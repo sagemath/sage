@@ -1,4 +1,4 @@
-cython zeromq setuptools
+$(PYTHON) cython zeromq | setuptools pip
 
 ----------
 All lines of this file are ignored except the first.

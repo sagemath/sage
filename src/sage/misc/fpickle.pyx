@@ -1,3 +1,4 @@
+# cython: old_style_globals=True
 """
 Function pickling
 

@@ -984,8 +984,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E[2*omega[2]]
         ((q*q1+q*q2)/(q*q1+q2))*B[(1, 2, 1)] + ((q*q1+q*q2)/(q*q1+q2))*B[(2, 1, 1)] + B[(2, 2, 0)]
         sage: for d in range(4):                                    # long time (9s)
-        ...       for weight in IntegerVectors(d,3).map(list).map(L0):
-        ...           eigenvalues = E.eigenvalues(E[L0(weight)])
+        ....:     for weight in IntegerVectors(d,3).map(list).map(L0):
+        ....:         eigenvalues = E.eigenvalues(E[L0(weight)])
 
     Some type `C` calculations::
 

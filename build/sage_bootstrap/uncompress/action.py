@@ -17,6 +17,7 @@ import os
 
 from sage_bootstrap.uncompress.tar_file import SageTarFile
 from sage_bootstrap.uncompress.zip_file import SageZipFile
+from sage_bootstrap.util import retry
 
 ARCHIVE_TYPES = [SageTarFile, SageZipFile]
 
@@ -66,6 +67,10 @@ def unpack_archive(archive, dirname=None):
     try:
         archive.extractall(members=archive.names)
         if dirname and top_level:
-            os.rename(top_level, dirname)
+            # On Windows os.rename can fail unexpectedly with a permission
+            # error if a virus scanner or other background process is
+            # inspecting the newly extracted files
+            rename = lambda: os.rename(top_level, dirname)
+            retry(rename, OSError)
     finally:
         os.chdir(prev_cwd)

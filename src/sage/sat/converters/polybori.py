@@ -1,7 +1,7 @@
 """
 An ANF to CNF Converter using a Dense/Sparse Strategy
 
-This converter is based on two converters. The first one, by Martin Albrecht, was based on [CB07]_,
+This converter is based on two converters. The first one, by Martin Albrecht, was based on [CB2007]_,
 this is the basis of the "dense" part of the converter. It was later improved by Mate Soos. The
 second one, by Michael Brickenstein, uses a reduced truth table based approach and forms the
 "sparse" part of the converter.
@@ -12,12 +12,6 @@ AUTHORS:
 - Michael Brickenstein - (2009) 'cnf.py' for PolyBoRi
 - Mate Soos - (2010) improved version of 'anf2cnf.py'
 - Martin Albrecht - (2012) unified and added to Sage
-
-REFERENCES:
-
-.. [CB07] Nicolas Courtois, Gregory V. Bard: Algebraic Cryptanalysis of the Data Encryption
-   Standard, In 11-th IMA Conference, Cirencester, UK, 18-20 December 2007, Springer LNCS 4887. See
-   also http://eprint.iacr.org/2006/402/.
 
 Classes and Methods
 -------------------

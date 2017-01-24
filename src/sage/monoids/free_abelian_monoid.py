@@ -56,9 +56,10 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
+from sage.misc.cachefunc import cached_method
 from sage.structure.category_object import normalize_names
-from sage.structure.parent_gens import ParentWithGens
+from sage.structure.parent import Parent
+from sage.categories.monoids import Monoids
 from .free_abelian_monoid_element import FreeAbelianMonoidElement
 from sage.rings.integer import Integer
 from sage.rings.all import ZZ
@@ -175,20 +176,28 @@ def is_FreeAbelianMonoid(x):
     """
     return isinstance(x, FreeAbelianMonoid_class)
 
-class FreeAbelianMonoid_class(ParentWithGens):
+class FreeAbelianMonoid_class(Parent):
     """
     Free abelian monoid on `n` generators.
     """
     Element = FreeAbelianMonoidElement
 
     def __init__(self, n, names):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: F = FreeAbelianMonoid(6,'b')
+            sage: TestSuite(F).run()
+        """
         if not isinstance(n, (int, long, Integer)):
-            raise TypeError("n (=%s) must be an integer."%n)
+            raise TypeError("n (=%s) must be an integer"%n)
         if n < 0:
-            raise ValueError("n (=%s) must be nonnegative."%n)
+            raise ValueError("n (=%s) must be nonnegative"%n)
         self.__ngens = int(n)
-        assert not names is None
-        self._assign_names(names)
+        assert names is not None
+        Parent.__init__(self, names=names, category=Monoids().Commutative())
 
     def __repr__(self):
         n = self.__ngens
@@ -208,7 +217,7 @@ class FreeAbelianMonoid_class(ParentWithGens):
         """
         if isinstance(x, FreeAbelianMonoidElement) and x.parent() == self:
             return x
-        return FreeAbelianMonoidElement(self, x)
+        return self.element_class(self, x)
 
 
     def __contains__(self, x):
@@ -256,7 +265,20 @@ class FreeAbelianMonoid_class(ParentWithGens):
             raise IndexError("Argument i (= %s) must be between 0 and %s."%(i, n-1))
         x = [ 0 for j in range(n) ]
         x[int(i)] = 1
-        return self.Element(self,x)
+        return self.element_class(self, x)
+
+    @cached_method
+    def gens(self):
+        """
+        Return the generators of ``self``.
+
+        EXAMPLES::
+
+            sage: F = FreeAbelianMonoid(5,'a')
+            sage: F.gens()
+            (a0, a1, a2, a3, a4)
+        """
+        return tuple([self.gen(i) for i in range(self.__ngens)])
 
     def ngens(self):
         """

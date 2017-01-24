@@ -504,7 +504,7 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: type(M.groundset())
             <type 'frozenset'>
             sage: type(M.groundset_list())
-            <type 'list'>
+            <... 'list'>
             sage: sorted(M.groundset_list())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 
@@ -2068,7 +2068,7 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: PM = M._heuristic_partition()
             sage: PN = N._heuristic_partition()
             sage: morphism = {}
-            sage: for i in xrange(len(M)): morphism[min(PM[i])]=min(PN[i])
+            sage: for i in range(len(M)): morphism[min(PM[i])] = min(PN[i])
             sage: M._is_isomorphism(N, morphism)
             True
         """

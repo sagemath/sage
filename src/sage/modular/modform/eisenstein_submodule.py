@@ -3,6 +3,7 @@
 The Eisenstein Subspace
 """
 from __future__ import absolute_import
+from six.moves import range
 
 from sage.structure.all import Sequence
 from sage.misc.all import verbose
@@ -442,7 +443,7 @@ class EisensteinSubmodule_gH_Q(EisensteinSubmodule_params):
         symbs = self.modular_symbols(sign=0)
         d = self.rank()
         wrong_mat, pivs = _convert_matrix_from_modsyms(symbs, A)
-        c = Matrix(self.base_ring(), d, [self.basis()[i][j+1] for i in xrange(d) for j in pivs])
+        c = Matrix(self.base_ring(), d, [self.basis()[i][j+1] for i in range(d) for j in pivs])
         return c * wrong_mat * ~c
 
     def _compute_hecke_matrix(self, n, bound=None):

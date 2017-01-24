@@ -13,7 +13,7 @@ EXAMPLES::
     19134702400093278081449423917
     sage: R(137) == fibonacci(137)
     True
-    sage: [R(i) % 4 for i in xrange(12)]
+    sage: [R(i) % 4 for i in range(12)]
     [0, 1, 1, 2, 3, 1, 0, 1, 1, 2, 3, 1]
     sage: R.period(4)        #the period of the fibonacci sequence modulo 4
     6
@@ -29,7 +29,7 @@ EXAMPLES::
     [0, 1, 2]
 
     sage: T = BinaryRecurrenceSequence(2,0,1,2)
-    sage: [T(i) for i in xrange(10)]
+    sage: [T(i) for i in range(10)]
     [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
     sage: T.is_degenerate()
     True
@@ -64,8 +64,10 @@ REFERENCES:
 #****************************************************************************#
 from __future__ import division
 
+from six.moves import range
+
 from sage.structure.sage_object import SageObject
-from sage.matrix.constructor import matrix, vector
+from sage.matrix.constructor import matrix
 from sage.rings.number_field.number_field import QuadraticField
 from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.finite_rings.finite_field_constructor import GF
@@ -73,6 +75,7 @@ from sage.rings.integer import Integer
 from sage.arith.all import gcd, lcm, next_prime, is_prime, next_prime_power, legendre_symbol
 from sage.functions.log import log
 from sage.functions.other import sqrt
+
 
 class BinaryRecurrenceSequence(SageObject):
 
@@ -281,7 +284,7 @@ class BinaryRecurrenceSequence(SageObject):
         EXAMPLES::
 
             sage: S = BinaryRecurrenceSequence(2,0,1,2)
-            sage: [S(i) for i in xrange(10)]
+            sage: [S(i) for i in range(10)]
             [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
             sage: S.is_geometric()
             True
@@ -311,13 +314,13 @@ class BinaryRecurrenceSequence(SageObject):
         EXAMPLES::
 
             sage: S = BinaryRecurrenceSequence(0,1)
-            sage: [S(i) for i in xrange(10)]
+            sage: [S(i) for i in range(10)]
             [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
             sage: S.is_quasigeometric()
             True
 
             sage: R = BinaryRecurrenceSequence(3,0)
-            sage: [R(i) for i in xrange(10)]
+            sage: [R(i) for i in range(10)]
             [0, 1, 3, 9, 27, 81, 243, 729, 2187, 6561]
             sage: R.is_quasigeometric()
             True
@@ -355,7 +358,7 @@ class BinaryRecurrenceSequence(SageObject):
         EXAMPLES::
 
             sage: S = BinaryRecurrenceSequence(2,-1)
-            sage: [S(i) for i in xrange(10)]
+            sage: [S(i) for i in range(10)]
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
             sage: S.is_arithmetic()
             True
@@ -393,7 +396,7 @@ class BinaryRecurrenceSequence(SageObject):
             sage: R.period(31)
             30
 
-            sage: [R(i) % 4 for i in xrange(12)]
+            sage: [R(i) % 4 for i in range(12)]
             [0, 1, 1, 2, 3, 1, 0, 1, 1, 2, 3, 1]
             sage: R.period(4)
             6
@@ -407,7 +410,7 @@ class BinaryRecurrenceSequence(SageObject):
             True
             sage: S.is_geometric()
             True
-            sage: [S(i) % 17 for i in xrange(16)]
+            sage: [S(i) % 17 for i in range(16)]
             [1, 2, 4, 8, 16, 15, 13, 9, 1, 2, 4, 8, 16, 15, 13, 9]
             sage: S.period(17)
             8
@@ -488,8 +491,8 @@ class BinaryRecurrenceSequence(SageObject):
 
                     #expand the list of prime factors so every factor is with multiplicity 1
 
-                    for i in xrange(len(Mfac)):
-                        for j in xrange(Mfac[i][1]):
+                    for i in range(len(Mfac)):
+                        for j in range(Mfac[i][1]):
                             C.append(Mfac[i][0])
 
                     Mfac = C
@@ -573,7 +576,7 @@ class BinaryRecurrenceSequence(SageObject):
             ValueError: The degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers.
 
             sage: L = BinaryRecurrenceSequence(4,0,2,2)
-            sage: [L(i).factor() for i in xrange(10)]
+            sage: [L(i).factor() for i in range(10)]
             [2, 2, 2^3, 2^5, 2^7, 2^9, 2^11, 2^13, 2^15, 2^17]
             sage: L.is_quasigeometric()
             True
@@ -598,7 +601,7 @@ class BinaryRecurrenceSequence(SageObject):
 
         if self.is_geometric() or self.is_quasigeometric():
             no_powers = True
-            for i in xrange(1,6*p+1):
+            for i in range(1,6*p+1):
                 if _is_p_power(self(i), p) :
                     no_powers = False
                     break
@@ -623,7 +626,7 @@ class BinaryRecurrenceSequence(SageObject):
 
             #Look at classes n = k mod p, for k = 1,...,p.
 
-            for k in xrange(1,p+1):
+            for k in range(1,p+1):
 
                 #The linear equation alpha^(k-1)*u_0 + (k+pm)*(alpha^(k-1)*u1 - u0*alpha^k)
                 #must thus be a pth power.  This is a linear equation in m, namely, A + B*m, where
@@ -668,7 +671,7 @@ class BinaryRecurrenceSequence(SageObject):
                 a0 = F(self.u0); a1 = F(self.u1) #a0 and a1 are variables for terms in sequence
                 bf, cf = F(self.b), F(self.c)
 
-                for n in xrange(Bound): # n is the index of the a0
+                for n in range(Bound): # n is the index of the a0
 
                     #Check whether a0 is a perfect power mod ell
                     if _is_p_power_mod(a0, p, ell) :
@@ -711,7 +714,7 @@ class BinaryRecurrenceSequence(SageObject):
 
                             CongNew = []        #makes a new list from cong that is now mod M = lcm(M1, modu) instead of M1
                             M = lcm(M1, modu)
-                            for k in xrange(M // M1):
+                            for k in range(M // M1):
                                 for i in cong:
                                     CongNew.append(k * M1 + i)
                             cong = set(CongNew)
@@ -947,7 +950,7 @@ def _next_good_prime(p, R, qq, patience, qqold):
 
                     N = _goodness(R._ell, R, p)
 
-                    #proceed only if R._ell statisfies the goodness requirements
+                    #proceed only if R._ell satisfies the goodness requirements
                     if qqold < N <= qq:
                         return R._ell
 
@@ -961,8 +964,7 @@ def _next_good_prime(p, R, qq, patience, qqold):
         return False
 
 
-def _is_p_power_mod(a,p,N):
-
+def _is_p_power_mod(a, p, N):
     """
     Determine if ``a`` is a ``p`` th power modulo ``N``.
 
@@ -1147,7 +1149,7 @@ def _find_cong1(p, R, ell):
     #cong1 keeps track of congruences mod modu for the sequence mod ell
     cong1 = []
 
-    for n in xrange(modu): # n is the index of the a0
+    for n in range(modu): # n is the index of the a0
 
         #Check whether a0 is a perfect power mod ell
         if a0 in PPowers:

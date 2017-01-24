@@ -481,7 +481,7 @@ class Superincreasing(SageObject):
 
         ALGORITHMS:
 
-        The algorithm used is adapted from page 355 of [HPS08]_.
+        The algorithm used is adapted from page 355 of [HPS2008]_.
 
 
         EXAMPLES:
@@ -518,12 +518,6 @@ class Superincreasing(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: Element e (= -10) of seq must be a non-negative integer.
-
-
-        REFERENCES:
-
-        .. [HPS08] \J. Hoffstein, J. Pipher, and J.H. Silverman. *An
-          Introduction to Mathematical Cryptography*. Springer, 2008.
         """
         # input error handling
         if not self.is_superincreasing():

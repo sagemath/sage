@@ -41,6 +41,7 @@ Methods
 from __future__ import print_function
 
 from six import itervalues
+from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 
@@ -163,7 +164,7 @@ class IncidenceStructure(object):
 
             sage: V = GF(5)
             sage: e0,e1,e2,e3,e4 = V
-            sage: [e0,e1,e2,e3,e4] == range(5)   # coercion makes them equal
+            sage: [e0,e1,e2,e3,e4] == list(range(5)) # coercion makes them equal
             True
             sage: blocks = [[e0,e1,e2],[e0,e1],[e2,e4]]
             sage: I = IncidenceStructure(V, blocks)
@@ -196,17 +197,17 @@ class IncidenceStructure(object):
         if incidence_matrix:
             M = matrix(incidence_matrix)
             v = M.nrows()
-            self._points = range(v)
+            self._points = list(range(v))
             self._point_to_index = None
             self._blocks = sorted(M.nonzero_positions_in_column(i) for i in range(M.ncols()))
 
         else:
             if isinstance(points, (int,Integer)):
-                self._points = range(points)
+                self._points = list(range(points))
                 self._point_to_index = None
             else:
                 self._points = sorted(points)
-                if self._points == range(len(points)) and all(isinstance(x,(int,Integer)) for x in self._points):
+                if self._points == list(range(len(points))) and all(isinstance(x,(int,Integer)) for x in self._points):
                     self._point_to_index = None
                 else:
                     self._point_to_index = {e:i for i,e in enumerate(self._points)}
@@ -313,7 +314,7 @@ class IncidenceStructure(object):
             self.num_blocks() != other.num_blocks()):
             return False
 
-        p_to_i = self._point_to_index if self._point_to_index else range(self.num_points())
+        p_to_i = self._point_to_index if self._point_to_index else list(range(self.num_points()))
 
         if any(p not in p_to_i for p in other.ground_set()):
             return False
@@ -409,7 +410,7 @@ class IncidenceStructure(object):
             g = Graph()
             n = self.num_points()
             g.add_edges((i+n,x) for i,b in enumerate(self._blocks) for x in b)
-            canonical_label = g.canonical_label([range(n),range(n,n+self.num_blocks())],certificate=True)[1]
+            canonical_label = g.canonical_label([list(range(n)),list(range(n,n+self.num_blocks()))],certificate=True)[1]
             canonical_label = [canonical_label[x] for x in range(n)]
             self._canonical_label = canonical_label
 
@@ -901,6 +902,18 @@ class IncidenceStructure(object):
             else:
                 return d
 
+    def rank(self):
+        r"""
+        Return the rank of the hypergraph (the maximum size of a block).
+
+        EXAMPLES::
+
+            sage: h = Hypergraph(8, [[0,1,3],[1,4,5,6],[1,2]])
+            sage: h.rank()
+            4
+        """
+        return max(len(b) for b in self._blocks)
+
     def is_regular(self,r=None):
         r"""
         Test whether the incidence structure is `r`-regular.
@@ -968,7 +981,7 @@ class IncidenceStructure(object):
 
         If ``k`` is defined, a boolean is returned. If ``k`` is set to ``None``
         (default), the method returns either ``False`` or the integer ``k`` such
-        that the incidence structure is `r`-regular.
+        that the incidence structure is `k`-uniform.
 
         .. WARNING::
 
@@ -986,10 +999,10 @@ class IncidenceStructure(object):
 
         TESTS::
 
-            sage: IncidenceStructure([]).is_regular()
+            sage: IncidenceStructure([]).is_uniform()
             Traceback (most recent call last):
             ...
-            ValueError: This incidence structure has no points.
+            ValueError: This incidence structure has no blocks.
         """
         if self.num_blocks() == 0:
             raise ValueError("This incidence structure has no blocks.")
@@ -1041,7 +1054,7 @@ class IncidenceStructure(object):
             False
         """
         B = self._blocks
-        return all(B[i] != B[i+1] for i in xrange(len(B)-1))
+        return all(B[i] != B[i+1] for i in range(len(B)-1))
 
     def _gap_(self):
         """
@@ -1324,7 +1337,7 @@ class IncidenceStructure(object):
             return G
 
         if perm is None:
-            self._points = range(self.num_points())
+            self._points = list(range(self.num_points()))
             self._point_to_index = None
             return
 
@@ -1338,7 +1351,7 @@ class IncidenceStructure(object):
             raise ValueError("Two points are getting relabelled with the same name !")
 
         self._points = [perm[x] for x in self._points]
-        if self._points == range(self.num_points()):
+        if self._points == list(range(self.num_points())):
             self._point_to_index  = None
         else:
             self._point_to_index = {v:i for i,v in enumerate(self._points)}
@@ -1507,7 +1520,7 @@ class IncidenceStructure(object):
             sage: D.is_t_design(return_parameters=True)
             (True, (1, 4, 2, 1))
 
-            sage: D = IncidenceStructure(4, [range(4)])
+            sage: D = IncidenceStructure(4, [list(range(4))])
             sage: D.is_t_design(return_parameters=True)
             (True, (4, 4, 4, 1))
 
@@ -1515,7 +1528,7 @@ class IncidenceStructure(object):
 
             sage: blocks = designs.steiner_quadruple_system(8)
             sage: S4_8 = IncidenceStructure(8, blocks)
-            sage: R = range(15)
+            sage: R = list(range(15))
             sage: [(v,k,l) for v in R for k in R for l in R if S4_8.is_t_design(3,v,k,l)]
             [(8, 4, 1)]
             sage: [(v,k,l) for v in R for k in R for l in R if S4_8.is_t_design(2,v,k,l)]
@@ -1761,7 +1774,7 @@ class IncidenceStructure(object):
             gB = []
             for b in gblcks:
                 gB.append([x-1 for x in b])
-            return IncidenceStructure(range(v), gB, name=None, check=False)
+            return IncidenceStructure(list(range(v)), gB, name=None, check=False)
         else:
             return IncidenceStructure(
                           incidence_matrix=self.incidence_matrix().transpose(),
@@ -1787,7 +1800,7 @@ class IncidenceStructure(object):
 
         A non self-dual example::
 
-            sage: IS = IncidenceStructure(range(4), [[0,1,2,3],[1,2,3]])
+            sage: IS = IncidenceStructure(list(range(4)), [[0,1,2,3],[1,2,3]])
             sage: IS.automorphism_group().cardinality()
             6
             sage: IS.dual().automorphism_group().cardinality()
@@ -1806,7 +1819,8 @@ class IncidenceStructure(object):
         g = Graph()
         n = self.num_points()
         g.add_edges((i+n,x) for i,b in enumerate(self._blocks) for x in b)
-        ag = g.automorphism_group(partition=[range(n), range(n,n+self.num_blocks())])
+        ag = g.automorphism_group(partition=[list(range(n)),
+                                             list(range(n,n+self.num_blocks()))])
 
         if self._point_to_index:
             gens = [[tuple([self._points[i] for i in cycle if (not cycle or cycle[0]<n)])
@@ -1910,7 +1924,7 @@ class IncidenceStructure(object):
                 n_classes = degrees.pop()
                 p = MixedIntegerLinearProgram(solver=solver)
                 b = p.new_variable(binary=True)
-                domain = range(self.num_points())
+                domain = list(range(self.num_points()))
 
                 # Lists of blocks containing i for every i
                 dual = [[] for i in domain]
@@ -1940,7 +1954,7 @@ class IncidenceStructure(object):
 
         if check and self._classes is not False:
             assert sorted(id(c) for cls in self._classes for c in cls) == sorted(id(b) for b in self._blocks), "some set does not appear exactly once"
-            domain = range(self.num_points())
+            domain = list(range(self.num_points()))
             for i,c in enumerate(self._classes):
                 assert sorted(sum(c,[])) == domain, "class {} is not a partition".format(i)
 
@@ -2078,7 +2092,7 @@ class IncidenceStructure(object):
         from sage.graphs.graph import Graph
         blocks = self.blocks()
         blocks_sets = [frozenset(_) for _ in blocks]
-        g = Graph([range(self.num_blocks()), lambda x,y: len(blocks_sets[x]&blocks_sets[y])], loops = False)
+        g = Graph([list(range(self.num_blocks())), lambda x,y: len(blocks_sets[x]&blocks_sets[y])], loops = False)
         return [[blocks[i] for i in C] for C in g.coloring(algorithm="MILP")]
 
     def _spring_layout(self):

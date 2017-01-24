@@ -701,7 +701,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: g_r = g.canonical_label()
             sage: g_c == g_r
             True
-            sage: list(sorted(labels.keys()))
+            sage: list(sorted(labels))
             [Combinatorial species,
              Product of (Combinatorial species) and (Combinatorial species),
              Singleton species,

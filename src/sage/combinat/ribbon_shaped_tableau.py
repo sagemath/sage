@@ -18,11 +18,12 @@ Ribbon Shaped Tableaux
 
 from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, StandardSkewTableaux
 from sage.combinat.tableau import Tableaux
-from sage.combinat.permutation import Permutation, descents_composition_first, descents_composition_list, descents_composition_last
+from sage.combinat.permutation import descents_composition_first, descents_composition_list, descents_composition_last
 from sage.rings.integer import Integer
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
+
 
 class RibbonShapedTableau(SkewTableau):
     r"""

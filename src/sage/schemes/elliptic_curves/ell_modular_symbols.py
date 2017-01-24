@@ -15,7 +15,7 @@ one is used.
 Associated to `E` there is a canonical generator in each space. They are maps
 `[.]^+` and `[.]^{-}`, both `\QQ \to\QQ`. They are normalised such that
 
-.. math::
+.. MATH::
 
    [r]^{+} \Omega^{+} + [r]^{-}\Omega^{-}  = \int_{\infty}^r 2\pi i f(z) dz
 

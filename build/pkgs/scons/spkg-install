@@ -10,6 +10,7 @@ cd src/
 
 rm -rf $SAGE_LOCAL/lib/scons-*
 
+# scons does not work with pip
 python setup.py install
 
 if [ $? -ne 0 ]; then

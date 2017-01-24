@@ -12,7 +12,6 @@ General matrix Constructor
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 import types
 from .matrix_space import MatrixSpace
 from sage.rings.ring import is_Ring
@@ -571,6 +570,22 @@ class MatrixFactory(object):
         ...
         TypeError: invalid matrix constructor: type matrix? for help
 
+    TESTS:
+
+    Some calls using an iterator (note that xrange is no longer available
+    in Python 3)::
+
+        sage: from six.moves import range
+        sage: matrix(QQ, 3, 6, range(18), sparse=true)
+        [ 0  1  2  3  4  5]
+        [ 6  7  8  9 10 11]
+        [12 13 14 15 16 17]
+        sage: matrix(4, 4, range(16))
+        [ 0  1  2  3]
+        [ 4  5  6  7]
+        [ 8  9 10 11]
+        [12 13 14 15]
+
     AUTHORS:
 
     - William Stein: Initial implementation
@@ -661,6 +676,8 @@ class MatrixFactory(object):
                 jrange = srange(ncols)
                 arg = [[arg(i, j) for j in jrange] for i in irange]
 
+            if isinstance(arg, xrange):
+                arg = list(arg)
             if isinstance(arg, (list, tuple)):
                 if not arg:
                     # no entries are specified, pass back the zero matrix
@@ -852,6 +869,7 @@ def prepare_dict(w):
     X = [x for _, x in Z]
     entries, ring = prepare(X)
     return dict([(Z[i][0],entries[i]) for i in range(len(entries))]), ring
+
 
 def nrows_from_dict(d):
     """

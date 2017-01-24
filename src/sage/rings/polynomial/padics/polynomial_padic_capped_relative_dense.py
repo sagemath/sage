@@ -8,6 +8,7 @@ p-adic Capped Relative Dense Polynomials
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 import sage.rings.polynomial.polynomial_element_generic
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -108,7 +109,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         elif isinstance(x, dict):
             zero = parentbr.zero()
             n = max(x.keys()) if x else 0
-            v = [zero for _ in xrange(n + 1)]
+            v = [zero] * (n + 1)
             for i, z in x.iteritems():
                 v[i] = z
             x = v
@@ -389,7 +390,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             if stop is None or stop > d:
                 stop = d
             values = ([self.base_ring().zero()] * start
-                      + [self[i] for i in xrange(start, stop)])
+                      + [self[i] for i in range(start, stop)])
             return self.parent()(values)
 
         try:

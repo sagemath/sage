@@ -193,24 +193,6 @@ cdef extern from "mpfi.h":
     bint (*mpfi_is_strictly_pos) (mpfi_srcptr)
     bint (*mpfi_is_strictly_neg) (mpfi_srcptr)
 
-    # default comparison functions
-    bint mpfi_is_pos_default(mpfi_srcptr)
-    bint mpfi_is_nonneg_default(mpfi_srcptr)
-    bint mpfi_is_neg_default(mpfi_srcptr)
-    bint mpfi_is_nonpos_default(mpfi_srcptr)
-    bint mpfi_is_zero_default(mpfi_srcptr)
-    bint mpfi_is_strictly_neg_default(mpfi_srcptr a)
-    bint mpfi_is_strictly_pos_default(mpfi_srcptr a)
-
-    int mpfi_cmp_default(mpfi_srcptr, mpfi_srcptr)
-    int mpfi_cmp_d_default(mpfi_srcptr, double)
-    int mpfi_cmp_ui_default(mpfi_srcptr, unsigned long)
-    int mpfi_cmp_si_default(mpfi_srcptr, long)
-    int mpfi_cmp_z_default(mpfi_srcptr, mpz_srcptr)
-    int mpfi_cmp_q_default(mpfi_srcptr, mpq_srcptr)
-    int mpfi_cmp_fr_default(mpfi_srcptr, mpfr_srcptr)
-
-
     bint mpfi_has_zero(mpfi_srcptr)
 
     bint mpfi_nan_p(mpfi_srcptr)

@@ -32,7 +32,7 @@ class RootSpace(CombinatorialFreeModule):
 
     This class is also used for coroot spaces (or lattices).
 
-    .. seealso::
+    .. SEEALSO::
 
         - :meth:`RootSystem`
         - :meth:`RootSystem.root_lattice` and :meth:`RootSystem.root_space`
@@ -43,8 +43,8 @@ class RootSpace(CombinatorialFreeModule):
     TESTS::
 
         sage: for ct in CartanType.samples(crystallographic=True)+[CartanType(["A",2],["C",5,1])]:
-        ...       TestSuite(ct.root_system().root_lattice()).run()
-        ...       TestSuite(ct.root_system().root_space()).run()
+        ....:     TestSuite(ct.root_system().root_lattice()).run()
+        ....:     TestSuite(ct.root_system().root_space()).run()
         sage: r = RootSystem(['A',4]).root_lattice()
         sage: r.simple_root(1)
         alpha[1]
@@ -252,8 +252,8 @@ class RootSpaceElement(CombinatorialFreeModuleElement):
         the Cartan matrix::
 
             sage: matrix([ [ alpha[i].scalar(alphacheck[j])
-            ...              for i in L.index_set() ]
-            ...            for j in L.index_set() ])
+            ....:            for i in L.index_set() ]
+            ....:          for j in L.index_set() ])
             [ 2 -1  0  0]
             [-1  2 -1  0]
             [ 0 -1  2 -1]

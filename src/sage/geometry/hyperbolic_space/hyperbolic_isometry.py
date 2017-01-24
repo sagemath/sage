@@ -746,8 +746,8 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         """
         d = sqrt(self._matrix.det()**2)
         tau = sqrt((self._matrix / sqrt(d)).trace()**2)
-        if self.classification() in ['hyperbolic', 'oriention-reversing hyperbolic']:
-            return 2 * arccosh(tau/2)
+        if self.classification() in ['hyperbolic', 'orientation-reversing hyperbolic']:
+            return 2 * arccosh(tau / 2)
         raise TypeError("translation length is only defined for hyperbolic transformations")
 
     def fixed_point_set(self): #UHP

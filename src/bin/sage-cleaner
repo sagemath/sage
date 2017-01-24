@@ -103,9 +103,13 @@ def kill_spawned_jobs(jobfile, parent_pid):
     logger.info("Killing %s's spawned jobs", parent_pid)
     killed_them_all = True
     for job in open(jobfile).readlines():
-        pid, cmd = job.strip().split(' ', 1)
-        logger.info("--> Killing '%s' with PID %s and parent PID %s", cmd, pid, parent_pid)
-        pid = int(pid)
+        try:
+            pid, cmd = job.strip().split(' ', 1)
+            pid = int(pid)
+            logger.info("--> Killing %r with PID %s and parent PID %s", cmd, pid, parent_pid)
+        except Exception:
+            logger.error("Exception while processing job %r from %s, ignoring", job, jobfile)
+            continue
         try:
             pgrp = os.getpgid(pid)
             logger.info("--> Killing process group %s", pgrp)

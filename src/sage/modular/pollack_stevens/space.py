@@ -3,7 +3,7 @@ r"""
 Pollack-Stevens' Modular Symbols Spaces
 
 This module contains a class for spaces of modular symbols that use Glenn
-Stevens' conventions.
+Stevens' conventions, as explained in [PS]_.
 
 There are two main differences between the modular symbols in this directory
 and the ones in :mod:`sage.modular.modsym`:
@@ -12,9 +12,57 @@ and the ones in :mod:`sage.modular.modsym`:
   there.
 
 - There is a duality: these modular symbols are functions from
-  `Div^0(P^1(\QQ))` (cohomological objects), the others are formal linear
-  combinations of `Div^0(P^1(\QQ))` (homological objects).
-"""## mm TODO examples?
+  `\textrm{Div}^0(P^1(\QQ))` (cohomological objects), the others are formal linear
+  combinations of `\textrm{Div}^0(P^1(\QQ))` (homological objects).
+
+EXAMPLES:
+
+First we create the space of modular symbols of weight 0 (`k=2`) and level 11::
+
+    sage: M = PollackStevensModularSymbols(Gamma0(11), 0); M
+    Space of modular symbols for Congruence Subgroup Gamma0(11) with sign 0 and values in Sym^0 Q^2
+
+One can also create a space of overconvergent modular symbols, by specifying a prime and a precision::
+
+    sage: M = PollackStevensModularSymbols(Gamma0(11), p = 5, prec_cap = 10, weight = 0); M
+    Space of overconvergent modular symbols for Congruence Subgroup Gamma0(11) with sign 0 and values in Space of 5-adic distributions with k=0 action and precision cap 10
+
+Currently not much functionality is available on the whole space, and these
+spaces are mainly used as parents for the modular symbols. These can be constructed from the corresponding
+classical modular symbols (or even elliptic curves) as follows::
+
+    sage: A = ModularSymbols(13, sign=1, weight=4).decomposition()[0]
+    sage: A.is_cuspidal()
+    True
+    sage: from sage.modular.pollack_stevens.space import ps_modsym_from_simple_modsym_space
+    sage: f = ps_modsym_from_simple_modsym_space(A); f
+    Modular symbol of level 13 with values in Sym^2 Q^2
+    sage: f.values()
+    [(-13, 0, -1),
+     (247/2, 13/2, -6),
+     (39/2, 117/2, 42),
+     (-39/2, 39, 111/2),
+     (-247/2, -117, -209/2)]
+    sage: f.parent()
+    Space of modular symbols for Congruence Subgroup Gamma0(13) with sign 1 and values in Sym^2 Q^2
+
+::
+
+    sage: E = EllipticCurve('37a1')
+    sage: phi = E.pollack_stevens_modular_symbol(); phi
+    Modular symbol of level 37 with values in Sym^0 Q^2
+    sage: phi.values()
+    [0, 1, 0, 0, 0, -1, 1, 0, 0]
+    sage: phi.parent()
+    Space of modular symbols for Congruence Subgroup Gamma0(37) with sign 0 and values in Sym^0 Q^2
+
+REFERENCES:
+
+.. [PS] Overconvergent modular symbols and p-adic L-functions
+   Robert Pollack, Glenn Stevens
+   Annales Scientifiques de l'Ecole Normale Superieure, serie 4, 44 fascicule 1 (2011), 1--42.
+
+"""
 #*****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
@@ -68,7 +116,7 @@ class PollackStevensModularSymbols_factory(UniqueFactory):
     They are only relevant if ``coefficients`` is ``None``, in which case the
     coefficient module is inferred from the other data.
 
-    .. WARNING::
+    .. note::
 
         We emphasize that in the Pollack-Stevens notation, the
         ``weight`` is the usual weight minus 2, so a classical weight
@@ -157,7 +205,7 @@ class PollackStevensModularSymbolspace(Module):
     r"""
     A class for spaces of modular symbols that use Glenn Stevens' conventions.
     This class should not be instantiated directly by the user: this is handled
-    by the factory object :class:`PollackStevensModularSymbols`.
+    by the factory object :class:`PollackStevensModularSymbols_factory`.
 
     INPUT:
 
@@ -290,7 +338,7 @@ class PollackStevensModularSymbolspace(Module):
 
         OUTPUT:
 
-        A :class:`sage.modular.pollack_stevens.fund_domain.PollackStevensModularSymbolsDomain`
+        A :class:`sage.modular.pollack_stevens.fund_domain.PollackStevensModularDomain`
 
         EXAMPLES::
 
@@ -823,7 +871,7 @@ def ps_modsym_from_elliptic_curve(E, sign = 0, implementation='eclib'):
       the plus (if ``sign`` == 1) or the minus (if ``sign`` == -1) modular
       symbol. The default of 0 returns the sum of the plus and minus symbols.
 
-    - ``implementation`` --  either 'eclib' (default) or 'sage'. This 
+    - ``implementation`` --  either 'eclib' (default) or 'sage'. This
       determines which implementation of the underlying classical
       modular symbols is used.
 
@@ -1001,7 +1049,7 @@ def ps_modsym_from_simple_modsym_space(A, name="alpha"):
         sage: ps_modsym_from_simple_modsym_space(A)
         Traceback (most recent call last):
         ...
-        ValueError: A must positive dimension
+        ValueError: A must have positive dimension
 
     We check that forms of nontrivial character are getting handled correctly::
 
@@ -1014,7 +1062,7 @@ def ps_modsym_from_simple_modsym_space(A, name="alpha"):
         [0, 0, 0, 0, 0]
     """
     if A.dimension() == 0:
-        raise ValueError("A must positive dimension")
+        raise ValueError("A must have positive dimension")
 
     if A.sign() == 0:
         raise ValueError("A must have sign +1 or -1 (otherwise it is"

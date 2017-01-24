@@ -83,6 +83,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.structure.element import CommutativeRingElement
 import sage.rings.number_field.number_field_rel as number_field_rel
@@ -634,7 +635,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             x = R.gen()
             a = R(1)
             d = R.degree()
-            for _ in xrange(d):
+            for _ in range(d):
                 v += (a*self).list()
                 a *= x
             S = R.base_ring()

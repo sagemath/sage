@@ -1,3 +1,8 @@
+# distutils: extra_compile_args = LINBOX_CFLAGS
+# distutils: libraries = LINBOX_LIBRARIES
+# distutils: library_dirs = LINBOX_LIBDIR
+# distutils: language = c++
+
 r"""
 Linbox interface
 """
@@ -8,13 +13,11 @@ Linbox interface
 
 from sage.libs.gmp.mpz cimport *
 from sage.rings.integer cimport Integer
-from sage.misc.misc import verbose, get_verbose, cputime, UNAME
+from sage.misc.misc import verbose, get_verbose
 
 ##########################################################################
 ## Sparse matrices modulo p.
 ##########################################################################
-
-include 'sage/modules/vector_modn_sparse_c.pxi'
 
 cdef extern from "linbox/linbox-sage.h":
     ctypedef struct vector_uint "std::vector<unsigned int>":

@@ -179,6 +179,8 @@ Classes and functions
 #*****************************************************************************
 from __future__ import print_function
 
+from six.moves import range
+
 import operator
 import re
 
@@ -2288,7 +2290,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
         k = N.index(x0)
         N = N[:k] + N[k+1:]
         n = len(c)
-        A = A.matrix_from_columns(range(k) + range(k + 1, n))
+        A = A.matrix_from_columns(list(range(k)) + list(range(k + 1, n)))
         b = copy(b)
         c = vector(self.base_ring(), n - 1)
         v = self._constant_term

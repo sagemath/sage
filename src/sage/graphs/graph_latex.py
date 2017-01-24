@@ -52,13 +52,13 @@ Here is a minimal session demonstrating how to use these features. The following
 
     sage: H = graphs.HeawoodGraph()
     sage: H.set_latex_options(
-    ...   graphic_size=(5,5),
-    ...   vertex_size=0.2,
-    ...   edge_thickness=0.04,
-    ...   edge_color='green',
-    ...   vertex_color='green',
-    ...   vertex_label_color='red'
-    ...   )
+    ....: graphic_size=(5,5),
+    ....: vertex_size=0.2,
+    ....: edge_thickness=0.04,
+    ....: edge_color='green',
+    ....: vertex_color='green',
+    ....: vertex_label_color='red'
+    ....: )
 
 At this point, ``view(H)`` should call ``pdflatex`` to process the string created by ``latex(H)`` and then display the resulting graphic.
 
@@ -68,9 +68,6 @@ To use this image in a LaTeX document, you could of course just copy and save th
     sage: check_tkz_graph()  # random - depends on TeX installation
     sage: latex(H)
     \begin{tikzpicture}
-    %
-    \useasboundingbox (0,0) rectangle (5.0cm,5.0cm);
-    %
     \definecolor{cv0}{rgb}{0.0,0.502,0.0}
     \definecolor{cfv0}{rgb}{1.0,1.0,1.0}
     \definecolor{clv0}{rgb}{1.0,0.0,0.0}
@@ -184,7 +181,6 @@ This example illustrates switching between the built-in styles when using the tk
     sage: check_tkz_graph()  # random - depends on TeX installation
     sage: latex(g)
     \begin{tikzpicture}
-    ...
     \GraphInit[vstyle=Classic]
     ...
     \end{tikzpicture}
@@ -198,7 +194,6 @@ This example illustrates switching between the built-in styles when using the tk
     LaTeX options for Petersen graph: {'tkz_style': 'Art'}
     sage: latex(g)
     \begin{tikzpicture}
-    ...
     \GraphInit[vstyle=Art]
     ...
     \end{tikzpicture}
@@ -238,49 +233,46 @@ choices. ::
     (x, y, u, w)
     sage: G = Graph(loops=True)
     sage: for i in range(5):
-    ...      for j in range(i+1, 5):
-    ...           G.add_edge((i, j), label=(x^i*y^j).expand())
+    ....:    for j in range(i+1, 5):
+    ....:         G.add_edge((i, j), label=(x^i*y^j).expand())
     sage: G.add_edge((0,0), label=sin(u))
     sage: G.add_edge((4,4), label=w^5)
     sage: G.set_pos(G.layout_circular())
     sage: G.set_latex_options(
-    ...   units='in',
-    ...   graphic_size=(8,8),
-    ...   margins=(1,2,2,1),
-    ...   scale=0.5,
-    ...   vertex_color='0.8',
-    ...   vertex_colors={1:'aqua', 3:'y', 4:'#0000FF'},
-    ...   vertex_fill_color='blue',
-    ...   vertex_fill_colors={1:'green', 3:'b', 4:'#FF00FF'},
-    ...   vertex_label_color='brown',
-    ...   vertex_label_colors={0:'g',1:'purple',2:'#007F00'},
-    ...   vertex_shape='diamond',
-    ...   vertex_shapes={1:'rectangle', 2:'sphere', 3:'sphere', 4:'circle'},
-    ...   vertex_size=0.3,
-    ...   vertex_sizes={0:1.0, 2:0.3, 4:1.0},
-    ...   vertex_label_placements = {2:(0.6, 180), 4:(0,45)},
-    ...   edge_color='purple',
-    ...   edge_colors={(0,2):'g',(3,4):'red'},
-    ...   edge_fills=True,
-    ...   edge_fill_color='green',
-    ...   edge_label_colors={(2,3):'y',(0,4):'blue'},
-    ...   edge_thickness=0.05,
-    ...   edge_thicknesses={(3,4):0.2, (0,4):0.02},
-    ...   edge_labels=True,
-    ...   edge_label_sloped=True,
-    ...   edge_label_slopes={(0,3):False, (2,4):False},
-    ...   edge_label_placement=0.50,
-    ...   edge_label_placements={(0,4):'above', (2,3):'left', (0,0):'above', (4,4):'below'},
-    ...   loop_placement=(2.0, 'NO'),
-    ...   loop_placements={4:(8.0, 'EA')}
-    ...   )
+    ....: units='in',
+    ....: graphic_size=(8,8),
+    ....: margins=(1,2,2,1),
+    ....: scale=0.5,
+    ....: vertex_color='0.8',
+    ....: vertex_colors={1:'aqua', 3:'y', 4:'#0000FF'},
+    ....: vertex_fill_color='blue',
+    ....: vertex_fill_colors={1:'green', 3:'b', 4:'#FF00FF'},
+    ....: vertex_label_color='brown',
+    ....: vertex_label_colors={0:'g',1:'purple',2:'#007F00'},
+    ....: vertex_shape='diamond',
+    ....: vertex_shapes={1:'rectangle', 2:'sphere', 3:'sphere', 4:'circle'},
+    ....: vertex_size=0.3,
+    ....: vertex_sizes={0:1.0, 2:0.3, 4:1.0},
+    ....: vertex_label_placements = {2:(0.6, 180), 4:(0,45)},
+    ....: edge_color='purple',
+    ....: edge_colors={(0,2):'g',(3,4):'red'},
+    ....: edge_fills=True,
+    ....: edge_fill_color='green',
+    ....: edge_label_colors={(2,3):'y',(0,4):'blue'},
+    ....: edge_thickness=0.05,
+    ....: edge_thicknesses={(3,4):0.2, (0,4):0.02},
+    ....: edge_labels=True,
+    ....: edge_label_sloped=True,
+    ....: edge_label_slopes={(0,3):False, (2,4):False},
+    ....: edge_label_placement=0.50,
+    ....: edge_label_placements={(0,4):'above', (2,3):'left', (0,0):'above', (4,4):'below'},
+    ....: loop_placement=(2.0, 'NO'),
+    ....: loop_placements={4:(8.0, 'EA')}
+    ....: )
     sage: from sage.graphs.graph_latex import check_tkz_graph
     sage: check_tkz_graph()  # random - depends on TeX installation
     sage: print(latex(G))
     \begin{tikzpicture}
-    %
-    \useasboundingbox (0,0) rectangle (4.0in,4.0in);
-    %
     \definecolor{cv0}{rgb}{0.8,0.8,0.8}
     \definecolor{cfv0}{rgb}{0.0,0.0,1.0}
     \definecolor{clv0}{rgb}{0.0,0.5,0.0}
@@ -423,7 +415,7 @@ def have_tkz_graph():
 
 @cached_function
 def setup_latex_preamble():
-    """
+    r"""
     Adds appropriate ``\usepackage{...}``, and other instructions to
     the latex preamble for the packages that are needed for processing
     graphs(``tikz``, ``tkz-graph``, ``tkz-berge``), if available
@@ -1282,9 +1274,6 @@ class GraphLatex(SageObject):
             sage: opts = g.latex_options()
             sage: print(opts.latex())
             \begin{tikzpicture}
-            %
-            \useasboundingbox (0,0) rectangle (5.0cm,5.0cm);
-            %
             \definecolor{cv0}{rgb}{0.0,0.0,0.0}
             \definecolor{cfv0}{rgb}{1.0,1.0,1.0}
             \definecolor{clv0}{rgb}{0.0,0.0,0.0}
@@ -1364,7 +1353,7 @@ class GraphLatex(SageObject):
                 autosize = True,
                 crop = True,
                 figonly = 'True',
-                prog=self.get_option('prog'))
+                prog=self.get_option('prog')).strip()
         # usepdflatex = True, debug = True)
 
     def tkz_picture(self):
@@ -1401,10 +1390,7 @@ class GraphLatex(SageObject):
             sage: g.set_latex_options(tkz_style='Art')
             sage: print(opts.tkz_picture())
             \begin{tikzpicture}
-            %
             \GraphInit[vstyle=Art]
-            %
-            \useasboundingbox (0,0) rectangle (5.0cm,5.0cm);
             %
             \Vertex[L=\hbox{$0$},x=2.5cm,y=5.0cm]{v0}
             \Vertex[L=\hbox{$1$},x=0.0cm,y=0.0cm]{v1}
@@ -1426,9 +1412,6 @@ class GraphLatex(SageObject):
             sage: g.set_latex_options(tkz_style='Custom')
             sage: print(opts.tkz_picture())
             \begin{tikzpicture}
-            %
-            \useasboundingbox (0,0) rectangle (5.0cm,5.0cm);
-            %
             \definecolor{cv0}{rgb}{0.0,0.0,0.0}
             \definecolor{cfv0}{rgb}{1.0,1.0,1.0}
             \definecolor{clv0}{rgb}{0.0,0.0,0.0}
@@ -1637,7 +1620,7 @@ class GraphLatex(SageObject):
         # or use this type of extra information if they are switched off
         vertex_labels = self.get_option('vertex_labels')
 
-        # We collect options for vertices, default values and and for-some-vertices information
+        # We collect options for vertices, default values and for-some-vertices information
         # These are combined into dictionaries on a per-vertex basis, for all vertices
         # This only applies for a custom style
         #
@@ -1848,14 +1831,10 @@ class GraphLatex(SageObject):
         # s is the eventual tkz string
         # Everything should now be in place
         # We build a list and then concatenate it as the return value
-        s = ['\\begin{tikzpicture}\n%\n']
+        s = ['\\begin{tikzpicture}\n']
 
         if not customized:
             s+=['\\GraphInit[vstyle=', style, ']\n%\n']
-
-        # Specify the bounding box for the latex result
-        # If too big, then the latex paper size may need to be expanded
-        s+=['\\useasboundingbox (0,0) rectangle (', str(round(scale*graphic_size[0],4)), units, ',', str(round(scale*graphic_size[1],4)), units, ');\n%\n']
 
         # Internal strings representing colors are defined here in custom style
         if customized:

@@ -165,6 +165,25 @@ class OutputSceneCanvas3d(OutputBase):
         filename = os.path.join(
             SAGE_EXTCODE, 'doctest', 'rich_output', 'example.canvas3d')
         return cls(OutputBuffer.from_file(filename))
+
+
+class OutputSceneThreejs(OutputBase):
+
+    def __init__(self, html):
+        """
+        Three.js Scene
+
+        INPUT:
+
+        - ``html`` -- string/bytes. The Three.js HTML data.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output.output_catalog import OutputSceneThreejs
+            sage: OutputSceneThreejs('<html></html>')
+            OutputSceneThreejs container
+        """
+        self.html = OutputBuffer(html)
         
 
 class OutputSceneWavefront(OutputBase):

@@ -257,23 +257,27 @@ def get_gap_memory_pool_size():
 
     EXAMPLES::
 
-        sage: from sage.interfaces.gap import \
-        ...       get_gap_memory_pool_size
+        sage: from sage.interfaces.gap import get_gap_memory_pool_size
         sage: get_gap_memory_pool_size()   # random output
         1534059315
     """
     global gap_memory_pool_size
     if gap_memory_pool_size is not None:
         return gap_memory_pool_size
-    from sage.misc.memory_info import MemoryInfo
-    mem = MemoryInfo()
-    suggested_size = max(mem.available_swap() // 10,
-                         mem.available_ram()  // 50)
+
+    import psutil
+    from sage.misc.getusage import virtual_memory_limit
+    mem = psutil.virtual_memory()
+    swap = psutil.swap_memory()
+    vmax = virtual_memory_limit()
+
+    suggested_size = max(swap.free // 10, mem.available // 50)
     # Don't eat all address space if the user set ulimit -v
-    suggested_size = min(suggested_size, mem.virtual_memory_limit()//10)
+    suggested_size = min(suggested_size, vmax // 10)
     # ~220MB is the minimum for long doctests
     suggested_size = max(suggested_size, 250 * 1024**2)
     return suggested_size
+
 
 def _get_gap_memory_pool_size_MB():
     """
@@ -1286,8 +1290,9 @@ class Gap(Gap_generic):
 
         TESTS:
 
-        We make sure that #9938 (GAP does not start if the path to the GAP
-        workspace file contains more than 82 characters) is fixed::
+        We make sure that :trac:`9938` (GAP does not start if the path
+        to the GAP workspace file contains more than 82 characters) is
+        fixed::
 
             sage: ORIGINAL_WORKSPACE = sage.interfaces.gap.WORKSPACE
             sage: sage.interfaces.gap.WORKSPACE = os.path.join(SAGE_TMP, "gap" + "0"*(80-len(SAGE_TMP)))

@@ -76,14 +76,14 @@ class IntegerRange(UniqueRepresentation, Parent):
     step)`` is the set whose list of elements is equivalent to the python
     construction ``range(begin, end, step)``::
 
-        sage: list(IntegerRange(4,105,3)) == range(4,105,3)
+        sage: list(IntegerRange(4,105,3)) == list(range(4,105,3))
         True
-        sage: list(IntegerRange(-54,13,12)) == range(-54,13,12)
+        sage: list(IntegerRange(-54,13,12)) == list(range(-54,13,12))
         True
 
     Except for the type of the numbers::
 
-        sage: type(IntegerRange(-54,13,12)[0]), type(range(-54,13,12)[0])
+        sage: type(IntegerRange(-54,13,12)[0]), type(list(range(-54,13,12))[0])
         (<type 'sage.rings.integer.Integer'>, <type 'int'>)
 
     When ``begin`` is finite and ``end`` is +Infinity, ``self`` is the infinite
@@ -142,7 +142,7 @@ class IntegerRange(UniqueRepresentation, Parent):
     be supposed to be included and the ``end`` bound supposed to be excluded::
 
         sage: I = IntegerRange(-100,100,10,0)
-        sage: J = range(-100,100,10)
+        sage: J = list(range(-100,100,10))
         sage: 100 in I
         False
         sage: 100 in J
@@ -176,29 +176,29 @@ class IntegerRange(UniqueRepresentation, Parent):
         sage: TestSuite(IntegerRange(732,-12,-2743,732)).run()
         sage: # 20 random tests: range and IntegerRange give the same set for finite cases
         sage: for i in range(20):
-        ...       begin = Integer(randint(-300,300))
-        ...       end = Integer(randint(-300,300))
-        ...       step = Integer(randint(-20,20))
-        ...       if step == 0:
-        ...           step = Integer(1)
-        ...       assert list(IntegerRange(begin, end, step)) == range(begin, end, step)
+        ....:     begin = Integer(randint(-300,300))
+        ....:     end = Integer(randint(-300,300))
+        ....:     step = Integer(randint(-20,20))
+        ....:     if step == 0:
+        ....:         step = Integer(1)
+        ....:     assert list(IntegerRange(begin, end, step)) == list(range(begin, end, step))
         sage: # 20 random tests: range and IntegerRange with middle point for finite cases
         sage: for i in range(20):
-        ...       begin = Integer(randint(-300,300))
-        ...       end = Integer(randint(-300,300))
-        ...       step = Integer(randint(-15,15))
-        ...       if step == 0:
-        ...           step = Integer(-3)
-        ...       I = IntegerRange(begin, end, step)
-        ...       if I.cardinality() == 0:
-        ...           assert len(range(begin, end, step)) == 0
-        ...       else:
-        ...           TestSuite(I).run()
-        ...           L1 = list(IntegerRange(begin, end, step, I.an_element()))
-        ...           L2 = range(begin, end, step)
-        ...           L1.sort()
-        ...           L2.sort()
-        ...           assert L1 == L2
+        ....:     begin = Integer(randint(-300,300))
+        ....:     end = Integer(randint(-300,300))
+        ....:     step = Integer(randint(-15,15))
+        ....:     if step == 0:
+        ....:         step = Integer(-3)
+        ....:     I = IntegerRange(begin, end, step)
+        ....:     if I.cardinality() == 0:
+        ....:         assert len(range(begin, end, step)) == 0
+        ....:     else:
+        ....:         TestSuite(I).run()
+        ....:         L1 = list(IntegerRange(begin, end, step, I.an_element()))
+        ....:         L2 = list(range(begin, end, step))
+        ....:         L1.sort()
+        ....:         L2.sort()
+        ....:         assert L1 == L2
 
     Thanks to :trac:`8543` empty integer range are allowed::
 
@@ -429,11 +429,11 @@ class IntegerRangeFinite(IntegerRange):
 
     def __getitem__(self, i):
         r"""
-        Return the i-th elt of this integer range.
+        Return the i-th element of this integer range.
 
         EXAMPLES::
 
-            sage: I=IntegerRange(1,13,5)
+            sage: I = IntegerRange(1,13,5)
             sage: I[0], I[1], I[2]
             (1, 6, 11)
             sage: I[3]
@@ -449,10 +449,10 @@ class IntegerRangeFinite(IntegerRange):
 
             sage: I = IntegerRange(13,1,-1)
             sage: l = I.list()
-            sage: [I[i] for i in xrange(I.cardinality())] == l
+            sage: [I[i] for i in range(I.cardinality())] == l
             True
             sage: l.reverse()
-            sage: [I[i] for i in xrange(-1,-I.cardinality()-1,-1)] == l
+            sage: [I[i] for i in range(-1,-I.cardinality()-1,-1)] == l
             True
         """
         if isinstance(i,slice):

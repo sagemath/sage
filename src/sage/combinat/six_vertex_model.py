@@ -162,7 +162,6 @@ class SixVertexConfiguration(ClonableArray):
             Arrow from (2.0,1.0) to (1.0,1.0)
         """
         from sage.plot.graphics import Graphics
-        from sage.plot.circle import circle
         from sage.plot.arrow import arrow
 
         if color == 4:
@@ -563,21 +562,21 @@ class SixVertexModel(UniqueRepresentation, Parent):
 
         bdry = [self._bdry_cond[0]]
         lbd = list(self._bdry_cond[3]) + [None] # Dummy
-        left = [ [lbd[0]] ]
+        left = [[lbd[0]]]
         cur = [[-1]]
         n = self._nrows
         m = self._ncols
         # [[3, 1], [5, 3]]
         # [[4, 3], [3, 2]]
 
-        while len(cur) > 0:
+        while cur:
             # If we're at the last row
             if len(cur) > n:
                 cur.pop()
                 left.pop()
-                # Check if all our bottom boundry conditions are statisfied
+                # Check if all our bottom boundary conditions are satisfied
                 if all(x is not self._bdry_cond[2][i]
-                       for i,x in enumerate(bdry[-1])):
+                       for i, x in enumerate(bdry[-1])):
                     yield self.element_class(self, tuple(tuple(x) for x in cur))
                 bdry.pop()
 

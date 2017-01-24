@@ -49,7 +49,7 @@ test.spyx
 
 AUTHORS:
 
-- Jeroen Demeyer (2010-11-20): initial version (#10300)
+- Jeroen Demeyer (2010-11-20): initial version (:trac:`10300`)
 
 """
 from subprocess import *

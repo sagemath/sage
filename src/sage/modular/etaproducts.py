@@ -4,7 +4,7 @@ Eta-products on modular curves :math:`X_0(N)`
 This package provides a class for representing eta-products, which
 are meromorphic functions on modular curves of the form
 
-.. math::
+.. MATH::
 
     \prod_{d | N} \eta(q^d)^{r_d}
 
@@ -217,14 +217,14 @@ class EtaGroup_class(AbelianGroup):
         pass it to the reduce_basis() function which performs
         LLL-reduction to give a more manageable basis.
         """
-
+        from six.moves import range
         N = self.level()
         divs = divisors(N)[:-1]
         s = len(divs)
         primedivs = prime_divisors(N)
 
         rows = []
-        for i in xrange(s):
+        for i in range(s):
             # generate a row of relation matrix
             row = [ Mod(divs[i], 24) - Mod(N, 24), Mod(N/divs[i], 24) - Mod(1, 24)]
             for p in primedivs:
@@ -235,7 +235,7 @@ class EtaGroup_class(AbelianGroup):
         # now we compute elementary factors of Mlift
         S,U,V = Mlift.smith_form()
         good_vects = []
-        for i in xrange(U.nrows()):
+        for i in range(U.nrows()):
             vect = U.row(i)
             nf = (i < S.ncols() and S[i,i]) or 0
             good_vects.append((vect * 24/gcd(nf, 24)).list())
@@ -244,7 +244,7 @@ class EtaGroup_class(AbelianGroup):
         dicts = []
         for v in good_vects:
             dicts.append({})
-            for i in xrange(s):
+            for i in range(s):
                 dicts[-1][divs[i]] = v[i]
             dicts[-1][N] = v[-1]
         if reduce:
@@ -285,6 +285,7 @@ class EtaGroup_class(AbelianGroup):
             [Eta product of level 4 : (eta_1)^8 (eta_4)^-8,
             Eta product of level 4 : (eta_1)^-8 (eta_2)^24 (eta_4)^-16]
         """
+        from six.moves import range
         N = self.level()
         cusps = AllCusps(N)
         r = matrix(ZZ, [[et.order_at_cusp(c) for c in cusps] for et in long_etas])
@@ -294,9 +295,9 @@ class EtaGroup_class(AbelianGroup):
         short_etas = []
         for shortvect in rred.rows():
             bv = A.coordinates(shortvect)
-            dict = {}
-            for d in divisors(N):
-                dict[d] = sum( [bv[i]*long_etas[i].r(d) for i in xrange(r.nrows())])
+            dict = {d: sum(bv[i] * long_etas[i].r(d)
+                           for i in range(r.nrows()))
+                    for d in divisors(N)}
             short_etas.append(self(dict))
         return short_etas
 
@@ -695,6 +696,7 @@ def AllCusps(N):
         ...
         ValueError: N must be positive
     """
+    from six.moves import range
     N = ZZ(N)
     if N <= 0:
         raise ValueError("N must be positive")
@@ -705,8 +707,8 @@ def AllCusps(N):
         if n == 1:
             c.append(CuspFamily(N, d))
         elif n > 1:
-            for i in xrange(n):
-                c.append(CuspFamily(N, d, label=str(i+1)))
+            for i in range(n):
+                c.append(CuspFamily(N, d, label=str(i + 1)))
     return c
 
 class CuspFamily(SageObject):
@@ -800,7 +802,7 @@ def qexp_eta(ps_ring, prec):
     Return the q-expansion of `\eta(q) / q^{1/24}`, where
     `\eta(q)` is Dedekind's function
 
-    .. math::
+    .. MATH::
 
         \eta(q) = q^{1/24}\prod_{n=1}^\infty (1-q^n),
 
@@ -819,7 +821,7 @@ def qexp_eta(ps_ring, prec):
 
     ALGORITHM: We use the Euler identity
 
-    .. math::
+    .. MATH::
 
          \eta(q) = q^{1/24}( 1 + \sum_{n \ge 1} (-1)^n (q^{n(3n+1)/2} + q^{n(3n-1)/2})
 
@@ -954,7 +956,7 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
     Liable to return meaningless results if qexp_terms isn't at least
     `1 + d*(m_1,m_2)` where
 
-    .. math::
+    .. MATH::
 
        m_i = min(0, {\text degree of the pole of $\eta_i$ at $\infty$})
 
@@ -969,7 +971,7 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
         sage: _eta_relations_helper(EtaProduct(26, {2:2,13:2,26:-2,1:-2}),EtaProduct(26, {2:4,13:2,26:-4,1:-2}),3,12,['a','b'],False) # not enough terms, will return rubbish
         [1]
     """
-
+    from six.moves import range
     indices = [(i,j) for j in range(degree) for i in range(degree)]
     inf = CuspFamily(eta1.level(), 1)
 
@@ -978,11 +980,11 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
         print("Trying all coefficients from q^%s to q^%s inclusive" % (-pole_at_infinity, -pole_at_infinity + qexp_terms - 1))
 
     rows = []
-    for j in xrange(qexp_terms):
+    for j in range(qexp_terms):
         rows.append([])
     for i in indices:
         func = (eta1**i[0]*eta2**i[1]).qexp(qexp_terms)
-        for j in xrange(qexp_terms):
+        for j in range(qexp_terms):
             rows[j].append(func[j - pole_at_infinity])
     M = matrix(rows)
     V = M.right_kernel()
@@ -995,6 +997,6 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
         x,y = R.gens()
         relations = []
         for c in V.basis():
-            relations.append(sum( [ c[v] * x**indices[v][0] * y**indices[v][1] for v in xrange(len(indices))]))
+            relations.append(sum( [ c[v] * x**indices[v][0] * y**indices[v][1] for v in range(len(indices))]))
         id = R.ideal(relations)
         return id.groebner_basis()

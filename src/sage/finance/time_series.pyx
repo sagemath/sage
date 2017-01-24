@@ -18,7 +18,7 @@ algebraic structure and are always mutable.
 EXAMPLES::
 
     sage: set_random_seed(1)
-    sage: t = finance.TimeSeries([random()-0.5 for _ in xrange(10)]); t
+    sage: t = finance.TimeSeries([random()-0.5 for _ in range(10)]); t
     [0.3294, 0.0959, -0.0706, -0.4646, 0.4311, 0.2275, -0.3840, -0.3528, -0.4119, -0.2933]
     sage: t.sums()
     [0.3294, 0.4253, 0.3547, -0.1099, 0.3212, 0.5487, 0.1647, -0.1882, -0.6001, -0.8933]
@@ -45,7 +45,6 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 include "cysignals/memory.pxi"
 from cpython.string cimport *
 from libc.math cimport exp, floor, log, pow, sqrt
@@ -502,7 +501,7 @@ cdef class TimeSeries:
 
         Note that both summands must be a time series::
 
-            sage: v + xrange(4)
+            sage: v + range(4)
             Traceback (most recent call last):
             ...
             TypeError: right operand must be a time series

@@ -160,7 +160,7 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
         sage: from os import linesep as CR
         sage: # sage_timeit(r'a = 2\\nb=131\\nfactor(a^b-1)')
         sage: sage_timeit('a = 2' + CR + 'b=131' + CR + 'factor(a^b-1)',
-        ...               globals(), number=10)
+        ....:             globals(), number=10)
         10 loops, best of 3: ... per loop
 
     Test to make sure that ``timeit`` behaves well with output::
@@ -218,7 +218,7 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     # to the shell namespace?
 
     src = timeit_.template % {'stmt': timeit_.reindent(stmt, 8),
-                             'setup': "pass"}
+                             'setup': "pass", 'init' : ''}
     code = compile(src, "<magic-timeit>", "exec")
     ns = {}
     if not globals_dict:

@@ -8,6 +8,9 @@ free open source license as defined at http://www.opensource.org/.
 The whole Sage software distribution is licensed under the General
 Public License, version 3 (no other versions!).
 
+All Sage documentation is licensed under Creative Commons 3.0 BY-SA
+License.
+
 Some of the code available in *optional* Sage packages (not included
 in sage-*.tar) are licensed under more restrictive conditions.
 

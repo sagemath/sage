@@ -200,7 +200,7 @@ cdef class IntegerListsBackend(object):
         EXAMPLES::
 
             sage: C = IntegerListsLex(n=2, max_length=3, min_slope=0)
-            sage: all([l in C for l in C])  # indirect doctest
+            sage: all(l in C for l in C)  # indirect doctest
             True
         """
         if len(comp) < self.min_length or len(comp) > self.max_length:

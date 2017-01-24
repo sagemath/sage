@@ -503,7 +503,7 @@ class BooleanFormula(object):
 
     def __eq__(self, other):
         r"""
-        Overload the ``==`` operator to deterine logical equivalence.
+        Overload the ``==`` operator to determine logical equivalence.
 
         INPUT:
 

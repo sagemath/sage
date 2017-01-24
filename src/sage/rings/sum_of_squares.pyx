@@ -30,7 +30,7 @@ cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]):
     r"""
     Return ``1`` if ``n`` is a sum of two squares and ``0`` otherwise.
 
-    If ``1`` is returned, the the value of ``res[0]`` and ``res[1]`` are set to the
+    If ``1`` is returned, the value of ``res[0]`` and ``res[1]`` are set to the
     lexicographically smallest solution of `a^2 + b^2 = n`.
     """
     cdef uint_fast32_t fac,i,ii,j,jj,nn
@@ -168,7 +168,7 @@ def two_squares_pyx(uint32_t n):
         ....:     if s(two_squares_pyx(s(ij))) != s(ij):
         ....:         print("hey")
 
-        sage: for n in xrange(1,65536):
+        sage: for n in range(1,65536):
         ....:     if two_squares_pyx(n^2) != (0, n):
         ....:         print("hey")
         ....:     if two_squares_pyx(n^2 + 1) != (1, n):
@@ -302,7 +302,7 @@ def four_squares_pyx(uint32_t n):
         (0, 0, 0, 0)
 
         sage: s = lambda t: sum(i^2 for i in t)
-        sage: all(s(four_squares_pyx(n)) == n for n in xrange(5000,10000))
+        sage: all(s(four_squares_pyx(n)) == n for n in range(5000,10000))
         True
     """
     cdef uint_fast32_t fac, j, nn

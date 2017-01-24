@@ -11,7 +11,7 @@ Saclib 2.2
 Copyright (c) 1993, 2008, RISC-Linz (contact wcbrown@usna.edu)
 
 Permission to use, copy, modify, and/or distribute this software, including
-source files, README files, etc., for any purpose with or without fee is 
+source files, README files, etc., for any purpose with or without fee is
 hereby granted, provided that the above copyright notice and this permission
 notice appear in all copies.
 

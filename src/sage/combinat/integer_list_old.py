@@ -31,14 +31,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
+from six.moves import builtins
 
 from sage.arith.all import binomial
 from sage.rings.integer_ring import ZZ
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
 from sage.structure.list_clone import ClonableArray
-from sage.misc.lazy_attribute import lazy_attribute
-from six.moves import builtins
 from sage.misc.stopgap import stopgap
 
 
@@ -538,7 +537,7 @@ def is_a(comp, min_length, max_length, floor, ceiling, min_slope, max_slope):
 
         sage: from sage.combinat.integer_list_old import is_a
         sage: IV = sage.combinat.integer_list_old.IntegerListsLex(n=2,length=3,min_slope=0)
-        sage: all([is_a(iv, 3, 3, lambda i: 0, lambda i: 5, 0, 10) for iv in IV])
+        sage: all(is_a(iv, 3, 3, lambda i: 0, lambda i: 5, 0, 10) for iv in IV)
         True
     """
     if len(comp) < min_length or len(comp) > max_length:

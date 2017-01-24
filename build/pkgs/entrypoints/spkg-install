@@ -4,4 +4,4 @@
 #
 
 mv setup.py src
-cd src && pip install --verbose --no-index .
+cd src && $PIP_INSTALL .

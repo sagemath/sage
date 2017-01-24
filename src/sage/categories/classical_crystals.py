@@ -44,6 +44,7 @@ class ClassicalCrystals(Category_singleton):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           running ._test_stembridge_local_axioms() . . . pass
@@ -57,6 +58,7 @@ class ClassicalCrystals(Category_singleton):
         running ._test_enumerated_set_iter_list() . . . pass
         running ._test_eq() . . . pass
         running ._test_fast_iter() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
@@ -182,12 +184,9 @@ class ClassicalCrystals(Category_singleton):
 
             REFERENCES:
 
-            .. [D1974] \M. Demazure, Desingularisation des varietes de Schubert,
-               Ann. E. N. S., Vol. 6, (1974), p. 163-172
+            - [De1974]_
 
-            .. [M2009] Sarah Mason, An Explicit Construction of Type A Demazure Atoms,
-               Journal of Algebraic Combinatorics, Vol. 29, (2009), No. 3, p.295-313.
-               :arXiv:`0707.4267`
+            - [Ma2009]_
             """
             from sage.misc.misc_c import prod
             from sage.rings.integer_ring import ZZ
@@ -289,6 +288,7 @@ class ClassicalCrystals(Category_singleton):
                   Running the test suite of self.an_element()
                   running ._test_category() . . . pass
                   running ._test_eq() . . . pass
+                  running ._test_new() . . . pass
                   running ._test_not_implemented_methods() . . . pass
                   running ._test_pickling() . . . pass
                   running ._test_stembridge_local_axioms() . . . pass
@@ -302,6 +302,7 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_enumerated_set_iter_list() . . . pass
                 running ._test_eq() . . . pass
                 running ._test_fast_iter() . . . pass
+                running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
                 running ._test_some_elements() . . . pass
@@ -315,6 +316,7 @@ class ClassicalCrystals(Category_singleton):
                   Running the test suite of self.an_element()
                   running ._test_category() . . . pass
                   running ._test_eq() . . . pass
+                  running ._test_new() . . . pass
                   running ._test_not_implemented_methods() . . . pass
                   running ._test_pickling() . . . pass
                   running ._test_stembridge_local_axioms() . . . pass
@@ -328,6 +330,7 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_enumerated_set_iter_list() . . . pass
                 running ._test_eq() . . . pass
                 running ._test_fast_iter() . . . pass
+                running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
                 running ._test_some_elements() . . . pass
@@ -366,6 +369,7 @@ class ClassicalCrystals(Category_singleton):
                   Running the test suite of self.an_element()
                   running ._test_category() . . . pass
                   running ._test_eq() . . . pass
+                  running ._test_new() . . . pass
                   running ._test_not_implemented_methods() . . . pass
                   running ._test_pickling() . . . pass
                   running ._test_stembridge_local_axioms() . . . pass
@@ -379,6 +383,7 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_enumerated_set_iter_list() . . . pass
                 running ._test_eq() . . . pass
                 running ._test_fast_iter() . . . pass
+                running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
                 running ._test_some_elements() . . . pass

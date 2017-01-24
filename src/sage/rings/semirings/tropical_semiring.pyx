@@ -24,7 +24,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element cimport RingElement, Element, ModuleElement
+from sage.structure.element cimport Element, ModuleElement
 from sage.categories.semirings import Semirings
 from sage.categories.map cimport Map
 from sage.sets.family import Family
@@ -32,7 +32,7 @@ from sage.rings.all import ZZ
 
 import operator
 
-cdef class TropicalSemiringElement(RingElement):
+cdef class TropicalSemiringElement(Element):
     r"""
     An element in the tropical semiring over an ordered additive semigroup
     `R`. Either in `R` or `\infty`. The operators `+, \cdot` are defined as
@@ -60,7 +60,7 @@ cdef class TropicalSemiringElement(RingElement):
             sage: elt = T(2)
             sage: TestSuite(elt).run()
         """
-        RingElement.__init__(self, parent)
+        Element.__init__(self, parent)
         self._val = val
 
     def __reduce__(self):

@@ -53,7 +53,7 @@ spades, or clubs) and a value (2, 3, ..., 10, jack, queen, king, ace). The
 game is played with a full deck, which consists of the Cartesian product
 of the set of suits and the set of values:
 
-.. math:: \operatorname{Cards} = \operatorname{Suits} \times
+.. MATH:: \operatorname{Cards} = \operatorname{Suits} \times
           \operatorname{Values} = \{ (s, v)  \mathrel| s\in
           \operatorname{Suits} \text{ et } v \in \operatorname{Values} \}\,.
 
@@ -239,12 +239,12 @@ Our next goal is to recover this result using ``Sage``. Let
 `C_0=\emptyset` and `c_0=0`. The set of all trees is
 then the disjoint union of the sets `C_n`:
 
-.. math:: C=\biguplus_{n\in \mathbb N} C_n\,.
+.. MATH:: C=\biguplus_{n\in \mathbb N} C_n\,.
 
 Having named the set `C` of all trees, we can translate the
 recursive definition of trees into a set-theoretic equation:
 
-.. math:: C \quad \approx \quad  \{ \mathrm{L} \} \quad \uplus\quad C \times C\,.
+.. MATH:: C \quad \approx \quad  \{ \mathrm{L} \} \quad \uplus\quad C \times C\,.
 
 In words: a tree `t` (which is by definition in `C`) is either a
 leaf (so in `\{\mathrm{L}\}`) or a node to which two trees
@@ -258,7 +258,7 @@ manipulate all the numbers `c_n` simultaneously, by encoding them
 as coefficients in a formal power series, called the *generating
 function* of the `c_n`’s:
 
-.. math:: C(z) = \sum_{n\in \mathbb N} c_n z^n\,,
+.. MATH:: C(z) = \sum_{n\in \mathbb N} c_n z^n\,,
 
 where `z` is a formal variable (which means that we do not
 have to worry about questions of convergence). The beauty of this idea
@@ -269,7 +269,7 @@ the corresponding series (`A(z)+B(z)`,
 satisfied by `C` can be translated directly into an algebraic
 equation satisfied by `C(z)`:
 
-.. math:: C(z) = z + C(z) \cdot C(z)\,.
+.. MATH:: C(z) = z + C(z) \cdot C(z)\,.
 
 Now we can solve this equation with ``Sage``. In order to do so, we
 introduce two variables, `C` and `z`, and we define the
@@ -370,7 +370,7 @@ satisfies the recurrence relation
 `c_{n+1}=\frac{(4n-2)}{n+1}c_n`. Simplifying, we find that
 `c_n` is the `(n-1)`-th Catalan number:
 
-.. math:: c_n = \operatorname{Catalan}(n-1) = \frac {1}{n} \binom{2(n-1)}{n-1}\,.
+.. MATH:: c_n = \operatorname{Catalan}(n-1) = \frac {1}{n} \binom{2(n-1)}{n-1}\,.
 
 We check this::
 
@@ -423,15 +423,15 @@ equation with respect to `z`::
     sage: C = function('C')(z)
     sage: equation =  P(x=z, y=C) == 0
     sage: diff(equation, z)
-    D[0](C)(z)*D[1](P)(z, C(z)) + D[0](P)(z, C(z)) == 0
+    diff(C(z), z)*D[1](P)(z, C(z)) + D[0](P)(z, C(z)) == 0
 
 or, in a more readable format,
 
-.. math:: \frac{d C(z)}{d z} \frac{\partial P}{\partial y} (z, C(z)) + \frac{\partial P}{\partial x}(z,C(z)) = 0
+.. MATH:: \frac{d C(z)}{d z} \frac{\partial P}{\partial y} (z, C(z)) + \frac{\partial P}{\partial x}(z,C(z)) = 0
 
 From this we deduce:
 
-.. math:: \frac{d C(z)}{d z} = - \frac{\frac{\partial P}{\partial x}}{\frac{\partial P}{\partial y}}(z, C(z))\,.
+.. MATH:: \frac{d C(z)}{d z} = - \frac{\frac{\partial P}{\partial x}}{\frac{\partial P}{\partial y}}(z, C(z))\,.
 
 In the case of complete binary trees, this gives::
 
@@ -482,23 +482,23 @@ We lift the result to `\QQ(x)[y]` and then substitute
 
 or, more legibly,
 
-.. math:: \frac{\partial C(z)}{\partial z} = \frac{1}{1-4z} -\frac{2}{1-4z}C(z)\,.
+.. MATH:: \frac{\partial C(z)}{\partial z} = \frac{1}{1-4z} -\frac{2}{1-4z}C(z)\,.
 
 In this simple case, we can directly deduce from this expression a
 linear differential equation with coefficients in `\QQ[z]`::
 
     sage: equadiff = diff(C,z) == fraction(x=z, y=C)
     sage: equadiff
-    D[0](C)(z) == 2*C(z)/(4*z - 1) - 1/(4*z - 1)
+    diff(C(z), z) == 2*C(z)/(4*z - 1) - 1/(4*z - 1)
     sage: equadiff = equadiff.simplify_rational()
     sage: equadiff = equadiff * equadiff.rhs().denominator()
     sage: equadiff = equadiff - equadiff.rhs()
     sage: equadiff
-    (4*z - 1)*D[0](C)(z) - 2*C(z) + 1 == 0
+    (4*z - 1)*diff(C(z), z) - 2*C(z) + 1 == 0
 
 or, more legibly,
 
-.. math:: (1-4z) \frac{\partial C(z)}{\partial z} + 2 C(z) - 1 = 0\,.
+.. MATH:: (1-4z) \frac{\partial C(z)}{\partial z} + 2 C(z) - 1 = 0\,.
 
 It is trivial to verify this equation on the closed form::
 
@@ -528,7 +528,7 @@ the differential equation, we obtain the desired recurrence relation on
 the coefficients; in this case we recover the relation we had already
 found, based on the closed form:
 
-.. math:: c_{n+1}=\frac{(4n-2)}{n+1}c_n
+.. MATH:: c_{n+1}=\frac{(4n-2)}{n+1}c_n
 
 After fixing the correct initial conditions, it becomes possible to
 calculate the coefficients of `C(z)` recursively::
@@ -1041,7 +1041,7 @@ then it is passed as an argument to ``sum`` to add them up. If, on the
 other hand, the iterator is passed directly to ``sum`` (note the absence
 of square brackets)::
 
-    sage: sum( binomial(8, i) for i in xrange(9) )
+    sage: sum( binomial(8, i) for i in range(9) )
     256
 
 the function ``sum`` receives the iterator directly, and can
@@ -1053,9 +1053,9 @@ Most functions that take a list of elements as input will also accept
 an iterator (or an iterable) instead. To begin with, one can obtain the
 list (or the tuple) of elements of an iterator as follows::
 
-    sage: list(binomial(8, i) for i in xrange(9))
+    sage: list(binomial(8, i) for i in range(9))
     [1, 8, 28, 56, 70, 56, 28, 8, 1]
-    sage: tuple(binomial(8, i) for i in xrange(9))
+    sage: tuple(binomial(8, i) for i in range(9))
     (1, 8, 28, 56, 70, 56, 28, 8, 1)
 
 We now consider the functions ``all`` and ``any`` which denote
@@ -1266,27 +1266,29 @@ or select only the elements in positions 2, 3, and 4 (analogue of
     [[1, 3, 2], [2, 1, 3], [2, 3, 1]]
 
 The itertools methods ``imap`` and ``ifilter`` have been renamed to
-``map`` and ``filter`` in Python 3. You should rather avoid using them,
-as follows.
+``map`` and ``filter`` in Python 3. You can get them also in Python 2 using::
+
+    sage: from builtins import map, filter
 
 To apply a function to all the elements, one can do::
 
-    sage: [z.cycle_type() for z in Permutations(3)]
+    sage: from builtins import map
+    sage: list(map(lambda z: z.cycle_type(), Permutations(3)))
     [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]
 
 and similarly to select the elements satisfying a certain condition::
 
-    sage: [z for z in Permutations(3) if z.has_pattern([1,2])]
+    sage: from builtins import filter
+    sage: list(filter(lambda z: z.has_pattern([1,2]), Permutations(3)))
     [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2]]
 
 In all these situations, ``attrcall`` can be an advantageous alternative
 to creating an anonymous function::
 
-    sage: list(itertools.imap(lambda z: z.cycle_type(),
-    ....:                     Permutations(3)))
+    sage: from builtins import map
+    sage: list(map(lambda z: z.cycle_type(), Permutations(3)))
     [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]
-    sage: list(itertools.imap(attrcall("cycle_type"),
-    ....:                     Permutations(3)))
+    sage: list(map(attrcall("cycle_type"), Permutations(3)))
     [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]
 
 Implementation of new iterators
@@ -1863,10 +1865,10 @@ REFERENCES:
    clean up.
 
 .. [2]
-   Technical detail: ``xrange`` returns an iterator on
+   Technical detail: ``range`` returns an iterator on
    `\{0,\dots,8\}` while ``range`` returns the corresponding
-   list. Starting in ``Python`` 3.0, ``range`` will behave like ``xrange``, and
-   ``xrange`` will no longer be needed.
+   list. Starting in ``Python`` 3.0, ``range`` will behave like ``range``, and
+   ``range`` will no longer be needed.
 
 .. [3]
    In practice, an efficient implementation would exploit the symmetries

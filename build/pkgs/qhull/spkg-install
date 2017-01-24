@@ -8,23 +8,14 @@ fi
 
 cd src/
 
-# Apply all patches
-for patch in ../patches/*.patch; do
-	echo "Applying $patch"
-	patch -p1 <"$patch"
-	if [ $? -ne 0 ]; then
-		echo >&2 "Error applying '$patch'"
-		return 1
-	fi
-done
-
-make -j1
+$MAKE -j1
 if [ $? -ne 0 ]; then
    echo "Error building qhull"
    exit 1
 fi
 
-make -j1 install
+# Note that the Makefile uses DESTDIR for what otherwise would be called "prefix".
+$MAKE -j1 install DESTDIR="$SAGE_LOCAL"
 if [ $? -ne 0 ]; then
     echo "Error installing qhull"
     exit 1

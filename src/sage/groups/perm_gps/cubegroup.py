@@ -92,6 +92,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #**************************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 import random
@@ -210,7 +211,7 @@ def inv_list(lst):
         sage: inv_list(L)
         [3, 1, 2]
     """
-    return [lst.index(i)+1 for i in range(1,1+len(lst))]
+    return [lst.index(i) + 1 for i in range(1, 1 + len(lst))]
 
 face_polys = {
 ### bottom layer L, F, R, B
@@ -346,7 +347,7 @@ def index2singmaster(facet):
 
     EXAMPLES::
 
-        sage: from sage.groups.perm_gps.cubegroup import *
+        sage: from sage.groups.perm_gps.cubegroup import index2singmaster
         sage: index2singmaster(41)
         'dlf'
     """
@@ -358,7 +359,7 @@ def color_of_square(facet, colors=['lpurple', 'yellow', 'red', 'green', 'orange'
 
     EXAMPLES::
 
-        sage: from sage.groups.perm_gps.cubegroup import *
+        sage: from sage.groups.perm_gps.cubegroup import color_of_square
         sage: color_of_square(41)
         'blue'
     """
@@ -453,7 +454,7 @@ def plot3d_cubie(cnt, clrs):
 
     EXAMPLES::
 
-        sage: from sage.groups.perm_gps.cubegroup import *
+        sage: from sage.groups.perm_gps.cubegroup import plot3d_cubie, blue, red, green
         sage: clrF = blue; clrU = red; clrR = green
         sage: P = plot3d_cubie([1/2,1/2,1/2],[clrF,clrU,clrR])
     """
@@ -663,7 +664,7 @@ class CubeGroup(PermutationGroup_generic):
         EXAMPLES::
 
             sage: C = CubeGroup()
-            sage: C.parse(range(1,49))
+            sage: C.parse(list(range(1,49)))
             ()
             sage: g = C.parse("L"); g
             (1,17,41,40)(4,20,44,37)(6,22,46,35)(9,11,16,14)(10,13,15,12)
@@ -748,14 +749,14 @@ class CubeGroup(PermutationGroup_generic):
         EXAMPLES::
 
             sage: rubik = CubeGroup()
-            sage: rubik.facets() == range(1,49)
+            sage: rubik.facets() == list(range(1,49))
             True
         """
-        fcts = range(1,49)
+        fcts = range(1, 49)
         if g is not None:
             return [g(i) for i in fcts]
         else:
-            return fcts
+            return list(fcts)
 
     def faces(self, mv):
         r"""
@@ -959,7 +960,7 @@ class CubeGroup(PermutationGroup_generic):
         g = self.parse(mv)
         state = self.facets(g)
         clr_any = white
-        shown_labels = range(1,9)+range(17,33)
+        shown_labels = list(range(1, 9)) + list(range(17, 33))
         clr = [color_of_square(state[c-1]) for c in shown_labels]
         cubiesR = [plot3d_cubie(cubie_centers(c),cubie_colors(c,state)) for c in [32,31,30,29,28,27,26,25]]
         cubeR = sum(cubiesR)

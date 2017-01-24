@@ -10,7 +10,7 @@ cd src
 
 # Install a flat package (not an egg), which is the same as how pip
 # installs packages.
-python setup.py install --single-version-externally-managed --record dummy
+$PIP_INSTALL .
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing SageNB"
     exit 1

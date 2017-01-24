@@ -17,6 +17,7 @@ Rankers
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from collections import Iterable, Sequence
 from sage.misc.cachefunc import cached_function
@@ -202,7 +203,7 @@ def unrank(L, i):
         'c'
         sage: unrank(('a','b','c'), 1)
         'b'
-        sage: unrank(xrange(3,13,2), 1)
+        sage: unrank(range(3,13,2), 1)
         5
 
     Enumerated sets::
@@ -211,18 +212,6 @@ def unrank(L, i):
         2
         sage: unrank(IntegerModRing(29), 10)
         10
-
-    An old parent with unranking implemented in ``__getitem__``::
-
-        sage: M = MatrixSpace(GF(3), 2, 2)
-        sage: hasattr(M, "unrank")
-        False
-        sage: M[42]
-        [1 0]
-        [2 1]
-        sage: unrank(M, 42)
-        [1 0]
-        [2 1]
 
     An iterable::
 
@@ -251,7 +240,7 @@ def unrank(L, i):
     TESTS::
 
         sage: from sage.combinat.ranker import unrank
-        sage: unrank(range(3), 10)
+        sage: unrank(list(range(3)), 10)
         Traceback (most recent call last):
         ...
         IndexError: list index out of range
@@ -260,11 +249,6 @@ def unrank(L, i):
         Traceback (most recent call last):
         ...
         IndexError: index out of range
-
-        sage: M[100]
-        Traceback (most recent call last):
-        ...
-        IndexError: list index out of range
     """
     if L in EnumeratedSets:
         return L.unrank(i)

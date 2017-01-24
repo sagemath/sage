@@ -753,7 +753,7 @@ cdef class randstate:
          seed the Pari random number generator.  If not, seeds the
          generator.
 
-         .. note::
+         .. NOTE::
 
             Since pari 2.4.3, pari's random number generator has
             changed a lot.  the seed output by getrand() is now a

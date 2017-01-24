@@ -20,7 +20,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 include "cysignals/signals.pxi"
 include "sage/ext/cdefs.pxi"
 
@@ -57,10 +56,10 @@ cdef class Lfunction:
             sage: Lfunction_from_character(DirichletGroup(5)[1])
             L-function with complex Dirichlet coefficients
         """
-        cdef int i              #for indexing loops
-        cdef Integer tmpi       #for accessing integer values
-        cdef RealNumber tmpr    #for accessing real values
-        cdef ComplexNumber tmpc #for accessing complexe values
+        cdef int i              # for indexing loops
+        cdef Integer tmpi       # for accessing integer values
+        cdef RealNumber tmpr    # for accessing real values
+        cdef ComplexNumber tmpc # for accessing complex values
 
         cdef char *NAME = name
         cdef int what_type = what_type_L
@@ -395,13 +394,13 @@ cdef class Lfunction_I(Lfunction):
     with integer Dirichlet Coefficients. We assume that L-functions
     satisfy the following functional equation.
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = \omega Q^s \overline{\Lambda(1-\bar s)}
 
     where
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = Q^s \left( \prod_{j=1}^a \Gamma(\kappa_j s + \gamma_j) \right) L(s)
 
@@ -533,13 +532,13 @@ cdef class Lfunction_D(Lfunction):
     with real Dirichlet coefficients. We assume that L-functions
     satisfy the following functional equation.
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = \omega Q^s \overline{\Lambda(1-\bar s)}
 
     where
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = Q^s \left( \prod_{j=1}^a \Gamma(\kappa_j s + \gamma_j) \right) L(s)
 
@@ -672,13 +671,13 @@ cdef class Lfunction_C:
     with complex Dirichlet Coefficients. We assume that L-functions
     satisfy the following functional equation.
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = \omega Q^s \overline{\Lambda(1-\bar s)}
 
     where
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = Q^s \left( \prod_{j=1}^a \Gamma(\kappa_j s + \gamma_j) \right) L(s)
 
@@ -906,17 +905,17 @@ def Lfunction_from_character(chi, type="complex"):
     OMEGA=1.0/ ( CCC(0,1)**a * (CCC(modulus)).sqrt()/chi.gauss_sum() )
 
     if type == "complex":
-        dir_coeffs=[CCC(chi(n)) for n in xrange(1,modulus+1)]
+        dir_coeffs = [CCC(chi(n)) for n in xrange(1, modulus + 1)]
         return Lfunction_C("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
     if not type in ["double","int"]:
         raise ValueError("unknown type")
     if chi.order() != 2:
         raise ValueError("For non quadratic characters you must use type=\"complex\"")
     if type == "double":
-        dir_coeffs=[RRR(chi(n)) for n in xrange(1,modulus+1)]
+        dir_coeffs = [RRR(chi(n)) for n in xrange(1, modulus + 1)]
         return Lfunction_D("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
     if type == "int":
-        dir_coeffs=[Integer(chi(n)) for n in xrange(1,modulus+1)]
+        dir_coeffs = [Integer(chi(n)) for n in xrange(1, modulus + 1)]
         return Lfunction_I("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
 
 
@@ -948,11 +947,13 @@ def Lfunction_from_elliptic_curve(E, number_of_coeffs=10000):
         sage: L.value(0.5, derivative=1)
         0.305999...
     """
-    Q=(RRR(E.conductor())).sqrt()/(RRR(2*pi))
-    poles=[]
-    residues=[]
     import sage.libs.lcalc.lcalc_Lfunction
-    dir_coeffs=E.anlist(number_of_coeffs)
-    dir_coeffs=[RRR(dir_coeffs[i])/(RRR(i)).sqrt() for i in xrange(1,number_of_coeffs)]
-    OMEGA=E.root_number()
-    return Lfunction_D("", 2,dir_coeffs, 0,Q,OMEGA,[1],[.5],poles,residues)
+    Q = RRR(E.conductor()).sqrt() / RRR(2 * pi)
+    poles = []
+    residues = []
+    dir_coeffs = E.anlist(number_of_coeffs)
+    dir_coeffs = [RRR(dir_coeffs[i]) / (RRR(i)).sqrt()
+                  for i in xrange(1, number_of_coeffs)]
+    OMEGA = E.root_number()
+    return Lfunction_D("", 2, dir_coeffs, 0, Q, OMEGA, [1], [.5],
+                       poles, residues)

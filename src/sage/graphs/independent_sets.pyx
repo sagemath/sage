@@ -144,28 +144,28 @@ cdef class IndependentSets:
             sage: from sage.graphs.independent_sets import IndependentSets
             sage: from sage.graphs.matchpoly import matching_polynomial
             sage: def check_matching(G):
-            ...       number_of_matchings = sum(map(abs,matching_polynomial(G).coefficients(sparse=False)))
-            ...       if number_of_matchings != IndependentSets(G.line_graph()).cardinality():
-            ...           print("Ooooch !")
+            ....:     number_of_matchings = sum(map(abs,matching_polynomial(G).coefficients(sparse=False)))
+            ....:     if number_of_matchings != IndependentSets(G.line_graph()).cardinality():
+            ....:         print("Ooooch !")
             sage: for i in range(30):
-            ...       check_matching(graphs.RandomGNP(11,.3))
+            ....:     check_matching(graphs.RandomGNP(11,.3))
 
         Compare the result with the output of :meth:`subgraph_search`::
 
             sage: from sage.sets.set import Set
             sage: def check_with_subgraph_search(G):
-            ...       IS = set(map(Set,list(IndependentSets(G))))
-            ...       if not all(G.subgraph(l).is_independent_set() for l in IS):
-            ...          print("Gloops")
-            ...       alpha = max(map(len,IS))
-            ...       IS2 = [Set([x]) for x in range(G.order())] + [Set([])]
-            ...       for n in range(2,alpha+1):
-            ...           IS2.extend(map(Set,list(G.subgraph_search_iterator(Graph(n), induced = True))))
-            ...       if len(IS) != len(set(IS2)):
-            ...          print("Oops")
-            ...          print(len(IS), len(set(IS2)))
+            ....:     IS = set(map(Set,list(IndependentSets(G))))
+            ....:     if not all(G.subgraph(l).is_independent_set() for l in IS):
+            ....:        print("Gloops")
+            ....:     alpha = max(map(len,IS))
+            ....:     IS2 = [Set([x]) for x in range(G.order())] + [Set([])]
+            ....:     for n in range(2,alpha+1):
+            ....:         IS2.extend(map(Set,list(G.subgraph_search_iterator(Graph(n), induced = True))))
+            ....:     if len(IS) != len(set(IS2)):
+            ....:        print("Oops")
+            ....:        print(len(IS), len(set(IS2)))
             sage: for i in range(5):
-            ...       check_with_subgraph_search(graphs.RandomGNP(11,.3))
+            ....:     check_with_subgraph_search(graphs.RandomGNP(11,.3))
 
         Empty graph::
 

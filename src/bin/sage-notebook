@@ -23,7 +23,7 @@ class NotebookSageNB(object):
     @classmethod
     def print_help(cls):
         cls([], help=True)
-    
+
     def cmdline2argspec(self, cmdline_args):
         """
         Convert command line arguments to Python argspec
@@ -32,11 +32,11 @@ class NotebookSageNB(object):
         notebook, do not use.
 
         INPUT:
-    
+
         - ``cmdline_args`` -- list of string.
-    
+
         OUTPUT:
-    
+
         A python argspec: A pair consisting of a tuple and a dict.
         """
         args = []
@@ -119,7 +119,7 @@ class SageNBExport(NotebookJupyter):
             "--NotebookApp.default_url='/sagenb'",
         ]
         super(SageNBExport, self).__init__(argv)
-        
+
 
 description = \
 """
@@ -136,7 +136,7 @@ show this help message and exit. Can be combined with
 
 epilog = \
 """
-EXAMPLES: 
+EXAMPLES:
 
 * Run default notebook on port 1234. Note that the first argument
   after "-n" will be interpreted as notebook name unless you stop
@@ -149,6 +149,15 @@ EXAMPLES:
 * Run Jupyter notebook in custom directory:
 
       sage --notebook=jupyter --notebook-dir=/home/foo/bar
+
+* List available legacy Sage notebooks:
+
+      sage --notebook=export --list
+
+* Export a legacy Sage notebook as a Jupyter notebook:
+
+      sage --notebook=export --ipynb=Output.ipynb admin:10
+
 """
 
 
@@ -158,7 +167,7 @@ notebook_launcher = {
     'ipython': NotebookJupyter,
     'jupyter': NotebookJupyter,
     'export': SageNBExport,
-} 
+}
 
 notebook_names = ', '.join(notebook_launcher.keys())
 
@@ -176,7 +185,7 @@ def make_parser():
         add_help=False)
     parser.add_argument('-h', '--help',
                         dest='option_help', action='store_true',
-                        default=False, 
+                        default=False,
                         help=help_help)
     parser.add_argument('--log', dest='log', default=None,
                         help='one of [DEBUG, INFO, ERROR, WARNING, CRITICAL]')

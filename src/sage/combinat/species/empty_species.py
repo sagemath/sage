@@ -52,13 +52,13 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         sage: X == S    # TODO: Not Implemented
         True
         sage: (X.generating_series().coefficients(4) ==
-        ...    S.generating_series().coefficients(4))
+        ....:  S.generating_series().coefficients(4))
         True
         sage: (X.isotype_generating_series().coefficients(4) ==
-        ...    S.isotype_generating_series().coefficients(4))
+        ....:  S.isotype_generating_series().coefficients(4))
         True
         sage: (X.cycle_index_series().coefficients(4) ==
-        ...    S.cycle_index_series().coefficients(4))
+        ....:  S.cycle_index_series().coefficients(4))
         True
 
     The following tests that it is the zero element with respect to

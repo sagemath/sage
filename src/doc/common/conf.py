@@ -2,7 +2,6 @@ import sys, os, sphinx
 from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC
 from datetime import date
 
-
 # If your extensions are in another directory, add it here.
 sys.path.append(os.path.join(SAGE_SRC, "sage_setup", "docbuild", "ext"))
 
@@ -155,6 +154,7 @@ extlinks = {
     'arxiv': ('http://arxiv.org/abs/%s', 'Arxiv '),
     'oeis': ('https://oeis.org/%s', 'OEIS sequence '),
     'doi': ('https://dx.doi.org/%s', 'doi:'),
+    'pari': ('http://pari.math.u-bordeaux.fr/dochtml/help/%s', 'pari:'),
     'mathscinet': ('http://www.ams.org/mathscinet-getitem?mr=%s', 'MathSciNet ')
     }
 
@@ -567,9 +567,11 @@ def skip_member(app, what, name, obj, skip, options):
 def process_dollars(app, what, name, obj, options, docstringlines):
     r"""
     Replace dollar signs with backticks.
-    See sage.misc.sagedoc.process_dollars for more information
+
+    See sage.misc.sagedoc.process_dollars for more information.
     """
-    if len(docstringlines) > 0 and name.find("process_dollars") == -1:
+    if len(docstringlines) and name.find("process_dollars") == -1:
+        from six.moves import range
         from sage.misc.sagedoc import process_dollars as sagedoc_dollars
         s = sagedoc_dollars("\n".join(docstringlines))
         lines = s.split("\n")
@@ -596,7 +598,7 @@ def process_inherited(app, what, name, obj, options, docstringlines):
         if name in obj.__objclass__.__dict__.keys():
             return
 
-    for i in xrange(len(docstringlines)):
+    for i in range(len(docstringlines)):
         docstringlines.pop()
 
 dangling_debug = False

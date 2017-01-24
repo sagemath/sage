@@ -1,5 +1,3 @@
-# distutils: depends = NTL/ZZ.h
-
 from .types cimport ZZ_c
 from sage.libs.gmp.types cimport mpz_t, mpz_srcptr
 

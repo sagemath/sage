@@ -21,6 +21,7 @@ The algorithm used in this file comes from
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.combinat.composition import Composition
@@ -145,9 +146,9 @@ class Necklaces_evaluation(CombinatorialClass):
             True
             sage: [1,2,2,2] in Necklaces([2,2])
             False
-            sage: all([ n in Necklaces([2,1,3,1]) for n in Necklaces([2,1,3,1])])
+            sage: all(n in Necklaces([2,1,3,1]) for n in Necklaces([2,1,3,1]))
             True
-            sage: all([ n in Necklaces([0,1,2,3]) for n in Necklaces([0,1,2,3])])
+            sage: all(n in Necklaces([0,1,2,3]) for n in Necklaces([0,1,2,3]))
             True
         """
         xl = list(x)
@@ -210,8 +211,8 @@ class Necklaces_evaluation(CombinatorialClass):
         ::
 
             sage: comps = [[],[2,2],[3,2,7],[4,2],[0,4,2],[2,0,4]]+Compositions(4).list()
-            sage: ns = [ Necklaces(comp) for comp in comps]
-            sage: all( [ n.cardinality() == len(n.list()) for n in ns] )
+            sage: ns = [Necklaces(comp) for comp in comps]
+            sage: all(n.cardinality() == len(n.list()) for n in ns)
             True
         """
         evaluation = self._content
@@ -287,7 +288,7 @@ def _ffc(content, equality=False):
     e[0] -= 1
     k = len(e)
 
-    rng_k = range(k)
+    rng_k = list(range(k))
     rng_k.reverse()
     dll = DoublyLinkedList(rng_k)
     if not e[0]: # == 0
@@ -381,7 +382,7 @@ def _lfc(content, equality=False):
     content[0] -= 1
     k = len(content)
 
-    rng_k = range(k)
+    rng_k = list(range(k))
     rng_k.reverse()
     dll = DoublyLinkedList(rng_k)
 
@@ -506,7 +507,7 @@ def _simple_fixed_content(a, content, t, p, k, equality=False):
             if not n % p: # == 0
                 yield a
     else:
-        r = range(a[t-p-1],k)
+        r = list(range(a[t-p-1], k))
         for j in r:
             if content[j] > 0:
                 a[t-1] = j

@@ -763,11 +763,6 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                       if ``True``, return instead the `q`-analogue as a
                       polynomial in `q`
 
-                    REFERENCES:
-
-                    .. [STW2016] C. Stump, H. Thomas, N. Williams.
-                       *Cataland II*, in preparation, 2016.
-
                     EXAMPLES::
 
                         sage: W = ColoredPermutations(1,3)
@@ -825,7 +820,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                       if ``True``, return instead the `q`-analogue as a
                       polynomial in `q`
 
-                    See [Arm2006]_ for further information.
+                    See [Ar2006]_ for further information.
 
                     .. NOTE::
 
@@ -833,12 +828,6 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                           Fuss-Catalan number `\frac{1}{mn+1}\binom{(m+1)n}{n}`.
                         - The Fuss-Catalan numbers for `G(r, 1, n)` all
                           coincide for `r > 1`.
-
-                    REFERENCES:
-
-                    .. [Arm2006] D. Armstrong. *Generalized noncrossing
-                       partitions and combinatorics of Coxeter groups*.
-                       Mem. Amer. Math. Soc., 2006.
 
                     EXAMPLES::
 
@@ -896,7 +885,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     where `d_1, \ldots, d_n` are the degrees and where
                     `h` is the Coxeter number.
-                    See [Arm2006]_ for further information.
+                    See [Ar2006]_ for further information.
 
                     INPUT:
 

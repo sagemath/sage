@@ -6,42 +6,18 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
-if [ "x$SAGE64" = xyes ]; then
-    echo "Building a 64-bit version of lcalc"
+cd src
 
-    # Both Sun and GNU compilers use -m64 to build 64-bit code, but compilers
-    # from IBM (on AIX), and HP (on HP-UX) do not. So allow the environment
-    # variables CFLAG64 and CXXFLAG64 to set the flag to whatever option the
-    # C and C++ compilers want for 64-bit code. If not set, default to -m64.
+echo "Now installing lcalc binary, library and header files..."
+rm -fr "$SAGE_LOCAL"/include/libLfunction
 
-    if [ -z "$CFLAG64" ]; then
-        CFLAG64=-m64
-    fi
-    if [ -z "$CXXFLAG64" ]; then
-        CXXFLAG64="$CFLAG64" # default to that of the C compiler
-    fi
+cd src   # Now we are in src/src.
 
-    CFLAGS="$CFLAGS $CFLAG64"
-    CXXFLAGS="$CXXFLAGS $CXXFLAG64"
+$MAKE install INSTALL_DIR="$SAGE_LOCAL"
+
+if [ "$UNAME" = "Darwin" ]; then
+    install_name_tool -id ${SAGE_LOCAL}/lib/libLfunction.dylib "${SAGE_LOCAL}"/lib/libLfunction.dylib
 fi
-
-# If SAGE_DEBUG is set to 'yes', add debugging information.  Since both
-# the Sun and GNU compilers accept -g to give debugging information,
-# there is no need to do anything specific to one compiler or the other.
-if [ "x$SAGE_DEBUG" = xyes ]; then
-    echo "Code will be built with debugging information present. Unset 'SAGE_DEBUG'"
-    echo "or set it to 'no' if you don't want that."
-
-    CFLAGS="$CFLAGS -O0 -g"
-    CXXFLAGS="$CXXFLAGS -O0 -g"
-else
-    echo "No debugging information will be used during the build of this package."
-    echo "Set 'SAGE_DEBUG' to 'yes' if you want debugging information present (-g added)."
-fi
-
-# Export everything. Probably not necessary in most cases.
-export CFLAGS
-export CXXFLAGS
 
 success() {
     if [ $? -ne 0 ]; then
@@ -49,38 +25,5 @@ success() {
         exit 1
     fi
 }
-
-export DEFINES=""
-
-# Set installation directory
-export INSTALL_DIR="$SAGE_LOCAL/"
-
-cd src
-
-# Apply Sage-specific patches: (See SPKG.txt for details on the patches.)
-echo "Patching the upstream source code for Sage..."
-for patch in ../patches/*.patch; do
-    patch -p1 < "$patch"
-    success "patch $patch failed to apply"
-done
-
-# There's currently no 'configure' script for Lcalc; we (also) configure
-# it by patching the Makefile. This may change in a later release of Lcalc.
-
-cd src   # Now we are in src/src.
-
-# Build everything:
-echo "Now building lcalc, example programs and the shared library..."
-$MAKE
-success "$MAKE"
-
-# Install everything
-echo "Now installing lcalc binary, library and header files..."
-rm -fr "$SAGE_LOCAL"/include/libLfunction
-$MAKE install
-
-if [ "$UNAME" = "Darwin" ]; then
-    install_name_tool -id ${SAGE_LOCAL}/lib/libLfunction.dylib "${SAGE_LOCAL}"/lib/libLfunction.dylib
-fi
 
 success "$MAKE install"

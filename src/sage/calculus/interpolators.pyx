@@ -54,7 +54,7 @@ def polygon_spline(pts):
 
     Polygon approximation of an circle::
 
-        sage: pts = [e^(I*t / 25) for t in xrange(25)]
+        sage: pts = [e^(I*t / 25) for t in range(25)]
         sage: ps = polygon_spline(pts)
         sage: ps.derivative(2)
         (-0.0470303661...+0.1520363883...j)
@@ -185,7 +185,7 @@ def complex_cubic_spline(pts):
 
     Polygon approximation of a circle::
 
-        sage: pts = [e^(I*t / 25) for t in xrange(25)]
+        sage: pts = [e^(I*t / 25) for t in range(25)]
         sage: cs = complex_cubic_spline(pts)
         sage: cs.derivative(2)
         (-0.0497765406583...+0.151095006434...j)

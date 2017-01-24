@@ -7,6 +7,7 @@ Examples of finite Weyl groups
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
@@ -113,11 +114,11 @@ class SymmetricGroup(UniqueRepresentation, Parent):
             sage: FiniteWeylGroups().example().index_set()
             [0, 1, 2]
         """
-        return range(self.n-1)
+        return list(range(self.n - 1))
 
     def simple_reflection(self, i):
         """
-        Implements :meth:`CoxeterGroups.ParentMethods.simple_reflection`
+        Implement :meth:`CoxeterGroups.ParentMethods.simple_reflection`
         by returning the transposition `(i, i+1)`.
 
         EXAMPLES::
@@ -126,7 +127,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
             (0, 1, 3, 2)
         """
         assert i in self.index_set()
-        return self(tuple(range(i)+[i+1,i]+range(i+2,self.n)))
+        return self(tuple(range(i)) + (i + 1, i) + tuple(range(i + 2, self.n)))
 
     def product(self, x, y):
         """

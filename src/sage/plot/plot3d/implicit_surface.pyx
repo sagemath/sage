@@ -1,5 +1,5 @@
 r"""
-Graphics 3D object for representing and triangulating isosurfaces.
+Graphics 3D Object for Representing and Triangulating Isosurfaces.
 
 AUTHORS:
 
@@ -344,9 +344,9 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             sage: cube_marcher = MarchingCubesTriangles((-2, 2), (-2, 2), (-2, 2), 4, (10,)*3, smooth=False)
             sage: f = lambda x, y, z: x^2 + y^2 + z^2
             sage: slices = np.zeros((10, 10, 10), dtype=np.double)
-            sage: for x in reversed(xrange(0, 10)):
-            ....:     for y in xrange(0, 10):
-            ....:         for z in xrange(0, 10):
+            sage: for x in reversed(range(0, 10)):
+            ....:     for y in range(0, 10):
+            ....:         for z in range(0, 10):
             ....:             slices[x, y, z] = f(*[a * (4 / 9) -2 for a in (x, y, z)])
             ....:     cube_marcher.process_slice(x, slices[x, :, :])
             sage: faces = cube_marcher.finish()
@@ -687,7 +687,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             sage: from sage.plot.plot3d.implicit_surface import MarchingCubesTriangles
             sage: import numpy as np
             sage: cube_marcher = MarchingCubesTriangles((0, 1), (0, 1), (0, 1), 0, (3, 2, 2), smooth=False)
-            sage: slices = [np.ones((2, 2), dtype=np.double) for i in xrange(0, 3)]
+            sage: slices = [np.ones((2, 2), dtype=np.double) for i in range(3)]
             sage: slices[0][1, 1] = -1
             sage: cube_marcher._update_yz_vertices(0, None, slices[0], slices[1])
             sage: cube_marcher._update_x_vertices(0, None, slices[0], slices[1], slices[2])
@@ -959,13 +959,14 @@ cdef class ImplicitSurface(IndexFaceSet):
             sage: G = ImplicitSurface(x^2 + y^2 + z^2, (x,-2, 2), (y,-2, 2), (z,-2, 2), contour=4, color=(t,cm))
             sage: G.show(viewer='tachyon')
         """
+        self._extra_kwds = kwds
         color_data = None
         if 'color' in kwds:
             try:
                 if len(kwds['color']) == 2 and callable(kwds['color'][0]):
                     color_data = kwds['color']
                     kwds.pop('color')
-            except TypeError, AttributeError:
+            except (TypeError, AttributeError):
                 pass
         if color_data is None:
             # case of a global color
@@ -1084,11 +1085,11 @@ cdef class ImplicitSurface(IndexFaceSet):
 
             sage: def points_equal(a, b, epsilon=(1e-5)):
             ....:     return all(abs(x0-x1) < epsilon for x0, x1 in zip(a, b))
-            sage: list = []
+            sage: checklist = []
             sage: assert len(vertices) >= 20 # I should hope so, we're rendering at the default resolution!
-            sage: for vertex, surf_vertex in zip(vertices, G.vertex_list())[0:20]:
-            ....:     list.append(points_equal(map(float, vertex.split(' ')[1:]), surf_vertex))
-            sage: all(list)
+            sage: for vertex, surf_vertex in list(zip(vertices, G.vertex_list()))[0:20]:
+            ....:     checklist.append(points_equal(map(float, vertex.split(' ')[1:]), surf_vertex))
+            sage: all(checklist)
             True
         """
         self.triangulate()

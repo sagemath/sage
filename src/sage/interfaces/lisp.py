@@ -381,7 +381,9 @@ class Lisp(Expect):
         self._check_valid_function_name(function)
         return self.new("(%s %s)"%(function, ",".join([s.name() for s in args])))
 
-class LispElement(ExpectElement):
+
+# Inherit from RingElement to make __pow__ work
+class LispElement(RingElement, ExpectElement):
     def __cmp__(self, other):
         """
         EXAMPLES::

@@ -9,8 +9,8 @@ puzzle or its solution(s).  Primarily this is accomplished with the
 
 AUTHORS:
 
-    - Tom Boothby (2008/05/02): Exact Cover, Dancing Links algorithm
-    - Robert Beezer (2009/05/29): Backtracking algorithm, Sudoku class
+- Tom Boothby (2008/05/02): Exact Cover, Dancing Links algorithm
+- Robert Beezer (2009/05/29): Backtracking algorithm, Sudoku class
 """
 ######################################################################
 #       Copyright (C) 2009, Robert A. Beezer <beezer@ups.edu>
@@ -591,13 +591,6 @@ class Sudoku(SageObject):
             Traceback (most recent call last):
             ...
             NotImplementedError: bogus is not an algorithm for Sudoku puzzles
-
-        .. rubric:: Citations
-
-        .. [sudoku:top95]  "95 Hard Puzzles",
-           http://magictour.free.fr/top95, or http://norvig.com/top95.txt
-        .. [sudoku:royle]  Gordon Royle, "Minimum Sudoku",
-           http://people.csse.uwa.edu.au/gordon/sudokumin.php
         """
         if algorithm == 'backtrack':
             if self.n > 4:
@@ -714,11 +707,6 @@ class Sudoku(SageObject):
             |4 7 2|3 1 9|5 6 8|
             |8 6 3|7 4 5|2 1 9|
             +-----+-----+-----+
-
-        .. rubric:: Citations
-
-        .. [sudoku:escargot]  "Al Escargot", due to Arto Inkala, http://timemaker.blogspot.com/2006/12/ai-escargot-vwv.html
-        .. [sudoku:wikipedia]  "Near worst case", Wikipedia: "Algorithmics of sudoku", http://en.wikipedia.org/wiki/Algorithmics_of_sudoku
         """
         from .sudoku_backtrack import backtrack_all
         solutions = backtrack_all(self.n, self.puzzle)

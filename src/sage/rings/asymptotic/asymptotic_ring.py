@@ -779,7 +779,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         return hash(str(self))
 
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return whether this asymptotic expansion is not identically zero.
 
@@ -803,6 +803,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         """
         return bool(self._summands_)
 
+    __nonzero__ = __bool__
 
     def __eq__(self, other):
         r"""
@@ -957,11 +958,10 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         """
         if len(self.summands) != len(other.summands):
             return False
-        from itertools import izip
+        from builtins import zip
         return all(s == o for s, o in
-                   izip(self.summands.elements_topological(),
-                        other.summands.elements_topological()))
-
+                   zip(self.summands.elements_topological(),
+                       other.summands.elements_topological()))
 
     def _simplify_(self):
         r"""

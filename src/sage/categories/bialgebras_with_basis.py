@@ -51,7 +51,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             with `\Delta^{(1)} = \Delta` (the ordinary coproduct in `A`) and
             `\Delta^{(0)} = \mathrm{Id}`; and with `\mu^{(k)} := \mu \circ
             \bigl(\mu^{(k-1)} \otimes \mathrm{Id})` and `\mu^{(1)} = \mu`
-            (the ordinary product in `B`). See [Sw1969]_.
+            (the ordinary product in `B`). See [Swe1969]_.
 
             (In the literature, one finds, e.g., `\Delta^{(2)}` for what we
             denote above as `\Delta^{(1)}`. See [KMN2012]_.)
@@ -162,13 +162,6 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 :meth:`sage.categories.bialgebras.ElementMethods.convolution_product`
 
-            REFERENCES:
-
-            .. [AL2015] *The characteristic polynomial of the Adams operators
-               on graded connected Hopf algebras*.
-               Marcelo Aguiar and Aaron Lauve.
-               Algebra Number Theory, v.9, 2015, n.3, 2015.
-
             .. TODO::
 
                 Remove dependency on ``modules_with_basis`` methods.
@@ -231,7 +224,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             with `\Delta^{(1)} = \Delta` (the ordinary coproduct in `A`) and
             `\Delta^{(0)} = \mathrm{Id}`; and with `\mu^{(k)} := \mu \circ
             \bigl(\mu^{(k-1)} \otimes \mathrm{Id})` and `\mu^{(1)} = \mu`
-            (the ordinary product in `B`). See [Sw1969]_.
+            (the ordinary product in `B`). See [Swe1969]_.
 
             (In the literature, one finds, e.g., `\Delta^{(2)}` for what we
             denote above as `\Delta^{(1)}`. See [KMN2012]_.)
@@ -245,16 +238,6 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             OUTPUT:
 
             - the convolution product of ``maps`` applied to ``self``
-
-            REFERENCES:
-
-            .. [KMN2012] On the trace of the antipode and higher indicators.
-               Yevgenia Kashina and Susan Montgomery and Richard Ng.
-               Israel J. Math., v.188, 2012.
-
-            .. [Sw1969] Hopf algebras.
-               Moss Sweedler.
-               W.A. Benjamin, Math Lec Note Ser., 1969.
 
             AUTHORS:
 

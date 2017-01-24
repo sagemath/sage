@@ -5,15 +5,6 @@ cd src
 # workaround for incorrect permissions, see Trac #15742
 chmod 755 install-sh
 
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 # Workaround for bugs with -D_FORTIFY_SOURCE=2 on antiques
 export CPPFLAGS='-U_FORTIFY_SOURCE'
 

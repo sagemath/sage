@@ -54,7 +54,7 @@ class UnknownClass(UniqueRepresentation, SageObject):
         """
         return "Unknown"
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         When evaluated in a boolean context ``Unknown()`` is evalutated into
         ``False``.
@@ -67,6 +67,8 @@ class UnknownClass(UniqueRepresentation, SageObject):
             True
         """
         return False
+
+    __nonzero__ = __bool__
 
     def __and__(self, other):
         """

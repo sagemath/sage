@@ -241,14 +241,14 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         The cycle index series of the species of cyclic permutations is
         given by
 
-        .. math::
+        .. MATH::
 
              -\sum_{k=1}^\infty \phi(k)/k * log(1 - x_k)
 
 
         which is equal to
 
-        .. math::
+        .. MATH::
 
              \sum_{n=1}^\infty \frac{1}{n} * \sum_{k|n} \phi(k) * x_k^{n/k}
 

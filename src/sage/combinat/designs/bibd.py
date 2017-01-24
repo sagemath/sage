@@ -53,6 +53,8 @@ Functions
 from __future__ import division, print_function
 from __future__ import absolute_import
 
+from six.moves import range
+
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
 from .design_catalog import transversal_design
@@ -140,18 +142,18 @@ def balanced_incomplete_block_design(v, k, existence=False, use_LJCR=False):
 
     Existence of BIBD with `k=3,4,5`::
 
-        sage: [v for v in xrange(50) if designs.balanced_incomplete_block_design(v,3,existence=True)]
+        sage: [v for v in range(50) if designs.balanced_incomplete_block_design(v,3,existence=True)]
         [1, 3, 7, 9, 13, 15, 19, 21, 25, 27, 31, 33, 37, 39, 43, 45, 49]
-        sage: [v for v in xrange(100) if designs.balanced_incomplete_block_design(v,4,existence=True)]
+        sage: [v for v in range(100) if designs.balanced_incomplete_block_design(v,4,existence=True)]
         [1, 4, 13, 16, 25, 28, 37, 40, 49, 52, 61, 64, 73, 76, 85, 88, 97]
-        sage: [v for v in xrange(150) if designs.balanced_incomplete_block_design(v,5,existence=True)]
+        sage: [v for v in range(150) if designs.balanced_incomplete_block_design(v,5,existence=True)]
         [1, 5, 21, 25, 41, 45, 61, 65, 81, 85, 101, 105, 121, 125, 141, 145]
 
     For `k > 5` there are currently very few constructions::
 
-        sage: [v for v in xrange(300) if designs.balanced_incomplete_block_design(v,6,existence=True) is True]
+        sage: [v for v in range(300) if designs.balanced_incomplete_block_design(v,6,existence=True) is True]
         [1, 6, 31, 66, 76, 91, 96, 106, 111, 121, 126, 136, 141, 151, 156, 171, 181, 186, 196, 201, 211, 241, 271]
-        sage: [v for v in xrange(300) if designs.balanced_incomplete_block_design(v,6,existence=True) is Unknown]
+        sage: [v for v in range(300) if designs.balanced_incomplete_block_design(v,6,existence=True) is Unknown]
         [51, 61, 81, 166, 216, 226, 231, 246, 256, 261, 276, 286, 291]
 
     Here are some constructions with `k \geq 7` and `v` a prime power::
@@ -181,7 +183,7 @@ def balanced_incomplete_block_design(v, k, existence=False, use_LJCR=False):
     if k == v:
         if existence:
             return True
-        return BalancedIncompleteBlockDesign(v, [range(v)], check=False, copy=False)
+        return BalancedIncompleteBlockDesign(v, [list(range(v))], check=False, copy=False)
 
     # Non-existence of BIBD
     if (v < k or
@@ -204,7 +206,7 @@ def balanced_incomplete_block_design(v, k, existence=False, use_LJCR=False):
         if existence:
             return True
         from itertools import combinations
-        return BalancedIncompleteBlockDesign(v, combinations(range(v),2), check=False, copy=True)
+        return BalancedIncompleteBlockDesign(v, combinations(list(range(v)),2), check=False, copy=True)
     if k == 3:
         if existence:
             return v%6 == 1 or v%6 == 3
@@ -323,7 +325,7 @@ def steiner_triple_system(n):
 
     if n%6 == 3:
         t = (n-3) // 6
-        Z = range(2*t+1)
+        Z = list(range(2 * t + 1))
 
         T = lambda x_y : x_y[0] + (2*t+1)*x_y[1]
 
@@ -333,7 +335,7 @@ def steiner_triple_system(n):
     elif n%6 == 1:
 
         t = (n-1) // 6
-        N = range(2*t)
+        N = list(range(2 * t))
         T = lambda x_y : x_y[0]+x_y[1]*t*2 if x_y != (-1,-1) else n-1
 
         L1 = lambda i,j : (i+j) % ((n-1)//3)
@@ -483,7 +485,7 @@ def BIBD_from_TD(v,k,existence=False):
         for i in range(k):
             BIBD.extend([[(x-v)+inf if x >= v else x+i*v for x in B] for B in BIBDvpkk])
 
-        BIBD.append(range(k*v,v*k+k))
+        BIBD.append(list(range(k * v, v * k + k)))
 
     # No idea ...
     else:
@@ -796,7 +798,7 @@ def PBD_4_5_8_9_12(v, check=True):
     if v <= 1:
         PBD = []
     elif v <= 12:
-        PBD = [range(v)]
+        PBD = [list(range(v))]
     elif v == 13 or v == 28:
         PBD = v_4_1_BIBD(v, check=False)
     elif v == 29:
@@ -835,11 +837,11 @@ def PBD_4_5_8_9_12(v, check=True):
         t,u = _get_t_u(v)
         TD = transversal_design(5,t)
         TD = [[x for x in X if x<4*t+u] for X in TD]
-        for B in [range(t*i,t*(i+1)) for i in range(4)]:
+        for B in [list(range(t*i,t*(i+1))) for i in range(4)]:
             TD.extend(_PBD_4_5_8_9_12_closure([B]))
 
         if u > 1:
-            TD.extend(_PBD_4_5_8_9_12_closure([range(4*t,4*t+u)]))
+            TD.extend(_PBD_4_5_8_9_12_closure([list(range(4*t,4*t+u))]))
 
         PBD = TD
 
@@ -1066,9 +1068,9 @@ def PBD_from_TD(k,t,u):
     TD = transversal_design(k+bool(u),t, check=False)
     TD = [[x for x in X if x<k*t+u] for X in TD]
     for i in range(k):
-        TD.append(range(t*i,t*i+t))
+        TD.append(list(range(t*i,t*i+t)))
     if u>=2:
-        TD.append(range(k*t,k*t+u))
+        TD.append(list(range(k*t,k*t+u)))
     return TD
 
 def BIBD_5q_5_for_q_prime_power(q):
@@ -1264,7 +1266,7 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
         except TypeError:
             pass
         else:
-            points = range(i)
+            points = list(range(i))
 
         GroupDivisibleDesign.__init__(self,
                                       points,

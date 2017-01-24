@@ -6,8 +6,8 @@ RequirePackage("sisyphos");
 RequirePackage("ve");
 
 diff -ur src/gap3/lib/init.g.orig src/gap3/lib/init.g
---- src/gap3/lib/init.g.orig	2016-03-30 17:58:09.557517250 +0200
-+++ src/gap3/lib/init.g	2016-03-30 17:58:23.265517363 +0200
+--- a/lib/init.g	2016-03-30 17:58:09.557517250 +0200
++++ b/lib/init.g	2016-03-30 17:58:23.265517363 +0200
 @@ -1142,17 +1142,17 @@
  Print(" gap3-jm5 final 21Mar2016 -- see webusers.imj-prg.fr/~jmichel/gap3\n");
  Print(" Minimal distribution -- loading the following packages:\n");

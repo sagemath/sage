@@ -1,3 +1,4 @@
+# distutils: language = c++
 # distutils: libraries = gmpxx gmp
 
 from sage.libs.gmp.types cimport mpz_t, mpq_t

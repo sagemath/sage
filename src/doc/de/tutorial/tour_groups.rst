@@ -7,7 +7,7 @@ Matrixgruppen (mit Ihren eigenen Erzeugern), und abelschen Gruppen
 (sogar unendlichen). Vieles davon ist mit Hilfe der GAP-Schnittstelle
 implementiert.
 
-Zum Beispiel können Sie, um eine Permuationsgruppe zu erzeugen, die
+Zum Beispiel können Sie, um eine Permutationsgruppe zu erzeugen, die
 Liste der Erzeuger wie folgt angeben.
 
 ::

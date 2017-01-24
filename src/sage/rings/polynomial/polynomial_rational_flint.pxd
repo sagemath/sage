@@ -6,7 +6,7 @@
 #                        http://www.gnu.org/licenses/                         #
 ###############################################################################
 
-from sage.libs.flint.fmpq_poly cimport *
+from sage.libs.flint.types cimport fmpq_poly_t
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 

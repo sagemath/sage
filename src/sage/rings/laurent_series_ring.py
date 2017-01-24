@@ -180,7 +180,7 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
 
     def base_extend(self, R):
         """
-        Returns the laurent series ring over R in the same variable as
+        Return the Laurent series ring over R in the same variable as
         self, assuming there is a canonical coerce map from the base ring
         of self to R.
 

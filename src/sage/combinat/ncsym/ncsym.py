@@ -11,6 +11,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 #from sage.misc.lazy_attribute import lazy_attribute
@@ -159,7 +160,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
     (that is, `S_n`-invariant elements of `R\langle x_1, x_2, \ldots, x_n \rangle`).
 
     This ring is implemented as a Hopf algebra whose basis elements are
-    indexed by set parititions.
+    indexed by set partitions.
 
     Let `A = \{A_1, A_2, \ldots, A_r\}` be a set partition of the integers
     `\{ 1, 2, \ldots, k \}`.  A monomial basis element indexed by `A`
@@ -633,7 +634,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             if len(A) == 1:
                 return self.tensor_square().sum_of_monomials([(P([]), A), (A, P([]))])
 
-            ell_set = range(1, len(A) + 1) # +1 for indexing
+            ell_set = list(range(1, len(A) + 1))  # +1 for indexing
             L = [[[], ell_set]] + list(SetPartitions(ell_set, 2))
 
             def to_basis(S):
@@ -1403,7 +1404,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             if len(A) == 1:
                 return self.tensor_square().sum_of_monomials([(P([]), A), (A, P([]))])
 
-            ell_set = range(1, len(A) + 1) # +1 for indexing
+            ell_set = list(range(1, len(A) + 1))  # +1 for indexing
             L = [[[], ell_set]] + list(SetPartitions(ell_set, 2))
 
             def to_basis(S):

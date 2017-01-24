@@ -139,7 +139,7 @@ class UniqueFactorizationDomains(Category_singleton):
 
             ALGORITHM:
 
-            Algorithm 3.3.1 in [GTM138]_, based on pseudo-division.
+            Algorithm 3.3.1 in [Coh1993]_, based on pseudo-division.
 
             EXAMPLES::
 
@@ -152,11 +152,6 @@ class UniqueFactorizationDomains(Category_singleton):
                  (-113*x^6 - 106*x^5 - 133*x^4 - 101*x^3 - 42*x^2 - 41*x)*T - 34*x^6 + 13*x^5 + 54*x^4 + 126*x^3 + 134*x^2 - 5*x - 50)
                 sage: (-x^2 - 4*x - 5)^(3-2+1) * p == quo*q + rem
                 True
-
-            REFERENCES:
-
-            .. [GTM138] Henri Cohen. A Course in Computational Number Theory.
-               Graduate Texts in Mathematics, vol. 138. Springer, 1993.
             """
             if f.degree() < g.degree():
                 A,B = g, f

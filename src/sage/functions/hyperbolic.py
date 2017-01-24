@@ -93,6 +93,8 @@ class Function_sinh(GinacFunction):
 
             sage: latex(sinh(x))
             \sinh\left(x\right)
+            sage: sinh(x)._sympy_()
+            sinh(x)
 
         To prevent automatic evaluation, use the ``hold`` parameter::
 
@@ -129,6 +131,8 @@ class Function_cosh(GinacFunction):
 
             sage: latex(cosh(x))
             \cosh\left(x\right)
+            sage: cosh(x)._sympy_()
+            cosh(x)
 
         To prevent automatic evaluation, use the ``hold`` parameter::
 
@@ -191,6 +195,8 @@ class Function_tanh(GinacFunction):
 
             sage: latex(tanh(x))
             \tanh\left(x\right)
+            sage: tanh(x)._sympy_()
+            tanh(x)
 
         Check that real/imaginary parts are correct (:trac:`20098`)::
 
@@ -246,6 +252,8 @@ class Function_coth(GinacFunction):
             -1/sinh(x)^2
             sage: latex(coth(x))
             \operatorname{coth}\left(x\right)
+            sage: coth(x)._sympy_()
+            coth(x)
         """
         GinacFunction.__init__(self, "coth", latex_name=r"\operatorname{coth}")
 
@@ -297,6 +305,8 @@ class Function_sech(GinacFunction):
             -sech(x)*tanh(x)
             sage: latex(sech(x))
             \operatorname{sech}\left(x\right)
+            sage: sech(x)._sympy_()
+            sech(x)
         """
         GinacFunction.__init__(self, "sech", latex_name=r"\operatorname{sech}",)
 
@@ -346,6 +356,8 @@ class Function_csch(GinacFunction):
             -coth(x)*csch(x)
             sage: latex(csch(x))
             {\rm csch}\left(x\right)
+            sage: csch(x)._sympy_()
+            csch(x)
         """
         GinacFunction.__init__(self, "csch", latex_name=r"{\rm csch}")
 
@@ -419,9 +431,11 @@ class Function_arcsinh(GinacFunction):
             arcsinh
             sage: latex(arcsinh(x))
             {\rm arcsinh}\left(x\right)
+            sage: asinh(x)._sympy_()
+            asinh(x)
         """
         GinacFunction.__init__(self, "arcsinh", latex_name=r"{\rm arcsinh}",
-                conversions=dict(maxima='asinh', sympy='asinh'))
+                conversions=dict(maxima='asinh', sympy='asinh', fricas='asinh'))
 
 arcsinh = asinh = Function_arcsinh()
 
@@ -501,9 +515,11 @@ class Function_arccosh(GinacFunction):
             arccosh
             sage: latex(arccosh(x))
             {\rm arccosh}\left(x\right)
+            sage: acosh(x)._sympy_()
+            acosh(x)
         """
         GinacFunction.__init__(self, "arccosh", latex_name=r"{\rm arccosh}",
-                conversions=dict(maxima='acosh', sympy='acosh'))
+                conversions=dict(maxima='acosh', sympy='acosh', fricas='acosh'))
 
 arccosh = acosh = Function_arccosh()
 
@@ -557,9 +573,11 @@ class Function_arctanh(GinacFunction):
             arctanh
             sage: latex(arctanh(x))
             {\rm arctanh}\left(x\right)
+            sage: atanh(x)._sympy_()
+            atanh(x)
         """
         GinacFunction.__init__(self, "arctanh", latex_name=r"{\rm arctanh}",
-                conversions=dict(maxima='atanh', sympy='atanh'))
+                conversions=dict(maxima='atanh', sympy='atanh', fricas='atanh'))
 
 arctanh = atanh = Function_arctanh()
 
@@ -599,10 +617,12 @@ class Function_arccoth(GinacFunction):
 
             sage: latex(arccoth(x))
             \operatorname{arccoth}\left(x\right)
+            sage: acoth(x)._sympy_()
+            acoth(x)
         """
         GinacFunction.__init__(self, "arccoth",
                 latex_name=r"\operatorname{arccoth}",
-                conversions=dict(maxima='acoth', sympy='acoth'))
+                conversions=dict(maxima='acoth', sympy='acoth', fricas='acoth'))
 
     def _eval_numpy_(self, x):
         """
@@ -640,10 +660,12 @@ class Function_arcsech(GinacFunction):
             -1/(sqrt(-x^2 + 1)*x)
             sage: latex(arcsech(x))
             \operatorname{arcsech}\left(x\right)
+            sage: asech(x)._sympy_()
+            asech(x)
         """
         GinacFunction.__init__(self, "arcsech",
                 latex_name=r"\operatorname{arcsech}",
-                conversions=dict(maxima='asech'))
+                conversions=dict(maxima='asech', sympy='asech', fricas='asech'))
 
     def _eval_numpy_(self, x):
         """
@@ -692,7 +714,7 @@ class Function_arccsch(GinacFunction):
         """
         GinacFunction.__init__(self, "arccsch",
                 latex_name=r"\operatorname{arccsch}",
-                conversions=dict(maxima='acsch'))
+                conversions=dict(maxima='acsch', sympy='asech', fricas='acsch'))
 
     def _eval_numpy_(self, x):
         """

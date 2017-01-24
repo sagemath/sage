@@ -61,26 +61,28 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 class Sigma0ActionAdjuster(UniqueRepresentation):
 
-    # Can one make an abstract class in Sage?
-
     @abstract_method
     def __call__(self, x):
         r"""
         Given a :class:`Sigma0element` ``x``, return four integers.
 
+        This is used to allow for other conventions for the action of Sigma0
+        on the space of distributions.
+
         EXAMPLE::
 
             sage: from sage.modular.pollack_stevens.sigma0 import _default_adjuster
             sage: A = _default_adjuster()
-            sage: A(matrix(ZZ, 2, [1,2,3,4])) # indirect doctest
-            (1, 2, 3, 4)
-        """# mm TODO
+            sage: A(matrix(ZZ, 2, [3,4,5,6])) # indirect doctest
+            (3, 4, 5, 6)
+        """
         pass
 
 
 class _default_adjuster(Sigma0ActionAdjuster):
     """
-    A callable object that does nothing to a matrix, returning its entries in the natural order.
+    A callable object that does nothing to a matrix, returning its entries
+    in the natural, by-row, order.
 
     INPUT:
 
@@ -106,6 +108,34 @@ class _default_adjuster(Sigma0ActionAdjuster):
         """
         return tuple(g.list())
 
+class _default_adjuster(Sigma0ActionAdjuster):
+    """
+    A callable object that does nothing to a matrix, returning its entries
+    in the natural, by-row, order.
+
+    INPUT:
+
+    - ``g`` -- a `2 \times 2` matrix
+
+    OUTPUT:
+
+    - a 4-tuple consisting of the entries of the matrix
+
+    EXAMPLES::
+
+        sage: A = sage.modular.pollack_stevens.sigma0._default_adjuster(); A
+        <sage.modular.pollack_stevens.sigma0._default_adjuster object at 0x...>
+        sage: TestSuite(A).run()
+    """
+    def __call__(self, g):
+        """
+        EXAMPLES::
+
+            sage: T = sage.modular.pollack_stevens.sigma0._default_adjuster()
+            sage: T(matrix(ZZ,2,[1..4])) # indirect doctest
+            (1, 2, 3, 4)
+        """
+        return tuple(g.list())
 
 class Sigma0_factory(UniqueFactory):
     r"""
@@ -166,7 +196,26 @@ Sigma0 = Sigma0_factory('sage.modular.pollack_stevens.sigma0.Sigma0')
 class Sigma0Element(MonoidElement):
     r"""
     An element of the monoid Sigma0. This is a wrapper around a `2 \times 2` matrix.
-    """##mm TODO
+
+    EXAMPLES::
+
+        sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
+        sage: S = Sigma0(7)
+        sage: g = S([2,3,7,1])
+        sage: g.det()
+        -19
+        sage: h = S([1,2,0,1])
+        sage: g * h
+        [ 2  7]
+        [ 7 15]
+        sage: g.inverse()
+        Traceback (most recent call last):
+        ...
+        TypeError: no conversion of this rational to integer
+        sage: h.inverse()
+        [ 1 -2]
+        [ 0  1]
+    """
     def __init__(self, parent, mat):
         r"""
         EXAMPLE::
@@ -352,8 +401,21 @@ class _Sigma0Embedding(Morphism):
 
 class Sigma0_class(Parent):
     r"""
+    The class representing the monoid `\Sigma_0(N)`.
 
-    """ #mm TODO
+    EXAMPLE::
+
+        sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
+        sage: S = Sigma0(5); S
+        Monoid Sigma0(5) with coefficients in Integer Ring
+        sage: S([1,2,1,1])
+        Traceback (most recent call last):
+        ...
+        TypeError: level 5^1 does not divide 1
+        sage: S([1,2,5,1])
+        [1 2]
+        [5 1]
+    """
     Element = Sigma0Element
 
     def __init__(self, N, base_ring, adjuster):

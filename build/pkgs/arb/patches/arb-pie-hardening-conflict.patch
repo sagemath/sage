@@ -1,0 +1,17 @@
+In newer binutils, ld options -r and -pie conflict.
+Patch due to Jörg-Volker Peetz
+(source : https://groups.google.com/d/msg/sage-devel/TduebNoZuBE/sEULolL0BQAJ),
+packaged by Emmanuel Charpentier
+
+diff -ru arb-2.8.1-orig/Makefile.subdirs arb-2.8.1-new/Makefile.subdirs
+--- arb-2.8.1-orig/Makefile.subdirs	2015-12-31 17:30:01.000000000 +0100
++++ arb-2.8.1-new/Makefile.subdirs	2016-11-07 18:50:34.540051779 +0100
+@@ -52,7 +52,7 @@
+ 	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) -c $< -o $@ -MMD -MP -MF "$(BUILD_DIR)/$(MOD_DIR)_$*.d" -MT "$(BUILD_DIR)/$(MOD_DIR)_$*.d" -MT "$@"
+ 
+ $(MOD_LOBJ): $(LOBJS)
+-	$(QUIET_CC) $(CC) $(ABI_FLAG) -Wl,-r $^ -o $@ -nostdlib
++	$(QUIET_CC) $(CC) $(ABI_FLAG) -r $^ -o $@ -nostdlib
+ 
+ -include $(LOBJS:.lo=.d)
+ 

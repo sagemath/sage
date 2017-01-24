@@ -198,7 +198,7 @@ cached methods. We remark, however, that cached methods are
 hardly by used.
 ::
 
-    sage: cython_code = ["from sage.structure.element cimport Element, ElementWithCachedMethod",
+    sage: cython_code = ["from sage.structure.element cimport Element, ElementWithCachedMethod", "from cpython.object cimport PyObject_RichCompare",
     ....: "cdef class MyBrokenElement(Element):",
     ....: "    cdef public object x",
     ....: "    def __init__(self,P,x):",
@@ -210,8 +210,8 @@ hardly by used.
     ....: "        return '<%s>'%self.x",
     ....: "    def __hash__(self):",
     ....: "        return hash(self.x)",
-    ....: "    cpdef int _cmp_(left, right) except -2:",
-    ....: "        return cmp(left.x,right.x)",
+    ....: "    cpdef _richcmp_(left, right, int op):",
+    ....: "        return PyObject_RichCompare(left.x, right.x, op)",
     ....: "    def raw_test(self):",
     ....: "        return -self",
     ....: "cdef class MyElement(ElementWithCachedMethod):",
@@ -225,8 +225,8 @@ hardly by used.
     ....: "        return '<%s>'%self.x",
     ....: "    def __hash__(self):",
     ....: "        return hash(self.x)",
-    ....: "    cpdef int _cmp_(left, right) except -2:",
-    ....: "        return cmp(left.x,right.x)",
+    ....: "    cpdef _richcmp_(left, right, int op):",
+    ....: "        return PyObject_RichCompare(left.x, right.x, op)",
     ....: "    def raw_test(self):",
     ....: "        return -self",
     ....: "from sage.structure.parent cimport Parent",
@@ -2919,7 +2919,7 @@ cdef class CachedMethod(object):
                         self.nargs = 1
                     else:
                         self.nargs = 2
-                except:
+                except Exception:
                     pass
             if self.nargs == 0:
                 args, varargs, keywords, defaults = sage_getargspec(f)

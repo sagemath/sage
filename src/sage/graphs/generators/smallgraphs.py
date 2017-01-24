@@ -16,7 +16,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
-
+from six.moves import range
 # import from Sage library
 from sage.graphs.graph import Graph
 from math import sin, cos, pi
@@ -473,7 +473,8 @@ def Cell600(embedding=1):
     # all vertices together
     U = vert96 + vert16 + vert8
 
-    g = Graph([range(120), lambda i, j: U[i].inner_product(U[j]) == f / 2])
+    g = Graph([list(range(120)),
+               lambda i, j: U[i].inner_product(U[j]) == f / 2])
 
     # Embedding
     from sage.graphs.graph_plot import _circle_embedding
@@ -559,7 +560,8 @@ def Cell120():
     # all vertices together
     U = vert1 + vert2
 
-    g = Graph([range(600), lambda i, j: U[i].inner_product(U[j]) == 6*f-2])
+    g = Graph([list(range(600)),
+               lambda i, j: U[i].inner_product(U[j]) == 6*f-2])
 
     from sage.graphs.graph_plot import _circle_embedding
     pos = [0, 1, 3, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 17, 20, 21, 23, 24, 25,
@@ -767,7 +769,7 @@ def HallJankoGraph(from_string=True):
         g = Graph([(int(u), int(v)) for u,v in edges])
         g.relabel()
 
-    _circle_embedding(g, range(100))
+    _circle_embedding(g, list(range(100)))
     g.name("Hall-Janko graph")
     return g
 
@@ -1237,8 +1239,8 @@ def BlanusaFirstSnarkGraph():
                10:[15],11:[6],14:[2]},
               name="Blanusa First Snark Graph")
 
-    g.add_cycle(range(17))
-    _circle_embedding(g, range(17), shift=0.25)
+    g.add_cycle(list(range(17)))
+    _circle_embedding(g, list(range(17)), shift=0.25)
     g.get_pos()[17] = (0,0)
     return g
 
@@ -1652,8 +1654,8 @@ def DoubleStarSnark():
         }
 
     g = Graph(d, pos={}, name="Double star snark")
-    _circle_embedding(g, range(15), radius=2)
-    _circle_embedding(g, range(15, 30), radius=1.4)
+    _circle_embedding(g, list(range(15)), radius=2)
+    _circle_embedding(g, list(range(15, 30)), radius=1.4)
 
     return g
 
@@ -1747,9 +1749,9 @@ def KittellGraph():
                22: [17, 19, 20, 21, 15]},
               name = "Kittell Graph")
 
-    _circle_embedding(g, range(3), shift=.75)
-    _circle_embedding(g, range(3,13), radius = .4)
-    _circle_embedding(g, range(15,22), radius = .2, shift=-.15)
+    _circle_embedding(g, list(range(3)), shift=.75)
+    _circle_embedding(g, list(range(3, 13)), radius = .4)
+    _circle_embedding(g, list(range(15, 22)), radius = .2, shift=-.15)
     pos = g.get_pos()
     pos[13] = (-.65,-.35)
     pos[14] = (.65,-.35)
@@ -1888,7 +1890,7 @@ def ClebschGraph():
         g.add_edge(x % 16, (x + 8) % 16)
         x += 1
 
-    _circle_embedding(g, range(16), shift=.5)
+    _circle_embedding(g, list(range(16)), shift=.5)
     g.name("Clebsch graph")
 
     return g
@@ -1920,10 +1922,10 @@ def CoxeterGraph():
             26: [10, 16, 23],
             }, pos={})
 
-    g.add_cycle(range(24))
+    g.add_cycle(list(range(24)))
     g.add_edges([(5, 11), (9, 20), (12, 1), (13, 19), (17, 4), (3, 21)])
 
-    _circle_embedding(g, range(24))
+    _circle_embedding(g, list(range(24)))
     _circle_embedding(g, [24, 25, 26], radius=.5)
     g.get_pos()[27] = (0, 0)
 
@@ -2193,7 +2195,7 @@ def HortonGraph():
     for i in range(3):
         g.delete_vertex((2*i+1,15))
 
-    _circle_embedding(g, range(3), radius=.2, shift=-0.75)
+    _circle_embedding(g, [0, 1, 2], radius=.2, shift=-0.75)
 
     g.relabel()
 
@@ -2265,17 +2267,17 @@ def EllinghamHorton54Graph():
     g.add_edge(52, 53)
 
     # Top
-    _circle_embedding(g, range(16), center=(0, .5), shift=.5, radius=.5)
+    _circle_embedding(g, list(range(16)), center=(0, .5), shift=.5, radius=.5)
 
     # Bottom-left
-    _circle_embedding(g, range(16, 22), center=(-1.5, -1))
-    _circle_embedding(g, range(22, 28), center=(-1.5, -1), radius=.5)
-    _circle_embedding(g, range(28, 34), center=(-1.5, -1), radius=.7)
+    _circle_embedding(g, list(range(16, 22)), center=(-1.5, -1))
+    _circle_embedding(g, list(range(22, 28)), center=(-1.5, -1), radius=.5)
+    _circle_embedding(g, list(range(28, 34)), center=(-1.5, -1), radius=.7)
 
     # Bottom right
-    _circle_embedding(g, range(34, 40), center=(1.5, -1))
-    _circle_embedding(g, range(40, 46), center=(1.5, -1), radius=.5)
-    _circle_embedding(g, range(46, 52), center=(1.5, -1), radius=.7)
+    _circle_embedding(g, list(range(34, 40)), center=(1.5, -1))
+    _circle_embedding(g, list(range(40, 46)), center=(1.5, -1), radius=.5)
+    _circle_embedding(g, list(range(46, 52)), center=(1.5, -1), radius=.7)
 
     d = g.get_pos()
     d[52] = (-.3, -2.5)
@@ -2342,8 +2344,8 @@ def EllinghamHorton78Graph():
             64: [65, 69], 65: [77], 66: [70, 73], 67: [68, 73],
             68: [69, 76], 70: [71, 76], 76: [77]}, pos={})
 
-    _circle_embedding(g, range(15), center=(-2.5, 1.5))
-    _circle_embedding(g, range(15, 30), center=(-2.5, -1.5))
+    _circle_embedding(g, list(range(15)), center=(-2.5, 1.5))
+    _circle_embedding(g, list(range(15, 30)), center=(-2.5, -1.5))
     _circle_embedding(g, [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
         42, 74, 43, 44], center=(2.5, 1.5))
     _circle_embedding(g, [45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56,
@@ -3051,7 +3053,7 @@ def HigmanSimsGraph(relabel=True):
         sage: K.is_isomorphic(A) and K.is_isomorphic(B)
         True
         sage: C = H.subgraph(range(25,75))
-        sage: D = H.subgraph(range(0,25)+range(75,100))
+        sage: D = H.subgraph(list(range(0,25))+list(range(75,100)))
         sage: K.is_isomorphic(C) and K.is_isomorphic(D)
         True
 
@@ -3301,8 +3303,8 @@ def HoffmanGraph():
             11: [14],
             13: [15]})
     g.set_pos({})
-    _circle_embedding(g, range(8))
-    _circle_embedding(g, range(8, 14), radius=.7, shift=.5)
+    _circle_embedding(g, list(range(8)))
+    _circle_embedding(g, list(range(8, 14)), radius=.7, shift=.5)
     _circle_embedding(g, [14, 15], radius=.1)
 
     g.name("Hoffman Graph")
@@ -3666,7 +3668,7 @@ def MarkstroemGraph():
     """
     g = Graph(name="Markstroem Graph")
 
-    g.add_cycle(range(9))
+    g.add_cycle(list(range(9)))
     g.add_path([0,9,10,11,2,1,11])
     g.add_path([3,12,13,14,5,4,14])
     g.add_path([6,15,16,17,8,7,17])
@@ -3679,7 +3681,7 @@ def MarkstroemGraph():
     _circle_embedding(g, sum([[9+3*i+j for j in range(3)]+[0]*2 for i in range(3)],[]), radius=.6, shift=.7)
     _circle_embedding(g, [18,19,20], radius=.35, shift=.25)
     _circle_embedding(g, [21,22,23], radius=.15, shift=.25)
-    _circle_embedding(g, range(9))
+    _circle_embedding(g, list(range(9)))
 
     return g
 
@@ -3799,7 +3801,8 @@ def McLaughlinGraph():
                 g.add_edge(b, c)
 
     # Here we relabel the elements of g in an architecture-independent way
-    g.relabel({v:i for i,v in enumerate(range(1,23)+sorted(blocks,key=sorted))})
+    g.relabel({v: i for i, v in enumerate(list(range(1, 23)) +
+                                          sorted(blocks, key=sorted))})
     g.name("McLaughlin")
     return g
 
@@ -3986,14 +3989,14 @@ def PoussinGraph():
     """
     g = Graph({2:[7,8,3,4],1:[7,6],0:[6,5,4],3:[5]},name="Poussin Graph")
 
-    g.add_cycle(range(3))
-    g.add_cycle(range(3,9))
-    g.add_cycle(range(9,14))
+    g.add_cycle(list(range(3)))
+    g.add_cycle(list(range(3, 9)))
+    g.add_cycle(list(range(9, 14)))
     g.add_path([8,12,7,11,6,10,5,9,3,13,8,12])
     g.add_edges([(14,i) for i in range(9,14)])
-    _circle_embedding(g, range(3), shift=.75)
-    _circle_embedding(g, range(3,9), radius=.4, shift=0)
-    _circle_embedding(g, range(9,14), radius=.2, shift=.4)
+    _circle_embedding(g, list(range(3)), shift=.75)
+    _circle_embedding(g, list(range(3, 9)), radius=.4, shift=0)
+    _circle_embedding(g, list(range(9, 14)), radius=.2, shift=.4)
     g.get_pos()[14] = (0,0)
 
     return g
@@ -4332,13 +4335,13 @@ def SousselierGraph():
     """
     g = Graph(name="Sousselier Graph")
 
-    g.add_cycle(range(15))
+    g.add_cycle(list(range(15)))
     g.add_path([12,8,3,14])
     g.add_path([9,5,0,11])
     g.add_edge(6,2)
     g.add_edges([(15,i) for i in range(15) if i%3==1])
 
-    _circle_embedding(g, range(15), shift=-.25)
+    _circle_embedding(g, list(range(15)), shift=-.25)
     g.get_pos()[15] = (0,0)
 
     return g
@@ -4378,7 +4381,7 @@ def SzekeresSnarkGraph():
                           center=(cos(2*(i+.25)*pi/5),sin(2*(i+.25)*pi/5)),
                           shift=5.45+1.8*i)
 
-    _circle_embedding(g, range(5), radius=1, shift=.25)
+    _circle_embedding(g, list(range(5)), radius=1, shift=.25)
 
     g.relabel()
     return g
@@ -4430,9 +4433,9 @@ def TietzeGraph():
         True
     """
     g = Graph([(0,9),(3,10),(6,11),(1,5),(2,7),(4,8)], name="Tietze Graph")
-    g.add_cycle(range(9))
+    g.add_cycle(list(range(9)))
     g.add_cycle([9,10,11])
-    _circle_embedding(g,range(9))
+    _circle_embedding(g, list(range(9)))
     _circle_embedding(g,[9,10,11],radius=.5)
 
     return g
@@ -4475,9 +4478,9 @@ def TruncatedTetrahedralGraph():
         True
     """
     g = Graph(':K`ESwC_EOyDl\\MCi', loops=False, multiedges=False)
-    _circle_embedding(g, range(6), radius=1)
-    _circle_embedding(g, range(6,9), radius=.6, shift=.25)
-    _circle_embedding(g, range(9,12), radius=.2, shift=.25)
+    _circle_embedding(g, list(range(6)), radius=1)
+    _circle_embedding(g, list(range(6, 9)), radius=.6, shift=.25)
+    _circle_embedding(g, list(range(9, 12)), radius=.2, shift=.25)
     g.name("Truncated Tetrahedron")
     return g
 
@@ -4689,7 +4692,7 @@ def WatkinsSnarkGraph():
         g.add_edge((i,4),i)
         g.add_edge((i,6),(i,2))
 
-    _circle_embedding(g, range(5), shift=.25, radius=1.1)
+    _circle_embedding(g, list(range(5)), shift=.25, radius=1.1)
     return g
 
 def WienerArayaGraph():
@@ -4958,23 +4961,23 @@ def JankoKharaghaniTonchevGraph():
     from sage.combinat.permutation import Permutation as P
     from sage.libs.gap.libgap import libgap
 
-    m1=prod([P((9*x+k,9*x+k+3,9*x+k+6)) for k,x in product(xrange(1,4),xrange(36))])
-    m2=prod([P((3*x+1,3*x+2,3*x+3)) for x in xrange(108)])
+    m1=prod(P((9*x+k,9*x+k+3,9*x+k+6)) for k in range(1, 4) for x in range(36))
+    m2=prod(P((3*x+1,3*x+2,3*x+3)) for x in range(108))
     t=prod(prod(map(P,[(9*x+2,9*x+3),(9*x+4,9*x+7),(9*x+5,9*x+9),(9*x+6,9*x+8)])) for
-        x in xrange(36))
+        x in range(36))
     n1=prod(prod(map(P,[(1+x,19+x,37+x),(55+x,73+x,91+x),(109+x,127+x,145+x),
                 (163+x,181+x,199+x),(217+x,235+x,253+x),(271+x,289+x,307+x)]))
-                 for x in xrange(18))
+                 for x in range(18))
     n2=prod(prod(map(P,[(1+x,55+x,109+x),(19+x,73+x,127+x),(37+x,91+x,145+x),
                 (163+x,217+x,271+x),(181+x,235+x,289+x),(199+x,253+x,307+x)]))
-                 for x in xrange(18))
+                 for x in range(18))
     s=prod(prod(map(P,[(19+x,37+x),(55+x,109+x),(73+x,145+x),(91+x,127+x),
                 (181+x,199+x),(217+x,271+x),(235+x,307+x),(253+x,289+x)]))
-                 for x in xrange(18))
+                 for x in range(18))
     k=prod(prod(map(P,[(18*x+1,18*x+10),(18*x+2,18*x+11),(18*x+3,18*x+12),
                 (18*x+4,18*x+13),(18*x+5,18*x+14),(18*x+6,18*x+15),(18*x+7,18*x+16),
                 (18*x+8,18*x+17),(18*x+9,18*x+18)]))
-                 for x in xrange(18))
+                 for x in range(18))
     G=libgap.Group(map(lambda p: libgap.PermList(p), [m1,m2,t,n1,n2,s,k]))
     st=libgap.Group(map(lambda p: libgap.PermList(p), [t,s]))
     B1=(19,22,25,29,30,31,33,34,35,37,40,43,47,48,49,51,52,53,55,56,57,65,
@@ -4999,3 +5002,176 @@ def JankoKharaghaniTonchevGraph():
             Gamma.add_edges(map(tuple,G.Orbit(libgap.Set([i,j]), libgap.OnSets)))
     Gamma.relabel()
     return Gamma
+
+def IoninKharaghani765Graph():
+    r"""
+    Return a `(765, 192, 48, 48)`-strongly regular graph.
+
+    Existence of a strongly regular graph with these parameters was claimed in [IK03]_.
+    Implementing the construction in the latter did not work, however. This function
+    implements the following instructions, shared by Yury Ionin and Hadi
+    Kharaghani.
+
+        Let `A` be the affine plane over the field `GF(3)=\{-1,0,1\}`. Let
+
+        .. MATH::
+
+            \phi_1(x,y) &= x\\
+            \phi_2(x,y) &= y\\
+            \phi_3(x,y) &= x+y\\
+            \phi_4(x,y) &= x-y\\
+
+        For `i=1,2,3,4` and `j\in GF(3)`, let `L_{i,j}` be the line in `A`
+        defined by `\phi_i(x,y)=j`. Let `\mathcal M` be the set of all 12 lines
+        `L_{i,j}`, plus the empty set. Let `\pi` be the permutation defined on
+        `\mathcal M` by `\pi(L_{i,j}) = L_{i,j+1}` and `\pi(\emptyset) =
+        \emptyset`, so that `\pi` has three orbits of cardinality 3 and one of
+        cardinality 1.
+
+        Let `A=(p_1,...,p_9)` with `p_1=(-1,1)`, `p_2=(-1,0)`, `p_3=(-1,1)`,
+        `p_4=(0,-1)`, `p_5=(0,0)`, `p_6=(0,1)`, `p_7=(1,-1)`, `p_8=(1,0)`,
+        `p_9=(1,1)`. Note that `p_i+p_{10-i}=(0,0)`. For any subset `X` of `A`,
+        let `M(X)` be the `(0,1)`-matrix of order 9 whose `(i,j)`-entry equals 1
+        if and only if `p_{10-i}-p_j\in X`. Note that `M` is a symmetric matrix.
+
+        An `MF`-tuple is an ordered quintuple `(X_1, X_2, X_3, X_4, X_5)` of
+        subsets of `A`, of which one is the empty set and the other four are
+        pairwise non-parallel lines. Such a quintuple generates the following
+        block matrix:
+
+        .. MATH::
+
+            N(X_1, X_2, X_3, X_4, X_5) = \left( \begin{array}{ccccc}
+                M(X_1) & M(X_2) & M(X_3) & M(X_4) & M(X_5)\\
+                M(X_2) & M(X_3) & M(X_4) & M(X_5) & M(X_1)\\
+                M(X_3) & M(X_4) & M(X_5) & M(X_1) & M(X_2)\\
+                M(X_4) & M(X_5) & M(X_1) & M(X_2) & M(X_3)\\
+                M(X_5) & M(X_1) & M(X_2) & M(X_3) & M(X_4)
+                \end{array}\right)
+
+        Observe that if `(X_1, X_2, X_3, X_4, X_5)` is an `MF`-tuple, then
+        `N(X_1, X_2, X_3, X_4, X_5)` is the symmetric incidence matrix of a
+        symmetric `(45, 12, 3)`-design.
+
+        Let `\mathcal F` be the set of all `MF`-tuples and let `\sigma` be the
+        following permutation of `\mathcal F`:
+
+        .. MATH::
+
+            \sigma(X_1, X_2, X_3, X_4, X_5) & = (X_2, X_3, X_4, X_5, X_1)\\
+            \pi(X_1, X_2, X_3, X_4, X_5) & = (\pi(X_1), \pi(X_2), \pi(X_3), \pi(X_4), \pi(X_5))\\
+
+        Observe that `\sigma` and `\pi` commute, and generate a (cyclic) group
+        `G` of order 15. We will from now on identify `G` with the (cyclic)
+        multiplicative group of the field `GF(16)` equal to
+        `\{\omega^0,...,\omega^{14}\}`. Let `W=[w_{ij}]` be the following matrix
+        of order 17 over `GF(16)=\{a_1,...,a_16\}`:
+
+        .. MATH::
+
+            w_{ij}=\left\{\begin{array}{ll}
+                a_i+a_j & \text{if }1\leq i\leq 16, 1\leq j\leq 16,\\
+                1       & \text{if }i=17, j\neq 17,\\
+                1       & \text{if }i\neq 17, j= 17,\\
+                0       & \text{if }i=j=17
+                \end{array}\right.
+
+        The diagonal entries of `W` are equal to 0, each off-diagonal entry can
+        be represented as `\omega^k` with `0\leq k\leq 14`. Matrix `W` is a
+        symmetric `BGW(17,16,15; G)`.
+
+        Fix an `MF`-tuple `(X_1, X_2, X_3, X_4, X_5)` and let `S` be the block
+        matrix obtained from `W` by replacing every diagonal entry of `W` by the
+        zero matrix of order 45, and every off-diagonal entry `\omega^k` by the
+        matrix `N(\sigma^k(X_1, X_2, X_3, X_4, X_5))` (through the association
+        of `\omega^k` with an element of `G`). Then `S` is a symmetric incidence
+        matrix of a symmetric `(765, 192, 48)`-design with zero diagonal, and
+        therefore `S` is an adjacency matrix of a strongly regular graph with
+        parameters `(765, 192, 48, 48)`.
+
+    EXAMPLES::
+
+        sage: g = graphs.IoninKharaghani765Graph(); g
+        Ionin-Kharaghani: Graph on 765 vertices
+
+    TESTS::
+
+        sage: graphs.strongly_regular_graph(765, 192, 48, 48)
+        Ionin-Kharaghani: Graph on 765 vertices
+
+    .. TODO::
+
+        An update to [IK03]_ meant to fix the problem encountered became available
+        2016/02/24, see http://www.cs.uleth.ca/~hadi/research/IoninKharaghani.pdf
+
+    REFERENCE:
+
+    .. [IK03] Yury Ionin, Hadi Kharaghani
+       New families of strongly regular graphs.
+       Journal of Combinatorial Designs,
+       Vol 11 (2003), no. 3, 208–217,
+       :doi:`10.1002/jcd.10038`
+    """
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+    K = GF(3)
+
+    # the four φ functions
+    phi = [lambda xy: 1*xy[0]+0*xy[1],
+           lambda xy: 0*xy[0]+1*xy[1],
+           lambda xy: 1*xy[0]+1*xy[1],
+           lambda xy: 1*xy[0]-1*xy[1]]
+
+    # Defining L_{i,j}
+    L = {(i,j):set() for i in range(4) for j in K}
+    from itertools import product
+    for p in product(K,K):
+        for i in range(4):
+            L[i,phi[i](p)].add(p)
+
+    L = {k:frozenset(v) for k,v in L.iteritems()}
+
+    # Defining pi
+    pi = {L[i,j]:L[i,(j+1)%3] for (i,j) in L}
+    pi[frozenset()] = frozenset()
+
+    # Defining A
+    A = [(-1,-1), (-1,0), (-1,1), (0,-1), (0,0), (0,1), (1,-1), (1,0), (1,1)]
+
+    def M(S):
+        S = set([(K(x),K(y)) for x,y in S])
+        difference = lambda (x,y),(xx,yy): (K(x-xx),K(y-yy))
+        return matrix([[1 if difference(A[8-i],A[j]) in S else 0 for i in range(9)]
+                       for j in range(9)])
+
+    def N(Xi):
+        Xi = map(M,Xi)
+        return matrix.block([Xi[i:]+Xi[:i]
+                             for i in range(len(Xi))])
+
+    sigma = lambda Xi: Xi[1:] + [pi[Xi[0]]]
+    f_pow = lambda f,i,X : f_pow(f,i-1,f(X)) if i else X
+
+    sigma2 = lambda Xi: Xi[1:] + [Xi[0]]
+    pi_vec = lambda x: map(pi.get,x)
+
+    # The matrix W, with off-diagonal entries equal to integers 1,...,15
+    # (instead of x^1,...,x^15)
+    from sage.matrix.constructor import matrix
+    GF16 = GF(16,'x')
+    W = matrix( [[x+y for x in GF16] + [1] for y in GF16] +
+                [[1]*16+[0]])
+    x = GF16.primitive_element()
+    log_x = {x**i:i for i in range(15)}
+    W = W.apply_map(lambda x:log_x[x]+1 if x else 0)
+
+    # Associate a matrix to every entry of W
+    int_to_matrix = {0:matrix.zero(45)}
+    for i in range(15):
+        vec = [frozenset([]),L[0,0],L[1,0],L[2,0],L[3,0]]
+        vec = f_pow(pi_vec,i%3,vec)
+        vec = f_pow(sigma2,i%5,vec)
+        int_to_matrix[i+1] = N(vec)
+
+    M = matrix.block([[int_to_matrix[x] for x in R] for R in W.rows()])
+    g = Graph(M,name="Ionin-Kharaghani")
+    return g

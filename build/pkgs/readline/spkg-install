@@ -39,15 +39,6 @@ export LDFLAGS
 
 cd src/
 
-echo "Applying patches to upstream source..."
-for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
-    if [[ $? -ne 0 ]]; then
-        echo >&2 "Error applying '$patch'."
-        exit 1
-    fi
-done
-
 echo "Configuring readline..."
 ./configure \
     --prefix="$SAGE_LOCAL" \
@@ -85,21 +76,21 @@ fi
 
 case "$UNAME" in
     Darwin)
-	DYLIB_NAME=libreadline.dylib;;
+        DYLIB_NAME=libreadline.dylib;;
     CYGWIN)
-	# It is of course very lame that readline names the file .dll.a, but that's what it does.
-	DYLIB_NAME=libreadline.dll.a;;
+        # It is of course very lame that readline names the file .dll.a, but that's what it does.
+        DYLIB_NAME=libreadline.dll.a;;
     OpenBSD)
-	# Untested. (David Kirkby, 11th November 2010)
+        # Untested. (David Kirkby, 11th November 2010)
         # Extension changed from 6.1 to 6.2; still untested. (October 2011)
         # Extension changed from 6.2 to 6.3; still untested. (June 2014)
-	DYLIB_NAME=libreadline.so.6.3;;
+        DYLIB_NAME=libreadline.so.6.3;;
     FreeBSD)
-	DYLIB_NAME=libreadline.so.6;;
+        DYLIB_NAME=libreadline.so.6;;
     HP-UX)
-	DYLIB_NAME=libreadline.sl.6;;
+        DYLIB_NAME=libreadline.sl.6;;
     *)  # e.g. "Linux" or "SunOS"
-	DYLIB_NAME=libreadline.so
+        DYLIB_NAME=libreadline.so
 esac
 
 # Make sure that the install worked, despite whatever the

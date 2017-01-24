@@ -35,7 +35,7 @@ Frobby source distribution.
  * fix linking (rpath)
 
 === frobby-0.9.0.p1 (Dima Pasechnik, Sept 7, 2013) ===
- * added <unistd.h> for getpid() 
+ * added <unistd.h> for getpid()
 
 === frobby-0.9.0 (Mike Hansen, May 24th, 2012) ===
  * #13007: Update to 0.9.0.

@@ -27,10 +27,11 @@ from sage.monoids.indexed_free_monoid import (IndexedMonoid,
         IndexedMonoidElement, IndexedFreeMonoidElement,
         IndexedFreeAbelianMonoidElement)
 from sage.misc.cachefunc import cached_method
-from sage.combinat.dict_addition import dict_addition
+import sage.data_structures.blas_dict as blas
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 from sage.sets.family import Family
+from six import iteritems
 
 class IndexedGroup(IndexedMonoid):
     """
@@ -338,20 +339,40 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
 
         EXAMPLES::
 
-            sage: G = FreeAbelianMonoid(index_set=ZZ)
+            sage: G = Groups().Commutative().free(index_set=ZZ)
             sage: G(G.gen(2))
             F[2]
             sage: G([[1, 3], [-2, 12]])
             F[-2]^12*F[1]^3
-            sage: G({1:3, -2: 12})
+            sage: G({1: 3, -2: 12})
             F[-2]^12*F[1]^3
             sage: G(-5)
             Traceback (most recent call last):
             ...
             TypeError: unable to convert -5, use gen() instead
+
+        TESTS::
+
+            sage: G([(1, 3), (1, -5)])
+            F[1]^-2
+
+            sage: G([(42, 0)])
+            1
+            sage: G([(42, 3), (42, -3)])
+            1
+            sage: G({42: 0})
+            1
         """
-        if isinstance(x, (list, tuple, dict)):
-            x = dict(x)
+        if isinstance(x, (list, tuple)):
+            d = dict()
+            for k, v in x:
+                if k in d:
+                    d[k] += v
+                else:
+                    d[k] = v
+            x = d
+        if isinstance(x, dict):
+            x = {k: v for k, v in iteritems(x) if v != 0}
         return IndexedGroup._element_constructor_(self, x)
 
     @cached_method
@@ -403,7 +424,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
                 1
             """
             return self.__class__(self.parent(),
-                                  dict_addition([self._monomial, other._monomial]))
+                                  blas.add(self._monomial, other._monomial))
 
         def __invert__(self):
             """
@@ -464,5 +485,5 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
                 return self
             if n == 0:
                 return self.parent().one()
-            return self.__class__(self.parent(), {k:v*n for k,v in self._monomial.iteritems()})
+            return self.__class__(self.parent(), {k:v*n for k,v in iteritems(self._monomial)})
 

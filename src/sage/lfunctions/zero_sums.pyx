@@ -209,9 +209,9 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         """
         if not python_floats:
-            return [self.cn(i) for i in xrange(n+1)]
+            return [self.cn(i) for i in xrange(n + 1)]
         else:
-            return [float(self.cn(i)) for i in xrange(n+1)]
+            return [float(self.cn(i)) for i in xrange(n + 1)]
 
     def digamma(self, s, include_constant_term=True):
         r"""
@@ -266,7 +266,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
             try:
                 z = ZZ(s)
                 return PlusInfinity()
-            except:
+            except Exception:
                 pass
 
         if imag(s)==0:
@@ -1548,7 +1548,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         very large conductor (so long as the conductor is known or quickly
         computable) when Delta is not too large (see below).
 
-        Uses Bober's rank bounding method as described in [Bob-13]_.
+        Uses Bober's rank bounding method as described in [Bob2013]_.
 
         INPUT:
 
@@ -1730,12 +1730,6 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
             sage: Z.analytic_rank_upper_bound(max_Delta=2.37,adaptive=False, # long time
             ....: root_number=1,bad_primes=bad_primes,ncpus=2)               # long time
             32
-
-        REFERENCES:
-
-        .. [Bob-13] \J.W. Bober. Conditionally bounding analytic ranks of elliptic curves.
-           ANTS 10. http://msp.org/obs/2013/1-1/obs-v1-n1-p07-s.pdf
-
         """
         #Helper function: compute zero sum and apply parity if not False
         def run_computation(Delta):

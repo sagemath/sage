@@ -130,7 +130,7 @@ cdef class IncreasingList(ClonableList):
         cdef int i
         for i in range(len(self)-1):
             if self._getitem(i) >= self._getitem(i+1):
-                raise ValueError , "array is not increasing"
+                raise ValueError("array is not increasing")
 
 
 

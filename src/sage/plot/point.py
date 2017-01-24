@@ -270,7 +270,7 @@ class Point(GraphicPrimitive_xydata):
         #method does not interpret it as a list of 3 floating
         #point color specifications when there are
         #three points. This is mentioned in the matplotlib 0.98
-        #documentation and fixes \#2076
+        #documentation and fixes #2076
         from matplotlib.colors import rgb2hex
         c = rgb2hex(to_mpl_color(options['rgbcolor']))
 

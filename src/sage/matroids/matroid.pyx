@@ -288,23 +288,20 @@ Testing. Note that the abstract base class does not support pickling::
 REFERENCES
 ==========
 
-..  [BC79] \R. E. Bixby, W. H. Cunningham, Matroids, Graphs, and 3-Connectivity. In Graph theory and related topics (Proc. Conf., Univ. Waterloo, Waterloo, ON, 1977), 91-103
-..  [Cunningham86] \W. H. Cunningham, Improved Bounds for Matroid Partition and Intersection Algorithms. SIAM Journal on Computing 1986 15:4, 948-957
-..  [CMO11] \C. Chun, D. Mayhew, J. Oxley, A chain theorem for internally 4-connected binary matroids. J. Combin. Theory Ser. B 101 (2011), 141-189.
-..  [CMO12] \C. Chun, D. Mayhew, J. Oxley,  Towards a splitter theorem for internally 4-connected binary matroids. J. Combin. Theory Ser. B 102 (2012), 688-700.
-..  [Cunningham] \W. H. Cunningham. Improved bounds for matroid partition and intersection algorithms. SIAM J. Comput. 15, 4 (November 1986), 948-957.
-..  [GG12] Jim Geelen and Bert Gerards, Characterizing graphic matroids by a system of linear equations, submitted, 2012. Preprint: http://www.gerardsbase.nl/papers/geelen_gerards=testing-graphicness%5B2013%5D.pdf
-..  [GR01] \C.Godsil and G.Royle, Algebraic Graph Theory. Graduate Texts in Mathematics, Springer, 2001.
-..  [Hlineny] Petr Hlineny, "Equivalence-free exhaustive generation of matroid representations", Discrete Applied Mathematics 154 (2006), pp. 1210-1222.
-..  [Hochstaettler] Winfried Hochstaettler, "About the Tic-Tac-Toe Matroid", preprint.
-..  [Lyons] \R. Lyons, Determinantal probability measures. Publications Mathematiques de l'Institut des Hautes Etudes Scientifiques 98(1)  (2003), pp. 167-212.
-..  [Oxley1] James Oxley, "Matroid theory", Oxford University Press, 1992.
-..  [Oxley] James Oxley, "Matroid Theory, Second Edition". Oxford University Press, 2011.
-..  [Pen12] \R. Pendavingh, On the evaluation at `(-i, i)` of the Tutte polynomial of a binary matroid. Preprint: :arxiv:`1203.0910`
-..  [PvZ] \R. A. Pendavingh, S. H. M. van Zwam, Lifts of matroid
-    representations over partial fields, Journal of Combinatorial Theory, 
-    Series B, Volume 100, Issue 1, January 2010, Pages 36-67
-..  [Rajan] \A. Rajan, Algorithmic applications of connectivity and related topics in matroid theory. Ph.D. Thesis, Northwestern university, 1987.
+- [BC1977]_
+- [Cun1986]_
+- [CMO2011]_
+- [CMO2012]_
+- [GG2012]_
+- [GR2001]_
+- [Hli2006]_
+- [Hoc]_
+- [Lyo2003]_
+- [Oxl1992]_
+- [Oxl2011]_
+- [Pen2012]_
+- [PvZ2010]_
+- [Raj1987]_
 
 AUTHORS:
 
@@ -1133,7 +1130,7 @@ cdef class Matroid(SageObject):
         .. TODO::
 
             This important method can (and should) be optimized considerably.
-            See [Hlineny]_ p.1219 for hints to that end.
+            See [Hli2006]_ p.1219 for hints to that end.
         """
         if self is N:
             if certificate:
@@ -1521,7 +1518,7 @@ cdef class Matroid(SageObject):
             [1, 2]
 
             sage: Q = RootSystem(['D',4]).root_lattice()
-            sage: m = matrix(map(lambda x: x.to_vector(), Q.positive_roots()))
+            sage: m = matrix([x.to_vector() for x in Q.positive_roots()])
             sage: m = m.transpose(); m
             [1 0 0 0 1 0 0 0 1 1 1 1]
             [0 1 0 0 1 1 1 1 1 1 1 2]
@@ -2021,7 +2018,7 @@ cdef class Matroid(SageObject):
             True
 
             sage: Q = RootSystem(['D',4]).root_lattice()
-            sage: m = matrix(map(lambda x: x.to_vector(), Q.positive_roots()))
+            sage: m = matrix([x.to_vector() for x in Q.positive_roots()])
             sage: m = m.transpose(); m
             [1 0 0 0 1 0 0 0 1 1 1 1]
             [0 1 0 0 1 1 1 1 1 1 1 2]
@@ -2310,7 +2307,7 @@ cdef class Matroid(SageObject):
             True
 
         The following is the 'Escher matroid' by Brylawski and Kelly. See
-        Example 1.5.5 in [Oxley]_ ::
+        Example 1.5.5 in [Oxl2011]_ ::
 
             sage: M = Matroid(circuit_closures={2: [[1, 2, 3], [1, 4, 5]],
             ....: 3: [[1, 2, 3, 4, 5], [1, 2, 3, 6, 7], [1, 4, 5, 6, 7]]})
@@ -3027,10 +3024,7 @@ cdef class Matroid(SageObject):
 
         REFERENCE:
 
-        .. [DLHK2007] \J. A. De Loera, D. C. Haws, M. Köppe, Ehrhart polynomials
-          of matroid polytopes and polymatroids. Discrete & Computational
-          Geometry, Volume 42, Issue 4. :arxiv:`0710.4346`,
-          :doi:`10.1007/s00454-008-9120-8`
+        - [DLHK2007]_
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         from sage.modules.free_module import FreeModule
@@ -3941,7 +3935,7 @@ cdef class Matroid(SageObject):
         .. TODO::
 
             This important method can (and should) be optimized considerably.
-            See [Hlineny]_ p.1219 for hints to that end.
+            See [Hli2006]_ p.1219 for hints to that end.
 
         EXAMPLES::
 
@@ -4215,7 +4209,7 @@ cdef class Matroid(SageObject):
         `C` for which closure`(S) \in C` for all `S` in ``subsets``.
 
         There is a one-to-one correspondence between the modular cuts of a
-        matroid and the single-element extensions of the matroid. See [Oxley]_
+        matroid and the single-element extensions of the matroid. See [Oxl2011]_
         Section 7.2 for more information.
 
         .. NOTE::
@@ -4223,7 +4217,7 @@ cdef class Matroid(SageObject):
             Sage uses linear subclasses, rather than modular cuts, internally
             for matroid extension. A linear subclass is the set of hyperplanes
             (flats of rank `r(M) - 1`) of a modular cut. It determines the
-            modular cut uniquely (see [Oxley]_ Section 7.2).
+            modular cut uniquely (see [Oxl2011]_ Section 7.2).
 
         INPUT:
 
@@ -4301,7 +4295,7 @@ cdef class Matroid(SageObject):
         :meth:`modular cut <sage.matroids.matroid.Matroid.modular_cut>` and
         uniquely determines the modular cut. Hence the collection of linear
         subclasses is in 1-to-1 correspondence with the collection of
-        single-element extensions of a matroid. See [Oxley]_, section 7.2.
+        single-element extensions of a matroid. See [Oxl2011]_, section 7.2.
 
         INPUT:
 
@@ -5073,10 +5067,10 @@ cdef class Matroid(SageObject):
           to compute 3-connectivity:
 
           - ``None`` -- The most appropriate algorithm is chosen automatically.
-          - ``"bridges"`` -- Bixby and Cunningham's algorithm, based on bridges [BC79]_.
+          - ``"bridges"`` -- Bixby and Cunningham's algorithm, based on bridges [BC1977]_.
             Note that this cannot return a separator.
           - ``"intersection"`` -- An algorithm based on matroid intersection.
-          - ``"shifting"`` -- An algorithm based on the shifting algorithm [Rajan]_.
+          - ``"shifting"`` -- An algorithm based on the shifting algorithm [Raj1987]_.
 
         OUTPUT:
 
@@ -5090,10 +5084,10 @@ cdef class Matroid(SageObject):
 
         ALGORITHM:
 
-        - Bridges based: The 3-connectivity algorithm from [BC79]_ which runs in `O((r(E))^2|E|)` time.
+        - Bridges based: The 3-connectivity algorithm from [BC1977]_ which runs in `O((r(E))^2|E|)` time.
         - Matroid intersection based: Evaluates the connectivity between `O(|E|^2)` pairs of disjoint
           sets `S`, `T` with `|S| = |T| = 2`.
-        - Shifting algorithm: The shifting algorithm from [Rajan]_ which runs in `O((r(E))^2|E|)` time.
+        - Shifting algorithm: The shifting algorithm from [Raj1987]_ which runs in `O((r(E))^2|E|)` time.
 
         EXAMPLES::
 
@@ -5154,7 +5148,7 @@ cdef class Matroid(SageObject):
           - ``None`` -- The most appropriate algorithm is chosen automatically.
           - ``"intersection"`` -- an algorithm based on matroid intersection, equivalent
             to calling ``is_kconnected(4,certificate)``.
-          - ``"shifting"`` -- an algorithm based on the shifting algorithm [Rajan]_.
+          - ``"shifting"`` -- an algorithm based on the shifting algorithm [Raj1987]_.
 
         OUTPUT:
 
@@ -5669,7 +5663,7 @@ cdef class Matroid(SageObject):
 
         ALGORITHM:
 
-        The 3-connectivity algorithm from [BC79]_ which runs in `O((r(E))^2|E|)` time.
+        The 3-connectivity algorithm from [BC1977]_ which runs in `O((r(E))^2|E|)` time.
 
         EXAMPLES::
 
@@ -6143,7 +6137,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: PR = RootSystem(['A',4]).root_lattice().positive_roots()
-            sage: m = matrix(map(lambda x: x.to_vector(), PR)).transpose()
+            sage: m = matrix([x.to_vector() for x in PR]).transpose()
             sage: M = Matroid(m)
             sage: M.is_k_closed(3)
             True
@@ -6151,7 +6145,7 @@ cdef class Matroid(SageObject):
             True
 
             sage: PR = RootSystem(['D',4]).root_lattice().positive_roots()
-            sage: m = matrix(map(lambda x: x.to_vector(), PR)).transpose()
+            sage: m = matrix([x.to_vector() for x in PR]).transpose()
             sage: M = Matroid(m)
             sage: M.is_k_closed(3)
             False
@@ -7043,7 +7037,7 @@ cdef class Matroid(SageObject):
         ALGORITHM:
 
         A blocking flow based algorithm which performs well if the size of
-        the intersection is large [Cunningham]_.
+        the intersection is large [Cun1986]_.
 
         EXAMPLES::
 
@@ -7221,7 +7215,7 @@ cdef class Matroid(SageObject):
 
         Reduce partition to a matroid intersection between a matroid sum 
         and a partition matroid. It's known the direct method doesn't gain
-        much advantage over matroid intersection. [Cunningham86]
+        much advantage over matroid intersection. [Cun1986]
         """
         from sage.matroids.union_matroid import MatroidSum, PartitionMatroid
         if self.loops():
@@ -7480,7 +7474,7 @@ cdef class Matroid(SageObject):
             (A23, A23, A23)
             sage: A23 = A.gen(0)
             sage: A23*A23
-            A23^2
+            0
 
         We construct a more interesting example using the Fano matroid::
 
@@ -7492,22 +7486,26 @@ cdef class Matroid(SageObject):
 
         Next we get the non-trivial generators and do some computations::
 
-            sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = A.gens()[6:]
+            sage: G = A.gens()[6:]
+            sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G
             sage: Ag * Ag
-            Ag^2
-            sage: Ag * Aace
-            Aace^2 - Abcd*Abeg - Abeg*Acfg - Aadg*Adef + Abcd*Adef + Abeg*Adef
-            sage: Aace * Adef
-            Aadg*Adef + Abcd*Adef - Abeg*Adef
+            2*Adef^2
+            sage: Ag * Abeg
+            -Adef^2
+            sage: matrix([[x * y for x in G] for y in G])
+            [2*Adef^2        0        0  -Adef^2        0  -Adef^2  -Adef^2        0]
+            [       0   Adef^2        0        0        0        0        0        0]
+            [       0        0   Adef^2        0        0        0        0        0]
+            [ -Adef^2        0        0   Adef^2        0        0        0        0]
+            [       0        0        0        0   Adef^2        0        0        0]
+            [ -Adef^2        0        0        0        0   Adef^2        0        0]
+            [ -Adef^2        0        0        0        0        0   Adef^2        0]
+            [       0        0        0        0        0        0        0   Adef^2]
 
         REFERENCES:
 
-        .. [FY04] Eva Maria Feichtner and Sergey Yuzvinsky.
-           *Chow rings of toric varieties defined by atomic lattices*.
-           Inventiones Mathematicae. **155** (2004), no. 3, pp. 515-536.
-
-        .. [AHK15] Karim Adiprasito, June Huh, and Eric Katz.
-           *Hodge theory for combinatorial geometries*. :arxiv:`1511.02888`.
+        - [FY2004]_
+        - [AHK2015]_
         """
         # Setup
         if R is None:
@@ -7532,7 +7530,7 @@ cdef class Matroid(SageObject):
         gens = P.gens()
         # Create the ideal of quadratic relations
         Q = [gens[i] * gens[i+j+1] for i,F in enumerate(flats)
-             for j,G in enumerate(flats[i+1:]) if F < G or G < F]
+             for j,G in enumerate(flats[i+1:]) if not (F < G or G < F)]
         # Create the ideal of linear relations
         L = [sum(gens[i] for i in flats_containing[x])
              - sum(gens[i] for i in flats_containing[y])
@@ -7581,7 +7579,7 @@ cdef class Matroid(SageObject):
         # check sanity of pos_dict and add it to cached info if sane
             if matroids_plot_helpers.posdict_is_sane(self, pos_dict) == True: 
                 self._cached_info={'plot_positions':pos_dict, 'lineorders':lineorders}
-        # placeholder for aditional placement methods. Only need to compute positions and update self._cached_info
+        # placeholder for additional placement methods. Only need to compute positions and update self._cached_info
         elif pos_method == 2:
             raise NotImplementedError
 

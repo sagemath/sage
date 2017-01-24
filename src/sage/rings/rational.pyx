@@ -59,17 +59,17 @@ import sage.rings.rational_field
 cimport integer
 from integer cimport Integer
 
-import sage.libs.pari.pari_instance
-from sage.libs.pari.paridecl cimport *
-from sage.libs.pari.gen cimport gen as pari_gen
-from sage.libs.pari.pari_instance cimport PariInstance, INT_to_mpz, INTFRAC_to_mpq
+from sage.libs.cypari2.paridecl cimport *
+from sage.libs.cypari2.gen cimport gen as pari_gen
+from sage.libs.pari.convert_gmp cimport INT_to_mpz, INTFRAC_to_mpq, new_gen_from_mpq_t
 
 from integer_ring import ZZ
-from sage.libs.gmp.rational_reconstruction cimport mpq_rational_reconstruction
+from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
 
 from sage.structure.coerce cimport is_numpy_type
 from sage.structure.element cimport Element, RingElement, ModuleElement, coercion_model
 from sage.structure.element import bin_op, coerce_binop
+from sage.structure.parent cimport Parent
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
 
@@ -143,8 +143,7 @@ cdef Rational_sub_(Rational self, Rational other):
 
     return x
 
-cdef object the_rational_ring
-the_rational_ring = sage.rings.rational_field.Q
+cdef Parent the_rational_ring = sage.rings.rational_field.Q
 
 # make sure zero/one elements are set
 cdef set_zero_one_elements():
@@ -157,12 +156,13 @@ set_zero_one_elements()
 cpdef Integer integer_rational_power(Integer a, Rational b):
     """
     Compute `a^b` as an integer, if it is integral, or return ``None``.
-    The positive real root is taken for even denominators.
+
+    The nonnegative real root is taken for even denominators.
 
     INPUT:
 
     - a -- an ``Integer``
-    - b -- a positive ``Rational``
+    - b -- a nonnegative ``Rational``
 
     OUTPUT:
 
@@ -197,18 +197,26 @@ cpdef Integer integer_rational_power(Integer a, Rational b):
         True
         sage: integer_rational_power(-1, 9/8) is None
         True
+
+    TESTS (:trac:`11228`)::
+
+        sage: integer_rational_power(-10, QQ(2))
+        100
+        sage: integer_rational_power(0, QQ(0))
+        1
     """
     cdef Integer z = <Integer>PY_NEW(Integer)
     if mpz_sgn(mpq_numref(b.value)) < 0:
         raise ValueError("Only positive exponents supported.")
     cdef int sgn = mpz_sgn(a.value)
     cdef bint exact
-    if sgn == 0:
-        pass # z is 0
-    elif sgn < 0:
-        return None
-    elif mpz_cmp_ui(a.value, 1) == 0:
+    if (mpz_cmp_ui(a.value, 1) == 0 or
+          mpz_cmp_ui(mpq_numref(b.value), 0) == 0):
         mpz_set_ui(z.value, 1)
+    elif sgn == 0:
+        pass # z is 0
+    elif sgn < 0 and mpz_cmp_ui(mpq_denref(b.value), 1):
+        return None
     else:
         if (not mpz_fits_ulong_p(mpq_numref(b.value))
             or not mpz_fits_ulong_p(mpq_denref(b.value))):
@@ -261,6 +269,27 @@ cpdef rational_power_parts(a, b, factor_limit=10**5):
         2/3*sqrt(3)
         sage: t^2
         4/3
+
+    Check if :trac:`15605` is fixed::
+
+        sage: rational_power_parts(-1, -1/3)
+        (1, -1)
+        sage: (-1)^(-1/3)
+        -(-1)^(2/3)
+        sage: 1 / ((-1)^(1/3))
+        -(-1)^(2/3)
+        sage: rational_power_parts(-1, 2/3)
+        (1, -1)
+        sage: (-1)^(2/3)
+        (-1)^(2/3)
+        sage: all(rational_power_parts(-1, i/77) == (1,-1) for i in range(1,9))
+        True
+        sage: (-1)^(1/3)*(-1)^(1/5)
+        (-1)^(8/15)
+        sage: bool((-1)^(2/3) == -1/2 + sqrt(3)/2*I)
+        True
+        sage: all((-1)^(p/q) == cos(p*pi/q) + I * sin(p*pi/q) for p in srange(1,6) for q in srange(1,6))
+        True
     """
     b_negative=False
     if b < 0:
@@ -277,6 +306,8 @@ cpdef rational_power_parts(a, b, factor_limit=10**5):
     if c is not None:
         return c, 1
     numer, denom = b.numerator(), b.denominator()
+    if a == -1 and denom > 1:
+        return 1, -1
     if a < factor_limit*factor_limit:
         f = a.factor()
     else:
@@ -1304,7 +1335,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
     def _bnfisnorm(self, K, proof=True, extra_primes=0):
         r"""
-        This gives the output of the PARI function bnfisnorm.
+        This gives the output of the PARI function :pari:`bnfisnorm`.
 
         Tries to tell whether the rational number ``self`` is the norm of some
         element `y` in ``K``. Returns a pair `(a, b)` where
@@ -2551,9 +2582,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: (-4/17).__nonzero__()
-            True
-            sage: (0/5).__nonzero__()
+            sage: bool(0/5)
             False
             sage: bool(-4/17)
             True
@@ -3504,12 +3533,11 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: m = n._pari_(); m
             9390823/17
             sage: type(m)
-            <type 'sage.libs.pari.gen.gen'>
+            <type 'sage.libs.cypari2.gen.gen'>
             sage: m.type()
             't_FRAC'
         """
-        cdef PariInstance P = sage.libs.pari.pari_instance.pari
-        return P.new_gen_from_mpq_t(self.value)
+        return new_gen_from_mpq_t(self.value)
 
     def _interface_init_(self, I=None):
         """

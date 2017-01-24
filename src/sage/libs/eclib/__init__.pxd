@@ -1,6 +1,6 @@
 # distutils: language = c++
 # distutils: extra_compile_args = -DNTL_ALL
-# distutils: libraries = ec ntl pari gmpxx gmp m
+# distutils: libraries = ec ntl pari gmp m
 
 # NOTE: eclib includes have specific dependencies and must be included
 # in a specific order. That explains the various empty

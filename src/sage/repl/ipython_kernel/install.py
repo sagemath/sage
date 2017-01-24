@@ -10,7 +10,7 @@ import os
 import errno
 
 from sage.env import (
-    SAGE_ROOT, SAGE_DOC, SAGE_LOCAL, SAGE_EXTCODE,
+    SAGE_DOC, SAGE_LOCAL, SAGE_EXTCODE,
     SAGE_VERSION
 )
 from jupyter_core.paths import ENV_JUPYTER_PATH
@@ -151,7 +151,7 @@ class SageKernelSpec(object):
              '{connection_file}']
         """
         return [
-            os.path.join(SAGE_ROOT, 'sage'),
+            os.path.join(SAGE_LOCAL, 'bin', 'sage'),
             '--python',
             '-m', 'sage.repl.ipython_kernel',
             '-f', '{connection_file}',

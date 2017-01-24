@@ -426,7 +426,7 @@ cdef class RealIntervalField_class(sage.rings.ring.Field):
     ::
 
         sage: def check(x):
-        ...       return (x, x.lower() == x.upper())
+        ....:     return (x, x.lower() == x.upper())
         sage: check(RIF(pi))
         (3.141592653589794?, False)
         sage: check(RIF(RR(pi)))
@@ -3137,9 +3137,9 @@ cdef class RealIntervalFieldElement(RingElement):
         elif field.rnd == MPFR_RNDU:
             mpfi_get_right(x.value, self.value)
         elif field.rnd == MPFR_RNDZ:
-            if mpfi_is_strictly_pos_default(self.value):    # interval is > 0
+            if mpfi_is_strictly_pos(self.value):    # interval is > 0
                 mpfi_get_left(x.value, self.value)
-            elif mpfi_is_strictly_neg_default(self.value):  # interval is < 0
+            elif mpfi_is_strictly_neg(self.value):  # interval is < 0
                 mpfi_get_right(x.value, self.value)
             else:
                 mpfr_set_zero(x.value, 1)                   # interval contains 0
@@ -3737,15 +3737,15 @@ cdef class RealIntervalFieldElement(RingElement):
 
         EXAMPLES::
 
-            sage: RIF(0).__nonzero__()
+            sage: bool(RIF(0))
             False
-            sage: RIF(1).__nonzero__()
+            sage: bool(RIF(1))
             True
-            sage: RIF(1, 2).__nonzero__()
+            sage: bool(RIF(1, 2))
             True
-            sage: RIF(0, 1).__nonzero__()
+            sage: bool(RIF(0, 1))
             True
-            sage: RIF(-1, 1).__nonzero__()
+            sage: bool(RIF(-1, 1))
             True
         """
         return not (mpfr_zero_p(&self.value.left) and mpfr_zero_p(&self.value.right))
@@ -5245,11 +5245,11 @@ def RealInterval(s, upper=None, int base=10, int pad=0, min_prec=53):
 
         sage: ks = 5*10**5, 10**6
         sage: for k in ks:
-        ...      try:
-        ...          z = RealInterval("1." + "1"*k)
-        ...          assert len(str(z))-4 >= k
-        ...      except TypeError:
-        ...          pass
+        ....:    try:
+        ....:        z = RealInterval("1." + "1"*k)
+        ....:        assert len(str(z))-4 >= k
+        ....:    except TypeError:
+        ....:        pass
 
     """
     if not isinstance(s, str):

@@ -254,6 +254,11 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         sage: q_binomial(4, 2, Zmod(6)(2), algorithm='naive')
         5
 
+    Check that it works with Python integer for ``q``::
+
+        sage: q_binomial(3r, 2r, 1r)
+        3
+
     REFERENCES:
 
     .. [CH2006] William Y.C. Chen and Qing-Hu Hou, *Factors of the Gaussian
@@ -280,8 +285,14 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         is_polynomial = isinstance(q, Polynomial)
 
     R = parent(q)
-    zero = R.zero()
-    one = R.one()
+    try:
+        zero = R.zero()
+    except AttributeError:
+        zero = R('0')
+    try:
+        one = R.one()
+    except AttributeError:
+        one = R('1')
 
     if not(0 <= k and k <= n):
         return zero
@@ -312,6 +323,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
     if algorithm == 'naive':
         denom = prod(one - q**i for i in range(1, k+1))
         if not denom: # q is a root of unity, use the cyclotomic algorithm
+            from sage.rings.polynomial.cyclotomic import cyclotomic_value
             return cyclotomic_value(n, k, q, algorithm='cyclotomic')
         else:
             num = prod(one - q**i for i in range(n-k+1, n+1))
@@ -563,7 +575,7 @@ def q_subgroups_of_abelian_group(la, mu, q=None, algorithm='birkhoff'):
 
     - ``la`` -- type of the ambient group as a :class:`Partition`
     - ``mu`` -- type of the subgroup as a :class:`Partition`
-    - ``q`` -- (default: ``None``) an indeterminat or a prime number; if
+    - ``q`` -- (default: ``None``) an indeterminate or a prime number; if
       ``None``, this defaults to `q \in \ZZ[q]`
     - ``algorithm`` -- (default: ``'birkhoff'``) the algorithm to use can be
       one of the following:

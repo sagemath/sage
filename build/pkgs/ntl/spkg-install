@@ -19,45 +19,14 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
-CUR=`pwd`
-
-ntl_libtool()
-{
-    echo "Generating libtool."
-
-    cd "$CUR/src/libtool"
-
-    ./configure
-
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error generating libtool."
-        exit 1
-    fi
-}
-
-ntl_patch()
-{
-    echo
-    echo "Applying patches to NTL."
-
-    cd "$CUR/src"
-
-    # Apply all patches
-    for patch in ../patches/*.patch; do
-        patch -p1 < "$patch"
-        if [ $? -ne 0 ]; then
-            echo >&2 "Error applying '$patch'."
-            exit 1
-        fi
-    done
-}
+SRC=`pwd`/src/src
 
 ntl_configure()
 {
     echo
     echo "Configuring NTL."
 
-    cd "$CUR/src/ntl/src"
+    cd "$SRC"
 
     # Run the configure script, setting CC, CXX, CFLAGS etc as needed.
     # This ensures that they get written by DoConfig into 'makefile'.
@@ -128,25 +97,24 @@ ntl_configure()
 
         if $assembler_ok; then
             echo "Configuring NTL with NATIVE=on since the assembler appears to"
-            echo "be recent enough to support the instructions Sage's GCC emits." 
+            echo "be recent enough to support the instructions Sage's GCC emits."
             DISABLE_NATIVE="NATIVE=on"
         else
             echo "Configuring NTL with NATIVE=off since we're using Sage's GCC"
-            echo "and the assembler might not support all instructions GCC emits." 
+            echo "and the assembler might not support all instructions GCC emits."
             DISABLE_NATIVE="NATIVE=off"
         fi
     else
         echo "Configuring NTL with NATIVE=on (NTL might still disable it)."
         DISABLE_NATIVE="NATIVE=on"
     fi
-    
+
     ./configure DEF_PREFIX="$SAGE_LOCAL" SHARED=on \
         CXX="$CXX" CXXFLAGS="$CXXFLAGS $SHAREDFLAGS" \
         LDFLAGS="$LDFLAGS" LIBTOOL_LINK_FLAGS="$LIBTOOL_LINK_FLAGS" \
         NTL_GMP_LIP=on NTL_GF2X_LIB=on \
         "$DISABLE_NATIVE" \
-        NTL_THREADS=off \
-        LIBTOOL="$CUR/src/libtool/libtool"
+        NTL_THREADS=off
 
     if [ $? -ne 0 ]; then
         echo >&2 "Error configuring NTL."
@@ -159,7 +127,7 @@ ntl_build()
     echo
     echo "Tuning and building NTL."
 
-    cd "$CUR/src/ntl/src"
+    cd "$SRC"
 
     $MAKE
 
@@ -179,7 +147,7 @@ ntl_install()
     echo
     echo "Installing NTL."
 
-    cd "$CUR/src/ntl/src"
+    cd "$SRC"
 
     $MAKE install
 
@@ -194,8 +162,6 @@ ntl_install()
     touch "$SAGE_LOCAL"/include/NTL/*
 }
 
-ntl_patch
-ntl_libtool
 ntl_configure
 ntl_build
 ntl_install

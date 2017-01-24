@@ -21,11 +21,11 @@ def python(z, locals=None):
 
         sage: from sage.libs.pari.gen_py import python
         sage: python(pari(3))
-        doctest:...: DeprecationWarning: gen_py.python is deprecated, use sage.libs.pari.gen.gentoobj or the .python() method instead
+        doctest:...: DeprecationWarning: gen_py.python is deprecated, use sage.libs.cypari2.gen.gentoobj or the .python() method instead
         See http://trac.sagemath.org/19888 for details.
         3
     """
     from sage.misc.superseded import deprecation
-    deprecation(19888, 'gen_py.python is deprecated, use sage.libs.pari.gen.gentoobj or the .python() method instead')
-    from sage.libs.pari.gen import gentoobj
+    deprecation(19888, 'gen_py.python is deprecated, use sage.libs.cypari2.gen.gentoobj or the .python() method instead')
+    from sage.libs.cypari2.gen import gentoobj
     return gentoobj(z, locals)

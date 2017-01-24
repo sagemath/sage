@@ -464,6 +464,7 @@ this data.
 #*****************************************************************************
 from __future__ import print_function, absolute_import
 
+from six.moves import range
 from six.moves.builtins import sorted
 from six import class_types
 
@@ -2011,11 +2012,11 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         and :meth:`.special_node` are consistent::
 
             sage: for ct in CartanType.samples(affine = True):
-            ...       g1 = ct.classical().dynkin_diagram()
-            ...       g2 = ct.dynkin_diagram()
-            ...       g2.delete_vertex(ct.special_node())
-            ...       assert sorted(g1.vertices()) == sorted(g2.vertices())
-            ...       assert sorted(g1.edges()) == sorted(g2.edges())
+            ....:     g1 = ct.classical().dynkin_diagram()
+            ....:     g2 = ct.dynkin_diagram()
+            ....:     g2.delete_vertex(ct.special_node())
+            ....:     assert sorted(g1.vertices()) == sorted(g2.vertices())
+            ....:     assert sorted(g1.edges()) == sorted(g2.edges())
 
         """
 
@@ -2453,6 +2454,7 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
 
             sage: TestSuite(ct).run(verbose = True)
             running ._test_category() . . . pass
+            running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
         """

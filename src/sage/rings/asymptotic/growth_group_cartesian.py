@@ -336,11 +336,10 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
              x^(2/3)*log(x)^(-4)*(-2/3)^y,
              x^(-2/3)*log(x)^5*(3/2)^y)
         """
-        from itertools import izip
+        from builtins import zip
         return iter(
             self(c) for c in
-            izip(*tuple(F.some_elements() for F in self.cartesian_factors())))
-
+            zip(*tuple(F.some_elements() for F in self.cartesian_factors())))
 
     def _create_element_in_extension_(self, element):
         r"""

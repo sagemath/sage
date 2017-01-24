@@ -3,7 +3,8 @@ Interacts for Algebra and Number Theory
 
 AUTHORS:
 
-- Harald Schilly (2011-01-16): initial version (#9623) partially based on work by Lauri Ruotsalainen
+- Harald Schilly (2011-01-16): initial version (:trac:`9623`)
+  partially based on work by Lauri Ruotsalainen
 
 """
 from __future__ import absolute_import

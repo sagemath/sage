@@ -70,14 +70,7 @@ SCIP_VERSION=`echo "$SCIP_DIR" | sed -e "s/.*-//"`
 
 # Apply patches to SCIP.
 cd $SCIP_DIR
-for patch in $SPKGDIR/patches/scip/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
+sage-apply-patches $SPKGDIR/patches/scip || exit $?
 
 echo "Compiling SoPlex"
 
@@ -143,7 +136,7 @@ fi
 
 cd $SRC/$SCIP_DIR
 # for clp add the option LPS=clp
-## added -rpath.  Abusing LIBBUILD_o is of course a hack. 
+## added -rpath.  Abusing LIBBUILD_o is of course a hack.
 $MAKE OPT=$OPT LPSOPT=$OPT VERBOSE=true SHARED=true ZIMPL=false GMP=true ZLIB=true READLINE=true \
      USRCFLAGS="$CFLAGS" USRCXXFLAGS="$CXXFLAGS" USRLDFLAGS="$LDFLAGS" \
      LIBBUILD_o="-Wl,-rpath,$SAGE_LOCAL/lib -lgmp -lz -lreadline -o " \

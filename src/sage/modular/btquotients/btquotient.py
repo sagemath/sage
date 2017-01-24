@@ -9,11 +9,35 @@
 r"""
 Quotients of the Bruhat-Tits tree
 
-Compute quotients and fundamental domains of the Bruhat-Tits tree
+This package contains all the functionality described and developed in [FM]_.
+It allows for computations with fundamental domains of the Bruhat-Tits tree,
 under the action of arithmetic groups arising from units in definite
 quaternion algebras.
+
+EXAMPLES:
+
+Create the quotient attached to a maximal order of the quaternion algebra of
+discriminant `13`, at the prime `p = 5`.
+::
+
+    sage: Y = BruhatTitsQuotient(5, 13)
+
+We can query for its genus, as well as get it back as a graph::
+
+    sage: Y.genus()
+    5
+    sage: Y.get_graph()
+    Multi-graph on 2 vertices
+
+The rest of functionality can be found in the docstrings below.
+
+REFERENCES:
+
+.. [FM] Computing fundamental domains for the Bruhat-Tits tree for `\textrm{GL}_2(\QQ_p)`,
+   `p`-adic automorphic forms, and the canonical embedding of Shimura curves
+   Cameron Franc, Marc Masdeu
+   LMS Journal of Computation and Mathematics (2014), volume 17, issue 01, pp. 1-23.
 """
-# mm TODO longer docstring at the start.
 
 from __future__ import print_function
 from __future__ import absolute_import
@@ -163,9 +187,9 @@ class DoubleCosetReduction(SageObject):
             sage: Y = BruhatTitsQuotient(5, 13)
             sage: x = Matrix(ZZ,2,2,[123,153,1231,1231])
             sage: DoubleCosetReduction(Y,x)
-            DoubleCosetReduction
+            Double coset data (-1, [(4), (5), (-4), (-4)], 8)
         """
-        return "DoubleCosetReduction" ## mm TODO could be better
+        return "Double coset data (%s, %s, %s)"%(self.sign(), list(self.gamma), self.label)
 
     def __cmp__(self, other):
         """
@@ -258,14 +282,14 @@ class DoubleCosetReduction(SageObject):
         INPUT:
 
         - ``embedding`` - an integer, or a function (default:
-            none). If ``embedding`` is None, then the image of
-            ``self.gamma`` under the local splitting associated to
-            ``self.Y`` is used. If ``embedding`` is an integer, then
-            the precision of the local splitting of self.Y is raised
-            (if necessary) to be larger than this integer, and this
-            new local splitting is used. If a function is passed, then
-            map ``self.gamma`` under ``embedding``.
-        - ``scale`` -- ## mm TODO
+          none). If ``embedding`` is None, then the image of
+          ``self.gamma`` under the local splitting associated to
+          ``self.Y`` is used. If ``embedding`` is an integer, then
+          the precision of the local splitting of self.Y is raised
+          (if necessary) to be larger than this integer, and this
+          new local splitting is used. If a function is passed, then
+          map ``self.gamma`` under ``embedding``.
+        - ``scale`` -- (default: 1) scaling factor applied to the output
 
         OUTPUT:
 
@@ -445,7 +469,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         - ``e`` - a 2x2 matrix with integer entries
 
         - ``normalized`` - boolean (default: false). If True
-            then the input matrix M is assumed to be normalized
+          then the input matrix M is assumed to be normalized
 
         OUTPUT:
 
@@ -635,7 +659,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         """
         try:
             return self._edges_leaving_origin
-        except:
+        except AttributeError:
             p = self._p
             self._edges_leaving_origin = [self.edge(self._Mat_22([0, -1, p, 0]))]
             self._edges_leaving_origin.extend([self.edge(self._Mat_22([p, i, 0, 1])) for i in range(p)])
@@ -776,7 +800,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
     def subdivide(self, edgelist, level):
         r"""
         (Ordered) edges of self may be regarded as open balls in
-        `P_1(\QQ_p)`.  Given a list of edges, this function return a list
+        `P^1(\QQ_p)`.  Given a list of edges, this function return a list
         of edges corresponding to the level-th subdivision of the
         corresponding opens.  That is, each open ball of the input is
         broken up into `p^{\mbox{level}}` subballs of equal radius.
@@ -918,7 +942,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``z`` - an element of an unramified extension of `\QQ_p`
-            that is not contained in `\QQ_p`.
+          that is not contained in `\QQ_p`.
 
         OUTPUT:
 
@@ -1072,24 +1096,24 @@ class Vertex(SageObject):
 
     INPUT:
 
-     - ``p`` - a prime integer.
+    - ``p`` - a prime integer.
 
-     - ``label`` - An integer which uniquely identifies this vertex.
+    - ``label`` - An integer which uniquely identifies this vertex.
 
-     - ``rep`` - A 2x2 matrix in reduced form representing this
-       vertex.
+    - ``rep`` - A 2x2 matrix in reduced form representing this
+      vertex.
 
-     - ``leaving_edges`` - (default: empty list) A list of edges
-       leaving this vertex.
+    - ``leaving_edges`` - (default: empty list) A list of edges
+      leaving this vertex.
 
-     - ``entering_edges`` - (default: empty list) A list of edges
-       entering this vertex.
+    - ``entering_edges`` - (default: empty list) A list of edges
+      entering this vertex.
 
-     - ``determinant`` - (default: None) The determinant of ``rep``,
-       if known.
+    - ``determinant`` - (default: None) The determinant of ``rep``,
+      if known.
 
-     - ``valuation`` - (default: None) The valuation of the
-       determinant of ``rep``, if known.
+    - ``valuation`` - (default: None) The valuation of the
+      determinant of ``rep``, if known.
 
     EXAMPLES::
 
@@ -1189,27 +1213,27 @@ class Edge(SageObject):
 
     INPUT:
 
-     - ``p`` - a prime integer.
+    - ``p`` - a prime integer.
 
-     - ``label`` - An integer which uniquely identifies this edge.
+    - ``label`` - An integer which uniquely identifies this edge.
 
-     - ``rep`` - A 2x2 matrix in reduced form representing this edge.
+    - ``rep`` - A 2x2 matrix in reduced form representing this edge.
 
-     - ``origin`` - The origin vertex of ``self``.
+    - ``origin`` - The origin vertex of ``self``.
 
-     - ``target`` - The target vertex of ``self``.
+    - ``target`` - The target vertex of ``self``.
 
-     - ``links`` - (Default: empty list) A list of elements of
-       `\Gamma` which identify different edges in the Bruhat-Tits tree
-       which are equivalent to ``self``.
+    - ``links`` - (Default: empty list) A list of elements of
+      `\Gamma` which identify different edges in the Bruhat-Tits tree
+      which are equivalent to ``self``.
 
-     - ``opposite`` - (Default: None) The edge opposite to ``self``
+    - ``opposite`` - (Default: None) The edge opposite to ``self``
 
-     - ``determinant`` - (Default: None) The determinant of ``rep``,
-       if known.
+    - ``determinant`` - (Default: None) The determinant of ``rep``,
+      if known.
 
-     - ``valuation`` - (Default: None) The valuation of the
-       determinant of ``rep``, if known.
+    - ``valuation`` - (Default: None) The valuation of the
+      determinant of ``rep``, if known.
 
     EXAMPLES::
 
@@ -1324,7 +1348,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
     group of norm 1 elements in an Eichler `\ZZ[1/p]`-order of some (tame)
     level inside of a definite quaternion algebra that is unramified
     at the prime `p`. Note that this routine relies in Magma in the case
-    `p = 2` or when `Nplus > 1`.
+    `p = 2` or when `N^{+} > 1`.
 
     INPUT:
 
@@ -1344,8 +1368,11 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
     - ``character`` - a Dirichlet character (Default: None) of modulus
       `pN^-N^+`.
 
-    - ``use_magma`` - boolean (default: False). If True, uses magma
+    - ``use_magma`` - boolean (default: False). If True, uses Magma
       for quaternion arithmetic.
+
+    - ``magma_session`` -- (default: None). If specified, the Magma session
+      to use.
 
     EXAMPLES:
 
@@ -1375,7 +1402,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
     """
     @staticmethod
     def __classcall__(cls, p, Nminus, Nplus=1, character=None,
-                      use_magma=False, seed=None):
+                      use_magma=False, seed=None, magma_session=None):
         """
         Ensure that a canonical BruhatTitsQuotient is created.
 
@@ -1385,10 +1412,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             True
         """
         return super(BruhatTitsQuotient, cls).__classcall__(cls, p, Nminus, Nplus,
-                                                    character, use_magma, seed)
+               character, use_magma, seed, magma_session)
 
     def __init__(self, p, Nminus, Nplus=1, character=None,
-                 use_magma=False, seed=None):
+                 use_magma=False, seed=None, magma_session=None):
         """
         Compute the quotient of the Bruhat-Tits tree by an arithmetic
         quaternionic group.
@@ -1430,7 +1457,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         self._Nplus = Nplus
         if use_magma or self._Nplus != 1 or self._p == 2:
             try:
-                self._magma = magma
+                if magma_session is None:
+                    self._magma = magma
+                else:
+                    self._magma = magma_session
                 magmap = self._magma(p)
                 # print("Warning: this input needs magma to work...")
             except RuntimeError:
@@ -1679,7 +1709,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Compute certain invariants from the level data of the quotient
         which allow one to compute the genus of the curve.
 
-        ## Reference: Theorem 9 of our paper "Computing fundamental domains for the Bruhat-Tits tree for GL2 (Qp ), p-adic automorphic forms, and the canonical embedding of Shimura curves". ##mm TODO
+        Details to be found in Theorem 9 of [FM]_.
 
         EXAMPLES::
 
@@ -1718,7 +1748,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Compute the `e_3` invariant defined by the formula
 
-        .. math::
+        .. MATH::
 
            e_k =\prod_{\ell\mid pN^-}\left(1-\left(\frac{-3}{\ell}\right)\right)\prod_{\ell \| N^+}\left(1+\left(\frac{-3}{\ell}\right)\right)\prod_{\ell^2\mid N^+} \nu_\ell(3)
 
@@ -1740,7 +1770,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Compute the `e_4` invariant defined by the formula
 
-        .. math::
+        .. MATH::
 
            e_k =\prod_{\ell\mid pN^-}\left(1-\left(\frac{-k}{\ell}\right)\right)\prod_{\ell \| N^+}\left(1+\left(\frac{-k}{\ell}\right)\right)\prod_{\ell^2\mid N^+} \nu_\ell(k)
 
@@ -1778,10 +1808,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
     @cached_method
     def get_num_verts(self):
         """
-        Return the number of vertices in the quotient using a
-        formula.
-
-        ##Add me: reference for the formula being used ##mm TODO
+        Return the number of vertices in the quotient using the formula
+        `V = 2(\mu/12 + e_3/3 + e_4/4)`.
 
         OUTPUT:
 
@@ -1798,7 +1826,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
     @cached_method
     def get_num_ordered_edges(self):
         """
-        Return the number of ordered edges in the quotient.
+        Return the number of ordered edges `E` in the quotient using
+        the formula relating the genus `g` with the number of vertices `V`
+        and that of unordered edges `E/2`: `E = 2(g + V - 1)`.
 
         OUTPUT:
 
@@ -2292,7 +2322,19 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: X = BruhatTitsQuotient(3,2*5*7,character = f)
             sage: X.get_extra_embedding_matrices()
             []
-        """ ##mm TODO nontrivial example
+
+        ::
+
+            sage: f = DirichletGroup(6)[1]
+            sage: X = BruhatTitsQuotient(5,2,3, character = f, use_magma=True) # optional - magma
+            sage: X.get_extra_embedding_matrices() # optional - magma
+            [
+            [1 0 2 0]
+            [0 0 2 0]
+            [0 0 0 0]
+            [1 0 2 2]
+            ]
+        """
         if not self._use_magma or len(self._extra_level) == 0:
             return []
         n_iters = 0
@@ -2403,7 +2445,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         if exact is True:
             try:
                 return self._Iota_exact
-            except:
+            except AttributeError:
                 raise RuntimeError('Exact splitting not available.')
         else:
             if prec is None:
@@ -2822,19 +2864,11 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(3,7)
-            sage: X._get_Up_data()
-            [[
-            [1/3   0]
-            [  0   1], [DoubleCosetReduction, DoubleCosetReduction, DoubleCosetReduction, DoubleCosetReduction]
-            ],
+            sage: [o[0] for o in X._get_Up_data()]
             [
-            [-1/3  1/3]
-            [   1    0], [DoubleCosetReduction, DoubleCosetReduction, DoubleCosetReduction, DoubleCosetReduction]
-            ],
-            [
-            [-2/3  1/3]
-            [   1    0], [DoubleCosetReduction, DoubleCosetReduction, DoubleCosetReduction, DoubleCosetReduction]
-            ]]
+            [1/3   0]  [-1/3  1/3]  [-2/3  1/3]
+            [  0   1], [   1    0], [   1    0]
+            ]
         """
         E = self.get_edge_list()
         vec_a = self._BT.subdivide([1], 1)
@@ -2857,13 +2891,11 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(3,5)
-            sage: X._get_atkin_lehner_data(3)
-            [
+            sage: X._get_atkin_lehner_data(3)[0]
             [ 2]
             [ 4]
             [-3]
-            [-2], [DoubleCosetReduction, DoubleCosetReduction]
-            ]
+            [-2]
         """
         E = self.get_edge_list()
         # self._increase_precision(20)
@@ -3279,7 +3311,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Bruhat-Tits tree are equivalent under the arithmetic group in
         question. The computation boils down to an application of the
         LLL short-vector algorithm to a particular lattice; for
-        details see [FM].
+        details see [FM2014]_.
 
         INPUT:
 
@@ -3311,12 +3343,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: X._are_equivalent(M1,M2, as_edges=True)
             sage: X._are_equivalent(M1,M2) == False
             False
-
-        REFERENCES:
-
-        .. [FM] "Computing quotients of the Bruhat-Tits tree...",
-           Cameron Franc, Marc Masdeu.
-        """ ## mm TODO complete reference
+        """
         try:
             return self._cached_equivalent[(v1, v2, as_edges)]
         except KeyError:
@@ -3639,15 +3666,20 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return a harmonic cocycle with the same hecke eigenvalues as ``E``.
 
+        Given an elliptic curve `E` having a conductor `N` of the form `pN^-N^+`,
+        return the harmonic cocycle over ``self`` which is attached to ``E`` via
+        modularity. The result is only well-defined up to scaling.
+
         INPUT:
 
         - ``E`` -- an elliptic curve over the rational numbers
 
-        - ``prec`` -- ##mm TODO
+        - ``prec`` -- (default: None) If specified, the harmonic cocycle will take values
+          in `\QQ_p` with precision ``prec``. Otherwise it will take values in `\ZZ`.
 
         OUTPUT:
 
-        ## mm TODO
+        A harmonic cocycle attached via modularity to the given elliptic curve.
 
         EXAMPLES::
 
@@ -3722,26 +3754,31 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
     def padic_automorphic_forms(self, U, prec=None, t=None, R=None, overconvergent=False):
         r"""
-        The module of (quaternionic) `p`-adic automorphic forms.
+        The module of (quaternionic) `p`-adic automorphic forms over ``self``.
 
         INPUT:
 
-        - ``U`` - A coefficient module or an integer. If ``U`` is a
-          coefficient module then this creates the relevant space of
+        - ``U`` -- A distributions module or an integer. If ``U`` is a
+          distributions module then this creates the relevant space of
           automorphic forms. If ``U`` is an integer then the coefficients
           are the (`U-2`)nd power of the symmetric representation of
           `GL_2(\QQ_p)`.
 
-        - ``prec`` - A precision (default = None). If not None should
-          be a positive integer
+        - ``prec`` -- A precision (default : None). If not None should
+          be a positive integer.
 
-        - ``t`` - (default = None). #mm TODO
+        - ``t`` -- (default : None). The number of additional moments to store. If None, determine
+          it automatically from ``prec``, ``U`` and the ``overconvergent`` flag.
 
-        - ``R`` - (default = None).
+        - ``R`` -- (default : None). If specified, coefficient field of the automorphic forms.
+          If not specified it defaults to the base ring of the distributions ``U``, or to `\QQ_p`
+          with the working precision ``prec``.
 
-        - ``overconvergent`` - Boolean (default = False).
+        - ``overconvergent`` -- Boolean (default = False). If True, will construct overconvergent
+          `p`-adic automorphic forms. Otherwise it constructs the finite dimensional space of
+          `p`-adic automorphic forms which is isomorphic to the space of harmonic cocycles.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: X = BruhatTitsQuotient(11,5)
             sage: X.padic_automorphic_forms(2,prec=10)

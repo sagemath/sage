@@ -153,7 +153,7 @@ class CWComplexes(Category_singleton):
         """
         Return extraneous super categories for ``CWComplexes().Compact()``.
 
-        A compact CW complex is finite, see Proposition A.1 in [Hat]_.
+        A compact CW complex is finite, see Proposition A.1 in [Hat2002]_.
 
         .. TODO::
 

@@ -15,8 +15,8 @@ The presence of a chain homotopy defines an equivalence relation
 (*chain homotopic*) on chain maps. If `f` and `g` are chain homotopic,
 then one can show that `f` and `g` induce the same map on homology.
 
-Chain contractions are not as well known. The papers [M-AR]_, [RM-A]_,
-and [PR]_ provide some references. Given two chain complexes `C` and
+Chain contractions are not as well known. The papers [MAR2009]_, [RMA2009]_,
+and [PR2015]_ provide some references. Given two chain complexes `C` and
 `D`, a *chain contraction* is a chain homotopy `H: C \to C` for which
 there are chain maps `\pi: C \to D` ("projection") and `\iota: D \to
 C` ("inclusion") such that
@@ -30,22 +30,6 @@ C` ("inclusion") such that
 Such a chain homotopy provides a strong relation between the chain
 complexes `C` and `D`; for example, their homology groups are
 isomorphic.
-
-REFERENCES:
-
-.. [M-AR] \H. Molina-Abril and P. Réal, *Homology computation using spanning
-   trees* in Progress in Pattern Recognition, Image Analysis,
-   Computer Vision, and Applications, Lecture Notes in Computer
-   Science, volume 5856, pp 272-278, Springer, Berlin (2009).
-
-.. [PR] \P. Pilarczyk and P. Réal, *Computation of cubical homology,
-   cohomology, and (co)homological operations via chain contraction*,
-   Adv. Comput. Math. 41 (2015), pp 253--275.
-
-.. [RM-A] \P. Réal and H. Molina-Abril, *Cell AT-models for digital
-   volumes* in Torsello, Escolano, Brun (eds.), Graph-Based
-   Representations in Pattern Recognition, Lecture Notes in
-   Computer Science, volume 5534, pp. 314-3232, Springer, Berlin (2009).
 """
 from __future__ import absolute_import
 
@@ -214,8 +198,8 @@ class ChainHomotopy(Morphism):
         (Some authors also require that `H \partial H = H`, whereas
         some make this part of the definition of "homology gradient
         vector field. We have made the second choice.) See
-        Molina-Abril and Réal [M-AR]_ and Réal and Molina-Abril
-        [RM-A]_ for this and related terminology.
+        Molina-Abril and Réal [MAR2009]_ and Réal and Molina-Abril
+        [RMA2009]_ for this and related terminology.
 
         See also :meth:`is_homology_gradient_vector_field`.
 
@@ -257,8 +241,8 @@ class ChainHomotopy(Morphism):
         H = 0`) such that `\partial H \partial = \partial` and `H
         \partial H = H`.
 
-        See Molina-Abril and Réal [M-AR]_ and Réal and Molina-Abril
-        [RM-A]_ for this and related terminology.
+        See Molina-Abril and Réal [MAR2009]_ and Réal and Molina-Abril
+        [RMA2009]_ for this and related terminology.
 
         See also :meth:`is_algebraic_gradient_vector_field`.
 

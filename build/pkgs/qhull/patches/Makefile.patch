@@ -1,17 +1,7 @@
-* DESTDIR needs to be Sage install (that would better be fixed by a configure script)
 * fix dependencies between target (otherwise compilation fails with "make -j3")
 
 --- a/Makefile
 +++ b/Makefile
-@@ -77,7 +77,7 @@
- # Unix line endings (\n)
- # $Id: //main/2015/qhull/Makefile#10 $
- 
--DESTDIR = /usr/local
-+DESTDIR = $(SAGE_ROOT)/local
- BINDIR	= $(DESTDIR)/bin
- INCDIR	= $(DESTDIR)/include
- LIBDIR	= $(DESTDIR)/lib
 @@ -200,7 +200,7 @@ cleanall: clean
  doc: 
  	$(PRINTMAN) $(TXTFILES) $(DOCFILES)

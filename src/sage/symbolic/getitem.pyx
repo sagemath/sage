@@ -1,13 +1,16 @@
 "Operands"
 
-###############################################################################
-#   Sage: Open Source Mathematical Software
+#*****************************************************************************
 #       Copyright (C) 2011 Burcin Erocal <burcin@erocal.org>
-#  Distributed under the terms of the GNU General Public License (GPL),
-#  version 2 or any later version.  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
-from .ginac cimport GEx, GEx_construct_ex
+#*****************************************************************************
+
+from sage.libs.pynac.pynac cimport GEx, GEx_construct_ex
 from sage.symbolic.expression cimport new_Expression_from_GEx
 
 cdef inline int normalize_index(object arg, int nops, object err_msg) except -1:

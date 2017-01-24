@@ -1060,7 +1060,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             if not isinstance(im_gens, (tuple, list)):
                 im_gens = [im_gens]
             im_gens = sage.structure.all.Sequence(im_gens, parent.codomain(),
-                    immutable=True)
+                                                  check=check, immutable=True)
         if check:
             if len(im_gens) != parent.domain().ngens():
                 raise ValueError("number of images must equal number of generators")

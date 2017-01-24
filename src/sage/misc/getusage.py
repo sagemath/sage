@@ -4,6 +4,9 @@ Get resource usage of process
 AUTHORS:
 
 - William Stein (2006-03-04): initial version
+
+- Jeroen Demeyer (2016-11-14): implement as thin wrapper over
+  ``psutil`` package
 """
 
 #*****************************************************************************
@@ -15,7 +18,72 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from __future__ import absolute_import, division, print_function
+
 import os
+import sys
+
+
+def get_memory_usage(t=None):
+    """
+    Return the memory usage of the current process in megabytes.
+
+    INPUT:
+
+    - ``t`` -- a float (default: None); output of an earlier call.
+      If this is given, return the current usage minus `t`.
+
+    OUTPUT: a float representing the number of megabytes used.
+
+    EXAMPLES::
+
+        sage: t = get_memory_usage(); t  # random
+        873.98046875
+        sage: type(t)
+        <type 'float'>
+    """
+    import psutil
+    m = psutil.Process().memory_info().vms / 1048576
+    if t is None:
+        return m
+    else:
+        return m - t
+
+
+def virtual_memory_limit():
+    """
+    Return the upper limit for virtual memory usage.
+
+    This is the value set by ``ulimit -v`` at the command line or a
+    practical limit if no limit is set. In any case, the value is
+    bounded by ``sys.maxsize``.
+
+    OUTPUT:
+
+    Integer. The virtual memory limit in bytes.
+
+    EXAMPLES::
+
+        sage: from sage.misc.getusage import virtual_memory_limit
+        sage: virtual_memory_limit() > 0
+        True
+        sage: virtual_memory_limit() <= sys.maxsize
+        True
+    """
+    import resource
+    try:
+        vmax = resource.getrlimit(resource.RLIMIT_AS)[0]
+    except resource.error:
+        vmax = resource.RLIM_INFINITY
+    if vmax == resource.RLIM_INFINITY:
+        import psutil
+        vmax = psutil.virtual_memory().total + psutil.swap_memory().total
+    return min(vmax, sys.maxsize)
+
+
+########################################################################
+# Old deprecated stuff below
+########################################################################
 
 def top():
     """
@@ -47,6 +115,9 @@ def top():
 
         PID USERNAME  SIZE   RSS STATE  PRI NICE      TIME  CPU PROCESS/NLWP
     """
+    from sage.misc.superseded import deprecation
+    deprecation(21805, "the function top() is deprecated.")
+
     U = os.uname()[0].lower()
     pid = os.getpid()
 
@@ -70,79 +141,6 @@ def top():
         return r
     return r[i+1:]
 
-def get_memory_usage(t=None):
-    """
-    Return memory usage.
-
-    INPUT:
-
-    - ``t`` - a float (default: None); output of an earlier call
-
-    OUTPUT:
-
-    - ``Linux`` - Returns float number (in megabytes)
-
-    - ``OS X`` - Returns float number (in megabytes) that matches
-      VSIZE column of ``top``
-
-    - ``Solaris or OpenSolaris`` - Returns float number (in megabytes)
-      that matches RSS column of ``prstat``. Depending on the memory
-      usage, ``prstat`` will output the data in KB, MB or GB. In each
-      case, the value returned by this function will always be in MB.
-
-    - ``FreeBSD`` - Returns float number (in megabytes) that matches
-      RSS column of ``ps -auxwww``
-
-    - ``other`` - not implemented for any other operating systems
-
-    EXAMPLES::
-
-        sage: t = get_memory_usage(); t  # random
-        873.98046875
-
-    .. NOTE::
-
-        * Currently, :func:`get_memory_usage` calls ``prstat`` on Solaris
-          and OpenSolaris to get the data it requires. In the long term, a
-          better solution would be to use Solaris system calls.
-
-        * In some instances, ``top`` may be used on OS X. This may break
-          if the memory usage is greater than 9999 MB. However, normally
-          ``top`` is not used on OS X.
-    """
-    U = os.uname()[0].lower()
-    if U == 'linux' or U[:6] == 'cygwin':
-        m = linux_memory_usage()
-    elif U == 'darwin':
-        try:
-            from sage.misc.darwin_utilities import darwin_memory_usage
-            m = float(darwin_memory_usage()) / (1024 * 1024)
-        except ImportError:
-            # darwin_utilities is not supported on some versions of OS X.
-            m = float(top().split()[-1].strip('M+'))
-    elif U == 'sunos':
-        # Sun's 'prstat' command appends K, M or G depending on whether
-        # the memory usage is in KB. MB or GB. So we need to strip off
-        # the letter, and convert to a consistent unit of MB.
-        memory_in_KB_MB_or_GB = top().split()[3]
-        if memory_in_KB_MB_or_GB.endswith("K"):
-            m = float(memory_in_KB_MB_or_GB.strip("K")) / 1024
-        elif memory_in_KB_MB_or_GB.endswith("M"):
-            m = float(memory_in_KB_MB_or_GB.strip("M"))
-        elif memory_in_KB_MB_or_GB.endswith("G"):
-            m = float(memory_in_KB_MB_or_GB.strip("G")) * 1024
-    elif U == 'freebsd':
-        memory_in_KB = top().split()[3]
-        m = float(memory_in_KB) / 1024
-    else:
-        raise NotImplementedError("memory usage not implemented on platform %s" % U)
-
-    if t is None:
-        return m
-    else:
-        return m - t
-
-
 
 ########################################################################
 # The following is adapted from
@@ -156,6 +154,9 @@ def VmB(VmKey):
     """
     Function used internally by this module.
     """
+    from sage.misc.superseded import deprecation
+    deprecation(21805, "the function VmB() is deprecated.")
+
     global _proc_status, _scale
      # get pseudo file  /proc/<pid>/status
     try:

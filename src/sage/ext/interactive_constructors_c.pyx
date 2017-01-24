@@ -1,3 +1,4 @@
+# cython: old_style_globals=True
 r"""
 Constructors that automatically inject variables into the global module scope
 """

@@ -22,7 +22,7 @@ EXAMPLES::
 TESTS:
 
 Check that the outcome of arithmetic with symbolic vectors is again
-a symbolic vector (#11549)::
+a symbolic vector (:trac:`11549`)::
 
     sage: v = vector(SR, [1, 2])
     sage: w = vector(SR, [sin(x), 0])

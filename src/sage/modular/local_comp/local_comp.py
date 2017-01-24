@@ -10,11 +10,8 @@ representations, but they are specified by a finite amount of data, and this
 module provides functions which determine a description of the local factor
 `\pi_{f, p}` at a finite prime `p`.
 
-The functions in this module are based on the algorithms described in:
-
-.. [LW11] David Loeffler and Jared Weinstein, *On the computation of local components of a newform*,
-   Mathematics of Computation (to appear), 2011. `Online version
-   <http://dx.doi.org/10.1090/S0025-5718-2011-02530-5>`_.
+The functions in this module are based on the algorithms described in
+[LW2012]_.
 
 AUTHORS:
 
@@ -393,7 +390,7 @@ class UnramifiedPrincipalSeries(PrincipalSeries):
         Return the Satake polynomial of this representation, i.e.~the polynomial whose roots are `\chi_1(p), \chi_2(p)`
         where this representation is `\pi(\chi_1, \chi_2)`. Concretely, this is the polynomial
 
-        .. math::
+        .. MATH::
 
             X^2 - p^{(j - k + 2)/2} a_p(f) X + p^{j + 1} \varepsilon(p)`.
 
@@ -615,7 +612,7 @@ class PrimitiveSupercuspidal(LocalComponentBase):
 
         EXAMPLES:
 
-        The first example from _[LW11]::
+        The first example from [LW2012]_::
 
             sage: f = Newform('50a')
             sage: Pi = LocalComponent(f, 5)
@@ -648,7 +645,7 @@ class PrimitiveSupercuspidal(LocalComponentBase):
         .. warning::
 
             The above output isn't actually the same as in Example 2 of
-            _[LW11], due to an error in the published paper (correction
+            [LW2012]_, due to an error in the published paper (correction
             pending) -- the published paper has the inverses of the above
             characters.
 

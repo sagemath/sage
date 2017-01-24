@@ -7,7 +7,7 @@ signal (used to kill this process)::
 
     sage: import signal
     sage: import time
-    sage: from sage.ext.pselect import PSelecter
+    sage: from cysignals.pselect import PSelecter
     sage: with PSelecter([signal.SIGHUP]):
     ....:     os.kill(os.getppid(), signal.SIGINT)
     ....:     time.sleep(30)

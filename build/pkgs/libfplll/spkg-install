@@ -6,21 +6,10 @@ if [ "$SAGE_LOCAL" = "" ]; then
     exit 1
 fi
 
-cd src
-
-echo "Applying patches to upstream sources..."
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error: '$patch' failed to apply."
-        exit 1
-    fi
-done
+cd src || exit
 
 INCLUDES="-I$SAGE_LOCAL/include/"
 
-CFLAGS="$CFLAGS -fPIC $INCLUDES -L$SAGE_LOCAL/lib"
 CXXFLAGS="$CXXFLAGS -fPIC $INCLUDES -L$SAGE_LOCAL/lib"
 CPPFLAGS="$INCLUDES"
 
@@ -28,20 +17,14 @@ CPPFLAGS="$INCLUDES"
 # This will be -m64 with both Sun Studio and gcc, but other compilers
 # such as those from IBM on AIX and HP on HP-UX use different flags.
 
-if [ -z $CFLAG64 ] ; then
-    CFLAG64=-m64
-fi
-
-if [ -z $CXXFLAG64 ] ; then
+if [ -z "$CXXFLAG64" ] ; then
     CXXFLAG64=-m64
 fi
 
 if [ "x$SAGE64" = xyes ]; then
     echo "Building a 64-bit version of libfplll"
-    CFLAGS="$CFLAGS $CFLAG64"
     CXXFLAGS="$CXXFLAGS $CXXFLAG64"
-    CPPFLAGS="$CPPFLAGS $CFLAG64"
-    CC="$CC $CFLAG64"
+    CPPFLAGS="$CPPFLAGS $CXXFLAG64"
     CXX="$CXX $CXXFLAG64"
 fi
 
@@ -51,29 +34,40 @@ if [ "$UNAME" = "CYGWIN" ]; then
     export MAKE
 fi
 
-export CFLAGS
-export CXXFLAGS
-export CPPFLAGS
-export CC
-export CXX
+if [ "x$SAGE_DEBUG" = "xyes" ]; then
+   CXXFLAGS="$CXXFLAGS -O0"
+   ENABLE_DEBUG="--enable-debug"
+else
+   CXXFLAGS="$CXXFLAGS -O3"
+   ENABLE_DEBUG=""
+fi
 
-echo "Now configuring libfplll..."
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
+export CXXFLAGS="$CXXFLAGS"
+export CPPFLAGS="$CPPFLAGS"
+export CXX="$CXX"
+
+echo "Now configuring fplll..."
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" $ENABLE_DEBUG
 if [ $? -ne 0 ]; then
-    echo "Error configuring libfplll"
+    echo "Error configuring fplll"
     exit 1
 fi
 
-echo "Now building libfplll..."
-$MAKE
+echo "Now building fplll..."
+$MAKE V=1
 if [ $? -ne 0 ]; then
-    echo "Error building libfplll"
+    echo "Error building fplll"
     exit 1
 fi
 
-echo "Now installing libfplll..."
+echo "Now installing fplll..."
 $MAKE install
 if [ $? -ne 0 ]; then
-    echo "Error installing libfplll"
+    echo "Error installing fplll"
     exit 1
 fi
+
+
+# Pretend that the "fplll" package is not installed. This is needed to
+# support renaming libfplll -> fplll in the future.
+rm -f "$SAGE_SPKG_INST/"fplll-*

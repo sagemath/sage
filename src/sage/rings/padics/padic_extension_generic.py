@@ -323,10 +323,11 @@ class pAdicExtensionGeneric(pAdicGeneric):
         EXAMPLES::
 
             sage: R.<a> = Zq(125, 5); R.random_element()
-            3*a + (2*a + 1)*5 + (4*a^2 + 3*a + 4)*5^2 + (a^2 + 2*a)*5^3 + (a + 2)*5^4 + O(5^5)
+            (3*a^2 + 3*a + 3) + (a^2 + 4*a + 1)*5 + (3*a^2 + 4*a + 1)*5^2 + 
+            (2*a^2 + 3*a + 3)*5^3 + (4*a^2 + 3)*5^4 + O(5^5)
             sage: R = Zp(5,3); S.<x> = ZZ[]; f = x^5 + 25*x^2 - 5; W.<w> = R.ext(f)
             sage: W.random_element()
-            3 + 4*w + 3*w^2 + w^3 + 4*w^4 + w^5 + w^6 + 3*w^7 + w^8 + 2*w^10 + 4*w^11 + w^12 + 2*w^13 + 4*w^14 + O(w^15)
+            4 + 3*w + w^2 + 4*w^3 + w^5 + 3*w^6 + w^7 + 4*w^10 + 2*w^12 + 4*w^13 + 3*w^14 + O(w^15)
         """
         return reduce(lambda x,y: x+y,
                       [self.ground_ring().random_element() * self.gen()**i for i in

@@ -11,16 +11,13 @@ the `mpmath library`_.
 
 REFERENCES:
 
-- [AS]_ Abramowitz and Stegun: *Handbook of Mathematical Functions*
-- Wikipedia Entry: http://en.wikipedia.org/wiki/Exponential_integral
+- [AS1964]_ Abramowitz and Stegun: *Handbook of Mathematical Functions*
+- :wikipedia:`Exponential_integral`
 - Online Encyclopedia of Special Function: http://algo.inria.fr/esf/index.html
 - NIST Digital Library of Mathematical Functions: http://dlmf.nist.gov/
 - Maxima `special functions package`_
 - `mpmath library`_
 
-.. [AS] 'Handbook of Mathematical Functions', Milton Abramowitz and Irene
-   A. Stegun, National Bureau of Standards Applied Mathematics Series, 55.
-   See also http://www.math.sfu.ca/~cbm/aands/.
 .. _`special functions package`: http://maxima.sourceforge.net/docs/manual/en/maxima_15.html
 .. _`mpmath library`: http://code.google.com/p/mpmath/
 
@@ -69,11 +66,11 @@ class Function_exp_integral_e(BuiltinFunction):
     r"""
     The generalized complex exponential integral `E_n(z)` defined by
 
-    .. math::
+    .. MATH::
 
         E_n(z) = \int_1^{\infty} \frac{e^{-z t}}{t^n} \; dt
 
-    for complex numbers `n` and `z`, see [AS]_ 5.1.4.
+    for complex numbers `n` and `z`, see [AS1964]_ 5.1.4.
 
     The special case where `n = 1` is denoted in Sage by
     ``exp_integral_e1``.
@@ -93,7 +90,7 @@ class Function_exp_integral_e(BuiltinFunction):
         sage: N(exponential_integral_1(1))
         0.219383934395520
 
-    We can verify one case of [AS]_ 5.1.45, i.e.
+    We can verify one case of [AS1964]_ 5.1.45, i.e.
     `E_n(z) = z^{n-1}\Gamma(1-n,z)`::
 
         sage: N(exp_integral_e(2, 3+I))
@@ -125,12 +122,12 @@ class Function_exp_integral_e(BuiltinFunction):
         Ei(-x) - gamma(-1, x)
 
     Some special values of ``exp_integral_e`` can be simplified.
-    [AS]_ 5.1.23::
+    [AS1964]_ 5.1.23::
 
         sage: exp_integral_e(0,x)
         e^(-x)/x
 
-    [AS]_ 5.1.24::
+    [AS1964]_ 5.1.24::
 
         sage: exp_integral_e(6,0)
         1/5
@@ -230,7 +227,7 @@ class Function_exp_integral_e(BuiltinFunction):
         """
         If `n` is an integer strictly larger than 0, then the derivative of
         `E_n(z)` with respect to `z` is
-        `-E_{n-1}(z)`. See [AS]_ 5.1.26.
+        `-E_{n-1}(z)`. See [AS1964]_ 5.1.26.
 
         EXAMPLES::
 
@@ -256,11 +253,11 @@ class Function_exp_integral_e1(BuiltinFunction):
     r"""
     The generalized complex exponential integral `E_1(z)` defined by
 
-    .. math::
+    .. MATH::
 
         E_1(z) = \int_z^\infty \frac{e^{-t}}{t} \; dt
 
-    see [AS]_ 5.1.4.
+    see [AS1964]_ 5.1.4.
 
     EXAMPLES::
 
@@ -332,7 +329,7 @@ class Function_exp_integral_e1(BuiltinFunction):
 
     def _derivative_(self, z, diff_param=None):
         """
-        The derivative of `E_1(z)` is `-e^{-z}/z`. See [AS], 5.1.26.
+        The derivative of `E_1(z)` is `-e^{-z}/z`. See [AS1964], 5.1.26.
 
         EXAMPLES::
 
@@ -355,11 +352,11 @@ class Function_log_integral(BuiltinFunction):
     r"""
     The logarithmic integral `\operatorname{li}(z)` defined by
 
-    .. math::
+    .. MATH::
 
         \operatorname{li}(x) = \int_0^z \frac{dt}{\ln(t)} = \operatorname{Ei}(\ln(x))
 
-    for x > 1 and by analytic continuation for complex arguments z (see [AS]_ 5.1.3).
+    for x > 1 and by analytic continuation for complex arguments z (see [AS1964]_ 5.1.3).
 
     EXAMPLES:
 
@@ -420,7 +417,8 @@ class Function_log_integral(BuiltinFunction):
         BuiltinFunction.__init__(self, "log_integral", nargs=1,
                                  latex_name=r'log_integral',
                                  conversions=dict(maxima='expintegral_li',
-                                                  sympy='li'))
+                                                  sympy='li',
+                                                  fricas='li'))
 
     def _eval_(self, z):
         """
@@ -480,7 +478,7 @@ class Function_log_integral_offset(BuiltinFunction):
     The offset logarithmic integral, or Eulerian logarithmic integral,
     `\operatorname{Li}(x)` is defined by
 
-    .. math::
+    .. MATH::
 
         \operatorname{Li}(x) = \int_2^x \frac{dt}{\ln(t)} =
         \operatorname{li}(x)-\operatorname{li}(2)
@@ -495,14 +493,14 @@ class Function_log_integral_offset(BuiltinFunction):
     the lower limit of integration is `2` rather than `0` to avoid the
     singularity at `x = 1` of
 
-    .. math::
+    .. MATH::
 
         \frac{1}{\ln(t)}
 
     See :class:`Function_log_integral` for details of `\operatorname{li}(x)`.
     Thus `\operatorname{Li}(x)` can also be represented by
 
-    .. math::
+    .. MATH::
 
         \operatorname{Li}(x) = \operatorname{li}(x)-\operatorname{li}(2)
 
@@ -512,7 +510,7 @@ class Function_log_integral_offset(BuiltinFunction):
         0.000000000000000
 
     `\operatorname{Li}(x)` is extended to complex arguments `z`
-    by analytic continuation (see [AS]_ 5.1.3)::
+    by analytic continuation (see [AS1964]_ 5.1.3)::
 
         sage: Li(6.6+5.4*I)
         3.97032201503632 + 2.62311237593572*I
@@ -520,7 +518,7 @@ class Function_log_integral_offset(BuiltinFunction):
     The function `\operatorname{Li}` is an approximation for the number of
     primes up to `x`. In fact, the famous Riemann Hypothesis is
 
-    .. math::
+    .. MATH::
 
         |\pi(x) - \operatorname{Li}(x)| \leq \sqrt{x} \log(x).
 
@@ -666,11 +664,11 @@ class Function_sin_integral(BuiltinFunction):
     r"""
     The trigonometric integral `\operatorname{Si}(z)` defined by
 
-    .. math::
+    .. MATH::
 
         \operatorname{Si}(z) = \int_0^z \frac{\sin(t)}{t} \; dt,
 
-    see [AS]_ 5.2.1.
+    see [AS1964]_ 5.2.1.
 
     EXAMPLES:
 
@@ -777,7 +775,8 @@ class Function_sin_integral(BuiltinFunction):
         BuiltinFunction.__init__(self, "sin_integral", nargs=1,
                                  latex_name=r'\operatorname{Si}',
                                  conversions=dict(maxima='expintegral_si',
-                                                  sympy='Si'))
+                                                  sympy='Si',
+                                                  fricas='Si'))
 
     def _eval_(self, z):
         """
@@ -856,12 +855,12 @@ class Function_cos_integral(BuiltinFunction):
     r"""
     The trigonometric integral `\operatorname{Ci}(z)` defined by
 
-    .. math::
+    .. MATH::
 
         \operatorname{Ci}(z) = \gamma + \log(z) + \int_0^z \frac{\cos(t)-1}{t} \; dt,
 
     where `\gamma` is the Euler gamma constant (``euler_gamma`` in Sage),
-    see [AS]_ 5.2.1.
+    see [AS1964]_ 5.2.1.
 
     EXAMPLES::
 
@@ -949,7 +948,8 @@ class Function_cos_integral(BuiltinFunction):
         BuiltinFunction.__init__(self, "cos_integral", nargs=1,
                                  latex_name=r'\operatorname{Ci}',
                                  conversions=dict(maxima='expintegral_ci',
-                                                  sympy='Ci'))
+                                                  sympy='Ci',
+                                                  fricas='Ci'))
 
     def _evalf_(self, z, parent=None, algorithm=None):
         """
@@ -991,11 +991,11 @@ class Function_sinh_integral(BuiltinFunction):
     r"""
     The trigonometric integral `\operatorname{Shi}(z)` defined by
 
-    .. math::
+    .. MATH::
 
         \operatorname{Shi}(z) = \int_0^z \frac{\sinh(t)}{t} \; dt,
 
-    see [AS]_ 5.2.3.
+    see [AS1964]_ 5.2.3.
 
     EXAMPLES:
 
@@ -1081,7 +1081,8 @@ class Function_sinh_integral(BuiltinFunction):
         BuiltinFunction.__init__(self, "sinh_integral", nargs=1,
                                  latex_name=r'\operatorname{Shi}',
                                  conversions=dict(maxima='expintegral_shi',
-                                                  sympy='Shi'))
+                                                  sympy='Shi',
+                                                  fricas='Shi'))
 
     def _eval_(self, z):
         """
@@ -1141,11 +1142,11 @@ class Function_cosh_integral(BuiltinFunction):
     r"""
     The trigonometric integral `\operatorname{Chi}(z)` defined by
 
-    .. math::
+    .. MATH::
 
         \operatorname{Chi}(z) = \gamma + \log(z) + \int_0^z \frac{\cosh(t)-1}{t} \; dt,
 
-    see [AS]_ 5.2.4.
+    see [AS1964]_ 5.2.4.
 
     EXAMPLES::
 
@@ -1228,7 +1229,8 @@ class Function_cosh_integral(BuiltinFunction):
         BuiltinFunction.__init__(self, "cosh_integral", nargs=1,
                                  latex_name=r'\operatorname{Chi}',
                                  conversions=dict(maxima='expintegral_chi',
-                                                  sympy='Chi'))
+                                                  sympy='Chi',
+                                                  fricas='Chi'))
 
     def _evalf_(self, z, parent=None, algorithm=None):
         """
@@ -1278,12 +1280,12 @@ class Function_exp_integral(BuiltinFunction):
     r"""
     The generalized complex exponential integral Ei(z) defined by
 
-    .. math::
+    .. MATH::
 
         \operatorname{Ei}(x) = \int_{-\infty}^x \frac{e^t}{t} \; dt
 
     for x > 0 and for complex arguments by analytic continuation,
-    see [AS]_ 5.1.2.
+    see [AS1964]_ 5.1.2.
 
     EXAMPLES::
 
@@ -1340,7 +1342,8 @@ class Function_exp_integral(BuiltinFunction):
         """
         BuiltinFunction.__init__(self, "Ei",
                                  conversions=dict(maxima='expintegral_ei',
-                                                  sympy='Ei'))
+                                                  sympy='Ei',
+                                                  fricas='Ei'))
 
     def _evalf_(self, x, parent=None, algorithm=None):
         """
@@ -1370,7 +1373,7 @@ class Function_exp_integral(BuiltinFunction):
             2*e^(x^2)/x
             sage: f = function('f')
             sage: Ei(f(x)).diff(x)
-            e^f(x)*D[0](f)(x)/f(x)
+            e^f(x)*diff(f(x), x)/f(x)
         """
         return exp(x)/x
 
@@ -1387,7 +1390,7 @@ def exponential_integral_1(x, n=0):
 
     The exponential integral `E_1(x)` is
 
-    .. math::
+    .. MATH::
 
                       E_1(x) = \int_{x}^{\infty} \frac{e^{-t}}{t} \; dt
 

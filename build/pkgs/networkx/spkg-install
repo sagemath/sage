@@ -8,11 +8,6 @@ fi
 
 export MAKE=make
 
-echo "Deleting old networkX installs"
-rm -rf "$SAGE_LOCAL"/lib/python/networkx*
-rm -rf "$SAGE_LOCAL"/lib/python/site-packages/networkx*
-rm -rf "$SAGE_LOCAL"/spkg/network*
-
 cd src
 
-python setup.py install
+$PIP_INSTALL .

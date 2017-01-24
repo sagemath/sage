@@ -677,7 +677,7 @@ cdef class _mw:
           efficient to add several points at once and then saturate
           just once at the end).
 
-        .. note::
+        .. NOTE::
 
            The eclib function which implements this only carries out
            any saturation if the rank of the points increases upon
@@ -895,7 +895,7 @@ cdef class _mw:
           some details of the processing, finding linear relations,
           and partial saturation are output.
 
-        .. note::
+        .. NOTE::
 
            The effect of the search is also governed by the class
            options, notably whether the points found are processed:
@@ -1251,7 +1251,7 @@ cdef class _two_descent:
         `\ZZ/2\ZZ`-basis for `E(\QQ)/2E(\QQ)` (modulo torsion),
         otherwise possibly only for a proper subgroup.
 
-        .. note::
+        .. NOTE::
 
            You must call ``saturate()`` first, or a RunTimeError will be raised.
 

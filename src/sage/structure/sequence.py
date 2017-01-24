@@ -77,6 +77,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 ##########################################################################
 from __future__ import print_function
+from six.moves import range
 
 from sage.misc.latex import list_function as list_latex_function
 import sage.structure.sage_object
@@ -451,7 +452,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         self.__universe = universe
         if check:
             x = list(x)
-            for i in xrange(len(x)):
+            for i in range(len(x)):
                 try:
                     x[i] = universe(x[i])
                 except TypeError:
@@ -622,11 +623,13 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
         INPUT:
 
-        - ``cmp`` - see Python ``list sort``
-        
         - ``key`` - see Python ``list sort``
         
         - ``reverse`` - see Python ``list sort``
+
+        - ``cmp`` - see Python ``list sort`` (deprecated)
+
+        Because ``cmp`` is not allowed in Python3, it must be avoided.
 
         EXAMPLES::
 
@@ -636,11 +639,17 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             [1/5, 2, 3]
             sage: B.sort(reverse=True); B
             [3, 2, 1/5]
+
+        TESTS::
+
             sage: B.sort(cmp = lambda x,y: cmp(y,x)); B
+            doctest:...: DeprecationWarning: sorting using cmp is deprecated
+            See http://trac.sagemath.org/21376 for details.
             [3, 2, 1/5]
-            sage: B.sort(cmp = lambda x,y: cmp(y,x), reverse=True); B
-            [1/5, 2, 3]
         """
+        if cmp is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(21376, 'sorting using cmp is deprecated')
         self._require_mutable()
         list.sort(self, cmp=cmp, key=key, reverse=reverse)
 

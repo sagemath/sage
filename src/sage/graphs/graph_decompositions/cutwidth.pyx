@@ -1,4 +1,3 @@
-# distutils: libraries = gmp
 r"""
 Cutwidth
 

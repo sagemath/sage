@@ -797,7 +797,7 @@ class TriangularModuleMorphism(ModuleMorphism):
             ValueError: Morphism not known to be invertible;
             see the invertible option of module_morphism
             sage: phiinv = phi.section()
-            sage: map(phiinv*phi, X.basis().list()) == X.basis().list()
+            sage: list(map(phiinv*phi, X.basis().list())) == X.basis().list()
             True
             sage: phiinv(Y.basis()[1])
             Traceback (most recent call last):

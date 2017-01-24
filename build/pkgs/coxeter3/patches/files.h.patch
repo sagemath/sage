@@ -1,0 +1,14 @@
+--- src/files.h	2013-02-14 18:26:28.000000000 +0100
++++ files.h	2016-10-24 16:02:52.829513554 +0200
+@@ -109,10 +109,7 @@
+   void printHeckeElt(FILE* file, const H& h, const SchubertContext& p, 
+ 		     const Interface& I, OutputTraits& traits, 
+ 		     const Length& l = undef_length);
+-template <class H>
+-  void printHeckeElt(FILE* file, const H& h, const SchubertContext& p, 
+-		     const Interface& I, OutputTraits& traits, 
+-		     const Length& l = undef_length);
++
+ template <class H>
+   void printHeckeElt(FILE* file, const H& h, const Permutation& a, 
+ 		     const SchubertContext& p, const Interface& I,

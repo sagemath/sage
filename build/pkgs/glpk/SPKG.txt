@@ -36,28 +36,24 @@ http://www.gnu.org/software/glpk/#maintainer
  * GMP/MPIR
  * zlib
 
-== Special Update/Build Instructions == 
+== Special Update/Build Instructions ==
 
- * It should be sufficient to pass `--with-<package>="$SAGE_LOCAL"` 
-   (where <package>={gmp,zlib}) instead of adding Sage's directories 
-   to `CPPFLAGS` and `LDFLAGS`; see comment in `spkg-install`. 
-   Turns out that (as of version 4.55) 
-   1) GLPK unconditionally uses its own copy of zlib (see above), 
-      and the `configure` option `--with-zlib` is no longer valid; 
-   2) `configure` doesn't support specifying the location of the GMP 
-      library to use; only `--with-gmp[=yes]` or `--with-gmp=no` 
-      are valid options.  (So we *have to* add Sage's include and 
-      library directories to `CPPFLAGS` and `LDFLAGS`, respectively.) 
- * Do we need the `--disable-static`?  The stand-alone solver presumably 
-   runs faster when built with a static library; also other (stand-alone) 
-   programs using it would. 
-   (Instead, we should perhaps use `--enable-static --enable-shared` to 
+ * `configure` doesn't support specifying the location of the GMP
+      library to use; only `--with-gmp[=yes]` or `--with-gmp=no`
+      are valid options.  (So we *have to* add Sage's include and
+      library directories to `CPPFLAGS` and `LDFLAGS`, respectively.)
+ * Do we need the `--disable-static`?  The stand-alone solver presumably
+   runs faster when built with a static library; also other (stand-alone)
+   programs using it would.
+   (Instead, we should perhaps use `--enable-static --enable-shared` to
    go safe.)
 
 === Patches ===
 
- * cygwin_sharedlib.patch: Let a shared library be built on Cygwin by
+ * All patches below are currently used by spkg-src
+   * src/01-zlib.patch: don't build the included zlib library.
+   * src/02-cygwin_sharedlib.patch: Let a shared library be built on Cygwin by
    passing the -no-undefined flag to libtool.
- * zlib.patch: don't build the included zlib library.
- * build_system/: contains patches prior to re-autotoolification.
 
+   The numbering reflect the order in which they have been created from
+   glpk pristine's sources

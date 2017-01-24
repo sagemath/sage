@@ -79,7 +79,7 @@ class Posets(Category):
         sage: y >= x     # todo: not implemented
         True
 
-    .. seealso:: :func:`Poset`, :class:`FinitePosets`, :class:`LatticePosets`
+    .. SEEALSO:: :func:`Poset`, :class:`FinitePosets`, :class:`LatticePosets`
 
     TESTS::
 

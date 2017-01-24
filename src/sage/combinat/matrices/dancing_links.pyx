@@ -362,10 +362,11 @@ cdef class dancing_linksWrapper:
         """
         D = self.split(column)
         from sage.parallel.decorate import parallel
+
         @parallel(ncpus=ncpus)
         def nb_sol(i):
             return dlx_solver(D[i]).number_of_solutions()
-        K = sorted(D.keys())
+        K = sorted(D)
         for ((args, kwds), val) in nb_sol(K):
             yield args[0], val
 

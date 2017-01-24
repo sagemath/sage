@@ -277,6 +277,10 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         (:mod:`~sage.geometry.polyhedron.backend_cdd`) with `\QQ` or
         `\RDF` coefficients depending on ``base_ring``.
 
+      * ``'normaliz'``: use normaliz
+        (:mod:`~sage.geometry.polyhedron.backend_normaliz`) with `\ZZ` or
+        `\QQ` coefficients depending on ``base_ring``.
+
       * ``'ppl'``: use ppl
         (:mod:`~sage.geometry.polyhedron.backend_ppl`) with `\ZZ` or
         `\QQ` coefficients depending on ``base_ring``.
@@ -341,10 +345,10 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     ::
 
         sage: positive_coords = Polyhedron(ieqs=[
-        ...       [0, 1, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0],
-        ...       [0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 1]])
+        ....:     [0, 1, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0],
+        ....:     [0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 1]])
         sage: P = Polyhedron(ieqs=positive_coords.inequalities() + (
-        ...       [0,0,1,-1,-1,1,0], [0,0,-1,1,-1,1,0]), eqns=[[-31,1,1,1,1,1,1]])
+        ....:     [0,0,1,-1,-1,1,0], [0,0,-1,1,-1,1,0]), eqns=[[-31,1,1,1,1,1,1]])
         sage: P
         A 5-dimensional polyhedron in QQ^6 defined as the convex hull of 7 vertices
         sage: P.dim()

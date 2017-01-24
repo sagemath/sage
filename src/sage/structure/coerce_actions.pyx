@@ -273,7 +273,7 @@ cdef class ModuleAction(Action):
     implementation of an ``_an_element_()`` method. This is not always
     awailable. But usually, the action is only needed when one already
     *has* two elements. Hence, by :trac:`14249`, the coercion model will
-    pass these two elements the the :class:`ModuleAction` constructor.
+    pass these two elements to the :class:`ModuleAction` constructor.
 
     The actual action is implemented by the ``_rmul_`` or ``_lmul_``
     function on its elements. We must, however, be very particular about

@@ -4,7 +4,7 @@ r"""
 This module implements filtered vector spaces, that is, a descending
 sequence of vector spaces
 
-.. math::
+.. MATH::
 
     \cdots \supset F_d \supset F_{d+1} \supset F_{d+2} \supset \cdots
 

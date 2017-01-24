@@ -6,8 +6,10 @@
 
 # Assume current directory is SAGE_ROOT/build/make
 export SAGE_ROOT=`cd ../.. && pwd -P`
+if [ -z "$SAGE_LOCAL" ]; then
+    export SAGE_LOCAL="$SAGE_ROOT/local"
+fi
 export SAGE_SRC="$SAGE_ROOT/src"
-export SAGE_LOCAL="$SAGE_ROOT/local"
 export SAGE_SHARE="$SAGE_LOCAL/share"
 export SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
 export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"

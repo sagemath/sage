@@ -33,7 +33,7 @@ EXAMPLES::
 
     sage: from sage.repl.rich_output.backend_base import BackendSimple
     sage: backend = BackendSimple()
-    sage: plain_text = backend.plain_text_formatter(range(10));  plain_text
+    sage: plain_text = backend.plain_text_formatter(list(range(10)));  plain_text
     OutputPlainText container
     sage: backend.displayhook(plain_text, plain_text)
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -304,7 +304,7 @@ class BackendBase(SageObject):
 
             sage: from sage.repl.rich_output.backend_base import BackendBase
             sage: backend = BackendBase()
-            sage: out = backend.plain_text_formatter(range(30))
+            sage: out = backend.plain_text_formatter(list(range(30)))
             sage: out
             OutputPlainText container
             sage: out.text
@@ -315,7 +315,7 @@ class BackendBase(SageObject):
             19,\n 20,\n 21,\n 22,\n 23,\n 24,\n 25,\n 26,\n 27,\n
             28,\n 29]'
 
-            sage: out = backend.plain_text_formatter(range(20), concatenate=True)
+            sage: out = backend.plain_text_formatter(list(range(20)), concatenate=True)
             sage: out.text.get()
             '0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19'
        """
@@ -354,7 +354,7 @@ class BackendBase(SageObject):
 
             sage: from sage.repl.rich_output.backend_base import BackendBase
             sage: backend = BackendBase()
-            sage: out = backend.ascii_art_formatter(range(30))
+            sage: out = backend.ascii_art_formatter(list(range(30)))
             sage: out
             OutputAsciiArt container
             sage: out.ascii_art
@@ -402,7 +402,7 @@ class BackendBase(SageObject):
 
             sage: from sage.repl.rich_output.backend_base import BackendBase
             sage: backend = BackendBase()
-            sage: out = backend.unicode_art_formatter(range(30))
+            sage: out = backend.unicode_art_formatter(list(range(30)))
             sage: out
             OutputUnicodeArt container
             sage: out.unicode_art

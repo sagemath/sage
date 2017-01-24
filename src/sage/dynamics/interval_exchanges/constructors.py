@@ -109,26 +109,17 @@ of the corresponding matrix::
 
 REFERENCES:
 
-.. [BL08] Corentin Boissy and Erwan Lanneau, "Dynamics and geometry of the
-  Rauzy-Veech induction for quadratic differentials" (arxiv:0710.5614) to appear
-  in Ergodic Theory and Dynamical Systems
+- [BL2008]_
 
-.. [DN90] Claude Danthony and Arnaldo Nogueira "Measured foliations on
-  nonorientable surfaces", Annales scientifiques de l'Ecole Normale
-  Superieure, Ser. 4, 23, no. 3 (1990) p 469-494
+- [DN1990]_
 
-.. [N85] Arnaldo Nogueira, "Almost all Interval Exchange Transformations with
-  Flips are Nonergodic" (Ergod. Th. & Dyn. Systems, Vol 5., (1985), 257-271
+- [Nog1985]_
 
-.. [R79] Gerard Rauzy, "Echanges d'intervalles et transformations induites",
-  Acta Arith. 34, no. 3, 203-212, 1980
+- [Rau1979]_
 
-.. [V78] William Veech, "Interval exchange transformations", J. Analyse Math.
-  33, 222-272
+- [Vee1978]_
 
-.. [Z] Anton Zorich, "Generalized Permutation software"
-  (http://perso.univ-rennes1.fr/anton.zorich)
-
+- [Zor]_
 
 AUTHORS:
 
@@ -242,7 +233,7 @@ def Permutation(*args,**kargs):
 
     Those permutations are the combinatoric part of an interval exchange
     transformation (IET). The combinatorial study of those objects starts with
-    Gerard Rauzy [R79]_ and William Veech [V78]_.
+    Gerard Rauzy [Rau1979]_ and William Veech [Vee1978]_.
 
     The combinatoric part of interval exchange transformation can be taken
     independently from its dynamical origin. It has an important link with
@@ -427,9 +418,9 @@ def GeneralizedPermutation(*args,**kargs):
     Returns a permutation of an interval exchange transformation.
 
     Those permutations are the combinatoric part of linear involutions and were
-    introduced by Danthony-Nogueira [DN90]_. The full combinatoric study and
+    introduced by Danthony-Nogueira [DN1990]_. The full combinatoric study and
     precise links with strata of quadratic differentials was achieved few years
-    later by Boissy-Lanneau [BL08]_.
+    later by Boissy-Lanneau [BL2008]_.
 
     INPUT:
 
@@ -700,7 +691,7 @@ def RauzyDiagram(*args, **kargs):
     interval exchange transformation). The edges correspond to the action of the
     different operations considered.
 
-    It first appeard in the original article of Rauzy [R79]_.
+    It first appeard in the original article of Rauzy [Rau1979]_.
 
     INPUT:
 

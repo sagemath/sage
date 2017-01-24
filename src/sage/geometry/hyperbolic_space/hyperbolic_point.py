@@ -60,7 +60,7 @@ Some more examples::
 #***********************************************************************
 
 from sage.structure.element import Element
-from sage.symbolic.pynac import I
+from sage.symbolic.all import I
 from sage.misc.latex import latex
 from sage.matrix.matrix import is_Matrix
 from sage.matrix.constructor import matrix
@@ -83,7 +83,7 @@ class HyperbolicPoint(Element):
       appropriate model
     - ``is_boundary`` -- whether the point is a boundary point
     - ``check`` -- (default: ``True``) if ``True``, then check to make sure
-      the coordinates give a valid point the the model
+      the coordinates give a valid point in the model
 
     EXAMPLES:
 

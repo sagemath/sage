@@ -52,6 +52,7 @@ TESTS::
     Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
     sage: TestSuite(IL).run(skip=['_test_category'],verbose=True)
     running ._test_eq() . . . pass
+    running ._test_new() . . . pass
     running ._test_not_implemented_methods() . . . pass
     running ._test_pickling() . . . pass
 

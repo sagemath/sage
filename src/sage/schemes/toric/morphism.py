@@ -60,7 +60,7 @@ homogeneously rescaled coordinates of a point of `\mathbb{P}^1` map to the same
 point in `\mathbb{P}^2` up to its homogeneous rescalings. It is not
 equivariant with respect to the torus actions
 
-.. math::
+.. MATH::
 
     \CC^\times \times \mathbb{P}^1,
     (\mu,[u:v]) \mapsto [u:\mu v]
@@ -137,7 +137,7 @@ If we denote the homogeneous coordinates of `O_{\mathbb{P}^1}(2)` by
 `x`, `t`, `y` corresponding to the rays `(1,2)`, `(1,1)`, and `(1,0)`
 then the blow-up map is [BB]_:
 
-.. math::
+.. MATH::
 
     f: O_{\mathbb{P}^1}(2) \to \CC^2/\ZZ_2, \quad
     (x,t,y) \mapsto \left( x\sqrt{t}, y\sqrt{t} \right)
@@ -276,7 +276,7 @@ It is possible to study fibers of the last two morphisms or their composition::
     N(-1, -1, 0)
     in Sublattice <N(1, 0, 0), N(0, 1, 0)>
     sage: for c in phi_d.codomain().fan():
-    ...       c.ambient_ray_indices()
+    ....:     c.ambient_ray_indices()
     (1, 2)
     (0, 2)
     (0, 1)
@@ -373,6 +373,8 @@ from __future__ import print_function
 # the toric varieties level from Morphism. See
 # https://groups.google.com/d/msg/sage-devel/qF4yU6Vdmao/wQlNrneSmWAJ
 from sage.categories.morphism import Morphism
+
+from sage.structure.sage_object import richcmp_not_equal, richcmp
 
 from sage.structure.sequence import Sequence
 from sage.rings.all import ZZ
@@ -881,18 +883,20 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             raise ValueError('The fan morphism codomain must be the fan of the codomain.')
         self._fan_morphism = fan_morphism
 
-    def _cmp_(self, right):
+    def _richcmp_(self, right, op):
         r"""
         Compare ``self`` and ``right``.
 
         INPUT:
 
-        - ``right`` -- anything.
+        - ``right`` -- another toric morphism
 
         OUTPUT:
 
-        - 0 if ``right`` is also a toric morphism between the same domain and
-          codomain, given by an equal fan morphism. 1 or -1 otherwise.
+        - boolean
+
+        Comparison is done first by domain, then by codomain, then by
+        fan morphism.
 
         TESTS::
 
@@ -900,23 +904,27 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             sage: P3 = toric_varieties.P(3)
             sage: m = matrix([(2,0,0), (1,1,0)])
             sage: phi = A2.hom(m, P3)
-            sage: cmp(phi, phi)
-            0
-            sage: cmp(phi, prod(phi.factor()))
-            0
-            sage: abs(cmp(phi, phi.factor()[0]))
-            1
-            sage: cmp(phi, 1) * cmp(1, phi)
-            -1
+            sage: phi == phi
+            True
+            sage: phi == prod(phi.factor())
+            True
+            sage: phi == phi.factor()[0]
+            False
         """
-        if isinstance(right, SchemeMorphism_fan_toric_variety):
-            return cmp(
-                [self.domain(), self.codomain(), self.fan_morphism()],
-                [right.domain(), right.codomain(), right.fan_morphism()])
-        else:
-            return cmp(type(self), type(right))
+        if not isinstance(right, SchemeMorphism_fan_toric_variety):
+            return NotImplemented
 
-    __cmp__ = _cmp_
+        lx = self.domain()
+        rx = right.domain()
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
+
+        lx = self.codomain()
+        rx = right.codomain()
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
+
+        return richcmp(self.fan_morphism(), right.fan_morphism(), op)
 
     def _composition_(self, right, homset):
         """
@@ -985,7 +993,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         The intermediate varieties are universal in the following sense. Let
         ``self`` map `X` to `X'` and let `X_s`, `X_i` sit in between, that is,
 
-        .. math::
+        .. MATH::
 
             X
             \twoheadrightarrow
@@ -1476,8 +1484,8 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         EXAMPLES::
 
             sage: polytope = LatticePolytope(
-            ...       [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
-            ...        (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
+            ....:     [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
+            ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope)
             sage: P2 = toric_varieties.P2()
             sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
@@ -1587,15 +1595,15 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         corresponding nodes of the graph are joined by an edge. Note that
         irreducible components do not have to be of the same dimension.
         
-        .. seealso::
+        .. SEEALSO::
 
             :meth:`~SchemeMorphism_fan_toric_variety_dominant.fiber_component`.
 
         EXAMPLES::
 
             sage: polytope = Polyhedron(
-            ...       [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
-            ...        (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
+            ....:     [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
+            ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
 
             sage: P2 = toric_varieties.P2()
@@ -1606,7 +1614,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
             sage: fibration.fiber_graph( P2.fan(0)[0] )
             Graph on 1 vertex
             sage: for c1 in P2.fan(1):
-            ...       fibration.fiber_graph(c1)
+            ....:     fibration.fiber_graph(c1)
             Graph on 1 vertex
             Graph on 1 vertex
             Graph on 4 vertices
@@ -1669,8 +1677,8 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
     EXAMPLES::
 
         sage: polytope = Polyhedron(
-        ...       [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
-        ...        (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
+        ....:     [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
+        ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
         sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
         sage: P2 = toric_varieties.P2()
         sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
@@ -1704,8 +1712,8 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         TESTS::
 
             sage: polytope = Polyhedron(
-            ...       [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
-            ...        (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
+            ....:     [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
+            ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
             sage: P2 = toric_varieties.P2()
             sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
@@ -1760,8 +1768,8 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         EXAMPLES::
 
             sage: polytope = Polyhedron(
-            ...       [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
-            ...        (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
+            ....:     [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
+            ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
             sage: P2 = toric_varieties.P2()
             sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
@@ -1937,8 +1945,8 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         EXAMPLES::
 
             sage: polytope = Polyhedron(
-            ...       [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
-            ...        (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
+            ....:     [(-3,0,-1,-1),(-1,2,-1,-1),(0,-1,0,0),(0,0,0,1),(0,0,1,0),
+            ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
             sage: P2 = toric_varieties.P2()
             sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])

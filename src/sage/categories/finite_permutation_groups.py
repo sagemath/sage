@@ -26,7 +26,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
     EXAMPLES::
 
         sage: C = PermutationGroups().Finite(); C
-        Category of finite permutation groups
+        Category of finite enumerated permutation groups
         sage: C.super_categories()
         [Category of permutation groups,
          Category of finite groups,
@@ -51,6 +51,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           pass
@@ -63,6 +64,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
         running ._test_enumerated_set_iter_list() . . . pass
         running ._test_eq() . . . pass
         running ._test_inverse() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_one() . . . pass
         running ._test_pickling() . . . pass
@@ -111,7 +113,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
             Returns the *cycle index* of `G`, which is a gadget counting
             the elements of `G` by cycle type, averaged over the group:
 
-            .. math::
+            .. MATH::
 
                 P = \frac{1}{|G|} \sum_{g\in G} p_{ \operatorname{cycle\ type}(g) }
 
@@ -161,7 +163,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 p[1, 1, 1, 1, 1] + 15*p[2, 2, 1] + 20*p[3, 1, 1] + 24*p[5]
 
                 sage: for G in TransitiveGroups(5):               # optional - database_gap # long time
-                ...       G.cardinality() * G.cycle_index()
+                ....:     G.cardinality() * G.cycle_index()
                 p[1, 1, 1, 1, 1] + 4*p[5]
                 p[1, 1, 1, 1, 1] + 5*p[2, 2, 1] + 4*p[5]
                 p[1, 1, 1, 1, 1] + 5*p[2, 2, 1] + 10*p[4, 1] + 4*p[5]
@@ -186,8 +188,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
             REFERENCES:
 
-             .. [Ker1991] \A. Kerber. Algebraic combinatorics via finite group actions, 2.2 p. 70.
-               BI-Wissenschaftsverlag, Mannheim, 1991.
+            - [Ke1991]_
 
             AUTHORS:
 

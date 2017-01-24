@@ -633,7 +633,7 @@ Sage example in ./programmation.tex, line 2214::
 Sage example in ./programmation.tex, line 2221::
 
   sage: L1 = [0..4]; L2 = [5..9]
-  sage: zip(L1, L2)
+  sage: list(zip(L1, L2))
   [(0, 5), (1, 6), (2, 7), (3, 8), (4, 9)]
   sage: map(lambda x, y:(x, y), L1, L2)
   [(0, 5), (1, 6), (2, 7), (3, 8), (4, 9)]

@@ -75,14 +75,6 @@ class InlineFortran:
             sage: os.getcwd() == SAGE_ROOT
             True
         """
-        if len(x.splitlines()) == 1 and os.path.exists(x):
-            from sage.misc.superseded import deprecation
-            deprecation(2891, "Calling fortran() with a filename is deprecated, use fortran(open(f).read) instead")
-            filename = x
-            x = open(x).read()
-            if filename.lower().endswith('.f90'):
-                x = '!f90\n' + x
-
         if globals is None:
             globals = self.globs
 

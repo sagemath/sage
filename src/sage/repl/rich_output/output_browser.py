@@ -37,7 +37,7 @@ class OutputHtml(OutputBase):
         Construct a sample Html output container
 
         This static method is meant for doctests, so they can easily
-        construt an example.
+        construct an example.
 
         OUTPUT:
 

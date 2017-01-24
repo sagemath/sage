@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 cd src
-python setup.py install
+$PIP_INSTALL .

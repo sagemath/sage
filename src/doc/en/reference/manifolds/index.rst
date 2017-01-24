@@ -17,6 +17,8 @@ More documentation (in particular example worksheets) can be found
 
    diff_manifold
 
+   riem_manifold
+
    sage/manifolds/utilities
 
 .. include:: ../footer.txt

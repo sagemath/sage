@@ -15,7 +15,7 @@ set -e
 
 # TODO on the next update: l71 switch from gz to bz2 as wished in #18826
 VERSION="1.2.2"
-VERSIONREV="37"
+VERSIONREV="103"
 
 # The upstream tarball name is: giac"$SOURCEORIG".tar.gz
 SOURCEORIG=_"$VERSION"-"$VERSIONREV"
@@ -67,9 +67,7 @@ touch html_vall
 
 # building giac source tarball for the spkg
 cd ../../../
-tar -cz src -f "$OUTPUTFILEBASENAME".tar.gz
-# On the next update don't forget to change to bz2 as wished in #18826
-#tar -cj src -f  -f "$OUTPUTFILEBASENAME".tar.bz2
+tar -cj src -f "$OUTPUTFILEBASENAME".tar.bz2
 
 
 

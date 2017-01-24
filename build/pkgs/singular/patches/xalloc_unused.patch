@@ -1,0 +1,28 @@
+commit 67e67da7e75dd2a71a25010346c18f728afb4a77
+Author: Jean-Pierre Flori <jean-pierre.flori@ssi.gouv.fr>
+Date:   Tue Dec 20 09:43:03 2016 +0000
+
+    Mark unused params as unused to get rid of compiler warnings.
+
+diff --git a/xalloc/omalloc.h b/xalloc/omalloc.h
+index 80ae08d..473277d 100644
+--- a/xalloc/omalloc.h
++++ b/xalloc/omalloc.h
+@@ -86,7 +86,7 @@ static inline void *omRealloc(void *d, size_t ns)
+   }
+ }
+ #define omReallocAligned(A,B) omRealloc(A,B)
+-static inline void *omReallocSize(void *d, size_t os, size_t ns)
++static inline void *omReallocSize(void *d, __attribute__((unused)) size_t os, size_t ns)
+ { if (d==NULL) return omAlloc(ns);
+   else
+   {
+@@ -113,7 +113,7 @@ static inline void *omRealloc0(void *d, size_t ns)
+   }
+   return n;
+ }
+-static inline void omFreeSize(void *d, size_t s)
++static inline void omFreeSize(void *d, __attribute__((unused)) size_t s)
+ { if (d!=NULL) { long *dd=(long*)d; dd--; free(dd);}}
+ 
+ static inline char * omStrDup(const char *s)

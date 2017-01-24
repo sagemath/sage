@@ -23,7 +23,6 @@ from .banner import version, banner
 from .temporary_file import tmp_dir, tmp_filename
 
 from .misc_c import prod, running_total, balanced_sum
-lazy_import('sage.misc.misc_c', ['is_32_bit', 'is_64_bit'], deprecation=17460)
 mul = prod
 add = sum
 
@@ -53,10 +52,9 @@ from .fpickle import pickle_function, unpickle_function
 
 from .dist import install_scripts
 
-from .package import (install_package,
-        installed_packages, is_package_installed,
+from .package import (installed_packages, is_package_installed,
         standard_packages, optional_packages, experimental_packages,
-        upgrade, package_versions)
+        package_versions)
 
 from .pager import pager
 
@@ -82,8 +80,6 @@ from .sage_input import sage_input
 
 lazy_import("sage.misc.cython", ["cython_lambda", "cython_create_local_so"]) 
 lazy_import("sage.misc.cython_c", "cython_compile", "cython")
-lazy_import("sage.misc.cython_c", "cython_compile", "pyrex", deprecation=9552)
-lazy_import("sage.misc.cython_c", "cython_compile", "sagex", deprecation=9552)
 
 from .persist import save, load, dumps, loads, db, db_save
 
@@ -134,7 +130,6 @@ from .functional import (additive_order,
                         n, N,
                         objgens,
                         objgen,
-                        one,
                         order,
                         rank,
                         regulator,
@@ -145,7 +140,7 @@ from .functional import (additive_order,
                         squarefree_part,
                         symbolic_sum as sum,
                         transpose,
-                        zero)
+                        )
 
 
 from .latex import LatexExpr, latex, view, pretty_print_default
@@ -201,7 +196,3 @@ class logstr(str):
         elif not '~' in self:
          delim = '~'
         return r"""\verb%s%s%s"""%(delim, self.replace('\n\n','\n').replace('\n','; '), delim)
-
-
-lazy_import("sage.misc", "messaging", deprecation=18140)
-

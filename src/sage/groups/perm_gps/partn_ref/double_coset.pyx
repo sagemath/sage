@@ -92,11 +92,6 @@ REFERENCE:
 
 include 'data_structures_pyx.pxi' # includes bitsets
 
-cdef inline int cmp(int a, int b):
-    if a < b: return -1
-    elif a == b: return 0
-    else: return 1
-
 # Functions
 
 cdef bint all_children_are_equivalent_trivial(PartitionStack *PS, void *S):
@@ -110,7 +105,7 @@ cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degre
     cdef list MS2 = <list> S2
     cdef int i, j
     for i from 0 <= i < degree:
-        j = cmp(MS1[gamma_1[i]], MS2[gamma_2[i]])
+        j = int_cmp(MS1[gamma_1[i]], MS2[gamma_2[i]])
         if j != 0: return j
     return 0
 
@@ -129,40 +124,40 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
         sage: gens = [[1,2,3,0]]
         sage: reps = [[0,1,2,3]]
         sage: for p in SymmetricGroup(4):
-        ...     p = [p(i)-1 for i in range(1,5)]
-        ...     found = False
-        ...     for r in reps:
-        ...         if coset_eq(p, r, gens):
-        ...             found = True
-        ...             break
-        ...     if not found:
-        ...         reps.append(p)
+        ....:   p = [p(i)-1 for i in range(1,5)]
+        ....:   found = False
+        ....:   for r in reps:
+        ....:       if coset_eq(p, r, gens):
+        ....:           found = True
+        ....:           break
+        ....:   if not found:
+        ....:       reps.append(p)
         sage: len(reps)
         6
         sage: gens = [[1,0,2,3],[0,1,3,2]]
         sage: reps = [[0,1,2,3]]
         sage: for p in SymmetricGroup(4):
-        ...     p = [p(i)-1 for i in range(1,5)]
-        ...     found = False
-        ...     for r in reps:
-        ...         if coset_eq(p, r, gens):
-        ...             found = True
-        ...             break
-        ...     if not found:
-        ...         reps.append(p)
+        ....:   p = [p(i)-1 for i in range(1,5)]
+        ....:   found = False
+        ....:   for r in reps:
+        ....:       if coset_eq(p, r, gens):
+        ....:           found = True
+        ....:           break
+        ....:   if not found:
+        ....:       reps.append(p)
         sage: len(reps)
         6
         sage: gens = [[1,2,0,3]]
         sage: reps = [[0,1,2,3]]
         sage: for p in SymmetricGroup(4):
-        ...     p = [p(i)-1 for i in range(1,5)]
-        ...     found = False
-        ...     for r in reps:
-        ...         if coset_eq(p, r, gens):
-        ...             found = True
-        ...             break
-        ...     if not found:
-        ...         reps.append(p)
+        ....:   p = [p(i)-1 for i in range(1,5)]
+        ....:   found = False
+        ....:   for r in reps:
+        ....:       if coset_eq(p, r, gens):
+        ....:           found = True
+        ....:           break
+        ....:   if not found:
+        ....:       reps.append(p)
         sage: len(reps)
         8
 

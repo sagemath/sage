@@ -1,4 +1,4 @@
-$(PYTHON)
+$(PYTHON) | pip entrypoints pygments mistune
 
 ----------
 All lines of this file are ignored except the first.

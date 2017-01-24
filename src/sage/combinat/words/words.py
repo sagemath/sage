@@ -1,6 +1,6 @@
 # coding=utf-8
 r"""
-Combinatorial classes of words.
+Set of words
 
 To define a new class of words, please refer to the documentation file:
 sage/combinat/words/notes/word_inheritance_howto.txt
@@ -124,7 +124,7 @@ class AbstractLanguage(Parent):
         r"""
         INPUT:
 
-        - ``alphabet`` -- the unerlying alphabet
+        - ``alphabet`` -- the underlying alphabet
 
         TESTS::
 
@@ -133,10 +133,10 @@ class AbstractLanguage(Parent):
             sage: loads(dumps(InfiniteWords('ab'))) == InfiniteWords('ab')
             True
 
-            sage: Words('abc').cmp_letters
-            <built-in function cmp>
-            sage: Words('bac').cmp_letters
-            <bound method FiniteOrInfiniteWords._cmp_letters ...>
+            sage: Words('abc').sortkey_letters
+            <bound method FiniteOrInfiniteWords._sortkey_trivial ...>
+            sage: Words('bac').sortkey_letters
+            <bound method FiniteOrInfiniteWords._sortkey_letters ...>
         """
         if isinstance(alphabet, (int,Integer)):
             from sage.sets.integer_range import IntegerRange
@@ -153,10 +153,12 @@ class AbstractLanguage(Parent):
         if alphabet.cardinality() == Infinity or \
            (alphabet.cardinality() < 36 and
             all(alphabet.unrank(i) > alphabet.unrank(j) for
-            i in range(min(36,alphabet.cardinality())) for j in range(i))):
-            self.cmp_letters = cmp
+            i in range(min(36, alphabet.cardinality())) for j in range(i))):
+            self.cmp_letters = cmp  # deprecated
+            self.sortkey_letters = self._sortkey_trivial
         else:
-            self.cmp_letters = self._cmp_letters
+            self.cmp_letters = self._cmp_letters  # deprecated
+            self.sortkey_letters = self._sortkey_letters
 
         if category is None:
             category = Sets()
@@ -249,7 +251,7 @@ class AbstractLanguage(Parent):
 
         INPUT:
 
-        -  ``letter`` - a letter
+        -  ``letter`` -- a letter
 
         EXAMPLES::
 
@@ -314,13 +316,16 @@ class AbstractLanguage(Parent):
 
         INPUT:
 
-        - ``letter1`` - a letter in the alphabet
-        - ``letter2`` - a letter in the alphabet
+        - ``letter1`` -- a letter in the alphabet
+        - ``letter2`` -- a letter in the alphabet
 
         EXAMPLES::
 
             sage: W = FiniteWords('woa')
             sage: W.cmp_letters('w','a')  # indirect doctest
+            doctest:warning...:
+            DeprecationWarning: cmp_letters is deprecated. Use sortkey_letters instead
+            See http://trac.sagemath.org/21435 for details.
             -2
             sage: W.cmp_letters('w','o')  # indirect doctest
             -1
@@ -331,8 +336,51 @@ class AbstractLanguage(Parent):
 
             sage: assert W.cmp_letters == W._cmp_letters
         """
+        from sage.misc.superseded import deprecation
+        deprecation(21435, "cmp_letters is deprecated. Use sortkey_letters instead")
         rk = self.alphabet().rank
         return int(rk(letter1) - rk(letter2))
+
+    def _sortkey_trivial(self, letter1):
+        """
+        Trivial function, used to sort the letters by their names.
+
+        INPUT:
+
+        - ``letter1`` -- a letter in the alphabet
+
+        EXAMPLES::
+
+            sage: W = FiniteWords('ade')
+            sage: W.sortkey_letters('d')  # indirect doctest
+            'd'
+        """
+        return letter1
+
+    def _sortkey_letters(self, letter1):
+        r"""
+        Return the default value used to sort the letters.
+
+        INPUT:
+
+        - ``letter1`` -- a letter in the alphabet
+
+        EXAMPLES::
+
+            sage: W = FiniteWords('woa')
+            sage: W.sortkey_letters('w')  # indirect doctest
+            0
+            sage: W.sortkey_letters('o')  # indirect doctest
+            1
+            sage: W.sortkey_letters('a')  # indirect doctest
+            2
+
+        TESTS::
+
+            sage: assert W.sortkey_letters == W._sortkey_letters
+        """
+        rk = self.alphabet().rank
+        return rk(letter1)
 
     def __eq__(self, other):
         r"""
@@ -471,8 +519,9 @@ class FiniteWords(AbstractLanguage):
         if (self.alphabet().cardinality() <= 256 and
                 all(isinstance(i, (int,Integer)) and 0 <= i < 256 for i in self.alphabet())):
             L = self.alphabet().list()
-            if (all(L[i] < L[i+1] for i in range(len(L)-1)) and
-                    all(self.cmp_letters(L[i],L[i+1]) == -1 for i in range(len(L)-1))):
+            key = self.sortkey_letters
+            if (all(L[i] < L[i + 1] for i in range(len(L) - 1)) and
+                    all(key(L[i]) < key(L[i + 1]) for i in range(len(L) - 1))):
                 classes['char'] = word.FiniteWord_char
 
         return classes
@@ -808,22 +857,22 @@ class FiniteWords(AbstractLanguage):
 
         If the alphabet is a subset of [0, 255], then it uses char as datatype::
 
-            sage: type(Word([0,1,1,2,0], alphabet=range(256)))
+            sage: type(Word([0,1,1,2,0], alphabet=list(range(256))))
             <class 'sage.combinat.words.word.FiniteWord_char'>
 
         If the alphabet is a subset of [0, 255], then the letters must
         convert to an unsigned char. Otherwise an error is raised before
         the check is done::
 
-            sage: type(Word([0,1,1,2,0,257], alphabet=range(256)))
+            sage: type(Word([0,1,1,2,0,257], alphabet=list(range(256))))
             Traceback (most recent call last):
             ...
             OverflowError: value too large to convert to unsigned char
-            sage: type(Word([0,1,1,2,0,258], alphabet=range(257)))
+            sage: type(Word([0,1,1,2,0,258], alphabet=list(range(257))))
             Traceback (most recent call last):
             ...
             ValueError: 258 not in alphabet!
-            sage: type(Word([0,1,1,2,0,103], alphabet=range(100)))
+            sage: type(Word([0,1,1,2,0,103], alphabet=list(range(100))))
             Traceback (most recent call last):
             ...
             ValueError: 103 not in alphabet!
@@ -2035,22 +2084,22 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
         If the alphabet is a subset of [0, 255], then it uses char as datatype::
 
-            sage: type(Word([0,1,1,2,0], alphabet=range(256)))
+            sage: type(Word([0,1,1,2,0], alphabet=list(range(256))))
             <class 'sage.combinat.words.word.FiniteWord_char'>
 
         If the alphabet is a subset of [0, 255], then the letters must
         convert to an unsigned char. Otherwise an error is raised before
         the check is done::
 
-            sage: type(Word([0,1,1,2,0,257], alphabet=range(256)))
+            sage: type(Word([0,1,1,2,0,257], alphabet=list(range(256))))
             Traceback (most recent call last):
             ...
             OverflowError: value too large to convert to unsigned char
-            sage: type(Word([0,1,1,2,0,258], alphabet=range(257)))
+            sage: type(Word([0,1,1,2,0,258], alphabet=list(range(257))))
             Traceback (most recent call last):
             ...
             ValueError: 258 not in alphabet!
-            sage: type(Word([0,1,1,2,0,103], alphabet=range(100)))
+            sage: type(Word([0,1,1,2,0,103], alphabet=list(range(100))))
             Traceback (most recent call last):
             ...
             ValueError: 103 not in alphabet!

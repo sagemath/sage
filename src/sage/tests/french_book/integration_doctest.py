@@ -21,7 +21,7 @@ Sage example in ./integration.tex, line 103::
     sage: fp = plot(f, 1, 3, color='red')
     sage: n = 4
     sage: interp_points = [(1+2*u/(n-1), N(f(1+2*u/(n-1))))
-    ....:                  for u in xrange(n)]
+    ....:                  for u in range(n)]
     sage: A = PolynomialRing(RR, 'x')
     sage: pp = plot(A.lagrange_polynomial(interp_points), 1, 3, fill='axis')
     sage: show(fp+pp)

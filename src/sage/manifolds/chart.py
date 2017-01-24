@@ -18,11 +18,9 @@ AUTHORS:
 
 REFERENCES:
 
-- Chap. 2 of [Lee11]_ \J.M. Lee: *Introduction to Topological Manifolds*,
-  2nd ed., Springer (New York) (2011)
+- Chap. 2 of [Lee2011]_
+- Chap. 1 of [Lee2013]_
 
-- Chap. 1 of [Lee13]_ \J.M. Lee : *Introduction to Smooth Manifolds*,
-  2nd ed., Springer (New York) (2013)
 """
 
 #*****************************************************************************
@@ -1865,9 +1863,10 @@ class RealChart(Chart):
         # All tests have been passed:
         return True
 
-    @options(color='red',  style='-', thickness=1, plot_points=75, label_axes=True)
+    @options(max_range=8, color='red',  style='-', thickness=1, plot_points=75,
+             label_axes=True)
     def plot(self, chart=None, ambient_coords=None, mapping=None,
-             fixed_coords=None, ranges=None, max_range=8, nb_values=None,
+             fixed_coords=None, ranges=None, number_values=None,
              steps=None, parameters=None, **kwds):
         r"""
         Plot ``self`` as a grid in a Cartesian graph based on
@@ -1908,27 +1907,27 @@ class RealChart(Chart):
           entire coordinate range declared during the chart construction
           is considered (with ``-Infinity`` replaced by ``-max_range``
           and ``+Infinity`` by ``max_range``)
+        - ``number_values`` -- (default: ``None``) either an integer or a
+          dictionary with keys the coordinates to be drawn and values the
+          number of constant values of the coordinate to be considered; if
+          ``number_values`` is a single integer, it represents the number of
+          constant values for all coordinates; if ``number_values`` is ``None``,
+          it is set to 9 for a 2D plot and to 5 for a 3D plot
+        - ``steps`` -- (default: ``None``) dictionary with keys the coordinates
+          to be drawn and values the step between each constant value of
+          the coordinate; if ``None``, the step is computed from the coordinate
+          range (specified in ``ranges``) and ``number_values``. On the contrary
+          if the step is provided for some coordinate, the corresponding
+          number of constant values is deduced from it and the coordinate range.
+        - ``parameters`` -- (default: ``None``) dictionary giving the numerical
+          values of the parameters that may appear in the relation between
+          the two coordinate systems
         - ``max_range`` -- (default: 8) numerical value substituted to
           +Infinity if the latter is the upper bound of the range of a
           coordinate for which the plot is performed over the entire coordinate
           range (i.e. for which no specific plot range has been set in
           ``ranges``); similarly ``-max_range`` is the numerical valued
           substituted for ``-Infinity``
-        - ``nb_values`` -- (default: ``None``) either an integer or a dictionary
-          with keys the coordinates to be drawn and values the number of
-          constant values of the coordinate to be considered; if ``nb_values``
-          is a single integer, it represents the number of constant values for
-          all coordinates; if ``nb_values`` is ``None``, it is set to 9 for a
-          2D plot and to 5 for a 3D plot
-        - ``steps`` -- (default: ``None``) dictionary with keys the coordinates
-          to be drawn and values the step between each constant value of
-          the coordinate; if ``None``, the step is computed from the coordinate
-          range (specified in ``ranges``) and ``nb_values``. On the contrary
-          if the step is provided for some coordinate, the corresponding
-          number of constant values is deduced from it and the coordinate range.
-        - ``parameters`` -- (default: ``None``) dictionary giving the numerical
-          values of the parameters that may appear in the relation between
-          the two coordinate systems
         - ``color`` -- (default: ``'red'``) either a single color or a
           dictionary of colors, with keys the coordinates to be drawn,
           representing the colors of the lines along which the coordinate
@@ -1964,11 +1963,25 @@ class RealChart(Chart):
 
         EXAMPLES:
 
-        Grid of polar coordinates in terms of Cartesian coordinates in the
-        Euclidean plane::
+        A 2-dimensional chart plotted in terms of itself results in a
+        rectangular grid::
 
             sage: R2 = Manifold(2, 'R^2', structure='topological') # the Euclidean plane
             sage: c_cart.<x,y> = R2.chart() # Cartesian coordinates
+            sage: g = c_cart.plot()  # equivalent to c_cart.plot(c_cart)
+            sage: g
+            Graphics object consisting of 18 graphics primitives
+
+        .. PLOT::
+
+            R2 = Manifold(2, 'R^2', structure='topological')
+            c_cart = R2.chart('x y')
+            g = c_cart.plot()
+            sphinx_plot(g)
+
+        Grid of polar coordinates in terms of Cartesian coordinates in the
+        Euclidean plane::
+
             sage: U = R2.open_subset('U', coord_def={c_cart: (y!=0, x<0)}) # the complement of the segment y=0 and x>0
             sage: c_pol.<r,ph> = U.chart(r'r:(0,+oo) ph:(0,2*pi):\phi') # polar coordinates on U
             sage: pol_to_cart = c_pol.transition_map(c_cart, [r*cos(ph), r*sin(ph)])
@@ -1988,8 +2001,10 @@ class RealChart(Chart):
 
         Call with non-default values::
 
-            sage: g = c_pol.plot(c_cart, ranges={ph:(pi/4,pi)}, nb_values={r:7, ph:17},
-            ....:                color={r:'red', ph:'green'}, style={r:'-', ph:'--'})
+            sage: g = c_pol.plot(c_cart, ranges={ph:(pi/4,pi)},
+            ....:                number_values={r:7, ph:17},
+            ....:                color={r:'red', ph:'green'},
+            ....:                style={r:'-', ph:'--'})
 
         .. PLOT::
 
@@ -1998,7 +2013,7 @@ class RealChart(Chart):
             U = R2.open_subset('U', coord_def={c_cart: (y!=0, x<0)})
             c_pol = U.chart(r'r:(0,+oo) ph:(0,2*pi):\phi'); r, ph = c_pol[:]
             pol_to_cart = c_pol.transition_map(c_cart, [r*cos(ph), r*sin(ph)])
-            g = c_pol.plot(c_cart, ranges={ph:(pi/4,pi)}, nb_values={r:7, ph:17}, \
+            g = c_pol.plot(c_cart, ranges={ph:(pi/4,pi)}, number_values={r:7, ph:17},
                            color={r:'red', ph:'green'}, style={r:'-', ph:'--'})
             sphinx_plot(g)
 
@@ -2030,22 +2045,9 @@ class RealChart(Chart):
             g = c_pol.plot(c_cart, fixed_coords={ph: pi/4})
             sphinx_plot(g)
 
-        A chart can be plotted in terms of itself, resulting in a rectangular
-        grid::
-
-            sage: g = c_cart.plot()  # equivalent to c_cart.plot(c_cart)
-            sage: g # a rectangular grid
-            Graphics object consisting of 18 graphics primitives
-
-        .. PLOT::
-
-            R2 = Manifold(2, 'R^2', structure='topological')
-            c_cart = R2.chart('x y'); x, y = c_cart[:]
-            g = c_cart.plot()
-            sphinx_plot(g)
-
-        An example with the ambient chart given by the coordinate expression of
-        some manifold map: 3D plot of the stereographic charts on the
+        An example with the ambient chart lying in an another manifold (the
+        plot is then performed via some manifold map passed as the
+        argument ``mapping``): 3D plot of the stereographic charts on the
         2-sphere::
 
             sage: S2 = Manifold(2, 'S^2', structure='topological') # the 2-sphere
@@ -2067,8 +2069,31 @@ class RealChart(Chart):
             sage: g = c_xy.plot(c_cart, mapping=Phi)
             sage: g
             Graphics3d Object
-            sage: type(g)
-            <class 'sage.plot.plot3d.base.Graphics3dGroup'>
+
+        .. PLOT::
+
+            S2 = Manifold(2, 'S^2', structure='topological')
+            U = S2.open_subset('U') ; V = S2.open_subset('V')
+            S2.declare_union(U,V)
+            c_xy = U.chart('x y'); x, y = c_xy[:]
+            c_uv = V.chart('u v'); u, v = c_uv[:]
+            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)),
+                             intersection_name='W', restrictions1= x**2+y**2!=0,
+                             restrictions2= u**2+v**2!=0)
+            uv_to_xy = xy_to_uv.inverse()
+            R3 = Manifold(3, 'R^3', structure='topological')
+            c_cart = R3.chart('X Y Z')
+            Phi = S2.continuous_map(R3, {(c_xy, c_cart): [2*x/(1+x**2+y**2),
+                              2*y/(1+x**2+y**2), (x**2+y**2-1)/(1+x**2+y**2)],
+                              (c_uv, c_cart): [2*u/(1+u**2+v**2),
+                              2*v/(1+u**2+v**2), (1-u**2-v**2)/(1+u**2+v**2)]},
+                              name='Phi', latex_name=r'\Phi')
+            sphinx_plot(c_xy.plot(c_cart, mapping=Phi))
+
+        NB: to get a better coverage of the whole sphere, one should increase
+        the coordinate sampling via the argument ``number_values`` or the
+        argument ``steps`` (only the default value, ``number_values = 5``, is
+        used here, which is pretty low).
 
         The same plot without the ``(X,Y,Z)`` axes labels::
 
@@ -2079,6 +2104,28 @@ class RealChart(Chart):
             sage: g2 = c_uv.plot(c_cart, mapping=Phi, color='green')
             sage: g + g2
             Graphics3d Object
+
+        .. PLOT::
+
+            S2 = Manifold(2, 'S^2', structure='topological')
+            U = S2.open_subset('U') ; V = S2.open_subset('V')
+            S2.declare_union(U,V)
+            c_xy = U.chart('x y'); x, y = c_xy[:]
+            c_uv = V.chart('u v'); u, v = c_uv[:]
+            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)),
+                             intersection_name='W', restrictions1= x**2+y**2!=0,
+                             restrictions2= u**2+v**2!=0)
+            uv_to_xy = xy_to_uv.inverse()
+            R3 = Manifold(3, 'R^3', structure='topological')
+            c_cart = R3.chart('X Y Z')
+            Phi = S2.continuous_map(R3, {(c_xy, c_cart): [2*x/(1+x**2+y**2),
+                              2*y/(1+x**2+y**2), (x**2+y**2-1)/(1+x**2+y**2)],
+                              (c_uv, c_cart): [2*u/(1+u**2+v**2),
+                              2*v/(1+u**2+v**2), (1-u**2-v**2)/(1+u**2+v**2)]},
+                              name='Phi', latex_name=r'\Phi')
+            g = c_xy.plot(c_cart, mapping=Phi, label_axes=False)
+            g2 = c_uv.plot(c_cart, mapping=Phi, color='green')
+            sphinx_plot(g+g2)
 
         South stereographic chart drawned in terms of the North one (we split
         the plot in four parts to avoid the singularity at `(u,v)=(0,0)`)::
@@ -2097,8 +2144,8 @@ class RealChart(Chart):
             U = S2.open_subset('U'); V = S2.open_subset('V'); S2.declare_union(U,V)
             c_xy = U.chart('x y'); x, y = c_xy[:]
             c_uv = V.chart('u v'); u, v = c_uv[:]
-            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)), \
-                              intersection_name='W', restrictions1= x**2+y**2!=0, \
+            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)),
+                              intersection_name='W', restrictions1= x**2+y**2!=0,
                               restrictions2= u**2+v**2!=0)
             uv_to_xy = xy_to_uv.inverse()
             c_uvW = c_uv.restrict(U.intersection(V))
@@ -2123,13 +2170,14 @@ class RealChart(Chart):
             U = S2.open_subset('U'); V = S2.open_subset('V'); S2.declare_union(U,V)
             c_xy = U.chart('x y'); x, y = c_xy[:]
             c_uv = V.chart('u v'); u, v = c_uv[:]
-            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)), \
-                              intersection_name='W', restrictions1= x**2+y**2!=0, \
+            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)),
+                              intersection_name='W', restrictions1= x**2+y**2!=0,
                               restrictions2= u**2+v**2!=0)
             uv_to_xy = xy_to_uv.inverse()
             c_uvW = c_uv.restrict(U.intersection(V))
             gu1 = c_uvW.plot(c_xy, fixed_coords={u: 1}, max_range=20, plot_points=300)
-            gv1 = c_uvW.plot(c_xy, fixed_coords={v: 1}, max_range=20, plot_points=300, color='green')
+            gv1 = c_uvW.plot(c_xy, fixed_coords={v: 1}, max_range=20, plot_points=300,
+                             color='green')
             sphinx_plot(gu1+gv1)
 
         Note that we have set ``max_range=20`` to have a wider range for
@@ -2140,8 +2188,14 @@ class RealChart(Chart):
         rectangular grid::
 
             sage: g = c_cart.plot() # equivalent to c_cart.plot(c_cart)  # long time
-            sage: g  # a 3D mesh cube  # long time
+            sage: g  # long time
             Graphics3d Object
+
+        .. PLOT::
+
+            R3 = Manifold(3, 'R^3', structure='topological')
+            c_cart = R3.chart('X Y Z')
+            sphinx_plot(c_cart.plot())
 
         A 4-dimensional chart plotted in terms of itself (the plot is
         performed for at most 3 coordinates, which must be specified via
@@ -2150,10 +2204,20 @@ class RealChart(Chart):
             sage: M = Manifold(4, 'M', structure='topological')
             sage: X.<t,x,y,z> = M.chart()
             sage: g = X.plot(ambient_coords=(t,x,y)) # the coordinate z is not depicted  # long time
-            sage: g  # a 3D mesh cube  # long time
+            sage: g  # long time
             Graphics3d Object
+
+        .. PLOT::
+
+            M = Manifold(4, 'M', structure='topological')
+            X = M.chart('t x y z'); t,x,y,z = X[:]
+            g = X.plot(ambient_coords=(t,x,y))
+            sphinx_plot(g)
+
+        ::
+
             sage: g = X.plot(ambient_coords=(t,y)) # the coordinates x and z are not depicted
-            sage: g  # a 2D mesh square
+            sage: g
             Graphics object consisting of 18 graphics primitives
 
         .. PLOT::
@@ -2163,6 +2227,22 @@ class RealChart(Chart):
             g = X.plot(ambient_coords=(t,y))
             sphinx_plot(g)
 
+        Note that the default values of some arguments of the method ``plot``
+        are stored in the dictionary ``plot.options``::
+
+            sage: X.plot.options  # random (dictionary output)
+            {'color': 'red', 'label_axes': True, 'max_range': 8,
+             'plot_points': 75, 'style': '-', 'thickness': 1}
+
+        so that they can be adjusted by the user::
+
+            sage: X.plot.options['color'] = 'blue'
+
+        From now on, all chart plots will use blue as the default color.
+        To restore the original default options, it suffices to type::
+
+            sage: X.plot.reset()
+
         """
         from sage.misc.functional import numerical_approx
         from sage.plot.graphics import Graphics
@@ -2171,13 +2251,14 @@ class RealChart(Chart):
         from .utilities import set_axes_labels
 
         # Extract the kwds options
+        max_range = kwds['max_range']
         color = kwds['color']
         style = kwds['style']
         thickness = kwds['thickness']
         plot_points = kwds['plot_points']
         label_axes = kwds['label_axes']
 
-        def _plot_xx_list(xx_list, rem_coords, ranges, steps, nb_values):
+        def _plot_xx_list(xx_list, rem_coords, ranges, steps, number_values):
             r"""
             Helper function to plot the coordinate grid.
             """
@@ -2187,7 +2268,7 @@ class RealChart(Chart):
             resu = []
             for xx in xx_list:
                 xc = xmin
-                for i in range(nb_values[coord]):
+                for i in range(number_values[coord]):
                     nxx = list(xx)
                     nxx[self._xx.index(coord)] = xc
                     resu.append(nxx)
@@ -2197,7 +2278,7 @@ class RealChart(Chart):
             else:
                 rem_coords.remove(coord)
                 return _plot_xx_list(resu, rem_coords, ranges, steps,
-                                     nb_values)
+                                     number_values)
 
         if chart is None:
             chart = self
@@ -2296,25 +2377,25 @@ class RealChart(Chart):
                     xmax = numerical_approx(bounds[1][0] - 1.e-3)
                 ranges0[coord] = (xmin, xmax)
         ranges = ranges0
-        if nb_values is None:
+        if number_values is None:
             if nca == 2: # 2D plot
-                nb_values = 9
+                number_values = 9
             else:   # 3D plot
-                nb_values = 5
-        if not isinstance(nb_values, dict):
-            nb_values0 = {}
+                number_values = 5
+        if not isinstance(number_values, dict):
+            number_values0 = {}
             for coord in coords:
-                nb_values0[coord] = nb_values
-            nb_values = nb_values0
+                number_values0[coord] = number_values
+            number_values = number_values0
         if steps is None:
             steps = {}
         for coord in coords:
             if coord not in steps:
                 steps[coord] = ((ranges[coord][1] - ranges[coord][0])
-                                / (nb_values[coord]-1))
+                                / (number_values[coord]-1))
             else:
                 from sage.functions.other import floor
-                nb_values[coord] = 1 + floor((ranges[coord][1] - ranges[coord][0])
+                number_values[coord] = 1 + floor((ranges[coord][1] - ranges[coord][0])
                                              / steps[coord])
         if not isinstance(color, dict):
             color0 = {}
@@ -2343,7 +2424,7 @@ class RealChart(Chart):
         if fixed_coords is not None:
             if len(fixed_coords) != nc - len(coords):
                 raise ValueError("bad number of fixed coordinates")
-            for fc, val in fixed_coords.iteritems():
+            for fc, val in fixed_coords.items():
                 xx0[self._xx.index(fc)] = val
         ind_a = [chart._xx.index(ac) for ac in ambient_coords]
         resu = Graphics()
@@ -2355,7 +2436,7 @@ class RealChart(Chart):
             xx_list = [xx0]
             if len(rem_coords) >= 1:
                 xx_list = _plot_xx_list(xx_list, rem_coords, ranges, steps,
-                                        nb_values)
+                                        number_values)
             xmin, xmax = ranges[coord]
             nbp = plot_points[coord]
             dx = (xmax - xmin) / (nbp-1)

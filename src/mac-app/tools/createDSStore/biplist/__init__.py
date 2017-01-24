@@ -489,8 +489,9 @@ class StringWrapper(object):
         
         for encoding in ('ascii', 'utf_16_be'):
             try:
-               encodedValue = value.encode(encoding)
-            except: pass
+                encodedValue = value.encode(encoding)
+            except Exception:
+                pass
             if encodedValue is not None:
                 if encodedValue not in cls.__instances:
                     cls.__instances[encodedValue] = super(StringWrapper, cls).__new__(cls)

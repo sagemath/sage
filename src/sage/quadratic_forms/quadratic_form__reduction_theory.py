@@ -148,7 +148,7 @@ def minkowski_reduction(self):
     Find a Minkowski-reduced form equivalent to the given one.
     This means that
 
-    .. math::
+    .. MATH::
 
             Q(v_k) <= Q(s_1 * v_1 + ... + s_n * v_n)
 

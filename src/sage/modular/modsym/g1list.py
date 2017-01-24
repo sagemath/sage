@@ -18,8 +18,9 @@ List of coset representatives for `\Gamma_1(N)` in `{\rm SL}_2(\ZZ)`
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
+from sage.arith.all import GCD
 
-import sage.arith.all as arith
 
 class G1list:
     r"""
@@ -41,8 +42,8 @@ class G1list:
             List of coset representatives for Gamma_1(6) in SL_2(Z)
         """
         self.__N = N
-        self.__list = [(u,v) for u in xrange(N) for v in xrange(N) \
-                             if arith.GCD(arith.GCD(u,v),N) == 1]
+        self.__list = [(u, v) for u in range(N) for v in range(N)
+                       if GCD(GCD(u, v), N) == 1]
 
     def __cmp__(self, other):
         r"""

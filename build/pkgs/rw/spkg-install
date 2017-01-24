@@ -10,7 +10,7 @@ fi
 cd "src"
 
 ./configure --prefix="$SAGE_LOCAL" \
-	    --enable-executable=no && # no igraph dependency
+            --enable-executable=no && # no igraph dependency
 $MAKE &&
 $MAKE install
 

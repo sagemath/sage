@@ -30,14 +30,14 @@ index fa5c167..5cd1a13 100644
  }
 @@ -750,7 +752,8 @@ paristack_resize(ulong newsize)
    newsize = maxuu(minuu(newsize, vsize), pari_mainstack->size);
-   pari_mainstack->size = newsize;
-   pari_mainstack->bot = pari_mainstack->top - pari_mainstack->size;
--  pari_warn(warner,"increasing stack size to %lu",newsize);
-+  if (DEBUGMEM > 0)
-+    pari_warn(warner,"increasing stack size to %lu",newsize);
+   if (pari_mainstack_setsize(pari_mainstack, newsize))
+   {
+-    pari_warn(warner, "increasing stack size to %lu", pari_mainstack->size);
++    if (DEBUGMEM > 0)
++      pari_warn(warner, "increasing stack size to %lu", pari_mainstack->size);
+   }
  }
  
- void
 diff --git a/src/test/dotest b/src/test/dotest
 index 3cb790d..6e4cc70 100755
 --- a/src/test/dotest

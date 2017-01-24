@@ -179,13 +179,14 @@ cdef class ParametricSurface(IndexFaceSet):
             f = tuple(f)
         self.f = f
         self.render_grid = domain
+        self._extra_kwds = kwds
         color_data = None
         if 'color' in kwds:
             try:
                 if len(kwds['color']) == 2 and callable(kwds['color'][0]):
                     color_data = kwds['color']
                     kwds.pop('color')
-            except TypeError, AttributeError:
+            except (TypeError, AttributeError):
                 pass
         if color_data is None:
             # case of a global color

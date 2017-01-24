@@ -22,6 +22,7 @@ Function and Data Plots
    sage/plot/contour_plot
    sage/plot/density_plot
    sage/plot/plot_field
+   sage/plot/streamline_plot
    sage/plot/scatter_plot
    sage/plot/step
    sage/plot/histogram

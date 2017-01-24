@@ -4,3 +4,5 @@
 cdef class AttributeErrorMessage:
     cdef public cls
     cdef public name
+
+cpdef getattr_from_other_class(self, cls, name)

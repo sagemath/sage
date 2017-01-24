@@ -10,6 +10,7 @@ AUTHOR:
 Functions and Methods
 ----------------------
 """
+from six.moves import range
 
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
@@ -315,7 +316,7 @@ def minimize(func,x0,gradient=None,hessian=None,algorithm="default",**args):
         fast_f=fast_callable(func, vars=var_names, domain=float)
         f=lambda p: fast_f(*p)
         gradient_list=func.gradient()
-        fast_gradient_functions=[fast_callable(gradient_list[i], vars=var_names, domain=float)  for i in xrange(len(gradient_list))]
+        fast_gradient_functions=[fast_callable(gradient_list[i], vars=var_names, domain=float)  for i in range(len(gradient_list))]
         gradient=lambda p: scipy.array([ a(*p) for a in fast_gradient_functions])
     else:
         f=func
@@ -369,7 +370,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
       - ``'default'``  -- default choices
 
       - ``'l-bfgs-b'`` -- only effective if you specify bound constraints.
-        See [ZBN97]_.
+        See [ZBN1997]_.
 
     - ``gradient`` -- Optional gradient function. This will be computed
       automatically for symbolic functions. This is only used when the
@@ -411,14 +412,6 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         (-10.0, 10.0)
         sage: minimize_constrained(rosen, [(-50,-10),(5,10)],[1,1],algorithm='l-bfgs-b')
         (-10.0, 10.0)
-
-
-    REFERENCES:
-
-    .. [ZBN97] \C. Zhu, R. H. Byrd and J. Nocedal. L-BFGS-B: Algorithm 778:
-      L-BFGS-B, FORTRAN routines for large scale bound constrained
-      optimization. ACM Transactions on Mathematical Software, Vol 23, Num. 4,
-      pp.550--560, 1997.
     """
     from sage.symbolic.expression import Expression
     import scipy
@@ -431,7 +424,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         fast_f=func._fast_float_(*var_names)
         f=lambda p: fast_f(*p)
         gradient_list=func.gradient()
-        fast_gradient_functions=[gradient_list[i]._fast_float_(*var_names)  for i in xrange(len(gradient_list))]
+        fast_gradient_functions=[gradient_list[i]._fast_float_(*var_names)  for i in range(len(gradient_list))]
         gradient=lambda p: scipy.array([ a(*p) for a in fast_gradient_functions])
     else:
         f=func
@@ -616,7 +609,7 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
 
     We search for a formula for the `n`-th prime number::
 
-        sage: dataprime = [(i, nth_prime(i)) for i in xrange(1, 5000, 100)]
+        sage: dataprime = [(i, nth_prime(i)) for i in range(1, 5000, 100)]
         sage: find_fit(dataprime, a * x * log(b * x), parameters = [a, b], variables = [x])
         [a == 1.11..., b == 1.24...]
 
@@ -679,14 +672,14 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
 
     def function(x_data, params):
         result = numpy.zeros(len(x_data))
-        for row in xrange(len(x_data)):
+        for row in range(len(x_data)):
             fparams = numpy.hstack((x_data[row], params)).tolist()
             result[row] = func(*fparams)
         return result
 
     def error_function(params, x_data, y_data):
         result = numpy.zeros(len(x_data))
-        for row in xrange(len(x_data)):
+        for row in range(len(x_data)):
             fparams = x_data[row].tolist() + params.tolist()
             result[row] = func(*fparams)
         return result - y_data

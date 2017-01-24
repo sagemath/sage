@@ -1257,6 +1257,12 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: x = mg.f_string([1,3,4,2,4,3,2,1,4])
                 sage: [x.epsilon(i) for i in B.index_set()]
                 [1, 1, 0, 1]
+
+            Check that :trac:`21671` is fixed::
+
+                sage: B = crystals.infinity.LSPaths(['G',2])
+                sage: len(B.subcrystal(max_depth=7))
+                116
             """
             ret = super(InfinityCrystalOfLSPaths.Element, self).e(i, power=power,
                                                                   length_only=length_only)
@@ -1278,7 +1284,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             while any(endpoint.scalar(alc) < 1 for alc in h):
                 value[-1] += rho
                 endpoint += rho
-            while all(endpoint.scalar(alc) > 1 for alc in h):
+            while all(endpoint.scalar(alc) > 1 for alc in h) and value[-1] != WLR.zero():
                 value[-1] -= rho
                 endpoint -= rho
             while value[-1] == WLR.zero():
@@ -1333,7 +1339,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             while any(endpoint.scalar(alc) < 1 for alc in h):
                 value[-1] += rho
                 endpoint += rho
-            while all(endpoint.scalar(alc) > 1 for alc in h):
+            while all(endpoint.scalar(alc) > 1 for alc in h) and value[-1] != WLR.zero():
                 value[-1] -= rho
                 endpoint -= rho
             while value[-1] == WLR.zero():

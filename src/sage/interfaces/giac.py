@@ -1,9 +1,10 @@
 r"""
-Interface to Giac
+Pexpect Interface to Giac
+(You should prefer the cython interface: giacpy_sage and its libgiac command)
 
 (adapted by F. Han from William Stein and Gregg Musiker maple's interface)
 
-You must have the optional  Giac interpreter installed
+You must have the  Giac interpreter installed
 and available as the command ``giac`` in your PATH in
 order to use this interface. You need a giac version
 supporting "giac --sage" ( roughly after 0.9.1 ). In this case you do not have
@@ -26,22 +27,22 @@ If the giac spkg is installed, you should find the full html documentation there
 
 EXAMPLES::
 
-    sage: giac('3 * 5')                                 # optional - giac
+    sage: giac('3 * 5')
     15
-    sage: giac.eval('ifactor(2005)')                    # optional - giac
+    sage: giac.eval('ifactor(2005)')
     '5*401'
-    sage: giac.ifactor(2005)                            # optional - giac
+    sage: giac.ifactor(2005)
     2005
-    sage: l=giac.ifactors(2005) ; l; l[2]               # optional - giac
+    sage: l=giac.ifactors(2005) ; l; l[2]
     [5,1,401,1]
     401
-    sage: giac.fsolve('x^2=cos(x)+4', 'x','0..5')         # optional - giac
+    sage: giac.fsolve('x^2=cos(x)+4', 'x','0..5')
     [1.9140206190...
-    sage: giac.factor('x^5 - y^5')                      # optional - giac
+    sage: giac.factor('x^5 - y^5')
     (x-y)*(x^4+x^3*y+x^2*y^2+x*y^3+y^4)
-    sage: R.<x,y>=QQ[];f=(x+y)^5;f2=giac(f);(f-f2).normal() #optional - giac
+    sage: R.<x,y>=QQ[];f=(x+y)^5;f2=giac(f);(f-f2).normal()
     0
-    sage: x,y=giac('x,y'); giac.int(y/(cos(2*x)+cos(x)),x)         #random; optional - giac
+    sage: x,y=giac('x,y'); giac.int(y/(cos(2*x)+cos(x)),x)     # random
     y*2*((-(tan(x/2)))/6+(-2*1/6/sqrt(3))*ln(abs(6*tan(x/2)-2*sqrt(3))/abs(6*tan(x/2)+2*sqrt(3))))
 
 
@@ -74,7 +75,7 @@ discuss two of those ways in this tutorial.
 
    ::
 
-       sage: giac('factor(x^5-1)')                 # optional - giac
+       sage: giac('factor(x^5-1)')
        (x-1)*(x^4+x^3+x^2+x+1)
 
    Notice, there is no need to use a semicolon.
@@ -86,7 +87,7 @@ discuss two of those ways in this tutorial.
 
    ::
 
-       sage: giac('(x^5-1)').factor()              # optional - giac
+       sage: giac('(x^5-1)').factor()
        (x-1)*(x^4+x^3+x^2+x+1)
 
    where ``expression.command()`` means the same thing as
@@ -96,7 +97,7 @@ discuss two of those ways in this tutorial.
 
    ::
 
-       sage: giac('(x^12-1)/(x-1)').normal()     # optional - giac
+       sage: giac('(x^12-1)/(x-1)').normal()
        x^11+x^10+x^9+x^8+x^7+x^6+x^5+x^4+x^3+x^2+x+1
 
 
@@ -111,12 +112,12 @@ allowed square roots). So for example,
 
 ::
 
-    sage: giac('(x^12-1)').factor( )           # optional - giac
+    sage: giac('(x^12-1)').factor( )
     (x-1)*(x+1)*(x^2+1)*(x^2-x+1)*(x^2+x+1)*(x^4-x^2+1)
 
 ::
 
-    sage: giac('(x^28-1)').factor( )           # optional - giac
+    sage: giac('(x^28-1)').factor( )
     (x-1)*(x+1)*(x^2+1)*(x^6-x^5+x^4-x^3+x^2-x+1)*(x^6+x^5+x^4+x^3+x^2+x+1)*(x^12-x^10+x^8-x^6+x^4-x^2+1)
 
 Another important feature of giac is its online help. We can
@@ -141,12 +142,12 @@ For example, for help on the giac command factors, we type ::
 
 ::
 
-    sage: alpha = giac((1+sqrt(5))/2)            # optional - giac
-    sage: beta = giac(1-sqrt(5))/2               # optional - giac
-    sage: f19  = alpha^19 - beta^19/sqrt(5)      # optional - giac
-    sage: f19                                    # optional - giac
+    sage: alpha = giac((1+sqrt(5))/2)
+    sage: beta = giac(1-sqrt(5))/2
+    sage: f19  = alpha^19 - beta^19/sqrt(5)
+    sage: f19
     (sqrt(5)/2+1/2)^19-((-sqrt(5)+1)/2)^19/sqrt(5)
-    sage: (f19-(5778*sqrt(5)+33825)/5).normal()                           # optional - giac
+    sage: (f19-(5778*sqrt(5)+33825)/5).normal()
     0
 
 Let's say we want to write a giac program now that squares a
@@ -164,10 +165,10 @@ In Sage, we write
 
 ::
 
-    sage: mysqcu = giac('proc(x) if x > 0 then x^2 else x^3 fi end')    # optional - giac
-    sage: mysqcu(5)                                                      # optional - giac
+    sage: mysqcu = giac('proc(x) if x > 0 then x^2 else x^3 fi end')
+    sage: mysqcu(5)
     25
-    sage: mysqcu(-5)                                                     # optional - giac
+    sage: mysqcu(-5)
     -125
 
 More complicated programs should be put in a separate file and
@@ -213,20 +214,20 @@ class Giac(Expect):
 
     ::
 
-      sage: l=giac('normal((y+sqrt(2))^4)'); l   # optional - giac
+      sage: l=giac('normal((y+sqrt(2))^4)'); l
       y^4+4*sqrt(2)*y^3+12*y^2+8*sqrt(2)*y+4
-      sage: f=giac('(u,v)->{ if (u<v){ [u,v] } else { [v,u] }}');f(1,2),f(3,1)   # optional - giac
+      sage: f=giac('(u,v)->{ if (u<v){ [u,v] } else { [v,u] }}');f(1,2),f(3,1)
       ([1,2], [1,3])
 
     The output of the giac command is a Giac object, and it can be used for another giac command.
 
     ::
 
-      sage: l.factors()                          #optional  - giac
+      sage: l.factors()
       [y+sqrt(2),4]
-      sage: giac('(x^12-1)').factor( )           # optional - giac
+      sage: giac('(x^12-1)').factor( )
       (x-1)*(x+1)*(x^2+1)*(x^2-x+1)*(x^2+x+1)*(x^4-x^2+1)
-      sage: giac('assume(y>0)'); giac('y^2=3').solve('y')  #optional - giac
+      sage: giac('assume(y>0)'); giac('y^2=3').solve('y')
       y
       ...[sqrt(3)]
 
@@ -234,19 +235,19 @@ class Giac(Expect):
 
     ::
 
-      sage: x,y,z=giac('x,y,z');type(y)   # optional - giac
+      sage: x,y,z=giac('x,y,z');type(y)
       <class 'sage.interfaces.giac.GiacElement'>
-      sage: I1=(1/(cos(2*y)+cos(y))).integral(y,0,pi/4).simplify()  #optional - giac
-      sage: (I1-((-2*ln((sqrt(3)-3*tan(1/8*pi))/(sqrt(3)+3*tan(1/8*pi)))*sqrt(3)-3*tan(1/8*pi))/9)).normal()       # optional - giac
+      sage: I1=(1/(cos(2*y)+cos(y))).integral(y,0,pi/4).simplify()
+      sage: (I1-((-2*ln((sqrt(3)-3*tan(1/8*pi))/(sqrt(3)+3*tan(1/8*pi)))*sqrt(3)-3*tan(1/8*pi))/9)).normal()
       0
-      sage: ((y+z*sqrt(5))*(y-sqrt(5)*z)).normal() # optional - giac
+      sage: ((y+z*sqrt(5))*(y-sqrt(5)*z)).normal()
       y^2-5*z^2
 
     Polynomials or elements of SR can be evaluated directly by the giac interface.
 
     ::
 
-      sage: R.<a,b>=QQ[];f=(2+a+b);p=giac.gcd(f^3+5*f^5,f^2+f^5);p;R(p); #optional - giac
+      sage: R.<a,b>=QQ[];f=(2+a+b);p=giac.gcd(f^3+5*f^5,f^2+f^5);p;R(p);
       a^2+2*a*b+4*a+b^2+4*b+4
       a^2 + 2*a*b + b^2 + 4*a + 4*b + 4
 
@@ -254,7 +255,7 @@ class Giac(Expect):
 
     ::
 
-      sage: a=sqrt(2);giac('Digits:=30;a:=5');a,giac('a'),giac(a),giac(a).evalf()  # optional - giac
+      sage: a=sqrt(2);giac('Digits:=30;a:=5');a,giac('a'),giac(a),giac(a).evalf()
       30
       (sqrt(2), 5, sqrt(2), 1.41421356237309504880168872421)
 
@@ -266,7 +267,7 @@ class Giac(Expect):
 
         EXAMPLES::
 
-            sage: giac == loads(dumps(giac))                # optional - giac
+            sage: giac == loads(dumps(giac))
             True
         """
         Expect.__init__(self,
@@ -285,12 +286,12 @@ class Giac(Expect):
         """
         EXAMPLES::
 
-            sage: giac._function_class()                 # optional - giac
+            sage: giac._function_class()
             <class 'sage.interfaces.giac.GiacFunction'>
 
         ::
 
-            sage: type(giac.diff)                        # optional - giac
+            sage: type(giac.diff)
             <class 'sage.interfaces.giac.GiacFunction'>
         """
         return GiacFunction
@@ -323,17 +324,17 @@ class Giac(Expect):
 
         EXAMPLES::
 
-            sage: giac._read_in_file_command('test')   # optional - giac
+            sage: giac._read_in_file_command('test')
             'read "test"'
 
         ::
 
-            sage: filename = tmp_filename()             # optional - giac
-            sage: f = open(filename,'w')                # optional - giac
-            sage: f.write('xx := 22;\n')                # optional - giac
-            sage: f.close()              # optional - giac
-            sage: giac.read(filename)    # optional - giac
-            sage: giac.get('xx').strip() # optional - giac
+            sage: filename = tmp_filename()
+            sage: f = open(filename,'w')
+            sage: f.write('xx := 22;\n')
+            sage: f.close()
+            sage: giac.read(filename)
+            sage: giac.get('xx').strip()
             '22'
         """
         return 'read "%s"'%filename
@@ -342,17 +343,17 @@ class Giac(Expect):
         """
         EXAMPLES::
 
-            sage: giac._quit_string()     # optional - giac
+            sage: giac._quit_string()
             '@d'
 
         ::
 
-            sage: m = Giac()         # optional - giac
-            sage: a = m(2)           # optional - giac
-            sage: m.is_running()     # optional - giac
+            sage: m = Giac()
+            sage: a = m(2)
+            sage: m.is_running()
             True
-            sage: m.quit()           # optional - giac
-            sage: m.is_running()     # optional - giac
+            sage: m.quit()
+            sage: m.is_running()
             False
         """
         return '@d'
@@ -396,13 +397,13 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-            sage: m = Giac()           # optional - giac
-            sage: m.expect() is None   # optional - giac
+            sage: m = Giac()
+            sage: m.expect() is None
             True
-            sage: m._start()           # optional - giac
-            sage: m.expect()           # optional - giac
+            sage: m._start()
+            sage: m.expect()
             Giac with PID ... running .../giac --sage
-            sage: m.quit()             # optional - giac
+            sage: m.quit()
         """
         return self._expect
 
@@ -433,8 +434,8 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-            sage: c = giac.completions('cas')  # optional - giac
-            sage: 'cas_setup' in c             # optional - giac
+            sage: c = giac.completions('cas')
+            sage: 'cas_setup' in c
             True
         """
         if self._expect is None:
@@ -460,10 +461,10 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-            sage: c = giac._commands() # optional - giac
-            sage: len(c) > 100          # optional - giac
+            sage: c = giac._commands()
+            sage: len(c) > 100
             True
-            sage: 'Psi' in c          # optional - giac
+            sage: 'Psi' in c
             True
         """
         try:
@@ -485,10 +486,10 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-            sage: c = giac._tab_completion(use_disk_cache=False, verbose=False) # optional - giac
-            sage: len(c) > 100  # optional - giac
+            sage: c = giac._tab_completion(use_disk_cache=False, verbose=False)
+            sage: len(c) > 100
             True
-            sage: 'factors' in c  # optional - giac
+            sage: 'factors' in c
             True
         """
         try:
@@ -521,13 +522,13 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-            sage: t = giac.cputime() # optional - giac
-            sage: t                   # random; optional - giac
+            sage: t = giac.cputime()
+            sage: t                     # random
             0.02
-            sage: x = giac('x')      # optional - giac
-            sage: giac.diff(x^2, x)  # optional - giac
+            sage: x = giac('x')
+            sage: giac.diff(x^2, x)
             2*x
-            sage: giac.cputime(t)    # random; optional - giac
+            sage: giac.cputime(t)       # random
             0.0
         """
         if t is None:
@@ -540,11 +541,11 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
         """
         EXAMPLES::
 
-            sage: giac._eval_line('2+2')  # optional - giac
+            sage: giac._eval_line('2+2')
             '4'
 
-            sage: A=matrix([range(280)])  # optional - giac
-            sage: GA=giac(A)              # optional - giac
+            sage: A=matrix([range(280)])
+            sage: GA=giac(A)
         """
         with gc_disabled():
             z = Expect._eval_line(self, line, allow_use_file=allow_use_file,
@@ -567,17 +568,17 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-            sage: giac.eval("2+2;\n3") #optional - giac
+            sage: giac.eval("2+2;\n3")
             '4,3'
-            sage: giac.eval("2+2;\n3",False) # optional - giac
+            sage: giac.eval("2+2;\n3",False)
             '4\n3'
-            sage: s='g(x):={\nx+1;\nx+2;\n}' # optional - giac
-            sage: giac(s)                    # optional - giac
+            sage: s='g(x):={\nx+1;\nx+2;\n}'
+            sage: giac(s)
             (x)->{
             x+1;
             x+2;
             }
-            sage: giac.g(5)                   # optional - giac
+            sage: giac.g(5)
             7
         """
         #we remove \n to enable multiline code in the notebook magic mode %giac
@@ -594,8 +595,8 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-            sage: giac.set('xx', '2') # optional - giac
-            sage: giac.get('xx')      # optional - giac
+            sage: giac.set('xx', '2')
+            sage: giac.get('xx')
             '2'
         """
         cmd = '%s:=%s:;'%(var,value)   #if giac is not in maple mode ( maple_mode(0))
@@ -610,8 +611,8 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-            sage: giac.set('xx', '2') # optional - giac
-            sage: giac.get('xx')      # optional - giac
+            sage: giac.set('xx', '2')
+            sage: giac.get('xx')
             '2'
         """
         s = self.eval('%s'%var)
@@ -628,8 +629,8 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         ::
 
-            sage: m = giac(2)  # optional - giac
-            sage: type(m)       # optional - giac
+            sage: m = giac(2)
+            sage: type(m)
             <class 'sage.interfaces.giac.GiacElement'>
         """
         return GiacElement
@@ -645,8 +646,8 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         ::
 
-            sage: two = giac(2)  # optional - giac
-            sage: type(two.gcd)   # optional - giac
+            sage: two = giac(2)
+            sage: type(two.gcd)
             <class 'sage.interfaces.giac.GiacFunctionElement'>
         """
         return GiacFunctionElement
@@ -657,10 +658,10 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-            sage: giac._equality_symbol()               # optional - giac
+            sage: giac._equality_symbol()
             '=='
 
-            sage: giac(2) == giac(2) # optional - giac
+            sage: giac(2) == giac(2)
             True
         """
         return '=='
@@ -676,7 +677,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         ::
 
-            sage: giac(2) == giac(2) # optional - giac
+            sage: giac(2) == giac(2)
             True
         """
         return '1'
@@ -728,11 +729,11 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-            sage: giac.set('xx', '2')  # optional - giac
-            sage: giac.get('xx')       # optional - giac
+            sage: giac.set('xx', '2')
+            sage: giac.get('xx')
             '2'
-            sage: giac.clear('xx')     # optional - giac
-            sage: giac.get('xx')       # optional - giac
+            sage: giac.clear('xx')
+            sage: giac.get('xx')
             'xx'
         """
         self.eval('purge(%s)'%var)
@@ -743,7 +744,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         EXAMPLES::
 
-            sage: giac.version()  # optional - giac
+            sage: giac.version()
             "giac...
 
         """
@@ -771,7 +772,7 @@ class GiacFunctionElement(FunctionElement):
 
         EXAMPLES::
 
-            sage: two = giac(2)  # optional - giac
+            sage: two = giac(2)
             sage: two.gcd._sage_doc_() # not tested; output may vary LANG
             "...gcd - greatest common divisor of polynomials...
         """
@@ -784,9 +785,9 @@ class GiacElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: float(giac(1/2))   # optional - giac
+            sage: float(giac(1/2))
             0.5
-            sage: type(_)            # optional - giac
+            sage: type(_)
             <type 'float'>
         """
         return float(giac.eval('evalf(%s)' % self.name()))
@@ -797,11 +798,11 @@ class GiacElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: f=giac('y^3+1+t')        # optional - giac
-            sage: g=(f.unapply('y,t'))     # optional - giac
-            sage: g                        # optional - giac
+            sage: f=giac('y^3+1+t')
+            sage: g=(f.unapply('y,t'))
+            sage: g
             (y,t)->y^3+1+t
-            sage: g(1,2)                   # optional - giac
+            sage: g(1,2)
             4
         """
         return giac('unapply(%s,%s)'%(self,var))
@@ -816,8 +817,8 @@ class GiacElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: m = giac('x^2+y^2')                       # optional - giac
-            sage: hash(m)                                   # random; optional - giac
+            sage: m = giac('x^2+y^2')
+            sage: hash(m)              # random
             4614285348919569149
         """
         return hash(giac.eval('string(%s);'%self.name()))
@@ -832,33 +833,33 @@ class GiacElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: a = giac(5)                              # optional - giac
-            sage: b = giac(5)                              # optional - giac
-            sage: a == b                                   # optional - giac
+            sage: a = giac(5)
+            sage: b = giac(5)
+            sage: a == b
             True
-            sage: a == 5                                   # optional - giac
+            sage: a == 5
             True
 
         ::
 
-            sage: c = giac(3)                              # optional - giac
-            sage: a == c                                   # optional - giac
+            sage: c = giac(3)
+            sage: a == c
             False
-            sage: a < c                                    # optional - giac
+            sage: a < c
             False
-            sage: a < 6                                    # optional - giac
+            sage: a < 6
             True
-            sage: c <= a                                   # optional - giac
+            sage: c <= a
             True
 
         ::
 
         TESTS::
 
-            sage: x = var('x')                            # optional - giac
-            sage: t = giac((x+1)^2)                       # optional - giac
-            sage: u = giac(x^2+2*x+1)                     # optional - giac
-            sage: u == t                                  # optional - giac
+            sage: x = var('x')
+            sage: t = giac((x+1)^2)
+            sage: u = giac(x^2+2*x+1)
+            sage: u == t
             False
         """
         P = self.parent()
@@ -893,8 +894,8 @@ class GiacElement(ExpectElement):
         """
         EXAMPLES::
 
-            sage: a = giac(2) # optional - giac
-            sage: 'sin' in a._tab_completion() # optional - giac
+            sage: a = giac(2)
+            sage: 'sin' in a._tab_completion()
             True
         """
         return self.parent()._tab_completion()
@@ -904,7 +905,7 @@ class GiacElement(ExpectElement):
         """
         EXAMPLES::
 
-            sage: len(giac([1,2,3]))                # optional - giac
+            sage: len(giac([1,2,3]))
             3
         """
         return int(self.size())
@@ -913,8 +914,8 @@ class GiacElement(ExpectElement):
         """
         EXAMPLES::
 
-            sage: l = giac([1,2,3])                # optional - giac
-            sage: list(iter(l))                    # optional - giac
+            sage: l = giac([1,2,3])
+            sage: list(iter(l))
             [1, 2, 3]
         """
         for i in range(len(self)):  # zero-indexed if giac is maple_mode(0)
@@ -927,11 +928,11 @@ class GiacElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: a = giac(2)                        # optional - giac
-            sage: a.__del__()                        # optional - giac
-            sage: a                                  # optional - giac
+            sage: a = giac(2)
+            sage: a.__del__()
+            sage: a
             2
-            sage: del a                              # optional - giac
+            sage: del a
             sage: a
             Traceback (most recent call last):
             ...
@@ -949,12 +950,12 @@ class GiacElement(ExpectElement):
         EXAMPLES::
 
             sage: x = var('x')
-            sage: giac(x)                      # optional - giac
+            sage: giac(x)
             x
-            sage: giac(5)                      # optional - giac
+            sage: giac(5)
             5
-            sage: M = matrix(QQ,2,range(4))    # optional - giac
-            sage: giac(M)                      # optional - giac
+            sage: M = matrix(QQ,2,range(4))
+            sage: giac(M)
             [[0,1],[2,3]]
         """
         self._check_valid()
@@ -966,7 +967,7 @@ class GiacElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: print(latex(giac('(x^4 - y)/(y^2-3*x)')))  # optional - giac
+            sage: print(latex(giac('(x^4 - y)/(y^2-3*x)')))
             "\frac{(x^{4}-y)}{(y^{2}-3\cdot x)}"
 
         """
@@ -981,17 +982,17 @@ class GiacElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: R.<x,y>=QQ[]                                   # optional - giac
-            sage: M=giac('matrix(4,4,(k,l)->(x^k-y^l))'); M      # optional - giac
+            sage: R.<x,y>=QQ[]
+            sage: M=giac('matrix(4,4,(k,l)->(x^k-y^l))'); M
             matrix[[0,1-y,1-y^2,1-y^3],[x-1,x-y,x-y^2,x-y^3],[x^2-1,x^2-y,x^2-y^2,x^2-y^3],[x^3-1,x^3-y,x^3-y^2,x^3-y^3]]
-            sage: M.eigenvals()       # random; optional - giac
+            sage: M.eigenvals()             # random
             0,0,(x^3+x^2+x-y^3-y^2-y+sqrt(x^6+2*x^5+3*x^4-14*x^3*y^3+2*x^3*y^2+2*x^3*y+6*x^3+2*x^2*y^3-14*x^2*y^2+2*x^2*y+5*x^2+2*x*y^3+2*x*y^2-14*x*y+4*x+y^6+2*y^5+3*y^4+6*y^3+5*y^2+4*y-12))/2,(x^3+x^2+x-y^3-y^2-y-sqrt(x^6+2*x^5+3*x^4-14*x^3*y^3+2*x^3*y^2+2*x^3*y+6*x^3+2*x^2*y^3-14*x^2*y^2+2*x^2*y+5*x^2+2*x*y^3+2*x*y^2-14*x*y+4*x+y^6+2*y^5+3*y^4+6*y^3+5*y^2+4*y-12))/2
-            sage: Z=matrix(R,M);Z                                # optional - giac
+            sage: Z=matrix(R,M);Z
             [         0     -y + 1   -y^2 + 1   -y^3 + 1]
             [     x - 1      x - y   -y^2 + x   -y^3 + x]
             [   x^2 - 1    x^2 - y  x^2 - y^2 -y^3 + x^2]
             [   x^3 - 1    x^3 - y  x^3 - y^2  x^3 - y^3]
-            sage: parent(Z)                                      # optional - giac
+            sage: parent(Z)
             Full MatrixSpace of 4 by 4 dense matrices over Multivariate Polynomial Ring in x, y over Rational Field
         """
         v = self.dim()
@@ -1014,14 +1015,14 @@ class GiacElement(ExpectElement):
 
         EXAMPLE::
 
-        sage: m = giac('x^2 + 5*y')                            # optional - giac
-        sage: m.sage()                                          # optional - giac
+        sage: m = giac('x^2 + 5*y')
+        sage: m.sage()
         x^2 + 5*y
 
         ::
 
-        sage: m = giac('sin(2*sqrt(1-x^2)) * (1 - cos(1/x))^2')  # optional - giac
-        sage: m.trigexpand().sage()                              # optional - giac
+        sage: m = giac('sin(2*sqrt(1-x^2)) * (1 - cos(1/x))^2')
+        sage: m.trigexpand().sage()
         2*cos(sqrt(-x^2 + 1))*cos(1/x)^2*sin(sqrt(-x^2 + 1)) - 4*cos(sqrt(-x^2 + 1))*cos(1/x)*sin(sqrt(-x^2 + 1)) + 2*cos(sqrt(-x^2 + 1))*sin(sqrt(-x^2 + 1))
 
         """
@@ -1054,16 +1055,16 @@ class GiacElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: y=giac('y');f=(sin(2*y)/y).integral(y).simplify(); f        # optional - giac
+            sage: y=giac('y');f=(sin(2*y)/y).integral(y).simplify(); f
             Si(2*y)
-            sage: f.diff(y).simplify()                                        # optional - giac
+            sage: f.diff(y).simplify()
             sin(2*y)/y
 
         ::
 
-            sage: f = giac('exp(x^2)').integral('x',0,1) ; f                # optional - giac
+            sage: f = giac('exp(x^2)').integral('x',0,1) ; f
             1.46265174...
-            sage: x,y=giac('x'),giac('y');integrate(cos(x+y),'x=0..pi').simplify()     # optional - giac
+            sage: x,y=giac('x'),giac('y');integrate(cos(x+y),'x=0..pi').simplify()
             -2*sin(y)
         """
         if min is None:
@@ -1093,7 +1094,7 @@ class GiacElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: giac('1/(1+k^2)').sum('k',-oo,+infinity).simplify()     # optional -  giac
+            sage: giac('1/(1+k^2)').sum('k',-oo,+infinity).simplify()
             (pi*exp(pi)^2+pi)/(exp(pi)^2-1)
         """
         if min is None:
@@ -1146,8 +1147,8 @@ def __doctest_cleanup():
     EXAMPLES::
 
         sage: from sage.interfaces.giac import __doctest_cleanup
-        sage: m = giac(2)         # optional - giac
-        sage: giac.is_running()   # optional - giac
+        sage: m = giac(2)
+        sage: giac.is_running()
         True
         sage: __doctest_cleanup()
         sage: giac.is_running()

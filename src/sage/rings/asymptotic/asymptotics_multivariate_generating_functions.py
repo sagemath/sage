@@ -213,6 +213,7 @@ Classes and Methods
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from functools import total_ordering
 from itertools import combinations_with_replacement
@@ -947,7 +948,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: L
             [y^2, -x*y + 1]
             sage: df = f.denominator_factored()
-            sage: sum([L[i]*df[i][0]**df[i][1] for i in xrange(len(df))]) == 1
+            sage: sum(L[i]*df[i][0]**df[i][1] for i in range(len(df))) == 1
             True
 
         ::
@@ -1039,8 +1040,8 @@ class FractionWithFactoredDenominator(RingElement):
         df = self.denominator_factored()
         m = len(df)
         iteration1 = FractionWithFactoredDenominatorSum(
-            [self.parent()(p * L[i], [df[j] for j in xrange(m) if j != i])
-             for i in xrange(m) if L[i] != 0])
+            [self.parent()(p * L[i], [df[j] for j in range(m) if j != i])
+             for i in range(m) if L[i] != 0])
 
         # Now decompose each FFPD of iteration1.
         for r in iteration1:
@@ -1125,11 +1126,11 @@ class FractionWithFactoredDenominator(RingElement):
         S = 'S'
         while S in [str(x) for x in Xs]:
             S = S + 'S'
-        Ss = [S + str(i) for i in xrange(m)]
+        Ss = [S + str(i) for i in range(m)]
         T = 'T'
         while T in [str(x) for x in Xs]:
             T = T + 'T'
-        Ts = [T + str(i) for i in xrange(m)]
+        Ts = [T + str(i) for i in range(m)]
 
         Vs = [str(x) for x in Xs] + Ss + Ts
         RR = PolynomialRing(F, Vs)
@@ -1138,8 +1139,8 @@ class FractionWithFactoredDenominator(RingElement):
         Ts = RR.gens()[d + m: d + 2 * m]
 
         # Compute the appropriate elimination ideal.
-        J = RR.ideal([Ss[j] - RR(df[j][0]) for j in xrange(m)] +
-                     [Ss[j] ** df[j][1] - Ts[j] for j in xrange(m)])
+        J = RR.ideal([Ss[j] - RR(df[j][0]) for j in range(m)] +
+                     [Ss[j] ** df[j][1] - Ts[j] for j in range(m)])
         J = J.elimination_ideal(Xs + Ss)
 
         # Coerce J into the polynomial ring in the indeteminates Ts[m:].
@@ -1241,14 +1242,14 @@ class FractionWithFactoredDenominator(RingElement):
         gg = (g.lt() - g) / (g.lc())
         numers = map(prod, zip(gg.coefficients(), gg.monomials()))
         e = list(g.lt().exponents())[0: m]
-        denoms = [(new_vars[j], e[0][j] + 1) for j in xrange(m)]
+        denoms = [(new_vars[j], e[0][j] + 1) for j in range(m)]
         # Write r in terms of new_vars,
         # cancel factors in the denominator, and combine like terms.
         FFPD = FractionWithFactoredDenominatorRing(J.ring())
         iteration1_temp = FractionWithFactoredDenominatorSum(
             [FFPD(a, denoms) for a in numers])._combine_like_terms_()
         # Substitute in df.
-        qpowsub = {new_vars[j]: df[j][0] ** df[j][1] for j in xrange(m)}
+        qpowsub = {new_vars[j]: df[j][0] ** df[j][1] for j in range(m)}
         iteration1 = FractionWithFactoredDenominatorSum()
         for r in iteration1_temp:
             num1 = p * J.ring()(r.numerator()).subs(qpowsub)
@@ -1472,7 +1473,7 @@ class FractionWithFactoredDenominator(RingElement):
         # Do first iteration of decomposition.
         iteration1 = FractionWithFactoredDenominatorSum()
         # Contributions from qs.
-        for i in xrange(n):
+        for i in range(n):
             if L[i] == 0:
                 continue
             # Cancel one df[i] from denominator.
@@ -1488,20 +1489,20 @@ class FractionWithFactoredDenominator(RingElement):
         # the least index j such that new_df[j][1] > 1.
         # Know such an index exists by first 'if' statement at
         # the top.
-        for j in xrange(n):
+        for j in range(n):
             if df[j][1] > 1:
                 J = j
                 break
         new_df = [list(t) for t in df]
         new_df[J][1] -= 1
-        for k in xrange(var_sets_n.cardinality()):
+        for k in range(var_sets_n.cardinality()):
             if L[n + k] == 0:
                 continue
             # Sort variables according to the term order of R.
             x = sorted(var_sets_n[k])
             # Compute Jacobian in the Symbolic Ring.
             jac = jacobian([SR(p * L[n + k])] +
-                           [SR(qs[j]) for j in xrange(n) if j != J],
+                           [SR(qs[j]) for j in range(n) if j != J],
                            [SR(xx) for xx in x])
             det = jac.determinant()
             psign = permutation_sign(x, X)
@@ -1586,7 +1587,7 @@ class FractionWithFactoredDenominator(RingElement):
         if asy_var is None:
             asy_var = var('r')
         cauchy_stuff = prod([X[j] ** (-alpha[j] * asy_var - 1)
-                             for j in xrange(d)])
+                             for j in range(d)])
         decomp2 = FractionWithFactoredDenominatorSum()
         for f in decomp1:
             ff = self.parent()(f.numerator() * cauchy_stuff,
@@ -1884,7 +1885,7 @@ class FractionWithFactoredDenominator(RingElement):
         if d == 1:
             det = jacobian(H, X).subs(p).determinant().abs()
             exp_scale = prod([(p[X[i]] ** (-alpha[i])).subs(p)
-                              for i in xrange(d)])
+                              for i in range(d)])
             subexp_part = -G.subs(p) / (det * prod(p.values()))
             if numerical:
                 exp_scale = exp_scale.n(digits=numerical)
@@ -1896,9 +1897,9 @@ class FractionWithFactoredDenominator(RingElement):
         if vector(p.values()) in QQ ** d:
             P = p
         else:
-            sP = [var('p' + str(j)) for j in xrange(d)]
-            P = {X[j]: sP[j] for j in xrange(d)}
-            p = {sP[j]: p[X[j]] for j in xrange(d)}
+            sP = [var('p' + str(j)) for j in range(d)]
+            P = {X[j]: sP[j] for j in range(d)}
+            p = {sP[j]: p[X[j]] for j in range(d)}
 
         # Setup.
         if verbose:
@@ -1914,13 +1915,13 @@ class FractionWithFactoredDenominator(RingElement):
         L = [str(elt) for elt in X]
         while t in L:
             t = t + 't'
-        T = [var(t + str(i)) for i in xrange(d - 1)]
-        e = {X[i]: P[X[i]] * exp(I * T[i]) for i in xrange(d - 1)}
+        T = [var(t + str(i)) for i in range(d - 1)]
+        e = {X[i]: P[X[i]] * exp(I * T[i]) for i in range(d - 1)}
         ht = h.subs(e)
         At = A.subs(e)
         Phit = (-log(P[X[d - 1]] * ht) +
                 I * sum([alpha[i] / alpha[d - 1] * T[i]
-                         for i in xrange(d - 1)]))
+                         for i in range(d - 1)]))
         Tstar = {t: ZZ.zero() for t in T}
         # Store h and U and all their derivatives evaluated at P.
         atP = P.copy()
@@ -1931,13 +1932,13 @@ class FractionWithFactoredDenominator(RingElement):
         # Keep a copy of unevaluated h derivatives for use in the case
         # d = 2 and v > 2 below.
         hderivs1 = {}   # First derivatives of h.
-        for i in xrange(d - 1):
+        for i in range(d - 1):
             s = solve(diff(H.subs({X[d - 1]: ZZ.one() / h}), X[i]),
                       diff(h, X[i]))[0].rhs().simplify()
             hderivs1.update({diff(h, X[i]): s})
             atP.update({diff(h, X[i]).subs(P): s.subs(P).subs(atP)})
         hderivs = diff_all(h, X[0: d - 1], 2 * N, sub=hderivs1, rekey=h)
-        for k in hderivs.keys():
+        for k in hderivs:
             atP.update({k.subs(P): hderivs[k].subs(atP)})
 
         # Compute the derivatives of U up to order 2 * N and evaluate at P.
@@ -1958,7 +1959,7 @@ class FractionWithFactoredDenominator(RingElement):
         k = H.polynomial(CC).degree() - 1
         if k == 0:
             # Then we can conclude that all higher derivatives of U are zero.
-            for l in xrange(1, 2 * N + 1):
+            for l in range(1, 2 * N + 1):
                 for s in combinations_with_replacement(X, l):
                     Uderivs[diff(U, list(s)).subs(P)] = ZZ.zero()
         elif k > 0 and k < 2 * N:
@@ -1971,7 +1972,7 @@ class FractionWithFactoredDenominator(RingElement):
             if all_zero:
                 # Then, using a proposition at the end of [RaWi2012], we can
                 # conclude that all higher derivatives of U are zero.
-                for l in xrange(k + 1, 2 * N + 1):
+                for l in range(k + 1, 2 * N + 1):
                     for s in combinations_with_replacement(X, l):
                         Uderivs.update({diff(U, list(s)).subs(P): ZZ.zero()})
             else:
@@ -2044,27 +2045,27 @@ class FractionWithFactoredDenominator(RingElement):
             # Plug above into asymptotic formula.
             L = []
             if v.mod(2) == 0:
-                for k in xrange(N):
+                for k in range(N):
                     L.append(sum([(-1) ** l * gamma((2 * k + v * l + 1) / v) /
                                   (factorial(l) * factorial(2 * k + v * l)) *
-                                  DD[(k, l)] for l in xrange(0, 2 * k + 1)]))
+                                  DD[(k, l)] for l in range(0, 2 * k + 1)]))
                 chunk = (a ** (-1 / v) / (pi * v) *
                          sum([alpha[d - 1] ** (-(2 * k + 1) / v) *
                               L[k] * asy_var ** (-(2 * k + 1) / v)
-                              for k in xrange(N)]))
+                              for k in range(N)]))
             else:
                 zeta = exp(I * pi / (2 * v))
-                for k in xrange(N):
+                for k in range(N):
                     L.append(sum([(-1) ** l * gamma((k + v * l + 1) / v) /
                                   (factorial(l) * factorial(k + v * l)) *
                                   (zeta ** (k + v * l + 1) +
                                    (-1) ** (k + v * l) *
                                    zeta ** (-(k + v * l + 1))) *
-                                  DD[(k, l)] for l in xrange(0, k + 1)]))
+                                  DD[(k, l)] for l in range(0, k + 1)]))
                 chunk = (abs(a) ** (-1 / v) / (2 * pi * v) *
                          sum([alpha[d - 1] ** (-(k + 1) / v) *
                               L[k] * asy_var ** (-(k + 1) / v)
-                              for k in xrange(N)]))
+                              for k in range(N)]))
 
         # Asymptotics for d >= 2 case.
         # A singular Phit''(Tstar) will cause a crash in this case.
@@ -2103,16 +2104,16 @@ class FractionWithFactoredDenominator(RingElement):
 
             # Plug above into asymptotic formula.
             L = []
-            for k in xrange(N):
+            for k in range(N):
                 L.append(sum([DD[(0, k, l)] / ((-1) ** k * 2 ** (l + k) *
                                                factorial(l) * factorial(l + k))
-                              for l in xrange(0, 2 * k + 1)]))
+                              for l in range(0, 2 * k + 1)]))
             chunk = sum([(2 * pi) ** ((1 - d) / Integer(2)) *
                          a.determinant() ** (-ZZ.one() / Integer(2)) *
                          alpha[d - 1] ** ((ZZ.one() - d) / Integer(2) - k) *
                          L[k] *
                          asy_var ** ((ZZ.one() - d) / Integer(2) - k)
-                         for k in xrange(N)])
+                         for k in range(N)])
 
         chunk = chunk.subs(p).simplify()
         coeffs = chunk.coefficients(asy_var)
@@ -2122,12 +2123,12 @@ class FractionWithFactoredDenominator(RingElement):
             subexp_part = sum([co[0].subs(p).n(digits=numerical) *
                                asy_var ** co[1] for co in coeffs])
             exp_scale = prod([(P[X[i]] ** (-alpha[i])).subs(p)
-                              for i in xrange(d)]).n(digits=numerical)
+                              for i in range(d)]).n(digits=numerical)
         else:
             subexp_part = sum([co[0].subs(p) * asy_var ** co[1]
                                for co in coeffs])
             exp_scale = prod([(P[X[i]] ** (-alpha[i])).subs(p)
-                              for i in xrange(d)])
+                              for i in range(d)])
         return (exp_scale ** asy_var * subexp_part, exp_scale, subexp_part)
 
 
@@ -2269,7 +2270,7 @@ class FractionWithFactoredDenominator(RingElement):
         if n == d:
             det = jacobian(H, X).subs(P).determinant().abs()
             exp_scale = prod([(P[X[i]] ** (-alpha[i])).subs(P)
-                              for i in xrange(d)])
+                              for i in range(d)])
             subexp_part = G.subs(P) / (det * prod(P.values()))
             if numerical:
                 exp_scale = exp_scale.n(digits=numerical)
@@ -2280,9 +2281,9 @@ class FractionWithFactoredDenominator(RingElement):
         # If P is a tuple of rationals, then compute with it directly.
         # Otherwise, compute symbolically and plug in P at the end.
         if vector(P.values()) not in QQ ** d:
-            sP = [var('p' + str(j)) for j in xrange(d)]
-            P = {X[j]: sP[j] for j in xrange(d)}
-            p = {sP[j]: p[X[j]] for j in xrange(d)}
+            sP = [var('p' + str(j)) for j in range(d)]
+            P = {X[j]: sP[j] for j in range(d)}
+            p = {sP[j]: p[X[j]] for j in range(d)}
 
         # Setup.
         if verbose:
@@ -2292,32 +2293,32 @@ class FractionWithFactoredDenominator(RingElement):
         L = [str(elt) for elt in X]
         while t in L:
             t = t + 't'
-        T = [var(t + str(i)) for i in xrange(d - 1)]
+        T = [var(t + str(i)) for i in range(d - 1)]
         s = 's'
         while s in L:
             s = s + 't'
-        S = [var(s + str(i)) for i in xrange(n - 1)]
-        Sstar = {S[j]: Sstar[j] for j in xrange(n - 1)}
+        S = [var(s + str(i)) for i in range(n - 1)]
+        Sstar = {S[j]: Sstar[j] for j in range(n - 1)}
         thetastar = {t: ZZ.zero() for t in T}
         thetastar.update(Sstar)
         # Create implicit functions.
-        h = [function('h' + str(j))(*tuple(X[:d - 1])) for j in xrange(n)]
+        h = [function('h' + str(j))(*tuple(X[:d - 1])) for j in range(n)]
         U = function('U')(*tuple(X))
         # All other functions are defined in terms of h, U, and
         # explicit functions.
-        Hcheck = prod([X[d - 1] - ZZ.one() / h[j] for j in xrange(n)])
-        Gcheck = -G / U * prod([-h[j] / X[d - 1] for j in xrange(n)])
+        Hcheck = prod([X[d - 1] - ZZ.one() / h[j] for j in range(n)])
+        Gcheck = -G / U * prod([-h[j] / X[d - 1] for j in range(n)])
         A = [(-1) ** (n - 1) * X[d - 1] ** (-n + j) *
              diff(Gcheck.subs({X[d - 1]: ZZ.one() / X[d - 1]}), X[d - 1], j)
-             for j in xrange(n)]
-        e = {X[i]: P[X[i]] * exp(I * T[i]) for i in xrange(d - 1)}
+             for j in range(n)]
+        e = {X[i]: P[X[i]] * exp(I * T[i]) for i in range(d - 1)}
         ht = [hh.subs(e) for hh in h]
-        hsumt = (sum([S[j] * ht[j] for j in xrange(n - 1)]) +
+        hsumt = (sum([S[j] * ht[j] for j in range(n - 1)]) +
                  (ZZ.one() - sum(S)) * ht[n - 1])
         At = [AA.subs(e).subs({X[d - 1]: hsumt}) for AA in A]
         Phit = (-log(P[X[d - 1]] * hsumt) +
                 I * sum([alpha[i] / alpha[d - 1] * T[i]
-                         for i in xrange(d - 1)]))
+                         for i in range(d - 1)]))
         # atP Stores h and U and all their derivatives evaluated at C.
         atP = P.copy()
         atP.update({hh.subs(P): ZZ.one() / P[X[d - 1]] for hh in h})
@@ -2330,7 +2331,7 @@ class FractionWithFactoredDenominator(RingElement):
             hderivs1.update({diff(h[j], X[i]): s})
             atP.update({diff(h[j], X[i]).subs(P): s.subs(P).subs(atP)})
         hderivs = diff_all(h, X[0:d - 1], 2 * N, sub=hderivs1, rekey=h)
-        for k in hderivs.keys():
+        for k in hderivs:
             atP.update({k.subs(P): hderivs[k].subs(atP)})
 
         # Compute the derivatives of U up to order 2 * N - 2 + min{n, N} - 1 and
@@ -2342,14 +2343,14 @@ class FractionWithFactoredDenominator(RingElement):
         if verbose:
             print("Computing derivatives of auxiliary functions...")
         m = min(n, N)
-        end = [X[d-1] for j in xrange(n)]
+        end = [X[d-1] for j in range(n)]
         Hprodderivs = diff_all(Hprod, X, 2 * N - 2 + n, ending=end, sub_final=P)
         atP.update({U.subs(P): diff(Hprod, X[d - 1], n).subs(P)/factorial(n)})
         Uderivs = {}
         k = Hprod.polynomial(CC).degree() - n
         if k == 0:
             # Then we can conclude that all higher derivatives of U are zero.
-            for l in xrange(1, 2 * N - 2 + m):
+            for l in range(1, 2 * N - 2 + m):
                 for s in combinations_with_replacement(X, l):
                     Uderivs[diff(U, list(s)).subs(P)] = ZZ.zero()
         elif k > 0 and k < 2 * N - 2 + m - 1:
@@ -2361,7 +2362,7 @@ class FractionWithFactoredDenominator(RingElement):
                 all_zero = False
             if all_zero:
                 # Then all higher derivatives of U are zero.
-                for l in xrange(k + 1, 2 * N - 2 + m):
+                for l in range(k + 1, 2 * N - 2 + m):
                     for s in combinations_with_replacement(X, l):
                         Uderivs.update({diff(U, list(s)).subs(P): ZZ.zero()})
             else:
@@ -2390,7 +2391,7 @@ class FractionWithFactoredDenominator(RingElement):
         # to stand in for the expressions At and Phitu respectively.
         if verbose:
             print("Computing derivatives of more auxiliary functions...")
-        AA = [function('A' + str(j))(*tuple(T + S)) for j in xrange(n)]
+        AA = [function('A' + str(j))(*tuple(T + S)) for j in range(n)]
         At_derivs = diff_all(At, T + S, 2 * N - 2, sub=hderivs1,
                              sub_final=[thetastar, atP], rekey=AA)
         BB = function('BB')(*tuple(T + S))
@@ -2398,7 +2399,7 @@ class FractionWithFactoredDenominator(RingElement):
                                 sub_final=[thetastar, atP], rekey=BB, zero_order=3)
         AABB_derivs = At_derivs
         AABB_derivs.update(Phitu_derivs)
-        for j in xrange(n):
+        for j in range(n):
             AABB_derivs[AA[j]] = At[j].subs(thetastar).subs(atP)
         AABB_derivs[BB] = Phitu.subs(thetastar).subs(atP)
 
@@ -2406,12 +2407,12 @@ class FractionWithFactoredDenominator(RingElement):
             print("Computing second-order differential operator actions...")
         DD = diff_op(AA, BB, AABB_derivs, T + S, a_inv, n, N)
         L = {}
-        for (j, k) in product(xrange(min(n, N)), xrange(max(0, N - 1 - n), N)):
+        for (j, k) in product(range(min(n, N)), range(max(0, N - 1 - n), N)):
             if j + k <= N - 1:
                 L[(j, k)] = sum([DD[(j, k, l)] / ((-1) ** k * 2 ** (k + l) *
                                                   factorial(l) *
                                                   factorial(k + l))
-                                 for l in xrange(2 * k + 1)])
+                                 for l in range(2 * k + 1)])
                 det = (a.determinant() ** (-1 / Integer(2)) *
                        (2 * pi) ** ((n - d) / Integer(2)))
         chunk = det * sum([(alpha[d - 1] * asy_var) ** ((n - d) /
@@ -2419,11 +2420,11 @@ class FractionWithFactoredDenominator(RingElement):
                            sum([L[(j, k)] * binomial(n - 1, j) *
                                 stirling_number1(n - j, n + k - q) *
                                 (-1) ** (q - j - k)
-                                for (j, k) in product(xrange(min(n - 1, q) + 1),
-                                                      xrange(max(0, q - n),
+                                for (j, k) in product(range(min(n - 1, q) + 1),
+                                                      range(max(0, q - n),
                                                              q + 1))
                                 if j + k <= q])
-                           for q in xrange(N)])
+                           for q in range(N)])
         chunk = chunk.subs(P).simplify()
         coeffs = chunk.coefficients(asy_var)
         coeffs.reverse()
@@ -2433,12 +2434,12 @@ class FractionWithFactoredDenominator(RingElement):
                                asy_var ** co[1]
                                for co in coeffs])
             exp_scale = prod([(P[X[i]] ** (-alpha[i])).subs(p)
-                              for i in xrange(d)]).n(digits=numerical)
+                              for i in range(d)]).n(digits=numerical)
         else:
             subexp_part = sum([co[0].subs(p) * asy_var ** co[1]
                                for co in coeffs])
             exp_scale = prod([(P[X[i]] ** (-alpha[i])).subs(p)
-                              for i in xrange(d)])
+                              for i in range(d)])
         return (exp_scale ** asy_var * subexp_part, exp_scale, subexp_part)
 
 
@@ -2555,8 +2556,8 @@ class FractionWithFactoredDenominator(RingElement):
         d = self.dimension()
         H = [h for (h, e) in self.denominator_factored()]
         n = len(H)
-        return [tuple([diff(H[i], X[j]).subs(p) for j in xrange(d)])
-                for i in xrange(n)]
+        return [tuple([diff(H[i], X[j]).subs(p) for j in range(d)])
+                for i in range(n)]
 
 
     def log_grads(self, p):
@@ -2606,8 +2607,8 @@ class FractionWithFactoredDenominator(RingElement):
         d = self.dimension()
         H = [h for (h, e) in self.denominator_factored()]
         n = len(H)
-        return [tuple([(X[j] * diff(H[i], X[j])).subs(p) for j in xrange(d)])
-                for i in xrange(n)]
+        return [tuple([(X[j] * diff(H[i], X[j])).subs(p) for j in range(d)])
+                for i in range(n)]
 
 
     def critical_cone(self, p, coordinate=None):
@@ -2655,13 +2656,13 @@ class FractionWithFactoredDenominator(RingElement):
         d = self.dimension()
         lg = self.log_grads(p)
         n = len(lg)
-        if coordinate not in xrange(d):
+        if coordinate not in range(d):
             # Search from d-1 down to 0 for a coordinate j such that
             # for all i we have lg[i][j] != 0.
             # One is guaranteed to exist in the case of a convenient multiple
             # point.
-            for j in reversed(xrange(d)):
-                if 0 not in [lg[i][j] for i in xrange(n)]:
+            for j in reversed(range(d)):
+                if 0 not in [lg[i][j] for i in range(n)]:
                     coordinate = j
                     break
         Gamma = [direction(v, coordinate) for v in lg]
@@ -2728,7 +2729,7 @@ class FractionWithFactoredDenominator(RingElement):
         # Test 2: Are the factors in H smooth at p?
         grads = self.grads(p)
         for v in grads:
-            if v == [0 for i in xrange(d)]:
+            if v == [0 for i in range(d)]:
                 return (False, 'not smooth point of factors')
 
         # Test 3: Do the factors in H intersect transversely at p?
@@ -2746,7 +2747,7 @@ class FractionWithFactoredDenominator(RingElement):
         # Test 4: Is p convenient?
         M = matrix(self.log_grads(p))
         convenient_coordinates = []
-        for j in xrange(d):
+        for j in range(d):
             if 0 not in M.columns()[j]:
                 convenient_coordinates.append(j)
         if not convenient_coordinates:
@@ -2867,7 +2868,7 @@ class FractionWithFactoredDenominator(RingElement):
         J = S.ideal([Hred] +
                     [alpha[d - 1] * X[i] * diff(Hred, X[i]) -
                      alpha[i] * X[d - 1] * diff(Hred, X[d - 1])
-                     for i in xrange(d - 1)])
+                     for i in range(d - 1)])
         return S.ideal(J.groebner_basis())
 
 
@@ -2949,7 +2950,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         # Create biggest multi-index needed.
         alpha = []
-        for i in xrange(d):
+        for i in range(d):
             alpha.append(max(nu[i] for nu in multi_indices))
 
         # Compute Maclaurin expansion of self up to index alpha.
@@ -2957,14 +2958,14 @@ class FractionWithFactoredDenominator(RingElement):
         # Slow!
         f = SR(self.quotient())
         X = [SR(g) for g in R.gens()]
-        for i in xrange(d):
+        for i in range(d):
             f = f.taylor(X[i], 0, alpha[i])
         F = R(f)
 
         # Collect coefficients.
         X = R.gens()
         for nu in multi_indices:
-            monomial = prod(X[i] ** nu[i] for i in xrange(d))
+            monomial = prod(X[i] ** nu[i] for i in range(d))
             val = F.monomial_coefficient(monomial)
             if numerical:
                 val = val.n(digits=numerical)
@@ -3261,7 +3262,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Ring):
             from sage.misc.superseded import deprecation
             deprecation(10519, "Keyword argument 'numerator' "
                                "is deprecated. "
-                               "Ignoring non-keyword argumets (if any). "
+                               "Ignoring non-keyword arguments (if any). "
                                "Specify numerator and factored denominator "
                                "as first and second argument, i.e., use "
                                "something like FFPD(n, df).")
@@ -3269,7 +3270,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Ring):
             from sage.misc.superseded import deprecation
             deprecation(10519, "Keyword argument 'denominator_factored' "
                                "is deprecated. "
-                               "Ignoring non-keyword argumets (if any). "
+                               "Ignoring non-keyword arguments (if any). "
                                "Specify numerator and factored denominator "
                                "as first and second argument, i.e., use "
                                "something like FFPD(n, df).")
@@ -3282,7 +3283,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Ring):
             from sage.misc.superseded import deprecation
             deprecation(10519, "Keyword argument 'quotient' "
                                "is deprecated. "
-                               "Ignoring non-keyword argumets (if any). "
+                               "Ignoring non-keyword arguments (if any). "
                                "Specify numerator and factored denominator "
                                "as first and second argument, i.e., use "
                                "something like FFPD(q).")
@@ -3296,7 +3297,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Ring):
 
         if kwargs:
             raise ValueError('Unknown keyword arguments '
-                             '%s given' % (kwargs.keys(),))
+                             '%s given' % (kwargs,))
 
         # process arguments
         if len(args) > 2:
@@ -3844,7 +3845,7 @@ def diff_prod(f_derivs, u, g, X, interval, end, uderivs, atc):
             D[diff(u, t).subs(atc)] = var('zing' +
                                           ''.join(str(x) for x in t))
         eqns = [lhs[i] == rhs[i].subs(uderivs).subs(D)
-                for i in xrange(len(lhs))]
+                for i in range(len(lhs))]
         variables = D.values()
         sol = solve(eqns, *variables, solution_dict=True)
         uderivs.update(subs_all(D, sol[ZZ.zero()]))
@@ -3885,7 +3886,7 @@ def permutation_sign(s, u):
     from sage.combinat.permutation import Permutation
 
     # Convert lists to lists of numbers in {1,..., len(u)}
-    A = [i + 1 for i in xrange(len(u))]
+    A = [i + 1 for i in range(len(u))]
     B = [u.index(x) + 1 for x in s]
 
     C = sorted(set(A).difference(set(B)))
@@ -3948,7 +3949,7 @@ def subs_all(f, sub, simplify=False):
     for ff in f:
         for D in sub:
             if isinstance(ff, dict):
-                ff = {k: ff[k].subs(D) for k in ff.keys()}
+                ff = {k: ff[k].subs(D) for k in ff}
             else:
                 ff = ff.subs(D)
         g.append(ff)
@@ -4020,7 +4021,7 @@ def diff_all(f, V, n, ending=[], sub=None, sub_final=None,
         sage: f = function('f')(x)
         sage: dd = diff_all(f, [x], 3)
         sage: dd[(x, x, x)]
-        D[0, 0, 0](f)(x)
+        diff(f(x), x, x, x)
 
         sage: d1 = {diff(f, x): 4*x^3}
         sage: dd = diff_all(f, [x], 3, sub=d1)
@@ -4042,17 +4043,17 @@ def diff_all(f, V, n, ending=[], sub=None, sub_final=None,
         sage: f = function('f')(*X)
         sage: dd = diff_all(f, X, 2, ending=[y, y, y])
         sage: dd[(z, y, y, y)]
-        D[1, 1, 1, 2](f)(x, y, z)
+        diff(f(x, y, z), y, y, y, z)
 
     ::
 
         sage: g = function('g')(*X)
         sage: dd = diff_all([f, g], X, 2)
         sage: dd[(0, y, z)]
-        D[1, 2](f)(x, y, z)
+        diff(f(x, y, z), y, z)
 
         sage: dd[(1, z, z)]
-        D[2, 2](g)(x, y, z)
+        diff(g(x, y, z), z, z)
 
         sage: f = exp(x*y*z)
         sage: ff = function('ff')(*X)
@@ -4078,7 +4079,7 @@ def diff_all(f, V, n, ending=[], sub=None, sub_final=None,
     if singleton:
         for s in seeds:
             derivs[tuple(s)] = subs_all(diff(f[0], s), sub)
-        for l in xrange(start, n + 1):
+        for l in range(start, n + 1):
             for t in combinations_with_replacement(V, l):
                 s = t + tuple(ending)
                 derivs[s] = subs_all(diff(derivs[s[1:]], s[0]), sub)
@@ -4086,37 +4087,37 @@ def diff_all(f, V, n, ending=[], sub=None, sub_final=None,
         # Make the dictionary keys of the form (j, sequence of variables),
         # where j in range(r).
         for s in seeds:
-            value = subs_all([diff(f[j], s) for j in xrange(r)], sub)
-            derivs.update({tuple([j] + s): value[j] for j in xrange(r)})
-        for l in xrange(start, n + 1):
+            value = subs_all([diff(f[j], s) for j in range(r)], sub)
+            derivs.update({tuple([j] + s): value[j] for j in range(r)})
+        for l in range(start, n + 1):
             for t in combinations_with_replacement(V, l):
                 s = t + tuple(ending)
-                value = subs_all([diff(derivs[(j,) + s[1:]], s[0]) for j in xrange(r)], sub)
-                derivs.update({(j,) + s: value[j] for j in xrange(r)})
+                value = subs_all([diff(derivs[(j,) + s[1:]], s[0]) for j in range(r)], sub)
+                derivs.update({(j,) + s: value[j] for j in range(r)})
     if zero_order:
         # Zero out all the derivatives of order < zero_order
         if singleton:
-            for k in derivs.keys():
+            for k in derivs:
                 if len(k) < zero_order:
                     derivs[k] = ZZ.zero()
         else:
             # Ignore the first of element of k, which is an index.
-            for k in derivs.keys():
+            for k in derivs:
                 if len(k) - 1 < zero_order:
                     derivs[k] = ZZ.zero()
     if sub_final:
         # Substitute sub_final into the values of derivs.
-        for k in derivs.keys():
+        for k in derivs:
             derivs[k] = subs_all(derivs[k], sub_final)
     if rekey:
         # Rekey the derivs dictionary by the value of rekey.
         F = rekey
         if singleton:
             # F must be a singleton.
-            derivs = {diff(F, list(k)): derivs[k] for k in derivs.keys()}
+            derivs = {diff(F, list(k)): derivs[k] for k in derivs}
         else:
             # F must be a list.
-            derivs = {diff(F[k[0]], list(k)[1:]): derivs[k] for k in derivs.keys()}
+            derivs = {diff(F[k[0]], list(k)[1:]): derivs[k] for k in derivs}
     return derivs
 
 
@@ -4172,7 +4173,7 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
         sage: AB_derivs = {}
         sage: M = matrix([[1, 2],[2, 1]])
         sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)
-        sage: sorted(DD.keys())
+        sage: sorted(DD)
         [(0, 0, 0), (0, 1, 0), (0, 1, 1), (0, 1, 2)]
         sage: len(DD[(0, 1, 2)])
         246
@@ -4187,7 +4188,7 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
     product_derivs = {}
     for j, k in xmrange([r, N], tuple):
         if j + k < N:
-            for l in xrange(2 * k + 1):
+            for l in range(2 * k + 1):
                 for s in combinations_with_replacement(V, 2 * (k + l)):
                     DF = diff(A[j] * B ** l, list(s)).subs(AB_derivs)
                     product_derivs[(j, k, l) + s] = DF
@@ -4197,7 +4198,7 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
     rows = M.nrows()
     for j, k in xmrange([r, N], tuple):
         if j + k < N:
-            for l in xrange(2 * k + 1):
+            for l in range(2 * k + 1):
                 # Take advantage of the symmetry of M by ignoring
                 # the upper-diagonal entries of M and multiplying by
                 # appropriate powers of 2.
@@ -4303,24 +4304,23 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
         sage: AB_derivs = {}
         sage: sorted(diff_op_simple(A, B, AB_derivs, x, 3, 2, 2).items())
         [((0, 0), A(x)),
-         ((1, 0), 1/2*I*2^(2/3)*D[0](A)(x)),
-         ((1, 1), 1/4*2^(2/3)*(B(x)*D[0, 0, 0, 0](A)(x)
-          + 4*D[0, 0, 0](A)(x)*D[0](B)(x) + 6*D[0, 0](A)(x)*D[0, 0](B)(x)
-          + 4*D[0](A)(x)*D[0, 0, 0](B)(x) + A(x)*D[0, 0, 0, 0](B)(x)))]
+         ((1, 0), 1/2*I*2^(2/3)*diff(A(x), x)),
+         ((1, 1),
+          1/4*2^(2/3)*(B(x)*diff(A(x), x, x, x, x) + 4*diff(A(x), x, x, x)*diff(B(x), x) + 6*diff(A(x), x, x)*diff(B(x), x, x) + 4*diff(A(x), x)*diff(B(x), x, x, x) + A(x)*diff(B(x), x, x, x, x)))]
     """
     from sage.functions.other import sqrt
 
     I = sqrt(-ZZ.one())
     DD = {}
     if v.mod(Integer(2)) == ZZ.zero():
-        for k in xrange(N):
-            for l in xrange(2 * k + 1):
+        for k in range(N):
+            for l in range(2 * k + 1):
                DD[(k, l)] = ((a ** (-ZZ.one() / v)) ** (2 * k + v * l) *
                               diff(A * B ** l, x,
                                    2 * k + v * l).subs(AB_derivs))
     else:
-        for k in xrange(N):
-            for l in xrange(k + 1):
+        for k in range(N):
+            for l in range(k + 1):
                 DD[(k, l)] = ((abs(a) ** (-ZZ.one() / v) * I *
                                a / abs(a)) ** (k + v * l) *
                               diff(A * B ** l, x,
@@ -4366,20 +4366,19 @@ def coerce_point(R, p):
         sage: FFPD = FractionWithFactoredDenominatorRing(R)
         sage: f = FFPD()
         sage: p = {SR(x): 1, SR(y): 7/8}
-        sage: for k in sorted(p.keys(), key=str):
+        sage: for k in sorted(p, key=str):
         ....:     print("{} {} {}".format(k, k.parent(), p[k]))
         x Symbolic Ring 1
         y Symbolic Ring 7/8
         sage: q = coerce_point(R, p)
-        sage: for k in sorted(q.keys(), key=str):
+        sage: for k in sorted(q, key=str):
         ....:     print("{} {} {}".format(k, k.parent(), q[k]))
         x Multivariate Polynomial Ring in x, y over Rational Field 1
         y Multivariate Polynomial Ring in x, y over Rational Field 7/8
     """
-    if p is not None and p.keys() and p.keys()[0].parent() != R:
+    if p and list(p)[0].parent() != R:
         try:
             return {x: p[SR(x)] for x in R.gens()}
         except TypeError:
             pass
     return p
-

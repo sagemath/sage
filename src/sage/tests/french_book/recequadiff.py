@@ -230,12 +230,12 @@ Sage example in ./recequadiff.tex, line 674::
   sage: x, t = var('x, t'); f = function('f')(x); g = function('g')(t)
   sage: z = f*g
   sage: eq(x,t) = diff(z,x,2) == diff(z,t); eq(x,t)
-  g(t)*D[0, 0](f)(x) == f(x)*D[0](g)(t)
+    g(t)*diff(f(x), x, x) == f(x)*diff(g(t), t)
 
 Sage example in ./recequadiff.tex, line 688::
 
   sage: eqn = eq/z; eqn(x,t)
-  D[0, 0](f)(x)/f(x) == D[0](g)(t)/g(t)
+    diff(f(x), x, x)/f(x) == diff(g(t), t)/g(t)
 
 Sage example in ./recequadiff.tex, line 702::
 

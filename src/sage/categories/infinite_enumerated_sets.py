@@ -71,9 +71,9 @@ class InfiniteEnumeratedSets(CategoryWithAxiom):
                 sage: NN.list()
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: infinite list
+                NotImplementedError: cannot list an infinite set
             """
-            raise NotImplementedError("infinite list")
+            raise NotImplementedError("cannot list an infinite set")
         _list_default  = list # needed by the check system.
 
         def _test_enumerated_set_iter_cardinality(self, **options):

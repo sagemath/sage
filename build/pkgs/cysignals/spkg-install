@@ -8,22 +8,17 @@ fi
 
 cd src
 
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
+if [ "$SAGE_DEBUG" = yes ]; then
+    CYSIGNALS_CONFIGURE="--enable-debug $CYSIGNALS_CONFIGURE"
+fi
 
-./configure
+./configure $CYSIGNALS_CONFIGURE
 if [ $? -ne 0 ]; then
     echo "Error configuring cysignals ... exiting"
     exit 1
 fi
 
-$MAKE install
+$PIP_INSTALL .
 if [ $? -ne 0 ]; then
     echo "Error installing cysignals ... exiting"
     exit 1

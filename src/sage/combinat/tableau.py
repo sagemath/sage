@@ -67,6 +67,9 @@ For display options, see :meth:`Tableaux.options`.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
+from six.moves import range
+
+from builtins import zip
 
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
@@ -81,11 +84,10 @@ from sage.rings.infinity import PlusInfinity
 from sage.arith.all import factorial, binomial
 from sage.rings.integer import Integer
 from sage.combinat.composition import Composition, Compositions
-from .integer_vector import IntegerVectors
+from sage.combinat.integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
 import sage.libs.symmetrica.all as symmetrica
 import sage.misc.prandom as random
 from . import permutation
-import itertools
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.misc.all import uniq, prod
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -315,7 +317,7 @@ class Tableau(ClonableList):
         # Check that it has partition shape. That's all we require from a
         # general tableau.
         lens = [len(_) for _ in self]
-        for (a, b) in itertools.izip(lens, lens[1:]):
+        for (a, b) in zip(lens, lens[1:]):
             if a < b:
                 raise ValueError("A tableau must be a list of iterables of weakly decreasing length.")
         if lens and lens[-1] == 0:
@@ -1518,8 +1520,8 @@ class Tableau(ClonableList):
             sage: t = Tableau([[1,3,4,7],[6,2],[2,3]])
             sage: def by_word(T):
             ....:     ed = T.to_word().evaluation_dict()
-            ....:     m = max(ed.keys()) + 1
-            ....:     return [ed.get(k,0) for k in range(1,m)]
+            ....:     m = max(ed) + 1
+            ....:     return [ed.get(k, 0) for k in range(1, m)]
             sage: by_word(t) == t.weight()
             True
             sage: SST = SemistandardTableaux(shape=[3,1,1])
@@ -1683,8 +1685,8 @@ class Tableau(ClonableList):
             sage: Tableau([[5, 3], [2, 4]]).is_standard()
             False
         """
-        entries=sorted(self.entries())
-        return entries==range(1,self.size()+1) and self.is_row_strict() and self.is_column_strict()
+        entries = sorted(self.entries())
+        return entries == list(range(1, self.size() + 1)) and self.is_row_strict() and self.is_column_strict()
 
     def is_increasing(self):
         """
@@ -1860,8 +1862,8 @@ class Tableau(ClonableList):
         sh = self.shape()
         if sh != secondtab.shape():
             raise TypeError("the tableaux must be the same shape")
-        return all( self[a][b] <= secondtab[a][b] for a in xrange(len(self))
-                                                  for b in xrange(len(self[a])) )
+        return all( self[a][b] <= secondtab[a][b] for a in range(len(self))
+                                                  for b in range(len(self[a])) )
 
     def k_weight(self, k):
         r"""
@@ -2817,12 +2819,11 @@ class Tableau(ClonableList):
         # Ensure that the permutations involve all elements of the
         # tableau, by including the identity permutation on the set [1..k].
         k = self.size()
-        gens = [range(1, k+1)]
+        gens = [list(range(1, k + 1))]
         for row in self:
-            for j in range(len(row)-1):
-                gens.append( (row[j], row[j+1]) )
+            for j in range(len(row) - 1):
+                gens.append( (row[j], row[j + 1]) )
         return PermutationGroup( gens )
-
 
     def column_stabilizer(self):
         """
@@ -3666,11 +3667,11 @@ class Tableau(ClonableList):
             [((0, 5), 3), ((1, 4), 2), ((2, 4), 1)]
         """
         segments = {}
-        for r,row in enumerate(self):
+        for r, row in enumerate(self):
             for c in range(len(row)):
-                for j in range(c+1):
-                    if row[j] != r+1 and (r,row[j]) not in segments.keys():
-                        segments[(r,row[j])] = j
+                for j in range(c + 1):
+                    if row[j] != r + 1 and (r, row[j]) not in segments:
+                        segments[(r, row[j])] = j
         return segments
 
     def seg(self):
@@ -3985,8 +3986,8 @@ class Tableau(ClonableList):
             sage: Tableau([[1,2,3],[4]]).first_row_descent() is  None
             True
         """
-        for row in xrange(len(self)):
-            for col in xrange(len(self[row])-1):
+        for row in range(len(self)):
+            for col in range(len(self[row])-1):
                 if self[row][col]>self[row][col+1]:
                     return (row,col)
         return None
@@ -4013,7 +4014,7 @@ class Tableau(ClonableList):
             sage: Tableau([[1,2,3],[4]]).first_column_descent() is None
             True
         """
-        for row in xrange(len(self)-1):
+        for row in range(len(self)-1):
             col = 0
             while col < len(self[row+1]):
                 if self[row][col] > self[row+1][col]:
@@ -4206,13 +4207,13 @@ class SemistandardTableau(Tableau):
         for row in t:
             if any(c not in PI for c in row):
                 raise ValueError("the entries of a semistandard tableau must be non-negative integers")
-            if any(row[c] > row[c+1] for c in xrange(len(row)-1)):
+            if any(row[c] > row[c+1] for c in range(len(row)-1)):
                 raise ValueError("the entries in each row of a semistandard tableau must be weakly increasing")
 
         # and strictly increasing down columns
         if t:
-            for row, next in itertools.izip(t, t[1:]):
-                if not all(row[c] < next[c] for c in xrange(len(next))):
+            for row, next in zip(t, t[1:]):
+                if not all(row[c] < next[c] for c in range(len(next))):
                     raise ValueError("the entries of each column of a semistandard tableau must be strictly increasing")
 
 class StandardTableau(SemistandardTableau):
@@ -4312,14 +4313,16 @@ class StandardTableau(SemistandardTableau):
         # t is semistandard so we only need to check
         # that its entries are in bijection with {1, 2, ..., n}
         flattened_list = [i for row in self for i in row]
-        if sorted(flattened_list) != range(1, len(flattened_list)+1):
+        if sorted(flattened_list) != list(range(1, len(flattened_list) + 1)):
             raise ValueError("the entries in a standard tableau must be in bijection with 1,2,...,n")
 
     def dominates(self, t):
         r"""
-        Return ``True`` if ``self`` dominates the tableau ``t``. That is,
-        if the shape of the tableau restricted to `k` dominates the shape of
-        ``t`` restrcted to `k`, for `k = 1, 2, \ldots, n`.
+        Return ``True`` if ``self`` dominates the tableau ``t``.
+
+        That is, if the shape of the tableau restricted to `k`
+        dominates the shape of ``t`` restricted to `k`, for `k = 1, 2,
+        \ldots, n`.
 
         When the two tableaux have the same shape, then this ordering
         coincides with the Bruhat ordering for the corresponding permutations.
@@ -4344,7 +4347,7 @@ class StandardTableau(SemistandardTableau):
         """
         t=StandardTableau(t)
         return all(self.restrict(m).shape().dominates(t.restrict(m).shape())
-                        for m in xrange(1,1+self.size()))
+                        for m in range(1,1+self.size()))
 
     def is_standard(self):
         """
@@ -5492,7 +5495,7 @@ class SemistandardTableaux(Tableaux):
                     return False
                 if not all(row[i] <= row[i+1] for i in range(len(row)-1)):
                     return False
-            for row, next in itertools.izip(t, t[1:]):
+            for row, next in zip(t, t[1:]):
                 if not all(row[c] < next[c] for c in range(len(next))):
                     return False
             return self.max_entry is None or max(max(row) for row in t) <= self.max_entry
@@ -5638,7 +5641,7 @@ class SemistandardTableaux_size_inf(SemistandardTableaux):
             for part in Partitions(self.size):
                 if i != 1:
                     for k in range(1, self.size+1):
-                        for c in IntegerVectors(self.size - k, i-1):
+                        for c in integer_vectors_nk_fast_iter(self.size - k, i-1):
                             c.append(k)
                             for sst in SemistandardTableaux_shape_weight(part, Composition(c)):
                                 yield self.element_class(self, sst)
@@ -5740,7 +5743,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
         while(True):
             if i != 1:
                 for k in range(1, n+1):
-                    for c in IntegerVectors(n - k, i-1):
+                    for c in integer_vectors_nk_fast_iter(n - k, i-1):
                         c.append(k)
                         for sst in SemistandardTableaux_shape_weight(self.shape, Composition(c)):
                             yield self.element_class(self, sst)
@@ -5806,7 +5809,7 @@ class SemistandardTableaux_size(SemistandardTableaux):
             sage: [[1,2],[3,3]] in SemistandardTableaux(4, max_entry=2)
             False
             sage: SST = SemistandardTableaux(4)
-            sage: all([sst in SST for sst in SST])
+            sage: all(sst in SST for sst in SST)
             True
 
         Check that :trac:`14145` is fixed::
@@ -5863,8 +5866,9 @@ class SemistandardTableaux_size(SemistandardTableaux):
             pos += 1
             tot += weights[pos]
         # we now have pos elements over the diagonal and n - 2 * pos on it
-        m = diagonal_matrix(IntegerVectors(self.size - 2 * pos, self.max_entry).random_element())
-        above_diagonal = IntegerVectors(pos, kchoose2m1 + 1).random_element()
+        m = diagonal_matrix( list(IntegerVectors(self.size - 2 * pos,
+                                                 self.max_entry).random_element()) )
+        above_diagonal = list(IntegerVectors(pos, kchoose2m1 + 1).random_element())
         index = 0
         for i in range(self.max_entry - 1):
             for j in range(i + 1, self.max_entry):
@@ -5887,9 +5891,9 @@ class SemistandardTableaux_size(SemistandardTableaux):
             9
             sage: SemistandardTableaux(4, max_entry=10).cardinality()
             4225
-            sage: ns = range(1, 6)
+            sage: ns = list(range(1, 6))
             sage: ssts = [ SemistandardTableaux(n) for n in ns ]
-            sage: all([sst.cardinality() == len(sst.list()) for sst in ssts])
+            sage: all(sst.cardinality() == len(sst.list()) for sst in ssts)
             True
         """
         from sage.combinat.partition import Partitions
@@ -6021,7 +6025,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
             sage: sst[0].parent() is sst
             True
         """
-        for c in IntegerVectors(sum(self.shape), self.max_entry):
+        for c in integer_vectors_nk_fast_iter(sum(self.shape), self.max_entry):
             for sst in SemistandardTableaux_shape_weight(self.shape, Composition(c)):
                 yield self.element_class(self, sst)
 
@@ -6031,7 +6035,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
         EXAMPLES::
 
             sage: SST = SemistandardTableaux([2,1])
-            sage: all([sst in SST for sst in SST])
+            sage: all(sst in SST for sst in SST)
             True
             sage: len(filter(lambda x: x in SST, SemistandardTableaux(3)))
             8
@@ -6039,7 +6043,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
             8
 
             sage: SST = SemistandardTableaux([2,1], max_entry=4)
-            sage: all([sst in SST for sst in SST])
+            sage: all(sst in SST for sst in SST)
             True
             sage: SST.cardinality()
             20
@@ -6088,8 +6092,8 @@ class SemistandardTableaux_shape(SemistandardTableaux):
                 content = j - i
                 t[i][j] = randint(1 - content, self.max_entry)
         conj = Partition(self.shape).conjugate()
-        for i in xrange(len(conj) - 1, -1, -1):
-            for j in xrange(conj[i] - 1, -1, -1):
+        for i in range(len(conj) - 1, -1, -1):
+            for j in range(conj[i] - 1, -1, -1):
                 row = j
                 col = i
                 s = t[row][col]
@@ -6164,7 +6168,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
             return Integer(num / den)
         elif algorithm == 'sum':
             c = 0
-            for comp in IntegerVectors(sum(self.shape), self.max_entry):
+            for comp in integer_vectors_nk_fast_iter(sum(self.shape), self.max_entry):
                 c += SemistandardTableaux_shape_weight(self.shape, Composition(comp)).cardinality()
             return c
         raise ValueError("unknown algorithm {}".format(algorithm))
@@ -6205,7 +6209,7 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
         EXAMPLES::
 
             sage: SST = SemistandardTableaux([2,1], [2,1])
-            sage: all([sst in SST for sst in SST])
+            sage: all(sst in SST for sst in SST)
             True
             sage: len(filter(lambda x: x in SST, SemistandardTableaux(3)))
             1
@@ -6358,9 +6362,9 @@ class SemistandardTableaux_size_weight(SemistandardTableaux):
         TESTS::
 
             sage: SST = SemistandardTableaux(6, [2,2,2])
-            sage: all([sst in SST for sst in SST])
+            sage: all(sst in SST for sst in SST)
             True
-            sage: all([sst in SST for sst in SemistandardTableaux([3,2,1],[2,2,2])])
+            sage: all(sst in SST for sst in SemistandardTableaux([3,2,1],[2,2,2]))
             True
         """
         from sage.combinat.partition import Partition
@@ -6512,7 +6516,7 @@ class StandardTableaux(SemistandardTableaux):
             return True
         elif Tableaux.__contains__(self, x):
             flatx = sorted(sum((list(row) for row in x),[]))
-            return flatx == range(1,len(flatx)+1) and (len(x)==0 or
+            return flatx == list(range(1,len(flatx)+1)) and (len(x)==0 or
                      (all(row[i]<row[i+1] for row in x for i in range(len(row)-1)) and
                        all(x[r][c]<x[r+1][c] for r in range(len(x)-1)
                                               for c in range(len(x[r+1])) )
@@ -6583,7 +6587,7 @@ class StandardTableaux_size(StandardTableaux):
         TESTS::
 
             sage: ST3 = StandardTableaux(3)
-            sage: all([st in ST3 for st in ST3])
+            sage: all(st in ST3 for st in ST3)
             True
             sage: ST4 = StandardTableaux(4)
             sage: filter(lambda x: x in ST3, ST4)
@@ -6658,7 +6662,7 @@ class StandardTableaux_size(StandardTableaux):
             4
             sage: ns = [1,2,3,4,5,6]
             sage: sts = [StandardTableaux(n) for n in ns]
-            sage: all([st.cardinality() == len(st.list()) for st in sts])
+            sage: all(st.cardinality() == len(st.list()) for st in sts)
             True
             sage: StandardTableaux(50).cardinality()
             27886995605342342839104615869259776
@@ -6670,11 +6674,11 @@ class StandardTableaux_size(StandardTableaux):
             ....:     for p in Partitions(n):
             ....:         c += StandardTableaux(p).cardinality()
             ....:     return c
-            sage: all([cardinality_using_hook_formula(i) == StandardTableaux(i).cardinality() for i in range(10)])
+            sage: all(cardinality_using_hook_formula(i) == StandardTableaux(i).cardinality() for i in range(10))
             True
         """
         tableaux_number = self.size % 2  # identity involution
-        fixed_point_numbers = xrange(tableaux_number, self.size + 1 - tableaux_number, 2)
+        fixed_point_numbers = list(range(tableaux_number, self.size + 1 - tableaux_number, 2))
 
         # number of involutions of size "size" (number of ways to
         # choose "fixed_point_number" out of "size" elements *
@@ -6722,7 +6726,7 @@ class StandardTableaux_size(StandardTableaux):
 
         TESTS::
 
-            sage: all([StandardTableaux(10).random_element() in StandardTableaux(10) for i in range(20)])
+            sage: all(StandardTableaux(10).random_element() in StandardTableaux(10) for i in range(20))
             True
         """
         from sage.misc.prandom import randrange
@@ -6739,7 +6743,7 @@ class StandardTableaux_size(StandardTableaux):
             # We add the number of involutions with ``fixed_point_number``
             # fixed points.
             partial_sum += binomial(self.size, fixed_point_number) * \
-                           prod(xrange(1, self.size - fixed_point_number , 2))
+                           prod(range(1, self.size - fixed_point_number , 2))
             # If the partial sum is greater than the involution index,
             # then the random involution that we want to generate has
             # ``fixed_point_number`` fixed points.
@@ -6748,7 +6752,7 @@ class StandardTableaux_size(StandardTableaux):
             fixed_point_number += 2
         # We generate a subset of size "fixed_point_number" of the set {1,
         # ..., size}.
-        fixed_point_positions = set(sample(xrange(1, self.size + 1), fixed_point_number))
+        fixed_point_positions = set(sample(range(1, self.size + 1), fixed_point_number))
         # We generate a list of tuples which will form the cycle
         # decomposition of our random involution. This list contains
         # singletons (corresponding to the fixed points of the
@@ -6786,7 +6790,7 @@ class StandardTableaux_shape(StandardTableaux):
         EXAMPLES::
 
             sage: ST = StandardTableaux([2,1,1])
-            sage: all([st in ST for st in ST])
+            sage: all(st in ST for st in ST)
             True
             sage: len(filter(lambda x: x in ST, StandardTableaux(4)))
             3

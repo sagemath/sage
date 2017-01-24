@@ -33,6 +33,7 @@ TESTS::
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
+from six.moves import range
 
 # System imports
 import sys
@@ -75,6 +76,7 @@ from sage.misc.all import lazy_attribute
 
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
+from sage.categories.enumerated_sets import EnumeratedSets
 
 _Rings = Rings()
 _Fields = Fields()
@@ -118,11 +120,11 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
         sage: MatrixSpace(ZZ,10,5)
         Full MatrixSpace of 10 by 5 dense matrices over Integer Ring
         sage: MatrixSpace(ZZ,10,5).category()
-        Category of infinite modules over (euclidean domains
-             and infinite enumerated sets and metric spaces)
+        Category of infinite enumerated modules over
+         (euclidean domains and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(ZZ,10,10).category()
-        Category of infinite algebras over (euclidean domains
-             and infinite enumerated sets and metric spaces)
+        Category of infinite enumerated algebras over
+         (euclidean domains and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(QQ,10).category()
         Category of infinite algebras over (quotient fields and metric spaces)
 
@@ -323,6 +325,9 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
         elif is_finite is False:
             category = category.Infinite()
 
+        if base_ring in EnumeratedSets:
+            category = category.Enumerated()
+
         sage.structure.parent.Parent.__init__(self, category=category)
         #sage.structure.category_object.CategoryObject._init_category_(self, category)
 
@@ -478,13 +483,13 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
 
             sage: x = polygen(QQ)
             sage: for R in [ZZ, QQ, RealField(100), ComplexField(100), RDF, CDF,
-            ...             SR, GF(2), GF(11), GF(2^8,'a'), GF(3^19,'a'),
-            ...             NumberField(x^3+2,'a'), CyclotomicField(4),
-            ...             PolynomialRing(QQ,'x'), PolynomialRing(CC,2,'x')]:
-            ...       A = MatrixSpace(R,60,30,sparse=False)(0)
-            ...       B = A.augment(A)
-            ...       A = MatrixSpace(R,60,30,sparse=True)(0)
-            ...       B = A.augment(A)
+            ....:           SR, GF(2), GF(11), GF(2^8,'a'), GF(3^19,'a'),
+            ....:           NumberField(x^3+2,'a'), CyclotomicField(4),
+            ....:           PolynomialRing(QQ,'x'), PolynomialRing(CC,2,'x')]:
+            ....:     A = MatrixSpace(R,60,30,sparse=False)(0)
+            ....:     B = A.augment(A)
+            ....:     A = MatrixSpace(R,60,30,sparse=True)(0)
+            ....:     B = A.augment(A)
 
         Check that :trac:`13012` is fixed::
 
@@ -964,7 +969,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             sage: MS[2]
             Traceback (most recent call last):
             ...
-            NotImplementedError: since it is infinite, cannot list Full MatrixSpace of 7 by 7 dense matrices over Rational Field
+            AttributeError: 'MatrixSpace_with_category' object has no attribute 'list'
         """
         if isinstance(x, (int, long, integer.Integer)):
             return self.list()[x]
@@ -1151,8 +1156,8 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
         if self.__nrows != self.__ncols:
             raise TypeError("identity matrix must be square")
         A = self.zero_matrix().__copy__()
-        for i in xrange(self.__nrows):
-            A[i,i] = 1
+        for i in range(self.__nrows):
+            A[i, i] = 1
         A.set_immutable()
         return A
 
@@ -1311,9 +1316,9 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             [1 2]
             [3 4]
 
-        Note that the last "flip" cannot be performed if ``x`` is a matrix, no
-        matter what is ``rows`` (it used to be possible but was fixed by
-        Trac 10793)::
+        Note that the last "flip" cannot be performed if ``x`` is a
+        matrix, no matter what is ``rows`` (it used to be possible but
+        was fixed by :trac:`10793`)::
 
             sage: projection = matrix(ZZ,[[1,0,0],[0,1,0]])
             sage: projection
@@ -1438,7 +1443,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             ArithmeticSubgroupElement
         if is_MatrixGroupElement(x) or isinstance(x, ArithmeticSubgroupElement):
             return self(x.matrix(), copy=False)
-        if isinstance(x, (types.GeneratorType, xrange)):
+        if isinstance(x, (types.GeneratorType,)):
             x = list(x)
         if not sparse and isinstance(x, dict):
             x = dict_to_list(x, m, n)

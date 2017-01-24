@@ -33,19 +33,9 @@ export CFLAGS
 
 cd src
 
-echo "Applying patches to upstream sources..."
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
-
 echo "Configuring GSL..."
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
+  LIBS="`pkg-config --libs-only-l cblas` -lm"
 if [ $? -ne 0 ]; then
     echo >&2 "Error configuring GSL."
     exit 1

@@ -150,27 +150,6 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             except AssertionError:
                 pass
 
-    class ElementMethods:
-        """
-        ``Magmas.Element.__mul__`` is preferable to ``Modules.Element.__mul__``
-        since the later does not handle products of two elements of ``self``.
-
-        TESTS::
-
-            sage: A = AlgebrasWithBasis(QQ).example(); A
-            An example of an algebra with basis: the free algebra
-            on the generators ('a', 'b', 'c') over Rational Field
-            sage: x = A.an_element()
-            sage: x
-            B[word: ] + 2*B[word: a] + 3*B[word: b] + B[word: bab]
-            sage: x.__mul__(x)
-            B[word: ] + 4*B[word: a] + 4*B[word: aa] + 6*B[word: ab]
-            + 2*B[word: abab] + 6*B[word: b] + 6*B[word: ba]
-            + 2*B[word: bab] + 2*B[word: baba] + 3*B[word: babb]
-            + B[word: babbab] + 9*B[word: bb] + 3*B[word: bbab]
-        """
-        __mul__ = Magmas.ElementMethods.__mul__.__func__
-
     class WithBasis(CategoryWithAxiom_over_base_ring):
 
         class ParentMethods:
@@ -286,5 +265,4 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                     sage: A(3)
                     3*B[word: ]
                 """
-                return self.term(self.one_basis(), r) #.
-
+                return self.term(self.one_basis(), r)

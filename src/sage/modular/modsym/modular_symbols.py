@@ -31,7 +31,7 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 import sage.modular.cusps as cusps
 from sage.modular.modsym.apply import apply_to_monomial
 from sage.modular.modsym.manin_symbol import ManinSymbol
@@ -268,7 +268,7 @@ class ModularSymbol(SageObject):
 
         The action of `g` on symbols is by
 
-        .. math::
+        .. MATH::
 
            P(X,Y)\{\alpha, \beta\} \mapsto  P(dX-bY, -cx+aY) \{g(\alpha), g(\beta)\}.
 
@@ -334,7 +334,7 @@ class ModularSymbol(SageObject):
         v = [(0,1), (1,0)]
         if not alpha.is_infinity():
             cf = alpha._rational_().continued_fraction()
-            v.extend((cf.p(k),cf.q(k)) for k in xrange(len(cf)))
+            v.extend((cf.p(k),cf.q(k)) for k in range(len(cf)))
         sign = 1
         z = formal_sum.FormalSum(0)
         for j in range(1,len(v)):

@@ -1362,10 +1362,10 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         """
         if self.Data == NULL:
             raise ValueError("The matrix must not be empty")
-        if (self.Data.Nor <> self.Data.Noc):
+        if self.Data.Nor != self.Data.Noc:
             raise ValueError("only defined for square matrices")
         o = MatOrder(self.Data)
-        if o==-1:
+        if o == -1:
             raise ArithmeticError("order too large")
         else:
             return o

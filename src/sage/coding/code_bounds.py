@@ -18,67 +18,54 @@ AUTHORS:
 
 - Dima Pasechnik (2012-10): added LP bounds.
 
-Let `F` be a finite field (we denote the finite field with
-`q` elements by `\GF{q}`).
-A subset `C` of `V=F^n` is called a code of
-length `n`. A subspace of `V` (with the standard
-basis) is called a linear code of length `n`. If its
-dimension is denoted `k` then we typically store a basis of
-`C` as a `k\times n` matrix (the rows are the basis
-vectors). If `F=\GF{2}` then `C` is
-called a binary code. If `F` has `q` elements
-then `C` is called a `q`-ary code. The elements
-of a code `C` are called codewords. The information rate
-of `C` is
+Let `F` be a finite field (we denote the finite field with `q` elements by
+`\GF{q}`).  A subset `C` of `V=F^n` is called a code of length `n`. A subspace
+of `V` (with the standard basis) is called a linear code of length `n`. If its
+dimension is denoted `k` then we typically store a basis of `C` as a `k\times
+n` matrix (the rows are the basis vectors). If `F=\GF{2}` then `C` is called a
+binary code. If `F` has `q` elements then `C` is called a `q`-ary code. The
+elements of a code `C` are called codewords. The information rate of `C` is
 
 
-.. math::
+.. MATH::
 
      R={\frac{\log_q\vert C\vert}{n}},
 
 
-where `\vert C\vert` denotes the number of elements of
-`C`. If `{\bf v}=(v_1,v_2,...,v_n)`,
-`{\bf w}=(w_1,w_2,...,w_n)` are vectors in
-`V=F^n` then we define
+where `\vert C\vert` denotes the number of elements of `C`. If `{\bf
+v}=(v_1,v_2,...,v_n)`, `{\bf w}=(w_1,w_2,...,w_n)` are vectors in `V=F^n` then
+we define
 
 
-.. math::
+.. MATH::
 
      d({\bf v},{\bf w}) =\vert\{i\ \vert\ 1\leq i\leq n,\ v_i\not= w_i\}\vert
 
 
-to be the Hamming distance between `{\bf v}` and
-`{\bf w}`. The function
-`d:V\times V\rightarrow \Bold{N}` is called the Hamming
-metric. The weight of a vector (in the Hamming metric) is
-`d({\bf v},{\bf 0})`. The minimum distance of a linear
-code is the smallest non-zero weight of a codeword in `C`.
-The relatively minimum distance is denoted
+to be the Hamming distance between `{\bf v}` and `{\bf w}`. The function
+`d:V\times V\rightarrow \Bold{N}` is called the Hamming metric. The weight of a
+vector (in the Hamming metric) is `d({\bf v},{\bf 0})`. The minimum distance of
+a linear code is the smallest non-zero weight of a codeword in `C`.  The
+relatively minimum distance is denoted
 
 
-.. math::
+.. MATH::
 
      \delta = d/n.
 
-A linear code with length
-`n`, dimension `k`, and minimum distance
-`d` is called an `[n,k,d]_q`-code and
-`n,k,d` are called its parameters. A (not necessarily
-linear) code `C` with length `n`, size
-`M=|C|`, and minimum distance `d` is called an
-`(n,M,d)_q`-code (using parentheses instead of square
+A linear code with length `n`, dimension `k`, and minimum distance `d` is
+called an `[n,k,d]_q`-code and `n,k,d` are called its parameters. A (not
+necessarily linear) code `C` with length `n`, size `M=|C|`, and minimum
+distance `d` is called an `(n,M,d)_q`-code (using parentheses instead of square
 brackets). Of course, `k=\log_q(M)` for linear codes.
 
-What is the "best" code of a given length? Let `F` be a
-finite field with `q` elements. Let `A_q(n,d)`
-denote the largest `M` such that there exists a
-`(n,M,d)` code in `F^n`. Let `B_q(n,d)`
-(also denoted `A^{lin}_q(n,d)`) denote the largest
-`k` such that there exists a `[n,k,d]` code in
-`F^n`. (Of course, `A_q(n,d)\geq B_q(n,d)`.)
-Determining `A_q(n,d)` and `B_q(n,d)` is one of
-the main problems in the theory of error-correcting codes.
+What is the "best" code of a given length? Let `F` be a finite field with `q`
+elements. Let `A_q(n,d)` denote the largest `M` such that there exists a
+`(n,M,d)` code in `F^n`. Let `B_q(n,d)` (also denoted `A^{lin}_q(n,d)`) denote
+the largest `k` such that there exists a `[n,k,d]` code in `F^n`. (Of course,
+`A_q(n,d)\geq B_q(n,d)`.) Determining `A_q(n,d)` and `B_q(n,d)` is one of the
+main problems in the theory of error-correcting codes. For more details see
+[HP2003]_ and [Lin1999]_.
 
 These quantities related to solving a generalization of the
 childhood game of "20 questions".
@@ -170,11 +157,6 @@ TODO:
 
 - mrrw2_bound_asymp(delta,q), "second" asymptotic
   McEliese-Rumsey-Rodemich-Welsh bound for the information rate.
-
-REFERENCES:
-
-- C. Huffman, V. Pless, Fundamentals of error-correcting codes,
-  Cambridge Univ. Press, 2003.
 """
 from __future__ import absolute_import
 
@@ -313,8 +295,8 @@ def plotkin_upper_bound(n,q,d, algorithm=None):
         192
     """
     if algorithm=="gap":
+        gap.load_package("guava")
         ans=gap.eval("UpperBoundPlotkin(%s,%s,%s)"%(n,d,q))
-        #print "calling Guava ..."
         return QQ(ans)
     else:
         t = 1 - 1/q
@@ -345,7 +327,7 @@ def griesmer_upper_bound(n,q,d,algorithm=None):
         128
     """
     if algorithm=="gap":
-        #print "calling Guava ..."
+        gap.load_package("guava")
         ans=gap.eval("UpperBoundGriesmer(%s,%s,%s)"%(n,d,q))
         return QQ(ans)
     else:
@@ -382,7 +364,7 @@ def elias_upper_bound(n,q,d,algorithm=None):
     """
     r = 1-1/q
     if algorithm=="gap":
-        #print "calling Guava ..."
+        gap.load_package("guava")
         ans=gap.eval("UpperBoundElias(%s,%s,%s)"%(n,d,q))
         return QQ(ans)
     else:
@@ -413,7 +395,7 @@ def hamming_upper_bound(n,q,d):
     contain more than the whole vector space.
 
 
-    .. math::
+    .. MATH::
 
          M \leq {q^n \over V(n,e)},
 
@@ -442,7 +424,7 @@ def singleton_upper_bound(n,q,d):
     results, with `M \leq q^n-d+1`. Thus
 
 
-    .. math::
+    .. MATH::
 
          M \leq q^{n-d+1}.
 

@@ -31,11 +31,15 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
+
+from builtins import zip
 
 from sage.structure.sage_object import SageObject
 from sage.combinat.words.word_options import word_options
-from itertools import islice, izip, groupby
+from itertools import islice, groupby
 from sage.rings.all import Integers, ZZ, Infinity
+
 
 class Word_class(SageObject):
     def parent(self):
@@ -48,7 +52,7 @@ class Word_class(SageObject):
             Finite words over Set of Python objects of type 'object'
             sage: Word(range(12)).parent()
             Finite words over Set of Python objects of type 'object'
-            sage: Word(range(4), alphabet=range(6)).parent()
+            sage: Word(range(4), alphabet=list(range(6))).parent()
             Finite words over {0, 1, 2, 3, 4, 5}
             sage: Word(iter('abac'), alphabet='abc').parent()
             Finite words over {'a', 'b', 'c'}
@@ -63,7 +67,7 @@ class Word_class(SageObject):
 
             sage: Word(iter([1,2,3]), length="unknown")._repr_()
             'word: 123'
-            sage: Word(xrange(100), length="unknown")._repr_()
+            sage: Word(range(100), length="unknown")._repr_()
             'word: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,...'
             sage: Word(lambda x:x%3)._repr_()
             'word: 0120120120120120120120120120120120120120...'
@@ -293,7 +297,7 @@ class Word_class(SageObject):
         if not isinstance(other, Word_class):
             return NotImplemented
         self_it, other_it = iter(self), iter(other)
-        cmp_fcn = self._parent.cmp_letters
+        cmp_key = self._parent.sortkey_letters
         while True:
             try:
                 cs = next(self_it)
@@ -316,7 +320,9 @@ class Word_class(SageObject):
                     # other is a proper prefix of self: return 1.
                     return 1
                 else:
-                    r = cmp_fcn(cs, co)
+                    key_cs = cmp_key(cs)
+                    key_co = cmp_key(co)
+                    r = cmp(key_cs, key_co)
                     if r != 0:
                         return r
 
@@ -459,7 +465,7 @@ class Word_class(SageObject):
             sage: w = Word(it, length="finite"); w
             word: 0100101001
         """
-        for (b,c) in izip(self, other):
+        for (b, c) in zip(self, other):
             if b == c:
                 yield b
             else:
@@ -1580,9 +1586,9 @@ class Word_class(SageObject):
 
         # The alphabet
         if mod is None and base >= 2:
-            alphabet = range(base)
+            alphabet = list(range(base))
         elif mod in ZZ and mod >= 2:
-            alphabet = range(mod)
+            alphabet = list(range(mod))
         else:
             raise ValueError("base (=%s) and mod (=%s) must be integers greater or equal to 2"%(base, mod))
 

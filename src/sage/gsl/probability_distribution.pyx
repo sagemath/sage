@@ -370,7 +370,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         sage: T.cum_distribution_function(1)
         0.054040531093234534
         sage: T.cum_distribution_function_inv(.5)
-        3.532230067546424
+        3.532230067546424...
 
     The lognormal distribution has two parameters ``sigma``
     and ``zeta``::

@@ -344,7 +344,7 @@ cdef class Functor(SageObject):
             sage: F1(ZZ)
             Traceback (most recent call last):
             ...
-            TypeError: x (=Integer Ring) is not in Category of finite fields
+            TypeError: x (=Integer Ring) is not in Category of finite enumerated fields
             sage: F2 = IdentityFunctor(Fields())
             sage: F2(RR) is RR #indirect doctest
             True
@@ -359,13 +359,12 @@ cdef class Functor(SageObject):
         which was fixed in :trac:`8807`::
 
             sage: class IllFunctor(Functor):
-            ...     def __init__(self, m,n):
-            ...         self._m = m
-            ...         self._n = n
-            ...         Functor.__init__(self,Rings(),Rings())
-            ...     def _apply_functor(self, R):
-            ...         return MatrixSpace(R,self._m,self._n)
-            ...
+            ....:   def __init__(self, m,n):
+            ....:       self._m = m
+            ....:       self._n = n
+            ....:       Functor.__init__(self,Rings(),Rings())
+            ....:   def _apply_functor(self, R):
+            ....:       return MatrixSpace(R,self._m,self._n)
             sage: F = IllFunctor(2,2)
             sage: F(QQ)
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
@@ -392,7 +391,7 @@ cdef class Functor(SageObject):
 
             sage: F = ForgetfulFunctor(FiniteFields(),Fields())
             sage: F.domain()
-            Category of finite fields
+            Category of finite enumerated fields
 
         """
         return self.__domain
@@ -458,7 +457,7 @@ class ForgetfulFunctor_generic(Functor):
 
         sage: F = ForgetfulFunctor(FiniteFields(),Fields()) #indirect doctest
         sage: F
-        The forgetful functor from Category of finite fields to Category of fields
+        The forgetful functor from Category of finite enumerated fields to Category of fields
         sage: F(GF(3))
         Finite Field of size 3
 
@@ -479,7 +478,7 @@ class ForgetfulFunctor_generic(Functor):
 
             sage: F = ForgetfulFunctor(FiniteFields(),Fields())
             sage: F #indirect doctest
-            The forgetful functor from Category of finite fields to Category of fields
+            The forgetful functor from Category of finite enumerated fields to Category of fields
 
         """
         return "The forgetful functor from %s to %s"%(

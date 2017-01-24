@@ -206,7 +206,7 @@ cdef class LazyImport(object):
             Option ``at_startup=True`` for lazy import ZZ not needed anymore
             Integer Ring
 
-        .. note::
+        .. NOTE::
 
            For a :class:`LazyImport` object that appears in a class
            namespace, we need to do something special. Indeed, the
@@ -217,9 +217,9 @@ cdef class LazyImport(object):
            ``__get__``::
 
                sage: class Foo(object):
-               ...       lazy_import('sage.all', 'plot')
+               ....:     lazy_import('sage.all', 'plot')
                sage: class Bar(Foo):
-               ...       pass
+               ....:     pass
                sage: type(Foo.__dict__['plot'])
                <type 'sage.misc.lazy_import.LazyImport'>
 
@@ -444,15 +444,18 @@ cdef class LazyImport(object):
 
     def __cmp__(left, right):
         """
+        Removed by :trac:`21247` (for compatibility with Python 3)
+
         TESTS::
 
-            sage: lazy_import('sage.all', 'ZZ'); lazy_ZZ = ZZ
-            sage: cmp(lazy_ZZ, ZZ)
-            0
-            sage: cmp(lazy_ZZ, QQ)
-            -1
+            sage: lazy_import('sage.all', ['ZZ', 'QQ'])
+            sage: cmp(ZZ, QQ)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: old-style comparisons are not supported for lazily imported objects (see https://trac.sagemath.org/ticket/21247)
         """
-        return binop(cmp, left, right)
+        raise NotImplementedError("old-style comparisons are not supported "
+            "for lazily imported objects (see https://trac.sagemath.org/ticket/21247)")
 
     def __richcmp__(left, right, int op):
         """
@@ -497,7 +500,7 @@ cdef class LazyImport(object):
 
             sage: from sage.misc.lazy_import import LazyImport
             sage: class Foo:
-            ...       my_method = LazyImport('sage.all', 'my_method')
+            ....:     my_method = LazyImport('sage.all', 'my_method')
 
         Now we can use it as a usual method::
 
@@ -535,7 +538,7 @@ cdef class LazyImport(object):
         """
         TESTS::
 
-            sage: sage.all.foo = range(10)
+            sage: sage.all.foo = list(range(10))
             sage: lazy_import('sage.all', 'foo')
             sage: type(foo)
             <type 'sage.misc.lazy_import.LazyImport'>
@@ -549,7 +552,7 @@ cdef class LazyImport(object):
         """
         TESTS::
 
-            sage: sage.all.foo = range(10)
+            sage: sage.all.foo = list(range(10))
             sage: lazy_import('sage.all', 'foo')
             sage: type(foo)
             <type 'sage.misc.lazy_import.LazyImport'>
@@ -1030,9 +1033,9 @@ def lazy_import(module, names, _as=None, namespace=None, bint overwrite=True, at
     We check that :func:`lazy_import` also works for methods::
 
         sage: class Foo(object):
-        ...       lazy_import('sage.all', 'plot')
+        ....:     lazy_import('sage.all', 'plot')
         sage: class Bar(Foo):
-        ...       pass
+        ....:     pass
         sage: type(Foo.__dict__['plot'])
         <type 'sage.misc.lazy_import.LazyImport'>
         sage: 'EXAMPLES' in Bar.plot.__doc__

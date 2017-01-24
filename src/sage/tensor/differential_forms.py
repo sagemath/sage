@@ -38,7 +38,7 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 
 from sage.rings.ring import Algebra
 from sage.tensor.coordinate_patch import CoordinatePatch
@@ -207,7 +207,6 @@ class DifferentialForms(Algebra):
         form = DifferentialForm(self, 0, self._patch.coordinate(i))
         return form.diff()
 
-
     def gens(self):
         """
         Return a list of the generators of ``self``.
@@ -221,11 +220,8 @@ class DifferentialForms(Algebra):
             Algebra of differential forms in the variables x, y, z
             sage: F.gens()
             (dx, dy, dz)
-
         """
-
-        return tuple(self.gen(n) for n in xrange(0, self._patch.dim()))
-
+        return tuple(self.gen(n) for n in range(self._patch.dim()))
 
     def base_space(self):
         """

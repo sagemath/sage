@@ -43,7 +43,7 @@ polynomial or matrix, will have our new method. So you can do
 ``PariError`` in this case.
 
 The ``gen`` class is defined in
-:file:`SAGE_ROOT/src/sage/libs/pari/gen.pyx`, and this is where we
+:file:`SAGE_ROOT/src/sage/libs/cypari2/gen.pyx`, and this is where we
 add the method ``matfrobenius``::
 
     def matfrobenius(self, flag=0):
@@ -401,6 +401,7 @@ interface to Singular::
 
     sage: singular.LIB("brnoeth.lib")
     sage: singular.ring(5,'(x,y)','lp')
+        polynomial ring, over a field, global ordering
         //   characteristic : 5
         //   number of vars : 2
         //        block   1 : ordering lp

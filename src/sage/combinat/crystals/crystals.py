@@ -114,14 +114,14 @@ One can get (currently) crude plotting via::
 If dot2tex is installed, one can obtain nice latex pictures via::
 
     sage: K = crystals.KirillovReshetikhin(['A',3,1], 1,1)
-    sage: view(K, pdflatex=True, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(K, pdflatex=True) # optional - dot2tex graphviz, not tested (opens external window)
 
 or with colored edges::
 
     sage: K = crystals.KirillovReshetikhin(['A',3,1], 1,1)
     sage: G = K.digraph()
     sage: G.set_latex_options(color_by_label = {0:"black", 1:"red", 2:"blue", 3:"green"}) #optional - dot2tex graphviz
-    sage: view(G, pdflatex=True, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(G, pdflatex=True) # optional - dot2tex graphviz, not tested (opens external window)
 
 For rank two crystals, there is an alternative method of getting
 metapost pictures. For more information see ``C.metapost?``.

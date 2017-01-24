@@ -52,7 +52,7 @@ class EllipticCurveFactory(UniqueFactory):
     In Sage, an elliptic curve is always specified by
     (the coefficients of) a long Weierstrass equation
 
-    .. math::
+    .. MATH::
 
         y^2 + a_1 xy + a_3 y = x^3 + a_2 x^2 + a_4 x + a_6.
 

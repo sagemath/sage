@@ -94,8 +94,8 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
     """
     TESTS::
 
-        sage: R.<a> = ZqCR(27,10000); R == loads(dumps(R))
-        True
+        sage: R.<a> = ZqCR(27,10000)
+        sage: TestSuite(R).run()
     """
     def __init__(self, prepoly, poly, prec, halt, print_mode, shift_seed, names, implementation='NTL'):
         """
@@ -154,8 +154,8 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
     """
     TESTS::
 
-        sage: R.<a> = QqCR(27,10000); R == loads(dumps(R))
-        True
+        sage: R.<a> = QqCR(27,10000)
+        sage: TestSuite(R).run()
     """
     def __init__(self, prepoly, poly, prec, halt, print_mode, shift_seed, names, implementation='NTL'):
         """
@@ -225,8 +225,8 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
     """
     TESTS::
 
-        sage: R.<a> = ZqCA(27,10000); R == loads(dumps(R))
-        True
+        sage: R.<a> = ZqCA(27,10000)
+        sage: TestSuite(R).run()
     """
     def __init__(self, prepoly, poly, prec, halt, print_mode, shift_seed, names, implementation='NTL'):
         """
@@ -286,8 +286,8 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
     """
     TESTS::
 
-        sage: R.<a> = ZqFM(27,10000); R == loads(dumps(R))
-        True
+        sage: R.<a> = ZqFM(27,10000)
+        sage: TestSuite(R).run()
     """
     def __init__(self, prepoly, poly, prec, halt, print_mode, shift_seed, names, implementation='NTL'):
         """
@@ -352,8 +352,8 @@ class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCap
     TESTS::
 
         sage: R = Zp(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-        sage: W.<w> = R.ext(f); W == loads(dumps(W))
-        True
+        sage: W.<w> = R.ext(f)
+        sage: TestSuite(R).run()
     """
     def __init__(self, prepoly, poly, prec, halt, print_mode, shift_seed, names, implementation='NTL'):
         """
@@ -410,8 +410,8 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
     TESTS::
 
         sage: R = Qp(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-        sage: W.<w> = R.ext(f); W == loads(dumps(W))
-        True
+        sage: W.<w> = R.ext(f)
+        sage: TestSuite(R).run()
     """
     def __init__(self, prepoly, poly, prec, halt, print_mode, shift_seed, names, implementation='NTL'):
         """
@@ -479,8 +479,8 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
     TESTS::
 
         sage: R = ZpCA(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-        sage: W.<w> = R.ext(f); W == loads(dumps(W))
-        True
+        sage: W.<w> = R.ext(f)
+        sage: TestSuite(R).run()
     """
     def __init__(self, prepoly, poly, prec, halt, print_mode, shift_seed, names, implementation):
         """
@@ -537,8 +537,8 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
     TESTS::
 
         sage: R = ZpFM(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-        sage: W.<w> = R.ext(f); W == loads(dumps(W))
-        True
+        sage: W.<w> = R.ext(f)
+        sage: TestSuite(R).run()
     """
     def __init__(self, prepoly, poly, prec, halt, print_mode, shift_seed, names, implementation='NTL'):
         """

@@ -30,7 +30,7 @@ def number_of_rooted_trees(n):
     Compute the number `a(n)` of rooted trees with `n` nodes using the
     recursive formula ([SL000081]_):
 
-    .. math::
+    .. MATH::
 
         a(n+1) = \frac{1}{n} \sum_{k=1}^{n} \left( \sum_{d|k} d a(d) \right) a(n-k+1)
 

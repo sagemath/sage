@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+# cython: old_style_globals=True
 r"""
 Abstract base class for Sage objects
 """
@@ -47,6 +48,23 @@ cdef class SageObject:
     .. automethod:: _ascii_art_
     .. automethod:: _cache_key
     """
+    def _test_new(self, **options):
+        """
+        Check that ``cls.__new__(cls)`` does not crash Python,
+        where ``cls = type(self)``.
+
+        It is perfectly legal for ``__new__`` to raise ordinary
+        exceptions.
+
+        EXAMPLES::
+
+            sage: SageObject()._test_new()
+        """
+        cdef type cls = type(self)
+        try:
+            cls.__new__(cls)
+        except Exception:
+            pass
 
     #######################################################################
     # Textual representation code
@@ -947,6 +965,17 @@ def load(*filename, compress=True, verbose=True):
         hello world
         [None, None, 2/3]
 
+    Files with a ``.sage`` extension are preparsed. Also note that we
+    can access global variables::
+
+        sage: t = tmp_filename(ext=".sage")
+        sage: with open(t, 'w') as f:
+        ....:     f.write("a += Mod(2/3, 11)")  # This evaluates to Mod(8, 11)
+        sage: a = -1
+        sage: load(t)
+        sage: a
+        7
+
     We can load Fortran files::
 
         sage: code = '      subroutine hello\n         print *, "Hello World!"\n      end subroutine hello\n'
@@ -1067,7 +1096,7 @@ def dumps(obj, compress=True):
     """
     Dump obj to a string s.  To recover obj, use ``loads(s)``.
 
-    .. seealso:: :func:`dumps`
+    .. SEEALSO:: :func:`dumps`
 
     EXAMPLES::
 
@@ -1295,20 +1324,44 @@ def unpickle_global(module, name):
         sage: del unpickle_override[('sage.rings.integer', 'Integer')]
         sage: unpickle_global('sage.rings.integer', 'Integer')
         <type 'sage.rings.integer.Integer'>
+        
+    A meaningful error message with resolution instructions is displayed for
+    old pickles that accidentally got broken because a class or entire module
+    was moved or renamed::
+    
+        sage: unpickle_global('sage.all', 'some_old_class')
+        Traceback (most recent call last):
+        ...
+        ImportError: cannot import some_old_class from sage.all, call
+        register_unpickle_override('sage.all', 'some_old_class', ...)
+        to fix this
+        
+        sage: unpickle_global('sage.some_old_module', 'some_old_class')
+        Traceback (most recent call last):
+        ...
+        ImportError: cannot import some_old_class from sage.some_old_module, call
+        register_unpickle_override('sage.some_old_module', 'some_old_class', ...)
+        to fix this
     """
     unpickler = unpickle_override.get((module, name))
     if unpickler is not None:
         return unpickler[0]
 
+    def error():
+        raise ImportError("cannot import {1} from {0}, call "
+            "register_unpickle_override({0!r}, {1!r}, ...) to fix this".format(
+                module, name))
+
     mod = sys_modules.get(module)
     if mod is not None:
-        return getattr(mod, name)
+        try:
+            return getattr(mod, name)
+        except AttributeError:
+            error()
     try:
         __import__(module)
     except ImportError:
-        raise ImportError("cannot import {1} from {0}, "
-            "call register_unpickle_override({0!r}, {1!r}, ...) to fix this".format(
-            module, name))
+        error()
     mod = sys_modules[module]
     return getattr(mod, name)
 
@@ -1317,7 +1370,7 @@ def loads(s, compress=True):
     Recover an object x that has been dumped to a string s
     using ``s = dumps(x)``.
 
-    .. seealso:: :func:`dumps`
+    .. SEEALSO:: :func:`dumps`
 
     EXAMPLES::
 
@@ -1466,7 +1519,7 @@ def unpickle_all(dir = None, debug=False, run_test_suite=False):
 
     When run with no arguments :meth:`unpickle_all` tests that all of the
     "standard" pickles stored in the pickle_jar at
-    ``SAGE_ROOT/local/share/sage/ext/pickle_jar/pickle_jar.tar.bz2`` can be unpickled.
+    ``SAGE_SHARE/sage/ext/pickle_jar/pickle_jar.tar.bz2`` can be unpickled.
 
     ::
 
@@ -1593,3 +1646,21 @@ def unpickle_all(dir = None, debug=False, run_test_suite=False):
     print("Failed to unpickle %s objects." % j)
     if debug:
         return tracebacks
+
+
+def make_None(*args, **kwds):
+    """
+    Do nothing and return ``None``. Used for overriding pickles when
+    that pickle is no longer needed.
+
+    EXAMPLES::
+
+        sage: from sage.structure.sage_object import make_None
+        sage: print(make_None(42, pi, foo='bar'))
+        None
+    """
+    return None
+
+
+# Generators is no longer used (#21382)
+register_unpickle_override('sage.structure.generators', 'make_list_gens', make_None)

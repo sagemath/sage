@@ -1,0 +1,22 @@
+From 589e8eab0d5415b844ad43ec150a72e4004e1114 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Hans=20Sch=C3=B6nemann?= <hannes@mathematik.uni-kl.de>
+Date: Wed, 21 Dec 2016 19:00:51 +0100
+Subject: [PATCH] fix: charstr in standard::groebner for ZZ, ZZ/m
+
+---
+ Singular/LIB/standard.lib | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Singular/LIB/standard.lib b/Singular/LIB/standard.lib
+index d657b98..f7ee564 100644
+--- a/Singular/LIB/standard.lib
++++ b/Singular/LIB/standard.lib
+@@ -881,7 +881,7 @@ EXAMPLE: example groebner;  shows an example"
+   else {ideal i=i_par; } // int, poly, number, ideal
+   kill i_par;
+ // check for integer etc coefficients
+-  if (charstr(basering)[1]=="i") // either integer or integer,q
++  if (attrib(basering,"ring_cf")==1) // either integer or integer,q
+   {
+     if (find(option(),"prot"))  { "calling std for ideals in ring with ring coefficients"; }
+     return (std(i));

@@ -138,46 +138,56 @@ See :meth:`~sage.plot.graphics.Graphics.show` for full details.
 Note that the axes will not cross if the data is not on both sides of
 both axes, even if it is quite close::
 
-    sage: plot(x^3,(x,1,10))
+    sage: plot(x^3, (x,1,10))
     Graphics object consisting of 1 graphics primitive
 
 .. PLOT::
 
-    g = plot(x**3,(x,1,10))
+    g = plot(x**3, (x,1,10))
     sphinx_plot(g)
 
 
 When the labels have quite different orders of magnitude or are very
 large, scientific notation (the `e` notation for powers of ten) is used::
 
-    sage: plot(x^2,(x,480,500))  # no scientific notation
+    sage: plot(x^2, (x,480,500))  # no scientific notation
     Graphics object consisting of 1 graphics primitive
 
 .. PLOT::
 
-    g = plot(x**2,(x,480,500))
+    g = plot(x**2, (x,480,500))
     sphinx_plot(g)
 
 ::
 
-    sage: plot(x^2,(x,300,500))  # scientific notation on y-axis
+    sage: plot(x^2, (x,300,500))  # scientific notation on y-axis
     Graphics object consisting of 1 graphics primitive
 
 .. PLOT::
 
-    g = plot(x**2,(x,300,500))
+    g = plot(x**2, (x,300,500))
     sphinx_plot(g)
 
 
 But you can fix your own tick labels, if you know what to expect and
 have a preference::
 
-    sage: plot(x^2,(x,300,500),ticks=[None,50000])
+    sage: plot(x^2, (x,300,500), ticks=[100,50000])
     Graphics object consisting of 1 graphics primitive
 
 .. PLOT::
 
-    g = plot(x**2,(x,300,500),ticks=[None,50000])
+    g = plot(x**2, (x,300,500), ticks=[100,50000])
+    sphinx_plot(g)
+
+To change the ticks on one axis only, use the following notation::
+
+    sage: plot(x^2, (x,300,500), ticks=[None,50000])
+    Graphics object consisting of 1 graphics primitive
+
+.. PLOT::
+
+    g = plot(x**2, (x,300,500), ticks=[None,50000])
     sphinx_plot(g)
 
 You can even have custom tick labels along with custom positioning. ::
@@ -290,8 +300,8 @@ We plot the Riemann zeta function along the critical line and see
 the first few zeros::
 
     sage: i = CDF.0      # define i this way for maximum speed.
-    sage: p1 = plot(lambda t: arg(zeta(0.5+t*i)), 1,27,rgbcolor=(0.8,0,0))
-    sage: p2 = plot(lambda t: abs(zeta(0.5+t*i)), 1,27,color=hue(0.7))
+    sage: p1 = plot(lambda t: arg(zeta(0.5+t*i)), 1, 27, rgbcolor=(0.8,0,0))
+    sage: p2 = plot(lambda t: abs(zeta(0.5+t*i)), 1, 27, color=hue(0.7))
     sage: print(p1 + p2)
     Graphics object consisting of 2 graphics primitives
     sage: p1 + p2    # display it
@@ -301,9 +311,9 @@ the first few zeros::
 
     from sage.rings.complex_double import ComplexDoubleElement
     i = ComplexDoubleElement(0,1)      # define i this way for maximum speed.
-    p1 = plot(lambda t: arg(zeta(0.5+t*i)), 1,27,rgbcolor=(0.8,0,0))
-    p2 = plot(lambda t: abs(zeta(0.5+t*i)), 1,27,color=hue(0.7))
-    g = p1+p2
+    p1 = plot(lambda t: arg(zeta(0.5+t*i)), 1, 27, rgbcolor=(0.8,0,0))
+    p2 = plot(lambda t: abs(zeta(0.5+t*i)), 1, 27, color=hue(0.7))
+    g = p1 + p2
     sphinx_plot(g)
 
 .. NOTE::
@@ -311,12 +321,12 @@ the first few zeros::
     Not all functions in Sage are symbolic. When plotting non-symbolic functions
     they should be wrapped in ``lambda``::
 
-        sage: plot(lambda x:fibonacci(round(x)),(x,1,10))
+        sage: plot(lambda x:fibonacci(round(x)), (x,1,10))
         Graphics object consisting of 1 graphics primitive
 
 .. PLOT::
 
-    g=plot(lambda x:fibonacci(round(x)),(x,1,10))
+    g=plot(lambda x:fibonacci(round(x)), (x,1,10))
     sphinx_plot(g)
 
 Many concentric circles shrinking toward the origin::
@@ -332,10 +342,9 @@ Here is a pretty graph::
 
     sage: g = Graphics()
     sage: for i in range(60):
-    ...    p = polygon([(i*cos(i),i*sin(i)), (0,i), (i,0)],\
-    ...                color=hue(i/40+0.4), alpha=0.2)
-    ...    g = g + p
-    ...
+    ....:    p = polygon([(i*cos(i),i*sin(i)), (0,i), (i,0)],\
+    ....:                color=hue(i/40+0.4), alpha=0.2)
+    ....:    g = g + p
     sage: g.show(dpi=200, axes=False)
 
 .. PLOT::
@@ -352,17 +361,17 @@ Here is a pretty graph::
 Another graph::
 
     sage: x = var('x')
-    sage: P = plot(sin(x)/x, -4,4, color='blue') + \
-    ...       plot(x*cos(x), -4,4, color='red') + \
-    ...       plot(tan(x),-4,4, color='green')
+    sage: P = plot(sin(x)/x, -4, 4, color='blue') + \
+    ...       plot(x*cos(x), -4, 4, color='red') + \
+    ...       plot(tan(x), -4, 4, color='green')
     ...
-    sage: P.show(ymin=-pi,ymax=pi)
+    sage: P.show(ymin=-pi, ymax=pi)
 
 .. PLOT::
 
-    g = plot(sin(x)/x, -4,4, color='blue') + \
-        plot(x*cos(x), -4,4, color='red') + \
-        plot(tan(x),-4,4, color='green')
+    g = plot(sin(x)/x, -4, 4, color='blue') + \
+        plot(x*cos(x), -4, 4, color='red') + \
+        plot(tan(x), -4, 4, color='green')
     g.ymin(-pi)
     g.ymax(pi)
     sphinx_plot(g)
@@ -444,8 +453,8 @@ NUMERICAL PLOTTING:
 Sage includes Matplotlib, which provides 2D plotting with an interface
 that is a likely very familiar to people doing numerical
 computation.
-You can use `plt.clf()` to clear the current image frame
-and `plt.close()` to close it.
+You can use ``plt.clf()`` to clear the current image frame
+and ``plt.close()`` to close it.
 For example,
 
 ::
@@ -549,6 +558,7 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
+from six.moves import range
 
 import os
 from functools import reduce
@@ -755,7 +765,8 @@ def xydata_from_point_list(points):
         ([0.0, 1.0, 2.0, 3.0, 4.0], [0.0, 1.0, 4.0, 9.0, 16.0])
         sage: xydata_from_point_list(enumerate(prime_range(1, 15)))
         ([0.0, 1.0, 2.0, 3.0, 4.0, 5.0], [2.0, 3.0, 5.0, 7.0, 11.0, 13.0])
-        sage: from itertools import izip; xydata_from_point_list(izip([2,3,5,7], [11, 13, 17, 19]))
+        sage: from builtins import zip
+        sage: xydata_from_point_list(list(zip([2,3,5,7], [11, 13, 17, 19])))
         ([2.0, 3.0, 5.0, 7.0], [11.0, 13.0, 17.0, 19.0])
     """
     from sage.rings.complex_number import ComplexNumber
@@ -894,7 +905,7 @@ def plot(funcs, *args, **kwds):
 
       - a list or dictionary of colors (valid only if `X` is a list):
         if a dictionary, keys are taken from ``range(len(X))``;
-        the entries/values of the list/dictonary may be any of the options above.
+        the entries/values of the list/dictionary may be any of the options above.
 
       - 'automatic' -- maps to default ('blue') if `X` is a single Sage object; and
         maps to a fixed sequence of regularly spaced colors if `X` is a list.
@@ -1707,7 +1718,7 @@ def plot(funcs, *args, **kwds):
 
     .. PLOT::
 
-        g = plot(floor(x), (x, 1, 10), exclude=range(1,11))
+        g = plot(floor(x), (x, 1, 10), exclude=list(range(1,11)))
         sphinx_plot(g)
 
     We exclude all points where :class:`~sage.functions.prime_pi.PrimePi`
@@ -1749,7 +1760,7 @@ def plot(funcs, *args, **kwds):
     .. PLOT::
 
         def f(x): return (floor(x)+0.5) / (1-(x-0.5)**2)
-        g = plot(f, (x, -3.5, 3.5), detect_poles='show', exclude=range(-3,4), ymin=-5, ymax=5)
+        g = plot(f, (x, -3.5, 3.5), detect_poles='show', exclude=list(range(-3,4)), ymin=-5, ymax=5)
         sphinx_plot(g)
 
     Regions in which the plot has no values are automatically excluded. The
@@ -2716,7 +2727,7 @@ def polar_plot(funcs, *args, **kwds):
 
     .. PLOT::
 
-        g = polar_plot(log(floor(x)), (x, 1, 4*pi), exclude=range(1,13))
+        g = polar_plot(log(floor(x)), (x, 1, 4*pi), exclude=list(range(1,13)))
         sphinx_plot(g)
 
     """
@@ -2749,6 +2760,9 @@ def list_plot(data, plotjoined=False, **kwargs):
     The ``plotjoined=True`` option tells ``list_plot`` to plot a line
     joining all the data.
 
+    For other keyword options that the ``list_plot`` function can
+    take, refer to :func:`~sage.plot.plot.plot`.
+
     It is possible to pass empty dictionaries, lists, or tuples to
     ``list_plot``. Doing so will plot nothing (returning an empty plot).
 
@@ -2765,13 +2779,13 @@ def list_plot(data, plotjoined=False, **kwargs):
     Here are a bunch of random red points::
 
         sage: r = [(random(),random()) for _ in range(20)]
-        sage: list_plot(r,color='red')
+        sage: list_plot(r, color='red')
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
         r = [(random(),random()) for _ in range(20)]
-        g = list_plot(r,color='red')
+        g = list_plot(r, color='red')
         sphinx_plot(g)
 
     This gives all the random points joined in a purple line::
@@ -2851,14 +2865,14 @@ def list_plot(data, plotjoined=False, **kwargs):
 
         sage: x_coords = [cos(t)^3 for t in srange(0, 2*pi, 0.02)]
         sage: y_coords = [sin(t)^3 for t in srange(0, 2*pi, 0.02)]
-        sage: list_plot(zip(x_coords, y_coords))
+        sage: list_plot(list(zip(x_coords, y_coords)))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
         x_coords = [cos(t)**3 for t in srange(0, 2*pi, 0.02)]
         y_coords = [sin(t)**3 for t in srange(0, 2*pi, 0.02)]
-        g = list_plot(zip(x_coords, y_coords))
+        g = list_plot(list(zip(x_coords, y_coords)))
         sphinx_plot(g)
 
     If instead you try to pass the two lists as separate arguments,
@@ -2867,7 +2881,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         sage: list_plot(x_coords, y_coords)
         Traceback (most recent call last):
         ...
-        TypeError: The second argument 'plotjoined' should be boolean (True or False).  If you meant to plot two lists 'x' and 'y' against each other, use 'list_plot(zip(x,y))'.
+        TypeError: The second argument 'plotjoined' should be boolean (True or False).  If you meant to plot two lists 'x' and 'y' against each other, use 'list_plot(list(zip(x,y)))'.
 
     Dictionaries with numeric keys and values can be plotted::
 
@@ -2911,18 +2925,18 @@ def list_plot(data, plotjoined=False, **kwargs):
 
         Instead this will work. We drop the point `(0,1)`.::
 
-            sage: list_plot(zip(range(1,len(yl)), yl[1:]), scale='loglog') # long time
+            sage: list_plot(list(zip(range(1,len(yl)), yl[1:])), scale='loglog') # long time
             Graphics object consisting of 1 graphics primitive
 
     We use :func:`list_plot_loglog` and plot in a different base.::
 
-        sage: list_plot_loglog(zip(range(1,len(yl)), yl[1:]), base=2) # long time
+        sage: list_plot_loglog(list(zip(range(1,len(yl)), yl[1:])), base=2) # long time
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
         yl = [2**k for k in range(20)]
-        g = list_plot_loglog(zip(range(1,len(yl)), yl[1:]), base=2) # long time
+        g = list_plot_loglog(list(zip(range(1,len(yl)), yl[1:])), base=2) # long time
         sphinx_plot(g)
 
     We can also change the scale of the axes in the graphics just before
@@ -2962,7 +2976,7 @@ def list_plot(data, plotjoined=False, **kwargs):
     if not isinstance(plotjoined, bool):
         raise TypeError("The second argument 'plotjoined' should be boolean "
                     "(True or False).  If you meant to plot two lists 'x' "
-                    "and 'y' against each other, use 'list_plot(zip(x,y))'.")
+                    "and 'y' against each other, use 'list_plot(list(zip(x,y)))'.")
     if isinstance(data, dict):
         if plotjoined:
             list_data = sorted(list(data.iteritems()))
@@ -3150,31 +3164,31 @@ def list_plot_loglog(data, plotjoined=False, **kwds):
     EXAMPLES::
 
         sage: yl = [5**k for k in range(10)]; xl = [2**k for k in range(10)]
-        sage: list_plot_loglog(zip(xl, yl)) # long time # plot in loglog scale with base 10
+        sage: list_plot_loglog(list(zip(xl, yl))) # long time # plot in loglog scale with base 10
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
         yl = [5**k for k in range(10)]
         xl = [2**k for k in range(10)]
-        g = list_plot_loglog(zip(xl, yl)) # long time # plot in loglog scale with base 10
+        g = list_plot_loglog(list(zip(xl, yl))) # long time # plot in loglog scale with base 10
         sphinx_plot(g)
 
     ::
 
-        sage: list_plot_loglog(zip(xl, yl), base=2.1) # long time # with base 2.1 on both axes
+        sage: list_plot_loglog(list(zip(xl, yl)), base=2.1) # long time # with base 2.1 on both axes
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
         yl = [5**k for k in range(10)]
         xl = [2**k for k in range(10)]
-        g = list_plot_loglog(zip(xl, yl), base=2.1) # long time # with base 2.1 on both axes
+        g = list_plot_loglog(list(zip(xl, yl)), base=2.1) # long time # with base 2.1 on both axes
         sphinx_plot(g)
 
     ::
 
-        sage: list_plot_loglog(zip(xl, yl), base=(2,5)) # long time
+        sage: list_plot_loglog(list(zip(xl, yl)), base=(2,5)) # long time
         Graphics object consisting of 1 graphics primitive
 
     .. warning::
@@ -3192,7 +3206,7 @@ def list_plot_loglog(data, plotjoined=False, **kwds):
 
         Instead this will work. We drop the point `(0,1)`.::
 
-            sage: list_plot_loglog(zip(range(1,len(yl)), yl[1:]))
+            sage: list_plot_loglog(list(zip(range(1,len(yl)), yl[1:])))
             Graphics object consisting of 1 graphics primitive
 
     """
@@ -3214,13 +3228,13 @@ def list_plot_semilogx(data, plotjoined=False, **kwds):
     EXAMPLES::
 
         sage: yl = [2**k for k in range(12)]
-        sage: list_plot_semilogx(zip(yl,yl))
+        sage: list_plot_semilogx(list(zip(yl,yl)))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
         yl = [2**k for k in range(12)]
-        g = list_plot_semilogx(zip(yl,yl))
+        g = list_plot_semilogx(list(zip(yl,yl)))
         sphinx_plot(g)
 
     .. warning::
@@ -3232,12 +3246,12 @@ def list_plot_semilogx(data, plotjoined=False, **kwds):
         ::
 
             sage: yl = [2**k for k in range(12)]
-            sage: list_plot_semilogx(yl) # plot is empty because of `(0,1)`
+            sage: list_plot_semilogx(yl) # plot empty due to (0,1)
             Graphics object consisting of 1 graphics primitive
 
         We remove `(0,1)` to fix this.::
 
-            sage: list_plot_semilogx(zip(range(1, len(yl)), yl[1:]))
+            sage: list_plot_semilogx(list(zip(range(1, len(yl)), yl[1:])))
             Graphics object consisting of 1 graphics primitive
 
     ::
@@ -3287,12 +3301,12 @@ def list_plot_semilogy(data, plotjoined=False, **kwds):
         ::
 
             sage: xl = [2**k for k in range(12)]; yl = range(len(xl))
-            sage: list_plot_semilogy(zip(xl,yl)) # plot empty due to (1,0)
+            sage: list_plot_semilogy(list(zip(xl,yl))) # plot empty due to (1,0)
             Graphics object consisting of 1 graphics primitive
 
         We remove `(1,0)` to fix this.::
 
-            sage: list_plot_semilogy(zip(xl[1:],yl[1:]))
+            sage: list_plot_semilogy(list(zip(xl[1:],yl[1:])))
             Graphics object consisting of 1 graphics primitive
 
 
@@ -3375,7 +3389,7 @@ def reshape(v, n, m):
     # Now v should be a single list.
     # First, make it have the right length.
     v = list(v)   # do not mutate the argument
-    for i in xrange(n*m - len(v)):
+    for i in range(n * m - len(v)):
         v.append(G)
 
     # Next, create a list of lists out of it.
@@ -3553,7 +3567,7 @@ def var_and_list_of_values(v, plot_points):
         return var, [a, b]
     else:
         step = (b-a)/float(plot_points-1)
-        values = [a + step*i for i in xrange(plot_points)]
+        values = [a + step * i for i in range(plot_points)]
         return var, values
 
 
@@ -3916,4 +3930,3 @@ from .text import text, Text as GraphicPrimitive_Text
 from .polygon import polygon, Polygon as GraphicPrimitive_Polygon
 from .circle import circle, Circle as GraphicPrimtive_Circle
 from .contour_plot import contour_plot, implicit_plot, ContourPlot as GraphicPrimitive_ContourPlot
-

@@ -123,7 +123,7 @@ Sage example in ./nonlinear.tex, line 424::
     sage: q = function('q')(x)
     sage: p = (x - alpha)^m * q
     sage: p.derivative(x)
-    (-alpha + x)^(m - 1)*m*q(x) + (-alpha + x)^m*D[0](q)(x)
+    (-alpha + x)^(m - 1)*m*q(x) + (-alpha + x)^m*diff(q(x), x)
     sage: simplify(p.derivative(x)(x=alpha))
     0
 

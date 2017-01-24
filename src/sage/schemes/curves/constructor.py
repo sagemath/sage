@@ -6,6 +6,8 @@ AUTHORS:
 - William Stein (2005-11-13)
 
 - David Kohel (2006-01)
+
+- Grayson Jorgenson (2016-6)
 """
 from __future__ import absolute_import
 

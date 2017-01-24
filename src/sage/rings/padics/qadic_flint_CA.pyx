@@ -14,7 +14,7 @@ cdef class PowComputer_(PowComputer_flint_unram):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125)
+            sage: R.<a> = ZqCA(125)
             sage: type(R.prime_pow)
             <type 'sage.rings.padics.qadic_flint_CA.PowComputer_'>
             sage: R.prime_pow._prec_type

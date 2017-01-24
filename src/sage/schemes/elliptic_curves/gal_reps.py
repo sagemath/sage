@@ -1334,7 +1334,7 @@ class GaloisRepresentation(SageObject):
 
     def is_quasi_unipotent(self,p,ell):
         r"""
-        Returns true if the Galois representation to `GL_2(\ZZ_p)` is quasi-unipotent at `\ell\neq p`, i.e. if there is a fintie extension `K/\QQ` such that the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/K)` maps into a Borel subgroup.
+        Returns true if the Galois representation to `GL_2(\ZZ_p)` is quasi-unipotent at `\ell\neq p`, i.e. if there is a finite extension `K/\QQ` such that the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/K)` maps into a Borel subgroup.
 
         For a Galois representation attached to an elliptic curve `E`, this returns always True.
 

@@ -31,6 +31,9 @@ SPKG Repository: https://bitbucket.org/malb/givaro-spkg
 
 == Changelog ==
 
+=== givaro-4.0.2 (Clement Pernet, 30 July 2016) ===
+ * #13164: updated to new upstream release.
+
 === givaro-3.7.1 (Jean-Pierre Flori, 9 August 2012) ===
  * #13164: updated to new upstream release.
 

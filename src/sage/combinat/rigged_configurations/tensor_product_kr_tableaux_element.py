@@ -25,6 +25,8 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 
+from six.moves import range
+
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.tensor_product import TensorProductOfRegularCrystalsElement
 
@@ -186,7 +188,7 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         # We take advantage of the fact the components are rectangular
         diag = ''
         diag += ' (X) '.join(c[0] for c in comp)
-        for row in xrange(1, num_rows):
+        for row in range(1, num_rows):
             diag += '\n'
             for c in range(num_comp):
                 if c > 0:

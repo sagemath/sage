@@ -108,7 +108,7 @@ A list of colors allows us to color the faces sequentially::
     sage: P = E(P, 3)
     sage: P.plot()                   #not tested
 
-All the color schemes from ``matplotlib.cm.datad.keys()`` can be used::
+All the color schemes from ``list(matplotlib.cm.datad)`` can be used::
 
     sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
     sage: P.repaint(cmap='summer')
@@ -208,6 +208,7 @@ which only work in dimension two or three)::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.misc.functional import det
 from sage.structure.sage_object import SageObject
@@ -220,7 +221,6 @@ from sage.plot.polygon import polygon
 from sage.plot.line import line
 from sage.rings.integer_ring import ZZ
 from sage.misc.latex import LatexExpr
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 
 # matplotlib color maps, loaded on-demand
@@ -1064,7 +1064,7 @@ class Patch(SageObject):
             if not cm:
                 from matplotlib import cm
 
-            if not cmap in cm.datad.keys():
+            if not cmap in cm.datad:
                 raise RuntimeError("Color map %s not known (type sorted(colors) for valid names)" % cmap)
             cmap = cm.__dict__[cmap]
             dim = float(len(self))
@@ -1086,7 +1086,7 @@ class Patch(SageObject):
           ``None``, the isometric projection is used by default.
 
         - ``opacity`` - float between ``0`` and ``1`` (optional, default: ``0.75``)
-          opacity of the the face
+          opacity of the face
 
         .. WARNING::
 
@@ -1236,7 +1236,7 @@ class Patch(SageObject):
             sage: P = E(P, 4)
             sage: from sage.misc.latex import latex             #not tested
             sage: latex.add_to_preamble('\\usepackage{tikz}')   #not tested
-            sage: view(P, tightpage=true)                       #not tested
+            sage: view(P)                       #not tested
 
         Plot using shades of gray (useful for article figures)::
 
@@ -1496,7 +1496,7 @@ class E1Star(SageObject):
             raise ValueError("iterations (=%s) must be >= 0." % iterations)
         else:
             old_faces = patch
-            for i in xrange(iterations):
+            for i in range(iterations):
                 new_faces = []
                 for f in old_faces:
                     new_faces.extend(self._call_on_face(f, color=f.color()))

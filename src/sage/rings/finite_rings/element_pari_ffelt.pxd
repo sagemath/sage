@@ -1,4 +1,4 @@
-from sage.libs.pari.types cimport GEN
+from sage.libs.cypari2.types cimport GEN
 from sage.rings.finite_rings.element_base cimport FinitePolyExtElement
 
 cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):

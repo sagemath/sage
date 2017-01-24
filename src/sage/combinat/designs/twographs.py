@@ -20,7 +20,7 @@ the :meth:`descendant <TwoGraph.descendant>` of `T` w.r.t. `v`.
 in the same number alpha of triples of `T`.
 
 This module implements a direct construction of a two-graph from a list of
-triples, constrution of descendant graphs, regularity checking, and other
+triples, construction of descendant graphs, regularity checking, and other
 things such as constructing the complement two-graph, cf. [BH12]_.
 
 AUTHORS:

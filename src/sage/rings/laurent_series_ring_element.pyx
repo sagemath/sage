@@ -63,6 +63,7 @@ from sage.rings.integer import Integer
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_univariate
 from .power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, ModuleElement, RingElement, AlgebraElement
+from sage.structure.sage_object cimport richcmp_not_equal, rich_to_bool
 from sage.misc.derivative import multi_derivative
 
 
@@ -760,7 +761,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def truncate(self, long n):
         r"""
-        Returns the laurent series of degree ` < n` which is
+        Return the Laurent series of degree ` < n` which is
         equivalent to self modulo `x^n`.
 
         EXAMPLES::
@@ -797,7 +798,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def truncate_neg(self, long n):
         r"""
-        Returns the laurent series equivalent to self except without any
+        Return the Laurent series equivalent to self except without any
         degree n terms.
 
         This is equivalent to
@@ -926,11 +927,11 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return min(self.valuation(), other.valuation())
 
-    cpdef int _cmp_(self, right_r) except -2:
+    cpdef _richcmp_(self, right_r, int op):
         r"""
         Comparison of self and right.
 
-        We say two approximate laurent series are equal, if they agree for
+        We say two approximate Laurent series are equal, if they agree for
         all coefficients up to the *minimum* of the precisions of each.
         Comparison is done in dictionary order from lowest degree to
         highest degree coefficients. This is different than polynomials,
@@ -980,7 +981,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         val = self.common_valuation(right)
         if val is infinity:
-            return 0  # Both arguments are zero
+            return rich_to_bool(op, 0)  # Both arguments are zero
 
         cdef long deg = max(self.degree(), right.degree())
         prec = self.common_prec(right)
@@ -989,11 +990,12 @@ cdef class LaurentSeries(AlgebraElement):
 
         cdef long i
         cdef int c
-        for i in range(val, deg+1):
-            c = cmp(self[i], right[i])
-            if c:
-                return c
-        return 0
+        for i in range(val, deg + 1):
+            li = self[i]
+            ri = right[i]
+            if li != ri:
+                return richcmp_not_equal(li, ri, op)
+        return rich_to_bool(op, 0)
 
     def valuation_zero_part(self):
         """
@@ -1128,7 +1130,7 @@ cdef class LaurentSeries(AlgebraElement):
         documentation for the global derivative() function for more
         details.
 
-        .. seealso::
+        .. SEEALSO::
 
            :meth:`_derivative`
 
@@ -1164,7 +1166,7 @@ cdef class LaurentSeries(AlgebraElement):
         derivative as expected. Otherwise, _derivative(var) gets called
         recursively on each coefficient.
 
-        .. seealso::
+        .. SEEALSO::
 
            :meth:`derivative`
 

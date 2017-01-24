@@ -398,7 +398,7 @@ class ResidueSequence(ClonableArray):
                 # we have overridden __getitem__ so that indices are 1-based but
                 # __setitem__ is still 0-based so we need to renormalise the LHS
                 swap[i-1],swap[j-1] = self[j], self[i]
-            except:
+            except IndexError:
                 raise IndexError('%s and %s must be between 1 and %s' % (i,j,self.size))
         return swap
 

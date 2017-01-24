@@ -2,21 +2,7 @@
 
 cd src
 
-# Apply patches
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
-# On some systems pexpect doesn't upgrade correctly without
-# first removing the old version.
-rm -f "$SAGE_LOCAL"/lib/python*/site-packages/pexpect.*
-
-python setup.py install
+$PIP_INSTALL .
 
 if [ $? -ne 0 ]; then
     echo "Error installing pexpect"

@@ -21,7 +21,7 @@ class FiniteFields(CategoryWithAxiom):
     EXAMPLES::
 
         sage: K = FiniteFields(); K
-        Category of finite fields
+        Category of finite enumerated fields
 
     A finite field is a finite monoid with the structure of a field;
     it is currently assumed to be enumerated::

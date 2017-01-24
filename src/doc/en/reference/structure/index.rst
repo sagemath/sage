@@ -9,7 +9,6 @@ Sage Objects
 
    sage/structure/sage_object
    sage/structure/category_object
-   sage/structure/generators
 
 Parents
 -------

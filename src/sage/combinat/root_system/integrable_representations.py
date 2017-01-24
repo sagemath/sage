@@ -34,8 +34,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
     REFERENCES:
 
-    .. [Kac] Kac, *Infinite-dimensional Lie algebras*, Third Edition.
-       Cambridge, 1990.
+    - [Ka1990]_
 
     .. [KMPS] Kass, Moody, Patera and Slansky, *Affine Lie algebras,
        weight multiplicities, and branching rules*. Vols. 1, 2. University
@@ -62,10 +61,10 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
     where `(\, | \,)` is the invariant inner product on the weight
     lattice and `\rho` is the Weyl vector. Moreover if `m(\mu)>0`
     then `\mu\in\operatorname{supp}(V)` differs from `\Lambda` by an element
-    of the root lattice ([Kac]_, Propositions 11.3 and 11.4).
+    of the root lattice ([Ka1990]_, Propositions 11.3 and 11.4).
     
     Let `\delta` be the nullroot, which is the lowest positive imaginary
-    root. Then by [Kac]_, Proposition 11.3 or Corollary 11.9, for fixed `\mu`
+    root. Then by [Ka1990]_, Proposition 11.3 or Corollary 11.9, for fixed `\mu`
     the function `m(\mu - k\delta)` is a monotone increasing function of
     `k`. It is useful to take `\mu` to be such that this function is nonzero
     if and only if `k \geq 0`. Therefore we make the following definition.  If
@@ -186,7 +185,10 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
             sage: Lambda = RootSystem(['A',3,1]).weight_lattice(extended=true).fundamental_weights()
             sage: V = IntegrableRepresentation(Lambda[1]+Lambda[2]+Lambda[3])
-            sage: TestSuite(V).run()
+
+        Some methods required by the category are not implemented::
+
+            sage: TestSuite(V).run()  # known bug (#21387)
         """
         CategoryObject.__init__(self, base=ZZ, category=Modules(ZZ))
 
@@ -266,7 +268,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Return the level of ``self``.
 
         The level of a highest weight representation `V_{\Lambda}` is
-        defined as `(\Lambda | \delta)` See [Kac]_ section 12.4.
+        defined as `(\Lambda | \delta)` See [Ka1990]_ section 12.4.
 
         EXAMPLES::
 
@@ -281,7 +283,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         """
         Return the Coxeter number of the Cartan type of ``self``.
 
-        The Coxeter number is defined in [Kac]_ Chapter 6, and commonly
+        The Coxeter number is defined in [Ka1990]_ Chapter 6, and commonly
         denoted `h`.
 
         EXAMPLES::
@@ -298,7 +300,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         r"""
         Return the dual Coxeter number of the Cartan type of ``self``.
 
-        The dual Coxeter number is defined in [Kac]_ Chapter 6, and commonly
+        The dual Coxeter number is defined in [Ka1990]_ Chapter 6, and commonly
         denoted `h^{\vee}`.
 
         EXAMPLES::
@@ -631,7 +633,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Iterate over the set of real positive roots `\alpha \in \Delta^+`
         in ``self`` such that `\nu - \alpha \in Q^+`.
         
-        See [Kac]_ Proposition 6.3 for the way to compute the set of real
+        See [Ka1990]_ Proposition 6.3 for the way to compute the set of real
         roots for twisted affine case.
         
         INPUT:
@@ -855,7 +857,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         A weight `\mu` is *maximal* if it has nonzero multiplicity but
         `\mu + \delta`` has multiplicity zero. There are a finite number
-        of dominant maximal weights. Indeed, [Kac]_ Proposition 12.6
+        of dominant maximal weights. Indeed, [Ka1990]_ Proposition 12.6
         shows that the dominant maximal weights are in bijection with
         the classical weights in `k \cdot F` where `F` is the fundamental
         alcove and `k` is the level. The construction used in this
@@ -967,7 +969,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         The modular characteristic is a rational number introduced
         by Kac and Peterson [KacPeterson]_, required to interpret the
         string functions as Fourier coefficients of modular forms. See
-        [Kac]_ Section 12.7. Let `k` be the level, and let `h^\vee`
+        [Ka1990]_ Section 12.7. Let `k` be the level, and let `h^\vee`
         be the dual Coxeter number. Then
 
         .. MATH::

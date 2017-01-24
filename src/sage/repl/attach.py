@@ -72,6 +72,8 @@ from __future__ import print_function
 import os
 import six
 import time
+from IPython import get_ipython
+
 from sage.repl.load import load, load_wrap
 import sage.repl.inputhook
 import sage.env
@@ -581,11 +583,20 @@ def reload_attached_files_if_modified():
         []
         sage: shell.quit()
     """
+    ip = get_ipython()
     for filename, mtime in modified_file_iterator():
         basename = os.path.basename(filename)
         timestr = time.strftime('%T', mtime)
-        from sage.libs.readline import interleaved_output
-        with interleaved_output():
-            print('### reloading attached file {0} modified at {1} ###'.format(basename, timestr))
+        notice = '### reloading attached file {0} modified at {1} ###'.format(basename, timestr)
+        if ip and ip.pt_cli:
+            with ip.pt_cli.patch_stdout_context(raw=True):
+                print(notice)
+                code = load_wrap(filename, attach=True)
+                ip.run_cell(code)
+        elif ip:
+            print(notice)
             code = load_wrap(filename, attach=True)
-            get_ipython().run_cell(code)
+            ip.run_cell(code)
+        else:
+            print(notice)
+            load(filename, globals(), attach=True)

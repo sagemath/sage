@@ -28,7 +28,7 @@ cp -rp small "$SAGE_LOCAL/gap/latest/"
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing small group database."
     exit 1
-fi 
+fi
 echo "Installed small group database."
 
 rm -rf "$SAGE_LOCAL/gap/latest/prim"
@@ -36,7 +36,7 @@ cp -rp prim "$SAGE_LOCAL/gap/latest/"
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing prim database."
     exit 1
-fi 
+fi
 echo "Installed prim database."
 
 rm -rf "$SAGE_LOCAL/gap/latest/trans"
@@ -44,7 +44,7 @@ cp -rp trans "$SAGE_LOCAL/gap/latest/"
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing trans database."
     exit 1
-fi 
+fi
 echo "Installed trans database."
 
 rm -rf "$SAGE_LOCAL/gap/latest/pkg/tomlib"
@@ -52,7 +52,7 @@ cp -rp pkg/tomlib "$SAGE_LOCAL/gap/latest/pkg/"
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing tomlib database."
     exit 1
-fi 
+fi
 echo "Installed tomlib database."
 
 sage -c "gap_reset_workspace()"

@@ -24,6 +24,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from copy import copy
 from itertools import product
@@ -188,29 +189,29 @@ def bdd_height_iq(K, height_bound):
 
     # Find principal ideals of bounded norm
     possible_norm_set = set([])
-    for n in xrange(class_number):
-        for m in xrange(1, height_bound + 1):
+    for n in range(class_number):
+        for m in range(1, height_bound + 1):
             possible_norm_set.add(m*class_group_rep_norms[n])
     bdd_ideals = bdd_norm_pr_gens_iq(K, possible_norm_set)
 
     # Distribute the principal ideals
     generator_lists = []
-    for n in xrange(class_number):
+    for n in range(class_number):
         this_ideal = class_group_reps[n]
         this_ideal_norm = class_group_rep_norms[n]
         gens = []
-        for i in xrange(1, height_bound + 1):
+        for i in range(1, height_bound + 1):
             for g in bdd_ideals[i*this_ideal_norm]:
                 if g in this_ideal:
                     gens.append(g)
         generator_lists.append(gens)
 
     # Build all the output numbers
-    for n in xrange(class_number):
+    for n in range(class_number):
         gens = generator_lists[n]
         s = len(gens)
-        for i in xrange(s):
-            for j in xrange(i + 1, s):
+        for i in range(s):
+            for j in range(i + 1, s):
                 if K.ideal(gens[i], gens[j]) == class_group_reps[n]:
                     new_number = gens[i]/gens[j]
                     for zeta in roots_of_unity:
@@ -455,10 +456,10 @@ def bdd_height(K, height_bound, precision=53, LLL=False):
         """
         x = number
         x_logs = []
-        for i in xrange(r1):
+        for i in range(r1):
             sigma = embeddings[i]
             x_logs.append(abs(sigma(x)).log())
-        for i in xrange(r1, r + 1):
+        for i in range(r1, r + 1):
             tau = embeddings[i]
             x_logs.append(2*abs(tau(x)).log())
         return vector(x_logs)
@@ -509,7 +510,7 @@ def bdd_height(K, height_bound, precision=53, LLL=False):
         lll_fund_units = []
         for c in pari(cut_fund_unit_logs).qflll().python().columns():
             new_unit = 1
-            for i in xrange(r):
+            for i in range(r):
                 new_unit *= fund_units[i]**c[i]
             lll_fund_units.append(new_unit)
         fund_units = lll_fund_units
@@ -522,20 +523,20 @@ def bdd_height(K, height_bound, precision=53, LLL=False):
 
     # Find generators for principal ideals of bounded norm
     possible_norm_set = set([])
-    for n in xrange(class_number):
-        for m in xrange(1, B + 1):
+    for n in range(class_number):
+        for m in range(1, B + 1):
             possible_norm_set.add(m*class_group_rep_norms[n])
     bdd_ideals = bdd_norm_pr_ideal_gens(K, possible_norm_set)
 
     # Distribute the principal ideal generators
     generator_lists = []
     generator_logs = []
-    for n in xrange(class_number):
+    for n in range(class_number):
         this_ideal = class_group_reps[n]
         this_ideal_norm = class_group_rep_norms[n]
         gens = []
         gen_logs = []
-        for i in xrange(1, B + 1):
+        for i in range(1, B + 1):
             for g in bdd_ideals[i*this_ideal_norm]:
                 if g in this_ideal:
                     gens.append(g)
@@ -546,12 +547,12 @@ def bdd_height(K, height_bound, precision=53, LLL=False):
     # Compute the lists of relevant pairs and corresponding heights
     gen_height_dictionary = dict()
     relevant_pair_lists = []
-    for n in xrange(class_number):
+    for n in range(class_number):
         relevant_pairs = []
         gens = generator_lists[n]
         s = len(gens)
-        for i in xrange(s):
-            for j in xrange(i + 1, s):
+        for i in range(s):
+            for j in range(i + 1, s):
                 if K.ideal(gens[i], gens[j]) == class_group_reps[n]:
                     relevant_pairs.append([i, j])
                     gen_height_dictionary[(n, i, j)] = log_height_for_generators(n, i, j)
@@ -599,13 +600,13 @@ def bdd_height(K, height_bound, precision=53, LLL=False):
     all_unit_tuples  = set(copy(U0))
 
     # Check candidate heights
-    for n in xrange(class_number):
+    for n in range(class_number):
         relevant_pairs = relevant_pair_lists[n]
         for pair in relevant_pairs:
             i = pair[0] ; j = pair[1]
             gen_height = gen_height_dictionary[(n, i, j)]
             u_height_bound = logB + gen_height
-            for k in xrange(U_length):
+            for k in range(U_length):
                 u = U[k]
                 u_height = unit_height_dictionary[u]
                 if u_height <= u_height_bound:
@@ -620,7 +621,7 @@ def bdd_height(K, height_bound, precision=53, LLL=False):
     units_dictionary = dict()
     for u in all_unit_tuples:
         unit = K(1)
-        for j in xrange(r):
+        for j in range(r):
             unit *= (fund_units[j])**(u[j])
         units_dictionary[u] = unit
 

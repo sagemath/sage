@@ -20,6 +20,7 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #
 ################################################################################
+from six.moves import range
 
 from sage.arith.all import euler_phi, lcm, gcd, divisors, get_inverse_mod, get_gcd, factor
 from sage.modular.modsym.p1list import lift_to_sl2z
@@ -677,7 +678,7 @@ class GammaH_class(CongruenceSubgroup):
             sage: len(v)
             361
 
-        This demonstrates the problem underlying trac \#1220::
+        This demonstrates the problem underlying :trac:`1220`::
 
             sage: G = GammaH(99, [67])
             sage: G._reduce_coset(11,-3)
@@ -716,13 +717,13 @@ class GammaH_class(CongruenceSubgroup):
         Two cusps `u_1/v_1` and `u_2/v_2` are equivalent modulo `\Gamma_H(N)`
         if and only if
 
-        .. math::
+        .. MATH::
 
             v_1 =  h v_2 \bmod N\quad \text{and}\quad u_1 =  h^{-1} u_2 \bmod {\rm gcd}(v_1,N)
 
         or
 
-        .. math::
+        .. MATH::
 
             v_1 = -h v_2 \bmod N\quad \text{and}\quad u_1 = -h^{-1} u_2 \bmod {\rm gcd}(v_1,N)
 
@@ -907,10 +908,10 @@ class GammaH_class(CongruenceSubgroup):
         hashes = []
         N = self.level()
 
-        for d in xrange(1, 1+N):
+        for d in range(1, 1+N):
             w = N.gcd(d)
             M = int(w) if w > 1 else 2
-            for a in xrange(1,M):
+            for a in range(1,M):
                 if gcd(a, w) != 1:
                     continue
                 while gcd(a, d) != 1:
@@ -1281,7 +1282,7 @@ def _GammaH_coset_helper(N, H):
     HH = [Zmod(N)(h) for h in H]
     k = euler_phi(N)
 
-    for i in xrange(1, N):
+    for i in range(1, N):
         if gcd(i, N) != 1: continue
         if not i in W:
             t.append(t[0]*i)

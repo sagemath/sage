@@ -8,7 +8,7 @@ hidden Markov model.
 
 AUTHOR:
 
-   - William Stein, 2010-03
+- William Stein, 2010-03
 """
 
 #############################################################################
@@ -17,7 +17,7 @@ AUTHOR:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 #############################################################################
-
+from cpython.object cimport PyObject_RichCompare
 
 cdef extern from "math.h":
     double exp(double)
@@ -249,7 +249,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         return unpickle_gaussian_mixture_distribution_v1, (
             self.c0, self.c1, self.param, self.fixed)
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         EXAMPLES::
 
@@ -265,8 +265,9 @@ cdef class GaussianMixtureDistribution(Distribution):
             True
         """
         if not isinstance(other, GaussianMixtureDistribution):
-            raise ValueError
-        return cmp(self.__reduce__()[1], other.__reduce__()[1])
+            raise NotImplemented
+        return PyObject_RichCompare(self.__reduce__()[1],
+                                    other.__reduce__()[1], op)
 
     def __len__(self):
         """

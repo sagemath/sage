@@ -47,11 +47,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.homology.simplicial_complex import Simplex
 from sage.categories.coxeter_groups import CoxeterGroups
 from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.combinat.subword_complex import SubwordComplex, SubwordComplexFacet
 from sage.rings.semirings.non_negative_integer_semiring import NN
+
 
 class ClusterComplexFacet(SubwordComplexFacet):
     r"""

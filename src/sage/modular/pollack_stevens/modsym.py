@@ -2,7 +2,32 @@
 r"""
 Element class for Pollack-Stevens' Modular Symbols
 
-"""## mm TODO examples?
+This is the class of elements in the spaces of Pollack-Steven's modular symbols as described in [PS]_.
+
+EXAMPLES::
+
+    sage: E = EllipticCurve('11a')
+    sage: phi = E.pollack_stevens_modular_symbol(); phi
+    Modular symbol of level 11 with values in Sym^0 Q^2
+    sage: phi.weight() # Note that weight k=2 of a modular form corresponds here to weight 0
+    0
+    sage: phi.values()
+    [-1/5, 1, 0]
+    sage: phi.is_ordinary(11)
+    True
+    sage: phi_lift = phi.lift(11, 5, eigensymbol = True) # long time
+    sage: phi_lift.padic_lseries().series(5) # long time
+    O(11^5) + (10 + 3*11 + 6*11^2 + 9*11^3 + O(11^4))*T + (6 + 3*11 + 2*11^2 + O(11^3))*T^2 + (2 + 2*11 + O(11^2))*T^3 + (5 + O(11))*T^4 + O(T^5)
+
+::
+
+    sage: A = ModularSymbols(Gamma1(8),4).decomposition()[0].plus_submodule().new_subspace()
+    sage: from sage.modular.pollack_stevens.space import ps_modsym_from_simple_modsym_space
+    sage: phi = ps_modsym_from_simple_modsym_space(A)
+    sage: phi.values()
+    [(-1, 0, 0), (1, 0, 0), (-9, -6, -4)]
+
+"""
 #*****************************************************************************
 #        Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
@@ -33,7 +58,7 @@ from .fund_domain import M2Z
 
 minusproj = [1, 0, 0, -1]
 
-def _iterate_Up(Phi, p, M, ap, eisenloss, q, aq, check):
+def _iterate_Up(Phi, p, M, ap, q, aq, check):
     r"""
     Return an overconvergent Hecke-eigensymbol lifting self -- self must be a
     `p`-ordinary eigensymbol
@@ -45,8 +70,6 @@ def _iterate_Up(Phi, p, M, ap, eisenloss, q, aq, check):
     - ``M`` -- integer equal to the number of moments
 
     - ``ap`` -- Hecke eigenvalue at `p`
-
-    - ``eisenloss`` -- ##mm TODO
 
     - ``q`` -- prime
 
@@ -67,11 +90,6 @@ def _iterate_Up(Phi, p, M, ap, eisenloss, q, aq, check):
     """
     if ap.valuation(p) > 0:
         raise ValueError("Lifting non-ordinary eigensymbols not implemented (issue #20)")
-
-
-    ## Scale by a large enough power of p to clear denominators from solving difference equation
-    # s = (newM).exact_log(p)+1
-    # Phi = Phi * p**s
 
     ## Act by Hecke to ensure values are in D and not D^dag after sovling difference equation
     verbose("Applying Hecke", level = 2)
@@ -928,7 +946,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
                 return self._find_alpha(p=p, k=k, M=M, ap=ap, new_base_ring=new_base_ring, ordinary=ordinary, check=False, find_extraprec=find_extraprec)
         return alpha, new_base_ring, newM, eisenloss, q, aq
 
-    def p_stabilize(self, p=None, M=None, alpha=None, ap=None, new_base_ring=None, ordinary=True, check=True):
+    def p_stabilize(self, p=None, M=20, alpha=None, ap=None, new_base_ring=None, ordinary=True, check=True):
         r"""
         Return the `p`-stablization of self to level `N p` on which `U_p` acts by `\alpha`.
 
@@ -940,7 +958,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         - ``p`` -- prime not dividing the level of self
 
-        - ``M`` -- precision of `\QQ_p`
+        - ``M`` -- (default: 20) precision of `\QQ_p`
 
         - ``alpha`` -- `U_p` eigenvalue
 
@@ -948,7 +966,10 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         - ``new_base_ring`` -- change of base ring
 
-        - ``ordinary`` -- ##mm TODO
+        - ``ordinary`` -- (default: True) whether to return the ordinary
+                          (at ``p``) eigensymbol.
+
+        - ``check`` -- (default: True) whether to perform extra sanity checks
 
         OUTPUT:
 
@@ -956,7 +977,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
         self away from `p` and eigenvalue `\alpha` at `p`.
         The eigenvalue `\alpha` depends on the parameter ``ordinary``.
 
-        If ordinary == True: the unique modular symbol of level
+        If ``ordinary`` == True: the unique modular symbol of level
         `N p` with the same Hecke eigenvalues as self away from
         `p` and unit eigenvalue at `p`; else  the unique modular
         symbol of level `N p` with the same Hecke eigenvalues as
@@ -1000,10 +1021,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
         if check:
             p = self._get_prime(p, alpha)
         k = self.parent().weight()
-        if M is None:
-            M = ZZ(20)
-        else:
-            M = ZZ(M)
+        M = ZZ(M)
         verbose("p stabilizing: M = %s" % M, level=2)
         if alpha is None:
             alpha, new_base_ring, newM, eisenloss, q, aq = self._find_alpha(p, k, M + 1, ap, new_base_ring, ordinary, check, find_extraprec=False)
@@ -1026,8 +1044,8 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
     def completions(self, p, M):
         r"""
         If `K` is the base_ring of self, this function takes all maps
-        `K\to Q_p` and applies them to self return a list of
-        (modular symbol,map: `K\to Q_p`) as map varies over all such maps.
+        `K\to \QQ_p` and applies them to self return a list of
+        (modular symbol,map: `K\to \QQ_p`) as map varies over all such maps.
 
         .. NOTE::
 
@@ -1041,7 +1059,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         OUTPUT:
 
-        - A list of tuples (modular symbol,map: `K\to Q_p`) as map varies over all such maps
+        - A list of tuples (modular symbol,map: `K\to \QQ_p`) as map varies over all such maps
 
         EXAMPLES::
 
@@ -1108,7 +1126,8 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         - ``algorithm`` -- 'stevens' or 'greenberg' (default 'stevens')
 
-        - ``eigensymbol`` -- if True, lifts to Hecke eigensymbol (self must be a `p`-ordinary eigensymbol)
+        - ``eigensymbol`` -- if True, lifts to Hecke eigensymbol (self must
+          be a `p`-ordinary eigensymbol)
 
         (Note: ``eigensymbol = True`` does *not* just indicate to the code that
         self is an eigensymbol; it solves a wholly different problem, lifting
@@ -1160,7 +1179,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
             sage: L.symbol() is Phi              # long time
             True
 
-       Examples using Greenberg's algorithm::
+        Examples using Greenberg's algorithm::
 
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
@@ -1221,8 +1240,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
                 alpha = self.Tq_eigenvalue(p, M=M + 1, check=check)
             newM, eisenloss, q, aq = self._find_extraprec(p, M + 1, alpha, check)
             Phi = self._lift_to_OMS(p, newM, new_base_ring, algorithm)
-            Phi = _iterate_Up(Phi, p, newM, alpha,
-                                           eisenloss, q, aq, check)
+            Phi = _iterate_Up(Phi, p, newM, alpha, q, aq, check)
             Phi = Phi.reduce_precision(M)
             return Phi._normalize(include_zeroth_moment = True)
         else:
@@ -1245,7 +1263,11 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         - ``new_base_ring`` -- new base ring
 
-        - ``algorithm`` -- ## mm TODO
+        - ``algorithm`` -- (default: 'greenberg') a string, either 'greenberg'
+          or 'stevens', specifying whether to use
+          the lifting algorithm of M.Greenberg or that of Pollack--Stevens.
+          The latter one solves the difference equation, which is not needed. The
+          option to use Pollack--Stevens' algorithm here is just for historical reasons.
 
         OUTPUT:
 
@@ -1363,7 +1385,19 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
         2) the denominators appearing when solving the difference equation,
         3) those denominators who might be also present in self.
 
-        INPUT : ##mm TODO
+        INPUT :
+
+        - ``p`` -- working prime
+        - ``M`` -- precision
+        - ``alpha`` -- the Up-eigenvalue
+        - ``check`` -- whether to check that ``self`` is a `T_q` eigensymbol
+
+        OUTPUT :
+
+        A tuple (newM, eisenloss, q, aq), where ``newM`` is the new precision, `q` is
+        a prime different from `p`, and ``aq`` is the eigenvalue of `T_q` of the eigensymbol.
+        The value ``eisenloss`` is the loss of precision accounted for in the denominators of the Hecke
+        eigenvalue.
 
         EXAMPLES::
 
@@ -1401,23 +1435,28 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         INPUT:
 
-        - ``p`` -- prime
+        - ``p`` -- prime, not dividing the level of self
 
         - ``M`` -- precision
 
-        - ``alpha`` -- (default: None)
+        - ``alpha`` -- (default: None) the `U_p` eigenvalue, if known
 
-        - ``ap`` -- (default: None)
+        - ``ap`` -- (default: None) the Hecke eigenvalue at p (before stabilizing), if known
 
-        - ``new_base_ring`` -- (default: None)
+        - ``new_base_ring`` -- (default: None) if specified, force the resulting eigensymbol to take values in the given ring
 
-        - ``ordinary`` -- (default: True)
+        - ``ordinary`` -- (default: True) whether to return the ordinary
+                          (at ``p``) eigensymbol.
 
-        - ``algorithm`` -- (default: None)
+        - ``algorithm`` -- (default: 'greenberg') a string, either 'greenberg'
+          or 'stevens', specifying whether to use
+          the lifting algorithm of M.Greenberg or that of Pollack--Stevens.
+          The latter one solves the difference equation, which is not needed. The
+          option to use Pollack--Stevens' algorithm here is just for historical reasons.
 
-        - ``eigensymbol`` -- (default: False)
+        - ``eigensymbol`` -- (default: False) if True, return an overconvergent eigensymbol. Otherwise just perform a naive lift
 
-        - ``check`` -- (default: True)
+        - ``check`` -- (default: True) whether to perform extra sanity checks
 
         OUTPUT:
 
@@ -1434,7 +1473,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
             1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10)
             sage: g.Tq_eigenvalue(3)                # long time
             2 + 3^2 + 2*3^3 + 2*3^4 + 2*3^6 + 3^8 + 2*3^9 + O(3^10)
-        """ #mm TODO inputs
+        """
         if check:
             p = self._get_prime(p, alpha)
         k = self.parent().weight()
@@ -1454,8 +1493,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
                                 new_base_ring=new_base_ring, check=check)
         # And use the standard lifting function for eigensymbols
         Phi = self._lift_to_OMS(p, newM, new_base_ring, algorithm)
-        Phi = _iterate_Up(Phi, p=p, M=newM, ap=alpha,
-                          eisenloss=eisenloss, q=q, aq=aq, check=check)
+        Phi = _iterate_Up(Phi, p=p, M=newM, ap=alpha, q=q, aq=aq, check=check)
         Phi = Phi.reduce_precision(M)
         return Phi._normalize(include_zeroth_moment = True)
 
@@ -1534,7 +1572,7 @@ class PSModularSymbolElement_dist(PSModularSymbolElement):
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: L = phi.lift(37, M=6, eigensymbol=True).padic_lseries(); L  # long time
             37-adic L-series of Modular symbol of level 37 with values in Space of 37-adic distributions with k=0 action and precision cap 7
-            sage: L.series(6,2) # long time
+            sage: L.series(2) # long time
             O(37^6) + (4 + 37 + 36*37^2 + 19*37^3 + 21*37^4 + O(37^5))*T + O(T^2)
         """
         from sage.modular.pollack_stevens.padic_lseries import pAdicLseries

@@ -1,14 +1,13 @@
 """
 Hyperelliptic curves over a padic field.
 """
-from __future__ import absolute_import
-
 #*****************************************************************************
 #  Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import absolute_import
+from six.moves import range
 
 from . import hyperelliptic_generic
 
@@ -371,7 +370,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             except TypeError:   #if f is a constant, not callable
                 f_dt = f*dt
             if x.valuation() != -2:
-                I = sum([f_dt[n]/(n+1) for n in xrange(f_dt.degree()+1)]) # \int_0^1 f dt
+                I = sum(f_dt[n]/(n+1) for n in range(f_dt.degree() + 1)) # \int_0^1 f dt
             else:
                 If_dt = f_dt.integral().laurent_polynomial()
                 I = If_dt(Q[0]**g/Q[1]) - If_dt(P[0]**g/P[1])

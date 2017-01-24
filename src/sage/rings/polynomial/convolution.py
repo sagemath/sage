@@ -18,7 +18,7 @@ The convolution function is reasonably fast, even though it is
 written in pure Python. For example, the following takes less than
 a second::
 
-    sage: v=convolution(range(1000), range(1000))
+    sage: v = convolution(list(range(1000)), list(range(1000)))
 
 ALGORITHM: Converts the problem to multiplication in the ring
 `S[x]/(x^M - 1)`, where `S = R[y]/(y^K + 1)` (where
@@ -319,17 +319,17 @@ def _negaconvolution_fft(L1, L2, n):
 
        sage: from sage.rings.polynomial.convolution import _negaconvolution_naive
        sage: from sage.rings.polynomial.convolution import _negaconvolution_fft
-       sage: _negaconvolution_naive(range(8), range(5, 13))
+       sage: _negaconvolution_naive(list(range(8)), list(range(5, 13)))
        [-224, -234, -224, -192, -136, -54, 56, 196]
-       sage: _negaconvolution_fft(range(8), range(5, 13), 3)
+       sage: _negaconvolution_fft(list(range(8)), list(range(5, 13)), 3)
        [-224, -234, -224, -192, -136, -54, 56, 196]
 
    ::
 
        sage: for n in range(3, 10):
-       ...      L1 = [ZZ.random_element(100) for _ in range(1 << n)]
-       ...      L2 = [ZZ.random_element(100) for _ in range(1 << n)]
-       ...      assert _negaconvolution_naive(L1, L2) == _negaconvolution_fft(L1, L2, n)
+       ....:    L1 = [ZZ.random_element(100) for _ in range(1 << n)]
+       ....:    L2 = [ZZ.random_element(100) for _ in range(1 << n)]
+       ....:    assert _negaconvolution_naive(L1, L2) == _negaconvolution_fft(L1, L2, n)
 """
    assert n >= 3
 
@@ -384,10 +384,10 @@ def _convolution_fft(L1, L2):
    ::
 
        sage: for len1 in range(4, 30):
-       ...      for len2 in range(4, 30):
-       ...         L1 = [ZZ.random_element(100) for _ in range(len1)]
-       ...         L2 = [ZZ.random_element(100) for _ in range(len2)]
-       ...         assert _convolution_naive(L1, L2) == _convolution_fft(L1, L2)
+       ....:    for len2 in range(4, 30):
+       ....:       L1 = [ZZ.random_element(100) for _ in range(len1)]
+       ....:       L2 = [ZZ.random_element(100) for _ in range(len2)]
+       ....:       assert _convolution_naive(L1, L2) == _convolution_fft(L1, L2)
    """
    R = parent(L1[0])
 

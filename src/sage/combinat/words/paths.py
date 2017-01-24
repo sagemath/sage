@@ -167,7 +167,6 @@ REFERENCES:
 - [5] http://en.wikipedia.org/wiki/Dyck_word
 
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Arnaud bergeron <abergeron@gmail.coms>,
 #       Copyright (C) 2009 Sebastien Labbe <slabqc@gmail.com>,
@@ -178,8 +177,10 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-from itertools import izip
+from builtins import zip
+
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -1402,7 +1403,7 @@ class FiniteWordPath_all(SageObject):
             start = next(it)
         elif kind != 'left':
             raise ValueError('unknown value for kind (=%s)'%kind)
-        tout = [point([c], color=color[a], size=size) for a, c in izip(self, it) if a in letters]
+        tout = [point([c], color=color[a], size=size) for a, c in zip(self, it) if a in letters]
         return sum(tout)
 
     def projected_path(self, v=None, ring=None):

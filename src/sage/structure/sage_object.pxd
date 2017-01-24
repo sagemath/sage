@@ -10,6 +10,70 @@ cdef class SageObject:
     pass
 
 
+cpdef inline richcmp_not_equal(x, y, int op):
+    """
+    Like ``richcmp(x, y, op)`` but assuming that `x` is not equal to `y`.
+
+    INPUT:
+
+    - ``op`` -- a rich comparison operation (e.g. ``Py_EQ``)
+
+    OUTPUT:
+
+    If ``op`` is not ``op_EQ`` or ``op_NE``, the result of
+    ``richcmp(x, y, op)``. If ``op`` is ``op_EQ``, return
+    ``False``. If ``op`` is ``op_NE``, return ``True``.
+
+    This is useful to compare lazily two objects A and B according to 2
+    (or more) different parameters, say width and height for example.
+    One could use::
+
+        return richcmp((A.width(), A.height()), (B.width(), B.height()), op)
+
+    but this will compute both width and height in all cases, even if
+    A.width() and B.width() are enough to decide the comparison.
+
+    Instead one can do::
+
+        wA = A.width()
+        wB = B.width()
+        if wA != wB:
+            return richcmp_not_equal(wA, wB, op)
+        return richcmp(A.height(), B.height(), op)
+
+    The difference with ``richcmp`` is that ``richcmp_not_equal``
+    assumes that its arguments are not equal, which is excluding the case
+    where the comparison cannot be decided so far, without
+    knowing the rest of the parameters.
+
+    EXAMPLES::
+
+        sage: from sage.structure.sage_object import (richcmp_not_equal,
+        ....:    op_EQ, op_NE, op_LT, op_LE, op_GT, op_GE)
+        sage: for op in (op_LT, op_LE, op_EQ, op_NE, op_GT, op_GE):
+        ....:     print(richcmp_not_equal(3, 4, op))
+        True
+        True
+        False
+        True
+        False
+        False
+        sage: for op in (op_LT, op_LE, op_EQ, op_NE, op_GT, op_GE):
+        ....:     print(richcmp_not_equal(5, 4, op))
+        False
+        False
+        False
+        True
+        True
+        True
+    """
+    if op == Py_EQ:
+        return False
+    elif op == Py_NE:
+        return True
+    return richcmp(x, y, op)
+
+
 cpdef inline bint rich_to_bool(int op, int c):
     """
     Return the corresponding ``True`` or ``False`` value for a rich

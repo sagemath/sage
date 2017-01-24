@@ -93,9 +93,10 @@ Classes and Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-from sage.combinat.recognizable_series import RecognizableSeries
-from sage.combinat.recognizable_series import RecognizableSeriesSpace
+from .recognizable_series import RecognizableSeries
+from .recognizable_series import RecognizableSeriesSpace
 from sage.misc.cachefunc import cached_function, cached_method
 from six import iteritems
 
@@ -130,7 +131,7 @@ def pad_right(T, length, zero=0):
         sage: pad_right([1,2,3], 10)
         [1, 2, 3, 0, 0, 0, 0, 0, 0, 0]
     """
-    return T + type(T)(zero for _ in xrange(length - len(T)))
+    return T + type(T)(zero for _ in range(length - len(T)))
 
 
 def value(D, k):
@@ -818,6 +819,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
               Running the test suite of self.an_element()
               running ._test_category() . . . pass
               running ._test_eq() . . . pass
+              running ._test_new() . . . pass
               running ._test_nonzero_equal() . . . pass
               running ._test_not_implemented_methods() . . . pass
               running ._test_pickling() . . . pass
@@ -827,6 +829,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             running ._test_elements_eq_transitive() . . . pass
             running ._test_elements_neq() . . . pass
             running ._test_eq() . . . pass
+            running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
             running ._test_some_elements() . . . pass

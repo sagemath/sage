@@ -24,8 +24,7 @@ AUTHORS:
 include "sage/libs/linkages/padics/mpz.pxi"
 include "CA_template.pxi"
 
-from sage.libs.pari.pari_instance cimport PariInstance
-cdef PariInstance P = sage.libs.pari.pari_instance.pari
+from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 
 cdef class PowComputer_(PowComputer_base):
@@ -145,10 +144,10 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
             mpz_set_ui(holder.value, 0)
         else:
             val = mpz_remove(holder.value, self.value, self.prime_pow.prime.value)
-        return P.new_gen_from_padic(val, self.absprec - val,
-                                    self.prime_pow.prime.value,
-                                    self.prime_pow.pow_mpz_t_tmp(self.absprec - val),
-                                    holder.value)
+        return new_gen_from_padic(val, self.absprec - val,
+                                  self.prime_pow.prime.value,
+                                  self.prime_pow.pow_mpz_t_tmp(self.absprec - val),
+                                  holder.value)
 
     def _integer_(self, Z=None):
         r"""
@@ -178,12 +177,28 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
          EXAMPLES::
 
-            sage: R = Zp(7,4,'capped-abs')
+            sage: R = Zp(7,10,'capped-abs')
             sage: a = R(8)
             sage: a.residue(1)
-             1
-            sage: a.residue(2)
+            1
+
+        This is different from applying ``% p^n`` which returns an element in
+        the same ring::
+
+            sage: b = a.residue(2); b
             8
+            sage: b.parent()
+            Ring of integers modulo 49
+            sage: c = a % 7^2; c
+            1 + 7 + O(7^8)
+            sage: c.parent()
+            7-adic Ring with capped absolute precision 10
+
+        Note that reduction of ``c`` dropped to the precision of the unit part
+        of ``7^2``, see :meth:`_mod_`::
+
+            sage: R(7^2).unit_part()
+            1 + O(7^8)
 
         TESTS::
 
@@ -193,10 +208,14 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
             Traceback (most recent call last):
             ...
             ValueError: cannot reduce modulo a negative power of p.
-            sage: a.residue(5)
+            sage: a.residue(11)
             Traceback (most recent call last):
             ...
             PrecisionError: not enough precision known in order to compute residue.
+
+        .. SEEALSO::
+
+            :meth:`_mod_`
 
         """
         cdef Integer selfvalue, modulus

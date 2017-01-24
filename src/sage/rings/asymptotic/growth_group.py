@@ -635,8 +635,8 @@ class Variable(sage.structure.unique_representation.CachedRepresentation,
             ...
             TypeError: Cannot substitute in 1/x in
             <class 'sage.rings.asymptotic.growth_group.Variable'>.
-            > *previous* TypeError: unsupported operand parent(s) for '/':
-            'Integer Ring' and '<type 'str'>'
+            > *previous* TypeError: unsupported operand type(s) for /:
+            'sage.rings.integer.Integer' and 'str'
             sage: Variable('1/x')._substitute_({'x': 0})
             Traceback (most recent call last):
             ...
@@ -4196,6 +4196,7 @@ class GrowthGroupFactory(sage.structure.factory.UniqueFactory):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           pass
@@ -4205,6 +4206,7 @@ class GrowthGroupFactory(sage.structure.factory.UniqueFactory):
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
         running ._test_inverse() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_one() . . . pass
         running ._test_pickling() . . . pass
@@ -4222,6 +4224,7 @@ class GrowthGroupFactory(sage.structure.factory.UniqueFactory):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           pass
@@ -4231,6 +4234,7 @@ class GrowthGroupFactory(sage.structure.factory.UniqueFactory):
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
         running ._test_inverse() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_one() . . . pass
         running ._test_pickling() . . . pass
@@ -4248,6 +4252,7 @@ class GrowthGroupFactory(sage.structure.factory.UniqueFactory):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           pass
@@ -4257,6 +4262,7 @@ class GrowthGroupFactory(sage.structure.factory.UniqueFactory):
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
         running ._test_inverse() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_one() . . . pass
         running ._test_pickling() . . . pass

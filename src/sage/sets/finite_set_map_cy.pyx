@@ -85,7 +85,7 @@ cpdef fibers(f, domain):
         sage: fibers(lambda x: 1, [1,1,1])
         {1: {1}}
 
-    .. seealso:: :func:`fibers_args` if one needs to pass extra
+    .. SEEALSO:: :func:`fibers_args` if one needs to pass extra
        arguments to ``f``.
     """
     result = {}
@@ -202,20 +202,20 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
             sage: fs2
             [1, 0, 1, 1]
             sage: with fs.clone() as fs3:
-            ...       fs3._setimage(0, 2)
-            ...       fs3._setimage(1, 2)
+            ....:     fs3._setimage(0, 2)
+            ....:     fs3._setimage(1, 2)
             sage: fs3
             [2, 2, 2, 1]
 
         TESTS::
 
             sage: with fs.clone() as fs3:
-            ...       fs3._setimage(6, 2)
+            ....:     fs3._setimage(6, 2)
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
             sage: with fs.clone() as fs3:
-            ...       fs3._setimage(1, 4)
+            ....:     fs3._setimage(1, 4)
             Traceback (most recent call last):
             ...
             AssertionError: Wrong value self(1) = 4
@@ -252,7 +252,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
         OUTPUT: ``None``
 
-        .. note:: if you need speed, please use instead :meth:`_setimage`
+        .. NOTE:: if you need speed, please use instead :meth:`_setimage`
 
         EXAMPLES::
 
@@ -262,8 +262,8 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
             sage: fs2
             [1, 0, 1, 1]
             sage: with fs.clone() as fs3:
-            ...       fs3.setimage(0, 2)
-            ...       fs3.setimage(1, 2)
+            ....:     fs3.setimage(0, 2)
+            ....:     fs3.setimage(1, 2)
             sage: fs3
             [2, 2, 2, 1]
         """
@@ -277,7 +277,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
         - ``i`` -- any object.
 
-        .. note:: if you need speed, please use instead :meth:`_getimage`
+        .. NOTE:: if you need speed, please use instead :meth:`_getimage`
 
         EXAMPLES::
 
@@ -481,21 +481,21 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
             sage: fs2
             map: a -> w, b -> v, c -> v, d -> v
             sage: with fs.clone() as fs3:
-            ...       fs3.setimage("a", "u")
-            ...       fs3.setimage("c", "w")
+            ....:     fs3.setimage("a", "u")
+            ....:     fs3.setimage("c", "w")
             sage: fs3
             map: a -> u, b -> v, c -> w, d -> v
 
         TESTS::
 
             sage: with fs.clone() as fs3:
-            ...       fs3.setimage("z", 2)
+            ....:     fs3.setimage("z", 2)
             Traceback (most recent call last):
             ...
             ValueError: 'z' is not in dict
 
             sage: with fs.clone() as fs3:
-            ...       fs3.setimage(1, 4)
+            ....:     fs3.setimage(1, 4)
             Traceback (most recent call last):
             ...
             ValueError: 1 is not in dict
@@ -515,7 +515,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
 
             sage: F = FiniteSetMaps(["a", "b", "c", "d"], ["u", "v", "w"])
             sage: fs = F._from_list_([1, 0, 2, 1])
-            sage: map(fs.getimage, ["a", "b", "c", "d"])
+            sage: list(map(fs.getimage, ["a", "b", "c", "d"]))
             ['v', 'u', 'w', 'v']
         """
         parent = self._parent
@@ -605,7 +605,7 @@ cdef class FiniteSetEndoMap_N(FiniteSetMap_MN):
     """
     Maps from ``range(n)`` to itself.
 
-    .. seealso:: :class:`FiniteSetMap_MN` for assumptions on the parent
+    .. SEEALSO:: :class:`FiniteSetMap_MN` for assumptions on the parent
 
     TESTS::
 
@@ -658,7 +658,7 @@ cdef class FiniteSetEndoMap_Set(FiniteSetMap_Set):
     """
     Maps from a set to itself
 
-    .. seealso:: :class:`FiniteSetMap_Set` for assumptions on the parent
+    .. SEEALSO:: :class:`FiniteSetMap_Set` for assumptions on the parent
 
     TESTS::
 

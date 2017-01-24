@@ -137,7 +137,7 @@ class OutputImageJpg(OutputBase):
 
         INPUT:
 
-        - ``jpeg`` --
+        - ``jpg`` --
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. Alternatively,
           a string (bytes) can be passed directly which will then be
           converted into an
@@ -188,7 +188,7 @@ class OutputImageSvg(OutputBase):
 
         INPUT:
 
-        - ``SVG`` --
+        - ``svg`` --
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. Alternatively,
           a string (bytes) can be passed directly which will then be
           converted into an

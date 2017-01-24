@@ -27,7 +27,6 @@ AUTHOR:
 - Yann Laigle-Chapuy (2009-08-28): first implementation
 
 """
-
 from libc.string cimport memcpy
 
 from sage.structure.sage_object cimport SageObject
@@ -60,7 +59,7 @@ cdef walsh_hadamard(long *f, int ldn):
     to a multidimensional discrete Fourier transform of size 2x2x...x2.
     It can be defined by the following formula:
 
-    .. math:: W(j) = \sum_{i\in\{0,1\}^n} (-1)^{f(i)\oplus i \cdot j}
+    .. MATH:: W(j) = \sum_{i\in\{0,1\}^n} (-1)^{f(i)\oplus i \cdot j}
 
     EXAMPLES::
 
@@ -113,13 +112,13 @@ cdef reed_muller(mp_limb_t* f, int ldn):
     The Reed Muller transform (also known as binary Möbius transform)
     is an orthogonal transform. For a function `f` defined by
 
-    .. math:: f(x) = \bigoplus_{I\subset\{1,\ldots,n\}} \left(a_I \prod_{i\in I} x_i\right)
+    .. MATH:: f(x) = \bigoplus_{I\subset\{1,\ldots,n\}} \left(a_I \prod_{i\in I} x_i\right)
 
     it allows to compute efficiently the ANF from the truth table and
     vice versa, using the formulae:
 
-    .. math:: f(x) = \bigoplus_{support(x)\subset I} a_I
-    .. math:: a_i  = \bigoplus_{I\subset support(x)} f(x)
+    .. MATH:: f(x) = \bigoplus_{support(x)\subset I} a_I
+    .. MATH:: a_i  = \bigoplus_{I\subset support(x)} f(x)
 
 
     EXAMPLES::
@@ -468,7 +467,7 @@ cdef class BooleanFunction(SageObject):
         nb_limbs = self._truth_table.limbs
         if nb_limbs == 1:
             L = len(self)
-            for i in range(L):
+            for i in xrange(L):
                 res[i  ]=self[i]
                 res[i+L]=other[i]
             return res
@@ -675,7 +674,7 @@ cdef class BooleanFunction(SageObject):
         r"""
         Compute the Walsh Hadamard transform `W` of the function `f`.
 
-        .. math:: W(j) = \sum_{i\in\{0,1\}^n} (-1)^{f(i)\oplus i \cdot j}
+        .. MATH:: W(j) = \sum_{i\in\{0,1\}^n} (-1)^{f(i)\oplus i \cdot j}
 
         EXAMPLE::
 
@@ -695,7 +694,7 @@ cdef class BooleanFunction(SageObject):
                 temp[i] = (bitset_in(self._truth_table,i)<<1)-1
 
             walsh_hadamard(temp, self._nvariables)
-            self._walsh_hadamard_transform = tuple( [temp[i] for i in xrange(n)] )
+            self._walsh_hadamard_transform = tuple(temp[i] for i in xrange(n))
             sig_free(temp)
 
         return self._walsh_hadamard_transform
@@ -757,7 +756,7 @@ cdef class BooleanFunction(SageObject):
             sage: B.is_symmetric()
             True
         """
-        cdef list T = [ self(2**i-1) for i in range(self._nvariables+1) ]
+        cdef list T = [ self(2**i-1) for i in xrange(self._nvariables+1) ]
         for i in xrange(2**self._nvariables):
             if T[ hamming_weight_int(i) ] != bitset_in(self._truth_table, i):
                 return False
@@ -850,7 +849,7 @@ cdef class BooleanFunction(SageObject):
         r"""
         Return the autocorrelation fo the function, defined by
 
-        .. math:: \Delta_f(j) = \sum_{i\in\{0,1\}^n} (-1)^{f(i)\oplus f(i\oplus j)}.
+        .. MATH:: \Delta_f(j) = \sum_{i\in\{0,1\}^n} (-1)^{f(i)\oplus f(i\oplus j)}.
 
         EXAMPLES::
 
@@ -870,7 +869,7 @@ cdef class BooleanFunction(SageObject):
                 temp[i] = W[i]*W[i]
 
             walsh_hadamard(temp, self._nvariables)
-            self._autocorrelation = tuple( [temp[i]>>self._nvariables for i in xrange(n)] )
+            self._autocorrelation = tuple(temp[i]>>self._nvariables for i in xrange(n))
             sig_free(temp)
 
         return self._autocorrelation
@@ -932,7 +931,7 @@ cdef class BooleanFunction(SageObject):
         Return (if it exists) an annihilator of the boolean function of
         degree at most `d`, that is a Boolean polynomial `g` such that
 
-        .. math::
+        .. MATH::
 
             f(x)g(x) = 0 \forall x.
 
@@ -966,9 +965,9 @@ cdef class BooleanFunction(SageObject):
 
         from sage.matrix.constructor import Matrix
         from sage.arith.all import binomial
-        M = Matrix(GF(2),sum([binomial(self._nvariables,i) for i in xrange(d+1)]),len(s))
+        M = Matrix(GF(2),sum(binomial(self._nvariables,i) for i in xrange(d+1)),len(s))
 
-        for i in xrange(1,d+1):
+        for i in xrange(1, d + 1):
             C = Combinations(self._nvariables,i)
             for c in C:
                 r.append(prod([G[i] for i in c]))
@@ -1020,7 +1019,7 @@ cdef class BooleanFunction(SageObject):
         f = self
         g = ~self
         for i in xrange(self._nvariables):
-            for fun in [f,g]:
+            for fun in [f, g]:
                 A = fun.annihilator(i)
                 if A is not None:
                     if annihilator:

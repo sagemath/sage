@@ -6,8 +6,7 @@ This module implements computations of Hecke operators and `U_p`-eigenfunctions
 on `p`-adic overconvergent modular forms of tame level 1, where `p` is one of
 the primes `\{2, 3, 5, 7, 13\}`, using the algorithms described in [Loe2007]_.
 
-.. [Loe2007] David Loeffler, *Spectral expansions of overconvergent modular functions*,
-   Int. Math. Res. Not 2007 (050).  `Arxiv preprint <http://uk.arxiv.org/abs/math/0701168>`_.
+- [Loe2007]_
 
 AUTHORS:
 
@@ -23,7 +22,7 @@ The Theory
 
 Let `p` be one of the above primes, so `X_0(p)` has genus 0, and let
 
-.. math::
+.. MATH::
 
     f_p = \sqrt[p-1]{\frac{\Delta(pz)}{\Delta(z)}}
 
@@ -33,7 +32,7 @@ Furthermore, if we work over `\CC_p`, the `r`-overconvergent locus on `X_0(p)`
 (or of `X_0(1)`, via the canonical subgroup lifting), corresponds to the
 `p`-adic disc
 
-.. math::
+.. MATH::
 
     |f_p|_p \le p^{\frac{12r}{p-1}}.
 
@@ -174,6 +173,7 @@ classical) does not apply.
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
+from six.moves import range
 
 from sage.matrix.all        import matrix, MatrixSpace, diagonal_matrix
 from sage.misc.misc         import verbose
@@ -324,7 +324,7 @@ class OverconvergentModularFormsSpace(Module):
         self._basis_cache = [self._wtchar.pAdicEisensteinSeries(self._qsr, self.prec())]
         self._uniformiser = self._qsr(EtaProduct(prime, {prime: 24/ZZ(prime-1), ZZ(1):-24/ZZ(prime-1)}).qexp(self.prec()))
 
-        for i in xrange(1, self.prec()):
+        for i in range(1, self.prec()):
             self._basis_cache.append(self._basis_cache[-1] * self._uniformiser * self._const)
 
     #####################################
@@ -897,7 +897,7 @@ class OverconvergentModularFormsSpace(Module):
         x = qexp
         g = self._gsr.gen()
         answer = self._gsr(0)
-        for i in xrange(n):
+        for i in range(n):
             assert(x.valuation() >= i)
             answer += (x[i] / self._basis_cache[i][i])*g**i
             x = x - self._basis_cache[i] * answer[i]
@@ -939,9 +939,9 @@ class OverconvergentModularFormsSpace(Module):
 
         M = MatrixSpace(self.base_ring(), n)
         mat = M(0)
-        for j in xrange(min(n, self.prime())):
+        for j in range(min(n, self.prime())):
             l = self._convert_to_basis(self.hecke_operator(self._basis_cache[j], m))
-            for i in xrange(n):
+            for i in range(n):
                 try:
                     mat[i,j] = l[i]
                 except IndexError:
@@ -954,10 +954,10 @@ class OverconvergentModularFormsSpace(Module):
                             mat[i,j] = 0 # computations are exact for weight 0, and we know these terms are zero
         if use_recurrence:
             if m != self.prime(): raise ValueError("Recurrence method not valid when m != p")
-            for j in xrange(self.prime(), n):
+            for j in range(self.prime(), n):
                 # can only apply recurrence if have i,j both >= p.
                 if j >= self.prec():
-                    for i in xrange(self.prime()):
+                    for i in range(self.prime()):
                         if self.weight() != 0:
                             raise ValueError("n is too large for current precision")
                         else:
@@ -968,19 +968,19 @@ class OverconvergentModularFormsSpace(Module):
 
                 else:
                     l = self._convert_to_basis(self.hecke_operator(self._basis_cache[j], m))
-                    for i in xrange(self.prime()):
+                    for i in range(self.prime()):
                         mat[i,j] = l[i]
-                for i in xrange(self.prime(), n):
-                    for u in xrange(self.prime()):
-                        for v in xrange(self.prime()):
+                for i in range(self.prime(), n):
+                    for u in range(self.prime()):
+                        for v in range(self.prime()):
                             mat[i,j] = mat[i,j] + mat[i-u-1, j-v-1]*self.recurrence_matrix()[u,v]
 
         else:
             if( n*self.prime() > self.prec()):
                 raise ValueError("n is too large")
-            for j in xrange(self.prime(), n):
+            for j in range(self.prime(), n):
                 l = self._convert_to_basis(self.hecke_operator(self._basis_cache[j], m))
-                for i in xrange(n):
+                for i in range(n):
                     mat[i,j] = l[i]
         return mat
 
@@ -1072,7 +1072,7 @@ class OverconvergentModularFormsSpace(Module):
 
             # now calculate the kernel using PARI
 
-            v = mr._pari_().matker()
+            v = mr.matker()
 
             if repr(v) == "[;]":
                 verbose("PARI returned empty eigenspace in slope %s" % r.valuation())
@@ -1086,7 +1086,7 @@ class OverconvergentModularFormsSpace(Module):
                 continue
 
             gexp = self._gsr(0)
-            for i in xrange(v.nrows()):
+            for i in range(v.nrows()):
                 gexp += self._gsr.gen()**i * F(v[i,0])
             gexp = gexp + O(self._gsr.gen()**int(v.nrows()))
 
@@ -1155,7 +1155,7 @@ class OverconvergentModularFormsSpace(Module):
         MM = OverconvergentModularForms(self.prime(), 0, 0, base_ring=QQ)
         m = MM._discover_recurrence_matrix(use_smithline = True).base_extend(self.base_ring())
 
-        r = diagonal_matrix([self._const**i for i in xrange(self.prime())])
+        r = diagonal_matrix([self._const**i for i in range(self.prime())])
         self._cached_recurrence_matrix = (r**(-1)) * m * r
         self._cached_recurrence_matrix.set_immutable()
         return self._cached_recurrence_matrix
@@ -1182,7 +1182,7 @@ class OverconvergentModularFormsSpace(Module):
             h = self._uniformiser.shift(-1) * jq
             fi = self._qsr(1)
             coeffs = []
-            for i in xrange(self.prime()+2):
+            for i in range(self.prime()+2):
                 if not h.valuation() >= i:
                     raise ValueError("Something strange is happening here")
 
@@ -1197,8 +1197,8 @@ class OverconvergentModularFormsSpace(Module):
             bigI = x*SmiH(y*cc)- y*cc*SmiH(x)
             smallI = xyring(bigI / (x - cc*y))
             r = matrix(ZZ, self.prime(), self.prime())
-            for i in xrange(self.prime()):
-                for j in xrange(self.prime()):
+            for i in range(self.prime()):
+                for j in range(self.prime()):
                     r[i,j] = -smallI[i+1, j+1]
             return r
         else:
@@ -1268,7 +1268,7 @@ class OverconvergentModularFormElement(ModuleElement):
             raise ValueError("Must supply exactly one of a q-expansion and a g-expansion")
         if gexp is not None:
             self._gexp = gexp.add_bigoh(self.parent().prec())
-            self._qexp = sum([self.parent()._basis_cache[i] * gexp[i] for i in xrange(min(gexp.prec(), self.parent().prec()))])
+            self._qexp = sum([self.parent()._basis_cache[i] * gexp[i] for i in range(min(gexp.prec(), self.parent().prec()))])
             self._qexp = self._qexp.add_bigoh(self._gexp.prec())
         else: # qexp is not None
             self._qexp = qexp.add_bigoh(self.parent().prec())
@@ -1542,7 +1542,7 @@ class OverconvergentModularFormElement(ModuleElement):
         if not is_pAdicField(F):
             F = pAdicField(p)
 
-        for i in xrange(self.prec()):
+        for i in range(self.prec()):
             ord = max( ord, 12/ZZ(p - 1)*i*(r - s) - F(self.gexp()[i]).normalized_valuation())
 
         return ord
@@ -1584,7 +1584,7 @@ class OverconvergentModularFormElement(ModuleElement):
         s = self.parent().radius()
         p = self.prime()
 
-        for i in xrange(self.gexp().prec()):
+        for i in range(self.gexp().prec()):
             if 12/ZZ(p - 1)*i*(r - s) - F(self.gexp()[i]).normalized_valuation() == self.r_ord(r):
                 return i
         raise RuntimeError("Can't get here")

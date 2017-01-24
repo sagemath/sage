@@ -912,7 +912,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         INPUT:
 
         - ``q`` -- the variable `q`
-        - ``only_highest_weight`` -- use only the classicaly highest weight
+        - ``only_highest_weight`` -- use only the classically highest weight
           rigged configurations
         - ``weight`` -- return the fermionic formula `M(\lambda, L; q)` where
           `\lambda` is the classical weight ``weight``

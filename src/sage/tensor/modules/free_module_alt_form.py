@@ -475,7 +475,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             b = 0.333333333333333 e^1/\e^2 + 2.50000000000000 e^1/\e^3
              + 4.00000000000000 e^2/\e^3
 
-        The output format is then controled by the argument ``format_spec`` of
+        The output format is then controlled by the argument ``format_spec`` of
         the method :meth:`display`::
 
             sage: b.display(format_spec=10)  # 10 bits of precision

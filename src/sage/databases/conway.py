@@ -19,11 +19,13 @@ Frank Luebeck's tables of Conway polynomials over finite fields
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import collections, os
-from sage.env import SAGE_SHARE
+from six import itervalues
 
-_CONWAYDATA = os.path.join(SAGE_SHARE, 'conway_polynomials',
-        'conway_polynomials.sobj')
+import collections, os
+
+from sage.env import CONWAY_POLYNOMIALS_DATA_DIR
+
+_CONWAYDATA = os.path.join(CONWAY_POLYNOMIALS_DATA_DIR, 'conway_polynomials.sobj')
 _conwaydict = None
 
 class DictInMapping(collections.Mapping):
@@ -163,7 +165,7 @@ class ConwayPolynomials(collections.Mapping):
             return self._len
         except AttributeError:
             pass
-        self._len = sum(len(a) for a in self._store.itervalues())
+        self._len = sum(len(a) for a in itervalues(self._store))
         return self._len
 
     def __iter__(self):

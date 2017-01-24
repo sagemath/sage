@@ -56,14 +56,14 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     decorated function::
 
         sage: def square(f):
-        ...     @sage_wraps(f)
-        ...     def new_f(x):
-        ...         return f(x)*f(x)
-        ...     return new_f
+        ....:   @sage_wraps(f)
+        ....:   def new_f(x):
+        ....:       return f(x)*f(x)
+        ....:   return new_f
         sage: @square
         ... def g(x):
-        ...     "My little function"
-        ...     return x
+        ....:   "My little function"
+        ....:   return x
         sage: g(2)
         4
         sage: g(x)
@@ -79,13 +79,13 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     unchanged) (see :trac:`9976`)::
 
         sage: def diff_arg_dec(f):
-        ...     @sage_wraps(f)
-        ...     def new_f(y, some_def_arg=2):
-        ...         return f(y+some_def_arg)
-        ...     return new_f
+        ....:   @sage_wraps(f)
+        ....:   def new_f(y, some_def_arg=2):
+        ....:       return f(y+some_def_arg)
+        ....:   return new_f
         sage: @diff_arg_dec
         ... def g(x):
-        ...     return x
+        ....:   return x
         sage: g(1)
         3
         sage: g(1, some_def_arg=4)
@@ -113,15 +113,15 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     (:trac:`9919`)::
 
         sage: def square_for_met(f):
-        ...     @sage_wraps(f)
-        ...     def new_f(self, x):
-        ...         return f(self,x)*f(self,x)
-        ...     return new_f
+        ....:   @sage_wraps(f)
+        ....:   def new_f(self, x):
+        ....:       return f(self,x)*f(self,x)
+        ....:   return new_f
         sage: class T:
-        ...     @square_for_met
-        ...     def g(self, x):
-        ...         "My little method"
-        ...         return x
+        ....:   @square_for_met
+        ....:   def g(self, x):
+        ....:       "My little method"
+        ....:       return x
         sage: t = T()
         sage: t.g(2)
         4
@@ -131,10 +131,10 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     The bug described in :trac:`11734` is fixed::
 
         sage: def square(f):
-        ...     @sage_wraps(f)
-        ...     def new_f(x):
-        ...         return f(x)*f(x)
-        ...     return new_f
+        ....:   @sage_wraps(f)
+        ....:   def new_f(x):
+        ....:       return f(x)*f(x)
+        ....:   return new_f
         sage: f = lambda x:x^2
         sage: g = square(f)
         sage: g(3) # this line used to fail for some people if these command were manually entered on the sage prompt
@@ -180,7 +180,7 @@ class infix_operator(object):
     An infix element-wise addition operator::
 
         sage: def eadd(a,b):
-        ...     return a.parent([i+j for i,j in zip(a,b)])
+        ....:   return a.parent([i+j for i,j in zip(a,b)])
         sage: eadd=infix_operator('add')(eadd)
         sage: u=vector([1,2,3])
         sage: v=vector([5,4,3])
@@ -215,7 +215,7 @@ class infix_operator(object):
 
             sage: from sage.misc.decorators import infix_operator
             sage: def eadd(a,b):
-            ...     return a.parent([i+j for i,j in zip(a,b)])
+            ....:   return a.parent([i+j for i,j in zip(a,b)])
             sage: eadd=infix_operator('add')(eadd)
             sage: u=vector([1,2,3])
             sage: v=vector([5,4,3])
@@ -252,7 +252,7 @@ class infix_operator(object):
             22
 
             sage: def eadd(a,b):
-            ...     return a.parent([i+j for i,j in zip(a,b)])
+            ....:   return a.parent([i+j for i,j in zip(a,b)])
             sage: eadd=infix_operator('add')(eadd)
             sage: u=vector([1,2,3])
             sage: v=vector([5,4,3])
@@ -379,20 +379,20 @@ def decorator_defaults(func):
         sage: from sage.misc.decorators import decorator_defaults
         sage: @decorator_defaults
         ... def my_decorator(f,*args,**kwds):
-        ...     print(kwds)
-        ...     print(args)
-        ...     print(f.__name__)
+        ....:   print(kwds)
+        ....:   print(args)
+        ....:   print(f.__name__)
         ...
         sage: @my_decorator
         ... def my_fun(a,b):
-        ...     return a,b
+        ....:   return a,b
         ...
         {}
         ()
         my_fun
         sage: @my_decorator(3,4,c=1,d=2)
         ... def my_fun(a,b):
-        ...     return a,b
+        ....:   return a,b
         ...
         {'c': 1, 'd': 2}
         (3, 4)

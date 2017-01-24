@@ -143,17 +143,14 @@ and repeat this command every time that we change the file simple.py. However, i
 
 every change applied to the file simple.py will be automatically updated in Sage.
 
-Can I use Sage with Python 3.x?
-"""""""""""""""""""""""""""""""
+Can I use SageMath with Python 3.x?
+"""""""""""""""""""""""""""""""""""
 
-Currently, no. Sage depends on the
-`SciPy <http://www.scipy.org>`_
-stack of Python numerical and scientific packages. As of 2010, SciPy
-still uses Python 2.x. So until SciPy is ported to run with Python
-3.x and
-`Cython <http://www.cython.org>`_
-supports Python 3.x, Sage will continue to use Python 2.x.
+Currently, no (November 2016). Work in progress aims to allow this in
+the not-so-far future. Until this task is completed, SageMath will continue
+to use Python 2.x.
 
+See :trac:`15530` for tracking the current progress.
 
 I'm seeing an error about "Permission denied" on a file called "sage-flags.txt".
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -181,9 +178,7 @@ it probably means that you compiled/installed Sage as one user, but
 have not run it to let it generate the ``sage-flags.txt`` file. Just
 run Sage one time as whatever user installed it and this problem
 should go away. This would also be easy to fix by having Sage run once
-as part of the install process; see
-`trac ticket #6375 <http://trac.sagemath.org/sage_trac/ticket/6375>`_
-for this fix.
+as part of the install process; see :trac:`6375` for this fix.
 
 
 I downloaded a Sage binary and it crashes on startup with "Illegal instruction". What can I do?
@@ -387,9 +382,9 @@ You might want to convert ASCII characters such as "Big Mac" to ASCII
 numerals for further processing. In Sage and Python, you can use ``ord``,
 e.g. ::
 
-    sage: map(ord, "abcde")
+    sage: list(map(ord, "abcde"))
     [97, 98, 99, 100, 101]
-    sage: map(ord, "Big Mac")
+    sage: list(map(ord, "Big Mac"))
     [66, 105, 103, 32, 77, 97, 99]
 
 
@@ -467,27 +462,6 @@ with a graphical session. Then build your Sage source distribution
 from within your text based session. You need to make sure that you
 can first restore your graphical session, before you attempt to log
 into a text based session.
-
-
-When I run doctests on Mac OS X I see the messages with "malloc", but in the end Sage reports that everything went fine.
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-The "malloc" messages you refer to might be something such as the
-following::
-
-    sage -t  src/sage/libs/pari/gen.pyx
-    python(4563) malloc: *** vm_allocate(size=4096000000) failed (error code=3)
-    python(4563) malloc: *** error: can't allocate region
-    python(4563) malloc: *** set a breakpoint in szone_error to debug
-
-The issue above is not a doctest failure. It is an error message
-printed by the system and it is exactly what one expects to see. In
-that particular doctest, we try to allocate a very large list in Pari
-that does not fit into physical memory (it is at least 100GB in
-size). So Mac OS X tells you that it could not allocate a chunk of
-memory roughly 4 GB in size, which is expected, if you are using Sage
-on a 32-bit version of OS X and you have compiled Sage in 32-bit bit
-mode or your binary Sage distribution is 32-bit.
 
 
 Sage 2.9 and higher fails compiling ATLAS on Linux. How can I fix this?

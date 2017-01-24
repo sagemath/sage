@@ -803,7 +803,7 @@ class QuadraticForm(SageObject):
         matrix is given then the output will be the quadratic form Q'
         which in matrix notation is given by:
 
-        .. math::
+        .. MATH::
                 Q' = v^t * Q * v.
 
 
@@ -1031,7 +1031,7 @@ class QuadraticForm(SageObject):
         Returns a (symmetric) Gram matrix A for the quadratic form Q,
         meaning that
 
-        .. math::
+        .. MATH::
 
             Q(x) = x^t * A * x,
 
@@ -1057,7 +1057,7 @@ class QuadraticForm(SageObject):
         Returns a (symmetric) Gram matrix A for the quadratic form Q,
         meaning that
 
-        .. math::
+        .. MATH::
 
             Q(x) = x^t * A * x,
 

@@ -319,13 +319,6 @@ class MatchingGame(SageObject):
         ....:   r.pref = (1, 2, 3)
         sage: g.solve()
         {1: -1, 2: -2, 3: -3}
-
-
-    REFERENCES:
-
-    .. [DI1989]  Dan Gusfield and Robert W. Irving.
-       *The stable marriage problem: structure and algorithms*.
-       Vol. 54. Cambridge: MIT press, 1989.
     """
     def __init__(self, generator, revr=None):
         r"""

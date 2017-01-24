@@ -600,18 +600,13 @@ class DualPBWBasis(CombinatorialFreeModule):
     where `S \ast T` denotes the shuffle product of `S` and `T` and
     `\mathrm{Lyn}(X)` is the set of Lyndon words in the alphabet `X`.
 
-    The definition may be found in Theorem 5.3 of [Reuten1993]_.
+    The definition may be found in Theorem 5.3 of [Reu1993]_.
 
     INPUT:
 
     - ``R`` -- ring
 
     - ``names`` -- names of the generators (string or an alphabet)
-
-    REFERENCES:
-
-    .. [Reuten1993] \C. Reutenauer. *Free Lie Algebras*. Number 7 in
-       London Math. Soc. Monogr. (N.S.). Oxford University Press. (1993).
 
     EXAMPLES::
 

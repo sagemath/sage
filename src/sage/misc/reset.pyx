@@ -1,4 +1,7 @@
-"Interpreter reset"
+# cython: old_style_globals=True
+"""
+Interpreter reset
+"""
 
 import sys
 

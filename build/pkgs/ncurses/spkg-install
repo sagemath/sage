@@ -41,17 +41,6 @@ export LDFLAGS
 
 cd src
 
-echo "Applying patches to upstream source..."
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'."
-        exit 1
-    fi
-done
-
-
 # Ncurses cannot build narrow and wide (unicode, --enable-widec)
 # versions in one go. Need to compile twice. Note that Python's curses
 # module will want the wide version, and readline the narrow version.

@@ -397,7 +397,7 @@ def hasse_invariant(self, p):
     Cassels's book.  If Q is diagonal with coefficients `a_i`, then the
     (Cassels) Hasse invariant is given by
 
-    .. math::
+    .. MATH::
 
         c_p = \prod_{i < j} (a_i, a_j)_p
 
@@ -488,7 +488,7 @@ def hasse_invariant__OMeara(self, p):
     p167 of O'Meara's book.  If Q is diagonal with coefficients `a_i`,
     then the (Cassels) Hasse invariant is given by
 
-    .. math::
+    .. MATH::
 
         c_p = \prod_{i <= j} (a_i, a_j)_p
 

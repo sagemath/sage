@@ -126,7 +126,7 @@ def ConstantFormsSpaceFunctor(group):
     r"""
     Construction functor for the space of constant forms.
 
-    When determening a common parent between a ring
+    When determining a common parent between a ring
     and a forms ring or space this functor is first
     applied to the ring.
 
@@ -138,8 +138,7 @@ def ConstantFormsSpaceFunctor(group):
         sage: ConstantFormsSpaceFunctor(4)
         ModularFormsFunctor(n=4, k=0, ep=1)
     """
-
-    return FormsSpaceFunctor("holo", group, QQ(0), ZZ(1))
+    return FormsSpaceFunctor("holo", group, QQ.zero(), ZZ.one())
 
 
 class FormsSubSpaceFunctor(ConstructionFunctor):

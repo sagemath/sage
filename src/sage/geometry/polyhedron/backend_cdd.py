@@ -45,7 +45,7 @@ class Polyhedron_cdd(Polyhedron_base):
         EXAMPLES::
 
             sage: Polyhedron(vertices=[(0,0)], rays=[(1,1)],
-            ...              lines=[(1,-1)], backend='cdd', base_ring=QQ)  # indirect doctest
+            ....:            lines=[(1,-1)], backend='cdd', base_ring=QQ)  # indirect doctest
             A 2-dimensional polyhedron in QQ^2 defined as the
             convex hull of 1 vertex, 1 ray, 1 line
         """
@@ -74,7 +74,7 @@ class Polyhedron_cdd(Polyhedron_base):
         EXAMPLES::
 
             sage: Polyhedron(ieqs=[(0,1,1)], eqns=[(0,1,-1)],
-            ...              backend='cdd', base_ring=QQ)  # indirect doctest
+            ....:            backend='cdd', base_ring=QQ)  # indirect doctest
             A 1-dimensional polyhedron in QQ^2 defined as the
             convex hull of 1 vertex and 1 ray
         """
@@ -141,7 +141,7 @@ class Polyhedron_cdd(Polyhedron_base):
         TESTS::
 
             sage: p = Polyhedron(vertices=[[0,0,0],[1,0,0],[0,1,0],[0,0,1]],
-            ...                  backend='cdd', base_ring=QQ)
+            ....:                backend='cdd', base_ring=QQ)
             sage: from sage.geometry.polyhedron.cdd_file_format import cdd_Vrepresentation
             sage: s = cdd_Vrepresentation('rational', [[0,0,1],[0,1,0],[1,0,0]], [], [])
             sage: p._init_from_cdd_input(s)

@@ -850,7 +850,7 @@ commutative, i.e. is a finite field. In other words,
 ``DivisionRings().Finite()`` *coincides* with ``Fields().Finite()``::
 
         sage: DivisionRings().Finite()
-        Category of finite fields
+        Category of finite enumerated fields
         sage: DivisionRings().Finite() is Fields().Finite()
         True
 
@@ -1312,7 +1312,7 @@ Other design goals include:
        sage: Rings().Commutative().Finite().NoZeroDivisors()
        Category of finite integral domains
        sage: Rings().Finite().Division()
-       Category of finite fields
+       Category of finite enumerated fields
 
    This will allow for progressively getting rid of all the entries
    like :class:`GradedHopfAlgebrasWithBasis` which are polluting the
@@ -1423,7 +1423,7 @@ categories of `J`. In particular, it is a finite process.
     ... so we would have an infinite increasing chain of constructible
     categories.
 
-    It's reasonnable to assume that there is a finite number of axioms
+    It's reasonable to assume that there is a finite number of axioms
     defined in the code. There remains to use this assumption to argue
     that any infinite execution of the algorithm would give rise to
     such an infinite sequence.
@@ -1638,7 +1638,7 @@ TESTS:
     Category of integral domains
 
     sage: DivisionRings().Finite() # Wedderburn's theorem
-    Category of finite fields
+    Category of finite enumerated fields
 
     sage: FiniteMonoids().Algebras(QQ)
     Join of Category of monoid algebras over Rational Field
@@ -1677,7 +1677,7 @@ all_axioms += ("Flying", "Blue",
                "Differentiable", "Smooth", "Analytic", "AlmostComplex",
                "FinitelyGeneratedAsMagma",
                "WellGenerated",
-               "Facade", "Finite", "Infinite",
+               "Facade", "Finite", "Infinite","Enumerated",
                "Complete",
                "FiniteDimensional", "Connected", "WithBasis",
                "Irreducible",

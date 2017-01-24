@@ -191,7 +191,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
     `[a',b';c',d']` of `\Gamma_1(N/t,t)` in `{\rm SL}_2(\ZZ)` are equivalent if
     and only if
 
-    .. math::
+    .. MATH::
 
         a \cong a' \pmod{t},
         b \cong b' \pmod{t},

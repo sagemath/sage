@@ -55,6 +55,7 @@ REFERENCES:
 #*****************************************************************************
 from __future__ import print_function
 
+from six.moves import range
 from six import itervalues
 
 from sage.rings.integer_ring import ZZ
@@ -312,13 +313,13 @@ def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
             return False
 
     if skew:
-        for i in xrange(n-1):
-            for j in xrange(i+1, n):
+        for i in range(n-1):
+            for j in range(i+1, n):
                 if M[i,j] != -M[j,i]:
                     if verbose:
                         print("The matrix is not skew")
                     return False
-        for i in xrange(n):
+        for i in range(n):
             if M[i,i] != 1:
                 if verbose:
                     print("The matrix is not skew - diagonal entries must be all 1")
@@ -695,7 +696,7 @@ def RSHCD_324(e):
     and for the case `\epsilon=-1` from the "twist" `M'` of `M`, using Lemma 11
     in [HX10]_. Namely, it turns out that the matrix
 
-    .. math::
+    .. MATH::
 
         M'=\begin{pmatrix} M_{12} & M_{11}\\ M_{11}^\top & M_{21} \end{pmatrix},
         \quad\text{where}\quad
@@ -716,7 +717,7 @@ def RSHCD_324(e):
         sage: from sage.combinat.matrices.hadamard_matrix import RSHCD_324, is_hadamard_matrix
         sage: for e in [1,-1]: # long time
         ....:     M = RSHCD_324(e) # long time
-        ....:     print("{} {} {}".format(M==M.T,is_hadamard_matrix(M),all([M[i,i]==1 for i in xrange(324)]))) # long time
+        ....:     print("{} {} {}".format(M==M.T,is_hadamard_matrix(M),all([M[i,i]==1 for i in range(324)]))) # long time
         ....:     print(set(map(sum,M))) # long time
         True True True
         set([18])
@@ -727,7 +728,8 @@ def RSHCD_324(e):
 
     .. [CP16] \N. Cohen, D. Pasechnik,
        Implementing Brouwer's database of strongly regular graphs,
-       http://arxiv.org/abs/1601.00181
+       Designs, Codes, and Cryptography, 2016
+       :doi:`10.1007/s10623-016-0264-x`
     """
 
     from sage.graphs.generators.smallgraphs import JankoKharaghaniTonchevGraph as JKTG
@@ -1248,7 +1250,7 @@ def szekeres_difference_set_pair(m, check=True):
         from itertools import product, chain
         assert(len(A)==len(B)==m)
         if m>1:
-            assert(sG==set(map(lambda (x,y): x/y, chain(product(A,A), product(B,B)))))
+            assert(sG==set([xy[0]/xy[1] for xy in chain(product(A,A), product(B,B))]))
         assert(all(F.one()/b+F.one() in sG for b in B))
         assert(not any(F.one()/a-F.one() in sG for a in A))
     return G,A,B

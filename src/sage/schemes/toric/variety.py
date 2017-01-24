@@ -235,7 +235,7 @@ cohomology ring `H^*(X,\QQ)` and the rational Chow ring `A^*(X,\QQ) =
 A_{d-*}(X)\otimes \QQ` are isomorphic except for a doubling in
 degree. More precisely, the Chow group has the same rank
 
-  .. math::
+  .. MATH::
 
        A_{d-k}(X) \otimes \QQ \simeq H^{2k}(X,\QQ)
 
@@ -1229,7 +1229,7 @@ class ToricVariety_field(AmbientSpace):
             sage: toric_varieties.P2().dimension_singularities()
             -1
         """
-        for codim in range(0,self.dimension()+1):
+        for codim in range(self.dimension()+1):
             if any(not cone.is_smooth() for cone in self.fan(codim)):
                 return self.dimension() - codim
         return -1
@@ -1736,7 +1736,7 @@ class ToricVariety_field(AmbientSpace):
             sage: TV_res.gens()
             (z0, z1, z2, z3, z4, z5, z6, z7)
             sage: TV_res = TV.resolve(coordinate_names="x+",
-            ...                       make_simplicial=True)
+            ....:                     make_simplicial=True)
             sage: TV_res.gens()
             (x0, x1, x2, x3, x4, x5, x6, x7)
         """
@@ -2135,8 +2135,8 @@ class ToricVariety_field(AmbientSpace):
             [1/3 1/2 1/6]
             sage: A = P2_123.Chow_group(QQ)
             sage: matrix([ [ A(P2_123.divisor(i))
-            ...              .intersection_with_divisor(P2_123.divisor(j))
-            ...              .count_points() for i in range(0,3) ] for j in range(0,3) ])
+            ....:            .intersection_with_divisor(P2_123.divisor(j))
+            ....:            .count_points() for i in range(0,3) ] for j in range(0,3) ])
             [2/3   1 1/3]
             [  1 3/2 1/2]
             [1/3 1/2 1/6]
@@ -2203,7 +2203,7 @@ class ToricVariety_field(AmbientSpace):
             True
         """
         assert self.is_orbifold(), "Requires the toric variety to be an orbifold."
-        c = prod([ 1+self.cohomology_ring().gen(i) for i in range(0,self._fan.nrays()) ])
+        c = prod([ 1+self.cohomology_ring().gen(i) for i in range(self._fan.nrays()) ])
         if deg is None:
             return c
         else:
@@ -2246,7 +2246,7 @@ class ToricVariety_field(AmbientSpace):
         assert self.is_orbifold(), "Requires the toric variety to be an orbifold."
         n_rels = self._fan.nrays() - self.dimension()
         ch = sum([ self.cohomology_ring().gen(i).exp()
-                   for i in range(0,self._fan.nrays()) ]) - n_rels
+                   for i in range(self._fan.nrays()) ]) - n_rels
         if deg is None:
             return ch
         else:
@@ -2336,7 +2336,7 @@ class ToricVariety_field(AmbientSpace):
             else:
                 chi=0
                 H = self.cohomology_basis()
-                for d in range(0, self.dimension()+1):
+                for d in range(self.dimension()+1):
                     chi += (-1)**d * len(H[d])
             self._chi = chi
         return self._chi
@@ -2382,7 +2382,7 @@ class ToricVariety_field(AmbientSpace):
             sage: dP6.coordinate_ring()
             Multivariate Polynomial Ring in x, u, y, v, z, w
             over Rational Field
-            sage: dP6.divisor(range(6))
+            sage: dP6.divisor(list(range(6)))
             V(u) + 2*V(y) + 3*V(v) + 4*V(z) + 5*V(w)
             sage: dP6.inject_variables()
             Defining x, u, y, v, z, w
@@ -2952,7 +2952,7 @@ def normalize_names(names=None, ngens=None, prefix=None, indices=None,
     Now suppose that you want to enumerate your variables starting with one
     instead of zero::
 
-        sage: normalize_names("x+", 4, indices=range(1,5))
+        sage: normalize_names("x+", 4, indices=list(range(1,5)))
         ['x1', 'x2', 'x3', 'x4']
 
     You may actually have an arbitrary enumeration scheme::
@@ -2987,7 +2987,7 @@ def normalize_names(names=None, ngens=None, prefix=None, indices=None,
     Let's now use all parameters at once::
 
         sage: normalize_names("x, y, s+", 4, prefix="t",
-        ....:     indices=range(1,5), return_prefix=True)
+        ....:     indices=list(range(1,5)), return_prefix=True)
         ['x', 'y', 's3', 's4', 's']
 
     Note that you still need to give indices for all names, even if some of
@@ -3295,7 +3295,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
             ([z], [z], [z])
         """
         if "_gens" not in self.__dict__:
-            self._gens = tuple( self.gen(i) for i in range(0,self._variety.fan().nrays()) )
+            self._gens = tuple( self.gen(i) for i in range(self._variety.fan().nrays()) )
         return self._gens
 
     def gen(self, i):
@@ -3519,4 +3519,3 @@ class CohomologyClass(QuotientRingElement):
         for d in range(1,self.parent()._variety.dimension()+1):
             exp_x += self**d / factorial(d)
         return exp_x
-

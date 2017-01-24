@@ -21,9 +21,10 @@ cdef extern from *: # hack to get at cython macro
     int unlikely(int)
     int likely(int)
 
+from sage.structure.sage_object cimport richcmp
 from sage.libs.singular.decl cimport ideal, ring, poly, currRing
 from sage.libs.singular.decl cimport rChangeCurrRing
-from sage.libs.singular.decl cimport new_skStrategy, delete_skStrategy, idRankFreeModule
+from sage.libs.singular.decl cimport new_skStrategy, delete_skStrategy, id_RankFreeModule
 from sage.libs.singular.decl cimport initEcartBBA, enterSBba, initBuchMoraCrit, initS, pNorm, id_Delete, kTest
 from sage.libs.singular.decl cimport omfree, redNF, p_Copy, redtailBba
 
@@ -117,7 +118,7 @@ cdef class GroebnerStrategy(SageObject):
         cdef ideal *i = sage_ideal_to_singular_ideal(L)
         self._strat = new_skStrategy()
 
-        self._strat.ak = idRankFreeModule(i, R._ring)
+        self._strat.ak = id_RankFreeModule(i, R._ring)
         #- creating temp data structures
         initBuchMoraCrit(self._strat)
         self._strat.initEcart = initEcartBBA
@@ -216,7 +217,7 @@ cdef class GroebnerStrategy(SageObject):
         """
         return self._parent
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         EXAMPLE::
 
@@ -230,10 +231,13 @@ cdef class GroebnerStrategy(SageObject):
             sage: strat == GroebnerStrategy(I)
             False
         """
-        if not isinstance(other, GroebnerStrategy):
-            return cmp(type(self),other(type))
-        else:
-            return cmp(self._ideal.gens(),(<GroebnerStrategy>other)._ideal.gens())
+        try:
+            lx = <GroebnerStrategy?>self
+            rx = <GroebnerStrategy?>other
+        except TypeError:
+            return NotImplemented
+        return richcmp(lx._ideal.gens(),
+                       rx._ideal.gens(), op)
 
     def __reduce__(self):
         """
@@ -353,7 +357,7 @@ cdef class NCGroebnerStrategy(SageObject):
         cdef ideal *i = sage_ideal_to_singular_ideal(L)
         self._strat = new_skStrategy()
 
-        self._strat.ak = idRankFreeModule(i, R._ring)
+        self._strat.ak = id_RankFreeModule(i, R._ring)
         #- creating temp data structures
         initBuchMoraCrit(self._strat)
         self._strat.initEcart = initEcartBBA
@@ -450,7 +454,7 @@ cdef class NCGroebnerStrategy(SageObject):
         """
         return self._parent
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         EXAMPLE::
 
@@ -465,12 +469,13 @@ cdef class NCGroebnerStrategy(SageObject):
             sage: strat == NCGroebnerStrategy(I)
             False
         """
-        if not isinstance(other, NCGroebnerStrategy):
-            return cmp(type(self),other(type))
-        else:
-            return cmp((self._ideal.gens(),self._ideal.side()),
-                       ((<NCGroebnerStrategy>other)._ideal.gens(),
-                        (<NCGroebnerStrategy>other)._ideal.side()))
+        try:
+            lx = <NCGroebnerStrategy?>self
+            rx = <NCGroebnerStrategy?>other
+        except TypeError:
+            return NotImplemented
+        return richcmp((lx._ideal.gens(), lx._ideal.side()),
+                       (rx._ideal.gens(), rx._ideal.side()), op)
 
     def __reduce__(self):
         """

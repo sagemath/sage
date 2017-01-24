@@ -5,6 +5,10 @@ from sage.structure.parent cimport Parent
 from sage.libs.singular.function cimport RingWrap
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 
+from sage.libs.singular.decl cimport wFunctionalBuch
+
+from sage.libs.singular.decl cimport p_Totaldegree
+
 cdef extern from *:
     ctypedef long Py_hash_t
 

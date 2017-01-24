@@ -13,6 +13,7 @@ Functions
 ---------
 """
 from __future__ import print_function
+from six.moves import range
 
 
 def product(m):
@@ -93,7 +94,7 @@ def product(m):
         k += 1
 
     m = new_m
-    f = range(n+1)  # focus pointer
+    f = list(range(n + 1))  # focus pointer
     o = [1] * n     # switch +1 or -1
     a = [0] * n     # current element of the product
 
@@ -163,7 +164,7 @@ def combinations(n,t):
 
         sage: c = combinations(Infinity,4)
         sage: s = set([0,1,2,3])
-        sage: for _ in xrange(10):
+        sage: for _ in range(10):
         ....:     i,j = next(c)
         ....:     s.remove(i); s.add(j)
         ....:     print(s)
@@ -177,7 +178,7 @@ def combinations(n,t):
         set([2, 3, 4, 5])
         set([1, 3, 4, 5])
         set([0, 3, 4, 5])
-        sage: for _ in xrange(1000):
+        sage: for _ in range(1000):
         ....:     i,j = next(c)
         ....:     s.remove(i); s.add(j)
         sage: s
@@ -230,7 +231,7 @@ def _revolving_door_odd(n,t):
         True
     """
     # note: the numerotation of the steps below follows Kunth TAOCP
-    c = range(t) + [n]    # the combination (ordered list of numbers of length t+1)
+    c = list(range(t)) + [n]    # the combination (ordered list of numbers of length t+1)
 
     while True:
         # R3 : easy case
@@ -276,7 +277,7 @@ def _revolving_door_even(n,t):
     """
     # note: the numerotation of the setps below follows Kunth TAOCP
 
-    c = range(t) + [n]    # the combination (ordered list of numbers of length t+1)
+    c = list(range(t)) + [n]    # the combination (ordered list of numbers of length t+1)
 
     while True:
         # R3 : easy case

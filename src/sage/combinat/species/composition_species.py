@@ -226,7 +226,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
              p[1, 1, 1] + p[2, 1] + p[3],
              p[1, 1, 1, 1] + p[2, 1, 1] + p[2, 2] + p[3, 1] + p[4]]
 
-        Here we (indirectly) check that the the cycle index series for
+        Here we (indirectly) check that the cycle index series for
         permutations weighted by the number of cycles is correctly
         computed.
 

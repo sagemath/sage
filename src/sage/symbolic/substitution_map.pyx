@@ -18,8 +18,8 @@ back to Python.
 #*****************************************************************************
 
 
-from .ginac cimport *
-from sage.symbolic.expression cimport *
+from sage.libs.pynac.pynac cimport *
+from sage.symbolic.expression cimport Expression, new_Expression_from_GEx
 
 
 cdef class SubstitutionMap(SageObject):

@@ -38,7 +38,7 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #########################################################################
-
+from six.moves import range
 from sage.rings.all import Integer
 from sage.misc.all import verbose
 from sage.matrix.all import Matrix
@@ -406,12 +406,12 @@ def _convert_matrix_from_modsyms(symbs, T):
 
     # compute the q-expansions of some cusp forms and their
     # images under T_n
-    for i in xrange(d**2):
-        v = X([ hecke_matrix_ls[m][i] for m in xrange(r) ])
+    for i in range(d**2):
+        v = X([ hecke_matrix_ls[m][i] for m in range(r) ])
         Ynew = Y.span(Y.basis() + [v])
         if Ynew.rank() > Y.rank():
             basis.append(v)
-            basis_images.append(X([ hecke_image_ls[m][i] for m in xrange(r) ]))
+            basis_images.append(X([ hecke_image_ls[m][i] for m in range(r) ]))
             Y = Ynew
             if len(basis) == d: break
 
@@ -421,4 +421,5 @@ def _convert_matrix_from_modsyms(symbs, T):
     bigmat = Matrix(A, basis).augment(Matrix(A, basis_images))
     bigmat.echelonize()
     pivs = bigmat.pivots()
-    return bigmat.matrix_from_rows_and_columns(range(d), [ r+x for x in pivs ]), pivs
+    return bigmat.matrix_from_rows_and_columns(list(range(d)),
+                                               [r + x for x in pivs]), pivs

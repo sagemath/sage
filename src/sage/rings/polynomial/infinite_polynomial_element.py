@@ -88,6 +88,7 @@ finite polynomial rings are merged with infinite polynomial rings::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
@@ -1021,18 +1022,18 @@ class InfinitePolynomial_sparse(RingElement):
             Fsmall = dict([[k[0], [e for e in k[1]]] for k in other.footprint().items()])
             ltbig = slt
             ltsmall = olt
-        # Case 1: one of the Infintie Polynomials is scalar.
+        # Case 1: one of the Infinite Polynomials is scalar.
         if not Fsmall:
             return (rawcmp, 1, ltbig/ltsmall)
         # "not Fbig" is now impossible, because we only consider *global* monomial orderings.
         # These are the occurring shifts:
         Lsmall = sorted(Fsmall.keys())
         Lbig   = sorted(Fbig.keys())
-        P = range(Lbig[-1]+1)
-        gens = xrange(PARENT.ngens())
-        if Lsmall[0]==0:
+        P = list(range(Lbig[-1] + 1))
+        gens = list(range(PARENT.ngens()))
+        if Lsmall[0] == 0:
             if 0 not in Fbig:
-                return (None,1,1)
+                return (None, 1, 1)
             Lsmall.pop(0)
             Lbig.pop(0)
             ExpoSmall = Fsmall[0]
@@ -1136,7 +1137,7 @@ class InfinitePolynomial_sparse(RingElement):
                     res = R(self._p).coefficient(R(monomial._p))
         elif isinstance(monomial, dict):
             if monomial:
-                I = monomial.iterkeys()
+                I = iter(monomial)
                 K = next(I)
                 del monomial[K]
                 res = self.coefficient(K).coefficient(monomial)

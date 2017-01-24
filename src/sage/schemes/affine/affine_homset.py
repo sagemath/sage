@@ -60,7 +60,7 @@ class SchemeHomset_points_spec(sage.schemes.generic.homset.SchemeHomset_generic)
 
     def _element_constructor_(self, *args, **kwds):
         """
-        The element contstructor.
+        The element constructor.
 
         EXAMPLES::
 

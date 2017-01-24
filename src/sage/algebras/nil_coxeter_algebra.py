@@ -143,11 +143,8 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
 
     def k_schur_noncommutative_variables(self, la):
         r"""
-        In type `A^{(1)}` this is the `k`-Schur function in noncommutative variables defined by Thomas Lam.
-
-        REFERENCES:
-
-           .. [Lam2005] \T. Lam, Affine Stanley symmetric functions, Amer. J. Math.  128  (2006),  no. 6, 1553--1586.
+        In type `A^{(1)}` this is the `k`-Schur function in noncommutative variables
+        defined by Thomas Lam [Lam2005]_.
 
         This function is currently only defined in type `A^{(1)}`.
 

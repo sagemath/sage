@@ -322,7 +322,7 @@ class FreeModuleTensor(ModuleElement):
 
     ####### Required methods for ModuleElement (beside arithmetic) #######
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return ``True`` if ``self`` is nonzero and ``False`` otherwise.
 
@@ -336,28 +336,29 @@ class FreeModuleTensor(ModuleElement):
             sage: t.add_comp(e)
             3-indices components w.r.t. Basis (e_0,e_1,e_2) on the
              Rank-3 free module M over the Integer Ring
-            sage: t.__nonzero__()  # unitialized components are zero
+            sage: bool(t)  # unitialized components are zero
             False
             sage: t == 0
             True
             sage: t[e,1,0,2] = 4  # setting a non-zero component in basis e
             sage: t.display()
             4 e_1*e_0*e^2
-            sage: t.__nonzero__()
+            sage: bool(t)
             True
             sage: t == 0
             False
             sage: t[e,1,0,2] = 0
             sage: t.display()
             0
-            sage: t.__nonzero__()
+            sage: bool(t)
             False
             sage: t == 0
             True
-
         """
         basis = self.pick_a_basis()
         return not self._components[basis].is_zero()
+
+    __nonzero__ = __bool__
 
     ##### End of required methods for ModuleElement (beside arithmetic) #####
 
@@ -631,7 +632,7 @@ class FreeModuleTensor(ModuleElement):
             sage: latex(v.display())
             v = 0.333333333333333 e_1 -2.00000000000000 e_2
 
-        The output format is then controled by the argument ``format_spec`` of
+        The output format is then controlled by the argument ``format_spec`` of
         the method :meth:`display`::
 
             sage: v.display(format_spec=10)  # 10 bits of precision
@@ -711,6 +712,136 @@ class FreeModuleTensor(ModuleElement):
 
     disp = display
 
+    def display_comp(self, basis=None, format_spec=None, symbol=None,
+                     latex_symbol=None, index_labels=None,
+                     index_latex_labels=None, only_nonzero=True,
+                     only_nonredundant=False):
+        r"""
+        Display the tensor components with respect to a given module
+        basis, one per line.
+
+        The output is either text-formatted (console mode) or LaTeX-formatted
+        (notebook mode).
+
+        INPUT:
+
+        - ``basis`` -- (default: ``None``) basis of the free module with
+          respect to which the tensor components are defined; if ``None``,
+          the module's default basis is assumed
+        - ``format_spec`` -- (default: ``None``) format specification passed
+          to ``self._fmodule._output_formatter`` to format the output
+        - ``symbol`` -- (default: ``None``) string (typically a single letter)
+          specifying the symbol for the components; if ``None``, the tensor
+          name is used if it has been set, otherwise ``'X'`` is used
+        - ``latex_symbol`` -- (default: ``None``) string specifying the LaTeX
+          symbol for the components; if ``None``, the tensor LaTeX name
+          is used if it has been set, otherwise ``'X'`` is used
+        - ``index_labels`` -- (default: ``None``) list of strings representing
+          the labels of each of the individual indices; if ``None``, integer
+          labels are used
+        - ``index_latex_labels`` -- (default: ``None``) list of strings
+          representing the LaTeX labels of each of the individual indices; if
+          ``None``, integers labels are used
+        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+          nonzero components are displayed
+        - ``only_nonredundant`` -- (default: ``False``) boolean; if ``True``,
+          only nonredundant components are displayed in case of symmetries
+
+        EXAMPLES:
+
+        Display of the components of a type-`(2,1)` tensor on a rank 2
+        vector space over `\QQ`::
+
+            sage: FiniteRankFreeModule._clear_cache_() # for doctests only
+            sage: M = FiniteRankFreeModule(QQ, 2, name='M', start_index=1)
+            sage: e = M.basis('e')
+            sage: t = M.tensor((2,1), name='T', sym=(0,1))
+            sage: t[1,2,1], t[1,2,2], t[2,2,2] = 2/3, -1/4, 3
+            sage: t.display()
+            T = 2/3 e_1*e_2*e^1 - 1/4 e_1*e_2*e^2 + 2/3 e_2*e_1*e^1
+                - 1/4 e_2*e_1*e^2 + 3 e_2*e_2*e^2
+            sage: t.display_comp()
+            T^12_1 = 2/3
+            T^12_2 = -1/4
+            T^21_1 = 2/3
+            T^21_2 = -1/4
+            T^22_2 = 3
+
+        The LaTeX output for the notebook::
+
+            sage: latex(t.display_comp())
+            \begin{array}{lcl} T_{\phantom{\, 1}\phantom{\, 2}\,1}^{\,1\,2\phantom{\, 1}}
+             & = & \frac{2}{3} \\ T_{\phantom{\, 1}\phantom{\, 2}\,2}^{\,1\,2\phantom{\, 2}}
+             & = & -\frac{1}{4} \\ T_{\phantom{\, 2}\phantom{\, 1}\,1}^{\,2\,1\phantom{\, 1}}
+             & = & \frac{2}{3} \\ T_{\phantom{\, 2}\phantom{\, 1}\,2}^{\,2\,1\phantom{\, 2}}
+             & = & -\frac{1}{4} \\ T_{\phantom{\, 2}\phantom{\, 2}\,2}^{\,2\,2\phantom{\, 2}}
+             & = & 3 \end{array}
+
+        By default, only the non-vanishing components are displayed; to see
+        all the components, the argument ``only_nonzero`` must be set to
+        ``False``::
+
+            sage: t.display_comp(only_nonzero=False)
+            T^11_1 = 0
+            T^11_2 = 0
+            T^12_1 = 2/3
+            T^12_2 = -1/4
+            T^21_1 = 2/3
+            T^21_2 = -1/4
+            T^22_1 = 0
+            T^22_2 = 3
+
+        ``t`` being symmetric w.r.t. to its first two indices, one may ask to
+        skip the components that can be deduced by symmetry::
+
+            sage: t.display_comp(only_nonredundant=True)
+            T^12_1 = 2/3
+            T^12_2 = -1/4
+            T^22_2 = 3
+
+        The index symbols can be customized::
+
+            sage: t.display_comp(index_labels=['x', 'y'])
+            T^xy_x = 2/3
+            T^xy_y = -1/4
+            T^yx_x = 2/3
+            T^yx_y = -1/4
+            T^yy_y = 3
+
+        Display of the components w.r.t. a basis different from the
+        default one::
+
+            sage: f = M.basis('f', from_family=(-e[1]+e[2], e[1]+e[2]))
+            sage: t.display_comp(basis=f)
+            T^11_1 = 29/24
+            T^11_2 = 13/24
+            T^12_1 = 3/4
+            T^12_2 = 3/4
+            T^21_1 = 3/4
+            T^21_2 = 3/4
+            T^22_1 = 7/24
+            T^22_2 = 23/24
+
+        """
+        if basis is None:
+            basis = self._fmodule._def_basis
+        if self._name is not None:
+            symbol = self._name
+        else:
+            symbol = 'X'
+        if self._latex_name is not None:
+            latex_symbol = self._latex_name
+        else:
+            latex_symbol = 'X'
+        index_positions = self._tensor_type[0]*'u' + self._tensor_type[1]*'d'
+        return self.comp(basis).display(symbol,
+                                        latex_symbol=latex_symbol,
+                                        index_positions=index_positions,
+                                        index_labels=index_labels,
+                                        index_latex_labels=index_latex_labels,
+                                        format_spec=format_spec,
+                                        only_nonzero=only_nonzero,
+                                        only_nonredundant=only_nonredundant)
 
     def view(self, basis=None, format_spec=None):
         r"""

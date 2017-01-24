@@ -180,6 +180,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.structure.sage_object import SageObject
 from sage.structure.element import Element
@@ -291,8 +292,8 @@ class Factorization(SageObject):
         """
         if not isinstance(x, list):
             raise TypeError("x must be a list")
-        for i in xrange(len(x)):
-            t=x[i]
+        for i in range(len(x)):
+            t = x[i]
             if not (isinstance(t, tuple) and len(t) == 2):
                 raise TypeError("x must be a list of pairs (p, e) with e an integer")
             if not isinstance(t[1],(int, long, Integer)):

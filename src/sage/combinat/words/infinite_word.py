@@ -28,7 +28,7 @@ over an alphabet `A`::
 ::
 
     sage: def t(n):
-    ...       return add(Integer(n).digits(base=2)) % 2
+    ....:     return add(Integer(n).digits(base=2)) % 2
     sage: Word(t, alphabet = [0, 1])
     word: 0110100110010110100101100110100110010110...
 
@@ -73,6 +73,8 @@ Infinite words in a specific combinatorial class::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
+
 from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.words.word_options import word_options
 from sage.rings.all import Infinity
@@ -86,7 +88,7 @@ class InfiniteWord_class(Word_class):
 
             sage: Word(iter([1,2,3]), length="unknown")._repr_()
             'word: 123'
-            sage: Word(xrange(100), length="unknown")._repr_()
+            sage: Word(range(100), length="unknown")._repr_()
             'word: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,...'
             sage: Word(lambda x:x%3)._repr_()
             'word: 0120120120120120120120120120120120120120...'

@@ -7,7 +7,7 @@ Introduction
 This tutorial outlines the construction of Brandt modules in Sage. The
 importance of this construction is that it provides us with a method
 to compute modular forms on `\Gamma_0(N)` as outlined in Pizer's paper
-[Pizer]_. In fact there exists a non-canonical Hecke algebra isomorphism
+[Piz1980]_. In fact there exists a non-canonical Hecke algebra isomorphism
 between the Brandt modules and a certain subspace of
 `S_{2}(\Gamma_0(pM))` which contains all the newforms.
 
@@ -147,10 +147,8 @@ EXAMPLES::
 
 REFERENCES:
 
-.. [Pizer] Arnold Pizer, *An Algorithm for Computing Modular Forms on* `\Gamma_{0}(N)`
-
-.. [Kohel] David Kohel, *Hecke Module Structure of Quaternions*
-
+- [Piz1980]_
+- [Koh2000]_
 
 Further Examples
 ----------------
@@ -305,7 +303,7 @@ def class_number(p, r, M):
     Return the class number of an order of level `N = p^r M` in the
     quaternion algebra over `\QQ` ramified precisely at `p` and infinity.
 
-    This is an implementation of Theorem 1.12 of [Pizer]_.
+    This is an implementation of Theorem 1.12 of [Piz1980]_.
 
     INPUT:
 
@@ -341,7 +339,7 @@ def maximal_order(A):
     Return a maximal order in the quaternion algebra ramified
     at `p` and infinity.
 
-    This is an implementation of Proposition 5.2 of [Pizer]_.
+    This is an implementation of Proposition 5.2 of [Piz1980]_.
 
     INPUT:
 

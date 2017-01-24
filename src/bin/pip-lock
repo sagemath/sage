@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+
+# We should avoid running pip while uninstalling a package because that
+# is prone to race conditions. This script runs pip under a lock.
+# For details, see https://trac.sagemath.org/ticket/21672
+
+
+import sys
+import os
+import fcntl
+
+
+# Parse commandline (really just argv[1]).
+# By default, we apply an exclusive (write) lock. If the string "SHARED"
+# is given as first argument, we apply a shared (read) lock instead.
+
+locktype = fcntl.LOCK_EX
+if len(sys.argv) >= 1 and sys.argv[1] == "SHARED":
+    sys.argv.pop(1)
+    locktype = fcntl.LOCK_SH
+sys.argv[0] = "pip"
+
+
+# Open lockfile and lock it
+lockdir = os.path.join(sys.prefix, "var", "lock")
+try:
+    os.makedirs(lockdir)
+except OSError:
+    if not os.path.isdir(lockdir):
+        raise
+
+lockfile = os.path.join(lockdir, "pip.lock")
+lock = open(lockfile, "w+")
+
+# First try a non-blocking lock such that we can give an informative
+# message while the user is waiting.
+try:
+    fcntl.flock(lock, locktype | fcntl.LOCK_NB)
+except IOError:
+    if locktype == fcntl.LOCK_SH:
+        kind = "shared"
+    else:
+        kind = "exclusive"
+    sys.stderr.write("Waiting for {0} lock to run {1} ... ".format(kind, " ".join(sys.argv)))
+    sys.stderr.flush()
+    fcntl.flock(lock, locktype)
+    sys.stderr.write("ok\n")
+    sys.stderr.flush()
+
+
+# Finally run pip (in this Python session).
+# Note that the import of pkg_resources must happen under the lock!
+from pkg_resources import load_entry_point
+sys.exit(
+    load_entry_point('pip', 'console_scripts', 'pip')()
+)

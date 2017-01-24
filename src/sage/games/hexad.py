@@ -53,19 +53,13 @@ David Joyner (2006-05)
 
 REFERENCES:
 
-.. [Cur84] \R. Curtis, The Steiner system `S(5,6,12)`, the Mathieu
-   group `M_{12}`, and the kitten. *Computational group theory*,
-   ed. M. Atkinson, Academic Press, 1984.
+- [Cu1984]_
 
-.. [Con84] \J. Conway, Hexacode and tetracode - MINIMOG and MOG.
-   *Computational group theory*, ed. M. Atkinson, Academic Press, 1984.
+- [Co1984]_
 
-.. [ConSlo86] \J. Conway and N. Sloane. *Lexicographic codes: error-correcting
-   codes from game theory*, IEEE Trans. Infor. Theory **32** (1986) 337-348.
+- [CS1986]_
 
-.. [KahRyb01] \J. Kahane and A. Ryba. *The hexad game*,
-   Electronic Journal of Combinatorics, **8** (2001)
-   http://www.combinatorics.org/Volume_8/Abstracts/v8i2r11.html
+- [KR2001]_
 
 Some details are also online at:  http://www.permutationpuzzles.org/hexad/
 """
@@ -89,7 +83,7 @@ from sage.calculus.calculus import SR
 def view_list(L):
     """
     This provides a printout of the lines, crosses and squares
-    of the MINIMOG, as in Curtis' paper [Cur84]_.
+    of the MINIMOG, as in Curtis' paper [Cu1984]_.
 
     EXAMPLES::
 
@@ -513,7 +507,7 @@ class Minimog(object):
             The 3 "points at infinity" are
             ``{MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}``.
 
-        Theorem ([Cur84]_,  [Con84]_): Each hexads is of exactly one
+        Theorem ([Cu1984]_,  [Co1984]_): Each hexads is of exactly one
         of the following types:
 
         0. {3 "points at infinity"} union {any line},
@@ -548,7 +542,7 @@ class Minimog(object):
 
         David Joyner (2006-05)
 
-        REFERENCES: [Cur84]_,  [Con84]_
+        REFERENCES: [Cu1984]_,  [Co1984]_
         """
         MINIMOG = self.minimog
         L = set(pts)
@@ -663,7 +657,7 @@ class Minimog(object):
         to the MINIMOG of in the "shuffle numbering" rather than the
         "modulo `11` labeling".
 
-        **Proposition** ([KahRyb01]_) For this Steiner system, the
+        **Proposition** ([KR2001]_) For this Steiner system, the
         winning strategy is to choose a move which is a hexad from
         this system.
 
@@ -702,7 +696,7 @@ class Minimog(object):
 
         David Joyner (2006-05)
 
-        REFERENCES: [ConSlo86]_, [KahRyb01]_
+        REFERENCES: [CS1986]_, [KR2001]_
         """
         total = sum(L0)
         if total < 22:

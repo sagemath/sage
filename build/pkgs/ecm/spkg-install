@@ -7,21 +7,6 @@ fi
 
 cd src/
 
-###############################################################################
-# Apply patches (if any):
-###############################################################################
-
-# Apply patches.  See SPKG.txt for information about what each patch
-# does.
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 # Use newer version of config.guess and config.sub (see Trac #19724)
 cp "$SAGE_ROOT"/config/config.* .
 
@@ -147,11 +132,11 @@ else
         # The compiler supports '-march=native', but the assembler might not
         # support (some of) the instructions emitted with this (e.g. the
         # Apple assembler doesn't know AVX yet).
-        cat >foo.c <<-"EOF"
-		double d;
-		unsigned long fancy_insns() { return (unsigned long) d; }
-		int main () { return 0; }
-	EOF
+        cat >foo.c <<EOF
+                double d;
+                unsigned long fancy_insns() { return (unsigned long) d; }
+                int main () { return 0; }
+EOF
         if $CC -march=native -o foo foo.c &>/dev/null && ./foo >/dev/null; then
             cpu_params="-march=native"
         else

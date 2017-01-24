@@ -51,6 +51,8 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 
+from six.moves import range
+
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
@@ -968,10 +970,10 @@ class RealReflectionGroup(ComplexReflectionGroup):
             else:
                 raise ValueError('side must be "left" or "right"')
             if on_space == "primal":
-                return sum(vec[j] * Phi[w(j+1) - 1] for j in xrange(n))
+                return sum(vec[j] * Phi[w(j+1) - 1] for j in range(n))
             elif on_space == "dual":
                 w = ~w
-                return sum(Phi[w(j+1) - 1]*vec[j] for j in xrange(n))
+                return sum(Phi[w(j+1) - 1]*vec[j] for j in range(n))
             else:
                 raise ValueError('on_space must be "primal" or "dual"')
 

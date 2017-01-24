@@ -906,7 +906,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             sage: G = polygon([(0,0,1), (1,1,1), (2,0,1)])
             sage: G.json_repr(G.default_render_params())
-            ["{vertices:[{x:0,y:0,z:1},{x:1,y:1,z:1},{x:2,y:0,z:1}],faces:[[0,1,2]],color:'#0000ff'}"]
+            ["{vertices:[{x:0,y:0,z:1},{x:1,y:1,z:1},{x:2,y:0,z:1}], faces:[[0,1,2]], color:'#0000ff', opacity:1}"]
 
         A simple colored one::
 
@@ -918,7 +918,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: t_list=[Texture(col[i]) for i in range(10)]
             sage: S = IndexFaceSet(face_list, point_list, texture_list=t_list)
             sage: S.json_repr(S.default_render_params())
-            ["{vertices:[{x:2,y:0,z:0},{x:0,y:2,z:0},{x:0,y:0,z:2},{x:0,y:1,z:1},{x:1,y:0,z:1},{x:1,y:1,z:0}],faces:[[0,4,5],[3,4,5],[2,3,4],[1,3,5]],face_colors:['#ff0000','#ff9900','#cbff00','#33ff00']}"]
+            ["{vertices:[{x:2,y:0,z:0},..., face_colors:['#ff0000','#ff9900','#cbff00','#33ff00'], opacity:1}"]
         """
         cdef Transformation transform = render_params.transform
         cdef point_c res
@@ -938,18 +938,20 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         faces_str = "[{}]".format(",".join([format_json_face(self._faces[i])
                                             for i from 0 <= i < self.fcount]))
+        opacity = self._extra_kwds.get('opacity', 1)
+
         if self.global_texture:
             color_str = "'#{}'".format(self.texture.hex_rgb())
-            return ["{vertices:%s,faces:%s,color:%s}" %
-                    (vertices_str, faces_str, color_str)]
+            return ["{{vertices:{}, faces:{}, color:{}, opacity:{}}}".format(
+                    vertices_str, faces_str, color_str, opacity)]
         else:
             color_str = "[{}]".format(",".join(["'{}'".format(
                     Color(self._faces[i].color.r,
                           self._faces[i].color.g,
                           self._faces[i].color.b).html_color())
                                             for i from 0 <= i < self.fcount]))
-            return ["{vertices:%s,faces:%s,face_colors:%s}" %
-                    (vertices_str, faces_str, color_str)]
+            return ["{{vertices:{}, faces:{}, face_colors:{}, opacity:{}}}".format(
+                    vertices_str, faces_str, color_str, opacity)]
 
     def obj_repr(self, render_params):
         """
@@ -1082,14 +1084,15 @@ cdef class IndexFaceSet(PrimitiveObject):
         cdef Py_ssize_t i, j, ix, ff
         cdef IndexFaceSet dual = IndexFaceSet([], **kwds)
         cdef int incoming, outgoing
+        cdef dict dd
 
         dual.realloc(self.fcount, self.vcount, self.icount)
 
-        sig_on()
         # is using dicts overly-heavy?
         dual_faces = [{} for i from 0 <= i < self.vcount]
 
         for i from 0 <= i < self.fcount:
+            sig_check()
             # Let the vertex be centered on the face according to a simple average
             face = &self._faces[i]
             dual.vs[i] = self.vs[face.vertices[0]]
@@ -1113,6 +1116,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         i = 0
         ix = 0
         for dd in dual_faces:
+            sig_check()
             face = &dual._faces[i]
             face.n = len(dd)
             if face.n == 0: # skip unused vertices
@@ -1129,7 +1133,6 @@ cdef class IndexFaceSet(PrimitiveObject):
         dual.vcount = self.fcount
         dual.fcount = i
         dual.icount = ix
-        sig_off()
 
         return dual
 

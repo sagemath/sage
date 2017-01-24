@@ -18,7 +18,7 @@ EXAMPLES::
     sage: P[12:23].list()
     [41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83]
 
-    sage: f = lazy_list((i**2-3*i for i in xrange(10)))
+    sage: f = lazy_list((i**2 - 3*i for i in range(10)))
     sage: print(" ".join(str(i) for i in f))
     0 -2 -2 0 4 10 18 28 40 54
     sage: i1 = iter(f)
@@ -271,7 +271,7 @@ def slice_unpickle(master, start, stop, step):
     TESTS::
 
         sage: from sage.misc.lazy_list import slice_unpickle
-        sage: slice_unpickle(range(35), 1, 3, 7) == range(35)[1:3:7]
+        sage: slice_unpickle(list(range(35)), 1, 3, 7) == list(range(35))[1:3:7]
         True
     """
     return master[start:stop:step]
@@ -756,7 +756,7 @@ cdef class lazy_list_generic(object):
 
         ::
 
-            sage: l = lazy_list(i^2 for i in xrange(5))
+            sage: l = lazy_list(i ** 2 for i in range(5))
             sage: list(l)
             [0, 1, 4, 9, 16]
             sage: l._info()
@@ -840,7 +840,8 @@ cdef class lazy_list_generic(object):
 
         We check commutation::
 
-            sage: l = lazy_list(iter(xrange(10000)))
+            sage: from six.moves import range
+            sage: l = lazy_list(iter(range(10000)))
             sage: l1 = l[::2][:3001]
             sage: l2 = l[:6002][::2]
             sage: l1._info()

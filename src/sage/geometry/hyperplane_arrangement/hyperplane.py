@@ -90,9 +90,12 @@ Which you can't do with hyperplane arrangements::
     Arrangement <y | x | x + y - 1 | 3*x + 2*y - 5*z - 7>
     sage: arrangement + x
     Traceback (most recent call last):
-    TypeError: unsupported operand type(s) for +:
-    'HyperplaneArrangements_with_category.element_class' and 
-    'HyperplaneArrangements_with_category.element_class'
+    ...
+    TypeError: unsupported operand parent(s) for '+':
+    'Hyperplane arrangements in 3-dimensional linear space
+         over Rational Field with coordinates x, y, z' and
+    'Hyperplane arrangements in 3-dimensional linear space
+         over Rational Field with coordinates x, y, z'
 """
 
 #*****************************************************************************

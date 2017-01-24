@@ -77,10 +77,7 @@ class HochschildComplex(UniqueRepresentation, CategoryObject):
 
     - :wikipedia:`Hochschild_homology`
     - https://ncatlab.org/nlab/show/Hochschild+cohomology
-
-    .. [Redondo] Maria Julia Redondo.
-       *Hochschild cohomology: some methods for computations*.
-       http://inmabb.criba.edu.ar/gente/mredondo/crasp.pdf
+    - [Red2001]_
     """
     def __init__(self, A, M):
         """
@@ -92,14 +89,14 @@ class HochschildComplex(UniqueRepresentation, CategoryObject):
             sage: T = SGA.trivial_representation()
             sage: H = SGA.hochschild_complex(T)
 
-        We skip the category test because the category containment
-        tests assumes ``H`` is an instance of :class:`Parent`::
+            sage: H.category()
+            Category of chain complexes over Rational Field
+            sage: H in ChainComplexes(QQ)
+            True
 
-            sage: TestSuite(H).run(skip="_test_category")
-            sage: H.category() == ChainComplexes(QQ)
-            True
-            sage: H in ChainComplexes(QQ) # known bug
-            True
+        Some methods required by the category are not implemented::
+
+            sage: TestSuite(H).run()  # known bug (#21386)
         """
         self._A = A
         self._M = M

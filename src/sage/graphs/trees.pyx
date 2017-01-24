@@ -35,19 +35,19 @@ cdef class TreeIterator:
 
         sage: from sage.graphs.trees import TreeIterator
         sage: def check_trees(n):
-        ...       trees = []
-        ...       for t in TreeIterator(n):
-        ...           if t.is_tree() == False:
-        ...               return False
-        ...           if t.num_verts() != n:
-        ...               return False
-        ...           if t.num_edges() != n - 1:
-        ...               return False
-        ...           for tree in trees:
-        ...               if tree.is_isomorphic(t) == True:
-        ...                   return False
-        ...           trees.append(t)
-        ...       return True
+        ....:     trees = []
+        ....:     for t in TreeIterator(n):
+        ....:         if t.is_tree() == False:
+        ....:             return False
+        ....:         if t.num_verts() != n:
+        ....:             return False
+        ....:         if t.num_edges() != n - 1:
+        ....:             return False
+        ....:         for tree in trees:
+        ....:             if tree.is_isomorphic(t) == True:
+        ....:                 return False
+        ....:         trees.append(t)
+        ....:     return True
         sage: check_trees(10)
         True
 

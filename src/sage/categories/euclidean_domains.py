@@ -83,11 +83,7 @@ class EuclideanDomains(Category_singleton):
             ALGORITHM:
 
             Naive implementation of the algorithm described in Section 4.8 of
-            Bach & Shallit [BachShallit1996]_.
-
-            .. [BachShallit1996] Eric Bach, Jeffrey Shallit.
-                *Algorithmic Number Theory, Vol. 1: Efficient Algorithms*.
-                MIT Press, 1996. ISBN 978-0262024051.
+            Bach & Shallit [BS1996]_.
 
             EXAMPLES::
 
@@ -241,12 +237,7 @@ class EuclideanDomains(Category_singleton):
 
             ALGORITHM:
 
-            Algorithm 3.2.1 in [Coh1996]_.
-
-            REFERENCES:
-
-            .. [Coh1996] Henri Cohen. *A Course in Computational Algebraic
-               Number Theory*. Springer, 1996.
+            Algorithm 3.2.1 in [Coh1993]_.
 
             EXAMPLES::
 
