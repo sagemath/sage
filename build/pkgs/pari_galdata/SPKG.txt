@@ -3,7 +3,7 @@
 == Description ==
 
 PARI package "galdata": Needed by polgalois to compute Galois group in
-degrees 8 through 11. 
+degrees 8 through 11.
 
 == License ==
 

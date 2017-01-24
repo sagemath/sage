@@ -19,6 +19,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from copy import copy
 from sage.combinat.subset import Subsets
@@ -540,19 +541,21 @@ def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
         # multiply lift by appropriate scalar matrices and adjust (mod M)
         # to find an element of minimal height. These will have
         # coefficients in [-M/2, M/2)
-        for scalar in [y for y in xrange(1, M) if gcd(y,M) == 1]:
-            new_lift = [scalar*x - (scalar*x/M).round()*M for x in init_lift]
-            g = gcd(new_lift)
-            new_lift = [x // g for x in new_lift]
-            if  all([abs(x) <= ht_bound for x in new_lift]):
-                a,b,c,d = new_lift
-                f = (a*z + b) / (c*z + d)
-                if rational_function(f(z)) == f(rational_function(z)):
-                    if return_functions:
-                        valid_auto.append(f)
-                    else:
-                        valid_auto.append(matrix(ZZ,2,2,new_lift))
-                    break
+        for scalar in range(1, M):
+            if gcd(scalar, M) == 1:
+                new_lift = [scalar*x - (scalar*x/M).round()*M
+                            for x in init_lift]
+                g = gcd(new_lift)
+                new_lift = [x // g for x in new_lift]
+                if  all([abs(x) <= ht_bound for x in new_lift]):
+                    a,b,c,d = new_lift
+                    f = (a*z + b) / (c*z + d)
+                    if rational_function(f(z)) == f(rational_function(z)):
+                        if return_functions:
+                            valid_auto.append(f)
+                        else:
+                            valid_auto.append(matrix(ZZ,2,2,new_lift))
+                        break
 
     return valid_auto
 
@@ -800,7 +803,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                             # found some elements of order 'order'
                             # if an element of Aut_{F_p} has been lifted to QQ
                             # remove that element from Aut_{F_p} so we don't
-                            # attempt to lift that element again unecessarily
+                            # attempt to lift that element again unnecessarily
                             automorphisms=remove_redundant_automorphisms(automorphisms,
                                 orderelts, primepowers, temp)
                             if order == 4: #have some elements of order 4

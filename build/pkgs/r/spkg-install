@@ -80,7 +80,11 @@ if [ "$UNAME" = "Darwin" ]; then
     if [ $MACOSX_VERSION -ge 14 ]; then
         echo "OS X 10.$[$MACOSX_VERSION-4] Configuring R without aqua support."
         R_CONFIGURE="--with-aqua=no $R_CONFIGURE"
-    fi 
+    fi
+    if [ $MACOSX_VERSION -ge 16 ]; then
+        echo "OS X 10.$[$MACOSX_VERSION-4] Building with clang."
+        CC=clang
+    fi
 fi
 
 if [ "$UNAME" = "CYGWIN" ]; then
@@ -107,17 +111,6 @@ fi
 
 cd src
 
-# Apply patches.  See SPKG.txt for information about what each patch
-# does.
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 if [ "$UNAME" = "Darwin" ]; then
     # Fixing install_name(s)
     sed -i -e 's:\"-install_name :\"-install_name ${libdir}/R/lib/:' configure
@@ -131,12 +124,12 @@ export SAGE_BUILDING_R=yes
 config()
 {
     ./configure \
-	--prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
-	--with-readline=yes \
-	--with-x=$XSUPPORT \
-	"$R_CONFIGURE_BLAS" \
-	"$R_CONFIGURE_LAPACK" \
-	$R_CONFIGURE
+        --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
+        --with-readline=yes \
+        --with-x=$XSUPPORT \
+        "$R_CONFIGURE_BLAS" \
+        "$R_CONFIGURE_LAPACK" \
+        $R_CONFIGURE
 }
 
 config
@@ -145,8 +138,8 @@ if [ $? -ne 0 ]; then
     XSUPPORT=no
     config
     if [ $? -ne 0 ]; then
-	echo >&2 "Error configuring R."
-	exit 1
+        echo >&2 "Error configuring R."
+        exit 1
     fi
 fi
 

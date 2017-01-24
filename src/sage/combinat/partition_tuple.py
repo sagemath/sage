@@ -257,6 +257,8 @@ subgroup::
 #*****************************************************************************
 from __future__ import print_function, absolute_import
 
+from six.moves import range
+
 import itertools
 
 from .combinat import CombinatorialElement
@@ -1139,8 +1141,8 @@ class PartitionTuple(CombinatorialElement):
             raise ValueError('(comp, row+1, col) must be inside the diagram')
         g = self.initial_tableau().to_list()
         a = g[comp][row][col]
-        g[comp][row][col:] = range(a+col+1, g[comp][row+1][col]+1)
-        g[comp][row+1][:col+1] = range(a, a+col+1)
+        g[comp][row][col:] = list(range(a+col+1, g[comp][row+1][col]+1))
+        g[comp][row+1][:col+1] = list(range(a, a+col+1))
         from .tableau_tuple import TableauTuple
         g = TableauTuple(g)
         g._garnir_cell = (comp,row,col)
@@ -1455,7 +1457,7 @@ class PartitionTuple(CombinatorialElement):
             for row in comp:
                 gens.extend([(c,c+1) for c in range(m+1,m+row)])
                 m+=row
-        gens.append( range(1,self.size()+1) )  # to ensure we get a subgroup of Sym_n
+        gens.append(list(range(1,self.size()+1)))  # to ensure we get a subgroup of Sym_n
         return PermutationGroup( gens )
 
     def young_subgroup_generators(self):
@@ -1978,7 +1980,7 @@ class PartitionTuples_all(PartitionTuples):
              ([], [], [], [])]
         """
         for size in NN:
-            for level in xrange(size+1):
+            for level in range(size+1):
                 for mu in PartitionTuples_level_size(level+1,size-level):
                     yield self._element_constructor_(mu)
 

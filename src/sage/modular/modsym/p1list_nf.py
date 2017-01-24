@@ -580,7 +580,7 @@ class P1NFList(SageObject):
             sage: type(P)
             <class 'sage.modular.modsym.p1list_nf.P1NFList'>
             sage: type(P.list())
-            <type 'list'>
+            <... 'list'>
         """
         return self.__list
 

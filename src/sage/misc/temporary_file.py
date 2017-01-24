@@ -185,21 +185,8 @@ def graphics_filename(ext='.png'):
         True
         sage: fn.endswith('.jpeg')
         True
-
-    Historically, it was also possible to omit the dot. This has been
-    changed in :trac:`16640` but it will still work for now::
-
-        sage: fn = graphics_filename("jpeg")
-        doctest:...: DeprecationWarning: extension must now include the dot
-        See http://trac.sagemath.org/16640 for details.
-        sage: fn.endswith('.jpeg')
-        True
     """
     import sage.plot.plot
-    from sage.misc.superseded import deprecation
-    if ext[0] not in '.-':
-        deprecation(16640, "extension must now include the dot")
-        ext = '.' + ext
     if sage.plot.plot.EMBEDDED_MODE:
         # Don't use this unsafe function except in the notebook, #15515
         i = 0
@@ -208,6 +195,7 @@ def graphics_filename(ext='.png'):
         filename = 'sage%d%s'%(i,ext)
         return filename
     else:
+        from sage.misc.superseded import deprecation
         deprecation(17234,'use tmp_filename instead')
         return tmp_filename(ext=ext)
 

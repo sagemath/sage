@@ -405,7 +405,7 @@ def split_local_cover(self):
     Tries to find subform of the given (positive definite quaternary)
     quadratic form Q of the form
 
-    .. math::
+    .. MATH::
 
         d*x^2 + T(y,z,w)
 

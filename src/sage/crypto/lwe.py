@@ -9,7 +9,7 @@ distribution. See [Reg09]_ for details.
 
 The Ring Learning with Errors problem (LWE) is solving a set of univariate
 polynomial equations - typically in a cyclotomic field - where the right hand
-side was disturbed 'slightly'. See [LPR10]_ for details.
+side was disturbed 'slightly'. See [LPR2010]_ for details.
 
 This module implements generators of LWE samples where parameters are chosen
 following proposals in the cryptographic literature.
@@ -78,23 +78,15 @@ AUTHORS:
 
 REFERENCES:
 
-.. [Reg09] Oded Regev. On Lattices, Learning with Errors, Random Linear Codes,
-   and Cryptography. in Journal of the ACM 56(6). ACM 2009,
-   http://dx.doi.org/10.1145/1060590.1060603
+- [Reg09]_
 
-.. [LP11] Richard Lindner and Chris Peikert. Better key sizes (and attacks) for
-   LWE-based encryption. in Proceeding of the 11th international conference on
-   Topics in cryptology: CT-RSA 2011. Springer 2011,
-   http://dx.doi.org/10.1007/978-3-642-19074-2_21
+- [LP2011]_
 
-.. [LPR10] Vadim Lyubashevsky, Chris Peikert, and Oded Regev. On Ideal Lattices
-   and Learning with Errors over Rings. in Advances in Cryptology -- EUROCRYPT
-   2010. Springer 2010. http://dx.doi.org/10.1007/978-3-642-13190-5_1
+- [LPR2010]_
 
-.. [CGW13] Daniel Cabarcas, Florian Göpfert, and Patrick Weiden. Provably Secure
-   LWE-Encryption with Uniform Secret. Cryptology ePrint Archive, Report
-   2013/164. 2013.  2013/164. http://eprint.iacr.org/2013/164
+- [CGW2013]_
 """
+from six.moves import range
 
 from sage.functions.log import exp, log
 from sage.functions.other import sqrt, floor, ceil
@@ -394,7 +386,7 @@ class Regev(LWE):
 
 class LindnerPeikert(LWE):
     """
-    LWE oracle with parameters as in [LP11]_.
+    LWE oracle with parameters as in [LP2011]_.
 
     .. automethod:: __init__
     """
@@ -402,14 +394,14 @@ class LindnerPeikert(LWE):
         """
         Construct LWE instance parameterised by security parameter ``n`` where
         the modulus ``q`` and the ``stddev`` of the noise is chosen as in
-        [LP11]_.
+        [LP2011]_.
 
         INPUT:
 
         - ``n`` - security parameter (integer > 0)
         - ``delta`` - error probability per symbol (default: 0.01)
         - ``m`` - number of allowed samples or ``None`` in which case ``m=2*n +
-          128`` as in [LP11]_ (default: ``None``)
+          128`` as in [LP2011]_ (default: ``None``)
 
         EXAMPLES::
 
@@ -431,9 +423,9 @@ class LindnerPeikert(LWE):
         c = find_root(2*n*log(c)+n*(1-c**2) + 40*log(2) == 0, 1, 10)
         # Upper bound on s**2/t
         s_t_bound = (sqrt(2) * pi / c / sqrt(2*n*log(2/delta))).n()
-        # Interpretation of "choose q just large enough to allow for a Gaussian parameter s>=8" in [LP11]_
+        # Interpretation of "choose q just large enough to allow for a Gaussian parameter s>=8" in [LP2011]_
         q = next_prime(floor(2**round(log(256 / s_t_bound, 2))))
-        # Gaussian parameter as defined in [LP11]_
+        # Gaussian parameter as defined in [LP2011]_
         s = sqrt(s_t_bound*floor(q/4))
         # Transform s into stddev
         stddev = s/sqrt(2*pi.n())
@@ -443,14 +435,14 @@ class LindnerPeikert(LWE):
 
 class UniformNoiseLWE(LWE):
     """
-    LWE oracle with uniform secret with parameters as in [CGW13]_.
+    LWE oracle with uniform secret with parameters as in [CGW2013]_.
 
     .. automethod:: __init__
     """
     def __init__(self, n, instance='key', m=None):
         """
         Construct LWE instance parameterised by security parameter ``n`` where
-        all other parameters are chosen as in [CGW13]_.
+        all other parameters are chosen as in [CGW2013]_.
 
         INPUT:
 
@@ -462,7 +454,7 @@ class UniformNoiseLWE(LWE):
             (default: ``key``)
 
         - ``m`` - number of allowed samples or ``None`` in which case ``m`` is
-          chosen as in [CGW13_].  (default: ``None``)
+          chosen as in [CGW2013]_.  (default: ``None``)
 
         EXAMPLES::
 
@@ -598,7 +590,7 @@ class RingLWE(SageObject):
 
 class RingLindnerPeikert(RingLWE):
     """
-    Ring-LWE oracle with parameters as in [LP11]_.
+    Ring-LWE oracle with parameters as in [LP2011]_.
 
     .. automethod:: __init__
     """
@@ -606,7 +598,7 @@ class RingLindnerPeikert(RingLWE):
         """
         Construct a Ring-LWE oracle in dimension ``n=phi(N)`` where
         the modulus ``q`` and the ``stddev`` of the noise is chosen as in
-        [LP11]_.
+        [LP2011]_.
 
         INPUT:
 
@@ -630,9 +622,9 @@ class RingLindnerPeikert(RingLWE):
         c = find_root(2*n*log(c)+n*(1-c**2) + 40*log(2) == 0, 1, 10)
         # Upper bound on s**2/t
         s_t_bound = (sqrt(2) * pi / c / sqrt(2*n*log(2/delta))).n()
-        # Interpretation of "choose q just large enough to allow for a Gaussian parameter s>=8" in [LP11]_
+        # Interpretation of "choose q just large enough to allow for a Gaussian parameter s>=8" in [LP2011]_
         q = next_prime(floor(2**round(log(256 / s_t_bound, 2))))
-        # Gaussian parameter as defined in [LP11]_
+        # Gaussian parameter as defined in [LP2011]_
         s = sqrt(s_t_bound*floor(q/4))
         # Transform s into stddev
         stddev = s/sqrt(2*pi.n())
@@ -757,7 +749,7 @@ def samples(m, n, lwe, seed=None, balanced=False, **kwds):
         f = lambda a_c: a_c
     else:
         f = balance_sample
-    return [f(lwe()) for _ in xrange(m)]
+    return [f(lwe()) for _ in range(m)]
 
 def balance_sample(s, q=None):
     r"""
@@ -776,7 +768,7 @@ def balance_sample(s, q=None):
     EXAMPLE::
 
         sage: from sage.crypto.lwe import balance_sample, samples, Regev
-        sage: map(balance_sample, samples(10, 5, Regev))
+        sage: list(map(balance_sample, samples(10, 5, Regev)))
         [((-9, -4, -4, 4, -4), 4), ((-8, 11, 12, -11, -11), -7),
         ...
         ((-11, 12, 0, -6, -3), 7), ((-7, 14, 8, 11, -8), -12)]
@@ -785,7 +777,7 @@ def balance_sample(s, q=None):
         sage: from sage.crypto.lwe import balance_sample, DiscreteGaussianDistributionPolynomialSampler, RingLWE, samples
         sage: D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 5)
         sage: rlwe = RingLWE(20, 257, D)
-        sage: map(balance_sample, samples(10, 8, rlwe))
+        sage: list(map(balance_sample, samples(10, 8, rlwe)))
         [((-7, -37, -64, 107, -91, -24, 120, 54), (74, 83, 18, 55, -53, 43, 4, 10)),
         ...
         ((-63, 34, 82, -112, 49, 89, -72, -41), (117, 43, 13, -37, 102, 55, -97, 56))]

@@ -32,6 +32,8 @@ from sage.rings.integer cimport Integer
 from sage.libs.gmp.mpz cimport mpz_add_ui
 from libcpp.vector cimport vector
 from libcpp.string cimport string
+from sage.structure.sage_object cimport richcmp_not_equal, rich_to_bool
+
 
 cdef class stl_int_vector(SageObject):
     """
@@ -131,7 +133,7 @@ cdef class stl_int_vector(SageObject):
         sig_off()
         return accumulator
 
-    def __cmp__(lhs, stl_int_vector rhs):
+    def __richcmp__(left, stl_int_vector right, int op):
         """
         Compare with ``other``.
 
@@ -140,23 +142,28 @@ cdef class stl_int_vector(SageObject):
             sage: from sage.tests.stl_vector import stl_int_vector
             sage: u = stl_int_vector()
             sage: v = stl_int_vector()
-            sage: cmp(u,v)
-            0
+            sage: u == v
+            True
         """
-        cdef int c = cmp(lhs.data.size(), rhs.data.size())
-        if c != 0:
-            return c
+        cdef stl_int_vector lhs = left
+        cdef stl_int_vector rhs = right
+
+        lx = lhs.data.size()
+        rx = rhs.data.size()
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
+
         cdef vector[int].iterator lhs_iter = lhs.data.begin()
         cdef vector[int].iterator rhs_iter = rhs.data.begin()
         sig_on()
         try:
             while lhs_iter != lhs.data.end():
-                c = cmp(<int>(lhs_iter[0]), <int>(rhs_iter[0]))
-                if c != 0:
-                    return c
+                left_i = <int>(lhs_iter[0])
+                right_i = <int>(rhs_iter[0])
+                if left_i != right_i:
+                    return richcmp_not_equal(left_i, right_i, op)
                 lhs_iter += 1
                 rhs_iter += 1
         finally:
             sig_off()
-        return 0
-
+        return rich_to_bool(op, 0)

@@ -2,19 +2,11 @@
 
 cd src
 
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
+set -e
 
-
-python setup.py install
+$PIP_INSTALL .
 
 # Install the Jupyter notebook configuration
 ETC_JUPYTER="$SAGE_ETC"/jupyter
 mkdir -p "$ETC_JUPYTER"
-cp ../patches/jupyter_notebook_config.py  "$ETC_JUPYTER"/
+cp ../jupyter_notebook_config.py "$ETC_JUPYTER"/

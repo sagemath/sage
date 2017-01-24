@@ -243,7 +243,7 @@ class Category_over_base(CategoryWithParameters):
             sage: Algebras(Fields())._repr_object_names()
             'algebras over fields'
             sage: Algebras(GF(2).category())._repr_object_names()
-            'algebras over (finite fields and subquotients of monoids and quotients of semigroups)'
+            'algebras over (finite enumerated fields and subquotients of monoids and quotients of semigroups)'
         """
         base = self.__base
         if isinstance(base, Category):

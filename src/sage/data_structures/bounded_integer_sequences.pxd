@@ -39,17 +39,17 @@ cdef bint biseq_init_copy(biseq_t R, biseq_t S) except -1
 cdef tuple biseq_pickle(biseq_t S)
 cdef bint biseq_unpickle(biseq_t R, tuple bitset_data, mp_bitcnt_t itembitsize, mp_size_t length) except -1
 cdef bint biseq_init_list(biseq_t R, list data, size_t bound) except -1
-cdef inline Py_hash_t biseq_hash(biseq_t S)
-cdef inline int biseq_cmp(biseq_t S1, biseq_t S2)
+cdef Py_hash_t biseq_hash(biseq_t S)
+cdef bint biseq_richcmp(biseq_t S1, biseq_t S2, int op)
 cdef bint biseq_init_concat(biseq_t R, biseq_t S1, biseq_t S2) except -1
-cdef inline bint biseq_startswith(biseq_t S1, biseq_t S2) except -1
+cdef bint biseq_startswith(biseq_t S1, biseq_t S2) except -1
 cdef mp_size_t biseq_contains(biseq_t S1, biseq_t S2, mp_size_t start) except -2
 cdef mp_size_t biseq_startswith_tail(biseq_t S1, biseq_t S2, mp_size_t start) except -2
 cdef mp_size_t biseq_index(biseq_t S, size_t item, mp_size_t start) except -2
 cdef size_t biseq_getitem(biseq_t S, mp_size_t index)
 cdef biseq_getitem_py(biseq_t S, mp_size_t index)
-cdef inline void biseq_inititem(biseq_t S, mp_size_t index, size_t item)
-cdef inline void biseq_clearitem(biseq_t S, mp_size_t index)
+cdef void biseq_inititem(biseq_t S, mp_size_t index, size_t item)
+cdef void biseq_clearitem(biseq_t S, mp_size_t index)
 cdef bint biseq_init_slice(biseq_t R, biseq_t S, mp_size_t start, mp_size_t stop, mp_size_t step) except -1
 
 cdef class BoundedIntegerSequence:

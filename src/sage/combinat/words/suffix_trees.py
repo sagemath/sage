@@ -18,7 +18,6 @@ from sage.graphs.digraph import DiGraph
 from sage.sets.set import Set
 from sage.combinat.words.words import Words
 from sage.rings.integer import Integer
-from itertools import izip
 
 ################################################################################
 # Suffix Tries

@@ -23,9 +23,15 @@ there::
     sage: g + h
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand type(s) for +:
-    'sage.groups.matrix_gps.group_element.MatrixGroupElement_gap' and
-    'sage.groups.matrix_gps.group_element.MatrixGroupElement_gap'
+    TypeError: unsupported operand parent(s) for '+':
+    'Matrix group over Finite Field of size 3 with 2 generators (
+    [1 0]  [1 1]
+    [0 1], [0 1]
+    )' and
+    'Matrix group over Finite Field of size 3 with 2 generators (
+    [1 0]  [1 1]
+    [0 1], [0 1]
+    )'
 
     sage: g.matrix() + h.matrix()
     [2 0]
@@ -72,6 +78,7 @@ from __future__ import print_function
 
 from sage.structure.element cimport MultiplicativeGroupElement, Element, MonoidElement, Matrix
 from sage.structure.parent cimport Parent
+from sage.structure.sage_object cimport richcmp
 from sage.libs.gap.element cimport GapElement, GapElement_List
 from sage.groups.libgap_wrapper cimport ElementLibGAP
 
@@ -238,7 +245,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
             except TypeError:
                 return None
 
-    cpdef int _cmp_(self, other) except -2:
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -256,7 +263,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         """
         cdef MatrixGroupElement_generic x = <MatrixGroupElement_generic>self
         cdef MatrixGroupElement_generic y = <MatrixGroupElement_generic>other
-        return cmp(x._matrix, y._matrix)
+        return richcmp(x._matrix, y._matrix, op)
 
     cpdef list list(self):
         """
@@ -524,7 +531,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             except TypeError:
                 return None
 
-    cpdef int _cmp_(self, other) except -2:
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -538,7 +545,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             sage: g == G.one()
             False
         """
-        return cmp(self.matrix(), other.matrix())
+        return richcmp(self.matrix(), other.matrix(), op)
 
     @cached_method
     def matrix(self):

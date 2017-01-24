@@ -17,7 +17,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 include 'sage/ext/stdsage.pxi'
 
 from sage.misc.long cimport pyobject_to_long
@@ -151,7 +150,7 @@ cdef class Fmpz_poly(SageObject):
             sage: f.list()
             [2, 1, 0, -1]
         """
-        return [self[i] for i in xrange(self.degree()+1)]
+        return [self[i] for i in xrange(self.degree() + 1)]
 
     def __add__(left, right):
         """

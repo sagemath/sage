@@ -7,10 +7,10 @@ AUTHORS:
 - John H. Palmieri (2009-08)
 
 This module implements the basic structure of finite
-`\Delta`-complexes.  For full mathematical details, see Hatcher [Hat]_,
+`\Delta`-complexes.  For full mathematical details, see Hatcher [Hat2002]_,
 especially Section 2.1 and the Appendix on "Simplicial CW Structures".
 As Hatcher points out, `\Delta`-complexes were first introduced by Eilenberg
-and Zilber [EZ]_, although they called them "semi-simplicial complexes".
+and Zilber [EZ1950]_, although they called them "semi-simplicial complexes".
 
 A `\Delta`-complex is a generalization of a :mod:`simplicial complex
 <sage.homology.simplicial_complex>`; a `\Delta`-complex `X` consists
@@ -21,7 +21,7 @@ functions `d_i` from `X_n` to `X_{n-1}`, with `d_i(s)` equal to the
 `i`-th face of `s` for each simplex `s \in X_n`.  These maps must
 satisfy the *simplicial identity*
 
-  .. math::
+  .. MATH::
 
     d_i d_j = d_{j-1} d_i \text{ for all } i<j.
 
@@ -50,10 +50,8 @@ vertex.
 
 REFERENCES:
 
-.. [Hat] Allen Hatcher, "Algebraic Topology", Cambridge University Press (2002).
-
-.. [EZ] \S. Eilenberg and J. Zilber, "Semi-Simplicial Complexes and Singular
-        Homology", Ann. Math. (2) 51 (1950), 499-513.
+- [Hat2002]_
+- [EZ1950]_
 """
 from __future__ import absolute_import
 
@@ -1267,12 +1265,7 @@ class DeltaComplex(GenericCellComplex):
         simplex in the complex.
 
         The term "elementary subdivison" is taken from p. 112 in John
-        M. Lee's book [Lee]_.
-
-        REFERENCES:
-
-        .. [Lee] John M. Lee, Introduction to Topological Manifolds,
-           Springer-Verlag, GTM volume 202.
+        M. Lee's book [Lee2011]_.
 
         EXAMPLES::
 
@@ -1553,7 +1546,7 @@ class DeltaComplex(GenericCellComplex):
         coefficients in ``base_ring``.
 
         The term "algebraic topological model" is defined by Pilarczyk
-        and Réal [PR]_.
+        and Réal [PR2015]_.
 
         INPUT:
 

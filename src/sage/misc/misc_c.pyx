@@ -332,9 +332,9 @@ def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
 
     We make copies when appropriate so that we don't accidentally modify the arguments::
 
-        sage: range(10e4)==balanced_sum([[i] for i in range(10e4)], [])
+        sage: list(range(10e4))==balanced_sum([[i] for i in range(10e4)], [])
         True
-        sage: range(10e4)==balanced_sum([[i] for i in range(10e4)], [])
+        sage: list(range(10e4))==balanced_sum([[i] for i in range(10e4)], [])
         True
 
     TESTS::
@@ -426,13 +426,6 @@ cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff
         return balanced_list_sum(L, offset, k, cutoff) + balanced_list_sum(L, offset + k, count - k, cutoff)
 
 
-#################################################################
-# 32/64-bit computer?
-#################################################################
-is_64_bit = sys.maxsize >= 9223372036854775807
-is_32_bit = not is_64_bit
-
-
 cpdef list normalize_index(object key, int size):
     """
     Normalize an index key and return a valid index or list of indices
@@ -517,59 +510,59 @@ cpdef list normalize_index(object key, int size):
         [0, 2, 2]
         sage: normalize_index([4,4,-5],5)
         [4, 4, 0]
-        sage: s=slice(None,None,None); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(None,None,None); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(None,None,-2); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(None,None,-2); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(None,None,4); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(None,None,4); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(None,-2,None); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(None,-2,None); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(None,-2,-2); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(None,-2,-2); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(None,-2,4); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(None,-2,4); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(None,4,None); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(None,4,None); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(None,4,-2); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(None,4,-2); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(None,4,4); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(None,4,4); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(-2,None,None); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(-2,None,None); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(-2,None,-2); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(-2,None,-2); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(-2,None,4); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(-2,None,4); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(-2,-2,None); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(-2,-2,None); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(-2,-2,-2); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(-2,-2,-2); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(-2,-2,4); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(-2,-2,4); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(-2,4,None); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(-2,4,None); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(-2,4,-2); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(-2,4,-2); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(-2,4,4); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(-2,4,4); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(4,None,None); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(4,None,None); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(4,None,-2); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(4,None,-2); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(4,None,4); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(4,None,4); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(4,-2,None); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(4,-2,None); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(4,-2,-2); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(4,-2,-2); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(4,-2,4); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(4,-2,4); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(4,4,None); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(4,4,None); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(4,4,-2); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(4,4,-2); normalize_index(s,5)==list(range(5))[s]
         True
-        sage: s=slice(4,4,4); normalize_index(s,5)==range(5)[s]
+        sage: s=slice(4,4,4); normalize_index(s,5)==list(range(5))[s]
         True
     """
     cdef tuple index_tuple

@@ -87,6 +87,7 @@ AUTHORS:
 ###############################################################################
 from __future__ import print_function
 from __future__ import absolute_import
+from six import iteritems
 
 # standard Python libraries
 import re
@@ -515,7 +516,7 @@ def evalunitdict():
     for w in unitdict:
         for j in unitdict[w]:
             if isinstance(unitdict[w][j], tuple): unitdict[w][j] = unitdict[w][j][0]
-        value_to_unit[w] = dict(zip(unitdict[w].itervalues(), unitdict[w].iterkeys()))
+        value_to_unit[w] = {b: a for a, b in iteritems(unitdict[w])}
 
 
 ###############################################################################

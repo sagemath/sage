@@ -1032,7 +1032,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation):
                              To expect a homogeneous result after applying
                              the operator to a homogeneous element it should
                              should be homogeneous operator (with respect
-                             to the the usual, special grading).
+                             to the usual, special grading).
 
         - ``new_parent``  -- Try to convert the result to the specified
                              ``new_parent``. If ``new_parent == None`` (default)

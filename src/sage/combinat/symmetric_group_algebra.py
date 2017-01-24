@@ -8,6 +8,7 @@ Symmetric Group Algebra
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
+from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from .combinatorial_algebra import CombinatorialAlgebra
@@ -21,7 +22,6 @@ from sage.rings.all import QQ, PolynomialRing
 from sage.arith.all import factorial
 from sage.matrix.all import matrix
 from sage.modules.all import vector
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 import itertools
 from sage.combinat.permutation_cython import (left_action_same_n, right_action_same_n)
@@ -965,10 +965,10 @@ class SymmetricGroupAlgebra_n(CombinatorialFreeModule):
         from sage.sets.family import Family
         if self.n <= 1:
             return Family([])
-        a = range(1, self.n+1)
+        a = list(range(1, self.n + 1))
         a[0] = 2
         a[1] = 1
-        b = range(2, self.n+2)
+        b = list(range(2, self.n + 2))
         b[self.n-1] = 1
         return Family([self.monomial(self._indices(a)), self.monomial(self._indices(b))])
 
@@ -1148,7 +1148,7 @@ class SymmetricGroupAlgebra_n(CombinatorialFreeModule):
         if n < k:
             return self.zero()
         def complement(xs):
-            res = range(1, n+1)
+            res = list(range(1, n + 1))
             for x in xs:
                 res.remove(x)
             return res
@@ -1240,7 +1240,7 @@ class SymmetricGroupAlgebra_n(CombinatorialFreeModule):
         if n < k:
             return self.zero()
         def complement(xs):
-            res = range(1, n+1)
+            res = list(range(1, n + 1))
             for x in xs:
                 res.remove(x)
             return res
@@ -1300,7 +1300,7 @@ class SymmetricGroupAlgebra_n(CombinatorialFreeModule):
         res = self.zero()
 
         for i in range(1, k):
-            p = range(1, self.n+1)
+            p = list(range(1, self.n + 1))
             p[i-1] = k
             p[k-1] = i
             res += self.monomial(self._indices(p))
@@ -2378,7 +2378,8 @@ class HeckeAlgebraSymmetricGroup_generic(CombinatorialAlgebra):
         if x == []:
             return self.one()
         if len(x) < self.n and x in Permutations():
-            return self.monomial(self._indices( list(x) + range(len(x)+1, self.n+1) ))
+            return self.monomial(self._indices(list(x) +
+                                               list(range(len(x)+1, self.n+1))))
         raise TypeError
 
 class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
@@ -2491,7 +2492,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
             raise ValueError("i (= %(i)d) must be between 1 and n-1 (= %(nm)d)" % {'i': i, 'nm': self.n - 1})
 
         P = self.basis().keys()
-        return self.monomial(P( range(1, i) + [i+1, i] + range(i+2, self.n+1) ))
+        return self.monomial(P(list(range(1, i)) + [i+1, i] + list(range(i+2, self.n+1))))
         # The permutation here is simply the transposition (i, i+1).
 
     def algebra_generators(self):
@@ -2555,7 +2556,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
 
         q = self.q()
         P = self._indices
-        v = self.sum_of_terms( ( ( P(range(1, l) + [k] + range(l+1, k) + [l]),
+        v = self.sum_of_terms( ( ( P(list(range(1, l)) + [k] + list(range(l+1, k)) + [l]),
                                    q ** l - q ** (l-1) )
                                  for l in range(1, k) ),
                                distinct=True )

@@ -10,7 +10,7 @@ Point counting on curves
 How do you count points on an elliptic curve over a finite field in
 Sage?
 
-Over prime finite fields, includes both the the baby step giant step
+Over prime finite fields, includes both the baby step giant step
 method and the SEA (Schoof-Elkies-Atkin) algorithm (implemented in PARI
 by Christophe Doche and Sylvain Duquesne). An example taken form the
 Reference manual:

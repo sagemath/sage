@@ -963,7 +963,7 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism_coercion):
 
 cdef class pAdicConvert_FM_ZZ(RingMap):
     """
-    The map from a fixed modulus ring back to ZZ that returns the the smallest
+    The map from a fixed modulus ring back to ZZ that returns the smallest
     non-negative integer approximation to its input which is accurate up to the precision.
 
     If the input is not in the closure of the image of ZZ, raises a ValueError.

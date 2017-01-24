@@ -218,7 +218,7 @@ Vectors::
     sage: b = a.sage(); b # optional - lie
     [1, 2, 3]
     sage: type(b) # optional - lie
-    <type 'list'>
+    <... 'list'>
 
 Matrices::
 

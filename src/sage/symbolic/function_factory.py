@@ -175,7 +175,7 @@ def function(s, *args, **kwds):
         sage: f = cr(a)
         sage: g = f.diff(a).integral(b)
         sage: g
-        b*D[0](cr)(a)
+        b*diff(cr(a), a)
         sage: foo = function("foo", nargs=2)
         sage: x,y,z = var("x y z")
         sage: foo(x, y) + foo(y, z)^2
@@ -216,9 +216,9 @@ def function(s, *args, **kwds):
         sage: psi = function('psi', nargs=1)(r); psi
         psi(r)
         sage: g = 1/r^2*(2*r*psi.derivative(r,1) + r^2*psi.derivative(r,2)); g
-        (r^2*D[0, 0](psi)(r) + 2*r*D[0](psi)(r))/r^2
+        (r^2*diff(psi(r), r, r) + 2*r*diff(psi(r), r))/r^2
         sage: g.expand()
-        2*D[0](psi)(r)/r + D[0, 0](psi)(r)
+        2*diff(psi(r), r)/r + diff(psi(r), r, r)
         sage: g.coefficient(psi.derivative(r,2))
         1
         sage: g.coefficient(psi.derivative(r,1))

@@ -11,21 +11,7 @@ fi
 
 TOP=`pwd`
 
-#######################################################################
-# Apply all patches.  See patches/README.txt for details about the
-# patches.
-#######################################################################
 cd src
-for patch in ../patches/*.patch; do
-    # Use --no-backup-if-mismatch to prevent .orig files (these confuse
-    # PARI's Perl script which creates pari.desc).
-    patch --no-backup-if-mismatch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 
 # Prepare all variables for building PARI/GP, except for CFLAGS
 set_environment()
@@ -58,7 +44,7 @@ set_environment()
     # Pari ignores LDFLAGS when linking libpari-gmp.so, so we trick it:
     DLLDFLAGS="$LDFLAGS"
     export DLLDFLAGS
-    
+
     # PARI does not build correctly with LD set (which is set by
     # sage-env).  PARI actually needs LD set to a compiler to do the
     # linking, not to the linker directly.

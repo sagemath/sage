@@ -328,7 +328,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: X = CombinatorialFreeModule(ZZ, [1,2]); x = X.basis()
                 sage: Y = CombinatorialFreeModule(ZZ, [3,4]); y = Y.basis()
                 sage: phi = X.module_morphism(on_basis = {1: y[3] + 3*y[4], 2: 2*y[3] + 5*y[4]}.__getitem__,
-                ...                           codomain = Y)
+                ....:                         codomain = Y)
                 sage: phi.matrix()
                 [1 2]
                 [3 5]
@@ -359,7 +359,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     sage: Y = CombinatorialFreeModule(QQ, [3,4]); y = Y.basis()
                     sage: phi = X.module_morphism(on_basis = {1: y[3] + 3*y[4], 2: 2*y[3] + 5/2*y[4]}.__getitem__,
-                    ...                           codomain = Y)
+                    ....:                         codomain = Y)
                     sage: phi.matrix().parent()          # todo: not implemented
                     Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
@@ -399,7 +399,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: X = CombinatorialFreeModule(ZZ, [1,2], category = category); X.rename("X"); x = X.basis()
                 sage: Y = CombinatorialFreeModule(ZZ, [3,4], category = category); Y.rename("Y"); y = Y.basis()
                 sage: phi = X.module_morphism(on_basis = {1: y[3] + 3*y[4], 2: 2*y[3] + 5*y[4]}.__getitem__,
-                ...                           codomain = Y, category = category)
+                ....:                         codomain = Y, category = category)
                 sage: psi = ~phi
                 sage: psi
                 Generic morphism:
@@ -422,14 +422,14 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             We check that this function complains if the morphism is not invertible::
 
                 sage: phi = X.module_morphism(on_basis = {1: y[3] + y[4], 2: y[3] + y[4]}.__getitem__,
-                ...                           codomain = Y, category = category)
+                ....:                         codomain = Y, category = category)
                 sage: ~phi
                 Traceback (most recent call last):
                 ...
                 RuntimeError: morphism is not invertible
 
                 sage: phi = X.module_morphism(on_basis = {1: y[3] + y[4], 2: y[3] + 5*y[4]}.__getitem__,
-                ...                           codomain = Y, category = category)
+                ....:                         codomain = Y, category = category)
                 sage: ~phi
                 Traceback (most recent call last):
                 ...

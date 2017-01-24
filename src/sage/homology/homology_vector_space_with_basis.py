@@ -7,12 +7,8 @@ for computing cup products and cohomology operations.
 
 REFERENCES:
 
-.. [G-DR03] \R. González-Díaz and P. Réal, *Computation of cohomology
-   operations on finite simplicial complexes* in Homology,
-   Homotopy and Applications 5 (2003), 83-93.
-
-.. [G-DR99] \R. González-Díaz and P. Réal, *A combinatorial method for
-   computing Steenrod squares* in J. Pure Appl. Algebra 139 (1999), 89-108.
+- [GDR2003]_
+- [GDR1999]_
 
 AUTHORS:
 
@@ -566,7 +562,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             r"""
             Return the cup product of this element and ``other``.
 
-            Algorithm: see González-Díaz and Réal [G-DR03]_, p. 88.
+            Algorithm: see González-Díaz and Réal [GDR2003]_, p. 88.
             Given two cohomology classes, lift them to cocycle
             representatives via the chain contraction for this
             complex, using
@@ -633,7 +629,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             This cohomology operation is only defined in
             characteristic 2.
 
-            Algorithm: see González-Díaz and Réal [G-DR99]_,
+            Algorithm: see González-Díaz and Réal [GDR1999]_,
             Corollary 3.2.
 
             EXAMPLES::
@@ -681,7 +677,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             base_ring = P.base_ring()
             if base_ring.characteristic() != 2:
                 raise ValueError('Steenrod squares are only defined in characteristic 2')
-            # We keep the same notation as in [G-DR99].
+            # We keep the same notation as in [GDR1999].
             # The trivial cases:
             if i == 0:
                 # Sq^0 is the identity.
@@ -720,7 +716,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                 # [i_n, i_{n-1}, ..., i_0]. (It is reversed from the
                 # obvious order because this is closer to the order in
                 # which the face maps will be applied.)  Now we sum over
-                # these, according to the formula in [G-DR99], Corollary 3.2.
+                # these, according to the formula in [GDR1999], Corollary 3.2.
                 result = {}
                 cycle = elt.to_cycle()
                 n_chains = scomplex.n_chains(j, base_ring)
@@ -772,7 +768,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
 def sum_indices(k, i_k_plus_one, S_k_plus_one):
     r"""
     This is a recursive function for computing the indices for the
-    nested sums in González-Díaz and Réal [G-DR99]_, Corollary 3.2.
+    nested sums in González-Díaz and Réal [GDR1999]_, Corollary 3.2.
 
     In the paper, given indices `i_n`, `i_{n-1}`, ..., `i_{k+1}`,
     given `k`, and given `S(k+1)`, the number `S(k)` is defined to be

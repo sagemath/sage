@@ -126,7 +126,7 @@ class QuotientRingElement(RingElement):
         """
         return self.__rep
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return True if quotient ring element is non-zero in the
         quotient ring `R/I`, by determining whether the element
@@ -143,12 +143,12 @@ class QuotientRingElement(RingElement):
 
         TESTS::
 
-            sage: S(0).__nonzero__()
-            False
-            sage: (a-a).__nonzero__()
+            sage: bool(a - a)
             False
         """
         return self.__rep not in self.parent().defining_ideal()
+
+    __nonzero__ = __bool__
 
     def is_unit(self):
         """
@@ -785,6 +785,7 @@ class QuotientRingElement(RingElement):
             sage: I = sage.rings.ideal.FieldIdeal(P)
             sage: Q = P.quo(I)
             sage: Q._singular_()
+            polynomial ring, over a field, global ordering
             //   characteristic : 2
             //   number of vars : 2
             //        block   1 : ordering dp

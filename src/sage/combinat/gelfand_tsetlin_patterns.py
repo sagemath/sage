@@ -37,6 +37,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from sage.structure.parent import Parent
 from sage.structure.list_clone import ClonableArray
@@ -535,8 +536,8 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         sage: c = 0
         sage: from sage.combinat.crystals.kirillov_reshetikhin import partitions_in_box
         sage: for p in partitions_in_box(3,3):
-        ...      S = SemistandardTableaux(p, max_entry=3)
-        ...      c += S.cardinality()
+        ....:    S = SemistandardTableaux(p, max_entry=3)
+        ....:    c += S.cardinality()
         sage: c == G.cardinality()
         True
 
@@ -717,8 +718,8 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             sage: c = 0
             sage: from sage.combinat.crystals.kirillov_reshetikhin import partitions_in_box
             sage: for p in partitions_in_box(3,3):
-            ...      S = SemistandardTableaux(p, max_entry=3)
-            ...      c += S.cardinality()
+            ....:    S = SemistandardTableaux(p, max_entry=3)
+            ....:    c += S.cardinality()
             sage: c == len(L)
             True
             sage: G = GelfandTsetlinPatterns(3, 3, strict=True)
@@ -784,7 +785,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
                             yield self.element_class(self, list(x))
                     n += 1
                 return
-            for x in xrange(self._k+1):
+            for x in range(self._k+1):
                 yield self.element_class(self, [[x]])
             n = 2
             while not self._strict or n <= self._k+1:
@@ -799,7 +800,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             return
         if self._n == 1:
             if self._k is not None:
-                for x in xrange(self._k+1):
+                for x in range(self._k+1):
                     yield self.element_class(self, [[x]])
             else:
                 k = 1
@@ -822,7 +823,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             sage: len(L) == G.cardinality()
             True
             sage: type(L[0])
-            <type 'list'>
+            <... 'list'>
         """
         # Setup the first row
         iters = [None]*n
@@ -1140,7 +1141,7 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
             sage: [[4,3,1], [4,2], [3]] in G
             False
         """
-        # Check if the the top row matches (if applicable)
+        # Check if the top row matches (if applicable)
         if tuple(gt[0]) != self._row:
             return False
         return GelfandTsetlinPatterns.__contains__(self, gt)

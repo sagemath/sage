@@ -8,7 +8,7 @@ Grout. Since April 2012 it also contains the ISGCI graph database.
 == Upstream Contact ==
 
  * For ISGCI:
- 
+
    H.N. de Ridder (hnridder@graphclasses.org)
 
  * For Andries Brouwer's database:

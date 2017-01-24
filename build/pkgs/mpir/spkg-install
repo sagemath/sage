@@ -9,20 +9,6 @@ fi
 cd src
 
 ###############################################################################
-# Apply patches (if any):
-###############################################################################
-
-echo "Applying patches to upstream sources..."
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue # ignore non-readable / non-existent files
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error: '$patch' failed to apply."
-        exit 1
-    fi
-done
-
-###############################################################################
 # Previous MPIR installations are only removed after a *successful* (re)build,
 # before installing the new one. (Done below.)
 ###############################################################################

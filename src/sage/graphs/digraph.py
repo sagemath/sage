@@ -814,18 +814,33 @@ class DiGraph(GenericGraph):
     ### Formats
     def dig6_string(self):
         """
-        Returns the dig6 representation of the digraph as an ASCII string.
-        Valid for single (no multiple edges) digraphs on 0 to 262143
-        vertices.
+        Return the dig6 representation of the digraph as an ASCII string.
+
+        This is only valid for single (no multiple edges) digraphs
+        on at most `2^{18}-1=262143` vertices.
+
+        .. NOTE::
+
+            As the dig6 format only handles graphs with vertex set
+            `\{0,...,n-1\}`, a :meth:`relabelled copy
+            <sage.graphs.generic_graph.GenericGraph.relabel>` will
+            be encoded, if necessary.
+
+        .. SEEALSO::
+
+            * :meth:`~sage.graphs.graph.Graph.graph6_string` --
+              a similar string format for undirected graphs
 
         EXAMPLES::
 
-            sage: D = DiGraph()
+            sage: D = DiGraph({0: [1, 2], 1: [2], 2: [3], 3: [0]})
             sage: D.dig6_string()
+            'CW`_'
+
+        TESTS::
+
+            sage: DiGraph().dig6_string()
             '?'
-            sage: D.add_edge(0,1)
-            sage: D.dig6_string()
-            'AO'
         """
         n = self.order()
         if n > 262143:
@@ -912,13 +927,13 @@ class DiGraph(GenericGraph):
         Checking acyclic graphs are indeed acyclic ::
 
             sage: def random_acyclic(n, p):
-            ...    g = graphs.RandomGNP(n, p)
-            ...    h = DiGraph()
-            ...    h.add_edges([ ((u,v) if u<v else (v,u)) for u,v,_ in g.edges() ])
-            ...    return h
+            ....:  g = graphs.RandomGNP(n, p)
+            ....:  h = DiGraph()
+            ....:  h.add_edges([ ((u,v) if u<v else (v,u)) for u,v,_ in g.edges() ])
+            ....:  return h
             ...
             sage: all( random_acyclic(100, .2).is_directed_acyclic()    # long time
-            ...        for i in range(50))                              # long time
+            ....:      for i in range(50))                              # long time
             True
 
         TESTS:
@@ -1857,8 +1872,8 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph ([(0,1,'A'),(1,0,'B'),(1,2,'C')])
             sage: re = D.reverse_edges( [ (0,1), (1,2) ],
-            ...                         inplace = False,
-            ...                         multiedges = True)
+            ....:                       inplace = False,
+            ....:                       multiedges = True)
             sage: re.edges()
             [(1, 0, 'A'), (1, 0, 'B'), (2, 1, 'C')]
             sage: D.edges()
@@ -2714,7 +2729,7 @@ class DiGraph(GenericGraph):
         EXAMPLES::
 
             sage: D = DiGraph({ 0:[1,2,3], 4:[2,5], 1:[8], 2:[7], 3:[7],
-            ...     5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10] })
+            ....:   5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10] })
             sage: D.plot(layout='circular').show()
             sage: D.topological_sort()
             [4, 5, 6, 9, 0, 1, 2, 3, 7, 8, 10]
@@ -2752,7 +2767,7 @@ class DiGraph(GenericGraph):
 
               sage: import networkx
               sage: D = DiGraph({ 0:[1,2,3], 4:[2,5], 1:[8], 2:[7], 3:[7],
-              ...     5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10] })
+              ....:   5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10] })
               sage: N = D.networkx_graph()
               sage: networkx.topological_sort(N)
               [4, 5, 6, 9, 0, 1, 2, 3, 7, 8, 10]

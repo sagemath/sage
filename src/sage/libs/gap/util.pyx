@@ -12,7 +12,7 @@ Utility functions for libGAP
 ###############################################################################
 from __future__ import print_function, absolute_import
 
-from sage.env import SAGE_LOCAL
+from sage.env import SAGE_LOCAL, GAP_ROOT_DIR
 from libc.stdint cimport uintptr_t
 from .element cimport *
 
@@ -157,9 +157,8 @@ def gap_root():
         '/home/vbraun/opt/sage-5.3.rc0/local/gap/latest'
     """
     import os.path
-    gapdir = os.path.join(SAGE_LOCAL, 'gap', 'latest')
-    if os.path.exists(gapdir):
-        return gapdir
+    if os.path.exists(GAP_ROOT_DIR):
+        return GAP_ROOT_DIR
     print('The gap-4.5.5.spkg (or later) seems to be not installed!')
     gap_sh = open(os.path.join(SAGE_LOCAL, 'bin', 'gap')).read().splitlines()
     gapdir = filter(lambda dir:dir.strip().startswith('GAP_DIR'), gap_sh)[0]
@@ -259,7 +258,7 @@ cdef libGAP_Obj gap_eval(str gap_string) except? NULL:
 
         sage: libgap.eval('if 4>3 then\nPrint("hi");\nfi')
         NULL
-        sage: libgap.eval('1+1')   # testing that we have sucessfully recovered
+        sage: libgap.eval('1+1')   # testing that we have successfully recovered
         2
 
         sage: libgap.eval('if 4>3 thenPrint("hi");\nfi')
@@ -269,7 +268,7 @@ cdef libGAP_Obj gap_eval(str gap_string) except? NULL:
         if 4>3 thenPrint("hi");
         fi;
                        ^
-        sage: libgap.eval('1+1')   # testing that we have sucessfully recovered
+        sage: libgap.eval('1+1')   # testing that we have successfully recovered
         2
     """
     initialize()

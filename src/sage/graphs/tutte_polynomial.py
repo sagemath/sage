@@ -152,7 +152,7 @@ def contracted_edge(G, unlabeled_edge):
 def removed_loops(G):
     r"""
     A context manager which removes all the loops in the graph `G`.
-    It yields a list of the the loops, and restores the loops upon
+    It yields a list of the loops, and restores the loops upon
     exiting.
 
     EXAMPLES::
@@ -571,7 +571,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         sage: len(cache) > 0
         True
 
-    Verify that #18366 is fixed::
+    Verify that :trac:`18366` is fixed::
 
         sage: g = Graph(multiedges=True)
         sage: g.add_edges([(0,1,1),(1,5,2),(5,3,3),(5,2,4),(2,4,5),(0,2,6),(0,3,7),(0,4,8),(0,5,9)]);

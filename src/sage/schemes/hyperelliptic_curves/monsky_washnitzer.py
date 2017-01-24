@@ -388,7 +388,7 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
             column.extend([base_ring(0)] * (degree - len(column)))
         return coeffs
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -403,6 +403,8 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
             True
         """
         return not not self._triple[0] or not not self._triple[1] or not not self._triple[2]
+
+    __nonzero__ = __bool__
 
     def __cmp__(self, other):
         """
@@ -1040,13 +1042,13 @@ def frobenius_expansion_by_newton(Q, p, M):
     More specifically, it finds `F_0` and `F_1` in
     the quotient ring `R[x, T]/(T - Q(x))`, such that
 
-    .. math::
+    .. MATH::
 
        F(  dx/y) = T^{-r} F0 dx/y, \text{\ and\ } F(x dx/y) = T^{-r} F1 dx/y
 
     where
 
-    .. math::
+    .. MATH::
 
        r = ( (2M-3)p - 1 )/2.
 
@@ -1234,13 +1236,13 @@ def frobenius_expansion_by_series(Q, p, M):
 
     It uses the sum
 
-    .. math::
+    .. MATH::
 
          F0 = \sum_{k=0}^{M-2} \binom{-1/2}{k} p x^{p-1} E^k T^{(M-2-k)p}
 
     and
 
-    .. math::
+    .. MATH::
 
          F1 = x^p F0,
 
@@ -1434,7 +1436,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
     Try using the trace to speed up the calculation::
 
         sage: A = monsky_washnitzer.matrix_of_frobenius(x^3 - x + R(1/4),
-        ...                                             p, M, -2)
+        ....:                                           p, M, -2)
         sage: A
         [2715  187]
         [1445  408]
@@ -1493,7 +1495,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
         sage: M = monsky_washnitzer.adjusted_prec(p, prec)
         sage: R.<x> = PolynomialRing(Integers(p**M))
         sage: A = monsky_washnitzer.matrix_of_frobenius(            # long time
-        ...                             x^3 - x + R(1/4), p, M)     # long time
+        ....:                           x^3 - x + R(1/4), p, M)     # long time
         sage: B = A.change_ring(Integers(p**prec)); B               # long time
         [74311982 57996908]
         [95877067 25828133]
@@ -1511,7 +1513,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
         sage: M = monsky_washnitzer.adjusted_prec(p, prec)
         sage: R.<x> = PolynomialRing(Integers(p**M))
         sage: A = monsky_washnitzer.matrix_of_frobenius(            # long time
-        ...                             x^3 - x + R(1/4), p, M)     # long time
+        ....:                           x^3 - x + R(1/4), p, M)     # long time
         sage: B = A.change_ring(Integers(p**prec))                  # long time
         sage: B.det()                                               # long time
         5
@@ -1530,13 +1532,13 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
         sage: A = A.change_ring(Integers(p**max_prec))              # long time
         sage: result = []                                           # long time
         sage: for prec in range(1, max_prec):                       # long time
-        ...       M = monsky_washnitzer.adjusted_prec(p, prec)      # long time
-        ...       R.<x> = PolynomialRing(Integers(p^M),'x')         # long time
-        ...       B = monsky_washnitzer.matrix_of_frobenius(        # long time
-        ...                         x^3 - x + R(1/4), p, M)         # long time
-        ...       B = B.change_ring(Integers(p**prec))              # long time
-        ...       result.append(B == A.change_ring(                 # long time
-        ...                                Integers(p**prec)))      # long time
+        ....:     M = monsky_washnitzer.adjusted_prec(p, prec)      # long time
+        ....:     R.<x> = PolynomialRing(Integers(p^M),'x')         # long time
+        ....:     B = monsky_washnitzer.matrix_of_frobenius(        # long time
+        ....:                       x^3 - x + R(1/4), p, M)         # long time
+        ....:     B = B.change_ring(Integers(p**prec))              # long time
+        ....:     result.append(B == A.change_ring(                 # long time
+        ....:                              Integers(p**prec)))      # long time
         sage: result == [True] * (max_prec - 1)                     # long time
         True
 
@@ -1763,7 +1765,7 @@ def matrix_of_frobenius_hyperelliptic(Q, p=None, prec=None, M=None):
     `(d-1)` x `(d-1)` matrix `M` of Frobenius on Monsky-Washnitzer cohomology,
     and list of differentials \{f_i \} such that
 
-    .. math::
+    .. MATH::
 
         \phi^* (x^i dx/2y) = df_i + M[i]*vec(dx/2y, ..., x^{d-2} dx/2y)
 
@@ -2047,7 +2049,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         The key here is that the formula for `d(x^iy^j)` is messy
         in terms of `i`, but varies nicely with `j`.
 
-        .. math::
+        .. MATH::
 
                      d(x^iy^j) = y^{j-1} (2ix^{i-1}y^2 + j (A_i(x) + B_i(x)y^2)) \frac{dx}{2y}
 
@@ -2270,7 +2272,7 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
         else:
             raise ZeroDivisionError("Element not invertible")
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return True iff ``self`` is not zero.
 
@@ -2279,10 +2281,12 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: R.<x> = QQ['x']
             sage: E = HyperellipticCurve(x^5-3*x+1)
             sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.__nonzero__()
+            sage: bool(x)
             True
         """
         return not not self._f
+
+    __nonzero__ = __bool__
 
     def __eq__(self, other):
         """
@@ -2340,7 +2344,7 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: y*x
             y*x
         """
-        # over laurent series, addition and subtraction can be
+        # over Laurent series, addition and subtraction can be
         # expensive, and the degree of this poly is small enough that
         # Karatsuba actually hurts significantly in some cases
         if self._f[0].valuation() + other._f[0].valuation() > -200:
@@ -2771,7 +2775,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
         the Monsky-Washnitzer cohomology. First we lift `\phi` to `A^{\dagger}`
         by setting
 
-        .. math::
+        .. MATH::
 
             \phi(x) = x^p
 
@@ -2779,7 +2783,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         Pulling back the differential `dx/2y`, we get
 
-        .. math::
+        .. MATH::
 
            \phi^*(dx/2y) = px^{p-1} y(\phi(y))^{-1} dx/2y
                          = px^{p-1} y^{1-p} \sqrt{1+ \frac{Q(x^p) - Q(x)^p}{Q(x)^p}} dx/2y
@@ -2846,7 +2850,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
         """
         Returns the action of a `p`-power lift of Frobenius on the basis
 
-        .. math::
+        .. MATH::
 
             \{ dx/2y, x dx/2y, ..., x^{d-2} dx/2y \}
 
@@ -3062,7 +3066,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         """
         return self._coeff
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -3078,6 +3082,8 @@ class MonskyWashnitzerDifferential(ModuleElement):
             False
         """
         return not not self._coeff
+
+    __nonzero__ = __bool__
 
     def _repr_(self):
         """

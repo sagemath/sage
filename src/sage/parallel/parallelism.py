@@ -3,7 +3,7 @@ Parallelization control
 
 This module defines the singleton class :class:`Parallelism` to govern the
 parallelization of computations in some specific topics. It allows the user to
-set the number of  processes to be used for parallelization.
+set the number of processes to be used for parallelization.
 
 Some examples of use are provided in the documentation of
 :meth:`sage.tensor.modules.comp.Components.contract`.

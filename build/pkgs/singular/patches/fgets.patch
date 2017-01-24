@@ -1,0 +1,22 @@
+Make sure Singular does not choke if its stdin gets closed.
+diff --git a/kernel/oswrapper/feread.cc b/kernel/oswrapper/feread.cc
+index 0513c9c..87b9214 100644
+--- a/kernel/oswrapper/feread.cc
++++ b/kernel/oswrapper/feread.cc
+@@ -325,12 +325,13 @@ char * fe_fgets(const char *pr,char *s, int size)
+     /* NULL can mean various things... */
+     switch(errno)
+     {
+-      case 0:     return NULL;           /*EOF */
++      case 0:     return NULL;           /* EOF */
++      case EBADF: return NULL;           /* stdin got closed */
+       case EINTR: return strcpy(s,"\n"); /* CTRL-C or other signal */
+       default:                           /* other error */
+       {
+-	int errsv = errno;
+-        fprintf(stderr,"fgets() failed with errno %d\n",errsv);
++        int errsv = errno;
++        fprintf(stderr,"fgets() failed with errno %d\n%s\n",errsv,strerror(errsv));
+         return NULL;
+       }
+     }

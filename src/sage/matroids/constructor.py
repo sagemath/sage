@@ -99,6 +99,7 @@ from __future__ import absolute_import
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six import itervalues
 
 from itertools import combinations
 import sage.matrix.matrix_space as matrix_space
@@ -805,7 +806,7 @@ def Matroid(*args, **kwds):
         if 'groundset' not in kwds:
             E = set()
             if isinstance(kwds['circuit_closures'], dict):
-                for X in kwds['circuit_closures'].itervalues():
+                for X in itervalues(kwds['circuit_closures']):
                     for Y in X:
                         E.update(Y)
             else:

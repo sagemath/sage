@@ -213,7 +213,7 @@ class AllPairs(ParentWithSetFactory, DisjointUnionEnumeratedSets):
     It is constructed as the disjoint union
     (:class:`DisjointUnionEnumeratedSets`) of :class:`Pairs_Y` parents:
 
-    .. math::
+    .. MATH::
 
         S := \bigcup_{i = 0,1,..., 4} S^y
 
@@ -379,7 +379,7 @@ class Pairs_Y(ParentWithSetFactory, DisjointUnionEnumeratedSets):
     It is constructed as the disjoint union
     (:class:`DisjointUnionEnumeratedSets`) of :class:`SingletonPair` parents:
 
-    .. math::
+    .. MATH::
 
         S^y := \bigcup_{i = 0,1,..., 4} S_i^y
 

@@ -26,24 +26,24 @@ for dim in 4 5 6 11; do
 
     $MAKE CC="$CC" CFLAGS="$CFLAGS"
     if [ $? -ne 0 ]; then
-	echo "Error building PALP."
-	exit 1
+        echo "Error building PALP."
+        exit 1
     fi
 
     for file in poly class cws nef mori; do
-	cp -p ${file}.x "$SAGE_LOCAL"/bin/${file}-${dim}d.x
-	if [ $? -ne 0 ]; then
-	    echo "Error installing PALP."
-	    exit 1
-	fi
+        cp -p ${file}.x "$SAGE_LOCAL"/bin/${file}-${dim}d.x
+        if [ $? -ne 0 ]; then
+            echo "Error installing PALP."
+            exit 1
+        fi
     done
 
     # the next step is important to avert races on older file systems
     # for example, ext3 has 1-second timestamp granularity!
     $MAKE cleanall
     if [ $? -ne 0 ]; then
-	echo "Error building PALP."
-	exit 1
+        echo "Error building PALP."
+        exit 1
     fi
 done
 

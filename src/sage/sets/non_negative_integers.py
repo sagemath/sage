@@ -32,7 +32,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         sage: NN.list()
         Traceback (most recent call last):
         ...
-        NotImplementedError: infinite list
+        NotImplementedError: cannot list an infinite set
         sage: NN.element_class
         <type 'sage.rings.integer.Integer'>
         sage: it = iter(NN)

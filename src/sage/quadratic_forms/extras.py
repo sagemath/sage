@@ -52,7 +52,7 @@ def is_triangular_number(n, return_value=False):
         sage: F1 == F2
         True
 
-        sage: for n in xrange(1000):
+        sage: for n in range(1000):
         ....:     res,v = is_triangular_number(n,return_value=True)
         ....:     assert res == is_triangular_number(n)
         ....:     if res: assert v*(v+1)/2 == n

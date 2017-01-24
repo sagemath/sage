@@ -23,7 +23,7 @@ import sys
 import platform
 from six.moves import builtins
 
-from sage.env import SAGE_LOCAL, SAGE_SRC, SAGE_LIB, UNAME
+from sage.env import SAGE_LOCAL, SAGE_SRC
 from .misc import SPYX_TMP
 from .temporary_file import tmp_filename
 import pkgconfig
@@ -309,8 +309,7 @@ def cython(filename, verbose=False, compile_message=False,
 
         sage: code = [
         ....: "#clang C++",
-        ....: "#cinclude %s/include/singular %s/include/factory"%(SAGE_LOCAL, SAGE_LOCAL),
-        ....: "#clib m readline singular givaro ntl gmpxx gmp",
+        ....: "#clib m readline Singular givaro ntl gmpxx gmp",
         ....: "from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular",
         ....: "from sage.libs.singular.polynomial cimport singular_polynomial_pow",
         ....: "def test(MPolynomial_libsingular p):",
@@ -767,7 +766,6 @@ def compile_and_load(code):
 TESTS = {
 'trac11680':"""
 #cargs -O3 -ggdb
-#cinclude $SAGE_SRC/sage/libs/flint $SAGE_LOCAL/include/flint
 #clib flint
 
 from sage.rings.rational cimport Rational

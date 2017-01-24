@@ -27,7 +27,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # LiDIA 2.2.0 installs its headers into lidia/ but expects them in LiDIA!?!
-# So we make a symbolic link, just in case.  
+# So we make a symbolic link, just in case.
 # (On the Mac, nothing is done because of its case-preserving, case-insensitive file system.)
 ( cd "$SAGE_LOCAL/include" && if [ ! -r LiDIA ] ; then ln -s lidia LiDIA; fi  || true )
 

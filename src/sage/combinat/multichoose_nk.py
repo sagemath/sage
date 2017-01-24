@@ -16,6 +16,7 @@ Low-level multichoose
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
+from six.moves import range
 
 from .combinat import CombinatorialClass
 from sage.arith.all import binomial
@@ -100,11 +101,10 @@ class MultichooseNK(CombinatorialClass):
             sage: MultichooseNK(5,2).random_element()
             [0, 1]
         """
-        n,k = self._n, self._k
-        rng = range(n)
+        n, k = self._n, self._k
+        rng = list(range(n))
         r = []
         for i in range(k):
-            r.append( rnd.choice(rng))
-
+            r.append(rnd.choice(rng))
         r.sort()
         return r

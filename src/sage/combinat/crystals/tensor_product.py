@@ -958,7 +958,7 @@ class TensorProductOfCrystalsElement(ImmutableListWithParent):
         Comparison of two elements of this crystal:
 
         - different length: incomparable
-        - otherwise lexicographicaly, considering ``self[i]`` and ``other[i]``
+        - otherwise lexicographically, considering ``self[i]`` and ``other[i]``
           as incomparable if ``self[i] < other[i]`` returns NotImplemented
         """
         if parent(self) is not parent(other):
@@ -2131,7 +2131,7 @@ class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
             }
         """
         from sage.combinat.output import tex_from_array
-        # Modified version of to_tableau() to have the entrys be letters
+        # Modified version of to_tableau() to have the entries be letters
         #   rather than their values
         if self._list == []:
             return "{\\emptyset}"

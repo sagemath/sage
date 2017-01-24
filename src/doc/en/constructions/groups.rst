@@ -297,7 +297,7 @@ from there.
 
     sage: G = H.semidirect_product(K, phi)
 
-To avoid unnecessary repitition, we will now give commands that one can use to
+To avoid unnecessary repetition, we will now give commands that one can use to
 create the cyclic group of order `n`, `C_n`, and the dihedral group on `n`
 letters, `D_n`. We will present one more example of each to ensure that the
 reader understands the command, then it will be withheld.

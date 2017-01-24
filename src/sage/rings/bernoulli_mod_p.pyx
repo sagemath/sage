@@ -93,24 +93,24 @@ def verify_bernoulli_mod_p(data):
 
 def bernoulli_mod_p(int p):
     r"""
-    Returns the bernoulli numbers `B_0, B_2, ... B_{p-3}` modulo `p`.
+    Return the Bernoulli numbers `B_0, B_2, ... B_{p-3}` modulo `p`.
 
     INPUT:
 
-        p -- integer, a prime
+    p -- integer, a prime
 
     OUTPUT:
 
-        list -- Bernoulli numbers modulo `p` as a list
-                of integers [B(0), B(2), ... B(p-3)].
+    list -- Bernoulli numbers modulo `p` as a list
+    of integers [B(0), B(2), ... B(p-3)].
 
     ALGORITHM:
 
-        Described in accompanying latex file.
+    Described in accompanying latex file.
 
     PERFORMANCE:
 
-        Should be complexity `O(p \log p)`.
+    Should be complexity `O(p \log p)`.
 
     EXAMPLES:
 
@@ -118,9 +118,9 @@ def bernoulli_mod_p(int p):
     computes exact rationals) for `p = 37`::
 
         sage: bernoulli_mod_p(37)
-         [1, 31, 16, 15, 16, 4, 17, 32, 22, 31, 15, 15, 17, 12, 29, 2, 0, 2]
-        sage: [bernoulli(n) % 37 for n in xrange(0, 36, 2)]
-         [1, 31, 16, 15, 16, 4, 17, 32, 22, 31, 15, 15, 17, 12, 29, 2, 0, 2]
+        [1, 31, 16, 15, 16, 4, 17, 32, 22, 31, 15, 15, 17, 12, 29, 2, 0, 2]
+        sage: [bernoulli(n) % 37 for n in range(0, 36, 2)]
+        [1, 31, 16, 15, 16, 4, 17, 32, 22, 31, 15, 15, 17, 12, 29, 2, 0, 2]
 
     Boundary case::
 
@@ -129,7 +129,7 @@ def bernoulli_mod_p(int p):
 
     AUTHOR:
 
-        -- David Harvey (2006-08-06)
+    -- David Harvey (2006-08-06)
 
     """
 
@@ -226,18 +226,18 @@ def bernoulli_mod_p(int p):
 
 def bernoulli_mod_p_single(long p, long k):
     r"""
-    Returns the bernoulli number `B_k` mod `p`.
+    Return the Bernoulli number `B_k` mod `p`.
 
     If `B_k` is not `p`-integral, an ArithmeticError is raised.
 
     INPUT:
 
-        p -- integer, a prime
-        k -- non-negative integer
+    - p -- integer, a prime
+    - k -- non-negative integer
 
     OUTPUT:
 
-        The `k`-th bernoulli number mod `p`.
+    The `k`-th Bernoulli number mod `p`.
 
     EXAMPLES::
 
@@ -273,33 +273,33 @@ def bernoulli_mod_p_single(long p, long k):
 
         sage: bernoulli_mod_p(37)
          [1, 31, 16, 15, 16, 4, 17, 32, 22, 31, 15, 15, 17, 12, 29, 2, 0, 2]
-        sage: [bernoulli_mod_p_single(37, n) % 37 for n in xrange(0, 36, 2)]
+        sage: [bernoulli_mod_p_single(37, n) % 37 for n in range(0, 36, 2)]
          [1, 31, 16, 15, 16, 4, 17, 32, 22, 31, 15, 15, 17, 12, 29, 2, 0, 2]
 
         sage: bernoulli_mod_p(31)
          [1, 26, 1, 17, 1, 9, 11, 27, 14, 23, 13, 22, 14, 8, 14]
-        sage: [bernoulli_mod_p_single(31, n) % 31 for n in xrange(0, 30, 2)]
+        sage: [bernoulli_mod_p_single(31, n) % 31 for n in range(0, 30, 2)]
          [1, 26, 1, 17, 1, 9, 11, 27, 14, 23, 13, 22, 14, 8, 14]
 
         sage: bernoulli_mod_p(3)
          [1]
-        sage: [bernoulli_mod_p_single(3, n) % 3 for n in xrange(0, 2, 2)]
+        sage: [bernoulli_mod_p_single(3, n) % 3 for n in range(0, 2, 2)]
          [1]
 
         sage: bernoulli_mod_p(5)
          [1, 1]
-        sage: [bernoulli_mod_p_single(5, n) % 5 for n in xrange(0, 4, 2)]
+        sage: [bernoulli_mod_p_single(5, n) % 5 for n in range(0, 4, 2)]
          [1, 1]
 
         sage: bernoulli_mod_p(7)
          [1, 6, 3]
-        sage: [bernoulli_mod_p_single(7, n) % 7 for n in xrange(0, 6, 2)]
+        sage: [bernoulli_mod_p_single(7, n) % 7 for n in range(0, 6, 2)]
          [1, 6, 3]
 
     AUTHOR:
 
-        -- David Harvey (2007-08-31)
-        -- David Harvey (2008-06): rewrote to use bernmm library
+    -- David Harvey (2007-08-31)
+    -- David Harvey (2008-06): rewrote to use bernmm library
 
     """
     if p <= 2:

@@ -803,18 +803,20 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
             x = self.parent(x)
         return self.parent().new('%s %% %s'%(self.name(), x.name()))
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
             sage: a = macaulay2(0)  # optional - macaulay2
             sage: a == 0            # optional - macaulay2
             True
-            sage: a.__nonzero__()   # optional - macaulay2
+            sage: bool(a)           # optional - macaulay2
             False
         """
         P = self.parent()
         return P.eval('%s == 0'%self.name()) == 'false'
+
+    __nonzero__ = __bool__
 
     def sage_polystring(self):
         """

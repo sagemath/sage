@@ -222,7 +222,7 @@ typedef struct _dgs_disc_gauss_dp_t {
   dgs_bern_uniform_t *B;
 
   /**
-     To realise rejection sampling, we call `B_{exp(-(x·x)/(2σ²))}` and accept
+     To realize rejection sampling, we call `B_{exp(-(x·x)/(2σ²))}` and accept
      if it returns 1.
 
      Used when ``DGS_DISC_GAUSS_UNIFORM_LOGTABLE`` or
@@ -443,7 +443,7 @@ typedef struct _dgs_disc_gauss_mp_t {
   dgs_bern_uniform_t *B;
 
   /**
-     To realise rejection sampling, we call `B_{exp(-(x·x)/(2σ²))}` and accept
+     To realize rejection sampling, we call `B_{exp(-(x·x)/(2σ²))}` and accept
      if it returns 1.
 
      Used when ``DGS_DISC_GAUSS_UNIFORM_LOGTABLE`` or

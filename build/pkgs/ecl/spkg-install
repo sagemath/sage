@@ -8,17 +8,6 @@ fi
 
 cd src
 
-# Patch sources. Note that some patches (in the patches/src directory)
-# have been applied to the source tarball.
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 if [ -z "$CFLAG64" ] ; then
     CFLAG64=-m64
 fi

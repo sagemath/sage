@@ -1,0 +1,14 @@
+diff --git a/Makefile.system b/Makefile.system
+index b05177b..d4b3709 100644
+--- a/Makefile.system
++++ b/Makefile.system
+@@ -217,7 +217,9 @@ endif
+ #
+ 
+ ifeq ($(OSNAME), Darwin)
++ifndef MACOSX_DEPLOYMENT_TARGET
+ export MACOSX_DEPLOYMENT_TARGET=10.6
++endif
+ MD5SUM = md5 -r
+ endif
+ 

@@ -20,26 +20,23 @@ AUTHORS:
 
 include "cysignals/memory.pxi"
 include "cysignals/signals.pxi"
-from sage.libs.pari.paridecl cimport *
-from sage.libs.pari.paripriv cimport *
+from sage.libs.cypari2.paridecl cimport *
+from sage.libs.cypari2.paripriv cimport *
+from sage.libs.pari.convert_gmp cimport _new_GEN_from_mpz_t
+from sage.libs.cypari2.stack cimport new_gen, clear_stack, deepcopy_to_python_heap
+from sage.libs.cypari2.gen cimport gen as pari_gen, objtogen
 
 from element_base cimport FinitePolyExtElement
 from integer_mod import IntegerMod_abstract
 
-import sage.libs.pari
 import sage.rings.integer
 from sage.interfaces.gap import is_GapElement
-from sage.libs.pari.gen cimport gen as pari_gen
-from sage.libs.pari.pari_instance cimport PariInstance
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial
 from sage.rings.rational import Rational
 from sage.structure.element cimport Element, ModuleElement, RingElement
-
-cdef PariInstance pari = sage.libs.pari.pari_instance.pari
-
 
 cdef GEN _INT_to_FFELT(GEN g, GEN x) except NULL:
     """
@@ -186,8 +183,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         This should be called exactly once on every instance.
         """
-        self.val = pari.deepcopy_to_python_heap(g, <pari_sp*>&self.block)
-        pari.clear_stack()
+        self.val = deepcopy_to_python_heap(g, <pari_sp*>&self.block)
+        clear_stack()
 
     cdef void construct_from(FiniteFieldElement_pari_ffelt self, object x) except *:
         """
@@ -222,12 +219,12 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         elif isinstance(x, Integer):
             g = (<pari_gen>self._parent._gen_pari).g
             sig_on()
-            x_GEN = pari._new_GEN_from_mpz_t((<Integer>x).value)
+            x_GEN = _new_GEN_from_mpz_t((<Integer>x).value)
             self.construct(_INT_to_FFELT(g, x_GEN))
 
         elif isinstance(x, int) or isinstance(x, long):
             g = (<pari_gen>self._parent._gen_pari).g
-            x = pari(x)
+            x = objtogen(x)
             sig_on()
             x_GEN = (<pari_gen>x).g
             self.construct(_INT_to_FFELT(g, x_GEN))
@@ -236,7 +233,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             if self._parent.characteristic().divides(x.modulus()):
                 g = (<pari_gen>self._parent._gen_pari).g
                 sig_on()
-                x_GEN = pari._new_GEN_from_mpz_t(Integer(x).value)
+                x_GEN = _new_GEN_from_mpz_t(Integer(x).value)
                 self.construct(_INT_to_FFELT(g, x_GEN))
             else:
                 raise TypeError("no coercion defined")
@@ -288,7 +285,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                 set_gel(f, 1, gmael(g, 2, 1))
                 for i in xrange(n):
                     xi = Integer(x[i])
-                    set_gel(f, i + 2, pari._new_GEN_from_mpz_t(xi.value))
+                    set_gel(f, i + 2, _new_GEN_from_mpz_t(xi.value))
             elif t == t_FF_Flxq or t == t_FF_F2xq:
                 f = cgetg(n + 2, t_VECSMALL)
                 set_gel(f, 1, gmael(g, 2, 1))
@@ -348,7 +345,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             c^4 + 2*c^3
         """
         sig_on()
-        return str(pari.new_gen(self.val))
+        return str(new_gen(self.val))
 
     def __hash__(FiniteFieldElement_pari_ffelt self):
         """
@@ -685,7 +682,25 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             Univariate Polynomial Ring in alpha over Finite Field of size 3
         """
         sig_on()
-        return self._parent.polynomial_ring()(pari.new_gen(FF_to_FpXQ_i(self.val)))
+        return self._parent.polynomial_ring()(new_gen(FF_to_FpXQ_i(self.val)))
+
+    def minpoly(self, var='x'):
+        """
+        Return the minimal polynomial of ``self``.
+
+        INPUT:
+
+        - ``var`` -- string (default: 'x'): variable name to use.
+
+        EXAMPLE::
+
+            sage: R.<x> = PolynomialRing(FiniteField(3))
+            sage: F.<a> = FiniteField(3^2, modulus=x^2 + 1, impl='pari_ffelt')
+            sage: a.minpoly('y')
+            y^2 + 1
+        """
+        sig_on()
+        return self._parent.polynomial_ring(var)(new_gen(FF_minpoly(self.val)))
 
     def charpoly(FiniteFieldElement_pari_ffelt self, object var='x'):
         """
@@ -698,12 +713,12 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         EXAMPLE::
 
             sage: R.<x> = PolynomialRing(FiniteField(3))
-            sage: F.<a> = FiniteField(3^2, modulus=x^2 + 1)
+            sage: F.<a> = FiniteField(3^2, modulus=x^2 + 1, impl='pari_ffelt')
             sage: a.charpoly('y')
             y^2 + 1
         """
         sig_on()
-        return self._parent.polynomial_ring(var)(pari.new_gen(FF_charpoly(self.val)))
+        return self._parent.polynomial_ring(var)(new_gen(FF_charpoly(self.val)))
 
     def is_square(FiniteFieldElement_pari_ffelt self):
         """
@@ -880,10 +895,10 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         self_order = FF_order(self.val, NULL)
         if not dvdii(base_order, self_order):
             # self_order does not divide base_order
-            pari.clear_stack()
+            clear_stack()
             raise ArithmeticError("element %s does not lie in group generated by %s"%(self, base))
         x = FF_log(self.val, (<FiniteFieldElement_pari_ffelt>base).val, base_order)
-        return Integer(pari.new_gen(x))
+        return Integer(new_gen(x))
 
     def multiplicative_order(FiniteFieldElement_pari_ffelt self):
         """
@@ -902,7 +917,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         cdef GEN order
         sig_on()
         order = FF_order(self.val, NULL)
-        return Integer(pari.new_gen(order))
+        return Integer(new_gen(order))
 
     def lift(FiniteFieldElement_pari_ffelt self):
         """
@@ -1002,7 +1017,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             a^2 + 2*a + 1
         """
         sig_on()
-        return pari.new_gen(self.val)
+        return new_gen(self.val)
 
     def _pari_init_(self):
         """

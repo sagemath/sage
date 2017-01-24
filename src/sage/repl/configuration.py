@@ -1,5 +1,18 @@
 r"""
 Sage's IPython Configuration
+
+TESTS:
+
+We check that Sage stdin can be piped in even if stdout is a tty; In that case
+the IPython simple prompt is being used::
+
+    sage: cmd = 'print([sys.stdin.isatty(), sys.stdout.isatty()])'
+    sage: import pexpect
+    sage: output = pexpect.run(
+    ....:     'bash -c \'echo "{0}" | sage\''.format(cmd),
+    ....: )
+    sage: 'In [1]: [False, True]' in output
+    True
 """
 
 #*****************************************************************************
@@ -54,7 +67,7 @@ class SageIpythonConfiguration(object):
             sage: sage_ipython_config._allow_ansi()
             False
         """
-        return (not self._doctest_mode()) and sys.stdout.isatty()
+        return (not self._doctest_mode()) and sys.stdin.isatty() and sys.stdout.isatty()
 
     def colors(self):
         """

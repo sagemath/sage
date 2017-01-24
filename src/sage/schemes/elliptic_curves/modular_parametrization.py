@@ -5,7 +5,7 @@ Modular parametrization of elliptic curves over `\QQ`
 By the work of Taylor--Wiles et al. it is known that there
 is a surjective morphism
 
-.. math::
+.. MATH::
 
     \phi_E: X_0(N) \rightarrow E.
 
@@ -53,7 +53,7 @@ class ModularParameterization:
     r"""
     This class represents the modular parametrization of an elliptic curve
 
-    .. math::
+    .. MATH::
 
         \phi_E: X_0(N) \rightarrow E.
 
@@ -237,7 +237,7 @@ class ModularParameterization:
 
         The series should satisfy the differential equation
 
-        .. math::
+        .. MATH::
 
             \frac{\mathrm{d}X}{2Y + a_1 X + a_3} = \frac{f(q)\, \mathrm{d}q}{q}
 

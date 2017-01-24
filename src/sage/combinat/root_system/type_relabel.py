@@ -8,6 +8,7 @@ Root system data for relabelled Cartan types
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -569,7 +570,7 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
         """
         affine = self._type.affine()
         relabelling = self._relabelling.copy()
-        for special_node in [affine.special_node()] + range(affine.rank()):
+        for special_node in [affine.special_node()] + list(range(affine.rank())):
             if special_node not in self._relabelling_inverse:
                 relabelling[affine.special_node()] = special_node
                 break
@@ -650,7 +651,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         r"""
         Returns a special node of the Dynkin diagram
 
-        .. seealso:: :meth:`~sage.combinat.root_system.CartanType_affine.special_node`
+        .. SEEALSO:: :meth:`~sage.combinat.root_system.CartanType_affine.special_node`
 
         It is obtained by relabelling of the special node of the non
         relabelled Dynkin diagram.

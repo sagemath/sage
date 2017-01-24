@@ -1,0 +1,45 @@
+From af86db438dcc1ec2c2c840cf2ed54a609ea949cf Mon Sep 17 00:00:00 2001
+From: Bill Allombert <Bill.Allombert@math.u-bordeaux1.fr>
+Date: Mon, 5 Sep 2016 14:28:16 +0200
+Subject: [PATCH 1/1] perl: add explicit "." in @INC
+
+perl 5.26 will remove "." from @INC
+---
+ src/desc/doc_make  | 1 +
+ src/desc/gen_proto | 1 +
+ src/desc/merge_822 | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/src/desc/doc_make b/src/desc/doc_make
+index 2dfbd42..fdc144d 100755
+--- a/src/desc/doc_make
++++ b/src/desc/doc_make
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl
++BEGIN { @INC=(".",@INC); }
+ use warnings FATAL => 'all';
+ use strict;
+ use PARI::822;
+diff --git a/src/desc/gen_proto b/src/desc/gen_proto
+index ffd94a8..e39252d 100755
+--- a/src/desc/gen_proto
++++ b/src/desc/gen_proto
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++BEGIN { @INC=(".",@INC); }
+ use PARI::822;
+ 
+ $class=$ARGV[0];
+diff --git a/src/desc/merge_822 b/src/desc/merge_822
+index 4c9217b..47025ac 100755
+--- a/src/desc/merge_822
++++ b/src/desc/merge_822
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++BEGIN { @INC=(".",@INC); }
+ use PARI::822;
+ 
+ open(IN, $ARGV[0]) || die "cannot find $ARGV[0]";
+-- 
+2.1.4
+

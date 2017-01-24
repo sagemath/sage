@@ -4,7 +4,7 @@ SAT-Solvers via DIMACS Files
 Sage supports calling SAT solvers using the popular DIMACS format. This module implements
 infrastructure to make it easy to add new such interfaces and some example interfaces.
 
-Currently, interfaces to **RSat** [RS]_ and **Glucose** [GL]_ are included by default.
+Currently, interfaces to **RSat** and **Glucose** are included by default.
 
 .. note::
 

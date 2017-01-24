@@ -26,29 +26,17 @@ More information is available in the following references:
 
 REFERENCES:
 
-.. [Basu] Kaushik Basu.
-   *The Traveler's Dilemma: Paradoxes of Rationality in Game Theory*.
-   The American Economic Review (1994): 391-395.
+- [Ba1994]_
 
-.. [Cressman] Cressman, Ross.
-   *Evolutionary dynamics and extensive form games*.
-   MIT Press.
+- [Cre2003]_
 
-.. [McMillan] John McMillan.
-   *Games, strategies, and managers*.
-   Oxford University Press.
+- [McM1992]_
 
-.. [Skyrms] Brian Skyrms.
-   *The stag hunt and the evolution of social structure*.
-   Cambridge University Press.
+- [Sky2003]_
 
-.. [Watson] Joel Watson.
-   *Strategy: an introduction to game theory*.
-   WW Norton.
+- [Wat2003]_
 
-.. [Webb] James Webb.
-   *Game theory: decisions, interaction and Evolution*.
-   Springer Science & Business Media.
+- [Web2007]_
 
 AUTHOR:
 
@@ -70,7 +58,7 @@ def PrisonersDilemma(R=-2, P=-4, S=-5, T=0):
     If they both defect they both get a medium length sentence.
 
     This can be modeled as a normal form game using the following two matrices
-    [Webb]_:
+    [Web2007]_:
 
     .. MATH::
 
@@ -92,7 +80,7 @@ def PrisonersDilemma(R=-2, P=-4, S=-5, T=0):
     - `P` denotes the utility for punishing the other player.
     - `T` denotes the temptation payoff.
 
-    An often used version [Webb]_ is the following:
+    An often used version [Web2007]_ is the following:
 
     .. MATH::
 
@@ -156,7 +144,7 @@ def CoordinationGame(A=10, a=5, B=0, b=0, C=0, c=0, D=5, d=10):
     Return a 2 by 2 Coordination Game.
 
     A coordination game is a particular type of game where the pure Nash
-    equilibrium is for the players to pick the same strategies [Webb]_.
+    equilibrium is for the players to pick the same strategies [Web2007]_.
 
     In general these are represented as a normal form game using the
     following two matrices:
@@ -247,7 +235,7 @@ def BattleOfTheSexes():
     watch a movie. They both however want to spend their evening
     together.
     This can be modeled as a normal form game using the following two matrices
-    [Webb]_:
+    [Web2007]_:
 
     .. MATH::
 
@@ -297,7 +285,7 @@ def StagHunt():
     hare by himself, but a hare is worth less than a stag.
 
     This can be modeled as a normal form game using the following two matrices
-    [Skyrms]_:
+    [Sky2003]_:
 
     .. MATH::
 
@@ -438,7 +426,7 @@ def HawkDove(v=2, c=3):
       `c>v`.
 
     This can be modeled as a normal form game using the following two matrices
-    [Webb]_:
+    [Web2007]_:
 
     .. MATH::
 
@@ -532,7 +520,7 @@ def Pigs():
     to eat a third of the food (and they will also both lose 1 unit of food).
 
     This can be modeled as a normal form game using the following two matrices
-    [McMillan]_ (we assume that the dominant pig's utilities are given by
+    [McM1992]_ (we assume that the dominant pig's utilities are given by
     `A`):
 
     .. MATH::
@@ -582,7 +570,7 @@ def MatchingPennies():
     if not then player 2 wins.
 
     This can be modeled as a zero sum normal form game with the following
-    matrix [Webb]_:
+    matrix [Web2007]_:
 
     .. MATH::
 
@@ -628,7 +616,7 @@ def RPS():
     the tie.
 
     This can be modeled as a zero sum normal form game with the following
-    matrix [Webb]_:
+    matrix [Web2007]_:
 
     .. MATH::
 
@@ -752,7 +740,7 @@ def Chicken(A=0, a=0, B=1, b=-1, C=-1, c=1, D=-10, d=-10):
     Where `A < B, D < C` and `a < c, d < b` but with the extra
     condition that `A > C` and `a > b`.
 
-    Here are the numeric values used by default [Watson]_:
+    Here are the numeric values used by default [Wat2003]_:
 
     .. MATH::
 
@@ -841,7 +829,7 @@ def TravellersDilemma(max_value=10):
     write down?
 
     This can be modeled as a normal form game using the following two matrices
-    [Basu]_:
+    [Ba1994]_:
 
     .. MATH::
 

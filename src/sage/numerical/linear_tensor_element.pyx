@@ -126,7 +126,7 @@ cdef class LinearTensor(ModuleElement):
 
     def coefficient(self, x):
         r"""
-        Return one of the the coefficients.
+        Return one of the coefficients.
 
         INPUT:
 

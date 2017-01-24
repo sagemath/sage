@@ -1,6 +1,11 @@
 r"""
 Tests for the Sage <-> PARI interface
 
+The default precision is 64 bits, see :trac:`21425`::
+
+    sage: pari("bitprecision(Pi)")
+    64
+
 Deprecation checks::
 
     sage: pari.poltchebi(10)

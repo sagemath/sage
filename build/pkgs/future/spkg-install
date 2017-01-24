@@ -2,7 +2,7 @@
 
 cd src
 
-python setup.py install
+$PIP_INSTALL .
 if [ $? -ne 0 ]; then
     echo "Error installing future ... exiting"
     exit 1

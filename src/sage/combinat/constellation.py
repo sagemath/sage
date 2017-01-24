@@ -49,6 +49,7 @@ REFERENCES:
 #
 #  The full text of the GPL is available at http://www.gnu.org/licenses/
 # *************************************************************************
+from six.moves import range
 
 from sage.structure.element import parent
 from sage.structure.parent import Parent
@@ -293,7 +294,7 @@ class Constellation_class(Element):
         if not self._mutable:
             raise ValueError("this constellation is immutable."
                              " Take a mutable copy first.")
-        S = SymmetricGroup(range(self.degree()))
+        S = SymmetricGroup(list(range(self.degree())))
         tr = S((j0, j1))
         i = int(i)
         if i < 0 or i >= len(self._g):
@@ -330,7 +331,7 @@ class Constellation_class(Element):
         """
         return Integer(self.degree() * 2 -
                        sum(sum(j - 1 for j in self.profile(i))
-                           for i in xrange(self.length())))
+                           for i in range(self.length())))
 
     def genus(self):
         r"""
@@ -470,7 +471,7 @@ class Constellation_class(Element):
         if self._connected:
             return [self]
         G = Graph()
-        G.add_vertices(range(self.degree()))
+        G.add_vertices(list(range(self.degree())))
         for p in self._g:
             G.add_edges(enumerate(p.domain()))
         m = G.connected_components()
@@ -479,17 +480,17 @@ class Constellation_class(Element):
         for mm in m:
             mm.sort()
         m.sort()
-        g = [[] for _ in xrange(len(m))]
+        g = [[] for _ in range(len(m))]
         m_inv = [None] * self.degree()
         for t, mt in enumerate(m):
             for i, mti in enumerate(mt):
                 m_inv[mti] = i
-            for k in xrange(self.length()):
+            for k in range(self.length()):
                 tmp = [None] * len(mt)
                 for i, mti in enumerate(mt):
                     tmp[i] = m_inv[self._g[k](mti)]
                 g[t].append(tmp)
-        return [Constellation(g=g[i], check=False) for i in xrange(len(m))]
+        return [Constellation(g=g[i], check=False) for i in range(len(m))]
 
     def __eq__(self, other):
         r"""
@@ -573,7 +574,7 @@ class Constellation_class(Element):
             return self.length().__cmp__(other.length())
         if self.degree() != other.degree():
             return self.degree().__cmp__(other.degree())
-        for i in xrange(self.length() - 1):
+        for i in range(self.length() - 1):
             if self._g[i] != other._g[i]:
                 return self._g[i].__cmp__(other._g[i])
         return 0
@@ -590,7 +591,7 @@ class Constellation_class(Element):
         """
         s = "Constellation of length {} and degree {}".format(self.length(),
                                                               self.degree())
-        for i in xrange(self.length()):
+        for i in range(self.length()):
             s += "\ng{} {}".format(i, self._g[i].cycle_string(True))
         return s
 
@@ -658,7 +659,7 @@ class Constellation_class(Element):
             ([3, 2], [2, 1, 1, 1], [5])
         """
         if i is None:
-            return tuple(self.profile(j) for j in xrange(self.length()))
+            return tuple(self.profile(j) for j in range(self.length()))
         else:
             parts = [len(cy) for cy in self._g[i].cycle_tuples(True)]
             return Partition(sorted(parts, reverse=True))
@@ -758,9 +759,9 @@ class Constellation_class(Element):
             g2 ('a','b','e','d','c')
         """
         if perm is not None:
-            g = [[None] * self.degree() for _ in xrange(self.length())]
-            for i in xrange(len(perm.domain())):
-                for k in xrange(self.length()):
+            g = [[None] * self.degree() for _ in range(self.length())]
+            for i in range(len(perm.domain())):
+                for k in range(self.length()):
                     g[k][perm(i)] = perm(self._g[k](i))
             return Constellation(g=g, check=False, mutable=self.is_mutable())
 
@@ -894,7 +895,7 @@ class Constellation_class(Element):
         while waiting:
             c = waiting.pop()
             G.add_vertex(c)
-            for i in xrange(self.length()):
+            for i in range(self.length()):
                 cc = self.braid_group_action(i).relabel()
                 if cc not in G:
                     waiting.append(cc)
@@ -1072,11 +1073,11 @@ class Constellations_ld(UniqueRepresentation, Parent):
         d = self._degree
         Sd = self._sym
 
-        g = [Sd.random_element() for _ in xrange(l - 1)]
+        g = [Sd.random_element() for _ in range(l - 1)]
         G = PermutationGroup(g)
         while not G.degree() == d or (self._connected and
                                       not G.is_transitive()):
-            g = [Sd.random_element() for _ in xrange(l - 1)]
+            g = [Sd.random_element() for _ in range(l - 1)]
             G = PermutationGroup(g)
 
         return self([sigma.domain() for sigma in g] + [None], mutable=mutable)
@@ -1592,7 +1593,7 @@ def perms_canonical_labels_from(x, y, j0, verbose=False):
 
     k = 0
     mapping = [None] * n
-    waiting = [[] for i in xrange(len(y))]
+    waiting = [[] for i in range(len(y))]
 
     while k < n:
         if verbose:
@@ -1728,13 +1729,13 @@ def perms_canonical_labels(p, e=None):
     n = len(p[0])
 
     c_win = None
-    m_win = range(n)
+    m_win = list(range(n))
 
     x = p[0]
     y = p[1:]
 
     if e is None:
-        e = range(n)
+        e = list(range(n))
 
     # get canonical label from i in to_test and compare
     while e:

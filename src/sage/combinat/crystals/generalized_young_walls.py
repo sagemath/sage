@@ -724,7 +724,7 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
 
         sage: S = Yinf.subcrystal(max_depth=3)
         sage: G = Yinf.digraph(subset=S) # long time
-        sage: view(G, tightpage=True) # not tested
+        sage: view(G) # not tested
     """
 
     @staticmethod
@@ -934,7 +934,7 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
 
         sage: S = YLa.subcrystal(max_depth=4)
         sage: G = YLa.digraph(subset=S)
-        sage: view(G, tightpage=True) # not tested
+        sage: view(G) # not tested
     """
     @staticmethod
     def __classcall_private__(cls, n, La):

@@ -71,8 +71,9 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
-
+from six.moves import range
 import six
+
 from . import ring
 from . import fraction_field_element
 import sage.misc.latex as latex
@@ -595,7 +596,7 @@ class FractionField_generic(ring.Field):
                         # and the x[i] are rational functions in the
                         # remaining variables.
                         v = Element(self, x.variable(), 1)
-                        return sum(self(x[i]) * v**i for i in xrange(x.poldegree() + 1))
+                        return sum(self(x[i]) * v**i for i in range(x.poldegree() + 1))
             raise
 
     def construction(self):

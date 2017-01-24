@@ -754,7 +754,7 @@ def ideal_to_gfan_format(input_ring, polys):
 
         TESTS:
 
-        Test that #20146 is fixed::
+        Test that :trac:`20146` is fixed::
 
             sage: P = PolynomialRing(QQ,"x11,x12,x13,x14,x15,x21,x22,x23,x24,x25,x31,x32,x33,x34,x35"); x = P.gens(); M = Matrix(3,x)
             sage: I = P.ideal(M.minors(2))

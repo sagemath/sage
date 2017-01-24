@@ -199,10 +199,10 @@ def test_word_perms(t_limit=5.0):
         raise MemoryError("Error allocating memory.")
     from sage.misc.prandom import randint
     from sage.combinat.permutation import Permutations
-    S = Permutations(range(n))
+    S = Permutations(list(xrange(n)))
     t = cputime()
     while cputime(t) < t_limit:
-        word = [randint(0,1) for _ in xrange(n)]
+        word = [randint(0, 1) for _ in xrange(n)]
         cw1 = 0
         for j from 0 <= j < n:
             cw1 += (<codeword>word[j]) << (<codeword>j)
@@ -295,7 +295,7 @@ cdef WordPermutation *create_word_perm(object list_perm):
     word_perm.chunk_num = num_chunks
     words_per_chunk = 1 << chunk_size
     word_perm.gate = ( (<codeword>1) << chunk_size ) - 1
-    list_perm += range(len(list_perm), chunk_size*num_chunks)
+    list_perm += list(xrange(len(list_perm), chunk_size*num_chunks))
     word_perm.chunk_words = words_per_chunk
     for i from 0 <= i < num_chunks:
         images_i = <codeword *> sig_malloc(words_per_chunk * sizeof(codeword))
@@ -657,7 +657,7 @@ cdef codeword *expand_to_ortho_basis(BinaryCode B, int n):
     for j from i <= j < n:
         basis[j] = 0
     # now basis is length i
-    perm = range(B.nrows)
+    perm = list(xrange(B.nrows))
     perm_c = []
     for j from B.nrows <= j < B.ncols:
         if (<codeword>1 << j) & pivots:
@@ -665,7 +665,7 @@ cdef codeword *expand_to_ortho_basis(BinaryCode B, int n):
         else:
             perm_c.append(j)
     perm.extend(perm_c)
-    perm.extend(range(B.ncols, n))
+    perm.extend(list(xrange(B.ncols, n)))
     perm_c = [0]*n
     for j from 0 <= j < n:
         perm_c[perm[j]] = j
@@ -1138,7 +1138,7 @@ cdef class BinaryCode:
             [000000000100001011011110]
             [000000000010101110001101]
             [000000000001010111000111]
-            sage: B.apply_permutation(range(11,-1,-1) + range(12, 24))
+            sage: B.apply_permutation(list(range(11,-1,-1)) + list(range(12, 24)))
             sage: B
             Binary [24,12] linear code, generator matrix
             [000000000001101011100011]
@@ -2238,7 +2238,7 @@ cdef class PartitionStack:
             sage: import sage.coding.binary_code
             sage: from sage.coding.binary_code import *
             sage: P = PartitionStack(2, 6)
-            sage: P._dangerous_dont_use_set_ents_lvls(range(5,-1,-1), [1,2,2,3,3,-1], range(3,-1,-1), [1,1,2,-1])
+            sage: P._dangerous_dont_use_set_ents_lvls(list(range(5,-1,-1)), [1,2,2,3,3,-1], list(range(3,-1,-1)), [1,1,2,-1])
             sage: P
             ({3,2,1,0})  ({5,4,3,2,1,0})
             ({3},{2},{1,0})  ({5},{4,3,2,1,0})
@@ -2273,7 +2273,7 @@ cdef class PartitionStack:
             sage: import sage.coding.binary_code
             sage: from sage.coding.binary_code import *
             sage: P = PartitionStack(2, 6)
-            sage: P._dangerous_dont_use_set_ents_lvls(range(5,-1,-1), [1,2,2,3,3,-1], range(3,-1,-1), [1,1,2,-1])
+            sage: P._dangerous_dont_use_set_ents_lvls(list(range(5,-1,-1)), [1,2,2,3,3,-1], list(range(3,-1,-1)), [1,1,2,-1])
             sage: P
             ({3,2,1,0})  ({5,4,3,2,1,0})
             ({3},{2},{1,0})  ({5},{4,3,2,1,0})
@@ -2890,7 +2890,7 @@ cdef class PartitionStack:
             sage: import sage.coding.binary_code
             sage: from sage.coding.binary_code import *
             sage: P = PartitionStack(4, 8)
-            sage: P._dangerous_dont_use_set_ents_lvls(range(8), range(7)+[-1], [4,7,12,11,1,9,3,0,2,5,6,8,10,13,14,15], [0]*16)
+            sage: P._dangerous_dont_use_set_ents_lvls(list(range(8)), list(range(7))+[-1], [4,7,12,11,1,9,3,0,2,5,6,8,10,13,14,15], [0]*16)
             sage: P
             ({4},{7},{12},{11},{1},{9},{3},{0},{2},{5},{6},{8},{10},{13},{14},{15})  ({0},{1,2,3,4,5,6,7})
             ({4},{7},{12},{11},{1},{9},{3},{0},{2},{5},{6},{8},{10},{13},{14},{15})  ({0},{1},{2,3,4,5,6,7})
@@ -2924,7 +2924,7 @@ cdef class PartitionStack:
             sage: import sage.coding.binary_code
             sage: from sage.coding.binary_code import *
             sage: P = PartitionStack(4, 8)
-            sage: P._dangerous_dont_use_set_ents_lvls(range(8), range(7)+[-1], [4,7,12,11,1,9,3,0,2,5,6,8,10,13,14,15], [0]*16)
+            sage: P._dangerous_dont_use_set_ents_lvls(list(range(8)), list(range(7))+[-1], [4,7,12,11,1,9,3,0,2,5,6,8,10,13,14,15], [0]*16)
             sage: P
             ({4},{7},{12},{11},{1},{9},{3},{0},{2},{5},{6},{8},{10},{13},{14},{15})  ({0},{1,2,3,4,5,6,7})
             ({4},{7},{12},{11},{1},{9},{3},{0},{2},{5},{6},{8},{10},{13},{14},{15})  ({0},{1},{2,3,4,5,6,7})
@@ -3808,7 +3808,7 @@ cdef class BinaryCodeClassifier:
             sage: from sage.coding.binary_code import *
             sage: BC = BinaryCodeClassifier()
             sage: B = BinaryCode(codes.ExtendedBinaryGolayCode().generator_matrix())
-            sage: B.apply_permutation(range(24,-1,-1))
+            sage: B.apply_permutation(list(range(24,-1,-1)))
             sage: B
             Binary [24,12] linear code, generator matrix
             [011000111010100000000000]
@@ -3871,12 +3871,12 @@ cdef class BinaryCodeClassifier:
 
         .. NOTE::
 
-            The function ``self_orthogonal_binary_codes`` makes heavy
+            The function ``codes.databases.self_orthogonal_binary_codes`` makes heavy
             use of this function.
 
         MORE EXAMPLES::
 
-            sage: soc_iter = self_orthogonal_binary_codes(12, 6, 4)
+            sage: soc_iter = codes.databases.self_orthogonal_binary_codes(12, 6, 4)
             sage: L = list(soc_iter)
             sage: for n in range(0, 13):
             ....:   s = 'n=%2d : '%n
@@ -3967,7 +3967,7 @@ cdef class BinaryCodeClassifier:
 
 
         for i from 0 <= i < len(aut_gp_gens):
-            parent_generators[i] = create_word_perm(aut_gp_gens[i] + range(B.ncols, n))
+            parent_generators[i] = create_word_perm(aut_gp_gens[i] + list(xrange(B.ncols, n)))
 
         word = 0
         while ortho_basis[k] & (((<codeword>1) << B.ncols) - 1):
@@ -4069,8 +4069,9 @@ cdef class BinaryCodeClassifier:
                           %(str(aut_B_aug.__interface[gap]),str(H))))
                         rt_transversal = [PermutationGroupElement(g) for g in rt_transversal if str(g) != '()']
                         rt_transversal = [[a-1 for a in g.domain()] for g in rt_transversal]
-                        rt_transversal = [g + range(len(g), n) for g in rt_transversal]
-                        rt_transversal.append(range(n))
+                        rt_transversal = [g + list(xrange(len(g), n))
+                                          for g in rt_transversal]
+                        rt_transversal.append(list(xrange(n)))
                         bingo2 = 0
                         for coset_rep in rt_transversal:
                             hwp = create_word_perm(coset_rep)

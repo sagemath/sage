@@ -2,7 +2,7 @@
 Double Description Algorithm for Cones
 
 This module implements the double description algorithm for extremal
-vertex enumeration in a pointed cone following [FukudaProdon]_. With a
+vertex enumeration in a pointed cone following [FP1996]_. With a
 little bit of preprocessing (see
 :mod:`~sage.geometry.polyhedron.double_description_inhomogeneous`)
 this defines a backend for polyhedral computations. But as far as this
@@ -36,14 +36,6 @@ The implementation works over any exact field that is embedded in
      (-0.2411809548974793?, -0.2411809548974793?, 0.2411809548974793?),
      (0.07665629029830300?, 0.07665629029830300?, 0.2411809548974793?),
      (0.5822623322995881?, -0.4177376677004119?, 0.4177376677004119?)]
-
-REFERENCES:
-
-..  [FukudaProdon]
-    Komei Fukuda , Alain Prodon:
-    Double Description Method Revisited,
-    Combinatorics and Computer Science, volume 1120 of Lecture Notes
-    in Computer Science, page 91-111. Springer (1996)
 """
 
 #*****************************************************************************
@@ -62,12 +54,12 @@ REFERENCES:
 # TODO
 #
 # The adjacency check should use caching and the "combinatorial
-# criterion" instead of the "algebraic criterion", see [FukudaProdon]
+# criterion" instead of the "algebraic criterion", see [FP1996]
 # for definition. Since coefficient arithmetic is relatively expensive
 # we should avoid it as far as possible.
 #
 # Also, the variants of the double description algorithm described in
-# [FukudaProdon] should be implemented. The design of this module is
+# [FP1996] should be implemented. The design of this module is
 # such that variants of the basic algorithm should be easy to add as
 # subclasses of DoubleDescriptionPair and Problem.
 # *****************************************************************************
@@ -732,7 +724,7 @@ class StandardAlgorithm(Problem):
     """
     Standard implementation of the double description algorithm
 
-    See [FukudaProdon]_ for the definition of the "Standard
+    See [FP1996]_ for the definition of the "Standard
     Algorithm".
 
     EXAMPLES::

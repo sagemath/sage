@@ -11,6 +11,8 @@ Datatypes for words defined by iterators and callables
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
+
 from sage.combinat.words.word_datatypes import WordDatatype
 from sage.rings.all import Infinity
 from math import ceil
@@ -84,8 +86,9 @@ class WordDatatype_callable(WordDatatype):
         if self._len is Infinity:
             domain = itertools.count()
         else:
-            domain = xrange(self._len)
-        return itertools.imap(self._func, domain)
+            domain = range(self._len)
+        for x in domain:
+            yield self._func(x)
 
     def __getitem__(self, key):
         r"""
@@ -361,7 +364,7 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
         if self._len is Infinity:
             domain = itertools.count()
         else:
-            domain = xrange(self._len)
+            domain = range(self._len)
         letter_cache = self._letter_cache
         func = self._func
         for x in domain:

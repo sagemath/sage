@@ -134,7 +134,7 @@ class UnionOfIntervals:
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.height import UnionOfIntervals
-            sage: UnionOfIntervals(range(10)).intervals()
+            sage: UnionOfIntervals(list(range(10))).intervals()
             [(0, 1), (2, 3), (4, 5), (6, 7), (8, 9)]
             sage: UnionOfIntervals([-infinity, pi, 17, infinity]).intervals()
             [(-Infinity, pi), (17, +Infinity)]
@@ -1378,7 +1378,7 @@ class EllipticCurveCanonicalHeight:
 
         (Real) `c>0` such that
 
-        .. math::
+        .. MATH::
 
             |\wp(z) - z^-2| \le \frac{c^2|z|^2}{1-c|z|^2}
 

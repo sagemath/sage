@@ -261,7 +261,7 @@ class ToricPlotter(SageObject):
             False
         """
         # Just to make TestSuite happy...
-        return self.__dict__ == other.__dict__
+        return type(self) is type(other) and self.__dict__ == other.__dict__
 
     def adjust_options(self):
         r"""

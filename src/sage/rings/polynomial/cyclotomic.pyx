@@ -47,7 +47,7 @@ def cyclotomic_coeffs(nn, sparse=None):
     This calculates the coefficients of the n-th cyclotomic polynomial
     by using the formula
 
-    .. math::
+    .. MATH::
 
         \\Phi_n(x) = \\prod_{d|n} (1-x^{n/d})^{\\mu(d)}
 
@@ -106,19 +106,19 @@ def cyclotomic_coeffs(nn, sparse=None):
       Arnold and Michael Monagan)
     """
     factors = factor(nn)
-    if any([e != 1 for p, e in factors]):
+    if any(e != 1 for _, e in factors):
         # If there are primes that occur in the factorization with multiplicity
         # greater than one we use the fact that Phi_ar(x) = Phi_r(x^a) when all
         # primes dividing a divide r.
-        rad = prod([p for p, e in factors])
+        rad = prod(p for p, _ in factors)
         rad_coeffs = cyclotomic_coeffs(rad, sparse=True)
         pow = int(nn // rad)
         if sparse is None or sparse:
             L = {}
         else:
-            L = [0] * (1 + pow * prod([p-1 for p, e in factors]))
+            L = [0] * (1 + pow * prod(p - 1 for p, _ in factors))
         for mon, c in rad_coeffs.items():
-            L[mon*pow] = c
+            L[mon * pow] = c
         return L
 
     elif len(factors) == 1 and not sparse:
@@ -138,10 +138,10 @@ def cyclotomic_coeffs(nn, sparse=None):
         return [int(a) for a in pari.polcyclo(nn).Vecrev()]
 
     cdef long d, max_deg = 0, n = nn
-    primes = [int(p) for p, e in factors]
+    primes = [int(p) for p, _ in factors]
     prime_subsets = list(subsets(primes))
     if n > 5000:
-        prime_subsets.sort(my_cmp)
+        prime_subsets.sort(key=lambda a: -prod(a))
 
     for s in prime_subsets:
         if len(s) % 2 == 0:
@@ -201,7 +201,7 @@ def cyclotomic_coeffs(nn, sparse=None):
 
 def cyclotomic_value(n, x):
     """
-    Returns the value of the `n`-th cyclotomic polynomial evaulated at `x`.
+    Return the value of the `n`-th cyclotomic polynomial evaluated at `x`.
 
     INPUT:
 
@@ -215,7 +215,7 @@ def cyclotomic_value(n, x):
 
     ALGORITHM:
 
-    - Reduce to the case that n is squarefree: use the identity
+    - Reduce to the case that `n` is squarefree: use the identity
 
     .. MATH::
 
@@ -231,8 +231,8 @@ def cyclotomic_value(n, x):
 
     where `\mu` is the Möbius function.
 
-    - Handles the case that x^d = 1 for some d, but not the case that
-      x^d - 1 is non-invertible: in this case polynomial evaluation is
+    - Handles the case that `x^d = 1` for some `d`, but not the case that
+      `x^d - 1` is non-invertible: in this case polynomial evaluation is
       used instead.
 
     EXAMPLES::
@@ -313,15 +313,15 @@ def cyclotomic_value(n, x):
 
     factors = n.factor()
     cdef Py_ssize_t i, j, ti, L, root_of_unity = -1
-    primes = [p for p, e in factors]
+    primes = [p for p, _ in factors]
     L = len(primes)
-    if any(e != 1 for p, e in factors):
+    if any(e != 1 for _, e in factors):
         # If there are primes that occur in the factorization with multiplicity
         # greater than one we use the fact that Phi_ar(x) = Phi_r(x^a) when all
         # primes dividing a divide r.
         rad = prod(primes)
         pow = n // rad
-        x = x**pow
+        x = x ** pow
         n = rad
     if x == 1:
         # if n is prime, return n
@@ -342,10 +342,10 @@ def cyclotomic_value(n, x):
             mu = 1
             num = x - 1
             den = 1
-        for i in range(L):
+        for i in xrange(L):
             ti = 1 << i
             p = primes[i]
-            for j in range(ti):
+            for j in xrange(ti):
                 xpow = xd[j]**p
                 xd.append(xpow)
                 md[ti+j] = -md[j]
@@ -376,17 +376,21 @@ def cyclotomic_value(n, x):
         # If root_of_unity = (1<<L) - (1<<(i-1)) - 1 for some i < L,
         # then n/d == primes[i] and we need to multiply by primes[i],
         # otherwise n/d is composite and nothing more needs to be done.
-        for i in range(L):
+        for i in xrange(L):
             if root_of_unity + (1 << i) + 1 == 1 << L:
                 ans *= primes[i]
                 break
     return x.parent()(ans)
 
+
 def bateman_bound(nn):
+    """
+    Reference:
+
+    Bateman, P. T.; Pomerance, C.; Vaughan, R. C.
+    *On the size of the coefficients of the cyclotomic polynomial.*
+    """
     _, n = nn.val_unit(2)
     primes = [p for p, _ in factor(n)]
     j = len(primes)
-    return prod([primes[k]^(2^(j-k-2)-1) for k in range(j-2)])
-
-def my_cmp(a, b):
-    return int(prod(b) - prod(a))
+    return prod(primes[k] ** (2 ** (j - k - 2) - 1) for k in xrange(j - 2))

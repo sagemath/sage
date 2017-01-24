@@ -48,14 +48,12 @@ http://www.python.org/community/
 
 === Patches ===
 
- * sdist.patch: Make sure that sdist copies over the .hg directory.
  * socket.patch: Work around an SSL issue.
  * permissions.patch: Changes the permission of installed libraries
    to 0755 (like any other library) instead of 0555.
- * sys_path_security.patch: ensure that the current working directory
-   or the script directory is prepended to sys.path only if there is no
-   security risk in doing so.
- * io-issue_14437.patch: Fixes Python issue #14437 (building _io on Cygwin)
+ * sys_path_security-issue_16202.patch: ensure that the current working
+   directory or the script directory is prepended to sys.path only if
+   there is no security risk in doing so.
  * ncurses-issue_9665.patch: Fixes Python issue #9665 (by patching configure
    and configure.in after running autotools).
  * ncurses-issue_14438.patch: Fixes Python issue #14438 (ncurses)
@@ -66,7 +64,8 @@ http://www.python.org/community/
    for C and C++). See http://bugs.python.org/issue5755.
  * hashlibfallbacks-issue_18000.patch: Fixed Python issue #18000.
  * tinfo.patch: make sure tinfo is correctly linked in when needed on Cygwin.
-
-Temporarily removed since it does not apply to python-2.7.6:
- * uuid.patch: patch from Python issue 11063; reduce uuid moudle import side
-   effects and fix thread related issues.
+ * uuid-issue_11063.patch: patch from Python issue 11063; reduce uuid
+   module import side effects and fix thread related issues.
+ * getcallargs-issue_20108.patch: fix inspect.getcallargs() when the
+   function has a "func" keyword argument. Needed for @interact from
+   ipywidgets.

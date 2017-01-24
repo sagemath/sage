@@ -31,17 +31,28 @@ deprecated_callable_import(19315,
             ("This method soon will not be available in that way."
             "Please call codes.bounds.%(name)s instead"))
 
-lazy_import("sage.coding.linear_code", ["LinearCode",
+lazy_import("sage.coding.linear_code", [
+            "LinearCode",
             "LinearCodeFromVectorSpace",
-            "best_known_linear_code",
-            "best_known_linear_code_www",
-            "bounds_minimum_distance",
             "self_orthogonal_binary_codes"])
 
-lazy_import("sage.coding.delsarte_bounds", ["Krawtchouk", "Kravchuk",
+# Functions removed from the global namespace
+lazy_import('sage.coding.databases','best_linear_code_in_guava', "best_known_linear_code",
+    deprecation=(21165, "best_known_linear_code has moved to sage.coding.databases.best_linear_code_in_guava"))
+lazy_import('sage.coding.databases','best_linear_code_in_guava', "best_known_linear_code_www",
+    deprecation=(21165, "best_known_linear_code_www has moved to sage.coding.databases.best_linear_code_in_guava"))
+lazy_import('sage.coding.databases','bounds_on_minimum_distance_in_guava', "bounds_minimum_distance",
+    deprecation=(21165, "bounds_minimum_distance has moved to sage.coding.databases.bounds_on_minimum_distance_in_guava"))
+lazy_import('sage.coding.databases','self_orthogonal_binary_codes', "self_orthogonal_binary_codes",
+    deprecation=(21165, "self_orthogonal_binary_codes has moved to sage.coding.databases.self_orthogonal_binary_codes"))
+lazy_import('sage.coding.databases','self_dual_binary_codes', "self_dual_codes_binary",
+    deprecation=(21165, "self_dual_codes_binary has moved to sage.coding.databases.self_dual_binary_codes"))
+
+lazy_import("sage.coding.delsarte_bounds", [
+            "Krawtchouk",
+            "Kravchuk",
             "delsarte_bound_hamming_space",
             "delsarte_bound_additive_hamming_space"])
 
-from .sd_codes import self_dual_codes_binary
 lazy_import('sage.coding', 'codes_catalog', 'codes')
 lazy_import('sage.coding', 'channels_catalog', 'channels')

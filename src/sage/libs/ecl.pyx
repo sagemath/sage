@@ -799,9 +799,10 @@ cdef class EclObject:
         r"""
         Comparison test.
 
-        An EclObject is not equal to any non-EclObject. Two EclObjects are equal
-        if their wrapped lisp objects are EQUAL. Since LISP has no univeral ordering,
-        less than and greater than tests are not implemented for EclObjects.
+        An EclObject is not equal to any non-EclObject. Two EclObjects
+        are equal if their wrapped lisp objects are EQUAL. Since LISP
+        has no universal ordering, less than and greater than tests
+        are not implemented for EclObjects.
 
         EXAMPLES::
 

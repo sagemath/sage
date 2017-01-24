@@ -768,7 +768,7 @@ class GenericCellComplex(SageObject):
         coefficients in ``base_ring``.
 
         The term "algebraic topological model" is defined by Pilarczyk
-        and Réal [PR]_.
+        and Réal [PR2015]_.
 
         This is not implemented for generic cell complexes. For any
         classes deriving from this one, when this method is

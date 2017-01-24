@@ -185,13 +185,17 @@ export SAGE_ENV_SOURCED=$SAGE_ENV_VERSION
 
 export SAGE_ROOT="$NEW_SAGE_ROOT"
 
+# SAGE_LOCAL is the installation prefix and can be customized
+if [ -z "$SAGE_LOCAL" ]; then
+    export SAGE_LOCAL="$SAGE_ROOT/local"
+fi
 
 # sage-env must know where the Sage's script files are
 if [ -z "$SAGE_SCRIPTS_DIR" ]; then
     if [ -f "`dirname $0`/sage-env" ]; then
         SAGE_SCRIPTS_DIR=`dirname $0`
-    elif [ -f "$SAGE_ROOT/local/bin/sage-env" ]; then
-        SAGE_SCRIPTS_DIR="$SAGE_ROOT/local/bin"
+    elif [ -f "$SAGE_LOCAL/bin/sage-env" ]; then
+        SAGE_SCRIPTS_DIR="$SAGE_LOCAL/bin"
     elif [ -f "$SAGE_ROOT/src/bin/sage-env" ]; then
         SAGE_SCRIPTS_DIR="$SAGE_ROOT/src/bin"
     else
@@ -256,8 +260,8 @@ if [ 1 = 2 ]; then
     echo "if you use sh, bash or a similar shell"
 fi
 
-# Setting Sage-related location environment variables.
-export SAGE_LOCAL="$SAGE_ROOT/local"
+# Setting Sage-related location environment variables,
+# depending on SAGE_ROOT and SAGE_LOCAL which are already defined.
 export SAGE_ETC="$SAGE_LOCAL/etc"
 export SAGE_SHARE="$SAGE_LOCAL/share"
 export SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
@@ -267,10 +271,10 @@ export SAGE_SRC="$SAGE_ROOT/src"
 export SAGE_DOC_SRC="$SAGE_SRC/doc"
 export SAGE_DOC="$SAGE_SHARE/doc/sage"
 
-if [ -z "${SAGE_ORIG_PATH_SET}" ]; then 
-    SAGE_ORIG_PATH=$PATH && export SAGE_ORIG_PATH 
-    SAGE_ORIG_PATH_SET=True && export SAGE_ORIG_PATH_SET 
-fi 
+if [ -z "${SAGE_ORIG_PATH_SET}" ]; then
+    SAGE_ORIG_PATH=$PATH && export SAGE_ORIG_PATH
+    SAGE_ORIG_PATH_SET=True && export SAGE_ORIG_PATH_SET
+fi
 export PATH="$SAGE_ROOT/build/bin:$SAGE_SRC/bin:$SAGE_LOCAL/bin:$PATH"
 
 # We offer a toolchain option, so if $SAGE_LOCAL/toolchain/toolchain-env exists source it.
@@ -333,8 +337,8 @@ if [ -z "$SAGE_REPO_ANONYMOUS" ]; then
     export SAGE_REPO_ANONYMOUS
 fi
 if [ -z "$SAGE_REPO_AUTHENTICATED" ]; then
-	SAGE_REPO_AUTHENTICATED="ssh://git@trac.sagemath.org:2222/sage.git"
-	export SAGE_REPO_AUTHENTICATED
+        SAGE_REPO_AUTHENTICATED="ssh://git@trac.sagemath.org:2222/sage.git"
+        export SAGE_REPO_AUTHENTICATED
 fi
 if [ -z "$SAGE_DISTFILES" ]; then
     SAGE_DISTFILES="$SAGE_ROOT/upstream"
@@ -370,9 +374,22 @@ if [ "$SAGE_STARTUP_FILE" = "" ]; then
     export SAGE_STARTUP_FILE
 fi
 
-IPYTHONDIR=`find "$SAGE_SPKG_INST" -name "ipython*"`
-if [ -n "$IPYTHONDIR" ]; then
-    export IPYTHONDIR="$DOT_SAGE/${IPYTHONDIR##*/}"
+if [ -z "$IPYTHONDIR" ]; then
+    # We hardcode a version number in the directory name. The idea is
+    # that we keep using the same version number as long as that is
+    # possible. Only when some future IPython version really requires
+    # a new structure for the $IPYTHONDIR should this version number be
+    # changed to the new IPython version.
+    export IPYTHONDIR="$DOT_SAGE/ipython-5.0.0"
+fi
+
+if [ -z "$JUPYTER_CONFIG_DIR" ]; then
+    # We hardcode a version number in the directory name. The idea is
+    # that we keep using the same version number as long as that is
+    # possible. Only when some future Jupyter version really requires
+    # a new structure for the $JUPYTER_CONFIG_DIR should this version
+    # number be changed to the new jupyter_core version.
+    export JUPYTER_CONFIG_DIR="$DOT_SAGE/jupyter-4.1"
 fi
 
 if [ "$PYTHON_EGG_CACHE" = "" ]; then
@@ -394,7 +411,7 @@ if [ "$PYTHONUSERBASE" = "" ]; then
 fi
 
 if [ -d "$SAGE_LOCAL/lib/python" ]; then
-    PYTHONPATH="$SAGE_LOCAL/lib/python:$SAGE_LOCAL/lib/python/site_packages"
+    PYTHONPATH="$SAGE_LOCAL/lib/python"
     if [ -n "$SAGE_PATH" ]; then
         PYTHONPATH="$SAGE_PATH:$PYTHONPATH"
     fi
@@ -411,9 +428,9 @@ export LDFLAGS
 # variable MPLCONFIGDIR. Note that we can't find the version number by
 # importing matplotlib, because that could create matplotlib's standard
 # config directory. So we use pkg_resources.
-"$SAGE_ROOT/local/bin/python" -c 'import pkg_resources; pkg_resources.get_distribution("matplotlib").version' 2>/dev/null
+"$SAGE_LOCAL/bin/python" -c 'import pkg_resources; pkg_resources.get_distribution("matplotlib").version' 2>/dev/null
 if [ $? -eq 0 ]; then
-    MPLVERSION=`"$SAGE_ROOT/local/bin/python" -c 'import pkg_resources; print (pkg_resources.get_distribution("matplotlib").version)'`
+    MPLVERSION=`"$SAGE_LOCAL/bin/python" -c 'import pkg_resources; print (pkg_resources.get_distribution("matplotlib").version)'`
     MPLCONFIGDIR="$DOT_SAGE/matplotlib-$MPLVERSION"
     export MPLCONFIGDIR
     # The directory is created when Sage starts (see sage.misc.misc).
@@ -428,30 +445,30 @@ if [ -d "$SAGE_LOCAL/lib/R/share" ] ; then
    R_MAKEVARS_SITE="$SAGE_LOCAL/lib/R/share/Makevars.site" && export R_MAKEVARS_SITE
    if ! [ -f "$R_MAKEVARS_SITE" ] ; then
        if ! [ -a "$R_MAKEVARS_SITE" ] ; then
-	   echo "## Empty site-wide Makevars file for Sage's R" > "$R_MAKEVARS_SITE"
+           echo "## Empty site-wide Makevars file for Sage's R" > "$R_MAKEVARS_SITE"
        else
-	   >&2 echo "Warning: $R_MAKEVARS_SITE exists and is not a file : trouble ahead..."
+           >&2 echo "Warning: $R_MAKEVARS_SITE exists and is not a file : trouble ahead..."
        fi
    fi
 fi
 if [ -d "$DOT_SAGE" ] ; then
     if ! [ -d "$DOT_SAGE/R" ] ; then
-	if ! [ -a  "$DOT_SAGE/R" ] ; then
-	    mkdir -p "$DOT_SAGE/R"
-	else
-	    >&2 echo "Warning: $DOT_SAGE/R exists and is not a directory : trouble ahead..."
-	fi
+        if ! [ -a  "$DOT_SAGE/R" ] ; then
+            mkdir -p "$DOT_SAGE/R"
+        else
+            >&2 echo "Warning: $DOT_SAGE/R exists and is not a directory : trouble ahead..."
+        fi
     fi
     R_MAKEVARS_USER="$DOT_SAGE/R/Makevars.user" && export R_MAKEVARS_USER
     if ! [ -f "$R_MAKEVARS_USER" ] ; then
-	if ! [ -a "$R_MAKEVARS_USER" ] ; then
-	    echo "## Empty user-specific Makevars file for Sage's R" > "$R_MAKEVARS_USER"
-	else
-	    >&2 echo "Warning: $R_MAKEVARS_USER exists and is not a file : trouble ahead..."
-	fi
+        if ! [ -a "$R_MAKEVARS_USER" ] ; then
+            echo "## Empty user-specific Makevars file for Sage's R" > "$R_MAKEVARS_USER"
+        else
+            >&2 echo "Warning: $R_MAKEVARS_USER exists and is not a file : trouble ahead..."
+        fi
     fi
 fi
-MAXIMA_PREFIX="$SAGE_ROOT/local" && export MAXIMA_PREFIX
+export MAXIMA_PREFIX="$SAGE_LOCAL"
 
 PERL5LIB="$SAGE_LOCAL/lib/perl5:$PERL5LIB" && export PERL5LIB
 
@@ -583,6 +600,11 @@ if [ -n "$CFLAGS" -a -z "$CXXFLAGS" ]; then
     export CXXFLAGS="$CFLAGS"
 fi
 
+if [ "$UNAME" = "Darwin" ]; then
+    # Trac #21175 - export empty ARCHFLAGS for the benefit of Perl modules
+    ARCHFLAGS="" && export ARCHFLAGS
+fi
+
 if [ "$CP" = "" ]; then
     CP="cp"  && export CP
 fi
@@ -644,6 +666,8 @@ if [ "${MAKEFLAGS-__unset__}" != "__unset__" ]; then
     MAKE=`echo "$MAKE" | sed 's/ .*//'`
 fi
 export MAKE
+
+export PIP_INSTALL="sage-pip-install"
 
 # When building documentation, use MathJax by default. To turn it off,
 # set SAGE_DOC_MATHJAX to be "no" or "False".

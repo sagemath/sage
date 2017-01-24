@@ -23,8 +23,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
 import math
 from . import shapes
@@ -134,7 +133,8 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
         Graphics3d Object
         sage: line3d((x, x^2, x^3) for x in range(5))
         Graphics3d Object
-        sage: from itertools import izip; line3d(izip([2,3,5,7], [11, 13, 17, 19], [-1, -2, -3, -4]))
+        sage: from builtins import zip
+        sage: line3d(zip([2,3,5,7], [11, 13, 17, 19], [-1, -2, -3, -4]))
         Graphics3d Object
     """
     points = list(points)
@@ -146,6 +146,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
     if radius is None:
         L = Line(points, thickness=thickness, arrow_head=arrow_head, **kwds)
         L._set_extra_kwds(kwds)
+        L._extra_kwds['thickness'] = thickness  # remove this line if json_repr is defined
         return L
     else:
         v = []

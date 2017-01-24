@@ -43,6 +43,6 @@ Symbolic Calculus
    sage/symbolic/benchmark
    sage/symbolic/random_tests
 
-   sage/symbolic/pynac
+   sage/libs/pynac/pynac
 
 .. include:: ../footer.txt

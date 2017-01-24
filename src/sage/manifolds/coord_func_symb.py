@@ -195,7 +195,7 @@ class CoordFunctionSymb(CoordFunction):
         sage: g = function('g')(x, y)
         sage: f0(x,y) = diff(g, x) + diff(g, y)
         sage: f0
-        (x, y) |--> D[0](g)(x, y) + D[1](g)(x, y)
+        (x, y) |--> diff(g(x, y), x) + diff(g(x, y), y)
 
     while for coordinate functions, the display is more "textbook" like::
 
@@ -206,8 +206,7 @@ class CoordFunctionSymb(CoordFunction):
     The difference is even more dramatic on LaTeX outputs::
 
         sage: latex(f0)
-        \left( x, y \right) \ {\mapsto} \ D[0]\left(g\right)\left(x, y\right)
-         + D[1]\left(g\right)\left(x, y\right)
+        \left( x, y \right) \ {\mapsto} \ \frac{\partial}{\partial x}g\left(x, y\right) + \frac{\partial}{\partial y}g\left(x, y\right)
         sage: latex(f)
         \frac{\partial\,g}{\partial x} + \frac{\partial\,g}{\partial y}
 
@@ -216,13 +215,13 @@ class CoordFunctionSymb(CoordFunction):
     for the symbolic expression stored in ``f``::
 
         sage: f.expr()
-        D[0](g)(x, y) + D[1](g)(x, y)
+        diff(g(x, y), x) + diff(g(x, y), y)
 
     One can switch to Pynac notation by changing the options::
 
         sage: Manifold.options.textbook_output=False
         sage: latex(f)
-        D[0]\left(g\right)\left(x, y\right) + D[1]\left(g\right)\left(x, y\right)
+        \frac{\partial}{\partial x}g\left(x, y\right) + \frac{\partial}{\partial y}g\left(x, y\right)
         sage: Manifold.options._reset()
         sage: latex(f)
         \frac{\partial\,g}{\partial x} + \frac{\partial\,g}{\partial y}

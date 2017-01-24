@@ -48,6 +48,7 @@ Functions
 ---------
 """
 from __future__ import print_function, absolute_import, division
+from six.moves import range
 
 from sage.arith.all import is_prime_power
 from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
@@ -221,7 +222,7 @@ def kirkman_triple_system(v,existence=False):
         first_class = [[(0,1),(0,2),'inf']]
         b0 = K.one(); b1 = a**t; b2 = a**m
         first_class.extend([(b0*a**i,1),(b1*a**i,1),(b2*a**i,2)]
-                            for i in range(t)+range(2*t,3*t)+range(4*t,5*t))
+                            for i in list(range(t))+list(range(2*t,3*t))+list(range(4*t,5*t)))
         b0 = a**(m+t); b1=a**(m+3*t); b2=a**(m+5*t)
         first_class.extend([[(b0*a**i,2),(b1*a**i,2),(b2*a**i,2)]
                             for i in range(t)])
@@ -271,7 +272,7 @@ def kirkman_triple_system(v,existence=False):
         classes = [[[relabel[action(p,x)] for x in tr] for tr in B0]
                    for p in K]
 
-        for i in range(t)+range(2*t,3*t)+range(4*t,5*t):
+        for i in list(range(t))+list(range(2*t,3*t))+list(range(4*t,5*t)):
             classes.append([[relabel[action(p,x)] for x in A[i]] for p in K])
 
         KTS = BalancedIncompleteBlockDesign(v,[tr for cl in classes for tr in cl],k=3,lambd=1,copy=False)
@@ -465,7 +466,7 @@ def PBD_4_7(v,check=True, existence=False):
         # Beth/Jungnickel/Lenz: take KTS(15) and extend each of the 7 classes
         # with a new point. Make those new points a 7-set.
         KTS15 = kirkman_triple_system(15)
-        blocks = [S+[i+15] for i,classs in enumerate(KTS15._classes) for S in classs]+[range(15,22)]
+        blocks = [S+[i+15] for i,classs in enumerate(KTS15._classes) for S in classs]+[list(range(15, 22))]
 
     elif v == 34:
         # [BJL99] (p527,vol1), but originally Brouwer
@@ -480,7 +481,7 @@ def PBD_4_7(v,check=True, existence=False):
         D = [[(x+i,  y+i)     for x,y in D]+[33]   for i in range(9)]
 
         blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*9+(x[0]%9) for x in S]
-                  for S in A+B+C+D+[range(27,34)]]
+                  for S in A+B+C+D+[list(range(27,34))]]
     elif v == 46:
         # [BJL99] (p527,vol1), but originally Brouwer
         A = [(1,0),(3,0),(9,0),(0,1)]
@@ -496,7 +497,7 @@ def PBD_4_7(v,check=True, existence=False):
         E = [[(x+i,  y+i) for x,y in E]+[45]   for i in range(13)]
 
         blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*13+(x[0]%13) for x in S]
-                  for S in A+B+C+D+E+[range(39,46)]]
+                  for S in A+B+C+D+E+[list(range(39, 46))]]
 
     elif v == 58:
         # [BJL99] (p527,vol1), but originally Brouwer
@@ -515,7 +516,7 @@ def PBD_4_7(v,check=True, existence=False):
         F = [[(x+i,  y+i) for x,y in F]+[57]   for i in range(17)]
 
         blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*17+(x[0]%17) for x in S]
-                  for S in A+B+C+D+E+F+[range(51,58)]]
+                  for S in A+B+C+D+E+F+[list(range(51,58))]]
 
     elif v == 70:
         # [BJL99] (p527,vol1), but originally Brouwer
@@ -537,7 +538,7 @@ def PBD_4_7(v,check=True, existence=False):
 
         blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*21+(x[0]%21)
                    for x in S]
-                  for S in A+B+C+D+E+F+H+[range(63,70)]]
+                  for S in A+B+C+D+E+F+H+[list(range(63,70))]]
 
     elif v == 82:
         # This construction is Theorem IX.3.16 from [BJL99] (p.627).
@@ -566,7 +567,7 @@ def PBD_4_7(v,check=True, existence=False):
             for i in range(5):
                 GDD2.append([x+i*15 if x<15 else x+60 for x in B])
 
-        GDD2.append(range(75,82))
+        GDD2.append(list(range(75,82)))
         blocks = GDD2
 
     elif v == 94:
@@ -607,11 +608,11 @@ def PBD_4_7(v,check=True, existence=False):
                for i,classs in enumerate(rBIBD4._classes)
                for S in classs]
         if points_to_add == 7:
-            GDD.append(range(40,40+points_to_add))
+            GDD.append(list(range(40, 40 + points_to_add)))
             groups = [[x] for x in range(40+points_to_add)]
         else:
             groups = [[x] for x in range(40)]
-            groups.append(range(40,40+points_to_add))
+            groups.append(list(range(40,40+points_to_add)))
         GDD = GroupDivisibleDesign(40+points_to_add,
                                    groups = groups,
                                    blocks = GDD,

@@ -93,7 +93,7 @@ cdef class FrozenBitset:
     `\{0, 1, 2, \dots, k\}` and the membership in ``FB`` of each `i` is
     determined by the binary value `b_i`.
 
-    .. seealso::
+    .. SEEALSO::
 
         - :class:`Bitset`
 
@@ -1257,7 +1257,7 @@ cdef class Bitset(FrozenBitset):
         for a Python set type, the Python ``set`` data type may be
         faster.
 
-    .. seealso::
+    .. SEEALSO::
 
         - :class:`FrozenBitset`
         - Python's `set types <http://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_

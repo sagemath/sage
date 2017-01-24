@@ -58,7 +58,7 @@ include "sage/ext/cdefs.pxi"
 include "cysignals/signals.pxi"
 include "sage/ext/stdsage.pxi"
 
-from sage.libs.gmp.rational_reconstruction cimport mpq_rational_reconstruction
+from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
 from sage.libs.gmp.randomize cimport *
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_mat cimport *
@@ -84,13 +84,11 @@ from sage.misc.all import verbose, get_verbose, prod
 
 #########################################################
 # PARI C library
-from sage.libs.pari.gen cimport gen
-from sage.libs.pari.pari_instance cimport PariInstance, INTFRAC_to_mpq
-
-import sage.libs.pari.pari_instance
-cdef PariInstance pari = sage.libs.pari.pari_instance.pari
-
-from sage.libs.pari.paridecl cimport *
+from sage.libs.cypari2.gen cimport gen
+from sage.libs.pari.convert_gmp cimport (INTFRAC_to_mpq,
+           _new_GEN_from_mpq_t_matrix, rational_matrix)
+from sage.libs.cypari2.stack cimport clear_stack
+from sage.libs.cypari2.paridecl cimport *
 #########################################################
 
 cdef class Matrix_rational_dense(Matrix_dense):
@@ -173,6 +171,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
         cdef Rational z
 
         if entries is None: return
+        if isinstance(entries, xrange):
+            entries = list(entries)
         if isinstance(entries, (list, tuple)):
             if len(entries) != self._nrows * self._ncols:
                 raise TypeError("entries has the wrong length")
@@ -646,7 +646,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         OUTPUT: the inverse of self
 
-        .. note::
+        .. NOTE::
 
            - The n x n cases for n <= 2 are handcoded for speed.
 
@@ -762,7 +762,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
              "integer" -- clear denominators and call det on integer matrix
 
-        .. note::
+        .. NOTE::
 
            It would be *VERY VERY* hard for det to fail even with
            proof=False.
@@ -1027,7 +1027,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [ -53/5   55/3   61/3]
             [   5/3 -37/45 -73/45]
             [   -27   76/3   67/3]
-            sage: (pari(a)*pari(a))._sage_() == a*a
+            sage: (pari(a)*pari(a)).sage() == a*a
             True
         """
         if self._nrows <= 6 and self._ncols <= 6 and right._nrows <= 6 and right._ncols <= 6 and \
@@ -1236,10 +1236,10 @@ cdef class Matrix_rational_dense(Matrix_dense):
         EXAMPLES::
 
             sage: A = matrix(QQ, [
-            ...                   [1, 0, 1, -3, 1],
-            ...                   [-5, 1, 0, 7, -3],
-            ...                   [0, -1, -4, 6, -2],
-            ...                   [4, -1, 0, -6, 2]])
+            ....:                 [1, 0, 1, -3, 1],
+            ....:                 [-5, 1, 0, 7, -3],
+            ....:                 [0, -1, -4, 6, -2],
+            ....:                 [4, -1, 0, -6, 2]])
             sage: result = A._right_kernel_matrix()
             sage: result[0]
             'computed-iml-rational'
@@ -1251,7 +1251,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             True
 
         Computed result is the negative of the pivot basis, which
-        is just slighltly more efficient to compute. ::
+        is just slightly more efficient to compute. ::
 
             sage: A.right_kernel_matrix(basis='pivot') == -A.right_kernel_matrix(basis='computed')
             True
@@ -1824,7 +1824,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
            proof=True.
 
 
-        .. note::
+        .. NOTE::
 
            IMPORTANT: If you expect that the subspaces in the answer
            are spanned by vectors with small height coordinates, use
@@ -1884,7 +1884,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         -  ``**kwds`` - passed on to echelon function.
 
-        .. note::
+        .. NOTE::
 
            IMPORTANT: If you expect that the subspaces in the answer are
            spanned by vectors with small height coordinates, use
@@ -2304,7 +2304,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         ::
 
-            sage: A = matrix(QQ,2,3,xrange(6))
+            sage: A = matrix(QQ, 2, 3, range(6))
             sage: type(A)
             <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: B = A.transpose()
@@ -2519,7 +2519,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         # now convert d to a Sage rational
         cdef Rational e = <Rational>Rational.__new__(Rational)
         INTFRAC_to_mpq(e.value, d)
-        pari.clear_stack()
+        clear_stack()
         return e
 
     def _rank_pari(self):
@@ -2533,7 +2533,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         """
         sig_on()
         cdef long r = rank(pari_GEN(self))
-        pari.clear_stack()
+        clear_stack()
         return r
 
     def _multiply_pari(self, Matrix_rational_dense right):
@@ -2563,7 +2563,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         sig_on()
         cdef GEN M = gmul(pari_GEN(self), pari_GEN(right))
         A = new_matrix_from_pari_GEN(self.matrix_space(self._nrows, right._ncols), M)
-        pari.clear_stack()
+        clear_stack()
         return A
 
     def _invert_pari(self):
@@ -2590,7 +2590,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         # Convert matrix back to Sage.
         A = new_matrix_from_pari_GEN(self._parent, d)
-        pari.clear_stack()
+        clear_stack()
         return A
 
     def _pari_(self):
@@ -2602,7 +2602,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             sage: matrix(QQ,2,[1/5,-2/3,3/4,4/9])._pari_()
             [1/5, -2/3; 3/4, 4/9]
         """
-        return pari.rational_matrix(self._matrix, self._nrows, self._ncols)
+        return rational_matrix(self._matrix, self._nrows, self._ncols)
 
     def row(self, Py_ssize_t i, from_list=False):
         """
@@ -2634,7 +2634,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         cdef Vector_rational_dense v = Vector_rational_dense.__new__(Vector_rational_dense)
         v._init(self._ncols, parent)
         for j in range(self._ncols):
-            mpq_init(v._entries[j]); mpq_set(v._entries[j], self._matrix[i][j])
+            mpq_set(v._entries[j], self._matrix[i][j])
         return v
 
     def column(self, Py_ssize_t i, from_list=False):
@@ -2668,7 +2668,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         cdef Vector_rational_dense v = Vector_rational_dense.__new__(Vector_rational_dense)
         v._init(self._nrows, parent)
         for j in range(self._nrows):
-            mpq_init(v._entries[j]); mpq_set(v._entries[j], self._matrix[j][i])
+            mpq_set(v._entries[j], self._matrix[j][i])
         return v
 
     ################################################
@@ -2723,5 +2723,5 @@ cdef inline GEN pari_GEN(Matrix_rational_dense B):
     For internal use only; this directly uses the PARI stack.
     One should call ``sig_on()`` before and ``sig_off()`` after.
     """
-    cdef GEN A = pari._new_GEN_from_mpq_t_matrix(B._matrix, B._nrows, B._ncols)
+    cdef GEN A = _new_GEN_from_mpq_t_matrix(B._matrix, B._nrows, B._ncols)
     return A

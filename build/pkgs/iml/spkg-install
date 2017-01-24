@@ -8,17 +8,6 @@ fi
 
 cd src
 
-# Apply patches.
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
-
 if [ "$SAGE_DEBUG" = "yes" ]; then
     echo "Building a debug version of IML."
     export CFLAGS="-O0 -g $CFLAGS"
@@ -38,7 +27,7 @@ fi
     --with-default="$SAGE_LOCAL" \
     --with-cblas="$(pkg-config --libs cblas)" \
     --with-cblas-include="$(pkg-config --cflags cblas)" \
-    "$IML_CONFIGURE" 
+    "$IML_CONFIGURE"
 if [ $? -ne 0 ]; then
     echo >&2 "Error configuring IML."
     exit 1

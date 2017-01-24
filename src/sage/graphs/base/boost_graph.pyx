@@ -220,7 +220,7 @@ cdef boost_clustering_coeff(BoostGenGraph *g, vertices):
 
     else:
         clust_of_v = {v:g[0].clustering_coeff(v) for v in vertices}
-        return [(sum(clust_of_v.itervalues())/len(clust_of_v)), clust_of_v]
+        return [(sum(clust_of_v.itervalues()) / len(clust_of_v)), clust_of_v]
 
 
 cpdef clustering_coeff(g, vertices = None):
@@ -578,7 +578,7 @@ cpdef min_spanning_tree(g,
     The edges of a minimum spanning tree of ``g``, if one exists, otherwise
     the empty list.
 
-    .. seealso::
+    .. SEEALSO::
 
         - :meth:`sage.graphs.generic_graph.GenericGraph.min_spanning_tree`
 
@@ -642,7 +642,7 @@ cpdef min_spanning_tree(g,
 
     try:
         boost_weighted_graph_from_sage_graph(&g_boost, g, weight_function)
-    except Exception, e:
+    except Exception as e:
         sig_off()
         raise e
 
@@ -788,7 +788,7 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
                     if float(weight_function(e)) < 0:
                         algorithm = 'Bellman-Ford'
                         break
-                except ValueError, TypeError:
+                except (ValueError, TypeError):
                     raise ValueError("I cannot find the weight of edge " +
                                      str(e) + ".")
 
@@ -798,7 +798,7 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
                     if float(w) < 0:
                         algorithm = 'Bellman-Ford'
                         break
-                except ValueError, TypeError:
+                except (ValueError, TypeError):
                     raise ValueError("The label '", str(w), "' is not convertible " +
                                      "to a float.")
 

@@ -29,18 +29,18 @@ class BindableClass(object):
 
         sage: from sage.misc.nested_class import NestedClassMetaclass
         sage: class Outer:
-        ...       __metaclass__ = NestedClassMetaclass # just a workaround for Python misnaming nested classes
+        ....:     __metaclass__ = NestedClassMetaclass # just a workaround for Python misnaming nested classes
         ...
-        ...       class Inner:
-        ...           def __init__(self, *args):
-        ...               print(args)
+        ....:     class Inner:
+        ....:         def __init__(self, *args):
+        ....:             print(args)
         ...
-        ...       def f(self, *args):
-        ...           print("{} {}".format(self, args))
+        ....:     def f(self, *args):
+        ....:         print("{} {}".format(self, args))
         ...
-        ...       @staticmethod
-        ...       def f_static(*args):
-        ...           print(args)
+        ....:     @staticmethod
+        ....:     def f_static(*args):
+        ....:         print(args)
         ...
         sage: outer = Outer()
 
@@ -80,12 +80,12 @@ class BindableClass(object):
 
         sage: from sage.misc.bindable_class import BindableClass
         sage: class Outer:
-        ...       __metaclass__ = NestedClassMetaclass # just a workaround for Python misnaming nested classes
+        ....:     __metaclass__ = NestedClassMetaclass # just a workaround for Python misnaming nested classes
         ...
-        ...       class Inner(BindableClass):
-        ...           " some documentation "
-        ...           def __init__(self, outer, *args):
-        ...               print("{} {}".format(outer, args))
+        ....:     class Inner(BindableClass):
+        ....:         " some documentation "
+        ....:         def __init__(self, outer, *args):
+        ....:             print("{} {}".format(outer, args))
 
     Calling ``Outer.Inner`` returns the (unbound) class as usual::
 

@@ -383,10 +383,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
             sage: axiom.get('xx')         #optional - axiom
             '2'
 
-            sage: fricas.set('xx', '2')    #optional - fricas
-            sage: fricas.get('xx')         #optional - fricas
-            '2'
-
         """
         cmd = '%s := %s'%(var, value)
         out = self._eval_line(cmd, reformat=False)
@@ -423,20 +419,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
             sage: print(axiom._eval_line('2+2'))  # optional - axiom
               4
                                                        Type: PositiveInteger
-            sage: fricas._eval_line(")set output algebra off")  #optional - fricas
-            ''
-            sage: fricas._eval_line(")set output tex on")  #optional - fricas
-            ''
-            sage: print(fricas._eval_line("2+2"))  # optional - fricas
-            $$
-            4 
-            \leqno(3)
-            $$
-                                                                                                                                                                                                                                    Type: PositiveInteger
-            sage: fricas._eval_line(")set output tex off")  #optional - fricas
-            ''
-            sage: fricas._eval_line(")set output algebra on")  #optional - fricas
-            ''
         """
         if not wait_for_prompt:
             return Expect._eval_line(self, line)
@@ -498,8 +480,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: a = axiom(x==6); a    #optional axiom
-            x= 6
-            sage: a = fricas(x==6); a   #optional fricas
             x= 6
         """
         return "="
@@ -709,14 +689,6 @@ class PanAxiomElement(ExpectElement):
             sage: _.type()        #optional - axiom
             Tuple PositiveInteger
 
-            sage: two = fricas(2)  #optional - fricas
-            sage: two.comma(3)     #optional - fricas
-            [2,3]
-            sage: two.comma(3,4)   #optional - fricas
-            [2,3,4]
-            sage: _.type()         #optional - fricas
-            Tuple(PositiveInteger)
-
         """
         P = self._check_valid()
         args = list(args)
@@ -734,9 +706,6 @@ class PanAxiomElement(ExpectElement):
             sage: latex(a)       #optional - axiom
             \frac{1}{2}
 
-            sage: a = fricas(1/2) #optional - fricas
-            sage: latex(a)        #optional - fricas
-            1 \over 2
         """
         self._check_valid()
         P = self.parent()
@@ -767,15 +736,6 @@ class PanAxiomElement(ExpectElement):
             sage: _.type()                     #optional - axiom
             DoubleFloat
 
-        ::
-
-            sage: a = fricas(1.2); a            #optional - fricas
-            1.2
-            sage: a.as_type(fricas.DoubleFloat) #optional - fricas
-            1.2
-            sage: _.type()                      #optional - fricas
-            DoubleFloat
-
         """
         P = self._check_valid()
         type = P(type)
@@ -794,9 +754,6 @@ class PanAxiomElement(ExpectElement):
             sage: a.unparsed_input_form() #optional - axiom
             'x*x+1'
 
-            sage: a = fricas(x^2+1)       #optional - fricas
-            sage: a.unparsed_input_form() #optional - fricas
-            'x^2+1'
         """
         P = self._check_valid()
         s = P.eval('unparse(%s::InputForm)'%self._name)
@@ -831,15 +788,6 @@ class PanAxiomElement(ExpectElement):
 
             sage: gp(axiom(1/2))    #optional - axiom
             1/2
-
-            sage: fricas(1).sage()          #optional - fricas
-            1
-            sage: fricas(-1).sage()         #optional - fricas
-            -1
-            sage: fricas(1/2).sage()        #optional - fricas
-            1/2
-            sage: fricas(x^2/(x-1)).sage()  #optional - fricas
-            x^2/(x - 1)
 
         DoubleFloat's in Axiom are converted to be in RDF in Sage.
 
@@ -931,19 +879,12 @@ class PanAxiomElement(ExpectElement):
 
             sage: axiom('Integer').sage()  #optional - axiom
             Integer Ring
-            sage: fricas('Integer').sage() #optional - fricas
-            Integer Ring
 
             sage: axiom('Fraction Integer').sage()  #optional - axiom
-            Rational Field
-            sage: fricas('Fraction Integer').sage() #optional - fricas
             Rational Field
 
             sage: axiom('DoubleFloat').sage()  #optional - axiom
             Real Double Field
-            sage: fricas('DoubleFloat').sage() #optional - fricas
-            Real Double Field
-
         """
         P = self._check_valid()
         name = str(self)

@@ -106,8 +106,7 @@ def regexp(expr, item):
 
     REFERENCES:
 
-    .. [GH2005] Gerhard Haring. [Online] Available:
-        http://lists.initd.org/pipermail/pysqlite/2005-November/000253.html
+    - [Ha2005]_
 
     EXAMPLES::
 
@@ -242,7 +241,7 @@ def construct_skeleton(database):
     skeleton = {}
     cur = database.__connection__.cursor()
     exe = cur.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
-    from sage.env import SAGE_SHARE
+    from sage.env import GRAPHS_DATA_DIR
     for table in exe.fetchall():
         skeleton[table[0]] = {}
         exe1 = cur.execute("PRAGMA table_info(%s)"%table[0])
@@ -257,7 +256,7 @@ def construct_skeleton(database):
         for col in exe2.fetchall():
             if col[1].find('sqlite') == -1:
                 if database.__dblocation__ == \
-                        os.path.join(SAGE_SHARE,'graphs','graphs.db'):
+                        os.path.join(GRAPHS_DATA_DIR,'graphs.db'):
                     name = col[1]
                 else:
                     name = col[1][len(table[0])+3:]

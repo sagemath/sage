@@ -13,10 +13,8 @@ AUTHORS:
 
 REFERENCES:
 
-- [Lee11]_ \J.M. Lee : *Introduction to Topological Manifolds*, 2nd ed.,
-  Springer (New York) (2011)
-- [KN63]_  \S. Kobayashi & K. Nomizu : *Foundations of Differential Geometry*,
-  vol. 1, Interscience Publishers (New York) (1963)
+- [Lee2011]_
+- [KN1963]_
 
 """
 #******************************************************************************

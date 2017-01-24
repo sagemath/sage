@@ -1,4 +1,3 @@
-# distutils: language = c++
 r"""
 Farey Symbol for arithmetic subgroups of `{\rm PSL}_2(\ZZ)`
 
@@ -42,6 +41,8 @@ from sage.plot.all import hyperbolic_arc, hyperbolic_triangle, text
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
+from cpython.object cimport PyObject_RichCompare
+from sage.structure.sage_object cimport richcmp_not_equal
 from itertools import groupby
 
 cdef class Farey:
@@ -489,7 +490,7 @@ cdef class Farey:
         sig_off()
         return result
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
         Compare self to others.
 
@@ -501,16 +502,20 @@ cdef class Farey:
             sage: FareySymbol(Gamma0(23)) == loads(dumps(FareySymbol(Gamma0(23))))
             True
         """
-        cmp_fcts = [lambda fs: fs.coset_reps(),
-                    lambda fs: fs.cusps(),
-                    lambda fs: fs.fractions()]
+        if not isinstance(other, Farey):
+            return NotImplemented
 
-        for cf in cmp_fcts:
-            c = cmp(cf(self), cf(other))
-            if c != 0:
-                return c
+        cosetA = self.coset_reps()
+        cosetB = other.coset_reps()
+        if cosetA != cosetB:
+            return richcmp_not_equal(cosetA, cosetB, op)
 
-        return c
+        cuspA = self.cusps()
+        cuspB = other.cusps()
+        if cuspA != cuspB:
+            return richcmp_not_equal(cuspA, cuspB, op)
+
+        return PyObject_RichCompare(self.fractions(), other.fractions(), op)
 
     def __reduce__(self):
         r"""

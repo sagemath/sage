@@ -3,7 +3,7 @@
 Wrappers for Giac functions
 
 We provide a python function to compute and convert to sage a groebner
-basis using the giacpy module.
+basis using the giacpy_sage module.
 
 AUTHORS:
 
@@ -12,11 +12,11 @@ AUTHORS:
 
 EXAMPLES::
 
-    sage: from sage.libs.giac import groebner_basis as gb_giac # optional - giacpy
+    sage: from sage.libs.giac import groebner_basis as gb_giac # optional - giacpy_sage
     sage: P = PolynomialRing(QQ, 6, 'x')
     sage: I = sage.rings.ideal.Cyclic(P)
-    sage: B = gb_giac(I.gens()) # optional - giacpy, random
-    sage: B # optional - giacpy
+    sage: B = gb_giac(I.gens()) # optional - giacpy_sage, random
+    sage: B # optional - giacpy_sage
     Polynomial Sequence with 45 Polynomials in 6 Variables
 """
 
@@ -51,18 +51,18 @@ class GiacSettingsDefaultContext:
         """
         EXAMPLE::
 
-           sage: from sage.libs.giac import GiacSettingsDefaultContext  # optional - giacpy
-           sage: from giacpy import giacsettings # optional - giacpy
-           sage: giacsettings.proba_epsilon = 1e-16 # optional - giacpy
-           sage: with GiacSettingsDefaultContext(): giacsettings.proba_epsilon = 1e-12 # optional - giacpy
-           sage: giacsettings.proba_epsilon < 1e-14 # optional - giacpy
+           sage: from sage.libs.giac import GiacSettingsDefaultContext  # optional - giacpy_sage
+           sage: from giacpy_sage import giacsettings # optional - giacpy_sage
+           sage: giacsettings.proba_epsilon = 1e-16 # optional - giacpy_sage
+           sage: with GiacSettingsDefaultContext(): giacsettings.proba_epsilon = 1e-12 # optional - giacpy_sage
+           sage: giacsettings.proba_epsilon < 1e-14 # optional - giacpy_sage
            True
 
         """
         try:
-            from giacpy import giacsettings, libgiac
+            from giacpy_sage import giacsettings, libgiac
         except ImportError:
-            raise ImportError("""One of the optional packages giac or giacpy is missing""")
+            raise ImportError("""One of the optional packages giac or giacpy_sage is missing""")
 
         self.proba_epsilon = giacsettings.proba_epsilon
         self.threads = giacsettings.threads
@@ -73,18 +73,18 @@ class GiacSettingsDefaultContext:
         """
         EXAMPLE::
 
-           sage: from sage.libs.giac import GiacSettingsDefaultContext  # optional - giacpy
-           sage: from giacpy import giacsettings # optional - giacpy
-           sage: giacsettings.proba_epsilon = 1e-16 # optional - giacpy
-           sage: with GiacSettingsDefaultContext(): giacsettings.proba_epsilon = 1e-30 # optional - giacpy
-           sage: giacsettings.proba_epsilon < 1e-20 # optional - giacpy
+           sage: from sage.libs.giac import GiacSettingsDefaultContext  # optional - giacpy_sage
+           sage: from giacpy_sage import giacsettings # optional - giacpy_sage
+           sage: giacsettings.proba_epsilon = 1e-16 # optional - giacpy_sage
+           sage: with GiacSettingsDefaultContext(): giacsettings.proba_epsilon = 1e-30 # optional - giacpy_sage
+           sage: giacsettings.proba_epsilon < 1e-20 # optional - giacpy_sage
            False
 
         """
         try:
-            from giacpy import giacsettings, libgiac
+            from giacpy_sage import giacsettings, libgiac
         except ImportError:
-            raise ImportError("""One of the optional packages giac or giacpy is missing""")
+            raise ImportError("""One of the optional packages giac or giacpy_sage is missing""")
 
         # Restore the debug level first to not have messages at each modification
         libgiac('debug_infolevel')(self.debuginfolevel)
@@ -98,20 +98,20 @@ def local_giacsettings(func):
 
     EXAMPLE::
 
-        sage: def testf(a,b):  # optional - giacpy
+        sage: def testf(a,b):  # optional - giacpy_sage
         ....:    giacsettings.proba_epsilon = a/100
         ....:    giacsettings.threads = b+2
         ....:    return (giacsettings.proba_epsilon, giacsettings.threads)
 
-        sage: from giacpy import giacsettings  # optional - giacpy
-        sage: from sage.libs.giac import local_giacsettings  # optional - giacpy
-        sage: gporig, gtorig = (giacsettings.proba_epsilon,giacsettings.threads)  # optional - giacpy
-        sage: gp, gt = local_giacsettings(testf)(giacsettings.proba_epsilon,giacsettings.threads)  # optional - giacpy
-        sage: gporig == giacsettings.proba_epsilon  # optional - giacpy
+        sage: from giacpy_sage import giacsettings  # optional - giacpy_sage
+        sage: from sage.libs.giac import local_giacsettings  # optional - giacpy_sage
+        sage: gporig, gtorig = (giacsettings.proba_epsilon,giacsettings.threads)  # optional - giacpy_sage
+        sage: gp, gt = local_giacsettings(testf)(giacsettings.proba_epsilon,giacsettings.threads)  # optional - giacpy_sage
+        sage: gporig == giacsettings.proba_epsilon  # optional - giacpy_sage
         True
-        sage: gtorig == giacsettings.threads  # optional - giacpy
+        sage: gtorig == giacsettings.threads  # optional - giacpy_sage
         True
-        sage: gp<gporig, gt-gtorig  # optional - giacpy
+        sage: gp<gporig, gt-gtorig  # optional - giacpy_sage
         (True, 2)
 
     """
@@ -131,7 +131,7 @@ def local_giacsettings(func):
 @local_giacsettings
 def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **kwds):
     """
-    Computes a Groebner Basis of an ideal using giacpy. The result is
+    Computes a Groebner Basis of an ideal using giacpy_sage. The result is
     automatically converted to sage.
 
     INPUT:
@@ -144,14 +144,14 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **
 
         * if ``proba_epsilon`` is None, the value of
           ``sage.structure.proof.all.polynomial()`` is taken. If it is
-          false then the global ``giacpy.giacsettings.proba_epsilon`` is
+          false then the global ``giacpy_sage.giacsettings.proba_epsilon`` is
           used.
 
         * if ``proba_epsilon`` is 0, probabilistic algorithms are
           disabled.
 
     - ``threads`` - (default: None) Maximal number of threads allowed
-      for giac. If None, the global ``giacpy.giacsettings.threads`` is
+      for giac. If None, the global ``giacpy_sage.giacsettings.threads`` is
       considered.
 
     - ``prot`` - (default: False) if True print detailled informations
@@ -162,38 +162,38 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **
 
     EXAMPLES::
 
-        sage: from sage.libs.giac import groebner_basis as gb_giac # optional - giacpy
-        sage: P = PolynomialRing(GF(previous_prime(2**31)), 6, 'x') # optional - giacpy
-        sage: I = sage.rings.ideal.Cyclic(P) # optional - giacpy
-        sage: B=gb_giac(I.gens());B # optional - giacpy
+        sage: from sage.libs.giac import groebner_basis as gb_giac # optional - giacpy_sage
+        sage: P = PolynomialRing(GF(previous_prime(2**31)), 6, 'x') # optional - giacpy_sage
+        sage: I = sage.rings.ideal.Cyclic(P) # optional - giacpy_sage
+        sage: B=gb_giac(I.gens());B # optional - giacpy_sage
         <BLANKLINE>
         // Groebner basis computation time ...
         Polynomial Sequence with 45 Polynomials in 6 Variables
-        sage: B.is_groebner() # optional - giacpy
+        sage: B.is_groebner() # optional - giacpy_sage
         True
 
     Computations over QQ can benefit from
 
     * a probabilistic lifting::
 
-        sage: P = PolynomialRing(QQ,5, 'x') # optional - giacpy
-        sage: I = ideal([P.random_element(3,7) for j in range(5)]) # optional - giacpy
-        sage: B1 = gb_giac(I.gens(),1e-16) # optional - giacpy, long time (1s)
+        sage: P = PolynomialRing(QQ,5, 'x') # optional - giacpy_sage
+        sage: I = ideal([P.random_element(3,7) for j in range(5)]) # optional - giacpy_sage
+        sage: B1 = gb_giac(I.gens(),1e-16) # optional - giacpy_sage, long time (1s)
         Running a probabilistic check for the reconstructed Groebner basis.
         If successfull, error probability is less than 1e-16 ...
-        sage: sage.structure.proof.all.polynomial(True) # optional - giacpy
-        sage: B2 = gb_giac(I.gens()) # optional - giacpy, long time (4s)
+        sage: sage.structure.proof.all.polynomial(True) # optional - giacpy_sage
+        sage: B2 = gb_giac(I.gens()) # optional - giacpy_sage, long time (4s)
         <BLANKLINE>
         // Groebner basis computation time...
-        sage: B1==B2 # optional - giacpy, long time
+        sage: B1==B2 # optional - giacpy_sage, long time
         True
-        sage: B1.is_groebner() # optional - giacpy, long time (20s)
+        sage: B1.is_groebner() # optional - giacpy_sage, long time (20s)
         True
 
     * multi threaded operations::
 
-        sage: P = PolynomialRing(QQ, 8, 'x') # optional - giacpy
-        sage: I=sage.rings.ideal.Cyclic(P) # optional - giacpy
+        sage: P = PolynomialRing(QQ, 8, 'x') # optional - giacpy_sage
+        sage: I=sage.rings.ideal.Cyclic(P) # optional - giacpy_sage
         sage: time B = gb_giac(I.gens(),1e-6,threads=2) # doctest: +SKIP
         Running a probabilistic check for the reconstructed Groebner basis...
         Time: CPU 168.98 s, Wall: 94.13 s
@@ -202,8 +202,8 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **
 
     ::
 
-        sage: I=sage.rings.ideal.Katsura(P) # optional - giacpy
-        sage: gb_giac(I,prot=True)  # optional - giacpy, random, long time (3s)
+        sage: I=sage.rings.ideal.Katsura(P) # optional - giacpy_sage
+        sage: gb_giac(I,prot=True)  # optional - giacpy_sage, random, long time (3s)
         9381383 begin computing basis modulo 535718473
         9381501 begin new iteration zmod, number of pairs: 8, base size: 8
         ...end, basis size 74 prime number 1
@@ -225,29 +225,29 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **
 
     TESTS::
 
-        sage: from giacpy import libgiac # optional - giacpy
-        sage: libgiac("x2:=22; x4:='whywouldyoudothis'") # optional - giacpy
+        sage: from giacpy_sage import libgiac # optional - giacpy_sage
+        sage: libgiac("x2:=22; x4:='whywouldyoudothis'") # optional - giacpy_sage
         22,whywouldyoudothis
-        sage: gb_giac(I) # optional - giacpy
+        sage: gb_giac(I) # optional - giacpy_sage
         Traceback (most recent call last):
         ...
         ValueError: Variables names ['x2', 'x4'] conflict in giac. Change them or purge them from in giac with libgiac.purge('x2')
-        sage: libgiac.purge('x2'),libgiac.purge('x4') # optional - giacpy
+        sage: libgiac.purge('x2'),libgiac.purge('x4') # optional - giacpy_sage
         (22, whywouldyoudothis)
-        sage: gb_giac(I) # optional - giacpy, long time (3s)
+        sage: gb_giac(I) # optional - giacpy_sage, long time (3s)
         <BLANKLINE>
         // Groebner basis computation time...
         Polynomial Sequence with 74 Polynomials in 8 Variables
 
-        sage: I=ideal(P(0),P(0)) # optional - giacpy
-        sage: I.groebner_basis() == gb_giac(I) # optional - giacpy
+        sage: I=ideal(P(0),P(0)) # optional - giacpy_sage
+        sage: I.groebner_basis() == gb_giac(I) # optional - giacpy_sage
         True
 
     """
     try:
-        from giacpy import libgiac, giacsettings
+        from giacpy_sage import libgiac, giacsettings
     except ImportError:
-        raise ImportError("""One of the optional packages giac or giacpy is missing""")
+        raise ImportError("""One of the optional packages giac or giacpy_sage is missing""")
 
     try:
         iter(gens)

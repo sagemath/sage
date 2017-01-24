@@ -294,7 +294,7 @@ cdef void print_rank_dec(subset_t s, int l):
 
 def mkgraph(int num_vertices):
     r"""
-    Returns the graph corresponding the the current rank-decomposition.
+    Return the graph corresponding to the current rank-decomposition.
 
     (This function is for internal use)
 

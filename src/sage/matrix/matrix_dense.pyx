@@ -12,6 +12,7 @@ from __future__ import print_function
 cimport matrix
 
 from   sage.structure.element    cimport Element, RingElement
+from sage.structure.sage_object cimport richcmp_not_equal, rich_to_bool
 import sage.matrix.matrix_space
 import sage.structure.sequence
 
@@ -101,7 +102,7 @@ cdef class Matrix_dense(matrix.Matrix):
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cpdef int _cmp_(self, right) except -2:
+    cpdef _richcmp_(self, right, int op):
         """
         EXAMPLES::
 
@@ -109,22 +110,23 @@ cdef class Matrix_dense(matrix.Matrix):
             sage: m = matrix([[x,x+1],[1,x]])
             sage: n = matrix([[x+1,x],[1,x]])
             sage: o = matrix([[x,x],[1,x]])
-            sage: m.__cmp__(n)
-            -1
-            sage: m.__cmp__(m)
-            0
-            sage: n.__cmp__(m)
-            1
-            sage: m.__cmp__(o)
-            1
+            sage: m < n
+            True
+            sage: m == m
+            True
+            sage: n > m
+            True
+            sage: m <= o
+            False
         """
         cdef Py_ssize_t i, j
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._ncols:
-                res = cmp( self[i,j], right[i,j] )
-                if res != 0:
-                    return res
-        return 0
+                lij = self[i, j]
+                rij = right[i, j]
+                if lij != rij:
+                    return richcmp_not_equal(lij, rij, op)
+        return rich_to_bool(op, 0)
 
     def transpose(self):
         """
@@ -269,7 +271,7 @@ cdef class Matrix_dense(matrix.Matrix):
         Differentiate with respect to var by differentiating each element
         with respect to var.
 
-        .. seealso::
+        .. SEEALSO::
 
            :meth:`derivative`
 

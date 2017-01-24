@@ -89,7 +89,7 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
     ::
 
         sage: def left_multiplication_by(g):
-        ...       return lambda h : h*g
+        ....:     return lambda h : h*g
         sage: G = CyclicPermutationGroup(4)
         sage: operators = [ left_multiplication_by(gen) for gen in G.gens() ]
         sage: Y = YangBaxterGraph(root=G.identity(), operators=operators); Y
@@ -462,8 +462,8 @@ class YangBaxterGraph_generic(SageObject):
             sage: ops = [SwapIncreasingOperator(i) for i in range(3)]
             sage: Y = YangBaxterGraph(root=(0,2,1,0), operators=ops)
             sage: def relabel_operator(op, u):
-            ...       i = op.position()
-            ...       return u[:i] + u[i:i+2][::-1] + u[i+2:]
+            ....:     i = op.position()
+            ....:     return u[:i] + u[i:i+2][::-1] + u[i+2:]
             sage: Y.vertex_relabelling_dict((1,2,3,4), relabel_operator)
             {(0, 2, 1, 0): (1, 2, 3, 4),
              (2, 0, 1, 0): (2, 1, 3, 4),
@@ -495,8 +495,8 @@ class YangBaxterGraph_generic(SageObject):
             sage: ops = [SwapIncreasingOperator(i) for i in range(3)]
             sage: Y = YangBaxterGraph(root=(0,2,1,0), operators=ops)
             sage: def relabel_op(op, u):
-            ...       i = op.position()
-            ...       return u[:i] + u[i:i+2][::-1] + u[i+2:]
+            ....:     i = op.position()
+            ....:     return u[:i] + u[i:i+2][::-1] + u[i+2:]
             sage: d = Y.relabel_vertices((1,2,3,4), relabel_op, inplace=False); d
             Yang-Baxter graph with root vertex (1, 2, 3, 4)
             sage: Y.vertices()
@@ -527,8 +527,8 @@ class YangBaxterGraph_generic(SageObject):
             sage: ops = [SwapIncreasingOperator(i) for i in range(3)]
             sage: Y = YangBaxterGraph(root=(0,2,1,0), operators=ops)
             sage: def relabel_op(op, u):
-            ...       i = op.position()
-            ...       return u[:i] + u[i:i+2][::-1] + u[i+2:]
+            ....:     i = op.position()
+            ....:     return u[:i] + u[i:i+2][::-1] + u[i+2:]
             sage: Y.edges()
             [((0, 2, 1, 0), (2, 0, 1, 0), Swap-if-increasing at position 0), ((2, 0, 1, 0), (2, 1, 0, 0), Swap-if-increasing at position 1)]
             sage: d = {((0,2,1,0),(2,0,1,0)):17, ((2,0,1,0),(2,1,0,0)):27}

@@ -309,7 +309,7 @@ ideal classes containing :math:`(5,\sqrt{-30})` and
     Class group of order 4 with structure C2 x C2 of Number Field
     in a with defining polynomial x^2 + 30
     sage: category(C)
-    Category of finite commutative groups
+    Category of finite enumerated commutative groups
     sage: C.gens()
     (Fractional ideal class (2, a), Fractional ideal class (3, a))
 

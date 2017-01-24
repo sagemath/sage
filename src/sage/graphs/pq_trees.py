@@ -177,7 +177,7 @@ def reorder_sets(sets):
         sage: seq = [ seq[p(i+1)-1] for i in range(len(seq)) ]
         sage: ordered = reorder_sets(seq)
         sage: if not 0 in ordered[0]:
-        ...      ordered = ordered.reverse()
+        ....:    ordered = ordered.reverse()
         sage: print(ordered)
         [{0, 1, 2}, {1, 2, 3}, {2, 3, 4}, {3, 4, 5}, {4, 5, 6}, {5, 6, 7}, {8, 6, 7}, {8, 9, 7}, {8, 9, 10}, {9, 10, 11}, {10, 11, 12}, {11, 12, 13}, {12, 13, 14}, {13, 14, 15}]
     """

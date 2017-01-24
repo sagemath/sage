@@ -1519,10 +1519,10 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
             sage: R = Zp(5,20,'capped-rel')
             sage: for i in range(11):
-            ...       for j in range(1,10):
-            ...           if j == 5:
-            ...               continue
-            ...           assert i/j == R(i/j).rational_reconstruction()
+            ....:     for j in range(1,10):
+            ....:         if j == 5:
+            ....:             continue
+            ....:         assert i/j == R(i/j).rational_reconstruction()
         """
         if self.is_zero(self.precision_absolute()):
             return Rational(0)
@@ -1894,11 +1894,11 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: K = Zp(p, max_prec)
             sage: full_log = (K(1 + p)).log()
             sage: for prec in range(2, max_prec):
-            ...       ll1 = (K(1+p).add_bigoh(prec)).log()
-            ...       ll2 = K(1+p).log(prec)
-            ...       assert ll1 == full_log
-            ...       assert ll2 == full_log
-            ...       assert ll1.precision_absolute() == prec
+            ....:     ll1 = (K(1+p).add_bigoh(prec)).log()
+            ....:     ll2 = K(1+p).log(prec)
+            ....:     assert ll1 == full_log
+            ....:     assert ll2 == full_log
+            ....:     assert ll1.precision_absolute() == prec
 
         Check that ``aprec`` works for fixed-mod elements::
 
@@ -2111,15 +2111,15 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: K = Zp(p, max_prec)
             sage: full_exp = (K(p)).exp()
             sage: for prec in range(2, max_prec):
-            ...       ll = (K(p).add_bigoh(prec)).exp()
-            ...       assert ll == full_exp
-            ...       assert ll.precision_absolute() == prec
+            ....:     ll = (K(p).add_bigoh(prec)).exp()
+            ....:     assert ll == full_exp
+            ....:     assert ll.precision_absolute() == prec
             sage: K = Qp(p, max_prec)
             sage: full_exp = (K(p)).exp()
             sage: for prec in range(2, max_prec):
-            ...       ll = (K(p).add_bigoh(prec)).exp()
-            ...       assert ll == full_exp
-            ...       assert ll.precision_absolute() == prec
+            ....:     ll = (K(p).add_bigoh(prec)).exp()
+            ....:     assert ll == full_exp
+            ....:     assert ll.precision_absolute() == prec
 
         Check that this also works for capped-absolute implementations::
 
@@ -2213,7 +2213,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         INPUT:
 
-        - ``aprec`` -- an integer, the precison to which to compute the
+        - ``aprec`` -- an integer, the precision to which to compute the
           exponential
 
         EXAMPLES::

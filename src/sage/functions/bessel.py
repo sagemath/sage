@@ -101,7 +101,7 @@ The main objects which are exported from this module are:
 -  When solving for separable solutions of Laplace's equation in
    spherical coordinates, the radial equation has the form:
 
-   .. math::
+   .. MATH::
 
          x^2 \frac{d^2 y}{dx^2} + 2x \frac{dy}{dx} + [x^2 - n(n+1)]y = 0.
 
@@ -110,11 +110,11 @@ The main objects which are exported from this module are:
    related to the ordinary Bessel functions `J_n` and
    `Y_n` by:
 
-   .. math::
+   .. MATH::
 
          j_n(x) = \sqrt{\frac{\pi}{2x}} J_{n+1/2}(x),
 
-   .. math::
+   .. MATH::
 
          y_n(x) = \sqrt{\frac{\pi}{2x}} Y_{n+1/2}(x) = (-1)^{n+1} \sqrt{\frac{\pi}{2x}} J_{-n-1/2}(x).
 
@@ -179,19 +179,21 @@ AUTHORS:
 
 REFERENCES:
 
-.. [AS-Bessel] \F. W. J. Olver: 9. Bessel Functions of Integer Order, in Abramowitz and Stegun: Handbook of Mathematical Functions
-    http://people.math.sfu.ca/~cbm/aands/page_355.htm
-.. [AS-Spherical] \H. A. Antosiewicz: 10. Bessel Functions of Fractional Order, in Abramowitz and Stegun: Handbook of Mathematical Functions
-    http://people.math.sfu.ca/~cbm/aands/page_435.htm
-.. [AS-Struve] \M. Abramowitz: 12. Struve Functions and Related Functions, in Abramowitz and Stegun: Handbook of Mathematical Functions
-   http://people.math.sfu.ca/~cbm/aands/page_495.htm
-.. [DLMF-Bessel] \F. W. J. Olver and L. C. Maximon: 10. Bessel Functions, in NIST Digital Library of Mathematical Functions
-    http://dlmf.nist.gov/10
-.. [DLMF-Struve] \R. B. Paris: 11. Struve and Related Functions, in NIST Digital Library of Mathematical Functions
-    http://dlmf.nist.gov/11
-.. _`mpmath Library`: https://github.com/fredrik-johansson/mpmath
-.. [WP-Bessel] :wikipedia:`Bessel_function`
-.. [WP-Struve] :wikipedia:`Struve_function`
+- [AS-Bessel]_
+
+- [AS-Spherical]_
+
+- [AS-Struve]_
+
+- [DLMF-Bessel]_
+
+- [DLMF-Struve]_
+
+.. _`mpmath library`: http://mpmath.org
+
+- [WP-Bessel]_
+
+- [WP-Struve]_
 """
 
 #*****************************************************************************
@@ -336,11 +338,14 @@ class Function_Bessel_J(BuiltinFunction):
 
             sage: sage.functions.bessel.Function_Bessel_J()
             bessel_J
+            sage: bessel_J(x, x)._sympy_()
+            besselj(x, x)
         """
         BuiltinFunction.__init__(self, "bessel_J", nargs=2,
                                  conversions=dict(mathematica='BesselJ',
                                                   maxima='bessel_j',
-                                                  sympy='besselj'))
+                                                  sympy='besselj',
+                                                  fricas='besselJ'))
 
     def _eval_(self, n, x):
         """
@@ -549,11 +554,14 @@ class Function_Bessel_Y(BuiltinFunction):
 
             sage: sage.functions.bessel.Function_Bessel_Y()(0, x)
             bessel_Y(0, x)
+            sage: bessel_Y(x, x)._sympy_()
+            bessely(x, x)
         """
         BuiltinFunction.__init__(self, "bessel_Y", nargs=2,
                                  conversions=dict(mathematica='BesselY',
                                                   maxima='bessel_y',
-                                                  sympy='bessely'))
+                                                  sympy='bessely',
+                                                  fricas='besselY'))
 
     def _eval_(self, n, x):
         """
@@ -567,6 +575,11 @@ class Function_Bessel_Y(BuiltinFunction):
             -sqrt(2)*sqrt(1/(pi*x))*cos(x)
             sage: bessel_Y(-1/2, x)
             sqrt(2)*sqrt(1/(pi*x))*sin(x)
+
+        TESTS::
+
+            sage: bessel_Y(0, 0)
+            -Infinity
         """
         from sage.rings.infinity import infinity, unsigned_infinity
         if not isinstance(x, Expression) and x == 0:
@@ -746,11 +759,14 @@ class Function_Bessel_I(BuiltinFunction):
 
             sage: bessel_I(1,x)
             bessel_I(1, x)
+            sage: bessel_I(x, x)._sympy_()
+            besseli(x, x)
         """
         BuiltinFunction.__init__(self, "bessel_I", nargs=2,
                                  conversions=dict(mathematica='BesselI',
                                                   maxima='bessel_i',
-                                                  sympy='besseli'))
+                                                  sympy='besseli',
+                                                  fricas='besselI'))
 
     def _eval_(self, n, x):
         """
@@ -943,11 +959,14 @@ class Function_Bessel_K(BuiltinFunction):
 
             sage: sage.functions.bessel.Function_Bessel_K()
             bessel_K
+            sage: bessel_K(x, x)._sympy_()
+            besselk(x, x)
         """
         BuiltinFunction.__init__(self, "bessel_K", nargs=2,
                                  conversions=dict(mathematica='BesselK',
                                                   maxima='bessel_k',
-                                                  sympy='besselk'))
+                                                  sympy='besselk',
+                                                  fricas='besselK'))
 
     def _eval_(self, n, x):
         """
@@ -960,8 +979,13 @@ class Function_Bessel_K(BuiltinFunction):
             sqrt(1/2)*sqrt(pi)*e^(-x)/sqrt(x)
             sage: bessel_K(n, 0)
             bessel_K(n, 0)
+
+        TESTS::
+
+            sage: bessel_K(0, 0)
+            +Infinity
         """
-        from sage.rings.infinity import unsigned_infinity
+        from sage.rings.infinity import infinity, unsigned_infinity
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return infinity
@@ -1235,7 +1259,7 @@ class Function_Struve_H(BuiltinFunction):
                                  conversions=dict(maple='StruveH',
                                                   mathematica='StruveH',
                                                   maxima='struve_h',
-                                                  sympy='struveh'))
+                                                  fricas='struveH'))
 
     def _eval_(self, a, z):
         """
@@ -1349,7 +1373,7 @@ class Function_Struve_L(BuiltinFunction):
                                  conversions=dict(maple='StruveL',
                                                   mathematica='StruveL',
                                                   maxima='struve_l',
-                                                  sympy='struvel'))
+                                                  fricas='struveL'))
 
     def _eval_(self, a, z):
         """
@@ -1427,7 +1451,7 @@ class Function_Hankel1(BuiltinFunction):
 
     DEFINITION:
 
-    .. math::
+    .. MATH::
 
         H_\nu^{(1)}(z) = J_{\nu}(z) + iY_{\nu}(z)
 
@@ -1459,7 +1483,8 @@ class Function_Hankel1(BuiltinFunction):
                                  conversions=dict(maple='HankelH1',
                                                   mathematica='HankelH1',
                                                   maxima='hankel1',
-                                                  sympy='hankel1'))
+                                                  sympy='hankel1',
+                                                  fricas='hankelH1'))
 
     def _evalf_(self, nu, z, parent, algorithm=None):
         r"""
@@ -1513,7 +1538,7 @@ class Function_Hankel2(BuiltinFunction):
 
     DEFINITION:
 
-    .. math::
+    .. MATH::
 
         H_\nu^{(2)}(z) = J_{\nu}(z) - iY_{\nu}(z)
 
@@ -1545,7 +1570,8 @@ class Function_Hankel2(BuiltinFunction):
                                  conversions=dict(maple='HankelH2',
                                                   mathematica='HankelH2',
                                                   maxima='hankel2',
-                                                  sympy='hankel2'))
+                                                  sympy='hankel2',
+                                                  fricas='hankelH2'))
 
     def _evalf_(self, nu, z, parent, algorithm=None):
         r"""
@@ -1599,7 +1625,7 @@ class SphericalBesselJ(BuiltinFunction):
 
     DEFINITION:
 
-    .. math::
+    .. MATH::
 
         j_n(z) = \sqrt{\frac{\pi}{2z}} \,J_{n + \frac{1}{2}}(z)
 
@@ -1698,7 +1724,7 @@ class SphericalBesselY(BuiltinFunction):
 
     DEFINITION:
 
-    .. math::
+    .. MATH::
 
         y_n(z) = \sqrt{\frac{\pi}{2z}} \,Y_{n + \frac{1}{2}}(z)
 
@@ -1797,7 +1823,7 @@ class SphericalHankel1(BuiltinFunction):
 
     DEFINITION:
 
-    .. math::
+    .. MATH::
 
         h_n^{(1)}(z) = \sqrt{\frac{\pi}{2z}} \,H_{n + \frac{1}{2}}^{(1)}(z)
 
@@ -1893,7 +1919,7 @@ class SphericalHankel2(BuiltinFunction):
 
     DEFINITION:
 
-    .. math::
+    .. MATH::
 
         h_n^{(2)}(z) = \sqrt{\frac{\pi}{2z}} \,H_{n + \frac{1}{2}}^{(2)}(z)
 

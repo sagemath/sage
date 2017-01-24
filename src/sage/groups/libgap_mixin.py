@@ -95,8 +95,7 @@ class GroupMixinLibGAP(object):
             sage: G.cardinality()
             +Infinity
         """
-        if self.is_finite():
-            return self.gap().Size().sage()
+        return self.gap().Size().sage()
         from sage.rings.infinity import Infinity
         return Infinity
 
@@ -344,6 +343,29 @@ class GroupMixinLibGAP(object):
         while not iterator.IsDoneIterator().sage():
             yield self(iterator.NextIterator(), check=False)
 
+    def __len__(self):
+        """
+        Return the number of elements in ``self``.
+
+        EXAMPLES::
+
+            sage: F = GF(3)
+            sage: gens = [matrix(F,2, [1,-1,0,1]), matrix(F, 2, [1,1,-1,1])]
+            sage: G = MatrixGroup(gens)
+            sage: len(G)
+            48
+
+        An error is raised if the group is not finite::
+
+            sage: len(GL(2,ZZ))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
+        """
+        if not self.is_finite():
+            raise NotImplementedError('group must be finite')
+        return int(self.cardinality())
+
     @cached_method
     def list(self):
         """
@@ -357,7 +379,7 @@ class GroupMixinLibGAP(object):
         EXAMPLES::
 
             sage: F = GF(3)
-            sage: gens = [matrix(F,2, [1,0, -1,1]), matrix(F, 2, [1,1,0,1])]
+            sage: gens = [matrix(F,2, [1,0,-1,1]), matrix(F, 2, [1,1,0,1])]
             sage: G = MatrixGroup(gens)
             sage: G.cardinality()
             24

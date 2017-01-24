@@ -1,42 +1,46 @@
-diff -druN src.orig/Lib/distutils/ccompiler.py src/Lib/distutils/ccompiler.py
---- src.orig/Lib/distutils/ccompiler.py	2014-01-05 18:57:04.783053177 +0100
-+++ src/Lib/distutils/ccompiler.py	2014-01-05 19:57:50.586433772 +0100
-@@ -842,8 +842,8 @@
+diff --git a/Lib/distutils/ccompiler.py b/Lib/distutils/ccompiler.py
+index 62506a6..f80230c 100644
+--- a/Lib/distutils/ccompiler.py
++++ b/Lib/distutils/ccompiler.py
+@@ -842,9 +842,9 @@ main (int argc, char **argv) {
      def library_filename(self, libname, lib_type='static',     # or 'shared'
                           strip_dir=0, output_dir=''):
          assert output_dir is not None
--        if lib_type not in ("static", "shared", "dylib"):
--            raise ValueError, "'lib_type' must be \"static\", \"shared\" or \"dylib\""
-+        if lib_type not in ("static", "shared", "dylib", "import"):
-+            raise ValueError, "'lib_type' must be \"static\", \"shared\", \"dylib\" or \"import\""
+-        if lib_type not in ("static", "shared", "dylib", "xcode_stub"):
++        if lib_type not in ("static", "shared", "dylib", "xcode_stub", "import"):
+             raise ValueError, ("""'lib_type' must be "static", "shared", """
+-                               """"dylib", or "xcode_stub".""")
++                               """"dylib", "xcode_stub" or "import".""")
          fmt = getattr(self, lib_type + "_lib_format")
          ext = getattr(self, lib_type + "_lib_extension")
  
-diff -druN src.orig/Lib/distutils/unixccompiler.py src/Lib/distutils/unixccompiler.py
---- src.orig/Lib/distutils/unixccompiler.py	2014-01-05 18:57:04.779053224 +0100
-+++ src/Lib/distutils/unixccompiler.py	2014-01-05 20:24:44.862580174 +0100
-@@ -79,9 +79,11 @@
-     static_lib_extension = ".a"
+diff --git a/Lib/distutils/unixccompiler.py b/Lib/distutils/unixccompiler.py
+index 4c35676..54f8356 100644
+--- a/Lib/distutils/unixccompiler.py
++++ b/Lib/distutils/unixccompiler.py
+@@ -80,10 +80,12 @@ class UnixCCompiler(CCompiler):
      shared_lib_extension = ".so"
      dylib_lib_extension = ".dylib"
+     xcode_stub_lib_extension = ".tbd"
 -    static_lib_format = shared_lib_format = dylib_lib_format = "lib%s%s"
 +    import_lib_extension = ".dll.a"
 +    import_lib_format = static_lib_format = shared_lib_format = dylib_lib_format = "lib%s%s"
+     xcode_stub_lib_format = dylib_lib_format
      if sys.platform == "cygwin":
          exe_extension = ".exe"
 +        shared_lib_extension = ".dll"
  
      def preprocess(self, source,
                     output_file=None, macros=None, include_dirs=None,
-@@ -246,6 +248,7 @@
-         shared_f = self.library_filename(lib, lib_type='shared')
+@@ -249,6 +251,7 @@ class UnixCCompiler(CCompiler):
          dylib_f = self.library_filename(lib, lib_type='dylib')
+         xcode_stub_f = self.library_filename(lib, lib_type='xcode_stub')
          static_f = self.library_filename(lib, lib_type='static')
 +        import_f = self.library_filename(lib, lib_type='import')
  
          if sys.platform == 'darwin':
              # On OSX users can specify an alternate SDK using
-@@ -261,6 +264,7 @@
+@@ -279,6 +282,7 @@ class UnixCCompiler(CCompiler):
  
  
          for dir in dirs:
@@ -44,7 +48,7 @@ diff -druN src.orig/Lib/distutils/unixccompiler.py src/Lib/distutils/unixccompil
              shared = os.path.join(dir, shared_f)
              dylib = os.path.join(dir, dylib_f)
              static = os.path.join(dir, static_f)
-@@ -277,7 +281,9 @@
+@@ -297,7 +301,9 @@ class UnixCCompiler(CCompiler):
              # data to go on: GCC seems to prefer the shared library, so I'm
              # assuming that *all* Unix C compilers do.  And of course I'm
              # ignoring even GCC's "-static" option.  So sue me.
@@ -53,9 +57,9 @@ diff -druN src.orig/Lib/distutils/unixccompiler.py src/Lib/distutils/unixccompil
 +                return implib
 +            elif os.path.exists(dylib):
                  return dylib
-             elif os.path.exists(shared):
-                 return shared
-@@ -286,3 +292,22 @@
+             elif os.path.exists(xcode_stub):
+                 return xcode_stub
+@@ -308,3 +314,22 @@ class UnixCCompiler(CCompiler):
  
          # Oops, didn't find it in *any* of 'dirs'
          return None
@@ -78,10 +82,11 @@ diff -druN src.orig/Lib/distutils/unixccompiler.py src/Lib/distutils/unixccompil
 +
 +        # Oops, didn't find it in *any* of 'dirs'
 +        return None
-diff -druN src.orig/setup.py src/setup.py
---- src/setup.py.orig	2014-06-04 10:49:00.403972978 +0100
-+++ src/setup.py	2014-06-04 10:52:42.131927994 +0100
-@@ -703,8 +703,12 @@
+diff --git a/setup.py b/setup.py
+index aa08ada..f41d200 100644
+--- a/setup.py
++++ b/setup.py
+@@ -726,8 +726,12 @@ class PyBuildExt(build_ext):
          do_readline = self.compiler.find_library_file(lib_dirs, 'readline')
          readline_termcap_library = ""
          curses_library = ""
@@ -95,7 +100,7 @@ diff -druN src.orig/setup.py src/setup.py
              fp = os.popen("ldd %s" % do_readline)
              ldd_output = fp.readlines()
              ret = fp.close()
-@@ -755,7 +759,10 @@
+@@ -778,7 +782,10 @@ class PyBuildExt(build_ext):
  
              readline_libs = ['readline']
              if readline_termcap_library:
@@ -107,7 +112,7 @@ diff -druN src.orig/setup.py src/setup.py
              elif curses_library:
                  readline_libs.append(curses_library)
              elif self.compiler.find_library_file(lib_dirs +
-@@ -1344,6 +1351,8 @@
+@@ -1370,6 +1377,8 @@ class PyBuildExt(build_ext):
                  # _curses_panel.so must link with panelw.
                  panel_library = 'panelw'
              curses_libs = [curses_library]

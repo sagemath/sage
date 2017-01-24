@@ -9,6 +9,14 @@ include 'data_structures_pxd.pxi' # includes bitsets
 
 from sage.rings.integer cimport Integer
 
+cdef inline int int_cmp(int a, int b):
+    if a < b:
+        return -1
+    elif a == b:
+        return 0
+    else:
+        return 1
+
 cdef struct dc_work_space:
     int degree
     # for nontrivial input groups
@@ -31,6 +39,3 @@ cdef int double_coset( void *, void *, PartitionStack *, int *, int,
     int (*)(PartitionStack *, void *, int *, int),
     int (*)(int *, int *, void *, void *, int),
     StabilizerChain *, dc_work_space *, int *) except -1
-
-
-

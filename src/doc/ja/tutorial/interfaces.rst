@@ -55,7 +55,7 @@ GPは送られて来た文字列を評価し，結果を変数に格納する(�
     sage: type(gp('znprimroot(10007)'))
     <class 'sage.interfaces.gp.GpElement'>
     sage: type(pari('znprimroot(10007)'))
-    <type 'sage.libs.pari.gen.gen'>
+    <type 'sage.libs.cypari2.gen.gen'>
 
 では，どちらの方法を選ぶべきだろうか？ 
 答は目的による、としか言えない．
@@ -84,7 +84,7 @@ PARI Cライブラリ インターフェイスについて言うと，こちら�
     sage: v
     [1, 2, 3, 4, 5]
     sage: type(v)
-    <type 'sage.libs.pari.gen.gen'>
+    <type 'sage.libs.cypari2.gen.gen'>
 
 
 PARIのオブジェクトは全て ``py_pari.gen`` 型になる．
@@ -172,6 +172,7 @@ Singularは，グレブナー基底，多変数多項式のgcd，平面曲線の
 
     sage: R1 = singular.ring(0, '(x,y)', 'dp')
     sage: R1
+    polynomial ring, over a field, global ordering
     //   characteristic : 0
     //   number of vars : 2
     //        block   1 : ordering dp

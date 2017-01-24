@@ -154,8 +154,7 @@ cdef class Map(Element):
 
             sage: phi = QQ['x']._internal_coerce_map_from(ZZ)
             sage: phi.domain
-            <weakref at ...; to 'sage.rings.integer_ring.IntegerRing_class'
-            at ... (JoinCategory.parent_class)>
+            <weakref at ...; to 'sage.rings.integer_ring.IntegerRing_class' at ...>
             sage: type(phi)
             <type 'sage.categories.map.FormalCompositeMap'>
             sage: psi = copy(phi)   # indirect doctest
@@ -1412,6 +1411,23 @@ cdef class Section(Map):
               To:   Multivariate Polynomial Ring in x, y over Rational Field
         """
         return "Section"
+
+    def inverse(self):
+        """
+        Return inverse of ``self``.
+
+        TEST::
+
+            sage: from sage.categories.map import Section
+            sage: R.<x,y> = QQ[]
+            sage: f = R.hom([x+y, x-y], R)
+            sage: sf = Section(f)
+            sage: sf.inverse()
+            Ring endomorphism of Multivariate Polynomial Ring in x, y over Rational Field
+              Defn: x |--> x + y
+                    y |--> x - y
+        """
+        return self._inverse
 
 cdef class FormalCompositeMap(Map):
     """

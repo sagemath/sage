@@ -741,8 +741,8 @@ class AlphabeticStringMonoid(StringMonoid_class):
         referred to as the characteristic frequency probability distribution.
         Various studies report slightly different values for the
         characteristic frequency probability of an English letter. For
-        instance, [Lew00]_ reports that "E" has a characteristic
-        frequency probability of 0.12702, while [BekPip82]_ reports this
+        instance, [Lew2000]_ reports that "E" has a characteristic
+        frequency probability of 0.12702, while [BP1982]_ reports this
         value as 0.127. The concepts of characteristic frequency probability
         and characteristic frequency probability distribution can also be
         applied to non-empty alphabets other than the English alphabet.
@@ -765,12 +765,12 @@ class AlphabeticStringMonoid(StringMonoid_class):
           following tables are supported:
 
           - ``"beker_piper"`` -- the table of characteristic frequency
-            probability distribution by Beker and Piper [BekPip82]_. This is
+            probability distribution by Beker and Piper [BP1982]_. This is
             the default table to use.
 
           - ``"lewand"`` -- the table of characteristic frequency
             probability distribution by Lewand as described on page 36
-            of [Lew00]_.
+            of [Lew2000]_.
 
         OUTPUT:
 
@@ -781,7 +781,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
         EXAMPLES:
 
         The characteristic frequency probability distribution table of
-        Beker and Piper [BekPip82]_::
+        Beker and Piper [BP1982]_::
 
             sage: A = AlphabeticStrings()
             sage: table = A.characteristic_frequency(table_name="beker_piper")
@@ -815,7 +815,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
             ('Z', 0.00100000000000000)]
 
         The characteristic frequency probability distribution table
-        of Lewand [Lew00]_::
+        of Lewand [Lew2000]_::
 
             sage: table = A.characteristic_frequency(table_name="lewand")
             sage: sorted(table.items())
@@ -901,14 +901,6 @@ class AlphabeticStringMonoid(StringMonoid_class):
             Traceback (most recent call last):
             ...
             ValueError: Table name must be either 'beker_piper' or 'lewand'.
-
-        REFERENCES:
-
-        .. [BekPip82] \H. Beker and F. Piper. *Cipher Systems: The
-          Protection of Communications*. John Wiley and Sons, 1982.
-
-        .. [Lew00] Robert Edward Lewand. *Cryptological Mathematics*.
-          The Mathematical Association of America, 2000.
         """
         supported_tables = ["beker_piper", "lewand"]
         if table_name not in supported_tables:

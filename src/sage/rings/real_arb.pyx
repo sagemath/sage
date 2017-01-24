@@ -407,7 +407,7 @@ class RealBallField(UniqueRepresentation, Field):
 
         TESTS::
 
-            sage: RealBallField(53) is RealBallField()
+            sage: RealBallField(53) is RealBallField() is RBF
             True
         """
         return super(RealBallField, cls).__classcall__(cls, precision, category)
@@ -448,9 +448,10 @@ class RealBallField(UniqueRepresentation, Field):
                 base_ring=self,
                 category=category or sage.categories.fields.Fields().Infinite())
         self._prec = precision
-        from sage.rings.qqbar import AA
+        # The coercion from QQbar is handled in _coerce_map_from_ to prevent
+        # import loops leading to silent UniqueRepresentation failures.
         from sage.rings.real_lazy import RLF
-        self._populate_coercion_lists_([ZZ, QQ, AA, RLF])
+        self._populate_coercion_lists_([ZZ, QQ, RLF])
 
     def _repr_(self):
         r"""
@@ -499,6 +500,9 @@ class RealBallField(UniqueRepresentation, Field):
             emb = other.coerce_embedding()
             if emb is not None:
                 return self.has_coerce_map_from(emb.codomain())
+        from sage.rings.qqbar import AA
+        if other is AA:
+            return True
 
     def _element_constructor_(self, mid=None, rad=None):
         """
@@ -919,7 +923,7 @@ class RealBallField(UniqueRepresentation, Field):
 
         EXAMPLES::
 
-            sage: [RBF.fibonacci(n) for n in xrange(7)]
+            sage: [RBF.fibonacci(n) for n in range(7)]
             [0,
             1.000000000000000,
             1.000000000000000,
@@ -951,7 +955,7 @@ class RealBallField(UniqueRepresentation, Field):
 
         EXAMPLES::
 
-            sage: [RBF.bell_number(n) for n in xrange(7)]
+            sage: [RBF.bell_number(n) for n in range(7)]
             [1.000000000000000,
              1.000000000000000,
              2.000000000000000,
@@ -1242,7 +1246,6 @@ cdef class RealBall(RingElement):
             ...
             TypeError: no canonical coercion...
         """
-        import sage.symbolic.constants
         cdef fmpz_t tmpz
         cdef fmpq_t tmpq
         cdef arf_t  tmpr
@@ -1287,38 +1290,6 @@ cdef class RealBall(RingElement):
                 elif mid_as_qe._parent._embedding is None:
                     raise ValueError("need an embedding")
             real_part_of_quadratic_element_to_arb(self.value, mid_as_qe, prec(self))
-        elif isinstance(mid, sage.rings.infinity.AnInfinity):
-            if isinstance(mid, sage.rings.infinity.PlusInfinity):
-                arb_pos_inf(self.value)
-            elif isinstance(mid, sage.rings.infinity.MinusInfinity):
-                arb_neg_inf(self.value)
-            else:
-                arb_zero_pm_inf(self.value)
-        elif isinstance(mid, sage.symbolic.constants.Constant):
-            if _do_sig(prec(self)): sig_on()
-            try:
-                if isinstance(mid, sage.symbolic.constants.NotANumber):
-                    arb_indeterminate(self.value)
-                elif isinstance(mid, sage.symbolic.constants.Pi):
-                    arb_const_pi(self.value, prec(self))
-                elif isinstance(mid, sage.symbolic.constants.Log2):
-                    arb_const_log2(self.value, prec(self))
-                elif isinstance(mid, sage.symbolic.constants.Catalan):
-                    arb_const_catalan(self.value, prec(self))
-                elif isinstance(mid, sage.symbolic.constants.Khinchin):
-                    arb_const_khinchin(self.value, prec(self))
-                elif isinstance(mid, sage.symbolic.constants.Glaisher):
-                    arb_const_glaisher(self.value, prec(self))
-                elif isinstance(mid, sage.symbolic.constants.EulerGamma):
-                    arb_const_euler(self.value, prec(self))
-                else:
-                    raise TypeError("unsupported constant")
-            finally:
-                if _do_sig(prec(self)): sig_off()
-        elif isinstance(mid, sage.symbolic.constants_c.E):
-            if _do_sig(prec(self)): sig_on()
-            arb_const_e(self.value, prec(self))
-            if _do_sig(prec(self)): sig_off()
         elif isinstance(mid, RealIntervalFieldElement):
             mpfi_to_arb(self.value,
                 (<RealIntervalFieldElement> mid).value,
@@ -1327,7 +1298,42 @@ cdef class RealBall(RingElement):
             if arb_set_str(self.value, mid, prec(self)) != 0:
                 raise ValueError("unsupported string format")
         else:
-            raise TypeError("unsupported midpoint type")
+            # the initializers that trigger imports
+            import sage.symbolic.constants
+            if isinstance(mid, sage.rings.infinity.AnInfinity):
+                if isinstance(mid, sage.rings.infinity.PlusInfinity):
+                    arb_pos_inf(self.value)
+                elif isinstance(mid, sage.rings.infinity.MinusInfinity):
+                    arb_neg_inf(self.value)
+                else:
+                    arb_zero_pm_inf(self.value)
+            elif isinstance(mid, sage.symbolic.constants.Constant):
+                if _do_sig(prec(self)): sig_on()
+                try:
+                    if isinstance(mid, sage.symbolic.constants.NotANumber):
+                        arb_indeterminate(self.value)
+                    elif isinstance(mid, sage.symbolic.constants.Pi):
+                        arb_const_pi(self.value, prec(self))
+                    elif isinstance(mid, sage.symbolic.constants.Log2):
+                        arb_const_log2(self.value, prec(self))
+                    elif isinstance(mid, sage.symbolic.constants.Catalan):
+                        arb_const_catalan(self.value, prec(self))
+                    elif isinstance(mid, sage.symbolic.constants.Khinchin):
+                        arb_const_khinchin(self.value, prec(self))
+                    elif isinstance(mid, sage.symbolic.constants.Glaisher):
+                        arb_const_glaisher(self.value, prec(self))
+                    elif isinstance(mid, sage.symbolic.constants.EulerGamma):
+                        arb_const_euler(self.value, prec(self))
+                    else:
+                        raise TypeError("unsupported constant")
+                finally:
+                    if _do_sig(prec(self)): sig_off()
+            elif isinstance(mid, sage.symbolic.constants_c.E):
+                if _do_sig(prec(self)): sig_on()
+                arb_const_e(self.value, prec(self))
+                if _do_sig(prec(self)): sig_off()
+            else:
+                raise TypeError("unsupported midpoint type")
 
         if rad is not None:
             mag_init(tmpm)

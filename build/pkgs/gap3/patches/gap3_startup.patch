@@ -6,8 +6,8 @@ in the startup script gap.sh.
 GAP_DIR is set 
 
 diff -ur src/gap3/bin/gap.sh.orig src/gap3/bin/gap.sh
---- src/gap3/bin/gap.sh.orig	2016-03-10 22:02:49.836772326 +0100
-+++ src/gap3/bin/gap.sh	2016-03-10 22:13:15.096777500 +0100
+--- a/bin/gap.sh	2016-03-10 22:02:49.836772326 +0100
++++ b/bin/gap.sh	2016-03-10 22:13:15.096777500 +0100
 @@ -1,4 +1,10 @@
  #!/bin/bash
 +

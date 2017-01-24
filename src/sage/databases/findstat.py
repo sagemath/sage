@@ -167,6 +167,7 @@ Classes and methods
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.element import Element
@@ -2056,7 +2057,7 @@ class FindStatCollection(Element):
         else:
             g = self._sageconstructor_overridden
 
-        return [(x, statistic(x)) for (x,_) in zip(g, xrange(max_values))]
+        return [(x, statistic(x)) for (x,_) in zip(g, range(max_values))]
 
     def id(self):
         r"""
@@ -2297,7 +2298,7 @@ class FindStatCollections(Parent, UniqueRepresentation):
              lambda x: x.num_verts(),
              lambda x, l: x.num_verts() in l,
              lambda X: str((sorted(X.canonical_label().edges(False)), X.num_verts())),
-             lambda x: (lambda E, V: Graph([range(V), lambda i,j: (i,j) in E or (j,i) in E], immutable=True))(*literal_eval(x))],
+             lambda x: (lambda E, V: Graph([list(range(V)), lambda i,j: (i,j) in E or (j,i) in E], immutable=True))(*literal_eval(x))],
         6:  [None, None, None, Composition,           Compositions,            None,
              lambda x: x.size(),
              lambda x, l: x.size() in l,
@@ -2332,7 +2333,7 @@ class FindStatCollections(Parent, UniqueRepresentation):
              lambda x: x.cardinality(),
              lambda x, l: x.cardinality() in l,
              lambda X: str((sorted(X._hasse_diagram.canonical_label().cover_relations()), len(X._hasse_diagram.vertices()))),
-             lambda x: (lambda R, E: Poset((range(E), R)))(*literal_eval(x))],
+             lambda x: (lambda R, E: Poset((list(range(E)), R)))(*literal_eval(x))],
         19: [None, None, None, SemistandardTableau,   lambda x: SemistandardTableaux(x),
              None,
              lambda x: x.size(),

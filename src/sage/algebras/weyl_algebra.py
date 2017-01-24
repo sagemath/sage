@@ -23,7 +23,7 @@ import operator
 from sage.categories.rings import Rings
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.sets.family import Family
-from sage.combinat.dict_addition import dict_addition, dict_linear_combination
+import sage.data_structures.blas_dict as blas
 from sage.combinat.free_module import _divide_if_possible
 from sage.rings.ring import Algebra
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
@@ -234,7 +234,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
             d = half_term(m[1], False)
             if p == '1': # No polynomial part
                 return d
-            elif d == '1': # No differiental part
+            elif d == '1': # No differential part
                 return p
             else:
                 return p + ' ' + d
@@ -310,7 +310,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
             dx*dy + dz + x^3 - 2
         """
         F = self.parent()
-        return self.__class__(F, dict_addition([self.__monomials, other.__monomials]))
+        return self.__class__(F, blas.add(self.__monomials, other.__monomials))
 
         d = copy(self.__monomials)
         zero = self.parent().base_ring().zero()
@@ -504,7 +504,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
         if F.base_ring().is_field():
             x = F.base_ring()( x )
             x_inv = x**-1
-            D = dict_linear_combination( [ ( D, x_inv ) ] )
+            D = blas.linear_combination( [ ( D, x_inv ) ] )
 
             return self.__class__(F, D)
 

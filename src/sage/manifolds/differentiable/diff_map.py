@@ -16,10 +16,8 @@ AUTHORS:
 
 REFERENCES:
 
-- Chap. 1 of [KN63]_ \S. Kobayashi & K. Nomizu : *Foundations of Differential
-  Geometry*, vol. 1, Interscience Publishers (New York) (1963)
-- Chaps. 2 and 3 of [Lee13]_ \J.M. Lee : *Introduction to Smooth Manifolds*,
-  2nd ed., Springer (New York) (2013)
+- Chap. 1 of [KN1963]_
+- Chaps. 2 and 3 of [Lee2013]_
 
 """
 
@@ -187,6 +185,35 @@ class DiffMap(ContinuousMap):
         sage: sp = M.point((0,0), chart=c_xy, name='S')  # the South pole
         sage: Phi(sp).coord() # Cartesian coordinates
         (0, 0, -1)
+
+    The differential `\mathrm{d}\Phi` of the map `\Phi` at the North pole and
+    at the South pole::
+
+        sage: Phi.differential(np)
+        Generic morphism:
+          From: Tangent space at Point N on the 2-dimensional differentiable manifold S^2
+          To:   Tangent space at Point Phi(N) on the 3-dimensional differentiable manifold R^3
+        sage: Phi.differential(sp)
+        Generic morphism:
+          From: Tangent space at Point S on the 2-dimensional differentiable manifold S^2
+          To:   Tangent space at Point Phi(S) on the 3-dimensional differentiable manifold R^3
+
+    The matrix of the linear map `\mathrm{d}\Phi_N` with respect to the default
+    bases of `T_N S^2` and `T_{\Phi(N)} \RR^3`::
+
+        sage: Phi.differential(np).matrix()
+        [2 0]
+        [0 2]
+        [0 0]
+
+    the default bases being::
+
+        sage: Phi.differential(np).domain().default_basis()
+        Basis (d/du,d/dv) on the Tangent space at Point N on the 2-dimensional
+         differentiable manifold S^2
+        sage: Phi.differential(np).codomain().default_basis()
+        Basis (d/dX,d/dY,d/dZ) on the Tangent space at Point Phi(N) on the
+         3-dimensional differentiable manifold R^3
 
     Differentiable maps can be composed by means of the operator ``*``: let
     us introduce the map `\RR^3\rightarrow \RR^2` corresponding to
@@ -482,3 +509,700 @@ class DiffMap(ContinuousMap):
         ContinuousMap._del_derived(self)  # derived quantities of the mother
                                           # class
         self._diff.clear()
+
+    def differential(self, point):
+        r"""
+        Return the differential of ``self`` at a given point.
+
+        If the differentiable map ``self`` is
+
+        .. MATH::
+
+            \Phi: M \longrightarrow N,
+
+        where `M` and `N` are differentiable manifolds, the *differential*
+        of `\Phi` at a point `p \in M` is the tangent space linear map:
+
+        .. MATH::
+
+            \mathrm{d}\Phi_p: T_p M \longrightarrow T_{\Phi(p)} N
+
+        defined by
+
+        .. MATH::
+
+            \begin{array}{rccc}
+            \forall v\in T_p M,\quad \mathrm{d}\Phi_p(v) :
+                                & C^k(N) & \longrightarrow & \mathbb{R} \\
+                                & f & \longmapsto & v(f\circ \Phi)
+            \end{array}
+
+        INPUT:
+
+        - ``point`` -- point `p` in the domain `M` of the differentiable
+          map `\Phi`
+
+        OUTPUT:
+
+        - `\mathrm{d}\Phi_p`, the differential of `\Phi` at `p`, as a
+          :class:`~sage.tensor.modules.free_module_morphism.FiniteRankFreeModuleMorphism`
+
+        EXAMPLES:
+
+        Differential of a differentiable map between a 2-dimensional manifold
+        and a 3-dimensional one::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: N = Manifold(3, 'N')
+            sage: Y.<u,v,w> = N.chart()
+            sage: Phi = M.diff_map(N, {(X,Y): (x-2*y, x*y, x^2-y^3)}, name='Phi',
+            ....:                  latex_name = r'\Phi')
+            sage: p = M.point((2,-1), name='p')
+            sage: dPhip = Phi.differential(p) ; dPhip
+            Generic morphism:
+              From: Tangent space at Point p on the 2-dimensional differentiable manifold M
+              To:   Tangent space at Point Phi(p) on the 3-dimensional differentiable manifold N
+            sage: latex(dPhip)
+            \mathrm{d}\Phi_{p}
+            sage: dPhip.parent()
+            Set of Morphisms from Tangent space at Point p on the 2-dimensional
+             differentiable manifold M to Tangent space at Point Phi(p) on the
+             3-dimensional differentiable manifold N in Category of finite
+             dimensional vector spaces over Symbolic Ring
+
+        The matrix of `\mathrm{d}\Phi_p` w.r.t. to the default bases of
+        `T_p M` and `T_{\Phi(p)} N`::
+
+            sage: dPhip.matrix()
+            [ 1 -2]
+            [-1  2]
+            [ 4 -3]
+
+        """
+        image_point = self(point)
+        tsp_image = image_point._manifold.tangent_space(image_point)
+        tsp_source = point._manifold.tangent_space(point)
+        # Search for a common chart to perform the computation
+        chartp = None
+
+        # 1/ Search without any extra computation
+        for chart in point._coordinates:
+            for chart_pair in self._diff:
+                if chart == chart_pair[0]:
+                    chartp = chart_pair
+                    break
+            if chartp is not None:
+                break
+        else:
+            # 2/ Search with a coordinate transformation on the point
+            for chart_pair in self._diff:
+                try:
+                    point.coord(chart_pair[0])
+                    chartp = chart_pair
+                except ValueError:
+                    pass
+
+        if chartp is None:
+            # 3/ Search with a coordinate evaluation of self
+            for chart1 in point._coordinates:
+                for chart2 in self._codomain.atlas():
+                    try:
+                        self.differential_functions(chart1, chart2)
+                        chartp = (chart1, chart2)
+                        break
+                    except ValueError:
+                        pass
+                if chartp is not None:
+                    break
+
+        if chartp is None:
+            raise ValueError("no common chart have been found for the " +
+                     "coordinate expressions of {} and {}".format(self, point))
+
+        diff_funct = self.differential_functions(*chartp)
+        chart1 = chartp[0]
+        chart2 = chartp[1]
+        coord_point = point.coord(chart1)
+        n1 = self._domain.dim()
+        n2 = self._codomain.dim()
+        matrix = [[diff_funct[i][j](*coord_point) for j in range(n1)]
+                  for i in range(n2)]
+        bases = (chart1.frame().at(point), chart2.frame().at(image_point))
+        if self._name is not None and point._name is not None:
+            name = 'd%s_%s'%(self._name, point._name)
+        else:
+            name = None
+        if self._latex_name is not None and point._latex_name is not None:
+            latex_name = r'\mathrm{d}%s_{%s}'%(self._latex_name,
+                                               point._latex_name)
+        else:
+            latex_name = None
+        return tsp_source.hom(tsp_image, matrix, bases=bases,
+                              name=name, latex_name=latex_name)
+
+    def differential_functions(self, chart1=None, chart2=None):
+        r"""
+        Return the coordinate expression of the differential of the
+        differentiable map with respect to a pair of charts.
+
+        If the differentiable map is
+
+        .. MATH::
+
+            \Phi: M \longrightarrow  N,
+
+        where `M` and `N` are differentiable manifolds, the *differential*
+        of `\Phi` at a point `p \in M` is the tangent space linear map:
+
+        .. MATH::
+
+            \mathrm{d}\Phi_p: T_p M \longrightarrow T_{\Phi(p)} N
+
+        defined by
+
+        .. MATH::
+
+            \begin{array}{rccc}
+            \forall v\in T_p M,\quad \mathrm{d}\Phi_p(v) : & C^k(N) &
+                                              \longrightarrow & \mathbb{R}, \\
+                                & f & \longmapsto & v(f\circ \Phi).
+            \end{array}
+
+        If the coordinate expression of `\Phi` is
+
+        .. MATH::
+
+            y^i = Y^i(x^1, \ldots, x^n), \quad 1 \leq i \leq m,
+
+        where `(x^1, \ldots, x^n)` are coordinates of a chart on `M` and
+        `(y^1, \ldots, y^m)` are coordinates of a chart on `\Phi(M)`, the
+        expression of the differential of `\Phi` with respect to these
+        coordinates is
+
+        .. MATH::
+
+            J_{ij} = \frac{\partial Y^i}{\partial x^j} \quad 1\leq i \leq m,
+                            \qquad 1 \leq j \leq n.
+
+        `\left. J_{ij} \right|_p` is then the matrix of the linear map
+        `\mathrm{d}\Phi_p` with respect to the bases of `T_p M` and
+        `T_{\Phi(p)} N` associated to the above charts:
+
+        .. MATH::
+
+            \mathrm{d}\Phi_p\left( \left. \frac{\partial}{\partial x^j}
+               \right|_p \right) = \left. J_{ij} \right|_p \;
+             \left. \frac{\partial}{\partial y^i} \right| _{\Phi(p)}.
+
+        INPUT:
+
+        - ``chart1`` -- (default: ``None``) chart on the domain `M` of `\Phi`
+          (coordinates denoted by `(x^j)` above); if ``None``, the domain's
+          default chart is assumed
+        - ``chart2`` -- (default: ``None``) chart on the codomain of `\Phi`
+          (coordinates denoted by `(y^i)` above); if ``None``, the codomain's
+          default chart is assumed
+
+        OUTPUT:
+
+        - the functions `J_{ij}` as a double array, `J_{ij}` being
+          the element ``[i][j]`` represented by a
+          :class:`~sage.manifolds.coord_func.CoordFunction`
+
+        To get symbolic expressions, use the method
+        :meth:`jacobian_matrix` instead.
+
+        EXAMPLES:
+
+        Differential functions of a map between a 2-dimensional manifold
+        and a 3-dimensional one::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: N = Manifold(3, 'N')
+            sage: Y.<u,v,w> = N.chart()
+            sage: Phi = M.diff_map(N, {(X,Y): (x-2*y, x*y, x^2-y^3)}, name='Phi',
+            ....:                  latex_name = r'\Phi')
+            sage: J = Phi.differential_functions(X, Y) ; J
+            [     1     -2]
+            [     y      x]
+            [   2*x -3*y^2]
+
+        The result is cached::
+
+            sage: Phi.differential_functions(X, Y) is J
+            True
+
+        The elements of ``J`` are functions of the coordinates of
+        the chart ``X``::
+
+            sage: J[2][0]
+            2*x
+            sage: type(J[2][0])
+            <class 'sage.manifolds.coord_func_symb.CoordFunctionSymbRing_with_category.element_class'>
+            sage: J[2][0].display()
+            (x, y) |--> 2*x
+
+        In contrast, the method :meth:`jacobian_matrix` leads directly to
+        symbolic expressions::
+
+            sage: JJ = Phi.jacobian_matrix(X,Y) ; JJ
+            [     1     -2]
+            [     y      x]
+            [   2*x -3*y^2]
+            sage: JJ[2,0]
+            2*x
+            sage: type(JJ[2,0])
+            <type 'sage.symbolic.expression.Expression'>
+            sage: bool( JJ[2,0] == J[2][0].expr() )
+            True
+
+        """
+        dom1 = self._domain; dom2 = self._codomain
+        if chart1 is None:
+            chart1 = dom1._def_chart
+        if chart2 is None:
+            chart2 = dom2._def_chart
+        if (chart1, chart2) not in self._diff:
+            funct = self.coord_functions(chart1, chart2)
+            self._diff[(chart1, chart2)] = funct.jacobian()
+        return self._diff[(chart1, chart2)]
+
+    def jacobian_matrix(self, chart1=None, chart2=None):
+        r"""
+        Return the Jacobian matrix resulting from the coordinate expression
+        of the differentiable map with respect to a pair of charts.
+
+        If `\Phi` is the current differentiable map and its coordinate
+        expression is
+
+        .. MATH::
+
+            y^i = Y^i(x^1, \ldots, x^n),  \quad 1 \leq i \leq m,
+
+        where `(x^1, \ldots, x^n)` are coordinates of a chart `X` on the
+        domain of `\Phi` and `(y^1, \ldots, y^m)` are coordinates of a chart
+        `Y` on the codomain of `\Phi`, the *Jacobian matrix* of the
+        differentiable map `\Phi` w.r.t. to charts `X` and `Y` is
+
+        .. MATH::
+
+            J = \left( \frac{\partial Y^i}{\partial x^j}
+              \right)_{{1 \leq i \leq m \atop 1 \leq j \leq n}},
+
+        where `i` is the row index and `j` the column one.
+
+        INPUT:
+
+        - ``chart1`` -- (default: ``None``) chart `X` on the domain of
+          `\Phi`; if none is provided, the domain's default chart is assumed
+        - ``chart2`` -- (default: ``None``) chart `Y` on the codomain of
+          `\Phi`; if none is provided, the codomain's default chart is
+          assumed
+
+        OUTPUT:
+
+        - the matrix `J` defined above
+
+        EXAMPLES:
+
+        Jacobian matrix of a map between a 2-dimensional manifold and a
+        3-dimensional one::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: N = Manifold(3, 'N')
+            sage: Y.<u,v,w> = N.chart()
+            sage: Phi = M.diff_map(N, {(X,Y): (x-2*y, x*y, x^2-y^3)}, name='Phi',
+            ....:                  latex_name = r'\Phi')
+            sage: Phi.display()
+            Phi: M --> N
+               (x, y) |--> (u, v, w) = (x - 2*y, x*y, -y^3 + x^2)
+            sage: J = Phi.jacobian_matrix(X, Y) ; J
+            [     1     -2]
+            [     y      x]
+            [   2*x -3*y^2]
+            sage: J.parent()
+            Full MatrixSpace of 3 by 2 dense matrices over Symbolic Ring
+
+        """
+        from sage.matrix.constructor import matrix
+        diff_funct = self.differential_functions(chart1, chart2)
+        n1 = self._domain.dim()
+        n2 = self._codomain.dim()
+        return matrix([[diff_funct[i][j].expr() for j in range(n1)]
+                       for i in range(n2)])
+
+    def pullback(self, tensor):
+        r"""
+        Pullback operator associated with ``self``.
+
+        In what follows, let `\Phi` denote a differentiable map, `M` its
+        domain and `N` its codomain.
+
+        INPUT:
+
+        - ``tensor`` --
+          :class:`~sage.manifolds.differentiable.tensorfield.TensorField`;
+          a fully covariant tensor field `T` on `N`, i.e. a tensor
+          field of type `(0, p)`, with `p` a positive or zero integer; the
+          case `p = 0` corresponds to a scalar field
+
+        OUTPUT:
+
+        - a :class:`~sage.manifolds.differentiable.tensorfield.TensorField`
+          representing a fully covariant tensor field on `M` that is the
+          pullback of `T` by `\Phi`
+
+        EXAMPLES:
+
+        Pullback on `S^2` of a scalar field defined on `R^3`::
+
+            sage: M = Manifold(2, 'S^2', start_index=1)
+            sage: U = M.open_subset('U') # the complement of a meridian (domain of spherical coordinates)
+            sage: c_spher.<th,ph> = U.chart(r'th:(0,pi):\theta ph:(0,2*pi):\phi') # spherical coord. on U
+            sage: N = Manifold(3, 'R^3', r'\RR^3', start_index=1)
+            sage: c_cart.<x,y,z> = N.chart() # Cartesian coord. on R^3
+            sage: Phi = U.diff_map(N, (sin(th)*cos(ph), sin(th)*sin(ph), cos(th)),
+            ....:                  name='Phi', latex_name=r'\Phi')
+            sage: f = N.scalar_field(x*y*z, name='f') ; f
+            Scalar field f on the 3-dimensional differentiable manifold R^3
+            sage: f.display()
+            f: R^3 --> R
+               (x, y, z) |--> x*y*z
+            sage: pf = Phi.pullback(f) ; pf
+            Scalar field Phi_*(f) on the Open subset U of the 2-dimensional
+             differentiable manifold S^2
+            sage: pf.display()
+            Phi_*(f): U --> R
+               (th, ph) |--> cos(ph)*cos(th)*sin(ph)*sin(th)^2
+
+        Pullback on `S^2` of the standard Euclidean metric on `R^3`::
+
+            sage: g = N.sym_bilin_form_field('g')
+            sage: g[1,1], g[2,2], g[3,3] = 1, 1, 1
+            sage: g.display()
+            g = dx*dx + dy*dy + dz*dz
+            sage: pg = Phi.pullback(g) ; pg
+            Field of symmetric bilinear forms Phi_*(g) on the Open subset U of
+             the 2-dimensional differentiable manifold S^2
+            sage: pg.display()
+            Phi_*(g) = dth*dth + sin(th)^2 dph*dph
+
+        Pullback on `S^2` of a 3-form on `R^3`::
+
+            sage: a = N.diff_form(3, 'A')
+            sage: a[1,2,3] = f
+            sage: a.display()
+            A = x*y*z dx/\dy/\dz
+            sage: pa = Phi.pullback(a) ; pa
+            3-form Phi_*(A) on the Open subset U of the 2-dimensional
+             differentiable manifold S^2
+            sage: pa.display() # should be zero (as any 3-form on a 2-dimensional manifold)
+            Phi_*(A) = 0
+
+        """
+        from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+        from sage.manifolds.differentiable.vectorframe import CoordFrame
+        from sage.tensor.modules.comp import (Components, CompWithSym,
+                                              CompFullySym, CompFullyAntiSym)
+
+        def _pullback_paral(self, tensor):
+            r"""
+            Pullback on parallelizable domains.
+            """
+            dom1 = self._domain
+            dom2 = self._codomain
+            ncov = tensor._tensor_type[1]
+            resu_name = None ; resu_latex_name = None
+            if self._name is not None and tensor._name is not None:
+                resu_name = self._name + '_*(' + tensor._name + ')'
+            if self._latex_name is not None and tensor._latex_name is not None:
+                resu_latex_name = self._latex_name + '_*' + tensor._latex_name
+            fmodule1 = dom1.vector_field_module()
+            ring1 = fmodule1._ring
+            si1 = fmodule1._sindex
+            of1 = fmodule1._output_formatter
+            si2 = dom2._sindex
+            resu = fmodule1.tensor((0,ncov), name=resu_name,
+                                   latex_name=resu_latex_name, sym=tensor._sym,
+                                   antisym=tensor._antisym)
+            for frame2 in tensor._components:
+                if isinstance(frame2, CoordFrame):
+                    chart2 = frame2._chart
+                    for chart1 in dom1._atlas:
+                        if (chart1, chart2) in self._coord_expression:
+                            # Computation at the component level:
+                            frame1 = chart1._frame
+                            tcomp = tensor._components[frame2]
+                            if isinstance(tcomp, CompFullySym):
+                                ptcomp = CompFullySym(ring1, frame1, ncov,
+                                                      start_index=si1,
+                                                      output_formatter=of1)
+                            elif isinstance(tcomp, CompFullyAntiSym):
+                                ptcomp = CompFullyAntiSym(ring1, frame1, ncov,
+                                                          start_index=si1,
+                                                          output_formatter=of1)
+                            elif isinstance(tcomp, CompWithSym):
+                                ptcomp = CompWithSym(ring1, frame1, ncov,
+                                                     start_index=si1,
+                                                     output_formatter=of1,
+                                                     sym=tcomp.sym,
+                                                     antisym=tcomp.antisym)
+                            else:
+                                ptcomp = Components(ring1, frame1, ncov,
+                                                    start_index=si1,
+                                                    output_formatter=of1)
+                            phi = self._coord_expression[(chart1, chart2)]
+                            jacob = phi.jacobian()
+                            # X2 coordinates expressed in terms of X1 ones via the
+                            # mapping:
+                            coord2_1 = phi(*(chart1._xx))
+                            for ind_new in ptcomp.non_redundant_index_generator():
+                                res = 0
+                                for ind_old in dom2.manifold().index_generator(ncov):
+                                    ff = tcomp[[ind_old]].coord_function(chart2)
+                                    t = chart1.function(ff(*coord2_1))
+                                    for i in range(ncov):
+                                        t *= jacob[ind_old[i]-si2][ind_new[i]-si1]
+                                    res += t
+                                ptcomp[ind_new] = res
+                            resu._components[frame1] = ptcomp
+                return resu
+        # End of function _pullback_paral
+
+        # Special case of the identity map:
+        if self._is_identity:
+            return tensor  # no test for efficiency
+        # Generic case:
+        dom1 = self._domain
+        dom2 = self._codomain
+        tdom = tensor._domain
+        if not tdom.is_subset(dom2):
+            raise ValueError("the tensor field is not defined on the map codomain")
+        (ncon, ncov) = tensor._tensor_type
+        if ncon != 0:
+            raise TypeError("the pullback cannot be taken on a tensor " +
+                            "with some contravariant part")
+        resu_name = None ; resu_latex_name = None
+        if self._name is not None and tensor._name is not None:
+            resu_name = self._name + '_*(' + tensor._name + ')'
+        if self._latex_name is not None and tensor._latex_name is not None:
+            resu_latex_name = self._latex_name + '_*' + tensor._latex_name
+        if ncov == 0:
+            # Case of a scalar field
+            resu_fc = []
+            for chart2 in tensor._express:
+                for chart1 in dom1._atlas:
+                    if (chart1, chart2) in self._coord_expression:
+                        phi = self._coord_expression[(chart1, chart2)]
+                        coord1 = chart1._xx
+                        ff = tensor._express[chart2]
+                        resu_fc.append( chart1.function(ff(*(phi(*coord1)))) )
+            dom_resu = resu_fc[0].parent()._chart._domain
+            for fc in resu_fc[1:]:
+                dom_resu = dom_resu.union(fc.parent()._chart._domain)
+            resu = dom_resu.scalar_field(name=resu_name,
+                                         latex_name=resu_latex_name)
+            for fc in resu_fc:
+                resu._express[fc.parent()._chart] = fc
+        else:
+            # Case of tensor field of rank >= 1
+            if tensor._vmodule._dest_map is not tdom.identity_map():
+                raise TypeError("the pullback in defined only for tensor " +
+                                "fields on {}".format(dom2))
+            resu_rst = []
+            for chart_pair in self._coord_expression:
+                chart1 = chart_pair[0]; chart2 = chart_pair[1]
+                ch2dom = chart2._domain
+                if ch2dom.is_subset(tdom):
+                    self_r = self.restrict(chart1._domain, subcodomain=ch2dom)
+                    tensor_r = tensor.restrict(ch2dom)
+                    resu_rst.append(_pullback_paral(self_r, tensor_r))
+            dom_resu = resu_rst[0]._domain
+            for rst in resu_rst[1:]:
+                dom_resu = dom_resu.union(rst._domain)
+            resu = dom_resu.tensor_field(0, ncov, name=resu_name,
+                                         latex_name=resu_latex_name,
+                                         sym=resu_rst[0]._sym,
+                                         antisym=resu_rst[0]._antisym)
+            for rst in resu_rst:
+                if rst._domain is not resu._domain:
+                    resu._restrictions[rst._domain] = rst
+            if isinstance(resu, TensorFieldParal):
+                for rst in resu_rst:
+                    for frame, comp in rst._components.items():
+                        resu._components[frame] = comp
+        return resu
+
+
+    def pushforward(self, tensor):
+        r"""
+        Pushforward operator associated with ``self``.
+
+        In what follows, let `\Phi` denote the differentiable map, `M` its
+        domain and `N` its codomain.
+
+        INPUT:
+
+        - ``tensor`` --
+          :class:`~sage.manifolds.differentiable.tensorfield.TensorField`;
+          a fully contrariant tensor field `T` on `M`, i.e. a tensor
+          field of type `(p, 0)`, with `p` a positive integer
+
+        OUTPUT:
+
+        - a :class:`~sage.manifolds.differentiable.tensorfield.TensorField`
+          representing a fully contravariant tensor field along `M` with
+          values in `N`, which is the pushforward of `T` by `\Phi`
+
+        EXAMPLES:
+
+        Pushforward of a vector field on the 2-sphere `S^2` to the Euclidean
+        3-space `\RR^3`, via the standard embedding of `S^2`::
+
+            sage: S2 = Manifold(2, 'S^2', start_index=1)
+            sage: U = S2.open_subset('U')  # domain of spherical coordinates
+            sage: spher.<th,ph> = U.chart(r'th:(0,pi):\theta ph:(0,2*pi):\phi')
+            sage: R3 = Manifold(3, 'R^3', start_index=1)
+            sage: cart.<x,y,z> = R3.chart()
+            sage: Phi = U.diff_map(R3, {(spher, cart): [sin(th)*cos(ph),
+            ....:   sin(th)*sin(ph), cos(th)]}, name='Phi', latex_name=r'\Phi')
+            sage: v = U.vector_field(name='v')
+            sage: v[:] = 0, 1
+            sage: v.display()
+            v = d/dph
+            sage: pv = Phi.pushforward(v); pv
+            Vector field Phi^*(v) along the Open subset U of the 2-dimensional
+             differentiable manifold S^2 with values on the 3-dimensional
+             differentiable manifold R^3
+            sage: pv.display()
+            Phi^*(v) = -sin(ph)*sin(th) d/dx + cos(ph)*sin(th) d/dy
+
+        Pushforward of a vector field on the real line to the `\RR^3`, via a
+        helix embedding::
+
+            sage: R.<t> = RealLine()
+            sage: Psi = R.diff_map(R3, [cos(t), sin(t), t], name='Psi',
+            ....:                  latex_name=r'\Psi')
+            sage: u = R.vector_field(name='u')
+            sage: u[0] = 1
+            sage: u.display()
+            u = d/dt
+            sage: pu = Psi.pushforward(u); pu
+            Vector field Psi^*(u) along the Real number line R with values on
+             the 3-dimensional differentiable manifold R^3
+            sage: pu.display()
+            Psi^*(u) = -sin(t) d/dx + cos(t) d/dy + d/dz
+
+        """
+        from sage.tensor.modules.comp import (Components, CompWithSym,
+                                              CompFullySym, CompFullyAntiSym)
+        from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+        vmodule = tensor.base_module()
+        dest_map = vmodule.destination_map()
+        dom1 = tensor.domain()
+        ambient_dom1 = dest_map.codomain()
+        if not ambient_dom1.is_subset(self._domain):
+            raise ValueError("the {} does not take its values on the " +
+                             "domain of the {}".format(tensor, self))
+        (ncon, ncov) = tensor.tensor_type()
+        if ncov != 0:
+            raise ValueError("the pushforward cannot be taken on a tensor " +
+                             "with some covariant part")
+        if ncon == 0:
+            raise ValueError("the pushforward cannot be taken on a scalar " +
+                             "field")
+        if dest_map != dom1.identity_map():
+            raise NotImplementedError("the case of a non-trivial destination" +
+                                      " map is not implemented yet")
+        if not isinstance(tensor, TensorFieldParal):
+            raise NotImplementedError("the case of a non-parallelizable " +
+                                      "domain is not implemented yet")
+        # A pair of charts (chart1, chart2) where the computation
+        # is feasable is searched, privileging the default chart of the
+        # map's domain for chart1
+        chart1 = None; chart2 = None
+        def_chart1 = dom1.default_chart()
+        def_chart2 = self._codomain.default_chart()
+        if (def_chart1._frame in tensor._components
+                and (def_chart1, def_chart2) in self._coord_expression):
+            chart1 = def_chart1
+            chart2 = def_chart2
+        else:
+            for (chart1n, chart2n) in self._coord_expression:
+                if (chart2n == def_chart2
+                         and chart1n._frame in tensor._components):
+                    chart1 = chart1n
+                    chart2 = def_chart2
+                    break
+        if chart2 is None:
+            # It is not possible to have def_chart2 as chart for
+            # expressing the result; any other chart is then looked for:
+            for (chart1n, chart2n) in self._coord_expression:
+                if chart1n._frame in tensor._components:
+                    chart1 = chart1n
+                    chart2 = chart2n
+                    break
+        if chart1 is None:
+            # Computations of components are attempted
+            chart1 = dom1.default_chart()
+            tensor.comp(chart1.frame())
+            for chart2n in self._codomain.atlas():
+                try:
+                    self.coord_functions(chart1, chart2n)
+                    chart2 = chart2n
+                    break
+                except ValueError:
+                    pass
+            else:
+                raise ValueError("no pair of charts could be found to " +
+                                 "compute the pushforward of " +
+                                 "the {} by the {}".format(tensor, self))
+        # Vector field module for the result:
+        fmodule2 = dom1.vector_field_module(dest_map=self)
+        #
+        frame2 = fmodule2.basis(from_frame=chart2.frame())
+        si1 = dom1.start_index()
+        si2 = fmodule2._sindex
+        ring2 = fmodule2._ring
+        of2 = fmodule2._output_formatter
+        # Computation at the component level:
+        tcomp = tensor._components[chart1.frame()]
+        # Construction of the pushforward components (ptcomp):
+        if isinstance(tcomp, CompFullySym):
+            ptcomp = CompFullySym(ring2, frame2, ncon, start_index=si2,
+                                  output_formatter=of2)
+        elif isinstance(tcomp, CompFullyAntiSym):
+            ptcomp = CompFullyAntiSym(ring2, frame2, ncon, start_index=si2,
+                                      output_formatter=of2)
+        elif isinstance(tcomp, CompWithSym):
+            ptcomp = CompWithSym(ring2, frame2, ncon, start_index=si2,
+                                 output_formatter=of2, sym=tcomp._sym,
+                                 antisym=tcomp._antisym)
+        else:
+            ptcomp = Components(ring2, frame2, ncon, start_index=si2,
+                                output_formatter=of2)
+        # Computation of the pushforward components:
+        jacob = self.differential_functions(chart1=chart1, chart2=chart2)
+        si2 = chart2.domain().start_index()
+        for ind_new in ptcomp.non_redundant_index_generator():
+            res = 0
+            for ind_old in dom1.index_generator(ncon):
+                t = tcomp[[ind_old]].coord_function(chart1)
+                for i in range(ncon):
+                    t *= jacob[ind_new[i]-si2][ind_old[i]-si1]
+                res += t
+            ptcomp[ind_new] = res
+        # Name of the result:
+        resu_name = None ; resu_latex_name = None
+        if self._name is not None and tensor._name is not None:
+            resu_name = self._name + '^*(' + tensor._name + ')'
+        if self._latex_name is not None and tensor._latex_name is not None:
+            resu_latex_name = self._latex_name + '^*' + tensor._latex_name
+        # Creation of the result with the components obtained above:
+        resu = fmodule2.tensor_from_comp((ncon, 0), ptcomp, name=resu_name,
+                                         latex_name=resu_latex_name)
+        return resu
+

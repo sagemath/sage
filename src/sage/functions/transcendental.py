@@ -86,13 +86,13 @@ class Function_zeta(GinacFunction):
 
             sage: s = SR('s')
             sage: zeta(s).series(s==1, 2)
-            1*(s - 1)^(-1) + (euler_gamma) + (-1/2*stieltjes(1))*(s - 1) + Order((s - 1)^2)
+            1*(s - 1)^(-1) + (euler_gamma) + (-stieltjes(1))*(s - 1) + Order((s - 1)^2)
 
         Generally, the Stieltjes constants occur in the Laurent
         expansion of `\zeta`-type singularities::
 
             sage: zeta(2*s/(s+1)).series(s==1, 2)
-            2*(s - 1)^(-1) + (euler_gamma + 1) + (-1/4*stieltjes(1))*(s - 1) + Order((s - 1)^2)
+            2*(s - 1)^(-1) + (euler_gamma + 1) + (-1/2*stieltjes(1))*(s - 1) + Order((s - 1)^2)
 
 
         TESTS::
@@ -102,6 +102,8 @@ class Function_zeta(GinacFunction):
             sage: a = loads(dumps(zeta(x)))
             sage: a.operator() == zeta
             True
+            sage: zeta(x)._sympy_()
+            zeta(x)
 
             sage: zeta(1)
             Infinity
@@ -168,6 +170,8 @@ class Function_stieltjes(GinacFunction):
             sage: a = loads(dumps(stieltjes(n)))
             sage: a.operator() == stieltjes
             True
+            sage: stieltjes(x)._sympy_()
+            stieltjes(x)
 
             sage: stieltjes(x).subs(x==0)
             euler_gamma
@@ -255,7 +259,7 @@ def hurwitz_zeta(s, x, prec=None, **kwargs):
     The Hurwitz zeta function is one of the many zeta functions. It
     defined as
 
-    .. math::
+    .. MATH::
 
              \zeta(s, x) = \sum_{k=0}^{\infty} (k + x)^{-s}.
 
@@ -364,7 +368,7 @@ def zeta_symmetric(s):
 
     More precisely,
 
-    .. math::
+    .. MATH::
 
                 xi(s) = \gamma(s/2 + 1) * (s-1) * \pi^{-s/2} * \zeta(s).
 
@@ -409,7 +413,7 @@ class DickmanRho(BuiltinFunction):
     Dickman's function is the continuous function satisfying the
     differential equation
 
-    .. math::
+    .. MATH::
 
          x \rho'(x) + \rho(x-1) = 0
 
@@ -417,7 +421,7 @@ class DickmanRho(BuiltinFunction):
     `0 \le x \le 1`. It is useful in estimating the frequency
     of smooth numbers as asymptotically
 
-    .. math::
+    .. MATH::
 
          \Psi(a, a^{1/s}) \sim a \rho(s)
 
@@ -588,7 +592,7 @@ class DickmanRho(BuiltinFunction):
         r"""
         Approximate using de Bruijn's formula
 
-        .. math::
+        .. MATH::
 
              \rho(x) \sim \frac{exp(-x \xi + Ei(\xi))}{\sqrt{2\pi x}\xi}
 

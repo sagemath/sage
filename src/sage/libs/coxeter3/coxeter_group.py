@@ -303,7 +303,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                 sage: all(W.kazhdan_lusztig_polynomial(u,u) == 1 for u in W) # optional - coxeter3
                 True
 
-            This convention differs from Theorem 2.7 in [LeclercThibon1998]_ by:
+            This convention differs from Theorem 2.7 in [LT1998]_ by:
 
             .. MATH::
 
@@ -347,21 +347,15 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         - ``J`` -- a subset of the index set of ``self`` specifying the parabolic subgroup
 
         This method implements the parabolic Kazhdan-Lusztig polynomials
-        `P^{-,J}_{u,v}` of [Deodhar1987]_, which are defined as
+        `P^{-,J}_{u,v}` of [Deo1987b]_, which are defined as
         `P^{-,J}_{u,v} = \sum_{z\in W_J} (-1)^{\ell(z)} P_{yz,w}(q)`
         with the conventions in Sage.
         As for :meth:`kazhdan_lusztig_polynomial` the convention
-        differs from Theorem 2.7 in [LeclercThibon1998]_ by:
+        differs from Theorem 2.7 in [LT1998]_ by:
 
         .. MATH::
 
             {}^{LT} P_{y,w}^{-,J}(q) = q^{\ell(w)-\ell(y)} P_{y,w}^{-,J}(q^{-2})
-
-        REFERENCES:
-
-            .. [Deodhar1987] \V.V. Deodhar, On some geometric aspects of Bruhat orderings II. The parabolic analogue of Kazhdan-Lusztig polynomials, J. Alg. 111 (1987) 483-506.
-
-            .. [LeclercThibon1998] \B. Leclerc, J.-Y. Thibon, Littlewood-Richardson coefficients and Kazhdan-Lusztig polynomials, http://front.math.ucdavis.edu/9809.5122
 
         EXAMPLES::
 

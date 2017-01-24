@@ -38,7 +38,7 @@ Let's request the category of some objects::
     Category of finite dimensional vector spaces with basis over (quotient fields and metric spaces)
     sage: G = SymmetricGroup(9)
     sage: G.category()
-    Join of Category of finite permutation groups and Category of finite weyl groups
+    Join of Category of finite enumerated permutation groups and Category of finite weyl groups
     sage: P = PerfectMatchings(3)
     sage: P.category()
     Category of finite enumerated sets
@@ -843,7 +843,7 @@ class Category(UniqueRepresentation, SageObject):
         Since :trac:`11943`, the order of super categories is
         determined by Python's method resolution order C3 algorithm.
 
-        .. seealso:: :meth:`all_super_categories`
+        .. SEEALSO:: :meth:`all_super_categories`
 
         .. note:: this attribute is likely to eventually become a tuple.
 
@@ -878,7 +878,7 @@ class Category(UniqueRepresentation, SageObject):
         Since :trac:`11943`, the order of super categories is
         determined by Python's method resolution order C3 algorithm.
 
-        .. seealso:: :meth:`all_super_categories`
+        .. SEEALSO:: :meth:`all_super_categories`
 
         .. note:: this attribute is likely to eventually become a tuple.
 
@@ -902,7 +902,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. note:: this is used for speeding up category containment tests.
 
-        .. seealso:: :meth:`all_super_categories`
+        .. SEEALSO:: :meth:`all_super_categories`
 
         EXAMPLES::
 
@@ -1179,7 +1179,7 @@ class Category(UniqueRepresentation, SageObject):
             full subcategory of some other category (see
             :meth:`is_full_subcategory`). For example, the category of
             Coxeter groups is not full subcategory of the category of
-            groups since morphisms need to perserve the distinguished
+            groups since morphisms need to preserve the distinguished
             generators::
 
                 sage: CoxeterGroups().is_full_subcategory(Groups())
@@ -1847,7 +1847,7 @@ class Category(UniqueRepresentation, SageObject):
         Otherwise, the two categories are joined together::
 
             sage: Monoids().or_subcategory(EnumeratedSets(), join=True)
-            Join of Category of monoids and Category of enumerated sets
+            Category of enumerated monoids
         """
         if category is None:
             return self
@@ -1986,7 +1986,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Monoids().axioms()
             frozenset({'Associative', 'Unital'})
             sage: (EnumeratedSets().Infinite() & Sets().Facade()).axioms()
-            frozenset({'Facade', 'Infinite'})
+            frozenset({'Enumerated', 'Facade', 'Infinite'})
         """
         return frozenset(axiom
                          for category in self._super_categories
@@ -2362,7 +2362,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Category.join((Sets(), Rings(), Monoids()), as_list=True)
             [Category of rings]
             sage: Category.join((Modules(ZZ), FiniteFields()), as_list=True)
-            [Category of finite fields, Category of modules over Integer Ring]
+            [Category of finite enumerated fields, Category of modules over Integer Ring]
             sage: Category.join([], as_list=True)
             []
             sage: Category.join([Groups()], as_list=True)
@@ -2755,9 +2755,11 @@ class CategoryWithParameters(Category):
         This is because those two fields do not have the exact same category::
 
             sage: GF(3).category()
-            Join of Category of finite fields and Category of subquotients of monoids and Category of quotients of semigroups
+            Join of Category of finite enumerated fields
+             and Category of subquotients of monoids
+             and Category of quotients of semigroups
             sage: GF(2^3,'x').category()
-            Category of finite fields
+            Category of finite enumerated fields
 
         Similarly for ``QQ`` and ``RR``::
 
@@ -3089,9 +3091,9 @@ class JoinCategory(CategoryWithParameters):
         EXAMPLES::
 
             sage: C = Posets() & FiniteEnumeratedSets() & Sets().Facade(); C
-            Join of Category of finite posets and Category of finite enumerated sets and Category of facade sets
+            Category of facade finite enumerated posets
             sage: C._without_axiom("Facade")
-            Join of Category of finite posets and Category of finite enumerated sets
+            Category of finite enumerated posets
 
             sage: C = Sets().Finite().Facade()
             sage: type(C)

@@ -2,7 +2,9 @@
 r"""
 Delsarte, a.k.a. Linear Programming (LP), upper bounds
 
-This module provides LP upper bounds for the parameters of codes.
+This module provides LP upper bounds for the parameters of codes,
+introduced in [De1973]_.
+
 The exact LP solver PPL is used by default, ensuring that no
 rounding/overflow problems occur.
 
@@ -20,6 +22,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, division
+from six.moves import range
 
 
 
@@ -31,13 +34,13 @@ def Krawtchouk(n, q, l, x, check=True):
 
     It is defined by the generating function
 
-    .. math::
+    .. MATH::
 
         (1+(q-1)z)^{n-x}(1-z)^x=\sum_{l} K^{n,q}_l(x)z^l
 
     and is equal to
 
-    .. math::
+    .. MATH::
 
         K^{n,q}_l(x)=\sum_{j=0}^l (-1)^j (q-1)^{(l-j)} \binom{x}{j} \binom{n-x}{l-j},
 
@@ -133,12 +136,12 @@ def _delsarte_LP_building(n, d, d_star, q, isinteger,  solver, maxc = 0):
 
     p = MixedIntegerLinearProgram(maximization=True, solver=solver)
     A = p.new_variable(integer=isinteger, nonnegative=True)
-    p.set_objective(sum([A[r] for r in xrange(n+1)]))
+    p.set_objective(sum([A[r] for r in range(n+1)]))
     p.add_constraint(A[0]==1)
-    for i in xrange(1,d):
+    for i in range(1,d):
         p.add_constraint(A[i]==0)
-    for j in xrange(1,n+1):
-        rhs = sum([Krawtchouk(n,q,j,r,check=False)*A[r] for r in xrange(n+1)])
+    for j in range(1,n+1):
+        rhs = sum([Krawtchouk(n,q,j,r,check=False)*A[r] for r in range(n+1)])
         p.add_constraint(0*A[0] <= rhs)
         if j >= d_star:
           p.add_constraint(0*A[0] <= rhs)
@@ -146,12 +149,12 @@ def _delsarte_LP_building(n, d, d_star, q, isinteger,  solver, maxc = 0):
           p.add_constraint(0*A[0] == rhs)
 
     if maxc > 0:
-        p.add_constraint(sum([A[r] for r in xrange(n+1)]), max=maxc)
+        p.add_constraint(sum([A[r] for r in range(n+1)]), max=maxc)
     return A, p
 
 def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isinteger=False):
     """
-    Find the Delsarte bound [1]_ on codes in Hamming space ``H_q^n``
+    Find the Delsarte bound [De1973]_ on codes in Hamming space ``H_q^n``
     of minimal distance ``d``
 
 
@@ -219,12 +222,6 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isint
        sage: delsarte_bound_hamming_space(11,3,-4)
        Solver exception: PPL : There is no feasible solution
        False
-
-    REFERENCES:
-
-    .. [1] \P. Delsarte, An algebraic approach to the association schemes of coding theory,
-           Philips Res. Rep., Suppl., vol. 10, 1973.
-
     """
     from sage.numerical.mip import MIPSolverException
     A, p = _delsarte_LP_building(n, d, 0, q, isinteger, solver)

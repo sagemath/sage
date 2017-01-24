@@ -907,7 +907,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         `p` is a prime of bad reduction if and only if the defining
         polynomials of self plus the G and H polynomials have a common
-        zero. Or stated another way, `p` is a prime of bad reducion if
+        zero. Or stated another way, `p` is a prime of bad reduction if
         and only if the radical of the ideal defined by the defining
         polynomials of self plus the G and H polynomials is not
         `(x_0,x_1,\ldots,x_N)`.  This happens if and only if some

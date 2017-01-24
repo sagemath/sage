@@ -176,13 +176,15 @@ AUTHOR:
 #*****************************************************************************
 from __future__ import print_function
 
+from six.moves import range
+
 from operator import mul
 from itertools import chain, product
 from sage.misc.all import prod
 from sage.functions.all import factorial
 from sage.arith.all import moebius, divisors
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.structure.element import Element, parent
+from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -802,9 +804,9 @@ class SimilarityClassType(CombinatorialElement):
             sage: tau.as_partition_dictionary()
             {[1]: [1, 1]}
         """
-        D = dict()
+        D = {}
         for PT in self:
-            if PT.partition() in D.keys():
+            if PT.partition() in D:
                 D[PT.partition()] = Partition(sorted(D[PT.partition()] + [PT.degree()]))
             else:
                 D[PT.partition()] = Partition([PT.degree()])
@@ -836,8 +838,8 @@ class SimilarityClassType(CombinatorialElement):
         numerator = prod([prod([primitives(d+1, invertible=invertible, q = q)-i for i in range(list_of_degrees.count(d+1))]) for d in range(maximum_degree)])
         tau_list = list(self)
         D = dict((i, tau_list.count(i)) for i in tau_list)
-        denominator = reduce(mul, [factorial(D[primary_type]) for primary_type in D.keys()])
-        return numerator/denominator
+        denominator = reduce(mul, [factorial(D[primary_type]) for primary_type in D])
+        return numerator / denominator
 
     def is_semisimple(self):
         """
@@ -853,7 +855,7 @@ class SimilarityClassType(CombinatorialElement):
             sage: tau.is_semisimple()
             False
         """
-        return all([PT.partition().get_part(0) == 1 for PT in self])
+        return all(PT.partition().get_part(0) == 1 for PT in self)
 
     def is_regular(self):
         """
@@ -869,7 +871,7 @@ class SimilarityClassType(CombinatorialElement):
             sage: tau.is_regular()
             False
         """
-        return all([len(PT.partition()) == 1 for PT in self])
+        return all(len(PT.partition()) == 1 for PT in self)
 
     def rcf(self):
         """
@@ -1083,9 +1085,9 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
             sage: def test(n):
             ....:     M = SimilarityClassTypes(n)
             ....:     return M.sum(lambda la:1) == q**(n**2) and M.sum(lambda la:1, invertible = True)== order_of_general_linear_group(n)
-            sage: all([test(n) for n in range(5)])
+            sage: all(test(n) for n in range(5))
             True
-            sage: all([test(n) for n in range(5, 15)]) # long time
+            sage: all(test(n) for n in range(5, 15)) # long time
             True
         """
         n = self._n
@@ -1196,7 +1198,7 @@ def dictionary_from_generator(gen):
     EXAMPLES::
 
         sage: from sage.combinat.similarity_class_type import dictionary_from_generator
-        sage: dictionary_from_generator(((floor(x/2), x) for x in xrange(10)))
+        sage: dictionary_from_generator(((floor(x/2), x) for x in range(10)))
         {0: 1, 1: 5, 2: 9, 3: 13, 4: 17}
 
     It also works with lists::

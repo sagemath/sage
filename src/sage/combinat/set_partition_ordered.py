@@ -308,7 +308,7 @@ class OrderedSetPartitions(UniqueRepresentation, Parent):
         TESTS::
 
             sage: OS = OrderedSetPartitions([1,2,3,4])
-            sage: all([sp in OS for sp in OS])
+            sage: all(sp in OS for sp in OS)
             True
         """
         #x must be a list
@@ -409,7 +409,7 @@ class OrderedSetPartitions_sn(OrderedSetPartitions):
         TESTS::
 
             sage: OS = OrderedSetPartitions([1,2,3,4], 2)
-            sage: all([sp in OS for sp in OS])
+            sage: all(sp in OS for sp in OS)
             True
             sage: OS.cardinality()
             14
@@ -494,7 +494,7 @@ class OrderedSetPartitions_scomp(OrderedSetPartitions):
         TESTS::
 
             sage: OS = OrderedSetPartitions([1,2,3,4], [2,1,1])
-            sage: all([ sp in OS for sp in OS])
+            sage: all(sp in OS for sp in OS)
             True
             sage: OS.cardinality()
             12

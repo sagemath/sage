@@ -3,7 +3,7 @@ C Function Profiler Using Google Perftools
 
 Note that the profiler samples 100x per second by default. In
 particular, you cannot profile anything shorter than 10ms. You can
-adjust the rate with the ``CPUPROFILE_FREQUENCY`` evironment variable
+adjust the rate with the ``CPUPROFILE_FREQUENCY`` environment variable
 if you want to change it.
 
 EXAMPLES::

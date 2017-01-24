@@ -144,7 +144,7 @@ cdef extern from "Python.h":
     #PyWeakref_GetObject with borrowed references. This is the recommended
     #strategy according to Cython/Includes/cpython/__init__.pxd
     PyObject* PyWeakref_GetObject(PyObject * wr)
-    int PyList_SetItem(object list, Py_ssize_t index,PyObject * item) except -1
+    int PyList_SetItem(object list, Py_ssize_t index, PyObject * item) except -1
 
 cdef PyObject* PyDict_GetItemWithError(dict op, object key) except? NULL:
     cdef PyDictEntry* ep
@@ -194,7 +194,7 @@ cdef del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, long hash):
     - ``long hash``        -- hash of the key by which the value is stored in the dict
 
     The hash bucket determined by the given hash is searched for the item
-    containing the given value. If this item can't be found, the function is
+    containing the given value. If this item cannot be found, the function is
     silently returning. Otherwise, the item is removed from the dict.
 
     TESTS:
@@ -213,7 +213,7 @@ cdef del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, long hash):
     overridded by a new value. Therefore, the callback does not delete the
     item::
 
-        sage: for k in D.iterkeys():    # indirect doctest
+        sage: for k in D:    # indirect doctest
         ....:     V[k] = None
         ....:     D[k] = ZZ
         sage: len(D)
@@ -255,12 +255,12 @@ cdef del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, long hash):
         perturb = perturb >> 5 #this is the value of PERTURB_SHIFT
 
     T=PyList_New(2)
-    PyList_SetItem(T,0,ep.me_key)
+    PyList_SetItem(T, 0, ep.me_key)
     if dummy == NULL:
         raise RuntimeError("dummy needs to be initialized")
     Py_XINCREF(dummy)
     ep.me_key = dummy
-    PyList_SetItem(T,1,ep.me_value)
+    PyList_SetItem(T, 1, ep.me_value)
     ep.me_value = NULL
     mp.ma_used -= 1
     #We have transferred the to-be-deleted references to the list T
@@ -363,7 +363,8 @@ cdef class WeakValueDictEraser:
             sage: len(D) #indirect doctest
             0
         """
-        self.D = PyWeakref_NewRef(D,None)
+        self.D = PyWeakref_NewRef(D, None)
+
     def __call__(self, r):
         """
         INPUT:
@@ -373,7 +374,7 @@ cdef class WeakValueDictEraser:
         When this is called with a weak reference ``r``, then an entry from the
         dictionary pointed to by ``self.D`` is removed that has ``r`` as a value
         identically, stored under a key with hash ``r.key``. If no such key
-        exists, or if the dictionary itself doesn't exist any more, then nothing
+        exists, or if the dictionary itself does not exist any more, then nothing
         happens.
 
         If the dictionary has an iterator active on it then the object is
@@ -462,7 +463,7 @@ cdef class WeakValueDictionary(dict):
     already been overridded by a new value. Therefore, the callback does not
     delete the item::
 
-        sage: for k in D.iterkeys():    # indirect doctest
+        sage: for k in D:    # indirect doctest
         ....:     V[k] = None
         ....:     D[k] = ZZ
         sage: len(D)
@@ -729,7 +730,7 @@ cdef class WeakValueDictionary(dict):
         PyDict_SetItem(self,k,KeyedRef(v,self.callback,PyObject_Hash(k)))
 
     #def __delitem__(self, k):
-    #we don't really have to override this method.
+    #we do not really have to override this method.
 
     def pop(self, k):
         """
@@ -807,9 +808,9 @@ cdef class WeakValueDictionary(dict):
 
     def get(self, k, d=None):
         """
-        Return the stored value for a key, or a default value for unkown keys.
+        Return the stored value for a key, or a default value for unknown keys.
 
-        The default value defaults to None.
+        The default value defaults to ``None``.
 
         EXAMPLES::
 
@@ -931,45 +932,6 @@ cdef class WeakValueDictionary(dict):
     #since GC is not deterministic, neither is the length of a WeakValueDictionary,
     #so we might as well just return the normal dictionary length.
 
-    def iterkeys(self):
-        """
-        Iterate over the keys of this dictionary.
-
-        .. WARNING::
-
-            Iteration is unsafe, if the length of the dictionary changes
-            during the iteration! This can also happen by garbage collection.
-
-        EXAMPLES::
-
-            sage: import sage.misc.weak_dict
-            sage: class Vals(object): pass
-            sage: L = [Vals() for _ in range(10)]
-            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
-            sage: del L[4]
-
-        One item got deleted from the list ``L`` and hence the corresponding
-        item in the dictionary got deleted as well. Therefore, the
-        corresponding key 4 is missing in the list of keys::
-
-            sage: list(sorted(D.iterkeys()))
-            [0, 1, 2, 3, 5, 6, 7, 8, 9]
-
-        """
-        cdef PyObject *key
-        cdef PyObject *wr
-        cdef Py_ssize_t pos = 0
-        try:
-            self._enter_iter()
-            while PyDict_Next(self, &pos, &key, &wr):
-                #this check doesn't really say anything: by the time
-                #the key makes it to the customer, it may have already turned
-                #invalid. It's a cheap check, though.
-                if PyWeakref_GetObject(wr)!=Py_None:
-                    yield <object>key
-        finally:
-            self._exit_iter()
-
     def __iter__(self):
         """
         Iterate over the keys of this dictionary.
@@ -991,11 +953,23 @@ cdef class WeakValueDictionary(dict):
         item in the dictionary got deleted as well. Therefore, the
         corresponding key 4 is missing in the list of keys::
 
-            sage: sorted(list(D))    # indirect doctest
+            sage: list(sorted(D))
             [0, 1, 2, 3, 5, 6, 7, 8, 9]
 
         """
-        return self.iterkeys()
+        cdef PyObject *key
+        cdef PyObject *wr
+        cdef Py_ssize_t pos = 0
+        try:
+            self._enter_iter()
+            while PyDict_Next(self, &pos, &key, &wr):
+                #this check does not really say anything: by the time
+                #the key makes it to the customer, it may have already turned
+                #invalid. It's a cheap check, though.
+                if PyWeakref_GetObject(wr)!=Py_None:
+                    yield <object>key
+        finally:
+            self._exit_iter()
 
     def keys(self):
         """
@@ -1017,7 +991,7 @@ cdef class WeakValueDictionary(dict):
             [0, 1, 2, 3, 5, 6, 7, 8, 9]
 
         """
-        return list(self.iterkeys())
+        return list(iter(self))
 
     def itervalues(self):
         """
@@ -1246,7 +1220,7 @@ cdef class WeakValueDictionary(dict):
             sage: D = WeakValueDictionary((K[i],K[i+1]) for i in range(10))
             sage: k = K[10]
             sage: del K
-            sage: i = D.iterkeys(); d = next(i); del d
+            sage: i = iter(D); d = next(i); del d
             sage: len(D.keys())
             10
             sage: del k
@@ -1273,7 +1247,7 @@ cdef class WeakValueDictionary(dict):
             sage: D = WeakValueDictionary((K[i],K[i+1]) for i in range(10))
             sage: k = K[10]
             sage: del K
-            sage: i = D.iterkeys(); d = next(i); del d
+            sage: i = iter(D); d = next(i); del d
             sage: len(D.keys())
             10
             sage: del k

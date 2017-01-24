@@ -4,19 +4,18 @@ Fully packed loops
 # python3
 from __future__ import division, print_function
 
-from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.six_vertex_model import SquareIceModel, \
-SixVertexConfiguration, SixVertexModel
+from sage.combinat.six_vertex_model import (SquareIceModel,
+                                            SixVertexConfiguration,
+                                            SixVertexModel)
 from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix
 from sage.plot.graphics import Graphics
 from sage.matrix.constructor import matrix
 from sage.plot.line import line
-from sage.combinat.perfect_matching import PerfectMatching
 from sage.arith.all import factorial
 from sage.rings.integer import Integer
 from sage.misc.all import prod
@@ -1022,7 +1021,7 @@ class FullyPackedLoop(Element):
         vertices_d = self._vertex_dictionary.copy()
 
         while len(boundary_d) > 2:
-            startpoint = boundary_d.keys()[0]
+            startpoint = list(boundary_d)[0]
             position = boundary_d[startpoint]
 
             boundary_d.pop(startpoint)
@@ -1043,7 +1042,7 @@ class FullyPackedLoop(Element):
             link_pattern.append((startpoint, endpoint))
             boundary_d.pop(endpoint)
 
-        link_pattern.append(tuple(boundary_d.keys()))
+        link_pattern.append(tuple(boundary_d))
 
         return link_pattern
 
@@ -1121,7 +1120,7 @@ class FullyPackedLoop(Element):
     def _get_coordinates(self, current_pos):
         """
         Return a list of 2 coordinates that refer to the moves that could
-        potentialy be made.
+        potentially be made.
 
         TESTS::
 
@@ -1389,11 +1388,10 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
                 SVM = AlternatingSignMatrix(generator).to_six_vertex_model()
             except (TypeError, ValueError):
                 SVM = SixVertexModel(self._n, boundary_conditions='ice')(generator)
-                M = SVM.to_alternating_sign_matrix()
-
+                SVM.to_alternating_sign_matrix()
         if len(SVM) != self._n:
             raise ValueError("invalid size")
-        return self.element_class(self,SVM)
+        return self.element_class(self, SVM)
 
     Element = FullyPackedLoop
 

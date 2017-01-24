@@ -13,14 +13,6 @@ rm -rf "$SAGE_LOCAL"/include/polybori*
 rm -rf "$SAGE_LOCAL"/share/polybori
 
 cd src
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
 
 # C++11 workaround https://trac.sagemath.org/ticket/20926
 export CXXFLAGS="$CXXFLAGS -std=c++98"

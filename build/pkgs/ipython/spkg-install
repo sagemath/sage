@@ -8,33 +8,8 @@ fi
 
 cd src
 
-# Apply patches.  See SPKG.txt for information about what each patch
-# does.
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    else
-        echo "Successfully applied patch $patch"
-    fi
-done
+$PIP_INSTALL .
 
-python setup.py build
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building IPython."
-    exit 1
-fi
-
-echo "Removing old version of IPython..."
-rm -rf "$SAGE_LOCAL/lib/python/site-packages/IPython"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error deleting previous version"
-    exit 1
-fi
-
-python setup.py install
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing IPython"
     exit 1

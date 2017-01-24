@@ -8,7 +8,7 @@ AUTHORS:
 
 This module implements the basic structure of finite cubical
 complexes.  For full mathematical details, see Kaczynski, Mischaikow,
-and Mrozek [KMM]_, for example.
+and Mrozek [KMM2004]_, for example.
 
 Cubical complexes are topological spaces built from gluing together
 cubes of various dimensions; the collection of cubes must be closed
@@ -55,11 +55,6 @@ square in `\RR^3`: the same unit square as ``S1``, but embedded in
 ``S1`` (in fact, they're "cubically equivalent"), and this is
 reflected in the fact that they have isomorphic homology groups.
 
-REFERENCES:
-
-.. [KMM] Tomasz Kaczynski, Konstantin Mischaikow, and Marian Mrozek,
-         "Computational Homology", Springer-Verlag (2004).
-
 .. note::
 
    This class derives from
@@ -94,7 +89,7 @@ class Cube(SageObject):
     endpoints, each of which is either a unit interval or a degenerate
     (length 0) interval; for example,
 
-    .. math::
+    .. MATH::
 
        [0,1] \times [3,4] \times [2,2] \times [1,2]
 
@@ -436,7 +431,7 @@ class Cube(SageObject):
         In the example below, this method is called with arguments
         ``C1`` and ``C2``, where
 
-        .. math::
+        .. MATH::
 
             C1 = [0,1] \times [3] \times [4] \times [6,7] \\
             C2 = [2] \times [7,8] \times [9] \times [1,2] \times [0] \times [5]
@@ -513,7 +508,7 @@ class Cube(SageObject):
 
         If the cube is given by
 
-        .. math::
+        .. MATH::
 
            C = [i_1, j_1] \times [i_2, j_2] \times ... \times [i_k, j_k]
 
@@ -571,7 +566,7 @@ class Cube(SageObject):
 
         - a list containing triples ``(coeff, left, right)``
 
-        This uses the algorithm described by Pilarczyk and Réal [PR]_
+        This uses the algorithm described by Pilarczyk and Réal [PR2015]_
         on p. 267; the formula is originally due to Serre.  Calling
         this method ``alexander_whitney`` is an abuse of notation,
         since the actual Alexander-Whitney map goes from `C(K \times
@@ -1605,7 +1600,7 @@ class CubicalComplex(GenericCellComplex):
         coefficients in ``base_ring``.
 
         The term "algebraic topological model" is defined by Pilarczyk
-        and Réal [PR]_.
+        and Réal [PR2015]_.
 
         INPUT:
 
@@ -1686,7 +1681,7 @@ class CubicalComplex(GenericCellComplex):
         ordering of the vertices of the cubical complex.  Then for
         each maximal face
 
-        .. math::
+        .. MATH::
 
            C = [i_1, j_1] \times [i_2, j_2] \times ... \times [i_k, j_k]
 

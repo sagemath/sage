@@ -114,7 +114,7 @@ To compute this in Sage we have::
 
 Allowing players to play mixed strategies ensures that there will always
 be a Nash Equilibrium for a normal form game. This result is called Nash's
-Theorem ([N1950]_).
+Theorem ([Nas1950]_).
 
 Let us consider the game called 'matching pennies' where two players each
 present a coin with either HEADS or TAILS showing. If the coins show the
@@ -205,11 +205,11 @@ When obtaining Nash equilibrium there are 3 algorithms currently available:
 
 * ``'lrs'``: Reverse search vertex enumeration for 2 player games. This
   algorithm uses the optional 'lrslib' package. To install it, type
-  ``sage -i lrslib`` in the shell. For more information, see [A2000]_.
+  ``sage -i lrslib`` in the shell. For more information, see [Av2000]_.
 
 * ``'LCP'``: Linear complementarity program algorithm for 2 player games.
   This algorithm uses the open source game theory package:
-  `Gambit <http://gambit.sourceforge.net/>`_ [MMAT2014]_. At present this is
+  `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_. At present this is
   the only gambit algorithm available in sage but further development will
   hope to implement more algorithms
   (in particular for games with more than 2 players). To install it,
@@ -566,26 +566,15 @@ A good description of degenerate games can be found in [NN2007]_.
 
 REFERENCES:
 
-.. [N1950] John Nash.
-   *Equilibrium points in n-person games.*
-   Proceedings of the National Academy of Sciences 36.1 (1950): 48-49.
+- [Nas1950]_
 
-.. [NN2007] Nisan, Noam, et al., eds.
-   *Algorithmic game theory.*
-   Cambridge University Press, 2007.
+- [NN2007]_
 
-.. [A2000] Avis, David.
-   *A revised implementation of the reverse search vertex enumeration algorithm.*
-   Polytopes-combinatorics and computation
-   Birkhauser Basel, 2000.
+- [Av2000]_
 
-.. [MMAT2014] McKelvey, Richard D., McLennan, Andrew M., and Turocy, Theodore L.
-   *Gambit: Software Tools for Game Theory, Version 13.1.2.*
-   http://www.gambit-project.org (2014).
+- [Gambit]_
 
-.. [SLB2008] Shoham, Yoav, and Kevin Leyton-Brown.
-   *Multiagent systems: Algorithmic, game-theoretic, and logical foundations.*
-   Cambridge University Press, 2008.
+- [SLB2008]_
 
 AUTHOR:
 
@@ -1863,7 +1852,7 @@ class NormalFormGame(SageObject, MutableMapping):
         The implementation here transforms the search over mixed strategies to a
         search over supports which is a discrete search. A full explanation of
         this is given in [CK2015]_. This problem is known to be NP-Hard
-        [D2009]_.  Another possible implementation is via best response
+        [Du2009]_.  Another possible implementation is via best response
         polytopes, see :trac:`18958`.
 
         The game Rock-Paper-Scissors is an example of a non-degenerate game,::
@@ -2002,27 +1991,6 @@ class NormalFormGame(SageObject, MutableMapping):
             Traceback (most recent call last):
             ...
             NotImplementedError: Tests for Degeneracy is not yet implemented for games with more than two players.
-
-        REFERENCES:
-
-        .. [D2009] Du Ye.
-           *On the Complexity of Deciding Degeneracy in Games*
-           http://arxiv.org/pdf/0905.3012v1.pdf
-           (2009)
-
-        .. [DGRB2010] David Avis, Gabriel D. Rosenberg, Rahul Savani, Bernhard von Stengel.
-           *Enumeration of Nash equilibria for two-player games.*
-           http://www.maths.lse.ac.uk/personal/stengel/ETissue/ARSvS.pdf (2010)
-
-        .. [AH2002] \R. J. Aumann and S. Hart, Elsevier, eds.
-           *Computing equilibria for two-person games*
-           http://www.maths.lse.ac.uk/personal/stengel/TEXTE/nashsurvey.pdf
-           (2002)
-
-        .. [CK2015] \J. Campbell and V. Knight.
-           *On testing degeneracy of bi-matrix games*
-           http://vknight.org/unpeudemath/code/2015/06/25/on_testing_degeneracy_of_games/
-           (2015)
         """
         if len(self.players) > 2:
             raise NotImplementedError("Tests for Degeneracy is not yet "

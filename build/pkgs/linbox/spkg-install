@@ -8,19 +8,6 @@ fi
 
 cd src/
 
-###############################################################################
-# Apply patches (if any):
-###############################################################################
-
-ls ../patches/*.patch &>/dev/null && \
-for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'."
-        exit 1
-    fi
-done
-
 # Use newer version of config.guess and config.sub (see Trac #19761)
 cp "$SAGE_ROOT"/config/config.* build-aux
 
@@ -48,20 +35,34 @@ if [ "$SAGE64" = yes ]; then
 fi
 
 # C++11 workaround https://trac.sagemath.org/ticket/20926
-if [ "$UNAME" = CYGWIN ]; then
-    # Special case for Cygwin https://trac.sagemath.org/ticket/21185
-    CXXFLAGS="$CXXFLAGS -std=gnu++98"
-else
-    CXXFLAGS="$CXXFLAGS -std=c++98"
-fi
+# Since https://trac.sagemath.org/ticket/17635 linbox passes a -std=gnu++11 flag, so we no longer need to add it
+# if [ "$UNAME" = CYGWIN ]; then
+     # Special case for Cygwin https://trac.sagemath.org/ticket/21185
+#     CXXFLAGS="$CXXFLAGS -std=gnu++98"
+# else
+#     CXXFLAGS="$CXXFLAGS -std=c++98"
+#fi
 
 ###############################################################################
 # Configure, build and install LinBox:
 ###############################################################################
 
+# If SAGE_FAT_BINARY is set, disable dependency that be discovered on the building system.
+if [ "$SAGE_FAT_BINARY" = yes ]; then
+    LINBOX_CONFIGURE="--without-ocl $LINBOX_CONFIGURE"
+fi
+
+# Disable fplll as version 5.x is not supported by linbox <= 1.4.2.
+# This is harmless as no functionality using fplll is exposed in Sage.
+# See trac ticket #21221.
+LINBOX_CONFIGURE="--without-fplll $LINBOX_CONFIGURE"
+
+# We disable openmp because of build failures, see
+# http://trac.sagemath.org/ticket/17635#comment:67
 ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
             --with-default="$SAGE_LOCAL" \
-            --enable-sage --enable-optimization --disable-static
+            --enable-sage --disable-static --disable-openmp \
+            $LINBOX_CONFIGURE
 if [ $? -ne 0 ]; then
     echo >&2 "Error configuring LinBox."
     exit 1

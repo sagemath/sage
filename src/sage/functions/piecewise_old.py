@@ -1277,7 +1277,7 @@ class PiecewisePolynomial:
         r"""
         Returns the partial sum
         
-        .. math::
+        .. MATH::
         
            f(x) \sim \frac{a_0}{2} + \sum_{n=1}^N [a_n\cos(\frac{n\pi x}{L}) + b_n\sin(\frac{n\pi x}{L})],         
         
@@ -1303,7 +1303,7 @@ class PiecewisePolynomial:
         r"""
         Returns the Cesaro partial sum
         
-        .. math::
+        .. MATH::
         
            f(x) \sim \frac{a_0}{2} + \sum_{n=1}^N (1-n/N)*[a_n\cos(\frac{n\pi x}{L}) + b_n\sin(\frac{n\pi x}{L})],         
         
@@ -1332,7 +1332,7 @@ class PiecewisePolynomial:
         Returns the Hann-filtered partial sum (named after von Hann, not
         Hamming)
         
-        .. math::
+        .. MATH::
         
            f(x) \sim \frac{a_0}{2} + \sum_{n=1}^N H_N(n)*[a_n\cos(\frac{n\pi x}{L}) + b_n\sin(\frac{n\pi x}{L})],         
         
@@ -1360,7 +1360,7 @@ class PiecewisePolynomial:
         r"""
         Returns the "filtered" partial sum
         
-        .. math::
+        .. MATH::
         
            f(x) \sim \frac{a_0}{2} + \sum_{n=1}^N F_n*[a_n\cos(\frac{n\pi x}{L}) + b_n\sin(\frac{n\pi x}{L})],         
         
@@ -1388,7 +1388,7 @@ class PiecewisePolynomial:
         r"""
         Plots the partial sum
         
-        .. math::
+        .. MATH::
         
            f(x) \sim \frac{a_0}{2} +  sum_{n=1}^N [a_n\cos(\frac{n\pi x}{L}) + b_n\sin(\frac{n\pi x}{L})],         
         
@@ -1419,7 +1419,7 @@ class PiecewisePolynomial:
         r"""
         Plots the partial sum
         
-        .. math::
+        .. MATH::
         
                      f(x) \sim \frac{a_0}{2} +                     \sum_{n=1}^N (1-n/N)*[a_n\cos(\frac{n\pi x}{L}) + b_n\sin(\frac{n\pi x}{L})],         
         
@@ -1452,7 +1452,7 @@ class PiecewisePolynomial:
         r"""
         Plots the partial sum
         
-        .. math::
+        .. MATH::
         
            f(x) \sim \frac{a_0}{2} + \sum_{n=1}^N H_N(n)*[a_n\cos(\frac{n\pi x}{L}) + b_n\sin(\frac{n\pi x}{L})],         
         
@@ -1485,7 +1485,7 @@ class PiecewisePolynomial:
         r"""
         Plots the partial sum
         
-        .. math::
+        .. MATH::
         
                      f(x) \sim \frac{a_0}{2} +                     \sum_{n=1}^N F_n*[a_n\cos(\frac{n\pi x}{L}) + b_n\sin(\frac{n\pi x}{L})],         
         
@@ -1521,7 +1521,7 @@ class PiecewisePolynomial:
         `x`,
         
         
-        .. math::
+        .. MATH::
         
                      f(x) \sim \frac{a_0}{2} +                     \sum_{n=1}^\infty [a_n\cos(\frac{n\pi x}{L}) + b_n\sin(\frac{n\pi x}{L})],         \ \ \ -L<x<L.         
         
@@ -1598,7 +1598,7 @@ class PiecewisePolynomial:
         `a_n = \frac{2}{L}\int_{-L}^L f(x)\cos(n\pi x/L)dx` such
         that
         
-        .. math::
+        .. MATH::
         
                      f(x) \sim \frac{a_0}{2} +                     \sum_{n=1}^\infty a_n\cos(\frac{n\pi x}{L}),\ \ 0<x<L.         
         
@@ -1657,7 +1657,7 @@ class PiecewisePolynomial:
         `b_n = \frac{2}{L}\int_{-L}^L f(x)\sin(n\pi x/L)dx` such
         that
         
-        .. math::
+        .. MATH::
         
            f(x) \sim \sum_{n=1}^\infty b_n\sin(\frac{n\pi x}{L}),\ \ 0<x<L.         
         

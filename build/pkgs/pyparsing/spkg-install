@@ -8,17 +8,8 @@ fi
 
 cd src
 
-for patch in ../patches/*.patch; do
-    [ -f "$patch" ] || continue
-    # Apply patch as binary since source has incorrect line endings
-    patch -p1 --binary <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
+$PIP_INSTALL .
 
-python setup.py install
 if [ $? -ne 0 ]; then
     echo "Error installing pyparsing ... exiting"
     exit 1

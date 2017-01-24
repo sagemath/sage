@@ -38,6 +38,8 @@ import numpy as np
 cimport numpy as np
 
 from sage.rings.all import CIF
+from cpython.object cimport Py_EQ, Py_NE
+
 
 cdef class PeriodicRegion:
 
@@ -520,11 +522,11 @@ cdef class PeriodicRegion:
             right._ensure_full()
         return PeriodicRegion(left.w1, left.w2, left.data ^ right.data, left.full)
 
-    def __cmp__(left, right):
+    def __richcmp__(left, right, op):
         """
-        Compares to regions.
+        Compare two regions.
 
-        Note: this is good for equality but not an ordering relation.
+        .. NOTE:: This is good for equality but not an ordering relation.
 
         TESTS::
 
@@ -544,17 +546,20 @@ cdef class PeriodicRegion:
             sage: S2 == S3
             False
         """
-        c = cmp(type(left), type(right))
-        if c: return c
-        c = cmp((left.w1, left.w2), (right.w1, right.w2))
-        if c: return c
-        if left.full ^ right.full:
-            left._ensure_full()
-            right._ensure_full()
-        if (left.data == right.data).all():
-            return 0
+        if type(left) is not type(right) or op not in [Py_EQ, Py_NE]:
+            return NotImplemented
+
+        if (left.w1, left.w2) != (right.w1, right.w2):
+            equal = False
         else:
-            return 1
+            if left.full ^ right.full:
+                left._ensure_full()
+                right._ensure_full()
+            equal = (left.data == right.data).all()
+
+        if op is Py_EQ:
+            return equal
+        return not equal
 
     def border(self, raw=True):
         """

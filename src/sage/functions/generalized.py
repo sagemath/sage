@@ -220,6 +220,8 @@ class FunctionHeaviside(BuiltinFunction):
             heaviside(x)
             sage: latex(heaviside(x))
             H\left(x\right)
+            sage: heaviside(x)._sympy_()
+            Heaviside(x)
         """
         BuiltinFunction.__init__(self, "heaviside", latex_name="H",
                                  conversions=dict(maxima='hstep',
@@ -483,6 +485,8 @@ class FunctionSignum(BuiltinFunction):
             0
             sage: sgn(x)
             sgn(x)
+            sage: sgn(x)._sympy_()
+            sign(x)
         """
         BuiltinFunction.__init__(self, "sgn", latex_name=r"\mathrm{sgn}",
                 conversions=dict(maxima='signum',mathematica='Sign',sympy='sign'),

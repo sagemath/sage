@@ -17,6 +17,8 @@ Cartesian Products
 #*****************************************************************************
 from __future__ import absolute_import
 
+from six.moves import range
+
 from inspect import isgenerator
 import sage.misc.prandom as rnd
 from sage.misc.mrange import xmrange_iter, _is_finite, _len
@@ -135,7 +137,7 @@ class CartesianProduct_iters(CombinatorialClass):
         sage: c = cartesian_product([F1, F2, F3])
 
         sage: type(C.an_element())
-        <type 'list'>
+        <... 'list'>
         sage: type(c.an_element())
         <class 'sage.sets.cartesian_product.CartesianProduct_with_category.element_class'>
 
@@ -195,7 +197,7 @@ class CartesianProduct_iters(CombinatorialClass):
         EXAMPLES::
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
-            sage: CartesianProduct_iters(range(2), range(3))
+            sage: CartesianProduct_iters(list(range(2)), list(range(3)))
             Cartesian product of [0, 1], [0, 1, 2]
         """
         return "Cartesian product of " + ", ".join(map(str, self.iters))
@@ -210,9 +212,9 @@ class CartesianProduct_iters(CombinatorialClass):
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: CartesianProduct_iters(range(2), range(3)).cardinality()
             6
-            sage: CartesianProduct_iters(range(2), xrange(3)).cardinality()
+            sage: CartesianProduct_iters(range(2), range(3)).cardinality()
             6
-            sage: CartesianProduct_iters(range(2), xrange(3), xrange(4)).cardinality()
+            sage: CartesianProduct_iters(range(2), range(3), range(4)).cardinality()
             24
 
         This works correctly for infinite objects::
@@ -241,7 +243,7 @@ class CartesianProduct_iters(CombinatorialClass):
         EXAMPLES::
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
-            sage: C = CartesianProduct_iters(xrange(3), xrange(4))
+            sage: C = CartesianProduct_iters(range(3), range(4))
             sage: len(C)
             12
             sage: C = CartesianProduct_iters(ZZ, QQ)
@@ -337,7 +339,7 @@ class CartesianProduct_iters(CombinatorialClass):
         EXAMPLES::
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
-            sage: C = CartesianProduct_iters(xrange(1000), xrange(1000), xrange(1000))
+            sage: C = CartesianProduct_iters(range(1000), range(1000), range(1000))
             sage: C[238792368]
             [238, 792, 368]
 

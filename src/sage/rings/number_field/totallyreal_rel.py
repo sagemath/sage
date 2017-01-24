@@ -702,8 +702,8 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
     Each of the outputs must be elements of Sage if ``return_pari_objects``
     is set to ``False``::
 
-        sage: enumerate_totallyreal_fields_rel(F, 2, 2000)[0][1].parent()
-        Interface to the PARI C library
+        sage: type(enumerate_totallyreal_fields_rel(F, 2, 2000)[0][1])
+        <type 'sage.libs.cypari2.gen.gen'>
         sage: enumerate_totallyreal_fields_rel(F, 2, 2000, return_pari_objects=False)[0][0].parent()
         Integer Ring
         sage: enumerate_totallyreal_fields_rel(F, 2, 2000, return_pari_objects=False)[0][1].parent()
@@ -930,8 +930,8 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
 
         sage: enumerate_totallyreal_fields_all(2, 10)
         [[5, x^2 - x - 1], [8, x^2 - 2]]
-        sage: enumerate_totallyreal_fields_all(2, 10)[0][1].parent()
-        Interface to the PARI C library
+        sage: type(enumerate_totallyreal_fields_all(2, 10)[0][1])
+        <type 'sage.libs.cypari2.gen.gen'>
         sage: enumerate_totallyreal_fields_all(2, 10, return_pari_objects=False)[0][1].parent()
         Univariate Polynomial Ring in x over Rational Field
 

@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# This command is specifically for pip-installing from a local
+# source directory, as opposed to from a package index via package
+# name.  That is, it is for pip-installing Sage spkgs from their
+# extracted upstream sources.
+#
+# This ensures that any previous installations of the same package
+# are uninstalled first.
+
+# Default arguments for all packages installed with `pip install`
+# --ignore-installed : Force pip to re-install package even if it thinks it's
+#                      already installed (for which it sometimes gets false
+#                      positives for partially-installed packages).
+# --verbose          : Display the output when running setup.py.
+# --no-deps          : Don't install runtime dependencies from PyPI.
+# --no-index         : Don't look at the package index.
+#                      This also disables pip's version self-check.
+pip_install_flags="--ignore-installed --verbose --no-deps --no-index"
+
+# Consume any additional pip install arguments except the last one
+while [ $# -gt 1 ]; do
+    pip_install_flags="$pip_install_flags $1"
+    shift
+done
+
+# Last argument must be "." and will be ignored
+if [ "$1" != "." ]; then
+    echo >&2 "$0 requires . as final argument"
+    exit 1
+fi
+
+# Find out the name of the package that we are installing
+name="$(python setup.py --name)"
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: could not determine package name"
+    exit 1
+fi
+
+if [ $(echo "$name" | wc -l) -gt 1 ]; then
+    name="$(echo "$name" | tail -1)"
+    echo >&2 "Warning: This package has a badly-behaved setup.py which outputs"
+    echo >&2 "more than the package name for 'setup.py --name'; using the last"
+    echo >&2 "line as the package name: $name"
+fi
+
+# We should avoid running pip while uninstalling a package because that
+# is prone to race conditions. Therefore, we use a lockfile while
+# running pip. This is implemented in the Python script pip-lock.
+
+# Keep uninstalling as long as it succeeds
+while true; do
+    out=$(pip-lock uninstall --disable-pip-version-check -y "$name" 2>&1)
+    if [ $? -ne 0 ]; then
+        break
+    fi
+    echo "$out"
+done
+
+# Not ideal, but this is the easiest way to check if the package
+# was not installed to begin with (which pip treats as an error).
+# If it wasn't, then we proceed quietly; if it was installed show the
+# uninstallation output and error out.
+if [[ "$out" != *"not installed" ]]; then
+    echo >&2 "$out"
+    exit 1
+fi
+
+# Finally actually do the installation (the "SHARED" tells pip-lock
+# to apply a shared lock)
+echo "Installing package $name using pip"
+exec pip-lock SHARED install $pip_install_flags .

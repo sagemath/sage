@@ -27,7 +27,7 @@ from sage.matrix.constructor import matrix
 def dhsw_snf(mat, verbose=False):
     """
     Preprocess a matrix using the "Elimination algorithm" described by
-    Dumas et al. [DHSW]_, and then call ``elementary_divisors`` on the
+    Dumas et al. [DHSW2003]_, and then call ``elementary_divisors`` on the
     resulting (smaller) matrix.
 
     .. NOTE::
@@ -71,12 +71,6 @@ def dhsw_snf(mat, verbose=False):
         sage: mat = random_matrix(ZZ, 20, 20, x=-1, y=2)
         sage: mat.elementary_divisors() == dhsw_snf(mat)
         True
-
-    REFERENCES:
-
-    .. [DHSW] Dumas, Heckenbach, Saunders, and Welker. *Computing simplicial
-       homology based on efficient Smith normal form algorithms*.
-       Algebra, geometry, and software systems. (2003) 177-206.
     """
     ring = mat.base_ring()
     rows = mat.nrows()

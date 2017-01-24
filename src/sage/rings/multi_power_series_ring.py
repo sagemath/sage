@@ -829,10 +829,9 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         if c: return c
         return 0
 
-
     def laurent_series_ring(self):
         """
-        Laruent series not yet implemented for multivariate power series rings
+        Laurent series not yet implemented for multivariate power series rings
 
         TESTS::
 

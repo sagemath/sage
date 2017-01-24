@@ -31,7 +31,7 @@ from __future__ import absolute_import
 
 include "cysignals/memory.pxi"
 include "cysignals/signals.pxi"
-from sage.libs.pari.paridecl cimport *
+from sage.libs.cypari2.paridecl cimport *
 
 from libc.stdint cimport int_fast8_t, uint_fast16_t, uint8_t, uint32_t, uint64_t
 from sage.rings.integer cimport Integer
@@ -123,19 +123,15 @@ cdef class PrimePi(BuiltinFunction):
         NOTES:
 
         Uses a recursive implementation, using the optimizations described in
-        [RAO2011]_.
-
-        REFERENCES:
-
-        .. [RAO2011] \R.A. Ohana. On Prime Counting in Abelian Number Fields.
-           http://wstein.org/home/ohanar/papers/abelian_prime_counting/main.pdf.
+        [Oha2011]_.
 
         AUTHOR:
 
         - \R. Andrew Ohana (2011)
         """
         super(PrimePi, self).__init__('prime_pi', latex_name=r"\pi",
-                conversions={'mathematica':'PrimePi', 'pari':'primepi'})
+                conversions={'mathematica':'PrimePi', 'pari':'primepi',
+                    'sympy':'primepi'})
 
     cdef uint32_t *__primes
     cdef uint32_t __numPrimes, __maxSieve, __primeBound
@@ -510,7 +506,7 @@ cpdef Integer legendre_phi(x, a):
     NOTES:
 
     Uses a recursive implementation, using the optimizations described in
-    [RAO2011]_.
+    [Oha2011]_.
 
     AUTHOR:
 

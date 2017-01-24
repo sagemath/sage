@@ -17,7 +17,7 @@ EXAMPLES::
 
 include 'data_structures_pyx.pxi' # includes bitsets
 
-from .double_coset cimport double_coset
+from .double_coset cimport double_coset, int_cmp
 
 
 def is_isomorphic(self, other):
@@ -72,6 +72,6 @@ cdef int compare_lists(int *gamma_1, int *gamma_2, void *S1, void *S2, int degre
     cdef list MS2 = <list> S2
     cdef int i, j
     for i from 0 <= i < degree:
-        j = cmp(MS1[gamma_1[i]], MS2[gamma_2[i]])
+        j = int_cmp(MS1[gamma_1[i]], MS2[gamma_2[i]])
         if j != 0: return j
     return 0

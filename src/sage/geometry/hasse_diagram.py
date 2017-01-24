@@ -105,7 +105,7 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
     and we can compute the Hasse diagram as ::
 
         sage: L = sage.geometry.cone.Hasse_diagram_from_incidences(
-        ...                       atom_to_coatoms, coatom_to_atoms)
+        ....:                     atom_to_coatoms, coatom_to_atoms)
         sage: L
         Finite poset containing 8 elements with distinguished linear extension
         sage: for level in L.level_sets(): print(level)

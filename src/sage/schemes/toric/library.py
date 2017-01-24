@@ -37,6 +37,7 @@ or immediately during assignment like this::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.structure.sage_object import SageObject
 
@@ -575,7 +576,8 @@ class ToricVarietyFactory(SageObject):
             raise ValueError("only projective spaces of positive dimension "
                              "can be constructed!\nGot: %s" % n)
         m = identity_matrix(n).augment(matrix(n, 1, [-1]*n))
-        charts = [ range(0,i)+range(i+1,n+1) for i in range(0,n+1) ]
+        charts = [list(range(i)) + list(range(i + 1, n + 1))
+                  for i in range(n + 1)]
         return CPRFanoToricVariety(
             Delta_polar=LatticePolytope(m.columns(), lattice=ToricLattice(n)),
             charts=charts, check=self._check, coordinate_names=names,
@@ -691,7 +693,7 @@ class ToricVarietyFactory(SageObject):
             raise ValueError("only affine spaces of positive dimension can "
                              "be constructed!\nGot: %s" % n)
         rays = identity_matrix(n).columns()
-        cones = [ range(0,n) ]
+        cones = [list(range(n))]
         fan = Fan(cones, rays, check=self._check)
         return ToricVariety(fan, coordinate_names=names)
 
@@ -1059,7 +1061,7 @@ class ToricVarietyFactory(SageObject):
     def BCdlOG(self, names='v1 v2 c1 c2 v4 v5 b e1 e2 e3 f g v6', base_ring=QQ):
         r"""
         Construct the 5-dimensional toric variety studied in
-        [BCdlOG]_, [HLY]_
+        [BCdlOG]_, [HLY2002]_
 
         INPUT:
 
@@ -1107,10 +1109,7 @@ class ToricVarietyFactory(SageObject):
             Between N=1 Theories and Divisors that Contribute to the
             Superpotential", http://arxiv.org/abs/hep-th/0001208
 
-        ..  [HLY]
-            Yi Hu, Chien-Hao Liu, Shing-Tung Yau, "Toric morphisms and
-            fibrations of toric Calabi-Yau hypersurfaces",
-            http://arxiv.org/abs/math/0010082
+        - [HLY2002]_
         """
         return self._make_CPRFanoToricVariety('BCdlOG', names, base_ring)
 
@@ -1455,7 +1454,7 @@ class ToricVarietyFactory(SageObject):
         Q = L/L_sub
         rays = []
         cones = []
-        w = range(m)
+        w = list(range(m))
         L_basis = L.basis()
         for i in w:
             b = L_basis[i]

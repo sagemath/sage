@@ -26,8 +26,8 @@ Functions, Classes and Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six.moves import range
 
 import sage   # WHAT !!!
 
@@ -520,7 +520,7 @@ def merge_overlapping(A, B, key=None):
     def find_overlapping_index(A, B):
         if len(B) > len(A) - 2:
             raise StopIteration
-        matches = iter(i for i in xrange(1, len(A) - len(B))
+        matches = iter(i for i in range(1, len(A) - len(B))
                        if A[i:i+len(B)] == B)
         return next(matches)
 
@@ -532,7 +532,7 @@ def merge_overlapping(A, B, key=None):
 
         Adapted from http://stackoverflow.com/a/30056066/1052778.
         """
-        matches = iter(i for i in xrange(min(len(A), len(B)), 0, -1)
+        matches = iter(i for i in range(min(len(A), len(B)), 0, -1)
                        if A[-i:] == B[:i])
         return next(matches, 0)
 

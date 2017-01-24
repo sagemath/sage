@@ -26,6 +26,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from sage.structure.sage_object import SageObject
 
@@ -893,7 +894,7 @@ class PermutationIET(Permutation):
 
         This `d*d` antisymmetric matrix is given by the rule :
 
-        .. math::
+        .. MATH::
 
             m_{ij} = \begin{cases}
                 1 & \text{$i < j$ and $\pi(i) > \pi(j)$} \\
@@ -1059,7 +1060,7 @@ class PermutationIET(Permutation):
             sage: iet.Permutation('a b c d','d c b a').separatrix_diagram()
             [[('d', 'a'), 'b', 'c', ('d', 'a'), 'b', 'c']]
         """
-        separatrices = range(len(self)) # bottom intervals
+        separatrices = list(range(len(self))) # bottom intervals
         labels = self[1] # their labels
 
         singularities = []
@@ -1266,23 +1267,23 @@ class PermutationIET(Permutation):
             a = C.row(i)
 
             a_indices = []
-            for k in xrange(n):
+            for k in range(n):
                 if a[k] != 0: a_indices.append(k)
 
             t_a = len(a_indices) % 2
-            for j1 in xrange(len(a_indices)):
-                for j2 in xrange(j1+1,len(a_indices)):
+            for j1 in range(len(a_indices)):
+                for j2 in range(j1+1,len(a_indices)):
                     t_a = (t_a + M[a_indices[j1], a_indices[j2]]) % 2
 
             b = C.row(g+i)
 
             b_indices = []
-            for k in xrange(n):
+            for k in range(n):
                 if b[k] != 0: b_indices.append(k)
 
             t_b = len(b_indices) % 2
-            for j1 in xrange(len(b_indices)):
-                for j2 in xrange(j1+1,len(b_indices)):
+            for j1 in range(len(b_indices)):
+                for j2 in range(j1+1,len(b_indices)):
                     t_b = (t_b + M[b_indices[j1],b_indices[j2]]) % 2
 
             s = (s + t_a * t_b) % 2
@@ -1482,14 +1483,14 @@ class PermutationIET(Permutation):
         Acta Arith. 34, no. 3, 203-212, 1980
 
         M. Kontsevich, A. Zorich "Connected components of the moduli space
-        of Abelian differentials with prescripebd singularities" Invent. math.
+        of Abelian differentials with prescribed singularities" Invent. math.
         153, 631-678 (2003)
         """
         test = self.erase_marked_points()
 
         n = test.length_top()
         cylindric = test.cylindric()
-        return cylindric._twin[0] == range(n-1,-1,-1)
+        return cylindric._twin[0] == list(range(n - 1, -1, -1))
 
     def cylindric(self):
         r"""
@@ -1645,7 +1646,7 @@ class PermutationLI(Permutation):
         A quadratic (or generalized) permutation is *reducible* if there exists
         a decomposition
 
-        .. math::
+        .. MATH::
 
            A1 u B1 | ... | B1 u A2
 
@@ -1653,7 +1654,7 @@ class PermutationLI(Permutation):
 
         where no corners is empty, or exactly one corner is empty
         and it is on the left, or two and they are both on the
-        right or on the left. The definition is due to [BL08]_ where they prove
+        right or on the left. The definition is due to [BL2008]_ where they prove
         that the property of being irreducible is stable under Rauzy induction.
 
         INPUT:
@@ -1746,17 +1747,17 @@ class PermutationLI(Permutation):
                 break
             A11 = s0[:i11]
 
-            for i21 in xrange(0, l1) :
+            for i21 in range(0, l1) :
                 if i21 > 0 and s1[i21-1] in A21:
                     break
                 A21 = s1[:i21]
 
-                for i12 in xrange(l0 - 1, i11 - 1, -1) :
+                for i12 in range(l0 - 1, i11 - 1, -1) :
                     if s0[i12] in A12 or s0[i12] in A21:
                         break
                     A12 = s0[i12:]
 
-                    for i22 in xrange(l1 - 1, i21 - 1, -1) :
+                    for i22 in range(l1 - 1, i21 - 1, -1) :
                         if s1[i22] in A22 or s1[i22] in A11:
                             break
                         A22 = s1[i22:]
@@ -2795,8 +2796,8 @@ class RauzyDiagram(SageObject):
             a b c d
             d c b a
         """
-        from itertools import imap
-        return imap(
+        from builtins import map
+        return map(
             lambda x: self._vertex_to_permutation(x),
             self._succ.keys())
 

@@ -503,7 +503,7 @@ def lift_cross_ratios(A, lift_map = None):
 
     This method will create a unique candidate representation ``Z``, but will not verify
     if ``Z`` is indeed a representation of ``M``. However, this is guaranteed if the
-    conditions of the lift theorem (see [PvZ]_) hold for the lift map in combination with
+    conditions of the lift theorem (see [PvZ2010]_) hold for the lift map in combination with
     the matrix ``A``.
 
     For a lift map `f` and a matrix `A` these conditions are as follows. First of all

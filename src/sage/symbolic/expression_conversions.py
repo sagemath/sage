@@ -18,8 +18,7 @@ from __future__ import print_function
 
 import operator as _operator
 from sage.rings.rational_field import QQ
-from sage.symbolic.ring import SR
-from sage.symbolic.pynac import I
+from sage.symbolic.all import I, SR
 from sage.functions.all import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
 from sage.functions.piecewise import piecewise
@@ -349,7 +348,7 @@ class Converter(object):
 
             sage: from sage.symbolic.expression_conversions import Converter
             sage: a = function('f', x).diff(x); a
-            D[0](f)(x)
+            diff(f(x), x)
             sage: Converter().derivative(a, a.operator())
             Traceback (most recent call last):
             ...
@@ -494,7 +493,7 @@ class InterfaceInit(Converter):
             sage: m = InterfaceInit(maxima)
             sage: f = function('f')
             sage: a = f(x).diff(x); a
-            D[0](f)(x)
+            diff(f(x), x)
             sage: print(m.derivative(a, a.operator()))
             diff('f(_SAGE_VAR_x), _SAGE_VAR_x, 1)
             sage: b = f(x).diff(x, x)
@@ -525,7 +524,7 @@ class InterfaceInit(Converter):
 
             sage: f = function('f', x)
             sage: df = f.diff(x); df
-            D[0](f)(x)
+            diff(f(x), x)
             sage: maxima(df)
             'diff('f(_SAGE_VAR_x),_SAGE_VAR_x,1)
 
@@ -554,7 +553,7 @@ class InterfaceInit(Converter):
             sage: x, y = var('x y')
             sage: f = function('f')(x, y)
             sage: f_x = f.diff(x); f_x
-            D[0](f)(x, y)
+            diff(f(x, y), x)
             sage: maxima(f_x)
             'diff('f(_SAGE_VAR_x,_SAGE_VAR_y),_SAGE_VAR_x,1)
 
@@ -580,7 +579,7 @@ class InterfaceInit(Converter):
 
             sage: x,y = var('x,y')
             sage: (gamma_inc(x,y).diff(x))
-            D[0](gamma)(x, y)
+            diff(gamma(x, y), x)
             sage: (gamma_inc(x,x+1).diff(x)).simplify()
             -(x + 1)^(x - 1)*e^(-x - 1) + D[0](gamma)(x, x + 1)
         """
@@ -1850,7 +1849,7 @@ class SubstituteFunction(ExpressionTreeWalker):
             sage: s = SubstituteFunction(foo(x), foo, bar)
             sage: f = foo(x).diff(x)
             sage: s.derivative(f, f.operator())
-            D[0](bar)(x)
+            diff(bar(x), x)
 
         TESTS:
 
@@ -1894,9 +1893,7 @@ class HoldRemover(ExpressionTreeWalker):
             arctan2(0, 0) + 1
             sage: h = HoldRemover(ex, [hypergeometric])
             sage: h()
-            Traceback (most recent call last):
-            ...
-            RuntimeError: arctan2_eval(): arctan2(0,0) encountered
+            NaN + hypergeometric((1, 2), (3, 4), 0)
         """
         self.ex = ex
         if exclude is None:
@@ -1914,8 +1911,12 @@ class HoldRemover(ExpressionTreeWalker):
             sage: h()
             0
         """
+        from sage.functions.other import Function_sum
+        from sage.calculus.calculus import symbolic_sum
         if not operator:
             return self
+        if isinstance(operator, Function_sum):
+            return symbolic_sum(*map(self, ex.operands()))
         if operator in self._exclude:
             return operator(*map(self, ex.operands()), hold=True)
         else:

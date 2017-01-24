@@ -7,24 +7,13 @@ This module stores a database of two-weight codes.
 
 REFERENCE:
 
-.. [BS03] \I. Bouyukliev and J. Simonis,
-   Some new results on optimal codes over `F_5`,
-   Designs, Codes and Cryptography 30, no. 1 (2003): 97-111,
-   http://www.moi.math.bas.bg/moiuser/~iliya/pdf_site/gf5srev.pdf,
+- [BS2003]_
 
-.. [ChenDB] Eric Chen,
-   Online database of two-weight codes,
-   http://moodle.tec.hkr.se/~chen/research/2-weight-codes/search.php
+- [ChenDB]_
 
-.. [Kohnert07] \A. Kohnert,
-   Constructing two-weight codes with prescribed groups of automorphisms,
-   Discrete applied mathematics 155, no. 11 (2007): 1451-1457.
-   http://linearcodes.uni-bayreuth.de/twoweight/
+- [Koh2007]_
 
-.. [Disset00] \L. Dissett,
-   Combinatorial and computational aspects of finite geometries,
-   2000,
-   https://tspace.library.utoronto.ca/bitstream/1807/14575/1/NQ49844.pdf
+- [Di2000]_
 
 TESTS:
 
@@ -77,7 +66,7 @@ data = [
                "11010221121101111102210221220221000111011101121102012101101012012022222000211200202012211100111201200001122001211011120102110212212102121001",
                "20201121211111111012202022201210001220122121211010121011010020110121220201212002010222011001111012100011010212110021202021102112221012110011",
                "02022222111111110112020112011200022102212222110102210110100101102211201211220020002120110011110221100110002121100222120211021112010112220101"),
-        'source': "Found by Axel Kohnert [Kohnert07]_ and shared by Alfred Wassermann.",
+        'source': "Found by Axel Kohnert [Koh2007]_ and shared by Alfred Wassermann.",
     },
     {
         'n' : 98,
@@ -155,7 +144,7 @@ data = [
                "111111222222333333444444000000111111000",
                "223300133440112240112240133440123400110",
                "402340414201142301132013234230044330401"),
-        'source': "From Bouyukliev and Simonis ([BS03]_, Theorem 4.1)",
+        'source': "From Bouyukliev and Simonis ([BS2003]_, Theorem 4.1)",
     },
     {
         'n' : 55,
@@ -290,7 +279,7 @@ data = [
                "1110100010000111000111011011100110111000010000000001000111001010101101",
                "1101000110001110001110110101001101110000100010000010001110010101001011",
                "1010001110011100001101101010011011110001000100000100001100101010010111"),
-        'source': "Found by Axel Kohnert [Kohnert07]_ and shared by Alfred Wassermann.",
+        'source': "Found by Axel Kohnert [Koh2007]_ and shared by Alfred Wassermann.",
     },
     {
         'n' : 85,
@@ -345,7 +334,7 @@ data = [
                 "00000001111111111111111111111111100000000000000000011111111111111111111111111aaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbb",
                 "0000000000000000000000000000000001111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
                ]],
-        'source' : "From [Disset00]_",
+        'source' : "From [Di2000]_",
     },
     {
         'n' : 132,
@@ -360,7 +349,7 @@ data = [
                 "00000011111111111111111111110000000000000000000000000000001111111111111111111111aaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
                 "000000000000000000000000000011111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
                ]],
-        'source' : "From [Disset00]_",
+        'source' : "From [Di2000]_",
     },
     {
         'n' : 143,
@@ -375,7 +364,7 @@ data = [
                 "00000000011111111111111111111111111111100000000000000000000001111111111111111111111aaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
                 "00000000000000000000000000000000000000011111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
                ]],
-        'source' : "From [Disset00]_",
+        'source' : "From [Di2000]_",
     },
     {
         'n' : 168,
@@ -389,7 +378,7 @@ data = [
                "000000000111111111111000000000111111111111111222222222222222000000000000000111111111111222222222222000000000000000111111111111222222222222000000000000111111111222222222",
                "000000000000000000000111111111111111111111111111111111111111000000000000000000000000000000000000000111111111111111111111111111111111111111222222222222222222222222222222",
                "000000000000000000000000000000000000000000000000000000000000111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"],
-        'source' : "From [Disset00]_",
+        'source' : "From [Di2000]_",
     },
 ]
 

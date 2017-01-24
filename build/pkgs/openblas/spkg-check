@@ -7,7 +7,27 @@ fi
 
 cd src
 
-$MAKE tests
+# OpenBlas has no proper configure script
+# Options are directly passed to make
+# And the name static library archive produced depends on them
+# And the tests directly link to that archive rather than through a symlink
+# Therefore the following is copied from spkg-install
+# We could also patch the Makefile to use a generic symlink pointing
+# to the archive with a specific name
+
+# See #22021 for issues with multithreading
+OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_THREAD=0"
+
+if [ `python -c "from __future__ import print_function; import platform; print(platform.architecture()[0])"` = "32bit" ]; then
+    OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE BINARY=32"
+fi
+
+if [ "x$SAGE_FAT_BINARY" = "xyes" ]; then
+    # See https://github.com/xianyi/OpenBLAS/issues/510
+    OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=PRESCOTT"
+fi
+
+$MAKE tests $OPENBLAS_CONFIGURE
 if [ $? -ne 0 ]; then
     echo >&2 "Error while running the OpenBLAS testsuite ... exiting"
     exit 1

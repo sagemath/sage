@@ -22,15 +22,6 @@ export SVNVERSION=no
 
 cd src
 
-# PATCH
-for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error: Patch \"$patch\" failed to apply."
-        exit 1
-    fi
-done
-
 if [ "$SAGE_DEBUG" = "yes" ]; then
     echo "Building Python with pydebug"
     PYTHON_CONFIGURE="$PYTHON_CONFIGURE --with-pydebug"
@@ -56,6 +47,10 @@ if [ "$UNAME" = Darwin ]; then
     mkdir "$CUR"/include
     cp -rp "${xcode}"/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-migrator/sdk/MacOSX.sdk/usr/include/openssl "$CUR"/include
     export CFLAGS="-I$CUR/include"
+    if [ $MACOSX_VERSION -ge 16 ]; then
+        echo "OS X 10.$[$MACOSX_VERSION-4] Building with clang."
+        CC=clang
+    fi
 elif [ "$UNAME" = SunOS ]; then
     # Enable some C99 features on Solaris. This in particular enables
     # the isinf() and isfinite() functions. It works both for C and
@@ -84,6 +79,14 @@ build()
     if [ $? -ne 0 ]; then
         echo >&2 "Error building Python."
         exit 1
+    fi
+
+    # On OS X, test to see if _scproxy built before installing.
+    if [ "$UNAME" = "Darwin" ]; then
+        if [ -z `find build -name _scproxy.so` ]; then
+            echo >&2 "Error: the _scproxy module failed to build."
+            exit 1
+        fi
     fi
 
     # Remove old libraries
@@ -149,6 +152,15 @@ for module in ctypes math hashlib crypt readline socket ; do
         import_errors=true
     fi
 done
+
+if [ "$UNAME" = "Darwin" ]; then
+    if python -c "import _scproxy"; then
+        echo "_scproxy module imported OK"
+    else
+        echo >&2 "_scproxy module failed to import"
+        import_errors=true
+    fi
+fi
 
 if $import_errors; then
     echo >&2 "Error: One or more modules failed to import."

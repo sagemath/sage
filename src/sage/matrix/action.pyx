@@ -328,7 +328,10 @@ cdef class VectorMatrixAction(MatrixMulAction):
         EXAMPLES::
 
             sage: from sage.matrix.action import VectorMatrixAction
-            sage: A = VectorMatrixAction(MatrixSpace(QQ, 3, 5), VectorSpace(CDF, 3)); A
+            sage: M = MatrixSpace(QQ, 3, 5)
+            sage: V = VectorSpace(CDF, 3)
+            sage: A = VectorMatrixAction(M, V)
+            sage: A
             Right action by Full MatrixSpace of 3 by 5 dense matrices over Rational Field on Vector space of dimension 3 over Complex Double Field
             sage: A.codomain()
             Vector space of dimension 5 over Complex Double Field

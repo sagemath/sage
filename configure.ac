@@ -80,8 +80,10 @@ fi
 
 # Assume current directory is SAGE_ROOT
 SAGE_ROOT=`pwd -P`
+if test -z "$SAGE_LOCAL"; then
+    SAGE_LOCAL="$SAGE_ROOT/local"
+fi
 SAGE_SRC="$SAGE_ROOT/src"
-SAGE_LOCAL="$SAGE_ROOT/local"
 SAGE_SHARE="$SAGE_LOCAL/share"
 SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
 SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
@@ -679,16 +681,16 @@ fi
 # BLAS library
 AC_MSG_CHECKING([BLAS library])
 AC_ARG_WITH([blas],
-[AS_HELP_STRING([--with-blas=atlas],
-    [use ATLAS as BLAS library (default)])]
 [AS_HELP_STRING([--with-blas=openblas],
-    [use OpenBLAS as BLAS library])],,
-    [with_blas=atlas]  # default
+    [use OpenBLAS as BLAS library (default)])]
+[AS_HELP_STRING([--with-blas=atlas],
+    [use ATLAS as BLAS library])],,
+    [with_blas=openblas]  # default
 )
 
 case "$with_blas" in
-    atlas) true;;
-    openblas) need_to_install_atlas=no;;
+    openblas) true;;
+    atlas) need_to_install_openblas=no;;
     *) AC_MSG_ERROR([allowed values for --with-blas are 'atlas' and 'openblas']);;
 esac
 
@@ -931,10 +933,12 @@ while read PKG_NAME PKG_VERSION PKG_VAR; do
         DEPS=""
     fi
 
+    # Below we have to obscure A""M_V_at, or autoconf would complain:
+    # "error: possibly undefined macro: A""M_V_at"
     if [ "$TYPE" = pip ]; then
         # Special rules using PIP
         echo >&7 "$PKG_NAME:$DEPS"
-        echo >&7 "	sage-logger -p 'sage --pip install $PKG_NAME' \$(SAGE_LOGS)/$PKG_NAME.log"
+        echo >&7 "	\$(A""M_V_at)sage-logger -p 'sage --pip install $PKG_NAME' \$(SAGE_LOGS)/$PKG_NAME.log"
         echo >&7
 
         # Add a target to remove the "installed" file for "sage -f"
@@ -944,21 +948,21 @@ while read PKG_NAME PKG_VERSION PKG_VAR; do
     elif [ "$TYPE" = script ]; then
         # Just run the spkg-install script
         echo >&7 "$PKG_NAME:$DEPS"
-        echo >&7 "	cd '$SAGE_ROOT' && \\"
+        echo >&7 "	\$(A""M_V_at)cd '$SAGE_ROOT' && \\"
         echo >&7 "	    source '$SAGE_ROOT/src/bin/sage-env' && \\"
         echo >&7 "	    sage-logger -p '$SAGE_ROOT/build/pkgs/$PKG_NAME/spkg-install' \$(SAGE_LOGS)/$PKG_NAME.log"
         echo >&7
 
         # Just run the spkg-uninstall script if it exists
         echo >&7 "$PKG_NAME-clean:"
-        echo >&7 "	-cd '$SAGE_ROOT' && \\"
+        echo >&7 "	-\$(A""M_V_at)cd '$SAGE_ROOT' && \\"
         echo >&7 "	    source '$SAGE_ROOT/src/bin/sage-env' && \\"
         echo >&7 "	    '$SAGE_ROOT/build/pkgs/$PKG_NAME/spkg-uninstall'"
         echo >&7
     else
         # Normal Sage packages
         echo >&7 "\$(INST)/$PKG_VERSION:$DEPS"
-        echo >&7 "	+sage-logger -p '\$(SAGE_SPKG) $PKG_VERSION' '\$(SAGE_LOGS)/$PKG_VERSION.log'"
+        echo >&7 "	+\$(A""M_V_at)sage-logger -p '\$(SAGE_SPKG) $PKG_VERSION' '\$(SAGE_LOGS)/$PKG_VERSION.log'"
         echo >&7
 
         # Add a target with just the bare package name for "sage -i"
@@ -982,16 +986,12 @@ exec 7>&-
 
 
 dnl AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([build/make/Makefile-auto])
+AC_CONFIG_FILES([build/make/Makefile-auto src/Makefile])
 AC_CONFIG_MACRO_DIR([m4])
 
 dnl Create basic directories needed for Sage
 AC_CONFIG_COMMANDS(mkdirs,
     [
-        SAGE_LOGS=${ac_abs_top_builddir}/logs/pkgs
-        SAGE_LOCAL=${ac_abs_top_builddir}/local
-        SAGE_SHARE=${ac_abs_top_builddir}/local/share
-        SAGE_INST=${ac_abs_top_builddir}/local/var/lib/sage/installed
         for d in "$SAGE_LOGS" "$SAGE_LOCAL" \
             "$SAGE_LOCAL/bin" "$SAGE_LOCAL/etc" \
             "$SAGE_LOCAL/include" "$SAGE_LOCAL/lib" \
@@ -1009,6 +1009,12 @@ AC_CONFIG_COMMANDS(mkdirs,
             AC_MSG_NOTICE([[creating symbolic link lib64 -> lib]])
             ln -s lib "$SAGE_LOCAL/lib64"
         fi
+    ],
+    [
+        SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
+        SAGE_LOCAL="$SAGE_LOCAL"
+        SAGE_SHARE="$SAGE_SHARE"
+        SAGE_INST="$SAGE_SPKG_INST"
     ])
 
 AC_OUTPUT()

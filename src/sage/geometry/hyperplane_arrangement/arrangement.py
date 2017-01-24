@@ -308,16 +308,8 @@ AUTHORS:
 
 This module implements hyperplane arrangements defined over the
 rationals or over finite fields.  The original motivation was to make
-a companion to Richard Stanley's notes [RS]_ on hyperplane
+a companion to Richard Stanley's notes [Sta2007]_ on hyperplane
 arrangements.
-
-REFERENCES:
-
-..  [RS]
-    Stanley, Richard: *Hyperplane Arrangements*,
-    Geometric Combinatorics (E. Miller, V. Reiner, and B. Sturmfels, eds.),
-    IAS/Park City Mathematics Series, vol. 13, American Mathematical Society,
-    Providence, RI, 2007, pp. 389-496.
 """
 
 #*****************************************************************************
@@ -1283,7 +1275,7 @@ class HyperplaneArrangementElement(Element):
 
         The `d`-th entry is the number of faces of dimension `d`.  A
         *face* is the intersection of a region with a hyperplane of
-        the arrangehment.
+        the arrangement.
 
         EXAMPLES::
 
@@ -1805,7 +1797,7 @@ class HyperplaneArrangementElement(Element):
         The face semigroup of a hyperplane arrangement is always a
         left-regular band (i.e., a semigroup satisfying the identities
         `x^2 = x` and `xyx = xy`). When the arrangement is central, then
-        this semigroup is a monoid. See [Brown2000]_ (Appendix A in
+        this semigroup is a monoid. See [Br2000]_ (Appendix A in
         particular) for further properties.
 
         INPUT:
@@ -1841,11 +1833,6 @@ class HyperplaneArrangementElement(Element):
             sage: xGzGy = faces[(-1, 1, 1)] # closed face x >= z >= y
             sage: a.face_product(xEzGy, yGxGz) == xGzGy
             True
-
-        REFERENCES:
-
-        .. [Brown2000] Kenneth S. Brown, *Semigroups, rings, and Markov
-           chains*, :arxiv:`math/0006145v1`.
         """
         f = F.representative_point()
         g = G.representative_point()
@@ -2237,12 +2224,7 @@ class HyperplaneArrangementElement(Element):
 
         REFERENCES:
 
-        ..  [GZ] Greene; Zaslavsky
-            "On the Interpretation of Whitney Numbers Through Arrangements of
-            Hyperplanes, Zonotopes, Non-Radon Partitions, and Orientations of
-            Graphs"
-            Transactions of the American Mathematical Society, Vol. 280, No. 1.
-            (Nov., 1983), pp. 97-126.
+        - [GZ1983]_
         """
         if 0 <= i and j <= self.dimension():
             if kind == 1:
@@ -2263,7 +2245,7 @@ class HyperplaneArrangementElement(Element):
         intersection poset such that `x \leq y` with ranks `i` and `j`,
         respectively.
 
-        See [GZ]_ for more details.
+        See [GZ1983]_ for more details.
 
         INPUT:
 
@@ -2464,7 +2446,7 @@ class HyperplaneArrangementElement(Element):
         `M_A` as the linear matroid spanned by `\{ n_H | H \in A \}`.
         The matroid `M_A` is such that the lattice of flats of `M` is
         isomorphic to the intersection lattice of `A`
-        (Proposition 3.6 in [RS]_).
+        (Proposition 3.6 in [Sta2007]_).
 
         EXAMPLES::
 
@@ -2528,7 +2510,7 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES:
 
-        We construct Example 2.2 from [Yuz93]_::
+        We construct Example 2.2 from [Yuz1993]_::
 
             sage: P.<x,y,z> = HyperplaneArrangements(QQ)
             sage: A = P(x, y, z, x+y+z, 2*x+y+z, 2*x+3*y+z, 2*x+3*y+4*z, 3*x+5*z, 3*x+4*y+5*z)
@@ -2537,13 +2519,6 @@ class HyperplaneArrangementElement(Element):
             3
             sage: B.minimal_generated_number()
             4
-
-        REFERENCES:
-
-        .. [Yuz93] Sergey Yuzvinsky,
-           *The first two obstructions to the freeness of arrangements*,
-           Transactions of the American Mathematical Society,
-           Vol. 335, **1** (1993) pp. 231--244.
         """
         V = VectorSpace(self.base_ring(), self.dimension())
         W = VectorSpace(self.base_ring(), self.n_hyperplanes())
@@ -2571,7 +2546,7 @@ class HyperplaneArrangementElement(Element):
         """
         Return if ``self`` is formal.
 
-        A hyperplane arrangement is *formal* if it is 3-generated [Yuz93]_,
+        A hyperplane arrangement is *formal* if it is 3-generated [Yuz1993]_,
         where `k`-generated is defined in :meth:`minimal_generated_number`.
 
         EXAMPLES::
@@ -2671,7 +2646,7 @@ class HyperplaneArrangementElement(Element):
 
           * ``"singular"`` -- use Singular's minimal free resolution
           * ``"BC"`` -- use the algorithm given by Barakat and Cuntz
-            in [BC12]_ (much slower than using Singular)
+            in [BC2012]_ (much slower than using Singular)
 
         ALGORITHM:
 
@@ -2682,7 +2657,7 @@ class HyperplaneArrangementElement(Element):
 
         .. RUBRIC:: BC
 
-        This implementation follows [BC12]_ by constructing a chain
+        This implementation follows [BC2012]_ by constructing a chain
         of free modules
 
         .. MATH::
@@ -2712,13 +2687,6 @@ class HyperplaneArrangementElement(Element):
             ....:    A = x.inversion_arrangement()
             ....:    assert (A.is_free(algorithm="BC")
             ....:            == A.is_free(algorithm="singular"))
-
-        REFERENCES:
-
-        .. [BC12] Mohamed Barakat and Michael Cuntz.
-           *Coxeter and crystallographic arrangements are inductively free*.
-           Adv. in Math. **229** Issue 1 (2012). pp. 691-709.
-           :doi:`10.1016/j.aim.2011.09.011`, :arxiv:`1011.4228`.
         """
         if not self.is_central():
             raise NotImplementedError("only implemented for central arrangements")
@@ -2747,7 +2715,7 @@ class HyperplaneArrangementElement(Element):
 
           * ``"singular"`` -- use Singular's minimal free resolution
           * ``"BC"`` -- use the algorithm given by Barakat and Cuntz
-            in [BC12]_ (much slower than using Singular)
+            in [BC2012]_ (much slower than using Singular)
 
         OUTPUT:
 
@@ -2762,7 +2730,7 @@ class HyperplaneArrangementElement(Element):
 
         This gets the reduced syzygy module of the Jacobian ideal of
         the defining polynomial `f` of ``self``. It then checks Saito's
-        criterion that the determinat of the basis matrix is a scalar
+        criterion that the determinant of the basis matrix is a scalar
         multiple of `f`. If the basis matrix is not square or it fails
         Saito's criterion, then we check if the arrangement is free.
         If it is free, then we fall back to the Barakat-Cuntz algorithm.
@@ -2770,7 +2738,7 @@ class HyperplaneArrangementElement(Element):
         .. RUBRIC:: BC
 
         Return the product of the derivation module free chain matrices.
-        See Section 6 of [BC12]_.
+        See Section 6 of [BC2012]_.
 
         EXAMPLES::
 

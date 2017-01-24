@@ -22,3 +22,6 @@ from .finitely_presented_named import KleinFourPresentation as KleinFour
 from .finitely_presented_named import SymmetricPresentation as Symmetric
 from .finitely_presented_named import QuaternionPresentation as Quaternion
 from .finitely_presented_named import AlternatingPresentation as Alternating
+from .finitely_presented_named import BinaryDihedralPresentation as BinaryDihedral
+
+

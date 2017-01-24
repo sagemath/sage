@@ -26,6 +26,8 @@ MAKE="${MAKE:-make}"
 CONFVERSION=`cat $PKG/package-version.txt`
 
 bootstrap () {
+    # Get autotools from our own package into PATH (Trac #21214)
+    source src/bin/sage-env
     aclocal -I m4 && \
     automake --add-missing --copy build/make/Makefile-auto && \
     autoconf

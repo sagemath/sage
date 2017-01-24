@@ -4,7 +4,7 @@ A class to keep information about faces of a polyhedron
 This module gives you a tool to work with the faces of a polyhedron
 and their relative position. First, you need to find the faces. To get
 the faces in a particular dimension, use the
-:meth:`~sage.geometry.poylhedron.base.face` method::
+:meth:`~sage.geometry.polyhedron.base.face` method::
 
     sage: P = polytopes.cross_polytope(3)
     sage: P.faces(3)
@@ -14,7 +14,7 @@ the faces in a particular dimension, use the
     sage: P.faces(1)
     (<0,1>, <0,2>, <1,2>, <0,3>, <1,3>, <0,4>, <2,4>, <3,4>, <2,5>, <3,5>, <4,5>, <1,5>)
 
-or :meth:`~sage.geometry.poylhedron.base.face_lattice` to get the
+or :meth:`~sage.geometry.polyhedron.base.face_lattice` to get the
 whole face lattice as a poset::
 
     sage: P.face_lattice()

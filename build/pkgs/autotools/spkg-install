@@ -23,19 +23,15 @@ git init
 SRC=`pwd`/src
 BUILD=`pwd`/build
 
-########################################################################
-# Apply patch(es)
-########################################################################
+# Mac OS X 10.11.5 installs GNU m4 1.4.6 as both "m4" and "gm4".
+# This is too old to bootstrap libtool 1.4.3.
+# The configure script prefers "gm4" to "m4" and thus does not
+# find the m4 from SageMath.
+# The following environment variable makes sure we use the m4 from
+# SageMath.  See trac #21047.
+export M4="$SAGE_LOCAL/bin/m4"
 
-cd src
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
+cd "$SRC"
 
 ########################################################################
 # Remove old installed versions
@@ -99,9 +95,16 @@ cd "$BUILD"
     echo "SAGE_LOCAL = $SAGE_LOCAL"
     # Force the use of bash as shell (/bin/sh on OpenSolaris has
     # problems with very long command lines used in some make rules).
-    echo "SHELL = `which bash`"
+    echo "SHELL = bash"
     echo
     cat "$SRC/../Makefile.build"
 ) >Makefile
 
 $MAKE
+
+# Install symlinks bin/aclocal-AM_API_VERSION and bin/automake-AM_API_VERSION.
+# (am__api_version).  These are required for autoreconf to work (Trac #21047).
+cd "$SAGE_LOCAL"/bin
+for x in $automake_versions; do
+    ln -sf ../automake-$x/bin/automake-* ../automake-$x/bin/aclocal-* .
+done

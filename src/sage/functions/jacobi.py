@@ -127,8 +127,7 @@ REFERENCES:
 
 - :wikipedia:`Jacobi's_elliptic_functions`
 
-.. [KhaSuk04] \A. Khare and U. Sukhatme. "Cyclic Identities Involving
-   Jacobi Elliptic Functions". :arxiv:`math-ph/0201004`
+- [KS2002]_
 
 AUTHORS:
 
@@ -1137,14 +1136,8 @@ jacobi_am = JacobiAmplitude()
 def inverse_jacobi_f(kind, x, m):
     r"""
     Internal function for numerical evaluation of a continous complex branch
-    of each inverse Jacobi function, as described in [Tee97]_. Only accepts
+    of each inverse Jacobi function, as described in [Tee1997]_. Only accepts
     real arguments.
-
-    REFERENCES:
-
-    .. [Tee97] Tee, Garry J. "Continuous branches of inverses of the 12 Jacobi
-       elliptic functions for real argument". 1997.
-       https://researchspace.auckland.ac.nz/bitstream/handle/2292/5042/390.pdf.
 
     TESTS::
 
@@ -1612,13 +1605,7 @@ def inverse_jacobi_f(kind, x, m):
 def jacobi_am_f(x, m):
     r"""
     Internal function for numeric evaluation of the Jacobi amplitude function
-    for real arguments. Procedure described in [Ehrhardt13]_.
-
-    REFERENCES:
-
-    .. [Ehrhardt13] Ehrhardt, Wolfgang. "The AMath and DAMath Special
-       Functions: Reference Manual and Implementation Notes, Version 1.3".
-       2013. http://www.wolfgang-ehrhardt.de/specialfunctions.pdf.
+    for real arguments. Procedure described in [Eh2013]_.
 
     TESTS::
 

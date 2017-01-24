@@ -19,7 +19,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import is_RealField
 from sage.symbolic.constants import pi
-from sage.symbolic.pynac import I
+from sage.symbolic.all import I
 
 # ---------------- The Gamma Function  ------------------
 
@@ -96,7 +96,7 @@ def zeta__exact(n):
     The argument must be a critical value, namely either positive even
     or negative odd.
 
-    See for example [Iwasawa]_, p13, Special value of `\zeta(2k)`
+    See for example [Iwa1972]_, p13, Special value of `\zeta(2k)`
 
     EXAMPLES:
 
@@ -135,9 +135,9 @@ def zeta__exact(n):
 
     REFERENCES:
 
-    .. [Iwasawa] Iwasawa, *Lectures on p-adic L-functions*
-    .. [IreRos] Ireland and Rosen, *A Classical Introduction to Modern Number Theory*
-    .. [WashCyc] Washington, *Cyclotomic Fields*
+    - [Iwa1972]_
+    - [IR1990]_
+    - [Was1997]_
     """
     if n < 0:
         return bernoulli(1-n)/(n-1)
@@ -172,7 +172,7 @@ def QuadraticBernoulliNumber(k, d):
 
     REFERENCES:
 
-    - [Iwasawa]_, pp 7-16.
+    - [Iwa1972]_, pp 7-16.
     """
     # Ensure the character is primitive
     d1 = fundamental_discriminant(d)
@@ -213,9 +213,9 @@ def quadratic_L_function__exact(n, d):
 
     REFERENCES:
 
-    - [Iwasawa]_, pp 16-17, Special values of `L(1-n, \chi)` and `L(n, \chi)`
-    - [IreRos]_
-    - [WashCyc]_
+    - [Iwa1972]_, pp 16-17, Special values of `L(1-n, \chi)` and `L(n, \chi)`
+    - [IR1990]_
+    - [Was1997]_
     """
     from sage.all import SR, sqrt
     if n <= 0:

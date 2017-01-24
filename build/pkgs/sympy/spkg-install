@@ -8,30 +8,8 @@ fi
 
 cd src/
 
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
-echo "building sympy"
-python setup.py build
-
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building sympy"
-    exit 1
-fi
-
-# It is very important that we have SAGE_LOCAL set, otherwise this
-# might potentially delete stuff in /lib
-echo "Deleting $SAGE_LOCAL/lib/python*/site-packages/sympy*"
-rm -rf "$SAGE_LOCAL"/lib/python*/site-packages/sympy*
-
 echo "installing sympy"
-python setup.py install
+$PIP_INSTALL .
 
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing sympy"

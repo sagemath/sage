@@ -10,6 +10,7 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from .cipher import SymmetricKeyCipher
 from sage.monoids.string_monoid_element import StringMonoidElement
@@ -434,19 +435,19 @@ class SubstitutionCipher(SymmetricKeyCipher):
         EXAMPLES::
 
             sage: A = HexadecimalStrings(); S = SubstitutionCryptosystem(A)
-            sage: K = A([16-i for i in xrange(16)]); S(K)
+            sage: K = A([16-i for i in range(16)]); S(K)
             Substitution cipher on Free hexadecimal string monoid
             sage: A = AlphabeticStrings(); S = SubstitutionCryptosystem(A)
-            sage: K = A([26-i for i in xrange(26)]); S(K)
+            sage: K = A([26-i for i in range(26)]); S(K)
             Substitution cipher on Free alphabetic string monoid on A-Z
             sage: A = OctalStrings(); S = SubstitutionCryptosystem(A)
-            sage: K = A([8-i for i in xrange(8)]); S(K)
+            sage: K = A([8-i for i in range(8)]); S(K)
             Substitution cipher on Free octal string monoid
             sage: A = BinaryStrings(); S = SubstitutionCryptosystem(A)
-            sage: K = A([2-i for i in xrange(2)]); S(K)
+            sage: K = A([2-i for i in range(2)]); S(K)
             Substitution cipher on Free binary string monoid
             sage: A = Radix64Strings(); S = SubstitutionCryptosystem(A)
-            sage: K = A([64-i for i in xrange(64)]); S(K)
+            sage: K = A([64-i for i in range(64)]); S(K)
             Substitution cipher on Free radix 64 string monoid
         """
         return "Substitution cipher on %s" % self.parent().cipher_domain()

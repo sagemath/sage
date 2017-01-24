@@ -18,7 +18,7 @@ TESTS::
 """
 from __future__ import absolute_import
 
-#*****************************************************************************
+##############################################################################
 #       Copyright (C) 2012 Jan Poeschko <jan@poeschko.com>
 #       Copyright (C) 2014 Martin Albrecht <martinralbecht@googlemail.com>
 #
@@ -32,17 +32,15 @@ from __future__ import absolute_import
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+##############################################################################
 
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.method_decorator import MethodDecorator
 from sage.modules.free_module import FreeModule_submodule_with_basis_pid, FreeModule_ambient_pid
 from sage.modules.free_module_element import vector
-from sage.modules.vector_integer_dense import Vector_integer_dense
-from sage.structure.parent import Parent
 from sage.rings.number_field.number_field_element import OrderElement_absolute
+
 
 def IntegerLattice(basis, lll_reduce=True):
     r"""
@@ -76,65 +74,65 @@ def IntegerLattice(basis, lll_reduce=True):
     Sage includes a generator for hard lattices from cryptography::
 
         sage: from sage.modules.free_module_integer import IntegerLattice
-        sage: A = sage.crypto.gen_lattice(type='modular', m=10, seed=42, dual=True)
+        sage: A = sage.crypto.gen_lattice(type='modular', m=10, seed=1337, dual=True)
         sage: IntegerLattice(A)
         Free module of degree 10 and rank 10 over Integer Ring
         User basis matrix:
-        [ 0  1  2  0  1  2 -1  0 -1 -1]
-        [ 0  1  0 -3  0  0  0  0  3 -1]
-        [ 1  1 -1  0 -3  0  0  1  2 -2]
-        [-1  2 -1 -1  2 -2  1 -1  0 -1]
-        [ 1  0 -4  2  0  1 -2 -1  0  0]
-        [ 2  3  0  1  1  0 -2  3  0  0]
-        [-2 -3 -2  0  0  1 -1  1  3 -2]
-        [-3  0 -1  0 -2 -1 -2  1 -1  1]
-        [ 1  4 -1  1  2  2  1  0  3  1]
-        [-1 -1  0 -3 -1  2  2  3 -1  0]
+        [-1  1  2 -2  0  1  0 -1  2  1]
+        [ 1  0  0 -1 -2  1 -2  3 -1  0]
+        [ 1  2  0  2 -1  1 -2  2  2  0]
+        [ 1  0 -1  0  2  3  0  0 -1 -2]
+        [ 1 -3  0  0  2  1 -2 -1  0  0]
+        [-3  0 -1  0 -1  2 -2  0  0  2]
+        [ 0  0  0  1  0  2 -3 -3 -2 -1]
+        [ 0 -1 -4 -1 -1  1  2 -1  0  1]
+        [ 1  1 -2  1  1  2  1  1 -2  3]
+        [ 2 -1  1  2 -3  2  2  1  0  1]
 
     You can also construct the lattice directly::
 
         sage: from sage.modules.free_module_integer import IntegerLattice
-        sage: sage.crypto.gen_lattice(type='modular', m=10, seed=42, dual=True, lattice=True)
+        sage: sage.crypto.gen_lattice(type='modular', m=10, seed=1337, dual=True, lattice=True)
         Free module of degree 10 and rank 10 over Integer Ring
         User basis matrix:
-        [ 0  1  2  0  1  2 -1  0 -1 -1]
-        [ 0  1  0 -3  0  0  0  0  3 -1]
-        [ 1  1 -1  0 -3  0  0  1  2 -2]
-        [-1  2 -1 -1  2 -2  1 -1  0 -1]
-        [ 1  0 -4  2  0  1 -2 -1  0  0]
-        [ 2  3  0  1  1  0 -2  3  0  0]
-        [-2 -3 -2  0  0  1 -1  1  3 -2]
-        [-3  0 -1  0 -2 -1 -2  1 -1  1]
-        [ 1  4 -1  1  2  2  1  0  3  1]
-        [-1 -1  0 -3 -1  2  2  3 -1  0]
+        [-1  1  2 -2  0  1  0 -1  2  1]
+        [ 1  0  0 -1 -2  1 -2  3 -1  0]
+        [ 1  2  0  2 -1  1 -2  2  2  0]
+        [ 1  0 -1  0  2  3  0  0 -1 -2]
+        [ 1 -3  0  0  2  1 -2 -1  0  0]
+        [-3  0 -1  0 -1  2 -2  0  0  2]
+        [ 0  0  0  1  0  2 -3 -3 -2 -1]
+        [ 0 -1 -4 -1 -1  1  2 -1  0  1]
+        [ 1  1 -2  1  1  2  1  1 -2  3]
+        [ 2 -1  1  2 -3  2  2  1  0  1]
 
     We construct an ideal lattice from an element of an absolute order::
 
         sage: K.<a>  = CyclotomicField(17)
         sage: O = K.ring_of_integers()
         sage: f = O.random_element(); f
-        -a^15 - a^12 - a^10 - 8*a^9 - a^8 - 4*a^7 + 3*a^6 + a^5 + 2*a^4 + 8*a^3 - a^2 + a + 1
+        -a^15 + a^13 + 4*a^12 - 12*a^11 - 256*a^10 + a^9 - a^7 - 4*a^6 + a^5 + 210*a^4 + 2*a^3 - 2*a^2 + 2*a - 2
 
         sage: from sage.modules.free_module_integer import IntegerLattice
         sage: IntegerLattice(f)
         Free module of degree 16 and rank 16 over Integer Ring
         User basis matrix:
-        [ 1  1 -1  8  2  1  3 -4 -1 -8 -1  0 -1  0  0 -1]
-        [-1  0  1  1 -1  8  2  1  3 -4 -1 -8 -1  0 -1  0]
-        [ 1  1  0  1  2  2  0  9  3  2  4 -3  0 -7  0  1]
-        [ 1  0  1  1  0  1  2  2  0  9  3  2  4 -3  0 -7]
-        [ 2 -5 -2 -9 -2 -1 -2 -1 -1 -2 -1  0  0 -2  7  1]
-        [ 1  4  0 -5 -3  0  3  5 -2  2  0 -7  4  0 -6 -2]
-        [-7  4  0 -6 -2  0  1  4  0 -5 -3  0  3  5 -2  2]
-        [-1  0  0 -1  0  1  1 -1  8  2  1  3 -4 -1 -8 -1]
-        [-1 -1 -2  4  1  9  1 -1  0  1 -8 -1 -1 -4  3  2]
-        [-1 -2  6 -6  8  1 -3  5  3  1  1  0 -2  4  3  2]
-        [ 4  8  2  7 -3  2 -1  2  0 -4  0  3  6  3  0 -4]
-        [ 0 -1  0  1  1 -1  8  2  1  3 -4 -1 -8 -1  0 -1]
-        [ 2 -7 -1  0 -2  5  2  9  2  1  2  1  1  2  1  0]
-        [-1  7 -5  9  2 -2  6  4  2  2  1 -1  5  4  3  1]
-        [ 3  1 -6  0  3  1 -5  2  2  8 -4  4 -3  2 -6 -7]
-        [ 2  6 -4  4  0 -1  7  0 -6  3  9  1 -3 -1  4  3]
+        [  -2    2   -2    2  210    1   -4   -1    0    1 -256  -12    4    1    0   -1]
+        [  33   48   44   48  256 -209   28   51   45   49   -1   35   44   48   44   48]
+        [   1   -1    3   -1    3  211    2   -3    0    1    2 -255  -11    5    2    1]
+        [-223   34   50   47  258    0   29   45   46   47    2  -11   33   48   44   48]
+        [ -13   31   46   42   46   -2 -225   32   48   45  256   -2   27   43   44   45]
+        [ -16   33   42   46  254    1  -19   32   44   45    0  -13 -225   32   48   45]
+        [ -15 -223   30   50  255    1  -20   32   42   47   -2  -11  -15   33   44   44]
+        [ -11  -11   33   48  256    3  -17 -222   32   53    1   -9  -14   35   44   48]
+        [ -12  -13   32   45  257    0  -16  -13   32   48   -1  -10  -14 -222   31   51]
+        [  -9  -13 -221   32   52    1  -11  -12   33   46  258    1  -15  -12   33   49]
+        [  -5   -2   -1    0 -257  -13    3    0   -1   -2   -1   -3    1   -3    1  209]
+        [ -15  -11  -15   33  256   -1  -17  -14 -225   33    4  -12  -13  -14   31   44]
+        [  11   11   11   11 -245   -3   17   10   13  220   12    5   12    9   14  -35]
+        [ -18  -15  -20   29  250   -3  -23  -16  -19   30   -4  -17  -17  -17 -229   28]
+        [ -15  -11  -15 -223  242    5  -18  -12  -16   34   -2  -11  -15  -11  -15   33]
+        [ 378  120   92  147  152  462  136   96   99  144  -52  412  133   91 -107  138]
 
     We construct `\ZZ^n`::
 
@@ -154,11 +152,13 @@ def IntegerLattice(basis, lll_reduce=True):
         [0 0 0 0 0 0 0 0 0 1]
 
 
-    Sage also interfaces with fpLLL's lattice generator::
+    Sage also interfaces with fpylll's lattice generator::
 
         sage: from sage.modules.free_module_integer import IntegerLattice
-        sage: from sage.libs.fplll.fplll import gen_simdioph
-        sage: IntegerLattice(gen_simdioph(8, 20, 10), lll_reduce=False)
+        sage: from fpylll import IntegerMatrix
+        sage: A = IntegerMatrix.random(8, "simdioph", bits=20, bits2=10)
+        sage: A = A.to_matrix(matrix(ZZ, 8, 8))
+        sage: IntegerLattice(A, lll_reduce=False)
         Free module of degree 8 and rank 8 over Integer Ring
         User basis matrix:
         [   1024  829556  161099   11567  521155  769480  639201  689979]
@@ -186,6 +186,7 @@ def IntegerLattice(basis, lll_reduce=True):
                                                    basis=basis,
                                                    lll_reduce=lll_reduce)
 
+
 class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pid):
     r"""
     This class represents submodules of `\ZZ^n` with a distinguished basis.
@@ -199,21 +200,21 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     EXAMPLE::
 
         sage: from sage.modules.free_module_integer import IntegerLattice
-        sage: L = IntegerLattice(sage.crypto.gen_lattice(type='modular', m=10, seed=42, dual=True)); L
+        sage: L = IntegerLattice(sage.crypto.gen_lattice(type='modular', m=10, seed=1337, dual=True)); L
         Free module of degree 10 and rank 10 over Integer Ring
         User basis matrix:
-        [ 0  1  2  0  1  2 -1  0 -1 -1]
-        [ 0  1  0 -3  0  0  0  0  3 -1]
-        [ 1  1 -1  0 -3  0  0  1  2 -2]
-        [-1  2 -1 -1  2 -2  1 -1  0 -1]
-        [ 1  0 -4  2  0  1 -2 -1  0  0]
-        [ 2  3  0  1  1  0 -2  3  0  0]
-        [-2 -3 -2  0  0  1 -1  1  3 -2]
-        [-3  0 -1  0 -2 -1 -2  1 -1  1]
-        [ 1  4 -1  1  2  2  1  0  3  1]
-        [-1 -1  0 -3 -1  2  2  3 -1  0]
+        [-1  1  2 -2  0  1  0 -1  2  1]
+        [ 1  0  0 -1 -2  1 -2  3 -1  0]
+        [ 1  2  0  2 -1  1 -2  2  2  0]
+        [ 1  0 -1  0  2  3  0  0 -1 -2]
+        [ 1 -3  0  0  2  1 -2 -1  0  0]
+        [-3  0 -1  0 -1  2 -2  0  0  2]
+        [ 0  0  0  1  0  2 -3 -3 -2 -1]
+        [ 0 -1 -4 -1 -1  1  2 -1  0  1]
+        [ 1  1 -2  1  1  2  1  1 -2  3]
+        [ 2 -1  1  2 -3  2  2  1  0  1]
         sage: L.shortest_vector()
-        (0, 1, 2, 0, 1, 2, -1, 0, -1, -1)
+        (-1, 1, 2, -2, 0, 1, 0, -1, 2, 1)
 
     """
     def __init__(self, ambient, basis, check=True, echelonize=False,
@@ -488,7 +489,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         .. NOTE::
 
-            This is realised by calling
+            This is realized by calling
             :func:`sage.modules.free_module_integer.FreeModule_submodule_with_basis_integer.BKZ` with
             ``block_size == self.rank()``.
 
@@ -505,16 +506,14 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         EXAMPLE::
 
             sage: from sage.modules.free_module_integer import IntegerLattice
-            sage: L = sage.crypto.gen_lattice(type='random', n=1, m=40, q=2^60, seed=42, lattice=True)
+            sage: L = sage.crypto.gen_lattice(type='random', n=1, m=40, q=2^60, seed=1337, lattice=True)
             sage: L.HKZ()
             40 x 40 dense matrix over Integer Ring (use the '.str()' method to see the entries)
 
             sage: L.reduced_basis[0]
-            (-1, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 0,
-             -1, 1, 0, 1, 1, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0)
+            (0, 0, -1, -1, 0, 0, -1, 1, 0, 0, -1, 1, 1, 0, 0, 1, 1, 1, -1, 0, 0, 1, -1, 0, 0, -1, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 1, 0, 0, -2)
         """
         return self.BKZ(block_size=self.rank())
-
 
     @cached_method
     def volume(self):
@@ -527,7 +526,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         EXAMPLE::
 
-            sage: L = sage.crypto.gen_lattice(m=10, seed=42, lattice=True)
+            sage: L = sage.crypto.gen_lattice(m=10, seed=1337, lattice=True)
             sage: L.volume()
             14641
         """
@@ -548,7 +547,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         EXAMPLE::
 
-            sage: L = sage.crypto.gen_lattice(m=10, seed=42, lattice=True)
+            sage: L = sage.crypto.gen_lattice(m=10, seed=1337, lattice=True)
             sage: L.discriminant()
             214358881
         """
@@ -582,7 +581,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         INPUT:
 
         - ``update_reduced_basis`` -- (default: ``True``) set this flag if
-          the found vector should be used to improve the basis 
+          the found vector should be used to improve the basis
 
         - ``algorithm`` -- (default: ``"fplll"``) either ``"fplll"`` or
           ``"pari"``
@@ -629,9 +628,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             v = vectors.python().columns()[0]
             w = v*B
         elif algorithm == "fplll":
-            from sage.libs.fplll.fplll import FP_LLL
-            L = FP_LLL(self.reduced_basis)
-            w = L.shortest_vector(*args, **kwds)
+            from fpylll import IntegerMatrix, SVP
+            L = IntegerMatrix.from_matrix(self.reduced_basis)
+            w = vector(ZZ, SVP.shortest_vector(L, *args, **kwds))
+
         else:
             raise ValueError("algorithm '{}' unknown".format(algorithm))
 
@@ -665,8 +665,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         w = matrix(ZZ, w)
         L = w.stack(self.reduced_basis).LLL()
         assert(L[0] == 0)
-        self._reduced_basis = L.matrix_from_rows(range(1,L.nrows()))
-
+        self._reduced_basis = L.matrix_from_rows(range(1, L.nrows()))
 
     @cached_method
     def voronoi_cell(self, radius=None):
@@ -718,13 +717,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         ALGORITHM:
 
-        Uses parts of the algorithm from [Vit1996]_.
-
-        REFERENCES:
-
-        .. [Vit1996] \E. Viterbo, E. Biglieri. *Computing the Voronoi Cell
-           of a Lattice: The Diamond-Cutting Algorithm*.
-           IEEE Transactions on Information Theory, 1996.
+        Uses parts of the algorithm from [VB1996]_.
         """
         if not self._basis_is_LLL_reduced:
             self.LLL()
@@ -793,14 +786,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         ALGORITHM:
 
-        Uses the algorithm from [Mic2010]_.
-
-        REFERENCES:
-
-        .. [Mic2010] \D. Micciancio, P. Voulgaris. *A Deterministic Single
-           Exponential Time Algorithm for Most Lattice Problems based on
-           Voronoi Cell Computations*.
-           Proceedings of the 42nd ACM Symposium Theory of Computation, 2010.
+        Uses the algorithm from [MV2010]_.
         """
         voronoi_cell = self.voronoi_cell()
 
@@ -830,4 +816,3 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             t_new = t_new - CVPP_2V(t_new, V_scaled, ZZ(2 ** (i - 1)) * voronoi_cell)
             i -= 1
         return t - t_new
-

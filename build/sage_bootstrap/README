@@ -1,6 +1,6 @@
 Sage-Bootstrap
 
-This is a utility libary for dealing with third-party tarballs and
+This is a utility library for dealing with third-party tarballs and
 building Sage. You should never import anything from the actual Sage
 library here, nor should you import anything from sage_bootstrap into
 Sage (because this would reconfigure logging). They must be kept

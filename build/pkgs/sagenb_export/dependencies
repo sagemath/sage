@@ -1,4 +1,4 @@
-nbconvert ipython six
+$(PYTHON) nbconvert ipython six | pip
 
 ----------
 All lines of this file are ignored except the first.

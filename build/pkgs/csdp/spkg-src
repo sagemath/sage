@@ -10,7 +10,7 @@ git clone https://github.com/dimpase/csdp.git
 cd csdp
 
 VERSION=`autoconf --trace='AC_INIT:$2'`
-autoreconf --install 
+autoreconf --install
 automake --add-missing --copy
 ./configure
 

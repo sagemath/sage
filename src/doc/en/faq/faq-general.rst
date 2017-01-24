@@ -86,7 +86,7 @@ previous and ongoing work of many authors of included components.
 A list of (some) direct contributors can be found on the
 `Sage Development Map <http://www.sagemath.org/development-map.html>`_
 and the history of changes can be found in the high-level
-`changelog <http://www.sagemath.org/mirror/src/changelog.txt>`_. Refer
+`changelogs <http://www.sagemath.org/changelogs/>`_. Refer
 to the
 `acknowledgment page <http://www.sagemath.org/development-ack.html>`_
 of the Sage website for an up-to-date list of financial and

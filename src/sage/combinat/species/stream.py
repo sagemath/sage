@@ -33,8 +33,8 @@ def _apply_function(func, list):
 
         sage: from sage.combinat.species.stream import _apply_function
         sage: def square(l):
-        ...       l.append(l[-1]^2)
-        ...       return l[-1]
+        ....:     l.append(l[-1]^2)
+        ....:     return l[-1]
         ...
         sage: l = [2]
         sage: g = _apply_function(square, l)
@@ -74,11 +74,11 @@ class Stream_class(SageObject):
     EXAMPLES::
 
         sage: from sage.combinat.species.stream import Stream
-        sage: from itertools import izip
+        sage: from builtins import zip
         sage: s = Stream(const=0)
         sage: len(s)
         1
-        sage: [x for (x,i) in izip(s, range(4))]
+        sage: [x for (x,i) in zip(s, range(4))]
         [0, 0, 0, 0]
         sage: len(s)
         1
@@ -87,7 +87,7 @@ class Stream_class(SageObject):
 
         sage: s = Stream(const=4)
         sage: g = iter(s)
-        sage: l1 = [x for (x,i) in izip(g, range(10))]
+        sage: l1 = [x for (x,i) in zip(g, range(10))]
         sage: l = [4 for k in range(10)]
         sage: l == l1
         True
@@ -96,7 +96,7 @@ class Stream_class(SageObject):
 
         sage: h = lambda l: 1 if len(l) < 2 else l[-1] + l[-2]
         sage: fib = Stream(h)
-        sage: [x for (x,i) in izip(fib, range(11))]
+        sage: [x for (x,i) in zip(fib, range(11))]
         [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 
     ::
@@ -105,20 +105,20 @@ class Stream_class(SageObject):
         sage: l = [4, 3, 5, 2, 6, 1]
         sage: s = Stream(l)
         sage: s[3] = -1
-        sage: [x for (x,i) in izip(s, r)]
+        sage: [x for (x,i) in zip(s, r)]
         [4, 3, 5, -1, 6, 1, 1, 1, 1, 1]
         sage: s[5] = -2
-        sage: [x for (x,i) in izip(s, r)]
+        sage: [x for (x,i) in zip(s, r)]
         [4, 3, 5, -1, 6, -2, 1, 1, 1, 1]
         sage: s[6] = -3
-        sage: [x for (x,i) in izip(s, r)]
+        sage: [x for (x,i) in zip(s, r)]
         [4, 3, 5, -1, 6, -2, -3, 1, 1, 1]
         sage: s[8] = -4
-        sage: [x for (x,i) in izip(s, r)]
+        sage: [x for (x,i) in zip(s, r)]
         [4, 3, 5, -1, 6, -2, -3, 1, -4, 1]
         sage: a = Stream(const=0)
         sage: a[2] = 3
-        sage: [x for (x,i) in izip(a, range(4))]
+        sage: [x for (x,i) in zip(a, range(4))]
         [0, 0, 3, 0]
     """
 
@@ -226,20 +226,20 @@ class Stream_class(SageObject):
         EXAMPLES::
 
             sage: from sage.combinat.species.stream import Stream
-            sage: from itertools import izip
+            sage: from builtins import zip
             sage: fib = Stream()
             sage: def g():
-            ...          yield 1
-            ...          yield 1
-            ...          n = 0
-            ...          while True:
-            ...              yield fib[n] + fib[n+1]
-            ...              n += 1
+            ....:        yield 1
+            ....:        yield 1
+            ....:        n = 0
+            ....:        while True:
+            ....:            yield fib[n] + fib[n+1]
+            ....:            n += 1
 
         ::
 
             sage: fib.set_gen(g())
-            sage: [x for (x,i) in izip(fib, range(11))]
+            sage: [x for (x,i) in zip(fib, range(11))]
             [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 
         ::
@@ -273,24 +273,24 @@ class Stream_class(SageObject):
 
         TESTS::
 
-            sage: from itertools import izip
+            sage: from builtins import zip
             sage: f = lambda l: 0 if len(l) == 0 else l[-1] + 1
             sage: o = Stream(f)
-            sage: [x for (x,i) in izip(o, range(10))]
+            sage: [x for (x,i) in zip(o, range(10))]
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
             sage: double = lambda z: 2*z
             sage: t = o.map(double)
-            sage: [x for (x,i) in izip(t, range(10))]
+            sage: [x for (x,i) in zip(t, range(10))]
             [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
 
         ::
 
             sage: double = lambda z: 2*z
             sage: o = Stream([0,1,2,3])
-            sage: [x for (x,i) in izip(o, range(6))]
+            sage: [x for (x,i) in zip(o, range(6))]
             [0, 1, 2, 3, 3, 3]
             sage: t = o.map(double)
-            sage: [x for (x,i) in izip(t, range(6))]
+            sage: [x for (x,i) in zip(t, range(6))]
             [0, 2, 4, 6, 6, 6]
         """
         return Stream((f(x) for x in self))

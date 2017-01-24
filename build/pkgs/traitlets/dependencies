@@ -1,4 +1,4 @@
-$(PYTHON) ipython_genutils decorator
+$(PYTHON) ipython_genutils decorator | pip
 
 ----------
 All lines of this file are ignored except the first.

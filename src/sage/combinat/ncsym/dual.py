@@ -11,6 +11,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
@@ -372,7 +373,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
         def _set_par_to_par(self, A):
             r"""
-            Return the the shape of ``A`` if ``A`` is the canonical standard
+            Return the shape of ``A`` if ``A`` is the canonical standard
             set partition `A_1 | A_2 | \cdots | A_k` where `|` is the pipe
             operation (see
             :meth:~sage.combinat.set_partition.SetPartition.pipe()` )
@@ -413,7 +414,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             cur = 1
             prev_len = 0
             for p in A:
-                if prev_len > len(p) or list(p) != range(cur, cur+len(p)):
+                if prev_len > len(p) or list(p) != list(range(cur, cur+len(p))):
                     return None
                 prev_len = len(p)
                 cur += len(p)

@@ -20,6 +20,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from copy import copy
 from sage.misc.all import cached_function
@@ -73,7 +74,7 @@ def is_mutation_finite(M, nr_of_checks=None):
         nr_of_checks = 1000 * n
     k = 0
     path = []
-    for i in xrange(nr_of_checks):
+    for i in range(nr_of_checks):
         # this test is done to avoid mutating back in the same direction
         k_test = k
         while k_test == k:
@@ -1436,7 +1437,7 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
         M_const = _dig6_to_matrix( dig6 )
         nz = [ (i,j) for i,j in M_const.nonzero_positions() if i > j ]
         # performing k tests on the matrix M_const
-        for i in xrange(k):
+        for i in range(k):
             M = copy( M_const )
             # every pair M[i,j],M[j,i] is possibly changed
             # while the property of being skew-symmetrizable is kept
@@ -1468,7 +1469,7 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
             mt = _connected_mutation_type( dg )
             mut = -1
             # we perform nr_mut many mutations
-            for i in xrange(nr_mut):
+            for i in range(nr_mut):
                 # while making sure that we do not mutate back
                 mut_tmp = mut
                 while mut == mut_tmp:

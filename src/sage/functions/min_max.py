@@ -206,7 +206,7 @@ class MaxSymbolic(MinMax_base):
             5
             sage: max_symbolic(5,3)
             5
-            sage: u = max_symbolic(*(range(10)+[x])); u
+            sage: u = max_symbolic(*(list(range(10))+[x])); u
             max(x, 9)
             sage: u.subs(x=-1)
             9
@@ -295,7 +295,7 @@ class MinSymbolic(MinMax_base):
             3
             sage: min_symbolic(5,3)
             3
-            sage: u = min_symbolic(*(range(10)+[x])); u
+            sage: u = min_symbolic(*(list(range(10))+[x])); u
             min(x, 0)
             sage: u.subs(x=-1)
             -1

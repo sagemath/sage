@@ -93,11 +93,12 @@ well-defined::
     sage: unsigned_oo/0
     Traceback (most recent call last):
     ...
-    ValueError: unsigned oo times smaller number not defined
+    ValueError: quotient of number < oo by number < oo not defined
 
-What happened above is that 0 is canonically coerced to "a number
-less than infinity" in the unsigned infinity ring, and the quotient
-is then not well-defined.
+What happened above is that 0 is canonically coerced to "A number less
+than infinity" in the unsigned infinity ring. Next, Sage tries to divide
+by multiplying with its inverse. Finally, this inverse is not
+well-defined.
 
 ::
 
@@ -224,7 +225,7 @@ from sage.misc.fast_methods import Singleton
 import sage.rings.integer
 import sage.rings.rational
 
-from sage.rings.integer_ring import ZZ
+import sage.rings.integer_ring
 
 _obj = {}
 class _uniq(object):
@@ -286,6 +287,8 @@ class AnInfinity(object):
             - infinity
             sage: [x._fricas_init_() for x in [unsigned_infinity, oo, -oo]]   # optional - fricas
             ['%infinity', '%plusInfinity', '%minusInfinity']
+            sage: [fricas(x) for x in [unsigned_infinity, oo, -oo]]   # optional - fricas
+            [infinity,  + infinity, - infinity]
         """
         if self._sign_char == '':
             return r"%infinity"
@@ -836,7 +839,7 @@ class LessThanInfinity(_uniq, RingElement):
             0
         """
         if isinstance(other, UnsignedInfinity):
-            return ZZ(0)
+            return sage.rings.integer_ring.ZZ(0)
         raise ValueError("quotient of number < oo by number < oo not defined")
 
     def __cmp__(self, other):
@@ -1280,6 +1283,20 @@ class FiniteNumber(RingElement):
             Traceback (most recent call last):
             ...
             SignError: cannot add positive finite value to negative finite value
+
+        Subtraction is implemented by adding the negative::
+
+            sage: P = InfinityRing
+            sage: 4 - oo # indirect doctest
+            -Infinity
+            sage: 5 - -oo
+            +Infinity
+            sage: P(44) - P(4)
+            Traceback (most recent call last):
+            ...
+            SignError: cannot add positive finite value to negative finite value
+            sage: P(44) - P(-1)
+            A positive finite number
         """
         if isinstance(other, InfinityElement):
             return other
@@ -1312,7 +1329,7 @@ class FiniteNumber(RingElement):
         if other.is_zero():
             if isinstance(self, InfinityElement):
                 raise SignError("cannot multiply infinity by zero")
-            return ZZ(0)
+            return sage.rings.integer_ring.ZZ(0)
         if self.value < 0:
             if isinstance(other, InfinityElement):
                 return -other
@@ -1324,7 +1341,7 @@ class FiniteNumber(RingElement):
         if self.value == 0:
             if isinstance(other, InfinityElement):
                 raise SignError("cannot multiply infinity by zero")
-            return ZZ(0)
+            return sage.rings.integer_ring.ZZ(0)
 
     def _div_(self, other):
         """
@@ -1341,24 +1358,6 @@ class FiniteNumber(RingElement):
             A negative finite number
         """
         return self * ~other
-
-    def _sub_(self, other):
-        """
-        EXAMPLES::
-
-            sage: P = InfinityRing
-            sage: 4 - oo # indirect doctest
-            -Infinity
-            sage: 5 - -oo
-            +Infinity
-            sage: P(44) - P(4)
-            Traceback (most recent call last):
-            ...
-            SignError: cannot add positive finite value to negative finite value
-            sage: P(44) - P(-1)
-            A positive finite number
-        """
-        return self._add_(-other)
 
     def __invert__(self):
         """

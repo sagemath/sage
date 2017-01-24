@@ -33,13 +33,6 @@ CUR=`pwd`
 
 cd src/
 
-# Apply patches:
-echo "Applying patches (if any)..."
-for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
-    check_error "Patch '$patch' failed to apply."
-done
-
 # Use newer version of config.guess and config.sub (see Trac #19734)
 cp "$SAGE_ROOT"/config/config.* .
 
@@ -87,7 +80,7 @@ if [[ "$SAGE_SPKG_INSTALL_DOCS" = yes ]] ; then
 
     # The Maxima HTML docs are already built, we just need to copy
     # them to the sage installation.
-    MAXIMA_DOCS=$SAGE_ROOT/local/share/doc/maxima
+    MAXIMA_DOCS=$SAGE_SHARE/doc/maxima
     MAXIMA_FIGURES=$MAXIMA_DOCS/figures
 
     mkdir -p $MAXIMA_FIGURES

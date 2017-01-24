@@ -288,7 +288,7 @@ def edit_devel(self, filename, linenum):
 
     This hook calls the default implementation, but changes the filename for
     files that appear to be from the sage library: if the filename begins with
-    'SAGE_ROOT/local/lib/python.../site-packages', it replaces this by
+    'SAGE_LOCAL/lib/python.../site-packages', it replaces this by
     'SAGE_ROOT/src'.
 
     EXAMPLES::
@@ -298,7 +298,7 @@ def edit_devel(self, filename, linenum):
 
     The above should open your favorite editor (as stored in the environment
     variable :envvar:`EDITOR`) with the file in which gcd is defined, and when your
-    editor supports it, also at the line in wich gcd is defined.
+    editor supports it, also at the line in which gcd is defined.
     """
     import IPython.core.hooks
     runpathpattern = '^'+sage.env.SAGE_LIB

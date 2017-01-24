@@ -38,6 +38,7 @@ from sage.finance.time_series cimport TimeSeries
 from sage.matrix.matrix import is_Matrix
 from sage.matrix.all import matrix
 from sage.misc.randstate cimport current_randstate, randstate
+from cpython.object cimport PyObject_RichCompare
 
 from util cimport HMM_Util
 
@@ -359,7 +360,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return unpickle_discrete_hmm_v1, \
                (self.A, self.B, self.pi, self.n_out, self._emission_symbols, self._emission_symbols_dict)
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         EXAMPLES::
 
@@ -375,9 +376,9 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             False
         """
         if not isinstance(other, DiscreteHiddenMarkovModel):
-            raise ValueError
-        return cmp(self.__reduce__()[1], other.__reduce__()[1])
-
+            return NotImplemented
+        return PyObject_RichCompare(self.__reduce__()[1],
+                                    other.__reduce__()[1], op)
 
     def emission_matrix(self):
         """
@@ -1321,20 +1322,31 @@ def unpickle_discrete_hmm_v0(A, B, pi, emission_symbols, name):
     return DiscreteHiddenMarkovModel(A,B,pi,emission_symbols,normalize=False)
 
 def unpickle_discrete_hmm_v1(A, B, pi, n_out, emission_symbols, emission_symbols_dict):
-    """
+    r"""
+    Return a :class:`DiscreteHiddenMarkovModel`, restored from the arguments.
+
+    This function is used internally for unpickling.
+
     TESTS::
 
         sage: m = hmm.DiscreteHiddenMarkovModel([[0.4,0.6],[0.1,0.9]], [[0.0,1.0],[0.5,0.5]], [1,0],['a','b'])
-        sage: loads(dumps(m)) == m   # indirect test
+        sage: m2 = loads(dumps(m)) # indirect doctest
+        sage: m2 == m
+        True
+
+    Test that :trac:`15711` has been resolved::
+
+        sage: str(m2) == str(m)
+        True
+        sage: m2.log_likelihood('baa'*2) == m.log_likelihood('baa'*2)
         True
     """
     cdef DiscreteHiddenMarkovModel m = DiscreteHiddenMarkovModel.__new__(DiscreteHiddenMarkovModel)
     m.A = A
     m.B = B
     m.pi = pi
+    m.N = len(pi)
     m.n_out = n_out
     m._emission_symbols = emission_symbols
     m._emission_symbols_dict = emission_symbols_dict
     return m
-
-

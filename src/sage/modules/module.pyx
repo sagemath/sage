@@ -1,11 +1,6 @@
 """
 Abstract base class for modules
 
-Two classes for modules are defined here: :class:`.Module_old` and
-:class:`.Module`. The former is a legacy class which should not be used for new
-code anymore as it does not conform to the coercion model. Eventually all
-occurences shall be ported to :class:`.Module`.
-
 AUTHORS:
 
 - William Stein: initial version
@@ -67,25 +62,7 @@ A minimal example of a module::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.parent_gens cimport ParentWithAdditiveAbelianGens
 from sage.structure.parent cimport Parent
-
-cdef class Module_old(sage.structure.parent_gens.ParentWithAdditiveAbelianGens):
-    """
-    Generic module class.
-    """
-    def __init__(self, *args, **kwds):
-        """
-        TESTS::
-
-            sage: sage.modules.module.Module_old(ZZ)
-            doctest:...: DeprecationWarning: the class Module_old is superseded by Module.
-            See http://trac.sagemath.org/17543 for details.
-            <type 'sage.modules.module.Module_old'>
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(17543, "the class Module_old is superseded by Module.")
-        ParentWithAdditiveAbelianGens.__init__(self, *args, **kwds)
 
 
 cdef class Module(sage.structure.parent.Parent):
@@ -297,7 +274,7 @@ def is_Module(x):
         False
 
     """
-    return isinstance(x, Module) or isinstance(x, Module_old)
+    return isinstance(x, Module)
 
 def is_VectorSpace(x):
     """

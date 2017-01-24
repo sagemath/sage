@@ -1,5 +1,5 @@
 r"""
-Base classes for 3D Graphics objects and plotting
+Base Classes for 3D Graphics Objects and Plotting
 
 AUTHORS:
 
@@ -8,6 +8,8 @@ AUTHORS:
 - Robert Bradshaw (2007-08): Cythonization, much optimization
 
 - William Stein (2008)
+
+- Paul Masson (2016): Three.js support 
 
 .. TODO::
 
@@ -127,12 +129,13 @@ cdef class Graphics3d(SageObject):
         can_view_jmol = (types.OutputSceneJmol in display_manager.supported_output())
         can_view_canvas3d  = (types.OutputSceneCanvas3d in display_manager.supported_output())
         can_view_wavefront = (types.OutputSceneWavefront in display_manager.supported_output())
+        can_view_threejs = (types.OutputSceneThreejs in display_manager.supported_output())
         opts = self._process_viewing_options(kwds)
         viewer = opts.get('viewer', None)
         # make sure viewer is one of the supported options
-        if viewer not in [None, 'jmol', 'tachyon', 'canvas3d', 'wavefront']:
+        if viewer not in [None, 'jmol', 'tachyon', 'canvas3d', 'wavefront', 'threejs']:
             import warnings
-            warnings.warn('viewer={0} is not supported'.format(viewer))
+            warnings.warn('viewer={} is not supported'.format(viewer))
             viewer = None
         # select suitable default
         if viewer is None:
@@ -140,6 +143,7 @@ cdef class Graphics3d(SageObject):
         # fall back to 2d image if necessary
         if viewer == 'canvas3d' and not can_view_canvas3d:   viewer = 'jmol'
         if viewer == 'wavefront' and not can_view_wavefront: viewer = 'jmol'
+        if viewer == 'threejs' and not can_view_threejs:     viewer = 'jmol'
         if viewer == 'jmol' and not can_view_jmol:           viewer = 'tachyon'
         ### Second, return the corresponding graphics file
         if viewer == 'jmol':
@@ -157,6 +161,8 @@ cdef class Graphics3d(SageObject):
             return self._rich_repr_canvas3d(**opts)
         elif viewer == 'wavefront':
             return self._rich_repr_wavefront(**opts)
+        elif viewer == 'threejs':
+            return self._rich_repr_threejs(**opts)
         else:
             assert False   # unreachable
 
@@ -323,7 +329,7 @@ cdef class Graphics3d(SageObject):
             sage: out
             OutputSceneCanvas3d container
             sage: out.canvas3d.get()
-            "[{vertices:[{x:0,y:0,z:-1},...,color:'#6666ff'}]"
+            "[{vertices:[{x:0,y:0,z:-1},..., color:'#6666ff', opacity:1}]"
         """
         opts = self._process_viewing_options(kwds)
         aspect_ratio = opts['aspect_ratio'] # this necessarily has a value now
@@ -336,6 +342,87 @@ cdef class Graphics3d(SageObject):
         canvas3d = '[' + ','.join(data) + ']'
         from sage.repl.rich_output.output_catalog import OutputSceneCanvas3d
         return OutputSceneCanvas3d(canvas3d)
+
+    def _rich_repr_threejs(self, **kwds):
+        r"""
+        Rich Representation as Three.js Scene
+
+        INPUT:
+
+        Optional keyword arguments.
+
+        OUTPUT:
+
+        Instance of
+        :class:`sage.repl.rich_output.output_graphics3d.OutputSceneThreejs`.
+
+        EXAMPLES::
+
+            sage: sphere()._rich_repr_threejs()
+            OutputSceneThreejs container
+        """
+        options = {}
+        options['aspect_ratio'] = [float(i) for i in kwds.get('aspect_ratio', [1,1,1])]
+        options['axes'] = kwds.get('axes', False)
+        options['axes_labels'] = kwds.get('axes_labels', ['x','y','z'])
+        options['decimals'] = int(kwds.get('decimals', 2))
+        options['frame'] = kwds.get('frame', True)
+
+        if not options['frame']:
+            options['axes_labels'] = False
+
+        lights = "[{x:0, y:0, z:10}, {x:0, y:0, z:-10}]"
+
+        b = self.bounding_box()
+        bounds = "[{{x:{}, y:{}, z:{}}}, {{x:{}, y:{}, z:{}}}]".format(
+                 b[0][0], b[0][1], b[0][2], b[1][0], b[1][1], b[1][2])
+
+        import json
+        points, lines, texts = [], [], []
+        if not hasattr(self, 'all'):
+            self += Graphics3d()
+        for p in self.flatten().all:
+            if hasattr(p, 'loc'):
+                color = p._extra_kwds.get('color', 'blue')
+                opacity = p._extra_kwds.get('opacity', 1)
+                points.append("{{point:{}, size:{}, color:'{}', opacity:{}}}".format(
+                              json.dumps(p.loc), p.size, color, opacity))
+            if hasattr(p, 'points'):
+                color = p._extra_kwds.get('color', 'blue')
+                opacity = p._extra_kwds.get('opacity', 1)
+                thickness = p._extra_kwds.get('thickness', 1)
+                lines.append("{{points:{}, color:'{}', opacity:{}, linewidth:{}}}".format(
+                             json.dumps(p.points), color, opacity, thickness))
+            if hasattr(p, '_trans'):
+                if hasattr(p.all[0], 'string'):
+                    m = p.get_transformation().get_matrix()
+                    texts.append("{{text:'{}', x:{}, y:{}, z:{}}}".format(
+                                  p.all[0].string, m[0,3], m[1,3], m[2,3]))
+
+        points = '[' + ','.join(points) + ']'
+        lines = '[' + ','.join(lines) + ']'
+        texts = '[' + ','.join(texts) + ']'
+
+        surfaces = self.json_repr(self.default_render_params())
+        surfaces = flatten_list(surfaces)
+        surfaces = '[' + ','.join(surfaces) + ']'
+
+        from sage.env import SAGE_EXTCODE
+        filename = os.path.join(SAGE_EXTCODE, 'threejs', 'threejs_template.html')
+        f = open(filename, 'r')
+        html = f.read()
+        f.close()
+
+        html = html.replace('SAGE_OPTIONS', json.dumps(options))
+        html = html.replace('SAGE_LIGHTS', lights)
+        html = html.replace('SAGE_BOUNDS', bounds)
+        html = html.replace('SAGE_TEXTS', str(texts))
+        html = html.replace('SAGE_POINTS', str(points))
+        html = html.replace('SAGE_LINES', str(lines))
+        html = html.replace('SAGE_SURFACES', str(surfaces))
+
+        from sage.repl.rich_output.output_catalog import OutputSceneThreejs
+        return OutputSceneThreejs(html);
 
     def __str__(self):
         """
@@ -1294,8 +1381,11 @@ end_scene""" % (render_params.antialiasing,
 
            * 'tachyon': Ray tracer generates a static PNG image
 
-           * 'canvas3d': Web-based 3D viewer powered by JavaScript and
-             <canvas> (notebook only)
+           * 'canvas3d': Web-based 3D viewer using JavaScript
+             and a canvas renderer (Sage notebook only)
+
+           * 'threejs': Web-based 3D viewer using JavaScript
+             and a WebGL renderer
 
         -  ``verbosity`` -- display information about rendering
            the figure
@@ -1456,7 +1546,7 @@ end_scene""" % (render_params.antialiasing,
         filename. This can be either:
 
         - an image file (of type: PNG, BMP, GIF, PPM, or TIFF) rendered
-          using Tachyon,
+          using Jmol (default) or Tachyon,
 
         - a Sage object file (of type ``.sobj``) that you can load back later
           (a pickle),
@@ -1471,12 +1561,12 @@ end_scene""" % (render_params.antialiasing,
 
         - ``filename`` -- string. Where to save the image or object.
 
-        - ``**kwds`` -- When specifying an image file to be rendered by Tachyon,
-          any of the viewing options accepted by show() are valid as keyword
-          arguments to this function and they will behave in the same way.
-          Accepted keywords include: ``viewer``, ``verbosity``, ``figsize``,
-          ``aspect_ratio``, ``frame_aspect_ratio``, ``zoom``, ``frame``, and
-          ``axes``. Default values are provided.
+        - ``**kwds`` -- When specifying an image file to be rendered by Tachyon
+          or Jmol, any of the viewing options accepted by show() are valid as
+          keyword arguments to this function and they will behave in the same
+          way. Accepted keywords include: ``viewer``, ``verbosity``,
+          ``figsize``, ``aspect_ratio``, ``frame_aspect_ratio``, ``zoom``,
+          ``frame``, and ``axes``. Default values are provided.
 
         EXAMPLES::
 
@@ -1489,15 +1579,15 @@ end_scene""" % (render_params.antialiasing,
 
             sage: G.save(f, zoom=2, figsize=[5, 10])
 
-        But some extra parameters don't make sense (like ``viewer``, since
-        rendering is done using Tachyon only). They will be ignored::
+        Using Tachyon instead of the default viewer (Jmol) to create the
+        image::
 
-            sage: G.save(f, viewer='jmol') # Looks the same
+            sage: G.save(f, viewer='tachyon')
 
         Since Tachyon only outputs PNG images, PIL will be used to convert to
         alternate formats::
 
-            sage: cube().save(tmp_filename(ext='.gif'))
+            sage: cube().save(tmp_filename(ext='.gif'), viewer='tachyon')
 
         Here is how to save in one of the data formats::
 
@@ -1512,7 +1602,7 @@ end_scene""" % (render_params.antialiasing,
             SageObject.save(self, filename)
         elif ext in ['.bmp', '.png', '.gif', '.ppm', '.tiff', '.tif',
                      '.jpg', '.jpeg']:
-            self.save_image(filename)
+            self.save_image(filename, **kwds)
         elif filename.endswith('.spt.zip'):
             scene = self._rich_repr_jmol(**kwds)
             scene.jmol.save(filename)

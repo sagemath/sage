@@ -170,7 +170,7 @@ def rings0():
 
         sage: import sage.rings.tests
         sage: type(sage.rings.tests.rings0())
-        <type 'list'>
+        <... 'list'>
     """
     from sage.all import IntegerRing, RationalField, ZZ, IntegerModRing
     v = [(IntegerRing, 'ring of integers'),
@@ -204,7 +204,7 @@ def rings1():
 
         sage: import sage.rings.tests
         sage: type(sage.rings.tests.rings0())
-        <type 'list'>
+        <... 'list'>
     """
     v = rings0()
     X = random_rings(level=0)

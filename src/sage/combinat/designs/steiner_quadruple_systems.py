@@ -74,6 +74,7 @@ Functions
 ---------
 """
 from __future__ import print_function
+from six.moves import range
 
 from sage.misc.cachefunc import cached_function
 from sage.combinat.designs.incidence_structures import IncidenceStructure
@@ -90,7 +91,7 @@ def two_n(B):
     EXAMPLES::
 
         sage: from sage.combinat.designs.steiner_quadruple_systems import two_n
-        sage: for n in xrange(4, 30):
+        sage: for n in range(4, 30):
         ....:     if (n%6) in [2,4]:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not two_n(sqs).is_t_design(3,2*n,4,1):
@@ -102,15 +103,15 @@ def two_n(B):
 
     # Line 1
     for x,y,z,t in B._blocks:
-        for a in xrange(2):
-            for b in xrange(2):
-                for c in xrange(2):
+        for a in range(2):
+            for b in range(2):
+                for c in range(2):
                     d = (a+b+c)%2
                     Y.append([x+a*n,y+b*n,z+c*n,t+d*n])
 
     # Line 2
-    for j in xrange(n):
-        for jj in xrange(j+1,n):
+    for j in range(n):
+        for jj in range(j+1,n):
             Y.append([j,jj,n+j,n+jj])
 
     return IncidenceStructure(2*n,Y,check=False,copy=False)
@@ -127,7 +128,7 @@ def three_n_minus_two(B):
     EXAMPLES::
 
         sage: from sage.combinat.designs.steiner_quadruple_systems import three_n_minus_two
-        sage: for n in xrange(4, 30):
+        sage: for n in range(4, 30):
         ....:     if (n%6) in [2,4]:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_two(sqs).is_t_design(3,3*n-2,4,1):
@@ -141,31 +142,31 @@ def three_n_minus_two(B):
     for x,y,z,t in B._blocks:
         if t == A:
             # Line 2.
-            for a in xrange(3):
-                for b in xrange(3):
+            for a in range(3):
+                for b in range(3):
                     c = -(a+b)%3
                     Y.append([r(a,x),r(b,y),r(c,z),3*n-3])
 
             # Line 3.
-            Y.extend([[r(i,x),r(i,y),r(i+1,z),r(i+2,z)] for i in xrange(3)])
-            Y.extend([[r(i,x),r(i,z),r(i+1,y),r(i+2,y)] for i in xrange(3)])
-            Y.extend([[r(i,y),r(i,z),r(i+1,x),r(i+2,x)] for i in xrange(3)])
+            Y.extend([[r(i,x),r(i,y),r(i+1,z),r(i+2,z)] for i in range(3)])
+            Y.extend([[r(i,x),r(i,z),r(i+1,y),r(i+2,y)] for i in range(3)])
+            Y.extend([[r(i,y),r(i,z),r(i+1,x),r(i+2,x)] for i in range(3)])
 
         else:
             # Line 1.
-            for a in xrange(3):
-                for b in xrange(3):
-                    for c in xrange(3):
+            for a in range(3):
+                for b in range(3):
+                    for c in range(3):
                         d = -(a+b+c)%3
                         Y.append([r(a,x),r(b,y),r(c,z),r(d,t)])
 
     # Line 4.
-    for j in xrange(n-1):
-        for jj in xrange(j+1,n-1):
-            Y.extend([[r(i,j),r(i,jj),r(i+1,j),r(i+1,jj)] for i in xrange(3)])
+    for j in range(n-1):
+        for jj in range(j+1,n-1):
+            Y.extend([[r(i,j),r(i,jj),r(i+1,j),r(i+1,jj)] for i in range(3)])
 
     # Line 5.
-    for j in xrange(n-1):
+    for j in range(n-1):
         Y.append([r(0,j),r(1,j),r(2,j),3*n-3])
 
     return IncidenceStructure(3*n-2,Y,check=False,copy=False)
@@ -182,7 +183,7 @@ def three_n_minus_eight(B):
     EXAMPLES::
 
         sage: from sage.combinat.designs.steiner_quadruple_systems import three_n_minus_eight
-        sage: for n in xrange(4, 30):
+        sage: for n in range(4, 30):
         ....:     if (n%12) == 2:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_eight(sqs).is_t_design(3,3*n-8,4,1):
@@ -202,30 +203,30 @@ def three_n_minus_eight(B):
 
     # Line 2.
     for s in B._blocks[:-1]:
-        for i in xrange(3):
+        for i in range(3):
             Y.append([r(i,x) if x<= n-5 else x+2*(n-4) for x in s])
 
 
     # Line 3.
-    for a in xrange(4):
-        for aa in xrange(n-4):
-            for aaa in xrange(n-4):
+    for a in range(4):
+        for aa in range(n-4):
+            for aaa in range(n-4):
                 aaaa = -(a+aa+aaa)%(n-4)
                 Y.append([r(0,aa),r(1,aaa), r(2,aaaa),3*(n-4)+a])
 
 
     # Line 4.
     k = (n-14) // 12
-    for i in xrange(3):
-        for b in xrange(n-4):
-            for bb in xrange(n-4):
+    for i in range(3):
+        for b in range(n-4):
+            for bb in range(n-4):
                 bbb = -(b+bb)%(n-4)
-                for d in xrange(2*k+1):
+                for d in range(2*k+1):
                     Y.append([r(i+2,bbb), r(i, b+2*k+1+i*(4*k+2)-d) , r(i, b+2*k+2+i*(4*k+2)+d), r(i+1,bb)])
 
     # Line 5.
-    for i in xrange(3):
-        for alpha in xrange(4*k+2, 12*k+9):
+    for i in range(3):
+        for alpha in range(4*k+2, 12*k+9):
             for ra,sa in P(alpha,6*k+5):
                 for raa,saa in P(alpha,6*k+5):
                     Y.append([r(i,ra),r(i,sa),r(i+1,raa), r(i+1,saa)])
@@ -245,7 +246,7 @@ def three_n_minus_four(B):
     EXAMPLES::
 
         sage: from sage.combinat.designs.steiner_quadruple_systems import three_n_minus_four
-        sage: for n in xrange(4, 30):
+        sage: for n in range(4, 30):
         ....:     if n%12 == 10:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_four(sqs).is_t_design(3,3*n-4,4,1):
@@ -263,34 +264,34 @@ def three_n_minus_four(B):
     # Line 1/2.
     Y = []
     for s in B._blocks:
-        for i in xrange(3):
+        for i in range(3):
             Y.append([r(i,x) if x<= n-3 else x+2*(n-2) for x in s])
 
     # Line 3.
-    for a in xrange(2):
-        for aa in xrange(n-2):
-            for aaa in xrange(n-2):
+    for a in range(2):
+        for aa in range(n-2):
+            for aaa in range(n-2):
                 aaaa= -(a+aa+aaa)%(n-2)
                 Y.append([r(0,aa),r(1,aaa), r(2,aaaa),3*(n-2)+a])
 
     # Line 4.
     k = (n-10) // 12
-    for i in xrange(3):
-        for b in xrange(n-2):
-            for bb in xrange(n-2):
+    for i in range(3):
+        for b in range(n-2):
+            for bb in range(n-2):
                 bbb = -(b+bb)%(n-2)
-                for d in xrange(2*k+1):
+                for d in range(2*k+1):
                     Y.append([r(i+2,bbb), r(i, b+2*k+1+i*(4*k+2)-d) , r(i, b+2*k+2+i*(4*k+2)+d), r(i+1,bb)])
 
     # Line 5.
     from sage.graphs.graph_coloring import round_robin
     one_factorization = round_robin(2*(6*k+4)).edges()
-    color_classes = [[] for j in xrange(2*(6*k+4)-1)]
+    color_classes = [[] for j in range(2*(6*k+4)-1)]
     for u,v,l in one_factorization:
         color_classes[l].append((u,v))
 
-    for i in xrange(3):
-        for alpha in xrange(4*k+2, 12*k+6+1):
+    for i in range(3):
+        for alpha in range(4*k+2, 12*k+6+1):
             for ra,sa in P(alpha, 6*k+4):
                 for raa,saa in P(alpha, 6*k+4):
                     Y.append([r(i,ra),r(i,sa),r(i+1,raa), r(i+1,saa)])
@@ -309,7 +310,7 @@ def four_n_minus_six(B):
     EXAMPLES::
 
         sage: from sage.combinat.designs.steiner_quadruple_systems import four_n_minus_six
-        sage: for n in xrange(4, 20):
+        sage: for n in range(4, 20):
         ....:     if (n%6) in [2,4]:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not four_n_minus_six(sqs).is_t_design(3,4*n-6,4,1):
@@ -323,16 +324,16 @@ def four_n_minus_six(B):
     # Line 1.
     Y = []
     for s in B._blocks:
-        for i in xrange(2):
-            for ii in xrange(2):
+        for i in range(2):
+            for ii in range(2):
                 Y.append([r(i,ii,x) if x<= n-3 else x+3*(n-2) for x in s])
 
     # Line 2/3/4/5
     k = f // 2
-    for l in xrange(2):
-        for eps in xrange(2):
-            for c in xrange(k):
-                for cc in xrange(k):
+    for l in range(2):
+        for eps in range(2):
+            for c in range(k):
+                for cc in range(k):
                     ccc = -(c+cc)%k
                     Y.append([4*(n-2)+l, r(0,0,2*c)  , r(0,1,2*cc-eps)  , r(1,eps,2*ccc+l)  ])
                     Y.append([4*(n-2)+l, r(0,0,2*c+1), r(0,1,2*cc-1-eps), r(1,eps,2*ccc+1-l)])
@@ -340,12 +341,12 @@ def four_n_minus_six(B):
                     Y.append([4*(n-2)+l, r(1,0,2*c+1), r(1,1,2*cc-1-eps), r(0,eps,2*ccc+l)  ])
 
     # Line 6/7
-    for h in xrange(2):
-        for eps in xrange(2):
-            for ccc in xrange(k):
+    for h in range(2):
+        for eps in range(2):
+            for ccc in range(k):
                 assert len(barP(ccc,k)) == k-1
                 for rc,sc in barP(ccc,k):
-                    for c in xrange(k):
+                    for c in range(k):
                         cc = -(c+ccc)%k
                         Y.append([r(h,0,2*c+eps)  , r(h,1,2*cc-eps), r(h+1,0,rc), r(h+1,0,sc)])
                         Y.append([r(h,0,2*c-1+eps), r(h,1,2*cc-eps), r(h+1,1,rc), r(h+1,1,sc)])
@@ -353,19 +354,19 @@ def four_n_minus_six(B):
 
 
     # Line 8/9
-    for h in xrange(2):
-        for eps in xrange(2):
-            for ccc in xrange(k):
+    for h in range(2):
+        for eps in range(2):
+            for ccc in range(k):
                 for rc,sc in barP(k+ccc,k):
-                    for c in xrange(k):
+                    for c in range(k):
                         cc = -(c+ccc)%k
                         Y.append([r(h,0,2*c+eps)  , r(h,1,2*cc-eps), r(h+1,1,rc), r(h+1,1,sc)])
                         Y.append([r(h,0,2*c-1+eps), r(h,1,2*cc-eps), r(h+1,0,rc), r(h+1,0,sc)])
 
 
     # Line 10
-    for h in xrange(2):
-        for alpha in xrange(n-3):
+    for h in range(2):
+        for alpha in range(n-3):
             for ra,sa in P(alpha,k):
                 for raa,saa in P(alpha,k):
                     Y.append([r(h,0,ra),r(h,0,sa),r(h,1,raa),r(h,1,saa)])
@@ -384,7 +385,7 @@ def twelve_n_minus_ten(B):
     EXAMPLES::
 
         sage: from sage.combinat.designs.steiner_quadruple_systems import twelve_n_minus_ten
-        sage: for n in xrange(4, 15):
+        sage: for n in range(4, 15):
         ....:     if (n%6) in [2,4]:
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not twelve_n_minus_ten(sqs).is_t_design(3,12*n-10,4,1):
@@ -398,7 +399,7 @@ def twelve_n_minus_ten(B):
     # Line 1.
     Y = []
     for s in B14._blocks:
-        for i in xrange(n-1):
+        for i in range(n-1):
             Y.append([r(i,x) if x<= 11 else r(n-2,11)+x-11 for x in s])
 
     for s in B._blocks:
@@ -406,35 +407,35 @@ def twelve_n_minus_ten(B):
             u,v,w,B = s
             dd = {0:u,1:v,2:w}
             d = lambda x:dd[x%3]
-            for b in xrange(12):
-                for bb in xrange(12):
+            for b in range(12):
+                for bb in range(12):
                     bbb = -(b+bb)%12
-                    for h in xrange(2):
+                    for h in range(2):
                         # Line 2
                         Y.append([r(n-2,11)+1+h,r(u,b),r(v,bb),r(w,bbb+3*h)])
 
-                    for i in xrange(3):
+                    for i in range(3):
                         # Line 38.3
                         Y.append([r(d(i),b+4+i), r(d(i),b+7+i), r(d(i+1),bb), r(d(i+2),bbb)])
 
-            for j in xrange(12):
-                for eps in xrange(2):
-                    for i in xrange(3):
+            for j in range(12):
+                for eps in range(2):
+                    for i in range(3):
                         # Line 38.4-38.7
                         Y.append([ r(d(i),j), r(d(i+1),j+6*eps  ), r(d(i+2),6*eps-2*j+1), r(d(i+2),6*eps-2*j-1)])
                         Y.append([ r(d(i),j), r(d(i+1),j+6*eps  ), r(d(i+2),6*eps-2*j+2), r(d(i+2),6*eps-2*j-2)])
                         Y.append([ r(d(i),j), r(d(i+1),j+6*eps-3), r(d(i+2),6*eps-2*j+1), r(d(i+2),6*eps-2*j+2)])
                         Y.append([ r(d(i),j), r(d(i+1),j+6*eps+3), r(d(i+2),6*eps-2*j-1), r(d(i+2),6*eps-2*j-2)])
 
-            for j in xrange(6):
-                for i in xrange(3):
-                    for eps in xrange(2):
+            for j in range(6):
+                for i in range(3):
+                    for eps in range(2):
                         # Line 38.8
                         Y.append([ r(d(i),j), r(d(i),j+6), r(d(i+1),j+3*eps), r(d(i+1),j+6+3*eps)])
 
-            for j in xrange(12):
-                for i in xrange(3):
-                    for eps in xrange(4):
+            for j in range(12):
+                for i in range(3):
+                    for eps in range(4):
                         # Line 38.11
                         Y.append([ r(d(i),j), r(d(i),j+1), r(d(i+1),j+3*eps), r(d(i+1),j+3*eps+1)])
                         # Line 38.12
@@ -445,15 +446,15 @@ def twelve_n_minus_ten(B):
             for alpha in [4,5]:
                 for ra,sa in P(alpha,6):
                     for raa,saa in P(alpha,6):
-                        for i in xrange(3):
-                            for ii in xrange(i+1,3):
+                        for i in range(3):
+                            for ii in range(i+1,3):
                                 # Line 38.14
                                 Y.append([ r(d(i),ra), r(d(i),sa), r(d(ii),raa), r(d(ii),saa)])
 
-            for g in xrange(6):
-                for eps in xrange(2):
-                    for i in xrange(3):
-                        for ii in xrange(3):
+            for g in range(6):
+                for eps in range(2):
+                    for i in range(3):
+                        for ii in range(3):
                             if i == ii:
                                 continue
                             # Line 38.9
@@ -463,9 +464,9 @@ def twelve_n_minus_ten(B):
 
         else:
             x,y,z,t = s
-            for a in xrange(12):
-                for aa in xrange(12):
-                    for aaa in xrange(12):
+            for a in range(12):
+                for aa in range(12):
+                    for aaa in range(12):
                         aaaa = -(a+aa+aaa)%12
                         # Line 3
                         Y.append([r(x,a), r(y,aa), r(z,aaa), r(t,aaaa)])
@@ -525,28 +526,28 @@ def P(alpha, m):
         if alpha < m:
             if alpha%2 == 0:
                 b = alpha // 2
-                return [(2*a, (2*a + 2*b + 1)%(2*m)) for a in xrange(m)]
+                return [(2*a, (2*a + 2*b + 1)%(2*m)) for a in range(m)]
             else:
                 b = (alpha-1) // 2
-                return [(2*a, (2*a - 2*b - 1)%(2*m)) for a in xrange(m)]
+                return [(2*a, (2*a - 2*b - 1)%(2*m)) for a in range(m)]
         else:
             y = alpha - m
-            pairs  = [(b,(2*y-b)%(2*m)) for b in xrange(y)]
-            pairs += [(c,(2*m+2*y-c-2)%(2*m)) for c in xrange(2*y+1,m+y-1)]
+            pairs  = [(b,(2*y-b)%(2*m)) for b in range(y)]
+            pairs += [(c,(2*m+2*y-c-2)%(2*m)) for c in range(2*y+1,m+y-1)]
             pairs += [(2*m+int(-1.5-.5*(-1)**y),y),(2*m+int(-1.5+.5*(-1)**y),m+y-1)]
             return pairs
     else:
         if alpha < m-1:
             if alpha % 2 == 0:
                 b = alpha // 2
-                return [(2*a,(2*a+2*b+1)%(2*m)) for a in xrange(m)]
+                return [(2*a,(2*a+2*b+1)%(2*m)) for a in range(m)]
             else:
                 b = (alpha-1) // 2
-                return [(2*a,(2*a-2*b-1)%(2*m)) for a in xrange(m)]
+                return [(2*a,(2*a-2*b-1)%(2*m)) for a in range(m)]
         else:
             y = alpha-m+1
-            pairs  = [(b,2*y-b) for b in xrange(y)]
-            pairs += [(c,2*m+2*y-c) for c in xrange(2*y+1,m+y)]
+            pairs  = [(b,2*y-b) for b in range(y)]
+            pairs += [(c,2*m+2*y-c) for c in range(2*y+1,m+y)]
             pairs += [(y,m+y)]
             return pairs
 
@@ -561,7 +562,7 @@ def _missing_pair(n,l):
         (2, 3)
     """
     l = [x for X in l for x in X]
-    for x in xrange(n):
+    for x in range(n):
         if not x in l:
             break
 
@@ -609,7 +610,7 @@ def barP_system(m):
         # The first (shorter) collections of  pairs, obtained from P by removing
         # pairs. Those are added to 'last', a new list of pairs
         last = []
-        for n in xrange(1, (m-2)//2+1):
+        for n in range(1, (m-2)//2+1):
             pairs.append([p for p in P(2*n,m) if not isequal(p,(2*n,(4*n+1)%(2*m)))])
             last.append((2*n,(4*n+1)%(2*m)))
             pairs.append([p for p in P(2*n-1,m) if not isequal(p,(2*m-2-2*n,2*m-1-4*n))])
@@ -628,7 +629,7 @@ def barP_system(m):
         pairs.append(P(0,m))
         pairs.append(P(m-1,m))
 
-        for alpha in xrange(m+2,2*m-1):
+        for alpha in range(m+2,2*m-1):
             pairs.append(P(alpha,m))
         pairs.append(last)
 
@@ -636,7 +637,7 @@ def barP_system(m):
 
         # Now the points must be relabeled
         relabel = {}
-        for n in xrange(1, (m-2)//2+1):
+        for n in range(1, (m-2)//2+1):
             relabel[2*n] = (4*n)%(2*m)
             relabel[4*n+1] = (4*n+1)%(2*m)
             relabel[2*m-2-2*n] = (4*n-2)%(2*m)
@@ -652,7 +653,7 @@ def barP_system(m):
         # pairs. Those are added to 'last', a new list of pairs
 
         last = []
-        for n in xrange(0, (m-3)//2+1):
+        for n in range(0, (m-3)//2+1):
             pairs.append([p for p in P(2*n,m) if not isequal(p,(2*n,(4*n+1)%(2*m)))])
             last.append((2*n,(4*n+1)%(2*m)))
             pairs.append([p for p in P(2*n+1,m) if not isequal(p,(2*m-2-2*n,2*m-3-4*n))])
@@ -666,7 +667,7 @@ def barP_system(m):
 
         # Pairs of normal length
 
-        for alpha in xrange(m-1,2*m-2):
+        for alpha in range(m-1,2*m-2):
             pairs.append(P(alpha,m))
         pairs.append(last)
 
@@ -674,7 +675,7 @@ def barP_system(m):
 
         # Now the points must be relabeled
         relabel = {}
-        for n in xrange(0, (m-3)//2+1):
+        for n in range(0, (m-3)//2+1):
             relabel[2*n] = (4*n)%(2*m)
             relabel[4*n+1] = (4*n+1)%(2*m)
             relabel[2*m-2-2*n] = (4*n+2)%(2*m)
@@ -723,7 +724,7 @@ def steiner_quadruple_system(n, check = False):
 
     TESTS::
 
-        sage: for n in xrange(4, 100):                                      # long time
+        sage: for n in range(4, 100):                                      # long time
         ....:     if (n%6) in [2,4]:                                        # long time
         ....:         sqs = designs.steiner_quadruple_system(n, check=True) # long time
     """

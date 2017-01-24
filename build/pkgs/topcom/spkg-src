@@ -8,7 +8,7 @@ shopt -s extglob
 
 TOPCOM_VERSION=0.17.7
 
-if [ -z "$TOPCOM_KEEP" ] ; then 
+if [ -z "$TOPCOM_KEEP" ] ; then
     # Remove old sources and download new
     rm -rf src
     tar xzf <( curl http://www.rambau.wm.uni-bayreuth.de/Software/TOPCOM-$TOPCOM_VERSION.tar.gz )

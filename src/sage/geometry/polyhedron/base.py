@@ -329,7 +329,7 @@ class Polyhedron_base(Element):
         consistent state any more and neither the polyhedron nor its
         H/V-representation objects may be used any more.
 
-        .. seealso:: :meth:`~sage.geometry.polyhedron.parent.Polyhedra_base.recycle`
+        .. SEEALSO:: :meth:`~sage.geometry.polyhedron.parent.Polyhedra_base.recycle`
 
         EXAMPLES::
 
@@ -338,14 +338,14 @@ class Polyhedron_base(Element):
 
             sage: vertices = [(0,0,0,0),(1,0,0,0),(0,1,0,0),(1,1,0,0),(0,0,1,0),(0,0,0,1)]
             sage: def loop_polyhedra():
-            ....:     for i in range(0,100):
+            ....:     for i in range(100):
             ....:         p = Polyhedron(vertices)
 
             sage: timeit('loop_polyhedra()')                   # not tested - random
             5 loops, best of 3: 79.5 ms per loop
 
             sage: def loop_polyhedra_with_recycling():
-            ....:     for i in range(0,100):
+            ....:     for i in range(100):
             ....:         p = Polyhedron(vertices)
             ....:         p._delete()
 
@@ -442,7 +442,7 @@ class Polyhedron_base(Element):
     def _is_subpolyhedron(self, other):
         """
         Test whether ``self`` is a (not necessarily strict)
-        sub-polyhdedron of ``other``.
+        sub-polyhedron of ``other``.
 
         INPUT:
 
@@ -1428,8 +1428,8 @@ class Polyhedron_base(Element):
             sage: triangle.vertices_list()
             [[0, 1], [1, 0], [1, 1]]
             sage: a_simplex = Polyhedron(ieqs = [
-            ...            [0,1,0,0,0],[0,0,1,0,0],[0,0,0,1,0],[0,0,0,0,1]
-            ...        ], eqns = [[1,-1,-1,-1,-1]])
+            ....:          [0,1,0,0,0],[0,0,1,0,0],[0,0,0,1,0],[0,0,0,0,1]
+            ....:      ], eqns = [[1,-1,-1,-1,-1]])
             sage: a_simplex.vertices_list()
             [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             sage: a_simplex.vertices_list() == [list(v) for v in a_simplex.vertex_generator()]
@@ -1482,8 +1482,8 @@ class Polyhedron_base(Element):
             sage: triangle.vertices()
             (A vertex at (0, 1), A vertex at (1, 0), A vertex at (1, 1))
             sage: a_simplex = Polyhedron(ieqs = [
-            ...            [0,1,0,0,0],[0,0,1,0,0],[0,0,0,1,0],[0,0,0,0,1]
-            ...        ], eqns = [[1,-1,-1,-1,-1]])
+            ....:          [0,1,0,0,0],[0,0,1,0,0],[0,0,0,1,0],[0,0,0,0,1]
+            ....:      ], eqns = [[1,-1,-1,-1,-1]])
             sage: a_simplex.vertices()
             (A vertex at (1, 0, 0, 0), A vertex at (0, 1, 0, 0),
              A vertex at (0, 0, 1, 0), A vertex at (0, 0, 0, 1))
@@ -1525,7 +1525,7 @@ class Polyhedron_base(Element):
             base_ring = self.base_ring()
         m = matrix(base_ring, self.ambient_dim(), self.n_vertices())
         for i,v in enumerate(self.vertices()):
-            for j in range(0,self.ambient_dim()):
+            for j in range(self.ambient_dim()):
                 m[j,i] = v[j]
         return m
 
@@ -2192,7 +2192,7 @@ class Polyhedron_base(Element):
         A :class:`hyperplane arrangement
         <sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement>`
         consisting of the hyperplanes defined by the
-        :meth:`~sage.geometric.hyperplane_arragement.arrangement.HyperplaneArrangementElement.Hrepresentation`.
+        :meth:`~sage.geometric.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.Hrepresentation`.
         If the polytope is full-dimensional, this is the hyperplane
         arrangement spanned by the facets of the polyhedron.
 
@@ -2296,7 +2296,7 @@ class Polyhedron_base(Element):
 
             sage: cube = polytopes.hypercube(3)
             sage: triangulation = cube.triangulate(
-            ...      engine='internal') # to make doctest independent of TOPCOM
+            ....:    engine='internal') # to make doctest independent of TOPCOM
             sage: triangulation
             (<0,1,2,7>, <0,1,4,7>, <0,2,4,7>, <1,2,3,7>, <1,4,5,7>, <2,4,6,7>)
             sage: simplex_indices = triangulation[0]; simplex_indices
@@ -2324,7 +2324,7 @@ class Polyhedron_base(Element):
         Minkowski addition of two subsets of a vector space is defined
         as
 
-        .. math::
+        .. MATH::
 
             X \oplus Y =
             \cup_{y\in Y} (X+y) =
@@ -2381,7 +2381,7 @@ class Polyhedron_base(Element):
         Minkowski addition (see :meth:`Minkowski_sum`) or as
         set-theoretic intersection via
 
-        .. math::
+        .. MATH::
 
             X \ominus Y =
             (X^c \oplus Y)^c =
@@ -3127,7 +3127,7 @@ class Polyhedron_base(Element):
             sage: a_face.dim()
             1
             sage: set(a_face.ambient_Vrepresentation()) == \
-            ...   set([square.Vrepresentation(0), square.Vrepresentation(2)])
+            ....: set([square.Vrepresentation(0), square.Vrepresentation(2)])
             True
             sage: a_face.ambient_Vrepresentation()
             (A vertex at (-1, -1), A vertex at (1, -1))
@@ -3152,7 +3152,7 @@ class Polyhedron_base(Element):
         TESTS::
 
             sage: c5_20 = Polyhedron(vertices = [[i,i^2,i^3,i^4,i^5]
-            ...       for i in range(1,21)])
+            ....:     for i in range(1,21)])
             sage: c5_20_fl = c5_20.face_lattice() # long time
             sage: [len(x) for x in c5_20_fl.level_sets()] # long time
             [1, 20, 190, 580, 680, 272, 1]
@@ -3181,32 +3181,21 @@ class Polyhedron_base(Element):
             sage: Polyhedron(lines=[(1,0),(0,1)], vertices=[(0,0)]).face_lattice().level_sets()
             [[<>], [<0,1,2>]]
             sage: Polyhedron(lines=[(1,0)], rays=[(0,1)], vertices=[(0,0)])\
-            ...       .face_lattice().level_sets()
+            ....:     .face_lattice().level_sets()
             [[<>], [<0,1>], [<0,1,2>]]
             sage: Polyhedron(vertices=[(0,)], lines=[(1,)]).face_lattice().level_sets()
             [[<>], [<0,1>]]
             sage: Polyhedron(lines=[(1,0)], vertices=[(0,0)]).face_lattice().level_sets()
             [[<>], [<0,1>]]
-
-        REFERENCES:
-
-        ..  [KP2002]
-
-            Volker Kaibel and Marc E. Pfetsch, "Computing the Face
-            Lattice of a Polytope from its Vertex-Facet Incidences",
-            Computational Geometry: Theory and Applications, Volume
-            23, Issue 3 (November 2002), 281-290.  Available at
-            http://portal.acm.org/citation.cfm?id=763203 and free of
-            charge at http://arxiv.org/abs/math/0106043
         """
         coatom_to_Hindex = [ h.index() for h in self.inequality_generator() ]
         Hindex_to_coatom = [None] * self.n_Hrepresentation()
-        for i in range(0,len(coatom_to_Hindex)):
+        for i in range(len(coatom_to_Hindex)):
             Hindex_to_coatom[ coatom_to_Hindex[i] ] = i
 
         atom_to_Vindex = [ v.index() for v in self.Vrep_generator() if not v.is_line() ]
         Vindex_to_atom = [None] * self.n_Vrepresentation()
-        for i in range(0,len(atom_to_Vindex)):
+        for i in range(len(atom_to_Vindex)):
                         Vindex_to_atom[ atom_to_Vindex[i] ] = i
 
         atoms_incidences   = [ tuple([ Hindex_to_coatom[h.index()]
@@ -3328,7 +3317,7 @@ class Polyhedron_base(Element):
         EXAMPLES::
 
             sage: p = Polyhedron(vertices=[[1, 2, 3], [1, 3, 2],
-            ...       [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1], [0, 0, 0]])
+            ....:     [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1], [0, 0, 0]])
             sage: p.f_vector()
             (1, 7, 12, 7, 1)
         """
@@ -4175,7 +4164,7 @@ class Polyhedron_base(Element):
             raise ValueError('Empty polytope is not allowed')
         if not self.is_compact():
             raise ValueError('Only polytopes (compact polyhedra) are allowed.')
-        for i in range(0,self.ambient_dim()):
+        for i in range(self.ambient_dim()):
             coords = [ v[i] for v in self.vertex_generator() ]
             max_coord = max(coords)
             min_coord = min(coords)
@@ -4227,6 +4216,17 @@ class Polyhedron_base(Element):
             Traceback (most recent call last):
             ...
             RuntimeError: LattE integrale failed (exit code 1) to execute count --cdd /dev/stdin, see error message above
+
+        TESTS:
+
+        We check that :trac:`21491` is fixed::
+
+            sage: P = Polyhedron(ieqs=[], eqns=[[-10,0,1],[-10,1,0]])
+            sage: P.integral_points_count() # optional - latte_int
+            1
+            sage: P = Polyhedron(ieqs=[], eqns=[[-11,0,2],[-10,1,0]])
+            sage: P.integral_points_count() # optional - latte_int
+            0
         """
         if self.is_empty():
             return 0
@@ -4258,7 +4258,13 @@ class Polyhedron_base(Element):
                 err = ":\n" + err
             raise RuntimeError("LattE integrale failed (exit code {}) to execute {}".format(ret_code, ' '.join(args)) + err.strip())
 
-        return Integer(ans.splitlines()[-1])
+        try:
+            return Integer(ans.splitlines()[-1])
+        except IndexError:
+            # opening a file is slow (30e-6s), so we read the file
+            # numOfLatticePoints only in case of a IndexError above
+            with open(SAGE_TMP+'/numOfLatticePoints', 'r') as f:
+                return Integer(f.read())
 
     def integral_points(self, threshold=100000):
         r"""
@@ -4313,7 +4319,7 @@ class Polyhedron_base(Element):
         Finally, the 3-d reflexive polytope number 4078::
 
             sage: v = [(1,0,0), (0,1,0), (0,0,1), (0,0,-1), (0,-2,1),
-            ...        (-1,2,-1), (-1,2,-2), (-1,1,-2), (-1,-1,2), (-1,-3,2)]
+            ....:      (-1,2,-1), (-1,2,-2), (-1,1,-2), (-1,-1,2), (-1,-3,2)]
             sage: P = Polyhedron(v)
             sage: pts1 = P.integral_points()                     # Sage's own code
             sage: all(P.contains(p) for p in pts1)
@@ -4367,7 +4373,7 @@ class Polyhedron_base(Element):
                 (self.is_simplex() and box_points<1000) or \
                 box_points<threshold:
             from sage.geometry.integral_points import rectangular_box_points
-            return rectangular_box_points(box_min, box_max, self)
+            return rectangular_box_points(list(box_min), list(box_max), self)
 
         # for more complicate polytopes, triangulate & use smith normal form
         from sage.geometry.integral_points import simplex_points
@@ -4526,12 +4532,9 @@ class Polyhedron_base(Element):
 
         - For ``output="matrixlist"``: a list of matrices.
 
-        REFERENCES:
+        REFERENCES: 
 
-        ..  [BSS]
-            David Bremner, Mathieu Dutour Sikiric, Achill Schuermann:
-            Polyhedral representation conversion up to symmetries.
-            http://arxiv.org/abs/math/0702239
+        - [BSS2009]_
 
         EXAMPLES::
 
@@ -4739,7 +4742,7 @@ class Polyhedron_base(Element):
 
         # Construct the graph.
         G = Graph()
-        for i in range(0, len(V)):
+        for i in range(len(V)):
             for j in range(i+1, len(V)):
                 c_ij = rational_approximation(V[i] * Qplus * V[j])
                 G.add_edge(index0+i, index0+j, edge_label(i, j, c_ij))

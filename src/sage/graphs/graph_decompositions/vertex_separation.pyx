@@ -748,7 +748,7 @@ def vertex_separation_exp(G, verbose = False):
     memset(neighborhoods, <uint8_t> -1, mem)
 
     cdef int i,j , k
-    for k in range(g.n):
+    for k in xrange(g.n):
         if verbose:
             print("Looking for a strategy of cost", str(k))
 
@@ -791,7 +791,7 @@ cdef inline int exists(FastDigraph g, uint8_t * neighborhoods, int current, int 
     cdef int next_set
 
 
-    for i in range(g.n):
+    for i in xrange(g.n):
         if (current >> i)&1:
             continue
 
@@ -822,7 +822,7 @@ cdef list find_order(FastDigraph g, uint8_t * neighborhoods, int cost):
     while n:
         # We look for n vertices
 
-        for i in range(g.n):
+        for i in xrange(g.n):
             if (current >> i)&1:
                 continue
 
@@ -1090,11 +1090,11 @@ def vertex_separation_MILP(G, integrality = False, solver = None, verbosity = 0)
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: for i in range(10):
-        ...       G = digraphs.RandomDirectedGNP(10, 0.2)
-        ...       ve, le = vertex_separation.vertex_separation(G)
-        ...       vm, lm = vertex_separation.vertex_separation_MILP(G)
-        ...       if ve != vm:
-        ...          print("The solution is not optimal!")
+        ....:     G = digraphs.RandomDirectedGNP(10, 0.2)
+        ....:     ve, le = vertex_separation.vertex_separation(G)
+        ....:     vm, lm = vertex_separation.vertex_separation_MILP(G)
+        ....:     if ve != vm:
+        ....:        print("The solution is not optimal!")
 
     Comparison with different values of the integrality parameter::
 
@@ -1135,7 +1135,7 @@ def vertex_separation_MILP(G, integrality = False, solver = None, verbosity = 0)
     # (2) x[v,t] <= x[v,t+1]   for all v in V, and for t:=0..N-2
     # (3) y[v,t] <= y[v,t+1]   for all v in V, and for t:=0..N-2
     for v in V:
-        for t in xrange(N-1):
+        for t in xrange(N - 1):
             p.add_constraint( x[v,t] - x[v,t+1] <= 0 )
             p.add_constraint( y[v,t] - y[v,t+1] <= 0 )
 
@@ -1394,8 +1394,8 @@ def vertex_separation_BAB(G,
         binary_matrix_free(bm_pool)
         raise MemoryError("Unable to allocate data strutures.")
 
-    cdef list best_seq = range(n)
-    for i in range(n):
+    cdef list best_seq = list(range(n))
+    for i in xrange(n):
         prefix[i] = i
         positions[i] = i
 
@@ -1426,7 +1426,7 @@ def vertex_separation_BAB(G,
         sig_off()
 
         # ==> Build the final ordering
-        order = [int_to_vertex[best_seq[i]] for i in range(n)]
+        order = [int_to_vertex[best_seq[i]] for i in xrange(n)]
 
     finally:
         if verbose:
@@ -1520,7 +1520,7 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
 
     if level==n:
         if current_cost < upper_bound:
-            for i in range(n):
+            for i in xrange(n):
                 best_seq[i] = prefix[i]
             if verbose:
                 print("New upper bound: {}".format(current_cost))
@@ -1584,7 +1584,7 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
     #
     if loc_level==n:
         if current_cost < upper_bound:
-            for i in range(n):
+            for i in xrange(n):
                 best_seq[i] = prefix[i]
             if verbose:
                 print("New upper bound: {}".format(current_cost))
@@ -1600,7 +1600,7 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
     cdef frozenset frozen_prefix
 
     if loc_level<=max_prefix_length:
-        frozen_prefix = frozenset([prefix[i] for i in range(loc_level)])
+        frozen_prefix = frozenset([prefix[i] for i in xrange(loc_level)])
         if frozen_prefix in prefix_storage:
             return upper_bound
 

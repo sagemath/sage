@@ -909,7 +909,7 @@ cdef inline uint32_t simple_BFS(uint32_t n,
     Perform a breadth first search (BFS) using the same method as in
     sage.graphs.distances_all_pairs.all_pairs_shortest_path_BFS
 
-    Furthermore, the method returns the the eccentricity of the source which is
+    Furthermore, the method returns the eccentricity of the source which is
     either the last computed distance when all vertices are seen, or a very
     large number (UINT32_MAX) when the graph is not connected.
 
@@ -1614,7 +1614,7 @@ def floyd_warshall(gg, paths = True, distances = False):
         sage: u,v = g.random_vertex(), g.random_vertex()
         sage: p = [v]
         sage: while p[0] is not None:
-        ...     p.insert(0,path[u][p[0]])
+        ....:   p.insert(0,path[u][p[0]])
         sage: len(p) == dist[u][v] + 2
         True
 

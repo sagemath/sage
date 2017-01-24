@@ -14,3 +14,8 @@ Patches to configuration files:
 C files:
 * stackwarn.patch (Jeroen Demeyer, #19883): do not display warnings
   regarding the stack size (unless DEBUGMEM is set).
+
+Building documentation
+* perl_inc.patch (Francois Bissey, #21622): import upstream patch
+to deal with perl install where "." is not part of @INC anymore
+in perl.

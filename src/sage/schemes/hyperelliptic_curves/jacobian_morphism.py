@@ -76,7 +76,7 @@ respectively::
 
 Frobenius satisfies
 
-.. math::
+.. MATH::
 
     x^4 + 12*x^3 + 78*x^2 + 444*x + 1369
 
@@ -641,9 +641,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         # comparing polynomials is well-defined
         return cmp(self.__polys, other.__polys)
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
-        Return True if this divisor is not the additive identity element.
+        Return ``True`` if this divisor is not the additive identity element.
 
         EXAMPLES::
 
@@ -661,6 +661,8 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             True
         """
         return self.__polys[0] != 1
+
+    __nonzero__ = __bool__
 
     def __neg__(self):
         r"""

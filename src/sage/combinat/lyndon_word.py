@@ -178,7 +178,7 @@ class LyndonWords_class(UniqueRepresentation, Parent):
         TESTS::
 
             sage: LW33 = LyndonWords(3,3)
-            sage: all([lw in LyndonWords() for lw in LW33])
+            sage: all(lw in LyndonWords() for lw in LW33)
             True
         """
         if isinstance(w, list):
@@ -255,7 +255,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
             False
             sage: [1,1,2,2] in LyndonWords([2,2])
             True
-            sage: all([ lw in LyndonWords([2,1,3,1]) for lw in LyndonWords([2,1,3,1])])
+            sage: all(lw in LyndonWords([2,1,3,1]) for lw in LyndonWords([2,1,3,1]))
             True
         """
         if isinstance(x, list):
@@ -280,9 +280,9 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
 
         ::
 
-            sage: comps = [[],[2,2],[3,2,7],[4,2]]+Compositions(4).list()
-            sage: lws = [ LyndonWords(comp) for comp in comps]
-            sage: all( [ lw.cardinality() == len(lw.list()) for lw in lws] )
+            sage: comps = [[],[2,2],[3,2,7],[4,2]] + Compositions(4).list()
+            sage: lws = [LyndonWords(comp) for comp in comps]
+            sage: all(lw.cardinality() == len(lw.list()) for lw in lws)
             True
         """
         evaluation = self._e
@@ -422,7 +422,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
         TESTS::
 
             sage: LW33 = LyndonWords(3,3)
-            sage: all([lw in LW33 for lw in LW33])
+            sage: all(lw in LW33 for lw in LW33)
             True
         """
         if isinstance(w, list):
@@ -543,8 +543,8 @@ class StandardBracketedLyndonWords_nk(UniqueRepresentation, Parent):
              [2, [2, 3]],
              [[2, 3], 3]]
         """
-        from itertools import imap
-        return imap(standard_bracketing, self._lyndon)
+        from builtins import map
+        return map(standard_bracketing, self._lyndon)
 
 def standard_bracketing(lw):
     """

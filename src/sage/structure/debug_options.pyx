@@ -41,4 +41,14 @@ cdef class DebugOptions_class:
         self.refine_category_hash_check = False
 
 
-debug = DebugOptions_class()
+cdef DebugOptions_class debug = DebugOptions_class()
+
+# Since "debug" is declared with a type, it can only be cimported at
+# the Cython level, not imported in plain Python. So we add it to the
+# globals manually. We need to hack into Cython internals for this
+# since Sage is compiled with the old_style_globals option.
+from cpython.object cimport PyObject
+cdef extern from *:
+    PyObject* __pyx_d
+
+(<object>__pyx_d)["debug"] = debug

@@ -12,8 +12,10 @@ There are two useful ways to compare symbolic expressions:
   symbolic variables). Can be very slow as it potentially calls
   Maxima to prove the inequality.
 """
+
 from cpython cimport *
 
+from sage.libs.pynac.pynac cimport *
 from sage.symbolic.ring import SR
 from sage.symbolic.expression cimport is_Expression
 

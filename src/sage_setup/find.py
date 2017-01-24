@@ -74,7 +74,7 @@ def find_python_sources(src_dir, modules=('sage',)):
     return python_packages, python_modules
 
 
-def find_extra_files(packages, src_dir, cythonized_dir, site_packages, special_filenames=[]):
+def find_extra_files(packages, src_dir, cythonized_dir, special_filenames=[]):
     """
     Find all extra files which should be installed.
 
@@ -94,9 +94,6 @@ def find_extra_files(packages, src_dir, cythonized_dir, site_packages, special_f
     - ``cythonized_dir`` -- the directory where the Cython-generated
       files are
 
-    - ``site_packages`` -- the directory where the files should be
-      installed
-
     - ``special_filenames`` -- a list of filenames to be installed from
       ``src_dir``
 
@@ -104,8 +101,8 @@ def find_extra_files(packages, src_dir, cythonized_dir, site_packages, special_f
 
         sage: from sage_setup.find import find_extra_files
         sage: from sage.env import SAGE_SRC, SAGE_CYTHONIZED
-        sage: find_extra_files(["sage.modular.arithgroup"], SAGE_SRC, SAGE_CYTHONIZED, ".")
-        [('./sage/modular/arithgroup',
+        sage: find_extra_files(["sage.modular.arithgroup"], SAGE_SRC, SAGE_CYTHONIZED)
+        [('sage/modular/arithgroup',
           ['.../src/sage/modular/arithgroup/farey.pxd', ...farey_symbol.h...])]
     """
     data_files = []
@@ -122,7 +119,7 @@ def find_extra_files(packages, src_dir, cythonized_dir, site_packages, special_f
                     if f.endswith(".h")]
 
         if files:
-            data_files.append((os.path.join(site_packages, dir), files))
+            data_files.append((dir, files))
 
     return data_files
 

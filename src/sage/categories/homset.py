@@ -22,17 +22,17 @@ Nonetheless, garbage collection occurs when the original references are
 overwritten::
 
     sage: for p in prime_range(200):
-    ...     K = GF(p)
-    ...     H = Hom(ZZ, K)
+    ....:   K = GF(p)
+    ....:   H = Hom(ZZ, K)
     ...
     sage: import gc
     sage: _ = gc.collect()
     sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF
     sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]
     sage: len(L)
-    2
+    1
     sage: L
-    [Finite Field of size 2, Finite Field of size 199]
+    [Finite Field of size 199]
 
 AUTHORS:
 
@@ -114,7 +114,7 @@ def Hom(X, Y, category=None, check=True):
         Vector space of dimension 3 over Rational Field
         sage: G = AlternatingGroup(3)
         sage: Hom(G, G)
-        Set of Morphisms from Alternating group of order 3!/2 as a permutation group to Alternating group of order 3!/2 as a permutation group in Category of finite permutation groups
+        Set of Morphisms from Alternating group of order 3!/2 as a permutation group to Alternating group of order 3!/2 as a permutation group in Category of finite enumerated permutation groups
         sage: Hom(ZZ, QQ, Sets())
         Set of Morphisms from Integer Ring to Rational Field in Category of sets
 
@@ -127,15 +127,15 @@ def Hom(X, Y, category=None, check=True):
     using a weak cache::
 
         sage: for p in prime_range(10^3):
-        ...    K = GF(p)
-        ...    a = K(0)
+        ....:  K = GF(p)
+        ....:  a = K(0)
         sage: import gc
         sage: gc.collect()       # random
         624
         sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF
         sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]
-        sage: len(L), L[0], L[len(L)-1]
-        (2, Finite Field of size 2, Finite Field of size 997)
+        sage: len(L), L[0]
+        (1, Finite Field of size 997)
 
     To illustrate the choice of the category, we consider the
     following parents as running examples::
@@ -151,7 +151,7 @@ def Hom(X, Y, category=None, check=True):
         sage: Hom(X, Y)
         Set of Morphisms from Integer Ring
          to Symmetric group of order 3! as a permutation group
-         in Join of Category of monoids and Category of enumerated sets
+         in Category of enumerated monoids
 
     Otherwise, if ``category`` is specified, then ``category`` is used,
     after checking that ``X`` and ``Y`` are indeed in ``category``::
@@ -455,7 +455,7 @@ def End(X, category=None):
 
         sage: G = AlternatingGroup(3)
         sage: S = End(G); S
-        Set of Morphisms from Alternating group of order 3!/2 as a permutation group to Alternating group of order 3!/2 as a permutation group in Category of finite permutation groups
+        Set of Morphisms from Alternating group of order 3!/2 as a permutation group to Alternating group of order 3!/2 as a permutation group in Category of finite enumerated permutation groups
         sage: from sage.categories.homset import is_Endset
         sage: is_Endset(S)
         True
@@ -547,10 +547,10 @@ class Homset(Set_generic):
             sage: X = ZZ['x']; X.rename("X")
             sage: Y = ZZ['y']; Y.rename("Y")
             sage: class MyHomset(Homset):
-            ...       def my_function(self, x):
-            ...           return Y(x[0])
-            ...       def _an_element_(self):
-            ...           return sage.categories.morphism.SetMorphism(self, self.my_function)
+            ....:     def my_function(self, x):
+            ....:         return Y(x[0])
+            ....:     def _an_element_(self):
+            ....:         return sage.categories.morphism.SetMorphism(self, self.my_function)
             ...
             sage: import __main__; __main__.MyHomset = MyHomset # fakes MyHomset being defined in a Python module
             sage: H = MyHomset(X, Y, category=Monoids(), base = ZZ)
@@ -698,7 +698,7 @@ class Homset(Set_generic):
         """
         return hash((self._domain, self._codomain, self.base()))
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         TESTS::
 
@@ -706,6 +706,8 @@ class Homset(Set_generic):
             True
         """
         return True
+
+    __nonzero__ = __bool__
 
     def _generic_convert_map(self, S):
         """
@@ -782,7 +784,7 @@ class Homset(Set_generic):
 
             sage: H = Hom(AlternatingGroup(4), AlternatingGroup(7))
             sage: H.homset_category()
-            Category of finite permutation groups
+            Category of finite enumerated permutation groups
         """
         return self.__category
 
@@ -1192,10 +1194,10 @@ class HomsetWithBase(Homset):
             sage: X = ZZ['x']; X.rename("X")
             sage: Y = ZZ['y']; Y.rename("Y")
             sage: class MyHomset(HomsetWithBase):
-            ...       def my_function(self, x):
-            ...           return Y(x[0])
-            ...       def _an_element_(self):
-            ...           return sage.categories.morphism.SetMorphism(self, self.my_function)
+            ....:     def my_function(self, x):
+            ....:         return Y(x[0])
+            ....:     def _an_element_(self):
+            ....:         return sage.categories.morphism.SetMorphism(self, self.my_function)
             ...
             sage: import __main__; __main__.MyHomset = MyHomset # fakes MyHomset being defined in a Python module
             sage: H = MyHomset(X, Y, category=Monoids())

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # We reuse the gdb pythonstartup script.
-PYTHONSTARTUP=$SAGE_ROOT/local/bin/sage-ipython
+PYTHONSTARTUP=$SAGE_LOCAL/bin/sage-ipython
 export PYTHONSTARTUP
 echo $PYTHONSTARTUP
 if [ ! -d "$DOT_SAGE/valgrind" ]; then

@@ -9,7 +9,7 @@ if [ $# -eq 0 ]; then
     sage --package fix-checksum
 else
     for tarball in "$@" ; do
-	pkg=$(sage --package name $tarball)
-	sage --package fix-checksum $pkg
+        pkg=$(sage --package name $tarball)
+        sage --package fix-checksum $pkg
     done
 fi

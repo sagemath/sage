@@ -263,13 +263,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #
 ##########################################################################
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six.moves import range
+import six
 
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 from sage.env import DOT_SAGE
 import re
-import six
 import sage.rings.integer
 from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
@@ -707,7 +707,7 @@ class R(ExtraTabCompletion, Expect):
         #The following was more structural, but breaks on my machine.  (stein)
         #p = p._sage_()
         #s = p['_Dim'][0]
-        #l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in xrange(0,s)]
+        #l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in range(0,s)]
         #return l
 
     def _object_class(self):
@@ -1250,7 +1250,7 @@ class R(ExtraTabCompletion, Expect):
 
 # patterns for _sage_()
 rel_re_param = re.compile('\s([\w\.]+)\s=')
-rel_re_xrange = re.compile('([\d]+):([\d]+)')
+rel_re_range = re.compile('([\d]+):([\d]+)')
 rel_re_integer = re.compile('([^\d])([\d]+)L')
 rel_re_terms = re.compile('terms\s*=\s*(.*?),')
 rel_re_call = re.compile('call\s*=\s*(.*?)\),')
@@ -1386,14 +1386,14 @@ class RElement(ExtraTabCompletion, ExpectElement):
             return P.new('%s[%s]'%(self._name, n))
         else:
             L = []
-            for i in xrange(len(n)):
+            for i in range(len(n)):
                 if parent(n[i]) is P:
                     L.append(n[i].name())
                 else:
                     L.append(str(n[i]))
             return P.new('%s[%s]'%(self._name, ','.join(L)))
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Implements bool(self).
 
@@ -1415,6 +1415,8 @@ class RElement(ExtraTabCompletion, ExpectElement):
             True
         """
         return "FALSE" in repr(self==0)
+
+    __nonzero__ = __bool__
 
     def _comparison(self, other, symbol):
         """
@@ -1640,9 +1642,9 @@ class RElement(ExtraTabCompletion, ExpectElement):
         """
         return x.group().replace('.','_')
 
-    def _subs_xrange(self, x):
+    def _subs_range(self, x):
         """
-        Change endpoints of xranges.  This is used internally in the
+        Change endpoints of ranges.  This is used internally in the
         code for converting R expressions to Sage objects.
 
         INPUT:
@@ -1655,13 +1657,13 @@ class RElement(ExtraTabCompletion, ExpectElement):
 
             sage: import re
             sage: a = r([1,2,3])
-            sage: rel_re_xrange = re.compile('([\d]+):([\d]+)')
-            sage: rel_re_xrange.sub(a._subs_xrange, ' 1:10')
-            ' xrange(1,11)'
+            sage: rel_re_range = re.compile('([\d]+):([\d]+)')
+            sage: rel_re_range.sub(a._subs_range, ' 1:10')
+            ' range(1,11)'
         """
         g = x.groups()
         g1 = int(g[1]) + 1
-        return 'xrange(%s,%s)'%(g[0],g1)
+        return 'range(%s,%s)' % (g[0],  g1)
 
     def _subs_integer(self, x):
         """
@@ -1856,8 +1858,8 @@ class RElement(ExtraTabCompletion, ExpectElement):
         exp = re.sub(' list\(', ' _r_list(', exp)
         exp = re.sub('\(list\(', '(_r_list(', exp)
 
-        # Change 'a:b' to 'xrange(a,b+1)'
-        exp = rel_re_xrange.sub(self._subs_xrange, exp)
+        # Change 'a:b' to 'range(a,b+1)'
+        exp = rel_re_range.sub(self._subs_range, exp)
 
         # Change 'dL' to 'Integer(d)'
         exp = rel_re_integer.sub(self._subs_integer, exp)

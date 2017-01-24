@@ -17,7 +17,7 @@ familiar and most standard ones, and all of the others are defined
 in terms of one of these. The bases are described in the
 documentation for the function
 :func:`steenrod_algebra_basis`; also see the papers by
-Monks [M1998]_ and Wood [W1998]_ for more information about them. For
+Monks [Mon1998]_ and Wood [Woo1998]_ for more information about them. For
 commutator bases, see the preprint by Palmieri and Zhang [PZ2008]_.
 
 - 'milnor': Milnor basis.
@@ -104,18 +104,6 @@ in the file :file:`steenrod_algebra_mult.py` and also in the
 method for :class:`SteenrodAlgebra_generic
 <sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra_generic>` in
 :file:`steenrod_algebra.py`.
-
-REFERENCES:
-
-.. [M1998] \K. G. Monks, "Change of basis, monomial relations, and
-   `P^s_t` bases for the Steenrod algebra," J. Pure Appl.
-   Algebra 125 (1998), no. 1-3, 235-260.
-
-.. [PZ2008] \J. H. Palmieri and J. J. Zhang, "Commutators in the Steenrod
-   algebra," preprint (2008)
-
-.. [W1998] \R. M. W. Wood, "Problems in the Steenrod algebra," Bull. London
-   Math. Soc. 30 (1998), no. 5, 449-517.
 """
 from __future__ import absolute_import
 

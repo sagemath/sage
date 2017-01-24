@@ -125,7 +125,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         sage: grA = A.graded_algebra()
         sage: grA.category()
         Category of graded algebras with basis over Rational Field
-        sage: x,y,z = map(lambda s: grA.algebra_generators()[s], ['x','y','z'])
+        sage: x,y,z = [grA.algebra_generators()[s] for s in ['x','y','z']]
         sage: x
         bar(U['x'])
         sage: y * x + z

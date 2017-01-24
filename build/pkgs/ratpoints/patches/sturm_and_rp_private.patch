@@ -1,0 +1,194 @@
+diff --git a/rp-private.h b/rp-private.h
+index b4c7dad..0c7193e 100644
+--- a/rp-private.h
++++ b/rp-private.h
+@@ -36,7 +36,7 @@
+ #define LONG_SHIFT ((LONG_LENGTH == 16) ? 4 : \
+                     (LONG_LENGTH == 32) ? 5 : \
+ 		    (LONG_LENGTH == 64) ? 6 : 0)
+-#define LONG_MASK (~(-1L<<LONG_SHIFT))
++#define LONG_MASK (~(-(1L<<LONG_SHIFT)))
+ 
+ /* Check if SSE instructions can be used.
+    We assume that one SSE word of 128 bit is two long's,
+diff --git a/sturm.c b/sturm.c
+index c78d7c6..5fd2cf5 100644
+--- a/sturm.c
++++ b/sturm.c
+@@ -27,7 +27,6 @@
+  ***********************************************************************/
+ 
+ #include "ratpoints.h"
+-
+ /**************************************************************************
+  * Arguments of _ratpoints_compute_sturm() : (from the args argument)     *
+  *                                                                        *
+@@ -53,7 +52,7 @@
+ /* A helper function: evaluate the polynomial in cofs[] of given degree
+   at num/2^denexp and return the sign. */
+ 
+-static long eval_sign(ratpoints_args *args, mpz_t *cofs, long degree,
++static long eval_sign(const ratpoints_args *args, const mpz_t *cofs, long degree,
+                       long num, long denexp)
+ {
+   long n, e, s;
+@@ -70,11 +69,80 @@ static long eval_sign(ratpoints_args *args, mpz_t *cofs, long degree,
+   return(s);
+ }
+ 
++static const    long max = (long)(((unsigned long)(-1))>>1);
++static const    long min = (long)(-(((unsigned long)(-1))>>1));
++    /* recursive helper function */
++static void iterate(long nl, long nr, long del, long der, long cleft, long cright,
++                 long sl, long sr, long depth,
++		 ratpoints_interval **iptr, const ratpoints_interval *ivlo,
++		 const ratpoints_args *args, const long k, const long sturm_degs[],
++                 const mpz_t sturm[][args->degree + 1])
++    { /* nl/2^del, nr/2^der : interval left/right endpoints,
++         cleft, cright: sign change counts at endpoints,
++         sl, sr: signs at endpoints,
++         depth: iteration depth */
++     long iter = args->sturm;
++      if(cleft == cright && sl < 0) { return; }
++         /* here we know the polynomial is negative on the interval */
++      if((cleft == cright && sl > 0) || depth >= iter)
++      /* we have to add/extend an interval if we either know that
++         the polynomial is positive on the interval (first condition)
++         or the maximal iteration depth has been reached (second condition) */
++      { double l = ((double)nl)/((double)(1<<del));
++        double u = ((double)nr)/((double)(1<<der));
++        if(*iptr == ivlo)
++        { (*iptr)->low = l; (*iptr)->up  = u; (*iptr)++; }
++        else
++        { if(((*iptr)-1)->up == l) /* extend interval */
++          { ((*iptr)-1)->up = u; }
++          else /* new interval */
++          { (*iptr)->low = l; (*iptr)->up  = u; (*iptr)++; }
++        }
++        return;
++      }
++      /* now we must split the interval and evaluate the sturm sequence
++         at the midpoint */
++      { long nm, dem, s0, s1, s2, s, cmid = 0, n;
++        if(nl == min)
++        { if(nr == max) { nm = 0; dem = 0; }
++          else { nm = (nr == 0) ? -1 : 2*nr; dem = 0; }
++        }
++        else
++        { if(nr == max) { nm = (nl == 0) ? 1 : 2*nl; dem = 0; }
++          else /* "normal" case */
++          { if(del == der) /* then both are zero */
++            { if(((nl+nr) & 1) == 0) { nm = (nl+nr)>>1; dem = 0; }
++              else { nm = nl+nr; dem = 1; }
++            }
++            else /* here one de* is greater */
++            { if(del > der) { nm = nl + (nr<<(del-der)); dem = del+1; }
++              else { nm = (nl<<(der-del)) + nr; dem = der+1; }
++            }
++          }
++        }
++        s0 = eval_sign(args, sturm[0], sturm_degs[0], nm, dem);
++        s1 = eval_sign(args, sturm[1], sturm_degs[1], nm, dem);
++        if(s0*s1 == -1) { cmid++; }
++        s = (s1 == 0) ? s0 : s1;
++        for(n = 2; n <= k; n++)
++        { s2 = eval_sign(args, sturm[n], sturm_degs[n], nm, dem);
++          if(s2 == -s) { cmid++; s = s2; }
++          else if(s2 != 0) { s = s2; }
++        }
++        /* now recurse */
++        iterate(nl, nm, del, dem, cleft, (s0==0) ? (cmid+1) : cmid,
++                sl, (s0==0) ? -s1 : s0, depth+1,
++                iptr, ivlo, args, k, sturm_degs, sturm);
++        iterate(nm, nr, dem, der, cmid, cright,
++                (s0==0) ? s1 : s0, sr, depth+1,
++		iptr, ivlo, args, k, sturm_degs, sturm);
++      }
++    } /* end iterate() */
++
+ long _ratpoints_compute_sturm(ratpoints_args *args)
+ { 
+   mpz_t *cofs = args->cof;
+   long degree = args->degree;
+-  long iter = args->sturm; 
+   ratpoints_interval *ivlist = args->domain;
+   long num_iv = args->num_inter;
+   long n, m, k, new_num;
+@@ -165,75 +233,12 @@ long _ratpoints_compute_sturm(ratpoints_args *args)
+   /* recall: typedef struct {double low; double up;} ratpoints_interval; */
+   { ratpoints_interval ivlocal[1 + (degree>>1)];
+     ratpoints_interval *iptr = &ivlocal[0];
+-    long max = (long)(((unsigned long)(-1))>>1);
+-    long min = -max;
+     long num_intervals;
+     long slcf = mpz_cmp_si(cofs[degree], 0);
+ 
+-    /* recursive helper function */
+-    void iterate(long nl, long nr, long del, long der, long cleft, long cright,
+-                 long sl, long sr, long depth)
+-    { /* nl/2^del, nr/2^der : interval left/right endpoints,
+-         cleft, cright: sign change counts at endpoints,
+-         sl, sr: signs at endpoints,
+-         depth: iteration depth */
+-      if(cleft == cright && sl < 0) { return; }
+-         /* here we know the polynomial is negative on the interval */
+-      if((cleft == cright && sl > 0) || depth >= iter) 
+-      /* we have to add/extend an interval if we either know that
+-         the polynomial is positive on the interval (first condition)
+-         or the maximal iteration depth has been reached (second condition) */
+-      { double l = ((double)nl)/((double)(1<<del));
+-        double u = ((double)nr)/((double)(1<<der));
+-        if(iptr == &ivlocal[0])
+-        { iptr->low = l; iptr->up  = u; iptr++; }
+-        else
+-        { if((iptr-1)->up == l) /* extend interval */
+-          { (iptr-1)->up = u; }
+-          else /* new interval */
+-          { iptr->low = l; iptr->up  = u; iptr++; }
+-        }
+-        return; 
+-      }
+-      /* now we must split the interval and evaluate the sturm sequence
+-         at the midpoint */
+-      { long nm, dem, s0, s1, s2, s, cmid = 0, n;
+-        if(nl == min)
+-        { if(nr == max) { nm = 0; dem = 0; }
+-          else { nm = (nr == 0) ? -1 : 2*nr; dem = 0; }
+-        }
+-        else
+-        { if(nr == max) { nm = (nl == 0) ? 1 : 2*nl; dem = 0; } 
+-          else /* "normal" case */
+-          { if(del == der) /* then both are zero */
+-            { if(((nl+nr) & 1) == 0) { nm = (nl+nr)>>1; dem = 0; }
+-              else { nm = nl+nr; dem = 1; } 
+-            }
+-            else /* here one de* is greater */
+-            { if(del > der) { nm = nl + (nr<<(del-der)); dem = del+1; }
+-              else { nm = (nl<<(der-del)) + nr; dem = der+1; }
+-            }
+-          }
+-        }
+-        s0 = eval_sign(args, sturm[0], sturm_degs[0], nm, dem);
+-        s1 = eval_sign(args, sturm[1], sturm_degs[1], nm, dem);
+-        if(s0*s1 == -1) { cmid++; }
+-        s = (s1 == 0) ? s0 : s1;
+-        for(n = 2; n <= k; n++)
+-        { s2 = eval_sign(args, sturm[n], sturm_degs[n], nm, dem);
+-          if(s2 == -s) { cmid++; s = s2; }
+-          else if(s2 != 0) { s = s2; }
+-        }
+-        /* now recurse */
+-        iterate(nl, nm, del, dem, cleft, (s0==0) ? (cmid+1) : cmid, 
+-                sl, (s0==0) ? -s1 : s0, depth+1);
+-        iterate(nm, nr, dem, der, cmid, cright, 
+-                (s0==0) ? s1 : s0, sr, depth+1);
+-      }
+-    } /* end iterate() */
+-
+     iterate(min, max, 0, 0, count2, count1, 
+-            (degree & 1) ? -slcf : slcf, slcf, 0);
++            (degree & 1) ? -slcf : slcf, slcf, 0,
++	    &iptr, &ivlocal[0], args, k, sturm_degs, sturm);
+     num_intervals = iptr - &ivlocal[0];
+     /* intersect with given intervals */
+     { ratpoints_interval local_copy[num_iv];

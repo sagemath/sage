@@ -129,7 +129,7 @@ cpdef kruskal(G, wfunction=None, bint check=False):
     The edges of a minimum spanning tree of ``G``, if one exists, otherwise
     returns the empty list.
 
-    .. seealso::
+    .. SEEALSO::
 
         - :meth:`sage.graphs.generic_graph.GenericGraph.min_spanning_tree`
 
@@ -153,23 +153,23 @@ cpdef kruskal(G, wfunction=None, bint check=False):
         sage: G
         Looped multi-graph on 7 vertices
         sage: for i in range(20):
-        ...       u = randint(1, 7)
-        ...       v = randint(1, 7)
-        ...       w = randint(0, 20)
-        ...       G.add_edge(u, v, w)
+        ....:     u = randint(1, 7)
+        ....:     v = randint(1, 7)
+        ....:     w = randint(0, 20)
+        ....:     G.add_edge(u, v, w)
         sage: H = copy(G)
         sage: H
         Looped multi-graph on 7 vertices
         sage: def sanitize(G):
-        ...       G.allow_loops(False)
-        ...       E = {}
-        ...       for u, v, _ in G.multiple_edges():
-        ...           E.setdefault(u, v)
-        ...       for u in E:
-        ...           W = sorted(G.edge_label(u, E[u]))
-        ...           for w in W[1:]:
-        ...               G.delete_edge(u, E[u], w)
-        ...       G.allow_multiple_edges(False)
+        ....:     G.allow_loops(False)
+        ....:     E = {}
+        ....:     for u, v, _ in G.multiple_edges():
+        ....:         E.setdefault(u, v)
+        ....:     for u in E:
+        ....:         W = sorted(G.edge_label(u, E[u]))
+        ....:         for w in W[1:]:
+        ....:             G.delete_edge(u, E[u], w)
+        ....:     G.allow_multiple_edges(False)
         sage: sanitize(H)
         sage: H
         Graph on 7 vertices
@@ -179,13 +179,13 @@ cpdef kruskal(G, wfunction=None, bint check=False):
     An example from pages 599--601 in [GoodrichTamassia2001]_. ::
 
         sage: G = Graph({"SFO":{"BOS":2704, "ORD":1846, "DFW":1464, "LAX":337},
-        ...   "BOS":{"ORD":867, "JFK":187, "MIA":1258},
-        ...   "ORD":{"PVD":849, "JFK":740, "BWI":621, "DFW":802},
-        ...   "DFW":{"JFK":1391, "MIA":1121, "LAX":1235},
-        ...   "LAX":{"MIA":2342},
-        ...   "PVD":{"JFK":144},
-        ...   "JFK":{"MIA":1090, "BWI":184},
-        ...   "BWI":{"MIA":946}})
+        ....: "BOS":{"ORD":867, "JFK":187, "MIA":1258},
+        ....: "ORD":{"PVD":849, "JFK":740, "BWI":621, "DFW":802},
+        ....: "DFW":{"JFK":1391, "MIA":1121, "LAX":1235},
+        ....: "LAX":{"MIA":2342},
+        ....: "PVD":{"JFK":144},
+        ....: "JFK":{"MIA":1090, "BWI":184},
+        ....: "BWI":{"MIA":946}})
         sage: G.weighted(True)
         sage: kruskal(G, check=True)
         [('BOS', 'JFK', 187), ('BWI', 'JFK', 184), ('BWI', 'MIA', 946), ('BWI', 'ORD', 621), ('DFW', 'LAX', 1235), ('DFW', 'ORD', 802), ('JFK', 'PVD', 144), ('LAX', 'SFO', 337)]
@@ -193,8 +193,8 @@ cpdef kruskal(G, wfunction=None, bint check=False):
     An example from pages 568--569 in [CormenEtAl2001]_. ::
 
         sage: G = Graph({"a":{"b":4, "h":8}, "b":{"c":8, "h":11},
-        ...   "c":{"d":7, "f":4, "i":2}, "d":{"e":9, "f":14},
-        ...   "e":{"f":10}, "f":{"g":2}, "g":{"h":1, "i":6}, "h":{"i":7}})
+        ....: "c":{"d":7, "f":4, "i":2}, "d":{"e":9, "f":14},
+        ....: "e":{"f":10}, "f":{"g":2}, "g":{"h":1, "i":6}, "h":{"i":7}})
         sage: G.weighted(True)
         sage: kruskal(G, check=True)
         [('a', 'b', 4), ('a', 'h', 8), ('c', 'd', 7), ('c', 'f', 4), ('c', 'i', 2), ('d', 'e', 9), ('f', 'g', 2), ('g', 'h', 1)]
@@ -229,24 +229,24 @@ cpdef kruskal(G, wfunction=None, bint check=False):
     The input graph must be connected. ::
 
         sage: def my_disconnected_graph(n, ntries, directed=False, multiedges=False, loops=False):
-        ...       G = Graph()
-        ...       k = randint(1, n)
-        ...       G.add_vertices(range(k))
-        ...       if directed:
-        ...           G = G.to_directed()
-        ...       if multiedges:
-        ...           G.allow_multiple_edges(True)
-        ...       if loops:
-        ...           G.allow_loops(True)
-        ...       for i in range(ntries):
-        ...           u = randint(0, k-1)
-        ...           v = randint(0, k-1)
-        ...           G.add_edge(u, v)
-        ...       while G.is_connected():
-        ...           u = randint(0, k-1)
-        ...           v = randint(0, k-1)
-        ...           G.delete_edge(u, v)
-        ...       return G
+        ....:     G = Graph()
+        ....:     k = randint(1, n)
+        ....:     G.add_vertices(range(k))
+        ....:     if directed:
+        ....:         G = G.to_directed()
+        ....:     if multiedges:
+        ....:         G.allow_multiple_edges(True)
+        ....:     if loops:
+        ....:         G.allow_loops(True)
+        ....:     for i in range(ntries):
+        ....:         u = randint(0, k-1)
+        ....:         v = randint(0, k-1)
+        ....:         G.add_edge(u, v)
+        ....:     while G.is_connected():
+        ....:         u = randint(0, k-1)
+        ....:         v = randint(0, k-1)
+        ....:         G.delete_edge(u, v)
+        ....:     return G
         sage: G = my_disconnected_graph(100, 50, directed=False, multiedges=False, loops=False)  # long time
         sage: kruskal(G, check=True)  # long time
         []

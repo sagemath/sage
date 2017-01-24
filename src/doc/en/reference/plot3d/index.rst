@@ -51,5 +51,6 @@ Backends
    :maxdepth: 2
 
    sage/plot/plot3d/tachyon
+   threejs
 
 .. include:: ../footer.txt

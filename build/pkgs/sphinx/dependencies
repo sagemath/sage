@@ -1,4 +1,4 @@
-$(PYTHON) | setuptools docutils jinja2 pygments six snowballstemmer imagesize babel alabaster
+$(PYTHON) | setuptools pip docutils jinja2 pygments six snowballstemmer imagesize babel alabaster
 
 ----------
 All lines of this file are ignored except the first.

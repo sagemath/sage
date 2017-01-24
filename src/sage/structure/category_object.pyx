@@ -1,3 +1,4 @@
+# cython: old_style_globals=True
 r"""
 Base class for objects of a category
 
@@ -46,8 +47,6 @@ This example illustrates generators for a free module over `\ZZ`.
     ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
 """
 
-from __future__ import division
-
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,12 +54,13 @@ from __future__ import division
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
-cimport generators
-cimport sage_object
+from __future__ import absolute_import, division, print_function
+
+from sage.structure.misc import dir_with_other_class
+from sage.structure.misc cimport getattr_from_other_class
 from sage.categories.category import Category
-from sage.structure.debug_options import debug
+from sage.structure.debug_options cimport debug
 from sage.misc.cachefunc import cached_method
 
 
@@ -102,7 +102,7 @@ cpdef inline check_default_category(default_category, category):
         return default_category
     return default_category.join([default_category,category])
 
-cdef class CategoryObject(sage_object.SageObject):
+cdef class CategoryObject(SageObject):
     """
     An object in some category.
     """
@@ -140,11 +140,11 @@ cdef class CategoryObject(sage_object.SageObject):
         """
         if base is not None:
             self._base = base
-        self._generators = {}
         if category is not None:
             self._init_category_(category)
 
     def __cinit__(self):
+        self.__cached_methods = {}
         self._hash_value = -1
 
     def _init_category_(self, category):
@@ -191,7 +191,7 @@ cdef class CategoryObject(sage_object.SageObject):
         The new category is obtained by adjoining ``category`` to the
         current one.
 
-        .. seealso:: :function:`Category.join`
+        .. SEEALSO:: :function:`Category.join`
 
         EXAMPLES::
 
@@ -206,7 +206,7 @@ cdef class CategoryObject(sage_object.SageObject):
             Category of magmas
             sage: P._refine_category_(EnumeratedSets())
             sage: P.category()
-            Join of Category of magmas and Category of enumerated sets
+            Category of enumerated magmas
             sage: P._refine_category_([Semigroups(), CommutativeAdditiveSemigroups()])
             sage: P.category()
             Join of Category of semigroups and Category of commutative additive semigroups and Category of enumerated sets
@@ -258,36 +258,6 @@ cdef class CategoryObject(sage_object.SageObject):
     ##############################################################################
     # Generators
     ##############################################################################
-
-    def _populate_generators_(self, gens=None, names=None, normalize = True, category=None):
-        if category in self._generators:
-            raise ValueError("Generators cannot be changed after object creation.")
-        if category is None:
-            category = self._category
-        from sage.structure.sequence import Sequence
-        if gens is None:
-            n = self._ngens_()
-            from sage.rings.infinity import infinity
-            if n is infinity:
-                gens = generators.Generators_naturals(self, category)
-            else:
-                gens = generators.Generators_finite(self, self._ngens_(), None, category)
-        elif isinstance(gens, Generators):
-            pass
-        elif isinstance(gens, (list, tuple, Sequence)):
-            if names is None:
-                names = tuple([str(x) for x in gens])
-            gens = generators.Generators_list(self, list(gens), category)
-        else:
-            gens = generators.Generators_list(self, [gens], category)
-        self._generators[category] = gens
-        if category == self._category:
-            if names is not None and self._names is None:
-                self._assign_names(names, ngens=gens.count(), normalize=normalize)
-            self._generators[category] = gens
-
-    def _ngens_(self):
-        return 0
 
     def gens_dict(self):
         r"""
@@ -455,14 +425,7 @@ cdef class CategoryObject(sage_object.SageObject):
         if names is None: return
         if normalize:
             if ngens is None:
-                if self._generators is None or len(self._generators) == 0:
-                    # not defined yet
-                    if isinstance(names, (tuple, list)) and names is not None:
-                        ngens = len(names)
-                    else:
-                        ngens = 1
-                else:
-                    ngens = self.ngens()
+                ngens = -1  # unknown
             names = normalize_names(ngens, names)
         if self._names is not None and names != self._names:
             raise ValueError('variable names cannot be changed after object creation.')
@@ -586,19 +549,13 @@ cdef class CategoryObject(sage_object.SageObject):
         for v, g in zip(vs, gs):
             scope[v] = g
 
-    def injvar(self, scope=None, verbose=True):
-        """
-        This is a deprecated synonym for :meth:`.inject_variables`.
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(4143, 'injvar is deprecated; use inject_variables instead.')
-        return self.inject_variables(scope=scope, verbose=verbose)
-
     #################################################################################################
     # Bases
     #################################################################################################
 
     def has_base(self, category=None):
+        from sage.misc.superseded import deprecation
+        deprecation(21395, "The method has_base() is deprecated and will be removed")
         if category is None:
             return self._base is not None
         else:
@@ -732,9 +689,6 @@ cdef class CategoryObject(sage_object.SageObject):
     def latex_name(self):
         return self.latex_variable_names()[0]
 
-    def _temporarily_change_names(self, names):
-        self._names = names
-
     #################################################################################
     # Give all objects with generators a dictionary, so that attribute setting
     # works.   It would be nice if this functionality were standard in Cython,
@@ -747,7 +701,6 @@ cdef class CategoryObject(sage_object.SageObject):
         except AttributeError:
             pass
         d = dict(d)
-        d['_generators'] = self._generators
         d['_category'] = self._category
         d['_base'] = self._base
         d['_names'] = self._names
@@ -757,10 +710,6 @@ cdef class CategoryObject(sage_object.SageObject):
         # Update this integer if you change any of these attributes
         ###########
         d['_pickle_version'] = 1
-        try:
-            d['_generator_orders'] = self._generator_orders
-        except AttributeError:
-            pass
 
         return d
 
@@ -771,7 +720,6 @@ cdef class CategoryObject(sage_object.SageObject):
             version = 0
         try:
             if version == 1:
-                self._generators = d['_generators']
                 if d['_category'] is not None:
                     # We must not erase the category information of
                     # self.  Otherwise, pickles break (e.g., QQ should
@@ -783,10 +731,6 @@ cdef class CategoryObject(sage_object.SageObject):
                         self._category = self._category.join([self._category,d['_category']])
                 self._base = d['_base']
                 self._names = d['_names']
-                try:
-                    self._generator_orders = d['_generator_orders']
-                except (AttributeError, KeyError):
-                    pass
             elif version == 0:
                 # In the old code, this functionality was in parent_gens,
                 # but there were parents that didn't inherit from parent_gens.
@@ -794,14 +738,6 @@ cdef class CategoryObject(sage_object.SageObject):
                 try:
                     self._base = d['_base']
                     self._names = d['_names']
-                    from sage.categories.all import Objects
-                    if d['_gens'] is None:
-                        from sage.structure.generators import Generators
-                        self._generators = Generators(self, None, Objects())
-                    else:
-                        from sage.structure.generators import Generators_list
-                        self._generators = Generators_list(self, d['_gens'], Objects())
-                    self._generator_orders = d['_generator_orders'] # this may raise a KeyError, but that's okay.
                     # We throw away d['_latex_names'] and d['_list']
                 except (AttributeError, KeyError):
                     pass
@@ -833,6 +769,133 @@ cdef class CategoryObject(sage_object.SageObject):
         if self._hash_value == -1:
             self._hash_value = hash(repr(self))
         return self._hash_value
+
+    ##############################################################################
+    # Getting attributes from the category
+    ##############################################################################
+
+    def __getattr__(self, name):
+        """
+        Let cat be the category of ``self``. This method emulates
+        ``self`` being an instance of both ``CategoryObject`` and
+        ``cat.parent_class``, in that order, for attribute lookup.
+
+        This attribute lookup is cached for speed.
+
+        EXAMPLES:
+
+        We test that ZZ (an extension type) inherits the methods from
+        its categories, that is from ``EuclideanDomains().parent_class``::
+
+            sage: ZZ._test_associativity
+            <bound method JoinCategory.parent_class._test_associativity of Integer Ring>
+            sage: ZZ._test_associativity(verbose = True)
+            sage: TestSuite(ZZ).run(verbose = True)
+            running ._test_additive_associativity() . . . pass
+            running ._test_an_element() . . . pass
+            running ._test_associativity() . . . pass
+            running ._test_cardinality() . . . pass
+            running ._test_category() . . . pass
+            running ._test_characteristic() . . . pass
+            running ._test_distributivity() . . . pass
+            running ._test_elements() . . .
+              Running the test suite of self.an_element()
+              running ._test_category() . . . pass
+              running ._test_eq() . . . pass
+              running ._test_new() . . . pass
+              running ._test_nonzero_equal() . . . pass
+              running ._test_not_implemented_methods() . . . pass
+              running ._test_pickling() . . . pass
+              pass
+            running ._test_elements_eq_reflexive() . . . pass
+            running ._test_elements_eq_symmetric() . . . pass
+            running ._test_elements_eq_transitive() . . . pass
+            running ._test_elements_neq() . . . pass
+            running ._test_enumerated_set_contains() . . . pass
+            running ._test_enumerated_set_iter_cardinality() . . . pass
+            running ._test_enumerated_set_iter_list() . . . pass
+            running ._test_eq() . . . pass
+            running ._test_euclidean_degree() . . . pass
+            running ._test_gcd_vs_xgcd() . . . pass
+            running ._test_metric() . . . pass
+            running ._test_new() . . . pass
+            running ._test_not_implemented_methods() . . . pass
+            running ._test_one() . . . pass
+            running ._test_pickling() . . . pass
+            running ._test_prod() . . . pass
+            running ._test_quo_rem() . . . pass
+            running ._test_some_elements() . . . pass
+            running ._test_zero() . . . pass
+            running ._test_zero_divisors() . . . pass
+
+            sage: Sets().example().sadfasdf
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'PrimeNumbers_with_category' object has no attribute 'sadfasdf'
+        """
+        return self.getattr_from_category(name)
+
+    cdef getattr_from_category(self, name):
+        # Lookup a method or attribute from the category abstract classes.
+        # See __getattr__ above for documentation.
+        try:
+            return self.__cached_methods[name]
+        except KeyError:
+            if self._category is None:
+                # Usually, this will just raise AttributeError in
+                # getattr_from_other_class().
+                cls = type
+            else:
+                cls = self._category.parent_class
+
+            attr = getattr_from_other_class(self, cls, name)
+            self.__cached_methods[name] = attr
+            return attr
+
+    def __dir__(self):
+        """
+        Let cat be the category of ``self``. This method emulates
+        ``self`` being an instance of both ``CategoryObject`` and
+        ``cat.parent_class``, in that order, for attribute directory.
+
+        EXAMPLES::
+
+            sage: for s in dir(ZZ):
+            ....:     if s[:6] == "_test_": print(s)
+            _test_additive_associativity
+            _test_an_element
+            _test_associativity
+            _test_cardinality
+            _test_category
+            _test_characteristic
+            _test_distributivity
+            _test_elements
+            _test_elements_eq_reflexive
+            _test_elements_eq_symmetric
+            _test_elements_eq_transitive
+            _test_elements_neq
+            _test_enumerated_set_contains
+            _test_enumerated_set_iter_cardinality
+            _test_enumerated_set_iter_list
+            _test_eq
+            _test_euclidean_degree
+            _test_gcd_vs_xgcd
+            _test_metric
+            _test_new
+            _test_not_implemented_methods
+            _test_one
+            _test_pickling
+            _test_prod
+            _test_quo_rem
+            _test_some_elements
+            _test_zero
+            _test_zero_divisors
+            sage: F = GF(9,'a')
+            sage: dir(F)
+            [..., '__class__', ..., '_test_pickling', ..., 'extension', ...]
+
+        """
+        return dir_with_other_class(self, self.category().parent_class)
 
     ##############################################################################
     # For compatibility with Python 2
@@ -1031,55 +1094,3 @@ cpdef bint certify_names(names) except -1:
             raise ValueError("variable name {!r} appears more than once".format(N))
         s.add(N)
     return True
-
-
-class localvars:
-    r"""
-    Context manager for safely temporarily changing the variables
-    names of an object with generators.
-
-    Objects with named generators are globally unique in Sage.
-    Sometimes, though, it is very useful to be able to temporarily
-    display the generators differently.   The new Python ``with``
-    statement and the localvars context manager make this easy and
-    safe (and fun!)
-
-    Suppose X is any object with generators.  Write
-
-    ::
-
-        with localvars(X, names[, latex_names] [,normalize=False]):
-            some code
-            ...
-
-    and the indented code will be run as if the names in ``X`` are changed to
-    the new names. If you give ``normalize=True``, then the names are assumed
-    to be a tuple of the correct number of strings.
-
-    EXAMPLES::
-
-       sage: R.<x,y> = PolynomialRing(QQ,2)
-       sage: with localvars(R, 'z,w'):
-       ....:     print(x^3 + y^3 - x*y)
-       z^3 + w^3 - z*w
-
-    NOTES: I wrote this because it was needed to print elements of the quotient
-    of a ring `R` by an ideal `I` using the print function for elements of `R`.
-    See the code in :mod:`sage.rings.quotient_ring_element`.
-
-    AUTHOR: William Stein (2006-10-31)
-    """
-    # fix this so that it handles latex names with the printer framework.
-    def __init__(self, obj, names, latex_names=None, normalize=True):
-        self._obj = obj
-        if normalize:
-            self._names = normalize_names(obj.ngens(), names)
-        else:
-            self._names = names
-
-    def __enter__(self):
-        self._orig_names = (<CategoryObject?>self._obj)._names
-        self._obj._temporarily_change_names(self._names)
-
-    def __exit__(self, type, value, traceback):
-        self._obj._temporarily_change_names(self._orig_names)

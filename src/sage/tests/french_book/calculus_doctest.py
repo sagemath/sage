@@ -408,9 +408,9 @@ Sage example in ./calculus.tex, line 1163::
     sage: function('f')(x); function('g')(x); diff(f(g(x)), x)
     f(x)
     g(x)
-    D[0](f)(g(x))*D[0](g)(x)
+    D[0](f)(g(x))*diff(g(x), x)
     sage: diff(ln(f(x)), x)
-    D[0](f)(x)/f(x)
+    diff(f(x), x)/f(x)
 
 Sage example in ./calculus.tex, line 1180::
 
@@ -568,7 +568,7 @@ Sage example in ./sol/calculus.tex, line 34::
     sage: phi(h) = (g(a+3*h) - 3*g(a+2*h) \
     ....:           + 3*g(a+h) - g(a)) / h^3
     sage: phi(h).expand()
-    D[0, 0, 0](f)(a)
+    diff(f(a), a, a, a)
 
 Sage example in ./sol/calculus.tex, line 57::
 
@@ -578,7 +578,7 @@ Sage example in ./sol/calculus.tex, line 57::
     sage: phi(h) = sum(binomial(n,k)*(-1)^(n-k) \
     ....:          * g(a+k*h) for k in (0..n)) / h^n
     sage: phi(h).expand()
-    D[0, 0, 0, 0, 0, 0, 0](f)(a)
+    diff(f(a), a, a, a, a, a, a, a)
 
 Sage example in ./sol/calculus.tex, line 82::
 
@@ -699,7 +699,7 @@ Sage example in ./sol/calculus.tex, line 365::
     sage: i = vector([1, 0, 0])
     sage: S = (r1 - r3) * R2 + (r3 - r2) * R1 +   (r2 - r1) * R3
     sage: V =  S + e * i.cross_product(D)
-    sage: map(lambda x:x.simplify_full(), V)
+    sage: [x.simplify_full() for x in V]
     [0, 0, 0]
 
 Sage example in ./sol/calculus.tex, line 390::
@@ -707,7 +707,7 @@ Sage example in ./sol/calculus.tex, line 390::
     sage: N = r3 * R1.cross_product(R2) + r1 * R2.cross_product(R3)\
     ....:   + r2 * R3.cross_product(R1)
     sage: W =  p * S + e * i.cross_product(N)
-    sage: print(map(lambda x:x.simplify_full(), W))
+    sage: [x.simplify_full() for x in W]
     [0, 0, 0]
 
 Sage example in ./sol/calculus.tex, line 409::

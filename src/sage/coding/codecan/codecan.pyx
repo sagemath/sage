@@ -53,7 +53,7 @@ AUTHORS:
 
 REFERENCES:
 
-[Feu2009]_
+- [Feu2009]
 
 EXAMPLES:
 
@@ -486,27 +486,22 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         sage: all( [(a*mat).echelon_form() == mat.echelon_form() for a in A])
         True
     """
-    def __cinit__(self, n, generator_matrix, **kwds):
+    def __cinit__(self):
         r"""
         Initialization. See :meth:`__init__`.
 
-        EXAMPLES::
+        TESTS::
 
             sage: from sage.coding.codecan.codecan import PartitionRefinementLinearCode
-            sage: mat = codes.HammingCode(GF(3), 3).dual_code().generator_matrix()
-            sage: P = PartitionRefinementLinearCode(mat.ncols(), mat)
+            sage: C = PartitionRefinementLinearCode.__new__(PartitionRefinementLinearCode, 0)
         """
-        self._k = generator_matrix.nrows()
-        self._q = len(generator_matrix.base_ring())
+        self._hyp2points = NULL
+        self._points2hyp = NULL
+        self._hyp_part = NULL
+        self._hyp_refine_vals_scratch = NULL
         self._nr_of_supp_refine_calls = 0
         self._nr_of_point_refine_calls = 0
-        self._matrix = copy(generator_matrix)
-        self._root_matrix = generator_matrix
         self._stored_states = dict()
-        self._supp_refine_vals = _BestValStore(n)
-        self._point_refine_vals = _BestValStore(n)
-        # self._hyp_refine_vals will initialized after
-        # we computed the set of codewords
 
     def __init__(self, n, generator_matrix, P=None, algorithm_type="semilinear"):
         r"""
@@ -535,7 +530,22 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
             sage: from sage.coding.codecan.codecan import PartitionRefinementLinearCode
             sage: mat = codes.HammingCode(GF(3), 3).dual_code().generator_matrix()
             sage: P = PartitionRefinementLinearCode(mat.ncols(), mat)
+
+        ::
+
+            sage: from sage.coding.codecan.codecan import PartitionRefinementLinearCode
+            sage: mat = codes.HammingCode(GF(3), 3).dual_code().generator_matrix()
+            sage: P = PartitionRefinementLinearCode(mat.ncols(), mat)
         """
+        self._k = generator_matrix.nrows()
+        self._q = len(generator_matrix.base_ring())
+        self._matrix = copy(generator_matrix)
+        self._root_matrix = generator_matrix
+        self._supp_refine_vals = _BestValStore(n)
+        self._point_refine_vals = _BestValStore(n)
+        # self._hyp_refine_vals will initialized after
+        # we computed the set of codewords
+
         self._run(P, algorithm_type)
 
     def __dealloc__(self):
@@ -543,14 +553,16 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         Deallocates ``self``.
         """
         cdef int i
-        for i in range(self._n):
-            bitset_free(self._points2hyp[i])
+        if self._points2hyp is not NULL:
+            for i in range(self._n):
+                bitset_free(self._points2hyp[i])
+            sig_free(self._points2hyp)
 
-        for i in range(self._hyp_part.degree):
-            bitset_free(self._hyp2points[i])
+        if self._points2hyp is not NULL:
+            for i in range(self._hyp_part.degree):
+                bitset_free(self._hyp2points[i])
+            sig_free(self._hyp2points)
 
-        sig_free(self._hyp2points)
-        sig_free(self._points2hyp)
         PS_dealloc(self._hyp_part)
         sig_free(self._hyp_refine_vals_scratch)
 
@@ -781,29 +793,19 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
             if s >= 0:
                 self._hyp_part.levels[s] = 0
 
-        self._hyp2points = < bitset_t *> sig_malloc(self._hyp_part.degree * sizeof(bitset_t))
-        if self._hyp2points is NULL:
-            raise MemoryError('allocating PartitionRefinementLinearCode')
-        self._points2hyp = < bitset_t *> sig_malloc(self._n * sizeof(bitset_t))
-        if self._hyp2points is NULL:
-            sig_free(self._hyp2points)
-            raise MemoryError('allocating PartitionRefinementLinearCode')
-
+        self._points2hyp = <bitset_t*>check_calloc(self._n, sizeof(bitset_t))
         for i in range(self._n):
             bitset_init(self._points2hyp[i], self._hyp_part.degree)
-            bitset_zero(self._points2hyp[i])
 
+        self._hyp2points = <bitset_t*>check_calloc(self._hyp_part.degree, sizeof(bitset_t))
         for i in range(self._hyp_part.degree):
             bitset_init(self._hyp2points[i], self._n)
-            bitset_zero(self._hyp2points[i])
             for j in flat_W[i].support():
                 bitset_add(self._hyp2points[i], j)
                 bitset_add(self._points2hyp[j], i)
 
-        self._hyp_refine_vals_scratch = <long *> sig_malloc(
-                            self._hyp_part.degree * sizeof(long))
-        if self._hyp_refine_vals_scratch is NULL:
-            raise MemoryError('allocating PartitionRefinementLinearCode')
+        self._hyp_refine_vals_scratch = <long*>check_allocarray(
+                self._hyp_part.degree, sizeof(long))
 
         self._hyp_refine_vals = _BestValStore(self._hyp_part.degree)
 
@@ -968,10 +970,9 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         self._part.depth += 1
         PS_clear(self._part)
 
-        cdef bitset_t *nonsingletons
+        cdef bitset_t *nonsingletons = NULL
         cdef bitset_t scratch
         bitset_init(scratch, self._hyp_part.degree)
-        nonsingletons = < bitset_t *> sig_malloc(0)
         cdef int nr_cells = PS_all_new_cells(self._hyp_part, & nonsingletons)
 
         for i in range(self._n):
@@ -1013,10 +1014,9 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         self._hyp_part.depth += 1
         PS_clear(self._hyp_part)
-        cdef bitset_t *nonsingletons
+        cdef bitset_t *nonsingletons = NULL
         cdef bitset_t scratch
         bitset_init(scratch, self._part.degree)
-        nonsingletons = < bitset_t *> sig_malloc(0)
         cdef int nr_cells = PS_all_new_cells(self._part, & nonsingletons)
 
         for i in range(self._hyp_part.degree):

@@ -130,7 +130,7 @@ class ReductionData(SageObject):
 
        Be careful regarding the formula:
 
-       .. math::
+       .. MATH::
 
           \text{valuation of the naive minimal discriminant} = f + n - 1 + 11c(X).
 
@@ -318,7 +318,7 @@ class Genus2reduction(SageObject):
     Consider the modular curve `X_1(13)` defined by an
     equation
 
-    .. math::
+    .. MATH::
 
                    y^2 + (x^3-x^2-1)y = x^2 - x.
 

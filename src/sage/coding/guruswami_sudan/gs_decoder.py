@@ -1,17 +1,15 @@
 r"""
-Guruswami-Sudan decoder for Generalized Reed-Solomon codes
+Guruswami-Sudan decoder for (Generalized) Reed-Solomon codes
 
 REFERENCES:
 
-    .. [GS99] Venkatesan Guruswami and Madhu Sudan, Improved Decoding of
-       Reed-Solomon Codes and Algebraic-Geometric Codes, 1999
+- [GS1999]_
 
-    .. [N13] Johan S. R. Nielsen, List Decoding of Algebraic Codes, Ph.D.
-       Thesis, Technical University of Denmark, 2013
+- [Nie2013]_
 
 AUTHORS:
 
-- Johan S. R. Nielsen, original implementation (see [Nielsen]_ for details)
+- Johan S. R. Nielsen, original implementation (see [Nie]_ for details)
 - David Lucas, ported the original implementation in Sage
 """
 
@@ -31,7 +29,6 @@ from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.coding.decoder import Decoder
 from sage.coding.guruswami_sudan.interpolation import gs_interpolation_linalg, gs_interpolation_lee_osullivan
-from sage.coding.guruswami_sudan.rootfinding import rootfind_roth_ruckenstein
 from sage.coding.guruswami_sudan.utils import (johnson_radius,
                                                gilt,
                                                solve_degree2_to_integer_range)
@@ -85,6 +82,24 @@ def n_k_params(C, n_k):
     elif n_k is not None:
         return n_k
 
+def roth_ruckenstein_root_finder(p, maxd=None, precision=None):
+    """
+    Wrapper for Roth-Ruckenstein algorithm to compute the roots of a polynomial
+    with coefficients in ``F[x]``.
+
+    TESTS::
+
+        sage: from sage.coding.guruswami_sudan.gs_decoder import roth_ruckenstein_root_finder
+        sage: R.<x> = GF(13)[]
+        sage: S.<y> = R[]
+        sage: p = (y - x^2 - x - 1) * (y + x + 1)
+        sage: roth_ruckenstein_root_finder(p, maxd = 2)
+        [12*x + 12, x^2 + x + 1]
+    """
+    gens = p.parent().gens()
+    if len(gens) == 2:
+        p = p.polynomial(gens[1])
+    return p.roots(multiplicities=False, degree_bound=maxd, algorithm="Roth-Ruckenstein")
 
 class GRSGuruswamiSudanDecoder(Decoder):
     r"""
@@ -94,7 +109,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
     The Guruswami-Sudan algorithm is a polynomial time algorithm to decode
     beyond half the minimum distance of the code. It can decode up to the
     Johnson radius which is `n - \sqrt(n(n-d))`, where `n, d` is the length,
-    respectively minimum distance of the RS code. See [GS99] for more details.
+    respectively minimum distance of the RS code. See [GS1999]_ for more details.
     It is a list-decoder meaning that it returns a list of all closest codewords
     or their corresponding message polynomials. Note that the output of the
     ``decode_to_code`` and ``decode_to_message`` methods are therefore lists.
@@ -155,8 +170,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         ``my_rootfinder(Q, maxd=default_value, precision=default_value)``. `Q`
         will be given as an element of `F[x][y]`. The function must return the
         roots as a list of polynomials over a univariate polynomial ring. See
-        :meth:`sage.coding.guruswami_sudan.rootfinding.rootfind_roth_ruckenstein`
-        for an example.
+        :meth:`roth_ruckenstein_root_finder` for an example.
 
         If one provides a function as ``interpolation_alg``, its signature has
         to be: ``my_inter(interpolation_points, tau, s_and_l, wy)``. See
@@ -168,38 +182,36 @@ class GRSGuruswamiSudanDecoder(Decoder):
         sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
         sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau = 97)
         sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
 
     One can specify multiplicity and list size instead of ``tau``::
 
         sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters = (1,2))
         sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
 
     One can pass a method as ``root_finder`` (works also for ``interpolation_alg``)::
 
-        sage: from sage.coding.guruswami_sudan.rootfinding import rootfind_roth_ruckenstein
-        sage: rf = rootfind_roth_ruckenstein
+        sage: from sage.coding.guruswami_sudan.gs_decoder import roth_ruckenstein_root_finder
+        sage: rf = roth_ruckenstein_root_finder
         sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters = (1,2), root_finder = rf)
         sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
 
     If one wants to use the native Sage algorithms for the root finding step,
     one can directly pass the string given in the ``Input`` block of this class.
     This works for ``interpolation_alg`` as well::
 
 
-        sage: from sage.coding.guruswami_sudan.rootfinding import rootfind_roth_ruckenstein
-        sage: rf = rootfind_roth_ruckenstein
         sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters = (1,2), root_finder="RothRuckenstein")
         sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
 
     Actually, we can construct the decoder from ``C`` directly::
 
         sage: D = C.decoder("GuruswamiSudan", tau = 97)
         sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
     """
 
     ####################### static methods ###############################
@@ -259,7 +271,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         # We start with l=1 and check if a satisfiable s can be chosen. We keep
         # increasing l by 1 until this is the case. The governing equation is
         #   s*(s+1)/2 * n < (l+1)*s*(n-tau) - l*(l+1)/2*(k-1)
-        # See [GS99]
+        # See [GS1999]_
         def try_l(l):
             (mins,maxs) = solve_degree2_to_integer_range(n, n-2*(l+1)*(n-tau), (k-1)*l*(l+1))
             if maxs > 0 and maxs >= mins:
@@ -376,7 +388,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         for the provided ``tau``, but arise from easily-evaluated closed
         expressions and are very good approximations of the best ones.
 
-        See [N13]_ pages 53-54, proposition 3.11 for details.
+        See [Nie2013]_ pages 53-54, proposition 3.11 for details.
 
         INPUT:
 
@@ -444,7 +456,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         Returns whether input parameters satisfy the governing equation of
         Guruswami-Sudan.
 
-        See [N13]_ page 49, definition 3.3 and proposition 3.4 for details.
+        See [Nie2013]_ page 49, definition 3.3 and proposition 3.4 for details.
 
         INPUT:
 
@@ -543,7 +555,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         If ``code`` is not a GRS code, an error is raised::
 
-            sage: C  = codes.RandomLinearCode(10, 4, GF(11))
+            sage: C  = codes.random_linear_code(GF(11), 10, 4)
             sage: codes.decoders.GRSGuruswamiSudanDecoder(C, tau = 2)
             Traceback (most recent call last):
             ...
@@ -576,7 +588,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         if hasattr(root_finder, '__call__'):
             self._root_finder = root_finder
         elif root_finder == None or root_finder == "RothRuckenstein":
-            self._root_finder = rootfind_roth_ruckenstein
+            self._root_finder = roth_ruckenstein_root_finder
         else:
             raise ValueError("Please provide a method or one of the allowed strings for root_finder")
         super(GRSGuruswamiSudanDecoder, self).__init__(code, code.ambient_space(), "EvaluationPolynomial")
@@ -590,7 +602,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
             sage: D = C.decoder("GuruswamiSudan", tau = 97)
             sage: D
-            Guruswami-Sudan decoder for [250, 70, 181] Generalized Reed-Solomon Code over Finite Field of size 251 decoding 97 errors with parameters (1, 2)
+            Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
         """
         return "Guruswami-Sudan decoder for %s decoding %s errors with parameters %s" % (self.code(), self.decoding_radius(), (self.multiplicity(), self.list_size()))
 
@@ -603,7 +615,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
             sage: D = C.decoder("GuruswamiSudan", tau = 97)
             sage: latex(D)
-            \textnormal{Guruswami-Sudan decoder for } [250, 70, 181] \textnormal{ Generalized Reed-Solomon Code over } \Bold{F}_{251}\textnormal{ decoding }97\textnormal{ errors with parameters }(1, 2)
+            \textnormal{Guruswami-Sudan decoder for } [250, 70, 181] \textnormal{ Reed-Solomon Code over } \Bold{F}_{251}\textnormal{ decoding }97\textnormal{ errors with parameters }(1, 2)
         """
         return "\\textnormal{Guruswami-Sudan decoder for } %s\\textnormal{ decoding }%s\\textnormal{ errors with parameters }%s" % (self.code()._latex_(), self.decoding_radius(), (self.multiplicity(), self.list_size()))
 
@@ -640,8 +652,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
             sage: D = C.decoder("GuruswamiSudan", tau = 97)
-            sage: D.interpolation_algorithm() #random
-            <function gs_interpolation_linalg at 0x7f9d55753500>
+            sage: D.interpolation_algorithm()
+            <function gs_interpolation_lee_osullivan at 0x...>
         """
         return self._interpolation_alg
 
@@ -651,15 +663,16 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         Remember that its signature has to be:
         ``my_rootfinder(Q, maxd=default_value, precision=default_value)``.
-        See :meth:`sage.coding.guruswami_sudan.rootfinding.rootfind_roth_ruckenstein`
+        See :meth:`roth_ruckenstein_root_finder`
         for an example.
 
         EXAMPLES::
 
+            sage: from sage.coding.guruswami_sudan.gs_decoder import roth_ruckenstein_root_finder
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
             sage: D = C.decoder("GuruswamiSudan", tau = 97)
-            sage: D.rootfinding_algorithm() #random
-            <function rootfind_roth_ruckenstein at 0x7fea00618848>
+            sage: D.rootfinding_algorithm()
+            <function roth_ruckenstein_root_finder at 0x...>
         """
         return self._root_finder
 
@@ -772,6 +785,17 @@ class GRSGuruswamiSudanDecoder(Decoder):
             2
             sage: c in codewords
             True
+
+        TESTS:
+
+        Check that :trac:`21347` is fixed::
+
+            sage: C = codes.GeneralizedReedSolomonCode(GF(13).list()[:10], 3)
+            sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau = 4)
+            sage: c = vector(GF(13), [6, 8, 2, 1, 5, 1, 2, 8, 6, 9])
+            sage: e = vector(GF(13), [1, 0, 0, 1, 1, 0, 0, 1, 0, 1])
+            sage: D.decode_to_code(c+e)
+            []
         """
         C = self.code()
         n, k, d, alphas, colmults, s, l = C.length(), C.dimension(), C.minimum_distance(),\
@@ -791,7 +815,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         except TypeError:
             raise ValueError("The provided root-finding algorithm has a wrong signature. See the documentation of `codes.decoders.GRSGuruswamiSudanDecoder.rootfinding_algorithm()` for details")
         if not polynomials:
-            return None
+            return []
 
         E = self.connected_encoder()
         codewords = [ E.encode(f) for f in polynomials]

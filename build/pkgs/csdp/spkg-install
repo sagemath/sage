@@ -6,7 +6,7 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
-cat LICENSE 
+cat LICENSE
 echo "**************************************************"
 echo "NOTE that csdp's License is NOT GPL-compatible"
 echo "**************************************************"

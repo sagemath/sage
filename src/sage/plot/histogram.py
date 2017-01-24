@@ -31,7 +31,7 @@ class Histogram(GraphicPrimitive):
         sage: type(g)
         <class 'sage.plot.histogram.Histogram'>
         sage: opts = { 'bins':20, 'label':'mydata'}
-        sage: g = Histogram([random() for _ in xrange(500)], opts); g
+        sage: g = Histogram([random() for _ in range(500)], opts); g
         Histogram defined by a data list of size 500
 
     We can accept multiple sets of the same length::
@@ -68,10 +68,10 @@ class Histogram(GraphicPrimitive):
             sage: H = histogram([10,3,5], normed=True); h = H[0]
             sage: h.get_minmax_data()
             {'xmax': 10.0, 'xmin': 3.0, 'ymax': 0.4761904761904765, 'ymin': 0}
-            sage: G = histogram([random() for _ in xrange(500)]); g = G[0]
+            sage: G = histogram([random() for _ in range(500)]); g = G[0]
             sage: g.get_minmax_data() # random output
             {'xmax': 0.99729312925213209, 'xmin': 0.00013024562219410285, 'ymax': 61, 'ymin': 0}
-            sage: Y = histogram([random()*10 for _ in xrange(500)], range=[2,8]); y = Y[0]
+            sage: Y = histogram([random()*10 for _ in range(500)], range=[2,8]); y = Y[0]
             sage: ymm = y.get_minmax_data(); ymm['xmax'], ymm['xmin']
             (8.0, 2.0)
             sage: Z = histogram([[1,3,2,0], [4,4,3,3]]); z = Z[0]
@@ -126,7 +126,7 @@ class Histogram(GraphicPrimitive):
             18
         """
         return {'color': 'The color of the face of the bars or list of colors if multiple data sets are given.',
-                'edgecolor':'The color of the the border of each bar.',
+                'edgecolor':'The color of the border of each bar.',
                 'alpha': 'How transparent the plot is',
                 'hue':'The color of the bars given as a hue.',
                 'fill':'(True or False, default True) Whether to fill the bars',
@@ -207,7 +207,7 @@ def histogram(datalist, **options):
       a histogram is computed in which each bin gives the counts in that
       bin plus all bins for smaller values.  Negative values give
       a reversed direction of accumulation
-    - ``edgecolor`` -- The color of the the border of each bar
+    - ``edgecolor`` -- The color of the border of each bar
     - ``fill`` -- (boolean - default: True) Whether to fill the bars
     - ``hatch`` -- (default: None) symbol to fill the bars with - one of
       "/", "\\", "|", "-", "+", "x", "o", "O", ".", "*", "" (or None)
@@ -248,7 +248,7 @@ def histogram(datalist, **options):
     looks like the probability density function::
 
         sage: nv = normalvariate
-        sage: H = histogram([nv(0,1) for _ in xrange(1000)], bins=20, normed=True, range=[-5,5])
+        sage: H = histogram([nv(0,1) for _ in range(1000)], bins=20, normed=True, range=[-5,5])
         sage: P = plot( 1/sqrt(2*pi)*e^(-x^2/2), (x,-5,5), color='red', linestyle='--')
         sage: H+P
         Graphics object consisting of 2 graphics primitives
@@ -256,7 +256,7 @@ def histogram(datalist, **options):
     There are many options one can use with histograms.  Some of these
     control the presentation of the data, even if it is boring::
 
-        sage: histogram(range(100), color=(1,0,0), label='mydata',\
+        sage: histogram(list(range(100)), color=(1,0,0), label='mydata',\
               rwidth=.5, align="right")
         Graphics object consisting of 1 graphics primitive
 
@@ -271,7 +271,7 @@ def histogram(datalist, **options):
 
     We can do several data sets at once if desired::
 
-        sage: histogram([srange(0,1,.1)*10, [nv(0, 1) for _ in xrange(100)]], color=['red','green'], bins=5)
+        sage: histogram([srange(0,1,.1)*10, [nv(0, 1) for _ in range(100)]], color=['red','green'], bins=5)
         Graphics object consisting of 1 graphics primitive
 
     We have the option of stacking the data sets too::
@@ -281,11 +281,9 @@ def histogram(datalist, **options):
 
     It is possible to use weights with the histogram as well::
 
-        sage: histogram(range(10), bins=3, weights=[1,2,3,4,5,5,4,3,2,1])
+        sage: histogram(list(range(10)), bins=3, weights=[1,2,3,4,5,5,4,3,2,1])
         Graphics object consisting of 1 graphics primitive
-
     """
-
     g = Graphics()
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options))
     g.add_primitive(Histogram(datalist, options=options))

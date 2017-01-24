@@ -21,6 +21,7 @@ from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import Element
+from sage.structure.sage_object import richcmp
 from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.infinity import Infinity
@@ -200,7 +201,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
             """
             return hash(self._b) ^ hash(self._m)
 
-        def __cmp__(self, other):
+        def _richcmp_(self, other, op):
             """
             Comparison.
 
@@ -236,12 +237,8 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
                  [[1, 2], [2, 3]](1),
                  [[1, 2], [3, 3]](1),
                  [[2, 2], [3, 3]](2)]
-
             """
-            if parent(self) is parent(other):
-                return cmp(self._m, other._m) or cmp(self._b, other._b)
-            else:
-                return cmp(parent(self), parent(other))
+            return richcmp((self._m, self._b), (other._m, other._b), op)
 
         def e(self, i):
             """

@@ -48,7 +48,7 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 
 from sage.structure.sage_object import SageObject
 from sage.rings.number_field.number_field import NumberField, QuadraticField
@@ -322,6 +322,19 @@ class GaloisRepresentation(SageObject):
             sage: rho = E.galois_representation()
             sage: rho.isogeny_bound()
             [0]
+
+        An example (an elliptic curve with everywhere good reduction
+        over an imaginary quadratic field with quite large
+        discriminant), which failed until fixed at :trac:`21776`::
+
+            sage: K.<a> = NumberField(x^2 - x + 112941801)
+            sage: E = EllipticCurve([a+1,a-1,a,-23163076*a + 266044005933275,57560769602038*a - 836483958630700313803])
+            sage: E.conductor().norm()
+            1
+            sage: GR = E.galois_representation()
+            sage: GR.isogeny_bound()
+            []
+
         """
         if self.E.has_rational_cm():
             return [0]
@@ -533,7 +546,7 @@ def _maybe_borels(E, L, patience=100):
         L.remove(2)
         include_2 = not E.division_polynomial(2).is_irreducible()
 
-    for P in K.primes_of_degree_one_iter():
+    for P in deg_one_primes_iter(K):
         if not (L and patience): # stop if no primes are left, or
                                  # patience is exhausted
             break
@@ -645,7 +658,7 @@ def _exceptionals(E, L, patience=1000):
     for l in L:
         D[l] = [True, True, True]
 
-    for P in K.primes_of_degree_one_iter():
+    for P in deg_one_primes_iter(K):
         try:
             trace = E.change_ring(P.residue_field()).trace_of_frobenius()
         except ArithmeticError: # Bad reduction at P.
@@ -760,6 +773,50 @@ def _tr12(tr, det):
     det3 = det**3
     return ((tr * (tr**2 - 3 * det))**2 - 2 * det3)**2 - 2 * det3**2
 
+def deg_one_primes_iter(K, principal_only=False):
+    r"""
+    Return an iterator over degree 1 primes of ``K``.
+
+    INPUT:
+
+    - ``K`` -- a number field
+    - ``principal_only`` -- bool; if ``True``, only yield principal primes
+
+    OUTPUT:
+
+    An iterator over degree 1 primes of `K` up to the given norm,
+    optionally yielding only principal primes.
+
+    EXAMPLES::
+
+        sage: K.<a> = QuadraticField(-5)
+        sage: from sage.schemes.elliptic_curves.gal_reps_number_field import deg_one_primes_iter
+        sage: it = deg_one_primes_iter(K)
+        sage: [next(it) for _ in range(6)]
+        [Fractional ideal (2, a + 1),
+         Fractional ideal (3, a + 1),
+         Fractional ideal (3, a + 2),
+         Fractional ideal (-a),
+         Fractional ideal (7, a + 3),
+         Fractional ideal (7, a + 4)]
+        sage: it = deg_one_primes_iter(K, True)
+        sage: [next(it) for _ in range(6)]
+        [Fractional ideal (-a),
+         Fractional ideal (-2*a + 3),
+         Fractional ideal (2*a + 3),
+         Fractional ideal (a + 6),
+         Fractional ideal (a - 6),
+         Fractional ideal (-3*a + 4)]
+    """
+    # imaginary quadratic fields have no principal primes of norm < disc / 4
+    start = K.discriminant().abs() // 4 if principal_only and K.signature() == (0,1) else 2
+
+    from sage.arith.misc import primes
+    from sage.rings.infinity import infinity
+    for p in primes(start=start, stop=infinity):
+        for P in K.primes_above(p, degree=1):
+            if not principal_only or P.is_principal():
+                yield P
 
 def _semistable_reducible_primes(E):
     r"""Find a list containing all semistable primes l unramified in K/QQ
@@ -785,7 +842,8 @@ def _semistable_reducible_primes(E):
 
     E = _over_numberfield(E)
     K = E.base_field()
-    deg_one_primes = K.primes_of_degree_one_iter()
+
+    deg_one_primes = deg_one_primes_iter(K, principal_only=True)
 
     bad_primes = set([]) # This will store the output.
 
@@ -801,8 +859,9 @@ def _semistable_reducible_primes(E):
     while len(precomp) < 2:
         P = next(deg_one_primes)
 
-        if not P.is_principal():
-            continue
+        # the iterator tests this already
+        # if not P.is_principal():
+        #     continue
 
         det = P.norm()
         if det == last_char:
@@ -826,7 +885,7 @@ def _semistable_reducible_primes(E):
     Kgal = K.galois_closure('b')
     maps = K.embeddings(Kgal)
 
-    for i in xrange(2 ** (K.degree() - 1)):
+    for i in range(2 ** (K.degree() - 1)):
         ## We iterate through all possible characters. ##
 
         # Here, if i = i_{l-1} i_{l-2} cdots i_1 i_0 in binary, then i
@@ -838,7 +897,7 @@ def _semistable_reducible_primes(E):
         phi2y = 1
 
         # We compute the two algebraic characters at x and y:
-        for j in xrange(K.degree()):
+        for j in range(K.degree()):
             if i % 2 == 1:
                 phi1x *= maps[j](x)
                 phi1y *= maps[j](y)
@@ -884,8 +943,9 @@ def _semistable_reducible_primes(E):
         while True:
             P = next(deg_one_primes)
 
-            if not P.is_principal():
-                continue
+            # the iterator tests this already
+            # if not P.is_principal():
+            #     continue
 
             try:
                 tr = E.change_ring(P.residue_field()).trace_of_frobenius()
@@ -976,7 +1036,7 @@ def _possible_normalizers(E, SA):
     traces_list = []
     W = V.zero_subspace()
 
-    deg_one_primes = K.primes_of_degree_one_iter()
+    deg_one_primes = deg_one_primes_iter(K)
 
     while W.dimension() < V.dimension() - 1:
         P = next(deg_one_primes)
@@ -1035,7 +1095,7 @@ def _possible_normalizers(E, SA):
 
     # We find the element a of the selmer group corresponding to v:
     a = 1
-    for i in xrange(len(selmer_group)):
+    for i in range(len(selmer_group)):
         if v[i] == 1:
             a *= selmer_group[i]
 

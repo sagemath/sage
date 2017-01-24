@@ -1,20 +1,32 @@
 #!/usr/bin/env python
 
 import os
-common_curves = os.path.join(os.getcwd(), 'src', 'common')
+os.chdir("src")
+
+
+try:
+    SAGE_SHARE = os.environ['SAGE_SHARE']
+except KeyError:
+    raise RuntimeError("SAGE_SHARE undefined, maybe run `sage -sh`?")
+
+
+def safe_makedirs(dir):
+    try:
+        os.makedirs(dir)
+    except OSError:
+        if not os.path.isdir(dir):
+            raise
+
 
 def install_cremona():
     from sqlite3 import connect
 
-    if 'SAGE_SHARE' not in os.environ:
-        raise RuntimeError("SAGE_SHARE undefined, maybe run `sage -sh`?")
-
-    cremona_root = os.path.join(os.environ['SAGE_SHARE'], 'cremona')
-    if not os.path.exists(cremona_root):
-        os.makedirs(cremona_root)
+    cremona_root = os.path.join(SAGE_SHARE, 'cremona')
+    safe_makedirs(cremona_root)
 
     target = os.path.join(cremona_root, 'cremona_mini.db')
 
+    print("Creating database {0}".format(target))
     if os.path.exists(target):
         os.remove(target)
 
@@ -30,7 +42,7 @@ def install_cremona():
     class_data = []
     curve_data = []
 
-    for line in open(os.path.join(common_curves, 'allcurves.00000-09999')):
+    for line in open(os.path.join('common', 'allcurves.00000-09999')):
         N, iso, num, eqn, r, tors = line.split()
         cls = N + iso
         cur = cls + num
@@ -45,43 +57,46 @@ def install_cremona():
 
     con.commit()
 
+
 def install_ellcurves():
-    import shutil, tempfile
+    ellcurves_root = os.path.join(SAGE_SHARE, 'ellcurves')
 
-    if 'SAGE_SHARE' not in os.environ:
-        raise RuntimeError("SAGE_SHARE undefined, maybe run `sage -sh`?")
+    # Remove previous installs (possibly with bad permissions, see
+    # https://trac.sagemath.org/ticket/21641)
+    import shutil
+    try:
+        shutil.rmtree(ellcurves_root)
+    except OSError:
+        pass
 
-    target = os.path.join(os.environ['SAGE_SHARE'], 'ellcurves')
-    if os.path.exists(target):
-        try:
-            shutil.rmtree(target)
-        except OSError:
-            os.remove(target)
+    safe_makedirs(ellcurves_root)
 
-    shutil.move(os.path.join('src', 'ellcurves'), target)
-    rank = {}
-    for line in open(os.path.join(common_curves, 'allcurves.00000-09999')):
-        r = line.split()[4]
-        if r not in rank:
-            rank[r] = open(tempfile.mkstemp()[1], 'w')
-        rank[r].write(line)
+    # Open all source files from the "ellcurves" directory containing
+    # a database of curves with given rank. In the install directory,
+    # we store all curves from the "allcurves" Cremona database by rank,
+    # as well as the curves from "ellcurves".
+    rank_src = {'rank0': None, 'rank1': None, 'rank2': None}  # Not in "ellcurves"
+    for r in os.listdir('ellcurves'):
+        if not r.startswith("."):
+            rank_src[r] = open(os.path.join('ellcurves', r))
 
-    for r, f in rank.items():
-        f.close()
-        endpath = os.path.join(target, 'rank' + r)
-        if os.path.exists(endpath):
-            old = tempfile.mkstemp()[1]
-            shutil.move(endpath, old)
-            shutil.move(f.name, endpath)
-            f = open(endpath, 'a')
-            tmp = open(old, 'r')
-            f.write(tmp.read())
-            tmp.close()
-            f.close()
-            os.remove(old)
-        else:
-            shutil.move(f.name, endpath)
-        os.chmod(endpath, 0o644)
+    # Create files for each rank of elliptic curves in the databases.
+    rank_dst = {}
+    for r in rank_src:
+        filename = os.path.join(ellcurves_root, r)
+        print("Creating text file {0}".format(filename))
+        rank_dst[r] = open(filename, 'w')
+
+    # Write the curves from the "allcurves" database to the rank file
+    for line in open(os.path.join('common', 'allcurves.00000-09999')):
+        r = "rank" + line.split()[4]
+        rank_dst[r].write(line)
+
+    # Now append the ranks from the "ellcurves" database
+    for r, f in rank_src.items():
+        if f is not None:
+            rank_dst[r].write(f.read())
+
 
 if __name__ == '__main__':
     install_cremona()

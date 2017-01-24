@@ -21,6 +21,7 @@ from __future__ import print_function
 
 from sage.data_structures.bounded_integer_sequences cimport *
 from cpython.slice cimport PySlice_GetIndicesEx
+from sage.structure.sage_object cimport rich_to_bool
 
 include "cysignals/signals.pxi"
 include "sage/data_structures/bitset.pxi"
@@ -261,11 +262,11 @@ cdef class QuiverPath(MonoidElement):
         """
         return self._path.length != 0
 
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         Comparison for :class:`QuiverPaths`.
 
-        The following data (listed in order of preferance) is used for
+        The following data (listed in order of preference) is used for
         comparison:
 
         - **Negative** length of the paths
@@ -332,20 +333,20 @@ cdef class QuiverPath(MonoidElement):
         other = right
         # we want *negative* degree reverse lexicographical order
         if other._path.length < cself._path.length:
-            return -1
+            return rich_to_bool(op, -1)
         if other._path.length > cself._path.length:
-            return 1
+            return rich_to_bool(op, 1)
         if cself._start < other._start:
-            return -1
+            return rich_to_bool(op, -1)
         if cself._start > other._start:
-            return 1
+            return rich_to_bool(op, 1)
         if cself._end < other._end:
-            return -1
+            return rich_to_bool(op, -1)
         if cself._end > other._end:
-            return 1
-        if cself._path.length==0:
-            return 0
-        return biseq_cmp(cself._path, other._path)
+            return rich_to_bool(op, 1)
+        if cself._path.length == 0:
+            return rich_to_bool(op, 0)
+        return biseq_richcmp(cself._path, other._path, op)
 
     def __getitem__(self, index):
         """

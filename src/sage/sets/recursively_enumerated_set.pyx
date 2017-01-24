@@ -367,7 +367,6 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         if post_process is not None:
             self.post_process = post_process
         self._graded_component = None
-        self._graded_component_it = None
         Parent.__init__(self, facade=facade, category=EnumeratedSets().or_subcategory(category))
 
     def __reduce__(self):
@@ -411,9 +410,9 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
             sage: C = RecursivelyEnumeratedSet((1, 2, 3), factor)
             sage: C.__getstate__()
-            (None, None)
+            (None,)
         """
-        return (self._graded_component, self._graded_component_it)
+        return (self._graded_component, )
 
     def __setstate__(self, l):
         r"""
@@ -429,14 +428,16 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             sage: C.__setstate__(C.__getstate__())
         """
         self._graded_component = l[0]
-        self._graded_component_it = l[1]
+        # Since trac ticket #21312, the graded component iterator is not used
+        # anymore but maybe some previously pickled object still have it
+        # self._graded_component_it = l[1]
 
     def __len__(self):
         """
         Disable ``__len__()`` from :class:`Parent` :trac:`12955`.
 
-        Because Python assumes ``__len__()`` is fast and we can't
-        have a fast default implmentation.
+        Because Python assumes ``__len__()`` is fast and we cannot
+        have a fast default implementation.
 
         EXAMPLES::
 
@@ -589,7 +590,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         A graded component is a set of elements of the same depth.
 
-        It is currently implemented only for herited classes.
+        It is currently implemented only for graded or symmetric structure.
 
         OUTPUT:
 
@@ -613,6 +614,8 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         A graded component is a set of elements of the same depth where the
         depth of an element is its minimal distance to a root.
 
+        It is currently implemented only for graded or symmetric structure.
+
         INPUT:
 
         - ``depth`` -- integer
@@ -629,35 +632,9 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             Traceback (most recent call last):
             ...
             NotImplementedError: graded_component_iterator method currently implemented only for graded or symmetric structure
-
-        When the structure is symmetric::
-
-            sage: f = lambda a: [a-1,a+1]
-            sage: C = RecursivelyEnumeratedSet([10, 15], f, structure='symmetric')
-            sage: for i in range(5): sorted(C.graded_component(i))
-            [10, 15]
-            [9, 11, 14, 16]
-            [8, 12, 13, 17]
-            [7, 18]
-            [6, 19]
-
-        When the structure is graded::
-
-            sage: f = lambda a: [a+1, a+I]
-            sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
-            sage: for i in range(5): sorted(C.graded_component(i))
-            [0]
-            [I, 1]
-            [2*I, I + 1, 2]
-            [3*I, 2*I + 1, I + 2, 3]
-            [4*I, 3*I + 1, 2*I + 2, I + 3, 4]
         """
-        if self._graded_component is None:
-            self._graded_component = []
-            self._graded_component_it = self.graded_component_iterator()
-        while len(self._graded_component) <= depth:
-            self._graded_component.append(next(self._graded_component_it))
-        return self._graded_component[depth]
+        raise NotImplementedError("graded_component_iterator method currently"
+                                  " implemented only for graded or symmetric structure")
 
     def elements_of_depth_iterator(self, depth):
         r"""
@@ -725,6 +702,12 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         r"""
         Iterate on the elements of ``self`` (breadth first).
 
+        This code remembers only elements needed by the graded component iterator
+        to generate the next graded component.
+
+        This method is the default breadth first search iterator when the
+        structure is symmetric or graded.
+
         INPUT:
 
         - ``max_depth`` -- (Default: ``None``) specifies the maximal depth
@@ -733,9 +716,9 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         .. NOTE::
 
-            It should be slower than the other one since it must generates
-            the whole graded component before yielding the first element of
-            each graded component. It is used for test only.
+            Calling next in this iterator will be either quite slow or very fast
+            since it generates the whole graded component before yielding the
+            elements of each graded component.
 
         EXAMPLES::
 
@@ -811,7 +794,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         cdef set known, todo
         known = set(self._seeds)
         todo = known.copy()
-        while len(todo) > 0:
+        while todo:
             x = todo.pop()
             yield x
             for y in self.successors(x):
@@ -991,13 +974,104 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
              [4*I, 3*I + 1, 2*I + 2, I + 3, 4],
              [5*I, 4*I + 1, 3*I + 2, 2*I + 3, I + 4, 5],
              [6*I, 5*I + 1, 4*I + 2, 3*I + 3, 2*I + 4, I + 5, 6]]
+
+        TESTS:
+
+        Note that interrupting the computation (``KeyboardInterrupt`` for
+        instance) breaks the iterator::
+
+            sage: def f(a):
+            ....:     sleep(0.05)
+            ....:     return [a-1,a+1]
+            sage: C = RecursivelyEnumeratedSet([0], f, structure='symmetric')
+            sage: it = C.graded_component_iterator()
+            sage: next(it)
+            {0}
+            sage: next(it)
+            {-1, 1}
+            sage: from cysignals.alarm import alarm
+            sage: alarm(0.02); next(it)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: next(it)
+            Traceback (most recent call last):
+            ...
+            StopIteration
         """
         cdef set A,B
         A = set()
         B = set(self._seeds)
-        while len(B) > 0:
+        while B:
             yield B
             A,B = B, self._get_next_graded_component(A, B)
+
+    cpdef graded_component(self, depth):
+        r"""
+        Return the graded component of given depth.
+
+        This method caches each lower graded component. See
+        :meth:`graded_component_iterator` to generate each graded component
+        without caching the previous ones.
+
+        A graded component is a set of elements of the same depth where the
+        depth of an element is its minimal distance to a root.
+
+        INPUT:
+
+        - ``depth`` -- integer
+
+        OUTPUT:
+
+        A set.
+
+        EXAMPLES::
+
+            sage: f = lambda a: [a-1,a+1]
+            sage: C = RecursivelyEnumeratedSet([10, 15], f, structure='symmetric')
+            sage: for i in range(5): sorted(C.graded_component(i))
+            [10, 15]
+            [9, 11, 14, 16]
+            [8, 12, 13, 17]
+            [7, 18]
+            [6, 19]
+
+        TESTS:
+
+        We make sure that :trac:`21312` is fixed::
+
+            sage: def f(a):
+            ....:    sleep(0.1)
+            ....:    return [a-1,a+1]
+            sage: C = RecursivelyEnumeratedSet([0], f, structure='symmetric')
+            sage: from cysignals.alarm import alarm
+            sage: alarm(0.45); C.graded_component(10)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: C.graded_component(1)
+            {-1, 1}
+            sage: C.graded_component(2)
+            {-2, 2}
+            sage: C.graded_component(3)
+            {-3, 3}
+            sage: C.graded_component(4)
+            {-4, 4}
+            sage: C.graded_component(5)
+            {-5, 5}
+        """
+        cdef set A, B, C
+        if self._graded_component is None:
+            A = set()
+            B = set(self._seeds)
+            C = self._get_next_graded_component(A, B)
+            self._graded_component = [B, C]
+        while len(self._graded_component) <= depth:
+            A = self._graded_component[-2]
+            B = self._graded_component[-1]
+            C = self._get_next_graded_component(A, B)
+            self._graded_component.append(C)
+        return self._graded_component[depth]
 
     cdef set _get_next_graded_component(self, set A, set B):
         r"""
@@ -1084,7 +1158,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
             max_depth = self._max_depth
         current_level = self._seeds
         depth = 0
-        while len(current_level) > 0 and depth <= max_depth:
+        while current_level and depth <= max_depth:
             next_level = set()
             for x in current_level:
                 yield x
@@ -1141,6 +1215,66 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
         while True:
             yield B
             B = self._get_next_graded_component(B)
+
+    cpdef graded_component(self, depth):
+        r"""
+        Return the graded component of given depth.
+
+        This method caches each lower graded component. See
+        :meth:`graded_component_iterator` to generate each graded component
+        without caching the previous ones.
+
+        A graded component is a set of elements of the same depth where the
+        depth of an element is its minimal distance to a root.
+
+        INPUT:
+
+        - ``depth`` -- integer
+
+        OUTPUT:
+
+        A set.
+
+        EXAMPLES::
+
+            sage: f = lambda a: [a+1, a+I]
+            sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
+            sage: for i in range(5): sorted(C.graded_component(i))
+            [0]
+            [I, 1]
+            [2*I, I + 1, 2]
+            [3*I, 2*I + 1, I + 2, 3]
+            [4*I, 3*I + 1, 2*I + 2, I + 3, 4]
+
+        TESTS:
+
+        We make sure that :trac:`21312` is fixed::
+
+            sage: def f(a):
+            ....:    sleep(0.1)
+            ....:    return [a+1, a+I]
+            sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
+            sage: from cysignals.alarm import alarm
+            sage: alarm(0.45); C.graded_component(10)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: C.graded_component(2)
+            {2*I, I + 1, 2}
+            sage: C.graded_component(3)
+            {3*I, 2*I + 1, I + 2, 3}
+            sage: C.graded_component(4)
+            {4*I, 3*I + 1, 2*I + 2, I + 3, 4}
+        """
+        cdef set B, C
+        if self._graded_component is None:
+            B = set(self._seeds)
+            self._graded_component = [B]
+        while len(self._graded_component) <= depth:
+            B = self._graded_component[-1]
+            C = self._get_next_graded_component(B)
+            self._graded_component.append(C)
+        return self._graded_component[depth]
 
     cdef set _get_next_graded_component(self, set B):
         r"""

@@ -2,12 +2,12 @@
 
 == Description ==
 
-A Sage implementation of Ore algebras and Ore polynomials. 
+A Sage implementation of Ore algebras and Ore polynomials.
 
 Main features for the most common algebras include basic arithmetic and actions;
 gcrd and lclm; D-finite closure properties; natural transformations between
 related algebras; guessing; desingularization; solvers for polynomials, rational
-functions and (generalized) power series. 
+functions and (generalized) power series.
 
 == License ==
 

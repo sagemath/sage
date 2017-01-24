@@ -177,6 +177,7 @@ class LetterplaceIdeal(Ideal_nc):
             sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
             sage: TestSuite(I).run(skip=['_test_category'],verbose=True)
             running ._test_eq() . . . pass
+            running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
 

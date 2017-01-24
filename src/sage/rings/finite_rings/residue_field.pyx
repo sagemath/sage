@@ -172,6 +172,7 @@ from sage.rings.polynomial.polynomial_element import is_Polynomial
 
 from sage.structure.factory import UniqueFactory
 from sage.structure.element cimport parent_c
+from sage.structure.sage_object cimport richcmp, richcmp_not_equal
 
 
 class ResidueFieldFactory(UniqueFactory):
@@ -464,9 +465,11 @@ class ResidueField_generic(Field):
             sage: k.<a> = P.residue_field() # indirect doctest
 
             sage: k.category()
-            Category of finite fields
+            Category of finite enumerated fields
             sage: F.category()
-            Join of Category of finite fields and Category of subquotients of monoids and Category of quotients of semigroups
+            Join of Category of finite enumerated fields
+             and Category of subquotients of monoids
+             and Category of quotients of semigroups
 
         TESTS::
 
@@ -718,7 +721,7 @@ class ResidueField_generic(Field):
             OK = OK.ring_of_integers()
         return self._internal_coerce_map_from(OK).section()
 
-    def __cmp__(self, x):
+    def _richcmp_(self, x, op):
         """
         Compares two residue fields: they are equal iff the primes
         defining them are equal and they have the same variable name.
@@ -743,12 +746,13 @@ class ResidueField_generic(Field):
             sage: ll == l
             False
         """
-        c = cmp(type(self), type(x))
-        if c: return c
-        c = cmp(self.p, x.p)
-        if c: return c
-        c = cmp(self.variable_name(), x.variable_name())
-        return c
+        if not isinstance(x, ResidueField_generic):
+            return NotImplemented
+        lp = self.p
+        rp = x.p
+        if lp != rp:
+            return richcmp_not_equal(lp, rp, op)
+        return richcmp(self.variable_name(), x.variable_name(), op)
 
     def __hash__(self):
         r"""

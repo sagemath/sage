@@ -27,6 +27,7 @@ from sage.rings.all import Infinity, ZZ
 from sage.rings.integer cimport Integer
 from sage.structure.element cimport Element
 from sage.structure.sage_object import register_unpickle_override
+from sage.structure.sage_object cimport richcmp_not_equal, richcmp
 
 
 def is_ManinSymbol(x):
@@ -199,7 +200,7 @@ cdef class ManinSymbol(Element):
         """
         return self._repr_()
 
-    cpdef int _cmp_(self, right) except -2:
+    cpdef _richcmp_(self, right, int op):
         """
         Comparison function for ManinSymbols.
 
@@ -213,16 +214,24 @@ cdef class ManinSymbol(Element):
             True
             sage: slist[20] <= slist[10]
             False
-            sage: cmp(slist[10],slist[20])
-            -1
-            sage: cmp(slist[20],slist[10])
-            1
-            sage: cmp(slist[20],slist[20])
-            0
+            sage: slist[10] < slist[20]
+            True
+            sage: slist[20] > slist[10]
+            True
+            sage: slist[20] != slist[20]
+            False
         """
         cdef ManinSymbol other = <ManinSymbol>right
         # Compare tuples (i,u,v)
-        return cmp(self.i, other.i) or cmp(self.u, other.u) or cmp(self.v, other.v)
+        lx = self.i
+        rx = other.i
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
+        lx = self.u
+        rx = other.u
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
+        return richcmp(self.v, other.v, op)
 
     def __mul__(self, matrix):
         """

@@ -1,5 +1,5 @@
-*** /tmp/main.cpp	Sat Sep  7 14:09:12 2013
---- src/main.cpp	Sat Sep  7 14:09:44 2013
+*** a/src/main.cpp	Sat Sep  7 14:09:12 2013
+--- b/src/main.cpp	Sat Sep  7 14:09:44 2013
 ***************
 *** 24,29 ****
 --- 24,31 ----

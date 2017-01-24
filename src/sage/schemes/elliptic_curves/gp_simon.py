@@ -94,7 +94,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
 
     K = E.base_ring()
     K_orig = K
-    # The following is to correct the bug at \#5204: the gp script
+    # The following is to correct the bug at #5204: the gp script
     # fails when K is a number field whose generator is called 'x'.
     # It also deals with relative number fields.
     E_orig = E

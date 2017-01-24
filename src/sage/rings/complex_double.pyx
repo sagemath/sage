@@ -67,7 +67,7 @@ import operator
 
 from sage.misc.randstate cimport randstate, current_randstate
 
-from sage.libs.pari.paridecl cimport *
+from sage.libs.cypari2.paridecl cimport *
 include "cysignals/signals.pxi"
 
 from sage.libs.gsl.complex cimport *
@@ -85,11 +85,8 @@ from sage.structure.parent_gens import ParentWithGens
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
 
-from sage.libs.pari.gen cimport gen as pari_gen
-from sage.libs.pari.pari_instance cimport PariInstance
-
-import sage.libs.pari.pari_instance
-cdef PariInstance pari = sage.libs.pari.pari_instance.pari
+from sage.libs.cypari2.gen cimport gen as pari_gen
+from sage.libs.cypari2.convert cimport new_gen_from_double, new_t_COMPLEX_from_double
 
 import complex_number
 
@@ -1118,21 +1115,6 @@ cdef class ComplexDoubleElement(FieldElement):
         s = str(self).replace('*I', 'i')
         return re.sub(r"e\+?(-?\d+)", r" \\times 10^{\1}", s)
 
-    cdef GEN _gen(self):
-        cdef GEN y
-        if self._complex.dat[1] == 0:
-            # Return t_REAL
-            y = pari.double_to_GEN(self._complex.dat[0])
-        else:
-            # Return t_COMPLEX
-            y = cgetg(3, t_COMPLEX)
-            if self._complex.dat[0] == 0:
-                set_gel(y, 1, gen_0)
-            else:
-                set_gel(y, 1, pari.double_to_GEN(self._complex.dat[0]))
-            set_gel(y, 2, pari.double_to_GEN(self._complex.dat[1]))
-        return y
-
     def _pari_(self):
         """
         Return PARI version of ``self``, as ``t_COMPLEX`` or ``t_REAL``.
@@ -1148,8 +1130,10 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: pari(CDF(I))
             1.00000000000000*I
         """
-        sig_on()
-        return pari.new_gen(self._gen())
+        if self._complex.dat[1] == 0:
+            return new_gen_from_double(self._complex.dat[0])
+        else:
+            return new_t_COMPLEX_from_double(self._complex.dat[0], self._complex.dat[1])
 
     #######################################################################
     # Arithmetic
@@ -2402,12 +2386,10 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: CDF(1,5).algdep(2)
             x^2 - 2*x + 26
         """
-        sig_on()
-        f = pari.new_gen(algdep0(self._gen(), n, 0))
         from polynomial.polynomial_ring_constructor import PolynomialRing
         from integer_ring import ZZ
         R = PolynomialRing(ZZ ,'x')
-        return R(list(reversed(eval(str(f.Vec())))))
+        return R(self._pari_().algdep(n))
 
 
 cdef class FloatToCDF(Morphism):
@@ -2535,32 +2517,6 @@ cdef class ComplexToCDF(Morphism):
             'Native'
         """
         return "Native"
-
-#####################################################
-# Create new ComplexDoubleElement from a
-# gsl_complex C struct.
-#####################################################
-
-cdef GEN complex_gen(x):
-    """
-    Complex generator.
-
-    INPUT:
-
-    -  A Python object ``x``
-
-    OUTPUT:
-
-    -  A GEN of type t_COMPLEX, or raise a ``TypeError``.
-    """
-    cdef ComplexDoubleElement z
-    global _CDF
-    try:
-        z = x
-    except TypeError:
-        z = _CDF(x)
-    return z._gen()
-
 
 
 

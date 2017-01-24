@@ -10,7 +10,7 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 
 from .congroup_generic import CongruenceSubgroup
 from sage.misc.all import prod
@@ -122,7 +122,7 @@ class Gamma_class(CongruenceSubgroup):
         r"""
         Return the index of self in the full modular group. This is given by
 
-        .. math::
+        .. MATH::
 
           \prod_{\substack{p \mid N \\ \text{$p$ prime}}}\left(p^{3e}-p^{3e-2}\right).
 
@@ -195,19 +195,19 @@ class Gamma_class(CongruenceSubgroup):
             [0, 1/4, 1/3, 3/8, 1/2, 2/3, 3/4, 1, 4/3, 3/2, 5/3, 2, 7/3, 5/2, 8/3, 3, 7/2, 11/3, 4, 14/3, 5, 6, 7, Infinity]
         """
         n = self.level()
-        C=[QQ(x) for x in xrange(n)]
+        C = [QQ(x) for x in range(n)]
 
         n0=n//2
         n1=(n+1)//2
 
-        for r in xrange(1, n1):
+        for r in range(1, n1):
             if r > 1 and gcd(r,n)==1:
                 C.append(ZZ(r)/ZZ(n))
             if n0==n/2 and gcd(r,n0)==1:
                 C.append(ZZ(r)/ZZ(n0))
 
-        for s in xrange(2,n1):
-            for r in xrange(1, 1+n):
+        for s in range(2,n1):
+            for r in range(1, 1+n):
                 if GCD_list([s,r,n])==1:
                     # GCD_list is ~40x faster than gcd, since gcd wastes loads
                     # of time initialising a Sequence type.

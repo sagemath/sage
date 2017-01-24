@@ -41,12 +41,14 @@ from __future__ import print_function
 include "cysignals/memory.pxi"
 from libc.string cimport memcpy
 from cpython.dict cimport *
+from cpython.object cimport PyObject_RichCompare
 
 import copy
 from functools import reduce
 from sage.structure.element import generic_power
 from sage.misc.misc import cputime
 from sage.misc.latex import latex
+from sage.misc.superseded import deprecation
 
 
 cdef class PolyDict:
@@ -118,35 +120,47 @@ cdef class PolyDict:
         self.__repn  = pdict
         self.__zero = zero
 
-    def __cmp__(self, PolyDict right):
-        return cmp(self.__repn, right.__repn)
+    def __richcmp__(PolyDict self, PolyDict right, int op):
+        return PyObject_RichCompare(self.__repn, right.__repn, op)
 
-    def compare(PolyDict self, PolyDict other, fn=None):
-        if fn is None:
+    def compare(PolyDict self, PolyDict other, key=None):
+        if key is not None:
+            # start with biggest
+            left  = iter(sorted(self.__repn, key=key, reverse=True))
+            right = iter(sorted(other.__repn, key=key, reverse=True))
+        else:
+            # in despair, do that
+            assert False
             return cmp(self.__repn, other.__repn)
-
-        left  = iter(sorted( self.__repn,fn,reverse=True)) #start with biggest
-        right = iter(sorted(other.__repn,fn,reverse=True))
 
         for m in left:
             try:
                 n = next(right)
             except StopIteration:
-                return 1 # left has terms, right doesn't
-            ret =  fn(m,n)
-            if ret!=0:
-                return ret # we have a difference
-            ret = cmp(self.__repn[m],other.__repn[n]) #compare coefficients
-            if ret!=0:
-                return ret #if they differ use it
-            #try next pair
+                return 1  # left has terms, right does not
 
+            # first compare the leading monomials
+            keym = key(m)
+            keyn = key(n)
+            if keym > keyn:
+                return 1
+            elif keym < keyn:
+                return -1
+
+            # same leading monomial, compare their coefficients
+            coefm = self.__repn[m]
+            coefn = other.__repn[n]
+            if coefm > coefn:
+                return 1
+            elif coefm < coefn:
+                return -1
+
+        # try next pair
         try:
             n = next(right)
+            return -1  # right has terms, left does not
         except StopIteration:
-            return 0 # both have no terms
-
-        return -1 # right has terms, left doesn't
+            return 0  # both have no terms
 
     def list(PolyDict self):
         """
@@ -389,7 +403,8 @@ cdef class PolyDict:
             H[ETuple(f)] = val
         return PolyDict(H, zero=self.__zero, force_etuples=False)
 
-    def latex(PolyDict self, vars, atomic_exponents=True, atomic_coefficients=True, cmpfn = None):
+    def latex(PolyDict self, vars, atomic_exponents=True,
+              atomic_coefficients=True, cmpfn=None, sortkey=None):
         r"""
         Return a nice polynomial latex representation of this PolyDict, where
         the vars are substituted in.
@@ -427,8 +442,11 @@ cdef class PolyDict:
         n = len(vars)
         poly = ""
         E = self.__repn.keys()
-        if cmpfn:
-            E.sort(cmp = cmpfn, reverse=True)
+        if sortkey:
+            E.sort(key=sortkey, reverse=True)
+        elif cmpfn:
+            deprecation(21766, 'the cmpfn keyword is deprecated, use sortkey')
+            E.sort(cmp=cmpfn, reverse=True)
         else:
             E.sort(reverse=True)
         try:
@@ -476,7 +494,8 @@ cdef class PolyDict:
         return poly
 
 
-    def poly_repr(PolyDict self, vars, atomic_exponents=True, atomic_coefficients=True, cmpfn = None):
+    def poly_repr(PolyDict self, vars, atomic_exponents=True,
+                  atomic_coefficients=True, cmpfn=None, sortkey=None):
         """
         Return a nice polynomial string representation of this PolyDict, where
         the vars are substituted in.
@@ -484,8 +503,8 @@ cdef class PolyDict:
         INPUT:
 
         - ``vars`` -- list
-        - ``atomic_exponents`` -- bool (default: True)
-        - ``atomic_coefficients`` -- bool (default: True)
+        - ``atomic_exponents`` -- bool (default: ``True``)
+        - ``atomic_coefficients`` -- bool (default: ``True``)
 
         EXAMPLES::
 
@@ -494,7 +513,7 @@ cdef class PolyDict:
             sage: f.poly_repr(['a','WW'])
             '2*a^2*WW^3 + 4*a^2*WW + 3*a*WW^2'
 
-        When atomic_exponents is False, the exponents are surrounded
+        When atomic_exponents is ``False``, the exponents are surrounded
         in parenthesis, since ^ has such high precedence. ::
 
             # I've removed fractional exponent support in ETuple when moving to a sparse C integer array
@@ -517,8 +536,11 @@ cdef class PolyDict:
         n = len(vars)
         poly = ""
         E = self.__repn.keys()
-        if cmpfn:
-            E.sort(cmp = cmpfn, reverse=True)
+        if sortkey:
+            E.sort(key=sortkey, reverse=True)
+        elif cmpfn:
+            deprecation(21766, 'the cmpfn keyword is deprecated, use sortkey')
+            E.sort(cmp=cmpfn, reverse=True)
         else:
             E.sort(reverse=True)
         try:
@@ -715,7 +737,7 @@ cdef class PolyDict:
             PolyDict with representation {(1, 2): -3, (1, 1): -10, (2, 1): -4}
         """
 
-        # TOOD: should refactor add, make abstract operator, so can do both +/-; or copy code.
+        # TODO: should refactor add, make abstract operator, so can do both +/-; or copy code.
         return self + other.scalar_lmult(-1)
 
     def __one(PolyDict self):

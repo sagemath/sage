@@ -87,7 +87,7 @@ Or just::
 
 A picture of the graph::
 
-    sage: S.show()
+    sage: S.show() # long time
 
 The relevant Laplacian matrices::
 
@@ -258,7 +258,7 @@ Distribution of avalanche sizes::
     sage: p = list_plot([[log(i+1),log(a.count(i))] for i in [0..max(a)] if a.count(i)])
     sage: p.axes_labels(['log(N)','log(D(N))'])
     sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))
-    sage: show(p+t,axes_labels=['log(N)','log(D(N))'])
+    sage: show(p+t,axes_labels=['log(N)','log(D(N))']) # long time
 
 Working with sandpile divisors::
 
@@ -324,7 +324,7 @@ from copy import deepcopy
 from inspect import getdoc
 import os  # CHECK: possibly unnecessary after removing 4ti2-dependent methods
 from sage.calculus.functional import derivative
-from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.integer_vector import integer_vectors_nk_fast_iter
 from sage.combinat.parking_functions import ParkingFunctions
 from sage.combinat.set_partition import SetPartitions
 from sage.combinat.vector_partition import IntegerVectorsIterator
@@ -388,7 +388,7 @@ class Sandpile(DiGraph):
 
         EXAMPLES::
 
-            sage: Sandpile.help()
+            sage: Sandpile.help() # long time
             For detailed help with any method FOO listed below,
             enter "Sandpile.FOO?" or enter "S.FOO?" for any Sandpile S.
             <BLANKLINE>
@@ -792,7 +792,7 @@ class Sandpile(DiGraph):
         EXAMPLES::
 
             sage: S = sandpiles.House()
-            sage: S.show3d()
+            sage: S.show3d() # long time
         """
 
         if self.is_undirected():
@@ -1969,9 +1969,8 @@ class Sandpile(DiGraph):
         """
 
         # first order the vertices according to their distance from the sink
-        verts = self.vertices()
-        verts = sorted(verts, self._compare_vertices)
-        verts.reverse()
+        verts = sorted(self.vertices(),
+                       key=lambda v: self.distance(v, self._sink), reverse=True)
         perm = {}
         for i in range(len(verts)):
             perm[verts[i]]=i
@@ -2231,8 +2230,7 @@ class Sandpile(DiGraph):
 
         REFERENCES:
 
-        .. [Levine2014] Lionel Levine. Threshold state and a conjecture of Poghosyan, Poghosyan,
-           Priezzhev and Ruelle, Communications in Mathematical Physics.
+        - [Lev2014]_
         """
         st = deepcopy(state)
         V = self.vertices()
@@ -2324,8 +2322,7 @@ class Sandpile(DiGraph):
 
         REFERENCES:
 
-        .. [Levine2014]_ Lionel Levine. Threshold state and a conjecture of Poghosyan, Poghosyan,
-           Priezzhev and Ruelle, Communications in Mathematical Physics.
+        - [Lev2014]_
         """
         return self._stationary_density
 
@@ -2440,30 +2437,6 @@ class Sandpile(DiGraph):
 ######### Algebraic Geometry ##########
 #######################################
 
-    def _compare_vertices(self, v, w):
-        r"""
-        Compare vertices based on their distance from the sink.
-
-        INPUT:
-
-        ``v``, ``w`` -- vertices
-
-        OUTPUT:
-
-        integer
-
-        EXAMPLES::
-
-            sage: S = sandpiles.House()
-            sage: S.distance(1, S.sink())
-            1
-            sage: S.distance(3, S.sink())
-            2
-            sage: S._compare_vertices(1,3)
-            -1
-        """
-        return self.distance(v, self._sink) - self.distance(w, self._sink)
-
     def _set_ring(self):
         r"""
         Set up polynomial ring for the sandpile.
@@ -2476,12 +2449,11 @@ class Sandpile(DiGraph):
             True
         """
         # first order the vertices according to their distance from the sink
-        verts = self.vertices()
-        verts = sorted(verts, self._compare_vertices)
-        verts.reverse()
+        verts = sorted(self.vertices(),
+                       key=lambda v: self.distance(v, self._sink))
 
         # variable i refers to the i-th vertex in self.vertices()
-        names = [self.vertices().index(v) for v in verts]
+        names = [self.vertices().index(v) for v in reversed(verts)]
 
         vars = ''
         for i in names:
@@ -3801,7 +3773,7 @@ class SandpileConfig(dict):
             sage: p = list_plot([[log(i+1),log(a.count(i))] for i in [0..max(a)] if a.count(i)])
             sage: p.axes_labels(['log(N)','log(D(N))'])
             sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))
-            sage: show(p+t,axes_labels=['log(N)','log(D(N))'])
+            sage: show(p+t,axes_labels=['log(N)','log(D(N))']) # long time
 
         .. NOTE::
 
@@ -4145,14 +4117,13 @@ class SandpileConfig(dict):
         .. NOTE::
 
             To define ``c.burst(v)``, if `v` is not the sink, let `c'` be the unique
-            recurrent for which the the stabilization of `c' + v` is `c`.  The
+            recurrent for which the stabilization of `c' + v` is `c`.  The
             burst size is then the amount of sand that goes into the sink during this
             stabilization.  If `v` is the sink, the burst size is defined to be 1.
 
         REFERENCES:
 
-        .. [Levine2014]_ Lionel Levine. Threshold state and a conjecture of Poghosyan, Poghosyan,
-           Priezzhev and Ruelle, Communications in Mathematical Physics.
+        - [Lev2014]_
         """
         if v==self.sandpile().sink():
             return 1
@@ -5089,10 +5060,7 @@ class SandpileDivisor(dict):
         if isinstance(D,SandpileDivisor):
             w = vector(D.values())
         else:
-            try:
-                w = vector(D)
-            except:
-                raise SyntaxError(D)
+            w = vector(D)
         # Now test for linear equivalence and find firing vector
         D,U,V = self.sandpile()._smith_form
         b = v - w
@@ -5109,7 +5077,7 @@ class SandpileDivisor(dict):
                     return V*x
                 else:
                     return True
-            except:
+            except Exception:
                 if with_firing_vector:
                     return vector([])
                 else:
@@ -5527,7 +5495,7 @@ class SandpileDivisor(dict):
                 rk += 1
                 try:
                     d = next(i for i,j in enumerate(c) if i==j and i!=0)
-                except:
+                except Exception:
                     d = n - 1
                 k = k - d
                 if k >=0:
@@ -5540,10 +5508,9 @@ class SandpileDivisor(dict):
         else:
             rk = -1
             while True:
-                IV = IntegerVectors(rk+1,S.num_verts())
-                for e in IV:
-                    E = SandpileDivisor(S,e)
-                    if (self - E).effective_div()==[]:
+                for e in integer_vectors_nk_fast_iter(rk+1,S.num_verts()):
+                    E = SandpileDivisor(S, e)
+                    if (self - E).effective_div() == []:
                         self._rank = rk
                         self._rank_witness = E
                         return
@@ -5728,7 +5695,7 @@ class SandpileDivisor(dict):
             v = s.sink()
         try:
             seq = self._weierstrass_rank_seq[v]
-        except:
+        except Exception:
             D = deepcopy(self)
             verts = s.vertices()
             Ei = s.zero_div()
@@ -6313,91 +6280,7 @@ def sandlib(selector=None):
 ########## Some useful functions ################
 #################################################
 
-def complete_sandpile(n):
-    r"""
-    The sandpile on the complete graph with n vertices.
 
-    INPUT:
-
-    ``n`` -- positive integer
-
-    OUTPUT:
-
-    Sandpile
-
-    EXAMPLES::
-
-        sage: K = sandpiles.Complete(5)
-        sage: K.betti(verbose=False)
-        [1, 15, 50, 60, 24]
-    """
-    deprecation(18618,'May 25, 2015:  Replaced by sandpiles.Complete.')
-    return Sandpile(graphs.CompleteGraph(n), 0)
-
-def grid_sandpile(m, n):
-    r"""
-    The `m\times n` grid sandpile.  Each nonsink vertex has degree 4.
-
-    INPUT:
-
-    ``m``, ``n`` -- positive integers
-
-    OUTPUT:
-
-    Sandpile with sink named ``sink``.
-
-    EXAMPLES::
-
-        sage: G = grid_sandpile(3,4)
-        doctest:...: DeprecationWarning: grid_sandpile() will soon be removed.  Use sandpile.Grid() instead.
-        See http://trac.sagemath.org/18618 for details.
-        doctest:...: DeprecationWarning: May 25, 2015: Replaced by sandpiles.Grid.
-        See http://trac.sagemath.org/18618 for details.
-        sage: G.dict()
-        {'sink': {},
-         (1, 1): {'sink': 2, (1, 2): 1, (2, 1): 1},
-         (1, 2): {'sink': 1, (1, 1): 1, (1, 3): 1, (2, 2): 1},
-         (1, 3): {'sink': 1, (1, 2): 1, (1, 4): 1, (2, 3): 1},
-         (1, 4): {'sink': 2, (1, 3): 1, (2, 4): 1},
-         (2, 1): {'sink': 1, (1, 1): 1, (2, 2): 1, (3, 1): 1},
-         (2, 2): {(1, 2): 1, (2, 1): 1, (2, 3): 1, (3, 2): 1},
-         (2, 3): {(1, 3): 1, (2, 2): 1, (2, 4): 1, (3, 3): 1},
-         (2, 4): {'sink': 1, (1, 4): 1, (2, 3): 1, (3, 4): 1},
-         (3, 1): {'sink': 2, (2, 1): 1, (3, 2): 1},
-         (3, 2): {'sink': 1, (2, 2): 1, (3, 1): 1, (3, 3): 1},
-         (3, 3): {'sink': 1, (2, 3): 1, (3, 2): 1, (3, 4): 1},
-         (3, 4): {'sink': 2, (2, 4): 1, (3, 3): 1}}
-        sage: G.group_order()
-        4140081
-        sage: G.invariant_factors()
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1380027]
-    """
-    deprecation(18618,'May 25, 2015: Replaced by sandpiles.Grid.')
-    g = {}
-    # corners first
-    g[(1,1)] = {(1,2):1, (2,1):1, 'sink':2}
-    g[(m,1)] = {(m-1,1):1, (m,2):1, 'sink':2}
-    g[(1,n)] = {(1,n-1):1, (2,n):1, 'sink':2}
-    g[(m,n)] = {(m-1,n):1, (m,n-1):1, 'sink':2}
-    # top edge
-    for col in range(2,n):
-        g[(1,col)] = {(1,col-1):1, (1,col+1):1, (2,col):1, 'sink':1}
-    # left edge
-    for row in range (2,m):
-        g[(row,1)] = {(row-1,1):1, (row+1,1):1, (row,2):1, 'sink':1}
-    # right edge
-    for row in range (2,m):
-        g[(row,n)] = {(row-1,n):1, (row+1,n):1, (row,n-1):1, 'sink':1}
-    # bottom edge
-    for col in range(2,n):
-        g[(m,col)] = {(m,col-1):1, (m,col+1):1, (m-1,col):1, 'sink':1}
-    # inner vertices
-    for row in range(2,m):
-        for col in range(2,n):
-            g[(row,col)] ={(row-1,col):1, (row+1,col):1, (row,col-1):1, (row,col+1):1}
-    # the sink vertex
-    g['sink'] = {}
-    return Sandpile(g, 'sink')
 
 def triangle_sandpile(n):
     r"""
@@ -6641,48 +6524,6 @@ def random_DAG(num_verts, p=0.5, weight_max=1):
         g[i] = out_edges
     return g
 
-def random_tree(n, d):
-    r"""
-    A random undirected tree with `n` nodes, no node having
-    degree higher than `d`.
-
-    INPUT:
-
-    ``n``, ``d`` -- integers
-
-    OUTPUT:
-
-    Graph
-
-    EXAMPLES::
-
-        sage: T = random_tree(15,3)
-        doctest:...: DeprecationWarning: random_tree will be removed soon.  Use graphs.RandomTree() instead.
-        See http://trac.sagemath.org/18618 for details.
-        sage: T.show()
-        sage: S = Sandpile(T,0)
-        sage: U = S.reorder_vertices()
-        sage: U.show()
-    """
-    deprecation(18618,'random_tree will be removed soon.  Use graphs.RandomTree() instead.')
-    g = Graph()
-    # active vertices
-    active = [0]
-    g.add_vertex(0)
-    next_vertex = 1
-    while g.num_verts()<n:
-        node = randint(0,g.num_verts()-1)
-        if g.degree(node)>d:
-            active.remove(node)
-            break
-        r = randint(0,d)
-        if r>0:
-            for i in range(r):
-                g.add_vertex(next_vertex)
-                g.add_edge((node,next_vertex))
-                active.append(next_vertex)
-                next_vertex+=1
-    return g
 
 def glue_graphs(g, h, glue_g, glue_h):
     r"""
@@ -6794,7 +6635,7 @@ def firing_graph(S, eff):
         sage: S = sandpiles.Cycle(6)
         sage: D = SandpileDivisor(S, [1,1,1,1,2,0])
         sage: eff = D.effective_div()
-        sage: firing_graph(S,eff).show3d(edge_size=.005,vertex_size=0.01)
+        sage: firing_graph(S,eff).show3d(edge_size=.005,vertex_size=0.01) # long time
     """
     g = DiGraph()
     g.add_vertices(range(len(eff)))
@@ -6829,7 +6670,7 @@ def parallel_firing_graph(S, eff):
         sage: S = sandpiles.Cycle(6)
         sage: D = SandpileDivisor(S, [1,1,1,1,2,0])
         sage: eff = D.effective_div()
-        sage: parallel_firing_graph(S,eff).show3d(edge_size=.005,vertex_size=0.01)
+        sage: parallel_firing_graph(S,eff).show3d(edge_size=.005,vertex_size=0.01) # long time
     """
     g = DiGraph()
     g.add_vertices(range(len(eff)))
@@ -7048,9 +6889,7 @@ def wilmes_algorithm(M):
 
     REFERENCES:
 
-    .. [Primer2013] Perlman, Perkinson, and Wilmes.  Primer for the algebraic
-       geometry of sandpiles. Tropical and Non-Archimedean Geometry, Contemp.
-       Math., 605, Amer. Math. Soc., Providence, RI, 2013.
+    - [PPW2013]_
     """
     # find the gcd of the row-sums, and perform the corresponding row
     # operations on M

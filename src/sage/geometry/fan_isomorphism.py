@@ -95,9 +95,9 @@ def fan_isomorphism_generator(fan1, fan2):
         sage: m1.elementary_divisors() == m2.elementary_divisors() == [1,1,0]
         True
         sage: fan1 = Fan([Cone([m1*vector([23, 14]), m1*vector([   3,100])]),
-        ...               Cone([m1*vector([-1,-14]), m1*vector([-100, -5])])])
+        ....:             Cone([m1*vector([-1,-14]), m1*vector([-100, -5])])])
         sage: fan2 = Fan([Cone([m2*vector([23, 14]), m2*vector([   3,100])]),
-        ...               Cone([m2*vector([-1,-14]), m2*vector([-100, -5])])])
+        ....:             Cone([m2*vector([-1,-14]), m2*vector([-100, -5])])])
         sage: next(fan_isomorphism_generator(fan1, fan2))
         [18  1 -5]
         [ 4  0 -1]
@@ -109,11 +109,11 @@ def fan_isomorphism_generator(fan1, fan2):
         sage: m1.elementary_divisors() == m2.elementary_divisors() == [1,1,0]
         True
         sage: fan0 = Fan([Cone([m0*vector([1,0]), m0*vector([1,1])]),
-        ...               Cone([m0*vector([1,1]), m0*vector([0,1])])])
+        ....:             Cone([m0*vector([1,1]), m0*vector([0,1])])])
         sage: fan1 = Fan([Cone([m1*vector([1,0]), m1*vector([1,1])]),
-        ...               Cone([m1*vector([1,1]), m1*vector([0,1])])])
+        ....:             Cone([m1*vector([1,1]), m1*vector([0,1])])])
         sage: fan2 = Fan([Cone([m2*vector([1,0]), m2*vector([1,1])]),
-        ...               Cone([m2*vector([1,1]), m2*vector([0,1])])])
+        ....:             Cone([m2*vector([1,1]), m2*vector([0,1])])])
         sage: tuple(fan_isomorphism_generator(fan0, fan0))
         (
         [1 0]  [0 1]
@@ -232,9 +232,9 @@ def find_isomorphism(fan1, fan2, check=False):
         FanNotIsomorphicError
 
         sage: fan1 = Fan(cones=[[1,3,4,5],[0,1,2,3],[2,3,4],[0,1,5]],
-        ...              rays=[(-1,-1,0),(-1,-1,3),(-1,1,-1),(-1,3,-1),(0,2,-1),(1,-1,1)])
+        ....:            rays=[(-1,-1,0),(-1,-1,3),(-1,1,-1),(-1,3,-1),(0,2,-1),(1,-1,1)])
         sage: fan2 = Fan(cones=[[0,2,3,5],[0,1,4,5],[0,1,2],[3,4,5]],
-        ...              rays=[(-1,-1,-1),(-1,-1,0),(-1,1,-1),(0,2,-1),(1,-1,1),(3,-1,-1)])
+        ....:            rays=[(-1,-1,-1),(-1,-1,0),(-1,1,-1),(0,2,-1),(1,-1,1),(3,-1,-1)])
         sage: fan1.is_isomorphic(fan2)
         True
     """
@@ -341,13 +341,13 @@ def fan_2d_echelon_forms(fan):
         sage: rays.reverse()
         sage: cones = [(3,1), (1,2), (2,0), (0,3)]
         sage: for i in range(100):
-        ...       m = random_matrix(ZZ,2,2)
-        ...       if abs(det(m)) != 1: continue
-        ...       perm = S4.random_element()
-        ...       perm_cones = [ (perm(c[0]+1)-1, perm(c[1]+1)-1) for c in cones ]
-        ...       perm_rays = [ rays[perm(i+1)-1] for i in range(len(rays)) ]
-        ...       fan2 = Fan(perm_cones, rays=[m*vector(r) for r in perm_rays])
-        ...       assert fan_2d_echelon_form(fan2) in echelon_forms
+        ....:     m = random_matrix(ZZ,2,2)
+        ....:     if abs(det(m)) != 1: continue
+        ....:     perm = S4.random_element()
+        ....:     perm_cones = [ (perm(c[0]+1)-1, perm(c[1]+1)-1) for c in cones ]
+        ....:     perm_rays = [ rays[perm(i+1)-1] for i in range(len(rays)) ]
+        ....:     fan2 = Fan(perm_cones, rays=[m*vector(r) for r in perm_rays])
+        ....:     assert fan_2d_echelon_form(fan2) in echelon_forms
         
     The trivial case was fixed in :trac:`18613`::
         

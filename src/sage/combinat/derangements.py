@@ -22,6 +22,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -145,7 +146,7 @@ class Derangements(UniqueRepresentation, Parent):
             True
         """
         if x in ZZ:
-            x = range(1, x+1)
+            x = list(range(1, x + 1))
         return super(Derangements, cls).__classcall__(cls, tuple(x))
 
     def __init__(self, x):
@@ -316,13 +317,13 @@ class Derangements(UniqueRepresentation, Parent):
             yield [3,1,2]
         elif n >= 4:
             for d in self._iter_der(n-1):
-                for i in xrange(1, n):
+                for i in range(1, n):
                     s = d[:]
                     ii = d.index(i)
                     s[ii] = n
                     yield s + [i]
             for d in self._iter_der(n-2):
-                for i in xrange(1, n):
+                for i in range(1, n):
                     s = d[:]
                     s = [x >= i and x+1 or x for x in s]
                     s.insert(i-1, n)
@@ -340,7 +341,7 @@ class Derangements(UniqueRepresentation, Parent):
             sage: D._fixed_point([5,4,3,2,1])
             True
         """
-        return any([x == y for (x, y) in zip(a, self._set)])
+        return any(x == y for (x, y) in zip(a, self._set))
 
     def _count_der(self, n):
         """
@@ -376,7 +377,7 @@ class Derangements(UniqueRepresentation, Parent):
         r"""
         Counts the number of derangements of a positive integer, a
         list, or a string.  The list or string may contain repeated
-        elements.  If an integer `n` is given, the the value returned
+        elements.  If an integer `n` is given, the value returned
         is the number of derangements of `[1, 2, 3, \ldots, n]`.
 
         For an integer, or a list or string with all elements
@@ -438,7 +439,7 @@ class Derangements(UniqueRepresentation, Parent):
             [2, 3, 4, 1]
         """
         n = len(self._set)
-        A = range(1, n+1)
+        A = list(range(1, n + 1))
         mark = [x<0 for x in A]
         i,u = n,n
         while u >= 2:

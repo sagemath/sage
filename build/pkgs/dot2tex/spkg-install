@@ -6,28 +6,10 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
-# Delete any old version or setup.py refuses to overwrite it
-rm -rf "$SAGE_LOCAL/lib/python/site-packages/dot2tex"
-
-ls -al
 cd src
 
-for patch in ../patches/*.patch; do
-    [ -f "$patch" ] || continue
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
+$PIP_INSTALL .
 
-python setup.py build
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building dot2tex."
-    exit 1
-fi
-
-python setup.py install
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing dot2tex."
     exit 1

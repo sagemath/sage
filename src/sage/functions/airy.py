@@ -48,7 +48,6 @@ Verify that the Airy functions are solutions to the differential equation::
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
-from sage.structure.coerce import parent as sage_structure_coerce_parent
 from sage.functions.other import gamma
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_double import RDF
@@ -159,11 +158,15 @@ class FunctionAiryAiSimple(BuiltinFunction):
             sage: from sage.functions.airy import airy_ai_simple
             sage: f = airy_ai_simple(x); f
             airy_ai(x)
+            sage: airy_ai_simple(x)._sympy_()
+            airyai(x)
         """
         BuiltinFunction.__init__(self, "airy_ai",
                                  latex_name=r'\operatorname{Ai}',
                                  conversions=dict(mathematica='AiryAi',
-                                                  maxima='airy_ai'))
+                                                  maxima='airy_ai',
+                                                  sympy='airyai',
+                                                  fricas='airyAi'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -261,11 +264,15 @@ class FunctionAiryAiPrime(BuiltinFunction):
             airy_ai_prime(x)
             sage: airy_ai_prime(0)
             -1/3*3^(2/3)/gamma(1/3)
+            sage: airy_ai_prime(x)._sympy_()
+            airyaiprime(x)
         """
         BuiltinFunction.__init__(self, "airy_ai_prime",
                                  latex_name=r"\operatorname{Ai}'",
                                  conversions=dict(mathematica='AiryAiPrime',
-                                                  maxima='airy_dai'))
+                                                  maxima='airy_dai',
+                                                  sympy='airyaiprime',
+                                                  fricas='airyAiPrime'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -355,7 +362,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
     solutions to the Airy differential equation `f''(x) - x f(x) = 0`. It is
     defined by the initial conditions:
 
-    .. math::
+    .. MATH::
 
         \operatorname{Ai}(0)=\frac{1}{2^{2/3} \Gamma\left(\frac{2}{3}\right)},
 
@@ -363,7 +370,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
 
     Another way to define the Airy Ai function is:
 
-    .. math::
+    .. MATH::
 
         \operatorname{Ai}(x)=\frac{1}{\pi}\int_0^\infty
         \cos\left(\frac{1}{3}t^3+xt\right) dt.
@@ -376,7 +383,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
       `\operatorname{Ai}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
       this gives the `n`-fold iterated integral.
 
-    .. math::
+    .. MATH::
 
         f_0(z) = \operatorname{Ai}(z)
 
@@ -492,7 +499,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
           `\operatorname{Bi}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
           this gives the `n`-fold iterated integral.
 
-        .. math::
+        .. MATH::
 
             f_0(z) = \operatorname{Bi}(z)
 
@@ -580,11 +587,15 @@ class FunctionAiryBiSimple(BuiltinFunction):
             sage: from sage.functions.airy import airy_bi_simple
             sage: f = airy_bi_simple(x); f
             airy_bi(x)
+            sage: f._sympy_()
+            airybi(x)
         """
         BuiltinFunction.__init__(self, "airy_bi",
                                  latex_name=r'\operatorname{Bi}',
                                  conversions=dict(mathematica='AiryBi',
-                                                  maxima='airy_bi'))
+                                                  maxima='airy_bi',
+                                                  sympy='airybi',
+                                                  fricas='airyBi'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -684,11 +695,15 @@ class FunctionAiryBiPrime(BuiltinFunction):
             airy_bi_prime(x)
             sage: airy_bi_prime(0)
             3^(1/6)/gamma(1/3)
+            sage: airy_bi_prime(x)._sympy_()
+            airybiprime(x)
         """
         BuiltinFunction.__init__(self, "airy_bi_prime",
                                  latex_name=r"\operatorname{Bi}'",
                                  conversions=dict(mathematica='AiryBiPrime',
-                                                  maxima='airy_dbi'))
+                                                  maxima='airy_dbi',
+                                                  sympy='airybiprime',
+                                                  fricas='airyBiPrime'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -778,7 +793,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
     solutions to the Airy differential equation `f''(x) - x f(x) = 0`. It is
     defined by the initial conditions:
 
-    .. math::
+    .. MATH::
 
         \operatorname{Bi}(0)=\frac{1}{3^{1/6} \Gamma\left(\frac{2}{3}\right)},
 
@@ -786,7 +801,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
 
     Another way to define the Airy Bi function is:
 
-    .. math::
+    .. MATH::
 
         \operatorname{Bi}(x)=\frac{1}{\pi}\int_0^\infty
         \left[ \exp\left( xt -\frac{t^3}{3} \right)

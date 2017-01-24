@@ -386,7 +386,7 @@ class Ideal_generic(MonoidElement):
         """
         raise NotImplementedError
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return ``True`` if this ideal is not `(0)`.
 
@@ -418,6 +418,8 @@ class Ideal_generic(MonoidElement):
             if not g.is_zero():
                 return True
         return False
+
+    __nonzero__ = __bool__
 
     def base_ring(self):
         r"""

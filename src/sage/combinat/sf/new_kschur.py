@@ -583,9 +583,6 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             return element.coefficient([])
 
     class ElementMethods:
-
-        __mul__ = Magmas.ElementMethods.__mul__.__func__
-
         def _mul_(self, other):
             r"""
             Return the product of two elements ``self`` and ``other``.
@@ -1068,7 +1065,7 @@ class kSchur(CombinatorialFreeModule):
         r"""
         Multiply two `k`-Schur functions at `t=1` indexed by ``left`` and ``right``
 
-        This algorithm uses the the property that if `R` is an `r \times (k+1-r)`
+        This algorithm uses the property that if `R` is an `r \times (k+1-r)`
         rectangle, then
 
         .. MATH::
@@ -1115,7 +1112,7 @@ class kSchur(CombinatorialFreeModule):
         Take the product of two `k`-Schur functions.
 
         If `t \neq 1`, then take the product by lifting to the Schur functions and then
-        retracting back into the the `k`-bounded subspace (if possible).
+        retracting back into the `k`-bounded subspace (if possible).
 
         If `t=1`, then the product is done using
         :meth:`~AlgebrasWithBasis.ParentMethods._product_from_combinatorial_algebra_multiply`
@@ -1315,9 +1312,10 @@ class K_kSchur(CombinatorialFreeModule):
 
     def _homogeneous_generators_noncommutative_variables_zero_Hecke(self, r):
         r"""
-        Returns the ``r^{th}`` homogeneous generator, viewed as an element inside the
-        affine zero Hecke algebra. This is the sum of all cyclicly decreasing elements
-        of order ``r``.
+        Return the ``r^{th}`` homogeneous generator, viewed as an element inside the
+        affine zero Hecke algebra.
+
+        This is the sum of all cyclically decreasing elements of order ``r``.
 
         INPUT:
 

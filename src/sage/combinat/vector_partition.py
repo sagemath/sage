@@ -257,7 +257,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
             sage: VP.cardinality()
             9
         """
-        if all([coord==0 for coord in self._vec]):
+        if all(coord == 0 for coord in self._vec):
             yield self.element_class(self, []) # the zero vector has only the empty partition
         else:
             for vec in IntegerVectorsIterator(list(self._vec), min = list(self._min)): # choose the first part

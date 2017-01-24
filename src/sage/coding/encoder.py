@@ -51,7 +51,7 @@ class Encoder(SageObject):
 
     REFERENCES:
 
-    .. [Nielsen] Johan S. R. Nielsen, (https://bitbucket.org/jsrn/codinglib/)
+    - [Nie]_
     """
 
     def __init__(self, code):
@@ -84,7 +84,7 @@ class Encoder(SageObject):
         We can check its parameters::
 
             sage: E.code()
-            Linear code of length 4, dimension 2 over Finite Field of size 2
+            [4, 2] linear code over GF(2)
         """
         self._code = code
 
@@ -147,7 +147,7 @@ class Encoder(SageObject):
             sage: E.encode(word)
             Traceback (most recent call last):
             ...
-            ValueError: The value to encode must be in Vector space of dimension 4 over Finite Field of size 2
+            ArithmeticError: reduction modulo 2 not defined
         """
         M = self.message_space()
         if word not in M:
@@ -197,16 +197,14 @@ class Encoder(SageObject):
             ...
             EncodingError: Given word is not in the code
 
-        If ones tries to unencode a codeword of a code of dimension 0, it
-        returns the empty vector::
+        Note that since ticket :trac: `21326`, codes cannot be of length zero::
 
             sage: G = Matrix(GF(17), [])
             sage: C = LinearCode(G)
-            sage: E = codes.encoders.LinearCodeGeneratorMatrixEncoder(C)
-            sage: c = C.random_element()
-            sage: E.unencode(c)
-            ()
-        """
+            Traceback (most recent call last):
+            ...
+            ValueError: length must be a non-zero positive integer
+       """
         if nocheck == False and c not in self.code():
             raise EncodingError("Given word is not in the code")
         return self.unencode_nocheck(c)
@@ -219,7 +217,7 @@ class Encoder(SageObject):
 
         AUTHORS:
 
-            This function is taken from codinglib [Nielsen]_
+            This function is taken from codinglib [Nie]_
 
         EXAMPLES::
 
@@ -246,7 +244,7 @@ class Encoder(SageObject):
 
         AUTHORS:
 
-            This function is taken from codinglib [Nielsen]_
+            This function is taken from codinglib [Nie]_
 
         INPUT:
 

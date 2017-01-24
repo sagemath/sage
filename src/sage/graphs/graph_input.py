@@ -19,6 +19,8 @@ Functions
 
 """
 from __future__ import absolute_import
+from six.moves import range
+
 
 def from_graph6(G, g6_string):
     r"""
@@ -55,8 +57,8 @@ def from_graph6(G, g6_string):
         raise RuntimeError("The string (%s) seems corrupt: for n = %d, the string is too short."%(ss,n))
     G.add_vertices(range(n))
     k = 0
-    for i in xrange(n):
-        for j in xrange(i):
+    for i in range(n):
+        for j in range(i):
             if m[k] == '1':
                 G._backend.add_edge(i, j, None, False)
             k += 1
@@ -93,16 +95,16 @@ def from_sparse6(G, g6_string):
         k = int(ceil(log(n,2)))
         ords = [ord(i) for i in s]
         if any(o > 126 or o < 63 for o in ords):
-            raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in xrange(63,127)]))
+            raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in range(63,127)]))
         bits = ''.join([int_to_binary_string(o-63).zfill(6) for o in ords])
         b = []
         x = []
-        for i in xrange(int(floor(len(bits)/(k+1)))):
+        for i in range(int(floor(len(bits)/(k+1)))):
             b.append(int(bits[(k+1)*i:(k+1)*i+1],2))
             x.append(int(bits[(k+1)*i+1:(k+1)*i+k+1],2))
         v = 0
         edges = []
-        for i in xrange(len(b)):
+        for i in range(len(b)):
             if b[i] == 1:
                 v += 1
             if x[i] > v:
@@ -147,8 +149,8 @@ def from_dig6(G, dig6_string):
         raise RuntimeError("The string (%s) seems corrupt: for n = %d, the string is too short."%(ss,n))
     G.add_vertices(range(n))
     k = 0
-    for i in xrange(n):
-        for j in xrange(n):
+    for i in range(n):
+        for j in range(n):
             if m[k] == '1':
                 G._backend.add_edge(i, j, None, True)
             k += 1
@@ -257,7 +259,7 @@ def from_adjacency_matrix(G, M, loops=False, multiedges=False, weighted=False):
     if multiedges is None:
         multiedges = ((not weighted) and any(e != 0 and e != 1 for e in entries))
 
-    if not loops and any(M[i,i] for i in xrange(M.nrows())):
+    if not loops and any(M[i,i] for i in range(M.nrows())):
         if loops is False:
             raise ValueError("Non-looped digraph's adjacency"+
             " matrix must have zeroes on the diagonal.")

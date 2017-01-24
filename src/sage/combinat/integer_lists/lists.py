@@ -257,7 +257,7 @@ class IntegerLists(Parent):
         EXAMPLES::
 
             sage: C = IntegerListsLex(n=2, max_length=3, min_slope=0)
-            sage: all([l in C for l in C])
+            sage: all(l in C for l in C)
             True
         """
         return self.backend._contains(item)

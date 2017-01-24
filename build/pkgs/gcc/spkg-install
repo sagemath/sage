@@ -7,17 +7,7 @@ if [ -z "$SAGE_LOCAL" ]; then
 fi
 
 # Apply fixes to upstream source
-echo "Applying patches..."
 cd src
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    echo "Using $patch"
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
 
 # Exit on error
 set -e

@@ -6,8 +6,8 @@ cdef class FastDigraph:
     cdef dict int_to_vertices
     cdef int * degree
 
-cdef inline int compute_out_neighborhood_cardinality(FastDigraph, int)
+cdef int compute_out_neighborhood_cardinality(FastDigraph, int)
 
-cdef inline int popcount32(int)
+cdef int popcount32(int)
 
 

@@ -580,7 +580,7 @@ cdef class Vector_double_dense(FreeModuleElement):
         - ``p`` is any other real number: for a vector `\vec{x}`
           this method computes
 
-          .. math::
+          .. MATH::
 
                 \left(\sum_i x_i^p\right)^{1/p}
 

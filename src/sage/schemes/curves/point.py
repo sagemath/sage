@@ -222,7 +222,7 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
             3*x*y^2 + y^3 + 10*x^2 - 3*x*y - y^2 + 5*x - y + 1])
             sage: Q = C([-1,0])
             sage: Q.tangents()
-            [y, -x + y - 1, x + 1, x + y + 1]
+            [y, x + 1, x - y + 1, x + y + 1]
         """
         return self.codomain().tangents(self)
 

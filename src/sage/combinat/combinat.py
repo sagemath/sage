@@ -82,7 +82,7 @@ combinatorial functions:
 
 -  gaussian_binomial the gaussian binomial
 
-.. math::
+.. MATH::
 
              \binom{n}{k}_q = \frac{(1-q^m)(1-q^{m-1})\cdots (1-q^{m-r+1})}                              {(1-q)(1-q^2)\cdots (1-q^r)}.
 
@@ -143,6 +143,8 @@ Functions and classes
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
+
+from six.moves import range
 
 from sage.interfaces.all import maxima
 from sage.rings.all import ZZ, QQ, Integer, infinity
@@ -333,11 +335,11 @@ def bell_number(n, algorithm='flint', **options):
 
     TESTS::
 
-        sage: all([bell_number(n) == bell_number(n,'dobinski') for n in range(200)])
+        sage: all(bell_number(n) == bell_number(n,'dobinski') for n in range(200))
         True
-        sage: all([bell_number(n) == bell_number(n,'gap') for n in range(200)])
+        sage: all(bell_number(n) == bell_number(n,'gap') for n in range(200))
         True
-        sage: all([bell_number(n) == bell_number(n,'mpmath', prec=500) for n in range(200, 220)])
+        sage: all(bell_number(n) == bell_number(n,'mpmath', prec=500) for n in range(200, 220))
         True
 
     AUTHORS:
@@ -932,7 +934,7 @@ class CombinatorialObject(SageObject):
             sage: class Foo(CombinatorialObject, Element): pass
             sage: L = [Foo([4-i]) for i in range(4)]; L
             [[4], [3], [2], [1]]
-            sage: sorted(L, cmp)
+            sage: sorted(L)
             [[1], [2], [3], [4]]
             sage: f = Foo([4])
             sage: f is None
@@ -952,7 +954,7 @@ class CombinatorialObject(SageObject):
                 ....:     def __init__(self, l):
                 ....:         CombinatorialObject.__init__(self, l)
                 sage: L = [Bar([4-i]) for i in range(4)]
-                sage: sorted(L, cmp)
+                sage: sorted(L)
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: comparison not implemented for <class '__main__.Bar'>
@@ -1086,7 +1088,7 @@ class CombinatorialObject(SageObject):
             sage: c + [4]
             [1, 2, 3, 4]
             sage: type(_)
-            <type 'list'>
+            <... 'list'>
         """
         return self._list + other
 
@@ -1110,7 +1112,7 @@ class CombinatorialObject(SageObject):
             self._hash = hash(str(self._list))
         return self._hash
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` if ``self`` is non-zero.
 
@@ -1156,6 +1158,8 @@ class CombinatorialObject(SageObject):
         """
         return bool(self._list)
 
+    __nonzero__ = __bool__
+
     def __len__(self):
         """
         EXAMPLES::
@@ -1178,7 +1182,7 @@ class CombinatorialObject(SageObject):
             sage: c[1:]
             [2, 3]
             sage: type(_)
-            <type 'list'>
+            <... 'list'>
         """
         return self._list[key]
 
@@ -1489,7 +1493,7 @@ class CombinatorialClass(Parent):
             sage: p5 = Partitions(5)
             sage: a = [2,2,1]
             sage: type(a)
-            <type 'list'>
+            <... 'list'>
             sage: a = p5(a)
             sage: type(a)
             <class 'sage.combinat.partition.Partitions_n_with_category.element_class'>
@@ -2621,7 +2625,7 @@ def unshuffle_iterator(a, one=1):
     n = len(a)
     for I in powerset(range(n)):
         sorted_I = tuple(sorted(I))
-        nonI = range(n)
+        nonI = list(range(n))
         for j in reversed(sorted_I): # probably optimizable
             nonI.pop(j)
         sorted_nonI = tuple(nonI)
@@ -2748,10 +2752,10 @@ def fibonacci_sequence(start, stop=None, algorithm=None):
         stop = ZZ(stop)
 
     if algorithm:
-        for n in xrange(start, stop):
+        for n in range(start, stop):
             yield fibonacci(n, algorithm=algorithm)
     else:
-        for n in xrange(start, stop):
+        for n in range(start, stop):
             yield fibonacci(n)
 
 def fibonacci_xrange(start, stop=None, algorithm='pari'):

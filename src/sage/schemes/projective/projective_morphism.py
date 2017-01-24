@@ -1551,7 +1551,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         `p` is a prime of bad reduction if and only if the defining
         polynomials of self have a common zero. Or stated another way,
-        `p` is a prime of bad reducion if and only if the radical of
+        `p` is a prime of bad reduction if and only if the radical of
         the ideal defined by the defining polynomials of self is not
         `(x_0,x_1,\ldots,x_N)`.  This happens if and only if some
         power of each `x_i` is not in the ideal defined by the
@@ -2992,11 +2992,11 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
     def critical_point_portrait(self, check=True, embedding=None):
         r"""
-        If this map is post-critically finite, return it's critical point portrait.
+        If this map is post-critically finite, return its critical point portrait.
 
         This is the directed graph of iterates starting with the critical points. Must be
         dimension 1. If ``check`` is True, then the map is first checked to see if it is
-        postcrtically finite.
+        postcritically finite.
 
         INPUT:
 
@@ -3529,6 +3529,199 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             polys.append(R(e([i+1]).expand(N)(multipliers)))
         return polys
 
+    def reduced_form(self, prec=300, return_conjugation=True, error_limit=0.000001):
+        r"""
+        Returns reduced form of this projective morphism.
+
+        The reduced form is the `SL(2, \ZZ)` equivalent morphism obtained by applying
+        the binary form reduction algorithm from Stoll and Cremona [SC]_
+        to the homogeneous polynomial defining the periodic points (the dynatomic polynomial).
+        The smallest period `n` with enough periodic points is used.
+
+        This should also minimize the sum of the squares of the coefficients,
+        but this is not always the case.
+
+        See :meth:`sage.rings.polynomial.multi_polynomial.reduced_form` for the information
+        on binary form reduction.
+
+        Implemented by Rebecca Lauren Miller as part of GSOC 2016.
+
+        INPUT:
+
+        - ``prec`` -- integer, desired precision (default: 300)
+
+        - ``return_conjuagtion`` -- A Boolean. Returns element of `SL(2, \ZZ)`. (default: True)
+
+        - ``error_limit`` -- sets the error tolerance (default:0.000001)
+
+        OUTPUT:
+
+        - a projective morphism
+
+        - a matrix
+
+        EXAMPLES::
+
+            sage: PS.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: H = End(PS)
+            sage: f = H([x^3 + x*y^2, y^3])
+            sage: m = matrix(QQ, 2, 2, [-221, -1, 1, 0])
+            sage: f = f.conjugate(m)
+            sage: f.reduced_form(prec=100) #needs 2 periodic
+            Traceback (most recent call last):
+            ...
+            ValueError: not enough precision
+            sage: f.reduced_form()
+            (
+            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to
+            (x^3 + x*y^2 : y^3)
+            ,
+            [  0  -1]
+            [  1 221]
+            )
+
+        ::
+
+            sage: PS.<x,y> = ProjectiveSpace(ZZ, 1)
+            sage: H = End(PS)
+            sage: f = H([x^2+ x*y, y^2]) #needs 3 periodic
+            sage: m = matrix(QQ, 2, 2, [-221, -1, 1, 0])
+            sage: f = f.conjugate(m)
+            sage: f.reduced_form(prec=200)
+            (
+            Scheme endomorphism of Projective Space of dimension 1 over Integer Ring
+            Defn: Defined on coordinates by sending (x : y) to
+            (-x^2 + x*y - y^2 : -y^2)
+            ,
+            [  0  -1]
+            [  1 220]
+            )
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: H = End(P)
+            sage: f = H([x^3, y^3])
+            sage: f.reduced_form()
+            (
+            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to
+            (x^3 : y^3)
+            ,
+            [-1  0]
+            [ 0 -1]
+            )
+
+        ::
+
+            sage: PS.<X,Y> = ProjectiveSpace(QQ,1)
+            sage: H = End(PS)
+            sage: f = H([7365*X^4 + 12564*X^3*Y + 8046*X^2*Y^2 + 2292*X*Y^3 + 245*Y^4,\
+            -12329*X^4 - 21012*X^3*Y - 13446*X^2*Y^2 - 3828*X*Y^3 - 409*Y^4])
+            sage: f.reduced_form(prec=30)
+            Traceback (most recent call last):
+            ...
+            ValueError: accuracy of Newton's root not within tolerance(1.2519607 > 1e-06), increase precision
+            sage: f.reduced_form()
+            (
+            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (X : Y) to
+            (-7*X^4 - 12*X^3*Y - 42*X^2*Y^2 - 12*X*Y^3 - 7*Y^4 : -X^4 - 4*X^3*Y - 6*X^2*Y^2 - 4*X*Y^3 - Y^4),
+            <BLANKLINE>
+            [-1  2]
+            [ 2 -5]
+            )
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(RR, 1)
+            sage: H = End(P)
+            sage: f = H([x^4, RR(sqrt(2))*y^4])
+            sage: m = matrix(RR, 2, 2, [1,12,0,1])
+            sage: f = f.conjugate(m)
+            sage: f.reduced_form()
+            (
+            Scheme endomorphism of Projective Space of dimension 1 over Real Field with 53 bits of precision
+              Defn: Defined on coordinates by sending (x : y) to
+                    (-x^4 + 2.86348722511320e-12*y^4 : -1.41421356237310*y^4)
+            ,
+            [-1 12]
+            [ 0 -1]
+            )
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(CC, 1)
+            sage: H = End(P)
+            sage: f = H([x^4, CC(sqrt(-2))*y^4])
+            sage: m = matrix(CC, 2, 2, [1,12,0,1])
+            sage: f = f.conjugate(m)
+            sage: f.reduced_form()
+            (
+            Scheme endomorphism of Projective Space of dimension 1 over Complex Field with 53 bits of precision
+              Defn: Defined on coordinates by sending (x : y) to
+                    (-x^4 + (-1.03914726748259e-15)*y^4 : (-8.65956056235493e-17 - 1.41421356237309*I)*y^4)
+            ,
+            [-1 12]
+            [ 0 -1]
+            )
+
+        ::
+
+            sage: K.<w> = QuadraticField(2)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: H = End(P)
+            sage: f = H([x^3, w*y^3])
+            sage: m = matrix(K, 2, 2, [1,12,0,1])
+            sage: f = f.conjugate(m)
+            sage: f.reduced_form()
+            (
+             Scheme endomorphism of Projective Space of dimension 1 over Number Field in w
+             with defining polynomial x^2 - 2
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^3 : (w)*y^3)
+            ,
+            [-1 12]
+            [ 0 -1]
+            )
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<w> = NumberField(x^5+x-3, embedding=(x^5+x-3).roots(ring=CC)[0][0])
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: H = End(P)
+            sage: f = H([12*x^3, 2334*w*y^3])
+            sage: m = matrix(K, 2, 2, [-12,1,1,0])
+            sage: f = f.conjugate(m)
+            sage: f.reduced_form()
+            (
+            Scheme endomorphism of Projective Space of dimension 1 over Number Field
+            in w with defining polynomial x^5 + x - 3
+              Defn: Defined on coordinates by sending (x : y) to
+                    (12*x^3 : (2334*w)*y^3)
+            ,
+            [  0  -1]
+            [  1 -12]
+            )
+        """
+        R = self.coordinate_ring()
+        F = R(self.dynatomic_polynomial(1))
+        x,y = R.gens()
+        d = gcd(F, F.derivative(x)).degree() #counts multiple roots
+        n = 2
+        # Checks to make sure there are enough distinct, roots we need 3
+        # if there are not it finds the nth periodic points until there are enough
+        while F.degree()-d <= 2:
+            F = self.dynatomic_polynomial(n) # finds n periodic points
+            d = gcd(F, F.derivative(x)).degree() #counts multiple roots
+            n += 1
+        G,m = F.reduced_form(prec=prec, return_conjugation=return_conjugation)
+        if return_conjugation:
+            return (self.conjugate(m), m)
+        return self.conjugate(m)
+
 class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial_projective_space):
 
     def lift_to_rational_periodic(self, points_modp, B=None):
@@ -3750,7 +3943,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             of the list of possible periods modulo several primes of good reduction to get a possible list
             of minimal periods of rational periodic points. Take each point modulo `p` associated to each
             of these possible periods and try to lift it to a rational point with a combination of
-            `p`-adic approximation and the LLL basis reducion algorithm.
+            `p`-adic approximation and the LLL basis reduction algorithm.
 
             See [Hutz]_.
 
@@ -3855,7 +4048,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                 #determine rational periodic points
                 #infinity is a totally ramified fixed point for a polynomial
                 periodic_points = set([inf])
-                #compute the weil resctriction
+                #compute the weil restriction
                 G = g.weil_restriction()
                 F = G.homogenize(d)
                 #find the QQ rational periodic points for the weil restriction
@@ -4290,7 +4483,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                 #determine rational preperiodic points
                 #infinity is a totally ramified fixed point for a polynomial
                 preper = set([inf])
-                #compute the weil resctriction
+                #compute the weil restriction
                 G = g.weil_restriction()
                 F = G.homogenize(d)
                 #find the QQ rational preperiodic points for the weil restriction
@@ -4302,13 +4495,13 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                         pt = [sum([P[i]*w**i for i in range(d)])]
                         pt.insert(k,1)
                         Q = PS(pt)
-                        #for each preperidic point get the entire connected component
+                        #for each preperiodic point get the entire connected component
                         if not Q in preper:
                             for t in self.connected_rational_component(Q):
                                 preper.add(t)
                 preper = list(preper)
             else:
-                #input error checking done in possible_periods and rational_peridic_points
+                #input error checking done in possible_periods and rational_periodic_points
                 badprimes = kwds.pop("bad_primes", None)
                 periods = kwds.pop("periods", None)
                 primebound = kwds.pop("prime_bound", [1, 20])

@@ -134,9 +134,10 @@ def cover_and_relations_from_invariants(invs):
         [0 2 0]
         [0 0 3])
     """
+    from six.moves import range
     n = len(invs)
     A = ZZ**n
-    B = A.span([A.gen(i) * invs[i] for i in xrange(n)])
+    B = A.span([A.gen(i) * invs[i] for i in range(n)])
     return (A, B)
 
 
@@ -163,12 +164,13 @@ class AdditiveAbelianGroupElement(FGP_Element):
             sage: v._hermite_lift()
             (1, 0)
         """
+        from six.moves import range
         y = self.lift()
         H = self.parent().W().basis_matrix()
         pivot_rows = H.pivot_rows()
         pivots = H.pivots()
 
-        for i in xrange(H.nrows()):
+        for i in range(H.nrows()):
             if i in pivot_rows:
                 j = pivots[i]
                 N = H[i,j]

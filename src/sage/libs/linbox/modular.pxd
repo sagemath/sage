@@ -1,10 +1,15 @@
-cdef extern from "linbox/field/modular.h":
+# distutils: extra_compile_args = GIVARO_CFLAGS
+# distutils: libraries = GIVARO_LIBRARIES
+# distutils: library_dirs = GIVARO_LIBDIR
+# distutils: language = c++
+
+cdef extern from "givaro/modular.h":
     # double
 
-    cdef cppclass ModDoubleFieldElement "LinBox::Modular<double>::Element":
+    cdef cppclass ModDoubleFieldElement "Givaro::Modular<double>::Element":
         pass
 
-    cdef cppclass ModDoubleField "LinBox::Modular<double>":
+    cdef cppclass ModDoubleField "Givaro::Modular<double>":
         ModDoubleField(int modulus)
         ModDoubleFieldElement init(ModDoubleFieldElement res, int v)
         ModDoubleFieldElement init(ModDoubleFieldElement res, double v)
@@ -20,10 +25,10 @@ cdef extern from "linbox/field/modular.h":
 
 
     # float
-    cdef cppclass ModFloatFieldElement "LinBox::Modular<float>::Element":
+    cdef cppclass ModFloatFieldElement "Givaro::Modular<float>::Element":
         pass
 
-    cdef cppclass ModFloatField "LinBox::Modular<float>":
+    cdef cppclass ModFloatField "Givaro::Modular<float>":
         ModFloatField(int modulus)
         ModFloatFieldElement init(ModFloatFieldElement res, int v)
         ModFloatFieldElement init(ModFloatFieldElement res, double v)

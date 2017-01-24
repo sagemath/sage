@@ -908,7 +908,7 @@ class ChowGroup_class(FGP_Module_class):
         with `A_1(X)=\ZZ\oplus\ZZ/3\ZZ`::
 
             sage: X = ToricVariety(Fan(cones=[[0,1],[1,2],[2,0]],
-            ...                        rays=[[2,-1],[-1,2],[-1,-1]]))
+            ....:                      rays=[[2,-1],[-1,2],[-1,-1]]))
             sage: A = X.Chow_group()
             sage: A.degree(1)
             C3 x Z
@@ -926,7 +926,7 @@ class ChowGroup_class(FGP_Module_class):
         Third, an example with `A_2(X)=\ZZ^5`::
 
             sage: cube = [[ 1,0,0],[0, 1,0],[0,0, 1],[-1, 1, 1],
-            ...           [-1,0,0],[0,-1,0],[0,0,-1],[ 1,-1,-1]]
+            ....:         [-1,0,0],[0,-1,0],[0,0,-1],[ 1,-1,-1]]
             sage: lat_cube = LatticePolytope(cube)
             sage: X = ToricVariety(FaceFan((LatticePolytope(lat_cube))))
             sage: X.Chow_group().degree(2)
@@ -940,9 +940,9 @@ class ChowGroup_class(FGP_Module_class):
         torsion, `A_2(X)=\ZZ^5 \oplus \ZZ/2`::
 
             sage: rays = [[ 1, 2, 3],[ 1,-1, 1],[-1, 1, 1],[-1,-1, 1],
-            ...           [-1,-1,-1],[-1, 1,-1],[ 1,-1,-1],[ 1, 1,-1]]
+            ....:         [-1,-1,-1],[-1, 1,-1],[ 1,-1,-1],[ 1, 1,-1]]
             sage: cones = [[0,1,2,3],[4,5,6,7],[0,1,7,6],
-            ...            [4,5,3,2],[0,2,5,7],[4,6,1,3]]
+            ....:          [4,5,3,2],[0,2,5,7],[4,6,1,3]]
             sage: X = ToricVariety(Fan(cones, rays))
             sage: X.Chow_group().degree(2)  # long time (2s on sage.math, 2011)
             C2 x Z^5
@@ -950,12 +950,12 @@ class ChowGroup_class(FGP_Module_class):
         Finally, Example 1.3 of [FS]_::
 
             sage: points_mod = lambda k: matrix([[ 1, 1, 2*k+1],[ 1,-1, 1],
-            ...                              [-1, 1, 1],[-1,-1, 1],[-1,-1,-1],
-            ...                              [-1, 1,-1],[ 1,-1,-1],[ 1, 1,-1]])
+            ....:                            [-1, 1, 1],[-1,-1, 1],[-1,-1,-1],
+            ....:                            [-1, 1,-1],[ 1,-1,-1],[ 1, 1,-1]])
             sage: rays = lambda k: matrix([[1,1,1],[1,-1,1],[-1,1,1]]
-            ...                              ).solve_left(points_mod(k)).rows()
+            ....:                            ).solve_left(points_mod(k)).rows()
             sage: cones = [[0,1,2,3],[4,5,6,7],[0,1,7,6],
-            ...            [4,5,3,2],[0,2,5,7],[4,6,1,3]]
+            ....:          [4,5,3,2],[0,2,5,7],[4,6,1,3]]
             sage: X_Delta = lambda k: ToricVariety(Fan(cones=cones, rays=rays(k)))
             sage: X_Delta(0).Chow_group().degree()  # long time (3s on sage.math, 2011)
             (Z, Z, Z^5, Z)

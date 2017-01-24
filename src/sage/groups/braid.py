@@ -76,6 +76,8 @@ from sage.categories.action import Action
 from sage.sets.set import Set
 from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPresentedGroupElement
 from sage.misc.package import PackageNotFoundError
+from sage.structure.sage_object import richcmp, rich_to_bool
+
 
 class Braid(FinitelyPresentedGroupElement):
     """
@@ -93,7 +95,7 @@ class Braid(FinitelyPresentedGroupElement):
         sage: B((1, 2, -3, -2))
         s0*s1*s2^-1*s1^-1
     """
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
         Compare ``self`` and ``other``
 
@@ -104,18 +106,16 @@ class Braid(FinitelyPresentedGroupElement):
             sage: c = B([2, 1, 2])
             sage: b == c #indirect doctest
             True
-            sage: b._cmp_(c^(-1))
-            -1
-            sage: B([])._cmp_(B.one())
-            0
+            sage: b < c^(-1)
+            True
+            sage: B([]) == B.one()
+            True
         """
-        if self.Tietze()==other.Tietze():
-            return 0
+        if self.Tietze() == other.Tietze():
+            return rich_to_bool(op, 0)
         nfself = [i.Tietze() for i in self.left_normal_form()]
         nfother = [i.Tietze() for i in other.left_normal_form()]
-        return cmp(nfself, nfother)
-
-    __cmp__ = _cmp_
+        return richcmp(nfself, nfother, op)
 
     def __hash__(self):
         r"""
@@ -291,11 +291,11 @@ class Braid(FinitelyPresentedGroupElement):
                     A[-i, -1-i] = t**(-1)
                 if j == 1:
                     for k in range(n - 1):
-                        A[k,0] = -t
+                        A[k, 0] = -t
                 if j == -1:
-                    A[0,0] = -t**(-1)
+                    A[0, 0] = -t**(-1)
                     for k in range(1, n - 1):
-                        A[k,0] = -1
+                        A[k, 0] = -1
                 M = M * A
         return M
 
@@ -607,8 +607,7 @@ class Braid(FinitelyPresentedGroupElement):
 
         REFERENCES:
 
-        .. [Bigelow] Bigelow, Stephen J. The Lawrence-Krammer representation.
-           :arxiv:`math/0204057v1`
+        - [Big2003]_
         """
         return self.parent()._LKB_matrix_(self.Tietze(), variab=variables)
 
@@ -677,7 +676,7 @@ class Braid(FinitelyPresentedGroupElement):
             True
 
         An element of the kernel of the Burau representation, following
-        [Big99]_::
+        [Big1999]_::
 
             sage: B = BraidGroup(6)
             sage: psi1 = B([4, -5, -2, 1])
@@ -693,10 +692,8 @@ class Braid(FinitelyPresentedGroupElement):
 
         REFERENCES:
 
-        .. [Big99] Stephen J. Bigelow. The Burau representation is
-           not faithful for `n = 5`. Geom. Topol., 3:397--404, 1999.
-        .. [JonesNotes] Vaughan Jones. The Jones Polynomial.
-           https://math.berkeley.edu/~vfr/jones.pdf
+        - [Big1999]_
+        - [Jon2005]_
         """
         if variab is None:
             R = LaurentPolynomialRing(IntegerRing(), 'A')
@@ -735,10 +732,8 @@ class Braid(FinitelyPresentedGroupElement):
 
         REFERENCES:
 
-        .. [Dynnikov07] \I. Dynnikov and B. Wiest, On the complexity of braids,
-           J. Europ. Math. Soc. 9 (2007)
-        .. [Dehornoy] \P. Dehornoy, Le probleme d'isotopie des tresses, in
-           lecons de mathematiques d'aujourd'hui vol. 4
+        - [DW2007]_
+        - [Deh2011]_
         """
         coord = [0, 1] * self.strands()
         for s in self.Tietze():
@@ -865,14 +860,14 @@ class Braid(FinitelyPresentedGroupElement):
         The normalization is so that the unknot has Jones polynomial `1`. If
         ``skein_normalization`` is ``True``, the variable of the result is
         replaced by a itself to the power of `4`, so that the result
-        agrees with the conventions of [Lic]_ (which in particular differs
+        agrees with the conventions of [Lic1997]_ (which in particular differs
         slightly from the conventions used otherwise in this class), had
         one used the conventional Kauffman bracket variable notation directly.
 
         If ``variab`` is ``None`` return a polynomial in the variable `A`
         or `t`, depending on the value ``skein_normalization``. In
         particular, if ``skein_normalization`` is ``False``, return the
-        result in terms of the variable `t`, also used in [Lic]_.
+        result in terms of the variable `t`, also used in [Lic1997]_.
 
         INPUT:
 
@@ -939,14 +934,8 @@ class Braid(FinitelyPresentedGroupElement):
             sage: B = BraidGroup(4)
             sage: b11n42 = B([1, -2, 3, -2, 3, -2, -2, -1, 2, -3, -3, 2, 2])
             sage: b11n34 = B([1, 1, 2, -3, 2, -3, 1, -2, -2, -3, -3])
-            sage: cmp(b11n42.jones_polynomial(), b11n34.jones_polynomial())
-            0
-
-        REFERENCES:
-
-        .. [Lic] William B. Raymond Lickorish. An Introduction to Knot Theory,
-           volume 175 of Graduate Texts in Mathematics. Springer-Verlag,
-           New York, 1997. ISBN 0-387-98254-X
+            sage: bool(b11n42.jones_polynomial() == b11n34.jones_polynomial())
+            True
         """
         if skein_normalization:
             if variab is None:
@@ -986,10 +975,10 @@ class Braid(FinitelyPresentedGroupElement):
         a = lnfp[0]
         l = lnfp[1:]
         n = self.strands()
-        delta = Permutation([n-i for i in range(n)])
+        delta = Permutation([n - i for i in range(n)])
         P = self.parent()
-        return tuple( [P._permutation_braid(delta) ** a] +
-                      [P._permutation_braid(i) for i in l] )
+        return tuple([P._permutation_braid(delta) ** a] +
+                     [P._permutation_braid(i) for i in l])
 
     def _left_normal_form_perm_(self):
         """
@@ -1458,6 +1447,7 @@ class Braid(FinitelyPresentedGroupElement):
         B = self.parent()
         return [[B._element_from_libbraiding(i) for i in s] for s in slc]
 
+
 class BraidGroup_class(FinitelyPresentedGroup):
     """
     The braid group on `n` strands.
@@ -1523,7 +1513,9 @@ class BraidGroup_class(FinitelyPresentedGroup):
              e*f*e*f^-1*e^-1*f^-1)
         """
         n = len(names)
-        if n<1: #n is the number of generators, not the number of strands (see ticket 14081)
+        # n is the number of generators, not the number of strands (see
+        # ticket 14081)
+        if n < 1:
             raise ValueError("the number of strands must be an integer bigger than one")
         free_group = FreeGroup(names)
         rels = []
@@ -1564,7 +1556,7 @@ class BraidGroup_class(FinitelyPresentedGroup):
             sage: B1 # indirect doctest
             Braid group on 5 strands
         """
-        return "Braid group on %s strands"%self._nstrands_
+        return "Braid group on %s strands" % self._nstrands_
 
     def cardinality(self):
         """
@@ -1656,8 +1648,8 @@ class BraidGroup_class(FinitelyPresentedGroup):
             [s0, s0*s1, (s0*s1)^3]
         """
         elements_list = [self.gen(0)]
-        elements_list.append(self(range(1,self.strands())))
-        elements_list.append(elements_list[-1]**self.strands())
+        elements_list.append(self(range(1, self.strands())))
+        elements_list.append(elements_list[-1] ** self.strands())
         return elements_list
 
     def _permutation_braid_Tietze(self, p):
@@ -1680,11 +1672,11 @@ class BraidGroup_class(FinitelyPresentedGroup):
             sage: B._permutation_braid_Tietze(P)
             (1, 2, 1, 3, 2, 4)
         """
-        if p.length() == 0:
+        if not p.length():
             return ()
         pl = p
         l = []
-        while pl.length()>0:
+        while pl.length() > 0:
             i = 1
             while i<max(pl):
                 if pl(i)>pl(i+1):
@@ -1878,7 +1870,7 @@ class BraidGroup_class(FinitelyPresentedGroup):
 
         A basis element is specified as a list of integers obtained by
         considering the pairings as obtained as the 'highest term' of
-        trivalent trees marked by Jones--Wenzl projectors (see e.g. [Wan10]_).
+        trivalent trees marked by Jones--Wenzl projectors (see e.g. [Wan2010]_).
         In practice, this is a list of non-negative integers whose first
         element is ``drain_size``, whose last element is `0`, and satisfying
         that consecutive integers have difference `1`. Moreover, the length
@@ -1915,12 +1907,6 @@ class BraidGroup_class(FinitelyPresentedGroup):
             sage: d = 2
             sage: B.dimension_of_TL_space(d) == len(B.TL_basis_with_drain(d))
             True
-
-        REFERENCES:
-
-        .. [Wan10] Zhenghan Wang. Tolological quantum computation. Providence,
-           RI: American Mathematical Society (AMS), 2010.
-           ISBN 978-0-8218-4930-9
         """
         def fill_out_forest(forest, treesize):
             # The basis elements are built recursively using this function,
@@ -2298,7 +2284,7 @@ def BraidGroup(n=None, names='s'):
         (g0, g1)
 
     Since the word problem for the braid groups is solvable, their Cayley graph
-    can be localy obtained as follows (see :trac:`16059`)::
+    can be locally obtained as follows (see :trac:`16059`)::
 
         sage: def ball(group, radius):
         ....:     ret = set()
@@ -2343,7 +2329,6 @@ def BraidGroup(n=None, names='s'):
     from sage.structure.category_object import normalize_names
     names = normalize_names(n, names)
     return BraidGroup_class(names)
-
 
 
 class MappingClassGroupAction(Action):

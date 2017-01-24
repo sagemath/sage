@@ -6,7 +6,7 @@ provide a fully generalized algebraic representation of both the whole AES
 cipher as well as its individual components.
 
 This class is an algebraic implementation of the Rijndael-GF extension of the
-AES cipher, as described in [DR02]_. The AES cipher itself is defined to
+AES cipher, as described in [DR2002]_. The AES cipher itself is defined to
 operate on a state in `(\GF{2})^{8 n_t}` where
 `n_t \in \{16, 20, 24, 28, 32\}`. Rijndael-GF is a generalization of AES which
 allows for operations in `(\GF{2^8})^{n_t}`, enabling more algebraically
@@ -74,7 +74,7 @@ We can also use binary strings as input and output. ::
     sage: rgf(ciphertext, key, algorithm='decrypt', format='binary') == plain
     True
 
-[DR02]_ demonstrates an example of encryption which takes the plaintext
+[DR2002]_ demonstrates an example of encryption which takes the plaintext
 '3243f6a8885a308d313198a2e0370734' and the key
 '2b7e151628aed2a6abf7158809cf4f3c' and returns the ciphertext
 '3902dc1925dc116a8409850b1dfb9732'. We can use this example to demonstrate
@@ -410,12 +410,6 @@ Since ``expand_key_poly`` is not actually a
     Traceback (most recent call last):
     ...
     TypeError: keyword 'f' must be a Round_Component_Poly_Constr
-
-REFERENCES:
-
-.. [DR02] Joan Daemen, Vincent Rijmen. The Design of Rijndael.
-  Springer-Verlag Berlin Heidelberg, 2002.
-
 """
 
 #*****************************************************************************

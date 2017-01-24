@@ -176,7 +176,7 @@ def is_ToricLattice(x):
     EXAMPLES::
 
         sage: from sage.geometry.toric_lattice import (
-        ...     is_ToricLattice)
+        ....:   is_ToricLattice)
         sage: is_ToricLattice(1)
         False
         sage: N = ToricLattice(3)
@@ -203,7 +203,7 @@ def is_ToricLatticeQuotient(x):
     EXAMPLES::
 
         sage: from sage.geometry.toric_lattice import (
-        ...     is_ToricLatticeQuotient)
+        ....:   is_ToricLatticeQuotient)
         sage: is_ToricLatticeQuotient(1)
         False
         sage: N = ToricLattice(3)

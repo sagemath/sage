@@ -12,10 +12,8 @@ AUTHORS:
 
 REFERENCES:
 
-- Chap. 1 of [KN63]_ \S. Kobayashi & K. Nomizu : *Foundations of Differential
-  Geometry*, vol. 1, Interscience Publishers (New York) (1963)
-- [Lee11]_ \J.M. Lee : *Introduction to Topological Manifolds*, 2nd ed.,
-  Springer (New York) (2011)
+- Chap. 1 of [KN1963]_
+- [Lee2011]_
 
 """
 
@@ -411,7 +409,7 @@ class ContinuousMap(Morphism):
                                      " have the same dimension")
             if coord_functions is not None:
                 n2 = self._codomain.dim()
-                for chart_pair, expression in coord_functions.iteritems():
+                for chart_pair, expression in coord_functions.items():
                     if chart_pair[0] not in self._domain.atlas():
                         raise ValueError("{} is not a chart ".format(
                                                               chart_pair[0]) +
@@ -546,7 +544,7 @@ class ContinuousMap(Morphism):
             return other.is_identity()
         if other._is_identity:
             return self.is_identity()
-        for charts, coord_functions in self._coord_expression.iteritems():
+        for charts, coord_functions in self._coord_expression.items():
             try:
                 if coord_functions.expr() != other.expr(*charts):
                     return False

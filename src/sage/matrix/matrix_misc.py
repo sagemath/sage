@@ -17,6 +17,7 @@ Miscellaneous matrix functions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -24,13 +25,15 @@ from sage.rings.integer_ring import ZZ
 _Fields = Fields()
 
 def row_iterator(A):
-    for i in xrange(A.nrows()):
+    for i in range(A.nrows()):
         yield A.row(i)
+
 
 def weak_popov_form(M,ascend=True):
     from sage.misc.superseded import deprecation
     deprecation(16888, 'You should call row_reduced_form() instead')
     return row_reduced_form(M)
+
 
 def row_reduced_form(M,transformation=False):
     """
@@ -272,7 +275,7 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
     ``A.permanental_minor(i)``).
 
     The algorithm implemented by that function has been developed by P. Butera
-    and M. Pernici, see [ButPer]. Its complexity is `O(2^n m^2 n)` where `m` and
+    and M. Pernici, see [BP2015]. Its complexity is `O(2^n m^2 n)` where `m` and
     `n` are the number of rows and columns of `A`.  Moreover, if `A` is a banded
     matrix with width `w`, that is `A_{ij}=0` for `|i - j| > w` and `w < n/2`,
     then the complexity of the algorithm is `O(4^w (w+1) n^2)`.
@@ -418,7 +421,7 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
         `k` rows of `A`;  `\eta_i` is associated to the i-th column;
         nilpotency avoids having twice the same column in a product of `A`'s.
 
-        For more details, see the article [ButPer].
+        For more details, see the article [BP2015]_.
 
         From a technical point of view, the product in
         `K[\eta_1, \ldots, \eta_n][t]` is implemented as a subroutine in
@@ -432,11 +435,6 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
         to the key `6 = (110)_2` while `\eta_0 \eta_3` has key `9 = (1001)_2`.
         In particular all operations on monomials are implemented via bitwise
         operations on the keys.
-
-    REFERENCES:
-
-    .. [ButPer] \P. Butera and M. Pernici "Sums of permanental minors
-       using Grassmann algebra", :arxiv:`1406.5337`
     """
     if permanent_only:
         prec = None
@@ -451,7 +449,7 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
     A = A.rows()
     p = {0: K.one()}
     t = K.gen()
-    vars_to_do = range(ncols)
+    vars_to_do = list(range(ncols))
     for i in range(nrows):
         # build the polynomial p1 = 1 + t sum A_{ij} eta_j
         if permanent_only:

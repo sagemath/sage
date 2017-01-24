@@ -12,6 +12,7 @@ Elements of Finite Algebras
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 import re
 
@@ -95,12 +96,12 @@ class FiniteDimensionalAlgebraElement(AlgebraElement):
                     raise TypeError("algebra is not unitary")
             elif is_Vector(elt):
                 self._vector = elt.base_extend(k)
-                self._matrix = Matrix(k, sum([elt[i] * A.table()[i] for i in xrange(n)]))
+                self._matrix = Matrix(k, sum([elt[i] * A.table()[i] for i in range(n)]))
             elif is_Matrix(elt):
                 if not A.is_unitary():
                     raise TypeError("algebra is not unitary")
                 self._vector = A._one * elt
-                if not check or sum([self._vector[i]*A.table()[i] for i in xrange(n)]) == elt:
+                if not check or sum([self._vector[i]*A.table()[i] for i in range(n)]) == elt:
                     self._matrix = elt
                 else:
                     raise ValueError("matrix does not define an element of the algebra")
@@ -173,7 +174,7 @@ class FiniteDimensionalAlgebraElement(AlgebraElement):
         if A.is_commutative():
             return self._matrix
         return sum([self.vector()[i] * A.left_table()[i] for
-                    i in xrange(A.degree())])
+                    i in range(A.degree())])
 
     def _repr_(self):
         """
@@ -191,7 +192,7 @@ class FiniteDimensionalAlgebraElement(AlgebraElement):
         coeffs = list(self.vector())
         atomic = A.base_ring()._repr_option('element_is_atomic')
         non_zero = False
-        for n in xrange(m):
+        for n in range(m):
             x = coeffs[n]
             if x:
                 if non_zero:

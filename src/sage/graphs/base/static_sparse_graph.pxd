@@ -26,7 +26,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled = ?) except -1
 cdef void free_short_digraph(short_digraph g)
 cdef int init_reverse(short_digraph dst, short_digraph src) except -1
 cdef int out_degree(short_digraph g, int u)
-cdef inline uint32_t * has_edge(short_digraph g, int u, int v)
-cdef inline object edge_label(short_digraph g, uint32_t * edge)
+cdef uint32_t * has_edge(short_digraph g, int u, int v)
+cdef object edge_label(short_digraph g, uint32_t * edge)
 cdef int tarjan_strongly_connected_components_C(short_digraph g, int *scc)
 cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int *scc, short_digraph output)

@@ -18,6 +18,6 @@ rm -f cliquer-$VERSION.tar.gz
 make dist
 mv cliquer-$VERSION.tar.gz ../
 cd ..
-rm -rf autocliquer/ 
+rm -rf autocliquer/
 
 

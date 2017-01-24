@@ -283,7 +283,6 @@ Miscellaneous Inspection and Development Tools
    sage/misc/classgraph
    sage/misc/dev_tools
    sage/misc/function_mangling
-   sage/misc/memory_info
    sage/misc/rest_index_of_methods
 
 Low-Level Utilities
