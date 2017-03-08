@@ -1,0 +1,97 @@
+Increase the hardcoded library file name buffer size
+
+See https://trac.sagemath.org/ticket/22175
+
+---
+diff --git a/Singular/fehelp.cc b/Singular/fehelp.cc
+index df00135..2fb2f5d 100644
+--- a/Singular/fehelp.cc
++++ b/Singular/fehelp.cc
+@@ -702,7 +702,7 @@ static BOOLEAN heOnlineHelp(char* s)
+     return FALSE;
+   }
+ 
+-  char libnamebuf[128];
++  char libnamebuf[1024];
+   FILE *fp=NULL;
+   // first, search for library of that name
+   if ((str[1]!='\0') &&
+diff --git a/Singular/iparith.cc b/Singular/iparith.cc
+index 9843bb1..a1472e8 100644
+--- a/Singular/iparith.cc
++++ b/Singular/iparith.cc
+@@ -5193,7 +5193,7 @@ BOOLEAN jjWAITALL1(leftv res, leftv u)
+ 
+ BOOLEAN jjLOAD(const char *s, BOOLEAN autoexport)
+ {
+-  char libnamebuf[256];
++  char libnamebuf[1024];
+   lib_types LT = type_of_LIB(s, libnamebuf);
+ 
+ #ifdef HAVE_DYNAMIC_LOADING
+@@ -5228,7 +5228,7 @@ BOOLEAN jjLOAD(const char *s, BOOLEAN autoexport)
+         package savepack=currPack;
+         currPack=IDPACKAGE(pl);
+         IDPACKAGE(pl)->loaded=TRUE;
+-        char libnamebuf[256];
++        char libnamebuf[1024];
+         FILE * fp = feFopen( s, "r", libnamebuf, TRUE );
+         BOOLEAN bo=iiLoadLIB(fp, libnamebuf, s, pl, autoexport, TRUE);
+         currPack=savepack;
+diff --git a/Singular/iplib.cc b/Singular/iplib.cc
+index a0fdff9..2bd6e7b 100644
+--- a/Singular/iplib.cc
++++ b/Singular/iplib.cc
+@@ -656,7 +656,7 @@ iiGetBuiltinModInit(const char* libname)
+ BOOLEAN iiTryLoadLib(leftv v, const char *id)
+ {
+   BOOLEAN LoadResult = TRUE;
+-  char libnamebuf[128];
++  char libnamebuf[1024];
+   char *libname = (char *)omAlloc(strlen(id)+5);
+   const char *suffix[] = { "", ".lib", ".so", ".sl", NULL };
+   int i = 0;
+@@ -672,7 +672,7 @@ BOOLEAN iiTryLoadLib(leftv v, const char *id)
+     {
+       char *s=omStrDup(libname);
+       #ifdef HAVE_DYNAMIC_LOADING
+-      char libnamebuf[256];
++      char libnamebuf[1024];
+       #endif
+ 
+       if (LT==LT_SINGULAR)
+@@ -717,7 +717,7 @@ BOOLEAN iiLocateLib(const char* lib, char* where)
+ 
+ BOOLEAN iiLibCmd( char *newlib, BOOLEAN autoexport, BOOLEAN tellerror, BOOLEAN force )
+ {
+-  char libnamebuf[128];
++  char libnamebuf[1024];
+   // procinfov pi;
+   // idhdl h;
+   idhdl pl;
+diff --git a/Singular/libparse.cc b/Singular/libparse.cc
+index 333999f..b468ed1 100644
+--- a/Singular/libparse.cc
++++ b/Singular/libparse.cc
+@@ -1093,7 +1093,7 @@ BOOLEAN p_static = FALSE;
+ int old_state = 0;
+ lib_cmds last_cmd = LP_NONE;
+ 
+-char libnamebuf[128];
++char libnamebuf[1024];
+ char *text_buffer=NULL;
+ long string_start;
+ 
+diff --git a/Singular/libparse.ll b/Singular/libparse.ll
+index 3cd7abc..f85bb3b 100644
+--- a/Singular/libparse.ll
++++ b/Singular/libparse.ll
+@@ -44,7 +44,7 @@ BOOLEAN p_static = FALSE;
+ int old_state = 0;
+ lib_cmds last_cmd = LP_NONE;
+ 
+-char libnamebuf[128];
++char libnamebuf[1024];
+ char *text_buffer=NULL;
+ long string_start;
+ 
