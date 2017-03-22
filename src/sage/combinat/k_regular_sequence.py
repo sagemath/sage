@@ -1448,3 +1448,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         right = vector(values(0, lines))
         left = vector(pad_right(tuple(left), d, zero=zero))
         return self(mu, left, right)
+
+
+
+
