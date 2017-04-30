@@ -1,4 +1,20 @@
-from __future__ import absolute_import
+r"""
+Boundedness of `k`-regular sequences
+
+AUTHORS:
+
+- Gabriel Lipnik (2017)
+"""
+
+#*****************************************************************************
+#       Copyright (C) 2017 Gabriel Lipnik <galipnik@edu.aau.at>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 def red_mult(A, B):
     r"""
@@ -120,7 +136,8 @@ def k_regular_sequence_is_bounded(seq):
         marked as experimental. It, its functionality or its interface
         might change without a formal deprecation.
         See http://trac.sagemath.org/21202 for details.
-        sage: S = Seq2((Matrix([[0, 1, 0], [0, 0, 1], [-1, 2, 0]]), Matrix([[-1, 0, 0], [-3/4, -1/4, 3/4], [-1/4, 1/4, -3/4]])), left=vector([1, 0, 0]), right=vector([-4, -4, -4]))
+        sage: S = Seq2((Matrix([[0, 1, 0], [0, 0, 1], [-1, 2, 0]]), Matrix([[-1, 0, 0], 
+        ....: [-3/4, -1/4, 3/4], [-1/4, 1/4, -3/4]])), left=vector([1, 0, 0]), right=vector([-4, -4, -4]))
         sage: k_regular_sequence_is_bounded(S)
         ev2
         False
@@ -151,7 +168,7 @@ def k_regular_sequence_is_bounded(seq):
         print 'm2err'
         pass
 
-    matricesProd = list(matrices[i]*matrices[j] for i in srange(length) for j in srange(1, length) if i != j)
+    matricesProd2 = list(matrices[i]*matrices[j] for i in srange(length) for j in srange(1, length) if i != j)
     if not check_eigenvalues(matricesProd):
         print 'ev2'
         return False
