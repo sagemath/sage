@@ -1,57 +1,43 @@
 from __future__ import absolute_import
 
-
-def reduce_matrix_max_2(A):
+def red_mult(A, B):
     r"""
-    Return the matrix `B` with entries `B_{ij} = \max{A_{ij},2}`.
+    Return the matrix `A\cdot B` with entries `\min{(A\cdot B)_{ij},2}`.
 
     INPUT: 
 
-    - ``A`` -- a matrix 
+    - ``A`` -- an `m \times n` matrix
+    - ``B`` -- an `n \times p` matrix
 
     OUTPUT: 
 
-    A matrix with entries `\max{A_{ij},2}`
+    An `m \times p` matrix with entries `\min{(A\cdot B)_{ij},2}`
 
     EXAMPLES::
-        sage: from sage.combinat.k_automatic_sequence import reduce_matrix_max_2
-        sage: A = Matrix([[0, 1, 2], [3, 4, 5], [-6, -7, -8]])
-        sage: reduce_matrix_max_2(A)
-        [ 0  1  2]
-        [ 2  2  2]
-        [-6 -7 -8]
+        sage: from sage.combinat.k_regular_sequence_bounded import red_mult
+        sage: A = Matrix([[2, 0, 0], [0, 2, 0], [0, 0, 2]])
+        sage: red_mult(A, A)
+        [2 0 0]
+        [0 2 0]
+        [0 0 2]
     """
+    return (A*B).apply_map(lambda m: min(m, 2))
 
-    n = A.nrows()
-    m = A.ncols()
-    B = zero_matrix(n, m)
 
-    for i in srange(n):
-        for j in srange(m):
-            # TO THINK: negative values?
-            if A[i, j] > 2:
-                B[i, j] = 2 
-            else:
-                B[i, j] = A[i, j]
-    return B
-
-def red_mult(A, B):
-    return reduce_matrix_max_2(A*B)
-
-def construct_phi(L):
+def construct_phi(matrices):
     r"""
-    Return the set `\phi(L)` with `\phi` as defined in []
+    Return the set `\phi(L)` with `\phi` as defined in [###paper###]
     
     INPUT:
     
-    - ``L`` -- a list of square matrices with the same dimension
+    - ``L`` -- a list of non-negative square matrices with the same dimension
 
     OUTPUT:
     
     The set `\phi(L)`
 
     EXAMPLES::
-        sage: from sage.combinat.k_automatic_sequence import construct_phi
+        sage: from sage.combinat.k_regular_sequence_bounded import construct_phi
         sage: L = [Matrix([[2, 2], [1, 3]]), Matrix([[0, 2], [1, 1]])]
         sage: construct_phi(L)
         [
@@ -59,32 +45,62 @@ def construct_phi(L):
         [1 1], [2 2], [1 2]
         ]
     """
-    
-    l = len(L)
-    redL = []
-    for i in srange(1, l):
-        redL.append(reduce_matrix_max_2(L[i]))
-    n = len(redL)
-    while(True): 
-        for A in redL:
-            for B in L:
-                C = red_mult(A, B)
-                if C not in redL:
-                    redL.append(C)
-        if len(redL) == n:
-            return redL
+    redMatrices = list(ell.apply_map(lambda m: min(m,2)) for ell in matrices[1:])
+    redLength = len(redMatrices)
+    counter = 1
+    while(True):
+        for A in redMatrices:
+            for B in matrices:
+                prod = red_mult(B, A)
+                if prod not in redMatrices:
+                    redMatrices.append(prod)
+        if len(redMatrices) == redLength:
+            return redMatrices
         else:
-            n = len(redL)
+            redLength = len(redMatrices)
+        counter = counter + 1
+        if counter > 1000000:
+            raise RuntimeError('while loop too long...')
+
+
+def mandel_simon_algorithm(matrices):
     from sage.arith.srange import srange
     from sage.matrix.constructor import Matrix
     from sage.matrix.matrix_space import MatrixSpace
     from sage.rings.integer_ring import ZZ
 
-    
-def mandel_simon_algorithm(L):
-    A = construct_phi(L)
-    for M in A:
-        if red_mult(M, M) == red_mult(red_mult(M, M), M) and not M**2 == M**3:
+    length = len(matrices)
+    if not all(matrices[i] in MatrixSpace(ZZ, matrices[i].nrows(), matrices[i].ncols()) for i in srange(1, length)):
+        raise ValueError('Matrix is not integer-valued.')
+
+    def is_non_negative(M):
+        return min(M.list()) >= 0
+
+    posMatrices = list()
+    for i in srange(length):
+        M = matrices[i]
+        if is_non_negative(M):
+            posMatrices.append(M)
+        elif is_non_negative(-M):
+            posMatrices.append(-M)
+        else:
+            raise ValueError('M[{}] is neither non-negative nor non-positive.'.format(i))
+
+    constrMatrices = construct_phi(posMatrices)
+    return not any(red_mult(M, M) == red_mult(red_mult(M, M), M) and not M**2 == M**3
+                   for M in constrMatrices)
+
+
+def check_eigenvalues(matrices):
+    from sage.matrix.constructor import Matrix
+    from sage.arith.srange import srange
+
+    for mat in matrices:
+        eigen = mat.eigenvectors_right()
+        l = len(eigen)
+        isBounded = all(abs(eigen[i][0]) < 1 or (abs(eigen[i][0]) == 1 and
+                        len(eigen[i][1]) == eigen[i][2]) for i in srange(0, l))
+        if isBounded == False:
             return False
     return True
 
