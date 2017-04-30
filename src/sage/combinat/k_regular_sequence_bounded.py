@@ -104,43 +104,56 @@ def check_eigenvalues(matrices):
             return False
     return True
 
-                                  
-def is_bounded(S):
+
+def k_regular_sequence_is_bounded(seq):
     r"""
-    Return ``True`` if S is bounded and ``False`` if S is not bounded
+    Return whether this `k`-regular sequence is bounded or not (if decidable with this implementation)
 
     INPUT:
     
     - ``S`` -- a `k`-regular sequence
-    """
 
-    L = S.minimized().mu
-    le = len(L)
-    for i in srange(1, le):
-        M = L[i]
-        es = M.eigenvectors_left()
-        l = len(es)
-        for i in srange(0, l):
-            if abs(es[i][0]) > 1 or (abs(es[i][0]) == 1 and len(es[i][1]) < es[i][2]):
-                return False
-
-    mandelSimon = True
-    posL = []
-    l = len(L)
-    for i in srange(0, l):
-        M = L[i]
-        if max(M._list()) <= 0:
-            posL.append(Matrix(numpy.absolute(numpy.array(M))))
-        elif min(M._list()) >= 0:
-            posL.append(M)
-        elif max(M._list()) > 0 and min(M._list()) < 0:
-            mandelSimon = False
-            break
-
-    if mandelSimon == True:
-        print 'maldelSimon = True'
-        return mandel_simon_algorithm(posL)
-    else:
-        raise Exception( "Not decidable with this implementation.")
-    from sage.arith.srange import srange
+    EXAMPLES::
+        sage: from sage.combinat.k_regular_sequence_bounded import k_regular_sequence_is_bounded
+        sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+        doctest:...: FutureWarning: This class/method/function is
+        marked as experimental. It, its functionality or its interface
+        might change without a formal deprecation.
+        See http://trac.sagemath.org/21202 for details.
+        sage: S = Seq2((Matrix([[0, 1, 0], [0, 0, 1], [-1, 2, 0]]), Matrix([[-1, 0, 0], [-3/4, -1/4, 3/4], [-1/4, 1/4, -3/4]])), left=vector([1, 0, 0]), right=vector([-4, -4, -4]))
+        sage: k_regular_sequence_is_bounded(S)
+        ev2
+        False
     
+    """
+    from sage.arith.srange import srange
+    matrices = seq.mu
+    length = len(matrices)
+    matricesWithout = list(matrices[i] for i in srange(1, length))
+    try:
+        if mandel_simon_algorithm(matricesWithout):
+            print 'ms1'
+            return True
+    except ValueError:
+        print 'ms1err'
+        pass
+    
+    matrices = seq.minimized().mu
+    matricesWithout = list(matrices[i] for i in srange(1, length))
+    if not check_eigenvalues(matricesWithout):
+        print 'ev1'
+        return False
+
+    try:
+        print 'ms2'
+        return mandel_simon_algorithm(matricesWithout)
+    except ValueError:
+        print 'm2err'
+        pass
+
+    matricesProd = list(matrices[i]*matrices[j] for i in srange(length) for j in srange(1, length) if i != j)
+    if not check_eigenvalues(matricesProd):
+        print 'ev2'
+        return False
+
+    raise RuntimeError('It is not decidable with this implementation whether the sequence is bounded or not.')
