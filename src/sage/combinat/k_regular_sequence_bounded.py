@@ -1,6 +1,5 @@
+from __future__ import absolute_import
 
-from sage.all_cmdline import *   # import sage library
-import numpy # needed!
 
 def reduce_matrix_max_2(A):
     r"""
@@ -76,6 +75,10 @@ def construct_phi(L):
             return redL
         else:
             n = len(redL)
+    from sage.arith.srange import srange
+    from sage.matrix.constructor import Matrix
+    from sage.matrix.matrix_space import MatrixSpace
+    from sage.rings.integer_ring import ZZ
 
     
 def mandel_simon_algorithm(L):
@@ -123,4 +126,5 @@ def is_bounded(S):
         return mandel_simon_algorithm(posL)
     else:
         raise Exception( "Not decidable with this implementation.")
+    from sage.arith.srange import srange
     
