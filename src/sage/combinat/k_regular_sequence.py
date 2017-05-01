@@ -918,6 +918,11 @@ class kRegularSequence(RecognizableSeries):
             return result
 
 
+    def is_bounded(self):
+        from sage.combinat.k_regular_sequence_bounded import k_regular_sequence_is_bounded
+        return k_regular_sequence_is_bounded(self)
+
+
 def _pickle_kRegularSequenceSpace(k, coefficients, category):
     r"""
     Pickle helper.
