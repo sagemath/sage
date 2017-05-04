@@ -16,6 +16,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.misc.cachefunc import cached_function
+
 def red_mult(A, B):
     r"""
     Return the matrix `A\cdot B` with entries `\min{(A\cdot B)_{ij},2}`.
@@ -30,19 +32,36 @@ def red_mult(A, B):
     An `m \times p` matrix with entries `\min{(A\cdot B)_{ij},2}`
 
     EXAMPLES::
+
         sage: from sage.combinat.k_regular_sequence_bounded import red_mult
-        sage: A = Matrix([[2, 0, 0], [0, 2, 0], [0, 0, 2]])
-        sage: red_mult(A, A)
-        [2 0 0]
-        [0 2 0]
-        [0 0 2]
+        sage: A = Matrix([[2, 0], [0, 2]])
+        sage: B = Matrix([[-2, 0], [0, 2]])
+        sage: A*B
+        [-4  0]
+        [ 0  4]        
+        sage: red_mult(A, B)
+        [-4  0]
+        [ 0  2]
+
+    ::
+
+        sage: A = Matrix([[1, 2, 3], [-1, -2, -3], [1, 2, 3]])
+        sage: B = Matrix([[1, 2, 3], [2, 3, 4], [1, 2, 3]])
+        sage: A*B
+        [  8  14  20]
+        [ -8 -14 -20]
+        [  8  14  20]
+        sage: red_mult(A, B)
+        [  2   2   2]
+        [ -8 -14 -20]
+        [  2   2   2]
     """
     return (A*B).apply_map(lambda m: min(m, 2))
 
 
 def construct_phi(matrices):
     r"""
-    Return the set `\phi(L)` with `\phi` as defined in [###paper###]
+    Return the set `\phi(\text{span}\ L)` with `\phi` as defined in [###paper###]
     
     INPUT:
     
@@ -120,7 +139,7 @@ def check_eigenvalues(matrices):
             return False
     return True
 
-
+@cached_function
 def k_regular_sequence_is_bounded(seq):
     r"""
     Return whether this `k`-regular sequence is bounded or not (if decidable with this implementation)
