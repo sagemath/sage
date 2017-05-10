@@ -187,8 +187,17 @@ def mandel_simon_algorithm(matrices):
 
 
     """
+    if not is_integer_valued(matrices):
+        raise ValueError('Not all matrices are integer-valued.')
+
+    # debug:
+    if not is_non_negative(matrices):
+        print posMatrices
+        raise ValueError('Implementation Error?')
+
+    phi = construct_phi(matrices)
     return not any(red_mult(M, M) == red_mult(red_mult(M, M), M) and not M**2 == M**3
-                   for M in constrMatrices)
+                   for M in phi)
 
 
 def check_eigenvalues(matrices):
@@ -299,33 +308,37 @@ def k_regular_sequence_is_bounded(seq):
     
     """
     from sage.arith.srange import srange
-    matrices = seq.mu
+
+    matrices = list(seq.mu)
     length = len(matrices)
-    matricesWithout = list(matrices[i] for i in srange(1, length))
     try:
-        if mandel_simon_algorithm(matricesWithout):
+        if mandel_simon_algorithm(make_positive(matrices)):
             print 'ms1'
             return True
     except ValueError:
         print 'ms1err'
         pass
     
-    matrices = seq.minimized().mu
-    matricesWithout = list(matrices[i] for i in srange(1, length))
+    matrices = list(seq.minimized().mu)
+    matricesWithout = matrices[1:]
     if not check_eigenvalues(matricesWithout):
         print 'ev1'
         return False
 
     try:
         print 'ms2'
-        return mandel_simon_algorithm(matricesWithout)
+        return mandel_simon_algorithm(make_positive(matrices))
     except ValueError:
         print 'm2err'
         pass
 
-    matricesProd2 = list(matrices[i]*matrices[j] for i in srange(length) for j in srange(1, length) if i != j)
+    #matricesProd = list(matrices[i]*matrices[j] for i in srange(length)
+    #                    for j in srange(1, length) if i != j)
+    matricesProd = list(ell*em for ell in matrices for em in matrices[1:] if ell != em)
     if not check_eigenvalues(matricesProd):
         print 'ev2'
         return False
 
-    raise RuntimeError('It is not decidable with this implementation whether the sequence is bounded or not.')
+    raise RuntimeError('It is not decidable with this implementation ' +
+                       'whether the sequence is bounded or not.')# +
+                       #'You could try it with another representation of your sequence.')
