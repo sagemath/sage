@@ -109,6 +109,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.dynamic_class import DynamicMetaclass, dynamic_class
 
+from sage.categories.axiom import all_axioms
 from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _flatten_categories, join_as_tuple
 
 _join_cache = WeakValueDictionary()
@@ -3200,7 +3201,7 @@ class JoinCategory(CategoryWithParameters):
             ValueError: This join category isn't built by adding axioms to a single category
         """
         from sage.categories.category_with_axiom import CategoryWithAxiom
-        return CategoryWithAxiom._repr_object_names_static(self._without_axioms(named=True), self.axioms())
+        return CategoryWithAxiom._repr_object_names.im_func(self)
 
     def _repr_(self, as_join = False):
         """

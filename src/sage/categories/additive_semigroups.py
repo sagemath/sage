@@ -10,6 +10,7 @@ Additive semigroups
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.algebra_functor import AlgebrasCategory
