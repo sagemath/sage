@@ -2055,7 +2055,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``axiom`` -- a string, the name of an axiom
+        - ``axiom`` -- an axiom or a string, the name of an axiom
 
         EXAMPLES::
 
@@ -2086,7 +2086,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``axioms`` -- a list of strings, the names of the axioms
+        - ``axioms`` -- a list of axioms or names thereof
 
         EXAMPLES::
 
@@ -2097,12 +2097,19 @@ class Category(UniqueRepresentation, SageObject):
             sage: FiniteSets()._with_axioms(["Finite"])
             Category of finite sets
 
-        Axioms that are not defined for the ``self`` are ignored::
+        Axioms that are not defined for ``self`` are ignored::
 
             sage: Sets()._with_axioms(["Flying"])
             Category of sets
             sage: Magmas()._with_axioms(["Flying", "Unital"])
             Category of unital magmas
+
+        Unknown axioms trigger an error::
+
+            sage: Sets()._with_axioms(["FooBar"])
+            Traceback (most recent call last):
+            ...
+            ValueError: No known axiom named FooBar
 
         Note that adding several axioms at once can do more than
         adding them one by one. This is because the availability of an

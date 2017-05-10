@@ -1,5 +1,5 @@
 """
-Axioms
+Axioms and categories with axioms
 
 This documentation covers how to implement axioms and proceeds with an
 overview of the implementation of the axiom infrastructure. It assumes
@@ -235,7 +235,7 @@ But calling ``FiniteCs()`` right after defining the class would have
 failed (try it!). In general, one needs to set the attribute explicitly::
 
     sage: class FiniteCs(CategoryWithAxiom):
-    ....:     _base_category_class_and_axiom = (Cs, 'Finite')
+    ....:     _base_category_class_and_axiom = (Cs, axioms.Finite)
     ....:     class ParentMethods:
     ....:         def foo(self):
     ....:             print("I am a method on finite C's")
@@ -320,27 +320,34 @@ Defining a new axiom
 We describe now how to define a new axiom. The first step is to figure
 out the largest category where the axiom makes sense. For example
 ``Sets`` for ``Finite``, ``Magmas`` for ``Associative``, or
-``Modules`` for ``FiniteDimensional``. Here we define the axiom
-``Green`` for the category ``Cs`` and its subcategories::
+``Modules`` for ``FiniteDimensional``. Here we declare the new axiom
+``Green``::
+
+    sage: from sage.categories.axiom import Axiom
+    sage: Axiom('Green');
+    Green
+
+It immedieately appears in the catalog of axioms, which is a
+convenient way to access it:
+
+    sage: axioms.Green
+    Green
+
+We now define and implement this axiom for category ``Cs`` (and its
+subcategories)::
 
     sage: from sage.categories.category_with_axiom import CategoryWithAxiom
     sage: class Cs(Category):
     ....:     def super_categories(self):
     ....:         return [Sets()]
     ....:     class SubcategoryMethods:
-    ....:         def Green(self):
+    ....:         def Green(self):            # definition
     ....:             '<documentation of the axiom Green>'
-    ....:             return self._with_axiom("Green")
-    ....:     class Green(CategoryWithAxiom):
+    ....:             return self._with_axiom(axioms.Green)
+    ....:     class Green(CategoryWithAxiom): # implementation
     ....:         class ParentMethods:
     ....:             def foo(self):
     ....:                 print("I am a method on green C's")
-
-With the current implementation, the name of the axiom must also be
-added to a global container::
-
-    sage: all_axioms = sage.categories.category_with_axiom.all_axioms
-    sage: all_axioms += ("Green",)
 
 We can now use the axiom as usual::
 
@@ -387,27 +394,30 @@ It is therefore the natural spot for the documentation of the axiom.
     We could possibly define an @axiom decorator? This could hide two
     little implementation details: whether or not to make the method a
     cached method, and the call to _with_axiom(...) under the hood. It
-    could do possibly do some more magic. The gain is not obvious though.
+    could do possibly do some more magic. The gain is not obvious
+    though. Alternatively, one could try to merge the axiom
+    declaration and its definition
 
 .. NOTE::
 
-    ``all_axioms`` is only used marginally, for sanity checks and when
-    trying to derive automatically the base category class. The order
-    of the axioms in this tuple also controls the order in which they
-    appear when printing out categories with axioms (see
-    :meth:`CategoryWithAxiom._repr_object_names_static`).
+    Internally, the catalog ``axioms`` is used marginally, for sanity
+    checks and when trying to derive automatically the axiom and base
+    category classes.
 
-    During a Sage session, new axioms should only be added at the *end*
-    of ``all_axioms``, as above, so as to not break the cache of
-    :func:`axioms_rank`. Otherwise, they can be inserted statically
-    anywhere in the tuple. For axioms defined within the Sage library,
-    the name is best inserted by editing directly the definition of
-    ``all_axioms`` in :mod:`sage.categories.category_with_axiom`.
+.. NOTE::
+
+    The order in which axioms are declared influences the heuristic
+    that is used to try produce nice names for the objects of a
+    category; see :meth:`CategoryWithAxiom._repr_object_names`.
+
+    As a rule of thumb, axioms should be declared from more general to
+    more specific (which is the natural tendency anyway when loading
+    the Sage library).
 
 .. TOPIC:: Design note
 
     Let us state again that, unlike what the existence of
-    ``all_axioms`` might suggest, the definition of an axiom is local
+    ``axioms`` might suggest, the definition of an axiom is local
     to a category and its subcategories. In particular, two
     independent categories ``Cs()`` and ``Ds()`` can very well define
     axioms with the same name and different semantics. As long as the
@@ -420,12 +430,6 @@ It is therefore the natural spot for the documentation of the axiom.
 
     This caveat is no different from that of name clashes in hierarchy
     of classes involving multiple inheritance.
-
-.. TODO::
-
-    Explore ways to get rid of this global ``all_axioms`` tuple,
-    and/or have automatic registration there, and/or having a
-    register_axiom(...) method.
 
 Special case: defining an axiom depending on several categories
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -794,9 +798,9 @@ implies some other axiom ``B``, with the same consequence as above on
 the subsets of axioms appearing in the abstract model. For example, a
 division ring necessarily has no zero divisors::
 
-    sage: 'NoZeroDivisors' in Rings().Division().axioms()
+    sage: axioms.NoZeroDivisors in Rings().Division().axioms()
     True
-    sage: 'NoZeroDivisors' in Rings().axioms()
+    sage: axioms.NoZeroDivisors in Rings().axioms()
     False
 
 This deduction rule is implemented by the method
@@ -903,7 +907,7 @@ than ``Fields.Finite``::
     ....:         return [MyDivisionRings()]
 
     sage: class MyFiniteFields(CategoryWithAxiom):
-    ....:     _base_category_class_and_axiom = (MyDivisionRings, "Finite")
+    ....:     _base_category_class_and_axiom = (MyDivisionRings, axioms.Finite)
     ....:     def extra_super_categories(self): # Wedderburn's theorem
     ....:         return [MyFields()]
 
@@ -943,8 +947,8 @@ real axioms; they deserve a full documentation!)::
     sage: from sage.categories.category_singleton import Category_singleton
     sage: from sage.categories.category_with_axiom import axiom
     sage: import sage.categories.category_with_axiom
-    sage: all_axioms = sage.categories.category_with_axiom.all_axioms
-    sage: all_axioms += ("B","C","D","E","F")
+    sage: Axiom("B"), Axiom("C"), Axiom("D"), Axiom("E"), Axiom("F")
+    (B, C, D, E, F)
 
     sage: class As(Category_singleton):
     ....:     def super_categories(self):

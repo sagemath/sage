@@ -55,7 +55,8 @@ class DivisionRings(CategoryWithAxiom):
 
             sage: DivisionRings().extra_super_categories()
             (Category of domains,)
-            sage: "NoZeroDivisors" in DivisionRings().axioms()
+
+            sage: axioms.NoZeroDivisors in DivisionRings().axioms()
             True
         """
         return (Rings().NoZeroDivisors(),)
