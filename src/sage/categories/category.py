@@ -2021,13 +2021,13 @@ class Category(UniqueRepresentation, SageObject):
         """
         if axiom in self.axioms():
             return (self, )
-        axiom_attribute = getattr(self.__class__, axiom, None)
+        axiom_attribute = getattr(self.__class__, str(axiom), None)
         if axiom_attribute is None:
             # If the axiom is not defined for this category, ignore it
             # This uses the following invariant: the categories for
             # which a given axiom is defined form a lower set
             return (self,)
-        if axiom in self.__class__.__base__.__dict__:
+        if str(axiom) in self.__class__.__base__.__dict__:
             # self implements this axiom
             from .category_with_axiom import CategoryWithAxiom
             if inspect.isclass(axiom_attribute) and issubclass(axiom_attribute, CategoryWithAxiom):
@@ -2041,7 +2041,7 @@ class Category(UniqueRepresentation, SageObject):
                  tuple(cat
                        for category in self._super_categories
                        for cat in category._with_axiom_as_tuple(axiom))
-        hook = getattr(self, axiom+"_extra_super_categories", None)
+        hook = getattr(self, str(axiom)+"_extra_super_categories", None)
         if hook is not None:
             assert inspect.ismethod(hook)
             result += tuple(hook())
@@ -2076,6 +2076,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. WARNING:: This may be changed in the future to raising an error.
         """
+        axiom = all_axioms(axiom)
         return Category.join(self._with_axiom_as_tuple(axiom))
 
     def _with_axioms(self, axioms):
@@ -2170,6 +2171,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Groups()._without_axiom("Unital") # todo: not implemented
             Category of semigroups
         """
+        axiom = all_axioms(axiom)
         if axiom not in self.axioms():
             return self
         else:

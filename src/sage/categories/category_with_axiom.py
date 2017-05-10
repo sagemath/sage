@@ -1656,50 +1656,136 @@ TESTS:
 from __future__ import print_function
 
 import importlib
-import re
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.misc.lazy_import import LazyImport
-from sage.misc.misc import call_method
+from sage.misc.misc import call_method, attrcall
 from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_types import Category_over_base_ring
 from sage.structure.dynamic_class import DynamicMetaclass
-from sage.categories.category_cy_helper import AxiomContainer, canonicalize_axioms, _sort_uniq
+from sage.categories.axiom import Axiom, uncamelcase, all_axioms
 
 # The order of the axioms in this lists implies that
 # Magmas().Commutative().Unital() is printed as
 # ``Category of commutative unital magmas''
 
-all_axioms = AxiomContainer()
-all_axioms += ("Flying", "Blue",
-               "Compact",
-               "Differentiable", "Smooth", "Analytic", "AlmostComplex",
-               "FinitelyGeneratedAsMagma",
-               "WellGenerated",
-               "Facade", "Finite", "Infinite","Enumerated",
-               "Complete",
-               "FiniteDimensional", "Connected", "WithBasis",
-               "Irreducible",
-               "Commutative", "Associative", "Inverse", "Unital", "Division", "NoZeroDivisors",
-               "AdditiveCommutative", "AdditiveAssociative", "AdditiveInverse", "AdditiveUnital",
-               "Distributive",
-               "Endset",
-               "Pointed"
-              )
+class WithBasisAxiom(Axiom):
+    def _repr_object_names(self, base_category):
+        """
+        Return the name of the objects in `base_category` satisfying this axiom.
 
-def uncamelcase(s,separator=" "):
-    """
-    EXAMPLES::
+        EXAMPLES::
 
-        sage: sage.categories.category_with_axiom.uncamelcase("FiniteDimensionalAlgebras")
-        'finite dimensional algebras'
-        sage: sage.categories.category_with_axiom.uncamelcase("JTrivialMonoids")
-        'j trivial monoids'
-        sage: sage.categories.category_with_axiom.uncamelcase("FiniteDimensionalAlgebras", "_")
-        'finite_dimensional_algebras'
-    """
-    return re.sub("(?!^)[A-Z]", lambda match: separator+match.group()[0], s).lower()
+            sage: Algebras(QQ).WithBasis()
+            Category of algebras with basis over Rational Field
+        """
+        base_object_names = base_category._repr_object_names()
+        return base_object_names.replace(" over ", " with basis over ", 1)
+
+class ConnectedAxiom(Axiom):
+    def _repr_object_names(self, base_category):
+        """
+        Return the name of the objects in `base_category` satisfying this axiom.
+
+        EXAMPLES::
+
+            sage: Algebras(QQ).Graded().Connected()
+            Category of graded connected algebras over Rational Field
+            sage: Algebras(QQ).Filtered().Connected()
+            Category of filtered connected algebras over Rational Field
+        """
+        base_object_names = base_category._repr_object_names()
+        if "graded " in base_object_names:
+            return base_object_names.replace("graded ", "graded connected ", 1)
+        elif "filtered " in base_object_names:
+            return base_object_names.replace("filtered ", "filtered connected ", 1)
+        else:
+            return "connected "+base_object_names
+
+class HyphenedAxiom(Axiom):
+    def _repr_object_names(self, base_category):
+        """
+        Return the name of the objects in `base_category` satisfying this axiom.
+
+        EXAMPLES::
+
+            sage: AdditiveMagmas().AdditiveCommutative()
+            Category of additive-commutative additive magmas
+            sage: AdditiveMagmas().AdditiveUnital().AdditiveInverse()
+            Category of additive-inverse additive-unital additive magmas
+        """
+        return uncamelcase(repr(self), "-") + " " + base_category._repr_object_names()
+
+class EndsetAxiom(Axiom):
+    def _repr_object_names(self, base_category):
+        """
+        Return the name of the objects in `base_category` satisfying this axiom.
+
+        EXAMPLES::
+
+            sage: from sage.categories.homsets import Homsets
+            sage: Homsets().Endset()
+            Category of endsets
+            sage: Rings().Endsets()
+            Category of endsets of unital magmas and additive-unital additive magmas
+        """
+        base_object_names = base_category._repr_object_names()
+        if "homsets" in base_object_names:
+            # Without the space at the end to handle Homsets().Endset()
+            return base_object_names.replace("homsets", "endsets", 1)
+        else:
+            # Could possibly do better? Let's wait for a use case
+            return "endset "+base_object_names
+
+class FinitelyGeneratedAsMagmaAxiom(Axiom):
+    def _repr_object_names(self, base_category):
+        """
+        Return the name of the objects in `base_category` satisfying this axiom.
+
+        EXAMPLES::
+
+            sage: from sage.categories.homsets import Homsets
+            sage: PermutationGroups().FinitelyGeneratedAsMagma()
+            Category of finitely generated permutation groups
+            sage: Rings().FinitelyGeneratedAsMagma()
+            Category of finitely-generated-as-magma rings
+        """
+        base_object_names = base_category._repr_object_names()
+        from sage.categories.additive_magmas import AdditiveMagmas
+        if not base_category.is_subcategory(AdditiveMagmas()):
+            return "finitely generated "+base_object_names
+        else:
+            return "finitely-generated-as-magma "+base_object_names
+
+# Remember: the order in which axioms are defined influences the
+# pretty printing of categories. See the documentation for details.
+# In short: from more general to more specific.
+[Axiom(axiom) for axiom in [
+    "Flying", "Blue",
+    "Compact",
+    "Differentiable", "Smooth", "Analytic", "AlmostComplex",
+    "WellGenerated",
+    "Facade", "Finite", "Infinite","Enumerated"]]
+
+FinitelyGeneratedAsMagmaAxiom("FinitelyGeneratedAsMagma")
+
+Axiom("Complete")
+Axiom("FiniteDimensional")
+
+ConnectedAxiom("Connected")
+WithBasisAxiom("WithBasis")
+Axiom("Irreducible")
+
+[Axiom(axiom)         for axiom in [
+    "Commutative", "Associative", "Inverse", "Unital", "NoZeroDivisors", "Division"]]
+[HyphenedAxiom(axiom) for axiom in [
+    "AdditiveCommutative","AdditiveAssociative","AdditiveInverse", "AdditiveUnital"]]
+
+Axiom("Distributive")
+
+EndsetAxiom("Endset")
+Axiom("Pointed")
 
 def base_category_class_and_axiom(cls):
     """
@@ -1771,10 +1857,11 @@ def base_category_class_and_axiom(cls):
         # standard location (sage.categories.algebras)
         name = cls.__name__
         for axiom in all_axioms:
-            if axiom == "WithBasis" and name.endswith(axiom):
-                base_name = name[:-len(axiom)]
-            elif name.startswith(axiom):
-                base_name = name[len(axiom):]
+            axiom_name = str(axiom)
+            if axiom_name == "WithBasis" and name.endswith(axiom_name):
+                base_name = name[:-len(axiom_name)]
+            elif name.startswith(axiom_name):
+                base_name = name[len(axiom_name):]
             else:
                 continue
             if base_name == "Sets": # Special case for Sets which is in sets_cat
@@ -1784,7 +1871,7 @@ def base_category_class_and_axiom(cls):
             try:
                 base_module = importlib.import_module("sage.categories."+base_module_name)
                 base_category_class = getattr(base_module, base_name)
-                assert getattr(base_category_class, axiom, None) is cls, \
+                assert getattr(base_category_class, axiom_name, None) is cls, \
                     "Missing (lazy import) link for {} to {} for axiom {}?".format(base_category_class, cls, axiom)
                 return base_category_class, axiom
             except (ImportError,AttributeError):
@@ -1824,24 +1911,33 @@ def axiom_of_nested_class(cls, nested_cls):
     """
     try:
         axiom = nested_cls.__dict__["_base_category_class_and_axiom"][1]
+        if isinstance(axiom, str):
+            from sage.misc.superseded import deprecation
+            deprecation(22965,
+                "specifying an axiom by its name in `_base_category_class_and_axiom` is deprecated.\n"
+                "Please use `axioms.%s` instead."%axiom)
+            axiom_name = axiom
+        else:
+            axiom_name = str(axiom)
+
     except KeyError:
         assert not isinstance(cls, DynamicMetaclass)
         nested_cls_name = nested_cls.__name__.split(".")[-1]
         if nested_cls_name in all_axioms:
-            axiom = nested_cls_name
+            axiom_name = nested_cls_name
         else:
             cls_name = cls.__name__.split(".")[-1]
             if nested_cls_name.startswith(cls_name):
-                axiom = nested_cls_name[len(cls_name):]
+                axiom_name = nested_cls_name[len(cls_name):]
             elif nested_cls_name.endswith(cls_name):
-                axiom = nested_cls_name[:-len(cls_name)]
+                axiom_name = nested_cls_name[:-len(cls_name)]
             else:
                 raise ValueError("could not infer axiom for the nested class {} of {}".format(nested_cls, cls))
-    assert axiom in all_axioms, \
-        "Incorrect deduction ({}) for the name of the axiom for the nested class {} of {}".format(axiom, nested_cls, cls)
-    assert axiom in cls.__dict__ and cls.__dict__[axiom] == nested_cls, \
+    assert axiom_name in all_axioms, \
+        "Incorrect deduction ({}) for the name of the axiom for the nested class {} of {}".format(axiom_name, nested_cls, cls)
+    assert axiom_name in cls.__dict__ and cls.__dict__[axiom_name] == nested_cls, \
         "{} not a nested axiom class of {} for axiom {}".format(nested_cls, cls, axiom)
-    return axiom
+    return all_axioms(axiom_name)
 
 class CategoryWithAxiom(Category):
     r"""
@@ -1957,7 +2053,7 @@ class CategoryWithAxiom(Category):
             sage: Fields._axiom
             'Commutative'
         """
-        return cls._base_category_class_and_axiom[1]
+        return all_axioms(cls._base_category_class_and_axiom[1])
 
     @staticmethod
     def __classcall__(cls, *args, **options):
@@ -2061,14 +2157,14 @@ class CategoryWithAxiom(Category):
         # Workaround #15648: if Rings.Finite is a LazyImport object,
         # this forces the substitution of the object back into Rings
         # to avoid resolving the lazy import over and over
-        if isinstance(base_category_class.__dict__[cls._axiom], LazyImport):
-            setattr(base_category_class, cls._axiom, cls)
+        if isinstance(base_category_class.__dict__[str(cls._axiom)], LazyImport):
+            setattr(base_category_class, str(cls._axiom), cls)
 
         if base_category is None:
              return cls
         # For Rings().Finite, this returns the method
         # Sets.SubcategoryMethods.Finite, with its first argument bound to Rings()
-        return getattr(super(base_category.__class__.__base__, base_category), cls._axiom)
+        return getattr(super(base_category.__class__.__base__, base_category), str(cls._axiom))
 
     def __init__(self, base_category):
         """
@@ -2198,110 +2294,88 @@ class CategoryWithAxiom(Category):
         """
         return None
 
-    @staticmethod
-    def _repr_object_names_static(category, axioms):
+    def _repr_object_names(self):
         r"""
-        INPUT:
+        Return the name of the objects of this category, as used by ``_repr_``.
 
-        - ``base_category`` -- a category
-        - ``axioms`` -- a list or iterable of strings
-
-        EXAMPLES::
-
-            sage: from sage.categories.category_with_axiom import CategoryWithAxiom
-            sage: CategoryWithAxiom._repr_object_names_static(Semigroups(), ["Flying", "Blue"])
-            'flying blue semigroups'
-            sage: CategoryWithAxiom._repr_object_names_static(Algebras(QQ), ["Flying", "WithBasis", "Blue"])
-            'flying blue algebras with basis over Rational Field'
-            sage: CategoryWithAxiom._repr_object_names_static(Algebras(QQ), ["WithBasis"])
-            'algebras with basis over Rational Field'
-            sage: CategoryWithAxiom._repr_object_names_static(Sets().Finite().Subquotients(), ["Finite"])
-            'subquotients of finite sets'
-            sage: CategoryWithAxiom._repr_object_names_static(Monoids(), ["Unital"])
-            'monoids'
-            sage: CategoryWithAxiom._repr_object_names_static(Algebras(QQ['x']['y']), ["Flying", "WithBasis", "Blue"])
-            'flying blue algebras with basis over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field'
-
-        If the axioms is a set or frozen set, then they are first
-        sorted using :func:`canonicalize_axioms`::
-
-            sage: CategoryWithAxiom._repr_object_names_static(Semigroups(), set(["Finite", "Commutative", "Facade"]))
-            'facade finite commutative semigroups'
-
-        .. SEEALSO:: :meth:`_repr_object_names`
+        .. SEEALSO:: :meth:`Category._repr_object_names`
 
         .. NOTE::
 
-            The logic here is shared between :meth:`_repr_object_names`
-            and :meth:`.category.JoinCategory._repr_object_names`
+            This is art not science :-) The heuristic tries to:
 
-        TESTS::
+            - display axioms in the order in which they appear in ``axioms``;
+            - use hardcoded names whenever possible;
+            - reduce the number of axioms shown by  exploiting the
+              convention that, when an axiom `B` implies an axiom `A`, it
+              tentatively appears after `A` in ``axioms``.
 
-            sage: from sage.categories.homsets import Homsets
-            sage: CategoryWithAxiom._repr_object_names_static(Homsets(), ["Endset"])
-            'endsets'
-            sage: CategoryWithAxiom._repr_object_names_static(PermutationGroups(), ["FinitelyGeneratedAsMagma"])
-            'finitely generated permutation groups'
-            sage: CategoryWithAxiom._repr_object_names_static(Rings(), ["FinitelyGeneratedAsMagma"])
-            'finitely generated as magma rings'
-        """
-        from sage.categories.additive_magmas import AdditiveMagmas
-        axioms = canonicalize_axioms(all_axioms,axioms)
-        base_category = category._without_axioms(named=True)
-        if isinstance(base_category, CategoryWithAxiom): # Smelly runtime type checking
-            result = super(CategoryWithAxiom, base_category)._repr_object_names()
-        else:
-            result = base_category._repr_object_names()
-        for axiom in reversed(axioms):
-            # TODO: find a more generic way to handle the special cases below
-            if axiom in base_category.axioms():
-                # If the base category already has this axiom, we
-                # need not repeat it here. See the example with
-                # Sets().Finite().Subquotients() or Monoids()
-                continue
-            base_category = base_category._with_axiom(axiom)
-            if axiom == "WithBasis":
-                result = result.replace(" over ", " with basis over ", 1)
-            elif axiom == "Connected" and "graded " in result:
-                result = result.replace("graded ", "graded connected ", 1)
-            elif axiom == "Connected" and "filtered " in result:
-                result = result.replace("filtered ", "filtered connected ", 1)
-            elif axiom == "Endset" and "homsets" in result:
-                # Without the space at the end to handle Homsets().Endset()
-                result = result.replace("homsets", "endsets", 1)
-            elif axiom == "FinitelyGeneratedAsMagma" and \
-                 not base_category.is_subcategory(AdditiveMagmas()):
-                result = "finitely generated " + result
-            else:
-                result = uncamelcase(axiom) + " " + result
-        return result
+            See the code for details. The examples below are good use cases
+            for experimenting with alternative heuristics with the same aims.
 
-    def _repr_object_names(self):
-        r"""
-        The names of the objects of this category, as used by ``_repr_``.
+        .. NOTE::
 
-        .. SEEALSO:: :meth:`Category._repr_object_names`
+            :meth:`.category.JoinCategory._repr_object_names` is basically a copy of this method.
 
         EXAMPLES::
 
             sage: FiniteSets()._repr_object_names()
             'finite sets'
-            sage: AlgebrasWithBasis(QQ).FiniteDimensional()._repr_object_names()
-            'finite dimensional algebras with basis over Rational Field'
-            sage: Monoids()._repr_object_names()
-            'monoids'
+
             sage: Semigroups().Unital().Finite()._repr_object_names()
             'finite monoids'
+            sage: Semigroups().Commutative().Facade().Finite()._repr_object_names()
+            'facade finite commutative semigroups'
+            sage: Monoids()._repr_object_names()
+            'monoids'
+            sage: Monoids().JTrivial()._repr_object_names()
+            'J-trivial monoids'
+            sage: Monoids().JTrivial().Finite()._repr_object_names()
+            'finite J-trivial monoids'
+
+            sage: Fields().Finite()._repr_object_names()
+            'finite fields'
+
             sage: Algebras(QQ).Commutative()._repr_object_names()
             'commutative algebras over Rational Field'
+            sage: Algebras(QQ).FiniteDimensional().Commutative().WithBasis()._repr_object_names()
+            'finite dimensional commutative algebras with basis over Rational Field'
+            sage: Algebras(QQ).WithBasis()._repr_object_names()
+            'algebras with basis over Rational Field'
 
-        .. NOTE::
+            sage: PermutationGroups().FinitelyGenerated()._repr_object_names()
+            'finitely generated permutation groups'
+            sage: PermutationGroups().Finite()._repr_object_names()
+            'finite permutation groups'
 
-            This is implemented by taking _repr_object_names from
-            self._without_axioms(named=True), and adding the names
-            of the relevant axioms in appropriate order.
+            sage: Rings().FinitelyGeneratedAsMagma()._repr_object_names()
+            'finitely-generated-as-magma rings'
         """
-        return CategoryWithAxiom._repr_object_names_static(self, self.axioms())
+        base_category = self._without_axioms(named=True)
+        if base_category is self:
+            if isinstance(base_category, CategoryWithAxiom): # Smelly runtime type checking
+                return super(CategoryWithAxiom, base_category)._repr_object_names()
+            else:
+                return Category._repr_object_names(self)
+        axioms = self.axioms().difference(base_category.axioms())
+
+        # We now run through all axioms, starting from those that have
+        # been defined first, and remove those that are implied by the
+        # remaining ones. Then we apply induction using the first
+        # remaining axiom, called main_axiom below.
+        axioms_sorted = sorted(axioms, key = attrcall("index"))
+        main_axiom = None
+        for axiom in axioms_sorted:
+            new_axioms = axioms.difference([axiom])
+            if base_category._with_axioms(new_axioms) is self:
+                # axiom is implied by the others
+                axioms = new_axioms
+            elif main_axiom is None:
+                main_axiom = axiom
+
+        axioms = axioms.difference([main_axiom])
+        base_category = base_category._with_axioms(axioms)
+        return main_axiom._repr_object_names(base_category)
 
     def base_category(self):
         r"""
@@ -2354,9 +2428,9 @@ class CategoryWithAxiom(Category):
             sage: C.__class__
             <class 'sage.categories.distributive_magmas_and_additive_magmas.DistributiveMagmasAndAdditiveMagmas.AdditiveAssociative.AdditiveCommutative_with_category'>
             sage: C.__reduce__()
-            (<function call_method at ...>, (Category of additive associative distributive magmas and additive magmas, '_with_axiom', 'AdditiveCommutative'))
+            (<function call_method at ...>, (Category of additive-associative distributive magmas and additive magmas, '_with_axiom', 'AdditiveCommutative'))
         """
-        return (call_method, (self._base_category, "_with_axiom", self._axiom))
+        return (call_method, (self._base_category, "_with_axiom", str(self._axiom)))
 
     @cached_method
     def _without_axiom(self, axiom):
@@ -2382,6 +2456,7 @@ class CategoryWithAxiom(Category):
             sage: Groups().Commutative()._without_axiom("Unital")
             Category of commutative semigroups
         """
+        axiom = all_axioms(axiom)
         axioms = self.axioms().difference([axiom])
         return self._without_axioms()._with_axioms(axioms)
 

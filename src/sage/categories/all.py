@@ -137,3 +137,5 @@ from .classical_crystals import ClassicalCrystals
 
 # polyhedra
 lazy_import('sage.categories.polyhedra', 'PolyhedralSets')
+
+from .axiom import all_axioms as axioms
