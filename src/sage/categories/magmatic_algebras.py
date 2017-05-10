@@ -42,7 +42,7 @@ class MagmaticAlgebras(Category_over_base_ring):
         sage: C = MagmaticAlgebras(ZZ); C
         Category of magmatic algebras over Integer Ring
         sage: C.super_categories()
-        [Category of additive commutative additive associative additive unital distributive magmas and additive magmas,
+        [Category of additive-commutative additive-associative additive-unital distributive magmas and additive magmas,
          Category of modules over Integer Ring]
 
     TESTS::
@@ -57,7 +57,7 @@ class MagmaticAlgebras(Category_over_base_ring):
 
             sage: from sage.categories.magmatic_algebras import MagmaticAlgebras
             sage: MagmaticAlgebras(ZZ).super_categories()
-            [Category of additive commutative additive associative additive unital distributive magmas and additive magmas, Category of modules over Integer Ring]
+            [Category of additive-commutative additive-associative additive-unital distributive magmas and additive magmas, Category of modules over Integer Ring]
 
             sage: from sage.categories.additive_semigroups import AdditiveSemigroups
             sage: MagmaticAlgebras(ZZ).is_subcategory((AdditiveSemigroups() & Magmas()).Distributive())

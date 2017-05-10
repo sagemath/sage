@@ -29,7 +29,7 @@ class Surface(UniqueRepresentation, Parent):
         An example of a CW complex: the surface given by the boundary map (1, 2, 1, 2)
 
         sage: X.category()
-        Category of finite finite dimensional CW complexes
+        Category of finite CW complexes
 
     We conclude by running systematic tests on this manifold::
 
