@@ -11,6 +11,7 @@ Unital algebras
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
@@ -46,7 +47,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
         True
         sage: TestSuite(C).run()
     """
-    _base_category_class_and_axiom = (MagmaticAlgebras, "Unital")
+    _base_category_class_and_axiom = (MagmaticAlgebras, all_axioms.Unital)
 
     class ParentMethods:
         def from_base_ring(self, r):

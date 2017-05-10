@@ -10,6 +10,7 @@ Domains
 #******************************************************************************
 
 from sage.misc.lazy_import import LazyImport
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rings import Rings
 
@@ -34,7 +35,7 @@ class Domains(CategoryWithAxiom):
         sage: TestSuite(C).run()
     """
 
-    _base_category_class_and_axiom = (Rings, "NoZeroDivisors")
+    _base_category_class_and_axiom = (Rings, all_axioms.NoZeroDivisors)
 
     def super_categories(self):
         """

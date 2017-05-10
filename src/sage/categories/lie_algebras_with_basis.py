@@ -18,6 +18,7 @@ AUTHORS:
 
 from sage.misc.abstract_method import abstract_method
 #from sage.misc.cachefunc import cached_method
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.lie_algebras import LieAlgebras
 
@@ -25,7 +26,7 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
     Category of Lie algebras with a basis.
     """
-    _base_category_class_and_axiom = [LieAlgebras, "WithBasis"]
+    _base_category_class_and_axiom = [LieAlgebras, all_axioms.WithBasis]
 
     def example(self, gens=None):
         """

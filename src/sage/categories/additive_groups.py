@@ -9,6 +9,7 @@ Additive groups
 #******************************************************************************
 
 from sage.misc.lazy_import import LazyImport
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
 from sage.categories.additive_monoids import AdditiveMonoids
 
@@ -49,6 +50,6 @@ class AdditiveGroups(CategoryWithAxiom_singleton):
         sage: C = AdditiveGroups()
         sage: TestSuite(C).run()
     """
-    _base_category_class_and_axiom = (AdditiveMonoids, "AdditiveInverse")
+    _base_category_class_and_axiom = (AdditiveMonoids, all_axioms.AdditiveInverse)
 
     AdditiveCommutative = LazyImport('sage.categories.commutative_additive_groups', 'CommutativeAdditiveGroups', at_startup=True)

@@ -10,6 +10,7 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.misc.cachefunc import cached_method
 from .algebras import Algebras
@@ -36,7 +37,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
 
         sage: TestSuite(C).run()
     """
-    _base_category_class_and_axiom = (SemisimpleAlgebras.FiniteDimensional, "WithBasis")
+    _base_category_class_and_axiom = (SemisimpleAlgebras.FiniteDimensional, all_axioms.WithBasis)
 
     class ParentMethods:
         # This is needed to override the one in finite_dimensional_algebras_with_basis

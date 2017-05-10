@@ -9,6 +9,7 @@ Additive monoids
 #******************************************************************************
 
 from sage.misc.lazy_import import LazyImport
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
 from sage.categories.additive_semigroups import AdditiveSemigroups
 from sage.categories.homsets import HomsetsCategory
@@ -42,7 +43,7 @@ class AdditiveMonoids(CategoryWithAxiom_singleton):
         True
         sage: TestSuite(C).run()
     """
-    _base_category_class_and_axiom = (AdditiveSemigroups, "AdditiveUnital")
+    _base_category_class_and_axiom = (AdditiveSemigroups, all_axioms.AdditiveUnital)
 
     AdditiveCommutative = LazyImport('sage.categories.commutative_additive_monoids', 'CommutativeAdditiveMonoids', at_startup=True)
     AdditiveInverse = LazyImport('sage.categories.additive_groups', 'AdditiveGroups', at_startup=True)

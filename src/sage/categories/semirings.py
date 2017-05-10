@@ -9,6 +9,7 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from .magmas_and_additive_magmas import MagmasAndAdditiveMagmas
 
@@ -48,5 +49,5 @@ class Semirings(CategoryWithAxiom):
 
         sage: TestSuite(Semirings()).run()
     """
-    _base_category_class_and_axiom = (MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative.AdditiveUnital.Associative, "Unital")
+    _base_category_class_and_axiom = (MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative.AdditiveUnital.Associative, all_axioms.Unital)
 

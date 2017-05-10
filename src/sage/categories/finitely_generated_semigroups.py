@@ -11,6 +11,7 @@ Finitely generated semigroups
 import itertools
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.semigroups import Semigroups
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -43,7 +44,7 @@ class FinitelyGeneratedSemigroups(CategoryWithAxiom):
         sage: TestSuite(C).run()
     """
 
-    _base_category_class_and_axiom = (Semigroups, "FinitelyGeneratedAsMagma")
+    _base_category_class_and_axiom = (Semigroups, all_axioms.FinitelyGeneratedAsMagma)
 
     @cached_method
     def extra_super_categories(self):

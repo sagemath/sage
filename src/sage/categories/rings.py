@@ -13,6 +13,7 @@ Rings
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
 from sage.structure.element import Element
@@ -57,7 +58,7 @@ class Rings(CategoryWithAxiom):
           in the category ``Algebras(P)``.
     """
 
-    _base_category_class_and_axiom = (Rngs, "Unital")
+    _base_category_class_and_axiom = (Rngs, all_axioms.Unital)
 
     class MorphismMethods:
         @cached_method

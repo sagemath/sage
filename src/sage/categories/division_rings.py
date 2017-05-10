@@ -9,6 +9,7 @@ Division rings
 #******************************************************************************
 
 from sage.misc.lazy_import import LazyImport
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rings import Rings
 
@@ -36,7 +37,7 @@ class DivisionRings(CategoryWithAxiom):
     # this category and not ``no zero divisors division rings``. See
     # :meth:`Category_with_axiom._repr_object_names` and the ``named``
     # option of :meth:`Category_with_axiom._without_axioms
-    _base_category_class_and_axiom = (Rings, "Division")
+    _base_category_class_and_axiom = (Rings, all_axioms.Division)
 
     def extra_super_categories(self):
         r"""

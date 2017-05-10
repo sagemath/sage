@@ -8,6 +8,7 @@ Commutative additive groups
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.axiom import all_axioms
 from sage.categories.category_types import AbelianCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.algebra_functor import AlgebrasCategory
@@ -55,7 +56,7 @@ class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
 
     Also, it's likely that some code will end up there at some point.
     """
-    _base_category_class_and_axiom = (AdditiveGroups, "AdditiveCommutative")
+    _base_category_class_and_axiom = (AdditiveGroups, all_axioms.AdditiveCommutative)
 
     class CartesianProducts(CartesianProductsCategory):
         pass

@@ -14,6 +14,7 @@ Fields
 
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.misc.lazy_import import LazyImport
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.category_singleton import Category_contains_method_by_parent_class
 from sage.categories.euclidean_domains import EuclideanDomains
@@ -47,7 +48,7 @@ class Fields(CategoryWithAxiom):
 
         sage: TestSuite(Fields()).run()
     """
-    _base_category_class_and_axiom = (DivisionRings, "Commutative")
+    _base_category_class_and_axiom = (DivisionRings, all_axioms.Commutative)
 
     def extra_super_categories(self):
         """
