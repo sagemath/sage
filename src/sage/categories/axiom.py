@@ -252,6 +252,18 @@ class Axiom(UniqueRepresentation, SageObject):
         return hash(self._name)
 
     def __init__(self, name):
+        """
+        Initializes this axiom.
+
+        TESTS::
+
+            sage: from sage.categories.axiom import Axiom
+            sage: Coucou = Axiom("Coucou"); Coucou
+            Coucou
+            sage: Coucou is Axiom("Coucou")
+            True
+            sage: TestSuite(Coucou).run()
+        """
         assert isinstance(name, str)
         self._name = name
         if name in all_axioms.__dict__:
@@ -260,9 +272,43 @@ class Axiom(UniqueRepresentation, SageObject):
         self._index = len(all_axioms.__dict__)
 
     def index(self):
+        """
+        Return the index of this axiom.
+
+        OUTPUT:
+
+        ``i`` such that ``self`` is the ``i``-th axiom defined in this session.
+
+        This is used internally in the category pretty printing
+        heuristic. See
+        :meth:`sage.categories.category_with_axiom.CategoryWithAxiom._repr_object_names`.
+
+        EXAMPLES::
+
+            sage: axioms.Flying.index()
+            1
+        """
         return self._index
 
-    def __repr__(self): # not _repr_: we do NOT want the renaming feature of SageObject's
+    def __repr__(self):
+        """
+        Return the name of this idiom as string representation.
+
+        EXAMPLES::
+
+            sage: axioms.FiniteDimensional.__repr__()
+            'FiniteDimensional'
+
+            sage: axioms.FiniteDimensional
+            FiniteDimensional
+
+        ..  NOTE::
+
+            This is also used to recover the name of the idiom which
+            is used intensively internaly. Hence we do NOT want the
+            renaming feature of SageObject's and implement
+            ``__repr__`` rather ``_repr_``.
+        """
         return self._name
 
     def _repr_object_names(self, base_category):
