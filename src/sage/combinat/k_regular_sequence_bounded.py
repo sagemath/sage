@@ -140,7 +140,9 @@ def construct_phi(matrices):
         [0 1 2], [2 2 0]
         ]
     """
-    redMatrices = list(ell.apply_map(lambda m: min(m,2)) for ell in matrices)
+    from sage.arith.srange import srange    
+    length = len(matrices)
+    redMatrices = list(matrices[i].apply_map(lambda m: min(m,2)) for i in srange(1, length))
     redLength = len(redMatrices)
     counter = 1
     while(True):
@@ -158,18 +160,12 @@ def construct_phi(matrices):
             raise RuntimeError('while loop too long...')
 
 
-def mandel_simon_algorithm(matrices):
-    from sage.arith.srange import srange
-    from sage.matrix.constructor import Matrix
+def is_integer_valued(matrices):
     from sage.matrix.matrix_space import MatrixSpace
     from sage.rings.integer_ring import ZZ
+    return all(mat in MatrixSpace(ZZ, mat.nrows(), mat.ncols()) for mat in matrices)
 
-    length = len(matrices)
-    if not all(matrices[i] in MatrixSpace(ZZ, matrices[i].nrows(), matrices[i].ncols()) for i in srange(1, length)):
-        raise ValueError('Matrix is not integer-valued.')
 
-    def is_non_negative(M):
-        return min(M.list()) >= 0
 
     posMatrices = list()
     for i in srange(length):
