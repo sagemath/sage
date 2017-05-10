@@ -166,16 +166,9 @@ def is_integer_valued(matrices):
     return all(mat in MatrixSpace(ZZ, mat.nrows(), mat.ncols()) for mat in matrices)
 
 
+def is_non_negative(matrices):
+    return all(min(mat.list()) >= 0 for mat in matrices)
 
-    posMatrices = list()
-    for i in srange(length):
-        M = matrices[i]
-        if is_non_negative(M):
-            posMatrices.append(M)
-        elif is_non_negative(-M):
-            posMatrices.append(-M)
-        else:
-            raise ValueError('M[{}] is neither non-negative nor non-positive.'.format(i))
 
 def mandel_simon_algorithm(matrices):
     r"""
@@ -251,6 +244,22 @@ def check_eigenvalues(matrices):
         if isBounded == False:
             return False
     return True
+
+
+def make_positive(matrices):
+    from sage.arith.srange import srange    
+    length = len(matrices)
+    posMatrices = list()
+    for i in srange(length):
+        mat = matrices[i]
+        if is_non_negative(mat):
+            posMatrices.append(mat)
+        elif is_non_negative(-mat):
+            posMatrices.append(-mat)
+        else:
+            raise ValueError('M[{}] is neither non-negative nor non-positive.'.format(i))
+    return posMatrices
+
 
 @cached_function
 def k_regular_sequence_is_bounded(seq):
