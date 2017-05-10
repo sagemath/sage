@@ -276,7 +276,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         sage: Q in Fields()
         True
         sage: Q.category()
-        Category of commutative division no zero divisors
+        Category of commutative division
         quotients of algebras over Rational Field
         sage: first_class == Q.__class__
         False

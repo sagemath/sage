@@ -240,7 +240,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         sage: G.domain()
         {1, 2, 3, 4}
         sage: G.category()
-        Join of Category of finite enumerated permutation groups
+        Join of Category of finite permutation groups
          and Category of finite weyl groups
 
     TESTS::
@@ -652,7 +652,7 @@ class AlternatingGroup(PermutationGroup_symalt):
             sage: G
             Alternating group of order 6!/2 as a permutation group
             sage: G.category()
-            Category of finite enumerated permutation groups
+            Category of finite permutation groups
             sage: TestSuite(G).run() # long time
 
             sage: G = AlternatingGroup([1,2,4,5])
@@ -661,7 +661,7 @@ class AlternatingGroup(PermutationGroup_symalt):
             sage: G.domain()
             {1, 2, 4, 5}
             sage: G.category()
-            Category of finite enumerated permutation groups
+            Category of finite permutation groups
             sage: TestSuite(G).run()
 
         TESTS::
@@ -716,7 +716,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
             sage: G
             Cyclic group of order 8 as a permutation group
             sage: G.category()
-            Category of finite enumerated permutation groups
+            Category of finite permutation groups
             sage: TestSuite(G).run()
             sage: C = CyclicPermutationGroup(10)
             sage: C.is_abelian()
@@ -1001,7 +1001,7 @@ class KleinFourGroup(PermutationGroup_unique):
         TESTS::
 
             sage: G.category()
-            Category of finite enumerated permutation groups
+            Category of finite permutation groups
             sage: TestSuite(G).run()
 
             sage: groups.permutation.KleinFour()
@@ -1424,7 +1424,7 @@ class DihedralGroup(PermutationGroup_unique):
 
             sage: TestSuite(G).run()
             sage: G.category()
-            Category of finite enumerated permutation groups
+            Category of finite permutation groups
             sage: TestSuite(G).run()
 
             sage: groups.permutation.Dihedral(6)
@@ -1743,7 +1743,7 @@ class MathieuGroup(PermutationGroup_unique):
         TESTS::
 
             sage: G.category()
-            Category of finite enumerated permutation groups
+            Category of finite permutation groups
             sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"])
 
             sage: groups.permutation.Mathieu(9)
@@ -1800,7 +1800,7 @@ class TransitiveGroup(PermutationGroup_unique):
             [(1,2,3,4,5), (1,4)(2,3)]
 
             sage: G.category()                         # optional - database_gap
-            Category of finite enumerated permutation groups
+            Category of finite permutation groups
 
         .. warning:: this follows GAP's naming convention of indexing
           the transitive groups starting from ``1``::
@@ -2135,7 +2135,7 @@ class PrimitiveGroup(PermutationGroup_unique):
         sage: G.gens()                              # optional - database_gap
         [(2,4)(3,5), (1,2,3,5,4)]
         sage: G.category()                          # optional - database_gap
-        Category of finite enumerated permutation groups
+        Category of finite permutation groups
 
     .. warning::
 
@@ -2586,7 +2586,7 @@ class PGL(PermutationGroup_plg):
             Finite Field in b of size 3^2
 
             sage: G.category()
-            Category of finite enumerated permutation groups
+            Category of finite permutation groups
             sage: TestSuite(G).run() # long time
 
         TESTS::
@@ -2653,7 +2653,7 @@ class PSL(PermutationGroup_plg):
             Finite Field in a of size 2^3
 
             sage: G.category()
-            Category of finite enumerated permutation groups
+            Category of finite permutation groups
             sage: TestSuite(G).run() # long time
 
         TESTS::

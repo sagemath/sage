@@ -627,7 +627,7 @@ cdef class Map(Element):
             sage: phi.category_for()
             Category of rings
             sage: phi.category()
-            Category of homsets of unital magmas and additive unital additive magmas
+            Category of homsets of unital magmas and additive-unital additive magmas
             sage: R.<x,y> = QQ[]
             sage: f = R.hom([x+y, x-y], R)
             sage: f.category_for()

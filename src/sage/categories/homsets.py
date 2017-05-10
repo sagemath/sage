@@ -51,7 +51,7 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
             sage: C = AdditiveGroups()
             sage: C.full_super_categories()
-            [Category of additive inverse additive unital additive magmas,
+            [Category of additive-inverse additive-unital additive magmas,
              Category of additive monoids]
             sage: H = HomsetsCategory.default_super_categories(C); H
             Category of homsets of additive monoids
@@ -69,7 +69,7 @@ class HomsetsCategory(FunctorialConstructionCategory):
         magmas and additive magmas::
 
             sage: Rings().Homsets()
-            Category of homsets of unital magmas and additive unital additive magmas
+            Category of homsets of unital magmas and additive-unital additive magmas
 
         Otherwise, if ``category`` implements a nested class
         ``Homsets``, this method returns the category of all homsets::
@@ -85,7 +85,7 @@ class HomsetsCategory(FunctorialConstructionCategory):
             sage: AdditiveMagmas().Homsets().super_categories()
             [Category of additive magmas, Category of homsets]
             sage: AdditiveMagmas().AdditiveUnital().Homsets().super_categories()
-            [Category of additive unital additive magmas, Category of homsets]
+            [Category of additive-unital additive magmas, Category of homsets]
 
         the other coming from ``category.Homsets().extra_super_categories()``::
 
@@ -194,7 +194,7 @@ class HomsetsOf(HomsetsCategory):
             sage: (Magmas() & AdditiveMagmas() & Posets()).Homsets()
             Category of homsets of magmas and additive magmas and posets
             sage: Rings().Homsets()
-            Category of homsets of unital magmas and additive unital additive magmas
+            Category of homsets of unital magmas and additive-unital additive magmas
         """
         base_category = self.base_category()
         try:

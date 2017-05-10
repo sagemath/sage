@@ -93,6 +93,6 @@ class DistributiveMagmasAndAdditiveMagmas(CategoryWithAxiom):
                 sage: C.extra_super_categories();
                 [Category of distributive magmas and additive magmas]
                 sage: C.axioms()
-                frozenset({'Distributive'})
+                frozenset({Distributive})
             """
             return [DistributiveMagmasAndAdditiveMagmas()]

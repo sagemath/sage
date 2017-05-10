@@ -25,7 +25,7 @@ class LTrivialSemigroups(CategoryWithAxiom):
         EXAMPLES::
 
             sage: Semigroups().LTrivial().extra_super_categories()
-            [Category of h trivial semigroups]
+            [Category of H-trivial semigroups]
         """
         return [Semigroups().HTrivial()]
 
@@ -37,7 +37,7 @@ class LTrivialSemigroups(CategoryWithAxiom):
         EXAMPLES::
 
             sage: Semigroups().LTrivial().RTrivial_extra_super_categories()
-            [Category of j trivial magmas]
+            [Category of J-trivial magmas]
 
         TESTS::
 
@@ -53,7 +53,7 @@ class LTrivialSemigroups(CategoryWithAxiom):
         EXAMPLES::
 
             sage: Semigroups().LTrivial().Commutative_extra_super_categories()
-            [Category of j trivial semigroups]
+            [Category of J-trivial semigroups]
 
         TESTS::
 

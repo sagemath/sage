@@ -83,7 +83,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
         sage: C = ComplexReflectionOrGeneralizedCoxeterGroups(); C
         Category of complex reflection or generalized coxeter groups
         sage: C.super_categories()
-        [Category of finitely generated enumerated groups]
+        [Category of finitely generated groups]
 
         sage: C.required_methods()
         {'element': {'optional': ['reflection_length'],

@@ -79,7 +79,7 @@ class DivisionRings(CategoryWithAxiom):
             sage: DivisionRings().Finite_extra_super_categories()
             (Category of commutative magmas,)
             sage: DivisionRings().Finite()
-            Category of finite enumerated fields
+            Category of finite fields
 
         .. WARNING::
 

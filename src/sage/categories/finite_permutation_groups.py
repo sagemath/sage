@@ -27,7 +27,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
     EXAMPLES::
 
         sage: C = PermutationGroups().Finite(); C
-        Category of finite enumerated permutation groups
+        Category of finite permutation groups
         sage: C.super_categories()
         [Category of permutation groups,
          Category of finite groups,

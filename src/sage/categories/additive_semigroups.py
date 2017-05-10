@@ -39,7 +39,7 @@ class AdditiveSemigroups(CategoryWithAxiom_singleton):
          Category of objects]
 
         sage: C.axioms()
-        frozenset({'AdditiveAssociative'})
+        frozenset({AdditiveAssociative})
         sage: C is AdditiveMagmas().AdditiveAssociative()
         True
 
@@ -47,7 +47,7 @@ class AdditiveSemigroups(CategoryWithAxiom_singleton):
 
         sage: TestSuite(C).run()
     """
-    _base_category_class_and_axiom = (AdditiveMagmas, "AdditiveAssociative")
+    _base_category_class_and_axiom = (AdditiveMagmas, all_axioms.AdditiveAssociative)
 
     AdditiveCommutative = LazyImport('sage.categories.commutative_additive_semigroups', 'CommutativeAdditiveSemigroups', at_startup=True)
     AdditiveUnital = LazyImport('sage.categories.additive_monoids', 'AdditiveMonoids', at_startup=True)
@@ -115,7 +115,7 @@ class AdditiveSemigroups(CategoryWithAxiom_singleton):
                 sage: C.extra_super_categories()
                 [Category of additive semigroups]
                 sage: C.axioms()
-                frozenset({'AdditiveAssociative'})
+                frozenset({AdditiveAssociative})
             """
             return [AdditiveSemigroups()]
 
@@ -130,7 +130,7 @@ class AdditiveSemigroups(CategoryWithAxiom_singleton):
                 [Category of semigroups]
                 sage: CommutativeAdditiveSemigroups().Algebras(QQ).super_categories()
                 [Category of additive semigroup algebras over Rational Field,
-                 Category of additive commutative additive magma algebras over Rational Field]
+                 Category of additive-commutative additive magma algebras over Rational Field]
             """
             from sage.categories.semigroups import Semigroups
             return [Semigroups()]

@@ -27,12 +27,12 @@ class Rngs(CategoryWithAxiom):
         sage: C = Rngs(); C
         Category of rngs
         sage: sorted(C.super_categories(), key=str)
-        [Category of associative additive commutative additive associative additive unital distributive magmas and additive magmas,
+        [Category of associative additive-commutative additive-associative additive-unital distributive magmas and additive magmas,
          Category of commutative additive groups]
 
-        sage: sorted(C.axioms())
-        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
-         'AdditiveUnital', 'Associative', 'Distributive']
+        sage: sorted(C.axioms(), key=str)
+        [AdditiveAssociative, AdditiveCommutative, AdditiveInverse,
+         AdditiveUnital, Associative, Distributive]
 
         sage: C is (CommutativeAdditiveGroups() & Semigroups()).Distributive()
         True

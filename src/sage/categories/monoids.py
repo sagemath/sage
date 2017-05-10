@@ -48,7 +48,7 @@ class Monoids(CategoryWithAxiom):
          Category of objects]
 
         sage: Monoids().axioms()
-        frozenset({'Associative', 'Unital'})
+        frozenset({Associative, Unital})
         sage: Semigroups().Unital()
         Category of monoids
 

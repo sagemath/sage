@@ -163,7 +163,7 @@ class CWComplexes(Category_singleton):
 
             sage: from sage.categories.cw_complexes import CWComplexes
             sage: CWComplexes().Compact() # indirect doctest
-            Category of finite finite dimensional CW complexes
+            Category of finite CW complexes
             sage: CWComplexes().Compact() is CWComplexes().Finite()
             True
         """

@@ -26,21 +26,21 @@ class AdditiveGroups(CategoryWithAxiom_singleton):
         sage: AdditiveGroups()
         Category of additive groups
         sage: AdditiveGroups().super_categories()
-        [Category of additive inverse additive unital additive magmas,
+        [Category of additive-inverse additive-unital additive magmas,
          Category of additive monoids]
         sage: AdditiveGroups().all_super_categories()
         [Category of additive groups,
-         Category of additive inverse additive unital additive magmas,
+         Category of additive-inverse additive-unital additive magmas,
          Category of additive monoids,
-         Category of additive unital additive magmas,
+         Category of additive-unital additive magmas,
          Category of additive semigroups,
          Category of additive magmas,
          Category of sets,
          Category of sets with partial maps,
          Category of objects]
 
-        sage: AdditiveGroups().axioms()
-        frozenset({'AdditiveAssociative', 'AdditiveInverse', 'AdditiveUnital'})
+        sage: sorted(AdditiveGroups().axioms(), key=str)
+        [AdditiveAssociative, AdditiveInverse, AdditiveUnital]
         sage: AdditiveGroups() is AdditiveMonoids().AdditiveInverse()
         True
 

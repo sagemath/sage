@@ -63,7 +63,7 @@ class Modules(Category_module):
         sage: Modules(Rings())
         Category of modules over rings
         sage: Modules(FiniteFields())
-        Category of vector spaces over finite enumerated fields
+        Category of vector spaces over finite fields
 
         sage: Modules(Integers(9))
         Category of modules over Ring of integers modulo 9

@@ -29,9 +29,9 @@ class AdditiveMonoids(CategoryWithAxiom_singleton):
         sage: C = AdditiveMonoids(); C
         Category of additive monoids
         sage: C.super_categories()
-        [Category of additive unital additive magmas, Category of additive semigroups]
-        sage: sorted(C.axioms())
-        ['AdditiveAssociative', 'AdditiveUnital']
+        [Category of additive-unital additive magmas, Category of additive semigroups]
+        sage: sorted(C.axioms(), key=str)
+        [AdditiveAssociative, AdditiveUnital]
         sage: from sage.categories.additive_semigroups import AdditiveSemigroups
         sage: C is AdditiveSemigroups().AdditiveUnital()
         True
@@ -83,7 +83,7 @@ class AdditiveMonoids(CategoryWithAxiom_singleton):
                 sage: AdditiveMonoids().Homsets().extra_super_categories()
                 [Category of additive semigroups]
                 sage: AdditiveMonoids().Homsets().super_categories()
-                [Category of homsets of additive unital additive magmas, Category of additive monoids]
+                [Category of homsets of additive-unital additive magmas, Category of additive monoids]
 
             .. TODO::
 

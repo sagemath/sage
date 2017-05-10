@@ -745,7 +745,7 @@ or the axioms satisfied by the operations of a category::
     sage: Groups().super_categories()
     [Category of monoids, Category of inverse unital magmas]
     sage: Groups().axioms()
-    frozenset({'Associative', 'Inverse', 'Unital'})
+    frozenset({Associative, Inverse, Unital})
 
 or constructing the intersection of two categories, or the smallest
 category containing them::
@@ -1018,14 +1018,14 @@ permutation groups (no surprise)::
     sage: P = PermutationGroup([[(1,2,3)]]); P
     Permutation Group with generators [(1,2,3)]
     sage: P.category()
-    Category of finite enumerated permutation groups
+    Category of finite permutation groups
 
 In this case, the group is commutative, so we can specify this::
 
     sage: P = PermutationGroup([[(1,2,3)]], category=PermutationGroups().Finite().Commutative()); P
     Permutation Group with generators [(1,2,3)]
     sage: P.category()
-    Category of finite enumerated commutative permutation groups
+    Category of finite commutative permutation groups
 
 This feature can even be used, typically in experimental code, to add
 more structure to existing parents, and in particular to add methods
@@ -1190,7 +1190,7 @@ We have seen that Sage is aware of the axioms satisfied by, for
 example, groups::
 
     sage: Groups().axioms()
-    frozenset({'Associative', 'Inverse', 'Unital'})
+    frozenset({Associative, Inverse, Unital})
 
 In fact, the category of groups can be *defined* by stating that a
 group is a magma, that is a set endowed with an internal binary
@@ -1275,7 +1275,7 @@ together::
     sage: C = Magmas().Associative() & Magmas().Unital().Inverse() & Sets().Finite(); C
     Category of finite groups
     sage: sorted(C.axioms())
-    ['Associative', 'Finite', 'Inverse', 'Unital']
+    [Finite, Associative, Inverse, Unital]
 
 For a more advanced example, Sage knows that a ring is a set `C`
 endowed with a multiplication which distributes over addition, such
@@ -1284,23 +1284,39 @@ that `(C, +)` is a commutative additive group and `(C, *)` is a monoid::
     sage: C = (CommutativeAdditiveGroups() & Monoids()).Distributive(); C
     Category of rings
 
-    sage: sorted(C.axioms())
-    ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
-     'AdditiveUnital', 'Associative', 'Distributive', 'Unital']
+    sage: sorted(C.axioms(), key=str)
+    [AdditiveAssociative, AdditiveCommutative, AdditiveInverse,
+     AdditiveUnital, Associative, Distributive, Unital]
 
 The infrastructure allows for specifying further deduction rules, in
 order to encode mathematical facts like Wedderburn's theorem::
 
     sage: DivisionRings() & Sets().Finite()
-    Category of finite enumerated fields
+    Category of finite fields
+
+.. NOTE::
+
+    Up to :trac:`22965`, axioms were represented as plain strings. For
+    backward compatibility, users can safely use axiom names instead
+    of the axioms themselves::
+
+        sage: "Unital" in Rings().axioms()
+        True
+
+    This behavior may be deprecated in the future; it is therefore
+    recommended to use the axioms explicitly, typically by fetching
+    them from the catalog::
+
+        sage: axioms.Unital in Rings().axioms()
+        True
 
 .. NOTE::
 
     When an axiom specifies the properties of some operations in Sage,
     the notations for those operations are tied to this axiom. For
     example, as we have seen above, we need two distinct axioms for
-    associativity: the axiom "AdditiveAssociative" is about the
-    properties of the addition `+`, whereas the axiom "Associative" is
+    associativity: the axiom ``AdditiveAssociative`` is about the
+    properties of the addition `+`, whereas the axiom ``Associative`` is
     about the properties of the multiplication `*`.
 
     We are touching here an inherent limitation of the current
@@ -1383,7 +1399,7 @@ for a category with two operations `+` and `*`::
     Category of fields
 
     sage: Rings().Division().Finite()
-    Category of finite enumerated fields
+    Category of finite fields
 
 or for more advanced categories::
 

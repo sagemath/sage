@@ -32,9 +32,9 @@ class Rings(CategoryWithAxiom):
         sage: sorted(Rings().super_categories(), key=str)
         [Category of rngs, Category of semirings]
 
-        sage: sorted(Rings().axioms())
-        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
-         'AdditiveUnital', 'Associative', 'Distributive', 'Unital']
+        sage: sorted(Rings().axioms(), key=str)
+        [AdditiveAssociative, AdditiveCommutative, AdditiveInverse,
+         AdditiveUnital, Associative, Distributive, Unital]
 
         sage: Rings() is (CommutativeAdditiveGroups() & Monoids()).Distributive()
         True

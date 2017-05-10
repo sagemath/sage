@@ -23,8 +23,8 @@ class CommutativeAdditiveMonoids(CategoryWithAxiom):
         Category of commutative additive monoids
         sage: C.super_categories()
         [Category of additive monoids, Category of commutative additive semigroups]
-        sage: sorted(C.axioms())
-        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveUnital']
+        sage: sorted(C.axioms(), key=str)
+        [AdditiveAssociative, AdditiveCommutative, AdditiveUnital]
         sage: C is AdditiveMagmas().AdditiveAssociative().AdditiveCommutative().AdditiveUnital()
         True
 

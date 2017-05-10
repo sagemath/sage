@@ -108,7 +108,7 @@ class LieAlgebras(Category_over_base_ring):
             sage: from sage.categories.category import JoinCategory
             sage: from sage.categories.category_with_axiom import Blahs
             sage: LieAlgebras(JoinCategory((Blahs().Flying(), Fields())))
-            Category of Lie algebras over (flying unital blahs and fields)
+            Category of Lie algebras over (flying blahs and fields)
         """
         base = self.base()
         if isinstance(base, Category):

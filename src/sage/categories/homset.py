@@ -113,7 +113,7 @@ def Hom(X, Y, category=None, check=True):
         Vector space of dimension 3 over Rational Field
         sage: G = AlternatingGroup(3)
         sage: Hom(G, G)
-        Set of Morphisms from Alternating group of order 3!/2 as a permutation group to Alternating group of order 3!/2 as a permutation group in Category of finite enumerated permutation groups
+        Set of Morphisms from Alternating group of order 3!/2 as a permutation group to Alternating group of order 3!/2 as a permutation group in Category of finite permutation groups
         sage: Hom(ZZ, QQ, Sets())
         Set of Morphisms from Integer Ring to Rational Field in Category of sets
 
@@ -454,7 +454,7 @@ def End(X, category=None):
 
         sage: G = AlternatingGroup(3)
         sage: S = End(G); S
-        Set of Morphisms from Alternating group of order 3!/2 as a permutation group to Alternating group of order 3!/2 as a permutation group in Category of finite enumerated permutation groups
+        Set of Morphisms from Alternating group of order 3!/2 as a permutation group to Alternating group of order 3!/2 as a permutation group in Category of finite permutation groups
         sage: from sage.categories.homset import is_Endset
         sage: is_Endset(S)
         True
@@ -487,7 +487,7 @@ def End(X, category=None):
 
         sage: H = Hom(ZZ,ZZ,Rings())
         sage: H.category()
-        Category of endsets of unital magmas and additive unital additive magmas
+        Category of endsets of unital magmas and additive-unital additive magmas
     """
     return Hom(X,X, category)
 
@@ -782,7 +782,7 @@ class Homset(Set_generic):
 
             sage: H = Hom(AlternatingGroup(4), AlternatingGroup(7))
             sage: H.homset_category()
-            Category of finite enumerated permutation groups
+            Category of finite permutation groups
         """
         return self.__category
 

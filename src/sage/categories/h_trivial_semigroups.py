@@ -56,8 +56,8 @@ class HTrivialSemigroups(CategoryWithAxiom):
         EXAMPLES::
 
             sage: Semigroups().HTrivial().Inverse_extra_super_categories()
-            [Category of j trivial semigroups]
+            [Category of J-trivial semigroups]
             sage: Monoids().HTrivial().Inverse()
-            Category of h trivial groups
+            Category of H-trivial groups
         """
         return [self.JTrivial()]

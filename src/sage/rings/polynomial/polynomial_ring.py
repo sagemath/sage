@@ -246,7 +246,7 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
             sage: category(GF(7)['x'])
             Join of Category of euclidean domains
              and Category of commutative algebras over
-              (finite enumerated fields and subquotients of monoids and quotients of semigroups)
+              (finite fields and subquotients of monoids and quotients of semigroups)
 
         TESTS:
 

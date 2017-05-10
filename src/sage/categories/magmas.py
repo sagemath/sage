@@ -189,7 +189,7 @@ class Magmas(Category_singleton):
             the name of this axiom is explicit::
 
                 sage: Rings().FinitelyGeneratedAsMagma()
-                Category of finitely generated as magma enumerated rings
+                Category of finitely-generated-as-magma rings
 
             On the other hand, it does not depend on the
             multiplicative structure: for example a group is finitely
@@ -200,10 +200,10 @@ class Magmas(Category_singleton):
                 sage: Semigroups().FinitelyGenerated()
                 Category of finitely generated semigroups
                 sage: Groups().FinitelyGenerated()
-                Category of finitely generated enumerated groups
+                Category of finitely generated groups
 
                 sage: Semigroups().FinitelyGenerated().axioms()
-                frozenset({'Associative', 'Enumerated', 'FinitelyGeneratedAsMagma'})
+                frozenset({Enumerated, Associative, FinitelyGeneratedAsMagma})
 
             Note that the set of generators may depend on the actual
             category; for example, in a group, one can often use less
@@ -234,7 +234,7 @@ class Magmas(Category_singleton):
                 sage: Semigroups().FinitelyGenerated()
                 Category of finitely generated semigroups
                 sage: Groups().FinitelyGenerated()
-                Category of finitely generated enumerated groups
+                Category of finitely generated groups
 
             An error is raised if this is ambiguous::
 
@@ -329,7 +329,7 @@ class Magmas(Category_singleton):
             TESTS::
 
                 sage: Magmas().JTrivial()
-                Category of j trivial magmas
+                Category of J-trivial magmas
                 sage: (Semigroups().RTrivial() & Semigroups().LTrivial()) is Semigroups().JTrivial()
                 True
             """
@@ -416,7 +416,7 @@ class Magmas(Category_singleton):
                     sage: C.extra_super_categories()
                     [Category of commutative magmas]
                     sage: C.axioms()
-                    frozenset({'Commutative'})
+                    frozenset({Commutative})
                 """
                 return [Magmas().Commutative()]
 
@@ -609,8 +609,8 @@ class Magmas(Category_singleton):
                         sage: C = Magmas().Unital().Inverse().CartesianProducts()
                         sage: C.extra_super_categories();
                         [Category of inverse unital magmas]
-                        sage: sorted(C.axioms())
-                        ['Inverse', 'Unital']
+                        sage: sorted(C.axioms(), key=str)
+                        [Inverse, Unital]
                     """
                     return [Magmas().Unital().Inverse()]
 
@@ -626,7 +626,7 @@ class Magmas(Category_singleton):
                     sage: C.extra_super_categories();
                     [Category of unital magmas]
                     sage: C.axioms()
-                    frozenset({'Unital'})
+                    frozenset({Unital})
 
                     sage: Monoids().CartesianProducts().is_subcategory(Monoids())
                     True
@@ -1049,10 +1049,10 @@ class Magmas(Category_singleton):
                 The Cartesian product of (Rational Field, Integer Ring, Integer Ring)
                 sage: C.category()
                 Category of Cartesian products of commutative rings
-                sage: sorted(C.category().axioms())
-                ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
-                 'AdditiveUnital', 'Associative', 'Commutative',
-                 'Distributive', 'Unital']
+                sage: sorted(C.category().axioms(), key=str)
+                [AdditiveAssociative, AdditiveCommutative, AdditiveInverse,
+                 AdditiveUnital, Associative, Commutative,
+                 Distributive, Unital]
 
                 sage: TestSuite(C).run()
             """

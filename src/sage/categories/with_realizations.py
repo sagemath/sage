@@ -246,7 +246,7 @@ def WithRealizations(self):
             sage: Algebras(QQ).WithRealizations().super_categories()
             [Category of algebras over Rational Field,
              Category of monoids with realizations,
-             Category of additive unital additive magmas with realizations]
+             Category of additive-unital additive magmas with realizations]
 
         Is this always desirable? For example,
         ``AlgebrasWithBasis(QQ).WithRealizations()`` should certainly

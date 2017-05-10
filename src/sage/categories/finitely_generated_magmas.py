@@ -26,7 +26,7 @@ class FinitelyGeneratedMagmas(CategoryWithAxiom):
         sage: C.super_categories()
         [Category of magmas]
         sage: sorted(C.axioms())
-        ['FinitelyGeneratedAsMagma']
+        [FinitelyGeneratedAsMagma]
 
     TESTS::
 

@@ -344,7 +344,7 @@ cdef class Functor(SageObject):
             sage: F1(ZZ)
             Traceback (most recent call last):
             ...
-            TypeError: x (=Integer Ring) is not in Category of finite enumerated fields
+            TypeError: x (=Integer Ring) is not in Category of finite fields
             sage: F2 = IdentityFunctor(Fields())
             sage: F2(RR) is RR #indirect doctest
             True
@@ -391,7 +391,7 @@ cdef class Functor(SageObject):
 
             sage: F = ForgetfulFunctor(FiniteFields(),Fields())
             sage: F.domain()
-            Category of finite enumerated fields
+            Category of finite fields
 
         """
         return self.__domain
@@ -457,7 +457,7 @@ class ForgetfulFunctor_generic(Functor):
 
         sage: F = ForgetfulFunctor(FiniteFields(),Fields()) #indirect doctest
         sage: F
-        The forgetful functor from Category of finite enumerated fields to Category of fields
+        The forgetful functor from Category of finite fields to Category of fields
         sage: F(GF(3))
         Finite Field of size 3
 
@@ -478,7 +478,7 @@ class ForgetfulFunctor_generic(Functor):
 
             sage: F = ForgetfulFunctor(FiniteFields(),Fields())
             sage: F #indirect doctest
-            The forgetful functor from Category of finite enumerated fields to Category of fields
+            The forgetful functor from Category of finite fields to Category of fields
 
         """
         return "The forgetful functor from %s to %s"%(

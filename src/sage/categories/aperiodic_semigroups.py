@@ -23,6 +23,6 @@ class AperiodicSemigroups(CategoryWithAxiom):
         EXAMPLES::
 
             sage: Semigroups().Aperiodic().extra_super_categories()
-            [Category of h trivial semigroups]
+            [Category of H-trivial semigroups]
         """
         return [Semigroups().HTrivial()]

@@ -38,7 +38,7 @@ Let's request the category of some objects::
     Category of finite dimensional vector spaces with basis over (quotient fields and metric spaces)
     sage: G = SymmetricGroup(9)
     sage: G.category()
-    Join of Category of finite enumerated permutation groups and Category of finite weyl groups
+    Join of Category of finite permutation groups and Category of finite weyl groups
     sage: P = PerfectMatchings(3)
     sage: P.category()
     Category of finite enumerated sets
@@ -1103,7 +1103,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Magmas().Unital().additional_structure()
             Category of unital magmas
             sage: AdditiveMagmas().AdditiveUnital().additional_structure()
-            Category of additive unital additive magmas
+            Category of additive-unital additive magmas
 
         Similarly, :ref:`functorial construction categories
         <category-primer-functorial-constructions>` don't define
@@ -1228,7 +1228,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: structure(Magmas())
             (Category of magmas,)
             sage: structure(Rings())
-            (Category of unital magmas, Category of additive unital additive magmas)
+            (Category of unital magmas, Category of additive-unital additive magmas)
             sage: structure(Fields())
             (Category of euclidean domains,)
             sage: structure(Algebras(QQ))
@@ -1983,9 +1983,9 @@ class Category(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: Monoids().axioms()
-            frozenset({'Associative', 'Unital'})
+            frozenset({Associative, Unital})
             sage: (EnumeratedSets().Infinite() & Sets().Facade()).axioms()
-            frozenset({'Enumerated', 'Facade', 'Infinite'})
+            frozenset({Facade, Infinite, Enumerated})
         """
         return frozenset(axiom
                          for category in self._super_categories
@@ -2099,9 +2099,9 @@ class Category(UniqueRepresentation, SageObject):
 
         Axioms that are not defined for the ``self`` are ignored::
 
-            sage: Sets()._with_axioms(["FooBar"])
+            sage: Sets()._with_axioms(["Flying"])
             Category of sets
-            sage: Magmas()._with_axioms(["FooBar", "Unital"])
+            sage: Magmas()._with_axioms(["Flying", "Unital"])
             Category of unital magmas
 
         Note that adding several axioms at once can do more than
@@ -2363,7 +2363,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Category.join((Sets(), Rings(), Monoids()), as_list=True)
             [Category of rings]
             sage: Category.join((Modules(ZZ), FiniteFields()), as_list=True)
-            [Category of finite enumerated fields, Category of modules over Integer Ring]
+            [Category of finite fields, Category of modules over Integer Ring]
             sage: Category.join([], as_list=True)
             []
             sage: Category.join([Groups()], as_list=True)
@@ -2407,7 +2407,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: TCF is (T.Facade() & T.Commutative())
             True
             sage: TCF.axioms()
-            frozenset({'Commutative', 'Facade'})
+            frozenset({Facade, Commutative})
             sage: type(TCF)
             <class 'sage.categories.category_with_axiom.TestObjects.Commutative.Facade_with_category'>
 
@@ -2756,11 +2756,11 @@ class CategoryWithParameters(Category):
         This is because those two fields do not have the exact same category::
 
             sage: GF(3).category()
-            Join of Category of finite enumerated fields
+            Join of Category of finite fields
              and Category of subquotients of monoids
              and Category of quotients of semigroups
             sage: GF(2^3,'x').category()
-            Category of finite enumerated fields
+            Category of finite fields
 
         Similarly for ``QQ`` and ``RR``::
 
