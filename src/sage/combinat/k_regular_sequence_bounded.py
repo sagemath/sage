@@ -39,7 +39,6 @@ ACKNOWLEDGEMENT:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.misc.cachefunc import cached_function
 
 
 def red_mult(A, B):
@@ -270,7 +269,6 @@ def make_positive(matrices):
     return posMatrices
 
 
-@cached_function
 def k_regular_sequence_is_bounded(seq):
     r"""
     Return whether this `k`-regular sequence is bounded
@@ -318,7 +316,7 @@ def k_regular_sequence_is_bounded(seq):
     except ValueError:
         print 'ms1err'
         pass
-    
+
     matrices = list(seq.minimized().mu)
     matricesWithout = matrices[1:]
     if not check_eigenvalues(matricesWithout):

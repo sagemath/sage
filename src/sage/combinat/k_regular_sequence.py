@@ -918,6 +918,7 @@ class kRegularSequence(RecognizableSeries):
             return result
 
 
+    @cached_method
     def is_bounded(self):
         from sage.combinat.k_regular_sequence_bounded import k_regular_sequence_is_bounded
         return k_regular_sequence_is_bounded(self)
