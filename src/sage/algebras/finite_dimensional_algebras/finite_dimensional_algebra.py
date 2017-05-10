@@ -19,6 +19,7 @@ from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
 
 from sage.rings.integer_ring import ZZ
 
+from sage.categories.semigroups import Semigroups
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix import is_Matrix
@@ -181,9 +182,9 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             (e,)
         """
         self._table = table
-        self._assume_associative = "Associative" in category.axioms()
         # No further validity checks necessary!
         Algebra.__init__(self, base_ring=k, names=names, category=category)
+        self._assume_associative = self in Semigroups
 
     def _repr_(self):
         """

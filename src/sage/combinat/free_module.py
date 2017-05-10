@@ -26,7 +26,7 @@ from sage.combinat.cartesian_product import CartesianProduct_iters
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.all import Category, Sets, ModulesWithBasis
+from sage.categories.all import Category, Sets, Modules, ModulesWithBasis
 import sage.data_structures.blas_dict as blas
 from sage.typeset.ascii_art import AsciiArt, empty_ascii_art
 from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art
@@ -1988,11 +1988,12 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             """
             assert(len(modules) > 0)
             R = modules[0].base_ring()
-            assert(all(module in ModulesWithBasis(R)) for module in modules)
+            C = Modules(R).WithBasis()
+            assert all(module in C for module in modules)
             # should check the base ring
             # flatten the list of modules so that tensor(A, tensor(B,C)) gets rewritten into tensor(A, B, C)
             modules = sum([module._sets if isinstance(module, CombinatorialFreeModule_Tensor) else (module,) for module in modules], ())
-            if all('FiniteDimensional' in M.category().axioms() for M in modules):
+            if all(M in Modules.FiniteDimensional for M in modules):
                 options['category'] = options['category'].FiniteDimensional()
             return super(CombinatorialFreeModule.Tensor, cls).__classcall__(cls, modules, **options)
 

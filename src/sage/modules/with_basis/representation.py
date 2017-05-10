@@ -173,7 +173,7 @@ class Representation(Representation_abstract):
         self._module = module
         indices = module.basis().keys()
         cat = Modules(module.base_ring()).WithBasis()
-        if 'FiniteDimensional' in module.category().axioms():
+        if module in Modules.FiniteDimensional:
             cat = cat.FiniteDimensional()
         Representation_abstract.__init__(self, semigroup, module.base_ring(), indices,
                                          category=cat, **module.print_options())

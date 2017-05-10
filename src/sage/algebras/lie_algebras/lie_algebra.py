@@ -25,6 +25,7 @@ from sage.structure.indexed_generators import standardize_names_index_set
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
+from sage.categories.modules import Modules
 from sage.categories.algebras import Algebras
 from sage.categories.lie_algebras import LieAlgebras, LiftMorphism
 from sage.categories.rings import Rings
@@ -968,9 +969,9 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
         # We strip the following axioms from the category of the assoc. algebra:
         #   FiniteDimensional and WithBasis
         category = LieAlgebras(R).or_subcategory(category)
-        if 'FiniteDimensional' in self._assoc.category().axioms():
+        if self._assoc in Modules.FiniteDimensional:
             category = category.FiniteDimensional()
-        if 'WithBasis' in self._assoc.category().axioms() and gens is None:
+        if self._assoc in Modules.WithBasis and gens is None:
             category = category.WithBasis()
 
         LieAlgebraWithGenerators.__init__(self, R, names, index_set, category)

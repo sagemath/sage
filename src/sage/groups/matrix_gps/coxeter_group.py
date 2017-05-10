@@ -21,6 +21,7 @@ AUTHORS:
 from six.moves import range
 
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.categories.sets_cat import Sets
 from sage.categories.coxeter_groups import CoxeterGroups
 
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
@@ -453,10 +454,12 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             ....:
             [2, 3]
         """
-        # Finite Coxeter groups are marked as finite in
-        # their ``__init__`` method, so we can just check
-        # the category of ``self``.
-        return "Finite" in self.category().axioms()
+        # Finite Coxeter groups are marked as finite in their
+        # ``__init__`` method. You would hope to inherit the default
+        # implementation of is_finite from the Sets.Finite category,
+        # but it's overriden by Groups.is_finite. Instead we manually
+        # check membership to Sets.Finite.
+        return self in Sets.Finite
 
     @cached_method
     def order(self):
