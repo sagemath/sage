@@ -230,6 +230,23 @@ class Axiom(UniqueRepresentation, SageObject):
         else:
             return self is other
 
+    def __ne__(self, other):
+        r"""
+        Return whether ``self != other``.
+
+        TESTS::
+
+            sage: axioms.Associative != "Associative"
+            False
+            sage: "Associative" != axioms.Associative
+            False
+            sage: axioms.Associative != axioms.Associative
+            False
+            sage: axioms.Associative != axioms.Commutative
+            True
+        """
+        return not self == other
+
     def __hash__(self):
         r"""
         Return a hash value for ``self``.
