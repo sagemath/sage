@@ -101,8 +101,8 @@ def construct_phi(matrices):
         sage: L = [Matrix([[2, 2], [1, 3]]), Matrix([[0, 2], [1, 1]])]
         sage: construct_phi(L)
         [
-        [0 2]  [2 2]  [2 2]
-        [1 1], [2 2], [1 2]
+        [2 2]  [0 2]  [2 2]
+        [1 2], [1 1], [2 2]
         ]
 
     ::
@@ -111,9 +111,13 @@ def construct_phi(matrices):
         ....: [1, 2, 2]]), Matrix([[5, 1, 1], [1, 7, 1], [0, 1, 32]])]
         sage: construct_phi(L)
         [
-        [0 1 1]  [2 1 1]  [2 2 2]  [2 2 2]  [2 2 2]  [1 2 2]  [2 2 2]
-        [2 1 1]  [1 2 1]  [1 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]
-        [1 2 2], [0 1 2], [1 2 2], [2 2 2], [0 1 2], [2 2 2], [1 2 2]
+        [2 1 0]  [0 1 1]  [2 1 1]  [2 2 1]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]
+        [2 0 1]  [2 1 1]  [1 2 1]  [2 2 1]  [1 2 2]  [2 2 2]  [2 2 2]  [2 2 2]
+        [0 0 1], [1 2 2], [0 1 2], [0 0 1], [1 2 2], [0 1 2], [0 0 1], [1 2 2],
+        <BLANKLINE>
+        [2 0 2]  [2 2 2]  [1 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 1 2]
+        [2 2 2]  [2 2 2]  [2 2 2]  [2 1 2]  [2 2 2]  [2 1 2]  [2 2 2]  [2 2 2]
+        [2 1 2], [2 2 2], [2 2 2], [2 0 2], [2 1 2], [2 1 2], [2 0 2], [2 2 2]
         ]
 
     Tests::
@@ -122,26 +126,30 @@ def construct_phi(matrices):
         ....: [1,1,2]]), Matrix([[8, 1, 0], [0, 0, 3], [0, 1, 0]])]
         sage: construct_phi(L)
         [
-        [0 2 1]  [2 1 0]  [1 2 2]  [2 1 2]  [1 2 2]  [2 2 2]  [0 1 2]  [2 2 2]
-        [1 0 0]  [0 0 2]  [0 2 2]  [0 2 1]  [2 2 2]  [2 2 0]  [2 1 0]  [0 2 0]
-        [1 1 2], [0 1 0], [2 2 2], [2 2 2], [1 0 0], [2 2 0], [2 2 2], [0 0 2],
+        [2 1 0]  [0 2 1]  [2 1 0]  [2 2 0]  [1 2 2]  [2 2 2]  [2 2 2]  [2 0 2]
+        [2 0 0]  [1 0 0]  [0 0 2]  [2 2 0]  [0 2 2]  [2 2 0]  [2 2 2]  [2 1 0]
+        [2 0 2], [1 1 2], [0 1 0], [2 2 2], [2 2 2], [2 2 0], [2 2 2], [2 1 2],
         <BLANKLINE>
-        [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 0]  [2 2 2]
-        [2 2 2]  [1 2 2]  [2 2 2]  [2 1 2]  [2 2 2]  [2 0 0]  [2 2 2]  [0 2 2]
-        [2 2 2], [2 2 2], [0 2 2], [2 2 2], [0 2 1], [2 2 2], [2 2 2], [2 2 2],
+        [2 1 2]  [0 1 2]  [2 2 2]  [2 2 2]  [2 2 0]  [2 2 2]  [2 2 2]  [2 2 2]
+        [0 2 1]  [2 1 0]  [2 2 0]  [1 2 2]  [2 2 2]  [2 0 2]  [2 1 2]  [0 1 2]
+        [2 2 2], [2 2 2], [2 2 2], [2 2 2], [2 2 2], [2 2 2], [2 2 2], [2 2 2],
         <BLANKLINE>
-        [2 2 2]  [2 2 2]  [0 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]
-        [0 1 2]  [2 2 2]  [2 2 2]  [0 0 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 0]
-        [2 2 2], [2 1 0], [2 2 2], [0 2 0], [1 2 2], [2 1 2], [2 0 0], [2 2 2],
+        [2 2 0]  [1 2 2]  [2 2 2]  [2 2 0]  [2 2 2]  [2 1 2]  [2 2 2]  [2 2 2]
+        [2 0 2]  [2 2 2]  [0 2 0]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]
+        [2 0 0], [1 0 0], [0 0 2], [2 2 0], [0 2 2], [2 1 0], [0 2 1], [2 1 0],
         <BLANKLINE>
-        [2 2 2]  [2 2 2]
-        [2 2 2]  [2 2 2]
-        [0 1 2], [2 2 0]
+        [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]
+        [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 2 2]  [2 0 0]  [2 0 0]  [0 0 2]
+        [2 2 0], [1 2 2], [2 0 2], [2 1 2], [0 1 2], [2 0 2], [2 2 2], [0 2 0],
+        <BLANKLINE>
+        [2 2 2]  [2 2 2]  [2 2 2]  [2 1 2]  [2 0 2]  [0 2 2]  [2 0 2]
+        [0 2 2]  [2 0 2]  [2 2 2]  [2 0 2]  [2 2 0]  [2 2 2]  [2 2 2]
+        [2 2 2], [2 0 0], [2 0 0], [2 2 2], [2 2 2], [2 2 2], [2 2 2]
         ]
     """
     from sage.arith.srange import srange    
-    len = len(matrices)
-    phi = matrices
+    length = len(matrices)
+    phi = [mat.apply_map(lambda m: min(m, 2)) for mat in matrices]
     counter = 1
     while(True):
         for A in matrices:
@@ -149,29 +157,96 @@ def construct_phi(matrices):
                 prod = red_mult(A, B)
                 if prod not in phi:
                     phi.append(prod)
-        if len(phi) == len:
+        if len(phi) == length:
             return phi
         else:
-            len = len(phi)
+            length = len(phi)
         counter = counter + 1
         if counter > 1000000:
             raise RuntimeError('while loop too long...')
 
 
 def is_integer_valued(matrices):
+    r"""
+    Return whether every matrix in ``matrices`` is integer-valued.
+
+    INPUT:
+
+    - ``matrices`` -- a list of square matrices in the same dimension
+
+    OUTPUT:
+
+    A boolean.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.k_regular_sequence_bounded import is_integer_valued
+        sage: matrices = [Matrix([[1, 2], [-1, 0]]), Matrix([[42, -42], [0, 0]])]
+        sage: is_integer_valued(matrices)
+        True
+
+    ::
+
+        sage: matrices = [Matrix([[1, pi], [-1, 0]])]
+        sage: is_integer_valued(matrices)
+        False
+
+    ::
+
+        sage: matrices = [Matrix([[1, 1/2], [2/4, 0]])]
+        sage: is_integer_valued(matrices)
+        False
+
+    ::
+
+        sage: matrices = [Matrix([[1, 4/2], [-1, 0]])]
+        sage: is_integer_valued(matrices)
+        True
+    """
     from sage.matrix.matrix_space import MatrixSpace
     from sage.rings.integer_ring import ZZ
-    return all(mat in MatrixSpace(ZZ, mat.nrows(), mat.ncols()) for mat in matrices)
+    M = MatrixSpace(ZZ, matrices[0].nrows(), matrices[0].ncols()) 
+    return all(mat in M for mat in matrices)
 
 
 def is_non_negative(matrices):
+    r"""
+    Return whether every matrix in ``matrices`` is non-negative.
+
+    INPUT:
+
+    - ``matrices`` -- a list of square matrices in the same dimension
+
+    OUTPUT:
+
+    A boolean.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.k_regular_sequence_bounded import is_non_negative
+        sage: matrices = [Matrix([[1, 2], [1, 0]]), Matrix([[42, -42], [0, 0]])]
+        sage: is_non_negative(matrices)
+        False
+
+    ::
+
+        sage: matrices = [Matrix([[0]])]
+        sage: is_non_negative(matrices)
+        True
+
+    ::
+
+        sage: matrices = [Matrix([[1, 1/2], [2/4, 0]])]
+        sage: is_non_negative(matrices)
+        True
+    """
     return all(min(mat.list()) >= 0 for mat in matrices)
 
 
 def mandel_simon_algorithm(matrices):
     r"""
-    Return whether a special semigroup generated by the matrices in ``matrices``
-    is bounded, using a criterion in [MS1977].
+    Return whether the semigroup generated by ``matrices``
+    is finite, using a criterion in [MS1977].
 
     INPUT:
 
@@ -183,18 +258,16 @@ def mandel_simon_algorithm(matrices):
 
     EXAMPLES::
 
-
     """
     if not is_integer_valued(matrices):
         raise ValueError('Not all matrices are integer-valued.')
 
     # debug:
     if not is_non_negative(matrices):
-        print posMatrices
         raise ValueError('Implementation Error?')
 
     phi = construct_phi(matrices)
-    return not any(red_mult(M, M) == red_mult(red_mult(M, M), M) and not M**2 == M**3
+    return not any(red_mult(M, M) == M and not M**2 == M**3
                    for M in phi)
 
 
@@ -246,14 +319,51 @@ def check_eigenvalues(matrices):
     for mat in matrices:
         eigen = mat.eigenvectors_right()
         l = len(eigen)
-        isBounded = all(abs(eigen[i][0]) < 1 or (abs(eigen[i][0]) == 1 and
-                        len(eigen[i][1]) == eigen[i][2]) for i in srange(0, l))
-        if isBounded == False:
+        if not all(abs(eigen[i][0]) < 1 or (abs(eigen[i][0]) == 1 and
+                   len(eigen[i][1]) == eigen[i][2]) for i in srange(0, l)):
             return False
     return True
 
 
 def make_positive(matrices):
+    r"""
+    Return a list of non-negative matrices 
+
+    INPUT:
+
+    - ``matrices`` -- a list of matrices where every matrix is either non-negative or non-positive
+
+    OUTPUT:
+
+    A list of matrices containing every non-negative matrix of ``matrices``, and `-M` if `M` is a non-positive matrix of ``matrices``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.k_regular_sequence_bounded import make_positive
+        sage: matrices = [Matrix([[1, 2], [1, 0]]), Matrix([[42, 42], [0, 0]])]
+        sage: make_positive(matrices)
+        [
+        [1 2]  [42 42]
+        [1 0], [ 0  0]
+        ]
+
+    ::
+
+        sage: matrices = [Matrix([[1, 2], [1, 0]]), Matrix([[-42, -42], [0, 0]])]
+        sage: make_positive(matrices)
+        [
+        [1 2]  [42 42]
+        [1 0], [ 0  0]
+        ]
+
+    ::
+
+        sage: matrices = [Matrix([[1, 2], [1, 0]]), Matrix([[42, -42], [0, 0]])]
+        sage: make_positive(matrices)
+        Traceback (most recent call last):
+        ...
+        ValueError: M[1] is neither non-negative nor non-positive.
+    """
     from sage.arith.srange import srange    
     length = len(matrices)
     posMatrices = list()
@@ -323,14 +433,12 @@ def k_regular_sequence_is_bounded(seq):
         return False
 
     try:
-        print 'ms2'
-        return mandel_simon_algorithm(make_positive(matrices))
+        if mandel_simon_algorithm(make_positive(matrices)):
+            return True
     except ValueError:
         print 'm2err'
         pass
 
-    #matricesProd = list(matrices[i]*matrices[j] for i in srange(length)
-    #                    for j in srange(1, length) if i != j)
     matricesProd = list(ell*em for ell in matrices for em in matrices[1:] if ell != em)
     if not check_eigenvalues(matricesProd):
         print 'ev2'
