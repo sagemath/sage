@@ -920,6 +920,135 @@ class kRegularSequence(RecognizableSeries):
 
     @cached_method
     def is_bounded(self):
+        r"""
+        Return whether this `k`-regular sequence is bounded
+        (if decidable with this implementation)
+
+        INPUT:
+
+        - ``S`` -- a `k`-regular sequence
+
+        OUTPUT:
+
+        A boolean.
+
+        EXAMPLES:
+
+        Thue-Morse Sequence::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: TM = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [1, 0]])], 
+            ....: left=vector([1, 0]), right=vector([0, 1]))
+            sage: TM.is_bounded()
+            True
+
+        Binary Sum of Digits::
+
+            sage: SD = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])], 
+            ....: left=vector([0, 1]), right=vector([1, 0]))
+            sage: SD.is_bounded()
+            False
+
+        Sequence of All Natural Numbers::
+
+            sage: N = Seq2([Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])], 
+            ....: left=vector([1, 0]), right=vector([0, 1]))
+            sage: N.is_bounded()
+            False
+
+        Indicator Function of Even Integers::
+
+            sage: E = Seq2([Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])], 
+            ....: left=vector([1, 0]), right=vector([1, 1]))
+            sage: E.is_bounded()
+            True
+
+        Indicator Function of Odd Integers::
+
+            sage: O = Seq2([Matrix([[0, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])], 
+            ....: left=vector([1, 0]), right=vector([0, 1]))
+            sage: O.is_bounded()
+            True
+
+        Number of Odd Entries in Pascal's Triangle::
+
+            sage: U = Seq2([Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])], 
+            ....: left=vector([0, 1]), right=vector([1, 0]), transpose=True)
+            sage: U.is_bounded()
+            False
+
+        Counting '10' in the Binary Representation::
+
+            sage: C = Seq2([Matrix([[0, 1, 0, 0], [0, 0, 0, 1], [-1, 0, 1, 1], 
+            ....: [0, 0, 0, 1]]), Matrix([[0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 1, 0], 
+            ....: [-1, 0, 1, 1]])], left=vector([1, 0, 0, 0]),
+            ....: right=vector([0, 0, 1, 0]))
+            sage: C.is_bounded()
+            False
+
+        Numbers Starting with '10'::
+
+            sage: L = [2, 4, 5, 8, 9, 10, 11, 16, 17, 18, 19, 20, 21, 22, 23, 32, 33, 
+            ....: 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 64, 65, 66, 
+            ....: 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 
+            ....: 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 128, 129, 130, 131]
+            sage: def f(n):
+            ....:     return L[n]
+            sage: D = Seq2.guess(f = f, n_max = 65)
+            sage: D.is_bounded()
+            False
+
+        Signum Function::
+
+            sage: S = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])], 
+            ....: left=vector([1, 0]), right=vector([0, 1]))
+            sage: S.is_bounded()
+            True
+
+        Number of Digits from the Right to the First '1'::
+
+            sage: L = [0, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1, 5, 1, 2, 1, 
+            ....: 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1, 6, 1, 2, 1, 3, 1, 2, 1, 4, 1,
+            ....: 2, 1, 3, 1, 2, 1, 5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1, 
+            ....: 7, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1, 5, 1, 2, 1, 3, 1,
+            ....: 2, 1, 4, 1, 2, 1, 3, 1, 2, 1, 6, 1, 2, 1, 3, 1, 2, 1, 4, 1]
+            sage: def f(n):
+            ....:     return L[n]
+            sage: S = Seq2.guess(f = f, n_max = len(L) - 1)
+            sage: S.is_bounded()
+            Traceback (most recent call last):
+            ...
+            RuntimeError: It is not decidable with this implementation whether the 
+            sequence is bounded or not.
+
+        Find another Representation or a Sequence which is equivalent in Boundedness::
+
+            sage: S1 = S.subsequence(a = 1, b = 1)
+            sage: S1.is_bounded()
+            False
+
+        TESTS::
+
+            sage: S = Seq2((Matrix([[0, 1, 0], [0, 0, 1], [-1, 2, 0]]),
+            ....: Matrix([[-1, 0, 0], [-3/4, -1/4, 3/4], [-1/4, 1/4, -3/4]])), 
+            ....: left=vector([1, 0, 0]), right=vector([-4, -4, -4]))
+            sage: S.is_bounded()
+            False
+
+        ::
+
+            sage: S = Seq2((Matrix([[1,0], [1,0]]), Matrix([[0,1],[1,0]])),
+            ....:          left = vector([1,1]), right = vector([1,0]))
+            WARNING:...:Unhealthy sequence: mu[0]*right != right.
+                        Results might be wrong. Use heal=True or
+                        method .healed() for correcting this.
+            sage: S.is_bounded()
+            True
+
+        .. SEEALSO::
+
+            :mod:`boundedness of `k`-regular sequences <sage.combinat.k_regular_sequence_bounded>`
+        """
         from sage.combinat.k_regular_sequence_bounded import k_regular_sequence_is_bounded
         return k_regular_sequence_is_bounded(self)
 
@@ -1454,7 +1583,3 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         right = vector(values(0, lines))
         left = vector(pad_right(tuple(left), d, zero=zero))
         return self(mu, left, right)
-
-
-
-
