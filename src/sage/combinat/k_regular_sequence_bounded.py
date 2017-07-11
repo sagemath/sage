@@ -261,6 +261,37 @@ def is_bounded_via_mandel_simon_algorithm(matrices):
 
     EXAMPLES::
 
+        sage: from sage.combinat.k_regular_sequence_bounded import is_bounded_via_mandel_simon_algorithm
+        sage: J = [Matrix([[1, 0, 1], [0, 1, 1], [0, 0, 0]])]
+        sage: is_bounded_via_mandel_simon_algorithm(J)
+        True
+
+    ::
+
+        sage: from sage.combinat.k_regular_sequence_bounded import is_bounded_via_mandel_simon_algorithm
+        sage: K = [Matrix([[1, 1], [1, 1]])]
+        sage: is_bounded_via_mandel_simon_algorithm(K)
+        False
+
+    ::
+
+        sage: L = [Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [0, 0]])]
+        sage: is_bounded_via_mandel_simon_algorithm(L)
+        True
+
+    ::
+
+        sage: M = [Matrix([[1, 0], [0, 2]]), Matrix([[1, 0], [0, 0]])]
+        sage: is_bounded_via_mandel_simon_algorithm(M)
+        False
+
+    Non-integer-valued Input::
+
+        sage: N = [Matrix([[0.5, 0], [1, 0]])]
+        sage: is_bounded_via_mandel_simon_algorithm(N)
+        Traceback (most recent call last):
+        ...
+        ValueError: Not all matrices are integer-valued.
     """
     if not is_integer_valued(matrices):
         raise ValueError('Not all matrices are integer-valued.')
