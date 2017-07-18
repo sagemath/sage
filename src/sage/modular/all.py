@@ -14,6 +14,8 @@ from .dirichlet import (DirichletGroup,
                         kronecker_character, kronecker_character_upside_down,
                         trivial_character)
 
+from .hecke_character import HeckeCharacterGroup
+
 from .arithgroup.all import (Gamma0, Gamma1, GammaH, Gamma, SL2Z,
                              ArithmeticSubgroup_Permutation,
                              CongruenceSubgroup, FareySymbol)
