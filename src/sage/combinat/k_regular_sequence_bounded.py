@@ -33,7 +33,7 @@ ACKNOWLEDGEMENT:
   Austrian Science Fund (FWF): P 24644-N26.
 """
 #*****************************************************************************
-#       Copyright (C) 2017 Gabriel Lipnik <TODO: Insert proper Email adress>
+#       Copyright (C) 2017 Gabriel Lipnik <devel@gabriellipnik.at>
 #
 # This program is free software: You can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
