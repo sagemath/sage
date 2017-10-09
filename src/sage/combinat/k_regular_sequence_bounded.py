@@ -422,8 +422,6 @@ def k_regular_sequence_is_bounded(S):
 
     A boolean.
 
-    TODO: exception...
-
     EXAMPLES:
 
     Thue-Morse Sequence::   
