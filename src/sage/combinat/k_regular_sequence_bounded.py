@@ -247,7 +247,7 @@ def is_non_negative(matrices):
 def is_bounded_via_mandel_simon_algorithm(matrices):
     r"""
     Return whether the semigroup generated whether the semigroup of all 
-    possible products of matrices is finite/bounded, 
+    possible products of ``matrices`` is finite/bounded,
     using a criterion in [MS1977].
 
     INPUT:
@@ -309,6 +309,10 @@ def has_bounded_matrix_powers(matrices):
     INPUT:
 
     - ``matrices`` -- a list of square matrices
+
+    ALGORITHM: 
+
+    Eigenvalues are used for the check.
 
     OUTPUT:
 
