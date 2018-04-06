@@ -925,7 +925,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES:
 
-        Thue-Morse Sequence::
+        Thue--Morse Sequence::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: TM = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [1, 0]])],
