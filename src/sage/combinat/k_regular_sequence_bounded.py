@@ -422,7 +422,7 @@ def k_regular_sequence_is_bounded(S):
 
     EXAMPLES:
 
-    Thue-Morse Sequence::
+    Thue--Morse Sequence::
 
         sage: from sage.combinat.k_regular_sequence_bounded import k_regular_sequence_is_bounded
         sage: Seq2 = kRegularSequenceSpace(2, ZZ)
