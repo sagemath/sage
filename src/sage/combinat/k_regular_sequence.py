@@ -922,7 +922,6 @@ class kRegularSequence(RecognizableSeries):
     def is_bounded(self):
         r"""
         Return whether this `k`-regular sequence is bounded
-        (if decidable with this implementation)
 
         INPUT:
 
