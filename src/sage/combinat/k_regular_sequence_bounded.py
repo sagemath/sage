@@ -94,7 +94,7 @@ def construct_phi(matrices):
     INPUT:
 
     - ``matrices`` -- a list of non-negative square matrices
-    in the same dimension
+      in the same dimension
 
     OUTPUT:
 
