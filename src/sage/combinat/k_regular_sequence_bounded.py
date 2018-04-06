@@ -316,10 +316,6 @@ def has_bounded_matrix_powers(matrices):
 
     Eigenvalues are used for the check.
 
-    OUTPUT:
-
-    A boolean.
-
     TEST::
 
         max(abs(eigenvalues)) = 1, multiplicities okay:
