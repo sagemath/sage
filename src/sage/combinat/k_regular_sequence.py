@@ -1010,6 +1010,10 @@ class kRegularSequence(RecognizableSeries):
             sage: S1.is_bounded()
             False
 
+        .. SEEALSO::
+
+            :mod:`boundedness of `k`-regular sequences <sage.combinat.k_regular_sequence_bounded>`
+
         TESTS::
 
             sage: S = Seq2((Matrix([[0, 1, 0], [0, 0, 1], [-1, 2, 0]]),
@@ -1027,10 +1031,6 @@ class kRegularSequence(RecognizableSeries):
                         method .healed() for correcting this.
             sage: S.is_bounded()
             True
-
-        .. SEEALSO::
-
-            :mod:`boundedness of `k`-regular sequences <sage.combinat.k_regular_sequence_bounded>`
         """
         from sage.combinat.k_regular_sequence_bounded import k_regular_sequence_is_bounded
         return k_regular_sequence_is_bounded(self)
