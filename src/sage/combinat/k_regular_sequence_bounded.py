@@ -249,8 +249,7 @@ def is_non_negative(matrices):
 def is_bounded_via_mandel_simon_algorithm(matrices):
     r"""
     Return whether the semigroup generated whether the semigroup of all
-    possible products of ``matrices`` is finite/bounded,
-    using a criterion in [MS1977].
+    possible products of ``matrices`` is finite/bounded.
 
     INPUT:
 
@@ -260,6 +259,10 @@ def is_bounded_via_mandel_simon_algorithm(matrices):
     OUTPUT:
 
     A boolean.
+
+    ALGORITHM:
+
+    A criterion based on [MS1977] is used here.
 
     EXAMPLES::
 
