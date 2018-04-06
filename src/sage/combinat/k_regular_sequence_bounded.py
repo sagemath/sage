@@ -316,7 +316,7 @@ def has_bounded_matrix_powers(matrices):
 
     Eigenvalues are used for the check.
 
-    TEST::
+    EXAMPLES::
 
         max(abs(eigenvalues)) = 1, multiplicities okay:
         sage: from sage.combinat.k_regular_sequence_bounded import has_bounded_matrix_powers
