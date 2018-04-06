@@ -287,7 +287,7 @@ def is_bounded_via_mandel_simon_algorithm(matrices):
         sage: is_bounded_via_mandel_simon_algorithm(M)
         False
 
-    Non-integer-valued Input::
+    Non-integer-valued input::
 
         sage: N = [Matrix([[0.5, 0], [1, 0]])]
         sage: is_bounded_via_mandel_simon_algorithm(N)
