@@ -76,6 +76,8 @@ import sage.interfaces.all
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.factory import UniqueFactory
+from sage.structure.richcmp import richcmp, richcmp_method
+
 
 class IntegerModFactory(UniqueFactory):
     r"""
@@ -287,6 +289,7 @@ def _unit_gens_primepowercase(p, r):
              integer.Integer(p**(r - 1) * (p - 1)))]
 
 
+@richcmp_method
 class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
     """
     The ring of integers modulo `N`.
@@ -589,7 +592,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
             sage: L = R.list_of_elements_of_multiplicative_group(); L
             [1, 5, 7, 11]
             sage: type(L[0])
-            <type 'int'>
+            <... 'int'>
         """
         import sage.rings.fast_arith as a
         if self.__order <= 46340:   # todo: don't hard code
@@ -1198,7 +1201,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             14
             sage: f = R.coerce_map_from(int); f
             Native morphism:
-              From: Set of Python objects of type 'int'
+              From: Set of Python objects of class 'int'
               To:   Ring of integers modulo 15
             sage: f(-1r)
             14
@@ -1255,7 +1258,26 @@ In the latter case, please inform the developers.""".format(self.order()))
         if to_ZZ is not None:
             return integer_mod.Integer_to_IntegerMod(self) * to_ZZ
 
-    def __cmp__(self, other):
+    def _convert_map_from_(self, other):
+        """
+        Conversion from p-adic fields.
+
+        EXAMPLES::
+
+            sage: Zmod(81).convert_map_from(Qp(3))
+            Reduction morphism:
+              From: 3-adic Field with capped relative precision 20
+              To:   Ring of integers modulo 81
+        """
+        from sage.rings.padics.padic_generic import pAdicGeneric, ResidueReductionMap
+        if isinstance(other, pAdicGeneric) and other.degree() == 1:
+            p = other.prime()
+            N = self.cardinality()
+            n = N.exact_log(p)
+            if p**n == N:
+                return ResidueReductionMap._create_(other, self)
+
+    def __richcmp__(self, other, op):
         """
         EXAMPLES::
 
@@ -1286,12 +1308,12 @@ In the latter case, please inform the developers.""".format(self.order()))
         # But if we go to the base class, we avoid the influence
         # of the category.
         try:
-            c = cmp(other.__class__.__base__, self.__class__.__base__)
+            c = bool(other.__class__.__base__ != self.__class__.__base__)
         except AttributeError: # __base__ does not always exists
-            c = cmp(type(other), type(self))
+            c = bool(type(other) != type(self))
         if c:
-            return c
-        return cmp(self.__order, other.__order)
+            return NotImplemented
+        return richcmp(self.__order, other.__order, op)
 
     def unit_gens(self, **kwds):
         r"""
@@ -1479,7 +1501,7 @@ In the latter case, please inform the developers.""".format(self.order()))
                     gens.append(x)
                     orders.append(o)
         elif algorithm == 'pari':
-            _, orders, gens = self.order()._pari_().znstar()
+            _, orders, gens = self.order().__pari__().znstar()
             gens = map(self, gens)
             orders = map(integer.Integer, orders)
         else:
@@ -1543,7 +1565,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         """
         Return 1.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R = Integers(12345678900)
             sage: R.degree()

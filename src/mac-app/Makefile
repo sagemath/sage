@@ -81,17 +81,18 @@ $(APP)/Contents/Resources/sage: $(APP)
 	@# because $(APP) is newer than (the rsync preserves time)
 	test -d $@ && touch $@
 
-# .DS_Store tells finder the icon position and background image to use
-# when opening the dmg.	
-$(TARGET)/.DS_Store: tools/createDSStore/createDSStore.py
-	@# On some old Mac OS X, createDSStore fails when there already
-	@# is an existing file
-	rm -f $(TARGET)/.DS_Store
-	tools/createDSStore/createDSStore.py $(TARGET) $(TARGET) $(APP_NAME)
+# The background image for the DMG.
+# It contains the arrow pointing from the .app to the Applications
+# folder.
+#
+# The background image should be at 72dpi. if a different resolution is
+# set in the metadata, Finder produces weird results.
+#
+$(TARGET)/.background/sage.png: sage-dmg-background.png
+	mkdir -p $(TARGET)/.background
+	cp sage-dmg-background.png $(TARGET)/.background/sage.png
 
-$(TARGET)/.background.png: sage-dmg-background.png
-	cp sage-dmg-background.png $(TARGET)/.background.png
-
+# Link to Applications
 $(TARGET)/Applications:
 	rm -f $(TARGET)/Applications
 	ln -s /Applications/ $(TARGET)/Applications
@@ -100,19 +101,44 @@ $(TARGET)/Applications:
 $(TARGET)/README.txt: $(SAGE_ROOT)/src/bin/sage-README-osx.txt
 	cp $^ $@
 
-non_app_files: $(TARGET)/README.txt $(TARGET)/.DS_Store $(TARGET)/.background.png $(TARGET)/Applications
+non_app_files: $(TARGET)/README.txt $(TARGET)/.background/sage.png $(TARGET)/Applications
 
 sage_symlink: $(APP)/Contents/Resources/sage/sage
 	rm -f $(APP)/sage
 	ln -s Contents/Resources/sage/sage $(APP)/sage
 
-# Compress the built directory into a DMG
+# The arrangement of the icons and the "alias" for the background
+# image are stored in a .DS_Store file. The .DS_Store file does
+# not store the background image by relative path, but by "alias"
+# which contains the volume name as well - so we cannot just
+# generate one .DS_Store and copy it from version to version since
+# the volume name contains the version.
+#
+# It would be nice if we could generate the .DS_Store directly
+# instead of mounting the image before compressing it.
+# Unfortunately, the .DS_Store format is proprietary and changed
+# in Mac OS 10.12, so trying this with the ds_store python package
+# did not work out (https://bitbucket.org/al45tair/ds_store/issues/7).
+# Also see Ticket 20119 and 22739.
+
 # Dependencies need to be in that order because non_app_files
 # needs the directory created by $(APP)/Contents/Resources/sage
-$(DMG): $(APP)/Contents/Resources/sage sage_symlink non_app_files
-	hdiutil create -srcfolder $(TARGET) -volname $(TARGET) -format UDBZ $(DMG)
+tmp-$(DMG): $(APP)/Contents/Resources/sage sage_symlink non_app_files
+	@# Create initial DMG
+	hdiutil create -srcfolder $(TARGET) -volname $(TARGET) -format UDRW tmp-$(DMG)
+
+	@# Mount it so that we can run the Apple Script file on it
+	@# to arrange the icons and set the background image
+	mkdir -p mnt
+	hdiutil attach tmp-$(DMG) -mountpoint mnt
+	osascript arrangeIcons.applescript mnt $(APP_NAME)
+	hdiutil detach mnt
+
+# Compress the built directory into a DMG
+$(DMG): tmp-$(DMG)
+	hdiutil convert -format UDBZ -o $(DMG) tmp-$(DMG)	
 
 .PHONY: clean default debug app non_app_files
 
 clean:
-	rm -rf $(APP) build $(DMG)
+	rm -rf $(TARGET) build $(DMG) tmp-$(DMG) mnt

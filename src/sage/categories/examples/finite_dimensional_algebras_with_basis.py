@@ -12,6 +12,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.all import FiniteDimensionalAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 
+
 class KroneckerQuiverPathAlgebra(CombinatorialFreeModule):
     r"""
     An example of a finite dimensional algebra with basis: the path
@@ -19,7 +20,7 @@ class KroneckerQuiverPathAlgebra(CombinatorialFreeModule):
 
     This class illustrates a minimal implementation of a finite
     dimensional algebra with basis. See
-    :class:`sage.quiver.algebra.PathAlgebra` for a full-featured
+    :class:`sage.quivers.algebra.PathAlgebra` for a full-featured
     implementation of path algebras.
     """
 

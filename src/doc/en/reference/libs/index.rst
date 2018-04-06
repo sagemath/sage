@@ -3,20 +3,18 @@ C/C++ Library Interfaces
 
 An underlying philosophy in the development of Sage is that it
 should provide unified library-level access to the some of the best
-GPL'd C/C++ libraries. Currently Sage provides some access to
-MWRANK, NTL, PARI, and Hanke, each of which are included with
-Sage.
+GPL'd C/C++ libraries. Sage provides access to many libraries which
+are included with Sage.
 
 The interfaces are implemented via shared libraries and data is
 moved between systems purely in memory. In particular, there is no
-interprocess interpreter parsing (e.g., ``expect``),
+interprocess interpreter parsing (e.g., ``pexpect``),
 since everything is linked together and run as a single process.
-This is much more robust and efficient than using
-``expect``.
+This is much more robust and efficient than using ``pexpect``.
 
 Each of these interfaces is used by other parts of Sage. For
-example, mwrank is used by the elliptic curves module to compute
-ranks of elliptic curves, and PARI is used for computation of class
+example, eclib is used by the elliptic curves module to compute
+ranks of elliptic curves and PARI is used for computation of class
 groups. It is thus probably not necessary for a casual user of Sage
 to be aware of the modules described in this chapter.
 
@@ -30,6 +28,9 @@ to be aware of the modules described in this chapter.
    sage/libs/eclib/homspace
    sage/libs/eclib/constructor
    sage/libs/lcalc/lcalc_Lfunction
+   sage/libs/pari
+   sage/libs/pari/convert_sage
+   sage/rings/pari_ring
    sage/libs/ratpoints
    sage/libs/singular/function
    sage/libs/singular/function_factory
@@ -40,6 +41,7 @@ to be aware of the modules described in this chapter.
    sage/libs/singular/groebner_strategy
    sage/libs/ppl
    sage/libs/linbox/linbox
+   sage/libs/linbox/linbox_flint_interface
    sage/libs/flint/flint
    sage/libs/flint/fmpz_poly
    sage/libs/flint/arith
@@ -48,7 +50,6 @@ to be aware of the modules described in this chapter.
    sage/libs/ntl/all
    sage/libs/libecm
    sage/libs/lrcalc/lrcalc
-   sage/rings/pari_ring
    sage/libs/readline
    sage/libs/gap/context_managers
    sage/libs/gap/gap_functions

@@ -37,10 +37,11 @@ def pyprocessing(processes=0):
         sage: p_iter = pyprocessing(4)
         sage: P = parallel(p_iter=p_iter)
         sage: def f(x): return x+x
-        sage: v = list(P(f)(range(10))); v.sort(); v
+        sage: v = list(P(f)(list(range(10)))); v.sort(); v
         [(((0,), {}), 0), (((1,), {}), 2), (((2,), {}), 4), (((3,), {}), 6), (((4,), {}), 8), (((5,), {}), 10), (((6,), {}), 12), (((7,), {}), 14), (((8,), {}), 16), (((9,), {}), 18)]
     """
-    if processes == 0: processes = ncpus.ncpus()
+    if processes == 0:
+        processes = ncpus.ncpus()
     return partial(parallel_iter, processes)
 
 def parallel_iter(processes, f, inputs):

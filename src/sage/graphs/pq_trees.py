@@ -114,6 +114,7 @@ Methods and functions
 #                         http://www.gnu.org/licenses/                         #
 ################################################################################
 from __future__ import print_function
+from six import iteritems
 
 # Constants, to make the code more readable
 
@@ -163,7 +164,7 @@ def reorder_sets(sets):
 
     PQ-Trees
 
-    EXAMPLE:
+    EXAMPLES:
 
     There is only one way (up to reversal) to represent contiguously
     the sequence ofsets `\{i-1, i, i+1\}`::
@@ -209,7 +210,7 @@ class PQ:
         r"""
         Construction of a PQ-Tree
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
@@ -233,7 +234,7 @@ class PQ:
         r"""
         Recursively reverses ``self`` and its children
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
@@ -258,7 +259,7 @@ class PQ:
 
         - ``v`` -- an element of the ground set
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
@@ -273,7 +274,7 @@ class PQ:
         r"""
         Iterates over the children of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
@@ -290,7 +291,7 @@ class PQ:
         r"""
         Returns the number of children of ``self``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
@@ -304,7 +305,7 @@ class PQ:
         Returns the current ordering given by listing the leaves from
         left to right.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
@@ -324,7 +325,7 @@ class PQ:
         r"""
         Succintly represents ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
@@ -429,7 +430,7 @@ class PQ:
         method recursively "flattens" trees having only on PQ-tree
         child, and returns it.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([P([[2,4], [2,8], [2,9]])])
@@ -479,7 +480,7 @@ class P(PQ):
         function ends. If there is no possibility of doing so, the function
         raises a ``ValueError`` exception.
 
-        EXAMPLE:
+        EXAMPLES:
 
         Ensuring the sets containing ``0`` are continuous::
 
@@ -541,7 +542,7 @@ class P(PQ):
         n_PARTIAL_ALIGNED       = len(set_PARTIAL_ALIGNED)
         n_PARTIAL_UNALIGNED     = len(set_PARTIAL_UNALIGNED)
 
-        counts = {x:len(y) for x,y in sorting.iteritems()}
+        counts = {x: len(y) for x, y in iteritems(sorting)}
 
         # Excludes the situation where there is no solution.
         # read next comment for more explanations
@@ -677,7 +678,7 @@ class P(PQ):
 
             :meth:`orderings` -- iterate over all admissible orderings
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = P([[0,3], [1,2], [2,3], [2,4], [4,0],[2,8], [2,9]])
@@ -760,7 +761,7 @@ class Q(PQ):
         function ends. If there is no possibility of doing so, the function
         raises a ``ValueError`` exception.
 
-        EXAMPLE:
+        EXAMPLES:
 
         Ensuring the sets containing ``0`` are continuous::
 
@@ -828,7 +829,7 @@ class Q(PQ):
         n_PARTIAL_ALIGNED       = len(set_PARTIAL_ALIGNED)
         n_PARTIAL_UNALIGNED     = len(set_PARTIAL_UNALIGNED)
 
-        counts = {x:len(y) for x,y in sorting.iteritems()}
+        counts = {x: len(y) for x, y in iteritems(sorting)}
 
         ###################################################################
         #                                                                 #
@@ -1014,7 +1015,7 @@ class Q(PQ):
 
             :meth:`orderings` -- iterate over all admissible orderings
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: q = Q([[0,3], [1,2], [2,3], [2,4], [4,0],[2,8], [2,9]])

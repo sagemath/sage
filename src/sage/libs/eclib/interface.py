@@ -770,7 +770,7 @@ class mwrank_MordellWeil(SageObject):
       rank; useful if an upper bound for the rank is already
       known).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: E = mwrank_EllipticCurve([1,0,1,4,-6])
         sage: EQ = mwrank_MordellWeil(E)
@@ -894,7 +894,7 @@ class mwrank_MordellWeil(SageObject):
 
         See the docstring of this class for full documentation.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: E = mwrank_EllipticCurve([1,0,1,4,-6])
             sage: EQ = mwrank_MordellWeil(E)
@@ -935,7 +935,7 @@ class mwrank_MordellWeil(SageObject):
 
         (string) String representation of this Mordell-Weil subgroup.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: E = mwrank_EllipticCurve([0,0,1,-7,6])
             sage: EQ = mwrank_MordellWeil(E, verbose=False)
@@ -1152,7 +1152,7 @@ class mwrank_MordellWeil(SageObject):
 
         - ``odd_primes_only`` (bool, default ``False``) -- only do
           saturation at odd primes.  (If the points have been found
-          via :meth:``two_descent()`` they should already be 2-saturated.)
+          via :meth:`two_descent` they should already be 2-saturated.)
 
         OUTPUT:
 

@@ -150,7 +150,7 @@ http://maxima.sourceforge.net/docs/intromax/intromax.html.
     sage: f.expand()
     x^6*y^3+9*x^4*y^3+27*x^2*y^3+27*y^3+3*x^5*y^2+18*x^3*y^2+27*x*y^2+3*x^4*y+9*x^2*y+x^3
     sage: f.subst('x=5/z')
-    (5/z+25*y/z^2+3*y)^3
+    (5/z+(25*y)/z^2+3*y)^3
     sage: g = f.subst('x=5/z')
     sage: h = g.ratsimp(); h
     (27*y^3*z^6+135*y^2*z^5+(675*y^3+225*y)*z^4+(2250*y^2+125)*z^3+(5625*y^3+1875*y)*z^2+9375*y^2*z+15625*y^3)/z^6
@@ -161,19 +161,19 @@ http://maxima.sourceforge.net/docs/intromax/intromax.html.
 
     sage: eqn = maxima(['a+b*c=1', 'b-a*c=0', 'a+b=5'])
     sage: s = eqn.solve('[a,b,c]'); s
-    [[a=(25*sqrt(79)*%i+25)/(6*sqrt(79)*%i-34),b=(5*sqrt(79)*%i+5)/(sqrt(79)*%i+11),c=(sqrt(79)*%i+1)/10],[a=(25*sqrt(79)*%i-25)/(6*sqrt(79)*%i+34),b=(5*sqrt(79)*%i-5)/(sqrt(79)*%i-11),c=-(sqrt(79)*%i-1)/10]]
+    [[a=-(sqrt(79)*%i-11)/4,b=(sqrt(79)*%i+9)/4,c=(sqrt(79)*%i+1)/10],[a=(sqrt(79)*%i+11)/4,b=-(sqrt(79)*%i-9)/4,c=-(sqrt(79)*%i-1)/10]]
 
 Here is an example of solving an algebraic equation::
 
     sage: maxima('x^2+y^2=1').solve('y')
     [y=-sqrt(1-x^2),y=sqrt(1-x^2)]
     sage: maxima('x^2 + y^2 = (x^2 - y^2)/sqrt(x^2 + y^2)').solve('y')
-    [y=-sqrt((-y^2-x^2)*sqrt(y^2+x^2)+x^2),y=sqrt((-y^2-x^2)*sqrt(y^2+x^2)+x^2)]
+    [y=-sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2),y=sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2)]
 
 You can even nicely typeset the solution in latex::
 
     sage: latex(s)
-    \left[ \left[ a={{25\,\sqrt{79}\,i+25}\over{6\,\sqrt{79}\,i-34}} ,   b={{5\,\sqrt{79}\,i+5}\over{\sqrt{79}\,i+11}} , c={{\sqrt{79}\,i+1  }\over{10}} \right]  , \left[ a={{25\,\sqrt{79}\,i-25}\over{6\,  \sqrt{79}\,i+34}} , b={{5\,\sqrt{79}\,i-5}\over{\sqrt{79}\,i-11}} ,   c=-{{\sqrt{79}\,i-1}\over{10}} \right]  \right]
+    \left[ \left[ a=-{{\sqrt{79}\,i-11}\over{4}} , b={{\sqrt{79}\,i+9  }\over{4}} , c={{\sqrt{79}\,i+1}\over{10}} \right]  , \left[ a={{  \sqrt{79}\,i+11}\over{4}} , b=-{{\sqrt{79}\,i-9}\over{4}} , c=-{{  \sqrt{79}\,i-1}\over{10}} \right]  \right]
 
 To have the above appear onscreen via ``xdvi``, type
 ``view(s)``. (TODO: For OS X should create pdf output
@@ -199,7 +199,7 @@ and use preview instead?)
     sage: f.diff('x')
     k*x^3*%e^(k*x)*sin(w*x)+3*x^2*%e^(k*x)*sin(w*x)+w*x^3*%e^(k*x)*cos(w*x)
     sage: f.integrate('x')
-    (((k*w^6+3*k^3*w^4+3*k^5*w^2+k^7)*x^3+(3*w^6+3*k^2*w^4-3*k^4*w^2-3*k^6)*x^2+(-18*k*w^4-12*k^3*w^2+6*k^5)*x-6*w^4+36*k^2*w^2-6*k^4)*%e^(k*x)*sin(w*x)+((-w^7-3*k^2*w^5-3*k^4*w^3-k^6*w)*x^3+(6*k*w^5+12*k^3*w^3+6*k^5*w)*x^2+(6*w^5-12*k^2*w^3-18*k^4*w)*x-24*k*w^3+24*k^3*w)*%e^(k*x)*cos(w*x))/(w^8+4*k^2*w^6+6*k^4*w^4+4*k^6*w^2+k^8)
+    (((k*w^6+3*k^3*w^4+3*k^5*w^2+k^7)*x^3+(3*w^6+3*k^2*w^4-3*k^4*w^2-3*k^6)*x^2+((-18*k*w^4)-12*k^3*w^2+6*k^5)*x-6*w^4+36*k^2*w^2-6*k^4)*%e^(k*x)*sin(w*x)+(((-w^7)-3*k^2*w^5-3*k^4*w^3-k^6*w)*x^3+(6*k*w^5+12*k^3*w^3+6*k^5*w)*x^2+(6*w^5-12*k^2*w^3-18*k^4*w)*x-24*k*w^3+24*k^3*w)*%e^(k*x)*cos(w*x))/(w^8+4*k^2*w^6+6*k^4*w^4+4*k^6*w^2+k^8)
 
 ::
 
@@ -208,12 +208,12 @@ and use preview instead?)
     1
     sage: g = maxima('f/sinh(k*x)^4')
     sage: g.taylor('x', 0, 3)
-    f/(k^4*x^4)-2*f/(3*k^2*x^2)+11*f/45-62*k^2*f*x^2/945
+    f/(k^4*x^4)-(2*f)/((3*k^2)*x^2)+(11*f)/45-((62*k^2*f)*x^2)/945
 
 ::
 
     sage: maxima.taylor('asin(x)','x',0, 10)
-    x+x^3/6+3*x^5/40+5*x^7/112+35*x^9/1152
+    x+x^3/6+(3*x^5)/40+(5*x^7)/112+(35*x^9)/1152
 
 Examples involving matrices
 ---------------------------
@@ -253,7 +253,7 @@ We illustrate Laplace transforms::
 
     sage: _ = maxima.eval("f(t) := t*sin(t)")
     sage: maxima("laplace(f(t),t,s)")
-    2*s/(s^2+1)^2
+    (2*s)/(s^2+1)^2
 
 ::
 
@@ -270,7 +270,7 @@ We illustrate Laplace transforms::
 
     sage: _ = maxima.eval("f(t) := t^5*exp(t)*sin(t)")
     sage: maxima("laplace(f(t),t,s)")
-    360*(2*s-2)/(s^2-2*s+2)^4-480*(2*s-2)^3/(s^2-2*s+2)^5+120*(2*s-2)^5/(s^2-2*s+2)^6
+    (360*(2*s-2))/(s^2-2*s+2)^4-(480*(2*s-2)^3)/(s^2-2*s+2)^5+(120*(2*s-2)^5)/(s^2-2*s+2)^6
     sage: print(maxima("laplace(f(t),t,s)"))
                                              3                 5
                360 (2 s - 2)    480 (2 s - 2)     120 (2 s - 2)
@@ -286,17 +286,17 @@ We illustrate Laplace transforms::
 ::
 
     sage: maxima("laplace(diff(x(t),t,2),t,s)")
-    -%at('diff(x(t),t,1),t=0)+s^2*'laplace(x(t),t,s)-x(0)*s
+    (-%at('diff(x(t),t,1),t=0))+s^2*'laplace(x(t),t,s)-x(0)*s
 
 It is difficult to read some of these without the 2d
 representation::
 
     sage: print(maxima("laplace(diff(x(t),t,2),t,s)"))
-                         !
-                d        !         2
-              - -- (x(t))!      + s  laplace(x(t), t, s) - x(0) s
-                dt       !
-                         !t = 0
+                             !
+                    d        !          2
+                 (- -- (x(t))!     ) + s  laplace(x(t), t, s) - x(0) s
+                    dt       !
+                             !t = 0
 
 Even better, use
 ``view(maxima("laplace(diff(x(t),t,2),t,s)"))`` to see
@@ -463,19 +463,17 @@ Test that Maxima gracefully handles this syntax error (:trac:`17667`)::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six import string_types
 
 import os
 import re
 import pexpect
-#cygwin = os.uname()[0][:6]=="CYGWIN"
 
 from random import randrange
 
 from sage.env import DOT_SAGE, SAGE_LOCAL
-
-##import sage.rings.all
+from sage.misc.misc import ECL_TMP
 
 from .expect import (Expect, ExpectElement, FunctionElement,
                     ExpectFunction, gc_disabled)
@@ -484,6 +482,8 @@ from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
                              MaximaAbstractElement,
                              MaximaAbstractFunctionElement,
                              MaximaAbstractElementFunction)
+from sage.docs.instancedoc import instancedoc
+
 
 # Thanks to the MRO for multiple inheritance used by the Sage's Python,
 # this should work as expected
@@ -557,6 +557,7 @@ class Maxima(MaximaAbstract, Expect):
                         name = 'maxima',
                         prompt = '\(\%i[0-9]+\) ',
                         command = 'maxima --userdir="%s" -p "%s"'%(SAGE_MAXIMA_DIR,STARTUP),
+                        env = {'TMPDIR': str(ECL_TMP)},
                         script_subdirectory = script_subdirectory,
                         restart_on_ctrlc = False,
                         verbose_start = False,
@@ -640,7 +641,7 @@ class Maxima(MaximaAbstract, Expect):
         """
         return reduce_load_Maxima, tuple([]) #(self.__init_code,)
 
-    def _sendline(self, str):
+    def _sendline(self, string):
         """
         Send a string followed by a newline character.
 
@@ -650,7 +651,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima.get('t')
             '9'
         """
-        self._sendstr(str)
+        self._sendstr(string)
         os.write(self._expect.child_fd, os.linesep)
 
     def _expect_expr(self, expr=None, timeout=None):
@@ -679,7 +680,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima.assume('a>0')
             [a>0]
             sage: maxima('integrate(1/(x^3*(a+b*x)^(1/3)),x)')
-            -b^2*log((b*x+a)^(2/3)+a^(1/3)*(b*x+a)^(1/3)+a^(2/3))/(9*a^(7/3))+2*b^2*atan((2*(b*x+a)^(1/3)+a^(1/3))/(sqrt(3)*a^(1/3)))/(3^(3/2)*a^(7/3))+2*b^2*log((b*x+a)^(1/3)-a^(1/3))/(9*a^(7/3))+(4*b^2*(b*x+a)^(5/3)-7*a*b^2*(b*x+a)^(2/3))/(6*a^2*(b*x+a)^2-12*a^3*(b*x+a)+6*a^4)
+            (-(b^2*log((b*x+a)^(2/3)+a^(1/3)*(b*x+a)^(1/3)+a^(2/3)))/(9*a^(7/3)))+(2*b^2*atan((2*(b*x+a)^(1/3)+a^(1/3))/(sqrt(3)*a^(1/3))))/(3^(3/2)*a^(7/3))+(2*b^2*log((b*x+a)^(1/3)-a^(1/3)))/(9*a^(7/3))+(4*b^2*(b*x+a)^(5/3)-7*a*b^2*(b*x+a)^(2/3))/(6*a^2*(b*x+a)^2-12*a^3*(b*x+a)+6*a^4)
             sage: maxima('integrate(x^n,x)')
             Traceback (most recent call last):
             ...
@@ -996,7 +997,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima.get('xxxxx')
             '2'
         """
-        if not isinstance(value, str):
+        if not isinstance(value, string_types):
             raise TypeError
         cmd = '%s : %s$'%(var, value.rstrip(';'))
         if len(cmd) > self.__eval_using_file_cutoff:
@@ -1046,7 +1047,7 @@ class Maxima(MaximaAbstract, Expect):
         EXAMPLES::
 
             sage: maxima._function_class()
-            <class 'sage.interfaces.maxima.MaximaFunction'>
+            <class 'sage.interfaces.interface.InterfaceFunction'>
         """
         return MaximaFunction
 
@@ -1068,7 +1069,7 @@ class Maxima(MaximaAbstract, Expect):
         EXAMPLES::
 
             sage: maxima._function_element_class()
-            <class 'sage.interfaces.maxima.MaximaFunctionElement'>
+            <class 'sage.interfaces.interface.InterfaceFunctionElement'>
         """
         return MaximaFunctionElement
 
@@ -1119,8 +1120,8 @@ def is_MaximaElement(x):
     """
     return isinstance(x, MaximaElement)
 
-# Thanks to the MRO for multiple inheritance used by the Sage's Python,
-# this should work as expected
+
+@instancedoc
 class MaximaElement(MaximaAbstractElement, ExpectElement):
     """
     Element of Maxima through Pexpect interface.
@@ -1186,26 +1187,11 @@ class MaximaElement(MaximaAbstractElement, ExpectElement):
             return s
 
 
-# Thanks to the MRO for multiple inheritance used by the Sage's Python,
-# this should work as expected
-class MaximaFunctionElement(MaximaAbstractFunctionElement, FunctionElement):
-    pass
-#    def __init__(self, obj, name):
-#        MaximaAbstractFunctionElement.__init__(self, obj, name)
-#        FunctionElement.__init__(self, obj, name)
+MaximaFunctionElement = MaximaAbstractFunctionElement
+MaximaFunction = MaximaAbstractFunction
 
 
-# Thanks to the MRO for multiple inheritance used by the Sage's Python,
-# this should work as expected
-class MaximaFunction(MaximaAbstractFunction, ExpectFunction):
-    pass
-#    def __init__(self, parent, name):
-#        MaximaAbstractFunction.__init__(self, parent, name)
-#        ExpectFunction.__init__(self, parent, name)
-
-
-# Thanks to the MRO for multiple inheritance used by the Sage's Python,
-# this should work as expected
+@instancedoc
 class MaximaElementFunction(MaximaElement, MaximaAbstractElementFunction):
     """
     Maxima user-defined functions.

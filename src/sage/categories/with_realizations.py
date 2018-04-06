@@ -115,12 +115,9 @@ def WithRealizations(self):
     ``Out``, as above one can just do::
 
         sage: A.inject_shorthands()
-        Injecting F as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
-        doctest:...: RuntimeWarning: redefining global value `F`
-        Injecting In as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the In basis
-        doctest:...: RuntimeWarning: redefining global value `In`
-        Injecting Out as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Out basis
-        doctest:...: RuntimeWarning: redefining global value `Out`
+        Defining F as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
+        Defining In as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the In basis
+        Defining Out as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Out basis
 
     .. RUBRIC:: Rationale
 
@@ -180,7 +177,7 @@ def WithRealizations(self):
         sage: In[{1}] * x
         Traceback (most recent call last):
         ...
-        TypeError: unsupported operand parent(s) for '*': 'The subset algebra of {1, 2, 3} over Rational Field in the In basis' and 'Univariate Polynomial Ring in x over The subset algebra of {1, 2, 3} over Rational Field'
+        TypeError: unsupported operand parent(s) for *: 'The subset algebra of {1, 2, 3} over Rational Field in the In basis' and 'Univariate Polynomial Ring in x over The subset algebra of {1, 2, 3} over Rational Field'
 
     .. RUBRIC:: The category of realizations of `A`
 

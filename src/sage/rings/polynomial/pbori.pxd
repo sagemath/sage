@@ -1,3 +1,5 @@
+from libcpp.memory cimport unique_ptr, shared_ptr, make_shared
+
 from sage.rings.polynomial.multi_polynomial_ring_generic cimport \
                                                 MPolynomialRing_generic
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial
@@ -18,6 +20,8 @@ cdef class BooleanPolynomialRing(MPolynomialRing_generic):
 
 cdef class BooleanPolynomial(MPolynomial):
     cdef PBPoly _pbpoly
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
 
 cdef class BooleSet:
     cdef BooleanPolynomialRing _ring
@@ -30,6 +34,7 @@ cdef class CCuddNavigator:
 cdef class BooleanMonomial(MonoidElement):
     cdef PBMonom _pbmonom
     cdef BooleanPolynomialRing _ring
+    cpdef _mul_(self, other)
 
 cdef class BooleanMonomialVariableIterator:
     cdef object parent
@@ -44,34 +49,42 @@ cdef class BooleanMonomialIterator:
     cdef PBMonomIter _end
     cdef Py_ssize_t* pbind
 
+# Wrap PBPolyIter using pointers because there is no default constructor
 cdef class BooleanPolynomialIterator:
     cdef BooleanPolynomial obj
-    cdef PBPolyIter _iter
-    cdef PBPolyIter _end
+    cdef PBPolyIter* _iter
+    cdef PBPolyIter* _end
 
+# Wrap PBSetIter using pointers because there is no default constructor
 cdef class BooleSetIterator:
     cdef object _parent
     cdef BooleanPolynomialRing _ring
-    cdef PBSetIter _iter
-    cdef PBSetIter _end
+    cdef PBSetIter* _iter
+    cdef PBSetIter* _end
     cdef BooleSet obj
 
 cdef class BooleanPolynomialEntry:
     cdef public BooleanPolynomial p
 
+# Wrap PBRedStrategy using shared_ptr because there is no default
+# constructor and because multiple Python objects may point to
+# the same PBRedStrategy
 cdef class ReductionStrategy:
-    cdef PBRedStrategy *_strat
-    cdef bint _borrowed
+    cdef shared_ptr[PBRedStrategy] _strat
     cdef BooleanPolynomialRing _parent
 
+# Wrap PBGBStrategy using shared_ptr because there is no default
+# constructor and because multiple Python objects may point to
+# the same PBGBStrategy
 cdef class GroebnerStrategy:
-    cdef PBGBStrategy* _strat
-    cdef PBRefCounter _count
+    cdef shared_ptr[PBGBStrategy] _strat
     cdef BooleanPolynomialRing _parent
     cdef public ReductionStrategy reduction_strategy
 
+# Wrap PBFGLMStrategy using unique_ptr for analogy with
+# ReductionStrategy and GroebnerStrategy
 cdef class FGLMStrategy:
-    cdef PBFglmStrategy _strat
+    cdef unique_ptr[PBFGLMStrategy] _strat
     cdef BooleanPolynomialRing _parent
 
 cdef class BooleanPolynomialVector:
@@ -103,3 +116,9 @@ cdef class MonomialFactory:
 cdef class PolynomialFactory:
     cdef BooleanPolynomialRing _ring
     cdef PBPolyFactory _factory
+
+
+# Cython doesn't seem to support constructors with additional template
+# parameters, so we declare this aliasing constructor as special case
+cdef extern from *:
+    cdef shared_ptr[T] shared_ptr_alias_PBGBStrategy "std::shared_ptr"[T](shared_ptr[PBGBStrategy]&, T*)

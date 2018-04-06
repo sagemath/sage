@@ -81,7 +81,7 @@ def apply_to_monomial(int i, int j, int a, int b, int c, int d):
     list of ints, which are the coefficients
     of `Y^j, Y^{j-1}X, \ldots, X^j`, respectively.
 
-    EXAMPLE:
+    EXAMPLES:
 
     We compute that `(X+Y)^2(X-Y) = X^3 + X^2Y - XY^2 - Y^3`::
 

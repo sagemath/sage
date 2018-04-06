@@ -373,7 +373,7 @@ def affine_factorizations(w, l, weight=None):
 
     - ``w`` -- an (affine) permutation or element of the (affine) Weyl group
 
-    - ``l`` -- nonegative integer
+    - ``l`` -- nonnegative integer
 
     - ``weight`` -- (default: None) tuple of nonnegative integers specifying the length of the factors
 

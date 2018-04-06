@@ -107,6 +107,7 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from six import iteritems
 
 from sage.rings.all import ZZ
 from sage.modules.all import vector
@@ -257,9 +258,9 @@ def WeierstrassMap(polynomial, variables=None):
         result = vector(ZZ, result)
         result.set_immutable()
         return result
-    X_dict = dict( (homogenize(e,2), v) for e,v in X.dict().iteritems() )
-    Y_dict = dict( (homogenize(e,3), v) for e,v in Y.dict().iteritems() )
-    Z_dict = dict( (homogenize(e,1), v) for e,v in Z.dict().iteritems() )
+    X_dict = dict((homogenize(e,2), v) for e, v in iteritems(X.dict()))
+    Y_dict = dict((homogenize(e,3), v) for e, v in iteritems(Y.dict()))
+    Z_dict = dict((homogenize(e,1), v) for e, v in iteritems(Z.dict()))
     # shift to non-negative exponents if necessary
     min_deg = [0]*R.ngens()
     for var in variables:
@@ -269,9 +270,9 @@ def WeierstrassMap(polynomial, variables=None):
         min_Z = min([ e[i] for e in Z_dict ]) if len(Z_dict)>0 else 0
         min_deg[i] = min( min_X/2, min_Y/3, min_Z )
     min_deg = vector(min_deg)
-    X_dict = dict( (tuple(e-2*min_deg), v) for e,v in X_dict.iteritems() )
-    Y_dict = dict( (tuple(e-3*min_deg), v) for e,v in Y_dict.iteritems() )
-    Z_dict = dict( (tuple(e-1*min_deg), v) for e,v in Z_dict.iteritems() )
+    X_dict = dict((tuple(e-2*min_deg), v) for e, v in iteritems(X_dict))
+    Y_dict = dict((tuple(e-3*min_deg), v) for e, v in iteritems(Y_dict))
+    Z_dict = dict((tuple(e-1*min_deg), v) for e, v in iteritems(Z_dict))
     return (R(X_dict), R(Y_dict), R(Z_dict))
 
 

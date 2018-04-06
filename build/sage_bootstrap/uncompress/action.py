@@ -15,11 +15,11 @@ from __future__ import print_function
 
 import os
 
-from sage_bootstrap.uncompress.tar_file import SageTarFile
+from sage_bootstrap.uncompress.tar_file import SageTarFile, SageTarXZFile
 from sage_bootstrap.uncompress.zip_file import SageZipFile
 from sage_bootstrap.util import retry
 
-ARCHIVE_TYPES = [SageTarFile, SageZipFile]
+ARCHIVE_TYPES = [SageTarFile, SageZipFile, SageTarXZFile]
 
 
 

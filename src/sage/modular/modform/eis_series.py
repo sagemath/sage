@@ -2,8 +2,6 @@
 """
 Eisenstein Series
 """
-from __future__ import absolute_import
-
 #*****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
 #
@@ -13,6 +11,8 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
+from six import integer_types
 
 import sage.misc.all as misc
 import sage.modular.dirichlet as dirichlet
@@ -294,7 +294,7 @@ def __find_eisen_chars_gammaH(N, H, k):
     Find all triples `(\psi_1, \psi_2, t)` that give rise to an Eisenstein series of weight `k` on
     `\Gamma_H(N)`.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: pars =  sage.modular.modform.eis_series.__find_eisen_chars_gammaH(15, [2], 5)
         sage: [(x[0].values_on_gens(), x[1].values_on_gens(), x[2]) for x in pars]
@@ -489,10 +489,9 @@ def compute_eisenstein_params(character, k):
         sage: len(sage.modular.modform.eis_series.compute_eisenstein_params(GammaH(15, [4]), 3))
         8
     """
-    if isinstance(character, (int,long,Integer)):
+    if isinstance(character, integer_types + (Integer,)):
         return __find_eisen_chars_gamma1(character, k)
     elif isinstance(character, GammaH_class):
         return __find_eisen_chars_gammaH(character.level(), character._generators_for_H(), k)
     else:
         return __find_eisen_chars(character, k)
-

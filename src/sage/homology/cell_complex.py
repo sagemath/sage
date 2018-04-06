@@ -43,9 +43,8 @@ by developers producing new classes, not casual users.
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-
-
 from __future__ import absolute_import
+from six.moves import range
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
@@ -171,6 +170,9 @@ class GenericCellComplex(SageObject):
         try:
             return max([x.dimension() for x in self._facets])
         except AttributeError:
+            if len(self.cells()) == 0:
+                # The empty cell complex has dimension -1.
+                return -1
             return max(self.cells())
 
     def n_cells(self, n, subcomplex=None):
@@ -519,7 +521,7 @@ class GenericCellComplex(SageObject):
         from sage.homology.homology_group import HomologyGroup
 
         if dim is not None:
-            if isinstance(dim, (list, tuple)):
+            if isinstance(dim, (list, tuple, range)):
                 low = min(dim) - 1
                 high = max(dim) + 2
             else:
@@ -549,11 +551,11 @@ class GenericCellComplex(SageObject):
             if H:
                 answer = {}
                 if not dims:
-                    dims =range(self.dimension() + 1)
+                    dims = range(self.dimension() + 1)
                 for d in dims:
                     answer[d] = H.get(d, HomologyGroup(0, base_ring))
                 if dim is not None:
-                    if not isinstance(dim, (list, tuple)):
+                    if not isinstance(dim, (list, tuple, range)):
                         answer = answer.get(dim, HomologyGroup(0, base_ring))
                 return answer
 
@@ -572,9 +574,9 @@ class GenericCellComplex(SageObject):
         answer = C.homology(base_ring=base_ring, generators=generators,
                             verbose=verbose, algorithm=algorithm)
         if dim is None:
-            dim = range(self.dimension()+1)
+            dim = range(self.dimension() + 1)
         zero = HomologyGroup(0, base_ring)
-        if isinstance(dim, (list, tuple)):
+        if isinstance(dim, (list, tuple, range)):
             return dict([d, answer.get(d, zero)] for d in dim)
         return answer.get(dim, zero)
 
@@ -982,8 +984,8 @@ class GenericCellComplex(SageObject):
         :meth:`~sage.homology.cubical_complex.Cube.alexander_whitney`. Then
         the method for simplicial complexes just calls the method for
         individual simplices, and similarly for cubical complexes. For
-        `\Delta`-complexes, the method is instead defined at the level
-        of the cell complex.
+        `\Delta`-complexes and simplicial sets, the method is instead
+        defined at the level of the cell complex.
 
         EXAMPLES::
 
@@ -1053,6 +1055,37 @@ class GenericCellComplex(SageObject):
             NotImplementedError
         """
         raise NotImplementedError
+
+    def is_connected(self):
+        """
+        True if this cell complex is connected.
+
+        EXAMPLES::
+
+            sage: V = SimplicialComplex([[0,1,2],[3]])
+            sage: V
+            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (3,)}
+            sage: V.is_connected()
+            False
+            sage: X = SimplicialComplex([[0,1,2]])
+            sage: X.is_connected()
+            True
+            sage: U = simplicial_complexes.ChessboardComplex(3,3)
+            sage: U.is_connected()
+            True
+            sage: W = simplicial_complexes.Sphere(3)
+            sage: W.is_connected()
+            True
+            sage: S = SimplicialComplex([[0,1],[2,3]])
+            sage: S.is_connected()
+            False
+
+            sage: cubical_complexes.Sphere(0).is_connected()
+            False
+            sage: cubical_complexes.Sphere(2).is_connected()
+            True
+        """
+        return self.graph().is_connected()
 
     @abstract_method
     def n_skeleton(self, n):

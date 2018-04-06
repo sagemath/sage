@@ -11,6 +11,8 @@ cdef class SkewPolynomial(AlgebraElement):
     cdef SkewPolynomial _new_c(self,list coeffs,Parent P,char check=*)
     cpdef SkewPolynomial _new_constant_poly(self,RingElement a,Parent P,char check=*)
     cpdef _neg_(self)
+    cpdef _floordiv_(self, right)
+    cpdef _mod_(self, right)
 
     cpdef bint is_zero(self)
     cpdef bint is_one(self)
@@ -27,9 +29,11 @@ cdef class SkewPolynomial_generic_dense(SkewPolynomial):
     cdef list _coeffs
 
     cdef void __normalize(self)
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
 
     cpdef dict dict(self)
-    cpdef list list(self)
+    cpdef list list(self, bint copy=*)
 
     cpdef right_power_mod(self, exp, modulus)
     cpdef left_power_mod(self, exp, modulus)

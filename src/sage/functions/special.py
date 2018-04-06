@@ -121,9 +121,9 @@ REFERENCES:
 - Abramowitz and Stegun: Handbook of Mathematical Functions,
   http://www.math.sfu.ca/~cbm/aands/
 
-- http://en.wikipedia.org/wiki/Spherical_harmonics
+- :wikipedia:`Spherical_harmonics`
 
-- http://en.wikipedia.org/wiki/Helmholtz_equation
+- :wikipedia:`Helmholtz_equation`
 
 - Online Encyclopedia of Special Function
   http://algo.inria.fr/esf/index.html
@@ -165,7 +165,7 @@ from sage.misc.latex import latex
 from sage.rings.all import ZZ, RR, RDF, CDF
 from sage.functions.other import real, imag, log_gamma
 from sage.symbolic.constants import pi
-from sage.symbolic.function import BuiltinFunction, is_inexact
+from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
 from sage.calculus.calculus import maxima
 from sage.structure.element import parent
@@ -184,9 +184,9 @@ class SphericalHarmonic(BuiltinFunction):
 
         sage: x, y = var('x, y')
         sage: spherical_harmonic(3, 2, x, y)
-        15/4*sqrt(7/30)*cos(x)*e^(2*I*y)*sin(x)^2/sqrt(pi)
+        1/8*sqrt(30)*sqrt(7)*cos(x)*e^(2*I*y)*sin(x)^2/sqrt(pi)
         sage: spherical_harmonic(3, 2, 1, 2)
-        15/4*sqrt(7/30)*cos(1)*e^(4*I)*sin(1)^2/sqrt(pi)
+        1/8*sqrt(30)*sqrt(7)*cos(1)*e^(4*I)*sin(1)^2/sqrt(pi)
         sage: spherical_harmonic(3 + I, 2., 1, 2)
         -0.351154337307488 - 0.415562233975369*I
         sage: latex(spherical_harmonic(3, 2, x, y, hold=True))
@@ -221,17 +221,29 @@ class SphericalHarmonic(BuiltinFunction):
             sage: spherical_harmonic(1/2, 2, x, y)
             spherical_harmonic(1/2, 2, x, y)
             sage: spherical_harmonic(3, 2, x, y)
-            15/4*sqrt(7/30)*cos(x)*e^(2*I*y)*sin(x)^2/sqrt(pi)
+            1/8*sqrt(30)*sqrt(7)*cos(x)*e^(2*I*y)*sin(x)^2/sqrt(pi)
             sage: spherical_harmonic(3, 2, 1, 2)
-            15/4*sqrt(7/30)*cos(1)*e^(4*I)*sin(1)^2/sqrt(pi)
+            1/8*sqrt(30)*sqrt(7)*cos(1)*e^(4*I)*sin(1)^2/sqrt(pi)
             sage: spherical_harmonic(3 + I, 2., 1, 2)
             -0.351154337307488 - 0.415562233975369*I
+
+        Check that :trac:`20939` is fixed::
+
+            sage: ex = spherical_harmonic(3,2,1,2*pi/3)
+            sage: QQbar(ex * sqrt(pi)/cos(1)/sin(1)^2).minpoly()
+            x^4 + 105/32*x^2 + 11025/1024
         """
         if n in ZZ and m in ZZ and n > -1:
             if abs(m) > n:
                 return ZZ(0)
-            return maxima("spherical_harmonic({},{},{},{})".format(
-                ZZ(n), ZZ(m), maxima(theta), maxima(phi))).sage()
+            if m == 0 and theta.is_zero():
+                return sqrt((2*n+1)/4/pi)
+            from sage.arith.misc import factorial
+            from sage.functions.trig import cos
+            from sage.functions.orthogonal_polys import gen_legendre_P
+            return (sqrt(factorial(n-m) * (2*n+1) / (4*pi * factorial(n+m))) *
+                    exp(I*m*phi) * gen_legendre_P(n, m, cos(theta)) *
+                    (-1)**m).simplify_trig()
 
     def _evalf_(self, n, m, theta, phi, parent, **kwds):
         r"""
@@ -1001,34 +1013,21 @@ class EllipticPi(BuiltinFunction):
 elliptic_pi = EllipticPi()
 
 
-def error_fcn(t):
-    r"""
-    The complementary error function
-    `\frac{2}{\sqrt{\pi}}\int_t^\infty e^{-x^2} dx` (t belongs
-    to RR).  This function is currently always
-    evaluated immediately.
+def error_fcn(x):
+    """
+    Deprecated in :trac:`21819`. Please use ``erfc()``.
 
     EXAMPLES::
 
-        sage: error_fcn(6)
-        2.15197367124989e-17
-        sage: error_fcn(RealField(100)(1/2))
-        0.47950012218695346231725334611
-
-    Note this is literally equal to `1 - erf(t)`::
-
-        sage: 1 - error_fcn(0.5)
-        0.520499877813047
-        sage: erf(0.5)
-        0.520499877813047
+        sage: error_fcn(x)
+        doctest:warning
+        ...
+        DeprecationWarning: error_fcn() is deprecated. Please use erfc()
+        See http://trac.sagemath.org/21819 for details.
+        erfc(x)
     """
-    try:
-        return t.erfc()
-    except AttributeError:
-        try:
-            return RR(t).erfc()
-        except Exception:
-            raise NotImplementedError
-
-
+    from .error import erfc
+    from sage.misc.superseded import deprecation
+    deprecation(21819, "error_fcn() is deprecated. Please use erfc()")
+    return erfc(x)
 

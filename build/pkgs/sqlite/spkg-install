@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo >&2 "SAGE_LOCAL undefined ... exiting"
     echo >&2 "Maybe run 'sage --sh'?"
@@ -36,10 +34,7 @@ if uname -sr |grep 'Darwin [0-8][.]' >/dev/null; then
 fi
 
 
-# We need to explicitly add --enable-readline because of a bug in the
-# configure script of SQLite 3.13.0:
-# http://www.mail-archive.com/sqlite-users%40mailinglists.sqlite.org/msg08804.html
-./configure --prefix="$SAGE_LOCAL" --enable-readline --libdir="$SAGE_LOCAL/lib"
+./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
 if [ $? -ne 0 ]; then
     echo >&2 "Error configuring sqlite."
     exit 1

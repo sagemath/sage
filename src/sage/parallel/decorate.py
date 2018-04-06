@@ -2,6 +2,7 @@ r"""
 Decorate interface for parallel computation
 """
 from __future__ import print_function, absolute_import
+from six import integer_types
 
 import types
 
@@ -10,6 +11,7 @@ from sage.rings.all import Integer
 from .reference import parallel_iter as p_iter_reference
 from .use_fork import p_iter_fork
 from . import multiprocessing_sage
+from sage.docs.instancedoc import instancedoc
 
 
 def normalize_input(a):
@@ -68,7 +70,7 @@ class Parallel:
 
         self.p_iter = None
 
-        if isinstance(p_iter, (int, long, Integer)):
+        if isinstance(p_iter, integer_types + (Integer,)):
             p_iter, ncpus = 'fork', p_iter
 
         if ncpus is None:
@@ -119,6 +121,8 @@ class Parallel:
         """
         return ParallelFunction(self, f)
 
+
+@instancedoc
 class ParallelFunction(object):
     """
     Class which parallelizes a function or class method.
@@ -266,7 +270,7 @@ for a in args[0]))
         from sage.misc.sageinspect import sage_getsource
         return sage_getsource(self.func)
 
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         Returns the docstring for this object, which is just the
         docstring for the underlying function.  See
@@ -284,8 +288,7 @@ for a in args[0]))
             sage: sage_getdoc(p(f))
             'Test docstring\n'
         """
-        from sage.misc.sageinspect import sage_getdoc
-        return sage_getdoc(self.func)
+        return self.func.__doc__
 
 
 def parallel(p_iter='fork', ncpus=None, **kwds):

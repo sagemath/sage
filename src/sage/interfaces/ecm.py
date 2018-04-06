@@ -36,6 +36,7 @@ seed, but currently there is no facility to do so.
 #                   http://www.gnu.org/licenses/
 ###############################################################################
 from __future__ import print_function
+from six import iteritems
 
 import os
 import re
@@ -140,9 +141,6 @@ class ECM(SageObject):
         - ``ve`` -- integer `n`. Verbosely show short (`< n`
           character) expressions on each loop
 
-        - ``cofdec`` -- boolean. Force cofactor output in decimal
-          (even if expressions are used )
-
         - ``B2scale`` -- integer. Multiplies the default B2 value
 
         - ``go`` -- integer. Preload with group order val, which can
@@ -175,7 +173,7 @@ class ECM(SageObject):
     def _make_cmd(self, B1, B2, kwds):
         ecm = ['ecm']
         options = []
-        for x, v in kwds.iteritems():
+        for x, v in iteritems(kwds):
             if v is False:
                 continue
             options.append('-{0}'.format(x))
@@ -395,15 +393,15 @@ class ECM(SageObject):
             if m is not None:
                 factor = m.group('factor')
                 primality = m.group('primality')
-                assert primality in ['probable prime', 'composite']
-                result += [(ZZ(factor), primality == 'probable prime')]
+                assert primality in ['prime', 'composite']
+                result += [(ZZ(factor), primality == 'prime')]
                 continue  # cofactor on the next line
             m = self._found_cofactor_re.match(line)
             if m is not None:
                 cofactor = m.group('cofactor')
                 primality = m.group('primality')
-                assert primality in ['Probable prime', 'Composite']
-                result += [(ZZ(cofactor), primality == 'Probable prime')]
+                assert primality in ['Prime', 'Composite']
+                result += [(ZZ(cofactor), primality == 'Prime')]
                 # assert len(result) == 2
                 return result
         raise ValueError('failed to parse ECM output')
@@ -500,7 +498,6 @@ class ECM(SageObject):
         if factor_digits is not None:
             B1 = self.recommended_B1(factor_digits)
         kwds['one'] = True
-        kwds['cofdec'] = True
         cmd = self._make_cmd(B1, None, kwds)
         out = self._run_ecm(cmd, n)
         return self._parse_output(n, out)
@@ -534,7 +531,7 @@ class ECM(SageObject):
 
             ECM is not a good primality test. Not finding a
             factorization is only weak evidence for `n` being
-            prime. You shoud run a **good** primality test before
+            prime. You should run a **good** primality test before
             calling this function.
 
         EXAMPLES::
@@ -546,7 +543,7 @@ class ECM(SageObject):
 
         Note that the input number cannot have more than 4095 digits::
 
-            sage: f=2^2^14+1
+            sage: f = 2^2^14+1
             sage: ecm.find_factor(f)
             Traceback (most recent call last):
             ...
@@ -832,8 +829,8 @@ Using B1=16578, B2=16578-3162402, polynomial x^1, sigma=2617498039
 Step 1 took 12ms
 Step 2 took 17ms
 ********** Factor found in step 2: 79792266297612017
-Found probable prime factor of 17 digits: 79792266297612017
-Probable prime cofactor 6366805760909027985741435139224233 has 34 digits
+Found prime factor of 17 digits: 79792266297612017
+Prime cofactor 6366805760909027985741435139224233 has 34 digits
 """
 
 TEST_ECM_OUTPUT_2 = """
@@ -843,8 +840,8 @@ Using B1=2000, B2=147396, polynomial x^1, sigma=434130265
 Step 1 took 2ms
 Step 2 took 3ms
 ********** Factor found in step 2: 179424673
-Found probable prime factor of  9 digits: 179424673
-Probable prime cofactor 179424673 has 9 digits
+Found prime factor of  9 digits: 179424673
+Prime cofactor 179424673 has 9 digits
 """
 
 TEST_ECM_OUTPUT_3 = """
@@ -862,7 +859,7 @@ Using B1=2806, B2=2806-224406, polynomial x^1, sigma=478195111
 Step 1 took 5ms
 Step 2 took 4ms
 ********** Factor found in step 2: 197002597249
-Found probable prime factor of 12 digits: 197002597249
+Found prime factor of 12 digits: 197002597249
 Composite cofactor 339872432034468861533158743041639097889948066859 has 48 digits
 """
 
@@ -874,5 +871,5 @@ Step 1 took 4ms
 Step 2 took 2ms
 ********** Factor found in step 2: 265748496095531068869578877937
 Found composite factor of 30 digits: 265748496095531068869578877937
-Probable prime cofactor 251951573867253012259144010843 has 30 digits
+Prime cofactor 251951573867253012259144010843 has 30 digits
 """

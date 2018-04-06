@@ -8,7 +8,7 @@ Sage's manuals are written in `ReST <http://docutils.sourceforge.net/rst.html>`_
 (reStructuredText), and generated with the software `Sphinx
 <http://sphinx.pocoo.org>`_:
 
-.. list-table::
+.. LIST-TABLE::
    :widths: 4 12
    :header-rows: 1
 
@@ -102,7 +102,7 @@ by Sage, you can link toward it without specifying its full path::
 
 **Sage-specific roles:** Sage defines several specific *roles*:
 
-.. list-table::
+.. LIST-TABLE::
    :widths: 4 4 4
    :header-rows: 0
 
@@ -219,10 +219,10 @@ Syntax Highlighting Cython Code
 ===============================
 
 If you want to write :ref:`Cython <chapter-cython>` code in a ReST file, precede
-the code block by ``.. code-block:: cython`` instead of the usual ``::``. Enable
-syntax-highlighting in a whole file with ``.. highlight:: cython``. Example:
+the code block by ``.. CODE-BLOCK:: cython`` instead of the usual ``::``. Enable
+syntax-highlighting in a whole file with ``.. HIGHLIGHT:: cython``. Example:
 
-.. code-block:: cython
+.. CODE-BLOCK:: cython
 
     cdef extern from "descrobject.h":
         ctypedef struct PyMethodDef:

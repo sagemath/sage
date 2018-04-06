@@ -22,8 +22,9 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six import iteritems
+
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modular.modsym.all import P1List
 from sage.rings.integer import Integer
@@ -1515,7 +1516,7 @@ class ManinRelations(PollackStevensModularDomain):
     def prep_hecke_on_gen_list(self, l, gen, modulus=None):
         r"""
         Return the precomputation to compute `T_l` in a way that
-        speeds up the hecke calculation.
+        speeds up the Hecke calculation.
 
         Namely, returns a list of the form [h,A].
 
@@ -1539,7 +1540,7 @@ class ManinRelations(PollackStevensModularDomain):
             4
         """
         ans = []
-        for h, vh in self.prep_hecke_on_gen(l, gen, modulus=modulus).iteritems():
+        for h, vh in iteritems(self.prep_hecke_on_gen(l, gen, modulus=modulus)):
             ans.extend([(h, v) for v in vh])
         return ans
 

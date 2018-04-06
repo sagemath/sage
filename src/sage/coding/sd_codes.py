@@ -1,5 +1,5 @@
 r"""
-Deprecated name for sage.coding.self_dual_codes
+Deprecated module now known as sage.coding.self_dual_codes
 """
 
 from sage.misc.superseded import deprecation

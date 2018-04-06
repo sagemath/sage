@@ -24,6 +24,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six import iteritems
 
 from sage.matrix.constructor import Matrix
 from sage.rings.all import ZZ, QQ, FiniteField, GF
@@ -35,6 +36,7 @@ from sage.graphs.graph import Graph
 from sage.matrix.constructor import matrix
 from operator import itemgetter
 from sage.rings.number_field.number_field import NumberField
+
 
 def setprint(X):
     """
@@ -125,7 +127,7 @@ def setprint_s(X, toplevel=False):
     if isinstance(X, frozenset) or isinstance(X, set):
         return '{' + ', '.join([setprint_s(x) for x in sorted(X)]) + '}'
     elif isinstance(X, dict):
-        return '{' + ', '.join([setprint_s(key) + ': ' + setprint_s(val) for key, val in sorted(X.iteritems())]) + '}'
+        return '{' + ', '.join([setprint_s(key) + ': ' + setprint_s(val) for key, val in sorted(iteritems(X))]) + '}'
     elif isinstance(X, str):
         if toplevel:
             return X
@@ -221,28 +223,26 @@ def sanitize_contractions_deletions(matroid, contractions, deletions):
         sage: setprint(sanitize_contractions_deletions(M, [1, 2, 3], 'efg'))
         Traceback (most recent call last):
         ...
-        ValueError: input contractions is not a subset of the groundset.
+        ValueError: [1, 2, 3] is not a subset of the groundset
         sage: setprint(sanitize_contractions_deletions(M, 'efg', [1, 2, 3]))
         Traceback (most recent call last):
         ...
-        ValueError: input deletions is not a subset of the groundset.
+        ValueError: [1, 2, 3] is not a subset of the groundset
         sage: setprint(sanitize_contractions_deletions(M, 'ade', 'efg'))
         Traceback (most recent call last):
         ...
         ValueError: contraction and deletion sets are not disjoint.
 
     """
-    if contractions is None:
-        contractions = frozenset([])
-    contractions = frozenset(contractions)
-    if not matroid.groundset().issuperset(contractions):
-        raise ValueError("input contractions is not a subset of the groundset.")
+    if not contractions:
+        contractions = frozenset()
+    else:
+        contractions = matroid._subset(contractions)
 
-    if deletions is None:
-        deletions = frozenset([])
-    deletions = frozenset(deletions)
-    if not matroid.groundset().issuperset(deletions):
-        raise ValueError("input deletions is not a subset of the groundset.")
+    if not deletions:
+        deletions = frozenset()
+    else:
+        deletions = matroid._subset(deletions)
 
     if not contractions.isdisjoint(deletions):
         raise ValueError("contraction and deletion sets are not disjoint.")
@@ -367,7 +367,7 @@ def spanning_forest(M):
 
     INPUT:
 
-    - ``M`` -- a matrix defining a bipartite graph G. The vertices are the 
+    - ``M`` -- a matrix defining a bipartite graph G. The vertices are the
       rows and columns, if `M[i,j]` is non-zero, then there is an edge
       between row `i` and column `j`.
 
@@ -401,19 +401,19 @@ def spanning_forest(M):
 
 def spanning_stars(M):
     r"""
-    Returns the edges of a connected subgraph that is a union of 
+    Returns the edges of a connected subgraph that is a union of
     all edges incident some subset of vertices.
 
     INPUT:
 
-    - ``M`` -- a matrix defining a bipartite graph G. The vertices are the 
+    - ``M`` -- a matrix defining a bipartite graph G. The vertices are the
       rows and columns, if `M[i,j]` is non-zero, then there is an edge
       between row i and column 0.
 
     OUTPUT:
 
     A list of tuples `(row,column)` in a spanning forest of the bipartite graph defined by ``M``
-    
+
     EXAMPLES::
 
         sage: edges = sage.matroids.utilities.spanning_stars(matrix([[1,1,1],[1,1,1],[1,1,1]]))
@@ -551,7 +551,7 @@ def lift_cross_ratios(A, lift_map = None):
         True
 
     """
-    for s,t in lift_map.iteritems():
+    for s, t in iteritems(lift_map):
         source_ring = s.parent()
         target_ring = t.parent()
         break
@@ -622,13 +622,13 @@ def lift_cross_ratios(A, lift_map = None):
         div = True
         for entry2 in entries:
             if div:
-                for cr, degree in F[entry2].iteritems():
+                for cr, degree in iteritems(F[entry2]):
                     if cr in monomial:
                         monomial[cr] = monomial[cr]+ degree
                     else:
                         monomial[cr] = degree
             else:
-                for cr, degree in F[entry2].iteritems():
+                for cr, degree in iteritems(F[entry2]):
                     if cr in monomial:
                         monomial[cr] = monomial[cr] - degree
                     else:
@@ -640,9 +640,9 @@ def lift_cross_ratios(A, lift_map = None):
 
     # compute each entry of Z as the product of lifted cross ratios
     Z = Matrix(target_ring, A.nrows(), A.ncols())
-    for entry, monomial in F.iteritems():
+    for entry, monomial in iteritems(F):
         Z[entry] = plus_one2
-        for cr,degree in monomial.iteritems():
+        for cr,degree in iteritems(monomial):
             if cr == minus_one1:
                 Z[entry] = Z[entry] * (minus_one2**degree)
             else:
@@ -722,3 +722,63 @@ def lift_map(target):
             R(-5)**(-1): G(-t)**(-1), R(5)**2: G(t)**2, R(5)**(-2): G(t)**(-2) }
 
     raise NotImplementedError(target)
+
+def split_vertex(G, u, v=None, edges=None):
+    """
+    Split a vertex in a graph.
+
+    If an edge is inserted between the vertices after splitting, this
+    corresponds to a graphic coextension of a matroid.
+
+    INPUT:
+
+    - ``G`` -- A SageMath Graph.
+    - ``u`` -- A vertex in ``G``.
+    - ``v`` -- (optional) The name of the new vertex after the splitting. If
+      ``v`` is specified and already in the graph, it must be an isolated vertex.
+    - ``edges`` -- (optional) An iterable container of edges on ``u`` that
+      move to ``v`` after the splitting. If ``None``, ``v`` will be an isolated
+      vertex. The edge labels must be specified.
+
+    EXAMPLES::
+
+        sage: from sage.matroids.utilities import split_vertex
+        sage: G = graphs.BullGraph()
+        sage: split_vertex(G, u = 1, v = 'a', edges = [(1, 3)])
+        Traceback (most recent call last):
+        ...
+        ValueError: the edges are not all incident with u
+        sage: split_vertex(G, u = 1, v = 'a', edges = [(1, 3, None)])
+        sage: G.edges()
+        [(0, 1, None), (0, 2, None), (1, 2, None), (2, 4, None), (3, 'a', None)]
+
+    """
+    if v is None:
+        v = G.add_vertex()
+    elif v not in G:
+        G.add_vertex(v)
+    elif G.degree(v) != 0:
+        raise ValueError("v must be a new vertex or an isolated vertex")
+    if edges is None:
+        edges = []
+
+    edges_on_u = G.edges_incident(u)
+
+    for e in edges:
+        if e not in edges_on_u:
+            # if e is a loop, put it on u and v
+            # otherwise raise an error
+            if e[0] == e[1]:
+                G.add_edge(u, v, e[2])
+                G.delete_edge(e)
+            else:
+                raise ValueError("the edges are not all incident with u")
+
+        elif e[0] == u:
+            G.add_edge(v, e[1], e[2])
+        elif e[1] == u:
+            G.add_edge(e[0], v, e[2])
+        G.delete_edge(e)
+
+    # This modifies the graph without needing to return anything
+    return

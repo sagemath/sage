@@ -2,11 +2,10 @@ r"""
 Morphisms between finitely generated modules over a PID
 
 AUTHOR:
+
 - William Stein, 2009
 """
-from __future__ import absolute_import
-
-####################################################################################
+# *************************************************************************
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -19,10 +18,12 @@ from __future__ import absolute_import
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-####################################################################################
+# *************************************************************************
+from __future__ import absolute_import
 
 from sage.categories.morphism import Morphism, is_Morphism
 from .fgp_module import DEBUG
+from sage.structure.richcmp import richcmp, op_NE
 
 
 class FGP_Morphism(Morphism):
@@ -150,11 +151,15 @@ class FGP_Morphism(Morphism):
         self.__im_gens = tuple([self(x) for x in self.domain().gens()])
         return self.__im_gens
 
-    def _cmp_(self, right):
+    def _richcmp_(self, right, op):
         """
+        Comparison of ``self`` and ``right``.
+
         EXAMPLES::
 
-            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ); W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2]); Q = V/W
+            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
+            sage: W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
+            sage: Q = V/W
             sage: phi = Q.hom([Q.0,Q.0 + 2*Q.1])
             sage: phi.im_gens()
             ((1, 0), (1, 2))
@@ -166,21 +171,19 @@ class FGP_Morphism(Morphism):
             sage: phi == psi
             False
             sage: psi = Q.hom([Q.0,Q.0 - 2*Q.1])
-            sage: cmp(phi,psi)
-            -1
-            sage: cmp(psi,phi)
-            1
+            sage: phi < psi
+            True
+            sage: psi >= phi
+            True
             sage: psi = Q.hom([Q.0,Q.0 + 2*Q.1])
             sage: phi == psi
             True
         """
         a = (self.domain(), self.codomain())
         b = (right.domain(), right.codomain())
-        c = cmp(a,b)
-        if c: return c
-        return cmp(self.im_gens(), right.im_gens())
-
-    __cmp__ = _cmp_
+        if a != b:
+            return (op == op_NE)
+        return richcmp(self.im_gens(), right.im_gens(), op)
 
     def __add__(self, right):
         """

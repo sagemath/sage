@@ -36,6 +36,7 @@ AUTHORS:
 - Eric Gourgoulhon, Michal Bejger (2013-2015) : initial version
 - Marco Mancini (2015): parallelization of vector field plots
 - Travis Scrimshaw (2016): review tweaks
+- Eric Gourgoulhon (2017): vector fields inherit from multivector fields
 
 REFERENCES:
 
@@ -47,7 +48,7 @@ REFERENCES:
 """
 
 #******************************************************************************
-#       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#       Copyright (C) 2015, 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2015 Marco Mancini <marco.mancini@obspm.fr>
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
@@ -58,12 +59,12 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.tensor.modules.free_module_tensor import FiniteRankFreeModuleElement
-from sage.manifolds.differentiable.tensorfield import TensorField
-from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
+from sage.manifolds.differentiable.multivectorfield import (
+                                       MultivectorField, MultivectorFieldParal)
 from sage.misc.decorators import options
 
-class VectorField(TensorField):
+class VectorField(MultivectorField):
     r"""
     Vector field along a differentiable manifold.
 
@@ -101,7 +102,7 @@ class VectorField(TensorField):
 
     INPUT:
 
-    - ``vector_field_module`` -- module `\mathcal{X}(U,\Phi)` of vector
+    - ``vector_field_module`` -- module `\mathfrak{X}(U,\Phi)` of vector
       fields along `U` with values on `M\supset\Phi(U)`
     - ``name`` -- (default: ``None``) name given to the vector field
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the vector
@@ -229,10 +230,10 @@ class VectorField(TensorField):
             Fix ``_test_pickling`` (in the superclass :class:`TensorField`).
 
         """
-        TensorField.__init__(self, vector_field_module, (1,0), name=name,
-                             latex_name=latex_name)
+        MultivectorField.__init__(self, vector_field_module, 1, name=name,
+                                  latex_name=latex_name)
         # Initialization of derived quantities:
-        TensorField._init_derived(self)
+        MultivectorField._init_derived(self)
         # Initialization of list of quantities depending on self:
         self._init_dependencies()
 
@@ -360,7 +361,8 @@ class VectorField(TensorField):
         else:
             resu_name = None
         if self._latex_name is not None and scalar._latex_name is not None:
-            resu_latex = r"{}\left({}\right)".format(self._latex_name , scalar._latex_name)
+            resu_latex = r"{}\left({}\right)".format(self._latex_name ,
+                                                     scalar._latex_name)
         else:
             resu_latex = None
         resu = dom_resu.scalar_field(name=resu_name, latex_name=resu_latex)
@@ -919,9 +921,17 @@ class VectorField(TensorField):
         """
         Return the Lie bracket ``[self, other]``.
 
+        INPUT:
+
+        - ``other`` -- a :class:`VectorField`
+
+        OUTPUT:
+
+        - the :class:`VectorField` ``[self, other]``
+
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure='smooth')
+            sage: M = Manifold(3, 'M')
             sage: X.<x,y,z> = M.chart()
             sage: v = -X.frame()[0] + 2*X.frame()[1] - (x^2 - y)*X.frame()[2]
             sage: w = (z + y) * X.frame()[1] - X.frame()[2]
@@ -929,12 +939,25 @@ class VectorField(TensorField):
             Vector field on the 3-dimensional differentiable manifold M
             sage: vw.display()
             (-x^2 + y + 2) d/dy + (-y - z) d/dz
+
+        Some checks::
+
+            sage: vw == - w.bracket(v)
+            True
+            sage: f = M.scalar_field({X: x+y*z})
+            sage: vw(f) == v(w(f)) - w(v(f))
+            True
+            sage: vw == w.lie_derivative(v)
+            True
+
         """
-        return other.lie_der(self)
+        # Call of the Schouten-Nijenhuis bracket
+        return MultivectorField.bracket(self, other)
 
 #******************************************************************************
 
-class VectorFieldParal(FiniteRankFreeModuleElement, TensorFieldParal, VectorField):
+class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
+                       VectorField):
     r"""
     Vector field along a differentiable manifold, with values on a
     parallelizable manifold.
@@ -973,7 +996,7 @@ class VectorFieldParal(FiniteRankFreeModuleElement, TensorFieldParal, VectorFiel
 
     INPUT:
 
-    - ``vector_field_module`` -- free module `\mathcal{X}(U,\Phi)` of vector
+    - ``vector_field_module`` -- free module `\mathfrak{X}(U,\Phi)` of vector
       fields along `U` with values on `M\supset\Phi(U)`
     - ``name`` -- (default: ``None``) name given to the vector field
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the vector
@@ -1146,13 +1169,13 @@ class VectorFieldParal(FiniteRankFreeModuleElement, TensorFieldParal, VectorFiel
         """
         FiniteRankFreeModuleElement.__init__(self, vector_field_module,
                                              name=name, latex_name=latex_name)
-        # TensorFieldParal attributes:
+        # MultivectorFieldParal attributes:
         self._domain = vector_field_module._domain
         self._ambient_domain = vector_field_module._ambient_domain
         # VectorField attributes:
         self._vmodule = vector_field_module
         # Initialization of derived quantities:
-        TensorFieldParal._init_derived(self)
+        MultivectorFieldParal._init_derived(self)
         VectorField._init_derived(self)
         # Initialization of list of quantities depending on self:
         self._init_dependencies()
@@ -1202,7 +1225,7 @@ class VectorFieldParal(FiniteRankFreeModuleElement, TensorFieldParal, VectorFiel
         - ``del_restrictions`` -- (default: ``True``) determines whether
           the restrictions of ``self`` to subdomains are deleted
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()  # makes M parallelizable
@@ -1210,7 +1233,8 @@ class VectorFieldParal(FiniteRankFreeModuleElement, TensorFieldParal, VectorFiel
             sage: v._del_derived()
 
         """
-        TensorFieldParal._del_derived(self, del_restrictions=del_restrictions)
+        MultivectorFieldParal._del_derived(self,
+                                           del_restrictions=del_restrictions)
         VectorField._del_derived(self)
         self._del_dependencies()
 

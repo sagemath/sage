@@ -268,30 +268,49 @@ http://docs.python.org/library/ for a complete list. ::
     sage: el.__mul__(2)
     2*B[[1, 2, 3]] + 6*B[[1, 3, 2]] + B[[3, 2, 1]]
 
-Some particular actions modify the data structure of ``el``::
-
-    sage: el.rename("bla")
-    sage: el
-    bla
-
 .. note::
+
+    We now create a custom :class:`~sage.structure.element.Element`
+    class to explain the details of how attributes work in Python
+    (you can ignore the ``parent`` in the code below, that is not
+    relevant here)::
+
+        sage: from sage.structure.element import Element
+        sage: class MyElt(Element):
+        ....:     def __init__(self, parent, val):
+        ....:         super(MyElt, self).__init__(parent)
+        ....:         self.value = val
+        sage: el = MyElt(val=42, parent=ZZ)
+        sage: el
+        Generic element of a structure
 
     The class is stored in a particular attribute called ``__class__``,
     and the normal attributes are stored in a dictionary called ``__dict__``::
 
-       sage: F = CombinatorialFreeModule(QQ, Permutations())
-       sage: el = 3*F([1,3,2])+ F([1,2,3])
-       sage: el.rename("foo")
-       sage: el.__class__
-        <class 'sage.combinat.free_module.CombinatorialFreeModule_with_category.element_class'>
-       sage: el.__dict__
-       {'__custom_name': 'foo',
-        '_monomial_coefficients': {[1, 2, 3]: 1, [1, 3, 2]: 3}}
+        sage: el.__dict__
+        {'value': 42}
+        sage: el.__class__
+        <class '__main__.MyElt'>
+
+    Some particular actions modify the attributes of ``el``::
+
+        sage: el.rename("bla")
+        sage: el
+        bla
+        sage: el.__dict__
+        {'__custom_name': 'bla', 'value': 42}
 
     Lots of Sage objects are not Python objects but compiled Cython
-    objects. Python sees them as builtin objects and you don't have access to
-    the data structure. Examples include integers and permutation group
-    elements::
+    objects. Python sees them as builtin objects and you do not have
+    access to some of their internal data structure. For example, the
+    base class ``Element`` stores the parent of ``el`` as a Cython
+    attribute ``_parent`` but it does not appear in the ``__dict__``
+    and we cannot access it from Python.
+
+    Some examples of Cython classes (technically,
+    `extension types <http://cython.readthedocs.io/en/stable/src/userguide/extension_types.html>`_)
+    in Sage include integers and permutation group elements. These do
+    not have a ``__dict__`` at all::
 
         sage: e = Integer(9)
         sage: type(e)

@@ -1,6 +1,7 @@
 import sys, os, sphinx
-from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC
+from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC, THEBE_DIR
 from datetime import date
+from six import iteritems
 
 # If your extensions are in another directory, add it here.
 sys.path.append(os.path.join(SAGE_SRC, "sage_setup", "docbuild", "ext"))
@@ -201,7 +202,8 @@ html_favicon = 'favicon.ico'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = [os.path.join(SAGE_DOC_SRC, 'common', 'static'), 'static']
+html_static_path = [os.path.join(SAGE_DOC_SRC, 'common', 'static'), THEBE_DIR,
+                    'static']
 
 # We use MathJax to build the documentation unless the environment
 # variable SAGE_DOC_MATHJAX is set to "no" or "False".  (Note that if
@@ -230,7 +232,7 @@ if (os.environ.get('SAGE_DOC_MATHJAX', 'no') != 'no'
                          for i in ('docs', 'README*', 'test',
                                    'unpacked', 'LICENSE')]
 else:
-     extensions.append('sphinx.ext.pngmath')
+     extensions.append('sphinx.ext.imgmath')
 
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
@@ -306,8 +308,9 @@ latex_elements['preamble'] = r"""
 \usepackage{amssymb}
 \usepackage{textcomp}
 \usepackage{mathrsfs}
+\usepackage{iftex}
 
-% Only declare unicode characters when compiling with pdftex; E.g. japanese 
+% Only declare unicode characters when compiling with pdftex; E.g. japanese
 % tutorial does not use pdftex
 \ifPDFTeX
     \DeclareUnicodeCharacter{01CE}{\capitalcaron a}
@@ -354,7 +357,7 @@ latex_elements['preamble'] = r"""
     \DeclareUnicodeCharacter{03C5}{\ensuremath{\upsilon}}
     \DeclareUnicodeCharacter{03A5}{\ensuremath{\Upsilon}}
     \DeclareUnicodeCharacter{2113}{\ell}
-    
+
     \DeclareUnicodeCharacter{221A}{\ensuremath{\sqrt{}}}
     \DeclareUnicodeCharacter{2264}{\leq}
     \DeclareUnicodeCharacter{2265}{\geq}
@@ -378,7 +381,7 @@ latex_elements['preamble'] = r"""
     \DeclareUnicodeCharacter{2308}{\lceil}
     \DeclareUnicodeCharacter{2309}{\rceil}
     \DeclareUnicodeCharacter{22C5}{\ensuremath{\cdot}}
-    
+
     \newcommand{\sageMexSymbol}[1]
     {{\fontencoding{OMX}\fontfamily{cmex}\selectfont\raisebox{0.75em}{\symbol{#1}}}}
     \DeclareUnicodeCharacter{239B}{\sageMexSymbol{"30}} % parenlefttp
@@ -393,7 +396,7 @@ latex_elements['preamble'] = r"""
     \DeclareUnicodeCharacter{23A4}{\sageMexSymbol{"33}} % bracketrighttp
     \DeclareUnicodeCharacter{23A5}{\sageMexSymbol{"37}} % bracketrightex
     \DeclareUnicodeCharacter{23A6}{\sageMexSymbol{"35}} % bracketrightbt
-    
+
     \DeclareUnicodeCharacter{23A7}{\sageMexSymbol{"38}} % curly brace left top
     \DeclareUnicodeCharacter{23A8}{\sageMexSymbol{"3C}} % curly brace left middle
     \DeclareUnicodeCharacter{23A9}{\sageMexSymbol{"3A}} % curly brace left bottom
@@ -403,11 +406,11 @@ latex_elements['preamble'] = r"""
     \DeclareUnicodeCharacter{23AD}{\sageMexSymbol{"3B}} % curly brace right bottom
     \DeclareUnicodeCharacter{23B0}{\{} % 2-line curly brace left top half  (not in cmex)
     \DeclareUnicodeCharacter{23B1}{\}} % 2-line curly brace right top half (not in cmex)
-    
+
     \DeclareUnicodeCharacter{2320}{\ensuremath{\int}} % top half integral
     \DeclareUnicodeCharacter{2321}{\ensuremath{\int}} % bottom half integral
     \DeclareUnicodeCharacter{23AE}{\ensuremath{\|}} % integral extenison
-    
+
     \DeclareUnicodeCharacter{2571}{/}   % Box drawings light diagonal upper right to lower left
 \fi
 
@@ -509,7 +512,7 @@ def check_nested_class_picklability(app, what, name, obj, skip, options):
         # Check picklability of nested classes.  Adapted from
         # sage.misc.nested_class.modify_for_nested_pickle.
         module = sys.modules[obj.__module__]
-        for (nm, v) in obj.__dict__.iteritems():
+        for (nm, v) in iteritems(obj.__dict__):
             if (isinstance(v, type) and
                 v.__name__ == nm and
                 v.__module__ == module.__name__ and
@@ -517,7 +520,7 @@ def check_nested_class_picklability(app, what, name, obj, skip, options):
                 v.__module__ not in skip_picklability_check_modules):
                 # OK, probably this is an *unpicklable* nested class.
                 app.warn('Pickling of nested class %r is probably broken. '
-                         'Please set __metaclass__ of the parent class to '
+                         'Please set the metaclass of the parent class to '
                          'sage.misc.nested_class.NestedClassMetaclass.' % (
                         v.__module__ + '.' + name + '.' + nm))
 

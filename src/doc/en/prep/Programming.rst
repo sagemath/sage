@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-programming:
+
 Sage Introductory Programming Tutorial
 ======================================
 

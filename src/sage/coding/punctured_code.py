@@ -81,13 +81,13 @@ def _insert_punctured_positions(l, punctured_points, value = None):
     F = l[0].base_ring()
     final = [None] * (len(l) + len(punctured_points))
     for i in punctured_points:
-        if value == None:
+        if value is None:
             final[i] = F.random_element()
         else:
             final[i] = value
     index = 0
     for i in range(len(final)):
-        if final[i] == None:
+        if final[i] is None:
             final[i] = l[index]
             index += 1
     return final
@@ -426,7 +426,9 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
         G = M.delete_columns(list(pos))
         G = G.echelon_form()
         k = G.rank()
-        return G[:k]
+        M = G[:k]
+        M.set_immutable()
+        return M
 
 
 

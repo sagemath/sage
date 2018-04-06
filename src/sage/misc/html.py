@@ -24,105 +24,6 @@ from sage.misc.superseded import deprecation
 from sage.misc.decorators import rename_keyword
 
 
-
-# Various hacks for the deprecation period in trac #18292 are
-# conditional on this bool
-_old_and_deprecated_behavior = True
-
-def old_and_deprecated_wrapper(method):
-    """
-    Wrapper to reinstate the old behavior of ``html``
-
-    See :trac:`18292`.
-
-    EXAMPLES::
-
-        sage: from sage.misc.html import HtmlFragment, old_and_deprecated_wrapper
-        sage: @old_and_deprecated_wrapper
-        ....: def foo(): 
-        ....:     return HtmlFragment('foo')
-
-    The old behavior is to print and return nothing::
-    
-        sage: import sage.misc.html
-        sage: sage.misc.html._old_and_deprecated_behavior = True
-        sage: f = foo()
-        foo
-        sage: f
-        <BLANKLINE>
-        sage: type(f)
-        <class 'sage.misc.html.WarnIfNotPrinted'>
-        sage: import sage.misc.html
-
-    The new behavior will be to return a HTML fragment::
-
-        sage: sage.misc.html._old_and_deprecated_behavior = False
-        sage: f = foo()
-        sage: f 
-        foo
-        sage: type(f)
-        <class 'sage.misc.html.HtmlFragment'>
-
-    A deprecation warning is generated if the html output is not printed::
-
-        sage: sage.misc.html._old_and_deprecated_behavior = True
-        sage: def html_without_print():
-        ....:    html('output without pretty_print')     
-        sage: html_without_print()
-        output without pretty_print
-        doctest:...: DeprecationWarning:  html(...) will change soon to return HTML instead of printing it. Instead use pretty_print(html(...)) for strings or just pretty_print(...) for math. 
-        See http://trac.sagemath.org/18292 for details.
-
-        sage: def html_with_print():
-        ....:    pretty_print(html('output with pretty_print'))
-        sage: html_with_print()
-        output with pretty_print
-    """
-    from sage.repl.rich_output.pretty_print import pretty_print
-    def wrapped(*args, **kwds):
-        output = method(*args, **kwds)
-        assert isinstance(output, HtmlFragment)
-        if _old_and_deprecated_behavior:
-            # workaround for the old SageNB interacts
-            pretty_print(output)
-            return WarnIfNotPrinted()
-        else:
-            return output
-    return wrapped
-
-
-class WarnIfNotPrinted(SageObject):
-    """
-    To be removed when the deprecation for :trac:`18292` expires.
-    """
-
-    _printed = False
-    
-    def _repr_(self):
-        self._printed = True
-        return ''
-
-    def __del__(self):
-        if not self._printed:
-            message = """ 
-                html(...) will change soon to return HTML instead of
-                printing it. Instead use pretty_print(html(...)) for
-                strings or just pretty_print(...) for math.
-            """
-            message = ' '.join([l.strip() for l in message.splitlines()])
-            from sage.misc.superseded import deprecation
-            deprecation(18292, message)
-
-    @classmethod
-    def skip_pretty_print(cls, obj):
-        if isinstance(obj, cls):
-            # Consider it printed, but don't actually print
-            obj._printed = True
-            return True
-        else:
-            return False
-
-
 class HtmlFragment(str, SageObject):
     r"""
     A HTML fragment.
@@ -284,7 +185,6 @@ class HTMLFragmentFactory(SageObject):
         """
         return 'Create HTML output (see html? for details)'
     
-    @old_and_deprecated_wrapper
     def __call__(self, obj):
         r"""
         Construct a HTML fragment
@@ -302,8 +202,8 @@ class HTMLFragmentFactory(SageObject):
      
             sage: h = html('<hr>');  pretty_print(h)
             <hr>
-            sage: type(h)       # should be <class 'sage.misc.html.HtmlFragment'>
-            <class 'sage.misc.html.WarnIfNotPrinted'>
+            sage: type(h)
+            <class 'sage.misc.html.HtmlFragment'>
 
             sage: pretty_print(html(1/2))
             <script type="math/tex">\frac{1}{2}</script>
@@ -332,7 +232,6 @@ class HTMLFragmentFactory(SageObject):
         # If all else fails
         return math_parse(str(obj))
          
-    @old_and_deprecated_wrapper
     def eval(self, s, locals=None):
         r"""
         Evaluate embedded <sage> tags
@@ -356,9 +255,6 @@ class HTMLFragmentFactory(SageObject):
             sage: html.eval('<sage>a</sage>', locals={'a': 456})
             <script type="math/tex">456</script>
         """
-        if hasattr(s, '_html_'):
-            deprecation(18292, 'html.eval() is for strings, use html() for sage objects')
-            return s._html_()
         if locals is None:
             from sage.repl.user_globals import get_globals
             locals = get_globals()
@@ -379,92 +275,6 @@ class HTMLFragmentFactory(SageObject):
             s = s[j+7:]
         return HtmlFragment(t)
 
-    @old_and_deprecated_wrapper
-    def table(self, x, header=False):
-        r"""
-        Generate a HTML table.  
-
-        See :class:`~sage.misc.table.table`.
-
-        INPUT:
-
-        - ``x`` -- a list of lists (i.e., a list of table rows)
-
-        - ``header`` -- a row of headers.  If ``True``, then the first
-          row of the table is taken to be the header.
-
-        OUTPUT:
-     
-        A :class:`HtmlFragment` instance.
-
-        EXAMPLES::
-
-            sage: pretty_print(html.table([(i, j, i == j) for i in [0..1] for j in [0..1]]))
-            doctest:...: DeprecationWarning: use table() instead of html.table()
-            See http://trac.sagemath.org/18292 for details.
-            <div class="notruncate">
-            <table class="table_form">
-            <tbody>
-            <tr class ="row-a">
-            <td><script type="math/tex">0</script></td>
-            <td><script type="math/tex">0</script></td>
-            <td><script type="math/tex">\mathrm{True}</script></td>
-            </tr>
-            <tr class ="row-b">
-            <td><script type="math/tex">0</script></td>
-            <td><script type="math/tex">1</script></td>
-            <td><script type="math/tex">\mathrm{False}</script></td>
-            </tr>
-            <tr class ="row-a">
-            <td><script type="math/tex">1</script></td>
-            <td><script type="math/tex">0</script></td>
-            <td><script type="math/tex">\mathrm{False}</script></td>
-            </tr>
-            <tr class ="row-b">
-            <td><script type="math/tex">1</script></td>
-            <td><script type="math/tex">1</script></td>
-            <td><script type="math/tex">\mathrm{True}</script></td>
-            </tr>
-            </tbody>
-            </table>
-            </div>
-
-            sage: pretty_print(html(table(
-            ....:     [(x,n(sin(x), digits=2)) for x in range(4)],
-            ....:     header_row=["$x$", "$\sin(x)$"])))
-            <div class="notruncate">
-            <table class="table_form">
-            <tbody>
-            <tr>
-            <th><script type="math/tex">x</script></th>
-            <th><script type="math/tex">\sin(x)</script></th>
-            </tr>
-            <tr class ="row-a">
-            <td><script type="math/tex">0</script></td>
-            <td><script type="math/tex">0.00</script></td>
-            </tr>
-            <tr class ="row-b">
-            <td><script type="math/tex">1</script></td>
-            <td><script type="math/tex">0.84</script></td>
-            </tr>
-            <tr class ="row-a">
-            <td><script type="math/tex">2</script></td>
-            <td><script type="math/tex">0.91</script></td>
-            </tr>
-            <tr class ="row-b">
-            <td><script type="math/tex">3</script></td>
-            <td><script type="math/tex">0.14</script></td>
-            </tr>
-            </tbody>
-            </table>
-            </div>
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(18292, 'use table() instead of html.table()')
-        from .table import table
-        return table(x, header_row=header)._html_()
-
-    @old_and_deprecated_wrapper
     def iframe(self, url, height=400, width=800):
         r"""
         Generate an iframe HTML fragment
@@ -499,8 +309,8 @@ class HTMLFragmentFactory(SageObject):
             <iframe height="400" width="800"
             src="file:///home/admin/0/data/filename"></iframe>
             sage: pretty_print(html.iframe('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA'
-            ... 'AUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBA'
-            ... 'AO9TXL0Y4OHwAAAABJRU5ErkJggg=="'))
+            ....: 'AUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBA'
+            ....: 'AO9TXL0Y4OHwAAAABJRU5ErkJggg=="'))
             <iframe height="400" width="800" 
             src="http://data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==""></iframe>
         """

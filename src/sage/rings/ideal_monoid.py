@@ -8,17 +8,19 @@ import sage.rings.integer_ring
 from . import ideal
 from sage.categories.monoids import Monoids
 
+
 def IdealMonoid(R):
     r"""
     Return the monoid of ideals in the ring ``R``.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: R = QQ['x']
         sage: sage.rings.ideal_monoid.IdealMonoid(R)
         Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
     """
     return IdealMonoid_c(R)
+
 
 class IdealMonoid_c(Parent):
     r"""
@@ -36,7 +38,7 @@ class IdealMonoid_c(Parent):
     (The "_test_category" test fails but I haven't the foggiest idea why.)
     """
 
-    Element = ideal.Ideal_generic # this doesn't seem to do anything
+    Element = ideal.Ideal_generic  # this doesn't seem to do anything
 
     def __init__(self, R):
         r"""
@@ -49,7 +51,8 @@ class IdealMonoid_c(Parent):
             Monoid of ideals of Number Field in a with defining polynomial x^2 + 23
         """
         self.__R = R
-        Parent.__init__(self, base = sage.rings.integer_ring.ZZ, category = Monoids())
+        Parent.__init__(self, base=sage.rings.integer_ring.ZZ,
+                        category=Monoids())
         self._populate_coercion_lists_()
 
     def _repr_(self):
@@ -62,13 +65,13 @@ class IdealMonoid_c(Parent):
             sage: M = sage.rings.ideal_monoid.IdealMonoid(R); M._repr_()
             'Monoid of ideals of Number Field in a with defining polynomial x^2 + 23'
         """
-        return "Monoid of ideals of %s"%self.__R
+        return "Monoid of ideals of %s" % self.__R
 
     def ring(self):
         r"""
         Return the ring of which this is the ideal monoid.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R = QuadraticField(-23, 'a')
             sage: M = sage.rings.ideal_monoid.IdealMonoid(R); M.ring() is R
@@ -91,7 +94,7 @@ class IdealMonoid_c(Parent):
         """
         try:
             side = x.side()
-        except (AttributeError,TypeError):
+        except (AttributeError, TypeError):
             side = None
         try:
             x = x.gens()
@@ -100,7 +103,7 @@ class IdealMonoid_c(Parent):
         if side is None:
             y = self.__R.ideal(x)
         else:
-            y = self.__R.ideal(x,side=side)
+            y = self.__R.ideal(x, side=side)
         y._set_parent(self)
         return y
 
@@ -108,7 +111,7 @@ class IdealMonoid_c(Parent):
         r"""
         Used by coercion framework.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R = QuadraticField(-23, 'a')
             sage: M = R.ideal_monoid()
@@ -126,11 +129,11 @@ class IdealMonoid_c(Parent):
         else:
             return self.ring().has_coerce_map_from(x)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         r"""
-        Comparison function.
+        Check whether ``self`` is not equal to ``other``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R = QuadraticField(-23, 'a')
             sage: M = R.ideal_monoid()
@@ -142,6 +145,23 @@ class IdealMonoid_c(Parent):
             True
         """
         if not isinstance(other, IdealMonoid_c):
-            return cmp(type(self), type(other))
+            return False
         else:
-            return cmp(self.ring(), other.ring())
+            return self.ring() == other.ring()
+
+    def __ne__(self, other):
+        r"""
+        Check whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: R = QuadraticField(-23, 'a')
+            sage: M = R.ideal_monoid()
+            sage: M != QQ
+            True
+            sage: M != 17
+            True
+            sage: M != R.ideal_monoid()
+            False
+        """
+        return not (self == other)

@@ -629,7 +629,7 @@ class SQLQuery(SageObject):
             sage: from sage.graphs.graph_database import valid_kwds, data_to_degseq
             sage: relabel = {}
             sage: for col in valid_kwds:
-            ...       relabel[col] = ' '.join([word.capitalize() for word in col.split('_')])
+            ....:     relabel[col] = ' '.join([word.capitalize() for word in col.split('_')])
             sage: q = GraphQuery(display_cols=['graph6','degree_sequence'], num_vertices=4)
             sage: SQLQuery.show(q, format_cols={'degree_sequence':(lambda x,y: data_to_degseq(x,y))}, relabel_cols=relabel, id_col='graph6')
             Graph6               Degree Sequence
@@ -909,10 +909,10 @@ class SQLDatabase(SageObject):
         is the name of a column::
 
             sage: table_skeleton = {
-            ... 'graph6':{'sql':'TEXT', 'index':True, 'primary_key':True},
-            ... 'vertices':{'sql':'INTEGER'},
-            ... 'edges':{'sql':'INTEGER'}
-            ... }
+            ....: 'graph6':{'sql':'TEXT', 'index':True, 'primary_key':True},
+            ....: 'vertices':{'sql':'INTEGER'},
+            ....: 'edges':{'sql':'INTEGER'}
+            ....: }
 
         Then we create the table::
 
@@ -946,12 +946,12 @@ class SQLDatabase(SageObject):
 
             sage: labels = {}
             sage: for i in range(2, 5):
-            ...       labels[i] = []
-            ...       for g in all_labeled_graphs(i):
-            ...           g = g.canonical_label()
-            ...           if g not in labels[i]:
-            ...               labels[i].append(g)
-            ...               D.add_row('simon', (g.size(), g.graph6_string(), g.order()))
+            ....:     labels[i] = []
+            ....:     for g in all_labeled_graphs(i):
+            ....:         g = g.canonical_label()
+            ....:         if g not in labels[i]:
+            ....:             labels[i].append(g)
+            ....:             D.add_row('simon', (g.size(), g.graph6_string(), g.order()))
             sage: D.show('simon') # random
             edges                graph6               vertices
             ------------------------------------------------------------
@@ -1316,7 +1316,7 @@ class SQLDatabase(SageObject):
             sage: con = D.get_connection()
             sage: t = con.execute('CREATE TABLE simon(n INTEGER, n2 INTEGER)')
             sage: for n in range(10):
-            ...     t = con.execute('INSERT INTO simon VALUES(%d,%d)'%(n,n^2))
+            ....:   t = con.execute('INSERT INTO simon VALUES(%d,%d)'%(n,n^2))
             sage: D.show('simon')
             n                    n2
             ----------------------------------------
@@ -1378,10 +1378,10 @@ class SQLDatabase(SageObject):
 
             sage: D = SQLDatabase()
             sage: table_skeleton = {
-            ... 'graph6':{'sql':'TEXT', 'index':True, 'primary_key':True},
-            ... 'vertices':{'sql':'INTEGER'},
-            ... 'edges':{'sql':'INTEGER'}
-            ... }
+            ....: 'graph6':{'sql':'TEXT', 'index':True, 'primary_key':True},
+            ....: 'vertices':{'sql':'INTEGER'},
+            ....: 'edges':{'sql':'INTEGER'}
+            ....: }
             sage: D.create_table('simon', table_skeleton)
             sage: D.show('simon')
             edges                graph6               vertices

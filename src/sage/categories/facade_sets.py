@@ -94,7 +94,7 @@ class FacadeSets(CategoryWithAxiom):
             else:
                 parents = self.facade_for()
                 if parents is True:
-                    return NotImplementedError
+                    raise NotImplementedError
                 for parent in self.facade_for():
                     try:
                         return parent(element)

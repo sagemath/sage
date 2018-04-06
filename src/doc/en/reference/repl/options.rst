@@ -71,7 +71,8 @@ Command-line options for Sage
 - ``--M2 [...]`` -- run Sage's Macaulay2 with the given arguments
 - ``--maxima [...]`` -- run Sage's Maxima with the given arguments
 - ``--mwrank [...]`` -- run Sage's mwrank with the given arguments
-- ``--python [...]`` -- run the Python interpreter
+- ``--python [...]``, ``--python2 [...]`` -- run the Python 2 interpreter
+- ``--python3 [...]`` -- run the Python 3 interpreter
 - ``-R [...]`` -- run Sage's R with the given arguments
 - ``--scons [...]`` -- run Sage's scons
 - ``--singular [...]`` -- run Sage's singular with the given arguments

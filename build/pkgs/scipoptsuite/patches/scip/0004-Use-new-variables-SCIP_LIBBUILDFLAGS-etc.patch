@@ -1,0 +1,61 @@
+From 3fee3c4219a116c3f962848fcf2b12b81e833579 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Sun, 31 Jul 2016 12:58:52 -0700
+Subject: [PATCH 4/5] Use new variables SCIP_LIBBUILDFLAGS etc.
+
+---
+ Makefile | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index d551556..103d89b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1109,7 +1109,7 @@ libscip:		preprocess
+ $(SCIPLIBFILE):	$(SCIPLIBOBJFILES) $(LPILIBFILE) $(NLPILIBFILE) | $(LIBDIR)/$(LIBTYPE) $(LIBOBJSUBDIRS)
+ 		@echo "-> generating library $@"
+ 		-rm -f $@
+-		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(SCIPLIBOBJFILES) $(SCIPLIBEXTLIBS)
++		$(LIBBUILD) $(LIBBUILDFLAGS) $(SCIP_LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(SCIPLIBOBJFILES) $(SCIPLIBEXTLIBS)
+ 
+ ifneq ($(RANLIB),)
+ 		$(RANLIB) $@
+@@ -1122,7 +1122,7 @@ libobjscip:		preprocess
+ $(OBJSCIPLIBFILE):	$(OBJSCIPLIBOBJFILES) | $(LIBOBJSUBDIRS) $(LIBDIR)/$(LIBTYPE)
+ 		@echo "-> generating library $@"
+ 		-rm -f $@
+-		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(OBJSCIPLIBOBJFILES)
++		$(LIBBUILD) $(LIBBUILDFLAGS) $(OBJSCIP_LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(OBJSCIPLIBOBJFILES)
+ ifneq ($(RANLIB),)
+ 		$(RANLIB) $@
+ endif
+@@ -1134,7 +1134,7 @@ liblpi:		preprocess
+ $(LPILIBFILE):	$(LPILIBOBJFILES) | $(LIBOBJSUBDIRS) $(LIBDIR)/$(LIBTYPE)
+ 		@echo "-> generating library $@"
+ 		-rm -f $@
+-		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(LPILIBOBJFILES) $(LPILIBEXTLIBS)
++		$(LIBBUILD) $(LIBBUILDFLAGS) $(LPI_LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(LPILIBOBJFILES) $(LPILIBEXTLIBS)
+ ifneq ($(RANLIB),)
+ 		$(RANLIB) $@
+ endif
+@@ -1146,7 +1146,7 @@ libnlpi:		preprocess
+ $(NLPILIBFILE):	$(NLPILIBOBJFILES) $(NLPILIBSCIPOBJFILES) | $(LIBOBJSUBDIRS) $(LIBDIR)/$(LIBTYPE)
+ 		@echo "-> generating library $@"
+ 		-rm -f $@
+-		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(NLPILIBOBJFILES) $(NLPILIBSCIPOBJFILES) $(NLPILIBEXTLIBS)
++		$(LIBBUILD) $(LIBBUILDFLAGS) $(NLPI_LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(NLPILIBOBJFILES) $(NLPILIBSCIPOBJFILES)
+ ifneq ($(RANLIB),)
+ 		$(RANLIB) $@
+ endif
+@@ -1158,7 +1158,7 @@ libtpi:		preprocess
+ $(TPILIBFILE):	$(TPILIBOBJFILES) | $(LIBOBJSUBDIRS) $(LIBDIR)/$(LIBTYPE)
+ 		@echo "-> generating library $@"
+ 		-rm -f $@
+-		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(TPILIBOBJFILES)
++		$(LIBBUILD) $(LIBBUILDFLAGS) $(TPI_LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(TPILIBOBJFILES)
+ ifneq ($(RANLIB),)
+ 		$(RANLIB) $@
+ endif
+-- 
+2.7.4 (Apple Git-66)
+

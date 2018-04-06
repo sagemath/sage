@@ -191,6 +191,8 @@ for both of these uses.
 
 
 from libc.string cimport memset
+from cysignals.memory cimport check_malloc, check_allocarray, sig_free
+
 include 'sage/data_structures/bitset.pxi'
 
 cdef enum:
@@ -249,7 +251,7 @@ cdef class SparseGraph(CGraph):
 
         O(  (nverts + extra_vertices)*expected_degree + num_arcs  ).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: S = SparseGraph(nverts = 10, expected_degree = 3, extra_vertices = 10)
@@ -446,7 +448,7 @@ cdef class SparseGraph(CGraph):
 
          - ``u, v`` -- non-negative integers, must be in self
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
@@ -495,7 +497,7 @@ cdef class SparseGraph(CGraph):
         INPUT:
          - ``u, v`` - integers
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
@@ -626,7 +628,7 @@ cdef class SparseGraph(CGraph):
         INPUT:
          - ``u, v`` - integers
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
@@ -979,7 +981,7 @@ cdef class SparseGraph(CGraph):
          - ``u, v`` - non-negative integers, must be in self
          - ``l`` - a positive integer label, or zero for no label
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
@@ -1042,7 +1044,7 @@ cdef class SparseGraph(CGraph):
          - positive integer - indicates that there is a label on ``(u, v)``.
          - 0 - either the arc ``(u, v)`` is unlabeled, or there is no arc at all.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
@@ -1122,7 +1124,7 @@ cdef class SparseGraph(CGraph):
         Gives the labels of all arcs ``(u, v)``. An unlabeled arc is interpreted as
         having label 0.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
@@ -1218,7 +1220,7 @@ cdef class SparseGraph(CGraph):
          - ``u, v`` - non-negative integers, must be in self
          - ``l`` - a positive integer label, or zero for no label
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
@@ -1285,7 +1287,7 @@ cdef class SparseGraph(CGraph):
          - ``u, v`` -- non-negative integers, must be in self
          - ``l`` -- a positive integer label, or zero for no label
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
@@ -1402,7 +1404,7 @@ cdef class SparseGraphBackend(CGraphBackend):
         """
         Initialize a sparse graph with n vertices.
 
-        EXAMPLE:
+        EXAMPLES:
 
             sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
             sage: D.add_edge(0,1,None,False)
@@ -1446,7 +1448,7 @@ cdef class SparseGraphBackend(CGraphBackend):
          - ``l`` - the edge label
          - ``directed`` - if False, also add ``(v,u)``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
             sage: D.add_edge(0,1,None,False)
@@ -1461,6 +1463,16 @@ cdef class SparseGraphBackend(CGraphBackend):
             sage: D.edges()
             [(0, 1, 3)]
 
+        Check :trac:`22991`::
+
+            sage: G = Graph(3, sparse=True)
+            sage: G.add_edge(0,0)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot add edge from 0 to 0 in graph without loops
+            sage: G = Graph(3, sparse=True, loops=True)
+            sage: G.add_edge(0,0); G.edges()
+            [(0, 0, None)]
         """
         if u is None: u = self.add_vertex(None)
         if v is None: v = self.add_vertex(None)
@@ -1474,8 +1486,9 @@ cdef class SparseGraphBackend(CGraphBackend):
         else:
             l_int = self.new_edge_label(l)
 
-        if (not self.loops(None)) and u_int == v_int:
-            return
+        if u_int == v_int and not self._loops:
+            raise ValueError(f"cannot add edge from {u!r} to {v!r} in graph without loops")
+
         if not self.multiple_edges(None):
             if self._cg.has_arc_label(u_int, v_int, l_int):
                 return
@@ -1502,7 +1515,7 @@ cdef class SparseGraphBackend(CGraphBackend):
            ``(u,v)`` or ``(u,v,l)``
          - ``directed`` - if False, add ``(v,u)`` as well as ``(u,v)``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
             sage: D.add_edges([(0,1), (2,3), (4,5), (5,6)], False)
@@ -1532,7 +1545,7 @@ cdef class SparseGraphBackend(CGraphBackend):
          - ``l`` - the edge label
          - ``directed`` - if False, also delete ``(v,u,l)``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
             sage: D.add_edges([(0,1), (2,3), (4,5), (5,6)], False)
@@ -1612,7 +1625,7 @@ cdef class SparseGraphBackend(CGraphBackend):
 
          - ``u,v`` - the vertices of the edge
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
             sage: D.add_edges([(0,1,1), (2,3,2), (4,5,3), (5,6,2)], False)
@@ -1648,7 +1661,7 @@ cdef class SparseGraphBackend(CGraphBackend):
          - ``u,v`` - the vertices of the edge
          - ``l`` - the edge label, or ``None``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
             sage: D.add_edges([(0,1), (2,3), (4,5), (5,6)], False)
@@ -1677,7 +1690,7 @@ cdef class SparseGraphBackend(CGraphBackend):
         - ``vertices`` - a list of vertex labels
         - ``labels`` - boolean, whether to return labels as well
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
             sage: G.add_edge(1,2,3,False)
@@ -1686,7 +1699,7 @@ cdef class SparseGraphBackend(CGraphBackend):
             sage: list(G.iterator_edges(range(9), True))
             [(1, 2, 3)]
 
-        TEST::
+        TESTS::
 
             sage: g = graphs.PetersenGraph()
             sage: g.edges_incident([0,1,2])
@@ -1765,7 +1778,7 @@ cdef class SparseGraphBackend(CGraphBackend):
         - ``vertices`` - a list of vertex labels
         - ``labels`` - boolean, whether to return labels as well
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
             sage: G.add_edge(1,2,3,True)
@@ -1818,7 +1831,7 @@ cdef class SparseGraphBackend(CGraphBackend):
          - ``vertices`` - a list of vertex labels
          - ``labels`` - boolean, whether to return labels as well
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
             sage: G.add_edge(1,2,3,True)
@@ -1900,7 +1913,7 @@ cdef class SparseGraphBackend(CGraphBackend):
          - ``l`` - the edge label
          - ``directed`` - if False, also set ``(v,u)`` with label ``l``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
             sage: G.add_edge(1,2,None,True)

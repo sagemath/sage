@@ -23,6 +23,7 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from six import iteritems
 
 # TODO: cythonize this.
 
@@ -220,7 +221,7 @@ def algebraic_topological_model(K, base_ring=None):
             c_bar = c_vec
             bdry_c = diff * c_vec
             # Apply phi to bdry_c and subtract from c_bar.
-            for (idx, coord) in bdry_c.iteritems():
+            for (idx, coord) in iteritems(bdry_c):
                 try:
                     c_bar -= coord * phi_dict[dim-1][idx]
                 except KeyError:
@@ -231,7 +232,7 @@ def algebraic_topological_model(K, base_ring=None):
             # Evaluate pi(bdry(c_bar)).
             pi_bdry_c_bar = zero
 
-            for (idx, coeff) in bdry_c_bar.iteritems():
+            for (idx, coeff) in iteritems(bdry_c_bar):
                 try:
                     pi_bdry_c_bar += coeff * pi_dict[dim-1][idx]
                 except KeyError:
@@ -250,7 +251,7 @@ def algebraic_topological_model(K, base_ring=None):
             else:
                 # Take any u in gens so that lambda_i = <u, pi(bdry(c_bar))> != 0.
                 # u_idx will be the index of the corresponding cell.
-                for (u_idx, lambda_i) in pi_bdry_c_bar.iteritems():
+                for (u_idx, lambda_i) in iteritems(pi_bdry_c_bar):
                     # Now find the actual cell.
                     u = old_cells[u_idx]
                     if u in gens[dim-1]:
@@ -310,7 +311,7 @@ def algebraic_topological_model(K, base_ring=None):
             # First pi:
             if idx in pi_dict[n]:
                 column = vector(base_ring, M_rows)
-                for (entry, coeff) in pi_dict[n][idx].iteritems():
+                for (entry, coeff) in iteritems(pi_dict[n][idx]):
                     # Translate from cells in n_cells to cells in gens[n].
                     column[gens[n].index(n_cells[entry])] = coeff
             else:
@@ -522,7 +523,7 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
                 # Take any u in gens so that lambda_i = <u, pi(bdry(c_bar))> != 0.
                 # u_idx will be the index of the corresponding cell.
                 (u_idx, lambda_i) = pi_bdry_c_bar.leading_item()
-                for (u_idx, lambda_i) in pi_bdry_c_bar.iteritems():
+                for (u_idx, lambda_i) in iteritems(pi_bdry_c_bar):
                     if u_idx not in to_be_deleted:
                         break
                 # This element/column needs to be deleted from gens and

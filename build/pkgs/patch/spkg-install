@@ -1,11 +1,3 @@
-#!/usr/bin/env bash
-
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
 # Let the user define the environment variable CFLAG64 to
 # something if their C compiler needs a compiler flag other than
 # -m64 to build 64-bit objects. This would be the case with IBM's
@@ -34,24 +26,9 @@ if [ "x$UNAME" = xAIX ] ; then
 fi
 
 cd src
-
-./configure --prefix="$SAGE_LOCAL"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring GNU patch"
-    exit 1
-fi
-
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building GNU patch"
-    exit 1
-fi
-
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing GNU patch"
-    exit 1
-fi
+sdh_configure
+sdh_make
+sdh_make_install
 
 if [ "$UNAME" = "CYGWIN" ] ; then
     cp ../patch.exe.manifest "$SAGE_LOCAL/bin/"

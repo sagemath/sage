@@ -236,14 +236,27 @@ class HyperbolicGeodesic(SageObject):
             False
             sage: g1 == g1
             True
-
         """
-
         if not isinstance(other, HyperbolicGeodesic):
             return False
         return (self._model is other._model and
                 self._start == other._start and
                 self._end == other._end)
+
+    def __ne__(self, other):
+        """
+        Test unequality of self and other.
+
+        EXAMPLES::
+
+            sage: g1 = HyperbolicPlane().UHP().get_geodesic(I, 2*I)
+            sage: g2 = HyperbolicPlane().UHP().get_geodesic(2*I, I)
+            sage: g1 != g2
+            True
+            sage: g1 != g1
+            False
+        """
+        return not (self == other)
 
     #######################
     # Setters and Getters #
@@ -298,22 +311,20 @@ class HyperbolicGeodesic(SageObject):
 
             sage: UHP = HyperbolicPlane().UHP()
             sage: UHP.get_geodesic(I, 2*I).model()
-            Hyperbolic plane in the Upper Half Plane Model model
+            Hyperbolic plane in the Upper Half Plane Model
 
             sage: PD = HyperbolicPlane().PD()
             sage: PD.get_geodesic(0, I/2).model()
-            Hyperbolic plane in the Poincare Disk Model model
+            Hyperbolic plane in the Poincare Disk Model
 
             sage: KM = HyperbolicPlane().KM()
             sage: KM.get_geodesic((0, 0), (0, 1/2)).model()
-            Hyperbolic plane in the Klein Disk Model model
+            Hyperbolic plane in the Klein Disk Model
 
             sage: HM = HyperbolicPlane().HM()
             sage: HM.get_geodesic((0, 0, 1), (0, 1, sqrt(2))).model()
-            Hyperbolic plane in the Hyperboloid Model model
-
+            Hyperbolic plane in the Hyperboloid Model
         """
-
         return self._model
 
     def to_model(self, model):
@@ -713,7 +724,7 @@ class HyperbolicGeodesic(SageObject):
             sage: g.is_complete()
             True
 
-        TEST:
+        TESTS:
 
         Check that floating points remain floating points through this method::
 
@@ -895,7 +906,7 @@ class HyperbolicGeodesic(SageObject):
             ...
             ValueError: the length must be finite
 
-        TEST::
+        TESTS::
 
             sage: g = HyperbolicPlane().PD().random_geodesic()
             sage: h = g.perpendicular_bisector()
@@ -964,7 +975,7 @@ class HyperbolicGeodesic(SageObject):
             sage: g.dist(p)
             +Infinity
 
-        TEST:
+        TESTS:
 
         Check that floating points remain floating points in :meth:`dist` ::
 
@@ -1635,7 +1646,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: bool(abs(A(e).coordinates()) > 10**9)
             True
 
-        TEST:
+        TESTS:
 
         Check that floating points remain floating points through this method::
 

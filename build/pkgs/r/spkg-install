@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo >&2 "SAGE_LOCAL undefined ... exiting"
     echo >&2 "Maybe run 'sage --sh'?"
@@ -38,11 +36,6 @@ if [ "$UNAME" = "Darwin" ]; then
    cp patches/java "$SAGE_LOCAL"/bin
    cp patches/javac "$SAGE_LOCAL"/bin
 fi
-
-
-# Determine special configure options $R_CONFIGURE (don't put paths in
-# this variable as this can cause problems with quoting)
-R_CONFIGURE="--enable-R-shlib $R_CONFIGURE"
 
 # Note by Karl-Dieter Crisman, April 12th 2010. X support would be nice
 # to have in OSX, but see
@@ -87,12 +80,6 @@ if [ "$UNAME" = "Darwin" ]; then
     fi
 fi
 
-if [ "$UNAME" = "CYGWIN" ]; then
-    # Cygwin libm does not provide "long double" functions
-    # and we do not install Cephes on Cygwin at the moment
-    R_CONFIGURE="--disable-long-double $R_CONFIGURE"
-fi
-
 if [ "$SAGE_FAT_BINARY" = yes ]; then
     echo "Disabling ICU, OpenMP for a binary build"
     R_CONFIGURE="--without-ICU --disable-openmp $R_CONFIGURE"
@@ -121,10 +108,13 @@ fi
 # See patches/R.sh.patch
 export SAGE_BUILDING_R=yes
 
+
 config()
 {
     ./configure \
         --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
+	--enable-R-shlib \
+	--with-recommended-packages \
         --with-readline=yes \
         --with-x=$XSUPPORT \
         "$R_CONFIGURE_BLAS" \

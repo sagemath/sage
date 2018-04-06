@@ -2,7 +2,7 @@
 Plane quartic curves over a general ring. These are generic genus 3 curves,
 as distinct from hyperelliptic curves of genus 3.
 
-EXAMPLE::
+EXAMPLES::
 
     sage: PP.<X,Y,Z> = ProjectiveSpace(2, QQ)
     sage: f = X^4 + Y^4 + Z^4 - 3*X*Y*Z*(X+Y+Z)

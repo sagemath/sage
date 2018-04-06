@@ -18,7 +18,10 @@ in the users's web browser. Interactivity includes
   on a touch pad
 
 The generated HTML file contains all data for the scene apart from the JavaScript library
-and can be saved to disk for sharing or embedding in a web page.
+and can be saved to disk for sharing or embedding in a web page. The option ``online``
+can be set to ``true`` to provide links to the required files in an online content delivery
+network. Alternately the required files can be downloaded from the Three.js GitHub repository
+and linked directly from the web server.
 
 Options currently supported by the viewer:
 
@@ -35,6 +38,9 @@ Options currently supported by the viewer:
 - ``decimals`` -- (default: 2) integer determining decimals displayed in labels
 
 - ``frame`` -- (default: True) Boolean determining whether frame is drawn
+
+- ``online`` -- (default: False) Boolean determining whether the local standard package
+  files are replaced by links to an online content delivery network
 
 - ``opacity`` -- (default: 1) numeric value for transparency of lines and surfaces
 

@@ -19,7 +19,7 @@ then the product is equals to the other.
 The shuffle product has been introduced by S. Eilenberg and S. Mac Lane in
 1953 [EilLan53]_.
 
-EXAMPLE::
+EXAMPLES::
 
     sage: from sage.combinat.shuffle import ShuffleProduct
     sage: list(ShuffleProduct([1,2], ["a", "b", "c"]))
@@ -71,7 +71,7 @@ class SetShuffleProduct(SageObject):
         sage: from sage.combinat.shuffle import SetShuffleProduct
         sage: TestSuite(SetShuffleProduct).run()
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.shuffle import SetShuffleProduct
         sage: sorted(SetShuffleProduct({(1,), (2,3)}, {(4,5), (6,)}))

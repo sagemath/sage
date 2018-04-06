@@ -27,7 +27,6 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.ncsym.bases import NCSymBases, MultiplicativeNCSymBases, NCSymBasis_abstract
 from sage.combinat.set_partition import SetPartitions
 from sage.combinat.set_partition_ordered import OrderedSetPartitions
-from sage.combinat.subset import Subsets
 from sage.combinat.posets.posets import Poset
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.matrix.matrix_space import MatrixSpace
@@ -580,7 +579,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 sage: S = SetPartition([[1,2,3], [4,5]])
                 sage: AB = SetPartition([[1], [2,3], [4], [5]])
                 sage: L = sorted(filter(lambda x: S.inf(x) == AB, SetPartitions(5)), key=str)
-                sage: map(list, L) == map(list, sorted(m.product_on_basis(A, B).support(), key=str))
+                sage: list(map(list, L)) == list(map(list, sorted(m.product_on_basis(A, B).support(), key=str)))
                 True
             """
             if not A:

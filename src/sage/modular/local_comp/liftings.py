@@ -27,7 +27,7 @@ def lift_to_gamma1(g, m, n):
     The result is always a list of Sage integers (unlike ``lift_to_sl2z``,
     which tends to return Python ints).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.local_comp.liftings import lift_to_gamma1
         sage: A = matrix(ZZ, 2, lift_to_gamma1([10, 11, 3, 11], 19, 5)); A
@@ -97,7 +97,7 @@ def lift_gen_to_gamma1(m, n):
 
     This is a special case of :func:`~lift_to_gamma1`, and is coded as such.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.local_comp.liftings import lift_gen_to_gamma1
         sage: A = matrix(ZZ, 2, lift_gen_to_gamma1(9, 8)); A
@@ -123,7 +123,7 @@ def lift_uniformiser_odd(p, u, n):
     This is required for the local components machinery in the "ramified" case
     (when the exponent of `p` dividing the level is odd).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.local_comp.liftings import lift_uniformiser_odd
         sage: lift_uniformiser_odd(3, 2, 11)
@@ -146,7 +146,7 @@ def lift_ramified(g, p, u, n):
     then adds an appropriate multiple of the top row to the bottom row in order
     to get the bottom-left entry correct modulo `p^{u+1}`.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.local_comp.liftings import lift_ramified
         sage: lift_ramified([2,2,3,2], 3, 1, 1)

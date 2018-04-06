@@ -157,7 +157,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         """
         # Computed at initialization
-        if include_euler_gamma==False:
+        if not include_euler_gamma:
             return self._C1
         else:
             return self._C0
@@ -1228,7 +1228,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
             if n<expt:
                 y += self._sincsquared_summand_1(n, t, ap, p, logp, thetap,
                                                  sqrtp, logq, thetaq, sqrtq, z)
-        # Now iterate only only over those n that are 1 or 5 mod 6
+        # Now iterate only over those n that are 1 or 5 mod 6
         n = 11
         # First: those n that are <= sqrt(bound)
         bound1 = c_exp(t/2)
@@ -1567,7 +1567,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
           - If True, the computation is first run with small and then
             successively larger Delta values up to max_Delta. If at any
-            point the computed bound is 0 (or 1 when when root_number is -1
+            point the computed bound is 0 (or 1 when root_number is -1
             or True), the computation halts and that value is returned;
             otherwise the minimum of the computed bounds is returned.
           - If False, the computation is run a single time with

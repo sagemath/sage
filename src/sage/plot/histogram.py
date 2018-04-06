@@ -116,7 +116,7 @@ class Histogram(GraphicPrimitive):
 
             sage: from sage.plot.histogram import Histogram
             sage: g = Histogram( [1,3,2,0], {})
-            sage: L = list(sorted(g._allowed_options().iteritems()))
+            sage: L = list(sorted(g._allowed_options().items()))
             sage: L[0]
             ('align',
              'How the bars align inside of each bin. Acceptable values are "left", "right" or "mid".')

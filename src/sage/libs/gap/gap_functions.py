@@ -507,6 +507,7 @@ common_gap_functions = [
   'IsSortedList',
   'IsSpecialLinearGroup',
   'IsSporadicSimple',
+  'IsStandardIterator',
   'IsString',
   'IsStringRep',
   'IsSubgroup',

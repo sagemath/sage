@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 r"""
 Alphabet
 
@@ -6,8 +6,8 @@ AUTHORS:
 
 - Franco Saliola (2008-12-17) : merged into sage
 - Vincent Delecroix and Stepan Starosta (2012): remove classes for alphabet and
-  use other Sage classes otherwise (TotallyOrderFiniteSet, FiniteEnumeratedSet,
-  ...). More shortcut to standard alphabets.
+  use other Sage classes otherwise (TotallyOrderedFiniteSet,
+  FiniteEnumeratedSet, ...). More shortcut to standard alphabets.
 
 EXAMPLES::
 
@@ -33,6 +33,8 @@ EXAMPLES::
 #*****************************************************************************
 from __future__ import print_function
 from six.moves import range
+from six import integer_types
+
 from sage.categories.sets_cat import Sets
 
 from sage.sets.totally_ordered_finite_set import TotallyOrderedFiniteSet
@@ -44,7 +46,6 @@ from sage.rings.infinity import Infinity
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.positive_integers import PositiveIntegers
 
-import itertools
 
 set_of_letters = {
     'lower'       : "abcdefghijklmnopqrstuvwxyz",
@@ -213,13 +214,13 @@ def build_alphabet(data=None, names=None, name=None):
     if name is not None and (data is not None or names is not None):
         raise ValueError("name cannot be specified with any other argument")
 
-    # Swap arguments if we need to to try and make sure we have "good" user input
-    if isinstance(names, (int,long,Integer)) or names == Infinity \
+    # Swap arguments if we need to try and make sure we have "good" user input
+    if isinstance(names, integer_types + (Integer,)) or names == Infinity \
             or (data is None and names is not None):
         data,names = names,data
 
     # data is an integer
-    if isinstance(data, (int,long,Integer)):
+    if isinstance(data, integer_types + (Integer,)):
         if names is None:
             from sage.sets.integer_range import IntegerRange
             return IntegerRange(Integer(data))

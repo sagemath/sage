@@ -73,10 +73,9 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
     One can quickly define all the bases using the following shortcut::
 
         sage: A.inject_shorthands()
-        Injecting F as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
-        ...
-        Injecting In as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the In basis
-        ...
+        Defining F as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
+        Defining In as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the In basis
+        Defining Out as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Out basis
 
     Accessing the basis elements is done with :meth:`basis()` method::
 
@@ -232,33 +231,6 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             Subsets of {1, 2, 3}
         """
         return Subsets(self._S)
-
-    def indices_cmp(self, x, y):
-        r"""
-        A comparison function on sets which gives a linear extension
-        of the inclusion order.
-
-        INPUT:
-
-        - ``x``, ``y`` -- sets
-
-        EXAMPLES::
-
-            sage: from functools import cmp_to_key
-            sage: A = Sets().WithRealizations().example(); A
-            The subset algebra of {1, 2, 3} over Rational Field
-            sage: sorted(A.indices(), key=cmp_to_key(A.indices_cmp))
-            doctest:...: DeprecationWarning: indices_cmp is deprecated, use indices_key instead.
-            See http://trac.sagemath.org/17229 for details.
-            [{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(17229, "indices_cmp is deprecated, use indices_key instead.")
-
-        s = (len(x) > len(y)) - (len(x) < len(y))
-        if s != 0:
-            return s
-        return (list(x) > list(y)) - (list(x) < list(y))
 
     def indices_key(self, x):
         r"""

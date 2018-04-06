@@ -97,7 +97,7 @@ class DifferentialStructure(Singleton):
         Return the subcategory of ``cat`` corresponding to the structure
         of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.manifolds.structure import DifferentialStructure
             sage: from sage.categories.manifolds import Manifolds
@@ -121,7 +121,7 @@ class RealDifferentialStructure(Singleton):
         Return the subcategory of ``cat`` corresponding to the structure
         of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.manifolds.structure import DifferentialStructure
             sage: from sage.categories.manifolds import Manifolds

@@ -72,6 +72,7 @@ from .commutative_algebras import CommutativeAlgebras
 from .coalgebras import Coalgebras
 from .bialgebras import Bialgebras
 from .hopf_algebras import HopfAlgebras
+from .lie_algebras import LieAlgebras
 
 # specific algebras
 from .monoid_algebras import MonoidAlgebras

@@ -16,10 +16,10 @@ Complex Plots
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 # TODO: use NumPy buffers and complex fast_callable (when supported)
-
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
 cimport numpy as cnumpy
 

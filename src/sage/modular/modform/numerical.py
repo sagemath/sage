@@ -11,9 +11,11 @@ Numerical computation of newforms
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six import integer_types
 
 from sage.structure.sage_object  import SageObject
 from sage.structure.sequence     import Sequence
+from sage.structure.richcmp import richcmp_method, richcmp
 from sage.modular.modsym.all     import ModularSymbols
 from sage.modular.arithgroup.all import Gamma0
 from sage.modules.all            import vector
@@ -26,6 +28,7 @@ from sage.matrix.constructor     import matrix
 # This variable controls importing the SciPy library sparingly
 scipy=None
 
+@richcmp_method
 class NumericalEigenforms(SageObject):
     """
     numerical_eigenforms(group, weight=2, eps=1e-20, delta=1e-2, tp=[2,3,5])
@@ -97,7 +100,7 @@ class NumericalEigenforms(SageObject):
             sage: numerical_eigenforms(61) # indirect doctest
             Numerical Hecke eigenvalues for Congruence Subgroup Gamma0(61) of weight 2
         """
-        if isinstance(group, (int, long, Integer)):
+        if isinstance(group, integer_types + (Integer,)):
             group = Gamma0(Integer(group))
         self._group  = group
         self._weight = Integer(weight)
@@ -107,24 +110,22 @@ class NumericalEigenforms(SageObject):
         self._eps = eps
         self._delta = delta
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
-        Compare two spaces of numerical eigenforms. Currently
-        returns 0 if they come from the same space of modular
-        symbols, and -1 otherwise.
+        Compare two spaces of numerical eigenforms.
+
+        They are considered equal if and only if they come from the
+        same space of modular symbols.
 
         EXAMPLES::
 
             sage: n = numerical_eigenforms(23)
-            sage: n.__cmp__(loads(dumps(n)))
-            0
+            sage: n == loads(dumps(n))
+            True
         """
-        if not isinstance( other, NumericalEigenforms ):
-            raise ValueError("%s is not a space of numerical eigenforms"%other)
-        if self.modular_symbols() == other.modular_symbols():
-            return 0
-        else:
-            return -1
+        if not isinstance(other, NumericalEigenforms):
+            return NotImplemented
+        return richcmp(self.modular_symbols(), other.modular_symbols(), op)
 
     def level(self):
         """
@@ -525,6 +526,3 @@ def support(v, eps):
 
     """
     return [i for i in range(v.degree()) if abs(v[i]) > eps]
-
-
-

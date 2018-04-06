@@ -103,7 +103,7 @@ class JordanAlgebra(Parent, UniqueRepresentation):
         sage: (x*y)*(x*x) == x*(y*(x*x))
         True
 
-    Next we constuct a Jordan algebra from a symmetric bilinear form::
+    Next we construct a Jordan algebra from a symmetric bilinear form::
 
         sage: m = matrix([[-2,3],[3,4]])
         sage: J.<a,b,c> = JordanAlgebra(m); J

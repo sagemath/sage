@@ -31,4 +31,4 @@ cdef class CoercionModel_cache_maps(CoercionModel):
 
     cdef TripleDict _division_parents
     cpdef analyse(self, xp, yp, op=*)
-    cpdef Parent division_parent(self, Parent parent)
+    cpdef division_parent(self, Parent P)

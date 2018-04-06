@@ -87,4 +87,4 @@ cdef class FiniteField_givaro_iterator:
     cdef int iterator
     cdef Cache_givaro _cache
 
-cdef inline FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x)
+cdef FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x)

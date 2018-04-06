@@ -1,4 +1,4 @@
-from sage.libs.cypari2.gen cimport gen as pari_gen
+from cypari2.gen cimport Gen as pari_gen
 from sage.libs.flint.types cimport fmpz_poly_t
 from sage.rings.padics.pow_computer_flint cimport PowComputer_flint_unram
 from sage.rings.padics.qadic_flint_CR cimport CRElement
@@ -12,7 +12,7 @@ include "CA_template_header.pxi"
 cdef class qAdicCappedAbsoluteElement(CAElement):
     pass
 
-cdef class qAdicCoercion_Zq_Qq(RingHomomorphism_coercion):
+cdef class qAdicCoercion_Zq_Qq(RingHomomorphism):
     cdef CRElement _zero
     cdef Morphism _section
 

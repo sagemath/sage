@@ -38,6 +38,7 @@ AUTHOR:
 #            The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ######################################################################
+from six import integer_types
 
 from sage.rings.integer_ring import ZZ
 from sage.symbolic.constants import NaN
@@ -78,27 +79,32 @@ def mean(v):
     if len(v) == 0:
         return NaN
     s = sum(v)
-    if isinstance(s, (int,long)):
+    if isinstance(s, integer_types):
         # python integers are stupid.
         return s/ZZ(len(v))
     return s/len(v)
 
+
 def mode(v):
     """
-    Return the mode of `v`.  The mode is the sorted list of the most
-    frequently occuring elements in `v`.  If `n` is the most times
-    that any element occurs in `v`, then the mode is the sorted list
-    of elements of `v` that occur `n` times.
+    Return the mode of `v`.
 
-    NOTE: The elements of `v` must be hashable and comparable.
+    The mode is the list of the most frequently occuring
+    elements in `v`. If `n` is the most times that any element occurs
+    in `v`, then the mode is the list of elements of `v` that
+    occur `n` times. The list is sorted if possible.
+
+    .. NOTE::
+
+        The elements of `v` must be hashable.
 
     INPUT:
 
-        - `v` -- a list
+    - `v` -- a list
 
     OUTPUT:
 
-        - a list
+    - a list (sorted if possible)
 
     EXAMPLES::
 
@@ -109,20 +115,28 @@ def mode(v):
         3
         sage: mode([])
         []
+
         sage: mode([1,2,3,4,5])
         [1, 2, 3, 4, 5]
         sage: mode([3,1,2,1,2,3])
         [1, 2, 3]
-        sage: mode(['sage', 4, I, 3/5, 'sage', pi])
+        sage: mode([0, 2, 7, 7, 13, 20, 2, 13])
+        [2, 7, 13]
+
+        sage: mode(['sage', 'four', 'I', 'three', 'sage', 'pi'])
         ['sage']
+
         sage: class MyClass:
-        ...     def mode(self):
-        ...         return [1]
+        ....:   def mode(self):
+        ....:       return [1]
         sage: stats.mode(MyClass())
         [1]
     """
-    if hasattr(v, 'mode'): return v.mode()
-    from operator import itemgetter
+    if hasattr(v, 'mode'):
+        return v.mode()
+
+    if not v:
+        return v
 
     freq = {}
     for i in v:
@@ -131,8 +145,12 @@ def mode(v):
         else:
             freq[i] = 1
 
-    s = sorted(freq.items(), key=itemgetter(1), reverse=True)
-    return [i[0] for i in s if i[1]==s[0][1]]
+    n = max(freq.values())
+    try:
+        return sorted(u for u, f in freq.items() if f == n)
+    except TypeError:
+        return [u for u, f in freq.items() if f == n]
+
 
 def std(v, bias=False):
     """
@@ -161,7 +179,7 @@ def std(v, bias=False):
         sage: std([1..6], bias=False)
         sqrt(7/2)
         sage: std([e, pi])
-        sqrt(1/2)*sqrt((pi - e)^2)
+        sqrt(1/2)*abs(pi - e)
         sage: std([])
         NaN
         sage: std([I, sqrt(2), 3/5])
@@ -187,9 +205,9 @@ def std(v, bias=False):
     x = 0
     if isinstance(v, numpy.ndarray):
         # accounts for numpy arrays
-        if bias == True:
+        if bias:
             return v.std()
-        elif bias == False:
+        else:
             return v.std(ddof=1)
 
     if len(v) == 0:
@@ -243,19 +261,19 @@ def variance(v, bias=False):
         sage: variance(x, bias=True)
         833.25
         sage: class MyClass:
-        ...     def variance(self, bias = False):
-        ...        return 1
+        ....:   def variance(self, bias = False):
+        ....:      return 1
         sage: stats.variance(MyClass())
         1
         sage: class SillyPythonList:
-        ...     def __init__(self):
-        ...         self.__list = [2L,4L]
-        ...     def __len__(self):
-        ...         return len(self.__list)
-        ...     def __iter__(self):
-        ...         return self.__list.__iter__()
-        ...     def mean(self):
-        ...         return 3L
+        ....:   def __init__(self):
+        ....:       self.__list = [2L,4L]
+        ....:   def __len__(self):
+        ....:       return len(self.__list)
+        ....:   def __iter__(self):
+        ....:       return self.__list.__iter__()
+        ....:   def mean(self):
+        ....:       return 3L
         sage: R = SillyPythonList()
         sage: variance(R)
         2
@@ -265,20 +283,21 @@ def variance(v, bias=False):
 
     TESTS:
 
-    The performance issue from #10019 is solved::
+    The performance issue from :trac:`10019` is solved::
 
         sage: variance([1] * 2^18)
         0
     """
-    if hasattr(v, 'variance'): return v.variance(bias=bias)
+    if hasattr(v, 'variance'):
+        return v.variance(bias=bias)
     import numpy
 
     x = 0
     if isinstance(v, numpy.ndarray):
         # accounts for numpy arrays
-        if bias == True:
+        if bias is True:
             return v.var()
-        elif bias == False:
+        elif bias is False:
             return v.var(ddof=1)
     if len(v) == 0:
         # variance of empty set defined as NaN
@@ -289,12 +308,12 @@ def variance(v, bias=False):
         x += (vi - mu)**2
     if bias:
         # population variance
-        if isinstance(x, (int,long)):
+        if isinstance(x, integer_types):
             return x/ZZ(len(v))
         return x/len(v)
     else:
         # sample variance
-        if isinstance(x, (int,long)):
+        if isinstance(x, integer_types):
             return x/ZZ(len(v)-1)
         return x/(len(v)-1)
 
@@ -327,8 +346,8 @@ def median(v):
         sage: median([])
         NaN
         sage: class MyClass:
-        ...      def median(self):
-        ...         return 1
+        ....:    def median(self):
+        ....:       return 1
         sage: stats.median(MyClass())
         1
     """

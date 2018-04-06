@@ -18,24 +18,20 @@ AUTHORS:
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import division
+from __future__ import absolute_import, division
 
-include "cysignals/signals.pxi"
-include "sage/ext/cdefs.pxi"
+from cysignals.signals cimport sig_on, sig_off
+
 include 'misc.pxi'
 include 'decl.pxi'
+from sage.libs.gmp.mpz cimport *
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer import Integer
@@ -345,7 +341,7 @@ cdef class ntl_zz_p(object):
             sage: int(ntl.zz_p(3,next_prime(100)))
             3
             sage: type(int(ntl.zz_p(3,next_prime(100))))
-            <type 'int'>
+            <... 'int'>
         """
         return zz_p_rep(self.x)
 
@@ -411,7 +407,7 @@ def make_zz_p(val, context):
     """
     For unpickling.
 
-    TEST:
+    TESTS:
         sage: f = ntl.zz_p(1, 12)
         sage: loads(dumps(f)) == f
         True

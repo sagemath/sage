@@ -22,8 +22,6 @@
 # automatically.
 #SAGE_ROOT=/path/to/sage-version
 
-
-
 # Resolve all symbolic links in a filename.  This more or less behaves
 # like "readlink -f" except that it does not convert the filename to an
 # absolute path (a relative path remains relative), nor does it treat
@@ -133,6 +131,7 @@ fi
 if [ -x "$SAGE_ROOT/src/bin/sage" ]; then
     exec "$SAGE_ROOT/src/bin/sage" "$@"
 elif [ -x "$SAGE_ROOT/local/bin/sage" ]; then # if in a stripped binary
+    # Note in this case we assume that SAGE_LOCAL is the "local" subdirectory
     exec "$SAGE_ROOT/local/bin/sage" "$@"
 else
     echo >&2 "$0: no Sage installation found in \$SAGE_ROOT=$SAGE_ROOT"

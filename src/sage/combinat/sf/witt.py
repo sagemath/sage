@@ -994,7 +994,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         # symmetric basis and the complete homogeneous basis (over the same base
         # ring as self), respectively (but they are only set if the respective
         # arguments ``coerce_p``, ``coerce_e`` and ``coerce_h`` are True).
-        # self._friendly will be the one avaliable basis which makes computations
+        # self._friendly will be the one available basis which makes computations
         # the easiest.
 
         self._friendly = None

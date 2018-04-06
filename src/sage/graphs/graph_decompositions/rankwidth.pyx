@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Rank Decompositions of graphs
 
@@ -75,7 +76,7 @@ from the smaller of the two and its complement.
       it to us, what we need is some information on the hardware you run to know
       where it comes from !
 
-EXAMPLE::
+EXAMPLES::
 
         sage: g = graphs.PetersenGraph()
         sage: g.rank_decomposition()
@@ -116,15 +117,19 @@ Methods
 """
 
 #*****************************************************************************
-#      Copyright (C) 2011 Nathann Cohen <nathann.cohen@gail.com>
+#       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 from __future__ import print_function
 
-include "cysignals/memory.pxi"
-include "cysignals/signals.pxi"
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport *
 
 from libc.string cimport memset
 
@@ -150,7 +155,7 @@ def rank_decomposition(G, verbose = False):
     numerical value and ``decomposition_tree`` is a ternary tree describing the
     decomposition (cf. the module's documentation).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.rankwidth import rank_decomposition
         sage: g = graphs.PetersenGraph()
@@ -298,7 +303,7 @@ def mkgraph(int num_vertices):
 
     (This function is for internal use)
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.rankwidth import rank_decomposition
         sage: g = graphs.PetersenGraph()
@@ -313,7 +318,7 @@ def mkgraph(int num_vertices):
     from sage.graphs.graph import Graph
     g = Graph()
 
-    cdef subset_t * tab = <subset_t *> sig_malloc(sizeof(subset_t) * (2*num_vertices -1))
+    cdef subset_t * tab = <subset_t *>check_allocarray(2*num_vertices - 1, sizeof(subset_t))
     tab[0] = 0x7ffffffful >> (31 - num_vertices)
 
     cdef int beg = 0

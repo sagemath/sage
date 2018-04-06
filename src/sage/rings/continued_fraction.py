@@ -203,6 +203,7 @@ from __future__ import division, print_function, absolute_import
 from six.moves import range
 
 from sage.structure.sage_object import SageObject
+from sage.structure.richcmp import richcmp_method, rich_to_bool
 from .integer import Integer
 from .infinity import Infinity
 
@@ -289,6 +290,7 @@ def rat_interval_cf_list(r1, r2):
     return l
 
 
+@richcmp_method
 class ContinuedFraction_base(SageObject):
     r"""
     Base class for (standard) continued fractions.
@@ -311,7 +313,7 @@ class ContinuedFraction_base(SageObject):
     - computation of convergents in :meth:`convergent`, :meth:`numerator` and
       :meth:`denominator`
 
-    - comparison with other continued fractions (see :meth:`__cmp__`)
+    - comparison with other continued fractions (see :meth:`__richcmp__`)
 
     - elementary arithmetic function :meth:`floor`, :meth:`ceil`, :meth:`sign`
 
@@ -506,7 +508,7 @@ class ContinuedFraction_base(SageObject):
             + \frac{\displaystyle 1}{\displaystyle 2
             + \frac{\displaystyle 1}{\displaystyle 1
             + \frac{\displaystyle 1}{\displaystyle \dots}}}}}}}}}}
-            sage: print cf_pi._latex_(nterms=3)
+            sage: print(cf_pi._latex_(nterms=3))
             3
             + \frac{\displaystyle 1}{\displaystyle 7
             + \frac{\displaystyle 1}{\displaystyle 15
@@ -515,12 +517,12 @@ class ContinuedFraction_base(SageObject):
         nterms = int(nterms)
         if nterms <= 0:
             raise ValueError("nterms must be positive")
-        v=[self.quotient(i) for i in range(nterms+1)]
-        s = str(v[0])+'\n'
-        for i in range(1,min(len(v)-1,nterms)):
+        v = [self.quotient(i) for i in range(nterms + 1)]
+        s = str(v[0]) + '\n'
+        for i in range(1, min(len(v) - 1, nterms)):
             s += '+ \\frac{\\displaystyle 1}{\\displaystyle %s\n' % v[i]
         s += '+ \\frac{\\displaystyle 1}{\\displaystyle \dots'
-        s += '}'*(len(v)-1)
+        s += '}' * (len(v) - 1)
         return s
 
     def __abs__(self):
@@ -540,8 +542,10 @@ class ContinuedFraction_base(SageObject):
             return self
         return -self
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
+        Rich comparison.
+
         EXAMPLES::
 
             sage: a = continued_fraction(-17/389)
@@ -554,19 +558,23 @@ class ContinuedFraction_base(SageObject):
             False
             sage: d == d
             True
-        """
-        i = 0
 
+            sage: a == 'nothing'
+            False
+        """
+        if not isinstance(other, ContinuedFraction_base):
+            return NotImplemented
+
+        i = 0
         while True:
             a = self.quotient(i)
             b = other.quotient(i)
-            test = cmp(a,b)
-            if test == 1:  # a > b
-                return -1 if i % 2 else 1
-            if test == -1:  # b > a
-                return 1 if i % 2 else -1
+            if a > b:
+                return rich_to_bool(op, -1 if i % 2 else 1)
+            if b > a:
+                return rich_to_bool(op, 1 if i % 2 else -1)
             if a == ZZ_0 and b == ZZ_0 and i:  # rational case
-                return 0
+                return rich_to_bool(op, 0)
             i += 1
 
     def _mpfr_(self, R):
@@ -851,7 +859,9 @@ class ContinuedFraction_base(SageObject):
             sage: a.convergents()
             [0, 1/6, 1/7, 5/34, 6/41, 23/157]
 
-            sage: #TODO: example with infinite list
+        .. TODO::
+
+            Add an example with infinite list.
         """
         if self.length() == Infinity:
             from sage.misc.lazy_list import lazy_list
@@ -863,9 +873,9 @@ class ContinuedFraction_base(SageObject):
         r"""
         Return the list of partial quotients of ``self``.
 
-        If ``self`` is an infinite continued fraction, the the object returned
-        is a :class:`~sage.misc.lazy_list.lazy_list_generic` which behave like an
-        infinite list.
+        If ``self`` is an infinite continued fraction, then the object returned
+        is a :class:`~sage.misc.lazy_list.lazy_list_generic` which behaves
+        like an infinite list.
 
         EXAMPLES::
 
@@ -874,7 +884,9 @@ class ContinuedFraction_base(SageObject):
             sage: a.quotients()
             [0, 6, 1, 4, 1, 3]
 
-            sage: #TODO: example with infinite list
+        .. TODO::
+
+            Add an example with infinite list.
         """
         if self.length() == Infinity:
             from sage.misc.lazy_list import lazy_list
@@ -1299,8 +1311,10 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
             return Infinity
         return Integer(len(self._x1))
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
+        Rich comparison.
+
         EXAMPLES::
 
             sage: a = continued_fraction([(0,),(1,2,3,1,2,3,1)]); a.n()
@@ -1323,19 +1337,18 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
             False
         """
         if isinstance(other, ContinuedFraction_periodic):
-            n = max(len(self._x1) + 2*len(self._x2),
-                    len(other._x1) + 2*len(other._x2))
+            n = max(len(self._x1) + 2 * len(self._x2),
+                    len(other._x1) + 2 * len(other._x2))
             for i in range(n):
                 a = self.quotient(i)
                 b = other.quotient(i)
-                test = cmp(a,b)
-                if test == 1:
-                    return -1 if i % 2 else 1
-                if test == -1:
-                    return 1 if i % 2 else -1
-            return 0
+                if a > b:
+                    return rich_to_bool(op, -1 if i % 2 else 1)
+                if b > a:
+                    return rich_to_bool(op, 1 if i % 2 else -1)
+            return rich_to_bool(op, 0)
 
-        return ContinuedFraction_base.__cmp__(self, other)
+        return ContinuedFraction_base.__richcmp__(self, other, op)
 
     def value(self):
         r"""
@@ -1638,6 +1651,7 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
         xx1,xx2 = check_and_reduce_pair(xx1,x2)
         return self.__class__(xx1,xx2)
 
+
 class ContinuedFraction_real(ContinuedFraction_base):
     r"""
     Continued fraction of a real (exact) number.
@@ -1702,9 +1716,9 @@ class ContinuedFraction_real(ContinuedFraction_base):
         """
         raise ValueError("the length is infinite!")
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
-        Comparison.
+        Rich comparison.
 
         EXAMPLES::
 
@@ -1721,12 +1735,12 @@ class ContinuedFraction_real(ContinuedFraction_base):
             #     sage: cmp(pi, pi+4)
             #     1
             if self.value() == other.value():
-                return 0
+                return rich_to_bool(op, 0)
             if self.value() - other.value() > 0:
-                return 1
-            return -1
+                return rich_to_bool(op, 1)
+            return rich_to_bool(op, -1)
         except Exception:
-            return ContinuedFraction_base.__cmp__(self, other)
+            return ContinuedFraction_base.__richcmp__(self, other, op)
 
     def _repr_(self):
         r"""

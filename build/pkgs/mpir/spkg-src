@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ -z "$SAGE_DISTFILES" ]; then
+    echo >&2 "SAGE_DISTFILES undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+set -e
+
+PACKAGEVERSION=`cat $SAGE_ROOT/build/pkgs/mpir/package-version.txt`
+MPIRVERSION=mpir-`echo $PACKAGEVERSION | sed 's/-.*//'`
+TARBALLVERSION="mpir-$PACKAGEVERSION"
+
+# Get the sources
+cd "$SAGE_DISTFILES"
+rm -rf mpir
+git clone https://github.com/wbhart/mpir.git mpir
+cd mpir
+git checkout 644faf502c56f97d9accd301965fc57d6ec70868
+
+# Add auto-generated files
+./autogen.sh
+
+# Create the tarball
+./configure
+make dist-bzip2
+
+# Unpack the tarball, remove some unwanted stuff
+tar xjf $MPIRVERSION.tar.bz2
+find $MPIRVERSION -name 'build.vc*' -prune -exec rm -r {} \;
+
+# Repackage the tarball and put it in SAGE_DISTFILES
+mv $MPIRVERSION $TARBALLVERSION
+tar c $TARBALLVERSION | bzip2 --best >../$TARBALLVERSION.tar.bz2
+sage-package fix-checksum mpir
+
+# Cleanup
+cd "$SAGE_DISTFILES"
+rm -rf mpir
+echo "New MPIR tarball is ready in $SAGE_DISTFILES/$TARBALLVERSION.tar.bz2"

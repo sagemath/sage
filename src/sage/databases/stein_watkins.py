@@ -279,7 +279,7 @@ class SteinWatkinsAllData:
         Iterate through the curve classes, but grouped into lists by
         level.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: d = SteinWatkinsAllData(1)
             sage: E = d.iter_levels()

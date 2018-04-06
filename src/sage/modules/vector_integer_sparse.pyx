@@ -4,12 +4,12 @@
 #
 #############################################################
 
+from cysignals.memory cimport sig_malloc, sig_free
+
 from sage.libs.gmp.mpz cimport *
 from sage.data_structures.binary_search cimport *
 from sage.rings.integer cimport Integer
 
-
-include "cysignals/memory.pxi"
 
 cdef int allocate_mpz_vector(mpz_vector* v, Py_ssize_t num_nonzero) except -1:
     """

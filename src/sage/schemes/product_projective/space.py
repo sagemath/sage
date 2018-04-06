@@ -42,14 +42,13 @@ We can also construct the product by specifying the dimensions and the base ring
 
 import six
 from sage.misc.cachefunc import cached_method
-from copy import copy
 from sage.misc.mrange import xmrange
-from sage.rings.all import (PolynomialRing, ZZ, QQ, Integer)
+from sage.misc.all import prod
 from sage.rings.all import (PolynomialRing, ZZ, QQ, Integer, CommutativeRing)
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polydict import ETuple
-from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme_product_projective
+from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
 from sage.schemes.product_projective.homset import (SchemeHomset_points_product_projective_spaces_ring,
@@ -58,14 +57,15 @@ from sage.schemes.product_projective.point import (ProductProjectiveSpaces_point
                                                    ProductProjectiveSpaces_point_field,
                                                    ProductProjectiveSpaces_point_finite_field)
 from sage.schemes.product_projective.morphism import ProductProjectiveSpaces_morphism_ring
+from sage.schemes.product_projective.subscheme import AlgebraicScheme_subscheme_product_projective
 
 
 def is_ProductProjectiveSpaces(x):
     r"""
     Return True if ``x`` is a product of projective spaces.
 
-    This is an ambient space defined by`\mathbb{P}^n_R \times \cdots \times \mathbb{P}^m_R`,
-    where `R` is a ring and`n,\ldots,m\geq 0`are integers.
+    This is an ambient space defined by `\mathbb{P}^n_R \times \cdots \times \mathbb{P}^m_R`,
+    where `R` is a ring and `n,\ldots, m\geq 0` are integers.
 
     OUTPUT: Boolean.
 
@@ -239,6 +239,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         #Note that the coordinate ring should really be the tensor product of the component
         #coordinate rings. But we just deal with them as multihomogeneous polynomial rings
         self._coordinate_ring = PolynomialRing(R,sum(N)+ len(N),names)
+        self._assign_names(names)
 
     def _repr_(self):
         r"""
@@ -328,15 +329,15 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         """
         return(self._components[i])
 
-    def __cmp__(self, right):
+    def __eq__(self, right):
         r"""
-        Compare two products of projective spaces.
+        Check equality of two products of projective spaces.
 
         INPUT:
 
-        - ``right`` - a product of projective spaces.
+        - ``right`` -- a product of projective spaces
 
-        OUTPUT: Boolean.
+        OUTPUT: Boolean
 
         EXAMPLES::
 
@@ -344,18 +345,115 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             sage: T.<x,y,z,u,v,w> = ProductProjectiveSpaces([2, 2], QQ)
             sage: S == T
             False
+        """
+        if not isinstance(right, ProductProjectiveSpaces_ring):
+            return False
+        else:
+            return self._components == right._components
 
-        ::
+    def __ne__(self, other):
+        """
+        Check non-equality of two products of projective spaces.
+
+        INPUT:
+
+        - ``other`` -- a product of projective spaces
+
+        OUTPUT: Boolean
+
+        EXAMPLES::
 
             sage: S.<a,x,y,z,u,v,w> = ProductProjectiveSpaces([3, 2], QQ)
             sage: T.<x,y,z,u,v,w> = ProductProjectiveSpaces([2, 2], QQ)
             sage: S != T
             True
         """
-        if not isinstance(right, (ProductProjectiveSpaces_ring)):
-            return -1
+        return not (self == other)
+
+    def __pow__(self, m):
+        """
+        Return the Cartesian power of this space.
+
+        INPUT: ``m`` -- integer.
+
+        OUTPUT: product of projective spaces.
+
+        EXAMPLES::
+
+            sage: P1 = ProductProjectiveSpaces([2,1], QQ, 'x')
+            sage: P1^3
+            Product of projective spaces P^2 x P^1 x P^2 x P^1 x P^2 x P^1 over
+            Rational Field
+
+        As you see, custom variable names are not preserved by power operator,
+        since there is no natural way to make new ones in general.
+        """
+        mm = int(m)
+        if mm != m:
+            raise ValueError("m must be an integer")
+        return ProductProjectiveSpaces(self.dimension_relative_components()*mm, self.base_ring())
+
+    def __mul__(self, right):
+        r"""
+        Create the product of projective spaces.
+
+        INPUT:
+
+        - ``right`` - a projective space, product of projective spaces, or subscheme.
+
+        OUTPUT: a product of projective spaces or subscheme
+
+        EXAMPLES::
+
+            sage: S.<t,x,y,z,u,v,w> = ProductProjectiveSpaces([3, 2], QQ)
+            sage: T.<a,b> = ProjectiveSpace(QQ, 1)
+            sage: S*T
+            Product of projective spaces P^3 x P^2 x P^1 over Rational Field
+
+        ::
+
+            sage: S = ProductProjectiveSpaces([3, 2], QQ, 'x')
+            sage: T = ProductProjectiveSpaces([2, 2], QQ, 'y')
+            sage: S*T
+            Product of projective spaces P^3 x P^2 x P^2 x P^2 over Rational Field
+
+        ::
+
+            sage: S = ProductProjectiveSpaces([1,2,1], ZZ, 't')
+            sage: T = ProductProjectiveSpaces([2,2], ZZ, 'x')
+            sage: T.inject_variables()
+            Defining x0, x1, x2, x3, x4, x5
+            sage: X = T.subscheme([x0*x4 - x1*x3])
+            sage: S*X
+            Closed subscheme of Product of projective spaces P^1 x P^2 x P^1 x P^2 x P^2 over Integer Ring defined by:
+              -x1*x3 + x0*x4
+
+        ::
+
+            sage: S = ProductProjectiveSpaces([3, 2], QQ,'x')
+            sage: T = AffineSpace(2, QQ, 'y')
+            sage: S*T
+            Traceback (most recent call last):
+            ...
+            TypeError: Affine Space of dimension 2 over Rational Field must be a projective space,
+            product of projective spaces, or subscheme
+        """
+        if self is right:
+            return self.__pow__(2)
+        if isinstance(right, ProductProjectiveSpaces_ring):
+            return ProductProjectiveSpaces(self.components() + right.components())
+        elif isinstance(right, ProjectiveSpace_ring):
+            return ProductProjectiveSpaces(self.components() + [right])
+        elif isinstance(right, AlgebraicScheme_subscheme):
+            AS = self*right.ambient_space()
+            CR = AS.coordinate_ring()
+            n = self.ambient_space().coordinate_ring().ngens()
+
+            phi = self.ambient_space().coordinate_ring().hom(list(CR.gens()[:n]), CR)
+            psi = right.ambient_space().coordinate_ring().hom(list(CR.gens()[n:]), CR)
+            return AS.subscheme([phi(t) for t in self.defining_polynomials()] + [psi(t) for t in right.defining_polynomials()])
         else:
-            return(cmp(self._components,right._components))
+            raise TypeError('%s must be a projective space, product of projective spaces, or subscheme'%right)
 
     def components(self):
         r"""
@@ -893,11 +991,46 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
               -u1*u3 + u0*u4
               Defn: Defined by sending (z0 : z1 , z2 : z3 : z4) to
                     (z0*z2 : z0*z3 : z0*z4 : z1*z2 : z1*z3 : z1*z4).
+
+            ::
+
+            sage: T = ProductProjectiveSpaces([1, 2, 1], QQ, 'z')
+            sage: T.segre_embedding()
+            Scheme morphism:
+              From: Product of projective spaces P^1 x P^2 x P^1 over Rational Field
+              To:   Closed subscheme of Projective Space of dimension 11 over
+            Rational Field defined by:
+              -u9*u10 + u8*u11,
+              -u7*u10 + u6*u11,
+              -u7*u8 + u6*u9,
+              -u5*u10 + u4*u11,
+              -u5*u8 + u4*u9,
+              -u5*u6 + u4*u7,
+              -u5*u9 + u3*u11,
+              -u5*u8 + u3*u10,
+              -u5*u8 + u2*u11,
+              -u4*u8 + u2*u10,
+              -u3*u8 + u2*u9,
+              -u3*u6 + u2*u7,
+              -u3*u4 + u2*u5,
+              -u5*u7 + u1*u11,
+              -u5*u6 + u1*u10,
+              -u3*u7 + u1*u9,
+              -u3*u6 + u1*u8,
+              -u5*u6 + u0*u11,
+              -u4*u6 + u0*u10,
+              -u3*u6 + u0*u9,
+              -u2*u6 + u0*u8,
+              -u1*u6 + u0*u7,
+              -u1*u4 + u0*u5,
+              -u1*u2 + u0*u3
+              Defn: Defined by sending (z0 : z1 , z2 : z3 : z4 , z5 : z6) to
+                    (z0*z2*z5 : z0*z2*z6 : z0*z3*z5 : z0*z3*z6 : z0*z4*z5 : z0*z4*z6
+            : z1*z2*z5 : z1*z2*z6 : z1*z3*z5 : z1*z3*z6 : z1*z4*z5 : z1*z4*z6).
         """
         N = self._dims
-        if len(N) > 2:
-            raise NotImplementedError("cannot have more than two components.")
-        M = (N[0]+1) * (N[1]+1)-1
+        M = prod([n+1 for n in N]) - 1
+        CR = self.coordinate_ring()
 
         vars = list(self.coordinate_ring().variable_names()) + [var + str(i) for i in range(M+1)]
         R = PolynomialRing(self.base_ring(), self.ngens()+M+1, vars, order='lex')
@@ -905,10 +1038,15 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         #set-up the elimination for the segre embedding
         mapping = []
         k = self.ngens()
-        for i in range(N[0]+1):
-            for j in range(N[0]+1, N[0] + N[1]+2):
-                mapping.append(R.gen(k) - R(self.gen(i) * self.gen(j)))
-                k += 1
+        index = self.num_components()*[0]
+        for count in range(M + 1):
+            mapping.append(R.gen(k+count)-prod([CR(self[i].gen(index[i])) for i in range(len(index))]))
+            for i in range(len(index)-1, -1, -1):
+                if index[i] == N[i]:
+                    index[i] = 0
+                else:
+                    index[i] += 1
+                    break #only increment once
 
         #change the defining ideal of the subscheme into the variables
         I = R.ideal(list(self.defining_polynomials()) + mapping)
@@ -922,21 +1060,27 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         #create new subscheme
         if PP is None:
-            PS = ProjectiveSpace(self.base_ring(),M,R.gens()[self.ngens():])
+            PS = ProjectiveSpace(self.base_ring(), M, R.variable_names()[self.ngens():])
             Y = PS.subscheme(L)
         else:
-            if PP.dimension_relative()!= M:
+            if PP.dimension_relative() != M:
                 raise ValueError("projective Space %s must be dimension %s")%(PP, M)
             S = PP.coordinate_ring()
-            psi = R.hom([0] * (N[0] + N[1]+2) + list(S.gens()), S)
+            psi = R.hom([0]*k + list(S.gens()), S)
             L = [psi(l) for l in L]
             Y = PP.subscheme(L)
 
         #create embedding for points
         mapping = []
-        for i in range(N[0]+1):
-            for j in range(N[0]+1, N[0] + N[1]+2):
-                mapping.append(self.gen(i) * self.gen(j))
+        index = self.num_components()*[0]
+        for count in range(M + 1):
+            mapping.append(prod([CR(self[i].gen(index[i])) for i in range(len(index))]))
+            for i in range(len(index)-1, -1, -1):
+                if index[i] == N[i]:
+                    index[i] = 0
+                else:
+                    index[i] += 1
+                    break #only increment once
         phi = self.hom(mapping, Y)
 
         return phi

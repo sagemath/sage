@@ -81,6 +81,7 @@ import sage.rings.all as rings
 import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
 import sage.modular.modsym.modsym as modsym
+from sage.misc.cachefunc import cached_method
 
 from .ambient import ModularFormsAmbient
 
@@ -195,6 +196,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             return self
         return ambient_R.ModularFormsAmbient_R(self, base_ring = base_ring)
 
+    @cached_method(key=lambda self,sign: rings.Integer(sign)) # convert sign to an Integer before looking this up in the cache
     def modular_symbols(self, sign=0):
         """
         Return corresponding space of modular symbols with given sign.
@@ -215,18 +217,10 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             ValueError: sign must be -1, 0, or 1
         """
         sign = rings.Integer(sign)
-        try:
-            return self.__modsym[sign]
-        except AttributeError:
-            self.__modsym = {}
-        except KeyError:
-            pass
-        self.__modsym[sign] = modsym.ModularSymbols(\
-            self.character(),
-            weight = self.weight(),
-            sign = sign,
-            base_ring = self.base_ring())
-        return self.__modsym[sign]
+        return modsym.ModularSymbols(self.character(),
+                                     weight = self.weight(),
+                                     sign = sign,
+                                     base_ring = self.base_ring())
 
     def eisenstein_submodule(self):
         """

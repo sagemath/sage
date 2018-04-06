@@ -253,6 +253,15 @@ public:
         best_col = NULL;
     }
 
+    ~dancing_links()
+    {
+        for (vector<column*>::iterator i = col_array.begin(); i != col_array.end(); i++)
+            free(*i);
+
+        for (vector<node*>::iterator i = node_array.begin(); i != node_array.end(); i++)
+            free(*i);
+    }
+
     int number_of_columns() {
         return nr_columns;
     }
@@ -357,35 +366,4 @@ public:
             }
         }
     }
-
-    void freemem() {
-        for(vector<column*>::iterator i = col_array.begin(); i != col_array.end(); i++) {
-            free(*i);
-        }
-
-        for(vector<node*>::iterator i = node_array.begin(); i != node_array.end(); i++) {
-            free(*i);
-        }
-    }
- };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+};

@@ -12,14 +12,14 @@
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 include 'misc.pxi'
 include 'decl.pxi'
 import weakref
 
-from sage.rings.integer_ring import IntegerRing
+from sage.rings.integer cimport Integer
 
-ZZ_sage = IntegerRing()
 
 
 cdef class ntl_ZZ_pContext_class(object):
@@ -89,7 +89,7 @@ cdef class ntl_ZZ_pContext_class(object):
             sage: c.modulus() == 10^30
             True
         """
-        return ZZ_sage(self.p)
+        return Integer(self.p)
 
 
     def restore(self):

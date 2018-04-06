@@ -16,7 +16,7 @@ some utility functions for this purpose.
 #                  http://www.gnu.org/licenses/
 ########################################################################
 from __future__ import print_function
-
+from six.moves import range
 
 # TODO: this module is a clear candidate for cythonizing. Need to
 # evaluate speed benefits.
@@ -130,7 +130,7 @@ def dhsw_snf(mat, verbose=False):
     new_mat = new_mat.matrix_from_columns(range(cols))
     if verbose:
         print("starting pass 2")
-    keep_columns = range(cols)
+    keep_columns = list(range(cols))
     check_leading = True
     while check_leading:
         check_leading = False

@@ -218,12 +218,6 @@ def pretty_print(*args, **kwds):
         <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z} 123 %% Creator: Matplotlib, PGF backend...</script></html>
         sage: pretty_print(plt, plt)        # graphics output
     """
-    # Support deprecation trac #18292
-    if len(args) == 1:
-        import sage.misc.html
-        if sage.misc.html.WarnIfNotPrinted.skip_pretty_print(args[0]):
-            return
-
     dm = get_display_manager()
     old_preferences_text = dm.preferences.text
     try:

@@ -1,43 +1,35 @@
-From 9e0f53cdeaebfd22721a52078af22fb9456156c6 Mon Sep 17 00:00:00 2001
+From 99b9db6b9e1db1a048e4bade34e1c5d86d3055c8 Mon Sep 17 00:00:00 2001
 From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
 Date: Tue, 26 Jul 2016 12:55:23 -0700
 Subject: [PATCH 2/5] Library dependencies
 
 ---
- Makefile | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ Makefile | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 27fb1ec..abf324a 100644
+index b276aa7..90a0eb1 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -122,6 +122,7 @@ endif
- LPILIBOBJ	=	lpi/lpi_spx.o scip/bitencode.o blockmemshell/memory.o scip/message.o
- LPILIBSRC	=	$(SRCDIR)/lpi/lpi_spx.cpp $(SRCDIR)/scip/bitencode.c $(SRCDIR)/blockmemshell/memory.c $(SRCDIR)/scip/message.c
- SOFTLINKS	+=	$(LIBDIR)/spxinc
-+LPILIBS         =       $(LIBDIR)/libsoplex.$(OSTYPE).$(ARCH).$(COMP).$(LPSOPT).$(LIBEXT)
- SOFTLINKS	+=	$(LIBDIR)/libsoplex.$(OSTYPE).$(ARCH).$(COMP).$(LPSOPT).$(STATICLIBEXT)
- SOFTLINKS	+=	$(LIBDIR)/libsoplex.$(OSTYPE).$(ARCH).$(COMP).$(LPSOPT).$(SHAREDLIBEXT)
- LPIINSTMSG	=	"  -> \"spxinc\" is the path to the SoPlex \"src\" directory, e.g., \"../../soplex/src\".\n"
-@@ -945,10 +946,10 @@ endif
- makesciplibfile: preprocess
- 		@$(MAKE) $(SCIPLIBFILE)
- 
--$(SCIPLIBFILE):	$(SCIPLIBOBJFILES) $(LPILIBFILE) | $(LIBDIR) $(LIBOBJSUBDIRS)
-+$(SCIPLIBFILE):	$(SCIPLIBOBJFILES) $(LPILIBFILE) $(NLPILIBFILE) | $(LIBDIR) $(LIBOBJSUBDIRS)
- 		@echo "-> generating library $@"
- 		-rm -f $@
--		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(SCIPLIBOBJFILES) $(LPILIBFILE)
-+		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(SCIPLIBOBJFILES) $(LPILIBFILE) $(NLPILIBFILE)
- ifneq ($(RANLIB),)
- 		$(RANLIB) $@
+@@ -422,7 +422,7 @@ SCIPLIBEXTLIBS	+=	$(READLINE_LDFLAGS)
  endif
-@@ -964,7 +965,7 @@ endif
- $(LPILIBFILE):	$(LPILIBOBJFILES) | $(LIBOBJSUBDIRS) $(LIBDIR)
+ SCIPLIBEXTLIBS	+=	$(ZIMPLLIB) $(LINKRPATH)$(realpath $(LIBDIR)/$(LIBTYPE))
+ endif
+-SCIPLIBEXTLIBS  +=      $(LPILIBFILE)
++SCIPLIBEXTLIBS  +=      $(LPILIBFILE) $(NLPILIBFILE)
+ 
+ #-----------------------------------------------------------------------------
+ # SCIP Library
+@@ -1104,10 +1104,11 @@ endif
+ libscip:		preprocess
+ 		@$(MAKE) $(SCIPLIBFILE) $(SCIPLIBLINK) $(SCIPLIBSHORTLINK)
+ 
+-$(SCIPLIBFILE):	$(SCIPLIBOBJFILES) | $(LIBDIR)/$(LIBTYPE) $(LIBOBJSUBDIRS)
++$(SCIPLIBFILE):	$(SCIPLIBOBJFILES) $(LPILIBFILE) $(NLPILIBFILE) | $(LIBDIR)/$(LIBTYPE) $(LIBOBJSUBDIRS)
  		@echo "-> generating library $@"
  		-rm -f $@
--		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(LPILIBOBJFILES)
-+		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(LPILIBOBJFILES) $(LPILIBS)
+ 		$(LIBBUILD) $(LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(SCIPLIBOBJFILES) $(SCIPLIBEXTLIBS)
++
  ifneq ($(RANLIB),)
  		$(RANLIB) $@
  endif

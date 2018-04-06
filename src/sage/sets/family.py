@@ -355,18 +355,22 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
         sage: f == g
         True
 
-    The family should keep the order of the keys::
+    A family should keep the order of the keys::
 
-        sage: f = Family(["c", "a", "b"], lambda x: x+x)
+        sage: f = Family(["c", "a", "b"], lambda i: 2*i)
+        sage: list(f)
+        ['cc', 'aa', 'bb']
+
+    Even with hidden keys (see :trac:`22955`)::
+
+        sage: f = Family(["c", "a", "b"], lambda i: 2*i,
+        ....:           hidden_keys=[5], hidden_function=lambda i: i%2)
         sage: list(f)
         ['cc', 'aa', 'bb']
 
     Only the hidden function is applied to the hidden keys::
 
-        sage: f = lambda x : 2*x
-        sage: h_f = lambda x:x%2
-        sage: F = Family([1,2,3,4],function = f, hidden_keys=[5],hidden_function=h_f)
-        sage: F[5]
+        sage: f[5]
         1
     """
     assert(isinstance(hidden_keys, list))
@@ -392,18 +396,19 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
                 return TrivialFamily(indices)
 
             raise NotImplementedError
-        if (isinstance(indices, (list, tuple, FiniteEnumeratedSet) )
+        if (isinstance(indices, (list, tuple, FiniteEnumeratedSet))
                and not lazy):
-            return FiniteFamily(dict([(i, function(i)) for i in indices]),
-                                keys = indices)
+            return FiniteFamily({i: function(i) for i in indices},
+                                keys=indices)
 
         return LazyFamily(indices, function, name)
     if lazy:
         raise ValueError("lazy keyword is incompatible with hidden keys !")
     if hidden_function is None:
         hidden_function = function
-    return FiniteFamilyWithHiddenKeys(dict([(i, function(i)) for i in indices]),
-                                      hidden_keys, hidden_function)
+    return FiniteFamilyWithHiddenKeys({i: function(i) for i in indices},
+                                      hidden_keys, hidden_function,
+                                      keys=indices)
 
 class AbstractFamily(Parent):
     """
@@ -532,7 +537,7 @@ class FiniteFamily(AbstractFamily):
             sage: f = FiniteFamily({3: 'a', 4: 'b', 7: 'd'})
             sage: TestSuite(f).run()
 
-        Check for bug #5538::
+        Check for bug :trac:`5538`::
 
             sage: d = {1:"a", 3:"b", 4:"c"}
             sage: f = Family(d)
@@ -541,12 +546,12 @@ class FiniteFamily(AbstractFamily):
             Finite family {1: 'a', 3: 'b', 4: 'c'}
             """
         # TODO: use keys to specify the order of the elements
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self._dictionary = dict(dictionary)
         self._keys = keys
         if keys is None:
             # Note: this overrides the two methods keys and values!
-            self.keys   = dictionary.keys
+            self.keys = dictionary.keys
             self.values = dictionary.values
 
     @cached_method
@@ -753,14 +758,14 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
     Caveat: Only instances of this class whose functions are compatible
     with :mod:`sage.misc.fpickle` can be pickled.
     """
-    def __init__(self, dictionary, hidden_keys, hidden_function):
+    def __init__(self, dictionary, hidden_keys, hidden_function, keys=None):
         """
         EXAMPLES::
 
             sage: f = Family([3,4,7], lambda i: 2*i, hidden_keys=[2])
             sage: TestSuite(f).run()
         """
-        FiniteFamily.__init__(self, dictionary)
+        FiniteFamily.__init__(self, dictionary, keys=keys)
         self._hidden_keys = hidden_keys
         self.hidden_function = hidden_function
         self.hidden_dictionary = {}
@@ -819,7 +824,8 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
         return {'dictionary': self._dictionary,
                 'hidden_keys': self._hidden_keys,
                 'hidden_dictionary': self.hidden_dictionary,
-                'hidden_function': f}
+                'hidden_function': f,
+                'keys': self._keys}
 
     def __setstate__(self, d):
         """
@@ -841,6 +847,11 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
             hidden_function = unpickle_function(hidden_function)
         self.__init__(d['dictionary'], d['hidden_keys'], hidden_function)
         self.hidden_dictionary = d['hidden_dictionary']
+        # Old pickles from before trac #22955 may not have a 'keys'
+        if 'keys' in d:
+            self._keys = d['keys']
+        else:
+            self._keys = None
 
 
 class LazyFamily(AbstractFamily):

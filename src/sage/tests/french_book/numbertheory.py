@@ -56,16 +56,16 @@ Traceback (most recent call last):
 ...
 ArithmeticError: rational reconstruction of 409 (mod 1000) does not exist
 sage: def harmonic(n):
-...    return sum([1/x for x in range(1,n+1)])
+....:     return sum([1/x for x in range(1,n+1)])
 sage: def harmonic_mod(n,m):
-...    return add([1/x % m for x in range(1,n+1)])
+....:     return add([1/x % m for x in range(1,n+1)])
 sage: def harmonic2(n):
-...    q = lcm(range(1,n+1))
-...    pmax = RR(q*(log(n)+1))
-...    m = ZZ(2*pmax^2)
-...    m = ceil(m/q)*q + 1
-...    a = harmonic_mod(n,m)
-...    return rational_reconstruction(a,m)
+....:     q = lcm(range(1,n+1))
+....:     pmax = RR(q*(log(n)+1))
+....:     m = ZZ(2*pmax^2)
+....:     m = ceil(m/q)*q + 1
+....:     a = harmonic_mod(n,m)
+....:     return rational_reconstruction(a,m)
 sage: harmonic(100) == harmonic2(100)
 True
 sage: a=2; b=3; m=5; n=7; lambda0=(b-a)/m % n; a+lambda0*m
@@ -73,16 +73,16 @@ sage: a=2; b=3; m=5; n=7; lambda0=(b-a)/m % n; a+lambda0*m
 sage: crt(2,3,5,7)
 17
 sage: def harmonic3(n):
-...    q = lcm(range(1,n+1))
-...    pmax = RR(q*(log(n)+1))
-...    B = ZZ(2*pmax^2)
-...    m = 1; a = 0; p = 2^63
-...    while m<B:
-...        p = next_prime(p)
-...        b = harmonic_mod(n,p)
-...        a = crt(a,b,m,p)
-...        m = m*p
-...    return rational_reconstruction(a,m)
+....:     q = lcm(range(1,n+1))
+....:     pmax = RR(q*(log(n)+1))
+....:     B = ZZ(2*pmax^2)
+....:     m = 1; a = 0; p = 2^63
+....:     while m<B:
+....:         p = next_prime(p)
+....:         b = harmonic_mod(n,p)
+....:         a = crt(a,b,m,p)
+....:         m = m*p
+....:     return rational_reconstruction(a,m)
 sage: harmonic(100) == harmonic3(100)
 True
 sage: crt(15,1,30,4)
@@ -99,21 +99,21 @@ sage: timeit('is_prime(p)') # random long time
 sage: [560 % (x-1) for x in [3,11,17]]
 [0, 0, 0]
 sage: def count_primes1(n):
-...    return add([1 for p in range(n+1) if is_prime(p)])
+....:     return add([1 for p in range(n+1) if is_prime(p)])
 sage: def count_primes2(n):
-...    return add([1 for p in range(n+1) if is_pseudoprime(p)])
+....:     return add([1 for p in range(n+1) if is_pseudoprime(p)])
 sage: def count_primes3(n):
-...    s=0; p=2
-...    while p <= n: s+=1; p=next_prime(p)
-...    return s
+....:     s=0; p=2
+....:     while p <= n: s+=1; p=next_prime(p)
+....:     return s
 sage: def count_primes4(n):
-...    s=0; p=2
-...    while p <= n: s+=1; p=next_probable_prime(p)
-...    return s
+....:     s=0; p=2
+....:     while p <= n: s+=1; p=next_probable_prime(p)
+....:     return s
 sage: def count_primes5(n):
-...    s=0
-...    for p in prime_range(n): s+=1
-...    return s
+....:     s=0
+....:     for p in prime_range(n): s+=1
+....:     return s
 sage: timeit('count_primes1(10^5)') # random, not tested
 5 loops, best of 3: 674 ms per loop
 sage: timeit('count_primes2(10^5)') # random, not tested

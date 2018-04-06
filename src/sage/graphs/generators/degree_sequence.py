@@ -190,7 +190,7 @@ def DegreeSequenceTree(deg_sequence):
        entry corresponding to the expected degree of a different vertex.
 
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: G = graphs.DegreeSequenceTree([3,1,3,3,1,1,1,2,1])
         sage: G.show()  # long time
@@ -215,7 +215,7 @@ def DegreeSequenceExpected(deg_sequence, seed=None):
     -  ``seed`` - for the random number generator.
 
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: G = graphs.DegreeSequenceExpected([1,2,3,2,3])
         sage: G.edges(labels=False)

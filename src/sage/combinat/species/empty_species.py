@@ -17,7 +17,6 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from .species import GenericCombinatorialSpecies
-from sage.misc.cachefunc import cached_function
 from .series_order import inf
 from sage.structure.unique_representation import UniqueRepresentation
 

@@ -73,7 +73,10 @@ columns do share the same coloring::
     sage: A = [a.get_perm() for a in P.get_autom_gens()]
     sage: H = SymmetricGroup(21).subgroup(A)
     sage: H.orbits()
-    [[1], [2], [3, 5, 4], [6, 10, 13, 20, 17, 9, 8, 11, 18, 15, 14, 16, 12, 19, 21, 7]]
+    [[1],
+     [2],
+     [3, 5, 4],
+     [6, 16, 8, 21, 12, 9, 13, 18, 11, 19, 15, 7, 20, 14, 17, 10]]
 
 We can also restrict the group action to linear isometries::
 
@@ -108,7 +111,7 @@ def _cyclic_shift(n, p):
 
     Note that the domain of a ``Permutation`` is ``range(1, n+1)``.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.coding.codecan.autgroup_can_label import _cyclic_shift
         sage: p = _cyclic_shift(10, [2,7,4,1]); p
@@ -260,8 +263,7 @@ class LinearCodeAutGroupCanLabel:
             col2pos.append([b for (a, b) in X ])
             col2P.append([a for (a, b) in X ])
 
-        zipped = zip(col2P, col_set, col2pos)
-        zipped.sort()
+        zipped = sorted(zip(col2P, col_set, col2pos))
 
         col2P = [qty for (qty, c, pos) in zipped]
         col_set = [c for (qty, c, pos) in zipped]

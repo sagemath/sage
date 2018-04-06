@@ -39,7 +39,7 @@ from sphinx.locale import _
 from sphinx.pycode import ModuleAnalyzer, PycodeError
 from sphinx.application import ExtensionError
 from sphinx.util.nodes import nested_parse_with_titles
-from sphinx.util.compat import Directive
+from docutils.parsers.rst import Directive
 from sphinx.util.inspect import getargspec, isdescriptor, safe_getmembers, \
     safe_getattr, object_description, is_builtin_class_method
 from sphinx.util.docstrings import prepare_docstring

@@ -169,7 +169,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
         sage: S.semigroup_generators()
         Family ('a', 'b', 'c', 'd')
 
-    and with product given by contatenation::
+    and with product given by concatenation::
 
         sage: S('dab') * S('acb')
         'dabacb'

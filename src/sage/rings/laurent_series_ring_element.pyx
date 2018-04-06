@@ -51,7 +51,7 @@ AUTHORS:
 
 - Robert Bradshaw: Cython version
 """
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import operator
 
@@ -63,7 +63,7 @@ from sage.rings.integer import Integer
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_univariate
 from .power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, ModuleElement, RingElement, AlgebraElement
-from sage.structure.sage_object cimport richcmp_not_equal, rich_to_bool
+from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.misc.derivative import multi_derivative
 
 
@@ -116,26 +116,26 @@ cdef class LaurentSeries(AlgebraElement):
 
         if isinstance(f, LaurentSeries):
             n += (<LaurentSeries>f).__n
-            if (<LaurentSeries>f).__u._parent is parent.power_series_ring():
+            if (<LaurentSeries>f).__u._parent is parent._power_series_ring:
                 f = (<LaurentSeries>f).__u
             else:
-                f = parent.power_series_ring()((<LaurentSeries>f).__u)
+                f = parent._power_series_ring((<LaurentSeries>f).__u)
         elif isinstance(f, LaurentPolynomial_univariate):
             f = f(parent.gen())
         elif not isinstance(f, PowerSeries):
-            f = parent.power_series_ring()(f)
+            f = parent._power_series_ring(f)
         ## now this is a power series, over a different ring ...
         ## requires that power series rings with same vars over the
         ## same parent are unique.
         elif parent is not f.parent():
-            f = parent.power_series_ring()(f)
+            f = parent._power_series_ring(f)
 
 
         # self is that t^n * u:
         if not f:
             if n == infinity:
                 self.__n = 0
-                self.__u = parent.power_series_ring()(0)
+                self.__u = parent._power_series_ring.zero()
             else:
                 self.__n = n
                 self.__u = f
@@ -155,11 +155,22 @@ cdef class LaurentSeries(AlgebraElement):
         return make_element_from_parent, (self._parent, self.__u, self.__n)
 
     def change_ring(self, R):
-        return self.parent().change_ring(R)(self)
+        """
+        Change the base ring of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<q> = LaurentSeriesRing(ZZ)
+            sage: p = R([1,2,3]); p
+            1 + 2*q + 3*q^2
+            sage: p.change_ring(GF(2))
+            1 + q^2
+        """
+        return self._parent.change_ring(R)(self)
 
     def is_unit(self):
         """
-        Returns True if this is Laurent series is a unit in this ring.
+        Return ``True`` if this is Laurent series is a unit in this ring.
 
         EXAMPLES::
 
@@ -219,16 +230,38 @@ cdef class LaurentSeries(AlgebraElement):
             sage: (3*z^-2909).is_monomial()
             False
         """
-
         return self.__u.is_monomial()
 
     def __nonzero__(self):
-        return not not self.__u
+        """
+        EXAMPLES::
+
+            sage: R.<t> = LaurentSeriesRing(ZZ)
+            sage: bool(t)
+            True
+            sage: bool(1/t)
+            True
+            sage: bool(2 + t)
+            True
+            sage: bool(1/(1-t))
+            True
+            sage: bool(1 + O(t^3))
+            True
+            sage: bool(t + O(t^3))
+            True
+            sage: bool(O(t^3))
+            False
+            sage: bool(O(t^-3))
+            False
+            sage: bool(R.zero())
+            False
+        """
+        return bool(self.__u)
 
     def _im_gens_(self, codomain, im_gens):
         return codomain(self(im_gens[0]))
 
-    def __normalize(self):
+    cdef __normalize(self):
         r"""
         A Laurent series is a pair (u(t), n), where either u=0 (to some
         precision) or u is a unit. This pair corresponds to
@@ -402,7 +435,7 @@ cdef class LaurentSeries(AlgebraElement):
             if stop > self.__u.degree() or stop is None:
                 stop = self.__u.degree()
             f = self.__u[start-self.__n:stop-self.__n:step]  # deprecation(18940)
-            return LaurentSeries(self._parent, f, self.__n)
+            return type(self)(self._parent, f, self.__n)
 
         return self.__u[i - self.__n]
 
@@ -426,7 +459,6 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return iter(self.__u)
 
-
     def list(self):
         """
         EXAMPLES::
@@ -440,7 +472,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def coefficients(self):
         """
-        Return the nonzero coefficients of self.
+        Return the nonzero coefficients of ``self``.
 
         EXAMPLES::
 
@@ -449,7 +481,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f.coefficients()
             [-5, 1, 1, -10/3]
         """
-        zero = self.parent().base_ring().zero()
+        zero = self._parent.base_ring().zero()
         return [c for c in self.list() if c != zero]
 
     def residue(self):
@@ -492,10 +524,9 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f.exponents()
             [-2, 1, 2, 3]
         """
-        zero = self.parent().base_ring().zero()
-        l = self.list()
+        zero = self._parent.base_ring().zero()
         v = self.valuation()
-        return [i+v for i in range(len(l)) if l[i] != zero]
+        return [i+v for i,val in enumerate(self.list()) if val != zero]
 
     def laurent_polynomial(self):
         """
@@ -510,8 +541,8 @@ cdef class LaurentSeries(AlgebraElement):
             sage: g.parent()
             Univariate Laurent Polynomial Ring in t over Rational Field
         """
-        R = self.parent().laurent_polynomial_ring()
-        return R(self.__u.polynomial())*R.gen()**(self.__n)
+        R = self._parent.laurent_polynomial_ring()
+        return R(self.__u.polynomial()) * R.gen()**(self.__n)
 
     def __setitem__(self, n, value):
         """
@@ -528,12 +559,22 @@ cdef class LaurentSeries(AlgebraElement):
 
     def _unsafe_mutate(self, i, value):
         """
-        Sage assumes throughout that commutative ring elements are
-        immutable. This is relevant for caching, etc. But sometimes you
-        need to change a Laurent series and you really know what you're
-        doing. That's when this function is for you.
+        Never use this unless you really know what you are doing.
 
-        EXAMPLES:
+        .. WARNING::
+
+           This could easily introduce subtle bugs, since Sage assumes
+           everywhere that Laurent series are immutable. It's OK to use
+           this if you really know what you're doing.
+
+        EXAMPLES::
+
+            sage: R.<t> = LaurentSeriesRing(QQ)
+            sage: f = t^2 + t^3 + O(t^10); f
+            t^2 + t^3 + O(t^10)
+            sage: f._unsafe_mutate(2, -3)
+            sage: f
+            -3*t^2 + t^3 + O(t^10)
         """
         j = i - self.__n
         if j >= 0:
@@ -594,7 +635,7 @@ cdef class LaurentSeries(AlgebraElement):
             f1 = self.__u
             f2 = right.__u
         # 3. Add
-        return LaurentSeries(self._parent, f1 + f2, m)
+        return type(self)(self._parent, f1 + f2, m)
 
     cpdef _sub_(self, right_m):
         """
@@ -629,7 +670,7 @@ cdef class LaurentSeries(AlgebraElement):
             f1 = self.__u << self.__n - m
             f2 = right.__u
         # 3. Subtract
-        return LaurentSeries(self._parent, f1 - f2, m)
+        return type(self)(self._parent, f1 - f2, m)
 
 
     def add_bigoh(self, prec):
@@ -646,9 +687,31 @@ cdef class LaurentSeries(AlgebraElement):
             return self
         P = self._parent
         if not self:
-            return LaurentSeries(P, P.power_series_ring()(0, prec=0), prec)
+            return type(self)(P, P._power_series_ring(0, prec=0), prec)
         u = self.__u.add_bigoh(prec - self.__n)
-        return LaurentSeries(P, u, self.__n)
+        return type(self)(P, u, self.__n)
+
+    def O(self, prec):
+        r"""
+        Return the Laurent series of precision at most ``prec`` obtained by
+        adding `O(q^\text{prec})`, where `q` is the variable. 
+        
+        The precision of ``self`` and the integer ``prec`` can be arbitrary. The
+        resulting Laurent series will have precision equal to the minimum of
+        the precision of ``self`` and ``prec``. The term `O(q^\text{prec})` is the
+        zero series with precision ``prec``.
+       
+        EXAMPLES::
+
+            sage: R.<t> = LaurentSeriesRing(QQ)
+            sage: f = t^-5 + t^-4 + t^3 + O(t^10); f
+            t^-5 + t^-4 + t^3 + O(t^10)
+            sage: f.O(-4)
+            t^-5 + O(t^-4)
+            sage: f.O(15)
+            t^-5 + t^-4 + t^3 + O(t^10)
+        """
+        return self.add_bigoh(prec)
 
     def degree(self):
         """
@@ -679,7 +742,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: -(1/(1+t+O(t^5)))
             -1 + t - t^2 + t^3 - t^4 + O(t^5)
         """
-        return LaurentSeries(self._parent, -self.__u, self.__n)
+        return type(self)(self._parent, -self.__u, self.__n)
 
     cpdef _mul_(self, right_r):
         """
@@ -692,15 +755,15 @@ cdef class LaurentSeries(AlgebraElement):
             x^-3 - x^-2 + x^-1 + 4*x^4 + O(x^5)
         """
         cdef LaurentSeries right = <LaurentSeries>right_r
-        return LaurentSeries(self._parent,
-                             self.__u * right.__u,
-                             self.__n + right.__n)
+        return type(self)(self._parent,
+                          self.__u * right.__u,
+                          self.__n + right.__n)
 
-    cpdef _rmul_(self, RingElement c):
-        return LaurentSeries(self._parent, self.__u._rmul_(c), self.__n)
+    cpdef _rmul_(self, Element c):
+        return type(self)(self._parent, self.__u._rmul_(c), self.__n)
 
-    cpdef _lmul_(self, RingElement c):
-        return LaurentSeries(self._parent, self.__u._lmul_(c), self.__n)
+    cpdef _lmul_(self, Element c):
+        return type(self)(self._parent, self.__u._lmul_(c), self.__n)
 
     def __pow__(_self, r, dummy):
         """
@@ -718,7 +781,7 @@ cdef class LaurentSeries(AlgebraElement):
         right=int(r)
         if right != r:
             raise ValueError("exponent must be an integer")
-        return LaurentSeries(self._parent, self.__u**right, self.__n*right)
+        return type(self)(self._parent, self.__u**right, self.__n*right)
 
     def shift(self, k):
         r"""
@@ -751,13 +814,13 @@ cdef class LaurentSeries(AlgebraElement):
 
         - Robert Bradshaw (2007-04-18)
         """
-        return LaurentSeries(self._parent, self.__u, self.__n + k)
+        return type(self)(self._parent, self.__u, self.__n + k)
 
     def __lshift__(LaurentSeries self, k):
-        return LaurentSeries(self._parent, self.__u, self.__n + k)
+        return type(self)(self._parent, self.__u, self.__n + k)
 
     def __rshift__(LaurentSeries self, k):
-        return LaurentSeries(self._parent, self.__u, self.__n - k)
+        return type(self)(self._parent, self.__u, self.__n - k)
 
     def truncate(self, long n):
         r"""
@@ -774,13 +837,13 @@ cdef class LaurentSeries(AlgebraElement):
             1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9
         """
         if n <= self.__n:
-            return LaurentSeries(self._parent, 0)
+            return self._parent.zero()
         else:
-            return LaurentSeries(self._parent, self.__u.truncate(n - self.__n), self.__n)
+            return type(self)(self._parent, self.__u.truncate(n - self.__n), self.__n)
 
     def truncate_laurentseries(self, long n):
         r"""
-        Replaces any terms of degree >= n by big oh
+        Replace any terms of degree >= n by big oh.
 
         EXAMPLES::
 
@@ -790,21 +853,29 @@ cdef class LaurentSeries(AlgebraElement):
             1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10 + x^11 + x^12 + x^13 + x^14 + x^15 + x^16 + x^17 + x^18 + x^19 + O(x^20)
             sage: f.truncate_laurentseries(10)
             1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + O(x^10)
-
         """
         if n <= self.__n:
-            return LaurentSeries(self._parent, 0)
-        else:            return LaurentSeries(self._parent, self.__u.truncate_powerseries(n - self.__n), self.__n)
+            return self._parent.zero()
+        else:
+            return type(self)(self._parent, self.__u.truncate_powerseries(n - self.__n), self.__n)
 
     def truncate_neg(self, long n):
         r"""
-        Return the Laurent series equivalent to self except without any
-        degree n terms.
+        Return the Laurent series equivalent to ``self`` except without any
+        degree ``n`` terms.
 
-        This is equivalent to
-        ```self - self.truncate(n)```.
+        This is equivalent to::
+
+            self - self.truncate(n)
+
+        EXAMPLES::
+
+            sage: A.<t> = LaurentSeriesRing(ZZ)
+            sage: f = 1/(1-t)
+            sage: f.truncate_neg(15)
+            t^15 + t^16 + t^17 + t^18 + t^19 + O(t^20)
         """
-        return LaurentSeries(self._parent, self.__u >> (n - self.__n), n)
+        return type(self)(self._parent, self.__u >> (n - self.__n), n)
 
     cpdef _div_(self, right_r):
         """
@@ -822,7 +893,7 @@ cdef class LaurentSeries(AlgebraElement):
         if right.__u.is_zero():
             raise ZeroDivisionError
         try:
-            return LaurentSeries(self._parent,
+            return type(self)(self._parent,
                              self.__u / right.__u,
                              self.__n - right.__n)
         except TypeError as msg:
@@ -929,7 +1000,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     cpdef _richcmp_(self, right_r, int op):
         r"""
-        Comparison of self and right.
+        Comparison of ``self`` and ``right``.
 
         We say two approximate Laurent series are equal, if they agree for
         all coefficients up to the *minimum* of the precisions of each.
@@ -938,7 +1009,7 @@ cdef class LaurentSeries(AlgebraElement):
         but consistent with the idea that the variable of a Laurent
         series is considered to be "very small".
 
-        See power_series_ring_element.__cmp__() for more
+        See :meth:`power_series_ring_element._richcmp_` for more
         information.
 
         EXAMPLES::
@@ -1099,7 +1170,7 @@ cdef class LaurentSeries(AlgebraElement):
         is the difference between its absolute precision  
         and its valuation.
 
-        By convension, the relative precision of `0` (or
+        By convention, the relative precision of `0` (or
         `O(x^r)` for any `r`) is `0`.
 
         EXAMPLES::
@@ -1118,8 +1189,7 @@ cdef class LaurentSeries(AlgebraElement):
             return self.prec() - self.valuation()
 
     def __copy__(self):
-        return LaurentSeries(self._parent, self.__u.copy(), self.__n)
-
+        return type(self)(self._parent, self.__u.copy(), self.__n)
 
     def derivative(self, *args):
         """
@@ -1194,17 +1264,17 @@ cdef class LaurentSeries(AlgebraElement):
         if var is not None and var is not self._parent.gen():
             # call _derivative() recursively on coefficients
             u = [coeff._derivative(var) for coeff in self.__u.list()]
-            u = self._parent.power_series_ring()(u, self.__u.prec())
-            return LaurentSeries(self._parent, u, self.__n)
+            u = self._parent._power_series_ring(u, self.__u.prec())
+            return type(self)(self._parent, u, self.__n)
 
         # compute formal derivative with respect to generator
         if self.is_zero():
-            return LaurentSeries(self._parent, 0, self.__u.prec() - 1)
+            return type(self)(self._parent, 0, self.__u.prec() - 1)
         cdef long m, n = self.__n
         a = self.__u.list()
         v = [(n+m)*a[m] for m from 0 <= m < len(a)]
-        u = self._parent.power_series_ring()(v, self.__u.prec())
-        return LaurentSeries(self._parent, u, n-1)
+        u = self._parent._power_series_ring(v, self.__u.prec())
+        return type(self)(self._parent, u, n-1)
 
 
     def integral(self):
@@ -1259,10 +1329,10 @@ cdef class LaurentSeries(AlgebraElement):
             v = []
         v += [a[i]/(n+i+1) for i in range(max(-n,0), len(a))]
         try:
-            u = self._parent.power_series_ring()(v, self.__u.prec())
+            u = self._parent._power_series_ring(v, self.__u.prec())
         except TypeError:
             raise ArithmeticError("Coefficients of integral cannot be coerced into the base ring")
-        return LaurentSeries(self._parent, u, n+1)
+        return type(self)(self._parent, u, n+1)
 
 
     def power_series(self):
@@ -1289,7 +1359,7 @@ cdef class LaurentSeries(AlgebraElement):
 
             sage: L.<t> = LaurentSeriesRing(GF(2))
             sage: R.<x,y> = PolynomialRing(L)
-            sage: O = L.power_series_ring()
+            sage: O = L._power_series_ring
             sage: S.<x,y> = PolynomialRing(O)
             sage: t**(-1)*x*y in S
             False
@@ -1348,6 +1418,13 @@ cdef class LaurentSeries(AlgebraElement):
             Traceback (most recent call last):
             ...
             ValueError: Can only substitute elements of positive valuation
+
+        Test for :trac:`23928`::
+
+            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
+            sage: f = LaurentSeries(R, x).add_bigoh(7)
+            sage: f(x)
+            x + O(x^7)
             """
         if len(kwds) >= 1:
             name = self.parent().variable_name()
@@ -1375,7 +1452,7 @@ cdef class LaurentSeries(AlgebraElement):
         if isinstance(x[0], tuple):
             x = x[0]
 
-        return self.__u(x)*(x[0]**self.__n)
+        return self.__u(*x)*(x[0]**self.__n)
 
 def make_element_from_parent(parent, *args):
     return parent(*args)

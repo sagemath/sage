@@ -96,7 +96,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
         Compute a basis of q-expansions of self to the given precision. Not
         implemented in this abstract base class.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = CuspForms(GammaH(11,[2]), 2)
             sage: sage.modular.modform.cuspidal_submodule.CuspidalSubmodule._compute_q_expansion_basis(M, 6)
@@ -207,7 +207,7 @@ class CuspidalSubmodule_R(CuspidalSubmodule):
     """
     def _compute_q_expansion_basis(self, prec):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(Gamma1(13), 2, base_ring=QuadraticField(-7, 'a')).q_expansion_basis() # indirect doctest
             [
@@ -247,7 +247,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
         Return the new subspace of this space of cusp forms. This is computed
         using modular symbols.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(55).new_submodule()
             Modular Forms subspace of dimension 3 of Modular Forms space of dimension 8 for Congruence Subgroup Gamma0(55) of weight 2 over Rational Field
@@ -296,7 +296,7 @@ class CuspidalSubmodule_gH_Q(CuspidalSubmodule_modsym_qexp):
         This is done directly using modular symbols, rather than using
         q-expansions as for spaces with fixed character.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(Gamma1(8), 4)._compute_hecke_matrix(2)
             [  0 -16  32]
@@ -314,7 +314,7 @@ class CuspidalSubmodule_gH_Q(CuspidalSubmodule_modsym_qexp):
 
     def _compute_diamond_matrix(self, d):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(Gamma1(5), 6).diamond_bracket_matrix(3) # indirect doctest
             [ -1   0   0]
@@ -381,7 +381,7 @@ def _convert_matrix_from_modsyms(symbs, T):
         A pair `(T_e, ps)` with `T_e` the converted matrix and `ps` a list
         of pivot elements of the echelon basis.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: CuspForms(Gamma1(5), 6).diamond_bracket_matrix(3) # indirect doctest
         [ -1   0   0]

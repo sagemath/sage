@@ -46,7 +46,7 @@ However, you cannot "mix wrong lattices" in your expressions::
     sage: n + m
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+':
+    TypeError: unsupported operand parent(s) for +:
     '3-d lattice N' and '3-d lattice M'
     sage: n * n
     Traceback (most recent call last):
@@ -101,7 +101,7 @@ from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.structure.coerce_exceptions import CoercionException
 from sage.structure.element cimport Element, Vector
 from sage.rings.integer cimport Integer
-from sage.structure.sage_object cimport richcmp_not_equal, richcmp
+from sage.structure.richcmp cimport richcmp_not_equal, richcmp
 
 
 def is_ToricLatticeElement(x):

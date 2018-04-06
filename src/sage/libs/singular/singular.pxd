@@ -42,7 +42,7 @@ cdef number *sa2si_ZZ(Integer d, ring *_ring)
 cdef number *sa2si_GFqGivaro(int exp ,ring (*))
 cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring)
 cdef number *sa2si_GFq_generic(object vector, ring *_ring)
-cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring)
+cdef number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring)
 
 cdef number *sa2si_NF(object element, ring *_ring)
 

@@ -64,7 +64,7 @@ def degseq_to_data(degree_sequence):
     (max-min) integer data type, as used for faster access in the
     underlying database.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_database import degseq_to_data
         sage: degseq_to_data([2,2,3,1])
@@ -81,7 +81,7 @@ def data_to_degseq(data, graph6=None):
     graphs with no edges, so that the correct number of zeros will be
     returned.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_database import data_to_degseq
         sage: data_to_degseq(3221)
@@ -102,7 +102,7 @@ def graph6_to_plot(graph6):
     Constructs a graph from a graph6 string and returns a Graphics
     object with arguments preset for show function.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_database import graph6_to_plot
         sage: type(graph6_to_plot('D??'))
@@ -128,7 +128,7 @@ def subgraphs_to_query(subgraphs, db):
     own because it doesn't set any display columns in the query string,
     causing a failure to fetch the data when run.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_database import subgraphs_to_query
         sage: gd = GraphDatabase()
@@ -137,13 +137,15 @@ def subgraphs_to_query(subgraphs, db):
         'SELECT ,,,,,  FROM misc WHERE ( ( misc.induced_subgraphs regexp ? ) AND (
         misc.induced_subgraphs regexp ? ) ) AND ( misc.induced_subgraphs regexp ? )'
     """
-    q = GraphQuery(graph_db=db,induced_subgraphs=subgraphs[1])
+    q = GraphQuery(graph_db=db, induced_subgraphs=subgraphs[1])
     if subgraphs[0] == 'all_of':
-        for i in range(len(subgraphs))[2:]:
-            q.intersect(GraphQuery(graph_db=db, induced_subgraphs=subgraphs[i]),in_place=True)
+        for i in range(2, len(subgraphs)):
+            q.intersect(GraphQuery(graph_db=db, induced_subgraphs=subgraphs[i]),
+                        in_place=True)
     elif subgraphs[0] == 'one_of':
-        for i in range(len(subgraphs))[2:]:
-            q.union(GraphQuery(graph_db=db, induced_subgraphs=subgraphs[i]),in_place=True)
+        for i in range(2, len(subgraphs)):
+            q.union(GraphQuery(graph_db=db, induced_subgraphs=subgraphs[i]),
+                    in_place=True)
     else:
         raise KeyError('Unable to initiate query:  Illegal input format for induced_subgraphs.')
     return q
@@ -202,7 +204,7 @@ def graph_db_info(tablename=None):
        table
 
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: graph_db_info().keys()
         ['graph_data', 'degrees', 'spectrum', 'misc', 'aut_grp']
@@ -484,7 +486,7 @@ class GraphQuery(GenericGraphQuery):
         """
         Returns an iterator over the results list of the GraphQuery.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Q = GraphQuery(display_cols=['graph6'],num_vertices=7, diameter=5)
             sage: for g in Q:
@@ -708,7 +710,7 @@ class GraphDatabase(SQLDatabase):
           University). [Online] Available:
           http://artsci.drake.edu/grout/graphs/
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = GraphDatabase()
             sage: G.get_skeleton()
@@ -893,7 +895,7 @@ class GraphDatabase(SQLDatabase):
         parameters and results. This is a helper method for the
         interactive_query method and should not be called directly.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: D = GraphDatabase()
             sage: D.interactive_query(display_cols=['graph6','num_vertices','degree_sequence'],num_edges=['<=',5],max_degree=3)
@@ -904,7 +906,7 @@ class GraphDatabase(SQLDatabase):
             sage: G = GraphDatabase()
             sage: f = G._gen_interact_func(display=['graph6'], num_vertices=3)
             sage: type(f)
-            <type 'function'>
+            <... 'function'>
             sage: interact(f)
             <html>...
         """
@@ -927,7 +929,7 @@ class GraphDatabase(SQLDatabase):
         Creates a GraphQuery on this database. For full class details, type
         GraphQuery? and press shift+enter.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: D = GraphDatabase()
             sage: q = D.query(display_cols=['graph6','num_vertices','degree_sequence'],num_edges=['<=',5])
@@ -1056,7 +1058,7 @@ class GraphDatabase(SQLDatabase):
         Generates an interact shell (in the notebook only) that allows the
         user to manipulate query parameters and see the updated results.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: D = GraphDatabase()
             sage: D.interactive_query(display_cols=['graph6','num_vertices','degree_sequence'],num_edges=5,max_degree=3)

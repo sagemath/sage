@@ -308,7 +308,7 @@ class PseudolineArrangement:
         See the :mod:`pseudolines module <sage.geometry.pseudolines>`'s
         documentation for more information on this encoding.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
@@ -365,7 +365,7 @@ class PseudolineArrangement:
         See the :mod:`pseudolines module <sage.geometry.pseudolines>`'s
         documentation for more information on this encoding.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
@@ -382,7 +382,7 @@ class PseudolineArrangement:
         See the :mod:`pseudolines module <sage.geometry.pseudolines>`'s
         documentation for more information on this encoding.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
@@ -412,7 +412,7 @@ class PseudolineArrangement:
           particular, to tune the dimensions, use the ``figsize`` argument
           (example below).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
@@ -470,7 +470,7 @@ class PseudolineArrangement:
         r"""
         A short txt description of the pseudoline arrangement.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
@@ -484,7 +484,7 @@ class PseudolineArrangement:
         r"""
         Test of equality.
 
-        TEST::
+        TESTS::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]

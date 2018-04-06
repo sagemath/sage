@@ -209,7 +209,7 @@ class LargeMatrixHelpRepr(ObjectReprABC):
         if obj.nrows() < max_rows and obj.ncols() < max_cols:
             return False
         p.text(
-            str(obj) + " (use the '.str()' method to see the entries)"
+            repr(obj) + " (use the '.str()' method to see the entries)"
         )
         return True
 

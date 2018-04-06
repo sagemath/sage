@@ -15,7 +15,7 @@ cdef class PowComputer_ext(PowComputer_class):
     cdef object _shift_seed
     cdef object _ext_type
 
-    cdef ZZ_c* pow_ZZ_tmp(self, long n)
+    cdef ZZ_c* pow_ZZ_tmp(self, long n) except NULL
     cdef ZZ_c* pow_ZZ_top(self)
 
     cdef void cleanup_ext(self)

@@ -621,7 +621,7 @@ class InitialForm(SageObject):
 
 def verts_for_normal(normal, poly):
     """
-    Returns the exponents of the vertices of a newton polytope
+    Returns the exponents of the vertices of a Newton polytope
     that make up the supporting hyperplane for the given outward
     normal.
 
@@ -819,7 +819,7 @@ class GroebnerFan(SageObject):
         self.__verbose = verbose
         if not is_MPolynomialIdeal(I):
             raise TypeError("I must be a multivariate polynomial ideal")
-        if prefix_check([str(R_gen) for R_gen in I.ring().gens()]) != True:
+        if not prefix_check([str(R_gen) for R_gen in I.ring().gens()]):
             raise RuntimeError("Ring variables cannot contain each other as prefixes")
         S = I.ring()
         R = S.base_ring()
@@ -1231,8 +1231,8 @@ class GroebnerFan(SageObject):
            (right), c (left), and d (top). The shifting is done modulo the
            number of variables in the polynomial ring. The default is 0.
 
-        -  ``larger`` - bool (default: False); if True, make
-           the triangle larger so that the shape of of the Groebner region
+        -  ``larger`` - bool (default: ``False``); if ``True``, make
+           the triangle larger so that the shape of the Groebner region
            appears. Affects the xfig file but probably not the sage graphics
            (?)
 

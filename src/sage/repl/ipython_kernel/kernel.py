@@ -19,9 +19,9 @@ from ipykernel.ipkernel import IPythonKernel
 from ipykernel.zmqshell import ZMQInteractiveShell
 from traitlets import Type
 
-from sage.env import SAGE_VERSION, SAGE_EXTCODE, SAGE_DOC
+from sage.env import SAGE_VERSION
 from sage.repl.interpreter import SageNotebookInteractiveShell
-from sage.repl.ipython_extension import SageCustomizations
+from sage.repl.ipython_extension import SageJupyterCustomizations
 
 class SageZMQInteractiveShell(SageNotebookInteractiveShell, ZMQInteractiveShell):
     pass
@@ -48,7 +48,7 @@ class SageKernel(IPythonKernel):
             <sage.repl.ipython_kernel.kernel.SageKernel object at 0x...>
         """
         super(SageKernel, self).__init__(**kwds)
-        SageCustomizations(self.shell)
+        SageJupyterCustomizations(self.shell)
 
     @property
     def banner(self):
@@ -166,5 +166,21 @@ class SageKernel(IPythonKernel):
         ]
 
     def pre_handler_hook(self):
+        """
+        Restore the signal handlers to their default values at Sage
+        startup, saving the old handler at the ``saved_sigint_handler``
+        attribute. This is needed because Jupyter needs to change the
+        ``SIGINT`` handler.
+
+        See :trac:`19135`.
+
+        TESTS::
+
+            sage: from sage.repl.ipython_kernel.kernel import SageKernel
+            sage: k = SageKernel.__new__(SageKernel)
+            sage: k.pre_handler_hook()
+            sage: k.saved_sigint_handler
+            <cyfunction python_check_interrupt at ...>
+        """
         from cysignals import init_cysignals
         self.saved_sigint_handler = init_cysignals()

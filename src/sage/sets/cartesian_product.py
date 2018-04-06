@@ -235,7 +235,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             This is meant as a fast low-level method. In particular,
             no coercion is attempted. When coercion or sanity checks
             are desirable, please use instead ``self(elements)`` or
-            ``self._element_constructor(elements)``.
+            ``self._element_constructor_(elements)``.
 
         EXAMPLES::
 
@@ -367,7 +367,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
                 sage: A((1, 1.23)).cartesian_factors()
                 (1, 1.23000000000000)
                 sage: type(_)
-                <type 'tuple'>
+                <... 'tuple'>
             """
             return self.value
 

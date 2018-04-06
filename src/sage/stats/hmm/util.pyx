@@ -79,8 +79,8 @@ cdef class HMM_Util:
             for k in range(i,j):
                 T._values[k] = t
         else:
-            # Normalie so sum is 1.
-            for k in range(i,j):
+            # Normalise so sum is 1.
+            for k in range(i, j):
                 T._values[k] /= s
 
 

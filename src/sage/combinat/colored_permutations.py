@@ -950,7 +950,8 @@ class SignedPermutations(ColoredPermutations):
     This is a finite Coxeter group of type `B_n`::
 
         sage: S.canonical_representation()
-        Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+        Finite Coxeter group over Number Field in a with
+        defining polynomial x^2 - 2 with Coxeter matrix:
         [1 3 2 2]
         [3 1 3 2]
         [2 3 1 4]

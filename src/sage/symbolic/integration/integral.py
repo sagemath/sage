@@ -30,6 +30,7 @@ available_integrators['maxima'] = external.maxima_integrator
 available_integrators['sympy'] = external.sympy_integrator
 available_integrators['mathematica_free'] = external.mma_free_integrator
 available_integrators['fricas'] = external.fricas_integrator
+available_integrators['giac'] = external.giac_integrator
 
 ######################################################
 #
@@ -61,7 +62,8 @@ class IndefiniteIntegral(BuiltinFunction):
         # creating a subclasses which define a different set of integrators
         self.integrators = [external.maxima_integrator]
 
-        BuiltinFunction.__init__(self, "integrate", nargs=2, conversions={'sympy': 'Integral'})
+        BuiltinFunction.__init__(self, "integrate", nargs=2, conversions={'sympy': 'Integral',
+                                                                          'giac': 'integrate'})
 
     def _eval_(self, f, x):
         """
@@ -149,7 +151,8 @@ class DefiniteIntegral(BuiltinFunction):
         # creating a subclasses which define a different set of integrators
         self.integrators = [external.maxima_integrator]
 
-        BuiltinFunction.__init__(self, "integrate", nargs=4, conversions={'sympy': 'Integral'})
+        BuiltinFunction.__init__(self, "integrate", nargs=4, conversions={'sympy': 'Integral',
+                                                                          'giac': 'integrate'})
 
     def _eval_(self, f, x, a, b):
         """
@@ -199,7 +202,7 @@ class DefiniteIntegral(BuiltinFunction):
             sage: integrate(x^2.7 * e^(-2.4*x), x, 0, 3).n()
             0.154572952320790
         """
-        from sage.gsl.integration import numerical_integral
+        from sage.calculus.integration import numerical_integral
         # The gsl routine returns a tuple, which also contains the error.
         # We only return the result.
         return numerical_integral(f, a, b)[0]
@@ -277,7 +280,7 @@ def _normalize_integral_input(f, v=None, a=None, b=None):
     EXAMPLES::
 
         sage: from sage.symbolic.integration.integral import \
-        ...       _normalize_integral_input
+        ....:     _normalize_integral_input
         sage: _normalize_integral_input(x^2, x, 0, 3)
         (x^2, x, 0, 3)
         sage: _normalize_integral_input(x^2, [x, 0, 3], None, None)
@@ -347,11 +350,19 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
        - 'mathematica_free' - use http://integrals.wolfram.com/
 
-       - 'fricas' - use FriCAS (the optional fricas spkg has to be installed) 
+       - 'fricas' - use FriCAS (the optional fricas spkg has to be installed)
+
+       - 'giac' - use Giac
 
     To prevent automatic evaluation use the ``hold`` argument.
 
-     EXAMPLES::
+    .. SEEALSO::
+
+        To integrate a polynomial over a polytope, use the optional
+        ``latte_int`` package
+        :meth:`sage.geometry.polyhedron.base.Polyhedron_base.integrate`.
+
+    EXAMPLES::
 
         sage: x = var('x')
         sage: h = sin(x)/(cos(x))^2
@@ -480,8 +491,8 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
     Alternatively, just use algorithm='mathematica_free' to integrate via Mathematica
     over the internet (does NOT require a Mathematica license!)::
 
-        sage: _ = var('x, y, z')
-        sage: f = sin(x^2) + y^z
+        sage: _ = var('x, y, z')  # optional - internet
+        sage: f = sin(x^2) + y^z   # optional - internet
         sage: f.integrate(x, algorithm="mathematica_free")   # optional - internet
         x*y^z + sqrt(1/2)*sqrt(pi)*fresnels(sqrt(2)*x/sqrt(pi))
 
@@ -494,10 +505,8 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: _ = var('y, z')
         sage: (x^y - z).integrate(y)
         -y*z + x^y/log(x)
-        sage: (x^y - z).integrate(y, algorithm="sympy")  # see Trac #14694
-        Traceback (most recent call last):
-        ...
-        AttributeError: 'ExprCondPair' object has no attribute '_sage_'
+        sage: (x^y - z).integrate(y, algorithm="sympy")
+        -y*z + cases(((log(x) == 0, y), (1, x^y/log(x))))
 
     We integrate the above function in Maple now::
 
@@ -543,6 +552,11 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
         sage: integrate(f(x), x, 1, 2, algorithm="sympy")
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
+
+    Using Giac to integrate the absolute value of a trigonometric expression::
+
+        sage: integrate(abs(cos(x)), x, 0, 2*pi, algorithm='giac')
+        4
 
     ALIASES: integral() and integrate() are the same.
 
@@ -631,10 +645,12 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         ValueError: invalid input (x, 1, 2, 3) - please use variable, with or without two endpoints
 
     Note that this used to be the test, but it is actually divergent
-    (though Maxima currently returns the principal value)::
+    (Maxima currently asks for assumptions on theta)::
 
         sage: integrate(t*cos(-theta*t),(t,-oo,oo))
-        0
+        Traceback (most recent call last):
+        ...
+        ValueError: Computation failed since Maxima requested additional constraints;...
 
     Check if :trac:`6189` is fixed::
 
@@ -762,6 +778,20 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: integrate(cos(w+T) / (1+c*cos(T))^2, T, 0, 2*pi)
         2*pi*sqrt(-c^2 + 1)*c*cos(w)/(c^4 - 2*c^2 + 1)
 
+    Check that :trac:`13733` is fixed::
+
+        sage: a = integral(log(cot(x) - 1), x, 0, pi/4); a  # long time (about 6 s)
+        -1/4*pi*log(2) - 1/2*I*dilog(I + 1) + 1/2*I*dilog(-I + 1) + 1/2*I*dilog(1/2*I + 1/2) - 1/2*I*dilog(-1/2*I + 1/2)
+        sage: abs(N(a - pi*log(2)/8)) < 1e-15  # long time
+        True
+
+    Check that :trac:`17968` is fixed::
+
+        sage: a = N(integrate(exp(x^3), (x, 1, 2)), prec=54)
+        sage: a.real_part()    # abs tol 1e-13
+        275.510983763312
+        sage: a.imag_part()    # abs tol 1e-13
+        0.0
     """
     expression, v, a, b = _normalize_integral_input(expression, v, a, b)
     if algorithm is not None:

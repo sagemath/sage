@@ -22,11 +22,14 @@ EXAMPLES::
 
 AUTHOR:
 
+- Rusydi H. Makarim (2016-10-13): add functions related to linear structures
 - Rusydi H. Makarim (2016-07-09): add is_plateaued()
 - Yann Laigle-Chapuy (2010-02-26): add basic arithmetic
 - Yann Laigle-Chapuy (2009-08-28): first implementation
 
 """
+from __future__ import absolute_import
+
 from libc.string cimport memcpy
 
 from sage.structure.sage_object cimport SageObject
@@ -39,7 +42,6 @@ from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 
 include "sage/data_structures/bitset.pxi"
-from cpython.string cimport *
 
 # for details about the implementation of hamming_weight_int,
 # walsh_hadamard transform, reed_muller transform, and a lot
@@ -348,7 +350,7 @@ cdef class BooleanFunction(SageObject):
 
     def _repr_(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: BooleanFunction(4) #indirect doctest
@@ -363,7 +365,7 @@ cdef class BooleanFunction(SageObject):
         """
         Return the complement Boolean function of `self`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B=BooleanFunction([0, 1, 1, 0, 1, 0, 0, 0])
@@ -378,7 +380,7 @@ cdef class BooleanFunction(SageObject):
         """
         Return the element wise sum of `self`and `other` which must have the same number of variables.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: A=BooleanFunction([0, 1, 0, 1, 1, 0, 0, 1])
@@ -409,7 +411,7 @@ cdef class BooleanFunction(SageObject):
         """
         Return the elementwise multiplication of `self`and `other` which must have the same number of variables.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: A=BooleanFunction([0, 1, 0, 1, 1, 0, 0, 1])
@@ -440,7 +442,7 @@ cdef class BooleanFunction(SageObject):
         """
         Return the concatenation of `self` and `other` which must have the same number of variables.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: A=BooleanFunction([0, 1, 0, 1])
@@ -519,7 +521,7 @@ cdef class BooleanFunction(SageObject):
         """
         The number of variables of this function.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: BooleanFunction(4).nvariables()
@@ -537,7 +539,7 @@ cdef class BooleanFunction(SageObject):
         - 'int' : we return a tuple of 0 or 1 values
         - 'hex' : we return a string representing the truth_table in hexadecimal
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: R.<x,y,z> = BooleanPolynomialRing(3)
@@ -578,7 +580,7 @@ cdef class BooleanFunction(SageObject):
         """
         Return the number of different input values.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: len(BooleanFunction(4))
@@ -617,7 +619,7 @@ cdef class BooleanFunction(SageObject):
         - a list - then all elements are evaluated as Booleans
         - an integer - then we consider its binary representation
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction([0,1,0,0])
@@ -646,7 +648,7 @@ cdef class BooleanFunction(SageObject):
         """
         Iterate through the value of the function.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction([0,1,1,0,1,0,1,0])
@@ -660,7 +662,7 @@ cdef class BooleanFunction(SageObject):
         """
         Return the cached Walsh Hadamard transform. *Unsafe*, no check.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction(3)
@@ -676,7 +678,7 @@ cdef class BooleanFunction(SageObject):
 
         .. MATH:: W(j) = \sum_{i\in\{0,1\}^n} (-1)^{f(i)\oplus i \cdot j}
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: R.<x> = GF(2^3,'a')[]
@@ -707,7 +709,7 @@ cdef class BooleanFunction(SageObject):
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
-            sage: sorted([_ for _ in B.absolute_walsh_spectrum().iteritems() ])
+            sage: sorted(B.absolute_walsh_spectrum().items())
             [(0, 64), (16, 64)]
 
             sage: B = BooleanFunction("0113077C165E76A8")
@@ -768,7 +770,7 @@ cdef class BooleanFunction(SageObject):
         to the linear functions, or the number of output ones need to
         change to obtain a linear function.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction(5)
@@ -787,7 +789,7 @@ cdef class BooleanFunction(SageObject):
         """
         Return True if the function is bent.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction("0113077C165E76A8")
@@ -847,7 +849,7 @@ cdef class BooleanFunction(SageObject):
 
     def autocorrelation(self):
         r"""
-        Return the autocorrelation fo the function, defined by
+        Return the autocorrelation of the function, defined by
 
         .. MATH:: \Delta_f(j) = \sum_{i\in\{0,1\}^n} (-1)^{f(i)\oplus f(i\oplus j)}.
 
@@ -882,7 +884,7 @@ cdef class BooleanFunction(SageObject):
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
-            sage: sorted([ _ for _ in B.absolute_autocorrelation().iteritems() ])
+            sage: sorted(B.absolute_autocorrelation().items())
             [(0, 33), (8, 58), (16, 28), (24, 6), (32, 2), (128, 1)]
         """
         d = {}
@@ -952,8 +954,8 @@ cdef class BooleanFunction(SageObject):
             {0}
         """
         # NOTE: this is a toy implementation
-        from sage.rings.polynomial.pbori import BooleanPolynomialRing
-        R = BooleanPolynomialRing(self._nvariables,'x')
+        from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor
+        R = BooleanPolynomialRing_constructor(self._nvariables,'x')
         G = R.gens()
         r = [R(1)]
 
@@ -998,7 +1000,7 @@ cdef class BooleanFunction(SageObject):
 
         INPUT:
 
-        - annihilator - a Boolean (default: False), if True, returns also an annihilator of minimal degree.
+        - annihilator -- a Boolean (default: False), if True, returns also an annihilator of minimal degree.
 
         EXAMPLES::
 
@@ -1047,11 +1049,143 @@ cdef class BooleanFunction(SageObject):
         W = self.absolute_walsh_spectrum()
         return (len(W) == 1) or (len(W) == 2 and 0 in W)
 
+    def is_linear_structure(self, val):
+        """
+        Return ``True`` if ``val`` is a linear structure of this Boolean
+        function.
+
+        INPUT:
+
+        - ``val`` -- either an integer or a tuple/list of `\GF{2}` elements
+          of length equal to the number of variables
+
+        .. SEEALSO::
+
+            :meth:`has_linear_structure`,
+            :meth:`linear_structures`.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.boolean_function import BooleanFunction
+            sage: f = BooleanFunction([0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0])
+            sage: f.is_linear_structure(1)
+            True
+            sage: l = [1, 0, 0, 1]
+            sage: f.is_linear_structure(l)
+            True
+            sage: v = vector(GF(2), l)
+            sage: f.is_linear_structure(v)
+            True
+            sage: f.is_linear_structure(7)
+            False
+            sage: f.is_linear_structure(20) #parameter is out of range
+            Traceback (most recent call last):
+            ...
+            IndexError: index out of range
+            sage: v = vector(GF(3), [1, 0, 1, 1])
+            sage: f.is_linear_structure(v)
+            Traceback (most recent call last):
+            ...
+            TypeError: base ring of input vector must be GF(2)
+            sage: v = vector(GF(2), [1, 0, 1, 1, 1])
+            sage: f.is_linear_structure(v)
+            Traceback (most recent call last):
+            ...
+            TypeError: input vector must be an element of a vector space with dimension 4
+            sage: f.is_linear_structure('X') #failure case
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot compute is_linear_structure() using parameter X
+        """
+        from sage.structure.element import is_Vector
+        nvars = self._nvariables
+
+        if isinstance(val, (tuple, list)):
+            i = ZZ(val, base=2)
+        elif is_Vector(val):
+            if val.base_ring() != GF(2):
+                raise TypeError("base ring of input vector must be GF(2)")
+            elif val.parent().dimension() != nvars:
+                raise TypeError("input vector must be an element of a vector space with dimension %d" % (nvars,))
+            i = ZZ(val.list(), base=2)
+        else:
+            i = val
+
+        a = self.autocorrelation()
+        try:
+            return abs(a[i]) == 1<<nvars
+        except IndexError:
+            raise IndexError("index out of range")
+        except TypeError:
+            raise TypeError("cannot compute is_linear_structure() using parameter %s" % (val,))
+
+    def has_linear_structure(self):
+        """
+        Return ``True`` if this function has a linear structure.
+
+        An `n`-variable Boolean function `f` has a linear structure if
+        there exists a nonzero `a \in \GF{2}^n` such that
+        `f(x \oplus a) \oplus f(x)` is a constant function.
+
+        .. SEEALSO::
+
+            :meth:`is_linear_structure`,
+            :meth:`linear_structures`.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.boolean_function import BooleanFunction
+            sage: f = BooleanFunction([0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0])
+            sage: f.has_linear_structure()
+            True
+            sage: f.autocorrelation()
+            (16, -16, 0, 0, 0, 0, 0, 0, -16, 16, 0, 0, 0, 0, 0, 0)
+            sage: g = BooleanFunction([0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1])
+            sage: g.has_linear_structure()
+            False
+            sage: g.autocorrelation()
+            (16, 4, 4, 4, 4, -4, -4, -4, -4, 4, -4, -4, -4, 4, -4, -4)
+        """
+        a = self.autocorrelation()
+        nvars = self._nvariables
+        return any(abs(a[i]) == 1<<nvars for i in range(1, 1<<nvars))
+
+    def linear_structures(self):
+        """
+        Return all linear structures of this Boolean function as a vector subspace
+        of `\GF{2}^n`.
+
+        .. SEEALSO::
+
+            :meth:`is_linear_structure`,
+            :meth:`has_linear_structure`.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.boolean_function import BooleanFunction
+            sage: f = BooleanFunction([0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0])
+            sage: LS = f.linear_structures()
+            sage: LS.dimension()
+            2
+            sage: LS.basis_matrix()
+            [1 0 0 0]
+            [0 0 0 1]
+            sage: LS.list()
+            [(0, 0, 0, 0), (1, 0, 0, 0), (0, 0, 0, 1), (1, 0, 0, 1)]
+        """
+        from sage.modules.free_module import VectorSpace
+
+        nvars = self.nvariables()
+        a = self.autocorrelation()
+        l = [ZZ(i).digits(base=2, padto=nvars) for i in range(1<<nvars) if abs(a[i]) == 1<<nvars]
+        V = VectorSpace(GF(2), nvars)
+        return V.subspace(l)
+
     def __setitem__(self, i, y):
         """
         Set a value of the function.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B=BooleanFunction([0,0,1,1])
@@ -1074,7 +1208,7 @@ cdef class BooleanFunction(SageObject):
         """
         Return the value of the function for the given input.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B=BooleanFunction([0,1,1,1])
@@ -1087,7 +1221,7 @@ cdef class BooleanFunction(SageObject):
         """
         Clear cached values.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction([0,1,1,0])
@@ -1107,7 +1241,7 @@ cdef class BooleanFunction(SageObject):
 
     def __reduce__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction([0,1,1,0])
@@ -1120,7 +1254,7 @@ def unpickle_BooleanFunction(bool_list):
     """
     Specific function to unpickle Boolean functions.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.crypto.boolean_function import BooleanFunction
         sage: B = BooleanFunction([0,1,1,0])
@@ -1137,7 +1271,7 @@ cdef class BooleanFunctionIterator:
         """
         Iterator through the values of a Boolean function.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction(3)
@@ -1152,7 +1286,7 @@ cdef class BooleanFunctionIterator:
         """
         Iterator through the values of a Boolean function.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction(1)
@@ -1165,7 +1299,7 @@ cdef class BooleanFunctionIterator:
         """
         Next value.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction(1)
@@ -1187,7 +1321,7 @@ def random_boolean_function(n):
     """
     Returns a random Boolean function with `n` variables.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.crypto.boolean_function import random_boolean_function
         sage: B = random_boolean_function(9)

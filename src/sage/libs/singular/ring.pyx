@@ -21,7 +21,7 @@ from sage.libs.gmp.mpz cimport mpz_init_set_ui, mpz_init_set
 from sage.libs.singular.decl cimport number, poly, ring, currRing
 from sage.libs.singular.decl cimport rChangeCurrRing, rCopy0, rComplete, rDelete, idInit
 from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc, omAlloc0Bin,  sip_sring_bin, rnumber_bin
-from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_rp, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a
+from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_rp, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
 from sage.libs.singular.decl cimport p_Copy, prCopyR
 from sage.libs.singular.decl cimport n_unknown,  n_Zp,  n_Q,   n_R,   n_GF,  n_long_R,  n_algExt,n_transExt,n_long_C,   n_Z,   n_Zn,  n_Znm,  n_Z2m,  n_CF
 from sage.libs.singular.decl cimport n_coeffType, cfInitCharProc
@@ -137,8 +137,8 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     _ring  = NULL
 
     n = int(n)
-    if n<1:
-        raise ArithmeticError("The number of variables must be at least 1.")
+    if n < 1:
+        raise NotImplementedError(f"polynomials in {n} variables are not supported in Singular")
 
     nvars = n
     order = TermOrder(term_order, n)
@@ -165,7 +165,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     ##         q    q : GF(q=p^n)       *names         TRUE              (todo)
 
     _wvhdl  = <int **>omAlloc0((nblcks + 2) * sizeof(int *))
-    _order  = <int *>omAlloc0((nblcks + 2) * sizeof(int))
+    _order  = <rRingOrder_t *>omAlloc0((nblcks + 2) * sizeof(int))
     _block0 = <int *>omAlloc0((nblcks + 2) * sizeof(int))
     _block1 = <int *>omAlloc0((nblcks + 2) * sizeof(int))
 
@@ -226,10 +226,8 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
     elif isinstance(base_ring, NumberField) and base_ring.is_absolute():
         characteristic = 1
-        try:
-            k = PolynomialRing(RationalField(), 1, [base_ring.variable_name()], 'lex')
-        except TypeError:
-            raise TypeError, "The multivariate polynomial ring in a single variable %s in lex order over Rational Field is supposed to be of type %s"%(base_ring.variable_name(), MPolynomialRing_libsingular)
+        k = PolynomialRing(RationalField(),
+            name=base_ring.variable_name(), order="lex", implementation="singular")
 
         minpoly = base_ring.polynomial()(k.gen())
 
@@ -248,7 +246,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cf = nInitChar( n_algExt,  <void *>&extParam) #
 
         if (_cf is NULL):
-            raise RuntimeError, "Failed to allocate _cf ring."
+            raise RuntimeError("Failed to allocate _cf ring.")
 
         _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
@@ -257,8 +255,6 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif (isinstance(base_ring, FiniteField_generic) and base_ring.is_prime_field()):
-        #or (is_IntegerModRing(base_ring) and base_ring.characteristic().is_prime()):
-
         if base_ring.characteristic() <= 2147483647:
             characteristic = base_ring.characteristic()
         else:
@@ -274,11 +270,10 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
             characteristic = -base_ring.characteristic() # note the negative characteristic
         else:
             raise TypeError("characteristic must be <= 2147483647.")
-        # TODO: This is lazy, it should only call Singular stuff not MPolynomial stuff
-        try:
-            k = PolynomialRing(base_ring.prime_subfield(), 1, [base_ring.variable_name()], 'lex')
-        except TypeError:
-            raise TypeError("The multivariate polynomial ring in a single variable %s in lex order over %s is supposed to be of type %s" % (base_ring.variable_name(), base_ring,MPolynomialRing_libsingular))
+
+        # TODO: This is lazy, it should only call Singular stuff not PolynomialRing()
+        k = PolynomialRing(base_ring.prime_subfield(),
+            name=base_ring.variable_name(), order="lex", implementation="singular")
         minpoly = base_ring.polynomial()(k.gen())
 
         ch = base_ring.characteristic()
@@ -300,13 +295,16 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cf = nInitChar( n_algExt,  <void *>&extParam)
 
         if (_cf is NULL):
-            raise RuntimeError, "Failed to allocate _cf ring."
+            raise RuntimeError("Failed to allocate _cf ring.")
 
         _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif is_IntegerModRing(base_ring):
 
         ch = base_ring.characteristic()
+        if ch < 2:
+            raise NotImplementedError(f"polynomials over {base_ring} are not supported in Singular")
+
         isprime = ch.is_prime()
 
         if not isprime and ch.is_power_of(2):
@@ -356,10 +354,8 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
             _cf = nInitChar( n_Zn, <void *>&_info )
         _ring = rDefault( _cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
-
     else:
-        raise NotImplementedError("Base ring is not supported.")
-
+        raise NotImplementedError(f"polynomials over {base_ring} are not supported in Singular")
 
     if (_ring is NULL):
         raise ValueError("Failed to allocate Singular ring.")
@@ -458,7 +454,8 @@ cdef class ring_wrapper_Py(object):
 
     def __cmp__(ring_wrapper_Py left, ring_wrapper_Py right):
         """
-        Compare ``left`` and ``right`` so that instances can be used as dictionary keys.
+        Compare ``left`` and ``right`` so that instances can be used
+        as dictionary keys.
 
         INPUT:
 
@@ -473,8 +470,8 @@ cdef class ring_wrapper_Py(object):
 
             sage: from sage.libs.singular.ring import ring_wrapper_Py
             sage: t = ring_wrapper_Py()
-            sage: t.__cmp__(t)
-            0
+            sage: t == t
+            True
         """
         if left._ring < right._ring:
             return -1
@@ -516,7 +513,7 @@ cdef ring *singular_ring_reference(ring *existing_ring) except NULL:
     calling this function `n` times, you need to call :func:`singular_ring_delete`
     `n+1` times to actually deallocate the ring.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: import gc
         sage: _ = gc.collect()

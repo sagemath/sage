@@ -20,7 +20,7 @@ AUTHOR:
 #*****************************************************************************
 
 
-from ntl_tools cimport ErrorMsgCallback
+from .ntl_tools cimport ErrorMsgCallback
 
 
 class NTLError(RuntimeError):

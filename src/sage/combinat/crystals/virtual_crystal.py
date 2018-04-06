@@ -24,6 +24,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
 
+from __future__ import division
+
 from sage.categories.crystals import Crystals
 from sage.categories.finite_crystals import FiniteCrystals
 from sage.combinat.root_system.cartan_type import CartanType
@@ -364,7 +366,7 @@ class VirtualCrystal(Subcrystal):
                 1
             """
             P = self.parent()
-            return self.value.epsilon(P._virtualization[i][0]) / P._scaling_factors[i]
+            return self.value.epsilon(P._virtualization[i][0]) // P._scaling_factors[i]
 
         def phi(self, i):
             r"""
@@ -383,7 +385,7 @@ class VirtualCrystal(Subcrystal):
                 0
             """
             P = self.parent()
-            return self.value.phi(P._virtualization[i][0]) / P._scaling_factors[i]
+            return self.value.phi(P._virtualization[i][0]) // P._scaling_factors[i]
 
         def weight(self):
             """
@@ -410,7 +412,7 @@ class VirtualCrystal(Subcrystal):
             La = WLR.fundamental_weights()
             v = P._virtualization
             sf = P._scaling_factors
-            return WLR.sum(wt.scalar(ac[v[i][0]]) / sf[i] * La[i]
+            return WLR.sum(wt.scalar(ac[v[i][0]]) // sf[i] * La[i]
                            for i in self.index_set())
 
 # TODO: implement a devirtualization map

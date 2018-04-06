@@ -1,10 +1,12 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo >&2 "SAGE_LOCAL undefined ... exiting"
     echo >&2 "Maybe run 'sage --sh'?"
     exit 1
 fi
+
+echo "Deleting old gf2x files."
+rm -f "$SAGE_LOCAL"/lib/libgf2x*
+rm -rf "$SAGE_LOCAL"/include/gf2x*
 
 cd src
 
@@ -34,6 +36,7 @@ fi
 if [ "$SAGE_FAT_BINARY" = "yes" ]; then
     echo "Building a generic gf2x library."
     GF2X_CONFIGURE="--disable-hardware-specific-code $GF2X_CONFIGURE"
+    SAGE_TUNE_GF2X="no"
 fi
 
 echo "Configuring gf2x."
@@ -67,17 +70,13 @@ case "$SAGE_TUNE_GF2X" in
     *)
         echo "Fast tuning of gf2x."
         echo "You can set SAGE_TUNE_GF2X to full to run a complete tuning."
-        $MAKE tune-lowlevel && $MAKE tune-toom TOOM_TUNING_LIMIT=100
+        $MAKE tune-lowlevel && $MAKE tune-toom
         if [ $? -ne 0 ]; then
             echo >&2 "Error: Failed to tune gf2x."
             exit 1
         fi
         ;;
 esac
-
-echo "Deleting old gf2x files."
-rm -f "$SAGE_LOCAL"/lib/libgf2x*
-rm -rf "$SAGE_LOCAL"/include/gf2x*
 
 echo "Installing gf2x."
 $MAKE install

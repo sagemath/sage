@@ -1,7 +1,4 @@
-| $(SAGERUNTIME)
-
-CONWAY_POLYNOMIALS depends on SAGERUNTIME because it runs Sage code to
-generate a Sage object (.sobj).
+$(PYTHON) | six
 
 ----------
 All lines of this file are ignored except the first.

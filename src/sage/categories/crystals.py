@@ -8,6 +8,8 @@ Crystals
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 from __future__ import print_function
+from builtins import zip
+from six import itervalues
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
@@ -236,13 +238,17 @@ class Crystals(Category_singleton):
 
         def weight_lattice_realization(self):
             """
-            Returns the weight lattice realization used to express weights.
+            Return the weight lattice realization used to express weights
+            in ``self``.
 
             This default implementation uses the ambient space of the
             root system for (non relabelled) finite types and the
             weight lattice otherwise. This is a legacy from when
             ambient spaces were partially implemented, and may be
             changed in the future.
+
+            For affine types, this returns the extended weight lattice
+            by default.
 
             EXAMPLES::
 
@@ -252,10 +258,43 @@ class Crystals(Category_singleton):
                 sage: K = crystals.KirillovReshetikhin(['A',2,1], 1, 1)
                 sage: K.weight_lattice_realization()
                 Weight lattice of the Root system of type ['A', 2, 1]
+
+            TESTS:
+
+            Check that crystals have the correct weight lattice realization::
+
+                sage: A = crystals.KirillovReshetikhin(['A',2,1], 1, 1).affinization()
+                sage: A.weight_lattice_realization()
+                Extended weight lattice of the Root system of type ['A', 2, 1]
+
+                sage: B = crystals.AlcovePaths(['A',2,1],[1,0,0])
+                sage: B.weight_lattice_realization()
+                Extended weight lattice of the Root system of type ['A', 2, 1]
+
+                sage: C = crystals.AlcovePaths("B3",[1,0,0])
+                sage: C.weight_lattice_realization()
+                Ambient space of the Root system of type ['B', 3]
+
+                sage: M = crystals.infinity.NakajimaMonomials(['A',3,2])
+                sage: M.weight_lattice_realization()
+                Extended weight lattice of the Root system of type ['B', 2, 1]^*
+                sage: M = crystals.infinity.NakajimaMonomials(['A',2])
+                sage: M.weight_lattice_realization()
+                Ambient space of the Root system of type ['A', 2]
+                sage: A = CartanMatrix([[2,-3],[-3,2]])
+                sage: M = crystals.infinity.NakajimaMonomials(A)
+                sage: M.weight_lattice_realization()
+                Weight lattice of the Root system of type Dynkin diagram of rank 2
+
+                sage: Y = crystals.infinity.GeneralizedYoungWalls(3)
+                sage: Y.weight_lattice_realization()
+                Extended weight lattice of the Root system of type ['A', 3, 1]
             """
             F = self.cartan_type().root_system()
             if self.cartan_type().is_finite() and F.ambient_space() is not None:
                 return F.ambient_space()
+            if self.cartan_type().is_affine():
+                return F.weight_lattice(extended=True)
             return F.weight_lattice()
 
         def cartan_type(self):
@@ -390,9 +429,9 @@ class Crystals(Category_singleton):
                 sage: len(S)
                 6
                 sage: list(C.subcrystal(index_set=[1,3], generators=[C(1,4)]))
-                [[[1, 4]], [[2, 4]], [[1, 3]], [[2, 3]]]
+                [[[1, 4]], [[1, 3]], [[2, 4]], [[2, 3]]]
                 sage: list(C.subcrystal(index_set=[1,3], generators=[C(1,4)], max_depth=1))
-                [[[1, 4]], [[2, 4]], [[1, 3]]]
+                [[[1, 4]], [[1, 3]], [[2, 4]]]
                 sage: list(C.subcrystal(index_set=[1,3], generators=[C(1,4)], direction='upper'))
                 [[[1, 4]], [[1, 3]]]
                 sage: list(C.subcrystal(index_set=[1,3], generators=[C(1,4)], direction='lower'))
@@ -432,6 +471,20 @@ class Crystals(Category_singleton):
                 sage: B = crystals.Tableaux(['B',2], shape=[1])
                 sage: S.digraph().is_isomorphic(B.digraph(), edge_labels=True)
                 True
+
+            TESTS:
+
+            Check that :trac:`23942` is fixed::
+
+                sage: B = crystals.infinity.Tableaux(['A',2])
+                sage: S = B.subcrystal(max_depth=3, category=HighestWeightCrystals())
+                sage: S.category()
+                Category of finite highest weight crystals
+
+                sage: K = crystals.KirillovReshetikhin(['A',3,1], 2,3)
+                sage: S = K.subcrystal(index_set=[1,3], category=HighestWeightCrystals())
+                sage: S.category()
+                Category of finite highest weight crystals
             """
             from sage.combinat.crystals.subcrystal import Subcrystal
             from sage.categories.finite_crystals import FiniteCrystals
@@ -456,8 +509,12 @@ class Crystals(Category_singleton):
                                       virtualization, scaling_factors,
                                       cartan_type, index_set, category)
 
+                # else self is a finite crystal
                 if direction == 'both':
-                    category = FiniteCrystals().or_subcategory(category)
+                    if category is None:
+                        category = FiniteCrystals()
+                    else:
+                        category = FiniteCrystals() & category
                     return Subcrystal(self, contained, generators,
                                       virtualization, scaling_factors,
                                       cartan_type, index_set, category)
@@ -489,7 +546,7 @@ class Crystals(Category_singleton):
             if category is None:
                 category = FiniteCrystals()
             else:
-               category = FiniteCrystals().join(category)
+               category = FiniteCrystals() & category
 
             if self in FiniteCrystals() and len(subset) == self.cardinality():
                 if index_set == self.index_set():
@@ -591,7 +648,7 @@ class Crystals(Category_singleton):
                          [The crystal of tableaux of type ['A', 2] and shape(s) [[1]],
                           The crystal of tableaux of type ['A', 2] and shape(s) [[1]],
                           The crystal of tableaux of type ['A', 2] and shape(s) [[1]]]
-                  Defn: [2, 1, 1] |--> [[[1]], [[2]], [[1]]]
+                  Defn: [[1, 1], [2]] |--> [[[1]], [[2]], [[1]]]
                 sage: b = B.module_generators[0]
                 sage: b.pp()
                   1  1
@@ -633,7 +690,7 @@ class Crystals(Category_singleton):
                 ['D', 4] -> ['D', 4, 1] Virtual Crystal morphism:
                   From: The crystal of tableaux of type ['D', 4] and shape(s) [[1, 1]]
                   To:   Kirillov-Reshetikhin crystal of type ['D', 4, 1] with (r,s)=(2,2)
-                  Defn: [2, 1] |--> [[1], [2]]
+                  Defn: [[1], [2]] |--> [[1], [2]]
                 sage: b = B.module_generators[0]
                 sage: psi(b)
                 [[1], [2]]
@@ -719,7 +776,7 @@ class Crystals(Category_singleton):
                         codomain = on_gens[0].parent()
                 elif isinstance(on_gens, dict):
                     if on_gens:
-                        codomain = on_gens.values()[0].parent()
+                        codomain = next(itervalues(on_gens)).parent()
                 else:
                     for x in self.module_generators:
                         y = on_gens(x)
@@ -737,7 +794,7 @@ class Crystals(Category_singleton):
 
         def digraph(self, subset=None, index_set=None):
             """
-            Returns the DiGraph associated to ``self``.
+            Return the :class:`DiGraph` associated to ``self``.
 
             INPUT:
 
@@ -817,22 +874,21 @@ class Crystals(Category_singleton):
                 sage: B.digraph()
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: infinite crystal
+                NotImplementedError: crystals not known to be finite
+                 must specify either the subset or depth
+                sage: B.digraph(depth=10)
+                Digraph on 161 vertices
 
             .. TODO:: Add more tests.
             """
             from sage.graphs.all import DiGraph
-            from sage.categories.highest_weight_crystals import HighestWeightCrystals
             d = {}
-            if self in HighestWeightCrystals:
-                f = lambda u_v_label: ({})
-            else:
-                f = lambda u_v_label: ({"backward": u_v_label[2] == 0})
 
             # Parse optional arguments
             if subset is None:
-                if self in Crystals().Infinite():
-                    raise NotImplementedError("infinite crystal")
+                if self not in Crystals().Finite():
+                    raise NotImplementedError("crystals not known to be finite"
+                                              " must specify the subset")
                 subset = self
             if index_set is None:
                 index_set = self.index_set()
@@ -847,9 +903,8 @@ class Crystals(Category_singleton):
             G = DiGraph(d)
             if have_dot2tex():
                 G.set_latex_options(format="dot2tex",
-                                    edge_labels = True,
-                                    color_by_label = self.cartan_type()._index_set_coloring,
-                                    edge_options = f)
+                                    edge_labels=True,
+                                    color_by_label=self.cartan_type()._index_set_coloring)
             return G
 
         def latex_file(self, filename):
@@ -1134,7 +1189,7 @@ class Crystals(Category_singleton):
                   The crystal of letters for type ['A', 2],
                   The crystal of letters for type ['A', 2]]
                 sage: T.module_generators
-                [[2, 1, 1], [1, 2, 1]]
+                ([2, 1, 1], [1, 2, 1])
             """
             from sage.combinat.crystals.tensor_product import TensorProductOfCrystals
             return TensorProductOfCrystals(self, *crystals, **options)
@@ -1650,16 +1705,27 @@ class Crystals(Category_singleton):
                 sage: C = crystals.KirillovReshetikhin(['A',3,1], 1, 2)
                 sage: elt = C(1,4)
                 sage: list(elt.subcrystal(index_set=[1,3]))
-                [[[1, 4]], [[2, 4]], [[1, 3]], [[2, 3]]]
+                [[[1, 4]], [[1, 3]], [[2, 4]], [[2, 3]]]
                 sage: list(elt.subcrystal(index_set=[1,3], max_depth=1))
-                [[[1, 4]], [[2, 4]], [[1, 3]]]
+                [[[1, 4]], [[1, 3]], [[2, 4]]]
                 sage: list(elt.subcrystal(index_set=[1,3], direction='upper'))
                 [[[1, 4]], [[1, 3]]]
                 sage: list(elt.subcrystal(index_set=[1,3], direction='lower'))
                 [[[1, 4]], [[2, 4]]]
+
+            TESTS:
+
+            Check that :trac:`23942` is fixed::
+
+                sage: K = crystals.KirillovReshetikhin(['A',2,1], 1,1)
+                sage: cat = HighestWeightCrystals().Finite()
+                sage: S = K.module_generator().subcrystal(index_set=[1,2], category=cat)
+                sage: S.category()
+                Category of finite highest weight crystals
             """
             return self.parent().subcrystal(generators=[self], index_set=index_set,
-                                            max_depth=max_depth, direction=direction)
+                                            max_depth=max_depth, direction=direction,
+                                            category=category)
 
     class SubcategoryMethods:
         """
@@ -1960,7 +2026,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
         elif isinstance(on_gens, (list, tuple)):
             if len(self._gens) != len(on_gens):
                 raise ValueError("invalid generator images")
-            d = {x: y for x,y in zip(self._gens, on_gens)}
+            d = {x: y for x, y in zip(self._gens, on_gens)}
             f = lambda x: d[x]
         else:
             f = on_gens
@@ -1985,12 +2051,12 @@ class CrystalMorphismByGenerators(CrystalMorphism):
             sage: psi = H((None, b, b, None), generators=T.highest_weight_vectors())
             sage: print(psi._repr_defn())
             [[[1]], [[1]], [[1]]] |--> None
-            [[[2]], [[1]], [[1]]] |--> [2, 1, 1]
-            [[[1]], [[2]], [[1]]] |--> [2, 1, 1]
+            [[[2]], [[1]], [[1]]] |--> [[1, 1], [2]]
+            [[[1]], [[2]], [[1]]] |--> [[1, 1], [2]]
             [[[3]], [[2]], [[1]]] |--> None
         """
         return '\n'.join(['{} |--> {}'.format(mg, im)
-                          for mg,im in zip(self._gens, self.im_gens())])
+                          for mg, im in zip(self._gens, self.im_gens())])
 
     def _check(self):
         """
@@ -2059,7 +2125,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
         """
         mg, ef, indices = self.to_module_generator(x)
         cur = self._on_gens(mg)
-        for op,i in reversed(zip(ef, indices)):
+        for op, i in reversed(list(zip(ef, indices))):
             if cur is None:
                 return None
 
@@ -2309,7 +2375,7 @@ class CrystalHomset(Homset):
           To:   Direct sum of the crystals Family
            (The crystal of tableaux of type ['A', 1] and shape(s) [[2]],
             The crystal of tableaux of type ['A', 1] and shape(s) [[]])
-          Defn: [[[1]], [[1]]] |--> [1, 1]
+          Defn: [[[1]], [[1]]] |--> [[1, 1]]
                 [[[2]], [[1]]] |--> []
         sage: psi.is_isomorphism()
         True
@@ -2363,15 +2429,15 @@ class CrystalHomset(Homset):
         ['B', 3] -> ['D', 4] Virtual Crystal morphism:
           From: The crystal of tableaux of type ['B', 3] and shape(s) [[1]]
           To:   The crystal of tableaux of type ['D', 4] and shape(s) [[2]]
-          Defn: [1] |--> [1, 1]
+          Defn: [[1]] |--> [[1, 1]]
         sage: for b in B: print("{} |--> {}".format(b, psi(b)))
-        [1] |--> [1, 1]
-        [2] |--> [2, 2]
-        [3] |--> [3, 3]
-        [0] |--> [3, -3]
-        [-3] |--> [-3, -3]
-        [-2] |--> [-2, -2]
-        [-1] |--> [-1, -1]
+        [[1]] |--> [[1, 1]]
+        [[2]] |--> [[2, 2]]
+        [[3]] |--> [[3, 3]]
+        [[0]] |--> [[3, -3]]
+        [[-3]] |--> [[-3, -3]]
+        [[-2]] |--> [[-2, -2]]
+        [[-1]] |--> [[-1, -1]]
     """
     def __init__(self, X, Y, category=None):
         """
@@ -2411,7 +2477,7 @@ class CrystalHomset(Homset):
             sage: H = Hom(B, B)
             sage: H(H.an_element()) # indirect doctest
             ['B', 3] Crystal endomorphism of The crystal of tableaux of type ['B', 3] and shape(s) [[2, 1]]
-              Defn: [2, 1, 1] |--> None
+              Defn: [[1, 1], [2]] |--> None
         """
         if not isinstance(x, CrystalMorphism):
             raise TypeError
@@ -2497,7 +2563,7 @@ class CrystalHomset(Homset):
             ['A', 2] Crystal morphism:
               From: The crystal of tableaux of type ['A', 2] and shape(s) [[2, 1]]
               To:   The infinity crystal of tableaux of type ['A', 2]
-              Defn: [2, 1, 1] |--> None
+              Defn: [[1, 1], [2]] |--> None
         """
         return self.element_class(self, lambda x: None)
 

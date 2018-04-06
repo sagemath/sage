@@ -29,6 +29,7 @@ from .matlab import matlab, matlab_version, Matlab
 from .mupad import mupad, Mupad  # NOT functional yet
 from .mwrank import mwrank, Mwrank
 from .octave import octave, octave_version, Octave
+from .polymake import polymake
 from .qepcad import qepcad, qepcad_version, qepcad_formula
 from .qsieve import qsieve
 from .singular import singular, singular_version, Singular

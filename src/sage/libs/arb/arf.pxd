@@ -1,4 +1,4 @@
-# distutils: libraries = arb
+# distutils: libraries = gmp flint arb
 
 from sage.libs.arb.types cimport *
 from sage.libs.gmp.types cimport mpz_t

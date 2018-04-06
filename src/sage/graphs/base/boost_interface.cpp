@@ -105,7 +105,7 @@ public:
         std::back_insert_iterator<edge_container> inserter(disconnecting_set);
         to_return.ec = boost::edge_connectivity(graph, inserter);
 
-        for (v_index i = 0; i < disconnecting_set.size(); i++) {
+        for (size_t i = 0; i < disconnecting_set.size(); i++) {
             edge_descriptor edge = disconnecting_set[i];
             to_return.edges.push_back(index[boost::source(edge, graph)]);
             to_return.edges.push_back(index[boost::target(edge, graph)]);
@@ -156,7 +156,7 @@ public:
             boost::king_ordering(graph, inv_perm.rbegin());
         }
 
-        for (int i = 0; i < inv_perm.size(); i++) {
+        for (size_t i = 0; i < inv_perm.size(); i++) {
             to_return.push_back(index[inv_perm[i]]);
         }
         return to_return;

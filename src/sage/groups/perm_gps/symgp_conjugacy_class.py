@@ -3,7 +3,7 @@ Conjugacy Classes Of The Symmetric Group
 
 AUTHORS:
 
-- Vincent Delacroix, Travis Scrimshaw (2014-11-23)
+- Vincent Delecroix, Travis Scrimshaw (2014-11-23)
 """
 from __future__ import print_function
 from six.moves import range
@@ -15,6 +15,7 @@ from sage.combinat.set_partition import SetPartitions
 from sage.combinat.permutation import Permutation, from_cycles
 from sage.sets.set import Set
 import itertools
+
 
 class SymmetricGroupConjugacyClassMixin(object):
     r"""
@@ -51,7 +52,7 @@ class SymmetricGroupConjugacyClassMixin(object):
         """
         return "Conjugacy class of cycle type %s in %s"%(self._part, self._parent)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         r"""
         Comparison of conjugacy classes is done by comparing the
         defining cycle types.
@@ -65,10 +66,24 @@ class SymmetricGroupConjugacyClassMixin(object):
             sage: C == Cp
             True
         """
-        c = cmp(type(self), type(other))
-        if c:
-             return c
-        return cmp(self._part, other._part)
+        if not isinstance(other, SymmetricGroupConjugacyClassMixin):
+            return False
+        return self._part == other._part
+
+    def __ne__(self, other):
+        """
+        Test for unequality.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(5)
+            sage: g = G([(1,3), (2,4,5)])
+            sage: C = G.conjugacy_class(Partition([3,2]))
+            sage: Cp = G.conjugacy_class(g)
+            sage: C != Cp
+            False
+        """
+        return not (self == other)
 
     def partition(self):
         """
@@ -81,6 +96,7 @@ class SymmetricGroupConjugacyClassMixin(object):
             sage: C = G.conjugacy_class(g)
         """
         return self._part
+
 
 class SymmetricGroupConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyClassGAP):
     """

@@ -33,6 +33,8 @@ linear in ``capacity``.
 from __future__ import print_function
 
 include "bitset.pxi"
+from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+
 
 cdef class FrozenBitset:
     r"""
@@ -657,17 +659,17 @@ cdef class FrozenBitset:
             left = self
             right = other._larger_capacity_(self._bitset.size)
 
-        if op == 2:  # ==
+        if op == Py_EQ:
             return bitset_eq(left._bitset, right._bitset)
-        elif op == 3:  # !=
+        elif op == Py_NE:
             return not bitset_eq(left._bitset, right._bitset)
-        elif op == 0:  # <
+        elif op == Py_LT:
             return bitset_issubset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 1:  # <=
+        elif op == Py_LE:
             return bitset_issubset(left._bitset, right._bitset)
-        elif op == 4:  # >
+        elif op == Py_GT:
             return bitset_issuperset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 5:  # >=
+        elif op == Py_GE:
             return bitset_issuperset(left._bitset, right._bitset)
 
     cpdef bint issubset(self, FrozenBitset other) except -1:
@@ -1300,7 +1302,7 @@ cdef class Bitset(FrozenBitset):
         """
         Raise an error, since mutable ``Bitset``s are not hashable.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: hash(Bitset('110'))
             Traceback (most recent call last):
@@ -1399,17 +1401,17 @@ cdef class Bitset(FrozenBitset):
             left = self
             right = other._larger_capacity_(self._bitset.size)
 
-        if op == 2:  # ==
+        if op == Py_EQ:
             return bitset_eq(left._bitset, right._bitset)
-        elif op == 3:  # !=
+        elif op == Py_NE:
             return not bitset_eq(left._bitset, right._bitset)
-        elif op == 0:  # <
+        elif op == Py_LT:
             return bitset_issubset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 1:  # <=
+        elif op == Py_LE:
             return bitset_issubset(left._bitset, right._bitset)
-        elif op == 4:  # >
+        elif op == Py_GT:
             return bitset_issuperset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 5:  # >=
+        elif op == Py_GE:
             return bitset_issuperset(left._bitset, right._bitset)
 
     cdef FrozenBitset _new(self, long int capacity):

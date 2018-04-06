@@ -21,6 +21,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 from sage.rings.padics.pow_computer cimport PowComputer_class
 from sage.rings.integer import Integer
@@ -370,7 +371,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         if R.e() != 1:
             raise NotImplementedError("Frobenius automorphism only implemented for unramified extensions")
         if self.is_zero(): return self
-        L = self.teichmuller_list()
+        L = self.teichmuller_expansion()
         ppow = R.uniformizer_pow(self.valuation())
         if arithmetic:
             exp = R.prime()
@@ -400,13 +401,20 @@ cdef class pAdicExtElement(pAdicGenericElement):
         """
         return False
 
-    def residue(self, absprec=1):
+    def residue(self, absprec=1, field=None, check_prec=True):
         r"""
         Reduces this element modulo `\pi^\mathrm{absprec}`.
 
         INPUT:
 
         - ``absprec`` - a non-negative integer (default: ``1``)
+
+        - ``field`` -- boolean (default ``None``).  For precision 1, whether to return
+          an element of the residue field or a residue ring.  Currently unused.
+
+        - ``check_prec`` -- boolean (default ``True``).  Whether to raise an error if this
+          element has insufficient precision to determine the reduction.  Errors are never
+          raised for fixed-mod or floating-point types.
 
         OUTPUT:
 
@@ -462,7 +470,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
             sage: R = ZpFM(3,5)
             sage: S.<a> = R[]
-            sage: W.<a> = R.extension(a^2 + 9*a + 1)
+            sage: W.<a> = R.extension(a^2 + 3)
             sage: W.one().residue(0)
             0
             sage: a.residue(-1)
@@ -472,21 +480,26 @@ cdef class pAdicExtElement(pAdicGenericElement):
             sage: a.residue(16)
             Traceback (most recent call last):
             ...
-            PrecisionError: insufficient precision to reduce modulo p^16.
+            NotImplementedError: residue() not implemented in extensions for absprec larger than one.
 
         """
         if absprec < 0:
             raise ValueError("cannot reduce modulo a negative power of the uniformizer.")
-        if absprec > self.precision_absolute():
-            from precision_error import PrecisionError
-            raise PrecisionError("not enough precision known in order to compute residue.")
         if self.valuation() < 0:
             raise ValueError("element must have non-negative valuation in order to compute residue.")
+        R = self.parent()
+        if check_prec and (R.is_fixed_mod() or R.is_floating_point()):
+            check_prec = False
+        if check_prec and absprec > self.precision_absolute():
+            from precision_error import PrecisionError
+            raise PrecisionError("not enough precision known in order to compute residue.")
+        if field and absprec != 1:
+            raise ValueError("field keyword may only be set at precision 1")
 
         if absprec == 0:
             from sage.rings.finite_rings.integer_mod import Mod
             return Mod(0,1)
         elif absprec == 1:
-            return self.parent().residue_field()(self[0])
+            return R.residue_field()(self.expansion(0))
         else:
             raise NotImplementedError("residue() not implemented in extensions for absprec larger than one.")

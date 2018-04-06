@@ -285,7 +285,7 @@ class BackendDoctest(BackendBase):
             assert rich_output.obj.get().startswith('mtllib ')
             assert rich_output.mtl.get().startswith('newmtl ')
         elif isinstance(rich_output, OutputSceneCanvas3d):
-            assert rich_output.canvas3d.get().startswith('[{vertices:')
+            assert rich_output.canvas3d.get().startswith('[{"vertices":')
         elif isinstance(rich_output, OutputVideoOgg):
             assert rich_output.video.get().startswith('OggS')
         elif isinstance(rich_output, OutputVideoWebM):

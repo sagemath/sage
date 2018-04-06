@@ -14,24 +14,24 @@ This module is meant for all functions related to centrality in networks.
 Functions
 ---------
 """
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
-include "sage/data_structures/bitset.pxi"
-include "cysignals/signals.pxi"
-
-from sage.graphs.base.static_sparse_graph cimport *
 from libc.string cimport memset
 from libc.stdint cimport uint32_t
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_check
+
+include "sage/data_structures/bitset.pxi"
+from sage.graphs.base.static_sparse_graph cimport *
 from sage.libs.gmp.mpq cimport *
 from sage.rings.rational cimport Rational
-include "cysignals/memory.pxi"
 from sage.ext.memory_allocator cimport MemoryAllocator
 
 ctypedef fused numerical_type:
     mpq_t
     double
 
-import cython
+cimport cython
 
 def centrality_betweenness(G, exact=False, normalize=True):
     r"""
@@ -181,11 +181,11 @@ cdef dict centrality_betweenness_C(G, numerical_type _, normalize=True):
         init_short_digraph(g, G, edge_labelled = False)
         init_reverse(bfs_dag, g)
 
-        queue               = <uint32_t *> check_malloc(n*sizeof(uint32_t))
-        degrees             = <uint32_t *> check_malloc(n*sizeof(uint32_t))
-        n_paths_from_source = <numerical_type *> check_malloc(n*sizeof(numerical_type))
-        betweenness_source  = <numerical_type *> check_malloc(n*sizeof(numerical_type))
-        betweenness         = <numerical_type *> check_malloc(n*sizeof(numerical_type))
+        queue               = <uint32_t *> check_allocarray(n, sizeof(uint32_t))
+        degrees             = <uint32_t *> check_allocarray(n, sizeof(uint32_t))
+        n_paths_from_source = <numerical_type *> check_allocarray(n, sizeof(numerical_type))
+        betweenness_source  = <numerical_type *> check_allocarray(n, sizeof(numerical_type))
+        betweenness         = <numerical_type *> check_allocarray(n, sizeof(numerical_type))
 
         bitset_init(seen,n)
         bitset_init(next_layer,n)
@@ -675,7 +675,6 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
     if G.num_verts()==0 or G.num_verts()==1:
         return []
 
-    sig_on()
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef short_digraph sd
     # Copying the whole graph to obtain the list of neighbors quicker than by
@@ -716,6 +715,8 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
     _sort_vertices_degree(sd, sorted_vert)
 
     for x in sorted_vert[:n]:
+        sig_check()
+
         if out_degree(sd, x) == 0:
             break
         # We start a BFSCut from x:
@@ -741,6 +742,7 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
 
         # The graph is explored layer by layer.
         while layer_current_beginning<layer_current_end and not stopped:
+            sig_check()
 
             # We update our estimate of the farness of v.
             # The estimate sets distance d+1 to gamma vertices (which is an
@@ -758,11 +760,15 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
             # Looking for all non-discovered neighbors of some vertex of the
             # current layer.
             for j in range(layer_current_beginning,layer_current_end):
+                sig_check()
+
                 u = queue[j]
 
                 # List the neighors of u
                 p_tmp = sd.neighbors[u]
                 while p_tmp<sd.neighbors[u+1] and not stopped:
+                    sig_check()
+
                     visited += 1
                     v = p_tmp[0]
                     p_tmp += 1
@@ -805,7 +811,6 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
             print("Visit {} from {}:".format(nvis, x))
             print("    Lower bound: {}".format(1 / kth))
             print("    Perf. ratio: {}".format(visited / (nvis * <double> (sd.neighbors[sd.n]-sd.edges))))
-    sig_off()
 
     if verbose > 0:
         print("Final performance ratio: {}".format(visited / (n * <double> (sd.neighbors[sd.n]-sd.edges))))

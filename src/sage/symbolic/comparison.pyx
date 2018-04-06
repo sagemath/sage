@@ -11,6 +11,12 @@ There are two useful ways to compare symbolic expressions:
   principle, evaluated to a boolean (for example, if it involves
   symbolic variables). Can be very slow as it potentially calls
   Maxima to prove the inequality.
+
+There is also a mixed version:
+
+* :func:`mixed_order` which is print order if variables are present,
+  and mathematical/numeric if not. This should enable quick and
+  correct results.
 """
 
 from cpython cimport *
@@ -58,7 +64,7 @@ cpdef int print_order(lhs, rhs) except -2:
 
     Check that :trac:`12967` is fixed::
 
-        sage: cmp(SR(oo), sqrt(2))
+        sage: print_order(SR(oo), sqrt(2))
         1
     """
     if not is_Expression(lhs):
@@ -250,7 +256,7 @@ cpdef int mixed_order(lhs, rhs) except -2:
 
     Check that :trac:`12967` is fixed::
 
-        sage: cmp(SR(oo), sqrt(2))
+        sage: mixed_order(SR(oo), sqrt(2))
         1
     """
     if not is_Expression(lhs):

@@ -62,7 +62,7 @@ class DoublyLinkedList():
         for i in range(1,n):
             self.prev_value[l[i]] = l[i-1]
 
-    def __cmp__(self, x):
+    def __eq__(self, other):
         """
         TESTS::
 
@@ -74,15 +74,24 @@ class DoublyLinkedList():
             sage: dll == dll2
             False
         """
-        if not isinstance(x, DoublyLinkedList):
-            return -1
-        if self.l != x.l:
-            return -1
-        if self.next_value != x.next_value:
-            return -1
-        if self.prev_value != x.prev_value:
-            return -1
-        return 0
+        return (isinstance(other, DoublyLinkedList) and
+            self.l == other.l and
+            self.next_value == other.next_value and
+            self.prev_value == other.prev_value)
+
+    def __ne__(self, other):
+        """
+        TESTS::
+
+            sage: dll = sage.combinat.misc.DoublyLinkedList([1,2,3])
+            sage: dll2 = sage.combinat.misc.DoublyLinkedList([1,2,3])
+            sage: dll != dll2
+            False
+            sage: dll.hide(1)
+            sage: dll != dll2
+            True
+        """
+        return not (self == other)
 
     def __repr__(self):
         """
@@ -332,12 +341,12 @@ def check_integer_list_constraints(l, **kwargs):
     """
     if 'singleton' in kwargs and kwargs['singleton']:
         singleton = True
-        result = [ l ]
+        result = [l]
         n = sum(l)
         del kwargs['singleton']
     else:
         singleton = False
-        if len(l) > 0:
+        if l:
             n = sum(l[0])
             result = l
         else:

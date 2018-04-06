@@ -1,33 +1,30 @@
 #!/usr/bin/env bash
 
 set -e
-shopt -s extglob
 
-GIT_VERSION=r70
+GIT_VERSION=r80
 
 [ -n "${SAGE_ROOT}" ] || SAGE_ROOT="$(pwd)/../../../"
 
 
-# fetch and rename latest version.
-URL="https://github.com/mrdoob/three.js/archive/${GIT_VERSION}.tar.gz"
-echo "Downloading $URL"
-rm -rf src
-if [ -z "$UPSTREAM_SOURCE_TARBALL" ]; then
-    tar xzf <( curl -L "$URL" )
-else
-    tar xzf "$UPSTREAM_SOURCE_TARBALL"
-fi
-mv three.js-${GIT_VERSION} src
+# Fetch latest version.
+URL1="https://raw.githubusercontent.com/mrdoob/three.js/${GIT_VERSION}/build/three.min.js"
+echo "Downloading $URL1"
+curl -OL "$URL1"
 
-# Delete the 200mb of enclosed examples
-# However, keep the examples/js directory (see Trac #17823)
-rm -rf src/examples/!(js)
+URL2="https://raw.githubusercontent.com/mrdoob/three.js/${GIT_VERSION}/examples/js/controls/OrbitControls.js"
+echo "Downloading $URL2"
+curl -OL "$URL2"
 
-# repack
-tar czf "$SAGE_ROOT/upstream/threejs-${GIT_VERSION}.tar.gz" src
-rm -rf src
+URL3="https://raw.githubusercontent.com/mrdoob/three.js/${GIT_VERSION}/LICENSE"
+echo "Downloading $URL3"
+curl -OL "$URL3"
 
-# update package info
+# Package
+tar czf "$SAGE_ROOT/upstream/threejs-${GIT_VERSION}.tar.gz" 'three.min.js' 'OrbitControls.js' 'LICENSE'
+rm -rf 'three.min.js' 'OrbitControls.js' 'LICENSE'
+
+# Update package info
 echo "${GIT_VERSION}" > 'package-version.txt'
-"$SAGE_ROOT"/sage -sh 'sage-fix-pkg-checksums'
+"$SAGE_ROOT"/sage --package fix-checksum
 

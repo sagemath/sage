@@ -32,8 +32,10 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-import category
+from . import category
+
 
 def _Functor_unpickle(Cl, D, domain, codomain):
     """
@@ -280,7 +282,7 @@ cdef class Functor(SageObject):
         By default, the argument will not be changed, but a ``TypeError``
         will be raised if the argument does not belong to the domain.
 
-        TEST::
+        TESTS::
 
             sage: from sage.categories.functor import Functor
             sage: F = Functor(Fields(),Fields())
@@ -387,7 +389,7 @@ cdef class Functor(SageObject):
         """
         The domain of self
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: F = ForgetfulFunctor(FiniteFields(),Fields())
             sage: F.domain()
@@ -400,7 +402,7 @@ cdef class Functor(SageObject):
         """
         The codomain of self
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: F = ForgetfulFunctor(FiniteFields(),Fields())
             sage: F.codomain()
@@ -494,7 +496,7 @@ class ForgetfulFunctor_generic(Functor):
         but happens to be a forgetful functor, both arguments will
         still be considered as being *different*.
 
-        TEST::
+        TESTS::
 
             sage: F1 = ForgetfulFunctor(FiniteFields(),Fields())
 

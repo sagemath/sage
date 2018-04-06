@@ -56,7 +56,7 @@ arithmetic_operators = {add_vararg: '+',
                         operator.add: '+',
                         operator.sub: '-',
                         operator.mul: '*',
-                        operator.div: '/',
+                        operator.truediv: '/',
                         operator.pow: '^'}
 
 relation_operators = {operator.eq:'==',

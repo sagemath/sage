@@ -244,7 +244,7 @@ class Truthtable:
             line = s = ""
             i = 0
             for e in row:
-                if e == True:
+                if e:
                     j = 2
                 else:
                     j = 1

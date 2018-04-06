@@ -54,7 +54,7 @@ def basis_of_short_vectors(self, show_lengths=False, safe_flag=None):
     Max_number_of_vectors = 10000
 
     ## Generate a PARI matrix for the associated Hessian matrix
-    M_pari = self._pari_()
+    M_pari = self.__pari__()
 
     ## Run through all possible minimal lengths to find a spanning set of vectors
     n = self.dim()
@@ -177,10 +177,10 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
         sage: Q = QuadraticForm(matrix(2, [72, 12, 12, 120]))
         sage: len_bound_pari = 2*22953421 - 2; len_bound_pari
         45906840
-        sage: vs = list(Q._pari_().qfminim(len_bound_pari)[2])  # long time (18s on sage.math, 2014)
+        sage: vs = list(Q.__pari__().qfminim(len_bound_pari)[2])  # long time (18s on sage.math, 2014)
         sage: v = vs[0]; v  # long time
         [66, -623]~
-        sage: v.Vec() * Q._pari_() * v  # long time
+        sage: v.Vec() * Q.__pari__() * v  # long time
         45902280
     """
     if not self.is_positive_definite() :
@@ -198,7 +198,7 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     len_bound_pari = 2*(len_bound - 1)
 
     # Call PARI's qfminim()
-    parilist = self._pari_().qfminim(len_bound_pari)[2].Vec()
+    parilist = self.__pari__().qfminim(len_bound_pari)[2].Vec()
 
     # List of lengths
     parilens = pari(r"(M,v) -> vector(#v, i, (v[i]~ * M * v[i])\2)")(self, parilist)
@@ -279,7 +279,7 @@ def _compute_automorphisms(self):
     if hasattr(self, "__automorphisms_pari"):
         return
 
-    A = self._pari_().qfauto()
+    A = self.__pari__().qfauto()
     self.__number_of_automorphisms = A[0]
     self.__automorphisms_pari = A[1]
 
@@ -360,9 +360,9 @@ def automorphisms(self):
         sage: Q = QuadraticForm(ZZ, 3, [2, 1, 2, 2, 1, 3])
         sage: Q.automorphisms()
         [
-        [1 0 0]  [-1  0  0]
-        [0 1 0]  [ 0 -1  0]
-        [0 0 1], [ 0  0 -1]
+        [-1  0  0]  [1 0 0]
+        [ 0 -1  0]  [0 1 0]
+        [ 0  0 -1], [0 0 1]
         ]
     """
     return [x.matrix() for x in self.automorphism_group().list()]

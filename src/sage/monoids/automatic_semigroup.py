@@ -146,7 +146,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         [[1, 0], [3, 1], [2, 0], [2, 1]]
 
     We can also use it to get submonoids from groups. We check that in the
-    symmetric group, a transposition and a cyle generate the whole group::
+    symmetric group, a transposition and a long cycle generate the whole group::
 
         sage: G5 = SymmetricGroup(5)
         sage: N = AutomaticSemigroup(Family({1: G5([2,1,3,4,5]), 2: G5([2,3,4,5,1])}), one=G5.one())

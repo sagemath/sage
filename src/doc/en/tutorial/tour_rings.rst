@@ -24,7 +24,7 @@ you are working with polynomials with rational coefficients, the
 polynomial won't factor.  With real coefficients, it will.  Therefore
 you may want to specify the ring to insure that you are getting the
 information you expect.  The following two commands defines the sets
-of polynomials with rational coefficents and real coefficients,
+of polynomials with rational coefficients and real coefficients,
 respectively.  The sets are named "ratpoly" and "realpoly", but these
 aren't important here; however, note that the strings ".<t>" and
 ".<z>" name the *variables* used in the two cases. ::

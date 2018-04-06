@@ -58,7 +58,7 @@ Lift an MSymbol to a matrix in `SL(2, R)`:
 
     sage: alpha = MSymbol(N, a + 2, 3*a^2)
     sage: alpha.lift_to_sl2_Ok()
-    [1, -4*a^2 + 9*a - 21, a + 2, a^2 - 3*a + 3]
+    [-3*a^2 + a + 12, 25*a^2 - 50*a + 100, a + 2, a^2 - 3*a + 3]
     sage: Ok = k.ring_of_integers()
     sage: M = Matrix(Ok, 2, alpha.lift_to_sl2_Ok())
     sage: det(M)
@@ -82,7 +82,7 @@ Lift an MSymbol from P1NFList to a matrix in `SL(2, R)`
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
+from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
 
 from sage.misc.search import search
@@ -110,6 +110,7 @@ def P1NFList_clear_level_cache():
     _level_cache = {}
 
 
+@richcmp_method
 class MSymbol(SageObject):
     """
     The constructor for an M-symbol over a number field.
@@ -235,7 +236,7 @@ class MSymbol(SageObject):
         """
         return "\\(%s: %s\)"%(self.c._latex_(), self.d._latex_())
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Comparison function for objects of the class MSymbol.
 
@@ -255,8 +256,8 @@ class MSymbol(SageObject):
         """
         if not isinstance(other, MSymbol):
             raise ValueError("You can only compare with another M-symbol")
-        return cmp([self.__c.list(), self.__d.list()],
-                            [other.__c.list(), other.__d.list()])
+        return richcmp([self.__c.list(), self.__d.list()],
+                       [other.__c.list(), other.__d.list()], op)
 
     def N(self):
         """
@@ -456,6 +457,8 @@ class MSymbol(SageObject):
 #**************************************************************************
 #*       P1NFList class                                                   *
 #**************************************************************************
+
+@richcmp_method
 class P1NFList(SageObject):
     """
     The class for `\mathbb{P}^1(R/N)`, the projective line modulo `N`, where
@@ -499,7 +502,7 @@ class P1NFList(SageObject):
         self.__list = p1NFlist(N)
         self.__list.sort()
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Comparison function for objects of the class P1NFList.
 
@@ -521,7 +524,7 @@ class P1NFList(SageObject):
         """
         if not isinstance(other, P1NFList):
             raise ValueError("You can only compare with another P1NFList")
-        return cmp(self.__N, other.__N)
+        return richcmp(self.__N, other.__N, op)
 
     def __getitem__(self, n):
         """
@@ -801,7 +804,7 @@ class P1NFList(SageObject):
             sage: P[5]
             M-symbol (1/2*a + 1/2: -a) of level Fractional ideal (3)
             sage: P.lift_to_sl2_Ok(5)
-            [1, -2, 1/2*a + 1/2, -a]
+            [-a, 2*a - 2, 1/2*a + 1/2, -a]
 
         ::
 

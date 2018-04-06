@@ -28,8 +28,9 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import, division
-
 from six.moves import range
+from six import add_metaclass
+
 from sage.combinat.integer_lists import IntegerListsLex
 from itertools import product
 
@@ -466,6 +467,7 @@ class IntegerVector(ClonableArray):
             raise ValueError("all entries must be non-negative")
 
 
+@add_metaclass(ClasscallMetaclass)
 class IntegerVectors(Parent):
     """
     The class of (non-negative) integer vectors.
@@ -579,9 +581,18 @@ class IntegerVectors(Parent):
         sage: iv = [ IntegerVectors(x[0], x[1], max_part = x[2]-1) for x in essai ]
         sage: all(map(lambda x: x.cardinality() == len(x.list()), iv))
         True
-    """
-    __metaclass__ = ClasscallMetaclass
 
+    An example showing the same output by using IntegerListsLex::
+
+        sage: IntegerVectors(4, max_length=2).list()
+        [[4], [3, 1], [2, 2], [1, 3], [0, 4]]
+        sage: list(IntegerListsLex(4, max_length=2))
+        [[4], [3, 1], [2, 2], [1, 3], [0, 4]]
+
+    .. SEEALSO::
+    
+        :class: `sage.combinat.integer_lists.invlex.IntegerListsLex`.
+    """
     @staticmethod
     def __classcall_private__(cls, n=None, k=None, **kwargs):
         """

@@ -1,11 +1,11 @@
 "Univariate rational functions over prime fields"
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import sys
 
-include "sage/ext/cdefs.pxi"
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
+from sage.libs.gmp.mpz cimport *
 from sage.rings.all import GF
 from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.ulong_extras cimport n_jacobi
@@ -996,7 +996,7 @@ cdef class FpT_iter:
             self.cur = next_
         return self.cur
 
-cdef class Polyring_FpT_coerce(RingHomomorphism_coercion):
+cdef class Polyring_FpT_coerce(RingHomomorphism):
     """
     This class represents the coercion map from GF(p)[t] to GF(p)(t)
 
@@ -1005,11 +1005,16 @@ cdef class Polyring_FpT_coerce(RingHomomorphism_coercion):
         sage: R.<t> = GF(5)[]
         sage: K = R.fraction_field()
         sage: f = K.coerce_map_from(R); f
-        Ring Coercion morphism:
+        Ring morphism:
           From: Univariate Polynomial Ring in t over Finite Field of size 5
           To:   Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5
         sage: type(f)
         <type 'sage.rings.fraction_field_FpT.Polyring_FpT_coerce'>
+
+    TESTS::
+
+        TestSuite(f).run()
+
     """
     cdef long p
 
@@ -1024,7 +1029,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism_coercion):
             sage: R.<t> = GF(next_prime(2000))[]
             sage: K = R.fraction_field() # indirect doctest
         """
-        RingHomomorphism_coercion.__init__(self, R.ring_of_integers().Hom(R), check=False)
+        RingHomomorphism.__init__(self, R.ring_of_integers().Hom(R))
         self.p = R.base_ring().characteristic()
 
     cdef dict _extra_slots(self, dict _slots):
@@ -1040,7 +1045,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism_coercion):
             t^2 + 1
         """
         _slots['p'] = self.p
-        return RingHomomorphism_coercion._extra_slots(self, _slots)
+        return RingHomomorphism._extra_slots(self, _slots)
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1055,7 +1060,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism_coercion):
             t^2 + 1
         """
         self.p = _slots['p']
-        RingHomomorphism_coercion._update_slots(self, _slots)
+        RingHomomorphism._update_slots(self, _slots)
 
     cpdef Element _call_(self, _x):
         """
@@ -1100,7 +1105,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism_coercion):
             sage: f(2*t + 2, 2, reduce=False)
             (2*t + 2)/2
 
-        TEST:
+        TESTS:
 
         Check that :trac:`12217` and :trac:`16811` are fixed::
 
@@ -1193,6 +1198,23 @@ cdef class FpT_Polyring_section(Section):
           To:   Univariate Polynomial Ring in t over Finite Field of size 5
         sage: type(f)
         <type 'sage.rings.fraction_field_FpT.FpT_Polyring_section'>
+
+    .. WARNING::
+
+        Comparison of ``FpT_Polyring_section`` objects is not currently
+        implemented. See :trac: `23469`. ::
+
+            sage: fprime = loads(dumps(f))
+            sage: fprime == f
+            False
+
+            sage: fprime(1+t) == f(1+t)
+            True
+
+    TESTS::
+
+        sage: TestSuite(f).run(skip='_test_pickling')
+
     """
     cdef long p
 
@@ -1290,7 +1312,7 @@ cdef class FpT_Polyring_section(Section):
         ans._cparent = get_cparent(ans._parent)
         return ans
 
-cdef class Fp_FpT_coerce(RingHomomorphism_coercion):
+cdef class Fp_FpT_coerce(RingHomomorphism):
     """
     This class represents the coercion map from GF(p) to GF(p)(t)
 
@@ -1299,11 +1321,16 @@ cdef class Fp_FpT_coerce(RingHomomorphism_coercion):
         sage: R.<t> = GF(5)[]
         sage: K = R.fraction_field()
         sage: f = K.coerce_map_from(GF(5)); f
-        Ring Coercion morphism:
+        Ring morphism:
           From: Finite Field of size 5
           To:   Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5
         sage: type(f)
         <type 'sage.rings.fraction_field_FpT.Fp_FpT_coerce'>
+
+    TESTS::
+
+        sage: TestSuite(f).run()
+
     """
     cdef long p
 
@@ -1318,7 +1345,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism_coercion):
             sage: R.<t> = GF(next_prime(3000))[]
             sage: K = R.fraction_field() # indirect doctest
         """
-        RingHomomorphism_coercion.__init__(self, R.base_ring().Hom(R), check=False)
+        RingHomomorphism.__init__(self, R.base_ring().Hom(R))
         self.p = R.base_ring().characteristic()
 
     cdef dict _extra_slots(self, dict _slots):
@@ -1337,7 +1364,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism_coercion):
             True
         """
         _slots['p'] = self.p
-        return RingHomomorphism_coercion._extra_slots(self, _slots)
+        return RingHomomorphism._extra_slots(self, _slots)
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1355,7 +1382,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism_coercion):
             True
         """
         self.p = _slots['p']
-        RingHomomorphism_coercion._update_slots(self, _slots)
+        RingHomomorphism._update_slots(self, _slots)
 
     cpdef Element _call_(self, _x):
         """
@@ -1471,6 +1498,24 @@ cdef class FpT_Fp_section(Section):
           To:   Finite Field of size 5
         sage: type(f)
         <type 'sage.rings.fraction_field_FpT.FpT_Fp_section'>
+
+    .. WARNING::
+
+        Comparison of ``FpT_Fp_section`` objects is not currently
+        implemented. See :trac: `23469`. ::
+
+            sage: fprime = loads(dumps(f))
+            sage: fprime == f
+            False
+
+            sage: fprime(3) == f(3)
+            True
+
+    TESTS::
+
+        sage: TestSuite(f).run(skip='_test_pickling')
+
+
     """
     cdef long p
 
@@ -1587,7 +1632,7 @@ cdef class FpT_Fp_section(Section):
         ans.ivalue = nmod_poly_get_coeff_ui(x._numer, 0)
         return ans
 
-cdef class ZZ_FpT_coerce(RingHomomorphism_coercion):
+cdef class ZZ_FpT_coerce(RingHomomorphism):
     """
     This class represents the coercion map from ZZ to GF(p)(t)
 
@@ -1596,11 +1641,16 @@ cdef class ZZ_FpT_coerce(RingHomomorphism_coercion):
         sage: R.<t> = GF(17)[]
         sage: K = R.fraction_field()
         sage: f = K.coerce_map_from(ZZ); f
-        Ring Coercion morphism:
+        Ring morphism:
           From: Integer Ring
           To:   Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 17
         sage: type(f)
         <type 'sage.rings.fraction_field_FpT.ZZ_FpT_coerce'>
+
+    TESTS::
+
+        sage: TestSuite(f).run()
+
     """
     cdef long p
 
@@ -1615,7 +1665,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism_coercion):
             sage: R.<t> = GF(next_prime(3000))[]
             sage: K = R.fraction_field() # indirect doctest
         """
-        RingHomomorphism_coercion.__init__(self, ZZ.Hom(R), check=False)
+        RingHomomorphism.__init__(self, ZZ.Hom(R))
         self.p = R.base_ring().characteristic()
 
     cdef dict _extra_slots(self, dict _slots):
@@ -1636,7 +1686,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism_coercion):
             True
         """
         _slots['p'] = self.p
-        return RingHomomorphism_coercion._extra_slots(self, _slots)
+        return RingHomomorphism._extra_slots(self, _slots)
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1656,7 +1706,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism_coercion):
             True
         """
         self.p = _slots['p']
-        RingHomomorphism_coercion._update_slots(self, _slots)
+        RingHomomorphism._update_slots(self, _slots)
 
     cpdef Element _call_(self, _x):
         """

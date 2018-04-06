@@ -79,7 +79,7 @@ class OutputSceneJmol(OutputBase):
             f.write('set defaultdirectory "{0}"\n'.format(scene_filename))
             f.write('script SCRIPT\n')
         return script_filename
-            
+
     @classmethod
     def example(cls):
         r"""
@@ -91,7 +91,7 @@ class OutputSceneJmol(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputSceneJmol`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputSceneJmol
@@ -118,7 +118,7 @@ class OutputSceneJmol(OutputBase):
         with open(scene_zip_filename) as f:
             scene_zip = f.read()
         return cls(scene_zip, example_png)
-        
+
 
 class OutputSceneCanvas3d(OutputBase):
 
@@ -149,7 +149,7 @@ class OutputSceneCanvas3d(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputSceneCanvas3d`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputSceneCanvas3d
@@ -157,9 +157,9 @@ class OutputSceneCanvas3d(OutputBase):
             OutputSceneCanvas3d container
 
             sage: rich_output.canvas3d
-            buffer containing 649 bytes
+            buffer containing 829 bytes
             sage: rich_output.canvas3d.get()
-            "[{vertices:[{x:1,y:1,z:1},...{x:1,y:-1,z:-1}],faces:[[0,1,2,3]],color:'008000'}]"
+            '[{"vertices":[{"x":1,"y":1,"z":1},...{"x":1,"y":-1,"z":-1}],"faces":[[0,1,2,3]],"color":"008000"}]'
         """
         from sage.env import SAGE_EXTCODE
         filename = os.path.join(
@@ -184,7 +184,7 @@ class OutputSceneThreejs(OutputBase):
             OutputSceneThreejs container
         """
         self.html = OutputBuffer(html)
-        
+
 
 class OutputSceneWavefront(OutputBase):
 
@@ -195,12 +195,12 @@ class OutputSceneWavefront(OutputBase):
         The Wavefront format consists of two files, an ``.obj`` file
         defining the geometry data (mesh points, normal vectors, ...)
         together with a ``.mtl`` file defining texture data.
-        
+
         INPUT:
 
         - ``obj`` -- bytes. The Wavefront obj file format describing
           the mesh shape.
-        
+
         - ``mtl`` -- bytes. The Wavefront mtl file format describing
           textures.
 
@@ -253,7 +253,7 @@ class OutputSceneWavefront(OutputBase):
         if os.path.split(filename)[0]:
             raise ValueError('must be pure filename, got directory component: {0}'
                              .format(filename))
-        
+
     def mtllib(self):
         """
         Return the ``mtllib`` filename
@@ -278,7 +278,7 @@ class OutputSceneWavefront(OutputBase):
             if line.startswith(marker):
                 return line[len(marker):]
         return 'scene.mtl'
-        
+
     def obj_filename(self):
         """
         Return the file name of the ``.obj`` file
@@ -336,7 +336,7 @@ class OutputSceneWavefront(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputSceneCanvas3d`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputSceneWavefront

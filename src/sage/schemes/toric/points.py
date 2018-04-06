@@ -2,7 +2,7 @@
 """
 Enumerate Points of a Toric Variety
 
-The classes here are not meant to be instatiated manually. Instead,
+The classes here are not meant to be instantiated manually. Instead,
 you should always use the methods of the :class:`point set
 <sage.schemes.toric.homset.SchemeHomset_points_toric_field>` of the
 variety.
@@ -607,7 +607,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
             sage: F.<a> = GF(5^2)
             sage: point_set = toric_varieties.P2_123(base_ring=F).point_set()
             sage: ffe = point_set._finite_field_enumerator()
-            sage: powers = range(24)
+            sage: powers = list(range(24))
             sage: ffe.exp(powers)
             (1, a, a + 3, 4*a + 3, 2*a + 2, 4*a + 1, 2, 2*a, 2*a + 1, 3*a + 1, 
              4*a + 4, 3*a + 2, 4, 4*a, 4*a + 2, a + 2, 3*a + 3, a + 4, 3, 3*a, 
@@ -634,7 +634,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
             sage: ffe = point_set._finite_field_enumerator()
             sage: ffe.rescalings()
             ((1, 1, 1), (1, 4, 4), (4, 2, 3), (4, 3, 2))
-            sage: map(ffe.log, ffe.rescalings())
+            sage: list(map(ffe.log, ffe.rescalings()))
             [(0, 0, 0), (0, 2, 2), (2, 1, 3), (2, 3, 1)]
             sage: ffe.rescaling_log_generators()
             ((2, 3, 1),)

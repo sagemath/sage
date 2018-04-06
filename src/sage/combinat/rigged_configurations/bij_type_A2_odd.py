@@ -121,9 +121,10 @@ class RCToKRTBijectionTypeA2Odd(RCToKRTBijectionTypeA):
             sage: RC = RiggedConfigurations(['A', 5, 2], [[2, 1]])
             sage: from sage.combinat.rigged_configurations.bij_type_A2_odd import RCToKRTBijectionTypeA2Odd
             sage: bijection = RCToKRTBijectionTypeA2Odd(RC(partition_list=[[1],[2,1],[2]]))
-            sage: bijection.next_state(0)
+            sage: bijection.next_state(1)
             -2
         """
+        height -= 1 # indexing
         n = self.n
         ell = [None] * (2*n)
         b = None

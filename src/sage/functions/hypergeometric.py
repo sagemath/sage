@@ -46,7 +46,8 @@ Equality testing::
 
 Computing terms and series::
 
-    sage: z = var('z')
+    sage: var('z')
+    z
     sage: hypergeometric([], [], z).series(z, 0)
     Order(1)
     sage: hypergeometric([], [], z).series(z, 1)
@@ -85,9 +86,11 @@ Computing terms and series::
 
 Plotting::
 
-    sage: plot(hypergeometric([1, 1], [3, 3, 3], x), x, -30, 30)
+    sage: f(x) = hypergeometric([1, 1], [3, 3, 3], x)
+    sage: plot(f, x, -30, 30)
     Graphics object consisting of 1 graphics primitive
-    sage: complex_plot(hypergeometric([x], [], 2), (-1, 1), (-1, 1))
+    sage: g(x) = hypergeometric([x], [], 2)
+    sage: complex_plot(g, (-1, 1), (-1, 1))
     Graphics object consisting of 1 graphics primitive
 
 Numeric evaluation::
@@ -103,7 +106,7 @@ Numeric evaluation::
     sage: hypergeometric([1, 2, 3], [4, 5, 6], 1/2).n(digits=30)
     1.02573619590133865036584139535
     sage: hypergeometric([5 - 3*I], [3/2, 2 + I, sqrt(2)], 4 + I).n()
-    5.52605111678805 - 7.86331357527544*I
+    5.52605111678803 - 7.86331357527540*I
     sage: hypergeometric((10, 10), (50,), 2.)
     -1705.75733163554 - 356.749986056024*I
 
@@ -130,7 +133,8 @@ The confluent hypergeometric functions can arise as solutions to second-order
 differential equations (example from `here <http://ask.sagemath.org/question/
 1168/how-can-one-use-maxima-kummer-confluent-functions>`_)::
 
-    sage: m = var('m')
+    sage: var('m')
+    m
     sage: y = function('y')(x)
     sage: desolve(diff(y, x, 2) + 2*x*diff(y, x) - 4*m*y, y,
     ....:         contrib_ode=true, ivar=x)
@@ -168,7 +172,7 @@ from sage.functions.other import sqrt, gamma, real_part
 from sage.functions.log import exp, log
 from sage.functions.trig import sin
 from sage.functions.hyperbolic import cosh, sinh
-from sage.functions.other import erf
+from sage.functions.error import erf
 from sage.symbolic.constants import pi
 from sage.symbolic.all import I
 from sage.symbolic.function import BuiltinFunction
@@ -410,9 +414,12 @@ class Hypergeometric(BuiltinFunction):
                 sage: h._fast_callable_(etb)
                 {hypergeometric((), (), x)}(v_0)
 
-                sage: y = var('y')
-                sage: fast_callable(hypergeometric([y], [], x),
-                ....:               vars=[x, y])(3, 4)
+                sage: var('x, y')
+                (x, y)
+                sage: f = fast_callable(hypergeometric([y], [], x), vars=[x, y])
+                sage: f(3, 4)
+                doctest:...: DeprecationWarning: Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)
+                See http://trac.sagemath.org/5930 for details.
                 hypergeometric((4,), (), 3)
             """
             return etb.call(self, *map(etb.var, etb._vars))
@@ -852,8 +859,8 @@ def closed_form(hyp):
                             (T - exp(z) * U))
 
         if p == 2 and q == 1:
-            R12 = QQ('1/2')
-            R32 = QQ('3/2')
+            R12 = QQ((1, 2))
+            R32 = QQ((3, 2))
 
             def _2f1(a, b, c, z):
                 """
@@ -1008,7 +1015,8 @@ class Hypergeometric_M(BuiltinFunction):
 
             EXAMPLES::
 
-                sage: a, b, z = var('a b z')
+                sage: var('a b z')
+                (a, b, z)
                 sage: hypergeometric_M(a, b, z).generalized()
                 hypergeometric((a,), (b,), z)
 
@@ -1109,7 +1117,8 @@ class Hypergeometric_U(BuiltinFunction):
 
             EXAMPLES::
 
-                sage: a, b, z = var('a b z')
+                sage: var('a b z')
+                (a, b, z)
                 sage: hypergeometric_U(a, b, z).generalized()
                 z^(-a)*hypergeometric((a, a - b + 1), (), -1/z)
                 sage: hypergeometric_U(1, 3, 1/2).generalized()

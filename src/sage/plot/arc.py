@@ -383,7 +383,7 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
 
     - ``r1``, ``r2`` - positive real numbers - radii of the ellipse. If only ``r1``
       is set, then the two radii are supposed to be equal and this function returns
-      an arc of of circle.
+      an arc of circle.
 
     - ``angle`` - real number - angle between the horizontal and the axis that
       corresponds to ``r1``.

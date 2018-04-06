@@ -137,7 +137,7 @@ def diamond_cut(V, GM, C, verbose=False):
 
     OUTPUT:
 
-    A :class:``Polyhedron`` instance.
+    A :class:`Polyhedron` instance.
 
     EXAMPLES::
 
@@ -246,7 +246,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
 
     OUTPUT:
 
-    A :class:``Polyhedron`` instance.
+    A :class:`Polyhedron` instance.
 
     EXAMPLES::
 

@@ -14,21 +14,19 @@ The map sends the cusp `\infty` to the origin of `E`.
 
 EXAMPLES::
 
-        sage: phi = EllipticCurve('11a1').modular_parametrization()
-        sage: phi
-        Modular parameterization from the upper half plane to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
-        sage: phi(0.5+CDF(I))
-        (285684.320516... + 7.0...e-11*I : 1.526964169...e8 + 5.6...e-8*I : 1.00000000000000)
-        sage: phi.power_series(prec = 7)
-        (q^-2 + 2*q^-1 + 4 + 5*q + 8*q^2 + q^3 + 7*q^4 + O(q^5), -q^-3 - 3*q^-2 - 7*q^-1 - 13 - 17*q - 26*q^2 - 19*q^3 + O(q^4))
+    sage: phi = EllipticCurve('11a1').modular_parametrization()
+    sage: phi
+    Modular parameterization from the upper half plane to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+    sage: phi(0.5+CDF(I))
+    (285684.320516... + 7.0...e-11*I : 1.526964169...e8 + 5.6...e-8*I : 1.00000000000000)
+    sage: phi.power_series(prec = 7)
+    (q^-2 + 2*q^-1 + 4 + 5*q + 8*q^2 + q^3 + 7*q^4 + O(q^5), -q^-3 - 3*q^-2 - 7*q^-1 - 13 - 17*q - 26*q^2 - 19*q^3 + O(q^4))
 
 AUTHORS:
 
-- chris wuthrich (02/10) - moved from ell_rational_field.py.
+- Chris Wuthrich (02/10) - moved from ell_rational_field.py.
 
 """
-from __future__ import absolute_import
-
 ######################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
@@ -43,11 +41,13 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 ######################################################################
+from __future__ import absolute_import
 
 from . import heegner
 
 from sage.rings.all import (LaurentSeriesRing, RationalField, ComplexField, QQ)
-import sage.misc.misc as misc
+from sage.misc.misc import verbose
+
 
 class ModularParameterization:
     r"""
@@ -82,7 +82,7 @@ class ModularParameterization:
 
     def curve(self):
         """
-        Returns the curve associated to this modular parametrization.
+        Return the curve associated to this modular parametrization.
 
         EXAMPLES::
 
@@ -106,7 +106,7 @@ class ModularParameterization:
         """
         return "Modular parameterization from the upper half plane to %s" % self._E
 
-    def __cmp__(self,other):
+    def __eq__(self, other):
         r"""
         Compares two modular parametrizations by simply comparing the elliptic curves.
 
@@ -117,15 +117,30 @@ class ModularParameterization:
             sage: phi == phi
             True
         """
-        c = cmp(type(self), type(other))
-        if c:
-            return c
-        return cmp(self._E, other._E)
+        if not isinstance(other, ModularParameterization):
+            return False
+
+        return self._E == other._E
+
+    def __ne__(self, other):
+        """
+        Check whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('37a1')
+            sage: phi = E.modular_parametrization()
+            sage: phi != phi
+            False
+        """
+        return not (self == other)
 
     def __call__(self, z, prec=None):
         r"""
-        Evaluate self at a point `z \in X_0(N)` where `z` is given by a
-        representative in the upper half plane. All computations done with ``prec``
+        Evaluate ``self`` at a point `z \in X_0(N)` where `z` is given by a
+        representative in the upper half plane.
+
+        All computations are done with ``prec``
         bits of precision. If ``prec`` is not given, use the precision of `z`.
 
         EXAMPLES::
@@ -171,18 +186,20 @@ class ModularParameterization:
         if isinstance(z, heegner.HeegnerPointOnX0N):
             return z.map_to_curve(self.curve())
         # Map to the CC of CC/PeriodLattice.
-        tm = misc.verbose("Evaluating modular parameterization to precision %s bits"%prec)
+        tm = verbose("Evaluating modular parameterization to precision %s bits" % prec)
         w = self.map_to_complex_numbers(z, prec=prec)
         # Map to E via Weierstrass P
         z = self._E.elliptic_exponential(w)
-        misc.verbose("Finished evaluating modular parameterization", tm)
+        verbose("Finished evaluating modular parameterization", tm)
         return z
 
     def map_to_complex_numbers(self, z, prec=None):
         """
-        Evaluate self at a point `z \in X_0(N)` where `z` is given by
+        Evaluate ``self`` at a point `z \in X_0(N)` where `z` is given by
         a representative in the upper half plane, returning a point in
-        the complex numbers.  All computations done with ``prec`` bits
+        the complex numbers.
+
+        All computations are done with ``prec`` bits
         of precision.  If ``prec`` is not given, use the precision of `z`.
         Use self(z) to compute the image of z on the Weierstrass equation
         of the curve.
@@ -211,20 +228,20 @@ class ModularParameterization:
             raise ValueError("Point must be in the upper half plane")
         # TODO: for very small imaginary part, maybe try to transform under
         # \Gamma_0(N) to a better representative?
-        q = (2*CC.gen()*CC.pi()*z).exp()
+        q = (2 * CC.gen() * CC.pi() * z).exp()
         #  nterms'th term is less than 2**-(prec+10) (c.f. eclib code)
-        nterms = (-(prec+10)/q.abs().log2()).ceil()
+        nterms = (-(prec + 10) / q.abs().log2()).ceil()
         # Use Horner's rule to sum the integral of the form
         enumerated_an = list(enumerate(self._E.anlist(nterms)))[1:]
         lattice_point = 0
         for n, an in reversed(enumerated_an):
-            lattice_point += an/n
+            lattice_point += an / n
             lattice_point *= q
         return lattice_point
 
     def power_series(self, prec=20):
         r"""
-        Computes and returns the power series of this modular parametrization.
+        Return the power series of this modular parametrization.
 
         The curve must be a a minimal model.  The prec parameter determines
         the number of significant terms.  This means that X will be given up
@@ -272,8 +289,8 @@ class ModularParameterization:
             sage: f/q == (X.derivative()/(2*Y+a1*X+a3))
             True
         """
-        R = LaurentSeriesRing(RationalField(),'q')
+        R = LaurentSeriesRing(RationalField(), 'q')
         if not self._E.is_minimal():
             raise NotImplementedError("only implemented for minimal curves")
-        XY = self._E.pari_mincurve().elltaniyama(prec-1)
-        return R(XY[0]),R(XY[1])
+        XY = self._E.pari_mincurve().elltaniyama(prec - 1)
+        return R(XY[0]), R(XY[1])

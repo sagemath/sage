@@ -1,8 +1,9 @@
 """
 Eisenstein Series (optimized compiled functions)
 """
-include 'sage/ext/stdsage.pxi'
-include "cysignals/signals.pxi"
+
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.rational_field import QQ
 from sage.rings.power_series_ring import PowerSeriesRing
@@ -60,8 +61,8 @@ cpdef Ek_ZZ(int k, int prec=10):
 
     # allocate the list for the result
     cdef list val = []
-    for i from 0 <= i < prec:
-        pp = <Integer>(PY_NEW(Integer))
+    for i in range(prec):
+        pp = Integer.__new__(Integer)
         mpz_set_si(pp.value, 1)
         val.append(pp)
 
@@ -71,7 +72,7 @@ cpdef Ek_ZZ(int k, int prec=10):
     max_power_sum = prec
     while max_power_sum:
         max_power_sum >>= 1
-        pp = <Integer>(PY_NEW(Integer))
+        pp = Integer.__new__(Integer)
         mpz_set_si(pp.value, 1)
         power_sum_ls.append(pp)
 
@@ -158,7 +159,7 @@ cpdef eisenstein_series_poly(int k, int prec = 10) :
         sage: eisenstein_series_poly(12, prec=5)
         5  691 65520 134250480 11606736960 274945048560
     """
-    cdef mpz_t *val = <mpz_t *>sig_malloc(prec * sizeof(mpz_t))
+    cdef mpz_t *val = <mpz_t *>check_allocarray(prec, sizeof(mpz_t))
     cdef mpz_t one, mult, term, last, term_m1, last_m1
     cdef unsigned long int expt
     cdef long ind, ppow, int_p

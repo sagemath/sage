@@ -7,7 +7,7 @@ Cython Functions for Timing Clone Protocol
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import absolute_import
 
 import sage
 from sage.structure.list_clone cimport ClonableArray

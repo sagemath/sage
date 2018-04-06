@@ -52,23 +52,24 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-
-include 'sage/ext/stdsage.pxi'
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
 
 from sage.rings.integer cimport Integer
 
-cimport free_module_element
+cimport sage.modules.free_module_element as free_module_element
 
-from free_module_element import vector
+from .free_module_element import vector
 
 from sage.libs.gmp.mpz cimport *
 
 
 cdef inline _Integer_from_mpz(mpz_t e):
-    cdef Integer z = PY_NEW(Integer)
+    cdef Integer z = Integer.__new__(Integer)
     mpz_set(z.value, e)
     return z
 
@@ -182,7 +183,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             sage: v[::-1]
             (3, 2, 1)
         """
-        cdef Integer z = PY_NEW(Integer)
+        cdef Integer z = Integer.__new__(Integer)
         mpz_set(z.value, self._entries[i])
         return z
 
@@ -254,8 +255,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             4
         """
         cdef Vector_integer_dense r = right
-        cdef Integer z
-        z = PY_NEW(Integer)
+        cdef Integer z = Integer.__new__(Integer)
         cdef mpz_t t
         mpz_init(t)
         mpz_set_si(z.value, 0)
@@ -282,7 +282,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             mpz_mul(z._entries[i], self._entries[i], r._entries[i])
         return z
 
-    cpdef _rmul_(self, RingElement left):
+    cpdef _rmul_(self, Element left):
         cdef Vector_integer_dense z
         cdef Integer a
         a = left
@@ -292,7 +292,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             mpz_mul(z._entries[i], self._entries[i], a.value)
         return z
 
-    cpdef _lmul_(self, RingElement right):
+    cpdef _lmul_(self, Element right):
         cdef Vector_integer_dense z
         cdef Integer a
         a = right

@@ -44,24 +44,28 @@ TESTS::
     True
 """
 
-###############################################################################
-#   Sage: System for Algebra and Geometry Experimentation
+#*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
-from __future__ import print_function
+#*****************************************************************************
 
-include "cysignals/signals.pxi"
-include "cysignals/memory.pxi"
+from __future__ import absolute_import, print_function
+
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
 
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 
-cimport free_module_element
-from free_module_element import vector
+cimport sage.modules.free_module_element as free_module_element
+from .free_module_element import vector
 
 from sage.libs.gmp.mpq cimport *
 
@@ -313,7 +317,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             mpq_mul(z._entries[i], self._entries[i], r._entries[i])
         return z
 
-    cpdef _rmul_(self, RingElement left):
+    cpdef _rmul_(self, Element left):
         cdef Vector_rational_dense z
         cdef Rational a
         if isinstance(left, Rational):
@@ -330,8 +334,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             mpq_mul(z._entries[i], self._entries[i], a.value)
         return z
 
-
-    cpdef _lmul_(self, RingElement right):
+    cpdef _lmul_(self, Element right):
         cdef Vector_rational_dense z
         cdef Rational a
         if isinstance(right, Rational):

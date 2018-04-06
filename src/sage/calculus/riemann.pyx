@@ -24,9 +24,9 @@ Development supported by NSF award No. 0702939.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.misc.decorators import options
 from sage.plot.all import list_plot, Graphics
@@ -37,11 +37,11 @@ from sage.rings.all import CDF
 
 from sage.arith.srange import srange
 
-from sage.gsl.interpolation import spline
+from sage.calculus.interpolation import spline
 
 from sage.plot.complex_plot import ComplexPlot
 
-from sage.gsl.integration import numerical_integral
+from sage.calculus.integration import numerical_integral
 
 
 import numpy as np

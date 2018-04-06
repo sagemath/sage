@@ -153,24 +153,25 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
             -0.499999999999995 + 0.866025403784447*I
             sage: A(a*b)
             -1
+
+        TESTS::
+
+            sage: F = AbelianGroup(1, [7], names="a")
+            sage: a, = F.gens()
+            sage: Fd = F.dual_group(names="A", base_ring=GF(29))
+            sage: A, = Fd.gens()
+            sage: A(a)
+            16
         """
         F = self.parent().base_ring()
         expsX = self.exponents()
         expsg = g.exponents()
         order = self.parent().gens_orders()
         N = LCM(order)
-        if is_ComplexField(F):
-            from sage.symbolic.constants import pi
-            I = F.gen()
-            PI = F(pi)
-            ans = prod([(2*PI*I*expsX[i]*expsg[i]/order[i]).exp() for i in range(len(expsX))])
-            return ans
-        ans = F(1)  ## assumes F is the cyclotomic field
-        zeta = F.gen()
-        for i in range(len(expsX)):
-            order_noti = N/order[i]
-            ans = ans*zeta**(expsX[i]*expsg[i]*order_noti)
-        return ans
+        order_not = [N / o for o in order]
+        zeta = F.zeta(N)
+        return F.prod(zeta ** (expsX[i] * expsg[i] * order_not[i])
+                      for i in range(len(expsX)))
 
     def word_problem(self, words, display=True):
         """

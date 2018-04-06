@@ -1,19 +1,25 @@
 """
 Bindable classes
 """
+
 #*****************************************************************************
 #       Copyright (C) 2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+
+from __future__ import absolute_import, print_function
 
 import functools
+from sage.misc import six
 from sage.misc.nested_class import NestedClassMetaclass
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 
-class BindableClass(object):
+class BindableClass(six.with_metaclass(ClasscallMetaclass)):
     """
     Bindable classes
 
@@ -110,8 +116,8 @@ class BindableClass(object):
 
             sage: type(outer.Inner).mro()
             [<class 'sage.misc.bindable_class.BoundClass'>,
-             <type 'functools.partial'>,
-             <type 'object'>]
+             <... 'functools.partial'>,
+             <... 'object'>]
 
         Still, documentation works as usual::
 
@@ -125,8 +131,6 @@ class BindableClass(object):
         sage: outer = Outer()
         sage: TestSuite(outer.Inner).run(skip=["_test_pickling"])
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classget__(cls, instance, owner):
         """
@@ -189,7 +193,7 @@ class BoundClass(functools.partial):
 
         Until a better approach is found, we reset the documentation
         of ``BoundClass`` below, and make an exception for
-        :meth:`__init__`` to the strict rule that every method should
+        :meth:`__init__` to the strict rule that every method should
         be doctested::
 
             sage: c.__class__.__doc__
@@ -254,12 +258,11 @@ class Inner2(BindableClass):
     Some documentation for Inner2
     """
 
-class Outer:
+# We need NestedClassMetaclass to work around a Python pickling bug
+class Outer(six.with_metaclass(NestedClassMetaclass)):
     """
     A class with a bindable nested class, for testing purposes
     """
-    __metaclass__ = NestedClassMetaclass # workaround for python pickling bug
-
     class Inner(BindableClass):
         """
         Some documentation for Outer.Inner

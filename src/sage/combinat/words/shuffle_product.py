@@ -110,7 +110,7 @@ class ShuffleProduct_w1w2(CombinatorialClass):
         from sage.combinat.words.word import Word
         if not isinstance(x, Word_class):
             return False
-        if x.length() !=self._w1.length() + self._w2.length():
+        if x.length() != self._w1.length() + self._w2.length():
             return False
         w1 = list(self._w1)
         w2 = list(self._w2)
@@ -120,15 +120,15 @@ class ShuffleProduct_w1w2(CombinatorialClass):
                 letter = wx.pop(0)
             except IndexError:
                 return False
-            if len(w1) > 0 and len(w2) > 0 and letter == w1[0] == w2[0]:
+            if w1 and w2 and letter == w1[0] == w2[0]:
                 return Word(wx) in self._w1[1:].shuffle(self._w2) or Word(wx) in self._w1.shuffle(self._w2[1:])
-            if len(w1) > 0 and letter == w1[0]:
+            if w1 and letter == w1[0]:
                 w1.pop(0)
-            elif len(w2) > 0 and letter == w2[0]:
+            elif w2 and letter == w2[0]:
                 w2.pop(0)
             else:
                 return False
-        return len(wx) == 0
+        return not wx
 
     def cardinality(self):
         r"""

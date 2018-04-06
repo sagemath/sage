@@ -16,6 +16,7 @@ Base class for groups
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 import random
 
@@ -68,6 +69,13 @@ cdef class Group(Parent):
                                        "_test_pickling",\
                                        "_test_prod",\
                                        "_test_some_elements"])
+
+    Generic groups have very little functionality::
+
+        sage: 4 in G
+        Traceback (most recent call last):
+        ...
+        NotImplementedError
     """
     def __init__(self, base=None, gens=None, category=None):
         """
@@ -97,6 +105,9 @@ cdef class Group(Parent):
             sage: h == hash(G)
             True
         """
+        if gens is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(22129, "gens keyword has been deprecated. Define a method gens() instead.")
         from sage.categories.groups import Groups
         if category is None:
             category = Groups()
@@ -105,34 +116,7 @@ cdef class Group(Parent):
                 category = (category,)
             if not any(cat.is_subcategory(Groups()) for cat in category):
                 raise ValueError("%s is not a subcategory of %s"%(category, Groups()))
-        Parent.__init__(self, base=base, gens=gens, category=category)
-
-    def __contains__(self, x):
-        r"""
-        Test whether `x` defines a group element.
-
-        INPUT:
-
-        - ``x`` -- anything.
-
-        OUTPUT:
-
-        Boolean.
-
-        EXAMPLES::
-
-            sage: from sage.groups.group import Group
-            sage: G = Group()
-            sage: 4 in G               #indirect doctest
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        try:
-            self(x)
-        except TypeError:
-            return False
-        return True
+        Parent.__init__(self, base=base, category=category)
 
     def is_abelian(self):
         """
@@ -159,7 +143,7 @@ cdef class Group(Parent):
         (Note for developers: Derived classes should override is_abelian, not
         is_commutative.)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: SL(2, 7).is_commutative()
             False
@@ -279,6 +263,9 @@ cdef class FiniteGroup(Group):
             sage: G.category()
             Category of finite groups
         """
+        if gens is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(22129, "gens keyword has been deprecated. Define a method gens() instead.")
         from sage.categories.finite_groups import FiniteGroups
         if category is None:
             category = FiniteGroups()
@@ -287,7 +274,7 @@ cdef class FiniteGroup(Group):
                 category = (category,)
             if not any(cat.is_subcategory(FiniteGroups()) for cat in category):
                 raise ValueError("%s is not a subcategory of %s"%(category, FiniteGroups()))
-        Parent.__init__(self, base=base, gens=gens, category=category)
+        Parent.__init__(self, base=base, category=category)
 
     def is_finite(self):
         """

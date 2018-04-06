@@ -1,1 +1,0 @@
-../../sage/static/thebe.js

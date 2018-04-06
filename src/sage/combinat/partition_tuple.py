@@ -483,7 +483,7 @@ class PartitionTuple(CombinatorialElement):
 
         The length is also known as the level.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: len( PartitionTuple([[2,1],[3,2],[1,1,1]]) )
             3
@@ -744,7 +744,7 @@ class PartitionTuple(CombinatorialElement):
         the \"components\" of partition tuples of level 1 (partitions) and for
         higher levels.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: for t in PartitionTuple([[2,1],[3,2],[3]]).components():
             ....:     print('%s\n' % t.ferrers_diagram())
@@ -847,7 +847,7 @@ class PartitionTuple(CombinatorialElement):
         Return the :class:`standard tableau tuples<StandardTableauTuples>` of
         this shape.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: PartitionTuple([[],[3,2,2,1],[2,2,1],[3]]).standard_tableaux()
             Standard tableau tuples of shape ([], [3, 2, 2, 1], [2, 2, 1], [3])
@@ -1044,7 +1044,7 @@ class PartitionTuple(CombinatorialElement):
         entered in order from left to right along the rows of each component,
         where the components are ordered from left to right.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: PartitionTuple([ [2,1],[3,2] ]).initial_tableau()
             ([[1, 2], [3]], [[4, 5, 6], [7, 8]])
@@ -1063,7 +1063,7 @@ class PartitionTuple(CombinatorialElement):
         to right, down the columns of each component, starting from the
         rightmost component and working to the left.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: PartitionTuple([ [3,1],[3,2] ]).initial_column_tableau()
             ([[6, 8, 9], [7]], [[1, 3, 5], [2, 4]])
@@ -1446,7 +1446,7 @@ class PartitionTuple(CombinatorialElement):
         Return the corresponding Young, or parabolic, subgroup of the
         symmetric group.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: PartitionTuple([[2,1],[4,2],[1]]).young_subgroup()
             Permutation Group with generators [(), (8,9), (6,7), (5,6), (4,5), (1,2)]
@@ -1465,7 +1465,7 @@ class PartitionTuple(CombinatorialElement):
         Return an indexing set for the generators of the corresponding Young
         subgroup.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: PartitionTuple([[2,1],[4,2],[1]]).young_subgroup_generators()
             [1, 4, 5, 6, 8]
@@ -1553,7 +1553,7 @@ class PartitionTuple(CombinatorialElement):
         Therefore,  the Gram determinant of `S(2,1|2,2)` when the Hecke parameter
         `q` is "generic" is
 
-        ..math::
+        .. MATH::
 
             q^N \Phi_2(q)^{532}\Phi_3(q)^{259}\Phi_4(q)^{196}\Phi_5(q)^{105}\Phi_6(q)^{105}
 
@@ -1622,7 +1622,7 @@ class PartitionTuple(CombinatorialElement):
 
         The defect of a partition tuple is given by
 
-        .. MATH: 
+        .. MATH::
 
             \text{defect}(\beta) = (\Lambda, \beta) - \tfrac12(\beta, \beta)
 
@@ -1933,7 +1933,7 @@ class PartitionTuples_all(PartitionTuples):
         r"""
         Initializes the class.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: TestSuite( PartitionTuples() ).run()
         """

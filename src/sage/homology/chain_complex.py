@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Chain complexes
 
@@ -46,6 +47,7 @@ complex.
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from six import iteritems
 
 from copy import copy
 
@@ -104,7 +106,7 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
 
     - ``data`` -- the data defining the chain complex; see below for
       more details.
-    
+
     The following keyword arguments are supported:
 
     - ``base_ring`` -- a commutative ring (optional), the ring over
@@ -235,7 +237,7 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
     if grading_group is None:
         grading_group = ZZ
     if degree_of_differential != 1 and degree != 1:
-        raise(ValueError, 'specify only one of degree_of_differential or degree, not both')
+        raise ValueError('specify only one of degree_of_differential or degree, not both')
     if degree_of_differential != 1:
         degree = degree_of_differential
     try:
@@ -273,7 +275,7 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
         mat = data_dict[n]
         if not isinstance(mat, Matrix):
             raise TypeError('one of the differentials in the data is not a matrix')
-        if mat.base_ring() is base_ring: 
+        if mat.base_ring() is base_ring:
             if not mat.is_immutable():
                 mat = copy(mat)  # do not make any arguments passed immutable
                 mat.set_immutable()
@@ -282,7 +284,7 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
             mat.set_immutable()
         data_dict[n] = mat
 
-    # include any "obvious" zero matrices that are not 0x0 
+    # include any "obvious" zero matrices that are not 0x0
     for n in data_dict.keys():  # note: data_dict will be mutated in this loop
         mat1 = data_dict[n]
         if (mat1.nrows(), mat1.ncols()) == (0, 0):
@@ -301,7 +303,7 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
                 mat0 = matrix(base_ring, mat1.ncols(), 0)
             mat0.set_immutable()
             data_dict[n-degree] = mat0
-        
+
     # check that this is a complex: going twice is zero
     if check:
         for n in data_dict.keys():
@@ -320,10 +322,10 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
                                  'their composition is not zero.'.format(n, n+degree))
 
     return ChainComplex_class(grading_group, degree, base_ring, data_dict)
-    
+
 
 class Chain_class(ModuleElement):
-    
+
     def __init__(self, parent, vectors, check=True):
         r"""
         A Chain in a Chain Complex
@@ -331,7 +333,7 @@ class Chain_class(ModuleElement):
         A chain is collection of module elements for each module `C_n`
         of the chain complex `(C_n, d_n)`. There is no restriction on
         how the differentials `d_n` act on the elements of the chain.
-        
+
         .. NOTE::
 
             You must use the chain complex to construct chains.
@@ -350,8 +352,8 @@ class Chain_class(ModuleElement):
         """
         # only nonzero vectors shall be stored, ensuring this is the
         # job of the _element constructor_
-        assert all(v.is_immutable() and not v.is_zero() 
-                   and v.base_ring() is parent.base_ring() 
+        assert all(v.is_immutable() and not v.is_zero()
+                   and v.base_ring() is parent.base_ring()
                    for v in vectors.values())
         self._vec = vectors
         super(Chain_class, self).__init__(parent)
@@ -397,7 +399,7 @@ class Chain_class(ModuleElement):
             return 'Trivial chain'
 
         if n == 1:
-            deg, vec = next(self._vec.iteritems())
+            deg, vec = next(iteritems(self._vec))
             return 'Chain({0}:{1})'.format(deg, vec)
 
         return 'Chain with {0} nonzero terms over {1}'.format(
@@ -415,7 +417,7 @@ class Chain_class(ModuleElement):
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0]), 1:zero_matrix(1,2)})
             sage: c = C({0:vector([1, 2, 3]), 1:vector([4, 5])})
             sage: ascii_art(c)
-               d_2       d_1       d_0  [1]  d_-1  
+               d_2       d_1       d_0  [1]  d_-1
             0 <---- [0] <---- [4] <---- [2] <----- 0
                               [5]       [3]
         """
@@ -433,7 +435,7 @@ class Chain_class(ModuleElement):
                 return AsciiArt(['0'])
             v = str(v.column()).splitlines()
             return AsciiArt(v, baseline=len(v)//2)
-            
+
         result = []
         chain_complex = self.parent()
         for ordered in chain_complex.ordered_degrees():
@@ -447,6 +449,53 @@ class Chain_class(ModuleElement):
         concatenated = result[0]
         for r in result[1:]:
             concatenated += AsciiArt([' ... ']) + r
+        return concatenated
+
+    def _unicode_art_(self):
+        """
+        Return a unicode art representation.
+
+        Note that arrows go to the left so that composition of
+        differentials is the usual matrix multiplication.
+
+        EXAMPLES::
+
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0]), 1:zero_matrix(1,2)})
+            sage: c = C({0:vector([1, 2, 3]), 1:vector([4, 5])})
+            sage: unicode_art(c)
+                                        ⎛1⎞
+               d_2       d_1  ⎛4⎞  d_0  ⎜2⎟  d_-1
+            0 ⟵──── (0) ⟵──── ⎝5⎠ ⟵──── ⎝3⎠ ⟵───── 0
+        """
+        from sage.typeset.unicode_art import UnicodeArt
+
+        def arrow_art(d):
+            d_str = [u'  d_{0}  '.format(d)]
+            arrow = u' ⟵' + u'─' * (len(d_str[0]) - 3) + u' '
+            d_str.append(arrow)
+            return UnicodeArt(d_str, baseline=0)
+
+        def vector_art(d):
+            v = self.vector(d)
+            if not v.degree():
+                return UnicodeArt([u'0'])
+            w = matrix(v).transpose()
+            return w._unicode_art_()
+
+        result = []
+        chain_complex = self.parent()
+        for ordered in chain_complex.ordered_degrees():
+            ordered = list(reversed(ordered))
+            if not ordered:
+                return UnicodeArt([u'0'])
+            result_ordered = vector_art(ordered[0] +
+                                        chain_complex.degree_of_differential())
+            for n in ordered:
+                result_ordered += arrow_art(n) + vector_art(n)
+            result = [result_ordered] + result
+        concatenated = result[0]
+        for r in result[1:]:
+            concatenated += UnicodeArt([u' ... ']) + r
         return concatenated
 
     def is_cycle(self):
@@ -466,16 +515,16 @@ class Chain_class(ModuleElement):
             True
         """
         chain_complex = self.parent()
-        for d, v in self._vec.iteritems():
+        for d, v in iteritems(self._vec):
             dv = chain_complex.differential(d) * v
             if not dv.is_zero():
                 return False
         return True
-    
+
     def is_boundary(self):
         """
         Return whether the chain is a boundary.
-        
+
         OUTPUT:
 
         Boolean. Whether the elements of the chain are in the image of
@@ -496,16 +545,16 @@ class Chain_class(ModuleElement):
             True
         """
         chain_complex = self.parent()
-        for d, v in self._vec.iteritems():
+        for d, v in iteritems(self._vec):
             d = chain_complex.differential(d - chain_complex.degree_of_differential()).transpose()
             if v not in d.image():
                 return False
         return True
-        
+
     def _add_(self, other):
         """
         Module addition
-        
+
         EXAMPLES::
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
@@ -513,7 +562,7 @@ class Chain_class(ModuleElement):
             sage: c + c
             Chain with 2 nonzero terms over Integer Ring
             sage: ascii_art(c + c)
-               d_1       d_0  [0]  d_-1  
+               d_1       d_0  [0]  d_-1
             0 <---- [6] <---- [2] <----- 0
                     [8]       [4]
         """
@@ -522,7 +571,7 @@ class Chain_class(ModuleElement):
             v = self.vector(d) + other.vector(d)
             if not v.is_zero():
                 v.set_immutable()
-                vectors[d] = v                
+                vectors[d] = v
         parent = self.parent()
         return parent.element_class(parent, vectors)
 
@@ -540,11 +589,11 @@ class Chain_class(ModuleElement):
             True
         """
         vectors = dict()
-        for d, v in self._vec.iteritems():
+        for d, v in iteritems(self._vec):
             v = scalar * v
             if not v.is_zero():
                 v.set_immutable()
-                vectors[d] = v                
+                vectors[d] = v
         parent = self.parent()
         return parent.element_class(parent, vectors)
 
@@ -579,7 +628,7 @@ class Chain_class(ModuleElement):
             True
         """
         return not self == other
-        
+
 
 class ChainComplex_class(Parent):
     r"""
@@ -629,10 +678,10 @@ class ChainComplex_class(Parent):
             raise ValueError('grading_group must be either ZZ or multiplicative')
         # all differentials (excluding the 0x0 ones) must be specified to the constructor
         if any(dim+degree_of_differential not in differentials and d.nrows() != 0
-               for dim, d in differentials.iteritems()):
+               for dim, d in iteritems(differentials)):
             raise ValueError('invalid differentials')
         if any(dim-degree_of_differential not in differentials and d.ncols() != 0
-               for dim, d in differentials.iteritems()):
+               for dim, d in iteritems(differentials)):
             raise ValueError('invalid differentials')
         self._grading_group = grading_group
         self._degree_of_differential = degree_of_differential
@@ -664,7 +713,7 @@ class ChainComplex_class(Parent):
         if isinstance(vectors, Chain_class):
             vectors = vectors._vec
         data = dict()
-        for degree, vec in vectors.iteritems():
+        for degree, vec in iteritems(vectors):
             if not is_Vector(vec):
                 vec = vector(self.base_ring(), vec)
                 vec.set_immutable()
@@ -703,14 +752,14 @@ class ChainComplex_class(Parent):
         Return the rank of a differential
 
         INPUT:
-        
+
         - ``degree`` -- an element `\delta` of the grading
           group. Which differential `d_{\delta}` we want to know the
           rank of
-        
+
         - ``ring`` -- (optional) a commutative ring `S`;
           if specified, the rank is computed after changing to this ring
-    
+
         OUTPUT:
 
         The rank of the differential `d_{\delta} \otimes_R S`, where
@@ -756,7 +805,7 @@ class ChainComplex_class(Parent):
             (1, 2)
         """
         return self._grading_group
-        
+
     @cached_method
     def nonzero_degrees(self):
         r"""
@@ -774,12 +823,13 @@ class ChainComplex_class(Parent):
             sage: one = matrix(ZZ, [[1]])
             sage: D = ChainComplex({0: one, 2: one, 6:one})
             sage: ascii_art(D)
-                       [1]                             [1]       [0]       [1]      
-            0 <-- C_7 <---- C_6 <-- 0  ...  0 <-- C_3 <---- C_2 <---- C_1 <---- C_0 <-- 0 
+                       [1]                             [1]       [0]       [1]
+            0 <-- C_7 <---- C_6 <-- 0  ...  0 <-- C_3 <---- C_2 <---- C_1 <---- C_0 <-- 0
             sage: D.nonzero_degrees()
             (0, 1, 2, 3, 6, 7)
         """
-        return tuple(sorted(n for n,d in self._diff.iteritems() if d.ncols() > 0))
+        return tuple(sorted(n for n, d in iteritems(self._diff)
+                            if d.ncols()))
 
     @cached_method
     def ordered_degrees(self, start=None, exclude_first=False):
@@ -802,10 +852,10 @@ class ChainComplex_class(Parent):
 
         * containing ``start`` (unless ``start`` would be the first
           and ``exclude_first=True``),
-        
+
         * in ascending order relative to :meth:`degree_of_differential`, and
 
-        * such that none of the corresponding differentials are `0\times 0`. 
+        * such that none of the corresponding differentials are `0\times 0`.
 
         If ``start`` has not been specified, a tuple of such tuples of
         degrees. One for each sequence of non-zero differentials. They
@@ -816,8 +866,8 @@ class ChainComplex_class(Parent):
             sage: one = matrix(ZZ, [[1]])
             sage: D = ChainComplex({0: one, 2: one, 6:one})
             sage: ascii_art(D)
-                       [1]                             [1]       [0]       [1]      
-            0 <-- C_7 <---- C_6 <-- 0  ...  0 <-- C_3 <---- C_2 <---- C_1 <---- C_0 <-- 0 
+                       [1]                             [1]       [0]       [1]
+            0 <-- C_7 <---- C_6 <-- 0  ...  0 <-- C_3 <---- C_2 <---- C_1 <---- C_0 <-- 0
             sage: D.ordered_degrees()
             ((-1, 0, 1, 2, 3), (5, 6, 7))
             sage: D.ordered_degrees(exclude_first=True)
@@ -944,7 +994,7 @@ class ChainComplex_class(Parent):
         for d in self.differential():
             data[(d+deg)] = self.differential()[d].transpose()
         return ChainComplex(data, degree=-deg)
-    
+
     def free_module_rank(self, degree):
         r"""
         Return the rank of the free module at the given ``degree``.
@@ -968,7 +1018,7 @@ class ChainComplex_class(Parent):
             return self._diff[degree].ncols()
         except KeyError:
             return ZZ.zero()
-        
+
     def free_module(self, degree=None):
         r"""
         Return the free module at fixed ``degree``, or their sum.
@@ -1017,13 +1067,13 @@ class ChainComplex_class(Parent):
             return False
         R = self.base_ring()
         equal = True
-        for d,mat in self.differential().iteritems():
+        for d, mat in iteritems(self.differential()):
             if d not in other.differential():
                 equal = equal and mat.ncols() == 0 and mat.nrows() == 0
             else:
                 equal = (equal and
                          other.differential()[d].change_ring(R) == mat.change_ring(R))
-        for d,mat in other.differential().iteritems():
+        for d, mat in iteritems(other.differential()):
             if d not in self.differential():
                 equal = equal and mat.ncols() == 0 and mat.nrows() == 0
         return equal
@@ -1267,7 +1317,7 @@ class ChainComplex_class(Parent):
         def change_ring(X):
             if X.base_ring() is base_ring:
                 return X
-            return X.change_ring(base_ring)                        
+            return X.change_ring(base_ring)
 
         # d_out is the differential going out of degree deg,
         # d_in is the differential entering degree deg
@@ -1374,7 +1424,7 @@ class ChainComplex_class(Parent):
           these coefficients -- must be either the integers or a
           field
 
-        OUTPUT: 
+        OUTPUT:
 
         The Betti number in degree ``deg`` -- the rank of the free
         part of the homology module in this degree.
@@ -1401,7 +1451,8 @@ class ChainComplex_class(Parent):
             raise NotImplementedError('only implemented if the base ring is ZZ or a field')
         H = self.homology(deg, base_ring=base_ring)
         if isinstance(H, dict):
-            return dict([deg, homology_group.dimension()] for deg, homology_group in H.iteritems())
+            return {deg: homology_group.dimension()
+                    for deg, homology_group in iteritems(H)}
         else:
             return H.dimension()
 
@@ -1637,8 +1688,9 @@ class ChainComplex_class(Parent):
                 s += "   boundary a%s = " % (idx + 1)
                 # construct list of bdries
                 col = mat.column(idx)
-                if col.nonzero_positions():
-                    for j in col.nonzero_positions():
+                nonzero_pos = col.nonzero_positions()
+                if nonzero_pos:
+                    for j in nonzero_pos:
                         entry = col[j]
                         if entry > 0:
                             sgn = "+"
@@ -1684,7 +1736,7 @@ class ChainComplex_class(Parent):
                                     [3 0 0]
                         [0 0]       [0 0 0]
              0 <-- C_2 <------ C_1 <-------- C_0 <-- 0
-        
+
             sage: one = matrix(ZZ, [[1]])
             sage: D = ChainComplex({0: one, 2: one, 6:one})
             sage: ascii_art(D)
@@ -1708,7 +1760,7 @@ class ChainComplex_class(Parent):
                 return AsciiArt([' 0 '])
             else:
                 return AsciiArt([' C_{0} '.format(n)])
-        
+
         result = []
         for ordered in self.ordered_degrees():
             ordered = list(reversed(ordered))
@@ -1721,6 +1773,59 @@ class ChainComplex_class(Parent):
         concatenated = result[0]
         for r in result[1:]:
             concatenated += AsciiArt([' ... ']) + r
+        return concatenated
+
+    def _unicode_art_(self):
+        """
+        Return a unicode art representation.
+
+        Note that arrows go to the left so that composition of
+        differentials is the usual matrix multiplication.
+
+        EXAMPLES::
+
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0]), 1:zero_matrix(1,2)})
+            sage: unicode_art(C)
+                                ⎛3 0 0⎞
+                      (0 0)     ⎝0 0 0⎠
+            0 ⟵── C_2 ⟵──── C_1 ⟵────── C_0 ⟵── 0
+
+            sage: one = matrix(ZZ, [[1]])
+            sage: D = ChainComplex({0: one, 2: one, 6:one})
+            sage: unicode_art(D)
+                      (1)                           (1)     (0)     (1)
+            0 ⟵── C_7 ⟵── C_6 ⟵── 0  ...  0 ⟵── C_3 ⟵── C_2 ⟵── C_1 ⟵── C_0 ⟵── 0
+        """
+        from sage.typeset.unicode_art import UnicodeArt
+
+        def arrow_art(n):
+            d_n = self.differential(n)
+            if not d_n.nrows() or not d_n.ncols():
+                return UnicodeArt([u'⟵──'])
+            d_str = list(d_n._unicode_art_())
+            arrow = u'⟵' + u'─' * (len(d_str[0]) - 1)
+            d_str.append(arrow)
+            return UnicodeArt(d_str)
+
+        def module_art(n):
+            C_n = self.free_module(n)
+            if not C_n.rank():
+                return UnicodeArt([u' 0 '])
+            else:
+                return UnicodeArt([u' C_{0} '.format(n)])
+
+        result = []
+        for ordered in self.ordered_degrees():
+            ordered = list(reversed(ordered))
+            if not ordered:
+                return UnicodeArt([u'0'])
+            result_ordered = module_art(ordered[0] + self.degree_of_differential())
+            for n in ordered:
+                result_ordered += arrow_art(n) + module_art(n)
+            result = [result_ordered] + result
+        concatenated = result[0]
+        for r in result[1:]:
+            concatenated += UnicodeArt([u' ... ']) + r
         return concatenated
 
     def _latex_(self):
@@ -1746,8 +1851,8 @@ class ChainComplex_class(Parent):
         deg = self.degree_of_differential()
         ring = self.base_ring()
         if self.grading_group() != ZZ:
-            guess = dict.keys()[0]
-            if guess-deg in dict:
+            guess = next(iter(dict.keys()))
+            if guess - deg in dict:
                 string += "\\dots \\xrightarrow{d_{%s}} " % latex(guess-deg)
             string += _latex_module(ring, mat.ncols())
             string += " \\xrightarrow{d_{%s}} \\dots" % latex(guess)

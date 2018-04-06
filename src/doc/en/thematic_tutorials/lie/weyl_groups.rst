@@ -104,10 +104,7 @@ and whose values are the roots, you may use the inverse family::
     sage: [s1,s2,s3] = W.simple_reflections()
     sage: altref = W.reflections().inverse_family()
     sage: pprint(altref)
-    Finite family {s1*s2*s1: (1, 0, -1), s2: (0, 1, -1), s3*s2*s3: (0, 1, 1),
-                   s3*s1*s2*s3*s1: (1, 0, 1), s1: (1, -1, 0),
-                   s1*s2*s3*s2*s1: (1, 0, 0), s2*s3*s1*s2*s3*s1*s2: (1, 1, 0),
-                   s2*s3*s2: (0, 1, 0), s3: (0, 0, 1)}
+    Finite family {s3*s2*s3: (0, 1, 1), s2*s3*s2: (0, 1, 0), s1*s2*s3*s2*s1: (1, 0, 0), s1*s2*s1: (1, 0, -1), s1: (1, -1, 0), s2*s3*s1*s2*s3*s1*s2: (1, 1, 0), s2: (0, 1, -1), s3*s1*s2*s3*s1: (1, 0, 1), s3: (0, 0, 1)}
     sage: altref[s3*s2*s3]
     (0, 1, 1)
 

@@ -23,7 +23,7 @@ cdef extern from "mpfr.h":
     ctypedef long mp_prec_t
     ctypedef long mpfr_prec_t
 
-    int MPFR_PREC_MIN, MPFR_PREC_MAX
+    mpfr_prec_t MPFR_PREC_MIN, MPFR_PREC_MAX
 
     # Initialization Functions
     void mpfr_init2 (mpfr_t x, mpfr_prec_t prec)

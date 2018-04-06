@@ -524,7 +524,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return ~self.reduced_norm() * self.conjugate()
 
-    cpdef _rmul_(self, RingElement left):
+    cpdef _rmul_(self, Element left):
         """
         Return left*self, where left is in the base ring.
 
@@ -538,7 +538,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return self.__class__(self._parent, (left*self[0], left*self[1], left*self[2], left*self[3]), check=False)
 
-    cpdef _lmul_(self, RingElement right):
+    cpdef _lmul_(self, Element right):
         """
         Return self*right, where right is in the base ring.
 

@@ -212,7 +212,7 @@ def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
     r"""
     A helper function to build ``OrthogonalPolarGraph`` and ``NO2,3,5`` graphs.
 
-    See see the `page of
+    See the `page of
     Andries Brouwer's website <http://www.win.tue.nl/~aeb/graphs/srghub.html>`_.
 
     INPUT:
@@ -333,7 +333,7 @@ def OrthogonalPolarGraph(m, q, sign="+"):
     r"""
     Returns the Orthogonal Polar Graph `O^{\epsilon}(m,q)`.
 
-    For more information on Orthogonal Polar graphs, see see the `page of
+    For more information on Orthogonal Polar graphs, see the `page of
     Andries Brouwer's website <http://www.win.tue.nl/~aeb/graphs/srghub.html>`_.
 
     INPUT:
@@ -1282,7 +1282,7 @@ def CossidentePenttilaGraph(q):
 
     .. [CP05] \A.Cossidente and T.Penttila
        Hemisystems on the Hermitian surface
-       Journal of London Math. Soc. 72(2005), 731-741
+       Journal of London Math. Soc. 72(2005), 731--741
     """
     p, k = is_prime_power(q,get_data=True)
     if k==0 or p==2:
@@ -1324,4 +1324,130 @@ def CossidentePenttilaGraph(q):
                for i,ni in enumerate(adj) for j in ni),
                format='list_of_edges', multiedges=False)
     G.name('CossidentePenttila('+str(q)+')')
+    return G
+
+def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperoval=True):
+    r"""
+    Return the subgraph of nowhere 0 words from two-weight code of projective plane hyperoval.
+
+    Let `q=2^k` and `\Pi=PG(2,q)`.  Fix a
+    `hyperoval <http://en.wikipedia.org/wiki/Oval_(projective_plane)#Even_q>`__
+    `O \subset \Pi`. Let `V=F_q^3` and `C` the two-weight 3-dimensional linear code
+    over `F_q` with words `c(v)` obtained from `v\in V` by computing
+
+    .. MATH::
+
+        c(v)=(\langle v,o_1 \rangle,...,\langle v,o_{q+2} \rangle), o_j \in O.
+
+    `C` contains `q(q-1)^2/2` words without 0 entries. The subgraph of the strongly
+    regular graph of `C` induced on the latter words is also strongly regular,
+    assuming `q>4`. This is a construction due to A.E.Brouwer [AB16]_, and leads
+    to graphs with parameters also given by a construction in [HHL09]_. According
+    to [AB16]_, these two constructions are likely to produce isomorphic graphs.
+
+    INPUT:
+
+    - ``q`` -- a power of two
+
+    - ``hyperoval`` -- a hyperoval (i.e. a complete 2-arc; a set of points in the plane
+      meeting every line in 0 or 2 points) in `PG(2,q)` over the field ``field``.
+      Each point of ``hyperoval`` must be a length 3
+      vector over ``field`` with 1st non-0 coordinate equal to 1. By default, ``hyperoval`` and
+      ``field`` are not specified, and constructed on the fly. In particular, ``hyperoval``
+      we build is the classical one, i.e. a conic with the point of intersection of its
+      tangent lines.
+
+    - ``field`` -- an instance of a finite field of order `q`, must be provided
+      if ``hyperoval`` is provided.
+
+    - ``check_hyperoval`` -- (default: ``True``) if ``True``,
+      check ``hyperoval`` for correctness.
+
+    .. SEEALSO::
+
+        - :func:`~sage.graphs.strongly_regular_db.is_nowhere0_twoweight`
+
+
+    EXAMPLES:
+
+    using the built-in construction::
+
+        sage: g=graphs.Nowhere0WordsTwoWeightCodeGraph(8); g
+        Nowhere0WordsTwoWeightCodeGraph(8): Graph on 196 vertices
+        sage: g.is_strongly_regular(parameters=True)
+        (196, 60, 14, 20)
+        sage: g=graphs.Nowhere0WordsTwoWeightCodeGraph(16) # not tested (long time)
+        sage: g.is_strongly_regular(parameters=True)       # not tested (long time)
+        (1800, 728, 268, 312)
+
+    supplying your own hyperoval::
+
+        sage: F=GF(8)
+        sage: O=[vector(F,(0,0,1)),vector(F,(0,1,0))]+[vector(F, (1,x^2,x)) for x in F]
+        sage: g=graphs.Nowhere0WordsTwoWeightCodeGraph(8,hyperoval=O,field=F); g
+        Nowhere0WordsTwoWeightCodeGraph(8): Graph on 196 vertices
+        sage: g.is_strongly_regular(parameters=True)
+        (196, 60, 14, 20)
+
+    TESTS::
+
+        sage: F=GF(8) # repeating a point...
+        sage: O=[vector(F,(1,0,0)),vector(F,(0,1,0))]+[vector(F, (1,x^2,x)) for x in F]
+        sage: graphs.Nowhere0WordsTwoWeightCodeGraph(8,hyperoval=O,field=F)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: incorrect hyperoval size
+        sage: O=[vector(F,(1,1,0)),vector(F,(0,1,0))]+[vector(F, (1,x^2,x)) for x in F]
+        sage: graphs.Nowhere0WordsTwoWeightCodeGraph(8,hyperoval=O,field=F)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: incorrect hyperoval
+
+    REFERENCES:
+
+    .. [HHL09] \T. Huang, L. Huang, M.I. Lin
+       On a class of strongly regular designs and quasi-semisymmetric designs.
+       In: Recent Developments in Algebra and Related Areas, ALM vol. 8, pp. 129--153.
+       International Press, Somerville (2009)
+
+    .. [AB16] \A.E. Brouwer
+       Personal communication, 2016
+
+    """
+    from sage.combinat.designs.block_design import ProjectiveGeometryDesign as PG
+    from sage.modules.free_module_element import free_module_element as vector
+    from sage.matrix.constructor import matrix
+
+    p, k = is_prime_power(q,get_data=True)
+    if k==0 or p!=2:
+       raise ValueError('q must be a power of 2')
+    if k<3:
+       raise ValueError('q must be a at least 8')
+    if field is None:
+        F = FiniteField(q, 'a')
+    else:
+        F = field
+
+    Theta = PG(2, 1, F, point_coordinates=1)
+    Pi = Theta.ground_set()
+    if hyperoval is None:
+        hyperoval = filter(lambda x: x[0]+x[1]*x[2]==0 or (x[0]==1 and x[1]==0 and x[2]==0), Pi)
+        O = set(hyperoval)
+    else:
+        map(lambda x: x.set_immutable(), hyperoval)
+        O = set(hyperoval)
+        if check_hyperoval:
+            if len(O) != q+2:
+                raise RuntimeError("incorrect hyperoval size")
+            for L in Theta.blocks():
+                if set(L).issubset(Pi):
+                    if not len(O.intersection(L)) in [0,2]:
+                        raise RuntimeError("incorrect hyperoval")
+    M = matrix(hyperoval)
+    C = filter(lambda x: not F.zero() in x, map(lambda x: M*x, F**3))
+    for x in C:
+        x.set_immutable()
+    G = Graph([C, lambda x,y: not F.zero() in x+y])
+    G.name('Nowhere0WordsTwoWeightCodeGraph('+str(q)+')')
+    G.relabel()
     return G

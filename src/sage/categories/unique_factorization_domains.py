@@ -152,6 +152,15 @@ class UniqueFactorizationDomains(Category_singleton):
                  (-113*x^6 - 106*x^5 - 133*x^4 - 101*x^3 - 42*x^2 - 41*x)*T - 34*x^6 + 13*x^5 + 54*x^4 + 126*x^3 + 134*x^2 - 5*x - 50)
                 sage: (-x^2 - 4*x - 5)^(3-2+1) * p == quo*q + rem
                 True
+
+            Check that :trac;`23620` has been resolved::
+
+                sage: R.<x> = ZpFM(2)[]
+                sage: f = 2*x + 2
+                sage: g = 4*x + 2
+                sage: f.gcd(g).parent() is R
+                True
+
             """
             if f.degree() < g.degree():
                 A,B = g, f
@@ -196,7 +205,7 @@ class UniqueFactorizationDomains(Category_singleton):
 
                 return d*B // b
 
-            return d
+            return f.parent()(d)
 
     class ElementMethods:
         # prime?

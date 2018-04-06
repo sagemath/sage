@@ -35,6 +35,7 @@ EXAMPLES::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 from sage.misc.superseded import deprecated_function_alias
 import sage.data_structures.blas_dict as blas

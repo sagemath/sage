@@ -78,7 +78,11 @@ toolchain-deps:
 
 # Everything needed to start up Sage using "./sage".  Of course, not
 # every part of Sage will work.  It does not include Maxima for example.
-SAGERUNTIME = sagelib $(SCRIPTS) $(inst_ipython) $(inst_pexpect) $(inst_psutil)
+SAGERUNTIME = sagelib $(SCRIPTS) $(inst_ipython) $(inst_pexpect) \
+		$(inst_psutil) $(inst_future)
+
+sageruntime: all-toolchain
+	$(MAKE) $(SAGERUNTIME)
 
 
 # Start Sage at least once to check that it works
@@ -98,7 +102,7 @@ $(STARTED): $(STANDARD_PACKAGES)
 #
 # This consists of packages which are required for the Sage build system.
 ###############################################################################
-base: $(inst_bzip2) $(inst_patch) $(inst_pkgconf)
+base: $(inst_patch) $(inst_pkgconf)
 
 ###############################################################################
 # Building normal packages
@@ -114,6 +118,7 @@ sagelib: \
 		$(inst_brial) \
 		$(inst_cephes) \
 		$(inst_cliquer) \
+		$(inst_cypari) \
 		$(inst_cysignals) \
 		$(inst_cython) \
 		$(inst_ecl) \
@@ -146,7 +151,8 @@ sagelib: \
 		$(inst_planarity) \
 		$(inst_ppl) \
 		$(inst_pynac) \
-		$(PYTHON) \
+		$(inst_python2) \
+		$(inst_python3) \
 		$(inst_ratpoints) \
 		$(inst_readline) \
 		$(inst_rw) \
@@ -197,10 +203,10 @@ $(SAGE_EXTCODE)/%: $(SAGE_SRC)/ext/%
 # documented modules are imported and because we use matplotlib to
 # produce plots.
 DOC_DEPENDENCIES = sagelib $(inst_sphinx) $(inst_sagenb) \
-	| $(SAGERUNTIME) $(inst_maxima) $(inst_networkx) $(inst_scipy) \
+	| $(SAGERUNTIME) $(inst_maxima) $(inst_networkx) $(inst_scipy) $(inst_sympy) \
 	$(inst_matplotlib) $(inst_pillow) $(inst_mathjax) $(inst_mpmath) \
 	$(inst_ipykernel) $(inst_jupyter_client) $(inst_conway_polynomials) \
-	$(inst_tachyon) $(inst_jmol) $(inst_thebe)
+	$(inst_tachyon) $(inst_jmol) $(inst_thebe) $(inst_ipywidgets) $(inst_typing)
 
 doc: doc-html
 

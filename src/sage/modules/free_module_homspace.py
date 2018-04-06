@@ -278,7 +278,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
         r"""
         Return identity morphism in an endomorphism ring.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: V=FreeModule(ZZ,5)
             sage: H=V.Hom(V)

@@ -82,8 +82,9 @@ Another colored example::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-include "cysignals/memory.pxi"
-include "cysignals/signals.pxi"
+
+from cysignals.memory cimport sig_malloc, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 from math import cos, sin
 from sage.rings.all import RDF
@@ -202,7 +203,7 @@ cdef class ParametricSurface(IndexFaceSet):
         """
         Return an instance of RenderParams suitable for plotting this object.
 
-        TEST::
+        TESTS::
 
             sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
             sage: type(MoebiusStrip(3,3).default_render_params())
@@ -287,7 +288,7 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: P = plot3d(x^2-y^2, (x, -2, 2), (y, -2, 2))
             sage: s = P.json_repr(P.default_render_params())
             sage: s[0][:100]
-            '{vertices:[{x:-2,y:-2,z:0},{x:-2,y:-1.89744,z:0.399737},{x:-2,y:-1.79487,z:0.778435},{x:-2,y:-1.6923'
+            '{"vertices":[{"x":-2,"y":-2,"z":0},{"x":-2,"y":-1.89744,"z":0.399737},{"x":-2,"y":-1.79487,"z":0.778'
         """
         self.triangulate(render_params)
         return IndexFaceSet.json_repr(self, render_params)
@@ -522,7 +523,7 @@ cdef class ParametricSurface(IndexFaceSet):
 
     def get_grid(self, ds):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.plot.plot3d.parametric_surface import ParametricSurface
             sage: def f(x,y): return x+y,x-y,x*y
@@ -662,7 +663,7 @@ cdef class ParametricSurface(IndexFaceSet):
 
     def eval(self, double u, double v):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.plot.plot3d.parametric_surface import ParametricSurface
             sage: def f(x,y): return x+y,x-y,x*y
@@ -689,21 +690,22 @@ cdef class ParametricSurface(IndexFaceSet):
         """
         return self
 
+
 class MoebiusStrip(ParametricSurface):
     """
-    Base class for the :class:`MoebiusStrip` graphics type. This sets the the
+    Base class for the :class:`MoebiusStrip` graphics type. This sets the
     basic parameters of the object.
 
     INPUT:
 
-    - ``r`` - A number which can be coerced to a float, serving roughly
-      as the radius of the object.
+    - ``r`` -- a number which can be coerced to a float, serving roughly
+      as the radius of the object
 
-    - ``width`` - A number which can be coerced to a float, which gives the
-      width of the object.
+    - ``width`` -- a number which can be coerced to a float, which gives the
+      width of the object
 
-    - ``twists`` - (default: 1) An integer, giving the number of twists in the
-      object (where one twist is the 'traditional' Möbius strip).
+    - ``twists`` -- (default: 1) an integer, giving the number of twists in the
+      object (where one twist is the 'traditional' Möbius strip)
 
     EXAMPLES::
 
@@ -747,7 +749,7 @@ class MoebiusStrip(ParametricSurface):
            which helps determine the increment for the `v` range for the
            MoebiusStrip object.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
             sage: N = MoebiusStrip(7,3,2) # two twists
@@ -766,7 +768,7 @@ class MoebiusStrip(ParametricSurface):
         Return a tuple for `x,y,z` coordinates for the given ``u`` and ``v``
         for this MoebiusStrip instance.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
             sage: N = MoebiusStrip(7,3,2) # two twists

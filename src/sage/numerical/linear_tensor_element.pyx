@@ -22,7 +22,7 @@ Here is an example of a linear function tensored with a vector space::
 from cpython.object cimport *
 
 from sage.misc.fast_methods cimport hash_by_id
-from sage.structure.element cimport ModuleElement, RingElement
+from sage.structure.element cimport ModuleElement, Element
 from sage.numerical.linear_functions cimport LinearFunction, is_LinearFunction
 
 
@@ -115,7 +115,7 @@ cdef class LinearTensor(ModuleElement):
         elements) of the variable represented by the keys (which are
         integers). The key ``-1`` corresponds to the constant term.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram().linear_functions_parent().tensor(RDF^2)
             sage: lt = p({0:[1,2], 3:[4,5]})
@@ -139,7 +139,7 @@ cdef class LinearTensor(ModuleElement):
         A constant, that is, an element of the free module factor. The
         coefficient of ``x`` in the linear function.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: mip.<b> = MixedIntegerLinearProgram()
             sage: lt = vector([1,2]) * b[3] + vector([4,5]) * b[0] - 5;  lt
@@ -174,7 +174,7 @@ cdef class LinearTensor(ModuleElement):
                 raise ValueError('x is from a different linear functions module')
             if len((<LinearFunction>x)._f) != 1:
                 raise ValueError('x is a sum, must be a single variable')
-            i = (<LinearFunction>x)._f.keys()[0]
+            i, = (<LinearFunction>x)._f.keys()
             if (<LinearFunction>x)._f[i] != 1:
                 raise ValueError('x must have a unit coefficient')
         else:
@@ -273,7 +273,7 @@ cdef class LinearTensor(ModuleElement):
 
         A :class:`LinearTensor`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
             sage: LT = LinearFunctionsParent(RDF).tensor(RDF^2)
@@ -293,7 +293,7 @@ cdef class LinearTensor(ModuleElement):
 
         A :class:`LinearTensor`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
             sage: LT = LinearFunctionsParent(RDF).tensor(RDF^2)
@@ -317,7 +317,7 @@ cdef class LinearTensor(ModuleElement):
 
         A :class:`LinearTensor`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
             sage: LT = LinearFunctionsParent(RDF).tensor(RDF^2)
@@ -331,7 +331,7 @@ cdef class LinearTensor(ModuleElement):
             result[key] = self._f.get(key, 0) - coeff
         return self.parent()(result)
 
-    cpdef _lmul_(self, RingElement b):
+    cpdef _lmul_(self, Element b):
         r"""
         Return multiplication by scalar.
 
@@ -343,7 +343,7 @@ cdef class LinearTensor(ModuleElement):
 
         A :class:`LinearTensor`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
             sage: LT = LinearFunctionsParent(RDF).tensor(RDF^2)
@@ -396,15 +396,12 @@ cdef class LinearTensor(ModuleElement):
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.explain(10, lt, operator.le)
             Coercion on left operand via
-                Conversion map:
+                Coercion map:
                   From: Integer Ring
-                  To:   Tensor product of Vector space of dimension 2 over Real 
-                        Double Field and Linear functions over Real Double Field
+                  To:   Tensor product of Vector space of dimension 2 over Real Double Field and Linear functions over Real Double Field
             Arithmetic performed after coercions.
-            Result lives in Tensor product of Vector space of dimension 2 over 
-            Real Double Field and Linear functions over Real Double Field
-            Tensor product of Vector space of dimension 2 over Real Double Field 
-            and Linear functions over Real Double Field
+            Result lives in Tensor product of Vector space of dimension 2 over Real Double Field and Linear functions over Real Double Field
+            Tensor product of Vector space of dimension 2 over Real Double Field and Linear functions over Real Double Field
         
             sage: operator.le(10, lt)
             (10.0, 10.0) <= (1.0, 2.0)*x_0

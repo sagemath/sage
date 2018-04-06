@@ -1,0 +1,29 @@
+cd src
+
+# Configuring
+./configure --prefix="$SAGE_LOCAL" --with-gmp="$SAGE_LOCAL" \
+    --with-mpfr="$SAGE_LOCAL" --with-mpc="$SAGE_LOCAL" \
+    --disable-static --enable-shared
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring MPFRCX."
+    exit 1
+fi
+
+# Building
+$MAKE
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building MPFRCX."
+    exit 1
+fi
+
+# Cleaning
+echo "Deleting old headers"
+rm -f "$SAGE_LOCAL"/include/mpfrcx.h
+rm -f "$SAGE_LOCAL"/lib/libmpfrcx.*
+
+# Installing
+$MAKE install
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing MPFRCX."
+    exit 1
+fi

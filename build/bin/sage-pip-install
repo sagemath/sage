@@ -15,7 +15,9 @@
 # --no-deps          : Don't install runtime dependencies from PyPI.
 # --no-index         : Don't look at the package index.
 #                      This also disables pip's version self-check.
-pip_install_flags="--ignore-installed --verbose --no-deps --no-index"
+# --isolated         : Don't read configuration files such as
+#                      ~/.pydistutils.cfg
+pip_install_flags="--ignore-installed --verbose --no-deps --no-index --isolated"
 
 # Consume any additional pip install arguments except the last one
 while [ $# -gt 1 ]; do
@@ -29,8 +31,18 @@ if [ "$1" != "." ]; then
     exit 1
 fi
 
+
+if [ "$SAGE_PYTHON3" = yes ]; then
+    PYTHON=python3
+    PIP=pip3
+else
+    PYTHON=python2
+    PIP=pip2
+fi
+
+
 # Find out the name of the package that we are installing
-name="$(python setup.py --name)"
+name="$($PYTHON setup.py --name)"
 
 if [ $? -ne 0 ]; then
     echo >&2 "Error: could not determine package name"
@@ -44,13 +56,14 @@ if [ $(echo "$name" | wc -l) -gt 1 ]; then
     echo >&2 "line as the package name: $name"
 fi
 
-# We should avoid running pip while uninstalling a package because that
+
+# We should avoid running pip2/3 while uninstalling a package because that
 # is prone to race conditions. Therefore, we use a lockfile while
-# running pip. This is implemented in the Python script pip-lock.
+# running pip. This is implemented in the Python script pip2/3-lock.
 
 # Keep uninstalling as long as it succeeds
 while true; do
-    out=$(pip-lock uninstall --disable-pip-version-check -y "$name" 2>&1)
+    out=$($PIP-lock uninstall --disable-pip-version-check -y "$name" 2>&1)
     if [ $? -ne 0 ]; then
         break
     fi
@@ -58,7 +71,7 @@ while true; do
 done
 
 # Not ideal, but this is the easiest way to check if the package
-# was not installed to begin with (which pip treats as an error).
+# was not installed to begin with (which pip2/3 treats as an error).
 # If it wasn't, then we proceed quietly; if it was installed show the
 # uninstallation output and error out.
 if [[ "$out" != *"not installed" ]]; then
@@ -66,7 +79,13 @@ if [[ "$out" != *"not installed" ]]; then
     exit 1
 fi
 
-# Finally actually do the installation (the "SHARED" tells pip-lock
+# Finally actually do the installation (the "SHARED" tells pip2/3-lock
 # to apply a shared lock)
-echo "Installing package $name using pip"
-exec pip-lock SHARED install $pip_install_flags .
+echo "Installing package $name using $PIP"
+
+$PIP-lock SHARED install $pip_install_flags .
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: installing with $PIP failed"
+    exit 3
+fi
+

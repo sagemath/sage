@@ -22,10 +22,11 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import absolute_import
 
 from sage.structure.element cimport FieldElement, RingElement, ModuleElement, Element
-from sage.structure.sage_object cimport richcmp, richcmp_not_equal
+from sage.misc.cachefunc import cached_method
+from sage.structure.richcmp cimport richcmp, richcmp_not_equal
 
 
 def is_FunctionFieldElement(x):
@@ -41,7 +42,7 @@ def is_FunctionFieldElement(x):
         False
     """
     if isinstance(x, FunctionFieldElement): return True
-    from function_field import is_FunctionField
+    from .function_field import is_FunctionField
     return is_FunctionField(x.parent())
 
 def make_FunctionFieldElement(parent, element_class, representing_element):
@@ -89,7 +90,7 @@ cdef class FunctionFieldElement(FieldElement):
         x._parent = self._parent
         return x
 
-    def _pari_(self):
+    def __pari__(self):
         r"""
         Coerce this element to PARI.
 
@@ -103,7 +104,7 @@ cdef class FunctionFieldElement(FieldElement):
             sage: K.<a> = FunctionField(QQ)
             sage: R.<b> = K[]
             sage: L.<b> = K.extension(b^2-a)
-            sage: b._pari_()
+            sage: b.__pari__()
             Traceback (most recent call last):
             ...
             NotImplementedError: PARI does not support general function field elements.
@@ -125,10 +126,16 @@ cdef class FunctionFieldElement(FieldElement):
         """
         return self._x._latex_()
 
-    def matrix(self):
+    @cached_method
+    def matrix(self, base=None):
         r"""
-        Return the matrix of multiplication by self, interpreting self as an element
-        of a vector space over its base field.
+        Return the matrix of multiplication by this element, interpreting this
+        element as an element of a vector space over ``base``.
+
+        INPUT:
+
+        - ``base`` -- a function field (default: ``None``), if ``None``, then
+          the matrix is formed over the base field of this function field.
 
         EXAMPLES:
 
@@ -153,13 +160,24 @@ cdef class FunctionFieldElement(FieldElement):
         An example in a relative extension, where neither function
         field is rational::
 
-            sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
-            sage: M.<T> = L[]; Z.<alpha> = L.extension(T^3 - y^2*T + x)
+            sage: M.<T> = L[]
+            sage: Z.<alpha> = L.extension(T^3 - y^2*T + x)
             sage: alpha.matrix()
             [          0           1           0]
             [          0           0           1]
             [         -x x*y - 4*x^3           0]
+            sage: alpha.matrix(K)
+            [           0            0            1            0            0            0]
+            [           0            0            0            1            0            0]
+            [           0            0            0            0            1            0]
+            [           0            0            0            0            0            1]
+            [          -x            0       -4*x^3            x            0            0]
+            [           0           -x       -4*x^4 -4*x^3 + x^2            0            0]
+            sage: alpha.matrix(Z)
+            [alpha]
 
         We show that this matrix does indeed work as expected when making a
         vector space from a function field::
@@ -175,23 +193,17 @@ cdef class FunctionFieldElement(FieldElement):
             sage: y5 == y4y
             True
         """
-        if self._matrix is None:
-            # Multiply each power of field generator on the left by this
-            # element; make matrix whose rows are the coefficients of the
-            # result, and transpose.
-            K = self.parent()
-            v = []
-            x = K.gen()
-            a = K(1)
-            d = K.degree()
-            for n in range(d):
-                v += (a*self).list()
-                a *= x
-            k = K.base_ring()
-            import sage.matrix.matrix_space
-            M = sage.matrix.matrix_space.MatrixSpace(k, d)
-            self._matrix = M(v)
-        return self._matrix
+        # multiply each element of the vector space isomorphic to the parent
+        # with this element; make matrix whose rows are the coefficients of the
+        # result, and transpose
+        V, f, t = self.parent().vector_space(base)
+        rows = [ t(self*f(b)) for b in V.basis() ]
+        from sage.matrix.matrix_space import MatrixSpace
+        MS = MatrixSpace(V.base_field(), V.dimension())
+        ret = MS(rows)
+        ret.transpose()
+        ret.set_immutable()
+        return ret
 
     def trace(self):
         """
@@ -333,7 +345,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
             sage: f.element()
             1/x^2*y + x/(x^2 + 1)
             sage: type(f.element())
-            <class 'sage.rings.polynomial.polynomial_element_generic.PolynomialRing_field_with_category.element_class'>
+            <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
         """
         return self._x
 
@@ -503,18 +515,18 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         FieldElement.__init__(self, parent)
         self._x = x
 
-    def _pari_(self):
+    def __pari__(self):
         r"""
         Coerce this element to PARI.
 
         EXAMPLES::
 
             sage: K.<a> = FunctionField(QQ)
-            sage: ((a+1)/(a-1))._pari_()
+            sage: ((a+1)/(a-1)).__pari__()
             (a + 1)/(a - 1)
 
         """
-        return self.element()._pari_()
+        return self.element().__pari__()
 
     def element(self):
         """

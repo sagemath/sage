@@ -17,6 +17,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
+from six import integer_types
 
 import sage.rings.polynomial.polynomial_element as polynomial_element
 import sage.rings.polynomial.multi_polynomial_element as multi_polynomial_element
@@ -83,7 +84,7 @@ class FiniteField_ext_pari(FiniteField_generic):
     The following is a native Python set::
 
         sage: set(k)
-        {0, 1, 2, a, 2*a, a + 1, 2*a + 1, a + 2, 2*a + 2}
+        {0, 1, a, a + 1, a + 2, 2, 2*a, 2*a + 1, 2*a + 2}
 
     And the following is a Sage set::
 
@@ -193,7 +194,6 @@ class FiniteField_ext_pari(FiniteField_generic):
 
         FiniteField_generic.__init__(self, base_ring, name, normalize=True)
 
-        self._kwargs = {}
         self.__char = p
         self.__pari_one = pari.pari(1).Mod(self.__char)
         self.__degree = n
@@ -475,7 +475,7 @@ class FiniteField_ext_pari(FiniteField_generic):
             except (ValueError, IndexError, TypeError):
                 raise TypeError("no coercion defined")
 
-        if isinstance(x, (int, long, integer.Integer, rational.Rational,
+        if isinstance(x, integer_types + (integer.Integer, rational.Rational,
                           pari.pari_gen, list)):
 
             return element_ext_pari.FiniteField_ext_pariElement(self, x)

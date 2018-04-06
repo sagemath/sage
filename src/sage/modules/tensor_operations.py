@@ -411,7 +411,7 @@ class TensorOperation(VectorCollection):
             sage: R = VectorCollection([(1,0), (1,2), (-1,-2)], QQ, 2)
             sage: S = VectorCollection([(1,), (-1,)], QQ, 1)
             sage: R_tensor_S = TensorOperation([R,S], operation='product')
-            sage: sorted(R_tensor_S._index_map.iteritems())   # indirect doctest
+            sage: sorted(R_tensor_S._index_map.items())   # indirect doctest
             [((0, 0), 0), ((0, 1), 1), ((1, 0), 2), ((1, 1), 3), ((2, 0), 3), ((2, 1), 2)]
         """
         V_list_indices = [range(V.n_vectors()) for V in self._V]
@@ -430,7 +430,7 @@ class TensorOperation(VectorCollection):
             ....:      VectorCollection, TensorOperation
             sage: R = VectorCollection([(1,0), (1,2), (-1,-2)], QQ, 2)
             sage: Sym2_R = TensorOperation([R,R], operation='symmetric')  # indirect doctest
-            sage: sorted(Sym2_R._index_map.iteritems())
+            sage: sorted(Sym2_R._index_map.items())
             [((0, 0), 0), ((0, 1), 1), ((0, 2), 2), ((1, 1), 3), ((1, 2), 4), ((2, 2), 3)]
         """
         V_list_indices = [range(V.n_vectors()) for V in self._V]
@@ -453,7 +453,7 @@ class TensorOperation(VectorCollection):
             ....:      VectorCollection, TensorOperation
             sage: R = VectorCollection([(1,0), (1,2), (-1,-2)], QQ, 2)
             sage: Alt2_R = TensorOperation([R, R], operation='antisymmetric')  # indirect doctest
-            sage: sorted(Alt2_R._index_map.iteritems())
+            sage: sorted(Alt2_R._index_map.items())
             [((0, 1), 0), ((0, 2), 1)]
         """
         n = len(self._V)
@@ -524,7 +524,7 @@ class TensorOperation(VectorCollection):
 
         TESTS::
 
-            sage: sorted(detR._index_map.iteritems())
+            sage: sorted(detR._index_map.items())
             [((0, 1), 0), ((0, 2), 1), ((1, 2), 2)]
             sage: detR.vectors()
             ((1), (-3), (2))

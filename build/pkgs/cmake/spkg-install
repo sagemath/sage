@@ -1,18 +1,15 @@
-#!/usr/bin/env bash
+if [ "$UNAME" = Darwin ]; then
+    CC=clang
+    CXX=clang++
+fi
 
 cd src
-
-system_curl=""
-
-if [ "$UNAME" = "Darwin" ]; then
-    system_curl="--system-curl"
-    unset MACOSX_DEPLOYMENT_TARGET
-fi
 
 ./bootstrap --prefix=$SAGE_LOCAL \
     --system-bzip2 \
     --system-zlib \
-    $system_curl \
+    --system-liblzma \
+    --system-curl \
     -- \
     -DCMAKE_PREFIX_PATH=$SAGE_LOCAL \
     -DCMAKE_TESTS_CDASH_SERVER=NOTFOUND

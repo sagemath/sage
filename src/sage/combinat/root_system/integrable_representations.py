@@ -368,7 +368,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             [   0    0   -1    1 -1/2]
             [   0    0    0 -1/2    1]
 
-        .. WARNING:
+        .. WARNING::
 
             If ``qelt1`` or ``qelt1`` accidentally gets coerced into
             the extended weight lattice, this will return an answer,
@@ -389,7 +389,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Symmetric form between an element of the weight and root lattices
         associated to ``self``.
 
-        .. WARNING:
+        .. WARNING::
 
             If ``qelt`` accidentally gets coerced into the extended weight
             lattice, this will return an answer, and it will be wrong. To make

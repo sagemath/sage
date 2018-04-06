@@ -1,5 +1,5 @@
 r"""
-Channels
+Base class for Channels and commonly used channels
 
 Given an input space and an output space, a channel takes element from
 the input space (the message) and transforms it into an element of the output space

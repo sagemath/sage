@@ -72,7 +72,7 @@ REFERENCES:
 .. [1] La Jolla Covering Repository,
   http://www.ccrwest.org/cover.html
 """
-from __future__ import absolute_import
+
 from sage.combinat.designs.block_design import (BlockDesign,
                                                 ProjectiveGeometryDesign,
                                                 DesarguesianProjectivePlaneDesign,
@@ -98,29 +98,8 @@ from sage.combinat.designs.orthogonal_arrays import transversal_design, incomple
 from sage.combinat.designs.difference_family import difference_family
 from .difference_matrices import difference_matrix
 
-from sage.misc.superseded import deprecated_callable_import
-deprecated_callable_import(19096,
-                           'sage.combinat.designs.incidence_structures',
-                           globals(),
-                           locals(),
-                           ["IncidenceStructure"],
-                           ("This alias will soon be removed. You can call the same object by removing 'designs.' in your command"))
-
-Hypergraph = BlockDesign = IncidenceStructure    # just an alias
 from sage.combinat.designs.bibd import balanced_incomplete_block_design, steiner_triple_system
 from sage.combinat.designs.resolvable_bibd import resolvable_balanced_incomplete_block_design, kirkman_triple_system
 from sage.combinat.designs.group_divisible_designs import group_divisible_design
 
 from .orthogonal_arrays import OAMainFunctions as orthogonal_arrays
-
-# When this deprecated function is removed, remove the handling of k=None in the
-# function orthogonal_arrays.orthogonal_array()
-deprecated_callable_import(17034,
-                           'sage.combinat.designs.orthogonal_arrays',
-                           globals(),
-                           locals(),
-                           ["orthogonal_array"],
-                           ("This function will soon be removed. Use the designs.orthogonal_arrays.* functions instead"))
-
-# We don't want this to appear in designs.<tab>
-del deprecated_callable_import

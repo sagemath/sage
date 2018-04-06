@@ -267,11 +267,11 @@ from the name of the category with axiom (see
 :func:`base_category_class_and_axiom` for the details). This typically
 covers the following examples::
 
-    sage: FiniteGroups()
-    Category of finite groups
-    sage: FiniteGroups() is Groups().Finite()
+    sage: FiniteCoxeterGroups()
+    Category of finite coxeter groups
+    sage: FiniteCoxeterGroups() is CoxeterGroups().Finite()
     True
-    sage: FiniteGroups._base_category_class_and_axiom_origin
+    sage: FiniteCoxeterGroups._base_category_class_and_axiom_origin
     'deduced by base_category_class_and_axiom'
 
     sage: FiniteDimensionalAlgebrasWithBasis(QQ)
@@ -926,7 +926,7 @@ to an infinite recursion.
 .. TOPIC:: Design discussion
 
     Supporting similar deduction rules will be an important feature in
-    the future, with quite a few occurences already implemented in
+    the future, with quite a few occurrences already implemented in
     upcoming tickets. For the time being though there is a single
     occurrence of this idiom outside of the tests. So this would be an
     easy thing to refactor after :trac:`10963` if a better idiom is
@@ -1364,7 +1364,7 @@ Other design goals include:
 Upcoming features
 =================
 
-.. TODO:
+.. TODO::
 
     - Implement compatibility axiom / functorial constructions. For
       example, one would want to have::
@@ -1685,6 +1685,7 @@ all_axioms += ("Flying", "Blue",
                "AdditiveCommutative", "AdditiveAssociative", "AdditiveInverse", "AdditiveUnital",
                "Distributive",
                "Endset",
+               "Pointed"
               )
 
 def uncamelcase(s,separator=" "):
@@ -1789,8 +1790,9 @@ def base_category_class_and_axiom(cls):
             except (ImportError,AttributeError):
                 pass
     raise TypeError("""Could not retrieve the base category class and axiom for {}.
-Please specify it explictly using the attribute _base_category_class_and_axiom.
+Please specify it explicitly using the attribute _base_category_class_and_axiom.
 See CategoryWithAxiom for details.""".format(cls))
+
 
 @cached_function
 def axiom_of_nested_class(cls, nested_cls):
@@ -2100,7 +2102,7 @@ class CategoryWithAxiom(Category):
 
         This check that an axiom category of a
         :class:`Category_singleton` is a singleton category, and
-        similarwise for :class`Category_over_base_ring`.
+        similarwise for :class:`Category_over_base_ring`.
 
         EXAMPLES::
 

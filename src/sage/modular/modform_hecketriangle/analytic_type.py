@@ -1,8 +1,8 @@
 r"""
 Analytic types of modular forms.
 
-Propoerties of modular forms and their generalizations are assembled
-into one partially ordered set.  See :class:``AnalyticType`` for a
+Properties of modular forms and their generalizations are assembled
+into one partially ordered set.  See :class:`AnalyticType` for a
 list of handled properties.
 
 AUTHORS:

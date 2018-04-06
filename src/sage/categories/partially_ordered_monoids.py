@@ -17,7 +17,7 @@ class PartiallyOrderedMonoids(Category_singleton):
     which are also monoids, and such that multiplication preserves the
     ordering: `x \leq y` implies `x*z < y*z` and `z*x < z*y`.
 
-    http://en.wikipedia.org/wiki/Ordered_monoid
+    See :wikipedia:`Ordered_monoid`
 
     EXAMPLES::
 

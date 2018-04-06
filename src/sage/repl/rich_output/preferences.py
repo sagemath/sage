@@ -25,7 +25,7 @@ EXAMPLES::
     * supplemental_plot is not specified
     * text = ascii_art
 
-Properties can be unset by deleting them or by assinging ``None``::
+Properties can be unset by deleting them or by assigning ``None``::
 
     sage: prefs.text = 'ascii_art'
     sage: del prefs.text

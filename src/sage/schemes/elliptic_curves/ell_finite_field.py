@@ -16,15 +16,10 @@ AUTHORS:
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
@@ -42,6 +37,7 @@ import sage.groups.generic as generic
 from . import ell_point
 from sage.arith.all import gcd, lcm, binomial
 from sage.structure.sequence import Sequence
+from sage.misc.cachefunc import cached_method
 
 import sage.plot.all as plot
 
@@ -1082,7 +1078,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         k = self.base_ring()
         p = k.characteristic()
         if k.degree()==1:
-            return ZZ(p + 1 - int(self._pari_().ellap(p)))
+            return ZZ(p + 1 - int(self.__pari__().ellap(p)))
         else:
             raise ValueError("cardinality_pari() only works over prime fields.")
 
@@ -1222,40 +1218,86 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
                     return self._order
                 if verbose: print("number of possibilities is now ",kmax-kmin+1)
 
+    @cached_method
     def gens(self):
-        """
-        Returns a tuple of length up to 2 of points which generate the
-        abelian group of points on this elliptic curve. See
-        abelian_group() for limitations.
+        r"""
+        Return points which generate the abelian group of points on
+        this elliptic curve.
 
-        The algorithm uses random points on the curve, and hence the
-        generators are likely to differ from one run to another; but they
-        are cached so will be consistent in any one run of Sage.
+        OUTPUT: a tuple of points on the curve.
 
-        AUTHORS:
+        - if the group is trivial: an empty tuple.
 
-        - John Cremona
+        - if the group is cyclic: a tuple with 1 point, a generator.
+
+        - if the group is not cyclic: a tuple with 2 points, where the
+          order of the first point equals the exponent of the group.
+
+        .. WARNING::
+
+            In the case of 2 generators `P` and `Q`, it is not
+            guaranteed that the group is the cartesian product of the 2
+            cyclic groups `\langle P \rangle` and `\langle Q \rangle`.
+            In other words, the order of `Q` isn't as small as possible.
+            If you really need to know the group structure, use
+            :meth:`abelian_group`.
 
         EXAMPLES::
 
-            sage: E=EllipticCurve(GF(11),[2,5])
-            sage: E.gens()                           # random output
-            ((0 : 7 : 1),)
-            sage: EllipticCurve(GF(41),[2,5]).gens() # random output
-            ((21 : 1 : 1), (8 : 0 : 1))
-            sage: F.<a>=GF(3^6,'a')
-            sage: E=EllipticCurve([a,a+1])
-            sage: pts=E.gens()
+            sage: E = EllipticCurve(GF(11),[2,5])
+            sage: P = E.gens()[0]; P # random
+            (0 : 7 : 1)
+            sage: E.cardinality(), P.order()
+            (10, 10)
+            sage: E = EllipticCurve(GF(41),[2,5])
+            sage: P, Q = E.gens(); P, Q # random
+            ((30 : 13 : 1), (32 : 23 : 1))
+            sage: P.order()*Q.order()
+            484
+            sage: E.cardinality()
+            44
+
+        If the abelian group has been computed, return those generators
+        instead::
+
+            sage: E.abelian_group()
+            Additive abelian group isomorphic to Z/22 + Z/2 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 2*x + 5 over Finite Field of size 41
+            sage: E.abelian_group().gens()
+            ((30 : 28 : 1), (23 : 0 : 1))
+            sage: E.gens()
+            ((30 : 28 : 1), (23 : 0 : 1))
+            sage: E.gens()[0].order()
+            22
+            sage: E.gens()[1].order()
+            2
+
+            sage: F.<a> = GF(3^6)
+            sage: E = EllipticCurve([a,a+1])
+            sage: pts = E.gens()
             sage: len(pts)
             1
-            sage: pts[0].order()==E.cardinality()
+            sage: pts[0].order() == E.cardinality()
             True
+            sage: E = EllipticCurve(GF(2),[0,0,1,1,1])
+            sage: E.gens()
+            ()
+
+        This works over larger finite fields where :meth:abelian_group may be
+        too expensive::
+
+            sage: k.<a> = GF(5^60)
+            sage: E = EllipticCurve([a,a])
+            sage: len(E.gens())
+            2
+            sage: E.cardinality()      # known bug #16931
+            867361737988403547205571230383620219837340
+            sage: E.gens()[0].order()  # known bug #16931
+            433680868994201773602785615191810109918670
+            sage: E.gens()[1].order()  # known bug #16931
+            48186763221577974844753957243534456657630
         """
-        try:
-            G =  self.abelian_group()
-            return [x.element() for x in G.gens()]
-        except AttributeError:
-            pass
+        G = self.__pari__().ellgroup(flag=1)
+        return tuple(self.point(list(pt)) for pt in G[2])
 
     def __iter__(self):
         """
@@ -1280,7 +1322,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         Return the n'th point in self's __points list. This enables users
         to iterate over the curve's point set.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: E=EllipticCurve(GF(97),[2,3])
             sage: S=E.points()
@@ -1301,6 +1343,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         """
         return self.points()[n]
 
+    @cached_method
     def abelian_group(self, debug=False):
         r"""
         Returns the abelian group structure of the group of points on this
@@ -1314,6 +1357,12 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
            methods are used which have space and time requirements
            which are `O(\sqrt{q})`.
 
+        .. SEEALSO::
+
+            If you do not need the complete abelian group structure but
+            only generators of the group, use :meth:`gens` which is
+            much faster.
+
         Also, the algorithm uses random points on the curve and hence the
         generators are likely to differ from one run to another; but the
         group is cached so the generators will not change in any one run of
@@ -1324,7 +1373,6 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         -  ``debug`` - (default: False): if True, print
            debugging messages
-
 
         OUTPUT:
 
@@ -1397,13 +1445,6 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             (Multiplicative Abelian group isomorphic to C50067594 x C2,
             ((3152*ibar + 7679 : 7330*ibar + 7913 : 1), (8466*ibar + 1770 : 0 : 1)))
         """
-        if not debug:
-            # if we're in debug mode, always recalculate
-            try:
-                return self.__abelian_group
-            except AttributeError:
-                pass
-
         k = self.base_field()
         q = k.order()
         p = k.characteristic()
@@ -1578,14 +1619,18 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
         self._order = n1*n2
-        if n1==1:
-            self.__abelian_group = AdditiveAbelianGroupWrapper(self.point_homset(), [], [])
+        if n1 == 1:
+            gens = orders = tuple()
+            return AdditiveAbelianGroupWrapper(self.point_homset(), [], [])
+        elif n2 == 1:
+            gens = (P1,)
+            orders = (n1,)
         else:
-            if n2==1:
-                self.__abelian_group = AdditiveAbelianGroupWrapper(self.point_homset(), [P1], [n1])
-            else:
-                self.__abelian_group = AdditiveAbelianGroupWrapper(self.point_homset(), [P1, P2], [n1, n2])
-        return self.__abelian_group
+            gens = (P1, P2)
+            orders = (n1, n2)
+        # Cache these gens as self.gens()
+        self.gens.set_cache(gens)
+        return AdditiveAbelianGroupWrapper(self.point_homset(), gens, orders)
 
     def is_isogenous(self, other, field=None, proof=True):
         """
@@ -1717,7 +1762,7 @@ self.cardinality(extension_degree=field.degree()//self.base_field().degree())\
         - ``proof`` (boolean, default True) -- If True, returns a
           proved result.  If False, then a return value of False is
           certain but a return value of True may be based on a
-          probabilistic test.  See the documentaion of the function
+          probabilistic test.  See the documentation of the function
           :meth:`is_j_supersingular` for more details.
 
         EXAMPLES::
@@ -1752,7 +1797,7 @@ self.cardinality(extension_degree=field.degree()//self.base_field().degree())\
         - ``proof`` (boolean, default True) -- If True, returns a
           proved result.  If False, then a return value of True is
           certain but a return value of False may be based on a
-          probabilistic test.  See the documentaion of the function
+          probabilistic test.  See the documentation of the function
           :meth:`is_j_supersingular` for more details.
 
         EXAMPLES::
@@ -1923,7 +1968,7 @@ def supersingular_j_polynomial(p):
 
     First compute H(X) whose roots are the Legendre
     `\lambda`-invariants of supersingular curves (Silverman V.4.1(b))
-    in charactersitic `p`.  Then, using a resultant computation with
+    in characteristic `p`.  Then, using a resultant computation with
     the polynomial relating `\lambda` and `j` (Silverman III.1.7(b)),
     we recover the polynomial (in variable ``j``) whose roots are the
     `j`-invariants.  Factors of `j` and `j-1728` are removed if

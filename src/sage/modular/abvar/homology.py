@@ -51,7 +51,7 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
+from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
 from sage.modular.hecke.all import HeckeModule_free_module
 from sage.rings.all import Integer, ZZ, QQ, CommutativeRing
 
@@ -59,6 +59,7 @@ from .abvar import sqrt_poly
 
 # TODO: we will probably also need homology that is *not* a Hecke module.
 
+@richcmp_method
 class Homology(HeckeModule_free_module):
     """
     A homology group of an abelian variety, equipped with a Hecke
@@ -119,11 +120,11 @@ class Homology_abvar(Homology):
             self, base, abvar.level(), weight=2)
         self.__abvar = abvar
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: J0(37).integral_homology() == J0(41).integral_homology()
             False
@@ -132,11 +133,11 @@ class Homology_abvar(Homology):
             sage: J0(37).integral_homology() == loads(dumps(J0(37).integral_homology()))
             True
         """
-
         if not isinstance(other, Homology_abvar):
-            return cmp(type(self), type(other))
+            return NotImplemented
         else:
-            return cmp((self.abelian_variety(), self.base_ring()), (other.abelian_variety(), other.base_ring()))
+            return richcmp((self.abelian_variety(), self.base_ring()),
+                           (other.abelian_variety(), other.base_ring()), op)
 
     def _repr_(self):
         """
@@ -557,6 +558,7 @@ class Homology_over_base(Homology_abvar):
         n = Integer(n)
         return self.abelian_variety()._integral_hecke_matrix(n).change_ring(self.base_ring())
 
+
 class Homology_submodule(Homology):
     """
     A submodule of the homology of a modular abelian variety.
@@ -609,13 +611,13 @@ class Homology_submodule(Homology):
             sage: G._repr_()
             'Submodule of rank 1 of Integral Homology of Abelian variety J0(37) of dimension 2'
         """
-        return "Submodule of rank %s of %s"%(self.rank(), self.__ambient)
+        return "Submodule of rank %s of %s" % (self.rank(), self.__ambient)
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: J0(37).homology().decomposition() # indirect doctest
             [
@@ -623,13 +625,13 @@ class Homology_submodule(Homology):
             Submodule of rank 2 of Integral Homology of Abelian variety J0(37) of dimension 2
             ]
         """
-
         if not isinstance(other, Homology_submodule):
-            return cmp(type(self), type(other))
-        c = cmp(self.__ambient, other.__ambient)
-        if c: return c
-        return cmp(self.__submodule, other.__submodule)
-
+            return NotImplemented
+        lx = self.__ambient
+        rx = other.__ambient
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
+        return richcmp(self.__submodule, other.__submodule, op)
 
     def ambient_hecke_module(self):
         """

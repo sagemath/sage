@@ -97,7 +97,7 @@ beliebigen Python-Typs innerhalb eines Sichtbarkeitsbereich aufnehmen.
     <type 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # jetzt ist a ein String
     sage: type(a)
-    <type 'str'>
+    <... 'str'>
 
 Die Programmiersprache C, welche statisch typisiert ist, unterscheidet
 sich hierzu stark; eine Variable, die dazu deklariert ist eine Ganzzahl (int)

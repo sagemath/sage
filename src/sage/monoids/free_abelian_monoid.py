@@ -44,8 +44,6 @@ lists of integer exponents.
     sage: x.list()
     [7, 2, 0, 1, 1]
 """
-from __future__ import absolute_import
-
 #*****************************************************************************
 #       Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
@@ -55,6 +53,8 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
+from six import integer_types
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.category_object import normalize_names
@@ -191,7 +191,7 @@ class FreeAbelianMonoid_class(Parent):
             sage: F = FreeAbelianMonoid(6,'b')
             sage: TestSuite(F).run()
         """
-        if not isinstance(n, (int, long, Integer)):
+        if not isinstance(n, integer_types + (Integer,)):
             raise TypeError("n (=%s) must be an integer"%n)
         if n < 0:
             raise ValueError("n (=%s) must be nonnegative"%n)

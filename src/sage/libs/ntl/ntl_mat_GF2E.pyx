@@ -22,14 +22,18 @@
 #    2006-01: initial version (based on code by William Stein)
 #
 ##############################################################################
-include "cysignals/signals.pxi"
+from __future__ import absolute_import
+
+from cysignals.signals cimport sig_on, sig_off
+from sage.ext.cplusplus cimport ccrepr
+
 include 'misc.pxi'
 include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
-from ntl_GF2E cimport ntl_GF2E
-from ntl_GF2EContext import ntl_GF2EContext
-from ntl_GF2EContext cimport ntl_GF2EContext_class
+from .ntl_GF2E cimport ntl_GF2E
+from .ntl_GF2EContext import ntl_GF2EContext
+from .ntl_GF2EContext cimport ntl_GF2EContext_class
 from sage.rings.integer cimport Integer
 from sage.misc.randstate cimport randstate, current_randstate
 
@@ -160,7 +164,7 @@ cdef class ntl_mat_GF2E(object):
 
     def __reduce__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: k.<a> = GF(2^4)
             sage: ctx = ntl.GF2EContext(k)
@@ -185,7 +189,7 @@ cdef class ntl_mat_GF2E(object):
             '[[[] [1]]\n[[] [1]]\n]'
         """
         self.c.restore_c()
-        return mat_GF2E_to_PyString(&self.x)
+        return ccrepr(self.x)
 
     def __mul__(ntl_mat_GF2E self, other):
         """
@@ -607,10 +611,10 @@ cdef class ntl_mat_GF2E(object):
 
     def image(self):
         """
-        The rows of X are computed as basis of A's row space.  X is is
+        The rows of X are computed as basis of A's row space.  X is
         row echelon form.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ctx = ntl.GF2EContext([1,1,0,1,1,0,0,0,1])
             sage: m = ntl.mat_GF2E(ctx, 3,3,[0..24])
@@ -632,7 +636,7 @@ cdef class ntl_mat_GF2E(object):
         Computes a basis for the kernel of the map ``x -> x*A``, where
         ``x`` is a row vector.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ctx = ntl.GF2EContext([1,1,0,1,1,0,0,0,1])
             sage: m = ntl.mat_GF2E(ctx, 3,3,[0..24])

@@ -1,5 +1,5 @@
 r"""
-Decoder
+Base class for Decoders
 
 Representation of an error-correction algorithm for a code.
 
@@ -51,18 +51,59 @@ class Decoder(SageObject):
     @classmethod
     def decoder_type(cls):
         r"""
-        Returns the set of types of ``self``. These types describe the nature of ``self``
-        and its decoding algorithm.
+        Returns the set of types of ``self``.
 
         This method can be called on both an uninstantiated decoder class,
         or on an instance of a decoder class.
+
+        The types of a decoder are a set of labels commonly associated with
+        decoders which describe the nature and behaviour of the decoding
+        algorithm. It should be considered as an informal descriptor but
+        can be coarsely relied upon for e.g. program logic.
+
+        The following are the most common types and a brief definition:
+
+        ======================  ================================================
+        Decoder type            Definition
+        ======================  ================================================
+        always-succeed          The decoder always returns a closest codeword if
+                                the number of errors is up to the decoding
+                                radius.
+        bounded-distance        Any vector with Hamming distance at most
+                                ``decoding_radius()`` to a codeword is
+                                decodable to some codeword. If ``might-fail`` is
+                                also a type, then this is not a guarantee but an
+                                expectancy.
+        complete                The decoder decodes every word in the ambient
+                                space of the code.
+        dynamic                 Some of the decoder's types will only be
+                                determined at construction time
+                                (depends on the parameters).
+        half-minimum-distance   The decoder corrects up to half the minimum
+                                distance, or a specific lower bound thereof.
+        hard-decision           The decoder uses no information on which
+                                positions are more likely to be in error or not.
+        list-decoder            The decoder outputs a list of likely codewords,
+                                instead of just a single codeword.
+        might-fail              The decoder can fail at decoding even within its
+                                usual promises, e.g. bounded distance.
+        not-always-closest      The decoder does not guarantee to always return a
+                                closest codeword.
+        probabilistic           The decoder has internal randomness which can affect
+                                running time and the decoding result.
+        soft-decision           As part of the input, the decoder takes
+                                reliability information on which positions are
+                                more likely to be in error. Such a decoder only
+                                works for specific channels.
+        ======================  ================================================
+
 
         EXAMPLES:
 
         We call it on a class::
 
             sage: codes.decoders.LinearCodeSyndromeDecoder.decoder_type()
-            {'dynamic', 'hard-decision', 'unique'}
+            {'dynamic', 'hard-decision'}
 
         We can also call it on a instance of a Decoder class::
 
@@ -70,26 +111,24 @@ class Decoder(SageObject):
             sage: C = LinearCode(G)
             sage: D = C.decoder()
             sage: D.decoder_type()
-            {'complete', 'hard-decision', 'might-error', 'unique'}
+            {'complete', 'hard-decision', 'might-error'}
         """
         return cls._decoder_type
 
     def _instance_decoder_type(self):
         r"""
-        Returns the set if types of ``self``.
-        These types describe the nature of ``self`` and its decoding algorithm.
+        This doc-string will be overridden at instantiation by that of
+        `Decoder.decoder_type`.
 
-        This method is used as a copy of :meth:`decoder_type` when instantiating a
-        class, so the returned set of types will be the one specific to the instance,
-        and no longer the one for the uninstantiated class.
+        EXAMPLES:
 
-        EXAMPLES::
+        Test to satisfy the doc-testing framework::
 
             sage: G = Matrix(GF(2), [[1, 0, 0, 1], [0, 1, 1, 1]])
             sage: C = LinearCode(G)
             sage: D = C.decoder()
-            sage: D._instance_decoder_type()
-            {'complete', 'hard-decision', 'might-error', 'unique'}
+            sage: D.decoder_type() #indirect doctest
+            {'complete', 'hard-decision', 'might-error'}
         """
         return self._decoder_type
 
@@ -234,10 +273,11 @@ class Decoder(SageObject):
 
     def decode_to_message(self, r):
         r"""
-        Decodes ``r`` to the message space of meth:`connected_encoder`.
+        Decode ``r`` to the message space of :meth:`connected_encoder`.
 
-        This is a default implementation, which assumes that the method
-        :meth:`decode_to_code` has been implemented, else it returns an exception.
+        This is a default implementation, which assumes that the
+        method :meth:`decode_to_code` has been implemented, else it
+        returns an exception.
 
         INPUT:
 
@@ -321,6 +361,8 @@ class Decoder(SageObject):
             1
         """
         raise NotImplementedError
+
+Decoder._instance_decoder_type.__func__.__doc__ = Decoder.decoder_type.__doc__
 
 class DecodingError(Exception):
     r"""

@@ -63,8 +63,7 @@ class PieriFactors(UniqueRepresentation, Parent):
         sage: PF.generating_series()
         6*z^6 + 14*z^5 + 18*z^4 + 15*z^3 + 9*z^2 + 4*z + 1
         sage: [w.reduced_word() for w in PF if w.length() == 2]
-        [[2, 0], [0, 1], [2, 3], [1, 2], [3, 2], [3, 1], [2, 1], [3, 0], [1, 0]]
-
+        [[2, 3], [1, 0], [2, 0], [0, 1], [2, 1], [3, 1], [3, 0], [3, 2], [1, 2]]
 
     REFERENCES:
 
@@ -144,7 +143,7 @@ class PieriFactors(UniqueRepresentation, Parent):
 
             sage: PF = WeylGroup(['A',3]).pieri_factors()
             sage: [w.reduced_word() for w in PF.elements()]
-            [[3, 2, 1], [2, 1], [1], [], [3, 1], [3], [3, 2], [2]]
+            [[3, 2, 1], [2, 1], [3, 1], [3, 2], [2], [1], [3], []]
 
         .. SEEALSO:: :meth:`maximal_elements`
 
@@ -372,7 +371,8 @@ class PieriFactors_affine_type(PieriFactors):
         s = ct.translation_factors()[1]
         R = RootSystem(ct).weight_space()
         Lambda = R.fundamental_weights()
-        orbit = [ R.reduced_word_of_translation(x) for x in (s*(Lambda[1]-Lambda[1].level()*Lambda[0])).orbit() ]
+        orbit = [R.reduced_word_of_translation(x)
+                 for x in (s*(Lambda[1]-Lambda[1].level()*Lambda[0]))._orbit_iter()]
         return [self.W.from_reduced_word(x) for x in orbit]
 
 

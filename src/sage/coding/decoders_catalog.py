@@ -3,13 +3,15 @@ Index of decoders
 
 The ``codes.decoders`` object may be used to access the decoders that Sage can build.
 
-**Generic decoders**
+It is usually not necessary to access these directly: rather, the ``decoder``
+method directly on a code allows you to construct all compatible decoders for
+that code (:meth:`sage.coding.linear_code.AbstractLinearCode.decoder`).
 
-- :class:`linear_code.LinearCodeSyndromeDecoder <sage.coding.linear_code.LinearCodeSyndromeDecoder>`
-- :class:`linear_code.LinearCodeNearestNeighborDecoder <sage.coding.linear_code.LinearCodeNearestNeighborDecoder>`
+**Extended code decoders**
+
+- :class:`extended_code.ExtendedCodeOriginalCodeDecoder <sage.coding.extended_code.ExtendedCodeOriginalCodeDecoder>`
 
 **Subfield subcode decoder**
-
 - :class:`subfield_subcode.SubfieldSubcodeOriginalCodeDecoder <sage.coding.subfield_subcode.SubfieldSubcodeOriginalCodeDecoder>`
 
 **Generalized Reed-Solomon code decoders**
@@ -17,12 +19,22 @@ The ``codes.decoders`` object may be used to access the decoders that Sage can b
 - :class:`grs.GRSBerlekampWelchDecoder <sage.coding.grs.GRSBerlekampWelchDecoder>`
 - :class:`grs.GRSErrorErasureDecoder <sage.coding.grs.GRSErrorErasureDecoder>`
 - :class:`grs.GRSGaoDecoder <sage.coding.grs.GRSGaoDecoder>`
-- :class:`grs.GRSKeyEquationSyndromeDecoder <sage.coding.grs.GRSKeyEquationSyndromeDecoder>`
 - :class:`guruswami_sudan.gs_decoder.GRSGuruswamiSudanDecoder <sage.coding.guruswami_sudan.gs_decoder.GRSGuruswamiSudanDecoder>`
+- :class:`grs.GRSKeyEquationSyndromeDecoder <sage.coding.grs.GRSKeyEquationSyndromeDecoder>`
 
-**Extended code decoders**
+**Generic decoders**
 
-- :class:`extended_code.ExtendedCodeOriginalCodeDecoder <sage.coding.extended_code.ExtendedCodeOriginalCodeDecoder>`
+- :class:`linear_code.LinearCodeNearestNeighborDecoder <sage.coding.linear_code.LinearCodeNearestNeighborDecoder>`
+- :class:`linear_code.LinearCodeSyndromeDecoder <sage.coding.linear_code.LinearCodeSyndromeDecoder>`
+- :class:`information_set_decoder.LinearCodeInformationSetDecoder <sage.coding.information_set_decoder.LinearCodeInformationSetDecoder>`
+
+**Cyclic code decoder**
+
+- :class:`cyclic_code.CyclicCodeSurroundingBCHDecoder <sage.coding.cyclic_code.CyclicCodeSurroundingBCHDecoder>`
+
+**BCH code decoder**
+
+- :class:`bch.BCHUnderlyingGRSDecoder <sage.coding.bch.BCHUnderlyingGRSDecoder>`
 
 **Punctured codes decoders**
 
@@ -45,16 +57,19 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .linear_code import (LinearCodeSyndromeDecoder, LinearCodeNearestNeighborDecoder)
-from .punctured_code import PuncturedCodeOriginalCodeDecoder
-from .grs import (GRSBerlekampWelchDecoder,
-                 GRSGaoDecoder,
-                 GRSKeyEquationSyndromeDecoder,
-                 GRSErrorErasureDecoder)
+from sage.misc.lazy_import import lazy_import as _lazy_import
+
+_lazy_import('sage.coding.bch',                        'BCHUnderlyingGRSDecoder')
+_lazy_import('sage.coding.cyclic_code',                'CyclicCodeSurroundingBCHDecoder')
+_lazy_import('sage.coding.extended_code',              'ExtendedCodeOriginalCodeDecoder')
+_lazy_import('sage.coding.grs',                       ['GRSBerlekampWelchDecoder',
+                                                       'GRSErrorErasureDecoder',
+                                                       'GRSGaoDecoder',
+                                                       'GRSKeyEquationSyndromeDecoder'])
 from .guruswami_sudan.gs_decoder import GRSGuruswamiSudanDecoder
-from .extended_code import ExtendedCodeOriginalCodeDecoder
-from .subfield_subcode import SubfieldSubcodeOriginalCodeDecoder
-from .grs import (GRSBerlekampWelchDecoder,
-                 GRSGaoDecoder,
-                 GRSKeyEquationSyndromeDecoder,
-                 GRSErrorErasureDecoder)
+_lazy_import('sage.coding.linear_code',               ['LinearCodeNearestNeighborDecoder',
+                                                       'LinearCodeSyndromeDecoder',
+                                                       'LinearCodeInformationSetDecoder'])
+_lazy_import('sage.coding.punctured_code',             'PuncturedCodeOriginalCodeDecoder')
+_lazy_import('sage.coding.subfield_subcode',           'SubfieldSubcodeOriginalCodeDecoder')
+_lazy_import('sage.coding.information_set_decoder',    'LinearCodeInformationSetDecoder')

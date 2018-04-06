@@ -51,7 +51,7 @@ There are two avenues to prove to the trac server that you are who you
 claim to be. First, to change the ticket web pages you need to log in
 to trac using a username/password. Second, there is public key
 cryptography used by git when copying new source files to the
-repository. This section will show you how to setup both.
+repository. This section will show you how to set up both.
 
 Generating and Uploading your SSH Keys
 --------------------------------------
@@ -351,7 +351,7 @@ trac ticket, enter the ticket number for the stopgap ticket in the "Stopgaps"
 field (see :ref:`section-trac-fields`). Stopgap tickets should be marked as
 blockers.
 
-.. note::
+.. NOTE::
 
     If mathematically valid code causes Sage to raise an error or
     crash, for example, there is no need for a stopgap.  Rather,

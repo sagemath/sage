@@ -184,3 +184,7 @@ cdef extern from "flint/fmpz.h":
     void fmpz_bin_uiui(fmpz_t, ulong, ulong)
     void fmpz_rfac_ui(fmpz_t, fmpz_t, ulong)
     void fmpz_rfac_uiui(fmpz_t, ulong, ulong)
+
+    # Random Generators
+    void fmpz_randbits(fmpz_t f, flint_rand_t state, mp_bitcnt_t bits)
+    void fmpz_randm(fmpz_t f, flint_rand_t state, const fmpz_t m)

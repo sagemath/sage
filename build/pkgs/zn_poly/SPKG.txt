@@ -147,7 +147,7 @@ the file src/COPYING for details.
  *  Ticket #8280: cygwin: zn_poly shared library named incorrectly on cygwin
 
 === zn_poly-0.9.p1 (David Kirkby, June 29th, 2009) ===
- *  Ticket #6443 A GNUism in zn_poly-0.9.p0 causes linking problems wiith Sun's linker
+ *  Ticket #6443 A GNUism in zn_poly-0.9.p0 causes linking problems with Sun's linker
     This was an easy fix - just substitue -soname for -h in src/makemakefile.py
     I did this with a sed script in spkg-install
 

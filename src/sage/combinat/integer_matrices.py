@@ -321,18 +321,18 @@ def integer_matrices_generator(row_sums, column_sums):
         [[0, 3], [2, 0], [0, 2]]
         [[0, 3], [1, 1], [1, 1]]
         [[0, 3], [0, 2], [2, 0]]
-
     """
-    row_sums = list(row_sums)
     column_sums = list(column_sums)
     if sum(row_sums) != sum(column_sums):
         raise StopIteration
-    if len(row_sums) == 0:
+    if not row_sums:
         yield []
     elif len(row_sums) == 1:
         yield [column_sums]
     else:
-        for comp in IntegerListsLex(n=row_sums[0], length=len(column_sums), ceiling=column_sums):
+        I = IntegerListsLex(n=row_sums[0], length=len(column_sums), ceiling=column_sums)
+        for comp in I.backend._iter():
             t = [column_sums[i]-ci for (i, ci) in enumerate(comp)]
             for mat in integer_matrices_generator(row_sums[1:], t):
                 yield [list(comp)] + mat
+

@@ -108,10 +108,14 @@ REFERENCE:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 from __future__ import print_function
 
 from libc.string cimport memcmp, memcpy
-include 'data_structures_pyx.pxi' # includes bitsets
+from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
+
+from .data_structures cimport *
+include "sage/data_structures/bitset.pxi"
 
 cdef inline int agcl_cmp(int a, int b):
     if a < b: return -1
@@ -275,7 +279,7 @@ def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
     output = get_aut_gp_and_can_lab(<void *> perm, part, n, &all_children_are_equivalent_trivial, &refine_and_return_invariant_trivial, &compare_perms, 1, group, NULL, NULL)
     SC_order(output.group, 0, I.value)
     assert I == 1
-    r_inv = range(n)
+    r_inv = list(xrange(n))
     for i from 0 <= i < n:
         r_inv[output.relabeling[i]] = i
     label = [perm[r_inv[i]] for i in range(n)]

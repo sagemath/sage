@@ -164,7 +164,7 @@ class CoordinatePatch(Parent):
 
         OUTPUT:
 
-        - list - a list of coordinates on this space.
+        - list -- a list of coordinates on this space.
 
         EXAMPLES::
 

@@ -122,7 +122,7 @@ class DIMACS(SatSolver):
 
         - ``decision`` - accepted for compatibility with other solvers, ignored.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.dimacs import DIMACS
             sage: solver = DIMACS()
@@ -136,7 +136,7 @@ class DIMACS(SatSolver):
         """
         Return the number of variables.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.dimacs import DIMACS
             sage: solver = DIMACS()
@@ -163,7 +163,7 @@ class DIMACS(SatSolver):
             than the number of variables generated so far, then new
             variables are created automatically.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.dimacs import DIMACS
             sage: solver = DIMACS()
@@ -194,7 +194,7 @@ class DIMACS(SatSolver):
         - ``filename`` - if ``None`` default filename specified at initialization is used for
           writing to (default: ``None``)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.dimacs import DIMACS
             sage: fn = tmp_filename()
@@ -252,7 +252,7 @@ class DIMACS(SatSolver):
             If ``filename`` points to a writable file, then the list of original
             clauses is written to that file in DIMACS format.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.dimacs import DIMACS
             sage: fn = tmp_filename()
@@ -306,7 +306,7 @@ class DIMACS(SatSolver):
 
         - ``nlits -- the number of literals appearing in ``clauses``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.dimacs import DIMACS
             sage: fn = tmp_filename()
@@ -437,7 +437,7 @@ class RSat(DIMACS):
 
         - If this instance is UNSAT: ``False``
 
-        EXAMPLE::
+        EXAMPLES::
 
            sage: from sage.sat.boolean_polynomials import solve as solve_sat
            sage: F,s = mq.SR(1,1,1,4,gf2=True,polybori=True).polynomial_system()
@@ -484,7 +484,7 @@ class Glucose(DIMACS):
 
         - If this instance is UNSAT: ``False``
 
-        EXAMPLE::
+        EXAMPLES::
 
            sage: from sage.sat.boolean_polynomials import solve as solve_sat
            sage: F,s = mq.SR(1,1,1,4,gf2=True,polybori=True).polynomial_system()

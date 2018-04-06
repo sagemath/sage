@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
    echo >&2 "SAGE_LOCAL undefined ... exiting"
    echo >&2 "Maybe run 'sage -sh'?"
@@ -12,11 +10,6 @@ fi
 rm "$SAGE_LOCAL"/lib/libgd.*
 
 cd src
-
-# Needed to correctly pickup libiconv on FreeBSD
-if [ "$UNAME" = "FreeBSD" ] ; then
-   LDFLAGS="-L/usr/local/lib $LDFLAGS"
-fi
 
 if [ "$SAGE64" = "yes" ]; then
    CFLAGS=" -m64 -g $CFLAGS"

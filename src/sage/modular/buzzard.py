@@ -19,8 +19,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #############################################################################
 
-__doc_exclude = ['gp', '_gp', 'Gp', 'Integer', 'sage_eval']
-
 from sage.interfaces.gp import Gp
 from sage.misc.all import sage_eval
 
@@ -30,7 +28,7 @@ def gp():
     r"""
     Return a copy of the GP interpreter with the appropriate files loaded.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: sage.modular.buzzard.gp()
         PARI/GP interpreter
@@ -55,7 +53,8 @@ def gp():
 ##     or t<=-1 for the odd char sending 5 to exp(2*pi*i/p^(n-2))^(-1-t).
 ##     (so either 0<=t<2^(n-2) or -1>=t>-1-2^(n-2) )
 
-##     EXAMPLES:
+##     EXAMPLES::
+
 ##         sage: buzzard_dimension_cusp_forms('TrivialCharacter(100)', 4)
 
 ##     Next we compute a dimension for the character of level 45 which is

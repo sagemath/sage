@@ -1,5 +1,3 @@
-#!/bin/sh
-
 ## This is how I created the initial output files
 ## for i in * ; do echo $i; ( cat $i | cdd_both_reps_gmp --all > ../output/$i ) ; done
 

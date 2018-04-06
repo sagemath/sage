@@ -14,6 +14,8 @@ cdef int acb_to_ComplexIntervalFieldElement(
 cdef class ComplexBall(RingElement):
     cdef acb_t value
     cdef ComplexBall _new(self)
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
     cpdef ComplexIntervalFieldElement _complex_mpfi_(self, parent)
     cpdef RealBall real(self)
     cpdef RealBall imag(self)

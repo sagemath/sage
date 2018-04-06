@@ -239,7 +239,7 @@ class xmrange_iter:
     iterate through a tuple version. ::
 
         sage: z = xmrange_iter([list(range(3)),list(range(2))], tuple);z
-        xmrange_iter([[0, 1, 2], [0, 1]], <type 'tuple'>)
+        xmrange_iter([[0, 1, 2], [0, 1]], <... 'tuple'>)
         sage: for a in z:
         ....:     print(a)
         (0, 0)
@@ -496,7 +496,7 @@ class xmrange:
         sage: z = xmrange([3,2]);z
         xmrange([3, 2])
         sage: z = xmrange([3,2], tuple);z
-        xmrange([3, 2], <type 'tuple'>)
+        xmrange([3, 2], <... 'tuple'>)
         sage: for a in z:
         ....:     print(a)
         (0, 0)

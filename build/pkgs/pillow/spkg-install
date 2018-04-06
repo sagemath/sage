@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo "SAGE_LOCAL undefined - exiting ..."
     echo "Maybe run 'sage -sh'?"
@@ -9,11 +7,14 @@ fi
 cd src
 
 # Delete old version
-site_packages="$SAGE_LOCAL/lib/python/site-packages"
-rm -rf "$site_packages"/PIL "$site_packages"/PIL-*.egg* "$site_packages"/Pillow-*.egg*
+rm -rf \
+   "$SAGE_LOCAL"/lib/python*/site-packages/PIL \
+   "$SAGE_LOCAL"/lib/python*/site-packages/PIL-*.egg* \
+   "$SAGE_LOCAL"/lib/python*/site-packages/Pillow-*.egg*
 
 # Note: Avoid shared libraries inside egg files, Trac #19467
-python setup.py \
+sage-python23 setup.py \
+       --no-user-cfg \
        build_ext \
        --disable-jpeg \
        install \

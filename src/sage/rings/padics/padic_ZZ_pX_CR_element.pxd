@@ -9,7 +9,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
     cdef long ordp
     cdef long relprec
     # relprec = 0 if self.unit is not constructed.  This includes _exact_zeros and _inexact_zeros
-    # relprec > 0 if self.unit is constucted and self is normalized
+    # relprec > 0 if self.unit is constructed and self is normalized
     # relprec < 0 if self.unit is constructed but self is not normalized.  The actual relprec is -self.relprec
 
     cdef int _set(self, ZZ_pX_c* unit, long ordp, long relprec) except -1

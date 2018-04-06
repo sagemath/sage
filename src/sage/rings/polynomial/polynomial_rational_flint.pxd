@@ -14,6 +14,7 @@ cdef class Polynomial_rational_flint(Polynomial):
     cdef fmpq_poly_t __poly
 
     cdef Polynomial_rational_flint _new(self)
+    cpdef _mod_(self, right)
     cpdef _unsafe_mutate(self, unsigned long n, value)
     cpdef Polynomial truncate(self, long n)
 

@@ -43,6 +43,16 @@ def ncpus():
         sage: sage.parallel.ncpus.ncpus()  # random output -- depends on machine.
         2
     """
+    # Support Sage environment variable SAGE_NUM_THREADS
+    # NOTE: while doctesting, this is forced to be 2 by the
+    # sage-runtests script
+    try:
+        n = os.environ["SAGE_NUM_THREADS"]
+    except KeyError:
+        pass
+    else:
+        return int(n)
+
     #for Linux, Unix and MacOS
     if hasattr(os, "sysconf"):
         if "SC_NPROCESSORS_ONLN" in os.sysconf_names:

@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-intro-tutorial:
+
 Introductory Sage Tutorial
 ==========================
 
@@ -12,18 +14,27 @@ by NSF DUE 0817071).  It is licensed under the Creative Commons
 Attribution\-ShareAlike 3.0 license (`CC BY\-SA
 <http://creativecommons.org/licenses/by-sa/3.0/>`_).
 
-If you are unsure how to log on to a Sage server or to create a new
-worksheet, you might find the :doc:`prelude on logging in <Logging-On>`
-helpful.  Otherwise, you can continue with this tutorial, which has the
+If you are unsure how to log on to a Sage server, start using a local 
+installation, or to create a new worksheet, you might find the 
+:doc:`prelude on logging in <Logging-On>` helpful.
+
+Otherwise, you can continue with this tutorial, which has the
 following sections:
 
 - :ref:`SageCommands`
+
+  - See :ref:`SageJupyterCommands` for the Jupyter notebook
+  - See :ref:`SageNBCommands` for the legacy Sage notebook
 
 - :ref:`SageFunctions`
 
 - :ref:`SageHelp`
 
 - :ref:`SageAnnotation`
+
+  - See :ref:`JupyterAnnotation` for the Jupyter notebook
+  - See :ref:`SageNBAnnotation` for the legacy Sage notebook
+
 
 This tutorial only introduces the most basic level of functionality.
 Later tutorials address topics such as calculus, advanced plotting, and
@@ -35,6 +46,72 @@ Evaluating Sage Commands
 ------------------------
 
 .. rubric:: Or, How do I get Sage to do some math?
+
+We have two parallel subsections here which cover (roughly) the
+same content.
+
+- See :ref:`SageJupyterCommands` for the Jupyter notebook
+- See :ref:`SageNBCommands` for the legacy Sage notebook
+
+
+.. _SageJupyterCommands:
+
+Evaluating in the Jupyter notebook
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In a Jupyter worksheet, there are little boxes called *input cells* or
+*code cells*. They should be about the width of your browser.
+
+.. image:: media/BlankJupyter.png
+    :align: center
+
+To do math in a Jupyter cell, one must do two things.
+
+- First, click inside the cell so that the cell is active (i.e., has a
+  bright green border).  This was already the case in the first cell
+  above. (If it is blue, the Jupyter notebook is in "command mode").
+  Type some math in it.
+
+.. image:: media/InputJupyter.png
+    :align: center
+
+- Then, there are two options.  A not-very-evident icon that looks like
+  the "play" symbol on a recording device can be clicked:
+
+  .. image:: media/RunCellIcon.png
+      :align: center
+
+  Or one can use the keyboard shortcut of holding down the Shift key
+  while you press the Enter key.  We call this "Shift\-Enter".
+
+Sage prints out its response just below the cell (that's the ``4``
+below, so Sage confirms that :math:`2+2=4`).  Note also that Sage has
+automatically made a new cell, and made it active, after you evaluated
+your first cell.
+
+.. image:: media/OutputJupyter.png
+    :align: center
+
+To do more mathematics, just do the same thing with more cells!
+
+.. image:: media/MoreCells.png
+    :align: center
+
+Unlike in the SageNB, one has to learn a variety of keyboard shortcuts
+or click on various menu items to manipulate cells.  There is a help
+menu to get you started on this; the Jupyter developers also maintain
+`an example notebook <http://nbviewer.jupyter.org/github/ipython/ipython/blob/3.x/examples/Notebook/Index.ipynb>`_
+which may assist you.
+
+.. image:: media/JupyterHelpMenu.png
+    :align: center
+
+
+
+.. _SageNBCommands:
+
+Evaluating in the SageNB notebook
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In any Sage worksheet, there are little boxes called *input cells* or
 *code cells*. They should be about the width of your browser.
@@ -521,10 +598,73 @@ Whether one uses Sage in the classroom or in research, it is usually
 helpful to describe to the reader what is being done, such as in the
 description you are now reading.
 
+- :ref:`JupyterAnnotation`
+- :ref:`SageNBAnnotation`
+
+.. _JupyterAnnotation:
+
+Jupyter Annotation
+~~~~~~~~~~~~~~~~~~
+
+Thanks to a styling language called
+`Markdown <http://jupyter-notebook.readthedocs.io/en/latest/examples/Notebook/Working%20With%20Markdown%20Cells.html>`_
+and the TeX rendering engine called
+`MathJax <http://www.mathjax.org/>`_, you can type much
+more in Sage than just Sage commands.  This math\-aware setup makes Sage
+perfect for annotating computations.
+
+While the Jupyter notebook does not have as fully-featured a word
+processor as the SageNB, we can still do a fair amount.
+To use this functionality, we create a *Markdown cell* (as opposed to a
+*input cell* that contains Sage commands that Sage evaluates).
+
+To do this without the keyboard shortcut, there is a menu for each cell;
+select "Markdown".
+
+.. image:: media/MarkDownMenu.png
+    :align: center
+
+Now you can type in whatever you want, including mathematics using
+LaTeX.
+
+.. image:: media/MDInput.png
+    :align: center
+
+Then evaluate the cell (for instance, with "Shift\-Enter"):
+
+.. image:: media/MDOutput.png
+    :align: center
+
+Markdown supports a fair amount of basic formatting, such as bold,
+underline, basic lists, and so forth.
+
+It can be fun to type in fairly complicated math, like this:
+
+.. MATH::
+
+   \zeta(s)=\sum_{n=1}^{\infty}\frac{1}{n^s}=\prod_p \left(\frac{1}{1-p^{-s}}\right)\; .
+
+One just types things like::
+
+   $$\zeta(s)=\sum_{n=1}^{\infty}\frac{1}{n^s}=\prod_p \left(\frac{1}{1-p^{-s}}\right)$$
+
+in a Markdown cell.
+
+.. image:: media/Riemann.png
+    :align: center
+
+
+
+.. _SageNBAnnotation:
+
+SageNB Annotation
+~~~~~~~~~~~~~~~~~
+
 Thanks to `the mini\-word processor TinyMCE
 <http://tinymce.moxiecode.com/>`_ and a TeX rendering engine called
 `MathJax <http://www.mathjax.org/>`_, you can type much
-more in Sage than just Sage commands.  This math\-aware setup makes Sage
+more in the SageNB notebook worksheets
+than just Sage commands.  This math\-aware setup makes Sage
 perfect for annotating computations.
 
 To use the word processor, we create a *text cell* (as opposed to a
@@ -629,6 +769,11 @@ programming experience to do things like this, go for it!
 ::
 
     sage: html("Sage is <a style='text-decoration:line-through'>somewhat</a> <b>really</b> cool! <p style='color:red'>(It even does HTML.)</p>")
+
+.. _Conclusion:
+
+Conclusion
+----------
 
 This concludes the introductory tutorial.  Our hope is that now you can
 try finding and using simple commands and functions in Sage.  Remember,

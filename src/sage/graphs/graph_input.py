@@ -18,7 +18,8 @@ Functions
 ---------
 
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, division
+import six
 from six.moves import range
 
 
@@ -32,7 +33,7 @@ def from_graph6(G, g6_string):
 
     - ``g6_string`` -- a graph6 string
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_graph6
         sage: g = Graph()
@@ -50,7 +51,7 @@ def from_graph6(G, g6_string):
     ss = g6_string[:n]
     n, s = length_and_string_from_graph6(ss)
     m = binary_string_from_graph6(s, n)
-    expected = n*(n-1)/2 + (6 - n*(n-1)/2)%6
+    expected = n*(n-1)//2 + (6 - n*(n-1)//2)%6
     if len(m) > expected:
         raise RuntimeError("The string (%s) seems corrupt: for n = %d, the string is too long."%(ss,n))
     elif len(m) < expected:
@@ -73,7 +74,7 @@ def from_sparse6(G, g6_string):
 
     - ``g6_string`` -- a sparse6 string
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_sparse6
         sage: g = Graph()
@@ -82,8 +83,7 @@ def from_sparse6(G, g6_string):
         True
     """
     from .generic_graph_pyx import length_and_string_from_graph6, int_to_binary_string
-    from math import ceil, floor
-    from sage.misc.functional import log
+    from math import floor
     n = g6_string.find('\n')
     if n == -1:
         n = len(g6_string)
@@ -92,14 +92,15 @@ def from_sparse6(G, g6_string):
     if n == 0:
         edges = []
     else:
-        k = int(ceil(log(n,2)))
+        from sage.rings.integer_ring import ZZ
+        k = int((ZZ(n) - 1).nbits())
         ords = [ord(i) for i in s]
         if any(o > 126 or o < 63 for o in ords):
             raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in range(63,127)]))
         bits = ''.join([int_to_binary_string(o-63).zfill(6) for o in ords])
         b = []
         x = []
-        for i in range(int(floor(len(bits)/(k+1)))):
+        for i in range(len(bits)//(k+1)):
             b.append(int(bits[(k+1)*i:(k+1)*i+1],2))
             x.append(int(bits[(k+1)*i+1:(k+1)*i+k+1],2))
         v = 0
@@ -125,7 +126,7 @@ def from_dig6(G, dig6_string):
 
     - ``dig6_string`` -- a dig6 string
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_dig6
         sage: g = DiGraph()
@@ -165,7 +166,7 @@ def from_seidel_adjacency_matrix(G, M):
 
     - ``M`` -- a Seidel adjacency matrix
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_seidel_adjacency_matrix
         sage: g = Graph()
@@ -218,7 +219,7 @@ def from_adjacency_matrix(G, M, loops=False, multiedges=False, weighted=False):
     - ``loops``, ``multiedges``, ``weighted`` (booleans) -- whether to consider
       the graph as having loops, multiple edges, or weights. Set to ``False`` by default.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_adjacency_matrix
         sage: g = Graph()
@@ -299,7 +300,7 @@ def from_incidence_matrix(G, M, loops=False, multiedges=False, weighted=False):
     - ``loops``, ``multiedges``, ``weighted`` (booleans) -- whether to consider
       the graph as having loops, multiple edges, or weights. Set to ``False`` by default.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_incidence_matrix
         sage: g = Graph()
@@ -361,13 +362,22 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
     - ``loops``, ``multiedges``, ``weighted`` (booleans) -- whether to consider
       the graph as having loops, multiple edges, or weights. Set to ``False`` by default.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_oriented_incidence_matrix
         sage: g = DiGraph()
         sage: from_oriented_incidence_matrix(g, digraphs.Circuit(10).incidence_matrix())
         sage: g.is_isomorphic(digraphs.Circuit(10))
         True
+
+    TESTS:
+
+    Fix bug reported in :trac:`22985`::
+
+        sage: DiGraph(matrix ([[1,0,0,1],[0,0,1,1],[0,0,1,1]]).transpose())
+        Traceback (most recent call last):
+        ...
+        ValueError: each column represents an edge: -1 goes to 1
     """
     from sage.matrix.matrix import is_Matrix
     assert is_Matrix(M)
@@ -379,8 +389,7 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
             raise ValueError("There must be two nonzero entries (-1 & 1) per column.")
         L = sorted(set(c.list()))
         if L != [-1,0,1]:
-            msg += "Each column represents an edge: -1 goes to 1."
-            raise ValueError(msg)
+            raise ValueError("each column represents an edge: -1 goes to 1")
         if c[NZ[0]] == -1:
             positions.append(tuple(NZ))
         else:
@@ -410,7 +419,7 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
     - ``convert_empty_dict_labels_to_None`` (boolean) -- whether to adjust for
       empty dicts instead of None in NetworkX default edge labels.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_dict_of_dicts
         sage: g = Graph()
@@ -421,9 +430,9 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
     if not all(isinstance(M[u], dict) for u in M):
         raise ValueError("Input dict must be a consistent format.")
 
-    if not loops and any(u in neighb for u,neighb in M.iteritems()):
+    if not loops and any(u in neighb for u,neighb in six.iteritems(M)):
         if loops is False:
-            u = next(u for u,neighb in M.iteritems() if u in neighb)
+            u = next(u for u,neighb in six.iteritems(M) if u in neighb)
             raise ValueError("The graph was built with loops=False but input M has a loop at {}.".format(u))
         loops = True
     if loops is None:
@@ -479,7 +488,7 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
     - ``loops``, ``multiedges``, ``weighted`` (booleans) -- whether to consider
       the graph as having loops, multiple edges, or weights. Set to ``False`` by default.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_dict_of_lists
         sage: g = Graph()
@@ -494,7 +503,7 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
                 if loops is None:
                     loops = True
                 elif loops is False:
-                    u = next(u for u,neighb in D.iteritems() if u in neighb)
+                    u = next(u for u,neighb in six.iteritems(D) if u in neighb)
                     raise ValueError("The graph was built with loops=False but input D has a loop at {}.".format(u))
                 break
         if loops is None:

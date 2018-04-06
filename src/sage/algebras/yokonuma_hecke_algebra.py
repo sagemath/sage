@@ -61,7 +61,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
     When we specialize `q = \pm 1`, we obtain the group algebra of
     the complex reflection group `G(d, 1, n) = (\ZZ / d\ZZ) \wr S_n`.
     Moreover for `d = 1`, the Yokonuma-Hecke algebra is equal to the
-    :class`Iwahori-Hecke <IwahoriHeckeAlgebra>` of type `A_{n-1}`.
+    :class:`Iwahori-Hecke <IwahoriHeckeAlgebra>` of type `A_{n-1}`.
 
     INPUT:
 

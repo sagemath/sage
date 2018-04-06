@@ -212,17 +212,17 @@ class Lseries_ell(SageObject):
 
         INPUT:
 
-        -   n -- integer
+        - n -- integer
 
-        -   prec -- integer
+        - prec -- integer
 
-        -   d -- integer
+        - d -- integer
 
         OUTPUT:
 
         - a string, exactly as output by sympow
 
-        .. note ::
+        .. NOTE::
 
             To use this function you may have to run a few commands
             like ``sympow('-new_data 1d2')``, each which takes a few
@@ -374,7 +374,7 @@ class Lseries_ell(SageObject):
 
             sage: E = EllipticCurve('37a')
             sage: vals = E.lseries().twist_values(1, -12, -4)
-            sage: vals  # abs tol 1e-17
+            sage: vals  # abs tol 1e-15
             [(-11, 1.47824342), (-8, 8.9590946e-18), (-7, 1.85307619), (-4, 2.45138938)]
             sage: F = E.quadratic_twist(-8)
             sage: F.rank()

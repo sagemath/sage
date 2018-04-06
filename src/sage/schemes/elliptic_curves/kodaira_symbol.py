@@ -61,9 +61,12 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.structure.sage_object import SageObject
+from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.integer import Integer
 import weakref
 
+
+@richcmp_method
 class KodairaSymbol_class(SageObject):
     r"""
     Class to hold a Kodaira symbol of an elliptic curve over a
@@ -231,7 +234,7 @@ class KodairaSymbol_class(SageObject):
         """
         return self._latex
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
         Standard comparison function for Kodaira Symbols.
 
@@ -272,14 +275,13 @@ class KodairaSymbol_class(SageObject):
             III*,
             IV,
             IV*]
-
         """
         if isinstance(other, KodairaSymbol_class):
             if (self._n == "generic" and not other._n is None) or (other._n == "generic" and not self._n is None):
-                return cmp(self._starred, other._starred)
-            return cmp(self._str, other._str)
+                return richcmp(self._starred, other._starred, op)
+            return richcmp(self._str, other._str, op)
         else:
-            return cmp(type(self), type(other))
+            return NotImplemented
 
     def _pari_code(self):
         """

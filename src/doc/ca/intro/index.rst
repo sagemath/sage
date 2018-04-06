@@ -495,7 +495,7 @@ repetim els primers exemples::
     sage: len(solutions)
     2
     sage: type(solutions[0])
-    <type 'dict'>
+    <... 'dict'>
     sage: for sol in solutions: print((sol[x].n(digits=3), sol[y].n(digits=3)))
     (5.00 - 5.59*I, 5.00 + 5.59*I)
     (5.00 + 5.59*I, 5.00 - 5.59*I)

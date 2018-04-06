@@ -20,6 +20,9 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 
+from cysignals.memory cimport sig_malloc, sig_free
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.numerical.mip import MIPSolverException
 from sage.libs.glpk.error import GLPKError
@@ -28,8 +31,6 @@ from sage.libs.glpk.lp cimport *
 from libc.float cimport DBL_MAX
 from libc.limits cimport INT_MAX
 
-include "cysignals/memory.pxi"
-include "cysignals/signals.pxi"
 
 cdef class GLPKBackend(GenericBackend):
 
@@ -48,7 +49,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         Constructor
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(solver="GLPK")
         """
@@ -96,7 +97,7 @@ cdef class GLPKBackend(GenericBackend):
 
         OUTPUT: The index of the newly created variable
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -176,7 +177,7 @@ cdef class GLPKBackend(GenericBackend):
 
         OUTPUT: The index of the variable created last.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -247,7 +248,7 @@ cdef class GLPKBackend(GenericBackend):
             *  0  Binary
             * -1 Real
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -280,7 +281,7 @@ cdef class GLPKBackend(GenericBackend):
             * +1 => Maximization
             * -1 => Minimization
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -306,7 +307,7 @@ cdef class GLPKBackend(GenericBackend):
         - ``coeff`` (double) -- its coefficient or ``None`` for
           reading (default: ``None``)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -332,7 +333,7 @@ cdef class GLPKBackend(GenericBackend):
         - ``name`` (``char *``) -- the problem's name. When set to
           ``NULL`` (default), the method returns the problem's name.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -365,7 +366,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -392,12 +393,45 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``level`` (integer) -- From 0 (no verbosity) to 3.
 
-        EXAMPLE::
+        EXAMPLES::
 
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "GLPK")
-            sage: p.set_verbosity(2)
+            sage: p.<x> = MixedIntegerLinearProgram(solver="GLPK")
+            sage: p.add_constraint(10 * x[0] <= 1)
+            sage: p.add_constraint(5 * x[1] <= 1)
+            sage: p.set_objective(x[0] + x[1])
+            sage: p.solve()
+            0.30000000000000004
+            sage: p.get_backend().set_verbosity(3)
+            sage: p.solve()
+            GLPK Integer Optimizer, v4.63
+            2 rows, 2 columns, 2 non-zeros
+            0 integer variables, none of which are binary
+            Preprocessing...
+            Objective value =   3.000000000e-01
+            INTEGER OPTIMAL SOLUTION FOUND BY MIP PREPROCESSOR
+            0.30000000000000004
 
+        ::
+
+            sage: p.<x> = MixedIntegerLinearProgram(solver="GLPK/exact")
+            sage: p.add_constraint(10 * x[0] <= 1)
+            sage: p.add_constraint(5 * x[1] <= 1)
+            sage: p.set_objective(x[0] + x[1])
+            sage: p.solve()
+            0.3
+            sage: p.get_backend().set_verbosity(2)
+            sage: p.solve()
+            *     2:   objval =                    0.3   (0)
+            *     2:   objval =                    0.3   (0)
+            0.3
+            sage: p.get_backend().set_verbosity(3)
+            sage: p.solve()
+            glp_exact: 2 rows, 2 columns, 2 non-zeros
+            GNU MP bignum library is being used
+            *     2:   objval =                    0.3   (0)
+            *     2:   objval =                    0.3   (0)
+            OPTIMAL SOLUTION FOUND
+            0.3
         """
         if level == 0:
             self.iocp.msg_lev = GLP_MSG_OFF
@@ -420,7 +454,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``i`` -- index of the constraint to remove
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: x, y = p['x'], p['y']
@@ -459,7 +493,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``constraints`` -- an iterable containing the indices of the rows to remove.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: x, y = p['x'], p['y']
@@ -544,7 +578,7 @@ cdef class GLPKBackend(GenericBackend):
             Traceback (most recent call last):
             ...
             GLPKError: glp_set_mat_row: i = 1; len = 1; invalid row length
-            Error detected in file glpapi01.c at line ...
+            Error detected in file api/prob1.c at line ...
         """
         if lower_bound is None and upper_bound is None:
             raise ValueError("At least one of 'upper_bound' or 'lower_bound' must be set.")
@@ -596,7 +630,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``names`` - an optional list of names (default: ``None``)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -644,7 +678,7 @@ cdef class GLPKBackend(GenericBackend):
         associates their coefficient on the model of the
         ``add_linear_constraint`` method.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -685,7 +719,7 @@ cdef class GLPKBackend(GenericBackend):
         to ``None`` if the constraint is not bounded in the
         corresponding direction, and is a real value otherwise.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -722,7 +756,7 @@ cdef class GLPKBackend(GenericBackend):
         to ``None`` if the variable is not bounded in the
         corresponding direction, and is a real value otherwise.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -767,7 +801,7 @@ cdef class GLPKBackend(GenericBackend):
             ``indices`` and ``coeffs`` are expected to be of the same
             length.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -810,7 +844,7 @@ cdef class GLPKBackend(GenericBackend):
         (If all variables are continuous, the algorithm reduces to solving the
         linear program by the simplex method.)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: lp = MixedIntegerLinearProgram(solver = 'GLPK', maximization = False)
             sage: x, y = lp[0], lp[1]
@@ -831,7 +865,7 @@ cdef class GLPKBackend(GenericBackend):
             the solution can not be computed for any reason (none
             exists, or the LP solver was not able to find it, etc...)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -857,7 +891,7 @@ cdef class GLPKBackend(GenericBackend):
             Thus, if you suspect that your system is infeasible,
             set the ``preprocessing`` option first.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: lp = MixedIntegerLinearProgram(solver = "GLPK")
             sage: v = lp.new_variable(nonnegative=True)
@@ -880,7 +914,7 @@ cdef class GLPKBackend(GenericBackend):
         If we switch to "simplex_only", the integrality constraints are ignored,
         and we get an optimal solution to the continuous relaxation.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: lp = MixedIntegerLinearProgram(solver = 'GLPK', maximization = False)
             sage: x, y = lp[0], lp[1]
@@ -905,15 +939,10 @@ cdef class GLPKBackend(GenericBackend):
         reconstructs rationals from doubles and also provides results
         as doubles.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: lp.solver_parameter("simplex_or_intopt", "exact_simplex_only") # use exact simplex only
             sage: lp.solve()
-            glp_exact: 3 rows, 2 columns, 6 non-zeros
-            GNU MP bignum library is being used
-            *     2:   objval =                      2   (0)
-            *     2:   objval =                      2   (0)
-            OPTIMAL SOLUTION FOUND
             2.0
             sage: lp.get_values([x, y])
             [1.5, 0.5]
@@ -925,7 +954,7 @@ cdef class GLPKBackend(GenericBackend):
         Calculating the corresponding basic solution is left as an
         exercise.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: lp.get_backend().get_row_stat(0)
             1
@@ -937,7 +966,7 @@ cdef class GLPKBackend(GenericBackend):
         rational reconstruction done by ``glp_exact`` and the subsequent
         conversion to double-precision floating point numbers.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: lp = MixedIntegerLinearProgram(solver = 'GLPK', maximization = True)
             sage: test = 2^53 - 43
@@ -946,11 +975,6 @@ cdef class GLPKBackend(GenericBackend):
             sage: lp.add_constraint(x <= test)
             sage: lp.set_objective(x)
             sage: lp.solve() == test # yes, we want an exact comparison here
-            glp_exact: 1 rows, 1 columns, 1 non-zeros
-            GNU MP bignum library is being used
-            *     0:   objval =                      0   (0)
-            *     1:   objval =   9.00719925474095e+15   (0)
-            OPTIMAL SOLUTION FOUND
             True
             sage: lp.get_values(x) == test # yes, we want an exact comparison here
             True
@@ -1051,7 +1075,7 @@ cdef class GLPKBackend(GenericBackend):
 
            Behaviour is undefined unless ``solve`` has been called before.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1089,7 +1113,7 @@ cdef class GLPKBackend(GenericBackend):
 
            Has no meaning unless ``solve`` has been called before.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: g = graphs.CubeGraph(9)
             sage: p = MixedIntegerLinearProgram(solver="GLPK")
@@ -1123,7 +1147,7 @@ cdef class GLPKBackend(GenericBackend):
 
            Has no meaning unless ``solve`` has been called before.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: g = graphs.CubeGraph(9)
             sage: p = MixedIntegerLinearProgram(solver="GLPK")
@@ -1157,7 +1181,7 @@ cdef class GLPKBackend(GenericBackend):
 
            Behaviour is undefined unless ``solve`` has been called before.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1188,7 +1212,7 @@ cdef class GLPKBackend(GenericBackend):
 
            Behaviour is undefined unless ``solve`` has been called before.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: lp = get_solver(solver = "GLPK")
@@ -1217,7 +1241,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         Return the number of columns/variables.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1234,7 +1258,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         Return the number of rows/constraints.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1255,7 +1279,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``index`` (integer) -- the col's id
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1282,7 +1306,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``index`` (integer) -- the row's id
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1308,7 +1332,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``index`` (integer) -- the variable's id
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1331,7 +1355,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``index`` (integer) -- the variable's id
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1353,7 +1377,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``index`` (integer) -- the variable's id
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1374,7 +1398,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         Test whether the problem is a maximization
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1399,7 +1423,7 @@ cdef class GLPKBackend(GenericBackend):
           variable has not upper bound. When set to ``False``
           (default), the method returns the current value.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1489,7 +1513,7 @@ cdef class GLPKBackend(GenericBackend):
           variable has not lower bound. When set to ``False``
           (default), the method returns the current value.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1576,7 +1600,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``filename`` (string)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1598,7 +1622,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``filename`` (string)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1616,7 +1640,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         Returns a copy of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = MixedIntegerLinearProgram(solver = "GLPK")
@@ -1848,7 +1872,7 @@ cdef class GLPKBackend(GenericBackend):
 
             To date, no attempt has been made to expose the interior point methods.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -1868,7 +1892,7 @@ cdef class GLPKBackend(GenericBackend):
         but you can switch to the standard simplex algorithm through the
         ``glp_simplex_or_intopt`` parameter.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: lp = MixedIntegerLinearProgram(solver = 'GLPK', maximization = False)
             sage: x, y = lp[0], lp[1]
@@ -2094,7 +2118,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``index`` (integer) -- the variable's id
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(maximization=True,\
                                                 solver="GLPK")
@@ -2124,7 +2148,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``index`` (integer) -- the variable's id
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(maximization=True,\
                                                 solver="GLPK")
@@ -2155,7 +2179,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``index`` (integer) -- the variable's id
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(maximization=True,\
                                                 solver="GLPK")
@@ -2186,7 +2210,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``index`` (integer) -- the variable's id
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(maximization=True,\
                                                 solver="GLPK")
@@ -2228,7 +2252,7 @@ cdef class GLPKBackend(GenericBackend):
             for the lp using the simplex algorithm. In all other cases an error
             message is printed.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -2315,7 +2339,7 @@ cdef class GLPKBackend(GenericBackend):
            If the simplex algorithm has not been used for solving 0.0 will
            be returned.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: lp = get_solver(solver = "GLPK")
@@ -2361,7 +2385,7 @@ cdef class GLPKBackend(GenericBackend):
            0.0 will be returned.
 
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "GLPK")
@@ -2384,7 +2408,7 @@ cdef class GLPKBackend(GenericBackend):
         else:
             return 0.0
 
-    cpdef int get_row_stat(self, int i):
+    cpdef int get_row_stat(self, int i) except? -1:
         """
         Retrieve the status of a constraint.
 
@@ -2402,7 +2426,7 @@ cdef class GLPKBackend(GenericBackend):
             * GLP_NF = 4     non-basic free (unbounded) variable
             * GLP_NS = 5     non-basic fixed variable
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: lp = get_solver(solver = "GLPK")
@@ -2421,14 +2445,15 @@ cdef class GLPKBackend(GenericBackend):
             sage: lp.get_row_stat(1)
             3
             sage: lp.get_row_stat(-1)
-            Exception ValueError: ...
-            0
+            Traceback (most recent call last):
+            ...
+            ValueError: The constraint's index i must satisfy 0 <= i < number_of_constraints
         """
         if i < 0 or i >= glp_get_num_rows(self.lp):
             raise ValueError("The constraint's index i must satisfy 0 <= i < number_of_constraints")
         return glp_get_row_stat(self.lp, i+1)
 
-    cpdef int get_col_stat(self, int j):
+    cpdef int get_col_stat(self, int j) except? -1:
         """
         Retrieve the status of a variable.
 
@@ -2446,7 +2471,7 @@ cdef class GLPKBackend(GenericBackend):
             * GLP_NF = 4     non-basic free (unbounded) variable
             * GLP_NS = 5     non-basic fixed variable
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: lp = get_solver(solver = "GLPK")
@@ -2464,9 +2489,10 @@ cdef class GLPKBackend(GenericBackend):
             1
             sage: lp.get_col_stat(1)
             2
-            sage: lp.get_col_stat(-1)
-            Exception ValueError: ...
-            0
+            sage: lp.get_col_stat(100)
+            Traceback (most recent call last):
+            ...
+            ValueError: The variable's index j must satisfy 0 <= j < number_of_variables
         """
         if j < 0 or j >= glp_get_num_cols(self.lp):
             raise ValueError("The variable's index j must satisfy 0 <= j < number_of_variables")
@@ -2483,7 +2509,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``stat`` -- The status to set to
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: lp = get_solver(solver = "GLPK")
@@ -2518,7 +2544,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``stat`` -- The status to set to
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: lp = get_solver(solver = "GLPK")
@@ -2556,7 +2582,7 @@ cdef class GLPKBackend(GenericBackend):
             * GLP_ESING     The basis matrix is singular within the working precision.
             * GLP_ECOND     The basis matrix is ill-conditioned.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: lp = get_solver(solver = "GLPK")
@@ -2616,7 +2642,7 @@ cdef class GLPKBackend(GenericBackend):
             Elements in ``indices`` have the same sense as index ``k``.
             All these variables are non-basic by definition.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: lp = get_solver(solver = "GLPK")
@@ -2708,7 +2734,7 @@ cdef class GLPKBackend(GenericBackend):
             Elements in ``indices`` have the same sense as index `k`.
             All these variables are basic by definition.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: lp = get_solver(solver = "GLPK")

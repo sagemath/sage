@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
     exit 1
@@ -85,6 +83,11 @@ else
     # for the shared one we also build, which then will be used by Sage.
     echo "Not adding '-fPIC' since we also build a shared library Sage will link"
     echo "to, or '--with-pic' was given in ECM_CONFIGURE."
+fi
+
+if [ "$UNAME" == "CYGWIN" ]; then
+    # Force shared library build only on Cygwin; it will not build otherwise
+    ECM_CONFIGURE="$ECM_CONFIGURE --enable-shared --disable-static"
 fi
 
 

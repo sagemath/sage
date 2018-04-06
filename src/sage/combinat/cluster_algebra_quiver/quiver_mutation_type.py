@@ -300,9 +300,7 @@ Background on generalized Cartan types can be found at
 
         :wikipedia:`Generalized_Cartan_matrix`
 
-For the compendium on the cluster algebra and quiver package in Sage see
-
-        :arxiv:`1102.4844`
+For the compendium on the cluster algebra and quiver package in Sage see [MS2011]_
 
 A `B`-matrix is a skew-symmetrizable `( n \times n )`-matrix `M`.
 I.e., there exists an invertible diagonal matrix `D` such that `DM` is
@@ -405,7 +403,7 @@ REFERENCES:
 
 - A good reference for the skew-symmetrizable elliptic diagrams is
   "Cluster algebras of finite mutation type via unfolding" by
-  A. Felikson, M. Shapiro, and P. Tumarkin, :arxiv:`1006.4276v4`.
+  A. Felikson, M. Shapiro, and P. Tumarkin, [FST2012]_.
 
 EXAMPLES:
 
@@ -799,7 +797,7 @@ class QuiverMutationType_abstract(UniqueRepresentation,SageObject):
             [ 0  0  0 -1  0 -1]
             [ 0  0  0  0  2  0]
         """
-        return _edge_list_to_matrix(self._digraph.edges(), self._rank, 0)
+        return _edge_list_to_matrix(self._digraph.edges(), list(range(self._rank)), [])
 
     @cached_method
     def standard_quiver(self):
@@ -2405,30 +2403,41 @@ def _mutation_type_error(data):
     raise ValueError(return_str)
 
 
-def _edge_list_to_matrix(edges, n, m):
-    """
+def _edge_list_to_matrix(edges, nlist, mlist):
+    r"""
     Return the matrix obtained from the edge list of a quiver.
 
     INPUT:
 
-    - ``edges``: the list of edges.
-
-    - ``n``: the number of mutable vertices of the quiver.
-
-    - ``m``: the number of frozen vertices of the quiver.
+    - ``edges`` -- the list of edges
+    - ``nlist`` -- the list of mutable vertices of the quiver
+    - ``mlist`` -- the list of frozen vertices of the quiver
 
     OUTPUT:
 
-    - An `(n+m) \times n` matrix corresponding to the edge-list.
+    An `(n+m) \times n` matrix corresponding to the edge-list.
 
     EXAMPLES::
 
         sage: from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import _edge_list_to_matrix
         sage: G = QuiverMutationType(['A',2])._digraph
-        sage: _edge_list_to_matrix(G.edges(),2,0)
+        sage: _edge_list_to_matrix(G.edges(), [0,1], [])
         [ 0  1]
         [-1  0]
+
+        sage: G2 = DiGraph([('a', 'b', 1)])
+        sage: _edge_list_to_matrix(G2.edges(), ['a', 'b'], [])
+        [ 0  1]
+        [-1  0]
+
+        sage: G3 = DiGraph([('a', 'b', 1), ('b', 'c', 1)])
+        sage: _edge_list_to_matrix(G3.edges(), ['a', 'b'], ['c'])
+        [ 0  1]
+        [-1  0]
+        [ 0 -1]
     """
+    n = len(nlist); m = len(mlist)
+    nmlist = nlist + mlist
     M = matrix(ZZ, n + m, n, sparse=True)
     for edge in edges:
         if edge[2] is None:
@@ -2436,8 +2445,9 @@ def _edge_list_to_matrix(edges, n, m):
         elif edge[2] in ZZ:
             edge = (edge[0], edge[1], (edge[2], -edge[2]))
         v1, v2, (a, b) = edge
-        if v1 < n:
-            M[v2, v1] = b
-        if v2 < n:
-            M[v1, v2] = a
+        if v1 in nlist:
+            M[nmlist.index(v2), nmlist.index(v1)] = b
+        if v2 in nlist:
+            M[nmlist.index(v1), nmlist.index(v2)] = a
     return M
+

@@ -33,7 +33,7 @@ When you do arithmetic with::
 
 TESTS:
 
-The arguments in the definition must be symbolic variables #10747::
+The arguments in the definition must be symbolic variables (:trac:`10747`)::
 
     sage: f(1)=2
     Traceback (most recent call last):

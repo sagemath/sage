@@ -9,22 +9,23 @@ Library interface to Embeddable Common Lisp (ECL)
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 #This version of the library interface prefers to convert ECL integers and
 #rationals to SAGE types Integer and Rational. These parts could easily be
 #adapted to work with pure Python types.
 
-include "cysignals/signals.pxi"
-include "sage/ext/cdefs.pxi"
-
 from libc.stdlib cimport abort
 from libc.signal cimport SIGINT, SIGBUS, SIGSEGV, SIGCHLD
 from libc.signal cimport raise_ as signal_raise
 from posix.signal cimport sigaction, sigaction_t
+cimport cysignals.signals
 
+from sage.libs.gmp.types cimport mpz_t
+from sage.misc.misc import ECL_TMP
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
+from cpython.object cimport Py_EQ, Py_NE
 
 #it would be preferrable to let bint_symbolp wrap an efficient macro
 #but the macro provided in object.h doesn't seem to work
@@ -280,6 +281,11 @@ def init_ecl():
     list_of_objects=cl_cons(Cnil,cl_cons(Cnil,Cnil))
     cl_set(string_to_object("*SAGE-LIST-OF-OBJECTS*"),list_of_objects)
 
+    cl_eval(string_to_object("""
+        (setf (logical-pathname-translations "TMP")
+              '(("**;*.*" "%s/**/*.*")))
+        """ % ECL_TMP))
+
     # We define our own error catching eval, apply and funcall/
     # Presently these routines are only converted to byte-code. If they
     # ever turn out to be a bottle neck, it should be easy to properly
@@ -384,7 +390,7 @@ def shutdown_ecl():
     that no ECL objects exist at a particular time. Hence, destroying ECL is a
     risky proposition.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.ecl import *
         sage: shutdown_ecl()
@@ -404,7 +410,7 @@ def print_objects():
     small integers do not get linked in. This routine prints the values
     currently stored.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.ecl import *
         sage: a=EclObject("hello")
@@ -818,13 +824,13 @@ cdef class EclObject:
             sage: EclObject("<")(a,b)
             <ECL: T>
         """
-        if   op == 2: # "=="
-            if not(isinstance(left,EclObject)) or not(isinstance(right,EclObject)):
+        if op == Py_EQ:
+            if not(isinstance(left,EclObject) and isinstance(right,EclObject)):
                 return False
             else:
                 return bint_equal((<EclObject>left).obj,(<EclObject>right).obj)
-        elif op == 3: # "!="
-            if not(isinstance(left,EclObject)) or not(isinstance(right,EclObject)):
+        elif op == Py_NE:
+            if not(isinstance(left,EclObject) and isinstance(right,EclObject)):
                 return True
             else:
                 return not(bint_equal((<EclObject>left).obj,(<EclObject>right).obj))

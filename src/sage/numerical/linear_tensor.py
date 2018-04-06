@@ -337,7 +337,7 @@ class LinearTensorParent_class(Parent):
 
         OUTPUT:
 
-        A :meth:`free_module`` element.
+        A :meth:`free_module` element.
 
         EXAMPLES::
 

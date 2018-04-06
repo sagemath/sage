@@ -13,6 +13,9 @@ just raise ``NotImplemented``.
 
 from sage.libs.all import libgap
 from sage.misc.cachefunc import cached_method
+from sage.groups.class_function import ClassFunction_libgap
+from sage.misc.superseded import deprecated_function_alias
+
 
 class GroupMixinLibGAP(object):
 
@@ -102,7 +105,7 @@ class GroupMixinLibGAP(object):
     order = cardinality
 
     @cached_method
-    def conjugacy_class_representatives(self):
+    def conjugacy_classes_representatives(self):
         """
         Return a set of representatives for each of the conjugacy classes
         of the group.
@@ -110,22 +113,34 @@ class GroupMixinLibGAP(object):
         EXAMPLES::
 
             sage: G = SU(3,GF(2))
-            sage: len(G.conjugacy_class_representatives())
+            sage: len(G.conjugacy_classes_representatives())
             16
 
             sage: G = GL(2,GF(3))
-            sage: G.conjugacy_class_representatives()
+            sage: G.conjugacy_classes_representatives()
             (
             [1 0]  [0 2]  [2 0]  [0 2]  [0 2]  [0 1]  [0 1]  [2 0]
             [0 1], [1 1], [0 2], [1 2], [1 0], [1 2], [1 1], [0 1]
             )
 
-            sage: len(GU(2,GF(5)).conjugacy_class_representatives())
+            sage: len(GU(2,GF(5)).conjugacy_classes_representatives())
             36
+
+        ::
+
+            sage: GL(2,ZZ).conjugacy_classes_representatives()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for finite groups
+
         """
+        if not self.is_finite():
+            raise NotImplementedError("only implemented for finite groups")
         G = self.gap()
         reps = [ cc.Representative() for cc in G.ConjugacyClasses() ]
         return tuple(self(g) for g in reps)
+
+    conjugacy_class_representatives = deprecated_function_alias(22783, conjugacy_classes_representatives)
 
     def conjugacy_classes(self):
         r"""
@@ -141,9 +156,18 @@ class GroupMixinLibGAP(object):
              [1 0] in Special Linear Group of degree 2 over Finite Field of size 2,
              Conjugacy class of [0 1]
              [1 1] in Special Linear Group of degree 2 over Finite Field of size 2)
+
+        ::
+
+            sage: GL(2,ZZ).conjugacy_classes()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for finite groups
         """
+        if not self.is_finite():
+            raise NotImplementedError("only implemented for finite groups")
         from sage.groups.conjugacy_classes import ConjugacyClassGAP
-        return tuple(ConjugacyClassGAP(self, self(g)) for g in self.conjugacy_class_representatives())
+        return tuple(ConjugacyClassGAP(self, self(g)) for g in self.conjugacy_classes_representatives())
 
     def conjugacy_class(self, g):
         r"""
@@ -271,7 +295,7 @@ class GroupMixinLibGAP(object):
     @cached_method
     def irreducible_characters(self):
         """
-        Returns the irreducible characters of the group.
+        Return the irreducible characters of the group.
 
         OUTPUT:
 
@@ -284,13 +308,122 @@ class GroupMixinLibGAP(object):
             (Character of General Linear Group of degree 2 over Finite Field of size 2,
              Character of General Linear Group of degree 2 over Finite Field of size 2,
              Character of General Linear Group of degree 2 over Finite Field of size 2)
+
+        ::
+
+            sage: GL(2,ZZ).irreducible_characters()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for finite groups
         """
+        if not self.is_finite():
+            raise NotImplementedError("only implemented for finite groups")
         Irr = self.gap().Irr()
         L = []
-        from sage.groups.class_function import ClassFunction_libgap
         for irr in Irr:
             L.append(ClassFunction_libgap(self, irr))
         return tuple(L)
+
+    def character(self, values):
+        r"""
+        Returns a group character from ``values``, where ``values`` is
+        a list of the values of the character evaluated on the conjugacy
+        classes.
+
+        INPUT:
+
+        - ``values`` -- a list of values of the character
+
+        OUTPUT: a group character
+
+        EXAMPLES::
+
+            sage: G = MatrixGroup(AlternatingGroup(4))
+            sage: G.character([1]*len(G.conjugacy_classes_representatives()))
+            Character of Matrix group over Integer Ring with 12 generators
+
+        ::
+
+            sage: G = GL(2,ZZ)
+            sage: G.character([1,1,1,1])
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for finite groups
+        """
+        if not self.is_finite():
+            raise NotImplementedError("only implemented for finite groups")
+        return ClassFunction_libgap(self, values)
+
+    def trivial_character(self):
+        r"""
+        Returns the trivial character of this group.
+
+        OUTPUT: a group character
+
+        EXAMPLES::
+
+            sage: MatrixGroup(SymmetricGroup(3)).trivial_character()
+            Character of Matrix group over Integer Ring with 6 generators
+
+        ::
+
+            sage: GL(2,ZZ).trivial_character()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for finite groups
+        """
+        if not self.is_finite():
+            raise NotImplementedError("only implemented for finite groups")
+        values = [1]*self._gap_().NrConjugacyClasses().sage()
+        return self.character(values)
+
+    def character_table(self):
+        r"""
+        Returns the matrix of values of the irreducible characters of this
+        group `G` at its conjugacy classes.
+
+        The columns represent the conjugacy classes of
+        `G` and the rows represent the different irreducible
+        characters in the ordering given by GAP.
+
+        OUTPUT: a matrix defined over a cyclotomic field
+
+        EXAMPLES::
+
+            sage: MatrixGroup(SymmetricGroup(2)).character_table()
+            [ 1 -1]
+            [ 1  1]
+            sage: MatrixGroup(SymmetricGroup(3)).character_table()
+            [ 1  1 -1]
+            [ 2 -1  0]
+            [ 1  1  1]
+            sage: MatrixGroup(SymmetricGroup(5)).character_table()
+            [ 1  1  1  1  1  1  1]
+            [ 1 -1 -1  1 -1  1  1]
+            [ 4  0  1 -1 -2  1  0]
+            [ 4  0 -1 -1  2  1  0]
+            [ 5 -1  1  0  1 -1  1]
+            [ 5  1 -1  0 -1 -1  1]
+            [ 6  0  0  1  0  0 -2]
+        """
+        #code from function in permgroup.py, but modified for
+        #how gap handles these groups.
+        G    = self._gap_()
+        cl   = self.conjugacy_classes()
+        from sage.rings.all import Integer
+        n    = Integer(len(cl))
+        irrG = G.Irr()
+        ct   = [[irrG[i][j] for j in range(n)] for i in range(n)]
+
+        from sage.rings.all import CyclotomicField
+        e = irrG.Flat().Conductor()
+        K = CyclotomicField(e)
+        ct = [[K(x) for x in v] for v in ct]
+
+        # Finally return the result as a matrix.
+        from sage.matrix.all import MatrixSpace
+        MS = MatrixSpace(K, n)
+        return MS(ct)
 
     def random_element(self):
         """
@@ -388,8 +521,8 @@ class GroupMixinLibGAP(object):
             24
             sage: v[:5]
             (
-            [1 0]  [2 0]  [0 1]  [0 2]  [1 2]
-            [0 1], [0 2], [2 0], [1 0], [2 2]
+            [0 1]  [0 1]  [0 1]  [0 2]  [0 2]
+            [2 0], [2 1], [2 2], [1 0], [1 1]
             )
             sage: all(g in G for g in G.list())
             True
@@ -402,12 +535,12 @@ class GroupMixinLibGAP(object):
             sage: MG = MatrixGroup([M1, M2, M3])
             sage: MG.list()
             (
-            [1 0]  [ 1  0]  [-1  0]  [-1  0]
-            [0 1], [ 0 -1], [ 0  1], [ 0 -1]
+            [-1  0]  [-1  0]  [ 1  0]  [1 0]
+            [ 0 -1], [ 0  1], [ 0 -1], [0 1]
             )
             sage: MG.list()[1]
-            [ 1  0]
-            [ 0 -1]
+            [-1  0]
+            [ 0  1]
             sage: MG.list()[1].parent()
             Matrix group over Integer Ring with 3 generators (
             [-1  0]  [ 1  0]  [-1  0]

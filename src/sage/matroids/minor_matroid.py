@@ -83,10 +83,10 @@ class MinorMatroid(Matroid):
     r"""
     Minor of a matroid.
 
-    For some matroid representations it can be computationally expensive to
-    derive an explicit representation of a minor. This class wraps around any
-    matroid to provide an abstract minor. It also serves as default implemen-
-    tation.
+    For some matroid representations, it can be computationally
+    expensive to derive an explicit representation of a minor. This
+    class wraps around any matroid to provide an abstract minor. It
+    also serves as default implementation.
 
     Return a minor.
 

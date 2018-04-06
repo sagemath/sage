@@ -12,6 +12,8 @@ General matrix Constructor
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
+
 import types
 from .matrix_space import MatrixSpace
 from sage.rings.ring import is_Ring
@@ -557,11 +559,6 @@ class MatrixFactory(object):
         sage: matrix(A, ring=QQ)
         [0 1]
         [2 3]
-        sage: matrix(A, QQ)
-        doctest:...: DeprecationWarning: when constructing a matrix, the ring must be the first argument
-        See http://trac.sagemath.org/20015 for details.
-        [0 1]
-        [2 3]
 
     A redundant ``ring`` argument::
 
@@ -598,12 +595,6 @@ class MatrixFactory(object):
     """
     def __call__(self, *Args, ring=None, nrows=None, ncols=None, sparse=None):
         cdef list args = list(Args)
-
-        # Check for deprecated (matrixable object, ring) argument
-        if len(args) == 2 and hasattr(args[0], '_matrix_'):
-            from sage.misc.superseded import deprecation
-            deprecation(20015, "when constructing a matrix, the ring must be the first argument")
-            args = [args[1], args[0]]
 
         # ring argument
         if ring is None and args and is_Ring(args[0]):
@@ -854,7 +845,7 @@ def prepare_dict(w):
 
     INPUT:
 
-    - ``w`` - dict
+    - ``w`` -- dict
 
     OUTPUT:
 
@@ -865,10 +856,10 @@ def prepare_dict(w):
         sage: sage.matrix.constructor.prepare_dict({(0,1):2, (4,10):Mod(1,7)})
         ({(0, 1): 2, (4, 10): 1}, Ring of integers modulo 7)
     """
-    Z = w.items()
+    Z = list(w.items())
     X = [x for _, x in Z]
     entries, ring = prepare(X)
-    return dict([(Z[i][0],entries[i]) for i in range(len(entries))]), ring
+    return {Z[i][0]: ent for i, ent in enumerate(entries)}, ring
 
 
 def nrows_from_dict(d):

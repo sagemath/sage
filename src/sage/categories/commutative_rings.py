@@ -85,7 +85,7 @@ class CommutativeRings(CategoryWithAxiom):
                 .. NOTE::
 
                     When `R = \ZZ / n \ZZ` the smallest element of each coset is
-                    sometimes callled a *coset leader*. This function returns
+                    sometimes called a *coset leader*. This function returns
                     sorted lists so that the coset leader will always be the
                     first element of the coset.
 

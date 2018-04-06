@@ -28,7 +28,7 @@ class Posets(Category):
         An example of a poset: sets ordered by inclusion
 
     The partial order is implemented by the mandatory method
-    :meth:`~Posets.ParentMethods.le`::
+    :meth:`~posets.ParentMethods.le`::
 
         sage: x = P(Set([1,3])); y = P(Set([1,2,3]))
         sage: x, y
@@ -41,8 +41,8 @@ class Posets(Category):
         False
 
     The other comparison methods are called
-    :meth:`~Posets.ParentMethods.lt`, :meth:`~Posets.ParentMethods.ge`,
-    :meth:`~Posets.ParentMethods.gt`, following Python's naming
+    :meth:`~posets.ParentMethods.lt`, :meth:`~posets.ParentMethods.ge`,
+    :meth:`~posets.ParentMethods.gt`, following Python's naming
     convention in :mod:`operator`. Default implementations are
     provided::
 
@@ -280,7 +280,7 @@ class Posets(Category):
 
             EXAMPLES::
 
-                sage: B = Posets.BooleanLattice(4)
+                sage: B = posets.BooleanLattice(4)
                 sage: B.order_ideal([7,10])
                 [0, 1, 2, 3, 4, 5, 6, 7, 8, 10]
             """
@@ -297,7 +297,7 @@ class Posets(Category):
 
             EXAMPLES::
 
-                sage: B = Posets.BooleanLattice(4)
+                sage: B = posets.BooleanLattice(4)
                 sage: B.order_filter([3,8])
                 [3, 7, 8, 9, 10, 11, 12, 13, 14, 15]
             """
@@ -321,7 +321,7 @@ class Posets(Category):
 
             EXAMPLES::
 
-                sage: B = Posets.BooleanLattice(4)
+                sage: B = posets.BooleanLattice(4)
                 sage: B.directed_subset([3, 8], 'up')
                 [3, 7, 8, 9, 10, 11, 12, 13, 14, 15]
                 sage: B.directed_subset([7, 10], 'down')
@@ -341,7 +341,7 @@ class Posets(Category):
 
             EXAMPLES::
 
-                sage: B = Posets.BooleanLattice(4)
+                sage: B = posets.BooleanLattice(4)
                 sage: B.principal_order_ideal(6)
                 [0, 2, 4, 6]
             """
@@ -357,7 +357,7 @@ class Posets(Category):
 
             EXAMPLES::
 
-                sage: B = Posets.BooleanLattice(4)
+                sage: B = posets.BooleanLattice(4)
                 sage: B.principal_order_filter(2)
                 [2, 3, 6, 7, 10, 11, 14, 15]
             """

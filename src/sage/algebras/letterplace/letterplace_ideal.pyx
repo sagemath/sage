@@ -43,7 +43,7 @@ from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.libs.singular.function import lib, singular_function
 from sage.algebras.letterplace.free_algebra_letterplace cimport FreeAlgebra_letterplace
 from sage.algebras.letterplace.free_algebra_element_letterplace cimport FreeAlgebraElement_letterplace
-from sage.all import Infinity
+from sage.rings.infinity import Infinity
 
 #####################
 # Define some singular functions
@@ -161,7 +161,7 @@ class LetterplaceIdeal(Ideal_nc):
           is a left, right or twosided ideal. Groebner bases or
           only supported in the twosided case.
 
-        TEST::
+        TESTS::
 
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: from sage.algebras.letterplace.letterplace_ideal import LetterplaceIdeal

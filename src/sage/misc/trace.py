@@ -46,10 +46,13 @@ def trace(code, preparse=True):
 
     TESTS:
 
-    The only real way to test this is via pexpect spawning a
-    sage subprocess that uses IPython.
+    For tests we disable garbage collection, see :trac:`21258` ::
 
-    ::
+        sage: import gc
+        sage: gc.disable()
+
+    The only real way to test this is via pexpect spawning a
+    sage subprocess that uses IPython::
 
         sage: import pexpect
         sage: s = pexpect.spawn('sage')
@@ -59,9 +62,7 @@ def trace(code, preparse=True):
         sage: _ = s.expect('100', timeout=90)
 
     Seeing the ipdb prompt and the 2 \* 5 in the output below is a
-    strong indication that the trace command worked correctly.
-
-    ::
+    strong indication that the trace command worked correctly::
 
         sage: print(s.before[s.before.find('--'):])
         --...
@@ -75,6 +76,10 @@ def trace(code, preparse=True):
         Traceback (most recent call last):
         ...
         NotImplementedError: the trace command is not implemented in the Sage notebook; you must use the command line.
+
+    Re-enable garbage collection::
+
+        sage: gc.enable()
     """
     from sage.plot.plot import EMBEDDED_MODE
     if EMBEDDED_MODE:

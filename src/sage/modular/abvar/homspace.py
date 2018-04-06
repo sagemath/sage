@@ -916,6 +916,17 @@ class EndomorphismSubring(Homspace, Ring):
         check_every determines how many Hecke operators we add in before
         checking to see if this condition is met.
 
+        INPUT:
+
+        - ``check_every`` -- integer (default: 1) If this integer is positive,
+          this integer determines how many Hecke operators we add in before
+          checking to see if the submodule spanned so far is maximal and
+          saturated.
+
+        OUTPUT:
+
+        - The image of the Hecke algebra as an subring of ``self``.
+
         EXAMPLES::
 
             sage: E = J0(33).endomorphism_ring()
@@ -963,6 +974,11 @@ class EndomorphismSubring(Homspace, Ring):
         V = EndVecZ.submodule([A.hecke_operator(1).matrix().list()])
 
         for n in range(2,M.sturm_bound()+1):
+            if (check_every > 0 and
+                    n % check_every == 0 and
+                    V.dimension() == d and
+                    V.index_in_saturation() == 1):
+                break
             V += EndVecZ.submodule([ A.hecke_operator(n).matrix().list() ])
 
         self.__hecke_algebra_image = EndomorphismSubring(A, V.basis())

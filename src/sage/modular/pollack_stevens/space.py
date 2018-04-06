@@ -241,7 +241,7 @@ class PollackStevensModularSymbolspace(Module):
         """
         Module.__init__(self, coefficients.base_ring())
         if sign not in [0, -1, 1]:
-            # sign must be be 0, -1 or 1
+            # sign must be 0, -1 or 1
             raise ValueError("sign must be 0, -1, or 1")
         self._group = group
         self._coefficients = coefficients
@@ -290,7 +290,7 @@ class PollackStevensModularSymbolspace(Module):
         r"""
         Used for comparison and coercion.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M1 = PollackStevensModularSymbols(Gamma0(11), coefficients=Symk(3))
             sage: M2 = PollackStevensModularSymbols(Gamma0(11), coefficients=Symk(3,Qp(11)))
@@ -903,11 +903,12 @@ def ps_modsym_from_elliptic_curve(E, sign = 0, implementation='eclib'):
     V = PollackStevensModularSymbols(Gamma0(N), 0)
     D = V.coefficient_module()
     manin = V.source()
-    # currently this uses eclib and the normalization given by 'L_ratio' in modular_symbol
+    # if sage's modular symbols are used we take the
+    # normalization given by 'L_ratio' in modular_symbol
+    if sign <= 0:
+        minus_sym = E.modular_symbol(sign=-1, implementation=implementation)
     if sign >= 0:
         plus_sym = E.modular_symbol(sign=1, implementation=implementation)
-    if sign <= 0:
-        minus_sym = E.modular_symbol(sign=-1, implementation='sage')
     val = {}
     for g in manin.gens():
         ac, bd = cusps_from_mat(g)

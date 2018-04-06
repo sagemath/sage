@@ -191,7 +191,7 @@ matrices::
     sage: rows = [randint(1, 10) for i in range(10)]
     sage: cols = [randint(1, 10) for i in range(10)]
     sage: rings = [ZZ]*10
-    sage: M = map(random_matrix, rings, rows, cols)
+    sage: M = list(map(random_matrix, rings, rows, cols))
     sage: M[0]  # random
     <BLANKLINE>
     [ -1  -3  -1 -37   1  -1  -4   5]
@@ -213,8 +213,8 @@ together with ``map`` as follows::
     [ 2  6  2]
     sage: rows = [randint(1, 10) for i in range(10)]
     sage: cols = [randint(1, 10) for i in range(10)]
-    sage: M = map(rand_mat, rows, cols)
-    sage: M = map(matrix, M)
+    sage: M = list(map(rand_mat, rows, cols))
+    sage: M = list(map(matrix, M))
     sage: M[0]  # random
     <BLANKLINE>
     [ 9  1  5  2 10 10  1]

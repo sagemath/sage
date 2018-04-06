@@ -1,0 +1,45 @@
+* (show-structure ssz4 6)
+
+Dimension = 0:
+
+        Vertices :  (<<GBar>>)
+
+Dimension = 1:
+
+Dimension = 2:
+
+        Simplex : <<GBar<- (2)><- NIL>>>
+
+                Faces : (<AbSm 0 <<GBar>>> <AbSm 0 <<GBar>>> <AbSm 0 <<GBar>>>)
+
+        Simplex : <<GBar<- (1)><- NIL>>>
+
+                Faces : (<AbSm 0 <<GBar>>> <AbSm 0 <<GBar>>> <AbSm 0 <<GBar>>>)
+
+Dimension = 3:
+
+        Simplex : <<GBar<- (1 1)><0 NIL><- NIL>>>
+
+                Faces : (<AbSm - <<GBar<- (1)><- NIL>>>> <AbSm - <<GBar<- (2)><- NIL>>>> <AbSm - <<GBar<- (1)><- NIL>>>> <AbSm 1-0 <<GBar>>>)
+
+        Simplex : <<GBar<1 (1)><- (1)><- NIL>>>
+
+                Faces : (<AbSm 1-0 <<GBar>>> <AbSm - <<GBar<- (1)><- NIL>>>> <AbSm - <<GBar<- (2)><- NIL>>>> <AbSm - <<GBar<- (1)><- NIL>>>>)
+
+        Simplex : <<GBar<0 (1)><- (1)><- NIL>>>
+
+                Faces : (<AbSm - <<GBar<- (1)><- NIL>>>> <AbSm - <<GBar<- (1)><- NIL>>>> <AbSm - <<GBar<- (1)><- NIL>>>> <AbSm - <<GBar<- (1)><- NIL>>>>)
+
+Dimension = 4:
+
+        Simplex : <<GBar<1-0 (1)><1-0 NIL><- (1)><- NIL>>>
+
+                Faces : (<AbSm 0 <<GBar<- (1)><- NIL>>>> <AbSm 0 <<GBar<- (1)><- NIL>>>> <AbSm - <<GBar<0 (1)><- (1)><- NIL>>>> <AbSm 2 <<GBar<- (1)><- NIL>>>> <AbSm 2 <<GBar<- (1)><- NIL>>>>)
+
+        Simplex : <<GBar<2-0 (1)><1 (1)><0 NIL><- NIL>>>
+
+                Faces : (<AbSm 1 <<GBar<- (1)><- NIL>>>> <AbSm - <<GBar<1 (1)><- (1)><- NIL>>>> <AbSm - <<GBar<0 (1)><- (1)><- NIL>>>> <AbSm - <<GBar<- (1 1)><0 NIL><- NIL>>>> <AbSm 1 <<GBar<- (1)><- NIL>>>>)
+
+        Simplex : <<GBar<2-1 (1)><0 (1)><0 NIL><- NIL>>>
+
+                Faces : (<AbSm 2 <<GBar<- (1)><- NIL>>>> <AbSm - <<GBar<1 (1)><- (1)><- NIL>>>> <AbSm 1 <<GBar<- (1)><- NIL>>>> <AbSm - <<GBar<- (1 1)><0 NIL><- NIL>>>> <AbSm 0 <<GBar<- (1)><- NIL>>>>)

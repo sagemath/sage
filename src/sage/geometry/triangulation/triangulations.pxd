@@ -1,4 +1,4 @@
-cdef extern from "sage/geometry/triangulation/triangulations.h":
+cdef extern from "triangulations.h":
     ctypedef void* triangulations_ptr
     cdef triangulations_ptr init_triangulations \
         (int n, int d, int star, bint fine, object seed, object flips)

@@ -190,6 +190,25 @@ cdef class CRElement(pAdicTemplateElement):
         cconstruct(ans.unit, ans.prime_pow)
         return ans
 
+    cdef pAdicTemplateElement _new_with_value(self, celement value, long absprec):
+        """
+        Creates a new element with a given value and absolute precision.
+
+        Used by code that doesn't know the precision type.
+        """
+        cdef CRElement ans = self._new_c()
+        ans.relprec = absprec
+        ans.ordp = 0
+        ccopy(ans.unit, value, ans.prime_pow)
+        ans._normalize()
+        return ans
+
+    cdef int _get_unit(self, celement value) except -1:
+        """
+        Sets ``value`` to the unit of this p-adic element.
+        """
+        ccopy(value, self.unit, self.prime_pow)
+
     cdef int check_preccap(self) except -1:
         """
         Checks that this element doesn't have precision higher than
@@ -498,14 +517,14 @@ cdef class CRElement(pAdicTemplateElement):
 
         Let `\alpha` be in `\mathcal{O}_K`.  Let
 
-        ..math ::
+        .. MATH::
 
             p = -\pi_K^{e_K} \epsilon
 
         be the factorization of `p` where `\epsilon` is a unit.  Then
         the `p`-th power of `1 + \alpha \pi_K^{\lambda}` satisfies
 
-        ..math ::
+        .. MATH::
 
             (1 + \alpha \pi^{\lambda})^p \equiv \left{ \begin{array}{lll}
             1 + \alpha^p \pi_K^{p \lambda} &
@@ -577,10 +596,9 @@ cdef class CRElement(pAdicTemplateElement):
             representative congruent to `\alpha` modulo `\pi_K`.  Thus
             the result will always be congruent to `1` modulo `\pi_K`.
 
-        .. REFERENCES::
+        REFERENCES:
 
-        .. [SP] Constructing Class Fields over Local Fields.
-                Sebastian Pauli.
+        .. [SP] *Constructing Class Fields over Local Fields*. Sebastian Pauli.
 
         INPUT:
 
@@ -826,7 +844,7 @@ cdef class CRElement(pAdicTemplateElement):
         an equal element with precision set to the minimum of ``self's``
         precision and ``absprec``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R = Zp(7,4,'capped-rel','series'); a = R(8); a.add_bigoh(1)
             1 + O(7)
@@ -868,7 +886,15 @@ cdef class CRElement(pAdicTemplateElement):
         else:
             if not isinstance(absprec, Integer):
                 absprec = Integer(absprec)
-            aprec = mpz_get_si((<Integer>absprec).value)
+            if mpz_fits_slong_p((<Integer>absprec).value) == 0:
+                if mpz_sgn((<Integer>absprec).value) == -1:
+                    raise ValueError("absprec must fit into a signed long")
+                else:
+                    aprec = self.prime_pow.ram_prec_cap
+            else:
+                aprec = mpz_get_si((<Integer>absprec).value)
+        if aprec < 0 and not self.parent().is_field():
+            return self.parent().fraction_field()(self).add_bigoh(absprec)
         if aprec < self.ordp:
             ans = self._new_c()
             ans._set_inexact_zero(aprec)
@@ -1176,172 +1202,7 @@ cdef class CRElement(pAdicTemplateElement):
             :meth:`sage.misc.cachefunc._cache_key`
         """
         tuple_recursive = lambda l: tuple(tuple_recursive(x) for x in l) if isinstance(l, list) else l
-        return (self.parent(), tuple_recursive(self.list()), self.valuation(), self.precision_relative())
-
-    def list(self, lift_mode = 'simple', start_val = None):
-        """
-        Returns a list of coefficients in a power series expansion of
-        self in terms of `\pi`.  If self is a field element, they start at
-        `\pi^{\mbox{valuation}}`, if a ring element at `\pi^0`.
-
-        For each lift mode, this function returns a list of `a_i` so
-        that this element can be expressed as
-
-        .. MATH::
-
-            \pi^v \cdot \sum_{i=0}^\infty a_i \pi^i
-
-        where `v` is the valuation of this element when the parent is
-        a field, and `v = 0` otherwise.
-
-        Different lift modes affect the choice of `a_i`.  When
-        ``lift_mode`` is ``'simple'``, the resulting `a_i` will be
-        non-negative: if the residue field is `\mathbb{F}_p` then they
-        will be integers with `0 \le a_i < p`; otherwise they will be
-        a list of integers in the same range giving the coefficients
-        of a polynomial in the indeterminant representing the maximal
-        unramified subextension.
-
-        Choosing ``lift_mode`` as ``'smallest'`` is similar to
-        ``'simple'``, but uses a balanced representation `-p/2 < a_i
-        \le p/2`.
-
-        Finally, setting ``lift_mode = 'teichmuller'`` will yield
-        Teichmuller representatives for the `a_i`: `a_i^q = a_i`.  In
-        this case the `a_i` will also be `p`-adic elements.
-
-        INPUT:
-
-        - ``lift_mode`` -- ``'simple'``, ``'smallest'`` or
-          ``'teichmuller'`` (default: ``'simple'``)
-
-        - ``start_val`` -- start at this valuation rather than the
-          default (`0` or the valuation of this element).  If
-          ``start_val`` is larger than the valuation of this element
-          a ``ValueError`` is raised.
-
-        OUTPUT:
-
-        - the list of coefficients of this element.  For base elements
-          these will be integers if ``lift_mode`` is ``'simple'`` or
-          ``'smallest'``, and elements of ``self.parent()`` if
-          ``lift_mode`` is ``'teichmuller'``.
-
-        .. NOTE::
-
-            Use slice operators to get a particular range.
-
-        EXAMPLES::
-
-            sage: R = Zp(7,6); a = R(12837162817); a
-            3 + 4*7 + 4*7^2 + 4*7^4 + O(7^6)
-            sage: L = a.list(); L
-            [3, 4, 4, 0, 4]
-            sage: sum([L[i] * 7^i for i in range(len(L))]) == a
-            True
-            sage: L = a.list('smallest'); L
-            [3, -3, -2, 1, -3, 1]
-            sage: sum([L[i] * 7^i for i in range(len(L))]) == a
-            True
-            sage: L = a.list('teichmuller'); L
-            [3 + 4*7 + 6*7^2 + 3*7^3 + 2*7^5 + O(7^6),
-            0,
-            5 + 2*7 + 3*7^3 + O(7^4),
-            1 + O(7^3),
-            3 + 4*7 + O(7^2),
-            5 + O(7)]
-            sage: sum([L[i] * 7^i for i in range(len(L))])
-            3 + 4*7 + 4*7^2 + 4*7^4 + O(7^6)
-
-            sage: R(0, 7).list()
-            []
-
-            sage: R = Qp(7,4); a = R(6*7+7**2); a.list()
-            [6, 1]
-            sage: a.list('smallest')
-            [-1, 2]
-            sage: a.list('teichmuller')
-            [6 + 6*7 + 6*7^2 + 6*7^3 + O(7^4),
-            2 + 4*7 + 6*7^2 + O(7^3),
-            3 + 4*7 + O(7^2),
-            3 + O(7)]
-
-        TESTS:
-
-        Check to see that :trac:`10292` is resolved::
-
-            sage: E = EllipticCurve('37a')
-            sage: R = E.padic_regulator(7)
-            sage: len(R.list())
-            19
-        """
-        if start_val is not None and start_val > self.ordp:
-            raise ValueError("starting valuation must be smaller than the element's valuation.  See slice()")
-        if self.relprec == 0:
-            return []
-        if lift_mode == 'teichmuller':
-            ulist = self.teichmuller_list()
-        elif lift_mode == 'simple':
-            ulist = clist(self.unit, self.relprec, True, self.prime_pow)
-        elif lift_mode == 'smallest':
-            ulist = clist(self.unit, self.relprec, False, self.prime_pow)
-        else:
-            raise ValueError("unknown lift_mode")
-        if (self.prime_pow.in_field == 0 and self.ordp > 0) or start_val is not None:
-            if lift_mode == 'teichmuller':
-                zero = self.parent()(0)
-            else:
-                # needs to be defined in the linkage file.
-                zero = _list_zero
-            if start_val is None:
-                v = self.ordp
-            else:
-                v = self.ordp - start_val
-            ulist = [zero] * v + ulist
-        return ulist
-
-    def teichmuller_list(self):
-        r"""
-        Returns a list [`a_0`, `a_1`,..., `a_n`] such that
-
-        - `a_i^q = a_i`, where `q` is the cardinality of the residue field,
-
-        - ``self.unit_part() =`` `\sum_{i = 0}^n a_i p^i`, and
-
-        - if `a_i \ne 0`, the absolute precision of `a_i` is
-          self.precision_relative() - i
-
-        EXAMPLES::
-
-            sage: R = Qp(5,5); R(70).list('teichmuller') #indirect doctest
-            [4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5),
-            3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4),
-            2 + 5 + 2*5^2 + O(5^3),
-            1 + O(5^2),
-            4 + O(5)]
-        """
-        ans = PyList_New(0)
-        if self.relprec == 0:
-            return ans
-        cdef long curpower = self.relprec
-        cdef CRElement list_elt
-        cdef CRElement tmp = self._new_c()
-        ccopy(tmp.unit, self.unit, self.prime_pow)
-        while not ciszero(tmp.unit, tmp.prime_pow) and curpower > 0:
-            list_elt = self._new_c()
-            cteichmuller(list_elt.unit, tmp.unit, curpower, self.prime_pow)
-            if ciszero(list_elt.unit, self.prime_pow):
-                list_elt._set_exact_zero()
-                cshift_notrunc(tmp.unit, tmp.unit, -1, curpower-1, self.prime_pow)
-            else:
-                list_elt.ordp = 0
-                list_elt.relprec = curpower
-                csub(tmp.unit, tmp.unit, list_elt.unit, curpower, self.prime_pow)
-                cshift_notrunc(tmp.unit, tmp.unit, -1, curpower-1, self.prime_pow)
-                creduce(tmp.unit, tmp.unit, curpower-1, self.prime_pow)
-            curpower -= 1
-            PyList_Append(ans, list_elt)
-        return ans
+        return (self.parent(), tuple_recursive(trim_zeros(list(self.expansion()))), self.valuation(), self.precision_relative())
 
     def _teichmuller_set_unsafe(self):
         """
@@ -1360,8 +1221,10 @@ cdef class CRElement(pAdicTemplateElement):
             11 + O(17^5)
             sage: a._teichmuller_set_unsafe(); a
             11 + 14*17 + 2*17^2 + 12*17^3 + 15*17^4 + O(17^5)
-            sage: a.list('teichmuller')
-            [11 + 14*17 + 2*17^2 + 12*17^3 + 15*17^4 + O(17^5)]
+            sage: E = a.expansion(lift_mode='teichmuller'); E
+            17-adic expansion of 11 + 14*17 + 2*17^2 + 12*17^3 + 15*17^4 + O(17^5) (teichmuller)
+            sage: list(E)
+            [11 + 14*17 + 2*17^2 + 12*17^3 + 15*17^4 + O(17^5), 0, 0, 0, 0]
 
         Note that if you set an element which is congruent to 0 you
         get an exact 0.
@@ -1379,6 +1242,39 @@ cdef class CRElement(pAdicTemplateElement):
             raise ValueError("not enough precision")
         else:
             cteichmuller(self.unit, self.unit, self.relprec, self.prime_pow)
+
+    def polynomial(self, var='x'):
+        """
+        Returns a polynomial over the base ring that yields this element
+        when evaluated at the generator of the parent.
+
+        INPUT:
+
+        - ``var`` -- string, the variable name for the polynomial
+
+        EXAMPLES::
+
+            sage: K.<a> = Qq(5^3)
+            sage: a.polynomial()
+            (1 + O(5^20))*x + (O(5^20))
+            sage: a.polynomial(var='y')
+            (1 + O(5^20))*y + (O(5^20))
+            sage: (5*a^2 + K(25, 4)).polynomial()
+            (5 + O(5^4))*x^2 + (O(5^4))*x + (5^2 + O(5^4))
+        """
+        R = self.base_ring()
+        S = R[var]
+        if exactzero(self.ordp):
+            return S([])
+        else:
+            prec = self.precision_absolute()
+            e = self.parent().e()
+            L = ccoefficients(self.unit, self.ordp, self.relprec, self.prime_pow)
+            if e == 1:
+                L = [R(c, prec) for c in L]
+            else:
+                L = [R(c, (prec - i - 1) // e + 1) for i, c in enumerate(L)]
+            return S(L)
 
     def precision_absolute(self):
         """
@@ -1403,7 +1299,7 @@ cdef class CRElement(pAdicTemplateElement):
         """
         if exactzero(self.ordp):
             return infinity
-        cdef Integer ans = PY_NEW(Integer)
+        cdef Integer ans = Integer.__new__(Integer)
         mpz_set_si(ans.value, self.ordp + self.relprec)
         return ans
 
@@ -1429,8 +1325,8 @@ cdef class CRElement(pAdicTemplateElement):
             0
             sage: R(0,7).precision_relative()
             0
-       """
-        cdef Integer ans = PY_NEW(Integer)
+        """
+        cdef Integer ans = Integer.__new__(Integer)
         mpz_set_si(ans.value, self.relprec)
         return ans
 
@@ -1528,7 +1424,7 @@ cdef class CRElement(pAdicTemplateElement):
             raise ValueError('Ring (%s) residue field of the wrong characteristic.'%self.parent())
         if exactzero((<CRElement>self).ordp):
             raise ValueError("unit part of 0 not defined")
-        cdef Integer val = PY_NEW(Integer)
+        cdef Integer val = Integer.__new__(Integer)
         mpz_set_si(val.value, (<CRElement>self).ordp)
         cdef CRElement unit = (<CRElement>self)._new_c()
         unit.ordp = 0
@@ -1558,16 +1454,21 @@ cdef class CRElement(pAdicTemplateElement):
             return 0
         return chash(self.unit, self.ordp, self.relprec, self.prime_pow) ^ self.ordp
 
-cdef class pAdicCoercion_ZZ_CR(RingHomomorphism_coercion):
+cdef class pAdicCoercion_ZZ_CR(RingHomomorphism):
     """
     The canonical inclusion from the integer ring to a capped relative ring.
 
     EXAMPLES::
 
         sage: f = Zp(5).coerce_map_from(ZZ); f
-        Ring Coercion morphism:
+        Ring morphism:
           From: Integer Ring
           To:   5-adic Ring with capped relative precision 20
+
+    TESTS::
+
+        sage: TestSuite(f).run()
+
     """
     def __init__(self, R):
         """
@@ -1578,8 +1479,8 @@ cdef class pAdicCoercion_ZZ_CR(RingHomomorphism_coercion):
             sage: f = Zp(5).coerce_map_from(ZZ); type(f)
             <type 'sage.rings.padics.padic_capped_relative_element.pAdicCoercion_ZZ_CR'>
         """
-        RingHomomorphism_coercion.__init__(self, ZZ.Hom(R), check=False)
-        self._zero = <CRElement?>R._element_constructor(R, 0)
+        RingHomomorphism.__init__(self, ZZ.Hom(R))
+        self._zero = R.element_class(R, 0)
         self._section = pAdicConvert_CR_ZZ(R)
 
     cdef dict _extra_slots(self, dict _slots):
@@ -1591,7 +1492,7 @@ cdef class pAdicCoercion_ZZ_CR(RingHomomorphism_coercion):
             sage: f = Zp(5).coerce_map_from(ZZ)
             sage: g = copy(f)   # indirect doctest
             sage: g
-            Ring Coercion morphism:
+            Ring morphism:
               From: Integer Ring
               To:   5-adic Ring with capped relative precision 20
             sage: g == f
@@ -1605,8 +1506,8 @@ cdef class pAdicCoercion_ZZ_CR(RingHomomorphism_coercion):
 
         """
         _slots['_zero'] = self._zero
-        _slots['_section'] = self._section
-        return RingHomomorphism_coercion._extra_slots(self, _slots)
+        _slots['_section'] = self.section() # use method since it copies coercion-internal sections.
+        return RingHomomorphism._extra_slots(self, _slots)
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1617,7 +1518,7 @@ cdef class pAdicCoercion_ZZ_CR(RingHomomorphism_coercion):
             sage: f = Zp(5).coerce_map_from(ZZ)
             sage: g = copy(f)   # indirect doctest
             sage: g
-            Ring Coercion morphism:
+            Ring morphism:
               From: Integer Ring
               To:   5-adic Ring with capped relative precision 20
             sage: g == f
@@ -1632,7 +1533,7 @@ cdef class pAdicCoercion_ZZ_CR(RingHomomorphism_coercion):
         """
         self._zero = _slots['_zero']
         self._section = _slots['_section']
-        RingHomomorphism_coercion._update_slots(self, _slots)
+        RingHomomorphism._update_slots(self, _slots)
 
     cpdef Element _call_(self, x):
         """
@@ -1709,6 +1610,10 @@ cdef class pAdicCoercion_ZZ_CR(RingHomomorphism_coercion):
             sage: f(Zp(5)(-1)) - 5^20
             -1
         """
+        from sage.misc.constant_function import ConstantFunction
+        if not isinstance(self._section.domain, ConstantFunction):
+            import copy
+            self._section = copy.copy(self._section)
         return self._section
 
 cdef class pAdicConvert_CR_ZZ(RingMap):
@@ -1761,22 +1666,27 @@ cdef class pAdicConvert_CR_ZZ(RingMap):
             ...
             ValueError: negative valuation
         """
-        cdef Integer ans = PY_NEW(Integer)
+        cdef Integer ans = Integer.__new__(Integer)
         cdef CRElement x = _x
         if x.relprec != 0:
             cconv_mpz_t_out(ans.value, x.unit, x.ordp, x.relprec, x.prime_pow)
         return ans
 
-cdef class pAdicCoercion_QQ_CR(RingHomomorphism_coercion):
+cdef class pAdicCoercion_QQ_CR(RingHomomorphism):
     """
     The canonical inclusion from the rationals to a capped relative field.
 
     EXAMPLES::
 
         sage: f = Qp(5).coerce_map_from(QQ); f
-        Ring Coercion morphism:
+        Ring morphism:
           From: Rational Field
           To:   5-adic Field with capped relative precision 20
+
+    TESTS::
+
+        sage: TestSuite(f).run()
+
     """
     def __init__(self, R):
         """
@@ -1787,8 +1697,8 @@ cdef class pAdicCoercion_QQ_CR(RingHomomorphism_coercion):
             sage: f = Qp(5).coerce_map_from(QQ); type(f)
             <type 'sage.rings.padics.padic_capped_relative_element.pAdicCoercion_QQ_CR'>
         """
-        RingHomomorphism_coercion.__init__(self, QQ.Hom(R), check=False)
-        self._zero = R._element_constructor(R, 0)
+        RingHomomorphism.__init__(self, QQ.Hom(R))
+        self._zero = R.element_class(R, 0)
         self._section = pAdicConvert_CR_QQ(R)
 
     cdef dict _extra_slots(self, dict _slots):
@@ -1800,7 +1710,7 @@ cdef class pAdicCoercion_QQ_CR(RingHomomorphism_coercion):
             sage: f = Qp(5).coerce_map_from(QQ)
             sage: g = copy(f)   # indirect doctest
             sage: g
-            Ring Coercion morphism:
+            Ring morphism:
               From: Rational Field
               To:   5-adic Field with capped relative precision 20
             sage: g == f
@@ -1814,8 +1724,8 @@ cdef class pAdicCoercion_QQ_CR(RingHomomorphism_coercion):
 
         """
         _slots['_zero'] = self._zero
-        _slots['_section'] = self._section
-        return RingHomomorphism_coercion._extra_slots(self, _slots)
+        _slots['_section'] = self.section() # use method since it copies coercion-internal sections.
+        return RingHomomorphism._extra_slots(self, _slots)
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1826,7 +1736,7 @@ cdef class pAdicCoercion_QQ_CR(RingHomomorphism_coercion):
             sage: f = Qp(5).coerce_map_from(QQ)
             sage: g = copy(f)   # indirect doctest
             sage: g
-            Ring Coercion morphism:
+            Ring morphism:
               From: Rational Field
               To:   5-adic Field with capped relative precision 20
             sage: g == f
@@ -1841,7 +1751,7 @@ cdef class pAdicCoercion_QQ_CR(RingHomomorphism_coercion):
         """
         self._zero = _slots['_zero']
         self._section = _slots['_section']
-        RingHomomorphism_coercion._update_slots(self, _slots)
+        RingHomomorphism._update_slots(self, _slots)
 
     cpdef Element _call_(self, x):
         """
@@ -1924,6 +1834,10 @@ cdef class pAdicCoercion_QQ_CR(RingHomomorphism_coercion):
             sage: f(Qp(5)(1/5))
             1/5
         """
+        from sage.misc.constant_function import ConstantFunction
+        if not isinstance(self._section.domain, ConstantFunction):
+            import copy
+            self._section = copy.copy(self._section)
         return self._section
 
 cdef class pAdicConvert_CR_QQ(RingMap):
@@ -1998,7 +1912,7 @@ cdef class pAdicConvert_QQ_CR(Morphism):
             <type 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_QQ_CR'>
         """
         Morphism.__init__(self, Hom(QQ, R, SetsWithPartialMaps()))
-        self._zero = R._element_constructor(R, 0)
+        self._zero = R.element_class(R, 0)
         self._section = pAdicConvert_CR_QQ(R)
 
     cdef dict _extra_slots(self, dict _slots):
@@ -2017,7 +1931,7 @@ cdef class pAdicConvert_QQ_CR(Morphism):
             True
         """
         _slots['_zero'] = self._zero
-        _slots['_section'] = self._section
+        _slots['_section'] = self.section() # use method since it copies coercion-internal sections.
         return Morphism._extra_slots(self, _slots)
 
     cdef _update_slots(self, dict _slots):
@@ -2123,9 +2037,13 @@ cdef class pAdicConvert_QQ_CR(Morphism):
             sage: f(Zp(5,4)(-1))
             -1
         """
+        from sage.misc.constant_function import ConstantFunction
+        if not isinstance(self._section.domain, ConstantFunction):
+            import copy
+            self._section = copy.copy(self._section)
         return self._section
 
-cdef class pAdicCoercion_CR_frac_field(RingHomomorphism_coercion):
+cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
     """
     The canonical inclusion of Zq into its fraction field.
 
@@ -2133,10 +2051,15 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism_coercion):
 
         sage: R.<a> = ZqCR(27, implementation='FLINT')
         sage: K = R.fraction_field()
-        sage: K.coerce_map_from(R)
-        Ring Coercion morphism:
-          From: Unramified Extension of 3-adic Ring with capped relative precision 20 in a defined by (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
-          To:   Unramified Extension of 3-adic Field with capped relative precision 20 in a defined by (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
+        sage: f = K.coerce_map_from(R); f
+        Ring morphism:
+          From: Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Ring
+          To:   Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Field
+
+    TESTS::
+
+        sage: TestSuite(f).run()
+
     """
     def __init__(self, R, K):
         """
@@ -2149,7 +2072,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism_coercion):
             sage: f = K.coerce_map_from(R); type(f)
             <type 'sage.rings.padics.qadic_flint_CR.pAdicCoercion_CR_frac_field'>
         """
-        RingHomomorphism_coercion.__init__(self, R.Hom(K), check=False)
+        RingHomomorphism.__init__(self, R.Hom(K))
         self._zero = K(0)
         self._section = pAdicConvert_CR_frac_field(K, R)
 
@@ -2240,6 +2163,10 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism_coercion):
             sage: f(K.gen())
             a + O(3^20)
         """
+        from sage.misc.constant_function import ConstantFunction
+        if not isinstance(self._section.domain, ConstantFunction):
+            import copy
+            self._section = copy.copy(self._section)
         return self._section
 
     cdef dict _extra_slots(self, dict _slots):
@@ -2253,9 +2180,9 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism_coercion):
             sage: f = K.coerce_map_from(R)
             sage: g = copy(f)   # indirect doctest
             sage: g
-            Ring Coercion morphism:
-              From: Unramified Extension of 3-adic Ring with capped relative precision 20 in a defined by (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
-              To:   Unramified Extension of 3-adic Field with capped relative precision 20 in a defined by (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
+            Ring morphism:
+              From: Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Ring
+              To:   Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Field
             sage: g == f
             True
             sage: g is f
@@ -2267,8 +2194,8 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism_coercion):
 
         """
         _slots['_zero'] = self._zero
-        _slots['_section'] = self._section
-        return RingHomomorphism_coercion._extra_slots(self, _slots)
+        _slots['_section'] = self.section() # use method since it copies coercion-internal sections.
+        return RingHomomorphism._extra_slots(self, _slots)
 
     cdef _update_slots(self, dict _slots):
         """
@@ -2281,9 +2208,9 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism_coercion):
             sage: f = K.coerce_map_from(R)
             sage: g = copy(f)   # indirect doctest
             sage: g
-            Ring Coercion morphism:
-              From: Unramified Extension of 3-adic Ring with capped relative precision 20 in a defined by (1 + O(3^20))*x^2 + (2 + O(3^20))*x + (2 + O(3^20))
-              To:   Unramified Extension of 3-adic Field with capped relative precision 20 in a defined by (1 + O(3^20))*x^2 + (2 + O(3^20))*x + (2 + O(3^20))
+            Ring morphism:
+              From: Unramified Extension in a defined by x^2 + 2*x + 2 with capped relative precision 20 over 3-adic Ring
+              To:   Unramified Extension in a defined by x^2 + 2*x + 2 with capped relative precision 20 over 3-adic Field
             sage: g == f
             True
             sage: g is f
@@ -2296,7 +2223,38 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism_coercion):
         """
         self._zero = _slots['_zero']
         self._section = _slots['_section']
-        RingHomomorphism_coercion._update_slots(self, _slots)
+        RingHomomorphism._update_slots(self, _slots)
+
+    def is_injective(self):
+        r"""
+        Return whether this map is injective.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqCR(9, implementation='FLINT')
+            sage: K = R.fraction_field()
+            sage: f = K.coerce_map_from(R)
+            sage: f.is_injective()
+            True
+
+        """
+        return True
+
+    def is_surjective(self):
+        r"""
+        Return whether this map is surjective.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqCR(9, implementation='FLINT')
+            sage: K = R.fraction_field()
+            sage: f = K.coerce_map_from(R)
+            sage: f.is_surjective()
+            False
+
+        """
+        return False
+
 
 cdef class pAdicConvert_CR_frac_field(Morphism):
     """
@@ -2308,8 +2266,8 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
         sage: K = R.fraction_field()
         sage: f = R.convert_map_from(K); f
         Generic morphism:
-          From: Unramified Extension of 3-adic Field with capped relative precision 20 in a defined by (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
-          To:   Unramified Extension of 3-adic Ring with capped relative precision 20 in a defined by (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
+          From: Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Field
+          To:   Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Ring
     """
     def __init__(self, K, R):
         """
@@ -2412,8 +2370,8 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
             sage: g = copy(f)   # indirect doctest
             sage: g
             Generic morphism:
-              From: Unramified Extension of 3-adic Field with capped relative precision 20 in a defined by (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
-              To:   Unramified Extension of 3-adic Ring with capped relative precision 20 in a defined by (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
+              From: Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Field
+              To:   Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Ring
             sage: g == f
             True
             sage: g is f
@@ -2440,8 +2398,8 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
             sage: g = copy(f)   # indirect doctest
             sage: g
             Generic morphism:
-              From: Unramified Extension of 3-adic Field with capped relative precision 20 in a defined by (1 + O(3^20))*x^2 + (2 + O(3^20))*x + (2 + O(3^20))
-              To:   Unramified Extension of 3-adic Ring with capped relative precision 20 in a defined by (1 + O(3^20))*x^2 + (2 + O(3^20))*x + (2 + O(3^20))
+              From: Unramified Extension in a defined by x^2 + 2*x + 2 with capped relative precision 20 over 3-adic Field
+              To:   Unramified Extension in a defined by x^2 + 2*x + 2 with capped relative precision 20 over 3-adic Ring
             sage: g == f
             True
             sage: g is f

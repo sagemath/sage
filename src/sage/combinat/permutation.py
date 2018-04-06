@@ -182,6 +182,7 @@ Below are listed all methods and classes defined in this file.
     :meth:`from_lehmer_code` | Returns the permutation with Lehmer code ``lehmer``.
     :meth:`from_reduced_word` | Returns the permutation corresponding to the reduced word ``rw``.
     :meth:`bistochastic_as_sum_of_permutations` | Returns a given bistochastic matrix as a nonnegative linear combination of permutations.
+    :meth:`bounded_affine_permutation` | Returns a partial permutation representing the bounded affine permutation of a matrix.
     :meth:`descents_composition_list` | Returns a list of all the permutations in a given descent class (i. e., having a given descents composition).
     :meth:`descents_composition_first` | Returns the smallest element of a descent class.
     :meth:`descents_composition_last` | Returns the largest element of a descent class.
@@ -244,7 +245,7 @@ from sage.structure.global_options import GlobalOptions
 from sage.interfaces.all import gap
 from sage.rings.all import ZZ, Integer, PolynomialRing
 from sage.arith.all import factorial
-from sage.matrix.all import matrix
+from sage.matrix.matrix_space import MatrixSpace
 from sage.combinat.tools import transitive_ideal
 from sage.combinat.composition import Composition
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -259,7 +260,8 @@ from .backtrack import GenericBacktracker
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.rsk import RSK, RSK_inverse
 from sage.combinat.permutation_cython import (left_action_product,
-             right_action_product, left_action_same_n, right_action_same_n)
+             right_action_product, left_action_same_n, right_action_same_n,
+             map_to_list, next_perm)
 
 class Permutation(CombinatorialElement):
     r"""
@@ -1165,9 +1167,9 @@ class Permutation(CombinatorialElement):
             [0 1 0]
             [0 0 1]
 
-        ::
+        Alternatively::
 
-            sage: Permutation([1,3,2]).to_matrix()
+            sage: matrix(Permutation([1,3,2]))
             [1 0 0]
             [0 0 1]
             [0 1 0]
@@ -1194,15 +1196,13 @@ class Permutation(CombinatorialElement):
             [0 0 1]
             [0 1 0]
         """
-        p = self[:]
-        n = len(p)
+        # build the dictionary of entries since the matrix is
+        # extremely sparse
+        entries = { (v-1, i): 1 for i, v in enumerate(self) }
+        M = MatrixSpace(ZZ, len(self), sparse=True)
+        return M(entries)
 
-        #Build the dictionary of entries since the matrix
-        #is extremely sparse
-        entries = {}
-        for i in range(n):
-            entries[(p[i]-1,i)] = 1
-        return matrix(n, entries, sparse = True)
+    _matrix_ = to_matrix
 
     @combinatorial_map(name='to alternating sign matrix')
     def to_alternating_sign_matrix(self):
@@ -1341,7 +1341,7 @@ class Permutation(CombinatorialElement):
             sage: p(2)
             1
             sage: p = Permutation([5,2,1,6,3,7,4])
-            sage: map(p, range(1,8))
+            sage: list(map(p, range(1,8)))
             [5, 2, 1, 6, 3, 7, 4]
 
         TESTS::
@@ -1520,7 +1520,7 @@ class Permutation(CombinatorialElement):
         (This implementation is the best choice for ``size > 410``
         approximately.)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = Permutation([5,9,1,8,2,6,4,7,3])
             sage: p._to_inversion_vector_divide_and_conquer()
@@ -2758,7 +2758,7 @@ class Permutation(CombinatorialElement):
             from sage.misc.superseded import deprecation
             deprecation(20555, "default behavior of descents may change in the near future to have indices starting from 1")
             from_zero = True
-        
+
         if side == 'right':
             p = self
         else:
@@ -4697,7 +4697,7 @@ class Permutation(CombinatorialElement):
         semi-lengths of the cycles of this graph (see Chapter VII of [Mcd]_ for
         more details, particularly Section VII.2).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Permutation([3, 4, 6, 1, 5, 7, 2, 8]).hyperoctahedral_double_coset_type()
             [3, 1]
@@ -4722,7 +4722,7 @@ class Permutation(CombinatorialElement):
         if n % 2 == 1:
             raise ValueError("%s is a permutation of odd size and has no coset-type"%self)
         S = PerfectMatchings(n)([(2*i+1,2*i+2) for i in range(n//2)])
-        return S.loop_type(S.conjugate_by_permutation(self))
+        return S.loop_type(S.apply_permutation(self))
 
     #####################
     # Binary operations #
@@ -5420,8 +5420,7 @@ class Permutations_mset(Permutations):
 
     def __iter__(self):
         r"""
-        Algorithm based on:
-        http://marknelson.us/2002/03/01/next-permutation/
+        Iterate over ``self``.
 
         EXAMPLES::
 
@@ -5436,50 +5435,18 @@ class Permutations_mset(Permutations):
             [[]]
         """
         mset = self.mset
-        n = len(self.mset)
-        lmset = list(mset)
-        mset_list = sorted((lmset.index(x) for x in lmset))
+        n = len(mset)
+        from array import array
+        mset_list = array('I', sorted(mset.index(x) for x in mset))
 
-        yield self.element_class(self, [lmset[x] for x in mset_list])
+        yield self.element_class(self, map_to_list(mset_list, mset, n), check=False)
 
         if n <= 1:
             return
 
-        while True:
-            one = n - 2
-            two = n - 1
-            j   = n - 1
-
-            #starting from the end, find the first o such that
-            #mset_list[o] < mset_list[o+1]
-            while two > 0 and mset_list[one] >= mset_list[two]:
-                one -= 1
-                two -= 1
-
-            if two == 0:
-                return
-
-            #starting from the end, find the first j such that
-            #mset_list[j] > mset_list[one]
-            while mset_list[j] <= mset_list[one]:
-                j -= 1
-
-            #Swap positions one and j
-            t = mset_list[one]
-            mset_list[one] = mset_list[j]
-            mset_list[j] = t
-
-            #Reverse the list between two and last
-            i = int((n - two)/2)-1
-            #mset_list = mset_list[:two] + [x for x in reversed(mset_list[two:])]
-            while i >= 0:
-                t = mset_list[ i + two ]
-                mset_list[ i + two ] = mset_list[n-1 - i]
-                mset_list[n-1 - i] = t
-                i -= 1
-
+        while next_perm(mset_list):
             #Yield the permutation
-            yield self.element_class(self, [lmset[x] for x in  mset_list])
+            yield self.element_class(self, map_to_list(mset_list, mset, n), check=False)
 
     def cardinality(self):
         """
@@ -6158,11 +6125,11 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: SP3 = Permutations(3)
-            sage: l = map(SP3.unrank, range(6))
+            sage: l = list(map(SP3.unrank, range(6)))
             sage: l == SP3.list()
             True
             sage: SP0 = Permutations(0)
-            sage: l = map(SP0.unrank, range(1))
+            sage: l = list(map(SP0.unrank, range(1)))
             sage: l == SP0.list()
             True
         """
@@ -6186,10 +6153,10 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             4
 
             sage: SP3 = Permutations(3)
-            sage: map(SP3.rank, SP3)
+            sage: list(map(SP3.rank, SP3))
             [0, 1, 2, 3, 4, 5]
             sage: SP0 = Permutations(0)
-            sage: map(SP0.rank, SP0)
+            sage: list(map(SP0.rank, SP0))
             [0]
         """
         if p is None:
@@ -6221,6 +6188,23 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             24
         """
         return factorial(self.n)
+
+    def degree(self):
+        """
+        Return the degree of ``self``.
+
+        This is the cardinality `n` of the set ``self`` acts on.
+
+        EXAMPLES::
+
+            sage: Permutations(0).degree()
+            0
+            sage: Permutations(1).degree()
+            1
+            sage: Permutations(5).degree()
+            5
+        """
+        return self.n
 
     def degrees(self):
         """
@@ -6986,6 +6970,62 @@ def bistochastic_as_sum_of_permutations(M, check = True):
 
     return value
 
+
+def bounded_affine_permutation(A):
+    r"""
+    Return the bounded affine permutation of a matrix.
+
+    The *bounded affine permutation* of a matrix `A` with entries in `R`
+    is a partial permutation of length `n`, where `n` is the number of
+    columns of `A`. The entry in position `i` is the smallest value `j`
+    such that column `i` is in the span of columns `i+1, \ldots, j`,
+    over `R`, where column indices are taken modulo `n`.
+    If column `i` is the zero vector, then the permutation has a
+    fixed point at `i`.
+
+    INPUT:
+
+    - ``A`` -- matrix with entries in a ring `R`
+
+    EXAMPLES::
+
+        sage: from sage.combinat.permutation import bounded_affine_permutation
+        sage: A = Matrix(ZZ, [[1,0,0,0], [0,1,0,0]])
+        sage: bounded_affine_permutation(A)
+        [5, 6, 3, 4]
+
+        sage: A = Matrix(ZZ, [[0,1,0,1,0], [0,0,1,1,0]])
+        sage: bounded_affine_permutation(A)
+        [1, 4, 7, 8, 5]
+
+    REFERENCES:
+
+    - [KLS2013]_
+    """
+    n = A.ncols()
+    R = A.base_ring()
+    from sage.modules.free_module import FreeModule
+    from sage.modules.free_module import span
+    z = FreeModule(R, A.nrows()).zero()
+    v = A.columns()
+    perm = []
+    for j in range(n):
+        if not v[j]:
+            perm.append(j + 1)
+            continue
+        V = span([z], R)
+        for i in range(j + 1, j + n + 1):
+            index = i % n
+            V = V + span([v[index]], R)
+            if not V.dimension():
+                continue
+            if v[j] in V:
+                perm.append(i + 1)
+                break
+    S = Permutations(2 * n, n)
+    return S(perm)
+
+
 class StandardPermutations_descents(StandardPermutations_n_abstract):
     """
     Permutations of `\{1, \ldots, n\}` with a fixed set of descents.
@@ -7642,7 +7682,7 @@ def permutohedron_lequal(p1, p2, side="right"):
 ############
 from sage.combinat.words.finite_word import evaluation_dict
 
-def to_standard(p, cmp=None, key=None):
+def to_standard(p, key=None):
     r"""
     Return a standard permutation corresponding to the iterable ``p``.
 
@@ -7651,11 +7691,6 @@ def to_standard(p, cmp=None, key=None):
     - ``p`` -- an iterable
     - ``key`` -- (optional) a comparison key for the element
       ``x`` of ``p``
-    - ``cmp`` -- (optional, deprecated) a comparison function for the
-      two elements ``x`` and ``y`` of ``p`` (return an integer
-      according to the outcome)
-
-    Using ``cmp`` is no longer allowed in Python3 and should be avoided.
 
     EXAMPLES::
 
@@ -7698,20 +7733,9 @@ def to_standard(p, cmp=None, key=None):
         sage: p = list(Words(100, 1000).random_element())
         sage: std(p) == permutation.to_standard(p)
         True
-
-    Deprecation of ``cmp`` in favor of ``key``::
-
-        sage: permutation.to_standard([5,8,2,5], cmp=lambda x,y: int(-1)*cmp(x,y))
-        doctest:warning...:
-        DeprecationWarning: do not use 'cmp' but rather 'key' for comparison
-        See http://trac.sagemath.org/21435 for details.
-        [2, 1, 4, 3]
     """
-    if cmp is not None:
-       from sage.misc.superseded import deprecation
-       deprecation(21435, "do not use 'cmp' but rather 'key' for comparison")
     ev_dict = evaluation_dict(p)
-    ordered_alphabet = sorted(ev_dict, cmp=cmp, key=key)
+    ordered_alphabet = sorted(ev_dict, key=key)
     offset = 0
     for k in ordered_alphabet:
         temp = ev_dict[k]
@@ -7792,9 +7816,9 @@ class CyclicPermutations(Permutations_mset):
              [[1, 1, 1], [1, 1, 1]]
         """
         if distinct:
-            content = [1]*len(self.mset)
+            content = [1] * len(self.mset)
         else:
-            content = [0]*len(self.mset)
+            content = [0] * len(self.mset)
             index_list = map(self.mset.index, self.mset)
             for i in index_list:
                 content[i] += 1

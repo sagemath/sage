@@ -1,0 +1,524 @@
+diff -ru a/benchmarks/data/Makefile.in b/benchmarks/data/Makefile.in
+--- a/benchmarks/data/Makefile.in	2017-02-06 17:34:41.975143500 +0100
++++ b/benchmarks/data/Makefile.in	2017-02-06 17:49:25.244034600 +0100
+@@ -214,6 +214,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/benchmarks/Makefile.in b/benchmarks/Makefile.in
+--- a/benchmarks/Makefile.in	2017-02-06 17:34:42.036008000 +0100
++++ b/benchmarks/Makefile.in	2017-02-06 17:49:25.210033100 +0100
+@@ -353,6 +353,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/benchmarks/matrix/Makefile.in b/benchmarks/matrix/Makefile.in
+--- a/benchmarks/matrix/Makefile.in	2017-02-06 17:34:41.999141900 +0100
++++ b/benchmarks/matrix/Makefile.in	2017-02-06 17:49:25.275533500 +0100
+@@ -214,6 +214,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/configure b/configure
+--- a/configure	2017-02-06 17:34:42.218522700 +0100
++++ b/configure	2017-02-06 17:49:21.704976100 +0100
+@@ -704,6 +704,7 @@
+ LINBOX_HAVE_OMP_FALSE
+ LINBOX_HAVE_OMP_TRUE
+ OMPFLAGS
++LINBOX_LDFLAGS
+ OTOOL64
+ OTOOL
+ LIPO
+@@ -15918,6 +15919,19 @@
+ 
+ 
+ 
++# needed for building interfaces as shared libs on Windows
++
++case "${host_os}" in
++    cygwin*|mingw*)
++        LINBOX_LDFLAGS=-no-undefined
++        ;;
++    *)
++        LINBOX_LDFLAGS=""
++        ;;
++esac
++
++
++
+ echo "-----------------------------------------------"
+ echo "        START  LINBOX CONFIG                   "
+ echo "-----------------------------------------------"
+diff -ru a/configure.ac b/configure.ac
+--- a/configure.ac	2017-02-06 17:36:56.899033700 +0100
++++ b/configure.ac	2017-02-06 17:47:20.828434500 +0100
+@@ -164,7 +164,20 @@
+ 
+ # newer libtool...
+ LT_PREREQ([2.2])
+-LT_INIT
++LT_INIT([win32-dll])
++
++
++# needed for building interfaces as shared libs on Windows
++AC_CANONICAL_HOST
++case "${host_os}" in
++    cygwin*|mingw*)
++        LINBOX_LDFLAGS=-no-undefined
++        ;;
++    *)
++        LINBOX_LDFLAGS=""
++        ;;
++esac
++AC_SUBST([LINBOX_LDFLAGS])
+ 
+ 
+ echo "-----------------------------------------------"
+diff -ru a/doc/Makefile.in b/doc/Makefile.in
+--- a/doc/Makefile.in	2017-02-06 17:34:39.850940900 +0100
++++ b/doc/Makefile.in	2017-02-06 17:49:25.325533100 +0100
+@@ -245,6 +245,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/examples/Makefile.in b/examples/Makefile.in
+--- a/examples/Makefile.in	2017-02-06 17:34:39.395831100 +0100
++++ b/examples/Makefile.in	2017-02-06 17:49:25.380594300 +0100
+@@ -358,6 +358,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/interfaces/driver/Makefile.am b/interfaces/driver/Makefile.am
+--- a/interfaces/driver/Makefile.am	2017-02-06 17:34:39.612887500 +0100
++++ b/interfaces/driver/Makefile.am	2017-02-06 17:47:54.367479800 +0100
+@@ -46,7 +46,7 @@
+ # \
+ 			#  lb-solve.C
+ 
+-liblbdriver_la_LDFLAGS=  $(NTL_LIBS) $(LDFLAGS) $(top_srcdir)/linbox/liblinbox.la -Wl,-zmuldefs
++liblbdriver_la_LDFLAGS=  $(NTL_LIBS) $(LDFLAGS) $(LINBOX_LDFLAGS) $(top_srcdir)/linbox/liblinbox.la -Wl,-zmuldefs
+ 
+ 
+ 
+diff -ru a/interfaces/driver/Makefile.in b/interfaces/driver/Makefile.in
+--- a/interfaces/driver/Makefile.in	2017-02-06 17:34:39.537872700 +0100
++++ b/interfaces/driver/Makefile.in	2017-02-06 17:49:25.458653400 +0100
+@@ -315,6 +315,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+@@ -444,7 +445,7 @@
+ 
+ # \
+ #			#  lb-solve.C
+-@LINBOX_COMPILE_DRIVERS_TRUE@liblbdriver_la_LDFLAGS = $(NTL_LIBS) $(LDFLAGS) $(top_srcdir)/linbox/liblinbox.la -Wl,-zmuldefs
++@LINBOX_COMPILE_DRIVERS_TRUE@liblbdriver_la_LDFLAGS = $(NTL_LIBS) $(LDFLAGS) $(LINBOX_LDFLAGS) $(top_srcdir)/linbox/liblinbox.la -Wl,-zmuldefs
+ @LINBOX_COMPILE_DRIVERS_TRUE@pkginclude_HEADERS = \
+ @LINBOX_COMPILE_DRIVERS_TRUE@		lb-driver.h              \
+ @LINBOX_COMPILE_DRIVERS_TRUE@		lb-blackbox-abstract.h   \
+diff -ru a/interfaces/kaapi/Makefile.in b/interfaces/kaapi/Makefile.in
+--- a/interfaces/kaapi/Makefile.in	2017-02-06 17:34:39.661926000 +0100
++++ b/interfaces/kaapi/Makefile.in	2017-02-06 17:49:25.495152600 +0100
+@@ -261,6 +261,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/interfaces/Makefile.in b/interfaces/Makefile.in
+--- a/interfaces/Makefile.in	2017-02-06 17:34:39.693925700 +0100
++++ b/interfaces/Makefile.in	2017-02-06 17:49:25.416594200 +0100
+@@ -272,6 +272,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/interfaces/maple/Makefile.am b/interfaces/maple/Makefile.am
+--- a/interfaces/maple/Makefile.am	2017-02-06 17:34:39.711925700 +0100
++++ b/interfaces/maple/Makefile.am	2017-02-06 17:48:29.892945500 +0100
+@@ -30,7 +30,7 @@
+ 
+ liblbmaple_la_SOURCES= lb-maple.C
+ 
+-liblbmaple_la_LDFLAGS=  $(NTL_LIBS) $(MAPLE_LIBS) $(top_srcdir)/interfaces/driver/liblbdriver.la -Wl,-zmuldefs $(LDFLAGS)
++liblbmaple_la_LDFLAGS=  $(NTL_LIBS) $(MAPLE_LIBS) $(top_srcdir)/interfaces/driver/liblbdriver.la -Wl,-zmuldefs $(LDFLAGS) $(LINBOX_LDFLAGS)
+ 
+ pkginclude_HEADERS =lb-maple.h lb-maple-utilities.h
+ 
+diff -ru a/interfaces/maple/Makefile.in b/interfaces/maple/Makefile.in
+--- a/interfaces/maple/Makefile.in	2017-02-06 17:34:39.703924800 +0100
++++ b/interfaces/maple/Makefile.in	2017-02-06 17:49:25.536153500 +0100
+@@ -296,6 +296,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+@@ -406,7 +407,7 @@
+ @LINBOX_HAVE_MAPLE_TRUE@AM_CXXFLAGS = @DEFAULT_CFLAGS@ -DDISABLE_COMMENTATOR -I../driver  $(NTL_CFLAGS) $(MAPLE_CFLAGS) 
+ @LINBOX_HAVE_MAPLE_TRUE@lib_LTLIBRARIES = liblbmaple.la
+ @LINBOX_HAVE_MAPLE_TRUE@liblbmaple_la_SOURCES = lb-maple.C
+-@LINBOX_HAVE_MAPLE_TRUE@liblbmaple_la_LDFLAGS = $(NTL_LIBS) $(MAPLE_LIBS) $(top_srcdir)/interfaces/driver/liblbdriver.la -Wl,-zmuldefs $(LDFLAGS)
++@LINBOX_HAVE_MAPLE_TRUE@liblbmaple_la_LDFLAGS = $(NTL_LIBS) $(MAPLE_LIBS) $(top_srcdir)/interfaces/driver/liblbdriver.la -Wl,-zmuldefs $(LDFLAGS) $(LINBOX_LDFLAGS)
+ @LINBOX_HAVE_MAPLE_TRUE@pkginclude_HEADERS = lb-maple.h lb-maple-utilities.h
+ all: all-am
+ 
+diff -ru a/interfaces/sage/Makefile.am b/interfaces/sage/Makefile.am
+--- a/interfaces/sage/Makefile.am	2017-02-06 17:34:39.685920400 +0100
++++ b/interfaces/sage/Makefile.am	2017-02-06 17:48:31.691793800 +0100
+@@ -38,5 +38,5 @@
+ #gentoo's linbox-1.1.6-fix-undefined-symbols.patch
+ liblinboxsage_la_LIBADD = $(top_builddir)/linbox/liblinbox.la
+ 
+-liblinboxsage_la_LDFLAGS = $(DEPS_LIBS) $(LDFLAGS) -version-info 0:0:0 #-Wl,-zmuldefs
++liblinboxsage_la_LDFLAGS = $(DEPS_LIBS) $(LDFLAGS) $(LINBOX_LDFLAGS) -version-info 0:0:0 #-Wl,-zmuldefs
+ endif
+diff -ru a/interfaces/sage/Makefile.in b/interfaces/sage/Makefile.in
+--- a/interfaces/sage/Makefile.in	2017-02-06 17:34:39.676920200 +0100
++++ b/interfaces/sage/Makefile.in	2017-02-06 17:49:25.576653400 +0100
+@@ -297,6 +297,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+@@ -415,7 +416,7 @@
+ #liblinboxsage_la_LIBADD = -llinbox 
+ #gentoo's linbox-1.1.6-fix-undefined-symbols.patch
+ @LINBOX_HAVE_SAGE_TRUE@liblinboxsage_la_LIBADD = $(top_builddir)/linbox/liblinbox.la
+-@LINBOX_HAVE_SAGE_TRUE@liblinboxsage_la_LDFLAGS = $(DEPS_LIBS) $(LDFLAGS) -version-info 0:0:0 #-Wl,-zmuldefs
++@LINBOX_HAVE_SAGE_TRUE@liblinboxsage_la_LDFLAGS = $(DEPS_LIBS) $(LDFLAGS) $(LINBOX_LDFLAGS) -version-info 0:0:0 #-Wl,-zmuldefs
+ all: all-am
+ 
+ .SUFFIXES:
+diff -ru a/linbox/algorithms/gauss/Makefile.in b/linbox/algorithms/gauss/Makefile.in
+--- a/linbox/algorithms/gauss/Makefile.in	2017-02-06 17:34:40.811512900 +0100
++++ b/linbox/algorithms/gauss/Makefile.in	2017-02-06 17:49:25.699269100 +0100
+@@ -261,6 +261,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/algorithms/Makefile.in b/linbox/algorithms/Makefile.in
+--- a/linbox/algorithms/Makefile.in	2017-02-06 17:34:40.892012600 +0100
++++ b/linbox/algorithms/Makefile.in	2017-02-06 17:49:25.662769500 +0100
+@@ -331,6 +331,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/algorithms/matrix-blas3/Makefile.in b/linbox/algorithms/matrix-blas3/Makefile.in
+--- a/linbox/algorithms/matrix-blas3/Makefile.in	2017-02-06 17:34:41.334550500 +0100
++++ b/linbox/algorithms/matrix-blas3/Makefile.in	2017-02-06 17:49:25.736269000 +0100
+@@ -262,6 +262,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/algorithms/opencl-kernels/Makefile.in b/linbox/algorithms/opencl-kernels/Makefile.in
+--- a/linbox/algorithms/opencl-kernels/Makefile.in	2017-02-06 17:34:41.048032700 +0100
++++ b/linbox/algorithms/opencl-kernels/Makefile.in	2017-02-06 17:49:25.772269700 +0100
+@@ -262,6 +262,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/algorithms/polynomial-matrix/Makefile.in b/linbox/algorithms/polynomial-matrix/Makefile.in
+--- a/linbox/algorithms/polynomial-matrix/Makefile.in	2017-02-06 17:34:41.118038400 +0100
++++ b/linbox/algorithms/polynomial-matrix/Makefile.in	2017-02-06 17:49:25.808769600 +0100
+@@ -261,6 +261,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/blackbox/Makefile.in b/linbox/blackbox/Makefile.in
+--- a/linbox/blackbox/Makefile.in	2017-02-06 17:34:40.342490600 +0100
++++ b/linbox/blackbox/Makefile.in	2017-02-06 17:49:25.847769500 +0100
+@@ -274,6 +274,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/element/Makefile.in b/linbox/element/Makefile.in
+--- a/linbox/element/Makefile.in	2017-02-06 17:34:40.189476400 +0100
++++ b/linbox/element/Makefile.in	2017-02-06 17:49:25.884331300 +0100
+@@ -242,6 +242,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/field/Makefile.in b/linbox/field/Makefile.in
+--- a/linbox/field/Makefile.in	2017-02-06 17:34:40.238976000 +0100
++++ b/linbox/field/Makefile.in	2017-02-06 17:49:25.920830500 +0100
+@@ -261,6 +261,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/Makefile.in b/linbox/Makefile.in
+--- a/linbox/Makefile.in	2017-02-06 17:34:41.938142500 +0100
++++ b/linbox/Makefile.in	2017-02-06 17:49:25.619769700 +0100
+@@ -339,6 +339,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/matrix/densematrix/Makefile.in b/linbox/matrix/densematrix/Makefile.in
+--- a/linbox/matrix/densematrix/Makefile.in	2017-02-06 17:34:41.579592400 +0100
++++ b/linbox/matrix/densematrix/Makefile.in	2017-02-06 17:49:25.998331800 +0100
+@@ -262,6 +262,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/matrix/Makefile.in b/linbox/matrix/Makefile.in
+--- a/linbox/matrix/Makefile.in	2017-02-06 17:34:41.657100600 +0100
++++ b/linbox/matrix/Makefile.in	2017-02-06 17:49:25.960845400 +0100
+@@ -303,6 +303,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/matrix/matrixdomain/Makefile.in b/linbox/matrix/matrixdomain/Makefile.in
+--- a/linbox/matrix/matrixdomain/Makefile.in	2017-02-06 17:34:41.525072000 +0100
++++ b/linbox/matrix/matrixdomain/Makefile.in	2017-02-06 17:49:26.037330200 +0100
+@@ -262,6 +262,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/matrix/sliced3/Makefile.in b/linbox/matrix/sliced3/Makefile.in
+--- a/linbox/matrix/sliced3/Makefile.in	2017-02-06 17:34:41.619106200 +0100
++++ b/linbox/matrix/sliced3/Makefile.in	2017-02-06 17:49:26.075331500 +0100
+@@ -261,6 +261,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/matrix/sparsematrix/Makefile.in b/linbox/matrix/sparsematrix/Makefile.in
+--- a/linbox/matrix/sparsematrix/Makefile.in	2017-02-06 17:34:41.408051100 +0100
++++ b/linbox/matrix/sparsematrix/Makefile.in	2017-02-06 17:49:26.113333300 +0100
+@@ -261,6 +261,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/randiter/Makefile.in b/linbox/randiter/Makefile.in
+--- a/linbox/randiter/Makefile.in	2017-02-06 17:34:39.952933900 +0100
++++ b/linbox/randiter/Makefile.in	2017-02-06 17:49:26.154830900 +0100
+@@ -294,6 +294,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/ring/Makefile.in b/linbox/ring/Makefile.in
+--- a/linbox/ring/Makefile.in	2017-02-06 17:34:40.154486000 +0100
++++ b/linbox/ring/Makefile.in	2017-02-06 17:49:26.194831500 +0100
+@@ -308,6 +308,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/ring/modular/Makefile.in b/linbox/ring/modular/Makefile.in
+--- a/linbox/ring/modular/Makefile.in	2017-02-06 17:34:40.057431300 +0100
++++ b/linbox/ring/modular/Makefile.in	2017-02-06 17:49:26.230845700 +0100
+@@ -261,6 +261,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/ring/ntl/Makefile.in b/linbox/ring/ntl/Makefile.in
+--- a/linbox/ring/ntl/Makefile.in	2017-02-06 17:34:40.134485700 +0100
++++ b/linbox/ring/ntl/Makefile.in	2017-02-06 17:49:26.268331000 +0100
+@@ -264,6 +264,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/solutions/Makefile.in b/linbox/solutions/Makefile.in
+--- a/linbox/solutions/Makefile.in	2017-02-06 17:34:41.776617100 +0100
++++ b/linbox/solutions/Makefile.in	2017-02-06 17:49:26.311330700 +0100
+@@ -263,6 +263,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/util/formats/Makefile.in b/linbox/util/formats/Makefile.in
+--- a/linbox/util/formats/Makefile.in	2017-02-06 17:34:41.877105700 +0100
++++ b/linbox/util/formats/Makefile.in	2017-02-06 17:49:26.387830900 +0100
+@@ -261,6 +261,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/util/Makefile.in b/linbox/util/Makefile.in
+--- a/linbox/util/Makefile.in	2017-02-06 17:34:41.842107200 +0100
++++ b/linbox/util/Makefile.in	2017-02-06 17:49:26.351831300 +0100
+@@ -336,6 +336,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/linbox/vector/Makefile.in b/linbox/vector/Makefile.in
+--- a/linbox/vector/Makefile.in	2017-02-06 17:34:40.568512800 +0100
++++ b/linbox/vector/Makefile.in	2017-02-06 17:49:26.425846200 +0100
+@@ -261,6 +261,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/macros/Makefile.in b/macros/Makefile.in
+--- a/macros/Makefile.in	2017-02-06 17:34:42.161518400 +0100
++++ b/macros/Makefile.in	2017-02-06 17:49:26.456862400 +0100
+@@ -213,6 +213,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/Makefile.in b/Makefile.in
+--- a/Makefile.in	2017-02-06 17:34:39.448852700 +0100
++++ b/Makefile.in	2017-02-06 17:49:25.129534900 +0100
+@@ -338,6 +338,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/tests/data/Makefile.in b/tests/data/Makefile.in
+--- a/tests/data/Makefile.in	2017-02-06 17:34:42.305020400 +0100
++++ b/tests/data/Makefile.in	2017-02-06 17:49:26.676899000 +0100
+@@ -212,6 +212,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/tests/Makefile.in b/tests/Makefile.in
+--- a/tests/Makefile.in	2017-02-06 17:34:42.357025900 +0100
++++ b/tests/Makefile.in	2017-02-06 17:49:26.643868200 +0100
+@@ -1260,6 +1260,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@
+diff -ru a/tests/matrix/Makefile.in b/tests/matrix/Makefile.in
+--- a/tests/matrix/Makefile.in	2017-02-06 17:34:42.374029500 +0100
++++ b/tests/matrix/Makefile.in	2017-02-06 17:49:26.706918800 +0100
+@@ -212,6 +212,7 @@
+ LINBOXSAGE_LIBS = @LINBOXSAGE_LIBS@
+ LINBOX_BENCH_PATH = @LINBOX_BENCH_PATH@
+ LINBOX_DOC_PATH = @LINBOX_DOC_PATH@
++LINBOX_LDFLAGS = @LINBOX_LDFLAGS@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+ LTLIBOBJS = @LTLIBOBJS@

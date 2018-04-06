@@ -16,6 +16,7 @@ H(yperplane) and V(ertex) representation objects for polyhedra
 
 from sage.structure.sage_object import SageObject
 from sage.structure.element import is_Vector
+from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.all import QQ, ZZ, RDF
 from sage.modules.free_module_element import vector
 
@@ -30,6 +31,7 @@ from sage.modules.free_module_element import vector
 #                  /       \               /      |    \
 #           Inequality  Equation        Vertex   Ray   Line
 
+@richcmp_method
 class PolyhedronRepresentation(SageObject):
     """
     The internal base class for all representation objects of
@@ -96,7 +98,7 @@ class PolyhedronRepresentation(SageObject):
         # Hrepresentation._set_data below).
         return hash(tuple(self._vector))
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Compare two representation objects
 
@@ -110,8 +112,7 @@ class PolyhedronRepresentation(SageObject):
 
         OUTPUT:
 
-        One of `-1`, `0`, `+1`.  ``True`` if and only if ``other`` represents the same
-        H-representation object.
+        boolean
 
         EXAMPLES::
 
@@ -120,24 +121,21 @@ class PolyhedronRepresentation(SageObject):
             An inequality (1, 0) x + 0 >= 0
             sage: ieq == copy(ieq)
             True
-            sage: cmp(ieq, copy(ieq))
-            0
-
-            sage: cmp(ieq, 'a string')
-            -1
 
             sage: square = Polyhedron([(0,0), (1,0), (0,1), (1,1)], base_ring=QQ)
-            sage: cmp(square.Vrepresentation(0), triangle.Vrepresentation(0))
-            0
+            sage: square.Vrepresentation(0) == triangle.Vrepresentation(0)
+            True
 
-            sage: ieq = square.Hrepresentation(0);  ieq.vector()
+            sage: ieq = square.Hrepresentation(0); ieq.vector()
             (0, 1, 0)
-            sage: abs(cmp(ieq, Polyhedron([(0,1,0)]).Vrepresentation(0)))
-            1
+            sage: ieq != Polyhedron([(0,1,0)]).Vrepresentation(0)
+            True
         """
         if not isinstance(other, PolyhedronRepresentation):
-            return -1
-        return cmp(type(self), type(other)) or cmp(self._vector, other._vector)
+            return NotImplemented
+        if type(self) != type(other):
+            return NotImplemented
+        return richcmp(self._vector, other._vector, op)
 
     def vector(self, base_ring=None):
         """
@@ -553,6 +551,54 @@ class Hrepresentation(PolyhedronRepresentation):
         for V in self.polyhedron().Vrep_generator():
             if incidence_matrix[V.index(), self.index()] == 1:
                 yield V
+
+    def repr_pretty(self, **kwds):
+        r"""
+        Return a pretty representation of this equality/inequality.
+
+        INPUT:
+
+        - ``prefix`` -- a string
+
+        - ``indices`` -- a tuple or other iterable
+
+        - ``latex`` -- a boolean
+
+        OUTPUT:
+
+        A string
+
+        EXAMPLES::
+
+            sage: P = Polyhedron(ieqs=[(0, 1, 0, 0), (1, 2, 1, 0)],
+            ....:                eqns=[(1, -1, -1, 1)])
+            sage: for h in P.Hrepresentation():
+            ....:     print(h.repr_pretty())
+            x0 + x1 == x2 + 1
+            x0 >= 0
+            2*x0 + x1 + 1 >= 0
+        """
+        return repr_pretty(self.vector(), self.type(), **kwds)
+
+    def _latex_(self):
+        r"""
+        Return a LaTeX-representation of this equality/inequality.
+
+        OUTPUT:
+
+        A string.
+
+        EXAMPLES::
+
+            sage: P = Polyhedron(ieqs=[(0, 1, 0, 0), (1, 2, 1, 0)],
+            ....:                eqns=[(1, -1, -1, 1)])
+            sage: for h in P.Hrepresentation():
+            ....:     print(latex(h))
+            x_{0} + x_{1} = x_{2} + 1
+            x_{0} \geq 0
+            2 \, x_{0} + x_{1} + 1 \geq 0
+        """
+        return self.repr_pretty(latex=True)
 
 
 class Inequality(Hrepresentation):
@@ -1359,3 +1405,58 @@ class Line(Vrepresentation):
             0
         """
         return Hobj.A() * self.vector()
+
+
+def repr_pretty(coefficients, type, prefix='x', indices=None, latex=False):
+    r"""
+    Return a pretty representation of equation/inequality represented
+    by the coefficients.
+
+    INPUT:
+
+    - ``coefficients`` -- a tuple or other iterable
+
+    - ``type`` -- either ``0`` (``PolyhedronRepresentation.INEQUALITY``)
+      or ``1`` (``PolyhedronRepresentation.EQUATION``)
+
+    - ``prefix`` -- a string
+
+    - ``indices`` -- a tuple or other iterable
+
+    - ``latex`` -- a boolean
+
+    OUTPUT:
+
+    A string.
+
+    EXAMPLES::
+
+        sage: from sage.geometry.polyhedron.representation import repr_pretty
+        sage: from sage.geometry.polyhedron.representation import PolyhedronRepresentation
+        sage: print(repr_pretty((0, 1, 0, 0), PolyhedronRepresentation.INEQUALITY))
+        x0 >= 0
+        sage: print(repr_pretty((1, 2, 1, 0), PolyhedronRepresentation.INEQUALITY))
+        2*x0 + x1 + 1 >= 0
+        sage: print(repr_pretty((1, -1, -1, 1), PolyhedronRepresentation.EQUATION))
+        x2 + 1 == x0 + x1
+    """
+    from sage.misc.latex import latex as latex_function
+    from sage.modules.free_module_element import vector
+    from sage.symbolic.ring import SR
+
+    coeffs = vector(coefficients)
+    if indices is None:
+        indices = range(len(coeffs)-1)
+    vars = vector([1] + list(SR(prefix + '{}'.format(i)) for i in indices))
+    positive_part = vector([max(c, 0) for c in coeffs])
+    negative_part = - (coeffs - positive_part)
+    assert coeffs == positive_part - negative_part
+    if type == PolyhedronRepresentation.EQUATION:
+        rel = '=' if latex else '=='
+    elif type == PolyhedronRepresentation.INEQUALITY:
+        rel = r'\geq' if latex else '>='
+    else:
+        raise NotImplementedError(
+            'no pretty printing available: wrong type {}'.format(type))
+    f = latex_function if latex else repr
+    return '{} {} {}'.format(f(positive_part*vars), rel, f(negative_part*vars))

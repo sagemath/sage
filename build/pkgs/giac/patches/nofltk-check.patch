@@ -192,13 +192,13 @@ diff -ruN check/TP00-sol.cas.out1 check.new/TP00-sol.cas.out1
 +++ b/check/TP00-sol.cas.out1	2015-03-02 15:44:22.000000000 +0100
 @@ -66,7 +66,7 @@
  5,
- (sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4,
+ (sqrt(5)-1)/4+I*sqrt(2*sqrt(5)+10)/4,
  "Done",
 - (i,j,k)->if k=1 then segment(a^i,a^j); else seq(arc(a^i,a^j,l/k),l=(1 .. k)); 
 + (i,j,k)->if k=1 then segment(a^i,a^j,'color'=56); else seq(arc(a^i,a^j,l/k,'color'=56),l=(1 .. k)); 
  fi ,
  "Done",
- pnt(pnt[(sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4,1048580]),pnt(pnt[((sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4)^2,1048580]),pnt(pnt[((sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4)^3,1048580]),pnt(pnt[((sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4)^4,1048580]),pnt(pnt[((sqrt(5)-1)/4+(I)*sqrt(2*sqrt(5)+10)/4)^5,1048580]),
+ pnt(pnt[(sqrt(5)-1)/4+I*sqrt(2*sqrt(5)+10)/4,1048580]),pnt(pnt[((sqrt(5)-1)/4+I*sqrt(2*sqrt(5)+10)/4)^2,1048580]),pnt(pnt[((sqrt(5)-1)/4+I*sqrt(2*sqrt(5)+10)/4)^3,1048580]),pnt(pnt[((sqrt(5)-1)/4+I*sqrt(2*sqrt(5)+10)/4)^4,1048580]),pnt(pnt[((sqrt(5)-1)/4+I*sqrt(2*sqrt(5)+10)/4)^5,1048580]),
 diff -ruN check/TP02-sol.cas check.new/TP02-sol.cas
 --- a/check/TP02-sol.cas	2014-06-26 17:24:46.000000000 +0200
 +++ b/check/TP02-sol.cas	2015-03-02 15:38:02.000000000 +0100

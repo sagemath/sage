@@ -18,8 +18,9 @@ EXAMPLES::
     buffer containing 26 bytes
     sage: buf.get()
     'this is the buffer content'
+    sage: type(buf.get()) is bytes
+    True
 """
-
 #*****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
@@ -67,14 +68,17 @@ class OutputBuffer(SageObject):
             self._data = data._data
         else:
             self._filename = None
-            self._data = bytes(data)
+            if not isinstance(data, bytes):
+                self._data = data.encode('utf-8')
+            else:
+                self._data = data
 
     @classmethod
     def from_file(cls, filename):
         """
         Construct buffer from data in file.
 
-        .. warning::
+        .. WARNING::
 
             The buffer assumes that the file content remains the same
             during the lifetime of the Sage session. To communicate
@@ -94,8 +98,8 @@ class OutputBuffer(SageObject):
 
             sage: from sage.repl.rich_output.buffer import OutputBuffer
             sage: name = sage.misc.temporary_file.tmp_filename()
-            sage: with open(name, 'w') as f:
-            ....:    f.write('file content')
+            sage: with open(name, 'wb') as f:
+            ....:    _ = f.write('file content')
             sage: buf = OutputBuffer.from_file(name);  buf
             buffer containing 12 bytes
 
@@ -123,8 +127,8 @@ class OutputBuffer(SageObject):
 
             sage: from sage.repl.rich_output.buffer import OutputBuffer
             sage: tmp = sage.misc.temporary_file.tmp_filename()
-            sage: with open(tmp, 'w') as f:
-            ....:    f.write('file content')
+            sage: with open(tmp, 'wb') as f:
+            ....:    _ = f.write('file content')
             sage: OutputBuffer._chmod_readonly(tmp)
             sage: import os, stat
             sage: stat.S_IMODE(os.stat(tmp).st_mode) & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
@@ -169,11 +173,16 @@ class OutputBuffer(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.rich_output.buffer import OutputBuffer
-            sage: OutputBuffer('test1234').get()
+            sage: c = OutputBuffer('test1234').get(); c
             'test1234'
+            sage: type(c) is bytes
+            True
+            sage: c = OutputBuffer(u'été').get()
+            sage: type(c) is bytes
+            True
         """
         if self._data is None:
-            with open(self._filename) as f:
+            with open(self._filename, 'rb') as f:
                 self._data = f.read()
         return self._data
 
@@ -275,5 +284,5 @@ class OutputBuffer(SageObject):
             ....:     f.read()
             'test'
         """
-        with open(filename, 'w') as f:
+        with open(filename, 'wb') as f:
             f.write(self.get())

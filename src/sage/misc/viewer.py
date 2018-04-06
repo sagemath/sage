@@ -58,8 +58,8 @@ def default_viewer(viewer=None):
     if isinstance(viewer, str):
         viewer = viewer.lower()
 
-    if 'SAGE_BROWSER' in os.environ:
-        BROWSER = os.environ['SAGE_BROWSER']
+    if 'BROWSER' in os.environ:
+        BROWSER = os.environ['BROWSER']
         DVI_VIEWER = BROWSER
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER

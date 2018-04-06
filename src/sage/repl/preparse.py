@@ -87,9 +87,9 @@ Raw and hex work correctly::
     sage: type(0xa1)
     <type 'sage.rings.integer.Integer'>
     sage: type(0xa1r)
-    <type 'int'>
+    <... 'int'>
     sage: type(0Xa1R)
-    <type 'int'>
+    <... 'int'>
 
 In Sage, methods can also be called on integer and real literals (note
 that in pure Python this would be a syntax error)::
@@ -159,7 +159,7 @@ We create a raw integer::
     sage: a
     393939
     sage: type(a)
-    <type 'int'>
+    <... 'int'>
 
 We create a raw float::
 
@@ -167,7 +167,7 @@ We create a raw float::
     sage: z
     1.5949
     sage: type(z)
-    <type 'float'>
+    <... 'float'>
 
 You can also use an upper case letter::
 
@@ -175,7 +175,7 @@ You can also use an upper case letter::
     sage: z
     3.1415
     sage: type(z)
-    <type 'float'>
+    <... 'float'>
 
 This next example illustrates how raw literals can be very useful in
 certain cases.  We make a list of even integers up to 10000::
@@ -199,7 +199,9 @@ Behind the scenes what happens is the following::
     sage: preparse('v = [ 2r * i for i in range(10000r)]')
     'v = [ 2 * i for i in range(10000)]'
 
-.. warning: The result of the above two expressions is different.  The
+.. WARNING::
+
+   The results of the above two expressions are different.  The
    first one computes a list of Sage integers, whereas the second
    creates a list of Python integers.  Python integers are typically
    much more efficient than Sage integers when they are very small;
@@ -421,27 +423,34 @@ def strip_string_literals(code, state=None):
     return "".join(new_code), literals, (in_quote, raw)
 
 
-def containing_block(code, ix, delimiters=['()','[]','{}'], require_delim=True):
+def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True):
     """
-    Returns the smallest range (start,end) such that code[start,end]
-    is delimited by balanced delimiters (e.g., parentheses, brackets,
-    and braces).
+    Find the code block given by balanced delimiters that contains the position ``idx``.
 
     INPUT:
 
     - ``code`` - a string
 
-    - ``ix`` - an integer; a starting position
+    - ``idx`` - an integer; a starting position
 
     - ``delimiters`` - a list of strings (default: ['()', '[]',
-      '{}']); the delimiters to balance
+      '{}']); the delimiters to balance. A delimiter must be a single
+      character and no character can at the same time be opening and
+      closing delimiter.
 
     - ``require_delim`` - a boolean (default: True); whether to raise
-      a SyntaxError if delimiters are unbalanced
+      a SyntaxError if delimiters are present. If the delimiters are
+      unbalanced, an error will be raised in any case.
 
     OUTPUT:
 
-    - a 2-tuple of integers
+    - a 2-tuple ``(a,b)`` of integers, such that ``code[a:b]`` is
+      delimited by balanced delimiters, ``a<=idx<b``, and ``a``
+      is maximal and ``b`` is minimal with that property. If that
+      does not exist, a ``SyntaxError`` is raised.
+
+    - If ``require_delim`` is false and ``a,b`` as above can not be
+      found, then ``0, len(code)`` is returned.
 
     EXAMPLES::
 
@@ -462,41 +471,97 @@ def containing_block(code, ix, delimiters=['()','[]','{}'], require_delim=True):
         '(L[5]+1)'
         sage: start, end = containing_block(s, 10); s[start:end]
         '(next_prime(L[5]+1))'
+
+    TESTS::
+
+        sage: containing_block('((a{))',0)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('((a{))',1)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('((a{))',2)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('((a{))',3)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('((a{))',4)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('((a{))',5)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('(()()',1)
+        (1, 3)
+        sage: containing_block('(()()',3)
+        (3, 5)
+        sage: containing_block('(()()',4)
+        (3, 5)
+        sage: containing_block('(()()',0)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('(()()',0, require_delim=False)
+        (0, 5)
+        sage: containing_block('((})()',1, require_delim=False)
+        (0, 6)
+        sage: containing_block('abc',1, require_delim=False)
+        (0, 3)
+
     """
     openings = "".join([d[0] for d in delimiters])
     closings = "".join([d[-1] for d in delimiters])
     levels = [0] * len(openings)
     p = 0
-    start = ix
+    start = idx
     while start >= 0:
-        start -= 1
-        if start == -1:
-            if require_delim:
-                raise SyntaxError("Unbalanced or missing ()'s")
-            else:
-                break
         if code[start] in openings:
             p = openings.index(code[start])
             levels[p] -= 1
             if levels[p] == -1:
                 break
-        elif code[start] in closings:
+        elif code[start] in closings and start < idx:
             p = closings.index(code[start])
             levels[p] += 1
+        start -= 1
     if start == -1:
-        return 0, len(code)
-    end = ix
-    level = 0
+        if require_delim:
+            raise SyntaxError("Unbalanced or missing delimiters")
+        else:
+            return 0, len(code)
+    if levels.count(0) != len(levels)-1:
+        if require_delim:
+            raise SyntaxError("Unbalanced delimiters")
+        else:
+            return 0, len(code)
+    p0 = p
+    # We now have levels[p0]==-1. We go to the right hand side
+    # till we find a closing delimiter of type p0 that makes
+    # levels[p0]==0.
+    end = idx
     while end < len(code):
-        end += 1
-        if end == len(code):
-            raise SyntaxError("Unbalanced or missing ()'s")
-        if code[end] == openings[p]:
-            level += 1
-        elif code[end] == closings[p]:
-            level -= 1
-            if level == -1:
+        if code[end] in closings:
+            p = closings.index(code[end])
+            levels[p] += 1
+            if p==p0 and levels[p] == 0:
                 break
+        elif code[end] in openings and end > idx:
+            p = openings.index(code[end])
+            levels[p] -= 1
+        end += 1
+    if levels.count(0) != len(levels):
+        # This also occurs when end==len(code) without finding a closing delimiter
+        if require_delim:
+            raise SyntaxError("Unbalanced delimiters")
+        else:
+            return 0, len(code)
     return start, end+1
 
 
@@ -831,7 +896,7 @@ def preparse_calculus(code):
 
     TESTS:
 
-    The arguments in the definition must be symbolic variables #10747::
+    The arguments in the definition must be symbolic variables (:trac:`10747`)::
 
         sage: preparse_calculus(";f(_sage_const_)=x;")
         Traceback (most recent call last):

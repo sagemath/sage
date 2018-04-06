@@ -17,7 +17,7 @@ class LeftModules(Category_over_base_ring):
     """
     The category of left modules
     left modules over an rng (ring not necessarily with unit), i.e.
-    an abelian group with left multiplation by elements of the rng
+    an abelian group with left multiplication by elements of the rng
 
     EXAMPLES::
 

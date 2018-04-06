@@ -435,7 +435,8 @@ class Function_arcsinh(GinacFunction):
             asinh(x)
         """
         GinacFunction.__init__(self, "arcsinh", latex_name=r"{\rm arcsinh}",
-                conversions=dict(maxima='asinh', sympy='asinh', fricas='asinh'))
+                conversions=dict(maxima='asinh', sympy='asinh', fricas='asinh',
+                                giac='asinh'))
 
 arcsinh = asinh = Function_arcsinh()
 
@@ -519,7 +520,8 @@ class Function_arccosh(GinacFunction):
             acosh(x)
         """
         GinacFunction.__init__(self, "arccosh", latex_name=r"{\rm arccosh}",
-                conversions=dict(maxima='acosh', sympy='acosh', fricas='acosh'))
+                conversions=dict(maxima='acosh', sympy='acosh', fricas='acosh',
+                                giac='acosh'))
 
 arccosh = acosh = Function_arccosh()
 
@@ -577,7 +579,8 @@ class Function_arctanh(GinacFunction):
             atanh(x)
         """
         GinacFunction.__init__(self, "arctanh", latex_name=r"{\rm arctanh}",
-                conversions=dict(maxima='atanh', sympy='atanh', fricas='atanh'))
+                conversions=dict(maxima='atanh', sympy='atanh', fricas='atanh',
+                                giac='atanh'))
 
 arctanh = atanh = Function_arctanh()
 
@@ -619,6 +622,11 @@ class Function_arccoth(GinacFunction):
             \operatorname{arccoth}\left(x\right)
             sage: acoth(x)._sympy_()
             acoth(x)
+
+        Check if :trac:`23636` is fixed::
+
+            sage: arccoth(float(1.1))
+            1.5222612188617113
         """
         GinacFunction.__init__(self, "arccoth",
                 latex_name=r"\operatorname{arccoth}",

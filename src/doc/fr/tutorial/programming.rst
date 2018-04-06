@@ -194,8 +194,6 @@ suivant :
 
     bash $ ./factor 2006
     2 * 17 * 59
-    bash $ ./factor "32*x^5-1"
-    (2*x - 1) * (16*x^4 + 8*x^3 + 4*x^2 + 2*x + 1)
 
 Types de données
 ================
@@ -208,17 +206,17 @@ listes, les n-uplets, les entiers et les flottants :
 ::
 
     sage: s = "sage"; type(s)
-    <type 'str'>
+    <... 'str'>
     sage: s = 'sage'; type(s)      # guillemets simples ou doubles
-    <type 'str'>
+    <... 'str'>
     sage: s = [1,2,3,4]; type(s)
-    <type 'list'>
+    <... 'list'>
     sage: s = (1,2,3,4); type(s)
-    <type 'tuple'>
+    <... 'tuple'>
     sage: s = int(2006); type(s)
-    <type 'int'>
+    <... 'int'>
     sage: s = float(2006); type(s)
-    <type 'float'>
+    <... 'float'>
 
 Sage ajoute de nombreux autres types. Par exemple, les espaces
 vectoriels :
@@ -301,7 +299,7 @@ sont indexés à partir de :math:`0` :
     sage: v = [2, 3, 5, 'x', SymmetricGroup(3)]; v
     [2, 3, 5, 'x', Symmetric group of order 3! as a permutation group]
     sage: type(v)
-    <type 'list'>
+    <... 'list'>
     sage: v[0]
     2
     sage: v[2]
@@ -371,7 +369,7 @@ une fois créés.
     sage: v = (1,2,3,4); v
     (1, 2, 3, 4)
     sage: type(v)
-    <type 'tuple'>
+    <... 'tuple'>
     sage: v[1] = 5
     Traceback (most recent call last):
     ...
@@ -415,7 +413,7 @@ utilisées partout où les listes peuvent l'être :
     sage: list(v)
     [1, 2, 3, 4/5]
     sage: type(list(v))
-    <type 'list'>
+    <... 'list'>
 
 Autre exemple : les bases d'espaces vectoriels sont des séquences non
 mutables, car il ne faut pas les modifier.
@@ -451,7 +449,7 @@ Python pour plus de détails) vers des objets arbitraires.
 
     sage: d = {1:5, 'sage':17, ZZ:GF(7)}
     sage: type(d)
-    <type 'dict'>
+    <... 'dict'>
     sage: d.keys()
      [1, 'sage', Integer Ring]
     sage: d['sage']
@@ -472,7 +470,7 @@ contenant les mêmes données :
 
 ::
 
-    sage: d.items()
+    sage: list(d.items())
     [(1, 5), ('sage', 17), (Integer Ring, Finite Field of size 7)]
 
 Le parcours itératifs des paires d'un dictionnaire est un idiome de
@@ -481,7 +479,7 @@ programmation fréquent :
 ::
 
     sage: d = {2:4, 3:9, 4:16}
-    sage: [a*b for a, b in d.iteritems()]
+    sage: [a*b for a, b in d.items()]
     [8, 27, 64]
 
 Comme le montre la dernière sortie ci-dessus, un dictionnaire stocke ses
@@ -669,16 +667,6 @@ deux membres en des nombres du même type lorsque c'est possible :
     False
     sage: 2/3 < 3/2;   3/2 < 3/1
     True
-    True
-
-Deux objets quelconques ou presque peuvent être comparés, sans hypothèse
-sur l'existence d'un ordre total sous-jacent.
-
-::
-
-    sage: 2 < CC(3.1,1)
-    True
-    sage: 5 < VectorSpace(QQ,3)   # random
     True
 
 Pour évaluer des inégalités symboliques, utilisez ``bool`` :

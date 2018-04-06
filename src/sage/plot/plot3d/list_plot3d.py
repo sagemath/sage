@@ -207,7 +207,7 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
             # return a line
             from .shapes2 import line3d
             return line3d(v, **kwds)
-        elif isinstance(v[0], tuple) or point_list == True and len(v[0]) == 3:
+        elif isinstance(v[0], tuple) or point_list and len(v[0]) == 3:
             return list_plot3d_tuples(v, interpolation_type, texture=texture, **kwds)
         else:
             return list_plot3d_array_of_arrays(v, interpolation_type, texture, **kwds)

@@ -4,7 +4,7 @@
 #
 #############################################################
 
-include "cysignals/memory.pxi"
+from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.libs.gmp.mpq cimport *
 from sage.data_structures.binary_search cimport *

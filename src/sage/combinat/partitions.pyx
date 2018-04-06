@@ -24,17 +24,17 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import sys
+
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.gmp.types cimport mpz_t
 
 cdef extern from "partitions_c.h":
     int part(mpz_t answer, unsigned int n)
     int test(bint longtest, bint forever)
-
-include "cysignals/signals.pxi"
 
 from sage.rings.integer cimport Integer
 

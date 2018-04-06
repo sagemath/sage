@@ -68,7 +68,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         r"""
         Create a Hecke module. Not intended to be called directly.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(Gamma0(17),2) # indirect doctest
             Cuspidal subspace of dimension 1 of Modular Forms space of dimension 2 for Congruence Subgroup Gamma0(17) of weight 2 over Rational Field
@@ -98,7 +98,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         r"""
         Ensure that the category is initialized correctly on unpickling.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: loads(dumps(ModularSymbols(11))).category() # indirect doctest
             Category of Hecke modules over Rational Field
@@ -112,7 +112,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         r"""
         The hash is determined by the base ring and the level.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: MS = sage.modular.hecke.module.HeckeModule_generic(QQ,1)
             sage: hash(MS) == hash((MS.base_ring(), MS.level()))
@@ -121,20 +121,6 @@ class HeckeModule_generic(sage.modules.module.Module):
         """
         return hash((self.base_ring(), self.__level))
 
-    def __cmp__(self, other):
-        r"""
-        Compare self to other. This must be overridden in all subclasses.
-
-        EXAMPLE::
-
-            sage: M = ModularForms(Gamma0(3))
-            sage: sage.modular.hecke.module.HeckeModule_generic.__cmp__(M, M)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: ...
-        """
-        raise NotImplementedError("Derived class %s should implement __cmp__" % type(self))
-
     def _compute_hecke_matrix_prime_power(self, p, r, **kwds):
         r"""
         Compute the Hecke matrix T_{p^r}, where `p` is prime and `r \ge 2`, assuming that
@@ -142,7 +128,7 @@ class HeckeModule_generic(sage.modules.module.Module):
 
         All derived classes must override either this function or ``self.character()``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularForms(SL2Z, 24)
             sage: M._compute_hecke_matrix_prime_power(3, 3)
@@ -177,7 +163,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         factorising n into prime powers and multiplying together the Hecke
         operators for each of these.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(Gamma0(3), 4)
             sage: M._compute_hecke_matrix_general_product(factor(10))
@@ -199,7 +185,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         r"""
         Compute the matrix of the Hecke operator `T_n` acting on the dual of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(Gamma0(3), 4)
             sage: M._compute_dual_hecke_matrix(10)
@@ -212,7 +198,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         r"""
         Compute the matrix of the Hecke operator `T_n` acting on self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = EisensteinForms(DirichletGroup(3).0, 3)
             sage: M._compute_hecke_matrix(16)
@@ -242,7 +228,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         Derived classes should overload this function, and they will inherit
         the machinery for calculating general Hecke operators.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = EisensteinForms(DirichletGroup(3).0, 3)
             sage: sage.modular.hecke.module.HeckeModule_generic._compute_hecke_matrix_prime(M, 3)
@@ -258,7 +244,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         in cases where this isn't self-evident (i.e. when this is not a space
         with fixed character).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = EisensteinForms(Gamma1(5), 3)
             sage: sage.modular.hecke.module.HeckeModule_generic._compute_diamond_matrix(M, 2)
@@ -311,17 +297,13 @@ class HeckeModule_generic(sage.modules.module.Module):
             sage: A.is_anemic()
             True
         """
-        try:
-            return self.__anemic_hecke_algebra
-        except AttributeError:
-            self.__anemic_hecke_algebra = algebra.AnemicHeckeAlgebra(self)
-            return self.__anemic_hecke_algebra
+        return algebra.AnemicHeckeAlgebra(self)
 
     def character(self):
         r"""
         The character of this space. As this is an abstract base class, return None.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.hecke.module.HeckeModule_generic(QQ, 10).character() is None
             True
@@ -332,7 +314,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         r"""
         Synonym for rank.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = sage.modular.hecke.module.HeckeModule_generic(QQ, 10).dimension()
             Traceback (most recent call last):
@@ -360,11 +342,7 @@ class HeckeModule_generic(sage.modules.module.Module):
             sage: A.hecke_algebra() == B.hecke_algebra()
             False
         """
-        try:
-            return self.__hecke_algebra
-        except AttributeError:
-            self.__hecke_algebra = algebra.HeckeAlgebra(self)
-            return self.__hecke_algebra
+        return algebra.HeckeAlgebra(self)
 
     def is_zero(self):
         """
@@ -530,13 +508,6 @@ class HeckeModule_free_module(HeckeModule_generic):
         HeckeModule_generic.__init__(self, base_ring, level, category=category)
         self.__weight = weight
 
-#    def __cmp__(self, other):
-#        if not isinstance(other, HeckeModule_free_module):
-#            return -1
-#        c = HeckeModule_generic.__cmp__(self, other)
-#        if c: return c
-#        return cmp(self.__weight, other.__weight)
-
 #    def __contains__(self, x):
 #        r"""
 #        Return True if x is an element of self.
@@ -670,7 +641,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         Return `T_n(e_i)`, where `e_i` is the
         `i`th basis vector of the ambient space.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(Gamma0(3))._hecke_image_of_ith_basis_vector(4, 0)
             7*(1,0)
@@ -684,7 +655,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         r"""
         Return the dot product of self with the eigenvector returned by dual_eigenvector.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(11)[0]
             sage: M._element_eigenvalue(M.0)
@@ -736,7 +707,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         For internal use. If this Hecke module was computed via a decomposition of another
         Hecke module, this method stores the index of this space in that decomposition.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(Gamma0(3))[0].factor_number() # indirect doctest
             0
@@ -747,7 +718,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         r"""
         Synonym for ambient_hecke_module. Return the ambient module associated to this module.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(1, 12).ambient()
             Modular Forms space of dimension 2 for Modular Group SL(2,Z) of weight 12 over Rational Field
@@ -758,7 +729,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         r"""
         Synonym for ambient_hecke_module. Return the ambient module associated to this module.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(1, 12).ambient_module()
             Modular Forms space of dimension 2 for Modular Group SL(2,Z) of weight 12 over Rational Field
@@ -771,10 +742,10 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def ambient_hecke_module(self):
         r"""
-        Return the ambient module associated to this module. As this is an
-        abstract base class, return NotImplementedError.
+        Return the ambient module associated to this module. As this is
+        an abstract base class, raise NotImplementedError.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.hecke.module.HeckeModule_free_module(QQ, 10, 3).ambient_hecke_module()
             Traceback (most recent call last):
@@ -889,7 +860,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         Return the matrix of the basis vectors of self (as vectors in some
         ambient module)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(1, 12).basis_matrix()
             [1 0]
@@ -1068,7 +1039,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         The degree of this Hecke module (i.e. the rank of the ambient free
         module)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(1, 12).degree()
             2
@@ -1120,7 +1091,7 @@ class HeckeModule_free_module(HeckeModule_generic):
               eigenvector for the dual action of Hecke operators on
               functionals.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: SF = ModularSymbols(14).cuspidal_subspace().simple_factors()
             sage: sorted([u.dual_eigenvector() for u in SF])
@@ -1213,7 +1184,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         The matrix of the `n^{th}` Hecke operator acting on the dual
         embedded representation of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(1, 24).dual_hecke_matrix(5)
             [     79345647584250/2796203 50530996976060416/763363419]
@@ -1367,7 +1338,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         """
         Return a tuple of basis elements of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(23).gens()
             ((1,0), (1,17), (1,19), (1,20), (1,21))
@@ -1378,7 +1349,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         r"""
         Return the nth basis vector of the space.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(23).gen(1)
             (1,17)
@@ -1390,7 +1361,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         The matrix of the `n^{th}` Hecke operator acting on given
         basis.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: C = CuspForms(1, 16)
             sage: C.hecke_matrix(3)
@@ -1483,7 +1454,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         Returns the `n^{th}` Hecke operator `T_n`. This
         function is a synonym for :meth:`.hecke_operator`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(11,2)
             sage: M.T(3)
@@ -1504,7 +1475,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         OUTPUT: a polynomial
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(11,2).hecke_polynomial(3)
             x^3 - 2*x^2 - 7*x - 4
@@ -1517,7 +1488,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         Hecke algebra. Raises NotImplementedError, as this is an abstract base
         class.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.hecke.module.HeckeModule_free_module(QQ, 10, 3).is_simple()
             Traceback (most recent call last):
@@ -1534,7 +1505,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         of several copies of the same simple module is not splittable in this
         sense.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(Gamma0(64)).cuspidal_subspace()
             sage: M.is_splittable()
@@ -1573,7 +1544,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         of several copies of the same simple module is not splittable in this
         sense.
 
-           EXAMPLE::
+           EXAMPLES::
 
             sage: M = ModularSymbols(Gamma0(64)).cuspidal_subspace()
             sage: M.is_splittable_anemic()
@@ -1589,7 +1560,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         r"""
         Number of generators of self (equal to the rank).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularForms(1, 12).ngens()
             2
@@ -1687,28 +1658,23 @@ class HeckeModule_free_module(HeckeModule_generic):
         -  ``alpha`` - name of generate for eigenvalue field
 
 
-        EXAMPLES: These computations use pseudo-random numbers, so we set
-        the seed for reproducible testing.
+        EXAMPLES:
 
-        ::
+        The outputs of the following tests are very unstable. The algorithms
+        are randomized and depend on cached results. A slight change in the
+        sequence of pseudo-random numbers or a modification in caching is
+        likely to modify the results. We reset the random number generator and
+        clear some caches for reproducibility::
 
             sage: set_random_seed(0)
-
-        The computations also use cached results from other computations,
-        so we clear the caches for reproducible testing.
-
-        ::
-
             sage: ModularSymbols_clear_cache()
 
-        We compute eigenvalues for newforms of level 62.
-
-        ::
+        We compute eigenvalues for newforms of level 62::
 
             sage: M = ModularSymbols(62,2,sign=-1)
             sage: S = M.cuspidal_submodule().new_submodule()
-            sage: [A.system_of_eigenvalues(3) for A in S.decomposition()]
-            [[1, 1, 0], [1, -1, 1/2*alpha + 1/2]]
+            sage: [[o.minpoly() for o in A.system_of_eigenvalues(3)] for A in S.decomposition()]
+            [[x - 1, x - 1, x], [x - 1, x + 1, x^2 - 2*x - 2]]
 
         Next we define a function that does the above::
 
@@ -1787,7 +1753,7 @@ def _dict_set(v, n, key, val):
     r"""
     Rough-and-ready implementation of a two-layer-deep dictionary.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.hecke.module import _dict_set
         sage: v = {}

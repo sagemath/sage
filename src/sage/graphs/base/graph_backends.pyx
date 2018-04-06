@@ -738,7 +738,7 @@ def unpickle_graph_backend(directed,vertices,edges,kwds):
     This function builds a :class:`Graph` or :class:`DiGraph` from its data, and
     returns the ``_backend`` attribute of this object.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.base.graph_backends import unpickle_graph_backend
         sage: b = unpickle_graph_backend(0,[0,1,2,3],[(0,3,'label'),(0,0,1)],{'loops':True})
@@ -772,7 +772,7 @@ class NetworkXGraphDeprecated(SageObject):
         """
         Issue deprecation warnings for the old networkx XGraph formats
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.base.graph_backends import NetworkXGraphDeprecated
             sage: NetworkXGraphDeprecated()
@@ -839,7 +839,7 @@ class NetworkXDiGraphDeprecated(SageObject):
         """
         Issue deprecation warnings for the old networkx XDiGraph formats
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.base.graph_backends import NetworkXDiGraphDeprecated
             sage: NetworkXDiGraphDeprecated()
@@ -936,7 +936,7 @@ class NetworkXGraphBackend(GenericGraphBackend):
         r"""
         Fix the deprecated class if necessary.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.structure.sage_object.unpickle_all() # indirect random
         """
@@ -1319,7 +1319,7 @@ class NetworkXGraphBackend(GenericGraphBackend):
         Iterate over the incoming edges incident to a sequence of vertices.
         Special case, only for internal use.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: g = DiGraph(graphs.PetersenGraph(), implementation="networkx")._backend
             doctest:...: DeprecationWarning: The 'implementation' keyword is deprecated, and the graphs has been stored as a 'c_graph'
@@ -1361,7 +1361,7 @@ class NetworkXGraphBackend(GenericGraphBackend):
         Iterate over the outbound edges incident to a sequence of vertices.
         Special case, only for internal use.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: g = DiGraph(graphs.PetersenGraph(), implementation="networkx")._backend
             doctest:...: DeprecationWarning: The 'implementation' keyword is deprecated, and the graphs has been stored as a 'c_graph'

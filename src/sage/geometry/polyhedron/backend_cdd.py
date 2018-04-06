@@ -13,8 +13,6 @@ from .base import Polyhedron_base
 from .base_QQ import Polyhedron_QQ
 from .base_RDF import Polyhedron_RDF
 
-
-
 #########################################################################
 class Polyhedron_cdd(Polyhedron_base):
     """
@@ -214,11 +212,11 @@ class Polyhedron_cdd(Polyhedron_base):
             return [int(i)-1 for i in l[2:]]  # make indices pythonic
 
         # nested function
-        def cdd_convert(string, field=self.field()):
+        def cdd_convert(string, base_ring=self.base_ring()):
             """
             Converts the cdd output string to a numerical value.
             """
-            return [field(x) for x in string.split()]
+            return [base_ring(x) for x in string.split()]
 
         # nested function
         def find_in_cddout(expected_string):
@@ -359,7 +357,7 @@ class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
 
             sage: p = Polyhedron(backend='cdd', base_ring=QQ)
             sage: type(p)
-            <class 'sage.geometry.polyhedron.backend_cdd.Polyhedra_QQ_cdd_with_category.element_class'>
+            <class 'sage.geometry.polyhedron.parent.Polyhedra_QQ_cdd_with_category.element_class'>
             sage: TestSuite(p).run()
         """
         Polyhedron_cdd.__init__(self, parent, Vrep, Hrep, **kwds)
@@ -401,7 +399,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
 
             sage: p = Polyhedron(backend='cdd', base_ring=RDF)
             sage: type(p)
-            <class 'sage.geometry.polyhedron.backend_cdd.Polyhedra_RDF_cdd_with_category.element_class'>
+            <class 'sage.geometry.polyhedron.parent.Polyhedra_RDF_cdd_with_category.element_class'>
             sage: TestSuite(p).run()
         """
         Polyhedron_cdd.__init__(self, parent, Vrep, Hrep, **kwds)

@@ -37,7 +37,9 @@ from sage.misc.flatten import flatten
 from sage.combinat.partition import Partition
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.letters import CrystalOfLetters
-from sage.combinat.crystals.tensor_product import CrystalOfWords, CrystalOfTableauxElement
+from sage.combinat.crystals.tensor_product import CrystalOfWords
+from sage.combinat.crystals.tensor_product_element import (CrystalOfTableauxElement,
+        InfinityCrystalOfTableauxElement, InfinityCrystalOfTableauxElementTypeD)
 
 
 class InfinityCrystalOfTableaux(CrystalOfWords):
@@ -292,100 +294,19 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
               From: The infinity crystal of rigged configurations of type ['A', 3]
               To:   The infinity crystal of tableaux of type ['A', 3]
         """
-        from sage.combinat.rigged_configurations.rc_infinity import InfinityCrystalOfRiggedConfigurations
-        if isinstance(P, InfinityCrystalOfRiggedConfigurations):
+        from sage.combinat.rigged_configurations.rc_infinity import (InfinityCrystalOfRiggedConfigurations,
+                                                                     InfinityCrystalOfNonSimplyLacedRC)
+        if (isinstance(P, InfinityCrystalOfRiggedConfigurations)
+            and (self.cartan_type().is_simply_laced()
+                 or isinstance(P, InfinityCrystalOfNonSimplyLacedRC))):
             from sage.combinat.rigged_configurations.bij_infinity import FromRCIsomorphism
             return FromRCIsomorphism(Hom(P, self))
         return super(InfinityCrystalOfTableaux, self)._coerce_map_from_(P)
 
-    class Element(CrystalOfTableauxElement):
+    class Element(InfinityCrystalOfTableauxElement):
         r"""
         Elements in `\mathcal{B}(\infty)` crystal of tableaux.
         """
-
-        def e(self,i):
-            r"""
-            Return the action of `\widetilde{e}_i` on ``self``.
-
-            INPUT:
-
-            - ``i`` -- An element of the index set
-
-            EXAMPLES::
-
-                sage: B = crystals.infinity.Tableaux(['B',3])
-                sage: b = B(rows=[[1,1,1,1,1,1,1,2,0,-3,-1,-1,-1,-1],[2,2,2,2,-2,-2],[3,-3,-3]])
-                sage: b.e(3).pp()
-                1  1  1  1  1  1  1  2  0 -3 -1 -1 -1 -1
-                2  2  2  2 -2 -2
-                3  0 -3
-                sage: b.e(1).pp()
-                1  1  1  1  1  1  1  0 -3 -1 -1 -1 -1
-                2  2  2  2 -2 -2
-                3 -3 -3
-            """
-            if i not in self.index_set():
-                raise ValueError('i is not in the index set.')
-            position = self.positions_of_unmatched_plus(i)
-            if position == []:
-                return None
-            k = position[0]
-            ret = self.set_index(k, self[k].e(i))
-            if k+i > len(self):
-                return ret
-            for j in reversed(range(1, i+1)):
-                if ret[k+i-j].value != j:
-                    return ret
-            # We've found a column, so we need to remove it
-            for j in range(i):
-                ret._list.pop(k)
-            return ret
-
-        def f(self, i):
-            r"""
-            Return the action of `\widetilde{f}_i` on ``self``.
-
-            INPUT:
-
-            - ``i`` -- An element of the index set
-
-            EXAMPLES::
-
-                sage: B = crystals.infinity.Tableaux(['C',4])
-                sage: b = B.highest_weight_vector()
-                sage: b.f(1).pp()
-                1  1  1  1  2
-                2  2  2
-                3  3
-                4
-                sage: b.f(3).pp()
-                1  1  1  1  1
-                2  2  2  2
-                3  3  4
-                4
-                sage: b.f(3).f(4).pp()
-                1  1  1  1  1
-                2  2  2  2
-                3  3 -4
-                4
-            """
-            if i not in self.index_set():
-                raise ValueError('i is not in the index set.')
-            position = self.positions_of_unmatched_minus(i)
-            if position == []:
-                return None
-            k = position[len(position)-1]
-            ret = self.set_index(k, self[k].f(i))
-            if k+i > len(self):
-                return ret
-            for j in reversed(range(1,i+1)):
-                if self[k+i-j].value != j:
-                    return ret
-            # We've found a full column, so we'll need to add a new column
-            for j in range(i):
-                ret._list.insert(k,self.parent().letters(j+1))
-            return ret
-
         def phi(self,i):
             r"""
             Return `\varphi_i` of ``self``.
@@ -655,53 +576,6 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
                         count += 1
             return count
 
-        def string_parameters(self,word):
-            r"""
-            Return the string parametrization of ``self`` with respect to ``word``.
-
-            For `w` in the Weyl group, let `R(w)` denote the set of reduced
-            expressions for `w`; that is, if `w = s_{i_1} s_{i_2} \cdots
-            s_{i_{\ell}}` is a reduced expression, then
-            `(i_1, i_2, \ldots, i_{\ell}) \in R(w)`.  For brevity, such words
-            are denoted by `\mathbf{i}`.
-
-            For `T \in \mathcal{T}(\infty)` and
-            `\mathbf{i} = (i_1, \ldots, i_{\ell}) \in R(w)`,
-            the string parametrization `(a_1, \ldots, a_{\ell})` of `T` in the
-            direction `\mathbf{i}` is defined recursively by `a_1 =
-            \varepsilon_{i_1}(T)` and `a_j = \varepsilon_{i_j}
-            (\widetilde{e}_{i_{j-1}}^{\, a_{j-1}} \cdots \widetilde{e}_{i_1}^{\,
-            a_1} T)` for `j = 2, \ldots, \ell`. If `w = w_0` is the longest
-            element of the Weyl group, then the path determined by the string
-            parametrization terminates at the highest weight vector.
-
-            INPUT:
-
-            - ``word`` -- A word in the alphabet of the index set
-
-            EXAMPLES::
-
-                sage: B = crystals.infinity.Tableaux("A5")
-                sage: b = B(rows=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,6,6,6,6,6,6],[2,2,2,2,2,2,2,2,2,4,5,5,5,6],[3,3,3,3,3,3,3,5],[4,4,4,6,6,6],[5,6]])
-                sage: b.string_parameters([1,2,1,3,2,1,4,3,2,1,5,4,3,2,1])
-                [0, 1, 1, 1, 1, 0, 4, 4, 3, 0, 11, 10, 7, 7, 6]
-
-                sage: B = crystals.infinity.Tableaux("G2")
-                sage: b = B(rows=[[1,1,1,1,1,3,3,0,-3,-3,-2,-2,-1,-1,-1,-1],[2,3,3,3]])
-                sage: b.string_parameters([2,1,2,1,2,1])
-                [5, 13, 11, 15, 4, 4]
-                sage: b.string_parameters([1,2,1,2,1,2])
-                [7, 12, 15, 8, 10, 0]
-            """
-            ret = []
-            for i in word:
-                a = 0
-                while self.e(i) is not None:
-                    self = self.e(i)
-                    a += 1
-                ret.append(a)
-            return ret
-
 
 class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
     r"""
@@ -766,79 +640,9 @@ class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
         module_generator = flatten([[p[j]-i for i in range(p[j])] for j in range(n-1)])
         return self(list=[self.letters(x) for x in module_generator])
 
-    class Element(InfinityCrystalOfTableaux.Element):
+    class Element(InfinityCrystalOfTableauxElementTypeD, InfinityCrystalOfTableaux.Element):
         r"""
         Elements in `\mathcal{B}(\infty)` crystal of tableaux for type `D_n`.
         """
-        def e(self, i):
-            r"""
-            Return the action of `\widetilde{e}_i` on ``self``.
+        pass
 
-            INPUT:
-
-            - ``i`` -- An element of the index set
-
-            EXAMPLES::
-
-                sage: B = crystals.infinity.Tableaux(['D',4])
-                sage: b = B.highest_weight_vector().f_string([1,4,3,1,2]); b.pp()
-                1  1  1  1  2  3
-                2  2  2
-                3 -3
-                sage: b.e(2).pp()
-                1  1  1  1  2  2
-                2  2  2
-                3 -3
-            """
-            if i not in self.index_set():
-                raise ValueError('i is not in the index set.')
-            position = self.positions_of_unmatched_plus(i)
-            if position == []:
-                return None
-            k = position[0]
-            ret = self.set_index(k, self[k].e(i))
-            if i == self.cartan_type().rank():
-                i -= 1
-            if k+i > len(self):
-                return ret
-            for j in reversed(range(1, i+1)):
-                if ret[k+i-j].value != j:
-                    return ret
-            # We've found a column, so we need to remove it
-            for j in range(i):
-                ret._list.pop(k)
-            return ret
-
-        def f(self, i):
-            r"""
-            Return the action of `\widetilde{f}_i` on ``self``.
-
-            INPUT:
-
-            - ``i`` -- An element of the index set
-
-            EXAMPLES::
-
-                sage: B = crystals.infinity.Tableaux(['D',5])
-                sage: b = B.highest_weight_vector().f_string([1,4,3,1,5]); b.pp()
-                1  1  1  1  1  1  2  2
-                2  2  2  2  2
-                3  3  3 -5
-                4  5
-                sage: b.f(1).pp()
-                1  1  1  1  1  1  2  2  2
-                2  2  2  2  2
-                3  3  3 -5
-                4  5
-                sage: b.f(5).pp()
-                1  1  1  1  1  1  2  2
-                2  2  2  2  2
-                3  3  3 -5
-                4 -4
-            """
-            ret = InfinityCrystalOfTableaux.Element.f(self, i)
-            if ret._list[0].value == -self.cartan_type().rank():
-                # Exceptional case for f_n where we need to add a new column
-                for j in range(i-1):
-                    ret._list.insert(0,self.parent().letters(j+1))
-            return ret

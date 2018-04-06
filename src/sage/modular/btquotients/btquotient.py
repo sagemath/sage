@@ -105,7 +105,7 @@ class DoubleCosetReduction(SageObject):
 
     Here usual denotes that we have rescaled gamma to have unit
     determinant, and so that the result is honestly an element
-    of the arithmetic quarternion group under consideration. In
+    of the arithmetic quaternion group under consideration. In
     practice we store integral multiples and keep track of the
     powers of `p`.
 
@@ -191,7 +191,7 @@ class DoubleCosetReduction(SageObject):
         """
         return "Double coset data (%s, %s, %s)"%(self.sign(), list(self.gamma), self.label)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Return self == other
 
@@ -204,34 +204,40 @@ class DoubleCosetReduction(SageObject):
             sage: d1 == d1
             True
         """
-        c = cmp(self._parent, other._parent)
-        if c:
-            return c
-        c = cmp(self.parity, other.parity)
-        if c:
-            return c
-        c = cmp(self._num_edges, other._num_edges)
-        if c:
-            return c
-        c = cmp(self.label, other.label)
-        if c:
-            return c
-        c = cmp(self.gamma, other.gamma)
-        if c:
-            return c
-        c = cmp(self.x, other.x)
-        if c:
-            return c
-        c = cmp(self.power, other.power)
-        if c:
-            return c
-        c = cmp(self._t_prec, other._t_prec)
-        if c:
-            return c
-        c = cmp(self._igamma_prec, other._igamma_prec)
-        if c:
-            return c
-        return 0
+        if self._parent != other._parent:
+            return False
+        if self.parity != other.parity:
+            return False
+        if self._num_edges != other._num_edges:
+            return False
+        if self.label != other.label:
+            return False
+        if self.gamma != other.gamma:
+            return False
+        if self.x != other.x:
+            return False
+        if self.power != other.power:
+            return False
+        if self._t_prec != other._t_prec:
+            return False
+        if self._igamma_prec != other._igamma_prec:
+            return False
+        return True
+
+    def __ne__(self, other):
+        """
+        Return self != other
+
+        TESTS::
+
+            sage: from sage.modular.btquotients.btquotient import DoubleCosetReduction
+            sage: Y = BruhatTitsQuotient(5, 13)
+            sage: x = Matrix(ZZ,2,2,[123,153,1231,1231])
+            sage: d1 = DoubleCosetReduction(Y,x)
+            sage: d1 != d1
+            False
+        """
+        return not self.__eq__(other)
 
     def sign(self):
         r"""
@@ -274,7 +280,7 @@ class DoubleCosetReduction(SageObject):
         Image under gamma.
 
         Elements of the arithmetic group can be regarded as elements
-        of the global quarterion order, and hence may be represented
+        of the global quaternion order, and hence may be represented
         exactly. This function computes the image of such an element
         under the local splitting and returns the corresponding `p`-adic
         approximation.
@@ -980,7 +986,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         L = []
         for ii in range(val):
             L.append(0)
-        L.extend(z.list())
+        L.extend(z.expansion())
         for n in range(len(L)):
             if L[n] != 0:
                 if len(L[n]) > 1:
@@ -1088,6 +1094,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
                     E.extend(self.subdivide([e], level))
         return E
 
+
 class Vertex(SageObject):
     r"""
     This is a structure to represent vertices of quotients of the
@@ -1173,9 +1180,9 @@ class Vertex(SageObject):
         """
         return "Vertex of Bruhat-Tits tree for p = %s" % (self.p)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
-        Returns self == other
+        Return self == other
 
         TESTS::
 
@@ -1184,25 +1191,32 @@ class Vertex(SageObject):
             sage: v1 == v1
             True
         """
-        c = cmp(self.p, other.p)
-        if c:
-            return c
-        c = cmp(self.label, other.label)
-        if c:
-            return c
-        c = cmp(self.rep, other.rep)
-        if c:
-            return c
-        c = cmp(self.determinant, other.determinant)
-        if c:
-            return c
-        c = cmp(self.valuation, other.valuation)
-        if c:
-            return c
-        c = cmp(self.parity, other.parity)
-        if c:
-            return c
-        return 0
+        if self.p != other.p:
+            return False
+        if self.label != other.label:
+            return False
+        if self.rep != other.rep:
+            return False
+        if self.determinant != other.determinant:
+            return False
+        if self.valuation != other.valuation:
+            return False
+        if self.parity != other.parity:
+            return False
+        return True
+
+    def __ne__(self, other):
+        """
+        Return self != other
+
+        TESTS::
+
+            sage: from sage.modular.btquotients.btquotient import Vertex
+            sage: v1 = Vertex(7,0,Matrix(ZZ,2,2,[1,2,3,18]))
+            sage: v1 != v1
+            False
+        """
+        return not self.__eq__(other)
 
 
 class Edge(SageObject):
@@ -1295,7 +1309,7 @@ class Edge(SageObject):
         """
         return "Edge of Bruhat-Tits tree for p =  %s" % (self.p)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Return self == other
 
@@ -1308,37 +1322,42 @@ class Edge(SageObject):
             sage: e1 == e1
             True
         """
-        c = cmp(self.p, other.p)
-        if c:
-            return c
-        c = cmp(self.label, other.label)
-        if c:
-            return c
-        c = cmp(self.rep, other.rep)
-        if c:
-            return c
-        c = cmp(self.origin, other.origin)
-        if c:
-            return c
-        c = cmp(self.target, other.target)
-        if c:
-            return c
-        c = cmp(self.links, other.links)
-        if c:
-            return c
-        c = cmp(self.opposite, other.opposite)
-        if c:
-            return c
-        c = cmp(self.determinant, other.determinant)
-        if c:
-            return c
-        c = cmp(self.valuation, other.valuation)
-        if c:
-            return c
-        c = cmp(self.parity, other.parity)
-        if c:
-            return c
-        return 0
+        if self.p != other.p:
+            return False
+        if self.label != other.label:
+            return False
+        if self.rep != other.rep:
+            return False
+        if self.origin != other.origin:
+            return False
+        if self.target != other.target:
+            return False
+        if self.links != other.links:
+            return False
+        if self.opposite != other.opposite:
+            return False
+        if self.determinant != other.determinant:
+            return False
+        if self.valuation != other.valuation:
+            return False
+        if self.parity != other.parity:
+            return False
+        return True
+
+    def __ne__(self, other):
+        """
+        Return self != other
+
+        TESTS::
+
+            sage: from sage.modular.btquotients.btquotient import Edge,Vertex
+            sage: v1 = Vertex(7,0,Matrix(ZZ,2,2,[1,2,3,18]))
+            sage: v2 = Vertex(7,0,Matrix(ZZ,2,2,[3,2,1,18]))
+            sage: e1 = Edge(7,0,Matrix(ZZ,2,2,[1,2,3,18]),v1,v2)
+            sage: e1 != e1
+            False
+        """
+        return not self.__eq__(other)
 
 
 class BruhatTitsQuotient(SageObject, UniqueRepresentation):
@@ -1544,14 +1563,26 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         """
         if self._p != other._p:
             return False
-        elif self._Nminus != other._Nminus:
+        if self._Nminus != other._Nminus:
             return False
-        elif self._Nplus != other._Nplus:
+        if self._Nplus != other._Nplus:
             return False
-        elif self._character != other._character:
+        if self._character != other._character:
             return False
-        else:
-            return True
+        return True
+
+    def __ne__(self, other):
+        r"""
+        Compare self with other.
+
+        EXAMPLES::
+
+            sage: X = BruhatTitsQuotient(5,13)
+            sage: Y = BruhatTitsQuotient(p = 5, Nminus = 13, Nplus=1,seed = 1231)
+            sage: X != Y
+            False
+        """
+        return not self.__eq__(other)
 
     def _latex_(self):
         r"""
@@ -2308,7 +2339,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return a list of  matrices representing the different embeddings.
 
-        .. NOTE: The precision is very low (currently set to 5 digits),
+        .. NOTE::
+
+           The precision is very low (currently set to 5 digits),
            since these embeddings are only used to apply a character.
 
         EXAMPLES:
@@ -2410,13 +2443,13 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``exact`` boolean (Default: False). If True, return an
+        - ``exact`` boolean (Default: ``False``). If ``True``, return an
           embedding into a matrix algebra with coefficients in a
           number field. Otherwise, embed into matrices over `p`-adic
           numbers.
 
-        - ``prec`` Integer (Default: None). If specified, return the
-          matrix with precision ``prec``. Otherwise, return the the
+        - ``prec`` Integer (Default: ``None``). If specified, return the
+          matrix with precision ``prec``. Otherwise, return the
           cached matrix (with the current working precision).
 
         OUTPUT:
@@ -2842,12 +2875,12 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             ]
         """
         OM = self.get_eichler_order_quadmatrix()
-        v = pari('qfminim(%s,2,0, flag = 2)' % (OM._pari_()))
-        n_units = Integer(v[0].python() / 2)
-        v = pari('qfminim(%s,2,%s, flag = 2)' % ((OM._pari_()), n_units))
+        v = pari('qfminim(%s,2,0, flag = 2)' % (OM.__pari__()))
+        n_units = Integer(v[0].sage() / 2)
+        v = pari('qfminim(%s,2,%s, flag = 2)' % ((OM.__pari__()), n_units))
         O_units = []
         for jj in range(n_units):
-            vec = Matrix(ZZ, 4, 1, [v[2][ii, jj].python() for ii in range(4)])
+            vec = Matrix(ZZ, 4, 1, [v[2][ii, jj].sage() for ii in range(4)])
             O_units.append(vec)
         return O_units
 
@@ -3223,7 +3256,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         n_units = len(self.get_units_of_order())
         ## Using PARI to get the shortest vector in the lattice (via LLL)
         ## We used to pass qfminim flag = 2
-        mat = pari('qfminim(%s,,%s,flag = 2)' % (A._pari_(), 2 * n_units))[2].python().transpose()
+        mat = pari('qfminim(%s,,%s,flag = 2)' % (A.__pari__(), 2 * n_units))[2].sage().transpose()
         n_vecs = mat.nrows()
         stabs = []
         for jj in range(n_vecs):
@@ -3289,7 +3322,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         if not self._use_magma or len(self._extra_level) == 0:
             return E * vec, True
         m = ZZ(twom / 2)
-        mat = pari('qfminim(%s,,%s,flag = %s)' % (A._pari_(), 1000, flag))[2].python().transpose()
+        mat = pari('qfminim(%s,,%s,flag = %s)' % (A.__pari__(), 1000, flag))[2].sage().transpose()
         n_vecs = mat.nrows()
         p = self._p
         pinv = Zmod(self._character.modulus())(p) ** -1
@@ -3357,7 +3390,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                 return None
         E, A = self._find_lattice(v1, v2, as_edges, twom)
         ## Using PARI to get the shortest vector in the lattice (via LLL)
-        vec = pari('qfminim(%s,,1,flag = 2)' % (A._pari_()))[2].python()
+        vec = pari('qfminim(%s,,1,flag = 2)' % (A.__pari__()))[2].sage()
 
         vect = vec.transpose()
         nrd = Integer((vect * A * vec)[0, 0] / 2)
@@ -3664,7 +3697,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
     def harmonic_cocycle_from_elliptic_curve(self, E, prec=None):
         r"""
-        Return a harmonic cocycle with the same hecke eigenvalues as ``E``.
+        Return a harmonic cocycle with the same Hecke eigenvalues as ``E``.
 
         Given an elliptic curve `E` having a conductor `N` of the form `pN^-N^+`,
         return the harmonic cocycle over ``self`` which is attached to ``E`` via
@@ -3740,7 +3773,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         OUTPUT: A space of harmonic cocycles
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X = BruhatTitsQuotient(31,7)
             sage: H = X.harmonic_cocycles(2,prec=10)

@@ -1,17 +1,21 @@
 """
 Fortran compiler
 """
-import os, imp, shutil
+from __future__ import absolute_import
+from six import iteritems
+
+import os
+import imp
+import shutil
+import sys
 
 from sage.misc.temporary_file import tmp_dir
 
 
 class InlineFortran:
     def __init__(self, globals=None):
-        if globals is None:
-            self.globs = {}
-        else:
-            self.globs = globals  # Deprecated
+        # globals=None means: use user globals from REPL
+        self.globs = globals
         self.library_paths=[]
         self.libraries=[]
         self.verbose = False
@@ -77,6 +81,9 @@ class InlineFortran:
         """
         if globals is None:
             globals = self.globs
+            if globals is None:
+                from sage.repl.user_globals import get_globals
+                globals = get_globals()
 
         from numpy import f2py
 
@@ -125,13 +132,18 @@ class InlineFortran:
                 print(log_string)
         finally:
             os.chdir(old_cwd)
-            try:
-                shutil.rmtree(mytmpdir)
-            except OSError:
-                # This can fail for example over NFS
-                pass
 
-        for k, x in m.__dict__.iteritems():
+            if sys.platform != 'cygwin':
+                # Do not delete temporary DLLs on Cygwin; this will cause
+                # future forks of this process to fail.  Instead temporary DLLs
+                # will be cleaned up upon process exit
+                try:
+                    shutil.rmtree(mytmpdir)
+                except OSError:
+                    # This can fail for example over NFS
+                    pass
+
+        for k, x in iteritems(m.__dict__):
             if k[0] != '_':
                 globals[k] = x
 

@@ -21,14 +21,20 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six import integer_types
 
 from sage.misc.misc import repr_lincomb
 from sage.structure.element import RingElement, AlgebraElement
+from sage.structure.parent_gens import localvars
+from sage.structure.richcmp import richcmp
 from sage.rings.integer import Integer
 from sage.modules.free_module_element import FreeModuleElement
 from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.algebras.free_algebra_element import FreeAlgebraElement
-from sage.structure.parent_gens import localvars
+
+
+import six
+
 
 def is_FreeAlgebraQuotientElement(x):
     """
@@ -46,6 +52,7 @@ def is_FreeAlgebraQuotientElement(x):
         True
     """
     return isinstance(x, FreeAlgebraQuotientElement)
+
 
 class FreeAlgebraQuotientElement(AlgebraElement):
     def __init__(self, A, x):
@@ -72,7 +79,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         if isinstance(x, FreeAlgebraQuotientElement) and x.parent() == Q:
             self.__vector = Q.module()(x.vector())
             return
-        if isinstance(x, (int, long, Integer)):
+        if isinstance(x, (Integer,) + integer_types):
             self.__vector = Q.module().gen(0) * x
             return
         elif isinstance(x, FreeModuleElement) and x.parent() is Q.module():
@@ -86,7 +93,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         F = A.monoid()
         B = A.monomial_basis()
 
-        if isinstance(x, (int, long, Integer)):
+        if isinstance(x, (Integer,) +  integer_types):
             self.__vector = x*M.gen(0)
         elif isinstance(x, RingElement) and not isinstance(x, AlgebraElement) and x in R:
             self.__vector = x * M.gen(0)
@@ -104,11 +111,11 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             # Need to do more work here to include monomials not
             # represented in the monomial basis.
             self.__vector = M(0)
-            for m, c in x._FreeAlgebraElement__monomial_coefficients.iteritems():
+            for m, c in six.iteritems(x._FreeAlgebraElement__monomial_coefficients):
                 self.__vector += c*M.gen(B.index(m))
         elif isinstance(x, dict):
             self.__vector = M(0)
-            for m, c in x.iteritems():
+            for m, c in six.iteritems(x):
                 self.__vector += c*M.gen(B.index(m))
         elif isinstance(x, AlgebraElement) and x.parent().ambient_algebra() is A:
             self.__vector = x.ambient_algebra_element().vector()
@@ -157,7 +164,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         """
         return self.__vector
 
-    def __cmp__(self, right):
+    def _richcmp_(self, right, op):
         """
         Compare two quotient algebra elements; done by comparing the
         underlying vector representatives.
@@ -165,18 +172,16 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         EXAMPLES::
 
             sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)
-            sage: cmp(i,j)
-            1
-            sage: cmp(j,i)
-            -1
-            sage: cmp(i,i)
-            0
+            sage: i > j
+            True
+            sage: i == i
+            True
             sage: i == 1
             False
             sage: i + j == j + i
             True
         """
-        return cmp(self.vector(), right.vector())
+        return richcmp(self.vector(), right.vector(), op)
 
     def __neg__(self):
         """

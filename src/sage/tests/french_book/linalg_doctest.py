@@ -18,7 +18,7 @@ Sage example in ./linalg.tex, line 136::
 
 Sage example in ./linalg.tex, line 148::
 
-    sage: MatrixSpace(ZZ,2,3).basis()
+    sage: list(MatrixSpace(ZZ,2,3).basis())
     [
     [1 0 0]  [0 1 0]  [0 0 1]  [0 0 0]  [0 0 0]  [0 0 0]
     [0 0 0], [0 0 0], [0 0 0], [1 0 0], [0 1 0], [0 0 1]

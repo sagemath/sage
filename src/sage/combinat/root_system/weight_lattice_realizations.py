@@ -627,11 +627,11 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
             See also :meth:`_test_reduced_word_of_translation`.
 
-            TODO:
+            .. TODO::
 
-             - Add a picture in the doc
-             - Add a method which, given an element of the classical
-               weight lattice, constructs the appropriate value for t
+                 - Add a picture in the doc
+                 - Add a method which, given an element of the classical
+                   weight lattice, constructs the appropriate value for t
             """
             return self.reduced_word_of_alcove_morphism(t.translation)
 

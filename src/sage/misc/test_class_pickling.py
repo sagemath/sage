@@ -24,7 +24,7 @@ def metaclass(name, bases):
         sage: type(c)
         <class 'sage.misc.test_class_pickling.Metaclass'>
         sage: c.__bases__
-        (<type 'object'>, <class sage.misc.test_class_pickling.bar at ...>)
+        (<... 'object'>, <class sage.misc.test_class_pickling.bar at ...>)
 
     """
     print("constructing class")
@@ -63,7 +63,7 @@ class Metaclass(type):
 
     def __reduce__(self):
         """
-        Implements the pickle protocol for classes in this metaclass
+        Implement the pickle protocol for classes in this metaclass
         (not for the instances of this class!!!)
 
         EXAMPLES::
@@ -73,7 +73,7 @@ class Metaclass(type):
             constructing class
             sage: c.__class__.__reduce__(c)
             reducing a class
-            (<function metaclass at ...>, ('foo3', (<type 'object'>, <class sage.misc.test_class_pickling.bar at ...>)))
+            (<function metaclass at ...>, ('foo3', (<... 'object'>, <class sage.misc.test_class_pickling.bar at ...>)))
         """
         print("reducing a class")
         return (metaclass, self.reduce_args)

@@ -363,7 +363,7 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - decompose_powers - whether to decompose prime power
+            - decompose_powers -- whether to decompose prime power
                                  denominators as opposed to having a single
                                  term for each irreducible factor of the
                                  denominator (default: True)

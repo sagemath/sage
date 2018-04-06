@@ -54,7 +54,7 @@ def pushover(message, **kwds):
 
       - ``token`` - your application's API token (default: Sage's default App token)
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: import sage.misc.messaging
         sage: sage.misc.messaging.pushover("Hi, how are you?", user="XXX") # not tested

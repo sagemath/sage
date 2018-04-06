@@ -1,6 +1,6 @@
 # distutils: depends = NTL/ZZ.h
 
-cdef extern from "sage/libs/ntl/ntlwrap.h":
+cdef extern from "ntlwrap.h":
     long NTL_OVFBND, NTL_SP_BOUND
 
     cdef cppclass ZZ_c "ZZ":

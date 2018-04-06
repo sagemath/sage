@@ -106,10 +106,12 @@ class IntegerLists(Parent):
         if "element_constructor" in kwds:
             element_constructor = kwds.pop("element_constructor")
         elif issubclass(self.Element, ClonableArray):
-            # Not all element classes support check=False
+            # Not all element classes support check=False, but
+            # ClonableArray certainly does.
             element_constructor = self._element_constructor_nocheck
         else:
-            element_constructor = None  # Parent's default
+            element_constructor = self._element_constructor_default
+        self._element_constructor_ = element_constructor
 
         category = kwds.pop("category", None)
         if category is None:
@@ -118,8 +120,7 @@ class IntegerLists(Parent):
         # Let self.backend be some IntegerListsBackend
         self.backend = self.backend_class(*args, **kwds)
 
-        Parent.__init__(self, element_constructor=element_constructor,
-                        category=category)
+        Parent.__init__(self, category=category)
 
     def __eq__(self, other):
         r"""
@@ -170,8 +171,8 @@ class IntegerLists(Parent):
             return False
         if self.backend != other.backend:
             return False
-        a = self._element_constructor
-        b = other._element_constructor
+        a = self._element_constructor_
+        b = other._element_constructor_
         if ismethod(a):
             a = get_method_function(a)
         if ismethod(b):
@@ -204,7 +205,7 @@ class IntegerLists(Parent):
             sage: list(C)     # indirect doctest
             [[2, 0, 0], [1, 1, 0], [1, 0, 1], [0, 2, 0], [0, 1, 1], [0, 0, 2]]
         """
-        return self._element_iter(self.backend._iter(), self._element_constructor)
+        return self._element_iter(self.backend._iter(), self._element_constructor_)
 
     @staticmethod
     def _element_iter(itr, constructor):
@@ -262,6 +263,31 @@ class IntegerLists(Parent):
         """
         return self.backend._contains(item)
 
+    def _element_constructor_default(self, l):
+        """
+        Default element constructor
+
+        EXAMPLES::
+
+            sage: L = IntegerListsLex(4)
+            sage: L._element_constructor_default([1,2,3])
+            [1, 2, 3]
+
+        We construct a variant of :class:`IntegerLists` with a custom
+        element class::
+
+            sage: class MyElt(list):
+            ....:     def __init__(self, parent, x):
+            ....:         list.__init__(self, x)
+            sage: from sage.combinat.integer_lists import IntegerLists
+            sage: class MyIntegersLists(IntegerLists):
+            ....:     Element = MyElt
+            sage: L = MyIntegersLists(5)
+            sage: L._element_constructor_
+            <bound method MyIntegersLists._element_constructor_default of Integer lists of sum 5 satisfying certain constraints>
+        """
+        return self.element_class(self, l)
+
     def _element_constructor_nocheck(self, l):
         r"""
         A variant of the standard element constructor that passes
@@ -274,14 +300,13 @@ class IntegerLists(Parent):
             [1, 2, 3]
 
         When relevant, this is assigned to
-        ``self._element_constructor`` by :meth:`__init__`, to avoid
+        ``self._element_constructor_`` by :meth:`__init__`, to avoid
         overhead when constructing elements from trusted data in the
         iterator::
 
-            sage: L._element_constructor
+            sage: L._element_constructor_
             <bound method IntegerListsLex._element_constructor_nocheck of ...>
-            sage: L._element_constructor([1,2,3])
+            sage: L._element_constructor_([1,2,3])
             [1, 2, 3]
         """
         return self.element_class(self, l, check=False)
-

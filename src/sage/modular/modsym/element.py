@@ -62,7 +62,7 @@ def set_modsym_print_mode(mode="manin"):
 
     OUTPUT: none
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: M = ModularSymbols(13, 8)
         sage: x = M.0 + M.1 + M.14
@@ -100,7 +100,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
            symbol in terms of a basis for the ambient space (not in
            terms of a basis for parent!)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: S = ModularSymbols(11, sign=1).cuspidal_submodule()
             sage: S(vector([0,1]))
@@ -120,30 +120,13 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
                 raise TypeError("x (of degree %s) must be of degree the same as the degree of the parent (of degree %s)."%(x.degree(), parent.degree()))
         hecke.HeckeModuleElement.__init__(self, parent, x)
 
-    def __cmp__(self, other):
-        r""" Standard comparison function.
-
-        EXAMPLE::
-
-            sage: M = ModularSymbols(11, 2)
-            sage: M.0 == M.1 # indirect doctest
-            False
-            sage: M.0 == (M.1 + M.0 - M.1)
-            True
-            sage: M.0 == ModularSymbols(13, 2).0
-            False
-            sage: M.0 == 4
-            False
-        """
-        return self.element().__cmp__(other.element())
-
     def _repr_(self):
         r"""
         String representation of self. The output will depend on the global
         modular symbols print mode setting controlled by the function
         ``set_modsym_print_mode``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(13, 4)
             sage: set_modsym_print_mode('manin'); M.0._repr_()
@@ -166,7 +149,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         r"""
         LaTeX representation of self. The output will be determined by the print mode setting set using ``set_modsym_print_mode``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(11, 2)
             sage: x = M.0 + M.2; x
@@ -195,7 +178,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         r"""
         Sum of self and other.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(3, 12)
             sage: x = M.0; y = M.1; z = x + y; z # indirect doctest
@@ -209,7 +192,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         r"""
         Right-multiply self by other.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(3, 12)
             sage: x = M.0; z = x*3; z # indirect doctest
@@ -219,7 +202,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             sage: z*Mod(1, 17)
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Modular Symbols space of dimension 8 for Gamma_0(3) of weight 12 with sign 0 over Rational Field' and 'Ring of integers modulo 17'
+            TypeError: unsupported operand parent(s) for *: 'Modular Symbols space of dimension 8 for Gamma_0(3) of weight 12 with sign 0 over Rational Field' and 'Ring of integers modulo 17'
         """
         return ModularSymbolsElement(self.parent(), self.element()*other, check=False)
 
@@ -227,7 +210,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         r"""
         Left-multiply self by other.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(3, 12)
             sage: x = M.0; z = 3*x; z # indirect doctest
@@ -237,7 +220,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             sage: Mod(1, 17)*z
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ring of integers modulo 17' and 'Modular Symbols space of dimension 8 for Gamma_0(3) of weight 12 with sign 0 over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Ring of integers modulo 17' and 'Modular Symbols space of dimension 8 for Gamma_0(3) of weight 12 with sign 0 over Rational Field'
         """
         return ModularSymbolsElement(self.parent(), left*self.element(), check=False)
 
@@ -245,7 +228,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         r"""
         Multiply by -1.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(3, 12)
             sage: x = M.0; z = -x; z # indirect doctest
@@ -259,7 +242,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         r"""
         Subtract other from self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(3, 12)
             sage: x = M.0; y = M.1; z = y-x; z # indirect doctest
@@ -279,7 +262,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         r"""
         Return a list of the coordinates of self in terms of a basis for the ambient space.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(37, 2).0.list()
             [1, 0, 0, 0, 0]
@@ -290,7 +273,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         """
         Returns a representation of self as a formal sum of Manin symbols.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: x = ModularSymbols(37, 4).0
             sage: x.manin_symbol_rep()
@@ -318,7 +301,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         Returns a representation of self as a formal sum of modular
         symbols.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: x = ModularSymbols(37, 4).0
             sage: x.modular_symbol_rep()
