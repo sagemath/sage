@@ -536,20 +536,23 @@ def k_regular_sequence_is_bounded(S):
     matrices = list(S.mu)
     length = len(matrices)
     try:
-        if is_bounded_via_mandel_simon_algorithm(make_positive(matrices)):
-            return True
+        return is_bounded_via_mandel_simon_algorithm(make_positive(matrices))
     except ValueError:
         pass
 
     matrices = list(S.minimized().mu)
-    matricesWithout = matrices[1:]
-    if not has_bounded_matrix_powers(matricesWithout):
+    if not has_bounded_matrix_powers(matrices):
         return False
 
-    matricesProd = list(ell*em for ell in matrices for em in matrices[1:]
+    matricesProd = list(ell*em for ell in matrices for em in matrices
                         if ell != em)
     if not has_bounded_matrix_powers(matricesProd):
         return False
+
+    try:
+        return is_bounded_via_mandel_simon_algorithm(make_positive(matricesProd))
+    except ValueError:
+        pass
 
     raise RuntimeError('It is not decidable with this implementation ' +
                        'whether the sequence is bounded or not.')
