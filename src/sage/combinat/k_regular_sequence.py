@@ -921,7 +921,7 @@ class kRegularSequence(RecognizableSeries):
     @cached_method
     def is_bounded(self):
         r"""
-        Return whether this `k`-regular sequence is bounded
+        Return whether this `k`-regular sequence is bounded.
 
         INPUT:
 
