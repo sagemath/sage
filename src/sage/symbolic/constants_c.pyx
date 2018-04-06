@@ -145,14 +145,14 @@ cdef class E(Expression):
             sage: t.operands()
             [a]
 
-        As opposed to::
+        This applies to the unit argument as well::
 
             sage: u = SR(1).exp()^a; u
             e^a
             sage: u.operator()
-            <built-in function pow>
+            exp
             sage: u.operands()
-            [e, a]
+            [a]
 
         It also works with matrices (see :trac:`4735`)::
 

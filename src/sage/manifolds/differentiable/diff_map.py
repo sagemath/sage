@@ -117,7 +117,7 @@ class DiffMap(ContinuousMap):
         sage: Phi.parent() is Hom(M, N)
         True
         sage: type(Phi)
-        <class 'sage.manifolds.differentiable.diff_map.DifferentiableManifoldHomset_with_category.element_class'>
+        <class 'sage.manifolds.differentiable.manifold_homset.DifferentiableManifoldHomset_with_category.element_class'>
         sage: Phi.display()
         Phi: S^2 --> R^3
         on U: (x, y) |--> (X, Y, Z) = (2*x/(x^2 + y^2 + 1), 2*y/(x^2 + y^2 + 1),
@@ -473,7 +473,7 @@ class DiffMap(ContinuousMap):
         r"""
         Initialize the derived quantities.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()
@@ -493,7 +493,7 @@ class DiffMap(ContinuousMap):
         r"""
         Delete the derived quantities.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()
@@ -564,7 +564,7 @@ class DiffMap(ContinuousMap):
               From: Tangent space at Point p on the 2-dimensional differentiable manifold M
               To:   Tangent space at Point Phi(p) on the 3-dimensional differentiable manifold N
             sage: latex(dPhip)
-            \mathrm{d}\Phi_{p}
+            {\mathrm{d}\Phi}_{p}
             sage: dPhip.parent()
             Set of Morphisms from Tangent space at Point p on the 2-dimensional
              differentiable manifold M to Tangent space at Point Phi(p) on the
@@ -634,8 +634,8 @@ class DiffMap(ContinuousMap):
         else:
             name = None
         if self._latex_name is not None and point._latex_name is not None:
-            latex_name = r'\mathrm{d}%s_{%s}'%(self._latex_name,
-                                               point._latex_name)
+            latex_name = r'{\mathrm{d}%s}_{%s}'%(self._latex_name,
+                                                 point._latex_name)
         else:
             latex_name = None
         return tsp_source.hom(tsp_image, matrix, bases=bases,
@@ -908,18 +908,34 @@ class DiffMap(ContinuousMap):
         from sage.tensor.modules.comp import (Components, CompWithSym,
                                               CompFullySym, CompFullyAntiSym)
 
-        def _pullback_paral(self, tensor):
+        def _pullback_chart(diff_map, tensor):
             r"""
-            Pullback on parallelizable domains.
+            Helper function performing the pullback on chart domains
+            only.
+
+            INPUT:
+
+            - ``diff_map`` -- a restriction of ``self``, whose both
+              domain and codomain are chart domains
+            - ``tensor`` -- a covariant tensor field, whose domain is
+              the codomain of ``diff_map``
+
+            OUTPUT:
+
+            - the pull back of ``tensor`` by ``diff_map``
+
             """
-            dom1 = self._domain
-            dom2 = self._codomain
+            dom1 = diff_map._domain
+            dom2 = diff_map._codomain
             ncov = tensor._tensor_type[1]
-            resu_name = None ; resu_latex_name = None
-            if self._name is not None and tensor._name is not None:
-                resu_name = self._name + '_*(' + tensor._name + ')'
-            if self._latex_name is not None and tensor._latex_name is not None:
-                resu_latex_name = self._latex_name + '_*' + tensor._latex_name
+            resu_name = None
+            resu_latex_name = None
+            if diff_map._name is not None and tensor._name is not None:
+                resu_name = diff_map._name + '_*(' + tensor._name + ')'
+            if (diff_map._latex_name is not None and
+                tensor._latex_name is not None):
+                resu_latex_name = '{' + diff_map._latex_name + '}_*' + \
+                                  tensor._latex_name
             fmodule1 = dom1.vector_field_module()
             ring1 = fmodule1._ring
             si1 = fmodule1._sindex
@@ -932,7 +948,8 @@ class DiffMap(ContinuousMap):
                 if isinstance(frame2, CoordFrame):
                     chart2 = frame2._chart
                     for chart1 in dom1._atlas:
-                        if (chart1, chart2) in self._coord_expression:
+                        if (chart1._domain is dom1 and (chart1, chart2) in
+                            diff_map._coord_expression):
                             # Computation at the component level:
                             frame1 = chart1._frame
                             tcomp = tensor._components[frame2]
@@ -954,10 +971,10 @@ class DiffMap(ContinuousMap):
                                 ptcomp = Components(ring1, frame1, ncov,
                                                     start_index=si1,
                                                     output_formatter=of1)
-                            phi = self._coord_expression[(chart1, chart2)]
+                            phi = diff_map._coord_expression[(chart1, chart2)]
                             jacob = phi.jacobian()
-                            # X2 coordinates expressed in terms of X1 ones via the
-                            # mapping:
+                            # X2 coordinates expressed in terms of
+                            # X1 ones via the diff. map:
                             coord2_1 = phi(*(chart1._xx))
                             for ind_new in ptcomp.non_redundant_index_generator():
                                 res = 0
@@ -965,12 +982,12 @@ class DiffMap(ContinuousMap):
                                     ff = tcomp[[ind_old]].coord_function(chart2)
                                     t = chart1.function(ff(*coord2_1))
                                     for i in range(ncov):
-                                        t *= jacob[ind_old[i]-si2][ind_new[i]-si1]
+                                        t *= jacob[ind_old[i]-si2, ind_new[i]-si1]
                                     res += t
                                 ptcomp[ind_new] = res
                             resu._components[frame1] = ptcomp
                 return resu
-        # End of function _pullback_paral
+        # End of function _pullback_chart
 
         # Special case of the identity map:
         if self._is_identity:
@@ -985,11 +1002,13 @@ class DiffMap(ContinuousMap):
         if ncon != 0:
             raise TypeError("the pullback cannot be taken on a tensor " +
                             "with some contravariant part")
-        resu_name = None ; resu_latex_name = None
+        resu_name = None
+        resu_latex_name = None
         if self._name is not None and tensor._name is not None:
             resu_name = self._name + '_*(' + tensor._name + ')'
         if self._latex_name is not None and tensor._latex_name is not None:
-            resu_latex_name = self._latex_name + '_*' + tensor._latex_name
+            resu_latex_name = "{" + self._latex_name + '}_*' + \
+                              tensor._latex_name
         if ncov == 0:
             # Case of a scalar field
             resu_fc = []
@@ -1010,7 +1029,7 @@ class DiffMap(ContinuousMap):
         else:
             # Case of tensor field of rank >= 1
             if tensor._vmodule._dest_map is not tdom.identity_map():
-                raise TypeError("the pullback in defined only for tensor " +
+                raise TypeError("the pullback is defined only for tensor " +
                                 "fields on {}".format(dom2))
             resu_rst = []
             for chart_pair in self._coord_expression:
@@ -1019,7 +1038,7 @@ class DiffMap(ContinuousMap):
                 if ch2dom.is_subset(tdom):
                     self_r = self.restrict(chart1._domain, subcodomain=ch2dom)
                     tensor_r = tensor.restrict(ch2dom)
-                    resu_rst.append(_pullback_paral(self_r, tensor_r))
+                    resu_rst.append(_pullback_chart(self_r, tensor_r))
             dom_resu = resu_rst[0]._domain
             for rst in resu_rst[1:]:
                 dom_resu = dom_resu.union(rst._domain)
@@ -1032,8 +1051,9 @@ class DiffMap(ContinuousMap):
                     resu._restrictions[rst._domain] = rst
             if isinstance(resu, TensorFieldParal):
                 for rst in resu_rst:
-                    for frame, comp in rst._components.items():
-                        resu._components[frame] = comp
+                    if rst._domain is resu._domain:
+                        for frame, comp in rst._components.items():
+                            resu._components[frame] = comp
         return resu
 
 
@@ -1105,8 +1125,8 @@ class DiffMap(ContinuousMap):
         dom1 = tensor.domain()
         ambient_dom1 = dest_map.codomain()
         if not ambient_dom1.is_subset(self._domain):
-            raise ValueError("the {} does not take its values on the " +
-                             "domain of the {}".format(tensor, self))
+            raise ValueError("the {} does not take its ".format(tensor) +
+                             "values on the domain of the {}".format(self))
         (ncon, ncov) = tensor.tensor_type()
         if ncov != 0:
             raise ValueError("the pushforward cannot be taken on a tensor " +
@@ -1192,11 +1212,12 @@ class DiffMap(ContinuousMap):
             for ind_old in dom1.index_generator(ncon):
                 t = tcomp[[ind_old]].coord_function(chart1)
                 for i in range(ncon):
-                    t *= jacob[ind_new[i]-si2][ind_old[i]-si1]
+                    t *= jacob[ind_new[i]-si2, ind_old[i]-si1]
                 res += t
             ptcomp[ind_new] = res
         # Name of the result:
-        resu_name = None ; resu_latex_name = None
+        resu_name = None
+        resu_latex_name = None
         if self._name is not None and tensor._name is not None:
             resu_name = self._name + '^*(' + tensor._name + ')'
         if self._latex_name is not None and tensor._latex_name is not None:

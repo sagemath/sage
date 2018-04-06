@@ -1,0 +1,59 @@
+diff -ru a/configure.ac b/configure.ac
+--- a/configure.ac	2017-02-06 17:36:56.899033700 +0100
++++ b/configure.ac	2017-02-06 17:47:20.828434500 +0100
+@@ -164,7 +164,20 @@
+ 
+ # newer libtool...
+ LT_PREREQ([2.2])
+-LT_INIT
++LT_INIT([win32-dll])
++
++
++# needed for building interfaces as shared libs on Windows
++AC_CANONICAL_HOST
++case "${host_os}" in
++    cygwin*|mingw*)
++        LINBOX_LDFLAGS=-no-undefined
++        ;;
++    *)
++        LINBOX_LDFLAGS=""
++        ;;
++esac
++AC_SUBST([LINBOX_LDFLAGS])
+ 
+ 
+ echo "-----------------------------------------------"
+diff -ru a/interfaces/driver/Makefile.am b/interfaces/driver/Makefile.am
+--- a/interfaces/driver/Makefile.am	2017-02-06 17:34:39.612887500 +0100
++++ b/interfaces/driver/Makefile.am	2017-02-06 17:47:54.367479800 +0100
+@@ -46,7 +46,7 @@
+ # \
+ 			#  lb-solve.C
+ 
+-liblbdriver_la_LDFLAGS=  $(NTL_LIBS) $(LDFLAGS) $(top_srcdir)/linbox/liblinbox.la -Wl,-zmuldefs
++liblbdriver_la_LDFLAGS=  $(NTL_LIBS) $(LDFLAGS) $(LINBOX_LDFLAGS) $(top_srcdir)/linbox/liblinbox.la -Wl,-zmuldefs
+ 
+ 
+ 
+diff -ru a/interfaces/maple/Makefile.am b/interfaces/maple/Makefile.am
+--- a/interfaces/maple/Makefile.am	2017-02-06 17:34:39.711925700 +0100
++++ b/interfaces/maple/Makefile.am	2017-02-06 17:48:29.892945500 +0100
+@@ -30,7 +30,7 @@
+ 
+ liblbmaple_la_SOURCES= lb-maple.C
+ 
+-liblbmaple_la_LDFLAGS=  $(NTL_LIBS) $(MAPLE_LIBS) $(top_srcdir)/interfaces/driver/liblbdriver.la -Wl,-zmuldefs $(LDFLAGS)
++liblbmaple_la_LDFLAGS=  $(NTL_LIBS) $(MAPLE_LIBS) $(top_srcdir)/interfaces/driver/liblbdriver.la -Wl,-zmuldefs $(LDFLAGS) $(LINBOX_LDFLAGS)
+ 
+ pkginclude_HEADERS =lb-maple.h lb-maple-utilities.h
+ 
+diff -ru a/interfaces/sage/Makefile.am b/interfaces/sage/Makefile.am
+--- a/interfaces/sage/Makefile.am	2017-02-06 17:34:39.685920400 +0100
++++ b/interfaces/sage/Makefile.am	2017-02-06 17:48:31.691793800 +0100
+@@ -38,5 +38,5 @@
+ #gentoo's linbox-1.1.6-fix-undefined-symbols.patch
+ liblinboxsage_la_LIBADD = $(top_builddir)/linbox/liblinbox.la
+ 
+-liblinboxsage_la_LDFLAGS = $(DEPS_LIBS) $(LDFLAGS) -version-info 0:0:0 #-Wl,-zmuldefs
++liblinboxsage_la_LDFLAGS = $(DEPS_LIBS) $(LDFLAGS) $(LINBOX_LDFLAGS) -version-info 0:0:0 #-Wl,-zmuldefs
+ endif

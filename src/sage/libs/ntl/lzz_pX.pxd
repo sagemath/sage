@@ -2,10 +2,8 @@
 
 from .types cimport ZZ_c, zz_p_c, zz_pX_c, zz_pX_Modulus_c
 
-cdef extern from "ccobject.h":
-    void zz_pX_Modulus_from_str "_from_str<zz_pXModulus>"(zz_pX_Modulus_c* dest, char* s)
 
-cdef extern from "sage/libs/ntl/ntlwrap.cpp":
+cdef extern from "ntlwrap.cpp":
     char* zz_pX_repr(zz_pX_c* x)
     void zz_pX_SetCoeff_long "SetCoeff"(zz_pX_c x, long i, long a)
     zz_p_c zz_pX_GetCoeff "coeff"(zz_pX_c x, long i)

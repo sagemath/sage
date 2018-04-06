@@ -376,13 +376,13 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             Return the shape of ``A`` if ``A`` is the canonical standard
             set partition `A_1 | A_2 | \cdots | A_k` where `|` is the pipe
             operation (see
-            :meth:~sage.combinat.set_partition.SetPartition.pipe()` )
+            :meth:`~sage.combinat.set_partition.SetPartition.pipe()` )
             and `A_i = [\lambda_i]` where `\lambda_1 \leq \lambda_2 \leq
             \cdots \leq \lambda_k`. Otherwise, return ``None``.
 
             This is the trailing term of `h_{\lambda}` mapped by `\chi` to
             the `\mathbf{w}` basis and is used by the coercion framework to
-            constuct the preimage `\chi^{-1}`.
+            construct the preimage `\chi^{-1}`.
 
             INPUT:
 

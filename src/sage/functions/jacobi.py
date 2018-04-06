@@ -159,7 +159,7 @@ from sage.functions.special import elliptic_e, elliptic_kc
 from sage.libs.mpmath import utils
 from sage.misc.latex import latex
 
-HALF = QQ('1/2')
+HALF = QQ((1, 2))
 
 
 class Jacobi(BuiltinFunction):

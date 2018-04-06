@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 ###########################################
 ## Singular
 ###########################################
@@ -61,17 +59,32 @@ remove_old_version()
     rm -f "$SAGE_LOCAL/include/omlimits.h" # 3.x only
     rm -rf "$SAGE_LOCAL/include/resources" #4.x only
     rm -rf "$SAGE_LOCAL/include/gfanlib" #4.x only
-    rm -f "$SAGE_LOCAL"/lib/libsingular* # 3.x with lower case
-    rm -f "$SAGE_LOCAL"/lib/libsingcf*.a # 3.x only additional archives
-    rm -f "$SAGE_LOCAL"/lib/libsingfac*.a # 3.x only additional archives
-    rm -f "$SAGE_LOCAL"/lib/libSingular* # 4.x with upper case
+
+    # Clean up all Singular-related libraries
+    libs=(
+        singular  # 3.x with lower case
+        singcf    # 3.x only additional archives
+        singfac   # 3.x only additional archives
+        Singular  # 4.x with upper case
+        polys
+        factory
+        omalloc
+        resources           # 3.x
+        singular_resources  # 4.x and up
+        gfan
+    )
+    if [ "$UNAME" = "CYGWIN" ]; then
+        for name in ${libs[*]}; do
+            rm -f "$SAGE_LOCAL"/bin/cyg${name}*.dll
+            rm -f "$SAGE_LOCAL"/lib/lib${name}*.a
+        done
+    else
+        for name in ${libs[*]}; do
+            rm -f "$SAGE_LOCAL"/lib/lib${name}*
+        done
+    fi
+
     rm -f "$SAGE_LOCAL"/lib/p_Procs_Field* # 3.x only
-    # a bunch of additional libraries for 4.x
-    rm -f "$SAGE_LOCAL"/lib/libpolys*
-    rm -f "$SAGE_LOCAL"/lib/libfactory*
-    rm -f "$SAGE_LOCAL"/lib/libomalloc*
-    rm -f "$SAGE_LOCAL"/lib/libresources*
-    rm -r "$SAGE_LOCAL"/lib/libgfan*
     rm -rf "$SAGE_LOCAL/share/singular"
     rm -f "$SAGE_LOCAL"/share/info/singular*
 }
@@ -96,6 +109,7 @@ config()
                 --enable-Singular \
                 --enable-factory \
                 --disable-doc \
+                --disable-polymake \
                 $SINGULAR_CONFIGURE
 
     if [ $? -ne 0 ]; then
@@ -121,26 +135,9 @@ build_singular()
 
 }
 
-fix_includes()
-{
-    # Fix all Singular includes to work from local/include
-    cd "$SAGE_LOCAL/include"
-
-    # First, generate a sed script to do these replacements
-    find singular -name '*.h' | while read include; do
-        # Replace #include <foo> by #include <singular/foo>
-        echo "s|# *include .${include#singular/}.|#include <$include>|"
-    done >"$SRC/fix_includes.sed"
-
-    # Now execute the script (we add .bak because BSD sed, used also
-    # on OS X, requires an argument for -i)
-    find singular -name '*.h' -exec sed -i.bak -f "$SRC/fix_includes.sed" {} \;
-}
-
 
 # Actually run all the functions defined above
-for i in remove_old_version config \
-  build_singular fix_includes ; do
+for i in remove_old_version config build_singular; do
     echo "############### Singular stage $i ###############"
     cd "$SRC" && $i
 done

@@ -56,17 +56,11 @@ http://webusers.imj-prg.fr/~jean.michel/
 == Special Update/Build Instructions ==
 
 The difference between the distributed tarball and Jean Michel's
-original tarball is that all binary files have been deleted one by one
-from the listing obtained by
-
-    grep -r -m 1 "^"  . | grep "^Binary file"
+original tarball also contains the binaries
 
 === Patches ===
 
- * gap3_makefile.patch: modifies src/src/Makefile such that if autodetects
-   the system
-
- * gap3_startup.patch: modifies src/bin/gap.sh to set GAP_DIR and GAP_PRG
+None
 
 == Dependencies ===
 

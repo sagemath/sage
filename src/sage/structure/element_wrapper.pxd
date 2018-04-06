@@ -6,7 +6,6 @@ cdef class ElementWrapper(Element):
 
     cpdef _richcmp_(left, right, int op)
     cpdef bint _lt_by_value(self, other)
-    cpdef int _cmp_by_value(self, other)
 
 cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
     pass

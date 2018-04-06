@@ -15,7 +15,7 @@ quadratic forms over the rationals.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 
 ###########################################################################
 ## TO DO: Add routines for hasse invariants at all places, anisotropic
@@ -41,7 +41,7 @@ def rational_diagonal_form(self, return_matrix=False):
     INPUT:
 
     - ``return_matrix`` -- (boolean, default: False) also return the
-      transformation matrix.
+      transformation matrix
 
     OUTPUT: either ``D`` (if ``return_matrix`` is false) or ``(D,T)``
     (if ``return_matrix`` is true) where
@@ -138,7 +138,7 @@ def rational_diagonal_form(self, return_matrix=False):
     This example cannot be computed by PARI::
 
         sage: Q = QuadraticForm(RIF, 4, range(10))
-        sage: Q._pari_()
+        sage: Q.__pari__()
         Traceback (most recent call last):
         ...
         TypeError
@@ -229,7 +229,7 @@ def _rational_diagonal_form_and_transformation(self):
 
     try:
         # Try PARI if the type is supported
-        pariself = self._pari_()
+        pariself = self.__pari__()
         # Check that conversion back works
         MS(pariself.sage())
     except Exception:
@@ -388,12 +388,9 @@ def signature(self):
     return p - n
 
 
-
-
-
 def hasse_invariant(self, p):
     """
-    Computes the Hasse invariant at a prime `p`, as given on p55 of
+    Computes the Hasse invariant at a prime `p` or at infinity, as given on p55 of
     Cassels's book.  If Q is diagonal with coefficients `a_i`, then the
     (Cassels) Hasse invariant is given by
 
@@ -405,21 +402,24 @@ def hasse_invariant(self, p):
     quadratic form must be non-degenerate over `Q_p` for this to make
     sense.
 
-    WARNING: This is different from the O'Meara Hasse invariant, which
-    allows `i <= j` in the product.  That is given by the method
-    hasse_invariant__OMeara(p).
+    .. WARNING::
 
-    NOTE: We should really rename this hasse_invariant__Cassels(), and
-    set hasse_invariant() as a front-end to it.
+        This is different from the O'Meara Hasse invariant, which
+        allows `i <= j` in the product.  That is given by the method
+        hasse_invariant__OMeara(p).
 
+    .. NOTE::
+
+        We should really rename this hasse_invariant__Cassels(), and
+        set hasse_invariant() as a front-end to it.
 
     INPUT:
 
-        `p` -- a prime number > 0
+    - `p` -- a prime number > 0 or `-1` for the infinite place
 
     OUTPUT:
 
-        1 or -1
+    1 or -1
 
     EXAMPLES::
 
@@ -484,8 +484,10 @@ def hasse_invariant(self, p):
 
 def hasse_invariant__OMeara(self, p):
     """
-    Computes the O'Meara Hasse invariant at a prime `p`, as given on
-    p167 of O'Meara's book.  If Q is diagonal with coefficients `a_i`,
+    Compute the O'Meara Hasse invariant at a prime `p`.
+
+    This is defined on
+    p167 of O'Meara's book. If Q is diagonal with coefficients `a_i`,
     then the (Cassels) Hasse invariant is given by
 
     .. MATH::
@@ -494,18 +496,19 @@ def hasse_invariant__OMeara(self, p):
 
     where `(a,b)_p` is the Hilbert symbol at `p`.
 
-    WARNING: This is different from the (Cassels) Hasse invariant, which
-    only allows `i < j` in the product.  That is given by the method
-    hasse_invariant(p).
+    .. WARNING::
 
+        This is different from the (Cassels) Hasse invariant, which
+        only allows `i < j` in the product.  That is given by the method
+        hasse_invariant(p).
 
     INPUT:
 
-        `p` -- a prime number > 0
+    - `p` -- a prime number > 0 or `-1` for the infinite place
 
     OUTPUT:
 
-        1 or -1
+    1 or -1
 
     EXAMPLES::
 
@@ -529,7 +532,7 @@ def hasse_invariant__OMeara(self, p):
 
     ::
 
-        sage: Q=DiagonalQuadraticForm(ZZ,[1,-1,-1])
+        sage: Q = DiagonalQuadraticForm(ZZ,[1,-1,-1])
         sage: [Q.hasse_invariant(p) for p in prime_range(20)]
         [-1, 1, 1, 1, 1, 1, 1, 1]
         sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
@@ -538,10 +541,9 @@ def hasse_invariant__OMeara(self, p):
     ::
 
         sage: K.<a>=NumberField(x^2-23)
-        sage: Q=DiagonalQuadraticForm(K,[-a,a+2])
+        sage: Q = DiagonalQuadraticForm(K,[-a,a+2])
         sage: [Q.hasse_invariant__OMeara(p) for p in K.primes_above(19)]
         [1, 1]
-
     """
     ## TO DO: Need to deal with the case n=1 separately somewhere!
 
@@ -567,31 +569,30 @@ def hasse_invariant__OMeara(self, p):
     return hasse_temp
 
 
-
-
 def is_hyperbolic(self, p):
-    """
-    Checks if the quadratic form is a sum of hyperbolic planes over
-    the p-adic numbers Q_p.
+    r"""
+    Check if the quadratic form is a sum of hyperbolic planes over
+    the `p`-adic numbers `\QQ_p` or over the real numbers `\RR`.
 
     REFERENCES:
 
-        This criteria follows from Cassels's "Rational Quadratic Forms":
-            - local invariants for hyperbolic plane (Lemma 2.4, p58)
-            - direct sum formulas (Lemma 2.3 on p58)
+    This criteria follows from Cassels's "Rational Quadratic Forms":
+
+    - local invariants for hyperbolic plane (Lemma 2.4, p58)
+    - direct sum formulas (Lemma 2.3, p58)
 
     INPUT:
 
-        `p` -- a prime number > 0
+    - `p` -- a prime number > 0 or `-1` for the infinite place
 
     OUTPUT:
 
-        boolean
+    boolean
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
-        sage: Q.is_hyperbolic("infinity")
+        sage: Q.is_hyperbolic(-1)
         False
         sage: Q.is_hyperbolic(2)
         False
@@ -603,42 +604,42 @@ def is_hyperbolic(self, p):
         False
         sage: Q.is_hyperbolic(13)    ## Here -1 is a square, so it's true.
         True
-
     """
     ## False for odd-dim'l forms
-    if self.dim() % 2 != 0:
+    if self.dim() % 2:
         return False
 
     ## True for the zero form
-    if self.dim == 0:
+    if not self.dim():
         return True
 
     ## Compare local invariants
-    ## (Note: since the dimension is even, the extra powers of 2 in
-    ##        self.det() := Det(2*Q) don't affect the answer!)
+    ## Note: since the dimension is even, the extra powers of 2 in
+    ##        self.det() := Det(2*Q) don't affect the answer!
     m = ZZ(self.dim() // 2)
-    if p == "infinity":
-        return (self.signature() == 0)
+    if p == -1:
+        return self.signature() == 0
 
-    elif p == 2:
-        return QQ(self.det() * (-1)**m).is_padic_square(p) and (self.hasse_invariant(p) == (-1)**m)    ## Actually, this -1 is the Hilbert symbol (-1,-1)_p
+    if p == 2:
+        return (QQ(self.det() * (-1) ** m).is_padic_square(p) and
+                self.hasse_invariant(p) ==
+                (-1) ** m.binomial(2))  # here -1 is hilbert_symbol(-1,-1,2)
 
-    else:
-        return QQ(self.det() * (-1)**m).is_padic_square(p) and (self.hasse_invariant(p) == 1)
-
+    return (QQ(self.det() * (-1) ** m).is_padic_square(p) and
+            self.hasse_invariant(p) == 1)
 
 
 def is_anisotropic(self, p):
-    """
-    Checks if the quadratic form is anisotropic over the p-adic numbers `Q_p`.
+    r"""
+    Check if the quadratic form is anisotropic over the p-adic numbers `\QQ_p` or `\RR`.
 
     INPUT:
 
-        `p` -- a prime number > 0
+    - `p` -- a prime number > 0 or `-1` for the infinite place
 
     OUTPUT:
 
-        boolean
+    boolean
 
     EXAMPLES::
 
@@ -669,42 +670,44 @@ def is_anisotropic(self, p):
 
         sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p), p, -p*least_quadratic_nonresidue(p)]).is_anisotropic(p)  for p in prime_range(3, 30)]
         [True, True, True, True, True, True, True, True, True]
-
     """
+    ## TO DO: Should check that p is prime
+    if p == -1:
+        return self.is_definite()
+
     n = self.dim()
     D = self.det()
 
-    ## TO DO: Should check that p is prime
+    if n >= 5:
+        return False
 
-    if (n >= 5):
-        return False;
+    if n == 4:
+        return (QQ(D).is_padic_square(p) and
+                (self.hasse_invariant(p) == - hilbert_symbol(-1, -1, p)))
 
-    if (n == 4):
-        return ( QQ(D).is_padic_square(p) and (self.hasse_invariant(p) == - hilbert_symbol(-1,-1,p)) )
+    if n == 3:
+        return self.hasse_invariant(p) != hilbert_symbol(-1, -D, p)
 
-    if (n == 3):
-        return (self.hasse_invariant(p) != hilbert_symbol(-1, -D, p))
+    if n == 2:
+        return not QQ(-D).is_padic_square(p)
 
-    if (n == 2):
-        return (not QQ(-D).is_padic_square(p))
-
-    if (n == 1):
-        return (self[0,0] != 0)
+    if n == 1:
+        return self[0, 0] != 0
 
     raise NotImplementedError("Oops!  We haven't established a convention for 0-dim'l quadratic forms... =(")
 
 
 def is_isotropic(self, p):
     """
-    Checks if Q is isotropic over the p-adic numbers `Q_p`.
+    Checks if Q is isotropic over the p-adic numbers `Q_p` or `RR`.
 
     INPUT:
 
-        `p` -- a prime number > 0
+    - `p` -- a prime number > 0 or `-1` for the infinite place
 
     OUTPUT:
 
-        boolean
+    boolean
 
     EXAMPLES::
 
@@ -742,54 +745,28 @@ def is_isotropic(self, p):
 
 def anisotropic_primes(self):
     """
-    Returns a list with all of the anisotropic primes of the quadratic form.
+    Return a list with all of the anisotropic primes of the quadratic form.
 
-
-    INPUT:
-
-        None
-
-    OUTPUT:
-
-        Returns a list of prime numbers >0.
+    The infinite place is denoted by `-1`.
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
         sage: Q.anisotropic_primes()
-        [2]
-
-    ::
+        [2, -1]
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: Q.anisotropic_primes()
-        [2]
-
-    ::
+        [2, -1]
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1,1])
         sage: Q.anisotropic_primes()
-        []
-
+        [-1]
     """
-
-    ## Look at all prime divisors of 2 * Det(Q) to find the anisotropic primes...
-    possible_primes = prime_divisors(2 * self.det())
-    AnisoPrimes = []
-
-    ## DIAGNSOTIC
-    #print " Possible anisotropic primes are: " + str(possible_primes)
-
-    for p in possible_primes:
-        if (self.is_anisotropic(p)):
-            AnisoPrimes += [p]
-
-    ## DIAGNSOTIC
-    #print " leaving anisotropic_primes..."
-
-    return AnisoPrimes
-
-
+    # Look at all prime divisors of 2 * Det(Q) to find the
+    # anisotropic primes...
+    possible_primes = prime_divisors(2 * self.det()) + [-1]
+    return [p for p in possible_primes if self.is_anisotropic(p)]
 
 
 def compute_definiteness(self):
@@ -862,12 +839,10 @@ def compute_definiteness(self):
     n = self.dim()
     M = self.matrix()
 
-
     ## Deal with the zero-diml form
     if n == 0:
         self.__definiteness_string = "zero"
         return
-
 
     sig_pos, sig_neg, sig_zer = self.signature_vector()
 
@@ -955,7 +930,7 @@ def compute_definiteness_string_by_determinants(self):
     ## Check the sign of the ratios of consecutive determinants of the upper triangular r x r submatrices
     first_coeff = self[0,0]
     for r in range(1,n+1):
-        I = range(r)
+        I = list(range(r))
         new_det = M.matrix_from_rows_and_columns(I, I).det()
 
         ## Check for a (non-degenerate) zero -- so it's indefinite

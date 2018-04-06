@@ -2885,8 +2885,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
             sage: S = ShiftCryptosystem(AlphabeticStrings())
             sage: K = S.random_key()
             sage: while K == 0:
-            ...       K = S.random_key()
-            ...
+            ....:     K = S.random_key()
             sage: invK = S.inverse_key(K)
             sage: K + invK == S.alphabet_size()
             True
@@ -2894,8 +2893,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
             True
             sage: K = S.random_key()
             sage: while K != 0:
-            ...       K = S.random_key()
-            ...
+            ....:     K = S.random_key()
             sage: invK = S.inverse_key(K)
             sage: K + invK != S.alphabet_size()
             True
@@ -2988,8 +2986,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
             sage: S = ShiftCryptosystem(AlphabeticStrings())
             sage: K = S.random_key()
             sage: while K == 0:
-            ...       K = S.random_key()
-            ...
+            ....:     K = S.random_key()
             sage: invK = S.inverse_key(K)
             sage: K + invK == S.alphabet_size()
             True
@@ -2997,8 +2994,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
             True
             sage: K = S.random_key()
             sage: while K != 0:
-            ...       K = S.random_key()
-            ...
+            ....:     K = S.random_key()
             sage: invK = S.inverse_key(K)
             sage: K + invK != S.alphabet_size()
             True

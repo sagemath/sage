@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-advanced-2dplotting:
+
 Tutorial for Advanced 2d Plotting
 =================================
 
@@ -562,7 +564,7 @@ Sage includes a variety of built\-in graphics objects.  These are
 particularly useful for adding to one's plot certain objects which are
 difficult to describe with equations, but which are basic geometric
 objects nonetheless.  In this section we will try to demonstrate the
-syntax of some of the most useful of them; for most of the the
+syntax of some of the most useful of them; for most of them the
 contextual (remember, append ``?``) help will give more details.
 
 Points

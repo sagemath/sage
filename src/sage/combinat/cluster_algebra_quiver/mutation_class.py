@@ -3,9 +3,7 @@ mutation_class
 
 This file contains helper functions for compute the mutation class of a cluster algebra or quiver.
 
-For the compendium on the cluster algebra and quiver package see
-
-        http://arxiv.org/abs/1102.4844
+For the compendium on the cluster algebra and quiver package see [MS2011]_
 
 AUTHORS:
 
@@ -25,11 +23,8 @@ from six.moves import range
 
 import time
 from sage.groups.perm_gps.partn_ref.refinement_graphs import *
-from sage.graphs.generic_graph import graph_isom_equivalent_non_edge_labeled_graph
-from copy import copy
 from sage.rings.all import ZZ, infinity
-from sage.graphs.all import Graph, DiGraph
-from sage.matrix.all import matrix
+from sage.graphs.all import DiGraph
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import _edge_list_to_matrix
 
 def _principal_part( mat ):
@@ -351,11 +346,12 @@ def _dig6_to_digraph( dig6 ):
 
 def _dig6_to_matrix( dig6 ):
     """
-    Returns the matrix obtained from the dig6 and edge data.
+    Return the matrix obtained from the dig6 and edge data.
 
     INPUT:
 
-    - ``dig6`` -- a pair ``(dig6, edges)`` where ``dig6`` is a string encoding a digraph and ``edges`` is a dict or tuple encoding edges
+    - ``dig6`` -- a pair ``(dig6, edges)`` where ``dig6`` is a string
+      encoding a digraph and ``edges`` is a dict or tuple encoding edges
 
     EXAMPLES::
 
@@ -369,8 +365,8 @@ def _dig6_to_matrix( dig6 ):
         [ 0  1  0  1]
         [ 0  0 -1  0]
     """
-    dg = _dig6_to_digraph( dig6 )
-    return _edge_list_to_matrix( dg.edges(), dg.order(), 0 )
+    dg = _dig6_to_digraph(dig6)
+    return _edge_list_to_matrix(dg.edges(), list(range(dg.order())), [])
 
 def _dg_is_sink_source( dg, v ):
     """

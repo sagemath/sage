@@ -10,7 +10,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.libs.pynac.pynac cimport GEx, GEx_construct_ex
+from sage.libs.pynac.pynac cimport GEx
 from sage.symbolic.expression cimport new_Expression_from_GEx
 
 cdef inline int normalize_index(object arg, int nops, object err_msg) except -1:
@@ -143,7 +143,7 @@ cdef class OperandsWrapper(SageObject):
             # handle nested index
             if len(arg) == 0: # or not all(lambda x: x in ZZ for t in args):
                 raise TypeError(ind_err_msg)
-            GEx_construct_ex(&cur_ex, self._expr._gobj)
+            cur_ex = GEx(self._expr._gobj)
             for x in arg:
                 nops = cur_ex.nops()
                 if nops == 0:

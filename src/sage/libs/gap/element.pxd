@@ -44,7 +44,11 @@ cdef class GapElement(RingElement):
     cdef _initialize(self, parent, libGAP_Obj obj)
     cpdef _type_number(self)
     cpdef is_bool(self)
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
+    cpdef _mod_(self, right)
 
+    cpdef GapElement deepcopy(self, bint mut)
 
 cdef class GapElement_Integer(GapElement):
     pass

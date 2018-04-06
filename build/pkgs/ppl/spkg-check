@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ "x$CFLAG64" = x ]; then
     CFLAG64=-m64
 fi

@@ -56,14 +56,14 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     decorated function::
 
         sage: def square(f):
-        ....:   @sage_wraps(f)
-        ....:   def new_f(x):
-        ....:       return f(x)*f(x)
-        ....:   return new_f
+        ....:     @sage_wraps(f)
+        ....:     def new_f(x):
+        ....:         return f(x)*f(x)
+        ....:     return new_f
         sage: @square
-        ... def g(x):
-        ....:   "My little function"
-        ....:   return x
+        ....: def g(x):
+        ....:     "My little function"
+        ....:     return x
         sage: g(2)
         4
         sage: g(x)
@@ -79,13 +79,13 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     unchanged) (see :trac:`9976`)::
 
         sage: def diff_arg_dec(f):
-        ....:   @sage_wraps(f)
-        ....:   def new_f(y, some_def_arg=2):
-        ....:       return f(y+some_def_arg)
-        ....:   return new_f
+        ....:     @sage_wraps(f)
+        ....:     def new_f(y, some_def_arg=2):
+        ....:         return f(y+some_def_arg)
+        ....:     return new_f
         sage: @diff_arg_dec
-        ... def g(x):
-        ....:   return x
+        ....: def g(x):
+        ....:     return x
         sage: g(1)
         3
         sage: g(1, some_def_arg=4)
@@ -109,6 +109,17 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
           ...
           '        return self.basis.reduced()\n'], ...)
 
+    The ``f`` attribute of the decorated function refers to the
+    original function::
+
+        sage: foo = object()
+        sage: @sage_wraps(foo)
+        ....: def func():
+        ....:     pass
+        sage: wrapped = sage_wraps(foo)(func)
+        sage: wrapped.f is foo
+        True
+
     Demonstrate that sage_wraps works for non-function callables
     (:trac:`9919`)::
 
@@ -131,10 +142,10 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     The bug described in :trac:`11734` is fixed::
 
         sage: def square(f):
-        ....:   @sage_wraps(f)
-        ....:   def new_f(x):
-        ....:       return f(x)*f(x)
-        ....:   return new_f
+        ....:     @sage_wraps(f)
+        ....:     def new_f(x):
+        ....:         return f(x)*f(x)
+        ....:     return new_f
         sage: f = lambda x:x^2
         sage: g = square(f)
         sage: g(3) # this line used to fail for some people if these command were manually entered on the sage prompt
@@ -148,6 +159,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
 
     def f(wrapper):
         update_wrapper(wrapper, wrapped, assigned=assigned, updated=updated)
+        wrapper.f = wrapped
         wrapper._sage_src_ = lambda: sage_getsource(wrapped)
         wrapper._sage_src_lines_ = lambda: sage_getsourcelines(wrapped)
         #Getting the signature right in documentation by Sphinx (Trac 9976)
@@ -378,22 +390,20 @@ def decorator_defaults(func):
 
         sage: from sage.misc.decorators import decorator_defaults
         sage: @decorator_defaults
-        ... def my_decorator(f,*args,**kwds):
+        ....: def my_decorator(f,*args,**kwds):
         ....:   print(kwds)
         ....:   print(args)
         ....:   print(f.__name__)
-        ...
+
         sage: @my_decorator
-        ... def my_fun(a,b):
+        ....: def my_fun(a,b):
         ....:   return a,b
-        ...
         {}
         ()
         my_fun
         sage: @my_decorator(3,4,c=1,d=2)
-        ... def my_fun(a,b):
+        ....: def my_fun(a,b):
         ....:   return a,b
-        ...
         {'c': 1, 'd': 2}
         (3, 4)
         my_fun

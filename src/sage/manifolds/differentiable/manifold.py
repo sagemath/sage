@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Differentiable Manifolds
 
@@ -252,7 +253,8 @@ A 1-form on the sphere::
     sage: df.display(stereoS.frame())
     df = -2*u/(u^4 + 2*u^2*v^2 + v^4 + 1) du - 2*v/(u^4 + 2*u^2*v^2 + v^4 + 1) dv
     sage: df.parent()
-    Module /\^1(S^2) of 1-forms on the 2-dimensional differentiable manifold S^2
+    Module Omega^1(S^2) of 1-forms on the 2-dimensional differentiable
+     manifold S^2
     sage: df.parent().category()
     Category of modules over Algebra of differentiable scalar fields on the
      2-dimensional differentiable manifold S^2
@@ -332,7 +334,7 @@ Let consider the complex number `i` as a point of the Riemann sphere::
     sage: i = M((I,), chart=Z, name='i'); i
     Point i on the 1-dimensional complex manifold C*
 
-Its coordinates w.r.t. the charts ``Z`` and ``W`` are::
+Its coordinates with respect to the charts ``Z`` and ``W`` are::
 
     sage: Z(i)
     (I,)
@@ -802,8 +804,8 @@ class DifferentiableManifold(TopologicalManifold):
             sage: p in U
             True
 
-        Checking whether various points, defined by their coordinates w.r.t.
-        chart ``X``,  are in ``U``::
+        Checking whether various points, defined by their coordinates
+        with respect to chart ``X``,  are in ``U``::
 
             sage: M((0,1/2)) in U
             True
@@ -952,7 +954,7 @@ class DifferentiableManifold(TopologicalManifold):
 
         Use :meth:`diff_map` instead.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Manifold(2, 'M'); X.<x,y> = M.chart()
             sage: N = Manifold(2, 'N'); Y.<u,v> = N.chart()
@@ -1015,7 +1017,7 @@ class DifferentiableManifold(TopologicalManifold):
         - the diffeomorphism, as an instance of
           :class:`~sage.manifolds.differentiable.diff_map.DiffMap`
 
-        EXAMPLE:
+        EXAMPLES:
 
         Diffeomorphism between the open unit disk in `\RR^2` and `\RR^2`::
 
@@ -1095,12 +1097,12 @@ class DifferentiableManifold(TopologicalManifold):
           :class:`~sage.manifolds.differentiable.vectorfield_module.VectorFieldModule`
           (or if `N` is parallelizable, a
           :class:`~sage.manifolds.differentiable.vectorfield_module.VectorFieldFreeModule`)
-          representing the module `\mathcal{X}(M,\Phi)` of vector fields on
+          representing the module `\mathfrak{X}(M,\Phi)` of vector fields on
           `M` taking values on `\Phi(M)\subset N`
 
         EXAMPLES:
 
-        Vector field module `\mathcal{X}(U) := \mathcal{X}(U,\mathrm{Id}_U)`
+        Vector field module `\mathfrak{X}(U) := \mathfrak{X}(U,\mathrm{Id}_U)`
         of the complement `U` of the two poles on the sphere `\mathbb{S}^2`::
 
             sage: S2 = Manifold(2, 'S^2')
@@ -1119,7 +1121,7 @@ class DifferentiableManifold(TopologicalManifold):
             sage: XU.base_ring() is U.scalar_field_algebra()
             True
 
-        `\mathcal{X}(U)` is a free module because `U` is parallelizable
+        `\mathfrak{X}(U)` is a free module because `U` is parallelizable
         (being a chart domain)::
 
             sage: U.is_manifestly_parallelizable()
@@ -1130,7 +1132,7 @@ class DifferentiableManifold(TopologicalManifold):
             sage: XU.rank()
             2
 
-        The elements of `\mathcal{X}(U)` are vector fields on `U`::
+        The elements of `\mathfrak{X}(U)` are vector fields on `U`::
 
             sage: XU.an_element()
             Vector field on the Open subset U of the 2-dimensional
@@ -1138,7 +1140,7 @@ class DifferentiableManifold(TopologicalManifold):
             sage: XU.an_element().display()
             2 d/dth + 2 d/dph
 
-        Vector field module `\mathcal{X}(U,\Phi)` of the
+        Vector field module `\mathfrak{X}(U,\Phi)` of the
         `\RR^3`-valued vector fields along `U`, associated with the
         embedding `\Phi` of `\mathbb{S}^2` into `\RR^3`::
 
@@ -1154,7 +1156,7 @@ class DifferentiableManifold(TopologicalManifold):
             Algebra of differentiable scalar fields on the Open subset U of the
              2-dimensional differentiable manifold S^2
 
-        `\mathcal{X}(U,\Phi)` is a free module because `\RR^3`
+        `\mathfrak{X}(U,\Phi)` is a free module because `\RR^3`
         is parallelizable and its rank is 3::
 
             sage: XU_R3.rank()
@@ -1265,7 +1267,7 @@ class DifferentiableManifold(TopologicalManifold):
           :class:`~sage.manifolds.differentiable.diff_form_module.DiffFormModule`
           (or if `N` is parallelizable, a
           :class:`~sage.manifolds.differentiable.diff_form_module.DiffFormFreeModule`)
-          representing the module `\Lambda^p(M,\Phi)` of `p`-forms on `M`
+          representing the module `\Omega^p(M,\Phi)` of `p`-forms on `M`
           taking values on `\Phi(M)\subset N`
 
         EXAMPLES:
@@ -1275,12 +1277,12 @@ class DifferentiableManifold(TopologicalManifold):
             sage: M = Manifold(3, 'M')
             sage: X.<x,y,z> = M.chart()
             sage: M.diff_form_module(2)
-            Free module /\^2(M) of 2-forms on the 3-dimensional differentiable
-             manifold M
+            Free module Omega^2(M) of 2-forms on the 3-dimensional
+             differentiable manifold M
             sage: M.diff_form_module(2).category()
             Category of finite dimensional modules over Algebra of
-             differentiable scalar fields on the 3-dimensional differentiable
-             manifold M
+             differentiable scalar fields on the 3-dimensional
+             differentiable manifold M
             sage: M.diff_form_module(2).base_ring()
             Algebra of differentiable scalar fields on the 3-dimensional
              differentiable manifold M
@@ -1295,6 +1297,66 @@ class DifferentiableManifold(TopologicalManifold):
         """
         return self.vector_field_module(dest_map=dest_map).dual_exterior_power(degree)
 
+    def multivector_module(self, degree, dest_map=None):
+        r"""
+        Return the set of multivector fields of a given degree defined
+        on ``self``, possibly with values in another manifold, as a
+        module over the algebra of scalar fields defined on ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.manifolds.differentiable.multivector_module.MultivectorModule`
+            for complete documentation.
+
+        INPUT:
+
+        - ``degree`` -- positive integer; the degree `p` of the
+          multivector fields
+        - ``dest_map`` -- (default: ``None``) destination map, i.e. a
+          differentiable map `\Phi:\ M \rightarrow N`, where `M` is the
+          current manifold and `N` a differentiable manifold;
+          if ``None``, it is assumed that `N = M` and that `\Phi` is the
+          identity map (case of multivector fields *on* `M`), otherwise
+          ``dest_map`` must be a
+          :class:`~sage.manifolds.differentiable.diff_map.DiffMap`
+
+        OUTPUT:
+
+        - a
+          :class:`~sage.manifolds.differentiable.multivector_module.MultivectorModule`
+          (or if `N` is parallelizable, a
+          :class:`~sage.manifolds.differentiable.multivector_module.MultivectorFreeModule`)
+          representing the module `\Omega^p(M,\Phi)` of `p`-forms on `M`
+          taking values on `\Phi(M)\subset N`
+
+        EXAMPLES:
+
+        Module of 2-vector fields on a 3-dimensional parallelizable
+        manifold::
+
+            sage: M = Manifold(3, 'M')
+            sage: X.<x,y,z> = M.chart()
+            sage: M.multivector_module(2)
+            Free module A^2(M) of 2-vector fields on the 3-dimensional
+             differentiable manifold M
+            sage: M.multivector_module(2).category()
+            Category of finite dimensional modules over Algebra of
+             differentiable scalar fields on the 3-dimensional
+             differentiable manifold M
+            sage: M.multivector_module(2).base_ring()
+            Algebra of differentiable scalar fields on the 3-dimensional
+             differentiable manifold M
+            sage: M.multivector_module(2).rank()
+            3
+
+        The outcome is cached::
+
+            sage: M.multivector_module(2) is M.multivector_module(2)
+            True
+
+        """
+        return self.vector_field_module(dest_map=dest_map).exterior_power(degree)
+
     def automorphism_field_group(self, dest_map=None):
         r"""
         Return the group of tangent-space automorphism fields defined on
@@ -1304,8 +1366,8 @@ class DifferentiableManifold(TopologicalManifold):
         If `M` is the current manifold and `\Phi` a differentiable map
         `\Phi: M \rightarrow N`, where `N` is a differentiable manifold,
         this method called with ``dest_map`` being `\Phi` returns the
-        general linear group `\mathrm{GL}(\mathcal{X}(M, \Phi))` of the module
-        `\mathcal{X}(M, \Phi)` of vector fields along `M` with values in
+        general linear group `\mathrm{GL}(\mathfrak{X}(M, \Phi))` of the module
+        `\mathfrak{X}(M, \Phi)` of vector fields along `M` with values in
         `\Phi(M) \subset N`.
 
         INPUT:
@@ -1324,7 +1386,7 @@ class DifferentiableManifold(TopologicalManifold):
           (if `N` is parallelizable) or a
           :class:`~sage.manifolds.differentiable.automorphismfield_group.AutomorphismFieldGroup`
           (if `N` is not parallelizable) representing
-          `\mathrm{GL}(\mathcal{X}(U, \Phi))`
+          `\mathrm{GL}(\mathfrak{X}(U, \Phi))`
 
         EXAMPLES:
 
@@ -1410,7 +1472,7 @@ class DifferentiableManifold(TopologicalManifold):
             Vector field v on the Open subset U of the 3-dimensional
              differentiable manifold M
 
-        The vector fields on `U` form the set `\mathcal{X}(U)`, which is a
+        The vector fields on `U` form the set `\mathfrak{X}(U)`, which is a
         module over the algebra `C^k(U)` of differentiable scalar fields
         on `U`::
 
@@ -1517,7 +1579,7 @@ class DifferentiableManifold(TopologicalManifold):
             sage: t in U.tensor_field_module((2,0))
             True
 
-        .. SEEALSO:
+        .. SEEALSO::
 
             For more examples, see
             :class:`~sage.manifolds.differentiable.tensorfield.TensorField`.
@@ -1687,6 +1749,91 @@ class DifferentiableManifold(TopologicalManifold):
         return self.tensor_field(0, 2, name=name, latex_name=latex_name,
                                  sym=(0,1))
 
+    def multivector_field(self, degree, name=None, latex_name=None,
+                          dest_map=None):
+        r"""
+        Define a multivector field on ``self``.
+
+        Via the argument ``dest_map``, it is possible to let the
+        multivector field take its values on another manifold. More
+        precisely, if `M` is the current manifold, `N` a differentiable
+        manifold, `\Phi:\  M \rightarrow N` a differentiable map and `p`
+        a non-negative integer, a *multivector field of degree* `p` (or
+        `p`-*vector field*) *along* `M` *with values on* `N` is a
+        differentiable map
+
+        .. MATH::
+
+            t:\ M  \longrightarrow T^{(p,0)} N
+
+        (`T^{(p,0)} N` being the tensor bundle of type `(p,0)` over `N`)
+        such that
+
+        .. MATH::
+
+            \forall x \in M,\quad t(x) \in \Lambda^p(T_{\Phi(x)} N),
+
+        where `\Lambda^p(T_{\Phi(x)} N)` is the `p`-th exterior power
+        of the tangent vector space `T_{\Phi(x)} N`.
+
+        The standard case of a `p`-vector field *on* `M` corresponds
+        to `N = M` and `\Phi = \mathrm{Id}_M`. Other common cases are
+        `\Phi` being an immersion and `\Phi` being a curve in `N` (`M`
+        is then an open interval of `\RR`).
+
+        For `p = 1`, one can use the method
+        :meth:`~sage.manifolds.differentiable.manifold.DifferentiableManifold.vector_field`
+        instead.
+
+        .. SEEALSO::
+
+            :class:`~sage.manifolds.differentiable.multivectorfield.MultivectorField`
+            for complete documentation.
+
+        INPUT:
+
+        - ``degree`` -- the degree `p` of the multivector field (i.e.
+          its tensor rank)
+        - ``name`` -- (default: ``None``) name given to the multivector
+          field
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote
+          the multivector field; if none is provided, the LaTeX symbol
+          is set to ``name``
+        - ``dest_map`` -- (default: ``None``) the destination map
+          `\Phi:\ M \rightarrow N`; if ``None``, it is assumed that
+          `N = M` and that `\Phi` is the identity map (case of a
+          multivector field *on* `M`), otherwise ``dest_map`` must be a
+          :class:`~sage.manifolds.differentiable.diff_map.DiffMap`
+
+        OUTPUT:
+
+        - the `p`-vector field as a
+          :class:`~sage.manifolds.differentiable.multivectorfield.MultivectorField`
+          (or if `N` is parallelizable, a
+          :class:`~sage.manifolds.differentiable.multivectorfield.MultivectorFieldParal`)
+
+        EXAMPLES:
+
+        A 2-vector field on a open subset of a 4-dimensional
+         differentiable manifold::
+
+            sage: M = Manifold(4, 'M')
+            sage: A = M.open_subset('A', latex_name=r'\mathcal{A}'); A
+            Open subset A of the 4-dimensional differentiable manifold M
+            sage: c_xyzt.<x,y,z,t> = A.chart()
+            sage: h = A.multivector_field(2, 'H'); h
+            2-vector field H on the Open subset A of the 4-dimensional
+             differentiable manifold M
+
+        See the documentation of class
+        :class:`~sage.manifolds.differentiable.multivectorfield.MultivectorField`
+        for more examples.
+
+        """
+        vmodule = self.vector_field_module(dest_map)
+        return vmodule.alternating_contravariant_tensor(degree,
+                                       name=name, latex_name=latex_name)
+
     def diff_form(self, degree, name=None, latex_name=None,
                   dest_map=None):
         r"""
@@ -1697,7 +1844,8 @@ class DifferentiableManifold(TopologicalManifold):
         precisely, if `M` is the current manifold, `N` a differentiable
         manifold, `\Phi:\  M \rightarrow N` a differentiable map and `p`
         a non-negative integer, a *differential form of degree* `p` (or
-        `p`-form) *along* `M` *with values on* `N` is a differentiable map
+        `p`-*form*) *along* `M` *with values on* `N` is a differentiable
+        map
 
         .. MATH::
 
@@ -1708,15 +1856,15 @@ class DifferentiableManifold(TopologicalManifold):
 
         .. MATH::
 
-            \forall p \in M,\ t(p) \in \Lambda^p(T^*_{\Phi(p)} N),
+            \forall x \in M,\quad t(x) \in \Lambda^p(T^*_{\Phi(x)} N),
 
-        where `\Lambda^p(T^*_{\Phi(p)} N)` is the `p`-th exterior power
-        of the dual of the tangent space `T_{\Phi(p)} N`.
+        where `\Lambda^p(T^*_{\Phi(x)} N)` is the `p`-th exterior power
+        of the dual of the tangent space `T_{\Phi(x)} N`.
 
         The standard case of a differential form *on* `M` corresponds
-        to `N = M` and `\Phi = \mathrm{Id}_M`. Other common cases are `\Phi`
-        being an immersion and `\Phi` being a curve in `N` (`M` is then
-        an open interval of `\RR`).
+        to `N = M` and `\Phi = \mathrm{Id}_M`. Other common cases are
+        `\Phi` being an immersion and `\Phi` being a curve in `N` (`M`
+        is then an open interval of `\RR`).
 
         For `p = 1`, one can use the method
         :meth:`~sage.manifolds.differentiable.manifold.DifferentiableManifold.one_form`
@@ -1724,21 +1872,22 @@ class DifferentiableManifold(TopologicalManifold):
 
         .. SEEALSO::
 
-            :class:`~sage.manifolds.differentiable.diff_form.DiffForm` for
-            complete documentation.
+            :class:`~sage.manifolds.differentiable.diff_form.DiffForm`
+            for complete documentation.
 
         INPUT:
 
-        - ``degree`` -- the degree `p` of the differential form (i.e. its
-          tensor rank)
-        - ``name`` -- (default: ``None``) name given to the differential form
-        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
-          differential form; if none is provided, the LaTeX symbol is set to
-          ``name``
+        - ``degree`` -- the degree `p` of the differential form (i.e.
+          its tensor rank)
+        - ``name`` -- (default: ``None``) name given to the differential
+          form
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote
+          the differential form; if none is provided, the LaTeX symbol
+          is set to ``name``
         - ``dest_map`` -- (default: ``None``) the destination map
-          `\Phi:\ M \rightarrow N`; if ``None``, it is assumed that `N = M`
-          and that `\Phi` is the identity map (case of a differential
-          form *on* `M`), otherwise ``dest_map`` must be a
+          `\Phi:\ M \rightarrow N`; if ``None``, it is assumed that
+          `N = M` and that `\Phi` is the identity map (case of a
+          differential form *on* `M`), otherwise ``dest_map`` must be a
           :class:`~sage.manifolds.differentiable.diff_map.DiffMap`
 
         OUTPUT:
@@ -1750,19 +1899,20 @@ class DifferentiableManifold(TopologicalManifold):
 
         EXAMPLES:
 
-        A 2-form on a open subset of a 4-dimensional differentiable manifold::
+        A 2-form on a open subset of a 4-dimensional differentiable
+        manifold::
 
             sage: M = Manifold(4, 'M')
             sage: A = M.open_subset('A', latex_name=r'\mathcal{A}'); A
             Open subset A of the 4-dimensional differentiable manifold M
             sage: c_xyzt.<x,y,z,t> = A.chart()
             sage: f = A.diff_form(2, 'F'); f
-            2-form F on the Open subset A of the 4-dimensional differentiable
-             manifold M
+            2-form F on the Open subset A of the 4-dimensional
+             differentiable manifold M
 
         See the documentation of class
-        :class:`~sage.manifolds.differentiable.diff_form.DiffForm` for more
-        examples.
+        :class:`~sage.manifolds.differentiable.diff_form.DiffForm` for
+        more examples.
 
         """
         vmodule = self.vector_field_module(dest_map)
@@ -1777,7 +1927,8 @@ class DifferentiableManifold(TopologicalManifold):
         1-form take its values on another manifold. More precisely,
         if `M` is the current manifold, `N` a differentiable
         manifold and `\Phi:\ M \rightarrow N` a differentiable map,
-        a *1-form along* `M` *with values on* `N` is a differentiable map
+        a *1-form along* `M` *with values on* `N` is a differentiable
+        map
 
         .. MATH::
 
@@ -1787,9 +1938,10 @@ class DifferentiableManifold(TopologicalManifold):
 
         .. MATH::
 
-            \forall p \in M,\ t(p) \in T^*_{\Phi(p)}N,
+            \forall p \in M,\quad t(p) \in T^*_{\Phi(p)}N,
 
-        where `T^*_{\Phi(p)}` is the dual of the tangent space `T_{\Phi(p)} N`.
+        where `T^*_{\Phi(p)}` is the dual of the tangent space
+        `T_{\Phi(p)} N`.
 
         The standard case of a 1-form *on* `M` corresponds to `N = M`
         and `\Phi = \mathrm{Id}_M`. Other common cases are `\Phi`
@@ -1798,18 +1950,19 @@ class DifferentiableManifold(TopologicalManifold):
 
         .. SEEALSO::
 
-            :class:`~sage.manifolds.differentiable.diff_form.DiffForm` for
-            complete documentation.
+            :class:`~sage.manifolds.differentiable.diff_form.DiffForm`
+            for complete documentation.
 
         INPUT:
 
         - ``name`` -- (default: ``None``) name given to the 1-form
-        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
-          1-form; if none is provided, the LaTeX symbol is set to ``name``
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote
+          the 1-form; if none is provided, the LaTeX symbol is set to
+          ``name``
         - ``dest_map`` -- (default: ``None``) the destination map
-          `\Phi:\ M \rightarrow N`; if ``None``, it is assumed that `N = M`
-          and that `\Phi` is the identity map (case of a 1-form *on* `M`),
-          otherwise ``dest_map`` must be a
+          `\Phi:\ M \rightarrow N`; if ``None``, it is assumed that
+          `N = M` and that `\Phi` is the identity map (case of a 1-form
+          *on* `M`), otherwise ``dest_map`` must be a
           :class:`~sage.manifolds.differentiable.diff_map.DiffMap`
 
         OUTPUT:
@@ -1830,8 +1983,8 @@ class DifferentiableManifold(TopologicalManifold):
             1-form omega on the Open subset A of the 3-dimensional
              differentiable manifold M
             sage: om.parent()
-            Free module /\^1(A) of 1-forms on the Open subset A of the
-             3-dimensional differentiable manifold M
+            Free module Omega^1(A) of 1-forms on the Open subset A of
+             the 3-dimensional differentiable manifold M
 
         .. SEEALSO::
 
@@ -1842,7 +1995,8 @@ class DifferentiableManifold(TopologicalManifold):
         vmodule = self.vector_field_module(dest_map)
         return vmodule.linear_form(name=name, latex_name=latex_name)
 
-    def automorphism_field(self, name=None, latex_name=None, dest_map=None):
+    def automorphism_field(self, name=None, latex_name=None,
+                          dest_map=None):
         r"""
         Define a field of automorphisms (invertible endomorphisms in each
         tangent space) on ``self``.
@@ -1919,7 +2073,8 @@ class DifferentiableManifold(TopologicalManifold):
         vmodule = self.vector_field_module(dest_map)
         return vmodule.automorphism(name=name, latex_name=latex_name)
 
-    def tangent_identity_field(self, name='Id', latex_name=None, dest_map=None):
+    def tangent_identity_field(self, name='Id', latex_name=None,
+                               dest_map=None):
         r"""
         Return the field of identity maps in the tangent spaces on ``self``.
 
@@ -2569,6 +2724,371 @@ class DifferentiableManifold(TopologicalManifold):
                 coord_expression = {chart: (coord_expression,)}
         return curve_set(coord_expression, name=name, latex_name=latex_name)
 
+    def integrated_curve(self, equations_rhs, velocities, curve_param,
+                         initial_tangent_vector, chart=None, name=None,
+                         latex_name=None, verbose=False):
+        r"""
+        Construct a curve defined by a system of second order
+        differential equations in the coordinate functions.
+
+        .. SEEALSO::
+
+            :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedCurve`
+            for details.
+
+        INPUT:
+
+        - ``equations_rhs`` -- list of the right-hand sides of the
+          equations on the velocities only
+        - ``velocities`` -- list of the symbolic expressions used in
+          ``equations_rhs`` to denote the velocities
+        - ``curve_param`` -- a tuple of the type ``(t, t_min, t_max)``,
+          where
+
+          * ``t`` is the symbolic variable used in ``equations_rhs`` to
+            denote the parameter of the curve;
+          * ``t_min`` is its minimal (finite) value;
+          * ``t_max`` its maximal (finite) value.
+
+        - ``initial_tangent_vector`` --
+          :class:`~sage.manifolds.differentiable.tangent_vector.TangentVector`;
+          initial tangent vector of the curve
+        - ``chart`` -- (default: ``None``) chart on the manifold in
+          which the equations are given; if ``None`` the default chart
+          of the manifold is assumed
+        - ``name`` -- (default: ``None``) string; symbol given to the curve
+        - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
+          the curve; if none is provided, ``name`` will be used
+
+        OUTPUT:
+
+        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedCurve`
+
+        EXAMPLES:
+
+        Trajectory of a particle of unit mass and unit charge in a
+        unit, uniform, stationary magnetic field::
+
+            sage: M = Manifold(3, 'M')
+            sage: X.<x1,x2,x3> = M.chart()
+            sage: t = var('t')
+            sage: D = X.symbolic_velocities()
+            sage: eqns = [D[1], -D[0], SR(0)]
+            sage: p = M.point((0,0,0), name='p')
+            sage: Tp = M.tangent_space(p)
+            sage: v = Tp((1,0,1))
+            sage: c = M.integrated_curve(eqns, D, (t,0,6), v, name='c'); c
+            Integrated curve c in the 3-dimensional differentiable
+             manifold M
+            sage: sys = c.system(verbose=True)
+            Curve c in the 3-dimensional differentiable manifold M
+             integrated over the Real interval (0, 6) as a solution to
+             the following system, written with respect to
+             Chart (M, (x1, x2, x3)):
+            <BLANKLINE>
+            Initial point: Point p on the 3-dimensional differentiable
+             manifold M with coordinates [0, 0, 0] with respect to
+             Chart (M, (x1, x2, x3))
+            Initial tangent vector: Tangent vector at Point p on the
+             3-dimensional differentiable manifold M with
+             components [1, 0, 1] with respect to Chart (M, (x1, x2, x3))
+            <BLANKLINE>
+            d(x1)/dt = Dx1
+            d(x2)/dt = Dx2
+            d(x3)/dt = Dx3
+            d(Dx1)/dt = Dx2
+            d(Dx2)/dt = -Dx1
+            d(Dx3)/dt = 0
+            <BLANKLINE>
+            sage: sol = c.solve()
+            sage: interp = c.interpolate()
+            sage: p = c(1.3, verbose=True)
+            Evaluating point coordinates from the interpolation
+             associated with the key 'cubic spline-interp-rk4_maxima'
+             by default...
+            sage: p
+            Point on the 3-dimensional differentiable manifold M
+            sage: p.coordinates()     # abs tol 1e-12
+            (0.9635581155730744, -0.7325010457963622, 1.3)
+            sage: tgt_vec = c.tangent_vector_eval_at(3.7, verbose=True)
+            Evaluating tangent vector components from the interpolation
+             associated with the key 'cubic spline-interp-rk4_maxima'
+             by default...
+            sage: tgt_vec[:]     # abs tol 1e-12
+            [-0.8481008455360024, 0.5298346120470748, 1.0000000000000007]
+
+        """
+
+        from sage.manifolds.differentiable.real_line import RealLine
+        from sage.manifolds.differentiable.manifold_homset import IntegratedCurveSet
+
+        if len(curve_param) != 3:
+            raise ValueError("the argument 'curve_param' must be of the form " +
+                             "(t, t_min, t_max)")
+        t = curve_param[0]
+        t_min = curve_param[1]
+        t_max = curve_param[2]
+        real_field = RealLine(names=(repr(t),))
+        interval = real_field.open_interval(t_min, t_max)
+        integrated_curve_set = IntegratedCurveSet(interval, self) # not
+        # possible to use Hom(interval, self)
+        return integrated_curve_set(equations_rhs, velocities, t,
+                                    initial_tangent_vector, chart=chart,
+                                    name=name, latex_name=latex_name,
+                                    verbose=verbose)
+
+    def integrated_autoparallel_curve(self, affine_connection,
+                        curve_param, initial_tangent_vector, chart=None,
+                        name=None, latex_name=None, verbose=False):
+        r"""
+        Construct an autoparallel curve on the manifold with respect to
+        a given affine connection.
+
+        .. SEEALSO::
+
+            :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedAutoparallelCurve`
+            for details.
+
+        INPUT:
+
+        - ``affine_connection`` --
+          :class:`~sage.manifolds.differentiable.affine_connection.AffineConnection`;
+          affine connection with respect to which the curve is autoparallel
+        - ``curve_param`` -- a tuple of the type ``(t, t_min, t_max)``,
+          where
+
+          * ``t`` is the symbolic variable to be used as the parameter
+            of the curve (the equations defining an instance of
+            :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedAutoparallelCurve`
+            are such that ``t`` will actually be an affine parameter
+            of the curve);
+          * ``t_min`` is its minimal (finite) value;
+          * ``t_max`` its maximal (finite) value.
+
+        - ``initial_tangent_vector`` --
+          :class:`~sage.manifolds.differentiable.tangent_vector.TangentVector`;
+          initial tangent vector of the curve
+        - ``chart`` -- (default: ``None``) chart on the manifold in
+          which the equations are given ; if ``None`` the default chart
+          of the manifold is assumed
+        - ``name`` -- (default: ``None``) string; symbol given to the curve
+        - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
+          the curve; if none is provided, ``name`` will be used
+
+        OUTPUT:
+
+        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedAutoparallelCurve`
+
+        EXAMPLES:
+
+        Autoparallel curves associated with the Mercator projection of
+        the 2-sphere `\mathbb{S}^{2}`::
+
+            sage: S2 = Manifold(2, 'S^2', start_index=1)
+            sage: polar.<th,ph> = S2.chart('th ph')
+            sage: epolar = polar.frame()
+            sage: ch_basis = S2.automorphism_field()
+            sage: ch_basis[1,1], ch_basis[2,2] = 1, 1/sin(th)
+            sage: epolar_ON=S2.default_frame().new_frame(ch_basis,'epolar_ON')
+
+        Set the affine connection associated with Mercator projection;
+        it is metric compatible but it has non-vanishing torsion::
+
+            sage: nab = S2.affine_connection('nab')
+            sage: nab.set_coef(epolar_ON)[:]
+            [[[0, 0], [0, 0]], [[0, 0], [0, 0]]]
+            sage: g = S2.metric('g')
+            sage: g[1,1], g[2,2] = 1, (sin(th))^2
+            sage: nab(g)[:]
+            [[[0, 0], [0, 0]], [[0, 0], [0, 0]]]
+            sage: nab.torsion()[:]
+            [[[0, 0], [0, 0]], [[0, cos(th)/sin(th)], [-cos(th)/sin(th), 0]]]
+
+        Declare an integrated autoparallel curve with respect to this
+        connection::
+
+            sage: p = S2.point((pi/4, 0), name='p')
+            sage: Tp = S2.tangent_space(p)
+            sage: v = Tp((1,1), basis=epolar_ON.at(p))
+            sage: t = var('t')
+            sage: c = S2.integrated_autoparallel_curve(nab, (t, 0, 6),
+            ....:                              v, chart=polar, name='c')
+            sage: sys = c.system(verbose=True)
+            Autoparallel curve c in the 2-dimensional differentiable
+             manifold S^2 equipped with Affine connection nab on the
+             2-dimensional differentiable manifold S^2, and integrated
+             over the Real interval (0, 6) as a solution to the
+             following equations, written with respect to
+             Chart (S^2, (th, ph)):
+            <BLANKLINE>
+            Initial point: Point p on the 2-dimensional differentiable
+             manifold S^2 with coordinates [1/4*pi, 0] with respect to
+             Chart (S^2, (th, ph))
+            Initial tangent vector: Tangent vector at Point p on the
+             2-dimensional differentiable manifold S^2 with
+             components [1, sqrt(2)] with respect to
+             Chart (S^2, (th, ph))
+            <BLANKLINE>
+            d(th)/dt = Dth
+            d(ph)/dt = Dph
+            d(Dth)/dt = 0
+            d(Dph)/dt = -Dph*Dth*cos(th)/sin(th)
+            <BLANKLINE>
+            sage: sol = c.solve()
+            sage: interp = c.interpolate()
+            sage: p = c(1.3, verbose=True)
+            Evaluating point coordinates from the interpolation
+             associated with the key 'cubic spline-interp-rk4_maxima'
+             by default...
+            sage: p
+            Point on the 2-dimensional differentiable manifold S^2
+            sage: p.coordinates()     # abs tol 1e-12
+            (2.085398163397449, 1.4203172015958863)
+            sage: tgt_vec = c.tangent_vector_eval_at(3.7, verbose=True)
+            Evaluating tangent vector components from the interpolation
+             associated with the key 'cubic spline-interp-rk4_maxima'
+             by default...
+            sage: tgt_vec[:]     # abs tol 1e-12
+            [0.9999999999999732, -1.016513736236512]
+
+        """
+
+        from sage.manifolds.differentiable.real_line import RealLine
+        from sage.manifolds.differentiable.manifold_homset import IntegratedAutoparallelCurveSet
+
+        if len(curve_param) != 3:
+            raise ValueError("the argument 'curve_param' must be " +
+                             "of the form (t, t_min, t_max)")
+        t = curve_param[0]
+        t_min = curve_param[1]
+        t_max = curve_param[2]
+        real_field = RealLine(names=(repr(t),))
+        interval = real_field.open_interval(t_min, t_max)
+        autoparallel_curve_set = IntegratedAutoparallelCurveSet(interval,
+                                                                self)
+        # not possible to use Hom(interval, self)
+        return autoparallel_curve_set(affine_connection, t,
+                                      initial_tangent_vector,
+                                      chart=chart, name=name,
+                                      latex_name=latex_name,
+                                      verbose=verbose)
+
+    def integrated_geodesic(self, metric, curve_param,
+                            initial_tangent_vector, chart=None,
+                            name=None, latex_name=None, verbose=False):
+        r"""
+        Construct a geodesic on the manifold with respect to a given metric.
+
+        .. SEEALSO::
+
+            :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedGeodesic`
+            for details.
+
+        INPUT:
+
+        - ``metric`` --
+          :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric`
+          metric with respect to which the curve is a geodesic
+        - ``curve_param`` -- a tuple of the type ``(t, t_min, t_max)``,
+          where
+
+          * ``t`` is the symbolic variable to be used as the parameter
+            of the curve (the equations defining an instance of
+            :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedGeodesic`
+            are such that ``t`` will actually be an affine parameter
+            of the curve);
+          * ``t_min`` is its minimal (finite) value;
+          * ``t_max`` its maximal (finite) value.
+
+        - ``initial_tangent_vector`` --
+          :class:`~sage.manifolds.differentiable.tangent_vector.TangentVector`;
+          initial tangent vector of the curve
+        - ``chart`` -- (default: ``None``) chart on the manifold in
+          which the equations are given; if ``None`` the default chart
+          of the manifold is assumed
+        - ``name`` -- (default: ``None``) string; symbol given to the curve
+        - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
+          the curve; if none is provided, ``name`` will be used
+
+        OUTPUT:
+
+        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedGeodesic`
+
+        EXAMPLES:
+
+        Geodesics of the unit 2-sphere `\mathbb{S}^{2}`::
+
+            sage: S2 = Manifold(2, 'S^2', start_index=1)
+            sage: polar.<th,ph> = S2.chart('th ph')
+            sage: epolar = polar.frame()
+
+        Set the standard metric tensor `g` on `\mathbb{S}^{2}`::
+
+            sage: g = S2.metric('g')
+            sage: g[1,1], g[2,2] = 1, (sin(th))^2
+
+        Declare an integrated geodesic with respect to this metric::
+
+            sage: p = S2.point((pi/4, 0), name='p')
+            sage: Tp = S2.tangent_space(p)
+            sage: v = Tp((1, 1), basis=epolar.at(p))
+            sage: t = var('t')
+            sage: c = S2.integrated_geodesic(g, (t, 0, 6), v,
+            ....:                                 chart=polar, name='c')
+            sage: sys = c.system(verbose=True)
+            Geodesic c in the 2-dimensional differentiable manifold S^2
+             equipped with Riemannian metric g on the 2-dimensional
+             differentiable manifold S^2, and integrated over the Real
+             interval (0, 6) as a solution to the following geodesic
+             equations, written with respect to Chart (S^2, (th, ph)):
+            <BLANKLINE>
+            Initial point: Point p on the 2-dimensional differentiable
+            manifold S^2 with coordinates [1/4*pi, 0] with respect to
+            Chart (S^2, (th, ph))
+            Initial tangent vector: Tangent vector at Point p on the
+            2-dimensional differentiable manifold S^2 with
+            components [1, 1] with respect to Chart (S^2, (th, ph))
+            <BLANKLINE>
+            d(th)/dt = Dth
+            d(ph)/dt = Dph
+            d(Dth)/dt = Dph^2*cos(th)*sin(th)
+            d(Dph)/dt = -2*Dph*Dth*cos(th)/sin(th)
+            <BLANKLINE>
+            sage: sol = c.solve()
+            sage: interp = c.interpolate()
+            sage: p = c(1.3, verbose=True)
+            Evaluating point coordinates from the interpolation
+             associated with the key 'cubic spline-interp-rk4_maxima'
+             by default...
+            sage: p
+            Point on the 2-dimensional differentiable manifold S^2
+            sage: p.coordinates()     # abs tol 1e-12
+            (2.2047444794514663, 0.7986609561213334)
+            sage: tgt_vec = c.tangent_vector_eval_at(3.7, verbose=True)
+            Evaluating tangent vector components from the interpolation
+             associated with the key 'cubic spline-interp-rk4_maxima'
+             by default...
+            sage: tgt_vec[:]     # abs tol 1e-12
+            [-1.090742147346732, 0.620568327518154]
+
+        """
+        from sage.manifolds.differentiable.real_line import RealLine
+        from sage.manifolds.differentiable.manifold_homset import IntegratedGeodesicSet
+
+        if len(curve_param) != 3:
+            raise ValueError("the argument 'curve_param' must be of " +
+                             "the form (t, t_min, t_max)")
+        t = curve_param[0]
+        t_min = curve_param[1]
+        t_max = curve_param[2]
+        real_field = RealLine(names=(repr(t),))
+        interval = real_field.open_interval(t_min, t_max)
+        integrated_geodesic_set = IntegratedGeodesicSet(interval, self)
+        return integrated_geodesic_set(metric, t, initial_tangent_vector,
+                                       chart=chart, name=name,
+                                       latex_name=latex_name,
+                                       verbose=verbose)
+
     def affine_connection(self, name, latex_name=None):
         r"""
         Define an affine connection on the manifold.
@@ -2587,7 +3107,7 @@ class DifferentiableManifold(TopologicalManifold):
         - the affine connection, as an instance of
           :class:`~sage.manifolds.differentiable.affine_connection.AffineConnection`
 
-        EXAMPLE:
+        EXAMPLES:
 
         Affine connection on an open subset of a 3-dimensional smooth manifold::
 
@@ -2639,7 +3159,7 @@ class DifferentiableManifold(TopologicalManifold):
           :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric`
           representing the defined pseudo-Riemannian metric.
 
-        EXAMPLE:
+        EXAMPLES:
 
         Metric on a 3-dimensional manifold::
 
@@ -2685,12 +3205,12 @@ class DifferentiableManifold(TopologicalManifold):
           :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric`
           representing the defined Riemannian metric.
 
-        EXAMPLE:
+        EXAMPLES:
 
         Metric of the hyperbolic plane `H^2`::
 
             sage: H2 = Manifold(2, 'H^2', start_index=1)
-            sage: X.<x,y> = H2.chart('x y:(0,+oo)')  # Poincare half-plane coord.
+            sage: X.<x,y> = H2.chart('x y:(0,+oo)')  # Poincaré half-plane coord.
             sage: g = H2.riemannian_metric('g')
             sage: g[1,1], g[2,2] = 1/y^2, 1/y^2
             sage: g
@@ -2716,7 +3236,7 @@ class DifferentiableManifold(TopologicalManifold):
 
         Use :meth:`riemannian_metric` instead.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Manifold(3, 'M')
             sage: g = M.riemann_metric('g')
@@ -2768,7 +3288,7 @@ class DifferentiableManifold(TopologicalManifold):
           :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric`
           representing the defined Lorentzian metric.
 
-        EXAMPLE:
+        EXAMPLES:
 
         Metric of Minkowski spacetime::
 
@@ -2808,7 +3328,7 @@ class DifferentiableManifold(TopologicalManifold):
 
         Use :meth:`lorentzian_metric` instead.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Manifold(4, 'M')
             sage: g = M.lorentz_metric('g')

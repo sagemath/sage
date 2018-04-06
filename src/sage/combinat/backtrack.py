@@ -70,11 +70,33 @@ from sage.structure.parent import Parent
 from sage.misc.prandom import randint
 from sage.misc.abstract_method import abstract_method
 from sage.categories.commutative_additive_semigroups import (
-CommutativeAdditiveSemigroups)
+        CommutativeAdditiveSemigroups)
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
-from sage.misc.sage_itertools import imap_and_filter_none
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_generic
+
+
+def _imap_and_filter_none(function, iterable):
+    r"""
+    Return an iterator over the elements ``function(x)``, where ``x``
+    iterates through ``iterable``, such that ``function(x)`` is not
+    ``None``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.backtrack import _imap_and_filter_none
+        sage: p = _imap_and_filter_none(lambda x: x if is_prime(x) else None, range(15))
+        sage: [next(p), next(p), next(p), next(p), next(p), next(p)]
+        [2, 3, 5, 7, 11, 13]
+        sage: p = _imap_and_filter_none(lambda x: x+x, ['a','b','c','d','e'])
+        sage: [next(p), next(p), next(p), next(p), next(p)]
+        ['aa', 'bb', 'cc', 'dd', 'ee']
+    """
+    for x in iterable:
+        x = function(x)
+        if x is not None:
+            yield x
+
 
 class GenericBacktracker(object):
     r"""
@@ -392,7 +414,7 @@ class SearchForest(Parent):
             sage: dumps(S)
             Traceback (most recent call last):
             ....:
-            PicklingError: Can't pickle <type 'function'>: attribute lookup __builtin__.function failed
+            PicklingError: Can't pickle <... 'function'>: attribute lookup __builtin__.function failed
 
         Let us now fake ``children`` being defined in a Python module::
 
@@ -496,7 +518,7 @@ class SearchForest(Parent):
                                       self.children,
                                       algorithm = self._algorithm)
         if hasattr(self, "post_process"):
-            iter = imap_and_filter_none(self.post_process, iter)
+            iter = _imap_and_filter_none(self.post_process, iter)
         return iter
 
     def depth_first_search_iterator(self):
@@ -533,7 +555,7 @@ class SearchForest(Parent):
         """
         iter = search_forest_iterator(self.roots(), self.children, algorithm='breadth')
         if hasattr(self, "post_process"):
-            iter = imap_and_filter_none(self.post_process, iter)
+            iter = _imap_and_filter_none(self.post_process, iter)
         return iter
 
     def _elements_of_depth_iterator_rec(self, depth=0):
@@ -593,7 +615,7 @@ class SearchForest(Parent):
         """
         iter = self._elements_of_depth_iterator_rec(depth)
         if hasattr(self, "post_process"):
-            iter = imap_and_filter_none(self.post_process, iter)
+            iter = _imap_and_filter_none(self.post_process, iter)
         return iter
 
     def __contains__(self, elt):

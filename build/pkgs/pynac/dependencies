@@ -1,4 +1,4 @@
-$(PYTHON) $(MP_LIBRARY) pkgconf flint singular
+$(PYTHON) $(MP_LIBRARY) pkgconf flint singular giac
 
 ----------
 All lines of this file are ignored except the first.

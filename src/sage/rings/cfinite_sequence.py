@@ -93,6 +93,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from six.moves import range
+from six import add_metaclass
 
 from sage.categories.fields import Fields
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -167,6 +168,7 @@ def CFiniteSequences(base_ring, names = None, category = None):
     return CFiniteSequences_generic(polynomial_ring, category)
 
 
+@add_metaclass(InheritComparisonClasscallMetaclass)
 class CFiniteSequence(FieldElement):
     r"""
     Create a C-finite sequence given its ordinary generating function.
@@ -249,9 +251,6 @@ class CFiniteSequence(FieldElement):
         ...
         NotImplementedError: Multidimensional o.g.f. not implemented.
     """
-
-    __metaclass__ = InheritComparisonClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(cls, ogf):
         r"""
@@ -339,7 +338,7 @@ class CFiniteSequence(FieldElement):
         INPUT:
 
         - ``ogf`` -- the ordinary generating function, a fraction of polynomials over the rationals
-        - ``parent`` --  the parent of the C-Finite sequence, an occurence of :class:`CFiniteSequences`
+        - ``parent`` --  the parent of the C-Finite sequence, an occurrence of :class:`CFiniteSequences`
 
         OUTPUT:
 
@@ -568,6 +567,32 @@ class CFiniteSequence(FieldElement):
             return False
         return self.ogf() == other.ogf()
 
+    def __ne__(self, other):
+        """
+        Compare two CFiniteSequences.
+
+        EXAMPLES::
+
+            sage: f = CFiniteSequence((2-x)/(1-x-x^2))
+            sage: f2 = CFiniteSequence((2-x)/(1-x-x^2))
+            sage: f != f2
+            False
+            sage: f != (2-x)/(1-x-x^2)
+            True
+            sage: (2-x)/(1-x-x^2) != f
+            True
+            sage: C.<x> = CFiniteSequences(QQ)
+            sage: r = C.from_recurrence([1,1],[2,1])
+            sage: s = C.from_recurrence([-1],[1])
+            sage: r != s
+            True
+            sage: r = C.from_recurrence([-1],[1])
+            sage: s = C(1/(1+x))
+            sage: r != s
+            False
+        """
+        return not self.__eq__(other)
+    
     def __getitem__(self, key):
         r"""
         Return a slice of the sequence.
@@ -805,12 +830,12 @@ class CFiniteSequence(FieldElement):
         Binet's formula for the Fibonacci numbers::
 
             sage: CFiniteSequence(x/(1-x-x^2)).closed_form()
-            1/5*sqrt(5)*(1/2*sqrt(5) + 1/2)^n - 1/5*sqrt(5)*(-1/2*sqrt(5) + 1/2)^n
+            sqrt(1/5)*(1/2*sqrt(5) + 1/2)^n - sqrt(1/5)*(-1/2*sqrt(5) + 1/2)^n
             sage: [_.subs(n=k).full_simplify() for k in range(6)]
             [0, 1, 1, 2, 3, 5]
 
             sage: CFiniteSequence((4*x+3)/(1-2*x-5*x^2)).closed_form()
-            1/12*(sqrt(6) + 1)^n*(7*sqrt(6) + 18) - 1/12*(-sqrt(6) + 1)^n*(7*sqrt(6) - 18)
+            1/2*(sqrt(6) + 1)^n*(7*sqrt(1/6) + 3) - 1/2*(-sqrt(6) + 1)^n*(7*sqrt(1/6) - 3)
 
         Examples with multiple roots::
 
@@ -821,7 +846,7 @@ class CFiniteSequence(FieldElement):
             sage: CFiniteSequence(1/(1-x)^3/(1-2*x)^4).closed_form()
             4/3*(n^3 - 3*n^2 + 20*n - 36)*2^n + 1/2*n^2 + 19/2*n + 49
             sage: CFiniteSequence((x/(1-x-x^2))^2).closed_form()
-            1/25*(5*n - sqrt(5))*(1/2*sqrt(5) + 1/2)^n + 1/25*(5*n + sqrt(5))*(-1/2*sqrt(5) + 1/2)^n
+            1/5*(n - sqrt(1/5))*(1/2*sqrt(5) + 1/2)^n + 1/5*(n + sqrt(1/5))*(-1/2*sqrt(5) + 1/2)^n
         """
         from sage.arith.all import binomial
         from sage.rings.qqbar import QQbar
@@ -1006,10 +1031,9 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
         x = self.gen()
         return self((2-x)/(1-x-x**2))
 
-
     def __contains__(self, x):
         """
-        Return True if x is an element of ``CFinteSequences`` or
+        Return True if x is an element of ``CFiniteSequences`` or
         canonically coerces to this ring.
 
         EXAMPLES::

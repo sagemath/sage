@@ -71,7 +71,8 @@ class SymbolicData:
     """
     def __init__(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: sd = SymbolicData(); sd # optional - database_symbolic_data
             SymbolicData with 372 ideals
         """

@@ -21,7 +21,7 @@ from sage.libs.pynac.pynac import symbol_table
 from sage.symbolic.constants import (pi, e, golden_ratio, log2, euler_gamma,
                                      catalan, khinchin, twinprime, mertens)
 from sage.functions.hypergeometric import hypergeometric
-
+from sage.symbolic.comparison import mixed_order
 
 ###################################################################
 ### Generate random expressions for doctests ######################
@@ -66,7 +66,7 @@ fast_nodes = [(0.9, fast_binary, 2), (0.1, fast_unary, 1)]
 # For creating expressions with the full power of Pynac's simple expression
 # subset (with no quantifiers/operators; that is, no derivatives, integrals,
 # etc.)
-full_binary = [(0.3, operator.add), (0.1, operator.sub), (0.3, operator.mul), (0.2, operator.div), (0.1, operator.pow)]
+full_binary = [(0.3, operator.add), (0.1, operator.sub), (0.3, operator.mul), (0.2, operator.truediv), (0.1, operator.pow)]
 full_unary = [(0.8, operator.neg), (0.2, operator.inv)]
 full_functions = _mk_full_functions()
 full_nullary = [(1.0, c) for c in [pi, e]] + [(0.05, c) for c in
@@ -146,8 +146,8 @@ def choose_from_prob_list(lst):
         (0.900000000000000, True)
         sage: true_count = 0
         sage: for _ in range(10000):
-        ...       if choose_from_prob_list(v)[1]:
-        ...           true_count += 1
+        ....:     if choose_from_prob_list(v)[1]:
+        ....:         true_count += 1
         sage: true_count
         9033
         sage: true_count - (10000 * 9/10)
@@ -208,7 +208,7 @@ def random_expr_helper(n_nodes, internal, leaves, verbose):
 
         sage: from sage.symbolic.random_tests import *
         sage: random_expr_helper(9, [(0.5, operator.add, 2),
-        ...       (0.5, operator.neg, 1)], [(0.5, 1), (0.5, x)], True)
+        ....:     (0.5, operator.neg, 1)], [(0.5, 1), (0.5, x)], True)
         About to apply <built-in function add> to [1, x]
         About to apply <built-in function add> to [x, x + 1]
         About to apply <built-in function neg> to [1]
@@ -290,23 +290,23 @@ def random_expr(size, nvars=1, ncoeffs=None, var_frac=0.5,
 ### Test the ordering of operands #################################
 ###################################################################
 
-def assert_strict_weak_order(a,b,c, cmp_func):
+def assert_strict_weak_order(a, b, c, cmp_func):
     r"""
-    Checks that ``cmp_func`` is a strict weak order.
+    Check that ``cmp_func`` is a strict weak order on the elements a,b,c.
 
     A strict weak order is a binary relation ``<`` such that
 
     * For all `x`, it is not the case that `x < x` (irreflexivity).
 
     * For all `x\not=y`, if `x < y` then it is not the case that `y <
-      x` (asymmetric).
+      x` (asymmetry).
 
     * For all `x`, `y`, and `z`, if `x < y` and `y < z` then `x < z`
       (transitivity).
 
     * For all `x`, `y`, and `z`, if x is incomparable with `y`, and
       `y` is incomparable with `z`, then `x` is incomparable with `z`
-      (transitivity of equivalence).
+      (transitivity of incomparability).
 
     INPUT:
 
@@ -322,56 +322,65 @@ def assert_strict_weak_order(a,b,c, cmp_func):
 
     REFERENCES:
 
-    http://en.wikipedia.org/wiki/Strict_weak_ordering
+    :wikipedia:`Strict_weak_ordering`
 
     EXAMPLES:
 
     The usual ordering of integers is a strict weak order::
 
         sage: from sage.symbolic.random_tests import assert_strict_weak_order
-        sage: a, b, c = [ randint(-10,10) for i in range(0,3) ]
-        sage: assert_strict_weak_order(a,b,c, lambda x,y: x<y)
+        sage: a, b, c = [randint(-10, 10) for i in range(3)]
+        sage: assert_strict_weak_order(a, b, c, lambda x, y: x < y)
 
         sage: x = [-SR(oo), SR(0), SR(oo)]
-        sage: cmp = matrix(3,3)
+        sage: cmp_M = matrix(3, 3, 0)
         sage: for i in range(3):
         ....:     for j in range(3):
-        ....:         cmp[i,j] = x[i].__cmp__(x[j])
-        sage: cmp
+        ....:         if x[i] < x[j]:
+        ....:             cmp_M[i, j] = -1
+        ....:         elif x[i] > x[j]:
+        ....:             cmp_M[i, j] = 1
+        sage: cmp_M
         [ 0 -1 -1]
         [ 1  0 -1]
         [ 1  1  0]
     """
     from sage.matrix.constructor import matrix
     from sage.combinat.permutation import Permutations
-    x = (a,b,c)
-    cmp = matrix(3,3)
+    x = (a, b, c)
+
+    cmp_M = matrix(3, 3)
     for i in range(3):
         for j in range(3):
-            cmp[i,j] = (cmp_func(x[i], x[j]) == 1)   # or -1, doesn't matter
-    msg = 'The binary relation failed to be a strict weak order on the elements\n'
-    msg += ' a = '+str(a)+'\n'
-    msg += ' b = '+str(b)+'\n'
-    msg += ' c = '+str(c)+'\n'
-    msg += str(cmp)
+            cmp_M[i, j] = (cmp_func(x[i], x[j]) == 1)   # or -1, doesn't matter
+
+    msg = 'the binary relation failed to be a strict weak order on the elements \n'
+    msg += ' a = {}\n b = {}\n c = {}\n'.format(a, b, c)
+    msg += str(cmp_M)
 
     for i in range(3):
         # irreflexivity
-        if cmp[i,i]: raise ValueError(msg)
+        if cmp_M[i, i]:
+            raise ValueError(msg)
 
         # asymmetric
         for j in range(i):
-            if cmp[i,j] and cmp[j,i]: raise ValueError(msg)
+            if cmp_M[i, j] and cmp_M[j, i]:
+                raise ValueError(msg)
 
-    def incomparable(i,j):
-        return not (cmp[i,j] or cmp[j,i])
+    def incomparable(i, j):
+        return not (cmp_M[i, j] or cmp_M[j, i])
 
-    for i,j,k in Permutations([0,1,2]):
+    for i, j, k in Permutations([0, 1, 2]):
         # transitivity
-        if cmp[i,j] and cmp[j,k] and not cmp[i,k]: raise ValueError(msg)
+        if cmp_M[i, j] and cmp_M[j, k] and not cmp_M[i, k]:
+            raise ValueError(msg)
 
-        # transitivity of equivalence
-        if incomparable(i,j) and incomparable(j,k) and not incomparable(i,k): raise ValueError(msg)
+        # transitivity of incomparability
+        if (incomparable(i, j) and incomparable(j, k) and
+                not incomparable(i, k)):
+            raise ValueError(msg)
+
 
 def test_symbolic_expression_order(repetitions=100):
     r"""
@@ -408,10 +417,10 @@ def test_symbolic_expression_order(repetitions=100):
             except (ZeroDivisionError, ValueError):
                 pass
 
-    for rep in range(0, repetitions):
+    for rep in range(repetitions):
         a = make_random_expr()
         b = make_random_expr()
         c = make_random_expr()
-        assert_strict_weak_order(a, b, c, lambda x,y: x._cmp_(y))
+        assert_strict_weak_order(a, b, c, mixed_order)
         assert_strict_weak_order(a, b, c, lambda x,y: x._cmp_add(y))
         assert_strict_weak_order(a, b, c, lambda x,y: x._cmp_mul(y))

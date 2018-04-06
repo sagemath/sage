@@ -698,18 +698,66 @@ class Chart(UniqueRepresentation, SageObject):
             substitutions = dict(zip(self._xx, coordinates))
             if parameters:
                 substitutions.update(parameters)
-            for restrict in self._restrictions:
-                if isinstance(restrict, tuple): # case of or conditions
-                    combine = False
-                    for expr in restrict:
-                        combine = combine or bool(expr.subs(substitutions))
-                    if not combine:
-                        return False
-                else:
-                    if not bool(restrict.subs(substitutions)):
-                        return False
-        # All tests have been passed:
+            return self._check_restrictions(self._restrictions, substitutions)
         return True
+
+    def _check_restrictions(self, restrict, substitutions):
+        r"""
+        Recursive helper function to check the validity of coordinates
+        given some restrictions
+
+        INPUT:
+
+        - restrict: a tuple of conditions (combined with 'or'), a list of
+          conditions (combined with 'and') or a single coordinate condition
+        - substitutions: dictionary (keys: coordinates of ``self``) giving the
+          value of each coordinate
+
+        OUTPUT:
+
+        - boolean stating whether the conditions are fulfilled by the
+          coordinate values
+
+        TESTS::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart()
+            sage: X._check_restrictions(x>0, {x: pi, y: 0})
+            True
+            sage: X._check_restrictions(x>0, {x: -sqrt(2), y: 0})
+            False
+            sage: X._check_restrictions((x>0, [x<y, y<0]), {x: 1, y: 2})
+            True
+            sage: X._check_restrictions((x>0, [x<y, y<0]), {x: -1, y: 2})
+            False
+            sage: X._check_restrictions((x>0, [x<y, y<0]), {x: -1, y: -1/2})
+            True
+            sage: X._check_restrictions([(x<y, y<0), x>0], {x: 1, y: 2})
+            True
+            sage: X._check_restrictions([(x<y, y<0), x>0], {x: -1, y: 2})
+            False
+            sage: X._check_restrictions([(x<y, y<0), x>0], {x: 1, y: -2})
+            True
+            sage: X._check_restrictions([(x<y, y<0), x>0], {x: 2, y: 1})
+            False
+
+        """
+        if isinstance(restrict, tuple): # case of 'or' conditions
+            combine = False
+            for cond in restrict:
+                combine = combine or self._check_restrictions(cond,
+                                                              substitutions)
+            return combine
+        elif isinstance(restrict, list): # case of 'and' conditions
+            combine = True
+            for cond in restrict:
+                combine = combine and self._check_restrictions(cond,
+                                                               substitutions)
+            return combine
+        # Case of a single condition:
+        return bool(restrict.subs(substitutions))
+
+
 
     def transition_map(self, other, transformations, intersection_name=None,
                        restrictions1=None, restrictions2=None):
@@ -1633,8 +1681,8 @@ class RealChart(Chart):
         for restrict in self._restrictions:
             restrict_used = False # determines whether restrict is used
                                   # to set some coordinate bound
-            if not isinstance(restrict, tuple): # case of 'or' conditions
-                                                # excluded
+            if not isinstance(restrict, (tuple, list)): # case of combined
+                                                        # conditions excluded
                 operands = restrict.operands()
                 left = operands[0]
                 right = operands[1]
@@ -1812,6 +1860,20 @@ class RealChart(Chart):
             sage: XD.valid_coordinates(0,0)
             True
 
+        Another open subset of the square, defined by `x^2+y^2<1` or
+        (`x>0` and `|y|<1`)::
+
+            sage: B = M.open_subset('B',
+            ....:                   coord_def={X: (x^2+y^2<1,
+            ....:                                  [x>0, abs(y)<1])})
+            sage: XB = X.restrict(B)
+            sage: XB.valid_coordinates(-1/2, 0)
+            True
+            sage: XB.valid_coordinates(-1/2, 3/2)
+            False
+            sage: XB.valid_coordinates(3/2, 1/2)
+            True
+
         """
         n = len(coordinates)
         if n != self._manifold._dim:
@@ -1836,31 +1898,19 @@ class RealChart(Chart):
             if min_included:
                 if x < xmin:
                     return False
-            else:
-                if x <= xmin:
-                    return False
+            elif x <= xmin:
+                return False
             if max_included:
                 if x > xmax:
                     return False
-            else:
-                if x >= xmax:
-                    return False
+            elif x >= xmax:
+                return False
         # Check of additional restrictions:
-        if self._restrictions != []:
+        if self._restrictions:
             substitutions = dict(zip(self._xx, coordinates))
             if parameters:
                 substitutions.update(parameters)
-            for restrict in self._restrictions:
-                if isinstance(restrict, tuple): # case of or conditions
-                    combine = False
-                    for expr in restrict:
-                        combine = combine or bool(expr.subs(substitutions))
-                    if not combine:
-                        return False
-                else:
-                    if not bool(restrict.subs(substitutions)):
-                        return False
-        # All tests have been passed:
+            return self._check_restrictions(self._restrictions, substitutions)
         return True
 
     @options(max_range=8, color='red',  style='-', thickness=1, plot_points=75,

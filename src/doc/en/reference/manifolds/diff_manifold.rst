@@ -22,4 +22,6 @@ Differentiable Manifolds
 
    diff_form
 
+   multivector
+
    sage/manifolds/differentiable/affine_connection

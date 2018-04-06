@@ -273,7 +273,7 @@ class Face(SageObject):
             sage: f.type()
             3
 
-        TEST:
+        TESTS:
 
         We test that types can be given by an int (see :trac:`10699`)::
 
@@ -352,15 +352,19 @@ class Face(SageObject):
         """
         v1 = self.vector()
         v2 = other.vector()
-        t1 = self.type()
-        t2 = other.type()
-
         if v1 < v2:
             return -1
         elif v1 > v2:
             return 1
-        else:
-            return cmp(t1, t2)
+
+        t1 = self.type()
+        t2 = other.type()
+        if t1 < t2:
+            return -1
+        elif t1 > t2:
+            return 1
+
+        return 0
 
     def __hash__(self):
         r"""
@@ -589,7 +593,7 @@ class Patch(SageObject):
             sage: P
             Patch: [[(0, 0, 0), 1]*, [(0, 0, 0), 2]*, [(0, 0, 0), 3]*]
 
-        TEST:
+        TESTS:
 
         We test that colors are not anymore mixed up between
         Patches (see :trac:`11255`)::
@@ -666,7 +670,7 @@ class Patch(SageObject):
             sage: hash(P)      #random
             -4839605361791007520
 
-        TEST:
+        TESTS:
 
         We test that two equal patches have the same hash (see :trac:`11255`)::
 
@@ -1005,11 +1009,11 @@ class Patch(SageObject):
         -  ``cmap`` - color map (default: ``'Set1'``). It can be one of the
            following :
 
-           - string - A coloring map. For available coloring map names type:
+           - string -- A coloring map. For available coloring map names type:
              ``sorted(colormaps)``
-           - list - a list of colors to assign cyclically to the faces.
+           - list -- a list of colors to assign cyclically to the faces.
              A list of a single color colors all the faces with the same color.
-           - dict - a dict of face types mapped to colors, to color the
+           - dict -- a dict of face types mapped to colors, to color the
              faces according to their type.
            - ``{}``, the empty dict - shorcut for
              ``{1:'red', 2:'green', 3:'blue'}``.
@@ -1252,7 +1256,7 @@ class Patch(SageObject):
             sage: sigma = WordMorphism({1:[1,2], 2:[1,3], 3:[1]})
             sage: E = E1Star(sigma)
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
-            sage: M = matrix(2, 3, map(float, [1,0,-0.7071,0,1,-0.7071]))
+            sage: M = matrix(2,3,[float(u) for u in [1,0,-0.7071,0,1,-0.7071]])
             sage: P = E(P, 3)
             sage: s = P.plot_tikz(projmat=M, edgecolor='facecolor', scale=0.6, drawzero=True)
 
@@ -1480,7 +1484,7 @@ class E1Star(SageObject):
             sage: E(P, iterations=4)
             Patch of 31 faces
 
-        TEST:
+        TESTS:
 
         We test that iterations=0 works (see :trac:`10699`)::
 

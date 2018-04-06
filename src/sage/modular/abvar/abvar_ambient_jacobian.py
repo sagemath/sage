@@ -16,9 +16,11 @@ from sage.structure.sequence import Sequence
 from .abvar             import (ModularAbelianVariety_modsym_abstract, ModularAbelianVariety,
                                simple_factorization_of_modsym_space, modsym_lattices,
                                ModularAbelianVariety_modsym)
-from sage.rings.all    import QQ
+from sage.rings.all    import QQ, Integer
 
 from sage.modular.modsym.modsym import ModularSymbols
+from sage.modular.modform.constructor import Newforms
+from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
 from . import morphism
 
 
@@ -391,6 +393,32 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         self.__decomposition[simple] = D
         return D
 
+    def newform_decomposition(self, names=None):
+        """
+        Return the newforms of the simple subvarieties in the decomposition of
+        self as a product of simple subvarieties, up to isogeny.
 
+        OUTPUT:
 
+        - an array of newforms
 
+        EXAMPLES::
+
+            sage: J0(81).newform_decomposition('a')
+            [q - 2*q^4 + O(q^6), q - 2*q^4 + O(q^6), q + a0*q^2 + q^4 - a0*q^5 + O(q^6)]
+
+            sage: J1(19).newform_decomposition('a')
+            [q - 2*q^3 - 2*q^4 + 3*q^5 + O(q^6),
+             q + a1*q^2 + (-1/9*a1^5 - 1/3*a1^4 - 1/3*a1^3 + 1/3*a1^2 - a1 - 1)*q^3 + (4/9*a1^5 + 2*a1^4 + 14/3*a1^3 + 17/3*a1^2 + 6*a1 + 2)*q^4 + (-2/3*a1^5 - 11/3*a1^4 - 10*a1^3 - 14*a1^2 - 15*a1 - 9)*q^5 + O(q^6)]
+        """
+        if self.dimension() == 0:
+            return []
+        G = self.group()
+        if not (is_Gamma0(G) or is_Gamma1(G)):
+            return [S.newform(names=names) for S in self.decomposition()]
+        Gtype = G.parent()
+        N = G.level()
+        preans = [Newforms(Gtype(d), names=names) *
+                  len(Integer(N/d).divisors()) for d in N.divisors()]
+        ans = [newform for l in preans for newform in l]
+        return ans

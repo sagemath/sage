@@ -14,6 +14,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 from __future__ import absolute_import
+from six import iteritems, string_types
 
 
 def runsnake(command):
@@ -203,8 +204,7 @@ def find_objects_from_name(name, module_name=None):
     r"""
     Return the list of objects from ``module_name`` whose name is ``name``.
 
-    If ``name`` is in the global namespace, the result is a list of length 1
-    that contains only this object. Otherwise, the function runs through all
+    If ``module_name`` is ``None``, the function runs through all
     loaded modules and returns the list of objects whose name matches ``name``.
 
     If ``module_name`` is not ``None``, then search only in submodules of
@@ -237,20 +237,15 @@ def find_objects_from_name(name, module_name=None):
         sage: dt.find_objects_from_name is dt.find_objects_from_name
         True
 
-    .. NOTE:
+    .. NOTE::
 
         It might be a good idea to move this function into
         :mod:`sage.misc.sageinspect`.
     """
-    # 1. check global namespace
-    if name in globals():
-        return [globals()[name]]
-
-    # 2. look for all modules that contain the name
     import sys
 
     obj = []
-    for smodule_name, smodule in sys.modules.iteritems():
+    for smodule_name, smodule in iteritems(sys.modules):
         if module_name and not smodule_name.startswith(module_name):
             continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:
@@ -307,7 +302,7 @@ def find_object_modules(obj):
     # something
     import sys
     module_to_obj = {}
-    for module_name, module in sys.modules.iteritems():
+    for module_name, module in iteritems(sys.modules):
         if module_name != '__main__' and hasattr(module, '__dict__'):
             d = module.__dict__
             names = [key for key in d if d[key] is obj]
@@ -319,7 +314,7 @@ def find_object_modules(obj):
         import re
         dec_pattern = re.compile("^(\w[\w0-9\_]*)\s*=", re.MULTILINE)
         module_to_obj2 = {}
-        for module_name, obj_names in module_to_obj.iteritems():
+        for module_name, obj_names in iteritems(module_to_obj):
             module_to_obj2[module_name] = []
             src = sageinspect.sage_getsource(sys.modules[module_name])
             m = dec_pattern.search(src)
@@ -492,6 +487,12 @@ def import_statements(*objects, **kwds):
         sage: import_statements('graph_decompositions')
         import sage.graphs.graph_decompositions
 
+    Check that a name from the global namespace is properly found (see
+    :trac:`23779`)::
+
+        sage: import_statements('log')
+        from sage.functions.log import log
+
     .. NOTE::
 
         The programmers try to made this function as smart as possible.
@@ -512,17 +513,25 @@ def import_statements(*objects, **kwds):
     answer_as_str = kwds.pop("answer_as_str", False)
 
     if kwds:
-        raise TypeError("Unexpected '%s' argument" % kwds.keys()[0])
+        raise TypeError("Unexpected '%s' argument" % next(iter(kwds.keys())))
 
     for obj in objects:
         name = None    # the name of the object
 
         # 1. if obj is a string, we look for an object that has that name
-        if isinstance(obj, str):
+        if isinstance(obj, string_types):
+            from sage.all import sage_globals
+            G = sage_globals()
             name = obj
-            obj = find_objects_from_name(name, 'sage')
-            if len(obj) == 0:
-                obj = find_objects_from_name(name)
+            if name in G:
+                # 1.a. object in the sage namespace
+                obj = [G[name]]
+            else:
+                # 1.b. object inside a submodule of sage
+                obj = find_objects_from_name(name, 'sage')
+                if not obj:
+                    # 1.c. object from something already imported
+                    obj = find_objects_from_name(name)
 
             # remove lazy imported objects from list obj
             i = 0
@@ -584,7 +593,7 @@ def import_statements(*objects, **kwds):
             raise ValueError("no import statement found for '{}'.".format(obj))
 
         if len(modules) == 1:  # the module is well defined
-            module_name, obj_names = modules.items()[0]
+            (module_name, obj_names), = modules.items()
             if name is None:
                 if verbose and len(obj_names) > 1:
                     print("# ** Warning **: several names for that object: {}".format(', '.join(sorted(obj_names))))
@@ -637,7 +646,7 @@ def import_statements(*objects, **kwds):
                                if '.all_' not in module_name and not module_name.endswith('.all')]
             if not(not_all_modules):
                 print("# ** Warning **: the object {} is only defined in .all modules".format(obj))
-                module_name = modules.keys()[0]
+                module_name = next(iter(modules.keys()))
             else:
                 if len(not_all_modules) > 1:
                     print("# ** Warning **: several modules for the object {}: {}".format(obj, ', '.join(modules.keys())))

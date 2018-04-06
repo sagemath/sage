@@ -130,7 +130,7 @@ class DLXMatrix:
         -  ``other`` - a DLX matrix
 
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.combinat.dlx import *
             sage: M = DLXMatrix([[1,[1]]])

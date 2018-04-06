@@ -20,7 +20,7 @@ def backtrack_all(n, puzzle):
 
         A list of solutions, where each solution is a (1-based) list similar to ``puzzle``.
 
-    TEST:
+    TESTS:
 
     This is just a cursory test here, since eventually this code will move.
     See the `backtrack` method of the `Sudoku` class in the

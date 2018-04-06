@@ -7,7 +7,7 @@ def rank(comb, n, check=True):
     where ``k`` is the length of ``comb``.
 
     The algorithm used is based on combinadics and James McCaffrey's
-    MSDN article. See: :wikipedia:`Combinadic`.
+    MSDN article. See :wikipedia:`Combinadic`.
 
     EXAMPLES::
 
@@ -55,7 +55,7 @@ def from_rank(r, n, k):
     size ``k`` when listed in lexicographic order.
 
     The algorithm used is based on combinadics and James McCaffrey's
-    MSDN article. See: http://en.wikipedia.org/wiki/Combinadic
+    MSDN article. See :wikipedia:`Combinadic`.
 
     EXAMPLES::
 

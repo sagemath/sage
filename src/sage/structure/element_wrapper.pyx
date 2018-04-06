@@ -382,46 +382,9 @@ cdef class ElementWrapper(Element):
             sage: 1 < l11                # random, since it depends on what the Integer 1 decides to do, which may just involve memory locations
             False
         """
-        return self.__class__ is other.__class__ \
-            and self._parent is other.parent() \
-            and self.value < (<ElementWrapper>other).value
-
-    cpdef int _cmp_by_value(self, other):
-        """
-        Implementation of ``cmp`` by comparing first values, then
-        parents, then class. This behavior (which implies a total
-        order) is not always desirable and hard to override. Hence
-        derived subclasses that want to take advantage of this
-        feature need to explicitely set :meth:`.__cmp__`.
-
-        EXAMPLES::
-
-            sage: class MyElement(ElementWrapper):
-            ....:     __cmp__ = ElementWrapper._cmp_by_value
-            ....:
-            sage: from sage.structure.element_wrapper import DummyParent
-            sage: parent1 = DummyParent("A parent")
-            sage: parent2 = DummyParent("Another parent")
-            sage: parent1 == parent2
-            False
-            sage: l11 = MyElement(parent1, 1)
-            sage: l12 = MyElement(parent1, 2)
-            sage: l21 = MyElement(parent2, 1)
-            sage: l22 = MyElement(parent2, 2)
-            sage: cmp(l11, l11)
-            0
-            sage: cmp(l11, l12), cmp(l12, l11)   # values differ
-            (-1, 1)
-            sage: cmp(l11, l21) in [-1, 1]       # parents differ
-            True
-            sage: cmp(l21, l11) == -cmp(l11, l21)
-            True
-            sage: cmp(l11, 1) in [-1,1]          # class differ
-            True
-        """
-        return cmp(self.__class__, other.__class__) or \
-               cmp(self.parent(), other.parent()) or \
-               cmp(self.value, other.value)
+        return (self.__class__ is other.__class__
+                and self._parent is other.parent()
+                and self.value < (<ElementWrapper>other).value)
 
     def __copy__(self):
         """

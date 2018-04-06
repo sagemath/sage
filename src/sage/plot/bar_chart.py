@@ -75,7 +75,7 @@ class BarChart(GraphicPrimitive):
 
             sage: from sage.plot.bar_chart import BarChart
             sage: g = BarChart(list(range(4)), [1,3,2,0], {})
-            sage: list(sorted(g._allowed_options().iteritems()))
+            sage: list(sorted(g._allowed_options().items()))
             [('hue', 'The color given as a hue.'), ('legend_label', 'The label for this item in the legend.'), ('rgbcolor', 'The color as an RGB tuple.'), ('width', 'The width of the bars'), ('zorder', 'The layer level in which to draw')]
         """
         return {'rgbcolor':'The color as an RGB tuple.',

@@ -189,8 +189,7 @@ class CoordFunctionSymb(CoordFunction):
         1
 
     Another difference regards the display of partial derivatives:
-    for callable symbolic functions, it relies on Pynac notation
-    ``D[0]``, ``D[1]``, etc.::
+    for callable symbolic functions, it involves ``diff``::
 
         sage: g = function('g')(x, y)
         sage: f0(x,y) = diff(g, x) + diff(g, y)
@@ -211,13 +210,13 @@ class CoordFunctionSymb(CoordFunction):
         \frac{\partial\,g}{\partial x} + \frac{\partial\,g}{\partial y}
 
     Note that this regards only the display of coordinate functions:
-    internally, the Pynac notation is still used, as we can check by asking
+    internally, the ``diff`` notation is still used, as we can check by asking
     for the symbolic expression stored in ``f``::
 
         sage: f.expr()
         diff(g(x, y), x) + diff(g(x, y), y)
 
-    One can switch to Pynac notation by changing the options::
+    One can switch to the standard symbolic notation by changing the options::
 
         sage: Manifold.options.textbook_output=False
         sage: latex(f)
@@ -482,9 +481,12 @@ class CoordFunctionSymb(CoordFunction):
         else:
             return self._simplify(resu)
 
-    def is_zero(self):
+
+    def __bool__(self):
         r"""
-        Return ``True`` if the function is zero and ``False`` otherwise.
+        Return ``True`` if ``self`` is nonzero and ``False`` otherwise.
+
+        This method is called by :meth:`~sage.structure.element.Element.is_zero()`.
 
         EXAMPLES:
 
@@ -493,11 +495,15 @@ class CoordFunctionSymb(CoordFunction):
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()
             sage: f = X.function(x^2+3*y+1)
+            sage: bool(f)
+            True
             sage: f.is_zero()
             False
             sage: f == 0
             False
             sage: g = X.function(0)
+            sage: bool(g)
+            False
             sage: g.is_zero()
             True
             sage: g == 0
@@ -508,7 +514,57 @@ class CoordFunctionSymb(CoordFunction):
             True
 
         """
-        return self._express.is_zero()
+        return not self._express.is_zero()
+
+    __nonzero__ = __bool__   # For Python2 compatibility
+
+    def is_trivial_zero(self):
+        r"""
+        Check if ``self`` is trivially equal to zero without any
+        simplification.
+
+        This method is supposed to be fast as compared with
+        ``self.is_zero()`` or ``self == 0`` and is intended to be
+        used in library code where trying to obtain a mathematically
+        correct result by applying potentially expensive rewrite rules
+        is not desirable.
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart()
+            sage: f = X.function(0)
+            sage: f.is_trivial_zero()
+            True
+            sage: f = X.function(float(0.0))
+            sage: f.is_trivial_zero()
+            True
+            sage: f = X.function(x-x)
+            sage: f.is_trivial_zero()
+            True
+            sage: X.zero_function().is_trivial_zero()
+            True
+
+        No simplification is attempted, so that ``False`` is returned for
+        non-trivial cases::
+
+            sage: f = X.function(cos(x)^2 + sin(x)^2 - 1)
+            sage: f.is_trivial_zero()
+            False
+
+        On the contrary, the method
+        :meth:`~sage.structure.element.Element.is_zero` and the direct
+        comparison to zero involve some simplification algorithms and
+        return ``True``::
+
+            sage: f.is_zero()
+            True
+            sage: f == 0
+            True
+
+        """
+        return self._express.is_trivial_zero()
+
 
     def copy(self):
         r"""
@@ -762,10 +818,10 @@ class CoordFunctionSymb(CoordFunction):
 
         """
         res = self._simplify(self._express + other._express)
-        if res == 0:
+        if res.is_trivial_zero():  # NB: "if res == 0" would be too
+                                   # expensive (cf. #22859)
             return self.parent().zero()
-        else:
-            return type(self)(self.parent(), res)
+        return type(self)(self.parent(), res)
 
     def _sub_(self, other):
         r"""
@@ -806,10 +862,10 @@ class CoordFunctionSymb(CoordFunction):
             True
         """
         res = self._simplify(self._express - other._express)
-        if res == 0:
+        if res.is_trivial_zero():  # NB: "if res == 0" would be too
+                                   # expensive (cf. #22859)
             return self.parent().zero()
-        else:
-            return type(self)(self.parent(), res)
+        return type(self)(self.parent(), res)
 
     def _mul_(self, other):
         r"""
@@ -843,10 +899,10 @@ class CoordFunctionSymb(CoordFunction):
 
         """
         res = self._simplify(self._express * other._express)
-        if res == 0:
+        if res.is_trivial_zero():  # NB: "if res == 0" would be too
+                                   # expensive (cf. #22859)
             return self.parent().zero()
-        else:
-            return type(self)(self.parent(), res)
+        return type(self)(self.parent(), res)
 
     def _rmul_(self, other):
         """
@@ -938,10 +994,10 @@ class CoordFunctionSymb(CoordFunction):
         if other._express.is_zero():
             raise ZeroDivisionError("division of a coordinate function by zero")
         res = self._simplify(self._express / SR(other))
-        if res == 0:
+        if res.is_trivial_zero():  # NB: "if res == 0" would be too
+                                   # expensive (cf. #22859)
             return self.parent().zero()
-        else:
-            return type(self)(self.parent(), res)
+        return type(self)(self.parent(), res)
 
     def exp(self):
         r"""
@@ -1446,7 +1502,7 @@ class CoordFunctionSymb(CoordFunction):
             sage: X.<x,y> = M.chart()
             sage: f = X.function(cos(x)^2+sin(x)^2 + sqrt(x^2))
             sage: f.display()
-            (x, y) |--> cos(x)^2 + sin(x)^2 + sqrt(x^2)
+            (x, y) |--> cos(x)^2 + sin(x)^2 + abs(x)
             sage: f.simplify()
             abs(x) + 1
 
@@ -1480,7 +1536,7 @@ class CoordFunctionSymb(CoordFunction):
             sage: X.<x,y> = M.chart('x:(-oo,0) y')
             sage: f = X.function(sqrt(x^2))
             sage: f
-            sqrt(x^2)
+            -x
             sage: f.simplify()
             -x
 
@@ -1718,6 +1774,22 @@ class CoordFunctionSymbRing(Parent, UniqueRepresentation):
             elt = self._chart.manifold().base_field().one()
         return self.element_class(self, elt)
 
+    def characteristic(self):
+        """
+        Return the characteristic of the function ring.
+
+        This is the characteristic of the base ring.
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart()
+            sage: FR = X.function_ring()
+            sage: FR.characteristic()
+            0
+        """
+        return self._chart.manifold().base_field().characteristic()
+
     def from_base_ring(self, r):
         """
         Return the canonical embedding of ``r`` into ``self``.
@@ -1757,4 +1829,3 @@ class CoordFunctionSymbRing(Parent, UniqueRepresentation):
     is_field = is_integral_domain
 
     Element = CoordFunctionSymb
-

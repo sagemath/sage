@@ -36,6 +36,10 @@ REFERENCES:
    *Noncommutative symmetric functions II: Transformations of alphabets*.
    http://www-igm.univ-mlv.fr/~jyt/ARTICLES/NCSF2.ps
 
+.. [HLNT09] F. Hivert, J.-G. Luque, J.-C. Novelli, J.-Y. Thibon,
+   *The (1-E)-transform in combinatorial Hopf algebras*.
+   :arxiv:`math/0912.0184v2`
+   
 .. [LMvW13] Kurt Luoto, Stefan Mykytiuk and Stephanie van Willigenburg,
    *An introduction to quasisymmetric Schur functions -- Hopf algebras,
    quasisymmetric functions, and Young composition tableaux*,
@@ -47,6 +51,11 @@ REFERENCES:
    *A lift of the Schur and Hall-Littlewood bases to
    non-commutative symmetric functions*,
    :arxiv:`1208.5191v3`.
+
+.. [Hoff2015] Michael Hoffman.
+   *Quasi-symmetric functions and mod* `p` *multiple harmonic sums*.
+   Kyushu J. Math. **69** (2015), pp. 345-366.
+   :doi:`10.2206/kyushujm.69.345`, :arxiv:`math/0401319v3`.
 
 AUTHOR:
 
@@ -85,6 +94,9 @@ from sage.combinat.words.word import Word
 from sage.misc.cachefunc import cached_method
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
+
+import six
+
 
 class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
     r"""
@@ -603,7 +615,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.Monomial()
 
-    _shorthands = tuple(['M', 'F', 'dI', 'QS'])
+    _shorthands = tuple(['M', 'F', 'E', 'dI', 'QS'])
 
     def dual(self):
         r"""
@@ -674,12 +686,12 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
         assert self.base_ring() == f.base_ring()
         exponent_coefficient = f.dict()
         z = {}
-        for (e, c) in exponent_coefficient.iteritems():
+        for (e, c) in six.iteritems(exponent_coefficient):
             I = Compositions()([ei for ei in e if ei > 0])
             if I not in z:
                 z[I] = c
         out = self.Monomial()._from_dict(z)
-        if check and out.expand(f.parent().ngens(), f.parent().gens()) != f:
+        if check and out.expand(f.parent().ngens(), f.parent().variable_names()) != f:
             raise ValueError("%s is not a quasi-symmetric polynomial" % f)
         return out
 
@@ -2566,6 +2578,200 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 return parent._from_dict(dct)
 
     F = Fundamental
+
+    class Essential(CombinatorialFreeModule, BindableClass):
+        r"""
+        The Hopf algebra of quasi-symmetric functions in the Essential basis.
+
+        The Essential quasi-symmetric functions are defined by
+
+        .. MATH::
+
+            E_I = \sum_{J \geq I} M_J = \sum_{i_1 \leq \cdots \leq i_k}
+            x_{i_1}^{I_1} \cdots x_{i_k}^{I_k},
+
+        where `I = (I_1, \ldots, I_k)`.
+
+        .. NOTE::
+
+            Our convention of `\leq` and `\geq` of compositions is
+            opposite that of [Hoff2015]_.
+
+        EXAMPLES::
+
+            sage: QSym = QuasiSymmetricFunctions(QQ)
+            sage: E = QSym.E()
+            sage: M = QSym.M()
+            sage: E(M[2,2])
+            E[2, 2] - E[4]
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: E(s[3,2])
+            5*E[1, 1, 1, 1, 1] - 2*E[1, 1, 1, 2] - 2*E[1, 1, 2, 1]
+             - 2*E[1, 2, 1, 1] + E[1, 2, 2] - 2*E[2, 1, 1, 1]
+             + E[2, 1, 2] + E[2, 2, 1]
+            sage: (1 + E[1])^3
+            E[] + 3*E[1] + 6*E[1, 1] + 6*E[1, 1, 1] - 3*E[1, 2]
+             - 3*E[2] - 3*E[2, 1] + E[3]
+            sage: E[1,2,1].coproduct()
+            E[] # E[1, 2, 1] + E[1] # E[2, 1] + E[1, 2] # E[1] + E[1, 2, 1] # E[]
+
+        The following is an alias for this basis::
+
+            sage: QSym.Essential()
+            Quasisymmetric functions over the Rational Field in the Essential basis
+
+        TESTS::
+
+            sage: E(M([]))
+            E[]
+            sage: E(M(0))
+            0
+            sage: E(s([]))
+            E[]
+            sage: E(s(0))
+            0
+        """
+        def __init__(self, QSym):
+            """
+            EXAMPLES::
+
+                sage: E = QuasiSymmetricFunctions(QQ).Essential()
+                sage: TestSuite(E).run()
+
+            TESTS::
+
+                sage: E = QuasiSymmetricFunctions(QQ).E()
+                sage: M = QuasiSymmetricFunctions(QQ).M()
+                sage: all(E(M(E[c])) == E[c] for n in range(5)
+                ....:     for c in Compositions(n))
+                True
+                sage: all(M(E(M[c])) == M[c] for n in range(5)
+                ....:     for c in Compositions(n))
+                True
+            """
+            CombinatorialFreeModule.__init__(self, QSym.base_ring(), Compositions(),
+                                             prefix='E', bracket=False,
+                                             category=QSym.Bases())
+
+            M = QSym.M()
+            category = self.realization_of()._category
+            # This changes Monomial into Essential
+            M.module_morphism(self.alternating_sum_of_fatter_compositions,
+                              codomain=self, category=category
+                              ).register_as_coercion()
+            # This changes Essential into Monomial
+            self.module_morphism(M.sum_of_fatter_compositions,
+                                 codomain=M, category=category
+                                 ).register_as_coercion()
+
+        def antipode_on_basis(self, compo):
+            r"""
+            Return the result of the antipode applied to a quasi-symmetric
+            Essential basis element.
+
+            INPUT:
+
+            - ``compo`` -- composition
+
+            OUTPUT:
+
+            - The result of the antipode applied to the composition ``compo``,
+              expressed in the Essential basis.
+
+            EXAMPLES::
+
+                sage: E = QuasiSymmetricFunctions(QQ).E()
+                sage: E.antipode_on_basis(Composition([2,1]))
+                E[1, 2] - E[3]
+                sage: E.antipode_on_basis(Composition([]))
+                E[]
+
+            TESTS::
+
+                sage: E = QuasiSymmetricFunctions(QQ).E()
+                sage: M = QuasiSymmetricFunctions(QQ).M()
+                sage: all(E(M(E[c]).antipode()) == E[c].antipode()
+                ....:     for n in range(5) for c in Compositions(n))
+                True
+
+                sage: all((-1)**len(I) * E[I] == M[I].star_involution().antipode()
+                ....:     for k in [3,4] for I in Compositions(k))
+                True
+            """
+            return (-1)**len(compo) * self.alternating_sum_of_fatter_compositions(compo.reversed())
+
+        def coproduct_on_basis(self, compo):
+            r"""
+            Return the coproduct of a Essential basis element.
+
+            Combinatorial rule: deconcatenation.
+
+            INPUT:
+
+            - ``compo`` -- composition
+
+            OUTPUT:
+
+            - The coproduct applied to the Essential quasi-symmetric function
+              indexed by ``compo``, expressed in the Essential basis.
+
+            EXAMPLES::
+
+                sage: E = QuasiSymmetricFunctions(QQ).Essential()
+                sage: E[4,2,3].coproduct()
+                E[] # E[4, 2, 3] + E[4] # E[2, 3] + E[4, 2] # E[3] + E[4, 2, 3] # E[]
+                sage: E.coproduct_on_basis(Composition([]))
+                E[] # E[]
+            """
+            return self.tensor_square().sum_of_monomials((self._indices(compo[:i]),
+                                                          self._indices(compo[i:]))
+                                                         for i in range(0,len(compo)+1))
+
+        def product_on_basis(self, I, J):
+            """
+            The product on Essential basis elements.
+
+            The product of the basis elements indexed by two compositions
+            `I` and `J` is the sum of the basis elements indexed by
+            compositions `K` in the stuffle product (also called the
+            overlapping shuffle product) of `I` and `J` with a
+            coefficient of `(-1)^{\ell(I) + \ell(J) - \ell(K)}`,
+            where `\ell(C)` is the length of the composition `C`.
+
+            INPUT:
+
+            - ``I``, ``J`` -- compositions
+
+            OUTPUT:
+
+            - The product of the Essential quasi-symmetric functions indexed
+              by ``I`` and ``J``, expressed in the Essential basis.
+
+            EXAMPLES::
+
+                sage: E = QuasiSymmetricFunctions(QQ).E()
+                sage: c1 = Composition([2])
+                sage: c2 = Composition([1,3])
+                sage: E.product_on_basis(c1, c2)
+                E[1, 2, 3] + E[1, 3, 2] - E[1, 5] + E[2, 1, 3] - E[3, 3]
+                sage: E.product_on_basis(c1, Composition([]))
+                E[2]
+                sage: E.product_on_basis(c1, Composition([3]))
+                E[2, 3] + E[3, 2] - E[5]
+
+            TESTS::
+
+                sage: E = QuasiSymmetricFunctions(QQ).E()
+                sage: M = QuasiSymmetricFunctions(QQ).M()
+                sage: all(E(M(E[cp])*M(E[c])) == E[cp]*E[c]  # long time
+                ....:     for c in Compositions(3) for cp in Compositions(5))
+                True
+            """
+            n = len(I) + len(J)
+            return self.sum_of_terms((K, (-1)**(n - len(K)))
+                                     for K in I.shuffle_product(J, overlap=True))
+
+    E = Essential
 
     class Quasisymmetric_Schur(CombinatorialFreeModule, BindableClass):
         r"""

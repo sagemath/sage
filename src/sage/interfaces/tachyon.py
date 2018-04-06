@@ -173,7 +173,7 @@ class TachyonRT(SageObject):
             Tachyon Parallel/Multiprocessor Ray Tracer   Version...
         """
         r = os.popen('tachyon').read()
-        if use_pager == True:
+        if use_pager:
             pager()(r)
         else:
             print(r)
@@ -281,7 +281,7 @@ the field of view is decreased slightly.  The zoom effect is
 implemented as a scaling factor on the height and width of the image
 plane relative to the world.
 
-  The {\bf ASPECRATIO} parameter controls the aspect ratio of the resulting
+  The {\bf ASPECTRATIO} parameter controls the aspect ratio of the resulting
 image.  By using the aspect ratio parameter, one can produce images which
 look correct on any screen.  Aspect ratio alters the relative width of the
 image plane, while keeping the height of the image plane constant.  In
@@ -781,7 +781,7 @@ properly.
         from sage.misc.sagedoc import format
         f = format(s)
         f = f.replace('{ ','').replace('}','').replace('{','')
-        if use_pager == True:
+        if use_pager:
             pager()(f)
         else:
             print(f)

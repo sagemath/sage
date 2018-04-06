@@ -35,7 +35,7 @@ def reduced_binary_form1(self):
     Q = deepcopy(self)
     M = matrix(R, 2, 2, [1,0,0,1])
 
-    while (interior_reduced_flag == False):
+    while not interior_reduced_flag:
         interior_reduced_flag = True
 
         ## Arrange for a <= c
@@ -104,7 +104,7 @@ def reduced_binary_form(self):
         M[i,i] = 1
 
 
-    while (interior_reduced_flag == False):
+    while not interior_reduced_flag:
         interior_reduced_flag = True
 
         #print Q
@@ -196,7 +196,7 @@ def minkowski_reduction(self):
 
     ## Begin the reduction
     done_flag = False
-    while done_flag == False:
+    while not done_flag:
 
         ## Loop through possible shorted vectors until
         done_flag = True
@@ -300,7 +300,7 @@ def minkowski_reduction_for_4vars__SP(self):
 
     ## Step 1: Begin the reduction
     done_flag = False
-    while done_flag == False:
+    while not done_flag:
 
         ## Loop through possible shorter vectors
         done_flag = True

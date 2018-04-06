@@ -60,7 +60,7 @@ class UnwrappingMorphism(Morphism):
     """
     def __init__(self, domain):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
             sage: F = QQbar.coerce_map_from(G); F
@@ -74,7 +74,7 @@ class UnwrappingMorphism(Morphism):
 
     def _call_(self, x):
         r"""
-        TEST::
+        TESTS::
 
             sage: E = EllipticCurve("65a1")
             sage: G = E.torsion_subgroup()
@@ -101,7 +101,7 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
     def __init__(self, parent, vector, element=None, check=False):
         r"""
-        EXAMPLE:
+        EXAMPLES:
 
             sage: from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
             sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
@@ -117,12 +117,12 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
         r"""
         Return the underlying object that this element wraps.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)
             sage: T; type(T)
             (0 : 0 : 1)
-            <class 'sage.groups.additive_abelian.additive_abelian_wrapper.EllipticCurveTorsionSubgroup_with_category.element_class'>
+            <class 'sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup_with_category.element_class'>
             sage: T.element(); type(T.element())
             (0 : 0 : 1)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_number_field'>
@@ -135,7 +135,7 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
         r"""
         String representation of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)
             sage: repr(T) # indirect doctest
@@ -153,7 +153,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
     def __init__(self, universe, gens, invariants):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0]) # indirect doctest
             Additive abelian group isomorphic to Z + Z embedded in Algebraic Field
@@ -170,7 +170,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         r"""
         The ambient group in which this abelian group lives.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
             sage: G.universe()
@@ -186,7 +186,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         ``self.invariants()``, which returns the orders of a minimal set of
         generators.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: V = Zmod(6)**2
             sage: G = AdditiveAbelianGroupWrapper(V, [2*V.0, 3*V.1], [3, 2])
@@ -199,7 +199,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
     def _repr_(self):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
             sage: repr(G) # indirect doctest
@@ -213,7 +213,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         generators of this group, compute the element of the ambient group with
         those exponents in terms of the generators of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), -1], [0, 0])
             sage: v = G._discrete_exp([3, 5]); v
@@ -232,7 +232,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         Given an element of the ambient group, attempt to express it in terms of the
         generators of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: V = Zmod(8)**2; G = AdditiveAbelianGroupWrapper(V, [[2,2],[4,0]], [4, 2])
             sage: G._discrete_log(V([6, 2]))

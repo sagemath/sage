@@ -1,0 +1,17 @@
+Remove call to mp_set_memory_functions()
+
+Merged upstream in 68bad31a7c636b77f20b064e1728b86f2386972d
+as part of a much larger patch.
+
+diff -ru a/src/gmpy2.c b/src/gmpy2.c
+--- a/src/gmpy2.c	2016-06-13 21:17:56.000000000 +0200
++++ b/src/gmpy2.c	2017-10-04 14:14:23.925780258 +0200
+@@ -842,8 +842,6 @@
+     PyObject *temp = NULL;
+ #endif
+ 
+-    mp_set_memory_functions(gmpy_allocate, gmpy_reallocate, gmpy_free);
+-
+     set_zcache();
+     set_pympzcache();
+     set_pympqcache();

@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-quickstart-interact:
+
 Sage Interact Quickstart
 ========================
 

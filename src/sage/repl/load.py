@@ -96,7 +96,7 @@ def load(filename, globals, attach=False):
     Note that ``.py`` files are *not* preparsed::
 
         sage: t = tmp_filename(ext='.py')
-        sage: open(t,'w').write("print 'hi', 2/3; z = -2/7")
+        sage: _ = open(t,'w').write("print 'hi', 2/3; z = -2/7")
         sage: z = 1
         sage: sage.repl.load.load(t, globals())  # optional - python2
         hi 0
@@ -106,7 +106,7 @@ def load(filename, globals, attach=False):
     A ``.sage`` file *is* preparsed::
 
         sage: t = tmp_filename(ext='.sage')
-        sage: open(t,'w').write("print 'hi', 2/3; z = -2/7")
+        sage: _ = open(t,'w').write("print 'hi', 2/3; z = -2/7")
         sage: z = 1
         sage: sage.repl.load.load(t, globals())
         hi 2/3
@@ -116,7 +116,7 @@ def load(filename, globals, attach=False):
     Cython files are *not* preparsed::
 
         sage: t = tmp_filename(ext='.pyx')
-        sage: open(t,'w').write("print 'hi', 2/3; z = -2/7")
+        sage: _ = open(t,'w').write("print 'hi', 2/3; z = -2/7")
         sage: z = 1
         sage: sage.repl.load.load(t, globals())
         Compiling ...
@@ -145,7 +145,7 @@ def load(filename, globals, attach=False):
     We attach a file::
 
         sage: t = tmp_filename(ext='.py')
-        sage: open(t,'w').write("print 'hello world'")
+        sage: _ = open(t,'w').write("print 'hello world'")
         sage: sage.repl.load.load(t, globals(), attach=True)
         hello world
         sage: t in attached_files()
@@ -167,7 +167,7 @@ def load(filename, globals, attach=False):
         ['.']
         sage: t_dir = tmp_dir()
         sage: fullpath = os.path.join(t_dir, 'test.py')
-        sage: open(fullpath, 'w').write("print 37 * 3")
+        sage: _ = open(fullpath, 'w').write("print 37 * 3")
         sage: load_attach_path(t_dir)
         sage: attach('test.py')
         111
@@ -185,7 +185,7 @@ def load(filename, globals, attach=False):
 
     Make sure that load handles filenames with spaces in the name or path::
 
-        sage: t = tmp_filename(ext=' b.sage'); open(t,'w').write("print 2")
+        sage: t = tmp_filename(ext=' b.sage'); _ = open(t,'w').write("print 2")
         sage: sage.repl.load.load(t, globals())
         2
 
@@ -203,7 +203,7 @@ def load(filename, globals, attach=False):
 
     if filename.lower().startswith(('http://', 'https://')):
         if attach:
-            # But see http://en.wikipedia.org/wiki/HTTP_ETag for how
+            # But see https://en.wikipedia.org/wiki/HTTP_ETag for how
             # we will do this.
             # http://www.diveintopython.net/http_web_services/etags.html
             raise NotImplementedError("you can't attach a URL")

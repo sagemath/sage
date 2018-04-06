@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 ###########################################
 ## Giac
 ###########################################
@@ -16,8 +14,15 @@ fi
 #############################################################
 # If CFLAGS and CXXFLAGS are unset, giac looks to set -g -O2,
 #   but if they are not empty, the -g -O2 is not added
+CFLAGS="-g -O2 $CFLAGS"
 CXXFLAGS="-g -O2 $CXXFLAGS"
 CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
+
+if [ `uname -m` = "ppc64" ]; then
+    CPPFLAGS="-Dx86_64 $CPPFLAGS"
+fi
+
+export CFLAGS CXXFLAGS CPPFLAGS
 
 cd src
 
@@ -38,7 +43,6 @@ echo "Configuring giac..."
 
 #    --disable-ao     (avoid libao deps)
 #    --disable-lapack (avoid lapack and blas deps because they could be from the base system)
-
 #   On OS X (10.12) the built in intl is broken
 DISABLENLS=""
 if [ "$UNAME" = "Darwin" ]; then

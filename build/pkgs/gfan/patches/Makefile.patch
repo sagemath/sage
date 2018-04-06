@@ -1,6 +1,26 @@
---- a/Makefile.orig	2012-07-11 11:50:44.733022911 +1200
-+++ b/Makefile	2012-07-11 12:20:02.644997882 +1200
-@@ -75,18 +75,10 @@
+diff --git a/Makefile b/Makefile
+index 0892969..c626eb9 100644
+--- a/Makefile
++++ b/Makefile
+@@ -26,7 +26,7 @@ sage_link.so: sage_link.pyx setup.py
+ endif
+ 
+ ifeq ($(gmppath),)
+-GMP_LINKOPTIONS = -lgmp
++GMP_LINKOPTIONS = -lgmp -lm
+ GMP_INCLUDEOPTIONS =
+ else
+ GMP_LINKOPTIONS = $(gmppath)/lib/libgmp.a
+@@ -34,7 +34,7 @@ GMP_INCLUDEOPTIONS = -I $(gmppath)/include
+ endif
+ 
+ ifeq ($(cddpath),)
+-CDD_LINKOPTIONS = -L/usr/local -lcddgmp
++CDD_LINKOPTIONS = -lcddgmp
+ CDD_INCLUDEOPTIONS =
+ else
+ CDD_LINKOPTIONS = $(cddpath)/lib/libcddgmp.a
+@@ -75,18 +75,11 @@ ADDITIONALINCLUDEOPTIONS = $(CDD_INCLUDEOPTIONS) $(GMP_INCLUDEOPTIONS) $(SOPLEX_
  MKDIR=mkdir -p
  
  
@@ -10,7 +30,7 @@
 -CLINKER     = $(CC)
 -CXX         = g++
 -CCLINKER    = $(CXX)
--#OPTFLAGS    = -O2 -DGMPRATIONAL -DNDEBUG
+ #OPTFLAGS    = -O2 -DGMPRATIONAL -DNDEBUG
  OPTFLAGS    = -O2 -DGMPRATIONAL -Wuninitialized
  
 -CFLAGS	  = $(OPTFLAGS) $(GPROFFLAG) $(ADDITIONALINCLUDEOPTIONS) #-pedantic
@@ -21,16 +41,16 @@
  
  CATSOBJECTS =	$(GCATSPATH)lp_cdd.o \
  		$(SOPLEX_OBJECTS) \
-@@ -317,7 +309,7 @@
+@@ -317,7 +310,7 @@ $(PREFIX):
  default: $(OBJECTS) $(ADDITIONALOBJECTS) $(EXECS)
  
  $(MAIN): $(OBJECTS)
 -	$(CCLINKER) $(OBJECTS) $(ADDITIONALLINKOPTIONS) $(GPROFFLAG) -o $(MAIN)
-+	$(CXX) $(CXXFLAGS) $(OBJECTS) $(ADDITIONALLINKOPTIONS) $(GPROFFLAG) -o $(MAIN) $(LDFLAGS)
++	$(CXX) $(CXXFLAGS) -o $(MAIN) $(LDFLAGS) $(OBJECTS) $(ADDITIONALLINKOPTIONS) $(GPROFFLAG)
  
  release:
  	rm -f -r $(RELEASEDIR)/*
-@@ -431,11 +423,11 @@
+@@ -431,11 +424,11 @@ library:
  	cp gfanlib_* gfanlib/
  	tar zcf -  gfanlib > gfanlib.tar.gz
  .c.o:
@@ -40,7 +60,7 @@
  	$(CXX) -c $<
  .cpp.o:
 -	$(CXX) $(CFLAGS) -c $<
-+	$(CXX) $(CXXFLAGS_LOCAL) $(CPPFLAGS) -c $<
++	$(CXX) $(CFLAGS_LOCAL) $(CPPFLAGS) -c $<
  .C.o:
  	$(CXX) -c $<
  # wget http://ftp.sunet.se/pub/gnu/gmp/gmp-4.2.2.tar.gz

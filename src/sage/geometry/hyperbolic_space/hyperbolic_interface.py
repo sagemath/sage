@@ -22,7 +22,7 @@ model), and HM (hyperboloid model).
     in the hyperboloid model.  Performing mapping this point to the upper
     half plane and performing computations there may return with vector
     whose components are unsimplified strings have several ``sqrt(2)``'s.
-    Presently, this drawback is outweighed by the rapidity with which new
+    Presently, this drawback is outweighted by the rapidity with which new
     models can be implemented.
 
 AUTHORS:
@@ -120,7 +120,7 @@ class HyperbolicPlane(Parent, UniqueRepresentation):
 
             sage: H = HyperbolicPlane()
             sage: H.a_realization()
-            Hyperbolic plane in the Upper Half Plane Model model
+            Hyperbolic plane in the Upper Half Plane Model
         """
         return self.UHP()
 

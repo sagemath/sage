@@ -10,15 +10,18 @@ AUTHOR:
 - David Harvey (2007-12): rewrote for hypellfrob version 2.0
 """
 
-#################################################################################
+#*****************************************************************************
 #       Copyright (C) 2007 David Harvey <dmharvey@math.harvard.edu>
 #                          William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
@@ -29,7 +32,6 @@ from sage.rings.all import Qp, O as big_oh
 from sage.arith.all import is_prime
 
 include "sage/libs/ntl/decl.pxi"
-include "cysignals/signals.pxi"
 
 
 cdef extern from "hypellfrob.h":

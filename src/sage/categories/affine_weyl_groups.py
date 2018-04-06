@@ -35,7 +35,7 @@ class AffineWeylGroups(Category_singleton):
         sage: W = WeylGroup(["A",4,1]); W
         Weyl Group of type ['A', 4, 1] (as a matrix group acting on the root space)
         sage: W.category()
-        Category of affine weyl groups
+        Category of irreducible affine weyl groups
 
     TESTS::
 

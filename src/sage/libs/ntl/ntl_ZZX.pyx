@@ -12,11 +12,11 @@
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import division, print_function, absolute_import
 
-from __future__ import division, print_function
+from cysignals.signals cimport sig_on, sig_off
+from sage.ext.cplusplus cimport ccreadstr
 
-include "cysignals/signals.pxi"
-include "cysignals/memory.pxi"
 include "decl.pxi"
 include 'misc.pxi'
 
@@ -130,8 +130,7 @@ cdef class ntl_ZZX(object):
                     cc = x
                 ZZX_SetCoeff(self.x, i, cc.x)
         else:
-            v = str(v)
-            ZZX_from_str(&self.x, v)
+            ccreadstr(self.x, str(v))
 
     def __reduce__(self):
         """
@@ -251,7 +250,7 @@ cdef class ntl_ZZX(object):
         sage: i
          -7
         sage: type(i)
-         <type 'int'>
+         <... 'int'>
         sage: x.getitem_as_int_doctest(15)
          0
         """
@@ -984,7 +983,7 @@ cdef class ntl_ZZX(object):
         the global default is proof=True) then it may use a randomized
         strategy that errors with probability no more than $2^{-80}$.
 
-        EXAMPLE:
+        EXAMPLES:
             sage: f = ntl.ZZX([1,2,0,3])
             sage: mod = ntl.ZZX([-5,2,0,0,1])
             sage: f.norm_mod(mod)

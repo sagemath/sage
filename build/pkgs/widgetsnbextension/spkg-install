@@ -1,9 +1,7 @@
-#!/usr/bin/env bash
-
 set -e
 
 cd src
 
-$PIP_INSTALL .
+sdh_pip_install .
 
 jupyter nbextension enable --sys-prefix --py widgetsnbextension

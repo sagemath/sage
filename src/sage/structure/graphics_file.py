@@ -221,7 +221,7 @@ def graphics_from_save(save_function, preferred_mime_types,
     
     - ``save_function`` -- callable that can save graphics to a file
       and accepts options like
-      :meth:`sage.plot.graphics.Graphics.save``.
+      :meth:`sage.plot.graphics.Graphics.save`.
 
     - ``preferred_mime_types`` -- list of mime types. The graphics
       output mime types in order of preference (i.e. best quality to

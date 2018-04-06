@@ -91,7 +91,7 @@ Which you can't do with hyperplane arrangements::
     sage: arrangement + x
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+':
+    TypeError: unsupported operand parent(s) for +:
     'Hyperplane arrangements in 3-dimensional linear space
          over Rational Field with coordinates x, y, z' and
     'Hyperplane arrangements in 3-dimensional linear space
@@ -118,7 +118,7 @@ class Hyperplane(LinearExpression):
     """
     A hyperplane.
 
-    You shoud always use :class:`AmbientVectorSpace` to construct
+    You should always use :class:`AmbientVectorSpace` to construct
     instances of this class.
 
     INPUT:

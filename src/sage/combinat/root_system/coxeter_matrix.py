@@ -17,6 +17,7 @@ Coxeter Matrices
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six import add_metaclass
 
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
@@ -29,6 +30,8 @@ from sage.rings.infinity import infinity
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.coxeter_type import CoxeterType
 
+
+@add_metaclass(ClasscallMetaclass)
 class CoxeterMatrix(CoxeterType):
     r"""
     A Coxeter matrix.
@@ -109,8 +112,6 @@ class CoxeterMatrix(CoxeterType):
         [   1 -3/2]
         [-3/2    1]
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(cls, data=None, index_set=None, coxeter_type=None,
                               cartan_type=None, coxeter_type_check=True):
@@ -709,12 +710,14 @@ class CoxeterMatrix(CoxeterType):
 
         EXAMPLES::
 
-            sage: CM = CoxeterMatrix([[1,-2],[-2,1]],['a','b'])
+            sage: CM = CoxeterMatrix([[1, -2], [-2, 1]], ['a', 'b'])
             sage: CM.__hash__()
-            1
-            sage: CM = CoxeterMatrix([[1,-3],[-3,1]],['1','2'])
+            -337812865737895661  # 64-bit
+            153276691            # 32-bit
+            sage: CM = CoxeterMatrix([[1, -3], [-3, 1]], ['1', '2'])
             sage: CM.__hash__()
-            4
+            -506719298606843492  # 64-bit
+            -1917568612          # 32-bit
         """        
         return hash(self._matrix)
 
@@ -904,7 +907,7 @@ class CoxeterMatrix(CoxeterType):
 
     def is_crystallographic(self):
         """
-        Return if ``self`` is crystallographic.
+        Return whether ``self`` is crystallographic.
 
         A Coxeter matrix is crystallographic if all non-diagonal entries
         are either 2, 4, or 6.
@@ -919,6 +922,21 @@ class CoxeterMatrix(CoxeterType):
         # We include 1 in this list to account for the diagonal
         L = [1, 2, 3, 4, 6]
         return all(x in L for row in self for x in row)
+
+    def is_irreducible(self):
+        """
+        Return whether ``self`` is irreducible.
+
+        A Coxeter matrix is irreducible if the Coxeter graph is connected.
+
+        EXAMPLES::
+
+            sage: CoxeterMatrix([['F',4],['A',1]]).is_irreducible()
+            False
+            sage: CoxeterMatrix(['H',3]).is_irreducible()
+            True
+        """
+        return self.coxeter_graph().is_connected()
 
     def is_finite(self):
         """

@@ -150,7 +150,7 @@ class SheafLibrary(object):
 
         .. warning::
 
-            You should never constuct instances manually. Can be
+            You should never construct instances manually. Can be
             accessed from a toric variety via the
             :attr:`sage.schemes.toric.variety.ToricVariety_field.sheaves`
             attribute.

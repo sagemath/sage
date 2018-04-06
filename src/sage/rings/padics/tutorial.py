@@ -310,8 +310,7 @@ In addition to requiring a prime power as the first argument,
 One can specify this name as follows::
 
     sage: R.<c> = Zq(125, prec = 20); R
-    Unramified Extension of 5-adic Ring with capped relative precision 20
-    in c defined by (1 + O(5^20))*x^3 + (O(5^20))*x^2 + (3 + O(5^20))*x + (3 + O(5^20))
+    Unramified Extension in c defined by x^3 + 3*x + 3 with capped relative precision 20 over 5-adic Ring
 
 Eisenstein Extensions
 ---------------------

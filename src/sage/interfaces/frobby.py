@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Interface to Frobby for fast computations on monomial ideals.
 
@@ -49,7 +50,7 @@ class Frobby:
         We compute the lcm of an ideal provided in Monos format. ::
 
             sage: frobby("analyze", input="vars x,y,z;[x^2,x*y];", # optional - frobby
-            ...       options=["lcm", "iformat monos", "oformat 4ti2"]) # optional - frobby
+            ....:     options=["lcm", "iformat monos", "oformat 4ti2"]) # optional - frobby
             ' 2 1 0\n\n2 generators\n3 variables\n'
 
 
@@ -130,10 +131,10 @@ class Frobby:
 
     def hilbert(self, monomial_ideal):
         r"""
-        Computes the multigraded Hilbert-Poincare series of the input
+        Computes the multigraded Hilbert-Poincaré series of the input
         ideal. Use the -univariate option to get the univariate series.
 
-        The Hilbert-Poincare series of a monomial ideal is the sum of all
+        The Hilbert-Poincaré series of a monomial ideal is the sum of all
         monomials not in the ideal. This sum can be written as a (finite)
         rational function with $(x_1-1)(x_2-1)...(x_n-1)$ in the denominator,
         assuming the variables of the ring are $x_1,x2,...,x_n$. This action
@@ -266,9 +267,9 @@ class Frobby:
             sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
             sage: allOK = True # optional - frobby
             sage: for ring in rings:  # optional - frobby
-            ...       id0 = ring.ideal(0) # optional - frobby
-            ...       decom0 = frobby.irreducible_decomposition(id0) # optional - frobby
-            ...       allOK = allOK and decom0 == [id0] # optional - frobby
+            ....:     id0 = ring.ideal(0) # optional - frobby
+            ....:     decom0 = frobby.irreducible_decomposition(id0) # optional - frobby
+            ....:     allOK = allOK and decom0 == [id0] # optional - frobby
             sage: allOK # optional - frobby
             True
 
@@ -278,9 +279,9 @@ class Frobby:
             sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
             sage: allOK = True # optional - frobby
             sage: for ring in rings: # optional - frobby
-            ...       id1 = ring.ideal(1) # optional - frobby
-            ...       decom1 = frobby.irreducible_decomposition(id1) # optional - frobby
-            ...       allOK = allOK and decom1 == [id1] # optional - frobby
+            ....:     id1 = ring.ideal(1) # optional - frobby
+            ....:     decom1 = frobby.irreducible_decomposition(id1) # optional - frobby
+            ....:     allOK = allOK and decom1 == [id1] # optional - frobby
             sage: allOK # optional - frobby
             True
         """

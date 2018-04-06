@@ -11,6 +11,8 @@ Base class for Jacobians of curves
 from sage.categories.fields import Fields
 _Fields = Fields()
 from sage.schemes.generic.scheme import Scheme, is_Scheme
+from sage.structure.richcmp import richcmp_method, richcmp
+
 
 def is_Jacobian(J):
     """
@@ -33,6 +35,7 @@ def is_Jacobian(J):
     """
     return isinstance(J, Jacobian_generic)
 
+
 def Jacobian(C):
     """
     EXAMPLES::
@@ -48,6 +51,8 @@ def Jacobian(C):
     except AttributeError:
         return Jacobian_generic(C)
 
+
+@richcmp_method
 class Jacobian_generic(Scheme):
     """
     Base class for Jacobians of projective curves.
@@ -110,7 +115,7 @@ class Jacobian_generic(Scheme):
         self.__curve = C
         Scheme.__init__(self, C.base_scheme())
 
-    def __cmp__(self, J):
+    def __richcmp__(self, J, op):
         """
         Compare the Jacobian self to `J`.  If `J` is a Jacobian, then
         self and `J` are equal if and only if their curves are equal.
@@ -133,8 +138,8 @@ class Jacobian_generic(Scheme):
             True
         """
         if not is_Jacobian(J):
-            return cmp(type(self), type(J))
-        return cmp(self.curve(), J.curve())
+            return NotImplemented
+        return richcmp(self.curve(), J.curve(), op)
 
     def _repr_(self):
         """
@@ -149,7 +154,7 @@ class Jacobian_generic(Scheme):
             sage: J._repr_()
             'Jacobian of Projective Plane Curve over Rational Field defined by x^3 + y^3 + z^3'
         """
-        return "Jacobian of %s"%self.__curve
+        return "Jacobian of %s" % self.__curve
 
     def _point(self):
         """
@@ -235,7 +240,7 @@ class Jacobian_generic(Scheme):
             polynomial x^2 + 1 defined by y^2 = x^3 - 10*x + 9
         """
         if R not in _Fields:
-            raise ValueError('Not a field: '+str(R))
+            raise ValueError('Not a field: ' + str(R))
         if self.base_ring() is R:
             return self
         if not R.has_coerce_map_from(self.base_ring()):

@@ -3,7 +3,7 @@
 # distutils: library_dirs = FFLASFFPACK_LIBDIR
 # distutils: language = c++ 
 
-from modular cimport ModDoubleField, ModFloatField, ModDoubleFieldElement, ModFloatFieldElement
+from .modular cimport ModDoubleField, ModFloatField, ModDoubleFieldElement, ModFloatFieldElement
 
 cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "std":
     cdef cppclass vector[T]:

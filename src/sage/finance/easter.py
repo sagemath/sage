@@ -51,23 +51,24 @@ def easter(year, algorithm=EASTER_WESTERN):
 
     http://www.tondering.dk/claus/calendar.html
 
-    EXAMPLES:
-    sage: import sage.finance.easter
-    sage: sage.finance.easter.easter(2009, 1)
-    datetime.date(2009, 4, 6)
-    sage: sage.finance.easter.easter(2009, 2)
-    datetime.date(2009, 4, 19)
-    sage: sage.finance.easter.easter(2009, 3)
-    datetime.date(2009, 4, 12)
-    sage: sage.finance.easter.easter(2010, 1)
-    datetime.date(2010, 3, 22)
-    sage: sage.finance.easter.easter(2010, 2)
-    datetime.date(2010, 4, 4)
-    sage: sage.finance.easter.easter(2010, 3)
-    datetime.date(2010, 4, 4)
+    EXAMPLES::
 
+        sage: import sage.finance.easter
+        sage: sage.finance.easter.easter(2009, 1)
+        datetime.date(2009, 4, 6)
+        sage: sage.finance.easter.easter(2009, 2)
+        datetime.date(2009, 4, 19)
+        sage: sage.finance.easter.easter(2009, 3)
+        datetime.date(2009, 4, 12)
+        sage: sage.finance.easter.easter(2010, 1)
+        datetime.date(2010, 3, 22)
+        sage: sage.finance.easter.easter(2010, 2)
+        datetime.date(2010, 4, 4)
+        sage: sage.finance.easter.easter(2010, 3)
+        datetime.date(2010, 4, 4)
 
     AUTHORS:
+
      - Gustavo Niemeyer (author of function)
      - Phaedon Sinis (adapted code for sage)
     """
@@ -112,4 +113,3 @@ def easter(year, algorithm=EASTER_WESTERN):
     d = 1+(p+27+(p+6)//40)%31
     m = 3+(p+26)//30
     return datetime.date(y,m,d)
-

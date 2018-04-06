@@ -353,7 +353,7 @@ Let us write the Sage code of this MILP::
 ::
 
     sage: matching = p.get_values(matching)
-    sage: [e for e,b in matching.iteritems() if b == 1]  # not tested
+    sage: [e for e, b in matching.items() if b == 1]  # not tested
     [(0, 1), (6, 9), (2, 7), (3, 4), (5, 8)]
 
 

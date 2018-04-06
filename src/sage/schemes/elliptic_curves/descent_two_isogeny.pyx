@@ -3,12 +3,19 @@ Descent on elliptic curves over `\QQ` with a 2-isogeny.
 """
 
 #*****************************************************************************
-#        Copyright (C) 2009 Robert L. Miller <rlmillster@gmail.com>
+#       Copyright (C) 2009 Robert L. Miller <rlmillster@gmail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+
+from __future__ import absolute_import, print_function
+
+from cysignals.memory cimport sig_malloc, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.all import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
@@ -16,9 +23,6 @@ cdef object x_ZZ = polygen(ZZ)
 from sage.rings.polynomial.real_roots import real_roots
 from sage.arith.all import prime_divisors
 from sage.all import ntl
-
-include "cysignals/memory.pxi"
-include "cysignals/signals.pxi"
 
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.mpz cimport *
@@ -51,7 +55,7 @@ def test_valuation(a, p):
     """
     Doctest function for cdef long valuation(mpz_t, mpz_t).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_valuation as tv
         sage: for i in [1..20]:
@@ -110,7 +114,7 @@ def test_padic_square(a, p):
     """
     Doctest function for cdef int padic_square(mpz_t, unsigned long).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_padic_square as ps
         sage: for i in [1..300]:
@@ -856,7 +860,7 @@ def test_qpls(a,b,c,d,e,p):
     """
     Testing function for Qp_soluble.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_qpls as tq
         sage: tq(1,2,3,4,5,7)
@@ -916,7 +920,7 @@ def test_els(a,b,c,d,e):
     """
     Doctest function for cdef int everywhere_locally_soluble(mpz_t, mpz_t, mpz_t, mpz_t, mpz_t).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_els
         sage: from sage.libs.ratpoints import ratpoints

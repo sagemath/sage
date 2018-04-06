@@ -37,7 +37,7 @@ category of toric varieties and toric morphisms.
 .. note::
 
     Do not create the toric morphisms (or any morphism of schemes)
-    directly from the the ``SchemeMorphism...`` classes. Instead, use the
+    directly from the ``SchemeMorphism...`` classes. Instead, use the
     :meth:`~sage.schemes.generic.scheme.hom` method common to all
     algebraic schemes to create new homomorphisms.
 
@@ -367,6 +367,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six import iteritems
 
 # For now, the scheme morphism base class cannot derive from Morphism
 # since this would clash with elliptic curves. So we derive only on
@@ -374,7 +375,7 @@ from __future__ import print_function
 # https://groups.google.com/d/msg/sage-devel/qF4yU6Vdmao/wQlNrneSmWAJ
 from sage.categories.morphism import Morphism
 
-from sage.structure.sage_object import richcmp_not_equal, richcmp
+from sage.structure.richcmp import richcmp_not_equal, richcmp
 
 from sage.structure.sequence import Sequence
 from sage.rings.all import ZZ
@@ -660,7 +661,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         orbit = self.parent().domain()
         codomain_fan = self.parent().codomain().fan()
         reverse_ray_dict = dict()
-        for n1,n2 in self._ray_map.iteritems():
+        for n1, n2 in iteritems(self._ray_map):
             ray_index = codomain_fan.rays().index(n1)
             if n2.is_zero(): 
                 assert ray_index in self._defining_cone.ambient_ray_indices()
@@ -1970,9 +1971,9 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             pass
         multiplicity = None
         image_ray_index = None
-        for ray, index in self._ray_index_map.iteritems():
+        for ray, index in iteritems(self._ray_index_map):
             d = gcd(ray)
-            if d*fiber_ray != ray:
+            if d * fiber_ray != ray:
                 continue
             if multiplicity is not None and d>multiplicity:
                 continue

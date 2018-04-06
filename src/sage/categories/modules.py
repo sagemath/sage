@@ -498,16 +498,27 @@ class Modules(Category_module):
                 True
                 sage: Modules(ZZ).FiniteDimensional().is_subcategory(Sets().Finite())
                 False
+
+                sage: Modules(Rings().Finite()).FiniteDimensional().is_subcategory(Sets().Finite())
+                True
+                sage: Modules(Rings()).FiniteDimensional().is_subcategory(Sets().Finite())
+                False
             """
-            if self.base_ring() in Sets().Finite():
-                return [Sets().Finite()]
+            base_ring = self.base_ring()
+            FiniteSets = Sets().Finite()
+            if (isinstance(base_ring, Category) and
+                    base_ring.is_subcategory(FiniteSets)) or \
+                base_ring in FiniteSets:
+                return [FiniteSets]
             else:
                 return []
 
     Filtered = LazyImport('sage.categories.filtered_modules', 'FilteredModules')
     Graded = LazyImport('sage.categories.graded_modules', 'GradedModules')
     Super = LazyImport('sage.categories.super_modules', 'SuperModules')
-    WithBasis = LazyImport('sage.categories.modules_with_basis', 'ModulesWithBasis')
+    # at_startup currently needed for MatrixSpace, see #22955 (e.g., comment:20)
+    WithBasis = LazyImport('sage.categories.modules_with_basis', 'ModulesWithBasis',
+                           at_startup=True)
 
     class ParentMethods:
         @cached_method
@@ -647,7 +658,7 @@ class Modules(Category_module):
         implementation is based on the following resources:
 
         - http://groups.google.fr/group/sage-devel/browse_thread/thread/35a72b1d0a2fc77a/348f42ae77a66d16#348f42ae77a66d16
-        - http://en.wikipedia.org/wiki/Direct_product
+        - :wikipedia:`Direct_product`
         """
         def extra_super_categories(self):
             """

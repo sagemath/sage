@@ -13,6 +13,7 @@
 #    they won't be available in child programs.
 #  - This script has a version number such that a newer version of
 #    sage-env can be sourced when upgrading.  See below.
+#  - It uses bash features, so it cannot be used with other shells.
 #
 #  If you want to set all environment variables for your shell like
 #  they are during the build of Sage packages, type
@@ -185,32 +186,71 @@ export SAGE_ENV_SOURCED=$SAGE_ENV_VERSION
 
 export SAGE_ROOT="$NEW_SAGE_ROOT"
 
-# SAGE_LOCAL is the installation prefix and can be customized
-if [ -z "$SAGE_LOCAL" ]; then
-    export SAGE_LOCAL="$SAGE_ROOT/local"
-fi
 
-# sage-env must know where the Sage's script files are
+# sage-env must know where the Sage's script files are.
+# Note that SAGE_SCRIPTS_DIR is only used here, so it does not need to
+# be exported.
 if [ -z "$SAGE_SCRIPTS_DIR" ]; then
-    if [ -f "`dirname $0`/sage-env" ]; then
-        SAGE_SCRIPTS_DIR=`dirname $0`
-    elif [ -f "$SAGE_LOCAL/bin/sage-env" ]; then
+    if [ -n "$SAGE_LOCAL" ] && [ -f "$SAGE_LOCAL/bin/sage-env-config" ]; then
         SAGE_SCRIPTS_DIR="$SAGE_LOCAL/bin"
-    elif [ -f "$SAGE_ROOT/src/bin/sage-env" ]; then
+    elif [ -f "$SAGE_ROOT/src/bin/sage-env-config" ]; then
         SAGE_SCRIPTS_DIR="$SAGE_ROOT/src/bin"
     else
-        echo >&2 "Error: You must set the SAGE_SCRIPTS_DIR environment variable to run this"
+        echo >&2 "Error: You must set either the SAGE_LOCAL or SAGE_SCRIPTS_DIR environment variable to run this"
         return 1
     fi
-elif [ ! -f "$SAGE_SCRIPTS_DIR/sage-env" ]; then
+elif [ ! -f "$SAGE_SCRIPTS_DIR/sage-env-config" ]; then
     echo >&2 "Error: SAGE_SCRIPTS_DIR is set to a bad value:"
     echo >&2 "SAGE_SCRIPTS_DIR=$SAGE_SCRIPTS_DIR"
     echo >&2 "You must correct it or erase it and rerun this script"
     return 1
 fi
 
-# Make SAGE_SCRIPTS_DIR absolute
-export SAGE_SCRIPTS_DIR="`cd "$SAGE_SCRIPTS_DIR" && pwd -P`"
+# Set environment variables (like SAGE_LOCAL) depending on ./configure
+. "$SAGE_SCRIPTS_DIR/sage-env-config"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: failed to source $SAGE_SCRIPTS_DIR/sage-env-config"
+    return 1
+fi
+
+# The compilers are set in order of priority by
+# 1) environment variables
+# 2) compiler installed by sage
+# 3) compiler set at configuration time 
+if [ -z "$CC" ]; then
+    if [ -x "$SAGE_LOCAL/bin/gcc" ]; then
+        CC=gcc
+    else
+        CC="$CONFIGURED_CC"
+    fi
+    export CC
+fi
+if [ -z "$CXX" ]; then
+    if [ -x "$SAGE_LOCAL/bin/g++" ]; then
+        CXX=g++
+    else
+        CXX="$CONFIGURED_CXX"
+    fi
+    export CXX
+fi
+if [ -z "$FC" ]; then
+    if [ -x "$SAGE_LOCAL/bin/gfortran" ]; then
+        FC=gfortran
+    else
+        FC="$CONFIGURED_FC"
+    fi
+    export FC
+fi
+if [ "$UNAME" = "Darwin" ]; then
+    OBJC="$CONFIGURED_OBJC"
+    OBJCXX="$CONFIGURED_OBJCXX"
+    export OBJC OBJCXX
+fi
+
+# Set other Fortran-related compiler variables
+export F77="$FC"
+export F90="$FC"   # Needed for SciPy
+export F95="$FC"
 
 # Call with: contains_spaces X${VAR}X
 # i.e., WITHOUT quotes but some character(s) around the environment variable to test.
@@ -374,24 +414,6 @@ if [ "$SAGE_STARTUP_FILE" = "" ]; then
     export SAGE_STARTUP_FILE
 fi
 
-if [ -z "$IPYTHONDIR" ]; then
-    # We hardcode a version number in the directory name. The idea is
-    # that we keep using the same version number as long as that is
-    # possible. Only when some future IPython version really requires
-    # a new structure for the $IPYTHONDIR should this version number be
-    # changed to the new IPython version.
-    export IPYTHONDIR="$DOT_SAGE/ipython-5.0.0"
-fi
-
-if [ -z "$JUPYTER_CONFIG_DIR" ]; then
-    # We hardcode a version number in the directory name. The idea is
-    # that we keep using the same version number as long as that is
-    # possible. Only when some future Jupyter version really requires
-    # a new structure for the $JUPYTER_CONFIG_DIR should this version
-    # number be changed to the new jupyter_core version.
-    export JUPYTER_CONFIG_DIR="$DOT_SAGE/jupyter-4.1"
-fi
-
 if [ "$PYTHON_EGG_CACHE" = "" ]; then
     PYTHON_EGG_CACHE="$DOT_SAGE/.python-eggs"
     export PYTHON_EGG_CACHE
@@ -410,30 +432,39 @@ if [ "$PYTHONUSERBASE" = "" ]; then
     export PYTHONUSERBASE
 fi
 
-if [ -d "$SAGE_LOCAL/lib/python" ]; then
-    PYTHONPATH="$SAGE_LOCAL/lib/python"
-    if [ -n "$SAGE_PATH" ]; then
-        PYTHONPATH="$SAGE_PATH:$PYTHONPATH"
-    fi
-    PYTHONHOME="$SAGE_LOCAL"
-    export PYTHONPATH
-    export PYTHONHOME
+if [ -n "$PYTHONHOME" ]; then
+    >&2 echo "Warning: PYTHONHOME must not be set when running Sage, clearing env..."
+    unset PYTHONHOME
 fi
 
 LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
 export LDFLAGS
 
-# Use a matplotlib config directory specific to Sage and specific to
-# the version number of matplotlib, by setting the environment
-# variable MPLCONFIGDIR. Note that we can't find the version number by
-# importing matplotlib, because that could create matplotlib's standard
-# config directory. So we use pkg_resources.
-"$SAGE_LOCAL/bin/python" -c 'import pkg_resources; pkg_resources.get_distribution("matplotlib").version' 2>/dev/null
-if [ $? -eq 0 ]; then
-    MPLVERSION=`"$SAGE_LOCAL/bin/python" -c 'import pkg_resources; print (pkg_resources.get_distribution("matplotlib").version)'`
-    MPLCONFIGDIR="$DOT_SAGE/matplotlib-$MPLVERSION"
-    export MPLCONFIGDIR
-    # The directory is created when Sage starts (see sage.misc.misc).
+if [ -z "$IPYTHONDIR" ]; then
+    # We hardcode a version number in the directory name. The idea is
+    # that we keep using the same version number as long as that is
+    # possible. Only when some future IPython version really requires
+    # a new structure for the $IPYTHONDIR should this version number be
+    # changed to the new IPython version.
+    export IPYTHONDIR="$DOT_SAGE/ipython-5.0.0"
+fi
+
+if [ -z "$JUPYTER_CONFIG_DIR" ]; then
+    # We hardcode a version number in the directory name. The idea is
+    # that we keep using the same version number as long as that is
+    # possible. Only when some future Jupyter version really requires
+    # a new structure for the $JUPYTER_CONFIG_DIR should this version
+    # number be changed to the new jupyter_core version.
+    export JUPYTER_CONFIG_DIR="$DOT_SAGE/jupyter-4.1"
+fi
+
+if [ -z "$MPLCONFIGDIR" ]; then
+    # We hardcode a version number in the directory name. The idea is
+    # that we keep using the same version number as long as that is
+    # possible. Only when some future Matplotlib version really requires
+    # a new structure for the $MPLCONFIGDIR should this version
+    # number be changed to the new matplotlib version.
+    export MPLCONFIGDIR="$DOT_SAGE/matplotlib-1.5.1"
 fi
 
 # Make sure that a system-wide R installation does not interfere
@@ -472,6 +503,11 @@ export MAXIMA_PREFIX="$SAGE_LOCAL"
 
 PERL5LIB="$SAGE_LOCAL/lib/perl5:$PERL5LIB" && export PERL5LIB
 
+# Allow SAGE_BROWSER to override BROWSER (Trac #22449)
+if [ -n "$SAGE_BROWSER" ]; then
+    export BROWSER="$SAGE_BROWSER"
+fi
+
 ############ architecture flags
 
 # Support flags to change the build architecture.  Currently, this is
@@ -487,65 +523,6 @@ PERL5LIB="$SAGE_LOCAL/lib/perl5:$PERL5LIB" && export PERL5LIB
 # This could be used in code to make special changes only when
 # code is being built as part of Sage.
 export __sage__=""
-
-# Set the C and C++ compilers
-if [ -z "$CC" ]; then
-    # On OS X 10.7 (Lion) or later when building GCC, use clang as
-    # default C compiler as some older versions of XCode 4 ship broken
-    # versions of GCC which fail to bootstrap GCC-4.6.3.
-    # See http://trac.sagemath.org/sage_trac/ticket/12820
-    if [ "$SAGE_BUILD_TOOLCHAIN" = yes ] && [ "$UNAME" = "Darwin" ] && [ "$MACOSX_VERSION" -ge 11 ]; then
-        CC=`which clang 2>/dev/null`
-        CXX=`which clang++ 2>/dev/null`
-    fi
-fi
-if [ -z "$CC" ]; then
-    CC=gcc
-fi
-if [ -z "$CXX" ]; then
-    CXX=g++
-fi
-if [ -z "$FC" ]; then
-    if command -v gfortran >/dev/null 2>/dev/null; then
-        FC=gfortran
-    elif command -v g95 >/dev/null 2>/dev/null; then
-        FC=g95
-    elif command -v g77 >/dev/null 2>/dev/null; then
-        FC=g77
-    fi
-fi
-
-# An Objective-C compiler is needed for R on Darwin.
-# On Darwin, /usr/bin/cc supports Objective-C.  The gcc shipped with
-# Sage doesn't.
-if [ "$UNAME" = "Darwin" ]; then
-    if [ -z "$OBJC" -a -x "/usr/bin/cc" ]; then
-        export OBJC=/usr/bin/cc
-    fi
-    if [ -z "$OBJCXX" -a -x "/usr/bin/c++" ]; then
-        export OBJCXX=/usr/bin/c++
-    fi
-fi
-
-# Override CC, CPP, CXX, FC if the GCC spkg was installed.
-if [ -x "$SAGE_LOCAL/bin/gcc" ]; then
-    CC=gcc
-fi
-if [ -x "$SAGE_LOCAL/bin/cpp" ]; then
-    CPP=cpp
-fi
-if [ -x "$SAGE_LOCAL/bin/g++" ]; then
-    CXX=g++
-fi
-if [ -x "$SAGE_LOCAL/bin/gfortran" ]; then
-    FC=gfortran
-fi
-export CC CPP CXX FC
-
-# Set other Fortran-related compiler variables
-export F77="$FC"
-export F90="$FC"   # Needed for SciPy
-export F95="$FC"
 
 # Setup env varariables if ccache is installed
 if [ -d "$SAGE_LOCAL/libexec/ccache" ]; then
@@ -667,7 +644,10 @@ if [ "${MAKEFLAGS-__unset__}" != "__unset__" ]; then
 fi
 export MAKE
 
+# Deprecated: See https://trac.sagemath.org/ticket/24014
 export PIP_INSTALL="sage-pip-install"
+
+export PIP_FORMAT="columns"
 
 # When building documentation, use MathJax by default. To turn it off,
 # set SAGE_DOC_MATHJAX to be "no" or "False".

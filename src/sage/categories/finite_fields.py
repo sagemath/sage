@@ -101,7 +101,7 @@ class FiniteFields(CategoryWithAxiom):
     #        sage: C = FiniteFields().element_class; C
     #        <type 'sage.rings.finite_rings.element_base.FiniteFieldElement'>
     #        sage: type(C)
-    #        <type 'type'>
+    #        <... 'type'>
     #    """
     #    from sage.rings.finite_rings.element_base import FiniteFieldElement
     #    return FiniteFieldElement

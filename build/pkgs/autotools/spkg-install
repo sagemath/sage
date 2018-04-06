@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 set -e
 
 if [ -z "$SAGE_LOCAL" ]; then
@@ -107,4 +105,16 @@ $MAKE
 cd "$SAGE_LOCAL"/bin
 for x in $automake_versions; do
     ln -sf ../automake-$x/bin/automake-* ../automake-$x/bin/aclocal-* .
+done
+
+# Some older versions of automake don't create this directory at install time
+# because there aren't any files in it by default; however aclocal crashes if
+# the directory is missing; https://trac.sagemath.org/ticket/21526
+for x in $automake_versions; do
+    aclocal_system_dir="$SAGE_LOCAL/automake-$x/share/aclocal"
+    if [ ! -d "$aclocal_system_dir" ]; then
+        mkdir -p "$aclocal_system_dir"
+        # Place a dummy file so that the directory at least isn't empty
+        touch "$aclocal_system_dir/README"
+    fi
 done

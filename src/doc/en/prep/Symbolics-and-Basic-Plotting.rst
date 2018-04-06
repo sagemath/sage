@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-symbolics-and-basic-plotting:
+
 Tutorial for Symbolics and Plotting
 ===================================
 
@@ -405,7 +407,7 @@ Basic 3D Plotting
 
 There are several mechanisms for viewing three\-dimensional plots in
 Sage, but we will stick to the default option in the notebook interface,
-which is via Java applets from the program `Jmol
+which is via javascript applets from the program `Jmol/JSmol
 <http://jmol.sourceforge.net/>`_ .
 
 Plotting a 3D plot is similar to plotting a 2D plot, but we need to
@@ -486,6 +488,6 @@ We close this tutorial with a cool plot that we define *implicitly* as a
     Graphics3d Object
 
 The next tutorial will use all that you have learned about Sage basics,
-symbolics, and plotting in a specific mathematical venue \- the calculus
-sequence!
+symbolics, and plotting in a specific mathematical venue \- the
+:ref:`calculus sequence <prep-calculus>`!
 

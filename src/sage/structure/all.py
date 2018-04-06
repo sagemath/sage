@@ -10,6 +10,7 @@ from .sage_object   import SageObject
 
 from .element import (
     canonical_coercion,
+    coercion_model,
     get_coercion_model,
     coercion_traceback,
     parent

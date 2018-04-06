@@ -612,7 +612,7 @@ class DiffScalarField(ScalarField):
         r"""
         Construct a scalar field.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()
@@ -637,7 +637,7 @@ class DiffScalarField(ScalarField):
         r"""
         Initialize the derived quantities.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()
@@ -653,7 +653,7 @@ class DiffScalarField(ScalarField):
         r"""
         Delete the derived quantities.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()
@@ -688,7 +688,7 @@ class DiffScalarField(ScalarField):
 
         - always `(0, 0)`
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Manifold(2, 'M')
             sage: c_xy.<x,y> = M.chart()
@@ -725,8 +725,8 @@ class DiffScalarField(ScalarField):
             sage: latex(df)
             \mathrm{d}f
             sage: df.parent()
-            Free module /\^1(M) of 1-forms on the 3-dimensional differentiable
-             manifold M
+            Free module Omega^1(M) of 1-forms on the 3-dimensional
+             differentiable manifold M
 
         The result is cached, i.e. is not recomputed unless ``f`` is changed::
 
@@ -929,3 +929,127 @@ class DiffScalarField(ScalarField):
 
         """
         return metric.hodge_star(self)
+
+    def bracket(self, other):
+        r"""
+        Return the Schouten-Nijenhuis bracket of ``self``, considered as a
+        multivector field of degree 0, with a multivector field.
+
+        See
+        :meth:`~sage.manifolds.differentiable.multivectorfield.MultivectorFieldParal.bracket`
+        for details.
+
+        INPUT:
+
+        - ``other`` -- a multivector field of degree `p`
+
+        OUTPUT:
+
+        - if `p=0`, a zero scalar field
+        - if `p=1`, an instance of :class:`DiffScalarField` representing
+          the Schouten-Nijenhuis bracket ``[self,other]``
+        - if `p\geq 2`, an instance of
+          :class:`~sage.manifolds.differentiable.multivectorfield.MultivectorField`
+          representing the Schouten-Nijenhuis bracket ``[self,other]``
+
+        EXAMPLES:
+
+        The Schouten-Nijenhuis bracket of two scalar fields is identically
+        zero::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: f = M.scalar_field({X: x+y^2}, name='f')
+            sage: g = M.scalar_field({X: y-x}, name='g')
+            sage: s = f.bracket(g); s
+            Scalar field zero on the 2-dimensional differentiable manifold M
+            sage: s.display()
+            zero: M --> R
+               (x, y) |--> 0
+
+        while the Schouten-Nijenhuis bracket of a scalar field `f` with a
+        multivector field `a` is equal to minus the interior product of the
+        differential of `f` with `a`::
+
+            sage: a = M.multivector_field(2, name='a')
+            sage: a[0,1] = x*y ; a.display()
+            a = x*y d/dx/\d/dy
+            sage: s = f.bracket(a); s
+            Vector field -i_df a on the 2-dimensional differentiable manifold M
+            sage: s.display()
+            -i_df a = 2*x*y^2 d/dx - x*y d/dy
+
+        See
+        :meth:`~sage.manifolds.differentiable.multivectorfield.MultivectorFieldParal.bracket`
+        for other examples.
+
+        """
+        if isinstance(other, DiffScalarField):
+            return self._domain.intersection(other._domain).zero_scalar_field()
+        return - self.differential().interior_product(other)
+
+    def wedge(self, other):
+        r"""
+        Return the exterior product of ``self``, considered as a differential
+        form of degree 0 or a multivector field of degree 0, with ``other``.
+
+        See
+        :meth:`~sage.manifolds.differentiable.diff_form.DiffFormParal.wedge`
+        (exterior product of differential forms) or
+        :meth:`~sage.manifolds.differentiable.multivectorfield.MultivectorFieldParal.wedge`
+        (exterior product of multivector fields) for details.
+
+        For a scalar field `f` and a `p`-form (or `p`-vector field) `a`, the
+        exterior product reduces to the standard product on the left by an
+        element of the base ring of the module of `p`-forms (or `p`-vector
+        fields): `f\wedge a = f a`.
+
+        INPUT:
+
+        - ``other`` -- a differential form or a multivector field `a`
+
+        OUTPUT:
+
+        - the product `f a`, where `f` is ``self``
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: f = M.scalar_field({X: x+y^2}, name='f')
+            sage: a = M.diff_form(2, name='a')
+            sage: a[0,1] = x*y
+            sage: s = f.wedge(a); s
+            2-form on the 2-dimensional differentiable manifold M
+            sage: s.display()
+            (x*y^3 + x^2*y) dx/\dy
+
+        """
+        return self*other
+
+    def degree(self):
+        r"""
+        Return the degree of ``self``, considered as a differential
+        form or a multivector field, i.e. zero.
+
+        This trivial method is provided for consistency with the exterior
+        calculus scheme, cf. the methods
+        :meth:`~sage.manifolds.differentiable.diff_form.DiffForm.degree`
+        (differential forms) and
+        :meth:`~sage.manifolds.differentiable.multivectorfield.MultivectorField.degree`
+        (multivector fields).
+
+        OUTPUT:
+
+        - 0
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: f = M.scalar_field({X: x+y^2})
+            sage: f.degree()
+            0
+
+        """
+        return 0

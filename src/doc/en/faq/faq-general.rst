@@ -188,7 +188,7 @@ functionalities are made possible through FOSS projects such as
   theory.
 * `Maxima <http://maxima.sourceforge.net>`_ --- system for symbolic
   and numerical computation.
-* `mpmath <http://code.google.com/p/mpmath>`_ --- a pure-Python
+* `mpmath <https://github.com/fredrik-johansson/mpmath>`_ --- a pure-Python
   library for multiprecision floating-point arithmetic.
 * `NumPy <http://numpy.scipy.org>`_ --- numerical linear algebra and
   other numerical computing capabilities for Python.

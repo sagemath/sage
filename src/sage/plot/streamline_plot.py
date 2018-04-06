@@ -153,7 +153,7 @@ def streamline_plot(f_g, xrange, yrange, **options):
     two variables `x` and `y`.
 
     If given two functions `(f(x,y), g(x,y))`, then this function plots
-    steamlines in the vector field over the specified ranges with ``xrange``
+    streamlines in the vector field over the specified ranges with ``xrange``
     being of `x`, denoted by ``xvar`` below, between ``xmin`` and ``xmax``,
     and ``yrange`` similarly (see below). ::
 

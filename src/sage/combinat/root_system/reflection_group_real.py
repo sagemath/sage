@@ -53,21 +53,13 @@ from __future__ import print_function
 
 from six.moves import range
 
-from sage.misc.cachefunc import cached_method, cached_in_parent_method
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.misc_c import prod
+from sage.misc.cachefunc import cached_function, cached_method, cached_in_parent_method
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
-from sage.rings.all import ZZ, QQ
-from sage.matrix.matrix import is_Matrix
+from sage.rings.all import ZZ
 from sage.interfaces.gap3 import gap3
 from sage.combinat.root_system.reflection_group_complex import ComplexReflectionGroup, IrreducibleComplexReflectionGroup
-from sage.categories.coxeter_groups import CoxeterGroups
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
-from sage.combinat.root_system.coxeter_group import is_chevie_available
 from sage.misc.sage_eval import sage_eval
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
-from sage.combinat.root_system.reflection_group_c import reduced_word_c
-from sage.matrix.all import Matrix, identity_matrix
+from sage.combinat.root_system.reflection_group_element import RealReflectionGroupElement
 
 def ReflectionGroup(*args,**kwds):
     r"""
@@ -231,6 +223,30 @@ def ReflectionGroup(*args,**kwds):
                hyperplane_index_set=kwds.get('hyperplane_index_set', None),
                reflection_index_set=kwds.get('reflection_index_set', None))
 
+@cached_function
+def is_chevie_available():
+    r"""
+    Test whether the GAP3 Chevie package is available.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.root_system.reflection_group_real import is_chevie_available
+        sage: is_chevie_available() # random
+        False
+        sage: is_chevie_available() in [True, False]
+        True
+    """
+    try:
+        from sage.interfaces.gap3 import gap3
+        gap3._start()
+        gap3.load_package("chevie")
+        return True
+    except Exception:
+        return False
+
+#####################################################################
+## Classes
+
 class RealReflectionGroup(ComplexReflectionGroup):
     """
     A real reflection group given as a permutation group.
@@ -393,18 +409,6 @@ class RealReflectionGroup(ComplexReflectionGroup):
             return CartanType([ct['series'], ct['rank']])
         else:
             return CartanType([W.cartan_type() for W in self.irreducible_components()])
-
-    def simple_root(self, i):
-        r"""
-        Return the simple root with index ``i``.
-
-        EXAMPLES::
-
-            sage: W = ReflectionGroup(['A',3])                          # optional - gap3
-            sage: W.simple_root(1)                                      # optional - gap3
-            (1, 0, 0)
-        """
-        return self.simple_roots()[i]
 
     def positive_roots(self):
         r"""
@@ -589,48 +593,6 @@ class RealReflectionGroup(ComplexReflectionGroup):
         """
         return self.cartan_type().coxeter_matrix()
 
-    def permutahedron(self, point=None):
-        r"""
-        Return the permutahedron of ``self``.
-
-        This is the convex hull of the point ``point`` in the weight
-        basis under the action of ``self`` on the underlying vector
-        space `V`.
-
-        INPUT:
-
-        - ``point`` -- optional, a point given by its coordinates in
-          the weight basis (default is `(1, 1, 1, \ldots)`)
-
-        .. NOTE::
-
-            The result is expressed in the root basis coordinates.
-
-        EXAMPLES::
-
-            sage: W = ReflectionGroup(['A',3])                          # optional - gap3
-            sage: W.permutahedron()                                     # optional - gap3
-            A 3-dimensional polyhedron in QQ^3 defined as the convex hull
-            of 24 vertices
-
-            sage: W = ReflectionGroup(['A',3],['B',2])                  # optional - gap3
-            sage: W.permutahedron()                                     # optional - gap3
-            A 5-dimensional polyhedron in QQ^5 defined as the convex hull of 192 vertices
-
-        TESTS::
-
-            sage: W = ReflectionGroup(['A',3])                          # optional - gap3
-            sage: W.permutahedron([3,5,8])                              # optional - gap3
-            A 3-dimensional polyhedron in QQ^3 defined as the convex hull
-            of 24 vertices
-        """
-        n = self.rank()
-        weights = self.fundamental_weights()
-        if point is None:
-            point = [1] * n
-        v = sum(point[i] * wt for i, wt in enumerate(weights))
-        from sage.geometry.polyhedron.constructor import Polyhedron
-        return Polyhedron(vertices=[v*w.to_matrix() for w in self])
 
     @cached_method
     def right_coset_representatives(self, J):
@@ -682,7 +644,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
              (1,12,3,2)(4,11,10,5)(6,9,8,7)]
             [()]
         """
-        from sage.combinat.root_system.reflection_group_complex import _gap_return
+        from sage.combinat.root_system.reflection_group_element import _gap_return
         J_inv = [self._index_set_inverse[j] + 1 for j in J]
         S = str(gap3('ReducedRightCosetRepresentatives(%s,ReflectionSubgroup(%s,%s))' % (self._gap_group._name, self._gap_group._name, J_inv)))
         return sage_eval(_gap_return(S), locals={'self': self})
@@ -701,411 +663,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
         """
         return self._index_set_inverse[i]
 
-    class Element(ComplexReflectionGroup.Element):
-
-        @lazy_attribute
-        def _reduced_word(self):
-            r"""
-            Computes a reduced word and stores it into ``self._reduced_word``.
-            The words are in ``range(n)`` and not in the index set.
-
-            TESTS::
-
-                sage: W = ReflectionGroup(['A',2])                      # optional - gap3
-                sage: [w._reduced_word for w in W]                      # optional - gap3
-                [[], [1], [0], [0, 1], [1, 0], [0, 1, 0]]
-            """
-            return reduced_word_c(self.parent(),self)
-
-        def reduced_word_in_reflections(self):
-            r"""
-            Return a word in the reflections to obtain ``self``.
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(['A',2], index_set=['a','b'], reflection_index_set=['A','B','C']) # optional - gap3
-                sage: [(w.reduced_word(), w.reduced_word_in_reflections()) for w in W]  # optional - gap3
-                [([], []),
-                 (['b'], ['B']),
-                 (['a'], ['A']),
-                 (['a', 'b'], ['A', 'B']),
-                 (['b', 'a'], ['A', 'C']),
-                 (['a', 'b', 'a'], ['C'])]
-
-            .. SEEALSO:: :meth:`reduced_word`
-            """
-            if self.is_one():
-                return []
-
-            W = self.parent()
-            r = self.reflection_length()
-            R = W.reflections()
-            I = W.reflection_index_set()
-            word = []
-            while r > 0:
-                for i in I:
-                    w = R[i]._mul_(self)
-                    if w.reflection_length() < r:
-                        word += [i]
-                        r -= 1
-                        self = w
-                        break
-            return word
-
-        def length(self):
-            r"""
-            Return the length of ``self`` in generating reflections.
-
-            This is the minimal numbers of generating reflections needed
-            to obtain ``self``.
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(['A',2])                      # optional - gap3
-                sage: for w in W:                                       # optional - gap3
-                ....:     print("%s %s"%(w.reduced_word(), w.length())) # optional - gap3
-                [] 0
-                [2] 1
-                [1] 1
-                [1, 2] 2
-                [2, 1] 2
-                [1, 2, 1] 3
-            """
-            return len(self._reduced_word)
-
-        def has_left_descent(self, i):
-            r"""
-            Return whether ``i`` is a left descent of ``self``.
-
-            This is done by testing whether ``i`` is mapped by ``self``
-            to a negative root.
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(["A",3])                      # optional - gap3
-                sage: s = W.simple_reflections()                        # optional - gap3
-                sage: (s[1]*s[2]).has_left_descent(1)                   # optional - gap3
-                True
-                sage: (s[1]*s[2]).has_left_descent(2)                   # optional - gap3
-                False
-            """
-            W = self.parent()
-            return self(W._index_set_inverse[i]+1) > W.number_of_reflections()
-
-        def has_descent(self, i, side="left", positive=False):
-            r"""
-            Return whether ``i`` is a descent (or ascent) of ``self``.
-
-            This is done by testing whether ``i`` is mapped by ``self``
-            to a negative root.
-
-            INPUT:
-
-            - ``i`` -- an index of a simple reflection
-            - ``side`` (default: ``'right'``) -- ``'left'`` or ``'right'``
-            - ``positive`` (default: ``False``) -- a boolean
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(["A",3])                      # optional - gap3
-                sage: s = W.simple_reflections()                        # optional - gap3
-                sage: (s[1]*s[2]).has_descent(1)                        # optional - gap3
-                True
-                sage: (s[1]*s[2]).has_descent(2)                        # optional - gap3
-                False
-            """
-            if not isinstance(positive, bool):
-                raise TypeError("%s is not a boolean"%(bool))
-
-            if i not in self.parent().index_set():
-                raise ValueError("the given index %s is not in the index set"%i)
-
-            negative = not positive
-
-            if side == 'left':
-                return self.has_left_descent(i) is negative
-            elif side == 'right':
-                return self.has_right_descent(i) is negative
-            else:
-                raise ValueError('side must be "left" or "right"')
-
-        def to_matrix(self, side="right", on_space="primal"):
-            r"""
-            Return ``self`` as a matrix acting on the underlying vector
-            space.
-
-            - ``side`` -- optional (default: ``"right"``) whether the
-              action of ``self`` is on the ``"left"`` or on the ``"right"``
-
-            - ``on_space`` -- optional (default: ``"primal"``) whether
-              to act as the reflection representation on the given
-              basis, or to act on the dual reflection representation
-              on the dual basis
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(['A',2])           # optional - gap3
-                sage: for w in W:                            # optional - gap3
-                ....:     w.reduced_word()                   # optional - gap3
-                ....:     [w.to_matrix(), w.to_matrix(on_space="dual")] # optional - gap3
-                []
-                [
-                [1 0]  [1 0]
-                [0 1], [0 1]
-                ]
-                [2]
-                [
-                [ 1  1]  [ 1  0]
-                [ 0 -1], [ 1 -1]
-                ]
-                [1]
-                [
-                [-1  0]  [-1  1]
-                [ 1  1], [ 0  1]
-                ]
-                [1, 2]
-                [
-                [-1 -1]  [ 0 -1]
-                [ 1  0], [ 1 -1]
-                ]
-                [2, 1]
-                [
-                [ 0  1]  [-1  1]
-                [-1 -1], [-1  0]
-                ]
-                [1, 2, 1]
-                [
-                [ 0 -1]  [ 0 -1]
-                [-1  0], [-1  0]
-                ]
-
-            TESTS::
-
-                sage: W = ReflectionGroup(['F',4])           # optional - gap3
-                sage: all(w.to_matrix(side="left") == W.from_reduced_word(reversed(w.reduced_word())).to_matrix(side="right").transpose() for w in W) # optional - gap3
-                True
-                sage: all(w.to_matrix(side="right") == W.from_reduced_word(reversed(w.reduced_word())).to_matrix(side="left").transpose() for w in W) # optional - gap3
-                True
-            """
-            W = self.parent()
-            if W._reflection_representation is None:
-                if side == "left":
-                    w = ~self
-                elif side == "right":
-                    w = self
-                else:
-                    raise ValueError('side must be "left" or "right"')
-
-                Delta = W.independent_roots()
-                Phi = W.roots()
-                M = Matrix([Phi[w(Phi.index(alpha)+1)-1] for alpha in Delta])
-                mat = W.base_change_matrix() * M
-            else:
-                refl_repr = W._reflection_representation
-                id_mat = identity_matrix(QQ, refl_repr[W.index_set()[0]].nrows())
-                mat = prod([refl_repr[i] for i in self.reduced_word()], id_mat)
-
-            if on_space == "primal":
-                if side == "left":
-                    mat = mat.transpose()
-            elif on_space == "dual":
-                if side == "left":
-                    mat = mat.inverse()
-                else:
-                    mat = mat.inverse().transpose()
-            else:
-                raise ValueError('on_space must be "primal" or "dual"')
-
-            mat.set_immutable()
-            return mat
-
-        matrix = to_matrix
-
-        def action(self, vec, side="right", on_space="primal"):
-            r"""
-            Return the image of ``vec`` under the action of ``self``.
-
-            INPUT:
-
-            - ``vec`` -- vector in the basis given by the simple root
-
-            - ``side`` -- optional (default: ``"right"``) whether the
-              action of ``self`` is on the ``"left"`` or on the ``"right"``
-
-            - ``on_space`` -- optional (default: ``"primal"``) whether
-              to act as the reflection representation on the given
-              basis, or to act on the dual reflection representation
-              on the dual basis
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(['A',2])                      # optional - gap3
-                sage: for w in W:                                       # optional - gap3
-                ....:     print("%s %s"%(w.reduced_word(),              # optional - gap3
-                ....:           [w.action(weight,side="left") for weight in W.fundamental_weights()]))  # optional - gap3
-                [] [(2/3, 1/3), (1/3, 2/3)]
-                [2] [(2/3, 1/3), (1/3, -1/3)]
-                [1] [(-1/3, 1/3), (1/3, 2/3)]
-                [1, 2] [(-1/3, 1/3), (-2/3, -1/3)]
-                [2, 1] [(-1/3, -2/3), (1/3, -1/3)]
-                [1, 2, 1] [(-1/3, -2/3), (-2/3, -1/3)]
-
-            TESTS::
-
-                sage: W = ReflectionGroup(['B',3])                      # optional - gap3
-                sage: all(w.action(alpha,side="right") == w.action_on_root(alpha,side="right")  # optional - gap3
-                ....:     for w in W for alpha in W.simple_roots())     # optional - gap3
-                True
-                sage: all(w.action(alpha,side="left") == w.action_on_root(alpha,side="left")  #optional - gap3
-                ....:     for w in W for alpha in W.simple_roots())     # optional - gap3
-                True
-            """
-            W = self.parent()
-            n = W.rank()
-            Phi = W.roots()
-            if side == "right":
-                w = self
-            elif side == "left":
-                w = ~self
-            else:
-                raise ValueError('side must be "left" or "right"')
-            if on_space == "primal":
-                return sum(vec[j] * Phi[w(j+1) - 1] for j in range(n))
-            elif on_space == "dual":
-                w = ~w
-                return sum(Phi[w(j+1) - 1]*vec[j] for j in range(n))
-            else:
-                raise ValueError('on_space must be "primal" or "dual"')
-
-        def _act_on_(self, vec, self_on_left):
-            r"""
-            Give the action of ``self`` as a linear transformation on
-            the vector space, in the basis given by the simple roots.
-
-            INPUT:
-
-            - ``vec`` -- the vector (an iterable) to act on
-
-            - ``self_on_left`` -- whether the action of ``self`` is on
-              the left or on the right
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(['A',2])           # optional - gap3
-                sage: w = W.from_reduced_word([1,2])         # optional - gap3
-                sage: for root in W.positive_roots():        # optional - gap3
-                ....:     print("%s -> %s"%(root, w*root))   # optional - gap3
-                (1, 0) -> (0, 1)
-                (0, 1) -> (-1, -1)
-                (1, 1) -> (-1, 0)
-
-                sage: for root in W.positive_roots():        # optional - gap3
-                ....:     print("%s -> %s"%(root, root*w))   # optional - gap3
-                (1, 0) -> (-1, -1)
-                (0, 1) -> (1, 0)
-                (1, 1) -> (0, -1)
-            """
-            if self_on_left:
-                return self.action(vec,side="left")
-            else:
-                return self.action(vec,side="right")
-
-        def action_on_root_indices(self, i, side="right"):
-            """
-            Return the action on the set of roots.
-
-            INPUT:
-
-            - ``i`` -- index of the root to act on
-
-            - ``side`` -- optional (default: ``"right"``) whether the
-              action is on the left or on the right
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(['A',3])           # optional - gap3
-                sage: w = W.w0                               # optional - gap3
-                sage: N = len(W.roots())                     # optional - gap3
-                sage: [w.action_on_root_indices(i,side="left") for i in range(N)]    # optional - gap3
-                [8, 7, 6, 10, 9, 11, 2, 1, 0, 4, 3, 5]
-
-                sage: W = ReflectionGroup(['A',2], reflection_index_set=['A','B','C'])   # optional - gap3
-                sage: w = W.w0                               # optional - gap3
-                sage: N = len(W.roots())                     # optional - gap3
-                sage: [w.action_on_root_indices(i,side="left") for i in range(N)]    # optional - gap3
-                [4, 3, 5, 1, 0, 2]
-            """
-            if side == "right":
-                w = self
-            elif side == "left":
-                w = ~self
-            else:
-                raise ValueError('side must be "left" or "right"')
-            W = w.parent()
-            return w(i + 1) - 1
-
-        def action_on_root(self, root, side="right"):
-            r"""
-            Return the root obtained by applying ``self`` to ``root``.
-
-            INPUT:
-
-            - ``root`` -- the root to act on
-
-            - ``side`` -- optional (default: ``"right"``) whether the
-              action is on the left or on the right
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(['A',2])           # optional - gap3
-                sage: for w in W:                            # optional - gap3
-                ....:     print("%s %s"%(w.reduced_word(),   # optional - gap3
-                ....:           [w.action_on_root(beta,side="left") for beta in W.positive_roots()]))  # optional - gap3
-                [] [(1, 0), (0, 1), (1, 1)]
-                [2] [(1, 1), (0, -1), (1, 0)]
-                [1] [(-1, 0), (1, 1), (0, 1)]
-                [1, 2] [(0, 1), (-1, -1), (-1, 0)]
-                [2, 1] [(-1, -1), (1, 0), (0, -1)]
-                [1, 2, 1] [(0, -1), (-1, 0), (-1, -1)]
-
-                sage: W = ReflectionGroup(['A',2])           # optional - gap3
-                sage: for w in W:                            # optional - gap3
-                ....:     print("%s %s"%(w.reduced_word(),   # optional - gap3
-                ....:           [w.action_on_root(beta,side="right") for beta in W.positive_roots()]))  # optional - gap3
-                [] [(1, 0), (0, 1), (1, 1)]
-                [2] [(1, 1), (0, -1), (1, 0)]
-                [1] [(-1, 0), (1, 1), (0, 1)]
-                [1, 2] [(-1, -1), (1, 0), (0, -1)]
-                [2, 1] [(0, 1), (-1, -1), (-1, 0)]
-                [1, 2, 1] [(0, -1), (-1, 0), (-1, -1)]
-            """
-            Phi = self.parent().roots()
-            return Phi[self.action_on_root_indices(Phi.index(root), side=side)]
-
-        def inversion_set(self, side="right"):
-            r"""
-            Return the inversion set of ``self``.
-
-            This is the set `\{\beta \in \Phi^+ : s(\beta) \in \Phi^-\}`,
-            where `s` is ``self``.
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(['A',2])                      # optional - gap3
-                sage: for w in W:                                       # optional - gap3
-                ....:     print("%s %s"%(w.reduced_word(), w.inversion_set()))  # optional - gap3
-                [] []
-                [2] [(0, 1)]
-                [1] [(1, 0)]
-                [1, 2] [(1, 0), (1, 1)]
-                [2, 1] [(0, 1), (1, 1)]
-                [1, 2, 1] [(0, 1), (1, 0), (1, 1)]
-
-                sage: W.from_reduced_word([1,2]).inversion_set(side="left") # optional - gap3
-                [(0, 1), (1, 1)]
-            """
-            Phi_plus = set(self.parent().positive_roots())
-            return [root for root in Phi_plus if self.action_on_root(root,side=side) not in Phi_plus]
+    class Element(RealReflectionGroupElement, ComplexReflectionGroup.Element):
 
         @cached_in_parent_method
         def right_coset_representatives(self):
@@ -1126,12 +684,12 @@ class RealReflectionGroup(ComplexReflectionGroup):
                 [2, 1] [[]]
                 [1, 2, 1] [[], [2], [2, 1]]
             """
-            from sage.combinat.root_system.reflection_group_complex import _gap_return
             W = self.parent()
             T = W.reflections()
             T_fix = [i + 1 for i in T.keys()
                      if self.fix_space().is_subspace(T[i].fix_space())]
             S = str(gap3('ReducedRightCosetRepresentatives(%s,ReflectionSubgroup(%s,%s))' % (W._gap_group._name, W._gap_group._name, T_fix)))
+            from sage.combinat.root_system.reflection_group_element import _gap_return
             return sage_eval(_gap_return(S, coerce_obj='W'),
                              locals={'self': self, 'W': W})
 
@@ -1158,7 +716,6 @@ class RealReflectionGroup(ComplexReflectionGroup):
             return [ (~w) for w in self.right_coset_representatives() ]
 
 class IrreducibleRealReflectionGroup(RealReflectionGroup, IrreducibleComplexReflectionGroup):
-
     def _repr_(self):
         r"""
         Return the string representation of ``self``.

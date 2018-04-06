@@ -452,3 +452,21 @@ class BackendSageNB(BackendBase):
             url='cell://' + filename,
             link_attrs='class="file_link"',
         ))
+
+    def threejs_offline_scripts(self):
+        """
+        Three.js scripts for the Sage notebook
+
+        OUTPUT:
+
+        String containing script tags
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output.backend_sagenb import BackendSageNB
+            sage: backend = BackendSageNB()
+            sage: backend.threejs_offline_scripts()
+            '...<script ...</script>...'
+        """
+        from sage.repl.rich_output import get_display_manager
+        return get_display_manager().threejs_scripts(online=True)

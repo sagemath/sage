@@ -35,6 +35,7 @@ AUTHORS:
 
 from __future__ import print_function
 from __future__ import absolute_import
+import __future__
 
 import hashlib, multiprocessing, os, sys, time, warnings, signal, linecache
 import doctest, traceback
@@ -45,7 +46,11 @@ from .sources import DictAsObject
 from .parsing import OriginalSource, reduce_hex
 from sage.structure.sage_object import SageObject
 from .parsing import SageOutputChecker, pre_hash, get_source
-from sage.repl.user_globals import set_globals
+from sage.repl.user_globals import set_globals, get_globals
+
+
+# All doctests run as if the following future imports are present
+MANDATORY_COMPILE_FLAGS = __future__.print_function.compiler_flag
 
 
 def init_sage():
@@ -106,6 +111,11 @@ def init_sage():
     import sage.all_cmdline
     sage.interfaces.quit.invalidate_all()
 
+    # Disable cysignals debug messages in doctests: this is needed to
+    # make doctests pass when cysignals was built with debugging enabled
+    from cysignals.signals import set_debug_level
+    set_debug_level(0)
+
     # Use the rich output backend for doctest
     from sage.repl.rich_output import get_display_manager
     dm = get_display_manager()
@@ -123,6 +133,7 @@ def init_sage():
     # Disable SymPy terminal width detection
     from sympy.printing.pretty.stringpict import stringPict
     stringPict.terminal_width = lambda self:0
+
 
 
 def showwarning_with_traceback(message, category, filename, lineno, file=sys.stdout, line=None):
@@ -434,6 +445,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         # Keep track of the number of failures and tries.
         failures = tries = 0
+        quiet = False
 
         # Save the option flags (since option directives can be used
         # to modify them).
@@ -445,11 +457,16 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         # Process each example.
         for examplenum, example in enumerate(test.examples):
+            if failures:
+                # If exitfirst is set, abort immediately after a
+                # failure.
+                if self.options.exitfirst:
+                    break
 
-            # If REPORT_ONLY_FIRST_FAILURE is set, then suppress
-            # reporting after the first failure.
-            quiet = (self.optionflags & doctest.REPORT_ONLY_FIRST_FAILURE and
-                     failures > 0)
+                # If REPORT_ONLY_FIRST_FAILURE is set, then suppress
+                # reporting after the first failure (but continue
+                # running the tests).
+                quiet |= (self.optionflags & doctest.REPORT_ONLY_FIRST_FAILURE)
 
             # Merge in the example's options.
             self.optionflags = original_optionflags
@@ -503,7 +520,13 @@ class SageDocTestRunner(doctest.DocTestRunner):
             finally:
                 if self.debugger is not None:
                     self.debugger.set_continue() # ==== Example Finished ====
-            got = self._fakeout.getvalue()  # the actual output
+            got = self._fakeout.getvalue()
+            try:
+                got = got.decode('utf-8')
+            except UnicodeDecodeError:
+                got = got.decode('latin1')
+            # the actual output
+
             outcome = FAILURE   # guilty until proved innocent or insane
 
             # If the example executed without raising any exceptions,
@@ -613,6 +636,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.test = test
         if compileflags is None:
             compileflags = doctest._extract_future_flags(test.globs)
+        compileflags |= MANDATORY_COMPILE_FLAGS
         # We use this slightly modified version of Pdb because it
         # interacts better with the doctesting framework (like allowing
         # doctests for sys.settrace()). Since we already have output
@@ -757,7 +781,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: DTR.running_global_digest.hexdigest()
             '3cb44104292c3a3ab4da3112ce5dc35c'
         """
-        s = pre_hash(get_source(example))
+        s = pre_hash(get_source(example)).encode('utf-8')
         self.running_global_digest.update(s)
         self.running_doctest_digest.update(s)
         if example.predecessors is not None:
@@ -1326,7 +1350,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: D = DictAsObject({'cputime':[],'walltime':[],'err':None})
             sage: DTR.update_results(D)
             0
-            sage: sorted(list(D.iteritems()))
+            sage: sorted(list(D.items()))
             [('cputime', [...]), ('err', None), ('failures', 0), ('walltime', [...])]
         """
         for key in ["cputime","walltime"]:
@@ -1410,7 +1434,8 @@ class DocTestDispatcher(SageObject):
         """
         for source in self.controller.sources:
             heading = self.controller.reporter.report_head(source)
-            self.controller.log(heading)
+            if not self.controller.options.only_errors:
+                self.controller.log(heading)
 
             with tempfile.TemporaryFile() as outtmpfile:
                 result = DocTestTask(source)(self.controller.options,
@@ -1419,9 +1444,11 @@ class DocTestDispatcher(SageObject):
                 output = outtmpfile.read()
 
             self.controller.reporter.report(source, False, 0, result, output)
+            if self.controller.options.exitfirst and result[1].failures:
+                break
 
     def parallel_dispatch(self):
-        """
+        r"""
         Run the doctests from the controller's specified sources in parallel.
 
         This creates :class:`DocTestWorker` subprocesses, while the master
@@ -1449,6 +1476,41 @@ class DocTestDispatcher(SageObject):
                 [... tests, ... s]
             sage -t .../rings/big_oh.py
                 [... tests, ... s]
+
+        If the ``exitfirst=True`` option is given, the results for a failing
+        module will be immediately printed and any other ongoing tests
+        canceled::
+
+            sage: test1 = os.path.join(SAGE_TMP, 'test1.py')
+            sage: test2 = os.path.join(SAGE_TMP, 'test2.py')
+            sage: with open(test1, 'w') as f:
+            ....:     f.write("'''\nsage: import time; time.sleep(60)\n'''")
+            sage: with open(test2, 'w') as f:
+            ....:     f.write("'''\nsage: True\nFalse\n'''")
+            sage: DC = DocTestController(DocTestDefaults(exitfirst=True,
+            ....:                                        nthreads=2),
+            ....:                        [test1, test2])
+            sage: DC.expand_files_into_sources()
+            sage: DD = DocTestDispatcher(DC)
+            sage: DR = DocTestReporter(DC)
+            sage: DC.reporter = DR
+            sage: DC.dispatcher = DD
+            sage: DC.timer = Timer().start()
+            sage: DD.parallel_dispatch()
+            sage -t .../test2.py
+            **********************************************************************
+            File ".../test2.py", line 2, in test2
+            Failed example:
+                True
+            Expected:
+                False
+            Got:
+                True
+            **********************************************************************
+            1 item had failures:
+               1 of   1 in test2
+                [1 test, 1 failure, ... s]
+            Killing test .../test1.py
         """
         opt = self.controller.options
         source_iter = iter(self.controller.sources)
@@ -1456,15 +1518,15 @@ class DocTestDispatcher(SageObject):
         # If timeout was 0, simply set a very long time
         if opt.timeout <= 0:
             opt.timeout = 2**60
-        # Timeout we give a process to die (after it received a SIGHUP
+        # Timeout we give a process to die (after it received a SIGQUIT
         # signal). If it doesn't exit by itself in this many seconds, we
         # SIGKILL it. This is 5% of doctest timeout, with a maximum of
-        # 10 minutes and a minimum of 20 seconds.
+        # 10 minutes and a minimum of 60 seconds.
         die_timeout = opt.timeout * 0.05
         if die_timeout > 600:
             die_timeout = 600
-        elif die_timeout < 20:
-            die_timeout = 20
+        elif die_timeout < 60:
+            die_timeout = 60
 
         # List of alive DocTestWorkers (child processes). Workers which
         # are done but whose messages have not been read are also
@@ -1474,6 +1536,9 @@ class DocTestDispatcher(SageObject):
         # List of DocTestWorkers which have finished running but
         # whose results have not been reported yet.
         finished = []
+
+        # If exitfirst is set and we got a failure.
+        abort_now = False
 
         # One particular worker that we are "following": we report the
         # messages while it's running. For other workers, we report the
@@ -1555,23 +1620,31 @@ class DocTestDispatcher(SageObject):
                     # Similarly, process finished workers.
                     new_finished = []
                     for w in finished:
-                        if follow is not None and follow is not w:
+                        if opt.exitfirst and w.result[1].failures:
+                            abort_now = True
+                        elif follow is not None and follow is not w:
                             # We are following a different worker, so
-                            # we cannot report now
+                            # we cannot report now.
                             new_finished.append(w)
-                        else:
-                            # Report the completion of this worker
-                            log(w.messages, end="")
-                            self.controller.reporter.report(
-                                w.source,
-                                w.killed,
-                                w.exitcode,
-                                w.result,
-                                w.output,
-                                pid=w.pid)
-                            restart = True
-                            follow = None
+                            continue
+
+                        # Report the completion of this worker
+                        log(w.messages, end="")
+                        self.controller.reporter.report(
+                            w.source,
+                            w.killed,
+                            w.exitcode,
+                            w.result,
+                            w.output,
+                            pid=w.pid)
+
+                        restart = True
+                        follow = None
+
                     finished = new_finished
+
+                    if abort_now:
+                        break
 
                     # Start new workers if possible
                     while source_iter is not None and len(workers) < opt.nthreads:
@@ -1583,7 +1656,8 @@ class DocTestDispatcher(SageObject):
                             # Start a new worker.
                             w = DocTestWorker(source, options=opt, funclist=[sel_exit])
                             heading = self.controller.reporter.report_head(w.source)
-                            w.messages = heading + "\n"
+                            if not self.controller.options.only_errors:
+                                w.messages = heading + "\n"
                             # Store length of heading to detect if the
                             # worker has something interesting to report.
                             w.heading_len = len(w.messages)
@@ -1648,7 +1722,7 @@ class DocTestDispatcher(SageObject):
             # killing the remaining workers.
             if len(workers) > 0 and os.fork() == 0:
                 # Block these signals
-                with PSelecter([signal.SIGHUP, signal.SIGINT]):
+                with PSelecter([signal.SIGQUIT, signal.SIGINT]):
                     try:
                         from time import sleep
                         sleep(die_timeout)
@@ -1951,9 +2025,18 @@ class DocTestWorker(multiprocessing.Process):
 
     def kill(self):
         """
-        Kill this worker. The first time this is called, use
-        ``SIGHUP``. Subsequent times, use ``SIGKILL``.  Also close the
-        message pipe if it was still open.
+        Kill this worker
+
+        This method is only called if there is something wrong with the
+        worker. Under normal circumstances, the worker is supposed to
+        exit by itself after finishing.
+
+        The first time this is called, use ``SIGQUIT``. This will trigger
+        the cysignals ``SIGQUIT`` handler and try to print an enhanced
+        traceback.
+
+        Subsequent times, use ``SIGKILL``.  Also close the message pipe
+        if it was still open.
 
         EXAMPLES::
 
@@ -1967,14 +2050,14 @@ class DocTestWorker(multiprocessing.Process):
             sage: DD = DocTestDefaults()
             sage: FDS = FileDocTestSource(filename,DD)
 
-        We set up the worker to start by blocking ``SIGHUP``, such that
+        We set up the worker to start by blocking ``SIGQUIT``, such that
         killing will fail initially::
 
             sage: from cysignals.pselect import PSelecter
             sage: import signal
             sage: def block_hup():
             ....:     # We never __exit__()
-            ....:     PSelecter([signal.SIGHUP]).__enter__()
+            ....:     PSelecter([signal.SIGQUIT]).__enter__()
             sage: W = DocTestWorker(FDS, DD, [block_hup])
             sage: W.start()
             sage: W.killed
@@ -1993,7 +2076,7 @@ class DocTestWorker(multiprocessing.Process):
             self.rmessages = None
         if not self.killed:
             self.killed = True
-            os.killpg(self.pid, signal.SIGHUP)
+            os.killpg(self.pid, signal.SIGQUIT)
         else:
             os.killpg(self.pid, signal.SIGKILL)
 
@@ -2129,7 +2212,10 @@ class DocTestTask(object):
                 timer = Timer().start()
 
                 for test in doctests:
-                    runner.run(test)
+                    result = runner.run(test)
+                    if options.exitfirst and result.failed:
+                        break
+
                 runner.filename = file
                 failed, tried = runner.summarize(options.verbose)
                 timer.stop().annotate(runner)

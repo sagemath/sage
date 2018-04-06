@@ -24,10 +24,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
-
-from builtins import zip
-
-from six.moves import range
+from six import add_metaclass
+from six.moves import range, zip
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.parent import Parent
@@ -49,6 +47,8 @@ from sage.combinat.skew_partition import SkewPartition, SkewPartitions
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.words.words import Words
 
+
+@add_metaclass(InheritComparisonClasscallMetaclass)
 class SkewTableau(ClonableList):
     """
     A skew tableau.
@@ -70,11 +70,17 @@ class SkewTableau(ClonableList):
 
         sage: SkewTableau(expr=[[1,1],[[5],[3,4],[1,2]]])
         [[None, 1, 2], [None, 3, 4], [5]]
-    """
-    __metaclass__ = InheritComparisonClasscallMetaclass
 
+    The ``chain`` form of a skew tableau consists of a list of
+    partitions `\lambda_1,\lambda_2,\ldots,`, such that all cells in
+    `\lambda_{i+1}` that are not in `\lambda_i` have entry `i`::
+
+        sage: SkewTableau(chain=[[2], [2, 1], [3, 1], [4, 3, 2, 1]])
+        [[None, None, 2, 3], [1, 3, 3], [3, 3], [3]]
+
+    """
     @staticmethod
-    def __classcall_private__(cls, st=None, expr=None):
+    def __classcall_private__(cls, st=None, expr=None, chain=None):
         """
         Return the skew tableau object corresponding to ``st``.
 
@@ -89,6 +95,8 @@ class SkewTableau(ClonableList):
             return st
         if expr is not None:
             return SkewTableaux().from_expr(expr)
+        if chain is not None:
+            return SkewTableaux().from_chain(chain)
 
         return SkewTableaux()(st)
 
@@ -162,7 +170,7 @@ class SkewTableau(ClonableList):
             return list(self) == list(other)
         else:
             return list(self) == other
-    
+
     def __ne__(self, other):
         r"""
         Check whether ``self`` is unequal to ``other``.
@@ -658,7 +666,8 @@ class SkewTableau(ClonableList):
             [[None, 1], [1]]
         """
         t = self[:]
-        return SkewTableau( [z for z in map(lambda x: [y for y in x if y is None or y <= n], t) if z != []] )
+        return SkewTableau([z for z in [[y for y in x if y is None or y <= n]
+                                        for x in t] if z])
 
     def restriction_outer_shape(self, n):
         """
@@ -1366,7 +1375,7 @@ class SkewTableau(ClonableList):
         l_out = len(lam)
         l_in = len(mu)
         mu += [0]*(l_out-l_in)
-        
+
         if l_out == 0:
             return True
         else:
@@ -1380,7 +1389,7 @@ class SkewTableau(ClonableList):
                 else:
                     u += 1
 
-            # Find the least v strictly greater than u for which 
+            # Find the least v strictly greater than u for which
             # lam[v] != mu[v-1]+1
             v = u + 1
             v_test = True
@@ -1570,7 +1579,7 @@ class SkewTableau(ClonableList):
 
 def _label_skew(list_of_cells, sk):
     """
-    Return a filled-in standard standard skew tableau given an
+    Return a filled-in standard skew tableau given an
     ordered list ``list_of_cells`` of the coordinates to fill in
     (as pairs) and an empty shape ``sk``.
 
@@ -1677,6 +1686,28 @@ class SkewTableaux(UniqueRepresentation, Parent):
             skp.append( [None]*(inner[i]) + outer[-(i+1)] )
 
         return self.element_class(self, skp)
+
+    def from_chain(self, chain):
+        """
+        Return the tableau corresponding to the chain of partitions.
+
+        EXAMPLES::
+
+            sage: SkewTableaux().from_chain([[1,1],[2,1],[3,1],[3,2],[3,3],[3,3,1]])
+            [[None, 1, 2], [None, 3, 4], [5]]
+        """
+        shape = chain[-1]
+        T = [[None for _ in range(r)] for r in shape]
+        for i in range(1,len(chain)):
+            la = chain[i]
+            mu = chain[i-1]
+            mu += [0]*(len(la) - len(mu))
+
+            for r in range(len(la)):
+                for c in range(mu[r], la[r]):
+                    T[r][c] = i
+
+        return self.element_class(self, T)
 
     def from_shape_and_word(self, shape, word):
         """

@@ -65,7 +65,7 @@ from sage.rings.integer_ring import IntegerRing
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object import SageObject
 from sage.structure.element cimport Element
-from sage.structure.sage_object cimport richcmp
+from sage.structure.richcmp cimport richcmp
 
 
 class ParentLibGAP(SageObject):
@@ -146,7 +146,7 @@ class ParentLibGAP(SageObject):
         Return whether the group was defined as a subgroup of a bigger
         group.
 
-        You can access the contaning group with :meth:`ambient`.
+        You can access the containing group with :meth:`ambient`.
 
         OUTPUT:
 

@@ -5,6 +5,10 @@ Disjoint-set data structure
 The main entry point is :func:`DisjointSet` which chooses the appropriate
 type to return. For more on the data structure, see :func:`DisjointSet`.
 
+This module defines a class for mutable partitioning of a set, which
+can not be used as a key of a dictionary, vertex of a graph etc. For
+immutable partitioning see :class:`SetPartition`.
+
 AUTHORS:
 
 - Sébastien Labbé (2008) - Initial version.
@@ -43,19 +47,22 @@ Disjoint set of hashables objects::
     sage: d.find('c')
     'a'
 """
+
 #*****************************************************************************
-#      Copyright (C) 2009 Sebastien Labbe <slabqc at gmail.com>
+#       Copyright (C) 2009 Sebastien Labbe <slabqc at gmail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include '../groups/perm_gps/partn_ref/data_structures_pyx.pxi'
-
-import itertools
 from sage.rings.integer import Integer
 from sage.structure.sage_object cimport SageObject
 from cpython.object cimport PyObject_RichCompare
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
+
 
 def DisjointSet(arg):
     r"""
@@ -711,7 +718,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         cdef int i
         for i from 0 <= i < self.cardinality():
             l.append(self._int_to_el[gs[i]])
-        return zip(self._int_to_el, l)
+        return list(zip(self._int_to_el, l))
 
     def __setstate__(self, l):
         r"""

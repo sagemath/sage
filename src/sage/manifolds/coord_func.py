@@ -71,7 +71,7 @@ class CoordFunction(AlgebraElement):
         r"""
         Initialize ``self``.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()
@@ -94,7 +94,7 @@ class CoordFunction(AlgebraElement):
 
         - a :class:`~sage.manifolds.chart.Chart`
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()
@@ -300,9 +300,11 @@ class CoordFunction(AlgebraElement):
         """
 
     @abstract_method
-    def is_zero(self):
+    def __bool__(self):
         r"""
-        Return ``True`` if the function is zero and ``False`` otherwise.
+        Return ``True`` if ``self`` is nonzero and ``False`` otherwise.
+
+        This method is called by :meth:`~sage.structure.element.Element.is_zero()`.
 
         TESTS:
 
@@ -313,12 +315,41 @@ class CoordFunction(AlgebraElement):
             sage: X.<x,y> = M.chart()
             sage: from sage.manifolds.coord_func import CoordFunction
             sage: f = CoordFunction(X.function_ring())
-            sage: f.is_zero()
+            sage: f.__bool__()
             Traceback (most recent call last):
             ...
-            NotImplementedError: <abstract method is_zero at 0x...>
+            NotImplementedError: <abstract method __bool__ at 0x...>
 
         """
+
+    @abstract_method
+    def is_trivial_zero(self):
+        r"""
+        Check if ``self`` is trivially equal to zero without any
+        simplification.
+
+        This method is supposed to be fast as compared with
+        ``self.is_zero()`` or ``self == 0`` and is intended to be
+        used in library code where trying to obtain a mathematically
+        correct result by applying potentially expensive rewrite rules
+        is not desirable.
+
+        TESTS:
+
+        This method must be implemented by derived classes; it is not
+        implemented here::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart()
+            sage: from sage.manifolds.coord_func import CoordFunction
+            sage: f = CoordFunction(X.function_ring())
+            sage: f.is_trivial_zero()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: <abstract method is_trivial_zero at 0x...>
+
+        """
+
 
     @abstract_method
     def copy(self):
@@ -1413,39 +1444,13 @@ class MultiCoordFunction(SageObject):
             True
 
         """
-        def simple_determinant(aa):
-            r"""
-            Compute the determinant of a square matrix represented as an array.
-
-            This function is based on Laplace's cofactor expansion.
-            """
-            n = len(aa)
-            if n == 1:
-                return aa[0][0]
-            res = 0
-            sign = True
-            for i in range(n):
-                b = []
-                for k in range(i):
-                    r = []
-                    for l in range(1,n):
-                       r.append(aa[k][l])
-                    b.append(r)
-                for k in range(i+1,n):
-                    r = []
-                    for l in range(1,n):
-                       r.append(aa[k][l])
-                    b.append(r)
-                if sign:
-                    res += aa[i][0] * simple_determinant(b)
-                else:
-                    res -= aa[i][0] * simple_determinant(b)
-                sign = not sign
-            return res
-
+        from sage.matrix.constructor import matrix
         if self._nf != self._nc:
             raise ValueError("the Jacobian matrix is not a square matrix")
-        J = self.jacobian()
-        J = [[J[i,j] for i in range(self._nc)] for j in range(self._nc)]
-        return simple_determinant(J)
+        mat = self.jacobian()
+        mat_expr = matrix([[mat[i,j].expr() for i in range(self._nc)]
+                           for j in range(self._nc)])
+        det = mat_expr.det() # the unsimplified determinant
+        func = self._functions[0]
+        return type(func)(func.parent(), func._simplify(det))
 

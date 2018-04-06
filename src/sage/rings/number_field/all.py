@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from .number_field import (NumberField, NumberFieldTower, CyclotomicField, QuadraticField,
-                          is_fundamental_discriminant)
+                           is_fundamental_discriminant, is_real_place)
 from .number_field_element import NumberFieldElement
 
 from .order import EquationOrder, GaussianIntegers, EisensteinIntegers

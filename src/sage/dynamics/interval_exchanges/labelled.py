@@ -88,8 +88,8 @@ TESTS::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six.moves import zip
 
 from sage.structure.sage_object import SageObject
 from sage.misc.lazy_attribute import lazy_attribute
@@ -107,6 +107,7 @@ from .template import FlippedPermutationIET, FlippedPermutationLI
 from .template import twin_list_iet, twin_list_li
 from .template import RauzyDiagram, FlippedRauzyDiagram
 from .template import interval_conversion, side_conversion
+
 
 class LabelledPermutation(SageObject):
     r"""
@@ -336,7 +337,7 @@ class LabelledPermutation(SageObject):
         r"""
         .. TODO::
 
-            resolve properly the mutablility problem with the
+            resolve properly the mutability problem with the
             :meth:`_twin` attribute.
 
         TESTS::
@@ -1439,7 +1440,7 @@ class LabelledPermutationLI(LabelledPermutation, PermutationLI):
         r"""
         The twin list of the permutation
 
-        TEST::
+        TESTS::
 
             sage: p = iet.GeneralizedPermutation('a a','b b')
             sage: p._twin
@@ -1559,13 +1560,15 @@ class FlippedLabelledPermutation(LabelledPermutation):
             True
         """
         if flips:
-            a0 = zip([self._alphabet.unrank(_) for _ in self._intervals[0]], self._flips[0])
-            a1 = zip([self._alphabet.unrank(_) for _ in self._intervals[1]], self._flips[1])
+            a0 = list(zip([self._alphabet.unrank(_)
+                           for _ in self._intervals[0]], self._flips[0]))
+            a1 = list(zip([self._alphabet.unrank(_)
+                           for _ in self._intervals[1]], self._flips[1]))
         else:
             a0 = [self._alphabet.unrank(_) for _ in self._intervals[0]]
             a1 = [self._alphabet.unrank(_) for _ in self._intervals[1]]
 
-        return [a0,a1]
+        return [a0, a1]
 
     def __getitem__(self,i):
         r"""
@@ -1592,7 +1595,7 @@ class FlippedLabelledPermutation(LabelledPermutation):
         letters = [self._alphabet.unrank(_) for _ in self._intervals[i]]
         flips = self._flips[i]
 
-        return zip(letters,flips)
+        return list(zip(letters, flips))
 
     def __eq__(self,other):
         r"""
@@ -1814,8 +1817,8 @@ class FlippedLabelledPermutationIET(
             f = self._flips
             i = self._intervals
             l = []
-            l.extend([str(j*(1+k)) for j,k in zip(f[0],i[0])])
-            l.extend([str(-j*(1+k)) for j,k in zip(f[1],i[1])])
+            l.extend([str(j*(1+k)) for j, k in zip(f[0],i[0])])
+            l.extend([str(-j*(1+k)) for j, k in zip(f[1],i[1])])
             self._hash = hash(''.join(l))
 
         return self._hash
@@ -1942,7 +1945,7 @@ class FlippedLabelledPermutationLI(FlippedLabelledPermutation,
 
         permutation -- the associated reduced permutation
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = iet.GeneralizedPermutation('a a','b b c c',flips='a')
             sage: q = iet.GeneralizedPermutation('a a','b b c c',flips='a',reduced=True)
@@ -2172,11 +2175,11 @@ class LabelledRauzyDiagram(RauzyDiagram):
 
         def orbit_substitution(self):
             r"""
-            Returns the substitution on the orbit of the left extremity.
+            Return the substitution on the orbit of the left extremity.
 
             OUTPUT:
 
-            WordMorhpism -- the word morphism corresponding to the orbit
+            WordMorphism -- the word morphism corresponding to the orbit
 
             EXAMPLES::
 
@@ -2210,7 +2213,7 @@ class LabelledRauzyDiagram(RauzyDiagram):
 
             boolean -- ``True`` if the path is full and ``False`` else
 
-            EXAMPLE::
+            EXAMPLES::
 
                 sage: p = iet.Permutation('a b c','c b a')
                 sage: r = p.rauzy_diagram()
@@ -2235,7 +2238,7 @@ class LabelledRauzyDiagram(RauzyDiagram):
 
         WordMorphism -- the WordMorphism corresponding to the edge
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = iet.Permutation('a b c','c b a')
             sage: r = p.rauzy_diagram()
@@ -2265,7 +2268,7 @@ class LabelledRauzyDiagram(RauzyDiagram):
 
         WordMorphism -- the word morphism corresponding to the edge
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = iet.Permutation('a b c','c b a')
             sage: r = p.rauzy_diagram()
@@ -2301,7 +2304,7 @@ class LabelledRauzyDiagram(RauzyDiagram):
 
         iterator -- iterator over full loops
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = iet.Permutation('a b','b a')
             sage: r = p.rauzy_diagram()
@@ -2340,7 +2343,7 @@ class LabelledRauzyDiagram(RauzyDiagram):
 
         iterator -- an iterator over the full loops of given length
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = iet.Permutation('a b','b a')
             sage: d = p.rauzy_diagram()

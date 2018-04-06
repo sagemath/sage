@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 ###########################################
 ## PARI
 ###########################################
@@ -177,13 +176,6 @@ install()
     $MAKE -j1 install install-lib-sta
     if [ $? -ne 0 ]; then
         echo >&2 "Error installing PARI"
-        exit 1
-    fi
-
-    # Copy anal.h
-    cp -f "src/language/anal.h" "$SAGE_LOCAL/include/pari/anal.h"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error copying anal.h"
         exit 1
     fi
 

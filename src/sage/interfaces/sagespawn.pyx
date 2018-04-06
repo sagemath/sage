@@ -30,7 +30,7 @@ from posix.unistd cimport getpid, getpgid, close, fork
 
 from time import sleep
 
-from sage.parallel.safefork cimport ContainChildren
+from sage.interfaces.process cimport ContainChildren
 
 
 class SageSpawn(spawn):

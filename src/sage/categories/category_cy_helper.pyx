@@ -136,15 +136,18 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
         sage: join_as_tuple(T,(),())
         (Category of algebras over Integer Ring,
          Category of finite monoids,
+         Category of finite additive groups,
          Category of coalgebras over Rational Field,
          Category of finite simplicial complexes)
         sage: join_as_tuple(T,('WithBasis',),())
         (Category of algebras with basis over Integer Ring,
          Category of finite monoids,
          Category of coalgebras with basis over Rational Field,
+         Category of finite additive groups,
          Category of finite simplicial complexes)
         sage: join_as_tuple(T,(),((Monoids(),'Finite'),))
         (Category of algebras over Integer Ring,
+         Category of finite additive groups,
          Category of coalgebras over Rational Field,
          Category of finite simplicial complexes)
     """
@@ -180,7 +183,7 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
         # Removes redundant categories
         new_cats = [new_cat for new_cat in <tuple>(category._with_axiom_as_tuple(axiom))
                     if not is_supercategory_of_done(new_cat, done)]
-        for cat in done.keys():
+        for cat in list(done.keys()):
             for new_cat in new_cats:
                 if new_cat.is_subcategory(cat):
                     del done[cat]

@@ -1,8 +1,6 @@
-#!/usr/bin/env bash
-
 cd src
 
-$PIP_INSTALL .
+sdh_pip_install .
 if [ $? -ne 0 ]; then
     echo "Error installing future ... exiting"
     exit 1

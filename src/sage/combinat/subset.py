@@ -28,6 +28,7 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function, absolute_import
 
+import six
 from six.moves import range
 import sage.misc.prandom as rnd
 import itertools
@@ -824,7 +825,7 @@ def dict_to_list(d):
         ['a', 'b', 'b', 'b']
     """
     l = []
-    for i,j in d.iteritems():
+    for i,j in six.iteritems(d):
         l.extend([i]*j)
     return l
 
@@ -1143,7 +1144,7 @@ class SubMultiset_sk(SubMultiset_s):
             sage: l = [1,1,1,1,2,2,3]
             sage: for k in range(len(l)):
             ....:    S = Subsets(l,k,submultiset=True)
-            ....:    print(S.generating_serie(x) == S.cardinality()*x**k)
+            ....:    print(S.generating_serie('x') == S.cardinality()*x**k)
             True
             True
             True

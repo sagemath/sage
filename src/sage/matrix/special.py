@@ -1,5 +1,55 @@
 """
 Constructors for special matrices
+
+This module gathers several constructors for special, commonly used or
+interesting matrices. These can be reached through ``matrix.<tab>``.
+
+For example, here is a circulant matrix of order five::
+
+    sage: matrix.circulant(SR.var('a b c d e'))
+    [a b c d e]
+    [e a b c d]
+    [d e a b c]
+    [c d e a b]
+    [b c d e a]
+
+The following constructions are available:
+
+.. csv-table::
+    :class: contentstable
+    :widths: 30
+    :delim: |
+
+    :meth:`~sage.matrix.special.block_diagonal_matrix`
+    :meth:`~sage.matrix.special.block_matrix`
+    :meth:`~sage.matrix.special.circulant`
+    :meth:`~sage.matrix.special.column_matrix`
+    :meth:`~sage.matrix.special.companion_matrix`
+    :meth:`~sage.matrix.special.diagonal_matrix`
+    :meth:`~sage.matrix.special.elementary_matrix`
+    :meth:`~sage.matrix.special.hankel`
+    :meth:`~sage.matrix.special.hilbert`
+    :meth:`~sage.matrix.special.identity_matrix`
+    :meth:`~sage.matrix.special.ith_to_zero_rotation_matrix`
+    :meth:`~sage.matrix.special.jordan_block`
+    :meth:`~sage.matrix.special.lehmer`
+    :meth:`~sage.matrix.special.ones_matrix`
+    :meth:`~sage.matrix.special.random_matrix`
+    :meth:`~sage.matrix.special.random_diagonalizable_matrix`
+    :meth:`~sage.matrix.special.random_echelonizable_matrix`
+    :meth:`~sage.matrix.special.random_rref_matrix`
+    :meth:`~sage.matrix.special.random_subspaces_matrix`
+    :meth:`~sage.matrix.special.random_unimodular_matrix`
+    :meth:`~sage.matrix.special.toeplitz`
+    :meth:`~sage.matrix.special.vandermonde`
+    :meth:`~sage.matrix.special.vector_on_axis_rotation_matrix`
+    :meth:`~sage.matrix.special.zero_matrix`
+
+The Combinatorics module provides further matrix constructors, such as Hadamard
+matrices and Latin squares. See:
+
+    - :ref:`sage.combinat.matrices.hadamard_matrix`
+    - :ref:`sage.combinat.matrices.latin`
 """
 
 #*****************************************************************************
@@ -11,9 +61,9 @@ Constructors for special matrices
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import, division
 from six.moves import range
+from six import integer_types
 
 import sage.rings.all as rings
 from sage.rings.ring import is_Ring
@@ -736,7 +786,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     # Size of matrix specified?
     # Formats 2, 4
     nrows = None
-    if isinstance(arg0, (int, long, rings.Integer)):
+    if isinstance(arg0, integer_types + (rings.Integer,)):
         nrows = arg0
         arg0 = arg1
     # Object holding entries
@@ -811,7 +861,7 @@ def identity_matrix(ring, n=0, sparse=False):
         sage: M.is_mutable()
         True
     """
-    if isinstance(ring, (int, long, rings.Integer)):
+    if isinstance(ring, integer_types  + (rings.Integer,)):
         n = ring
         ring = rings.ZZ
     return matrix_space.MatrixSpace(ring, n, n, sparse)(1)
@@ -837,7 +887,7 @@ def lehmer(ring, n=0):
     """
     from sage.sets.integer_range import IntegerRange
 
-    if isinstance(ring, (int, long, rings.Integer)):
+    if isinstance(ring, integer_types + (rings.Integer,)):
         n = ring
         ring = rings.QQ
     return matrix_space.MatrixSpace(ring, n, n).matrix([[min(i, j)/max(i, j) for i in IntegerRange(1, n+1)] for j in IntegerRange(1, n+1)])
@@ -880,7 +930,7 @@ def zero_matrix(ring, nrows=None, ncols=None, sparse=False):
         [0 0 0 0 0]
 
     """
-    if isinstance(ring, (int, long, rings.Integer)):
+    if isinstance(ring, integer_types + (rings.Integer,)):
         nrows, ncols = (ring, nrows)
         ring = rings.ZZ
     return matrix_space.MatrixSpace(ring, nrows, ncols, sparse)(0)
@@ -965,7 +1015,7 @@ def ones_matrix(ring, nrows=None, ncols=None, sparse=False):
         ...
         ValueError: constructing an all ones matrix requires at least one dimension
     """
-    if isinstance(ring, (int, long, rings.Integer)):
+    if isinstance(ring, integer_types + (rings.Integer,)):
         nrows, ncols = (ring, nrows)
         ring = rings.ZZ
     if nrows is None:
@@ -1415,7 +1465,7 @@ def circulant(v, sparse=None):
         True
     """
     from exceptions import AttributeError
-    if sparse==None:
+    if sparse is None:
         try:
             sparse = v.is_sparse()
         except AttributeError:
@@ -2058,7 +2108,7 @@ def jordan_block(eigenvalue, size, sparse=False):
     -  ``sparse`` - (default: False) - if True, return a sparse matrix
 
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: jordan_block(5, 3)
         [5 1 0]
@@ -2392,7 +2442,7 @@ def random_rref_matrix(parent, num_pivots):
     Billy Wonderly (2010-07)
     """
 
-    import sage.gsl.probability_distribution as pd
+    import sage.probability.probability_distribution as pd
     from sage.misc.prandom import randint
 
     try:
@@ -2531,13 +2581,13 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
     A matrix without size control may have very large entry sizes. ::
 
         sage: D=random_matrix(ZZ, 7, 8, algorithm='echelonizable', rank=6); D
-        [    1     2     8   -35  -178  -673  -284   778]
-        [    4     9    37  -163  -827 -3128 -1324  3624]
-        [    5     6    21   -88  -454 -1712  -708  1951]
-        [   -4    -5   -22    97   491  1854   779 -2140]
-        [    4     4    13   -55  -283 -1066  -436  1206]
-        [    4    11    43  -194  -982 -3714 -1576  4310]
-        [   -1    -2   -13    59   294  1113   481 -1312]
+        [    1     2     8   -35  -178  -239  -284   778]
+        [    4     9    37  -163  -827 -1111 -1324  3624]
+        [    5     6    21   -88  -454  -607  -708  1951]
+        [   -4    -5   -22    97   491   656   779 -2140]
+        [    4     4    13   -55  -283  -377  -436  1206]
+        [    4    11    43  -194  -982 -1319 -1576  4310]
+        [   -1    -2   -13    59   294   394   481 -1312]
 
     Matrices can be generated over any exact ring. ::
 
@@ -2603,30 +2653,32 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     ring = parent.base_ring()
     rows = parent.nrows()
-    if rank<0:
+    if rank < 0:
         raise ValueError("matrices must have rank zero or greater.")
-    if rank>min(rows,parent.ncols()):
+    if rank > min(rows,parent.ncols()):
         raise ValueError("matrices cannot have rank greater than min(ncols,nrows).")
     matrix = random_rref_matrix(parent, rank)
 
     # Entries of matrices over the ZZ or QQ can get large, entry size is regulated by finding the largest
     # entry of the resultant matrix after addition of scalar multiple of a row.
-    if ring==QQ or ring==ZZ:
+    if ring == QQ or ring == ZZ:
         # If upper_bound is not set, don't control entry size.
         if upper_bound is None:
         # If size control is not desired, the routine will run slightly faster, particularly with large matrices.
-            for pivots in range(rank-1,-1,-1):
-                row_index=0
-                while row_index<rows:
-                    if pivots==row_index:
-                        row_index+=1
-                    if pivots!=row_index and row_index!=rows:
-                        matrix.add_multiple_of_row(row_index,matrix.pivot_rows()[pivots],randint(-5,5))
-                        row_index+=1
-            if rows>1:
-                matrix.add_multiple_of_row(0,randint(1,rows-1),randint(-3,3))
+            for pivots in range(rank-1, -1, -1):
+                row_index = 0
+                while row_index < rows:
+                    if pivots == row_index:
+                        row_index += 1
+                    if pivots != row_index and row_index != rows:
+                        matrix.add_multiple_of_row(row_index,
+                                                   matrix.pivot_rows()[pivots],
+                                                   randint(-5, 5))
+                        row_index += 1
+            if rows > 1:
+                matrix.add_multiple_of_row(0, randint(1,rows-1), randint(-3,3))
         else:
-            if rank==1:  # would be better just to have a special generator...
+            if rank == 1:  # would be better just to have a special generator...
                tries = 0
                while max(map(abs,matrix.list())) >= upper_bound:
                   matrix = random_rref_matrix(parent, rank)
@@ -2697,7 +2749,7 @@ def random_subspaces_matrix(parent, rank=None):
 
     OUTPUT:
 
-    A matrix whose natrual basis vectors for its four subspaces, when
+    A matrix whose natural basis vectors for its four subspaces, when
     computed, have reasonably sized, integral valued, entries.
 
     .. note::
@@ -2833,7 +2885,7 @@ def random_subspaces_matrix(parent, rank=None):
     Billy Wonderly (2010-07)
     """
 
-    import sage.gsl.probability_distribution as pd
+    import sage.probability.probability_distribution as pd
 
     ring = parent.base_ring()
     rows = parent.nrows()
@@ -3134,9 +3186,9 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         ...
         ValueError: each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue.
 
-    TODO:
+    .. TODO::
 
-    Modify the routine to allow for complex eigenvalues.
+        Modify the routine to allow for complex eigenvalues.
 
     AUTHOR:
 
@@ -3396,7 +3448,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
     AUTHORS:
 
-        Sebastien Labbe (April 2010)
+    Sebastien Labbe (April 2010)
     """
     if not ring is None:
         # coerce the vector so that computations
@@ -3415,5 +3467,180 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
     entries = {}
     for k in range(dim):
         entries[(k, k)] = 1
-    entries.update({(j,j):aa, (j,i):bb, (i,j):-bb, (i,i):aa})
+    entries.update({(j, j): aa, (j, i): bb, (i, j): -bb, (i, i): aa})
     return matrix(entries, nrows=dim, ring=ring)
+
+@matrix_method
+def hilbert(dim, ring=QQ):
+    r"""
+    Return a Hilbert matrix of the given dimension.
+
+    The `n` dimensional Hilbert matrix is a square matrix with entries being
+    unit fractions,
+
+    .. MATH::
+
+        H_{ij} = \frac{1}{i+j-1},\qquad i, j = 1,\ldots, n.
+
+    For more information see the :wikipedia:`Hilbert_matrix`.
+
+    INPUT:
+
+    - ``dim`` -- integer, the dimension of the Hilbert matrix
+
+    - ``ring`` -- base ring (optional, default: \\QQ) of the resulting matrix
+
+    EXAMPLES::
+
+        sage: matrix.hilbert(5)
+        [  1 1/2 1/3 1/4 1/5]
+        [1/2 1/3 1/4 1/5 1/6]
+        [1/3 1/4 1/5 1/6 1/7]
+        [1/4 1/5 1/6 1/7 1/8]
+        [1/5 1/6 1/7 1/8 1/9]
+    """
+    entries = lambda i, j: 1/(i+j+1)
+    return matrix(entries, nrows=dim, ncols=dim, ring=ring)
+
+@matrix_method
+def vandermonde(v, ring=None):
+    r"""
+    Return a Vandermonde matrix of the given vector.
+
+    The `n` dimensional Vandermonde matrix is a square matrix with columns
+    being the powers of a given vector `v`,
+
+    .. MATH::
+
+        V_{ij} = v_i^{j-1},\qquad i, j = 1,\ldots, n.
+
+    For more information see the :wikipedia:`Vandermonde_matrix`.
+
+    INPUT:
+
+    - ``v`` -- vector, the second column of the Vandermonde matrix
+
+    - ``ring`` -- base ring (optional, default: None) of the resulting matrix
+
+    EXAMPLES:
+
+    A Vandermonde matrix of order three over the symbolic ring::
+
+        sage: matrix.vandermonde(SR.var(['x0', 'x1', 'x2']))
+        [   1   x0 x0^2]
+        [   1   x1 x1^2]
+        [   1   x2 x2^2]
+    """
+    entries = lambda i, j: v[i]**j
+    return matrix(entries, nrows=len(v), ncols=len(v), ring=ring)
+
+@matrix_method
+def toeplitz(c, r, ring=None):
+    r"""
+    Return a Toeplitz matrix of given first column and first row.
+
+    In a Toeplitz matrix, each descending diagonal from left to right is 
+    constant, such that:
+
+    .. MATH:: T_{i,j} = T_{i+1, j+1}.
+
+    For more information see the :wikipedia:`Toeplitz_matrix`.
+
+    INPUT:
+
+    - ``c`` -- vector, first column of the Toeplitz matrix
+
+    - ``r`` -- vector, first row of the Toeplitz matrix, counting from the
+      second column
+
+    - ``ring`` -- base ring (optional, default: None) of the resulting matrix
+
+    EXAMPLES:
+
+    A rectangular Toeplitz matrix::
+
+        sage: matrix.toeplitz([1..4], [5..6])
+        [1 5 6]
+        [2 1 5]
+        [3 2 1]
+        [4 3 2]
+
+    The following `N\times N` Toeplitz matrix arises in the discretization of
+    boundary value problems::
+
+        sage: N = 4
+        sage: matrix.toeplitz([-2, 1] + [0]*(N-2), [1] + [0]*(N-2))
+        [-2  1  0  0]
+        [ 1 -2  1  0]
+        [ 0  1 -2  1]
+        [ 0  0  1 -2]
+    """
+    entries = lambda i,j: c[i-j] if i>=j else r[j-i-1]
+    return matrix(entries, nrows=len(c), ncols=len(r)+1, ring=ring)
+
+@matrix_method
+def hankel(c, r=None, ring=None):
+    r"""
+    Return a Hankel matrix of given first column and whose elements are zero
+    below the first anti-diagonal.
+
+    The Hankel matrix is symmetric and constant across the anti-diagonals,
+    with elements
+
+    .. MATH::
+
+        H_{ij} = v_{i+j-1},\qquad i = 1,\ldots, m,~j = 1,\ldots, n,
+
+    where the vector `v_i = c_i` for `i = 1,\ldots, m` and `v_{m+i} = r_i` for
+    `i = 1, \ldots, n-1` completely determines the Hankel matrix. If the last
+    row, `r`, is not given, the Hankel matrix is square by default and `r = 0`.
+    For more information see the :wikipedia:`Hankel_matrix`.
+
+    INPUT:
+
+    - ``c`` -- vector, first column of the Hankel matrix
+
+    - ``r`` -- vector (optional, default: None), last row of the Hankel matrix, from
+      the second to the last column
+
+    - ``ring`` -- base ring (optional, default: None) of the resulting matrix
+
+    EXAMPLES:
+
+    A Hankel matrix with symbolic entries::
+
+        sage: matrix.hankel(SR.var('a, b, c, d, e'))
+        [a b c d e]
+        [b c d e 0]
+        [c d e 0 0]
+        [d e 0 0 0]
+        [e 0 0 0 0]
+
+    We can also pass the elements of the last row, starting at the second column::
+
+        sage: matrix.hankel(SR.var('a, b, c, d, e'), SR.var('f, g, h, i'))
+        [a b c d e]
+        [b c d e f]
+        [c d e f g]
+        [d e f g h]
+        [e f g h i]
+
+    A third order Hankel matrix in the integers::
+
+        sage: matrix.hankel([1, 2, 3])
+        [1 2 3]
+        [2 3 0]
+        [3 0 0]
+
+    The second argument allows to customize the last row::
+
+        sage: matrix.hankel([1..3], [7..10])
+        [ 1  2  3  7  8]
+        [ 2  3  7  8  9]
+        [ 3  7  8  9 10]
+    """
+    m = len(c)
+    r = [0]*(m-1) if r is None else list(r)
+    n = len(r)
+    entries = lambda i: c[i] if i < m else r[i-m]
+    return matrix(lambda i,j: entries(i+j), nrows=m, ncols=n+1, ring=ring)

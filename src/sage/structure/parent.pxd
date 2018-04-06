@@ -9,10 +9,10 @@
 cimport sage.structure.category_object
 from sage.structure.coerce_dict cimport MonoDict, TripleDict
 
-cdef class Parent(category_object.CategoryObject):
-    cdef public _element_constructor
+cdef class Parent(sage.structure.category_object.CategoryObject):
+    cdef _element_constructor
+    cdef bint _element_init_pass_parent
     cdef public _convert_method_name
-    cdef public bint _element_init_pass_parent
     cdef public _initial_coerce_list
     cdef public _initial_action_list
     cdef public _initial_convert_list
@@ -30,7 +30,6 @@ cdef class Parent(category_object.CategoryObject):
     cpdef register_conversion(self, mor)
     cpdef register_embedding(self, embedding)
 
-    cpdef bint _richcmp(left, right, int op) except -2
     cpdef int _cmp_(left, right) except -2
     cpdef bint is_exact(self) except -2
 
@@ -62,7 +61,8 @@ cdef class Parent(category_object.CategoryObject):
     cdef public object _cache_an_element
 
     # For internal use
-    cpdef _generic_convert_map(self, S)
+    cpdef _generic_convert_map(self, S, category=*)
+    cpdef _generic_coerce_map(self, S)
     cdef discover_coerce_map_from(self, S)
     cdef discover_convert_map_from(self, S)
     cdef discover_action(self, S, op, bint self_on_left, self_el=*, S_el=*)

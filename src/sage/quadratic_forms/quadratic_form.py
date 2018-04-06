@@ -16,6 +16,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from warnings import warn
 from copy import deepcopy
@@ -435,20 +436,27 @@ class QuadraticForm(SageObject):
         if n < 0:
             raise ValueError("the size must be a non-negative integer, not {}".format(n))
 
-        ## TODO: Verify that R is a ring...
+        # TODO: Verify that R is a ring...
 
-        ## Store the relevant variables
-        N = n*(n+1) // 2
+        # Store the relevant variables
+        N = n * (n + 1) // 2
         self.__n = n
         self.__base_ring = R
-        self.__coeffs = [self.__base_ring(0) for i in range(N)]
+        self.__coeffs = [self.__base_ring.zero() for i in range(N)]
 
-        ## Check if entries is a list for the current size, and if so, write the upper-triangular matrix
-        if isinstance(entries, list) and (len(entries) == N):
-            for i in range(N):
-                self.__coeffs[i] = self.__base_ring(entries[i])
-        elif (entries is not None):
-            raise TypeError("Oops! The entries " + str(entries) + "must be a list of size n(n+1)/2.")
+        # Check if entries is a list, tuple or iterator for the
+        # current size, and if so, write the upper-triangular matrix
+        if entries is not None:
+            try:
+                entries = list(entries)
+            except TypeError:
+                raise TypeError('entries must be an iterable')
+
+            if len(entries) == N:
+                for i in range(N):
+                    self.__coeffs[i] = self.__base_ring(entries[i])
+            else:
+                raise TypeError("Oops! The entries " + str(entries) + " must be a list of size n(n+1)/2.")
 
         ## -----------------------------------------------------------
 
@@ -499,18 +507,18 @@ class QuadraticForm(SageObject):
         return deepcopy(self._external_initialization_list)
 
 
-    def _pari_(self):
+    def __pari__(self):
         """
         Return a PARI-formatted Hessian matrix for Q.
 
         EXAMPLES::
 
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
-            sage: Q._pari_()
+            sage: Q.__pari__()
             [2, 0; 0, 10]
 
         """
-        return self.matrix()._pari_()
+        return self.matrix().__pari__()
 
     def _pari_init_(self):
         """
@@ -962,7 +970,7 @@ class QuadraticForm(SageObject):
                     return False
 
         ## Test that all entries coerce to R
-        if not ((A.base_ring() == R) or (ring_coerce_test == True)):
+        if not ((A.base_ring() == R) or ring_coerce_test):
             try:
                 for i in range(n):
                     for j in range(i, n):
@@ -1150,11 +1158,11 @@ class QuadraticForm(SageObject):
 
     def polynomial(self,names='x'):
         r"""
-        Returns the polynomial in 'n' variables of the quadratic form in the ring 'R[names].'
+        Return the polynomial in 'n' variables of the quadratic form in the ring 'R[names].'
 
         INPUT:
 
-            -'self' - a quadratic form over a commatitive ring.
+            -'self' - a quadratic form over a commutative ring.
             -'names' - the name of the variables. Digits will be appended to the name for each different canonical
             variable e.g x1, x2, x3 etc.
 

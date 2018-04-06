@@ -13,5 +13,7 @@ cdef int real_part_of_quadratic_element_to_arb(arb_t res, nfeq.NumberFieldElemen
 cdef class RealBall(RingElement):
     cdef arb_t value
     cdef RealBall _new(self)
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
     cpdef RealIntervalFieldElement _real_mpfi_(self, RealIntervalField_class parent)
     cpdef RealBall psi(self)

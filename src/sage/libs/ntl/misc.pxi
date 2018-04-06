@@ -1,7 +1,7 @@
 # distutils: depends = NTL/ZZ.h
 
-include "cysignals/signals.pxi"
-include "cysignals/memory.pxi"
+from cysignals.memory cimport sig_free
+from cysignals.signals cimport sig_off
 
 # Unset the signal handler and create a string from the buffer,
 # then free the memory in the buffer.

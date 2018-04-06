@@ -61,7 +61,7 @@ mehr referenziert wird. Die Objekte haben außerdem verschiedene Typen:
     sage: type(gp('znprimroot(10007)'))
     <class 'sage.interfaces.gp.GpElement'>
     sage: type(pari('znprimroot(10007)'))
-    <type 'sage.libs.cypari2.gen.gen'>
+    <type 'cypari2.gen.Gen'>
 
 Welche Variante sollten Sie also nutzen? Das kommt darauf an was
 Sie tun. Die GP-Schnittstelle kann alles was ein normales
@@ -98,9 +98,9 @@ Zuerst erstellen wir eine PARI-Liste aus einer Python-Liste.
     sage: v
     [1, 2, 3, 4, 5]
     sage: type(v)
-    <type 'sage.libs.cypari2.gen.gen'>
+    <type 'cypari2.gen.Gen'>
 
-Jedes PARI-Objekt ist vom Typ ``py_pari.gen``. Den PARI Typ des vorliegenden
+Jedes PARI-Objekt ist vom Typ ``Gen``. Den PARI Typ des vorliegenden
 Objekts können Sie mit der ``type`` Unterfunktion herausfinden.
 
 .. link
@@ -113,7 +113,7 @@ Objekts können Sie mit der ``type`` Unterfunktion herausfinden.
 Um eine elliptische Kurve in PARI zu erstellen geben Sie
 ``ellinit([1,2,3,4,5])`` ein. Bei Sage ist es ähnlich, nur
 dass ``ellinit`` eine Methode ist, die von jedem PARI-Objekt
-aus aufgerufen werden kann, z.B. unser ``t\_VEC v``.
+aus aufgerufen werden kann, z.B. unser ``t_VEC`` `v`.
 
 .. link
 
@@ -198,7 +198,7 @@ Sages Singular-Schnittstelle (ohne die ``....:``):
     sage: R1 = singular.ring(0, '(x,y)', 'dp')
     sage: R1
     polynomial ring, over a field, global ordering
-    //   characteristic : 0
+    //   coefficients: QQ
     //   number of vars : 2
     //        block   1 : ordering dp
     //                  : names    x y

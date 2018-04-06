@@ -3,7 +3,7 @@ This file is meant to catch errors in the PARI/GP package which are not
 caught by any other tests.
 
 Check that :trac:`9876` has been fixed, this test comes from PARI's
-self-test "rnfkummer" but was modified such that the answer is
+self-test :pari:`rnfkummer` but was modified such that the answer is
 canonical::
 
     sage: pari('addprimes([31438243, 238576291, 18775387483, 24217212463267, 1427657500359111961, 135564809928627323997297867381959])')

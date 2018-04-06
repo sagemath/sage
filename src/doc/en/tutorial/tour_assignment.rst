@@ -95,7 +95,7 @@ hold values of any Python type within a given scope:
     <type 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # now a is a string
     sage: type(a)
-    <type 'str'>
+    <... 'str'>
 
 The C programming language, which is statically typed, is much
 different; a variable declared to hold an int can only hold an int

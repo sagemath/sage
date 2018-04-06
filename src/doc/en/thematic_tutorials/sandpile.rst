@@ -2257,7 +2257,7 @@ EXAMPLES::
     sage: H.sink()
     (0, 0)
     sage: type(H.sink())
-    <type 'tuple'>
+    <... 'tuple'>
 
 ---
 
@@ -2283,7 +2283,7 @@ EXAMPLES::
     [0 4 0 0]
     [0 0 4 0]
     [0 0 0 0]
-    sage: U*s.laplacian()*V == D  # laplacian symmetric => tranpose not necessary
+    sage: U*s.laplacian()*V == D  # laplacian symmetric => transpose not necessary
     True
 
 ---
@@ -2376,8 +2376,7 @@ EXAMPLES::
 
 REFERENCES:
 
-.. [Levine2014]_ Lionel Levine. Threshold state and a conjecture of Poghosyan, Poghosyan,
-   Priezzhev and Ruelle, Communications in Mathematical Physics.
+- [Levine2014]_
 
 ---
 
@@ -3058,8 +3057,7 @@ EXAMPLES::
 
 REFERENCES:
 
-.. [Levine2014]_ Lionel Levine. Threshold state and a conjecture of Poghosyan, Poghosyan,
-   Priezzhev and Ruelle, Communications in Mathematical Physics.
+- [Levine2014]_
 
 ---
 
@@ -3987,36 +3985,36 @@ EXAMPLES::
 
     sage: s = sandpiles.Complete(4)
     sage: D = SandpileDivisor(s,[4,2,0,0])
-    sage: D.effective_div()
-    [{0: 0, 1: 6, 2: 0, 3: 0},
+    sage: sorted(D.effective_div(), key=str)
+    [{0: 0, 1: 2, 2: 0, 3: 4},
      {0: 0, 1: 2, 2: 4, 3: 0},
-     {0: 0, 1: 2, 2: 0, 3: 4},
+     {0: 0, 1: 6, 2: 0, 3: 0},
      {0: 1, 1: 3, 2: 1, 3: 1},
      {0: 2, 1: 0, 2: 2, 3: 2},
      {0: 4, 1: 2, 2: 0, 3: 0}]
-    sage: D.effective_div(False)
-    [[0, 6, 0, 0],
+    sage: sorted(D.effective_div(False))
+    [[0, 2, 0, 4],
      [0, 2, 4, 0],
-     [0, 2, 0, 4],
+     [0, 6, 0, 0],
      [1, 3, 1, 1],
      [2, 0, 2, 2],
      [4, 2, 0, 0]]
-    sage: D.effective_div(with_firing_vectors=True)
-    [({0: 0, 1: 6, 2: 0, 3: 0}, (0, -2, -1, -1)),
+    sage: sorted(D.effective_div(with_firing_vectors=True), key=str)
+    [({0: 0, 1: 2, 2: 0, 3: 4}, (0, -1, -1, -2)),
      ({0: 0, 1: 2, 2: 4, 3: 0}, (0, -1, -2, -1)),
-     ({0: 0, 1: 2, 2: 0, 3: 4}, (0, -1, -1, -2)),
+     ({0: 0, 1: 6, 2: 0, 3: 0}, (0, -2, -1, -1)),
      ({0: 1, 1: 3, 2: 1, 3: 1}, (0, -1, -1, -1)),
      ({0: 2, 1: 0, 2: 2, 3: 2}, (0, 0, -1, -1)),
      ({0: 4, 1: 2, 2: 0, 3: 0}, (0, 0, 0, 0))]
-    sage: a = _[0]
+    sage: a = _[2]
     sage: a[0].values()
     [0, 6, 0, 0]
     sage: vector(D.values()) - s.laplacian()*a[1]
     (0, 6, 0, 0)
-    sage: D.effective_div(False, True)
-    [([0, 6, 0, 0], (0, -2, -1, -1)),
+    sage: sorted(D.effective_div(False, True))
+    [([0, 2, 0, 4], (0, -1, -1, -2)),
      ([0, 2, 4, 0], (0, -1, -2, -1)),
-     ([0, 2, 0, 4], (0, -1, -1, -2)),
+     ([0, 6, 0, 0], (0, -2, -1, -1)),
      ([1, 3, 1, 1], (0, -1, -1, -1)),
      ([2, 0, 2, 2], (0, 0, -1, -1)),
      ([4, 2, 0, 0], (0, 0, 0, 0))]
@@ -4131,11 +4129,9 @@ EXAMPLES::
     is_q_reduced           -- Is the divisor q-reduced?
     is_symmetric           -- Is the divisor symmetric?
     is_weierstrass_pt      -- Is the given vertex a Weierstrass point?
-    linear_system          -- The complete linear system (deprecated: use "polytope_integer_pts").
     polytope               -- The polytope determinining the complete linear system.
     polytope_integer_pts   -- The integer points inside divisor's polytope.
     q_reduced              -- The linearly equivalent q-reduced divisor.
-    r_of_D                 -- The rank of the divisor (deprecated: use "rank", instead).
     rank                   -- The rank of the divisor.
     sandpile               -- The divisor's underlying sandpile.
     show                   -- Show the divisor.
@@ -4377,13 +4373,13 @@ EXAMPLES::
 
     sage: s = sandpiles.Complete(4)
     sage: D = SandpileDivisor(s,[4,2,0,0])
-    sage: D.polytope_integer_pts()
-    ((-2, -1, -1),
+    sage: sorted(D.polytope_integer_pts())
+    [(-2, -1, -1),
      (-1, -2, -1),
      (-1, -1, -2),
      (-1, -1, -1),
      (0, -1, -1),
-     (0, 0, 0))
+     (0, 0, 0)]
     sage: D = SandpileDivisor(s,[-1,0,0,0])
     sage: D.polytope_integer_pts()
     ()

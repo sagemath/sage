@@ -46,7 +46,7 @@ class AmbientSpace(Scheme):
     """
     def __init__(self, n, R=ZZ):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.schemes.generic.ambient_space import AmbientSpace
             sage: A = AmbientSpace(5, ZZ)
@@ -71,7 +71,7 @@ class AmbientSpace(Scheme):
     #######################################################################
     def __cmp__(self, right):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.schemes.generic.ambient_space import AmbientSpace
             sage: A = AmbientSpace(5, ZZ)
@@ -84,7 +84,7 @@ class AmbientSpace(Scheme):
 
     def _latex_(self):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.schemes.generic.ambient_space import AmbientSpace
             sage: A = AmbientSpace(5, ZZ)
@@ -97,7 +97,7 @@ class AmbientSpace(Scheme):
 
     def _repr_(self):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.schemes.generic.ambient_space import AmbientSpace
             sage: A = AmbientSpace(5, ZZ)
@@ -110,7 +110,7 @@ class AmbientSpace(Scheme):
 
     def _repr_generic_point(self, coords=None):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.schemes.generic.ambient_space import AmbientSpace
             sage: A = AmbientSpace(5, ZZ)
@@ -123,7 +123,7 @@ class AmbientSpace(Scheme):
 
     def _latex_generic_point(self, coords=None):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.schemes.generic.ambient_space import AmbientSpace
             sage: A = AmbientSpace(5, ZZ)
@@ -139,7 +139,7 @@ class AmbientSpace(Scheme):
         Verify that the coordinates of v define a point on this scheme, or
         raise a TypeError.
 
-        TEST::
+        TESTS::
 
             sage: from sage.schemes.generic.ambient_space import AmbientSpace
             sage: A = AmbientSpace(5, ZZ)
@@ -347,7 +347,8 @@ class AmbientSpace(Scheme):
 
 ##     def assign_names(self, names=None):
 ##         """
-##         EXAMPLES:
+##         EXAMPLES::
+
 ##             sage: A = AffineSpace(2, QQ, 'ab'); A
 ##             Affine Space of dimension 2 over Rational Field
 ##             sage: A.coordinate_ring()

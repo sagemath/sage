@@ -21,18 +21,23 @@ debugger.
 """
 
 #*****************************************************************************
-#      Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
+#       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'data_structures_pyx.pxi' # includes bitsets
+from cysignals.memory cimport sig_malloc, sig_free
 
+from .data_structures cimport *
 from .automorphism_group_canonical_label cimport (
     get_aut_gp_and_can_lab, aut_gp_and_can_lab,
     allocate_agcl_output, deallocate_agcl_output)
 from .double_coset cimport double_coset
+from sage.rings.integer cimport Integer
 
 
 cdef class PythonPartitionStack:
@@ -44,7 +49,7 @@ cdef class PythonPartitionStack:
         """
         Initialize a PartitionStack.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7) # implicit doctest
@@ -56,7 +61,7 @@ cdef class PythonPartitionStack:
         """
         Deallocate the PartitionStack.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -69,7 +74,7 @@ cdef class PythonPartitionStack:
         """
         Returns a string representing the stack.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -83,7 +88,7 @@ cdef class PythonPartitionStack:
         """
         Prints a representation of the stack.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -101,7 +106,7 @@ cdef class PythonPartitionStack:
         """
         Returns whether the deepest partition consists only of singleton cells.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -119,7 +124,7 @@ cdef class PythonPartitionStack:
         """
         Returns the number of cells in the deepest partition.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -134,7 +139,7 @@ cdef class PythonPartitionStack:
         Makes sure that the first element of the segment of entries i with
         start <= i <= end is minimal.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -152,7 +157,7 @@ cdef class PythonPartitionStack:
     def __copy__(self):
         """
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -173,7 +178,7 @@ cdef class PythonPartitionStack:
         Sets the current partition to the first shallower one, i.e. forgets about
         boundaries between cells that are new to the current level.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -195,7 +200,7 @@ cdef class PythonPartitionStack:
         """
         Returns the entries array as a Python list of ints.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -212,7 +217,7 @@ cdef class PythonPartitionStack:
         """
         Sets the ith entry of the entries array to entry.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -228,7 +233,7 @@ cdef class PythonPartitionStack:
         """
         Gets the ith entry of the entries array.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -242,7 +247,7 @@ cdef class PythonPartitionStack:
         """
         Return the levels array as a Python list of ints.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -258,7 +263,7 @@ cdef class PythonPartitionStack:
         """
         Sets the ith entry of the levels array to entry.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -276,7 +281,7 @@ cdef class PythonPartitionStack:
         """
         Gets the ith entry of the levels array.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -291,7 +296,7 @@ cdef class PythonPartitionStack:
         Returns the depth of the deepest partition in the stack, setting it to
         new if new is not None.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -308,7 +313,7 @@ cdef class PythonPartitionStack:
         Returns the degree of the partition stack, setting it to
         new if new is not None.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -324,7 +329,7 @@ cdef class PythonPartitionStack:
         """
         Return the partition at level k, as a Python list of lists.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
@@ -355,7 +360,7 @@ class PythonObjectWrapper:
         """
         Initialize a PythonObjectWrapper.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonObjectWrapper
             sage: def acae(a,b):
@@ -443,7 +448,7 @@ def aut_gp_and_can_lab_python(S, partition, n,
         base -- boolean; whether to return a base for the automorphism group
         order -- boolean; whether to return the order of the automorphism group
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_python import aut_gp_and_can_lab_python
         sage: def acae(a,b):
@@ -525,7 +530,7 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
             int compare_structures(list, list, object, object)
         (see double_coset.pyx for more documentation)
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_python import double_coset_python
         sage: def acae(a,b):
@@ -539,8 +544,10 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
 
         sage: def compare_lists(p1,p2,l1,l2,deg):
         ....:     for i in range(len(l1)):
-        ....:         j = cmp(l1[p1[i]], l2[p2[i]])
-        ....:         if j != 0: return j
+        ....:         a1 = l1[p1[i]]
+        ....:         a2 = l2[p2[i]]
+        ....:         if a1 < a2: return -1
+        ....:         if a1 > a2: return 1
         ....:     return 0
 
         sage: double_coset_python([0,0,1], [1,0,0], [[0,1,2]], [0,1,2], 3, acae, rari, compare_lists)

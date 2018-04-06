@@ -8,6 +8,7 @@ p-adic Flat Polynomials
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+import six
 from six.moves import range
 
 from sage.rings.polynomial.polynomial_element import Polynomial_generic_dense, Polynomial
@@ -52,7 +53,7 @@ class Polynomial_padic_flat(Polynomial_generic_dense, Polynomial_padic):
                 zero = R(0)
                 n = max(x.keys()) if x else 0
                 v = [zero] * (n + 1)
-                for i, z in x.iteritems():
+                for i, z in six.iteritems(x):
                     v[i] = R(z)
                     m = min(m, v[i].precision_absolute())
                 x = v

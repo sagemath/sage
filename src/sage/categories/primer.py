@@ -168,7 +168,7 @@ use, that is to which category it belongs::
 
     sage: G = GL(2,ZZ)
     sage: G.category()
-    Category of groups
+    Category of infinite groups
 
 In fact a group is a semigroup, and Sage knows about this::
 
@@ -180,10 +180,10 @@ In fact a group is a semigroup, and Sage knows about this::
 Altogether, our group gets algorithms from a bunch of bookshelves::
 
     sage: G.categories()
-    [Category of groups, Category of monoids, Category of semigroups,
+    [Category of infinite groups, Category of groups, Category of monoids,
      ...,
      Category of magmas,
-     Category of sets, ...]
+     Category of infinite sets, ...]
 
 Those can be viewed graphically::
 
@@ -414,7 +414,7 @@ Applying an operation is generally done by *calling a method*::
     sage: R.<x> = PolynomialRing(QQ, sparse=True)
     sage: pQ = R ( p )
     sage: type(pQ)
-    <class 'sage.rings.polynomial.polynomial_element_generic.PolynomialRing_field_with_category.element_class'>
+    <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
     sage: pQ.factor()
     (6) * (x + 1)^2
 

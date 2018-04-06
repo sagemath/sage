@@ -8,12 +8,6 @@ Base Classes for Rings, Algebras and Fields
    :maxdepth: 2
 
    sage/rings/ring
-   sage/rings/commutative_ring
-   sage/rings/commutative_algebra
-   sage/rings/dedekind_domain
-   sage/rings/euclidean_domain
-   sage/rings/integral_domain
-   sage/rings/principal_ideal_domain
 
 Ideals
 ------
@@ -61,6 +55,5 @@ Utilities
    sage/rings/big_oh
    sage/rings/infinity
    sage/rings/numbers_abc
-   sage/rings/misc
 
 .. include:: ../footer.txt

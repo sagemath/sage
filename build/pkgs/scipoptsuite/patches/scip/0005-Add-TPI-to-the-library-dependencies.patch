@@ -1,0 +1,34 @@
+From 1ca7c0504ea4caa678e13eb238d6bae7a705d26e Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Thu, 16 Mar 2017 18:37:43 -0700
+Subject: [PATCH 5/5] Add TPI to the library dependencies
+
+---
+ Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 103d89b..35a0224 100644
+--- a/Makefile
++++ b/Makefile
+@@ -422,7 +422,7 @@ SCIPLIBEXTLIBS	+=	$(READLINE_LDFLAGS)
+ endif
+ SCIPLIBEXTLIBS	+=	$(ZIMPLLIB) $(LINKRPATH)$(realpath $(LIBDIR)/$(LIBTYPE))
+ endif
+-SCIPLIBEXTLIBS  +=      $(LPILIBFILE) $(NLPILIBFILE)
++SCIPLIBEXTLIBS  +=      $(LPILIBFILE) $(NLPILIBFILE) $(TPILIBFILE)
+ 
+ #-----------------------------------------------------------------------------
+ # SCIP Library
+@@ -1106,7 +1106,7 @@ endif
+ libscip:		preprocess
+ 		@$(MAKE) $(SCIPLIBFILE) $(SCIPLIBLINK) $(SCIPLIBSHORTLINK)
+ 
+-$(SCIPLIBFILE):	$(SCIPLIBOBJFILES) $(LPILIBFILE) $(NLPILIBFILE) | $(LIBDIR)/$(LIBTYPE) $(LIBOBJSUBDIRS)
++$(SCIPLIBFILE):	$(SCIPLIBOBJFILES) $(LPILIBFILE) $(NLPILIBFILE) $(TPILIBFILE) | $(LIBDIR)/$(LIBTYPE) $(LIBOBJSUBDIRS)
+ 		@echo "-> generating library $@"
+ 		-rm -f $@
+ 		$(LIBBUILD) $(LIBBUILDFLAGS) $(SCIP_LIBBUILDFLAGS) $(LIBBUILD_o)$@ $(SCIPLIBOBJFILES) $(SCIPLIBEXTLIBS)
+-- 
+2.7.4 (Apple Git-66)
+

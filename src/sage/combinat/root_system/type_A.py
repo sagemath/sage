@@ -259,7 +259,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             sage: sorted(a.edges())
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
 
-        TEST::
+        TESTS::
 
             sage: a = DynkinDiagram(['A',1])
             sage: a

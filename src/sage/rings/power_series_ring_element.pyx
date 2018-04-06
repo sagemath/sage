@@ -14,7 +14,7 @@ AUTHORS:
 - Robert Bradshaw (2007-04): Cython version
 - Simon King (2012-08): use category and coercion framework, :trac:`13412`
 
-EXAMPLE::
+EXAMPLES::
 
     sage: R.<x> = PowerSeriesRing(ZZ)
     sage: TestSuite(R).run()
@@ -39,7 +39,7 @@ its generator as follows::
     sage: parent(x)
     Power Series Ring in x over Integer Ring
 
-EXAMPLE:
+EXAMPLES:
 
 This example illustrates that coercion for power
 series rings is consistent with coercion for polynomial rings.
@@ -93,21 +93,20 @@ With power series the behavior is the same.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import absolute_import
 
 import operator
 
-from infinity import infinity, is_Infinite
+from .infinity import infinity, is_Infinite
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.rings.polynomial.polynomial_element
-import power_series_ring
 import sage.misc.misc
 import sage.arith.all as arith
 import sage.misc.latex
-import rational_field, integer_ring
-from integer import Integer
+from . import rational_field
+from . import integer_ring
+from .integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.libs.pari.all import pari
 from sage.misc.superseded import deprecated_function_alias, deprecation
 from warnings import warn
 
@@ -119,7 +118,7 @@ from sage.misc.derivative import multi_derivative
 Polynomial = sage.rings.polynomial.polynomial_element.Polynomial_generic_dense
 
 from sage.structure.element cimport AlgebraElement, RingElement, ModuleElement, Element
-from sage.structure.sage_object cimport richcmp
+from sage.structure.richcmp cimport richcmp
 
 
 def is_PowerSeries(x):
@@ -586,7 +585,7 @@ cdef class PowerSeries(AlgebraElement):
         is the difference between its absolute precision
         and its valuation.
 
-        By convension, the relative precision of `0` (or
+        By convention, the relative precision of `0` (or
         `O(x^r)` for any `r`) is `0`.
 
         EXAMPLES::
@@ -962,7 +961,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def valuation_zero_part(self):
         r"""
-        Factor self as as `q^n \cdot (a_0 + a_1 q + \cdots)` with
+        Factor self as `q^n \cdot (a_0 + a_1 q + \cdots)` with
         `a_0` nonzero. Then this function returns
         `a_0 + a_1 q + \cdots` .
 
@@ -1071,8 +1070,9 @@ cdef class PowerSeries(AlgebraElement):
             sage: f % 67
             T^2 + O(T^3)
         """
-        if isinstance(other,(int,Integer,long)):
-            return power_series_ring.PowerSeriesRing(IntegerModRing(other), self.variable())(self)
+        from sage.rings.power_series_ring import PowerSeriesRing
+        if isinstance(other, (int, Integer, long)):
+            return PowerSeriesRing(IntegerModRing(other), self.variable())(self)
         raise NotImplementedError("Mod on power series ring elements not defined except modulo an integer.")
 
     def shift(self, n):
@@ -1855,7 +1855,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: (-1 + t + O(t^10)).log()
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.rings.rational.Rational' object has no attribute 'log'
+            ArithmeticError: constant term of power series is not 1
 
             sage: R.<t> = PowerSeriesRing(RR)
             sage: (2+t).log().exp()
@@ -1868,7 +1868,7 @@ cdef class PowerSeries(AlgebraElement):
         const_off = zero
 
         if not self[0].is_one():
-            if self.base_ring() in _Fields:
+            if self.base_ring() in _Fields and self[0] > 0:
                 const_off = self[0].log()
             else:
                 raise ArithmeticError("constant term of power series is not 1")
@@ -2058,13 +2058,13 @@ cdef class PowerSeries(AlgebraElement):
     ogf = deprecated_function_alias(15705, egf_to_ogf)
     egf = deprecated_function_alias(15705, ogf_to_egf)
 
-    def _pari_(self):
+    def __pari__(self):
         """
-        Return PARI power series corresponding to this series.
+        Return a PARI representation of this series.
 
         There are currently limits to the possible base rings over which this
         function works.  See the documentation for
-        ``sage.rings.polynomial.polynomial_element.Polynomial._pari_``
+        ``sage.rings.polynomial.polynomial_element.Polynomial.__pari__``
 
         EXAMPLES::
 
@@ -2073,9 +2073,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: pari(f) # indirect doctest
             1 + 17*w + 15*w^3 + O(w^5)
             sage: pari(1 - 19*w + w^5) # indirect doctest
-            Traceback (most recent call last):
-            ...
-            ValueError: series precision must be finite for conversion to pari object.
+            w^5 - 19*w + 1
             sage: R.<x> = Zmod(6)[[]]
             sage: pari(1 + x + 8*x^3 + O(x^8)) # indirect doctest
             Mod(1, 6) + Mod(1, 6)*x + Mod(2, 6)*x^3 + O(x^8)
@@ -2090,10 +2088,10 @@ cdef class PowerSeries(AlgebraElement):
             O(x^0)
         """
         n = self.prec()
-        if n is infinity:
-            raise ValueError("series precision must be finite for conversion to pari object.")
-        s = self.truncate()._pari_()  # PARI polynomial
-        s += pari('O(%s^%d)' % (s.variable(), n))  # PARI series
+        s = self.truncate().__pari__()  # PARI polynomial
+        if n is not infinity:
+            v = s.variable()
+            s = s.Ser(v, n - s.valuation(v) if s else n)
         return s
 
 def _solve_linear_de(R, N, L, a, b, f0):
@@ -2224,8 +2222,9 @@ def _solve_linear_de(R, N, L, a, b, f0):
 def make_powerseries_poly_v0(parent,  f, prec, is_gen):
     # This is only used to unpickle old pickles. The new pickling
     # works differently!
-    import power_series_poly
+    from . import power_series_poly
     return power_series_poly.PowerSeries_poly(parent, f, prec, 0, is_gen)
+
 
 def make_element_from_parent_v0(parent, *args):
     # This is only used to unpickle old pickles. The new pickling

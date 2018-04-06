@@ -18,7 +18,7 @@ EXAMPLES::
 REFERENCE:
 
 Uses the `Google performance analysis tools
-<https://code.google.com/p/gperftools>`_. Note that they are not
+<https://github.com/gperftools/gperftools>`_. Note that they are not
 included in Sage, you have to install them yourself on your system.
 
 AUTHORS:
@@ -34,9 +34,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import ctypes
 import time
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
+from sage.misc.compat import find_library
 
 
 libc = None
@@ -112,13 +114,12 @@ class Profiler(SageObject):
 
             sage: from sage.misc.gperftools import Profiler
             sage: Profiler()._libc()
-            <CDLL '...libc...', handle ... at ...>
+            <CDLL '...', handle ... at ...>
         """
         global libc
         if libc is not None:
             return libc
-        import ctypes, ctypes.util
-        name = ctypes.util.find_library('c')
+        name = find_library('c')
         if name:
             libc = ctypes.CDLL(name)
             return libc

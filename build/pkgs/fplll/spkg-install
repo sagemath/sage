@@ -1,0 +1,75 @@
+if [ "$SAGE_LOCAL" = "" ]; then
+    echo "SAGE_LOCAL undefined ... exiting";
+    echo "Maybe run 'sage -sh'?"
+    exit 1
+fi
+
+cd src || exit
+
+INCLUDES="-I$SAGE_LOCAL/include/"
+
+if [ "$UNAME" = "CYGWIN" ]; then
+    CXXFLAGS="$CXXFLAGS -std=gnu++11"
+fi
+CXXFLAGS="$CXXFLAGS -fPIC $INCLUDES -L$SAGE_LOCAL/lib"
+CPPFLAGS="$INCLUDES"
+CONFIGUREFLAGS="--prefix=$SAGE_LOCAL --libdir=$SAGE_LOCAL/lib"
+
+# Allow the user to specify a compiler flag for 64-bit builds.
+# This will be -m64 with both Sun Studio and gcc, but other compilers
+# such as those from IBM on AIX and HP on HP-UX use different flags.
+
+if [ -z "$CXXFLAG64" ] ; then
+    CXXFLAG64=-m64
+fi
+
+if [ "x$SAGE64" = xyes ]; then
+    echo "Building a 64-bit version of libfplll"
+    CXXFLAGS="$CXXFLAGS $CXXFLAG64"
+    CPPFLAGS="$CPPFLAGS $CXXFLAG64"
+    CXX="$CXX $CXXFLAG64"
+fi
+
+if [ "$UNAME" = "CYGWIN" ]; then
+    echo "Disable parallel building on Cygwin"
+    MAKE="$MAKE -j1"
+    export MAKE
+    CONFIGUREFLAGS="$CONFIGUREFLAGS --disable-recursive-enum"
+fi
+
+if [ "x$SAGE_DEBUG" = "xyes" ]; then
+   CXXFLAGS="$CXXFLAGS -O0"
+   CONFIGUREFLAGS="$CONFIGUREFLAGS --enable-debug"
+else
+   CXXFLAGS="$CXXFLAGS -O3"
+fi
+
+export CXXFLAGS="$CXXFLAGS"
+export CPPFLAGS="$CPPFLAGS"
+export CXX="$CXX"
+
+echo "Now configuring fplll..."
+./configure $CONFIGUREFLAGS
+if [ $? -ne 0 ]; then
+    echo "Error configuring fplll"
+    exit 1
+fi
+
+echo "Now building fplll..."
+$MAKE
+if [ $? -ne 0 ]; then
+    echo "Error building fplll"
+    exit 1
+fi
+
+echo "Now installing fplll..."
+$MAKE install
+if [ $? -ne 0 ]; then
+    echo "Error installing fplll"
+    exit 1
+fi
+
+
+# Pretend that the "libfplll" package is not installed. This is needed to
+# support renaming libfplll -> fplll done on Trac #24042
+rm -f "$SAGE_SPKG_INST/"libfplll-*

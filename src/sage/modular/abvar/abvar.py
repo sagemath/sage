@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Base class for modular abelian varieties
 
@@ -33,6 +34,8 @@ from __future__ import absolute_import
 
 from sage.categories.all        import ModularAbelianVarieties
 from sage.structure.sequence    import Sequence, Sequence_generic
+from sage.structure.richcmp import (richcmp_method, richcmp, richcmp_not_equal,
+                                    rich_to_bool)
 from sage.structure.parent_base import ParentWithBase
 from .morphism                   import HeckeOperator, Morphism, DegeneracyMap
 from .torsion_subgroup           import RationalTorsionSubgroup, QQbarTorsionSubgroup
@@ -41,15 +44,25 @@ from .cuspidal_subgroup          import CuspidalSubgroup, RationalCuspidalSubgro
 from sage.rings.all import ZZ, QQ, QQbar, Integer
 from sage.arith.all import LCM, divisors, prime_range, next_prime
 from sage.rings.ring import is_Ring
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.infinity import infinity
+from sage.rings.fraction_field import FractionField
 from sage.modules.free_module   import is_FreeModule
 from sage.modular.arithgroup.all import is_CongruenceSubgroup, is_Gamma0, is_Gamma1, is_GammaH
 from sage.modular.modsym.all    import ModularSymbols
 from sage.modular.modsym.space  import ModularSymbolsSpace
+from sage.modular.modform.constructor  import Newform
 from sage.matrix.all            import matrix, block_diagonal_matrix, identity_matrix
 from sage.modules.all           import vector
 from sage.groups.all            import AbelianGroup
 from sage.databases.cremona     import cremona_letter_code
 from sage.misc.all              import prod
+from sage.arith.misc            import is_prime
+from sage.databases.cremona     import CremonaDatabase
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
+from sage.sets.primes           import Primes
+from sage.functions.other       import real
 
 from copy import copy
 
@@ -84,6 +97,7 @@ def is_ModularAbelianVariety(x):
     return isinstance(x, ModularAbelianVariety_abstract)
 
 
+@richcmp_method
 class ModularAbelianVariety_abstract(ParentWithBase):
     def __init__(self, groups, base_field, is_simple=None, newform_level=None,
                  isogeny_number=None, number=None, check=True):
@@ -173,6 +187,50 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             (Congruence Subgroup Gamma0(37), Congruence Subgroup Gamma1(13))
         """
         return self.__groups
+
+    def is_J0(self):
+        """
+        Return whether of not self is of the form J0(N).
+
+        OUTPUT: bool
+
+        EXAMPLES::
+
+            sage: J0(23).is_J0()
+            True
+            sage: J1(11).is_J0()
+            False
+            sage: (J0(23) * J1(11)).is_J0()
+            False
+            sage: J0(37)[0].is_J0()
+            False
+            sage: (J0(23) * J0(21)).is_J0()
+            False
+        """
+        return len(self.groups()) == 1 and is_Gamma0(self.groups()[0]) \
+            and self.is_ambient()
+
+    def is_J1(self):
+        """
+        Return whether of not self is of the form J1(N).
+
+        OUTPUT: bool
+
+        EXAMPLES::
+
+            sage: J1(23).is_J1()
+            True
+            sage: J0(23).is_J1()
+            False
+            sage: (J1(11) * J1(13)).is_J1()
+            False
+            sage: (J1(11) * J0(13)).is_J1()
+            False
+            sage: J1(23)[0].is_J1()
+            False
+        """
+        return len(self.groups()) == 1 and is_Gamma1(self.groups()[0]) \
+            and self.is_ambient()
 
     #############################################################################
     # lattice() *must* be defined by every derived class!!!!
@@ -293,7 +351,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         nLambda = self.ambient_variety().lattice().scale(n)
         return n*v in self.lattice() + nLambda
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Compare two modular abelian varieties.
 
@@ -305,34 +363,46 @@ class ModularAbelianVariety_abstract(ParentWithBase):
 
         EXAMPLES::
 
-            sage: cmp(J0(37)[0], J0(37)[1])
-            -1
-            sage: cmp(J0(33)[0], J0(33)[1])
-            -1
-            sage: cmp(J0(37), 5) #random
-            1
+            sage: J0(37)[0] < J0(37)[1]
+            True
+            sage: J0(37)[0] == J0(37)[1]
+            False
+            sage: J0(33)[0] < J0(33)[1]
+            True
+            sage: J0(33)[0] >= J0(33)[1]
+            False
         """
-        if not isinstance(other, ModularAbelianVariety_abstract):
-            return cmp(type(self), type(other))
         if self is other:
-            return 0
-        c = cmp(self.groups(), other.groups())
-        if c: return c
+            return rich_to_bool(op, 0)
+        if not isinstance(other, ModularAbelianVariety_abstract):
+            return NotImplemented
+
+        lx = self.groups()
+        rx = other.groups()
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
 
         try:
-            c = cmp(self.__newform_level, other.__newform_level)
-            if c: return c
-        except AttributeError:
-            pass
-        try:
-            c = cmp(self.__isogeny_number, other.__isogeny_number)
-            if c: return c
+            lx = self.__newform_level
+            rx = other.__newform_level
+            if lx != rx:
+                return richcmp_not_equal(lx, rx, op)
         except AttributeError:
             pass
 
         try:
-            c = cmp(self.__degen_t, other.__degen_t)
-            if c: return c
+            lx = self.__isogeny_number
+            rx = other.__isogeny_number
+            if lx != rx:
+                return richcmp_not_equal(lx, rx, op)
+        except AttributeError:
+            pass
+
+        try:
+            lx = self.__degen_t
+            rx = other.__degen_t
+            if lx != rx:
+                return richcmp_not_equal(lx, rx, op)
         except AttributeError:
             pass
 
@@ -340,7 +410,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         # and degen_t does not imply two abelian varieties are equal.
         # See the docstring for self.label.
 
-        return cmp(self.lattice(), other.lattice())
+        return richcmp(self.lattice(), other.lattice(), op)
 
     def __radd__(self,other):
         """
@@ -446,6 +516,61 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         degen = str(self.degen_t()).replace(' ','')
         return '%s%s'%(self.newform_label(), degen)
 
+    def newform(self, names=None):
+        """
+        Return the newform `f` such that this abelian variety is isogenous to
+        the newform abelian variety `A_f`. If this abelian variety is not
+        simple, raise a ValueError.
+
+        INPUT:
+
+        - ``names`` -- (default: None) If the newform has coefficients in a
+          number field, then a generator name must be specified.
+
+        OUTPUT: A newform `f` so that self is isogenous to `A_f`.
+
+        EXAMPLES::
+
+            sage: J0(11).newform()
+            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
+
+            sage: f = J0(23).newform(names='a')
+            sage: AbelianVariety(f) == J0(23)
+            True
+
+            sage: J = J0(33)
+            sage: [s.newform('a') for s in J.decomposition()]
+            [q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6),
+             q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6),
+             q + q^2 - q^3 - q^4 - 2*q^5 + O(q^6)]
+
+        The following fails since `J_0(33)` is not simple::
+
+            sage: J0(33).newform()
+            Traceback (most recent call last):
+            ...
+            ValueError: self must be simple
+        """
+        return Newform(self.newform_label(), names=names)
+
+    def newform_decomposition(self, names=None):
+        """
+        Return the newforms of the simple subvarieties in the decomposition of
+        self as a product of simple subvarieties, up to isogeny.
+
+        OUTPUT:
+
+        - an array of newforms
+
+        EXAMPLES::
+
+            sage: J = J1(11) * J0(23)
+            sage: J.newform_decomposition('a')
+            [q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6),
+            q + a0*q^2 + (-2*a0 - 1)*q^3 + (-a0 - 1)*q^4 + 2*a0*q^5 + O(q^6)]
+        """
+        return [S.newform(names=names) for S in self.decomposition()]
+
     def newform_label(self):
         """
         Return the label [level][isogeny class][group] of the newform
@@ -477,6 +602,78 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         elif is_GammaH(G):
             group = 'GH%s'%(str(G._generators_for_H()).replace(' ',''))
         return '%s%s%s'%(N, cremona_letter_code(self.isogeny_number()), group)
+
+    def elliptic_curve(self):
+        """
+        Return an elliptic curve isogenous to self. If self is not dimension 1
+        with rational base ring, raise a ValueError.
+
+        The elliptic curve is found by looking it up in the CremonaDatabase.
+        The CremonaDatabase contains all curves up to some large conductor.  If
+        a curve is not found in the CremonaDatabase, a RuntimeError will be
+        raised. In practice, only the most committed users will see this
+        RuntimeError.
+
+        OUTPUT: an elliptic curve isogenous to self.
+
+        EXAMPLES::
+
+            sage: J = J0(11)
+            sage: J.elliptic_curve()
+            Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+
+            sage: J = J0(49)
+            sage: J.elliptic_curve()
+            Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 2*x - 1 over Rational Field
+
+            sage: A = J0(37)[1]
+            sage: E = A.elliptic_curve()
+            sage: A.lseries()(1)
+            0.725681061936153
+            sage: E.lseries()(1)
+            0.725681061936153
+
+        Elliptic curves are of dimension 1. ::
+
+            sage: J = J0(23)
+            sage: J.elliptic_curve()
+            Traceback (most recent call last):
+            ...
+            ValueError: self must be of dimension 1
+
+        This is only implemented for curves over QQ. ::
+
+            sage: J = J0(11).change_ring(CC)
+            sage: J.elliptic_curve()
+            Traceback (most recent call last):
+            ...
+            ValueError: base ring must be QQ
+        """
+
+        if self.dimension() > 1:
+            raise ValueError("self must be of dimension 1")
+        if self.base_ring() != QQ:
+            raise ValueError("base ring must be QQ")
+
+        f = self.newform('a')
+        N = f.level()
+
+        c = CremonaDatabase()
+        if N > c.largest_conductor():
+            raise RuntimeError("Elliptic curve not found" +
+                               " in installed database")
+
+        isogeny_classes = c.isogeny_classes(N)
+        curves = [EllipticCurve(x[0][0]) for x in isogeny_classes]
+
+        if len(curves) == 1:
+            return curves[0]
+        for p in Primes():
+            for E in curves:
+                if E.ap(p) != f.coefficient(p):
+                    curves.remove(E)
+                    if len(curves) == 1:
+                        return curves[0]
 
     def _isogeny_to_newform_abelian_variety(self):
         r"""
@@ -596,7 +793,8 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             Category of modular abelian varieties over Rational Field
         """
         if cat is None:
-            K = self.base_field(); L = B.base_field()
+            K = self.base_field()
+            L = B.base_field()
             if K == L:
                 F = K
             elif K == QQbar or L == QQbar:
@@ -668,7 +866,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
 
     def intersection(self, other):
         """
-        Returns the intersection of self and other inside a common ambient
+        Return the intersection of self and other inside a common ambient
         Jacobian product.
 
         INPUT:
@@ -783,18 +981,21 @@ class ModularAbelianVariety_abstract(ParentWithBase):
 
     def __add__(self, other):
         r"""
-        Returns the sum of the *images* of self and other inside the
-        ambient Jacobian product. self and other must be abelian
+        Return the sum of the *images* of self and other inside the
+        ambient Jacobian product.
+
+        Here self and other must be abelian
         subvarieties of the ambient Jacobian product.
 
-        ..warning::
+        .. WARNING::
 
-          The sum of course only makes sense in some ambient variety,
-          and by definition this function takes the sum of the images
-          of both self and other in the ambient product Jacobian.
+            The sum of course only makes sense in some ambient variety,
+            and by definition this function takes the sum of the images
+            of both self and other in the ambient product Jacobian.
 
-        EXAMPLES: We compute the sum of two abelian varieties of
-        `J_0(33)`::
+        EXAMPLES:
+
+        We compute the sum of two abelian varieties of `J_0(33)`::
 
             sage: J = J0(33)
             sage: J[0] + J[1]
@@ -1142,8 +1343,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         -  ``G`` - a finite subgroup of self
 
 
-        OUTPUT: abelian variety - the quotient `Q` of self by
-        `G`
+        OUTPUT: abelian variety - the quotient `Q` of self by `G`
 
 
         -  ``morphism`` - from self to the quotient
@@ -1539,6 +1739,44 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         """
         return self.lattice().rank() // 2
 
+    def conductor(self):
+        """
+        Return the conductor of this abelian variety.
+
+        EXAMPLES::
+
+            sage: A = J0(23)
+            sage: A.conductor().factor()
+            23^2
+
+            sage: A = J1(25)
+            sage: A.conductor().factor()
+            5^24
+
+            sage: A = J0(11^2); A.decomposition()
+            [
+            Simple abelian subvariety 11a(1,121) of dimension 1 of J0(121),
+            Simple abelian subvariety 11a(11,121) of dimension 1 of J0(121),
+            Simple abelian subvariety 121a(1,121) of dimension 1 of J0(121),
+            Simple abelian subvariety 121b(1,121) of dimension 1 of J0(121),
+            Simple abelian subvariety 121c(1,121) of dimension 1 of J0(121),
+            Simple abelian subvariety 121d(1,121) of dimension 1 of J0(121)
+            ]
+            sage: A.conductor().factor()
+            11^10
+
+            sage: A = J0(33)[0]; A
+            Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33)
+            sage: A.conductor()
+            11
+            sage: A.elliptic_curve().conductor()
+            11
+        """
+        if not self.base_ring() == QQ:
+            raise ValueError("base ring must be QQ")
+        return prod(f.level() ** f.base_ring().degree()
+                    for f in self.newform_decomposition('a'))
+
     def rank(self):
         """
         Return the rank of the underlying lattice of self.
@@ -1773,9 +2011,9 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         except AttributeError:
             if none_if_not_known:
                 return None
-            N = [A.newform_level() for A in self.decomposition()]
-            level = LCM([z[0] for z in N])
-            groups = sorted(set([z[1] for z in N]))
+            level = LCM([f.level() for f in self.newform_decomposition('a')])
+            groups = sorted(set([f.group() for f in
+                                 self.newform_decomposition('a')]))
             if len(groups) == 1:
                 groups = groups[0]
             self.__newform_level = level, groups
@@ -1992,6 +2230,151 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             T = T.block_sum(M[i].hecke_matrix(n))
         self.__ambient_hecke_matrix_on_modular_symbols[n] = T
         return T
+
+    def number_of_rational_points(self):
+        """
+        Return the number of rational points of this modular abelian variety.
+
+        It is not always possible to compute the order of the torsion
+        subgroup. The BSD conjecture is assumed to compute the algebraic rank.
+
+        OUTPUT: a positive integer or infinity
+
+        EXAMPLES::
+
+            sage: J0(23).number_of_rational_points()
+            11
+            sage: J0(29).number_of_rational_points()
+            7
+            sage: J0(37).number_of_rational_points()
+            +Infinity
+
+            sage: J0(12); J0(12).number_of_rational_points()
+            Abelian variety J0(12) of dimension 0
+            1
+
+            sage: J1(17).number_of_rational_points()
+            584
+
+            sage: J1(16).number_of_rational_points()
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Unable to compute order of torsion subgroup (it is in [1, 2, 4, 5, 10, 20])
+        """
+        # Check easy dimension zero case
+        if self.dimension() == 0:
+            return ZZ(1)
+
+        positive_rank = self.lseries().vanishes_at_1()
+
+        if positive_rank:
+            return infinity
+        else:
+            return self.rational_torsion_subgroup().order()
+
+    def frobenius_polynomial(self, p, var='x'):
+        """
+        Computes the frobenius polynomial at `p`.
+
+        INPUT:
+
+        - ``p`` -- prime number
+
+        OUTPUT:
+
+        a monic integral polynomial
+
+        EXAMPLES::
+
+            sage: f = Newform('39b','a')
+            sage: A=AbelianVariety(f)
+            sage: A.frobenius_polynomial(5)
+            x^4 + 2*x^2 + 25
+
+            sage: J=J0(23)
+            sage: J.frobenius_polynomial(997)
+            x^4 + 20*x^3 + 1374*x^2 + 19940*x + 994009
+
+            sage: J = J0(33)
+            sage: J.frobenius_polynomial(7)
+            x^6 + 9*x^4 - 16*x^3 + 63*x^2 + 343
+
+            sage: J = J0(19)
+            sage: J.frobenius_polynomial(3, var='y')
+            y^2 + 2*y + 3
+
+            sage: J = J0(3); J
+            Abelian variety J0(3) of dimension 0
+            sage: J.frobenius_polynomial(11)
+            1
+
+            sage: A = J1(27)[1]; A
+            Simple abelian subvariety 27bG1(1,27) of dimension 12 of J1(27)
+            sage: A.frobenius_polynomial(11)
+            x^24 - 3*x^23 - 15*x^22 + 126*x^21 - 201*x^20 - 1488*x^19 + 7145*x^18 - 1530*x^17 - 61974*x^16 + 202716*x^15 - 19692*x^14 - 1304451*x^13 + 4526883*x^12 - 14348961*x^11 - 2382732*x^10 + 269814996*x^9 - 907361334*x^8 - 246408030*x^7 + 12657803345*x^6 - 28996910448*x^5 - 43086135081*x^4 + 297101409066*x^3 - 389061369015*x^2 - 855935011833*x + 3138428376721
+
+            sage: J = J1(33)
+            sage: J.frobenius_polynomial(11)
+            Traceback (most recent call last):
+            ...
+            ValueError: p must not divide the level of self
+            sage: J.frobenius_polynomial(4)
+            Traceback (most recent call last):
+            ...
+            ValueError: p must be prime
+        """
+        if self.dimension() == 0:
+            return ZZ(1)
+        if self.level() % p == 0:
+            raise ValueError("p must not divide the level of self")
+        if not is_prime(p):
+            raise ValueError("p must be prime")
+        if not self.is_simple():
+            from .constructor import AbelianVariety
+            decomp = [AbelianVariety(f) for f in
+                      self.newform_decomposition('a')]
+            return prod((s.frobenius_polynomial(p) for s in
+                         decomp))
+        f = self.newform('a')
+        Kf = f.base_ring()
+        eps = f.character()
+        Qe = eps.base_ring()
+        d = Kf.degree() / Qe.degree()
+
+        ZZpoly = PolynomialRing(ZZ, var)
+        z = ZZpoly.gens()[0]
+
+        if Qe == QQ:
+            Gp = self.hecke_polynomial(p)
+            ans = ZZpoly(z**d * Gp(z+p/z))
+            return ans
+
+        # relativize number fields to compute charpoly of
+        # left multiplication of ap on Kf as a Qe-vector
+        # space.
+        Lf = Kf.relativize(Qe.gen(), 'a')
+        to_Lf = Lf.structure()[1]
+
+        # Re is just Qe with a different name
+        Re = Lf.base_field()
+        to_Re = Qe.hom(Re.gens()[0], Re)
+
+        name = Kf._names[0]
+        ap = to_Lf(f.modular_symbols(1).eigenvalue(p, name))
+        Gp = ap.charpoly(var='x')
+
+        S = PolynomialRing(Re, 'x')
+        x = S.gens()[0]
+        h = S(x**d * Gp(x=x+to_Re(eps(p))*p/x))
+
+        # take Qe norm
+        R = PolynomialRing(QQ, ['x', 'y'])
+        x, y = R.gens()
+        g = Qe.defining_polynomial()
+        H = sum(h[i].lift() * y**i for i in range(h.degree()+1))
+        ans = g.resultant(H)
+
+        return ZZpoly(ans.univariate_polynomial())
 
     ###############################################################################
     # Rational and Integral Homology
@@ -2351,7 +2734,8 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             sage: A = J.new_subvariety()
             sage: A
             Abelian subvariety of dimension 1 of J0(33)
-            sage: t = A.rational_torsion_subgroup()
+            sage: t = A.rational_torsion_subgroup(); t
+            Torsion subgroup of Abelian subvariety of dimension 1 of J0(33)
             sage: t.multiple_of_order()
             4
             sage: t.divisor_of_order()
@@ -2360,8 +2744,6 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             4
             sage: t.gens()
             [[(1/2, 0, 0, -1/2, 0, 0)], [(0, 0, 1/2, 0, 1/2, -1/2)]]
-            sage: t
-            Torsion subgroup of Abelian subvariety of dimension 1 of J0(33)
         """
         try:
             return self.__rational_torsion_subgroup
@@ -3101,7 +3483,8 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         amb = self.ambient_variety()
         S   = self.vector_space()
         X = amb.decomposition(simple=simple, bound=bound)
-        IN = []; OUT = []
+        IN = []
+        OUT = []
         i = 0
         V = 0
         last_dimension = 0
@@ -3275,9 +3658,10 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         Return the dual of this abelian variety.
 
         OUTPUT:
-            - dual abelian variety
-            - morphism from self to dual
-            - covering morphism from J to dual
+
+        - dual abelian variety
+        - morphism from self to dual
+        - covering morphism from J to dual
 
         .. warning::
 
@@ -3415,7 +3799,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
     def _complement_shares_no_factors_with_same_label(self):
         """
         Return True if no simple factor of self has the same newform_label
-        as any factor in a Poincare complement of self in the ambient
+        as any factor in a Poincaré complement of self in the ambient
         product Jacobian.
 
         EXAMPLES: `J_0(37)` is made up of two non-isogenous
@@ -3477,8 +3861,8 @@ class ModularAbelianVariety_abstract(ParentWithBase):
 
     def __getitem__(self, i):
         """
-        Returns the `i^{th}` decomposition factor of self
-        or returns the slice `i` of decompositions of self.
+        Return the `i^{th}` decomposition factor of self
+        or return the slice `i` of decompositions of self.
 
         EXAMPLES::
 
@@ -3937,7 +4321,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
     def is_ambient(self):
         """
         Return True if this abelian variety attached to a modular symbols
-        space space is attached to the cuspidal subspace of the ambient
+        space is attached to the cuspidal subspace of the ambient
         modular symbols space.
 
         OUTPUT: bool
@@ -3997,8 +4381,8 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
 
         EXAMPLES::
 
-            sage: J0(33).new_subvariety()
-            Abelian subvariety of dimension 1 of J0(33)
+            sage: J0(34).new_subvariety()
+            Abelian subvariety of dimension 1 of J0(34)
             sage: J0(100).new_subvariety()
             Abelian subvariety of dimension 1 of J0(100)
             sage: J1(13).new_subvariety()
@@ -4187,10 +4571,12 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         quotient is the same as the component group of its dual (which is the subvariety).
 
         INPUT:
-            - p -- a prime number
+
+        - p -- a prime number
 
         OUTPUT:
-            - Integer
+
+        - Integer
 
         EXAMPLES::
 
@@ -4209,13 +4595,15 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         if not self.is_simple():
             raise ValueError("self must be simple")
         p = Integer(p)
-        if not p.is_prime(): raise ValueError("p must be a prime integer")
-        try: return self.__component_group[p][0]
+        if not p.is_prime():
+            raise ValueError("p must be a prime integer")
+        try:
+            return self.__component_group[p][0]
         except AttributeError:
             self.__component_group = {}
         except KeyError: pass
         # Easy special case -- a prime of good reduction
-        if self.level() % p != 0:
+        if self.level() % p:
             one = Integer(1)
             self.__component_group[p] = (one,one,one)
             return one
@@ -4285,9 +4673,12 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         change, which is why it starts with an underscore.
 
         INPUT:
-            - p -- integer
+
+        - p -- integer
+
         OUTPUT:
-            - list -- of elementary invariants
+
+        - list -- of elementary invariants
 
         EXAMPLES::
 
@@ -4317,10 +4708,12 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         self.tamagawa_number_bounds functions.
 
         INPUT:
-            - p -- a prime number
+
+        - p -- a prime number
 
         OUTPUT:
-            - Integer
+
+        - Integer
 
         EXAMPLES::
 
@@ -4355,18 +4748,20 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
 
     def tamagawa_number_bounds(self, p):
         """
-        Return a divisor and multiple of the Tamagawa number of self at p.
+        Return a divisor and multiple of the Tamagawa number of self at `p`.
 
-        NOTE: the input abelian variety must be simple
+        NOTE: the input abelian variety must be simple.
 
         INPUT:
-            - p -- a prime number
+
+        - `p` -- a prime number
 
         OUTPUT:
-            - div -- integer; divisor of Tamagawa number at p
-            - mul -- integer; multiple of Tamagawa number at p
-            - mul_primes -- tuple; in case mul==0, a list of all
-              primes that can possibly divide the Tamagawa number at p.
+
+        - div -- integer; divisor of Tamagawa number at `p`
+        - mul -- integer; multiple of Tamagawa number at `p`
+        - mul_primes -- tuple; in case mul==0, a list of all
+          primes that can possibly divide the Tamagawa number at `p`
 
         EXAMPLES::
 
@@ -4377,15 +4772,21 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
             sage: A.tamagawa_number_bounds(3)
             (1, 0, (2, 3, 5))
         """
-        try: return self.__tamagawa_number_bounds[p]
-        except AttributeError: self.__tamagawa_number_bounds = {}
-        except KeyError: pass
+        try:
+            return self.__tamagawa_number_bounds[p]
+        except AttributeError:
+            self.__tamagawa_number_bounds = {}
+        except KeyError:
+            pass
         if not self.is_simple():
             raise ValueError("self must be simple")
         N = self.level()
-        div = 1; mul = 0; mul_primes = []
-        if N % p != 0:
-            div = 1; mul = 1
+        div = 1
+        mul = 0
+        mul_primes = []
+        if N % p:
+            div = 1
+            mul = 1
         elif N.valuation(p) == 1:
             M = self.modular_symbols(sign=1)
             if is_Gamma0(M.group()):
@@ -4394,7 +4795,8 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
                 cp = None
                 if W == -1:
                     # Frob acts trivially
-                    div = g; mul = g
+                    div = g
+                    mul = g
                 elif W == 1:
                     # Frob acts by -1
                     n = g.valuation(2)
@@ -4424,10 +4826,12 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         infinity.
 
         INPUT:
-            - p -- prime that exactly divides the level
+
+        - p -- prime that exactly divides the level
 
         OUTPUT:
-            - Brandt module space that corresponds to self.
+
+        - Brandt module space that corresponds to self.
 
         EXAMPLES::
 
@@ -4576,7 +4980,8 @@ def factor_new_space(M):
         Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 5 for Gamma_0(37) of weight 2 with sign 0 over Rational Field
         ]
     """
-    t = None; p = 2
+    t = None
+    p = 2
     for i in range(200):
         t, p = random_hecke_operator(M, t, p)
         f = t.charpoly()
@@ -4592,14 +4997,11 @@ def factor_new_space(M):
 
 def factor_modsym_space_new_factors(M):
     """
-    Given an ambient modular symbols space, return complete
-    factorization of it.
+    Return the factorizations of all the new subspaces of `M`.
 
     INPUT:
 
-
-    -  ``M`` - modular symbols space
-
+    - ``M`` -- ambient modular symbols space
 
     OUTPUT: list of decompositions corresponding to each new space.
 
@@ -4622,16 +5024,14 @@ def factor_modsym_space_new_factors(M):
 
 def simple_factorization_of_modsym_space(M, simple=True):
     """
-    Return factorization of `M`. If simple is False, return
-    powers of simples.
+    Return the canonical factorization of `M` into (simple) subspaces.
 
     INPUT:
 
+    - ``M`` -- ambient modular symbols space
 
-    -  ``M`` - modular symbols space
-
-    -  ``simple`` - bool (default: True)
-
+    - ``simple`` -- boolean (default: ``True``); if set to ``False``,
+      isogenous simple factors are grouped together
 
     OUTPUT: sequence
 
@@ -4649,14 +5049,24 @@ def simple_factorization_of_modsym_space(M, simple=True):
         (11, 0, None, Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 9 for Gamma_0(33) of weight 2 with sign 0 over Rational Field),
         (33, 0, None, Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 9 for Gamma_0(33) of weight 2 with sign 0 over Rational Field)
         ]
+
+    TESTS:
+
+    Check that :trac:`21799` is fixed::
+
+        sage: JH(28, [15]).decomposition()
+        [
+        Simple abelian subvariety 14aGH[15](1,28) of dimension 1 of JH(28,[15]),
+        Simple abelian subvariety 14aGH[15](2,28) of dimension 1 of JH(28,[15]),
+        Simple abelian subvariety 28aGH[15](1,28) of dimension 2 of JH(28,[15])
+        ]
     """
     D = []
-    N = M.level()
     for G in factor_modsym_space_new_factors(M):
         if len(G) > 0:
             # Compute the matrices of the degeneracy maps up.
-            T = divisors(N//G[0].level())
-            degen = [G[0].ambient_module().degeneracy_map(N, t).matrix() for t in T]
+            T = (M.level() // G[0].level()).divisors()
+            degen = [G[0].ambient_module().degeneracy_map(M, t).matrix() for t in T]
             # Construct a matrix with rows the basis for all the factors
             # stacked on top of each other.  We just multiply this by each
             # degeneracy matrix to get the basis for the images of the

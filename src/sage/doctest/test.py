@@ -134,6 +134,28 @@ Test the ``--initial`` option::
     ...
     1
 
+Test the ``--exitfirst`` option::
+
+    sage: subprocess.call(["sage", "-t", "--warn-long", "0", "--exitfirst", "initial.rst"], **kwds)  # long time
+    Running doctests...
+    Doctesting 1 file.
+    sage -t --warn-long 0.0 initial.rst
+    **********************************************************************
+    File "initial.rst", line 4, in sage.doctest.tests.initial
+    Failed example:
+        a = binomiak(10,5)  # random to test that we still get the exception
+    Exception raised:
+        Traceback (most recent call last):
+        ...
+        NameError: name 'binomiak' is not defined
+    **********************************************************************
+    ...
+    ----------------------------------------------------------------------
+    sage -t  --warn-long 0.0 initial.rst  # 1 doctest failed
+    ----------------------------------------------------------------------
+    ...
+    1
+
 Test a timeout using the ``SAGE_TIMEOUT`` environment variable::
 
     sage: from copy import deepcopy
@@ -213,12 +235,9 @@ in max(20, 120 * 0.05) = 20 seconds::
 
     sage: pid = int(open(F).read())    # long time
     sage: time.sleep(2)                # long time
-    sage: os.kill(pid, signal.SIGHUP)  # long time; 2 seconds passed => still alive
+    sage: os.kill(pid, signal.SIGQUIT) # long time; 2 seconds passed => still alive
     sage: time.sleep(23)               # long time
-    sage: os.kill(pid, signal.SIGHUP)  # long time; 25 seconds passed => dead
-    Traceback (most recent call last):
-    ...
-    OSError: ...
+    sage: os.kill(pid, signal.SIGQUIT) # long time; 25 seconds passed => dead
 
 Test a doctest failing with ``abort()``::
 

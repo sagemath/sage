@@ -331,7 +331,7 @@ def AntiCoordinationGame(A=3, a=3, B=5, b=1, C=1, c=5, D=0, d=0):
     Return a 2 by 2 AntiCoordination Game.
 
     An anti coordination game is a particular type of game where the pure Nash
-    equilibria is for the players to pick different strategies strategies.
+    equilibria is for the players to pick different strategies.
 
     In general these are represented as a normal form game using the
     following two matrices:
@@ -591,7 +591,7 @@ def MatchingPennies():
         ....:     (0, 0): [1, -1], (1, 1): [1, -1]}
         sage: g == d
         True
-        sage: g.obtain_nash()
+        sage: g.obtain_nash('enumeration')
         [[(1/2, 1/2), (1/2, 1/2)]]
     """
     from sage.matrix.constructor import matrix
@@ -636,7 +636,7 @@ def RPS():
         ....:      (2, 2): [0, 0], (1, 0): [1, -1], (0, 2): [1, -1]}
         sage: g == d
         True
-        sage: g.obtain_nash()
+        sage: g.obtain_nash('enumeration')
         [[(1/3, 1/3, 1/3), (1/3, 1/3, 1/3)]]
     """
     from sage.matrix.constructor import matrix
@@ -700,7 +700,7 @@ def RPSLS():
         ....:      (0, 2): [1, -1]}
         sage: g == d
         True
-        sage: g.obtain_nash()
+        sage: g.obtain_nash('enumeration')
         [[(1/5, 1/5, 1/5, 1/5, 1/5), (1/5, 1/5, 1/5, 1/5, 1/5)]]
     """
     from sage.matrix.constructor import matrix

@@ -307,7 +307,7 @@ def consistent(*formulas):
     for formula in formulas[1:]:
         conjunction = conjunction & formula
 
-    # if conjnction is a contradiction, the formulas are inconsistent
+    # if conjunction is a contradiction, the formulas are inconsistent
     return not conjunction.is_contradiction()
 
 def valid_consequence(consequence, *formulas):

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Installation script for gap3; based on the installation script for gap4.
 
 ###########################################
@@ -20,7 +18,7 @@ echo "INSTALL_DIR = $INSTALL_DIR"
 ## INSTALLATION
 ###########################################
 
-cd src
+cd src/src
 $MAKE
 if [ $? -ne 0 ]; then
     echo >&2 "Error building $PACKAGE_SHORTNAME."

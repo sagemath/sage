@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Levi-Civita Connections
 
@@ -37,11 +38,11 @@ class LeviCivitaConnection(AffineConnection):
     Levi-Civita connection on a pseudo-Riemannian manifold.
 
     Let `M` be a differentiable manifold of class `C^\infty` (smooth manifold)
-    over `\RR` endowed with with a pseudo-Riemannian metric `g`.
+    over `\RR` endowed with a pseudo-Riemannian metric `g`.
     Let `C^\infty(M)` be the algebra of smooth functions
     `M\rightarrow \RR` (cf.
     :class:`~sage.manifolds.differentiable.scalarfield_algebra.DiffScalarFieldAlgebra`)
-    and let `\mathcal{X}(M)` be the `C^\infty(M)`-module of vector fields on
+    and let `\mathfrak{X}(M)` be the `C^\infty(M)`-module of vector fields on
     `M` (cf.
     :class:`~sage.manifolds.differentiable.vectorfield_module.VectorFieldModule`).
     The *Levi-Civita connection associated with* `g` is the unique operator
@@ -49,14 +50,14 @@ class LeviCivitaConnection(AffineConnection):
     .. MATH::
 
         \begin{array}{cccc}
-        \nabla: & \mathcal{X}(M)\times \mathcal{X}(M) & \longrightarrow &
-                 \mathcal{X}(M) \\
+        \nabla: & \mathfrak{X}(M)\times \mathfrak{X}(M) & \longrightarrow &
+                 \mathfrak{X}(M) \\
                 & (u,v) & \longmapsto & \nabla_u v
         \end{array}
 
     that
 
-    - is `\RR`-bilinear, i.e. is bilinear when considering `\mathcal{X}(M)` as
+    - is `\RR`-bilinear, i.e. is bilinear when considering `\mathfrak{X}(M)` as
       a vector space over `\RR`
     - is `C^\infty(M)`-linear w.r.t. the first argument:
       `\forall f\in C^\infty(M),\ \nabla_{fu} v = f\nabla_u v`
@@ -64,7 +65,7 @@ class LeviCivitaConnection(AffineConnection):
       `\forall f\in C^\infty(M),\ \nabla_u (f v) = \mathrm{d}f(u)\, v + f  \nabla_u v`
     - is torsion-free
     - is compatible with `g`:
-      `\forall (u,v,w)\in \mathcal{X}(M)^3,\ u(g(v,w)) = g(\nabla_u v, w) + g(v, \nabla_u w)`
+      `\forall (u,v,w)\in \mathfrak{X}(M)^3,\ u(g(v,w)) = g(\nabla_u v, w) + g(v, \nabla_u w)`
 
     The Levi-Civita connection `\nabla` gives birth to the *covariant derivative
     operator* acting on tensor fields, denoted by the same symbol:
@@ -85,13 +86,13 @@ class LeviCivitaConnection(AffineConnection):
 
     .. MATH::
 
-        \forall u \in\mathcal{X}(M), \   \nabla_u v = \nabla v(., u)
+        \forall u \in\mathfrak{X}(M), \   \nabla_u v = \nabla v(., u)
 
     More generally for any tensor field `t\in T^{(k,l)}(M)`, we have
 
     .. MATH::
 
-        \forall u \in\mathcal{X}(M), \   \nabla_u t = \nabla t(\ldots, u)
+        \forall u \in\mathfrak{X}(M), \   \nabla_u t = \nabla t(\ldots, u)
 
 
     .. NOTE::
@@ -254,7 +255,7 @@ class LeviCivitaConnection(AffineConnection):
         r"""
         Initialize the derived quantities.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(5, 'M')
             sage: g = M.metric('g')
@@ -268,7 +269,7 @@ class LeviCivitaConnection(AffineConnection):
         r"""
         Delete the derived quantities.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(5, 'M')
             sage: g = M.metric('g')
@@ -295,7 +296,7 @@ class LeviCivitaConnection(AffineConnection):
         - instance of :class:`LeviCivitaConnection` representing the
           restriction.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()
@@ -562,7 +563,7 @@ class LeviCivitaConnection(AffineConnection):
         - the torsion tensor `T`, as a vanishing instance of
           :class:`~sage.manifolds.differentiable.tensorfield.TensorField`
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()
@@ -618,13 +619,13 @@ class LeviCivitaConnection(AffineConnection):
         - the Riemann curvature tensor `R`, as an instance of
           :class:`~sage.manifolds.differentiable.tensorfield.TensorField`
 
-        EXAMPLE:
+        EXAMPLES:
 
         Riemann tensor of the Levi-Civita connection associated with the
-        metric of the hyperbolic plane (Poincare disk model)::
+        metric of the hyperbolic plane (Poincaré disk model)::
 
             sage: M = Manifold(2, 'M', start_index=1)
-            sage: X.<x,y> = M.chart('x:(-1,1) y:(-1,1)')  # Cartesian coord. on the Poincare disk
+            sage: X.<x,y> = M.chart('x:(-1,1) y:(-1,1)')  # Cartesian coord. on the Poincaré disk
             sage: X.add_restrictions(x^2+y^2<1)
             sage: g = M.metric('g')
             sage: g[1,1], g[2,2] = 4/(1-x^2-y^2)^2, 4/(1-x^2-y^2)^2

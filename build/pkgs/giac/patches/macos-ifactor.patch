@@ -1,6 +1,6 @@
 --- a/src/ifactor.cc	2014-10-11 16:29:01.000000000 +0200
 +++ b/src/ifactor.cc	2014-10-11 16:29:28.000000000 +0200
-@@ -3708,7 +3708,7 @@
+@@ -3737,7 +3737,7 @@
        return giac_ifactors(n0._VECTptr->front(),contextptr);
  #ifdef HAVE_LIBPARI
  #ifdef __APPLE__

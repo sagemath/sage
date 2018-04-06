@@ -15,7 +15,7 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 include "sage/libs/ntl/decl.pxi"
 
@@ -492,13 +492,14 @@ cdef number *sa2si_NF(object elem, ring *_ring):
     nMapFuncPtr =  naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
 
     if (nMapFuncPtr is NULL):
-        raise RuntimeError, "Failed to determine nMapFuncPtr"
+        raise RuntimeError("Failed to determine nMapFuncPtr")
 
     elem = list(elem)
 
-    if _ring != currRing: rChangeCurrRing(_ring)
+    if _ring != currRing:
+        rChangeCurrRing(_ring)
     n1 = _ring.cf.cfInit(0, _ring.cf)
-    a = _ring.cf.cfParameter(1,_ring.cf)
+    a = _ring.cf.cfParameter(1, _ring.cf)
     apow1 = _ring.cf.cfInit(1, _ring.cf)
 
     cdef char *_name

@@ -413,8 +413,14 @@ cdef class UniqueFactory(SageObject):
                 except TypeError: # key is unhashable
                     self._cache[version, _cache_key(key)] = obj
             obj._factory_data = self, version, key, extra_args
-            if obj.__class__.__reduce__.__objclass__ is object:
-                # replace the generic object __reduce__ to use this one
+
+            # Install a custom __reduce__ method on the instance "obj"
+            # that we just created. We only do this if the class of
+            # "obj" has a generic __reduce__ method, which is either
+            # object.__reduce__ or __reduce_cython__, the
+            # auto-generated pickling function for Cython.
+            f = obj.__class__.__reduce__
+            if f.__objclass__ is object or f.__name__ == "__reduce_cython__":
                 obj.__reduce_ex__ = types.MethodType(generic_factory_reduce, obj)
         except AttributeError:
             pass
@@ -454,8 +460,8 @@ cdef class UniqueFactory(SageObject):
             sage: from sage.structure.test_factory import test_factory
             sage: test_factory.create_key_and_extra_args(1, 2, key=5)
             ((1, 2), {})
-            sage: GF.create_key_and_extra_args(3, foo='value')
-            ((3, ('x',), None, 'modn', "{'foo': 'value'}", 3, 1, True), {'foo': 'value'})
+            sage: GF.create_key_and_extra_args(3)
+            ((3, ('x',), None, 'modn', 3, 1, True, None, None, None), {})
         """
         return self.create_key(*args, **kwds), {}
 
@@ -505,7 +511,7 @@ cdef class UniqueFactory(SageObject):
         method, but this was removed in :trac:`16934`::
 
             sage: key, _ = GF.create_key_and_extra_args(27, 'k'); key
-            (27, ('k',), x^3 + 2*x + 1, 'givaro', '{}', 3, 3, True)
+            (27, ('k',), x^3 + 2*x + 1, 'givaro', 3, 3, True, None, 'poly', True)
             sage: K = GF.create_object(0, key); K
             Finite Field in k of size 3^3
             sage: GF.other_keys(key, K)
@@ -524,7 +530,7 @@ cdef class UniqueFactory(SageObject):
         change without having to re-write :meth:`__reduce__` methods
         that use it.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: V = FreeModule(ZZ, 5)
             sage: factory, data = FreeModule.reduce_data(V)

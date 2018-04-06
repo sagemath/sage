@@ -20,9 +20,10 @@ EXAMPLES::
 # the License, or (at your option) any later version.
 # http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.categories.homset import Hom, End
-from sage.rings.quotient_ring import QuotientRing_generic
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+from sage.categories.fields import Fields
+_Fields = Fields()
+from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 
 
 class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
@@ -130,7 +131,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         OUTPUT:
 
-        The (multi)-homomgeneous polynomial that is the ``i``-th coordinate.
+        The (multi)-homogeneous polynomial that is the ``i``-th coordinate.
 
         EXAMPLES::
 
@@ -286,27 +287,30 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         return True
 
-    def nth_iterate(self, P, n, normalize=False):
-        r"""
-        For a map of this morphism and a point `P` in ``self.domain()``
-        this function returns the nth iterate of `P` by this morphism.
-
-        If ``normalize`` is ``True``, then the coordinates are
-        automatically normalized.
-
-        .. TODO:: Is there a more efficient way to do this?
-
-        INPUT:
-
-        - ``P`` -- a point in ``self.domain()``.
-
-        - ``n`` -- a positive integer.
-
-        - ``normalize`` - Boolean (optional Default: ``False``).
+    def as_dynamical_system(self):
+        """
+        Return this endomorpism as a :class:`DynamicalSystem_producte_projective`.
 
         OUTPUT:
 
-        - A point in ``self.codomain()``.
+        - :class:`DynamicalSystem_produce_projective`.
+
+        EXAMPLES::
+
+            sage: Z.<a,b,x,y,z> = ProductProjectiveSpaces([1 , 2], ZZ)
+            sage: H = End(Z)
+            sage: f = H([a^3, b^3, x^2, y^2, z^2])
+            sage: type(f.as_dynamical_system())
+            <class 'sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective'>
+        """
+        if not self.is_endomorphism():
+            raise TypeError("must be an endomorphism")
+        from sage.dynamics.arithmetic_dynamics.product_projective_ds import DynamicalSystem_product_projective
+        return DynamicalSystem_product_projective(list(self), self.domain())
+
+    def nth_iterate(self, P, n, normalize=False):
+        """
+        Return the nth iterate of the point.
 
         EXAMPLES::
 
@@ -315,36 +319,17 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             sage: f = H([a^3, b^3 + a*b^2, x^2, y^2 - z^2, z*y])
             sage: P = Z([1, 1, 1, 1, 1])
             sage: f.nth_iterate(P, 3)
+            doctest:warning
+            ...
             (1/1872 : 1 , 1 : 1 : 0)
         """
-        return(P.nth_iterate(self, n, normalize))
+        from sage.misc.superseded import deprecation
+        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.green_function instead")
+        return self.as_dynamical_system().nth_iterate(P, n, normalize)
 
     def orbit(self, P, N, **kwds):
-        r"""
-        Returns the orbit of `P` by this morphism.
-
-        If `N` is an integer it returns `[P,self(P),\ldots,self^N(P)]`.
-
-        If `n` is a list or tuple `n = [m, k]` it returns `[self^m(P),\ldots,self^k(P)]`.
-        Automatically normalize the points if ``normalize == True``. Perform the checks on point initialize if
-        ``check==True``.
-
-        INPUT:
-
-        - ``P`` -- a point in ``self.domain()``.
-
-        - ``n`` -- a non-negative integer or list or tuple of two non-negative integers.
-
-        kwds:
-
-        - ``check`` -- boolean (optional - default: ``True``).
-
-        - ``normalize`` -- boolean (optional - default: ``False``).
-
-
-        OUTPUT:
-
-        - a list of points in ``self.codomain()``.
+        """
+        Return the orbit of this point.
 
         EXAMPLES::
 
@@ -353,29 +338,17 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             sage: f = H([a^3, b^3 + a*b^2, x^2, y^2 - z^2, z*y])
             sage: P = Z([1, 1, 1, 1, 1])
             sage: f.orbit(P, 3)
+            doctest:warning
+            ...
             [(1 : 1 , 1 : 1 : 1), (1/2 : 1 , 1 : 0 : 1), (1/12 : 1 , -1 : 1 : 0), (1/1872 : 1 , 1 : 1 : 0)]
         """
-        return(P.orbit(self, N, **kwds))
+        from sage.misc.superseded import deprecation
+        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.green_function instead")
+        return self.as_dynamical_system().orbit(P, N, **kwds)
 
     def nth_iterate_map(self, n):
-        r"""
-        This function returns the nth iterate of this morphsim as a
-        function on ``self.domain()``.
-
-        ALGORITHM:
-
-        Uses a form of successive squaring to reduce computations.
-
-
-        .. TODO:: This could be improved.
-
-        INPUT:
-
-        - ``n`` -- a positive integer.
-
-        OUTPUT:
-
-        - A map between products of projective spaces.
+        """
+        Return the nth iterate of this map.
 
         EXAMPLES::
 
@@ -383,30 +356,13 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             sage: H = End(Z)
             sage: f = H([a^3, b^3, x^2, y^2, z^2])
             sage: f.nth_iterate_map(3)
-            Scheme endomorphism of Product of projective spaces P^1 x P^2 over
+            doctest:warning
+            ...
+            Dynamical System of Product of projective spaces P^1 x P^2 over
             Rational Field
               Defn: Defined by sending (a : b , x : y : z) to
                     (a^27 : b^27 , x^8 : y^8 : z^8).
         """
-        if not self.is_endomorphism():
-            raise TypeError("domain and codomain of function not equal")
-
-        E = self.domain()
-        D = int(n)
-        if D < 0:
-            raise TypeError("iterate number must be a nonnegative integer")
-        N = sum([E.ambient_space()[i].dimension_relative() + 1 for i in range(E.ambient_space().num_components())])
-        F = list(self._polys)
-        Coord_ring = E.coordinate_ring()
-        if isinstance(Coord_ring, QuotientRing_generic):
-            PHI = [Coord_ring.gen(i).lift() for i in range(N)]
-        else:
-            PHI = [Coord_ring.gen(i) for i in range(N)]
-
-        while D:
-            if D&1:
-                PHI = [PHI[j](*F) for j in range(N)]
-            if D > 1: #avoid extra iterate
-                F = [F[j](*F) for j in range(N)] #'square'
-            D >>= 1
-        return End(E)(PHI)
+        from sage.misc.superseded import deprecation
+        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.green_function instead")
+        return self.as_dynamical_system().nth_iterate_map(n)

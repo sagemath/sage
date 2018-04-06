@@ -9,7 +9,7 @@ EXAMPLES::
     sage: F = GF(3)
     sage: gens = [matrix(F,2, [1,0, -1,1]), matrix(F,2, [1,1,0,1])]
     sage: G = MatrixGroup(gens)
-    sage: G.conjugacy_class_representatives()
+    sage: G.conjugacy_classes_representatives()
     (
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
@@ -62,6 +62,7 @@ from __future__ import print_function
 
 from sage.groups.group import Group
 from sage.rings.all import ZZ
+from sage.rings.all import QQbar
 from sage.rings.integer import is_Integer
 from sage.rings.ring import is_Ring
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
@@ -72,6 +73,14 @@ from sage.matrix.all import matrix
 from sage.misc.latex import latex
 from sage.structure.sequence import Sequence
 from sage.misc.cachefunc import cached_method
+from sage.modules.free_module_element import vector
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.arith.all import gcd
+from sage.rings.fraction_field import FractionField
+from sage.misc.functional import cyclotomic_polynomial
+from sage.rings.number_field.number_field import CyclotomicField
+from sage.combinat.integer_vector import IntegerVectors
 
 from sage.groups.matrix_gps.matrix_group import (
     is_MatrixGroup, MatrixGroup_generic, MatrixGroup_gap )
@@ -305,6 +314,34 @@ def MatrixGroup(*gens, **kwds):
 ###################################################################
 
 class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
+    """
+    TESTS::
+
+        sage: m1 = matrix(SR, [[1,2],[3,4]])
+        sage: m2 = matrix(SR, [[1,3],[-1,0]])
+        sage: MatrixGroup(m1) == MatrixGroup(m1)
+        True
+        sage: MatrixGroup(m1) == MatrixGroup(m1.change_ring(QQ))
+        False
+        sage: MatrixGroup(m1) == MatrixGroup(m2)
+        False
+        sage: MatrixGroup(m1, m2) == MatrixGroup(m2, m1)
+        False
+
+        sage: m1 = matrix(QQ, [[1,2],[3,4]])
+        sage: m2 = matrix(QQ, [[1,3],[-1,0]])
+        sage: MatrixGroup(m1) == MatrixGroup(m1)
+        True
+        sage: MatrixGroup(m1) == MatrixGroup(m2)
+        False
+        sage: MatrixGroup(m1, m2) == MatrixGroup(m2, m1)
+        False
+
+        sage: G = GL(2, GF(3))
+        sage: H = G.as_matrix_group()
+        sage: H == G, G == H
+        (True, True)
+    """
 
     def __init__(self, degree, base_ring, generator_matrices, category=None):
         """
@@ -330,28 +367,6 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         """
         self._gens_matrix = generator_matrices
         MatrixGroup_generic.__init__(self, degree, base_ring, category=category)
-
-    def __cmp__(self, other):
-        """
-        Implement comparison.
-
-        EXAMPLES::
-
-            sage: m1 = matrix(SR, [[1,2],[3,4]])
-            sage: m2 = matrix(SR, [[1,3],[-1,0]])
-            sage: cmp(MatrixGroup(m1), MatrixGroup(m1))
-            0
-            sage: abs(cmp(MatrixGroup(m1), MatrixGroup(m1.change_ring(QQ))))
-            1
-            sage: abs(cmp(MatrixGroup(m1), MatrixGroup(m2)))
-            1
-            sage: abs(cmp(MatrixGroup(m1, m2), MatrixGroup(m2, m1)))
-            1
-        """
-        c = super(FinitelyGeneratedMatrixGroup_generic, self).__cmp__(other)
-        if c != 0:
-            return c
-        return cmp(self._gens_matrix, other._gens_matrix)
 
     @cached_method
     def gens(self):
@@ -425,6 +440,30 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         """
         return len(self._gens_matrix)
 
+    def __reduce__(self):
+        """
+        Used for pickling.
+
+        TESTS::
+
+            sage: G = MatrixGroup([matrix(CC, [[1,2],[3,4]]),
+            ....:                  matrix(CC, [[1,3],[-1,0]])])
+            sage: loads(dumps(G)) == G
+            True
+
+        Check that :trac:`22128` is fixed::
+
+            sage: R = MatrixSpace(SR, 2)
+            sage: G = MatrixGroup([R([[1, 1], [0, 1]])])
+            sage: G.register_embedding(R)
+            sage: loads(dumps(G))
+            Matrix group over Symbolic Ring with 1 generators (
+            [1 1]
+            [0 1]
+            )
+        """
+        return MatrixGroup, (self._gens_matrix, {'check': False})
+
     def _test_matrix_generators(self, **options):
         """
         EXAMPLES::
@@ -478,48 +517,6 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         """
         return (MatrixGroup,
                 tuple(g.matrix() for g in self.gens()) + ({'check':False},))
-
-    def __cmp__(self, other):
-        """
-        Implement comparison.
-
-        EXAMPLES::
-
-            sage: m1 = matrix(QQ, [[1,2],[3,4]])
-            sage: m2 = matrix(QQ, [[1,3],[-1,0]])
-            sage: cmp(MatrixGroup(m1), MatrixGroup(m1))
-            0
-            sage: abs(cmp(MatrixGroup(m1), MatrixGroup(m2)))
-            1
-            sage: abs(cmp(MatrixGroup(m1, m2), MatrixGroup(m2, m1)))
-            1
-
-            sage: G = GL(2, GF(3))
-            sage: H = G.as_matrix_group()
-            sage: cmp(H, G), cmp(G, H)
-            (0, 0)
-            sage: H == G, G == H
-            (True, True)
-        """
-        c = super(FinitelyGeneratedMatrixGroup_gap, self).__cmp__(other)
-        if c != 0:
-            return c
-        try:
-            other_ngens = other.ngens
-            other_gen = other.gen
-        except AttributeError:
-            return 1
-        n = self.ngens()
-        m = other_ngens()
-        if n != m:
-            return cmp(n, m)
-        for i in range(n):
-            g = self.gen(i)
-            h = other_gen(i)
-            c = cmp(g.gap(), h.gap())
-            if c != 0:
-                return c
-        return 0
 
     def as_permutation_group(self, algorithm=None):
         r"""
@@ -728,8 +725,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         - Singular reference manual
 
-        - B. Sturmfels, "Algorithms in invariant theory", Springer-Verlag,
-          1993.
+        - [Stu1993]_
 
         - S. King, "Minimal Generating Sets of non-modular invariant
           rings of finite groups", :arxiv:`math/0703035`.
@@ -806,3 +802,505 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
                 singular.eval(SName+'[1,%d]'%(j)) for j in range(2,1+singular('ncols('+SName+')'))
                 ]
             return [PR(gen) for gen in OUT]
+
+    def molien_series(self, chi=None, return_series=True, prec=20, variable='t'):
+        r"""
+        Compute the Molien series of this finite group with respect to the
+        character ``chi``. It can be returned either as a rational function
+        in one variable or a power series in one variable. The base field
+        must be a finite field, the rationals, or a cyclotomic field.
+
+        Note that the base field characteristic cannot divide the group
+        order (i.e., the non-modular case).
+
+        ALGORITHM:
+
+        For a finite group `G` in characteristic zero we construct the Molien series as
+
+        .. MATH::
+
+            \frac{1}{|G|}\sum_{g \in G} \frac{\chi(g)}{\text{det}(I-tg)},
+
+        where `I` is the identity matrix and `t` an indeterminate.
+
+        For characteristic `p` not dividing the order of `G`, let `k` be the base field
+        and `N` the order of `G`. Define `\lambda` as a primitive `N`-th root of unity over `k`
+        and `\omega` as a primitive `N`-th root of unity over `\QQ`. For each `g \in G`
+        define `k_i(g)` to be the positive integer such that
+        `e_i = \lambda^{k_i(g)}` for each eigenvalue `e_i` of `g`. Then the Molien series
+        is computed as
+
+        .. MATH::
+
+            \frac{1}{|G|}\sum_{g \in G} \frac{\chi(g)}{\prod_{i=1}^n(1 - t\omega^{k_i(g)})},
+
+        where `t` is an indeterminant. [Dec1998]_
+
+        INPUT:
+
+        - ``chi`` -- (default: trivial character) a linear group character of this group
+
+        - ``return_series`` -- boolean (default: ``True``) if ``True``, then returns
+          the Molien series as a power series, ``False`` as a rational function
+
+        - ``prec`` -- integer (default: 20); power series default precision
+
+        - ``variable`` -- string (default: ``'t'``); Variable name for the Molien series
+
+        OUTPUT: single variable rational function or power series with integer coefficients
+
+        EXAMPLES::
+
+            sage: MatrixGroup(matrix(QQ,2,2,[1,1,0,1])).molien_series()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for finite groups
+            sage: MatrixGroup(matrix(GF(3),2,2,[1,1,0,1])).molien_series()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: characteristic cannot divide group order
+
+        Tetrahedral Group::
+
+            sage: K.<i> = CyclotomicField(4)
+            sage: Tetra =  MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [0,i, -i,0])
+            sage: Tetra.molien_series(prec=30)
+            1 + t^8 + 2*t^12 + t^16 + 2*t^20 + 3*t^24 + 2*t^28 + O(t^30)
+            sage: mol = Tetra.molien_series(return_series=False); mol
+            (t^8 - t^4 + 1)/(t^16 - t^12 - t^4 + 1)
+            sage: mol.parent()
+            Fraction Field of Univariate Polynomial Ring in t over Integer Ring
+            sage: chi = Tetra.character(Tetra.character_table()[1])
+            sage: Tetra.molien_series(chi, prec=30, variable='u')
+            u^6 + u^14 + 2*u^18 + u^22 + 2*u^26 + 3*u^30 + 2*u^34 + O(u^36)
+            sage: chi = Tetra.character(Tetra.character_table()[2])
+            sage: Tetra.molien_series(chi)
+            t^10 + t^14 + t^18 + 2*t^22 + 2*t^26 + O(t^30)
+
+        ::
+
+            sage: S3 = MatrixGroup(SymmetricGroup(3))
+            sage: mol = S3.molien_series(prec=10); mol
+            1 + t + 2*t^2 + 3*t^3 + 4*t^4 + 5*t^5 + 7*t^6 + 8*t^7 + 10*t^8 + 12*t^9 + O(t^10)
+            sage: mol.parent()
+            Power Series Ring in t over Integer Ring
+
+        Octahedral Group::
+
+            sage: K.<v> = CyclotomicField(8)
+            sage: a = v-v^3 #sqrt(2)
+            sage: i = v^2
+            sage: Octa = MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [(1+i)/a,0, 0,(1-i)/a])
+            sage: Octa.molien_series(prec=30)
+            1 + t^8 + t^12 + t^16 + t^18 + t^20 + 2*t^24 + t^26 + t^28 + O(t^30)
+
+        Icosahedral Group::
+
+            sage: K.<v> = CyclotomicField(10)
+            sage: z5 = v^2
+            sage: i = z5^5
+            sage: a = 2*z5^3 + 2*z5^2 + 1 #sqrt(5)
+            sage: Ico = MatrixGroup([[z5^3,0, 0,z5^2], [0,1, -1,0], [(z5^4-z5)/a, (z5^2-z5^3)/a, (z5^2-z5^3)/a, -(z5^4-z5)/a]])
+            sage: Ico.molien_series(prec=40)
+            1 + t^12 + t^20 + t^24 + t^30 + t^32 + t^36 + O(t^40)
+
+        ::
+
+            sage: G = MatrixGroup(CyclicPermutationGroup(3))
+            sage: chi = G.character(G.character_table()[1])
+            sage: G.molien_series(chi, prec=10)
+            t + 2*t^2 + 3*t^3 + 5*t^4 + 7*t^5 + 9*t^6 + 12*t^7 + 15*t^8 + 18*t^9 + 22*t^10 + O(t^11)
+
+        ::
+
+            sage: K = GF(5)
+            sage: S = MatrixGroup(SymmetricGroup(4))
+            sage: G = MatrixGroup([matrix(K,4,4,[K(y) for u in m.list() for y in u])for m in S.gens()])
+            sage: G.molien_series(return_series=False)
+            1/(t^10 - t^9 - t^8 + 2*t^5 - t^2 - t + 1)
+
+        ::
+
+            sage: i = GF(7)(3)
+            sage: G = MatrixGroup([[i^3,0,0,-i^3],[i^2,0,0,-i^2]])
+            sage: chi = G.character(G.character_table()[4])
+            sage: G.molien_series(chi)
+            3*t^5 + 6*t^11 + 9*t^17 + 12*t^23 + O(t^25)
+        """
+        if not self.is_finite():
+            raise NotImplementedError("only implemented for finite groups")
+        if chi is None:
+            chi = self.trivial_character()
+        M = self.matrix_space()
+        R = FractionField(self.base_ring())
+        N = self.order()
+        if R.characteristic() == 0:
+            P = PolynomialRing(R, variable)
+            t = P.gen()
+            #it is possible the character is over a larger cyclotomic field
+            K = chi.values()[0].parent()
+            if K.degree() != 1:
+                if R.degree() != 1:
+                    L = K.composite_fields(R)[0]
+                else:
+                    L = K
+            else:
+                L = R
+            mol = P(0)
+            for g in self:
+                mol += L(chi(g)) / (M.identity_matrix()-t*g.matrix()).det().change_ring(L)
+        elif R.characteristic().divides(N):
+            raise NotImplementedError("characteristic cannot divide group order")
+        else: #char p>0
+            #find primitive Nth roots of unity over base ring and QQ
+            F = cyclotomic_polynomial(N).change_ring(R)
+            w = F.roots(ring=R.algebraic_closure(), multiplicities=False)[0]
+            #don't need to extend further in this case since the order of
+            #the roots of unity in the character divide the order of the group
+            L = CyclotomicField(N, 'v')
+            v = L.gen()
+            #construct Molien series
+            P = PolynomialRing(L, variable)
+            t = P.gen()
+            mol = P(0)
+            for g in self:
+                #construct Phi
+                phi = L(chi(g))
+                for e in g.matrix().eigenvalues():
+                    #find power such that w**n  = e
+                    n = 1
+                    while w**n != e and n < N+1:
+                        n += 1
+                    #raise v to that power
+                    phi *= (1-t*v**n)
+                mol += P(1)/phi
+        #We know the coefficients will be integers
+        mol = mol.numerator().change_ring(ZZ) / mol.denominator().change_ring(ZZ)
+        #divide by group order
+        mol /= N
+        if return_series:
+            PS = PowerSeriesRing(ZZ, variable, default_prec=prec)
+            return PS(mol)
+        return mol
+
+    def reynolds_operator(self, poly, chi=None):
+        r"""
+        Compute the Reynolds operator of this finite group `G`.
+
+        This is the projection from a polynomial ring to the ring of
+        relative invariants [Stu1993]_. If possible, the invariant is
+        returned defined over the base field of the given polynomial
+        ``poly``, otherwise, it is returned over the compositum of the
+        fields involved in the computation.
+        Only implemented for absolute fields.
+
+        ALGORITHM:
+
+        Let `K[x]` be a polynomial ring and `\chi` a linear character for `G`. Let
+
+        .. MATH:
+
+            K[x]^G_{\chi} = \{f \in K[x] | \pi f = \chi(\pi) f \forall \pi\in G\}
+
+        be the ring of invarants of `G` relative to `\chi`. Then the Reynold's operator
+        is a map `R` from `K[x]` into `K[x]^G_{\chi}` defined by
+
+        .. MATH:
+
+            f \mapsto \frac{1}{|G|} \sum_{ \pi \in G} \chi(\pi) f.
+
+        INPUT:
+
+        - ``poly`` -- a polynomial
+
+        - ``chi`` -- (default: trivial character) a linear group character of this group
+
+        OUTPUT: an invariant polynomial relative to `\chi`
+
+        AUTHORS:
+
+        Rebecca Lauren Miller and Ben Hutz
+
+        EXAMPLES::
+
+            sage: S3 = MatrixGroup(SymmetricGroup(3))
+            sage: R.<x,y,z> = QQ[]
+            sage: f = x*y*z^3
+            sage: S3.reynolds_operator(f)
+            1/3*x^3*y*z + 1/3*x*y^3*z + 1/3*x*y*z^3
+
+        ::
+
+            sage: G = MatrixGroup(CyclicPermutationGroup(4))
+            sage: chi = G.character(G.character_table()[3])
+            sage: K.<v> = CyclotomicField(4)
+            sage: R.<x,y,z,w> = K[]
+            sage: G.reynolds_operator(x, chi)
+            1/4*x + (1/4*v)*y - 1/4*z + (-1/4*v)*w
+            sage: chi = G.character(G.character_table()[2])
+            sage: R.<x,y,z,w> = QQ[]
+            sage: G.reynolds_operator(x*y, chi)
+            1/4*x*y + (-1/4*zeta4)*y*z + (1/4*zeta4)*x*w - 1/4*z*w
+
+        ::
+
+            sage: K.<i> = CyclotomicField(4)
+            sage: G =  MatrixGroup(CyclicPermutationGroup(3))
+            sage: chi = G.character(G.character_table()[1])
+            sage: R.<x,y,z> = K[]
+            sage: G.reynolds_operator(x*y^5, chi)
+            1/3*x*y^5 + (2/3*izeta3^3 + izeta3^2 + 8/3*izeta3 + 1)*x^5*z +
+            (-2/3*izeta3^3 - izeta3^2 - 8/3*izeta3 - 4/3)*y*z^5
+            sage: R.<x,y,z> = QQbar[]
+            sage: G.reynolds_operator(x*y^5, chi)
+            1/3*x*y^5 + (-0.1666666666666667? - 0.2886751345948129?*I)*x^5*z +
+            (-0.1666666666666667? + 0.2886751345948129?*I)*y*z^5
+
+        ::
+
+            sage: K.<i> = CyclotomicField(4)
+            sage: Tetra =  MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [0,i, -i,0])
+            sage: chi = Tetra.character(Tetra.character_table()[4])
+            sage: L.<v> = QuadraticField(-3)
+            sage: R.<x,y> = L[]
+            sage: Tetra.reynolds_operator(x^4)
+            0
+            sage: Tetra.reynolds_operator(x^4, chi)
+            1/4*x^4 + (1/2*v)*x^2*y^2 + 1/4*y^4
+            sage: R.<x>=L[]
+            sage: LL.<w> = L.extension(x^2+v)
+            sage: R.<x,y> = LL[]
+            sage: Tetra.reynolds_operator(x^4, chi)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for absolute fields
+
+        ::
+
+            sage: G =  MatrixGroup(DihedralGroup(4))
+            sage: chi = G.character(G.character_table()[1])
+            sage: R.<x,y> = QQ[]
+            sage: f = x^4
+            sage: G.reynolds_operator(f, chi)
+            Traceback (most recent call last):
+            ...
+            TypeError: number of variables in polynomial must match size of matrices
+            sage: R.<x,y,z,w> = QQ[]
+            sage: f = x^3*y
+            sage: G.reynolds_operator(f, chi)
+            1/8*x^3*y - 1/8*x*y^3 + 1/8*y^3*z - 1/8*y*z^3 - 1/8*x^3*w + 1/8*z^3*w +
+            1/8*x*w^3 - 1/8*z*w^3
+
+        Characteristic p>0 examples::
+
+            sage: G = MatrixGroup([[0,1,1,0]])
+            sage: R.<w,x> = GF(2)[]
+            sage: G.reynolds_operator(x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: not implemented when characteristic divides group order
+
+        ::
+
+            sage: i = GF(7)(3)
+            sage: G = MatrixGroup([[i^3,0,0,-i^3],[i^2,0,0,-i^2]])
+            sage: chi = G.character(G.character_table()[4])
+            sage: R.<w,x> = GF(7)[]
+            sage: f = w^5*x + x^6
+            sage: G.reynolds_operator(f, chi)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: nontrivial characters not implemented for charateristic > 0
+            sage: G.reynolds_operator(f)
+            x^6
+
+        ::
+
+            sage: K = GF(3^2,'t')
+            sage: G = MatrixGroup([matrix(K,2,2, [0,K.gen(),1,0])])
+            sage: R.<x,y> = GF(3)[]
+            sage: G.reynolds_operator(x^8)
+            -x^8 - y^8
+
+        ::
+
+            sage: K = GF(3^2,'t')
+            sage: G = MatrixGroup([matrix(GF(3),2,2, [0,1,1,0])])
+            sage: R.<x,y> = K[]
+            sage: f = -K.gen()*x
+            sage: G.reynolds_operator(f)
+            (t)*x + (t)*y
+        """
+        if poly.parent().ngens() != self.degree():
+            raise TypeError("number of variables in polynomial must match size of matrices")
+        R = FractionField(poly.base_ring())
+        C = FractionField(self.base_ring())
+        if chi is None: #then this is the trivial character
+            if R.characteristic() == 0:
+                #non-modular case
+                if C == QQbar or R == QQbar:
+                    L = QQbar
+                elif not C.is_absolute() or not R.is_absolute():
+                    raise NotImplementedError("only implemented for absolute fields")
+                else: #create the compositum
+                    if C.absolute_degree() == 1:
+                        L = R
+                    elif R.absolute_degree() == 1:
+                        L = C
+                    else:
+                        L = C.composite_fields(R)[0]
+            elif not R.characteristic().divides(self.order()):
+                if R.characteristic() != C.characteristic():
+                    raise ValueError("base fields must have same characteristic")
+                else:
+                    if R.degree() >= C.degree():
+                        L = R
+                    else:
+                        L = C
+            else:
+                raise NotImplementedError("not implemented when characteristic divides group order")
+            poly = poly.change_ring(L)
+            poly_gens = vector(poly.parent().gens())
+            F = L.zero()
+            for g in self:
+                F += poly(*g.matrix()*vector(poly.parent().gens()))
+            F /= self.order()
+            return F
+        #non-trivial character case
+        K = chi.values()[0].parent()
+        if R.characteristic() == 0:
+            #extend base_ring to compositum
+            if C == QQbar or K == QQbar or R == QQbar:
+                L = QQbar
+            elif not C.is_absolute() or not K.is_absolute() or not R.is_absolute():
+                raise NotImplementedError("only implemented for absolute fields")
+            else:
+                fields = []
+                for M in [R,K,C]:
+                    if M.absolute_degree() != 1:
+                        fields.append(M)
+                l = len(fields)
+                if l == 0:
+                    # all are QQ
+                    L = R
+                elif l == 1:
+                    #only one is an extension
+                    L = fields[0]
+                elif l == 2:
+                    #only two are extensions
+                    L = fields[0].composite_fields(fields[1])[0]
+                else:
+                    #all three are extensions
+                    L1 = fields[0].composite_fields(fields[1])[0]
+                    L = L1.composite_fields(fields[2])[0]
+        else:
+            raise NotImplementedError("nontrivial characters not implemented for charateristic > 0")
+        poly = poly.change_ring(L)
+        poly_gens = vector(poly.parent().gens())
+        F = L.zero()
+        for g in self:
+            F += L(chi(g)) * poly(*g.matrix().change_ring(L)*poly_gens)
+        F /= self.order()
+        try: # attempt to move F to base_ring of polyomial
+            F = F.change_ring(R)
+        except (TypeError, ValueError):
+            pass
+        return F
+
+    def invariants_of_degree(self, deg, chi=None, R=None):
+        r"""
+        Return the (relative) invariants of given degree for this group.
+
+        For this group, compute the invariants of degree ``deg``
+        with respect to the group character ``chi``. The method
+        is to project each possible monomial of degree ``deg`` via
+        the Reynolds operator. Note that if the polynomial ring ``R``
+        is specified it's base ring may be extended if the resulting
+        invariant is defined over a bigger field.
+
+        INPUT:
+
+        - ``degree`` -- a positive integer
+
+        - ``chi`` -- (default: trivial character) a linear group character of this group
+
+        - ``R`` -- (optional) a polynomial ring
+
+        OUTPUT: list of polynomials
+
+        EXAMPLES::
+
+            sage: Gr = MatrixGroup(SymmetricGroup(2))
+            sage: Gr.invariants_of_degree(3)
+            [x0^3 + x1^3, x0^2*x1 + x0*x1^2]
+            sage: R.<x,y> = QQ[]
+            sage: Gr.invariants_of_degree(4, R=R)
+            [x^3*y + x*y^3, x^2*y^2, x^4 + y^4]
+
+        ::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: Gr = MatrixGroup(DihedralGroup(3))
+            sage: ct = Gr.character_table()
+            sage: chi = Gr.character(ct[0])
+            sage: [f(*(g.matrix()*vector(R.gens()))) == chi(g)*f \
+                  for f in Gr.invariants_of_degree(3, R=R, chi=chi) for g in Gr]
+            [True, True, True, True, True, True]
+
+        ::
+
+            sage: i = GF(7)(3)
+            sage: G = MatrixGroup([[i^3,0,0,-i^3],[i^2,0,0,-i^2]])
+            sage: G.invariants_of_degree(25)
+            []
+
+        ::
+
+            sage: G = MatrixGroup(SymmetricGroup(5))
+            sage: R = QQ['x,y']
+            sage: G.invariants_of_degree(3, R=R)
+            Traceback (most recent call last):
+            ...
+            TypeError: number of variables in polynomial ring must match size of matrices
+
+        ::
+
+            sage: K.<i> = CyclotomicField(4)
+            sage: G =  MatrixGroup(CyclicPermutationGroup(3))
+            sage: chi = G.character(G.character_table()[1])
+            sage: R.<x,y,z> = K[]
+            sage: G.invariants_of_degree(2, R=R, chi=chi)
+            [x*y + (2*izeta3^3 + 3*izeta3^2 + 8*izeta3 + 3)*x*z +
+             (-2*izeta3^3 - 3*izeta3^2 - 8*izeta3 - 4)*y*z,
+             x^2 + (-2*izeta3^3 - 3*izeta3^2 - 8*izeta3 - 4)*y^2 +
+             (2*izeta3^3 + 3*izeta3^2 + 8*izeta3 + 3)*z^2]
+
+        ::
+
+            sage: S3 = MatrixGroup(SymmetricGroup(3))
+            sage: chi = S3.character(S3.character_table()[0])
+            sage: S3.invariants_of_degree(5, chi=chi)
+            [x0^4*x1 - x0*x1^4 - x0^4*x2 + x1^4*x2 + x0*x2^4 - x1*x2^4,
+             x0^3*x1^2 - x0^2*x1^3 - x0^3*x2^2 + x1^3*x2^2 + x0^2*x2^3 - x1^2*x2^3]
+        """
+        D = self.degree()
+        deg = int(deg)
+        if deg <= 0:
+            raise ValueError("degree must be a positive integer")
+        if R is None:
+            R = PolynomialRing(self.base_ring(), 'x', D)
+        elif R.ngens() != D:
+            raise TypeError("number of variables in polynomial ring must match size of matrices")
+
+        ms = self.molien_series(prec=deg+1,chi=chi)
+        if ms[deg].is_zero():
+            return []
+        inv = set()
+        for e in IntegerVectors(deg, D):
+            F = self.reynolds_operator(R.monomial(*e), chi=chi)
+            if not F.is_zero():
+                F = F/F.lc()
+                inv.add(F)
+                if len(inv) == ms[deg]:
+                    break
+        return list(inv)

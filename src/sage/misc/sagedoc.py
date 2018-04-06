@@ -41,6 +41,8 @@ Check that sphinx is not imported at Sage start-up::
 
 from __future__ import print_function
 from __future__ import absolute_import
+from six import string_types
+
 import os, re, sys
 import pydoc
 from sage.misc.temporary_file import tmp_dir
@@ -54,7 +56,7 @@ from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC
 # should instead by taken care of by MathJax -- and nonmath, which
 # should be done always.
 
-# Math substititions: don't forget the leading backslash '\\'. These
+# Math substitutions: don't forget the leading backslash '\\'. These
 # are done using regular expressions, so it works best to also make
 # the strings raw: r'\\blah'.
 math_substitutes = [
@@ -241,21 +243,21 @@ def skip_TESTS_block(docstring):
     - ``docstring``, a string
 
     A "TESTS" block is a block starting with "TEST:" or "TESTS:" (or
-    the same with two colons), on a line on its own, and ending with
-    an unindented line (that is, the same level of indentation as
-    "TESTS") matching one of the following:
+    the same with two colons), on a line on its own, and ending either
+    with a line indented less than "TESTS", or with a line with the
+    same level of indentation -- not more -- matching one of the
+    following:
 
-    - a line which starts with whitespace and then a Sphinx directive
-      of the form ".. foo:", optionally followed by other text.
+    - a Sphinx directive of the form ".. foo:", optionally followed by
+      other text.
 
-    - a line which starts with whitespace and then text of the form
-      "UPPERCASE:", optionally followed by other text.
+    - text of the form "UPPERCASE:", optionally followed by other
+      text.
 
-    - lines which look like a ReST header: one line containing
-      anything, followed by a line consisting only of whitespace,
-      followed by a string of hyphens, equal signs, or other
-      characters which are valid markers for ReST headers: 
-      ``- = ` : ' " ~ _ ^ * + # < >``.
+    - lines which look like a reST header: one line containing
+      anything, followed by a line consisting only of a string of
+      hyphens, equal signs, or other characters which are valid
+      markers for reST headers: ``- = ` : ' " ~ _ ^ * + # < >``.
 
     Return the string obtained from ``docstring`` by removing these
     blocks.
@@ -266,22 +268,41 @@ def skip_TESTS_block(docstring):
         sage: start = ' Docstring\n\n'
         sage: test = ' TEST: \n\n Here is a test::\n     sage: 2+2 \n     5 \n\n'
         sage: test2 = ' TESTS:: \n\n     sage: 2+2 \n     6 \n\n'
-        sage: refs = ' REFERENCES: \n text text \n'
-        sage: directive = ' .. todo:: \n     do some stuff \n'
 
+    Test lines starting with "REFERENCES:"::
+
+        sage: refs = ' REFERENCES: \n text text \n'
         sage: skip_TESTS_block(start + test + refs).rstrip() == (start + refs).rstrip()
         True
         sage: skip_TESTS_block(start + test + test2 + refs).rstrip() == (start + refs).rstrip()
         True 
         sage: skip_TESTS_block(start + test + refs + test2).rstrip() == (start + refs).rstrip()
         True
+
+    Test Sphinx directives::
+
+        sage: directive = ' .. todo:: \n     do some stuff \n'
         sage: skip_TESTS_block(start + test + refs + test2 + directive).rstrip() == (start + refs + directive).rstrip()
         True
 
-        sage: header = 'Header:\n~~~~~~~~'
-        sage: fake_header = 'Header:\n-=-=-=-=-='
+    Test unindented lines::
+
+        sage: unindented = 'NOT INDENTED\n'
+        sage: skip_TESTS_block(start + test + unindented).rstrip() == (start + unindented).rstrip()
+        True
+        sage: skip_TESTS_block(start + test + unindented + test2 + unindented).rstrip() == (start + unindented + unindented).rstrip()
+        True
+
+    Test headers::
+
+        sage: header = ' Header:\n ~~~~~~~~'
         sage: skip_TESTS_block(start + test + header) == start + header
         True
+
+    Not a header because the characters on the second line must all be
+    the same::
+
+        sage: fake_header = ' Header:\n -=-=-=-=-='
         sage: skip_TESTS_block(start + test + fake_header).rstrip() == start.rstrip()
         True
 
@@ -291,7 +312,7 @@ def skip_TESTS_block(docstring):
         sage: another_fake = '\n    blah\n    ----'
         sage: skip_TESTS_block(start + test + another_fake).rstrip() == start.rstrip()
         True
-   """
+    """
     # tests_block: match a line starting with whitespace, then
     # "TEST" or "TESTS" followed by ":" or "::", then possibly
     # more whitespace, then the end of the line.
@@ -304,7 +325,7 @@ def skip_TESTS_block(docstring):
     # "REFERENCES:" or "ALGORITHM:".
     end_of_block = re.compile('[ ]*(\.\.[ ]+[-_A-Za-z]+|[A-Z]+):')
     # header: match a string of hyphens, or other characters which are
-    # valid markers for ReST headers: - = ` : ' " ~ _ ^ * + # < >
+    # valid markers for reST headers: - = ` : ' " ~ _ ^ * + # < >
     header = re.compile(r'^[ ]*([-=`:\'"~_^*+#><])\1+[ ]*$')
     s = ''
     skip = False
@@ -321,12 +342,21 @@ def skip_TESTS_block(docstring):
                 s += "\n"
                 s += l
         else:
-            if end_of_block.match(l) and not tests_block.match(l):
+            if l and not l.isspace() and not l.startswith(indentation):
+                # A non-blank line indented less than 'TESTS:'
+                skip = False
+                s += "\n"
+                s += l
+            elif end_of_block.match(l) and not tests_block.match(l):
+                # A line matching end_of_block and indented the same as 'TESTS:'
+                if l.startswith(indentation + " "):
+                    continue
                 skip = False
                 s += "\n"
                 s += l
             elif header.match(l):
-                if l.find(indentation) == 0:
+                # A line matching header.
+                if l.startswith(indentation + " "):
                     continue
                 skip = False
                 if previous:
@@ -568,16 +598,16 @@ def format(s, embedded=False):
         "   Returns ...  Todo: add tests as in combinat::rankers\n"
 
     In the following use case, the ``nodetex`` directive would have been ignored prior
-    to #11815::
+    to :trac:`11815`::
 
         sage: cython_code = ["def testfunc(x):",
-        ... "    '''",
-        ... "    nodetex",
-        ... "    This is a doc string with raw latex",
-        ... "",
-        ... "    `x \\geq y`",
-        ... "    '''",
-        ... "    return -x"]
+        ....: "    '''",
+        ....: "    nodetex",
+        ....: "    This is a doc string with raw latex",
+        ....: "",
+        ....: "    `x \\geq y`",
+        ....: "    '''",
+        ....: "    return -x"]
         sage: cython('\n'.join(cython_code))
         sage: from sage.misc.sageinspect import sage_getdoc
         sage: print(sage_getdoc(testfunc))
@@ -607,7 +637,7 @@ def format(s, embedded=False):
         ...
 
     """
-    if not isinstance(s, str):
+    if not isinstance(s, string_types):
         raise TypeError("s must be a string")
 
     # Leading empty lines must be removed, since we search for directives
@@ -689,7 +719,7 @@ def format_src(s):
         sage: format_src('<<<Sq>>>')[5:15]
         'Sq(*nums):'
     """
-    if not isinstance(s, str):
+    if not isinstance(s, string_types):
         raise TypeError("s must be a string")
     docs = set([])
     import sage.all
@@ -1548,13 +1578,7 @@ def help(module=None):
         Welcome to Sage ...
     """
     if not module is None:
-        if hasattr(module, '_sage_doc_'):
-            from sage.misc.sageinspect import sage_getdef, _sage_getdoc_unformatted
-            docstr = 'Help on ' + str(module) + '\n'
-            docstr += 'Definition: ' + module.__name__ + sage_getdef(module) + '\n'
-            pydoc.pager(docstr + _sage_getdoc_unformatted(module))
-        else:
-            python_help(module)
+        python_help(module)
     else:
         print("""Welcome to Sage {}!
 

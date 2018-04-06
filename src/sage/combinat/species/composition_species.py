@@ -19,7 +19,6 @@ from __future__ import absolute_import
 from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure
 from .partition_species import PartitionSpecies
-from sage.misc.cachefunc import cached_function
 from sage.structure.unique_representation import UniqueRepresentation
 
 class CompositionSpeciesStructure(GenericSpeciesStructure):

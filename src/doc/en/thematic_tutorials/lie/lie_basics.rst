@@ -785,7 +785,7 @@ is useful for many purposes, such as finding maximal subgroups
 and for describing the affine Weyl group.
 
 In particular, the hyperplane for the reflection `r_0`, used in generating
-the affine Weyl group is translated off the origin (so it becomes an affine
+the affine Weyl group, is translated off the origin (so it becomes an affine
 hyperplane). Now the root system is not described as linear transformations
 on an Euclidean space, but instead by *affine* transformations. Thus the
 dominant chamber has finite volume and tiles the Eucledian space. Moreover,
@@ -823,7 +823,7 @@ The extended Dynkin diagram is also a method of the ``WeylCharacterRing``::
 
 We note the following important distinctions from the classical cases:
 
-- The affine Weyl groups are all infinte.
+- The affine Weyl groups are all infinite.
 - Type `A_1^{(1)}` has two anti-parallel roots with distinct reflections.
   The Dynkin diagram in this case is represented by a double bond with
   arrows going in both directions.
@@ -833,9 +833,9 @@ Twisted affine root systems
 ---------------------------
 
 For the construction of `\alpha_0` in the twisted types, we refer the
-reader to Chaper 8 of [Kac]_. As mentioned above, most twisted types can
-be constructed by the taking the dual root system of an untwisted type.
-However the type `A_{2n}^{(2)}` root system which can only be constructed by
+reader to Chapter 8 of [Kac]_. As mentioned above, most twisted types can
+be constructed by taking the dual root system of an untwisted type.
+However the type `A_{2n}^{(2)}` root system can only be constructed by
 the twisting procedure defined in [Kac]_. It has the following properties:
 
 - The Dynkin diagram of type `A_2^{(2)}` has a quadruple bond with an arrow

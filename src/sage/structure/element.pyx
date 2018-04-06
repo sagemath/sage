@@ -194,7 +194,7 @@ there is no coercion::
     sage: x + y
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Some parent' and 'Other parent'
+    TypeError: unsupported operand parent(s) for +: 'Some parent' and 'Other parent'
 
 If ``_add_`` is not defined, an error message is raised, referring to
 the parents::
@@ -207,12 +207,12 @@ the parents::
     sage: x + x
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Some parent' and 'Some parent'
+    TypeError: unsupported operand parent(s) for +: 'Some parent' and 'Some parent'
     sage: y = Element(q)
     sage: x + y
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Some parent' and 'Other parent'
+    TypeError: unsupported operand parent(s) for +: 'Some parent' and 'Other parent'
 
 We can also implement arithmetic generically in categories::
 
@@ -284,20 +284,22 @@ from cpython.ref cimport PyObject
 import types
 cdef add, sub, mul, div, truediv, floordiv, mod
 cdef iadd, isub, imul, idiv, itruediv, ifloordiv
-from operator import (add, sub, mul, div, truediv, floordiv, mod,
-        iadd, isub, imul, idiv, itruediv, ifloordiv)
+from operator import (add, sub, mul, truediv, floordiv, mod,
+                      iadd, isub, imul, itruediv, ifloordiv)
+try:
+    from operator import div, idiv
+except ImportError:
+    div = idiv = None
+
 cdef dict _coerce_op_symbols = dict(
         add='+', sub='-', mul='*', div='/', truediv='/', floordiv='//', mod='%',
         iadd='+', isub='-', imul='*', idiv='/', itruediv='/', ifloordiv='//')
 
-cdef MethodType
-from types import MethodType
-
-from sage.structure.sage_object cimport rich_to_bool
+from sage.structure.richcmp cimport rich_to_bool
 from sage.structure.coerce cimport py_scalar_to_element
 from sage.structure.parent cimport Parent
-from sage.structure.misc import is_extension_type
-from sage.structure.misc cimport getattr_from_other_class
+from sage.cpython.type cimport can_assign_class
+from sage.cpython.getattr cimport getattr_from_other_class
 from sage.misc.lazy_format import LazyFormat
 from sage.misc import sageinspect
 from sage.misc.classcall_metaclass cimport ClasscallMetaclass
@@ -335,7 +337,7 @@ cdef bin_op_exception(op, x, y):
         pass
     px = parent(x)
     py = parent(y)
-    return TypeError(f"unsupported operand parent(s) for {op!r}: '{px}' and '{py}'")
+    return TypeError(f"unsupported operand parent(s) for {op}: '{px}' and '{py}'")
 
 
 def is_Element(x):
@@ -387,11 +389,34 @@ cdef class Element(SageObject):
 
     def _set_parent(self, parent):
         r"""
+        Set the parent of ``self`` to ``parent``.
+
         INPUT:
 
-        - ``parent`` - a SageObject
+        - ``parent`` -- a :class:`Parent`
+
+        .. WARNING::
+
+            Changing the parent of an object is not something you
+            should normally need. It is mainly meant for constructing a
+            new element from scratch, when ``__new__`` or ``__init__``
+            did not set the right parent. Using this method incorrectly
+            can break things badly.
+
+        EXAMPLES::
+
+            sage: q = 3/5
+            sage: parent(q)
+            Rational Field
+            sage: q._set_parent(CC)
+            sage: parent(q)
+            Complex Field with 53 bits of precision
+            sage: q._set_parent(float)
+            Traceback (most recent call last):
+            ...
+            TypeError: Cannot convert type to sage.structure.parent.Parent
         """
-        self._parent = parent
+        self._parent = <Parent?>parent
 
     def __getattr__(self, name):
         """
@@ -408,7 +433,7 @@ cdef class Element(SageObject):
         ``e.foo`` is not found in the super classes of ``e``, it's
         looked up manually in ``C.element_class`` and bound to ``e``.
 
-        .. NOTES::
+        .. NOTE::
 
             - The attribute or method is actually looked up in
               ``P._abstract_element_class``. In most cases this is
@@ -489,7 +514,7 @@ cdef class Element(SageObject):
             sage: dir(1)         # todo: not implemented
             ['N', ..., 'is_idempotent', 'is_integer', 'is_integral', ...]
         """
-        from .misc import dir_with_other_class
+        from sage.cpython.getattr import dir_with_other_class
         return dir_with_other_class(self, self.parent().category().element_class)
 
     def _repr_(self):
@@ -661,7 +686,7 @@ cdef class Element(SageObject):
         SageObject._test_category(self, tester = tester)
         category = self.category()
         # Tests that self inherits methods from the categories
-        if not is_extension_type(self.__class__):
+        if can_assign_class(self):
             # For usual Python classes, that should be done with
             # standard inheritance
             tester.assert_(isinstance(self, self.parent().category().element_class))
@@ -960,15 +985,31 @@ cdef class Element(SageObject):
 
     def __nonzero__(self):
         r"""
-        Return ``True`` if ``self`` does not equal self.parent()(0).
+        Return whether this element is equal to ``self.parent()(0)``.
 
         Note that this is automatically called when converting to
         boolean, as in the conditional of an if or while statement.
 
-        TESTS:
-        Verify that :trac:`5185` is fixed.
+        EXAMPLES::
 
-        ::
+            sage: bool(1) # indirect doctest
+            True
+
+        If ``self.parent()(0)`` raises an exception (because there is no
+        meaningful zero element,) then this method returns ``True``. Here,
+        there is no zero morphism of rings that goes to a non-trivial ring::
+
+            sage: bool(Hom(ZZ, Zmod(2)).an_element())
+            True
+
+        But there is a zero morphism to the trivial ring::
+
+            sage: bool(Hom(ZZ, Zmod(1)).an_element())
+            False
+
+        TESTS:
+
+        Verify that :trac:`5185` is fixed::
 
             sage: v = vector({1: 1, 3: -1})
             sage: w = vector({1: -1, 3: 1})
@@ -980,8 +1021,14 @@ cdef class Element(SageObject):
             False
             sage: (v+w).__nonzero__()
             False
+
         """
-        return self != self._parent.zero()
+        try:
+            zero = self._parent.zero()
+        except Exception:
+            return True # by convention
+
+        return self != zero
 
     def is_zero(self):
         """
@@ -996,79 +1043,6 @@ cdef class Element(SageObject):
             implement ``__nonzero__`` instead.
         """
         return not self
-
-    def __cmp__(self, other):
-        """
-        Compare ``left`` and ``right`` using the coercion framework.
-
-        ``self`` and ``other`` are coerced to a common parent and then
-        ``_cmp_`` and ``_richcmp_`` are tried.
-
-        EXAMPLES:
-
-        We create an ``Element`` class where we define ``_richcmp_``
-        and check that comparison works::
-
-            sage: cython('''
-            ....: from sage.structure.sage_object cimport rich_to_bool
-            ....: from sage.structure.element cimport Element
-            ....: cdef class FloatCmp(Element):
-            ....:     cdef float x
-            ....:     def __init__(self, float v):
-            ....:         self.x = v
-            ....:     cpdef _richcmp_(self, other, int op):
-            ....:         cdef float x1 = (<FloatCmp>self).x
-            ....:         cdef float x2 = (<FloatCmp>other).x
-            ....:         return rich_to_bool(op, (x1 > x2) - (x1 < x2) )
-            ....: ''')
-            sage: a = FloatCmp(1)
-            sage: b = FloatCmp(2)
-            sage: cmp(a, b)
-            -1
-            sage: b.__cmp__(a)
-            1
-            sage: a <= b, b <= a
-            (True, False)
-
-        This works despite ``_cmp_`` not being implemented::
-
-            sage: a._cmp_(b)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: comparison not implemented for <type '...FloatCmp'>
-        """
-        if have_same_parent(self, other):
-            left = self
-            right = other
-        else:
-            try:
-                left, right = coercion_model.canonical_coercion(self, other)
-            except TypeError:
-                # Compare by id()
-                if (<unsigned long><PyObject*>self) >= (<unsigned long><PyObject*>other):
-                    # It cannot happen that self is other, since they don't
-                    # have the same parent.
-                    return 1
-                else:
-                    return -1
-
-            if not isinstance(left, Element):
-                assert type(left) is type(right)
-                return cmp(left, right)
-
-        # Now we have two Sage Elements with the same parent
-        try:
-            # First attempt: use _cmp_()
-            return (<Element>left)._cmp_(<Element>right)
-        except NotImplementedError:
-            # Second attempt: use _richcmp_()
-            if (<Element>left)._richcmp_(right, Py_EQ):
-                return 0
-            if (<Element>left)._richcmp_(right, Py_LT):
-                return -1
-            if (<Element>left)._richcmp_(right, Py_GT):
-                return 1
-            raise
 
     def _cache_key(self):
         """
@@ -1148,6 +1122,33 @@ cdef class Element(SageObject):
             Traceback (most recent call last):
             ...
             NotImplementedError: comparison not implemented for <type 'sage.structure.element.Element'>
+
+        We now create an ``Element`` class where we define ``_richcmp_``
+        and check that comparison works::
+
+            sage: cython('''
+            ....: from sage.structure.richcmp cimport rich_to_bool
+            ....: from sage.structure.element cimport Element
+            ....: cdef class FloatCmp(Element):
+            ....:     cdef float x
+            ....:     def __init__(self, float v):
+            ....:         self.x = v
+            ....:     cpdef _richcmp_(self, other, int op):
+            ....:         cdef float x1 = (<FloatCmp>self).x
+            ....:         cdef float x2 = (<FloatCmp>other).x
+            ....:         return rich_to_bool(op, (x1 > x2) - (x1 < x2))
+            ....: ''')
+            sage: a = FloatCmp(1)
+            sage: b = FloatCmp(2)
+            sage: a <= b, b <= a
+            (True, False)
+
+        This works despite ``_cmp_`` not being implemented::
+
+            sage: a._cmp_(b)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: comparison not implemented for <type '...FloatCmp'>
         """
         # Obvious case
         if left is right:
@@ -1158,8 +1159,10 @@ cdef class Element(SageObject):
             c = left._cmp_(right)
         except NotImplementedError:
             # Check equality by id(), knowing that left is not right
-            if op == Py_EQ: return False
-            if op == Py_NE: return True
+            if op == Py_EQ:
+                return False
+            if op == Py_NE:
+                return True
             raise
         assert -1 <= c <= 1
         return rich_to_bool(op, c)
@@ -1169,10 +1172,13 @@ cdef class Element(SageObject):
         Default three-way comparison method which only checks for a
         Python class defining ``__cmp__``.
         """
-        left_cmp = left.__cmp__
-        if isinstance(left_cmp, MethodType):
+        try:
+            left_cmp = left.__cmp__
+        except AttributeError:
+            pass
+        else:
             return left_cmp(right)
-        msg = LazyFormat("comparison not implemented for %r")%type(left)
+        msg = LazyFormat("comparison not implemented for %r") % type(left)
         raise NotImplementedError(msg)
 
     ##################################################
@@ -1202,15 +1208,15 @@ cdef class Element(SageObject):
             sage: e + e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '+': '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for +: '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
             sage: 1 + e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '+': 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for +: 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
             sage: e + 1
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '+': '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
+            TypeError: unsupported operand parent(s) for +: '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
             sage: int(1) + e
             Traceback (most recent call last):
             ...
@@ -1323,15 +1329,15 @@ cdef class Element(SageObject):
             sage: e - e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '-': '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for -: '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
             sage: 1 - e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '-': 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for -: 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
             sage: e - 1
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '-': '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
+            TypeError: unsupported operand parent(s) for -: '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
             sage: int(1) - e
             Traceback (most recent call last):
             ...
@@ -1468,15 +1474,15 @@ cdef class Element(SageObject):
             sage: e * e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for *: '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
             sage: 1 * e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for *: 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
             sage: e * 1
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
+            TypeError: unsupported operand parent(s) for *: '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
             sage: int(1) * e
             Traceback (most recent call last):
             ...
@@ -1606,15 +1612,15 @@ cdef class Element(SageObject):
             sage: e / e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '/': '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for /: '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
             sage: 1 / e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '/': 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for /: 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
             sage: e / 1
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '/': '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
+            TypeError: unsupported operand parent(s) for /: '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
             sage: int(1) / e
             Traceback (most recent call last):
             ...
@@ -1677,15 +1683,15 @@ cdef class Element(SageObject):
             sage: operator.truediv(e, e)
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '/': '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for /: '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
             sage: operator.truediv(1, e)
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '/': 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for /: 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
             sage: operator.truediv(e, 1)
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '/': '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
+            TypeError: unsupported operand parent(s) for /: '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
             sage: operator.truediv(int(1), e)
             Traceback (most recent call last):
             ...
@@ -1778,15 +1784,15 @@ cdef class Element(SageObject):
             sage: e // e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '//': '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for //: '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
             sage: 1 // e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '//': 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for //: 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
             sage: e // 1
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '//': '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
+            TypeError: unsupported operand parent(s) for //: '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
             sage: int(1) // e
             Traceback (most recent call last):
             ...
@@ -1878,15 +1884,15 @@ cdef class Element(SageObject):
             sage: e % e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '%': '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for %: '<type 'sage.structure.parent.Parent'>' and '<type 'sage.structure.parent.Parent'>'
             sage: 1 % e
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '%': 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
+            TypeError: unsupported operand parent(s) for %: 'Integer Ring' and '<type 'sage.structure.parent.Parent'>'
             sage: e % 1
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '%': '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
+            TypeError: unsupported operand parent(s) for %: '<type 'sage.structure.parent.Parent'>' and 'Integer Ring'
             sage: int(1) % e
             Traceback (most recent call last):
             ...
@@ -1993,7 +1999,7 @@ cdef class ElementWithCachedMethod(Element):
     but certainly slower than with attribute assignment. Lazy attributes
     work as well.
 
-    EXAMPLE:
+    EXAMPLES:
 
     We define three element extension classes. The first inherits from
     :class:`Element`, the second from this class, and the third simply
@@ -2122,7 +2128,7 @@ cdef class ElementWithCachedMethod(Element):
             string of this class. Here, we demonstrate lazy
             attributes.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: cython('''
             ....: from sage.structure.element cimport ElementWithCachedMethod
@@ -2204,7 +2210,7 @@ cdef class ModuleElement(Element):
         return coercion_model.bin_op(self, n, mul)
 
     # rmul -- left * self
-    cpdef _rmul_(self, RingElement left):
+    cpdef _rmul_(self, Element left):
         """
         Reversed scalar multiplication for module elements with the
         module element on the right and the scalar on the left.
@@ -2214,7 +2220,7 @@ cdef class ModuleElement(Element):
         return self._lmul_(left)
 
     # lmul -- self * right
-    cpdef _lmul_(self, RingElement right):
+    cpdef _lmul_(self, Element right):
         """
         Scalar multiplication for module elements with the module
         element on the left and the scalar on the right.
@@ -2366,7 +2372,7 @@ cdef class RingElement(ModuleElement):
         """
         Return the (integral) power of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: a = Integers(389)['x']['y'](37)
             sage: p = sage.structure.element.RingElement.__pow__
@@ -2414,7 +2420,7 @@ cdef class RingElement(ModuleElement):
             sage: x^(2^64 + 12345)
             Traceback (most recent call last):
             ...
-            OverflowError: Exponent overflow (2147483648).
+            OverflowError: exponent overflow (2147483648)
 
         Another example from :trac:`2956` which always overflows
         with Singular 4::
@@ -2710,7 +2716,7 @@ cdef class CommutativeRingElement(RingElement):
         Return a representative for ``self`` modulo the ideal I (or the ideal
         generated by the elements of I if I is not an ideal.)
 
-        EXAMPLE:  Integers
+        EXAMPLES:  Integers
         Reduction of 5 modulo an ideal::
 
             sage: n = 5
@@ -2730,7 +2736,7 @@ cdef class CommutativeRingElement(RingElement):
             2
 
 
-        EXAMPLE: Univariate polynomials
+        EXAMPLES: Univariate polynomials
 
         ::
 
@@ -2749,7 +2755,7 @@ cdef class CommutativeRingElement(RingElement):
         When little is implemented about a given ring, then mod may
         return simply return `f`.
 
-        EXAMPLE: Multivariate polynomials
+        EXAMPLES: Multivariate polynomials
         We reduce a polynomial in two variables modulo a polynomial
         and an ideal::
 
@@ -3007,19 +3013,19 @@ cdef class Vector(ModuleElement):
             sage: parent(vector(ZZ['x'],[1,2,3,4])*vector(ZZ['y'],[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(vector(ZZ['x'],[1,2,3,4])*vector(QQ['y'],[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
             sage: parent(vector(QQ['x'],[1,2,3,4])*vector(ZZ['y'],[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(vector(QQ['x'],[1,2,3,4])*vector(QQ['y'],[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (vector * matrix) multiplication::
 
@@ -3055,19 +3061,19 @@ cdef class Vector(ModuleElement):
             sage: parent(vector(ZZ['x'],[1,2])*matrix(ZZ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(vector(ZZ['x'],[1,2])*matrix(QQ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
             sage: parent(vector(QQ['x'],[1,2])*matrix(ZZ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(vector(QQ['x'],[1,2])*matrix(QQ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (vector * scalar) multiplication::
 
@@ -3103,19 +3109,19 @@ cdef class Vector(ModuleElement):
             sage: parent(vector(ZZ['x'],[1,2])*ZZ['y'](1))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(vector(ZZ['x'],[1,2])*QQ['y'](1))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Rational Field'
             sage: parent(vector(QQ['x'],[1,2])*ZZ['y'](1))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(vector(QQ['x'],[1,2])*QQ['y'](1))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (scalar * vector) multiplication::
 
@@ -3151,19 +3157,19 @@ cdef class Vector(ModuleElement):
             sage: parent(ZZ['x'](1)*vector(ZZ['y'],[1,2]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(ZZ['x'](1)*vector(QQ['y'],[1,2]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
             sage: parent(QQ['x'](1)*vector(ZZ['y'],[1,2]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(QQ['x'](1)*vector(QQ['y'],[1,2]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
         """
         if have_same_parent(left, right):
             return (<Vector>left)._dot_product_(<Vector>right)
@@ -3295,19 +3301,19 @@ cdef class Matrix(ModuleElement):
             sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*matrix(ZZ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*matrix(QQ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
             sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*matrix(ZZ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*matrix(QQ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (matrix * vector) multiplication::
 
@@ -3343,19 +3349,19 @@ cdef class Matrix(ModuleElement):
             sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*vector(ZZ['y'],[1,2]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*vector(QQ['y'],[1,2]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
             sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*vector(ZZ['y'],[1,2]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*vector(QQ['y'],[1,2]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (matrix * scalar) multiplication::
 
@@ -3391,19 +3397,19 @@ cdef class Matrix(ModuleElement):
             sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*ZZ['y'](1))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*QQ['y'](1))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Rational Field'
             sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*ZZ['y'](1))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*QQ['y'](1))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (scalar * matrix) multiplication::
 
@@ -3439,19 +3445,19 @@ cdef class Matrix(ModuleElement):
             sage: parent(ZZ['x'](1)*matrix(ZZ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(ZZ['x'](1)*matrix(QQ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
             sage: parent(QQ['x'](1)*matrix(ZZ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
             sage: parent(QQ['x'](1)*matrix(QQ['y'],2,2,[1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
 
         Examples with matrices having matrix coefficients::
 
@@ -3911,6 +3917,9 @@ cdef class CoercionModel:
 from . import coerce
 cdef CoercionModel coercion_model = coerce.CoercionModel_cache_maps()
 
+# Make this accessible as Python object
+globals()["coercion_model"] = coercion_model
+
 
 def get_coercion_model():
     """
@@ -3922,12 +3931,11 @@ def get_coercion_model():
        sage: cm = e.get_coercion_model()
        sage: cm
        <sage.structure.coerce.CoercionModel_cache_maps object at ...>
+       sage: cm is coercion_model
+       True
     """
     return coercion_model
 
-def set_coercion_model(cm):
-    global coercion_model
-    coercion_model = cm
 
 def coercion_traceback(dump=True):
     r"""
@@ -3949,7 +3957,7 @@ def coercion_traceback(dump=True):
         sage: 1/5 + GF(5).gen()
         Traceback (most recent call last):
         ...
-        TypeError: unsupported operand parent(s) for '+': 'Rational Field' and 'Finite Field of size 5'
+        TypeError: unsupported operand parent(s) for +: 'Rational Field' and 'Finite Field of size 5'
         sage: coercion_traceback()
         Traceback (most recent call last):
         ...

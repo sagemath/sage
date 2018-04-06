@@ -20,6 +20,7 @@ from __future__ import absolute_import
 
 from .free_module import FreeModule_ambient_field
 
+
 class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
     """
     A quotient `V/W` of two vector spaces as a vector space.
@@ -181,32 +182,60 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         """
         return self.__hash
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
-        Compare self and other.
+        Compare ``self`` and ``other``.
 
-        If other is not a quotient of vector spaces, returns
-        comparison of the underlying types.  If it is, return
-        comparison of the pair (V,W) so that self is V/W for each of
-        self and other.
+        If ``other`` is not a quotient of vector spaces, return ``False``.
+
+        If it is, return comparison of the pair `(V, W)` so that ``self`` is
+        `V/W` for each of ``self`` and ``other``.
 
         EXAMPLES:
-        We create three quotient spaces and compare them:
-            sage: A = QQ^2; V = A.span_of_basis([[1,0], [1,1]]);
-            sage: W0 = V.span([V.1, V.0]); W1 = V.span([V.1]); W2 = V.span([V.1])
-            sage: Q0 = V/W0; Q1 = V/W1; Q2 = V/W2
-            sage: cmp(Q0, Q1)
-            1
-            sage: cmp(Q1, Q0)
-            -1
-            sage: cmp(Q1, Q2)
-            0
-            sage: cmp(Q1, 5) != 0
+
+        We create three quotient spaces and compare them::
+
+            sage: A = QQ^2
+            sage: V = A.span_of_basis([[1,0], [1,1]])
+            sage: W0 = V.span([V.1, V.0])
+            sage: W1 = V.span([V.1])
+            sage: W2 = V.span([V.1])
+            sage: Q0 = V/W0
+            sage: Q1 = V/W1
+            sage: Q2 = V/W2
+
+            sage: Q0 == Q1
+            False
+            sage: Q1 == Q2
             True
         """
         if not isinstance(other, FreeModule_ambient_field_quotient):
-            return cmp(type(self), type(other))
-        return cmp((self.V(), self.W()), (other.V(), other.W()))
+            return False
+        return (self.V(), self.W()) == (other.V(), other.W())
+
+    def __ne__(self, other):
+        """
+        Check not-equality of ``self`` and ``other``.
+
+        EXAMPLES:
+
+        We create three quotient spaces and compare them::
+
+            sage: A = QQ^2
+            sage: V = A.span_of_basis([[1,0], [1,1]])
+            sage: W0 = V.span([V.1, V.0])
+            sage: W1 = V.span([V.1])
+            sage: W2 = V.span([V.1])
+            sage: Q0 = V/W0
+            sage: Q1 = V/W1
+            sage: Q2 = V/W2
+
+            sage: Q0 != Q1
+            True
+            sage: Q1 != Q2
+            False
+        """
+        return not (self == other)
 
     def _element_constructor_(self, x):
         """
@@ -277,23 +306,23 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
             Composite map:
               From: Ambient free module of rank 2 over the principal ideal domain Integer Ring
               To:   Vector space quotient V/W of dimension 1 over Rational Field where
-                    V: Vector space of dimension 2 over Rational Field
-                    W: Vector space of degree 2 and dimension 1 over Rational Field
-                    Basis matrix:
-                    [1 2]
-              Defn:   Conversion map:
+            V: Vector space of dimension 2 over Rational Field
+            W: Vector space of degree 2 and dimension 1 over Rational Field
+            Basis matrix:
+            [1 2]
+              Defn:   Coercion map:
                       From: Ambient free module of rank 2 over the principal ideal domain Integer Ring
                       To:   Vector space of dimension 2 over Rational Field
                     then
                       Vector space morphism represented by the matrix:
-                      [   1]
-                      [-1/2]
-                      Domain: Vector space of dimension 2 over Rational Field
-                      Codomain: Vector space quotient V/W of dimension 1 over Rational Field where
-                                V: Vector space of dimension 2 over Rational Field
-                                W: Vector space of degree 2 and dimension 1 over Rational Field
-                                Basis matrix:
-                                [1 2]
+                    [   1]
+                    [-1/2]
+                    Domain: Vector space of dimension 2 over Rational Field
+                    Codomain: Vector space quotient V/W of dimension 1 over Rational Field where
+                    V: Vector space of dimension 2 over Rational Field
+                    W: Vector space of degree 2 and dimension 1 over Rational Field
+                    Basis matrix:
+                    [1 2]
 
         Make sure :trac:`10513` is fixed (no coercion from an abstract
         vector space to an isomorphic quotient vector space)::
@@ -319,7 +348,7 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def quotient_map(self):
         """
-        Given this quotient space $Q = V/W$, return the natural quotient map from V to Q.
+        Given this quotient space `Q = V/W`, return the natural quotient map from V to Q.
 
         EXAMPLES::
 
@@ -343,7 +372,7 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def lift_map(self):
         """
-        Given this quotient space $Q = V/W$, return a fixed choice of linear homomorphism
+        Given this quotient space `Q = V/W`, return a fixed choice of linear homomorphism
         (a section) from Q to V.
 
         EXAMPLES::
@@ -382,7 +411,7 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def W(self):
         """
-        Given this quotient space $Q = V/W$, return W.
+        Given this quotient space `Q = V/W`, return `W`.
 
         EXAMPLES::
 
@@ -397,7 +426,7 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def V(self):
         """
-        Given this quotient space $Q = V/W$, return $V$.
+        Given this quotient space `Q = V/W`, return `V`.
 
         EXAMPLES::
 
@@ -409,7 +438,9 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def cover(self):
         """
-        Given this quotient space $Q = V/W$, return $V$.  This is the same as self.V().
+        Given this quotient space `Q = V/W`, return `V`.
+
+        This is the same as :meth:`V`.
 
         EXAMPLES::
 
@@ -421,7 +452,9 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def relations(self):
         """
-        Given this quotient space $Q = V/W$, return $W$.  This is the same as self.W().
+        Given this quotient space `Q = V/W`, return `W`.
+
+        This is the same as :meth:`W`.
 
         EXAMPLES::
 

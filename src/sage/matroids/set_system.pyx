@@ -27,7 +27,7 @@ Methods
 #*****************************************************************************
 from __future__ import print_function
 
-include "cysignals/memory.pxi"
+from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 include 'sage/data_structures/bitset.pxi'
 
 # SetSystem
@@ -90,7 +90,7 @@ cdef class SetSystem:
         self._groundset_size = len(groundset)
         self._bitset_size = max(self._groundset_size, 1)
         self._capacity = capacity
-        self._subsets = <bitset_t*> sig_malloc(self._capacity * sizeof(bitset_t))
+        self._subsets = <bitset_t*>check_allocarray(self._capacity, sizeof(bitset_t))
         bitset_init(self._temp, self._bitset_size)
         self._len = 0
 
@@ -271,7 +271,7 @@ cdef class SetSystem:
             bitset_free(self._subsets[i])
         self._len = min(self._len, k)
         k2 = max(k, 1)
-        self._subsets = <bitset_t*> sig_realloc(self._subsets, k2 * sizeof(bitset_t))
+        self._subsets = <bitset_t*>check_reallocarray(self._subsets, k2, sizeof(bitset_t))
         self._capacity = k2
 
     cdef inline _append(self, bitset_t X):

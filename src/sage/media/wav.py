@@ -20,7 +20,7 @@ sample, and the number of channels in the file.
 
 AUTHORS:
 
-- Bobby Moretti and Gonzolo Tornaria (2007-07-01): First version
+- Bobby Moretti and Gonzalo Tornaria (2007-07-01): First version
 - William Stein (2007-07-03): add more
 - Bobby Moretti (2007-07-03): add doctests
 """

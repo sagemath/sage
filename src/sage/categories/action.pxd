@@ -4,10 +4,10 @@ from .map cimport Map
 from .functor cimport Functor
 
 cdef class Action(Functor):
-    cdef G
+    cdef readonly G
+    cdef readonly op
+    cdef readonly bint _is_left
     cdef US
-    cdef bint _is_left
-    cdef op
     cdef underlying_set(self)
     cpdef _call_(self, a, b)
 

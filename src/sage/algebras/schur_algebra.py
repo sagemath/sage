@@ -28,10 +28,12 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 import itertools
 
-from sage.categories.all import AlgebrasWithBasis
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModule_Tensor
 from sage.combinat.integer_lists import IntegerListsLex
@@ -247,7 +249,7 @@ class SchurAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R,
                                          schur_representative_indices(n, r),
                                          prefix='S', bracket=False,
-                                         category=AlgebrasWithBasis(R))
+                                         category=AlgebrasWithBasis(R).FiniteDimensional())
 
     def _repr_(self):
         """
@@ -428,12 +430,13 @@ class SchurTensorModule(CombinatorialFreeModule_Tensor):
             sage: T = SchurTensorModule(QQ, 2, 3)
             sage: TestSuite(T).run()
         """
-        C = CombinatorialFreeModule(R, range(1, n + 1))
+        C = CombinatorialFreeModule(R, list(range(1, n + 1)))
         self._n = n
         self._r = r
         self._sga = SymmetricGroupAlgebra(R, r)
         self._schur = SchurAlgebra(R, n, r)
-        CombinatorialFreeModule_Tensor.__init__(self, tuple([C] * r))
+        cat = ModulesWithBasis(R).TensorProducts().FiniteDimensional()
+        CombinatorialFreeModule_Tensor.__init__(self, tuple([C] * r), category=cat)
         g = self._schur.module_morphism(self._monomial_product, codomain=self)
         self._schur_action = self.module_morphism(g, codomain=self, position=1)
 
@@ -465,7 +468,7 @@ class SchurTensorModule(CombinatorialFreeModule_Tensor):
             B[1] # B[1] # B[2] + B[1] # B[2] # B[1] + B[2] # B[1] # B[1]
         """
         ret = []
-        for i in itertools.product(range(1, self._n + 1), repeat=self._r):
+        for i in itertools.product(list(range(1, self._n + 1)), repeat=self._r):
             if schur_representative_from_index(i, v) == xi:
                 ret.append(tuple(i))
         return self.sum_of_monomials(ret)
@@ -489,7 +492,7 @@ class SchurTensorModule(CombinatorialFreeModule_Tensor):
                 sage: x * y
                 Traceback (most recent call last):
                 ...
-                TypeError: unsupported operand parent(s) for '*': ...
+                TypeError: unsupported operand parent(s) for *: ...
 
             ::
 
@@ -502,7 +505,7 @@ class SchurTensorModule(CombinatorialFreeModule_Tensor):
                 sage: y * x
                 Traceback (most recent call last):
                 ...
-                TypeError: unsupported operand parent(s) for '*': ...
+                TypeError: unsupported operand parent(s) for *: ...
 
             ::
 
@@ -580,7 +583,7 @@ def GL_irreducible_character(n, mu, KK):
 
     #make ST the superstandard tableau of shape mu
     from sage.combinat.tableau import from_shape_and_word
-    ST = from_shape_and_word(mu, range(1, r + 1), convention='English')
+    ST = from_shape_and_word(mu, list(range(1, r + 1)), convention='English')
 
     #make ell the reading word of the highest weight tableau of shape mu
     ell = [i + 1 for i, l in enumerate(mu) for dummy in range(l)]

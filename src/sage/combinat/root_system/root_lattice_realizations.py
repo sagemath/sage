@@ -11,8 +11,7 @@ Root lattice realizations
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
 from sage.misc.abstract_method import abstract_method, AbstractMethod
 from sage.misc.misc import attrcall
@@ -29,6 +28,7 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 from sage.combinat.root_system.plot import PlotOptions, barycentric_projection_matrix
+from itertools import combinations_with_replacement
 
 
 class RootLatticeRealizations(Category_over_base_ring):
@@ -491,7 +491,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             Return the basic imaginary roots of ``self``.
 
             The basic imaginary roots `\delta` are the set of imaginary roots
-            in `-C^{\vee}` where `C` is the dominant chamger (i.e.,
+            in `-C^{\vee}` where `C` is the dominant chamber (i.e.,
             `\langle \beta, \alpha_i^{\vee} \rangle \leq 0` for all `i \in I`).
             All imaginary roots are `W`-conjugate to a simple imaginary root.
 
@@ -1126,13 +1126,12 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: P.coxeter_transformation()**20 == 1
                 True
             """
-            from sage.combinat.multichoose_nk import MultichooseNK
             Phi_plus = self.positive_roots()
             L = self.nonnesting_partition_lattice(facade=True)
             chains = [chain for chain in L.chains().list() if len(chain) <= m]
             multichains = []
             for chain in chains:
-                for multilist in MultichooseNK(len(chain), m):
+                for multilist in combinations_with_replacement(range(len(chain)), m):
                     if len(set(multilist)) == len(chain):
                         multichains.append(tuple([chain[i] for i in multilist]))
             def is_saturated_chain(chain):
@@ -1195,11 +1194,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             """
             if not self.cartan_type().is_finite():
-                raise ValueError("%s is not a finite Cartan type"%(self.cartan_type()))
-            from sage.combinat.combinat import MapCombinatorialClass
-            return MapCombinatorialClass(self.positive_roots(), attrcall('__neg__'), "The negative roots of %s"%self)
-            # Todo: use this instead once RecursivelyEnumeratedSet will be a proper enumerated set
-            #return self.positive_roots().map(attrcall('__negate__'))
+                raise ValueError("%s is not a finite Cartan type" % self.cartan_type())
+            return self.positive_roots().map(attrcall('__neg__'))
 
         ##########################################################################
         # coroots
@@ -1511,7 +1507,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: s[1]( r.simple_root(1) )
                 -alpha[1]
 
-            TEST::
+            TESTS::
 
                 sage: s
                 simple reflections
@@ -1600,7 +1596,8 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: pi[1](x[2])
                 -Lambda[1] + 2*Lambda[2]
 
-            TESTS:
+            TESTS::
+
                 sage: pi
                 pi
             """
@@ -2051,6 +2048,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 - :meth:`plot_alcoves`
                 - :meth:`plot_alcove_walk`
                 - :meth:`plot_ls_paths`
+                - :meth:`plot_mv_polytope`
                 - :meth:`plot_crystal`
             """
             plot_options = self.plot_parse_options(**options)
@@ -2400,7 +2398,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             # We build the family of fundamental weights in this space,
             # indexed by the fundamental weights in the weight lattice.
             #
-            # To this end, we don't use the embdding of the weight
+            # To this end, we don't use the embedding of the weight
             # lattice into self as for the roots or coroots because
             # the ambient space can define the fundamental weights
             # slightly differently (the usual GL_n vs SL_n catch).
@@ -2730,7 +2728,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             G = plot_options.empty()
             if alcoves is not True:
                 alcoves = list(alcoves)
-            if alcoves is True or (len(alcoves)>0 and W.is_parent_of(alcoves[0])):
+            if alcoves is True or (alcoves and W.is_parent_of(alcoves[0])):
                 if alcoves is True:
                     alcoves = W.weak_order_ideal(alcove_in_bounding_box, side="right")
                 # We assume that the fundamental alcove lies within
@@ -3027,6 +3025,78 @@ class RootLatticeRealizations(Category_over_base_ring):
                         G += plot_options.text(b, prev + prev.normalized()*plot_labels)
             return G
 
+        def plot_mv_polytope(self, mv_polytope, mark_endpoints=True,
+                             circle_size=0.06, circle_thickness=1.6,
+                             wireframe='blue', fill='green', alpha=1,
+                             **options):
+            r"""
+            Plot an MV polytope.
+
+            INPUT:
+
+            - ``mv_polytope`` -- an MV polytope
+            - ``mark_endpoints`` -- (default: ``True``) mark the endpoints
+              of the MV polytope
+            - ``circle_size`` -- (default: 0.06) the size of the circles
+            - ``circle_thickness`` -- (default: 1.6) the thinkness of the
+              extra rings of circles
+            - ``wireframe`` -- (default: ``'blue'``) color to draw the
+              wireframe of the polytope with
+            - ``fill`` -- (default: ``'green'``) color to fill the polytope with
+            - ``alpha`` -- (default: 1) the alpha value (opacity) of the fill
+            - ``**options`` -- plotting options
+
+            .. SEEALSO::
+
+                - :meth:`plot` for a description of the plotting options
+                - :ref:`sage.combinat.root_system.plot` for a tutorial
+                  on root system plotting
+
+            EXAMPLES::
+
+                sage: B = crystals.infinity.MVPolytopes(['C',2])
+                sage: L = RootSystem(['C',2]).ambient_space()
+                sage: p = B.highest_weight_vector().f_string([1,2,1,2])
+                sage: L.plot_fundamental_weights() + L.plot_mv_polytope(p)
+                Graphics object consisting of 14 graphics primitives
+
+            This also works in 3 dimensions::
+
+                sage: B = crystals.infinity.MVPolytopes(['A',3])
+                sage: L = RootSystem(['A',3]).ambient_space()
+                sage: p = B.highest_weight_vector().f_string([2,1,3,2])
+                sage: L.plot_mv_polytope(p)
+                Graphics3d Object
+            """
+            from sage.geometry.polyhedron.all import Polyhedron
+            plot_options = self.plot_parse_options(**options)
+
+            # Setup the shift for plotting
+            pbw_data = mv_polytope._pbw_datum.parent
+            al = self.simple_roots()
+            red = tuple(mv_polytope._pbw_datum.long_word)
+            roots = [self.sum(c*al[a] for a,c in root)
+                     for root in pbw_data._root_list_from(red)]
+            datum = mv_polytope._pbw_datum.lusztig_datum
+            end_pt = self.sum(roots[i] * c for i,c in enumerate(datum))
+            shift = plot_options.projection(end_pt)
+
+            vertices = [plot_options.projection(vertex) - shift
+                        for vertex in mv_polytope._polytope_vertices(self)]
+            p = Polyhedron(vertices=vertices).plot(wireframe=wireframe,
+                                                   fill=fill, alpha=alpha)
+            if mark_endpoints:
+                from sage.plot.circle import circle
+
+                p += circle(plot_options.projection(self.zero()),
+                            circle_size, fill=True,
+                            thickness=circle_thickness, color=wireframe)
+
+                p += circle(-shift,
+                            circle_size, fill=True,
+                            thickness=circle_thickness, color=wireframe)
+            return p
+
         def plot_crystal(self, crystal,
                          plot_labels=True, label_color='black',
                          edge_labels=False,
@@ -3151,7 +3221,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             For example, if invoked on the root lattice of type `['B',2]`, returns the
             coroot lattice of type `['C',2]`.
 
-            ..warning::
+            .. WARNING::
 
                 Not implemented for ambient spaces.
 
@@ -3352,18 +3422,37 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             return [s(self) for s in self.parent().simple_reflections()]
 
+        def _orbit_iter(self):
+            """
+            Iterate the orbit of ``self`` under the action of the Weyl group.
+
+            Call this method when the orbit just needs to be iterated over.
+
+            EXAMPLES::
+
+                sage: L = RootSystem(["A", 2]).ambient_lattice()
+                sage: sorted(L.rho()._orbit_iter())    # the output order is not specified
+                [(1, 2, 0), (1, 0, 2), (2, 1, 0),
+                 (2, 0, 1), (0, 1, 2), (0, 2, 1)]
+            """
+            R = RecursivelyEnumeratedSet([self], attrcall('simple_reflections'),
+                    structure=None, enumeration='breadth')
+            return iter(R)
+
         def orbit(self):
             r"""
-            The orbit of self under the action of the Weyl group
+            The orbit of ``self`` under the action of the Weyl group.
 
             EXAMPLES:
 
-            `\rho` is a regular element whose orbit is in bijection with the Weyl group.
-            In particular, it as 6 elements for the symmetric group `S_3`::
+            `\rho` is a regular element whose orbit is in bijection
+            with the Weyl group. In particular, it has 6 elements for
+            the symmetric group `S_3`::
 
                 sage: L = RootSystem(["A", 2]).ambient_lattice()
                 sage: sorted(L.rho().orbit())               # the output order is not specified
-                [(1, 2, 0), (1, 0, 2), (2, 1, 0), (2, 0, 1), (0, 1, 2), (0, 2, 1)]
+                [(1, 2, 0), (1, 0, 2), (2, 1, 0),
+                 (2, 0, 1), (0, 1, 2), (0, 2, 1)]
 
                 sage: L = RootSystem(["A", 3]).weight_lattice()
                 sage: len(L.rho().orbit())
@@ -3373,9 +3462,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: len(L.fundamental_weights()[2].orbit())
                 6
             """
-            R = RecursivelyEnumeratedSet([self], attrcall('simple_reflections'),
-                    structure=None, enumeration='breadth')
-            return list(R)
+            return list(self._orbit_iter())
 
         ##########################################################################
         #
@@ -3646,7 +3733,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         def is_dominant_weight(self): # Or is_dominant_integral_weight?
             """
-            Tests whether ``self`` is a dominant element of the weight lattice
+            Test whether ``self`` is a dominant element of the weight lattice.
 
             EXAMPLES::
 
@@ -3661,11 +3748,11 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: (-Lambda[1]+Lambda[2]).is_dominant()
                 False
 
-           Tests that the scalar products with the coroots are all
-           nonnegative integers. For example, if `x` is the sum of a
-           dominant element of the weight lattice plus some other element
-           orthogonal to all coroots, then the implementation correctly
-           reports `x` to be a dominant weight::
+            Tests that the scalar products with the coroots are all
+            nonnegative integers. For example, if `x` is the sum of a
+            dominant element of the weight lattice plus some other element
+            orthogonal to all coroots, then the implementation correctly
+            reports `x` to be a dominant weight::
 
                sage: x = Lambda[1] + L([-1,-1,-1])
                sage: x.is_dominant_weight()
@@ -3688,7 +3775,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             INPUT:
 
             - ``index_set`` - a subset (as a list or iterable) of the
-              nodes of the dynkin diagram; (default: ``None`` for all of them)
+              nodes of the Dynkin diagram; (default: ``None`` for all of them)
 
             If ``index_set`` is specified, the successors for the
             corresponding parabolic subsystem are returned.
@@ -3717,7 +3804,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             INPUT:
 
             - ``index_set`` - a subset (as a list or iterable) of the
-              nodes of the dynkin diagram; (default: ``None`` for all of them)
+              nodes of the Dynkin diagram; (default: ``None`` for all of them)
 
             If ``index_set`` is specified, the successors for the
             corresponding parabolic subsystem are returned.

@@ -28,7 +28,10 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.rings.all import (Integer, RationalField, ZZ)
 import sage.groups.additive_abelian.additive_abelian_wrapper as groups
+from sage.structure.richcmp import richcmp_method, richcmp
 
+
+@richcmp_method
 class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
     r"""
     The torsion subgroup of an elliptic curve over a number field.
@@ -160,9 +163,9 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         if self.__K is RationalField():
             G = self.__E.pari_curve().elltors()
-            order = G[0].python()
-            structure = G[1].python()
-            gens = G[2].python()
+            order = G[0].sage()
+            structure = G[1].sage()
+            gens = G[2].sage()
 
             self.__torsion_gens = [ self.__E(P) for P in gens ]
             from sage.groups.additive_abelian.additive_abelian_group import cover_and_relations_from_invariants
@@ -218,9 +221,9 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         """
         return "Torsion Subgroup isomorphic to %s associated to the %s" % (self.short_name(), self.__E)
 
-    def __cmp__(self,other):
+    def __richcmp__(self, other, op):
         r"""
-        Compares two torsion groups by simply comparing the elliptic curves.
+        Compare two torsion groups by simply comparing the elliptic curves.
 
         EXAMPLES::
 
@@ -229,10 +232,9 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
             sage: tor == tor
             True
         """
-        c = cmp(type(self), type(other))
-        if c:
-            return c
-        return cmp(self.__E, other.__E)
+        if type(self) != type(other):
+            return NotImplemented
+        return richcmp(self.__E, other.__E, op)
 
     def curve(self):
         """

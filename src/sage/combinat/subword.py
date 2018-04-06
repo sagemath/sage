@@ -482,7 +482,7 @@ class Subwords_wk(Subwords_w):
         if self._k > len(self._w):
             return iter([])
         iterator = itertools.combinations(self._w, self._k)
-        if self._element_constructor is tuple:
+        if self._build is tuple:
             return iterator
         else:
             return (self._build(x) for x in iterator)
@@ -523,7 +523,7 @@ def smallest_positions(word, subword, pos=0):
         sage: sage.combinat.subword.smallest_positions([1,3,3,5,4,5,3,5],[3,5,3],3)
         False
 
-    TEST:
+    TESTS:
 
     We check for :trac:`5534`::
 

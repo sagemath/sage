@@ -305,7 +305,8 @@ Let us see how one can explore this::
      'Gao',
      'GuruswamiSudan',
      'KeyEquationSyndrome',
-     'BerlekampWelch']
+     'BerlekampWelch',
+     'InformationSet']
 
 We got a list of the available encoders and decoders for our GRS code.
 Rather than using the default ones as we did before,
@@ -491,7 +492,7 @@ We can describe these boundaries in two ways:
     Static error rate channel creating between 1 and 14 errors, of input and output space Vector space of dimension 40 over Finite Field of size 59
 
 We already know that a channel has a
-:meth:`sage.coding.channel_constuctions.Channel.transmit` method which will
+:meth:`sage.coding.channel_constructions.Channel.transmit` method which will
 perform transmission over the channel; in this case it will return
 the transmitted word with some errors in it.
 This method will always check if the provided word belongs to
@@ -502,7 +503,7 @@ if one is simulating millions of transmissions.
 For this usage there is
 :meth:`sage.coding.channel_constructions.Channel.transmit_unsafe` which does
 the same as
-:meth:`sage.coding.channel_constuctions.Channel.transmit`
+:meth:`sage.coding.channel_constructions.Channel.transmit`
 but without checking the input, as illustrated thereafter::
 
     sage: c = C.random_element()
@@ -513,7 +514,7 @@ but without checking the input, as illustrated thereafter::
     False
 
 Note there exists a useful shortcut for
-:meth:`sage.coding.channel_constuctions.Channel.transmit` ::
+:meth:`sage.coding.channel_constructions.Channel.transmit` ::
 
     sage: r = Chan(c)
     sage: r in C

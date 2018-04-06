@@ -15,9 +15,9 @@ def is_Monoid(x):
         sage: is_Monoid(0)
         False
         sage: is_Monoid(ZZ)   # The technical math meaning of monoid has
-        ...                   # no bearing whatsoever on the result: it's
-        ...                   # a typecheck which is not satisfied by ZZ
-        ...                   # since it does not inherit from Monoid_class.
+        ....:                 # no bearing whatsoever on the result: it's
+        ....:                 # a typecheck which is not satisfied by ZZ
+        ....:                 # since it does not inherit from Monoid_class.
         False
         sage: is_Monoid(sage.monoids.monoid.Monoid_class(('a','b')))
         True

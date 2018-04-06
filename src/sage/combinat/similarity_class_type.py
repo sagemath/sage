@@ -175,8 +175,8 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
-
 from six.moves import range
+from six import add_metaclass
 
 from operator import mul
 from itertools import chain, product
@@ -338,6 +338,8 @@ def centralizer_group_cardinality(la, q = None):
         q = ZZ['q'].gen()
     return q**centralizer_algebra_dim(la)*prod([fq(m, q = q) for m in la.to_exp()])
 
+
+@add_metaclass(InheritComparisonClasscallMetaclass)
 class PrimarySimilarityClassType(Element):
     r"""
     A primary similarity class type is a pair consisting of a partition and a positive
@@ -348,15 +350,13 @@ class PrimarySimilarityClassType(Element):
     of order `|\lambda| \cdot d` with entries in a finite field of order `q`
     which correspond to the `\GF{q[t]}`-module
 
-    .. MATH ::
+    .. MATH::
 
         \frac{\GF{q[t]}}{p(t)^{\lambda_1} } \oplus
         \frac{\GF{q[t]}}{p(t)^{\lambda_2}} \oplus \dotsb
 
     for some irreducible polynomial `p(t)` of degree `d`.
     """
-    __metaclass__ = InheritComparisonClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(cls, deg, par):
         r"""
@@ -550,11 +550,9 @@ class PrimarySimilarityClassType(Element):
             q^8 - q^6 - q^4 + q^2
         """
         if q is None:
-            R = FractionField(ZZ['q'])
-            q = R.gen()
-        return self.statistic(centralizer_group_cardinality, q = q)
-        #p = q.parent()(prod(map(lambda n:fq(n, q = q), self.partition().to_exp()),1))
-        #return q**self.centralizer_algebra_dim()*p.substitute(q = q**self.degree())
+            q = FractionField(ZZ['q']).gen()
+        return self.statistic(centralizer_group_cardinality, q=q)
+
 
 class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
     r"""
@@ -693,7 +691,7 @@ class SimilarityClassType(CombinatorialElement):
     r"""
     A similarity class type.
 
-    A matrix type is a multiset of primary similairty class types.
+    A matrix type is a multiset of primary similarity class types.
 
     INPUT:
 
@@ -1215,7 +1213,8 @@ def dictionary_from_generator(gen):
     setofkeys = list(set(item[0] for item in L))
     return dict((key, sum(entry[1] for entry in (pair for pair in L if pair[0] == key))) for key in setofkeys)
 
-def matrix_similarity_classes(n, q = None, invertible = False):
+
+def matrix_similarity_classes(n, q=None, invertible=False):
     r"""
     Return the number of matrix similarity classes over a finite field of order
     ``q``.
@@ -1231,12 +1230,17 @@ def matrix_similarity_classes(n, q = None, invertible = False):
         15
     """
     if q is None:
-        q = FractionField(QQ['q']).gen()
+        q = ZZ['q'].gen()
+    basering = q.parent()
     if n == 0:
-        return 1
+        return basering.one()
     if invertible:
-        return sum([q**max(la)*((1-q**(-1))**map(lambda x: x>0, la.to_exp()).count(True)) for la in Partitions(n)])
-    return sum([q**max(la) for la in Partitions(n)])
+        tilde = 1 - ~q
+        return sum(q**max(la) *
+                   tilde ** len([x for x in la.to_exp() if x > 0])
+                   for la in Partitions(n))
+    return sum(q**max(la) for la in Partitions(n))
+
 
 def matrix_centralizer_cardinalities(n, q = None, invertible = False):
     """
@@ -1307,8 +1311,9 @@ def input_parsing(data):
                     case = 'pri'
                     output = data
                 except(TypeError, ValueError):
-                    raise ValueError("Expected a Partition, a SimiliarityClassType or a PrimarySimilarityClassType, got a %s"%(type(data)))
+                    raise ValueError("Expected a Partition, a SimilarityClassType or a PrimarySimilarityClassType, got a %s" % type(data))
     return case, data
+
 
 def ext_orbits(input_data, q = None, selftranspose = False):
     r"""

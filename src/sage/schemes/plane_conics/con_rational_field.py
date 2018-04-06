@@ -27,7 +27,6 @@ from __future__ import absolute_import
 
 from sage.rings.all import (PolynomialRing, ZZ, QQ)
 
-from sage.rings.morphism import is_RingHomomorphism
 from sage.rings.real_mpfr import is_RealField
 
 from sage.structure.sequence import Sequence
@@ -191,7 +190,10 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                                            algorithm = algorithm, \
                                            read_cache = read_cache)
         if point or obstruction:
-            if is_RingHomomorphism(ret[1]):
+            from sage.categories.map import Map
+            from sage.categories.all import Rings
+            if isinstance(ret[1], Map) and ret[1].category_for().is_subcategory(Rings()):
+                # ret[1] is a morphism of Rings
                 ret[1] = -1
         return ret
 
@@ -220,6 +222,9 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             True
 
         """
+        from sage.categories.map import Map
+        from sage.categories.all import Rings
+
         D, T = self.diagonal_matrix()
         abc = [D[j, j] for j in range(3)]
         if abc[2] == 0:
@@ -228,7 +233,8 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         b = -abc[1]/abc[2]
         if is_RealField(p) or is_InfinityElement(p):
             p = -1
-        elif is_RingHomomorphism(p):
+        elif isinstance(p, Map) and p.category_for().is_subcategory(Rings()):
+            # p is a morphism of Rings
             if p.domain() is QQ and is_RealField(p.codomain()):
                 p = -1
             else:

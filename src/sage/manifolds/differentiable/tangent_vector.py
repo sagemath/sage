@@ -26,7 +26,7 @@ REFERENCES:
 #******************************************************************************
 
 from sage.symbolic.ring import SR
-from sage.tensor.modules.free_module_tensor import FiniteRankFreeModuleElement
+from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 from sage.misc.decorators import options
 
 class TangentVector(FiniteRankFreeModuleElement):
@@ -62,7 +62,7 @@ class TangentVector(FiniteRankFreeModuleElement):
 
     .. SEEALSO::
 
-        :class:`~sage.tensor.modules.free_module_tensor.FiniteRankFreeModuleElement`
+        :class:`~sage.tensor.modules.free_module_element.FiniteRankFreeModuleElement`
         for more documentation.
 
     """
@@ -70,7 +70,7 @@ class TangentVector(FiniteRankFreeModuleElement):
         r"""
         Construct a tangent vector.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()

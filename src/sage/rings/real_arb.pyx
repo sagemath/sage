@@ -163,7 +163,7 @@ TESTS::
     Full MatrixSpace of 3 by 3 dense matrices over Real ball field
     with 53 bits precision
 
-    sage: polygen(RBF, x)^3
+    sage: polygen(RBF, 'x')^3
     x^3
 
 ::
@@ -178,16 +178,19 @@ TESTS::
 Classes and Methods
 ===================
 """
-#*****************************************************************************
-# Copyright (C) 2014 Clemens Heuberger <clemens.heuberger@aau.at>
-#
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  as published by the Free Software Foundation; either version 2 of
-#  the License, or (at your option) any later version.
-#                http://www.gnu.org/licenses/
-#*****************************************************************************
 
-include "cysignals/signals.pxi"
+#*****************************************************************************
+#       Copyright (C) 2014 Clemens Heuberger <clemens.heuberger@aau.at>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+from __future__ import absolute_import
+
+from cysignals.signals cimport sig_on, sig_str, sig_off
 
 from cpython.float cimport PyFloat_AS_DOUBLE
 from cpython.int cimport PyInt_AS_LONG
@@ -372,7 +375,7 @@ class RealBallField(UniqueRepresentation, Field):
 
     ::
 
-        sage: (1/2*RBF(1)) + AA(sqrt(2)) - 1 + polygen(QQ, x)
+        sage: (1/2*RBF(1)) + AA(sqrt(2)) - 1 + polygen(QQ, 'x')
         x + [0.914213562373095 +/- 4.10e-16]
 
     TESTS::
@@ -577,7 +580,7 @@ class RealBallField(UniqueRepresentation, Field):
 
     def gens(self):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: RBF.gens()
             (1.000000000000000,)
@@ -1550,6 +1553,28 @@ cdef class RealBall(RingElement):
                     return field(0)
         raise ValueError("unknown rounding mode")
 
+    def __float__(self):
+        """
+        Convert ``self`` to a ``float``.
+
+        EXAMPLES::
+
+            sage: float(RBF(1))
+            1.0
+        """
+        return float(self.n(prec(self)))
+
+    def __complex__(self):
+        """
+        Convert ``self`` to a ``complex``.
+
+        EXAMPLES::
+
+            sage: complex(RBF(1))
+            (1+0j)
+        """
+        return complex(self.n(prec(self)))
+
     # Center and radius, absolute value, endpoints
 
     def mid(self):
@@ -1844,7 +1869,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(0).union(1).endpoints()
-            (0.000000000000000, 1.00000000000000)
+            (-9.31322574615479e-10, 1.00000000093133)
         """
         cdef RealBall my_other = self._parent.coerce(other)
         cdef RealBall res = self._new()
@@ -2578,6 +2603,23 @@ cdef class RealBall(RingElement):
         """
         return not self.is_finite()
 
+    def is_NaN(self):
+        """
+        Return ``True`` if this ball is not-a-number.
+
+        EXAMPLES::
+
+            sage: RBF(NaN).is_NaN()
+            True
+            sage: RBF(-5).gamma().is_NaN()
+            True
+            sage: RBF(infinity).is_NaN()
+            False
+            sage: RBF(42, rad=1.r).is_NaN()
+            False
+        """
+        return arf_is_nan(arb_midref(self.value))
+
     # Arithmetic
 
     def __neg__(self):
@@ -2957,6 +2999,8 @@ cdef class RealBall(RingElement):
             [1.098612288668110 +/- 6.63e-16]
             sage: RBF(3).log(2)
             [1.584962500721156 +/- 7.53e-16]
+            sage: log(RBF(5), 2)
+            [2.32192809488736 +/- 3.04e-15]
 
             sage: RBF(-1/3).log()
             nan
@@ -3377,7 +3421,7 @@ cdef class RealBall(RingElement):
             sage: RBF(-1).zeta(1)
             [-0.0833333333333333 +/- 4.26e-17]
             sage: RBF(-1).zeta(2)
-            [-1.083333333333333 +/- 4.08e-16]
+            [-1.083333333333333 +/- 4.96e-16]
         """
         cdef RealBall a_ball
         cdef RealBall res = self._new()
@@ -3414,7 +3458,7 @@ cdef class RealBall(RingElement):
         TESTS::
 
             sage: RBF(1/3).polylog(2r)
-            [0.36621322997706 +/- 4.62e-15]
+            [0.366213229977063 +/- 5.85e-16]
         """
         cdef RealBall s_as_ball
         cdef Integer s_as_Integer

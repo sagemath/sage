@@ -7,7 +7,6 @@ AUTHORS:
   partially based on work by Lauri Ruotsalainen
 
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2011 Harald Schilly <harald.schilly@gmail.com>

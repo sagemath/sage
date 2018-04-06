@@ -11,6 +11,8 @@ cdef class RealDoubleField_class(Field):
 cdef class RealDoubleElement(FieldElement):
     cdef double _value
     cdef _new_c(self, double value)
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
     cpdef RealDoubleElement abs(RealDoubleElement self)
     cdef RealDoubleElement __pow_float(self, double exponent)
     cdef RealDoubleElement __pow_int(self, int exponent)

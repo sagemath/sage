@@ -40,7 +40,7 @@ class PolyhedralSets(Category_over_base_ring):
          <class 'sage.categories.sets_cat.Sets.element_class'>,
          <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.element_class'>,
          <class 'sage.categories.objects.Objects.element_class'>,
-         <type 'object'>]
+         <... 'object'>]
         sage: isinstance(P, P.parent().category().element_class)
         True
     """

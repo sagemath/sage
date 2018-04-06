@@ -32,6 +32,8 @@ cdef class ExteriorAlgebra_plural(NCPolynomialRing_plural):
 
 cdef class NCPolynomial_plural(RingElement):
     cdef poly *_poly
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
     cpdef _repr_short_(self)
     cdef long _hash_c(self)
     cpdef is_constant(self)

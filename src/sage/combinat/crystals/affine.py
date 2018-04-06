@@ -13,14 +13,13 @@ Affine Crystals
 #****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
-from sage.categories.regular_crystals import RegularCrystals
-from sage.categories.finite_crystals import FiniteCrystals
+from sage.categories.loop_crystals import RegularLoopCrystals
 from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.structure.sage_object import richcmp
+from sage.structure.richcmp import richcmp
 
 
 class AffineCrystalFromClassical(UniqueRepresentation, Parent):
@@ -82,7 +81,7 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
         ct = CartanType(cartan_type)
         return super(AffineCrystalFromClassical, cls).__classcall__(cls, ct, *args, **options)
 
-    def __init__(self, cartan_type, classical_crystal, category = None):
+    def __init__(self, cartan_type, classical_crystal, category=None):
         """
         Input is an affine Cartan type ``cartan_type``, a classical crystal
         ``classical_crystal``, and automorphism and its inverse
@@ -113,7 +112,7 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
             sage: TestSuite(A).run()
         """
         if category is None:
-            category = (RegularCrystals(), FiniteCrystals())
+            category = RegularLoopCrystals()
         self._cartan_type = cartan_type
         Parent.__init__(self, category = category)
         self.classical_crystal = classical_crystal;
@@ -133,6 +132,20 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
         """
         return "An affine crystal for type {}".format(self.cartan_type())
 
+    def cardinality(self):
+        """
+        Return the cardinality of ``self``.
+
+        EXAMPLES::
+
+            sage: C = crystals.Tableaux(['A',3],shape=[1])
+            sage: pr = attrcall("promotion")
+            sage: pr_inverse = attrcall("promotion_inverse")
+            sage: A = crystals.AffineFromClassicalAndPromotion(['A',3,1],C,pr,pr_inverse,1)
+            sage: A.cardinality() == C.cardinality()
+            True
+        """
+        return self.classical_crystal.cardinality()
 
     def __iter__(self):
         r"""
@@ -566,7 +579,7 @@ class AffineCrystalFromClassicalAndPromotion(AffineCrystalFromClassical):
         [[[2]], [[1]], [[3]]]
     """
 
-    def __init__(self, cartan_type, classical_crystal, p_automorphism, p_inverse_automorphism, dynkin_node):
+    def __init__(self, cartan_type, classical_crystal, p_automorphism, p_inverse_automorphism, dynkin_node, category=None):
         """
         Input is an affine Cartan type ``cartan_type``, a classical crystal
         ``classical_crystal``, and promotion automorphism and its inverse
@@ -591,7 +604,7 @@ class AffineCrystalFromClassicalAndPromotion(AffineCrystalFromClassical):
 
             sage: TestSuite(A).run()
         """
-        AffineCrystalFromClassical.__init__(self, cartan_type, classical_crystal)
+        AffineCrystalFromClassical.__init__(self, cartan_type, classical_crystal, category)
         self.p_automorphism = p_automorphism
         self.p_inverse_automorphism = p_inverse_automorphism
         self.dynkin_node = dynkin_node

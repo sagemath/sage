@@ -25,9 +25,8 @@ PKG=build/pkgs/configure
 MAKE="${MAKE:-make}"
 CONFVERSION=`cat $PKG/package-version.txt`
 
+
 bootstrap () {
-    # Get autotools from our own package into PATH (Trac #21214)
-    source src/bin/sage-env
     aclocal -I m4 && \
     automake --add-missing --copy build/make/Makefile-auto && \
     autoconf
@@ -57,8 +56,7 @@ bootstrap () {
 
 # Bootstrap by downloading the auto-generated files
 bootstrap-download () {
-    source src/bin/sage-env
-    sage-download-file configure-$CONFVERSION.tar.gz
+    build/bin/sage-download-file configure-$CONFVERSION.tar.gz
     if [ $? -ne 0 ]; then
         echo >&2 "Error: downloading configure-$CONFVERSION.tar.gz failed"
         exit 1
@@ -126,6 +124,12 @@ fi
 # Start cleanly (it's not a problem if this fails)
 $MAKE bootstrap-clean 2>/dev/null
 mkdir config 2>/dev/null
+
+# Get autotools from our own package into PATH (Trac #21214).
+# If Sage has not been built yet, this will fail due to a missing
+# sage-env-config. We just ignore that error.
+source src/bin/sage-env 2>/dev/null
+
 
 if [ $ALWAYSDOWNLOAD = yes ]; then
     bootstrap-download || exit $?

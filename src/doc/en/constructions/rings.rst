@@ -57,7 +57,7 @@ Here's an example using the Singular interface:
     sage: I = singular.ideal(['a+b+c+d', 'ab+ad+bc+cd', 'abc+abd+acd+bcd', 'abcd-1'])
     sage: R
     polynomial ring, over a field, global ordering
-    //   characteristic : 97
+    //   coefficients: ZZ/97
     //   number of vars : 4
     //        block   1 : ordering lp
     //                  : names    a b c d

@@ -171,8 +171,8 @@ from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 
 from sage.structure.factory import UniqueFactory
-from sage.structure.element cimport parent_c
-from sage.structure.sage_object cimport richcmp, richcmp_not_equal
+from sage.structure.element cimport parent
+from sage.structure.richcmp cimport richcmp, richcmp_not_equal
 
 
 class ResidueFieldFactory(UniqueFactory):
@@ -545,7 +545,7 @@ class ResidueField_generic(Field):
             4
         """
         K = OK = self.p.ring()
-        R = parent_c(x)
+        R = parent(x)
         if OK.is_field():
             OK = OK.ring_of_integers()
         else:
@@ -930,7 +930,7 @@ cdef class ReductionMap(Map):
             sage: f(1/h)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: division by zero in finite field.
+            ZeroDivisionError: division by zero in finite field
 
         An example to show that the issue raised in :trac:`1951`
         has been fixed::

@@ -97,9 +97,8 @@ import os
 from .expect import (Expect, ExpectElement, ExpectFunction,
                     FunctionElement, AsciiArtString)
 from sage.interfaces.tab_completion import ExtraTabCompletion
-
-
 from sage.env import DOT_SAGE
+from sage.docs.instancedoc import instancedoc
 
 COMMANDS_CACHE = '%s/mupad_commandlist_cache.sobj'%DOT_SAGE
 PROMPT = ">>"
@@ -167,7 +166,7 @@ class Mupad(ExtraTabCompletion, Expect):
 
             sage: filename = tmp_filename()
             sage: f = open(filename, 'w')
-            sage: f.write('x := 2;\n')
+            sage: _ = f.write('x := 2;\n')
             sage: f.close()
             sage: mupad.read(filename)   # optional - MuPAD
             sage: mupad.get('x').strip() # optional - mupad
@@ -443,13 +442,13 @@ command-line version of MuPAD.
         return res if res != [''] else []
 
 
+@instancedoc
 class MupadFunction(ExtraTabCompletion, ExpectFunction):
-    
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         EXAMPLES::
 
-            sage: mupad.diff._sage_doc_()
+            sage: mupad.diff.__doc__
             No help on diff available
         """
         M = self._parent
@@ -481,13 +480,14 @@ class MupadFunction(ExtraTabCompletion, ExpectFunction):
         return res if res != [] else self._parent._tab_completion()
 
 
+@instancedoc
 class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         EXAMPLES::
 
-            sage: x = mupad('x') # optional - mupad
-            sage: x.diff._sage_doc_() # optional - mupad
+            sage: x = mupad('x')  # optional - mupad
+            sage: x.diff.__doc__  # optional - mupad
             No help on diff available
 
         """
@@ -551,6 +551,7 @@ class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
             return P.function_call(self._name, [self._obj] + list(args))
 
 
+@instancedoc
 class MupadElement(ExtraTabCompletion, ExpectElement):
 
     def __getattr__(self, attrname):
@@ -600,17 +601,6 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
         res = self.parent().completions(self.name()+"::", strip=True)
         return res if res != [] else self.parent()._tab_completion()
 
-    def __repr__(self):
-        """
-        EXAMPLES::
-
-            sage: mupad.package('"MuPAD-Combinat"')  # optional - mupad-Combinat
-            sage: S = mupad.examples.SymmetricFunctions(); S # optional - mupad-Combinat
-            examples::SymmetricFunctions(Dom::ExpressionField())
-        """
-        self._check_valid()
-        return self.parent().get(self._name)
-
     def _latex_(self):
         r"""
         EXAMPLES::
@@ -635,7 +625,7 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
             sage: len(mupad([1,2,3])) # indirect doctest # optional - mupad
             3
             sage: type(len(mupad([1,2,3])))              # optional - mupad
-            <type 'int'>
+            <... 'int'>
 
             sage: len(mupad(4))                          # optional - mupad
             1
@@ -643,7 +633,7 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
         Implementing this is necessary for using MuPAD's lists as
         standard containers::
 
-            sage: map(ZZ, list(mupad([1,2,3])))          # optional - mupad
+            sage: list(map(ZZ, list(mupad([1,2,3]))))    # optional - mupad
             [1, 2, 3]
 
             sage: [int(x) for x in mupad([1,2,3]) ]      # optional - mupad

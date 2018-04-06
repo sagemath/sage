@@ -14,27 +14,38 @@ TESTS::
     []
 """
 
-##############################################################################
+#*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-##############################################################################
+#*****************************************************************************
+
+from __future__ import absolute_import
+
+from cysignals.signals cimport sig_on, sig_off
+from cysignals.memory cimport sig_malloc, sig_free
+
+from collections import Iterator, Sequence
 
 from sage.data_structures.binary_search cimport *
 from sage.modules.vector_integer_sparse cimport *
 from sage.modules.vector_rational_sparse cimport *
 
-include 'sage/ext/stdsage.pxi'
-include "cysignals/signals.pxi"
 from cpython.sequence cimport *
 
 from sage.rings.rational cimport Rational
 from sage.rings.integer  cimport Integer
-from matrix cimport Matrix
+from .matrix cimport Matrix
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
+
+from sage.libs.flint.fmpq cimport fmpq_set_mpq
+from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -43,22 +54,12 @@ cimport sage.structure.element
 
 import sage.matrix.matrix_space
 
-from matrix_integer_sparse cimport Matrix_integer_sparse
-from matrix_rational_dense cimport Matrix_rational_dense
+from .matrix_integer_sparse cimport Matrix_integer_sparse
+from .matrix_rational_dense cimport Matrix_rational_dense
 
 from sage.misc.misc import verbose
 
 cdef class Matrix_rational_sparse(Matrix_sparse):
-
-    ########################################################################
-    # LEVEL 1 functionality
-    #   * __cinit__
-    #   * __dealloc__
-    #   * __init__
-    #   * set_unsafe
-    #   * get_unsafe
-    #   * __hash__       -- always simple
-    ########################################################################
     def __cinit__(self, parent, entries, copy, coerce):
         # set the parent, nrows, ncols, etc.
         Matrix_sparse.__init__(self, parent)
@@ -113,7 +114,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef Rational z
         cdef PyObject** X
 
-        if entries is None: return
+        if entries is None:
+            return
         # fill in entries in the dict case
         if isinstance(entries, dict):
             R = self.base_ring()
@@ -124,7 +126,9 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
                     if i < 0 or j < 0 or i >= self._nrows or j >= self._ncols:
                         raise IndexError("invalid entries list")
                     mpq_vector_set_entry(&self._matrix[i], j, z.value)
-        elif isinstance(entries, list):
+        elif isinstance(entries, (Iterator, Sequence)):
+            if not isinstance(entries, (list, tuple)):
+                entries = list(entries)
             # Dense input format -- fill in entries
             if len(entries) != self._nrows * self._ncols:
                 raise TypeError("list of entries must be a dictionary of (i,j):x or a dense list of n * m elements")
@@ -159,8 +163,41 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
         return x
 
-    def __hash__(self):
-        return self._hash()
+    def add_to_entry(self, Py_ssize_t i, Py_ssize_t j, elt):
+        r"""
+        Add ``elt`` to the entry at position ``(i, j)``.
+
+        EXAMPLES::
+
+            sage: m = matrix(QQ, 2, 2, sparse=True)
+            sage: m.add_to_entry(0, 0, -1/3)
+            sage: m
+            [-1/3    0]
+            [   0    0]
+            sage: m.add_to_entry(0, 0, 1/3)
+            sage: m
+            [0 0]
+            [0 0]
+            sage: m.nonzero_positions()
+            []
+        """
+        if not isinstance(elt, Rational):
+            elt = Rational(elt)
+        if i < 0:
+            i += self._nrows
+        if i < 0 or i >= self._nrows:
+            raise IndexError("row index out of range")
+        if j < 0:
+            j += self._ncols
+        if j < 0 or j >= self._ncols:
+            raise IndexError("column index out of range")
+
+        cdef mpq_t z
+        mpq_init(z)
+        mpq_vector_get_entry(z, &self._matrix[i], j)
+        mpq_add(z, z, (<Rational>elt).value)
+        mpq_vector_set_entry(&self._matrix[i], j, z)
+        mpq_clear(z)
 
 
     ########################################################################
@@ -243,9 +280,9 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         # Build a table that gives the nonzero positions in each column of right
         nonzero_positions_in_columns = [set([]) for _ in range(right._ncols)]
         cdef Py_ssize_t i, j, k
-        for i from 0 <= i < right._nrows:
+        for i in range(right._nrows):
             v = &(right._matrix[i])
-            for j from 0 <= j < right._matrix[i].num_nonzero:
+            for j in range(right._matrix[i].num_nonzero):
                 nonzero_positions_in_columns[v.positions[j]].add(i)
 
         ans = self.new_matrix(self._nrows, right._ncols, sparse=False)
@@ -255,17 +292,17 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_init(x)
         mpq_init(y)
         mpq_init(s)
-        for i from 0 <= i < self._nrows:
+        for i in range(self._nrows):
             v = &self._matrix[i]
-            for j from 0 <= j < right._ncols:
+            for j in range(right._ncols):
                 mpq_set_si(s, 0, 1)
                 c = nonzero_positions_in_columns[j]
-                for k from 0 <= k < v.num_nonzero:
+                for k in range(v.num_nonzero):
                     if v.positions[k] in c:
                         mpq_vector_get_entry(y, &right._matrix[v.positions[k]], j)
                         mpq_mul(x, v.entries[k], y)
                         mpq_add(s, s, x)
-                mpq_set(ans._matrix[i][j], s)
+                fmpq_set_mpq(fmpq_mat_entry(ans._matrix, i, j), s)
 
         mpq_clear(x)
         mpq_clear(y)
@@ -286,7 +323,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     # def _list(self):
 
 # TODO
-##     cpdef _lmul_(self, RingElement right):
+##     cpdef _lmul_(self, Element right):
 ##         """
 ##         EXAMPLES:
 ##             sage: a = matrix(QQ,2,range(6))
@@ -332,7 +369,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         It is safe to change the resulting list (unless you give the option copy=False).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Matrix(QQ, [[0,0,0,1,0,0,0,0],[0,1,0,0,0,0,1,0]], sparse=True); M
             [0 0 0 1 0 0 0 0]
@@ -374,8 +411,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             sage: b.height()
             5007
         """
-        cdef Integer z
-        z = PY_NEW(Integer)
+        cdef Integer z = Integer.__new__(Integer)
         self.mpz_height(z.value)
         return z
 
@@ -430,8 +466,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             sage: b.denominator()
             293
         """
-        cdef Integer z
-        z = PY_NEW(Integer)
+        cdef Integer z = Integer.__new__(Integer)
         self.mpz_denom(z.value)
         return z
 
@@ -528,13 +563,13 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         x = self.fetch('in_echelon_form')
         if not x is None: return  # already known to be in echelon form
         self.check_mutability()
-        self.clear_cache()
 
         pivots = self._echelonize_multimodular(height_guess, proof, **kwds)
 
         self.cache('in_echelon_form', True)
-        self.cache('pivots', tuple(pivots))
-
+        self.cache('echelon_form', self)
+        self.cache('pivots', pivots)
+        self.cache('rank', len(pivots))
 
     def echelon_form(self, algorithm='default',
                      height_guess=None, proof=True, **kwds):
@@ -567,10 +602,10 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             return x
         if self.fetch('in_echelon_form'): return self
 
-        E = self._echelon_form_multimodular(height_guess, proof=proof)
+        E, pivots = self._echelon_form_multimodular(height_guess, proof=proof)
 
         self.cache(label, E)
-        self.cache('pivots', E.pivots())
+        self.cache('pivots', pivots)
         return E
 
     # Multimodular echelonization algorithms
@@ -579,21 +614,22 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef Matrix_rational_sparse E
         cdef mpq_vector* v
         cdef mpq_vector* w
-        E = self._echelon_form_multimodular(height_guess, proof=proof, **kwds)
+        E, pivots = self._echelon_form_multimodular(height_guess, proof=proof, **kwds)
+        self.clear_cache()
         # Get rid of self's data
         self._dealloc()
         # Copy E's data to self's data.
         self._matrix = <mpq_vector*> sig_malloc(E._nrows * sizeof(mpq_vector))
         if self._matrix == NULL:
             raise MemoryError("error allocating sparse matrix")
-        for i from 0 <= i < E._nrows:
+        for i in range(E._nrows):
             v = &self._matrix[i]
             w = &E._matrix[i]
             mpq_vector_init(v, E._ncols, w.num_nonzero)
-            for j from 0 <= j < w.num_nonzero:
+            for j in range(w.num_nonzero):
                 mpq_set(v.entries[j], w.entries[j])
                 v.positions[j] = w.positions[j]
-        return E.pivots()
+        return pivots
 
 
     def _echelon_form_multimodular(self, height_guess=None, proof=True):
@@ -606,11 +642,12 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         - height_guess -- integer or None
         - proof -- boolean (default: True)
         """
-        import misc
-        cdef Matrix E = misc.matrix_rational_echelon_form_multimodular(self,
+        from .misc import matrix_rational_echelon_form_multimodular
+        cdef Matrix E
+        E, pivots = matrix_rational_echelon_form_multimodular(self,
                                  height_guess=height_guess, proof=proof)
         E._parent = self._parent
-        return E
+        return E, pivots
 
 
     def set_row_to_multiple_of_row(self, i, j, s):
@@ -661,7 +698,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         for i from 0 <= i < self._nrows:
             v = &(self._matrix[i])
             for j from 0 <= j < v.num_nonzero:
-                mpq_set(B._matrix[i][v.positions[j]], v.entries[j])
+                fmpq_set_mpq(fmpq_mat_entry(B._matrix, i, v.positions[j]), v.entries[j])
         B.subdivide(self.subdivisions())
         return B
 

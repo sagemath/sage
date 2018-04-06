@@ -273,19 +273,19 @@ def local_normal_form(self, p):
     return Q_Jordan
 
 
-
-
 def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
     """
-    Returns a list of pairs `(s_i, L_i)` where `L_i` is a maximal
+    Return a list of pairs `(s_i, L_i)` where `L_i` is a maximal
     `p^{s_i}`-unimodular Jordan component which is further decomposed into
-    block diagonals of block size `\le 2`. For each `L_i` the 2x2 blocks are
-    listed after the 1x1 blocks (which follows from the convention of the
+    block diagonals of block size `\le 2`.
+
+    For each `L_i` the 2x2 blocks are listed after the 1x1 blocks
+    (which follows from the convention of the
     :meth:`local_normal_form` method).
 
-    ..note ::
+    .. NOTE::
 
-        The decomposition of each `L_i` into smaller block is not unique!
+        The decomposition of each `L_i` into smaller blocks is not unique!
 
     The ``safe_flag`` argument allows us to select whether we want a copy of
     the output, or the original output.  By default ``safe_flag = True``, so we

@@ -362,7 +362,7 @@ class Core(CombinatorialElement):
 
         - a list of integers in `\{0,1,\ldots,k-1\}` representing a reduced word for the transposition `t`
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: c = Core([],4)
             sage: c._transposition_to_reduced_word([2, 5])
@@ -439,7 +439,7 @@ class Core(CombinatorialElement):
 
             sage: c = Core([1],3)
             sage: c.weak_covers()
-            [[2], [1, 1]]
+            [[1, 1], [2]]
 
             sage: c = Core([4,2],3)
             sage: c.weak_covers()

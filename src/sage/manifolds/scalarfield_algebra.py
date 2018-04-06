@@ -561,7 +561,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         This is nothing but the constant scalar field `0` on the manifold,
         where `0` is the zero element of the base field.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()

@@ -27,7 +27,7 @@ Installation Guide for more about those.)
 - :envvar:`SAGE_PATH` -- a colon-separated list of directories which
   Sage searches when trying to locate Python libraries.
 
-- :envvar:`SAGE_BROWSER` -- on most platforms, Sage will detect the
+- :envvar:`BROWSER` -- on most platforms, Sage will detect the
   command to run a web browser, but if this doesn't seem to work on
   your machine, set this variable to the appropriate command.
 
@@ -44,13 +44,18 @@ you need to explicitly set the environment variable to the system-wide
 default.
 
 - :envvar:`IPYTHONDIR` --
-  directory where the configuation of IPython is stored. By default,
+  directory where the configuration of IPython is stored. By default,
   this is some directory inside :envvar:`DOT_SAGE`.
   See http://ipython.readthedocs.io/en/stable/development/config.html
   for more information.
 
 - :envvar:`JUPYTER_CONFIG_DIR` --
-  directory where the configuation of Jupyter is stored. By default,
+  directory where the configuration of Jupyter is stored. By default,
   this is some directory inside :envvar:`DOT_SAGE`.
   See http://jupyter.readthedocs.io/en/latest/projects/jupyter-directories.html
   for more information.
+
+- :envvar:`MPLCONFIGDIR` --
+  directory where the configuration of Matplotlib is stored.
+  See https://matplotlib.org/faq/environment_variables_faq.html#envvar-MPLCONFIGDIR
+  By default, this is some directory inside :envvar:`DOT_SAGE`.

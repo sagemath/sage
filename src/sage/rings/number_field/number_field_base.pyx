@@ -40,6 +40,50 @@ cdef class NumberField(Field):
     # This token docstring is mostly there to prevent Sphinx from pasting in
     # the docstring of the __init__ method inherited from IntegralDomain, which
     # is rather confusing.
+    def _pushout_(self, other):
+        r"""
+        TESTS:
+
+        Pushout is implemented for number field embedded in ``AA``::
+
+            sage: K.<a> = NumberField(x^2 - 3, embedding=AA(3)**(1/2))
+            sage: L.<b> = NumberField(x^2 - 2, embedding=AA(2)**(1/2))
+            sage: cm = sage.structure.element.get_coercion_model()
+            sage: cm.explain(K,L,operator.add)
+            Coercion on left operand via
+                Generic morphism:
+                  From: Number Field in a with defining polynomial x^2 - 3
+                  To:   Algebraic Real Field
+                  Defn: a -> 1.732050807568878?
+            Coercion on right operand via
+                Generic morphism:
+                  From: Number Field in b with defining polynomial x^2 - 2
+                  To:   Algebraic Real Field
+                  Defn: b -> 1.414213562373095?
+            Arithmetic performed after coercions.
+            Result lives in Algebraic Real Field
+            Algebraic Real Field
+
+        As a consequence, operations and comparisons work nicely::
+
+            sage: a + b
+            3.146264369941973?
+            sage: a < b
+            False
+            sage: 3*a < 4*b
+            True
+
+        Using number field with other classes::
+
+            sage: K.<cbrt2> = NumberField(x^3 - 2, embedding=AA(2)**(1/3))
+            sage: (cbrt2 + a) * b
+            4.231287179063857?
+        """
+        if isinstance(other, NumberField) and \
+            self._embedded_real and \
+            (<NumberField>other)._embedded_real:
+            from sage.rings.qqbar import AA
+            return AA
 
     def ring_of_integers(self, *args, **kwds):
         r"""

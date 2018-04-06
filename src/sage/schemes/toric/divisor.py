@@ -165,7 +165,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import zip
 
 from sage.combinat.combination import Combinations
 from sage.geometry.cone import is_Cone
@@ -184,6 +184,9 @@ from sage.schemes.toric.divisor_class import ToricRationalDivisorClass
 from sage.schemes.toric.variety import CohomologyRing, is_ToricVariety
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import is_Vector
+
+import six
+
 
 # forward declaration
 class ToricDivisor_generic(Divisor_generic):
@@ -567,11 +570,11 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         assert len(arg)==n_rays, \
             'Argument list {0} is not of the required length {1}!' \
             .format(arg, n_rays)
-        arg = zip(arg, toric_variety.gens())
+        arg = list(zip(arg, toric_variety.gens()))
         reduce = False
 
     ##### Now we must have a list of multiplicity-coordinate pairs
-    assert all(len(item)==2 for item in arg)
+    assert all(len(item) == 2 for item in arg)
     if ring is None:
         # if the coefficient ring was not given, try to use the most common ones.
         try:
@@ -1623,7 +1626,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         HH = cplx.homology(base_ring=QQ, cohomology=True)
         HH_list = [0]*(d+1)
-        for h in HH.iteritems():
+        for h in six.iteritems(HH):
             degree = h[0]+1
             cohomology_dim = h[1].dimension()
             if degree>d or degree<0:
@@ -1721,7 +1724,7 @@ class ToricDivisor_generic(Divisor_generic):
         cohomology. For toric divisors, the local sections can be
         chosen to be monomials (instead of general homogeneous
         polynomials), this is the reason for the extra grading by
-        `m\in M`. General refrences would be [Fu1993]_, [CLS]_. Here
+        `m\in M`. General references would be [Fu1993]_, [CLS]_. Here
         are some salient features of our implementation:
 
         * First, a finite set of `M`-lattice points is identified that

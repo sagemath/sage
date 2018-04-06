@@ -60,17 +60,22 @@ References
 Functions
 ---------
 """
-#*****************************************************************************
-# Copyright (C) 2015 David Coudert <david.coudert@inria.fr>
-#
-# Distributed under the terms of the GNU General Public License (GPL)
-# http://www.gnu.org/licenses/
-#*****************************************************************************
 
-include "cysignals/signals.pxi"
-include "sage/data_structures/bitset.pxi"
+#*****************************************************************************
+#       Copyright (C) 2015 David Coudert <david.coudert@inria.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from libc.stdint cimport uint32_t
+from cysignals.signals cimport sig_on, sig_off
+
+include "sage/data_structures/bitset.pxi"
+
 from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph
 from sage.ext.memory_allocator cimport MemoryAllocator
 
@@ -122,7 +127,7 @@ def is_asteroidal_triple_free(G, certificate=False):
         sage: is_asteroidal_triple_free(G, certificate=True)
         (False, [0, 2, 6])
 
-    TEST:
+    TESTS:
 
     Giving anything else than a Graph::
 

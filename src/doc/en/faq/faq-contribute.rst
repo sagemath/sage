@@ -147,7 +147,7 @@ resources can be found by a web search.
   `Python standard documentation <http://docs.python.org>`_
 * `Snakefood <http://furius.ca/snakefood>`_
 * `Sphinx <http://sphinx.pocoo.org>`_
-* `XDot <http://code.google.com/p/jrfonseca/wiki/XDot>`_
+* `XDot <https://github.com/jrfonseca/xdot.py>`_
 
 **Tutorials and books**
 

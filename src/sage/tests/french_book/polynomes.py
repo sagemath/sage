@@ -59,9 +59,8 @@ Sage example in ./polynomes.tex, line 162::
 Sage example in ./polynomes.tex, line 217::
 
   sage: def rook_polynomial(n, var='x'):
-  ...       return ZZ[var]([binomial(n, k)^2 * factorial(k)
-  ...                                      for k in (0..n) ])
-  ...
+  ....:     return ZZ[var]([binomial(n, k)^2 * factorial(k)
+  ....:                                    for k in (0..n) ])
 
 Sage example in ./polynomes.tex, line 259::
 
@@ -93,7 +92,7 @@ Sage example in ./polynomes.tex, line 332::
   sage: ZZ.is_subring(A)
   True
   sage: [n for n in range(20)
-  ...       if Integers(n)['x'].is_integral_domain()]
+  ....:     if Integers(n)['x'].is_integral_domain()]
   [0, 2, 3, 5, 7, 11, 13, 17, 19]
 
 Sage example in ./polynomes.tex, line 395::
@@ -280,10 +279,10 @@ Sage example in ./polynomes.tex, line 1020::
 Sage example in ./polynomes.tex, line 1026::
 
   sage: def lift_sym(a):
-  ...       m = a.parent().defining_ideal().gen()
-  ...       n = a.lift()
-  ...       if n <= m // 2: return n
-  ...       else: return n - m
+  ....:     m = a.parent().defining_ideal().gen()
+  ....:     n = a.lift()
+  ....:     if n <= m // 2: return n
+  ....:     else: return n - m
 
 Sage example in ./polynomes.tex, line 1034::
 
@@ -293,9 +292,9 @@ Sage example in ./polynomes.tex, line 1034::
 Sage example in ./polynomes.tex, line 1042::
 
   sage: def mypade(pol, n, k):
-  ...       x = ZpZx.gen();
-  ...       n,d = ZpZx(pol).rational_reconstruct(x^n, k-1, n-k)
-  ...       return Qx(map(lift_sym, n))/Qx(map(lift_sym, d))
+  ....:     x = ZpZx.gen();
+  ....:     n,d = ZpZx(pol).rational_reconstruct(x^n, k-1, n-k)
+  ....:     return Qx(map(lift_sym, n))/Qx(map(lift_sym, d))
 
 Sage example in ./polynomes.tex, line 1109::
 

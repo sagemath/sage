@@ -53,7 +53,7 @@ def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):
           documentation for more information, in particular with respect to the
           memory context.
 
-    EXAMPLE:
+    EXAMPLES:
 
     Sets whose elements all have the same remainder mod 2::
 

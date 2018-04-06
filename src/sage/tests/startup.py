@@ -5,6 +5,8 @@ EXAMPLES::
 
     sage: 'numpy' in sys.modules
     False
+    sage: 'pyparsing' in sys.modules
+    False
     sage: 'sage.libs.gap.libgap' in sys.modules
     False
 

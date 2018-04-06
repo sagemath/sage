@@ -24,10 +24,10 @@ it back to a polynomial::
     sage: f = (x^3 - sin(y)*x^2 - 5*x + 3); f
     x^3 - x^2*sin(y) - 5*x + 3
     sage: g = f.series(x, 4); g
-    3 + (-5)*x + (-sin(y))*x^2 + 1*x^3
+    3 + (-5)*x + (-sin(y))*x^2 + 1*x^3 + Order(x^4)
     sage: g.truncate()
     x^3 - x^2*sin(y) - 5*x + 3
-    sage: g = f.series(x==1, 4); g
+    sage: g = f.series(x==1, oo); g
     (-sin(y) - 1) + (-2*sin(y) - 2)*(x - 1) + (-sin(y) + 3)*(x - 1)^2 + 1*(x - 1)^3
     sage: h = g.truncate(); h
     (x - 1)^3 - (x - 1)^2*(sin(y) - 3) - 2*(x - 1)*(sin(y) + 1) - sin(y) - 1
@@ -96,6 +96,23 @@ Check that :trac:`14878` is fixed, this should take only microseconds::
     1*x^4 + (-1/6)*x^6 + Order(x^8)
     sage: sin(x*sin(x*sin(x*sin(x)))).series(x,12)
     1*x^4 + (-1/6)*x^6 + (-19/120)*x^8 + (-421/5040)*x^10 + Order(x^12)
+
+Check that :trac:`22959` is fixed::
+
+    sage: (x/(1-x^2)).series(x==0, 10)
+    1*x + 1*x^3 + 1*x^5 + 1*x^7 + 1*x^9 + Order(x^10)
+    sage: (x/(1-x^2)).series(x==0, 11)
+    1*x + 1*x^3 + 1*x^5 + 1*x^7 + 1*x^9 + Order(x^11)
+    sage: (x^2/(1-x^2)).series(x==0, 10)
+    1*x^2 + 1*x^4 + 1*x^6 + 1*x^8 + Order(x^10)
+    sage: (x^2/(1-x^2)).series(x==0, 11)
+    1*x^2 + 1*x^4 + 1*x^6 + 1*x^8 + 1*x^10 + Order(x^11)
+
+Check that :trac:`22733` is fixed::
+
+    sage: _ = var('z')
+    sage: z.series(x)
+    (z)
 """
 
 #*****************************************************************************

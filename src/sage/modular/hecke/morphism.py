@@ -69,7 +69,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
     -> B and G : B -> C are morphisms, the composition A -> C is G*F, but its
     matrix is F.matrix() * G.matrix().
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: A = ModularForms(1, 4)
         sage: B = ModularForms(1, 16)
@@ -97,7 +97,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         -  ``name`` - str (defaults to '') name of the morphism
            (used for printing)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularSymbols(6)
             sage: t = M.Hom(M)(matrix(QQ,3,3,srange(9)), name="spam"); t
@@ -148,8 +148,8 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         name = self.__name
         if name != '':
             name += ' '
-        return "Hecke module morphism %sdefined by the matrix\n%s\nDomain: %s\nCodomain: %s"%(\
-                name, str(self.matrix()), misc.strunc(self.domain()), misc.strunc(self.codomain()))
+        return "Hecke module morphism %sdefined by the matrix\n%r\nDomain: %s\nCodomain: %s"%(
+                name, self.matrix(), misc.strunc(self.domain()), misc.strunc(self.codomain()))
 
 # __mul__ method removed by David Loeffler 2009-04-14 as it is an exact duplicate of sage.modules.matrix_morphism.__mul__
 

@@ -49,6 +49,7 @@ EXAMPLES::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 from libc.math cimport sqrt, sin, cos, tan, asin, acos, atan, M_PI
 from sage.rings.real_double import RDF
@@ -238,7 +239,7 @@ def ColorCube(size, colors, opacity=1, **kwds):
         colors = colors * 2
     all = []
 
-    from texture import Texture
+    from .texture import Texture
     for k in range(6):
         all.append(IndexFaceSet([faces[k]], enclosed=True,
              texture=Texture(colors[k], opacity=opacity),
@@ -599,7 +600,7 @@ draw %s width %s {%s %s %s} {%s %s %s}\n%s
 def LineSegment(start, end, thickness=1, radius=None, **kwds):
     """
     Create a line segment, which is drawn as a cylinder from start to
-    end with radius radius.
+    end with radius ``radius``.
 
     EXAMPLES::
 

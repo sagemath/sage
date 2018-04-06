@@ -126,6 +126,5 @@ takes more time than just doing the iteration. However, on a
 takes only 6 seconds while the serial version we wrote earlier
 takes 20 seconds.
 
-Excercise: Rewrite the above using f2py or weave, so that each
-process compiles a fortran or C timestep function and uses that,
-how fast can you get this?
+Excercise: Rewrite the above using f2py, so that each process 
+compiles a fortran function and uses that, how fast can you get this?

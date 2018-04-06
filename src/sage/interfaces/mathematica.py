@@ -306,8 +306,7 @@ For more details, see the documentation for ``._sage_()``.
 OTHER Examples::
 
     sage: def math_bessel_K(nu,x):
-    ...       return mathematica(nu).BesselK(x).N(20)
-    ...
+    ....:     return mathematica(nu).BesselK(x).N(20)
     sage: math_bessel_K(2,I)                      # optional - mathematica
     -2.5928861754911969782 + 0.1804899720669620266 I
 
@@ -365,6 +364,7 @@ from sage.misc.cachefunc import cached_method
 from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
                                     FunctionElement, AsciiArtString)
 from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.docs.instancedoc import instancedoc
 
 
 def clean_output(s):
@@ -399,17 +399,41 @@ class Mathematica(ExtraTabCompletion, Expect):
     """
     Interface to the Mathematica interpreter.
     """
-    def __init__(self, maxread=None, script_subdirectory=None, logfile=None, server=None, server_tmpdir=None):
+    def __init__(self, maxread=None, script_subdirectory=None, logfile=None, server=None,
+                 server_tmpdir=None, command=None, verbose_start=False):
+        # We use -rawterm to get a raw text interface in Mathematica 9 or later.
+        # This works around the following issues of Mathematica 9 or later
+        # (tested with Mathematica 11.0.1 for Mac OS X x86 (64-bit))
+        #
+        # 1) If TERM is unset and input is a pseudoterminal, Mathematica shows no
+        # prompts, so pexpect will not work.
+        #
+        # 2) If TERM is set (to dumb, lpr, vt100, or xterm), there will be
+        # prompts; but there is bizarre echoing behavior by Mathematica (not
+        # the terminal driver).  For example, with TERM=dumb, many spaces and
+        # \r's are echoed.  With TERM=vt100 or better, in addition, many escape
+        # sequences are printed.
+        #
+        if command is None:
+            command = os.getenv('SAGE_MATHEMATICA_COMMAND') or 'math -rawterm'
+        eval_using_file_cutoff = 1024
+        # Removing terminal echo using "stty -echo" is not essential but it slightly
+        # improves performance (system time) and eliminates races of the terminal echo
+        # as a possible source of error.
+        if server:
+            command = 'stty -echo; {}'.format(command)
+        else:
+            command = 'sh -c "stty -echo; {}"'.format(command)
         Expect.__init__(self,
                         name = 'mathematica',
+                        command = command,
                         prompt = 'In[[0-9]+]:=',
-                        command = "math-readline",
                         server = server,
                         server_tmpdir = server_tmpdir,
                         script_subdirectory = script_subdirectory,
-                        verbose_start = False,
+                        verbose_start = verbose_start,
                         logfile=logfile,
-                        eval_using_file_cutoff=50)
+                        eval_using_file_cutoff=eval_using_file_cutoff)
 
     def _read_in_file_command(self, filename):
         return '<<"%s"'%filename
@@ -625,6 +649,8 @@ remote connection to a server running Mathematica -- for hints, type
             raise AttributeError
         return MathematicaFunction(self, attrname)
 
+
+@instancedoc
 class MathematicaElement(ExpectElement):
     def __getitem__(self, n):
         return self.parent().new('%s[[%s]]'%(self._name, n))
@@ -650,8 +676,8 @@ class MathematicaElement(ExpectElement):
         i = z.find('=')
         return z[i+1:].strip()
 
-    def __repr__(self):
-        P = self._check_valid()
+    def _repr_(self):
+        P = self.parent()
         return P.get(self._name, ascii_art=False).strip()
 
     def _sage_(self, locals={}):
@@ -870,7 +896,11 @@ class MathematicaElement(ExpectElement):
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: P = mathematica('Plot[Sin[x],{x,-2Pi,4Pi}]')   # optional - mathematica
-            sage: P._rich_repr_(dm)                              # optional - mathematica
+
+        The following test requires a working X display on Linux so that the
+        Mathematica frontend can do the rendering (:trac:`23112`)::
+
+            sage: P._rich_repr_(dm)                              # optional - mathematica mathematicafrontend
             OutputImagePng container
         """
         if self._is_graphics():
@@ -987,14 +1017,17 @@ class MathematicaElement(ExpectElement):
         """
         return self._sage_().n(*args, **kwargs)
 
+
+@instancedoc
 class MathematicaFunction(ExpectFunction):
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         M = self._parent
         return M.help(self._name)
 
 
+@instancedoc
 class MathematicaFunctionElement(FunctionElement):
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         M = self._obj.parent()
         return M.help(self._name)
 

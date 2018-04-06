@@ -1,5 +1,5 @@
-include "cysignals/memory.pxi"
-include "cysignals/signals.pxi"
+from cysignals.memory cimport check_allocarray, check_calloc, sig_free
+from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.rings.fast_arith cimport arith_llong
 cdef arith_llong arith = arith_llong()

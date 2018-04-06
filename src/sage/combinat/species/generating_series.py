@@ -773,10 +773,9 @@ class CycleIndexSeries(LazyPowerSeries):
             # `\\gcd (a, b)`` parts of size `\\lcm (a, b)` to `l_1 \\boxtimes l_2`. If `l_1` and `l_2`
             # are partitions of integers `n` and `m`, respectively, then `l_1 \\boxtimes l_2` is a
             # partition of `nm`.
-            term_iterable = chain.from_iterable( repeat(lcm(pair), times=gcd(pair)) for pair in product(l1, l2) )
-            term_list = sorted(term_iterable, reverse=True)
-            res = Partition(term_list)
-            return res
+            term_iterable = chain.from_iterable(repeat(lcm(pair), gcd(pair))
+                                                for pair in product(l1, l2))
+            return Partition(sorted(term_iterable, reverse=True))
 
         # We then extend this to an operation on symmetric functions as per eq. (52) of [MM]_.
         # (Maia and Mendez, in [MM]_, are talking about polynomials instead of symmetric

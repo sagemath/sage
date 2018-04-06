@@ -52,13 +52,16 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         sage: KW = WeylGroup(["A",3]).algebra(QQ)
         sage: H = KW.demazure_lusztig_operators(q1,q2); H
         A representation of the (q1, q2)-Hecke algebra of type ['A', 3, 1]
-        on Group algebra of Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space) over Rational Field
+        on Algebra of Weyl Group of type ['A', 3]
+        (as a matrix group acting on the ambient space)
+        over Rational Field
 
     Among other things, it implements the `T_w` operators, their
     inverses and compositions thereof::
 
         sage: H.Tw((1,2))
-        Generic endomorphism of Group algebra of Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space) over Rational Field
+        Generic endomorphism of Algebra of Weyl Group of type ['A', 3]
+        (as a matrix group acting on the ambient space) over Rational Field
 
     and the Cherednik operators `Y^{\lambda^\vee}`::
 
@@ -106,7 +109,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
             sage: WeylGroup(["A",3]).algebra(QQ).demazure_lusztig_operators(-1,1)._repr_()
             "A representation of the (-1, 1)-Hecke algebra of type ['A', 3, 1]
-            on Group algebra of Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space) over Rational Field"
+            on Algebra of Weyl Group of type ['A', 3]
+            (as a matrix group acting on the ambient space) over Rational Field"
         """
         return "A representation of the %s-Hecke algebra of type %s on %s"%((self._q1,self._q2), self.cartan_type(), self.domain())
 
@@ -163,7 +167,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
             sage: H = WeylGroup(["A",3]).algebra(QQ).demazure_lusztig_operators(-1,1)
             sage: H.domain()
-            Group algebra of Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space) over Rational Field
+            Algebra of Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space) over Rational Field
         """
         return self._domain
 
@@ -186,7 +190,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: rho = KW.demazure_lusztig_operators(q1,q2)
             sage: w = W.an_element()
             sage: rho.Ti_on_basis(w,1)
-            q1*B[1231]
+            q1*1231
         """
         return self._Ti_on_basis(x, i)
 
@@ -209,7 +213,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: rho = KW.demazure_lusztig_operators(q1,q2)
             sage: w = W.an_element()
             sage: rho.Ti_inverse_on_basis(w, 1)
-            -1/q2*B[1231] + ((q1+q2)/(q1*q2))*B[123]
+            -1/q2*1231 + ((q1+q2)/(q1*q2))*123
         """
         q1 = self._q1
         q2 = self._q2
@@ -254,13 +258,13 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: w = W.an_element(); w
             123
             sage: rho.on_basis(w, (1,),  signs=(-1,))
-            -1/q2*B[1231] + ((q1+q2)/(q1*q2))*B[123]
+            -1/q2*1231 + ((q1+q2)/(q1*q2))*123
             sage: rho.on_basis(w, (1,),  signs=( 1,))
-            q1*B[1231]
+            q1*1231
             sage: rho.on_basis(w, (1,1), signs=(1,-1))
-            B[123]
+            123
             sage: rho.on_basis(w, (1,1), signs=(-1,1))
-            B[123]
+            123
         """
         l = len(word)
         if l == 0:
@@ -342,29 +346,30 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
         .. MATH::
 
-            c T_{i_k}^{\epsilon_k} \circ \cdots \circ T_{i_1}^{\epsilon_k}
+            c T_{i_k}^{\epsilon_k} \circ \cdots \circ T_{i_1}^{\epsilon_k}.
 
         EXAMPLES::
 
             sage: W = WeylGroup("A3")
-            sage: W.element_class._repr_=lambda x: "".join(str(i) for i in x.reduced_word())
+            sage: W.element_class._repr_=lambda x: ('e' if not x.reduced_word()
+            ....:               else "".join(str(i) for i in x.reduced_word()))
             sage: K = QQ['q1,q2'].fraction_field()
             sage: q1, q2 = K.gens()
             sage: KW = W.algebra(K)
             sage: x = KW.an_element(); x
-            2*B[12321] + 3*B[1231] + B[123] + B[]
+            2*12321 + 3*1231 + 123 + e
 
             sage: T = KW.demazure_lusztig_operators(q1,q2)
             sage: T12 = T.Tw( (1,2) )
             sage: T12(KW.one())
-            q1^2*B[12]
+            q1^2*12
 
         This is `T_2 \circ T_1`::
 
             sage: T[2](T[1](KW.one()))
-            q1^2*B[12]
+            q1^2*12
             sage: T[1](T[2](KW.one()))
-            q1^2*B[21]
+            q1^2*21
             sage: T12(x) == T[2](T[1](x))
             True
 
@@ -372,7 +377,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
             sage: phi = T.Tw((1,2), (-1,1), 3)
             sage: phi(KW.one())
-            ((-3*q1)/q2)*B[12] + ((3*q1+3*q2)/q2)*B[2]
+            ((-3*q1)/q2)*12 + ((3*q1+3*q2)/q2)*2
             sage: phi(T[1](x)) == 3*T[2](x)
             True
 
@@ -410,23 +415,23 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: KW = W.algebra(QQ)
             sage: rho = KW.demazure_lusztig_operators(1, -1)
             sage: x = KW.monomial(W.an_element()); x
-            B[123]
+            123
             sage: word = [1,2]
             sage: rho.Tw(word)(x)
-            B[12312]
+            12312
             sage: rho.Tw_inverse(word)(x)
-            B[12321]
+            12321
 
             sage: K = QQ['q1,q2'].fraction_field()
             sage: q1, q2 = K.gens()
             sage: KW = W.algebra(K)
             sage: rho = KW.demazure_lusztig_operators(q1, q2)
             sage: x = KW.monomial(W.an_element()); x
-            B[123]
+            123
             sage: rho.Tw_inverse(word)(x)
-            1/q2^2*B[12321] + ((-q1-q2)/(q1*q2^2))*B[1231] + ((-q1-q2)/(q1*q2^2))*B[1232] + ((q1^2+2*q1*q2+q2^2)/(q1^2*q2^2))*B[123]
+            1/q2^2*12321 + ((-q1-q2)/(q1*q2^2))*1231 + ((-q1-q2)/(q1*q2^2))*1232 + ((q1^2+2*q1*q2+q2^2)/(q1^2*q2^2))*123
             sage: rho.Tw(word)(_)
-            B[123]
+            123
         """
         word = tuple(reversed(self.straighten_word(word)))
         signs = (-1,) * len(word)
@@ -512,7 +517,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
         INPUT:
 
-        - ``lambdacheck`` -- an element of the coroot lattice for this cartan type
+        - ``lambdacheck`` -- an element of the coroot lattice for this
+          Cartan type
 
         EXAMPLES::
 
@@ -532,15 +538,15 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: Y2 = rho.Y_lambdacheck(alpha[2])
 
             sage: x = KW.monomial(W.an_element()); x
-            B[12]
+            12
             sage: Y1(x)
-            ((-q1^2-2*q1*q2-q2^2)/(-q2^2))*B[2121] + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1*q2^2))*B[121] + ((q1^2+q1*q2)/(-q2^2))*B[212] + ((-q1^2)/(-q2^2))*B[12]
+            ((-q1^2-2*q1*q2-q2^2)/(-q2^2))*2121 + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1*q2^2))*121 + ((q1^2+q1*q2)/(-q2^2))*212 + ((-q1^2)/(-q2^2))*12
             sage: Y2(x)
-            ((-q1^4-q1^3*q2-q1*q2^3-q2^4)/(-q1^3*q2))*B[2121] + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1^2*q2))*B[121] + (q2^3/(-q1^3))*B[12]
+            ((-q1^4-q1^3*q2-q1*q2^3-q2^4)/(-q1^3*q2))*2121 + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1^2*q2))*121 + (q2^3/(-q1^3))*12
             sage: Y1(Y2(x))
-            ((q1*q2+q2^2)/q1^2)*B[212] + ((-q2)/q1)*B[12]
+            ((q1*q2+q2^2)/q1^2)*212 + ((-q2)/q1)*12
             sage: Y2(Y1(x))
-            ((q1*q2+q2^2)/q1^2)*B[212] + ((-q2)/q1)*B[12]
+            ((q1*q2+q2^2)/q1^2)*212 + ((-q2)/q1)*12
 
         The `Y` operators commute::
 
@@ -549,29 +555,29 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: Y2(Y1(x)) - Y1(Y2(x))
             0
 
-        In the classical root lattice, `\alpha_0+\alpha_1+\alpha_2=0`::
+        In the classical root lattice, `\alpha_0 + \alpha_1 + \alpha_2 = 0`::
 
             sage: Y0(Y1(Y2(x)))
-            B[12]
+            12
 
         Lemma 7.2 of [HST2008]_::
 
             sage: w0 = KW.monomial(W.long_element())
             sage: rho.Tw(0)(w0)
-            q2*B[1]
+            q2
             sage: rho.Tw_inverse(1)(w0)
-            1/q2*B[212]
+            1/q2*212
             sage: rho.Tw_inverse(2)(w0)
-            1/q2*B[121]
+            1/q2*121
 
         Lemma 7.5 of [HST2008]_::
 
             sage: Y0(w0)
-            q1^2/q2^2*B[2121]
+            q1^2/q2^2*2121
             sage: Y1(w0)
-            (q2/(-q1))*B[2121]
+            (q2/(-q1))*2121
             sage: Y2(w0)
-            (q2/(-q1))*B[2121]
+            (q2/(-q1))*2121
 
         .. TODO::
 
@@ -595,7 +601,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         # (co)weight space, because the alcove walks currently uses
         # rho_classical and, in type BC, the later does not have
         # integral coefficients:
-        # sage: RootSystem(["BC",2,2]).cowaeight_lattice().rho_classical()
+        # sage: RootSystem(["BC",2,2]).coweight_lattice().rho_classical()
 
         # On the other hand, at this point we need the expression of
         # lambdacheck in Q_check in order to use the translation
@@ -723,7 +729,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: E.affine_retract = w0._mul_
 
             sage: E[w0]
-            B[2121]
+            2121
             sage: E.eigenvalues(E[w0])
             [q2^2/q1^2, q1/(-q2), q1/(-q2)]
 
@@ -734,14 +740,14 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         Now we can compute all eigenvectors::
 
             sage: [E[w] for w in W]
-            [B[2121] - B[121] - B[212] + B[12] + B[21] - B[1] - B[2] + B[],
-            -B[2121] + B[212],
-            (q2/(q1-q2))*B[2121] + (q2/(-q1+q2))*B[121] + (q2/(-q1+q2))*B[212] - B[12] + ((-q2)/(-q1+q2))*B[21] + B[2],
-            ((-q2^2)/(-q1^2+q1*q2-q2^2))*B[2121] - B[121] + (q2^2/(-q1^2+q1*q2-q2^2))*B[212] + B[21],
-            ((q1^2+q2^2)/(-q1^2+q1*q2-q2^2))*B[2121] + ((-q1^2-q2^2)/(-q1^2+q1*q2-q2^2))*B[121] + ((-q2^2)/(-q1^2+q1*q2-q2^2))*B[212] + (q2^2/(-q1^2+q1*q2-q2^2))*B[12] - B[21] + B[1],
-            B[2121],
-            (q2/(-q1+q2))*B[2121] + ((-q2)/(-q1+q2))*B[121] - B[212] + B[12],
-            -B[2121] + B[121]]
+            [2121 - 121 - 212 + 12 + 21 - 1 - 2 + ,
+             -2121 + 212,
+             (q2/(q1-q2))*2121 + (q2/(-q1+q2))*121 + (q2/(-q1+q2))*212 - 12 + ((-q2)/(-q1+q2))*21 + 2,
+             ((-q2^2)/(-q1^2+q1*q2-q2^2))*2121 - 121 + (q2^2/(-q1^2+q1*q2-q2^2))*212 + 21,
+             ((q1^2+q2^2)/(-q1^2+q1*q2-q2^2))*2121 + ((-q1^2-q2^2)/(-q1^2+q1*q2-q2^2))*121 + ((-q2^2)/(-q1^2+q1*q2-q2^2))*212 + (q2^2/(-q1^2+q1*q2-q2^2))*12 - 21 + 1,
+             2121,
+             (q2/(-q1+q2))*2121 + ((-q2)/(-q1+q2))*121 - 212 + 12,
+             -2121 + 121]
         """
         if not self.cartan_type().is_affine():
             raise ValueError("The Cherednik operators are only defined for representations of affine Hecke algebra")
@@ -821,7 +827,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
             sage: E.keys()
             Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space)
             sage: E.domain()
-            Group algebra of Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space) over Fraction Field of Multivariate Polynomial Ring in q1, q2 over Rational Field
+            Algebra of Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space) over Fraction Field of Multivariate Polynomial Ring in q1, q2 over Rational Field
             sage: E._T == E._T_Y
             True
         """
@@ -863,7 +869,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
             sage: KW = W.algebra(K)
             sage: E = KW.demazure_lusztig_eigenvectors(q1, q2)
             sage: E.domain()
-            Group algebra of Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space) over Multivariate Polynomial Ring in q1, q2 over Rational Field
+            Algebra of Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space) over Multivariate Polynomial Ring in q1, q2 over Rational Field
         """
         return self._T.domain()
 
@@ -908,7 +914,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
             sage: KW = W.algebra(K)
             sage: E = KW.demazure_lusztig_eigenvectors(q1, q2)
             sage: E.seed(W.long_element())
-            B[123121]
+            123121
         """
         return self.domain().monomial(mu)
 
@@ -1121,7 +1127,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
             sage: E = KW.demazure_lusztig_eigenvectors(q1, q2)
             sage: w0 = W.long_element()
             sage: E[w0]
-            B[123121]
+            123121
         """
         L0 = self.keys()
         assert L0.is_parent_of(mu)

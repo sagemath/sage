@@ -56,6 +56,14 @@ def register_sage_classes():
         False
         sage: isinstance(sqrt(2), numbers.Real)
         False
+
+    Because we do this, NumPy's ``isscalar()`` recognizes Sage types::
+
+        sage: from numpy import isscalar
+        sage: isscalar(3.141)
+        True
+        sage: isscalar(4/17)
+        True
     """
     from sage.rings.integer import Integer
     from sage.rings.rational import Rational

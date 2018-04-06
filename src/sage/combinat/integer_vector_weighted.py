@@ -268,7 +268,7 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
 
             sage: C = WeightedIntegerVectors([2,1,3])
             sage: C.category()
-            Category of infinite enumerated sets with grading
+            Category of facade infinite enumerated sets with grading
             sage: TestSuite(C).run()
         """
         self._weights = weight

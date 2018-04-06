@@ -1,15 +1,19 @@
 #!/usr/bin/env python
 
-import os, sys
+import os
+import sys
 args = sys.argv[1:]
 
-from sage.env import SAGE_SRC
+if "SAGE_SRC" not in os.environ:
+    raise RuntimeError("The environment variable SAGE_SRC must be set.")
+SAGE_SRC = os.environ["SAGE_SRC"]
 
 # args can have length 0, in case we're printing a usage message (see trac 12207)
 pyx_file = os.path.abspath(args[-1]) if len(args) else None
 include_sage_flags = False
 
 if pyx_file and pyx_file.endswith('.spyx'):
+    sys.stderr.write("WARNING: running sage --cython on .spyx files is deprecated, use the .pyx extension instead\n")
     spyx_file = pyx_file
     pyx_file = pyx_file[:-5] + '.pyx'
     args[-1] = pyx_file

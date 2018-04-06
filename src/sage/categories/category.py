@@ -35,10 +35,12 @@ Let's request the category of some objects::
 
     sage: V = VectorSpace(RationalField(), 3)
     sage: V.category()
-    Category of finite dimensional vector spaces with basis over (quotient fields and metric spaces)
+    Category of finite dimensional vector spaces with basis
+     over (number fields and quotient fields and metric spaces)
     sage: G = SymmetricGroup(9)
     sage: G.category()
-    Join of Category of finite enumerated permutation groups and Category of finite weyl groups
+    Join of Category of finite enumerated permutation groups
+     and Category of finite weyl groups
     sage: P = PerfectMatchings(3)
     sage: P.category()
     Category of finite enumerated sets
@@ -102,7 +104,6 @@ from sage.misc.abstract_method import abstract_method, abstract_methods_of_class
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.c3_controlled import _cmp_key, _cmp_key_named, C3_sorted_merge
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.lazy_import import lazy_import
 from sage.misc.unknown import Unknown
 from sage.misc.weak_dict import WeakValueDictionary
 
@@ -276,9 +277,9 @@ class Category(UniqueRepresentation, SageObject):
         sage: As().parent_class
         <class '__main__.As.parent_class'>
         sage: As().parent_class.__bases__
-        (<type 'object'>,)
+        (<... 'object'>,)
         sage: As().parent_class.mro()
-        [<class '__main__.As.parent_class'>, <type 'object'>]
+        [<class '__main__.As.parent_class'>, <... 'object'>]
 
     ::
 
@@ -287,7 +288,7 @@ class Category(UniqueRepresentation, SageObject):
         sage: Bs().parent_class.__bases__
         (<class '__main__.As.parent_class'>,)
         sage: Bs().parent_class.mro()
-        [<class '__main__.Bs.parent_class'>, <class '__main__.As.parent_class'>, <type 'object'>]
+        [<class '__main__.Bs.parent_class'>, <class '__main__.As.parent_class'>, <... 'object'>]
 
     ::
 
@@ -296,7 +297,7 @@ class Category(UniqueRepresentation, SageObject):
         sage: Cs().parent_class.__bases__
         (<class '__main__.As.parent_class'>,)
         sage: Cs().parent_class.__mro__
-        (<class '__main__.Cs.parent_class'>, <class '__main__.As.parent_class'>, <type 'object'>)
+        (<class '__main__.Cs.parent_class'>, <class '__main__.As.parent_class'>, <... 'object'>)
 
     ::
 
@@ -305,7 +306,7 @@ class Category(UniqueRepresentation, SageObject):
         sage: Ds().parent_class.__bases__
         (<class '__main__.Cs.parent_class'>, <class '__main__.Bs.parent_class'>)
         sage: Ds().parent_class.mro()
-        [<class '__main__.Ds.parent_class'>, <class '__main__.Cs.parent_class'>, <class '__main__.Bs.parent_class'>, <class '__main__.As.parent_class'>, <type 'object'>]
+        [<class '__main__.Ds.parent_class'>, <class '__main__.Cs.parent_class'>, <class '__main__.Bs.parent_class'>, <class '__main__.As.parent_class'>, <... 'object'>]
 
     Note that that two categories in the same class need not have the
     same ``super_categories``. For example, ``Algebras(QQ)`` has
@@ -352,7 +353,7 @@ class Category(UniqueRepresentation, SageObject):
         <class '__main__.Cs.parent_class'>,
         <class '__main__.Bs.parent_class'>,
         <class '__main__.As.parent_class'>,
-        <type 'object'>]
+        <... 'object'>]
         sage: D.fA()
         'A'
         sage: D.fB()
@@ -377,7 +378,7 @@ class Category(UniqueRepresentation, SageObject):
         <class '__main__.Cs.element_class'>,
         <class '__main__.Bs.element_class'>,
         <class '__main__.As.element_class'>,
-        <type 'object'>]
+        <... 'object'>]
 
 
     TESTS::
@@ -1717,6 +1718,14 @@ class Category(UniqueRepresentation, SageObject):
             sage: Algebras(ZZ['t']).element_class is Algebras(ZZ['t','x']).element_class
             True
 
+        These classes are constructed with ``__slots__ = []``, so they
+        behave like extension types::
+
+            sage: E = FiniteEnumeratedSets().element_class
+            sage: from sage.structure.misc import is_extension_type
+            sage: is_extension_type(E)
+            True
+
         .. SEEALSO:: :meth:`parent_class`
         """
         return self._make_named_class('element_class', 'ElementMethods')
@@ -2015,7 +2024,8 @@ class Category(UniqueRepresentation, SageObject):
             sage: Rings().Division()._with_axiom_as_tuple('Finite')
             (Category of division rings,
              Category of finite monoids,
-             Category of commutative magmas)
+             Category of commutative magmas,
+             Category of finite additive groups)
             sage: HopfAlgebras(QQ)._with_axiom_as_tuple('FiniteDimensional')
             (Category of hopf algebras over Rational Field,
              Category of finite dimensional modules over Rational Field)
@@ -2590,13 +2600,14 @@ def category_sample():
         sage: sorted(category_sample(), key=str)
         [Category of G-sets for Symmetric group of order 8! as a permutation group,
          Category of Hecke modules over Rational Field,
+         Category of Lie algebras over Rational Field,
          Category of additive magmas, ...,
          Category of fields, ...,
          Category of graded hopf algebras with basis over Rational Field, ...,
          Category of modular abelian varieties over Rational Field, ...,
          Category of simplicial complexes, ...,
          Category of vector spaces over Rational Field, ...,
-         Category of weyl groups,...
+         Category of weyl groups, ...
     """
     import sage.categories.all
     abstract_classes_for_categories = [Category]
@@ -2651,7 +2662,6 @@ def category_graph(categories = None):
                 g.add_edge([source._repr_object_names(), target._repr_object_names()])
     return g
 
-lazy_import('sage.categories.homsets', 'Homsets', 'HomCategory', deprecation=10668)
 
 ##############################################################################
 # Parametrized categories whose parent/element class depend only on
@@ -2764,7 +2774,9 @@ class CategoryWithParameters(Category):
         Similarly for ``QQ`` and ``RR``::
 
             sage: QQ.category()
-            Join of Category of quotient fields and Category of metric spaces
+            Join of Category of number fields
+             and Category of quotient fields
+             and Category of metric spaces
             sage: RR.category()
             Join of Category of fields and Category of complete metric spaces
             sage: Modules(QQ).parent_class is Modules(RR).parent_class
@@ -2834,7 +2846,9 @@ class CategoryWithParameters(Category):
         of the left and right base rings::
 
             sage: Bimodules(QQ, ZZ)._make_named_class_key("morphism_class")
-            (Join of Category of quotient fields and Category of metric spaces,
+            (Join of Category of number fields
+                 and Category of quotient fields
+                 and Category of metric spaces,
              Join of Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
@@ -2968,11 +2982,15 @@ class JoinCategory(CategoryWithParameters):
                  and Category of infinite enumerated sets
                  and Category of metric spaces
             sage: Modules(QQ)._make_named_class_key('parent_class')
-            Join of Category of quotient fields and Category of metric spaces
+            Join of Category of number fields
+             and Category of quotient fields
+             and Category of metric spaces
             sage: Schemes(Spec(ZZ))._make_named_class_key('parent_class')
             Category of schemes
             sage: ModularAbelianVarieties(QQ)._make_named_class_key('parent_class')
-            Join of Category of quotient fields and Category of metric spaces
+            Join of Category of number fields
+             and Category of quotient fields
+             and Category of metric spaces
         """
         return tuple(getattr(cat, name) for cat in self._super_categories)
 
@@ -3016,9 +3034,10 @@ class JoinCategory(CategoryWithParameters):
             and only if it is a sub-category of all super categories
             of this join category.
 
-        EXAMPLE::
+        EXAMPLES::
 
-            sage: cat = Category.join([Rings(), VectorSpaces(QuotientFields().Metric())])
+            sage: base_cat = Category.join([NumberFields(), QuotientFields().Metric()])
+            sage: cat = Category.join([Rings(), VectorSpaces(base_cat)])
             sage: QQ['x'].category().is_subcategory(cat)  # indirect doctest
             True
         """

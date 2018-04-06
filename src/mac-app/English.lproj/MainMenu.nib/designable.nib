@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1421" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -90,6 +91,11 @@
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="newWorksheet:" target="578" id="671"/>
+                                    <binding destination="762" name="hidden" keyPath="values.preferSageNB" id="ckJ-9C-SYe">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </menuItem>
                             <menuItem title="Open Notebook" keyEquivalent="n" id="82">
@@ -332,6 +338,11 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="newWorksheet:" target="578" id="1245"/>
+                                    <binding destination="762" name="hidden" keyPath="values.preferSageNB" id="Ag6-Fd-ERe">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="1110"/>
@@ -381,6 +392,20 @@
                                 <connections>
                                     <action selector="stopServer:" target="578" id="980-d9-j3i"/>
                                     <binding destination="762" name="hidden" keyPath="values.preferSageNB" id="snT-Kr-otq"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Upgrade SageNB to Jupyter" id="8lg-XL-iWM" userLabel="Upgrade SageNB to Jupyter">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="upgradeNotebook:" target="578" id="9WJ-sf-9hZ"/>
+                                    <binding destination="762" name="enabled" keyPath="values.hasNBToUpgrade" id="gpU-Bf-PRi">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                            <integer key="NSNullPlaceholder" value="-1"/>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="Ahu-nZ-fun"/>
@@ -706,14 +731,14 @@
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="530" userLabel="prefWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="385" y="363" width="448" height="387"/>
+            <rect key="contentRect" x="385" y="363" width="448" height="416"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
-            <view key="contentView" id="531">
-                <rect key="frame" x="0.0" y="0.0" width="448" height="387"/>
+            <view key="contentView" misplaced="YES" id="531">
+                <rect key="frame" x="0.0" y="0.0" width="448" height="416"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView id="1673">
-                        <rect key="frame" x="13" y="10" width="422" height="371"/>
+                        <rect key="frame" x="13" y="39" width="422" height="371"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
@@ -954,12 +979,9 @@ Tip: Dragging a file to the Sage Executable text box will paste the path.</strin
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="785">
+                                        <box verticalHuggingPriority="750" boxType="separator" id="785">
                                             <rect key="frame" x="-3" y="267" width="407" height="5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                            <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <button verticalHuggingPriority="750" id="1658">
                                             <rect key="frame" x="11" y="6" width="126" height="32"/>
@@ -1045,7 +1067,7 @@ Tip: Dragging a file to the Sage Executable text box will paste the path.</strin
             <connections>
                 <outlet property="delegate" destination="572" id="751"/>
             </connections>
-            <point key="canvasLocation" x="191" y="332.5"/>
+            <point key="canvasLocation" x="171" y="108"/>
         </window>
         <customObject id="572" customClass="PreferencePanelController">
             <connections>
@@ -1068,16 +1090,21 @@ Tip: Dragging a file to the Sage Executable text box will paste the path.</strin
         </customObject>
         <menu id="580" userLabel="StatusItem">
             <items>
-                <menuItem title="New Worksheet" id="586">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="newWorksheet:" target="578" id="667"/>
-                    </connections>
-                </menuItem>
                 <menuItem title="Open Notebook" id="591">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="openNotebook:" target="578" id="666"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="New Worksheet" id="586">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="newWorksheet:" target="578" id="667"/>
+                        <binding destination="762" name="hidden" keyPath="values.preferSageNB" id="WkE-EQ-D2k">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
                     </connections>
                 </menuItem>
                 <menuItem title="Terminal Session" id="590">
@@ -1210,7 +1237,7 @@ Tip: Dragging a file to the Sage Executable text box will paste the path.</strin
                         <action selector="startJupyter:" target="578" id="KVw-0s-91A"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Stop Jupyter" state="on" tag="1" id="wZw-fz-7NL">
+                <menuItem title="Stop Jupyter" tag="1" id="wZw-fz-7NL">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="stopJupyter:" target="578" id="JzO-mW-VOd"/>
@@ -1228,6 +1255,13 @@ Tip: Dragging a file to the Sage Executable text box will paste the path.</strin
                     <connections>
                         <action selector="stopServer:" target="578" id="YJC-y5-Ry1"/>
                         <binding destination="762" name="hidden" keyPath="values.preferSageNB" id="QVY-Xh-soW"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Upgrade SageNB to Jupyter" id="vhW-8y-T8E" userLabel="Upgrade SageNB to Jupyter">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="upgradeNotebook:" target="578" id="lfA-Ih-4lj"/>
+                        <binding destination="762" name="enabled" keyPath="values.hasNBToUpgrade" id="buH-ca-Fhu"/>
                     </connections>
                 </menuItem>
                 <menuItem title="View Log" id="1685">

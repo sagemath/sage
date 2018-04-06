@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Coercion Maps Between Hyperbolic Plane Models
 
@@ -138,8 +139,8 @@ class HyperbolicModelCoercion(Morphism):
             sage: phi = UHP.coerce_map_from(PD)
             sage: ~phi
             Coercion Isometry morphism:
-              From: Hyperbolic plane in the Upper Half Plane Model model
-              To:   Hyperbolic plane in the Poincare Disk Model model
+              From: Hyperbolic plane in the Upper Half Plane Model
+              To:   Hyperbolic plane in the Poincare Disk Model
         """
         return self.domain().coerce_map_from(self.codomain())
 

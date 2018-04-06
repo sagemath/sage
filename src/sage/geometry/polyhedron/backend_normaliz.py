@@ -2,6 +2,11 @@
 """
 The Normaliz backend for polyhedral computations
 
+.. NOTE::
+
+    This backend requires `PyNormaliz <https://pypi.python.org/pypi/PyNormaliz/1.5>`_.
+    To install PyNormaliz, type :code:`sage -i pynormaliz` in the terminal.
+
 AUTHORS:
 
 - Matthias Köppe (2016-12): initial version
@@ -23,7 +28,7 @@ from sage.structure.element import Element
 from sage.misc.all import prod
 
 from sage.rings.all import ZZ, QQ
-from sage.rings.integer import LCM_list
+from sage.arith.functions import LCM_list
 from sage.misc.functional import denominator
 from sage.matrix.constructor import matrix, vector
 
@@ -297,14 +302,13 @@ class Polyhedron_normaliz(Polyhedron_base):
         EXAMPLES::
 
             sage: p = Polyhedron(vertices=[(0,1/2),(2,0),(4,5/6)],  # indirect doctest # optional - pynormaliz
-            ...                  backend='normaliz')
-            sage: set(p.Hrepresentation())                                 # optional - pynormaliz
-            {An inequality (1, 4) x - 2 >= 0,
+            ....:                backend='normaliz')
+            sage: p.Hrepresentation()                               # optional - pynormaliz
+            (An inequality (-5, 12) x + 10 >= 0,
              An inequality (1, -12) x + 6 >= 0,
-             An inequality (-5, 12) x + 10 >= 0}
-            sage: set(p.Vrepresentation())                                 # optional - pynormaliz
-            {A vertex at (0, 1/2), A vertex at (2, 0), A vertex at (4, 5/6)}
-
+             An inequality (1, 4) x - 2 >= 0)
+            sage: p.Vrepresentation()                               # optional - pynormaliz
+            (A vertex at (0, 1/2), A vertex at (2, 0), A vertex at (4, 5/6))
         """
         import PyNormaliz
         self._Vrepresentation = []
@@ -330,14 +334,13 @@ class Polyhedron_normaliz(Polyhedron_base):
         EXAMPLES::
 
             sage: p = Polyhedron(vertices=[(0,1/2), (2,0), (4,5/6)],  # indirect doctest # optional - pynormaliz
-            ...                  backend='normaliz')
-            sage: set(p.Hrepresentation())                                 # optional - pynormaliz
-            {An inequality (1, 4) x - 2 >= 0,
+            ....:                backend='normaliz')
+            sage: p.Hrepresentation()                                 # optional - pynormaliz
+            (An inequality (-5, 12) x + 10 >= 0,
              An inequality (1, -12) x + 6 >= 0,
-             An inequality (-5, 12) x + 10 >= 0}
-            sage: set(p.Vrepresentation())                                 # optional - pynormaliz
-            {A vertex at (0, 1/2), A vertex at (2, 0), A vertex at (4, 5/6)}
-
+             An inequality (1, 4) x - 2 >= 0)
+            sage: p.Vrepresentation()                                 # optional - pynormaliz
+            (A vertex at (0, 1/2), A vertex at (2, 0), A vertex at (4, 5/6))
         """
         import PyNormaliz
         self._Hrepresentation = []
@@ -385,7 +388,7 @@ class Polyhedron_normaliz(Polyhedron_base):
 
             sage: P=Polyhedron(ieqs=[[1, 0, 2], [3, 0, -2], [3, 2, -2]],   # optional - pynormaliz
             ....:              backend='normaliz')
-            sage: PI=P.integral_hull()                # indirect doctest   # optional - pynormaliz
+            sage: PI = P.integral_hull()                 # indirect doctest; optional - pynormaliz
         """
         return cls(parent, None, None, normaliz_cone=normaliz_cone)
 
@@ -400,27 +403,28 @@ class Polyhedron_normaliz(Polyhedron_base):
 
         Unbounded example from Normaliz manual, "a dull polyhedron"::
 
-            sage: P=Polyhedron(ieqs=[[1, 0, 2], [3, 0, -2], [3, 2, -2]],   # optional - pynormaliz
+            sage: P = Polyhedron(ieqs=[[1, 0, 2], [3, 0, -2], [3, 2, -2]], # optional - pynormaliz
             ....:              backend='normaliz')
-            sage: PI=P.integral_hull()                                     # optional - pynormaliz
-            sage: P.plot(color='yellow') + PI.plot(color='green') # not tested   # optional - pynormaliz
-            sage: set(PI.Vrepresentation())                                # optional - pynormaliz
-            {A vertex at (-1, 0), A vertex at (0, 1), A ray in the direction (1, 0)}
+            sage: PI = P.integral_hull()                                   # optional - pynormaliz
+            sage: P.plot(color='yellow') + PI.plot(color='green')          # optional - pynormaliz
+            Graphics object consisting of 10 graphics primitives
+            sage: PI.Vrepresentation()                                     # optional - pynormaliz
+            (A vertex at (-1, 0), A vertex at (0, 1), A ray in the direction (1, 0))
 
         Nonpointed case::
 
-            sage: P=Polyhedron(vertices=[[1/2, 1/3]], rays=[[1, 1]],       # optional - pynormaliz
+            sage: P = Polyhedron(vertices=[[1/2, 1/3]], rays=[[1, 1]],     # optional - pynormaliz
             ....:              lines=[[-1, 1]], backend='normaliz')
-            sage: PI=P.integral_hull()                                     # optional - pynormaliz
-            sage: set(PI.Vrepresentation())                                # optional - pynormaliz
-            {A vertex at (1, 0),
+            sage: PI = P.integral_hull()                                   # optional - pynormaliz
+            sage: PI.Vrepresentation()                                     # optional - pynormaliz
+            (A vertex at (1, 0),
              A ray in the direction (1, 0),
-             A line in the direction (1, -1)}
+             A line in the direction (1, -1))
 
         Empty polyhedron::
 
             sage: P = Polyhedron(backend='normaliz')                       # optional - pynormaliz
-            sage: PI=P.integral_hull()                                     # optional - pynormaliz
+            sage: PI = P.integral_hull()                                   # optional - pynormaliz
             sage: PI.Vrepresentation()                                     # optional - pynormaliz
             ()
         """
@@ -441,7 +445,7 @@ class Polyhedron_normaliz(Polyhedron_base):
         INPUT:
 
         - ``threshold`` -- integer (default: 10000); use the naïve
-        algorithm as long as the bounding box is smaller than this
+          algorithm as long as the bounding box is smaller than this
 
         OUTPUT:
 
@@ -489,11 +493,11 @@ class Polyhedron_normaliz(Polyhedron_base):
         be a very bad idea (note this is a rational (non-lattice)
         polytope, so the other backends use the bounding box method)::
 
-            sage: P = Polyhedron(vertices=((0, 0), (1789345,37121))) + 1/1000*polytopes.hypercube(2)
+            sage: P = Polyhedron(vertices=((0, 0), (178933,37121))) + 1/1000*polytopes.hypercube(2)
             sage: P = Polyhedron(vertices=P.vertices_list(),               # optional - pynormaliz
             ....:                backend='normaliz')
             sage: len(P.integral_points())                                 # optional - pynormaliz
-            3654
+            434
 
         Finally, the 3-d reflexive polytope number 4078::
 
@@ -546,6 +550,20 @@ class Polyhedron_normaliz(Polyhedron_base):
             sage: P = Polyhedron([[]], backend='normaliz')                 # optional - pynormaliz
             sage: P.integral_points()                                      # optional - pynormaliz
             ((),)
+
+        A polytope with no integral points (:trac:`22938`)::
+
+            sage: ieqs = [[1, 2, -1, 0], [0, -1, 2, -1], [0, 0, -1, 2],
+            ....:         [0, -1, 0, 0], [0, 0, -1, 0],  [0, 0, 0, -1],
+            ....:         [-1, -1, -1, -1], [1, 1, 0, 0], [1, 0, 1, 0],
+            ....:         [1, 0, 0, 1]]
+            sage: P = Polyhedron(ieqs=ieqs, backend='normaliz')            # optional - pynormaliz
+            sage: P.bounding_box()                                         # optional - pynormaliz
+            ((-3/4, -1/2, -1/4), (-1/2, -1/4, 0))
+            sage: P.bounding_box(integral_hull=True)                       # optional - pynormaliz
+            (None, None)
+            sage: P.integral_points()                                      # optional - pynormaliz
+            ()
         """
         import PyNormaliz
         if not self.is_compact():
@@ -561,11 +579,13 @@ class Polyhedron_normaliz(Polyhedron_base):
                 return ()
         # for small bounding boxes, it is faster to naively iterate over the points of the box
         if threshold > 1:
-            box_min, box_max = self.bounding_box(integral=True)
+            box_min, box_max = self.bounding_box(integral_hull=True)
+            if box_min is None:
+                return ()
             box_points = prod(max_coord-min_coord+1 for min_coord, max_coord in zip(box_min, box_max))
             if  box_points<threshold:
                 from sage.geometry.integral_points import rectangular_box_points
-                return rectangular_box_points(box_min, box_max, self)
+                return rectangular_box_points(list(box_min), list(box_max), self)
         # Compute with normaliz
         points = []
         cone = self._normaliz_cone

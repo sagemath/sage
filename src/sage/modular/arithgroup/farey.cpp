@@ -29,14 +29,8 @@
 #include <Python.h>
 
 #include "farey.hpp"
+#include "sage/modular/arithgroup/farey_symbol.h"
 
-// The following functions are defined in farey_symbols.h, but direct inclusion
-// of this file breaks compilation on cygwin, see trac #13336.
-extern "C" long convert_to_long(PyObject *);
-extern "C" PyObject *convert_to_Integer(mpz_class);
-extern "C" PyObject *convert_to_rational(mpq_class);
-extern "C" PyObject *convert_to_cusp(mpq_class);
-extern "C" PyObject *convert_to_SL2Z(SL2Z);
 
 using namespace std;
 
@@ -302,9 +296,9 @@ FareySymbol::FareySymbol(istream& is) {
 // User defined group and restoring from pickle
 
 FareySymbol::FareySymbol(PyObject* o) {
-  if( PyString_Check(o) ) {
+  if( PyBytes_Check(o) ) {
     // restoration from data
-    istringstream is(PyString_AsString(o));
+    istringstream is(PyBytes_AsString(o));
     is >> (*this);
   } else {
     // init with user defined group
@@ -1132,7 +1126,7 @@ PyObject* FareySymbol::get_pairing_matrices() const {
 PyObject* FareySymbol::dumps() const {
   std::ostringstream os(ostringstream::out|ostringstream::binary);
   os << (*this);
-  PyObject* d = PyString_FromString(os.str().c_str());
+  PyObject* d = PyBytes_FromString(os.str().c_str());
   return d;
 }
 

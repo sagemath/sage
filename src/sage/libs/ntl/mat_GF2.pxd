@@ -1,10 +1,7 @@
 from .types cimport mat_GF2_c, vec_GF2_c, GF2_c
 
-cdef extern from "ccobject.h":
-    void mat_GF2_from_str "_from_str<mat_GF2>"(mat_GF2_c* dest, char* s)
-    object mat_GF2_to_PyString "_to_PyString<mat_GF2>"(mat_GF2_c *x)
 
-cdef extern from "sage/libs/ntl/ntlwrap.cpp":
+cdef extern from "ntlwrap.cpp":
     void mat_GF2_add "add"( mat_GF2_c x, mat_GF2_c a, mat_GF2_c b)
     void mat_GF2_sub "sub"( mat_GF2_c x, mat_GF2_c a, mat_GF2_c b)
     void mat_GF2_mul "mul"( mat_GF2_c x, mat_GF2_c a, mat_GF2_c b)

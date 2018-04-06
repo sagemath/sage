@@ -12,10 +12,10 @@ cdef class SetSystem:
     cdef _relabel(self, l)
     cpdef _complements(self)
 
-    cdef inline resize(self, k=*)
-    cdef inline _append(self, bitset_t X)
-    cdef inline append(self, X)
-    cdef inline _subset(self, long k)
+    cdef resize(self, k=*)
+    cdef _append(self, bitset_t X)
+    cdef append(self, X)
+    cdef _subset(self, long k)
     cdef subset(self, k)
     cpdef _get_groundset(self)
 

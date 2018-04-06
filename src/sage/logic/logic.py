@@ -278,7 +278,7 @@ class SymbolicLogic:
 
         OUTPUT:
 
-        A new staement which or'd the given statements together.
+        A new statement which or'd the given statements together.
 
         EXAMPLES::
 

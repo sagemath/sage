@@ -410,8 +410,6 @@ def iterator(n, min_length, max_length, floor, ceiling, min_slope, max_slope):
         sage: list(iterator(2, 3, 3, lambda i: 0, lambda i: 5, 0, 10))
         [[0, 1, 1], [0, 0, 2]]
     """
-    #from sage.misc.superseded import deprecation
-    #deprecation(13605, 'iterator(...) is deprecated. Use IntegerListLex(...) instead.')
     stopgap("Iterator uses the old implementation of IntegerListsLex, which does not allow for arbitrary input;"
             " non-allowed input can return wrong results,"
             " please see the documentation for IntegerListsLex for details.",
@@ -767,7 +765,7 @@ class IntegerListsLex(Parent):
     readily implemented in MuPAD-Combinat). Encouragements,
     suggestions, and help are welcome.
 
-    .. TODO:
+    .. TODO::
 
         Integrate all remaining tests from
         http://mupad-combinat.svn.sourceforge.net/viewvc/mupad-combinat/trunk/MuPAD-Combinat/lib/COMBINAT/TEST/MachineIntegerListsLex.tst
@@ -987,7 +985,7 @@ class IntegerListsLex(Parent):
         """
         return self.element_class(self, lst)
 
-    def __cmp__(self, x):
+    def __eq__(self, x):
         """
         Compares two different :class:`IntegerListsLex`.
 
@@ -1004,7 +1002,24 @@ class IntegerListsLex(Parent):
             sage: C == D
             False
         """
-        return cmp(repr(self), repr(x))
+        return repr(self) == repr(x)
+
+    def __ne__(self, other):
+        """
+        Compares two different :class:`IntegerListsLex`.
+
+        For now, the comparison is done just on their repr's which is
+        not robust!
+
+        EXAMPLES::
+
+            sage: import sage.combinat.integer_list_old as integer_list
+            sage: C = integer_list.IntegerListsLex(2, length=3)
+            sage: D = integer_list.IntegerListsLex(4, length=3)
+            sage: C != D
+            True
+        """
+        return not self.__eq__(other)
 
     def _repr_(self):
         """
@@ -1143,8 +1158,8 @@ class IntegerListsLex(Parent):
         Default brute force implementation of count by iteration
         through all the objects.
 
-        Note that this skips the call to ``_element_constructor``, unlike
-        the default implementation.
+        Note that this skips the call to ``_element_constructor_``,
+        unlike the default implementation.
 
         .. TODO::
 

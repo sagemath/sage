@@ -4,7 +4,7 @@ Posets
 Common posets can be accessed through ``posets.<tab>`` and are listed in the
 posets catalog:
 
-- :ref:`Catalog of posets <sage.combinat.posets.poset_examples>`
+- :ref:`Catalog of posets and lattices <sage.combinat.posets.poset_examples>`
 
 Poset-related classes:
 

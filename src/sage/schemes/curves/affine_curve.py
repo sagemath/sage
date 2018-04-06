@@ -57,7 +57,7 @@ from sage.schemes.affine.affine_space import (AffineSpace,
                                               is_AffineSpace)
 from . import point
 
-from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme_affine
+from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 
 from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
 from sage.schemes.projective.projective_space import ProjectiveSpace
@@ -1485,6 +1485,67 @@ class AffinePlaneCurve(AffineCurve):
         H = Hom(A_line, C)
         return H([para[1]/para[0], para[2]/para[0]])
 
+    def fundamental_group(self):
+        r"""
+        Return a presentation of the fundamental group of the complement
+        of ``self``.
+
+        .. NOTE::
+
+            The curve must be defined over the rationals or a number field
+            with an embedding over `\QQbar`.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: C = A.curve(y^2 - x^3 - x^2)
+            sage: C.fundamental_group() # optional - sirocco
+            Finitely presented group < x0 |  >
+
+        In the case of number fields, they need to have an embedding
+        to the algebraic field::
+
+            sage: a = QQ[x](x^2+5).roots(QQbar)[0][0]
+            sage: F = NumberField(a.minpoly(), 'a', embedding=a)
+            sage: F.inject_variables()
+            Defining a
+            sage: A.<x,y> = AffineSpace(F, 2)
+            sage: C = A.curve(y^2 - a*x^3 - x^2)
+            sage: C.fundamental_group() # optional - sirocco
+            Finitely presented group < x0 |  >
+
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """
+        from sage.schemes.curves.zariski_vankampen import fundamental_group
+        F = self.base_ring()
+        from sage.rings.qqbar import QQbar
+        if QQbar.coerce_map_from(F) is None:
+            raise NotImplementedError("the base field must have an embedding"
+                                      " to the algebraic field")
+        f = self.defining_polynomial()
+        return fundamental_group(f, projective=False)
+
+    def riemann_surface(self,**kwargs):
+        r"""Return the complex riemann surface determined by this curve
+
+        OUTPUT:
+
+         - RiemannSurface object
+
+        EXAMPLES::
+
+            sage: R.<x,y>=QQ[]
+            sage: C=Curve(x^3+3*y^3+5)
+            sage: C.riemann_surface()
+            Riemann surface defined by polynomial f = x^3 + 3*y^3 + 5 = 0, with 53 bits of precision
+
+        """
+        from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
+        return RiemannSurface(self.defining_polynomial(),**kwargs)
+
+
 class AffinePlaneCurve_finite_field(AffinePlaneCurve):
 
     _point = point.AffinePlaneCurvePoint_finite_field
@@ -1496,7 +1557,7 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve):
         Use *very* naive point enumeration to find all rational points on
         this curve over a finite field.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A.<x,y> = AffineSpace(2,GF(9,'a'))
             sage: C = Curve(x^2 + y^2 - 1)
@@ -1542,7 +1603,7 @@ class AffinePlaneCurve_prime_finite_field(AffinePlaneCurve_finite_field):
 
         OUTPUT: basis of L(Div)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R = PolynomialRing(GF(5),2,names = ["x","y"])
             sage: x, y = R.gens()
@@ -1603,7 +1664,7 @@ class AffinePlaneCurve_prime_finite_field(AffinePlaneCurve_finite_field):
            The Brill-Noether package does not always work. When it
            fails a RuntimeError exception is raised.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: x, y = (GF(5)['x,y']).gens()
             sage: f = y^2 - x^9 - x

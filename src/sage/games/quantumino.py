@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 r"""
 Family Games America's Quantumino solver
 
@@ -7,7 +7,7 @@ This module allows to solve the `Quantumino puzzle
 made by Family Games America (see also `this video
 <http://www.youtube.com/watch?v=jX_VKzakZi8>`_ on Youtube). This puzzle was
 left at the dinner room of the Laboratoire de Combinatoire Informatique
-Mathematique in Montreal by Franco Saliola during winter 2011.
+Mathématique in Montreal by Franco Saliola during winter 2011.
 
 The solution uses the dancing links code which is in Sage and is based on
 the more general code available in the module :mod:`sage.combinat.tiling`.
@@ -27,7 +27,7 @@ This module defines two classes :
 
 AUTHOR:
 
-    - Sebastien Labbe, April 28th, 2011
+- Sébastien Labbé, April 28th, 2011
 
 DESCRIPTION (from [1]):
 
@@ -83,23 +83,22 @@ The solution is iterable. This may be used to explicitly list the positions of e
 pentamino::
 
     sage: for p in s: p                                   # long time (<1s)
-    Polyomino: [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 2, 0), (1, 1, 0)], Color: deeppink
-    Polyomino: [(0, 1, 1), (1, 1, 1), (1, 2, 1), (2, 1, 0), (2, 1, 1)], Color: deeppink
-    Polyomino: [(1, 0, 0), (1, 0, 1), (2, 0, 1), (3, 0, 1), (3, 1, 1)], Color: orange
-    Polyomino: [(2, 0, 0), (3, 0, 0), (4, 0, 0), (4, 0, 1), (4, 1, 1)], Color: green
-    Polyomino: [(0, 2, 1), (0, 3, 1), (0, 4, 1), (1, 4, 0), (1, 4, 1)], Color: green
-    Polyomino: [(0, 3, 0), (0, 4, 0), (1, 2, 0), (1, 3, 0), (1, 3, 1)], Color: red
-    Polyomino: [(2, 2, 0), (3, 1, 0), (3, 2, 0), (3, 2, 1), (4, 1, 0)], Color: red
-    Polyomino: [(2, 2, 1), (2, 3, 0), (2, 3, 1), (2, 4, 0), (3, 4, 0)], Color: purple
-    Polyomino: [(3, 3, 0), (4, 2, 0), (4, 2, 1), (4, 3, 0), (4, 3, 1)], Color: yellow
-    Polyomino: [(3, 3, 1), (3, 4, 1), (4, 4, 0), (4, 4, 1), (4, 5, 0)], Color: blue
-    Polyomino: [(2, 4, 1), (2, 5, 0), (2, 5, 1), (3, 5, 0), (3, 6, 0)], Color: blue
-    Polyomino: [(3, 5, 1), (4, 5, 1), (4, 6, 0), (4, 6, 1), (4, 7, 0)], Color: purple
-    Polyomino: [(2, 7, 1), (3, 6, 1), (3, 7, 0), (3, 7, 1), (4, 7, 1)], Color: gray
+    Polyomino: [(0, 0, 0), (1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 2, 0)], Color: deeppink
+    Polyomino: [(0, 0, 1), (0, 1, 0), (0, 1, 1), (0, 2, 1), (1, 2, 1)], Color: deeppink
+    Polyomino: [(0, 2, 0), (0, 3, 0), (0, 4, 0), (1, 4, 0), (1, 4, 1)], Color: green
+    Polyomino: [(0, 3, 1), (1, 3, 1), (2, 2, 0), (2, 2, 1), (2, 3, 1)], Color: green
+    Polyomino: [(1, 3, 0), (2, 3, 0), (2, 4, 0), (2, 4, 1), (3, 4, 0)], Color: red
+    Polyomino: [(1, 0, 1), (2, 0, 1), (2, 1, 0), (2, 1, 1), (3, 1, 1)], Color: red
+    Polyomino: [(2, 0, 0), (3, 0, 0), (3, 0, 1), (3, 1, 0), (4, 0, 0)], Color: gray
+    Polyomino: [(3, 2, 0), (4, 0, 1), (4, 1, 0), (4, 1, 1), (4, 2, 0)], Color: purple
+    Polyomino: [(3, 2, 1), (3, 3, 0), (3, 3, 1), (4, 2, 1), (4, 3, 1)], Color: yellow
+    Polyomino: [(3, 4, 1), (3, 5, 1), (4, 3, 0), (4, 4, 0), (4, 4, 1)], Color: blue
+    Polyomino: [(0, 4, 1), (0, 5, 0), (0, 5, 1), (0, 6, 1), (1, 5, 0)], Color: midnightblue
     Polyomino: [(0, 6, 0), (0, 7, 0), (0, 7, 1), (1, 7, 0), (2, 7, 0)], Color: darkblue
-    Polyomino: [(1, 5, 1), (1, 6, 1), (1, 7, 1), (2, 6, 0), (2, 6, 1)], Color: midnightblue
-    Polyomino: [(0, 5, 0), (0, 5, 1), (0, 6, 1), (1, 5, 0), (1, 6, 0)], Color: yellow
-
+    Polyomino: [(1, 7, 1), (2, 6, 0), (2, 6, 1), (2, 7, 1), (3, 6, 0)], Color: blue
+    Polyomino: [(1, 5, 1), (1, 6, 0), (1, 6, 1), (2, 5, 0), (2, 5, 1)], Color: yellow
+    Polyomino: [(3, 6, 1), (3, 7, 0), (3, 7, 1), (4, 5, 1), (4, 6, 1)], Color: purple
+    Polyomino: [(3, 5, 0), (4, 5, 0), (4, 6, 0), (4, 7, 0), (4, 7, 1)], Color: orange
 
 To get all the solutions, use the iterator returned by the ``solve``
 method. Note that finding the first solution is the most time consuming
@@ -142,7 +141,7 @@ solver to play with it::
     sage: q = QuantuminoSolver(0)
     sage: T = q.tiling_solver()
     sage: T
-    Tiling solver of 16 pieces into the box (5, 8, 2)
+    Tiling solver of 16 pieces into a box of size 80
     Rotation allowed: True
     Reflection allowed: False
     Reusing pieces allowed: False
@@ -453,17 +452,17 @@ class QuantuminoSolver(SageObject):
 
             sage: from sage.games.quantumino import QuantuminoSolver
             sage: QuantuminoSolver(0).tiling_solver()
-            Tiling solver of 16 pieces into the box (5, 8, 2)
+            Tiling solver of 16 pieces into a box of size 80
             Rotation allowed: True
             Reflection allowed: False
             Reusing pieces allowed: False
             sage: QuantuminoSolver(14).tiling_solver()
-            Tiling solver of 16 pieces into the box (5, 8, 2)
+            Tiling solver of 16 pieces into a box of size 80
             Rotation allowed: True
             Reflection allowed: False
             Reusing pieces allowed: False
             sage: QuantuminoSolver(14, box=(5,4,4)).tiling_solver()
-            Tiling solver of 16 pieces into the box (5, 4, 4)
+            Tiling solver of 16 pieces into a box of size 80
             Rotation allowed: True
             Reflection allowed: False
             Reusing pieces allowed: False
@@ -505,22 +504,22 @@ class QuantuminoSolver(SageObject):
         The explicit solution::
 
             sage: for p in s: p                                  # long time (fast)
-            Polyomino: [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 2, 0), (1, 1, 0)], Color: deeppink
-            Polyomino: [(0, 1, 1), (1, 1, 1), (1, 2, 1), (2, 1, 0), (2, 1, 1)], Color: deeppink
-            Polyomino: [(1, 0, 0), (1, 0, 1), (2, 0, 1), (3, 0, 1), (3, 1, 1)], Color: orange
-            Polyomino: [(2, 0, 0), (3, 0, 0), (4, 0, 0), (4, 0, 1), (4, 1, 1)], Color: green
-            Polyomino: [(0, 2, 1), (0, 3, 1), (0, 4, 1), (1, 4, 0), (1, 4, 1)], Color: green
-            Polyomino: [(0, 3, 0), (0, 4, 0), (1, 2, 0), (1, 3, 0), (1, 3, 1)], Color: red
-            Polyomino: [(2, 2, 0), (3, 1, 0), (3, 2, 0), (3, 2, 1), (4, 1, 0)], Color: red
-            Polyomino: [(2, 2, 1), (2, 3, 0), (2, 3, 1), (2, 4, 1), (3, 3, 0)], Color: midnightblue
-            Polyomino: [(3, 3, 1), (3, 4, 1), (4, 2, 0), (4, 2, 1), (4, 3, 1)], Color: purple
-            Polyomino: [(3, 4, 0), (4, 3, 0), (4, 4, 0), (4, 4, 1), (4, 5, 0)], Color: gray
-            Polyomino: [(1, 5, 1), (1, 6, 1), (2, 4, 0), (2, 5, 0), (2, 5, 1)], Color: blue
-            Polyomino: [(0, 5, 0), (0, 5, 1), (0, 6, 1), (1, 5, 0), (1, 6, 0)], Color: yellow
-            Polyomino: [(0, 6, 0), (0, 7, 0), (0, 7, 1), (1, 7, 0), (2, 7, 0)], Color: darkblue
-            Polyomino: [(1, 7, 1), (2, 6, 0), (2, 6, 1), (2, 7, 1), (3, 6, 0)], Color: blue
-            Polyomino: [(3, 7, 0), (4, 5, 1), (4, 6, 0), (4, 6, 1), (4, 7, 0)], Color: purple
-            Polyomino: [(3, 5, 0), (3, 5, 1), (3, 6, 1), (3, 7, 1), (4, 7, 1)], Color: orange
+            Polyomino: [(0, 0, 0), (1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 2, 0)], Color: deeppink
+            Polyomino: [(0, 0, 1), (0, 1, 0), (0, 1, 1), (0, 2, 1), (1, 2, 1)], Color: deeppink
+            Polyomino: [(0, 2, 0), (0, 3, 0), (0, 4, 0), (1, 4, 0), (1, 4, 1)], Color: green
+            Polyomino: [(0, 3, 1), (1, 3, 1), (2, 2, 0), (2, 2, 1), (2, 3, 1)], Color: green
+            Polyomino: [(1, 3, 0), (2, 3, 0), (2, 4, 0), (2, 4, 1), (3, 4, 0)], Color: red
+            Polyomino: [(1, 0, 1), (2, 0, 0), (2, 0, 1), (2, 1, 0), (3, 0, 1)], Color: midnightblue
+            Polyomino: [(0, 4, 1), (0, 5, 0), (0, 5, 1), (0, 6, 0), (1, 5, 0)], Color: red
+            Polyomino: [(2, 1, 1), (3, 0, 0), (3, 1, 0), (3, 1, 1), (4, 0, 0)], Color: blue
+            Polyomino: [(3, 2, 0), (4, 0, 1), (4, 1, 0), (4, 1, 1), (4, 2, 0)], Color: purple
+            Polyomino: [(3, 2, 1), (3, 3, 0), (4, 2, 1), (4, 3, 0), (4, 3, 1)], Color: yellow
+            Polyomino: [(3, 3, 1), (3, 4, 1), (4, 4, 0), (4, 4, 1), (4, 5, 0)], Color: blue
+            Polyomino: [(0, 6, 1), (0, 7, 0), (0, 7, 1), (1, 5, 1), (1, 6, 1)], Color: purple
+            Polyomino: [(1, 6, 0), (1, 7, 0), (1, 7, 1), (2, 7, 0), (3, 7, 0)], Color: darkblue
+            Polyomino: [(2, 5, 0), (2, 6, 0), (3, 6, 0), (4, 6, 0), (4, 6, 1)], Color: orange
+            Polyomino: [(2, 5, 1), (3, 5, 0), (3, 5, 1), (3, 6, 1), (4, 5, 1)], Color: gray
+            Polyomino: [(2, 6, 1), (2, 7, 1), (3, 7, 1), (4, 7, 0), (4, 7, 1)], Color: orange
 
         Enumerate the solutions::
 

@@ -91,6 +91,16 @@ packages of Sage::
 
 .. NOTE::
 
+    If your system supports multiprocessing and you want to use multiple
+    processors to build Sage, replace the last line above by::
+
+    [user@localhost sage]$ MAKE='make -jNUM' make
+
+    to tell the ``make`` program to run ``NUM`` jobs in parallel when
+    building Sage.
+
+.. NOTE::
+
     Mac OS X allows changing directories without using exact capitalization.
     Beware of this convenience when compiling for OS X. Ignoring exact
     capitalization when changing into :envvar:`SAGE_ROOT` can lead to build
@@ -111,44 +121,48 @@ A branch is a copy (except that it doesn't take up twice the space) of
 the Sage source code where you can store your modifications to the
 Sage source code and which you can upload to trac tickets.
 
-It is easy to create a new branch, just check out (switch to) the branch
-from where you want to start (that is, ``master``) and use the ``git
-branch`` command::
-
-    [user@localhost sage]$ git checkout master
-    [user@localhost sage]$ git branch last_twin_prime
-    [user@localhost sage]$ git checkout last_twin_prime
-
-You can list all branches using::
+To begin with, type the command ``git branch``. You will see the following::
 
     [user@localhost]$ git branch
+    * develop
       master
-    * last_twin_prime
 
 The asterisk shows you which branch you are on. Without an argument,
-the ``git branch`` command just displays a list of all local branches
-with the current one marked by an asterisk. Also note that ``git
-branch`` creates a new branch, but does not switch to it. For this,
-you have to use ``git checkout``::
+the ``git branch`` command displays a list of all local branches
+with the current one marked by an asterisk.
 
-    [user@localhost sage]$ git checkout master
-    Switched to branch 'master'
-    Your branch is up-to-date with 'github/master'.
-    [user@localhost sage]$ git branch
-    * master
-      last_twin_prime
+It is easy to create a new branch; first make sure you are on the branch from
+which you want to branch out. That is, if you are not currently on the
+``develop`` branch, type the command ``git checkout develop``::
+
+    [user@localhost sage]$ git checkout develop
+    Switched to branch 'develop'
+    Your branch is up-to-date with 'origin/develop'.
+
+Then use the ``git branch`` command to create a new branch, as follows::
+
+    [user@localhost sage]$ git branch last_twin_prime
+
+Also note that ``git branch`` creates a new branch, but does not switch
+to it. For this, you have to use ``git checkout``::
+
     [user@localhost sage]$ git checkout last_twin_prime
     Switched to branch 'last_twin_prime'
 
-Note that, unless you explicitly upload ("push") a branch to remote
-git repository, the local branch will only be on your computer and not
-visible to anyone else.
+Now if you use the command ``git branch``, you will see the following::
+
+    [user@localhost]$ git branch
+      develop
+    * last_twin_prime
+      master
+
+Note that unless you explicitly upload ("push") a branch to a remote
+git repository, the branch is a local branch that is only on your computer
+and not visible to anyone else.
 
 To avoid typing the new branch name twice you can use the shortcut
 ``git checkout -b my_new_branch`` to create and switch to the new
 branch in one command.
-
-
 
 .. _section_walkthrough_logs:
 
@@ -188,7 +202,7 @@ you which files changed, and how to continue with recording the
 changes::
 
     [user@localhost sage]$ git status
-    On branch master
+    On branch last_twin_prime
     Changes not staged for commit:
       (use "git add <file>..." to update what will be committed)
       (use "git checkout -- <file>..." to discard changes in working directory)
@@ -233,8 +247,18 @@ as if you were `installing Sage from scratch
 <http://doc.sagemath.org/html/en/installation/source.html>`_.
 However, this time only packages which were changed (or which depend
 on a changed package) will be recompiled,
-so it shoud be much faster than compiling Sage
-the first time. Rarely there are conflicts with other packages,
+so it should be much faster than compiling Sage
+the first time.
+
+.. NOTE::
+
+    If you have `pulled a branch from trac
+    <http://doc.sagemath.org/html/en/developer/manual_git.html#checking-out-tickets>`_,
+    it may depend on changes to third-party packages, so ``./sage -br``
+    may fail.  If this happens (and you believe the code in this branch
+    should compile), try running ``make``.
+
+Rarely there are conflicts with other packages,
 or with the already-installed older version of the package that you
 changed, in that case you do have to recompile everything using::
 

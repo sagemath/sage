@@ -3,13 +3,14 @@ Markov Switching Multifractal model
 
 Cython code
 """
+from __future__ import absolute_import
 
 from sage.misc.randstate cimport randstate, current_randstate
 
 cdef extern from "math.h":
     double sqrt(double)
 
-from time_series cimport TimeSeries
+from .time_series cimport TimeSeries
 
 def simulations(Py_ssize_t n, Py_ssize_t k,
                double m0, double sigma,

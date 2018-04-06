@@ -1,5 +1,5 @@
 r"""
-Management of relative finite field extensions
+Relative finite field extensions
 
 Considering a *absolute field* `F_{q^m}` and a *relative_field* `F_q`, with
 `q = p^s`, `p` being a prime and `s, m` being integers, this file

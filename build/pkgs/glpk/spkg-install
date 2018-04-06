@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
    echo >&2 "SAGE_LOCAL undefined ... exiting";
    echo >&2 "Maybe run 'sage -sh'?"
@@ -58,6 +56,10 @@ if [ $? -ne 0 ]; then
     echo >&2 "Error building GLPK."
     exit 1
 fi
+
+# Remove old libraries to make sure we can downgrade it if needed.
+# See https://trac.sagemath.org/ticket/23596#comment:4 and later.
+rm -f "$SAGE_LOCAL"/lib/libglpk.*
 
 $MAKE install
 if [ $? -ne 0 ]; then

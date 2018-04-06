@@ -334,7 +334,7 @@ class CoxeterGroups(Category_singleton):
 
         def grassmannian_elements(self, side="right"):
             """
-            Return the left or right grassmanian elements of ``self``
+            Return the left or right Grassmannian elements of ``self``
             as an enumerated set.
 
             INPUT:
@@ -365,14 +365,13 @@ class CoxeterGroups(Category_singleton):
 
         def _test_reduced_word(self, **options):
             """
-            Runs sanity checks on :meth:'CoxeterGroups.ElementMethods.reduced_word' and
+            Run sanity checks on :meth:`CoxeterGroups.ElementMethods.reduced_word` and
             :meth:`~sage.categories.complex_reflection_or_generalized_coxeter_groups.ComplexReflectionOrGeneralizedCoxeterGroups.ParentMethods.from_reduced_word`
 
             EXAMPLES::
 
                 sage: W = CoxeterGroups().example()
                 sage: W._test_reduced_word()
-
             """
             tester = self._tester(**options)
             s = self.simple_reflections()
@@ -510,14 +509,17 @@ class CoxeterGroups(Category_singleton):
 
         def bruhat_interval(self, x, y):
             """
-            Returns the list of t such that x <= t <= y.
+            Return the list of ``t`` such that ``x <= t <= y``.
 
             EXAMPLES::
 
                 sage: W = WeylGroup("A3", prefix="s")
                 sage: [s1,s2,s3]=W.simple_reflections()
                 sage: W.bruhat_interval(s2,s1*s3*s2*s1*s3)
-                [s1*s2*s3*s2*s1, s2*s3*s2*s1, s3*s1*s2*s1, s1*s2*s3*s1, s1*s2*s3*s2, s3*s2*s1, s2*s3*s1, s2*s3*s2, s1*s2*s1, s3*s1*s2, s1*s2*s3, s2*s1, s3*s2, s2*s3, s1*s2, s2]
+                [s1*s2*s3*s2*s1, s2*s3*s2*s1, s3*s1*s2*s1, s1*s2*s3*s1,
+                 s1*s2*s3*s2, s3*s2*s1, s2*s3*s1, s2*s3*s2, s1*s2*s1,
+                 s3*s1*s2, s1*s2*s3, s2*s1, s3*s2, s2*s3, s1*s2, s2]
+
                 sage: W = WeylGroup(['A',2,1], prefix="s")
                 sage: [s0,s1,s2]=W.simple_reflections()
                 sage: W.bruhat_interval(1,s0*s1*s2)
@@ -543,6 +545,137 @@ class CoxeterGroups(Category_singleton):
                 ret.append(nextlayer)
             return flatten(ret)
 
+        def bruhat_interval_poset(self, x, y, facade=False):
+            r"""
+            Return the poset of the Bruhat interval between ``x`` and ``y``
+            in Bruhat order.
+
+            EXAMPLES::
+
+                sage: W = WeylGroup("A3", prefix="s")
+                sage: s1,s2,s3 = W.simple_reflections()
+                sage: W.bruhat_interval_poset(s2, s1*s3*s2*s1*s3)
+                Finite poset containing 16 elements
+
+                sage: W = WeylGroup(['A',2,1], prefix="s")
+                sage: s0,s1,s2 = W.simple_reflections()
+                sage: W.bruhat_interval_poset(1, s0*s1*s2)
+                Finite poset containing 8 elements
+            """
+            if x == 1:
+                x = self.one()
+            if y == 1:
+                y = self.one()
+            if x == y:
+                return Poset([[x], []])
+            if not x.bruhat_le(y):
+                return Poset()
+            curlayer = set([y])
+            d = {}
+            while curlayer:
+                nextlayer = set()
+                for z in curlayer:
+                    for t in z.bruhat_lower_covers():
+                        if not x.bruhat_le(t):
+                            continue
+                        if t in d:
+                            d[t].append(z)
+                        else:
+                            d[t] = [z]
+                        if t not in nextlayer:
+                            nextlayer.add(t)
+                curlayer = nextlayer
+
+            from sage.combinat.posets.posets import Poset
+            from sage.graphs.graph import DiGraph
+            return Poset(DiGraph(d, format='dict_of_lists',
+                                 data_structure='static_sparse'),
+                         cover_relations=True,
+                         facade=facade)
+
+        def bruhat_graph(self, x=None, y=None, edge_labels=False):
+            r"""
+            Return the Bruhat graph as a directed graph, with an edge `u \to v`
+            if and only if `u < v` in the Bruhat order, and `u = r \cdot v`.
+
+            The Bruhat graph `\Gamma(x,y)`, defined if `x \leq y` in the
+            Bruhat order, has as its vertices the Bruhat interval
+            `\{ t | x \leq t \leq y \}`, and as its edges are the pairs
+            `(u, v)` such that `u = r \cdot v` where `r` is a reflection,
+            that is, a conjugate of a simple reflection.
+
+            REFERENCES:
+
+            Carrell, The Bruhat graph of a Coxeter group, a conjecture of Deodhar,
+            and rational smoothness of Schubert varieties. Algebraic groups and
+            their generalizations: classical methods (University Park, PA, 1991),
+            53--61, Proc. Sympos. Pure Math., 56, Part 1, Amer. Math. Soc.,
+            Providence, RI, 1994.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['H',3])
+                sage: G = W.bruhat_graph(); G
+                Digraph on 120 vertices
+
+                sage: W = CoxeterGroup(['A',2,1])
+                sage: s1, s2, s3 = W.simple_reflections()
+                sage: W.bruhat_graph(s1, s1*s3*s2*s3)
+                Digraph on 6 vertices
+
+                sage: W.bruhat_graph(s1, s3*s2*s3)
+                Digraph on 0 vertices
+
+                sage: W = WeylGroup("A3", prefix="s")
+                sage: s1, s2, s3 = W.simple_reflections()
+                sage: G = W.bruhat_graph(s1*s3, s1*s2*s3*s2*s1); G
+                Digraph on 10 vertices
+
+            Check that the graph has the correct number of edges
+            (see :trac:`17744`)::
+
+                sage: len(G.edges())
+                16
+            """
+            if x is None or x == 1:
+                x = self.one()
+            if y is None:
+                if self.is_finite():
+                    y = self.long_element()
+                else:
+                    raise TypeError("infinite groups must specify a maximal element")
+            elif y == 1:
+                y = self.one()
+
+            # Sort bruhat_interval in weakly decreasing order of length.
+            # We do this so we do not need to check the length in the
+            #   for loops below.
+            g = sorted(self.bruhat_interval(x, y), key=lambda w: -w.length())
+            d = []
+
+            if self.is_finite():
+                ref = self.reflections()
+                for i,u in enumerate(g):
+                    for v in g[:i]:
+                        w = u * v.inverse()
+                        if w in ref:
+                            if edge_labels:
+                                d.append((u, v, w))
+                            else:
+                                d.append((u, v))
+            else:
+                for i,u in enumerate(g):
+                    for v in g[:i]:
+                        w = u * v.inverse()
+                        if w.is_reflection():
+                            if edge_labels:
+                                d.append((u, v, w))
+                            else:
+                                d.append((u, v))
+
+            from sage.graphs.graph import DiGraph
+            return DiGraph(d)
+
         def canonical_representation(self):
             r"""
             Return the canonical faithful representation of ``self``.
@@ -551,7 +684,7 @@ class CoxeterGroups(Category_singleton):
 
                 sage: W = WeylGroup("A3")
                 sage: W.canonical_representation()
-                Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+                Finite Coxeter group over Integer Ring with Coxeter matrix:
                 [1 3 2]
                 [3 1 3]
                 [2 3 1]
@@ -1141,6 +1274,32 @@ class CoxeterGroups(Category_singleton):
             """
             return len(self.reduced_word())
 
+        def reflection_length(self):
+            """
+            Return the reflection length of ``self``.
+
+            The reflection length is the length of the shortest expression
+            of the element as a product of reflections.
+
+            .. SEEALSO::
+
+                :meth:`absolute_length`
+
+            EXAMPLES::
+            
+                sage: W = WeylGroup(['A',3])
+                sage: s = W.simple_reflections()
+                sage: (s[1]*s[2]*s[3]).reflection_length()
+                3
+
+                sage: W = SymmetricGroup(4)
+                sage: s = W.simple_reflections()
+                sage: (s[3]*s[2]*s[3]).reflection_length()
+                1
+
+            """
+            return self.absolute_length()
+
         def absolute_length(self):
             """
             Return the absolute length of ``self``.
@@ -1318,7 +1477,7 @@ class CoxeterGroups(Category_singleton):
             See :meth:`CoxeterGroups.ParentMethods.simple_projections`
             for the definition of the simple projections.
 
-            EXAMPLE::
+            EXAMPLES::
 
                 sage: W=CoxeterGroups().example()
                 sage: w=W.an_element()
@@ -1587,7 +1746,7 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - other - an element of the same Coxeter group
+            - other -- an element of the same Coxeter group
 
             OUTPUT: a boolean
 
@@ -1658,8 +1817,8 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - other - an element of the same Coxeter group
-            - side - 'left' or 'right'  (default: 'right')
+            - other -- an element of the same Coxeter group
+            - side -- 'left' or 'right'  (default: 'right')
 
             OUTPUT: a boolean
 
@@ -1728,9 +1887,9 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - side - 'left' or 'right'  (default: 'right')
-            - positive - a boolean (default: False)
-            - index_set - a list of indices or None
+            - side -- 'left' or 'right'  (default: 'right')
+            - positive -- a boolean (default: False)
+            - index_set -- a list of indices or None
 
             OUTPUT: a list
 
@@ -2134,8 +2293,8 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - side - 'left' or 'right' (default: 'right')
-            - index_set - a list of indices or None
+            - side -- 'left' or 'right' (default: 'right')
+            - index_set -- a list of indices or None
 
             OUTPUT: a list
 
@@ -2169,8 +2328,8 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - side - 'left' or 'right' (default: 'right')
-            - index_set - a list of indices or None
+            - side -- 'left' or 'right' (default: 'right')
+            - index_set -- a list of indices or None
 
             OUTPUT: a list
 

@@ -190,7 +190,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
                 sage: F = CommutativeAdditiveSemigroups().example()
                 sage: type(hash(F.an_element()))
-                <type 'int'>
+                <... 'int'>
             """
             return hash(tuple(self.value.items()))
 

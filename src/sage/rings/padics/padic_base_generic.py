@@ -21,10 +21,12 @@ from __future__ import absolute_import
 #*****************************************************************************
 
 from .padic_generic import pAdicGeneric
+from .misc import precprint
 from sage.rings.padics.pow_computer import PowComputer
 from sage.rings.padics.padic_capped_relative_element import pAdicCoercion_ZZ_CR, pAdicCoercion_QQ_CR, pAdicConvert_QQ_CR
 from sage.rings.padics.padic_capped_absolute_element import pAdicCoercion_ZZ_CA, pAdicConvert_QQ_CA
 from sage.rings.padics.padic_fixed_mod_element import pAdicCoercion_ZZ_FM, pAdicConvert_QQ_FM
+from sage.rings.padics.padic_floating_point_element import pAdicCoercion_ZZ_FP, pAdicCoercion_QQ_FP, pAdicConvert_QQ_FP
 
 class pAdicBaseGeneric(pAdicGeneric):
     _implementation = 'GMP'
@@ -39,8 +41,12 @@ class pAdicBaseGeneric(pAdicGeneric):
         self.prime_pow = PowComputer(p, max(min(prec - 1, 30), 1), prec, self.is_field(), self._prec_type())
         pAdicGeneric.__init__(self, self, p, prec, print_mode, names, element_class)
         if self.is_field():
-            coerce_list = [pAdicCoercion_ZZ_CR(self), pAdicCoercion_QQ_CR(self)]
-            convert_list = []
+            if self.is_capped_relative():
+                coerce_list = [pAdicCoercion_ZZ_CR(self), pAdicCoercion_QQ_CR(self)]
+                convert_list = []
+            else:
+                coerce_list = [pAdicCoercion_ZZ_FP(self), pAdicCoercion_QQ_FP(self)]
+                convert_list = []
         elif self.is_capped_relative():
             coerce_list = [pAdicCoercion_ZZ_CR(self)]
             convert_list = [pAdicConvert_QQ_CR(self)]
@@ -50,62 +56,76 @@ class pAdicBaseGeneric(pAdicGeneric):
         elif self.is_fixed_mod():
             coerce_list = [pAdicCoercion_ZZ_FM(self)]
             convert_list = [pAdicConvert_QQ_FM(self)]
+        elif self.is_floating_point():
+            coerce_list = [pAdicCoercion_ZZ_FP(self)]
+            convert_list = [pAdicConvert_QQ_FP(self)]
         else:
             raise RuntimeError
         self._populate_coercion_lists_(coerce_list=coerce_list, convert_list=convert_list, element_constructor=element_class)
 
-    def fraction_field(self, print_mode=None):
+    def _repr_(self, do_latex=False):
         r"""
-        Returns the fraction field of ``self``.
-
-        INPUT:
-
-        - ``print_mode`` - a dictionary containing print options.
-          Defaults to the same options as this ring.
-
-        OUTPUT:
-
-        - the fraction field of ``self``.
+        Returns a print representation of this p-adic ring or field.
 
         EXAMPLES::
 
-            sage: R = Zp(5, print_mode='digits')
-            sage: K = R.fraction_field(); repr(K(1/3))[3:]
-            '31313131313131313132'
-            sage: L = R.fraction_field({'max_ram_terms':4}); repr(L(1/3))[3:]
-            '3132'
+            sage: K = Zp(17); K #indirect doctest
+            17-adic Ring with capped relative precision 20
+            sage: latex(K)
+            \ZZ_{17}
+            sage: K = ZpCA(17); K #indirect doctest
+            17-adic Ring with capped absolute precision 20
+            sage: latex(K)
+            \ZZ_{17}
+            sage: K = ZpFP(17); K #indirect doctest
+            17-adic Ring with floating precision 20
+            sage: latex(K)
+            \ZZ_{17}
+            sage: K = ZpFM(7); K
+            7-adic Ring of fixed modulus 7^20
+            sage: latex(K) #indirect doctest
+            \ZZ_{7}
+            sage: K = Qp(17); K #indirect doctest
+            17-adic Field with capped relative precision 20
+            sage: latex(K)
+            \QQ_{17}
+            sage: K = QpFP(17); K #indirect doctest
+            17-adic Field with floating precision 20
+            sage: latex(K)
+            \QQ_{17}
         """
-        if self.is_field() and print_mode is None:
-            return self
-        from sage.rings.padics.factory import Qp
-        return Qp(self.prime(), self.precision_cap(), 'capped-rel', print_mode=self._modified_print_mode(print_mode), names=self._uniformizer_print())
+        if do_latex:
+            if self.is_field():
+                return r"\QQ_{%s}" % self.prime()
+            else:
+                return r"\ZZ_{%s}" % self.prime()
+        return "%s-adic %s %s"%(self.prime(), "Field" if self.is_field() else "Ring", precprint(self._prec_type(), self.precision_cap(), self.prime()))
 
-    def integer_ring(self, print_mode=None):
-        r"""
-        Returns the integer ring of ``self``, possibly with
-        ``print_mode`` changed.
+    def exact_field(self):
+        """
+        Returns the rational field.
 
-        INPUT:
-
-        - ``print_mode`` - a dictionary containing print options.
-          Defaults to the same options as this ring.
-
-        OUTPUT:
-
-        - The ring of integral elements in ``self``.
+        For compatibility with extensions of p-adics.
 
         EXAMPLES::
 
-            sage: K = Qp(5, print_mode='digits')
-            sage: R = K.integer_ring(); repr(R(1/3))[3:]
-            '31313131313131313132'
-            sage: S = K.integer_ring({'max_ram_terms':4}); repr(S(1/3))[3:]
-            '3132'
+            sage: Zp(5).exact_field()
+            Rational Field
         """
-        if not self.is_field() and print_mode is None:
-            return self
-        from sage.rings.padics.factory import Zp
-        return Zp(self.prime(), self.precision_cap(), self._prec_type(), print_mode=self._modified_print_mode(print_mode), names=self._uniformizer_print())
+        from sage.rings.rational_field import QQ
+        return QQ
+
+    def exact_ring(self):
+        """
+        Returns the integer ring.  
+
+        EXAMPLES::
+
+            sage: Zp(5).exact_ring() 
+            Integer Ring
+        """
+        from sage.rings.integer_ring import ZZ
+        return ZZ
 
     def is_isomorphic(self, ring):
         r"""
@@ -333,9 +353,11 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def plot(self, max_points=2500, **args):
         r"""
-        Creates a visualization of this `p`-adic ring as a fractal
-        similar as a generalization of the the Sierpi\'nski
-        triangle. The resulting image attempts to capture the
+        Create a visualization of this `p`-adic ring as a fractal
+        similar to a generalization of the Sierpi\'nski
+        triangle.
+
+        The resulting image attempts to capture the
         algebraic and topological characteristics of `\mathbb{Z}_p`.
 
         INPUT:

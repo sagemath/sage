@@ -62,7 +62,7 @@ Instalação
 
 Se você não tem o Sage instalado em um computador e quer apenas
 experimentar alguns comandos, use o Sage através do site
-http://cloud.sagemath.org.
+http://sagecell.sagemath.org.
 
 Veja o guia de instalação do Sage na seção de documentação na página
 principal do Sage [SA]_ para instruções de como instalar o Sage no seu
@@ -93,7 +93,7 @@ computador. Aqui faremos apenas alguns comentários.
    encontrá-lo.
 
    A documentação para usar o SageTex está disponível em
-   ``$SAGE_ROOT/local/share/texmf/tex/generic/sagetex/``, onde
+   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, onde
    ``$SAGE_ROOT`` refere-se ao diretório onde você instalou o Sage
    -- por exemplo, ``/opt/sage-4.2.1``.
 

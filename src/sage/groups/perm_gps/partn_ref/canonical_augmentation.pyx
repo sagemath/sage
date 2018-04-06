@@ -134,10 +134,10 @@ I. ``canonical_parent``:
 
     Apply the ``permutation`` to the ``child``, determine an arbitrary but fixed
     parent, apply the inverse of ``permutation`` to that parent, and return the
-    resulting object. Must also set the integer ``degree`` points to to the
+    resulting object. Must also set the integer ``degree`` points to the
     degree of the returned object.
 
-NOTE:
+.. NOTE::
 
     It is a good idea to try to implement an augmentation scheme where the
     degree of objects on each level of the augmentation tree is constant. The
@@ -158,13 +158,19 @@ REFERENCE:
 """
 
 #*****************************************************************************
-#      Copyright (C) 2010 - 2011 Robert L. Miller <rlmillster@gmail.com>
+#       Copyright (C) 2010 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'data_structures_pyx.pxi' # includes bitsets
+from cysignals.memory cimport sig_malloc, sig_free
+
+from .data_structures cimport*
+
 
 cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_err):
     r"""

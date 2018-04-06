@@ -8,6 +8,7 @@ Functions
    sage/functions/trig
    sage/functions/hyperbolic
    sage/functions/transcendental
+   sage/functions/error
    sage/functions/piecewise
    sage/functions/spike_function
    sage/functions/orthogonal_polys

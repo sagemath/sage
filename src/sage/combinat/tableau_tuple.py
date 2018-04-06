@@ -211,6 +211,7 @@ REFERENCES:
 #*****************************************************************************
 from __future__ import print_function, absolute_import
 from six.moves import range
+from six import add_metaclass
 
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.words.word import Word
@@ -698,10 +699,10 @@ class TableauTuple(CombinatorialElement):
         # attempt to return a tableau of the same type
         try:
             return self.parent()(conj)
-        except StandardError:
+        except Exception:
             try:
                 return self.parent().element_class(self.parent(), conj)
-            except StandardError:
+            except Exception:
                 return Tableau(conj)
 
     def pp(self):
@@ -1380,6 +1381,7 @@ class TableauTuple(CombinatorialElement):
 #--------------------------------------------------
 # Standard tableau tuple - element class
 #--------------------------------------------------
+@add_metaclass(ClasscallMetaclass)
 class StandardTableauTuple(TableauTuple):
     r"""
     A class to model a standard tableau of shape a partition tuple. This is
@@ -1487,8 +1489,6 @@ class StandardTableauTuple(TableauTuple):
         sage: TestSuite(  StandardTableauTuple([[[1,3,4],[6]],[], [[2],[5]]]) ).run()
         sage: TestSuite(  StandardTableauTuple([[[1,3,4],[6]],[[7]], [[2],[5]]]) ).run()
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(self, t):
         r"""
@@ -1895,7 +1895,7 @@ class TableauTuples(UniqueRepresentation, Parent):
         sage: t.category()
         Category of elements of Tableau tuples of level 3
 
-    .. SEE ALSO::
+    .. SEEALSO::
 
        - :class:`Tableau`
        - :class:`StandardTableau`
@@ -2584,7 +2584,9 @@ class StandardTableauTuples(TableauTuples):
     def __classcall_private__(cls, *args, **kwargs):
         r"""
         This is a factory class which returns the appropriate parent based on
-        arguments.  See the documentation for:class:`StandardTableauTuples``
+        arguments.
+
+        See the documentation for :class:`StandardTableauTuples`
         for more information.
 
         EXAMPLES::
@@ -2889,9 +2891,11 @@ class StandardTableauTuples_level(StandardTableauTuples):
 
     def __init__(self, level):
         r"""
-        Initializes the class of semistandard tableaux of level ``level`` of
-        arbitrary ``size``. Input is not checked; please use
-        :class:`:class:`StandardTableauTuples`` to ensure the options are
+        Initialize the class of semistandard tableaux of level ``level`` of
+        arbitrary ``size``.
+
+        Input is not checked; please use
+        :class:`StandardTableauTuples` to ensure the options are
         properly parsed.
 
         EXAMPLES::
@@ -3418,7 +3422,8 @@ class StandardTableauTuples_shape(StandardTableauTuples):
                 for col in range(len(t[row])):
                     cols[t[row][col]]=col+offset
                     mins[t[row][col]-1]=row+col
-            if len(t)>0: offset+=len(t[0])
+            if t:
+                offset += len(t[0])
 
         # To generate all of the tableaux we look for the first place where
         # cols[r]<cols[r-1]. Then swap r and s where s<r is maximal such that it
@@ -3582,6 +3587,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
         # Just to be safe we check that tab is standard and has shape mu by
         # using the class StandardTableauTuples(mu) to construct the tableau
         return self.element_class(self,tab)
+
 
 class StandardTableaux_residue(StandardTableauTuples):
     r"""

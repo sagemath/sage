@@ -28,7 +28,7 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
 
     The abelian group `\bigoplus_i \ZZ / n_i \ZZ`, where `n_i` are the invariants.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: AdditiveAbelianGroup([0, 2, 4])
         Additive abelian group isomorphic to Z + Z/2 + Z/4
@@ -184,7 +184,7 @@ class AdditiveAbelianGroupElement(FGP_Element):
         this group (represented as a quotient `G/H` of free abelian groups) to
         `G`, using the Hermite normal form of the matrix of relations.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AdditiveAbelianGroup([2,3])
             sage: repr(G.gen(0)) # indirect doctest
@@ -217,7 +217,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
 
     def __init__(self, cover, relations):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AdditiveAbelianGroup([0]); G # indirect doctest
             Additive abelian group isomorphic to Z
@@ -244,7 +244,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
         r"""
         Returns a Latex representation of the group, using the invariants.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G=AdditiveAbelianGroup([66, 77, 0, 0])
             sage: G._latex_()
@@ -273,7 +273,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
         r"""
         Return a name for the isomorphism class of this group.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: AdditiveAbelianGroup([0, 2,4]).short_name()
             'Z + Z/2 + Z/4'
@@ -362,7 +362,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
         r"""
         Return False since this is an additive group.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: AdditiveAbelianGroup([0]).is_multiplicative()
             False
@@ -408,7 +408,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
         r"""
         Standard initialisation function
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: AdditiveAbelianGroup([3]) # indirect doctest
             Additive abelian group isomorphic to Z/3
@@ -421,7 +421,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
         Return the specified generators for self (as a tuple). Compare
         ``self.smithform_gens()``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AdditiveAbelianGroup([2,3])
             sage: G.gens()
@@ -435,7 +435,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
         r"""
         Return the identity (zero) element of this group.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AdditiveAbelianGroup([2, 3])
             sage: G.identity()
@@ -447,7 +447,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
         r"""
         Return the permutation group attached to this group.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AdditiveAbelianGroup([2, 3])
             sage: G.permutation_group()

@@ -31,7 +31,7 @@ Methods
 from __future__ import print_function
 
 include 'sage/data_structures/bitset.pxi'
-from basis_matroid cimport BasisMatroid
+from .basis_matroid cimport BasisMatroid
 from sage.arith.all import binomial
 
 cdef class CutNode:

@@ -1,3 +1,4 @@
+# distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
 r"""
 Farey Symbol for arithmetic subgroups of `{\rm PSL}_2(\ZZ)`
 
@@ -19,18 +20,22 @@ for speed.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "cysignals/signals.pxi"
-include 'sage/ext/cdefs.pxi'
+from __future__ import absolute_import, division
 
-from .farey cimport *
+from cpython.object cimport PyObject_RichCompare
+from itertools import groupby
+from cysignals.signals cimport sig_on, sig_off
+
+from sage.libs.gmpxx cimport *
+
 from sage.rings.all import CC, RR
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import infinity
-from congroup_gammaH import is_GammaH
-from congroup_gamma1 import is_Gamma1
-from congroup_gamma0 import is_Gamma0
-from congroup_gamma import is_Gamma
-from congroup_sl2z import SL2Z
+from .congroup_gammaH import is_GammaH
+from .congroup_gamma1 import is_Gamma1
+from .congroup_gamma0 import is_Gamma0
+from .congroup_gamma import is_Gamma
+from .congroup_sl2z import SL2Z
 from sage.modular.cusps import Cusp
 
 from sage.plot.all import Graphics
@@ -41,9 +46,54 @@ from sage.plot.all import hyperbolic_arc, hyperbolic_triangle, text
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
-from cpython.object cimport PyObject_RichCompare
-from sage.structure.sage_object cimport richcmp_not_equal
-from itertools import groupby
+from sage.structure.richcmp cimport richcmp_not_equal
+
+
+cdef extern from "sage/modular/arithgroup/sl2z.hpp":
+    cppclass cpp_SL2Z "SL2Z":
+        mpz_class a, b, c, d
+        cpp_SL2Z(int, int, int, int)
+        cpp_SL2Z(mpz_class, mpz_class, mpz_class, mpz_class)
+        mpz_class a()
+        mpz_class b()
+        mpz_class c()
+        mpz_class d()
+
+cdef extern from "sage/modular/arithgroup/farey.hpp":
+    cppclass is_element_Gamma0:
+        is_element_Gamma0(int)
+    cppclass is_element_Gamma1:
+        is_element_Gamma1(int)
+    cppclass is_element_Gamma:
+        is_element_Gamma(int)
+    cppclass is_element_GammaH:
+        is_element_GammaH(int, object)
+    cppclass cpp_farey "FareySymbol":
+        cpp_farey()
+        cpp_farey(object)
+        cpp_farey(object, is_element_Gamma*)
+        cpp_farey(object, is_element_Gamma0*)
+        cpp_farey(object, is_element_Gamma1*)
+        cpp_farey(object, is_element_GammaH*)
+        size_t genus()
+        size_t index()
+        size_t level()
+        size_t nu2()
+        size_t nu3()
+        object is_element(mpz_t, mpz_t, mpz_t, mpz_t)
+        object word_problem(mpz_t, mpz_t, mpz_t, mpz_t, cpp_SL2Z *)
+        size_t get_cusp_class(mpz_t, mpz_t)
+        object get_cusps()
+        object get_cusp_widths()
+        object get_transformation_to_cusp(mpz_t, mpz_t)
+        object get_fractions()
+        object get_coset()
+        object get_generators()
+        object get_pairings()
+        object get_paired_sides()
+        object get_pairing_matrices()
+        object dumps()
+
 
 cdef class Farey:
     r"""
@@ -195,14 +245,14 @@ cdef class Farey:
             self.this_ptr = new cpp_farey(group)
             sig_off()
 
-    def __deallocpp__(self):
+    def __dealloc__(self):
         r"""
-        Remove reference to FareySymbol::
+        Remove reference to FareySymbol.
+
+        TESTS::
 
             sage: F = FareySymbol(Gamma0(23))
-
             sage: del F
-
         """
         del self.this_ptr
 

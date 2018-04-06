@@ -1,9 +1,7 @@
 from .types cimport mat_ZZ_c, ZZ_c, ZZX_c
 
-cdef extern from "ccobject.h":
-    object mat_ZZ_to_PyString "_to_PyString<mat_ZZ>"(mat_ZZ_c *x)
 
-cdef extern from "sage/libs/ntl/ntlwrap.cpp":
+cdef extern from "ntlwrap.cpp":
     void mat_ZZ_mul "mul"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
     void mat_ZZ_add "add"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
     void mat_ZZ_sub "sub"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)

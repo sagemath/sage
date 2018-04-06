@@ -5,7 +5,7 @@ Galois representations for elliptic curves over number fields.
 This file contains the code to compute for which primes the Galois
 representation attached to an elliptic curve (over an arbitrary
 number field) is surjective. The functions in this file are called by
-the `is_surjective` and `non_surjective` methods of an elliptic curve
+the ``is_surjective`` and ``non_surjective`` methods of an elliptic curve
 over a number field.
 
 EXAMPLES::
@@ -28,6 +28,7 @@ AUTHORS:
 
 - Eric Larson (2012-05-28): initial version.
 - Eric Larson (2014-08-13): added isogeny_bound function.
+- John Cremona (2016, 2017): various efficiency improvements to _semistable_reducible_primes
 
 REFERENCES:
 
@@ -35,7 +36,7 @@ REFERENCES:
     courbes elliptiques. Inventiones mathematicae, 1972.
 
 .. [Sutherland12] Sutherland. A local-global principle for rational
-    isogenies of prime degree. Journal de Theorie des Nombres de Bordeaux,
+    isogenies of prime degree. Journal de Théorie des Nombres de Bordeaux,
     2012.
 
 """
@@ -53,13 +54,12 @@ from six.moves import range
 from sage.structure.sage_object import SageObject
 from sage.rings.number_field.number_field import NumberField, QuadraticField
 from sage.schemes.elliptic_curves.cm import cm_j_invariants
-from sage.rings.rational_field import QQ
 from sage.modules.free_module import VectorSpace
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.rings.integer import Integer
 from sage.misc.functional import cyclotomic_polynomial
-from sage.arith.all import legendre_symbol
+from sage.arith.all import legendre_symbol, primes
 from sage.sets.set import Set
+from sage.rings.all import PolynomialRing, Integer, ZZ, QQ, Infinity
 
 class GaloisRepresentation(SageObject):
     r"""
@@ -70,7 +70,7 @@ class GaloisRepresentation(SageObject):
     and a rational prime number `p`, the `p^n`-torsion
     `E[p^n]` points of `E` is a representation of the
     absolute Galois group `G_K` of `K`. As `n` varies
-    we obtain the Tate module `T_p E` which is a
+    we obtain the Tate module `T_p E` which is
     a representation of `G_K` on a free `\ZZ_p`-module
     of rank `2`. As `p` varies the representations
     are compatible.
@@ -169,12 +169,12 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        * ``A`` - int (a bound on the number of traces of Frobenius to use
-                     while trying to prove surjectivity).
+        - ``A`` -- int (a bound on the number of traces of Frobenius to use
+          while trying to prove surjectivity).
 
         OUTPUT:
 
-        - ``list`` - A list of primes where mod-`p` representation is
+        - ``list`` -- A list of primes where mod-`p` representation is
           very likely not surjective. At any prime not in this list,
           the representation is definitely surjective. If `E` has CM,
           the list [0] is returned.
@@ -271,7 +271,7 @@ class GaloisRepresentation(SageObject):
 
     def isogeny_bound(self, A=100):
         r"""
-        Returns a list of primes `p` including all primes for which
+        Return a list of primes `p` including all primes for which
         the image of the mod-`p` representation is contained in a
         Borel.
 
@@ -282,9 +282,9 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``A`` - int (a bound on the number of traces of Frobenius to
-                     use while trying to prove the mod-`p`
-                     representation is not contained in a Borel).
+        - ``A`` -- int (a bound on the number of traces of Frobenius to
+          use while trying to prove the mod-`p`
+          representation is not contained in a Borel).
 
         OUTPUT:
 
@@ -361,7 +361,7 @@ class GaloisRepresentation(SageObject):
 
     def reducible_primes(self):
         r"""
-        Returns a list of primes `p` for which the mod-`p`
+        Return a list of primes `p` for which the mod-`p`
         representation is reducible, or [0] for CM curves.
 
         OUTPUT:
@@ -413,7 +413,7 @@ class GaloisRepresentation(SageObject):
 
 def _non_surjective(E, patience=100):
     r"""
-    Returns a list of primes `p` including all primes for which the mod-`p`
+    Return a list of primes `p` including all primes for which the mod-`p`
     representation might not be surjective.
 
     INPUT:
@@ -482,7 +482,7 @@ def _maybe_borels(E, L, patience=100):
     Borel subgroup, using straight-forward checking of traces of
     Frobenius.
 
-    .. NOTE:
+    .. NOTE::
 
        This function will sometimes return primes for which the image
        is not contained in a Borel subgroup.  This issue cannot always
@@ -491,17 +491,19 @@ def _maybe_borels(E, L, patience=100):
 
     INPUT:
 
-    - ``E`` - EllipticCurve - over a number field.
+    - ``E`` -- EllipticCurve - over a number field.
 
-    - ``L`` - list - a list of prime numbers.
+    - ``L`` -- list - a list of prime numbers.
 
-    - ``patience`` - int (a positive integer bounding the number of
-                          traces of Frobenius to use while trying to
-                          prove irreducibility).
+    - ``patience`` -- int (a positive integer bounding the number of
+      traces of Frobenius to use while trying to
+      prove irreducibility).
 
-    OUTPUT: list - The list of all primes `\ell` in L for which the
-                   mod `\ell` image might be contained in a Borel
-                   subgroup of `GL_2(\mathbf{F}_{\ell})`.
+    OUTPUT:
+
+    - list -- The list of all primes `\ell` in L for which the
+      mod `\ell` image might be contained in a Borel
+      subgroup of `GL_2(\mathbf{F}_{\ell})`.
 
     EXAMPLES::
 
@@ -585,10 +587,12 @@ def _exceptionals(E, L, patience=1000):
     - ``L`` - list - a list of prime numbers.
 
     - ``patience`` - int (a bound on the number of traces of Frobenius to
-                          use while trying to prove surjectivity).
+      use while trying to prove surjectivity).
 
-    OUTPUT: list - The list of all primes l in L for which the mod l image
-                   might fail to be surjective.
+    OUTPUT:
+
+    - list -- The list of all primes l in L for which the mod l image
+      might fail to be surjective.
 
     EXAMPLES::
 
@@ -751,28 +755,6 @@ def _over_numberfield(E):
     return E
 
 
-def _tr12(tr, det):
-    r"""Compute `X^{12} + Y^{12}` given `X + Y` and `X * Y`.
-
-    INPUT:
-
-    - ``tr`` - The value of `X + Y`.
-
-    - ``det`` - The value of `X * Y`.
-
-    OUTPUT: The value of `X^{12} + Y^{12}`.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.elliptic_curves.gal_reps_number_field import *
-        sage: X, Y = QQ['X, Y'].gens()
-        sage: sage.schemes.elliptic_curves.gal_reps_number_field._tr12(X + Y, X * Y)
-        X^12 + Y^12
-    """
-
-    det3 = det**3
-    return ((tr * (tr**2 - 3 * det))**2 - 2 * det3)**2 - 2 * det3**2
-
 def deg_one_primes_iter(K, principal_only=False):
     r"""
     Return an iterator over degree 1 primes of ``K``.
@@ -811,14 +793,18 @@ def deg_one_primes_iter(K, principal_only=False):
     # imaginary quadratic fields have no principal primes of norm < disc / 4
     start = K.discriminant().abs() // 4 if principal_only and K.signature() == (0,1) else 2
 
+    K_is_Q = (K==QQ)
     from sage.arith.misc import primes
     from sage.rings.infinity import infinity
     for p in primes(start=start, stop=infinity):
-        for P in K.primes_above(p, degree=1):
-            if not principal_only or P.is_principal():
-                yield P
+        if K_is_Q:
+            yield ZZ.ideal(p)
+        else:
+            for P in K.primes_above(p, degree=1):
+                if not principal_only or P.is_principal():
+                    yield P
 
-def _semistable_reducible_primes(E):
+def _semistable_reducible_primes(E, verbose=False):
     r"""Find a list containing all semistable primes l unramified in K/QQ
     for which the Galois image for E could be reducible.
 
@@ -838,10 +824,19 @@ def _semistable_reducible_primes(E):
         sage: E = EllipticCurve([0, -1, 1, -10, -20]) # X_0(11)
         sage: 5 in sage.schemes.elliptic_curves.gal_reps_number_field._semistable_reducible_primes(E)
         True
-    """
 
-    E = _over_numberfield(E)
+    This example, over a quintic field with Galois group `S_5`, took a
+    very long time before :trac:`22343`::
+
+        sage: K.<a> = NumberField(x^5 - 6*x^3 + 8*x - 1)
+        sage: E = EllipticCurve(K, [a^3 - 2*a, a^4 - 2*a^3 - 4*a^2 + 6*a + 1, a + 1, -a^3 + a + 1, -a])
+        sage: from sage.schemes.elliptic_curves.gal_reps_number_field import _semistable_reducible_primes
+        sage: _semistable_reducible_primes(E)
+        [2, 5, 53, 1117]
+    """
+    if verbose: print("In _semistable_reducible_primes with E={}".format(E.ainvs()))
     K = E.base_field()
+    d = K.degree()
 
     deg_one_primes = deg_one_primes_iter(K, principal_only=True)
 
@@ -849,132 +844,123 @@ def _semistable_reducible_primes(E):
 
     # We find two primes (of distinct residue characteristics) which are
     # of degree 1, unramified in K/Q, and at which E has good reduction.
-    # Both of these primes will give us a nontrivial divisibility constraint
+    # Each of these primes will give us a nontrivial divisibility constraint
     # on the exceptional primes l. For both of these primes P, we precompute
-    # a generator and the trace of Frob_P^12.
+    # a generator and the characteristic polynomial of Frob_P^12.
 
     precomp = []
-    last_char = 0 # The residue characteristic of the most recent prime.
+    last_p = 0 # The residue characteristic of the most recent prime.
 
     while len(precomp) < 2:
         P = next(deg_one_primes)
+        p = P.norm()
+        if p != last_p and (d==1 or P.ramification_index() == 1) and E.has_good_reduction(P):
+            precomp.append(P)
+            last_p = p
 
-        # the iterator tests this already
-        # if not P.is_principal():
-        #     continue
+    Px, Py = precomp
+    x, y = [P.gens_reduced()[0] for P in precomp]
+    EmodPx = E.reduction(Px) if d>1 else E.reduction(x)
+    EmodPy = E.reduction(Py) if d>1 else E.reduction(y)
+    fxpol = EmodPx.frobenius_polynomial()
+    fypol = EmodPy.frobenius_polynomial()
+    fx12pol = fxpol.adams_operator(12) # roots are 12th powers of those of fxpol
+    fy12pol = fypol.adams_operator(12)
+    px = x.norm() if d>1 else x
+    py = y.norm() if d>1 else x
+    Zx = fxpol.parent()
+    xpol = x.charpoly() if d>1 else Zx([-x,1])
+    ypol = y.charpoly() if d>1 else Zx([-y,1])
 
-        det = P.norm()
-        if det == last_char:
+    if verbose: print("Finished precomp, x={} (p={}), y={} (p={})".format(x,px,y,py))
+
+    for w in range(1+d/2):
+        if verbose: print("w = {}".format(w))
+        gx = xpol.symmetric_power(w).adams_operator(12).resultant(fx12pol)
+        gy = ypol.symmetric_power(w).adams_operator(12).resultant(fy12pol)
+        if verbose: print("computed gx and gy")
+
+        gxn = Integer(gx.absolute_norm()) if d>1 else gx
+        gyn = Integer(gy.absolute_norm()) if d>1 else gy
+        gxyn = gxn.gcd(gyn)
+        if gxyn:
+            xprimes = gxyn.prime_factors()
+            if verbose: print("adding prime factors {} of {} to {}".format(xprimes, gxyn, sorted(bad_primes)))
+            bad_primes.update(xprimes)
+            if verbose: print("...done, bad_primes now {}".format(sorted(bad_primes)))
             continue
+        else:
+            if verbose: print("gx and gy both 0!")
 
-        if P.ramification_index() != 1:
-            continue
-
-        if E.has_bad_reduction(P):
-            continue
-
-        tr = E.reduction(P).trace_of_frobenius()
-        x = P.gens_reduced()[0]
-
-        precomp.append((x, _tr12(tr, det)))
-        last_char = det
-
-    x, tx = precomp[0]
-    y, ty = precomp[1]
-
-    Kgal = K.galois_closure('b')
-    maps = K.embeddings(Kgal)
-
-    for i in range(2 ** (K.degree() - 1)):
-        ## We iterate through all possible characters. ##
-
-        # Here, if i = i_{l-1} i_{l-2} cdots i_1 i_0 in binary, then i
-        # corresponds to the character prod sigma_j^{i_j}.
-
-        phi1x = 1
-        phi2x = 1
-        phi1y = 1
-        phi2y = 1
-
-        # We compute the two algebraic characters at x and y:
-        for j in range(K.degree()):
-            if i % 2 == 1:
-                phi1x *= maps[j](x)
-                phi1y *= maps[j](y)
-            else:
-                phi2x *= maps[j](x)
-                phi2y *= maps[j](y)
-            i = int(i/2)
-
-        # Any prime with reducible image must divide both of:
-        gx = phi1x**12 + phi2x**12 - tx
-        gy = phi1y**12 + phi2y**12 - ty
-
-        if (gx != 0) or (gy != 0):
-            for prime in Integer(Kgal.ideal([gx, gy]).norm()).prime_factors():
-                bad_primes.add(prime)
-
-            continue
 
         ## It is possible that our curve has CM. ##
 
         # Our character must be of the form Nm^K_F for an imaginary
         # quadratic subfield F of K (which is the CM field if E has CM).
-        # We compute F:
 
-        a = (Integer(phi1x + phi2x)**2 - 4 * x.norm()).squarefree_part()
+        # Note that this can only happen when d is even, w=d/2, and K
+        # contains (or the Galois closure of K contains?) the
+        # imaginary quadratic field F = Q(sqrt(a)) which is the
+        # splitting field of both fx12pol and fy12pol.  We compute a
+        # and relativise K over F:
 
-        # See #19229: the name given here, which is not used, should
+        a = fx12pol.discriminant().squarefree_part()
+
+        # Construct a field isomorphic to K but a relative extension over QQ(sqrt(a)).
+
+        # See #19229: the names given here, which are not used, should
         # not be the name of the generator of the base field.
-        F = QuadraticField(a, 'gal_rep_nf_sqrt_a')
 
-        # Next, we turn K into relative number field over F.
+        rootsa = K(a).sqrt(all=True) # otherwise if a is not a square the
+                                     # returned result is in the symbolic ring!
+        try:
+            roota = rootsa[0]
+        except IndexError:
+            raise RuntimeError("error in _semistable_reducible_primes: K={} does not contain sqrt({})".format(K,a))
+        K_rel = K.relativize(roota, ['name1','name2'])
+        iso = K_rel.structure()[1] # an isomorphism from K to K_rel
+        E_rel = E.change_ring(iso) # same as E but over K_rel
 
-        K = K.relativize(F.embeddings(K)[0], K.variable_name()+'0')
-        E = E.change_ring(K.structure()[1])
+        ## We try again to find a nontrivial divisibility condition. ##
 
-        ## We try to find a nontrivial divisibility condition. ##
-
+        div = 0
         patience = 5 * K.absolute_degree()
         # Number of Frobenius elements to check before suspecting that E
         # has CM and computing the set of CM j-invariants of K to check.
         # TODO: Is this the best value for this parameter?
 
-        while True:
-            P = next(deg_one_primes)
+        while div==0 and patience>0:
+            P = next(deg_one_primes) # a prime of K not K_rel
+            while E.has_bad_reduction(P):
+                P = next(deg_one_primes)
 
-            # the iterator tests this already
-            # if not P.is_principal():
-            #     continue
+            if verbose: print("trying P = {}...".format(P))
+            EmodP = E.reduction(P)
+            fpol = EmodP.frobenius_polynomial()
+            if verbose: print("...good reduction, frobenius poly = {}".format(fpol))
+            x = iso(P.gens_reduced()[0]).relative_norm()
+            xpol = x.charpoly().adams_operator(12)
+            div2 = Integer(xpol.resultant(fpol.adams_operator(12)) // x.norm()**12)
+            if div2:
+                div = div2.isqrt()
+                assert div2==div**2
+                if verbose: print("...div = {}".format(div))
+            else:
+                if verbose: print("...div = 0, continuing")
+                patience -= 1
 
-            try:
-                tr = E.change_ring(P.residue_field()).trace_of_frobenius()
-            except ArithmeticError: # Bad reduction at P.
-                continue
+        if patience == 0:
+            # We suspect that E has CM, so we check:
+            if E.has_cm():
+                raise ValueError("In _semistable_reducible_primes, the curve E should not have CM.")
 
-            x = P.gens_reduced()[0].norm(F)
-            div = (x**12).trace() - _tr12(tr, x.norm())
+        assert div != 0
+        # We found our divisibility constraint.
 
-            patience -= 1
-
-            if div != 0:
-                # We found our divisibility constraint.
-
-                for prime in Integer(div).prime_factors():
-                    bad_primes.add(prime)
-
-                # Turn K back into an absolute number field.
-
-                E = E.change_ring(K.structure()[0])
-                K = K.structure()[0].codomain()
-
-                break
-
-            if patience == 0:
-                # We suspect that E has CM, so we check:
-                f = K.structure()[0]
-                if f(E.j_invariant()) in cm_j_invariants(f.codomain()):
-                    raise ValueError("The curve E should not have CM.")
+        xprimes = div.prime_factors()
+        if verbose: print("...adding prime factors {} of {} to {}...".format(xprimes,div, sorted(bad_primes)))
+        bad_primes.update(xprimes)
+        if verbose: print("...done, bad_primes now {}".format(sorted(bad_primes)))
 
     L = sorted(bad_primes)
     return L
@@ -993,7 +979,7 @@ def _possible_normalizers(E, SA):
 
     OUTPUT:
 
-    - list - A list of primes, which contains all primes `l` such that the
+    - list -- A list of primes, which contains all primes `l` such that the
              Galois image at `l` is contained in the normalizer of a Cartan
              subgroup, such that the corresponding quadratic character is
              ramified only at primes in SA.
@@ -1128,4 +1114,3 @@ def _possible_normalizers(E, SA):
 
                 bad_primes = sorted(bad_primes)
                 return bad_primes
-

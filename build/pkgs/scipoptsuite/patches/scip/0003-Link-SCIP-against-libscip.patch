@@ -1,34 +1,27 @@
-From 89d51635a590233215f1f08a73407a38f3c1a2f1 Mon Sep 17 00:00:00 2001
+From 0b208a25652550b3afd49ddd35e3879e82652a5b Mon Sep 17 00:00:00 2001
 From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
 Date: Fri, 29 Jul 2016 14:18:12 -0700
 Subject: [PATCH 3/5] Link SCIP against libscip
 
 ---
- Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index abf324a..7ee691a 100644
+index 90a0eb1..d551556 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -927,7 +927,7 @@ depend:		scipdepend lpidepend nlpidepend maindepend
- -include	$(LPILIBDEP)
- -include	$(NLPILIBDEP)
- 
--$(MAINFILE):	$(SCIPLIBOBJFILES) $(LPILIBOBJFILES) $(NLPILIBOBJFILES) $(MAINOBJFILES) | $(BINDIR) $(BINOBJDIR) $(LIBOBJSUBDIRS)
-+$(MAINFILE):	$(SCIPLIBFILE) $(MAINOBJFILES) | $(BINDIR) $(BINOBJDIR) $(LIBOBJSUBDIRS)
- 		@echo "-> linking $@"
- ifeq ($(LINKER),C)
- 		-$(LINKCC) $(MAINOBJFILES) \
-@@ -937,7 +937,7 @@ ifeq ($(LINKER),C)
- endif
- ifeq ($(LINKER),CPP)
- 		-$(LINKCXX) $(MAINOBJFILES) \
--		$(LINKCXX_L)$(LIBDIR) $(SCIPLIBOBJFILES) $(LPILIBOBJFILES) $(NLPILIBOBJFILES) \
-+		$(LINKCXX_L)$(LIBDIR) $(SCIPLIBFILE) $(LPILIBFILE) $(NLPILIBFILE) \
- 		$(OFLAGS) $(LPSLDFLAGS) $(LDFLAGS) $(LINKCXX_o)$@ \
+@@ -1096,7 +1096,9 @@ ifeq ($(LINKER),C)
  		|| ($(MAKE) errorhints && false)
  endif
+ ifeq ($(LINKER),CPP)
+-		-$(LINKCXX) $(MAINOBJFILES) $(LINKCCSCIPALL) $(LINKCXX_o)$@ \
++		-$(LINKCXX) $(MAINOBJFILES) \
++		$(LINKCXX_L)$(LIBDIR) $(SCIPLIBFILE) $(LPILIBFILE) $(NLPILIBFILE) \
++		$(OFLAGS) $(LPSLDFLAGS) $(LDFLAGS) $(LINKCXX_o)$@ \
+ 		|| ($(MAKE) errorhints && false)
+ endif
+ 
 -- 
 2.7.4 (Apple Git-66)
 

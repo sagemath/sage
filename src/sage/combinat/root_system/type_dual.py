@@ -271,29 +271,45 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
         res = res.replace("=?=", "=>=")
         return res
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
+        Return whether ``self`` is equal to ``other``.
+        
         EXAMPLES::
 
-            sage: B41     = CartanType(['B', 4, 1])
+            sage: B41 = CartanType(['B', 4, 1])
             sage: B41dual = CartanType(['B', 4, 1]).dual()
             sage: F41dual = CartanType(['F', 4, 1]).dual()
-            sage: cmp(F41dual, F41dual)
-            0
 
-        Whether ``cmp()`` returns 1 or -1 doesn't matter, just check
-        that the following are non-zero::
+            sage: F41dual == F41dual
+            True
+            sage: F41dual == B41dual
+            False
+            sage: B41dual == B41
+            False
+        """
+        if not isinstance(other, CartanType):
+            return False
+        return self._type == other._type
 
-            sage: cmp(F41dual, B41dual) != 0
+    def __ne__(self, other):
+        """
+        Return whether ``self`` is equal to ``other``.
+        
+        EXAMPLES::
+
+            sage: B41 = CartanType(['B', 4, 1])
+            sage: B41dual = CartanType(['B', 4, 1]).dual()
+            sage: F41dual = CartanType(['F', 4, 1]).dual()
+
+            sage: F41dual != F41dual
+            False
+            sage: F41dual != B41dual
             True
-            sage: cmp(B41dual, F41dual) * cmp(F41dual, B41dual) < 0
-            True
-            sage: cmp(B41dual, B41) != 0
+            sage: B41dual != B41
             True
         """
-        if other.__class__ != self.__class__:
-            return cmp(self.__class__, other.__class__)
-        return cmp(self._type, other._type)
+        return not (self == other)
 
     def dual(self):
         """

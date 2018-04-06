@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ "x$SAGE_LOCAL" = x ]; then
     echo >&2 "SAGE_LOCAL undefined ... exiting"
     echo >&2 "Maybe run 'sage -sh'?"
@@ -46,6 +44,13 @@ if [ $? -ne 0 ]; then
         echo >&2 "Error configuring the Parma Polyhedra Library."
         exit 1
     fi
+fi
+
+# Workaround to disable PPL's "watchdog timer", preventing it from clobbering
+# Cysignals' SIGALRM handler on Cygwin; see
+# https://trac.sagemath.org/ticket/21190
+if [ "$UNAME" = "CYGWIN" ]; then
+    sed -i 's/#define HAVE_DECL_SETITIMER 1/#define HAVE_DECL_SETITIMER 0/' config.h
 fi
 
 $MAKE

@@ -56,6 +56,7 @@ REFERENCES:
 from __future__ import print_function
 
 from sage.structure.all import SageObject
+from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
 from sage.rings.all import QQ, ZZ
 from sage.misc.all import uniq, cached_method
 from sage.matrix.constructor import vector, matrix, block_matrix, zero_matrix
@@ -140,7 +141,7 @@ def Bundle(toric_variety, multi_filtration, check=True):
     return KlyachkoBundle_class(toric_variety, multi_filtration, check=check)
 
 
-
+@richcmp_method
 class KlyachkoBundle_class(SageObject):
 
     def __init__(self, toric_variety, multi_filtration, check=True):
@@ -733,9 +734,9 @@ class KlyachkoBundle_class(SageObject):
             HH = vector(ZZ, [HH[i].rank() for i in range(space_dim+1) ])
         return HH
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
-        Compare ``self`` and ``other``
+        Compare ``self`` and ``other``.
 
         .. warning::
 
@@ -749,30 +750,32 @@ class KlyachkoBundle_class(SageObject):
 
         OUTPUT:
 
-        `-1`, `0`, or `+1`.
+        Boolean.
 
         EXAMPLES::
 
             sage: X = toric_varieties.P2()
             sage: V1 = X.sheaves.trivial_bundle(1)
             sage: V2 = X.sheaves.trivial_bundle(2)
-            sage: abs(cmp(V2, V1))
-            1
-            sage: cmp(V2, V1+V1)
-            0
+            sage: V2 == V1
+            False
+            sage: V2 == V1+V1
+            True
 
             sage: T_X = X.sheaves.tangent_bundle()
             sage: O_X = X.sheaves.trivial_bundle(1)
             sage: T_X + O_X == O_X + T_X
             False
         """
-        c = cmp(type(self), type(other))
-        if c!=0: return c
-        c = cmp(self.variety(), other.variety())
-        if c!=0: return c
-        c = cmp(self._filt, other._filt)
-        if c!=0: return c
-        return 0
+        if not isinstance(other, KlyachkoBundle_class):
+            return NotImplemented
+
+        lx = self.variety()
+        rx = other.variety()
+        if lx != rx:
+            return richcmp_not_equal(lr, rx, op)
+        
+        return richcmp(self._filt, other._filt, op)
 
     def is_isomorphic(self, other):
         """

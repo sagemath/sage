@@ -29,12 +29,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from copy import copy
 from sage.categories.number_fields import NumberFields
 _NumberFields = NumberFields()
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.order import is_NumberFieldOrder
-from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.schemes.generic.morphism import (SchemeMorphism_point, SchemeMorphism, is_SchemeMorphism)
 from sage.structure.sequence import Sequence
@@ -77,9 +75,16 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             (1, 2, 3)
         """
         SchemeMorphism.__init__(self, X)
-        if is_SchemeMorphism(v):
-            v = list(v)
         if check:
+            from sage.rings.ring import CommutativeRing
+            if is_SchemeMorphism(v):
+                v = list(v)
+            else:
+                try:
+                    if isinstance(v.parent(), CommutativeRing):
+                        v = [v]
+                except AttributeError:
+                    pass
             # Verify that there are the right number of coords
             d = self.codomain().ambient_space().ngens()
             if len(v) != d:
@@ -112,17 +117,12 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             sage: H = Hom(A, A)
             sage: f = H([(x-2*y^2)/x,3*x*y])
             sage: A(9,3).nth_iterate(f, 3)
+            doctest:warning
+            ...
             (-104975/13123, -9566667)
-
-        ::
-
-            sage: A.<x,y> = AffineSpace(ZZ, 2)
-            sage: X = A.subscheme([x-y^2])
-            sage: H = Hom(X, X)
-            sage: f = H([9*y^2, 3*y])
-            sage: X(9, 3).nth_iterate(f, 4)
-            (59049, 243)
         """
+        from sage.misc.superseded import deprecation
+        deprecation(23479, "use f.nth_iterate(P, n) instead")
         if self.codomain() != f.domain():
             raise TypeError("point is not defined over domain of function")
         if f.domain() != f.codomain():
@@ -159,25 +159,12 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             sage: H = Hom(A, A)
             sage: f = H([(x-2*y^2)/x, 3*x*y])
             sage: A(9, 3).orbit(f, 3)
+            doctest:warning
+            ...
             [(9, 3), (-1, 81), (13123, -243), (-104975/13123, -9566667)]
-
-        ::
-
-            sage: A.<x> = AffineSpace(QQ, 1)
-            sage: H = Hom(A, A)
-            sage: f = H([(x-2)/x])
-            sage: A(1/2).orbit(f,[1, 3])
-            [(-3), (5/3), (-1/5)]
-
-        ::
-
-            sage: A.<x,y> = AffineSpace(ZZ, 2)
-            sage: X = A.subscheme([x-y^2])
-            sage: H = Hom(X, X)
-            sage: f = H([9*y^2, 3*y])
-            sage: X(9, 3).orbit(f, (0, 4))
-            [(9, 3), (81, 9), (729, 27), (6561, 81), (59049, 243)]
         """
+        from sage.misc.superseded import deprecation
+        deprecation(23479, "use f.orbit(P, n) instead")
         Q = self
         if isinstance(N, list) or isinstance(N, tuple):
             Bounds = list(N)
@@ -469,34 +456,40 @@ class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field
         EXAMPLES::
 
             sage: P.<x,y,z> = AffineSpace(GF(5), 3)
-            sage: H = Hom(P, P)
-            sage: f = H([x^2 + y^2, y^2, z^2 + y*z])
-            sage: P(1, 1, 1).orbit_structure(f)
+            sage: f = DynamicalSystem_affine([x^2 + y^2, y^2, z^2 + y*z], domain=P)
+            sage: f.orbit_structure(P(1, 1, 1))
             [0, 6]
 
         ::
 
             sage: P.<x,y,z> = AffineSpace(GF(7), 3)
             sage: X = P.subscheme(x^2 - y^2)
-            sage: H = Hom(X, X)
-            sage: f = H([x^2, y^2, z^2])
-            sage: X(1, 1, 2).orbit_structure(f)
+            sage: f = DynamicalSystem_affine([x^2, y^2, z^2], domain=X)
+            sage: f.orbit_structure(X(1, 1, 2))
             [0, 2]
 
         ::
 
             sage: P.<x,y> = AffineSpace(GF(13), 2)
-            sage: H = Hom(P, P)
-            sage: f = H([x^2 - y^2, y^2])
+            sage: f = DynamicalSystem_affine([x^2 - y^2, y^2], domain=P)
             sage: P(3, 4).orbit_structure(f)
+            doctest:warning
+            ...
+            [2, 6]
+
+        ::
+
+            sage: P.<x,y> = AffineSpace(GF(13), 2)
+            sage: H = End(P)
+            sage: f = H([x^2 - y^2, y^2])
+            sage: f.orbit_structure(P(3, 4))
+            doctest:warning
+            ...
             [2, 6]
         """
-        Orbit = []
-        index = 1
-        P = self
-        while not P in Orbit:
-            Orbit.append(P)
-            P = f(P)
-            index += 1
-        I = Orbit.index(P)
-        return([I, index-I-1])
+        from sage.misc.superseded import deprecation
+        deprecation(23479, "use f.orbit_structure(P, n) instead")
+        try:
+            return f.orbit_structure(self)
+        except AttributeError:
+            raise TypeError("map must be a dynamical system")

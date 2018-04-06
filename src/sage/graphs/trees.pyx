@@ -16,10 +16,8 @@ REFERENCES:
 """
 from __future__ import print_function
 
-cdef extern from "limits.h":
-    cdef int INT_MAX
-
-include "cysignals/memory.pxi"
+from libc.limits cimport INT_MAX
+from cysignals.memory cimport check_allocarray, sig_free
 
 # from networkx import MultiGraph
 
@@ -37,14 +35,14 @@ cdef class TreeIterator:
         sage: def check_trees(n):
         ....:     trees = []
         ....:     for t in TreeIterator(n):
-        ....:         if t.is_tree() == False:
+        ....:         if not t.is_tree():
         ....:             return False
         ....:         if t.num_verts() != n:
         ....:             return False
         ....:         if t.num_edges() != n - 1:
         ....:             return False
         ....:         for tree in trees:
-        ....:             if tree.is_isomorphic(t) == True:
+        ....:             if tree.is_isomorphic(t):
         ....:                 return False
         ....:         trees.append(t)
         ....:     return True
@@ -85,12 +83,8 @@ cdef class TreeIterator:
             sage: t = TreeIterator(100)
             sage: t = None # indirect doctest
         """
-        if self.l != NULL:
-            sig_free(self.l)
-            self.l = NULL
-        if self.current_level_sequence != NULL:
-            sig_free(self.current_level_sequence)
-            self.current_level_sequence = NULL
+        sig_free(self.l)
+        sig_free(self.current_level_sequence)
 
     def __str__(self):
         r"""
@@ -147,11 +141,8 @@ cdef class TreeIterator:
                 self.first_time = 0
                 self.q = 0
             else:
-                self.l = <int *>sig_malloc(self.vertices * sizeof(int))
-                self.current_level_sequence = <int *>sig_malloc(self.vertices * sizeof(int))
-
-                if self.l == NULL or self.current_level_sequence == NULL:
-                    raise MemoryError
+                self.l = <int *>check_allocarray(self.vertices, sizeof(int))
+                self.current_level_sequence = <int *>check_allocarray(self.vertices, sizeof(int))
 
                 self.generate_first_level_sequence()
                 self.first_time = 0

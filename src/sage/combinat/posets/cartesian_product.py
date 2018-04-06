@@ -77,7 +77,7 @@ class CartesianProductPoset(CartesianProduct):
         Category of Cartesian products of finite enumerated sets
         sage: TestSuite(Cp).run()
 
-    .. SEEALSO:
+    .. SEEALSO::
 
         :class:`CartesianProduct`
     """
@@ -137,7 +137,7 @@ class CartesianProductPoset(CartesianProduct):
 
         EXAMPLES::
 
-            sage: P = Posets.ChainPoset(10)
+            sage: P = posets.ChainPoset(10)
             sage: def le_sum(left, right):
             ....:     return (sum(left) < sum(right) or
             ....:             sum(left) == sum(right) and left[0] <= right[0])
@@ -385,7 +385,7 @@ class CartesianProductPoset(CartesianProduct):
                 True
 
             The following example tests that the coercion gets involved in
-            comparisons; it can be simplified once #18182 is in merged.
+            comparisons; it can be simplified once :trac:`18182` is merged.
             ::
 
                 sage: class MyCP(CartesianProductPoset):

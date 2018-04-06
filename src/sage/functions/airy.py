@@ -68,7 +68,7 @@ class FunctionAiryAiGeneral(BuiltinFunction):
           `\operatorname{Ai}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
           this gives the `n`-fold iterated integral.
 
-        .. math ::
+        .. MATH::
 
             f_0(z) = \operatorname{Ai}(z)
 
@@ -161,12 +161,13 @@ class FunctionAiryAiSimple(BuiltinFunction):
             sage: airy_ai_simple(x)._sympy_()
             airyai(x)
         """
-        BuiltinFunction.__init__(self, "airy_ai",
-                                 latex_name=r'\operatorname{Ai}',
+        BuiltinFunction.__init__(self, 'airy_ai',
+                                 latex_name=r"\operatorname{Ai}",
                                  conversions=dict(mathematica='AiryAi',
                                                   maxima='airy_ai',
                                                   sympy='airyai',
-                                                  fricas='airyAi'))
+                                                  fricas='airyAi',
+                                                  giac='Airy_Ai'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -267,7 +268,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
             sage: airy_ai_prime(x)._sympy_()
             airyaiprime(x)
         """
-        BuiltinFunction.__init__(self, "airy_ai_prime",
+        BuiltinFunction.__init__(self, 'airy_ai_prime',
                                  latex_name=r"\operatorname{Ai}'",
                                  conversions=dict(mathematica='AiryAiPrime',
                                                   maxima='airy_dai',
@@ -590,12 +591,13 @@ class FunctionAiryBiSimple(BuiltinFunction):
             sage: f._sympy_()
             airybi(x)
         """
-        BuiltinFunction.__init__(self, "airy_bi",
-                                 latex_name=r'\operatorname{Bi}',
+        BuiltinFunction.__init__(self, 'airy_bi',
+                                 latex_name=r"\operatorname{Bi}",
                                  conversions=dict(mathematica='AiryBi',
                                                   maxima='airy_bi',
                                                   sympy='airybi',
-                                                  fricas='airyBi'))
+                                                  fricas='airyBi',
+                                                  giac='Airy_Bi'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -698,7 +700,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
             sage: airy_bi_prime(x)._sympy_()
             airybiprime(x)
         """
-        BuiltinFunction.__init__(self, "airy_bi_prime",
+        BuiltinFunction.__init__(self, 'airy_bi_prime',
                                  latex_name=r"\operatorname{Bi}'",
                                  conversions=dict(mathematica='AiryBiPrime',
                                                   maxima='airy_dbi',
@@ -815,7 +817,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
       `\operatorname{Bi}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
       this gives the `n`-fold iterated integral.
 
-    .. math ::
+    .. MATH::
 
         f_0(z) = \operatorname{Bi}(z)
 

@@ -72,14 +72,14 @@ AUTHORS:
 
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.rings.all import (
@@ -88,7 +88,7 @@ from sage.rings.all import (
     RationalField,
     RIF,
     ZZ)
-from sage.misc.functional import log
+from sage.functions.log import log
 from math import sqrt
 from sage.misc.all import verbose
 import sage.arith.all as arith
@@ -98,6 +98,7 @@ from sage.modules.free_module_element import vector
 factor = arith.factor
 valuation = arith.valuation
 Q = RationalField()
+
 
 class Sha(SageObject):
     r"""
@@ -157,9 +158,10 @@ class Sha(SageObject):
         self.E = E
         self.Emin = E.minimal_model() if not E.is_minimal() else E
 
-    def __cmp__(self,other):
+    def __eq__(self, other):
         r"""
-        Compares two Tate-Shafarevich groups by simply comparing the elliptic curves.
+        Compare two Tate-Shafarevich groups by simply comparing the
+        elliptic curves.
 
         EXAMPLES::
 
@@ -168,10 +170,22 @@ class Sha(SageObject):
             sage: S == S
             True
         """
-        c = cmp(type(self), type(other))
-        if c:
-            return c
-        return cmp(self.E, other.E)
+        if not isinstance(other, Sha):
+            return False
+        return self.E == other.E
+
+    def __ne__(self, other):
+        """
+        Check whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('37a1')
+            sage: S = E.sha()
+            sage: S != S
+            False
+        """
+        return not (self == other)
 
     def __repr__(self):
         r"""
@@ -191,8 +205,8 @@ class Sha(SageObject):
     # Functions related to the BSD conjecture.
     ########################################################################
 
-    def an_numerical(self, prec = None,
-                         use_database=True, proof=None):
+    def an_numerical(self, prec=None,
+                     use_database=True, proof=None):
         r"""
         Return the numerical analytic order of `Sha`, which is
         a floating point number in all cases.
@@ -265,7 +279,7 @@ class Sha(SageObject):
             an = self.__an_numerical
             if an.parent().precision() >= prec:
                 return RR(an)
-            else: # cached precision too low
+            else:  # cached precision too low
                 pass
         except AttributeError:
             pass
@@ -273,12 +287,12 @@ class Sha(SageObject):
         E = self.Emin
         r = Integer(E.rank(use_database=use_database, proof=proof))
         L = E.lseries().dokchitser(prec=prec2)
-        Lr= RR2(L.derivative(1,r))  # L.derivative() returns a Complex
+        Lr = RR2(L.derivative(1, r))  # L.derivative() returns a Complex
         Om = RR2(E.period_lattice().omega(prec2))
         Reg = E.regulator(use_database=use_database, proof=proof, precision=prec2)
         T = E.torsion_order()
         cp = E.tamagawa_product()
-        Sha = RR((Lr*T*T)/(r.factorial()*Om*cp*Reg))
+        Sha = RR((Lr*T*T) / (r.factorial()*Om*cp*Reg))
         self.__an_numerical = Sha
         return Sha
 
@@ -404,16 +418,16 @@ class Sha(SageObject):
         eps = E.root_number()
         if eps == 1:
             L1_over_omega = E.lseries().L_ratio()
-            if L1_over_omega == 0: # order of vanishing is at least 2
+            if L1_over_omega == 0:  # order of vanishing is at least 2
                 return self.an_numerical(use_database=use_database)
             T = E.torsion_subgroup().order()
             Sha = (L1_over_omega * T * T) / Q(E.tamagawa_product())
             try:
                 Sha = Integer(Sha)
             except ValueError:
-                raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not an integer."%Sha)
+                raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not an integer." % Sha)
             if not arith.is_square(Sha):
-                raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not a square."%Sha)
+                raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not a square." % Sha)
             E.__an = Sha
             self.__an = Sha
             return Sha
@@ -429,13 +443,13 @@ class Sha(SageObject):
             regulator = E.regulator(use_database=use_database, descent_second_limit=descent_second_limit)
             T = E.torsion_subgroup().order()
             omega = E.period_lattice().omega()
-            Sha = Integer(round ( (L1 * T * T) / (E.tamagawa_product() * regulator * omega) ))
+            Sha = Integer(round((L1 * T * T) / (E.tamagawa_product() * regulator * omega)))
             try:
                 Sha = Integer(Sha)
             except ValueError:
-                raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not an integer."%Sha)
+                raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not an integer." % Sha)
             if not arith.is_square(Sha):
-                raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not a square."%Sha)
+                raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not a square." % Sha)
             E.__an = Sha
             self.__an = Sha
             return Sha
@@ -538,7 +552,7 @@ class Sha(SageObject):
             1 + O(13^20)
         """
         try:
-            return self.__an_padic[(p,prec)]
+            return self.__an_padic[(p, prec)]
         except AttributeError:
             self.__an_padic = {}
         except KeyError:
@@ -548,13 +562,13 @@ class Sha(SageObject):
         tam = E.tamagawa_product()
         tors = E.torsion_order()**2
         r = E.rank()
-        if r > 0 :
+        if r > 0:
             reg = E.padic_regulator(p)
         else:
             if E.is_supersingular(p):
-                reg = vector([ Qp(p,20)(1), 0 ])
+                reg = vector([Qp(p, 20)(1), 0])
             else:
-                reg = Qp(p,20)(1)
+                reg = Qp(p, 20)(1)
 
         if use_twists and p > 2:
             Et, D = E.minimal_quadratic_twist()
@@ -566,23 +580,23 @@ class Sha(SageObject):
                 if ell % 2 == 1:
                     if Et.conductor() % ell**2 == 0:
                         D = ZZ(D/ell)
-            ve = valuation(D,2)
-            de = ZZ( (D/2**ve).abs() )
+            ve = valuation(D, 2)
+            de = ZZ((D/2**ve).abs())
             if de % 4 == 3:
                 de = -de
             Et = E.quadratic_twist(de)
             # now check individually if we can twist by -1 or 2 or -2
             Nmin = Et.conductor()
             Dmax = de
-            for DD in [-4*de,8*de,-8*de]:
+            for DD in [-4*de, 8*de, -8*de]:
                 Et = E.quadratic_twist(DD)
-                if Et.conductor() < Nmin and valuation(Et.conductor(),2) <= valuation(DD,2):
+                if Et.conductor() < Nmin and valuation(Et.conductor(), 2) <= valuation(DD, 2):
                     Nmin = Et.conductor()
                     Dmax = DD
             D = Dmax
             Et = E.quadratic_twist(D)
             lp = Et.padic_lseries(p)
-        else :
+        else:
             lp = E.padic_lseries(p)
             D = 1
 
@@ -595,20 +609,19 @@ class Sha(SageObject):
             lstar = ms(0)/E.real_components()
             bsd = tam/tors
             if prec == 0:
-                #prec = valuation(lstar/bsd, p)
+                # prec = valuation(lstar/bsd, p)
                 prec = 20
-            shan = Qp(p,prec=prec+2)(lstar/bsd)
-
+            shan = Qp(p, prec=prec + 2)(lstar/bsd)
 
         elif E.is_ordinary(p):
             K = reg.parent()
-            lg = log(K(1+p))
+            lg = log(K(1 + p))
 
             if (E.is_good(p) or E.ap(p) == -1):
                 if not E.is_good(p):
                     eps = 2
                 else:
-                    eps = (1-arith.kronecker_symbol(D,p)/lp.alpha())**2
+                    eps = (1 - arith.kronecker_symbol(D, p)/lp.alpha())**2
                 # according to the p-adic BSD this should be equal to the leading term of the p-adic L-series divided by sha:
                 bsdp = tam * reg * eps/tors/lg**r
             else:
@@ -620,7 +633,6 @@ class Sha(SageObject):
                 # this should be equal to the leading term of the p-adic L-series divided by sha:
                 bsdp = tam * reg * Li/tors/lg**r
 
-
             v = bsdp.valuation()
             if v > 0:
                 verbose("the prime is irregular for this curve.")
@@ -629,57 +641,56 @@ class Sha(SageObject):
             # triviality of the p-primary part of Sha
 
             if prec == 0:
-                n = max(v,2)
-                bounds = lp._prec_bounds(n,r+1)
+                n = max(v, 2)
+                bounds = lp._prec_bounds(n, r + 1)
                 while bounds[r] <= v:
                     n += 1
-                    bounds = lp._prec_bounds(n,r+1)
-                verbose("set precision to %s"%n)
+                    bounds = lp._prec_bounds(n, r + 1)
+                verbose("set precision to %s" % n)
             else:
-                n = max(2,prec)
+                n = max(2, prec)
 
             not_yet_enough_prec = True
             while not_yet_enough_prec:
-                lps = lp.series(n,quadratic_twist=D,prec=r+1)
+                lps = lp.series(n, quadratic_twist=D, prec=r + 1)
                 lstar = lps[r]
                 if (lstar != 0) or (prec != 0):
                     not_yet_enough_prec = False
                 else:
                     n += 1
-                    verbose("increased precision to %s"%n)
+                    verbose("increased precision to %s" % n)
 
             shan = lstar/bsdp
 
         elif E.is_supersingular(p):
             K = reg[0].parent()
-            lg = log(K(1+p))
-
+            lg = log(K(1 + p))
 
             # according to the p-adic BSD this should be equal to the leading term of the D_p - valued
             # L-series :
-            bsdp = tam /tors/lg**r * reg
+            bsdp = tam / tors / lg**r * reg
             # note this is an element in Q_p^2
 
-            verbose("the algebraic leading terms : %s"%bsdp)
+            verbose("the algebraic leading terms : %s" % bsdp)
 
-            v = [bsdp[0].valuation(),bsdp[1].valuation()]
+            v = [bsdp[0].valuation(), bsdp[1].valuation()]
 
             if prec == 0:
-                n = max(min(v)+2,3)
+                n = max(min(v) + 2, 3)
             else:
-                n = max(3,prec)
+                n = max(3, prec)
 
             verbose("...computing the p-adic L-series")
             not_yet_enough_prec = True
             while not_yet_enough_prec:
-                lps = lp.Dp_valued_series(n,quadratic_twist=D,prec=r+1)
-                lstar = [lps[0][r],lps[1][r]]
-                verbose("the leading terms : %s"%lstar)
-                if (lstar[0] != 0 or lstar[1] != 0) or ( prec != 0):
+                lps = lp.Dp_valued_series(n, quadratic_twist=D, prec=r + 1)
+                lstar = [lps[0][r], lps[1][r]]
+                verbose("the leading terms : %s" % lstar)
+                if (lstar[0] != 0 or lstar[1] != 0) or (prec != 0):
                     not_yet_enough_prec = False
                 else:
                     n += 1
-                    verbose("increased precision to %s"%n)
+                    verbose("increased precision to %s" % n)
 
             verbose("...putting things together")
             if bsdp[0] != 0:
@@ -690,14 +701,14 @@ class Sha(SageObject):
                 shan1 = lstar[1]/bsdp[1]
             else:
                 shan1 = 0   # this should conjecturally only happen when the rank is 0
-            verbose("the two values for Sha : %s"%[shan0,shan1])
+            verbose("the two values for Sha : %s" % [shan0, shan1])
 
             # check consistency (the first two are only here to avoid a bug in the p-adic L-series
             # (namely the coefficients of zero-relative precision are treated as zero)
             if shan0 != 0 and shan1 != 0 and shan0 - shan1 != 0:
                 raise RuntimeError("There must be a bug in the supersingular routines for the p-adic BSD.")
 
-            #take the better
+            # take the better
             if shan1 == 0 or shan0.precision_relative() > shan1.precision_relative():
                 shan = shan0
             else:
@@ -706,7 +717,7 @@ class Sha(SageObject):
         else:
             raise ValueError("The curve has to have semi-stable reduction at p.")
 
-        self.__an_padic[(p,prec)] = shan
+        self.__an_padic[(p, prec)] = shan
         return shan
 
     def p_primary_order(self, p):
@@ -756,9 +767,8 @@ class Sha(SageObject):
         # does not work if p = 2
         if p == 2:
             raise ValueError("{} is not an odd prime".format(p))
-        if (E.is_ordinary(p) and
-            E.conductor() % p != 0 and
-            E.galois_representation().is_surjective(p)):
+        if (E.is_ordinary(p) and E.conductor() % p != 0 and
+                E.galois_representation().is_surjective(p)):
             N = E.conductor()
             fac = N.factor()
             # the auxiliary prime will be one dividing the conductor
@@ -767,8 +777,8 @@ class Sha(SageObject):
                 raise ValueError("The order is not provably known using Skinner-Urban.\n" +
                                  "Try running p_primary_bound to get a bound.")
         else:
-             raise ValueError("The order is not provably known using Skinner-Urban.\n" +
-                              "Try running p_primary_bound to get a bound.")
+            raise ValueError("The order is not provably known using Skinner-Urban.\n" +
+                             "Try running p_primary_bound to get a bound.")
         return self.p_primary_bound(p)
 
     def p_primary_bound(self, p):
@@ -882,9 +892,9 @@ class Sha(SageObject):
             rho = E.galois_representation()
             su = rho.is_surjective(p)
             re = rho.is_reducible(p)
-            if not su and not re :
+            if not su and not re:
                 raise ValueError("The p-adic Galois representation is not surjective or reducible. Current knowledge about Euler systems does not provide an upper bound in this case. Try an_padic for a conjectural bound.")
-            shan = self.an_padic(p,prec = 0,use_twists=True)
+            shan = self.an_padic(p, prec=0, use_twists=True)
             if shan == 0:
                 raise RuntimeError("There is a bug in an_padic.")
             S = shan.valuation()
@@ -924,12 +934,12 @@ class Sha(SageObject):
         r = E.rank()
         t = E.two_torsion_rank()
         b = S - r - t
-        if  b < 0 :
+        if b < 0:
             b = 0
         return b
 
     def bound_kolyvagin(self, D=0, regulator=None,
-                           ignore_nonsurj_hypothesis=False):
+                        ignore_nonsurj_hypothesis=False):
         r"""
         Given a fundamental discriminant `D \neq -3,-4` that satisfies the
         Heegner hypothesis for `E`, return a list of primes so that
@@ -949,11 +959,11 @@ class Sha(SageObject):
 
         OUTPUT:
 
-        - list - a list of primes such that if `p` divides `Sha(E/K)`, then
+        - list -- a list of primes such that if `p` divides `Sha(E/K)`, then
           `p` is in this list, unless `E/K` has complex multiplication or
           analytic rank greater than 2 (in which case we return 0).
 
-        - index - the odd part of the index of the Heegner point in the full
+        - index -- the odd part of the index of the Heegner point in the full
           group of `K`-rational points on E.  (If `E` has CM, returns 0.)
 
         REMARKS:
@@ -1009,29 +1019,31 @@ class Sha(SageObject):
                 D -= 1
 
         if not E.satisfies_heegner_hypothesis(D):
-            raise ArithmeticError("Discriminant (=%s) must be a fundamental discriminant that satisfies the Heegner hypothesis."%D)
+            raise ArithmeticError("Discriminant (=%s) must be a fundamental discriminant that satisfies the Heegner hypothesis." % D)
         if D == -3 or D == -4:
-            raise ArithmeticError("Discriminant (=%s) must not be -3 or -4."%D)
+            raise ArithmeticError("Discriminant (=%s) must not be -3 or -4." % D)
         eps = E.root_number()
         L1_vanishes = E.lseries().L1_vanishes()
         if eps == 1 and L1_vanishes:
             return 0, 0        # rank even hence >= 2, so Kolyvagin gives nothing.
-        alpha = sqrt(abs(D))/(2*E.period_lattice().complex_area())
+        alpha = sqrt(abs(D)) / (2*E.period_lattice().complex_area())
         F = E.quadratic_twist(D)
         k_E = 2*sqrt(E.conductor()) + 10
         k_F = 2*sqrt(F.conductor()) + 10
-        #k_E = 2
-        #k_F = 2
+        # k_E = 2
+        # k_F = 2
 
-        MIN_ERR = 1e-10   # we assume that regulator and
-                          # discriminant, etc., computed to this accuracy.
+        MIN_ERR = 1e-10
+        # we assume that regulator and
+        # discriminant, etc., computed to this accuracy.
+
         tries = 0
         while True:
             tries += 1
             if tries >= 6:
                 raise RuntimeError("Too many precision increases in bound_kolyvagin")
             if eps == 1:   # E has even rank
-                verbose("Conductor of twist = %s"%F.conductor())
+                verbose("Conductor of twist = %s" % F.conductor())
                 LF1, err_F = F.lseries().deriv_at1(k_F)
                 LE1, err_E = E.lseries().at1(k_E)
                 err_F = max(err_F, MIN_ERR)
@@ -1040,9 +1052,7 @@ class Sha(SageObject):
                     hZ = regulator/2
                 else:
                     hZ = F.regulator(use_database=True)/2
-                #print  alpha * LE1 * LF1 / hZ
-                I = RIF(alpha) * RIF(LE1-err_E,LE1+err_E) * RIF(LF1-err_F,LF1+err_F) / hZ
-                #print I
+                I = RIF(alpha) * RIF(LE1-err_E, LE1+err_E) * RIF(LF1-err_F, LF1+err_F) / hZ
 
             else:          # E has odd rank
 
@@ -1054,29 +1064,30 @@ class Sha(SageObject):
                 LF1, err_F = F.lseries().at1(k_F)
                 err_F = max(err_F, MIN_ERR)
                 err_E = max(err_E, MIN_ERR)
-                #I = alpha * LE1 * LF1 / hZ
+                # I = alpha * LE1 * LF1 / hZ
 
-                I = RIF(alpha) * RIF(LE1-err_E,LE1+err_E) * RIF(LF1-err_F,LF1+err_F) / hZ
+                I = RIF(alpha) * RIF(LE1-err_E, LE1+err_E) * RIF(LF1-err_F, LF1+err_F) / hZ
 
-            verbose('interval = %s'%I)
+            verbose('interval = %s' % I)
             t, n = I.is_int()
             if t:
                 break
             elif I.absolute_diameter() < 1:
-                raise RuntimeError("Problem in bound_kolyvagin; square of index is not an integer -- D=%s, I=%s."%(D,I))
+                raise RuntimeError("Problem in bound_kolyvagin; square of index is not an integer -- D=%s, I=%s." % (D, I))
             verbose("Doubling bounds")
             k_E *= 2
             k_F *= 2
         # end while
 
         # We include 2 since Kolyvagin (in Gross) says nothing there
-        if n == 0:  return 0, 0  # no bound
+        if n == 0:
+            return 0, 0  # no bound
         F = factor(n)
         B = [2]
         for p, e in factor(n):
             if p > 2:
-                if e%2 != 0:
-                    raise RuntimeError("Problem in bound_kolyvagin; square of index is not a perfect square!  D=%s, I=%s, n=%s, e=%s."%(D,I,n,e))
+                if e % 2 != 0:
+                    raise RuntimeError("Problem in bound_kolyvagin; square of index is not a perfect square!  D=%s, I=%s, n=%s, e=%s." % (D, I, n, e))
                 B.append(p)
             else:
                 n /= 2**e  # replace n by its odd part
@@ -1085,7 +1096,6 @@ class Sha(SageObject):
                 B.append(p)
         B = sorted(set([int(x) for x in B]))
         return B, n
-
 
     def bound_kato(self):
         r"""
@@ -1199,4 +1209,3 @@ class Sha(SageObject):
         else:
             B = self.bound_kato()
         return B
-

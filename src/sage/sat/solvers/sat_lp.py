@@ -25,7 +25,7 @@ class SatLP(SatSolver):
           of the class
           :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: S=SAT(solver="LP"); S
             an ILP-based SAT Solver
@@ -38,7 +38,7 @@ class SatLP(SatSolver):
         """
         Return a *new* variable.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: S=SAT(solver="LP"); S
             an ILP-based SAT Solver
@@ -55,7 +55,7 @@ class SatLP(SatSolver):
         """
         Return the number of variables.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: S=SAT(solver="LP"); S
             an ILP-based SAT Solver
@@ -82,7 +82,7 @@ class SatLP(SatSolver):
             than the number of variables generated so far, then new
             variables are created automatically.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: S=SAT(solver="LP"); S
             an ILP-based SAT Solver
@@ -109,7 +109,7 @@ class SatLP(SatSolver):
 
         - If this instance is UNSAT: ``False``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: def is_bipartite_SAT(G):
             ....:     S=SAT(solver="LP"); S

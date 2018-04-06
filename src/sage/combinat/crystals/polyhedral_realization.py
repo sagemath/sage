@@ -266,7 +266,7 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
                 sage: [elt.phi(i) for i in B.index_set()]
                 [1, 1, 0]
             """
-            P = self[-1].parent().weight_lattice_realization()
+            P = self.parent().weight_lattice_realization()
             h = P.simple_coroots()
             omega = P(self.weight()).scalar(h[i])
             return self.epsilon(i) + omega
@@ -297,7 +297,7 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
             if pos is None or pos <= nf:
                 return None
 
-            l = self._list[:]
+            l = list(self)
             l[-pos] = crystal
             if pos <= 2*nf and all(b._m == 0 for b in l[-2*nf:-nf]):
                 return self.__class__(self.parent(), l[:-nf])
@@ -327,10 +327,10 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
 
             nf = len(self.parent()._factors)
             if pos <= nf:
-                l = self._list[:]
+                l = list(self)
                 l[-pos] = l[-pos].f(i)
                 return self.__class__(self.parent(), l + self.parent()._tp)
-            return self.set_index(-pos, crystal)
+            return self._set_index(-pos, crystal)
 
         def truncate(self, k=None):
             r"""
@@ -359,13 +359,13 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
                 [-1, -2, -1, 0, 0, 0, 0, 0, 0, 0]
             """
             if k is None:
-                k = len(self._list)
+                k = len(self)
 
             P = self.parent().finite_tensor_product(k)
-            if k <= len(self._list):
-                l = self._list[:k]
+            if k <= len(self):
+                l = self[:k]
             else:
-                l = self._list[:]
+                l = list(self)
                 N = len(self.parent()._tp)
                 while len(l) < k:
                     i = len(l) % N

@@ -498,7 +498,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
                 pass
 
             # The second attempt tries to split Magma elements into
-            # numerators and denominators first. This is neccessary
+            # numerators and denominators first. This is necessary
             # for the field of rational functions, because (at the moment of
             # writing) fraction field elements are not converted automatically
             # from Magma to Sage.
