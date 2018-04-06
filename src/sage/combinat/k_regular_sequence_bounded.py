@@ -546,12 +546,6 @@ def k_regular_sequence_is_bounded(S):
     if not has_bounded_matrix_powers(matricesWithout):
         return False
 
-    try:
-        if is_bounded_via_mandel_simon_algorithm(make_positive(matrices)):
-            return True
-    except ValueError:
-        pass
-
     matricesProd = list(ell*em for ell in matrices for em in matrices[1:]
                         if ell != em)
     if not has_bounded_matrix_powers(matricesProd):
