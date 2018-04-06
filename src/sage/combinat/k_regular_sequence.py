@@ -923,14 +923,6 @@ class kRegularSequence(RecognizableSeries):
         r"""
         Return whether this `k`-regular sequence is bounded.
 
-        INPUT:
-
-        - ``S`` -- a `k`-regular sequence
-
-        OUTPUT:
-
-        A boolean.
-
         EXAMPLES:
 
         Thue-Morse Sequence::
