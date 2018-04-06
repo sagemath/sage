@@ -928,50 +928,50 @@ class kRegularSequence(RecognizableSeries):
         Thue-Morse Sequence::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: TM = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [1, 0]])], 
+            sage: TM = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [1, 0]])],
             ....: left=vector([1, 0]), right=vector([0, 1]))
             sage: TM.is_bounded()
             True
 
         Binary Sum of Digits::
 
-            sage: SD = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])], 
+            sage: SD = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])],
             ....: left=vector([0, 1]), right=vector([1, 0]))
             sage: SD.is_bounded()
             False
 
         Sequence of All Natural Numbers::
 
-            sage: N = Seq2([Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])], 
+            sage: N = Seq2([Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])],
             ....: left=vector([1, 0]), right=vector([0, 1]))
             sage: N.is_bounded()
             False
 
         Indicator Function of Even Integers::
 
-            sage: E = Seq2([Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])], 
+            sage: E = Seq2([Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])],
             ....: left=vector([1, 0]), right=vector([1, 1]))
             sage: E.is_bounded()
             True
 
         Indicator Function of Odd Integers::
 
-            sage: O = Seq2([Matrix([[0, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])], 
+            sage: O = Seq2([Matrix([[0, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])],
             ....: left=vector([1, 0]), right=vector([0, 1]))
             sage: O.is_bounded()
             True
 
         Number of Odd Entries in Pascal's Triangle::
 
-            sage: U = Seq2([Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])], 
+            sage: U = Seq2([Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])],
             ....: left=vector([0, 1]), right=vector([1, 0]), transpose=True)
             sage: U.is_bounded()
             False
 
         Counting '10' in the Binary Representation::
 
-            sage: C = Seq2([Matrix([[0, 1, 0, 0], [0, 0, 0, 1], [-1, 0, 1, 1], 
-            ....: [0, 0, 0, 1]]), Matrix([[0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 1, 0], 
+            sage: C = Seq2([Matrix([[0, 1, 0, 0], [0, 0, 0, 1], [-1, 0, 1, 1],
+            ....: [0, 0, 0, 1]]), Matrix([[0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 1, 0],
             ....: [-1, 0, 1, 1]])], left=vector([1, 0, 0, 0]),
             ....: right=vector([0, 0, 1, 0]))
             sage: C.is_bounded()
@@ -979,29 +979,29 @@ class kRegularSequence(RecognizableSeries):
 
         Numbers Starting with '10'::
 
-            sage: D = Seq2([Matrix([[0, 1, 0, 0], [0, 0, 1, 0], [0, -2, 3, 0], 
-            ....: [0, -2, 2, 1]]), Matrix([[2, 0, 0, 0], [0, 0, 0, 1], 
-            ....: [0, 2, 0, 1], [0, -2, 0, 3]])], left=vector([1, 0, 0, 0]), 
+            sage: D = Seq2([Matrix([[0, 1, 0, 0], [0, 0, 1, 0], [0, -2, 3, 0],
+            ....: [0, -2, 2, 1]]), Matrix([[2, 0, 0, 0], [0, 0, 0, 1],
+            ....: [0, 2, 0, 1], [0, -2, 0, 3]])], left=vector([1, 0, 0, 0]),
             ....: right=vector([2, 2, 2, 5]))
             sage: D.is_bounded()
             False
 
         Signum Function::
 
-            sage: S = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])], 
+            sage: S = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])],
             ....: left=vector([1, 0]), right=vector([0, 1]))
             sage: S.is_bounded()
             True
 
         Number of Digits from the Right to the First '1'::
 
-            sage: S = Seq2([Matrix([[0, 1, 0], [-1, 2, 0], [0, 0, 1]]), 
-            ....: Matrix([[0, 0, 1], [0, 0, 2], [0, 0, 1]])], 
+            sage: S = Seq2([Matrix([[0, 1, 0], [-1, 2, 0], [0, 0, 1]]),
+            ....: Matrix([[0, 0, 1], [0, 0, 2], [0, 0, 1]])],
             ....: left=vector([1, 0, 0]), right=vector([0, 0, 1]))
             sage: S.is_bounded()
             Traceback (most recent call last):
             ...
-            RuntimeError: It is not decidable with this implementation whether the 
+            RuntimeError: It is not decidable with this implementation whether the
             sequence is bounded or not.
 
         Find another Representation or a Sequence which is equivalent in Boundedness::
@@ -1017,7 +1017,7 @@ class kRegularSequence(RecognizableSeries):
         TESTS::
 
             sage: S = Seq2((Matrix([[0, 1, 0], [0, 0, 1], [-1, 2, 0]]),
-            ....: Matrix([[-1, 0, 0], [-3/4, -1/4, 3/4], [-1/4, 1/4, -3/4]])), 
+            ....: Matrix([[-1, 0, 0], [-3/4, -1/4, 3/4], [-1/4, 1/4, -3/4]])),
             ....: left=vector([1, 0, 0]), right=vector([-4, -4, -4]))
             sage: S.is_bounded()
             False
