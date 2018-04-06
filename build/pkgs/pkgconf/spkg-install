@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 cd src
 
 # workaround for incorrect permissions, see Trac #15742

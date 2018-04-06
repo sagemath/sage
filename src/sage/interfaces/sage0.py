@@ -15,8 +15,9 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six import iteritems, string_types
 from six.moves import cPickle
+
 import os
 import re
 
@@ -25,6 +26,7 @@ import sage.repl.preparse
 
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.structure.sage_object import dumps, load
+from sage.docs.instancedoc import instancedoc
 
 
 class Sage(ExtraTabCompletion, Expect):
@@ -86,7 +88,7 @@ class Sage(ExtraTabCompletion, Expect):
 
     ::
 
-        sage: s('%s.parent()'%g.name())
+        sage: s('%s.parent()' % g.name())
         Vector space of dimension 4 over Rational Field
 
     Note that the memory space is completely different.
@@ -109,12 +111,12 @@ class Sage(ExtraTabCompletion, Expect):
         sage: a
         10
 
-    This `a=10` is in a subprocess of a subprocesses of your
+    This `a=10` is in a subprocess of a subprocess of your
     original Sage.
 
     ::
 
-        sage: _ = s.eval('%s.eval("x=8")'%s3.name())
+        sage: _ = s.eval('%s.eval("x=8")' % s3.name())
         sage: s3('"x"')
         8
         sage: s('x')
@@ -127,14 +129,15 @@ class Sage(ExtraTabCompletion, Expect):
     ``s('"x"')``, which is the string ``"x"``
     in the s interpreter.
     """
-    def __init__(self, logfile   = None,
-                       preparse  = True,
-                       python    = False,
-                       init_code = None,
-                       server    = None,
-                       server_tmpdir = None,
-                       remote_cleaner = True,
-                       **kwds):
+    def __init__(self,
+                 logfile=None,
+                 preparse=True,
+                 python=False,
+                 init_code=None,
+                 server=None,
+                 server_tmpdir=None,
+                 remote_cleaner=True,
+                 **kwds):
         """
         EXAMPLES::
 
@@ -163,15 +166,15 @@ class Sage(ExtraTabCompletion, Expect):
                 init_code = ['from six.moves import cPickle']
 
         Expect.__init__(self,
-                        name = 'sage',
-                        prompt = prompt,
-                        command = command,
-                        restart_on_ctrlc = False,
-                        logfile = logfile,
-                        init_code = init_code,
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        remote_cleaner = remote_cleaner,
+                        name='sage',
+                        prompt=prompt,
+                        command=command,
+                        restart_on_ctrlc=False,
+                        logfile=logfile,
+                        init_code=init_code,
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        remote_cleaner=remote_cleaner,
                         **kwds
                         )
         self._preparse = preparse
@@ -189,10 +192,10 @@ class Sage(ExtraTabCompletion, Expect):
             sage: sage0.cputime()     # random output
             1.6462939999999999
         """
-        s = self.eval('cputime(%s)'%t)
+        s = self.eval('cputime(%s)' % t)
         i = s.rfind('m')
         if i != -1:
-            s = s[i+1:-1]
+            s = s[i + 1:-1]
         return float(s)
 
     def _tab_completion(self):
@@ -205,7 +208,7 @@ class Sage(ExtraTabCompletion, Expect):
             sage: 'gcd' in t
             True
         """
-        return eval(self.eval('print repr(globals().keys())'))
+        return eval(self.eval('print(repr(globals().keys()))'))
 
     def __call__(self, x):
         """
@@ -229,16 +232,16 @@ class Sage(ExtraTabCompletion, Expect):
             else:
                 return self(x.sage())
 
-        if isinstance(x, str):
+        if isinstance(x, string_types):
             return SageElement(self, x)
 
         if self.is_local():
-            open(self._local_tmpfile(),'w').write(cPickle.dumps(x,2))
-            return SageElement(self, 'cPickle.load(open("%s"))'%self._local_tmpfile())
+            open(self._local_tmpfile(), 'w').write(cPickle.dumps(x, 2))
+            return SageElement(self, 'cPickle.load(open("%s"))' % self._local_tmpfile())
         else:
-            open(self._local_tmpfile(),'w').write(dumps(x))   # my dumps is compressed by default
+            open(self._local_tmpfile(), 'w').write(dumps(x))   # my dumps is compressed by default
             self._send_tmpfile_to_server()
-            return SageElement(self, 'loads(open("%s").read())'%self._remote_tmpfile())
+            return SageElement(self, 'loads(open("%s").read())' % self._remote_tmpfile())
 
     def __reduce__(self):
         """
@@ -304,10 +307,10 @@ class Sage(ExtraTabCompletion, Expect):
             sage: sage0.get('x')
             '2'
         """
-        cmd = '%s=%s'%(var,value)
+        cmd = '%s=%s' % (var, value)
         out = self.eval(cmd)
         if 'Traceback' in out:
-            raise TypeError("Error executing code in Sage\nCODE:\n\t%s\nSage ERROR:\n\t%s"%(cmd, out))
+            raise TypeError("Error executing code in Sage\nCODE:\n\t%s\nSage ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var):
         """
@@ -319,7 +322,7 @@ class Sage(ExtraTabCompletion, Expect):
             sage: sage0.get('x')
             '2'
         """
-        return self.eval('print %s'%var).strip()
+        return self.eval('print(%s)' % var).strip()
 
     def clear(self, var):
         """
@@ -337,7 +340,7 @@ class Sage(ExtraTabCompletion, Expect):
             sage: 'NameError' in sage0.get('x')
             True
         """
-        self.eval('del %s'%var)
+        self.eval('del %s' % var)
 
     def _contains(self, v1, v2):
         """
@@ -346,7 +349,7 @@ class Sage(ExtraTabCompletion, Expect):
             sage: sage0._contains('2', 'QQ')
             True
         """
-        return self.eval('%s in %s'%(v1,v2)) == "True"
+        return self.eval('%s in %s' % (v1, v2)) == "True"
 
     def console(self):
         """
@@ -395,6 +398,7 @@ class Sage(ExtraTabCompletion, Expect):
         return SageElement(self, x)
 
 
+@instancedoc
 class SageElement(ExpectElement):
 
     def _rich_repr_(self, display_manager, **kwds):
@@ -445,7 +449,7 @@ class SageElement(ExpectElement):
         """
         Return local copy of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sr = mq.SR(allow_zero_inversions=True)
             sage: F,s = sr.polynomial_system()
@@ -454,13 +458,15 @@ class SageElement(ExpectElement):
         """
         P = self.parent()
         if P.is_remote():
-            P.eval('save(%s, "%s")'%(self.name(), P._remote_tmpfile()))
+            P.eval('save(%s, "%s")' % (self.name(), P._remote_tmpfile()))
             P._get_tmpfile_from_server(self)
             return load(P._local_tmp_file())
         else:
-            P.eval('save(%s, "%s")'%(self.name(), P._local_tmpfile()))
+            P.eval('save(%s, "%s")' % (self.name(), P._local_tmpfile()))
             return load(P._local_tmpfile())
 
+
+@instancedoc
 class SageFunction(FunctionElement):
     def __call__(self, *args, **kwds):
         """
@@ -473,32 +479,31 @@ class SageFunction(FunctionElement):
         P = self._obj.parent()
         args = [P(x) for x in args]
         args = ','.join([x.name() for x in args])
-        kwds = ",".join(["%s=%s"%(k,P(v).name()) for k,v in kwds.iteritems()])
+        kwds = ",".join(["%s=%s" % (k, P(v).name())
+                         for k, v in iteritems(kwds)])
         if args != "" and kwds != "":
-            callstr = '%s.%s(%s,%s)'%(self._obj._name, self._name, args, kwds)
+            callstr = '%s.%s(%s,%s)' % (self._obj._name, self._name, args, kwds)
         elif kwds != "":
-            callstr = '%s.%s(%s)'%(self._obj._name, self._name, kwds)
+            callstr = '%s.%s(%s)' % (self._obj._name, self._name, kwds)
         elif args != "":
-            callstr = '%s.%s(%s)'%(self._obj._name, self._name, args)
+            callstr = '%s.%s(%s)' % (self._obj._name, self._name, args)
         else:
-            callstr = '%s.%s()'%(self._obj._name, self._name)
-        z = SageElement(P, callstr)
+            callstr = '%s.%s()' % (self._obj._name, self._name)
+        return SageElement(P, callstr)
 
-        return z
-
-    def __repr__(self):
+    def _repr_(self):
         """
         EXAMPLES::
 
             sage: sage0(4).gcd
             <built-in method gcd of sage.rings.integer.Integer object at 0x...>
         """
-
-        return str(self._obj.parent().eval('%s.%s'%(self._obj._name, self._name)))
-
+        return str(self._obj.parent().eval('%s.%s' % (self._obj._name,
+                                                      self._name)))
 
 
 sage0 = Sage()
+
 
 def reduce_load_Sage():
     """
@@ -509,6 +514,7 @@ def reduce_load_Sage():
         Sage
     """
     return sage0
+
 
 def reduce_load_element(s):
     """
@@ -524,7 +530,7 @@ def reduce_load_element(s):
     import base64
     s = base64.b32encode(s)
     sage0.eval('import base64')
-    return sage0('loads(base64.b32decode("%s"))'%s)
+    return sage0('loads(base64.b32decode("%s"))' % s)
 
 
 def sage0_console():
@@ -545,6 +551,7 @@ def sage0_console():
         raise RuntimeError('Can use the console only in the terminal. Try %%sage0 magics instead.')
     os.system('sage')
 
+
 def sage0_version():
     """
     EXAMPLES::
@@ -554,15 +561,3 @@ def sage0_version():
         True
     """
     return str(sage0('version()'))
-
-#def irun(filename):
-#    """
-#    Run the script in filename step-by-step displaying each input line
-#
-#    This does not work right with for loops, which span multiple lines.
-#    """
-#    print 'Interactive runing "%s"'%filename
-#    for L in open(filename).xreadlines():
-#        raw_input("sage: "+L[:-1])
-#        print sage0(L)[:-1]
-

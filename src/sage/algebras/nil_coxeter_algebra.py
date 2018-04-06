@@ -16,7 +16,9 @@ from sage.combinat.partition import Partitions
 
 class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
     r"""
-    Construct the Nil-Coxeter algebra of given type. This is the algebra
+    Construct the Nil-Coxeter algebra of given type.
+
+    This is the algebra
     with generators `u_i` for every node `i` of the corresponding Dynkin
     diagram. It has the usual braid relations (from the Weyl group) as well
     as the quadratic relation `u_i^2 = 0`.
@@ -25,7 +27,7 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
 
     - ``W`` -- a Weyl group
 
-    OPTIONAL ARGUEMENTS:
+    OPTIONAL ARGUMENTS:
 
     - ``base_ring`` -- a ring (default is the rational numbers)
     - ``prefix`` -- a label for the generators (default "u")

@@ -1,8 +1,6 @@
 """
 Matrix Plots
 """
-from __future__ import absolute_import
-
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
@@ -19,9 +17,13 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
+from six import iteritems
+
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options, suboptions
 from sage.plot.colors import get_cmap
+
 
 class MatrixPlot(GraphicPrimitive):
     """
@@ -114,8 +116,8 @@ class MatrixPlot(GraphicPrimitive):
 
         # center the matrix so that, for example, the square representing the
         # (0,0) entry is centered on the origin.
-        for k,v in limits.iteritems():
-            limits[k]-=0.5
+        for k, v in iteritems(limits):
+            limits[k] -= 0.5
         return limits
 
     def _allowed_options(self):

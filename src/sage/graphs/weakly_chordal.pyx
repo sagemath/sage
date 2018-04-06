@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Weakly chordal graphs
 
@@ -106,8 +107,15 @@ def is_long_hole_free(g, certificate=False):
         Subgraph of (): Graph on 5 vertices
         sage: hole.is_isomorphic(graphs.CycleGraph(hole.order()))
         True
+
+        sage: graphs.EmptyGraph().is_long_hole_free()
+        True
     """
     g._scream_if_not_simple()
+
+    if g.order() == 0:
+        return (True, []) if certificate else True
+
     cdef int a,b,c,i,u,v,d
 
     if g.is_immutable():
@@ -279,8 +287,15 @@ def is_long_antihole_free(g, certificate = False):
         False
         sage: a.complement().is_isomorphic( graphs.CycleGraph(9) )
         True
+
+        sage: graphs.EmptyGraph().is_long_hole_free()
+        True
     """
     g._scream_if_not_simple()
+
+    if g.order() == 0:
+        return (True, []) if certificate else True
+
     cdef int a,b,c,i,u,v,d
 
     if g.is_immutable():
@@ -420,7 +435,15 @@ def is_weakly_chordal(g, certificate = False):
         sage: l = len(s.vertices())
         sage: s.is_isomorphic( graphs.CycleGraph(l) )
         True
+
+    TESTS::
+
+        sage: graphs.EmptyGraph().is_weakly_chordal()
+        True
+
     """
+    if g.order() == 0:
+        return (True, []) if certificate else True
 
     if certificate:
         r,forbid_subgr = g.is_long_hole_free(certificate=True)

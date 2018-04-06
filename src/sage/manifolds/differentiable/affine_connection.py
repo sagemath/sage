@@ -42,7 +42,7 @@ class AffineConnection(SageObject):
     or `K=\CC`), let `C^\infty(M)` be the algebra of smooth functions
     `M\rightarrow K` (cf.
     :class:`~sage.manifolds.differentiable.scalarfield_algebra.DiffScalarFieldAlgebra`)
-    and let `\mathcal{X}(M)` be the `C^\infty(M)`-module of vector fields on
+    and let `\mathfrak{X}(M)` be the `C^\infty(M)`-module of vector fields on
     `M` (cf.
     :class:`~sage.manifolds.differentiable.vectorfield_module.VectorFieldModule`).
     An *affine connection* on `M` is an operator
@@ -50,14 +50,14 @@ class AffineConnection(SageObject):
     .. MATH::
 
         \begin{array}{cccc}
-        \nabla: & \mathcal{X}(M)\times \mathcal{X}(M) & \longrightarrow &
-                 \mathcal{X}(M) \\
+        \nabla: & \mathfrak{X}(M)\times \mathfrak{X}(M) & \longrightarrow &
+                 \mathfrak{X}(M) \\
                 & (u,v) & \longmapsto & \nabla_u v
         \end{array}
 
     that
 
-    - is `K`-bilinear, i.e. is bilinear when considering `\mathcal{X}(M)` as a
+    - is `K`-bilinear, i.e. is bilinear when considering `\mathfrak{X}(M)` as a
       vector space over `K`
     - is `C^\infty(M)`-linear w.r.t. the first argument:
       `\forall f\in C^\infty(M),\ \nabla_{fu} v = f\nabla_u v`
@@ -83,13 +83,13 @@ class AffineConnection(SageObject):
 
     .. MATH::
 
-        \forall u \in\mathcal{X}(M), \   \nabla_u v = \nabla v(., u)
+        \forall u \in\mathfrak{X}(M), \   \nabla_u v = \nabla v(., u)
 
     More generally for any tensor field `t\in T^{(k,l)}(M)`, we have
 
     .. MATH::
 
-        \forall u \in\mathcal{X}(M), \   \nabla_u t = \nabla t(\ldots, u)
+        \forall u \in\mathfrak{X}(M), \   \nabla_u t = \nabla t(\ldots, u)
 
 
     .. NOTE::
@@ -182,7 +182,7 @@ class AffineConnection(SageObject):
         sage: Df[:]
         [2*x, -2*y, 0]
 
-    The action of an affine connection connection on a scalar field must
+    The action of an affine connection on a scalar field must
     coincide with the differential::
 
         sage: Df == f.differential()
@@ -372,7 +372,7 @@ class AffineConnection(SageObject):
         r"""
         Initialize the derived quantities.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(4, 'M')
             sage: nab = M.affine_connection('nabla', latex_name=r'\nabla')
@@ -395,7 +395,7 @@ class AffineConnection(SageObject):
         r"""
         Delete the derived quantities.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(4, 'M')
             sage: nab = M.affine_connection('nabla', latex_name=r'\nabla')
@@ -535,7 +535,7 @@ class AffineConnection(SageObject):
         classes to adapt the output to the relevant subclass of
         :class:`~sage.tensor.modules.comp.Components`.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()
@@ -634,7 +634,7 @@ class AffineConnection(SageObject):
         Return the connection coefficients in a given frame for assignment.
 
         See method :meth:`coef` for details about the definition of the
-        connection coefficents.
+        connection coefficients.
 
         The connection coefficients with respect to other frames are deleted,
         in order to avoid any inconsistency. To keep them, use the method
@@ -726,7 +726,7 @@ class AffineConnection(SageObject):
         keeping the coefficients in other frames.
 
         See method :meth:`coef` for details about the definition of the
-        connection coefficents.
+        connection coefficients.
 
         To delete the connection coefficients in other frames, use the method
         :meth:`set_coef` instead.
@@ -818,7 +818,7 @@ class AffineConnection(SageObject):
           coefficients w.r.t. which are to be kept; if ``None``, the default
           frame of the connection's domain is assumed.
 
-        EXAMPLE:
+        EXAMPLES:
 
         We first create two sets of connection coefficients::
 
@@ -1169,7 +1169,7 @@ class AffineConnection(SageObject):
 
         - instance of :class:`AffineConnection` representing the restriction.
 
-        EXAMPLE:
+        EXAMPLES:
 
         Restriction of a connection on a 2-dimensional manifold::
 
@@ -1244,7 +1244,7 @@ class AffineConnection(SageObject):
           instance of
           :class:`~sage.manifolds.differentiable.tensorfield_paral.TensorFieldParal`
 
-        OUPUT:
+        OUTPUT:
 
         - common frame; if no common frame is found, None is returned.
 
@@ -1320,7 +1320,7 @@ class AffineConnection(SageObject):
 
         - tensor field `\nabla T`.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M', start_index=1)
             sage: X.<x,y> = M.chart()
@@ -1388,7 +1388,7 @@ class AffineConnection(SageObject):
 
         - tensor field `\nabla T`.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M', start_index=1)
             sage: X.<x,y> = M.chart()

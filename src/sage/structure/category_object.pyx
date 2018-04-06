@@ -57,14 +57,18 @@ This example illustrates generators for a free module over `\ZZ`.
 
 from __future__ import absolute_import, division, print_function
 
-from sage.structure.misc import dir_with_other_class
-from sage.structure.misc cimport getattr_from_other_class
+from sage.cpython.getattr import dir_with_other_class
+from sage.cpython.getattr cimport getattr_from_other_class
 from sage.categories.category import Category
 from sage.structure.debug_options cimport debug
 from sage.misc.cachefunc import cached_method
+from sage.structure.dynamic_class import DynamicMetaclass
 
 
 def guess_category(obj):
+    from sage.misc.superseded import deprecation
+    deprecation(24109, f"guess_category() is deprecated: CategoryObject of type {type(obj)} requires a category")
+
     # this should be obsolete if things declare their categories
     try:
         if obj.is_field():
@@ -164,19 +168,23 @@ cdef class CategoryObject(SageObject):
             sage: A._init_category_((Semigroups(), CommutativeAdditiveSemigroups()))
             sage: A.category()
             Join of Category of semigroups and Category of commutative additive semigroups
-            sage: A._init_category_(None)
-            sage: A.category()
-            Category of objects
-
-            sage: P = Parent(category = None)
+            sage: P = Parent(category=None)
             sage: P.category()
             Category of sets
+
+        TESTS::
+
+            sage: A = sage.structure.category_object.CategoryObject()
+            sage: A._init_category_(None)
+            doctest:...: DeprecationWarning: guess_category() is deprecated: CategoryObject of type <type 'sage.structure.category_object.CategoryObject'> requires a category
+            See http://trac.sagemath.org/24109 for details.
+            sage: A.category()
+            Category of objects
         """
         if category is None:
-            if debug.bad_parent_warnings:
-                print("No category for %s" % type(self))
-            category = guess_category(self) # so generators don't crash
-        elif isinstance(category, (list, tuple)):
+            # Deprecated in Trac #24109
+            category = guess_category(self)
+        if isinstance(category, (list, tuple)):
             category = Category.join(category)
         self._category = category
 
@@ -254,6 +262,30 @@ cdef class CategoryObject(SageObject):
              Category of objects]
         """
         return self.category().all_super_categories()
+
+    def _underlying_class(self):
+        r"""
+        Return the underlying class (class without the attached
+        categories) of the given object.
+
+        OUTPUT: A class
+
+        EXAMPLES::
+
+            sage: type(QQ)
+            <class 'sage.rings.rational_field.RationalField_with_category'>
+            sage: QQ._underlying_class()
+            <class 'sage.rings.rational_field.RationalField'>
+            sage: type(ZZ)
+            <type 'sage.rings.integer_ring.IntegerRing_class'>
+            sage: ZZ._underlying_class()
+            <type 'sage.rings.integer_ring.IntegerRing_class'>
+        """
+        cls = type(self)
+        if isinstance(cls, DynamicMetaclass):
+            return cls.__bases__[0]
+        else:
+            return cls
 
     ##############################################################################
     # Generators
@@ -437,19 +469,6 @@ cdef class CategoryObject(SageObject):
             raise TypeError("names must be a tuple of strings")
         self._names = names
 
-    def normalize_names(self, ngens, names):
-        """
-        TESTS::
-
-            sage: ZZ.normalize_names(1, "x")
-            doctest:...: DeprecationWarning: The method normalize_names() has been changed to a function
-            See http://trac.sagemath.org/19675 for details.
-            ('x',)
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(19675, "The method normalize_names() has been changed to a function")
-        return normalize_names(ngens, names)
-
     def variable_names(self):
         """
         Return the list of variable names corresponding to the generators.
@@ -496,7 +515,7 @@ cdef class CategoryObject(SageObject):
         """
         This is used by the variable names context manager.
 
-        TEST:
+        TESTS:
 
         In an old version, it was impossible to temporarily change
         the names if no names were previously assigned. But if one
@@ -816,6 +835,7 @@ cdef class CategoryObject(SageObject):
             running ._test_enumerated_set_iter_list() . . . pass
             running ._test_eq() . . . pass
             running ._test_euclidean_degree() . . . pass
+            running ._test_fraction_field() . . . pass
             running ._test_gcd_vs_xgcd() . . . pass
             running ._test_metric() . . . pass
             running ._test_new() . . . pass
@@ -879,6 +899,7 @@ cdef class CategoryObject(SageObject):
             _test_enumerated_set_iter_list
             _test_eq
             _test_euclidean_degree
+            _test_fraction_field
             _test_gcd_vs_xgcd
             _test_metric
             _test_new

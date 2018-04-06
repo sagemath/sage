@@ -19,3 +19,13 @@ from .graph_database import graph_db_info
 lazy_import("sage.graphs.graph_editor", "graph_editor")
 
 from sage.graphs.isgci import graph_classes
+
+"""
+TESTS:
+
+Test that sagenb.misc.support is not imported (see :trac:`22941`)::
+
+    sage: import sage.graphs.graph_editor
+    sage: 'sagenb.misc.support' in sys.modules
+    False
+"""

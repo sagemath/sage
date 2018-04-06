@@ -311,7 +311,7 @@ class Gap3(Gap_generic):
         Expect.__init__(self,
              name='gap3',
              prompt='gap> ',
-             command=self.__gap3_command_string + " -p -y 500",
+             command=self.__gap3_command_string + " -p -b -y 500",
              server=None,
              ulimit=None,
              script_subdirectory=None,
@@ -327,6 +327,8 @@ class Gap3(Gap_generic):
 
     def _start(self):
         r"""
+        Initialize the interface and start gap3.
+
         EXAMPLES::
 
             sage: gap3 = Gap3()                            #optional - gap3
@@ -335,6 +337,11 @@ class Gap3(Gap_generic):
             sage: gap3._start()                            #optional - gap3
             sage: gap3.is_running()                        #optional - gap3
             True
+
+        Check that :trac:`23142` is fixed::
+
+            sage: gap3.eval("1+1")                         #optional - gap3
+            '2'
             sage: gap3.quit()                              #optional - gap3
         """
         Expect._start(self)
@@ -345,6 +352,7 @@ class Gap3(Gap_generic):
             '@p\d+\.','@@','@[A-Z]','@[123456!"#$%&][^+]*\+', '@e','@c',
             '@f','@h','@i','@m','@n','@r','@s\d','@w.*\+','@x','@z'])
         self._compiled_small_pattern = self._expect.compile_pattern_list('@J')
+        self._expect.expect("@i")
 
     def _object_class(self):
         r"""
@@ -557,7 +565,7 @@ class Gap3(Gap_generic):
             sage: gap3('3+2')
             Traceback (most recent call last):
             ...
-            TypeError: unable to start gap3 because the command '/wrongpath/gap3 -p -y 500' failed: The command was not found or was not executable: /wrongpath/gap3.
+            TypeError: unable to start gap3 because the command '/wrongpath/gap3 ...' failed: The command was not found or was not executable: /wrongpath/gap3.
             <BLANKLINE>
                 Your attempt to start GAP3 failed, either because you do not have
                 have GAP3 installed, or because it is not configured correctly.

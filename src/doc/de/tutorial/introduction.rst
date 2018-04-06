@@ -63,7 +63,7 @@ Installation
 
 Falls Sie Sage auf Ihrem Computer nicht installiert haben und nur ein
 paar Befehle ausführen möchten, können Sie es online unter
-http://www.sagenb.org benutzen.
+http://sagecell.sagemath.org benutzen.
 
 Schauen Sie sich den `Sage Installation Guide <http://doc.sagemath.org/html/en/installation/index.html>`_ an, um Anleitungen
 zur Installation von Sage auf Ihrem Computer zu erhalten.
@@ -101,7 +101,7 @@ Hier geben wir nur ein paar Kommentare ab.
    einzige Datei in ein Verzeichnis kopieren, welches TeX durchsucht.
 
    Die Dokumentation für SageTeX befindet sich in
-   ``$SAGE_ROOT/local/share/texmf/tex/generic/sagetex/``, wobei
+   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, wobei
    "``$SAGE_ROOT``" auf das Verzeichnis zeigt, in welches Sie Sage
    installiert haben, zum Beispiel ``/opt/sage-4.2.1``.
 

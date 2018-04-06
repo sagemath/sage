@@ -581,7 +581,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
 
 class DualPBWBasis(CombinatorialFreeModule):
     r"""
-    The basis dual to the Poincare-Birkhoff-Witt basis of the free algebra.
+    The basis dual to the Poincaré-Birkhoff-Witt basis of the free algebra.
 
     We recursively define the dual PBW basis as the basis of the
     shuffle algebra given by

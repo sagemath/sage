@@ -1,0 +1,25 @@
+From 0af6c798cba27c44c216eac35be56e0b3ca467cd Mon Sep 17 00:00:00 2001
+From: Emmanuel Charpentier <emm.charpentier@free.fr>
+Date: Fri, 13 Oct 2017 07:15:37 +0200
+Subject: [PATCH 5/8] link_all_shared_libs
+
+---
+ etc/Makeconf.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/etc/Makeconf.in b/etc/Makeconf.in
+index e7d9fbd..3eccb2c 100644
+--- a/etc/Makeconf.in
++++ b/etc/Makeconf.in
+@@ -150,7 +150,7 @@ ALL_OBJCFLAGS = $(PKG_OBJCFLAGS) $(CPICFLAGS) $(SHLIB_CFLAGS) $(OBJCFLAGS)
+ ALL_OBJCXXFLAGS = $(PKG_OBJCXXFLAGS) $(CXXPICFLAGS) $(SHLIB_CXXFLAGS) $(OBJCXXFLAGS)
+ ALL_FFLAGS = $(R_XTRA_FFLAGS) $(PKG_FFLAGS) $(FPICFLAGS) $(SHLIB_FFLAGS) $(FFLAGS)
+ ## LIBR here as a couple of packages use this without SHLIB_LINK
+-ALL_LIBS = $(PKG_LIBS) $(SHLIB_LIBADD) $(LIBR)@DYLIB_UNDEFINED_ALLOWED_FALSE@ $(LIBINTL)
++ALL_LIBS = $(PKG_LIBS) $(SHLIB_LIBADD) $(LIBR)@DYLIB_UNDEFINED_ALLOWED_FALSE@ $(LIBINTL) $(LIBS)
+ 
+ .SUFFIXES:
+ .SUFFIXES: .c .cc .cpp .d .f .f90 .f95 .m .mm .M .o
+-- 
+2.14.2
+

@@ -150,12 +150,12 @@ Then in the file ``SAGE_ROOT/src/sage/all.py``, add a line ::
 
     from sage.measure_theory.all import *
 
-Non-Python Sage source code and supporting files should be placed in appropriate
-subdirectories of ``SAGE_ROOT/src/ext/``. They will then be automatically
-copied to the corresponding subdirectories of ``SAGE_ROOT/local/share/sage/ext/``
-during the build process and can be accessed at runtime using ``SAGE_EXTCODE``.
-For example, if ``file`` is placed in ``SAGE_ROOT/src/ext/directory/`` it can
-be accessed with ::
+Non-Python Sage source code and supporting files should be placed in
+appropriate subdirectories of ``SAGE_ROOT/src/ext/``. They will then be
+automatically copied to the corresponding subdirectories of
+``SAGE_ROOT/local/share/sage/ext/`` during the build process and can be
+accessed at runtime using ``SAGE_EXTCODE``.  For example, if ``file`` is placed
+in ``SAGE_ROOT/src/ext/directory/`` it can be accessed with ::
 
     from sage.env import SAGE_EXTCODE
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
@@ -187,18 +187,19 @@ The top of each Sage code file should follow this format::
 
     <Paragraph description>
 
+    EXAMPLES::
+
+    <Lots and lots of examples>
+
     AUTHORS:
 
     - YOUR NAME (2005-01-03): initial version
 
     - person (date in ISO year-month-day format): short desc
 
-    EXAMPLES::
-
-    <Lots and lots of examples>
     """
 
-    #*****************************************************************************
+    # ****************************************************************************
     #       Copyright (C) 2013 YOUR NAME <your email>
     #
     # This program is free software: you can redistribute it and/or modify
@@ -206,14 +207,16 @@ The top of each Sage code file should follow this format::
     # the Free Software Foundation, either version 2 of the License, or
     # (at your option) any later version.
     #                  http://www.gnu.org/licenses/
-    #*****************************************************************************
+    # ****************************************************************************
 
-As an example, see ``SAGE_ROOT/src/sage/rings/integer.pyx`` which
-contains the implementation for `\ZZ`. The ``AUTHORS:`` section is
-redundant, the authoritative log for who wrote what is always the git
-repository (see the output of ``git blame``). Nevertheless, it is
-sometimes useful to have a very rough overview over the history,
-especially if a lot of people have been working on that source file.
+As an example, see ``SAGE_ROOT/src/sage/rings/integer.pyx``, which contains the
+implementation for `\ZZ`. The names of the people who made major contributions
+to the file appear in the ``AUTHORS`` section. You can add your name to the
+list if you belong to the people, but refrain from being verbose in the
+description. The ``AUTHORS`` section shows very rough overview of the history,
+especially if a lot of people have been working on that source file. The
+authoritative log for who wrote what is always the git repository (see the
+output of ``git blame``).
 
 All code included with Sage must be licensed under the GPLv2+ or a
 compatible, that is, less restrictive license (e.g. the BSD license).
@@ -234,28 +237,48 @@ information. You can use the existing functions of Sage as templates.
 
 -  A **one-sentence description** of the function.
 
-   It must be followed by a blank line and end in a period.  It
-   describes the function or method's effect as a command ("Do this",
-   "Return that"), not as a description like "Returns the pathname ...".
+   It must be followed by a blank line and end in a period. It describes the
+   function or method's effect as a command ("Do this", "Return that"), not as
+   a description like "Returns the pathname ...".
+
+   For methods of a class, it is recommended to refer to the ``self`` argument
+   in a descriptive way, unless this leads to a confusion. For example, if
+   ``self`` is an integer, then ``this integer`` or ``the integer`` is more
+   descriptive, and it is preferable to write
+
+   .. CODE-BLOCK:: rest
+
+       Return whether this integer is prime.
 
 -  A **longer description**.
 
    This is optional if the one-sentence description does not need
-   more explanations. (Like "Return the number of vertices.")
+   more explanations.
 
-   Start with assumptions of the object, if there are any. ("The poset is
-   expected to be ranked.", if the function raises an exception when
-   called on non-ranked poset.)
+   Start with assumptions of the object, if there are any. For example,
 
-   Define your terms ("The lexicographic product of G and H is the graph
-   with vertex set ...") and mention possible aliases ("The tensor product
-   is also known as the categorical product and...").
+   .. CODE-BLOCK:: rest
+
+       The poset is expected to be ranked.
+
+   if the function raises an exception when called on a non-ranked poset.
+
+   Define your terms
+
+   .. CODE-BLOCK:: rest
+
+       The lexicographic product of `G` and `H` is the graph with vertex set ...
+
+   and mention possible aliases
+
+   .. CODE-BLOCK:: rest
+
+       The tensor product is also known as the categorical product and ...
 
 -  An **INPUT** and an **OUTPUT** block describing the input/output of
-   the function. This is not optional.
+   the function.
 
-   The INPUT block describes all arguments that the function accepts,
-   and the OUTPUT section describes its expected output.
+   The INPUT block describes all arguments that the function accepts.
 
    1. The type names should be descriptive, but do not have to represent
       the exact Sage/Python types. For example, use "integer" for
@@ -263,28 +286,42 @@ information. You can use the existing functions of Sage as templates.
 
    2. Mention the default values of the input arguments when applicable.
 
-   Example::
+   .. CODE-BLOCK:: rest
 
        INPUT:
 
-       - ``p`` -- (default: 2) a positive prime integer
+       - ``n`` -- integer
+
+       - ``p`` -- prime integer (default: `2`); coprime with ``n``
+
+   The OUTPUT block describes the expected output. This is required if the
+   one-sentence description of the function needs more explanation.
+
+   .. CODE-BLOCK:: rest
+
+       OUTPUT: the plaintext decrypted from the ciphertext ``C``
+
+   It is often the case that the output consists of several items.
+
+   .. CODE-BLOCK:: rest
+
+       OUTPUT: a tuple of
+
+       - the reduced echelon form `H` of the matrix `A`
+
+       - the transformation matrix `U` such that `UA = H`
+
+   You are recommended to be verbose enough for complicated outputs.
+
+   .. CODE-BLOCK:: rest
 
        OUTPUT:
 
-       A 5-tuple consisting of integers in this order:
-
-       1. the smallest primitive root modulo p
-       2. the smallest prime primitive root modulo p
-       3. the largest primitive root modulo p
-       4. the largest prime primitive root modulo p
-       5. total number of prime primitive roots modulo p
-
-   You can start the OUTPUT block with a dash if you prefer::
-
-       OUTPUT:
-
-       - The plaintext resulting from decrypting the ciphertext ``C``
-         using the Blum-Goldwasser decryption algorithm.
+       The decomposition of the free module on which this matrix `A` acts from
+       the right (i.e., the action is `x` goes to `xA`), along with whether
+       this matrix acts irreducibly on each factor. The factors are guaranteed
+       to be sorted in the same way as the corresponding factors of the
+       characteristic polynomial.
 
 -  An **EXAMPLES** block for examples. This is not optional.
 
@@ -382,15 +419,16 @@ information. You can use the existing functions of Sage as templates.
 - A **REFERENCES** block to list related books or papers (optional).
 
   Almost all bibliographic information should be put in the master bibliography
-  file, see below. Citations will then link to the master bibliography where the
-  reader can find the bibliographic details (see below for citation syntax).
-  REFERENCE blocks in individual docstrings are therefore usually not necessary.
+  file, see below. Citations will then link to the master bibliography where
+  the reader can find the bibliographic details (see below for citation
+  syntax).  REFERENCE blocks in individual docstrings are therefore usually not
+  necessary.
 
   Nevertheless, a REFERENCE block can be useful if there are relevant sources
   which are not explicitly mentioned in the docstring or if the docstring is
   particularly long. In that case, add the bibliographic information to the
-  master bibliography file, if not already present, and add a reference block to
-  your docstring as follows::
+  master bibliography file, if not already present, and add a reference block
+  to your docstring as follows::
 
       REFERENCES:
 
@@ -402,9 +440,9 @@ information. You can use the existing functions of Sage as templates.
 
   Note the trailing underscores which makes the citations into hyperlinks. See
   below for more about the master bibliography file. For more about citations,
-  see the `Sphinx/ReST markup for citations
-  <http://sphinx.pocoo.org/rest.html#citations>`_. For links to trac tickets or
-  wikipedia, see :ref:`chapter-sage_manuals_links`.
+  see the `Sphinx/reST markup for citations
+  <http://www.sphinx-doc.org/rest.html#citations>`_. For links to trac tickets
+  or wikipedia, see :ref:`chapter-sage_manuals_links`.
 
 - A **TESTS** block (highly recommended).
 
@@ -421,55 +459,96 @@ information. You can use the existing functions of Sage as templates.
 
   For the purposes of removal, A "TESTS" block is a block starting
   with "TEST:" or "TESTS:" (or the same with two colons), on a line on
-  its own, and ending with an unindented line (that is, the same level
-  of indentation as "TESTS") matching one of the following:
+  its own, and ending either with a line indented less than "TESTS",
+  or with a line with the same level of indentation -- not more --
+  matching one of the following:
 
-  - a line which starts with whitespace and then a Sphinx directive
-    of the form ".. foo:", optionally followed by other text.
+  - a Sphinx directive of the form ".. foo:", optionally followed by
+    other text.
 
-  - a line which starts with whitespace and then text of the form
-    "UPPERCASE:", optionally followed by other text.
+  - text of the form "UPPERCASE:", optionally followed by other
+    text.
 
-  - lines which look like a ReST header: one line containing
+  - lines which look like a reST header: one line containing
     anything, followed by a line consisting only of whitespace,
     followed by a string of hyphens, equal signs, or other
-    characters which are valid markers for ReST headers:
-    ``- = ` : ' " ~ _ ^ * + # < >``.
+    characters which are valid markers for reST
+    headers: ``- = ` : ' " ~ _ ^ * + # < >``.
+
+Note about Sphinx directives vs. other blocks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The main Sphinx directives that are used in Sage are:
+
+``.. MATH::``, ``.. NOTE::``, ``.. PLOT::``, ``.. RUBRIC::``,
+``.. SEEALSO::``, ``.. TODO::``, ``.. TOPIC::`` and ``.. WARNING::``.
+
+They must be written exactly as above, so for example
+``WARNING::`` or ``.. WARNING ::`` will not work.
+
+Some other directives are also available, but less frequently used, namely:
+
+``.. MODULEAUTHOR::``, ``.. automethod::``, ``.. autofunction::``,
+``.. image::``, ``.. figure::``.
+
+Other blocks shall not be used as directives; for example
+``.. ALGORITHM::`` will not be shown at all.
+
+Sage documentation style
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+All Sage documentation is written in reStructuredText (reST) and is
+processed by Sphinx. See http://www.sphinx-doc.org/rest.html for an
+introduction. Sage imposes these styles:
+
+- Lines should be shorter than 80 characters. If in doubt, read `PEP8: Maximum
+  Line Length <https://www.python.org/dev/peps/pep-0008/#maximum-line-length>`_.
+
+- All reST and Sphinx directives (like ``.. WARNING::``, ``.. NOTE::``,
+  ``.. MATH::``, etc.) are written in uppercase.
+
+- Code fragments are quoted with double backticks. This includes function
+  arguments and the Python literals like ````True````, ````False```` and
+  ````None````. For example:
+
+  .. CODE-BLOCK:: rest
+
+      If ``check`` is ``True``, then ...
 
 Sage's master **BIBLIOGRAPHY** file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  All bibliographical references should be stored in the master
-  bibliography file,
-  :file:`SAGE_ROOT/src/doc/en/reference/references/index.rst`, in the
-  format ::
+All bibliographical references should be stored in the master
+bibliography file,
+:file:`SAGE_ROOT/src/doc/en/reference/references/index.rst`, in the
+format ::
 
-      .. [Gau1801] \C. F. Gauss, *Disquisitiones Arithmeticae*, 1801.
+  .. [Gau1801] \C. F. Gauss, *Disquisitiones Arithmeticae*, 1801.
 
-      .. [RSA1978] \R. Rivest, A. Shamir, L. Adleman,
-                   "A Method for Obtaining Digital Signatures and
-                   Public-Key Cryptosystems".
-                   Communications of the ACM **21** (February 1978),
-                   120–126. :doi:`10.1145/359340.359342`.
+  .. [RSA1978] \R. Rivest, A. Shamir, L. Adleman,
+               "A Method for Obtaining Digital Signatures and
+               Public-Key Cryptosystems".
+               Communications of the ACM **21** (February 1978),
+               120–126. :doi:`10.1145/359340.359342`.
 
-  The part in brackets is the citation key: given these examples, you
-  could then use ``[Gau1801]_`` in a docstring to provide a link to the
-  first reference. Note the trailing underscore which makes the citation a
-  hyperlink.
+The part in brackets is the citation key: given these examples, you
+could then use ``[Gau1801]_`` in a docstring to provide a link to the
+first reference. Note the trailing underscore which makes the citation a
+hyperlink.
 
-  When possible, the key should have this form: for a single author, use the
-  first three letters of the family name followed by the year; for multiple
-  authors, use the first letter of each of the family names followed by the
-  year. Note that the year should be four digits, not just the last two -- Sage
-  already has references from both 1910 and 2010, for example.
+When possible, the key should have this form: for a single author, use the
+first three letters of the family name followed by the year; for multiple
+authors, use the first letter of each of the family names followed by the
+year. Note that the year should be four digits, not just the last two -- Sage
+already has references from both 1910 and 2010, for example.
 
-  When abbreviating the first name of an author in a bibliography
-  listing, be sure to put a backslash in front of it. This ensures
-  that the letter (``C.`` in the example above) will not be
-  interpreted as a list enumerator.
+When abbreviating the first name of an author in a bibliography
+listing, be sure to put a backslash in front of it. This ensures
+that the letter (``C.`` in the example above) will not be
+interpreted as a list enumerator.
 
-  For more about citations, see the `Sphinx/ReST markup for citations
-  <http://sphinx.pocoo.org/rest.html#citations>`_.
+For more about citations, see the `Sphinx/reST markup for citations
+<http://www.sphinx-doc.org/rest.html#citations>`_.
 
 Template
 ^^^^^^^^
@@ -487,39 +566,30 @@ indentation:
 
         INPUT:
 
-        - ``x`` -- integer (default: 1) the description of the
-          argument ``x`` goes here.  If it contains multiple lines, all
+        - ``x`` -- integer (default: `1`); the description of the
+          argument ``x`` goes here. If it contains multiple lines, all
           the lines after the first need to begin at the same indentation
           as the backtick.
 
-        - ``y`` -- integer (default: 2) the ...
+        - ``y`` -- integer (default: `2`); the description of the
+          argument ``y``
 
-        OUTPUT:
-
-        The point as a tuple.
-
-        .. SEEALSO::
-
-            :func:`line`
+        OUTPUT: the point as a tuple
 
         EXAMPLES:
 
-        This example illustrates ...
-
-        ::
+        This example illustrates ... ::
 
             sage: A = ModuliSpace()
             sage: A.point(2,3)
             xxx
 
-        We now ...
-
-        ::
+        We now ... ::
 
             sage: B = A.point(5,6)
             sage: xxx
 
-        It is an error to ...::
+        It is an error to ... ::
 
             sage: C = A.point('x',7)
             Traceback (most recent call last):
@@ -532,6 +602,10 @@ indentation:
             whether an elliptic curve `E` over `Q` is modular.
 
         ...
+
+        .. SEEALSO::
+
+            :func:`line`
 
         TESTS::
 
@@ -631,8 +705,8 @@ the following are valid::
         Return $\sin(x)$.
         """
 
-**MATH block:** This is similar to the LaTeX syntax ``\[<math expression>\]`` (or
-``$$<math expression>$$``). For instance::
+**MATH block:** This is similar to the LaTeX syntax ``\[<math expression>\]``
+(or ``$$<math expression>$$``). For instance::
 
     .. MATH::
 
@@ -687,15 +761,15 @@ documentation for math blocks
    &= O(n^2)\\
    \end{align}
 
-**Readability balance:** in the interactive console, LaTeX formulas contained in
-the documentation are represented by their LaTeX code (with
-backslashes stripped). In this situation ``\\frac{a}{b}`` is less readable than ``a/b``
-or ``a b^{-1}`` (some users may not even know LaTeX code). Make it pleasant for
+**Readability balance:** in the interactive console, LaTeX formulas contained
+in the documentation are represented by their LaTeX code (with backslashes
+stripped). In this situation ``\\frac{a}{b}`` is less readable than ``a/b`` or
+``a b^{-1}`` (some users may not even know LaTeX code). Make it pleasant for
 everybody as much as you can manage.
 
 **Commons rings** `(\Bold{Z},\Bold{N},...)`: The Sage LaTeX style is to typeset
-standard rings and fields using the locally-defined macro ``\\Bold``
-(e.g. ``\\Bold{Z}`` gives `\Bold{Z}`).
+standard rings and fields using the locally-defined macro ``\\Bold`` (e.g.
+``\\Bold{Z}`` gives `\Bold{Z}`).
 
 **Shortcuts** are available which preserve readability, e.g. ``\\ZZ`` (`\ZZ`),
 ``\\RR`` (`\RR`), ``\\CC`` (`\CC`), and ``\\QQ`` (`\QQ`). They appear as
@@ -734,8 +808,8 @@ written.
     sage: 2 * 3 # and here is a proof
     6
 
-- All **meaningful combinations** of input arguments. For example a function may
-  accept an ``algorithm="B"`` argument, and doctests should involve both
+- All **meaningful combinations** of input arguments. For example a function
+  may accept an ``algorithm="B"`` argument, and doctests should involve both
   ``algorithm="A"`` and ``algorithm="B"``.
 
 - **Corner cases:** the code should be able to handle a 0 input, or an empty
@@ -767,11 +841,11 @@ written.
   imported before it is tested. Hence the first line in the example.
 
 - **Preparsing:** As in Sage's console, `4/3` returns `4/3` and not `1` as in
-  Python 2.7. Testing occurs with full Sage preparsing of input within the standard
-  Sage shell environment, as described in :ref:`section-preparsing`.
+  Python 2.7. Testing occurs with full Sage preparsing of input within the
+  standard Sage shell environment, as described in :ref:`section-preparsing`.
 
-- **Writing files:** If a test outputs to a file, the file should be a temporary
-  file.  Use :func:`tmp_filename` to get a temporary filename, or
+- **Writing files:** If a test outputs to a file, the file should be a
+  temporary file.  Use :func:`tmp_filename` to get a temporary filename, or
   :func:`tmp_dir` to get a temporary directory. An example from
   ``SAGE_ROOT/src/sage/plot/graphics.py``)::
 
@@ -788,6 +862,18 @@ written.
       5
       7
 
+- **Python3 print:** even if Python2 syntax for print can still be
+  used in your own code for the moment, Python3 syntax for print must
+  be used in Sage code and doctests. If you use an old-style print in
+  doctests, it will raise a SyntaxError::
+
+      sage: print "not like that"
+      Traceback (most recent call last):
+      ...
+      SyntaxError: invalid syntax
+      sage: print("but like this")
+      but like this
+
 - **Split long lines:** You may want to split long lines of code with a
   backslash. Note: this syntax is non-standard and may be removed in the
   future::
@@ -802,8 +888,8 @@ written.
 
 .. _section-further_conventions:
 
-Special Markup to Influence Tests
----------------------------------
+Special Markup to Influence Doctests
+------------------------------------
 
 Overly complicated output in the example code can be shortened
 by an ellipsis marker ``...``::
@@ -842,8 +928,8 @@ framework. Here is a comprehensive list:
       This doctest passes too, as the output is not checked
 
   However, most functions generating pseudorandom output do not need this tag
-  since the doctesting framework guarantees the state of the pseudorandom number
-  generators (PRNGs) used in Sage for a given doctest.
+  since the doctesting framework guarantees the state of the pseudorandom
+  number generators (PRNGs) used in Sage for a given doctest.
 
   When possible, avoid the problem, e.g.: rather than checking the value of the
   hash in a doctest, one could illustrate successfully using it as a key in a
@@ -997,8 +1083,8 @@ further development on Sage.
 
 .. _chapter-testing:
 
-Running Automated Tests
-=======================
+Running Automated Doctests
+==========================
 
 This section describes Sage's automated testing of test files of the
 following types: ``.py``, ``.pyx``, ``.sage``, ``.rst``. Briefly, use
@@ -1035,13 +1121,13 @@ write for the documentation and have them work.
 For more information, see :ref:`chapter-doctesting`.
 
 
-Testing ReST Documentation
+Testing reST Documentation
 --------------------------
 
 Run ``sage -t <filename.rst>`` to test the examples in verbatim
-environments in ReST documentation.
+environments in reST documentation.
 
-Of course in ReST files, one often inserts explanatory texts between
+Of course in reST files, one often inserts explanatory texts between
 different verbatim environments. To link together verbatim
 environments, use the ``.. link`` comment. For example::
 
@@ -1070,7 +1156,7 @@ have that example skipped when testing the file.  This goes in the
 same place as the ``.. link`` in the previous example.
 
 See the files in ``SAGE_ROOT/src/doc/en/tutorial/`` for many
-examples of how to include automated testing in ReST documentation for
+examples of how to include automated testing in reST documentation for
 Sage.
 
 

@@ -55,7 +55,7 @@ Sageのかなりの部分がPythonを使って実装されているものの，�
 インストール
 ==============
 
-まだSageをコンピュータにインストールしていないけれども何かコマンドを実行してはみたいというなら， http://www.sagenb.org 上でオンライン実行してみる手がある．
+まだSageをコンピュータにインストールしていないけれども何かコマンドを実行してはみたいというなら， http://sagecell.sagemath.org 上でオンライン実行してみる手がある．
 
 Sageを自分のコンピュータへインストールする手順については，本家Sageウェブページ [SA]_ のドキュメンテーション部にある "Sage Installation Guide"を見てほしい．
 ここではいくつかコメントしておくだけにしよう．
@@ -73,7 +73,7 @@ Sageを自分のコンピュータへインストールする手順について�
 
 
 SageTeXの利用に関する解説は
-``$SAGE_ROOT/local/share/texmf/tex/generic/sagetex/`` にある．
+``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/`` にある．
 ``$SAGE_ROOT`` はSageがインストールされているディレクトリで，例えば ``/opt/sage-4.2.1`` などとなっているはずだ．
 
 

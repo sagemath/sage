@@ -95,7 +95,7 @@ def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_p
     if not self.is_definite() or not other.is_definite():
         raise ValueError("not a definite form in QuadraticForm.is_globally_equivalent_to()")
 
-    mat = other._pari_().qfisom(self)
+    mat = other.__pari__().qfisom(self)
     if not mat:
         return False
 
@@ -151,7 +151,7 @@ def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_
         return False
 
     ## Test equivalence over Z_p for all primes
-    if (self.base_ring() == ZZ) and (force_jordan_equivalence_test == False):
+    if (self.base_ring() == ZZ) and (not force_jordan_equivalence_test):
 
         ## Test equivalence with Conway-Sloane genus symbols (default over ZZ)
         if self.CS_genus_symbol_list() != other.CS_genus_symbol_list():

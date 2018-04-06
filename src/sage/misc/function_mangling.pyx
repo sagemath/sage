@@ -201,7 +201,7 @@ cdef class ArgumentFixer:
 
         in all cases.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.function_mangling import ArgumentFixer
             sage: def sum3(a,b,c=3,*args,**kwargs):
@@ -269,7 +269,7 @@ cdef class ArgumentFixer:
         The names `n_1, ..., n_m` are given in alphabetical
         order.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.function_mangling import ArgumentFixer
             sage: def do_something(a,b,c=3,*args,**kwargs):
@@ -313,6 +313,5 @@ cdef class ArgumentFixer:
             else:
                 val = defaults[name]
             Largs.append(val)
-        cdef list Items = kwargs.items()
-        Items.sort()
+        cdef list Items = sorted(kwargs.items())
         return tuple(Largs), tuple(Items)

@@ -16,8 +16,9 @@ from sage.misc.flatten import flatten
 from sage.structure.sage_object import SageObject
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.modules.free_module_element import vector
-from sage.rings.all import ZZ, QQ
+from sage.rings.all import QQ
 from sage.misc.functional import is_even, is_odd
+
 
 def branch_weyl_character(chi, R, S, rule="default"):
     r"""
@@ -268,7 +269,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
          sage: E7=WeylCharacterRing("E7",style="coroots")
          sage: A3xA3xA1=WeylCharacterRing("A3xA3xA1",style="coroots")
          sage: E7(1,0,0,0,0,0,0).branch(A3xA3xA1,rule="extended") # long time (0.7s)
-         A3xA3xA1(0,0,1,0,0,1,1) + A3xA3xA1(0,1,0,0,1,0,0) + A3xA3xA1(1,0,0,1,0,0,1) + 
+         A3xA3xA1(0,0,1,0,0,1,1) + A3xA3xA1(0,1,0,0,1,0,0) + A3xA3xA1(1,0,0,1,0,0,1) +
           A3xA3xA1(1,0,1,0,0,0,0) + A3xA3xA1(0,0,0,1,0,1,0) + A3xA3xA1(0,0,0,0,0,0,2)
         sage: fw = E7.fundamental_weights()
         sage: [E7(fw[i]).branch(D6,rule="levi") for i in [1,2,7]] # long time (0.3s)
@@ -882,7 +883,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
         3*G2(1,0)
         sage: A2xA2xG2=WeylCharacterRing("A2xA2xG2",style="coroots")
         sage: A2xA2xG2(0,1,1,1,0,1).branch(A2xG2,rule="proj13")
-        8*A2xG2(0,1,0,1)    
+        8*A2xG2(0,1,0,1)
 
     A more general way of specifying a branching rule from a reducible type is
     to supply a *list* of rules, one *component rule* for each
@@ -967,13 +968,13 @@ def branch_weyl_character(chi, R, S, rule="default"):
 
     or simply::
 
-        rule = lambda x : [x[0]-x[3],x[1]-x[2]]
+        rule = lambda x: [x[0]-x[3],x[1]-x[2]]
 
     We may now make and use the branching rule as follows.
 
     EXAMPLES::
 
-        sage: br = BranchingRule("A3", "C2", lambda x : [x[0]-x[3],x[1]-x[2]], "homemade"); br
+        sage: br = BranchingRule("A3", "C2", lambda x: [x[0]-x[3],x[1]-x[2]], "homemade"); br
         homemade branching rule A3 => C2
         sage: [A3,C2]=[WeylCharacterRing(x,style="coroots") for x in ["A3","C2"]]
         sage: A3(0,1,0).branch(C2,rule=br)
@@ -981,9 +982,9 @@ def branch_weyl_character(chi, R, S, rule="default"):
     """
     if isinstance(rule, str) or isinstance(rule, list):
         rule = branching_rule(R._cartan_type, S._cartan_type, rule)
-    if hasattr(rule,"_S"):
+    if hasattr(rule, "_S"):
         if rule._S != S.cartan_type():
-            raise ValueError("rule has wrong target Cartan type")        
+            raise ValueError("rule has wrong target Cartan type")
     mdict = {}
     for k in chi.weight_multiplicities():
         # TODO: Could this use the new from_vector of ambient_space ?
@@ -1004,11 +1005,13 @@ def branch_weyl_character(chi, R, S, rule="default"):
             mdict[h] = chi_mdict[k]
     return S.char_from_weights(mdict)
 
+
 class BranchingRule(SageObject):
     """
     A class for branching rules.
     """
-    def __init__(self, R, S, f, name="default", intermediate_types=[], intermediate_names=[]):
+    def __init__(self, R, S, f, name="default", intermediate_types=[],
+                 intermediate_names=[]):
         """
         INPUT:
 
@@ -1019,7 +1022,7 @@ class BranchingRule(SageObject):
         self._S = CartanType(S)
         self._f = f
         self._intermediate_types = intermediate_types
-        if len(intermediate_names) > 0:
+        if intermediate_names:
             self._intermediate_names = intermediate_names
         else:
             self._intermediate_names = [name]
@@ -1034,16 +1037,18 @@ class BranchingRule(SageObject):
             sage: b=branching_rule("F4","B3",rule="levi")*branching_rule("B3","G2",rule="miscellaneous"); b
             composite branching rule F4 => (levi) B3 => (miscellaneous) G2
         """
+        R_repr = self._R._repr_(compact=True)
+        S_repr = self._S._repr_(compact=True)
         if self._name == "composite":
-            ret = "composite branching rule %s => "%self._R._repr_(compact=True)
+            ret = "composite branching rule %s => " % R_repr
             for i in range(len(self._intermediate_types)):
                 intt = self._intermediate_types[i]
                 intn = self._intermediate_names[i]
-                ret += "(%s) %s => "%(intn, intt._repr_(compact=True))
-            ret += "(%s) %s"%(self._intermediate_names[-1], self._S._repr_(compact=True))
+                ret += "(%s) %s => " % (intn, intt._repr_(compact=True))
+            ret += "(%s) %s" % (self._intermediate_names[-1], S_repr)
             return ret
-        else:
-            return "%s branching rule %s => %s"%(self._name, self._R._repr_(compact=True), self._S._repr_(compact=True))
+
+        return "%s branching rule %s => %s" % (self._name, R_repr, S_repr)
 
     def __call__(self, x):
         """
@@ -1058,7 +1063,7 @@ class BranchingRule(SageObject):
         except Exception:
             return self._f(x.to_vector())
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Two branching rules with the same source and target Cartan types are
         considered equal if they are the same as mappings from the weight
@@ -1081,50 +1086,68 @@ class BranchingRule(SageObject):
             composite branching rule A3 => (isomorphic) D3 => (symmetric) B2 => (levi) A1
             sage: d == e
             False
-            sage: b1 = BranchingRule("A2","A2",lambda x : [x[2], x[1], x[0]], "long Weyl element conjugation")
-            sage: b2 = BranchingRule("A2","A2",lambda x : x, "identity map")
+            sage: b1 = BranchingRule("A2","A2",lambda x: [x[2], x[1], x[0]], "long Weyl element conjugation")
+            sage: b2 = BranchingRule("A2","A2",lambda x: x, "identity map")
             sage: b1 == b2
             False
             sage: A2 = WeylCharacterRing("A2",style="coroots")
             sage: [A2(f).branch(A2,rule=b1) == A2(f).branch(A2,rule=b2) for f in A2.fundamental_weights()]
             [True, True]
         """
-        c = cmp(type(self), type(other))
-        if c:
-            return c
+        if not isinstance(other, BranchingRule):
+            return False
+
         Rspace = RootSystem(self._R).ambient_space()
         Rspace_other = RootSystem(other._R).ambient_space()
-        c = cmp(Rspace, Rspace_other)
-        if c:
-            return c
+        if Rspace != Rspace_other:
+            return False
+
         Sspace = RootSystem(self._S).ambient_space()
         Sspace_other = RootSystem(other._S).ambient_space()
-        c = cmp(Sspace, Sspace_other)
-        if c:
-            return c
+        if Sspace != Sspace_other:
+            return False
+
         for v in Rspace.fundamental_weights():
             w = list(v.to_vector())
-            c = cmp(Sspace(self(w)), Sspace(other(w)))
-            if c:
-                return c
-        return 0
+            if Sspace(self(w)) != Sspace(other(w)):
+                return False
+        return True
+
+    def __ne__(self, other):
+        """
+        Test inequality
+
+        EXAMPLES::
+
+            sage: b1 = BranchingRule("A2","A2",lambda x: [x[2], x[1], x[0]], "long Weyl element conjugation")
+            sage: b2 = BranchingRule("A2","A2",lambda x: x, "identity map")
+            sage: b1 != b2
+            True
+        """
+        return not(self == other)
 
     def __mul__(self, other):
         """
         EXAMPLES::
 
-            sage: E6=WeylCharacterRing("E6",style="coroots")
-            sage: A5=WeylCharacterRing("A5",style="coroots")
+            sage: E6 = WeylCharacterRing("E6",style="coroots")
+            sage: A5 = WeylCharacterRing("A5",style="coroots")
             sage: br = branching_rule("E6","A5xA1",rule="extended")*branching_rule("A5xA1","A5",rule="proj1"); br
             composite branching rule E6 => (extended) A5xA1 => (proj1) A5
             sage: E6(1,0,0,0,0,0).branch(A5,rule=br)
             A5(0,0,0,1,0) + 2*A5(1,0,0,0,0)
         """
         if self._S == other._R:
-            intermediates = flatten([self._intermediate_types, self._S, other._intermediate_types])
-            internames = flatten([self._intermediate_names, other._intermediate_names])
-            f  = lambda x : other._f(self._f(x))
-            return BranchingRule(self._R, other._S, f, "composite", intermediate_types=intermediates, intermediate_names=internames)
+            intermediates = flatten([self._intermediate_types, self._S,
+                                     other._intermediate_types])
+            internames = flatten([self._intermediate_names,
+                                  other._intermediate_names])
+
+            def f(x):
+                return other._f(self._f(x))
+            return BranchingRule(self._R, other._S, f, "composite",
+                                 intermediate_types=intermediates,
+                                 intermediate_names=internames)
         else:
             raise ValueError("unable to define composite: source and target don't agree")
 
@@ -1157,7 +1180,7 @@ class BranchingRule(SageObject):
         EXAMPLES::
 
             sage: branching_rule("G2","A2","extended").describe()
-            <BLANKLINE>            
+            <BLANKLINE>
             3
             O=<=O---O
             1   2   0
@@ -1173,7 +1196,7 @@ class BranchingRule(SageObject):
             2 => 1
             <BLANKLINE>
             For more detailed information use verbose=True
-  
+
         In this example, `0` is the affine root, that is, the negative
         of the highest root, for `"G2"`. If `i => j` is printed, this
         means that the i-th simple (or affine) root of the ambient
@@ -1192,10 +1215,11 @@ class BranchingRule(SageObject):
         if self._S.is_compound():
             for j in range(len(self._S.component_types())):
                 ctype = self._S.component_types()[j]
-                component_rule = self*branching_rule(self._S, ctype,"proj%s"%(j+1))
-                print("\nprojection %d on %s " % (j+1,
+                component_rule = self*branching_rule(self._S, ctype,
+                                                     "proj%s" % (j + 1))
+                print("\nprojection %d on %s " % (j + 1,
                                                   ctype._repr_(compact=True)),
-                component_rule.describe(verbose=verbose, no_r=True))
+                      component_rule.describe(verbose=verbose, no_r=True))
             if not verbose:
                 print("\nfor more detailed information use verbose=True")
         else:
@@ -1263,10 +1287,12 @@ class BranchingRule(SageObject):
             A2(0,1) + A2(1,0) + A2(0,2) + 2*A2(1,1) + A2(2,0) + A2(1,2) + A2(2,1)
 
         """
+        from sage.combinat.root_system.weyl_characters import WeylCharacterRing
         if style is None:
             style = chi.parent()._style
-        S = sage.combinat.root_system.weyl_characters.WeylCharacterRing(self.Stype(), style=style)
+        S = WeylCharacterRing(self.Stype(), style=style)
         return chi.branch(S, rule=self)
+
 
 def branching_rule(Rtype, Stype, rule="default"):
     """
@@ -1292,14 +1318,14 @@ def branching_rule(Rtype, Stype, rule="default"):
     """
     if rule == "plethysm":
         try:
-            S = sage.combinat.root_system.weyl_characters.WeylCharacterRing(Stype.split("(")[0],style="coroots")
+            S = sage.combinat.root_system.weyl_characters.WeylCharacterRing(Stype.split("(")[0], style="coroots")
             chi = S(eval("("+Stype.split("(")[1]))
         except Exception:
-            S = sage.combinat.root_system.weyl_characters.WeylCharacterRing(Stype.split(".")[0],style="coroots")
-            chi= eval("S."+Stype.split(".")[1])
+            S = sage.combinat.root_system.weyl_characters.WeylCharacterRing(Stype.split(".")[0], style="coroots")
+            chi = eval("S." + Stype.split(".")[1])
         return branching_rule_from_plethysm(chi, Rtype)
-    Rtype=CartanType(Rtype)
-    Stype=CartanType(Stype)
+    Rtype = CartanType(Rtype)
+    Stype = CartanType(Stype)
     r = Rtype.rank()
     s = Stype.rank()
     rdim = Rtype.root_system().ambient_space().dimension()
@@ -1320,7 +1346,7 @@ def branching_rule(Rtype, Stype, rule="default"):
                 if not Stype.is_compound():
                     k = len(Rtypes)
                     n = RootSystem(Stype).ambient_space().dimension()
-                    return BranchingRule(Rtype, Stype, lambda x : [sum(x[i+n*j] for j in range(k)) for i in range(n)], "diagonal")
+                    return BranchingRule(Rtype, Stype, lambda x: [sum(x[i+n*j] for j in range(k)) for i in range(n)], "diagonal")
                 raise ValueError("invalid Cartan types for diagonal branching rule")
             else:
                 raise ValueError("Rule not found")
@@ -1332,12 +1358,12 @@ def branching_rule(Rtype, Stype, rule="default"):
             l = rule[i]
             if l != "omit":
                 if l == "identity":
-                    rules.append(BranchingRule(Rtypes[i], Rtypes[i], lambda x : x, "identity"))
+                    rules.append(BranchingRule(Rtypes[i], Rtypes[i], lambda x: x, "identity"))
                 else:
                     rules.append(l)
                 stor.append(i)
         shifts = Rtype._shifts
-        Stypes = [CartanType(l._S) for l in rules]
+        Stypes = [CartanType(ru._S) for ru in rules]
         ntypes = len(Stypes)
         if Stype.is_compound():
             def br(x):
@@ -1348,6 +1374,7 @@ def branching_rule(Rtype, Stype, rule="default"):
         else:
             j = stor[0]
             rulej = rules[0]
+
             def br(x):
                 return rulej(x[shifts[j]:shifts[j+1]])
         return BranchingRule(Rtype, Stype, br, name)
@@ -1381,52 +1408,52 @@ def branching_rule(Rtype, Stype, rule="default"):
     elif rule == "identity":
         if Rtype is not Stype:
             raise ValueError("Cartan types must match for identity rule")
-        return BranchingRule(Rtype, Stype, lambda x : x, "identity")
+        return BranchingRule(Rtype, Stype, lambda x: x, "identity")
     elif rule == "levi":
         if not s == r-1:
             raise ValueError("Incompatible ranks")
         if Rtype[0] == 'A':
             if Stype.is_compound():
-                if all(ct[0]=='A' for ct in stypes) and rdim == sdim:
-                    return BranchingRule(Rtype, Stype, lambda x : x, "levi")
+                if all(ct[0] == 'A' for ct in stypes) and rdim == sdim:
+                    return BranchingRule(Rtype, Stype, lambda x: x, "levi")
                 else:
                     raise ValueError("Rule not found")
             elif Stype[0] == 'A':
-                return BranchingRule(Rtype, Stype, lambda x : list(x)[:r], "levi")
+                return BranchingRule(Rtype, Stype, lambda x: list(x)[:r], "levi")
             else:
                 raise ValueError("Rule not found")
         elif Rtype[0] in ['B', 'C', 'D']:
             if Stype.is_atomic():
                 if Stype[0] == 'A':
-                    return BranchingRule(Rtype, Stype, lambda x : x, "levi")
+                    return BranchingRule(Rtype, Stype, lambda x: x, "levi")
                 elif Stype[0] == Rtype[0]:
-                    return BranchingRule(Rtype, Stype, lambda x : list(x)[1:], "levi")
+                    return BranchingRule(Rtype, Stype, lambda x: list(x)[1:], "levi")
             elif stypes[-1][0] == Rtype[0] and all(t[0] == 'A' for t in stypes[:-1]):
-                return BranchingRule(Rtype, Stype, lambda x : x, "levi")
+                return BranchingRule(Rtype, Stype, lambda x: x, "levi")
             else:
                 raise ValueError("Rule not found")
         elif Rtype == CartanType("E6"):
             if Stype == CartanType("D5"):
-                return BranchingRule(Rtype, Stype, lambda x : [-x[4],-x[3],-x[2],-x[1],-x[0]], "levi")
-            elif Stype == CartanType("A5"): # non-maximal levi
+                return BranchingRule(Rtype, Stype, lambda x: [-x[4],-x[3],-x[2],-x[1],-x[0]], "levi")
+            elif Stype == CartanType("A5"):  # non-maximal levi
                 return branching_rule("E6","A5xA1","extended")*branching_rule("A5xA1","A5","proj1")
             elif Stype.is_compound():
-                if Stype[0] == CartanType("A4") and Stype[1] == CartanType("A1"): # non-maximal levi
+                if Stype[0] == CartanType("A4") and Stype[1] == CartanType("A1"):  # non-maximal levi
                     return branching_rule("E6","A5xA1","extended")*branching_rule("A5xA1","A4xA1",[branching_rule("A5","A4","levi"),"identity"])
-                if Stype[0] == CartanType("A1") and Stype[1] == CartanType("A4"): # non-maximal levi
+                if Stype[0] == CartanType("A1") and Stype[1] == CartanType("A4"):  # non-maximal levi
                     return branching_rule("E6","A1xA5","extended")*branching_rule("A1xA5","A1xA4",["identity",branching_rule("A5","A4","levi")])
-                elif Stype[0] == CartanType("A2") and Stype[1] == CartanType("A2") and Stype[2]== CartanType("A1"): # non-maximal levi
+                elif Stype[0] == CartanType("A2") and Stype[1] == CartanType("A2") and Stype[2] == CartanType("A1"):  # non-maximal levi
                     return branching_rule("E6","A2xA2xA2","extended")*branching_rule("A2xA2xA2","A2xA2xA2",["identity","identity",branching_rule("A2","A2","automorphic")*branching_rule("A2","A1","levi")])
-                elif Stype[0] == CartanType("A2") and Stype[1] == CartanType("A1") and Stype[2]== CartanType("A2"): # non-maximal levi
+                elif Stype[0] == CartanType("A2") and Stype[1] == CartanType("A1") and Stype[2] == CartanType("A2"):  # non-maximal levi
                     raise ValueError("Not implemented: use A2xA2xA1 levi or A2xA2xA2 extended rule. (Non-maximal Levi.)")
-                elif Stype[0] == CartanType("A1") and Stype[1] == CartanType("A2") and Stype[2]== CartanType("A2"): # non-maximal levi
+                elif Stype[0] == CartanType("A1") and Stype[1] == CartanType("A2") and Stype[2] == CartanType("A2"):  # non-maximal levi
                     raise ValueError("Not implemented: use A2xA2xA1 levi or A2xA2xA2 extended rule. (Non-maximal Levi.)")
         elif Rtype == CartanType("E7"):
             if Stype == CartanType("D6"):
-                return branching_rule("E7","D6xA1","extended")*branching_rule("D6xA1","D6","proj1") # non-maximal levi
+                return branching_rule("E7","D6xA1","extended")*branching_rule("D6xA1","D6","proj1")  # non-maximal levi
             if Stype == CartanType("E6"):
-                return BranchingRule(Rtype, Stype, lambda x : [x[0], x[1], x[2], x[3], x[4], (x[5]+x[6]-x[7])/3, (2*x[5]+5*x[6]+x[7])/6, (-2*x[5]+x[6]+5*x[7])/6], "levi")
-            elif Stype == CartanType("A6"): # non-maximal levi
+                return BranchingRule(Rtype, Stype, lambda x: [x[0], x[1], x[2], x[3], x[4], (x[5]+x[6]-x[7])/3, (2*x[5]+5*x[6]+x[7])/6, (-2*x[5]+x[6]+5*x[7])/6], "levi")
+            elif Stype == CartanType("A6"):  # non-maximal levi
                 return branching_rule("E7","A7","extended")*branching_rule("A7","A7","automorphic")*branching_rule("A7","A6","levi")
             if Stype.is_compound():
                 if Stype[0] == CartanType("A5") and Stype[1] == CartanType("A1"):
@@ -1435,42 +1462,47 @@ def branching_rule(Rtype, Stype, rule="default"):
                     raise NotImplementedError("Not implemented: use A5xA1")
         elif Rtype == CartanType("E8"):
             if Stype == CartanType("D7"):
-                return BranchingRule(Rtype, Stype, lambda x : [-x[6],-x[5],-x[4],-x[3],-x[2],-x[1],-x[0]], "levi")
+                return BranchingRule(Rtype, Stype, lambda x: [-x[6],-x[5],-x[4],-x[3],-x[2],-x[1],-x[0]], "levi")
             elif Stype == CartanType("E7"):
-                return BranchingRule(Rtype, Stype, lambda x : [x[0],x[1],x[2],x[3],x[4],x[5],(x[6]-x[7])/2,(x[7]-x[6])/2], "levi")
+                return BranchingRule(Rtype, Stype, lambda x: [x[0],x[1],x[2],x[3],x[4],x[5],(x[6]-x[7])/2,(x[7]-x[6])/2], "levi")
             elif Stype == CartanType("A7"):
                 return branching_rule("E8","A8","extended")*branching_rule("A8","A7","levi")
             raise NotImplementedError("Not implemented yet: branch first using extended rule to get non-maximal levis")
         elif Rtype == CartanType("F4"):
             if Stype == CartanType("B3"):
-                return BranchingRule(Rtype, Stype, lambda x : x[1:], "levi")
+                return BranchingRule(Rtype, Stype, lambda x: x[1:], "levi")
             elif Stype == CartanType("C3"):
-                return BranchingRule(Rtype, Stype, lambda x : [x[1]-x[0],x[2]+x[3],x[2]-x[3]], "levi")
+                return BranchingRule(Rtype, Stype, lambda x: [x[1]-x[0],x[2]+x[3],x[2]-x[3]], "levi")
             else:
                 raise NotImplementedError("Not implemented yet")
         elif Rtype == CartanType("G2") and Stype == CartanType("A1"):
-            return BranchingRule(Rtype, Stype, lambda x : list(x)[1:][:2], "levi")
+            return BranchingRule(Rtype, Stype, lambda x: list(x)[1:][:2], "levi")
         else:
             raise ValueError("Rule not found")
     elif rule == "automorphic":
         if not Rtype == Stype:
             raise ValueError("Cartan types must agree for automorphic branching rule")
         elif Rtype[0] == 'A':
-            def rule(x) : y = [-i for i in x]; y.reverse(); return y
+            def rule(x):
+                y = [-i for i in x]
+                y.reverse()
+                return y
             return BranchingRule(Rtype, Stype, rule, "automorphic")
         elif Rtype[0] == 'D':
-            def rule(x) : x[len(x)-1] = -x[len(x)-1]; return x
+            def rule(x):
+                x[len(x) - 1] = -x[len(x) - 1]
+                return x
             return BranchingRule(Rtype, Stype, rule, "automorphic")
         elif Rtype[0] == 'E' and r == 6:
-            M = matrix(QQ,[(3, 3, 3, -3, 0, 0, 0, 0), \
-                           (3, 3, -3, 3, 0, 0, 0, 0), \
-                           (3, -3, 3, 3, 0, 0, 0, 0), \
-                           (-3, 3, 3, 3, 0, 0, 0, 0), \
-                           (0, 0, 0, 0, -3, -3, -3, 3), \
-                           (0, 0, 0, 0, -3, 5, -1, 1), \
-                           (0, 0, 0, 0, -3, -1, 5, 1), \
+            M = matrix(QQ,[(3, 3, 3, -3, 0, 0, 0, 0),
+                           (3, 3, -3, 3, 0, 0, 0, 0),
+                           (3, -3, 3, 3, 0, 0, 0, 0),
+                           (-3, 3, 3, 3, 0, 0, 0, 0),
+                           (0, 0, 0, 0, -3, -3, -3, 3),
+                           (0, 0, 0, 0, -3, 5, -1, 1),
+                           (0, 0, 0, 0, -3, -1, 5, 1),
                            (0, 0, 0, 0, 3, 1, 1, 5)])/6
-            return BranchingRule(Rtype, Stype, lambda x : tuple(M*vector(x)), "automorphic")
+            return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "automorphic")
         else:
             raise ValueError("No automorphism found")
     elif rule == "triality":
@@ -1479,23 +1511,25 @@ def branching_rule(Rtype, Stype, rule="default"):
         elif not Rtype[0] == 'D' and r == 4:
             raise ValueError("Triality is for D4 only")
         else:
-            return BranchingRule(Rtype, Stype, lambda x : [(x[0]+x[1]+x[2]+x[3])/2,(x[0]+x[1]-x[2]-x[3])/2,(x[0]-x[1]+x[2]-x[3])/2,(-x[0]+x[1]+x[2]-x[3])/2], "triality")
+            return BranchingRule(Rtype, Stype, lambda x: [(x[0]+x[1]+x[2]+x[3])/2,(x[0]+x[1]-x[2]-x[3])/2,(x[0]-x[1]+x[2]-x[3])/2,(-x[0]+x[1]+x[2]-x[3])/2], "triality")
     elif rule == "symmetric":
         if Rtype[0] == 'A':
             if (Stype[0] == 'C' or Stype[0] == 'D' and r == 2*s-1) or (Stype[0] == 'B' and r == 2*s):
-                return BranchingRule(Rtype, Stype, lambda x : [x[i]-x[r-i] for i in range(s)], "symmetric")
+                return BranchingRule(Rtype, Stype, lambda x: [x[i]-x[r-i] for i in range(s)], "symmetric")
             else:
                 raise ValueError("Rule not found")
         elif Rtype[0] == 'D' and Stype[0] == 'B' and s == r-1:
-            return BranchingRule(Rtype, Stype, lambda x : x[:s], "symmetric")
+            return BranchingRule(Rtype, Stype, lambda x: x[:s], "symmetric")
         elif Rtype == CartanType("D4") and Stype == CartanType("G2"):
-            return BranchingRule(Rtype, Stype, lambda x : [x[0]+x[1], -x[1]+x[2], -x[0]-x[2]], "symmetric")
+            return BranchingRule(Rtype, Stype, lambda x: [x[0]+x[1], -x[1]+x[2], -x[0]-x[2]], "symmetric")
         elif Rtype == CartanType("E6") and Stype == CartanType("F4"):
-            return BranchingRule(Rtype, Stype, lambda x : [(x[4]-3*x[5])/2,(x[0]+x[1]+x[2]+x[3])/2,(-x[0]-x[1]+x[2]+x[3])/2,(-x[0]+x[1]-x[2]+x[3])/2], "symmetric")
+            return BranchingRule(Rtype, Stype, lambda x: [(x[4]-3*x[5])/2,(x[0]+x[1]+x[2]+x[3])/2,(-x[0]-x[1]+x[2]+x[3])/2,(-x[0]+x[1]-x[2]+x[3])/2], "symmetric")
         elif Rtype == CartanType("E6") and Stype == CartanType("C4"):
             def f(x):
-                [x0,x1,x2,x3,x4,x5]=x[:6]
-                return [(x0+x1+x2+x3+x4-3*x5)/2, (-x0-x1-x2-x3+x4-3*x5)/2,  -x0+x3,  -x1+x2]
+                [x0, x1, x2, x3, x4, x5] = x[:6]
+                return [(x0+x1+x2+x3+x4-3*x5)/2,
+                        (-x0-x1-x2-x3+x4-3*x5)/2,
+                        -x0 + x3, -x1 + x2]
             return BranchingRule(Rtype, Stype, f, "symmetric")
         else:
             raise ValueError("Rule not found")
@@ -1515,109 +1549,116 @@ def branching_rule(Rtype, Stype, rule="default"):
                     else:
                         sdeg += 2*t[1]+1
                 if rdeg == sdeg:
-                    return BranchingRule(Rtype, Stype, lambda x : x[:s], "orthogonal_sum")
+                    return BranchingRule(Rtype, Stype, lambda x: x[:s], "orthogonal_sum")
                 else:
                     raise ValueError("Rule not found")
             elif Rtype[0] == 'C':
                 if all(t[0] == Rtype[0] for t in stypes):
-                    return BranchingRule(Rtype, Stype, lambda x : x, "orthogonal_sum")
+                    return BranchingRule(Rtype, Stype, lambda x: x, "orthogonal_sum")
             if rule == "orthogonal_sum":
                 raise ValueError("Rule not found")
             elif Rtype[0] == 'E':
                 if r == 6:
                     if stypes == [CartanType("A5"),CartanType("A1")]:
-                        M = matrix(QQ,[(-3, -3, -3, -3, -3, -5, -5, 5), \
-                                       (-9, 3, 3, 3, 3, 1, 1, -1), \
-                                       (3, -9, 3, 3, 3, 1, 1, -1), \
-                                       (3, 3, -9, 3, 3, 1, 1, -1), \
-                                       (3, 3, 3, -9, 3, 1, 1, -1), \
-                                       (3, 3, 3, 3, -9, 9, -3, 3), \
-                                       (-3, -3, -3, -3, -3, -1, 11, 1), \
+                        M = matrix(QQ,[(-3, -3, -3, -3, -3, -5, -5, 5),
+                                       (-9, 3, 3, 3, 3, 1, 1, -1),
+                                       (3, -9, 3, 3, 3, 1, 1, -1),
+                                       (3, 3, -9, 3, 3, 1, 1, -1),
+                                       (3, 3, 3, -9, 3, 1, 1, -1),
+                                       (3, 3, 3, 3, -9, 9, -3, 3),
+                                       (-3, -3, -3, -3, -3, -1, 11, 1),
                                        (3, 3, 3, 3, 3, 1, 1, 11)])/12
-                        return BranchingRule(Rtype, Stype, lambda x : tuple(M*vector(x)), "extended")
+                        return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "extended")
                     if stypes == [CartanType("A1"),CartanType("A5")]:
-                        M = matrix(QQ,[(-3, -3, -3, -3, -3, -1, 11, 1), \
-                                       (3, 3, 3, 3, 3, 1, 1, 11), \
-                                       (-3, -3, -3, -3, -3, -5, -5, 5), \
-                                       (-9, 3, 3, 3, 3, 1, 1, -1), \
-                                       (3, -9, 3, 3, 3, 1, 1, -1), \
-                                       (3, 3, -9, 3, 3, 1, 1, -1), \
-                                       (3, 3, 3, -9, 3, 1, 1, -1), \
+                        M = matrix(QQ,[(-3, -3, -3, -3, -3, -1, 11, 1),
+                                       (3, 3, 3, 3, 3, 1, 1, 11),
+                                       (-3, -3, -3, -3, -3, -5, -5, 5),
+                                       (-9, 3, 3, 3, 3, 1, 1, -1),
+                                       (3, -9, 3, 3, 3, 1, 1, -1),
+                                       (3, 3, -9, 3, 3, 1, 1, -1),
+                                       (3, 3, 3, -9, 3, 1, 1, -1),
                                        (3, 3, 3, 3, -9, 9, -3, 3)])/12
-                        return BranchingRule(Rtype, Stype, lambda x : tuple(M*vector(x)), "extended")
+                        return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "extended")
                     if stypes == [CartanType("A2"),CartanType("A2"),CartanType("A2")]:
-                        M = matrix(QQ,[(0, 0, -2, -2, -2, -2, -2, 2), \
-                                       (-3, 3, 1, 1, 1, 1, 1, -1), \
-                                       (3, -3, 1, 1, 1, 1, 1, -1), \
-                                       (0, 0, -2, -2, 4, 0, 0, 0), \
-                                       (0, 0, -2, 4, -2, 0, 0, 0), \
-                                       (0, 0, 4, -2, -2, 0, 0, 0), \
-                                       (0, 0, -2, -2, -2, 2, 2, -2), \
-                                       (3, 3, 1, 1, 1, -1, -1, 1), \
+                        M = matrix(QQ,[(0, 0, -2, -2, -2, -2, -2, 2),
+                                       (-3, 3, 1, 1, 1, 1, 1, -1),
+                                       (3, -3, 1, 1, 1, 1, 1, -1),
+                                       (0, 0, -2, -2, 4, 0, 0, 0),
+                                       (0, 0, -2, 4, -2, 0, 0, 0),
+                                       (0, 0, 4, -2, -2, 0, 0, 0),
+                                       (0, 0, -2, -2, -2, 2, 2, -2),
+                                       (3, 3, 1, 1, 1, -1, -1, 1),
                                        (-3, -3, 1, 1, 1, -1, -1, 1)])/6
-                        return BranchingRule(Rtype, Stype, lambda x : tuple(M*vector(x)), "extended")
+                        return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "extended")
                 elif r == 7:
                     if stypes == [CartanType("D6"),CartanType("A1")]:
-                        return BranchingRule(Rtype, Stype, lambda x : [x[5],x[4],x[3],x[2],x[1],x[0],x[6],x[7]], "extended")
+                        return BranchingRule(Rtype, Stype, lambda x: [x[5],x[4],x[3],x[2],x[1],x[0],x[6],x[7]], "extended")
                     elif stypes == [CartanType("A1"),CartanType("D6")]:
-                        return BranchingRule(Rtype, Stype, lambda x : [x[6],x[7],x[5],x[4],x[3],x[2],x[1],x[0]], "extended")
+                        return BranchingRule(Rtype, Stype, lambda x: [x[6],x[7],x[5],x[4],x[3],x[2],x[1],x[0]], "extended")
                     elif stypes == [CartanType("A5"),CartanType("A2")]:
-                        M = matrix(QQ,[(5, 1, 1, 1, 1, 1, 0, 0), \
-                                       (-1, -5, 1, 1, 1, 1, 0, 0), \
-                                       (-1, 1, -5, 1, 1, 1, 0, 0), \
-                                       (-1, 1, 1, -5, 1, 1, 0, 0), \
-                                       (-1, 1, 1, 1, -5, 1, 0, 0), \
-                                       (-1, 1, 1, 1, 1, -5, 0, 0), \
-                                       (1, -1, -1, -1, -1, -1, 0, -6), \
-                                       (1, -1, -1, -1, -1, -1, -6, 0), \
+                        M = matrix(QQ,[(5, 1, 1, 1, 1, 1, 0, 0),
+                                       (-1, -5, 1, 1, 1, 1, 0, 0),
+                                       (-1, 1, -5, 1, 1, 1, 0, 0),
+                                       (-1, 1, 1, -5, 1, 1, 0, 0),
+                                       (-1, 1, 1, 1, -5, 1, 0, 0),
+                                       (-1, 1, 1, 1, 1, -5, 0, 0),
+                                       (1, -1, -1, -1, -1, -1, 0, -6),
+                                       (1, -1, -1, -1, -1, -1, -6, 0),
                                        (-2, 2, 2, 2, 2, 2, -3, -3)])/6
-                        return BranchingRule(Rtype, Stype, lambda x : tuple(M*vector(x)), "extended")
+                        return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "extended")
                     elif stypes == [CartanType("A3"),CartanType("A3"),CartanType("A1")]:
-                        M = matrix(QQ, [(0, 0, -1, -1, -1, -1, 2, -2), \
-                                        (0, 0, -1, -1, -1, -1, -2, 2), \
-                                        (-2, 2, 1, 1, 1, 1, 0, 0), \
-                                        (2, -2, 1, 1, 1, 1, 0, 0), \
-                                        (0, 0, -1, -1, -1, 3, 0, 0), \
-                                        (0, 0, -1, -1, 3, -1, 0, 0), \
-                                        (0, 0, -1, 3, -1, -1, 0, 0), \
-                                        (0, 0, 3, -1, -1, -1, 0, 0), \
-                                        (2, 2, 0, 0, 0, 0, -2, -2), \
+                        M = matrix(QQ, [(0, 0, -1, -1, -1, -1, 2, -2),
+                                        (0, 0, -1, -1, -1, -1, -2, 2),
+                                        (-2, 2, 1, 1, 1, 1, 0, 0),
+                                        (2, -2, 1, 1, 1, 1, 0, 0),
+                                        (0, 0, -1, -1, -1, 3, 0, 0),
+                                        (0, 0, -1, -1, 3, -1, 0, 0),
+                                        (0, 0, -1, 3, -1, -1, 0, 0),
+                                        (0, 0, 3, -1, -1, -1, 0, 0),
+                                        (2, 2, 0, 0, 0, 0, -2, -2),
                                         (-2, -2, 0, 0, 0, 0, -2, -2)])/4
-                        return BranchingRule(Rtype, Stype, lambda x : tuple(M*vector(x)), "extended")
+                        return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "extended")
                 elif r == 8:
                     if stypes == [CartanType("A4"),CartanType("A4")]:
-                        M = matrix(QQ,[(0, 0, 0, -4, -4, -4, -4, 4), \
-                                       (-5, 5, 5, 1, 1, 1, 1, -1), \
-                                       (5, -5, 5, 1, 1, 1, 1, -1), \
-                                       (5, 5, -5, 1, 1, 1, 1, -1), \
-                                       (-5, -5, -5, 1, 1, 1, 1, -1), \
-                                       (0, 0, 0, -8, 2, 2, 2, -2), \
-                                       (0, 0, 0, 2, -8, 2, 2, -2), \
-                                       (0, 0, 0, 2, 2, -8, 2, -2), \
-                                       (0, 0, 0, 2, 2, 2, -8, -2), \
+                        M = matrix(QQ,[(0, 0, 0, -4, -4, -4, -4, 4),
+                                       (-5, 5, 5, 1, 1, 1, 1, -1),
+                                       (5, -5, 5, 1, 1, 1, 1, -1),
+                                       (5, 5, -5, 1, 1, 1, 1, -1),
+                                       (-5, -5, -5, 1, 1, 1, 1, -1),
+                                       (0, 0, 0, -8, 2, 2, 2, -2),
+                                       (0, 0, 0, 2, -8, 2, 2, -2),
+                                       (0, 0, 0, 2, 2, -8, 2, -2),
+                                       (0, 0, 0, 2, 2, 2, -8, -2),
                                        (0, 0, 0, 2, 2, 2, 2, 8)])/10
-                        return BranchingRule(Rtype, Stype, lambda x : tuple(M*vector(x)), "extended")
-                    elif len(stypes)==3:
-                        if 5 in stypes[0][i]: # S is A5xA2xA1
+                        return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "extended")
+                    elif len(stypes) == 3:
+                        if 5 in stypes[0][i]:  # S is A5xA2xA1
                             raise NotImplementedError("Not maximal: first branch to A7xA1")
                     elif stypes == [CartanType("D5"), CartanType("A3")]:
-                        raise NotImplementedError("Not maximal: first branch to D8 then D5xD3=D5xA3")                        
+                        raise NotImplementedError("Not maximal: first branch to D8 then D5xD3=D5xA3")
                     elif stypes == [CartanType("A3"), CartanType("D5")]:
                         raise NotImplementedError("Not maximal: first branch to D8 then D5xD3=D5xA3")
                     elif stypes == [CartanType("E6"), CartanType("A2")]:
-                        br = lambda x : [x[0],x[1],x[2],x[3],x[4], \
-                                         (x[5]+x[6]-x[7])/3,(x[5]+x[6]-x[7])/3,(-x[5]-x[6]+x[7])/3, \
-                                         (-x[5]-x[6]-2*x[7])/3,(-x[5]+2*x[6]+x[7])/3,(2*x[5]-x[6]+x[7])/3]
+                        def br(x):
+                            return [x[0], x[1], x[2], x[3], x[4],
+                                    (x[5]+x[6]-x[7])/3,(x[5]+x[6]-x[7])/3,
+                                    (-x[5]-x[6]+x[7])/3,
+                                    (-x[5]-x[6]-2*x[7])/3,
+                                    (-x[5]+2*x[6]+x[7])/3,
+                                    (2*x[5]-x[6]+x[7])/3]
                         return BranchingRule(Rtype, Stype, br, "extended")
                     elif stypes == [CartanType("E7"), CartanType("A1")]:
-                        br = lambda x : [x[0],x[1],x[2],x[3],x[4],x[5],(x[6]-x[7])/2,(-x[6]+x[7])/2,(-x[6]-x[7])/2,(x[6]+x[7])/2]
+                        def br(x):
+                            return [x[0], x[1], x[2], x[3], x[4], x[5],
+                                    (x[6]-x[7])/2, (-x[6]+x[7])/2,
+                                    (-x[6]-x[7])/2, (x[6]+x[7])/2]
                         return BranchingRule(Rtype, Stype, br, "extended")
                 raise ValueError("Rule not found")
             elif Rtype[0] == 'F':
                 if stypes == [CartanType("C3"), CartanType("A1")]:
-                    return BranchingRule(Rtype, Stype, lambda x : [x[0]-x[1],x[2]+x[3],x[2]-x[3],(-x[0]-x[1])/2,(x[0]+x[1])/2], "extended")
+                    return BranchingRule(Rtype, Stype, lambda x: [x[0]-x[1],x[2]+x[3],x[2]-x[3],(-x[0]-x[1])/2,(x[0]+x[1])/2], "extended")
                 elif stypes == [CartanType("A1"), CartanType("C3")]:
-                    return BranchingRule(Rtype, Stype, lambda x : [(-x[0]-x[1])/2,(x[0]+x[1])/2,x[0]-x[1],x[2]+x[3],x[2]-x[3]], "extended")
+                    return BranchingRule(Rtype, Stype, lambda x: [(-x[0]-x[1])/2,(x[0]+x[1])/2,x[0]-x[1],x[2]+x[3],x[2]-x[3]], "extended")
                 elif stypes == [CartanType("A2"), CartanType("A2")]:
                     M = matrix(QQ,[(-2, -1, -1, 0), (1, 2, -1, 0), (1, -1, 2, 0), (1, -1, -1, 3), (1, -1, -1, -3), (-2, 2, 2, 0)])/3
                 elif stypes == [CartanType("A3"), CartanType("A1")]:
@@ -1626,72 +1667,83 @@ def branching_rule(Rtype, Stype, rule="default"):
                     M = matrix(QQ,[(2, -2, -2, -2), (-2, 2, 2, 2), (-3, -1, -1, -1), (1, 3, -1, -1), (1, -1, 3, -1), (1, -1, -1, 3)])/4
                 else:
                     raise ValueError("Rule not found")
-                return BranchingRule(Rtype, Stype, lambda x : tuple(M*vector(x)), "extended")
+                return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "extended")
             elif Rtype[0] == 'G':
                 if stypes == [CartanType("A1"), CartanType("A1")]:
-                    return BranchingRule(Rtype, Stype, lambda x : [(x[1]-x[2])/2,-(x[1]-x[2])/2, x[0]/2, -x[0]/2], "extended")
+                    return BranchingRule(Rtype, Stype, lambda x: [(x[1]-x[2])/2,-(x[1]-x[2])/2, x[0]/2, -x[0]/2], "extended")
             raise ValueError("Rule not found")
-        else: # irreducible Stype
+        else:  # irreducible Stype
             if Rtype[0] == 'B' and Stype[0] == 'D':
-                return BranchingRule(Rtype, Stype, lambda x : x, "extended")
+                return BranchingRule(Rtype, Stype, lambda x: x, "extended")
             elif Rtype == CartanType("E7"):
                 if Stype == CartanType("A7"):
-                    M = matrix(QQ, [(-1, -1, -1, -1, -1, -1, 2, -2), \
-                                    (-1, -1, -1, -1, -1, -1, -2, 2), \
-                                    (-3, 1, 1, 1, 1, 1, 0, 0), \
-                                    (1, -3, 1, 1, 1, 1, 0, 0), \
-                                    (1, 1, -3, 1, 1, 1, 0, 0), \
-                                    (1, 1, 1, -3, 1, 1, 0, 0), \
-                                    (1, 1, 1, 1, -3, 1, 2, 2), \
+                    M = matrix(QQ, [(-1, -1, -1, -1, -1, -1, 2, -2),
+                                    (-1, -1, -1, -1, -1, -1, -2, 2),
+                                    (-3, 1, 1, 1, 1, 1, 0, 0),
+                                    (1, -3, 1, 1, 1, 1, 0, 0),
+                                    (1, 1, -3, 1, 1, 1, 0, 0),
+                                    (1, 1, 1, -3, 1, 1, 0, 0),
+                                    (1, 1, 1, 1, -3, 1, 2, 2),
                                     (1, 1, 1, 1, 1, -3, 2, 2)])/4
-                    return BranchingRule(Rtype, Stype, lambda x : tuple(M*vector(x)), "extended")
+                    return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "extended")
             elif Rtype == CartanType("E8"):
                 if Stype == CartanType("D8"):
-                    return BranchingRule(Rtype, Stype, lambda x : [-x[7],x[6],x[5],x[4],x[3],x[2],x[1],x[0]], "extended")
+                    return BranchingRule(Rtype, Stype, lambda x: [-x[7],x[6],x[5],x[4],x[3],x[2],x[1],x[0]], "extended")
                 elif Stype == CartanType("A8"):
-                    M = matrix([(-2, -2, -2, -2, -2, -2, -2, 2), \
-                                (-5, 1, 1, 1, 1, 1, 1, -1), \
-                                (1, -5, 1, 1, 1, 1, 1, -1), \
-                                (1, 1, -5, 1, 1, 1, 1, -1), \
-                                (1, 1, 1, -5, 1, 1, 1, -1), \
-                                (1, 1, 1, 1, -5, 1, 1, -1), \
-                                (1, 1, 1, 1, 1, -5, 1, -1), \
-                                (1, 1, 1, 1, 1, 1, -5, -1), \
+                    M = matrix([(-2, -2, -2, -2, -2, -2, -2, 2),
+                                (-5, 1, 1, 1, 1, 1, 1, -1),
+                                (1, -5, 1, 1, 1, 1, 1, -1),
+                                (1, 1, -5, 1, 1, 1, 1, -1),
+                                (1, 1, 1, -5, 1, 1, 1, -1),
+                                (1, 1, 1, 1, -5, 1, 1, -1),
+                                (1, 1, 1, 1, 1, -5, 1, -1),
+                                (1, 1, 1, 1, 1, 1, -5, -1),
                                 (1, 1, 1, 1, 1, 1, 1, 5)])/6
-                    return BranchingRule(Rtype, Stype, lambda x : tuple(M*vector(x)), "extended")
+                    return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "extended")
             elif Rtype == CartanType("F4") and Stype == CartanType("B4"):
-                return BranchingRule(Rtype, Stype, lambda x : [-x[0], x[1], x[2], x[3]], "extended")
+                return BranchingRule(Rtype, Stype, lambda x: [-x[0], x[1], x[2], x[3]], "extended")
             elif Rtype == CartanType("G2") and Stype == CartanType("A2"):
-                return BranchingRule(Rtype, Stype, lambda x : [(-x[1]+x[2])/3, (-x[0]+x[1])/3, (x[0]-x[2])/3], "extended")
+                return BranchingRule(Rtype, Stype, lambda x: [(-x[1]+x[2])/3, (-x[0]+x[1])/3, (x[0]-x[2])/3], "extended")
             else:
                 raise ValueError("Rule not found")
     elif rule == "isomorphic":
         if r != s:
             raise ValueError("Incompatible ranks")
         if Rtype == Stype:
-            return BranchingRule(Rtype, Stype, lambda x : x, "isomorphic")
+            return BranchingRule(Rtype, Stype, lambda x: x, "isomorphic")
         elif Rtype == CartanType("B2") and Stype == CartanType("C2"):
-            def rule(x) : [x1, x2] = x; return [x1+x2, x1-x2]
+            def rule(x):
+                [x1, x2] = x
+                return [x1 + x2, x1 - x2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
         elif Rtype == CartanType("C2") and Stype == CartanType("B2"):
-            def rule(x) : [x1, x2] = x; return [(x1+x2)/2, (x1-x2)/2]
+            def rule(x):
+                [x1, x2] = x
+                return [(x1 + x2) / 2, (x1 - x2) / 2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
         elif Rtype == CartanType("B1") and Stype == CartanType("A1"):
-            return BranchingRule(Rtype, Stype, lambda x : [x[0],-x[0]], "isomorphic")
+            return BranchingRule(Rtype, Stype, lambda x: [x[0],-x[0]], "isomorphic")
         elif Rtype == CartanType("A1") and Stype == CartanType("B1"):
-            return BranchingRule(Rtype, Stype, lambda x : [(x[0]-x[1])/2], "isomorphic")
+            return BranchingRule(Rtype, Stype, lambda x: [(x[0]-x[1])/2], "isomorphic")
         elif Rtype == CartanType("C1") and Stype == CartanType("A1"):
-            return BranchingRule(Rtype, Stype, lambda x : [x[0]/2,-x[0]/2], "isomorphic")
+            return BranchingRule(Rtype, Stype, lambda x: [x[0]/2,-x[0]/2], "isomorphic")
         elif Rtype == CartanType("A1") and Stype == CartanType("C1"):
-            return BranchingRule(Rtype, Stype, lambda x : [x[0]-x[1]], "isomorphic")
+            return BranchingRule(Rtype, Stype, lambda x: [x[0]-x[1]], "isomorphic")
         elif Rtype == CartanType("A3") and Stype == CartanType("D3"):
-            def rule(x): [x1, x2, x3, x4] = x; return [(x1+x2-x3-x4)/2, (x1-x2+x3-x4)/2, (x1-x2-x3+x4)/2]
+            def rule(x):
+                [x1, x2, x3, x4] = x
+                return [(x1+x2-x3-x4)/2, (x1-x2+x3-x4)/2, (x1-x2-x3+x4)/2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
         elif Rtype == CartanType("D3") and Stype == CartanType("A3"):
-            def rule(x): [t1, t2, t3] = x; return [(t1+t2+t3)/2, (t1-t2-t3)/2, (-t1+t2-t3)/2, (-t1-t2+t3)/2]
+            def rule(x):
+                [t1, t2, t3] = x
+                return [(t1+t2+t3)/2, (t1-t2-t3)/2,
+                        (-t1+t2-t3)/2, (-t1-t2+t3)/2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
         elif Rtype == CartanType("D2") and Stype == CartanType("A1xA1"):
-            def rule(x): [t1, t2] = x; return [(t1-t2)/2, -(t1-t2)/2, (t1+t2)/2, -(t1+t2)/2]
+            def rule(x):
+                [t1, t2] = x
+                return [(t1-t2)/2, -(t1-t2)/2, (t1+t2)/2, -(t1+t2)/2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
         else:
             raise ValueError("Rule not found")
@@ -1773,7 +1825,7 @@ def branching_rule(Rtype, Stype, rule="default"):
         mat = matrix(rows).transpose()
         if rule == "tensor-debug":
             print(mat)
-        return BranchingRule(Rtype, Stype, lambda x : tuple(mat*vector(x)), "tensor")
+        return BranchingRule(Rtype, Stype, lambda x: tuple(mat*vector(x)), "tensor")
     elif rule == "symmetric_power":
         if Stype[0] == 'A' and s == 1:
             if Rtype[0] == 'B':
@@ -1788,98 +1840,121 @@ def branching_rule(Rtype, Stype, rule="default"):
                 return BranchingRule(Rtype, Stype, rule, "symmetric_power")
     elif rule == "miscellaneous":
         if Rtype[0] == 'B' and Stype[0] == 'G' and r == 3:
-            return BranchingRule(Rtype, Stype, lambda x : [x[0]+x[1], -x[1]+x[2], -x[0]-x[2]], "miscellaneous")
+            return BranchingRule(Rtype, Stype, lambda x: [x[0]+x[1], -x[1]+x[2], -x[0]-x[2]], "miscellaneous")
         elif Rtype == CartanType("E6"):
             if Stype.is_compound():
                 if stypes == [CartanType("A2"),CartanType("G2")]:
-                    return BranchingRule(Rtype, Stype, lambda x : [-2*x[5],x[5]+x[4],x[5]-x[4],x[2]+x[3],x[1]-x[2],-x[1]-x[3]], "miscellaneous")
+                    return BranchingRule(Rtype, Stype, lambda x: [-2*x[5],x[5]+x[4],x[5]-x[4],x[2]+x[3],x[1]-x[2],-x[1]-x[3]], "miscellaneous")
                 elif stypes == [CartanType("G2"),CartanType("A2")]:
-                    return BranchingRule(Rtype, Stype, lambda x : [x[2]+x[3],x[1]-x[2],-x[1]-x[3],-2*x[5],x[5]+x[4],x[5]-x[4]], "miscellaneous")
+                    return BranchingRule(Rtype, Stype, lambda x: [x[2]+x[3],x[1]-x[2],-x[1]-x[3],-2*x[5],x[5]+x[4],x[5]-x[4]], "miscellaneous")
             else:
                 if Stype == CartanType("G2"):
-                    return BranchingRule(Rtype, Stype, lambda x : [x[2]+x[3]+x[4]-3*x[5], x[1]-2*x[2]-x[3], -x[1]+x[2]-x[4]+3*x[5]],"miscellaneous")
+                    return BranchingRule(Rtype, Stype, lambda x: [x[2]+x[3]+x[4]-3*x[5], x[1]-2*x[2]-x[3], -x[1]+x[2]-x[4]+3*x[5]],"miscellaneous")
                 if Stype == CartanType("A2"):
-                    return BranchingRule(Rtype, Stype, lambda x : [x[2]+x[3]+x[4]-3*x[5], x[1]-2*x[2]-x[3], -x[1]+x[2]-x[4]+3*x[5]],"miscellaneous")
+                    return BranchingRule(Rtype, Stype, lambda x: [x[2]+x[3]+x[4]-3*x[5], x[1]-2*x[2]-x[3], -x[1]+x[2]-x[4]+3*x[5]],"miscellaneous")
         elif Rtype == CartanType("E7"):
             if Stype.is_compound():
-                if stypes == [CartanType("C3"),CartanType("G2")]:
-                    return BranchingRule(Rtype, Stype, lambda x : [-2*x[6],x[4]+x[5],-x[4]+x[5],x[1]+x[3],x[2]-x[3],-x[1]-x[2]],"miscellaneous")
-                elif stypes == [CartanType("G2"),CartanType("C3")]:
-                    return BranchingRule(Rtype, Stype, lambda x : [x[1]+x[3],x[2]-x[3],-x[1]-x[2],-2*x[6],x[4]+x[5],-x[4]+x[5]],"miscellaneous")
-                elif stypes == [CartanType("F4"),CartanType("A1")]:
-                    def f(x) :
-                        [x0,x1,x2,x3,x4,x5,x6] = x[:7]
-                        return [(x4-x5)/2-x6,(x0+x1+x2+x3)/2,(-x0-x1+x2+x3)/2,(-x0+x1-x2+x3)/2,x5-x6,x6-x5]
+                if stypes == [CartanType("C3"), CartanType("G2")]:
+                    return BranchingRule(Rtype, Stype, lambda x: [-2*x[6],x[4]+x[5],-x[4]+x[5],x[1]+x[3],x[2]-x[3],-x[1]-x[2]], "miscellaneous")
+                elif stypes == [CartanType("G2"), CartanType("C3")]:
+                    return BranchingRule(Rtype, Stype, lambda x: [x[1]+x[3],x[2]-x[3],-x[1]-x[2],-2*x[6],x[4]+x[5],-x[4]+x[5]], "miscellaneous")
+                elif stypes == [CartanType("F4"), CartanType("A1")]:
+                    def f(x):
+                        [x0, x1, x2, x3, x4, x5, x6] = x[:7]
+                        return [(x4-x5)/2-x6, (x0+x1+x2+x3)/2,
+                                (-x0-x1+x2+x3)/2, (-x0+x1-x2+x3)/2,
+                                x5-x6, x6-x5]
                     return BranchingRule(Rtype, Stype, f, "miscellaneous")
-                elif stypes == [CartanType("A1"),CartanType("F4")]:
-                    def f(x) :
-                        [x0,x1,x2,x3,x4,x5,x6] = x[:7]
-                        return [x5-x6,x6-x5,(x4-x5)/2-x6,(x0+x1+x2+x3)/2,(-x0-x1+x2+x3)/2,(-x0+x1-x2+x3)/2]
+                elif stypes == [CartanType("A1"), CartanType("F4")]:
+                    def f(x):
+                        [x0, x1, x2, x3, x4, x5, x6] = x[:7]
+                        return [x5-x6, x6-x5, (x4-x5)/2-x6,
+                                (x0+x1+x2+x3)/2,
+                                (-x0-x1+x2+x3)/2,
+                                (-x0+x1-x2+x3)/2]
                     return BranchingRule(Rtype, Stype, f, "miscellaneous")
-                elif stypes == [CartanType("A1"),CartanType("A1")]:
-                    return BranchingRule(Rtype, Stype, lambda x : [x[1]+2*x[2]-2*x[3]-x[4]-2*x[6], -x[1]-2*x[2]+2*x[3]+x[4]+2*x[6], \
-                                                                   (x[3]+x[4]+x[5]-3*x[6]),-(x[3]+x[4]+x[5]-3*x[6])], "miscellaneous")
-                elif stypes == [CartanType("G2"),CartanType("A1")]:
-                    f = lambda x : [(x[0]-x[1]+x[2]+3*x[3]+x[4]-x[5]+2*x[6])/2,(-3*x[0]-x[1]-x[2]-x[3]+x[4]+x[5]-2*x[6])/2,(2*x[0]+2*x[1]-2*x[3]-2*x[4])/2, \
-                                    (x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2,-(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2]
+                elif stypes == [CartanType("A1"), CartanType("A1")]:
+                    return BranchingRule(Rtype, Stype,
+                                         lambda x: [x[1]+2*x[2]-2*x[3]-x[4]-2*x[6], -x[1]-2*x[2]+2*x[3]+x[4]+2*x[6],
+                                                    (x[3]+x[4]+x[5]-3*x[6]),-(x[3]+x[4]+x[5]-3*x[6])], "miscellaneous")
+                elif stypes == [CartanType("G2"), CartanType("A1")]:
+                    def f(x):
+                        return [(x[0]-x[1]+x[2]+3*x[3]+x[4]-x[5]+2*x[6])/2,
+                                (-3*x[0]-x[1]-x[2]-x[3]+x[4]+x[5]-2*x[6])/2,
+                                (2*x[0]+2*x[1]-2*x[3]-2*x[4])/2,
+                                (x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2,
+                                -(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2]
                     return BranchingRule(Rtype, Stype, f, "miscellaneous")
-                elif stypes == [CartanType("A1"),CartanType("G2")]:
-                    f = lambda x : [(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2,-(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2, \
-                        (x[0]-x[1]+x[2]+3*x[3]+x[4]-x[5]+2*x[6])/2,(-3*x[0]-x[1]-x[2]-x[3]+x[4]+x[5]-2*x[6])/2,(2*x[0]+2*x[1]-2*x[3]-2*x[4])/2]
+                elif stypes == [CartanType("A1"), CartanType("G2")]:
+                    def f(x):
+                        return [(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2,
+                                -(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2,
+                                (x[0]-x[1]+x[2]+3*x[3]+x[4]-x[5]+2*x[6])/2,
+                                (-3*x[0]-x[1]-x[2]-x[3]+x[4]+x[5]-2*x[6])/2,
+                                (2*x[0]+2*x[1]-2*x[3]-2*x[4])/2]
                     return BranchingRule(Rtype, Stype, f, "miscellaneous")
             elif Stype == CartanType("A2"):
-                return BranchingRule(Rtype, Stype, lambda x : (x[1]+x[2]+2*x[4]-4*x[6],-2*x[1]-x[2]+x[3]-2*x[4]+2*x[5],x[1]-x[3]-2*x[5]+4*x[6]), "miscellaneous")
+                return BranchingRule(Rtype, Stype, lambda x: (x[1]+x[2]+2*x[4]-4*x[6],-2*x[1]-x[2]+x[3]-2*x[4]+2*x[5],x[1]-x[3]-2*x[5]+4*x[6]), "miscellaneous")
         elif Rtype == CartanType("E8"):
             if Stype.is_compound():
                 if stypes == [CartanType("F4"),CartanType("G2")]:
-                    return BranchingRule(Rtype, Stype, lambda x : [x[7], x[6], x[5], x[4], x[1]+x[3], -x[3]+x[2], -x[1]-x[2]], "miscellaneous")
+                    return BranchingRule(Rtype, Stype, lambda x: [x[7], x[6], x[5], x[4], x[1]+x[3], -x[3]+x[2], -x[1]-x[2]], "miscellaneous")
                 elif stypes == [CartanType("G2"),CartanType("F4")]:
-                    return BranchingRule(Rtype, Stype, lambda x : [x[1]+x[3], -x[3]+x[2], -x[1]-x[2], x[7], x[6], x[5], x[4]], "miscellaneous")
+                    return BranchingRule(Rtype, Stype, lambda x: [x[1]+x[3], -x[3]+x[2], -x[1]-x[2], x[7], x[6], x[5], x[4]], "miscellaneous")
                 elif stypes == [CartanType("A2"), CartanType("A1")]:
-                    f = lambda x : [(x[0]-x[1]+x[2]+x[3]+3*x[4]+x[5]-x[6]-x[7])/2,(-3*x[0]-x[1]-x[2]-x[3]-x[4]+x[5]+x[6]+x[7])/2,(2*x[0]+2*x[1]-2*x[4]-2*x[5])/2, \
-                                    (x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2, -(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2]
+                    def f(x):
+                        return [(x[0]-x[1]+x[2]+x[3]+3*x[4]+x[5]-x[6]-x[7])/2,
+                                (-3*x[0]-x[1]-x[2]-x[3]-x[4]+x[5]+x[6]+x[7])/2,
+                                (2*x[0]+2*x[1]-2*x[4]-2*x[5])/2,
+                                (x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2,
+                                -(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2]
                     return BranchingRule("E8","A2xA1",f,"miscellaneous")
                 elif stypes == [CartanType("A1"), CartanType("A2")]:
-                    f = lambda x : [(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2, -(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2,
-                                    (x[0]-x[1]+x[2]+x[3]+3*x[4]+x[5]-x[6]-x[7])/2,(-3*x[0]-x[1]-x[2]-x[3]-x[4]+x[5]+x[6]+x[7])/2,(2*x[0]+2*x[1]-2*x[4]-2*x[5])/2]
-                    return BranchingRule("E8","A1xA2",f,"miscellaneous")
+                    def f(x):
+                        return [(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2,
+                                -(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2,
+                                (x[0]-x[1]+x[2]+x[3]+3*x[4]+x[5]-x[6]-x[7])/2,
+                                (-3*x[0]-x[1]-x[2]-x[3]-x[4]+x[5]+x[6]+x[7])/2,
+                                (2*x[0]+2*x[1]-2*x[4]-2*x[5])/2]
+                    return BranchingRule("E8", "A1xA2", f, "miscellaneous")
             elif Stype == CartanType("B2"):
-                   return BranchingRule("E8", "B2", lambda x : [-x[0] + x[2] + x[5] + 3*x[7], 2*x[0] - x[2] + x[3] + x[4] + 2*x[6] + x[7]], "miscellaneous")
+                return BranchingRule("E8", "B2", lambda x: [-x[0] + x[2] + x[5] + 3*x[7], 2*x[0] - x[2] + x[3] + x[4] + 2*x[6] + x[7]], "miscellaneous")
         elif Rtype[0] == 'F':
             if Stype.is_compound():
-                if stypes == [CartanType("A1"),CartanType("G2")]:
-                    return BranchingRule("F4","A1xG2", lambda x : [ 2*x[0], -2*x[0], x[1]+x[2], -x[2]+x[3], -x[1]-x[3]], "miscellaneous")
-                elif stypes == [CartanType("G2"),CartanType("A1")]:
-                    return BranchingRule("F4","G2xA1", lambda x : [x[1]+x[2], -x[2]+x[3], -x[1]-x[3], 2*x[0], -2*x[0]], "miscellaneous")
+                if stypes == [CartanType("A1"), CartanType("G2")]:
+                    return BranchingRule("F4", "A1xG2", lambda x: [2*x[0], -2*x[0], x[1]+x[2], -x[2]+x[3], -x[1]-x[3]], "miscellaneous")
+                elif stypes == [CartanType("G2"), CartanType("A1")]:
+                    return BranchingRule("F4","G2xA1", lambda x: [x[1]+x[2], -x[2]+x[3], -x[1]-x[3], 2*x[0], -2*x[0]], "miscellaneous")
         raise ValueError("Rule not found")
-    elif rule in ["i","ii","iii","iv","v","vi","vii"]:
+    elif rule in ["i", "ii", "iii", "iv", "v", "vi", "vii"]:
         if Stype != CartanType("A1"):
-            raise ValueError("Wrong target Cartan Type for rule %s"%rule)
+            raise ValueError("Wrong target Cartan Type for rule %s" % rule)
         if rule == "i" and Rtype == CartanType("G2"):
-            return BranchingRule(Rtype, Stype, lambda x : [(5*x[0]-x[1]-4*x[2])/3,-(5*x[0]-x[1]-4*x[2])/3], "i")
+            return BranchingRule(Rtype, Stype, lambda x: [(5*x[0]-x[1]-4*x[2])/3,-(5*x[0]-x[1]-4*x[2])/3], "i")
         elif rule == "ii" and Rtype == CartanType("F4"):
-            return BranchingRule(Rtype, Stype, lambda x : [8*x[0]+3*x[1]+2*x[2]+x[3],-(8*x[0]+3*x[1]+2*x[2]+x[3])], "ii")
+            return BranchingRule(Rtype, Stype, lambda x: [8*x[0]+3*x[1]+2*x[2]+x[3],-(8*x[0]+3*x[1]+2*x[2]+x[3])], "ii")
         elif rule == "iii" and Rtype == CartanType("E7"):
-            return BranchingRule(Rtype, Stype, \
-                          lambda x : [x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]-17*x[6],-(x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]-17*x[6])],"iii")
+            return BranchingRule(Rtype, Stype,
+                                 lambda x: [x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]-17*x[6],-(x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]-17*x[6])], "iii")
         elif rule == "iv" and Rtype == CartanType("E7"):
-            return BranchingRule(Rtype, Stype, \
-                          lambda x: [x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]-13*x[6],-(x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]-13*x[6])],"iv")
+            return BranchingRule(Rtype, Stype,
+                                 lambda x: [x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]-13*x[6],-(x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]-13*x[6])], "iv")
         elif rule == "v" and Rtype == CartanType("E8"):
-            return BranchingRule(Rtype, Stype, \
-                          lambda x : [x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]+6*x[6]+23*x[7],-(x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]+6*x[6]+23*x[7])],"v")
+            return BranchingRule(Rtype, Stype,
+                                 lambda x: [x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]+6*x[6]+23*x[7],-(x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]+6*x[6]+23*x[7])], "v")
         elif rule == "vi" and Rtype == CartanType("E8"):
-            return BranchingRule(Rtype, Stype, \
-                          lambda x : [x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]+5*x[6]+18*x[7],-(x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]+5*x[6]+18*x[7])],"vi")
+            return BranchingRule(Rtype, Stype,
+                                 lambda x: [x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]+5*x[6]+18*x[7],-(x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]+5*x[6]+18*x[7])], "vi")
         elif rule == "vii" and Rtype == CartanType("E8"):
-            return BranchingRule(Rtype, Stype, \
-                          lambda x : [x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7],-(x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7])],"vii")
-        raise ValueError("Wrong source Cartan Type for rule %s"%rule)
+            return BranchingRule(Rtype, Stype,
+                                 lambda x: [x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7],-(x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7])], "vii")
+        raise ValueError("Wrong source Cartan Type for rule %s" % rule)
     raise ValueError("Rule not found")
 
 get_branching_rule = branching_rule
 
-def branching_rule_from_plethysm(chi, cartan_type, return_matrix = False):
+
+def branching_rule_from_plethysm(chi, cartan_type, return_matrix=False):
     r"""
     Create the branching rule of a plethysm.
 
@@ -1920,19 +1995,19 @@ def branching_rule_from_plethysm(chi, cartan_type, return_matrix = False):
         [A2(1,1), A2(0,3) + A2(1,1) + A2(3,0), A2(1,1), A2(1,1)]
     """
     ct = CartanType(cartan_type)
-    if ct[0] not in ["A","B","C","D"]:
+    if ct[0] not in ["A", "B", "C", "D"]:
         raise ValueError("not implemented for type {}".format(ct[0]))
     if ct[0] == "A":
         ret = []
         ml = chi.weight_multiplicities()
         for v in ml:
             n = ml[v]
-            ret.extend(n*[v.to_vector()])
+            ret.extend(n * [v.to_vector()])
         M = matrix(ret).transpose()
         if len(M.columns()) != ct[1] + 1:
             raise ValueError("representation has wrong degree for type {}".format(ct))
-        return BranchingRule(ct, chi.parent().cartan_type(), lambda x : tuple(M*vector(x)), "plethysm (along %s)"%chi)
-    if ct[0] in ["B","D"]:
+        return BranchingRule(ct, chi.parent().cartan_type(), lambda x: tuple(M*vector(x)), "plethysm (along %s)" % chi)
+    if ct[0] in ["B", "D"]:
         if chi.frobenius_schur_indicator() != 1:
             raise ValueError("character is not orthogonal")
     if ct[0] == "C":
@@ -1941,7 +2016,7 @@ def branching_rule_from_plethysm(chi, cartan_type, return_matrix = False):
     if ct[0] == "B":
         if is_even(chi.degree()):
             raise ValueError("degree is not odd")
-    if ct[0] in ["C","D"]:
+    if ct[0] in ["C", "D"]:
         if is_odd(chi.degree()):
             raise ValueError("degree is not even")
     ret = []
@@ -1949,21 +2024,22 @@ def branching_rule_from_plethysm(chi, cartan_type, return_matrix = False):
     for v in ml:
         n = ml[v]
         vec = v.to_vector()
-        if all(x==0 for x in vec):
+        if all(x == 0 for x in vec):
             if ct[0] == "B":
                 n = (n-1)/2
             else:
                 n = n/2
-        elif [x for x in vec if x !=0][0] < 0:
+        elif [x for x in vec if x != 0][0] < 0:
             continue
-        ret.extend(n*[vec])
+        ret.extend(n * [vec])
     M = matrix(ret).transpose()
     if len(M.columns()) != ct.root_system().ambient_space().dimension():
         raise ValueError("representation has wrong degree for type {}".format(ct))
     if return_matrix:
         return M
     else:
-        return BranchingRule(ct, chi.parent().cartan_type(), lambda x : tuple(M*vector(x)), "plethysm (along %s)"%chi)
+        return BranchingRule(ct, chi.parent().cartan_type(), lambda x: tuple(M*vector(x)), "plethysm (along %s)" % chi)
+
 
 def maximal_subgroups(ct, mode="print_rules"):
     """
@@ -1987,223 +2063,223 @@ def maximal_subgroups(ct, mode="print_rules"):
         A1xC2:branching_rule("D4","C1xC2","tensor")*branching_rule("C1xC2","A1xC2",[branching_rule("C1","A1","isomorphic"),"identity"])
         A1xA1xA1xA1:branching_rule("D4","D2xD2","orthogonal_sum")*branching_rule("D2xD2","A1xA1xA1xA1",[branching_rule("D2","A1xA1","isomorphic"),branching_rule("D2","A1xA1","isomorphic")])
 
-    .. seealso: :meth:`~sage.combinat.root_system.weyl_characters.WeylCharacterRing.ParentMethods.maximal_subgroups`
+    .. SEEALSO:: :meth:`~sage.combinat.root_system.weyl_characters.WeylCharacterRing.ParentMethods.maximal_subgroups`
 
     """
 
     if CartanType(ct) == CartanType("A2"):
         rul = ["""A1:branching_rule("A2","A1","levi")"""]
     elif CartanType(ct) == CartanType("A3"):
-        rul = ["""A2:branching_rule("A3","A2","levi")""", \
-               """A1xA1:branching_rule("A3","A1xA1","tensor")""", \
-               """C2:branching_rule("A3","C2","symmetric")""", \
+        rul = ["""A2:branching_rule("A3","A2","levi")""",
+               """A1xA1:branching_rule("A3","A1xA1","tensor")""",
+               """C2:branching_rule("A3","C2","symmetric")""",
                """A1xA1:branching_rule("A3","A1xA1","levi")"""]
     elif CartanType(ct) == CartanType("A4"):
-        rul = ["""A3:branching_rule("A4","A3","levi")""", \
-               """B2:branching_rule("A4","B2","symmetric")""", \
+        rul = ["""A3:branching_rule("A4","A3","levi")""",
+               """B2:branching_rule("A4","B2","symmetric")""",
                """A1xA2:branching_rule("A4","A1xA2","levi")"""]
     elif CartanType(ct) == CartanType("A5"):
-        rul = ["""A4:branching_rule("A5","A4","levi")""", \
-               """A3:branching_rule("A5","D3","symmetric")*branching_rule("D3","A3","isomorphic")""", \
-               """A3:branching_rule("A5","A3(0,1,0)","plethysm") # alternative""", \
-               """C3:branching_rule("A5","C3","symmetric")""", \
-               """A2:branching_rule("A5","A2(2,0)","plethysm")""", \
-               """A1xA2:branching_rule("A5","A1xA2","tensor")""", \
-               """A1xA3:branching_rule("A5","A1xA3","levi")""", \
+        rul = ["""A4:branching_rule("A5","A4","levi")""",
+               """A3:branching_rule("A5","D3","symmetric")*branching_rule("D3","A3","isomorphic")""",
+               """A3:branching_rule("A5","A3(0,1,0)","plethysm") # alternative""",
+               """C3:branching_rule("A5","C3","symmetric")""",
+               """A2:branching_rule("A5","A2(2,0)","plethysm")""",
+               """A1xA2:branching_rule("A5","A1xA2","tensor")""",
+               """A1xA3:branching_rule("A5","A1xA3","levi")""",
                """A2xA2:branching_rule("A5","A2xA2","levi")"""]
     elif CartanType(ct) == CartanType("A6"):
-        rul = ["""A5:branching_rule("A6","A5","levi")""", \
-               """B3:branching_rule("A6","B3","symmetric")""", \
-               """A1xA4:branching_rule("A6","A1xA4","levi")""", \
+        rul = ["""A5:branching_rule("A6","A5","levi")""",
+               """B3:branching_rule("A6","B3","symmetric")""",
+               """A1xA4:branching_rule("A6","A1xA4","levi")""",
                """A2xA3:branching_rule("A6","A2xA3","levi")"""]
     elif CartanType(ct) == CartanType("A7"):
-        rul = ["""A6:branching_rule("A7","A6","levi")""", \
-               """C4:branching_rule("A7","C4","symmetric")""", \
-               """D4:branching_rule("A7","D4","symmetric")""", \
-               """A1xA3:branching_rule("A7","A1xA3","tensor")""", \
-               """A1xA5:branching_rule("A7","A1xA5","levi")""", \
-               """A2xA4:branching_rule("A7","A2xA4","levi")""", \
+        rul = ["""A6:branching_rule("A7","A6","levi")""",
+               """C4:branching_rule("A7","C4","symmetric")""",
+               """D4:branching_rule("A7","D4","symmetric")""",
+               """A1xA3:branching_rule("A7","A1xA3","tensor")""",
+               """A1xA5:branching_rule("A7","A1xA5","levi")""",
+               """A2xA4:branching_rule("A7","A2xA4","levi")""",
                """A3xA3:branching_rule("A7","A3xA3","levi")"""]
     elif CartanType(ct) == CartanType("A8"):
-        rul = ["""A7:branching_rule("A8","A7","levi")""", \
-               """B4:branching_rule("A8","B4","symmetric")""", \
-               """A2xA2:branching_rule("A8","A2xA2","tensor")""", \
-               """A1xA6:branching_rule("A8","A1xA6","levi")""", \
-               """A2xA5:branching_rule("A8","A2xA5","levi")""", \
+        rul = ["""A7:branching_rule("A8","A7","levi")""",
+               """B4:branching_rule("A8","B4","symmetric")""",
+               """A2xA2:branching_rule("A8","A2xA2","tensor")""",
+               """A1xA6:branching_rule("A8","A1xA6","levi")""",
+               """A2xA5:branching_rule("A8","A2xA5","levi")""",
                """A3xA4:branching_rule("A8","A3xA4","levi")"""]
     elif CartanType(ct) == CartanType("B3"):
-        rul = ["""G2:branching_rule("B3","G2","miscellaneous")""", \
-               """A3:branching_rule("B3","D3","extended")*branching_rule("D3","A3","isomorphic")""", \
+        rul = ["""G2:branching_rule("B3","G2","miscellaneous")""",
+               """A3:branching_rule("B3","D3","extended")*branching_rule("D3","A3","isomorphic")""",
                """A1xA1xA1:branching_rule("B3","D2xB1","orthogonal_sum")*branching_rule("D2xB1","A1xA1xA1",[branching_rule("D2","A1xA1","isomorphic"),branching_rule("B1","A1","isomorphic")])"""]
     elif CartanType(ct) == CartanType("B4"):
-        rul = ["""D4:branching_rule("B4","D4","extended")""", \
-               """A1:branching_rule("B4","A1","symmetric_power")""", \
-               """A1xA1:branching_rule("B4","B1xB1","tensor")*branching_rule("B1xB1","A1xA1",[branching_rule("B1","A1","isomorphic"),branching_rule("B1","A1","isomorphic")])""", \
-               """A1xA1xB2:branching_rule("B4","D2xB2","extended")*branching_rule("D2xB2","A1xA1xB2",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""", \
+        rul = ["""D4:branching_rule("B4","D4","extended")""",
+               """A1:branching_rule("B4","A1","symmetric_power")""",
+               """A1xA1:branching_rule("B4","B1xB1","tensor")*branching_rule("B1xB1","A1xA1",[branching_rule("B1","A1","isomorphic"),branching_rule("B1","A1","isomorphic")])""",
+               """A1xA1xB2:branching_rule("B4","D2xB2","extended")*branching_rule("D2xB2","A1xA1xB2",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""",
                """A1xA3:branching_rule("B4","B1xD3","extended")*branching_rule("B1xD3","A1xA3",[branching_rule("B1","A1","isomorphic"),branching_rule("D3","A3","isomorphic")])"""]
     elif CartanType(ct) == CartanType("B5"):
-        rul = ["""D5:branching_rule("B5","D5","extended")""", \
-               """A1:branching_rule("B5","A1","symmetric_power")""", \
-               """A1xA2xB3:branching_rule("B5","D2xB3","extended")*branching_rule("D2xB3","A1xA2xB3",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""", \
-               """A1xD4:branching_rule("B5","B1xD4","orthogonal_sum")*branching_rule("B1xD4","A1xD4",[branching_rule("B1","A1","isomorphic"),"identity"])""", \
+        rul = ["""D5:branching_rule("B5","D5","extended")""",
+               """A1:branching_rule("B5","A1","symmetric_power")""",
+               """A1xA2xB3:branching_rule("B5","D2xB3","extended")*branching_rule("D2xB3","A1xA2xB3",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""",
+               """A1xD4:branching_rule("B5","B1xD4","orthogonal_sum")*branching_rule("B1xD4","A1xD4",[branching_rule("B1","A1","isomorphic"),"identity"])""",
                """A3xB2:branching_rule("B5","D3xB2","orthogonal_sum")*branching_rule("D3xB2","A3xB2",[branching_rule("D3","A3","isomorphic"),"identity"])"""]
     elif CartanType(ct) == CartanType("B6"):
-        rul = ["""D6:branching_rule("B6","D6","extended")""", \
-               """A1:branching_rule("B6","A1","symmetric_power")""", \
-               """A1xA1xB4:branching_rule("B6","D2xB4","orthogonal_sum")*branching_rule("D2xB4","A1xA1xB4",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""", \
-               """A1xD5:branching_rule("B6","B1xD5","orthogonal_sum")*branching_rule("B1xD5","A1xD5",[branching_rule("B1","A1","isomorphic"),"identity"])""", \
-               """A3xB3:branching_rule("B6","D3xB3","orthogonal_sum")*branching_rule("D3xB3","A3xB3",[branching_rule("D3","A3","isomorphic"),"identity"])""", \
+        rul = ["""D6:branching_rule("B6","D6","extended")""",
+               """A1:branching_rule("B6","A1","symmetric_power")""",
+               """A1xA1xB4:branching_rule("B6","D2xB4","orthogonal_sum")*branching_rule("D2xB4","A1xA1xB4",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""",
+               """A1xD5:branching_rule("B6","B1xD5","orthogonal_sum")*branching_rule("B1xD5","A1xD5",[branching_rule("B1","A1","isomorphic"),"identity"])""",
+               """A3xB3:branching_rule("B6","D3xB3","orthogonal_sum")*branching_rule("D3xB3","A3xB3",[branching_rule("D3","A3","isomorphic"),"identity"])""",
                """B2xD4:branching_rule("B6","B2xD4","orthogonal_sum")"""]
     elif CartanType(ct) == CartanType("B7"):
-        rul = ["""D7:branching_rule("B7","D7","extended")""", \
-               """A3:branching_rule("B7","A3(1,0,1)","plethysm")""", \
-               """A1:branching_rule("B7","A1","symmetric_power")""", \
-               """A1xB2:branching_rule("B7","B1xB2","tensor")*branching_rule("B1xB2","A1xB2",[branching_rule("B1","A1","isomorphic"),"identity"])""", \
-               """A1xD6:branching_rule("B7","B1xD6","extended")*branching_rule("B1xD6","A1xD6",[branching_rule("B1","A1","isomorphic"),"identity"])""", \
-               """A1xA1xB5:branching_rule("B7","D2xB5","extended")*branching_rule("D2xB5","A1xA1xB5",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""", \
-               """B2xD5:branching_rule("B7","B2xD5","orthogonal_sum")""", \
-               """A3xB4:branching_rule("B7","D3xB4","orthogonal_sum")*branching_rule("D3xB4","A3xB4",[branching_rule("D3","A3","isomorphic"),"identity"])""", \
+        rul = ["""D7:branching_rule("B7","D7","extended")""",
+               """A3:branching_rule("B7","A3(1,0,1)","plethysm")""",
+               """A1:branching_rule("B7","A1","symmetric_power")""",
+               """A1xB2:branching_rule("B7","B1xB2","tensor")*branching_rule("B1xB2","A1xB2",[branching_rule("B1","A1","isomorphic"),"identity"])""",
+               """A1xD6:branching_rule("B7","B1xD6","extended")*branching_rule("B1xD6","A1xD6",[branching_rule("B1","A1","isomorphic"),"identity"])""",
+               """A1xA1xB5:branching_rule("B7","D2xB5","extended")*branching_rule("D2xB5","A1xA1xB5",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""",
+               """B2xD5:branching_rule("B7","B2xD5","orthogonal_sum")""",
+               """A3xB4:branching_rule("B7","D3xB4","orthogonal_sum")*branching_rule("D3xB4","A3xB4",[branching_rule("D3","A3","isomorphic"),"identity"])""",
                """B3xD4:branching_rule("B7","B3xD4","orthogonal_sum")"""]
     elif CartanType(ct) == CartanType("B8"):
-        rul = ["""D8:branching_rule("B8","D8","extended")""", \
-               """A1:branching_rule("B8","A1","symmetric_power")""", \
-               """A1xD7:branching_rule("B8","B1xD7","orthogonal_sum")*branching_rule("B1xD7","A1xD7",[branching_rule("B1","A1","isomorphic"),"identity"])""", \
-               """A1xA1xB6:branching_rule("B8","D2xB6","orthogonal_sum")*branching_rule("D2xB6","A1xA1xB6",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""", \
-               """B2xD6:branching_rule("B8","B2xD6","orthogonal_sum")""", \
-               """A3xB5:branching_rule("B8","D3xB5","orthogonal_sum")*branching_rule("D3xB5","A3xB5",[branching_rule("D3","A3","isomorphic"),"identity"])""", \
-               """B3xD5:branching_rule("B8","B3xD5","orthogonal_sum")""", \
+        rul = ["""D8:branching_rule("B8","D8","extended")""",
+               """A1:branching_rule("B8","A1","symmetric_power")""",
+               """A1xD7:branching_rule("B8","B1xD7","orthogonal_sum")*branching_rule("B1xD7","A1xD7",[branching_rule("B1","A1","isomorphic"),"identity"])""",
+               """A1xA1xB6:branching_rule("B8","D2xB6","orthogonal_sum")*branching_rule("D2xB6","A1xA1xB6",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""",
+               """B2xD6:branching_rule("B8","B2xD6","orthogonal_sum")""",
+               """A3xB5:branching_rule("B8","D3xB5","orthogonal_sum")*branching_rule("D3xB5","A3xB5",[branching_rule("D3","A3","isomorphic"),"identity"])""",
+               """B3xD5:branching_rule("B8","B3xD5","orthogonal_sum")""",
                """B4xD4:branching_rule("B8","B4xD4","orthogonal_sum")"""]
     elif CartanType(ct) == CartanType("C2"):
-        rul = ["""A1:branching_rule("C2","A1","symmetric_power")""", \
+        rul = ["""A1:branching_rule("C2","A1","symmetric_power")""",
                """A1xA1:branching_rule("C2","C1xC1","orthogonal_sum")*branching_rule("C1xC1","A1xA1",[branching_rule("C1","A1","isomorphic"),branching_rule("C1","A1","isomorphic")])"""]
     elif CartanType(ct) == CartanType("C3"):
-        rul = ["""A2:branching_rule("C3","A2","levi")""", \
-               """A1:branching_rule("C3","A1","symmetric_power")""", \
-               """A1xA1:branching_rule("C3","B1xC1","tensor")*branching_rule("B1xC1","A1xA1",[branching_rule("B1","A1","isomorphic"),branching_rule("C1","A1","isomorphic")])""", \
+        rul = ["""A2:branching_rule("C3","A2","levi")""",
+               """A1:branching_rule("C3","A1","symmetric_power")""",
+               """A1xA1:branching_rule("C3","B1xC1","tensor")*branching_rule("B1xC1","A1xA1",[branching_rule("B1","A1","isomorphic"),branching_rule("C1","A1","isomorphic")])""",
                """A1xC2:branching_rule("C3","C1xC2","orthogonal_sum")*branching_rule("C1xC2","A1xC2",[branching_rule("C1","A1","isomorphic"),"identity"])"""]
     elif CartanType(ct) == CartanType("C4"):
-        rul = ["""A3:branching_rule("C4","A3","levi")""", \
-               """A1:branching_rule("C4","A1","symmetric_power")""", \
-               """A1xA3:branching_rule("C4","C1xC3","orthogonal_sum")*branching_rule("C1xC3","A1xA3",[branching_rule("C1","A1","isomorphic"),"identity"])""", \
-               """C2xC2:branching_rule("C4","C2xC2","orthogonal_sum")""", \
+        rul = ["""A3:branching_rule("C4","A3","levi")""",
+               """A1:branching_rule("C4","A1","symmetric_power")""",
+               """A1xA3:branching_rule("C4","C1xC3","orthogonal_sum")*branching_rule("C1xC3","A1xA3",[branching_rule("C1","A1","isomorphic"),"identity"])""",
+               """C2xC2:branching_rule("C4","C2xC2","orthogonal_sum")""",
                """A1xA1xA1:branching_rule("C4","C1xD2","tensor")*branching_rule("C1xD2","A1xA1xA1",[branching_rule("C1","A1","isomorphic"),branching_rule("D2","A1xA1","isomorphic")])"""]
     elif CartanType(ct) == CartanType("C5"):
-        rul = ["""A4:branching_rule("C5","A4","levi")""", \
-               """A1:branching_rule("C5","A1","symmetric_power")""", \
-               """A1xC4:branching_rule("C5","C1xC4","orthogonal_sum")*branching_rule("C1xC4","A1xC4",[branching_rule("C1","A1","isomorphic"),"identity"])""", \
-               """C2xC3:branching_rule("C5","C2xC3","orthogonal_sum")""", \
+        rul = ["""A4:branching_rule("C5","A4","levi")""",
+               """A1:branching_rule("C5","A1","symmetric_power")""",
+               """A1xC4:branching_rule("C5","C1xC4","orthogonal_sum")*branching_rule("C1xC4","A1xC4",[branching_rule("C1","A1","isomorphic"),"identity"])""",
+               """C2xC3:branching_rule("C5","C2xC3","orthogonal_sum")""",
                """A1xB2:branching_rule("C5","C1xB2","tensor")*branching_rule("C1xB2","A1xB2",[branching_rule("C1","A1","isomorphic"),"identity"])"""]
     elif CartanType(ct) == CartanType("C6"):
-        rul = ["""A5:branching_rule("C6","A5","levi")""", \
-               """A1:branching_rule("C6","A1","symmetric_power")""", \
-               """A1xA3:branching_rule("C6","C1xD3","tensor")*branching_rule("C1xD3","A1xA3",[branching_rule("C1","A1","isomorphic"),branching_rule("D3","A3","isomorphic")])""", \
-               """A1xC2:branching_rule("C6","B1xC2","tensor")*branching_rule("B1xC2","A1xC2",[branching_rule("B1","A1","isomorphic"),"identity"])""", \
-               """A1xC5:branching_rule("C6","C1xC5","orthogonal_sum")*branching_rule("C1xC5","A1xC5",[branching_rule("C1","A1","isomorphic"),"identity"])""", \
-               """C2xC4:branching_rule("C6","C2xC4","orthogonal_sum")""", \
+        rul = ["""A5:branching_rule("C6","A5","levi")""",
+               """A1:branching_rule("C6","A1","symmetric_power")""",
+               """A1xA3:branching_rule("C6","C1xD3","tensor")*branching_rule("C1xD3","A1xA3",[branching_rule("C1","A1","isomorphic"),branching_rule("D3","A3","isomorphic")])""",
+               """A1xC2:branching_rule("C6","B1xC2","tensor")*branching_rule("B1xC2","A1xC2",[branching_rule("B1","A1","isomorphic"),"identity"])""",
+               """A1xC5:branching_rule("C6","C1xC5","orthogonal_sum")*branching_rule("C1xC5","A1xC5",[branching_rule("C1","A1","isomorphic"),"identity"])""",
+               """C2xC4:branching_rule("C6","C2xC4","orthogonal_sum")""",
                """C3xC3:branching_rule("C6","C3xC3","orthogonal_sum")"""]
     elif CartanType(ct) == CartanType("C7"):
-        rul = ["""A6:branching_rule("C7","A6","levi")""", \
-               """A1:branching_rule("C7","A1","symmetric_power")""", \
-               """A1xB3:branching_rule("C7","C1xB3","tensor")*branching_rule("C1xB3","A1xB3",[branching_rule("C1","A1","isomorphic"),"identity"])""", \
-               """A1xC6:branching_rule("C7","C1xC6","orthogonal_sum")*branching_rule("C1xC6","A1xC6",[branching_rule("C1","A1","isomorphic"),"identity"])""", \
-               """C2xC5:branching_rule("C7","C2xC5","orthogonal_sum")""", \
-               """C3xC4:branching_rule("C7","C3xC4","orthogonal_sum")""", \
+        rul = ["""A6:branching_rule("C7","A6","levi")""",
+               """A1:branching_rule("C7","A1","symmetric_power")""",
+               """A1xB3:branching_rule("C7","C1xB3","tensor")*branching_rule("C1xB3","A1xB3",[branching_rule("C1","A1","isomorphic"),"identity"])""",
+               """A1xC6:branching_rule("C7","C1xC6","orthogonal_sum")*branching_rule("C1xC6","A1xC6",[branching_rule("C1","A1","isomorphic"),"identity"])""",
+               """C2xC5:branching_rule("C7","C2xC5","orthogonal_sum")""",
+               """C3xC4:branching_rule("C7","C3xC4","orthogonal_sum")""",
                """C3:branching_rule("C7","C3(0,0,1)","plethysm") # overlooked by Patera and McKay"""]
     elif CartanType(ct) == CartanType("C8"):
-        rul = ["""A7:branching_rule("C8","A7","levi")""", \
-               """A1:branching_rule("C8","A1","symmetric_power")""", \
-               """C2:branching_rule("C8","C2(1,1)","plethysm")""", \
-               """A1xD4:branching_rule("C8","C1xD4","tensor")*branching_rule("C1xD4","A1xD4",[branching_rule("C1","A1","isomorphic"),"identity"])""", \
-               """A1xC7:branching_rule("C8","C1xC7","orthogonal_sum")*branching_rule("C1xC7","A1xC7",[branching_rule("C1","A1","isomorphic"),"identity"])""", \
-               """C2xC6:branching_rule("C8","C2xC6","orthogonal_sum")""", \
-               """C3xC5:branching_rule("C8","C3xC5","orthogonal_sum")""", \
+        rul = ["""A7:branching_rule("C8","A7","levi")""",
+               """A1:branching_rule("C8","A1","symmetric_power")""",
+               """C2:branching_rule("C8","C2(1,1)","plethysm")""",
+               """A1xD4:branching_rule("C8","C1xD4","tensor")*branching_rule("C1xD4","A1xD4",[branching_rule("C1","A1","isomorphic"),"identity"])""",
+               """A1xC7:branching_rule("C8","C1xC7","orthogonal_sum")*branching_rule("C1xC7","A1xC7",[branching_rule("C1","A1","isomorphic"),"identity"])""",
+               """C2xC6:branching_rule("C8","C2xC6","orthogonal_sum")""",
+               """C3xC5:branching_rule("C8","C3xC5","orthogonal_sum")""",
                """C4xC4:branching_rule("C8","C4xC4","orthogonal_sum")"""]
     elif CartanType(ct) == CartanType("D4"):
-        rul = ["""B3:branching_rule("D4","B3","symmetric")""", \
-               """A2:branching_rule("D4","A2(1,1)","plethysm")""", \
-               """A1xC2:branching_rule("D4","C1xC2","tensor")*branching_rule("C1xC2","A1xC2",[branching_rule("C1","A1","isomorphic"),"identity"])""", \
+        rul = ["""B3:branching_rule("D4","B3","symmetric")""",
+               """A2:branching_rule("D4","A2(1,1)","plethysm")""",
+               """A1xC2:branching_rule("D4","C1xC2","tensor")*branching_rule("C1xC2","A1xC2",[branching_rule("C1","A1","isomorphic"),"identity"])""",
                """A1xA1xA1xA1:branching_rule("D4","D2xD2","orthogonal_sum")*branching_rule("D2xD2","A1xA1xA1xA1",[branching_rule("D2","A1xA1","isomorphic"),branching_rule("D2","A1xA1","isomorphic")])"""]
     elif CartanType(ct) == CartanType("D5"):
-        rul = ["""A4:branching_rule("D5","A4","levi")""", \
-               """B4:branching_rule("D5","B4","symmetric")""", \
-               """C2:branching_rule("D5","C2(2,0)","plethysm")""", \
-               """A1xA1xA3:branching_rule("D5","D2xD3","orthogonal_sum")*branching_rule("D2xD3","A1xA1xA3",[branching_rule("D2","A1xA1","isomorphic"),branching_rule("D3","A3","isomorphic")])""", \
-               """A1xA3:branching_rule("D5","B1xB3","orthogonal_sum")*branching_rule("B1xB3","A1xA3",[branching_rule("B1","A1","isomorphic"),"identity"])""", \
+        rul = ["""A4:branching_rule("D5","A4","levi")""",
+               """B4:branching_rule("D5","B4","symmetric")""",
+               """C2:branching_rule("D5","C2(2,0)","plethysm")""",
+               """A1xA1xA3:branching_rule("D5","D2xD3","orthogonal_sum")*branching_rule("D2xD3","A1xA1xA3",[branching_rule("D2","A1xA1","isomorphic"),branching_rule("D3","A3","isomorphic")])""",
+               """A1xA3:branching_rule("D5","B1xB3","orthogonal_sum")*branching_rule("B1xB3","A1xA3",[branching_rule("B1","A1","isomorphic"),"identity"])""",
                """B2xB2:branching_rule("D5","B2xB2","orthogonal_sum")"""]
     elif CartanType(ct) == CartanType("D6"):
-        rul = ["""A5:branching_rule("D6","A5","levi")""", \
-               """B5:branching_rule("D6","B5","symmetric")""", \
-               """A1xA3:branching_rule("D6","C1xC3","tensor")*branching_rule("C1xC3","A1xA3",[branching_rule("C1","A1","isomorphic"),"identity"])""", \
-               """A1xA1xD4:branching_rule("D6","D2xD4","orthogonal_sum")*branching_rule("D2xD4","A1xA1xD4",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""", \
-               """A3xA3:branching_rule("D6","D3xD3","orthogonal_sum")*branching_rule("D3xD3","A3xA3",[branching_rule("D3","A3","isomorphic"),branching_rule("D3","A3","isomorphic")])""", \
-               """A1xB4:branching_rule("D6","B1xB4","orthogonal_sum")*branching_rule("B1xB4","A1xB4",[branching_rule("B1","A1","isomorphic"),"identity"])""", \
-               """B2xB3:branching_rule("D6","B2xB3","orthogonal_sum")""", \
+        rul = ["""A5:branching_rule("D6","A5","levi")""",
+               """B5:branching_rule("D6","B5","symmetric")""",
+               """A1xA3:branching_rule("D6","C1xC3","tensor")*branching_rule("C1xC3","A1xA3",[branching_rule("C1","A1","isomorphic"),"identity"])""",
+               """A1xA1xD4:branching_rule("D6","D2xD4","orthogonal_sum")*branching_rule("D2xD4","A1xA1xD4",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""",
+               """A3xA3:branching_rule("D6","D3xD3","orthogonal_sum")*branching_rule("D3xD3","A3xA3",[branching_rule("D3","A3","isomorphic"),branching_rule("D3","A3","isomorphic")])""",
+               """A1xB4:branching_rule("D6","B1xB4","orthogonal_sum")*branching_rule("B1xB4","A1xB4",[branching_rule("B1","A1","isomorphic"),"identity"])""",
+               """B2xB3:branching_rule("D6","B2xB3","orthogonal_sum")""",
                """A1xA1xA1:branching_rule("D6","B1xD2","tensor")*branching_rule("B1xD2","A1xA1xA1",[branching_rule("B1","A1","isomorphic"),branching_rule("D2","A1xA1","isomorphic")])"""]
     elif CartanType(ct) == CartanType("D7"):
-        rul = ["""A6:branching_rule("D7","A6","levi")""", \
-               """B6:branching_rule("D7","B6","symmetric")""", \
-               """C3:branching_rule("D7","C3(0,1,0)","plethysm")""", \
-               """C2:branching_rule("D7","C2(0,2)","plethysm")""", \
-               """G2:branching_rule("D7","G2(0,1)","plethysm")""", \
-               """A1xA1xD5:branching_rule("D7","D2xD5","orthogonal_sum")*branching_rule("D2xD5","A1xA1xD5",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""", \
-               """A3xD4:branching_rule("D7","D3xD4","orthogonal_sum")*branching_rule("D3xD4","A3xD4",[branching_rule("D3","A3","isomorphic"),"identity"])""", \
-               """A1xB5:branching_rule("D7","B1xB5","orthogonal_sum")*branching_rule("B1xB5","A1xB5",[branching_rule("B1","A1","isomorphic"),"identity"])""", \
-               """B2xB4:branching_rule("D7","B2xB4","orthogonal_sum")""", \
+        rul = ["""A6:branching_rule("D7","A6","levi")""",
+               """B6:branching_rule("D7","B6","symmetric")""",
+               """C3:branching_rule("D7","C3(0,1,0)","plethysm")""",
+               """C2:branching_rule("D7","C2(0,2)","plethysm")""",
+               """G2:branching_rule("D7","G2(0,1)","plethysm")""",
+               """A1xA1xD5:branching_rule("D7","D2xD5","orthogonal_sum")*branching_rule("D2xD5","A1xA1xD5",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""",
+               """A3xD4:branching_rule("D7","D3xD4","orthogonal_sum")*branching_rule("D3xD4","A3xD4",[branching_rule("D3","A3","isomorphic"),"identity"])""",
+               """A1xB5:branching_rule("D7","B1xB5","orthogonal_sum")*branching_rule("B1xB5","A1xB5",[branching_rule("B1","A1","isomorphic"),"identity"])""",
+               """B2xB4:branching_rule("D7","B2xB4","orthogonal_sum")""",
                """B3xB3:branching_rule("D7","B3xB3","orthogonal_sum")"""]
     elif CartanType(ct) == CartanType("D8"):
-        rul = ["""A7:branching_rule("D8","A7","levi")""", \
-               """B7:branching_rule("D8","B7","symmetric")""", \
-               """B4:branching_rule("D8","B4(0,0,0,1)","plethysm")""", \
-               """A1xC4:branching_rule("D8","C1xC4","tensor")*branching_rule("C1xC4","A1xC4",[branching_rule("C1","A1","isomorphic"),"identity"])""", \
-               """A1xA1xD6:branching_rule("D8","D2xD6","orthogonal_sum")*branching_rule("D2xD6","A1xA1xD6",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""", \
-               """A3xD5:branching_rule("D8","D3xD5","orthogonal_sum")*branching_rule("D3xD5","A3xD5",[branching_rule("D3","A3","isomorphic"),"identity"])""", \
-               """D4xD4:branching_rule("D8","D4xD4","orthogonal_sum")""", \
-               """A1xB6:branching_rule("D8","B1xB6","orthogonal_sum")*branching_rule("B1xB6","A1xB6",[branching_rule("B1","A1","isomorphic"),"identity"])""", \
-               """B2xB5:branching_rule("D8","B2xB5","orthogonal_sum")""", \
-               """B3xB4:branching_rule("D8","B3xB4","orthogonal_sum")""", \
+        rul = ["""A7:branching_rule("D8","A7","levi")""",
+               """B7:branching_rule("D8","B7","symmetric")""",
+               """B4:branching_rule("D8","B4(0,0,0,1)","plethysm")""",
+               """A1xC4:branching_rule("D8","C1xC4","tensor")*branching_rule("C1xC4","A1xC4",[branching_rule("C1","A1","isomorphic"),"identity"])""",
+               """A1xA1xD6:branching_rule("D8","D2xD6","orthogonal_sum")*branching_rule("D2xD6","A1xA1xD6",[branching_rule("D2","A1xA1","isomorphic"),"identity"])""",
+               """A3xD5:branching_rule("D8","D3xD5","orthogonal_sum")*branching_rule("D3xD5","A3xD5",[branching_rule("D3","A3","isomorphic"),"identity"])""",
+               """D4xD4:branching_rule("D8","D4xD4","orthogonal_sum")""",
+               """A1xB6:branching_rule("D8","B1xB6","orthogonal_sum")*branching_rule("B1xB6","A1xB6",[branching_rule("B1","A1","isomorphic"),"identity"])""",
+               """B2xB5:branching_rule("D8","B2xB5","orthogonal_sum")""",
+               """B3xB4:branching_rule("D8","B3xB4","orthogonal_sum")""",
                """C2xC2:branching_rule("D8","C2xC2","tensor")"""]
     elif CartanType(ct) == CartanType("G2"):
-        rul = ["""A2:branching_rule("G2","A2","extended")""", \
-               """A1:branching_rule("G2","A1","i")""", \
+        rul = ["""A2:branching_rule("G2","A2","extended")""",
+               """A1:branching_rule("G2","A1","i")""",
                """A1xA1:branching_rule("G2","A1xA1","extended")"""]
     elif CartanType(ct) == CartanType("F4"):
-        rul = ["""B4:branching_rule("F4","B4","extended")""", \
-               """A1:branching_rule("F4","A1","ii")""", \
-               """A1xG2:branching_rule("F4","A1xG2","miscellaneous")""", \
-               """A1xC3:branching_rule("F4","A1xC3","extended")""", \
+        rul = ["""B4:branching_rule("F4","B4","extended")""",
+               """A1:branching_rule("F4","A1","ii")""",
+               """A1xG2:branching_rule("F4","A1xG2","miscellaneous")""",
+               """A1xC3:branching_rule("F4","A1xC3","extended")""",
                """A2xA2:branching_rule("F4","A2xA2","extended")"""]
     elif CartanType(ct) == CartanType("E6"):
-        rul = ["""D5:branching_rule("E6","D5","levi")""", \
-               """C4:branching_rule("E6","C4","symmetric")""", \
-               """F4:branching_rule("E6","F4","symmetric")""", \
-               """A2:branching_rule("E6","A2","miscellaneous")""", \
-               """G2:branching_rule("E6","G2","miscellaneous")""", \
-               """A2xG2:branching_rule("E6","A2xG2","miscellaneous")""", \
-               """A1xA5:branching_rule("E6","A1xA5","extended")""", \
+        rul = ["""D5:branching_rule("E6","D5","levi")""",
+               """C4:branching_rule("E6","C4","symmetric")""",
+               """F4:branching_rule("E6","F4","symmetric")""",
+               """A2:branching_rule("E6","A2","miscellaneous")""",
+               """G2:branching_rule("E6","G2","miscellaneous")""",
+               """A2xG2:branching_rule("E6","A2xG2","miscellaneous")""",
+               """A1xA5:branching_rule("E6","A1xA5","extended")""",
                """A2xA2xA2:branching_rule("E6","A2xA2xA2","extended")"""]
     elif CartanType(ct) == CartanType("E7"):
-        rul = ["""A7:branching_rule("E7","A7","extended")""", \
-               """E6:branching_rule("E7","E6","levi")""", \
-               """A2:branching_rule("E7","A2","miscellaneous")""", \
-               """A1:branching_rule("E7","A1","iii")""", \
-               """A1:branching_rule("E7","A1","iv")""", \
-               """A1xF4:branching_rule("E7","A1xF4","miscellaneous")""", \
-               """G2xC3:branching_rule("E7","G2xC3","miscellaneous")""", \
-               """A1xG2:branching_rule("E7","A1xG2","miscellaneous")""", \
-               """A1xA1:branching_rule("E7","A1xA1","miscellaneous")""", \
-               """A1xD6:branching_rule("E7","A1xD6","extended")""", \
+        rul = ["""A7:branching_rule("E7","A7","extended")""",
+               """E6:branching_rule("E7","E6","levi")""",
+               """A2:branching_rule("E7","A2","miscellaneous")""",
+               """A1:branching_rule("E7","A1","iii")""",
+               """A1:branching_rule("E7","A1","iv")""",
+               """A1xF4:branching_rule("E7","A1xF4","miscellaneous")""",
+               """G2xC3:branching_rule("E7","G2xC3","miscellaneous")""",
+               """A1xG2:branching_rule("E7","A1xG2","miscellaneous")""",
+               """A1xA1:branching_rule("E7","A1xA1","miscellaneous")""",
+               """A1xD6:branching_rule("E7","A1xD6","extended")""",
                """A5xA2:branching_rule("E7","A5xA2","extended")"""]
     elif CartanType(ct) == CartanType("E8"):
-        rul = ["""A4xA4:branching_rule("E8","A4xA4","extended")""", \
-               """G2xF4:branching_rule("E8","G2xF4","miscellaneous")""", \
-               """E6xA2:branching_rule("E8","E6xA2","extended")""", \
-               """E7xA1:branching_rule("E8","E7xA1","extended")""", \
-               """D8:branching_rule("E8","D8","extended")""", \
-               """A8:branching_rule("E8","A8","extended")""", \
-               """B2:branching_rule("E8","B2","miscellaneous")""", \
-               """A1xA2:branching_rule("E8","A1xA2","miscellaneous")""", \
-               """A1:branching_rule("E8","A1","v")""", \
-               """A1:branching_rule("E8","A1","vi")""", \
+        rul = ["""A4xA4:branching_rule("E8","A4xA4","extended")""",
+               """G2xF4:branching_rule("E8","G2xF4","miscellaneous")""",
+               """E6xA2:branching_rule("E8","E6xA2","extended")""",
+               """E7xA1:branching_rule("E8","E7xA1","extended")""",
+               """D8:branching_rule("E8","D8","extended")""",
+               """A8:branching_rule("E8","A8","extended")""",
+               """B2:branching_rule("E8","B2","miscellaneous")""",
+               """A1xA2:branching_rule("E8","A1xA2","miscellaneous")""",
+               """A1:branching_rule("E8","A1","v")""",
+               """A1:branching_rule("E8","A1","vi")""",
                """A1:branching_rule("E8","A1","vii")"""]
     else:
         raise ValueError("Argument must be an irreducible classical Cartan Type with rank less than or equal to 8")

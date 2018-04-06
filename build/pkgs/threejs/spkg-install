@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Check required environment variable
 if [ -z "$SAGE_SHARE" ]; then
     echo >&2 "SAGE_SHARE undefined ... exiting"
@@ -11,4 +9,3 @@ fi
 TARGET="${SAGE_SHARE}/threejs"
 rm -rf "${TARGET}"
 cp -r 'src' "${TARGET}"
-

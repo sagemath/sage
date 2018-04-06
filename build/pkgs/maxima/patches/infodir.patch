@@ -1,10 +1,12 @@
---- src/src/init-cl.lisp	2010-12-05 03:06:03.000000000 +0100
-+++ src/src/init-cl.lisp	2011-05-18 19:16:05.226488803 +0200
-@@ -131,7 +131,7 @@
+diff --git a/src/init-cl.lisp b/src/init-cl.lisp
+index 0e1f18b..125f449 100644
+--- a/src/init-cl.lisp
++++ b/src/init-cl.lisp
+@@ -134,7 +134,7 @@ When one changes, the other does too."
  	  (setq libdir     (combine-path maxima-prefix-env "lib"))
  	  (setq libexecdir (combine-path maxima-prefix-env "libexec"))
  	  (setq datadir    (combine-path maxima-prefix-env "share"))
--	  (setq infodir    (combine-path maxima-prefix-env "info")))
+-	  (setq infodir    (combine-path maxima-prefix-env #+(or cygwin windows win32 win64) "share" "info")))
 +	  (setq infodir    (combine-path maxima-prefix-env "share" "info")))
  	(progn
  	  (setq libdir     (maxima-parse-dirstring *autoconf-libdir*))

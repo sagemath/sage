@@ -15,6 +15,8 @@ Yang-Baxter Graphs
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
+
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
 from sage.misc.lazy_attribute import lazy_attribute
@@ -582,7 +584,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
         """
         self._partition = partition
         beta = sorted(self._partition, reverse=True)
-        root = tuple(sum(map(range,beta), []))[::-1]
+        root = sum([tuple(range(b)) for b in beta], tuple())[::-1]
         operators = [SwapIncreasingOperator(i) for i in range(sum(partition)-1)]
         super(YangBaxterGraph_partition, self).__init__(root, operators)
 
@@ -780,15 +782,16 @@ class SwapOperator(SageObject):
 
             sage: from sage.combinat.yang_baxter_graph import SwapOperator
             sage: s = [SwapOperator(i) for i in range(3)]
-            sage: map(hash, s)
+            sage: [hash(t) for t in s]
             [0, 1, 2]
         """
         return hash(self._position)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         r"""
-        Compare two swap operators. The comparison is done by comparing the
-        positions.
+        Compare two swap operators.
+
+        The comparison is done by comparing the positions.
 
         EXAMPLES::
 
@@ -796,15 +799,27 @@ class SwapOperator(SageObject):
             sage: s = [SwapOperator(i) for i in range(3)]
             sage: s[0] == s[0]
             True
-            sage: s[1] < s[0]
+            sage: s[1] == s[0]
             False
-            sage: s[1] < s[2]
+        """
+        if not isinstance(other, SwapOperator):
+            return False
+        return self._position == other._position
+
+    def __ne__(self, other):
+        """
+        Check whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.yang_baxter_graph import SwapOperator
+            sage: s = [SwapOperator(i) for i in range(3)]
+            sage: s[0] != s[0]
+            False
+            sage: s[1] != s[0]
             True
         """
-        if type(self) is type(other):
-            return cmp(self._position, other._position)
-        else:
-            return cmp(type(self), type(other))
+        return not (self == other)
 
     def __repr__(self):
         r"""

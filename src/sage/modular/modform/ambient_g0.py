@@ -91,7 +91,7 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
         where d is a divisor of the level.  This is only implemented in the
         (trivial) level 1 case.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularForms(1, 30).atkin_lehner_operator()
             Hecke module morphism Atkin-Lehner operator W_1 defined by the matrix

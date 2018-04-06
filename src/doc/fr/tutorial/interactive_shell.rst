@@ -97,7 +97,7 @@ Voici un exemple :
     6: eval(_i1)
     7: %hist
 
-Dans la suite de ce tutorial et le reste de la documentation de Sage,
+Dans la suite de ce tutoriel et le reste de la documentation de Sage,
 nous omettrons la numérotation des sorties.
 
 Il est possible de créer (pour la durée d'une session) une macro qui
@@ -970,6 +970,22 @@ la variable ``b`` n'a pas été écrasée.
 L'interface *notebook*
 ======================
 
+Cette section concerne l'ancien bloc-note de Sage (“sagenb”). Pour plus de
+détails, voir la `documentation de sagenb
+<https://doc.sagemath.org/html/en/reference/notebook/index.html>`_.
+
+SageMath est en cours de transition vers l'utilisation par défaut du
+`bloc-note Jupyter
+<http://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_,
+qui a une structure différente. Pour les utilisateurs,
+la différence majeure est le fait que les feuilles de calcul sont
+sauvegardées dans le système de fichiers local comme n'importe quel autre
+fichier, alors que pour l'ancien bloc-note de Sage le principal accès aux
+feuilles de calcul passait par le serveur comme expliqué ci-dessous.
+
+Ancien bloc-note SageNB
+-----------------------
+
 Pour démarrer le *notebook* Sage, tapez
 
 .. skip
@@ -980,7 +996,7 @@ Pour démarrer le *notebook* Sage, tapez
 
 sur la ligne de commande Sage. Cela démarre le serveur du *notebook* et
 ouvre votre navigateur web par défaut sur la page correspondante. Les
-fichiers d'état du serveur sont placés dans ``$HOME/.sage/sage\_notebook``.
+fichiers d'état du serveur sont placés dans ``$HOME/.sage/sage\_notebook.sagenb``.
 
 La variante
 
@@ -991,19 +1007,24 @@ La variante
     sage: notebook("repertoire")
 
 lance un nouveau serveur *notebook* en utilisant les fichiers du
-répertoire donné à la place de ``$HOME/.sage/sage_notebook``. Cela peut
+``repertoire.sagenb`` donné à la place de ``$HOME/.sage/sage_notebook``. Cela peut
 être utile si vous voulez gérer une collection de feuilles de travail
 attachées à un projet spécifique, ou encore lancer plusieurs instances
 du serveur en même temps.
 
 Au démarrage, le *notebook* commence par créer les fichiers suivants
-dans ``$HOME/.sage/sage_notebook`` :
+dans ``$HOME/.sage/sage_notebook.sagenb`` :
 
 ::
 
-    nb.sobj       (fichier objet Sage du notebook)
-    objects/      (sous-répertoire contenant les objets Sage)
-    worksheets/   (sous-répertoire contenant les feuilles de travail).
+    conf.pickle
+    openid.pickle
+    twistedconf.tac
+    sagenb.pid
+    users.pickle
+    home/admin/ (sous-répertoire de l'utilisateur principal)
+    home/guest/
+    home/pub/
 
 Une fois ces fichiers créés, le *notebook* démarre un serveur web.
 
@@ -1011,8 +1032,8 @@ Un « *notebook* » est une collection de comptes utilisateur, qui peuvent
 chacun posséder un nombre quelconque de feuilles de travail. Quand vous
 créez une nouvelle feuille de travail, les données correspondantes sont
 stockées dans un répertoire de la forme
-``worksheets/utilisateur/numéro``. Dans chacun de ces répertoires se trouve un
-fichier texte brut ``worksheet.txt`` qui contient tout ce qu'il faut
+``home/utilisateur/numéro``. Dans chacun de ces répertoires se trouve un
+fichier texte brut ``worksheet.html`` qui contient tout ce qu'il faut
 pour reconstituer la feuille de travail s'il lui arrive quelque
 chose, si Sage rencontre un problème, ou quoi que ce soit de ce genre.
 
@@ -1046,6 +1067,6 @@ Le schéma suivant présente l'architecture du *Notebook* Sage :
     ----------------------                    .
 
 Dans le *notebook*, pour consulter l'aide d'une commande Sage ``cmd``,
-tapez ``cmd?`` dans le champ d'entrée des commandes puis tapez ``<échap>``
+tapez ``cmd?`` dans le champ d'entrée des commandes puis tapez ``<tab>``
 (et non ``<maj-entrée>``).
 

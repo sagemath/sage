@@ -40,7 +40,7 @@ def get_memory_usage(t=None):
         sage: t = get_memory_usage(); t  # random
         873.98046875
         sage: type(t)
-        <type 'float'>
+        <... 'float'>
     """
     import psutil
     m = psutil.Process().memory_info().vms / 1048576

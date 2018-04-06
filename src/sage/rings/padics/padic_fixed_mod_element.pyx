@@ -27,6 +27,11 @@ include "FM_template.pxi"
 from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 
+cdef extern from "sage/rings/padics/transcendantal.c":
+    cdef void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
+    cdef void padicexp(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
+    cdef void padicexp_Newton(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, unsigned long precinit, const mpz_t modulo)
+
 cdef class PowComputer_(PowComputer_base):
     """
     A PowComputer for a fixed-modulus padic ring.
@@ -171,7 +176,7 @@ cdef class pAdicFixedModElement(FMElement):
         mpz_set(ans.value, self.value)
         return ans
 
-    def _pari_(self):
+    def __pari__(self):
         """
         Conversion to PARI.
 
@@ -199,12 +204,12 @@ cdef class pAdicFixedModElement(FMElement):
             [&=...] PADIC(lg=5):... (precp=0,valp=10):... ... ... ...
                 p : [&=...] INT(lg=3):... (+,lgefint=3):... ... 
               p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ... 
-                I : [&=...] INT(lg=2):... (0,lgefint=2):... 
+                I : gen_0
 
         This checks that :trac:`15653` is fixed::
 
             sage: x = polygen(ZpFM(3,10))
-            sage: (x^3 + x + 1)._pari_().poldisc()
+            sage: (x^3 + x + 1).__pari__().poldisc()
             2 + 3 + 2*3^2 + 3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10)
         """
         cdef long val
@@ -239,13 +244,17 @@ cdef class pAdicFixedModElement(FMElement):
         """
         return self.lift_c()
 
-    def residue(self, absprec=1):
+    def residue(self, absprec=1, field=None, check_prec=False):
         r"""
         Reduce ``self`` modulo `p^\mathrm{absprec}`.
 
         INPUT:
 
         - ``absprec`` -- an integer (default: ``1``)
+
+        - ``field`` -- boolean (default ``None``).  Whether to return an element of GF(p) or Zmod(p).
+
+        - ``check_prec`` -- boolean (default ``False``).  No effect (for compatibility with other types).
 
         OUTPUT:
 
@@ -282,9 +291,10 @@ cdef class pAdicFixedModElement(FMElement):
             ...
             ValueError: Cannot reduce modulo a negative power of p.
             sage: a.residue(5)
-            Traceback (most recent call last):
-            ...
-            PrecisionError: Not enough precision known in order to compute residue.
+            8
+
+            sage: a.residue(field=True).parent()
+            Finite Field of size 7
 
         .. SEEALSO::
 
@@ -292,18 +302,27 @@ cdef class pAdicFixedModElement(FMElement):
 
         """
         cdef Integer selfvalue, modulus
+        cdef long aprec
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
-        if absprec > self.precision_absolute():
-            raise PrecisionError("Not enough precision known in order to compute residue.")
-        elif absprec < 0:
+        if absprec < 0:
             raise ValueError("Cannot reduce modulo a negative power of p.")
-        cdef long aprec = mpz_get_ui((<Integer>absprec).value)
+        if field is None:
+            field = (absprec == 1)
+        elif field and absprec != 1:
+            raise ValueError("field keyword may only be set at precision 1")
+        if mpz_fits_slong_p((<Integer>absprec).value) == 0:
+            raise ValueError("absolute precision does not fit in a long")
+        aprec = mpz_get_si((<Integer>absprec).value)
         modulus = PY_NEW(Integer)
         mpz_set(modulus.value, self.prime_pow.pow_mpz_t_tmp(aprec))
         selfvalue = PY_NEW(Integer)
         mpz_set(selfvalue.value, self.value)
-        return Mod(selfvalue, modulus)
+        if field:
+            from sage.rings.finite_rings.all import GF
+            return GF(self.parent().prime())(selfvalue)
+        else:
+            return Mod(selfvalue, modulus)
 
     def multiplicative_order(self):
         r"""
@@ -353,6 +372,202 @@ cdef class pAdicFixedModElement(FMElement):
         else:
             mpz_clear(tmp)
             return infinity
+
+    def _log_binary_splitting(self, aprec, mina=0):
+        r"""
+        Return ``\log(self)`` for ``self`` equal to 1 in the residue field
+
+        This is a helper method for :meth:`log`.
+        It uses a fast binary splitting algorithm.
+
+        INPUT:
+
+        - ``aprec`` -- an integer, the precision to which the result is
+          correct. ``aprec`` must not exceed the precision cap of the ring over
+          which this element is defined.
+        - ``mina`` -- an integer (default: 0), the series will check `n` up to
+          this valuation (and beyond) to see if they can contribute to the
+          series.
+
+        NOTE::
+
+            The function does not check that its argument ``self`` is
+            1 in the residue field. If this assumption is not fullfiled
+            the behaviour of the function is not specified.
+
+        ALGORITHM:
+
+        1. Raise `u` to the power `p^v` for a suitable `v` in order
+           to make it closer to 1. (`v` is chosen such that `p^v` is
+           close to the precision.)
+
+        2. Write
+
+        .. MATH::
+
+            u^{p-1} = \prod_{i=1}^\infty (1 - a_i p^{(v+1)*2^i})
+
+        with `0 \leq a_i < p^{(v+1)*2^i}` and compute
+        `\log(1 - a_i p^{(v+1)*2^i})` using the standard Taylor expansion
+
+        .. MATH::
+
+            \log(1 - x) = -x - 1/2 x^2 - 1/3 x^3 - 1/4 x^4 - 1/5 x^5 - \cdots
+
+        together with a binary splitting method.
+
+        3. Divide the result by `p^v`
+
+        The complexity of this algorithm is quasi-linear.
+
+        EXAMPLES::
+
+            sage: r = Qp(5,prec=4)(6)
+            sage: r._log_binary_splitting(2)
+            5 + O(5^2)
+            sage: r._log_binary_splitting(4)
+            5 + 2*5^2 + 4*5^3 + O(5^4)
+            sage: r._log_binary_splitting(100)
+            5 + 2*5^2 + 4*5^3 + O(5^4)
+
+            sage: r = Zp(5,prec=4,type='fixed-mod')(6)
+            sage: r._log_binary_splitting(5)
+            5 + 2*5^2 + 4*5^3 + O(5^4)
+
+        """
+        cdef unsigned long p
+        cdef unsigned long prec = min(aprec, self.prime_pow.prec_cap)
+        cdef pAdicFixedModElement ans
+
+        if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
+            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+        p = self.prime_pow.prime
+
+        ans = self._new_c()
+        sig_on()
+        padiclog(ans.value, self.value, p, prec, self.prime_pow.pow_mpz_t_tmp(prec))
+        sig_off()
+        return ans
+
+    def _exp_binary_splitting(self, aprec):
+        """
+        Compute the exponential power series of this element
+
+        This is a helper method for :meth:`exp`.
+
+        INPUT:
+
+        - ``aprec`` -- an integer, the precision to which to compute the
+          exponential
+
+        NOTE::
+
+            The function does not check that its argument ``self`` is
+            the disk of convergence of ``exp``. If this assumption is not
+            fullfiled the behaviour of the function is not specified.
+
+        ALGORITHM:
+
+        Write
+
+        .. MATH::
+
+            self = \sum_{i=1}^\infty a_i p^{2^i}
+
+        with `0 \leq a_i < p^{2^i}` and compute
+        `\exp(a_i p^{2^i})` using the standard Taylor expansion
+
+        .. MATH::
+
+            \exp(x) = 1 + x + x^2/2 + x^3/6 + x^4/24 + \cdots
+
+        together with a binary splitting method.
+
+        The binary complexity of this algorithm is quasi-linear.
+
+        EXAMPLES::
+
+            sage: R = Zp(7,5)
+            sage: x = R(7)
+            sage: x.exp(algorithm="binary_splitting")   # indirect doctest
+            1 + 7 + 4*7^2 + 2*7^3 + O(7^5)
+
+        """
+        cdef unsigned long p
+        cdef unsigned long prec = aprec
+        cdef pAdicFixedModElement ans
+
+        if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
+            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+        p = self.prime_pow.prime
+
+        ans = self._new_c()
+        sig_on()
+        padicexp(ans.value, self.value, p, prec, self.prime_pow.pow_mpz_t_tmp(prec))
+        sig_off()
+
+        return ans
+
+    def _exp_newton(self, aprec, log_algorithm=None):
+        """
+        Compute the exponential power series of this element
+
+        This is a helper method for :meth:`exp`.
+
+        INPUT:
+
+        - ``aprec`` -- an integer, the precision to which to compute the
+          exponential
+
+        - ``log_algorithm`` (default: None) -- the algorithm used for
+          computing the logarithm. This attribute is passed to the log
+          method. See :meth:`log` for more details about the possible
+          algorithms.
+
+        NOTE::
+
+            The function does not check that its argument ``self`` is
+            the disk of convergence of ``exp``. If this assumption is not
+            fullfiled the behaviour of the function is not specified.
+
+        ALGORITHM:
+
+        Solve the equation `\log(x) = self` using the Newton scheme::
+
+        .. MATH::
+
+            x_{i+1} = x_i \cdot (1 + self - \log(x_i))
+
+        The binary complexity of this algorithm is roughly the same
+        than that of the computation of the logarithm.
+
+        EXAMPLES::
+
+            sage: R.<w> = Zq(7^2,5)
+            sage: x = R(7*w)
+            sage: x.exp(algorithm="newton")   # indirect doctest
+            1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)
+        """
+        cdef unsigned long p
+        cdef unsigned long prec = aprec
+        cdef pAdicFixedModElement ans
+
+        if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
+            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+        p = self.prime_pow.prime
+
+        ans = self._new_c()
+        mpz_set_ui(ans.value, 1)
+        sig_on()
+        if p == 2:
+            padicexp_Newton(ans.value, self.value, p, prec, 2, self.prime_pow.pow_mpz_t_tmp(prec))
+        else:
+            padicexp_Newton(ans.value, self.value, p, prec, 1, self.prime_pow.pow_mpz_t_tmp(prec))
+        sig_off()
+
+        return ans
+
+
 
 def make_pAdicFixedModElement(parent, value):
     """

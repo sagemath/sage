@@ -46,17 +46,5 @@ The matplotlib mailing lists: see http://sourceforge.net/projects/matplotlib
    from src/lib/matplotlib/tests/baseline_images/*
 
  * NOTE: as of matplotlib-1.0.0 and Sage 4.6, Sage does not use
-   $HOME/.matplotlib (or whatever the user has set in MPLCONFIGDIR).
-   Instead, it sets MPLCONFIGDIR to $DOT_SAGE/matplotlib-VER, where
-   VER is the matplotlib version number.  This is because of
-   incompatibilities between the contents of .matplotlib between
-   matplotlib versions 0.99.3 and 1.0.0.  Sage reads the version
-   number VER by running
-
-      python -c 'import matplotlib; print(matplotlib.__version__)'
-
-   Note that at the end of the install process for matplotlib, the
-   spkg-install file prints a message showing what MPLCONFIGDIR will
-   be set to, using the command from sage-env, so this should provide
-   a check.
-
+   $HOME/.matplotlib by default. Instead, it sets MPLCONFIGDIR to
+   a subdirectory in $DOT_SAGE, see src/bin/sage-env

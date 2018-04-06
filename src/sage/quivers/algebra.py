@@ -22,7 +22,7 @@ from __future__ import absolute_import
 
 import six
 from sage.misc.cachefunc import cached_method
-from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModuleElement
+from sage.combinat.free_module import CombinatorialFreeModule
 from .algebra_elements import PathAlgebraElement
 
 class PathAlgebra(CombinatorialFreeModule):
@@ -350,7 +350,7 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: A2 = P2.algebra(GF(3))
             sage: A1.coerce_map_from(A2) # indirect doctest
             sage: A2.coerce_map_from(A1) # indirect doctest
-            Conversion map:
+            Coercion map:
               From: Path algebra of Multi-digraph on 2 vertices over Finite Field of size 3
               To:   Path algebra of Multi-digraph on 2 vertices over Finite Field of size 3
             sage: A1.coerce_map_from(ZZ) # indirect doctest
@@ -380,7 +380,7 @@ class PathAlgebra(CombinatorialFreeModule):
         ::
 
             sage: A2.coerce_map_from(P1)
-            Conversion map:
+            Coercion map:
               From: Partial semigroup formed by the directed paths of Multi-digraph on 2 vertices
               To:   Path algebra of Multi-digraph on 2 vertices over Finite Field of size 3
             sage: a = P1(P1.arrows()[0]); a

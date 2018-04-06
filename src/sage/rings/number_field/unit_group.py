@@ -15,12 +15,12 @@ The first generator is a primitive root of unity in the field::
     sage: UK.gens_values()  # random
     [-1/12*a^3 + 1/6*a, 1/24*a^3 + 1/4*a^2 - 1/12*a - 1]
     sage: UK.gen(0).value()
-    -1/12*a^3 + 1/6*a
+    1/12*a^3 - 1/6*a
 
     sage: UK.gen(0)
     u0
     sage: UK.gen(0) + K.one()   # coerce abstract generator into number field
-    -1/12*a^3 + 1/6*a + 1
+    1/12*a^3 - 1/6*a + 1
 
     sage: [u.multiplicative_order() for u in UK.gens()]
     [4, +Infinity]
@@ -37,18 +37,18 @@ as elements of an abstract multiplicative group::
     sage: UK(-1)
     u0^2
     sage: [UK(u) for u in (x^4-1).roots(K,multiplicities=False)]
-    [1, u0^2, u0^3, u0]
+    [1, u0^2, u0, u0^3]
 
     sage: UK.fundamental_units() # random
     [1/24*a^3 + 1/4*a^2 - 1/12*a - 1]
     sage: torsion_gen = UK.torsion_generator();  torsion_gen
     u0
     sage: torsion_gen.value()
-    -1/12*a^3 + 1/6*a
+    1/12*a^3 - 1/6*a
     sage: UK.zeta_order()
     4
     sage: UK.roots_of_unity()
-    [-1/12*a^3 + 1/6*a, -1, 1/12*a^3 - 1/6*a, 1]
+    [1/12*a^3 - 1/6*a, -1, -1/12*a^3 + 1/6*a, 1]
 
 Exp and log functions provide maps between units as field elements and exponent
 vectors with respect to the generators::
@@ -100,7 +100,30 @@ A relative number field example::
     sage: UL.zeta_order()
     24
     sage: UL.roots_of_unity()
-    [b*a, -b^2*a - b^2, b^3, -a, b*a + b, -b^2, -b^3*a, -a - 1, b, b^2*a, -b^3*a - b^3, -1, -b*a, b^2*a + b^2, -b^3, a, -b*a - b, b^2, b^3*a, a + 1, -b, -b^2*a, b^3*a + b^3, 1]
+    [-b^3*a - b^3,
+     -b^2*a,
+     b,
+     a + 1,
+     -b^3*a,
+     b^2,
+     b*a + b,
+     a,
+     b^3,
+     b^2*a + b^2,
+     b*a,
+     -1,
+     b^3*a + b^3,
+     b^2*a,
+     -b,
+     -a - 1,
+     b^3*a,
+     -b^2,
+     -b*a - b,
+     -a,
+     -b^3,
+     -b^2*a - b^2,
+     -b*a,
+     1]
 
 A relative extension example, which worked thanks to the code review by F.W.Clarke::
 
@@ -181,7 +204,13 @@ class UnitGroup(AbelianGroupWithValues_class):
     An S-unit group::
 
         sage: SUK = UnitGroup(K,S=21); SUK
-        S-unit group with structure C26 x Z x Z x Z x Z x Z x Z x Z x Z x Z x Z of Cyclotomic Field of order 13 and degree 12 with S = (Fractional ideal (3, z^3 + z^2 - 1), Fractional ideal (3, z^3 + z^2 + z - 1), Fractional ideal (3, z^3 - z - 1), Fractional ideal (3, z^3 - z^2 - z - 1), Fractional ideal (7))
+        S-unit group with structure C26 x Z x Z x Z x Z x Z x Z x Z x Z x Z x Z of
+         Cyclotomic Field of order 13 and degree 12 with
+         S = (Fractional ideal (3, z^3 - z - 1),
+              Fractional ideal (3, z^3 + z^2 + z - 1),
+              Fractional ideal (3, z^3 + z^2 - 1),
+              Fractional ideal (3, z^3 - z^2 - z - 1),
+              Fractional ideal (7))
         sage: SUK.rank()
         10
         sage: SUK.zeta_order()
@@ -229,7 +258,7 @@ class UnitGroup(AbelianGroupWithValues_class):
             sage: UK.gens()
             (u,)
             sage: UK.gens_values()
-            [-1/2*a + 1/2]
+            [1/2*a + 1/2]
 
             sage: K.<z> = CyclotomicField(13)
             sage: UK = K.unit_group(); UK
@@ -359,7 +388,7 @@ class UnitGroup(AbelianGroupWithValues_class):
             m = pK.bnfisunit(pari(u)).mattranspose()
 
         # convert column matrix to a list:
-        m = [ZZ(m[0,i].python()) for i in range(m.ncols())]
+        m = [ZZ(m[0,i].sage()) for i in range(m.ncols())]
 
         # NB pari puts the torsion after the fundamental units, before
         # the extra S-units but we have the torsion first:

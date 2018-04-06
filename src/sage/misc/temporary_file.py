@@ -236,9 +236,9 @@ class atomic_write:
 
         sage: from sage.misc.temporary_file import atomic_write
         sage: target_file = tmp_filename()
-        sage: open(target_file, "w").write("Old contents")
+        sage: _ = open(target_file, "w").write("Old contents")
         sage: with atomic_write(target_file) as f:
-        ....:     f.write("New contents")
+        ....:     _ = f.write("New contents")
         ....:     f.flush()
         ....:     open(target_file, "r").read()
         'Old contents'
@@ -250,10 +250,10 @@ class atomic_write:
 
         sage: from sage.misc.temporary_file import atomic_write
         sage: target_file = tmp_filename()
-        sage: open(target_file, "w").write("Old contents")
+        sage: _ = open(target_file, "w").write("Old contents")
         sage: with atomic_write(target_file) as f:
         ....:     f.close()
-        ....:     open(f.name, "w").write("Newer contents")
+        ....:     _ = open(f.name, "w").write("Newer contents")
         sage: open(target_file, "r").read()
         'Newer contents'
 
@@ -261,7 +261,7 @@ class atomic_write:
     not touched::
 
         sage: with atomic_write(target_file) as f:
-        ....:     f.write("Newest contents")
+        ....:     _ = f.write("Newest contents")
         ....:     raise RuntimeError
         Traceback (most recent call last):
         ...
@@ -275,14 +275,14 @@ class atomic_write:
 
         sage: target_file = tmp_filename()
         sage: with atomic_write(target_file, append=True) as f:
-        ....:     f.write("Hello")
+        ....:     _ = f.write("Hello")
         sage: with atomic_write(target_file, append=True) as f:
-        ....:     f.write(" World")
+        ....:     _ = f.write(" World")
         sage: open(target_file, "r").read()
         'Hello World'
         sage: with atomic_write(target_file, append=True) as f:
         ....:     f.seek(0)
-        ....:     f.write("HELLO")
+        ....:     _ = f.write("HELLO")
         sage: open(target_file, "r").read()
         'HELLO World'
 
@@ -292,7 +292,7 @@ class atomic_write:
         sage: link_to_target = os.path.join(tmp_dir(), "templink")
         sage: os.symlink(target_file, link_to_target)
         sage: with atomic_write(link_to_target) as f:
-        ....:     f.write("Newest contents")
+        ....:     _ = f.write("Newest contents")
         sage: open(target_file, "r").read()
         'Newest contents'
 
@@ -314,11 +314,11 @@ class atomic_write:
     Test writing twice to the same target file. The outermost ``with``
     "wins"::
 
-        sage: open(target_file, "w").write(">>> ")
+        sage: _ = open(target_file, "w").write(">>> ")
         sage: with atomic_write(target_file, append=True) as f, \
         ....:          atomic_write(target_file, append=True) as g:
-        ....:     f.write("AAA"); f.close()
-        ....:     g.write("BBB"); g.close()
+        ....:     _ = f.write("AAA"); f.close()
+        ....:     _ = g.write("BBB"); g.close()
         sage: open(target_file, "r").read()
         '>>> AAA'
     """

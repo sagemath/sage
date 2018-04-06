@@ -207,7 +207,7 @@ class Gamma1_class(GammaH_class):
         based on Todd-Coxeter enumeration will be used. This tends to return
         far larger sets of generators.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Gamma1(3).generators()
             [
@@ -262,7 +262,7 @@ class Gamma1_class(GammaH_class):
         Calculate the number of orbits of elliptic points of order 2 for this
         subgroup `\Gamma_1(N)`. This is known to be 0 if N > 2.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Gamma1(2).nu2()
             1
@@ -280,7 +280,7 @@ class Gamma1_class(GammaH_class):
         Calculate the number of orbits of elliptic points of order 3 for this
         subgroup `\Gamma_1(N)`. This is known to be 0 if N > 3.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Gamma1(2).nu3()
             0
@@ -319,7 +319,7 @@ class Gamma1_class(GammaH_class):
 
             N^2 \prod_{\substack{p \mid N \\ \text{$p$ prime}}} \left( 1 - \frac{1}{p^2}\right).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Gamma1(180).index()
             20736
@@ -427,6 +427,16 @@ class Gamma1_class(GammaH_class):
             [0, 0, 1, 0, 3, 0, 5, 0, 7, 0]
             sage: [Gamma1(9).dimension_cusp_forms(k, eps^2) for k in [1..10]]
             [0, 0, 0, 2, 0, 4, 0, 6, 0, 8]
+
+        In weight 1 this will return 0 in a few small cases, and otherwise give a NotImplementedError::
+
+            sage: chi = [u for u in DirichletGroup(40) if u(-1) == -1 and u(21) == 1][0]
+            sage: Gamma1(40).dimension_cusp_forms(1, chi)
+            0
+            sage: Gamma1(40).dimension_cusp_forms(1)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Computation of dimensions of weight 1 cusp forms spaces not implemented in general
         """
         from .all import Gamma0
 
@@ -450,7 +460,8 @@ class Gamma1_class(GammaH_class):
 
         if k == 1:
             try:
-                n = self.dimension_cusp_forms(1)
+                # see if we can rule out cusp forms existing
+                n = GammaH_constructor(self.level(), eps.kernel()).dimension_cusp_forms(1)
                 if n == 0:
                     return ZZ(0)
                 else: # never happens at present

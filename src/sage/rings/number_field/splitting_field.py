@@ -354,7 +354,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
     # Fgen = the generator of F as element of Q[y]/Kpol
     # (only needed if map=True)
     if map:
-        Fgen = F.gen()._pari_()
+        Fgen = F.gen().__pari__()
     verbose("Starting field: %s"%Kpol)
 
     # L and Lred are lists of SplittingData.

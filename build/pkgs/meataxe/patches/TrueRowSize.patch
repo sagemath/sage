@@ -1,0 +1,126 @@
+When using FfSetNoc() correctly, the equation
+FfCurrentRowSizeIo==FfTrueRowSize(FfNoc) will always hold.
+This patch replaces all calls to FfTrueRowSize(FfNoc).
+See trac ticket #23410.
+
+AUTHOR:
+
+- Simon King, 2015-09-26
+
+From 19ad8271345e704423d242241380f321f0fdd97e Mon Sep 17 00:00:00 2001
+From: Simon King <simon.king@uni-koeln.de>
+Date: Mon, 12 Sep 2016 12:31:47 +0200
+Subject: [PATCH] Do not call FfTrueRowSize(FfNoc)
+
+---
+ src/ffio.c     | 6 +++---
+ src/kernel-0.c | 6 +++---
+ src/mfread.c   | 2 +-
+ src/mfwrite.c  | 2 +-
+ src/zcmprow.c  | 2 +-
+ 5 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/src/ffio.c b/src/ffio.c
+index d2e3f1c..65fc2d1 100644
+--- a/src/ffio.c
++++ b/src/ffio.c
+@@ -68,7 +68,7 @@ int FfReadRows(FILE *f, PTR buf, int n)
+        -------------------- */
+     for (i = 0; i < n; ++i)
+     {
+-        if (fread(b,FfTrueRowSize(FfNoc),1,f) != 1) break;
++        if (fread(b,FfCurrentRowSizeIo,1,f) != 1) break;
+ 	b += FfCurrentRowSize;
+     }
+     if (ferror(f))
+@@ -106,7 +106,7 @@ int FfWriteRows(FILE *f, PTR  buf, int n)
+        --------------------- */
+     for (i = 0; i < n; ++i)
+     {
+-        if (fwrite(b,FfTrueRowSize(FfNoc),1,f) != 1) break;
++        if (fwrite(b,FfCurrentRowSizeIo,1,f) != 1) break;
+ 	b += FfCurrentRowSize;
+     }
+     if (ferror(f))
+@@ -141,7 +141,7 @@ int FfSeekRow(FILE *f, int pos)
+     long addr;
+ 
+     if (FfOrder != -1)
+-	addr = (long) FfTrueRowSize(FfNoc) * pos + 12;
++	addr = (long) FfCurrentRowSizeIo * pos + 12;
+     else
+ 	addr = (long) FfNoc * 4 * pos + 12;
+     if (SysFseek(f,addr) == -1)
+diff --git a/src/kernel-0.c b/src/kernel-0.c
+index 431f01a..bbab00b 100644
+--- a/src/kernel-0.c
++++ b/src/kernel-0.c
+@@ -638,7 +638,7 @@ PTR FfAddRow(PTR dest, PTR src)
+ #else
+ 	register BYTE *p1 = dest;
+ 	register BYTE *p2 = src;
+-	for (i = FfTrueRowSize(FfNoc); i != 0; --i)
++	for (i = FfCurrentRowSizeIo; i != 0; --i)
+ 	{
+ 	    register int x = *p2++;
+ 	    if (x != 0) *p1 = mtx_tadd[*p1][x];
+@@ -787,7 +787,7 @@ PTR FfSubRow(PTR dest, PTR src)
+ #else
+         register FEL *p1 = dest;
+         register FEL *p2 = src;
+-        for (i = FfTrueRowSize(FfNoc); i != 0; --i)
++        for (i = FfCurrentRowSizeIo; i != 0; --i)
+         {
+             register int x = *p2++;
+             if (x != 0) *p1 = mtx_tadd[*p1][table_inv[x]];
+@@ -999,7 +999,7 @@ void FfMulRow(PTR row, FEL mark)
+     {
+ 	multab = mtx_tmult[mark];
+ 	m = row;
+-	for (i = FfTrueRowSize(FfNoc); i != 0; --i)
++	for (i = FfCurrentRowSizeIo; i != 0; --i)
+ 	{
+ 	    register int x = *m;
+ 	    if (x != 0) *m = multab[x];
+diff --git a/src/mfread.c b/src/mfread.c
+index ce576f4..4d2a076 100644
+--- a/src/mfread.c
++++ b/src/mfread.c
+@@ -59,7 +59,7 @@ int MfReadRows(MtxFile_t *f, PTR buf, int nrows)
+        -------------------- */
+     for (i = 0; i < nrows; ++i)
+     {
+-        if (fread(b,FfTrueRowSize(FfNoc),1,f->File) != 1) break;
++        if (fread(b,FfCurrentRowSizeIo,1,f->File) != 1) break;
+ 	b += FfCurrentRowSize;
+     }
+     if (ferror(f->File)) 
+diff --git a/src/mfwrite.c b/src/mfwrite.c
+index cf24541..41fc181 100644
+--- a/src/mfwrite.c
++++ b/src/mfwrite.c
+@@ -58,7 +58,7 @@ int MfWriteRows(MtxFile_t *f, PTR buf, int nrows)
+        --------------------- */
+     for (i = 0; i < nrows; ++i)
+     {
+-        if (fwrite(b,FfTrueRowSize(FfNoc),1,f->File) != 1) 
++        if (fwrite(b,FfCurrentRowSizeIo,1,f->File) != 1) 
+ 	    break;
+ 	b += FfCurrentRowSize;
+     }
+diff --git a/src/zcmprow.c b/src/zcmprow.c
+index f9fe2a5..c4faff4 100644
+--- a/src/zcmprow.c
++++ b/src/zcmprow.c
+@@ -36,7 +36,7 @@
+ 
+ int FfCmpRows(PTR p1, PTR p2)
+ {	
+-    return memcmp(p1,p2,FfTrueRowSize(FfNoc));
++    return memcmp(p1,p2,FfCurrentRowSizeIo);
+ }
+ 
+ /**
+-- 
+2.5.0
+

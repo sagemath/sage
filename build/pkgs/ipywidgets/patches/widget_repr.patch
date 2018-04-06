@@ -1,0 +1,45 @@
+commit aadd75cb60d73638a24c8f69e5fbd0c5c8a44780
+Author: Jeroen Demeyer <jdemeyer@cage.ugent.be>
+Date:   Thu Jan 5 17:34:52 2017 +0100
+
+    Add __repr__ to Widget for testing/debugging
+
+diff --git a/ipywidgets/widgets/widget.py b/ipywidgets/widgets/widget.py
+index 8f4abd3..db474ac 100644
+--- a/ipywidgets/widgets/widget.py
++++ b/ipywidgets/widgets/widget.py
+@@ -123,6 +123,34 @@ class Widget(LoggingConfigurable):
+     widgets = {}
+     widget_types = {}
+ 
++    def __repr__(self):
++        """
++        Textual representation of this widget, mainly used for testing
++        and debugging.
++        """
++        # List of attributes to show with default values. The attribute
++        # is printed if it exists and its value is not equal to this
++        # default value.
++        attributes = [("value", None),
++                      ("min", None),
++                      ("max", None),
++                      ("step", None),
++                      ("options", None),
++                      ("description", ""),
++                      ("children", [])]
++        r = ""
++        for (attr, default) in attributes:
++            try:
++                v = getattr(self, attr)
++            except AttributeError:
++                continue
++            if default == v:
++                continue
++            if r:
++                r += ", "
++            r += attr + "=" + repr(v)
++        return "%s(%s)" % (type(self).__name__, r)
++
+     @staticmethod
+     def on_widget_constructed(callback):
+         """Registers a callback to be called when a widget is constructed.

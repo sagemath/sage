@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Interface with Cliquer (clique-related problems)
 
@@ -24,7 +25,6 @@ Methods
 -------
 """
 
-
 #*****************************************************************************
 #       Copyright (C) 2009 Nathann Cohen <nathann.cohen@gmail.com>
 #
@@ -34,9 +34,8 @@ Methods
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
-include "cysignals/signals.pxi"
-include "cysignals/memory.pxi"
+from cysignals.memory cimport sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 
 cdef extern from "sage/graphs/cliquer/cl.c":
@@ -58,7 +57,7 @@ def max_clique(graph):
           sage: max_clique(C)
           [7, 9]
 
-    TEST::
+    TESTS::
 
         sage: g = Graph()
         sage: g.clique_maximum()
@@ -90,7 +89,7 @@ def max_clique(graph):
 
     sig_free(list)
     graph_free(g)
-    return list_composition(b,d_inv)
+    return [d_inv[k] for k in b]
 
 
 # computes all the maximum clique of a graph and return its list
@@ -130,7 +129,7 @@ def all_max_clique(graph):
         sage: C.cliques_maximum()
         [[1, 2, 3, 4]]
 
-    TEST::
+    TESTS::
 
         sage: g = Graph()
         sage: g.cliques_maximum()
@@ -163,7 +162,7 @@ def all_max_clique(graph):
         if(list[i]!=-1):
             c.append(list[i])
         else:
-            b.append(list_composition(c,d_inv))
+            b.append([d_inv[k] for k in c])
             c=[]
 
     sig_free(list)
@@ -192,7 +191,7 @@ def clique_number(graph):
         sage: clique_number(G)
         3
 
-    TEST::
+    TESTS::
 
         sage: g = Graph()
         sage: g.clique_number()
@@ -215,22 +214,3 @@ def clique_number(graph):
     graph_free(g)
     sig_off()
     return c
-
-
-def list_composition(a,b):
-    """
-    Composes a list ``a`` with a map ``b``.
-
-    EXAMPLES::
-
-        sage: from sage.graphs.cliquer import list_composition
-        sage: list_composition([1,3,'a'], {'a':'b', 1:2, 2:3, 3:4})
-        [2, 4, 'b']
-
-    """
-    value=[]
-    for i in a:
-        value.append(b[i])
-    return value
-
-

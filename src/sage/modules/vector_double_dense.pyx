@@ -40,10 +40,11 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 cimport numpy
 import numpy
-import free_module_element
+from .free_module_element import FreeModuleElement
 
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
 
@@ -109,7 +110,7 @@ cdef class Vector_double_dense(FreeModuleElement):
         This function assumes that self._numpy_dtypeint and
         self._nrows and self._ncols have already been initialized.
 
-        EXAMPLE:
+        EXAMPLES:
 
         In this example, we throw away the current array and make a
         new uninitialized array representing the data for the class. ::
@@ -139,7 +140,7 @@ cdef class Vector_double_dense(FreeModuleElement):
         """
         Return a copy of the vector
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: a = vector(RDF, range(9))
             sage: a == copy(a)
@@ -220,7 +221,7 @@ cdef class Vector_double_dense(FreeModuleElement):
         """
         Return the length of the vector.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: v = vector(RDF, 5); v
             (0.0, 0.0, 0.0, 0.0, 0.0)
@@ -358,11 +359,11 @@ cdef class Vector_double_dense(FreeModuleElement):
 
         return self._new(_left._vector_numpy * _right._vector_numpy)
 
-    cpdef _rmul_(self, RingElement left):
+    cpdef _rmul_(self, Element left):
         """
         Multiply a scalar and vector
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: v = vector(CDF, range(3))
             sage: 3*v
@@ -374,12 +375,11 @@ cdef class Vector_double_dense(FreeModuleElement):
 
         return self._new(self._python_dtype(left)*self._vector_numpy)
 
-
-    cpdef _lmul_(self, RingElement right):
+    cpdef _lmul_(self, Element right):
         """
         Multiply a scalar and vector
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: v = vector(CDF, range(3))
             sage: v*3
@@ -394,9 +394,9 @@ cdef class Vector_double_dense(FreeModuleElement):
 
     def inv_fft(self,algorithm="radix2", inplace=False):
         """
-        This performs the inverse fast fourier transform on the vector.
+        This performs the inverse fast Fourier transform on the vector.
 
-        The fourier transform can be done in place using the keyword
+        The Fourier transform can be done in place using the keyword
         inplace=True
 
         This will be fastest if the vector's length is a power of 2.
@@ -412,12 +412,13 @@ cdef class Vector_double_dense(FreeModuleElement):
 
     def fft(self, direction = "forward", algorithm = "radix2", inplace=False):
         """
-        This performs a fast fourier transform on the vector.
+        This performs a fast Fourier transform on the vector.
 
         INPUT:
-           direction -- 'forward' (default) or 'backward'
 
-           The algorithm and inplace arguments are ignored.
+        - direction -- 'forward' (default) or 'backward'
+
+        The algorithm and inplace arguments are ignored.
 
         This function is fastest if the vector's length is a power of 2.
 
@@ -467,8 +468,8 @@ cdef class Vector_double_dense(FreeModuleElement):
             else:
                 self._vector_numpy = scipy.fftpack.ifft(self._vector_numpy, overwrite_x = True)
         else:
-            V = CDF**self._degree
-            from vector_complex_double_dense import Vector_complex_double_dense
+            V = CDF ** self._degree
+            from .vector_complex_double_dense import Vector_complex_double_dense
             if direction == 'forward':
                 return Vector_complex_double_dense(V, scipy.fft(self._vector_numpy))
             else:
@@ -678,7 +679,7 @@ cdef class Vector_double_dense(FreeModuleElement):
         """
         Calculate the arithmetic mean of the vector.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: v = vector(RDF, range(9))
             sage: w = vector(CDF, [k+(9-k)*I for k in range(9)])
@@ -750,7 +751,7 @@ cdef class Vector_double_dense(FreeModuleElement):
         subtracted from the result to give 0.0 for a normal
         distribution. (Paragraph from the scipy.stats docstring.)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: v = vector(RDF, range(9))
             sage: w = vector(CDF, [k+(9-k)*I for k in range(9)])

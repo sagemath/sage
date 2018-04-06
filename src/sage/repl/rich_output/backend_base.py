@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
 r"""
-Base class for Backends
+Base Class for Backends
 
 The display backends are the commandline, the SageNB notebook, the
-ipython notebook, the Emacs sage mode, the Sage doctester, .... All of
+IPython notebook, the Emacs sage mode, the Sage doctester, .... All of
 these have different capabilities for what they can display.
 
 To implement a new display backend, you need to subclass

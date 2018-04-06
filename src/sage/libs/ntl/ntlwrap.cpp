@@ -1,3 +1,5 @@
+#ifndef _SAGE_NTLWRAP_CPP
+#define _SAGE_NTLWRAP_CPP
 #include "ntlwrap.h"
 
 #ifdef __cplusplus
@@ -832,3 +834,4 @@ static void ZZ_pX_InvMod_newton_ram(struct ZZ_pX &x, const struct ZZ_pX &a, cons
 }
 
 #endif  /* #ifdef __cplusplus */
+#endif  /* #ifndef  _SAGE_NTLWRAP_CPP */

@@ -14,8 +14,8 @@ Both produce the same extension of `\QQ`. However, they should not be
 identical because `M` carries additional information::
 
     sage: L.structure()
-    (Ring Coercion endomorphism of Number Field in a with defining polynomial x^2 - 2,
-     Ring Coercion endomorphism of Number Field in a with defining polynomial x^2 - 2)
+    (Identity endomorphism of Number Field in a with defining polynomial x^2 - 2,
+     Identity endomorphism of Number Field in a with defining polynomial x^2 - 2)
     sage: M.structure()
     (Isomorphism given by variable name change map:
       From: Number Field in a with defining polynomial x^2 - 2

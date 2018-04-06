@@ -83,9 +83,9 @@ Test pickling::
 Comparison::
 
     sage: m = matrix(SR, 2, [sqrt(2), 3, pi, e])
-    sage: cmp(m,m)
-    0
-    sage: cmp(m,3) != 0
+    sage: m == m
+    True
+    sage: m != 3
     True
     sage: m = matrix(SR,2,[1..4]); n = m^2
     sage: (exp(m+n) - exp(m)*exp(n)).simplify_rational() == 0       # indirect test
@@ -147,13 +147,14 @@ Conversion to Maxima::
     matrix([sqrt(2),3],[%pi,%e])
 
 """
+from __future__ import absolute_import
 
 from sage.rings.polynomial.all import PolynomialRing
 from sage.structure.element cimport ModuleElement, RingElement, Element
 from sage.structure.factorization import Factorization
 
-from matrix_generic_dense cimport Matrix_generic_dense
-cimport matrix
+from .matrix_generic_dense cimport Matrix_generic_dense
+cimport sage.matrix.matrix as matrix
 
 cdef maxima
 
@@ -193,11 +194,13 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [3 4 5]
             [6 7 8]
             sage: es = A.eigenvectors_left(); es
-            [(-3*sqrt(6) + 6, [(1, -1/5*sqrt(6) + 4/5, -2/5*sqrt(3)*sqrt(2) + 3/5)], 1), (3*sqrt(6) + 6, [(1, 1/5*sqrt(6) + 4/5, 2/5*sqrt(3)*sqrt(2) + 3/5)], 1), (0, [(1, -2, 1)], 1)]
+            [(-3*sqrt(6) + 6, [(1, -1/5*sqrt(6) + 4/5, -2/5*sqrt(6) + 3/5)], 1),
+             (3*sqrt(6) + 6, [(1, 1/5*sqrt(6) + 4/5, 2/5*sqrt(6) + 3/5)], 1),
+             (0, [(1, -2, 1)], 1)]
             sage: eval, [evec], mult = es[0]
             sage: delta = eval*evec - evec*A
             sage: abs(abs(delta)) < 1e-10
-            sqrt(1/25*(3*(2*sqrt(3)*sqrt(2) - 3)*(sqrt(6) - 2) + 16*sqrt(3)*sqrt(2) + 5*sqrt(6) - 54)^2 + 1/25*(3*(sqrt(6) - 2)*(sqrt(6) - 4) + 14*sqrt(3)*sqrt(2) + 4*sqrt(6) - 42)^2 + 144/25*(sqrt(3)*sqrt(2) - sqrt(6))^2) < (1.00000000000000e-10)
+            sqrt(9/25*((2*sqrt(6) - 3)*(sqrt(6) - 2) + 7*sqrt(6) - 18)^2 + 9/25*((sqrt(6) - 2)*(sqrt(6) - 4) + 6*sqrt(6) - 14)^2) < (1.00000000000000e-10)
             sage: abs(abs(delta)).n() < 1e-10
             True
 
@@ -250,12 +253,12 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [(-1, [(1, 0, -1, 1, 0, -1), (0, 1, -1, 0, 1, -1)], 2), (1, [(1, 0, -1, -1, 0, 1), (0, 1, 1, 0, -1, -1)], 2), (-2, [(1, -1, 1, -1, 1, -1)], 1), (2, [(1, 1, 1, 1, 1, 1)], 1)]
         """
         from sage.modules.free_module_element import vector
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
 
-        [evals,mults],evecs=self.transpose()._maxima_(maxima).eigenvectors()._sage_()
-        result=[]
-        for e,evec,m in zip(evals,evecs,mults):
-            result.append((e,[vector(v) for v in evec], ZZ(m)))
+        [evals, mults], evecs = self.transpose()._maxima_(maxima).eigenvectors()._sage_()
+        result = []
+        for e, evec, m in zip(evals, evecs, mults):
+            result.append((e, [vector(v) for v in evec], ZZ(m)))
 
         return result
 
@@ -382,6 +385,10 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
     def charpoly(self, var='x', algorithm=None):
         """
         Compute the characteristic polynomial of self, using maxima.
+
+        INPUT:
+
+        - ``var`` - (default: 'x') name of variable of charpoly
 
         EXAMPLES::
 

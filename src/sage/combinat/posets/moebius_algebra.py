@@ -19,16 +19,15 @@ Möbius Algebras
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.algebras import Algebras
 from sage.categories.realizations import Realizations, Category_realization_of_parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.posets.lattices import LatticePoset
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.all import ZZ
+
 
 class BasisAbstract(CombinatorialFreeModule, BindableClass):
     """

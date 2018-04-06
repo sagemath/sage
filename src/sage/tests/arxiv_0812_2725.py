@@ -36,6 +36,7 @@ points since they cannot create any sort of crossing. ::
 #
 # See http://www.gnu.org/licenses/.
 #*****************************************************************************
+from six.moves import range
 from sage.combinat.set_partition import SetPartitions as SetPartitions
 
 
@@ -74,7 +75,7 @@ def CompleteMatchings(n):
     integer depends on what [1..n] returns, and also on what range(1,
     len([1..n])) is.
     """
-    for m in matchingsset(range(1, n + 1)):
+    for m in matchingsset(list(range(1, n + 1))):
         yield m
 
 
@@ -108,7 +109,7 @@ def matchingsset(L):
         sage: [m for m in matchingsset(())]
         [[]]
     """
-    if len(L) == 0:
+    if not L:
         yield []
     else:
         for k in range(1, len(L)):
@@ -197,7 +198,7 @@ def setp_to_edges(p):
     A list of non-loop edges of the set partition. As this code just
     works with crossings, we can ignore the loops.
 
-    EXAMPLE:
+    EXAMPLES:
 
     The main example from the paper::
 

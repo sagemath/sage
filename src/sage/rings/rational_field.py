@@ -32,7 +32,7 @@ function).
     sage: QQ((3*x)/(4*x))
     3/4
 
-TEST::
+TESTS::
 
     sage: Q = RationalField()
     sage: Q == loads(dumps(Q))
@@ -158,7 +158,9 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: Q.is_field()
             True
             sage: Q.category()
-            Join of Category of quotient fields and Category of metric spaces
+            Join of Category of number fields
+             and Category of quotient fields
+             and Category of metric spaces
             sage: Q.zeta()
             -1
 
@@ -221,7 +223,9 @@ class RationalField(Singleton, number_field_base.NumberField):
             ('x',)
         """
         from sage.categories.basic import QuotientFields
-        ParentWithGens.__init__(self, self, category=QuotientFields().Metric())
+        from sage.categories.number_fields import NumberFields
+        ParentWithGens.__init__(self, self, category=[QuotientFields().Metric(),
+                                                      NumberFields()])
         self._assign_names(('x',),normalize=False) # ???
         self._populate_coercion_lists_(element_constructor=Rational, init_no_parent=True)
 
@@ -339,7 +343,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             0
             sage: f = QQ.coerce_map_from(int); f # indirect doctest
             Native morphism:
-              From: Set of Python objects of type 'int'
+              From: Set of Python objects of class 'int'
               To:   Rational Field
             sage: f(44)
             44
@@ -348,10 +352,10 @@ class RationalField(Singleton, number_field_base.NumberField):
 
             sage: QQ.coerce_map_from(long) # indirect doctest
             Composite map:
-              From: Set of Python objects of type 'long'
+              From: Set of Python objects of class 'long'
               To:   Rational Field
               Defn:   Native morphism:
-                      From: Set of Python objects of type 'long'
+                      From: Set of Python objects of class 'long'
                       To:   Integer Ring
                     then
                       Natural morphism:
@@ -421,6 +425,24 @@ class RationalField(Singleton, number_field_base.NumberField):
                     yield self(-other/height)
                     yield self(height/other)
                     yield self(-height/other)
+
+    def __truediv__(self, I):
+        """
+        Form the quotient by an integral ideal.
+
+        EXAMPLES::
+
+            sage: QQ / ZZ
+            Q/Z
+        """
+        from sage.rings.ideal import Ideal_generic
+        from sage.groups.additive_abelian.qmodnz import QmodnZ
+        if I is ZZ:
+            return QmodnZ(1)
+        elif isinstance(I, Ideal_generic) and I.base_ring() is ZZ:
+            return QmodnZ(I.gen())
+        else:
+            return super(RationalField, self).__truediv__(I)
 
     def range_by_height(self, start, end=None):
         r"""
@@ -575,11 +597,11 @@ class RationalField(Singleton, number_field_base.NumberField):
         EXAMPLES::
 
             sage: QQ.embeddings(QQ)
-            [Ring Coercion endomorphism of Rational Field]
+            [Identity endomorphism of Rational Field]
             sage: QQ.embeddings(CyclotomicField(5))
-            [Ring Coercion morphism:
-              From: Rational Field
-              To:   Cyclotomic Field of order 5 and degree 4]
+            [Coercion map:
+               From: Rational Field
+               To:   Cyclotomic Field of order 5 and degree 4]
 
         `K` must have characteristic 0::
 
@@ -778,38 +800,6 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return True
 
-    def is_subring(self, K):
-        r"""
-        Return ``True`` if `\QQ` is a subring of `K`.
-
-        We are only able to determine this in some cases, e.g., when
-        `K` is a field or of positive characteristic.
-
-        EXAMPLES::
-
-            sage: QQ.is_subring(QQ)
-            True
-            sage: QQ.is_subring(QQ['x'])
-            True
-            sage: QQ.is_subring(GF(7))
-            False
-            sage: QQ.is_subring(CyclotomicField(7))
-            True
-            sage: QQ.is_subring(ZZ)
-            False
-            sage: QQ.is_subring(Frac(ZZ))
-            True
-        """
-        if K.is_field():
-            return K.characteristic() == 0
-        if K.characteristic() != 0:
-            return False
-        try:
-            self.embeddings(K)
-        except (TypeError, ValueError):
-            return False
-        return True
-
     def is_field(self, proof = True):
         """
         Return ``True``, since the rational field is a field.
@@ -1006,7 +996,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         Return an random element of `\QQ`.
 
         Elements are constructed by randomly choosing integers
-        for the numerator and denominator, not neccessarily coprime.
+        for the numerator and denominator, not necessarily coprime.
 
         INPUT:
 
@@ -1247,6 +1237,18 @@ class RationalField(Singleton, number_field_base.NumberField):
         return 'Fraction Integer'
 
     _fricas_init_ = _axiom_init_
+
+    def _polymake_init_(self):
+        r"""
+        Return the polymake representation of `\QQ`.
+
+        EXAMPLES::
+
+            sage: polymake(QQ)    #optional - polymake # indirect doctest
+            Rational
+
+        """
+        return '"Rational"'
 
     def _sage_input_(self, sib, coerced):
         r"""

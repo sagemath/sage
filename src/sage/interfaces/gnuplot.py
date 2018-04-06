@@ -47,7 +47,13 @@ class Gnuplot(SageObject):
         self(line)
         return ''
 
-    def __repr__(self):
+    def _repr_(self):
+        """
+        TESTS::
+
+            sage: gnuplot               # indirect doctests
+            Interface to Gnuplot
+        """
         return "Interface to Gnuplot"
 
     def plot(self, cmd, file=None, verbose=True, reset=True):

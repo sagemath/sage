@@ -326,7 +326,7 @@ class Mwrank_class(Expect):
         """
         Start the mwrank console.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: mwrank.console() # not tested: expects console input
             Program mwrank: ...
@@ -355,7 +355,7 @@ def mwrank_console():
     """
     Start the mwrank console.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: mwrank_console() # not tested: expects console input
         Program mwrank: ...

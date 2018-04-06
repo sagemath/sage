@@ -17,7 +17,7 @@ slopes (and hence a last infinite slope).
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element
-from sage.structure.sage_object import op_EQ, op_NE, op_LE, op_GE, op_LT
+from sage.structure.richcmp import op_EQ, op_NE, op_LE, op_GE, op_LT
 from sage.misc.cachefunc import cached_method
 
 from sage.rings.infinity import Infinity

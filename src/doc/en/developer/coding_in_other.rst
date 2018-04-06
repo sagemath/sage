@@ -138,7 +138,7 @@ convert output from PARI to Sage objects::
         if not self.is_square():
             raise ArithmeticError("frobenius matrix of non-square matrix not defined.")
 
-        v = self._pari_().matfrobenius(flag)
+        v = self.__pari__().matfrobenius(flag)
         if flag==0:
             return self.matrix_space()(v.python())
         elif flag==1:
@@ -402,7 +402,7 @@ interface to Singular::
     sage: singular.LIB("brnoeth.lib")
     sage: singular.ring(5,'(x,y)','lp')
         polynomial ring, over a field, global ordering
-        //   characteristic : 5
+        //   coefficients: ZZ/5
         //   number of vars : 2
         //        block   1 : ordering lp
         //                  : names    x y

@@ -17,6 +17,6 @@ cdef inline void mpq_div_zz(mpq_t res, mpz_t op1, mpz_t op2):
     mpq_canonicalize(res)
 
 cdef inline void mpq_mul_z(mpq_t res, mpq_t op1, mpz_t op2):
-    # (A/B) * C = (A/C) * B
+    # (A/B) * C = (C/B) * A
     mpq_div_zz(res, op2, mpq_denref(op1))
     mpz_mul(mpq_numref(res), mpq_numref(res), mpq_numref(op1))

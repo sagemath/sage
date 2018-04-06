@@ -39,12 +39,9 @@ LGPL V3+
    "-mcpu=...", and perhaps pass a more generic "--host=..." to
    'configure'. (MPIR honors '--enable-fat' to some extent, but this
    option isn't used on anything other than x86 / x86_64.)
+ * We currently work around a linker bug on MacOS X 10.5 PPC (with
+   GCC 4.2.1) which breaks 'configure' if debug symbols are enabled.
+   This *might* get fixed in later upstream releases.
  * We could save some space by removing the `src/build.vc10/` directory which
    isn't used in Sage.  (It gets probably more worth in case also directories /
    files for later versions of Microsoft Visual C get added.)
-
-=== Patches ===
- * asm-align.patch: on OS X using Xcode 7, ".align 64" in the files
-   "x86_64/mulredc*.asm" causes an error, and similarly with ".align
-   32,,16". These need to be changed to ".p2align 6" and ".p2align
-   5,,4", respectively

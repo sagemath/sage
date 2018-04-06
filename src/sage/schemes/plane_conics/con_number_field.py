@@ -28,7 +28,6 @@ from sage.rings.complex_field import is_ComplexField
 
 from sage.rings.ring import is_Ring
 from sage.rings.rational_field import is_RationalField
-from sage.rings.morphism import is_RingHomomorphism
 from sage.rings.real_mpfi import is_RealIntervalField
 from sage.rings.complex_interval_field import is_ComplexIntervalField
 
@@ -351,8 +350,9 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
 
         if ret == -1:
             if self._local_obstruction is None:
-                if (not is_RingHomomorphism(p)) or p.codomain() is AA or \
-                    p.codomain() is RLF:
+                from sage.categories.map import Map
+                from sage.categories.all import Rings
+                if not (isinstance(p, Map) and p.category_for().is_subcategory(Rings())) or p.codomain() is AA or p.codomain() is RLF:
                     self._local_obstruction = p
             return False
 

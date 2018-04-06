@@ -203,7 +203,7 @@ Example
 
 Suppose that we wish to compute the integral
 
-.. MATH ::
+.. MATH::
 
    \int_{U(n)} |tr(g)|^{2k}\,dg
 
@@ -457,7 +457,7 @@ Integration
 
 Suppose that we wish to compute the integral
 
-.. MATH ::
+.. MATH::
 
    \int_{U(n)} |tr(g)|^{2k}\,dg
 

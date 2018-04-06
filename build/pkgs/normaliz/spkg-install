@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 die () {
     echo "$@" 1>&2
     exit 1
@@ -13,7 +11,4 @@ cd src
 ./configure --disable-scip --disable-nmzintegrate --prefix=$SAGE_LOCAL || die "Error configuring normaliz"
 $MAKE || die "Error building normaliz"
 $MAKE install || die "Error installing normaliz"
-
-cd Singular || die "Normaliz distribution has no Singular subdirectory"
-cp -pf normaliz.lib "$SAGE_LOCAL/share/singular/" || die "Error installing normaliz.lib for Singular."
 

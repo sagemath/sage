@@ -19,7 +19,7 @@ coefficients where `p` is the characteristic of `k`. It can be defined
 via the formal group as `x+c` in the variable `z=\log_E(t)` for a
 constant `c` such that the constant term `c_0` in `\wp(z)` is zero.
 
-EXAMPLE::
+EXAMPLES::
 
     sage: E = EllipticCurve([0,1])
     sage: E.weierstrass_p()
@@ -177,7 +177,7 @@ def compute_wp_pari(E,prec):
         sage: compute_wp_pari(E, prec=30)
         z^-2 - 1/7*z^4 + 1/637*z^10 - 1/84721*z^16 + 3/38548055*z^22 - 4/8364927935*z^28 + O(z^30)
     """
-    ep = E._pari_()
+    ep = E.__pari__()
     wpp = ep.ellwp(n=prec)
     k = E.base_ring()
     R = LaurentSeriesRing(k,'z')
@@ -259,7 +259,7 @@ def compute_wp_fast(k, A, B, m):
 
      - ``k`` - the base field of the curve
      - ``A`` - and
-     - ``B`` - as the coeffients of the short Weierstrass model `y^2 = x^3 +Ax +B`, and
+     - ``B`` - as the coefficients of the short Weierstrass model `y^2 = x^3 +Ax +B`, and
      - ``m`` - the precision to which the function is computed to.
 
     OUTPUT:

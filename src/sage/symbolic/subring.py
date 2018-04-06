@@ -432,8 +432,7 @@ class GenericSymbolicSubring(SymbolicRing):
         elif ComplexField(mpfr_prec_min()).has_coerce_map_from(P):
             return P not in (RLF, CLF, AA, QQbar)
 
-
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Compare two symbolic subrings.
 
@@ -450,12 +449,28 @@ class GenericSymbolicSubring(SymbolicRing):
             sage: A == AB
             False
         """
-        c = cmp(type(self), type(other))
-        if c != 0:
-            return c
-        if self._vars_ == other._vars_:
-            return 0
-        return 1
+        if not isinstance(other, GenericSymbolicSubring):
+            return False
+        return self._vars_ == other._vars_
+
+    def __ne__(self, other):
+        """
+        Check whether ``self`` and ``other`` are not equal.
+
+        EXAMPLES::
+
+            sage: from sage.symbolic.subring import SymbolicSubring
+            sage: A = SymbolicSubring(accepting_variables=('a',))
+            sage: B = SymbolicSubring(accepting_variables=('b',))
+            sage: AB = SymbolicSubring(accepting_variables=('a', 'b'))
+            sage: A != A
+            False
+            sage: A != B
+            True
+            sage: A != AB
+            True
+        """
+        return not self == other
 
 
 from sage.categories.pushout import ConstructionFunctor
@@ -567,7 +582,6 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
         if self == other:
             return self
 
-
     def __eq__(self, other):
         r"""
         Return whether this functor is equal to ``other``.
@@ -588,7 +602,6 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
             True
         """
         return type(self) == type(other) and self.vars == other.vars
-
 
     def __ne__(self, other):
         r"""

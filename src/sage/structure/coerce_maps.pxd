@@ -3,7 +3,6 @@ from sage.categories.map cimport Map
 
 cdef class DefaultConvertMap(Map):
     cdef public bint _force_use
-    cdef public bint _is_coercion
 
 cdef class DefaultConvertMap_unique(DefaultConvertMap):
     pass

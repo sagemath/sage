@@ -60,7 +60,7 @@ Installation
 ============
 
 If you do not have Sage installed on a computer and just
-want to try some commands, use online at http://www.sagenb.org.
+want to try some commands, use it online at http://sagecell.sagemath.org.
 
 See the Sage Installation Guide in the documentation section of the
 main Sage webpage [SA]_ for instructions on installing Sage on your
@@ -93,7 +93,7 @@ computer. Here we merely make a few comments.
    will search.
 
    The documentation for using SageTeX is located in
-   ``$SAGE_ROOT/local/share/texmf/tex/generic/sagetex/``, where
+   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, where
    "``$SAGE_ROOT``" refers to the directory where you installed Sage --
    for example, ``/opt/sage-4.2.1``.
 

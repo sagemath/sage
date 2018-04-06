@@ -202,7 +202,7 @@ class TensorWithIndices(SageObject):
             if con.find('(', sym1+1) != -1 or '[' in con:
                 raise NotImplementedError("Multiple symmetries are not " +
                                           "treated yet.")
-            self._tensor = self._tensor.symmetrize(*(range(sym1, sym2+1)))
+            self._tensor = self._tensor.symmetrize(*range(sym1, sym2+1))
             self._changed = True # self does no longer contain the original tensor
             con = con.replace('(','').replace(')','')
         if '[' in con:
@@ -211,7 +211,7 @@ class TensorWithIndices(SageObject):
             if con.find('[', sym1+1) != -1 or '(' in con:
                 raise NotImplementedError("multiple symmetries are not " +
                                           "treated yet")
-            self._tensor = self._tensor.antisymmetrize(*(range(sym1, sym2+1)))
+            self._tensor = self._tensor.antisymmetrize(*range(sym1, sym2+1))
             self._changed = True # self does no longer contain the original tensor
             con = con.replace('[','').replace(']','')
         if len(con) != self._tensor._tensor_type[0]:
@@ -237,8 +237,7 @@ class TensorWithIndices(SageObject):
                                               "treated yet")
                 csym1 = sym1 + self._tensor._tensor_type[0]
                 csym2 = sym2 + self._tensor._tensor_type[0]
-                self._tensor = self._tensor.symmetrize(
-                                                      *(range(csym1, csym2+1)))
+                self._tensor = self._tensor.symmetrize(*range(csym1, csym2+1))
                 self._changed = True # self does no longer contain the original
                                      # tensor
                 cov = cov.replace('(','').replace(')','')
@@ -251,7 +250,7 @@ class TensorWithIndices(SageObject):
                 csym1 = sym1 + self._tensor._tensor_type[0]
                 csym2 = sym2 + self._tensor._tensor_type[0]
                 self._tensor = self._tensor.antisymmetrize(
-                                                      *(range(csym1, csym2+1)))
+                                                        *range(csym1, csym2+1))
                 self._changed = True # self does no longer contain the original
                                      # tensor
                 cov = cov.replace('[','').replace(']','')

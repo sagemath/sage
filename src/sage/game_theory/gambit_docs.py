@@ -127,9 +127,9 @@ showing the Battle of the Sexes::
     sage: g[int(1), int(1)][int(1)] = int(2)  # optional - gambit
     sage: solver = gambit.nash.ExternalLCPSolver()  # optional - gambit
     sage: solver.solve(g)  # optional - gambit
-    [<NashProfile for '': [1.0, 0.0, 1.0, 0.0]>,
-     <NashProfile for '': [0.6666666667, 0.3333333333, 0.3333333333, 0.6666666667]>,
-     <NashProfile for '': [0.0, 1.0, 0.0, 1.0]>]
+    [<NashProfile for '': [[1.0, 0.0], [1.0, 0.0]]>,
+     <NashProfile for '': [[0.6666666667, 0.3333333333], [0.3333333333, 0.6666666667]]>,
+     <NashProfile for '': [[0.0, 1.0], [0.0, 1.0]]>]
 
 AUTHOR:
 

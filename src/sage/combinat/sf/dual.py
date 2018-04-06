@@ -670,7 +670,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
             `s` = Schur).
 
-            :meth:`omega_involution()` is a synonym for the :meth`omega()`
+            :meth:`omega_involution` is a synonym for the :meth:`omega`
             method.
 
             OUTPUT:

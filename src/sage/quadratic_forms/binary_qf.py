@@ -44,6 +44,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from functools import total_ordering
 
 from sage.libs.pari.all import pari
 from sage.rings.all import ZZ, is_fundamental_discriminant
@@ -51,6 +52,8 @@ from sage.arith.all import divisors, gcd
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
 
+
+@total_ordering
 class BinaryQF(SageObject):
     """
     A binary quadratic form over `\ZZ`.
@@ -59,7 +62,6 @@ class BinaryQF(SageObject):
 
     - `v` -- a list or tuple of 3 entries:  [a,b,c], or a quadratic homogeneous
       polynomial in two variables with integer coefficients
-
 
     OUTPUT:
 
@@ -138,13 +140,13 @@ class BinaryQF(SageObject):
             sage: pari(f)
             Qfb(2, 3, 4)
             sage: type(pari(f))
-            <type 'sage.libs.cypari2.gen.gen'>
+            <type 'cypari2.gen.Gen'>
             sage: gp(f)
             Qfb(2, 3, 4)
             sage: type(gp(f))
             <class 'sage.interfaces.gp.GpElement'>
         """
-        return 'Qfb(%s,%s,%s)'%(self._a,self._b,self._c)
+        return 'Qfb(%s,%s,%s)' % (self._a, self._b, self._c)
 
     def __mul__(self, right):
         """
@@ -176,8 +178,8 @@ class BinaryQF(SageObject):
         # wrapped yet in the PARI C library.  We may as well settle
         # for the below, until somebody simply implements composition
         # from scratch in Cython.
-        v = list(pari('qfbcompraw(%s,%s)'%(self._pari_init_(),
-                                           right._pari_init_())))
+        v = list(pari('qfbcompraw(%s,%s)' % (self._pari_init_(),
+                                             right._pari_init_())))
         return BinaryQF(v)
 
     def __getitem__(self, n):
@@ -250,12 +252,13 @@ class BinaryQF(SageObject):
         """
         return hash(self._a) ^ (hash(self._b) << 4) ^ (hash(self._c) << 8)
 
-    def __cmp__(self, right):
+    def __eq__(self, right):
         """
-        Returns True if self and right are identical: the same coefficients.
+        Return ``True`` if ``self`` and ``right`` are identical.
+
+        This means that they have the same coefficients.
 
         EXAMPLES::
-
 
             sage: P = BinaryQF([2,2,3])
             sage: Q = BinaryQF([2,2,3])
@@ -277,8 +280,47 @@ class BinaryQF(SageObject):
             False
         """
         if not isinstance(right, BinaryQF):
-            return cmp(type(self), type(right))
-        return cmp((self._a,self._b,self._c), (right._a,right._b,right._c))
+            return False
+        return (self._a, self._b, self._c) == (right._a, right._b, right._c)
+
+    def __ne__(self, right):
+        """
+        Return ``True`` if ``self`` and ``right`` are not identical.
+
+        This means that they have different coefficients.
+
+        EXAMPLES::
+
+            sage: P = BinaryQF([2,2,3])
+            sage: Q = BinaryQF([2,2,3])
+            sage: R = BinaryQF([1,2,3])
+            sage: P != Q # indirect doctest
+            False
+            sage: P != R # indirect doctest
+            True
+        """
+        return not (self == right)
+
+    def __lt__(self, right):
+        """
+        Compare the coefficients of ``self`` and ``right``.
+
+        This is done lexicographically.
+
+        EXAMPLES::
+
+            sage: P = BinaryQF([2,2,3])
+            sage: Q = BinaryQF([1,2,3])
+            sage: P < Q
+            False
+            sage: Q < P
+            True
+            sage: Q <= P
+            True
+        """
+        if not isinstance(right, BinaryQF):
+            return False
+        return (self._a, self._b, self._c) < (right._a, right._b, right._c)
 
     def __add__(self, Q):
         """
@@ -289,7 +331,6 @@ class BinaryQF(SageObject):
         `(a_1 + a_2) x^2 + (b_1 + b_2) x y + (c_1 + c_2) y^2.`
 
         EXAMPLES::
-
 
             sage: P = BinaryQF([2,2,3]); P
             2*x^2 + 2*x*y + 3*y^2
@@ -317,7 +358,6 @@ class BinaryQF(SageObject):
 
         EXAMPLES::
 
-
             sage: P = BinaryQF([2,2,3]); P
             2*x^2 + 2*x*y + 3*y^2
             sage: Q = BinaryQF([-1,2,2]); Q
@@ -341,7 +381,6 @@ class BinaryQF(SageObject):
         Display the quadratic form.
 
         EXAMPLES::
-
 
             sage: Q = BinaryQF([1,2,3]); Q # indirect doctest
             x^2 + 2*x*y + 3*y^2
@@ -397,7 +436,6 @@ class BinaryQF(SageObject):
 
         EXAMPLES::
 
-
             sage: Q = BinaryQF([1,2,3])
             sage: Q.discriminant()
             -8
@@ -434,7 +472,6 @@ class BinaryQF(SageObject):
         `\gcd(a,b,c)=1`, i.e., is primitive.
 
         EXAMPLES::
-
 
             sage: Q = BinaryQF([6,3,9])
             sage: Q.is_primitive()
@@ -478,7 +515,6 @@ class BinaryQF(SageObject):
         `|b| \leq a \leq c`, i.e., is weakly reduced.
 
         EXAMPLES::
-
 
             sage: Q = BinaryQF([1,2,3])
             sage: Q.is_weakly_reduced()
@@ -659,7 +695,7 @@ class BinaryQF(SageObject):
 
         A prime number represented by the form.
 
-        .. note::
+        .. NOTE::
 
             This is a very elementary implementation which just substitutes
             values until a prime is found.
@@ -728,6 +764,7 @@ class BinaryQF(SageObject):
                     x = (z-b*y)//a2
                     return (x,y)
         return None
+
 
 def BinaryQF_reduced_representatives(D, primitive_only=False):
     r"""

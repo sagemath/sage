@@ -53,7 +53,7 @@ cdef extern from 'symmetrica/macro.h':
         HOMSYM = 13
         SCHUBERT = 14
         INTEGERVECTOR = 15
-        INEGER_VECTOR = 15
+        INTEGER_VECTOR = 15
         INT_VECTOR = 15
         INTVECTOR = 15
         KOSTKA = 16
@@ -1076,23 +1076,25 @@ cdef void* _op_schubert_dict(object d, OP res):
 cdef object _py_schubert(OP a):
     late_import()
     cdef OP pointer = a
-    z_elt = {}
+    cdef dict z_elt = {}
 
-    if a == NULL:
-        return SchubertPolynomialRing(ZZ)(0)
+    # SCHUBERT is (like) a list, so we also need to make sure it is not empty
+    if a == NULL or empty_listp(a):
+        return SchubertPolynomialRing(ZZ).zero()
 
     while pointer != NULL:
         z_elt[ _py(s_s_s(pointer)).remove_extra_fixed_points() ] = _py(s_sch_k(pointer))
         pointer = s_sch_n(pointer)
 
-    if len(z_elt) == 0:
-        return SchubertPolynomialRing(ZZ)(0)
+    if not z_elt:
+        return SchubertPolynomialRing(ZZ).zero()
 
     R = z_elt[ z_elt.keys()[0] ].parent()
     X = SchubertPolynomialRing(R)
-    z = X(0)
-    z._monomial_coefficients = z_elt
-    return z
+    # If the element constructor ends up copying the input dict in the future,
+    #   then this will not be as fast as creating a copy of the zero element
+    #   and explicitly setting the _monomial_coefficients.
+    return X.element_class(X, z_elt)
 
 
 ##########

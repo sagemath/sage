@@ -29,7 +29,7 @@ def from_whatever(data):
        file stream, or whatever.
 
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: l = ['N@@?N@UGAGG?gGlKCMO',':P_`cBaC_ACd`C_@BC`ABDHaEH_@BF_@CHIK_@BCEHKL_BIKM_BFGHI']
         sage: graphs_list.from_whatever(l)
@@ -80,7 +80,7 @@ def from_graph6(data):
        file stream.
 
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: l = ['N@@?N@UGAGG?gGlKCMO','XsGGWOW?CC?C@HQKHqOjYKC_uHWGX?P?~TqIKA`OA@SAOEcEA??']
         sage: graphs_list.from_graph6(l)
@@ -126,7 +126,7 @@ def from_sparse6(data):
        file stream.
 
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: l = [':P_`cBaC_ACd`C_@BC`ABDHaEH_@BF_@CHIK_@BCEHKL_BIKM_BFGHI',':f`??KO?B_OOSCGE_?OWONDBO?GOJBDO?_SSJdApcOIG`?og_UKEbg?_SKFq@[CCBA`p?oYMFp@gw]Qaa@xEMHDb@hMCBCbQ@ECHEcAKKQKFPOwo[PIDQ{KIHEcQPOkVKEW_WMNKqPWwcRKOOWSKIGCqhWt??___WMJFCahWzEBa`xOu[MpPPKqYNoOOOKHHDBPs|??__gWMKEcAHKgTLErqA?A@a@G{kVLErs?GDBA@XCs\\NggWSOJIDbHh@?A@aF']
         sage: graphs_list.from_sparse6(l)
@@ -180,7 +180,7 @@ def to_graph6(list, file = None, output_list=False):
        output is a list of strings (ignored if file gets specified)
 
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: l = [graphs.DodecahedralGraph(), graphs.PetersenGraph()]
         sage: graphs_list.to_graph6(l)
@@ -219,7 +219,7 @@ def to_sparse6(list, file = None, output_list=False):
        output is a list of strings (ignored if file gets specified)
 
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: l = [graphs.DodecahedralGraph(), graphs.PetersenGraph()]
         sage: graphs_list.to_sparse6(l)

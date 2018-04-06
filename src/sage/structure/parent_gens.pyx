@@ -56,14 +56,6 @@ This example illustrates generators for a free module over `\ZZ`.
     (1, 0, 0, 0)
     sage: M.gens()
     ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
-
-TESTS::
-
-    sage: sage.structure.parent_gens.normalize_names(5, 'x')
-    doctest:...: DeprecationWarning:
-    Importing normalize_names from here is deprecated. If you need to use it, please import it directly from sage.structure.category_object
-    See http://trac.sagemath.org/19675 for details.
-    ('x0', 'x1', 'x2', 'x3', 'x4')
 """
 
 #*****************************************************************************
@@ -75,20 +67,15 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
-include 'sage/ext/stdsage.pxi'
+from __future__ import absolute_import, print_function
 
 import sage.misc.defaults
 from sage.misc.latex import latex_variable_name
-import gens_py
-cimport parent
+from . import gens_py
+cimport sage.structure.parent as parent
 from sage.structure.coerce_dict import MonoDict
 cimport sage.structure.category_object as category_object
-
-from sage.misc.lazy_import import LazyImport
-normalize_names = LazyImport("sage.structure.category_object",
-        "normalize_names", deprecation=19675)
 
 
 cdef inline check_old_coerce(parent.Parent p):
@@ -103,7 +90,7 @@ cdef class ParentWithGens(ParentWithBase):
         EXAMPLES::
 
             sage: class MyParent(ParentWithGens):
-            ...       def ngens(self): return 3
+            ....:     def ngens(self): return 3
             sage: P = MyParent(base = QQ, names = 'a,b,c', normalize = True, category = Groups())
             sage: P.category()
             Category of groups
@@ -115,22 +102,6 @@ cdef class ParentWithGens(ParentWithBase):
         self._assign_names(names=names, normalize=normalize)
 
         ParentWithBase.__init__(self, base, category=category)
-        #if category is not None:
-        #    self._init_category_(category)
-
-##     def x__reduce__(self):
-##         if self._base is self:
-##             base = None
-##         else:
-##             base = self._base
-##         if HAS_DICTIONARY(self):
-##             _dict = self.__dict__
-##         else:
-##             _dict = None
-##         return (make_parent_gens_v0, (self.__class__,
-##                                       _dict, base,
-##                                       self._has_coerce_map_from,
-##                                       self._names))
 
     # Derived class *must* define ngens method.
     def ngens(self):
@@ -263,7 +234,7 @@ cdef class ParentWithGens(ParentWithBase):
            ``im_gens``, in which case return the (if it exists)
            natural map to X.
 
-        EXAMPLE: Polynomial Ring
+        EXAMPLES: Polynomial Ring
         We first illustrate construction of a few homomorphisms
         involving a polynomial ring.
 
@@ -292,7 +263,7 @@ cdef class ParentWithGens(ParentWithBase):
             sage: f(x^2+1)
             3
 
-        EXAMPLE: Natural morphism
+        EXAMPLES: Natural morphism
 
         ::
 
@@ -300,7 +271,7 @@ cdef class ParentWithGens(ParentWithBase):
             sage: f(7)
             2
             sage: f
-            Ring Coercion morphism:
+            Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
 
@@ -311,7 +282,7 @@ cdef class ParentWithGens(ParentWithBase):
             sage: QQ.hom(ZZ)
             Traceback (most recent call last):
             ...
-            TypeError: Natural coercion morphism from Rational Field to Integer Ring not defined.
+            TypeError: natural coercion morphism from Rational Field to Integer Ring not defined
         """
         if self._element_constructor is not None:
             return parent.Parent.hom(self, im_gens, codomain, check)

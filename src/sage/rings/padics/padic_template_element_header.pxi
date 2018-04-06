@@ -33,9 +33,14 @@ AUTHORS:
 from sage.structure.element cimport ModuleElement, RingElement
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 
+cdef enum expansion_mode:
+    simple_mode, smallest_mode, teichmuller_mode
+
 cdef class pAdicTemplateElement(pAdicGenericElement):
     cdef PowComputer_ prime_pow
     cdef int _set(self, x, long val, long xprec, absprec, relprec) except -1
+    cdef pAdicTemplateElement _new_with_value(self, celement value, long absprec)
+    cdef int _get_unit(self, celement value) except -1
     cdef pAdicTemplateElement _lshift_c(self, long shift)
     cdef pAdicTemplateElement _rshift_c(self, long shift)
     #cpdef RingElement _floordiv_c_impl(self, RingElement right)

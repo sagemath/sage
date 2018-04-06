@@ -719,7 +719,7 @@ class TopologicalManifold(ManifoldSubset):
                         break
                 else:
                     # A generic element with specific coordinates could not be
-                    # automatically generated, due to too complex cooordinate
+                    # automatically generated, due to too complex coordinate
                     # conditions. An element without any coordinate set is
                     # returned instead:
                     return self.element_class(self)
@@ -1519,7 +1519,7 @@ class TopologicalManifold(ManifoldSubset):
         In the present case (manifold or open subset of it), always
         return ``True``.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: M.is_open()

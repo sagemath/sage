@@ -84,7 +84,7 @@ from sage.rings.rational_field import is_RationalField, QQ
 from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism, isomorphisms
 
 from sage.sets.set import Set
-from sage.structure.sage_object import richcmp_not_equal, richcmp
+from sage.structure.richcmp import richcmp_not_equal, richcmp
 from sage.misc.cachefunc import cached_function
 
 #
@@ -2809,7 +2809,7 @@ class EllipticCurveIsogeny(Morphism):
 
            This function returns the `x`-coordinate component of the
            isogeny as a rational function in `F(x)`, where `F` is the
-           base field.  To obtain both coordiunate functions as
+           base field.  To obtain both coordinate functions as
            elements of the function field `F(x,y)` in two variables,
            use :meth:`rational_maps`.
 
@@ -3361,6 +3361,13 @@ class EllipticCurveIsogeny(Morphism):
             sage: Ym = Yhat.subs(x=X, y=Y)
             sage: (Xm, Ym) == E.multiplication_by_m(5)
             True
+
+        Test for :trac:`23928`::
+
+            sage: E = EllipticCurve(j=GF(431**2)(4))
+            sage: phi = E.isogeny(E.lift_x(0))
+            sage: phi.dual()
+            Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + 427*x over Finite Field in z2 of size 431^2 to Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 431^2
 
         Test (for :trac:`7096`)::
 

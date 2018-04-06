@@ -1,5 +1,3 @@
-#!/bin/sh
-
 # Move over the GNU makefile to the file 'Makefile'.
 # If SAGE64 is set to yes, add an '-m64' using 'sed'
 

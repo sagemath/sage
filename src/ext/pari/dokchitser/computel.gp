@@ -1,4 +1,4 @@
-/************* ComputeL v1.3.3, 2001-2013, (c) Tim Dokchitser ************/
+/************* ComputeL v1.3.4, 2001-2016, (c) Tim Dokchitser ************/
 /**************** computing special values of L-functions ****************/
 /* arXiv.org/abs/math.NT/0207280, Exper. Math. 13 (2004), no. 2, 137-150 */
 /****** Questions/comments welcome! -> tim.dokchitser@bristol.ac.uk ******/
@@ -353,7 +353,7 @@ cflength(cutoff=1.2)=
     t  = if(t1,(t1+t2)\2,t2);
     tt = t/cutoff/vA;
     res = coefgrow(t) * asympconstf*exp(-d*tt^(2/d))*tt^expdifff;
-    if (t1,if(res>err,t1=t,t2=t),if(res<err,t1=t2/2,t2*=2));
+    if (t1,if(abs(res)>err,t1=t,t2=t),if(abs(res)<err,t1=t2/2,t2*=2));
   );
   ceil(t2)
 }

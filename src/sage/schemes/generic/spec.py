@@ -87,7 +87,7 @@ class SpecFunctor(Functor, UniqueRepresentation):
     """
     def __init__(self, base_ring=None):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.schemes.generic.spec import SpecFunctor
             sage: SpecFunctor()

@@ -950,7 +950,7 @@ class AdditiveMagmas(Category_singleton):
                     r"""
                     Returns the zero of this group
 
-                    EXAMPLE::
+                    EXAMPLES::
 
                         sage: GF(8,'x').cartesian_product(GF(5)).zero()
                         (0, 0)

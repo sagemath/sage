@@ -166,7 +166,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
         r"""
         Return the new submodule of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: e = EisensteinForms(Gamma0(225), 2).new_submodule(); e
             Modular Forms subspace of dimension 3 of Modular Forms space of dimension 42 for Congruence Subgroup Gamma0(225) of weight 2 over Rational Field
@@ -312,7 +312,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
         r"""
         Return a list of the Eisenstein series in this space that are new.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: E = EisensteinForms(25, 4)
             sage: E.new_eisenstein_series()
@@ -476,7 +476,7 @@ class EisensteinSubmodule_gH_Q(EisensteinSubmodule_params):
             a_{i,j}(T_n* T_m)`. But we can't find the constant terms
             by this method, so an extra step is required.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: EisensteinForms(Gamma1(6), 3).hecke_matrix(3) # indirect doctest
             [ 1  0 72  0]
@@ -493,7 +493,7 @@ class EisensteinSubmodule_gH_Q(EisensteinSubmodule_params):
         Calculate the matrix of the diamond bracket operator <d> on this space,
         using modular symbols.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: E = EisensteinForms(Gamma1(7), 3)
             sage: E._compute_diamond_matrix(3)

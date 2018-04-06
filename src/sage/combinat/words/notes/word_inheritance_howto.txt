@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 #*****************************************************************************
 #       Copyright (C) 2009 Franco Saliola <saliola@gmail.com>
 #
@@ -17,11 +17,6 @@ class that inherits from it) and implement the following methods.
     - sortkey_letters(x) -- a function to compare letters in the alphabet;
       should return something that can be readily compared by
       Python. By default, the letters themselves are used.
-
-    - cmp_letters(x,y) -- a function to compare letters in the alphabet;
-      should behave like Python's cmp function (that is, it returns -1, 0
-      or 1, if x < y, x == y, x > y, respectively). By default, this points
-      to Python's cmp function. (DEPRECATED, do not use, see :trac:`21435`)
 
 By implementing the above methods, almost anything can be used as an
 alphabet.

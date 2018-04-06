@@ -148,7 +148,7 @@ class MiniAES(SageObject):
             sage: plaintxt == P
             True
         """
-        from sage.crypto.mq import SBox
+        from sage.crypto.sbox import SBox
         self._key_size = 16  # the number of bits in a secret key
         B = BinaryStrings()
         K = FiniteField(self._key_size, "x")

@@ -1,5 +1,5 @@
 """
-Installing the SageMath Jupyter Kernel and extensions
+Installing the SageMath Jupyter Kernel and Extensions
 
 Kernels have to register themselves with Jupyter so that they appear
 in the Jupyter notebook's kernel drop-down. This is done by
@@ -130,6 +130,23 @@ class SageKernelSpec(object):
         dst = os.path.join(self.nbextensions_dir, 'jsmol')
         self.symlink(src, dst)
 
+    def use_local_threejs(self):
+        """
+        Symlink threejs to the Jupyter notebook.
+
+        EXAMPLES::
+
+            sage: from sage.repl.ipython_kernel.install import SageKernelSpec
+            sage: spec = SageKernelSpec()
+            sage: spec.use_local_threejs()
+            sage: threejs = os.path.join(spec.nbextensions_dir, 'threejs')
+            sage: os.path.isdir(threejs)
+            True
+        """
+        src = os.path.join(SAGE_LOCAL, 'share', 'threejs')
+        dst = os.path.join(self.nbextensions_dir, 'threejs')
+        self.symlink(src, dst)
+
     def _kernel_cmd(self):
         """
         Helper to construct the SageMath kernel command.
@@ -236,6 +253,7 @@ class SageKernelSpec(object):
         instance = cls()
         instance.use_local_mathjax()
         instance.use_local_jsmol()
+        instance.use_local_threejs()
         instance._install_spec()
         instance._symlink_resources()
 

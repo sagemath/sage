@@ -19,7 +19,7 @@ REFERENCES:
 - `mpmath library`_
 
 .. _`special functions package`: http://maxima.sourceforge.net/docs/manual/en/maxima_15.html
-.. _`mpmath library`: http://code.google.com/p/mpmath/
+.. _`mpmath library`: https://github.com/fredrik-johansson/mpmath/
 
 AUTHORS:
 
@@ -395,10 +395,10 @@ class Function_log_integral(BuiltinFunction):
 
     REFERENCES:
 
-    - http://en.wikipedia.org/wiki/Logarithmic_integral_function
+    - :wikipedia:`Logarithmic_integral_function`
     - mpmath documentation: `logarithmic-integral`_
 
-    .. _`logarithmic-integral`: http://mpmath.googlecode.com/svn/trunk/doc/build/functions/expintegrals.html#logarithmic-integral
+    .. _`logarithmic-integral`: http://mpmath.org/doc/current/functions/expintegrals.html#logarithmic-integral
 
 
     """
@@ -583,10 +583,10 @@ class Function_log_integral_offset(BuiltinFunction):
 
     REFERENCES:
 
-    - http://en.wikipedia.org/wiki/Logarithmic_integral_function
+    - :wikipedia:`Logarithmic_integral_function`
     - mpmath documentation: `logarithmic-integral`_
 
-    .. _`logarithmic-integral`: http://mpmath.googlecode.com/svn/trunk/doc/build/functions/expintegrals.html#logarithmic-integral
+    .. _`logarithmic-integral`: http://mpmath.org/doc/current/functions/expintegrals.html#logarithmic-integral
     """
 
     def __init__(self):
@@ -754,10 +754,10 @@ class Function_sin_integral(BuiltinFunction):
 
     REFERENCES:
 
-    - http://en.wikipedia.org/wiki/Trigonometric_integral
+    - :wikipedia:`Trigonometric_integral`
     - mpmath documentation: `si`_
 
-    .. _`si`: http://mpmath.googlecode.com/svn/trunk/doc/build/functions/expintegrals.html#si
+    .. _`si`: http://mpmath.org/doc/current/functions/expintegrals.html#si
 
     """
     def __init__(self):
@@ -927,10 +927,10 @@ class Function_cos_integral(BuiltinFunction):
 
     REFERENCES:
 
-    - http://en.wikipedia.org/wiki/Trigonometric_integral
+    - :wikipedia:`Trigonometric_integral`
     - mpmath documentation: `ci`_
 
-    .. _`ci`: http://mpmath.googlecode.com/svn/trunk/doc/build/functions/expintegrals.html#ci
+    .. _`ci`: http://mpmath.org/doc/current/functions/expintegrals.html#ci
 
     """
     def __init__(self):
@@ -1060,10 +1060,10 @@ class Function_sinh_integral(BuiltinFunction):
 
     REFERENCES:
 
-    - http://en.wikipedia.org/wiki/Trigonometric_integral
+    - :wikipedia:`Trigonometric_integral`
     - mpmath documentation: `shi`_
 
-    .. _`shi`: http://mpmath.googlecode.com/svn/trunk/doc/build/functions/expintegrals.html#shi
+    .. _`shi`: http://mpmath.org/doc/current/functions/expintegrals.html#shi
 
     """
     def __init__(self):
@@ -1130,7 +1130,7 @@ class Function_sinh_integral(BuiltinFunction):
 
             sage: f = sinh_integral(ln(x))
             sage: f.diff(x)
-            sinh(log(x))/(x*log(x))
+            1/2*(x^2 - 1)/(x^2*log(x))
 
         """
         return sinh(z)/z
@@ -1170,13 +1170,13 @@ class Function_cosh_integral(BuiltinFunction):
 
         sage: f(x) = cosh_integral(x)
         sage: find_root(f, 0.1, 1.0)
-        0.523822571389482...
+        0.523822571389...
 
     Compare ``cosh_integral(3.0)`` to the definition of the value using
     numerical integration::
 
         sage: N(euler_gamma + log(3.0) + integrate((cosh(x)-1)/x, x, 0, 3.0) -
-        ...     cosh_integral(3.0)) < 1e-14
+        ....:   cosh_integral(3.0)) < 1e-14
         True
 
     Arbitrary precision and complex arguments are handled::
@@ -1208,10 +1208,10 @@ class Function_cosh_integral(BuiltinFunction):
 
     REFERENCES:
 
-    - http://en.wikipedia.org/wiki/Trigonometric_integral
+    - :wikipedia:`Trigonometric_integral`
     - mpmath documentation: `chi`_
 
-    .. _`chi`: http://mpmath.googlecode.com/svn/trunk/doc/build/functions/expintegrals.html#chi
+    .. _`chi`: http://mpmath.org/doc/current/functions/expintegrals.html#chi
 
     """
     def __init__(self):
@@ -1258,7 +1258,7 @@ class Function_cosh_integral(BuiltinFunction):
 
             sage: f = cosh_integral(ln(x))
             sage: f.diff(x)
-            cosh(log(x))/(x*log(x))
+            1/2*(x^2 + 1)/(x^2*log(x))
 
         """
         return cosh(z)/z
@@ -1490,12 +1490,12 @@ def exponential_integral_1(x, n=0):
         # Add extra bits to the input.
         # (experimentally verified -- Jeroen Demeyer)
         inprec = prec + 5 + math.ceil(math.log(prec))
-        x = RealField(inprec)(x)._pari_()
+        x = RealField(inprec)(x).__pari__()
         return R(x.eint1())
     else:
         # PARI's algorithm is less precise as n grows larger:
         # add extra bits.
         # (experimentally verified -- Jeroen Demeyer)
         inprec = prec + 1 + math.ceil(1.4427 * math.log(n))
-        x = RealField(inprec)(x)._pari_()
+        x = RealField(inprec)(x).__pari__()
         return [R(z) for z in x.eint1(n)]

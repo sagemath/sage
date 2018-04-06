@@ -29,7 +29,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.combinat.species.generating_series import CycleIndexSeriesRing, LogarithmCycleIndexSeries
+from sage.combinat.species.generating_series import LogarithmCycleIndexSeries
 from sage.rings.all import QQ
 from sage.misc.cachefunc import cached_function
 from sage.misc.superseded import deprecation

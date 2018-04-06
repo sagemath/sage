@@ -46,7 +46,7 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
         cells. This can cause trouble if the first sentence in the documentation
         of a function contains the '@' character.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import gen_rest_table_index
         sage: print(gen_rest_table_index([graphs.PetersenGraph]))
@@ -55,7 +55,7 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
            :widths: 30, 70
            :delim: @
         <BLANKLINE>
-           :func:`~sage.graphs.generators.smallgraphs.PetersenGraph` @ The Petersen Graph is a named graph that consists of 10 vertices...
+           :func:`~sage.graphs.generators.smallgraphs.PetersenGraph` @ Returns the Petersen Graph.
 
     The table of a module::
 
@@ -100,7 +100,7 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
 
     The inherited methods do not show up::
 
-        sage: gen_rest_table_index(sage.combinat.posets.lattices.FiniteLatticePoset).count('\n') < 55
+        sage: gen_rest_table_index(sage.combinat.posets.lattices.FiniteLatticePoset).count('\n') < 65
         True
         sage: from sage.graphs.generic_graph import GenericGraph
         sage: A = gen_rest_table_index(Graph).count('\n')
@@ -211,7 +211,7 @@ def list_of_subfunctions(root, only_local_functions=True):
     ``dict`` associates to every function/method the name under which it appears
     in ``root``.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import list_of_subfunctions
         sage: l = list_of_subfunctions(Graph)[0]
@@ -254,7 +254,8 @@ def list_of_subfunctions(root, only_local_functions=True):
                    local_filter(f,name))                 # possibly filter imported functions
                   }
 
-    return functions.keys(),functions
+    return list(functions.keys()), functions
+
 
 def gen_thematic_rest_table_index(root,additional_categories=None,only_local_functions=True):
     r"""
@@ -273,7 +274,7 @@ def gen_thematic_rest_table_index(root,additional_categories=None,only_local_fun
       filtered out. This can be useful to disable for making indexes of
       e.g. catalog modules such as :mod:`sage.coding.codes_catalog`.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import gen_thematic_rest_table_index, list_of_subfunctions
         sage: l = list_of_subfunctions(Graph)[0]
@@ -305,7 +306,7 @@ def doc_index(name):
     - ``name`` -- a string, which will become the title of the index in which
       this function/method will appear.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import doc_index
         sage: @doc_index("Wouhouuuuu")

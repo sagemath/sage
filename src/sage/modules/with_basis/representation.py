@@ -266,9 +266,9 @@ class Representation(Representation_abstract):
             sage: A = G.algebra(ZZ)
             sage: R = A.regular_representation()
             sage: x = A.an_element(); x
-            B[()] + 4*B[(1,2,3,4)] + 2*B[(1,4)(2,3)]
+            () + 4*(1,2,3,4) + 2*(1,4)(2,3)
             sage: R(x)
-            B[()] + 4*B[(1,2,3,4)] + 2*B[(1,4)(2,3)]
+            () + 4*(1,2,3,4) + 2*(1,4)(2,3)
         """
         if isinstance(x, Element) and x.parent() is self._module:
             return self._from_dict(x.monomial_coefficients(copy=False), remove_zeros=False)
@@ -305,23 +305,23 @@ class Representation(Representation_abstract):
                 sage: R = G.regular_representation()
                 sage: s1,s2 = G.gens()
                 sage: x = R.an_element(); x
-                2*B[s2*s1*s2] + B[s1*s2] + 3*B[s2] + B[1]
+                2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: 2 * x
-                4*B[s2*s1*s2] + 2*B[s1*s2] + 6*B[s2] + 2*B[1]
+                4*s2*s1*s2 + 2*s1*s2 + 6*s2 + 2
                 sage: s1 * x
-                2*B[s2*s1*s2*s1] + 3*B[s1*s2] + B[s1] + B[s2]
+                2*s2*s1*s2*s1 + 3*s1*s2 + s1 + s2
                 sage: s2 * x
-                B[s2*s1*s2] + 2*B[s1*s2] + B[s2] + 3*B[1]
+                s2*s1*s2 + 2*s1*s2 + s2 + 3
 
                 sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
                 sage: R = G.regular_representation(side="right")
                 sage: s1,s2 = G.gens()
                 sage: x = R.an_element(); x
-                2*B[s2*s1*s2] + B[s1*s2] + 3*B[s2] + B[1]
+                2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: x * s1
-                2*B[s2*s1*s2*s1] + B[s1*s2*s1] + 3*B[s2*s1] + B[s1]
+                2*s2*s1*s2*s1 + s1*s2*s1 + 3*s2*s1 + s1
                 sage: x * s2
-                2*B[s2*s1] + B[s1] + B[s2] + 3*B[1]
+                2*s2*s1 + s1 + s2 + 3
 
                 sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
                 sage: R = G.regular_representation()
@@ -330,14 +330,13 @@ class Representation(Representation_abstract):
                 sage: A = G.algebra(ZZ)
                 sage: s1,s2 = A.algebra_generators()
                 sage: x = R.an_element(); x
-                2*B[s2*s1*s2] + B[s1*s2] + 3*B[s2] + B[1]
+                2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: s1 * x
-                2*B[s2*s1*s2*s1] + 3*B[s1*s2] + B[s1] + B[s2]
+                2*s2*s1*s2*s1 + 3*s1*s2 + s1 + s2
                 sage: s2 * x
-                B[s2*s1*s2] + 2*B[s1*s2] + B[s2] + 3*B[1]
+                s2*s1*s2 + 2*s1*s2 + s2 + 3
                 sage: (2*s1 - s2) * x
-                4*B[s2*s1*s2*s1] - B[s2*s1*s2] + 4*B[s1*s2]
-                 + 2*B[s1] + B[s2] - 3*B[1]
+                4*s2*s1*s2*s1 - s2*s1*s2 + 4*s1*s2 + 2*s1 + s2 - 3
                 sage: (3*s1 + s2) * R.zero()
                 0
 
@@ -347,8 +346,8 @@ class Representation(Representation_abstract):
                 sage: a * x
                 Traceback (most recent call last):
                 ...
-                TypeError: unsupported operand parent(s) for '*':
-                 'Group algebra of Weyl Group of type ['B', 2] ... over Rational Field'
+                TypeError: unsupported operand parent(s) for *:
+                 'Algebra of Weyl Group of type ['B', 2] ... over Rational Field'
                  and 'Left Regular Representation of Weyl Group of type ['B', 2] ... over Integer Ring'
             """
             if isinstance(scalar, Element):

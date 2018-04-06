@@ -504,9 +504,9 @@ def cremona_to_lmfdb(cremona_label, CDB=None):
     TESTS::
 
         sage: for label in ['5077a1','66a3','102b','420c2']:
-        ...       assert(lmfdb_to_cremona(cremona_to_lmfdb(label)) == label)
+        ....:     assert(lmfdb_to_cremona(cremona_to_lmfdb(label)) == label)
         sage: for label in ['438.c2','306.b','462.f3']:
-        ...       assert(cremona_to_lmfdb(lmfdb_to_cremona(label)) == label)
+        ....:     assert(cremona_to_lmfdb(lmfdb_to_cremona(label)) == label)
     """
     from sage.libs.pari.all import pari
     m = cremona_label_regex.match(cremona_label)

@@ -5,7 +5,7 @@
 #                  http://www.gnu.org/licenses/
 #############################################################################
 
-include "cysignals/memory.pxi"
+from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.modules.vector_modn_sparse cimport c_vector_modint
 

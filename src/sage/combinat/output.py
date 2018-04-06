@@ -35,7 +35,7 @@ def tex_from_array(array, with_lines=True):
     ``[None]`` rather than ``[]``.
 
     The array is drawn using either the English or French convention
-    following :meth:`Tableaux.options``.
+    following :meth:`Tableaux.options`.
 
     .. SEEALSO:: :meth:`tex_from_array_tuple`
 

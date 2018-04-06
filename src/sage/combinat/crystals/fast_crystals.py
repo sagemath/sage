@@ -25,7 +25,7 @@ from sage.structure.parent import Parent
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.structure.element import Element, parent
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.structure.sage_object import richcmp
+from sage.structure.richcmp import richcmp
 
 
 class FastCrystal(UniqueRepresentation, Parent):

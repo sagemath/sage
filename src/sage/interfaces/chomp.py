@@ -114,8 +114,8 @@ class CHomP:
         EXAMPLES::
 
             sage: from sage.interfaces.chomp import CHomP
-            sage: CHomP().__repr__()
-            'CHomP interface'
+            sage: CHomP()           # indirect doctest
+            CHomP interface
         """
         return "CHomP interface"
 

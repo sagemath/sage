@@ -17,12 +17,12 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-include 'sage/ext/stdsage.pxi'
-
-from sage.misc.long cimport pyobject_to_long
 
 from cpython.sequence cimport *
 
+from cysignals.memory cimport sig_free
+
+from sage.misc.long cimport pyobject_to_long
 from sage.structure.sage_object cimport SageObject
 from sage.rings.integer cimport Integer
 from sage.libs.flint.fmpz_poly cimport *
@@ -102,7 +102,7 @@ cdef class Fmpz_poly(SageObject):
             sage: f[200]
             0
         """
-        cdef Integer res = <Integer>PY_NEW(Integer)
+        cdef Integer res = Integer.__new__(Integer)
         fmpz_poly_get_coeff_mpz(res.value, self.poly, i)
         return res
 

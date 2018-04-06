@@ -57,7 +57,7 @@ class JmolData(SageObject):
             sage: from sage.interfaces.jmoldata import JmolData
             sage: JData = JmolData()
             sage: type(JData.is_jvm_available())
-            <type 'bool'>
+            <... 'bool'>
         """
         try:
             version = subprocess.check_output(['java', '-version'], stderr=subprocess.STDOUT)

@@ -90,6 +90,8 @@ class GenericSpeciesStructure(CombinatorialObject):
 
     def __eq__(self, other):
         """
+        Check whether ``self`` is equal to ``other``.
+
         EXAMPLES::
 
             sage: T = species.BinaryTreeSpecies()
@@ -100,9 +102,25 @@ class GenericSpeciesStructure(CombinatorialObject):
             sage: t[0] == t[1][0]
             False
         """
-        if type(self) is not type(other):
+        if not isinstance(other, GenericSpeciesStructure):
             return False
         return self._list == other._list and self.labels() == other.labels()
+
+    def __ne__(self, other):
+        """
+        Check whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: T = species.BinaryTreeSpecies()
+            sage: t = T.structures([1,2,3])[0]; t
+            1*(2*3)
+            sage: t[0], t[1][0]
+            (1, 2)
+            sage: t[0] != t[1][0]
+            True
+        """
+        return not (self == other)
 
     def labels(self):
         """
@@ -333,7 +351,7 @@ class SpeciesWrapper(CombinatorialClass):
         self._labels = labels
         self._iterator = iterator
         self._generating_series = generating_series
-        self._name = "%s for %s with labels %s"%(name, species, labels)
+        self._name = "%s for %s with labels %s" % (name, species, labels)
         self._structure_class = structure_class if structure_class is not None else species._default_structure_class
 
     def labels(self):

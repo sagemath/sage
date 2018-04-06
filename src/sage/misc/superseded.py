@@ -22,7 +22,8 @@ Functions and classes
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+from six import iteritems
 
 from warnings import warn
 import inspect
@@ -374,7 +375,7 @@ class DeprecatedFunctionAlias(object):
         """
         # first look through variables in stack frames
         for frame in inspect.stack():
-            for name, obj in frame[0].f_globals.iteritems():
+            for name, obj in iteritems(frame[0].f_globals):
                 if obj is self:
                     return name
         # then search object that contains self as method
@@ -390,7 +391,7 @@ class DeprecatedFunctionAlias(object):
         for ref in gc.get_referrers(search_for):
             if is_class(ref) and ref is not self.__dict__:
                 ref_copy = copy.copy(ref)
-                for key, val in ref_copy.iteritems():
+                for key, val in iteritems(ref_copy):
                     if val is search_for:
                         return key
         raise AttributeError("The name of this deprecated function can not be determined")
@@ -502,84 +503,8 @@ def deprecated_function_alias(trac_number, func):
      - Luca De Feo (2011-07-11), printing the full module path when different from old path
     """
     _check_trac_number(trac_number)
-    module_name = inspect.getmodulename(
-        inspect.currentframe(1).f_code.co_filename)
+    frame1 = inspect.getouterframes(inspect.currentframe())[1][0]
+    module_name = inspect.getmodulename(frame1.f_code.co_filename)
     if module_name is None:
         module_name = '__main__'
     return DeprecatedFunctionAlias(trac_number, func, module_name)
-
-
-def deprecated_callable_import(trac_number, module_name, globs, locs, fromlist, message=None):
-    """
-    Imports a list of callables into the namespace from
-    which it is called.  These callables however give a deprecation
-    warning whenever they are called.  This is primarily used from
-    deprecating things from Sage's ``all.py`` files.
-
-    INPUT:
-
-    - ``trac_number`` -- integer. The trac ticket number where the
-      deprecation is introduced.
-
-    - ``param module_name`` -- string or ``None``. The name of the
-      module from which to import the callables or ``None``.
-
-    - ``globs`` -- dictionary. The ``globals()`` from where this is being called.
-
-    - ``locs`` -- dictionary. The ``locals()`` from where this is being called.
-
-    - ``fromlist`` -- list of strings. The list the names of the
-      callables to deprecate
-
-    - ``message`` -- string. Message to display when the deprecated functions are called.
-
-    .. note::
-
-       If ``module_name`` is ``None``, then no importing will be done, and
-       it will be assumed that the functions have already been
-       imported and are present in ``globs``
-
-    .. warning::
-
-       This should really only be used for functions.
-
-    EXAMPLES::
-
-       sage: from sage.misc.superseded import deprecated_callable_import
-       sage: is_prime(3)
-       True
-       sage: message = "Using %(name)s from here is deprecated."
-       sage: deprecated_callable_import(13109, None, globals(), locals(), ['is_prime'], message)
-       sage: is_prime(3)
-       doctest:...: DeprecationWarning:
-       Using is_prime from here is deprecated.
-       See http://trac.sagemath.org/13109 for details.
-       True
-       sage: del is_prime
-       sage: deprecated_callable_import(13109, 'sage.arith.all', globals(), locals(), ['is_prime'])
-       sage: is_prime(3)
-       doctest:...: DeprecationWarning:
-       Using is_prime from here is deprecated.  If you need to use it, please import it directly from sage.arith.all.
-       See http://trac.sagemath.org/13109 for details.
-       True
-    """
-    _check_trac_number(trac_number)
-    if message is None:
-        message = '\nUsing %(name)s from here is deprecated. ' + \
-            'If you need to use it, please import it directly from %(module_name)s.'
-    from functools import partial
-    from sage.misc.decorators import sage_wraps
-    if module_name is None:
-        mod_dict = globs
-    else:
-        mod_dict = __import__(module_name, globs, locs, fromlist).__dict__
-    for name in fromlist:
-        func = mod_dict[name]
-        def wrapper(func, name, *args, **kwds):
-            from sage.misc.superseded import deprecation
-            deprecation(trac_number, message%{'name': name, 'module_name': module_name})
-            return func(*args, **kwds)
-        wrapped_function = sage_wraps(func)(partial(wrapper, func, name))
-        wrapped_function.__doc__ = message%{'name': name, 'module_name': module_name}
-        globs[name] = wrapped_function
-    del name

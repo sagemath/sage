@@ -224,7 +224,7 @@ class Category_singleton(Category):
              <class 'sage.categories.sets_cat.Sets.subcategory_class'>,
              <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.subcategory_class'>,
              <class 'sage.categories.objects.Objects.subcategory_class'>,
-             <type 'object'>]
+             <... 'object'>]
             sage: R() is R()
             True
             sage: R() is R().__class__()

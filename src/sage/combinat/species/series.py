@@ -50,8 +50,15 @@ class LazyPowerSeriesRing(Algebra):
 
             sage: from sage.combinat.species.series import LazyPowerSeriesRing
             sage: L = LazyPowerSeriesRing(QQ)
-            sage: loads(dumps(L))
-            Lazy Power Series Ring over Rational Field
+
+        Equality testing is undecidable in general, and not much
+        efforts are done at this stage to implement equality when
+        possible. Hence the failing tests below::
+
+            sage: TestSuite(L).run()
+            Failure in ...
+            The following tests failed: _test_additive_associativity, _test_associativity, _test_distributivity, _test_elements, _test_one, _test_prod, _test_zero
+
         """
         #Make sure R is a ring with unit element
         if not R in Rings():
@@ -70,7 +77,7 @@ class LazyPowerSeriesRing(Algebra):
         self._element_class = element_class if element_class is not None else LazyPowerSeries
         self._order = None
         self._name = names
-        sage.structure.parent_base.ParentWithBase.__init__(self, R)
+        sage.structure.parent_base.ParentWithBase.__init__(self, R, category=Rings())
 
     def ngens(self):
         """
@@ -90,8 +97,10 @@ class LazyPowerSeriesRing(Algebra):
         """
         return "Lazy Power Series Ring over %s"%self.base_ring()
 
-    def __cmp__(self, x):
-        """
+    def __eq__(self, x):
+        """ 
+        Check whether ``self`` is equal to ``x``.
+
         EXAMPLES::
 
             sage: LQ = LazyPowerSeriesRing(QQ)
@@ -101,9 +110,24 @@ class LazyPowerSeriesRing(Algebra):
             sage: LZ == LQ
             False
         """
-        if self.__class__ is not x.__class__:
-            return cmp(self.__class__, x.__class__)
-        return cmp(self.base_ring(), x.base_ring())
+        if not isinstance(x, LazyPowerSeriesRing):
+            return False
+        return self.base_ring() == x.base_ring()
+
+    def __ne__(self, other):
+        """
+        Check whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: LQ = LazyPowerSeriesRing(QQ)
+            sage: LZ = LazyPowerSeriesRing(ZZ)
+            sage: LQ != LQ
+            False
+            sage: LZ != LQ
+            True
+        """
+        return not (self == other)
 
     def _coerce_impl(self, x):
         """

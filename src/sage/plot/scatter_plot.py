@@ -78,7 +78,7 @@ class ScatterPlot(GraphicPrimitive):
         EXAMPLES::
 
             sage: from sage.plot.scatter_plot import ScatterPlot
-            sage: list(sorted(ScatterPlot([-1,2], [17,4], {})._allowed_options().iteritems()))
+            sage: list(sorted(ScatterPlot([-1,2], [17,4], {})._allowed_options().items()))
             [('alpha', 'How transparent the marker border is.'),
             ('clip', 'Whether or not to clip.'),
             ('edgecolor', 'The color of the marker border.'),

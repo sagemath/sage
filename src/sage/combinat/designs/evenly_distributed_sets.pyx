@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 r"""
 Evenly distributed sets in finite fields
 
@@ -22,7 +22,7 @@ cimport cython
 from libc.limits cimport UINT_MAX
 from libc.string cimport memset, memcpy
 
-include "cysignals/memory.pxi"
+from cysignals.memory cimport check_malloc, check_calloc, sig_free
 
 from sage.rings.integer cimport Integer,smallInteger
 

@@ -103,7 +103,7 @@ example by the author of the original patch.
 
 For more advice on reviewing, see [WSblog]_.
 
-.. note::
+.. NOTE::
 
     "The perfect is the enemy of the good"
 

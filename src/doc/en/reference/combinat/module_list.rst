@@ -53,6 +53,7 @@ Comprehensive Module list
     sage/combinat/crystals/affinization
     sage/combinat/crystals/alcove_path
     sage/combinat/crystals/all
+    sage/combinat/crystals/bkk_crystals
     sage/combinat/crystals/catalog
     sage/combinat/crystals/catalog_elementary_crystals
     sage/combinat/crystals/catalog_infinity_crystals
@@ -65,12 +66,17 @@ Comprehensive Module list
     sage/combinat/crystals/highest_weight_crystals
     sage/combinat/crystals/induced_structure
     sage/combinat/crystals/infinity_crystals
-    sage/combinat/crystals/polyhedral_realization
+    sage/combinat/crystals/kac_modules
     sage/combinat/crystals/kirillov_reshetikhin
     sage/combinat/crystals/kyoto_path_model
     sage/combinat/crystals/letters
     sage/combinat/crystals/littelmann_path
     sage/combinat/crystals/monomial_crystals
+    sage/combinat/crystals/multisegments
+    sage/combinat/crystals/mv_polytopes
+    sage/combinat/crystals/pbw_crystal
+    sage/combinat/crystals/pbw_datum
+    sage/combinat/crystals/polyhedral_realization
     sage/combinat/crystals/spins
     sage/combinat/crystals/star_crystal
     sage/combinat/crystals/tensor_product
@@ -114,11 +120,14 @@ Comprehensive Module list
     sage/combinat/finite_state_machine
     sage/combinat/finite_state_machine_generators
     sage/combinat/free_module
+    sage/combinat/free_dendriform_algebra
     sage/combinat/free_prelie_algebra
     sage/combinat/fully_packed_loop
     sage/combinat/gelfand_tsetlin_patterns
     sage/combinat/graph_path
     sage/combinat/gray_codes
+    sage/combinat/growth
+    sage/combinat/grossman_larson_algebras
     sage/combinat/hall_polynomial
     sage/combinat/integer_lists/base
     sage/combinat/integer_lists/lists
@@ -158,6 +167,7 @@ Comprehensive Module list
     sage/combinat/ordered_tree
     sage/combinat/output
     sage/combinat/parking_functions
+    sage/combinat/plane_partition
     sage/combinat/partition
     sage/combinat/partition_algebra
     sage/combinat/partition_tuple
@@ -212,6 +222,7 @@ Comprehensive Module list
     sage/combinat/root_system/all
     sage/combinat/root_system/ambient_space
     sage/combinat/root_system/associahedron
+    sage/combinat/root_system/braid_move_calculator
     sage/combinat/root_system/branching_rules
     sage/combinat/root_system/cartan_matrix
     sage/combinat/root_system/cartan_type
@@ -230,6 +241,7 @@ Comprehensive Module list
     sage/combinat/root_system/root_lattice_realizations
     sage/combinat/root_system/root_space
     sage/combinat/root_system/root_system
+    sage/combinat/root_system/type_super_A
     sage/combinat/root_system/type_A
     sage/combinat/root_system/type_A_affine
     sage/combinat/root_system/type_A_infinity

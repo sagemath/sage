@@ -84,7 +84,7 @@ class IntegerRange(UniqueRepresentation, Parent):
     Except for the type of the numbers::
 
         sage: type(IntegerRange(-54,13,12)[0]), type(list(range(-54,13,12))[0])
-        (<type 'sage.rings.integer.Integer'>, <type 'int'>)
+        (<type 'sage.rings.integer.Integer'>, <... 'int'>)
 
     When ``begin`` is finite and ``end`` is +Infinity, ``self`` is the infinite
     arithmetic progression starting from the ``begin`` by step ``step``::

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ "$SAGE_LOCAL" = "" ]; then
    echo "SAGE_LOCAL undefined ... exiting";
    echo "Maybe run 'sage -sh'?"
@@ -8,7 +6,8 @@ fi
 
 cd src
 
-LDFLAGS="${LDFLAGS} -L${SAGE_LOCAL}/lib"
+# We add -ltinfo flag to let gdb compile on some 32bit VM, see #22487.
+LDFLAGS="${LDFLAGS} -L${SAGE_LOCAL}/lib -ltinfo"
 export LDFLAGS
 
 ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \

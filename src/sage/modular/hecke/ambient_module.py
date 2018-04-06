@@ -122,7 +122,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         r"""
         String representation of self. Should be overridden by derived classes.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.hecke.ambient_module.AmbientHeckeModule(QQ, 3, 2, 4)._repr_()
             'Generic ambient Hecke module of rank 3, level 2 and weight 4 over Rational Field'
@@ -135,7 +135,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         Matrix of the degeneracy map (with t = 1) from self to codomain, whose
         level should be a multiple of the level of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.hecke.ambient_module.AmbientHeckeModule(QQ, 3, 2, 4)._degeneracy_raising_matrix(4)
             Traceback (most recent call last):
@@ -148,7 +148,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         """
         Matrix of the degeneracy map of index t from self to codomain, whose level should be a divisor of the level of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.hecke.ambient_module.AmbientHeckeModule(QQ, 3, 2, 4)._degeneracy_lowering_matrix(2, 2)
             Traceback (most recent call last):
@@ -162,12 +162,12 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         Return the image under the Hecke operator T_n of the i-th basis
         element.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.hecke.ambient_module.AmbientHeckeModule(QQ, 3, 2, 4)._hecke_image_of_ith_basis_element(4, 2)
             Traceback (most recent call last):
             ...
-            NotImplementedError: Derived class <class 'sage.modular.hecke.ambient_module.AmbientHeckeModule_with_category'> should implement __cmp__
+            NotImplementedError: All subclasses must implement _compute_hecke_matrix_prime
         """
         return self.hecke_operator(n)(self.gen(i))
 
@@ -176,7 +176,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         Store the embedded dual module of this module. Since this module is an
         ambient module, this is not necessary.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularForms(11, 2)._set_dual_free_module(None)
         """
@@ -188,7 +188,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         Return the ambient space that contains this ambient space. This is,
         of course, just this space again.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularForms(11, 4); M.ambient_hecke_module() is M
             True
@@ -224,7 +224,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         next an echelonized basis for `D_1`, the next for
         `D_2`, etc.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: S = ModularSymbols(37, 2)
             sage: S.decomposition_matrix()
@@ -250,7 +250,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         Returns the inverse of the matrix returned by
         decomposition_matrix().
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: S = ModularSymbols(37, 2)
             sage: t = S.decomposition_matrix_inverse(); t
@@ -436,7 +436,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         module of the ambient space. As this space is ambient anyway,
         this just returns self.free_module().
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularForms(2,8); M.dual_free_module()
             Vector space of dimension 3 over Rational Field
@@ -485,7 +485,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         Return the free module underlying this ambient Hecke module (the
         forgetful functor from Hecke modules to modules over the base ring)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularForms(59, 2).free_module()
             Vector space of dimension 6 over Rational Field
@@ -512,7 +512,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         TODO: Get rid of this dreadful bit of code.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(17, 4).hecke_bound()
             15
@@ -534,7 +534,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         raises NotImplementedError, and should be overridden in derived
         classes.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.hecke.ambient_module.AmbientHeckeModule.hecke_module_of_level(ModularForms(2, 8),6)
             Traceback (most recent call last):
@@ -636,7 +636,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         all Hecke operators, even those that divide the level. This is
         always true for ambient Hecke modules, so return True.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(11, 4).is_full_hecke_module()
             True
@@ -647,7 +647,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         r"""
         Return True if this module is entirely new.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(11, 4).is_new()
             False
@@ -666,7 +666,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         r"""
         Return True if this module is entirely old.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(22).is_old()
             True
@@ -686,7 +686,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         Returns True if and only if self is a submodule of V. Since this is an
         ambient space, this returns True if and only if V is equal to self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(1, 4).is_submodule(ModularSymbols(11,4))
             False
@@ -705,7 +705,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         construct the appropriate linear combination of the basis vectors of
         self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularForms(3, 12).linear_combination_of_basis([1,0,0,0,1])
             2*q + 2049*q^2 + 177147*q^3 + 4196177*q^4 + 48830556*q^5 + O(q^6)
@@ -922,7 +922,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         Return the Hecke submodule of self generated by M, which may be a
         submodule of the free module of self, or a list of elements of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularForms(37, 2)
             sage: A = M.submodule([M.newforms()[0].element(), M.newforms()[1].element()]); A
@@ -946,7 +946,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         The class of submodules of this module. This is a separate method so it
         can be overridden in derived classes.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.hecke.ambient_module.AmbientHeckeModule._submodule_class(ModularForms(1, 24))
             <class 'sage.modular.hecke.submodule.HeckeSubmodule'>
@@ -971,7 +971,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         OUTPUT: Hecke submodule of self
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: V = QQ^8
             sage: ModularForms(24, 2).submodule_from_nonembedded_module(V.submodule([0]))

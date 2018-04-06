@@ -25,11 +25,13 @@ from sage.libs.all import pari
 from sage.libs.m4ri cimport mzd_write_bit, mzd_read_bit
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 
+from sage.misc.cachefunc import cached_method
+
 cdef class Polynomial_GF2X(Polynomial_template):
     """
     Univariate Polynomials over GF(2) via NTL's GF2X.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: P.<x> = GF(2)[]
         sage: x^3 + x^2 + 1
@@ -39,7 +41,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
         """
         Create a new univariate polynomials over GF(2).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: P.<x> = GF(2)[]
             sage: x^3 + x^2 + 1
@@ -83,9 +85,9 @@ cdef class Polynomial_GF2X(Polynomial_template):
         cdef long c = GF2_conv_to_long(GF2X_coeff(self.x, i))
         return self._parent._base(c)
 
-    def _pari_(self, variable=None):
+    def __pari__(self, variable=None):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: P.<x> = GF(2)[]
             sage: f = x^3 + x^2 + 1
@@ -111,7 +113,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
         - ``h`` -- a polynomial
         - ``algorithm`` -- either 'native' or 'ntl' (default: 'native')
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: P.<x> = GF(2)[]
             sage: r = 279
@@ -247,9 +249,10 @@ cdef class Polynomial_GF2X(Polynomial_template):
         verbose("Res %5.3f s"%cputime(t),level=1)
         return res
 
+    @cached_method
     def is_irreducible(self):
-        """
-        Return True precisely if this polynomial is irreducible over GF(2).
+        r"""
+        Return whether this polynomial is irreducible over `\GF{2}`.`
 
         EXAMPLES::
 
@@ -258,11 +261,18 @@ cdef class Polynomial_GF2X(Polynomial_template):
             False
             sage: (x^3 + x + 1).is_irreducible()
             True
+
+        Test that caching works::
+
+            sage: R.<x> = GF(2)[]
+            sage: f = x^2 + 1
+            sage: f.is_irreducible()
+            False
+            sage: f.is_irreducible.cache
+            False
+
         """
-        if 0 == GF2X_IterIrredTest(self.x):
-            return False
-        else:
-            return True
+        return 0 != GF2X_IterIrredTest(self.x)
 
 
 # The three functions below are used in polynomial_ring.py, but are in
@@ -275,7 +285,7 @@ def GF2X_BuildIrred_list(n):
     Return the list of coefficients of the lexicographically smallest
     irreducible polynomial of degree `n` over the field of 2 elements.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.polynomial_gf2x import GF2X_BuildIrred_list
         sage: GF2X_BuildIrred_list(2)
@@ -298,7 +308,7 @@ def GF2X_BuildSparseIrred_list(n):
     Return the list of coefficients of an irreducible polynomial of
     degree `n` of minimal weight over the field of 2 elements.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.polynomial_gf2x import GF2X_BuildIrred_list, GF2X_BuildSparseIrred_list
         sage: all([GF2X_BuildSparseIrred_list(n) == GF2X_BuildIrred_list(n)
@@ -318,7 +328,7 @@ def GF2X_BuildRandomIrred_list(n):
     Return the list of coefficients of an irreducible polynomial of
     degree `n` of minimal weight over the field of 2 elements.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.polynomial_gf2x import GF2X_BuildRandomIrred_list
         sage: GF2X_BuildRandomIrred_list(2)

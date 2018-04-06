@@ -46,6 +46,7 @@ You may change default plotting options as follows::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six import iteritems
 
 from copy import copy
 from math import pi
@@ -202,12 +203,12 @@ class ToricPlotter(SageObject):
         extra_options = dict()
         self.extra_options = extra_options
         toric_options = options()
-        for option, value in all_options.iteritems():
+        for option, value in iteritems(all_options):
             if option in toric_options:
                 sd[option] = value
             else:
                 extra_options[option] = value
-        for option, value in toric_options.iteritems():
+        for option, value in iteritems(toric_options):
             if option not in sd:
                 sd[option] = value
         if dimension not in [1, 2, 3]:

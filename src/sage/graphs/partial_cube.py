@@ -115,7 +115,7 @@ def breadth_first_level_search(G, start):
 
     - ``start`` -- vertex or list of vertices from which to start the traversal.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: H = digraphs.DeBruijn(3,2)
         sage: list(sage.graphs.partial_cube.breadth_first_level_search(H, '00'))
@@ -166,7 +166,7 @@ def depth_first_traversal(G, start):
       if the algorithm is progressing via the edge ``vw``, or ``False`` if the
       algorithm is backtracking via the edge ``wv``.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: H = digraphs.DeBruijn(3,2)
         sage: t = list(sage.graphs.partial_cube.depth_first_traversal(H, '00'))

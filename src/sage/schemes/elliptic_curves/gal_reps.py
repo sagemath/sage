@@ -1086,7 +1086,12 @@ class GaloisRepresentation(SageObject):
             d = K.absolute_degree()
 
             misc.verbose("field of degree %s.  try to compute Galois group"%(d),2)
+            # If the degree is too big, we have no chance at the Galois
+            # group.  K.galois_group calls is_galois which used to rely on
+            # pari's Galois group computations, so degree < 12
             try:
+                if d > 15:
+                    raise Exception()
                 G = K.galois_group()
             except Exception:
                 self.__image_type[p] = "The image is a group of order %s."%d

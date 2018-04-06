@@ -1,7 +1,7 @@
 diff -ru src/configure.ac b/configure.ac
 --- src/configure.ac	2013-04-06 16:02:41.000000000 +0200
 +++ b/configure.ac	2013-04-11 18:11:17.947929754 +0200
-@@ -1047,9 +1047,6 @@
+@@ -1451,9 +1451,6 @@
  then
      case $GCC in
      yes)
@@ -14,7 +14,7 @@ diff -ru src/configure.ac b/configure.ac
 diff -ru src/configure b/configure
 --- src/configure	2013-04-06 16:02:41.000000000 +0200
 +++ b/configure	2013-04-11 18:11:25.737930322 +0200
-@@ -5914,9 +5914,6 @@
+@@ -6843,9 +6843,6 @@
  then
      case $GCC in
      yes)

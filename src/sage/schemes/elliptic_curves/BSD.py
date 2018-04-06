@@ -18,7 +18,7 @@ class BSD_data:
     """
     Helper class used to keep track of information in proving BSD.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.BSD import BSD_data
         sage: D = BSD_data()
@@ -50,7 +50,7 @@ class BSD_data:
         """
         Updates some properties from ``curve``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.BSD import BSD_data
             sage: D = BSD_data()
@@ -206,7 +206,7 @@ def heegner_index_work(E):
 
         - the discriminant used
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.BSD import heegner_index_work
         sage: heegner_index_work(EllipticCurve('14a'))
@@ -369,7 +369,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         sage: E.rank()
         1
         sage: E._EllipticCurve_rational_field__rank
-        {True: 1}
+        (1, True)
         sage: E.analytic_rank = lambda : 0
         sage: E.prove_BSD()
         Traceback (most recent call last):
@@ -528,9 +528,9 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
        rank_lower_bd > rank_upper_bd:
         raise RuntimeError("Something went wrong with 2-descent.")
     if BSD.rank != len(gens):
-        if BSD.rank != len(BSD.curve._EllipticCurve_rational_field__gens[True]):
+        gens = BSD.curve.gens(proof=True)
+        if BSD.rank != len(gens):
             raise RuntimeError("Could not get generators")
-        gens = BSD.curve._EllipticCurve_rational_field__gens[True]
     BSD.gens = [BSD.curve.point(x, check=True) for x in gens]
 
     if BSD.rank != BSD.curve.analytic_rank():

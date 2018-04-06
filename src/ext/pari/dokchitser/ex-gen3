@@ -37,9 +37,9 @@ print("EXAMPLE: L-function of a genus 3 curve over Q");
 print("         with ",default(realprecision)," digits precision");
 print("C: y^2+(x^3+x^2+x+1)y=x^7+2*x^6+2*x^5+x^4 (hyperelliptic)");
 
-print("Actually need ",cflength()," coeficients to properly verify functional equation");
-print("          and ",cflength(1)," coeficients to compute L(s)");
-print("        given ",length(coef)," coeficients only, but let's try anyway:");
+print("Actually need ",cflength()," coefficients to properly verify functional equation");
+print("          and ",cflength(1)," coefficients to compute L(s)");
+print("        given ",length(coef)," coefficients only, but let's try anyway:");
 print("Functional eq. = ", errprint(checkfeq(1.1))," <- indication of actual precision");
 print("Conductor      = ", conductor);
 print("Sign           = ", sgn);

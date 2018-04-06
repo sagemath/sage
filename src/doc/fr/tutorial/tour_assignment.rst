@@ -99,7 +99,7 @@ sein d'une même portée :
     <type 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # ...et maintenant une chaîne
     sage: type(a)
-    <type 'str'>
+    <... 'str'>
 
 Le langage de programmation C, qui est statiquement typé, est bien
 différent : une fois déclarée de type int, une variable ne peut contenir

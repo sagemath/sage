@@ -56,7 +56,7 @@ Instalación
 ============
 
 Si no tienes instalado Sage en tu computador y sólo quieres
-probar algunos comandos, usa la versión en linea en http://cloud.sagemath.com
+probar algunos comandos, usa la versión en linea en http://sagecell.sagemath.org.
 
 Mira la Guía De Instalación Para Sage en la sección de documentación de la
 página web principal de [Sage]_ para obtener instrucciones sobre cómo instalar
@@ -93,7 +93,7 @@ Sage en tu computador. Aquí hacemos simplemente dos comentarios:
    en un directorio en el que TeX va a buscar.
 
    La documentación para usar SageTeX se encuentra en
-   ``$SAGE_ROOT/local/share/texmf/tex/generic/sagetex/``, donde
+   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, donde
    "``$SAGE_ROOT``" se refiere al directorio donde Sage está instalado --
    por ejemplo, ``/opt/sage-4.2.1``.
 

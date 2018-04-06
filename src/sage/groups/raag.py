@@ -4,7 +4,7 @@ Right-Angled Artin Groups
 A *right-angled Artin group* (often abbreviated as RAAG) is a group which
 has a presentation whose only relations are commutators between generators.
 These are also known as graph groups, since they are (uniquely) encoded by
-(simple) graphs, or partially commmutative groups.
+(simple) graphs, or partially commutative groups.
 
 AUTHORS:
 

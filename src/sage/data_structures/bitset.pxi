@@ -25,8 +25,9 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "cysignals/memory.pxi"
 from libc.string cimport strlen
+from cysignals.memory cimport check_calloc, check_reallocarray, sig_malloc, sig_free
+
 from sage.libs.gmp.mpn cimport *
 from sage.data_structures.bitset cimport *
 from cython.operator import preincrement as preinc
@@ -82,9 +83,9 @@ cdef inline bint bitset_init(bitset_t bits, mp_bitcnt_t size) except -1:
     bits.limbs = (size - 1) / (8 * sizeof(mp_limb_t)) + 1
     bits.bits = <mp_limb_t*>check_calloc(bits.limbs, sizeof(mp_limb_t))
 
-cdef inline bint bitset_realloc(bitset_t bits, mp_bitcnt_t size) except -1:
+cdef inline int bitset_realloc(bitset_t bits, mp_bitcnt_t size) except -1:
     """
-    Reallocate a bitset to size size. If reallocation is larger, new bitset
+    Reallocate a bitset to size ``size``. If reallocation is larger, new bitset
     does not contain any of the extra bits.
     """
     cdef mp_size_t limbs_old = bits.limbs
@@ -94,14 +95,10 @@ cdef inline bint bitset_realloc(bitset_t bits, mp_bitcnt_t size) except -1:
     if size <= 0:
         raise ValueError("bitset capacity must be greater than 0")
 
-    bits.limbs = (size - 1) / (8 * sizeof(mp_limb_t)) + 1
-    tmp = <mp_limb_t*>sig_realloc(bits.bits, bits.limbs * sizeof(mp_limb_t))
-    if tmp != NULL:
-        bits.bits = tmp
-    else:
-        bits.limbs = limbs_old
-        raise MemoryError
+    cdef mp_size_t limbs_new = (size - 1) / (8 * sizeof(mp_limb_t)) + 1
+    bits.bits = <mp_limb_t*>check_reallocarray(bits.bits, limbs_new, sizeof(mp_limb_t))
     bits.size = size
+    bits.limbs = limbs_new
 
     if bits.limbs > limbs_old:
         # Zero any extra limbs

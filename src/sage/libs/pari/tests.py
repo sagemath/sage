@@ -6,58 +6,181 @@ The default precision is 64 bits, see :trac:`21425`::
     sage: pari("bitprecision(Pi)")
     64
 
+Sage-specific API checks:
+
+Creating PARI objects::
+
+    sage: pari(Matrix(2,2,range(4)))
+    [0, 1; 2, 3]
+    sage: pari(x^2-3)
+    x^2 - 3
+
+The following example caused Sage to crash before
+:trac:`20630`::
+
+    sage: R.<theta> = QQ[]
+    sage: K.<a> = NumberField(theta^2 + 1)
+    sage: K.galois_group(type='pari')
+    Galois group PARI group [2, -1, 1, "S2"] of degree 2 of the Number Field in a with defining polynomial theta^2 + 1
+
+Before :trac:`15654`, this used to take a very long time.
+Now it takes much less than a second::
+
+    sage: pari.allocatemem(200000)
+    PARI stack size set to 200000 bytes, maximum size set to ...
+    sage: x = polygen(ZpFM(3,10))
+    sage: pol = ((x-1)^50 + x)
+    sage: pari(pol).poldisc()
+    2*3 + 3^4 + 2*3^6 + 3^7 + 2*3^8 + 2*3^9 + O(3^10)
+
+This used to give the wrong answer before :trac:`23259`::
+
+    sage: R.<x> = QQ[]
+    sage: f = pari(x^12 + x^7 - 1/5*x^6 - 3*x^5 + 13/5*x^4 + 11/5*x^3 + 2/5*x^2 + 2/5*x + 1/5)
+    sage: g,h = f.polredabs(1)
+    sage: f.subst(x,h)
+    Mod(0, x^12 - 2*x^11 + 2*x^10 - 11*x^9 + 13*x^8 + 15*x^7 - x^6 - 5*x^5 + 5)
+
+Getting the coefficients of a Laurent series behaves differently
+in Sage and PARI. In PARI we get all coefficients starting
+from the lowest degree term.  This includes trailing zeros::
+
+    sage: R.<x> = LaurentSeriesRing(QQ)
+    sage: s = x^2 + O(x^8)
+    sage: s.list()
+    [1]
+    sage: pari(s).list()
+    [1, 0, 0, 0, 0, 0]
+    sage: s = x^-2 + O(x^0)
+    sage: s.list()
+    [1]
+    sage: pari(s).list()
+    [1, 0]
+
+Number fields::
+
+    sage: x = polygen(QQ)
+    sage: K.<a> = NumberField(x^4 - 4*x^2 + 1)
+    sage: pari(K).nf_get_pol()
+    y^4 - 4*y^2 + 1
+    sage: L.<b> = K.extension(x^2 - 5)
+    sage: pari(L).nf_get_pol()        # Absolute
+    y^8 - 28*y^6 + 208*y^4 - 408*y^2 + 36
+    sage: L.pari_rnf().nf_get_pol()   # Relative
+    x^2 - 5
+
+    sage: K.pari_nf().nf_get_pol()
+    y^4 - 4*y^2 + 1
+    sage: K.pari_bnf().nf_get_pol()
+    y^4 - 4*y^2 + 1
+
+    sage: K.<a> = QuadraticField(-65)
+    sage: G = K.pari_bnf().bnf_get_gen(); G
+    [[3, 2; 0, 1], [2, 1; 0, 1]]
+    sage: [K.ideal(J) for J in G]
+    [Fractional ideal (3, a + 2), Fractional ideal (2, a + 1)]
+
+Conversions::
+
+    sage: K.<i> = QuadraticField(-1)
+    sage: F = pari(K).idealfactor(K.ideal(5)); F
+    [[5, [-2, 1]~, 1, 1, [2, -1; 1, 2]], 1; [5, [2, 1]~, 1, 1, [-2, -1; 1, -2]], 1]
+    sage: F[0,0].pr_get_p()
+    5
+
+    sage: K.<i> = QuadraticField(-1)
+    sage: J = pari(K).idealstar(K.ideal(4*i + 2))
+    sage: J.bid_get_cyc()
+    [4, 2]
+
+    sage: int(pari(RealField(63)(2^63-1)))
+    9223372036854775807L  # 32-bit
+    9223372036854775807   # 64-bit
+    sage: int(pari(RealField(63)(2^63+2)))
+    9223372036854775810L
+
+    sage: K = Qp(11,5)
+    sage: x = K(11^-10 + 5*11^-7 + 11^-6)
+    sage: y = pari(x)
+    sage: y.padicprime()
+    11
+    sage: y.padicprime().type()
+    't_INT'
+
+    sage: x = polygen(GF(3))
+    sage: k.<a> = GF(9, modulus=x^2+1)
+    sage: b = pari(a).ffprimroot()
+    sage: b  # random
+    a + 1
+    sage: b.fforder()
+    8
+
+    sage: pari(4).Zn_issquare(30.factor())
+    True
+    sage: pari(4).Zn_sqrt(30.factor())
+    22
+
+    sage: a = pari(1/2); a, a.type()
+    (1/2, 't_FRAC')
+
+Conversion from matrices and vectors is supported::
+
+    sage: a = pari(matrix(2,3,[1,2,3,4,5,6])); a, a.type()
+    ([1, 2, 3; 4, 5, 6], 't_MAT')
+    sage: v = vector([1.2, 3.4, 5.6])
+    sage: pari(v)
+    [1.20000000000000, 3.40000000000000, 5.60000000000000]
+
+Some more exotic examples::
+
+    sage: K.<a> = NumberField(polygen(QQ)^3 - 2)
+    sage: pari(K)
+    [y^3 - 2, [1, 1], -108, 1, [[1, 1.25992104989487, 1.58740105196820; 1, -0.629960524947437 + 1.09112363597172*I, -0.793700525984100 - 1.37472963699860*I], [1, 1.25992104989487, 1.58740105196820; 1, 0.461163111024285, -2.16843016298270; 1, -1.72108416091916, 0.581029111014503], [1, 1, 2; 1, 0, -2; 1, -2, 1], [3, 0, 0; 0, 0, 6; 0, 6, 0], [6, 0, 0; 0, 6, 0; 0, 0, 3], [2, 0, 0; 0, 0, 1; 0, 1, 0], [2, [0, 0, 2; 1, 0, 0; 0, 1, 0]], []], [1.25992104989487, -0.629960524947437 + 1.09112363597172*I], [1, y, y^2], [1, 0, 0; 0, 1, 0; 0, 0, 1], [1, 0, 0, 0, 0, 2, 0, 2, 0; 0, 1, 0, 1, 0, 0, 0, 0, 2; 0, 0, 1, 0, 1, 0, 1, 0, 0]]
+
+    sage: E = EllipticCurve('37a1')
+    sage: pari(E)
+    [0, 0, 1, -1, 0, 0, -2, 1, -1, 48, -216, 37, 110592/37, Vecsmall([1]), [Vecsmall([64, 1])], [0, 0, 0, 0, 0, 0, 0, 0]]
+
 Deprecation checks::
 
     sage: pari.poltchebi(10)
-    doctest:...: DeprecationWarning: poltchebi is deprecated. Please use polchebyshev instead.
-    See http://trac.sagemath.org/18203 for details.
+    doctest:...: DeprecationWarning: the PARI/GP function poltchebi is obsolete (2013-04-03)
     512*x^10 - 1280*x^8 + 1120*x^6 - 400*x^4 + 50*x^2 - 1
     sage: pari("x^3 + 1").polsturm(-1, 1)
     doctest:...: DeprecationWarning: argument 2 of the PARI/GP function polsturm is undocumented and deprecated
     1
-    sage: pari.nth_prime(10)
-    doctest:...: DeprecationWarning: nth_prime is deprecated. Please use prime instead.
-    See http://trac.sagemath.org/20216 for details.
-    29
-    sage: pari.prime_list(10)
-    doctest:...: DeprecationWarning: prime_list is deprecated. Please use primes instead.
-    See http://trac.sagemath.org/20216 for details.
-    [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-    sage: pari.primes_up_to_n(20)
-    doctest:...: DeprecationWarning: pari.primes_up_to_n(n) is deprecated, use pari.primes(end=n) instead
-    See http://trac.sagemath.org/20216 for details.
-    [2, 3, 5, 7, 11, 13, 17, 19]
-    sage: pari.polcyclo_eval(8, 2)
-    doctest:...: DeprecationWarning: polcyclo_eval is deprecated. Please use polcyclo instead.
-    See http://trac.sagemath.org/20217 for details.
-    17
-    sage: pari('x^-2').printtex()
-    doctest:...: DeprecationWarning: printtex is deprecated. Please use Strtex instead.
-    See http://trac.sagemath.org/20219 for details.
-    "\\frac{1}{x^2}"
-    sage: pari(10).phi()
-    doctest:...: DeprecationWarning: phi is deprecated. Please use eulerphi instead.
-    See http://trac.sagemath.org/20219 for details.
+    sage: x = pari('10^100')
+    sage: x.Str().length()
+    101
+    sage: x.sizedigit()
+    doctest:...: DeprecationWarning: the PARI/GP function sizedigit is obsolete (2015-01-13)
+    101
+    sage: x = pari('1.234')
+    sage: x
+    1.23400000000000
+    sage: x.sizedigit()
+    1
+    sage: pari('7234.1').sizedigit()
     4
-    sage: pari("x^3 + 5*x").reverse()
-    doctest:...: DeprecationWarning: reverse is deprecated. Please use polrecip instead.
-    See http://trac.sagemath.org/20219 for details.
-    5*x^2 + 1
-    sage: nf = pari("x^2 + 1").nfinit()
-    sage: id = nf.idealhnf(2)
-    sage: nf.idealintersection(id, id)
-    doctest:...: DeprecationWarning: idealintersection is deprecated. Please use idealintersect instead.
-    See http://trac.sagemath.org/20219 for details.
-    [2, 0; 0, 2]
-    sage: e = pari([1,0,1,-19,26]).ellinit()
-    sage: e.elltors(flag=1)
-    doctest:...: DeprecationWarning: The flag argument to elltors() is deprecated and not used anymore
-    See http://trac.sagemath.org/20219 for details.
-    [12, [6, 2], [[1, 2], [3, -2]]]
-    sage: pari("Mod(2,5)").order()
-    doctest:...: DeprecationWarning: order is deprecated. Please use znorder instead.
-    See http://trac.sagemath.org/20219 for details.
-    4
+    sage: pari('9234.1').sizedigit()
+    5
+    sage: pari(8).bernvec()
+    doctest:...: DeprecationWarning: the PARI/GP function bernvec() is obsolete: use repeated calls to bernfrac() instead
+    [1, 1/6, -1/30, 1/42, -1/30, 5/66, -691/2730, 7/6, -3617/510]
+    sage: [pari(2*n).bernfrac() for n in range(9)]
+    [1, 1/6, -1/30, 1/42, -1/30, 5/66, -691/2730, 7/6, -3617/510]
+    sage: e = pari([0,1,1,-2,0]).ellinit()
+    sage: e.elllseries(2.1)
+    doctest:...: DeprecationWarning: the PARI/GP function elllseries is obsolete (2016-08-08)
+    0.402838047956645
+    sage: e.elllseries(1, precision=128)
+    -6.17606670058278 E-39
+    sage: e.elllseries(1, precision=256)
+    -2.05598131842639 E-77
+    sage: e.elllseries(-2)
+    0
+    sage: e.elllseries(2.1, A=1.1)
+    0.402838047956645
 
 A long list of doctests which used to be part of manually written code
 which is now automatically generated:
@@ -66,10 +189,10 @@ Reading a gp file::
 
     sage: import tempfile
     sage: gpfile = tempfile.NamedTemporaryFile(mode="w")
-    sage: gpfile.file.write("mysquare(n) = {\n")
-    sage: gpfile.file.write("    n^2;\n")
-    sage: gpfile.file.write("}\n")
-    sage: gpfile.file.write("polcyclo(5)\n")
+    sage: __ = gpfile.file.write("mysquare(n) = {\n")
+    sage: __ = gpfile.file.write("    n^2;\n")
+    sage: __ = gpfile.file.write("}\n")
+    sage: __ = gpfile.file.write("polcyclo(5)\n")
     sage: gpfile.file.flush()
     sage: pari.read(gpfile.name)
     x^4 + x^3 + x^2 + x + 1
@@ -80,11 +203,11 @@ Constants::
 
     sage: pari.euler()
     0.577215664901533
-    sage: pari.euler(precision=100).python()
+    sage: pari.euler(precision=100).sage()
     0.577215664901532860606512090082...
     sage: pari.pi()
     3.14159265358979
-    sage: pari.pi(precision=100).python()
+    sage: pari.pi(precision=100).sage()
     3.1415926535897932384626433832...
 
 Polynomial functions::
@@ -825,7 +948,7 @@ Linear algebra::
     sage: pari('[1,2,3;4,5,6;7,8,9]').matker()
     [1; -2; 1]
     sage: pari('[1,2,3;4,5,6;7,8,9]').matker(1)
-    [3; -6; 3]
+    [1; -2; 1]
     sage: pari('matrix(3,3,i,j,i)').matker()
     [-1, -1; 1, 0; 0, 1]
     sage: pari('[1,2,3;4,5,6;7,8,9]*Mod(1,2)').matker()
@@ -886,19 +1009,19 @@ Quadratic forms::
     sage: A = Matrix(3,3,[1,2,3,2,5,5,3,5,11])
     sage: A.is_positive_definite()
     True
-    sage: pari(A).qfminim(10, 5).python()
+    sage: pari(A).qfminim(10, 5).sage()
     [
              [17 14 15 16 13]
              [-4 -3 -3 -3 -2]
     146, 10, [-3 -3 -3 -3 -3]
     ]
-    sage: pari(A).qfminim().python()
+    sage: pari(A).qfminim().sage()
     [
           [ 5  2  1]
           [-1 -1  0]
     6, 1, [-1  0  0]
     ]
-    sage: pari(A.change_ring(RR)).qfminim(5, m=5, flag=2).python()
+    sage: pari(A.change_ring(RR)).qfminim(5, m=5, flag=2).sage()
     [
                              [ -5 -10  -2  -7   3]
                              [  1   2   1   2   0]
@@ -906,7 +1029,7 @@ Quadratic forms::
     ]
 
     sage: M = diagonal_matrix([1,1,-1])
-    sage: P = M._pari_().qfparam([0,1,-1]); P
+    sage: P = M.__pari__().qfparam([0,1,-1]); P
     [0, -2, 0; 1, 0, -1; -1, 0, -1]
     sage: R.<x,y> = QQ[]
     sage: v = P.sage() * vector([x^2, x*y, y^2]); v
@@ -919,22 +1042,22 @@ Quadratic forms::
     True
 
     sage: M = diagonal_matrix([1,2,3,4,-5])
-    sage: M._pari_().qfsolve()
+    sage: M.__pari__().qfsolve()
     [0, 1, -1, 0, -1]~
     sage: M = diagonal_matrix([4,-9])
-    sage: M._pari_().qfsolve()
+    sage: M.__pari__().qfsolve()
     [6, 4]~
     sage: M = diagonal_matrix([1,1,1,1,1])
-    sage: M._pari_().qfsolve()
+    sage: M.__pari__().qfsolve()
     -1
     sage: M = diagonal_matrix([1,1,-3])
-    sage: M._pari_().qfsolve()
+    sage: M.__pari__().qfsolve()
     3
     sage: M = diagonal_matrix([1,-42])
-    sage: M._pari_().qfsolve()
+    sage: M.__pari__().qfsolve()
     -2
     sage: M = diagonal_matrix([1,-1,0,0])
-    sage: M._pari_().qfsolve().sage()
+    sage: M.__pari__().qfsolve().sage()
     [0 0]
     [0 0]
     [1 0]
@@ -1049,7 +1172,7 @@ Finite fields::
     82718061255302767487140869206996285356581211090087890624
     sage: g.fforder( (5^80-1, factor(5^80-1)) )
     82718061255302767487140869206996285356581211090087890624
-    sage: k(2)._pari_().fforder(o=4)
+    sage: k(2).__pari__().fforder(o=4)
     4
 
 p-adic functions::
@@ -1206,18 +1329,6 @@ Elliptic curves::
     sage: e = pari(EllipticCurve('90c2').a_invariants()).ellinit()
     sage: e.elllocalred(3)
     [2, -10, [1, 0, 0, 0], 4]
-
-    sage: e = pari([0,1,1,-2,0]).ellinit()
-    sage: e.elllseries(2.1)
-    0.402838047956645
-    sage: e.elllseries(1, precision=128)
-    3.19632265064095 E-40
-    sage: e.elllseries(1, precision=256)
-    8.68747983667209 E-79
-    sage: e.elllseries(-2)
-    0
-    sage: e.elllseries(2.1, A=1.1)
-    0.402838047956645
 
     sage: e = pari(EllipticCurve('65a1').a_invariants()).ellinit()
     sage: e.ellorder([0,0])
@@ -1387,6 +1498,7 @@ General number fields::
     sage: x = polygen(QQ)
     sage: K.<a> = NumberField(x^2 - 1/8)
     sage: pari(x^2 - 2).factornf(K.pari_polynomial("a"))
+    doctest:...: DeprecationWarning: the PARI/GP function factornf is obsolete (2016-08-08)
     [x + Mod(-a, a^2 - 2), 1; x + Mod(a, a^2 - 2), 1]
 
     sage: K.<z> = QuadraticField(-23)
@@ -1441,7 +1553,7 @@ General number fields::
     0
 
     sage: F = QuadraticField(5, 'alpha')
-    sage: nf = F._pari_()
+    sage: nf = F.__pari__()
     sage: P = F.ideal(F.gen())
     sage: Q = F.ideal(2)
     sage: moduli = pari.matrix(2,2,[P.pari_prime(),4,Q.pari_prime(),4])
@@ -1453,11 +1565,11 @@ General number fields::
     True
 
     sage: F = NumberField(x^3-2, 'alpha')
-    sage: nf = F._pari_()
+    sage: nf = F.__pari__()
     sage: x = pari('[1, -1, 2]~')
     sage: y = pari('[1, -1, 3]~')
     sage: nf.idealcoprime(x, y)
-    [1, 0, 0]~
+    1
 
     sage: y = pari('[2, -2, 4]~')
     sage: nf.idealcoprime(x, y)
@@ -1472,7 +1584,7 @@ General number fields::
     [[65, 8; 0, 1], [65, 47; 0, 1], [65, 18; 0, 1], [65, 57; 0, 1]]
 
     sage: F = NumberField(x^3-2, 'alpha')
-    sage: nf = F._pari_()
+    sage: nf = F.__pari__()
     sage: I = pari('[1, -1, 2]~')
     sage: bid = nf.idealstar(I)
     sage: nf.ideallog(5, bid)
@@ -1486,10 +1598,10 @@ General number fields::
 
     sage: x = polygen(ZZ)
     sage: F = NumberField(x^3 - 2, 'alpha')
-    sage: nf = F._pari_()
+    sage: nf = F.__pari__()
     sage: I = pari('[1, -1, 2]~')
     sage: nf.idealstar(I)
-    [[[43, 9, 5; 0, 1, 0; 0, 0, 1], [0]], [42, [42]], Mat([[43, [9, 1, 0]~, 1, 1, [-5, 2, -18; -9, -5, 2; 1, -9, -5]], 1]), [[[[42], [3], [3], [Vecsmall([])], 1]], [[], [], []]], Mat(1)]
+    [[[43, 9, 5; 0, 1, 0; 0, 0, 1], [0]], [42, [42]], [Mat([[43, [9, 1, 0]~, 1, 1, [-5, 2, -18; -9, -5, 2; 1, -9, -5]], 1]), Mat([[43, [9, 1, 0]~, 1, 1, [-5, 2, -18; -9, -5, 2; 1, -9, -5]], 1])], [[[[42], [3], [43, 9, 5; 0, 1, 0; 0, 0, 1], [[[-14, -8, 20]~, [1, 34, 38], [43, [9, 1, 0]~, 1, 1, [-5, 2, -18; -9, -5, 2; 1, -9, -5]]]~, 3, [42, [2, 1; 3, 1; 7, 1]]]]], [[], Vecsmall([])]], [Mat(1)]]
 
     sage: x = polygen(QQ)
     sage: K.<a> = NumberField(x^3 - 17)
@@ -1520,7 +1632,7 @@ General number fields::
 
     sage: x = QQ['x'].0; nf = pari(x^2 + 2).nfinit()
     sage: nf.nfgaloisconj()
-    [-x, x]~
+    [x, -x]~
     sage: nf = pari(x^3 + 2).nfinit()
     sage: nf.nfgaloisconj()
     [x]~
@@ -1563,7 +1675,7 @@ General number fields::
     [[1, [7605, 4]~, [5610, 5]~, [7913, -6]~; 0, 1, 0, -1; 0, 0, 1, 0; 0, 0, 0, 1], [[19320, 13720; 0, 56], [2, 1; 0, 1], 1, 1]]
 
     sage: pari('x^3 - 17').nfinit()
-    [x^3 - 17, [1, 1], -867, 3, [[1, 1.68006914259990, 2.57128159065824; 1, -0.340034571299952 - 2.65083754153991*I, -1.28564079532912 + 2.22679517779329*I], [1, 1.68006914259990, 2.57128159065824; 1, -2.99087211283986, 0.941154382464174; 1, 2.31080297023995, -3.51243597312241], [1, 2, 3; 1, -3, 1; 1, 2, -4], [3, 1, 0; 1, -11, 17; 0, 17, 0], [51, 0, 16; 0, 17, 3; 0, 0, 1], [17, 0, -1; 0, 0, 3; -1, 3, 2], [51, [-17, 6, -1; 0, -18, 3; 1, 0, -16]], [3, 17]], [2.57128159065824, -1.28564079532912 + 2.22679517779329*I], [1, 1/3*x^2 - 1/3*x + 1/3, x], [1, 0, -1; 0, 0, 3; 0, 1, 1], [1, 0, 0, 0, -4, 6, 0, 6, -1; 0, 1, 0, 1, 1, -1, 0, -1, 3; 0, 0, 1, 0, 2, 0, 1, 0, 1]]
+    [x^3 - 17, [1, 1], -867, 3, [[1, 1.68006914259990, 2.57128159065824; 1, -0.340034571299952 - 2.65083754153991*I, -1.28564079532912 + 2.22679517779329*I], [1, 1.68006914259990, 2.57128159065824; 1, -2.99087211283986, 0.941154382464174; 1, 2.31080297023995, -3.51243597312241], [1, 2, 3; 1, -3, 1; 1, 2, -4], [3, 1, 0; 1, -11, 17; 0, 17, 0], [51, 0, 16; 0, 17, 3; 0, 0, 1], [17, 0, -1; 0, 0, 3; -1, 3, 2], [51, [-17, 6, -1; 0, -18, 3; 1, 0, -16]], [3, 17]], [2.57128159065824, -1.28564079532912 + 2.22679517779329*I], [3, x^2 - x + 1, 3*x], [1, 0, -1; 0, 0, 3; 0, 1, 1], [1, 0, 0, 0, -4, 6, 0, 6, -1; 0, 1, 0, 1, 1, -1, 0, -1, 3; 0, 0, 1, 0, 2, 0, 1, 0, 1]]
     sage: pari('x^2 + 10^100 + 1').nfinit()
     [...]
     sage: pari('1.0').nfinit()
@@ -1573,17 +1685,17 @@ General number fields::
 
     sage: F = NumberField(x^3-2,'alpha')
     sage: G = NumberField(x^3-2,'beta')
-    sage: F._pari_().nfisisom(G._pari_())
+    sage: F.__pari__().nfisisom(G.__pari__())
     [y]
     sage: GG = NumberField(x^3-4,'gamma')
-    sage: F._pari_().nfisisom(GG._pari_())
+    sage: F.__pari__().nfisisom(GG.__pari__())
     [1/2*y^2]
-    sage: F._pari_().nfisisom(GG.pari_nf())
+    sage: F.__pari__().nfisisom(GG.pari_nf())
     [1/2*y^2]
-    sage: F.pari_nf().nfisisom(GG._pari_()[0])
+    sage: F.pari_nf().nfisisom(GG.__pari__()[0])
     [y^2]
     sage: H = NumberField(x^2-2,'alpha')
-    sage: F._pari_().nfisisom(H._pari_())
+    sage: F.__pari__().nfisisom(H.__pari__())
     0
     sage: K.<a> = NumberField(x^2 + x + 1)
     sage: L.<b> = NumberField(x^2 + 3)
@@ -1632,14 +1744,58 @@ General number fields::
 
     sage: x = SR.symbol('x')
     sage: F = NumberField(x^3-2,'alpha')
-    sage: F._pari_()[0].nfdisc()
+    sage: F.__pari__()[0].nfdisc()
     -108
     sage: G = NumberField(x^5-11,'beta')
-    sage: G._pari_()[0].nfdisc()
+    sage: G.__pari__()[0].nfdisc()
     45753125
     sage: f = x^3-2
-    sage: f._pari_()
+    sage: f.__pari__()
     x^3 - 2
-    sage: f._pari_().nfdisc()
+    sage: f.__pari__().nfdisc()
     -108
+
+These are some doctests that used to be part of Sage and were removed from the cypari2
+library::
+
+    sage: e = pari([0,0,0,-82,0]).ellinit()
+    sage: eta1 = e.elleta(precision=100)[0]
+    sage: eta1.sage()
+    3.6054636014326520859158205642077267748
+    sage: eta1 = e.elleta(precision=180)[0]
+    sage: eta1.sage()
+    3.60546360143265208591582056420772677481026899659802474544
+
+    sage: from cypari2 import Pari
+    sage: pari = Pari()
+
+    sage: f = pari('(2/3)*x^3 + x - 5/7 + y'); f
+    2/3*x^3 + x + (y - 5/7)
+    sage: var('x,y')
+    (x, y)
+    sage: f.sage({'x':x, 'y':y})
+    2/3*x^3 + x + y - 5/7
+
+    sage: pari.default("debug")
+    0
+    sage: pari.default("debug", 3)
+    sage: pari(2**67+1).factor()
+    IFAC: cracking composite
+            49191317529892137643
+    IFAC: factor 6713103182899
+            is prime
+    IFAC: factor 7327657
+            is prime
+    IFAC: prime 7327657
+            appears with exponent = 1
+    IFAC: prime 6713103182899
+            appears with exponent = 1
+    IFAC: found 2 large prime (power) factors.
+    [3, 1; 7327657, 1; 6713103182899, 1]
+    sage: pari.default("debug", 0)
+    sage: pari(2**67+1).factor()
+    [3, 1; 7327657, 1; 6713103182899, 1]
+
+    sage: pari(18).bernreal(precision=192).sage()
+    54.9711779448621553884711779448621553884711779448621553885
 """

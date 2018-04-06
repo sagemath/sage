@@ -103,7 +103,7 @@ cdef class IndependentSets:
         sage: number_of
         [1, 10, 30, 30, 5, 0, 0, 0, 0, 0]
 
-    It is also possible to define an an iterator over all independent sets of a
+    It is also possible to define an iterator over all independent sets of a
     given cardinality. Note, however, that Sage will generate them *all*, to
     return only those that satisfy the cardinality constraints. Getting the list
     of independent sets of size 4 in this way can thus take a very long time::

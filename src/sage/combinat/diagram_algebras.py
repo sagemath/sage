@@ -26,8 +26,7 @@ from six.moves import range
 from sage.categories.algebras import Algebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.element import generic_power
-from sage.combinat.free_module import (CombinatorialFreeModule,
-    CombinatorialFreeModuleElement)
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.combinat import bell_number, catalan_number
@@ -920,7 +919,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
 
     def symmetric_diagrams(self,l=None,perm=None):
         r"""
-        Return the list of brauer diagrams with symmetric placement of `l` arcs,
+        Return the list of Brauer diagrams with symmetric placement of `l` arcs,
         and with free nodes permuted according to `perm`.
 
         EXAMPLES::
@@ -952,7 +951,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
 
     def from_involution_permutation_triple(self, D1_D2_pi):
         r"""
-        Construct a Bruaer diagram of ``self`` from an involution
+        Construct a Brauer diagram of ``self`` from an involution
         permutation triple.
 
         A Brauer diagram can be represented as a triple where the first
@@ -987,7 +986,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
             raise ValueError("argument %s not in correct form; must be a tuple (D1, D2, pi)" % D1_D2_pi)
         D1 = [[abs(x) for x in b] for b in D1 if len(b) == 2] # not needed if argument correctly passed at outset.
         D2 = [[abs(x) for x in b] for b in D2 if len(b) == 2] # ditto.
-        nD2 = [map(lambda i: -i,b) for b in D2]
+        nD2 = [[-i for i in b] for b in D2]
         pi = list(pi)
         nn = set(range(1, self.order+1))
         dom = sorted(nn.difference(flatten([list(x) for x in D1])))
@@ -1462,7 +1461,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
 
     # The following subclass provides a few additional methods for
     # partition algebra elements.
-    class Element(CombinatorialFreeModuleElement):
+    class Element(CombinatorialFreeModule.Element):
         r"""
         An element of a diagram algebra.
 

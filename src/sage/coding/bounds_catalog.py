@@ -1,5 +1,5 @@
 r"""
-Index of bounds
+Index of bounds on the parameters of codes
 
 The ``codes.bounds`` object may be used to access the bounds that Sage can compute.
 
@@ -29,6 +29,12 @@ _lazy_import("sage.coding.code_bounds", ["codesize_upper_bound",
             "plotkin_bound_asymp",
             "elias_bound_asymp",
             "mrrw1_bound_asymp"])
+
+_lazy_import("sage.coding.delsarte_bounds",
+            ["krawtchouk",
+             "delsarte_bound_hamming_space",
+             "delsarte_bound_additive_hamming_space"])
+
 
 from sage.misc.rest_index_of_methods import gen_rest_table_index as _gen_rest_table_index
 import sys as _sys

@@ -19,6 +19,7 @@ Ribbon Tableaux
 from __future__ import division, print_function, absolute_import
 
 from sage.structure.parent import Parent
+from sage.structure.element import parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
@@ -33,6 +34,7 @@ from sage.misc.superseded import deprecated_function_alias
 from . import permutation
 import functools
 
+from sage.combinat.permutation import to_standard
 
 class RibbonTableau(SkewTableau):
     r"""
@@ -597,27 +599,26 @@ def spin_rec(t, nexts, current, part, weight, length):
         sage: spin_rec(t, [[t^5], [t^4], [t^6 + t^4 + t^2]], [[[2, 2, 2, 2, 1], [0, 0, 3]], [[3, 3, 1, 1, 1], [0, 3, 0]], [[3, 3, 3], [3, 0, 0]]], sp([[3, 3, 3, 2, 1], []]), [2, 1, 1], 3)
         [2*t^7 + 2*t^5 + t^3]
     """
-    from sage.combinat.words.word import Word
-    R = ZZ['t']
-    if current == []:
-        return [R(0)]
+    if not current:
+        return [parent(t).zero()]
 
     tmp = []
     partp = part[0].conjugate()
+    ell = len(partp)
 
     #compute the contribution of the ribbons added at
     #the current node
-    for perms in [current[i][1] for i in range(len(current))]:
-        perm = [partp[i] + len(partp) - (i + 1) - perms[i]
-                for i in range(len(partp))]
-        perm.reverse()
-        perm = Word(perm).standard_permutation()
-        tmp.append( (weight[-1]*(length-1)-perm.number_of_inversions()) )
+    for val in current:
+        perms = val[1]
+        perm = [partp[i] + ell - (i + 1) - perms[i] for i in reversed(range(ell))]
+        perm = to_standard(perm)
+        tmp.append( weight[-1]*(length-1) - perm.number_of_inversions() )
 
-    if nexts != []:
-        return [sum([sum([t**tmp[i]*nexts[i][j] for j in range(len(nexts[i]))]) for i in range(len(tmp))])]
+    if nexts:
+        return [ sum(sum(t**tval * nval for nval in nexts[i])
+                     for i, tval in enumerate(tmp)) ]
     else:
-        return [sum([t**tmp[i] for i in range(len(tmp))])]
+        return [ sum(t**val for val in tmp) ]
 
 
 def spin_polynomial_square(part, weight, length):
@@ -644,7 +645,6 @@ def spin_polynomial_square(part, weight, length):
         3*t^18 + 5*t^16 + 9*t^14 + 6*t^12 + 3*t^10
     """
     R = ZZ['t']
-    t = R.gen()
 
     if part in _Partitions:
         part = SkewPartition([part,_Partitions([])])
@@ -652,8 +652,9 @@ def spin_polynomial_square(part, weight, length):
         part = SkewPartition(part)
 
     if part == [[],[]] and weight == []:
-        return t.parent()(1)
+        return R.one()
 
+    t = R.gen()
     return R(graph_implementation_rec(part, weight, length, functools.partial(spin_rec,t))[0])
 
 def spin_polynomial(part, weight, length):
@@ -680,10 +681,10 @@ def spin_polynomial(part, weight, length):
         3*t^9 + 5*t^8 + 9*t^7 + 6*t^6 + 3*t^5
     """
     from sage.symbolic.ring import SR
-    sp = spin_polynomial_square(part,weight,length)
+    sp = spin_polynomial_square(part, weight, length)
     t = SR.var('t')
-    c = sp.coefficients(sparse=False)
-    return sum([c[i]*t**(QQ(i)/2) for i in range(len(c))])
+    coeffs = sp.list()
+    return sum(c * t**(QQ(i)/2) for i,c in enumerate(coeffs))
 
 def cospin_polynomial(part, weight, length):
     """
@@ -709,20 +710,18 @@ def cospin_polynomial(part, weight, length):
         3*t^4 + 6*t^3 + 9*t^2 + 5*t + 3
     """
     R = ZZ['t']
-    t = R.gen()
 
     # The power in the spin polynomial are all half integers
     # or all integers.  Manipulation of expressions need to
     # separate cases
     sp = spin_polynomial_square(part, weight, length)
     if sp == 0:
-        return R(0)
+        return R.zero()
 
-    coeffs = [c for c in sp.coefficients(sparse=False) if c != 0]
-    d = len(coeffs)-1
-    exponents = [d-e for e in range(len(coeffs))]
-
-    return R(sum([ coeffs[i]*t**exponents[i] for i in range(len(coeffs))]))
+    coeffs = [c for c in sp.list() if c != 0]
+    d = len(coeffs) - 1
+    t = R.gen()
+    return R( sum(c * t**(d-i) for i,c in enumerate(coeffs)) )
 
 
 ##     //////////////////////////////////////////////////////////////////////////////////////////
@@ -753,6 +752,9 @@ def graph_implementation_rec(skp, weight, length, function):
         weight = []
 
     partp = skp[0].conjugate()
+    ell = len(partp)
+    outer = skp[1]
+    outer_len = len(outer)
 
     ## Some tests in order to know if the shape and the weight are compatible.
     if weight != [] and weight[-1] <= len(partp):
@@ -763,22 +765,22 @@ def graph_implementation_rec(skp, weight, length, function):
     selection = []
 
     for j in range(len(perms)):
-        retire = [(partp[i]+ len(partp) - (i+1) - perms[j][i]) for i in range(len(partp))]
+        retire = [(val + ell - (i+1) - perms[j][i]) for i,val in enumerate(partp)]
         retire.sort(reverse=True)
-        retire = [ retire[i] - len(partp) + (i+1) for i in range(len(retire))]
+        retire = [val - ell + (i+1) for i,val in enumerate(retire)]
 
-        if retire[-1] >= 0 and retire == [i for i in reversed(sorted(retire))]:
-            retire = Partition([x for x in retire if x != 0]).conjugate()
+        if retire[-1] >= 0 and retire == sorted(retire, reverse=True):
+            retire = Partition(retire).conjugate()
 
             # Cutting branches if the retired partition has a line strictly included into the inner one
-            append = True
-            padded_retire = retire + [0]*(len(skp[1])-len(retire))
-            for k in range(len(skp[1])):
-                if padded_retire[k] - skp[1][k] < 0:
-                    append = False
-                    break
-            if append:
-                selection.append([retire, perms[j]])
+            if len(retire) >= outer_len:
+                append = True
+                for k in range(outer_len):
+                    if retire[k] - outer[k] < 0:
+                        append = False
+                        break
+                if append:
+                    selection.append([retire, perms[j]])
 
     #selection contains the list of current nodes
 
@@ -787,9 +789,9 @@ def graph_implementation_rec(skp, weight, length, function):
     else:
         #The recursive calls permit us to construct the list of the sons
         #of all current nodes in selection
-        a = [graph_implementation_rec([p[0], skp[1]], weight[:-1], length, function) for p in selection]
+        a = [graph_implementation_rec([p[0], outer], weight[:-1], length, function)
+             for p in selection]
         return function(a, selection, skp, weight, length)
-
 
 ##############################################################
 

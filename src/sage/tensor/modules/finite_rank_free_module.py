@@ -43,9 +43,8 @@ AUTHORS:
 
 REFERENCES:
 
-- Chap. 10 of R. Godement : *Algebra*, Hermann (Paris) / Houghton Mifflin
-  (Boston) (1968)
-- Chap. 3 of S. Lang : *Algebra*, 3rd ed., Springer (New York) (2002)
+- Chap. 10 of R. Godement : *Algebra* [God1968]_
+- Chap. 3 of S. Lang : *Algebra* [Lan2002]_
 
 EXAMPLES:
 
@@ -371,7 +370,7 @@ created by ``VectorSpace`` is actually a Cartesian power of the base field::
     Vector space of dimension 3 over Rational Field
     sage: V.category()
     Category of finite dimensional vector spaces with basis
-     over (quotient fields and metric spaces)
+     over (number fields and quotient fields and metric spaces)
     sage: V is QQ^3
     True
     sage: V.basis()
@@ -401,9 +400,11 @@ occur in the context of differentiable manifolds (see
 `here <http://sagemanifolds.obspm.fr/tensor_modules.html>`_ for more
 details):
 
-- the tangent vector space at any point of the manifold
+- the tangent vector space at any point of the manifold (cf.
+  :class:`~sage.manifolds.differentiable.tangent_space.TangentSpace`);
 - the set of vector fields on a parallelizable open subset `U` of the manifold,
-  which is a free module over the algebra of scalar fields on `U`.
+  which is a free module over the algebra of scalar fields on `U` (cf.
+  :class:`~sage.manifolds.differentiable.vectorfield_module.VectorFieldFreeModule`).
 
 For instance, without any specific coordinate choice, no basis can be
 distinguished in a tangent space.
@@ -534,7 +535,8 @@ from sage.structure.parent import Parent
 from sage.categories.modules import Modules
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
-from sage.tensor.modules.free_module_tensor import FiniteRankFreeModuleElement
+from sage.rings.integer import Integer
+from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
 class FiniteRankFreeModule(UniqueRepresentation, Parent):
     r"""
@@ -559,8 +561,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         :class:`~sage.combinat.free_module.CombinatorialFreeModule`, since
         both classes deal with modules with a *distinguished basis* (see
         details :ref:`above <diff-FreeModule>`).
-        Moreover, following the recommendation exposed in trac ticket
-        `#16427 <http://trac.sagemath.org/ticket/16427>`_
+        Moreover, following the recommendation exposed in :trac:`16427`
         the class :class:`FiniteRankFreeModule` inherits directly from
         :class:`~sage.structure.parent.Parent` (with the category set to
         :class:`~sage.categories.modules.Modules`) and not from the Cython
@@ -568,7 +569,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
 
     The class :class:`FiniteRankFreeModule` is a Sage *parent* class,
     the corresponding *element* class being
-    :class:`~sage.tensor.modules.free_module_tensor.FiniteRankFreeModuleElement`.
+    :class:`~sage.tensor.modules.free_module_element.FiniteRankFreeModuleElement`.
 
     INPUT:
 
@@ -657,12 +658,12 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
          Basis (f_0,f_1,f_2) on the Rank-3 free module M over the Integer Ring]
 
     M is a *parent* object, whose elements are instances of
-    :class:`~sage.tensor.modules.free_module_tensor.FiniteRankFreeModuleElement`
+    :class:`~sage.tensor.modules.free_module_element.FiniteRankFreeModuleElement`
     (actually a dynamically generated subclass of it)::
 
         sage: v = M.an_element() ; v
         Element of the Rank-3 free module M over the Integer Ring
-        sage: from sage.tensor.modules.free_module_tensor import FiniteRankFreeModuleElement
+        sage: from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
         sage: isinstance(v, FiniteRankFreeModuleElement)
         True
         sage: v in M
@@ -777,13 +778,18 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         self._sindex = start_index
         self._output_formatter = output_formatter
         # Dictionary of the tensor modules built on self
-        #   (keys = (k,l) --the tensor type) :
-        self._tensor_modules = {(1,0): self} # self is considered as the set of
-                                            # tensors of type (1,0)
-        # Dictionary of exterior powers of the dual of self
-        #   (keys = p --the power degree) :
+        #   (keys = (k,l) --the tensor type)
+        # This dictionary is to be extended on need by the method tensor_module
+        self._tensor_modules = {(1,0): self} # self is considered as the set
+                                             # of tensors of type (1,0)
+        # Dictionaries of exterior powers of self and of its dual
+        #   (keys = p --the power degree)
+        # These dictionaries are to be extended on need by the methods
+        # exterior_power and dual_exterior_power
+        self._exterior_powers = {1: self}
         self._dual_exterior_powers = {}
-        self._known_bases = []  # List of known bases on the free module
+        # List of known bases on the free module:
+        self._known_bases = []
         self._def_basis = None # default basis
         self._basis_changes = {} # Dictionary of the changes of bases
         # Zero element:
@@ -820,7 +826,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             Element of the Rank-3 free module M over the Integer Ring
 
         """
-        if comp == 0:
+        if isinstance(comp, (int, Integer)) and comp == 0:
             return self._zero_element
         resu = self.element_class(self, name=name, latex_name=latex_name)
         if comp:
@@ -831,7 +837,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         r"""
         Construct some (unamed) element of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: FiniteRankFreeModule._clear_cache_() # for doctests only
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
@@ -859,7 +865,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         r"""
         Return a string representation of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: FiniteRankFreeModule(ZZ, 3, name='M')
             Rank-3 free module M over the Integer Ring
@@ -955,14 +961,82 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             self._tensor_modules[(k,l)] = TensorFreeModule(self, (k,l))
         return self._tensor_modules[(k,l)]
 
+    def exterior_power(self, p):
+        r"""
+        Return the `p`-th exterior power of ``self``.
+
+        If `M` stands for the free module ``self``, the *p-th exterior
+        power of* `M` is the set `\Lambda^p(M)` of all *alternating
+        contravariant tensors* of rank `p`, i.e. of all multilinear maps
+
+        .. MATH::
+
+            \underbrace{M^*\times\cdots\times M^*}_{p\ \; \mbox{times}}
+            \longrightarrow R
+
+        that vanish whenever any of two of their arguments are equal.
+        `\Lambda^p(M)` is a free module of rank `\binom{n}{p}`
+        over the same ring as `M`, where `n` is the rank of `M`.
+
+        INPUT:
+
+        - ``p`` -- non-negative integer
+
+        OUTPUT:
+
+        - for `p=0`, the base ring `R`
+        - for `p=1`, the free module `M`, since `\Lambda^1(M)=M`
+        - for `p\geq 2`, instance of
+          :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerFreeModule`
+          representing the free module `\Lambda^p(M)`
+
+        EXAMPLES:
+
+        Exterior powers of the dual of a free `\ZZ`-module of rank 3::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: M.exterior_power(0)  # return the base ring
+            Integer Ring
+            sage: M.exterior_power(1)  # return the module itself
+            Rank-3 free module M over the Integer Ring
+            sage: M.exterior_power(1) is M
+            True
+            sage: M.exterior_power(2)
+            2nd exterior power of the Rank-3 free module M over the Integer Ring
+            sage: M.exterior_power(2).an_element()
+            Alternating contravariant tensor of degree 2 on the Rank-3
+             free module M over the Integer Ring
+            sage: M.exterior_power(2).an_element().display()
+            e_0/\e_1
+            sage: M.exterior_power(3)
+            3rd exterior power of the Rank-3 free module M over the Integer Ring
+            sage: M.exterior_power(3).an_element()
+            Alternating contravariant tensor of degree 3 on the Rank-3
+             free module M over the Integer Ring
+            sage: M.exterior_power(3).an_element().display()
+            e_0/\e_1/\e_2
+
+        See
+        :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerFreeModule`
+        for more documentation.
+
+        """
+        from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
+        if p == 0:
+            return self._ring
+        if p not in self._exterior_powers:
+            self._exterior_powers[p] = ExtPowerFreeModule(self, p)
+        return self._exterior_powers[p]
+
     def dual_exterior_power(self, p):
         r"""
         Return the `p`-th exterior power of the dual of ``self``.
 
-        If `M` stands for the free module ``self``, the *p-th exterior power*
-        of the dual of `M` is the set
-        `\Lambda^p(M^*)` of all *alternating forms of degree* `p` on `M`, i.e.
-        of all multilinear maps
+        If `M` stands for the free module ``self``, the *p-th exterior
+        power of the dual of* `M` is the set `\Lambda^p(M^*)` of all
+        *alternating forms of degree* `p` on `M`, i.e. of all
+        multilinear maps
 
         .. MATH::
 
@@ -979,10 +1053,10 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
 
         OUTPUT:
 
+        - for `p=0`, the base ring `R`
         - for `p\geq 1`, instance of
-          :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerFreeModule`
-          representing the free module `\Lambda^p(M^*)`; for `p=0`, the
-          base ring `R` is returned instead
+          :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerDualFreeModule`
+          representing the free module `\Lambda^p(M^*)`
 
         EXAMPLES:
 
@@ -1010,15 +1084,15 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             e^0/\e^1/\e^2
 
         See
-        :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerFreeModule`
+        :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerDualFreeModule`
         for more documentation.
 
         """
-        from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
+        from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
         if p == 0:
             return self._ring
         if p not in self._dual_exterior_powers:
-            self._dual_exterior_powers[p] = ExtPowerFreeModule(self, p)
+            self._dual_exterior_powers[p] = ExtPowerDualFreeModule(self, p)
         return self._dual_exterior_powers[p]
 
     def general_linear_group(self):
@@ -1131,7 +1205,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: e[0]
             Element e_0 of the Rank-3 free module M over the Integer Ring
             sage: latex(e)
-            \left(e_0,e_1,e_2\right)
+            \left(e_{0},e_{1},e_{2}\right)
 
         The LaTeX symbol can be set explicitely, as the second argument of
         :meth:`basis`::
@@ -1140,7 +1214,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             Basis (eps_0,eps_1,eps_2) on the Rank-3 free module M
              over the Integer Ring
             sage: latex(eps)
-            \left(\epsilon_0,\epsilon_1,\epsilon_2\right)
+            \left(\epsilon_{0},\epsilon_{1},\epsilon_{2}\right)
 
         If the provided symbol is that of an already defined basis, the latter
         is returned (no new basis is created)::
@@ -1288,6 +1362,10 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         elif tensor_type == (0,1):
             return self.linear_form(name=name, latex_name=latex_name)
         elif tensor_type[0] == 0 and tensor_type[1] > 1 and antisym:
+            if isinstance(antisym[0], (int, Integer)):
+                # a single antisymmetry is provided as a tuple or a range
+                # object; it is converted to a 1-item list:
+                antisym = [tuple(antisym)]
             if isinstance(antisym, list):
                 antisym0 = antisym[0]
             else:
@@ -1295,6 +1373,18 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             if len(antisym0) == tensor_type[1]:
                 return self.alternating_form(tensor_type[1], name=name,
                                              latex_name=latex_name)
+        elif tensor_type[0] > 1 and tensor_type[1] == 0 and antisym:
+            if isinstance(antisym[0], (int, Integer)):
+                # a single antisymmetry is provided as a tuple or a range
+                # object; it is converted to a 1-item list:
+                antisym = [tuple(antisym)]
+            if isinstance(antisym, list):
+                antisym0 = antisym[0]
+            else:
+                antisym0 = antisym
+            if len(antisym0) == tensor_type[0]:
+                return self.alternating_contravariant_tensor(tensor_type[0],
+                                           name=name, latex_name=latex_name)
         # Generic case:
         return self.tensor_module(*tensor_type).element_class(self,
                                  tensor_type, name=name, latex_name=latex_name,
@@ -1387,6 +1477,11 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
                                         isinstance(comp, CompFullyAntiSym):
             resu = self.alternating_form(tensor_type[1], name=name,
                                          latex_name=latex_name)
+        elif tensor_type[0] > 1 and tensor_type[1] == 0 and \
+                                        isinstance(comp, CompFullyAntiSym):
+            resu = self.alternating_contravariant_tensor(tensor_type[0],
+                                         name=name,
+                                         latex_name=latex_name)
         else:
             resu = self.tensor_module(*tensor_type).element_class(self,
                                  tensor_type, name=name, latex_name=latex_name)
@@ -1399,6 +1494,62 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         resu._components[comp._frame] = comp
         #
         return resu
+
+    def alternating_contravariant_tensor(self, degree, name=None,
+                                         latex_name=None):
+        r"""
+        Construct an alternating contravariant tensor on the free module.
+
+        INPUT:
+
+        - ``degree`` -- degree of the alternating contravariant tensor
+          (i.e. its tensor rank)
+        - ``name`` -- (default: ``None``) string; name given to the
+          alternating contravariant tensor
+        - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to
+          denote the alternating contravariant tensor; if none is
+          provided, the LaTeX symbol is set to ``name``
+
+        OUTPUT:
+
+        - instance of
+          :class:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor`
+
+        EXAMPLES:
+
+        Alternating contravariant tensor on a rank-3 module::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: a = M.alternating_contravariant_tensor(2, 'a') ; a
+            Alternating contravariant tensor a of degree 2 on the
+             Rank-3 free module M over the Integer Ring
+
+        The nonzero components in a given basis have to be set in a second
+        step, thereby fully specifying the alternating form::
+
+            sage: e = M.basis('e') ; e
+            Basis (e_0,e_1,e_2) on the Rank-3 free module M over the Integer Ring
+            sage: a.set_comp(e)[0,1] = 2
+            sage: a.set_comp(e)[1,2] = -3
+            sage: a.display(e)
+            a = 2 e_0/\e_1 - 3 e_1/\e_2
+
+        An alternating contravariant tensor of degree 1 is simply
+        an element of the module::
+
+            sage: a = M.alternating_contravariant_tensor(1, 'a') ; a
+            Element a of the Rank-3 free module M over the Integer Ring
+
+        See
+        :class:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor`
+        for more documentation.
+
+        """
+        if degree == 1:
+            return self.element_class(self, name=name,
+                                      latex_name=latex_name)
+        return self.exterior_power(degree).element_class(self, degree,
+                                       name=name, latex_name=latex_name)
 
     def alternating_form(self, degree, name=None, latex_name=None):
         r"""
@@ -1565,7 +1716,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             a = e_0*e^0 + 2 e_0*e^1 + e_1*e^0 + 3 e_1*e^1
 
         The automorphism components can be specified in a second step, as
-        components of a type-(1,1) tensor::
+        components of a type-`(1,1)` tensor::
 
             sage: a1 = M.automorphism(name='a')
             sage: a1[e,:] = [[1,2],[1,3]]
@@ -1628,7 +1779,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             Symmetric bilinear form A on the
              Rank-3 free module M over the Integer Ring
 
-        A symmetric bilinear form is a type-(0,2) tensor that is symmetric::
+        A symmetric bilinear form is a type-`(0,2)` tensor that is symmetric::
 
             sage: a.parent()
             Free module of type-(0,2) tensors on the
@@ -1803,7 +1954,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         r"""
         Return the dual module of ``self``.
 
-        EXAMPLE:
+        EXAMPLES:
 
         Dual of a free module over `\ZZ`::
 
@@ -2437,7 +2588,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: Id is M.general_linear_group().one()
             True
 
-        It is also a tensor of type-(1,1) on M::
+        It is also a tensor of type-`(1,1)` on M::
 
             sage: Id.tensor_type()
             (1, 1)

@@ -71,7 +71,7 @@
 -PNGLIB=
 +USEPNG= -DUSEPNG
 +PNGINC= -I$(SAGE_LOCAL)/include
-+PNGLIB= -L$(SAGE_LOCAL)/lib -lpng12 -lz $(LDFLAGS)
++PNGLIB= -L$(SAGE_LOCAL)/lib -lpng16 -lz
  
 -# Uncomment the following lines to enable PNG support
 -#USEPNG= -DUSEPNG

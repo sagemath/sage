@@ -71,7 +71,7 @@ def reproducible_repr(val):
     returns but for certain cases with more guarantees to ensure
     exactly the same result for semantically equivalent objects.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.doctest.fixtures import reproducible_repr
         sage: print(reproducible_repr(set(["a", "c", "b", "d"])))
@@ -132,7 +132,7 @@ class AttributeAccessTracerHelper(object):
         - ``reads`` -- (default: ``True``)
           whether to trace read access as well.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: class Foo(object):
             ....:     def f(self, *args):
@@ -164,7 +164,7 @@ class AttributeAccessTracerHelper(object):
         function to report arguments and return value.
         Otherwise an attribute read access is reported.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: class Foo(object):
             ....:     def f(self, *args):
@@ -206,7 +206,7 @@ class AttributeAccessTracerHelper(object):
 
         The name and new value are also reported in the output.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: class Foo(object):
             ....:     pass
@@ -245,7 +245,7 @@ class AttributeAccessTracerProxy(object):
         - ``reads`` -- (default: ``True``)
           whether to trace read access as well.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: class Foo(object):
             ....:     def f(self, *args):
@@ -279,7 +279,7 @@ class AttributeAccessTracerProxy(object):
         function to report arguments and return value.
         Otherwise an attribute read access is reported.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: class Foo(object):
             ....:     def f(self, *args):
@@ -305,7 +305,7 @@ class AttributeAccessTracerProxy(object):
 
         The name and new value are also reported in the output.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: class Foo(object):
             ....:     pass
@@ -342,7 +342,7 @@ def trace_method(obj, meth, **kwds):
       whether to trace read access as well.
       
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: class Foo(object):
         ....:     def f(self, arg=None):

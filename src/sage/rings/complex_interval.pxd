@@ -8,6 +8,8 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
     cdef mpfi_t __im
     cdef mp_prec_t _prec
 
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
     cdef RealIntervalFieldElement abs_c(ComplexIntervalFieldElement self)
     cdef RealIntervalFieldElement norm_c(ComplexIntervalFieldElement self)
 

@@ -51,7 +51,7 @@ class TestOutputPlainText(OutputPlainText):
         """
         Backend-specific subclass of the plain text output container.
 
-        Backends must not influence how the display system constucts
+        Backends must not influence how the display system constructs
         output containers, they can only control how the output
         container is displayed. In particular, we cannot override the
         constructor (only the

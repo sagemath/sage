@@ -51,6 +51,7 @@ Functions
 from __future__ import division, print_function, absolute_import
 
 from builtins import zip
+import six
 from six import itervalues
 from six.moves import range
 
@@ -115,7 +116,7 @@ def block_stabilizer(G, B):
         sage: block_stabilizer(C, [C((0,0)),C((2,0)),C((0,1)),C((2,1))])
         [(0, 0), (2, 0)]
 
-        sage: b = map(Zmod(45),[1, 3, 7, 10, 22, 25, 30, 35, 37, 38, 44])
+        sage: b = list(map(Zmod(45),[1, 3, 7, 10, 22, 25, 30, 35, 37, 38, 44]))
         sage: block_stabilizer(Zmod(45),b)
         [0]
     """
@@ -1537,7 +1538,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         elif explain_construction:
             return "The database contains a ({},{},{})-difference family".format(v,k,l)
 
-        vv, blocks = next(DF[v,k,l].iteritems())
+        vv, blocks = next(six.iteritems(DF[v,k,l]))
 
         # Build the group
         from sage.rings.finite_rings.integer_mod_ring import Zmod

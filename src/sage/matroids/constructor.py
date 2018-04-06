@@ -84,10 +84,10 @@ AUTHORS:
 - Rudi Pendavingh, Michael Welsh, Stefan van Zwam (2013-04-01): initial
   version
 
-Methods
-=======
+Functions
+=========
 """
-from __future__ import absolute_import
+
 #*****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Michael Welsh <michael@welsh.co.nz>
@@ -99,27 +99,28 @@ from __future__ import absolute_import
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
+from __future__ import absolute_import
+
 from six import itervalues
 
 from itertools import combinations
-import sage.matrix.matrix_space as matrix_space
 from sage.matrix.constructor import Matrix
-from sage.graphs.all import Graph, graphs
+from sage.graphs.all import Graph
 import sage.matrix.matrix
-from sage.rings.all import ZZ, QQ, FiniteField, GF
+from sage.rings.all import ZZ, QQ
+from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
-from .minor_matroid import MinorMatroid
-from .dual_matroid import DualMatroid
 from .rank_matroid import RankMatroid
 from .circuit_closures_matroid import CircuitClosuresMatroid
 from .basis_matroid import BasisMatroid
 from .linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
+from .graphic_matroid import GraphicMatroid
 import sage.matroids.utilities
-from networkx import NetworkXError
 
 
-def Matroid(*args, **kwds):
+def Matroid(groundset=None, data=None, **kwds):
     r"""
     Construct a matroid.
 
@@ -163,9 +164,16 @@ def Matroid(*args, **kwds):
 
     INPUT:
 
-    - ``groundset`` -- If provided, the groundset of the matroid.
-      If not provided, the function attempts to determine a groundset from the
-      data.
+    - ``groundset`` -- (optional) If provided, the groundset of the
+      matroid. Otherwise, the function attempts to determine a groundset
+      from the data.
+
+    Exactly one of the following inputs must be given (where ``data``
+    must be a positional argument and anything else must be a keyword
+    argument):
+
+    - ``data`` -- a graph or a matrix or a RevLex-Index string or a list
+      of independent sets containing all bases or a matroid.
     - ``bases`` -- The list of bases (maximal independent sets) of the
       matroid.
     - ``independent_sets`` -- The list of independent sets of the matroid.
@@ -181,25 +189,12 @@ def Matroid(*args, **kwds):
     - ``circuit_closures`` -- Either a list of tuples ``(k, C)`` with ``C``
       the closure of a circuit, and ``k`` the rank of ``C``, or a dictionary
       ``D`` with ``D[k]`` the set of closures of rank-``k`` circuits.
+    - ``revlex`` -- the encoding as a string of ``0`` and ``*`` symbols.
+      Used by [MatroidDatabase]_ and explained in [MMIB2012]_.
     - ``matroid`` -- An object that is already a matroid. Useful only with the
       ``regular`` option.
 
-    Up to two unnamed arguments are allowed.
-
-    - One unnamed argument, no named arguments other than ``regular`` -- the
-      input should be either a graph, or a matrix, or a list of independent
-      sets containing all bases, or a matroid.
-    - Two unnamed arguments: the first is the groundset, the second a graph,
-      or a matrix, or a list of independent sets containing all bases, or a
-      matroid.
-    - One unnamed argument, at least one named argument: the unnamed argument
-      is the groundset, the named argument is as above (but must be different
-      from ``groundset``).
-
-    The examples section details how each of the input types deals with
-    explicit or implicit groundset arguments.
-
-    OPTIONS:
+    Further options:
 
     - ``regular`` -- (default: ``False``) boolean. If ``True``,
       output a
@@ -247,7 +242,7 @@ def Matroid(*args, **kwds):
     iterable in these examples. So we type ``'abcd'`` to denote the list
     ``['a', 'b', 'c', 'd']``.
 
-    #. List of bases:
+    #.  List of bases:
 
         All of the following inputs are allowed, and equivalent::
 
@@ -283,7 +278,7 @@ def Matroid(*args, **kwds):
             sage: M1 == M2
             True
 
-    #. List of independent sets:
+    #.  List of independent sets:
 
         ::
 
@@ -301,7 +296,7 @@ def Matroid(*args, **kwds):
             sage: M1 == M2
             True
 
-    #. List of circuits:
+    #.  List of circuits:
 
         ::
 
@@ -334,7 +329,7 @@ def Matroid(*args, **kwds):
 
 
 
-    #. Graph:
+    #.  Graph:
 
         Sage has great support for graphs, see :mod:`sage.graphs.graph`.
 
@@ -342,37 +337,76 @@ def Matroid(*args, **kwds):
 
             sage: G = graphs.PetersenGraph()
             sage: Matroid(G)
-            Regular matroid of rank 9 on 15 elements with 2000 bases
+            Graphic matroid of rank 9 on 15 elements
 
-
-        Note: if a groundset is specified, we assume it is in the same order
-        as
-        :meth:`G.edge_iterator() <sage.graphs.generic_graph.GenericGraph.edge_iterator>`
-        provides::
-
-            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)],multiedges=True)
-            sage: M = Matroid('abcd', G)
-            sage: M.rank(['b', 'c'])
-            1
-
-        If no groundset is provided, we attempt to use the edge labels::
+        If each edge has a unique label, then those are used as the ground set
+        labels::
 
             sage: G = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'c')])
             sage: M = Matroid(G)
             sage: sorted(M.groundset())
             ['a', 'b', 'c']
 
-        If no edge labels are present and the graph is simple, we use the
+        If there are parallel edges, then integers are used for the ground set.
+        If there are no edges in parallel, and is not a complete list of labels,
+        or the labels are not unique, then vertex tuples are used::
+
+            sage: G = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'b')])
+            sage: M = Matroid(G)
+            sage: sorted(M.groundset())
+            [(0, 1), (0, 2), (1, 2)]
+            sage: H = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'b'), (1, 2, 'c')], multiedges=True)
+            sage: N = Matroid(H)
+            sage: sorted(N.groundset())
+            [0, 1, 2, 3]
+
+        The GraphicMatroid object forces its graph to be connected. If a
+        disconnected graph is used as input, it will connect the components.
+
+            sage: G1 = graphs.CycleGraph(3); G2 = graphs.DiamondGraph()
+            sage: G = G1.disjoint_union(G2)
+            sage: M = Matroid(G)
+            sage: M
+            Graphic matroid of rank 5 on 8 elements
+            sage: M.graph()
+            Looped multi-graph on 6 vertices
+            sage: M.graph().is_connected()
+            True
+            sage: M.is_connected()
+            False
+
+
+        If the keyword ``regular`` is set to ``True``, the output will instead
+        be an instance of ``RegularMatroid``.
+
+        ::
+
+            sage: G = Graph([(0, 1), (0, 2), (1, 2)])
+            sage: M = Matroid(G, regular=True); M
+            Regular matroid of rank 2 on 3 elements with 3 bases
+
+        Note: if a groundset is specified, we assume it is in the same order
+        as
+        :meth:`G.edge_iterator() <sage.graphs.generic_graph.GenericGraph.edge_iterator>`
+        provides::
+
+            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)], multiedges=True)
+            sage: M = Matroid('abcd', G)
+            sage: M.rank(['b', 'c'])
+            1
+
+        As before,
+        if no edge labels are present and the graph is simple, we use the
         tuples ``(i, j)`` of endpoints. If that fails, we simply use a list
         ``[0..m-1]`` ::
 
             sage: G = Graph([(0, 1), (0, 2), (1, 2)])
-            sage: M = Matroid(G)
+            sage: M = Matroid(G, regular=True)
             sage: sorted(M.groundset())
             [(0, 1), (0, 2), (1, 2)]
 
-            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)],multiedges=True)
-            sage: M = Matroid(G)
+            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)], multiedges=True)
+            sage: M = Matroid(G, regular=True)
             sage: sorted(M.groundset())
             [0, 1, 2, 3]
 
@@ -382,17 +416,16 @@ def Matroid(*args, **kwds):
         documentation)::
 
             sage: Matroid(graph=':I`AKGsaOs`cI]Gb~')
-            Regular matroid of rank 9 on 17 elements with 4004 bases
+            Graphic matroid of rank 9 on 17 elements
 
         However, this method is no more clever than ``Graph()``::
 
             sage: Matroid(graph=41/2)
             Traceback (most recent call last):
             ...
-            ValueError: input does not seem to represent a graph.
+            ValueError: This input cannot be turned into a graph
 
-
-    #. Matrix:
+    #.  Matrix:
 
         The basic input is a
         :mod:`Sage matrix <sage.matrix.constructor>`::
@@ -431,7 +464,6 @@ def Matroid(*args, **kwds):
             Traceback (most recent call last):
             ...
             ValueError: basis has wrong cardinality.
-
 
         If the groundset size equals number of rows plus number of columns, an
         identity matrix is prepended. Otherwise the groundset size must equal
@@ -485,20 +517,19 @@ def Matroid(*args, **kwds):
             sage: M.base_ring()
             Integer Ring
 
-    #. Rank function:
+    #.  Rank function:
 
         Any function mapping subsets to integers can be used as input::
 
             sage: def f(X):
             ....:     return min(len(X), 2)
-            ....:
             sage: M = Matroid('abcd', rank_function=f)
             sage: M
             Matroid of rank 2 on 4 elements
             sage: M.is_isomorphic(matroids.Uniform(2, 4))
             True
 
-    #. Circuit closures:
+    #.  Circuit closures:
 
         This is often a really concise way to specify a matroid. The usual way
         is a dictionary of lists::
@@ -517,7 +548,47 @@ def Matroid(*args, **kwds):
             sage: M.equals(matroids.named_matroids.Q6())
             True
 
-    #. Matroid:
+    #.  RevLex-Index:
+
+        This requires the ``groundset`` to be given and also needs a
+        additional keyword argument ``rank`` to specify the rank of the
+        matroid::
+
+            sage: M = Matroid("abcdef", "000000******0**", rank=4); M
+            Matroid of rank 4 on 6 elements with 8 bases
+            sage: list(M.bases())
+            [frozenset({'a', 'b', 'd', 'f'}),
+             frozenset({'a', 'c', 'd', 'f'}),
+             frozenset({'b', 'c', 'd', 'f'}),
+             frozenset({'a', 'b', 'e', 'f'}),
+             frozenset({'a', 'c', 'e', 'f'}),
+             frozenset({'b', 'c', 'e', 'f'}),
+             frozenset({'b', 'd', 'e', 'f'}),
+             frozenset({'c', 'd', 'e', 'f'})]
+
+        Only the ``0`` symbols really matter, any symbol can be used
+        instead of ``*``:
+
+            sage: Matroid("abcdefg", revlex="0++++++++0++++0+++++0+--++----+--++", rank=4)
+            Matroid of rank 4 on 7 elements with 31 bases
+
+        It is checked that the input makes sense (but not that it
+        defines a matroid)::
+
+            sage: Matroid("abcdef", "000000******0**")
+            Traceback (most recent call last):
+            ...
+            TypeError: for RevLex-Index, the rank needs to be specified
+            sage: Matroid("abcdef", "000000******0**", rank=3)
+            Traceback (most recent call last):
+            ...
+            ValueError: expected string of length 20 (6 choose 3), got 15
+            sage: M = Matroid("abcdef", "*0000000000000*", rank=4); M
+            Matroid of rank 4 on 6 elements with 2 bases
+            sage: M.is_valid()
+            False
+
+    #.  Matroid:
 
         Most of the time, the matroid itself is returned::
 
@@ -538,302 +609,324 @@ def Matroid(*args, **kwds):
             [0 1 0 1 1 1]
             [0 0 1 0 1 1]
 
-    The ``regular`` option:
+    The ``regular`` option::
 
-        ::
+        sage: M = Matroid(reduced_matrix=[[1, 1, 0],
+        ....:                             [1, 0, 1],
+        ....:                             [0, 1, 1]], regular=True)
+        sage: M
+        Regular matroid of rank 3 on 6 elements with 16 bases
 
-            sage: M = Matroid(reduced_matrix=[[1, 1, 0],
-            ....:                             [1, 0, 1],
-            ....:                             [0, 1, 1]], regular=True)
-            sage: M
-            Regular matroid of rank 3 on 6 elements with 16 bases
+        sage: M.is_isomorphic(matroids.CompleteGraphic(4))
+        True
 
-            sage: M.is_isomorphic(matroids.CompleteGraphic(4))
-            True
+    By default we check if the resulting matroid is actually regular. To
+    increase speed, this check can be skipped::
 
-        By default we check if the resulting matroid is actually regular. To
-        increase speed, this check can be skipped::
+        sage: M = matroids.named_matroids.Fano()
+        sage: N = Matroid(M, regular=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: input is not a valid regular matroid
+        sage: N = Matroid(M, regular=True, check=False)
+        sage: N
+        Regular matroid of rank 3 on 7 elements with 32 bases
 
-            sage: M = matroids.named_matroids.Fano()
-            sage: N = Matroid(M, regular=True)
-            Traceback (most recent call last):
-            ...
-            ValueError: input does not correspond to a valid regular matroid.
-            sage: N = Matroid(M, regular=True, check=False)
-            sage: N
-            Regular matroid of rank 3 on 7 elements with 32 bases
+        sage: N.is_valid()
+        False
 
-            sage: N.is_valid()
-            False
+    Sometimes the output is regular, but represents a different matroid
+    from the one you intended::
 
-        Sometimes the output is regular, but represents a different matroid
-        from the one you intended::
+        sage: M = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]))
+        sage: N = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]),
+        ....:             regular=True)
+        sage: N.is_valid()
+        True
+        sage: N.is_isomorphic(M)
+        False
 
-            sage: M = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]))
-            sage: N = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]),
-            ....:             regular=True)
-            sage: N.is_valid()
-            True
-            sage: N.is_isomorphic(M)
-            False
+    TESTS::
 
+        sage: Matroid()
+        Traceback (most recent call last):
+        ...
+        TypeError: no input data given for Matroid()
+        sage: Matroid("abc", bases=["abc"], foo="bar")
+        Traceback (most recent call last):
+        ...
+        TypeError: Matroid() got an unexpected keyword argument 'foo'
+        sage: Matroid(data=["x"], matrix=Matrix(1,1))
+        Traceback (most recent call last):
+        ...
+        TypeError: Matroid() got an unexpected keyword argument 'matrix'
+        sage: Matroid(bases=["x"], matrix=Matrix(1,1))
+        Traceback (most recent call last):
+        ...
+        TypeError: Matroid() got an unexpected keyword argument 'matrix'
+        sage: Matroid(Matrix(1,1), ring=ZZ, field=QQ)
+        Traceback (most recent call last):
+        ...
+        TypeError: Matroid() got an unexpected keyword argument 'ring'
+        sage: Matroid(rank_function=lambda X: len(X))
+        Traceback (most recent call last):
+        ...
+        TypeError: for rank functions, the groundset needs to be specified
+        sage: Matroid(matroid="rubbish")
+        Traceback (most recent call last):
+        ...
+        TypeError: input 'rubbish' is not a matroid
     """
-    # These are the valid arguments:
-    inputS = set(['groundset', 'bases', 'independent_sets', 'circuits', 'graph', 'matrix', 'reduced_matrix', 'rank_function', 'circuit_closures', 'matroid'])
-
     # process options
-    if 'regular' in kwds:
-        want_regular = kwds['regular']
-        kwds.pop('regular')
-    else:
-        want_regular = False
-    if 'check' in kwds:
-        want_check = kwds['check']
-        kwds.pop('check')
-    else:
-        want_check = True
+    want_regular = kwds.pop('regular', False)
+    check = kwds.pop('check', True)
 
     base_ring = None
-    have_field = False
     if 'field' in kwds:
-        base_ring = kwds['field']
-        kwds.pop('field')
-        have_field = True
-        if 'ring' in kwds:
-            raise ValueError("only one of ring and field can be specified.")
-        try:
-            if not base_ring.is_field():
-                raise TypeError("specified ``field`` is not a field.")
-        except AttributeError:
-            raise TypeError("specified ``field`` is not a field.")
-    if 'ring' in kwds:
-        base_ring = kwds['ring']
-        kwds.pop('ring')
-        try:
-            if not base_ring.is_ring():
-                raise TypeError("specified ``ring`` is not a ring.")
-        except AttributeError:
-            raise TypeError("specified ``ring`` is not a ring.")
+        base_ring = kwds.pop('field')
+        if check and not base_ring.is_field():
+            raise TypeError("{} is not a field".format(base_ring))
+    elif 'ring' in kwds:
+        base_ring = kwds.pop('ring')
+        if check and not base_ring.is_ring():
+            raise TypeError("{} is not a ring".format(base_ring))
 
-    # Process unnamed arguments
-    if len(args) > 0:
-        if 'groundset' in kwds:
-            raise ValueError('when using unnamed arguments, groundset must be the first unnamed argument or be implicit.')
-        if len(args) > 2:
-            raise ValueError('at most two unnamed arguments are allowed.')
-        if len(args) == 2 or len(kwds) > 0:
-            # First argument should be the groundset
-            kwds['groundset'] = args[0]
-        # Check for unnamed data
-        dataindex = -1
-        if len(args) == 2:
-            dataindex = 1
-        if len(args) == 1 and len(kwds) == 0:
-            dataindex = 0
-        if dataindex > -1:
-            # One unnamed argument, no named arguments
-            if isinstance(args[dataindex], sage.graphs.graph.Graph):
-                kwds['graph'] = args[dataindex]
-            elif isinstance(args[dataindex], sage.matrix.matrix.Matrix):
-                kwds['matrix'] = args[dataindex]
-            elif isinstance(args[dataindex], sage.matroids.matroid.Matroid):
-                kwds['matroid'] = args[dataindex]
-            else:
-                kwds['independent_sets'] = args[dataindex]
+    # "key" is the kind of data we got
+    key = None
+    if data is None:
+        for k in ['bases', 'independent_sets', 'circuits', 'graph',
+                'matrix', 'reduced_matrix', 'rank_function', 'revlex',
+                'circuit_closures', 'matroid']:
+            if k in kwds:
+                data = kwds.pop(k)
+                key = k
+                break
+        else:
+            # Assume that the single positional argument was actually
+            # the data (instead of the groundset)
+            data = groundset
+            groundset = None
 
-    # Check for multiple types of input
-    if len(set(kwds).difference(inputS)) > 0:
-        raise ValueError("unknown input argument")
-    if ('grondset' in kwds and len(kwds) != 2) or ('groundset' not in kwds and len(kwds) > 1):
-        raise ValueError("only one type of input may be specified.")
+    if key is None:
+        if isinstance(data, sage.graphs.graph.Graph):
+            key = 'graph'
+        elif isinstance(data, sage.matrix.matrix.Matrix):
+            key = 'matrix'
+        elif isinstance(data, sage.matroids.matroid.Matroid):
+            key = 'matroid'
+        elif isinstance(data, str):
+            key = 'revlex'
+        elif data is None:
+            raise TypeError("no input data given for Matroid()")
+        else:
+            key = 'independent_sets'
 
     # Bases:
-    if 'bases' in kwds:
-        if 'groundset' not in kwds:
-            gs = set()
-            for B in kwds['bases']:
-                gs.update(B)
-            kwds['groundset'] = gs
-        M = BasisMatroid(groundset=kwds['groundset'], bases=kwds['bases'])
+    if key == 'bases':
+        if groundset is None:
+            groundset = set()
+            for B in data:
+                groundset.update(B)
+        M = BasisMatroid(groundset=groundset, bases=data)
 
     # Independent sets:
-    if 'independent_sets' in kwds:
+    elif key == 'independent_sets':
         # Convert to list of bases first
         rk = -1
         bases = []
-        for I in kwds['independent_sets']:
+        for I in data:
             if len(I) == rk:
                 bases.append(I)
             elif len(I) > rk:
                 bases = [I]
                 rk = len(I)
-        if 'groundset' not in kwds:
-            gs = set()
+        if groundset is None:
+            groundset = set()
             for B in bases:
-                gs.update(B)
-            kwds['groundset'] = gs
-        M = BasisMatroid(groundset=kwds['groundset'], bases=bases)
+                groundset.update(B)
+        M = BasisMatroid(groundset=groundset, bases=bases)
 
     # Circuits:
-    if 'circuits' in kwds:
+    elif key == 'circuits':
         # Convert to list of bases first
         # Determine groundset (note that this cannot detect coloops)
-        if 'groundset' not in kwds:
-            gs = set()
-            for C in kwds['circuits']:
-                gs.update(C)
-            kwds['groundset'] = gs
-        # determine the rank by computing a basis
-        B = set(kwds['groundset'])
-        for C in kwds['circuits']:
-            I = B.intersection(C)
+        if groundset is None:
+            groundset = set()
+            for C in data:
+                groundset.update(C)
+        # determine the rank by computing a basis element
+        b = set(groundset)
+        for C in data:
+            I = b.intersection(C)
             if len(I) >= len(C):
-                B.discard(I.pop())
-        rk = len(B)
+                b.discard(I.pop())
+        rk = len(b)
         # Construct the basis matroid of appropriate rank. Note: slow!
-        BB = [frozenset(B) for B in combinations(kwds['groundset'], rk) if not any([frozenset(C).issubset(B) for C in kwds['circuits']])]
-        M = BasisMatroid(groundset=kwds['groundset'], bases=BB)
+        BB = [frozenset(B) for B in combinations(groundset, rk) if not any([frozenset(C).issubset(B) for C in data])]
+        M = BasisMatroid(groundset=groundset, bases=BB)
 
     # Graphs:
-    if 'graph' in kwds:
+
+    elif key == 'graph':
+        if isinstance(data, sage.graphs.generic_graph.GenericGraph):
+            G = data
+        else:
+            G = Graph(data)
+        # Decide on the groundset
+        m = G.num_edges()
+        if groundset is None:
+            # 1. Attempt to use edge labels.
+            sl = G.edge_labels()
+            if len(sl) == len(set(sl)):
+                groundset = sl
+                # 2. If simple, use vertex tuples
+            elif not G.has_multiple_edges():
+                groundset = [(i, j) for i, j, k in G.edge_iterator()]
+            else:
+                # 3. Use numbers
+                groundset = list(range(m))
+        if want_regular:
         # Construct the incidence matrix
         # NOTE: we are not using Sage's built-in method because
         # 1) we would need to fix the loops anyway
         # 2) Sage will sort the columns, making it impossible to keep labels!
-        G = kwds['graph']
-        if not isinstance(G, sage.graphs.generic_graph.GenericGraph):
-            try:
-                G = Graph(G)
-            except (ValueError, TypeError, NetworkXError):
-                raise ValueError("input does not seem to represent a graph.")
-        V = G.vertices()
-        E = G.edges()
-        n = G.num_verts()
-        m = G.num_edges()
-        A = Matrix(ZZ, n, m, 0)
-        mm = 0
-        for i, j, k in G.edge_iterator():
-            A[V.index(i), mm] = -1
-            A[V.index(j), mm] += 1  # So loops get 0
-            mm += 1
-        # Decide on the groundset
-        if 'groundset' not in kwds:
-            # 1. Attempt to use edge labels.
-            sl = G.edge_labels()
-            if len(sl) == len(set(sl)):
-                kwds['groundset'] = sl
-                # 2. If simple, use vertex tuples
-            elif not G.has_multiple_edges():
-                kwds['groundset'] = [(i, j) for i, j, k in G.edge_iterator()]
-            else:
-                # 3. Use numbers
-                kwds['groundset'] = range(m)
-        M = RegularMatroid(matrix=A, groundset=kwds['groundset'])
-        want_regular = False  # Save some time, since result is already regular
+            V = G.vertices()
+            n = G.num_verts()
+            A = Matrix(ZZ, n, m, 0)
+            mm = 0
+            for i, j, k in G.edge_iterator():
+                A[V.index(i), mm] = -1
+                A[V.index(j), mm] += 1  # So loops get 0
+                mm += 1
+            M = RegularMatroid(matrix=A, groundset=groundset)
+            want_regular = False  # Save some time, since result is already regular
+        else:
+            M = GraphicMatroid(G, groundset=groundset)
 
     # Matrices:
-    if 'matrix' in kwds or 'reduced_matrix' in kwds:
-        if 'matrix' in kwds:
-            A = kwds['matrix']
-        if 'reduced_matrix' in kwds:
-            A = kwds['reduced_matrix']
+    elif key in ['matrix', 'reduced_matrix']:
+        A = data
+        is_reduced = (key == 'reduced_matrix')
 
         # Fix the representation
         if not isinstance(A, sage.matrix.matrix.Matrix):
-            try:
-                if base_ring is not None:
-                    A = Matrix(base_ring, A)
-                else:
-                    A = Matrix(A)
-            except ValueError:
-                raise ValueError("input does not seem to contain a matrix.")
+            if base_ring is not None:
+                A = Matrix(base_ring, A)
+            else:
+                A = Matrix(A)
 
         # Fix the ring
         if base_ring is not None:
-            if A.base_ring() != base_ring:
+            if A.base_ring() is not base_ring:
                 A = A.change_ring(base_ring)
-        elif A.base_ring() == ZZ and not want_regular:  # Usually a rational matrix is intended, we presume.
+        elif A.base_ring() is ZZ and not want_regular:  # Usually a rational matrix is intended, we presume.
             A = A.change_ring(QQ)
             base_ring = QQ
         else:
             base_ring = A.base_ring()
 
-        # Determine groundset:
-        if 'matrix' in kwds:
-            if 'groundset' in kwds:
-                if len(kwds['groundset']) == A.nrows() + A.ncols():
-                    kwds['reduced_matrix'] = A
-                    kwds.pop('matrix')
+        # Check groundset
+        if groundset is not None:
+            if not is_reduced:
+                if len(groundset) == A.ncols():
+                    pass
+                elif len(groundset) == A.nrows() + A.ncols():
+                    is_reduced = True
                 else:
-                    if len(kwds['groundset']) != A.ncols():
-                        raise ValueError("groundset size does not correspond to matrix size.")
-            else:
-                kwds['groundset'] = range(A.ncols())
-        if 'reduced_matrix' in kwds:
-            if 'groundset' in kwds:
-                if len(kwds['groundset']) != A.nrows() + A.ncols():
-                    raise ValueError("groundset size does not correspond to matrix size.")
-            else:
-                kwds['groundset'] = range(A.nrows() + A.ncols())
-        if 'matrix' in kwds:
-            if base_ring == GF(2):
-                M = BinaryMatroid(groundset=kwds['groundset'], matrix=A)
-            elif base_ring == GF(3):
-                M = TernaryMatroid(groundset=kwds['groundset'], matrix=A)
-            elif base_ring.is_field() and base_ring.order() == 4:  # GF(4) can have different generators.
-                M = QuaternaryMatroid(groundset=kwds['groundset'], matrix=A)
-            else:
-                M = LinearMatroid(groundset=kwds['groundset'], matrix=A, ring=base_ring)
+                    raise ValueError("groundset size does not correspond to matrix size")
+            elif is_reduced:
+                if len(groundset) == A.nrows() + A.ncols():
+                    pass
+                else:
+                    raise ValueError("groundset size does not correspond to matrix size")
 
-        if 'reduced_matrix' in kwds:
-            if A.base_ring() == GF(2):
-                M = BinaryMatroid(groundset=kwds['groundset'], reduced_matrix=A)
-            elif A.base_ring() == GF(3):
-                M = TernaryMatroid(groundset=kwds['groundset'], reduced_matrix=A)
-            elif A.base_ring().is_field() and A.base_ring().order() == 4:  # GF(4) can have different generators.
-                M = QuaternaryMatroid(groundset=kwds['groundset'], reduced_matrix=A)
-            else:
-                M = LinearMatroid(groundset=kwds['groundset'], reduced_matrix=A, ring=base_ring)
+        if is_reduced:
+            kw = dict(groundset=groundset, reduced_matrix=A)
+        else:
+            kw = dict(groundset=groundset, matrix=A)
+
+        if isinstance(base_ring, FiniteField):
+            q = base_ring.order()
+        else:
+            q = 0
+
+        if q == 2:
+            M = BinaryMatroid(**kw)
+        elif q == 3:
+            M = TernaryMatroid(**kw)
+        elif q == 4:
+            M = QuaternaryMatroid(**kw)
+        else:
+            M = LinearMatroid(ring=base_ring, **kw)
 
     # Rank functions:
-    if 'rank_function' in kwds:
-        if 'groundset' not in kwds:
-            raise ValueError('for rank functions, groundset needs to be specified.')
-        M = RankMatroid(groundset=kwds['groundset'], rank_function=kwds['rank_function'])
+    elif key == 'rank_function':
+        if groundset is None:
+            raise TypeError('for rank functions, the groundset needs to be specified')
+        M = RankMatroid(groundset=groundset, rank_function=data)
+
+    # RevLex-Index:
+    elif key == "revlex":
+        if groundset is None:
+            raise TypeError('for RevLex-Index, the groundset needs to be specified')
+        try:
+            rk = kwds.pop("rank")
+        except KeyError:
+            raise TypeError('for RevLex-Index, the rank needs to be specified')
+
+        groundset = tuple(groundset)
+        data = tuple(data)
+        rk = int(rk)
+        N = len(groundset)
+
+        def revlex_sort_key(s):
+            return tuple(reversed(s))
+        subsets = sorted(combinations(range(N), rk), key=revlex_sort_key)
+        if len(data) != len(subsets):
+            raise ValueError("expected string of length %s (%s choose %s), got %s" %
+                (len(subsets), N, rk, len(data)))
+        bases = []
+        for i, x in enumerate(data):
+            if x != '0':
+                bases.append([groundset[c] for c in subsets[i]])
+        M = BasisMatroid(groundset=groundset, bases=bases)
 
     # Circuit closures:
-    if 'circuit_closures' in kwds:
-        if 'groundset' not in kwds:
-            E = set()
-            if isinstance(kwds['circuit_closures'], dict):
-                for X in itervalues(kwds['circuit_closures']):
-                    for Y in X:
-                        E.update(Y)
-            else:
-                for X in kwds['circuit_closures']:
-                    E.update(X[1])
+    elif key == 'circuit_closures':
+        if isinstance(data, dict):
+            CC = data
         else:
-            E = kwds['groundset']
-        if not isinstance(kwds['circuit_closures'], dict):
             # Convert to dictionary
             CC = {}
-            for X in kwds['circuit_closures']:
+            for X in data:
                 if X[0] not in CC:
                     CC[X[0]] = []
                 CC[X[0]].append(X[1])
-        else:
-            CC = kwds['circuit_closures']
-        M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
+
+        if groundset is None:
+            groundset = set()
+            for X in itervalues(CC):
+                for Y in X:
+                    groundset.update(Y)
+
+        M = CircuitClosuresMatroid(groundset=groundset, circuit_closures=CC)
 
     # Matroids:
-    if 'matroid' in kwds:
-        M = kwds['matroid']
-        if not isinstance(M, sage.matroids.matroid.Matroid):
-            raise ValueError("input does not appear to be of Matroid type.")
-    # Regular option:
+    elif key == 'matroid':
+        if not isinstance(data, sage.matroids.matroid.Matroid):
+            raise TypeError("input {!r} is not a matroid".format(data))
+        M = data
+
+    else:
+        raise AssertionError("unknown key %r" % key)
+
+    # All keywords should be used
+    for k in kwds:
+        raise TypeError("Matroid() got an unexpected keyword argument '{}'".format(k))
+
     if want_regular:
         M = sage.matroids.utilities.make_regular_matroid_from_matroid(M)
-        if want_check:
-            if not M.is_valid():
-                    raise ValueError('input does not correspond to a valid regular matroid.')
+        if check and not M.is_valid():
+            raise ValueError('input is not a valid regular matroid')
+
     return M

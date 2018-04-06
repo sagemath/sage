@@ -182,27 +182,42 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
         hecke.AmbientHeckeModule.__init__(self, base_ring, rank, group.level(), weight, category=category)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
-        Standard comparison function.
+        Check that ``self`` is equal to ``other``.
 
         EXAMPLES::
 
-            sage: ModularSymbols(11,2) == ModularSymbols(11,2) # indirect doctest
+            sage: ModularSymbols(11,2) == ModularSymbols(11,2)
             True
-            sage: ModularSymbols(11,2) == ModularSymbols(11,4) # indirect doctest
+            sage: ModularSymbols(11,2) == ModularSymbols(11,4)
             False
-
         """
         if not isinstance(other, ModularSymbolsSpace):
-            return cmp(type(self), type(other))
+            return False
+
         if isinstance(other, ModularSymbolsAmbient):
-            return misc.cmp_props(self, other, ['group', 'weight', 'sign', 'base_ring', 'character'])
-        c = cmp(self, other.ambient_hecke_module())
-        if c: return c
-        if self.free_module() == other.free_module():
-            return 0
-        return -1
+            return (self.group() == other.group() and
+                    self.weight() == other.weight() and
+                    self.sign() == other.sign() and
+                    self.base_ring() == other.base_ring() and
+                    self.character() == other.character())
+
+        return (self == other.ambient_hecke_module() and
+                self.free_module() == other.free_module())
+
+    def __ne__(self, other):
+        """
+        Check that ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: ModularSymbols(11,2) != ModularSymbols(11,2)
+            False
+            sage: ModularSymbols(11,2) != ModularSymbols(11,4)
+            True
+        """
+        return not (self == other)
 
     def new_submodule(self, p=None):
         r"""
@@ -412,7 +427,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
             sage: M(0)
             0
             sage: type(M(0))
-            <class 'sage.modular.modsym.element.ModularSymbolsAmbient_wt2_g0_with_category.element_class'>
+            <class 'sage.modular.modsym.ambient.ModularSymbolsAmbient_wt2_g0_with_category.element_class'>
 
         From a vector of the correct dimension we construct the
         corresponding linear combination of the basis elements::
@@ -1015,8 +1030,9 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
                 entries = syms.apply(i,h)
                 for k, x in entries:
                     f, s = mod2term[k]
-                    if s != 0:
-                        W[j,f] = W[j,f] + s*K(x)
+                    if s:
+                        # W[j,f] = W[j,f] + s*K(x)
+                        W.add_to_entry(j, f, s * K(x))
             j += 1
         tm = misc.verbose("start matrix multiply",tm)
         if hasattr(W, '_matrix_times_matrix_dense'):
@@ -1661,7 +1677,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
             (Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 7 and level 38, weight 2, character [zeta3], sign 1, over Cyclotomic Field of order 3 and degree 2)
         """
 
-##         EXAMPLES:
+##         EXAMPLES::
+
 ##             sage: M = ModularSymbols(Gamma0(22), 2); M
 ##             Modular Symbols space of dimension 7 for Gamma_0(22) of weight 2 with sign 0 over Rational Field
 ##             sage: M.factorization():
@@ -1671,7 +1688,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 ##             1 11 2
 ##             1 22 1
 
-##         An example with sign 1:
+##         An example with sign 1::
+
 ##             sage: M = ModularSymbols(Gamma0(22), 2, sign=1); M
 ##             Modular Symbols space of dimension 5 for Gamma_0(22) of weight 2 with sign 1 over Rational Field
 ##             sage: for b, e in M.factorization():
@@ -1680,7 +1698,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 ##             1 11 2
 ##             1 22 1
 
-##         An example for Gamma1:
+##         An example for Gamma1::
+
 ##             sage: M = ModularSymbols(Gamma1(26), 2, sign=1); M
 ##             Modular Symbols space of dimension 33 for Gamma_1(26) of weight 2 with sign 1 and over Rational Field
 ##             sage: for b, e in M.factorization():
@@ -1699,7 +1718,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 ##             2 26 1
 ##             2 26 1
 
-##         An example with level divisible by a square:
+##         An example with level divisible by a square::
+
 ##             sage: M = ModularSymbols(Gamma0(2*9),2); M
 ##             ???
 ##             sage: for b, e in M.factorization():
@@ -2057,7 +2077,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
             sage: [e(d) for d in [0..6]]
             [0, 1, 0, 1, 0, -1, 0]
 
-        We test that the sign issue at #8620 is fixed::
+        We test that the sign issue at :trac:`8620` is fixed::
 
             sage: M = Newforms(Gamma1(13),names = 'a')[0].modular_symbols(sign=0)
             sage: M.diamond_bracket_operator(4).matrix()
@@ -2884,7 +2904,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             Tp = W * R
             tm = misc.verbose("done multiplying",tm)
             Tp = Tp.dense_matrix()
-            misc.verbose("done making hecke operator dense",tm)
+            misc.verbose("done making Hecke operator dense", tm)
         if rows is None:
             self._hecke_matrices[(p,rows)] = Tp
         return Tp

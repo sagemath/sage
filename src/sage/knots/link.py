@@ -47,6 +47,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import division
+from six.moves import range
 
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
@@ -153,7 +154,7 @@ class Link(object):
         L = Link([[1, 4, 2, 3], [4, 1, 3, 2]])
         sphinx_plot(L.plot())
 
-    We can construct links from from the braid group::
+    We can construct links from the braid group::
 
         sage: B = BraidGroup(4)
         sage: L = Link(B([-1, -1, -1, -2, 1, -2, 3, -2]))
@@ -381,9 +382,9 @@ class Link(object):
             following negative one; of there exist a closed arc,
             it is returned as a list of positive numbers only
 
-        OUPUT:
+        OUTPUT:
 
-        A list of lists represeting the arcs based upon ``presentation``.
+        A list of lists representing the arcs based upon ``presentation``.
 
         EXAMPLES::
 
@@ -1319,7 +1320,7 @@ class Link(object):
             return self._pd_code
 
         if self._braid is not None:
-            strings = range(1, self._braid.strands() + 1)
+            strings = list(range(1, self._braid.strands() + 1))
             b = list(self._braid.Tietze())
             pd = []
             strings_max = strings[-1]
@@ -2400,10 +2401,12 @@ class Link(object):
         G = Graph()
         for c in self.pd_code():
             G.add_vertex(tuple(c))
-        for i in range(G.num_verts()-1):
-            for j in range(i, G.num_verts()):
-                if len(set(G.vertices()[i]).intersection(G.vertices()[j])) > 0:
-                    G.add_edge(G.vertices()[i], G.vertices()[j])
+        V = G.vertices()
+        setV = [set(c) for c in V]
+        for i in range(len(V) - 1):
+            for j in range(i+1, len(V)):
+                if setV[i].intersection(setV[j]):
+                    G.add_edge(V[i], V[j])
         return [[list(i) for i in j] for j in G.connected_components()]
 
     def homfly_polynomial(self, var1='L', var2='M', normalization = 'lm'):
@@ -2767,7 +2770,7 @@ class Link(object):
         MLP.set_objective(MLP.sum(v.values()))
         MLP.solve()
         # we store the result in a vector s packing right bends as negative left ones
-        s = range(len(edges))
+        s = list(range(len(edges)))
         values = MLP.get_values(v)
         for i in range(len(edges)):
             s[i] = int(values[2*i] - values[2*i + 1])
@@ -2876,15 +2879,16 @@ class Link(object):
         used_edges = []
         ims = line([], **kwargs)
         while len(used_edges) < len(edges):
+            cross_keys = list(crossings.keys())
             i = 0
             j = 0
-            while crossings.keys()[i][j] in used_edges:
+            while cross_keys[i][j] in used_edges:
                 if j < 3:
                     j += 1
                 else:
                     j = 0
-                    i+=1
-            c = crossings.keys()[i]
+                    i += 1
+            c = cross_keys[i]
             e = c[j]
             used_edges.append(e)
             direction = (crossings[c][2] - c.index(e)) % 4
@@ -2930,16 +2934,24 @@ class Link(object):
                 headshort = (c2[0].index(e) % 2 == 0)
             a = deepcopy(im[0][0])
             b = deepcopy(im[-1][0])
+
+            def delta(u, v):
+                if u < v:
+                    return -gap
+                if u > v:
+                    return gap
+                return 0
+
             if tailshort:
-                im[0][0][0][0] += cmp(a[1][0], im[0][0][0][0]) * gap
-                im[0][0][0][1] += cmp(a[1][1], im[0][0][0][1]) * gap
+                im[0][0][0][0] += delta(a[1][0], im[0][0][0][0])
+                im[0][0][0][1] += delta(a[1][1], im[0][0][0][1])
             if headshort:
-                im[-1][0][1][0] -= cmp(b[1][0], im[-1][0][0][0]) * gap
-                im[-1][0][1][1] -= cmp(b[1][1], im[-1][0][0][1]) * gap
+                im[-1][0][1][0] -= delta(b[1][0], im[-1][0][0][0])
+                im[-1][0][1][1] -= delta(b[1][1], im[-1][0][0][1])
             l = line([], **kwargs)
             c = 0
             p = im[0][0][0]
-            if len(im) == 4 and max([x[1] for x in im]) == 1:
+            if len(im) == 4 and max(x[1] for x in im) == 1:
                 l = bezier_path([[im[0][0][0], im[0][0][1], im[-1][0][0], im[-1][0][1]]], **kwargs)
                 p = im[-1][0][1]
             else:

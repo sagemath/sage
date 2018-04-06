@@ -49,7 +49,7 @@ class GiacSettingsDefaultContext:
 
     def __enter__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
            sage: from sage.libs.giac import GiacSettingsDefaultContext  # optional - giacpy_sage
            sage: from giacpy_sage import giacsettings # optional - giacpy_sage
@@ -71,7 +71,7 @@ class GiacSettingsDefaultContext:
 
     def __exit__(self, typ, value, tb):
         """
-        EXAMPLE::
+        EXAMPLES::
 
            sage: from sage.libs.giac import GiacSettingsDefaultContext  # optional - giacpy_sage
            sage: from giacpy_sage import giacsettings # optional - giacpy_sage
@@ -96,7 +96,7 @@ def local_giacsettings(func):
     """
     Decorator to preserve Giac's proba_epsilon and threads settings.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: def testf(a,b):  # optional - giacpy_sage
         ....:    giacsettings.proba_epsilon = a/100

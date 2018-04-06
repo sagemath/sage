@@ -167,10 +167,10 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
     cdef str cls_name = cls.__name__+'.'
     cdef str v_name
     if first_run:
-        for (name, v) in cls.__dict__.iteritems():
+        for (name, v) in cls.__dict__.items():
             if isinstance(v, NestedClassMetaclass):
                 v_name = v.__name__
-                if v_name==name and v.__module__ == mod_name and getattr(module, v_name, None) is not v:
+                if v_name == name and v.__module__ == mod_name and getattr(module, v_name, None) is not v:
                     # OK, probably this is a nested class.
                     dotted_name = name_prefix + '.' + v_name
                     setattr(module, dotted_name, v)
@@ -185,16 +185,16 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
                     modify_for_nested_pickle(v, dotted_name, module)
                     v.__name__ = dotted_name
     else:
-        for (name, v) in cls.__dict__.iteritems():
+        for (name, v) in cls.__dict__.items():
             if isinstance(v, class_types):
                 v_name = v.__name__
-                if v_name == cls_name+name and v.__module__ == mod_name:
+                if v_name == cls_name + name and v.__module__ == mod_name:
                     # OK, probably this is a nested class.
                     dotted_name = name_prefix + '.' + v_name
                     setattr(module, dotted_name, v)
                     modify_for_nested_pickle(v, name_prefix, module, False)
                     v.__name__ = dotted_name
-        
+
 
 def nested_pickle(cls):
     r"""
@@ -240,6 +240,7 @@ def nested_pickle(cls):
     modify_for_nested_pickle(cls, cls.__name__, sys_modules[cls.__module__])
     return cls
 
+
 cdef class NestedClassMetaclass(type):
     r"""
     A metaclass for nested pickling.
@@ -277,7 +278,8 @@ cdef class NestedClassMetaclass(type):
         """
         modify_for_nested_pickle(self, self.__name__, sys_modules[self.__module__])
 
-class MainClass(object):
+
+class MainClass(object, metaclass=NestedClassMetaclass):
     r"""
     A simple class to test nested_pickle.
 
@@ -287,8 +289,6 @@ class MainClass(object):
         sage: loads(dumps(MainClass()))
         <sage.misc.nested_class.MainClass object at 0x...>
     """
-
-    __metaclass__ = NestedClassMetaclass
 
     class NestedClass(object):
         r"""

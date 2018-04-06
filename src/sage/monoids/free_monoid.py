@@ -14,8 +14,6 @@ generators. You can print the generators as arbitrary strings using
 the optional ``names`` argument to the
 ``FreeMonoid`` function.
 """
-from __future__ import absolute_import
-
 #*****************************************************************************
 #       Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
@@ -25,6 +23,8 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
+from six import integer_types
 
 from sage.rings.integer import Integer
 from sage.structure.category_object import normalize_names
@@ -107,10 +107,14 @@ def FreeMonoid(index_set=None, names=None, commutative=False, **kwds):
         Free abelian monoid on 3 generators (x, y, z)
         sage: FreeMonoid(index_set=ZZ, commutative=True)
         Free abelian monoid indexed by Integer Ring
+
+    TESTS::
+
+        sage: FreeMonoid(index_set=ZZ, names='x,y,z')
+        Free monoid indexed by Integer Ring
     """
     if 'abelian' in kwds:
-        commutative = kwds['abelian']
-        del kwds['abelian']
+        commutative = kwds.pop('abelian')
 
     if commutative:
         from sage.monoids.free_abelian_monoid import FreeAbelianMonoid
@@ -127,7 +131,7 @@ def FreeMonoid(index_set=None, names=None, commutative=False, **kwds):
 
     if index_set not in ZZ:
         if names is not None:
-            names = normalize_names(len(names), names)
+            names = normalize_names(-1, names)
         from sage.monoids.indexed_free_monoid import IndexedFreeMonoid
         return IndexedFreeMonoid(index_set, names=names, **kwds)
 
@@ -193,7 +197,7 @@ class FreeMonoid_class(Monoid_class):
             sage: M = FreeMonoid(3, names=['a','b','c'])
             sage: TestSuite(M).run()
         """
-        if not isinstance(n, (int, long, Integer)):
+        if not isinstance(n, integer_types + (Integer,)):
             raise TypeError("n (=%s) must be an integer."%n)
         if n < 0:
             raise ValueError("n (=%s) must be nonnegative."%n)
@@ -201,26 +205,40 @@ class FreeMonoid_class(Monoid_class):
         #self._assign_names(names)
         Monoid_class.__init__(self,names)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
+        """
+        Test for equality.
+        """
+        if self is other:
+            return True
         if not isinstance(other, FreeMonoid_class):
-            return -1
-        c = cmp(self.__ngens, other.__ngens)
-        if c: return c
-        if self.variable_names() == other.variable_names():
-            return 0
-        return 1
+            return False
+        if self.__ngens != other.__ngens:
+            return False
+        try:
+            if self.variable_names() != other.variable_names():
+                return False
+        except ValueError:
+            pass
+        return True
+
+    def __ne__(self, other):
+        """
+        Test for unequality.
+        """
+        return not (self == other)
 
     def _repr_(self):
         return "Free monoid on %s generators %s"%(self.__ngens,self.gens())
 
     def _element_constructor_(self, x, check=True):
         """
-        Return `x` coerced into this free monoid.
+        Return ``x`` coerced into this free monoid.
 
-        One can create a free monoid element from the integer 1, from a
-        list of 2-tuples of integers `(i,j)`, where `(i,j)`
-        corresponds to `x_i^j`, where `x_i` is the
-        `i`th generator, and words in teh same alphabet as the generators.
+        One can create a free monoid element from the integer 1, from
+        a list of 2-tuples of integers `(i,j)`, where `(i,j)`
+        corresponds to `x_i^j`, where `x_i` is the `i`-th generator,
+        and from words in the same alphabet as the generators.
 
         EXAMPLES::
 
@@ -253,7 +271,7 @@ class FreeMonoid_class(Monoid_class):
             return x
         if isinstance(x, FreeMonoidElement) and x.parent() == self:
             return self.element_class(self,x._element_list,check)
-        if isinstance(x, (int, long, Integer)) and x == 1:
+        if isinstance(x, integer_types + (Integer,)) and x == 1:
             return self.element_class(self, x, check)
         if isinstance(x, FiniteWord_class):
             d = self.gens_dict()

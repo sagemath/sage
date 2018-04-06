@@ -4,7 +4,7 @@ cimport sage.structure.element
 cimport sage.rings.ring
 cimport sage.structure.element
 from sage.structure.element cimport RingElement, ModuleElement
-from sage.libs.cypari2.types cimport GEN
+from cypari2.types cimport GEN
 
 
 cdef class ComplexDoubleField_class(sage.rings.ring.Field):
@@ -13,5 +13,7 @@ cdef class ComplexDoubleField_class(sage.rings.ring.Field):
 cdef class ComplexDoubleElement(sage.structure.element.FieldElement):
     cdef gsl_complex _complex
     cdef ComplexDoubleElement _new_c(self, gsl_complex x)
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
 
 cdef ComplexDoubleElement new_ComplexDoubleElement()

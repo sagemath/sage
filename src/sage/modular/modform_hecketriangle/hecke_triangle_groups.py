@@ -781,7 +781,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
               To:   Algebraic Field
               Defn: e |--> 2*I
             sage: G.root_extension_embedding(4)
-            Ring Coercion morphism:
+            Coercion map:
               From: Rational Field
               To:   Algebraic Real Field
 
@@ -868,12 +868,11 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: G = HeckeTriangleGroup(n=5)
             sage: G.element_repr_method("conj")
             sage: G._elliptic_conj_reps()
-            sage: sorted(G._conj_prim.iteritems())
+            sage: sorted(G._conj_prim.items())
             [(-4, [[S], [S]]), (lam - 3, [[U], [U]]), (0, [[V(4)]])]
-            sage: sorted(G._conj_nonprim.iteritems())
+            sage: sorted(G._conj_nonprim.items())
             [(-lam - 2, [[U^(-2)], [U^2], [U^(-2)], [U^2]]), (lam - 3, [[U^(-1)], [U^(-1)]])]
         """
-
         if not hasattr(self, "_max_block_length"):
             self._conjugacy_representatives()
         elif ZZ(-4) in self._conj_prim:

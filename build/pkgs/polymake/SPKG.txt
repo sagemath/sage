@@ -35,19 +35,14 @@ standard.
 
 Several Sage packages should be installed before installing the
 polymake package to give a more featureful Polymake installation:
- sage -i 4ti2 latte_int topcom
-
-Also this old-style Sage package can be installed for a more
-featureful Polymake installation:
- sage -p qhull
+ sage -i 4ti2 latte_int topcom qhull
 
 Software that would need to be installed manually (no Sage package
  available) for a more featureful Polymake installation:
  azove,
  porta,
  vinci,
- SplitsTree4,
- bliss (needs Debian patches; can't use the existing old-style Sage package)
+ SplitsTree4
 
 Information on missing Polymake prerequisites after installing
 polymake:

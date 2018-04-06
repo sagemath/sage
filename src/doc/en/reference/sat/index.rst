@@ -22,11 +22,10 @@ By default, Sage solves SAT instances as an Integer Linear Program (see
 :mod:`sage.numerical.mip`), but any SAT solver supporting the DIMACS input
 format is easily interfaced using the :class:`sage.sat.solvers.dimacs.DIMACS`
 blueprint. Sage ships with pre-written interfaces for *RSat* [RS]_ and *Glucose*
-[GL]_. Furthermore, Sage provides a C++ interface to the *CryptoMiniSat* [CMS]_
-SAT solver which can be used interchangably with DIMACS-based solvers, but also
-provides advanced features. For this last solver, the optional CryptoMiniSat
-package must be installed, this can be accomplished by typing the following in the
-shell::
+[GL]_. Furthermore, Sage provides an interface to the *CryptoMiniSat* [CMS]_ SAT
+solver which can be used interchangably with DIMACS-based solvers. For this last
+solver, the optional CryptoMiniSat package must be installed, this can be
+accomplished by typing the following in the shell::
 
     sage -i cryptominisat sagelib
 
@@ -88,9 +87,7 @@ Details on Specific Solvers
    sage/sat/solvers/satsolver
    sage/sat/solvers/dimacs
    sage/sat/solvers/sat_lp
-.. optional - cryptominisat
-.. sage/sat/solvers/cryptominisat/cryptominisat
-.. sage/sat/solvers/cryptominisat/solverconf
+   sage/sat/solvers/cryptominisat
 
 Converters
 ----------
@@ -146,7 +143,7 @@ REFERENCES:
 
 .. [GL] http://www.lri.fr/~simon/?page=glucose
 
-.. [CMS] http://www.msoos.org/cryptominisat2/
+.. [CMS] http://www.msoos.org
 
 .. [SG09] http://www.satcompetition.org/2009/format-benchmarks2009.html
 

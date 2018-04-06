@@ -277,7 +277,7 @@ def divdiff_schubert_symmetrica(i, a):
     else:
         _op_integer(i, ci)
 
-    if i > max_a:
+    if i > max_a or i <= 0:
         freeall(ca); freeall(ci); freeall(cres)
         raise ValueError(r"cannot apply \delta_{%s} to a (= %s)" % (i, a))
 

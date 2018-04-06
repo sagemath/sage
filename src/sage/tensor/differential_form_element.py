@@ -30,6 +30,9 @@ from sage.rings.integer import Integer
 from sage.combinat.permutation import Permutation
 
 
+import six
+
+
 def sort_subscript(subscript):
     """
     A subscript is a range of integers.  This function sorts a subscript
@@ -569,8 +572,8 @@ class DifferentialForm(AlgebraElement):
                 # pairs as we go along.
 
                 for (key1, val1), (key2, val2) in \
-                        zip(self._components.iteritems(), \
-                            other._components.iteritems()):
+                        zip(six.iteritems(self._components), \
+                            six.iteritems(other._components)):
                     if key1 != key2 or str(val1) != str(val2):
                         return False
                 return True

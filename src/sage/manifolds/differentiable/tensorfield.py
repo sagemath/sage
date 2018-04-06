@@ -41,8 +41,8 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-
 from __future__ import print_function
+from six import itervalues
 
 from sage.rings.integer import Integer
 from sage.structure.element import ModuleElement
@@ -105,7 +105,7 @@ class TensorField(ModuleElement):
 
     INPUT:
 
-    - ``vector_field_module`` -- module `\mathcal{X}(U,\Phi)` of vector
+    - ``vector_field_module`` -- module `\mathfrak{X}(U,\Phi)` of vector
       fields along `U` associated with the map `\Phi: U \rightarrow M` (cf.
       :class:`~sage.manifolds.differentiable.vectorfield_module.VectorFieldModule`)
     - ``tensor_type`` -- pair `(k,l)` with `k` being the contravariant rank
@@ -936,7 +936,7 @@ class TensorField(ModuleElement):
         for assignment.
 
         The components with respect to other frames having the same domain
-        as the provided vector frame are kept. To delete them them, use the
+        as the provided vector frame are kept. To delete them, use the
         method :meth:`set_comp` instead.
 
         INPUT:
@@ -1778,12 +1778,10 @@ class TensorField(ModuleElement):
             True
 
         """
-        if other == 0:
-            return +self
         resu_rst = {}
         for dom in self._common_subdomains(other):
             resu_rst[dom] = self._restrictions[dom] + other._restrictions[dom]
-        some_rst = resu_rst.values()[0]
+        some_rst = next(itervalues(resu_rst))
         resu_sym = some_rst._sym
         resu_antisym = some_rst._antisym
         resu = self._vmodule.tensor(self._tensor_type, sym=resu_sym,
@@ -1843,12 +1841,10 @@ class TensorField(ModuleElement):
             True
 
         """
-        if other == 0:
-            return +self
         resu_rst = {}
         for dom in self._common_subdomains(other):
             resu_rst[dom] = self._restrictions[dom] - other._restrictions[dom]
-        some_rst = resu_rst.values()[0]
+        some_rst = next(itervalues(resu_rst))
         resu_sym = some_rst._sym
         resu_antisym = some_rst._antisym
         resu = self._vmodule.tensor(self._tensor_type, sym=resu_sym,
@@ -2240,13 +2236,13 @@ class TensorField(ModuleElement):
                 self_rr = self_r._restrictions[dom]
                 args_rr = [args_r[i]._restrictions[dom] for i in range(p)]
                 resu_rr = self_rr(*args_rr)
-                if resu_rr == 0:
+                if resu_rr.is_trivial_zero():
                     for chart in resu_rr._domain._atlas:
-                        resu._express[chart] = chart._zero_function
+                        resu._express[chart] = chart.zero_function()
                 else:
                     for chart, expr in resu_rr._express.items():
                         resu._express[chart] = expr
-            if resu == 0:
+            if resu.is_trivial_zero():
                 return dom_resu._zero_scalar_field
             # Name of the output:
             res_name = None

@@ -49,9 +49,9 @@ class Word_class(SageObject):
         TESTS::
 
             sage: Word(iter([1,2,3]), length="unknown").parent()
-            Finite words over Set of Python objects of type 'object'
+            Finite words over Set of Python objects of class 'object'
             sage: Word(range(12)).parent()
-            Finite words over Set of Python objects of type 'object'
+            Finite words over Set of Python objects of class 'object'
             sage: Word(range(4), alphabet=list(range(6))).parent()
             Finite words over {0, 1, 2, 3, 4, 5}
             sage: Word(iter('abac'), alphabet='abc').parent()
@@ -209,16 +209,16 @@ class Word_class(SageObject):
 
     def __len__(self):
         r"""
-        Returns the length of self (as a python integer).
+        Return the length of self (as a python integer).
 
-        ..NOTE::
+        .. NOTE::
 
             For infinite words or words of unknown length,
             use `length()` method instead.
 
         OUTPUT:
 
-            positive integer
+        positive integer
 
         EXAMPLES::
 
@@ -322,9 +322,10 @@ class Word_class(SageObject):
                 else:
                     key_cs = cmp_key(cs)
                     key_co = cmp_key(co)
-                    r = cmp(key_cs, key_co)
-                    if r != 0:
-                        return r
+                    if key_cs < key_co:
+                        return -1
+                    elif key_cs > key_co:
+                        return 1
 
     def __eq__(self, other):
         r"""
@@ -338,7 +339,7 @@ class Word_class(SageObject):
 
             boolean
 
-        .. NOTE:
+        .. NOTE::
 
             This function will not terminate if self and other are equal
             infinite words!
@@ -424,7 +425,7 @@ class Word_class(SageObject):
 
             boolean
 
-        .. NOTE:
+        .. NOTE::
 
             This function will not terminate if self and other are equal
             infinite words!
@@ -1524,7 +1525,7 @@ class Word_class(SageObject):
         -  ``mod`` - modulo (default: ``None``), can take the following
            values:
 
-           - integer - the modulo
+           - integer -- the modulo
 
            - ``None`` - the value ``base`` is considered for the modulo.
 

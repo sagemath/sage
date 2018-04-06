@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ "$SAGE_LOCAL" = "" ]; then
    echo "SAGE_LOCAL undefined ... exiting";
    echo "Maybe run 'sage -sh'?"
@@ -7,20 +5,29 @@ if [ "$SAGE_LOCAL" = "" ]; then
 fi
 
 echo "Cleaning out old PolyBoRi and BRiAl installations"
-rm -rf "$SAGE_LOCAL"/lib/python/site-packages/{polybori,brial}
+rm -rf "$SAGE_LOCAL"/lib/python*/site-packages/{polybori,brial}
 rm -f "$SAGE_LOCAL"/lib/lib{polybori,brial}*
 rm -rf "$SAGE_LOCAL"/include/polybori*
 rm -rf "$SAGE_LOCAL"/share/polybori
 
 cd src
 
-# C++11 workaround https://trac.sagemath.org/ticket/20926
-export CXXFLAGS="$CXXFLAGS -std=c++98"
+# Use C++11 to compile BRiAl, see https://trac.sagemath.org/ticket/21083
+export CXXFLAGS="$CXXFLAGS -std=c++11"
+
+export PYTHON=sage-python23
+
+#
+# BRiAl consists of a C++ library and a Python module
+#
+# First, install the library
+#
 
 ./configure \
     --prefix="$SAGE_LOCAL" \
     --libdir="$SAGE_LOCAL/lib" \
-    --enable-shared --disable-static
+    --enable-shared --disable-static \
+    --with-boost-unit-test-framework=no
 if [ $? -ne 0 ]; then
     echo "Error configuring BRiAl"
     exit 1
@@ -32,8 +39,18 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-$MAKE install -j1
+$MAKE install
 if [ $? -ne 0 ]; then
     echo "Error installing BRiAl"
+    exit 1
+fi
+
+#
+# Next, install the Python module
+#
+
+cd sage-brial && sdh_pip_install .
+if [ $? -ne 0 ]; then
+    echo "Error installing BRiAl Python module"
     exit 1
 fi

@@ -151,8 +151,7 @@ class RibbonShapedTableau(SkewTableau):
             sage: RibbonShapedTableau([]).width()
             0
         """
-        #return 1+sum([len(r)-1 for r in self])
-        return len(self[0]) if len(self) > 0 else 0
+        return len(self[0]) if self else 0
 
 
 class RibbonShapedTableaux(SkewTableaux):

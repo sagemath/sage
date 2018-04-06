@@ -19,9 +19,10 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 from libc.string cimport strchr
-from cpython.string cimport PyString_FromStringAndSize
+from cpython.bytes cimport PyBytes_FromStringAndSize
 from cpython.list cimport PyList_Append
 
 import math
@@ -425,7 +426,7 @@ cdef class Tokenizer:
             sage: t.last_token_string()
             '1e5'
         """
-        return PyString_FromStringAndSize(&self.s[self.last_pos], self.pos-self.last_pos)
+        return PyBytes_FromStringAndSize(&self.s[self.last_pos], self.pos-self.last_pos)
 
 
 cdef class Parser:

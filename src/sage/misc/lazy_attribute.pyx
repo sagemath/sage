@@ -27,7 +27,7 @@ cdef class _lazy_attribute(object):
     """
     Cython base class for lazy attributes.
 
-    EXAMPLE:
+    EXAMPLES:
 
     Only Python subclasses of this class are supposed to be instantiated::
 
@@ -647,7 +647,7 @@ class lazy_class_attribute(lazy_attribute):
         sage: Cl1().x
         1
 
-    ..WARNING::
+    .. WARNING::
 
         The behavior of lazy class attributes with respect to inheritance is
         not specified. It currently depends on the evaluation order::

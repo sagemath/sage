@@ -43,18 +43,20 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 from __future__ import print_function
+from six.moves import zip
 
 import numpy
 import math, bisect
 
 from sage.rings.all import (ZZ, QQ, RR, RDF, RIF, CC, CDF, CIF,
-    infinity, RealField, ComplexField)
+    infinity)
 
 from sage.misc.all import cached_method, cartesian_product_iterator
-from sage.arith.all import lcm, factor, factorial
+from sage.arith.all import lcm, factorial
 from sage.ext.fast_callable import fast_callable
 from sage.functions.log import log, exp
 from sage.symbolic.all import SR
+
 
 class UnionOfIntervals:
     r"""
@@ -139,7 +141,7 @@ class UnionOfIntervals:
             sage: UnionOfIntervals([-infinity, pi, 17, infinity]).intervals()
             [(-Infinity, pi), (17, +Infinity)]
         """
-        return zip(self._endpoints[::2], self._endpoints[1::2])
+        return list(zip(self._endpoints[::2], self._endpoints[1::2]))
 
     def is_empty(self):
         r"""
@@ -590,7 +592,7 @@ def min_on_disk(f, tol, max_iter=10000):
     contained in the disk `|z|\le1`, at which `f` takes its minumum
     value.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.height import min_on_disk
         sage: f = lambda x: (x^2+100).abs()
@@ -705,8 +707,6 @@ def rat_term_CIF(z, try_strict=True):
             # = r^2*x + 2*r*x^2 - 4*r + x
 
         df_dr = (r**2-1) * p2
-        df_dx = p1 * r
-
         dg_dr = p1 * y
         dg_dx = r * df_dr / y
 
@@ -941,14 +941,13 @@ class EllipticCurveCanonicalHeight:
             return min(min_fg, min_FG) ** (-1/QQ(3))
 
         else:
-            def pair_max(f, g):
-                f = f.change_ring(CIF)
-                g = g.change_ring(CIF)
-                max = type(RIF(0)).max
-                def max_f_g(z):
-                    return max(abs(f(z)), abs(g(z)))
-                return max_f_g
-            pair_max_old = pair_max
+            # def pair_max(f, g):
+            #     f = f.change_ring(CIF)
+            #     g = g.change_ring(CIF)
+            #     max = type(RIF(0)).max
+            #     def max_f_g(z):
+            #         return max(abs(f(z)), abs(g(z)))
+            #     return max_f_g
             def pair_max(f, g):
                 f = f.change_ring(CDF)
                 g = g.change_ring(CDF)
@@ -1043,7 +1042,6 @@ class EllipticCurveCanonicalHeight:
             [0, 2*log(5) + 2*log(2), 0, 2*log(13) + 2*log(5) + 4*log(2), 0]
         """
         s = 0
-        N = self.E.conductor()
         B = (n+1) ** max(2, self.K.degree())
         for p in self.K.primes_of_bounded_norm_iter(B):
             ep = self.e_p(p)
@@ -1774,7 +1772,7 @@ class EllipticCurveCanonicalHeight:
 
         - ``mu`` (real) - a positive real number
 
-        - ``N`` (integer) - upper bounf do the multiples to be used.
+        - ``N`` (integer) - upper bound on the multiples to be used.
 
         - ``verbose`` (boolean, default True) - verbosity flag.
 
@@ -1790,7 +1788,7 @@ class EllipticCurveCanonicalHeight:
             the attempt failed: trying again with larger `N` may yield
             ``True``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K.<a> = NumberField(x^3-2)
             sage: E = EllipticCurve([0,0,0,0,a])
@@ -1799,7 +1797,8 @@ class EllipticCurveCanonicalHeight:
         This curve does have a point of good reduction whose canonical
         point is approximately 1.68::
 
-            sage: P = E.gens(lim3=5)[0]
+            sage: P = E.gens(lim3=5)[0]; P
+            (1/3*a^2 + a + 5/3 : -2*a^2 - 4/3*a - 5/3 : 1)
             sage: P.height()
             1.68038085233673
             sage: P.has_good_reduction()
@@ -1902,7 +1901,7 @@ class EllipticCurveCanonicalHeight:
             sage: E = EllipticCurve([0,1-i,i,-i,0])
             sage: H = E.height_function()
             sage: H.min_gr(0.01,5)
-            0.015043796434657225
+            0.020153685521979152
 
         In this example the point `P=(0,0)` has height 0.023 so our
         lower bound is quite good::
@@ -1922,6 +1921,26 @@ class EllipticCurveCanonicalHeight:
             sage: H.min_gr(0.1,5) # long time (7.2s)
             0.25
 
+        TESTS:
+
+        This example from the LMFDB gave problems before the fix in :trac:`8829`::
+
+            sage: K.<a> = NumberField(x^2-x-1)
+            sage: phi = a
+            sage: E = EllipticCurve([phi + 1, -phi + 1, 1, 20*phi - 39, 196*phi + 237])
+            sage: H = E.height_function()
+            sage: H.min_gr(.1,5,True) # long time (~22s)
+            B_1(1) = 1540.19924637
+            ...
+            halving mu to 0.25 and increasing n_max to 6
+            ...
+            halving mu to 0.001953125 and increasing n_max to 13
+            doubling mu to 0.0078125
+            doubling mu to 0.015625
+            height bound in [0.0078125, 0.015625] using n_max = 13
+            ...
+            height bound in [0.0120485220735, 0.0131390064883] using n_max = 13
+            0.012048522073499539
         """
         test = self.test_mu
         if test(1, n_max, verbose):
@@ -1933,14 +1952,30 @@ class EllipticCurveCanonicalHeight:
             mu = .5
             while not test(mu, n_max, False):
                 mu /= 2
+                n_max += 1
+                if verbose:
+                    print("halving mu to %s and increasing n_max to %s" % (mu,n_max))
+            # now we have (mu,n_max) which work we can try to increase
+            # mu again using this larger n_max:
+            mu *= 2
+            while test(mu, n_max, False):
+                mu *= 2
+                if verbose:
+                    print("doubling mu to %s" % mu)
+            mu /= 2
+
         # The true value lies between mu and eps * mu.
         eps = 2.0
-        while eps > tol+1:
+        while eps > tol + 1:
             if verbose:
-                print("height bound in [%s, %s]" % (mu, mu * eps))
+                print("height bound in [%s, %s] using n_max = %s"
+                      % (mu, mu * eps, n_max))
             eps = math.sqrt(eps)
-            if test(mu*eps, n_max, False):
-                mu = mu*eps
+            if test(mu * eps, n_max, False):
+                mu = mu * eps
+        if verbose:
+            print("height bound in [%s, %s] using n_max = %s"
+                  % (mu, mu * eps, n_max))
         return RDF(mu)
 
     def min(self, tol, n_max, verbose=False):
@@ -1988,7 +2023,7 @@ class EllipticCurveCanonicalHeight:
             sage: E = EllipticCurve([0,1-i,i,-i,0])
             sage: H = E.height_function()
             sage: H.min(0.01,5) # long time (4s)
-            0.015043796434657225
+            0.020153685521979152
 
         In this example the point `P=(0,0)` has height 0.023 so our
         lower bound is quite good::

@@ -1,8 +1,6 @@
 """
 Submodules of Hecke modules
 """
-from __future__ import absolute_import
-
 #*****************************************************************************
 #       Sage: System for Algebra and Geometry Experimentation
 #
@@ -19,10 +17,12 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 import sage.arith.all as arith
 import sage.misc.misc as misc
 from sage.misc.cachefunc import cached_method
+from sage.structure.richcmp import richcmp_method, richcmp_not_equal, richcmp
 
 import sage.modules.all
 
@@ -43,6 +43,8 @@ def is_HeckeSubmodule(x):
     """
     return isinstance(x, HeckeSubmodule)
 
+
+@richcmp_method
 class HeckeSubmodule(module.HeckeModule_free_module):
     """
     Submodule of a Hecke module.
@@ -162,10 +164,9 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             raise TypeError("x does not coerce to an element of this Hecke module")
         return self.element_class(self, z)
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
-        Compare self to other. Returns 0 if self is the same as
-        other, and -1 otherwise.
+        Compare self to other.
 
         EXAMPLES::
 
@@ -176,20 +177,21 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             Rank 14 submodule of a Hecke module of level 12
             sage: T
             Rank 0 submodule of a Hecke module of level 12
-            sage: S.__cmp__(T)
-            1
-            sage: T.__cmp__(S)
-            -1
-            sage: S.__cmp__(S)
-            0
+            sage: S > T
+            True
+            sage: T < S
+            True
+            sage: S == S
+            True
         """
         if not isinstance(other, module.HeckeModule_free_module):
-            return cmp(type(self), type(other))
-        c = cmp(self.ambient(), other.ambient())
-        if c:
-            return c
+            return NotImplemented
+        lx = self.ambient()
+        rx = other.ambient()
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
         else:
-            return cmp(self.free_module(), other.free_module())
+            return richcmp(self.free_module(), other.free_module(), op)
 
     ################################
     # Semi-Private functions
@@ -242,7 +244,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def _compute_diamond_matrix(self, d):
         r"""
-        EXAMPLE:
+        EXAMPLES:
 
             sage: f = ModularSymbols(Gamma1(13),2,sign=1).cuspidal_subspace().decomposition()[0]
             sage: a = f.diamond_bracket_operator(2).matrix() # indirect doctest
@@ -374,7 +376,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             if V.rank() + self.rank() <= A.rank():
                 break
             p = arith.next_prime(p)
-            if p > bound:  # to avoid computing hecke bound unless necessary
+            if p > bound:  # to avoid computing Hecke bound unless necessary
                 break
 
         if V.rank() + self.rank() == A.rank():
@@ -889,7 +891,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         r"""
         Return the rank of self as a free module over the base ring.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularSymbols(6, 4).cuspidal_subspace().rank()
             2

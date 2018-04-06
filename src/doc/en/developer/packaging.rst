@@ -124,13 +124,21 @@ See :ref:`section-package-types` for the meaning of these types.
 Build and install scripts
 -------------------------
 
-The ``spkg-build`` and ``spkg-install`` files are shell scripts or
-Python scripts which build and install the package.
+The ``spkg-build`` and ``spkg-install`` files are ``bash`` scripts that
+build and/or install the package.  If no ``spkg-build`` exists, then the
+``spkg-install`` is responsible for both steps, though separating them is
+encouraged where possible.
+
+These scripts should *not* be prefixed with a shebang line (``#!...``) and
+should not have the executable bit set in their permissions.  These are
+added automatically, along with some additional boilerplate, when the
+package is installed.  The ``spkg-build`` and ``spkg-install`` files in the
+Sage source tree need only focus on the specific steps for building and
+installing that package.
+
 In the best case, the upstream project can simply be installed by the
 usual configure / make / make install steps. In that case, the build
 script would simply consist of::
-
-    #!/usr/bin/env bash
 
     cd src
 
@@ -147,8 +155,6 @@ script would simply consist of::
     fi
 
 The install script would consist of::
-
-    #!/usr/bin/env bash
 
     cd src
     $MAKE install
@@ -175,16 +181,35 @@ install it::
         cp -R doc/* "$SAGE_SHARE/doc/PACKAGE_NAME"
     fi
 
-Many packages currently do not separate the build and install steps
-and only provide a ``spkg-install`` file that does both.  The
-separation is useful in particular for root-owned install hierarchies:
+.. note::
+
+    Prior to Sage 8.1 the shebang line was included, and the scripts were
+    marked executable.  However, this is no longer the case as of
+    :trac:`23179`.  Now the scripts in the source tree are deliberately
+    written not to be directly executed, and are only made into executable
+    scripts when they are copied to the package's build directory.
+
+    Build/install scripts may still be written in Python, but the Python
+    code should go in a separate file (e.g. ``spkg-install.py``), and can
+    then be executed from the real ``spkg-install`` like::
+
+        exec sage-python23 spkg-install.py
+
+
+Many packages currently do not separate the build and install steps and only
+provide a ``spkg-install`` file that does both.  The separation is useful in
+particular for root-owned install hierarchies, where something like ``sudo``
+must be used to install files.  For this purpose Sage uses an environment
+variable ``$SAGE_SUDO``, the value of which may be provided by the developer
+at build time,  which should to the appropriate system-specific
+``sudo``-like command (if any).  The following rules are then observed:
 
 - If ``spkg-build`` exists, it is first called, followed by
   ``$SAGE_SUDO spkg-install``.
 
-- Otherwise, only ``spkg-install`` is called (without ``$SAGE_SUDO``).
-  Such packages would prefix all commands in ``spkg-install`` that
-  write into the installation hierarchy with ``$SAGE_SUDO``.
+- Otherwise, only ``spkg-install`` is called (without ``$SAGE_SUDO``).  Such
+  packages should prefix all commands in ``spkg-install`` that write into
+  the installation hierarchy with ``$SAGE_SUDO``.
 
 
 .. _section-spkg-check:
@@ -192,17 +217,40 @@ separation is useful in particular for root-owned install hierarchies:
 Self-Tests
 ----------
 
-The ``spkg-check`` file is an optional, but highly recommended, script
-to run self-tests of the package. It is run after building and
-installing if the ``SAGE_CHECK`` environment variable is set, see the
-Sage installation guide. Ideally, upstream has some sort of tests suite
-that can be run with the standard ``make check`` target. In that case,
-the ``spkg-check`` script would simply contain::
-
-    #!/usr/bin/env bash
+The ``spkg-check`` file is an optional, but highly recommended, script to
+run self-tests of the package.  The format for the ``spkg-check`` is the
+same as ``spkg-build`` and ``spkg-install``.  It is run after building and
+installing if the ``SAGE_CHECK`` environment variable is set, see the Sage
+installation guide. Ideally, upstream has some sort of tests suite that can
+be run with the standard ``make check`` target. In that case, the
+``spkg-check`` script would simply contain::
 
     cd src
     $MAKE check
+
+
+.. _section-python:
+
+Python-based packages
+---------------------
+
+The best way to install a Python-based package is to use pip, in which
+case the ``spkg-install`` script might just consist of ::
+
+    cd src && sdh_pip_install .
+
+Where ``sdh_pip_install`` is a function provided by ``sage-dist-helpers`` that
+points to the correct ``pip`` for the Python used by Sage, and includes some
+default flags needed for correct installation into Sage.
+
+If pip will not work but a command like ``python setup.py install``
+will, then the ``spkg-install`` script should call ``sage-python23``
+rather than ``python``. This will ensure that the correct version of
+Python is used to build and install the package. The same holds for
+``spkg-check`` scripts; for example, the ``pycrypto`` ``spkg-check``
+file contains the line ::
+
+    sage-python23 setup.py test
 
 
 .. _section-spkg-SPKG-txt:
@@ -280,8 +328,8 @@ If there is no ``|``, then all dependencies are normal.
   that B must be built before A can be built. The version of B does not
   matter, only the fact that B is installed matters.
   This should be used if the dependency is purely a build-time
-  dependency (for example, a dependency on Python simply because the
-  ``spkg-install`` file is written in Python).
+  dependency (for example, a dependency on pip simply because the
+  ``spkg-install`` file uses pip).
 
 - If A has a **normal dependency** on B, it means additionally that A
   should be rebuilt every time that B gets updated. This is the most

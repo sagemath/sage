@@ -162,7 +162,7 @@ the operator ``[:]``::
     [x + y     0]
     [    y  -3*x]
 
-To avoid any insconstency between the various components, the method
+To avoid any inconsistency between the various components, the method
 :meth:`~sage.manifolds.differentiable.tensorfield_paral.TensorFieldParal.set_comp`
 clears the components in other frames.
 To keep the other components, one must use the method
@@ -284,6 +284,8 @@ from sage.rings.integer import Integer
 from sage.structure.element import ModuleElement
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.manifolds.differentiable.tensorfield import TensorField
+from sage.parallel.decorate import parallel
+from sage.parallel.parallelism import Parallelism
 
 class TensorFieldParal(FreeModuleTensor, TensorField):
     r"""
@@ -340,7 +342,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
     INPUT:
 
-    - ``vector_field_module`` -- free module `\mathcal{X}(U,\Phi)` of vector
+    - ``vector_field_module`` -- free module `\mathfrak{X}(U,\Phi)` of vector
       fields along `U` associated with the map `\Phi: U \rightarrow M` (cf.
       :class:`~sage.manifolds.differentiable.vectorfield_module.VectorFieldFreeModule`)
     - ``tensor_type`` -- pair `(k,l)` with `k` being the contravariant rank
@@ -415,7 +417,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         [ 0  0  0]
         [ 0  0  0]
 
-    To avoid any insconstency between the various components, the method
+    To avoid any inconsistency between the various components, the method
     :meth:`set_comp` deletes the components in other frames.
     Accordingly, the components in the frame ``e`` have been deleted::
 
@@ -659,7 +661,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         r"""
         Initialize the derived quantities.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()  # makes M parallelizable
@@ -681,7 +683,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         - ``del_restrictions`` -- (default: ``True``) determines whether the
           restrictions of ``self`` to subdomains are deleted
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()  # makes M parallelizable
@@ -788,7 +790,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         for assignment.
 
         The components with respect to other frames on the same domain are
-        kept. To delete them them, use the method :meth:`set_comp` instead.
+        kept. To delete them, use the method :meth:`set_comp` instead.
 
         INPUT:
 
@@ -851,7 +853,13 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
         if basis._domain == self._domain:
             # Adding components on the tensor field domain:
-            return FreeModuleTensor.add_comp(self, basis=basis)
+            # We perform a backup of the restrictions, since
+            # they are deleted by FreeModuleTensor.add_comp (which
+            # invokes del_derived()), and restore them afterwards
+            restrictions_save = self._restrictions.copy()
+            comp = FreeModuleTensor.add_comp(self, basis=basis)
+            self._restrictions = restrictions_save
+            return comp
 
         # Adding components on a subdomain:
         #
@@ -958,7 +966,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             sage: c.display(Y.frame(), Y)
             c = (u + 1) d/du + u*v d/dv
 
-        There is no common ccordinate frame::
+        There is no common coordinate frame::
 
             sage: a._common_coord_frame(c)
 
@@ -1128,6 +1136,21 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             (-y^3*cos(x) + x^3*cos(y) + 2*x*y*sin(x)) dx
              + (-x^4*sin(y) - 3*x^2*y*cos(y) - y^2*sin(x)) dy
 
+        Parallel computation::
+
+            sage: Parallelism().set('tensor', nproc=2)
+            sage: Parallelism().get('tensor')
+            2
+            sage: om.lie_der(v)
+            1-form on the 2-dimensional differentiable manifold M
+            sage: om.lie_der(v).display()
+            (-y^3*cos(x) + x^3*cos(y) + 2*x*y*sin(x)) dx
+             + (-x^4*sin(y) - 3*x^2*y*cos(y) - y^2*sin(x)) dy
+
+            sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
+
+
+
         Check of Cartan identity::
 
             sage: om.lie_der(v) == (v.contract(0, om.exterior_derivative(), 0)
@@ -1151,34 +1174,93 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             if coord_frame is None:
                 raise ValueError("no common coordinate frame found")
             chart = coord_frame._chart
-            #
-            # 2/ Component computation:
-            tc = self._components[coord_frame]
-            vc = vector._components[coord_frame]
-            # the result has the same tensor type and same symmetries as self:
-            resc = self._new_comp(coord_frame)
-            n_con = self._tensor_type[0]
+
             vf_module = vector._fmodule
-            for ind in resc.non_redundant_index_generator():
-                rsum = 0
-                for i in vf_module.irange():
-                    rsum += vc[[i]].coord_function(chart) * \
-                           tc[[ind]].coord_function(chart).diff(i)
-                # loop on contravariant indices:
-                for k in range(n_con):
+            resc = self._new_comp(coord_frame)
+
+            # get n processes
+            nproc = Parallelism().get('tensor')
+            if nproc != 1 :
+
+                # Parallel computation
+                lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
+                ind_list = [ind for ind in resc.non_redundant_index_generator()]
+                ind_step = max(1, int(len(ind_list)/nproc))
+                local_list = lol(ind_list, ind_step)
+                # list of input parameters:
+                listParalInput = [(self, vector, coord_frame, chart, ind_part) for ind_part in local_list]
+
+                @parallel(p_iter='multiprocessing',ncpus=nproc)
+                def paral_lie_deriv(a, b , coord_frame, chart_cp, local_list_ind):
+                    #
+                    # 2/ Component computation:
+                    tc = a._components[coord_frame]
+                    vc = b._components[coord_frame]
+                    # the result has the same tensor type and same symmetries as a:
+                    n_con = a._tensor_type[0]
+                    vf_module = b._fmodule
+
+                    local_res = []
+                    for ind in local_list_ind:
+                        rsum = 0
+                        for i in vf_module.irange():
+                            rsum += vc[[i]].coord_function(chart_cp) * \
+                                   tc[[ind]].coord_function(chart_cp).diff(i)
+                        # loop on contravariant indices:
+                        for k in range(n_con):
+                            for i in vf_module.irange():
+                                indk = list(ind)
+                                indk[k] = i
+                                rsum -= tc[[indk]].coord_function(chart_cp) * \
+                                        vc[[ind[k]]].coord_function(chart_cp).diff(i)
+                        # loop on covariant indices:
+                        for k in range(n_con, a._tensor_rank):
+                            for i in vf_module.irange():
+                                indk = list(ind)
+                                indk[k] = i
+                                rsum += tc[[indk]].coord_function(chart_cp) * \
+                                        vc[[i]].coord_function(chart_cp).diff(ind[k])
+
+                        local_res.append([ind, rsum.scalar_field()])
+
+                    return local_res
+
+                # call to parallel lie derivative
+                for ii,val in paral_lie_deriv(listParalInput):
+                    for jj in val:
+                        resc[[jj[0]]] = jj[1]
+
+            else :
+                # Sequential computation
+                #
+                # 2/ Component computation:
+                tc = self._components[coord_frame]
+                vc = vector._components[coord_frame]
+                # the result has the same tensor type and same symmetries as self:
+                n_con = self._tensor_type[0]
+
+                for ind in resc.non_redundant_index_generator():
+                    rsum = 0
                     for i in vf_module.irange():
-                        indk = list(ind)
-                        indk[k] = i
-                        rsum -= tc[[indk]].coord_function(chart) * \
-                                vc[[ind[k]]].coord_function(chart).diff(i)
-                # loop on covariant indices:
-                for k in range(n_con, self._tensor_rank):
-                    for i in vf_module.irange():
-                        indk = list(ind)
-                        indk[k] = i
-                        rsum += tc[[indk]].coord_function(chart) * \
-                                vc[[i]].coord_function(chart).diff(ind[k])
-                resc[[ind]] = rsum.scalar_field()
+                        rsum += vc[[i]].coord_function(chart) * \
+                               tc[[ind]].coord_function(chart).diff(i)
+                    # loop on contravariant indices:
+                    for k in range(n_con):
+                        for i in vf_module.irange():
+                            indk = list(ind)
+                            indk[k] = i
+                            rsum -= tc[[indk]].coord_function(chart) * \
+                                    vc[[ind[k]]].coord_function(chart).diff(i)
+                    # loop on covariant indices:
+                    for k in range(n_con, self._tensor_rank):
+                        for i in vf_module.irange():
+                            indk = list(ind)
+                            indk[k] = i
+                            rsum += tc[[indk]].coord_function(chart) * \
+                                    vc[[i]].coord_function(chart).diff(ind[k])
+                    resc[[ind]] = rsum.scalar_field()
+
+
             #
             # 3/ Final result (the tensor)
             res = vf_module.tensor_from_comp(self._tensor_type, resc)
@@ -1266,30 +1348,30 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
                 raise ValueError("the argument 'dest_map' is not compatible " +
                                  "with the ambient domain of " +
                                  "the {}".format(self))
-            #!# First one tries to derive the restriction from a tighter domain:
-            #for dom, rst in self._restrictions.items():
-            #    if subdomain.is_subset(dom):
-            #        self._restrictions[subdomain] = rst.restrict(subdomain)
-            #        break
+            # First one tries to derive the restriction from a tighter domain:
+            for dom, rst in self._restrictions.items():
+                if subdomain.is_subset(dom):
+                    self._restrictions[subdomain] = rst.restrict(subdomain)
+                    break
             # If this fails, the restriction is created from scratch:
-            #else:
-            smodule = subdomain.vector_field_module(dest_map=dest_map)
-            resu = smodule.tensor(self._tensor_type, name=self._name,
-                                  latex_name=self._latex_name, sym=self._sym,
-                                  antisym=self._antisym,
-                                  specific_type=type(self))
-            for frame in self._components:
-                for sframe in subdomain._covering_frames:
-                    if sframe in frame._subframes:
-                        comp_store = self._components[frame]._comp
-                        scomp = resu._new_comp(sframe)
-                        scomp_store = scomp._comp
-                        # the components of the restriction are evaluated
-                        # index by index:
-                        for ind, value in comp_store.items():
-                            scomp_store[ind] = value.restrict(subdomain)
-                        resu._components[sframe] = scomp
-            self._restrictions[subdomain] = resu
+            else:
+                smodule = subdomain.vector_field_module(dest_map=dest_map)
+                resu = smodule.tensor(self._tensor_type, name=self._name,
+                                      latex_name=self._latex_name, sym=self._sym,
+                                      antisym=self._antisym,
+                                      specific_type=type(self))
+                for frame in self._components:
+                    for sframe in subdomain._covering_frames:
+                        if sframe in frame._subframes:
+                            comp_store = self._components[frame]._comp
+                            scomp = resu._new_comp(sframe)
+                            scomp_store = scomp._comp
+                            # the components of the restriction are evaluated
+                            # index by index:
+                            for ind, value in comp_store.items():
+                                scomp_store[ind] = value.restrict(subdomain)
+                            resu._components[sframe] = scomp
+                self._restrictions[subdomain] = resu
         return self._restrictions[subdomain]
 
     def __call__(self, *args):
@@ -1786,4 +1868,3 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             for ind, val in comp._comp.items():
                 comp_resu._comp[ind] = val(point)
         return resu
-

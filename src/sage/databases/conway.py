@@ -19,13 +19,15 @@ Frank Luebeck's tables of Conway polynomials over finite fields
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from six import itervalues
+from six import itervalues, iteritems
+from six.moves import cPickle as pickle
 
-import collections, os
+import collections
+import os
 
 from sage.env import CONWAY_POLYNOMIALS_DATA_DIR
 
-_CONWAYDATA = os.path.join(CONWAY_POLYNOMIALS_DATA_DIR, 'conway_polynomials.sobj')
+_CONWAYDATA = os.path.join(CONWAY_POLYNOMIALS_DATA_DIR, 'conway_polynomials.p')
 _conwaydict = None
 
 class DictInMapping(collections.Mapping):
@@ -91,6 +93,7 @@ class DictInMapping(collections.Mapping):
         """
         return repr(self._store)
 
+
 class ConwayPolynomials(collections.Mapping):
     def __init__(self):
         """
@@ -106,9 +109,9 @@ class ConwayPolynomials(collections.Mapping):
         if _conwaydict is None:
             if not os.path.exists(_CONWAYDATA):
                 raise RuntimeError('In order to initialize the database, '
-                        + '%s must exist.'%_CONWAYDATA)
-            from sage.structure.sage_object import load
-            _conwaydict = load(_CONWAYDATA)
+                        + '%s must exist.' % _CONWAYDATA)
+            with open(_CONWAYDATA, 'rb') as f:
+                _conwaydict = pickle.load(f)
         self._store = _conwaydict
 
     def __repr__(self):
@@ -181,9 +184,9 @@ class ConwayPolynomials(collections.Mapping):
             sage: next(itr)
             (2, 1)
         """
-        for a,b in self._store.iteritems():
+        for a, b in iteritems(self._store):
             for c in b:
-                yield a,c
+                yield a, c
 
     def polynomial(self, p, n):
         """

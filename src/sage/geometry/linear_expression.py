@@ -36,8 +36,10 @@ add them and multiply them with scalars::
     sage: m-m
     0*x + 0*y + 0*z + 0
 """
+from six.moves import zip
 
 from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
 from sage.structure.element import ModuleElement
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
@@ -263,8 +265,8 @@ class LinearExpression(ModuleElement):
             '0'
         """
         atomic_repr = self.parent().base_ring()._repr_option('element_is_atomic')
-        names = [multiplication+n for n in self.parent()._names]
-        terms = zip(self._coeffs, names)
+        names = [multiplication + n for n in self.parent()._names]
+        terms = list(zip(self._coeffs, names))
         if include_constant:
             terms += [(self._const, '')]
         if not include_zero:
@@ -389,7 +391,7 @@ class LinearExpression(ModuleElement):
         """
         return hash(self._coeffs) ^ hash(self._const)
 
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         """
         Compare two linear expressions.
 
@@ -416,8 +418,8 @@ class LinearExpression(ModuleElement):
             sage: x == 'test'
             False
         """
-        assert type(self) is type(other) and self.parent() is other.parent()  # guaranteed by framework
-        return cmp(self._coeffs, other._coeffs) or cmp(self._const, other._const)
+        return richcmp((self._coeffs, self._const),
+                (other._coeffs, other._const), op)
 
     def evaluate(self, point):
         """
@@ -588,21 +590,21 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: from sage.geometry.linear_expression import LinearExpressionModule
             sage: L = LinearExpressionModule(QQ, ('x', 'y', 'z'))
 
-        Construct from coeffients and constant term::
+        Construct from coefficients and constant term::
 
-            sage: L._element_constructor([1, 2, 3], 4)
+            sage: L._element_constructor_([1, 2, 3], 4)
             x + 2*y + 3*z + 4
-            sage: L._element_constructor(vector(ZZ, [1, 2, 3]), 4)
+            sage: L._element_constructor_(vector(ZZ, [1, 2, 3]), 4)
             x + 2*y + 3*z + 4
 
         Construct constant linear expression term::
 
-            sage: L._element_constructor(4)
+            sage: L._element_constructor_(4)
             0*x + 0*y + 0*z + 4
 
         Construct from list/tuple/iterable::
        
-            sage: L._element_constructor(vector([4, 1, 2, 3]))
+            sage: L._element_constructor_(vector([4, 1, 2, 3]))
             x + 2*y + 3*z + 4
 
         Construct from a pair ``(coefficients, constant)``::
@@ -614,7 +616,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
 
             sage: M = LinearExpressionModule(ZZ, ('u', 'v', 'w'))
             sage: m = M([1, 2, 3], 4)
-            sage: L._element_constructor(m)
+            sage: L._element_constructor_(m)
             x + 2*y + 3*z + 4
         """
         R = self.base_ring()
@@ -639,7 +641,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
                 const = arg0[0]
                 coeffs = arg0[1:]
         else:
-            # arg1 is not None, construct from coeffients and constant term
+            # arg1 is not None, construct from coefficients and constant term
             coeffs = list(arg0)
             const = arg1
         coeffs = self.ambient_module()(coeffs)
@@ -731,13 +733,13 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: L.<x> = LinearExpressionModule(QQ)
             sage: M.<y> = LinearExpressionModule(ZZ)
             sage: L.coerce_map_from(M)
-            Conversion map:
+            Coercion map:
               From: Module of linear expressions in variable y over Integer Ring
               To:   Module of linear expressions in variable x over Rational Field
             sage: M.coerce_map_from(L)
 
             sage: M.coerce_map_from(ZZ)
-            Conversion map:
+            Coercion map:
               From: Integer Ring
               To:   Module of linear expressions in variable y over Integer Ring
             sage: M.coerce_map_from(QQ)

@@ -37,6 +37,11 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
         ...
         RuntimeError: exponent must be at most 2147483647            # 32-bit
         RuntimeError: exponent must be at most 9223372036854775807   # 64-bit
+
+    See :trac:`22319`::
+
+        sage: a^pari(10)
+        10000000000
     """
     if isinstance(x, int):
         return PyInt_AS_LONG(x)

@@ -19,7 +19,6 @@ from .generating_series import _integers_from
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.all import ZZ
 from sage.arith.all import divisors, euler_phi
-from sage.misc.cachefunc import cached_function
 from sage.combinat.species.misc import accept_size
 
 class CycleSpeciesStructure(GenericSpeciesStructure):

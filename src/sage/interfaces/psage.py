@@ -67,7 +67,15 @@ class PSage(Sage):
         self._number = number
         number += 1
 
-    def __repr__(self):
+    def _repr_(self):
+        """
+        TESTS::
+
+            sage: from sage.interfaces.psage import PSage
+            sage: PSage()                                   # indirect doctest
+            A running non-blocking (parallel) instance of Sage (number ...)
+
+        """
         return 'A running non-blocking (parallel) instance of Sage (number %s)'%(self._number)
 
     def _unlock(self):

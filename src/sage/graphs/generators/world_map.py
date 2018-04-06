@@ -30,7 +30,7 @@ def WorldMap():
     equal to a dictionary containing the GPS coordinates
     of each country's capital city.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: g=graphs.WorldMap()
         sage: g.has_edge("France","Italy")

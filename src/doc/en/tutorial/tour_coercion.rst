@@ -56,7 +56,7 @@ providing different implementations of the same mathematical structure
     sage: R.<c> = PolynomialRing(ZZ, implementation='NTL')
     sage: type(a); type(b); type(c)
     <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
-    <class 'sage.rings.polynomial.polynomial_element_generic.PolynomialRing_integral_domain_with_category.element_class'>
+    <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category.element_class'>
     <type 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
 
 That poses two problems: On the one hand, if one has elements that are
@@ -392,7 +392,7 @@ example:
     sage: x+y
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+    TypeError: unsupported operand parent(s) for +: 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
 
 The reason is that Sage would not choose one of the potential
 candidates ``QQ['x']['y']``, ``QQ['y']['x']``, ``QQ['x','y']`` or

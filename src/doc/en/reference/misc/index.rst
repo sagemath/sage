@@ -35,7 +35,6 @@ Special Base Classes, Decorators, etc.
    sage/misc/decorators
    sage/misc/constant_function
    sage/misc/classcall_metaclass
-   sage/misc/cython_metaclass
    sage/misc/inherit_comparison
    sage/misc/method_decorator
    sage/misc/object_multiplexer
@@ -51,7 +50,6 @@ Lists and Iteration, etc.
    sage/misc/converting_dict
    sage/misc/flatten
    sage/misc/search
-   sage/misc/sage_itertools
    sage/misc/mrange
    sage/misc/multireplace
    sage/misc/map_threaded
@@ -154,7 +152,6 @@ Code Evaluation
 .. toctree::
    :maxdepth: 1
 
-   sage/misc/cython_c
    sage/misc/cython
    sage/misc/inline_fortran
    sage/misc/parser
@@ -277,6 +274,7 @@ Miscellaneous Inspection and Development Tools
 .. toctree::
    :maxdepth: 1
 
+   sage/docs/instancedoc
    sage/misc/sageinspect
    sage/misc/edit_module
    sage/misc/getusage

@@ -35,8 +35,8 @@ Fedora
     ``sudo yum install git-core``
 
 Windows
-    Download and install `msysGit
-    <http://code.google.com/p/msysgit/downloads/list>`_
+    Download and install `Git for Windows
+    <https://github.com/git-for-windows/git/releases/latest>`_
 
 OS X
     Use the `git OSX installer

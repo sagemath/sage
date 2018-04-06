@@ -35,7 +35,7 @@ nonsense. Here are some examples::
     sage: GF(5)(1) + CC(I)
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Finite Field of size 5' and 'Complex Field with 53 bits of precision'
+    TypeError: unsupported operand parent(s) for +: 'Finite Field of size 5' and 'Complex Field with 53 bits of precision'
 
 Parents and Elements
 ~~~~~~~~~~~~~~~~~~~~
@@ -88,10 +88,10 @@ to be able to reason with them, so their type is used instead::
 
     sage: a = int(10)
     sage: parent(a)
-    <type 'int'>
+    <... 'int'>
 
 In fact, under the hood, a special kind of parent "The set of all
-Python objects of type T" is used in these cases.
+Python objects of class T" is used in these cases.
 
 Note that parents are **not** always as tight as possible.
 
@@ -222,11 +222,11 @@ be obtained and queried.
 
     sage: cm.explain(ZZ['x','y'], QQ['x'])
     Coercion on left operand via
-       Conversion map:
+       Coercion map:
          From: Multivariate Polynomial Ring in x, y over Integer Ring
          To:   Multivariate Polynomial Ring in x, y over Rational Field
     Coercion on right operand via
-       Conversion map:
+       Coercion map:
          From: Univariate Polynomial Ring in x over Rational Field
          To:   Multivariate Polynomial Ring in x, y over Rational Field
     Arithmetic performed after coercions.
@@ -257,7 +257,7 @@ discovered between steps 1 and 2 above.
     Result lives in Univariate Polynomial Ring in x over Integer Ring
     Univariate Polynomial Ring in x over Integer Ring
 
-    sage: cm.explain(ZZ['x'], ZZ, operator.div)
+    sage: cm.explain(ZZ['x'], ZZ, operator.truediv)
     Action discovered.
        Right inverse action by Rational Field on Univariate Polynomial Ring in x over Integer Ring
        with precomposition on right by Natural morphism:
@@ -277,19 +277,19 @@ copy should be used instead (unless one knows what one is doing)::
     sage: QQ._internal_coerce_map_from(int)
     (map internal to coercion system -- copy before use)
     Native morphism:
-      From: Set of Python objects of type 'int'
+      From: Set of Python objects of class 'int'
       To:   Rational Field
     sage: copy(QQ._internal_coerce_map_from(int))
     Native morphism:
-     From: Set of Python objects of type 'int'
-     To:   Rational Field
+      From: Set of Python objects of class 'int'
+      To:   Rational Field
 
 Note that the user-visible method (without underscore) automates this copy::
 
     sage: copy(QQ.coerce_map_from(int))
     Native morphism:
-     From: Set of Python objects of type 'int'
-     To:   Rational Field
+      From: Set of Python objects of class 'int'
+      To:   Rational Field
 
 ::
 
@@ -487,7 +487,7 @@ That's all there is to it. Now we can test it out:
     sage: R(1/2) + 1/7
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Integer Ring localized at [2]' and 'Rational Field'
+    TypeError: unsupported operand parent(s) for +: 'Integer Ring localized at [2]' and 'Rational Field'
     sage: R(3/4) * 7
     LocalElt(21/4)
 

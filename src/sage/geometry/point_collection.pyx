@@ -78,7 +78,7 @@ need to spend time and memory four times.
 from __future__ import print_function
 
 from sage.structure.sage_object cimport SageObject
-from sage.structure.sage_object cimport richcmp_not_equal, richcmp
+from sage.structure.richcmp cimport richcmp_not_equal, richcmp
 
 from sage.matrix.all import matrix
 from sage.misc.all import latex
@@ -797,8 +797,8 @@ cdef class PointCollection(SageObject):
         """
         return self._module
 
-    @classmethod    # @staticmethod does not work in Cython so far
-    def output_format(cls, format=None):
+    @staticmethod
+    def output_format(format=None):
         r"""
         Return or set the output format for **ALL** point collections.
 

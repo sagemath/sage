@@ -295,7 +295,8 @@ class LatinSquare:
             sage: L = LatinSquare(matrix(ZZ, [[0, 1], [2, 3]]))
             sage: L.set_immutable()
             sage: L.__hash__()
-            12
+            1677951251422179082  # 64-bit
+            -479138038           # 32-bit
         """
         return hash(self.square)
 
@@ -441,7 +442,7 @@ class LatinSquare:
            right of self, and that the used symbols are in the range
            {0, 1, ..., m} (no holes in that list).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.combinat.matrices.latin import *
             sage: B = back_circulant(3)
@@ -503,7 +504,7 @@ class LatinSquare:
         Returns the number of distinct symbols in the partial latin square
         self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.combinat.matrices.latin import *
             sage: back_circulant(5).nr_distinct_symbols()
@@ -2533,7 +2534,7 @@ def tau_to_bitrade(t1, t2, t3):
     convert them to an explicit latin bitrade (T1, T2). The result is
     unique up to isotopism.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.matrices.latin import *
         sage: T1 = back_circulant(5)

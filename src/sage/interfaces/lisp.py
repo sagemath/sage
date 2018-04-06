@@ -56,6 +56,8 @@ import random
 
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
 from sage.structure.element import RingElement, parent
+from sage.docs.instancedoc import instancedoc
+
 
 class Lisp(Expect):
     def __init__(self,
@@ -111,7 +113,7 @@ class Lisp(Expect):
             sage: lisp.eval('(+ 2 2)')
             '4'
 
-        TEST:
+        TESTS:
 
         Verify that it works when input == output::
 
@@ -156,7 +158,7 @@ class Lisp(Expect):
             sage: lisp.get('x')
             '2'
 
-        TEST:
+        TESTS:
 
         It must also be possible to eval the variable by name::
 
@@ -383,6 +385,7 @@ class Lisp(Expect):
 
 
 # Inherit from RingElement to make __pow__ work
+@instancedoc
 class LispElement(RingElement, ExpectElement):
     def __cmp__(self, other):
         """
@@ -481,13 +484,15 @@ class LispElement(RingElement, ExpectElement):
         """
         return RingElement.__pow__(self, n)
 
+
+@instancedoc
 class LispFunctionElement(FunctionElement):
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         EXAMPLES::
 
             sage: two = lisp(2)
-            sage: two.sin._sage_doc_()
+            sage: two.sin.__doc__
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -496,12 +501,13 @@ class LispFunctionElement(FunctionElement):
         return M.help(self._name)
 
 
+@instancedoc
 class LispFunction(ExpectFunction):
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         EXAMPLES::
 
-            sage: lisp.sin._sage_doc_()
+            sage: lisp.sin.__doc__
             Traceback (most recent call last):
             ...
             NotImplementedError

@@ -4,6 +4,7 @@ from sage.rings.integer cimport Integer
 
 cdef class PowComputer_class(SageObject):
     cdef Integer prime
+    cdef Integer p2 # floor(p/2)
     cdef bint in_field
     cdef int __allocated
     cdef public object _prec_type
@@ -19,7 +20,7 @@ cdef class PowComputer_class(SageObject):
 
     cdef Integer pow_Integer(self, long n)
     cdef mpz_srcptr pow_mpz_t_top(self)
-    cdef mpz_srcptr pow_mpz_t_tmp(self, unsigned long n)
+    cdef mpz_srcptr pow_mpz_t_tmp(self, long n) except NULL
     cdef mpz_t temp_m
 
 cdef class PowComputer_base(PowComputer_class):

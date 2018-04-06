@@ -135,11 +135,8 @@ from .monomials import monomials
 CC = ComplexField()
 CIF = ComplexIntervalField()
 
-from .misc import composite_field
-
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.rings.invariant_theory', 'invariant_theory')
-lazy_import('sage.arith.all', '*', deprecation=19879)
 
 from .fast_arith import prime_range
 

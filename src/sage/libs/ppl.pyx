@@ -82,7 +82,7 @@ documentation, in particular:
       5
 
 * PPL supports (topologically) closed polyhedra
-  (:class:`C_Polyhedron`) as well as not neccesarily closed polyhedra
+  (:class:`C_Polyhedron`) as well as not necessarily closed polyhedra
   (:class:`NNC_Polyhedron`). Only the latter allows closure points
   (=points of the closure but not of the actual polyhedron) and strict
   inequalities (``>`` and ``<``)
@@ -102,7 +102,7 @@ Finally, PPL is fast. For example, here is the permutahedron of 5
 basis vectors::
 
     sage: from sage.libs.ppl import Variable, Generator_System, point, C_Polyhedron
-    sage: basis = range(0,5)
+    sage: basis = list(range(5))
     sage: x = [ Variable(i) for i in basis ]
     sage: gs = Generator_System();
     sage: for coeff in Permutations(basis):
@@ -115,7 +115,7 @@ measures it to be 90 microseconds on sage.math). Below we do the same
 computation with cddlib, which needs more than 3 seconds on the same
 hardware::
 
-    sage: basis = range(0,5)
+    sage: basis = list(range(5))
     sage: gs = [ tuple(coeff) for coeff in Permutations(basis) ]
     sage: Polyhedron(vertices=gs, backend='cdd')  # long time (3s on sage.math, 2011)
     A 4-dimensional polyhedron in QQ^5 defined as the convex hull of 120 vertices
@@ -150,15 +150,16 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.structure.sage_object cimport SageObject
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmpxx cimport mpz_class
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 
-include "cysignals/signals.pxi"
-
 from libcpp cimport bool as cppbool
+from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 ####################################################
 # Potentially expensive operations:
@@ -2702,7 +2703,7 @@ cdef class Polyhedron(_mutable_or_immutable):
 
         .. NOTE::
 
-            The modified polyhedron is not neccessarily a lattice
+            The modified polyhedron is not necessarily a lattice
             polyhedron; Some vertices will, in general, still be
             rational. Lattice points interior to the polyhedron may be
             lost in the process.
@@ -3131,17 +3132,17 @@ cdef class Polyhedron(_mutable_or_immutable):
         """
         cdef result
         sig_on()
-        if op==0:      # <   0
+        if op == Py_LT:
             result = rhs.strictly_contains(lhs)
-        elif op==1:    # <=  1
+        elif op == Py_LE:
             result = rhs.contains(lhs)
-        elif op==2:    # ==  2
+        elif op == Py_EQ:
             result = (lhs.thisptr[0] == rhs.thisptr[0])
-        elif op==4:    # >   4
+        elif op == Py_GT:
             result = lhs.strictly_contains(rhs)
-        elif op==5:    # >=  5
+        elif op == Py_GE:
             result = lhs.contains(rhs)
-        elif op==3:    # !=  3
+        elif op == Py_NE:
             result = (lhs.thisptr[0] != rhs.thisptr[0])
         else:
             assert False  # unreachable
@@ -4314,7 +4315,7 @@ cdef class Linear_Expression(object):
         - ``self``, ``other`` -- anything that can be used to
           construct a :class:`Linear_Expression`. One of them, not
           necessarily ``self``, is guaranteed to be a
-          :class:``Linear_Expression``, otherwise Python would not
+          :class:`Linear_Expression`, otherwise Python would not
           have called this method.
 
         OUTPUT:
@@ -4345,7 +4346,7 @@ cdef class Linear_Expression(object):
         - ``self``, ``other`` -- anything that can be used to
           construct a :class:`Linear_Expression`. One of them, not
           necessarily ``self``, is guaranteed to be a
-          :class:``Linear_Expression``, otherwise Python would not
+          :class:`Linear_Expression`, otherwise Python would not
           have called this method.
 
         OUTPUT:
@@ -4376,7 +4377,7 @@ cdef class Linear_Expression(object):
         - ``self``, ``other`` -- anything that can be used to
           construct a :class:`Linear_Expression`. One of them, not
           necessarily ``self``, is guaranteed to be a
-          :class:``Linear_Expression``, otherwise Python would not
+          :class:`Linear_Expression`, otherwise Python would not
           have called this method.
 
         OUTPUT:
@@ -5655,17 +5656,17 @@ cdef _wrap_Constraint(PPL_Constraint constraint):
 cdef _make_Constraint_from_richcmp(lhs_, rhs_, op):
     cdef Linear_Expression lhs = Linear_Expression(lhs_)
     cdef Linear_Expression rhs = Linear_Expression(rhs_)
-    if op==0:      # <   0
+    if op == Py_LT:
         return _wrap_Constraint(lhs.thisptr[0] <  rhs.thisptr[0])
-    elif op==1:    # <=  1
+    elif op == Py_LE:
         return _wrap_Constraint(lhs.thisptr[0] <= rhs.thisptr[0])
-    elif op==2:    # ==  2
+    elif op == Py_EQ:
         return _wrap_Constraint(lhs.thisptr[0] == rhs.thisptr[0])
-    elif op==4:    # >   4
+    elif op == Py_GT:
         return _wrap_Constraint(lhs.thisptr[0] >  rhs.thisptr[0])
-    elif op==5:    # >=  5
+    elif op == Py_GE:
         return _wrap_Constraint(lhs.thisptr[0] >= rhs.thisptr[0])
-    elif op==3:    # !=  3
+    elif op == Py_NE:
         raise NotImplementedError
     else:
         assert(False)

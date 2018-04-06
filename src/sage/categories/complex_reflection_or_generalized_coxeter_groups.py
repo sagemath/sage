@@ -69,8 +69,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
     - :meth:`ComplexReflectionOrGeneralizedCoxeterGroups.ElementMethods.apply_simple_reflection_right`
     - :meth:`ComplexReflectionOrGeneralizedCoxeterGroups.ElementMethods._mul_`
 
-    It's recommended to implement either `_mul` or both
-    `apply_simple_reflection_left` and `apply_simple_reflection_right`.
+    It's recommended to implement either ``_mul_`` or both
+    ``apply_simple_reflection_left`` and ``apply_simple_reflection_right``.
 
     .. SEEALSO::
 
@@ -120,8 +120,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             is *reducible* if its simple reflections can be split in
             two sets `X` and `Y` such that the elements of `X` commute
             with that of `Y`. In particular, the group is then direct
-            product of `\langle X\rangle` and `\langle Y\rangle`. It's
-            *irreducible* otherwise.
+            product of `\langle X \rangle` and `\langle Y \rangle`.
+            It's *irreducible* otherwise.
 
             EXAMPLES::
 
@@ -208,8 +208,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
         @cached_method
         def simple_reflections(self):
             r"""
-            Return the simple reflections `(s_i)_{i\in I}` of ``self`` as a family
-            indexed by :meth:`index_set`.
+            Return the simple reflections `(s_i)_{i\in I}` of ``self`` as
+            a family indexed by :meth:`index_set`.
 
             .. SEEALSO::
 
@@ -464,7 +464,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             .. SEEALSO::
 
                 - :meth:`reflection`
-                - :meth:`reflections_index_set`
+                - :meth:`reflection_index_set`
 
             EXAMPLES::
 
@@ -663,7 +663,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             .. SEEALSO::
 
                 - :meth:`index_set`
-                - :meth:`reflections_index_set`
+                - :meth:`reflection_index_set`
                 - :meth:`hyperplane_index_set`
                 - :meth:`~ComplexReflectionOrGeneralizedCoxeterGroups.ElementMethods.apply_simple_reflections`
                 - :meth:`~CoxeterGroup.ElementMethods.reduced_word`
@@ -738,9 +738,9 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             ALGORITHM:
 
-                Take the connected components of the graph on the
-                index set with edges (i,j) where s[i] and s[j] don't
-                commute.
+            Take the connected components of the graph on the
+            index set with edges ``(i,j)``, where ``s[i]`` and
+            ``s[j]`` do not commute.
             """
             I = self.index_set()
             s = self.simple_reflections()

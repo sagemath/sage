@@ -116,7 +116,9 @@ from __future__ import print_function
 from sage.misc.all import latex
 
 from sage.structure.element import AdditiveGroupElement
+from sage.structure.richcmp import richcmp, op_NE
 from sage.schemes.generic.morphism import SchemeMorphism
+
 
 def cantor_reduction_simple(a, b, f, genus):
     r"""
@@ -578,7 +580,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         """
         return list(self.__polys)[n]
 
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         r"""
         Compare self and other.
 
@@ -630,16 +632,11 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: P1 == P2
             False
         """
-        if not isinstance(other, JacobianMorphism_divisor_class_field):
-            try:
-                other = self.parent()(other)
-            except TypeError:
-                return -1
         if self.scheme() != other.scheme():
-            return -1
+            return op == op_NE
         # since divisors are internally represented as Mumford divisors,
         # comparing polynomials is well-defined
-        return cmp(self.__polys, other.__polys)
+        return richcmp(self.__polys, other.__polys, op)
 
     def __bool__(self):
         r"""

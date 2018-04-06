@@ -108,7 +108,6 @@ coordinates where the codomain is not implemented as a toric variety::
 
 from sage.categories.finite_fields import FiniteFields
 from sage.rings.all import ZZ
-from sage.rings.morphism import is_RingHomomorphism
 
 from sage.matrix.matrix import is_Matrix
 from sage.matrix.matrix_space import MatrixSpace
@@ -253,7 +252,10 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
         if isinstance(x, (list, tuple)):
             return SchemeMorphism_polynomial_toric_variety(self, x, check=check)
 
-        if is_RingHomomorphism(x):
+        from sage.categories.map import Map
+        from sage.categories.all import Rings
+        if isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
+            # x is a morphism of Rings
             assert x.domain() is self.codomain().coordinate_ring()
             assert x.codomain() is self.domain().coordinate_ring()
             return SchemeMorphism_polynomial_toric_variety(self, x.im_gens(), check=check)

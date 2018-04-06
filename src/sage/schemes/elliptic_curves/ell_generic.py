@@ -43,8 +43,8 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six import integer_types
 
 import math
 
@@ -647,7 +647,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - John Cremona (2008-08-07): adapted from lift_x()
 
-        TEST::
+        TESTS::
 
             sage: E=EllipticCurve('5077a1')
             sage: [x for x in srange(-10,10) if E.is_x_coord (x)]
@@ -757,7 +757,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - Robert Bradshaw (2007-04-24)
 
-        TEST::
+        TESTS::
 
             sage: E = EllipticCurve('37a').short_weierstrass_model().change_ring(GF(17))
             sage: E.lift_x(3, all=True)
@@ -1361,8 +1361,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.scale_curve(u)
             Elliptic Curve defined by y^2 + u*x*y + 3*u^3*y = x^3 + 2*u^2*x^2 + 4*u^4*x + 5*u^6 over Fraction Field of Univariate Polynomial Ring in u over Rational Field
         """
-        if isinstance(u, (int,long)):
-            u=self.base_ring()(u)       # because otherwise 1/u would round!
+        if isinstance(u, integer_types):
+            u = self.base_ring()(u)     # because otherwise 1/u would round!
         return self.change_weierstrass_model(1/u,0,0,0)
 
     def discriminant(self):
@@ -2518,7 +2518,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: plot(E, xmin=25,xmax=26)
             Graphics object consisting of 2 graphics primitives
 
-        With #12766 we added the components keyword::
+        With :trac:`12766` we added the components keyword::
 
             sage: E.real_components()
             2
@@ -2889,7 +2889,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve([RR(0), RR(0), RR(1), RR(-1), RR(0)])
             sage: e = E.pari_curve()
             sage: type(e)
-            <type 'sage.libs.cypari2.gen.gen'>
+            <type 'cypari2.gen.Gen'>
             sage: e.type()
             't_VEC'
             sage: e.disc()
@@ -2929,7 +2929,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
     # This method is defined so that pari(E) returns exactly the same
     # as E.pari_curve().  This works even for classes that inherit from
     # EllipticCurve_generic, such as EllipticCurve_rational_field.
-    def _pari_(self):
+    def __pari__(self):
         """
         Return the PARI curve corresponding to this elliptic curve
         with the default precision of 64 bits.
@@ -2942,7 +2942,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         Over a finite field::
 
-            sage: EllipticCurve(GF(2), [0,0,1,1,1])._pari_()
+            sage: EllipticCurve(GF(2), [0,0,1,1,1]).__pari__()
             [0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, Vecsmall([4]), [1, [[Vecsmall([0, 1]), Vecsmall([0, 1]), Vecsmall([0, 1])], Vecsmall([0, 1]), [Vecsmall([0, 1]), Vecsmall([0]), Vecsmall([0]), Vecsmall([0])]]], [0, 0, 0, 0]]
         """
         return self.pari_curve()

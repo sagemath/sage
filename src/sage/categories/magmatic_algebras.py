@@ -19,6 +19,9 @@ from sage.categories.magmas import Magmas
 from sage.categories.additive_magmas import AdditiveMagmas
 from sage.categories.modules import Modules
 
+import six
+
+
 class MagmaticAlgebras(Category_over_base_ring):
     """
     The category of algebras over a given base ring.
@@ -215,5 +218,5 @@ class MagmaticAlgebras(Category_over_base_ring):
 
                 """
                 return self.linear_combination( ( self.product_on_basis( mon_left, mon_right ), coeff_left * coeff_right )
-                                                  for ( mon_left, coeff_left ) in left.monomial_coefficients().iteritems()
-                                                  for ( mon_right, coeff_right ) in right.monomial_coefficients().iteritems() )
+                                                  for ( mon_left, coeff_left ) in six.iteritems(left.monomial_coefficients())
+                                                  for ( mon_right, coeff_right ) in six.iteritems(right.monomial_coefficients()) )

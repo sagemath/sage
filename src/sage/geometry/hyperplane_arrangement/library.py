@@ -34,7 +34,7 @@ def make_parent(base_ring, dimension, names=None):
 
     - ``base_ring`` -- a ring
 
-    - ``dimenison`` -- integer
+    - ``dimension`` -- integer
 
     - ``names`` -- ``None`` (default) or a list/tuple/iterable of
       strings

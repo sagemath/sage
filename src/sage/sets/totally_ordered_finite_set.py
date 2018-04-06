@@ -23,9 +23,11 @@ from __future__ import print_function
 
 from sage.structure.element import Element
 from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.categories.posets import Posets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+
 
 class TotallyOrderedFiniteSetElement(Element):
     """
@@ -85,13 +87,12 @@ class TotallyOrderedFiniteSetElement(Element):
         """
         return not (self == other)
 
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         r"""
         Comparison.
 
         For ``self`` and ``other`` that have the same parent the method compares
-        their rank. Otherwise, it compares their types as it is for the generic
-        comparison in :class:`sage.structure.element.Element`.
+        their rank.
 
         TESTS::
 
@@ -105,16 +106,9 @@ class TotallyOrderedFiniteSetElement(Element):
             sage: A(7) < A(2) or A(2) <= A(3) or A(2) < A(2)
             False
         """
-        try:
-            test = self.parent() == other.parent()
-        except AttributeError:
-            test = False
-        if not test:
-            return cmp(type(self),type(other))
-
         if self.value == other.value:
-            return 0
-        return cmp(self.rank(),other.rank())
+            return rich_to_bool(op, 0)
+        return richcmp(self.rank(), other.rank(), op)
 
     def _repr_(self):
         r"""
@@ -140,6 +134,7 @@ class TotallyOrderedFiniteSetElement(Element):
             'gaga'
         """
         return str(self.value)
+
 
 class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
     """
@@ -348,4 +343,3 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
             return self._elements.index(x) <= self._elements.index(y)
         except Exception:
             raise ValueError("arguments must be elements of the set")
-

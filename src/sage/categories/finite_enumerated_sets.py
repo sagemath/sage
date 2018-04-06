@@ -265,10 +265,10 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             - ``self.cardinality()``
             - ``self.unrank()``
 
-            .. seealso:: :meth:`_cardinality_from_list`,
+            .. SEEALSO:: :meth:`_cardinality_from_list`,
                 :meth:`_iterator_from_list`, and :meth:`_unrank_from_list`
 
-            .. warning::
+            .. WARNING::
 
                 The overriding of ``self.__iter__`` to use the cache
                 is ignored upon calls such as ``for x in C:`` or

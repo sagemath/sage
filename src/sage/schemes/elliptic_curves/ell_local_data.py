@@ -80,8 +80,6 @@ AUTHORS:
 - Chris Wuthrich: more documentation 2010-01
 
 """
-from __future__ import absolute_import
-
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -96,7 +94,8 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import absolute_import
+from six import integer_types
 
 from sage.structure.sage_object import SageObject
 from sage.misc.misc import verbose
@@ -269,9 +268,9 @@ class EllipticCurveLocalData(SageObject):
         if algorithm=="pari" and K is QQ:
             Eint = E.integral_model()
             data = Eint.pari_curve().elllocalred(p)
-            self._fp = data[0].python()
-            self._KS = KodairaSymbol(data[1].python())
-            self._cp = data[3].python()
+            self._fp = data[0].sage()
+            self._KS = KodairaSymbol(data[1].sage())
+            self._cp = data[3].sage()
             # We use a global minimal model since we can:
             self._Emin_reduced = Eint.minimal_model()
             self._val_disc = self._Emin_reduced.discriminant().valuation(p)
@@ -1111,6 +1110,8 @@ def check_prime(K,P):
         sage: from sage.schemes.elliptic_curves.ell_local_data import check_prime
         sage: check_prime(QQ,3)
         3
+        sage: check_prime(QQ,QQ(3))
+        3
         sage: check_prime(QQ,ZZ.ideal(31))
         31
         sage: K.<a>=NumberField(x^2-5)
@@ -1120,36 +1121,41 @@ def check_prime(K,P):
         Fractional ideal (a + 1)
         sage: [check_prime(K,P) for P in K.primes_above(31)]
         [Fractional ideal (5/2*a + 1/2), Fractional ideal (5/2*a - 1/2)]
+        sage: L.<b> = NumberField(x^2+3)
+        sage: check_prime(K, L.ideal(5))
+        Traceback (most recent call last):
+        ..
+        TypeError: The ideal Fractional ideal (5) is not a prime ideal of Number Field in a with defining polynomial x^2 - 5
+        sage: check_prime(K, L.ideal(b))
+        Traceback (most recent call last):
+        TypeError: No compatible natural embeddings found for Number Field in a with defining polynomial x^2 - 5 and Number Field in b with defining polynomial x^2 + 3
     """
     if K is QQ:
-        if isinstance(P, (int,long,Integer)):
+        if P in ZZ or isinstance(P, integer_types + (Integer,)):
             P = Integer(P)
             if P.is_prime():
                 return P
             else:
-                raise TypeError("%s is not prime"%P)
-        else:
-            if is_Ideal(P) and P.base_ring() is ZZ and P.is_prime():
+                raise TypeError("The element %s is not prime" % (P,) )
+        elif P in QQ:
+            raise TypeError("The element %s is not prime" % (P,) )
+        elif is_Ideal(P) and P.base_ring() is ZZ:
+            if P.is_prime():
                 return P.gen()
-        raise TypeError("%s is not a prime ideal of %s"%(P,ZZ))
+            else:
+                raise TypeError("The ideal %s is not a prime ideal of %s" % (P, ZZ))
+        else:
+            raise TypeError("%s is neither an element of QQ or an ideal of %s" % (P, ZZ))
 
     if not is_NumberField(K):
-        raise TypeError("%s is not a number field"%K)
+        raise TypeError("%s is not a number field" % (K,) )
 
-    if is_NumberFieldFractionalIdeal(P):
+    if is_NumberFieldFractionalIdeal(P) or P in K:
+        # if P is an ideal, making sure it is an fractional ideal of K
+        P = K.fractional_ideal(P)
         if P.is_prime():
             return P
         else:
-            raise TypeError("%s is not a prime ideal of %s"%(P,K))
+            raise TypeError("The ideal %s is not a prime ideal of %s" % (P, K))
 
-    if is_NumberFieldElement(P):
-        if P in K:
-            P = K.ideal(P)
-        else:
-            raise TypeError("%s is not an element of %s"%(P,K))
-        if P.is_prime():
-            return P
-        else:
-            raise TypeError("%s is not a prime ideal of %s"%(P,K))
-
-    raise TypeError("%s is not a valid prime of %s"%(P,K))
+    raise TypeError("%s is not a valid prime of %s" % (P, K))

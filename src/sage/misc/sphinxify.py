@@ -80,6 +80,10 @@ def sphinxify(docstring, format='html'):
     # buildername, confoverrides, status, warning, freshenv).
     confdir = os.path.join(SAGE_DOC_SRC, 'en', 'introspect')
 
+    open(os.path.join(srcdir, 'docutils.conf'), 'w').write(r"""
+[parsers]
+smart_quotes = no
+""")
     doctreedir = os.path.join(srcdir, 'doctrees')
     confoverrides = {'html_context': {}, 'master_doc': 'docstring'}
 

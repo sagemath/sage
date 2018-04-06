@@ -429,7 +429,7 @@ def mass_at_two_by_counting_mod_power(self, k):
 
         a rational number
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
         sage: Q.mass_at_two_by_counting_mod_power(1)

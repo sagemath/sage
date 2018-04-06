@@ -1,5 +1,11 @@
 """
-Standard C helper code for Cython modules
+Deprecated C helper code for Cython modules
+
+TESTS::
+
+    sage: cython('include "sage/ext/stdsage.pxi"')
+    doctest:...: DeprecationWarning: the file "stdsage.pxi" is deprecated, cimport the functions that you need
+    See http://trac.sagemath.org/23855 for details.
 """
 #*****************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
@@ -9,6 +15,10 @@ Standard C helper code for Cython modules
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
+from sage.misc.superseded import deprecation
+deprecation(23855, 'the file "stdsage.pxi" is deprecated, cimport the functions that you need')
+
 
 include "cysignals/memory.pxi"
 

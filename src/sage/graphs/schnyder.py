@@ -72,7 +72,7 @@ def _triangulate(g, comb_emb):
     # first make sure that the graph has at least 3 vertices, and that it is connected
     if g.order() < 3:
         raise ValueError("A Graph with less than 3 vertices doesn't have any triangulation.")
-    if g.is_connected() == False:
+    if not g.is_connected():
         raise NotImplementedError("_triangulate() only knows how to handle connected graphs.")
 
     if g.order() == 3 and len(g.edges()) == 2:             # if g is o--o--o
@@ -168,7 +168,7 @@ def _normal_label(g, comb_emb, external_face):
         True
         sage: faces = g.faces(g._embedding)
         sage: _triangulate(g, g._embedding)
-        [(2, 0), (4, 2), (6, 4), (5, 0), (3, 5), (1, 3), (4, 0), (3, 0)]
+        [(2, 0), (4, 2), (6, 4), (1, 3), (6, 1), (3, 5), (4, 0), (6, 3)]
         sage: tn = _normal_label(g, g._embedding, faces[0])
         sage: _realizer(g, tn)
         ({0: [<sage.graphs.schnyder.TreeNode instance at ...>]},
@@ -374,7 +374,7 @@ def _realizer(g, x, example=False):
         True
         sage: faces = g.faces(g._embedding)
         sage: _triangulate(g, g._embedding)
-        [(2, 0), (4, 2), (6, 4), (5, 0), (3, 5), (1, 3), (4, 0), (3, 0)]
+        [(2, 0), (4, 2), (6, 4), (1, 3), (6, 1), (3, 5), (4, 0), (6, 3)]
         sage: tn = _normal_label(g, g._embedding, faces[0])
         sage: _realizer(g, tn)
         ({0: [<sage.graphs.schnyder.TreeNode instance at ...>]},
@@ -461,12 +461,12 @@ def _compute_coordinates(g, x):
         True
         sage: faces = g.faces(g._embedding)
         sage: _triangulate(g, g._embedding)
-        [(2, 0), (4, 2), (6, 4), (5, 0), (3, 5), (1, 3), (4, 0), (3, 0)]
+        [(2, 0), (4, 2), (6, 4), (1, 3), (6, 1), (3, 5), (4, 0), (6, 3)]
         sage: tn = _normal_label(g, g._embedding, faces[0])
         sage: r = _realizer(g, tn)
         sage: _compute_coordinates(g,r)
         sage: g.get_pos()
-        {0: [5, 1], 1: [0, 5], 2: [1, 0], 3: [1, 4], 4: [2, 1], 5: [2, 3], 6: [3, 2]}
+        {0: [5, 1], 1: [0, 5], 2: [1, 0], 3: [1, 3], 4: [2, 1], 5: [2, 2], 6: [3, 2]}
     """
 
     tree_nodes, (v1, v2, v3) = x
@@ -571,7 +571,7 @@ class TreeNode():
         - ``children`` -- a list of TreeNode children of ``self``
         - ``label`` -- the associated realizer vertex label
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.graphs.schnyder import TreeNode
             sage: tn = TreeNode(label=5)

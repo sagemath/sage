@@ -129,7 +129,7 @@ cdef extern from "coin/OsiSolverInterface.hpp":
         void getBInvARow(int row, double* z, double * slack)
         void getBInvACol(int col, double* vec)
 
-        # Get indicies of basic variables
+        # Get indices of basic variables
         void getBasics(int* index)
 
         # Get objective coefficients

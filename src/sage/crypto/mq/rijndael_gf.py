@@ -422,6 +422,7 @@ Since ``expand_key_poly`` is not actually a
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, division
+from six import string_types
 
 from sage.matrix.constructor import matrix
 from sage.matrix.constructor import column_matrix
@@ -443,7 +444,7 @@ class RijndaelGF(SageObject):
         - ``Nb`` -- The block length of this instantiation. Must be between 4
           and 8.
 
-        - ``Nk`` -- The key length of this instantion. Must be between 4 and 8.
+        - ``Nk`` -- The key length of this instantiation. Must be between 4 and 8.
 
         - ``state_chr`` -- The variable name for polynomials representing
           elements from state matrices.
@@ -487,10 +488,10 @@ class RijndaelGF(SageObject):
         if Nk not in range(4, 9):
             msg = "Key length Nk must be in the range 4 - 8, not {0}"
             raise ValueError(msg.format(Nk))
-        if not isinstance(state_chr, basestring):
+        if not isinstance(state_chr, string_types):
             msg = "state_chr must be a string, not {0}"
             raise TypeError(msg.format(state_chr))
-        if not isinstance(key_chr, basestring):
+        if not isinstance(key_chr, string_types):
             msg = "key_chr must be a string, not {0}"
             raise TypeError(msg.format(key_chr))
 
@@ -707,8 +708,8 @@ class RijndaelGF(SageObject):
             sage: rgf._hex_to_GF('1a2b0f', matrix=False)
             [x^4 + x^3 + x, x^5 + x^3 + x + 1, x^3 + x^2 + x + 1]
         """
-        if not isinstance(H, basestring) or \
-           any([c not in '0123456789abcdefABCDEF' for c in H]):
+        if not isinstance(H, string_types) or \
+           any(c not in '0123456789abcdefABCDEF' for c in H):
             raise TypeError("keyword 'H' must be a hex string")
 
         def hx_to_gf(h):
@@ -835,8 +836,7 @@ class RijndaelGF(SageObject):
              x^7 + x^6 + x^4 + x^2 + x + 1,
              x^5 + x^4 + x^2 + 1]
         """
-        if not isinstance(B, basestring) or \
-           any([c not in '01' for c in B]):
+        if not isinstance(B, string_types) or any(c not in '01' for c in B):
             raise TypeError("keyword 'B' must be a binary string")
 
         def bn_to_gf(b):
@@ -953,14 +953,14 @@ class RijndaelGF(SageObject):
             True
         """
         if format == 'hex':
-            if not isinstance(plain, basestring) or \
-               any([c not in '0123456789abcdefABCDEF' for c in plain]):
+            if not isinstance(plain, string_types) or \
+               any(c not in '0123456789abcdefABCDEF' for c in plain):
                 raise TypeError("'plain' keyword must be a hex string")
             if len(plain) != 8 * self._Nb:
                 msg = "'plain' keyword\'s length must be {0}, not{1}"
                 raise ValueError(msg.format(8 * self._Nb, len(plain)))
-            if not isinstance(key, basestring) or \
-               any([c not in '0123456789abcdefABCDEF' for c in key]):
+            if not isinstance(key, string_types) or \
+               any(c not in '0123456789abcdefABCDEF' for c in key):
                 raise TypeError("'key' keyword must be a hex string")
             if len(key) != 8 * self._Nk:
                 msg = "'key' keyword's length must be {0}, not {1}"
@@ -969,14 +969,14 @@ class RijndaelGF(SageObject):
             key_state = self._hex_to_GF(key)
             roundKeys = self.expand_key(key_state)
         elif format == 'binary':
-            if not isinstance(plain, basestring) or \
-               any([c not in '01' for c in plain]):
+            if not isinstance(plain, string_types) or \
+               any(c not in '01' for c in plain):
                 raise TypeError("'plain' keyword must be a binary string")
             if len(plain) != 32 * self._Nb:
                 msg = "'plain' keyword's length must be {0}, not {1}"
                 raise ValueError(msg.format(32 * self._Nb, len(plain)))
-            if not isinstance(key, basestring) or \
-               any([c not in '01' for c in key]):
+            if not isinstance(key, string_types) or \
+               any(c not in '01' for c in key):
                 raise TypeError("'key' keyword must be a binary string")
             if len(key) != 32 * self._Nk:
                 msg = "'key' keyword's length must be {0}, not {1}"
@@ -1043,14 +1043,14 @@ class RijndaelGF(SageObject):
             True
         """
         if format == 'hex':
-            if not isinstance(ciphertext, basestring) or \
-               any([c not in '0123456789abcdefABCDEF' for c in ciphertext]):
+            if not isinstance(ciphertext, string_types) or \
+               any(c not in '0123456789abcdefABCDEF' for c in ciphertext):
                 raise TypeError("'ciphertext' keyword must be a hex string")
             if len(ciphertext) != 8 * self._Nb:
                 msg = "'ciphertext' keyword's length must be {0}, not{1}"
                 raise ValueError(msg.format(8 * self._Nb, len(ciphertext)))
-            if not isinstance(key, basestring) or \
-               any([c not in '0123456789abcdefABCDEF' for c in key]):
+            if not isinstance(key, string_types) or \
+               any(c not in '0123456789abcdefABCDEF' for c in key):
                 raise TypeError("'key' keyword must be a hex string")
             if len(key) != 8 * self._Nk:
                 msg = "'key' keyword's length must be {0}, not {1}"
@@ -1059,15 +1059,15 @@ class RijndaelGF(SageObject):
             key_state = self._hex_to_GF(key)
             roundKeys = self.expand_key(key_state)
         elif format == 'binary':
-            if not isinstance(ciphertext, basestring) or \
-               any([c not in '01' for c in ciphertext]):
+            if not isinstance(ciphertext, string_types) or \
+               any(c not in '01' for c in ciphertext):
                 raise TypeError(("'ciphertext' keyword must be a binary "
                                  "string"))
             if len(ciphertext) != 32 * self._Nb:
                 msg = "'ciphertext' keyword's length must be {0}, not {1}"
                 raise ValueError(msg.format(32 * self._Nb, len(ciphertext)))
-            if not isinstance(key, basestring) or \
-               any([c not in '01' for c in key]):
+            if not isinstance(key, string_types) or \
+               any(c not in '01' for c in key):
                 raise TypeError("'key' keyword must be a binary string")
             if len(key) != 32 * self._Nk:
                 msg = "'key' keyword\'s length must be {0}, not {1}"
@@ -1103,7 +1103,7 @@ class RijndaelGF(SageObject):
         - ``PRm`` -- If ``PRm`` is a `4 \times Nb` matrix with entries from
           the multivariate PolynomialRing ``_all_PR``, this method does nothing
           `\GF{2^8}`, this method does nothing. Otherwise, this method raises
-          an error. Note that a matrix of elements from `\GF(2^8)` is regarded
+          an error. Note that a matrix of elements from `\GF{2^8}` is regarded
           as a matrix with entries from ``_all_PR`` and will pass this test.
 
         - ``keyword`` -- The name of the keyword ``PRm`` from where this
@@ -1398,7 +1398,7 @@ class RijndaelGF(SageObject):
         if not isinstance(poly_constr, RijndaelGF.Round_Component_Poly_Constr):
             msg = "keyword 'poly_constr' must be a Round_Component_Poly_Constr"
             raise TypeError(msg)
-        if keys != None and (not isinstance(keys, list) or \
+        if keys is not None and (not isinstance(keys, list) or \
            len(keys) != self._Nr + 1 or \
            not all([isinstance(k, Matrix) for k in keys]) or \
            not all([k.dimensions() == (4, self._Nb) for k in keys]) or \
@@ -1409,7 +1409,7 @@ class RijndaelGF(SageObject):
             raise TypeError(msg.format(self._Nr, self._Nb, self._F))
 
         output = []
-        if keys != None:
+        if keys is not None:
             key_list = [el for inner in keys for el in inner.list()]
         for i in range(4):
             for j in range(self._Nb):
@@ -1420,13 +1420,13 @@ class RijndaelGF(SageObject):
                     p = poly_constr(i, j, algorithm, no_inversion=True)
                     p = p(state.list()) ** 254
                 else:
-                    if poly_constr_attr == None:
+                    if poly_constr_attr is None:
                         p = poly_constr(i, j, algorithm)
                     else:
                         p = poly_constr(i, j, algorithm, **poly_constr_attr)
                     # If there are key variables in the polynomial
                     if len(p.args()) > 4 * self._Nb:
-                        if keys != None:
+                        if keys is not None:
                             p = p(state.list() + key_list)
                         else:
                             p = p(state.list() + self.subkey_vrs_list)
@@ -1556,9 +1556,9 @@ class RijndaelGF(SageObject):
             msg = ("keyword 'g' must be a Round_Component_Poly_Constr or a "
                    "polynomial over {0}")
             raise TypeError(msg.format(self._F))
-        if f_attr != None and not isinstance(f_attr, dict):
+        if f_attr is not None and not isinstance(f_attr, dict):
             raise TypeError("f_attr must be a dictionary of keywords for f")
-        if g_attr != None and not isinstance(g_attr, dict):
+        if g_attr is not None and not isinstance(g_attr, dict):
             raise TypeError("g_attr must be a dictionary of keywords for g")
 
         if g in self._all_PR:
@@ -2276,7 +2276,7 @@ class RijndaelGF(SageObject):
             self._polynomial_constr = polynomial_constr
             self._Nb = rgf.block_length()
             self._rgf_name = rgf.__repr__()
-            if round_component_name != None and \
+            if round_component_name is not None and \
                not isinstance(round_component_name, str):
                 msg = "round_component_name must be None or a string"
                 raise TypeError(msg)
@@ -2345,7 +2345,7 @@ class RijndaelGF(SageObject):
                 ....: rgf._shift_rows_pc, rgf)
                 A polynomial constructor of a round component of Rijndael-GF block cipher with block length 4, key length 4, and 10 rounds.
             """
-            if self._rc_name == None:
+            if self._rc_name is None:
                 msg = "A polynomial constructor of a round component of {0}"
                 return msg.format(self._rgf_name)
             else:

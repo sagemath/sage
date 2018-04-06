@@ -30,7 +30,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'cysignals/signals.pxi'
+from cysignals.signals cimport sig_on, sig_off
 
 cdef extern from "homfly.h":
     ctypedef int  word; 

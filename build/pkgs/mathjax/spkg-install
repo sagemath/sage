@@ -1,6 +1,3 @@
-#!/bin/sh
-
-
 # Check required environment variable
 if [ -z "$SAGE_SHARE" ]; then
     echo >&2 "SAGE_SHARE undefined ... exiting"

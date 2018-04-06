@@ -56,7 +56,7 @@ rm -rf autom4te.cache
 # Make the final tarball and generate checksums
 cd ..
 tar c $PKGNAME-$PKGVERSION | bzip2 -c >"$PKGTARBALL"
-sage-fix-pkg-checksums "$PKGTARBALL"
+sage --package fix-checksum "$PKGNAME"
 
 # Clean up
 rm -rf $PKGNAME-*

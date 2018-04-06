@@ -40,6 +40,8 @@ cdef class RealIntervalFieldElement(RingElement):
     cdef inline RealIntervalFieldElement _new(self):
         """Return a new real interval with same parent as ``self``."""
         return RealIntervalFieldElement.__new__(RealIntervalFieldElement, self._parent)
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
     cdef RealIntervalFieldElement abs(RealIntervalFieldElement self)
     cdef Rational _simplest_rational_helper(self)
     cpdef _str_question_style(self, int base, int error_digits, e, bint prefer_sci)

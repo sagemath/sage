@@ -19,9 +19,7 @@ EXAMPLES::
 """
 from __future__ import print_function, absolute_import
 
-import weakref
-
-from . import laurent_series_ring_element
+from .laurent_series_ring_element import LaurentSeries
 
 from . import polynomial
 from . import ring
@@ -29,8 +27,9 @@ from . import ring
 from sage.libs.pari.all import pari_gen
 from sage.categories.fields import Fields
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationFields
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.cachefunc import cached_method
 
-laurent_series = {}
 def LaurentSeriesRing(base_ring, name=None, names=None, default_prec=None, sparse=False):
     """
     EXAMPLES::
@@ -53,17 +52,13 @@ def LaurentSeriesRing(base_ring, name=None, names=None, default_prec=None, spars
 
     Here the fraction field is not just the Laurent series ring, so you
     can't use the ``Frac`` notation to make the Laurent
-    series ring.
-
-    ::
+    series ring::
 
         sage: Frac(ZZ[['t']])
         Fraction Field of Power Series Ring in t over Integer Ring
 
     Laurent series rings are determined by their variable and the base
-    ring, and are globally unique.
-
-    ::
+    ring, and are globally unique::
 
         sage: K = Qp(5, prec = 5)
         sage: L = Qp(5, prec = 200)
@@ -93,33 +88,31 @@ def LaurentSeriesRing(base_ring, name=None, names=None, default_prec=None, spars
         1 + 2*x + 4*x^2 + 8*x^3 + 16*x^4 + O(x^5)
         sage: set_series_precision(20)
     """
-    if not names is None: name = names
+    if not names is None:
+        name = names
     if name is None:
-        raise TypeError("You must specify the name of the indeterminate of the Laurent series ring.")
+        raise TypeError("you must specify the name of the indeterminate of the Laurent series ring")
 
     if default_prec is None:
         from sage.misc.defaults import series_precision
         default_prec = series_precision()
 
-    global laurent_series
-    key = (base_ring, name, default_prec, sparse)
-    if key in laurent_series:
-        x = laurent_series[key]()
-        if x is not None: return x
-
     if isinstance(base_ring, ring.Field):
-        R = LaurentSeriesRing_field(base_ring, name, default_prec, sparse)
+        return LaurentSeriesRing_field(base_ring, name, default_prec, sparse)
     elif isinstance(base_ring, ring.IntegralDomain):
-        R = LaurentSeriesRing_domain(base_ring, name, default_prec, sparse)
+        return LaurentSeriesRing_domain(base_ring, name, default_prec, sparse)
     elif isinstance(base_ring, ring.CommutativeRing):
-        R = LaurentSeriesRing_generic(base_ring, name, default_prec, sparse)
+        return LaurentSeriesRing_generic(base_ring, name, default_prec, sparse)
     else:
         raise TypeError("base_ring must be a commutative ring")
-    laurent_series[key] = weakref.ref(R)
-    return R
 
 def is_LaurentSeriesRing(x):
     """
+    Return ``True`` if this is a *univariate* Laurent series ring.
+
+    This is in keeping with the behavior of ``is_PolynomialRing``
+    versus ``is_MPolynomialRing``.
+
     TESTS::
 
         sage: from sage.rings.laurent_series_ring import is_LaurentSeriesRing
@@ -129,9 +122,9 @@ def is_LaurentSeriesRing(x):
     """
     return isinstance(x, LaurentSeriesRing_generic)
 
-class LaurentSeriesRing_generic(ring.CommutativeRing):
-    """
-    Univariate Laurent Series Ring
+class LaurentSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing):
+    r"""
+    Univariate Laurent Series Ring.
 
     EXAMPLES::
 
@@ -155,7 +148,6 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
         Category of complete discrete valuation fields
         sage: TestSuite(F).run()
     """
-
     def __init__(self, base_ring, name=None, default_prec=None, sparse=False, category=None):
         """
         Initialization
@@ -169,10 +161,7 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
         """
         from .power_series_ring import PowerSeriesRing
         ring.CommutativeRing.__init__(self, base_ring, names=name,
-                                                  category=getattr(self, '_default_category', Fields()))
-        self._polynomial_ring = polynomial.polynomial_ring_constructor.PolynomialRing(self.base_ring(),
-                                                                                      self.variable_name(),
-                                                                                      sparse=sparse)
+                                      category=getattr(self, '_default_category', Fields()))
         self._power_series_ring = PowerSeriesRing(self.base_ring(),
                                                   self.variable_name(),
                                                   default_prec=default_prec,
@@ -205,10 +194,14 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             sage: R.default_prec()
             4
         """
-        return LaurentSeriesRing(R, self.variable_name(), default_prec=self.default_prec(), sparse=self.is_sparse())
+        return LaurentSeriesRing(R, self.variable_name(),
+                                 default_prec=self.default_prec(),
+                                 sparse=self.is_sparse())
 
     def is_sparse(self):
         """
+        Return if ``self`` is a sparse implementation.
+
         EXAMPLES::
 
             sage: K.<x> = LaurentSeriesRing(QQ, sparse=True)
@@ -217,9 +210,10 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
         """
         return self.power_series_ring().is_sparse()
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
-        A Laurent series ring is a field if and only if the base ring is a field.
+        A Laurent series ring is a field if and only if the base ring
+        is a field.
 
         TESTS::
 
@@ -240,17 +234,6 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
         """
         return self.power_series_ring().is_dense()
 
-    def __reduce__(self):
-        """
-        TESTS::
-
-            sage: K.<q> = LaurentSeriesRing(QQ,default_prec=4)
-            sage: L = loads(dumps(K))
-            sage: L.default_prec()
-            4
-        """
-        return self.__class__, (self.base_ring(), self.variable_name(), self.default_prec(), self.is_sparse())
-
     def _repr_(self):
         """
         EXAMPLES::
@@ -265,7 +248,7 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             s = 'Sparse ' + s
         return s
 
-    Element = laurent_series_ring_element.LaurentSeries
+    Element = LaurentSeries
 
     def _element_constructor_(self, x, n=0):
         r"""
@@ -351,7 +334,7 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
         from sage.structure.element import parent
 
         P = parent(x)
-        if isinstance(x, self.element_class) and n==0 and P is self:
+        if isinstance(x, self.element_class) and n == 0 and P is self:
             return x  # ok, since Laurent series are immutable (no need to make a copy)
         elif P is self.base_ring():
             # Convert x into a power series; if P is itself a Laurent
@@ -377,10 +360,10 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
                 return (x << n).add_bigoh(bigoh)
             else:  # General case, pretend to be a polynomial
                 return self(self.polynomial_ring()(x)) << n
-        elif is_FractionFieldElement(x) and \
-             (x.base_ring() is self.base_ring() or x.base_ring() == self.base_ring()) and \
-             (is_Polynomial(x.numerator()) or is_MPolynomial(x.numerator())):
-            x = self(x.numerator())/self(x.denominator())
+        elif (is_FractionFieldElement(x)
+              and (x.base_ring() is self.base_ring() or x.base_ring() == self.base_ring())
+              and (is_Polynomial(x.numerator()) or is_MPolynomial(x.numerator())) ):
+            x = self(x.numerator()) / self(x.denominator())
             return (x << n)
         return self.element_class(self, x, n)
 
@@ -431,43 +414,6 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             and P.variable_name() == self.variable_name()
             and A.has_coerce_map_from(P.base_ring())):
             return True
-
-    def __cmp__(self, other):
-        """
-        Compare this Laurent series ring to something else.
-
-        Laurent series rings are considered equal if the base ring, variable
-        names, and default truncation precision are the same.
-
-        First the base rings are compared, then the variable names, then
-        the default precision.
-
-        EXAMPLES::
-
-            sage: R.<t> = LaurentSeriesRing(ZZ)
-            sage: S.<t> = LaurentSeriesRing(ZZ)
-            sage: R is S
-            True
-            sage: R == S
-            True
-            sage: S.<t> = LaurentSeriesRing(ZZ, default_prec=10)
-            sage: R == S
-            False
-            sage: LaurentSeriesRing(ZZ,'t') == LaurentSeriesRing(QQ,'t')
-            False
-            sage: LaurentSeriesRing(QQ,'t') == 5
-            False
-        """
-        if not isinstance(other, LaurentSeriesRing_generic):
-            return cmp(type(self),type(other))
-        c = cmp(self.base_ring(), other.base_ring())
-        if c: return c
-        c = cmp(self.variable_name(), other.variable_name())
-        if c: return c
-        c = cmp(self.default_prec(), other.default_prec())
-        if c: return c
-        return 0
-
 
     def _is_valid_homomorphism_(self, codomain, im_gens):
         """
@@ -520,12 +466,11 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             sage: R.residue_field()
             Traceback (most recent call last):
             ...
-            TypeError: The base ring is not a field
+            TypeError: the base ring is not a field
         """
-        if self.base_ring().is_field():
-            return self.base_ring()
-        else:
-            raise TypeError("The base ring is not a field")
+        if not self.base_ring().is_field():
+            raise TypeError("the base ring is not a field")
+        return self.base_ring()
 
     def set_default_prec(self, n):
         """
@@ -544,7 +489,7 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
         """
         from sage.misc.superseded import deprecation
         deprecation(16201, "This method is deprecated.")
-        self.power_series_ring().set_default_prec(n)
+        self._power_series_ring.set_default_prec(n)
 
     def default_prec(self):
         """
@@ -557,7 +502,7 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             sage: R.default_prec()
             5
         """
-        return self.power_series_ring().default_prec()
+        return self._power_series_ring.default_prec()
 
     def is_exact(self):
         """
@@ -571,6 +516,7 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
         """
         return False
 
+    @cached_method
     def gen(self, n=0):
         """
         EXAMPLES::
@@ -580,12 +526,8 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             x
         """
         if n != 0:
-            raise IndexError("Generator n not defined.")
-        try:
-            return self.__generator
-        except AttributeError:
-            self.__generator = laurent_series_ring_element.LaurentSeries(self, [0,1])
-            return self.__generator
+            raise IndexError("generator {} not defined".format(n))
+        return self.element_class(self, [0,1])
 
     def uniformizer(self):
         """
@@ -603,12 +545,11 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             sage: R.uniformizer()
             Traceback (most recent call last):
             ...
-            TypeError: The base ring is not a field
+            TypeError: the base ring is not a field
         """
-        if self.base_ring().is_field():
-            return self.gen()
-        else:
-            raise TypeError("The base ring is not a field")
+        if not self.base_ring().is_field():
+            raise TypeError("the base ring is not a field")
+        return self.gen()
 
     def ngens(self):
         """
@@ -633,7 +574,9 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             sage: R.polynomial_ring()
             Univariate Polynomial Ring in x over Rational Field
         """
-        return self._polynomial_ring
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        return PolynomialRing(self.base_ring(), self.variable_name(),
+                              sparse=self.is_sparse())
 
     def laurent_polynomial_ring(self):
         r"""
@@ -646,12 +589,9 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             sage: R.laurent_polynomial_ring()
             Univariate Laurent Polynomial Ring in x over Rational Field
         """
-        try:
-            return self.__laurent_polynomial_ring
-        except AttributeError:
-            self.__laurent_polynomial_ring = polynomial.laurent_polynomial_ring.LaurentPolynomialRing( \
-                                         self.base_ring(), self.variable_name(), sparse=self.is_sparse())
-            return self.__laurent_polynomial_ring
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+        return LaurentPolynomialRing(self.base_ring(), self.variable_name(),
+                                     sparse=self.is_sparse())
 
     def power_series_ring(self):
         r"""
@@ -667,25 +607,21 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
         return self._power_series_ring
 
 class LaurentSeriesRing_domain(LaurentSeriesRing_generic, ring.IntegralDomain):
-    def __init__(self, base_ring, name=None, default_prec=None, sparse=False):
-        """
-        Initialization
+    """
+    Laurent series ring over a domain.
 
-        TESTS::
+    TESTS::
 
-            sage: TestSuite(LaurentSeriesRing(ZZ,'t')).run()
-        """
-        LaurentSeriesRing_generic.__init__(self, base_ring, name, default_prec, sparse)
+        sage: TestSuite(LaurentSeriesRing(ZZ,'t')).run()
+    """
 
 class LaurentSeriesRing_field(LaurentSeriesRing_generic, ring.Field):
+    """
+    Laurent series ring over a field.
+
+    TESTS::
+
+        sage: TestSuite(LaurentSeriesRing(QQ,'t')).run()
+    """
     _default_category = CompleteDiscreteValuationFields()
 
-    def __init__(self, base_ring, name=None, default_prec=None, sparse=False):
-        """
-        Initialization
-
-        TESTS::
-
-            sage: TestSuite(LaurentSeriesRing(QQ,'t')).run()
-        """
-        LaurentSeriesRing_generic.__init__(self, base_ring, name, default_prec, sparse)

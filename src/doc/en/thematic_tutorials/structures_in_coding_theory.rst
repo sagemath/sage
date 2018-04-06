@@ -81,6 +81,7 @@ Let us now write the constructor for our code class,
 that we store in some file called ``repetition_code.py``::
 
     sage: from sage.coding.linear_code import AbstractLinearCode
+    sage: from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
     sage: class BinaryRepetitionCode(AbstractLinearCode):
     ....:     _registered_encoders = {}
     ....:     _registered_decoders = {}
@@ -114,7 +115,7 @@ After these examples, you probably noticed that we use two methods,
 namely ``length()`` and ``dimension()`` without defining them.
 That is because their implementation is provided in
 :class:`sage.coding.linear_code.AbstractLinearCode`.
-The abstract class provides default implantation of the
+The abstract class provides a default implementation of the
 following getter methods:
 
 - :meth:`sage.coding.linear_code.AbstractLinearCode.dimension`
@@ -523,9 +524,9 @@ we do not wish to store all our classes directly in Sage's global namespace.
 We propose several catalog files to store our constructions, namely:
 
 - ``codes_catalog.py``,
-- ``encoders_catalog``,
-- ``decoders_catalog`` and
-- ``channels_catalog``.
+- ``encoders_catalog.py``,
+- ``decoders_catalog.py`` and
+- ``channels_catalog.py``.
 
 Everytime one creates a new object, it should be added in the dedicated
 catalog file instead of coding theory folder's ``all.py``.
@@ -534,19 +535,19 @@ Here it means the following:
 
 - add the following in ``codes_catalog.py``::
 
-    from repetition_code import BinaryRepetitionCode
+    from sage.coding.repetition_code import BinaryRepetitionCode
 
 - add the following in ``encoders_catalog.py``::
 
-    from repetition_code import BinaryRepetitionCodeGeneratorMatrixEncoder
+    from sage.coding.repetition_code import BinaryRepetitionCodeGeneratorMatrixEncoder
 
 - add the following in ``decoders_catalog.py``::
 
-    from repetition_code import BinaryRepetitionCodeMajorityVoteDecoder
+    from sage.coding.repetition_code import BinaryRepetitionCodeMajorityVoteDecoder
 
 - add the following in ``channels_catalog.py``::
 
-    from channel_constructions import BinaryStaticErrorRateChannel
+    from sage.coding.channel_constructions import BinaryStaticErrorRateChannel
 
 VII. Complete code of this tutorial
 ===================================
@@ -559,6 +560,7 @@ derive from the one that follows.
     from sage.coding.linear_code import AbstractLinearCode
     from sage.coding.encoder import Encoder
     from sage.coding.decoder import Decoder
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
     class BinaryRepetitionCode(AbstractLinearCode):
 
@@ -701,11 +703,20 @@ derive from the one that follows.
                 w[i] += F.one()
             return w
 
-``codes_catalog.py`` (continued, do the same in ``encoders_catalog.py``,
-``decoders_catalog.py`` and ``channels_catalog.py``)::
+``codes_catalog.py`` (continued)::
 
-    :class:`repetition_code.BinaryRepetitionCode <sage.coding.repetition_code.BinaryRepetitionCode>`
+    :class:`sage.coding.repetition_code.BinaryRepetitionCode <sage.coding.repetition_code.BinaryRepetitionCode>`
     #the line above creates a link to the class in the html documentation of coding theory library
-    from repetition_code import BinaryRepetitionCode
-    from channel_constructions import (ErrorErasureChannel, StaticErrorRateChannel, BinaryStaticErrorRateChannel)
+    from sage.coding.repetition_code import BinaryRepetitionCode
 
+``encoders_catalog.py`` (continued)::
+
+    from sage.coding.repetition_code import (BinaryRepetitionCodeGeneratorMatrixEncoder, BinaryRepetitionCodeStraightforwardEncoder)
+
+``decoders_catalog.py`` (continued)::
+
+    from sage.coding.repetition_code import BinaryRepetitionCodeMajorityVoteDecoder
+
+``channels_catalog.py`` (continued)::
+
+    from sage.coding.channel_constructions import (ErrorErasureChannel, StaticErrorRateChannel, BinaryStaticErrorRateChannel)

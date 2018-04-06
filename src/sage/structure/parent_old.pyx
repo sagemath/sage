@@ -18,41 +18,31 @@ This came up in some subtle bug once.
     5
 """
 
-###############################################################################
-#   Sage: System for Algebra and Geometry Experimentation
+#*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
-from __future__ import print_function
+#*****************************************************************************
+from __future__ import absolute_import, print_function
 
-cimport sage_object
+cimport sage.structure.sage_object as sage_object
 import operator
-from parent import Set_PythonType, Set_PythonType_class
-from coerce import py_scalar_parent
+from .parent import Set_PythonType, Set_PythonType_class
+from .coerce import py_scalar_parent
+from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.structure.coerce_dict import MonoDict, TripleDict
 
 from cpython.object cimport *
 from cpython.bool cimport *
-include 'sage/ext/stdsage.pxi'
 
 cdef inline check_old_coerce(Parent p):
     if p._element_constructor is not None:
         raise RuntimeError("%s still using old coercion framework" % p)
 
-
-## def make_parent_v0(_class, _dict, has_coerce_map_from):
-##     """
-##     This should work for any Python class deriving from this, as long
-##     as it doesn't implement some screwy __new__() method.
-##     """
-##     cdef Parent new_object
-##     new_object = _class.__new__(_class)
-##     if not _dict is None:
-##         new_object.__dict__ = _dict
-##     new_object._has_coerce_map_from = has_coerce_map_from
-##     return new_object
 
 cdef class Parent(parent.Parent):
     """
@@ -119,10 +109,10 @@ cdef class Parent(parent.Parent):
 
             sage: QQ['q,t'].coerce_map_from(int)
             Composite map:
-              From: Set of Python objects of type 'int'
+              From: Set of Python objects of class 'int'
               To:   Multivariate Polynomial Ring in q, t over Rational Field
               Defn:   Native morphism:
-                      From: Set of Python objects of type 'int'
+                      From: Set of Python objects of class 'int'
                       To:   Rational Field
                     then
                       Polynomial base injection morphism:
@@ -349,7 +339,7 @@ cdef class Parent(parent.Parent):
         for x in ['_an_element_', 'pi', 1.2, 2, 1, 0, infinity]:
             try:
                 return self(x)
-            except (TypeError, NameError, NotImplementedError, AttributeError, ValueError):
+            except Exception:
                 pass
 
         raise NotImplementedError("please implement _an_element_c_impl or _an_element_impl for %s" % self)
@@ -390,7 +380,17 @@ cdef class Parent(parent.Parent):
         else:
             return parent.Parent._an_element_(self)
 
-    cpdef _generic_convert_map(self, S):
+    cpdef _generic_convert_map(self, S, category=None):
+        r"""
+        Return a default conversion from ``S``.
+
+        EXAMPLES::
+
+           sage: R.<x,y>=QQ[]
+           sage: R._generic_convert_map(QQ).category_for()
+           Category of sets with partial maps
+
+        """
         if self._element_constructor is None:
             if hasattr(self, '_element_constructor_'):
                 assert callable(self._element_constructor_)
@@ -401,4 +401,4 @@ cdef class Parent(parent.Parent):
                 if isinstance(S, type):
                     S = Set_PythonType(S)
                 return CallMorphism(Hom(S, self))
-        return parent.Parent._generic_convert_map(self, S)
+        return parent.Parent._generic_convert_map(self, S, category)

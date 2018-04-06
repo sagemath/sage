@@ -32,6 +32,3 @@ None
 
 In the event patches ever need to be made to this package, the method of
 applying the patches should not rely on the 'patch' existing on the system.
-
-Since bzip2 may (actually, does) depend on patch indirectly the patch
-tarball must be in gzip format.

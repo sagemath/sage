@@ -1,3 +1,5 @@
+.. _installation-guide:
+
 Welcome to the Sage Installation Guide
 ======================================
 

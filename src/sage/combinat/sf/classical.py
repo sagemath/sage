@@ -19,9 +19,6 @@ from __future__ import absolute_import
 #*****************************************************************************
 
 from sage.rings.integer import Integer
-
-import sage.libs.symmetrica.all as symmetrica # used in eval()
-
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.rational_field import RationalField
 from sage.combinat.partition import _Partitions
@@ -33,6 +30,9 @@ from . import llt
 from . import macdonald
 from . import jack
 from . import orthotriang
+
+import six
+
 
 ZZ = IntegerRing()
 QQ = RationalField()
@@ -53,17 +53,19 @@ def init():
         sage: sage.combinat.sf.classical.conversion_functions[('Schur', 'powersum')]
         <built-in function t_SCHUR_POWSYM_symmetrica>
 
-    The following checks if the bug described in :trac:`15312` is fixed.::
+    The following checks if the bug described in :trac:`15312` is fixed. ::
 
         sage: change = sage.combinat.sf.classical.conversion_functions[('powersum', 'Schur')]
         sage: hideme = change({Partition([1]*47):ZZ(1)}) # long time
         sage: change({Partition([2,2]):QQ(1)})
         s[1, 1, 1, 1] - s[2, 1, 1] + 2*s[2, 2] - s[3, 1] + s[4]
     """
+    import sage.libs.symmetrica.all as symmetrica
     for other_basis in translate:
         for basis in translate:
             try:
-                conversion_functions[(other_basis, basis)] = eval('symmetrica.t_' + translate[other_basis] + '_' +  translate[basis])
+                conversion_functions[(other_basis, basis)] = getattr(symmetrica,
+                     't_{}_{}'.format(translate[other_basis], translate[basis]))
             except AttributeError:
                 pass
 
@@ -234,7 +236,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
                 raise TypeError("no coerce map from x's parent's base ring (= %s) to self's base ring (= %s)"%(PBR, self.base_ring()))
 
             z_elt = {}
-            for m, c in x._monomial_coefficients.iteritems():
+            for m, c in six.iteritems(x._monomial_coefficients):
                 n = sum(m)
                 P._m_cache(n)
                 for part in P._self_to_m_cache[n][m]:

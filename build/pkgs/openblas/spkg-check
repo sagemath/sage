@@ -1,5 +1,3 @@
-#!/bin/bash
-
 if [ "$SAGE_LOCAL" = "" ]; then
     echo >&2 "SAGE_LOCAL undefined ... exiting";
     exit 1
@@ -27,9 +25,25 @@ if [ "x$SAGE_FAT_BINARY" = "xyes" ]; then
     OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=PRESCOTT"
 fi
 
+echo "Running OpenBLAS testsuite"
+
 $MAKE tests $OPENBLAS_CONFIGURE
 if [ $? -ne 0 ]; then
-    echo >&2 "Error while running the OpenBLAS testsuite ... exiting"
-    exit 1
+    # First make sure we already didn't set a target
+    if [[ $OPENBLAS_CONFIGURE == *"TARGET"* ]]; then
+        echo >&2 "Error while running the OpenBlas testsuite ... exiting"
+        exit 1
+    else
+        # The recommended TARGET is ATOM if CPU fails
+        # See https://github.com/xianyi/OpenBLAS/issues/1204
+        OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=ATOM"
+        echo "Error while testing the OpenBLAS testsuite"
+        echo "Retrying the OpenBAS testsuit with TARGET=ATOM"
+        $MAKE tests $OPENBLAS_CONFIGURE
+        if [ $? -ne 0 ]; then
+            echo >&2 "Error while running the OpenBLAS testsuite ... exiting"
+            exit 1
+        fi
+    fi
 fi
 

@@ -40,6 +40,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialR
 
 # Laurent Polynomial Rings
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+lazy_import('sage.rings.polynomial.omega', 'MacMahonOmega')
 
 # Infinite Polynomial Rings
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing

@@ -12,7 +12,8 @@ Error handler for the GLPK library
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_error
+
 from .env cimport *
 from cpython.exc cimport PyErr_SetObject
 from sage.numerical.mip import MIPSolverException
@@ -69,9 +70,9 @@ def setup_glpk_error_handler():
     TESTS::
 
         sage: cython('''
-        ....: #clib glpk z gmp
+        ....: # distutils: libraries = glpk z gmp
+        ....: from cysignals.signals cimport sig_on, sig_off
         ....: from sage.libs.glpk.env cimport glp_term_out
-        ....: include "cysignals/signals.pxi"
         ....:
         ....: sig_on()
         ....: glp_term_out(12345)  # invalid value

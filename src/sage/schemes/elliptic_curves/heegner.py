@@ -98,6 +98,8 @@ from sage.misc.all import verbose, prod
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.sage_object import SageObject
+from sage.structure.richcmp import (richcmp_method, richcmp,
+                                    richcmp_not_equal, rich_to_bool)
 
 import sage.rings.number_field.number_field_element
 import sage.rings.number_field.number_field as number_field
@@ -252,7 +254,8 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('389a'); K5 = E.heegner_point(-7,5).ring_class_field()
+            sage: E = EllipticCurve('389a')
+            sage: K5 = E.heegner_point(-7,5).ring_class_field()
             sage: K11 = E.heegner_point(-7,11).ring_class_field()
             sage: K5 == K11
             False
@@ -262,6 +265,24 @@ class RingClassField(SageObject):
             False
         """
         return isinstance(other, RingClassField) and self.__D == other.__D and self.__c == other.__c
+
+    def __ne__(self, other):
+        """
+        Check whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('389a')
+            sage: K5 = E.heegner_point(-7,5).ring_class_field()
+            sage: K11 = E.heegner_point(-7,11).ring_class_field()
+            sage: K5 != K11
+            True
+            sage: K5 != K5
+            False
+            sage: K11 != 11
+            True
+        """
+        return not (self == other)
 
     def __hash__(self):
         """
@@ -627,6 +648,21 @@ class GaloisGroup(SageObject):
             False
         """
         return isinstance(G, GaloisGroup) and (G.__field,G.__base) == (self.__field,self.__base)
+
+    def __ne__(self, other):
+        """
+        EXAMPLES::
+
+            sage: G = EllipticCurve('389a').heegner_point(-7,5).ring_class_field().galois_group()
+            sage: G != G
+            False
+            sage: G != 0
+            True
+            sage: H = EllipticCurve('389a').heegner_point(-7,11).ring_class_field().galois_group()
+            sage: G != H
+            True
+        """
+        return not (self == other)
 
     def __hash__(self):
         """
@@ -1193,6 +1229,7 @@ class GaloisGroup(SageObject):
 #
 ##################################################################################
 
+
 class GaloisAutomorphism(SageObject):
     """
     An abstract automorphism of a ring class field.
@@ -1243,6 +1280,7 @@ class GaloisAutomorphism(SageObject):
             Ring class field extension of QQ[sqrt(-7)] of conductor 5
         """
         return self.parent().field()
+
 
 class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
     """
@@ -1306,6 +1344,18 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
         return isinstance(right, GaloisAutomorphismComplexConjugation) and \
                self.parent() == right.parent()
 
+    def __ne__(self, other):
+        """
+        EXAMPLES::
+
+            sage: G = EllipticCurve('389a').heegner_point(-7,5).ring_class_field().galois_group()
+            sage: conj = G.complex_conjugation()
+            sage: conj2 = sage.schemes.elliptic_curves.heegner.GaloisAutomorphismComplexConjugation(G)
+            sage: conj != conj2
+            False
+        """
+        return not (self == other)
+
     def _repr_(self):
         """
         Return print representation of the complex conjugation automorphism.
@@ -1352,6 +1402,8 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
         """
         return ZZ(2)
 
+
+@richcmp_method
 class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
     """
     An automorphism of a ring class field defined by a quadratic form.
@@ -1494,11 +1546,14 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
         """
         return hash((self.parent(), tuple(self.__quadratic_form)))
 
-    def __eq__(self, right):
+    def __richcmp__(self, right, op):
         """
+        Comparison.
+
         EXAMPLES::
 
-            sage: H = heegner_points(389,-7,5); s = H.ring_class_field().galois_group(H.quadratic_field())[1]
+            sage: H = heegner_points(389,-7,5)
+            sage: s = H.ring_class_field().galois_group(H.quadratic_field())[1]
             sage: s == s
             True
             sage: s == s*s
@@ -1507,31 +1562,23 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
             False
             sage: s == s*s*s*s*s*s*s
             True
-        """
-        return isinstance(right, GaloisAutomorphismQuadraticForm) and \
-               self.parent() == right.parent() and \
-               self.quadratic_form().is_equivalent(right.quadratic_form())
 
-    def __cmp__(self, right):
-        """
-        Compare ``self`` and right.  Used mainly so that lists of
-        automorphisms are sorted consistently between runs.
-
-        EXAMPLES::
-
-            sage: H = heegner_points(389,-20,3); s = H.ring_class_field().galois_group(H.quadratic_field())[0]
-            sage: s.__cmp__(s)
-            0
-            sage: s.__cmp__(0) != 0
+            sage: H = heegner_points(389,-20,3)
+            sage: s = H.ring_class_field().galois_group(H.quadratic_field())[0]
+            sage: s == s
             True
+            sage: s == 0
+            False
         """
         if not isinstance(right, GaloisAutomorphismQuadraticForm):
-            return cmp(type(self), type(right))
-        c = cmp(self.parent(), right.parent())
-        if c: return c
+            return NotImplemented
+        lx = self.parent()
+        rx = right.parent()
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
         if self.quadratic_form().is_equivalent(right.quadratic_form()):
-            return 0
-        return cmp(self.quadratic_form(), right.quadratic_form())
+            return rich_to_bool(op, 0)
+        return richcmp(self.quadratic_form(), right.quadratic_form(), op)
 
     def _repr_(self):
         """
@@ -1656,6 +1703,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
 ##################################################################################
 
 
+@richcmp_method
 class HeegnerPoint(SageObject):
     r"""
     A Heegner point of level `N`, discriminant `D` and conductor `c`
@@ -1696,19 +1744,32 @@ class HeegnerPoint(SageObject):
         self.__D = D
         self.__c = c
 
-    def __cmp__(self, x):
+    def __richcmp__(self, x, op):
         """
         Compare two Heegner points.
 
         EXAMPLES::
 
             sage: H = sage.schemes.elliptic_curves.heegner.HeegnerPoint(389,-7,5)
-            sage: H.__cmp__(H)
-            0
+            sage: H == H
+            True
+
+            sage: H = sage.schemes.elliptic_curves.heegner.HeegnerPoint(389,-7,5); type(H)
+            <class 'sage.schemes.elliptic_curves.heegner.HeegnerPoint'>
+            sage: J = sage.schemes.elliptic_curves.heegner.HeegnerPoint(389,-7,11)
+            sage: H == H
+            True
+            sage: H == J
+            False
+            sage: J == H
+            False
+            sage: H == 0
+            False
         """
         if not isinstance(x, HeegnerPoint):
-            raise NotImplementedError
-        return cmp((self.__N, self.__D, self.__c), (x.__N, x.__D, x.__c))
+            return NotImplemented
+        return richcmp((self.__N, self.__D, self.__c),
+                       (x.__N, x.__D, x.__c), op)
 
     def _repr_(self):
         """
@@ -1735,25 +1796,6 @@ class HeegnerPoint(SageObject):
             True
         """
         return hash((self.__N, self.__D, self.__c))
-
-    def __eq__(self, right):
-        """
-        EXAMPLES::
-
-            sage: H = sage.schemes.elliptic_curves.heegner.HeegnerPoint(389,-7,5); type(H)
-            <class 'sage.schemes.elliptic_curves.heegner.HeegnerPoint'>
-            sage: J = sage.schemes.elliptic_curves.heegner.HeegnerPoint(389,-7,11)
-            sage: H == H
-            True
-            sage: H == J
-            False
-            sage: J == H
-            False
-            sage: H == 0
-            False
-        """
-        if not isinstance(right, HeegnerPoint): return False
-        return (self.__N, self.__D, self.__c) == (right.__N, right.__D, right.__c)
 
     def level(self):
         """
@@ -1956,6 +1998,20 @@ class HeegnerPoints_level(HeegnerPoints):
         """
         return isinstance(other, HeegnerPoints_level) and self.level() == other.level()
 
+    def __ne__(self, other):
+        """
+        EXAMPLES::
+
+            sage: H = heegner_points(11)
+            sage: H != heegner_points(13)
+            True
+            sage: H != heegner_points(11)
+            False
+            sage: H != 0
+            True
+        """
+        return not (self == other)
+
     def _repr_(self):
         """
         Return string representation of the set of Heegner points.
@@ -2085,6 +2141,20 @@ class HeegnerPoints_level_disc(HeegnerPoints):
         """
         return isinstance(other, HeegnerPoints_level_disc) and \
                self.level() == other.level() and self.__D == other.__D
+
+    def __ne__(self, other):
+        """
+        EXAMPLES::
+
+            sage: H = heegner_points(389,-7)
+            sage: H != heegner_points(389,-7)
+            False
+            sage: H != 0
+            True
+            sage: H != heegner_points(389,-11)
+            True
+        """
+        return not (self == other)
 
     def _repr_(self):
         """
@@ -2321,6 +2391,20 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
                self.level() == other.level() and self.discriminant() == other.discriminant() \
                and self.conductor() == other.conductor()
 
+    def __ne__(self, other):
+        """
+        EXAMPLES::
+
+            sage: H = heegner_points(389,-7, 3)
+            sage: H != heegner_points(389,-7, 3)
+            False
+            sage: H != heegner_points(389,-7, 1)
+            True
+            sage: H != 0
+            True
+        """
+        return not (self == other)
+
     def _repr_(self):
         """
         Return string representation of this set of Heegner points.
@@ -2474,7 +2558,7 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
             sage: H.points() is H.points()
             True
             sage: type(H.points())
-            <type 'tuple'>
+            <... 'tuple'>
         """
         if beta is None:
             SDN = self.betas()
@@ -2632,26 +2716,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
         """
         return hash((HeegnerPoint.__hash__(self), self.reduced_quadratic_form()))
 
-    def __eq__(self, right):
-        """
-        EXAMPLES::
-
-            sage: x1 = EllipticCurve('389a').heegner_point(-7).heegner_point_on_X0N()
-            sage: x5 = EllipticCurve('389a').heegner_point(-7,5).heegner_point_on_X0N()
-            sage: x1 == x1
-            True
-            sage: x5 == x5
-            True
-            sage: x1 == x5
-            False
-            sage: x1 == 10
-            False
-        """
-        return isinstance(right, HeegnerPointOnX0N) and \
-               HeegnerPoint.__eq__(self,right) and \
-               self.reduced_quadratic_form() == right.reduced_quadratic_form()
-
-    def __cmp__(self, x):
+    def __richcmp__(self, x, op):
         """
         Compare two Heegner points with character.
 
@@ -2659,16 +2724,19 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
             sage: x1 = EllipticCurve('389a').heegner_point(-7).heegner_point_on_X0N()
             sage: x5 = EllipticCurve('389a').heegner_point(-7,5).heegner_point_on_X0N()
-            sage: x1.__cmp__(x1)
-            0
-            sage: x1.__cmp__(x5)
-            -1
-            sage: x5.__cmp__(x1)
-            1
+            sage: x1 == x1
+            True
+            sage: x1 < x5
+            True
+            sage: x5 > x1
+            True
         """
-        c = HeegnerPoint.__cmp__(self, x)
-        if c: return c
-        return cmp(self.__f, x.__f)
+        if not isinstance(x, HeegnerPointOnX0N):
+            return NotImplemented
+        return richcmp((self.level(), self.discriminant(),
+                        self.conductor(), self.__f),
+                       (x.level(), x.discriminant(),
+                        x.conductor(), x.__f), op)
 
     def _repr_(self):
         """
@@ -2759,9 +2827,11 @@ class HeegnerPointOnX0N(HeegnerPoint):
     @cached_method
     def tau(self):
         """
-        Return an element tau in the upper half plane that corresponds
-        to this particular Heegner point (actually, tau is in the
-        quadratic imagqinary field K associated to this Heegner point).
+        Return an element ``tau`` in the upper half plane that corresponds
+        to this particular Heegner point.
+
+        Actually, ``tau`` is in the quadratic imaginary field K associated
+        to this Heegner point.
 
         EXAMPLES::
 
@@ -2773,10 +2843,9 @@ class HeegnerPointOnX0N(HeegnerPoint):
             37*x^2 + 11*x*y + 2*y^2
         """
         K = self.quadratic_field()
-        c = self.conductor()
-        d = K.gen()*c
-        A,B,_ = self.__f
-        return (-B + d)/(2*A)
+        d = K.gen() * self.conductor()
+        A, B, _ = self.__f
+        return (-B + d) / (2 * A)
 
     def map_to_curve(self, E):
         """
@@ -2861,6 +2930,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
         """
         from sage.plot.all import point
         return point(CDF(self.tau()), **kwds)
+
 
 class HeegnerPointOnEllipticCurve(HeegnerPoint):
     """
@@ -2959,6 +3029,23 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         return isinstance(right, HeegnerPointOnEllipticCurve) and \
                (self.__E, self.__x) == (right.__E, right.__x)
 
+    def __ne__(self, other):
+        """
+        EXAMPLES::
+
+            sage: y1 = EllipticCurve('389a').heegner_point(-7)
+            sage: y5 = EllipticCurve('389a').heegner_point(-7,5)
+            sage: y1 != y1
+            False
+            sage: y5 != y5
+            False
+            sage: y1 != y5
+            True
+            sage: y1 != 10
+            True
+        """
+        return not (self == other)
+
     def _repr_(self):
         """
         Return string representation of this Heegner point.
@@ -3050,7 +3137,9 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
     def kolyvagin_point(self):
         """
         Return the Kolyvagin point corresponding to this Heegner
-        point.  This is the point obtained by applying the Kolyvagin
+        point.
+
+        This is the point obtained by applying the Kolyvagin
         operator `J_c I_c` in the group ring of the Galois group to
         this Heegner point.   It is a point that defines an element
         of `H^1(K, E[n])`, under certain hypotheses on `n`.
@@ -3061,9 +3150,8 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             Heegner point of discriminant -7 on elliptic curve of conductor 37
             sage: P = y.kolyvagin_point(); P
             Kolyvagin point of discriminant -7 on elliptic curve of conductor 37
-            sage: PP = P.numerical_approx() # approximately (0 : 0 : 1)
-            sage: all([c.abs() < 1e-15 for c in PP.xy()])
-            True
+            sage: P.numerical_approx()  # abs tol 1e-15
+            (-3.36910401903861e-16 - 2.22076195576076e-16*I : 3.33066907387547e-16 + 2.22076195576075e-16*I : 1.00000000000000)
         """
         return KolyvaginPoint(self)
 
@@ -3161,15 +3249,15 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-7); P
             Heegner point of discriminant -7 on elliptic curve of conductor 37
-            sage: all([c.abs()< 1e-15 for c in P.numerical_approx().xy()])
-            True
+            sage: P.numerical_approx()  # abs tol 1e-15
+            (-3.36910401903861e-16 - 2.22076195576076e-16*I : 3.33066907387547e-16 + 2.22076195576075e-16*I : 1.00000000000000)
             sage: P.numerical_approx(10)  # expect random digits
             (0.0030 - 0.0028*I : -0.0030 + 0.0028*I : 1.0)
             sage: P.numerical_approx(100)[0]  # expect random digits
             8.4...e-31 + 6.0...e-31*I
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-40); P
             Heegner point of discriminant -40 on elliptic curve of conductor 37
-            sage: P.numerical_approx()  # abs tol 1e-15
+            sage: P.numerical_approx()  # abs tol 1e-14
             (-3.15940603400359e-16 + 1.41421356237309*I : 1.00000000000000 - 1.41421356237309*I : 1.00000000000000)
 
         A rank 2 curve, where all Heegner points of conductor 1 are 0::
@@ -4379,7 +4467,8 @@ class KolyvaginCohomologyClass(SageObject):
 
     def __eq__(self, other):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: y = EllipticCurve('37a').heegner_point(-7)
             sage: c = y.kolyvagin_cohomology_class(3)
             sage: c == y.kolyvagin_cohomology_class(3)
@@ -4396,6 +4485,18 @@ class KolyvaginCohomologyClass(SageObject):
                self.__kolyvagin_point == other.__kolyvagin_point and \
                self.__n == other.__n
 
+    def __ne__(self, other):
+        """
+        EXAMPLES::
+
+            sage: y = EllipticCurve('37a').heegner_point(-7)
+            sage: c = y.kolyvagin_cohomology_class(3)
+            sage: c != y.kolyvagin_cohomology_class(3)
+            False
+            sage: c != y.kolyvagin_cohomology_class(5)
+            True
+        """
+        return not (self == other)
 
     def n(self):
         """
@@ -4533,6 +4634,20 @@ class HeegnerQuatAlg(SageObject):
         """
         return isinstance(other, HeegnerQuatAlg) and self.__level == other.__level \
                and self.__ell == other.__ell
+
+    def __ne__(self, other):
+        """
+        EXAMPLES::
+
+            sage: H = heegner_points(11).reduce_mod(3)
+            sage: H != heegner_points(11).reduce_mod(3)
+            False
+            sage: H != heegner_points(11).reduce_mod(5)
+            True
+            sage: H != 0
+            True
+        """
+        return not (self == other)
 
     def _repr_(self):
         """
@@ -4676,11 +4791,11 @@ class HeegnerQuatAlg(SageObject):
         """
         INPUT:
 
-            - `D` -- negative fundamental disriminant
+        - `D` -- negative fundamental discriminant
 
-            - `c` -- integer coprime
+        - `c` -- integer coprime
 
-            - `R` -- Eichler order
+        - `R` -- Eichler order
 
         EXAMPLES::
 
@@ -4968,13 +5083,13 @@ class HeegnerQuatAlg(SageObject):
 
         OUTPUT:
 
-            - dictionary mapping 2-tuples (u,v) to ideals
+        - dictionary mapping 2-tuples (u,v) to ideals
 
         EXAMPLES::
 
             sage: H = heegner_points(11).reduce_mod(7)
             sage: I = H.brandt_module().right_ideals()[0]
-            sage: sorted(H.cyclic_subideal_p1(I,3).iteritems())
+            sage: sorted(H.cyclic_subideal_p1(I,3).items())
             [((0, 1),
               Fractional ideal (2 + 2*j + 32*k, 2*i + 8*j + 82*k, 12*j + 60*k, 132*k)),
              ((1, 0),
@@ -5420,7 +5535,7 @@ class HeegnerQuatAlg(SageObject):
         return self.kolyvagin_sigma_operator(D, c, i)
 
         #w = 0
-        #for i, a in v.dict().iteritems():
+        #for i, a in six.iteritems(v.dict()):
         #    w += a * self.kolyvagin_sigma_operator(D, c, i)
         # return w
 
@@ -5727,6 +5842,21 @@ class HeegnerQuatAlgEmbedding(SageObject):
                self.__c == other.__c and \
                self.__R == other.__R and \
                self.__beta == other.__beta
+
+    def __ne__(self, other):
+        """
+        EXAMPLES::
+
+            sage: H = heegner_points(11).reduce_mod(3); R = H.left_orders()[0]
+            sage: f = H.optimal_embeddings(-7, 2, R)[0]
+            sage: f != H.optimal_embeddings(-7, 2, R)[0]
+            False
+            sage: f != H.optimal_embeddings(-7, 2, R)[1]
+            True
+            sage: f != 0
+            True
+        """
+        return not (self == other)
 
     def __call__(self, x):
         """
@@ -6248,7 +6378,7 @@ def kolyvagin_point(self, D, c=ZZ(1), check=True):
         sage: E = EllipticCurve('37a1')
         sage: P = E.kolyvagin_point(-67); P
         Kolyvagin point of discriminant -67 on elliptic curve of conductor 37
-        sage: P.numerical_approx()
+        sage: P.numerical_approx()  # abs tol 1e-14
         (6.00000000000000 : -15.0000000000000 : 1.00000000000000)
         sage: P.index()
         6
@@ -6299,7 +6429,7 @@ def ell_heegner_discriminants_list(self, n):
     OUTPUT: The list of the first n Heegner discriminants smaller than
     -5 for the given elliptic curve.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: E=EllipticCurve('11a')
         sage: E.heegner_discriminants_list(4)                     # indirect doctest
@@ -6338,7 +6468,7 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
 
     OUTPUT: Interval that contains the height of the Heegner point.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: E = EllipticCurve('11a')
         sage: E.heegner_point_height(-7)
@@ -6488,7 +6618,7 @@ def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mw
     which can be used to fine tune the 2-descent used to compute
     the regulator of the twist::
 
-        sage: E = EllipticCurve([0, 0, 1, -34874, -2506691])
+        sage: E = EllipticCurve([1,-1,0,-1228,-16267])
         sage: E.heegner_index(-8)
         Traceback (most recent call last):
         ...
@@ -6497,7 +6627,7 @@ def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mw
     However when we search higher, we find the points we need::
 
         sage: E.heegner_index(-8, descent_second_limit=16, check_rank=False)
-        1.00000?
+        2.00000?
 
 
     Two higher rank examples (of ranks 2 and 3)::

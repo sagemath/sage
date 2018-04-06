@@ -262,7 +262,8 @@ cdef class FastHashable_class:
         """
         return self._hash
 
-class Singleton(WithEqualityById):
+
+class Singleton(WithEqualityById, metaclass=ClasscallMetaclass):
     """
     A base class for singletons.
 
@@ -304,12 +305,8 @@ class Singleton(WithEqualityById):
         sage: loads(dumps(c))
         Traceback (most recent call last):
         ...
-        AssertionError: (("<class '__main__.D'> is not a direct
-        subclass of <class 'sage.misc.fast_methods.Singleton'>",),
-        <class '__main__.D'>, ())
+        AssertionError: <class '__main__.D'> is not a direct subclass of <class 'sage.misc.fast_methods.Singleton'>
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall__(cls):
         """

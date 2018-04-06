@@ -123,8 +123,15 @@ class Function_zeta(GinacFunction):
             (zeta(pi)) + (zetaderiv(1, pi))*(-pi + x) + Order((pi - x)^2)
             sage: (zeta(x) * 1/(1 - exp(-x))).residue(x==2*pi*I)
             zeta(2*I*pi)
+
+        Check that the right infinities are returned (:trac:`19439`)::
+
+            sage: zeta(1.0)
+            +infinity
+            sage: zeta(SR(1.0))
+            Infinity
         """
-        GinacFunction.__init__(self, "zeta")
+        GinacFunction.__init__(self, 'zeta', conversions={'giac':'Zeta'})
 
 zeta = Function_zeta()
 

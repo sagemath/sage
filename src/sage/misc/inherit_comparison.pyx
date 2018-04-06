@@ -8,7 +8,7 @@ only inherited as a whole: defining just 1 or 2 of these will prevent
 the others from being inherited.
 
 To solve this issue, you can use :class:`InheritComparisonMetaclass`
-as a Cython "metaclass" (see :mod:`sage.misc.cython_metaclass` for the
+as a Cython "metaclass" (see :mod:`sage.cpython.cython_metaclass` for the
 general mechanism). If you do this for an extension type which defines
 neither ``__richcmp__`` nor ``__cmp__``, then both these methods are
 inherited from the base class (the MRO is not used).
@@ -37,6 +37,10 @@ AUTHOR:
 
 from cpython.object cimport PyTypeObject
 from sage.misc.classcall_metaclass cimport ClasscallMetaclass
+
+cdef extern from "inherit_comparison_impl.c":
+    void inherit_comparison(PyTypeObject* dst, PyTypeObject* src)
+
 
 cdef class InheritComparisonMetaclass(type):
     """
@@ -78,10 +82,18 @@ cdef class InheritComparisonMetaclass(type):
         cdef PyTypeObject* t = <PyTypeObject*>self
         cdef PyTypeObject* b = t.tp_base
         if b:
-            if not t.tp_richcompare and not t.tp_compare:
-                t.tp_richcompare = b.tp_richcompare
-                t.tp_compare = b.tp_compare
+            inherit_comparison(t, b)
         super(InheritComparisonMetaclass, self).__init__(*args)
 
-class InheritComparisonClasscallMetaclass(InheritComparisonMetaclass, ClasscallMetaclass):
-    pass
+
+class InheritComparisonClasscallMetaclass(ClasscallMetaclass, InheritComparisonMetaclass):
+    """
+    Combine :class:`ClasscallMetaclass` with
+    :class:`InheritComparisonMetaclass`.
+
+    TESTS::
+
+        sage: from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass as M
+        sage: M.__new__(M, "myclass", (object,), {})
+        <class '__main__.myclass'>
+    """

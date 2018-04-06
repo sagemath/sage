@@ -12,9 +12,8 @@ Root system data for type A infinity
 from __future__ import print_function, absolute_import
 
 from .cartan_type import CartanType_standard, CartanType_simple
-from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.semirings.non_negative_integer_semiring import NN
+
 
 class CartanType(CartanType_standard, CartanType_simple):
     r"""

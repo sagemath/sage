@@ -25,6 +25,6 @@ See http://www.mpir.org
    - We currently don't use anything of GMP's/MPIR's CC setting, and matching
      with the current compiler (`$CC`) is perhaps suboptimal.
  * Remove some files / directories not needed for Sage from upstream:
-     rm -rf src/build.vc*             # Microsoft Visual C build files
-     rm -rf src/yasm/Mkfiles/{dj,vc*} # DJGPP, Microsoft Visual C
-   (Saves 13 of 40 MB uncompressed.)
+     - build.vc* directories (Microsoft Visual C build files)
+ * 3.0.0-644faf502c56f97d9accd301965fc57d6ec70868
+   was created by running the spkg-src script.

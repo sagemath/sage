@@ -16,6 +16,7 @@ Finite combinatorial classes
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
+from six.moves import range
 
 from .combinat import CombinatorialClass
 
@@ -127,7 +128,7 @@ class FiniteCombinatorialClass(CombinatorialClass):
             sage: F.keys()
             [0, 1, 2]
         """
-        return range(len(self.l))
+        return list(range(len(self.l)))
 
 # Backward compatibility pointer
 # Needed for unpickling.

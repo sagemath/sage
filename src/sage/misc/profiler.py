@@ -27,7 +27,7 @@ class Profiler:
 
     It's probably not a good idea to use this class in an inner loop :-)
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: def f():                        # not tested
         ....:     p = Profiler()              # not tested

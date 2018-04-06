@@ -112,7 +112,9 @@ class Algebras(CategoryWithAxiom_over_base_ring):
     Filtered    = LazyImport('sage.categories.filtered_algebras',    'FilteredAlgebras')
     Graded      = LazyImport('sage.categories.graded_algebras',      'GradedAlgebras')
     Super       = LazyImport('sage.categories.super_algebras',       'SuperAlgebras')
-    WithBasis   = LazyImport('sage.categories.algebras_with_basis',  'AlgebrasWithBasis')
+    # at_startup currently needed for MatrixSpace, see #22955 (e.g., comment:20)
+    WithBasis   = LazyImport('sage.categories.algebras_with_basis',  'AlgebrasWithBasis',
+                             at_startup=True)
     #if/when Semisimple becomes an axiom
     Semisimple  = LazyImport('sage.categories.semisimple_algebras',  'SemisimpleAlgebras')
 
@@ -174,7 +176,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
         discussion on:
 
          - http://groups.google.fr/group/sage-devel/browse_thread/thread/35a72b1d0a2fc77a/348f42ae77a66d16#348f42ae77a66d16
-         - http://en.wikipedia.org/wiki/Direct_product
+         - :wikipedia:`Direct_product`
         """
         def extra_super_categories(self):
             """

@@ -13,15 +13,3 @@ cdef class Linbox_modn_sparse:
     cdef object rank(self, int gauss)
     cdef void solve(self, c_vector_modint **x, c_vector_modint *b, int method)
 
-
-cdef class Linbox_integer_dense:
-    cdef mpz_t** matrix
-    cdef size_t nrows, ncols
-
-    cdef set(self, mpz_t** matrix, size_t nrows, size_t ncols)
-    cdef matrix_matrix_multiply(self,
-                                mpz_t **ans,
-                                mpz_t **B,
-                                size_t B_nr, size_t B_nc)
-    cdef unsigned long rank(self) except -1
-

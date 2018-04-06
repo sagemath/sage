@@ -133,7 +133,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
                 N = PS.dimension_relative()
                 BR = X.base_ring()
                 #need a lexicographic ordering for elimination
-                R = PolynomialRing(BR, N + 1, PS.gens(), order='lex')
+                R = PolynomialRing(BR, N + 1, PS.variable_names(), order='lex')
                 I = R.ideal(X.defining_polynomials())
                 I0 = R.ideal(0)
                 #Determine the points through elimination

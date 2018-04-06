@@ -1,3 +1,5 @@
+.. _a-tour-of-sage:
+
 ==============
 A Tour of Sage
 ==============

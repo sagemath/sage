@@ -19,17 +19,17 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 from cpython.object cimport *
 from sage.misc.constant_function import ConstantFunction
 
 import operator
 
-import homset
+
 
 from sage.structure.element cimport Element
-from sage.structure.sage_object cimport richcmp_not_equal, rich_to_bool
+from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 def is_Morphism(x):
     return isinstance(x, Morphism)
@@ -170,7 +170,7 @@ cdef class Morphism(Map):
             sage: L = CyclotomicField(132)
             sage: phi = L._internal_coerce_map_from(K)
             sage: phi.category()
-            Category of homsets of unital magmas and additive unital additive magmas
+            Category of homsets of number fields
         """
         # Should it be Category of elements of ...?
         return self.parent().category()
@@ -232,8 +232,8 @@ cdef class Morphism(Map):
                 if self(x) != x:
                     return False
             return True
-        except (AttributeError, NotImplementedError):
-            return NotImplementedError
+        except AttributeError:
+            raise NotImplementedError
 
     def pushforward(self, I):
         raise NotImplementedError
@@ -252,7 +252,7 @@ cdef class Morphism(Map):
             sage: x^2 + y
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '+': 'Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for +: 'Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Integer Ring'
 
         Let us declare a coercion from `\ZZ[x]` to `\ZZ[z]`::
 
@@ -359,6 +359,30 @@ cdef class Morphism(Map):
         except (AttributeError, NotImplementedError):
             return NotImplemented
 
+    def __nonzero__(self):
+        r"""
+        Return whether this morphism is not a zero morphism.
+
+        .. NOTE::
+
+            Be careful when overriding this method. Often morphisms are used
+            (incorrecly) in constructs such as ``if f: # do something`` where
+            the author meant to write ``if f is not None: # do something``.
+            Having morphisms return ``False`` here can therefore lead to subtle
+            bugs.
+
+        EXAMPLES::
+
+            sage: f = Hom(ZZ,Zmod(1)).an_element()
+            sage: bool(f) # indirect doctest
+            False
+
+        """
+        try:
+            return self._is_nonzero()
+        except Exception:
+            return super(Morphism, self).__nonzero__()
+
 
 cdef class FormalCoercionMorphism(Morphism):
     def __init__(self, parent):
@@ -383,8 +407,9 @@ cdef class CallMorphism(Morphism):
 cdef class IdentityMorphism(Morphism):
 
     def __init__(self, parent):
-        if not isinstance(parent, homset.Homset):
-            parent = homset.Hom(parent, parent)
+        from .homset import Homset, Hom
+        if not isinstance(parent, Homset):
+            parent = Hom(parent, parent)
         Morphism.__init__(self, parent)
 
     def _repr_type(self):
@@ -419,6 +444,28 @@ cdef class IdentityMorphism(Morphism):
 
     def __invert__(self):
         return self
+
+    def is_surjective(self):
+        r"""
+        Return whether this morphism is surjective.
+
+        EXAMPLES::
+
+            sage: Hom(ZZ, ZZ).identity().is_surjective()
+            True
+        """
+        return True
+
+    def is_injective(self):
+        r"""
+        Return whether this morphism is injective.
+
+        EXAMPLES::
+
+            sage: Hom(ZZ, ZZ).identity().is_injective()
+            True
+        """
+        return True
 
 cdef class SetMorphism(Morphism):
     def __init__(self, parent, function):
@@ -469,7 +516,7 @@ cdef class SetMorphism(Morphism):
         """
         Extra arguments are passed to the defining function.
 
-        TEST::
+        TESTS::
 
             sage: from sage.categories.morphism import SetMorphism
             sage: R.<x> = QQ[]
@@ -502,6 +549,7 @@ cdef class SetMorphism(Morphism):
             {'_codomain': Integer Ring,
              '_domain': Integer Ring,
              '_function': <built-in function __abs__>,
+             '_is_coercion': False,
              '_repr_type_str': None,
              'bla': 1}
         """

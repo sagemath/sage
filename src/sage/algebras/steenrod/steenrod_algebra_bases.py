@@ -1124,9 +1124,6 @@ def steenrod_basis_error_check(dim, p, **kwds):
     import sage.misc.misc as misc
     generic = kwds.get('generic', False if p==2 else True )
 
-    # In this test function, we don't want to use caching.
-    # Hence, the uncached versions of steenrod_algebra_basis
-    # and of convert_to_milnor_matrix are used.
     if not generic:
         bases = ('adem','woody', 'woodz', 'wall', 'arnona', 'arnonc',
                  'pst_rlex', 'pst_llex', 'pst_deg', 'pst_revz',

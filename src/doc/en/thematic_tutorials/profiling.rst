@@ -115,7 +115,7 @@ C-level function calls: %crun
 
 With ``%crun``, you can obtain the list of all C functions involved in a
 computation, as well as the time spent on each of them. You will need to have
-`the Google performance analysis tools <https://code.google.com/p/gperftools/>`_
+`the Google performance analysis tools <https://github.com/gperftools/gperftools/>`_
 installed on your system::
 
   sage: %crun p=random_prime(2**500)

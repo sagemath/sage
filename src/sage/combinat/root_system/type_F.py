@@ -15,7 +15,6 @@ from __future__ import absolute_import
 from six.moves import range
 
 from . import ambient_space
-from sage.misc.cachefunc import cached_method
 from sage.rings.all import ZZ
 from sage.combinat.family import Family
 

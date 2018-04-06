@@ -215,7 +215,7 @@ def show_identifiers(hidden=False):
         ['__', '_i', '_6', '_4', '_3', '_1', '_ii', '__doc__', '__builtins__', '___', '_9', '__name__', '_', 'a', '_i12', '_i14', 'factor', '__file__', '_hello', '_i13', '_i11', '_i10', '_i15', '_i5', '_13', '_10', '_iii', '_i9', '_i8', '_i7', '_i6', '_i4', '_i3', '_i2', '_i1', '_init_cmdline', '_14']
     """
     state = caller_locals()
-    return [x for x, v in state.iteritems() if _is_new_var(x, v, hidden)]
+    return sorted([x for x, v in state.iteritems() if _is_new_var(x, v, hidden)])
 
 def save_session(name='sage_session', verbose=False):
     r"""
@@ -288,6 +288,7 @@ def save_session(name='sage_session', verbose=False):
 
         sage: g = cython_lambda('double x', 'x*x + 1.5')
         sage: save_session(tmp_f, verbose=True)
+        Saving...
         Not saving g: g is a function, method, class or type
         ...
     """

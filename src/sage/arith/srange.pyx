@@ -21,11 +21,11 @@ AUTHORS:
 from __future__ import division, print_function
 
 from libc.math cimport ceil
-from sage.rings.integer cimport Integer
-from sage.structure.element cimport parent_c as parent
-from sage.structure.sequence import Sequence
+from cysignals.signals cimport sig_check
 
-include "cysignals/signals.pxi"
+from sage.rings.integer cimport Integer
+from sage.structure.element cimport parent
+from sage.structure.sequence import Sequence
 
 
 def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include_endpoint=False, endpoint_tolerance=1e-5):
@@ -214,8 +214,9 @@ def srange(*args, **kwds):
        it from the built-in Python ``range`` command.  The s
        at the beginning of the name stands for "Sage".
 
-    .. seealso: :func:`xsrange` -- iterator which is used to implement
-       :func:`srange`.
+    .. SEEALSO::
+
+        :func:`xsrange` -- iterator which is used to implement :func:`srange`.
 
     EXAMPLES::
 

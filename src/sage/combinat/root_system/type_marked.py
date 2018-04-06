@@ -329,7 +329,6 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: sorted(CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges())
             [(0, 1, 1), (1, 0, 1), (1, 2, 1), (2, 1, 2), (2, 3, 1), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
         """
-        from copy import copy
         result = self._type.dynkin_diagram().copy()
         result._cartan_type = self
         return result
@@ -710,7 +709,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
     def is_untwisted_affine(self):
         """
-        Implements :meth:'CartanType_affine.is_untwisted_affine`.
+        Implement :meth:`CartanType_affine.is_untwisted_affine`.
 
         A marked Cartan type is untwisted affine if the original is.
 
@@ -720,4 +719,3 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
             True
         """
         return self._type.is_untwisted_affine()
-

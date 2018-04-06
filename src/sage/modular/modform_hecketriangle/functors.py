@@ -488,7 +488,7 @@ class FormsSpaceFunctor(ConstructionFunctor):
 
         if isinstance(other, FormsSpaceFunctor):
             group = _common_subgroup(self._group, other._group)
-            if group == None:
+            if group is None:
                 return None
             analytic_type = self._analytic_type + other._analytic_type
             if (self._k == other._k) and (self._ep == other._ep):
@@ -497,7 +497,7 @@ class FormsSpaceFunctor(ConstructionFunctor):
                 return FormsRingFunctor(analytic_type, group, True)
         elif isinstance(other, FormsRingFunctor):
             group = _common_subgroup(self._group, other._group)
-            if group == None:
+            if group is None:
                 return None
             red_hom = other._red_hom
             analytic_type = self._analytic_type + other._analytic_type
@@ -679,14 +679,14 @@ class FormsRingFunctor(ConstructionFunctor):
 
         if isinstance(other, FormsSpaceFunctor):
             group = _common_subgroup(self._group, other._group)
-            if group == None:
+            if group is None:
                 return None
             red_hom = self._red_hom
             analytic_type = self._analytic_type + other._analytic_type
             return FormsRingFunctor(analytic_type, group, red_hom)
         elif isinstance(other, FormsRingFunctor):
             group = _common_subgroup(self._group, other._group)
-            if group == None:
+            if group is None:
                 return None
             red_hom = self._red_hom & other._red_hom
             analytic_type = self._analytic_type + other._analytic_type

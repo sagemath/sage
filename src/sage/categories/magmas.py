@@ -366,6 +366,28 @@ class Magmas(Category_singleton):
             from sage.categories.magmatic_algebras import MagmaticAlgebras
             return [MagmaticAlgebras(self.base_ring())]
 
+
+        class ParentMethods:
+            def is_field(self, proof=True):
+                r"""
+                Return ``True`` if ``self`` is a field.
+
+                For a magma algebra `RS` this is always false unless
+                `S` is trivial and the base ring `R`` is a field.
+
+                EXAMPLES::
+
+                    sage: SymmetricGroup(1).algebra(QQ).is_field()
+                    True
+                    sage: SymmetricGroup(1).algebra(ZZ).is_field()
+                    False
+                    sage: SymmetricGroup(2).algebra(QQ).is_field()
+                    False
+                """
+                if not self.base_ring().is_field(proof):
+                    return False
+                return (self.basis().keys().cardinality() == 1)
+
     class Commutative(CategoryWithAxiom):
 
         class ParentMethods:

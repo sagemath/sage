@@ -84,35 +84,6 @@ There are several ways to create and build Cython code in Sage.
               libraries = ['gmp']),
 
 
-Special Pragmas
-===============
-
-If Cython code is either attached or loaded as a ``.spyx`` file or
-loaded from the notebook as a ``%cython`` block, the following
-pragmas are available:
-
-* clang --- may be either c or c++ indicating whether a C or C++
-  compiler should be used.
-
-* clib --- additional libraries to be linked in, the space separated
-  list is split and passed to distutils.
-
-* cinclude --- additional directories to search for header files. The
-  space separated list is split and passed to distutils.
-
-* cfile -- additional C or C++ files to be compiled
-
-* cargs -- additional parameters passed to the compiler
-
-For example::
-
-    #clang C++
-    #clib givaro
-    #cinclude /usr/local/include/
-    #cargs -ggdb
-    #cfile foo.c
-
-
 Attaching or Loading .spyx Files
 ================================
 

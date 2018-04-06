@@ -16,10 +16,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/stdsage.pxi"
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
 from cpython.list cimport *
 
+from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.pylong cimport mpz_pythonhash
 from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
@@ -133,6 +133,10 @@ cdef inline bint creduce(mpz_t out, mpz_t a, long prec, PowComputer_ prime_pow) 
 
     - returns True if the reduction is zero; False otherwise.
     """
+    # The following could fail if the value returned by
+    # prime_pow.pow_mpz_t_tmp(prec) is zero. We could add a sig_on()/sig_off()
+    # to keep sage from crashing. This comes at a performance penalty, however.
+    # A correct implementation of prime_pow should never return zero.
     mpz_mod(out, a, prime_pow.pow_mpz_t_tmp(prec))
     return mpz_sgn(out) == 0
 
@@ -306,7 +310,7 @@ cdef inline int cinvert(mpz_t out, mpz_t a, long prec, PowComputer_ prime_pow) e
     success = mpz_invert(out, a, prime_pow.pow_mpz_t_tmp(prec))
     if not success:
         raise ZeroDivisionError
-    
+
 cdef inline int cmul(mpz_t out, mpz_t a, mpz_t b, long prec, PowComputer_ prime_pow) except -1:
     """
     Multiplication.
@@ -327,7 +331,7 @@ cdef inline int cdivunit(mpz_t out, mpz_t a, mpz_t b, long prec, PowComputer_ pr
     """
     Division.
 
-    The inversion is perfomed modulo p^prec.  Note that no reduction
+    The inversion is performed modulo p^prec.  Note that no reduction
     is performed after the product.
 
     INPUT:
@@ -380,7 +384,7 @@ cdef inline bint cisone(mpz_t out, PowComputer_ prime_pow) except -1:
     - returns True if `a = 1`, and False otherwise.
     """
     return mpz_cmp_ui(out, 1) == 0
-    
+
 cdef inline bint ciszero(mpz_t out, PowComputer_ prime_pow) except -1:
     """
     Returns whether this element is equal to 0.
@@ -395,7 +399,7 @@ cdef inline bint ciszero(mpz_t out, PowComputer_ prime_pow) except -1:
     - returns True if `a = 0`, and False otherwise.
     """
     return mpz_cmp_ui(out, 0) == 0
-    
+
 cdef inline int cpow(mpz_t out, mpz_t a, mpz_t n, long prec, PowComputer_ prime_pow) except -1:
     """
     Exponentiation.
@@ -441,12 +445,12 @@ cdef inline cpickle(mpz_t a, PowComputer_ prime_pow):
 
 cdef inline int cunpickle(mpz_t out, x, PowComputer_ prime_pow) except -1:
     """
-    Reconstruction from the output of meth:`cpickle`.
+    Reconstruction from the output of :meth:`cpickle`.
 
     INPUT:
 
     - ``out`` -- the ``mpz_t`` in which to store the result.
-    - ``x`` -- the result of `meth`:cpickle.
+    - ``x`` -- the result of :meth:`cpickle`.
     - ``prime_pow`` -- the PowComputer for the ring.
     """
     mpz_set(out, (<Integer?>x).value)
@@ -479,65 +483,79 @@ cdef inline long chash(mpz_t a, long ordp, long prec, PowComputer_ prime_pow) ex
             return -2
         return n
 
-cdef clist(mpz_t a, long prec, bint pos, PowComputer_ prime_pow):
+# the expansion_mode enum is defined in padic_template_element_header.pxi
+cdef inline cexpansion_next(mpz_t value, expansion_mode mode, long curpower, PowComputer_ prime_pow):
     """
-    Returns a list of digits in the series expansion.
-
-    This function is used in printing, and expresses ``a`` as a series
-    in the standard uniformizer ``p``.
+    Return the next digit in a `p`-adic expansion of ``value``.
 
     INPUT:
 
-    - ``a`` -- an ``mpz_t`` giving the underlying `p`-adic element.
-    - ``prec`` -- a precision giving the number of digits desired.
-    - ``pos`` -- if True then representatives in 0..(p-1) are used;
-                 otherwise the range (-p/2..p/2) is used.
-    - ``prime_pow`` -- a PowComputer for the ring.
-
-    OUTPUT:
-
-    - A list of p-adic digits `[a_0, a_1, \ldots]` so that
-      `a = a_0 + a_1*p + \cdots` modulo `p^{prec}`.
+    - ``value`` -- the `p`-adic element whose expansion is desired.
+    - ``mode`` -- either ``simple_mode`` or ``smallest_mode``
+    - ``curpower`` -- the current power of `p` for which the coefficient
+      is being found.  Only used in ``smallest_mode``.
+    - ``prime_pow`` -- A ``PowComputer`` holding `p`-adic data.
     """
-    cdef mpz_t tmp, halfp
+    if mode == teichmuller_mode: raise NotImplementedError
+    cdef Integer ans = PY_NEW(Integer)
     cdef bint neg
-    cdef long curpower
-    cdef Integer list_elt
-    ans = PyList_New(0)
-    mpz_set(holder.value, a)
-    if pos:
-        curpower = prec
-        while mpz_sgn(holder.value) != 0 and curpower >= 0:
-            list_elt = PY_NEW(Integer)
-            mpz_mod(list_elt.value, holder.value, prime_pow.prime.value)
-            mpz_sub(holder.value, holder.value, list_elt.value)
-            mpz_divexact(holder.value, holder.value, prime_pow.prime.value)
-            PyList_Append(ans, list_elt)
-            curpower -= 1
-    else:
-        neg = False
-        curpower = prec
-        mpz_fdiv_q_2exp(holder2.value, prime_pow.prime.value, 1)
-        while mpz_sgn(holder.value) != 0 and curpower > 0:
-            curpower -= 1
-            list_elt = PY_NEW(Integer)
-            mpz_mod(list_elt.value, holder.value, prime_pow.prime.value)
-            if mpz_cmp(list_elt.value, holder2.value) > 0:
-                mpz_sub(list_elt.value, list_elt.value, prime_pow.prime.value)
-                neg = True
-            else:
-                neg = False
-            mpz_sub(holder.value, holder.value, list_elt.value)
-            mpz_divexact(holder.value, holder.value, prime_pow.prime.value)
-            if neg:
-                if mpz_cmp(holder.value, prime_pow.pow_mpz_t_tmp(curpower)) >= 0:
-                    mpz_sub(holder.value, holder.value, prime_pow.pow_mpz_t_tmp(curpower))
-            PyList_Append(ans, list_elt)
+    mpz_mod(ans.value, value, prime_pow.prime.value)
+    if mode == smallest_mode:
+        if mpz_cmp(ans.value, prime_pow.p2.value) > 0:
+            mpz_sub(ans.value, ans.value, prime_pow.prime.value)
+            neg = True
+        else:
+            neg = False
+    mpz_sub(value, value, ans.value)
+    mpz_divexact(value, value, prime_pow.prime.value)
+    if (mode == smallest_mode and neg and
+        mpz_cmp(value, prime_pow.pow_mpz_t_tmp(curpower)) >= 0):
+        mpz_sub(value, value, prime_pow.pow_mpz_t_tmp(curpower))
     return ans
 
-# The element is filled in for zero in the output of clist if necessary.
+cdef inline cexpansion_getitem(mpz_t value, long m, PowComputer_ prime_pow):
+    """
+    Return the `m`th `p`-adic digit in the ``simple_mode`` expansion.
+
+    INPUT:
+
+    - ``value`` -- the `p`-adic element whose expansion is desired.
+    - ``m`` -- a non-negative integer: which entry in the `p`-adic expansion to return.
+    - ``prime_pow`` -- A ``PowComputer`` holding `p`-adic data.
+    """
+    cdef Integer ans = PY_NEW(Integer)
+    if m > 0:
+        mpz_fdiv_q(ans.value, value, prime_pow.pow_mpz_t_tmp(m))
+        mpz_mod(ans.value, ans.value, prime_pow.prime.value)
+    else:
+        mpz_mod(ans.value, value, prime_pow.prime.value)
+    return ans
+
+# The element is filled in for zero in the the p-adic expansion if necessary.
 # It could be [] for some other linkages.
-_list_zero = Integer(0)
+_expansion_zero = Integer(0)
+
+cdef list ccoefficients(mpz_t x, long valshift, long prec, PowComputer_ prime_pow):
+    """
+    Return a list of coefficients, as elements that can be converted into the base ring.
+
+    INPUT:
+
+    - ``x`` -- a ``celement`` giving the underlying `p`-adic element, or possibly its unit part.
+    - ``valshift`` -- a long giving the power of the uniformizer to shift `x` by.
+    - ``prec`` -- a long, the (relative) precision desired, used in rational reconstruction
+    - ``prime_pow`` -- the ``PowComputer`` of the ring
+    """
+    cdef Integer ansz
+    cdef Rational ansq
+    if valshift >= 0:
+        ansz = PY_NEW(Integer)
+        cconv_mpz_t_out_shared(ansz.value, x, valshift, prec, prime_pow)
+        return [ansz]
+    else:
+        ansq = Rational.__new__(Rational)
+        cconv_mpq_t_out_shared(ansq.value, x, valshift, prec, prime_pow)
+        return [ansq]
 
 cdef int cteichmuller(mpz_t out, mpz_t value, long prec, PowComputer_ prime_pow) except -1:
     """
@@ -550,7 +568,7 @@ cdef int cteichmuller(mpz_t out, mpz_t value, long prec, PowComputer_ prime_pow)
                  \pmod{p}`.
     - ``value`` -- an ``mpz_t``, the element mod `p` to lift.
     - ``prec`` -- a long, the precision to which to lift.
-    - ``prime_pow`` -- the Powcomputer of the ring.
+    - ``prime_pow`` -- the ``PowComputer`` of the ring.
     """
     if mpz_divisible_p(value, prime_pow.prime.value) != 0:
         mpz_set_ui(out, 0)

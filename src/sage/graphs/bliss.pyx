@@ -30,7 +30,6 @@ AUTHORS:
 from cpython cimport PyObject
 from libc.limits cimport LONG_MAX
 
-from sage.misc.decorators import rename_keyword
 
 cdef extern from "bliss/graph.hh" namespace "bliss":
 
@@ -223,10 +222,9 @@ def automorphism_group(G, partition=None):
 cdef void empty_hook(void *user_param , unsigned int n, const unsigned int *aut):
     return
 
-@rename_keyword(deprecation=21111, certify='certificate')
 def canonical_form(G, partition=None, return_graph=False, certificate=False):
-    """
-    Return a canonical label of ``G``
+    r"""
+    Return the canonical label of ``G``.
 
     A canonical label ``canonical_form(G)`` of ``G`` is a (di)graph defined on
     `\{0,...,n-1\}` such that ``G`` is isomorphic to ``H`` if and only if
@@ -237,10 +235,10 @@ def canonical_form(G, partition=None, return_graph=False, certificate=False):
     - ``G`` -- A graph or digraph.
 
     - ``partition`` -- A partition of the vertices of ``G`` into color classes.
-        Defaults to ``None``.
+      Defaults to ``None``.
 
     - ``return_graph`` -- If set to ``True``, ``canonical_form`` returns the
-        canonical graph of G. Otherwise, it returns its set of edges.
+      canonical graph of ``G``. Otherwise, it returns its set of edges.
 
     - ``certificate`` -- If set to ``True`` returns the labeling of G into a
       canonical graph.
@@ -273,9 +271,7 @@ def canonical_form(G, partition=None, return_graph=False, certificate=False):
         True
 
         sage: g = Graph({1: [2]})
-        sage: g_ = canonical_form(g, return_graph=True, certify=True)    # optional - bliss
-        doctest...: DeprecationWarning: use the option 'certificate' instead of 'certify'
-        See http://trac.sagemath.org/21111 for details.
+        sage: g_ = canonical_form(g, return_graph=True, certificate=True)    # optional - bliss
         sage: 0 in g_[0]                                                 # optional - bliss
         True
     """

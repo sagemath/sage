@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ "$SAGE_LOCAL" = "" ]; then
    echo "SAGE_LOCAL undefined ... exiting";
    echo "Maybe run 'sage -sh'?"
@@ -10,4 +8,4 @@ export MAKE=make
 
 cd src
 
-$PIP_INSTALL .
+sdh_pip_install .

@@ -32,11 +32,11 @@ class Polygon(GraphicPrimitive_xydata):
 
     INPUT:
 
-    - xdata - list of `x`-coordinates of points defining Polygon
+    - xdata -- list of `x`-coordinates of points defining Polygon
 
-    - ydata - list of `y`-coordinates of points defining Polygon
+    - ydata -- list of `y`-coordinates of points defining Polygon
 
-    - options - dict of valid plot options to pass to constructor
+    - options -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 

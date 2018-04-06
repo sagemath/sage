@@ -417,7 +417,7 @@ if( DEBUGLEVEL_ell >= 5, print("     starting repres"));
   fond = [];
   mat = idealhnf(nf,p);
   for( i = 1, #mat,
-    if( mat[i,i] != 1, fond = concat(fond,nf.nf[7][i])));
+    if( mat[i,i] != 1, fond = concat(fond, nf.zk[i])));
   f = #fond;
   pp = p.p;
   rep = vector(pp^f,i,0);

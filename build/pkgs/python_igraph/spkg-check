@@ -1,4 +1,2 @@
-#!/usr/bin/env bash
-
 cd src
-python setup.py check
+sage-python23 setup.py check

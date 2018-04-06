@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo "Error: SAGE_LOCAL undefined - exiting ..."
     echo "Maybe run 'sage -sh'?"
@@ -16,7 +14,7 @@ success() {
 # Install new version
 cd src
 
-$PIP_INSTALL .
+sdh_pip_install .
 success 'Error installing Jinja2'
 
 ### The Jinja2 docs use Sphinx which requires Jinja2... do not build!

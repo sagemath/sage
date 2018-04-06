@@ -78,6 +78,19 @@ class WeylGroups(Category_singleton):
     Finite = LazyImport('sage.categories.finite_weyl_groups', 'FiniteWeylGroups')
 
     class ParentMethods:
+        def coxeter_matrix(self):
+            """
+            Return the Coxeter matrix associated to ``self``.
+
+            EXAMPLES::
+
+                sage: G = WeylGroup(['A',3])
+                sage: G.coxeter_matrix()
+                [1 3 2]
+                [3 1 3]
+                [2 3 1]
+            """
+            return self.cartan_type().coxeter_matrix()
 
         def pieri_factors(self, *args, **keywords):
             r"""
@@ -106,8 +119,26 @@ class WeylGroups(Category_singleton):
                 sage: W = WeylGroup(['B',3])
                 sage: PF = W.pieri_factors()
                 sage: [w.reduced_word() for w in PF]
-                [[1, 2, 3, 2, 1], [1, 2, 3, 2], [2, 3, 2], [2, 3], [3, 1, 2, 1], [1, 2, 1], [2], [1, 2], [1], [], [2, 1], [3, 2, 1], [3, 1], [2, 3, 2, 1], [3], [3, 2], [1, 2, 3], [1, 2, 3, 1], [3, 1, 2], [2, 3, 1]]
-
+                [[1, 2, 3, 2, 1],
+                 [1, 2, 3, 2],
+                 [2, 3, 2],
+                 [3, 1, 2],
+                 [1, 2, 3, 1],
+                 [1, 2, 1],
+                 [3, 1],
+                 [2, 1],
+                 [2, 3, 2, 1],
+                 [1, 2, 3],
+                 [3, 1, 2, 1],
+                 [2, 3],
+                 [3, 2],
+                 [1, 2],
+                 [3],
+                 [],
+                 [2],
+                 [3, 2, 1],
+                 [2, 3, 1],
+                 [1]]
                 sage: W = WeylGroup(['C',4,1])
                 sage: PF = W.pieri_factors()
                 sage: W.from_reduced_word([3,2,0]) in PF
@@ -161,9 +192,6 @@ class WeylGroups(Category_singleton):
             if not self.cartan_type().is_finite():
                 raise ValueError("the Cartan type {} is not finite".format(self.cartan_type()))
 
-            # Find all the minimal length coset representatives
-            WP = [x for x in self if all(not x.has_descent(i) for i in index_set)]
-
             # This is a modified form of quantum_bruhat_successors.
             # It does not do any error checking and also is more efficient
             #   with how it handles memory and checks by using data stored
@@ -172,41 +200,47 @@ class WeylGroups(Category_singleton):
             NPR = lattice.nonparabolic_positive_roots(index_set)
             NPR_sum = sum(NPR)
             NPR_data = {}
-            full_NPR_sum = lattice.nonparabolic_positive_root_sum(())
+            double_rho = lattice.sum(lattice.positive_roots()) # = 2 * \rho
             for alpha in NPR:
                 ref = alpha.associated_reflection()
                 alphacheck = alpha.associated_coroot()
                 NPR_data[alpha] = [self.from_reduced_word(ref), # the element
-                                   len(ref) == full_NPR_sum.scalar(alphacheck) - 1, # is_quantum
+                                   len(ref) == double_rho.scalar(alphacheck) - 1, # is_quantum
                                    NPR_sum.scalar(alphacheck)] # the scalar
             # We also create a temporary cache of lengths as they are
             #   relatively expensive to compute and needed frequently
+            visited = {}
+            todo = {self.one()}
             len_cache = {}
             def length(x):
-                # It is sufficient and faster to use the matrices as the keys
-                m = x.matrix()
-                if m in len_cache:
-                    return len_cache[m]
-                len_cache[m] = x.length()
-                return len_cache[m]
-            def succ(x):
+                if x in len_cache:
+                    return len_cache[x]
+                len_cache[x] = x.length()
+                return len_cache[x]
+            while todo:
+                x = todo.pop()
                 w_length_plus_one = length(x) + 1
-                successors = []
+                adj = {}
                 for alpha in NPR:
                     elt, is_quantum, scalar = NPR_data[alpha]
                     wr = x * elt
                     wrc = wr.coset_representative(index_set)
                     # coset_representative returns wr if nothing gets changed
-                    if wrc is wr and length(wr) == w_length_plus_one:
-                        successors.append((wr, alpha))
+                    if wrc is wr and length(wrc) == w_length_plus_one:
+                        if wrc not in visited:
+                            todo.add(wrc)
+                        adj[wr] = alpha
                     elif is_quantum and length(wrc) == w_length_plus_one - scalar:
-                        successors.append((wrc, alpha))
-                return successors
+                        if wrc not in visited:
+                            todo.add(wrc)
+                        adj[wrc] = alpha
+                visited[x] = adj
 
             from sage.graphs.digraph import DiGraph
-            return DiGraph([[x,i[0],i[1]] for x in WP for i in succ(x)],
+            return DiGraph(visited,
                            name="Parabolic Quantum Bruhat Graph of %s for nodes %s"%(self, index_set),
-                           format="list_of_edges")
+                           format="dict_of_dicts",
+                           data_structure="static_sparse")
 
     class ElementMethods:
 

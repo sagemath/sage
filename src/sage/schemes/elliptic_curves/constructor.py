@@ -23,8 +23,8 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six import string_types, integer_types
 
-import six
 import sage.rings.all as rings
 
 from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
@@ -403,7 +403,7 @@ class EllipticCurveFactory(UniqueFactory):
             else:
                 x = coefficients_from_cubic(x, y, morphism=False)
 
-        if isinstance(x, six.string_types):
+        if isinstance(x, string_types):
             # Interpret x as a Cremona or LMFDB label.
             from sage.databases.cremona import CremonaDatabase
             x, data = CremonaDatabase().coefficients_and_data(x)
@@ -421,7 +421,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         if R is None:
             R = Sequence(x).universe()
-            if R in (rings.ZZ, int, long):
+            if R in (rings.ZZ,) + integer_types:
                 R = rings.QQ
 
         return (R, tuple(R(a) for a in x)), kwds
@@ -1009,7 +1009,7 @@ def chord_and_tangent(F, P):
 
         sage: F(p2)
         0
-        sage: map(type, p2)
+        sage: list(map(type, p2))
         [<type 'sage.rings.rational.Rational'>,
          <type 'sage.rings.rational.Rational'>,
          <type 'sage.rings.rational.Rational'>]
@@ -1103,10 +1103,11 @@ def projective_point(p):
         sage: projective_point([F(4), F(8), F(2)])
         [4, 8, 2]
     """
-    from sage.rings.integer import GCD_list, LCM_list
+    from sage.rings.integer import GCD_list
+    from sage.arith.functions import LCM_list
     try:
         p_gcd = GCD_list([x.numerator() for x in p])
-        p_lcm = LCM_list([x.denominator() for x in p])
+        p_lcm = LCM_list(x.denominator() for x in p)
     except AttributeError:
         return p
     scale = p_lcm / p_gcd

@@ -17,6 +17,7 @@ AUTHOR:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 cimport sage.rings.fast_arith
 import sage.rings.fast_arith
@@ -36,7 +37,7 @@ from sage.rings.bernmm import bernmm_bern_modp
 
 def verify_bernoulli_mod_p(data):
     """
-    Computes checksum for bernoulli numbers.
+    Computes checksum for Bernoulli numbers.
 
     It checks the identity
 

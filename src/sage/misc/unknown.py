@@ -34,15 +34,17 @@ class UnknownClass(UniqueRepresentation, SageObject):
             [False, Unknown, True]
             [True, True, True]
 
-        ..warning:: Unless PEP 335 is accepted, in the following cases,
-        ``and``, ``not`` and ``or`` return a somewhat wrong value::
+        .. WARNING::
 
-            sage: not Unknown         # should return Unknown
-            True
-            sage: Unknown and False   # should return False
-            Unknown
-            sage: Unknown or False    # should return Unknown
-            False
+            Unless PEP 335 is accepted, in the following cases,
+            ``and``, ``not`` and ``or`` return a somewhat wrong value::
+
+                sage: not Unknown         # should return Unknown
+                True
+                sage: Unknown and False   # should return False
+                Unknown
+                sage: Unknown or False    # should return Unknown
+                False
         """
 
     def _repr_(self):
@@ -74,7 +76,9 @@ class UnknownClass(UniqueRepresentation, SageObject):
         """
         The ``and`` logical connector.
 
-        ..warning:: This is not used by ``and`` unless PEP 335 is accepted.
+        .. WARNING::
+
+            This is not used by ``and`` unless PEP 335 is accepted.
 
         EXAMPLES::
 
@@ -97,7 +101,9 @@ class UnknownClass(UniqueRepresentation, SageObject):
         """
         The ``or`` logical connector.
 
-        ..warning:: This is not used by ``or`` unless PEP 335 is accepted.
+        .. WARNING::
+
+            This is not used by ``or`` unless PEP 335 is accepted.
 
         EXAMPLES::
 
@@ -120,7 +126,9 @@ class UnknownClass(UniqueRepresentation, SageObject):
         """
         The ``not`` logical connector.
 
-        ..warning:: This is not used by ``not`` unless PEP 335 is accepted.
+        .. WARNING::
+
+            This is not used by ``not`` unless PEP 335 is accepted.
 
         EXAMPLES::
 

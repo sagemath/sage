@@ -182,7 +182,7 @@ cdef class FiniteZZsubmodule_iterator:
 
     def __iter__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modules.finite_submodule_iter import FiniteZZsubmodule_iterator
             sage: F.<x,y,z> = FreeAlgebra(GF(3),3)
@@ -441,7 +441,7 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
 
     def __iter__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modules.finite_submodule_iter import FiniteFieldsubspace_projPoint_iterator
             sage: A = MatrixSpace(GF(3), 10,10).one()

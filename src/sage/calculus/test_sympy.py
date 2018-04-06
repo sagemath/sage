@@ -107,7 +107,7 @@ And here are some actual tests of sympy::
 
 ::
 
-    sage: e = sympify(1)/cos(x)**3; e
+    sage: e = (1/cos(x)^3)._sympy_(); e
     cos(x)**(-3)
     sage: f = e.series(x, 0, 10); f
     1 + 3*x**2/2 + 11*x**4/8 + 241*x**6/240 + 8651*x**8/13440 + O(x**10)
@@ -138,12 +138,12 @@ And the functionality to convert from sympy format to Sage format::
     sage: e._sage_().taylor(x._sage_(), 0, 8)
     8651/13440*x^8 + 241/240*x^6 + 11/8*x^4 + 3/2*x^2 + 1
     sage: f._sage_()
-    8651/13440*x^8 + 241/240*x^6 + 11/8*x^4 + 3/2*x^2 + 1
+    8651/13440*x^8 + 241/240*x^6 + 11/8*x^4 + 3/2*x^2 + Order(x^10) + 1
 
 Mixing SymPy with Sage::
 
     sage: import sympy
-    sage: sympy.sympify(var("y"))+sympy.Symbol("x")
+    sage: var("x")._sympy_() + var("y")._sympy_()
     x + y
     sage: o = var("omega")
     sage: s = sympy.Symbol("x")

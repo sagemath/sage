@@ -1,14 +1,14 @@
 #include <unistd.h>
 #include <stdio.h>
-#include "gap/libgap.h"
+#include <gap/libgap.h>
 
-#include "gap/config.h"
-#include "gap/system.h"
-#include "gap/objects.h"
-#include "gap/gasman.h"
-#include "gap/code.h"
-#include "gap/vars.h"
-#include "gap/read.h"
+#include <gap/config.h>
+#include <gap/system.h>
+#include <gap/objects.h>
+#include <gap/gasman.h>
+#include <gap/code.h>
+#include <gap/vars.h>
+#include <gap/read.h>
 
 extern char **environ;
 

@@ -41,20 +41,28 @@ REFERENCES:
 .. [LaZv04] S. Lando and A. Zvonkine, "Graphs on surfaces and their
             applications", Springer-Verlag, 2004.
 """
-# *************************************************************************
-# Copyright (C) 2015-2016 Vincent Delecroix <20100.delecroix@gmail.com>
-#                         Frederic Chapoton <fchapoton2@gmail.com>
+
+#*****************************************************************************
+#       Copyright (C) 2015-2016 Vincent Delecroix <20100.delecroix@gmail.com>
+#                               Frederic Chapoton <fchapoton2@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#  The full text of the GPL is available at http://www.gnu.org/licenses/
-# *************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
 from six.moves import range
+from six import integer_types
 
 from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.richcmp import (op_NE, op_EQ, richcmp_not_equal,
+                                    rich_to_bool)
+
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.rings.integer import Integer
 from sage.combinat.partition import Partition
@@ -473,7 +481,7 @@ class Constellation_class(Element):
         G = Graph()
         G.add_vertices(list(range(self.degree())))
         for p in self._g:
-            G.add_edges(enumerate(p.domain()))
+            G.add_edges(enumerate(p.domain()), loops=False)
         m = G.connected_components()
         if len(m) == 1:
             return [self]
@@ -492,9 +500,9 @@ class Constellation_class(Element):
                 g[t].append(tmp)
         return [Constellation(g=g[i], check=False) for i in range(len(m))]
 
-    def __eq__(self, other):
+    def _richcmp_(self, other, op):
         r"""
-        Test of equality.
+        Do the comparison.
 
         TESTS::
 
@@ -502,25 +510,42 @@ class Constellation_class(Element):
             True
             sage: Constellation(['(0,1)','(0,2)',None]) == Constellation(['(0,1)',None,'(0,2)'])
             False
-        """
-        if not isinstance(other, Constellation_class):
-            return False
-        return (self._g == other._g)
-
-    def __ne__(self, other):
-        r"""
-        Test of inequality.
-
-        TESTS::
 
             sage: Constellation(['(0,1,2)', None]) != Constellation(['(0,1,2)', None])
             False
             sage: Constellation(['(0,1)','(0,2)',None]) != Constellation(['(0,1)',None,'(0,2)'])
             True
+
+            sage: c1 = Constellation([[1,2,0],None])
+            sage: c2 = Constellation([[2,0,1],None])
+            sage: c1 < c2
+            True
+            sage: c2 > c1
+            True
         """
         if not isinstance(other, Constellation_class):
-            return True
-        return (self._g != other._g)
+            return op == op_NE
+        if op == op_EQ:
+            return self._g == other._g
+        if op == op_NE:
+            return self._g != other._g
+
+        lx = self.length()
+        rx = other.length()
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
+
+        lx = self.degree()
+        rx = other.degree()
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
+
+        for i in range(self.length() - 1):
+            lx = self._g[i]
+            rx = other._g[i]
+            if lx != rx:
+                return richcmp_not_equal(lx, rx, op)
+        return rich_to_bool(op, 0)
 
     def is_isomorphic(self, other, return_map=False):
         r"""
@@ -558,26 +583,6 @@ class Constellation_class(Element):
         return (self.degree() == other.degree() and
                 self.length() == other.length() and
                 self.relabel() == other.relabel())
-
-    def __cmp__(self, other):
-        r"""
-        TESTS::
-
-            sage: c1 = Constellation([[1,2,0],None])
-            sage: c2 = Constellation([[2,0,1],None])
-            sage: c1 < c2
-            True
-            sage: c2 > c1
-            True
-        """
-        if self.length() != other.length():
-            return self.length().__cmp__(other.length())
-        if self.degree() != other.degree():
-            return self.degree().__cmp__(other.degree())
-        for i in range(self.length() - 1):
-            if self._g[i] != other._g[i]:
-                return self._g[i].__cmp__(other._g[i])
-        return 0
 
     def _repr_(self):
         r"""
@@ -1463,7 +1468,7 @@ def perm_sym_domain(g):
         domain = set().union(*[a for cyc in g[1:-1].split(')(')
                                for a in cyc.split(',')])
         if all(s.isdigit() for s in domain):
-            return map(int, domain)
+            return [int(x) for x in domain]
         else:
             return domain
     elif parent(g) in Groups:
@@ -1516,7 +1521,8 @@ def perms_sym_init(g, sym=None):
 
     if sym is None:
         domain = set().union(*[perm_sym_domain(gg) for gg in g])
-        if all(isinstance(s, (Integer, int, long)) and s > 0 for s in domain):
+        if all(isinstance(s, (Integer,) + integer_types) and s > 0
+               for s in domain):
             domain = max(domain)
         else:
             domain = sorted(domain)
@@ -1552,7 +1558,7 @@ def perms_are_connected(g, n):
     if g:
         G.add_vertices(g[0].domain())
     for p in g:
-        G.add_edges(p.dict().items())
+        G.add_edges(p.dict().items(), loops=False)
     return G.is_connected()
 
 
@@ -1560,7 +1566,7 @@ def perms_canonical_labels_from(x, y, j0, verbose=False):
     r"""
     Return canonical labels for ``x``, ``y`` that starts at ``j0``
 
-    .. WARNING:
+    .. WARNING::
 
         The group generated by ``x`` and the elements of ``y`` should be
         transitive.
@@ -1715,7 +1721,7 @@ def perms_canonical_labels(p, e=None):
         [[1, 2, 3, 0], [0, 3, 2, 1], [2, 1, 0, 3]]
 
         sage: S = SymmetricGroup(range(4))
-        sage: [~S(m) * S(u) * S(m) for u in l0] == map(S, l)
+        sage: [~S(m) * S(u) * S(m) for u in l0] == list(map(S, l))
         True
 
         sage: perms_canonical_labels([])

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 The Chow group of a toric variety
 
@@ -322,7 +323,7 @@ class ChowCycle(FGP_Element):
             5
 
         In the case of a smooth complete toric variety, the Chow
-        (homology) groups are Poincare dual to the integral cohomology
+        (homology) groups are Poincaré dual to the integral cohomology
         groups. Here is such a smooth example::
 
             sage: D = P2.divisor(1)
@@ -454,7 +455,7 @@ class ChowCycle(FGP_Element):
 
     def cohomology_class(self):
         r"""
-        Return the (Poincare-dual) cohomology class.
+        Return the (Poincaré-dual) cohomology class.
 
         Consider a simplicial cone of the fan, that is, a
         `d`-dimensional cone spanned by `d` rays. Take the product of
@@ -462,13 +463,13 @@ class ChowCycle(FGP_Element):
         represents a cohomology classes of the toric variety `X`, see
         :meth:`~sage.schemes.toric.variety.ToricVariety_field.cohomology_ring`.
         Its cohomological degree is `2d`, which is the same degree as
-        the Poincare-dual of the (real) `\dim(X)-2d`-dimensional torus
+        the Poincaré-dual of the (real) `\dim(X)-2d`-dimensional torus
         orbit associated to the simplicial cone. By linearity, we can
         associate a cohomology class to each Chow cycle of a
         simplicial toric variety.
 
         If the toric variety is compact and smooth, the associated
-        cohomology class actually is the Poincare dual (over the
+        cohomology class actually is the Poincaré dual (over the
         integers) of the Chow cycle. In particular, integrals of dual
         cohomology classes perform intersection computations.
 
@@ -489,7 +490,7 @@ class ChowCycle(FGP_Element):
         If the toric variety is not simplicial, that is, has worse
         than orbifold singularities, there is no way to associate a
         cohomology class of the correct degree. In this case,
-        :meth:`cohomology_class` rasies a ``ValueError``.
+        :meth:`cohomology_class` raises a ``ValueError``.
 
         EXAMPLES::
 
@@ -640,7 +641,7 @@ class ChowGroup_class(FGP_Module_class):
             sage: 1/2 * A_ZZ.an_element() * 1/3
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*': 'Rational Field'
+            TypeError: unsupported operand parent(s) for *: 'Rational Field'
             and 'Chow group of 2-d CPR-Fano toric variety covered by 3 affine patches'
             sage: A_ZZ.get_action(ZZ)
             Right scalar multiplication by Integer Ring on Chow group of 2-d
@@ -702,10 +703,10 @@ class ChowGroup_class(FGP_Module_class):
 
         - ``x`` -- a cone of the fan, a toric divisor, or a valid
           input for
-          :class:sage.modules.fg_pid.fgp_module.FGP_Module_class`.
+          :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`.
 
         - ``check`` -- bool (default: ``True``). See
-          :class:sage.modules.fg_pid.fgp_module.FGP_Module_class`.
+          :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`.
 
         EXAMPLES::
 
@@ -896,7 +897,7 @@ class ChowGroup_class(FGP_Module_class):
         .. NOTE::
 
             * For a smooth toric variety, this is the same as the
-              Poincare-dual cohomology group
+              Poincaré-dual cohomology group
               `H^{d-2k}(X,\ZZ)`.
 
             * For a simplicial toric variety ("orbifold"),
@@ -1101,7 +1102,7 @@ class ChowGroup_degree_class(SageObject):
     r"""
     A fixed-degree subgroup of the Chow group of a toric variety.
 
-    WARNING ..
+    .. WARNING::
 
         Use
         :meth:`~sage.schemes.toric.chow_group.ChowGroup_class.degree`
