@@ -362,7 +362,7 @@ def make_positive(matrices):
     INPUT:
 
     - ``matrices`` -- a list of matrices where every matrix is either
-      non-negative or non-positive
+      non-negative or non-positive.
 
     OUTPUT:
 
