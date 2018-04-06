@@ -165,7 +165,7 @@ class HypergraphGenerators():
 
         - ``k,n`` -- nonnegative integers with `k\leq n`
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: h = hypergraphs.CompleteUniform(5,2); h
             Incidence structure with 5 points and 10 blocks

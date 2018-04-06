@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Finite Permutation Groups
 """
@@ -103,15 +104,18 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
         def cycle_index(self, parent = None):
             r"""
+            Return the *cycle index* of ``self``.
+
             INPUT:
 
              - ``self`` - a permutation group `G`
              - ``parent`` -- a free module with basis indexed by partitions,
                or behave as such, with a ``term`` and ``sum`` method
-               (default: the symmetric functions over the rational field in the p basis)
+               (default: the symmetric functions over the rational field in the `p` basis)
 
-            Returns the *cycle index* of `G`, which is a gadget counting
-            the elements of `G` by cycle type, averaged over the group:
+            The *cycle index* of a permutation group `G`
+            (:wikipedia:`Cycle_index`) is a gadget counting the
+            elements of `G` by cycle type, averaged over the group:
 
             .. MATH::
 
@@ -135,7 +139,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 8
 
             The cycle index plays an important role in the enumeration of
-            objects modulo the action of a group (Polya enumeration), via
+            objects modulo the action of a group (Pólya enumeration), via
             the use of symmetric functions and plethysms. It is therefore
             encoded as a symmetric function, expressed in the powersum
             basis::
@@ -151,8 +155,11 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 sage: h( P )
                 h[4]
 
-            TODO: add some simple examples of Polya enumeration, once it
-            will be easy to expand symmetric functions on any alphabet.
+            .. TODO::
+
+                Add some simple examples of Pólya enumeration, once
+                it will be easy to expand symmetric functions on any
+                alphabet.
 
             Here are the cycle indices of some permutation groups::
 
@@ -170,6 +177,13 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 p[1, 1, 1, 1, 1] + 15*p[2, 2, 1] + 20*p[3, 1, 1] + 24*p[5]
                 p[1, 1, 1, 1, 1] + 10*p[2, 1, 1, 1] + 15*p[2, 2, 1] + 20*p[3, 1, 1] + 20*p[3, 2] + 30*p[4, 1] + 24*p[5]
 
+            Permutation groups with arbitrary domains are supported
+            (see :trac:`22765`)::
+
+                sage: G = PermutationGroup([['b','c','a']], domain=['a','b','c'])
+                sage: G.cycle_index()
+                1/3*p[1, 1, 1] + 2/3*p[3]
+
             One may specify another parent for the result::
 
                 sage: F = CombinatorialFreeModule(QQ, Partitions())
@@ -179,12 +193,12 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 sage: P.parent() is F
                 True
 
-            This parent should have a ``term`` and ``sum`` method::
+            This parent should be a module with basis indexed by partitions::
 
                 sage: CyclicPermutationGroup(6).cycle_index(parent = QQ)
                 Traceback (most recent call last):
                   ...
-                AssertionError: `parent` should be (or behave as) a free module with basis indexed by partitions
+                ValueError: `parent` should be a module with basis indexed by partitions
 
             REFERENCES:
 
@@ -192,7 +206,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
             AUTHORS:
 
-             - Nicolas Borie and Nicolas M. Thiery
+            - Nicolas Borie and Nicolas M. Thiéry
 
             TESTS::
 
@@ -205,20 +219,17 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 sage: P.cycle_index()
                 p[1]
             """
-            from sage.combinat.permutation import Permutation
+            from sage.categories.modules import Modules
             if parent is None:
                  from sage.rings.rational_field import QQ
                  from sage.combinat.sf.sf import SymmetricFunctions
                  parent = SymmetricFunctions(QQ).powersum()
-            else:
-                assert hasattr(parent, "term") and hasattr(parent, "sum"), \
-                    "`parent` should be (or behave as) a free module with basis indexed by partitions"
+            elif not parent in Modules.WithBasis:
+                raise ValueError("`parent` should be a module with basis indexed by partitions")
             base_ring = parent.base_ring()
-            # TODO: use self.conjugacy_classes() once available
-            from sage.interfaces.gap import gap
-            CC = ([Permutation(self(C.Representative())).cycle_type(), base_ring(C.Size())] for C in gap(self).ConjugacyClasses())
-            return parent.sum( parent.term( partition, coeff ) for (partition, coeff) in CC)/self.cardinality()
-
+            return parent.sum_of_terms([C.an_element().cycle_type(), base_ring(C.cardinality())]
+                                       for C in self.conjugacy_classes()
+                                      ) / self.cardinality()
 
     class ElementMethods:
         # TODO: put abstract_methods for

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ "$SAGE_LOCAL" = "" ]; then
    echo "SAGE_LOCAL undefined ... exiting"
    echo "Maybe run 'sage -sh'?"
@@ -74,16 +72,20 @@ sage-apply-patches $SPKGDIR/patches/scip || exit $?
 
 echo "Compiling SoPlex"
 
-#OPT=opt
-# The compiler flags that come with "OPT=opt" on Mac OS X lead to a segfault in SCIP during a call to Soplex. ("stack_not_16_byte_aligned_error")
-OPT=dbg
-# instead supply some of our own optimization flags
-CFLAGS="$CFLAGS -O3"
-CXXFLAGS="$CXXFLAGS -O3"
+OPT=opt
 
 arg_LIBBUILDFLAGS=UNUSED=
 
 if [ `uname` = 'Darwin' ] ; then
+    # Using the GCC 5.4.0 shipped with Sage leads to segmentation fault.
+    # Override.
+    CXX=g++
+    PATH=/usr/bin:$PATH
+    if [ -d "$SAGE_LOCAL/libexec/ccache" ]; then
+        PATH="$SAGE_LOCAL/libexec/ccache:$PATH"
+    fi
+    CFLAGS="-DTHREADLOCAL="
+    CXXFLAGS="-DTHREADLOCAL="
     SHAREDLIBEXT="dylib"
     # regarding "-undefined dynamic_lookup" see https://trac.macports.org/ticket/44596
     arg_LIBBUILDFLAGS=LIBBUILDFLAGS="$LDFLAGS -dynamiclib -undefined dynamic_lookup -flat_namespace -install_name $SAGE_LOCAL/lib/libsoplex-$SOPLEX_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT -lgmp -lz"
@@ -96,7 +98,8 @@ cd $SRC/$SOPLEX_DIR
 ## The Makefile in soplex 2.2.1 forgets to add the library dependencies
 ## "-lgmp -lz", causing the link to fail on Mac OS X.
 LIBBUILDFLAGS="-lgmp -lz -lreadline"
-$MAKE VERBOSE=true OPT=$OPT ZLIB=true READLINE=true SHARED=true USRCFLAGS="$CFLAGS" USRCXXFLAGS="$CXXFLAGS" USRLDFLAGS="$LDFLAGS" "$arg_LIBBUILDFLAGS" SHAREDLIBEXT="$SHAREDLIBEXT"  INSTALLDIR="$SAGE_LOCAL" install
+# Put -Llib first, or otherwise the build will try link the soplex binary against an installed libsoplex from $SAGE_LOCAL/lib.
+$MAKE VERBOSE=true OPT=$OPT ZLIB=true READLINE=true SHARED=true CXX="$CXX" USRCFLAGS="$CFLAGS" USRCXXFLAGS="$CXXFLAGS" USRLDFLAGS="-Llib $LDFLAGS" "$arg_LIBBUILDFLAGS" SHAREDLIBEXT="$SHAREDLIBEXT"  INSTALLDIR="$SAGE_LOCAL" install
 
 if [ $? -ne 0 ]; then
     echo "Error building SOPLEX."
@@ -114,9 +117,10 @@ cd $SRC/$SCIP_DIR
 mkdir lib
 cd lib
 
-ln -sv $SRC/$SOPLEX_DIR/lib/libsoplex-$SOPLEX_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT libsoplex.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT
-ln -sv $SRC/$SOPLEX_DIR/src/ spxinc
-touch libsoplex.$OS.$ARCH.gnu.$OPT.a
+mkdir -p shared static include
+ln -sv $SRC/$SOPLEX_DIR/lib/libsoplex-$SOPLEX_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT shared/libsoplex.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT
+ln -sv $SRC/$SOPLEX_DIR/src/ include/spxinc
+touch static/libsoplex.$OS.$ARCH.gnu.$OPT.a
 
 echo "Compiling SCIP"
 
@@ -125,13 +129,15 @@ if [ `uname` = 'Darwin' ] ; then
     arg_LIBBUILDFLAGS=LIBBUILDFLAGS="$LDFLAGS -dynamiclib -undefined dynamic_lookup -flat_namespace"
     SCIP_LIBBUILDFLAGS="-Wl,-install_name,$SAGE_LOCAL/lib/libscip-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
     OBJSCIP_LIBBUILDFLAGS="-Wl,-install_name,$SAGE_LOCAL/lib/libobjscip-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
-    LPI_LIBBUILDFLAGS="-Wl,-install_name,$SAGE_LOCAL/lib/liblpispx-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+    LPI_LIBBUILDFLAGS="-Wl,-install_name,$SAGE_LOCAL/lib/liblpispx2-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
     NLPI_LIBBUILDFLAGS="-Wl,-install_name,$SAGE_LOCAL/lib/libnlpi.cppad-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+    TPI_LIBBUILDFLAGS="-Wl,-install_name,$SAGE_LOCAL/lib/libtpinone-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
 else
     SCIP_LIBBUILDFLAGS="-Wl,-soname=$SAGE_LOCAL/lib/libscip-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
     OBJSCIP_LIBBUILDFLAGS="-Wl,-soname=$SAGE_LOCAL/lib/libobjscip-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
-    LPI_LIBBUILDFLAGS="-Wl,-soname=$SAGE_LOCAL/lib/liblpispx-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+    LPI_LIBBUILDFLAGS="-Wl,-soname=$SAGE_LOCAL/lib/liblpispx2-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
     NLPI_LIBBUILDFLAGS="-Wl,-soname=$SAGE_LOCAL/lib/libnlpi.cppad-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
+    TPI_LIBBUILDFLAGS="-Wl,-soname=$SAGE_LOCAL/lib/libtpinone-$SCIP_VERSION.$OS.$ARCH.gnu.$OPT.$SHAREDLIBEXT"
 fi
 
 cd $SRC/$SCIP_DIR
@@ -145,7 +151,8 @@ $MAKE OPT=$OPT LPSOPT=$OPT VERBOSE=true SHARED=true ZIMPL=false GMP=true ZLIB=tr
      OBJSCIP_LIBBUILDFLAGS=$OBJSCIP_LIBBUILDFLAGS \
      LPI_LIBBUILDFLAGS=$LPI_LIBBUILDFLAGS \
      NLPI_LIBBUILDFLAGS=$NLPI_LIBBUILDFLAGS \
-     SHAREDLIBEXT="$SHAREDLIBEXT" INSTALLDIR="$SAGE_LOCAL" LINKRPATH="" install
+     TPI_LIBBUILDFLAGS=$TPI_LIBBUILDFLAGS \
+     SHAREDLIBEXT="$SHAREDLIBEXT" INSTALLDIR="$SAGE_LOCAL" install
 if [ $? -ne 0 ]; then
     echo "Error building/installing SCIP."
     exit 1

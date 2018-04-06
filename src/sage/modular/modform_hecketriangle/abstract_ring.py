@@ -439,7 +439,7 @@ class FormsRing_abstract(Parent):
             CuspForms(n=3, k=12, ep=1) over Integer Ring
         """
 
-        if analytic_type == None:
+        if analytic_type is None:
             analytic_type = self._analytic_type
         else:
             analytic_type = self._analytic_type.extend_by(analytic_type)
@@ -486,14 +486,14 @@ class FormsRing_abstract(Parent):
             ZeroForms(n=3, k=6, ep=-1) over Integer Ring
         """
 
-        if analytic_type == None:
+        if analytic_type is None:
             analytic_type = self._analytic_type
         else:
             analytic_type = self._analytic_type.reduce_to(analytic_type)
 
-        if (degree == None and not self.is_homogeneous()):
+        if (degree is None and not self.is_homogeneous()):
             return FormsRing(analytic_type, group=self.group(), base_ring=self.base_ring(), red_hom=self.has_reduce_hom())
-        elif (degree == None):
+        elif (degree is None):
             return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=self.weight(), ep=self.ep())
         else:
             (weight, ep) = degree
@@ -893,7 +893,7 @@ class FormsRing_abstract(Parent):
             True
         """
 
-        return self._weight != None
+        return self._weight is not None
 
     def is_modular(self):
         r"""

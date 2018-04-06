@@ -1,7 +1,7 @@
 """
 Real intervals with a fixed absolute precision
 """
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 from sage.ext.stdsage cimport PY_NEW
 
@@ -266,6 +266,8 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
             6.?
             sage: R100(R((5,6)))
             6.?
+            sage: RIF(CIF(NaN))
+            [.. NaN ..]
         """
         Element.__init__(self, parent)
 

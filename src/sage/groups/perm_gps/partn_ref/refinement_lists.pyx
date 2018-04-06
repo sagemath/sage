@@ -8,15 +8,19 @@ EXAMPLES::
 """
 
 #*****************************************************************************
-#      Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
-#      Copyright (C) 2009 Nicolas Borie <nicolas.borie@math.u-psud.fr>
+#       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
+#       Copyright (C) 2009 Nicolas Borie <nicolas.borie@math.u-psud.fr>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'data_structures_pyx.pxi' # includes bitsets
+from cysignals.memory cimport sig_malloc, sig_free
 
+from .data_structures cimport *
 from .double_coset cimport double_coset, int_cmp
 
 
@@ -25,7 +29,7 @@ def is_isomorphic(self, other):
     Return the bijection as a permutation if two lists are isomorphic, return
     False otherwise.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_lists import is_isomorphic
         sage: is_isomorphic([0,0,1],[1,0,0])

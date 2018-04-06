@@ -4,7 +4,7 @@ Reporting doctest results
 This module determines how doctest results are reported to the user.
 
 It also computes the exit status in the ``error_status`` attribute of
-:class:DocTestReporter. This is a bitwise OR of the following bits:
+:class:`DocTestReporter`. This is a bitwise OR of the following bits:
 
 - 1: Doctest failure
 - 2: Bad command line syntax or invalid options
@@ -300,6 +300,28 @@ class DocTestReporter(SageObject):
             Traceback (most recent call last):
             ...
             AttributeError: 'NoneType' object has no attribute 'basename'
+
+        The only-errors mode does not output anything on success::
+
+            sage: DD = DocTestDefaults(only_errors=True)
+            sage: FDS = FileDocTestSource(filename, DD)
+            sage: DC = DocTestController(DD, [filename])
+            sage: DTR = DocTestReporter(DC)
+            sage: doctests, extras = FDS.create_doctests(globals())
+            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: Timer().start().stop().annotate(runner)
+            sage: D = DictAsObject({'err':None})
+            sage: runner.update_results(D)
+            0
+            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Good tests")
+
+        However, failures are still output in the errors-only mode::
+
+            sage: runner.failures = 1
+            sage: runner.update_results(D)
+            1
+            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Failed test")
+                [... tests, 1 failure, ... s]
         """
         log = self.controller.log
         process_name = 'process (pid={0})'.format(pid) if pid else 'process'
@@ -308,13 +330,11 @@ class DocTestReporter(SageObject):
             stats = self.stats
             basename = source.basename
             cmd = self.report_head(source)
-
             try:
                 ntests, result_dict = results
             except (TypeError, ValueError):
                 ntests = 0
                 result_dict = DictAsObject(dict(err='badresult'))
-
             if timeout:
                 fail_msg = "Timed out"
                 if ntests > 0:
@@ -323,7 +343,9 @@ class DocTestReporter(SageObject):
                     fail_msg += " (with error after interrupt)"
                 elif return_code < 0:
                     sig = -return_code
-                    if sig == signal.SIGKILL:
+                    if sig == signal.SIGQUIT:
+                        pass  # and interrupt succeeded
+                    elif sig == signal.SIGKILL:
                         fail_msg += " (and interrupt failed)"
                     else:
                         fail_msg += " (with %s after interrupt)"%signal_name(sig)
@@ -441,8 +463,9 @@ class DocTestReporter(SageObject):
                                         else:
                                             log("    %s not run"%(count_noun(nskipped, tag + " test")))
                             if untested:
-                                log ("    %s skipped"%(count_noun(untested, "%stest"%("other " if seen_other else ""))))
-                    log("    [%s, %s%.2f s]" % (count_noun(ntests, "test"), "%s, "%(count_noun(f, "failure")) if f else "", wall))
+                                log("    %s skipped"%(count_noun(untested, "%stest"%("other " if seen_other else ""))))
+                    if not (self.controller.options.only_errors and not f):
+                        log("    [%s, %s%.2f s]" % (count_noun(ntests, "test"), "%s, "%(count_noun(f, "failure")) if f else "", wall))
             self.sources_completed += 1
 
         except Exception:

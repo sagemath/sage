@@ -277,34 +277,35 @@ def slice_unpickle(master, start, stop, step):
     return master[start:stop:step]
 
 
-def lazy_list_formatter(L, name=None, separator=None, more=None,
-        opening_delimiter=None, closing_delimiter=None,
-        preview=None):
+def lazy_list_formatter(L, name='lazy list',
+                        separator=', ', more='...',
+                        opening_delimiter='[', closing_delimiter=']',
+                        preview=3):
     r"""
     Return a string representation of ``L``.
 
     INPUT:
 
-    - ``L`` -- an iterable object.
+    - ``L`` -- an iterable object
 
     - ``name`` -- (default: ``'lazy list'``) a string appearing
       at first position (i.e., in front of the actual values)
-      in the representation.
+      in the representation
 
     - ``opening_delimiter`` -- (default: ``'['``) a string heading
-      the shown entries.
+      the shown entries
 
     - ``closing_delimiter`` -- (default: ``']'``) a string trailing
       the shown entries
 
     - ``separator`` -- (default: ``', '``) a string appearing between
-      two entries.
+      two entries
 
     - ``more`` -- (default: ``'...'``) a string indicating that
-      not all entries of the list are shown.
+      not all entries of the list are shown
 
     - ``preview`` -- (default: ``3``) an integer specifying the number of
-      elements shown in the representation string.
+      elements shown in the representation string
 
     OUTPUT:
 
@@ -348,26 +349,12 @@ def lazy_list_formatter(L, name=None, separator=None, more=None,
     """
     from itertools import islice
 
-    if name is None:
-        name = 'lazy list'
-    if opening_delimiter is None:
-        opening_delimiter = '['
-    if separator is None:
-        separator = ', '
-    if more is None:
-        more = '...'
-    if closing_delimiter is None:
-        closing_delimiter = ']'
-    if preview is None:
-        preview = 3
-
     cdef str s = name
     if s:
         s += ' '
     s += opening_delimiter
     cdef list P = list(islice(L, preview+1))
-    cdef list E = list('{!r}'.format(e)
-                       for e in P[:preview])
+    cdef list E = list(repr(e) for e in P[:preview])
     if len(P) > preview:
         E.append(more)
     s += separator.join(E)

@@ -130,24 +130,30 @@ AUTHORS:
 
 - Florent Hivert (2010-03): initial revision
 """
+
 #*****************************************************************************
-#  Copyright (C) 2009-2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>
+#       Copyright (C) 2009-2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
-include "sage/ext/stdsage.pxi"
-include "cysignals/memory.pxi"
+from __future__ import absolute_import, print_function
+
 from cpython.list cimport *
 from cpython.int cimport *
 from cpython.ref cimport *
 
+from cysignals.memory cimport check_reallocarray, sig_free
+
 import sage
+from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
-from sage.structure.sage_object cimport richcmp
+from sage.structure.richcmp cimport richcmp
 
 ############################################################################
 ###                         Basic clone elements                         ###
@@ -1124,7 +1130,7 @@ cdef class ClonableList(ClonableArray):
 
     cpdef remove(self, el):
         """
-        Remove the first occurence of ``el`` from ``self``
+        Remove the first occurrence of ``el`` from ``self``
 
         INPUT: ``el`` - any object
 
@@ -1311,10 +1317,9 @@ cdef class ClonableIntArray(ClonableElement):
         self._len = size
 
     def __dealloc__(self):
-        if self._list is not NULL:
-            sig_free(self._list)
-            self._len = -1
-            self._list = NULL
+        sig_free(self._list)
+        self._len = -1
+        self._list = NULL
 
     def _repr_(self):
         """
@@ -1354,7 +1359,7 @@ cdef class ClonableIntArray(ClonableElement):
         """
         Iterate over the items of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.structure.list_clone_demo import IncreasingIntArrays
             sage: I = IncreasingIntArrays()(range(5))
@@ -1369,7 +1374,7 @@ cdef class ClonableIntArray(ClonableElement):
         """
         Convert self into a Python list.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.structure.list_clone_demo import IncreasingIntArrays
             sage: I = IncreasingIntArrays()(range(5))

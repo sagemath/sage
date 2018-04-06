@@ -771,7 +771,7 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
 
         - :func:`~sage.combinat.designs.orthogonal_arrays_find_recursive.find_thwart_lemma_4_1`
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: print(designs.orthogonal_arrays.explain_construction(10,408))
         Lemma 4.1 with n=13,m=28 from:
@@ -947,7 +947,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
         - :func:`~sage.combinat.designs.orthogonal_arrays_find_recursive.find_three_factor_product`
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import three_factor_product

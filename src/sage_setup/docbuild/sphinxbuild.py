@@ -55,6 +55,9 @@ class SageSphinxLogger(object):
             re.compile('WARNING: html_static_path entry .* does not exist'),
             re.compile('WARNING: while setting up extension'),
             re.compile('WARNING: Any IDs not assiend for figure node'),
+            re.compile('WARNING: .* is not referenced'),
+            re.compile('WARNING: Build finished'),
+            re.compile('language "hu" not supported'),
             )
 
         # replacements: pairs of regular expressions and their replacements,

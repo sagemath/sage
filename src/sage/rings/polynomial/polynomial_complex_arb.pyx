@@ -23,7 +23,7 @@ TESTS:
 
 """
 
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.arb.acb cimport *
 from sage.rings.integer cimport Integer, smallInteger
@@ -209,7 +209,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         acb_poly_get_coeff_acb(res.value, self.__poly, n)
         return res
 
-    def list(self):
+    cpdef list list(self, bint copy=True):
         r"""
         Return the coefficient list of this polynomial.
 
@@ -334,10 +334,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: Pol.<x> = CBF[]
 
             sage: (x^3/7 - CBF(i)).quo_rem(x + CBF(pi))
-            (([0.1428571428571428 +/- 7.70e-17])*x^2 +
-            ([-0.448798950512828 +/- 6.74e-16])*x
-            + [1.40994348586991 +/- 3.34e-15],
-            [-4.42946809718569 +/- 9.00e-15] - I)
+            (([0.1428571428571428 +/- 7.70e-17])*x^2 + ([-0.448798950512828 +/- 6.74e-16])*x + [1.40994348586991 +/- 3.04e-15], [-4.42946809718569 +/- 7.86e-15] - I)
 
             sage: Pol(0).quo_rem(x + 1)
             (0, 0)

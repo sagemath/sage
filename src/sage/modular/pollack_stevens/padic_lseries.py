@@ -89,7 +89,7 @@ class pAdicLseries(SageObject):
         r"""
         Initialize the class
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
             sage: E = EllipticCurve('11a3')
@@ -169,23 +169,38 @@ class pAdicLseries(SageObject):
             self._coefficients[n] /= self._cinf
             return self._coefficients[n]
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         r"""
         Compare ``self`` and ``other``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: E = EllipticCurve('11a')
             sage: L = E.padic_lseries(11,implementation="pollackstevens",precision=6) # long time
             sage: L == loads(dumps(L)) # indirect doctest long time
             True
         """
-        return (cmp(type(self), type(other))
-                or cmp(self._symb, other._symb)
-                or cmp(self._quadratic_twist, other._quadratic_twist)
-                or cmp(self._gamma, other._gamma)
-                or cmp(self._precision, other._precision))
+        if not isinstance(other, pAdicLseries):
+            return False
+        
+        return (self._symb == other._symb and
+                self._quadratic_twist == other._quadratic_twist and
+                self._gamma == other._gamma and
+                self._precision == other._precision)
 
+    def __ne__(self, other):
+        r"""
+        Compare ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('11a')
+            sage: L = E.padic_lseries(11,implementation="pollackstevens",precision=6) # long time
+            sage: L != L  # long time
+            False
+        """
+        return not self.__eq__(other)
+    
     def symbol(self):
         r"""
         Return the overconvergent modular symbol

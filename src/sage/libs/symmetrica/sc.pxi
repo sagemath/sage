@@ -75,7 +75,7 @@ def charvalue_symmetrica(irred, cls, table=None):
     cclass = callocobject()
     cresult = callocobject()
 
-    if table == None:
+    if table is None:
         ctable = NULL
     else:
         ctable = callocobject()

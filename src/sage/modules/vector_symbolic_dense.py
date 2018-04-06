@@ -15,7 +15,7 @@ EXAMPLES::
     sage: u = vector([sin(x)^2 + cos(x)^2, log(2*y) + log(3*y)]); u
     (cos(x)^2 + sin(x)^2, log(3*y) + log(2*y))
     sage: type(u)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: u.simplify_full()
     (1, log(3*y) + log(2*y))
 
@@ -27,15 +27,15 @@ a symbolic vector (:trac:`11549`)::
     sage: v = vector(SR, [1, 2])
     sage: w = vector(SR, [sin(x), 0])
     sage: type(v)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: type(w)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: type(v + w)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: type(-v)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: type(5*w)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
 
 Test pickling/unpickling::
 

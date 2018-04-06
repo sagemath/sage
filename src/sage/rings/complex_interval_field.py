@@ -143,8 +143,9 @@ class ComplexIntervalField_class(ring.Field):
 
     We can load and save complex numbers and the complex interval field::
 
-        sage: cmp(loads(z.dumps()), z)
-        0
+        sage: saved_z = loads(z.dumps())
+        sage: saved_z.endpoints() == z.endpoints()
+        True
         sage: loads(CIF.dumps()) == CIF
         True
         sage: k = ComplexIntervalField(100)
@@ -375,25 +376,55 @@ class ComplexIntervalField_class(ring.Field):
             self.__middle_field = complex_field.ComplexField(self._prec)
             return self.__middle_field
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
-        Compare ``other`` to ``self``.
+        Test whether ``self`` is equal to ``other``.
 
-        If ``other`` is not a :class:`ComplexIntervalField_class`, compare by
-        type, otherwise compare by precision.
+        If ``other`` is not a :class:`ComplexIntervalField_class`,
+        return ``False``.  Otherwise, return ``True`` if ``self`` and
+        ``other`` have the same precision.
 
         EXAMPLES::
 
-            sage: cmp(CIF, ComplexIntervalField(200))
-            -1
-            sage: cmp(CIF, CC) != 0
+            sage: CIF == ComplexIntervalField(200)
+            False
+            sage: CIF == CC
+            False
+            sage: CIF == CIF
             True
-            sage: cmp(CIF, CIF)
-            0
         """
         if not isinstance(other, ComplexIntervalField_class):
-            return cmp(type(self), type(other))
-        return cmp(self._prec, other._prec)
+            return False
+        return self._prec == other._prec
+
+    def __hash__(self):
+         """
+         Return the hash.
+ 
+         EXAMPLES::
+ 
+             sage: C = ComplexIntervalField(200)
+             sage: from sage.rings.complex_interval_field import ComplexIntervalField_class
+             sage: D = ComplexIntervalField_class(200)
+             sage: hash(C) == hash(D)
+             True
+         """
+         return hash((self.__class__, self._prec))
+
+    def __ne__(self, other):
+        """
+        Test whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: CIF != ComplexIntervalField(200)
+            True
+            sage: CIF != CC
+            True
+            sage: CIF != CIF
+            False
+        """
+        return not (self == other)
 
     def __call__(self, x, im=None):
         """
@@ -413,6 +444,18 @@ class ComplexIntervalField_class(ring.Field):
             3.141592653589794? + 2.718281828459046?*I
             sage: ComplexIntervalField(100)(CIF(RIF(2,3)))
             3.?
+
+            sage: QQi.<i> = QuadraticField(-1)
+            sage: CIF(i)
+            1*I
+            sage: QQi.<i> = QuadraticField(-1, embedding=CC(0,-1))
+            sage: CIF(i)
+            -1*I
+            sage: QQi.<i> = QuadraticField(-1, embedding=None)
+            sage: CIF(i)
+            Traceback (most recent call last):
+            ...
+            ValueError: can not convert complex algebraic number to real interval
         """
         if im is None:
             if isinstance(x, complex_interval.ComplexIntervalFieldElement):
@@ -429,9 +472,14 @@ class ComplexIntervalField_class(ring.Field):
                             sage_eval(x.replace(' ',''), locals={"I":self.gen(),"i":self.gen()}))
 
             late_import()
-            if isinstance(x, NumberFieldElement_quadratic) and list(x.parent().polynomial()) == [1, 0, 1]:
-                (re, im) = list(x)
-                return complex_interval.ComplexIntervalFieldElement(self, re, im)
+            if isinstance(x, NumberFieldElement_quadratic):
+                parent = x.parent()
+                if (list(parent.polynomial()) == [1, 0, 1] and
+                        parent.coerce_embedding() is not None):
+                    (re, im) = list(x)
+                    if not parent._standard_embedding:
+                        im = -im
+                    return complex_interval.ComplexIntervalFieldElement(self, re, im)
 
             try:
                 return x._complex_mpfi_( self )
@@ -465,7 +513,7 @@ class ComplexIntervalField_class(ring.Field):
             sage: CIF((2,1)) + x
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '+': 'Complex Interval
+            TypeError: unsupported operand parent(s) for +: 'Complex Interval
             Field with 53 bits of precision' and 'Complex Field with 25 bits of precision'
         """
         try:

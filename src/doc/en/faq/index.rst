@@ -3,6 +3,8 @@
 .. your liking, but it should at least contain the root `toctree`
 .. directive.
 
+.. _faq:
+
 Welcome to the Sage FAQ!
 ========================
 

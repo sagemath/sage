@@ -33,13 +33,18 @@ def Polyhedra(base_ring, ambient_dim, backend=None):
 
     - ``ambient_dim`` -- integer. The ambient space dimension.
 
-    - ``backend`` -- string. The name of the backend for computations. Currently there are three backends implemented:
+    - ``backend`` -- string. The name of the backend for computations. There are
+       several backends implemented:
 
          * ``backend="ppl"`` uses the Parma Polyhedra Library
 
          * ``backend="cdd"`` uses CDD
 
          * ``backend="normaliz"`` uses normaliz
+
+         * ``backend="polymake"`` uses polymake
+
+         * ``backend="field"`` a generic Sage implementation
 
     OUTPUT:
 
@@ -66,34 +71,53 @@ def Polyhedra(base_ring, ambient_dim, backend=None):
 
         sage: Polyhedra(ZZ, 3, backend='cdd')
         Polyhedra in QQ^3
+
+    TESTS::
+
+        sage: Polyhedra(RR, 3, backend='field')
+        Traceback (most recent call last):
+        ...
+        ValueError: the 'field' backend for polyhedron can not be used with non-exact fields
+        sage: Polyhedra(RR, 3)
+        Traceback (most recent call last):
+        ...
+        ValueError: no appropriate backend for computations with Real Field with 53 bits of precision
     """
     if backend is None:
-        if base_ring is ZZ:
-            backend = 'ppl'
-        elif base_ring is QQ:
+        if base_ring is ZZ or base_ring is QQ:
             backend = 'ppl'
         elif base_ring is RDF:
             backend = 'cdd'
-        else:
+        elif base_ring.is_exact():
+            # TODO: find a more robust way of checking that the coefficients are indeed
+            # real numbers
+            if not RDF.has_coerce_map_from(base_ring):
+                raise ValueError("invalid base ring")
             backend = 'field'
-    if backend == 'ppl' and base_ring is QQ:
-        return Polyhedra_QQ_ppl(base_ring, ambient_dim)
-    elif backend == 'ppl' and base_ring is ZZ:
-        return Polyhedra_ZZ_ppl(base_ring, ambient_dim)
-    elif backend == 'normaliz' and base_ring is QQ:
-        return Polyhedra_QQ_normaliz(base_ring, ambient_dim)
-    elif backend == 'normaliz' and base_ring is ZZ:
-        return Polyhedra_ZZ_normaliz(base_ring, ambient_dim)
-    elif backend == 'cdd' and base_ring in (ZZ, QQ):
-        return Polyhedra_QQ_cdd(QQ, ambient_dim)
-    elif backend == 'cdd' and base_ring is RDF:
-        return Polyhedra_RDF_cdd(RDF, ambient_dim)
-    elif backend == 'field':
-        return Polyhedra_field(base_ring.fraction_field(), ambient_dim)
-    else:
-        raise ValueError('No such backend (='+str(backend)+
-                         ') implemented for given basering (='+str(base_ring)+').')
+        else:
+            raise ValueError("no appropriate backend for computations with {}".format(base_ring))
 
+    if backend == 'ppl' and base_ring is QQ:
+        return Polyhedra_QQ_ppl(base_ring, ambient_dim, backend)
+    elif backend == 'ppl' and base_ring is ZZ:
+        return Polyhedra_ZZ_ppl(base_ring, ambient_dim, backend)
+    elif backend == 'normaliz' and base_ring is QQ:
+        return Polyhedra_QQ_normaliz(base_ring, ambient_dim, backend)
+    elif backend == 'normaliz' and base_ring is ZZ:
+        return Polyhedra_ZZ_normaliz(base_ring, ambient_dim, backend)
+    elif backend == 'cdd' and base_ring in (ZZ, QQ):
+        return Polyhedra_QQ_cdd(QQ, ambient_dim, backend)
+    elif backend == 'cdd' and base_ring is RDF:
+        return Polyhedra_RDF_cdd(RDF, ambient_dim, backend)
+    elif backend == 'polymake':
+        return Polyhedra_polymake(base_ring.fraction_field(), ambient_dim, backend)
+    elif backend == 'field':
+        if not base_ring.is_exact():
+            raise ValueError("the 'field' backend for polyhedron can not be used with non-exact fields")
+        return Polyhedra_field(base_ring.fraction_field(), ambient_dim, backend)
+    else:
+        raise ValueError('No such backend (=' + str(backend) +
+                         ') implemented for given basering (=' + str(base_ring)+').')
 
 
 class Polyhedra_base(UniqueRepresentation, Parent):
@@ -107,13 +131,26 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
     - ``ambient_dim`` -- integer. The ambient space dimension.
 
+    - ``backend`` -- string. The name of the backend for computations. There are
+       several backends implemented:
+
+         * ``backend="ppl"`` uses the Parma Polyhedra Library
+
+         * ``backend="cdd"`` uses CDD
+
+         * ``backend="normaliz"`` uses normaliz
+
+         * ``backend="polymake"`` uses polymake
+
+         * ``backend="field"`` a generic Sage implementation
+
     EXAMPLES::
 
         sage: from sage.geometry.polyhedron.parent import Polyhedra
         sage: Polyhedra(ZZ, 3)
         Polyhedra in ZZ^3
     """
-    def __init__(self, base_ring, ambient_dim):
+    def __init__(self, base_ring, ambient_dim, backend):
         """
         The Python constructor.
 
@@ -129,6 +166,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: P = Polyhedra(QQ, 3)
             sage: TestSuite(P).run(skip='_test_pickling')
         """
+        self._backend = backend
         self._ambient_dim = ambient_dim
         from sage.categories.polyhedra import PolyhedralSets
         Parent.__init__(self, base=base_ring, category=PolyhedralSets(base_ring))
@@ -191,6 +229,18 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         """
         return self._ambient_dim
 
+    def backend(self):
+        r"""
+        Return the backend.
+
+        EXAMPLES::
+
+            sage: from sage.geometry.polyhedron.parent import Polyhedra
+            sage: Polyhedra(QQ, 3).backend()
+            'ppl'
+        """
+        return self._backend
+
     @cached_method
     def an_element(self):
         r"""
@@ -203,14 +253,14 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 5 vertices
         """
         zero = self.base_ring().zero()
-        one  = self.base_ring().one()
+        one = self.base_ring().one()
         p = [zero] * self.ambient_dim()
         points = [p]
-        for i in range(0,self.ambient_dim()):
+        for i in range(0, self.ambient_dim()):
             p = [zero] * self.ambient_dim()
             p[i] = one
             points.append(p)
-        return self.element_class(self, [points,[],[]], None)
+        return self.element_class(self, [points, [], []], None)
 
     @cached_method
     def some_elements(self):
@@ -232,16 +282,16 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         if self.ambient_dim() == 0:
             return [
                 self.element_class(self, None, None),
-                self.element_class(self, None, [[],[]]) ]
+                self.element_class(self, None, [[], []])]
         points = []
         R = self.base_ring()
-        for i in range(0,self.ambient_dim()+5):
-            points.append([R(i*j^2) for j in range(0,self.ambient_dim())])
+        for i in range(0, self.ambient_dim() + 5):
+            points.append([R(i*j^2) for j in range(0, self.ambient_dim())])
         return [
             self.element_class(self, [points[0:self.ambient_dim()+1], [], []], None),
             self.element_class(self, [points[0:1], points[1:self.ambient_dim()+1], []], None),
             self.element_class(self, [points[0:3], points[4:5], []], None),
-            self.element_class(self, None, None) ]
+            self.element_class(self, None, None)]
 
     @cached_method
     def zero(self):
@@ -356,7 +406,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: from sage.geometry.polyhedron.parent import Polyhedra
             sage: Polyhedra(QQ, 3)._repr_ambient_module()
             'QQ^3'
-            sage: K.<sqrt3> = NumberField(x^2-3)
+            sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())
             sage: Polyhedra(K, 4)._repr_ambient_module()
             '(Number Field in sqrt3 with defining polynomial x^2 - 3)^4'
         """
@@ -403,7 +453,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         - ``Hrep`` -- a list `[ieqs, eqns]`` or ``None``.
 
         - ``convert`` -- boolean keyword argument (default:
-          ``True``). Whether to convert the cooordinates into the base
+          ``True``). Whether to convert the coordinates into the base
           ring.
 
         - ``**kwds`` -- optional remaining keywords that are passed to the
@@ -413,29 +463,65 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
             sage: from sage.geometry.polyhedron.parent import Polyhedra
             sage: P = Polyhedra(QQ, 3)
-            sage: P._element_constructor_([[(0,0,0),(1,0,0),(0,1,0),(0,0,1)], [], []], None)
+            sage: P._element_constructor_([[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0,0,1)], [], []], None)
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 4 vertices
             sage: P([[(0,0,0),(1,0,0),(0,1,0),(0,0,1)], [], []], None)
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 4 vertices
             sage: P(0)
             A 0-dimensional polyhedron in QQ^3 defined as the convex hull of 1 vertex
+
+        Check that :trac:`21270` is fixed::
+
+            sage: poly = polytopes.regular_polygon(7)
+            sage: lp, x = poly.to_linear_program(solver='InteractiveLP', return_variable=True)
+            sage: lp.set_objective(x[0] + x[1])
+            sage: b = lp.get_backend()
+            sage: P = b.interactive_lp_problem()
+            sage: p = P.plot()
+
+            sage: Q = Polyhedron(ieqs=[[-499999, 1000000], [1499999, -1000000]])
+            sage: P = Polyhedron(ieqs=[[0, 1.0], [1.0, -1.0]], base_ring=RDF)
+            sage: Q.intersection(P)
+            A 1-dimensional polyhedron in RDF^1 defined as the convex hull of 2 vertices
+            sage: P.intersection(Q)
+            A 1-dimensional polyhedron in RDF^1 defined as the convex hull of 2 vertices
         """
         nargs = len(args)
         convert = kwds.pop('convert', True)
-        if nargs==2:
+
+        def convert_base_ring(lstlst):
+            return [[self.base_ring()(x) for x in lst] for lst in lstlst]
+
+        # renormalize before converting when going from QQ to RDF, see trac 21270
+        def convert_base_ring_Hrep(lstlst):
+            newlstlst = []
+            for lst in lstlst:
+                if all(c in QQ for c in lst):
+                    m = max(abs(w) for w in lst)
+                    if m == 0:
+                        newlstlst.append(lst)
+                    else:
+                        newlstlst.append([q/m for q in lst])
+                else:
+                    newlstlst.append(lst)
+            return convert_base_ring(newlstlst)
+        if nargs == 2:
             Vrep, Hrep = args
-            def convert_base_ring(lstlst):
-                return [ [self.base_ring()(x) for x in lst] for lst in lstlst]
             if convert and Hrep:
-                Hrep = [convert_base_ring(_) for _ in Hrep]
+                if self.base_ring == RDF:
+                    Hrep = [convert_base_ring_Hrep(_) for _ in Hrep]
+                else:
+                    Hrep = [convert_base_ring(_) for _ in Hrep]
             if convert and Vrep:
                 Vrep = [convert_base_ring(_) for _ in Vrep]
             return self.element_class(self, Vrep, Hrep, **kwds)
-        if nargs==1 and is_Polyhedron(args[0]):
+        if nargs == 1 and is_Polyhedron(args[0]):
             polyhedron = args[0]
-            Hrep = [ polyhedron.inequality_generator(), polyhedron.equation_generator() ]
+            Hrep = [polyhedron.inequality_generator(), polyhedron.equation_generator()]
+            if self.base_ring() == RDF:
+                Hrep = [convert_base_ring_Hrep(_) for _ in Hrep]
             return self.element_class(self, None, Hrep, **kwds)
-        if nargs==1 and args[0]==0:
+        if nargs == 1 and args[0] == 0:
             return self.zero()
         raise ValueError('Cannot convert to polyhedron object.')
 
@@ -545,7 +631,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         Boolean.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.geometry.polyhedron.parent import Polyhedra
             sage: Polyhedra(QQ,3).has_coerce_map_from( Polyhedra(ZZ,3) )   # indirect doctest
@@ -589,7 +675,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             Right action by Integer Ring on Polyhedra in ZZ^2
             sage: PZZ2.get_action(QQ)
             Right action by Rational Field on Polyhedra in QQ^2
-            with precomposition on left by Conversion map:
+            with precomposition on left by Coercion map:
               From: Polyhedra in ZZ^2
               To:   Polyhedra in QQ^2
             with precomposition on right by Identity endomorphism of Rational Field
@@ -799,6 +885,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd, Polyhedron_RDF_cdd
 from sage.geometry.polyhedron.backend_ppl import Polyhedron_ZZ_ppl, Polyhedron_QQ_ppl
 from sage.geometry.polyhedron.backend_normaliz import Polyhedron_ZZ_normaliz, Polyhedron_QQ_normaliz
+from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
 from sage.geometry.polyhedron.backend_field import Polyhedron_field
 
 class Polyhedra_ZZ_ppl(Polyhedra_base):
@@ -819,6 +906,8 @@ class Polyhedra_QQ_cdd(Polyhedra_base):
 class Polyhedra_RDF_cdd(Polyhedra_base):
     Element = Polyhedron_RDF_cdd
 
+class Polyhedra_polymake(Polyhedra_base):
+    Element = Polyhedron_polymake
+
 class Polyhedra_field(Polyhedra_base):
     Element = Polyhedron_field
-

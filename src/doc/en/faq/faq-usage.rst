@@ -146,7 +146,7 @@ every change applied to the file simple.py will be automatically updated in Sage
 Can I use SageMath with Python 3.x?
 """""""""""""""""""""""""""""""""""
 
-Currently, no (November 2016). Work in progress aims to allow this in
+Currently, no (February 2017). Work in progress aims to allow this in
 the not-so-far future. Until this task is completed, SageMath will continue
 to use Python 2.x.
 
@@ -387,7 +387,29 @@ e.g. ::
     sage: list(map(ord, "Big Mac"))
     [66, 105, 103, 32, 77, 97, 99]
 
+How can I wrote multiplication implicitly as in Mathematica?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+Sage has a function that enables this::
+
+    sage: implicit_multiplication(True)
+    sage: x 2 x  # Not tested
+    2*x^2
+    sage: implicit_multiplication(False)
+
+This is preparsed by Sage into Python code. It may not work in a
+complicated situation. To see what the preparser does::
+
+    sage: implicit_multiplication(True)
+    sage: preparse("2 x")
+    'Integer(2)*x'
+    sage: implicit_multiplication(False)
+    sage: preparse("2 x")
+    'Integer(2) x'
+
+See https://wiki.sagemath.org/sage_mathematica for more information
+about Mathematica vs. SageMath.
+    
 Can I make Sage automatically execute commands on startup?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -553,11 +575,11 @@ You need to give hints to Sage so that it uses C++ (both Givaro and
 NTL are C++ libraries), and it also needs the GMP and STDC C++
 libraries. Here is a small example::
 
-    # These comments are hints to Sage/Pyrex about the compiler and
+    # These comments are hints to Cython about the compiler and
     # libraries needed for the Givaro library:
     #
-    #clang c++
-    #clib givaro gmpxx gmp m stdc++
+    # distutils: language = c++
+    # distutils: libraries = givaro gmpxx gmp m
     cimport sage.rings.finite_field_givaro
     # Construct a finite field of order 11.
     cdef sage.rings.finite_field_givaro.FiniteField_givaro K
@@ -703,9 +725,15 @@ You will need to do this from the command line.  Just run a command like this.
 
 * Linux (assuming you have Sage in ``/usr/bin``)::
 
-    env SAGE_BROWSER=opera /usr/bin/sage -notebook
+    env BROWSER=opera /usr/bin/sage --notebook
 
-* Mac (assuming you are in the directory of your downloaded Sage)::
+* Mac (assuming you are in the directory of your downloaded Sage).
+  With the Jupyter notebook::
 
-    SAGE_BROWSER='open -a Firefox' ./sage -notebook
-    SAGE_BROWSER='open -a Google\ Chrome' ./sage -notebook
+    BROWSER='open -a Firefox %s' ./sage --notebook jupyter
+    BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter
+
+  With the old SageNB notebook::
+
+    BROWSER='open -a Firefox' ./sage --notebook
+    BROWSER='open -a Google\ Chrome' ./sage --notebook

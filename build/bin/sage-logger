@@ -62,12 +62,18 @@ fi
 
 mkdir -p "$logdir"
 
-if [[ "$V" = 0 && $use_prefix = true ]]; then
+# Do all logging of child processes with V=1 to ensure that no
+# information is lost.
+export MAKEFLAGS="$MAKEFLAGS V=1"
+
+if [ "$V" = 0 ]; then
+    export SAGE_SILENT_BUILD=yes
+fi
+
+if [ -n "$SAGE_SILENT_BUILD" -a ${use_prefix} = true ]; then
     # Silent build.
     # Similar to https://www.gnu.org/software/automake/manual/html_node/Automake-Silent-Rules.html#Automake-Silent-Rules
     echo "[$logname] installing. Log file: $logfile"
-    # Use verbose mode for output to logfiles.
-    export V=1
     ( exec>> $logfile 2>&1 ; eval "$cmd" )
     status=$?
     if [[ $status != 0 ]]; then

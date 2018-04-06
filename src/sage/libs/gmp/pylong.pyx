@@ -25,9 +25,15 @@ AUTHORS:
 #*****************************************************************************
 
 
+from cpython.object cimport Py_SIZE
 from cpython.int cimport PyInt_FromLong
 from cpython.long cimport PyLong_FromLong
-from mpz cimport *
+from cpython.longintrepr cimport _PyLong_New, PyLongObject, digit, PyLong_SHIFT
+from .mpz cimport *
+
+cdef extern from *:
+    Py_ssize_t* Py_SIZE_PTR "&Py_SIZE"(object)
+
 
 # Unused bits in every PyLong digit
 cdef size_t PyLong_nails = 8*sizeof(digit) - PyLong_SHIFT
@@ -43,7 +49,10 @@ cdef mpz_get_pylong_large(mpz_srcptr z):
     mpz_export((<PyLongObject*>L).ob_digit, NULL,
             -1, sizeof(digit), 0, PyLong_nails, z)
     if mpz_sgn(z) < 0:
-        (<PyLongObject*>L).ob_size = -(<PyLongObject*>L).ob_size
+        # Set correct size (use a pointer to hack around Cython's
+        # non-support for lvalues).
+        sizeptr = Py_SIZE_PTR(L)
+        sizeptr[0] = -pylong_size
     return L
 
 
@@ -70,12 +79,12 @@ cdef int mpz_set_pylong(mpz_ptr z, L) except -1:
     """
     Convert a Python ``long`` `L` to an ``mpz``.
     """
-    cdef Py_ssize_t pylong_size = (<PyLongObject*>L).ob_size
+    cdef Py_ssize_t pylong_size = Py_SIZE(L)
     if pylong_size < 0:
         pylong_size = -pylong_size
     mpz_import(z, pylong_size, -1, sizeof(digit), 0, PyLong_nails,
             (<PyLongObject*>L).ob_digit)
-    if (<PyLongObject*>L).ob_size < 0:
+    if Py_SIZE(L) < 0:
         mpz_neg(z, z)
 
 

@@ -402,7 +402,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
         r"""
         Text representation of a space of vector space morphisms.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: H = Hom(QQ^2, QQ^3)
             sage: H._repr_().split(' ')

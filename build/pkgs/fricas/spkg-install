@@ -1,11 +1,11 @@
-#!/usr/bin/env bash
-
 cd src
+
+# Use newer version of config.guess and config.sub (see Trac #23847)
+cp "$SAGE_ROOT"/config/config.* config
 
 ./configure --prefix="$SAGE_LOCAL" \
             --libdir="$SAGE_LOCAL/lib" \
             --with-lisp=ecl
-
 if [ $? -ne 0 ]; then
     echo >&2 "Error configuring fricas."
     exit 1

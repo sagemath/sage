@@ -223,7 +223,7 @@ def theta_by_cholesky(self, q_prec):
 
 
     ## Big loop which runs through all vectors
-    while (done_flag == False):
+    while not done_flag:
 
         ## Loop through until we get to i=1 (so we defined a vector x)
         while from_step3_flag or from_step4_flag:              ## IMPORTANT WARNING:  This replaces a do...while loop, so it may have to be adjusted!

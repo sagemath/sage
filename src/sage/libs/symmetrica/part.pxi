@@ -163,10 +163,11 @@ def gupta_tafel_symmetrica(max):
 
 def random_partition_symmetrica(n):
     """
-    returns a random partition p of the entered weight w.
+    Return a random partition p of the entered weight w.
+
     w must be an INTEGER object, p becomes a PARTITION object.
-    Type of partition is VECTOR . Its the algorithm of
-    Nijnhuis Wilf p.76
+    Type of partition is VECTOR . It uses the algorithm of
+    Nijenhuis and Wilf, p.76
     """
 
 

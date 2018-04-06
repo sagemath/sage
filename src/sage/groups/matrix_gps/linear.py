@@ -18,7 +18,7 @@ EXAMPLES::
     Special Linear Group of degree 2 over Finite Field of size 3
     sage: G.is_finite()
     True
-    sage: G.conjugacy_class_representatives()
+    sage: G.conjugacy_classes_representatives()
     (
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
@@ -47,13 +47,7 @@ AUTHORS:
 
 - Volker Braun (2013-1) port to new Parent, libGAP, extreme refactoring.
 
-REFERENCES:
-
-- [KL] Peter Kleidman and Martin Liebeck. The subgroup structure of
-  the finite classical groups. Cambridge University Press, 1990.
-
-- [C] R. W. Carter. Simple groups of Lie type, volume 28 of Pure and
-  Applied Mathematics. John Wiley and Sons, 1972.
+REFERENCES: See [KL1990]_ and [Car1972]_.
 """
 
 #*****************************************************************************
@@ -68,7 +62,7 @@ REFERENCES:
 from sage.misc.latex import latex
 from sage.groups.matrix_gps.named_group import (
     normalize_args_vectorspace, NamedMatrixGroup_generic, NamedMatrixGroup_gap )
-
+from sage.categories.groups import Groups
 
 
 ###############################################################################
@@ -82,7 +76,7 @@ def GL(n, R, var='a'):
     The general linear group `GL( d, R )` consists of all `d \times d`
     matrices that are invertible over the ring `R`.
 
-    .. note::
+    .. NOTE::
 
         This group is also available via ``groups.matrix.GL()``.
 
@@ -109,7 +103,7 @@ def GL(n, R, var='a'):
 
         sage: G = GL(6, QQ)
         sage: G.category()
-        Category of groups
+        Category of infinite groups
         sage: TestSuite(G).run()
 
     Here is the Cayley graph of (relatively small) finite General Linear Group::
@@ -117,8 +111,10 @@ def GL(n, R, var='a'):
         sage: g = GL(2,3)
         sage: d = g.cayley_graph(); d
         Digraph on 48 vertices
-        sage: d.show(color_by_label=True, vertex_size=0.03, vertex_labels=False)
-        sage: d.show3d(color_by_label=True)
+        sage: d.plot(color_by_label=True, vertex_size=0.03, vertex_labels=False)  # long time
+        Graphics object consisting of 144 graphics primitives
+        sage: d.plot3d(color_by_label=True)  # long time
+        Graphics3d Object
 
     ::
 
@@ -150,13 +146,22 @@ def GL(n, R, var='a'):
         General Linear Group of degree 2 over Finite Field of size 3
     """
     degree, ring = normalize_args_vectorspace(n, R, var='a')
+    try:
+        if ring.is_finite():
+            cat = Groups().Finite()
+        else:
+            cat = Groups().Infinite()
+    except AttributeError:
+        cat = Groups()
     name = 'General Linear Group of degree {0} over {1}'.format(degree, ring)
     ltx  = 'GL({0}, {1})'.format(degree, latex(ring))
     try:
         cmd  = 'GL({0}, {1})'.format(degree, ring._gap_init_())
-        return LinearMatrixGroup_gap(degree, ring, False, name, ltx, cmd)
+        return LinearMatrixGroup_gap(degree, ring, False, name, ltx, cmd,
+                                     category=cat)
     except ValueError:
-        return LinearMatrixGroup_generic(degree, ring, False, name, ltx)
+        return LinearMatrixGroup_generic(degree, ring, False, name, ltx,
+                                         category=cat)
 
 
 
@@ -168,7 +173,7 @@ def SL(n, R, var='a'):
     r"""
     Return the special linear group.
 
-    The special linear group `GL( d, R )` consists of all `d \times d`
+    The special linear group `SL( d, R )` consists of all `d \times d`
     matrices that are invertible over the ring `R` with determinant
     one.
 
@@ -200,6 +205,8 @@ def SL(n, R, var='a'):
         2
         sage: G = SL(2, ZZ); G
         Special Linear Group of degree 2 over Integer Ring
+        sage: G.category()
+        Category of infinite groups
         sage: G.gens()
         (
         [ 0  1]  [1 1]
@@ -224,14 +231,23 @@ def SL(n, R, var='a'):
         Special Linear Group of degree 2 over Finite Field of size 3
     """
     degree, ring = normalize_args_vectorspace(n, R, var='a')
+    try:
+        if ring.is_finite() or n == 1:
+            cat = Groups().Finite()
+        else:
+            cat = Groups().Infinite()
+    except AttributeError:
+        cat = Groups()
     name = 'Special Linear Group of degree {0} over {1}'.format(degree, ring)
     ltx  = 'SL({0}, {1})'.format(degree, latex(ring))
     from sage.libs.gap.libgap import libgap
     try:
         cmd  = 'SL({0}, {1})'.format(degree, ring._gap_init_())
-        return LinearMatrixGroup_gap(degree, ring, True, name, ltx, cmd)
+        return LinearMatrixGroup_gap(degree, ring, True, name, ltx, cmd,
+                                     category=cat)
     except ValueError:
-        return LinearMatrixGroup_generic(degree, ring, True, name, ltx)
+        return LinearMatrixGroup_generic(degree, ring, True, name, ltx,
+                                         category=cat)
 
 
 

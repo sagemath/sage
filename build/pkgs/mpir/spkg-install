@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
     echo >&2 "Maybe run 'sage -sh'?"
@@ -38,18 +36,6 @@ echo "Machine type (mpir): $MACHINE_TYPE_MPIR"
 ###############################################################################
 # Set up environment variables:
 ###############################################################################
-
-
-# The Yasm build uses PYTHON from the environment to find the Python interpreter,
-# so unset it in case it apparently contains nothing useful (like it did in Sage
-# versions prior to 5.0.beta10; cf. #10492), to not break Yasm's 'configure':
-if [ -n "$PYTHON" ]; then
-    if ! $PYTHON --version &>/dev/null; then
-        echo >&2 "Warning: Unsetting PYTHON (=\"$PYTHON\"), since it doesn't seem"
-        echo >&2 "         to contain the name of / path to a Python interpreter."
-        unset PYTHON
-    fi
-fi
 
 user_cflags=$CFLAGS # Save them. 'sage-env' sets CC, but not CFLAGS.
 required_cflags=""  # Additional mandatory settings required by Sage, accumulated below.
@@ -175,6 +161,23 @@ if [ "`uname -m`" = ppc64le ]; then
     export MPN_PATH=generic
 fi
 
+# Workaround old GNU as version by disabling assembly use.
+if [ "$UNAME" = Linux ]; then
+    as_version=`$AS --version | head -1 | awk 'NF>1{print $NF}'`
+    as_version_major=${as_version%%.*}
+    as_version_rest=${as_version#*.}
+    as_version_minor=${as_version_rest%%.*}
+    if [ $as_version_major -lt 2 ] || \
+       [ $as_version_major -eq 2 -a $as_version_minor -lt 24 ]; then
+        echo "Disable use of assembly because of GNU as <= 2.23."
+        export MPN_PATH=generic
+        if [ "$SAGE_FAT_BINARY" = "yes" ]; then
+            echo "Cannot build with SAGE_FAT_BINARY=yes."
+            exit 1
+        fi
+    fi
+fi
+
 # Work around a bug in GCC 4.7.0 which breaks the build on Itanium CPUs.
 # See #12765, #12751, and http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48496
 if [ "`uname -m`" = ia64 ] && [ "`testcc.sh $CC`" = GCC ] ; then
@@ -199,6 +202,17 @@ export ABI CFLAGS CXXFLAGS LDFLAGS # Partially redundant, but safe(r).
 
 MPIR_CONFIGURE="--enable-shared $MPIR_CONFIGURE"
 MPIR_CONFIGURE="--enable-gmpcompat $MPIR_CONFIGURE"
+
+# Fake yasm installation on non-x86[_64] system.
+# It is not installed but not needed.
+case `uname -m` in
+    i[3456]86|x86_64|amd64)
+        ;;
+    *) # Anything else
+        echo "Disabling check for yasm on non-x86[_64] system."
+        MPIR_CONFIGURE="--with-yasm=/bin/true $MPIR_CONFIGURE"
+        ;;
+esac
 
 # If we're bootstrapping GCC from the GCC spkg, don't build the C++
 # interface (cf. #12782), static libraries and disable fat binary.

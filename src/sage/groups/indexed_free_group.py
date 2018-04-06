@@ -18,6 +18,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ##############################################################################
+from six import integer_types
 
 from copy import copy
 from sage.categories.groups import Groups
@@ -479,7 +480,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
                 sage: x^-3
                 F[0]^-3*F[1]^-6*F[3]^-3*F[4]^3
             """
-            if not isinstance(n, (int, long, Integer)):
+            if not isinstance(n, integer_types + (Integer,)):
                 raise TypeError("Argument n (= {}) must be an integer".format(n))
             if n == 1:
                 return self

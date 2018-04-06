@@ -26,22 +26,20 @@ Classes and methods
 #****************************************************************************
 from __future__ import print_function
 from six.moves import range
+from six import add_metaclass
 
 from sage.rings.rational_field import QQ
-from sage.categories.posets import Posets
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.graphs.digraph import DiGraph
 import sage.graphs.linearextensions
-from sage.combinat.posets.hasse_diagram import HasseDiagram
-from sage.combinat.posets.posets import Poset
-from sage.combinat.posets.elements import PosetElement
-from sage.combinat.permutation import Permutation
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.structure.list_clone import ClonableArray
 
+
+@add_metaclass(InheritComparisonClasscallMetaclass)
 class LinearExtensionOfPoset(ClonableArray):
     r"""
     A linear extension of a finite poset `P` of size `n` is a total
@@ -89,8 +87,6 @@ class LinearExtensionOfPoset(ClonableArray):
         sage: Q.cover_relations()
         [[1, 2], [1, 4], [3, 4]]
     """
-    __metaclass__ = InheritComparisonClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(cls, linear_extension, poset):
         r"""
@@ -447,20 +443,78 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
             sage: Poset().linear_extensions().cardinality()
             1
-            sage: Posets.ChainPoset(1).linear_extensions().cardinality()
+            sage: posets.ChainPoset(1).linear_extensions().cardinality()
             1
+            sage: posets.BooleanLattice(4).linear_extensions().cardinality()
+            1680384
         """
         from sage.rings.integer import Integer
 
-        H = self._poset.order_ideals_lattice(as_ideals=False)._hasse_diagram
-        L = H.level_sets()
-        c = [0] * H.order()
-        for l in L[0]:
-            c[l] = 1
-        for lev in L[1:]:
-            for l in lev:
-                c[l] = sum(c[i] for i in H.lower_covers_iterator(l))
-        return Integer(sum(c[i] for i in H.sinks()))
+        n = len(self._poset)
+        if not n:
+            return Integer(1)
+
+        up = self._poset._hasse_diagram.to_dictionary()
+        # Convert to the Hasse diagram so our poset can be realized on
+        # the set {0,...,n-1} with a nice dictionary of edges
+
+        for i in range(n):
+            up[n - 1 - i] = sorted(set(up[n - 1 - i] +
+                                       [item for x in up[n - 1 - i]
+                                        for item in up[x]]))
+        # Compute the principal order filter for each element.
+
+        Jup = {1: []}
+        # Jup will be a dictionary giving up edges in J(P)
+
+        # We will perform a loop where after k loops, we will have a
+        # list of up edges for the lattice of order ideals for P
+        # restricted to entries 0,...,k.
+        loc = [1] * n
+
+        # This list will be indexed by entries in P. After k loops,
+        # the entry loc[i] will correspond to the element of J(P) that
+        # is the principal order ideal of i, restricted to the
+        # elements 0,...,k .
+
+        m = 1
+        # m keeps track of how many elements we currently have in J(P).
+        # We start with just the empty order ideal, and no relations.
+        for x in range(n):
+            # Use the existing Jup table to compute all covering
+            # relations in J(P) for things that are above loc(x).
+            K = [[loc[x]]]
+            j = 0
+            while K[j]:
+                K.append([b for a in K[j] for b in Jup[a]])
+                j += 1
+            K = sorted(set(item for sublist in K for item in sublist))
+            for j in range(len(K)):
+                i = m + j + 1
+                Jup[i] = [m + K.index(a) + 1 for a in Jup[K[j]]]
+                # These are copies of the covering relations with
+                # elements from K, but now with the underlying
+                # elements containing x.
+                Jup[K[j]] = Jup[K[j]] + [i]
+                # There are the new covering relations we get between
+                # ideals that don't contain x and those that do.
+            for y in up[x]:
+                loc[y] = K.index(loc[y]) + m + 1
+                # Updates loc[y] if y is above x.
+            m += len(K)
+        # Now we have a dictionary of covering relations for J(P). The
+        # following shortcut works to count maximal chains, since we
+        # made J(P) naturally labelled, and J(P) has a unique maximal
+        # element and minimum element.
+
+        Jup[m] = Integer(1)
+        while m > 1:
+            m -= 1
+            ct = Integer(0)
+            for j in Jup[m]:
+                ct += Jup[j]
+            Jup[m] = ct
+        return ct
     
     def __iter__(self):
         r"""

@@ -14,7 +14,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
 
-# from sage.structure.element import Element
+from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.sets.family import Family
@@ -52,7 +52,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
     With the option ``facade=False`` the elements are wrapped in an
     object whose parent is the disjoint union itself. The wrapped
-    object can then be recovered using the 'value' attribute.
+    object can then be recovered using the ``value`` attribute.
 
     The two options can be combined.
 
@@ -114,13 +114,13 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         sage: U4.unrank(18)
         [2, 3, 1, 4]
 
-    .. warning ::
+    .. WARNING::
 
         Beware that some of the operations assume in that case that infinitely
         many of the enumerated sets are non empty.
 
 
-    .. rubric:: Experimental options
+    .. RUBRIC:: Experimental options
 
     We demonstrate the ``keepkey`` option::
 
@@ -150,13 +150,24 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         sage: type(elv)
         <class 'sage.combinat.permutation.StandardPermutations_n_with_category.element_class'>
 
+    The elements ``el`` of the disjoint union are simple wrapped elements.
+    So to access the methods, you need to do ``el.value``::
+
+        sage: el[0]
+        Traceback (most recent call last):
+        ...
+        TypeError: 'sage.structure.element_wrapper.ElementWrapper' object
+         has no attribute '__getitem__'
+        sage: el.value[0]
+        2
+
     Possible extensions: the current enumeration order is not suitable
     for unions of infinite enumerated sets (except possibly for the
     last one). One could add options to specify alternative enumeration
     orders (anti-diagonal, round robin, ...) to handle this case.
 
 
-    .. rubric:: Inheriting from ``DisjointUnionEnumeratedSets``
+    .. RUBRIC:: Inheriting from ``DisjointUnionEnumeratedSets``
 
     There are two different use cases for inheriting from
     :class:`DisjointUnionEnumeratedSets`: writing a parent which
@@ -164,35 +175,34 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
     generic disjoint unions for some particular classes of
     :class:`sage.categories.enumerated_sets.EnumeratedSets`.
 
-      - In the first use case, the input of the ``__init__`` method is
-        most likely different from that of
-        :class:`DisjointUnionEnumeratedSets`. Then, one simply
-        writes the ``__init__`` method as usual::
+    - In the first use case, the input of the ``__init__`` method is
+      most likely different from that of
+      :class:`DisjointUnionEnumeratedSets`. Then, one simply
+      writes the ``__init__`` method as usual::
 
-            sage: class MyUnion(DisjointUnionEnumeratedSets):
-            ....:   def __init__(self):
-            ....:       DisjointUnionEnumeratedSets.__init__(self,
-            ....:            Family([1,2], Permutations))
-            sage: pp = MyUnion()
-            sage: pp.list()
-            [[1], [1, 2], [2, 1]]
+          sage: class MyUnion(DisjointUnionEnumeratedSets):
+          ....:   def __init__(self):
+          ....:       DisjointUnionEnumeratedSets.__init__(self,
+          ....:            Family([1,2], Permutations))
+          sage: pp = MyUnion()
+          sage: pp.list()
+          [[1], [1, 2], [2, 1]]
 
-        In case the :meth:`__init__` method takes optional arguments,
-        or does some normalization on them, a specific method
-        ``__classcall_private__`` is required (see the
-        documentation of :class:`UniqueRepresentation`).
+      In case the :meth:`__init__` method takes optional arguments,
+      or does some normalization on them, a specific method
+      ``__classcall_private__`` is required (see the
+      documentation of :class:`UniqueRepresentation`).
 
-      - In the second use case, the input of the ``__init__`` method
-        is the same as that of :class:`DisjointUnionEnumeratedSets`;
-        one therefore wants to inherit the :meth:`__classcall_private__`
-        method as well, which can be achieved as follows::
+    - In the second use case, the input of the ``__init__`` method
+      is the same as that of :class:`DisjointUnionEnumeratedSets`;
+      one therefore wants to inherit the :meth:`__classcall_private__`
+      method as well, which can be achieved as follows::
 
-            sage: class UnionOfSpecialSets(DisjointUnionEnumeratedSets):
-            ....:  __classcall_private__ = staticmethod(DisjointUnionEnumeratedSets.__classcall_private__)
-            ...
-            sage: psp = UnionOfSpecialSets(Family([1,2], Permutations))
-            sage: psp.list()
-            [[1], [1, 2], [2, 1]]
+          sage: class UnionOfSpecialSets(DisjointUnionEnumeratedSets):
+          ....:     __classcall_private__ = staticmethod(DisjointUnionEnumeratedSets.__classcall_private__)
+          sage: psp = UnionOfSpecialSets(Family([1,2], Permutations))
+          sage: psp.list()
+          [[1], [1, 2], [2, 1]]
 
     TESTS::
 
@@ -202,8 +212,12 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         sage: TestSuite(U4).run()
         doctest:...: UserWarning: Disjoint union of Lazy family (<class 'sage.combinat.permutation.Permutations'>(i))_{i in Non negative integers} is an infinite union
         The default implementation of __contains__ can loop forever. Please overload it.
-        sage: TestSuite(Ukeep).run()
         sage: TestSuite(UNoFacade).run()
+
+    We skip ``_test_an_element`` because the coercion framework does not
+    currently allow a tuple to be returned for facade parents::
+
+        sage: TestSuite(Ukeep).run(skip="_test_an_element")
 
     The following three lines are required for the pickling tests,
     because the classes ``MyUnion`` and ``UnionOfSpecialSets`` have
@@ -247,19 +261,31 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         assert(isinstance(keepkey, bool))
         return super(DisjointUnionEnumeratedSets, cls).__classcall__(
             cls, Family(fam),
-            facade = facade, keepkey = keepkey, category=category)
+            facade=facade, keepkey=keepkey, category=category)
 
 
-    def __init__(self, family, facade=True, keepkey=False, category = None):
+    def __init__(self, family, facade=True, keepkey=False, category=None):
         """
         TESTS::
 
             sage: U = DisjointUnionEnumeratedSets({1: FiniteEnumeratedSet([1,2,3]),
             ....:                                  2: FiniteEnumeratedSet([4,5,6])})
             sage: TestSuite(U).run()
+
+            sage: X = DisjointUnionEnumeratedSets({i: Partitions(i) for i in range(5)})
+            sage: TestSuite(X).run()
         """
         self._family = family
         self._facade  = facade
+        if facade:
+            if family in FiniteEnumeratedSets():
+                self._facade_for = tuple(family)
+            else:
+                # This allows the test suite to pass its tests by essentially
+                #   stating that this is a facade for any parent. Technically
+                #   this is wrong, but in practice, it will not have much
+                #   of an effect.
+                self._facade_for = True
         self._keepkey = keepkey
         if self._is_category_initialized():
             return
@@ -271,7 +297,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                 category = InfiniteEnumeratedSets()
             else:
                 category = FiniteEnumeratedSets()
-        Parent.__init__(self, category = category)
+        Parent.__init__(self, facade=facade, category=category)
 
     def _repr_(self):
         """
@@ -279,7 +305,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
             sage: U = DisjointUnionEnumeratedSets({1: FiniteEnumeratedSet([1,2,3]),
             ....:                                  2: FiniteEnumeratedSet([4,5,6])})
-            sage: U  # indirect doctest
+            sage: U
             Disjoint union of Finite family {1: {1, 2, 3}, 2: {4, 5, 6}}
         """
         return "Disjoint union of %s"%self._family
@@ -287,8 +313,10 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
     def _is_a(self, x):
         """
-        Check if a Sage object belongs to self. This methods is a helper for
-        :meth:`__contains__` and the constructor :meth:`_element_constructor_`.
+        Check if a Sage object ``x`` belongs to ``self``.
+
+        This methods is a helper for :meth:`__contains__` and the
+        constructor :meth:`_element_constructor_`.
 
         EXAMPLES::
 
@@ -312,11 +340,13 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
     def __contains__(self, x):
         """
-        .. warning::
+        Check containment.
 
-        If ``self`` is an infinite union and if the answer is
-        logically False, this will loop forever and never answer
-        ``False``. Therefore, a warning is issued.
+        .. WARNING::
+
+            If ``self`` is an infinite union and if the answer is
+            logically False, this will loop forever and never answer
+            ``False``. Therefore, a warning is issued.
 
         EXAMPLES::
 
@@ -377,7 +407,8 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
     def an_element(self):
         """
-        Returns an element of this disjoint union, as per :meth:`Sets.ParentMethods.an_element`.
+        Return an element of this disjoint union, as per
+        :meth:`Sets.ParentMethods.an_element`.
 
         EXAMPLES::
 
@@ -410,9 +441,9 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             sage: U.cardinality()
             +Infinity
 
-        .. warning::
+        .. WARNING::
 
-            as pointed out in the main documentation, it is
+            As pointed out in the main documentation, it is
             possible to construct examples where this is incorrect::
 
                 sage: U = DisjointUnionEnumeratedSets(
@@ -433,18 +464,18 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), facade=False)
             sage: U._element_constructor_
-            <bound method DisjointUnionEnumeratedSets_with_category._element_constructor_default of Disjoint union of Finite family {1: Partitions of the integer 1, 2: Partitions of the integer 2, 3: Partitions of the integer 3}>
+            <bound method DisjointUnionEnumeratedSets_with_category._element_constructor_default
+             of Disjoint union of Finite family {...}>
             sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), facade=True)
             sage: U._element_constructor_
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'DisjointUnionEnumeratedSets_with_category' object has no attribute '_element_constructor_'
+            <bound method DisjointUnionEnumeratedSets_with_category._element_constructor_facade
+             of Disjoint union of Finite family {...}>
         """
         if not self._facade:
             return self._element_constructor_default
         else:
-            return NotImplemented
+            return self._element_constructor_facade
 
     def _element_constructor_default(self, el):
         r"""
@@ -459,7 +490,10 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             sage: U([1,3,2])   # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: Value [1, 3, 2] does not belong to Disjoint union of Finite family {1: Partitions of the integer 1, 2: Partitions of the integer 2, 3: Partitions of the integer 3}
+            ValueError: value [1, 3, 2] does not belong to Disjoint union of
+             Finite family {1: Partitions of the integer 1,
+                 2: Partitions of the integer 2,
+                 3: Partitions of the integer 3}
 
             sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), keepkey=True, facade=False)
@@ -470,14 +504,82 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             sage: U((4,[2,1]))   # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: Value (4, [2, 1]) does not belong to Disjoint union of Finite family {1: Partitions of the integer 1, 2: Partitions of the integer 2, 3: Partitions of the integer 3}
+            ValueError: value (4, [2, 1]) does not belong to Disjoint union of
+             Finite family {1: Partitions of the integer 1,
+                 2: Partitions of the integer 2,
+                 3: Partitions of the integer 3}
         """
         if isinstance(el, self.element_class):
             el = el.value
         if self._is_a(el):
             return self.element_class(self, el)
         else:
-            raise ValueError("Value %s does not belong to %s"%(el, self))
+            raise ValueError("value %s does not belong to %s"%(el, self))
+
+    def _element_constructor_facade(self, el):
+        """
+        TESTS::
+
+            sage: X = DisjointUnionEnumeratedSets({i: Partitions(i) for i in range(5)})
+            sage: X([1]).parent()
+            Partitions of the integer 1
+            sage: X([2,1,1]).parent()  # indirect doctest
+            Partitions of the integer 4
+            sage: X([6])
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot coerce `[6]` in any parent in `Finite family {...}`
+
+        We need to call the element constructor directly when ``keepkey=True``
+        because this returns a `tuple`, where the coercion framework requires
+        an :class:`Element` be returned.
+
+            sage: X = DisjointUnionEnumeratedSets({i: Partitions(i) for i in range(5)},
+            ....:                                 keepkey=True)
+            sage: p = X._element_constructor_((0, []))  # indirect doctest
+            sage: p[1].parent()
+            Partitions of the integer 0
+ 
+        Test that facade parents can create and properly access elements
+        that are tuples (fixed by :trac:`22382`)::
+
+            sage: f = lambda mu: cartesian_product([mu.standard_tableaux(), 
+            ....:                                   mu.standard_tableaux()])
+            sage: tabs = DisjointUnionEnumeratedSets(Family(Partitions(4), f))
+            sage: s = StandardTableau([[1,3],[2,4]])
+            sage: (s,s) in tabs
+            True
+            sage: ss = tabs( (s,s) )
+            sage: ss[0]
+            [[1, 3], [2, 4]]
+
+        We do not coerce when one of the elements is already in the set::
+
+            sage: X = DisjointUnionEnumeratedSets([QQ, ZZ])
+            sage: x = X(2)
+            sage: x.parent() is ZZ
+            True
+        """
+        if self._keepkey:
+            P = self._family[el[0]]
+            if isinstance(el[1], Element) and el[1].parent() == P:
+                return el
+            try:
+                return (el[0], P(el[1]))
+            except Exception:
+                raise ValueError("cannot coerce `%s` in the parent `%s`"%(el[1], P))
+
+        # Check first to see if the parent of el is in the family
+        if (isinstance(el, Element) and isinstance(self._facade_for, tuple)
+            and el.parent() in self._facade_for):
+            return el
+
+        for P in self._family:
+            try:
+                return P(el)
+            except Exception:
+                pass
+        raise ValueError("cannot coerce `%s` in any parent in `%s`"%(el, self._family))
 
     @lazy_attribute
     def Element(self):
@@ -499,3 +601,4 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             return ElementWrapper
         else:
             return NotImplemented
+

@@ -71,6 +71,7 @@ distclean: build-clean
 	$(MAKE) misc-clean
 	@echo "Deleting all remaining output from build system ..."
 	rm -rf local
+	rm -f src/bin/sage-env-config
 
 # Delete all auto-generated files which are distributed as part of the
 # source tarball
@@ -129,14 +130,14 @@ ptestoptionallong: all
 configure: configure.ac src/bin/sage-version.sh m4/*.m4
 	./bootstrap -d
 
-install:
+install: all
 	@echo "******************************************************************"
-	@echo "The '$@' target is no longer supported:"
-	@echo "either build SageMath in-place or use the binary packaging scripts"
+	@echo "The '$@' target is a no-op; 'make' already does 'make install'"
+	@echo "You can change the install prefix from its default"
+	@echo "(the subdirectory 'local') by using ./configure --prefix=PREFIX"
+	@echo "You can also consider using the binary packaging scripts"
 	@echo "from https://github.com/sagemath/binary-pkg"
 	@echo "******************************************************************"
-	@exit 1
-
 
 .PHONY: default build install micro_release \
 	misc-clean bdist-clean distclean bootstrap-clean maintainer-clean \

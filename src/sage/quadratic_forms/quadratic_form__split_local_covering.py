@@ -169,13 +169,13 @@ def vectors_by_length(self, bound):
     ::
 
         sage: Q = QuadraticForm(ZZ, 4, [1,1,1,1, 1,0,0, 1,0, 1])
-        sage: map(len, Q.vectors_by_length(2))
+        sage: list(map(len, Q.vectors_by_length(2)))
         [1, 12, 12]
 
     ::
 
         sage: Q = QuadraticForm(ZZ, 4, [1,-1,-1,-1, 1,0,0, 4,-3, 4])
-        sage: map(len, Q.vectors_by_length(3))
+        sage: list(map(len, Q.vectors_by_length(3)))
         [1, 3, 0, 3]
     """
     # pari uses eps = 1e-6 ; nothing bad should happen if eps is too big
@@ -391,7 +391,7 @@ def complementary_subform_to_vector(self, v):
         if Q1[0,i] != 0:
             done_flag = False
 
-    if done_flag == False:
+    if not done_flag:
         raise RuntimeError("There is a problem cancelling out the matrix entries! =O")
 
 

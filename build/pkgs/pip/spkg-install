@@ -1,8 +1,20 @@
-#!/usr/bin/env bash
-
 cd src
 
 # pip can install itself!
-# need to use --upgrade or else pip, which is importing itself, will think
-# itself is already installed
-python -m pip install --verbose --no-index --upgrade .
+#
+# need to use --upgrade or --ignore-installed; Otherwise pip, which is
+# importing itself, will think itself is already installed
+#
+# Install pip3 first so pip2 overwrites local/bin/pip
+
+python3 -m pip install --verbose --no-index --ignore-installed --isolated .
+if [ $? -ne 0 ]; then
+    echo "Error building / installing pip3"
+    exit 1
+fi
+
+python2 -m pip install --verbose --no-index --ignore-installed --isolated .
+if [ $? -ne 0 ]; then
+    echo "Error building / installing pip2"
+    exit 1
+fi

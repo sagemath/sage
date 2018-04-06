@@ -79,15 +79,15 @@ class InfiniteEnumeratedSets(CategoryWithAxiom):
         def _test_enumerated_set_iter_cardinality(self, **options):
             """
             Check that the methods :meth:`.cardinality` and
-            :meth:`.__iter__`. are consistent.
+            :meth:`.__iter__` are consistent.
 
             See also :class:`TestSuite`.
 
             For infinite enumerated sets:
 
-               * :meth:`.cardinality` is supposed to return `infinity`
+            * :meth:`.cardinality` is supposed to return `infinity`
 
-               * :meth:`.list`` is supposed to raise a ``NotImplementedError``.
+            * :meth:`.list` is supposed to raise a ``NotImplementedError``.
 
             EXAMPLES::
 

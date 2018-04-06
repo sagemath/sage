@@ -186,7 +186,7 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
         sage: v[1][0].imag() < 1e25
         True
 
-        sage: K.<im> = NumberField(x^2 + 1)
+        sage: K.<im> = QuadraticField(-1)
         sage: eps = 1/2^100
         sage: x = polygen(K)
         sage: p = (x-1)*(x-1-eps)*(x-1+eps)*(x-1-eps*im)*(x-1+eps*im)

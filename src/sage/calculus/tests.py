@@ -104,8 +104,18 @@ from some Mathematica docs::
     -1/2*arctan(x/a)/a^3 - 1/4*log(a + x)/a^3 + 1/4*log(-a + x)/a^3
     sage: expand(integrate(log(1-x^2), x))
     x*log(-x^2 + 1) - 2*x + log(x + 1) - log(x - 1)
+
+This is an apparent regression in Maxima 5.39.0, although
+the antiderivative is correct, assuming we work with
+(poly)logs of complex argument. More convenient form is
+1/2*log(x^2)*log(-x^2 + 1) + 1/2*dilog(-x^2 + 1).
+See also https://sourceforge.net/p/maxima/bugs/3275/::
+
     sage: integrate(log(1-x^2)/x, x)
-    1/2*log(x^2)*log(-x^2 + 1) + 1/2*dilog(-x^2 + 1)
+    log(-x)*log(x + 1) + log(x)*log(-x + 1) + dilog(x + 1) + dilog(-x + 1)
+
+No problems here::
+
     sage: integrate(exp(1-x^2),x)
     1/2*sqrt(pi)*erf(x)*e
     sage: integrate(sin(x^2),x)

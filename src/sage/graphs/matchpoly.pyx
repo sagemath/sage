@@ -1,3 +1,4 @@
+# cython: binding=True
 """
 Matching Polynomial
 
@@ -25,19 +26,22 @@ Methods
 """
 
 #*****************************************************************************
-#                       Copyright (C) 2010 Robert Miller
+#       Copyright (C) 2010 Robert Miller
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.misc.all import prod
-include "cysignals/signals.pxi"
-include 'sage/ext/cdefs.pxi'
-include "cysignals/memory.pxi"
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
@@ -251,26 +255,20 @@ def matching_polynomial(G, complement=True, name=None):
     # The edges_mem table is of size (2 * nedges * nedges), and is to be read as
     # nedges blocks of size (2 * nedges). These blocks of size (2 * nedges) are
     # themselves to be read as two blocks of length nedges, addressed as edges1
-    # and edges2
-
-    # Only the first block of size (2*nedges) is here filled. The function
+    # and edges2.
+    #
+    # Only the first block of size (2 * nedges) is here filled. The function
     # delete_and_add will need the rest of the memory.
 
     fmpz_poly_init(pol)  # sets to zero
-    edges_mem = <int *> sig_malloc(2 * nedges * nedges * sizeof(int))
-    edges = <int **> sig_malloc(2 * nedges * sizeof(int *))
-    if edges_mem is NULL or edges is NULL:
-        if edges_mem is not NULL:
-            sig_free(edges_mem)
-        if edges is not NULL:
-            sig_free(edges)
-        raise MemoryError("Error allocating memory for matchpoly.")
+    edges = <int **>check_allocarray(2 * nedges, sizeof(int *))
+    edges_mem = <int *>check_allocarray(2 * nedges * nedges, sizeof(int))
 
-    for i from 0 <= i < 2 * nedges:
+    for i in range(2 * nedges):
         edges[i] = edges_mem + i * nedges
 
-    edges1 = edges[0]
-    edges2 = edges[1]
+    edges1 = edges_mem           # edges[0]
+    edges2 = edges_mem + nedges  # edges[1]
 
     cur = 0
     for i, j in sorted(map(sorted, G.edges(labels=False))):
@@ -286,12 +284,12 @@ def matching_polynomial(G, complement=True, name=None):
 
     # Building the actual matching polynomial
 
-    coeffs_ZZ = []
+    cdef list coeffs_ZZ = []
     cdef Integer c_ZZ
-    for i from 0 <= i <= nverts:
+    for i in range(nverts + 1):
         c_ZZ = Integer(0)
         fmpz_poly_get_coeff_mpz(c_ZZ.value, pol, i)
-        coeffs_ZZ.append(c_ZZ * (-1)**((nverts - i) / 2))
+        coeffs_ZZ.append(c_ZZ * (-1)**((nverts - i) // 2))
 
     f = x.parent()(coeffs_ZZ)
     sig_free(edges_mem)

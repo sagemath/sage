@@ -15,6 +15,7 @@ cdef extern from "flint/fmpz_poly.h":
     void fmpz_poly_fit_length(fmpz_poly_t, slong)
 
     void fmpz_poly_clear(fmpz_poly_t)
+    void _fmpz_poly_normalise(fmpz_poly_t)
 
     # Polynomial parameters
     slong fmpz_poly_length(const fmpz_poly_t)

@@ -1,0 +1,144 @@
+From 88a35ff457f55e527e0e8a503a0dc61976c1846d Mon Sep 17 00:00:00 2001
+From: Martin Kroeker <martin@ruby.chemie.uni-freiburg.de>
+Date: Tue, 25 Jul 2017 08:39:35 +0200
+Subject: [PATCH] Revert #1246, "honor cgroup/cpuset limits" for now
+
+Unsafe usage of the __GLIBC_PREREQ macro lead to build breakage on non-glibc systems
+---
+ driver/others/init.c   | 49 +++++--------------------------------------------
+ driver/others/memory.c | 37 -------------------------------------
+ 2 files changed, 5 insertions(+), 81 deletions(-)
+
+diff --git a/driver/others/init.c b/driver/others/init.c
+index 4c75d72e4..3e6176967 100644
+--- a/driver/others/init.c
++++ b/driver/others/init.c
+@@ -778,11 +778,11 @@ static int initialized = 0;
+ void gotoblas_affinity_init(void) {
+ 
+   int cpu, num_avail;
+-#ifndef USE_OPENMP	
++#ifndef USE_OPENMP
+   cpu_set_t cpu_mask;
+ #endif
+   int i;
+-	
++
+   if (initialized) return;
+ 
+   initialized = 1;
+@@ -826,54 +826,15 @@ void gotoblas_affinity_init(void) {
+   common -> shmid = pshmid;
+ 
+   if (common -> magic != SH_MAGIC) {
+-    cpu_set_t *cpusetp;
+-    int nums;
+-    int ret;
+-
+ #ifdef DEBUG
+     fprintf(stderr, "Shared Memory Initialization.\n");
+ #endif
+ 
+     //returns the number of processors which are currently online
+-
+-    nums = sysconf(_SC_NPROCESSORS_CONF);
+-     
+-#if !defined(__GLIBC_PREREQ) || !__GLIBC_PREREQ(2, 3)
+-    common->num_procs = nums;
+-#elif __GLIBC_PREREQ(2, 7)
+-    cpusetp = CPU_ALLOC(nums);
+-    if (cpusetp == NULL) {
+-        common->num_procs = nums;
+-    } else {
+-        size_t size;
+-        size = CPU_ALLOC_SIZE(nums);
+-        ret = sched_getaffinity(0,size,cpusetp);
+-        if (ret!=0) 
+-            common->num_procs = nums;
+-        else
+-            common->num_procs = CPU_COUNT_S(size,cpusetp);
+-    }
+-    CPU_FREE(cpusetp);
+-#else
+-    ret = sched_getaffinity(0,sizeof(cpu_set_t), cpusetp);
+-    if (ret!=0) {
+-        common->num_procs = nums;
+-    } else {
+-#if !__GLIBC_PREREQ(2, 6)  
+-    int i;
+-    int n = 0;
+-    for (i=0;i<nums;i++)
+-        if (CPU_ISSET(i,cpusetp)) n++;
+-    common->num_procs = n;
+-    }
+-#else
+-    common->num_procs = CPU_COUNT(sizeof(cpu_set_t),cpusetp);
+-#endif
+-
+-#endif 
++    common -> num_procs = sysconf(_SC_NPROCESSORS_CONF);;
+ 
+     if(common -> num_procs > MAX_CPUS) {
+-      fprintf(stderr, "\nOpenBLAS Warning : The number of CPU/Cores(%d) is beyond the limit(%d). Terminated.\n", common->num_procs, MAX_CPUS);
++      fprintf(stderr, "\nOpenBLAS Warining : The number of CPU/Cores(%d) is beyond the limit(%d). Terminated.\n", common->num_procs, MAX_CPUS);
+       exit(1);
+     }
+ 
+@@ -886,7 +847,7 @@ void gotoblas_affinity_init(void) {
+     if (common -> num_nodes > 1) numa_mapping();
+ 
+     common -> final_num_procs = 0;
+-    for(i = 0; i < common -> avail_count; i++) common -> final_num_procs += rcount(common -> avail[i]) + 1;   //Make the max cpu number.
++    for(i = 0; i < common -> avail_count; i++) common -> final_num_procs += rcount(common -> avail[i]) + 1;   //Make the max cpu number. 
+ 
+     for (cpu = 0; cpu < common -> final_num_procs; cpu ++) common -> cpu_use[cpu] =  0;
+ 
+diff --git a/driver/others/memory.c b/driver/others/memory.c
+index 38d063715..916950315 100644
+--- a/driver/others/memory.c
++++ b/driver/others/memory.c
+@@ -175,44 +175,7 @@ int get_num_procs(void);
+ #else
+ int get_num_procs(void) {
+   static int nums = 0;
+-cpu_set_t *cpusetp;
+-size_t size;
+-int ret;
+-int i,n;
+-
+   if (!nums) nums = sysconf(_SC_NPROCESSORS_CONF);
+-#if !defined(OS_LINUX)
+-     return nums;
+-#endif
+-     
+-#if !defined(__GLIBC_PREREQ)
+-   return nums;
+-#endif   
+-#if !__GLIBC_PREREQ(2, 3)
+-   return nums;
+-#endif   
+-
+-#if !__GLIBC_PREREQ(2, 7)
+-  ret = sched_getaffinity(0,sizeof(cpu_set_t), cpusetp);
+-  if (ret!=0) return nums;
+-  n=0;
+-#if !__GLIBC_PREREQ(2, 6)  
+-  for (i=0;i<nums;i++)
+-     if (CPU_ISSET(i,cpusetp)) n++;
+-  nums=n;   
+-#else
+-  nums = CPU_COUNT(sizeof(cpu_set_t),cpusetp);
+-#endif
+-  return nums;
+-#endif
+-
+-  cpusetp = CPU_ALLOC(nums);
+-  if (cpusetp == NULL) return nums;
+-  size = CPU_ALLOC_SIZE(nums);
+-  ret = sched_getaffinity(0,size,cpusetp);
+-  if (ret!=0) return nums;
+-  nums = CPU_COUNT_S(size,cpusetp);
+-  CPU_FREE(cpusetp);
+   return nums;
+ }
+ #endif

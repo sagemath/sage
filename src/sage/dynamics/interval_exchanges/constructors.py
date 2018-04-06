@@ -134,6 +134,7 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
+from six.moves import range
 
 from .template import PermutationIET, PermutationLI
 
@@ -191,7 +192,7 @@ def _two_lists(a):
             res[1] = a[1].split()
 
     elif isinstance(a, Permutation):
-        res[0] = range(1,len(a)+1)
+        res[0] = list(range(1,len(a)+1))
         res[1] = [a[i] for i in range(len(a))]
 
     elif not hasattr(a,'__len__'):
@@ -203,7 +204,7 @@ def _two_lists(a):
     elif len(a) == 1:
         a = a[0]
         if isinstance(a, Permutation):
-            res[0] = range(1,len(a)+1)
+            res[0] = list(range(1,len(a)+1))
             res[1] = [a[i] for i in range(len(a))]
 
         elif isinstance(a, (list,tuple)):
@@ -670,7 +671,7 @@ def Permutations_iterator(nintervals=None, irreducible=True,
             nintervals = alphabet.cardinality()
 
     elif alphabet is None:
-            alphabet = range(1, nintervals+1)
+            alphabet = list(range(1, nintervals + 1))
 
     if reduced:
         return ReducedPermutationsIET_iterator(nintervals,

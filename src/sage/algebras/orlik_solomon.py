@@ -252,7 +252,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         subset `S = \{ s_1 < s_2 < \cdots < s_k \}` of the ground set::
 
             sage: G = Graph([[1,2],[1,2],[2,3],[3,4],[4,2]], multiedges=True)
-            sage: M = Matroid(G)
+            sage: M = Matroid(G).regular_matroid()
             sage: E = M.groundset_list()
             sage: OS = M.orlik_solomon_algebra(ZZ)
             sage: G = OS.algebra_generators()

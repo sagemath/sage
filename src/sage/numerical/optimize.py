@@ -11,12 +11,14 @@ Functions and Methods
 ----------------------
 """
 from six.moves import range
+from six import iteritems
 
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
 
+from sage.misc.decorators import rename_keyword
 
-def find_root(f, a, b, xtol=10e-13, rtol=4.5e-16, maxiter=100, full_output=False):
+def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=False):
     """
     Numerically find a root of ``f`` on the closed interval `[a,b]`
     (or `[b,a]`) if possible, where ``f`` is a function in the one variable.
@@ -32,7 +34,10 @@ def find_root(f, a, b, xtol=10e-13, rtol=4.5e-16, maxiter=100, full_output=False
     - ``xtol``, ``rtol`` -- the routine converges when a root is known
       to lie within ``xtol`` of the value return. Should be `\geq 0`.
       The routine modifies this to take into account the relative precision
-      of doubles.
+      of doubles. By default, rtol is ``4*numpy.finfo(float).eps``, the
+      minimum allowed value for ``scipy.optimize.brentq``, which is what
+      this method uses underneath. This value is equal to ``2.0**-50`` for
+      IEEE-754 double precision floats as used by Python.
 
     - ``maxiter`` -- integer; if convergence is not achieved in
       ``maxiter`` iterations, an error is raised. Must be `\geq 0`.
@@ -59,7 +64,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=4.5e-16, maxiter=100, full_output=False
     defined below is positive for all `x \geq 2.01`::
 
         sage: def f(x):
-        ...       return sqrt(x) * log(x) - abs(Li(x) - prime_pi(x))
+        ....:     return sqrt(x) * log(x) - abs(Li(x) - prime_pi(x))
 
     We find where `f` equals, i.e., what value that is slightly smaller
     than `2.01` that could have been used in the formulation of the Riemann
@@ -229,11 +234,12 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
     xmin, fval, iter, funcalls = scipy.optimize.fminbound(f, a, b, full_output=1, xtol=tol, maxfun=maxfun)
     return fval, xmin
 
-def minimize(func,x0,gradient=None,hessian=None,algorithm="default",**args):
+@rename_keyword(deprecation=23062, disp='verbose')
+def minimize(func, x0, gradient=None, hessian=None, algorithm="default", \
+             verbose=False, **args):
     r"""
     This function is an interface to a variety of algorithms for computing
     the minimum of a function of several variables.
-
 
     INPUT:
 
@@ -258,53 +264,72 @@ def minimize(func,x0,gradient=None,hessian=None,algorithm="default",**args):
       ``'default'`` (for Python functions, the simplex method is the default)
       (for symbolic functions bfgs is the default):
 
-       - ``'simplex'``
+       - ``'simplex'`` -- using the downhill simplex algorithm
 
-       - ``'powell'``
+       - ``'powell'`` -- use the modified Powell algorithm
 
-       - ``'bfgs'`` -- (Broyden-Fletcher-Goldfarb-Shanno) requires
-         ``gradient``
+       - ``'bfgs'`` -- (Broyden-Fletcher-Goldfarb-Shanno) requires gradient
 
        - ``'cg'`` -- (conjugate-gradient) requires gradient
 
        - ``'ncg'`` -- (newton-conjugate gradient) requires gradient and hessian
 
+    - ``verbose`` -- (optional, default: False) print convergence message
 
-    EXAMPLES::
+    .. NOTE::
 
-        sage: vars=var('x y z')
-        sage: f=100*(y-x^2)^2+(1-x)^2+100*(z-y^2)^2+(1-y)^2
-        sage: minimize(f,[.1,.3,.4],disp=0)
-        (1.00..., 1.00..., 1.00...)
+        For additional information on the algorithms implemented in this function,
+        consult SciPy's `documentation on optimization and root
+        finding <https://docs.scipy.org/doc/scipy/reference/optimize.html>`_
 
-        sage: minimize(f,[.1,.3,.4],algorithm="ncg",disp=0)
+    EXAMPLES:
+
+    Minimize a fourth order polynomial in three variables (see the
+    :wikipedia:`Rosenbrock_function`)::
+
+        sage: vars = var('x y z')
+        sage: f = 100*(y-x^2)^2+(1-x)^2+100*(z-y^2)^2+(1-y)^2
+        sage: minimize(f, [.1,.3,.4]) # abs tol 1e-6
+        (1.0, 1.0, 1.0)
+
+    Try the newton-conjugate gradient method; the gradient and hessian are 
+    computed automatically::
+
+        sage: minimize(f, [.1, .3, .4], algorithm="ncg") # abs tol 1e-6
+        (1.0, 1.0, 1.0)
+
+    We get additional convergence information with the `verbose` option::
+
+        sage: minimize(f, [.1, .3, .4], algorithm="ncg", verbose=True)
+        Optimization terminated successfully.
+        ...
         (0.9999999..., 0.999999..., 0.999999...)
 
     Same example with just Python functions::
 
         sage: def rosen(x): # The Rosenbrock function
-        ...      return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
-        sage: minimize(rosen,[.1,.3,.4],disp=0)
-        (1.00..., 1.00..., 1.00...)
+        ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
+        sage: minimize(rosen, [.1,.3,.4]) # abs tol 3e-5
+        (1.0, 1.0, 1.0)
 
     Same example with a pure Python function and a Python function to
     compute the gradient::
 
         sage: def rosen(x): # The Rosenbrock function
-        ...      return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
+        ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
         sage: import numpy
         sage: from numpy import zeros
         sage: def rosen_der(x):
-        ...      xm = x[1r:-1r]
-        ...      xm_m1 = x[:-2r]
-        ...      xm_p1 = x[2r:]
-        ...      der = zeros(x.shape,dtype=float)
-        ...      der[1r:-1r] = 200r*(xm-xm_m1**2r) - 400r*(xm_p1 - xm**2r)*xm - 2r*(1r-xm)
-        ...      der[0] = -400r*x[0r]*(x[1r]-x[0r]**2r) - 2r*(1r-x[0])
-        ...      der[-1] = 200r*(x[-1r]-x[-2r]**2r)
-        ...      return der
-        sage: minimize(rosen,[.1,.3,.4],gradient=rosen_der,algorithm="bfgs",disp=0)
-        (1.00...,  1.00..., 1.00...)
+        ....:    xm = x[1r:-1r]
+        ....:    xm_m1 = x[:-2r]
+        ....:    xm_p1 = x[2r:]
+        ....:    der = zeros(x.shape, dtype=float)
+        ....:    der[1r:-1r] = 200r*(xm-xm_m1**2r) - 400r*(xm_p1 - xm**2r)*xm - 2r*(1r-xm)
+        ....:    der[0] = -400r*x[0r]*(x[1r]-x[0r]**2r) - 2r*(1r-x[0])
+        ....:    der[-1] = 200r*(x[-1r]-x[-2r]**2r)
+        ....:    return der
+        sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der, algorithm="bfgs") # abs tol 1e-6
+        (1.0, 1.0, 1.0)
     """
     from sage.symbolic.expression import Expression
     from sage.ext.fast_eval import fast_callable
@@ -323,26 +348,27 @@ def minimize(func,x0,gradient=None,hessian=None,algorithm="default",**args):
 
     if algorithm=="default":
         if gradient is None:
-            min = optimize.fmin(f, [float(_) for _ in x0], **args)
+            min = optimize.fmin(f, [float(_) for _ in x0], disp=verbose, **args)
         else:
-            min= optimize.fmin_bfgs(f, [float(_) for _ in x0],fprime=gradient, **args)
+            min= optimize.fmin_bfgs(f, [float(_) for _ in x0],fprime=gradient, disp=verbose, **args)
     else:
         if algorithm=="simplex":
-            min= optimize.fmin(f, [float(_) for _ in x0], **args)
+            min= optimize.fmin(f, [float(_) for _ in x0], disp=verbose, **args)
         elif algorithm=="bfgs":
-            min= optimize.fmin_bfgs(f, [float(_) for _ in x0], fprime=gradient, **args)
+            min= optimize.fmin_bfgs(f, [float(_) for _ in x0], fprime=gradient, disp=verbose, **args)
         elif algorithm=="cg":
-            min= optimize.fmin_cg(f, [float(_) for _ in x0], fprime=gradient, **args)
+            min= optimize.fmin_cg(f, [float(_) for _ in x0], fprime=gradient, disp=verbose, **args)
         elif algorithm=="powell":
-            min= optimize.fmin_powell(f, [float(_) for _ in x0], **args)
+            min= optimize.fmin_powell(f, [float(_) for _ in x0], disp=verbose, **args)
         elif algorithm=="ncg":
             if isinstance(func, Expression):
                 hess=func.hessian()
                 hess_fast= [ [fast_callable(a, vars=var_names, domain=float) for a in row] for row in hess]
                 hessian=lambda p: [[a(*p) for a in row] for row in hess_fast]
                 hessian_p=lambda p,v: scipy.dot(scipy.array(hessian(p)),v)
-                min= optimize.fmin_ncg(f, [float(_) for _ in x0], fprime=gradient, fhess=hessian, fhess_p=hessian_p, **args)
-    return vector(RDF,min)
+                min = optimize.fmin_ncg(f, [float(_) for _ in x0], fprime=gradient, \
+                      fhess=hessian, fhess_p=hessian_p, disp=verbose, **args)
+    return vector(RDF, min)
 
 def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args):
     r"""
@@ -400,53 +426,70 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         sage: minimize_constrained(f, [(None,None),(4,10)],[5,5])
         (4.8..., 4.8...)
 
-    Check, if L-BFGS-B finds the same minimum::
+    Check if L-BFGS-B finds the same minimum::
 
         sage: minimize_constrained(f, [(None,None),(4,10)],[5,5], algorithm='l-bfgs-b')
         (4.7..., 4.9...)
 
-    Rosenbrock function, [http://en.wikipedia.org/wiki/Rosenbrock_function]::
+    Rosenbrock function (see the :wikipedia:`Rosenbrock_function`)::
 
         sage: from scipy.optimize import rosen, rosen_der
         sage: minimize_constrained(rosen, [(-50,-10),(5,10)],[1,1],gradient=rosen_der,algorithm='l-bfgs-b')
         (-10.0, 10.0)
         sage: minimize_constrained(rosen, [(-50,-10),(5,10)],[1,1],algorithm='l-bfgs-b')
         (-10.0, 10.0)
+
+    TESTS:
+
+    Check if :trac:`6592` is fixed::
+
+        sage: x, y = var('x y')
+        sage: f = (100 - x) + (1000 - y)
+        sage: c = x + y - 479 # > 0
+        sage: minimize_constrained(f, [c], [100, 300])
+        (805.985..., 1005.985...)
+        sage: minimize_constrained(f, c, [100, 300])
+        (805.985..., 1005.985...)
     """
     from sage.symbolic.expression import Expression
     import scipy
     from scipy import optimize
-    function_type=type(lambda x,y: x+y)
+    function_type = type(lambda x,y: x+y)
 
     if isinstance(func, Expression):
-        var_list=func.variables()
+        var_list = func.variables()
         var_names = [str(_) for _ in var_list]
-        fast_f=func._fast_float_(*var_names)
-        f=lambda p: fast_f(*p)
-        gradient_list=func.gradient()
-        fast_gradient_functions=[gradient_list[i]._fast_float_(*var_names)  for i in range(len(gradient_list))]
-        gradient=lambda p: scipy.array([ a(*p) for a in fast_gradient_functions])
+        fast_f = func._fast_float_(*var_names)
+        f = lambda p: fast_f(*p)
+        gradient_list = func.gradient()
+        fast_gradient_functions = [gi._fast_float_(*var_names) for gi in gradient_list]
+        gradient = lambda p: scipy.array([ a(*p) for a in fast_gradient_functions])
+        if isinstance(cons, Expression):
+            fast_cons = cons._fast_float_(*var_names)
+            cons = lambda p: scipy.array([fast_cons(*p)])
+        elif isinstance(cons, list) and isinstance(cons[0], Expression):
+            fast_cons = [ci._fast_float_(*var_names) for ci in cons]
+            cons = lambda p: scipy.array([a(*p) for a in fast_cons])
     else:
-        f=func
+        f = func
 
     if isinstance(cons,list):
-        if isinstance(cons[0],tuple) or isinstance(cons[0],list) or cons[0] is None:
+        if isinstance(cons[0], tuple) or isinstance(cons[0], list) or cons[0] is None:
             if gradient is not None:
-                if algorithm=='l-bfgs-b':
-                    min= optimize.fmin_l_bfgs_b(f,x0,gradient,bounds=cons, iprint=-1, **args)[0]
+                if algorithm == 'l-bfgs-b':
+                    min = optimize.fmin_l_bfgs_b(f, x0, gradient, bounds=cons, iprint=-1, **args)[0]
                 else:
-                    min= optimize.fmin_tnc(f,x0,gradient,bounds=cons,messages=0,**args)[0]
+                    min = optimize.fmin_tnc(f, x0, gradient, bounds=cons, messages=0, **args)[0]
             else:
-                if algorithm=='l-bfgs-b':
-                    min= optimize.fmin_l_bfgs_b(f,x0,approx_grad=True,bounds=cons,iprint=-1, **args)[0]
+                if algorithm == 'l-bfgs-b':
+                    min = optimize.fmin_l_bfgs_b(f, x0, approx_grad=True, bounds=cons, iprint=-1, **args)[0]
                 else:
-                    min= optimize.fmin_tnc(f,x0,approx_grad=True,bounds=cons,messages=0,**args)[0]
-
-        elif isinstance(cons[0],function_type):
-            min= optimize.fmin_cobyla(f,x0,cons,iprint=0,**args)
-    elif isinstance(cons, function_type):
-        min= optimize.fmin_cobyla(f,x0,cons,iprint=0,**args)
-    return vector(RDF,min)
+                    min = optimize.fmin_tnc(f, x0, approx_grad=True, bounds=cons, messages=0, **args)[0]
+        elif isinstance(cons[0], function_type) or isinstance(cons[0], Expression):
+            min = optimize.fmin_cobyla(f, x0, cons, iprint=0, **args)
+    elif isinstance(cons, function_type) or isinstance(cons, Expression):
+        min = optimize.fmin_cobyla(f, x0, cons, iprint=0, **args)
+    return vector(RDF, min)
 
 
 def linear_program(c,G,h,A=None,b=None,solver=None):
@@ -502,6 +545,15 @@ def linear_program(c,G,h,A=None,b=None,solver=None):
         sage: sol=linear_program(c,G,h)
         sage: sol['x']
         (0.999..., 1.000...)
+
+    Here we solve the same problem with 'glpk' interface to 'cvxopt'::
+
+        sage: sol=linear_program(c,G,h,solver='glpk')
+        GLPK Simplex Optimizer...
+        ...
+        OPTIMAL LP SOLUTION FOUND
+        sage: sol['x']
+        (1.0, 1.0)
 
     Next, we maximize `x+y-50` subject to `50x + 24y \leq 2400`,
     `30x + 33y \leq 2100`, `x \geq 45`, and `y \geq 5`::
@@ -713,7 +765,7 @@ def binpacking(items,maximum=1,k=None):
     the least number of bins such that all the items can be put in the
     bins, while keeping sure that each bin contains a weight of at most `K` ?
 
-    For more informations : http://en.wikipedia.org/wiki/Bin_packing_problem
+    For more informations, see :wikipedia:`Bin_packing_problem`
 
     Two version of this problem are solved by this algorithm :
          * Is it possible to put the given items in `L` bins ?
@@ -812,15 +864,12 @@ def binpacking(items,maximum=1,k=None):
     except MIPSolverException:
         raise ValueError("This problem has no solution !")
 
-    box=p.get_values(box)
+    box = p.get_values(box)
 
-    boxes=[[] for i in range(k)]
+    boxes = [[] for i in range(k)]
 
-    for (i,b),value in box.iteritems():
+    for (i, b), value in iteritems(box):
         if value == 1:
             boxes[b].append(items[i])
 
     return boxes
-
-
-

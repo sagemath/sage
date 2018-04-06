@@ -7,7 +7,7 @@ AUTHORS:
   multiplication.
 - John H. Palmieri (2010-06-30: version 1.0) multiplication of
   Serre-Cartan basis elements using the Adem relations.
-  - Simon King (2011-10-25): Fix the use of cached functions.
+- Simon King (2011-10-25): Fix the use of cached functions.
 
 .. rubric:: Milnor multiplication, `p=2`
 
@@ -187,9 +187,8 @@ The *admissible* monomials at an odd prime are products of the form
 where `s_k \geq \epsilon_{k+1} + p s_{k+1}` for all `k`.  As at the
 prime 2, these form a basis for the Steenrod algebra.
 
-The main function for this is :func:`make_mono_admissible_` (and in
-practice, one should use the cached version,
-``make_mono_admissible``), which converts a product of Steenrod
+The main function for this is :func:`make_mono_admissible`,
+which converts a product of Steenrod
 squares or pth power operations and Bocksteins into a dictionary
 representing a sum of admissible monomials.
 """
@@ -198,6 +197,7 @@ representing a sum of admissible monomials.
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #*****************************************************************************
+from six.moves import range
 
 from sage.misc.cachefunc import cached_function
 
@@ -209,8 +209,8 @@ def milnor_multiplication(r,s):
 
     INPUT:
 
-    - r - tuple of non-negative integers
-    - s - tuple of non-negative integers
+    - r -- tuple of non-negative integers
+    - s -- tuple of non-negative integers
 
     OUTPUT:
 
@@ -251,7 +251,7 @@ def milnor_multiplication(r,s):
     cols = len(s) + 1
     diags = len(r) + len(s)
     # initialize matrix
-    M = range(rows)
+    M = list(range(rows))
     for i in range(rows):
         M[i] = [0]*cols
     for j in range(1,cols):
@@ -322,7 +322,7 @@ def multinomial(list):
 
     INPUT:
 
-    - list - list of integers
+    - list -- list of integers
 
     OUTPUT:
 
@@ -380,7 +380,7 @@ def milnor_multiplication_odd(m1,m2,p):
     - m1 - pair of tuples (e,r), where e is an increasing tuple of
       non-negative integers and r is a tuple of non-negative integers
     - m2 - pair of tuples (f,s), same format as m1
-    - p - odd prime number
+    - p -- odd prime number
 
     OUTPUT:
 
@@ -423,7 +423,7 @@ def milnor_multiplication_odd(m1,m2,p):
         sage: (a+b)*c == a*c + b*c
         True
 
-    Test that the bug reported in #7212 has been fixed::
+    Test that the bug reported in :trac:`7212` has been fixed::
 
         sage: A.P(36,6)*A.P(27,9,81)
         2 P(13,21,83) + P(14,24,82) + P(17,20,83) + P(25,18,83) + P(26,21,82) + P(36,15,80,1) + P(49,12,83) + 2 P(50,15,82) + 2 P(53,11,83) + 2 P(63,15,81)
@@ -491,7 +491,7 @@ def milnor_multiplication_odd(m1,m2,p):
     # Now for the Milnor matrices.  For each entry '(e,r): coeff' in answer,
     # multiply r with s.  Record coefficient for matrix and multiply by coeff.
     # Store in 'result'.
-    if len(s) == 0:
+    if not s:
         result = answer
     else:
         result = {}
@@ -502,7 +502,7 @@ def milnor_multiplication_odd(m1,m2,p):
             cols = len(s) + 1
             diags = len(r) + len(s)
             # initialize matrix
-            M = range(rows)
+            M = list(range(rows))
             for i in range(rows):
                 M[i] = [0]*cols
             for j in range(1,cols):
@@ -572,8 +572,8 @@ def multinomial_odd(list,p):
 
     INPUT:
 
-    - list - list of integers
-    - p - a prime number
+    - list -- list of integers
+    - p -- a prime number
 
     OUTPUT:
 
@@ -705,12 +705,6 @@ def adem(a, b, c=0, p=2, generic=None):
 
     a dictionary representing the mod `p` Adem relations
     applied to `P^a P^b` or (if `c` present) to `P^a \beta^b P^c`.
-
-    .. note::
-
-        Users should use :func:`adem` instead of this function (which
-        has a trailing underscore in its name): :func:`adem`
-        is the cached version of this one, and so will be faster.
 
     The mod `p` Adem relations for the mod `p` Steenrod algebra are as
     follows: if `p=2`, then if `a < 2b`,
@@ -874,13 +868,6 @@ def make_mono_admissible(mono, p=2, generic=None):
     and then apply this function recursively to each of the resulting
     tuples `(i_1, ..., i_{j-1}, NEW, i_{j+2}, ...)`, keeping track of
     the coefficients.
-
-    .. note::
-
-        Users should use :func:`make_mono_admissible` instead of this
-        function (which has a trailing underscore in its name):
-        :func:`make_mono_admissible` is the cached version of this
-        one, and so will be faster.
 
     EXAMPLES::
 

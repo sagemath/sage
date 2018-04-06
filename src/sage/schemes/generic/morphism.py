@@ -24,7 +24,7 @@ provide a method
 
 * ``myscheme._homset(*args, **kwds)`` returning a
   Hom-set, which must be an element of a derived class of
-  `class:`~sage.schemes.generic.homset.SchemeHomset_generic`. If your
+  :class:`~sage.schemes.generic.homset.SchemeHomset_generic`. If your
   new Hom-set class does not use ``myscheme._morphism`` then you
   do not have to provide it.
 
@@ -82,7 +82,8 @@ from __future__ import absolute_import, print_function
 
 import operator
 from sage.structure.element import (AdditiveGroupElement, RingElement,
-        Element, generic_power, parent, get_coercion_model)
+        Element, generic_power, parent, coercion_model)
+from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
 from sage.categories.homset import Homset, Hom, End
 from sage.categories.number_fields import NumberFields
@@ -90,7 +91,6 @@ from sage.categories.fields import Fields
 from sage.rings.all import Integer, CIF
 from sage.rings.fraction_field import FractionField
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.rings.morphism import is_RingHomomorphism
 from .point import is_SchemeTopologicalPoint
 from sage.rings.infinity import infinity
 from . import scheme
@@ -102,9 +102,7 @@ from sage.rings.rational_field import QQ
 from sage.categories.map import FormalCompositeMap, Map
 from sage.misc.constant_function import ConstantFunction
 from sage.categories.morphism import SetMorphism
-from sage.categories.morphism import Morphism
-
-coercion_model = get_coercion_model()
+from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 
 
 def is_SchemeMorphism(f):
@@ -133,7 +131,6 @@ def is_SchemeMorphism(f):
     """
     from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
     return isinstance(f, (SchemeMorphism, EllipticCurvePoint_field));
-
 
 class SchemeMorphism(Element):
     """
@@ -680,7 +677,7 @@ class SchemeMorphism_structure_map(SchemeMorphism):
     """
     def __init__(self, parent, codomain=None):
         """
-        The Python constuctor.
+        The Python constructor.
 
         See :class:`SchemeMorphism_structure_map` for details.
 
@@ -753,7 +750,7 @@ class SchemeMorphism_spec(SchemeMorphism):
     """
     def __init__(self, parent, phi, check=True):
         """
-        The Python constuctor.
+        The Python constructor.
 
         See :class:`SchemeMorphism_structure_map` for details.
 
@@ -764,13 +761,14 @@ class SchemeMorphism_spec(SchemeMorphism):
             Affine Scheme morphism:
               From: Spectrum of Rational Field
               To:   Spectrum of Integer Ring
-              Defn: Ring Coercion morphism:
+              Defn: Natural morphism:
                       From: Integer Ring
                       To:   Rational Field
         """
         SchemeMorphism.__init__(self, parent)
         if check:
-            if not is_RingHomomorphism(phi):
+            from sage.categories.all import Rings
+            if not (isinstance(phi, Map) and phi.category_for().is_subcategory(Rings())):
                 raise TypeError("phi (=%s) must be a ring homomorphism" % phi)
             if phi.domain() != parent.codomain().coordinate_ring():
                 raise TypeError("phi (=%s) must have domain %s"
@@ -882,13 +880,14 @@ class SchemeMorphism_spec(SchemeMorphism):
 # of the class
 ############################################################################
 class SchemeMorphism_polynomial(SchemeMorphism):
-    """
+    r"""
     A morphism of schemes determined by polynomials that define what
     the morphism does on points in the ambient space.
 
     INPUT:
 
-    - ``parent`` -- Hom-set whose domain and codomain are affine schemes.
+    - ``parent`` -- Hom-set whose domain and codomain are affine or
+      projective schemes.
 
     - ``polys`` -- a list/tuple/iterable of polynomials defining the
       scheme morphism.
@@ -924,6 +923,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         ...
         TypeError: polys (=[e^x, e^y]) must be elements of
         Multivariate Polynomial Ring in x, y over Rational Field
+
     """
     def __init__(self, parent, polys, check=True):
         """
@@ -955,7 +955,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
                 except (TypeError, AttributeError):
                     raise TypeError("polys (=%s) must be elements of %s"%(polys, source_ring))
             polys = Sequence(polys)
-        self._polys = polys
+        self._polys = tuple(polys)
         SchemeMorphism.__init__(self, parent)
 
     def defining_polynomials(self):
@@ -973,7 +973,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: A.<x,y> = AffineSpace(R)
             sage: H = A.Hom(A)
             sage: H([x^3+y, 1-x-y]).defining_polynomials()
-            [x^3 + y, -x - y + 1]
+            (x^3 + y, -x - y + 1)
         """
         return self._polys
 
@@ -1193,7 +1193,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
     def __copy__(self):
         r"""
-        Returns a copy of ``self``.
+        Return a copy of ``self``.
 
         OUTPUT:
 
@@ -1201,22 +1201,22 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         EXAMPLES::
 
-            sage: P.<x,y>=ProjectiveSpace(QQ,1)
-            sage: H=Hom(P,P)
-            sage: f=H([3/5*x^2,6*y^2])
-            sage: g =copy(f)
-            sage: f==g
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: H = Hom(P, P)
+            sage: f = H([3/5*x^2, 6*y^2])
+            sage: g = copy(f)
+            sage: f == g
             True
             sage: f is g
             False
 
         ::
 
-            sage: P.<x,y,z>=ProjectiveSpace(QQ,2)
-            sage: X=P.subscheme(x^2-y^2);
-            sage: Q=X(23,23,46)
-            sage: P=X(1,1,1)
-            sage: P!=Q
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: X = P.subscheme(x^2 - y^2);
+            sage: Q = X(23, 23, 46)
+            sage: P = X(1, 1, 1)
+            sage: P != Q
             True
         """
         return self.parent()(self._polys)
@@ -1442,16 +1442,122 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             S = self.codomain().change_ring(R)
             H = Hom(T,S)
 
-        if isinstance(R, Morphism):
+        if isinstance(R, Map):
             if R.domain() == self.base_ring():
-                R = self.domain().ambient_space().coordinate_ring().hom(R, T.ambient_space().coordinate_ring())
-        G = []
-        for f in self:
-            if isinstance(f, FractionFieldElement):
-                G.append(f.numerator().change_ring(R) / f.denominator().change_ring(R))
+                from sage.structure.coerce_maps import CallableConvertMap
+                S = self.domain().ambient_space().coordinate_ring()
+                T = T.ambient_space().coordinate_ring()
+                phi = CallableConvertMap(S, T, lambda self, g:T(g.map_coefficients(R)))
+                G = []
+                for f in self:
+                    if isinstance(f, FractionFieldElement):
+                        G.append(phi(f.numerator())/phi(f.denominator()))
+                    else:
+                        G.append(phi(f))
+        else:
+            G = []
+            for f in self:
+                if isinstance(f, FractionFieldElement):
+                    G.append(f.numerator().change_ring(R) / f.denominator().change_ring(R))
+                else:
+                    G.append(f.change_ring(R))
+        return H(G, check)
+
+    def specialization(self, D=None, phi=None, homset=None):
+        r"""
+        Specialization of this map.
+
+        Given a family of maps defined over a polynomial ring. A specialization
+        is a particular member of that family. The specialization can be specified either
+        by a dictionary or a :class:`SpecializationMorphism`.
+
+        INPUT:
+
+        - ``D`` -- dictionary (optional)
+
+        - ``phi`` -- SpecializationMorphism (optional)
+
+        - ``homset`` -- homset of specialized map (optional)
+
+        OUTPUT: :class:`SchemeMorphism_polynomial`
+
+        EXAMPLES::
+
+            sage: R.<c> = PolynomialRing(QQ)
+            sage: P.<x,y> = ProjectiveSpace(R, 1)
+            sage: H = End(P)
+            sage: f = H([x^2 + c*y^2,y^2])
+            sage: f.specialization({c:1})
+            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
+                  Defn: Defined on coordinates by sending (x : y) to
+                        (x^2 + y^2 : y^2)
+
+            ::
+
+            sage: R.<a,b> = PolynomialRing(QQ)
+            sage: P.<x,y> = ProjectiveSpace(R, 1)
+            sage: H = End(P)
+            sage: f = H([x^3 + a*x*y^2 + b*y^3, y^3])
+            sage: from sage.rings.polynomial.flatten import SpecializationMorphism
+            sage: phi = SpecializationMorphism(P.coordinate_ring(), dict({a:2,b:-1}))
+            sage: F = f.specialization(phi=phi); F
+            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
+                  Defn: Defined on coordinates by sending (x : y) to
+                        (x^3 + 2*x*y^2 - y^3 : y^3)
+            sage: g = H([x^2 + a*y^2,y^2])
+            sage: G = g.specialization(phi=phi)
+            sage: G.parent() is F.parent()
+            False
+            sage: G = g.specialization(phi=phi, homset=F.parent())
+            sage: G.parent() is F.parent()
+            True
+
+        ::
+
+            sage: R.<c> = PolynomialRing(QQ)
+            sage: P.<x,y> = ProjectiveSpace(R, 1)
+            sage: X = P.subscheme([x - c*y])
+            sage: H = End(X)
+            sage: f = H([x^2, c*y^2])
+            sage: f.specialization({c:2})
+            Scheme endomorphism of Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
+                  x - 2*y
+                  Defn: Defined on coordinates by sending (x : y) to
+                        (x^2 : 2*y^2)
+
+        ::
+
+            sage: R.<c> = QQ[]
+            sage: P.<x,y> = ProjectiveSpace(R,1)
+            sage: f = DynamicalSystem_projective([x^2 + c*y^2, y^2], domain=P)
+            sage: F = f.dynatomic_polynomial(3)
+            sage: g = F.specialization({c:1}); g
+            x^6 + x^5*y + 4*x^4*y^2 + 3*x^3*y^3 + 7*x^2*y^4 + 4*x*y^5 + 5*y^6
+            sage: g == f.specialization({c:1}).dynatomic_polynomial(3)
+            True
+        """
+        if D is None:
+            if phi is None:
+                raise ValueError("either the dictionary or the specialization must be provided")
+        else:
+            from sage.rings.polynomial.flatten import SpecializationMorphism
+            phi = SpecializationMorphism(self[0].parent(), D)
+        if homset is None:
+            domain = self.domain()
+            if isinstance(domain, AlgebraicScheme_subscheme):
+                domain = domain.specialization(phi=phi)
             else:
-                G.append(f.change_ring(R))
-        return(H(G, check))
+                domain = domain.change_ring(phi.codomain().base_ring())
+            if self.is_endomorphism():
+                homset = End(domain)
+            else:
+                codomain = self.codomain()
+                if isinstance(codomain, AlgebraicScheme_subscheme):
+                    codomain = codomain.specialization(phi=phi)
+                else:
+                    codomain = codomain.change_ring(phi.codomain().base_ring())
+                homset = Hom(domain, codomain)
+        return homset([phi(g) for g in self])
 
     def _composition_(self, other, homset):
         r"""
@@ -1664,7 +1770,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         return len(self._coords)
 
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
         Compare two scheme morphisms.
 
@@ -1675,15 +1781,15 @@ class SchemeMorphism_point(SchemeMorphism):
 
         OUTPUT:
 
-        ``+1``, ``0``, or ``-1``.
+        boolean
 
         EXAMPLES::
 
             sage: A = AffineSpace(2, QQ)
             sage: a = A(1,2)
             sage: b = A(3,4)
-            sage: a.__cmp__(b)
-            -1
+            sage: a < b
+            True
             sage: a != b
             True
         """
@@ -1691,10 +1797,8 @@ class SchemeMorphism_point(SchemeMorphism):
             try:
                 other = self._codomain.ambient_space()(other)
             except TypeError:
-                return -1
-        return cmp(self._coords, other._coords)
-
-    __cmp__ = _cmp_
+                return NotImplemented
+        return richcmp(self._coords, other._coords, op)
 
     def scheme(self):
         """
@@ -1804,11 +1908,94 @@ class SchemeMorphism_point(SchemeMorphism):
 
         EXAMPLES::
 
-            sage: P.<x,y>=ProjectiveSpace(ZZ,1)
-            sage: Q=P(152,113)
-            sage: copy(Q) is Q
+            sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
+            sage: Q = P(152, 113)
+            sage: Q2 = copy(Q)
+            sage: Q2 is Q
             False
-            sage: copy(Q) == Q
+            sage: Q2 == Q
             True
         """
         return(self._codomain.point(self._coords, check=False))
+
+    def specialization(self, D=None, phi=None, ambient=None):
+        r"""
+        Specialization of this point.
+
+        Given a family of points defined over a polynomial ring. A specialization
+        is a particular member of that family. The specialization can be specified either
+        by a dictionary or a :class:`SpecializationMorphism`.
+
+        INPUT:
+
+        - ``D`` -- dictionary (optional)
+
+        - ``phi`` -- SpecializationMorphism (optional)
+
+        - ``ambient`` -- ambient space of specialized point (optional)
+
+        OUTPUT: :class:`SchemeMorphism_polynomial`
+
+        EXAMPLES::
+
+            sage: R.<c> = PolynomialRing(QQ)
+            sage: P.<x,y> = ProjectiveSpace(R, 1)
+            sage: Q = P([c,1])
+            sage: Q.specialization({c:1})
+            (1 : 1)
+
+            ::
+
+            sage: R.<a,b> = PolynomialRing(QQ)
+            sage: P.<x,y> = ProjectiveSpace(R, 1)
+            sage: Q = P([a^2 + 2*a*b + 34, 1])
+            sage: from sage.rings.polynomial.flatten import SpecializationMorphism
+            sage: phi = SpecializationMorphism(P.coordinate_ring(),dict({a:2,b:-1}))
+            sage: T = Q.specialization(phi=phi); T
+            (34 : 1)
+            sage: Q2 = P([a,1])
+            sage: T2 = Q2.specialization(phi=phi)
+            sage: T2.codomain() is T.codomain()
+            False
+            sage: T3 = Q2.specialization(phi=phi, ambient=T.codomain())
+            sage: T3.codomain() is T.codomain()
+            True
+
+        ::
+
+            sage: R.<c> = PolynomialRing(QQ)
+            sage: P.<x,y> = ProjectiveSpace(R, 1)
+            sage: X = P.subscheme([x - c*y])
+            sage: Q = X([c, 1])
+            sage: Q2 = Q.specialization({c:2}); Q2
+            (2 : 1)
+            sage: Q2.codomain()
+            Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
+                  x - 2*y
+
+        ::
+
+            sage: R.<l> = PolynomialRing(QQ)
+            sage: S.<k,j> = PolynomialRing(R)
+            sage: K.<a,b,c,d> = S[]
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: H = End(P)
+            sage: Q = P([a^2,b^2])
+            sage: Q.specialization({a:2})
+            (4 : b^2)
+        """
+        if D is None:
+            if phi is None:
+                raise ValueError("either the dictionary or the specialization must be provided")
+        else:
+            from sage.rings.polynomial.flatten import SpecializationMorphism
+            phi = SpecializationMorphism(self.codomain().ambient_space().coordinate_ring(), D)
+        if ambient is None:
+            ambient = self.codomain()
+            if isinstance(ambient, AlgebraicScheme_subscheme):
+                ambient = ambient.specialization(phi=phi)
+            else:
+                ambient = ambient.change_ring(phi.codomain().base_ring())
+        psi = ambient.ambient_space().coordinate_ring().hom([0 for i in range(ambient.ambient_space().ngens())], ambient.base_ring())
+        return ambient([psi(phi(t)) for t in self])
+

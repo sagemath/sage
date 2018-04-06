@@ -7,7 +7,7 @@ Utility function to convert PARI ``GEN``s to/from the GMP types
 AUTHORS:
 
 - Luca De Feo (2016-09-06): Separate Sage-specific components from
-  generic C-interface in ``PariInstance`` (:trac:`20241`)
+  generic C-interface in ``Pari`` (:trac:`20241`)
 """
 
 #*****************************************************************************
@@ -22,16 +22,16 @@ AUTHORS:
 
 from __future__ import absolute_import, division, print_function
 
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.gmp.all cimport *
 
-from sage.libs.cypari2.paridecl cimport *
-from sage.libs.cypari2.stack cimport new_gen
+from cypari2.paridecl cimport *
+from cypari2.stack cimport new_gen
 
-cdef gen new_gen_from_mpz_t(mpz_t value):
+cdef Gen new_gen_from_mpz_t(mpz_t value):
     """
-    Create a new PARI gen of type ``t_INT`` from a given
+    Create a new PARI Gen of type ``t_INT`` from a given
     GMP integer ``value``.
 
     EXAMPLES::
@@ -72,9 +72,9 @@ cdef inline GEN _new_GEN_from_mpz_t(mpz_t value):
     return z
 
 
-cdef gen new_gen_from_mpq_t(mpq_t value):
+cdef Gen new_gen_from_mpq_t(mpq_t value):
     """
-    Create a new PARI gen of type ``t_INT`` or ``t_FRAC`` from a given
+    Create a new PARI Gen of type ``t_INT`` or ``t_FRAC`` from a given
     GMP rational ``value``.
 
     EXAMPLES::
@@ -119,10 +119,10 @@ cdef inline GEN _new_GEN_from_mpq_t(mpq_t value):
     return mkfrac(num, denom)
 
 
-cdef gen new_gen_from_padic(long ordp, long relprec,
+cdef Gen new_gen_from_padic(long ordp, long relprec,
                             mpz_t prime, mpz_t p_pow, mpz_t unit):
     """
-    Create a new PARI gen of type ``t_PADIC`` from the given input data
+    Create a new PARI Gen of type ``t_PADIC`` from the given input data
     as GMP integers.
     """
     cdef GEN z
@@ -154,7 +154,7 @@ cdef GEN _new_GEN_from_mpq_t_matrix(mpq_t** B, long nr, long nc):
     return A
 
 
-cdef gen rational_matrix(mpq_t** B, long nr, long nc):
+cdef Gen rational_matrix(mpq_t** B, long nr, long nc):
     """
     Create a new PARI matrix of type ``t_MAT`` from a given
     array of GMP rationals ``mpq_t``.
@@ -171,7 +171,7 @@ cdef gen rational_matrix(mpq_t** B, long nr, long nc):
 
     EXAMPLES::
 
-        sage: matrix(QQ,2,[1..6])._pari_()   # indirect doctest
+        sage: matrix(QQ,2,[1..6]).__pari__()   # indirect doctest
         [1, 2, 3; 4, 5, 6]
     """
     sig_on()

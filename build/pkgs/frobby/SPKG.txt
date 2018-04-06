@@ -30,7 +30,7 @@ Frobby source distribution.
 == Changelog ==
 
 === frobby-0.9.0.p2 (Dima Pasechnik, Jun 30, 2016) ===
- * convertion to new-style package
+ * conversion to new-style package
  * integration of Macaulay2 patches
  * fix linking (rpath)
 

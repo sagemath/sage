@@ -41,11 +41,11 @@ class Point(GraphicPrimitive_xydata):
 
     INPUT:
 
-    - xdata - list of x values for points in Point object
+    - xdata -- list of x values for points in Point object
 
-    - ydata - list of y values for points in Point object
+    - ydata -- list of y values for points in Point object
 
-    - options - dict of valid plot options to pass to constructor
+    - options -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 

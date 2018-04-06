@@ -27,6 +27,9 @@ from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.integer_ring import ZZ
 
 
+import six
+
+
 def KostkaFoulkesPolynomial(mu, nu, t=None):
     r"""
     Returns the Kostka-Foulkes polynomial `K_{\mu, \nu}(t)`.
@@ -130,41 +133,41 @@ def schur_to_hl(mu, t=None):
         sage: schur_to_hl([1,1,1])
         {[1, 1, 1]: 1}
         sage: a = schur_to_hl([2,1])
-        sage: for mc in sorted(a.iteritems()): print(mc)
+        sage: for mc in sorted(six.iteritems(a)): print(mc)
         ([1, 1, 1], t^2 + t)
         ([2, 1], 1)
         sage: a = schur_to_hl([3])
-        sage: for mc in sorted(a.iteritems()): print(mc)
+        sage: for mc in sorted(six.iteritems(a)): print(mc)
         ([1, 1, 1], t^3)
         ([2, 1], t)
         ([3], 1)
         sage: a = schur_to_hl([4])
-        sage: for mc in sorted(a.iteritems()): print(mc)
+        sage: for mc in sorted(six.iteritems(a)): print(mc)
         ([1, 1, 1, 1], t^6)
         ([2, 1, 1], t^3)
         ([2, 2], t^2)
         ([3, 1], t)
         ([4], 1)
         sage: a = schur_to_hl([3,1])
-        sage: for mc in sorted(a.iteritems()): print(mc)
+        sage: for mc in sorted(six.iteritems(a)): print(mc)
         ([1, 1, 1, 1], t^5 + t^4 + t^3)
         ([2, 1, 1], t^2 + t)
         ([2, 2], t)
         ([3, 1], 1)
         sage: a = schur_to_hl([2,2])
-        sage: for mc in sorted(a.iteritems()): print(mc)
+        sage: for mc in sorted(six.iteritems(a)): print(mc)
         ([1, 1, 1, 1], t^4 + t^2)
         ([2, 1, 1], t)
         ([2, 2], 1)
         sage: a = schur_to_hl([2,1,1])
-        sage: for mc in sorted(a.iteritems()): print(mc)
+        sage: for mc in sorted(six.iteritems(a)): print(mc)
         ([1, 1, 1, 1], t^3 + t^2 + t)
         ([2, 1, 1], 1)
         sage: a = schur_to_hl([1,1,1,1])
-        sage: for mc in sorted(a.iteritems()): print(mc)
+        sage: for mc in sorted(six.iteritems(a)): print(mc)
         ([1, 1, 1, 1], 1)
         sage: a = schur_to_hl([2,2,2])
-        sage: for mc in sorted(a.iteritems()): print(mc)
+        sage: for mc in sorted(six.iteritems(a)): print(mc)
         ([1, 1, 1, 1, 1, 1], t^9 + t^7 + t^6 + t^5 + t^3)
         ([2, 1, 1, 1, 1], t^4 + t^2)
         ([2, 2, 1, 1], t)

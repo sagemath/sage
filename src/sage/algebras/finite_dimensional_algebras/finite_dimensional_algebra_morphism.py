@@ -172,7 +172,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
 
         -- ``FiniteDimensionalAlgebraIdeal``, the inverse image of `I` under ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [0, 0]])])
             sage: I = A.maximal_ideal()

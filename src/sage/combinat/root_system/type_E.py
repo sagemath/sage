@@ -159,7 +159,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     def negative_roots(self):
         """
-        The negative negative roots.
+        The negative roots.
 
         EXAMPLES::
 

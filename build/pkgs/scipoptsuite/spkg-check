@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ "$SAGE_LOCAL" = "" ]; then
    echo "SAGE_LOCAL undefined ... exiting"
    echo "Maybe run 'sage -sh'?"
@@ -8,12 +6,21 @@ fi
 
 cd src
 
+# Choice of OPT should be consistent with spkg-install
+OPT=opt
+if [ `uname` = 'Darwin' ] ; then
+    OPT=dbg
+fi
+
 echo "Now running the SCIP test suite..."
 # Do the tests with the installed version of SCIP.
 # (The uninstalled ones do not work because we did not adjust their library dependencies.)
-$MAKE check OPT=dbg MAINFILE=$SAGE_LOCAL/bin/scip
+$MAKE check OPT=$OPT MAINFILE="$SAGE_LOCAL"/bin/scip | tee testsuite.log
 if [ $? -ne 0 ]; then
+    echo >&2 "Error: The SCIP test suite failed with an error status."
+    exit 1
+fi
+if grep -q fail testsuite.log ; then
     echo >&2 "Error: The SCIP test suite failed."
     exit 1
 fi
-echo "Review the above table regarding the outcome of the SCIP test suite."

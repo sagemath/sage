@@ -3,7 +3,7 @@ Ribbon Graphs
 
 This file implements objects called *ribbon graphs*. These are graphs 
 together with a cyclic ordering of the darts adjacent to each 
-vertex. This data allows us to unambiguosly "thicken" the ribbon 
+vertex. This data allows us to unambiguously "thicken" the ribbon 
 graph to an orientable surface with boundary. Also, every orientable
 surface with non-empty boundary is the thickening of a ribbon graph.
 
@@ -88,12 +88,12 @@ def _clean(l):
     """
     return [list(elt) for elt in l if elt]
 
+
 class RibbonGraph(SageObject, UniqueRepresentation):
     r"""
-    A ribbon graph codified as two elements of a certain permutation.
-    group.
+    A ribbon graph codified as two elements of a certain permutation group.
 
-    A comprenhensive introduction on the topic can be found in the beginning
+    A comprehensive introduction on the topic can be found in the beginning
     of [GGD2011]_ Chapter 4. More concretely, we will use a variation of what
     is called in the reference "The permutation representation pair of a
     dessin". Note that in that book, ribbon graphs are called "dessins
@@ -188,7 +188,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         Ribbon graph of genus 1 and 1 boundary components
 
     By drawing the picture in a piece of paper, one can see that its
-    thickening has only `1` boundary  component. Since the the thickening
+    thickening has only `1` boundary component. Since the thickening
     is homotopically equivalent to the graph and the graph has Euler
     characteristic `-1`, we find that the thickening has genus `1`::
 
@@ -1067,7 +1067,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
             found = i+1 in darts_rho
             #if a value is not in darts_rho, we take the next number that appears
             #and change it to the new value.
-            if found == False:
+            if not found:
                 aux_val = min(x for x in darts_rho if x > i+1)
                 pos_darts = darts_rho.index(aux_val)
                 pos_rho = _find(aux_rho,aux_val)
@@ -1140,14 +1140,14 @@ def make_ribbon(g, r):
 
     #We first generate the surface of genus g and 1 boundary component.
     #This is done by considering the usual planar representation of
-    #a surface as a poligon of 4*g+2 edges with identifications. (see
+    #a surface as a polygon of 4*g+2 edges with identifications. (see
     #any topology  book on the classification of surfaces)
     for i in range(2*g):
         repr_sigma[0].append(i+2)
         repr_sigma[1].append(i+(2*g+2)+1)
         repr_rho += [[i+2,i+(2*g+2)+1]]
 
-    #finally we add an edge for each aditional boundary component. 
+    #finally we add an edge for each additional boundary component. 
     max_dart = 4*g+2
     for j in range(r-1):
         repr_sigma[0].insert(0, max_dart+2*(j+1)-1)

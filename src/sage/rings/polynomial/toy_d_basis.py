@@ -4,7 +4,7 @@ Educational version of the `d`-Groebner Basis Algorithm over PIDs.
 No attempt was made to optimize this algorithm as the emphasis of this
 implementation is a clean and easy presentation.
 
-.. note::
+.. NOTE::
 
    The notion of 'term' and 'monomial' in [BW93]_ is swapped from the
    notion of those words in Sage (or the other way around, however you
@@ -13,7 +13,7 @@ implementation is a clean and easy presentation.
    coefficient. Also, what is called LM (the leading monomial) in
    Sage is called HT (the head term) in [BW93]_.
 
-EXAMPLE::
+EXAMPLES::
 
     sage: from sage.rings.polynomial.toy_d_basis import d_basis
 
@@ -78,16 +78,19 @@ Groebner basis of `I` over `\QQ` contains 1, so there are no solutions
 over `\QQ` or an algebraic closure of it (this is not surprising as
 there are 4 equations in 3 unknowns).::
 
-    sage: P.<x, y, z> = PolynomialRing(IntegerRing(), 3)
+    sage: P.<x, y, z> = PolynomialRing(IntegerRing(), 3, order='degneglex')
     sage: I = ideal( x^2 - 3*y, y^3 - x*y, z^3 - x, x^4 - y*z + 1 )
-    sage: I.change_ring( P.change_ring( RationalField() ) ).groebner_basis()
+    sage: I.change_ring(P.change_ring(RationalField())).groebner_basis()
     [1]
 
 However, when we compute the Groebner basis of I (defined over `\ZZ`), we
-note that there is a certain integer in the ideal which is not 1.::
+note that there is a certain integer in the ideal which is not 1::
 
-    sage: d_basis(I) # random -- waiting on upstream singular fixes at #6051
-    [x + 170269749119, y + 2149906854, z + ..., 282687803443]
+    sage: gb = d_basis(I); gb
+    [z - 107196348594952664476180297953816049406949517534824683390654620424703403993052759002989622,
+    y + 84382748470495086324437828161121754084154498572003307352857967748090984550697850484197972764799434672877850291328840,
+    x + 105754645239745824529618668609551113725317621921665293762587811716173,
+    282687803443]
 
 Now for each prime `p` dividing this integer 282687803443, the Groebner
 basis of I modulo `p` will be non-trivial and will thus give a solution
@@ -97,13 +100,13 @@ of the original system modulo `p`.::
     101 * 103 * 27173681
 
     sage: I.change_ring( P.change_ring( GF(101) ) ).groebner_basis()
-    [x + 19, y + 48, z - 33]
+    [z - 33, y + 48, x + 19]
 
     sage: I.change_ring( P.change_ring( GF(103) ) ).groebner_basis()
-    [x + 39, y + 8, z - 18]
+    [z - 18, y + 8, x + 39]
 
     sage: I.change_ring( P.change_ring( GF(27173681) ) ).groebner_basis()
-    [x - 536027, y + 3186055, z + 10380032]
+    [z + 10380032, y + 3186055, x - 536027]
 
 Of course, modulo any other prime the Groebner basis is trivial so
 there are no other solutions. For example::
@@ -115,13 +118,13 @@ AUTHOR:
 
 - Martin Albrecht (2008-08): initial version
 """
-
 from sage.rings.integer_ring import ZZ
 from sage.arith.all import xgcd, lcm, gcd
 from sage.rings.polynomial.toy_buchberger import inter_reduction
 from sage.structure.sequence import Sequence
 
-def spol(g1,g2):
+
+def spol(g1, g2):
     """
     Return S-Polynomial of ``g_1`` and ``g_2``.
 
@@ -134,7 +137,7 @@ def spol(g1,g2):
     - ``g1`` - polynomial
     - ``g2`` - polynomial
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.toy_d_basis import spol
         sage: P.<x, y, z> = PolynomialRing(IntegerRing(), 3, order='lex')
@@ -153,7 +156,8 @@ def spol(g1,g2):
 
     return b1*s1*g1 - b2*s2*g2
 
-def gpol(g1,g2):
+
+def gpol(g1, g2):
     """
     Return G-Polynomial of ``g_1`` and ``g_2``.
 
@@ -166,7 +170,7 @@ def gpol(g1,g2):
     - ``g1`` - polynomial
     - ``g2`` - polynomial
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.toy_d_basis import gpol
         sage: P.<x, y, z> = PolynomialRing(IntegerRing(), 3, order='lex')
@@ -188,6 +192,7 @@ def gpol(g1,g2):
 LM = lambda f: f.lm()
 LC = lambda f: f.lc()
 
+
 def d_basis(F, strat=True):
     r"""
     Return the `d`-basis for the Ideal ``F`` as defined in [BW93]_.
@@ -197,7 +202,7 @@ def d_basis(F, strat=True):
     - ``F`` - an ideal
     - ``strat`` - use update strategy (default: ``True``)
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.toy_d_basis import d_basis
         sage: A.<x,y> = PolynomialRing(ZZ, 2)
@@ -259,6 +264,7 @@ def d_basis(F, strat=True):
 
     return Sequence(sorted(inter_reduction(G),reverse=True))
 
+
 def select(P):
     """
     The normal selection strategy.
@@ -270,7 +276,7 @@ def select(P):
     OUTPUT:
         an element of P
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.toy_d_basis import select
         sage: A.<x,y> = PolynomialRing(ZZ, 2)
@@ -291,7 +297,8 @@ def select(P):
             min_pair = fi,fj
     return min_pair
 
-def update(G,B,h):
+
+def update(G, B, h):
     """
     Update ``G`` using the list of critical pairs ``B`` and the
     polynomial ``h`` as presented in [BW93]_, page 230. For this,
@@ -308,7 +315,7 @@ def update(G,B,h):
     OUTPUT:
         ``G,B`` where ``G`` and ``B`` are updated
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.toy_d_basis import update
         sage: A.<x,y> = PolynomialRing(ZZ, 2)
@@ -371,4 +378,4 @@ def update(G,B,h):
 
     G_new.add(h)
 
-    return G_new,B_new
+    return G_new, B_new

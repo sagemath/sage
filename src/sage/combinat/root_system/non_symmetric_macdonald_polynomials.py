@@ -26,8 +26,8 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.integer_ring import ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 from sage.combinat.root_system.hecke_algebra_representation import CherednikOperatorsEigenvectors
+
 
 class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
     r"""
@@ -144,7 +144,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: L0 = L.classical(); L0
         Ambient space of the Root system of type ['C', 2]
         sage: KL0 = L0.algebra(K); KL0
-        Group algebra of the Ambient space of the Root system of type ['C', 2]
+        Algebra of the Ambient space of the Root system of type ['C', 2]
         over Fraction Field of Multivariate Polynomial Ring in q, q1, q2 over Rational Field
 
     .. RUBRIC:: Affine Hecke algebra
@@ -175,7 +175,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
     (see :meth:`.root_lattice_realization.RootLatticeRealization.Algebras.ParentMethods.demazure_lusztig_operators`).::
 
         sage: KL = L.algebra(K); KL
-        Group algebra of the Ambient space of the Root system of type ['C', 2, 1]
+        Algebra of the Ambient space of the Root system of type ['C', 2, 1]
         over Fraction Field of Multivariate Polynomial Ring in q, q1, q2 over Rational Field
         sage: T = KL.demazure_lusztig_operators(q1, q2)
         sage: x = KL.monomial(omega[1]); x
@@ -194,7 +194,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
     defined by the action of their `T`-generators.::
 
         sage: T
-        A representation of the (q1, q2)-Hecke algebra of type ['C', 2, 1] on Group algebra of the Ambient space of the Root system of type ['C', 2, 1] over Fraction Field of Multivariate Polynomial Ring in q, q1, q2 over Rational Field
+        A representation of the (q1, q2)-Hecke algebra of type ['C', 2, 1] on Algebra of the Ambient space of the Root system of type ['C', 2, 1] over Fraction Field of Multivariate Polynomial Ring in q, q1, q2 over Rational Field
         sage: type(T)
         <class 'sage.combinat.root_system.hecke_algebra_representation.HeckeAlgebraRepresentation'>
         sage: T._test_relations()                 # long time (1.3s)
@@ -203,7 +203,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
     from a signed reduced word::
 
         sage: T.Tw([0,1,2],[1,-1,-1], q1^2)
-        Generic endomorphism of Group algebra of the Ambient space of the Root system of type ['C', 2, 1]
+        Generic endomorphism of Algebra of the Ambient space of the Root system of type ['C', 2, 1]
         over Fraction Field of Multivariate Polynomial Ring in q, q1, q2 over Rational Field
 
     (note the reversal of the word). Inverses are computed using the
@@ -754,7 +754,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: Y0 = Y[alphacheck[0]]
         sage: Y1 = Y[alphacheck[1]]
         sage: Y0
-        Generic endomorphism of Group algebra of the Ambient space of the Root system of type ['C', 1]
+        Generic endomorphism of Algebra of the Ambient space of the Root system of type ['C', 1]
         over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field
         sage: Y0.word, Y0.signs, Y0.scalar
         ((0, 1), (-1, -1), 1/q)
@@ -901,7 +901,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: x.is_one()
         True
         sage: x.parent()
-        Group algebra of the Weight lattice of the Root system of type ['A', 1]
+        Algebra of the Weight lattice of the Root system of type ['A', 1]
         over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field
 
         sage: E[omega[1]]
@@ -1111,7 +1111,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: ct = CartanType(["BC",2,2]).dual()
         sage: E = NonSymmetricMacdonaldPolynomials(ct, q=q, q1=q1, q2=q2)
         sage: KL = E.domain(); KL
-        Group algebra of the Ambient space of the Root system of type ['B', 2]
+        Algebra of the Ambient space of the Root system of type ['B', 2]
         over Fraction Field of Multivariate Polynomial Ring in q, q1, q2 over Rational Field
         sage: alpha = E.keys().simple_roots(); alpha
         Finite family {1: (1, -1), 2: (0, 1)}
@@ -1261,7 +1261,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         """
         return "The family of the Macdonald polynomials of type %s with parameters %s, %s, %s"%(self.cartan_type(),self._q, self._q1, self._q2)
 
-    # This is redundant with the cartan type method of
+    # This is redundant with the cartan_type method of
     # CherednikOperatorsEigenvectors, but we need it very early in the
     # initialization, before self._T_Y is set ...
     @cached_method
@@ -1393,10 +1393,10 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         EXAMPLES::
 
             sage: NonSymmetricMacdonaldPolynomials("B2~").KL0()
-            Group algebra of the Ambient space of the Root system of type ['B', 2]
+            Algebra of the Ambient space of the Root system of type ['B', 2]
             over Fraction Field of Multivariate Polynomial Ring in q, q1, q2 over Rational Field
             sage: NonSymmetricMacdonaldPolynomials("B2~*").KL0()
-            Group algebra of the Ambient space of the Root system of type ['C', 2]
+            Algebra of the Ambient space of the Root system of type ['C', 2]
             over Fraction Field of Multivariate Polynomial Ring in q, q1, q2 over Rational Field
 
         """
@@ -1562,7 +1562,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         - ``mu`` -- a weight `\mu` that lifts to a level 0 element of the affine weight lattice
 
         This methods simply checks the weight and calls
-        :meth:`.hecke_algebra_representation.CherednikOperatorsEigenvectors.__getitem__``.
+        :meth:`.hecke_algebra_representation.CherednikOperatorsEigenvectors.__getitem__`.
 
         .. NOTE::
 
@@ -1814,7 +1814,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         # nonsymmetric Macdonald polynomial of the dominant weight mu
         # by searching the Weyl orbit of mu and remembering
         Torbit = {}
-        for c in mu.orbit():
+        for c in mu._orbit_iter():
             i = c.first_descent()
             if i is None:
                 Torbit[c] = self[mu] # the nonsymmetric Macdonald polynomial of mu
@@ -1822,3 +1822,4 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
                 Torbit[c] = v * self._T.Tw([i])(Torbit[c.simple_reflection(i)])
             s = s + Torbit[c]
         return s
+

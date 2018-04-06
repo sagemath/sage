@@ -14,7 +14,7 @@
 #
 # needs sage in your PATH.
 #
-# AUTHOR: Christian Stump (March 2016)
+# AUTHOR: Christian Stump (Jun 2017)
 
 if [ -z "$SAGE_ROOT" ] ; then
     echo >&2 "Error - SAGE_ROOT undefined ... exiting"
@@ -23,12 +23,12 @@ if [ -z "$SAGE_ROOT" ] ; then
 fi
 
 PACKAGENAME="gap3"
-DOWNLOADVERSION="$PACKAGENAME-jm5"
-TARSOURCE="$DOWNLOADVERSION.tar.gz"
+DOWNLOADVERSION="$PACKAGENAME-jm"
+TARSOURCE=`wget -O - -o /dev/null  https://webusers.imj-prg.fr/~jean.michel/gap3/ | grep -o -m 1 'href=".*"' | awk '{print substr($0,7,length($0)-7) }'`
+UPLOADVERSION=`echo $TARSOURCE | awk '{print substr($0,8,length($0)-14) }'`
 
 cd build/pkgs/$PACKAGENAME
 
-UPLOADVERSION=`cat package-version.txt`
 TARTARGET="$SAGE_DISTFILES/$PACKAGENAME-$UPLOADVERSION.tar.gz"
 
 echo "### Remove old gap3 folder and tarball    ###"
@@ -38,7 +38,7 @@ rm -rf $DOWNLOADVERSION
 echo "### Download and extract upstream tarball ###"
 wget --no-check-certificate https://webusers.imj-prg.fr/~jean.michel/$PACKAGENAME/$TARSOURCE
 echo "### Untar'ing the upstream tarball        ###"
-tar -zxvf $TARSOURCE
+tar -zxf $TARSOURCE
 echo "### Remove downloaded tarball             ###"
 rm -f $TARSOURCE
 
@@ -46,22 +46,34 @@ echo "### Moving the files to its place $PACKAGENAME    ###"
 mv $DOWNLOADVERSION $PACKAGENAME
 cd $PACKAGENAME
 
-echo "### Removing the packages                 ###"
-echo "### anusq, arep, meataxe, nq, sisyphos, ve###"
-rm -r pkg/anusq
-# The function MovedPointsPerm? defined in arep/lib/tools.g is used in chevie, so it cannot be deleted completely
-rm -r pkg/arep/bin pkg/arep/src
-rm -r pkg/meataxe
-rm -r pkg/nq
-rm -r pkg/sisyphos
-rm -r pkg/ve
-echo "### Removing all remaining binaries       ###"
+echo "### Removing the package binaries         ###"
+cd pkg
+make cleanpackages
+cd ..
+echo "### Removing all bin binaries             ###"
+cd bin
 grep -r -m 1 "^"  . | grep "^Binary file" | xargs rm -f
 cd ..
 
+echo "### replacing lib/init.g, bin/gap.sh,     ###"
+echo "### src/Makefile by the sage versions     ###"
+mv -f sage/init.g lib/init.g
+mv -f sage/gap.sh bin/gap.sh
+mv -f sage/Makefile src/Makefile
+chmod a+x bin/gap.sh
+rm -f sage/*
+rmdir sage
+
+cd ..
+
 echo "### Tar'ing the archive to $TARTARGET     ###"
-tar -cvzf $TARTARGET $PACKAGENAME
+tar -czf $TARTARGET $PACKAGENAME
+
+echo "### Updating package-version.txt          ###"
+echo $UPLOADVERSION > 'package-version.txt'
+
 echo "### Fixing the checksum                   ###"
-sage-fix-pkg-checksums "$TARTARGET"
+../../../sage --package fix-checksum "$PACKAGENAME"
+
 echo "### Removing untar'ed archive             ###"
 rm -rf $PACKAGENAME

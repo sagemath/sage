@@ -470,7 +470,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
             if v.parent() is self:
                 return v
             else:
-                raise ValueError('%s shoud be a Python list of integer'%(v))
+                raise ValueError('%s should be a Python list of integer'%(v))
         except Exception:
             return self.element_class(self, list(v), check=check)
 
@@ -496,7 +496,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
             sage: I.orbit([1,1,1,1])
             {[1, 1, 1, 1]}
         """
-        assert isinstance(v, (list, ClonableIntArray)), '%s shoud be a Python list or an element of %s'%(v, self)
+        assert isinstance(v, (list, ClonableIntArray)), '%s should be a Python list or an element of %s'%(v, self)
         try:
             if v.parent() is self:
                 return orbit(self._sgs, v)
@@ -715,7 +715,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
             if v.parent() is self:
                 return v
             else:
-                raise ValueError('%s shoud be a Python list of integer'%(v))
+                raise ValueError('%s should be a Python list of integer'%(v))
         except Exception:
             return self.element_class(self, list(v), check=check)
 
@@ -919,7 +919,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
             sage: sorted(I.orbit([3,0,0,1]))
             [[0, 0, 1, 3], [0, 1, 3, 0], [1, 3, 0, 0], [3, 0, 0, 1]]
         """
-        assert isinstance(v, (list, ClonableIntArray)), '%s shoud be a Python list or an element of %s'%(v, self)
+        assert isinstance(v, (list, ClonableIntArray)), '%s should be a Python list or an element of %s'%(v, self)
         try:
             if v.parent() is self:
                 return orbit(self._sgs, v)

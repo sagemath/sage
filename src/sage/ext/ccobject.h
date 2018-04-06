@@ -59,12 +59,6 @@ T* Construct_ppp(void* mem, const P &d, const Q &e, const R &f){
   return new(mem) T(d, e, f);
 }
 
-/* Construct with four parameters */
-template <class T, class P, class Q, class R, class S>
-T* Construct_pppp(void* mem, const P &d, const Q &e, const R &f, const S &g){
-  return new(mem) T(d, e, f, g);
-}
-
 /* Destruct */
 template <class T>
 void Destruct(T* mem){
@@ -77,27 +71,47 @@ void Delete(T* mem){
   delete mem;
 }
 
-template <class T>
-void _from_str(T* dest, const char* src){
-  std::istringstream out(src);
-  out >> *dest;
-}
 
 template <class T>
-void _from_str_len(T* dest, const char* src, unsigned int len){
-  std::istringstream out(std::string(src, len));
-  out >> *dest;
-}
-
-template <class T>
-PyObject* _to_PyString(const T *x)
+static CYTHON_INLINE int ccreadstr(T& x, PyObject* b)
 {
-  std::ostringstream instore;
-  instore << (*x);
-  std::string instr = instore.str();
-  // using PyString_FromString truncates the output if whitespace is
-  // encountered so we use Py_BuildValue and specify the length
-  return Py_BuildValue("s#",instr.c_str(), instr.size());
+    PyObject* converted = NULL;
+
+#if PY_MAJOR_VERSION >= 3
+    // Accept "str" input on Python 3
+    if (PyUnicode_Check(b))
+    {
+        converted = PyUnicode_EncodeFSDefault(b);
+        if (!converted) {return -1;}
+        b = converted;
+    }
+#endif
+
+    char* buffer;
+    Py_ssize_t length;
+
+    if (PyBytes_AsStringAndSize(b, &buffer, &length) == -1)
+        {Py_XDECREF(converted); return -1;}
+    std::istringstream input(std::string(buffer, length));
+    Py_XDECREF(converted);
+
+    input >> x;
+
+    return 0;
+}
+
+
+template <class T>
+static CYTHON_INLINE PyObject* ccrepr(const T& x)
+{
+    std::ostringstream instore;
+    instore << x;
+    std::string instr = instore.str();
+#if PY_MAJOR_VERSION <= 2
+    return PyString_FromStringAndSize(instr.c_str(), instr.size());
+#else
+    return PyUnicode_DecodeFSDefaultAndSize(instr.c_str(), instr.size());
+#endif
 }
 
 /* Arrays */

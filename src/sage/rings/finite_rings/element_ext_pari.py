@@ -39,6 +39,7 @@ import sage.rings.finite_rings.integer_mod as integer_mod
 from .element_base import is_FiniteFieldElement
 from sage.modules.free_module_element import FreeModuleElement
 from sage.structure.dynamic_class import dynamic_class
+from sage.structure.richcmp import richcmp
 from sage.categories.finite_fields import FiniteFields
 
 class FiniteField_ext_pariElement(FinitePolyExtElement):
@@ -215,9 +216,9 @@ class FiniteField_ext_pariElement(FinitePolyExtElement):
 
             sage: from sage.rings.finite_rings.element_ext_pari import FiniteField_ext_pariElement
             sage: a = FiniteField_ext_pariElement(K,pari(0),value_from_pari=True)
-            sage: a._pari_().type()
+            sage: a.__pari__().type()
             't_INT'
-            sage: K(0)._pari_().type()
+            sage: K(0).__pari__().type()
             't_POLMOD'
         """
         element.FieldElement.__init__(self, parent)
@@ -358,7 +359,7 @@ class FiniteField_ext_pariElement(FinitePolyExtElement):
         """
         return FiniteField_ext_pariElement(self.parent(), self.__value, value_from_pari=True)
 
-    def _pari_(self, var=None):
+    def __pari__(self, var=None):
         """
         Return PARI object corresponding to this finite field element.
 
@@ -366,7 +367,7 @@ class FiniteField_ext_pariElement(FinitePolyExtElement):
 
             sage: k.<a> = FiniteField(3**3, 'a', impl='pari_mod')
             sage: b = a**2 + 2*a + 1
-            sage: b._pari_()
+            sage: b.__pari__()
             Mod(Mod(1, 3)*a^2 + Mod(2, 3)*a + Mod(1, 3), Mod(1, 3)*a^3 + Mod(2, 3)*a + Mod(1, 3))
 
         Looking at the PARI representation of a finite field element, it's
@@ -692,12 +693,12 @@ class FiniteField_ext_pariElement(FinitePolyExtElement):
         """
         return integer_ring.IntegerRing()(self.__value.lift().lift())
 
-
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         """
-        Compare an element of a finite field with other. If other is not an
-        element of a finite field, an attempt is made to coerce it so it is
-        one.
+        Compare an element of a finite field with other.
+
+        If other is not an element of a finite field, an attempt is
+        made to coerce it so it is one.
 
         EXAMPLES::
 
@@ -713,7 +714,8 @@ class FiniteField_ext_pariElement(FinitePolyExtElement):
             sage: a > a**2
             False
         """
-        return cmp(self.__value.lift().lift().Pol(), other.__value.lift().lift().Pol())
+        return richcmp(self.__value.lift().lift().Pol().Vec().sage(),
+                       other.__value.lift().lift().Pol().Vec().sage(), op)
 
     def log(self, base):
         """

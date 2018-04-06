@@ -52,9 +52,10 @@ EXAMPLES::
     sage: c.is_sparse()
     True
 """
+from __future__ import absolute_import
 
-cimport matrix
-cimport matrix_sparse
+cimport sage.matrix.matrix as matrix
+cimport sage.matrix.matrix_sparse as matrix_sparse
 cimport sage.structure.element
 from sage.structure.element cimport ModuleElement
 
@@ -102,16 +103,6 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         Secondly, there is no fast way to access non-zero elements in a given
         row/column.
     """
-    ########################################################################
-    # LEVEL 1 functionality
-    #   * __cinit__
-    #   * __init__
-    #   * __dealloc__
-    #   * set_unsafe
-    #   * get_unsafe
-    #   * def _pickle
-    #   * def _unpickle
-    ########################################################################
     def __cinit__(self, parent, entries=0, coerce=True, copy=True):
         self._entries = {}  # crucial so that pickling works
 
@@ -159,7 +150,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             sage: loads(dumps(m)) == m
             True
 
-            sage: R2.<a,b> = PolynomialRing(QQ,'a','b')
+            sage: R2.<a,b> = PolynomialRing(QQ)
             sage: M2 = MatrixSpace(R2,2,3,sparse=True)
             sage: M2(m)
             [4 1 0]
@@ -198,7 +189,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         if entries is None or not entries:
             # be careful here. We might get entries set to be an empty list
             # because of the code implemented in matrix_space.MatrixSpace
-            # So the condtion
+            # So the condition
             #   if entries is None or not entries:
             #       ...
             # is valid. But
@@ -241,7 +232,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             #
             #  and this is bad since:
             #
-            #    sage: map(type,m.dict().keys()[0])
+            #    sage: list(map(type,m.dict().keys()[0]))
             #    [<type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>,
             #     <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>]
             #
@@ -313,9 +304,6 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         else:
             raise RuntimeError("unknown matrix version (=%s)"%version)
 
-    def __hash__(self):
-        return self._hash()
-
     ########################################################################
     # LEVEL 2 functionality
     # x  * cdef _add_
@@ -357,10 +345,8 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         cdef Py_ssize_t i, j, len_v, len_w
         cdef Matrix_generic_sparse other
         other = <Matrix_generic_sparse> _other
-        cdef list v = self._entries.items()
-        v.sort()
-        cdef list w = other._entries.items()
-        w.sort()
+        cdef list v = sorted(self._entries.items())
+        cdef list w = sorted(other._entries.items())
         s = {}
         i = 0  # pointer into self
         j = 0  # pointer into other
@@ -601,7 +587,6 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
 ####################################################################################
 # Various helper functions
 ####################################################################################
-import matrix_space
 
 def Matrix_sparse_from_rows(X):
     """
@@ -633,6 +618,8 @@ def Matrix_sparse_from_rows(X):
         raise TypeError("X (=%s) must be a list or tuple"%X)
     if len(X) == 0:
         raise ArithmeticError("X must be nonempty")
+
+    from . import matrix_space
     entries = {}
     R = X[0].base_ring()
     ncols = X[0].degree()

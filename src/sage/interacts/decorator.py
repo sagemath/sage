@@ -13,6 +13,10 @@ The Interact Decorator
 #*****************************************************************************
 
 
+from sage.misc.superseded import deprecation
+deprecation(22636, "the module sage.interacts.decorator is deprecated")
+
+
 import inspect
 import textwrap
 from sage.misc.html import html
@@ -39,11 +43,9 @@ def interact(func, **kwds):
         ....: def f(x=[1,2,3]):
         ....:     print(x)
         <html>...</html>
+        sage: from sage.interacts.decorator import interact
+        doctest:...: DeprecationWarning: the module sage.interacts.decorator is deprecated
+        See http://trac.sagemath.org/22636 for details.
     """
     from sagenb.notebook.interact import interact as sagenb_interact
     return sagenb_interact(func, **kwds)
-
-
-
-
-

@@ -119,7 +119,7 @@ class OutputPlainText(OutputBase):
         """
         # Internally, all buffers store bytes. Strings/Unicode is always utf-8
         # encoded.
-        if isinstance(plain_text, unicode):
+        if not isinstance(plain_text, bytes):
             plain_text = plain_text.encode('utf-8')
         self.text = OutputBuffer(plain_text)
 
@@ -252,7 +252,7 @@ class OutputUnicodeArt(OutputBase):
         """
         # Internally, all buffers store bytes. Unicode is always utf-8
         # encoded.
-        if isinstance(unicode_art, unicode):
+        if not isinstance(unicode_art, bytes):
             unicode_art = unicode_art.encode('utf-8')
         self.unicode_art = OutputBuffer(unicode_art)
 

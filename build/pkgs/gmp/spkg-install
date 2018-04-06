@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
     echo >&2 "Maybe run 'sage -sh'?"
@@ -108,8 +106,8 @@ case "$UNAME" in
                 # Setting ABI=64 shouldn't be necessary, but shouldn't hurt either.
                 echo "Building a 64-bit version of GMP."
                 case "`uname -m`" in
-                    ppc64) ABI=mode64;;
-                    *)     ABI=64
+                    ppc*) ABI=mode64;;
+                    *)    ABI=64
                 esac
             elif $CC $CFLAGS $CFLAG32 -o foo foo.c 2>/dev/null && ./foo 2>/dev/null; then
                 # We're on a 32-bit OS which cannot run 64-bit executables.
@@ -123,11 +121,6 @@ case "$UNAME" in
             rm -f foo foo.c
         fi
         ;; # Linux
-    CYGWIN)
-        # For the moment, Cygwin is only 32-bits
-        # and configure gets lost if the hardware is 64 bits
-        ABI=32
-        ;;
     *) # e.g. AIX or HP-UX
         echo >&2 "Warning: Your platform ($UNAME) isn't yet explicitly supported" \
             "by this GMP spkg, i.e., by Sage's part of it."

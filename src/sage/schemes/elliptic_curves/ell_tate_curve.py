@@ -50,14 +50,16 @@ AUTHORS:
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.factory import Qp
 from sage.structure.sage_object import SageObject
+from sage.structure.richcmp import richcmp, richcmp_method
 from sage.arith.all import LCM
 from sage.modular.modform.constructor import EisensteinForms, CuspForms
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.misc.functional import log
+from sage.functions.log import log
 from sage.misc.all import denominator, prod
 import sage.matrix.all as matrix
 
 
+@richcmp_method
 class TateCurve(SageObject):
     r"""
     Tate's `p`-adic uniformisation of an elliptic curve with
@@ -101,7 +103,7 @@ class TateCurve(SageObject):
         self._E = E
         self._q = self.parameter()
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
         Compare self and other.
 
@@ -115,10 +117,10 @@ class TateCurve(SageObject):
             sage: eq7 == eq5
             False
         """
-        c = cmp(type(self), type(other))
-        if c:
-            return c
-        return cmp((self._E, self._p), (other._E, other._p))
+        if type(self) != type(other):
+            return NotImplemented
+
+        return richcmp((self._E, self._p), (other._E, other._p), op)
 
     def _repr_(self):
         r"""
@@ -631,14 +633,14 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``prec`` - the `p`-adic precision, default is 20.
+        - ``prec`` -- the `p`-adic precision, default is 20.
 
         REFERENCES:
 
         [MTT]_
 
         .. [Wer] Annette Werner, Local heights on abelian varieties and
-           rigid analytic unifomization, Doc. Math. 3 (1998), 301-319.
+           rigid analytic uniformization, Doc. Math. 3 (1998), 301-319.
 
         [SW]_
 

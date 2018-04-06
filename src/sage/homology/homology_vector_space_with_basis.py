@@ -30,9 +30,10 @@ from __future__ import absolute_import
 from sage.misc.cachefunc import cached_method
 from sage.categories.algebras import Algebras
 from sage.categories.modules import Modules
-from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModuleElement
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.sets.family import Family
 from .simplicial_complex import SimplicialComplex
+from .simplicial_set import SimplicialSet_arbitrary
 
 class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     r"""
@@ -103,7 +104,8 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         sage: x.cup_product(x)
         0
 
-    This works with simplicial, cubical, and `\Delta`-complexes::
+    This works with simplicial, cubical, and `\Delta`-complexes, and
+    also simplicial sets::
 
         sage: Klein_c = cubical_complexes.KleinBottle()
         sage: H = Klein_c.cohomology_ring(GF(2))
@@ -124,6 +126,29 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         0
         sage: v.cup_product(v)
         h^{2,0}
+
+        sage: X = simplicial_sets.RealProjectiveSpace(6)
+        sage: H_X = X.cohomology_ring(GF(2))
+        sage: a = H_X.basis()[1,0]
+        sage: a**6
+        h^{6,0}
+        sage: a**7
+        0
+
+    All products of positive-dimensional elements in a suspension
+    should be zero::
+
+        sage: Y = X.suspension()
+        sage: H_Y = Y.cohomology_ring(GF(2))
+        sage: b = H_Y.basis()[2,0]
+        sage: b**2
+        0
+        sage: B = sorted(H_Y.basis())[1:]
+        sage: B
+        [h^{2,0}, h^{3,0}, h^{4,0}, h^{5,0}, h^{6,0}, h^{7,0}]
+        sage: import itertools
+        sage: [a*b for (a,b) in itertools.combinations(B, 2)]
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     The basis elements in the simplicial complex case have been chosen
     differently; apply the change of basis `x \mapsto a + b`, `y \mapsto
@@ -350,7 +375,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
                                          cochains=self._cohomology)
         return chains.from_vector(vec)
 
-    class Element(CombinatorialFreeModuleElement):
+    class Element(CombinatorialFreeModule.Element):
         def to_cycle(self):
             r"""
             (Co)cycle representative of this homogeneous (co)homology class.
@@ -411,12 +436,30 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
         sage: x * x
         -h^{4,0}
 
-    There are mod 2 cohomology operations defined, also::
+    There are mod 2 cohomology operations defined, also, for
+    simplicial complexes and simplicial sets::
 
         sage: Hmod2 = CP2.cohomology_ring(GF(2))
         sage: y = Hmod2.basis(2)[2,0]
         sage: y.Sq(2)
         h^{4,0}
+
+        sage: Y = simplicial_sets.RealProjectiveSpace(6).suspension()
+        sage: H_Y = Y.cohomology_ring(GF(2))
+        sage: b = H_Y.basis()[2,0]
+        sage: b.Sq(1)
+        h^{3,0}
+        sage: b.Sq(2)
+        0
+        sage: c = H_Y.basis()[4,0]
+        sage: c.Sq(1)
+        h^{5,0}
+        sage: c.Sq(2)
+        h^{6,0}
+        sage: c.Sq(3)
+        h^{7,0}
+        sage: c.Sq(4)
+        0
     """
     def __init__(self, base_ring, cell_complex):
         """
@@ -509,7 +552,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             sage: x.cup_product(x)
             0
 
-        and `\Delta`-complexes::
+        `\Delta`-complexes::
 
             sage: T_d = delta_complexes.Torus()
             sage: a,b = T_d.cohomology_ring(QQ).basis(1)
@@ -521,6 +564,14 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             sage: w = RP2.cohomology_ring(GF(2)).basis()[1,0]
             sage: w.cup_product(w)
             h^{2,0}
+
+        and simplicial sets::
+
+            sage: from sage.homology.simplicial_set_examples import RealProjectiveSpace
+            sage: RP5 = RealProjectiveSpace(5)
+            sage: x = RP5.cohomology_ring(GF(2)).basis()[1,0]
+            sage: x**4
+            h^{4,0}
 
         A non-connected example::
 
@@ -655,6 +706,15 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                 sage: z.Sq(1)  # long time
                 h^{4,0}
 
+            This calculation is much faster with simplicial sets (on
+            one machine, 20 seconds with a simplicial complex, 4 ms
+            with a simplicial set). ::
+
+                sage: RP4_ss = simplicial_sets.RealProjectiveSpace(4)
+                sage: z_ss = RP4_ss.cohomology_ring(GF(2)).basis()[3,0]
+                sage: z_ss.Sq(1)
+                h^{4,0}
+
             TESTS::
 
                 sage: T = cubical_complexes.Torus()
@@ -662,7 +722,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                 sage: x.Sq(1)
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: Steenrod squares are only implemented for simplicial complexes
+                NotImplementedError: Steenrod squares are only implemented for simplicial complexes and simplicial sets
                 sage: S2 = simplicial_complexes.Sphere(2)
                 sage: x = S2.cohomology_ring(GF(7)).basis()[2,0]
                 sage: x.Sq(1)
@@ -672,8 +732,9 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             """
             P = self.parent()
             scomplex = P.complex()
-            if not isinstance(scomplex, SimplicialComplex):
-                raise NotImplementedError('Steenrod squares are only implemented for simplicial complexes')
+            if not isinstance(scomplex, (SimplicialComplex, SimplicialSet_arbitrary)):
+                raise NotImplementedError('Steenrod squares are only implemented for '
+                                          'simplicial complexes and simplicial sets')
             base_ring = P.base_ring()
             if base_ring.characteristic() != 2:
                 raise ValueError('Steenrod squares are only defined in characteristic 2')
@@ -692,7 +753,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                 d[index] = coeff
                 deg_comp[index[0]] = d
 
-            # Do the square on each graded componenet of ``self``.
+            # Do the square on each graded component of ``self``.
             for j in deg_comp:
                 # Make it into an actual element
                 m = j + i
@@ -757,9 +818,13 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                                 for k in range(right_endpoint, -1, -1):
                                     right = scomplex.face(right, k)
 
-                            left = n_chains(left)
-                            right = n_chains(right)
-                            gamma_coeff += coeff * cycle.eval(left) * cycle.eval(right)
+                            if ((hasattr(left, 'is_nondegenerate')
+                                 and left.is_nondegenerate()
+                                 and right.is_nondegenerate())
+                                or not hasattr(left, 'is_nondegenerate')):
+                                left = n_chains(left)
+                                right = n_chains(right)
+                                gamma_coeff += coeff * cycle.eval(left) * cycle.eval(right)
                     if gamma_coeff != base_ring.zero():
                         result[(m, gamma_index)] = gamma_coeff
                 ret += P._from_dict(result, remove_zeros=False)

@@ -1,10 +1,8 @@
-#!/usr/bin/env bash
-
 cd src
 
 set -e
 
-$PIP_INSTALL .
+sdh_pip_install .
 
 # Install the Jupyter notebook configuration
 ETC_JUPYTER="$SAGE_ETC"/jupyter

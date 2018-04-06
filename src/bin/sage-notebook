@@ -100,6 +100,27 @@ class NotebookJupyter(object):
         main(argv)
 
 
+class NotebookJupyterlab(object):
+    def print_banner(self):
+        banner()
+        print('Please wait while the Jupyterlab server starts...')
+
+    @classmethod
+    def print_help(cls):
+        cls(['help'])
+
+    def __init__(self, argv):
+        try:
+            from jupyterlab.labapp import main
+        except ImportError:
+            print("Jupyterlab is not installed (at least not in this Sage installation).")
+            print("You can install it by running")
+            print("  sage --pip install jupyterlab")
+            raise SystemExit(1)
+        self.print_banner()
+        main(argv)
+
+
 class SageNBExport(NotebookJupyter):
 
     def print_banner(self):
@@ -115,7 +136,7 @@ class SageNBExport(NotebookJupyter):
             SAGENB_EXPORT = 'sagenb-export'
             os.execvp(SAGENB_EXPORT, [SAGENB_EXPORT] + argv)
         argv += [
-            "--NotebookApp.server_extensions=['sagenb_export.nbextension']",
+            "--NotebookApp.nbserver_extensions={'sagenb_export.nbextension':True}",
             "--NotebookApp.default_url='/sagenb'",
         ]
         super(SageNBExport, self).__init__(argv)
@@ -162,10 +183,11 @@ EXAMPLES:
 
 
 notebook_launcher = {
-    'default': NotebookSageNB,   # change this to change the default
+    'default': SageNBExport,   # change this to change the default
     'sagenb': NotebookSageNB,
     'ipython': NotebookJupyter,
     'jupyter': NotebookJupyter,
+    'jupyterlab': NotebookJupyterlab,
     'export': SageNBExport,
 }
 
@@ -204,11 +226,23 @@ def make_parser():
     return parser
 
 
+def trac_23428_browser_workaround():
+    """
+    Running 'sage -n" with the Jupyter notebook on Darwin fails to
+    open a browser automatically. See :trac:`23428`.
+    """
+    if sys.platform != 'darwin':
+        return
+    if not os.environ.get('BROWSER', False):
+        os.environ['BROWSER'] = 'open'
+
+
 if __name__ == '__main__':
     parser = make_parser()
     args, unknown = parser.parse_known_args(sys.argv[1:])
     if len(unknown) > 0 and unknown[0] == '--':
         unknown = unknown[1:]
+    trac_23428_browser_workaround()
     if args.log is not None:
         import logging
         level = getattr(logging, args.log.upper())

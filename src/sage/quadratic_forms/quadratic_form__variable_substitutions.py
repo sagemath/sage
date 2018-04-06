@@ -60,7 +60,7 @@ def swap_variables(self, r, s, in_place = False):
         [ * * * 10 ]
 
     """
-    if (in_place == False):
+    if not in_place:
         Q = copy.deepcopy(self)
         Q.__init__(self.base_ring(), self.dim(), self.coefficients())
         Q.swap_variables(r,s,in_place=True)
@@ -109,7 +109,7 @@ def multiply_variable(self, c, i, in_place = False):
         [ * * * 7 ]
 
     """
-    if (in_place == False):
+    if not in_place:
         Q = copy.deepcopy(self)
         Q.__init__(self.base_ring(), self.dim(), self.coefficients())
         Q.multiply_variable(c,i,in_place=True)
@@ -157,7 +157,7 @@ def divide_variable(self, c, i, in_place = False):
         [ * * * 7 ]
 
     """
-    if (in_place == False):
+    if not in_place:
         Q = copy.deepcopy(self)
         Q.__init__(self.base_ring(), self.dim(), self.coefficients())
         Q.divide_variable(c,i,in_place=True)
@@ -221,7 +221,7 @@ def scale_by_factor(self, c, change_value_ring_flag=False):
         Q = self.__class__(R, self.dim(), list2)
         return Q
     except Exception:
-        if (change_value_ring_flag == False):
+        if not change_value_ring_flag:
             raise TypeError("Oops! We could not rescale the lattice in this way and preserve its defining ring.")
         else:
             raise UntestedCode("This code is not tested by current doctests!")
@@ -329,7 +329,7 @@ def elementary_substitution(self, c, i, j, in_place = False):     ## CHECK THIS!
         [ * * * 15 ]
 
     """
-    if (in_place == False):
+    if not in_place:
         Q = copy.deepcopy(self)
         Q.__init__(self.base_ring(), self.dim(), self.coefficients())
         Q.elementary_substitution(c, i, j, True)

@@ -23,6 +23,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.structure.richcmp import richcmp, op_NE
 from sage.structure.element import ModuleElement
 
 def is_HeckeModuleElement(x):
@@ -140,6 +141,28 @@ class HeckeModuleElement(ModuleElement):
         if R is None: return self.__element
         return self.__element.change_ring(R)
 
+    def _richcmp_(self, other, op):
+        """
+        Rich comparison of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: M = ModularSymbols(11, 2)
+            sage: M.0 == M.1 # indirect doctest
+            False
+            sage: M.0 == (M.1 + M.0 - M.1)
+            True
+            sage: M.0 == ModularSymbols(13, 2).0
+            False
+
+            sage: x = BrandtModule(37)([0,1,-1])
+            sage: x != x
+            False
+        """
+        if not isinstance(other, HeckeModuleElement):
+            return op == op_NE
+        return richcmp(self.element(), other.element(), op)
+
     def ambient_module(self):
         """
         Return the ambient Hecke module that contains this element.
@@ -216,6 +239,16 @@ class HeckeModuleElement(ModuleElement):
             False
             sage: M.1.is_cuspidal()
             True
+
+        TESTS:
+
+        Verify that :trac:`21497` is fixed::
+
+            sage: M = ModularSymbols(Gamma0(3),weight=22,sign=1)
+            sage: N = next(S for S in M.decomposition(anemic=False) if S.hecke_matrix(3).trace()==-128844)
+            sage: [g.is_cuspidal() for g in N.gens()]
+            [True, True]
+
         """
         return (self in self.parent().ambient().cuspidal_submodule())
 
@@ -244,7 +277,7 @@ class HeckeModuleElement(ModuleElement):
         Return True if this element is p-new. If p is None, return True if the
         element is new.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(22, 2).0.is_new(2)
             False
@@ -260,7 +293,7 @@ class HeckeModuleElement(ModuleElement):
         Return True if this element is p-old. If p is None, return True if the
         element is old.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(22, 2).0.is_old(11)
             False

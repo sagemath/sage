@@ -48,8 +48,7 @@ Two examples from the Mathematica documentation (done in Sage):
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.singular.decl cimport tHomog, number, IDELEMS, p_Copy, rChangeCurrRing
 from sage.libs.singular.decl cimport idInit, id_Delete, currRing, Sy_bit, OPT_REDSB
@@ -57,7 +56,7 @@ from sage.libs.singular.decl cimport scKBase, poly, testHomog, idSkipZeroes, id_
 from sage.libs.singular.decl cimport OPT_REDTAIL, singular_options, kInterRed, t_rep_gb, p_GetCoeff
 from sage.libs.singular.decl cimport pp_Mult_nn, p_Delete, n_Delete
 from sage.libs.singular.decl cimport rIsPluralRing
-from sage.libs.singular.decl cimport n_unknown,  n_Zp,  n_Q,   n_R,   n_GF,  n_long_R,  n_algExt,n_transExt,n_long_C,   n_Z,   n_Zn,  n_Znm,  n_Z2m,  n_CF
+from sage.libs.singular.decl cimport n_unknown, n_Zp, n_Q, n_R, n_GF, n_long_R, n_algExt,n_transExt,n_long_C, n_Z, n_Zn, n_Znm, n_Z2m, n_CF
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport new_MP
 from sage.rings.polynomial.plural cimport new_NCP
@@ -280,7 +279,7 @@ def interred_libsingular(I):
         sage: P.<x,y,z> = PolynomialRing(QQ)
         sage: I = ideal( x^2 - 3*y, y^3 - x*y, z^3 - x, x^4 - y*z + 1 )
         sage: I.interreduced_basis()
-        [y*z^2 - 81*x*y - 9*y - z, z^3 - x, x^2 - 3*y, 9*y^2 - y*z + 1]
+        [y*z^2 - 81*x*y - 9*y - z, z^3 - x, x^2 - 3*y, y^2 - 1/9*y*z + 1/9]
     """
     global singular_options
 
@@ -310,7 +309,7 @@ def interred_libsingular(I):
 
 
     # divide head by coefficients
-    if r.cf.type == n_unknown:
+    if r.cf.type != n_Z and r.cf.type != n_Znm and r.cf.type != n_Zn and r.cf.type != n_Z2m :
         for j from 0 <= j < IDELEMS(result):
             p = result.m[j]
             if p:

@@ -60,7 +60,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     A hyperelliptic curve object.
 
-    EXAMPLE:
+    EXAMPLES:
 
     Examples over the rationals::
 

@@ -53,7 +53,7 @@ def is_triangular(B):
 
       ``True`` if the basis is triangular; ``False`` otherwise.
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: from sage.rings.polynomial.toy_variety import is_triangular
       sage: R.<x,y,z> = PolynomialRing(QQ)
@@ -100,7 +100,7 @@ def coefficient_matrix(polys):
 
       A matrix ``M`` of the coefficients of ``polys``.
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: from sage.rings.polynomial.toy_variety import coefficient_matrix
       sage: R.<x,y> = PolynomialRing(QQ)
@@ -156,7 +156,7 @@ def is_linearly_dependent(polys):
       ``True`` if the elements of ``polys`` are linearly dependent;
       ``False`` otherwise.
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: from sage.rings.polynomial.toy_variety import is_linearly_dependent
       sage: R.<x,y> = PolynomialRing(QQ)
@@ -204,7 +204,7 @@ def linear_representation(p, polys):
       If ``n == len(polys)``, returns ``[a[0],a[1],...,a[n-1]]``
       such that ``p == a[0]*poly[0] + ... + a[n-1]*poly[n-1]``.
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: from sage.rings.polynomial.toy_variety import linear_representation
       sage: R.<x,y> = PolynomialRing(GF(32003))
@@ -241,7 +241,7 @@ def triangular_factorization(B, n=-1):
 
       A list ``T`` of triangular sets ``T_0``, ``T_1``, etc.
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: set_verbose(0)
       sage: from sage.rings.polynomial.toy_variety import triangular_factorization
@@ -315,7 +315,7 @@ def elim_pol(B, n=-1):
   - ``B`` - a list/tuple of polynomials or a multivariate polynomial ideal
   - ``n`` - the variable to check (see above) (default: ``-1``)
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: set_verbose(0)
       sage: from sage.rings.polynomial.toy_variety import elim_pol

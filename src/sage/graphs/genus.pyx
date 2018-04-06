@@ -36,9 +36,11 @@ described throughout the file.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 from libc.string cimport memcpy
+from cysignals.memory cimport sig_malloc, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 cimport sage.combinat.permutation_cython
 
@@ -46,10 +48,6 @@ from sage.combinat.permutation_cython cimport next_swap, reset_swap
 
 from sage.graphs.base.dense_graph cimport DenseGraph
 from sage.graphs.graph import Graph
-
-
-include "cysignals/memory.pxi"
-include "cysignals/signals.pxi"
 
 
 cdef inline int edge_map(int i):

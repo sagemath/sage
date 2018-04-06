@@ -502,14 +502,14 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
                 aa = 'XX[{}]'.format(l0.index(str(a))+len(var))
             else:
                 consta=True
-                aa = RR(a).str(truncate=False)
+                aa = RR(a).str()
             if str(b) in lv:
                 bb = 'XX[{}]'.format(lv.index(str(b)))
             elif str(b) in l0:
                 bb = 'XX[{}]'.format(l0.index(str(b))+len(var))
             else:
                 constb = True
-                bb = RR(b).str(truncate=False)
+                bb = RR(b).str()
             if consta:
                 oper += '_c'
                 if not oper=='div':
@@ -626,12 +626,12 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     """%(n-1)
     outfile.write(auxstring)
     for i in range(len(ics)):
-        outfile.write('\tv[{}] = {} ; \n'.format(i, RR(ics[i]).str(truncate=False)))
-    outfile.write('\ttini = {} ;\n'.format(RR(initial).str(truncate=False)))
-    outfile.write('\ttend = {} ;\n'.format(RR(final).str(truncate=False)))
-    outfile.write('\tdt   = {} ;\n'.format(RR(delta).str(truncate=False)))
-    outfile.write('\ttolrel = {} ;\n'.format(RR(tolrel).str(truncate=False)))
-    outfile.write('\ttolabs = {} ;\n'.format(RR(tolabs).str(truncate=False)))
+        outfile.write('\tv[{}] = {} ; \n'.format(i, RR(ics[i]).str()))
+    outfile.write('\ttini = {} ;\n'.format(RR(initial).str()))
+    outfile.write('\ttend = {} ;\n'.format(RR(final).str()))
+    outfile.write('\tdt   = {} ;\n'.format(RR(delta).str()))
+    outfile.write('\ttolrel = {} ;\n'.format(RR(tolrel).str()))
+    outfile.write('\ttolabs = {} ;\n'.format(RR(tolabs).str()))
     outfile.write('\textern char ofname[500];')
     outfile.write('\tstrcpy(ofname, "'+ output +'");\n')
     outfile.write('\tminc_tides(v,VARS,p,PARS,tini,tend,dt,tolrel,tolabs);\n')
@@ -752,9 +752,9 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
         sage: shutil.rmtree(tempdir)
 
     """
-    if parameters == None:
+    if parameters is None:
         parameters = []
-    if parameter_values == None:
+    if parameter_values is None:
         parameter_values = []
     RR = RealField(ceil(dig * 3.3219))
     l1, l2 = subexpressions_list(f, parameters)
@@ -792,7 +792,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
                 aa = 'par[{}]'.format(lp.index(sa))
             else:
                 consta=True
-                aa = RR(a).str(truncate=False)
+                aa = RR(a).str()
             if sb in lv:
                 bb = 'var[{}]'.format(lv.index(sb))
             elif sb in l0:
@@ -801,7 +801,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
                 bb = 'par[{}]'.format(lp.index(sb))
             else:
                 constb=True
-                bb = RR(b).str(truncate=False)
+                bb = RR(b).str()
             if consta:
                 oper += '_c'
                 if not oper=='div':
@@ -933,24 +933,24 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     outfile.write('\tfor(i=0; i<npar; i++) mpfr_init2(p[i], TIDES_PREC);\n')
 
     for i in range(npar):
-        outfile.write('\tmpfr_set_str(p[{}], "{}", 10, TIDES_RND);\n'.format(i,RR(parameter_values[i]).str(truncate=False)))
+        outfile.write('\tmpfr_set_str(p[{}], "{}", 10, TIDES_RND);\n'.format(i,RR(parameter_values[i]).str()))
     outfile.write('\tint nvar = {};\n\tmpfr_t v[nvar];\n'.format(VAR))
     outfile.write('\tfor(i=0; i<nvar; i++) mpfr_init2(v[i], TIDES_PREC);\n')
     for i in range(len(ics)):
-        outfile.write('\tmpfr_set_str(v[{}], "{}", 10, TIDES_RND);\n'.format(i,RR(ics[i]).str(truncate=False)))
+        outfile.write('\tmpfr_set_str(v[{}], "{}", 10, TIDES_RND);\n'.format(i,RR(ics[i]).str()))
     outfile.write('\tmpfr_t tolrel, tolabs;\n')
     outfile.write('\tmpfr_init2(tolrel, TIDES_PREC); \n')
     outfile.write('\tmpfr_init2(tolabs, TIDES_PREC); \n')
-    outfile.write('\tmpfr_set_str(tolrel, "{}", 10, TIDES_RND);\n'.format(RR(tolrel).str(truncate=False)))
-    outfile.write('\tmpfr_set_str(tolabs, "{}", 10, TIDES_RND);\n'.format(RR(tolabs).str(truncate=False)))
+    outfile.write('\tmpfr_set_str(tolrel, "{}", 10, TIDES_RND);\n'.format(RR(tolrel).str()))
+    outfile.write('\tmpfr_set_str(tolabs, "{}", 10, TIDES_RND);\n'.format(RR(tolabs).str()))
 
     outfile.write('\tmpfr_t tini, dt; \n')
     outfile.write('\tmpfr_init2(tini, TIDES_PREC); \n')
     outfile.write('\tmpfr_init2(dt, TIDES_PREC); \n')
 
 
-    outfile.write('\tmpfr_set_str(tini, "{}", 10, TIDES_RND);;\n'.format(RR(initial).str(truncate=False)))
-    outfile.write('\tmpfr_set_str(dt, "{}", 10, TIDES_RND);\n'.format(RR(delta).str(truncate=False)))
+    outfile.write('\tmpfr_set_str(tini, "{}", 10, TIDES_RND);;\n'.format(RR(initial).str()))
+    outfile.write('\tmpfr_set_str(dt, "{}", 10, TIDES_RND);\n'.format(RR(delta).str()))
     outfile.write('\tint nipt = {};\n'.format(floor((final-initial)/delta)))
     outfile.write('\tFILE* fd = fopen("' + output + '", "w");\n')
     outfile.write('\tmp_tides_delta(function_iteration, NULL, nvar, npar, nfun, v, p, tini, dt, nipt, tolrel, tolabs, NULL, fd);\n')

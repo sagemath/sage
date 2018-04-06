@@ -89,23 +89,6 @@ To find out more about
 see the top of the module :doc:`growth group <growth_group>`.
 
 
-.. WARNING::
-
-    As this code is experimental, a warning is thrown when an
-    asymptotic ring (or an associated structure) is created for the
-    first time in a session (see
-    :class:`sage.misc.superseded.experimental`).
-
-    TESTS::
-
-        sage: from sage.rings.asymptotic.growth_group import GrowthGroup
-        sage: G = GrowthGroup('x^ZZ')
-        doctest:...: FutureWarning: This class/method/function is marked as
-        experimental. It, its functionality or its interface might change
-        without a formal deprecation.
-        See http://trac.sagemath.org/17601 for details.
-
-
 .. _asymptotic_ring_intro:
 
 Introductory Examples
@@ -463,11 +446,12 @@ Classes and Methods
 from __future__ import print_function
 from __future__ import absolute_import
 
+from six import iteritems
+
 from sage.rings.ring import Algebra
 from sage.structure.element import CommutativeAlgebraElement
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.defaults import series_precision
-from sage.misc.superseded import experimental
 from sage.rings.all import RIF
 
 
@@ -1083,6 +1067,89 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         from sage.repl.rich_output.pretty_print import pretty_print
         pretty_print(self)
 
+    def monomial_coefficient(self, monomial):
+        r"""
+        Return the coefficient in the base ring of the given monomial
+        in this expansion.
+
+        INPUT:
+
+        - ``monomial`` -- a monomial element which can be converted
+          into the asymptotic ring of this element
+
+        OUTPUT:
+
+        An element of the coefficient ring.
+
+        EXAMPLES::
+
+            sage: R.<m, n> = AsymptoticRing("m^QQ*n^QQ", QQ)
+            sage: ae = 13 + 42/n + 2/n/m + O(n^-2)
+            sage: ae.monomial_coefficient(1/n)
+            42
+            sage: ae.monomial_coefficient(1/n^3)
+            0
+            sage: R.<n> = AsymptoticRing("n^QQ", ZZ)
+            sage: ae.monomial_coefficient(1/n)
+            42
+            sage: ae.monomial_coefficient(1)
+            13
+
+        TESTS:
+
+        Conversion of ``monomial`` the parent of this element must be
+        possible::
+
+            sage: R.<m> = AsymptoticRing("m^QQ", QQ)
+            sage: S.<n> = AsymptoticRing("n^QQ", QQ)
+            sage: m.monomial_coefficient(n)
+            Traceback (most recent call last):
+            ...
+            ValueError: Cannot include n with parent Exact Term Monoid
+            n^QQ with coefficients in Rational Field in Asymptotic Ring
+            <m^QQ> over Rational Field
+            > *previous* ValueError: n is not in Growth Group m^QQ
+
+        Only monomials are allowed::
+
+            sage: R.<n> = AsymptoticRing("n^QQ", QQ)
+            sage: (n + 4).monomial_coefficient(n + 5)
+            Traceback (most recent call last):
+            ...
+            ValueError: n + 5 not a monomial
+            sage: n.monomial_coefficient(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: 0 not a monomial
+
+        Cannot extract the coefficient of an O term::
+
+            sage: O(n).monomial_coefficient(n)
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'OTermMonoid_with_category.element_class'
+            object has no attribute 'coefficient'
+
+        The ``monomial`` must be exact::
+
+            sage: n.monomial_coefficient(O(n))
+            Traceback (most recent call last):
+            ...
+            ValueError: non-exact monomial O(n)
+
+        """
+        monomial = self.parent()(monomial)
+        if not monomial.is_exact():
+            raise ValueError("non-exact monomial {}".format(monomial))
+
+        if len(monomial.summands) != 1:
+            raise ValueError("{} not a monomial".format(monomial))
+
+        monomial_growth = next(monomial.summands.elements()).growth
+        try:
+            return self.summands.element(monomial_growth).coefficient
+        except KeyError:
+            return self.parent().coefficient_ring(0)
 
     def _add_(self, other):
         r"""
@@ -1583,6 +1650,12 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             2^n
             sage: e.parent()
             Asymptotic Ring <QQ^n * n^QQ> over Symbolic Ring
+
+        :trac:`22120`::
+
+            sage: A.<w> = AsymptoticRing('w^QQbar', QQ)
+            sage: w^QQbar(sqrt(2))
+            w^(1.414213562373095?)
         """
         if not self.summands:
             if exponent == 0:
@@ -2065,7 +2138,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             Traceback (most recent call last):
             ...
             ArithmeticError: Cannot construct y^x in Growth Group x^ZZ
-            > *previous* TypeError: unsupported operand parent(s) for '*':
+            > *previous* TypeError: unsupported operand parent(s) for *:
             'Growth Group x^ZZ' and 'Growth Group SR^x'
 
         Check that :trac:`19946` is fixed::
@@ -2412,7 +2485,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         ::
 
             sage: (x^2 + log(x)).subs(x=4*x+2).truncate(5)
-            16*x^2 + 16*x + log(x) + log(4) + 4 + 1/2*x^(-1) + O(x^(-2))
+            16*x^2 + 16*x + log(x) + 2*log(2) + 4 + 1/2*x^(-1) + O(x^(-2))
             sage: _.parent()
             Asymptotic Ring <(e^x)^QQ * x^ZZ * log(x)^ZZ> over Symbolic Ring
 
@@ -2507,7 +2580,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         # update with rules
         if isinstance(rules, dict):
-            for k, v in rules.iteritems():
+            for k, v in iteritems(rules):
                 if not isinstance(k, str) and k not in gens:
                     raise TypeError('Cannot substitute %s in %s '
                                     'since it is neither an '
@@ -2556,7 +2629,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             from .misc import combine_exceptions
             rules = '{' + ', '.join(
                 '%s: %s' % (k, v)
-                for k, v in sorted(locals.iteritems(),
+                for k, v in sorted(iteritems(locals),
                                    key=lambda k: str(k[0]))
                 if not k.startswith('_') and
                 not any(k == str(g) and v is g for g in gens)) + '}'
@@ -2564,9 +2637,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                 TypeError('Cannot apply the substitution rules %s on %s '
                           'in %s.' % (rules, self, self.parent())), e)
 
-
     subs = substitute
-
 
     def _substitute_(self, rules):
         r"""
@@ -3147,6 +3218,14 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             ``zeta`` will be dropped (as it will be part of the
             singular expansion) and expansions around infinity will no
             longer be accepted.
+
+        TESTS::
+
+            sage: C.<T> = AsymptoticRing('T^QQ', QQ)
+            sage: (1/T)._singularity_analysis_('n', 1)
+            Traceback (most recent call last):
+            ...
+            NotImplementedOZero: T^(-1)
         """
         from .misc import NotImplementedOZero
         OZeroEncountered = False
@@ -3165,7 +3244,8 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             else:
                 result += contribution
 
-        if OZeroEncountered and result.is_exact():
+        if OZeroEncountered and (isinstance(result, int) and result == 0
+                                 or result.is_exact()):
             raise NotImplementedOZero(self)
         return result
 
@@ -3265,9 +3345,6 @@ class AsymptoticRing(Algebra, UniqueRepresentation):
 
     # enable the category framework for elements
     Element = AsymptoticExpansion
-
-
-    __default_prec__ = series_precision()  # default default-precision
 
 
     @staticmethod
@@ -3389,15 +3466,13 @@ class AsymptoticRing(Algebra, UniqueRepresentation):
             category = CommutativeAlgebras(Rings())
 
         if default_prec is None:
-            default_prec = cls.__default_prec__
+            default_prec = series_precision()
 
         return super(AsymptoticRing,
                      cls).__classcall__(cls, growth_group, coefficient_ring,
                                         category=category,
                                         default_prec=default_prec)
 
-
-    @experimental(trac_number=17601)
     def __init__(self, growth_group, coefficient_ring, category, default_prec):
         r"""
         See :class:`AsymptoticRing` for more information.
@@ -3523,9 +3598,7 @@ class AsymptoticRing(Algebra, UniqueRepresentation):
         if all(values[parameter] is getattr(self, parameter)
                for parameter in parameters) and values['category'] is self.category():
             return self
-        from .misc import underlying_class
-        return underlying_class(self)(**values)
-
+        return self._underlying_class()(**values)
 
     @staticmethod
     def _create_empty_summands_():
@@ -4304,11 +4377,28 @@ class AsymptoticRing(Algebra, UniqueRepresentation):
             :doc:`asymptotic_ring`,
             :class:`AsymptoticRing`,
             :class:`AsymptoticRingFunctor`.
+
+        TESTS:
+
+        :trac:`22392`::
+
+            sage: from sage.rings.asymptotic.asymptotic_ring import AsymptoticRing
+            sage: class MyAsymptoticRing(AsymptoticRing):
+            ....:     pass
+            sage: A = MyAsymptoticRing(growth_group='x^ZZ', coefficient_ring=QQ)
+            sage: A.construction()[0].cls
+            <class '__main__.MyAsymptoticRing'>
         """
-        return AsymptoticRingFunctor(self.growth_group), self.coefficient_ring
+        return (AsymptoticRingFunctor(self.growth_group,
+                                      default_prec=self.default_prec,
+                                      category=self.category(),
+                                      cls=self._underlying_class()),
+                self.coefficient_ring)
 
 
 from sage.categories.pushout import ConstructionFunctor
+
+
 class AsymptoticRingFunctor(ConstructionFunctor):
     r"""
     A :class:`construction functor <sage.categories.pushout.ConstructionFunctor>`
@@ -4319,6 +4409,12 @@ class AsymptoticRingFunctor(ConstructionFunctor):
     - ``growth_group`` -- a partially ordered group (see
       :class:`AsymptoticRing` or
       :doc:`growth_group` for details).
+
+    - ``default_prec`` -- ``None`` (default) or an integer.
+
+    - ``category`` -- ``None`` (default) or a category.
+
+    - ``cls`` -- :class:`AsymptoticRing` (default) or a derived class.
 
     EXAMPLES::
 
@@ -4354,7 +4450,9 @@ class AsymptoticRingFunctor(ConstructionFunctor):
     rank = 13
 
 
-    def __init__(self, growth_group):
+    def __init__(self, growth_group,
+                 default_prec=None, category=None,
+                 cls=None):
         r"""
         See :class:`AsymptoticRingFunctor` for details.
 
@@ -4366,6 +4464,12 @@ class AsymptoticRingFunctor(ConstructionFunctor):
             AsymptoticRing<x^ZZ>
         """
         self.growth_group = growth_group
+        if cls is None:
+            self.cls = AsymptoticRing
+        else:
+            self.cls = cls
+        self._default_prec_ = default_prec
+        self._category_ = category
 
         from sage.categories.rings import Rings
         super(ConstructionFunctor, self).__init__(
@@ -4384,8 +4488,18 @@ class AsymptoticRingFunctor(ConstructionFunctor):
 
             sage: AsymptoticRing(growth_group='x^ZZ', coefficient_ring=QQ).construction()[0]  # indirect doctest
             AsymptoticRing<x^ZZ>
+
+        :trac:`22392`::
+
+            sage: from sage.rings.asymptotic.asymptotic_ring import AsymptoticRing
+            sage: class MyAsymptoticRing(AsymptoticRing):
+            ....:     pass
+            sage: A = MyAsymptoticRing(growth_group='x^ZZ', coefficient_ring=QQ)
+            sage: A.construction()
+            (MyAsymptoticRing<x^ZZ>, Rational Field)
         """
-        return 'AsymptoticRing<%s>' % (self.growth_group._repr_(condense=True),)
+        return '{}<{}>'.format(self.cls.__name__,
+                               self.growth_group._repr_(condense=True))
 
 
     def _apply_functor(self, coefficient_ring):
@@ -4406,9 +4520,37 @@ class AsymptoticRingFunctor(ConstructionFunctor):
             sage: F, C = A.construction()
             sage: F(C)  # indirect doctest
             Asymptotic Ring <x^ZZ> over Rational Field
+
+        TESTS:
+
+        :trac:`22392`::
+
+            sage: from sage.rings.asymptotic.asymptotic_ring import AsymptoticRing
+            sage: class MyAsymptoticRing(AsymptoticRing):
+            ....:     pass
+            sage: A = MyAsymptoticRing(growth_group='x^ZZ', coefficient_ring=QQ)
+            sage: type(A.construction()[0](ZZ))
+            <class '__main__.MyAsymptoticRing_with_category'>
+
+
+            sage: C = CyclotomicField(3)
+            sage: P = C['z']
+            sage: type(P(2) * A.gen())
+            <class '...MyAsymptoticRing_with_category.element_class'>
+
+        :trac:`22396`::
+
+            sage: A.<n> = AsymptoticRing('ZZ^n * n^ZZ', ZZ, default_prec=3)
+            sage: 1/(QQ(1)+n)
+            n^(-1) - n^(-2) + n^(-3) + O(n^(-4))
         """
-        return AsymptoticRing(growth_group=self.growth_group,
-                              coefficient_ring=coefficient_ring)
+        kwds = {'growth_group': self.growth_group,
+                'coefficient_ring': coefficient_ring}
+        if self._category_ is not None:
+            kwds['category'] = self._category_
+        if self._default_prec_ is not None:
+            kwds['default_prec'] = self._default_prec_
+        return self.cls(**kwds)
 
 
     def merge(self, other):
@@ -4433,11 +4575,47 @@ class AsymptoticRingFunctor(ConstructionFunctor):
             AsymptoticRing<x^ZZ>
             sage: F_X.merge(F_Y)
             AsymptoticRing<x^ZZ * y^ZZ>
+
+        TESTS:
+
+        :trac:`22396`::
+
+            sage: AN = AsymptoticRing(growth_group='y^ZZ', coefficient_ring=QQ)
+            sage: F_AN = AN.construction()[0]; F_AN._default_prec_ = None
+            sage: A3 = AsymptoticRing(growth_group='x^ZZ', coefficient_ring=QQ, default_prec=3)
+            sage: F_A3 = A3.construction()[0]
+            sage: A5 = AsymptoticRing(growth_group='x^ZZ', coefficient_ring=QQ, default_prec=5)
+            sage: F_A5 = A5.construction()[0]
+
+            sage: F_AN.merge(F_AN)(ZZ).default_prec
+            20
+            sage: F_AN.merge(F_A3)(ZZ).default_prec
+            3
+            sage: F_AN.merge(F_A5)(ZZ).default_prec
+            5
+            sage: F_A3.merge(F_AN)(ZZ).default_prec
+            3
+            sage: F_A3.merge(F_A3)(ZZ).default_prec
+            3
+            sage: F_A3.merge(F_A5)(ZZ).default_prec
+            3
+            sage: F_A5.merge(F_AN)(ZZ).default_prec
+            5
+            sage: F_A5.merge(F_A3)(ZZ).default_prec
+            3
+            sage: F_A5.merge(F_A5)(ZZ).default_prec
+            5
+
+            sage: A = AsymptoticRing(growth_group='y^ZZ', coefficient_ring=QQ)
+            sage: F1 = A.construction()[0]
+            sage: F2 = A.construction()[0]; F2._category_ = Rings()
+            sage: F1.merge(F2)._category_
+            Category of rings
         """
         if self == other:
             return self
 
-        if isinstance(other, AsymptoticRingFunctor):
+        if isinstance(other, AsymptoticRingFunctor) and self.cls == other.cls:
             from sage.structure.element import get_coercion_model
             cm = get_coercion_model()
             try:
@@ -4445,7 +4623,31 @@ class AsymptoticRingFunctor(ConstructionFunctor):
             except TypeError:
                 pass
             else:
-                return AsymptoticRingFunctor(G)
+                if (self._default_prec_ is None
+                    and other._default_prec_ is None):
+                    default_prec = None
+                elif self._default_prec_ is None:
+                    default_prec = other._default_prec_
+                elif other._default_prec_ is None:
+                    default_prec = self._default_prec_
+                else:
+                    default_prec = min(self._default_prec_,
+                                       other._default_prec_)
+                if (self._category_ is None
+                    and other._category_ is None):
+                    category = None
+                elif self._category_ is None:
+                    category = other._category_
+                elif other._category_ is None:
+                    category = self._category_
+                else:
+                    category = self._category_ | other._category_
+
+                return AsymptoticRingFunctor(
+                    G,
+                    default_prec=default_prec,
+                    category=category,
+                    cls=self.cls)
 
 
     def __eq__(self, other):
@@ -4471,8 +4673,11 @@ class AsymptoticRingFunctor(ConstructionFunctor):
             sage: F_X == F_Y
             False
         """
-        return type(self) == type(other) and \
-            self.growth_group == other.growth_group
+        return (type(self) == type(other)
+                and self.growth_group == other.growth_group
+                and self._default_prec_ == other._default_prec_
+                and self._category_ == other._category_
+                and self.cls == other.cls)
 
 
     def __ne__(self, other):

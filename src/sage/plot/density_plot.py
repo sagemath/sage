@@ -153,7 +153,7 @@ class DensityPlot(GraphicPrimitive):
 def density_plot(f, xrange, yrange, **options):
     r"""
     ``density_plot`` takes a function of two variables, `f(x,y)`
-    and plots the height of of the function over the specified
+    and plots the height of the function over the specified
     ``xrange`` and ``yrange`` as demonstrated below.
 
     ``density_plot(f, (xmin,xmax), (ymin,ymax), ...)``

@@ -9,6 +9,8 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
     cdef object _multiplicative_order
     cdef int _prec
 
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
     cdef RealNumber abs_c(ComplexNumber self)
     cdef RealNumber norm_c(ComplexNumber self)
 

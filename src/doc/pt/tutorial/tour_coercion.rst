@@ -398,7 +398,7 @@ Nenhuma coação para um parente comum vai ocorrer no seguinte exemplo:
     sage: x+y
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+    TypeError: unsupported operand parent(s) for +: 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
 
 A razão é que o Sage não escolhe um dos potenciais candidatos
 ``QQ['x']['y']``, ``QQ['y']['x']``, ``QQ['x','y']`` ou

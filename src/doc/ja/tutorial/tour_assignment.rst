@@ -85,7 +85,7 @@ Pythonのデータはダイナミックに型付けされ，変数を通して�
     <type 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # ここでaは文字列
     sage: type(a)
-    <type 'str'>
+    <... 'str'>
 
 
 プログラミング言語Cでは変数がスタティックに型付けされるから振舞いはかなり異なっていて，整数(int)型として宣言された変数は同じスコープ内では整数しか保持できない．

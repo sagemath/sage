@@ -74,6 +74,7 @@ Points can be compared::
 
 from sage.structure.element import Element
 from sage.misc.decorators import options
+from sage.symbolic.expression import Expression
 
 class ManifoldPoint(Element):
     r"""
@@ -611,8 +612,24 @@ class ManifoldPoint(Element):
                     common_chart = chart
                     break
         if common_chart is None:
+            # A commont chart is searched via a coordinate transformation,
+            # privileging the default chart
+            if def_chart in self._coordinates:
+                try:
+                    other.coordinates(def_chart)
+                    common_chart = def_chart
+                except ValueError:
+                    pass
+        if common_chart is None:
+            if def_chart in other._coordinates:
+                try:
+                    self.coordinates(def_chart)
+                    common_chart = def_chart
+                except ValueError:
+                    pass
+        if common_chart is None:
             # At this stage, a commont chart is searched via a coordinate
-            # transformation:
+            # transformation from any chart
             for chart in self._coordinates:
                 try:
                     other.coordinates(chart)
@@ -634,7 +651,14 @@ class ManifoldPoint(Element):
             #!# Another option would be:
             # raise ValueError("no common chart has been found to compare " +
             #                  "{} and {}".format(self, other))
-        return self._coordinates[common_chart] == other._coordinates[common_chart]
+        for xs, xo in zip(self._coordinates[common_chart],
+                          other._coordinates[common_chart]):
+            diff = xs - xo
+            if isinstance(diff, Expression) and not diff.is_trivial_zero():
+                return False
+            elif not (diff == 0):
+                return False
+        return True
 
     def __ne__(self, other):
         r"""

@@ -1,4 +1,2 @@
-#!/usr/bin/env bash
-
 cd src
-$PIP_INSTALL .
+sdh_pip_install .

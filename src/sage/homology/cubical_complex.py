@@ -63,8 +63,8 @@ reflected in the fact that they have isomorphic homology groups.
    see the :mod:`Generic Cell Complex <sage.homology.cell_complex>`
    page instead.
 """
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six.moves import zip
 
 from copy import copy
 from sage.homology.cell_complex import GenericCellComplex
@@ -228,8 +228,8 @@ class Cube(SageObject):
         t = t + ((0,0),) * (embed-len(t))
         vec = tuple(vec) + (0,) * (embed-len(vec))
         new = []
-        for (a,b) in zip(t, vec):
-            new.append([a[0]+b, a[1]+b])
+        for (a, b) in zip(t, vec):
+            new.append([a[0] + b, a[1] + b])
         return Cube(new)
 
     def __getitem__(self, n):
@@ -395,9 +395,9 @@ class Cube(SageObject):
             sage: C.faces_as_pairs()
             [([2,2] x [3,4], [1,1] x [3,4]), ([1,2] x [4,4], [1,2] x [3,3])]
         """
-        upper = [self.face(i,True) for i in range(self.dimension())]
-        lower = [self.face(i,False) for i in range(self.dimension())]
-        return zip(upper,lower)
+        upper = [self.face(i, True) for i in range(self.dimension())]
+        lower = [self.face(i, False) for i in range(self.dimension())]
+        return list(zip(upper, lower))
 
     def _compare_for_gluing(self, other):
         r"""
@@ -462,8 +462,8 @@ class Cube(SageObject):
         translate = []
         self_tuple = self.tuple()
         other_tuple = other.tuple()
-        nondegen = (zip(self.nondegenerate_intervals(),
-                        other.nondegenerate_intervals())
+        nondegen = (list(zip(self.nondegenerate_intervals(),
+                        other.nondegenerate_intervals()))
                     + [(len(self_tuple), len(other_tuple))])
         old = (-1, -1)
         self_added = 0

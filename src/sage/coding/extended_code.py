@@ -151,7 +151,9 @@ class ExtendedCode(AbstractLinearCode):
         nr, nc = H.nrows(), H.ncols()
         Hlist = H.list()
         v = matrix(F, nr + 1, 1, [one] + [zero] * nr)
-        return matrix(F, nr + 1, nc, [one] * nc + Hlist).augment(v)
+        M = matrix(F, nr + 1, nc, [one] * nc + Hlist).augment(v)
+        M.set_immutable()
+        return M
 
     def random_element(self):
         r"""
@@ -280,7 +282,9 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
         k = C.dimension()
         extra_col = [-sum(G.rows()[i]) for i in range(k)]
         extra_col = matrix(F, k, 1, extra_col)
-        return G.augment(extra_col)
+        M = G.augment(extra_col)
+        M.set_immutable()
+        return M
 
 
 

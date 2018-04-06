@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo "Error: SAGE_LOCAL undefined - exiting..."
     echo "Maybe run 'sage -sh'?"
@@ -72,8 +70,7 @@ if [ "$UNAME" = "Linux" ]; then
         ppc*|powerpc*)
             $MAKE linux-ppc;;
         armv6l|armv7l)
-            sed "s/-m32//g" ../../patches/Make-arch > Make-arch
-            $MAKE linux-thr;;
+            $MAKE linux-arm-thr;;
         *) # e.g. SPARC
             echo "Error: Sorry, your platform isn't supported by Tachyon and/or Sage. Exiting..."
             exit 1

@@ -11,6 +11,9 @@ Graded modules with basis
 
 from sage.categories.graded_modules import GradedModulesCategory
 
+import six
+
+
 class GradedModulesWithBasis(GradedModulesCategory):
     """
     The category of graded modules with a distinguished basis.
@@ -64,7 +67,7 @@ class GradedModulesWithBasis(GradedModulesCategory):
                               else base_minusone)
             return self.sum_of_terms([(key, diag(key) * value)
                                       for key, value in
-                                      element.monomial_coefficients(copy=False).iteritems()])
+                                      six.iteritems(element.monomial_coefficients(copy=False))])
 
     class ElementMethods:
         def degree_negation(self):

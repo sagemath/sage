@@ -20,6 +20,18 @@ Groups
    sage/groups/raag
    sage/groups/group_exp
    sage/groups/group_semidirect_product
+   sage/groups/misc_gps/misc_groups
+   sage/groups/semimonomial_transformations/semimonomial_transformation_group
+   sage/groups/semimonomial_transformations/semimonomial_transformation
+   sage/groups/class_function
+   sage/groups/conjugacy_classes
+
+Abelian Groups
+--------------
+
+.. toctree::
+   :maxdepth: 2
+
    sage/groups/abelian_gps/abelian_group
    sage/groups/abelian_gps/values
    sage/groups/abelian_gps/dual_abelian_group
@@ -29,6 +41,13 @@ Groups
    sage/groups/abelian_gps/abelian_group_morphism
    sage/groups/additive_abelian/additive_abelian_group
    sage/groups/additive_abelian/additive_abelian_wrapper
+
+Permutation Groups
+------------------
+
+.. toctree::
+   :maxdepth: 2
+
    sage/groups/perm_gps/permutation_groups_catalog
    sage/groups/perm_gps/permgroup
    sage/groups/perm_gps/permgroup_named
@@ -36,6 +55,13 @@ Groups
    sage/groups/perm_gps/permgroup_morphism
    sage/groups/perm_gps/cubegroup
    sage/groups/perm_gps/symgp_conjugacy_class
+
+Matrix and Affine Groups
+------------------------
+
+.. toctree::
+   :maxdepth: 2
+
    sage/groups/matrix_gps/catalog
    sage/groups/matrix_gps/matrix_group
    sage/groups/matrix_gps/group_element
@@ -48,16 +74,22 @@ Groups
    sage/groups/matrix_gps/orthogonal
    sage/groups/matrix_gps/symplectic
    sage/groups/matrix_gps/unitary
+   sage/groups/matrix_gps/heisenberg
    sage/groups/affine_gps/affine_group
    sage/groups/affine_gps/euclidean_group
    sage/groups/affine_gps/group_element
-   sage/groups/misc_gps/misc_groups
-   sage/groups/semimonomial_transformations/semimonomial_transformation_group
-   sage/groups/semimonomial_transformations/semimonomial_transformation
-   sage/groups/class_function
-   sage/groups/conjugacy_classes
-   sage/groups/perm_gps/partn_ref
-   sage/groups/perm_gps/partn_ref2
+
+Partition Refinement
+--------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/groups/perm_gps/partn_ref/canonical_augmentation
+   sage/groups/perm_gps/partn_ref/data_structures
+   sage/groups/perm_gps/partn_ref/refinement_graphs
+   sage/groups/perm_gps/partn_ref/refinement_lists
+   sage/groups/perm_gps/partn_ref/refinement_matrices
 
 Internals
 ---------

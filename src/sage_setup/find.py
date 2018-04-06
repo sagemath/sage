@@ -13,6 +13,12 @@ Recursive Directory Contents
 
 
 import os
+import six
+
+from collections import defaultdict
+
+if not six.PY2:
+    import importlib.util
 
 
 def find_python_sources(src_dir, modules=('sage',)):
@@ -35,6 +41,7 @@ def find_python_sources(src_dir, modules=('sage',)):
     EXAMPLES::
 
         sage: from sage.env import SAGE_SRC
+        sage: from sage_setup.find import find_python_sources
         sage: py_packages, py_modules = find_python_sources(SAGE_SRC)
         sage: examples = ['sage.structure', 'sage.structure.formal_sum',
         ....:             'sage.structure.sage_object', 'sage.doctest.tests']
@@ -50,7 +57,7 @@ def find_python_sources(src_dir, modules=('sage',)):
         sage: find_python_sources(SAGE_SRC, modules=['sage_setup'])
         (['sage_setup', ...], [...'sage_setup.find'...])
     """
-    PYMOD_EXT = os.path.extsep + 'py'
+    PYMOD_EXT = get_extensions('source')[0]
     INIT_FILE = '__init__' + PYMOD_EXT
 
     python_packages = []
@@ -100,10 +107,11 @@ def find_extra_files(packages, src_dir, cythonized_dir, special_filenames=[]):
     EXAMPLES::
 
         sage: from sage_setup.find import find_extra_files
-        sage: from sage.env import SAGE_SRC, SAGE_CYTHONIZED
-        sage: find_extra_files(["sage.modular.arithgroup"], SAGE_SRC, SAGE_CYTHONIZED)
-        [('sage/modular/arithgroup',
-          ['.../src/sage/modular/arithgroup/farey.pxd', ...farey_symbol.h...])]
+        sage: from sage.env import SAGE_SRC
+        sage: cythonized_dir = os.path.join(SAGE_SRC, "build", "cythonized")
+        sage: find_extra_files(["sage.ext.interpreters"], SAGE_SRC, cythonized_dir)
+        [('sage/ext/interpreters',
+          ['.../src/sage/ext/interpreters/wrapper_cdf.pxd', ...wrapper_cdf.h...])]
     """
     data_files = []
 
@@ -134,7 +142,7 @@ def installed_files_by_module(site_packages, modules=('sage',)):
       library is being installed. If the path doesn't exist, returns
       an empty dictionary.
 
-    - ``module`` -- list/tuple/iterable of strings (default:
+    - ``modules`` -- list/tuple/iterable of strings (default:
       ``('sage',)``). The top-level directory name(s) in
       ``site_packages``.
 
@@ -149,6 +157,7 @@ def installed_files_by_module(site_packages, modules=('sage',)):
 
         sage: from site import getsitepackages
         sage: site_packages = getsitepackages()[0]
+        sage: from sage_setup.find import installed_files_by_module
         sage: files_by_module = installed_files_by_module(site_packages)
         sage: from sage.misc.sageinspect import loadable_module_extension
         sage: 'sage/structure/sage_object' + loadable_module_extension() in \
@@ -163,9 +172,33 @@ def installed_files_by_module(site_packages, modules=('sage',)):
         ....:        number=1, repeat=1)
         1 loops, best of 1: 29.6 ms per loop
     """
-    module_files = dict()
-    def add(module, filename):
-        module_files.setdefault(module, set([filename])).add(filename)
+
+    module_files = defaultdict(set)
+    module_exts = get_extensions()
+
+    def add(module, filename, dirpath):
+        # Find the longest extension that matches the filename
+        best_ext = ''
+
+        for ext in module_exts:
+            if filename.endswith(ext) and len(ext) > len(best_ext):
+                best_ext = ext
+
+        if not best_ext:
+            return
+
+        base = filename[:-len(best_ext)]
+        filename = os.path.join(dirpath, filename)
+
+        if base != '__init__':
+            module += '.' + base
+
+        module_files[module].add(filename)
+
+        if not six.PY2:
+            cache_filename = importlib.util.cache_from_source(filename)
+            if os.path.exists(cache_filename):
+                module_files[module].add(cache_filename)
 
     cwd = os.getcwd()
     try:
@@ -176,13 +209,86 @@ def installed_files_by_module(site_packages, modules=('sage',)):
         for module in modules:
             for dirpath, dirnames, filenames in os.walk(module):
                 module_dir = '.'.join(dirpath.split(os.path.sep))
+
+                if os.path.basename(dirpath) == '__pycache__':
+                    continue
+
                 for filename in filenames:
-                    base, ext = os.path.splitext(filename)
-                    filename = os.path.join(dirpath, filename)
-                    if base == '__init__':
-                        add(module_dir, filename)
-                    else:
-                        add(module_dir + '.' + base, filename)
+                    add(module_dir, filename, dirpath)
     finally:
         os.chdir(cwd)
     return module_files
+
+
+def get_extensions(type=None):
+    """
+    Returns the filename extensions for different types of Python module files.
+
+    By default returns all extensions, but can be filtered by type.  The
+    possible types are 'source' (for pure Python sources), 'bytecode' (for
+    compiled bytecode files (i.e. pyc files), or 'extension' for C extension
+    modules.
+
+    INPUT:
+
+    - ``type`` -- the module type ('source', 'bytecode', or 'extension') or
+      None
+
+    EXAMPLES::
+
+        sage: from sage_setup.find import get_extensions
+        sage: get_extensions()  # random - depends on Python version
+        ['.so', 'module.so', '.py', '.pyc']
+        sage: get_extensions('source')
+        ['.py']
+        sage: get_extensions('bytecode')
+        ['.pyc']
+        sage: get_extensions('extension')  # random - depends on Python version
+        ['.so', 'module.so']
+    """
+
+    if type:
+        type = type.lower()
+        if type not in ('source', 'bytecode', 'extension'):
+            raise ValueError(
+                "type must by one of 'source' (for Python sources), "
+                "'bytecode' (for compiled Python bytecoe), or 'extension' "
+                "(for C extension modules).")
+
+    # Note: There is at least one case, for extension modules, where the
+    # 'extension' does not begin with '.', but rather with 'module', for cases
+    # in Python's stdlib, for example, where an extension module can be named
+    # like "<modname>module.so".  This breaks things for us if we have a Cython
+    # module literally named "module".
+    return [ext for ext in _get_extensions(type) if ext[0] == '.']
+
+
+if six.PY2:
+    import imp
+
+    def _get_extensions(type):
+        """
+        Python 2 implementation of ``get_extensions()`` using the `imp` module.
+        """
+
+        if type:
+            type = {'source': imp.PY_SOURCE, 'bytecode': imp.PY_COMPILED,
+                    'extension': imp.C_EXTENSION}[type]
+
+        return [s[0] for s in imp.get_suffixes()
+                if type is None or type == s[2]]
+else:
+    import importlib.machinery
+
+    def _get_extensions(type):
+        """
+        Python 3.3+ implementation of ``get_extensions()`` using the
+        `importlib.extensions` module.
+        """
+
+        if type:
+            return {'source': importlib.machinery.SOURCE_SUFFIXES,
+                    'bytecode': importlib.machinery.BYTECODE_SUFFIXES,
+                    'extension': importlib.machinery.EXTENSION_SUFFIXES}[type]
+
+        return importlib.machinery.all_suffixes()

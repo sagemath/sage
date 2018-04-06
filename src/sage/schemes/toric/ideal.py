@@ -163,6 +163,9 @@ from sage.rings.all import ZZ, QQ
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 
 
+import six
+
+
 class ToricIdeal(MPolynomialIdeal):
     r"""
     This class represents a toric ideal defined by an integral matrix.
@@ -445,7 +448,7 @@ class ToricIdeal(MPolynomialIdeal):
             d_old = p.dict()
             power = min([ e[0] for e in d_old.keys() ])
             d_new = dict( (subtract(exponent,power), coefficient)
-                          for exponent, coefficient in d_old.iteritems() )
+                          for exponent, coefficient in six.iteritems(d_old) )
             return p.parent()(d_new)
         basis = [divide_by_x_n(_) for _ in basis]
         quotient = ring.ideal(basis)

@@ -134,9 +134,10 @@ class RCToKRTBijectionTypeA2Even(RCToKRTBijectionTypeC):
             sage: RC = RiggedConfigurations(['A', 4, 2], [[2,1]])
             sage: from sage.combinat.rigged_configurations.bij_type_A2_even import RCToKRTBijectionTypeA2Even
             sage: bijection = RCToKRTBijectionTypeA2Even(RC(partition_list=[[2],[2,2]]))
-            sage: bijection.next_state(1)
+            sage: bijection.next_state(2)
             -1
         """
+        height -= 1 # indexing
         n = self.n
         ell = [None] * (2*n)
         case_S = [False] * n

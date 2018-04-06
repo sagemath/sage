@@ -3,13 +3,19 @@ Wrapper for Boyer's (C) planarity algorithm.
 """
 
 cdef extern from "planarity/graph.h":
-    ctypedef struct graphNode:
-        int v
+    ctypedef struct vertexRec:
         int link[2]
-    ctypedef graphNode * graphNodeP
+        int index
+    ctypedef vertexRec * vertexRecP
+
+    ctypedef struct edgeRec:
+        int link[2]
+        int neighbor
+    ctypedef edgeRec * edgeRecP
 
     ctypedef struct BM_graph:
-        graphNodeP G
+        vertexRecP V
+        edgeRecP E
         int N
     ctypedef BM_graph * graphP
 
@@ -70,10 +76,10 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
         True
 
     There were some problems with ``set_pos`` stability in the past,
-    so let's check if this this runs without exception::
+    so let's check if this runs without exception::
 
-        sage: for i,g in enumerate(atlas_graphs):                         # long time
-        ....:     if (not g.is_connected() or i==0):
+        sage: for i, g in enumerate(atlas_graphs):           # long time
+        ....:     if (not g.is_connected() or i == 0):
         ....:         continue
         ....:     _ = g.is_planar(set_embedding=True, set_pos=True)
     """
@@ -93,15 +99,16 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
             g._pos = { u: [0,0], v: [0,1] }
         return (True, None) if kuratowski else True
 
-    # create to and from mappings to relabel vertices to the set {0,...,n-1}
+    # create to and from mappings to relabel vertices to the set {1,...,n}
+    # (planarity 3 uses 1-based array indexing, with 0 representing NIL)
     cdef int i
     listto = g.vertices()
     ffrom = {}
     for vvv in listto:
-        ffrom[vvv] = listto.index(vvv)
+        ffrom[vvv] = listto.index(vvv) + 1
     to = {}
     for i from 0 <= i < len(listto):
-        to[i] = listto[i]
+        to[i + 1] = listto[i]
     g.relabel(ffrom)
 
     cdef graphP theGraph
@@ -125,7 +132,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
     status = gp_Embed(theGraph, EMBEDFLAGS_PLANAR)
     gp_SortVertices(theGraph)
 
-    # use to and from mappings to relabel vertices back from the set {0,...,n-1}
+    # use to and from mappings to relabel vertices back from the set {1,...,n}
     g.relabel(to)
 
     if status == NOTOK:
@@ -134,12 +141,12 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
         # Kuratowski subgraph isolator
         g_dict = {}
         from sage.graphs.graph import Graph
-        for i from 0 <= i < theGraph.N:
+        for i from 0 < i <= theGraph.N:
             linked_list = []
-            j = theGraph.G[i].link[1]
-            while j >= theGraph.N:
-                linked_list.append(to[theGraph.G[j].v])
-                j = theGraph.G[j].link[1]
+            j = theGraph.V[i].link[1]
+            while j:
+                linked_list.append(to[theGraph.E[j].neighbor])
+                j = theGraph.E[j].link[1]
             if len(linked_list) > 0:
                 g_dict[to[i]] = linked_list
         G = Graph(g_dict)
@@ -153,12 +160,12 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
             if set_embedding:
                 emb_dict = {}
                 #for i in range(theGraph.N):
-                for i from 0 <= i < theGraph.N:
+                for i from 0 < i <= theGraph.N:
                     linked_list = []
-                    j = theGraph.G[i].link[1]
-                    while j >= theGraph.N:
-                        linked_list.append(to[theGraph.G[j].v])
-                        j = theGraph.G[j].link[1]
+                    j = theGraph.V[i].link[1]
+                    while j:
+                        linked_list.append(to[theGraph.E[j].neighbor])
+                        j = theGraph.E[j].link[1]
                     emb_dict[to[i]] = linked_list
                 g._embedding = emb_dict
             if set_pos:
@@ -174,12 +181,12 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
 
                 emb_dict = {}
                 #for i in range(theGraph.N):
-                for i from 0 <= i < theGraph.N:
+                for i from 0 < i <= theGraph.N:
                     linked_list = []
-                    j = theGraph.G[i].link[0]
-                    while j >= theGraph.N:
-                        linked_list.append(to[theGraph.G[j].v])
-                        j = theGraph.G[j].link[0]
+                    j = theGraph.V[i].link[0]
+                    while j:
+                        linked_list.append(to[theGraph.E[j].neighbor])
+                        j = theGraph.E[j].link[0]
                     emb_dict[to[i]] = linked_list
                 g._embedding = emb_dict
         gp_Free(&theGraph)

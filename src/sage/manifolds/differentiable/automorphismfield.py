@@ -66,7 +66,7 @@ class AutomorphismField(TensorField):
 
     INPUT:
 
-    - ``vector_field_module`` -- module `\mathcal{X}(U,\Phi)` of vector
+    - ``vector_field_module`` -- module `\mathfrak{X}(U,\Phi)` of vector
       fields along `U` with values on `M` via the map `\Phi`
     - ``name`` -- (default: ``None``) name given to the field
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the field;
@@ -263,7 +263,7 @@ class AutomorphismField(TensorField):
         Create an instance of the same class as ``self`` on the same
         vector field module.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(5, 'M')
             sage: a = M.automorphism_field(name='a')
@@ -785,7 +785,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
 
     INPUT:
 
-    - ``vector_field_module`` -- free module `\mathcal{X}(U,\Phi)` of vector
+    - ``vector_field_module`` -- free module `\mathfrak{X}(U,\Phi)` of vector
       fields along `U` with values on `M` via the map `\Phi`
     - ``name`` -- (default: ``None``) name given to the field
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the field;
@@ -917,7 +917,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
         - ``del_restrictions`` -- (default: ``True``) determines whether the
           restrictions of ``self`` to subdomains are deleted.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()

@@ -145,7 +145,7 @@ def modI_relations(syms, sign):
     -  ``rels`` - set of pairs of pairs (j, s), where if
        mod[i] = (j,s), then x_i = s\*x_j (mod S relations)
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: L = sage.modular.modsym.manin_symbol_list.ManinSymbolList_gamma1(4, 3)
         sage: sage.modular.modsym.relation_matrix.modI_relations(L, 1)
@@ -214,7 +214,7 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
     OUTPUT: A sparse matrix whose rows correspond to the reduction of
     the T relations modulo the S and I relations.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.modsym.relation_matrix import sparse_2term_quotient, T_relation_matrix_wtk_g0, modS_relations
         sage: L = sage.modular.modsym.manin_symbol_list.ManinSymbolList_gamma_h(GammaH(36, [17,19]), 2)
@@ -284,7 +284,7 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
 
     -  ``list`` - integers i, such that the Manin symbols `x_i` are a basis.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.modsym.relation_matrix import sparse_2term_quotient, T_relation_matrix_wtk_g0, gens_to_basis_matrix, modS_relations
         sage: L = sage.modular.modsym.manin_symbol_list.ManinSymbolList_gamma1(4, 3)
@@ -420,7 +420,7 @@ def compute_presentation(syms, sign, field, sparse=None):
        symbols is a basis for the quotient by the relations.
 
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: L = sage.modular.modsym.manin_symbol_list.ManinSymbolList_gamma0(8,2)
         sage: sage.modular.modsym.relation_matrix.compute_presentation(L, 1, GF(9,'a'), True)
@@ -473,7 +473,7 @@ def relation_matrix_wtk_g0(syms, sign, field, sparse):
 
     - mod is a set of 2-term relations as output by ``sparse_2term_quotient``
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: L = sage.modular.modsym.manin_symbol_list.ManinSymbolList_gamma0(8,2)
         sage: A = sage.modular.modsym.relation_matrix.relation_matrix_wtk_g0(L, 0, GF(2), True); A
@@ -529,7 +529,7 @@ def sparse_2term_quotient(rels, n, F):
        the quotient.
 
 
-    EXAMPLE: We quotient out by the relations
+    EXAMPLES: We quotient out by the relations
 
     .. MATH::
 

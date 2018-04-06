@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Distances/shortest paths between all pairs of vertices
 
@@ -153,13 +154,14 @@ from __future__ import print_function
 include "sage/data_structures/binary_matrix.pxi"
 from libc.string cimport memset
 from libc.stdint cimport uint64_t, uint32_t, INT32_MAX, UINT32_MAX
+from cysignals.memory cimport sig_malloc, sig_calloc, sig_free
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.graphs.base.c_graph cimport CGraphBackend
 from sage.graphs.base.c_graph cimport CGraph
 from sage.ext.memory_allocator cimport MemoryAllocator
 
 from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph, out_degree
-
-from sage.misc.decorators import rename_keyword
 
 cdef inline all_pairs_shortest_path_BFS(gg,
                                         unsigned short * predecessors,
@@ -339,7 +341,7 @@ def shortest_path_all_pairs(G):
     The integer corresponding to a vertex is its index in the list
     ``G.vertices()``.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.distances_all_pairs import shortest_path_all_pairs
         sage: g = graphs.PetersenGraph()
@@ -419,7 +421,7 @@ def distances_all_pairs(G):
     This function returns a double dictionary ``D`` of vertices, in which the
     distance between vertices ``u`` and ``v`` is ``D[u][v]``.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.distances_all_pairs import distances_all_pairs
         sage: g = graphs.PetersenGraph()
@@ -630,7 +632,7 @@ def distances_and_predecessors_all_pairs(G):
     ``G.vertices()``.
 
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.distances_all_pairs import distances_and_predecessors_all_pairs
         sage: g = graphs.PetersenGraph()
@@ -806,7 +808,6 @@ cdef uint32_t * c_eccentricity_bounding(G) except NULL:
 
     return LB
 
-@rename_keyword(deprecation=19559 , method='algorithm')
 def eccentricity(G, algorithm="standard"):
     r"""
     Return the vector of eccentricities in G.
@@ -823,14 +824,14 @@ def eccentricity(G, algorithm="standard"):
       ``'standard'`` which performs a BFS from each vertex and ``'bounds'``
       which uses the fast algorithm proposed in [TK13]_ for undirected graphs.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.distances_all_pairs import eccentricity
         sage: g = graphs.PetersenGraph()
         sage: eccentricity(g)
         [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 
-    TEST:
+    TESTS:
 
     All algorithms are valid::
 
@@ -1234,7 +1235,6 @@ cdef uint32_t diameter_iFUB(uint32_t n,
     return LB
 
 
-@rename_keyword(deprecation=19559 , method='algorithm')
 def diameter(G, algorithm='iFUB', source=None):
     r"""
     Returns the diameter of `G`.
@@ -1334,7 +1334,7 @@ def diameter(G, algorithm='iFUB', source=None):
         sage: lbm = diameter(G, algorithm='multi-sweep')
         sage: if not (lb2<=lbm and lbm<=d3): print("Something goes wrong!")
 
-    TEST:
+    TESTS:
 
     This was causing a segfault. Fixed in :trac:`17873` ::
 
@@ -1423,7 +1423,7 @@ def wiener_index(G):
       paths from `\Omega` containing `e`. We then have
       `W(G) = \sum_{e\in E(G)}|\Omega(e)|`.
 
-    EXAMPLE:
+    EXAMPLES:
 
     From [GYLL93c]_, cited in [KRG96b]_::
 

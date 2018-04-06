@@ -103,7 +103,7 @@ def compute_G(p, F):
 
     the power series `F(q) / F(q^p)`, to the same precision as `F`
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: E = sage.modular.overconvergent.hecke_series.eisenstein_series_qexp(2, 12, Zmod(9),normalization="constant")
         sage: sage.modular.overconvergent.hecke_series.compute_G(3, E)
@@ -502,7 +502,7 @@ def complementary_spaces(N,p,k0,n,mdash,elldashp,elldash,modformsring,bound):
         [2 + 2*q + 14*q^2 + 19*q^3 + 18*q^4 + O(q^5)],
         [6 + 8*q + 10*q^2 + 23*q^3 + 4*q^4 + O(q^5)]]
     """
-    if modformsring == False:
+    if not modformsring:
         LWB = random_low_weight_bases(N,p,mdash,elldashp,bound)
     else:
         LWB,bound = low_weight_generators(N,p,mdash,elldashp)
@@ -670,12 +670,15 @@ def hecke_series_degree_bound(p,N,k,m):
 
 # Returns matrix A modulo p^m from Step 6 of Algorithm 2.
 
-def higher_level_UpGj(p,N,klist,m,modformsring,bound):
+def higher_level_UpGj(p, N, klist, m, modformsring, bound, extra_data=False):
     r"""
-    Returns a list ``[A_k]`` of square matrices over ``IntegerRing(p^m)``
-    parameterised by the weights k in ``klist``. The matrix `A_k` is the finite
-    square matrix which occurs on input p,k,N and m in Step 6 of Algorithm 2 in
-    [Lau2011]_. Notational change from paper: In Step 1 following Wan we defined
+    Return a list ``[A_k]`` of square matrices over ``IntegerRing(p^m)``
+    parameterised by the weights k in ``klist``.
+
+    The matrix `A_k` is the finite square matrix which occurs on input
+    p, k, N and m in Step 6 of Algorithm 2 in [Lau2011]_.
+
+    Notational change from paper: In Step 1 following Wan we defined
     j by `k = k_0 + j(p-1)` with `0 \le k_0 < p-1`. Here we replace j by
     ``kdiv`` so that we may use j as a column index for matrices.)
 
@@ -685,12 +688,15 @@ def higher_level_UpGj(p,N,klist,m,modformsring,bound):
     - ``N`` -- integer at least 2 and not divisible by p (level).
     - ``klist`` -- list of integers all congruent modulo (p-1) (the weights).
     - ``m`` -- positive integer.
-    - ``modformsring`` -- True or False.
+    - ``modformsring`` -- ``True`` or ``False``.
     - ``bound`` -- (even) positive integer.
+    - ``extra_data`` -- (default: ``False``) boolean.
 
     OUTPUT:
 
-    - list of square matrices.
+    - list of square matrices. If ``extra_data`` is ``True``, return also
+      extra intermediate data, namely the matrix `E` in [Lau2011]_ and
+      the integers ``elldash`` and ``mdash``.
 
     EXAMPLES::
 
@@ -704,7 +710,8 @@ def higher_level_UpGj(p,N,klist,m,modformsring,bound):
         [ 0  7 20  0 20  0]
         [ 0  1 24  0 20  0]
         ]
-
+        sage: len(higher_level_UpGj(5,3,[4],2,true,6,extra_data=True))
+        4
     """
     t = cputime()
     # Step 1
@@ -715,11 +722,12 @@ def higher_level_UpGj(p,N,klist,m,modformsring,bound):
     elldashp = elldash*p
     mdash = m + ceil(n/(p+1))
 
-    verbose("done step 1",t)
+    verbose("done step 1", t)
     t = cputime()
     # Steps 2 and 3
 
-    e,Ep1 = higher_level_katz_exp(p,N,k0,m,mdash,elldash,elldashp,modformsring,bound)
+    e, Ep1 = higher_level_katz_exp(p, N, k0, m, mdash, elldash, elldashp,
+                                   modformsring, bound)
     ell = dimension(transpose(e)[0].parent())
     S = e[0,0].parent()
 
@@ -753,14 +761,14 @@ def higher_level_UpGj(p,N,klist,m,modformsring,bound):
         # a solution over Z/(p^mdash). This has always been the case in
         # examples computed by the author, see Note 3.1.
 
-        A = matrix(S,ell,ell)
+        A = matrix(S, ell, ell)
         verbose("solving a square matrix problem of dimension %s" % ell)
         verbose("elldash is %s" % elldash)
 
-        for i in range(0,ell):
+        for i in range(ell):
             Ti = T[i]
-            for j in range(0,ell):
-                ej = Ti.parent()([e[j][l] for l in range(0,elldash)])
+            for j in range(ell):
+                ej = Ti.parent()([e[j][l] for l in range(elldash)])
                 ejleadpos = ej.nonzero_positions()[0]
                 lj = ZZ(ej[ejleadpos])
                 A[i,j] = S(ZZ(Ti[j])/lj)
@@ -769,7 +777,10 @@ def higher_level_UpGj(p,N,klist,m,modformsring,bound):
         Alist.append(MatrixSpace(Zmod(p**m),ell,ell)(A))
         verbose("done step 6", t)
 
-    return Alist
+    if extra_data:
+        return Alist, e, elldash, mdash
+    else:
+        return Alist
 
 
 #  *** LEVEL 1 CODE ***
@@ -777,7 +788,7 @@ def higher_level_UpGj(p,N,klist,m,modformsring,bound):
 def compute_Wi(k,p,h,hj,E4,E6):
     r"""
     This function computes a list `W_i` of q-expansions, together with an
-    auxilliary quantity `h^j` (see below) which is to be used on the next
+    auxiliary quantity `h^j` (see below) which is to be used on the next
     call of this function. (The precision is that of input q-expansions.)
 
     The list `W_i` is a certain subset of a basis of the modular forms of
@@ -915,12 +926,15 @@ def katz_expansions(k0,p,ellp,mdash,n):
 
 # *** MAIN FUNCTION FOR LEVEL 1 ***
 
-def level1_UpGj(p,klist,m):
+def level1_UpGj(p, klist, m, extra_data=False):
     r"""
-    Returns a list `[A_k]` of square matrices over ``IntegerRing(p^m)``
-    parameterised by the weights k in ``klist``. The matrix `A_k` is the finite
-    square matrix which occurs on input p,k and m in Step 6 of Algorithm 1 in
-    [Lau2011]_. Notational change from paper: In Step 1 following Wan we defined
+    Return a list `[A_k]` of square matrices over ``IntegerRing(p^m)``
+    parameterised by the weights k in ``klist``.
+
+    The matrix `A_k` is the finite square matrix which occurs on input
+    p, k and m in Step 6 of Algorithm 1 in [Lau2011]_.
+
+    Notational change from paper: In Step 1 following Wan we defined
     j by `k = k_0 + j(p-1)` with `0 \le k_0 < p-1`. Here we replace j by
     ``kdiv`` so that we may use j as a column index for matrices.
 
@@ -929,10 +943,13 @@ def level1_UpGj(p,klist,m):
     - ``p`` -- prime at least 5.
     - ``klist`` -- list of integers congruent modulo `(p-1)` (the weights).
     - ``m`` -- positive integer.
+    - ``extra_data`` -- (default: ``False``) boolean
 
     OUTPUT:
 
-    - list of square matrices.
+    - list of square matrices. If ``extra_data`` is ``True``, return also
+      extra intermediate data, namely the matrix `E` in [Lau2011]_ and
+      the integers ``elldash`` and ``mdash``.
 
     EXAMPLES::
 
@@ -945,6 +962,9 @@ def level1_UpGj(p,klist,m):
         [    0  1995  4802     0     0]
         [    0  9212 14406     0     0]
         ]
+        sage: len(level1_UpGj(7,[100],5,extra_data=True))
+        4
+
     """
     # Step 1
     t = cputime()
@@ -1012,7 +1032,10 @@ def level1_UpGj(p,klist,m):
         Alist.append(MatrixSpace(Zmod(p**m),ell,ell)(A))
         verbose("done step 6", t)
 
-    return Alist
+    if extra_data:
+        return Alist, e, ell, mdash
+    else:
+        return Alist
 
 # *** CODE FOR GENERAL LEVEL ***
 
@@ -1146,7 +1169,7 @@ def hecke_series(p,N,klist,m, modformsring = False, weightbound = 6):
         P = charpoly(A).reverse()
         Plist.append(P)
 
-    if oneweight == True:
+    if oneweight:
         return Plist[0]
     else:
         return Plist

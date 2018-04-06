@@ -176,7 +176,7 @@ def Psi(l, use_stored=True):
     - ``use_stored`` (boolean, default True) -- If True, use
       precomputed values, otherwise compute them on the fly.
 
-    .. note:
+    .. note::
 
        This computation takes a negligible time for `l=2,3,5,7`
        but more than 100s for `l=13`.  The reason
@@ -307,7 +307,7 @@ def isogenies_prime_degree_genus_0(E, l=None):
         t_list = sorted((f-j*t).roots(multiplicities=False))
         # The generic kernel polynomial applies to a standard curve
         # E_t with the correct j-invariant; we must compute the
-        # appropriate twising factor to scale X by:
+        # appropriate twisting factor to scale X by:
         c4, c6 = E.c_invariants()
         T = c4/(3*c6)
         jt = Fricke_module(l)
@@ -368,7 +368,10 @@ def _sporadic_Q_data(j):
     ``([a4,a6],coeffs)`` where ``[a4,a6]`` are the coefficients of a
     short Weierstrass equation of an elliptic curve E with j(E)=``j``,
     and ``coeffs`` is a list of coefficients of a polynomial defining
-    the kernel of an l-isogeny from E.
+    the kernel of an l-isogeny from E.  In all but one case this
+    polynomial is monic with integer coefficients.  In one case
+    ($\ell=37$, $j=-162677523113838677$) the constant coefficient has
+    denominator $37$.
 
     Whenever we have a curve of j-invariant ``j``, we can compute the
     corresponding l-isogeny by just scaling ``coeffs`` by the right
@@ -386,7 +389,7 @@ def _sporadic_Q_data(j):
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import sporadic_j, _sporadic_Q_data
         sage: [_sporadic_Q_data(j) for j in sorted(sporadic_j.keys()) if j != -262537412640768000]
         [([-269675595, -1704553285050],
-          [-855506888466179262477032094260950275409164148942611063430052125977143159,
+          [-31653754873248632711650187487655160190139073510876609346911928661154296875/37,
            -1469048260972089939455942042937882262144594798448952781325533511718750,
            -1171741935131505774747142644126089902595908234671576131857702734375,
            -574934780393177024547076427530739751753985644656221274606250000,
@@ -517,6 +520,20 @@ def _sporadic_Q_data(j):
            8160,
            1]),
          ([-3267, -280962], [1480352841, -56169531, -2829222, 10890, 429, 1])]
+
+    See :trac:`22328`.  This used to fail on l=37,
+    j=-162677523113838677 for which the kernel polynomial is not
+    integral::
+
+        sage: R = PolynomialRing(QQ,'x')
+        sage: for j in sporadic_j:
+        ....:     ell = sporadic_j[j]
+        ....:     if ell==163: continue # takes 40s
+        ....:     E = EllipticCurve(j=j).short_weierstrass_model()
+        ....:     f = R(_sporadic_Q_data(j)[1])
+        ....:     g = E.division_polynomial(ell)
+        ....:     assert g%f==0
+
     """
     from sage.rings.all import RealField
     from sage.misc.all import prod
@@ -535,7 +552,10 @@ def _sporadic_Q_data(j):
     if j in [-121, -24729001, -162677523113838677, QQ(-882216989)/131072]:
         w = 2*w2-w1 # imaginary period
     kerpol = prod(([X-L.elliptic_exponential(n*w/ell)[0] for n in range(1,(ell+1)//2)]))
-    kerpolcoeffs = [c.real().round() for c in list(kerpol)]
+    if j==-162677523113838677:
+        kerpolcoeffs = [(37*c.real()).round()/37 for c in list(kerpol)]
+    else:
+        kerpolcoeffs = [c.real().round() for c in list(kerpol)]
     return (a4a6,kerpolcoeffs)
 
 def isogenies_sporadic_Q(E, l=None):
@@ -2012,7 +2032,7 @@ def isogenies_prime_degree_general(E, l):
     # This function permutes the factors of a given degree, replacing
     # the factor with roots alpha with the one whose roots are
     # m(alpha), where m(x) is the rational function giving the
-    # multiplcation-by-a map on the X-coordinates.  Here, a is a
+    # multiplication-by-a map on the X-coordinates.  Here, a is a
     # generator for (Z/lZ)^* / <-1> (a so-called semi-primitive root).
     def mult(g):
         # Find f such that f(m) = 0 mod g

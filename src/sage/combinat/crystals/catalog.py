@@ -21,11 +21,13 @@ This is a catalog of crystals that are currently implemented in Sage:
   <sage.combinat.crystals.generalized_young_walls.CrystalOfGeneralizedYoungWalls>`
 * :func:`HighestWeight <sage.combinat.crystals.highest_weight_crystals.HighestWeightCrystal>`
 * :class:`Induced <sage.combinat.crystals.induced_structure.InducedCrystal>`
+* :class:`KacModule <sage.combinat.crystals.kac_modules.CrystalOfKacModule>`
 * :func:`KirillovReshetikhin <sage.combinat.crystals.kirillov_reshetikhin.KirillovReshetikhinCrystal>`
 * :class:`KyotoPathModel <sage.combinat.crystals.kyoto_path_model.KyotoPathModel>`
 * :class:`Letters <sage.combinat.crystals.letters.CrystalOfLetters>`
 * :class:`LSPaths <sage.combinat.crystals.littelmann_path.CrystalOfLSPaths>`
 * :class:`NakajimaMonomials <sage.combinat.crystals.monomial_crystals.CrystalOfNakajimaMonomials>`
+* :class:`OddNegativeRoots <sage.combinat.crystals.kac_modules.CrystalOfOddNegativeRoots>`
 * :class:`ProjectedLevelZeroLSPaths
   <sage.combinat.crystals.littelmann_path.CrystalOfProjectedLevelZeroLSPaths>`
 * :class:`RiggedConfigurations
@@ -45,6 +47,11 @@ Functorial constructions:
 
 * :class:`DirectSum <sage.combinat.crystals.direct_sum.DirectSumOfCrystals>`
 * :class:`TensorProduct <sage.combinat.crystals.tensor_product.TensorProductOfCrystals>`
+
+TESTS::
+
+    sage: 'absolute_import' in dir(crystals)
+    False
 """
 from __future__ import absolute_import
 
@@ -71,6 +78,9 @@ from sage.combinat.rigged_configurations.rc_crystal import CrystalOfRiggedConfig
 
 from sage.combinat.crystals.induced_structure import InducedCrystal as Induced
 
+from sage.combinat.crystals.kac_modules import CrystalOfKacModule as KacModule
+from sage.combinat.crystals.kac_modules import CrystalOfOddNegativeRoots as OddNegativeRoots
+
 from .tensor_product import TensorProductOfCrystals as TensorProduct
 from .direct_sum import DirectSumOfCrystals as DirectSum
 
@@ -78,3 +88,5 @@ from . import catalog_kirillov_reshetikhin as kirillov_reshetikhin
 from . import catalog_infinity_crystals as infinity
 from . import catalog_elementary_crystals as elementary
 
+# We don't want this to appear in tab completion
+del absolute_import

@@ -28,17 +28,23 @@ from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_generic
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
 from sage.graphs.graph import Graph
+from sage.graphs.graph import DiGraph
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
+
 from sage.rings.all import ZZ
 from sage.rings.infinity import infinity
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+from sage.rings.rational_field import QQ
+from sage.rings.number_field.number_field import QuadraticField, is_QuadraticField
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecated_function_alias
 from sage.misc.cachefunc import cached_method
 
+from sage.sets.family import Family
 
-class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentation):
+class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_generic):
     r"""
     A Coxeter group represented as a matrix group.
 
@@ -62,10 +68,13 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
     INPUT:
 
     - ``data`` -- a Coxeter matrix or graph or a Cartan type
-    - ``base_ring`` -- (default: the universal cyclotomic field) the base
-      ring which contains all values `\cos(\pi/m_{ij})` where `(m_{ij})_{ij}`
-      is the Coxeter matrix
+    - ``base_ring`` -- (default: the universal cyclotomic field or
+      a number field) the base ring which contains all values
+      `\cos(\pi/m_{ij})` where `(m_{ij})_{ij}` is the Coxeter matrix
     - ``index_set`` -- (optional) an indexing set for the generators
+
+    For finite Coxeter groups, the default base ring is taken to be `\QQ` or
+    a quadratic number field when possible.
 
     For more on creating Coxeter groups, see
     :meth:`~sage.combinat.root_system.coxeter_group.CoxeterGroup`.
@@ -175,7 +184,7 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
 
         sage: W = CoxeterGroup(['D',5], implementation="reflection")
         sage: W
-        Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+        Finite Coxeter group over Integer Ring with Coxeter matrix:
         [1 3 2 2 2]
         [3 1 3 2 2]
         [2 3 1 3 3]
@@ -183,7 +192,8 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
         [2 2 3 2 1]
         sage: W = CoxeterGroup(['H',3], implementation="reflection")
         sage: W
-        Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+        Finite Coxeter group over Number Field in a with defining polynomial
+        x^2 - 5 with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
@@ -195,7 +205,7 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
 
         EXAMPLES::
 
-            sage: W1 = CoxeterGroup(['A',2], implementation="reflection", base_ring=UniversalCyclotomicField())
+            sage: W1 = CoxeterGroup(['A',2], implementation="reflection", base_ring=ZZ)
             sage: W2 = CoxeterGroup([[1,3],[3,1]], index_set=(1,2))
             sage: W1 is W2
             True
@@ -211,7 +221,20 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
         data = CoxeterMatrix(data, index_set=index_set)
 
         if base_ring is None:
-            base_ring = UniversalCyclotomicField()
+            if data.is_simply_laced():
+                base_ring = ZZ
+            elif data.is_finite():
+                letter = data.coxeter_type().cartan_type().type()
+                if letter in ['B', 'C', 'F']:
+                    base_ring = QuadraticField(2)
+                elif letter == 'G':
+                    base_ring = QuadraticField(3)
+                elif letter == 'H':
+                    base_ring = QuadraticField(5)
+                else:
+                    base_ring = UniversalCyclotomicField()
+            else:
+                base_ring = UniversalCyclotomicField()
         return super(CoxeterMatrixGroup, cls).__classcall__(cls,
                                      data, base_ring, data.index_set())
 
@@ -233,9 +256,9 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
         We check that :trac:`16630` is fixed::
 
             sage: CoxeterGroup(['D',4], base_ring=QQ).category()
-            Category of finite coxeter groups
+            Category of finite irreducible coxeter groups
             sage: CoxeterGroup(['H',4], base_ring=QQbar).category()
-            Category of finite coxeter groups
+            Category of finite irreducible coxeter groups
             sage: F = CoxeterGroups().Finite()
             sage: all(CoxeterGroup([letter,i]) in F
             ....:     for i in range(2,5) for letter in ['A','B','D'])
@@ -243,9 +266,9 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: all(CoxeterGroup(['E',i]) in F for i in range(6,9))
             True
             sage: CoxeterGroup(['F',4]).category()
-            Category of finite coxeter groups
+            Category of finite irreducible coxeter groups
             sage: CoxeterGroup(['G',2]).category()
-            Category of finite coxeter groups
+            Category of finite irreducible coxeter groups
             sage: all(CoxeterGroup(['H',i]) in F for i in range(3,5))
             True
             sage: all(CoxeterGroup(['I',i]) in F for i in range(2,5))
@@ -257,12 +280,30 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
         MS = MatrixSpace(base_ring, n, sparse=True)
         MC = MS._get_matrix_class()
         # FIXME: Hack because there is no ZZ \cup \{ \infty \}: -1 represents \infty
+        E = UniversalCyclotomicField().gen
         if base_ring is UniversalCyclotomicField():
-            val = lambda x: base_ring.gen(2*x) + ~base_ring.gen(2*x) if x != -1 else base_ring(2)
+
+            def val(x):
+                if x == -1:
+                    return 2
+                else:
+                    return E(2*x) + ~E(2*x)
+        elif is_QuadraticField(base_ring):
+
+            def val(x):
+                if x == -1:
+                    return 2
+                else:
+                    return base_ring((E(2*x) + ~E(2*x)).to_cyclotomic_field())
         else:
             from sage.functions.trig import cos
             from sage.symbolic.constants import pi
-            val = lambda x: base_ring(2*cos(pi / x)) if x != -1 else base_ring(2)
+
+            def val(x):
+                if x == -1:
+                    return 2
+                else:
+                    return base_ring(2 * cos(pi / x))
         gens = [MS.one() + MC(MS, entries={(i, j): val(coxeter_matrix[index_set[i], index_set[j]])
                                            for j in range(n)},
                               coerce=True, copy=True)
@@ -277,6 +318,8 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             category = category.Finite()
         else:
             category = category.Infinite()
+        if self._matrix.is_irreducible():
+            category = category.Irreducible()
         self._index_set_inverse = {i: ii for ii,i in enumerate(self._matrix.index_set())}
         FinitelyGeneratedMatrixGroup_generic.__init__(self, ZZ(n), base_ring,
                                                       gens, category=category)
@@ -288,7 +331,8 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
         EXAMPLES::
 
             sage: CoxeterGroup([[1,3,2],[3,1,4],[2,4,1]])
-            Finite Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+            Finite Coxeter group over Number Field in a with
+            defining polynomial x^2 - 2 with Coxeter matrix:
             [1 3 2]
             [3 1 4]
             [2 4 1]
@@ -357,6 +401,18 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
 
     coxeter_graph = deprecated_function_alias(17798, coxeter_diagram)
 
+    def coxeter_type(self):
+        """
+        Return the Coxeter type of ``self``.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup(['H',3])
+            sage: W.coxeter_type()
+            Coxeter type of ['H', 3]
+        """
+        return self._matrix.coxeter_type()
+
     def bilinear_form(self):
         r"""
         Return the bilinear form associated to ``self``.
@@ -381,7 +437,7 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             [   0 -1/2    1    0]
             [   0 -1/2    0    1]
         """
-        return self._matrix.bilinear_form(self.base_ring())
+        return self._matrix.bilinear_form(self.base_ring().fraction_field())
 
     def is_finite(self):
         """
@@ -520,7 +576,6 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             rt.set_immutable()
             resu += [rt]
             d[rt] = ref
-        from sage.sets.family import Family
         return Family(resu, lambda rt: d[rt])
 
     def positive_roots(self, as_reflections=None):
@@ -626,6 +681,7 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
         rt = roots[0].parent().gen(self._index_set_inverse[i])
         return roots.index(rt)
 
+    @cached_method
     def fundamental_weights(self):
         """
         Return the fundamental weights for ``self``.
@@ -638,11 +694,12 @@ class CoxeterMatrixGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
 
             sage: W = CoxeterGroup(['A',3], implementation='reflection')
             sage: W.fundamental_weights()
-            {1: (3/2, 1, 1/2), 2: (1, 2, 1), 3: (1/2, 1, 3/2)}
+            Finite family {1: (3/2, 1, 1/2), 2: (1, 2, 1), 3: (1/2, 1, 3/2)}
         """
         simple_weights = self.bilinear_form().inverse()
-        return {i: simple_weights[k]
-                for k, i in enumerate(self.index_set())}
+        I = self.index_set()
+        D = {i: simple_weights[k] for k, i in enumerate(I)}
+        return Family(I, D.__getitem__)
 
     def fundamental_weight(self, i):
         r"""

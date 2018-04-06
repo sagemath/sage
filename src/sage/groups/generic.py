@@ -426,7 +426,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         sage: F.<a> = GF(37^5)
         sage: E = EllipticCurve(F, [1,1])
         sage: P = E.lift_x(a); P
-        (a : 28*a^4 + 15*a^3 + 14*a^2 + 7 : 1)
+        (a : 9*a^4 + 22*a^3 + 23*a^2 + 30 : 1)
 
     This will return a multiple of the order of P::
 
@@ -840,10 +840,10 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
 
     INPUT:
 
-    - a - a group element
-    - base - a group element
-    - bounds - a couple (lb,ub) representing the range where we look for a logarithm
-    - operation - string: '+', '*' or 'other'
+    - a -- a group element
+    - base -- a group element
+    - bounds -- a couple (lb,ub) representing the range where we look for a logarithm
+    - operation -- string: '+', '*' or 'other'
     - hash_function -- having an efficient hash function is critical for this algorithm
 
     OUTPUT: Returns an integer `n` such that `a=base^n` (or `a=n*base`)
@@ -860,7 +860,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
         sage: F.<a> = GF(37^5)
         sage: E = EllipticCurve(F, [1,1])
         sage: P = E.lift_x(a); P
-        (a : 9*a^4 + 22*a^3 + 23*a^2 + 30 : 1)
+        (a : 28*a^4 + 15*a^3 + 14*a^2 + 7 : 1)
 
     This will return a multiple of the order of P::
 
@@ -1403,7 +1403,7 @@ def structure_description(G, latex=False):
         'A8'
     """
     import re
-    from sage.misc.package import is_package_installed
+    from sage.misc.package import is_package_installed, PackageNotFoundError
     def correct_dihedral_degree(match):
         return "%sD%d" % (match.group(1), int(match.group(2))/2)
 
@@ -1411,7 +1411,7 @@ def structure_description(G, latex=False):
         description = str(G._gap_().StructureDescription())
     except RuntimeError:
         if not is_package_installed('database_gap'):
-            raise RuntimeError("You must install the optional database_gap package first.")
+            raise PackageNotFoundError("database_gap")
         raise
 
     description = re.sub(r"(\A|\W)D(\d+)", correct_dihedral_degree, description)

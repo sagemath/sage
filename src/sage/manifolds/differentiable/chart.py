@@ -33,6 +33,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.manifolds.chart import Chart, RealChart, CoordChange
 from sage.manifolds.differentiable.vectorframe import CoordFrame
 
@@ -547,6 +548,104 @@ class DiffChart(Chart):
                     dom._top_frames.remove(resu._frame)
         return self._dom_restrict[subset]
 
+    def symbolic_velocities(self, left='D', right=None):
+        r"""
+        Return a list of symbolic variables ready to be used by the
+        user as the derivatives of the coordinate functions with respect
+        to a curve parameter (i.e. the velocities along the curve).
+        It may actually serve to denote anything else than velocities,
+        with a name including the coordinate functions.
+        The choice of strings provided as 'left' and 'right' arguments
+        is not entirely free since it must comply with Python
+        prescriptions.
+
+        INPUT:
+
+        - ``left`` -- (default: ``D``) string to concatenate to the left
+          of each coordinate functions of the chart
+        - ``right`` -- (default: ``None``) string to concatenate to the
+          right of each coordinate functions of the chart
+
+        OUTPUT:
+
+        - a list of symbolic expressions with the desired names
+
+        EXAMPLES:
+
+        Symbolic derivatives of the Cartesian coordinates of the
+        3-dimensional Euclidean space::
+
+            sage: R3 = Manifold(3, 'R3', start_index=1)
+            sage: cart.<X,Y,Z> = R3.chart()
+            sage: D = cart.symbolic_velocities(); D
+            [DX, DY, DZ]
+            sage: D = cart.symbolic_velocities(left='d', right="/dt"); D
+            Traceback (most recent call last):
+            ...
+            ValueError: The name "dX/dt" is not a valid Python
+             identifier.
+            sage: D = cart.symbolic_velocities(left='d', right="_dt"); D
+            [dX_dt, dY_dt, dZ_dt]
+            sage: D = cart.symbolic_velocities(left='', right="'"); D
+            Traceback (most recent call last):
+            ...
+            ValueError: The name "X'" is not a valid Python
+             identifier.
+            sage: D = cart.symbolic_velocities(left='', right="_dot"); D
+            [X_dot, Y_dot, Z_dot]
+            sage: R.<t> = RealLine()
+            sage: canon_chart = R.default_chart()
+            sage: D = canon_chart.symbolic_velocities() ; D
+            [Dt]
+
+        """
+
+        from sage.symbolic.ring import var
+
+        # The case len(self[:]) = 1 is treated apart due to the
+        # following fact.
+        # In the case of several coordinates, the argument of 'var' (as
+        # implemented below after the case len(self[:]) = 1) is a list
+        # of strings of the form ['Dx1', 'Dx2', ...] and not a unique
+        # string of the form 'Dx1 Dx2 ...'.
+        # Although 'var' is supposed to accept both syntaxes, the first
+        # one causes an error when it contains only one argument, due to
+        # line 784 of sage/symbolic/ring.pyx :
+        # "return self.symbol(name, latex_name=formatted_latex_name, domain=domain)"
+        # In this line, the first argument 'name' of 'symbol' is a list
+        # and not a string if the argument of 'var' is a list of one
+        # string (of the type ['Dt']), which causes error in 'symbol'.
+        # This might be corrected.
+        if len(self[:]) == 1:
+            string_vel = left + format(self[:][0]) # will raise an error
+            # in case left is not a string
+            if right is not None:
+                string_vel += right # will raise an error in case right
+                # is not a string
+
+            # If the argument of 'var' contains only one word, for
+            # instance:
+            # sage: var('Dt')
+            # then 'var' does not return a tuple containing one symbolic
+            # expression, but the symbolic expression itself.
+            # This is taken into account below in order to return a list
+            # containing one symbolic expression.
+            return [var(string_vel)]
+
+        list_strings_velocities = [left + format(coord_func)
+                                   for coord_func in self[:]] # will
+        # raise an error in case left is not a string
+
+        if right is not None:
+            list_strings_velocities = [string_vel + right for string_vel
+                                       in list_strings_velocities] # will
+            # raise an error in case right is not a string
+
+        return list(var(list_strings_velocities))
+
+
+
+
 #*****************************************************************************
 
 class RealDiffChart(DiffChart, RealChart):
@@ -970,9 +1069,6 @@ class DiffCoordChange(CoordChange):
         CoordChange.__init__(self, chart1, chart2, *transformations)
         # Jacobian matrix:
         self._jacobian  = self._transf.jacobian()
-        # Jacobian determinant:
-        if self._n1 == self._n2:
-            self._jacobian_det = self._transf.jacobian_det()
         # If the two charts are on the same open subset, the Jacobian matrix is
         # added to the dictionary of changes of frame:
         if chart1._domain == chart2._domain:
@@ -994,3 +1090,82 @@ class DiffCoordChange(CoordChange):
                 vf_module._basis_changes[(frame1, frame2)] = ch_basis_inv
                 for sdom in domain._supersets:
                     sdom._frame_changes[(frame1, frame2)] = ch_basis_inv
+
+    def jacobian(self):
+        r"""
+        Return the Jacobian matrix of ``self``.
+
+        If ``self`` corresponds to the change of coordinates
+
+        .. MATH::
+
+            y^i = Y^i(x^1,\ldots,x^n)\qquad 1\leq i \leq n
+
+        the Jacobian matrix `J` is given by
+
+        .. MATH::
+
+            J_{ij} = \frac{\partial Y^i}{\partial x^j}
+
+        where `i` is the row index and `j` the column one.
+
+        OUTPUT:
+
+        - Jacobian matrix `J`, the elements `J_{ij}` of which being
+          coordinate functions
+          (cf. :class:`~sage.manifolds.coord_func.CoordFunction`)
+
+        EXAMPLES:
+
+        Jacobian matrix of a 2-dimensional transition map::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: Y.<u,v> = M.chart()
+            sage: X_to_Y = X.transition_map(Y, [x+y^2, 3*x-y])
+            sage: X_to_Y.jacobian()
+            [  1 2*y]
+            [  3  -1]
+
+        Each element of the Jacobian matrix is a coordinate function::
+
+            sage: parent(X_to_Y.jacobian()[0,0])
+            Ring of coordinate functions on Chart (M, (x, y))
+
+        """
+        return self._jacobian  # has been computed in __init__
+
+    @cached_method
+    def jacobian_det(self):
+        r"""
+        Return the Jacobian determinant of ``self``.
+
+        The Jacobian determinant is the determinant of the Jacobian
+        matrix (see :meth:`jacobian`).
+
+        OUTPUT:
+
+        - determinant of the Jacobian matrix `J` as a coordinate
+          function
+          (cf. :class:`~sage.manifolds.coord_func.CoordFunction`)
+
+        EXAMPLES:
+
+        Jacobian determinant of a 2-dimensional transition map::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: Y.<u,v> = M.chart()
+            sage: X_to_Y = X.transition_map(Y, [x+y^2, 3*x-y])
+            sage: X_to_Y.jacobian_det()
+            -6*y - 1
+            sage: X_to_Y.jacobian_det() == det(X_to_Y.jacobian())
+            True
+
+        The Jacobian determinant is a coordinate function::
+
+            sage: parent(X_to_Y.jacobian_det())
+            Ring of coordinate functions on Chart (M, (x, y))
+
+        """
+        return self._transf.jacobian_det()

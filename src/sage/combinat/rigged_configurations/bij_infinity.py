@@ -214,7 +214,8 @@ class MLTToRCBijectionTypeB(KRTToRCBijectionTypeB):
 
         EXAMPLES::
 
-            sage: RC = crystals.infinity.RiggedConfigurations(['B',4])
+            sage: vct = CartanType(['B',4]).as_folding()
+            sage: RC = crystals.infinity.RiggedConfigurations(vct)
             sage: T = crystals.infinity.Tableaux(['B',4])
             sage: Psi = T.crystal_morphism({T.module_generators[0]: RC.module_generators[0]})
             sage: TS = [x.value for x in T.subcrystal(max_depth=4)]
@@ -251,7 +252,8 @@ class RCToMLTBijectionTypeB(RCToKRTBijectionTypeB):
 
         EXAMPLES::
 
-            sage: RC = crystals.infinity.RiggedConfigurations(['B',4])
+            sage: vct = CartanType(['B',4]).as_folding()
+            sage: RC = crystals.infinity.RiggedConfigurations(vct)
             sage: T = crystals.infinity.Tableaux(['B',4])
             sage: Psi = RC.crystal_morphism({RC.module_generators[0]: T.module_generators[0]})
             sage: RCS = [x.value for x in RC.subcrystal(max_depth=4)]

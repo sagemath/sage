@@ -1,0 +1,69 @@
+diff --git a/Makefile.install b/Makefile.install
+index 24fe8c8..4c79c07 100644
+--- a/Makefile.install
++++ b/Makefile.install
+@@ -90,10 +90,11 @@ ifeq ($(OSNAME), Darwin)
+ endif
+ ifeq ($(OSNAME), WINNT)
+ 	@-cp $(LIBDLLNAME) "$(DESTDIR)$(OPENBLAS_BINARY_DIR)"
+-	@-cp $(LIBDLLNAME).a "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)"
++	@-cp $(IMPLIBNAME) "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)"
+ endif
+ ifeq ($(OSNAME), CYGWIN_NT)
+ 	@-cp $(LIBDLLNAME) "$(DESTDIR)$(OPENBLAS_BINARY_DIR)"
++	@-cp $(IMPLIBNAME) "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)"
+ endif
+ endif
+ 
+diff --git a/Makefile.system b/Makefile.system
+index bd361a1..eaf9aed 100644
+--- a/Makefile.system
++++ b/Makefile.system
+@@ -948,9 +948,15 @@ SYMBOLSUFFIX =
+ endif
+ 
+ ifndef LIBNAMESUFFIX
+-LIBPREFIX = lib$(SYMBOLPREFIX)openblas$(SYMBOLSUFFIX)
++LIBNAMEBASE = $(SYMBOLPREFIX)openblas$(SYMBOLSUFFIX)
+ else
+-LIBPREFIX = lib$(SYMBOLPREFIX)openblas$(SYMBOLSUFFIX)_$(LIBNAMESUFFIX)
++LIBNAMEBASE = $(SYMBOLPREFIX)openblas$(SYMBOLSUFFIX)_$(LIBNAMESUFFIX)
++endif
++
++ifeq ($(OSNAME), CYGWIN_NT)
++LIBPREFIX = cyg$(LIBNAMEBASE)
++else
++LIBPREFIX = lib$(LIBNAMEBASE)
+ endif
+ 
+ KERNELDIR	= $(TOPDIR)/kernel/$(ARCH)
+@@ -1109,6 +1115,7 @@ endif
+ 
+ 
+ LIBDLLNAME   = $(LIBPREFIX).dll
++IMPLIBNAME   = lib$(LIBNAMEBASE).dll.a
+ LIBSONAME    = $(LIBNAME:.$(LIBSUFFIX)=.so)
+ LIBDYNNAME   = $(LIBNAME:.$(LIBSUFFIX)=.dylib)
+ LIBDEFNAME   = $(LIBNAME:.$(LIBSUFFIX)=.def)
+diff --git a/exports/Makefile b/exports/Makefile
+index c053895..637eaf8 100644
+--- a/exports/Makefile
++++ b/exports/Makefile
+@@ -89,13 +89,13 @@ dll  : ../$(LIBDLLNAME)
+ # in their import table.  By instead using a stable name it is possible to
+ # upgrade between library versions, without needing to re-link an application.
+ # For more details see: https://github.com/xianyi/OpenBLAS/issues/127.
+-../$(LIBDLLNAME) : ../$(LIBNAME) libopenblas.def dllinit.$(SUFFIX)
++../$(LIBDLLNAME) : ../$(LIBNAME) $(LIBPREFIX).def dllinit.$(SUFFIX)
+ 	$(RANLIB) ../$(LIBNAME)
+-	$(CC) $(CFLAGS) $(LDFLAGS) libopenblas.def dllinit.$(SUFFIX) \
+-	-shared -o ../$(LIBDLLNAME) -Wl,--out-implib,../$(LIBDLLNAME).a \
++	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBPREFIX).def dllinit.$(SUFFIX) \
++	-shared -o ../$(LIBDLLNAME) -Wl,--out-implib,../$(IMPLIBNAME) \
+ 	-Wl,--whole-archive ../$(LIBNAME) -Wl,--no-whole-archive $(FEXTRALIB) $(EXTRALIB)
+ 
+-libopenblas.def : gensymbol
++$(LIBPREFIX).def : gensymbol
+ 	perl ./gensymbol win2k    $(ARCH) dummy $(EXPRECISION) $(NO_CBLAS) $(NO_LAPACK) $(NO_LAPACKE) $(NEED2UNDERSCORES) $(ONLY_CBLAS) "$(SYMBOLPREFIX)" "$(SYMBOLSUFFIX)" $(BUILD_LAPACK_DEPRECATED) > $(@F)
+ 
+ libgoto_hpl.def : gensymbol

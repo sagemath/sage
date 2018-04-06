@@ -63,7 +63,7 @@ class DifferentiableCurve(DiffMap):
       the values being lists or tuples of `n` symbolic expressions of `t`,
       where `n` is the dimension of `M`
     - ``name`` -- (default: ``None``) string; symbol given to the curve
-    - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote the
+    - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
       the curve; if none is provided, ``name`` will be used
     - ``is_isomorphism`` -- (default: ``False``) determines whether the
       constructed object is a diffeomorphism; if set to ``True``,
@@ -82,7 +82,7 @@ class DifferentiableCurve(DiffMap):
         sage: c = M.curve({X: [sin(t), sin(2*t)/2]}, (t, 0, 2*pi), name='c') ; c
         Curve c in the 2-dimensional differentiable manifold M
         sage: type(c)
-        <class 'sage.manifolds.differentiable.curve.DifferentiableCurveSet_with_category.element_class'>
+        <class 'sage.manifolds.differentiable.manifold_homset.DifferentiableCurveSet_with_category.element_class'>
 
     Instead of declaring the parameter `t`  as a symbolic variable by means
     of ``var('t')``, it is equivalent to get it as the canonical coordinate
@@ -326,7 +326,7 @@ class DifferentiableCurve(DiffMap):
             sage: R.<t> = RealLine()
             sage: c = M.curve([cos(t), sin(2*t)], (t, 0, 2*pi))
             sage: c.__reduce__()
-            (<class 'sage.manifolds.differentiable.curve.DifferentiableCurveSet_with_category.element_class'>,
+            (<class 'sage.manifolds.differentiable.manifold_homset.DifferentiableCurveSet_with_category.element_class'>,
              (Set of Morphisms from Real interval (0, 2*pi) to 2-dimensional
               differentiable manifold M in Join of Category of subobjects of
               sets and Category of smooth manifolds over Real Field with 53
@@ -434,8 +434,8 @@ class DifferentiableCurve(DiffMap):
         if (canon_chart, codom._def_chart) in self._coord_expression:
             chart_pair = (canon_chart, codom._def_chart)
         else:
-            chart_pair = self._coord_expression.keys()[0]  # a chart is picked
-                                                           # at random
+            chart_pair = next(iter(self._coord_expression.keys()))
+            # a chart is picked at random
         coord_functions = self._coord_expression[chart_pair]._functions
         n = codom._dim
         dict_subs = {canon_coord: t}
@@ -763,10 +763,8 @@ class DifferentiableCurve(DiffMap):
         """
         from sage.rings.infinity import Infinity
         from sage.misc.functional import numerical_approx
-        from sage.plot.graphics import Graphics
-        from sage.plot.line import line
         from sage.manifolds.chart import RealChart
-        from sage.manifolds.utilities import set_axes_labels
+
         #
         # Get the @options from kwds
         #
@@ -857,9 +855,62 @@ class DifferentiableCurve(DiffMap):
                                [numerical_approx( x[j].substitute(parameters) )
                                 for j in ind_pc] )
                 t += dt
+
+        return self._graphics(plot_curve, ambient_coords,
+                              thickness=thickness,
+                              aspect_ratio=aspect_ratio, color= color,
+                              style=style, label_axes=label_axes)
+
+
+
+    def _graphics(self, plot_curve, ambient_coords, thickness=1,
+                  aspect_ratio='automatic', color='red', style='-',
+                  label_axes=True):
+        r"""
+        Plot a 2D or 3D curve in a Cartesian graph with axes labeled by
+        the ambient coordinates; it is invoked by the methods
+        :meth:`plot` of
+        :class:`~sage.manifolds.differentiable.curve.DifferentiableCurve`,
+        and its subclasses
+        (:class:`~sage.manifolds.differentiable.integrated_curve.IntegratedCurve`,
+        :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedAutoparallelCurve`,
+        and
+        :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedGeodesic`).
+
+        TESTS::
+
+            sage: M = Manifold(2, 'R^2')
+            sage: X.<x,y> = M.chart()
+            sage: R.<t> = RealLine()
+            sage: c = M.curve([cos(t), sin(t)], (t, 0, 2*pi), name='c')
+            sage: graph = c._graphics([[1,2], [3,4]], [x,y])
+            sage: graph._objects[0].xdata == [1,3]
+            True
+            sage: graph._objects[0].ydata == [2,4]
+            True
+            sage: graph._objects[0]._options['thickness'] == 1
+            True
+            sage: graph._extra_kwds['aspect_ratio'] == 'automatic'
+            True
+            sage: graph._objects[0]._options['rgbcolor'] == 'red'
+            True
+            sage: graph._objects[0]._options['linestyle'] == '-'
+            True
+            sage: l = [r'$'+latex(x)+r'$', r'$'+latex(y)+r'$']
+            sage: graph._extra_kwds['axes_labels'] == l
+            True
+
+        """
+
+        from sage.plot.graphics import Graphics
+        from sage.plot.line import line
+        from sage.manifolds.utilities import set_axes_labels
+
+
         #
         # The plot
         #
+        n_pc = len(ambient_coords)
         resu = Graphics()
         resu += line(plot_curve, color=color, linestyle=style,
                      thickness=thickness)

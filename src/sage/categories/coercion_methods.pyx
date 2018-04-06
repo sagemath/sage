@@ -45,9 +45,9 @@ def _mul_parent(self, other):
     This is :meth:`Magmas.ElementMethods._mul_parent`, implemented as
     a Cython method in :mod:`sage.categories.coercion_methods`::
 
-        sage: x._mul_parent.im_func is Magmas.ElementMethods._mul_parent.im_func
+        sage: x._mul_parent.__func__ is Magmas.ElementMethods._mul_parent.__func__
         True
-        sage: x._mul_parent.im_func is sage.categories.coercion_methods._mul_parent
+        sage: x._mul_parent.__func__ is sage.categories.coercion_methods._mul_parent
         True
     """
     return (<Element>self)._parent.product(self, other)

@@ -33,6 +33,7 @@ from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
 from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
 from sage.rings.rational_field import QQ
+from sage.homology.simplicial_complex import SimplicialComplex
 
 class InducedHomologyMorphism(Morphism):
     r"""
@@ -156,8 +157,9 @@ class InducedHomologyMorphism(Morphism):
             sage: g = Hom(S1, S1).identity()
             sage: h = g.induced_homology_morphism(QQ)
         """
-        if map.domain().is_mutable() or map.codomain().is_mutable():
-            raise ValueError('the domain and codomain complexes must be immutable')
+        if (isinstance(map.domain(), SimplicialComplex)
+            and (map.domain().is_mutable() or map.codomain().is_mutable())):
+                raise ValueError('the domain and codomain complexes must be immutable')
         if base_ring is None:
             base_ring = QQ
         if not base_ring.is_field():

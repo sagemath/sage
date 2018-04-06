@@ -141,7 +141,7 @@ computes in place the (lexicographically) next skew tableau with the
 same constraints, or returns 0 if ``st`` is the last one.
 
 For a first example, see the :func:`skew` function code in the
-``lrcalc`` source code. We want to compute a skew schur function, so
+``lrcalc`` source code. We want to compute a skew Schur function, so
 create a skew LR tableau of the appropriate shape with ``st_new``
 (with ``conts = NULL``), then iterate through all the LR tableaux with
 ``st_next()``. For each skew tableau, we use that ``st->conts`` is the

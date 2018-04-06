@@ -74,9 +74,9 @@ AUTHORS:
   __floordiv__, __mod__, __iter__, __len__; stripped extra
   leading space and trailing newline from output.
 
-TODO:
+.. TODO::
 
-- get rid of all numbers in output, e.g., in ideal function below.
+    Get rid of all numbers in output, e.g., in ideal function below.
 """
 
 #*****************************************************************************
@@ -104,6 +104,7 @@ from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
 
 from sage.misc.multireplace import multiple_replace
 from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.docs.instancedoc import instancedoc
 
 import re
 
@@ -230,7 +231,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
             sage: filename = tmp_filename()
             sage: f = open(filename, "w")
-            sage: f.write("sage_test = 7;")
+            sage: _ = f.write("sage_test = 7;")
             sage: f.close()
             sage: command = macaulay2._read_in_file_command(filename)
             sage: macaulay2.eval(command)  # optional - macaulay2
@@ -285,7 +286,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
         r"""
         Restart Macaulay2 interpreter.
 
-        TEST::
+        TESTS::
 
             sage: macaulay2.restart()  # optional - macaulay2
         """
@@ -586,8 +587,8 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
     def new_from(self, type, value):
         """
-        Returns a new Macaulay2Element of type type constructed from
-        value.
+        Return a new ``Macaulay2Element`` of type ``type`` constructed from
+        ``value``.
 
         EXAMPLES::
 
@@ -603,6 +604,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
         return self.new("new %s from %s"%(type.name(), value.name()))
 
 
+@instancedoc
 class Macaulay2Element(ExtraTabCompletion, ExpectElement):
     def _latex_(self):
         """
@@ -681,7 +683,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
             sage: len(l)                  # optional - macaulay2
             3
             sage: type(_)                 # optional - macaulay2
-            <type 'int'>
+            <... 'int'>
         """
         self._check_valid()
         return int(self.parent()("#%s"%self.name()))
@@ -735,7 +737,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
         """
         Quotient of division of self by other.  This is denoted //.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R.<x,y> = GF(7)[]
 
@@ -770,7 +772,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
         """
         Remainder of division of self by other.  This is denoted %.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R.<x,y> = GF(7)[]
 
@@ -881,7 +883,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
 
         Return type: list of strings
 
-        TEST::
+        TESTS::
 
             sage: a = macaulay2("QQ[x,y]")   # optional - macaulay2
             sage: traits = a._tab_completion()   # optional - macaulay2
@@ -1165,12 +1167,13 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
             raise NotImplementedError("cannot convert %s to a Sage object"%repr_str)
 
 
+@instancedoc
 class Macaulay2Function(ExpectFunction):
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         EXAMPLES::
 
-            sage: print(macaulay2.load._sage_doc_())  # optional - macaulay2
+            sage: print(macaulay2.load.__doc__)  # optional - macaulay2
             load -- read Macaulay2 commands
             *******************************
             ...

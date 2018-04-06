@@ -39,7 +39,7 @@ kompilierten Sprache implementiert. Python hat folgende Vorteile:
    werden.
 
 -  **Fehlerbehandlung:** Python besitzt ein ausgeklügeltes und wohl
-   durchdachtes System für die Behandlung von Ausnahmebedingunen,
+   durchdachtes System für die Behandlung von Ausnahmebedingungen,
    mit dem Programme sinnvoll weiterarbeiten können, sogar wenn bei
    ihrem Aufruf Fehler auftreten.
 

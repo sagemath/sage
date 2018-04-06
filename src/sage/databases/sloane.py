@@ -265,7 +265,7 @@ class SloaneEncyclopediaClass:
         Load the entire encyclopedia into memory from a file. This is done
         automatically if the user tries to perform a lookup or a search.
         """
-        if self.__loaded__ == True:
+        if self.__loaded__:
             return
         try:
             file_seq = bz2.BZ2File(self.__file__, 'r')
@@ -336,7 +336,7 @@ class SloaneEncyclopediaClass:
         """
         Remove the database from memory.
         """
-        if self.__loaded__ == False:
+        if not self.__loaded__:
             return
         del self.__data__
         self.__loaded__ = False

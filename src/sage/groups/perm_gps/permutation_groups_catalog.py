@@ -3,6 +3,11 @@ Catalog of permutation groups
 
 Type ``groups.permutation.<tab>`` to access examples
 of groups implemented as permutation groups.
+
+TESTS::
+
+    sage: 'absolute_import' in dir(groups.permutation)
+    False
 """
 from __future__ import absolute_import
 
@@ -29,3 +34,6 @@ from .permgroup_named import SuzukiGroup as Suzuki
 from .permgroup_named import (PGL, PSL, PSp,PSU,PGU,)
 from .permgroup_named import TransitiveGroup as Transitive
 from .cubegroup import CubeGroup as RubiksCube
+
+# We don't want this to appear in tab completion
+del absolute_import

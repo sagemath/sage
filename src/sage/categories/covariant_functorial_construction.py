@@ -262,6 +262,18 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
             sage: F._foo
             Traceback (most recent call last):
             ...
+            AssertionError: base category class for <...AlgebrasWithBasis'>
+             mismatch; expected <...Algebras'>,
+             got <...GradedAlgebrasWithBasis'>
+
+        We note that because ``Algebras.WithBasis`` is not lazily imported
+        on startup (see :trac:`22955`), the test fails at a different
+        point in the code. However, if this import becomes lazy again, then
+        the following error will be generated and can replace the above::
+
+            sage: F._foo  # not tested
+            Traceback (most recent call last):
+            ...
             ValueError: could not infer axiom for the nested class
             <...AlgebrasWithBasis'> of <...GradedAlgebrasWithBasis'>
 

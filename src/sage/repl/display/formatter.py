@@ -68,6 +68,9 @@ from sage.structure.sage_object import SageObject
 from sage.repl.display.pretty_print import SagePrettyPrinter
 
 
+PLAIN_TEXT = u'text/plain'
+TEXT_HTML = u'text/html'
+
 
 class SageDisplayFormatter(DisplayFormatter):
 
@@ -95,6 +98,37 @@ class SageDisplayFormatter(DisplayFormatter):
         self.dm = get_display_manager()
         from sage.repl.rich_output.backend_ipython import BackendIPython
         self.dm.check_backend_class(BackendIPython)
+
+    def default_mime(self):
+        r"""
+        Return the default mime output(s)
+
+        If these are the only output mime types from the Sage rich output machinery, then
+        :meth:`format` will try to fall back to IPythons internal formatting.
+
+        OUTPUT:
+
+        List of mime type strings. Usually just text/plain, though possibly more depending on
+        display manager preferences.
+
+        EXAMPLES::
+
+            sage: from sage.repl.interpreter import get_test_shell
+            sage: from sage.repl.rich_output.backend_ipython import BackendIPython
+            sage: backend = BackendIPython()
+            sage: shell = get_test_shell()
+            sage: backend.install(shell=shell)
+            sage: shell.run_cell('get_ipython().display_formatter.default_mime()')
+            [u'text/plain']
+            sage: shell.run_cell('%display latex')   # indirect doctest
+            sage: shell.run_cell('get_ipython().display_formatter.default_mime()')
+            \newcommand{\Bold}[1]{\mathbf{#1}}\left[\verb|text/plain|, \verb|text/html|\right]
+            sage: shell.run_cell('%display default')
+            sage: shell.quit()
+        """
+        if self.dm.preferences.text == 'latex':
+            return [PLAIN_TEXT, TEXT_HTML]
+        return [PLAIN_TEXT]
 
     def format(self, obj, include=None, exclude=None):
         r"""
@@ -145,6 +179,15 @@ class SageDisplayFormatter(DisplayFormatter):
               u'text/plain': u'<IPython.core.display.Image object>'},
             {})
 
+        Test that IPython images still work even in latex output mode::
+
+            sage: shell.run_cell('%display latex')   # indirect doctest
+            sage: shell.run_cell('set(get_ipython().display_formatter.format(ipython_image)[0].keys())'
+            ....:                ' == set(["text/plain", "image/png"])')
+            \newcommand{\Bold}[1]{\mathbf{#1}}\mathrm{True}
+            sage: shell.run_cell('%display default')
+            sage: shell.quit()
+
         Test that ``__repr__`` is only called once when generating text output::
 
             sage: class Repper(object):
@@ -156,23 +199,25 @@ class SageDisplayFormatter(DisplayFormatter):
             I am repper
         """
         # First, use Sage rich output if there is any
-        PLAIN_TEXT = u'text/plain'
         sage_format, sage_metadata = self.dm.displayhook(obj)
         assert PLAIN_TEXT in sage_format, 'plain text is always present'
-        if sage_format.keys() != [PLAIN_TEXT]:
+        if not set(sage_format.keys()).issubset(self.default_mime()):
             return sage_format, sage_metadata
         # Second, try IPython widgets (obj._ipython_display_ and type registry)
         if self.ipython_display_formatter(obj):
             return {}, {}
-        # Finally, try IPython rich representation (obj._repr_foo_ methods)
+        # Finally, try IPython rich representation (obj._repr_foo_ methods and ipython hardcoded types)
         if exclude is not None:
-            exclude = list(exclude) + [PLAIN_TEXT]
+            exclude = list(exclude) + self.default_mime()
         else:
-            exclude = [PLAIN_TEXT]
+            exclude = self.default_mime()
         ipy_format, ipy_metadata = super(SageDisplayFormatter, self).format(
             obj, include=include, exclude=exclude)
-        ipy_format.update(sage_format)
-        ipy_metadata.update(sage_metadata)
+        if not ipy_format:
+            return sage_format, sage_metadata
+        ipy_format[PLAIN_TEXT] = sage_format[PLAIN_TEXT]
+        if PLAIN_TEXT in sage_metadata:
+            ipy_metadata[PLAIN_TEXT] = sage_metadata[PLAIN_TEXT]
         return ipy_format, ipy_metadata
 
 

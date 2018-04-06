@@ -49,7 +49,7 @@ class SemisimpleAlgebras(Category_over_base_ring):
         sage: DihedralGroup(5).algebra(IntegerModRing(7)) in SemisimpleAlgebras
         True
 
-    .. SEEALSO:: `<http://en.wikipedia.org/wiki/Semisimple_algebra>`_
+    .. SEEALSO:: :wikipedia:`Semisimple_algebra`
 
     TESTS::
 

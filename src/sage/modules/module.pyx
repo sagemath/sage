@@ -62,10 +62,7 @@ A minimal example of a module::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.parent cimport Parent
-
-
-cdef class Module(sage.structure.parent.Parent):
+cdef class Module(Parent):
     """
     Generic module class.
 

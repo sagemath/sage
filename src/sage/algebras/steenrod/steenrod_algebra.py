@@ -451,11 +451,10 @@ examples.
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six.moves import range
 
-from sage.combinat.free_module import CombinatorialFreeModule, \
-    CombinatorialFreeModuleElement
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.categories.all import ModulesWithBasis, tensor, Hom
@@ -694,7 +693,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(generic=True, profile=[[3,2,1], []])._has_nontrivial_profile()
             True
 
-        Check that a bug in #11832 has been fixed::
+        Check that a bug in :trac:`11832` has been fixed::
 
             sage: P3 = SteenrodAlgebra(p=3, profile=(lambda n: Infinity, lambda n: 1))
             sage: P3._has_nontrivial_profile()
@@ -1713,7 +1712,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - x - an element of this algebra
+        - x -- an element of this algebra
 
         OUTPUT: x converted to the Milnor basis
 
@@ -1973,7 +1972,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             #
             # Comm: similarly (Q, C) with Q as above and C a tuple
             # with each entry in t is of the form ((s,t), n),
-            # corresponding to c_{s,t}^n.  here c_{s,t} is the the
+            # corresponding to c_{s,t}^n.  here c_{s,t} is the
             # iterated commutator defined by c_{s,1} = P(p^s) and
             # c_{s,t} = [P(p^{s+t-1}), c_{s,t-1}].
             q_deg = q_degree(t[0], prime=p)
@@ -3073,22 +3072,22 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
     # element class
     ######################################################
 
-    class Element(CombinatorialFreeModuleElement):
+    class Element(CombinatorialFreeModule.Element):
         r"""
         Class for elements of the Steenrod algebra.  Since the
         Steenrod algebra class is based on
         :class:`CombinatorialFreeModule
         <sage.combinat.free_module.CombinatorialFreeModule>`, this is
-        based on :class:`CombinatorialFreeModuleElement
-        <sage.combinat.free_module.CombinatorialFreeModuleElement>`.
+        based on :class:`IndexedFreeModuleElement
+        <sage.modules.with_basis.indexed_element.IndexedFreeModuleElement>`.
         It has new methods reflecting its role, like :meth:`degree`
         for computing the degree of an element.
 
         EXAMPLES:
 
         Since this class inherits from
-        :class:`CombinatorialFreeModuleElement
-        <sage.combinat.free_module.CombinatorialFreeModuleElement>`,
+        :class:`IndexedFreeModuleElement
+        <sage.modules.with_basis.indexed_element.IndexedFreeModuleElement>`,
         elements can be used as iterators, and there are other useful
         methods::
 
@@ -3357,32 +3356,6 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             """
             a = self.change_basis(basis)
             return a.monomial_coefficients()
-
-        def basis(self, basis):
-            r"""
-            Representation of element with respect to basis.
-
-            INPUT:
-
-            - ``basis`` - string, basis in which to work.
-
-            OUTPUT: Representation of self in given basis
-
-            .. warning::
-
-                Deprecated (December 2010). Use :meth:`change_basis` instead.
-
-            EXAMPLES::
-
-                sage: c = Sq(2) * Sq(1)
-                sage: c.basis('milnor')
-                doctest:...: DeprecationWarning: The .basis() method is deprecated. Use .change_basis() instead.
-                See http://trac.sagemath.org/10052 for details.
-                Sq(0,1) + Sq(3)
-            """
-            from sage.misc.superseded import deprecation
-            deprecation(10052, 'The .basis() method is deprecated. Use .change_basis() instead.')
-            return self.change_basis(basis)
 
         def coproduct(self, algorithm='milnor'):
             """
@@ -4178,8 +4151,9 @@ def AA(n=None, p=2):
     if n is None:
         return SteenrodAlgebra(p=p)
     if p == 2:
-        return SteenrodAlgebra(p=p, profile=range(n+1, 0, -1))
-    return SteenrodAlgebra(p=p, profile=(range(n, 0, -1), [2]*(n+1)))
+        return SteenrodAlgebra(p=p, profile=list(range(n+1, 0, -1)))
+    return SteenrodAlgebra(p=p, profile=(list(range(n, 0, -1)), [2]*(n+1)))
+
 
 def Sq(*nums):
     r"""

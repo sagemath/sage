@@ -13,6 +13,8 @@ a self-consistent subset that can be used independently of SageManifolds.
 
    sage/tensor/modules/finite_rank_free_module
 
+   sage/tensor/modules/free_module_element
+
    sage/tensor/modules/free_module_basis
 
    tensors

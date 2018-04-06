@@ -27,11 +27,11 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 from six.moves import range
-
-from sage.structure.sage_object import SageObject
+from six import iteritems, add_metaclass
 
 from copy import copy
 
+from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
 from sage.combinat.words.alphabet import Alphabet
 from sage.graphs.graph import DiGraph
@@ -301,7 +301,7 @@ class Permutation(SageObject):
             return ''
 
         elif self._repr_type == 'reduced':
-            return ''.join(map(str,self[1]))
+            return ''.join(map(str, self[1]))
 
         else:
             f = getattr(self, self._repr_type)
@@ -353,8 +353,8 @@ class Permutation(SageObject):
 
         """
         l = self.list()
-        s0 = ' '.join(map(str,l[0]))
-        s1 = ' '.join(map(str,l[1]))
+        s0 = ' '.join(map(str, l[0]))
+        s1 = ' '.join(map(str, l[1]))
         return s0 + sep + s1
 
     _repr_type = 'str'
@@ -1596,7 +1596,7 @@ class PermutationLI(Permutation):
         r"""
         Initialization of the twin data.
 
-        TEST::
+        TESTS::
 
             sage: p = iet.GeneralizedPermutation('a a','b b',reduced=True)   #indirect doctest
             sage: p._twin
@@ -1626,7 +1626,7 @@ class PermutationLI(Permutation):
         r"""
         Intialization procedure of the alphabet of self from intervals list
 
-        TEST::
+        TESTS::
 
             sage: p = iet.GeneralizedPermutation('a a','b b')   #indirect doctest
             sage: p.alphabet()
@@ -1979,6 +1979,7 @@ class FlippedPermutationLI(FlippedPermutation, PermutationLI):
         return list(set(res))
 
 
+@add_metaclass(NestedClassMetaclass)
 class RauzyDiagram(SageObject):
     r"""
     Template for Rauzy diagrams.
@@ -1992,7 +1993,6 @@ class RauzyDiagram(SageObject):
     - Vincent Delecroix (2008-12-20): initial version
     """
     # TODO: pickle problem of Path (it does not understand what is its parent)
-    __metaclass__ = NestedClassMetaclass
 
     class Path(SageObject):
         r"""
@@ -2008,7 +2008,7 @@ class RauzyDiagram(SageObject):
             r"""
             Constructor of the path.
 
-            TEST::
+            TESTS::
 
                 sage: p = iet.Permutation('a b c', 'c b a')
                 sage: r = p.rauzy_diagram()
@@ -2054,7 +2054,7 @@ class RauzyDiagram(SageObject):
             r"""
             Returns a representation of the path.
 
-            TEST::
+            TESTS::
 
                 sage: p = iet.Permutation('a b','b a')
                 sage: r = p.rauzy_diagram()
@@ -2116,7 +2116,7 @@ class RauzyDiagram(SageObject):
             r"""
             Tests equality
 
-            TEST::
+            TESTS::
 
                 sage: p1 = iet.Permutation('a b','b a')
                 sage: r1 = p1.rauzy_diagram()
@@ -2139,7 +2139,7 @@ class RauzyDiagram(SageObject):
             r"""
             Tests inequality
 
-            TEST::
+            TESTS::
 
                 sage: p1 = iet.Permutation('a b','b a')
                 sage: r1 = p1.rauzy_diagram()
@@ -2321,7 +2321,7 @@ class RauzyDiagram(SageObject):
             r"""
             Returns the length of the path.
 
-            TEST::
+            TESTS::
 
 
                 sage: p = iet.Permutation('a b c','c b a')
@@ -2570,7 +2570,7 @@ class RauzyDiagram(SageObject):
 
             - ``composition`` - the composition function for the function. * if None (default None)
 
-            TEST::
+            TESTS::
 
                 sage: p = iet.Permutation('a b','b a')
                 sage: r = p.rauzy_diagram()
@@ -2737,14 +2737,14 @@ class RauzyDiagram(SageObject):
         return (
             type(self) is type(other) and
             self._edge_types == other._edge_types and
-            self._succ.keys()[0] in other._succ)
+            next(iter(self._succ.keys())) in other._succ)
 
     def __ne__(self, other):
         r"""
         Tests difference.
 
 
-        TEST::
+        TESTS::
 
             sage: iet.RauzyDiagram('a b','b a') != iet.RauzyDiagram('a b c','c b a')
             True
@@ -2761,7 +2761,7 @@ class RauzyDiagram(SageObject):
         return (
             type(self) is not type(other) or
             self._edge_types != other._edge_types or
-            self._succ.keys()[0] not in other._succ)
+            next(iter(self._succ.keys())) not in other._succ)
 
     def vertices(self):
         r"""
@@ -2796,10 +2796,8 @@ class RauzyDiagram(SageObject):
             a b c d
             d c b a
         """
-        from builtins import map
-        return map(
-            lambda x: self._vertex_to_permutation(x),
-            self._succ.keys())
+        for x in self._succ.keys():
+            yield self._vertex_to_permutation(x)
 
     def edges(self,labels=True):
         r"""
@@ -3158,7 +3156,7 @@ class RauzyDiagram(SageObject):
         r"""
         Return the corresponding winner
 
-        TEST::
+        TESTS::
 
             sage: r = iet.RauzyDiagram('a b','b a')
             sage: r.edge_to_winner(None,None)
@@ -3180,7 +3178,7 @@ class RauzyDiagram(SageObject):
         r"""
         Return the corresponding loser
 
-        TEST::
+        TESTS::
 
             sage: r = iet.RauzyDiagram('a b','b a')
             sage: r.edge_to_loser(None,None)
@@ -3346,7 +3344,7 @@ class RauzyDiagram(SageObject):
         r"""
         Returns a representation of self
 
-        TEST::
+        TESTS::
 
             sage: iet.RauzyDiagram('a b','b a')   #indirect doctest
             Rauzy diagram with 1 permutation
@@ -3442,7 +3440,7 @@ class RauzyDiagram(SageObject):
         functions __getitem__ and has_rauzy_move and rauzy_move which must
         be defined for child and their corresponding permutation types.
 
-        TEST::
+        TESTS::
 
             sage: r = iet.RauzyDiagram('a b c','c b a')   #indirect doctest
             sage: r = iet.RauzyDiagram('a b c','c b a',left_induction=True) #indirect doctest
@@ -3521,16 +3519,17 @@ class RauzyDiagram(SageObject):
             Looped multi-digraph on 3 vertices
 
         """
-        G = DiGraph(loops=True,multiedges=True)
+        G = DiGraph(loops=True, multiedges=True)
 
-        for p,neighbours in self._succ.iteritems():
+        for p, neighbours in iteritems(self._succ):
             p = self._vertex_to_permutation(p)
-            for i,n in enumerate(neighbours):
+            for i, n in enumerate(neighbours):
                 if n is not None:
                     q = self._vertex_to_permutation(n)
-                    G.add_edge(p,q,i)
+                    G.add_edge(p, q, i)
 
         return G
+
 
 class FlippedRauzyDiagram(RauzyDiagram):
     r"""

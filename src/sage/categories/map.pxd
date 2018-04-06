@@ -20,7 +20,7 @@ cdef class Map(Element):
     cdef object _category_for  # category in which this is a morphism
 
     cdef public _repr_type_str
-
+    cdef public bint _is_coercion
 
 cdef class Section(Map):
     cdef Map _inverse

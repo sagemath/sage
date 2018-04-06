@@ -107,5 +107,31 @@ class IntegralDomains(CategoryWithAxiom):
             """
             return True
 
+        def _test_fraction_field(self, **options):
+            r"""
+            Test that the fraction field, if it is implemented, works
+            correctly.
+
+            EXAMPLES::
+
+                sage: ZZ._test_fraction_field()
+
+            """
+            tester = self._tester(**options)
+            try:
+                fraction_field = self.fraction_field()
+            except Exception:
+                # some integral domains do not implement fraction_field() yet
+                if self in Fields():
+                    raise
+                return
+
+            for x in tester.some_elements():
+                # check that we can coerce into the fraction field
+                y = fraction_field.coerce(x)
+                # and convert back from it
+                z = self(x)
+                tester.assertEqual(x, z)
+
     class ElementMethods:
         pass

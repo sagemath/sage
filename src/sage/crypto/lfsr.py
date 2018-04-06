@@ -272,7 +272,7 @@ def lfsr_connection_polynomial(s):
     This implements the algorithm in section 3 of J. L. Massey's
     article [M]_.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: F = GF(2)
         sage: F

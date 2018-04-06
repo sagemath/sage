@@ -37,7 +37,9 @@ See :mod:`sage.geometry.triangulation.point_configuration` for more details.
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from six import iteritems
 
+from sage.structure.richcmp import richcmp
 from sage.structure.element import Element
 from sage.rings.all import QQ, ZZ
 from sage.modules.all import vector
@@ -222,7 +224,6 @@ class Triangulation(Element):
         :meth:`~sage.geometry.triangulation.point_configuration.PointConfiguration.triangulations`
         to triangulate point configurations.
     """
-
     def __init__(self, triangulation, parent, check=True):
         """
         The constructor of a ``Triangulation`` object. Note that an
@@ -273,7 +274,6 @@ class Triangulation(Element):
                                  for t in triangulation)
         self._triangulation = triangulation
 
-
     def point_configuration(self):
         """
         Returns the point configuration underlying the triangulation.
@@ -282,34 +282,30 @@ class Triangulation(Element):
 
             sage: pconfig = PointConfiguration([[0,0],[0,1],[1,0]])
             sage: pconfig
-            A point configuration in QQ^2 consisting of 3 points. The
-            triangulations of this point configuration are assumed to
-            be connected, not necessarily fine, not necessarily regular.
+            A point configuration in affine 2-space over Integer Ring
+            consisting of 3 points. The triangulations of this point
+            configuration are assumed to be connected, not necessarily
+            fine, not necessarily regular.
             sage: triangulation = pconfig.triangulate()
             sage: triangulation
             (<0,1,2>)
             sage: triangulation.point_configuration()
-            A point configuration in QQ^2 consisting of 3 points. The
-            triangulations of this point configuration are assumed to
-            be connected, not necessarily fine, not necessarily regular.
+            A point configuration in affine 2-space over Integer Ring
+            consisting of 3 points. The triangulations of this point
+            configuration are assumed to be connected, not necessarily
+            fine, not necessarily regular.
             sage: pconfig == triangulation.point_configuration()
             True
         """
         return self._point_configuration
 
-
-    def __cmp__(self, right):
+    def _richcmp_(self, right, op):
         r"""
         Compare ``self`` and ``right``.
 
         INPUT:
 
-        - ``right`` -- anything.
-
-        OUTPUT:
-
-        - 0 if ``right`` is the same triangulation as ``self``, 1 or
-          -1 otherwise.
+        - ``right`` -- a triangulation
 
         TESTS::
 
@@ -319,22 +315,12 @@ class Triangulation(Element):
             sage: t2 = Triangulation([[2,1,0]], pc)
             sage: t1 is t2
             False
-            sage: cmp(t1, t2)
-            0
             sage: t1 == t2    # indirect doctest
             True
-            sage: abs( cmp(t1, Triangulation(((0,1),(1,2)), pc, check=False) ))
-            1
-            sage: abs( cmp(t2, "not a triangulation") )
-            1
+            sage: t1 != Triangulation(((0,1),(1,2)), pc, check=False)
+            True
         """
-        left = self
-        c = cmp(isinstance(left,Triangulation), isinstance(right,Triangulation))
-        if c: return c
-        c = cmp(left.point_configuration(), right.point_configuration())
-        if c: return c
-        return cmp(left._triangulation, right._triangulation)
-
+        return richcmp(self._triangulation, right._triangulation, op)
 
     def __iter__(self):
         """
@@ -357,7 +343,6 @@ class Triangulation(Element):
         """
         for p in self._triangulation:
             yield p
-
 
     def __getitem__(self, i):
         """
@@ -686,8 +671,8 @@ class Triangulation(Element):
             frozenset({(0, 1, 7), (0, 2, 7), (0, 4, 7), (1, 2, 7), (1, 4, 7), (2, 4, 7)})
         """
         return frozenset(facet for facet, bounded_simplices
-                         in self._boundary_simplex_dictionary().iteritems()
-                         if len(bounded_simplices)==1)
+                         in iteritems(self._boundary_simplex_dictionary())
+                         if len(bounded_simplices) == 1)
 
     @cached_method
     def interior_facets(self):
@@ -722,8 +707,8 @@ class Triangulation(Element):
             frozenset({(0, 1, 7), (0, 2, 7), (0, 4, 7), (1, 2, 7), (1, 4, 7), (2, 4, 7)})
         """
         return frozenset(facet for facet, bounded_simplices
-                         in self._boundary_simplex_dictionary().iteritems()
-                         if len(bounded_simplices)==2)
+                         in iteritems(self._boundary_simplex_dictionary())
+                         if len(bounded_simplices) == 2)
 
     @cached_method
     def normal_cone(self):

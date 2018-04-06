@@ -302,7 +302,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     ## DIAGNOSTIC
     #print("IsLocalSolutionType: Finished the Zero congruence condition test \n")
 
-    if (zero_flag is False):
+    if not zero_flag:
         return <long> 0
 
     ## DIAGNOSTIC
@@ -317,12 +317,12 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     else:
         nonzero_flag = False
         i = 0
-        while ((nonzero_flag == False) and (i < len(nzvec))):
+        while ((not nonzero_flag) and (i < len(nzvec))):
             if ((w[nzvec[i]] % p) != 0):
                 nonzero_flag = True           ## The non-zero condition is satisfied when we find one non-zero entry
             i += 1
 
-    if (nonzero_flag == False):
+    if not nonzero_flag:
         return <long> 0
 
 
@@ -344,7 +344,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     for i from 0 <= i < n:
         if ((w[i] % p) != 0):
             Zero_flag = False
-    if (Zero_flag == True):
+    if Zero_flag:
         return <long> 2
 
 

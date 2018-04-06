@@ -27,7 +27,6 @@ from __future__ import print_function
 
 from six.moves import range
 
-from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.tensor_product import TensorProductOfRegularCrystalsElement
 
 class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):

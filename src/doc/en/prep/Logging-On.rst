@@ -2,10 +2,11 @@
 
 .. linkall
 
+.. _prep-logging-on:
 .. _logging-on:
 
-Logging on to a Sage Server and Creating a Worksheet
-====================================================
+Logging on and Making a Worksheet
+=================================
 
 This `Sage <http://www.sagemath.org>`_ worksheet is from a series of
 tutorials developed for the MAA PREP Workshop "Sage: Using Open\-Source
@@ -15,18 +16,93 @@ Attribution\-ShareAlike 3.0 license (`CC BY\-SA
 <http://creativecommons.org/licenses/by-sa/3.0/>`_).
 
 This document describes how to get into a Sage worksheet in the first
-place, including:
-
-- :ref:`logging in <LogOn>` for the first time
-
-- :ref:`editing a copy <LiveCopy>` of a worksheet someone sent you
-
-- :ref:`making your own worksheet <FromScratch>` from scratch
-
-If you already feel comfortable with this process, or at least
+place. If you already feel comfortable with this process, or at least
 comfortable enough to see how to actually use Sage, the main content of
 the tutorials begins with :doc:`the introductory tutorial
 <Intro-Tutorial>`.
+
+There are three main types of worksheets for Sage, all of which have
+somewhat similar behavior.
+
+- If you are using the Jupyter notebook or starting Sage from the
+  command line, you may see some screens about :ref:`exporting <Export>`.
+  We have basic information about this.
+
+- If you are using the CoCalc SageMath worksheets, you will want to
+  contact them or read some of their `documentation <https://github.com/sagemathinc/cocalc/wiki/sagews>`_
+  for further assistance.
+
+- Further below, we describe the process for logging on and making a
+  worksheet in the legacy :ref:`SageNB <SageNB>` server, including:
+
+  - :ref:`logging in <LogOn>` for the first time
+
+  - :ref:`editing a copy <LiveCopy>` of a worksheet someone sent you
+
+  - :ref:`making your own worksheet <FromScratch>` from scratch
+
+
+.. _Export:
+
+The Export screen and Jupyter notebook
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Starting in Sage 8.0, the default is to provide the Jupyter notebook
+for your worksheet experience via an export screen.  When you start
+Sage you may see a screen like this.
+
+.. image:: media/NotebookExport.png
+    :align: center
+
+There are three actions you can take, each of which is highlighted
+in the next picture.  Note that if you have no previous worksheets,
+the third option to "export" them will not make sense.  
+
+.. image:: media/NotebookExportDetails.png
+    :align: center
+
+The legacy SageNB is still a powerful web app, and has some advantages,
+but is not longer under active development, so we recommend that new users
+start with the Jupyter notebook.  Jupyter will bring you to a screen
+that is simply a listing of files in whatever folder Sage has opened in.
+
+.. image:: media/JupyterIntroScreen.png
+    :align: center
+
+
+If you want to start a worksheet, you will look at the upper right corner
+and ask for a new worksheet:
+
+.. image:: media/JupyterIntroDetails.png
+    :align: center
+
+.. NOTE::
+
+   The Jupyter notebook saves your files locally in your normal
+   filesystem, as normal file names.  So if you start the notebook
+   from a different location than usual, you may have to navigate
+   a bit to find your worksheet.
+
+Jupyter will allow you many types of files to open.  To use
+SageMath directly, just choose the Sage type; this will ensure that
+Jupyter runs using Sage and not pure Python or some other language.
+
+.. image:: media/FileChoose.png
+    :align: center
+
+You should now have a worksheet that looks more or less like this.
+
+.. image:: media/BlankJupyter.png
+    :align: center
+
+Now you are ready to begin to :ref:`evaluate Sage commands
+<SageCommands>`!
+
+
+.. _SageNB:
+
+Instructions for SageNB server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. _LogOn:
 
@@ -39,12 +115,15 @@ like this.
 .. image:: media/SignIn.png
     :align: center
 
-You can create an account in two ways.
+You can create an account in three ways.
 
 - Use an :ref:`OpenID <OpenID>` account to verify your account
 
 - Create a login in the :ref:`standard way <Standard>` by creating a
   username and password.
+
+- If you have opened it on your local machine (e.g. from the command
+  line or the Mac app), you should be automatically logged in.
 
 .. _OpenID:
 
@@ -99,15 +178,25 @@ worksheet <FromScratch>`.
 Two Usage Scenarios
 -------------------
 
-There are two main scenarios when starting with Sage on a server.
+There are two main scenarios when starting with Sage.
 
-- You are going to a Sage server, and just want to start trying some
+- You are running Sage locally or
+  going to a Sage server, and just want to start trying some
   mathematics.  We cover this situation :ref:`first <FromScratch>`.
 
 - Someone has given you a link to a published tutorial or other
   worksheet (perhaps one similar to this!) and you would like to try out
   the mathematics there, using your own editable copy of the worksheet.
   We cover this less common situation :ref:`below <LiveCopy>`.
+
+.. NOTE::
+
+   In either scenario, the Sage notebook will be saving your files
+   in a "hidden" location not meant for ordinary users and you will
+   ordinarily interact with your Sage worksheets only through the
+   notebook server.  Please see the
+   `reference manual <https://doc.sagemath.org/html/en/reference/notebook/index.html>`_
+   for SageNB for more information on how to access all this.
 
 .. _FromScratch:
 

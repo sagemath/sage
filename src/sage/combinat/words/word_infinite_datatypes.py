@@ -289,14 +289,14 @@ class WordDatatype_callable(WordDatatype):
 
             sage: w = Word(lambda n : n%3+10, caching=False)
             sage: w.__reduce__()
-            (Infinite words over Set of Python objects of type 'object',
+            (Infinite words over Set of Python objects of class 'object',
              ("csage.misc.fpickle...<lambda>...", 'pickled_function', False))
 
         ::
 
             sage: w = Word(lambda n : n%3+10, caching=False, length=8)
             sage: w.__reduce__()
-            (Finite words over Set of Python objects of type 'object',
+            (Finite words over Set of Python objects of class 'object',
              ("csage.misc.fpickle...<lambda>...", 8, 'pickled_function', False))
         """
         from sage.misc.fpickle import pickle_function
@@ -528,14 +528,14 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
 
             sage: w = Word(lambda n : n%3+10, caching=True)
             sage: w.__reduce__()
-            (Infinite words over Set of Python objects of type 'object',
+            (Infinite words over Set of Python objects of class 'object',
              ("csage.misc.fpickle...<lambda>...", 'pickled_function', True))
 
         ::
 
             sage: w = Word(lambda n : n%3+10, caching=True, length=8)
             sage: w.__reduce__()
-            (Finite words over Set of Python objects of type 'object',
+            (Finite words over Set of Python objects of class 'object',
              ("csage.misc.fpickle...<lambda>...", 8, 'pickled_function', True))
 
         Because ``pickle_function`` fails on CallableFromListOfWords,
@@ -543,7 +543,7 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
 
             sage: w = Word(range(5)) + Word('abcde')
             sage: w.__reduce__()
-            (Finite words over Set of Python objects of type 'object', ([0, 1, 2, 3, 4, 'a', 'b', 'c', 'd', 'e'],))
+            (Finite words over Set of Python objects of class 'object', ([0, 1, 2, 3, 4, 'a', 'b', 'c', 'd', 'e'],))
 
         """
         from sage.misc.fpickle import pickle_function
@@ -900,13 +900,13 @@ class WordDatatype_iter(WordDatatype):
 
             sage: w = Word(iter('ab'), caching=False, length='unknown')
             sage: w.__reduce__()
-            (Finite words over Set of Python objects of type 'object', (['a', 'b'],))
+            (Finite words over Set of Python objects of class 'object', (['a', 'b'],))
 
         ::
 
             sage: w = Word(iter('ab'*10000), caching=False, length='unknown')
             sage: w.__reduce__()
-            (Finite and infinite words over Set of Python objects of type 'object', (<generator object __iter__ at ...>, 'iter', False))
+            (Finite and infinite words over Set of Python objects of class 'object', (<generator object __iter__ at ...>, 'iter', False))
         """
         if self.is_finite():
             return self._parent, (list(self),)
@@ -1177,13 +1177,13 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
 
             sage: w = Word(iter('ab'), caching=True, length='unknown')
             sage: w.__reduce__()
-            (Finite words over Set of Python objects of type 'object', (['a', 'b'],))
+            (Finite words over Set of Python objects of class 'object', (['a', 'b'],))
 
         ::
 
             sage: w = Word(iter('ab'*10000), caching=True, length='unknown')
             sage: w.__reduce__()
-            (Finite and infinite words over Set of Python objects of type 'object',
+            (Finite and infinite words over Set of Python objects of class 'object',
              (<generator object __iter__ at ...>, 'iter', True))
         """
         if self.is_finite():

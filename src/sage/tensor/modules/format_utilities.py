@@ -329,7 +329,7 @@ class FormattedExpansion(SageObject):
         r"""
         Return a LaTeX representation of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.tensor.modules.format_utilities import FormattedExpansion
             sage: f = FormattedExpansion('v', r'\tilde v')

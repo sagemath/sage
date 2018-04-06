@@ -316,9 +316,9 @@ For a typical category, few bases, if any, need to be added to force
     sage: x.mro == x.mro_standard
     False
     sage: x.all_bases_len()
-    67
-    sage: x.all_bases_controlled_len()
     70
+    sage: x.all_bases_controlled_len()
+    74
 
     sage: C = GradedHopfAlgebrasWithBasis(QQ)
     sage: x = HierarchyElement(C, attrcall("super_categories"), attrgetter("_cmp_key"))
@@ -326,9 +326,9 @@ For a typical category, few bases, if any, need to be added to force
     sage: x.mro == x.mro_standard
     False
     sage: x.all_bases_len()
-    92
+    94
     sage: x.all_bases_controlled_len()
-    100
+    101
 
 The following can be used to search through the Sage named categories
 for any that requires the addition of some bases. The output may
@@ -346,7 +346,7 @@ doctest::
      Category of finite dimensional hopf algebras with basis over Rational Field,
      Category of finite enumerated permutation groups,
      Category of finite weyl groups,
-     Category of graded hopf algebras with basis over Rational Field]
+     Category of group algebras over Rational Field]
 
 AUTHOR:
 
@@ -892,7 +892,8 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
             # last list. Later, we will make sure that it is actually
             # in the tail of the last list.
             if not last_list_non_empty:
-                # Reinstate the last list for the suggestion if it had disapeared before
+                # Reinstate the last list for the suggestion
+                # if it had disappeared before
                 heads.append(O)
                 tails.append([])
                 tailsets.append(set())
@@ -949,7 +950,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
     #assert C3_merge(lists[:-1]+[suggestion_list]) == out
     return (out, suggestion_list)
 
-class HierarchyElement(object):
+class HierarchyElement(object, metaclass=ClasscallMetaclass):
     """
     A class for elements in a hierarchy.
 
@@ -1040,10 +1041,8 @@ class HierarchyElement(object):
         sage: x.cls
         <class '44.cls'>
         sage: x.cls.mro()
-        [<class '44.cls'>, <class '43.cls'>, <class '42.cls'>, <class '41.cls'>, <class '40.cls'>, <class '39.cls'>, <class '38.cls'>, <class '37.cls'>, <class '36.cls'>, <class '35.cls'>, <class '34.cls'>, <class '33.cls'>, <class '32.cls'>, <class '31.cls'>, <class '30.cls'>, <class '29.cls'>, <class '28.cls'>, <class '27.cls'>, <class '26.cls'>, <class '25.cls'>, <class '24.cls'>, <class '23.cls'>, <class '22.cls'>, <class '21.cls'>, <class '20.cls'>, <class '19.cls'>, <class '18.cls'>, <class '17.cls'>, <class '16.cls'>, <class '15.cls'>, <class '14.cls'>, <class '13.cls'>, <class '12.cls'>, <class '11.cls'>, <class '10.cls'>, <class '9.cls'>, <class '8.cls'>, <class '7.cls'>, <class '6.cls'>, <class '5.cls'>, <class '4.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <class '0.cls'>, <type 'object'>]
+        [<class '44.cls'>, <class '43.cls'>, <class '42.cls'>, <class '41.cls'>, <class '40.cls'>, <class '39.cls'>, <class '38.cls'>, <class '37.cls'>, <class '36.cls'>, <class '35.cls'>, <class '34.cls'>, <class '33.cls'>, <class '32.cls'>, <class '31.cls'>, <class '30.cls'>, <class '29.cls'>, <class '28.cls'>, <class '27.cls'>, <class '26.cls'>, <class '25.cls'>, <class '24.cls'>, <class '23.cls'>, <class '22.cls'>, <class '21.cls'>, <class '20.cls'>, <class '19.cls'>, <class '18.cls'>, <class '17.cls'>, <class '16.cls'>, <class '15.cls'>, <class '14.cls'>, <class '13.cls'>, <class '12.cls'>, <class '11.cls'>, <class '10.cls'>, <class '9.cls'>, <class '8.cls'>, <class '7.cls'>, <class '6.cls'>, <class '5.cls'>, <class '4.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <class '0.cls'>, <... 'object'>]
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall__(cls, value, succ, key = None):
         """
@@ -1308,12 +1307,12 @@ class HierarchyElement(object):
             sage: x.cls
             <class '1.cls'>
             sage: x.cls.mro()
-            [<class '1.cls'>, <type 'object'>]
+            [<class '1.cls'>, <... 'object'>]
             sage: x = HierarchyElement(30, P)
             sage: x.cls
             <class '30.cls'>
             sage: x.cls.mro()
-            [<class '30.cls'>, <class '15.cls'>, <class '10.cls'>, <class '6.cls'>, <class '5.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <type 'object'>]
+            [<class '30.cls'>, <class '15.cls'>, <class '10.cls'>, <class '6.cls'>, <class '5.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <... 'object'>]
         """
         super_classes = tuple(self._from_value(base).cls for base in self._bases_controlled)
         if not super_classes:

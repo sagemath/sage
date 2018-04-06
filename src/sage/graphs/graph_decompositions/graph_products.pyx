@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Products of graphs
 
@@ -165,7 +166,7 @@ def is_cartesian_product(g, certificate = False, relabeling = False):
         (see :meth:`~sage.graphs.generic_graph.GenericGraph.relabel`). Give it a
         try if it is too slow !
 
-    EXAMPLE:
+    EXAMPLES:
 
     The Petersen graph is prime::
 

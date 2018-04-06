@@ -17,7 +17,7 @@ AUTHORS:
 from sage.misc.randstate cimport random
 from sage.functions.log import ln
 
-def RandomGNP(n, p, directed = False, loops = False):
+def RandomGNP(n, p, bint directed=False, bint loops=False):
     r"""
     Returns a random graph or a digraph on `n` nodes. Each edge is inserted
     independently with probability `p`.
@@ -41,7 +41,7 @@ def RandomGNP(n, p, directed = False, loops = False):
 
     .. [2] \E. N. Gilbert. Random Graphs, Ann. Math.  Stat., 30, 1141 (1959).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_generators_pyx import RandomGNP
         sage: set_random_seed(0)
@@ -83,6 +83,7 @@ def RandomGNP(n, p, directed = False, loops = False):
     for 0 <= i < n:
         for (0 if directed else i+1) <= j < n:
             if random() < pp:
-                G.add_edge(i,j)
+                if i != j or loops:
+                    G.add_edge(i,j)
 
     return G

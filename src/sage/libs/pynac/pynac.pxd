@@ -1,16 +1,17 @@
 # distutils: language = c++
 # distutils: libraries = pynac gmp
-# distutils: extra_compile_args = -std=c++11
+# distutils: extra_compile_args = -std=c++11 SINGULAR_CFLAGS
+# pynac/basic.h includes factory/factory.h so this ^ is needed to find it
 """
 Declarations for pynac, a Python frontend for ginac
 
 Check that we can externally cimport this (:trac:`18825`)::
 
-    sage: cython(  # long time
+    sage: cython(  # long time; random compiler warnings
     ....: '''
-    ....: #clang c++
-    ....: #clib pynac
-    ....: #cargs --std=c++11
+    ....: # distutils: language = c++
+    ....: # distutils: libraries = pynac
+    ....: # distutils: extra_compile_args = --std=c++11
     ....: cimport sage.libs.pynac.pynac
     ....: ''')
 """
@@ -18,6 +19,7 @@ Check that we can externally cimport this (:trac:`18825`)::
 #*****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #       Copyright (C) 2008 Burcin Erocal
+#       Copyright (C) 2017 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,32 +28,35 @@ Check that we can externally cimport this (:trac:`18825`)::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-# NOTE: Because of the except+'s below, i.e., C++ exception handling,
-# we do *not* have to use sig_on() and sig_off(). We do use it a little
-# in the actual pyx code to catch control-c for long running functions.
-
 from cpython cimport PyObject
 from libcpp.vector cimport vector
 from libcpp.pair cimport pair
+from libcpp.string cimport string as stdstring
 from sage.libs.gmp.types cimport mpz_t, mpq_t, mpz_ptr, mpq_ptr
 
-cdef extern from "sage/libs/pynac/wrap.h":
+cdef extern from "pynac_wrap.h":
     void ginac_pyinit_Integer(object)
     void ginac_pyinit_Float(object)
     void ginac_pyinit_I(object)
 
-    # forward declaration of GEx
-    ctypedef struct GEx "ex"
-    ctypedef struct GExprSeq "exprseq"
+    # forward declarations
+    cdef cppclass GEx "ex"
+    cdef cppclass GExprSeq "exprseq"
 
-    ctypedef struct GBasic "basic":
+    cdef cppclass GBasic "basic":
         long gethash()
         int compare(GBasic other)
 
-    ctypedef struct GConstant "constant":
+    cdef cppclass GConstant "constant":
+        GConstant()
+        GConstant(char* name, void* evalf, char* texname, unsigned domain)
         unsigned get_serial()
 
-    ctypedef struct GInfinity "infinity":
+    # This is actually a function, but we declare it as void* for
+    # simplicity.
+    void* ConstantEvalf
+
+    cdef cppclass GInfinity "infinity":
         bint is_unsigned_infinity()
         bint is_plus_infinity()
         bint is_minus_infinity()
@@ -60,34 +65,45 @@ cdef extern from "sage/libs/pynac/wrap.h":
         GEx real_part()
         GEx imag_part()
 
-    ctypedef struct GSymbol "symbol":
+    cdef cppclass GSymbol "symbol":
         unsigned get_domain()
         void set_domain(unsigned d)
         void set_texname(char* t)
 
-    GSymbol* GSymbol_construct_str "Construct_p<symbol, char*>" \
-            (void *mem, char* m)
-
-    void GSymbol_destruct "Destruct<symbol>"(GSymbol *mem)
-
-    object GSymbol_to_str "_to_PyString<symbol>"(GSymbol *s)
-
-    ctypedef struct GExPair "std::pair<ex, ex>":
+    cdef cppclass GExPair "std::pair<ex, ex>":
         pass
-    ctypedef struct GExMap "exmap":
+
+    cdef cppclass GExMap "exmap":
         void insert(GExPair e)
 
-    ctypedef struct GExListIter "GiNaC::lst::const_iterator":
+    cdef cppclass GExListIter "GiNaC::lst::const_iterator":
         void inc "operator++" ()
         GEx obj "operator*" ()
-        bint is_not_equal "operator!=" (GExListIter i)
+        bint operator!=(GExListIter i)
 
-    ctypedef struct GExList "GiNaC::lst":
+    cdef cppclass GExList "GiNaC::lst":
         GExListIter begin()
         GExListIter end()
         GExList append_sym "append" (GSymbol e)
 
-    ctypedef struct GEx "ex":
+    cdef cppclass GSymbolSetIter "GiNaC::symbolset::const_iterator":
+        void inc "operator++" ()
+        GEx obj "operator*" ()
+        bint operator!=(GSymbolSetIter i)
+
+    cdef cppclass GSymbolSet "GiNaC::symbolset":
+        GSymbolSetIter begin()
+        GSymbolSetIter end()
+
+    cdef cppclass GEx "ex":
+        GEx()
+        GEx(GNumeric o)
+        GEx(GSymbol m)
+        GEx(GEx m)
+        GEx(long n)
+        GEx(double d)
+        GEx(GExprSeq s)
+        GEx operator=(object o)
         long gethash()                except +
         int compare(GEx other)        except +
         GEx expand(unsigned int opt)  except +
@@ -99,10 +115,11 @@ cdef extern from "sage/libs/pynac/wrap.h":
         bint is_polynomial(GEx vars)  except +
         bint match(GEx pattern, GExList s) except +
         bint find(GEx pattern, GExList s) except +
+        GSymbolSet free_symbols()     except +
         bint has(GEx pattern)         except +
         GEx subs(GEx expr)            except +
         GEx subs_map "subs" (GExMap map, unsigned options) except +
-        GEx coeff(GEx expr, int n)    except +
+        GEx coeff(GEx expr, GEx n)    except +
         GEx lcoeff(GEx expr)          except +
         GEx tcoeff(GEx expr)          except +
         void coefficients(GEx s, vector[pair[GEx,GEx]]) except +
@@ -111,8 +128,8 @@ cdef extern from "sage/libs/pynac/wrap.h":
         GEx numer()                   except +
         GEx denom()                   except +
         GEx numer_denom()             except +
-        int degree(GEx expr)          except +
-        int ldegree(GEx expr)         except +
+        GNumeric degree(GEx expr)          except +
+        GNumeric ldegree(GEx expr)         except +
         GEx unit(GEx expr)            except +
         GEx content(GEx expr)         except +
         GEx primpart(GEx expr)        except +
@@ -122,7 +139,7 @@ cdef extern from "sage/libs/pynac/wrap.h":
         int nops()                    except +
         GEx op "sorted_op" (int i)    except +
         GEx eval(int level)           except +
-        GEx evalf(int level, object parent) except +
+        GEx evalf(int level, parent)  except +
         GEx conjugate()               except +
         GEx real_part()               except +
         GEx imag_part()               except +
@@ -132,7 +149,7 @@ cdef extern from "sage/libs/pynac/wrap.h":
 
     GExPair make_pair "std::make_pair" (GEx, GEx)
 
-    ctypedef struct GNumeric "numeric":
+    cdef cppclass GNumeric "numeric":
         bint is_positive() except +
         bint is_negative() except +
 
@@ -141,10 +158,19 @@ cdef extern from "sage/libs/pynac/wrap.h":
     GNumeric ex_to_numeric "ex_to<numeric>" (GEx e)
     # given a GEx that is known to be a numeric, return reference to
     # the underlying PyObject*.
-    object py_object_from_numeric(GEx e)     except +
+    py_object_from_numeric(GEx e)     except +
 
     # Algorithms
     GEx g_gcd "gcd"(GEx a, GEx b) except +
+    bint g_factor "factor"(GEx expr, GEx res) except +
+    GEx g_gosper_term "gosper_term"(GEx the_ex, GEx n) except +
+    GEx g_gosper_sum_definite "gosper_sum_definite"(GEx the_ex,
+            GEx n, GEx a, GEx b, int* p) except +
+    GEx g_gosper_sum_indefinite "gosper_sum_indefinite"(GEx the_ex,
+            GEx n, int* p) except +
+    GEx to_gamma(GEx expr)          except +
+    GEx gamma_normalize(GEx expr)   except +
+    GEx g_resultant "resultant"(GEx a, GEx b, GEx v) except +
 
     # Pattern matching wildcards
     GEx g_wild "wild"(unsigned int label) except +
@@ -170,16 +196,15 @@ cdef extern from "sage/libs/pynac/wrap.h":
     bint is_a_relational "is_a<relational>" (GEx e)
     unsigned decide_relational(GEx e) except +
     operators relational_operator(GEx e)
-    operators switch_operator(operators op)
     GEx relational(GEx lhs, GEx rhs, operators o)
-    GEx g_lt "LT_WRAP" (GEx left, GEx right) except +
-    GEx g_eq "EQ_WRAP" (GEx left, GEx right) except +
-    GEx g_gt "GT_WRAP" (GEx left, GEx right) except +
-    GEx g_le "LE_WRAP" (GEx left, GEx right) except +
-    GEx g_ne "NE_WRAP" (GEx left, GEx right) except +
-    GEx g_ge "GE_WRAP" (GEx left, GEx right) except +
+    GEx operator<(GEx left, GEx right) except +
+    GEx operator==(GEx left, GEx right) except +
+    GEx operator>(GEx left, GEx right) except +
+    GEx operator<=(GEx left, GEx right) except +
+    GEx operator!=(GEx left, GEx right) except +
+    GEx operator>=(GEx left, GEx right) except +
 
-    #Domains
+    # Domains
     unsigned domain_complex "GiNaC::domain::complex"
     unsigned domain_real "GiNaC::domain::real"
     unsigned domain_positive "GiNaC::domain::positive"
@@ -218,11 +243,7 @@ cdef extern from "sage/libs/pynac/wrap.h":
     GEx g_Euler "Euler"
     GEx g_NaN "NaN"
 
-    GConstant* GConstant_construct(void *mem, char* name, char* texname, unsigned domain)
     bint is_a_constant "is_a<constant>" (GEx e)
-    void GConstant_destruct "Destruct<constant>"(GConstant *mem) except +
-    GConstant* GConstant_construct_str "Construct_p<constant, char*>" \
-            (void *mem, char* name) except +
 
     # Infinities
     bint is_a_infinity "is_a<GiNaC::infinity>" (GEx e)
@@ -235,59 +256,41 @@ cdef extern from "sage/libs/pynac/wrap.h":
     # we declare it here for easy reference
     GEx g_I "I"
 
-    # Destructor and constructor
-    void GEx_destruct "Destruct<ex>"(GEx *mem) except +
-    GEx* GEx_construct_symbol "Construct_p<ex, symbol>" \
-            (void *mem, GSymbol m) except +
-    GEx* GEx_construct_ex "Construct_p<ex, ex>" (void *mem, GEx m) except +
-    void GExMap_destruct "Destruct<exmap>"(GExMap *mem) except +
-    GExMap* GEx_construct_exmap "Construct_p<exmap, exmap>" (void *mem, GExMap m) except +
-    GEx* GEx_construct_long "Construct_p<ex, long>" (void *mem, long n) except +
-    GEx* GEx_construct_double "Construct_p<ex, double>" \
-            (void *mem, double d) except +
-    GEx* GEx_construct_exprseq "Construct_p<ex, exprseq>" \
-            (void *mem, GExprSeq s)
-
-    GEx* GEx_construct_pyobject "ASSIGN_WRAP" (GEx mem, object n)
-
     # Conversions
     double GEx_to_double(GEx e, int* success) except +
-    object GEx_to_str "_to_PyString<ex>"(GEx *s) except +
-    object GEx_to_str_latex "_to_PyString_latex<ex>"(GEx *s) except +
+    GEx_to_str_latex "_to_PyString_latex<ex>"(GEx *s) except +
 
     bint is_a_symbol "is_a<symbol>" (GEx e)
     GSymbol ex_to_symbol "ex_to<symbol>" (GEx e)
 
-    ctypedef struct GParamSetIter "paramset::const_iterator":
+    cdef cppclass GParamSetIter "paramset::const_iterator":
         void inc "operator++" ()
         unsigned obj "operator*" ()
-        bint is_not_equal "operator!=" (GParamSetIter i)
+        bint operator!=(GParamSetIter i)
 
-    ctypedef struct GParamSet "paramset":
+    cdef cppclass GParamSet "paramset":
         GParamSetIter begin()
         GParamSetIter end()
         int size()
 
-    ctypedef struct GExVector "exvector":
+    cdef cppclass GExVector "exvector":
         void push_back(GEx)
         int size()
         GEx at(int i)
 
-    ctypedef struct GExprSeq "exprseq":
-        pass
+    cdef cppclass GExprSeq "exprseq":
+        GExprSeq()
+        GExprSeq(GExVector m)
 
-    GExprSeq* GExprSeq_construct_exvector "Construct_p<exprseq, exvector>" \
-            (void *mem, GExVector m) except +
     bint is_a_exprseq "is_a<exprseq>" (GEx e)
     bint is_exactly_a_exprseq "is_exactly_a<exprseq>" (GEx e)
 
-
-    ctypedef struct GExSetIter "std::set<ex, ex_is_less>::const_iterator":
+    cdef cppclass GExSetIter "std::set<ex, ex_is_less>::const_iterator":
         void inc "operator++" ()
         GEx obj "operator*" ()
-        bint is_not_equal "operator!=" (GExSetIter i)
+        bint operator!=(GExSetIter i)
 
-    ctypedef struct GExSet "std::set<ex, ex_is_less>":
+    cdef cppclass GExSet "std::set<ex, ex_is_less>":
         GExSetIter begin()
         GExSetIter end()
 
@@ -300,51 +303,35 @@ cdef extern from "sage/libs/pynac/wrap.h":
     bint is_a_fderivative "is_a<GiNaC::fderivative>" (GEx e)
     bint is_a_function "is_a<GiNaC::function>" (GEx e)
     bint is_exactly_a_function "is_exactly_a<GiNaC::function>" (GEx e)
-    bint is_a_ncmul "is_a<GiNaC::ncmul>" (GEx e)
 
     # Arithmetic
     int ginac_error()
-    GEx gadd "ADD_WRAP" (GEx left, GEx right) except +
-    GEx gsub "SUB_WRAP" (GEx left, GEx right) except +
-    GEx gmul "MUL_WRAP" (GEx left, GEx right) except +
-    GEx gdiv "DIV_WRAP" (GEx left, GEx right) except +
-    GEx g_pow "pow" (GEx left, GEx exp)      except +
+    GEx operator+(GEx left, GEx right) except +
+    GEx operator-(GEx left, GEx right) except +
+    GEx operator*(GEx left, GEx right) except +
+    GEx operator/(GEx left, GEx right) except +
+    GEx g_pow "pow" (GEx left, GEx exp) except +
 
     GEx g_hold_wrapper "HOLD" (GEx (GEx) except+, GEx ex, bint) except +
     GEx g_hold_wrapper_vec "HOLD" (GEx (GExVector) except+, GExVector vec,
             bint) except +
     GEx g_hold2_wrapper "HOLD2" (GEx (GEx, GEx) except+, GEx ex, GEx ex,
             bint) except +
+    void g_set_state "GiNaC::set_state" (stdstring & s, bint b) except +
 
-    #GSymbol get_symbol(char* s)              except +
     GSymbol ginac_symbol "GiNaC::symbol" (char* s, char* t, unsigned d) except +
     GSymbol ginac_new_symbol "GiNaC::symbol" () except +
     GEx g_collect_common_factors "collect_common_factors" (GEx e) except +
 
-    # standard library string
-    ctypedef struct stdstring "std::string":
-        stdstring assign(char* s, Py_ssize_t l)
-        char* c_str()
-        unsigned int size()
-        char at(unsigned int ind)
-
-    stdstring* stdstring_construct_cstr \
-            "new std::string" (char* s, unsigned int l)
-    void stdstring_delete "Delete<std::string>"(stdstring* s)
-
     # Archive
-    ctypedef struct GArchive "archive":
+    cdef cppclass GArchive "archive":
         void archive_ex(GEx e, char* name) except +
         GEx unarchive_ex(GExList sym_lst, unsigned ind) except +
         void printraw "printraw(std::cout); " (int t)
 
-    object GArchive_to_str "_to_PyString<archive>"(GArchive *s)
-    void GArchive_from_str "_from_str_len<archive>"(GArchive *ar, char* s,
-            unsigned int l)
-
 
     GEx g_abs "GiNaC::abs" (GEx x)                      except + # absolute value
-    GEx g_step "GiNaC::step" (GEx x)                    except + # step function
+    GEx g_step "GiNaC::unit_step" (GEx x)               except + # step function
     GEx g_csgn "GiNaC::csgn" (GEx x)                    except + # complex sign
     GEx g_conjugate "GiNaC::conjugate_function" (GEx x) except + # complex conjugation
     GEx g_real_part "GiNaC::real_part_function" (GEx x) except + # real part
@@ -391,11 +378,11 @@ cdef extern from "sage/libs/pynac/wrap.h":
 
     GEx g_ex1_2 "GiNaC::_ex1_2"
 
-    ctypedef struct GFunction "function":
+    cdef cppclass GFunction "function":
         unsigned get_serial()
         char* get_name "get_name().c_str" ()
 
-    ctypedef struct GFDerivative "fderivative":
+    cdef cppclass GFDerivative "fderivative":
         GParamSet get_parameter_set()
 
     GFunction ex_to_function "ex_to<function>" (GEx ex)
@@ -407,28 +394,28 @@ cdef extern from "sage/libs/pynac/wrap.h":
     GEx g_function_eval2(unsigned int serial, GEx, GEx, bint) except +
     GEx g_function_eval3(unsigned int serial, GEx, GEx, GEx, bint) except +
 
-    ctypedef struct GFunctionOpt "function_options":
+    cdef cppclass GFunctionOpt "function_options":
+        GFunctionOpt operator=(GFunctionOpt)
         unsigned get_nparams()
         void set_python_func()
-        GFunctionOpt eval_func(object f)
-        GFunctionOpt subs_func(object f)
-        GFunctionOpt evalf_func(object f)
-        GFunctionOpt conjugate_func(object f)
-        GFunctionOpt real_part_func(object f)
-        GFunctionOpt imag_part_func(object f)
-        GFunctionOpt derivative_func(object f)
-        GFunctionOpt power_func(object f)
-        GFunctionOpt series_func(object f)
+        GFunctionOpt eval_func(f)
+        GFunctionOpt subs_func(f)
+        GFunctionOpt evalf_func(f)
+        GFunctionOpt conjugate_func(f)
+        GFunctionOpt real_part_func(f)
+        GFunctionOpt imag_part_func(f)
+        GFunctionOpt derivative_func(f)
+        GFunctionOpt power_func(f)
+        GFunctionOpt series_func(f)
         GFunctionOpt latex_name(char* name)
         GFunctionOpt do_not_apply_chain_rule()
         GFunctionOpt do_not_evalf_params()
-        void set_print_latex_func(object f)
-        void set_print_dflt_func(object f)
+        void set_print_latex_func(f)
+        void set_print_dflt_func(f)
         char* get_name()
         char* get_latex_name()
 
-
-    ctypedef struct GFunctionOptVector "vector<function_options>":
+    cdef cppclass GFunctionOptVector "vector<function_options>":
         int size()
         GFunctionOpt index "operator[]" (int ind)
 
@@ -441,7 +428,7 @@ cdef extern from "sage/libs/pynac/wrap.h":
     unsigned g_register_new "GiNaC::function::register_new" (GFunctionOpt opt)
 
     unsigned find_function "GiNaC::function::find_function" (char* name,
-            unsigned nargs) except +ValueError
+            unsigned nargs) except +
 
     bint has_symbol "GiNaC::has_symbol" (GEx ex)
     bint has_symbol_or_function "GiNaC::has_symbol_or_function" (GEx ex)
@@ -491,116 +478,112 @@ cdef extern from "sage/libs/pynac/wrap.h":
     unsigned binomial_serial "GiNaC::binomial_SERIAL::serial" # binomial coefficients
     unsigned Order_serial "GiNaC::Order_SERIAL::serial" # order term function in truncated power series
 
-    cdef extern from *:
-        ctypedef char* const_char_ptr "const char*"
-        ctypedef GParamSet const_paramset_ref "const GiNaC::paramset&"
+    ctypedef GParamSet const_paramset_ref "const GiNaC::paramset&"
 
     ctypedef struct py_funcs_struct:
-        object (*py_binomial)(object a, object b)
-        object (*py_binomial_int)(int n, unsigned int k) except +
-        object (*py_gcd)(object a ,object b)
-        object (*py_lcm)(object a ,object b)
-        object (*py_real)(object a)
-        object (*py_imag)(object a)
-        object (*py_numer)(object a)
-        object (*py_denom)(object a)
-        object (*py_conjugate)(object a)
-        bint (*py_is_rational)(object a)  except +
-        bint (*py_is_crational)(object a)  except +
-        bint (*py_is_real)(object a)  except +
-        bint (*py_is_integer)(object a)  except +
-        bint (*py_is_equal)(object a, object b)  except +
-        bint (*py_is_even)(object a)  except +
-        bint (*py_is_cinteger)(object a)  except +
-        bint (*py_is_prime)(object n)  except +
-        bint (*py_is_exact)(object x)  except +
+        py_binomial(a, b)
+        py_binomial_int(int n, unsigned int k)
+        py_gcd(a, b)
+        py_lcm(a, b)
+        py_real(a)
+        py_imag(a)
+        py_numer(a)
+        py_denom(a)
+        py_conjugate(a)
+        bint py_is_rational(a)
+        bint py_is_crational(a)
+        bint py_is_real(a)
+        bint py_is_integer(a)
+        bint py_is_equal(a, b)
+        bint py_is_even(a)
+        bint py_is_cinteger(a)
+        bint py_is_prime(n)
+        bint py_is_exact(x)
 
-        object (*py_integer_from_long)(long int x) except +
-        object (*py_integer_from_python_obj)(object x) except +
-        object (*py_integer_from_mpz)(mpz_t) except +
-        object (*py_rational_from_mpq)(mpq_t) except +
-        bint py_is_Integer(object x) except +
-        bint py_is_Rational(object x) except +
-        mpz_ptr py_mpz_from_integer(object x) except +
-        mpq_ptr py_mpq_from_rational(object x) except +
+        py_integer_from_long(long int x)
+        py_integer_from_python_obj(x)
+        py_integer_from_mpz(mpz_t)
+        py_rational_from_mpq(mpq_t)
+        bint py_is_Integer(x)
+        bint py_is_Rational(x)
+        mpz_ptr py_mpz_from_integer(x)
+        mpq_ptr py_mpq_from_rational(x)
 
-        object (*py_float)(object a, PyObject* parent) except +
-        object (*py_RDF_from_double)(double x)
+        py_float(a, PyObject* kwds)
+        py_RDF_from_double(double x)
 
+        py_factorial(x)
+        py_doublefactorial(x)
+        py_fibonacci(x)
+        py_step(x)
+        py_bernoulli(x)
+        py_sin(x)
+        py_cos(x)
+        py_stieltjes(x)
+        py_zeta(x)
+        py_exp(x)
+        py_log(x)
+        py_tan(x)
+        py_asin(x)
+        py_acos(x)
+        py_atan(x)
+        py_atan2(x, y)
+        py_sinh(x)
+        py_cosh(x)
+        py_tanh(x)
+        py_asinh(x)
+        py_acosh(x)
+        py_atanh(x)
+        py_tgamma(x)
+        py_lgamma(x)
+        py_isqrt(x)
+        py_sqrt(x)
+        py_abs(x)
+        py_mod(x, y)
+        py_smod(x, y)
+        py_irem(x, y)
+        py_iquo(x, y)
+        py_iquo2(x, y)
+        py_li(x, n, parent)
+        py_li2(x)
+        py_psi(x)
+        py_psi2(n, x)
 
-        object (*py_factorial)(object x) except +
-        object (*py_doublefactorial)(object x) except +
-        object (*py_fibonacci)(object x) except +
-        object (*py_step)(object x) except +
-        object (*py_bernoulli)(object x) except +
-        object (*py_sin)(object x) except +
-        object (*py_cos)(object x) except +
-        object (*py_stieltjes)(object x) except +
-        object (*py_zeta)(object x) except +
-        object (*py_exp)(object x) except +
-        object (*py_log)(object x) except +
-        object (*py_tan)(object x) except +
-        object (*py_asin)(object x) except +
-        object (*py_acos)(object x) except +
-        object (*py_atan)(object x) except +
-        object (*py_atan2)(object x, object y) except +
-        object (*py_sinh)(object x) except +
-        object (*py_cosh)(object x) except +
-        object (*py_tanh)(object x) except +
-        object (*py_asinh)(object x) except +
-        object (*py_acosh)(object x) except +
-        object (*py_atanh)(object x) except +
-        object (*py_tgamma)(object x) except +
-        object (*py_lgamma)(object x) except +
-        object (*py_isqrt)(object x) except +
-        object (*py_sqrt)(object x) except +
-        object (*py_abs)(object x) except +
-        object (*py_mod)(object x, object y) except +
-        object (*py_smod)(object x, object y) except +
-        object (*py_irem)(object x, object y) except +
-        object (*py_iquo)(object x, object y) except +
-        object (*py_iquo2)(object x, object y) except +
-        object (*py_li)(object x, object n, object parent) except +
-        object (*py_li2)(object x) except +
-        object (*py_psi)(object x) except +
-        object (*py_psi2)(object n, object x) except +
+        int py_int_length(x) except -1
 
-        int    (*py_int_length)(object x) except -1
+        py_eval_constant(unsigned serial, parent)
+        py_eval_unsigned_infinity()
+        py_eval_infinity()
+        py_eval_neg_infinity()
 
-        object (*py_eval_constant)(unsigned serial, object parent)
-        object (*py_eval_unsigned_infinity)()
-        object (*py_eval_infinity)()
-        object (*py_eval_neg_infinity)()
+        int py_get_parent_char(o) except -1
 
-        int    (*py_get_parent_char)(object o) except -1
+        stdstring* py_latex(o, int level)
+        stdstring* py_repr(o, int level)
 
-        stdstring* (*py_latex)(object o, int level) except +
-        stdstring* (*py_repr)(object o, int level) except +
+        stdstring* py_dumps(o)
+        py_loads(s)
 
-        stdstring* (*py_dumps)(object o) except +
-        object (*py_loads)(object s) except +
-
-        object exvector_to_PyTuple(GExVector seq)
-        GEx pyExpression_to_ex(object res) except *
-        object ex_to_pyExpression(GEx juice)
+        exvector_to_PyTuple(GExVector seq)
+        GEx pyExpression_to_ex(res) except *
+        ex_to_pyExpression(GEx juice)
         int py_get_ginac_serial()
-        object subs_args_to_PyTuple(GExMap map, unsigned options, GExVector seq)
+        subs_args_to_PyTuple(GExMap map, unsigned options, GExVector seq)
 
-        object py_get_sfunction_from_serial(unsigned s) except +
-        unsigned py_get_serial_from_sfunction(object f) except +
-        unsigned py_get_serial_for_new_sfunction(stdstring &s, unsigned nargs) \
-                except +
+        py_get_sfunction_from_serial(unsigned s)
+        unsigned py_get_serial_from_sfunction(f)
+        unsigned py_get_serial_for_new_sfunction(stdstring &s, unsigned nargs)
 
-        stdstring* py_print_function(unsigned id, object args) except +
-        stdstring* py_latex_function(unsigned id, object args) except +
+        stdstring* py_print_function(unsigned id, args)
+        stdstring* py_latex_function(unsigned id, args)
 
-        GConstant py_get_constant(const_char_ptr name) except +
+        GConstant py_get_constant(const char* name)
 
-        stdstring* (*py_print_fderivative)(unsigned id, object params, object args) except +
-        stdstring* (*py_latex_fderivative)(unsigned id, object params, object args) except +
-        object (*paramset_to_PyTuple)(const_paramset_ref s)
+        stdstring* py_print_fderivative(unsigned id, params, args)
+        stdstring* py_latex_fderivative(unsigned id, params, args)
+        paramset_to_PyTuple(const_paramset_ref s)
 
-        object (*py_rational_power_parts)(object basis, object exp)
+        py_rational_power_parts(basis, exp)
 
     py_funcs_struct py_funcs "GiNaC::py_funcs"
 

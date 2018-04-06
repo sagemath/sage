@@ -1,3 +1,6 @@
+cimport cython
+
+@cython.binding(True)
 def frobenius_unram(self, arithmetic=True):
     """
     Returns the image of this element under the Frobenius automorphism
@@ -40,20 +43,32 @@ def frobenius_unram(self, arithmetic=True):
         ...
         NotImplementedError: Frobenius automorphism only implemented for unramified extensions
     """
+    if self == 0:
+        return self
     R = self.parent()
-    if self.is_zero(): return self
-    L = self.teichmuller_list()
-    ppow = R.uniformizer_pow(self.valuation())
-    if arithmetic:
-        exp = R.prime()
-    else:
-        exp = R.prime()**(R.degree()-1)
-    ans = ppow * L[0]**exp
-    for m in range(1,len(L)):
-        ppow = ppow << 1
-        ans += ppow * L[m]**exp
-    return ans
+    p = R.prime()
+    a = R.gen()
+    frob_a = R._frob_gen()
+    ppow = self.valuation()
+    unit = self.unit_part()
+    coefs = unit.expansion()
+    ans = 0
 
+    # Xavier's implementation based on Horner scheme
+    for i in range(R.f()-1, -1, -1):
+        update = 0
+        for j in range(len(coefs)-1, -1, -1):
+            update *= p
+            try:
+                update += coefs[j][i]
+            except IndexError:
+                pass
+        ans *= frob_a
+        ans += update
+    return ans << ppow
+
+
+@cython.binding(True)
 def norm_unram(self, base = None):
     """
     Return the absolute or relative norm of this element.
@@ -102,7 +117,7 @@ def norm_unram(self, base = None):
 
     TESTS:
 
-    Check that #11586 has been resolved::
+    Check that :trac:`11586` has been resolved::
 
         sage: R.<x> = QQ[]
         sage: f = x^2 + 3*x + 1
@@ -133,6 +148,8 @@ def norm_unram(self, base = None):
             norm_of_uniformizer = (-1)**self.parent().degree() * self.parent().defining_polynomial()[0]
         return self.parent().ground_ring()(self.unit_part().matrix_mod_pn().det()) * norm_of_uniformizer**self.valuation()
 
+
+@cython.binding(True)
 def trace_unram(self, base = None):
     """
     Return the absolute or relative trace of this element.

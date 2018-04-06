@@ -112,7 +112,7 @@ class ContinuousMap(Morphism):
         sage: Phi.parent() is Hom(M, N)
         True
         sage: type(Phi)
-        <class 'sage.manifolds.continuous_map.TopologicalManifoldHomset_with_category.element_class'>
+        <class 'sage.manifolds.manifold_homset.TopologicalManifoldHomset_with_category.element_class'>
         sage: Phi.display()
         Phi: S^2 --> R^3
         on U: (x, y) |--> (X, Y, Z) = (2*x/(x^2 + y^2 + 1), 2*y/(x^2 + y^2 + 1), (x^2 + y^2 - 1)/(x^2 + y^2 + 1))
@@ -864,7 +864,7 @@ class ContinuousMap(Morphism):
         r"""
         Delete the derived quantities of ``self``.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()

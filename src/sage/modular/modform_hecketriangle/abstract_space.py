@@ -1899,10 +1899,10 @@ class FormsSpace_abstract(FormsRing_abstract):
         uniquely determine a corresponding (quasi) form in ``self`` with the given
         lower bound ``min_exp`` for the order at infinity (for each quasi part).
 
-        .. NOTE:
+        .. NOTE::
 
-        For ``n=infinity`` only the holomorphic case (``min_exp >= 0``)
-        is supported (in particular a non-negative order at ``-1`` is assumed).
+            For ``n=infinity`` only the holomorphic case (``min_exp >= 0``)
+            is supported (in particular a non-negative order at ``-1`` is assumed).
 
         INPUT:
 
@@ -2420,9 +2420,9 @@ class FormsSpace_abstract(FormsRing_abstract):
         r"""
         Return the dimension of ``self``.
 
-        .. NOTE:
+        .. NOTE::
 
-        This method should be overloaded by subclasses.
+            This method should be overloaded by subclasses.
 
         EXAMPLES::
 

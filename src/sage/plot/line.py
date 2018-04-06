@@ -57,7 +57,7 @@ class Line(GraphicPrimitive_xydata):
         EXAMPLES::
 
             sage: from sage.plot.line import Line
-            sage: list(sorted(Line([-1,2], [17,4], {})._allowed_options().iteritems()))
+            sage: list(sorted(Line([-1,2], [17,4], {})._allowed_options().items()))
             [('alpha', 'How transparent the line is.'),
              ('hue', 'The color given as a hue.'),
              ('legend_color', 'The color of the legend text.'),

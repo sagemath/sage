@@ -37,6 +37,7 @@ from sage.modular.modsym.apply import apply_to_monomial
 from sage.modular.modsym.manin_symbol import ManinSymbol
 from sage.structure.sage_object import SageObject
 import sage.structure.formal_sum as formal_sum
+from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.integer_ring import ZZ
 from sage.misc.latex import latex
 
@@ -44,6 +45,8 @@ _C = cusps.Cusps
 
 X, Y = ZZ['X,Y'].gens()
 
+
+@richcmp_method
 class ModularSymbol(SageObject):
     r"""
     The modular symbol `X^i\cdot Y^{k-2-i}\cdot \{\alpha, \beta\}`.
@@ -134,9 +137,9 @@ class ModularSymbol(SageObject):
         return "%s\\left\\{%s, %s\\right\\}"%(polypart,
                   latex(self.__alpha), latex(self.__beta))
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -155,9 +158,10 @@ class ModularSymbol(SageObject):
             True
         """
         if not isinstance(other, ModularSymbol):
-            return cmp(type(self), type(other))
-        return cmp((self.__space,-self.__i,self.__alpha,self.__beta),
-                   (other.__space,-other.__i,other.__alpha,other.__beta))
+            return NotImplemented
+        return richcmp((self.__space, -self.__i, self.__alpha, self.__beta),
+                       (other.__space,-other.__i,other.__alpha,other.__beta),
+                       op)
 
     def space(self):
         """

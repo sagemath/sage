@@ -120,7 +120,7 @@ TESTS::
 
 Check that :trac:`5562` has been fixed::
 
-    sage: R.<u> = PolynomialRing(RDF, 1, 'u')
+    sage: R.<u> = PolynomialRing(RDF, 1)
     sage: v1 = vector([u])
     sage: v2 = vector([CDF(2)])
     sage: v1 * v2
@@ -210,9 +210,7 @@ def is_PolynomialRing(x):
 
     ::
 
-        sage: is_PolynomialRing(PolynomialRing(ZZ,1,'w'))
-        False
-        sage: R = PolynomialRing(ZZ,1,'w'); R
+        sage: R.<w> = PolynomialRing(ZZ, implementation="singular"); R
         Multivariate Polynomial Ring in w over Integer Ring
         sage: is_PolynomialRing(R)
         False
@@ -294,10 +292,9 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
                 self._Karatsuba_threshold = 8
 
     def __reduce__(self):
-        import sage.rings.polynomial.polynomial_ring_constructor
-        return (sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing,
-                (self.base_ring(), self.variable_name(), None, self.is_sparse()))
-
+        from sage.rings.polynomial.polynomial_ring_constructor import unpickle_PolynomialRing
+        args = (self.base_ring(), self.variable_names(), None, self.is_sparse())
+        return unpickle_PolynomialRing, args
 
     def _element_constructor_(self, x=None, check=True, is_gen=False,
                               construct=False, **kwds):
@@ -919,8 +916,16 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
 
     def variable_names_recursive(self, depth=sage.rings.infinity.infinity):
         r"""
-        Returns the list of variable names of this and its base rings, as if
-        it were a single multi-variate polynomial.
+        Return the list of variable names of this ring and its base rings,
+        as if it were a single multi-variate polynomial.
+
+        INPUT:
+
+        - ``depth`` -- an integer or :mod:`Infinity <sage.rings.infinity>`.
+
+        OUTPUT:
+
+        A tuple of strings.
 
         EXAMPLES::
 
@@ -1084,6 +1089,7 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
             return True
         return False
 
+    @cached_method
     def is_exact(self):
         return self.base_ring().is_exact()
 
@@ -1589,7 +1595,7 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, ring.IntegralDo
                     element_class = Polynomial_integer_dense_flint
                     self._implementation_names = (None, 'FLINT')
                 else:
-                    raise ValueError("Unknown implementation %s for ZZ[x]"%implementation)
+                    raise ValueError("unknown implementation %r for ZZ[%r]" % (implementation, name[0]))
         PolynomialRing_commutative.__init__(self, base_ring, name=name,
                 sparse=sparse, element_class=element_class, category=category)
 
@@ -1620,11 +1626,11 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             sage: R = PRing(QQ, 'x', sparse=True); R
             Sparse Univariate Polynomial Ring in x over Rational Field
             sage: type(R.gen())
-            <class 'sage.rings.polynomial.polynomial_element_generic.PolynomialRing_field_with_category.element_class'>
+            <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
             sage: R = PRing(CC, 'x'); R
             Univariate Polynomial Ring in x over Complex Field with 53 bits of precision
             sage: type(R.gen())
-            <class 'sage.rings.polynomial.polynomial_element_generic.PolynomialRing_field_with_category.element_class'>
+            <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
 
         Demonstrate that :trac:`8762` is fixed::
 
@@ -1922,7 +1928,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
         # sage.tests.french_book.nonlinear_doctest where the base ring
         # is CC, but the function values lie in the symbolic ring.
         to_base_ring = self.base_ring()
-        points = map(lambda x: map(to_base_ring, x), points)
+        points = [[to_base_ring(u) for u in x] for x in points]
         var = self.gen()
 
         # use the method of divided-difference
@@ -2019,7 +2025,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
     """
     Univariate polynomial ring over a finite field.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: R = PolynomialRing(GF(27, 'a'), 'x')
         sage: type(R)
@@ -2032,7 +2038,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_finite_field
             sage: R = PolynomialRing_dense_finite_field(GF(5), implementation='generic')
             sage: type(R(0))
-            <class 'sage.rings.polynomial.polynomial_element_generic.PolynomialRing_dense_finite_field_with_category.element_class'>
+            <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_finite_field_with_category.element_class'>
 
             sage: S = PolynomialRing_dense_finite_field(GF(25, 'a'), implementation='NTL')
             sage: type(S(0))
@@ -2108,7 +2114,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
 
     def _roth_ruckenstein(self, p, degree_bound, precision):
         r"""
-        Returns all polynomials which are a solution to the, possibly modular,
+        Return all polynomials which are a solution to the, possibly modular,
         root-finding problem.
 
         This is the core of Roth-Ruckenstein's algorithm where all conversions,
@@ -2122,17 +2128,21 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
         - ``degree_bound`` -- a bound on the degree of the roots of ``p`` that
           the algorithm computes
 
-        - ``precision`` -- a non-negative integer or `None`. If given, it is the
-          sought precision for modular roots of `p`. Otherwise, the algorithm
-          computes unconditional roots.
+        - ``precision`` -- if given, roots are computed modulo `x^d` where `d` is
+          ``precision`` (see below)
 
         OUTPUT:
 
-        - a list containing all `F[x]` roots of `p(y)`, possibly modular. If
-        ``precision`` is given, the algorithm returns a list of pairs `(f, h)`,
-        where `f` is a polynomial and `h` is a non-negative integer such that
-        `p(f + x^{h}*g) \equiv 0 \mod x^{d}` for any `g \in F[x]`, where `d` is
-        ``precision``.
+        The list of roots of ``p`` of degree at most ``degree_bound``:
+
+        - If `precision = None` actual roots are computed, i.e. all `f \in F[x]`
+          such that `p(f) = 0`.
+
+        - If ``precision = k`` for some integer ``k``, then all `f \in \F[x]` such
+          that `Q(f) \equiv 0 \mod x^k` are computed. This set is infinite, thus it
+          represented as a list of pairs in `F[x] \times \mathbb{Z}_+`, where
+          `(f, d)` denotes that `Q(f + x^d h) \equiv 0 \mod x^k` for any `h \in
+          F[[x]]`.
 
         EXAMPLES::
 
@@ -2194,6 +2204,141 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
         roth_rec(p, 0, precision, g)
         return solutions
 
+    def _alekhnovich(self, p, degree_bound, precision=None, dc_threshold=None):
+        r"""
+        Use Alekhnovich's Divide & Conquer variant of Roth-Ruckenstein's
+        rootfinding algorithm to find roots modulo-up-to-some-precision of a `Q \in
+        F[x][y]` where `F` is a finite field. Supports a mixed strategy with
+        Roth-Ruckenstein applied at lowest precision.
+
+        INPUT:
+
+        - ``p`` -- a nonzero polynomial over ``F[x][y]``. The polynomial ``p``
+          should be first truncated to ``precision``
+
+        - ``degree_bound`` -- a bound on the degree of the roots of ``p`` that
+          the algorithm computes
+
+        - ``precision`` -- if given, roots are computed modulo `x^d` where `d` is
+          ``precision`` (see below)
+
+        - ``dc_threshold`` -- if given, the algorithm calls :meth:`_roth_ruckenetein`
+          to compute roots of degree at most ``dc_threshold``
+
+        OUTPUT:
+
+        The list of roots of ``p`` of degree at most ``degree_bound``:
+
+        - If `precision = None` actual roots are computed, i.e. all `f \in F[x]`
+          such that `p(f) = 0`.
+
+        - If ``precision = k`` for some integer ``k``, then all `f \in \F[x]` such
+          that `Q(f) \equiv 0 \mod x^k` are computed. This set is infinite, thus it
+          represented as a list of pairs in `F[x] \times \mathbb{Z}_+`, where
+          `(f, d)` denotes that `Q(f + x^d h) \equiv 0 \mod x^k` for any `h \in
+          F[[x]]`.
+
+        .. NOTE::
+
+            Non-exhaustive testing tends to indicate that ``dc_threhold = None`` is,
+            surprisingly, the best strategy. (See the example section.)
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(17)[]
+            sage: S.<y> = R[]
+            sage: p = (y - 2*x^2 - 3*x - 14) * (y - 3*x + 2) * (y - 1)
+            sage: R._alekhnovich(p, 2)
+            [3*x + 15, 2*x^2 + 3*x + 14, 1]
+            sage: R._alekhnovich(p, 1)
+            [3*x + 15, 1]
+            sage: R._alekhnovich(p, 1, precision = 2)
+            [(3*x + 15, 2), (3*x + 14, 2), (1, 2)]
+
+        Example of benchmark to check that `dc_threshold = None` is better::
+
+            sage: p = prod(y - R.random_element(20) for _ in range(10)) * S.random_element(10,10) # not tested
+            sage: %timeit _alekhnovich(R, p, 20, dc_threshold = None) # not tested
+            1 loop, best of 3: 418 ms per loop
+            sage: %timeit _alekhnovich(R, p, 20, dc_threshold = 1) # not tested
+            1 loop, best of 3: 416 ms per loop
+            sage: %timeit _alekhnovich(R, p, 20, dc_threshold = 2) # not tested
+            1 loop, best of 3: 418 ms per loop
+            sage: %timeit _alekhnovich(R, p, 20, dc_threshold = 3) # not tested
+            1 loop, best of 3: 454 ms per loop
+            sage: %timeit _alekhnovich(R, p, 20, dc_threshold = 4) # not tested
+            1 loop, best of 3: 519 ms per loop
+
+        AUTHORS:
+
+        - Johan Rosenkilde (2015) -- Original implementation
+        - Bruno Grenet (August 2016) -- Incorporation into SageMath and polishing
+        """
+        def alekh_rec(p, k, degree_bound, lvl):
+            r"""
+            Recursive core method for Alekhnovich algorithm."
+
+            INPUT:
+
+            - ``p`` -- the current value of the polynomial
+            - ``k`` -- the number of coefficients left to be computed
+            - ``degree_bound`` -- the current degree bound
+            - ``lvl`` -- the level in the recursion tree
+            """
+            if k<=0:
+                return [ (self.zero(),0) ]
+            elif degree_bound < 0:
+                # The only possible root of (current) p, if any, is y = 0
+                if p(0).is_zero() or p(0).valuation() >= k:
+                    return [ (self.zero(),0) ]
+                else:
+                    return []
+            elif k == 1 or degree_bound == 0:
+                #Either one coefficient left to be computed, or p has only one coefficient
+                py = self([c[0] for c in p.list()])  # py = p(x=0, y)
+                if py.is_zero():
+                    return [ (self.zero(), 0) ]
+                roots = py.roots(multiplicities=False)
+                return [ (self(r),1) for r in roots ]
+            elif k < dc_threshold:
+                # Run Roth-Ruckenstein
+                return self._roth_ruckenstein(p, degree_bound=degree_bound, precision=k)
+            else:
+                p = p.map_coefficients(lambda c:c.truncate(k))
+                half_roots = alekh_rec(p, k//2, degree_bound, lvl+1)
+                whole_roots = []
+                for (hi, di) in half_roots:
+                    QhatT = p(hi + y*x**di)
+                    if not QhatT:
+                        whole_roots.append((hi,di))
+                    else:
+                        val = min(c.valuation() for c in QhatT)
+                        Qhat = QhatT.map_coefficients(lambda c:c.shift(-val))
+                        sec_half = alekh_rec(Qhat, k-val, degree_bound - di, lvl+1)
+                        whole_roots.extend([ (hi + hij.shift(di), di+dij) for (hij, dij) in sec_half ])
+                return whole_roots
+
+        x = self.gen()
+        y = p.parent().gen()
+
+        # If precision is not given, find actual roots. To be sure, precision then
+        # needs to be more than wdeg{1,degree_bound}(Q) since a root might have degree degree_bound.
+        if precision is None:
+            k = 1 + max( p[i].degree() + degree_bound*i for i in range(1+p.degree()))
+        else:
+            k = precision
+
+        mod_roots = alekh_rec(p, k, degree_bound, 0)
+
+        if precision is None:
+            roots = []
+            for hi,_ in mod_roots:
+                if p(hi).is_zero():
+                    roots.append(hi)
+            return roots
+        else:
+            return mod_roots
+
     def _roots_univariate_polynomial(self, p, ring=None, multiplicities=False, algorithm=None, degree_bound=None):
         """
         Return the list of roots of ``p``.
@@ -2202,10 +2347,10 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
 
         - ``p`` -- the polynomial whose roots are computed
         - ``ring`` -- the ring to find roots (default is the base ring of ``p``)
-        - ``multiplicities`` -- bool (default: True): currently, only roots
-          without multiplicities are computed.
-        - ``algorithm`` -- the algorithm to use; currently, the only supported
-          algorithm is ``"Roth-Ruckenstein"``
+        - ``multiplicities`` -- bool (default: True): currently, roots are only
+          computed without their multiplicities.
+        - ``algorithm`` -- the algorithm to use: either ``"Alekhnovich"`` (default)
+          or ``"Roth-Ruckenstein"``
         - ``degree_bound``-- if not ``None``, return only roots of degree at
           most ``degree_bound``
 
@@ -2218,11 +2363,11 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             [x^2 + 11*x + 1, x + 1]
             sage: p.roots(multiplicities=False, degree_bound=1)
             [x + 1]
+            sage: p.roots(multiplicities=False, algorithm="Roth-Ruckenstein")
+            [x^2 + 11*x + 1, x + 1]
         """
         if multiplicities:
             raise NotImplementedError("Use multiplicities=False")
-
-#        Q = p.list()
 
         if degree_bound is None:
             l = p.degree()
@@ -2230,13 +2375,13 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             degree_bound = max((p[i].degree() - dl)//(l - i) for i in range(l) if p[i])
 
         if algorithm is None:
-            algorithm = "Roth-Ruckenstein"
+            algorithm = "Alekhnovich"
 
         if algorithm == "Roth-Ruckenstein":
             return self._roth_ruckenstein(p, degree_bound, None)
 
         elif algorithm == "Alekhnovich":
-            raise NotImplementedError("Alekhnovich algorithm is not implemented yet")
+            return self._alekhnovich(p, degree_bound)
 
         else:
             raise ValueError("unknown algorithm '{}'".format(algorithm))
@@ -2320,7 +2465,7 @@ class PolynomialRing_dense_padic_ring_capped_relative(PolynomialRing_dense_padic
             sage: R = PRing(Zp(13), name='t'); R
             Univariate Polynomial Ring in t over 13-adic Ring with capped relative precision 20
             sage: type(R.gen())
-            <class 'sage.rings.polynomial.padics.polynomial_padic_capped_relative_dense.PolynomialRing_dense_padic_ring_capped_relative_with_category.element_class'>
+            <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_padic_ring_capped_relative_with_category.element_class'>
         """
         if element_class is None:
             from sage.rings.polynomial.padics.\
@@ -2339,7 +2484,7 @@ class PolynomialRing_dense_padic_ring_capped_absolute(PolynomialRing_dense_padic
             sage: R = PRing(Zp(13, type='capped-abs'), name='t'); R
             Univariate Polynomial Ring in t over 13-adic Ring with capped absolute precision 20
             sage: type(R.gen())
-            <class 'sage.rings.polynomial.padics.polynomial_padic_flat.PolynomialRing_dense_padic_ring_capped_absolute_with_category.element_class'>
+            <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_padic_ring_capped_absolute_with_category.element_class'>
         """
         if element_class is None:
             from sage.rings.polynomial.padics.polynomial_padic_flat import \
@@ -2358,31 +2503,12 @@ class PolynomialRing_dense_padic_ring_fixed_mod(PolynomialRing_dense_padic_ring_
             Univariate Polynomial Ring in t over 13-adic Ring of fixed modulus 13^20
 
             sage: type(R.gen())
-            <class 'sage.rings.polynomial.padics.polynomial_padic_flat.PolynomialRing_dense_padic_ring_fixed_mod_with_category.element_class'>
+            <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_padic_ring_fixed_mod_with_category.element_class'>
         """
         if element_class is None:
             from sage.rings.polynomial.padics.polynomial_padic_flat import \
                     Polynomial_padic_flat
             element_class = Polynomial_padic_flat
-        PolynomialRing_dense_padic_ring_generic.__init__(self, base_ring,
-                name=name, element_class=element_class, category=category)
-
-class PolynomialRing_dense_padic_ring_lazy(PolynomialRing_dense_padic_ring_generic):
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
-        """
-        TESTS::
-
-            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_padic_ring_lazy as PRing
-            sage: R = PRing(Zp(13, type='lazy'), name='t')
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: lazy p-adics need more work.  Sorry.
-
-            #sage: type(R.gen())
-
-        """
-        if element_class is None:
-            element_class = polynomial_element_generic.Polynomial_generic_dense
         PolynomialRing_dense_padic_ring_generic.__init__(self, base_ring,
                 name=name, element_class=element_class, category=category)
 
@@ -2395,31 +2521,13 @@ class PolynomialRing_dense_padic_field_capped_relative(PolynomialRing_dense_padi
             sage: R = PRing(Qp(13), name='t'); R
             Univariate Polynomial Ring in t over 13-adic Field with capped relative precision 20
             sage: type(R.gen())
-            <class 'sage.rings.polynomial.padics.polynomial_padic_capped_relative_dense.PolynomialRing_dense_padic_field_capped_relative_with_category.element_class'>
+            <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_padic_field_capped_relative_with_category.element_class'>
         """
         if element_class is None:
             from sage.rings.polynomial.padics.\
                     polynomial_padic_capped_relative_dense import \
                     Polynomial_padic_capped_relative_dense
             element_class = Polynomial_padic_capped_relative_dense
-        PolynomialRing_dense_padic_field_generic.__init__(self, base_ring,
-                name=name, element_class=element_class, category=category)
-
-class PolynomialRing_dense_padic_field_lazy(PolynomialRing_dense_padic_field_generic):
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
-        """
-        TESTS::
-
-            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_padic_field_lazy as PRing
-            sage: R = PRing(Qp(13, type='lazy'), name='t')
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: lazy p-adics need more work.  Sorry.
-
-            #sage: type(R.gen())
-        """
-        if element_class is None:
-            element_class = polynomial_element_generic.Polynomial_generic_dense
         PolynomialRing_dense_padic_field_generic.__init__(self, base_ring,
                 name=name, element_class=element_class, category=category)
 

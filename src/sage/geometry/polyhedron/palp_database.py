@@ -35,9 +35,10 @@ from sage.structure.sage_object import SageObject
 from sage.matrix.all import matrix
 from sage.rings.all import Integer, ZZ
 
+from sage.interfaces.process import terminate
+
 from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
 from sage.geometry.polyhedron.constructor import Polyhedron
-
 
 
 #########################################################################
@@ -75,7 +76,7 @@ class PALPreader(SageObject):
         sage: next(iter(PALPreader(2, output='Polyhedron')))
         A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
         sage: type(_)
-        <class 'sage.geometry.polyhedron.backend_ppl.Polyhedra_ZZ_ppl_with_category.element_class'>
+        <class 'sage.geometry.polyhedron.parent.Polyhedra_ZZ_ppl_with_category.element_class'>
 
         sage: next(iter(PALPreader(2, output='PPL')))
         A 2-dimensional lattice polytope in ZZ^2 with 3 vertices
@@ -206,8 +207,9 @@ class PALPreader(SageObject):
             start = 0
         if step is None:
             step = 1
+
         palp = self._palp_Popen()
-        try:
+        with terminate(palp):
             palp_out = palp.stdout
             i = 0
             while True:
@@ -231,14 +233,6 @@ class PALPreader(SageObject):
                 i += 1
                 if stop is not None and i>=stop:
                     return
-        finally:
-            palp.poll()
-            if palp.returncode is None:
-                palp.terminate()
-            palp.poll()
-            if palp.returncode is None:
-                palp.kill()
-
 
     def _iterate_Polyhedron(self, start, stop, step):
         """

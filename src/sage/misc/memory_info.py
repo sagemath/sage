@@ -178,7 +178,7 @@ class MemoryInfo_proc(MemoryInfo_base):
             sage: mem = MemoryInfo()
             sage: if isinstance(mem, MemoryInfo_proc):
             ....:     info = mem._parse_proc_meminfo()
-            ... else:
+            ....: else:
             ....:     info = None
             sage: info   # random output
             {'available_ram': 1749782528,
@@ -351,7 +351,7 @@ class MemoryInfo_OSX(MemoryInfo_base):
             sage: mem = MemoryInfo()
             sage: if isinstance(mem, MemoryInfo_OSX):
             ....:     info = mem._parse_top()
-            ... else:
+            ....: else:
             ....:     info = None
             sage: info   # random output
             {'available_ram': 1749782528,

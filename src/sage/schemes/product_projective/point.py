@@ -23,10 +23,10 @@ We construct products projective spaces of various dimensions over the same ring
 from copy import copy
 from sage.categories.integral_domains import IntegralDomains
 from sage.rings.fraction_field import FractionField
-from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.morphism import SchemeMorphism
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.structure.sequence import Sequence
+from sage.structure.richcmp import richcmp
 
 
 class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
@@ -139,18 +139,17 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         """
         return('(%s)'%(" , ".join((" : ".join([repr(f) for f in Q])) for Q in self._points)))
 
-    def __eq__(self, other):
+    def _richcmp_(self, right, op):
         r"""
-        Tests the projective equality of two points.
+        Compare two points in products of projective spaces.
 
         INPUT:
 
-        - ``right`` - a point on a product of projective spaces.
+        - ``other`` -- another point
 
         OUTPUT:
 
-        - Boolean - ``True`` if the two points define the same point.
-          ``False`` otherwise.
+        boolean
 
         EXAMPLES::
 
@@ -159,24 +158,6 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: Q = T([2, 4, 6, 4, 5, 6])
             sage: P == Q
             True
-        """
-        for i in range(self.codomain().ambient_space().num_components()):
-           if self[i] != other[i]:
-               return False
-        return True
-
-    def __ne__(self, other):
-        r"""
-        Tests the projective inequality of two points.
-
-        INPUT:
-
-        - ``right`` -- a point on a product of projective spaces.
-
-        OUTPUT:
-
-        - Boolean - ``False`` if the two points define the same point.
-          ``True`` otherwise.
 
         EXAMPLES::
 
@@ -185,53 +166,36 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: Q = T([2, 4, 6, 4, 1, 0])
             sage: P != Q
             True
-        """
-        for i in range(self.codomain().ambient_space().num_components()):
-           if self[i] != other[i]:
-               return True
-        return False
-
-    def __cmp__(self, right):
-        r"""
-        Compare two points in products of projective spaces.
-
-        INPUT:
-
-        - ``other`` -- anything. To compare against this point.
-
-        OUTPUT:
-
-        ``+1``, ``0``, or ``-1``.
 
         EXAMPLES::
 
             sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')
             sage: P = T([3, 2, 3, 4, 1, 0])
             sage: Q = T([1, 2, 3, 4, 3, 1])
-            sage: P.__cmp__(Q)
-            1
+            sage: P > Q
+            True
 
         ::
 
             sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')
             sage: P = T([1, 2, 3, 4, 1, 0])
             sage: Q = T([1, 2, 3, 4, 3, 0])
-            sage: P.__cmp__(Q)
-            0
+            sage: P == Q
+            True
 
         ::
 
             sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')
             sage: P = T([1, 2, 3, 4, 1, 0])
             sage: Q = T([1, 2, 3, 4, 3, 1])
-            sage: P.__cmp__(Q)
-            -1
+            sage: P < Q
+            True
         """
         #needed for Digraph
         if not isinstance(right, (ProductProjectiveSpaces_point_ring)):
-            return -1
+            return NotImplemented
         else:
-            return(cmp(self._points, right._points))
+            return richcmp(self._points, right._points, op)
 
     def __copy__(self):
         r"""
@@ -423,45 +387,19 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         EXAMPLES::
 
-            sage: Z.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], QQ)
-            sage: H = End(Z)
-            sage: f = H([a^3, b^3 + a*b^2, x^2, y^2 - z^2, z*y])
-            sage: P = Z([1, 1, 1, 1, 1])
-            sage: P.nth_iterate(f, 3)
-            (1/1872 : 1 , 1 : 1 : 0)
-
-        ::
-
             sage: Z.<a,b,x,y> = ProductProjectiveSpaces([1, 1], ZZ)
-            sage: H = End(Z)
-            sage: f = H([a*b, b^2, x^3 - y^3, y^2*x])
+            sage: f = DynamicalSystem_projective([a*b, b^2, x^3 - y^3, y^2*x], domain=Z)
             sage: P = Z([2, 6, 2, 4])
             sage: P.nth_iterate(f, 2, normalize = True)
+            doctest:warning
+            ...
             (1 : 3 , 407 : 112)
 
         .. TODO:: Is there a more efficient way to do this?
         """
-        if self.codomain() != f.domain():
-            raise TypeError("point is not defined over domain of function")
-        if not f.is_endomorphism():
-            raise TypeError("domain and codomain of function not equal")
-        try:
-            n = ZZ(n)
-        except TypeError:
-            raise TypeError("iterate number must be an integer")
-        if n < 0:
-            raise TypeError("must be a forward orbit")
-        if n == 0:
-            return(self)
-        else:
-            Q = f(self)
-            if normalize == True:
-                Q.normalize_coordinates()
-            for i in range(2,n+1):
-                Q = f(Q)
-                if normalize == True:
-                    Q.normalize_coordinates()
-            return(Q)
+        from sage.misc.superseded import deprecation
+        deprecation(23479, "use f.nth_iterate(P, n, normalize) instead")
+        return f.nth_iterate(self, n, normalize)
 
     def orbit(self, f, N, **kwds):
         r"""
@@ -493,55 +431,17 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         EXAMPLES::
 
-            sage: Z.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], QQ)
-            sage: H = End(Z)
-            sage: f = H([a^3, b^3 + a*b^2, x^2, y^2 - z^2, z*y])
-            sage: P = Z([1, 1, 1, 1, 1])
-            sage: P.orbit(f, 3)
-            [(1 : 1 , 1 : 1 : 1), (1/2 : 1 , 1 : 0 : 1), (1/12 : 1 , -1 : 1 : 0), (1/1872 : 1 , 1 : 1 : 0)]
-
-        ::
-
             sage: Z.<a,b,x,y> = ProductProjectiveSpaces([1, 1], ZZ)
-            sage: H = End(Z)
-            sage: f = H([a*b, b^2, x^3 - y^3, y^2*x])
+            sage: f = DynamicalSystem_projective([a*b, b^2, x^3 - y^3, y^2*x], domain=Z)
             sage: P = Z([2, 6, 2, 4])
             sage: P.orbit(f, 3, normalize = True)
+            doctest:warning
+            ...
             [(1 : 3 , 1 : 2), (1 : 3 , -7 : 4), (1 : 3 , 407 : 112), (1 : 3 , 66014215 : 5105408)]
         """
-        if self.codomain() != f.domain():
-            raise TypeError("point is not defined over domain of function")
-        if not f.is_endomorphism():
-            raise TypeError("domain and codomain of function not equal")
-        if (isinstance(N, (list,tuple)) == False):
-            N = [0, N]
-        try:
-            N[0] = ZZ(N[0])
-            N[1] = ZZ(N[1])
-        except TypeError:
-            raise TypeError("orbit bounds must be integers")
-        if N[0] < 0 or N[1] < 0:
-            raise TypeError("orbit bounds must be non-negative")
-        if N[0] > N[1]:
-            return([])
-
-        Q=copy(self)
-        check = kwds.pop("check", True)
-        normalize = kwds.pop("normalize", False)
-
-        if normalize == True:
-            Q.normalize_coordinates()
-        for i in range(1, N[0]+1):
-            Q = f(Q, check)
-            if normalize == True:
-                Q.normalize_coordinates()
-        Orb = [Q]
-        for i in range(N[0]+1, N[1]+1):
-            Q = f(Q, check)
-            if normalize == True:
-                Q.normalize_coordinates()
-            Orb.append(Q)
-        return(Orb)
+        from sage.misc.superseded import deprecation
+        deprecation(23479, "use f.orbit(P, N, **kwds) instead")
+        return f.orbit(self, N, **kwds)
 
 class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
 

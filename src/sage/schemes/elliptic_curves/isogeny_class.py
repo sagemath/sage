@@ -26,9 +26,11 @@ AUTHORS:
 ##############################################################################
 from __future__ import print_function
 from __future__ import absolute_import
-
 import six
+from six.moves import range
+
 from sage.structure.sage_object import SageObject
+from sage.structure.richcmp import richcmp_method, richcmp
 from . import constructor
 import sage.databases.cremona
 from sage.rings.all import ZZ, QQ
@@ -38,6 +40,8 @@ from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
 from sage.schemes.elliptic_curves.ell_rational_field import EllipticCurve_rational_field
 from sage.schemes.elliptic_curves.ell_number_field import EllipticCurve_number_field
 
+
+@richcmp_method
 class IsogenyClass_EC(SageObject):
     r"""
     Isogeny class of an elliptic curve.
@@ -138,9 +142,9 @@ class IsogenyClass_EC(SageObject):
                 return i
         raise ValueError("%s is not in isogeny class %s" % (C,self))
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
-        Returns 0 if self and other are the same isogeny class.
+        Compare self and other.
 
         If they are different, compares the sorted underlying lists of
         curves.
@@ -157,8 +161,8 @@ class IsogenyClass_EC(SageObject):
             True
         """
         if isinstance(other, IsogenyClass_EC):
-            return cmp(sorted(self.curves), sorted(other.curves))
-        return cmp(type(self), type(other))
+            return richcmp(sorted(self.curves), sorted(other.curves), op)
+        return NotImplemented
 
     def __hash__(self):
         """
@@ -382,7 +386,7 @@ class IsogenyClass_EC(SageObject):
         Returns a graph whose vertices correspond to curves in this
         class, and whose edges correspond to prime degree isogenies.
 
-        .. note:
+        .. note::
 
             There are only finitely many possible isogeny graphs for
             curves over `\QQ` [M78].  This function tries to lay out
@@ -390,7 +394,7 @@ class IsogenyClass_EC(SageObject):
             This could also be done over other number fields, such as
             quadratic fields.
 
-        .. note:
+        .. note::
 
             The vertices are labeled 1 to n rather than 0 to n-1 to
             match LMFDB and Cremona labels for curves over `\QQ`.
@@ -420,7 +424,7 @@ class IsogenyClass_EC(SageObject):
                     for j in range(n):
                         if M[i,j]:
                             G.set_edge_label(i,j,str(self._qfmat[i][j]))
-            G.relabel(range(1,n+1))
+            G.relabel(list(range(1, n + 1)))
             return G
 
 
@@ -495,7 +499,7 @@ class IsogenyClass_EC(SageObject):
                     right.append([j for j in range(8) if N[centers[1],j] == 2 and N[left[i],j] == 3][0])
                 G.set_pos(pos={centers[0]:[-0.75,0],centers[1]:[0.75,0],left[0]:[-0.75,1],right[0]:[0.75,1],left[1]:[-1.25,-0.75],right[1]:[0.25,-0.75],left[2]:[-0.25,-0.25],right[2]:[1.25,-0.25]})
         G.set_vertices(D)
-        G.relabel(range(1,n+1))
+        G.relabel(list(range(1, n + 1)))
         return G
 
     @cached_method
@@ -986,7 +990,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
             sage: E.isogeny_class(order='database')
             Traceback (most recent call last):
             ...
-            RuntimeError: unable to to find Elliptic Curve defined by y^2 = x^3 + 1001 over Rational Field in the database
+            LookupError: Cremona database does not contain entry for Elliptic Curve defined by y^2 = x^3 + 1001 over Rational Field
             sage: TestSuite(isocls).run()
         """
         self._algorithm = algorithm
@@ -1040,13 +1044,13 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
             try:
                 label = self.E.cremona_label(space=False)
             except RuntimeError:
-                raise RuntimeError("unable to to find %s in the database"%self.E)
+                raise RuntimeError("unable to find %s in the database" % self.E)
             db = sage.databases.cremona.CremonaDatabase()
             curves = db.isogeny_class(label)
             if len(curves) == 0:
-                raise RuntimeError("unable to to find %s in the database"%self.E)
+                raise RuntimeError("unable to find %s in the database" % self.E)
             # All curves will have the same conductor and isogeny class,
-            # and there are are most 8 of them, so lexicographic sorting is okay.
+            # and there are most 8 of them, so lexicographic sorting is okay.
             self.curves = tuple(sorted(curves, key = lambda E: E.cremona_label()))
             self._mat = None
         elif algorithm == "sage":
@@ -1072,7 +1076,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
                     ijl_triples.append((i,j,l,phi))
                 if l_list is None:
                     l_list = [l for l in set([ZZ(f.degree()) for f in isogs])]
-                i = i+1
+                i += 1
             self.curves = tuple(curves)
             ncurves = len(curves)
             self._mat = MatrixSpace(ZZ,ncurves)(0)
@@ -1081,10 +1085,12 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
                 self._mat[i,j] = l
                 self._maps[i][j]=phi
         else:
-            raise ValueError("unknown algorithm '%s'"%algorithm)
+            raise ValueError("unknown algorithm '%s'" % algorithm)
+
 
 def possible_isogeny_degrees(E, verbose=False):
-    r""" Return a list of primes `\ell` sufficient to generate the
+    r"""
+    Return a list of primes `\ell` sufficient to generate the
     isogeny class of `E`.
 
     INPUT:

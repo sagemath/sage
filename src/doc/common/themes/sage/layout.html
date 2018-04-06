@@ -2,12 +2,12 @@
 
 {% block rootrellink %}
   {% if docstitle.startswith('Sage Documentation') %}
-    <a href="http://www.sagemath.org"><img src="{{ pathto('_static/sagelogo.png', 1) }}" style="vertical-align: middle" title="Sage Logo"></a>
+    <a href="http://www.sagemath.org"><img src="{{ pathto('_static/logo_sagemath_black.svg', 1) }}" height="28" style="vertical-align: middle" title="Sage Logo"></a>
   {% else %}
     {% if pathto(master_doc).endswith('.html') %}
-      <a href="{{ '../' + pathto(master_doc) }}"><img src="{{ pathto('_static/sagelogo.png', 1) }}" style="vertical-align: middle" title="Sage Logo"></a>
+      <a href="{{ '../' + pathto(master_doc) }}"><img src="{{ pathto('_static/logo_sagemath_black.svg', 1) }}" height="28" style="vertical-align: middle" title="Sage Logo"></a>
     {% else %}
-      <a href="{{ '../' + pathto(master_doc, 1) + '.html' }}"><img src="{{ pathto('_static/sagelogo.png', 1) }}" style="vertical-align: middle" title="Sage Logo"></a>
+      <a href="{{ '../' + pathto(master_doc, 1) + '.html' }}"><img src="{{ pathto('_static/logo_sagemath_black.svg', 1) }}" height="28" style="vertical-align: middle" title="Sage Logo"></a>
     {% endif %}
   {% endif %}
   {{ super() }}

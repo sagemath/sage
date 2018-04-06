@@ -65,11 +65,10 @@ Methods
 """
 
 from libcpp.vector cimport vector
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.sets.set import Set
 from sage.graphs.graph import Graph
-
-include "cysignals/signals.pxi"
 
 cdef extern from "tdlib/sage_tdlib.cpp":
      int sage_exact_decomposition(vector[unsigned int] &V_G, vector[unsigned int] &E_G, vector[vector[int]] &V_T, vector[unsigned int] &E_T, int lb)
@@ -127,7 +126,7 @@ def treedecomposition_exact(G, lb=-1):
         sage: T = tdlib.treedecomposition_exact(G)                   # optional - tdlib
         sage: T.show(vertex_size=2000)                               # optional - tdlib
 
-    TEST::
+    TESTS::
 
         sage: import sage.graphs.graph_decompositions.tdlib as tdlib # optional - tdlib
         sage: G = graphs.HouseGraph()                                # optional - tdlib

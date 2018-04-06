@@ -331,7 +331,7 @@ Sage example in ./calculus.tex, line 914::
 Sage example in ./calculus.tex, line 929::
 
     sage: v(x) = diff(u(x), x); sol = solve(v(x) == 0, x); sol
-    [x == 100/log(100), x == 0]
+    [x == 50/log(10), x == 0]
     sage: floor(sol[0].rhs())
     21
 

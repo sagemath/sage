@@ -6,8 +6,6 @@ Features of this library include *incredibly fast* arithmetic with
 polynomials and asymptotically fast factorization of polynomials.
 """
 
-__doc_exclude = []  # to include everything
-
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #

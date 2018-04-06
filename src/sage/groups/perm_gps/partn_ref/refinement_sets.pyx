@@ -17,15 +17,18 @@ REFERENCE:
 """
 
 #*****************************************************************************
-#      Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
+#       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'data_structures_pyx.pxi' # includes bitsets
-
+from .data_structures cimport *
 from .double_coset cimport double_coset
+include "sage/data_structures/bitset.pxi"
 
 
 def set_stab_py(generators, sett, relab=False):
@@ -383,7 +386,7 @@ def sets_isom_py(generators, set1, set2):
     set2 = uniq(set2)
     if len(generators) == 0:
         if set1 == set2:
-            return range(max(set1)+1)
+            return list(xrange(max(set1) + 1))
         else:
             return False
     cdef int i, j, n = len(generators[0]), n_gens = len(generators)
@@ -651,7 +654,7 @@ cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it):
             deallocate_cgd(cgd)
             return 1
     it.data = <void *> cgd
-    it.next = &canonical_generator_next
+    it.next = canonical_generator_next
     return 0
 
 cdef void free_subset_gen(iterator *subset_gen):
@@ -806,7 +809,7 @@ def sets_modulo_perm_group(list generators, int max_size, bint indicate_mem_err 
     if len(generators) == 0:
         ll = []
         for i in range(max_size,-1,-1):
-            ll.append(range(i))
+            ll.append(list(xrange(i)))
         return ll
     cdef int n = len(generators[0]), n_gens = len(generators)
     cdef iterator *subset_iterator

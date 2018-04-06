@@ -9,6 +9,10 @@
 from sphinx.builders.html import StandaloneHTMLBuilder
 from sphinx.util.console import bold
 from os import path
+
+import six
+
+
 try:
     from hashlib import md5
 except ImportError:
@@ -24,7 +28,7 @@ class InventoryBuilder(StandaloneHTMLBuilder):
 
     def get_outdated_docs(self):
         cfgdict = dict((name, self.config[name])
-                       for (name, desc) in self.config.values.iteritems()
+                       for (name, desc) in six.iteritems(self.config.values)
                        if desc[1] == 'html')
         self.config_hash = md5(unicode(cfgdict).encode('utf-8')).hexdigest()
         self.tags_hash = md5(unicode(sorted(self.tags)).encode('utf-8')) \

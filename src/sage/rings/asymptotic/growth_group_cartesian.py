@@ -16,21 +16,6 @@ ACKNOWLEDGEMENT:
 
 - Benjamin Hackl is supported by the Google Summer of Code 2015.
 
-.. WARNING::
-
-    As this code is experimental, warnings are thrown when a growth
-    group is created for the first time in a session (see
-    :class:`sage.misc.superseded.experimental`).
-
-    TESTS::
-
-        sage: from sage.rings.asymptotic.growth_group import GenericGrowthGroup, GrowthGroup
-        sage: GenericGrowthGroup(ZZ)
-        doctest:...: FutureWarning: This class/method/function is marked as
-        experimental. It, its functionality or its interface might change
-        without a formal deprecation.
-        See http://trac.sagemath.org/17601 for details.
-        Growth Group Generic(ZZ)
 
 TESTS::
 
@@ -97,10 +82,10 @@ Classes and Methods
 from __future__ import print_function
 from __future__ import absolute_import
 
-import sage
+from sage.structure.factory import UniqueFactory
 
 
-class CartesianProductFactory(sage.structure.factory.UniqueFactory):
+class CartesianProductFactory(UniqueFactory):
     r"""
     Create various types of Cartesian products depending on its input.
 
@@ -381,8 +366,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         if all(n.parent() is f for n, f in zip(element, factors)):
             parent = self
         else:
-            from .misc import underlying_class
-            parent = underlying_class(self)(tuple(n.parent() for n in element),
+            parent = self._underlying_class()(tuple(n.parent() for n in element),
                                             category=self.category())
         return parent(element)
 
@@ -457,6 +441,9 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             sage: G(n).value
             (1, n, 1)
         """
+        from sage.sets.cartesian_product import CartesianProduct
+        from sage.symbolic.ring import SR
+
         def convert_factors(data, raw_data):
             try:
                 return self._convert_factors_(data)
@@ -484,7 +471,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             if P is self:
                 return data
 
-            elif P is sage.symbolic.ring.SR:
+            elif P is SR:
                 from sage.symbolic.operators import mul_vararg
                 if data.operator() == mul_vararg:
                     return convert_factors(data.operands(), data)
@@ -495,8 +482,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             return super(GenericProduct, self)._element_constructor_(data)
         except (TypeError, ValueError):
             pass
-        if isinstance(data, (tuple, list,
-                             sage.sets.cartesian_product.CartesianProduct.Element)):
+        if isinstance(data, (tuple, list, CartesianProduct.Element)):
             return convert_factors(tuple(data), data)
 
         return convert_factors((data,), data)
@@ -643,11 +629,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             Growth Group QQ^x * x^ZZ * log(x)^ZZ
             sage: cm.discover_coercion(A, B)
             ((map internal to coercion system -- copy before use)
-             Conversion map:
+             Coercion map:
                From: Growth Group QQ^x * x^ZZ
                To:   Growth Group QQ^x * x^ZZ * log(x)^ZZ,
              (map internal to coercion system -- copy before use)
-             Conversion map:
+             Coercion map:
                From: Growth Group x^ZZ * log(x)^ZZ
                To:   Growth Group QQ^x * x^ZZ * log(x)^ZZ)
             sage: cm.common_parent(A, B)
@@ -696,7 +682,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         """
         from .growth_group import GenericGrowthGroup, AbstractGrowthGroupFunctor
         from .misc import merge_overlapping
-        from .misc import underlying_class
+        from sage.structure.element import get_coercion_model
 
         Sfactors = self.cartesian_factors()
         if isinstance(other, GenericProduct):
@@ -713,11 +699,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             try:
                 return merge_overlapping(
                     Sfactors, Ofactors,
-                    lambda f: (underlying_class(f), f._var_.var_repr))
+                    lambda f: (f._underlying_class(), f._var_.var_repr))
             except ValueError:
                 pass
 
-            cm = sage.structure.element.get_coercion_model()
+            cm = get_coercion_model()
             try:
                 Z = cm.common_parent(*Sfactors+Ofactors)
                 return (Z,), (Z,)
@@ -735,7 +721,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             try:
                 return merge_overlapping(
                     tuple(subfactors(Sfactors)), tuple(subfactors(Ofactors)),
-                    lambda f: (underlying_class(f), f._var_.var_repr))
+                    lambda f: (f._underlying_class(), f._var_.var_repr))
             except ValueError:
                 pass
 
@@ -1130,7 +1116,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                 ...
                 ArithmeticError: Cannot construct e^x in
                 Growth Group x^ZZ * log(x)^ZZ * log(log(x))^ZZ
-                > *previous* TypeError: unsupported operand parent(s) for '*':
+                > *previous* TypeError: unsupported operand parent(s) for *:
                 'Growth Group x^ZZ * log(x)^ZZ * log(log(x))^ZZ' and
                 'Growth Group (e^x)^ZZ'
 
@@ -1369,7 +1355,7 @@ class UnivariateProduct(GenericProduct):
         r"""
         See :class:`UnivariateProduct` for details.
 
-        TEST::
+        TESTS::
 
             sage: from sage.rings.asymptotic.growth_group import GrowthGroup
             sage: type(GrowthGroup('x^ZZ * log(x)^ZZ'))  # indirect doctest
@@ -1402,7 +1388,7 @@ class MultivariateProduct(GenericProduct):
     def __init__(self, sets, category, **kwargs):
         r"""
 
-        TEST::
+        TESTS::
 
             sage: from sage.rings.asymptotic.growth_group import GrowthGroup
             sage: type(GrowthGroup('x^ZZ * y^ZZ'))  # indirect doctest

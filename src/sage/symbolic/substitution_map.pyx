@@ -49,18 +49,6 @@ cdef class SubstitutionMap(SageObject):
             SubsMap
         """
         return 'SubsMap'  # GEx_to_str(&x._gobj)
-    
-    def __dealloc__(self):
-        """
-        Delete memory occupied by this substitution map
-
-        EXAMPLES::
-        
-            sage: from sage.symbolic.substitution_map import make_map
-            sage: make_map({x:x+1})
-            SubsMap
-        """
-        GExMap_destruct(&self._gmapobj)
 
 
 cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap):
@@ -83,7 +71,7 @@ cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap):
     """
     cdef SubstitutionMap result
     result = <SubstitutionMap>SubstitutionMap.__new__(SubstitutionMap)
-    GEx_construct_exmap(&result._gmapobj, smap)
+    result._gmapobj = smap
     return result
 
 

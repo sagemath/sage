@@ -48,19 +48,19 @@ Sage example in ./recequadiff.tex, line 227::
 Sage example in ./recequadiff.tex, line 244::
 
   sage: desolve(diff(y,x) == (cos(y)-2*x)/(y+x*sin(y)), y,
-  ...           show_method=True)
+  ....:         show_method=True)
   [x^2 - x*cos(y(x)) + 1/2*y(x)^2 == _C, 'exact']
 
 Sage example in ./recequadiff.tex, line 263::
 
   sage: desolve(diff(y,x) == x*y^2+y/x-1/x^2, y,
-  ...           contrib_ode=True, show_method=True)[1]
+  ....:         contrib_ode=True, show_method=True)[1]
   'riccati'
 
 Sage example in ./recequadiff.tex, line 279::
 
   sage: desolve(y == x*diff(y,x)-diff(y,x)^2, y,
-  ...           contrib_ode=True, show_method=True)
+  ....:         contrib_ode=True, show_method=True)
   [[y(x) == -_C^2 + _C*x, y(x) == 1/4*x^2], 'clairault']
 
 Sage example in ./recequadiff.tex, line 293::
@@ -130,7 +130,7 @@ Sage example in ./recequadiff.tex, line 408::
 
   sage: P = Graphics()
   sage: for k in range(1,20,2):
-  ...       P += plot(solve(ed, y)[0].subs(c == 1+k/4).rhs(), x, -3, 3)
+  ....:     P += plot(solve(ed, y)[0].subs(c == 1+k/4).rhs(), x, -3, 3)
   sage: P
   Graphics object consisting of 1... graphics primitives
 
@@ -138,9 +138,9 @@ Sage example in ./recequadiff.tex, line 426::
 
   sage: P = Graphics()
   sage: for j in [0,1]:
-  ...       for k in range(1,10,2):
-  ...           f = solve(ed,y)[j].subs(c == 2+0.25*k).rhs()
-  ...           P += plot(f, x, -3, 3)
+  ....:     for k in range(1,10,2):
+  ....:         f = solve(ed,y)[j].subs(c == 2+0.25*k).rhs()
+  ....:         P += plot(f, x, -3, 3)
   sage: P
   Graphics object consisting of 10 graphics primitives
 
@@ -181,7 +181,7 @@ Sage example in ./recequadiff.tex, line 535::
 
   sage: P = Graphics()
   sage: for k in range(-19,19,2):
-  ...       P += plot(y(x).subs(c == 1/k), x, 0, 3)
+  ....:     P += plot(y(x).subs(c == 1/k), x, 0, 3)
   sage: P
   Graphics object consisting of 19 graphics primitives
 
@@ -195,14 +195,14 @@ Sage example in ./recequadiff.tex, line 567::
 Sage example in ./recequadiff.tex, line 575::
 
   sage: Sol(x) = solve(sol, y)[0]; Sol(x)
-  log(y(x)) == (_C + x)*a + log(b*y(x) - a)
+  log(y(x)) == _C*a + a*x + log(b*y(x) - a)
 
 Sage example in ./recequadiff.tex, line 582::
 
   sage: Sol(x) = Sol(x).lhs()-Sol(x).rhs(); Sol(x)
-  -(_C + x)*a - log(b*y(x) - a) + log(y(x))
+  -_C*a - a*x - log(b*y(x) - a) + log(y(x))
   sage: Sol = Sol.simplify_log(); Sol(x)
-  -(_C + x)*a + log(y(x)/(b*y(x) - a))
+  -_C*a - a*x + log(y(x)/(b*y(x) - a))
   sage: solve(Sol, y)[0].simplify()
   y(x) == a*e^(_C*a + a*x)/(b*e^(_C*a + a*x) - 1)
 
@@ -334,24 +334,24 @@ Sage example in ./recequadiff.tex, line 1095::
   sage: x = var('x'); f = function('f')(x)
   sage: f(x) = 3.83*x*(1 - x/100000)
   sage: def u(n):
-  ...       if n==0: return(20000)
-  ...       else: return f(u(n-1))
+  ....:     if n==0: return(20000)
+  ....:     else: return f(u(n-1))
 
 Sage example in ./recequadiff.tex, line 1105::
 
   sage: def v(n):
-  ...       V = 20000;
-  ...       for k in [1..n]:
-  ...           V = f(V)
-  ...       return V
+  ....:     V = 20000;
+  ....:     for k in [1..n]:
+  ....:         V = f(V)
+  ....:     return V
 
 Sage example in ./recequadiff.tex, line 1118::
 
   sage: def nuage(u,n):
-  ...       L = [[0,u(0)]];
-  ...       for k in [1..n]:
-  ...           L += [[k,u(k)]]
-  ...       points(L).show()
+  ....:     L = [[0,u(0)]];
+  ....:     for k in [1..n]:
+  ....:         L += [[k,u(k)]]
+  ....:     points(L).show()
 
 Sage example in ./recequadiff.tex, line 1128::
 
@@ -360,13 +360,13 @@ Sage example in ./recequadiff.tex, line 1128::
 Sage example in ./recequadiff.tex, line 1144::
 
   sage: def escargot(f,x,u0,n,xmin,xmax):
-  ...       u = u0
-  ...       P = plot(x, x, xmin, xmax, color='gray')
-  ...       for i in range(n):
-  ...           P += line([[u,u],[u,f(u)],[f(u),f(u)]], color = 'red')
-  ...           u = f(u)
-  ...       P += f.plot(x, xmin, xmax, color='blue') # Courbe de f
-  ...       P.show()
+  ....:     u = u0
+  ....:     P = plot(x, x, xmin, xmax, color='gray')
+  ....:     for i in range(n):
+  ....:         P += line([[u,u],[u,f(u)],[f(u),f(u)]], color = 'red')
+  ....:         u = f(u)
+  ....:     P += f.plot(x, xmin, xmax, color='blue') # Courbe de f
+  ....:     P.show()
 
 Sage example in ./recequadiff.tex, line 1157::
 
@@ -378,9 +378,10 @@ Sage example in ./recequadiff.tex, line 1197::
   sage: from sympy import Function, Symbol
   sage: u = Function('u'); n = Symbol('n', integer=True)
 
-Sage example in ./recequadiff.tex, line 1208::
+Sage example in ./recequadiff.tex, line 1208 (WARNING: the order of factors is
+inverted, see :trac:`23496` )::
 
-  sage: f = u(n+2)-(3/2)*u(n+1)+(1/2)*u(n)
+  sage: f = u(n+2)-u(n+1)*(3/2)+u(n)*(1/2)
 
 Sage example in ./recequadiff.tex, line 1214::
 
@@ -396,4 +397,3 @@ Sage example in ./recequadiff.tex, line 1265::
   2**n*C0 + 2**(n + 2)*(C0 + n/2)
 
 """
-

@@ -258,7 +258,7 @@ A présent, passons aux questions arithmétiques.
     sage: (z[0]+z[1]+z[2])^2
     z0^2 + 2*z0*z1 + z1^2 + 2*z0*z2 + 2*z1*z2 + z2^2
 
-On peut aussi utiliser des notations plus mathématiques pour constuire
+On peut aussi utiliser des notations plus mathématiques pour construire
 un anneau de polynômes.
 
 ::

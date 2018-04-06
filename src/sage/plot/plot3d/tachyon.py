@@ -130,7 +130,7 @@ AUTHOR:
 
 - Paul Graham: Respect global verbosity settings (:trac:`16228`)
 
-.. TODO:
+.. TODO::
 
     - clean up trianglefactory stuff
 """

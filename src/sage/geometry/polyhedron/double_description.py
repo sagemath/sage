@@ -398,7 +398,7 @@ class DoubleDescriptionPair:
         Return a matrix space of size ``nrows`` and ``ncols`` over the base ring
         of ``self``.
 
-        These matrix spaces are cached to avoid the their creation in the very
+        These matrix spaces are cached to avoid their creation in the very
         demanding :meth:`add_inequality` and more precisely :meth:`are_adjacent`.
 
         EXAMPLES::

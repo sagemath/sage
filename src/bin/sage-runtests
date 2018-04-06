@@ -2,6 +2,13 @@
 
 import optparse, os, sys
 
+# Note: the DOT_SAGE and SAGE_STARTUP_FILE environment variables have already been set by sage-env
+DOT_SAGE = os.environ['DOT_SAGE']
+
+# Override to not pick up user configuration, see Trac #20270
+os.environ['SAGE_STARTUP_FILE'] = os.path.join(DOT_SAGE, 'init-doctests.sage')
+
+
 if __name__ == "__main__":
     parser = optparse.OptionParser()
 
@@ -38,28 +45,30 @@ if __name__ == "__main__":
     parser.add_option("--file-iterations", "--file_iterations", type=int, default=0, help="repeat each file this many times, stopping on the first failure")
 
     parser.add_option("-i", "--initial", action="store_true", default=False, help="only show the first failure in each file")
-    parser.add_option("--force_lib", "--force-lib", action="store_true", default=False, help="assume all files are Sage library files, regardless of location, ie don't import anything from the file tested")
+    parser.add_option("--exitfirst", action="store_true", default=False, help="end the test run immediately after the first failure or unexpected exception")
+    parser.add_option("--force_lib", "--force-lib", action="store_true", default=False, help="do not import anything from the tested file(s)")
     parser.add_option("--abspath", action="store_true", default=False, help="print absolute paths rather than relative paths")
     parser.add_option("--verbose", action="store_true", default=False, help="print debugging output during the test")
     parser.add_option("-d", "--debug", action="store_true", default=False, help="drop into a python debugger when an unexpected error is raised")
+    parser.add_option("--only-errors", action="store_true", default=False, help="only output failures, not test successes")
 
     parser.add_option("--gdb", action="store_true", default=False, help="run doctests under the control of gdb")
     parser.add_option("--valgrind", "--memcheck", action="store_true", default=False,
                       help="run doctests using Valgrind's memcheck tool.  The log "
                          "files are named sage-memcheck.PID and can be found in " +
-                         os.path.join(os.environ["DOT_SAGE"], "valgrind"))
+                         os.path.join(DOT_SAGE, "valgrind"))
     parser.add_option("--massif", action="store_true", default=False,
                       help="run doctests using Valgrind's massif tool.  The log "
                          "files are named sage-massif.PID and can be found in " +
-                         os.path.join(os.environ["DOT_SAGE"], "valgrind"))
+                         os.path.join(DOT_SAGE, "valgrind"))
     parser.add_option("--cachegrind", action="store_true", default=False,
                       help="run doctests using Valgrind's cachegrind tool.  The log "
                          "files are named sage-cachegrind.PID and can be found in " +
-                         os.path.join(os.environ["DOT_SAGE"], "valgrind"))
+                         os.path.join(DOT_SAGE, "valgrind"))
     parser.add_option("--omega", action="store_true", default=False,
                       help="run doctests using Valgrind's omega tool.  The log "
                          "files are named sage-omega.PID and can be found in " +
-                         os.path.join(os.environ["DOT_SAGE"], "valgrind"))
+                         os.path.join(DOT_SAGE, "valgrind"))
 
     parser.add_option("-f", "--failed", action="store_true", default=False,
         help="doctest only those files that failed in the previous run")
@@ -68,7 +77,7 @@ if __name__ == "__main__":
     parser.add_option("--show-skipped", "--show_skipped", action="store_true", default=False,
         help="print a summary at the end of each file of optional tests that were skipped")
 
-    parser.add_option("--stats_path", "--stats-path", default=os.path.join(os.environ['DOT_SAGE'], "timings2.json"),
+    parser.add_option("--stats_path", "--stats-path", default=os.path.join(DOT_SAGE, "timings2.json"),
                           help="path to a json dictionary for the latest run storing a timing for each file")
 
     # The --serial option is only really for internal use, better not
@@ -78,14 +87,41 @@ if __name__ == "__main__":
     parser.set_usage("sage -t [options] filenames")
 
 
-    from sage.doctest.control import DocTestController
     options, args = parser.parse_args()
 
     if len(args) == 0 and not (options.all or options.sagenb or options.new):
         parser.print_help()
-        err = 2
-    else:
-        DC = DocTestController(options, args)
-        err = DC.run()
+        sys.exit(2)
+
+    # Ensure that all doctests can be run with virtual memory limited
+    # to 3300 MiB. We must set this limit before starting Sage. Note
+    # that this is a per-process limit, so we do not need to worry about
+    # running multiple doctest processes in parallel. It is in
+    # particular doctests in src/sage/schemes/elliptic_curves/heegner.py
+    # which need this much memory.
+    memlimit = 3300 << 20
+    # Python's resource module only supports limits up to sys.maxsize,
+    # even if the OS does support higher limits.
+    if memlimit <= sys.maxsize:
+        import resource
+        lim, hard = resource.getrlimit(resource.RLIMIT_AS)
+        if lim == resource.RLIM_INFINITY or lim > memlimit:
+            try:
+                resource.setrlimit(resource.RLIMIT_AS, (memlimit, hard))
+            except ValueError:
+                if sys.platform != 'cygwin':
+                    # RLIMIT_AS is not currently supported on Cygwin so
+                    # this will probably fail there:
+                    # https://trac.sagemath.org/ticket/23979
+                    raise
+
+    # Limit the number of threads to 2 to save system resources.
+    # See Trac #23713 and #23892
+    os.environ["OMP_NUM_THREADS"] = "2"
+    os.environ["SAGE_NUM_THREADS"] = "2"
+
+    from sage.doctest.control import DocTestController
+    DC = DocTestController(options, args)
+    err = DC.run()
 
     sys.exit(err)

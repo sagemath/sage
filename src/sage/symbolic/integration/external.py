@@ -1,11 +1,21 @@
-"Symbolic integration via external software"
+"""Symbolic Integration via External Software
 
+TESTS::
+
+    sage: from sage.symbolic.integration.external import sympy_integrator
+    sage: sympy_integrator(sin(x), x)
+    -cos(x)
+"""
 from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
 
 
 def maxima_integrator(expression, v, a=None, b=None):
     """
+    Integration using Maxima
+
+    EXAMPLES::
+
         sage: from sage.symbolic.integration.external import maxima_integrator
         sage: maxima_integrator(sin(x), x)
         -cos(x)
@@ -26,6 +36,10 @@ def maxima_integrator(expression, v, a=None, b=None):
 
 def sympy_integrator(expression, v, a=None, b=None):
     """
+    Integration using SymPy
+
+    EXAMPLES::
+
         sage: from sage.symbolic.integration.external import sympy_integrator
         sage: sympy_integrator(sin(x), x)
         -cos(x)
@@ -43,9 +57,25 @@ def sympy_integrator(expression, v, a=None, b=None):
 
 def mma_free_integrator(expression, v, a=None, b=None):
     """
+    Integration using Mathematica's online integrator
+
+    EXAMPLES::
+
         sage: from sage.symbolic.integration.external import mma_free_integrator
         sage: mma_free_integrator(sin(x), x) # optional - internet
         -cos(x)
+
+    TESTS:
+
+    Check that :trac:`18212` is resolved::
+
+        sage: var('y')   # optional - internet
+        y
+        sage: integral(sin(y)^2, y, algorithm='mathematica_free') # optional - internet
+        -1/2*cos(y)*sin(y) + 1/2*y
+
+        sage: mma_free_integrator(exp(-x^2)*log(x), x) # optional - internet
+        1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)
     """
     import re
     # import compatible with py2 and py3
@@ -61,14 +91,53 @@ def mma_free_integrator(expression, v, a=None, b=None):
             if chr(i) not in vars:
                 shadow_x = SR.var(chr(i))
                 break
-        expression = expression.subs({x:shadow_x}).subs({dvar: x})
+        expression = expression.subs({x:shadow_x}).subs({v: x})
     params = urlencode({'expr': expression._mathematica_init_(), 'random': 'false'})
-    page = urlopen("http://integrals.wolfram.com/index.jsp", params).read()
+    page = urlopen("http://integrals.wolfram.com/home.jsp", params).read()
     page = page[page.index('"inputForm"'):page.index('"outputForm"')]
     page = re.sub("\s", "", page)
     mexpr = re.match(r".*Integrate.*==</em><br/>(.*)</p>", page).groups()[0]
     try:
-        ans = SR(mexpr.lower().replace('[', '(').replace(']', ')'))
+        from sage.libs.pynac.pynac import symbol_table
+        from sage.interfaces.mathematica import _un_camel as un_camel
+        from sage.symbolic.constants import constants_name_table as constants
+        from sage.calculus.calculus import symbolic_expression_from_string
+        from sage.calculus.calculus import _find_func as find_func
+
+        expr = mexpr.replace('\n',' ').replace('\r', '')
+        expr = expr.replace('[', '(').replace(']', ')')
+        expr = expr.replace('{', '[').replace('}', ']')
+        lsymbols = symbol_table['mathematica'].copy()
+        autotrans = [str.lower,      # Try it in lower case
+                     un_camel,      # Convert `CamelCase` to `camel_case`
+                     lambda x: x     # Try the original name
+                    ]
+        # Find the MMA funcs/vars/constants - they start with a letter.
+        # Exclude exponents (e.g. 'e8' from 4.e8)
+        p = re.compile('(?<!\.)[a-zA-Z]\w*')
+
+        for m in p.finditer(expr):
+            # If the function, variable or constant is already in the
+            # translation dictionary, then just move on.
+            if m.group() in lsymbols:
+                pass
+            # Now try to translate all other functions -- try each strategy
+            # in `autotrans` and check if the function exists in Sage
+            elif m.end() < len(expr) and expr[m.end()] == '(':
+                for t in autotrans:
+                    f = find_func(t(m.group()), create_when_missing = False)
+                    if f is not None:
+                        lsymbols[m.group()] = f
+                        break
+                else:
+                    raise NotImplementedError("Don't know a Sage equivalent for Mathematica function '%s'." % m.group())
+            # Check if Sage has an equivalent constant
+            else:
+                for t in autotrans:
+                    if t(m.group()) in constants:
+                        lsymbols[m.group()] = constants[t(m.group())]
+                        break
+        ans = symbolic_expression_from_string(expr, lsymbols, accept_sequence=True)
         if repr(v) != 'x':
             ans = ans.subs({x:v}).subs({shadow_x:x})
         return ans
@@ -118,3 +187,30 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
                          " in the integration interval")
 
     return result.sage()
+
+def giac_integrator(expression, v, a=None, b=None):
+    """
+    Integration using Giac
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.integration.external import giac_integrator
+        sage: giac_integrator(sin(x), x)
+        -cos(x)
+        sage: giac_integrator(1/(x^2+6), x, -oo, oo)
+        1/6*sqrt(6)*pi
+
+    TESTS::
+
+        sage: giac_integrator(e^(-x^2)*log(x), x)
+        integrate(e^(-x^2)*log(x), x)
+    """
+    ex = expression._giac_()
+    if a is None:
+        result = ex.integrate(v._giac_())
+    else:
+        result = ex.integrate(v._giac_(), a._giac_(), b._giac_())
+    if 'integrate' in format(result) or 'integration' in format(result):
+        return expression.integrate(v, a, b, hold=True)
+    else:
+        return result._sage_()

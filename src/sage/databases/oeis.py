@@ -148,7 +148,8 @@ Classes and methods
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
-
+from six.moves.urllib.request import urlopen
+from six.moves.urllib.parse import urlencode
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
@@ -159,7 +160,6 @@ from sage.misc.unknown import Unknown
 from sage.misc.misc import embedded
 from sage.misc.html import HtmlFragment
 from collections import defaultdict
-from urllib import urlopen, urlencode
 import re
 
 oeis_url = 'http://oeis.org/'

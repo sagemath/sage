@@ -3,7 +3,7 @@ Orthogonal Linear Groups
 
 The general orthogonal group `GO(n,R)` consists of all `n\times n`
 matrices over the ring `R` preserving an `n`-ary positive definite
-quadratic form. In cases where there are muliple non-isomorphic
+quadratic form. In cases where there are multiple non-isomorphic
 quadratic forms, additional data needs to be specified to
 disambiguate. The special orthogonal group is the normal subgroup of
 matrices of determinant one.
@@ -140,7 +140,7 @@ def GO(n, R, e=0, var='a'):
 
     The general orthogonal group `GO(n,R)` consists of all `n\times n`
     matrices over the ring `R` preserving an `n`-ary positive definite
-    quadratic form. In cases where there are muliple non-isomorphic
+    quadratic form. In cases where there are multiple non-isomorphic
     quadratic forms, additional data needs to be specified to
     disambiguate.
 
@@ -214,7 +214,7 @@ def SO(n, R, e=None, var='a'):
     The special orthogonal group `GO(n,R)` consists of all `n\times n`
     matrices with determinant one over the ring `R` preserving an
     `n`-ary positive definite quadratic form. In cases where there are
-    muliple non-isomorphic quadratic forms, additional data needs to
+    multiple non-isomorphic quadratic forms, additional data needs to
     be specified to disambiguate.
 
     .. note::

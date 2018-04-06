@@ -7,12 +7,11 @@
 #
 ###############################################################################
 
-cdef class FreeAlgebraElement_letterplace
-
-from sage.structure.element cimport AlgebraElement, ModuleElement, RingElement, Element
+from sage.structure.element cimport AlgebraElement, ModuleElement, Element
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular, MPolynomial_libsingular
 from sage.algebras.letterplace.free_algebra_letterplace cimport FreeAlgebra_letterplace
 
 cdef class FreeAlgebraElement_letterplace(AlgebraElement):
     cdef MPolynomial_libsingular _poly
-
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)

@@ -5,19 +5,24 @@
 .. _numerical_computing:
 
 Numerical Computing with Sage
-==========================================
+=============================
+
+.. WARNING::
+
+    Beware that this document may be obsolete.
+
 This document is designed to introduce the reader to the tools in Sage
 that are useful for doing numerical computation. By numerical
 computation we essentially mean machine precision floating point
 computations.  In particular, things such as optimization, numerical
-linear algebra, solving ODE's/PDE's numerically, etc.  or the first
-part of this document the reader is only assumed to be familiar with
-Python/Sage. In the second section on using compiled code, the
-computational prerequisites increase and I assume the reader is
-comfortable with writing programs in C or Fortran. The third section
-is on mpi and parallel programming and only requires knowledge of
-Python,  though familiarity with mpi would be helpful.
-Finally the last section is about 3d visualization in Sage.
+linear algebra, solving ODE's or PDE's numerically, etc.
+
+In the first part of this document the reader is only assumed to be
+familiar with Python/Sage. In the second section on using compiled
+code, the computational prerequisites increase and I assume the reader
+is comfortable with writing programs in C or Fortran. The third
+section is on mpi and parallel programming and only requires knowledge
+of Python, though familiarity with mpi would be helpful.
 
 In the current version of this document the reader is assumed to be
 familiar with the techniques of numerical analysis. The goal of this
@@ -33,4 +38,3 @@ where they can find more information.
    numerical_tools
    using_compiled_code_iteractively
    parallel_computation
-   visualization

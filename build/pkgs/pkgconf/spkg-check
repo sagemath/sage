@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 pkgconfig="$SAGE_LOCAL/bin/pkg-config"
 
 # Skip checks if we don't use the system pkg-config

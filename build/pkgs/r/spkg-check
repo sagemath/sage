@@ -1,5 +1,3 @@
-#!/bin/bash
-
 if [ "$SAGE_LOCAL" = "" ]; then
     echo >&2 "SAGE_LOCAL undefined ... exiting";
     exit 1

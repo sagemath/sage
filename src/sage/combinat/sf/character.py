@@ -36,6 +36,9 @@ from sage.arith.all import divisors, moebius
 from sage.functions.other import binomial
 from sage.rings.integer import Integer
 
+import six
+
+
 class generic_character(SFA_generic):
     def _my_key(self, la):
         r"""
@@ -428,7 +431,7 @@ class irreducible_character_basis(generic_character):
 
         """
         return self._p.prod( self._b_power_k_r(Integer(k),Integer(r))
-                             for (k,r) in gamma.to_exp_dict().iteritems() )
+                             for (k,r) in six.iteritems(gamma.to_exp_dict()) )
 
     def _self_to_power_on_basis(self, lam):
         r"""

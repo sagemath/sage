@@ -22,9 +22,6 @@ from .generating_series import _integers_from, factorial_stream
 from .subset_species import SubsetSpeciesStructure
 from .set_species import SetSpecies
 from .structure import GenericSpeciesStructure
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import ZZ
-from sage.misc.cachefunc import cached_function
 from sage.combinat.species.misc import accept_size
 from functools import reduce
 

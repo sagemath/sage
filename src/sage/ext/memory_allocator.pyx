@@ -1,5 +1,4 @@
-include "cysignals/signals.pxi"
-include "cysignals/memory.pxi"
+from cysignals.memory cimport *
 
 cdef extern from *:
     int unlikely(int) nogil  # Defined by Cython

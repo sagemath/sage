@@ -95,7 +95,7 @@ variável pode possuir valores de qualquer tipo em determinado escopo:
     <type 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # now a is a string
     sage: type(a)
-    <type 'str'>
+    <... 'str'>
 
 A linguagem de programação C, que é de tipagem estática , é muito
 diferente; uma variável que foi declarada como int pode apenas

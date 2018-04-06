@@ -109,7 +109,7 @@ The Hecke structure defined on the Brandt module is given by the
 Brandt matrices which can be computed using the definition of the
 Hecke operators given earlier.
 
-``hecke_matrix_from_defn(self,n)`` returns the matrix of the nth Hecke
+``hecke_matrix_from_defn(self,n)`` returns the matrix of the n-th Hecke
 operator `B_{0}(n)` acting on self, computed directly from the
 definition.
 
@@ -121,7 +121,7 @@ the theta series of the lattice `I_{i}\overline{I_{j}}` and the first
 coefficient in the theta series of the lattice
 `I_{i}\overline{I_{i}}`.
 
-``compute_hecke_matrix_brandt(self,n)`` returns the nth Hecke matrix,
+``compute_hecke_matrix_brandt(self,n)`` returns the n-th Hecke matrix,
 computed using theta series.
 
 EXAMPLES::
@@ -207,7 +207,7 @@ from sage.modular.hecke.all import (AmbientHeckeModule, HeckeSubmodule, HeckeMod
 from sage.modular.dirichlet import TrivialCharacter
 from sage.matrix.all  import MatrixSpace, matrix
 from sage.misc.mrange import cartesian_product_iterator
-
+from sage.structure.richcmp import richcmp, richcmp_method
 from sage.misc.cachefunc import cached_method
 
 from copy import copy
@@ -440,6 +440,7 @@ def right_order(R, basis):
     return Z.quaternion_order(C)
 
 
+@richcmp_method
 class BrandtModule_class(AmbientHeckeModule):
     """
     A Brandt module.
@@ -526,7 +527,7 @@ class BrandtModule_class(AmbientHeckeModule):
 
         Always trivial.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: BrandtModule(11,5).character()
             Dirichlet character modulo 55 of conductor 1 mapping 12 |--> 1, 46 |--> 1
@@ -547,9 +548,9 @@ class BrandtModule_class(AmbientHeckeModule):
             self.rank(), self.__N, aux, self.weight(), self.base_ring())
 
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -561,9 +562,11 @@ class BrandtModule_class(AmbientHeckeModule):
             True
         """
         if not isinstance(other, BrandtModule_class):
-            return cmp(type(self), type(other))
-        else:
-            return cmp( (self.__M, self.__N, self.weight(), self.base_ring()), (other.__M, other.__N, other.weight(), other.base_ring()))
+            return NotImplemented
+
+        return richcmp((self.__M, self.__N, self.weight(), self.base_ring()),
+                       (other.__M, other.__N, other.weight(), other.base_ring()),
+                       op)
 
     @cached_method
     def quaternion_algebra(self):
@@ -827,10 +830,12 @@ class BrandtModule_class(AmbientHeckeModule):
             raise IndexError("n must be positive.")
         if n not in self._hecke_matrices:
             if algorithm == 'default':
-                try: pr = len(self.__brandt_series_vectors[0][0])
-                except (AttributeError, IndexError): pr = 0
+                try:
+                    pr = len(self.__brandt_series_vectors[0][0])
+                except (AttributeError, IndexError):
+                    pr = 0
                 if n <= pr:
-                    # already trivially know the hecke operator in this case
+                    # already trivially know the Hecke operator in this case
                     algorithm = 'brandt'
                 if algorithm == 'default':  # still don't know
                     algorithm = 'direct'
@@ -1001,13 +1006,13 @@ class BrandtModule_class(AmbientHeckeModule):
 
         dictionary
 
-        EXAMPLES::
+        EXAMPLES:
 
         In this example the theta series determine the ideal classes::
 
             sage: B = BrandtModule(5,11); B
             Brandt module of dimension 4 of level 5*11 of weight 2 over Rational Field
-            sage: sorted(list(B._theta_dict(5).iteritems()))
+            sage: sorted(list(B._theta_dict(5).items()))
             [((1, 0, 0, 4, 0), [3]),
              ((1, 0, 0, 4, 2), [2]),
              ((1, 0, 2, 0, 6), [1]),
@@ -1015,7 +1020,7 @@ class BrandtModule_class(AmbientHeckeModule):
 
         In this example, the theta series does not determine the ideal class::
 
-             sage: sorted(list(BrandtModule(37)._theta_dict(6).iteritems()))
+             sage: sorted(list(BrandtModule(37)._theta_dict(6).items()))
              [((1, 0, 2, 2, 6, 4), [1, 2]), ((1, 2, 2, 4, 2, 4), [0])]
         """
         C = self.right_ideals()
@@ -1030,12 +1035,12 @@ class BrandtModule_class(AmbientHeckeModule):
 
     def _compute_hecke_matrix_brandt(self, n, sparse=False):
         """
-        Return the n-th hecke matrix, computed using Brandt matrices
+        Return the n-th Hecke matrix, computed using Brandt matrices
         (theta series).
 
         When the n-th Hecke operator is requested, we computed theta
         series to precision `2n+20`, since it only takes slightly
-        longer, and this means that any Hecke operator $T_m$ can
+        longer, and this means that any Hecke operator `T_m` can
         quickly be computed, for `m<2n+20`.
 
         INPUT:
@@ -1109,7 +1114,7 @@ class BrandtModule_class(AmbientHeckeModule):
              Fractional ideal (2 + 2*j, 2*i + 6*k, 8*j, 8*k),
              Fractional ideal (2 + 10*j + 8*k, 2*i + 8*j + 6*k, 16*j, 16*k))
 
-        TEST::
+        TESTS::
 
             sage: B = BrandtModule(1009)
             sage: Is = B.right_ideals()
@@ -1502,7 +1507,7 @@ class BrandtModuleElement(HeckeModuleElement):
             x = x.element()
         HeckeModuleElement.__init__(self, parent, parent.free_module()(x))
 
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         """
         EXAMPLES::
 
@@ -1520,12 +1525,7 @@ class BrandtModuleElement(HeckeModuleElement):
             sage: loads(dumps(B.0)) == B.0
             True
         """
-        if not isinstance(other, BrandtModuleElement):
-            other = self.parent()(other)
-        else:
-            c = cmp(self.parent(), other.parent())
-            if c: return c
-        return cmp(self.element(), other.element())
+        return richcmp(self.element(), other.element(), op)
 
     def monodromy_pairing(self, x):
         """

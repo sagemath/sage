@@ -15,12 +15,11 @@ from sage.categories.all import Category, Algebras, AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
-from sage.combinat.root_system.dynkin_diagram import DynkinDiagram
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.functional import is_even, is_odd
-from sage.modules.free_module_element import vector
-from sage.rings.all import ZZ, QQ
+from sage.misc.functional import is_even
+from sage.rings.all import ZZ
+
 
 class WeylCharacterRing(CombinatorialFreeModule):
     """
@@ -70,7 +69,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         [R(0,0,0), R(1,0,0), R(1,1,0)]
 
     Here ``R(1)``, ``R(fw1)``, and ``R(fw2)`` are irreducible representations
-    with highest weight vectors `0`, `\Lambda_1`, and `\Lambda_2` respecitively
+    with highest weight vectors `0`, `\Lambda_1`, and `\Lambda_2` respectively
     (the first two fundamental weights).
 
     For type `A` (also `G_2`, `F_4`, `E_6` and `E_7`) we will take as the
@@ -910,7 +909,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
     def _char_from_weights(self, mdict):
         """
-        Helper method for :meth:'char_from_weights'.
+        Helper method for :meth:`char_from_weights`.
 
         INPUT:
 

@@ -102,7 +102,7 @@ def Associahedron(cartan_type):
         (1, 70, 140, 90, 20, 1)
     """
     cartan_type = CartanType(cartan_type)
-    parent = Associahedra(QQ, cartan_type.rank())
+    parent = Associahedra(QQ, cartan_type.rank(), 'ppl')
     return parent(cartan_type)
 
 
@@ -171,7 +171,7 @@ class Associahedra(Polyhedra_QQ_ppl):
     EXAMPLES::
 
         sage: from sage.combinat.root_system.associahedron import Associahedra
-        sage: parent = Associahedra(QQ,2);  parent
+        sage: parent = Associahedra(QQ,2,'ppl');  parent
         Polyhedra in QQ^2
         sage: type(parent)
         <class 'sage.combinat.root_system.associahedron.Associahedra_with_category'>
@@ -200,7 +200,7 @@ class Associahedra(Polyhedra_QQ_ppl):
         EXAMPLES::
 
             sage: from sage.combinat.root_system.associahedron import Associahedra
-            sage: parent = Associahedra(QQ,2)
+            sage: parent = Associahedra(QQ,2,'ppl')
             sage: parent(['A',2])
             Generalized associahedron of type ['A', 2] with 5 vertices
             sage: parent._element_constructor_(['A',2])

@@ -20,12 +20,13 @@ AUTHOR:
 
 - William Stein (2008)
 """
+from __future__ import absolute_import
 
 from sage.rings.all import RDF, CDF, Integer
 from sage.modules.all import vector
 I = CDF.gen()
 
-from time_series cimport TimeSeries
+from .time_series cimport TimeSeries
 
 cdef extern from "math.h":
     double exp(double)

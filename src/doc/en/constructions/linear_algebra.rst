@@ -417,12 +417,7 @@ Using maxima, you can easily solve linear equations:
     (a, b, c)
     sage: eqn = [a+b*c==1, b-a*c==0, a+b==5]
     sage: s = solve(eqn, a,b,c); s
-    [[a == (25*I*sqrt(79) + 25)/(6*I*sqrt(79) - 34),
-      b == (5*I*sqrt(79) + 5)/(I*sqrt(79) + 11),
-      c == 1/10*I*sqrt(79) + 1/10],
-     [a == (25*I*sqrt(79) - 25)/(6*I*sqrt(79) + 34),
-      b == (5*I*sqrt(79) - 5)/(I*sqrt(79) - 11),
-      c == -1/10*I*sqrt(79) + 1/10]]
+    [[a == -1/4*I*sqrt(79) + 11/4, b == 1/4*I*sqrt(79) + 9/4, c == 1/10*I*sqrt(79) + 1/10], [a == 1/4*I*sqrt(79) + 11/4, b == -1/4*I*sqrt(79) + 9/4, c == -1/10*I*sqrt(79) + 1/10]]
 
 You can even nicely typeset the solution in LaTeX:
 

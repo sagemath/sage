@@ -1,4 +1,2 @@
-#!/usr/bin/env bash
-
 cd src
 $MAKE check

@@ -1,3 +1,4 @@
+#cython: wraparound=False, boundscheck=False
 r"""
 This contains a few time-critical auxillary cython functions for
 finite complex or real reflection groups.
@@ -127,15 +128,14 @@ cdef class Iterator(object):
                     successors.append((u1, word_new, i))
         return successors
 
-    cdef bint test(self, PermutationGroupElement u, PermutationGroupElement si, int i):
-        cdef int j, sij
+    cdef inline bint test(self, PermutationGroupElement u, PermutationGroupElement si, int i):
+        cdef int j
         cdef int N = self.N
         cdef int* siperm = si.perm
         cdef int* uperm = u.perm
 
         for j in range(i):
-            sij = siperm[j]
-            if uperm[sij] >= N:
+            if uperm[siperm[j]] >= N:
                 return False
         return True
 
@@ -374,7 +374,7 @@ def iterator_tracking_words(W):
                     level_set_new.append((y, word+[i]))
         level_set_cur = level_set_new
 
-cdef bint has_descent(PermutationGroupElement w, int i, int N):
+cdef inline bint has_descent(PermutationGroupElement w, int i, int N):
     return w.perm[i] >= N
 
 cdef int first_descent(PermutationGroupElement w, int n, int N):
@@ -402,9 +402,12 @@ cpdef list reduced_word_c(W,w):
     cdef int fdes = 0
     cdef list word = []
 
-    while fdes != -1:
+    while True:
         fdes = first_descent(w,n,N)
+        if fdes == -1:
+            break
         si = S[fdes]
         w = si._mul_(w)
         word.append(fdes)
-    return word[:-1]
+    return word
+

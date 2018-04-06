@@ -3,8 +3,7 @@ Blum-Goldwasser Probabilistic Encryption
 
 The Blum-Goldwasser probabilistic public-key encryption scheme. This scheme
 was originally described in [BG1985]_. See also section 8.7.2
-of [MvOV1996]_ and the
-`Wikipedia article <http://en.wikipedia.org/wiki/Blum-Goldwasser_cryptosystem>`_
+of [MvOV1996]_ and the :wikipedia:`Blum-Goldwasser_cryptosystem`
 on this scheme.
 
 AUTHORS:
@@ -273,18 +272,18 @@ class BlumGoldwasser(PublicKeyCryptosystem):
             sage: p = 78307; q = 412487
             sage: K = bg.private_key(p, q)
             sage: C = ([[1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0], \
-            ...   [1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1], \
-            ...   [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0], \
-            ...   [0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1], \
-            ...   [1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0], \
-            ...   [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1], \
-            ...   [1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0], \
-            ...   [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1], \
-            ...   [0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0], \
-            ...   [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1], \
-            ...   [1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1], \
-            ...   [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0], \
-            ...   [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1]], 3479653279)
+            ....: [1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1], \
+            ....: [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0], \
+            ....: [0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1], \
+            ....: [1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0], \
+            ....: [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1], \
+            ....: [1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0], \
+            ....: [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1], \
+            ....: [0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0], \
+            ....: [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1], \
+            ....: [1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1], \
+            ....: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0], \
+            ....: [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1]], 3479653279)
             sage: P = bg.decrypt(C, K)
             sage: bin_to_ascii(flatten(P))
             'Blum-Goldwasser encryption'
@@ -573,8 +572,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
             sage: p = random_blum_prime(10**4, 10**5)
             sage: q = random_blum_prime(10**4, 10**5)
             sage: while q == p:
-            ...       q = random_blum_prime(10**4, 10**5)
-            ...
+            ....:     q = random_blum_prime(10**4, 10**5)
             sage: p, q, a, b = bg.private_key(p, q)
             sage: gcd(p, q) == a*p + b*q == 1
             True
@@ -647,7 +645,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
             sage: p = random_blum_prime(10**4, 10**5)
             sage: q = random_blum_prime(10**4, 10**5)
             sage: while q == p:
-            ...       q = random_blum_prime(10**4, 10**5)
+            ....:     q = random_blum_prime(10**4, 10**5)
             ...
             sage: n = bg.public_key(p, q)
             sage: f = factor(n)

@@ -9,3 +9,5 @@ Differentiable Maps and Curves
    sage/manifolds/differentiable/diff_map
 
    sage/manifolds/differentiable/curve
+   
+   sage/manifolds/differentiable/integrated_curve

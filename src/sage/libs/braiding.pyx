@@ -22,7 +22,7 @@ permutation braids.
 #*****************************************************************************
 
 
-include 'cysignals/signals.pxi'
+from cysignals.signals cimport sig_on, sig_off
 
 from libcpp.list cimport list
 

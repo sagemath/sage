@@ -137,12 +137,12 @@ class MatchingGame(SageObject):
     It is possible to initiate a matching game without having to name each
     suitor and reviewer::
 
-        sage: n = 10
+        sage: n = 8
         sage: big_game = MatchingGame(n)
         sage: big_game.suitors()
-        (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        (1, 2, 3, 4, 5, 6, 7, 8)
         sage: big_game.reviewers()
-        (-1, -2, -3, -4, -5, -6, -7, -8, -9, -10)
+        (-1, -2, -3, -4, -5, -6, -7, -8)
 
     If we attempt to obtain the stable matching for the above game,
     without defining the preference function we obtain an error::
@@ -163,7 +163,7 @@ class MatchingGame(SageObject):
         ....:     big_game.suitors()[player].pref = suitr_preferences[player]
         ....:     big_game.reviewers()[player].pref = revr_preferences[-player]
         sage: big_game.solve()
-        {1: -1, 2: -8, 3: -9, 4: -10, 5: -7, 6: -6, 7: -5, 8: -4, 9: -3, 10: -2}
+        {1: -1, 2: -8, 3: -6, 4: -7, 5: -5, 6: -4, 7: -3, 8: -2}
 
     Note that we can also combine the two ways of creating a game. For example
     here is an initial matching game::

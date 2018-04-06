@@ -184,8 +184,6 @@ If the above script is called ``factor``, here is an example usage:
 
     bash $ ./factor 2006
     2 * 17 * 59
-    bash $ ./factor "32*x^5-1"
-    (2*x - 1) * (16*x^4 + 8*x^3 + 4*x^2 + 2*x + 1)
 
 Data Types
 ==========
@@ -198,17 +196,17 @@ ints and floats, as illustrated:
 ::
 
     sage: s = "sage"; type(s)
-    <type 'str'>
+    <... 'str'>
     sage: s = 'sage'; type(s)      # you can use either single or double quotes
-    <type 'str'>
+    <... 'str'>
     sage: s = [1,2,3,4]; type(s)
-    <type 'list'>
+    <... 'list'>
     sage: s = (1,2,3,4); type(s)
-    <type 'tuple'>
+    <... 'tuple'>
     sage: s = int(2006); type(s)
-    <type 'int'>
+    <... 'int'>
     sage: s = float(2006); type(s)
-    <type 'float'>
+    <... 'float'>
 
 To this, Sage adds many other types. E.g., vector spaces:
 
@@ -288,7 +286,7 @@ elements of the list are indexed starting from :math:`0`:
     sage: v = [2, 3, 5, 'x', SymmetricGroup(3)]; v
     [2, 3, 5, 'x', Symmetric group of order 3! as a permutation group]
     sage: type(v)
-    <type 'list'>
+    <... 'list'>
     sage: v[0]
     2
     sage: v[2]
@@ -361,7 +359,7 @@ they can't be changed.
     sage: v = (1,2,3,4); v
     (1, 2, 3, 4)
     sage: type(v)
-    <type 'tuple'>
+    <... 'tuple'>
     sage: v[1] = 5
     Traceback (most recent call last):
     ...
@@ -404,7 +402,7 @@ used:
     sage: list(v)
     [1, 2, 3, 4/5]
     sage: type(list(v))
-    <type 'list'>
+    <... 'list'>
 
 As another example, basis for vector spaces are immutable
 sequences, since it's important that you don't change them.
@@ -440,7 +438,7 @@ arbitrary objects.
 
     sage: d = {1:5, 'sage':17, ZZ:GF(7)}
     sage: type(d)
-    <type 'dict'>
+    <... 'dict'>
     sage: d.keys()
      [1, 'sage', Integer Ring]
     sage: d['sage']
@@ -459,7 +457,7 @@ You can turn the above dictionary into a list with the same data:
 
 ::
 
-    sage: d.items()
+    sage: list(d.items())
     [(1, 5), ('sage', 17), (Integer Ring, Finite Field of size 7)]
 
 A common idiom is to iterate through the pairs in a dictionary:
@@ -467,7 +465,7 @@ A common idiom is to iterate through the pairs in a dictionary:
 ::
 
     sage: d = {2:4, 3:9, 4:16}
-    sage: [a*b for a, b in d.iteritems()]
+    sage: [a*b for a, b in d.items()]
     [8, 27, 64]
 
 A dictionary is unordered, as the last output illustrates.
@@ -651,16 +649,6 @@ convert both numbers into the same type if possible:
     False
     sage: 2/3 < 3/2;   3/2 < 3/1
     True
-    True
-
-Almost any two objects may be compared; there is no assumption that
-the objects are equipped with a total ordering.
-
-::
-
-    sage: 2 < CC(3.1,1)
-    True
-    sage: 5 < VectorSpace(QQ,3)   # output can be somewhat random
     True
 
 Use bool for symbolic inequalities:

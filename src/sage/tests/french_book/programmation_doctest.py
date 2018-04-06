@@ -394,7 +394,7 @@ Sage example in ./programmation.tex, line 1562::
 
 Sage example in ./programmation.tex, line 1571::
 
-  sage: map(lambda n:2*n+1, [0..15])
+  sage: list(map(lambda n:2*n+1, [0..15]))
   [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]
   sage: [2*n+1 for n in [0..15]]
   [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]
@@ -476,7 +476,7 @@ Sage example in ./programmation.tex, line 1740::
   sage: x = var('x')
   sage: factor(diff(x*exp(x), [x, x]))
   (x + 2)*e^x
-  sage: map(lambda n: factor(diff(x*exp(x), n*[x])), [0..6])
+  sage: list(map(lambda n: factor(diff(x*exp(x), n*[x])), [0..6]))
   [x*e^x, (x + 1)*e^x, (x + 2)*e^x, (x + 3)*e^x, (x + 4)*e^x,
   (x + 5)*e^x, (x + 6)*e^x]
   sage: [factor (diff (x*exp(x), n*[x])) for n in [0..6]]
@@ -635,7 +635,7 @@ Sage example in ./programmation.tex, line 2221::
   sage: L1 = [0..4]; L2 = [5..9]
   sage: list(zip(L1, L2))
   [(0, 5), (1, 6), (2, 7), (3, 8), (4, 9)]
-  sage: map(lambda x, y:(x, y), L1, L2)
+  sage: list(map(lambda x, y:(x, y), L1, L2))
   [(0, 5), (1, 6), (2, 7), (3, 8), (4, 9)]
 
 Sage example in ./programmation.tex, line 2238::

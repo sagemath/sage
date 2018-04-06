@@ -1,0 +1,41 @@
+Francois Bissey francois.bissey@canterbury.ac.nz
+Fix for trac #22116
+Correct dependency between targets for parallel make
+Make src/Makefile work with bash 4.4
+adopted by upstream github.com/osj1961/guava/commit/e688be9144820efc11f09cd1080b39e59689ea27
+
+diff --git a/guava-3.13/Makefile.in b/guava-3.13/Makefile.in
+index 46e97f3..d5f2b98 100644
+--- a/guava-3.13/Makefile.in
++++ b/guava-3.13/Makefile.in
+@@ -22,7 +22,7 @@ minimum-weight: $(CJSRCDIR)/minimum-weight.o $(CJSRCDIR)/minimum-weight-gf2.o $(
+ $(CJSRCDIR)/minimum-weight.o $(CJSRCDIR)/minimum-weight-gf2.o \
+ $(CJSRCDIR)/minimum-weight-gf3.o $(CJSRCDIR)/popcount.o -lm
+ 
+-leonconv: 
++leonconv: desauto
+ 	cd ./src; $(MAKE) CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)";
+ 
+ desauto: 
+@@ -41,7 +41,7 @@ popcount.o: $(CJSRCDIR)/popcount.c $(CJSRCDIR)/popcount.h $(CJSRCDIR)/config.h $
+ 	$(CC) -c -O3 -Wall -I $(CJSRCDIR) $(CJSRCDIR)/popcount.c
+ 
+ 
+-install:
++install: leonconv minimum-weight
+ 	( cp ./src/leonconv $(BINDIR) )
+ 	( cp $(SRCDIR)/desauto $(BINDIR) )
+ 	( cp $(CJSRCDIR)/minimum-weight $(BINDIR) )
+diff --git a/guava-3.13/src/Makefile b/guava-3.13/src/Makefile
+index 1253a1c..d9d3495 100644
+--- a/guava-3.13/src/Makefile
++++ b/guava-3.13/src/Makefile
+@@ -11,7 +11,7 @@ SUBDIRS = leon ctjhai
+ .PHONY: all $(SUBDIRS)
+ 
+ all :	$(FILES)
+-	cd leon make
++	cd leon; $(MAKE)
+ 
+ leonconv: leonconv.c
+ 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o leonconv leonconv.c

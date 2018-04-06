@@ -81,7 +81,7 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
         - :meth:`IncidenceStructure.is_resolvable`
         - :func:`~sage.combinat.designs.bibd.balanced_incomplete_block_design`
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: KTS15 = designs.resolvable_balanced_incomplete_block_design(15,3); KTS15
         (15,3,1)-Balanced Incomplete Block Design
@@ -377,7 +377,7 @@ def v_4_1_rbibd(v,existence=False):
         that `v=3q+1\equiv 1\pmod{3}` where `q` is a prime power (see VII.7.5.a
         from [BJL99]_).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: rBIBD = designs.resolvable_balanced_incomplete_block_design(28,4)
         sage: rBIBD.is_resolvable()
@@ -435,7 +435,7 @@ def PBD_4_7(v,check=True, existence=False):
     This construction of PBD is used by the construction of Kirkman Triple
     Systems.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.designs.resolvable_bibd import PBD_4_7
         sage: PBD_4_7(22)
@@ -695,7 +695,7 @@ def PBD_4_7_from_Y(gdd,check=True):
       guys), you may want to disable it whenever you want speed. Set to ``True``
       by default.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.designs.resolvable_bibd import PBD_4_7_from_Y
         sage: PBD_4_7_from_Y(designs.transversal_design(7,8))

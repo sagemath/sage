@@ -28,7 +28,7 @@ class MultiplexFunction:
     """
     def __init__(self, multiplexer, name):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.object_multiplexer import Multiplex, MultiplexFunction
             sage: m = Multiplex(1,1/2)
@@ -41,7 +41,7 @@ class MultiplexFunction:
 
     def __call__(self, *args, **kwds):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.object_multiplexer import Multiplex, MultiplexFunction
             sage: m = Multiplex(1,1/2)
@@ -59,13 +59,13 @@ class MultiplexFunction:
 
 class Multiplex:
     """
-    Obbject for a list of children such that function calls on this
-    new objects implies that the same function is called on all
+    Object for a list of children such that function calls on this
+    new object implies that the same function is called on all
     children.
     """
     def __init__(self, *args):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.object_multiplexer import Multiplex
             sage: m = Multiplex(1,1/2)
@@ -76,7 +76,7 @@ class Multiplex:
 
     def __getattr__(self, name):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.object_multiplexer import Multiplex
             sage: m = Multiplex(1,1/2)

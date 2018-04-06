@@ -21,6 +21,7 @@ from __future__ import absolute_import
 #*****************************************************************************
 
 from .padic_extension_generic import pAdicExtensionGeneric
+from .misc import precprint
 from sage.rings.infinity import infinity
 from sage.misc.latex import latex
 from sage.rings.integer import Integer
@@ -49,12 +50,12 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
             sage: S.<x> = A[]
             sage: B.<t> = A.ext(x^2+7)
             sage: B #indirect doctest
-            Eisenstein Extension of 7-adic Ring with capped relative precision 10 in t defined by (1 + O(7^10))*x^2 + (O(7^11))*x + (7 + O(7^11))
+            Eisenstein Extension in t defined by x^2 + 7 with capped relative precision 20 over 7-adic Ring
         """
         if do_latex:
-            return "Eisenstein Extension of %s in %s defined by %s"%(latex(self.ground_ring()), self.latex_name(), latex(self.modulus()))
+            return "Eisenstein Extension in %s defined by %s over %s"%(self.latex_name(), latex(self.defining_polynomial(exact=True)), latex(self.ground_ring()))
         else:
-            return "Eisenstein Extension of %s in %s defined by %s"%(self.ground_ring(), self.variable_name(), self.modulus())
+            return "Eisenstein Extension in %s defined by %s %s over %s-adic %s"%(self.variable_name(), self.defining_polynomial(exact=True), precprint(self._prec_type(), self.precision_cap(), self.variable_name()), self.prime(), "Field" if self.is_field() else "Ring")
 
     def ramification_index(self, K = None):
         """
@@ -160,6 +161,29 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
             Finite Field of size 7
         """
         return self.ground_ring().residue_class_field()
+
+    def residue_ring(self, n):
+        """
+        Return the quotient of the ring of integers by the nth power of its maximal ideal.
+
+        EXAMPLES::
+
+            sage: S.<x> = ZZ[]
+            sage: W.<w> = Zp(5).extension(x^2 - 5)
+            sage: W.residue_ring(1)
+            Ring of integers modulo 5
+
+        The following requires implementing more general Artinian rings::
+
+            sage: W.residue_ring(2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+        """
+        if n == 1:
+            return self.ground_ring().residue_ring(1)
+        else:
+            raise NotImplementedError
 
     #def discriminant(self, K=None):
     #    if K is self:

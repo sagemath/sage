@@ -53,22 +53,26 @@ AUTHORS:
 - Volker Braun (2013-06-22): Rewrite
 """
 
-########################################################################
+#*****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#   as published by the Free Software Foundation; either version 2 of
-#   the License, or (at your option) any later version.
-#                   http://www.gnu.org/licenses/
-########################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
+from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.categories.sets_cat import Sets
 from sage.rings.all import ZZ
 from sage.rings.real_lazy import LazyFieldElement, RLF
 from sage.rings.infinity import infinity, minus_infinity
 
 
+@richcmp_method
 class InternalRealInterval(UniqueRepresentation, Parent):
     """
     A real interval.
@@ -294,7 +298,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         return not self._upper_closed
                 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Intervals are sorted by lower bound, then upper bound
 
@@ -308,8 +312,8 @@ class InternalRealInterval(UniqueRepresentation, Parent):
             (1, 3]
             sage: I2 = RealSet.open_closed(0, 5)[0];  I2
             (0, 5]
-            sage: cmp(I1, I2)
-            1
+            sage: I1 > I2
+            True
             sage: sorted([I1, I2])
             [(0, 5], (1, 3]]
 
@@ -320,8 +324,9 @@ class InternalRealInterval(UniqueRepresentation, Parent):
             sage: RealSet((0, 1),[1, 1],(1, 2))
             (0, 2)
         """
-        return cmp([self._lower, not self._lower_closed, self._upper, self._upper_closed],
-                   [other._lower, not other._lower_closed, other._upper, other._upper_closed])
+        x = (self._lower, not self._lower_closed, self._upper, self._upper_closed)
+        y = (other._lower, not other._lower_closed, other._upper, other._upper_closed)
+        return richcmp(x, y, op)
         
     element_class = LazyFieldElement
 
@@ -429,19 +434,17 @@ class InternalRealInterval(UniqueRepresentation, Parent):
             sage: I3.is_connected(I1)
             True
         """
-        cmp_lu = cmp(self._lower, other._upper)
-        cmp_ul = cmp(self._upper, other._lower)
         # self is separated and below other
-        if cmp_ul == -1:
+        if self._upper < other._lower:
             return False
         # self is adjacent and below other 
-        if cmp_ul == 0:
+        if self._upper == other._lower:
             return self._upper_closed or other._lower_closed
         # self is separated and above other
-        if cmp_lu == +1:
+        if other._upper < self._lower:
             return False
         # self is adjacent and above other 
-        if cmp_lu == 0:
+        if other._upper == self._lower:
             return self._lower_closed or other._upper_closed
         # They are not separated
         return True
@@ -475,28 +478,22 @@ class InternalRealInterval(UniqueRepresentation, Parent):
             sage: I1.convex_hull(I3)
             (0, 3/2]
         """
-        cmp_ll = cmp(self._lower, other._lower)
-        cmp_uu = cmp(self._upper, other._upper)
-        lower = upper = None
-        lower_closed = upper_closed = None
-        if cmp_ll == -1:
+        if self._lower < other._lower:
             lower = self._lower
             lower_closed = self._lower_closed
-        elif cmp_ll == +1:
+        elif self._lower > other._lower:
             lower = other._lower
             lower_closed = other._lower_closed
         else:
-            assert(cmp_ll == 0)
             lower = self._lower
             lower_closed = self._lower_closed or other._lower_closed
-        if cmp_uu == +1:
+        if self._upper > other._upper:
             upper = self._upper
             upper_closed = self._upper_closed
-        elif cmp_uu == -1:
+        elif self._upper < other._upper:
             upper = other._upper
             upper_closed = other._upper_closed
         else:
-            assert(cmp_uu == 0)
             upper = self._upper
             upper_closed = self._upper_closed or other._upper_closed
         return InternalRealInterval(lower, lower_closed, upper, upper_closed)
@@ -535,28 +532,24 @@ class InternalRealInterval(UniqueRepresentation, Parent):
             sage: I3.intersection(I1)
             (0, 0)
         """
-        cmp_ll = cmp(self._lower, other._lower)
-        cmp_uu = cmp(self._upper, other._upper)
         lower = upper = None
         lower_closed = upper_closed = None
-        if cmp_ll == -1:
+        if self._lower < other._lower:
             lower = other._lower
             lower_closed = other._lower_closed
-        elif cmp_ll == +1:
+        elif self._lower > other._lower:
             lower = self._lower
             lower_closed = self._lower_closed
         else:
-            assert(cmp_ll == 0)
             lower = self._lower
             lower_closed = self._lower_closed and other._lower_closed
-        if cmp_uu == +1:
+        if self._upper > other._upper:
             upper = other._upper
             upper_closed = other._upper_closed
-        elif cmp_uu == -1:
+        elif self._upper < other._upper:
             upper = self._upper
             upper_closed = self._upper_closed
         else:
-            assert(cmp_uu == 0)
             upper = self._upper
             upper_closed = self._upper_closed and other._upper_closed
         if lower > upper:
@@ -587,17 +580,16 @@ class InternalRealInterval(UniqueRepresentation, Parent):
             sage: i.contains(2)
             True
         """
-        cmp_lower = cmp(self._lower, x)
-        cmp_upper = cmp(x, self._upper)
-        if cmp_lower == cmp_upper == -1:
+        if self._lower < x < self._upper:
             return True
-        if cmp_lower == 0:
+        if self._lower == x:
             return self._lower_closed
-        if cmp_upper == 0:
+        if self._upper == x:
             return self._upper_closed
         return False
 
 
+@richcmp_method
 class RealSet(UniqueRepresentation, Parent):
 
     @staticmethod
@@ -615,8 +607,12 @@ class RealSet(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: RealSet(RealSet.open_closed(0,1), RealSet.closed_open(2,3))
+            sage: R = RealSet(RealSet.open_closed(0,1), RealSet.closed_open(2,3)); R
             (0, 1] + [2, 3)
+
+        TESTS::
+
+            sage: TestSuite(R).run()
         """
         if len(args) == 1 and isinstance(args[0], RealSet):
             return args[0]   # common optimization
@@ -644,9 +640,9 @@ class RealSet(UniqueRepresentation, Parent):
             else:
                 raise ValueError(str(arg) + ' does not determine real interval')
         intervals = RealSet.normalize(intervals)
-        return UniqueRepresentation.__classcall__(cls, intervals)
+        return UniqueRepresentation.__classcall__(cls, *intervals)
                 
-    def __init__(self, intervals):
+    def __init__(self, *intervals):
         """
         A subset of the real line
 
@@ -671,9 +667,10 @@ class RealSet(UniqueRepresentation, Parent):
             sage: RealSet(i, [3,4])    # list of two numbers = closed set
             (0, 1) + [3, 4]
         """
+        Parent.__init__(self, category = Sets())
         self._intervals = intervals
     
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Intervals are sorted by lower bound, then upper bound
 
@@ -687,16 +684,18 @@ class RealSet(UniqueRepresentation, Parent):
              (1, 3]
              sage: I2 = RealSet.open_closed(0, 5);  I2
              (0, 5]
-             sage: cmp(I1, I2)
-             1
+             sage: I1 > I2
+             True
              sage: sorted([I1, I2])
              [(0, 5], (1, 3]]
              sage: I1 == I1
              True
         """
+        if not isinstance(other, RealSet):
+            return NotImplemented
         # note that the interval representation is normalized into a
         # unique form
-        return cmp(self._intervals, other._intervals)
+        return richcmp(self._intervals, other._intervals, op)
 
     def __iter__(self):
         """
@@ -839,15 +838,15 @@ class RealSet(UniqueRepresentation, Parent):
         """
         # sort by lower bound
         intervals = sorted(intervals)
-        if len(intervals) == 0:
+        if not intervals:
             return tuple()
         merged = []
         curr = intervals.pop(0)
-        while len(intervals) != 0:
+        while intervals:
             next = intervals.pop(0)
-            cmp_ul = cmp(curr._upper, next._lower)
-            if cmp_ul == +1 or (
-                cmp_ul == 0 and (curr._upper_closed or next._lower_closed)):
+            if curr._upper > next._lower or (
+                    curr._upper == next._lower and
+                    (curr._upper_closed or next._lower_closed)):
                 curr = curr.convex_hull(next)
             else:
                 if not curr.is_empty():
@@ -1453,4 +1452,54 @@ class RealSet(UniqueRepresentation, Parent):
                     return False
         return True
 
-                
+    def _sage_input_(self, sib, coerced):
+        """
+        Produce an expression which will reproduce this value when evaluated.
+
+        TESTS::
+
+            sage: sage_input(RealSet())
+            RealSet()
+            sage: sage_input(RealSet.open(-oo, +oo))
+            RealSet(-oo, oo)
+            sage: sage_input(RealSet.point(77))
+            RealSet.point(77)
+            sage: sage_input(RealSet.closed_open(0, +oo))
+            RealSet.closed_open(0, oo)
+            sage: sage_input(RealSet.open_closed(-oo, 0))
+            RealSet.open_closed(-oo, 0)
+            sage: sage_input(RealSet.open_closed(-1, 0))
+            RealSet.open_closed(-1, 0)
+            sage: sage_input(RealSet.closed_open(-1, 0))
+            RealSet.closed_open(-1, 0)
+            sage: sage_input(RealSet.closed(0, 1))
+            RealSet.closed(0, 1)
+            sage: sage_input(RealSet.open(0, 1))
+            RealSet.open(0, 1)
+            sage: sage_input(RealSet.open(0, 1) + RealSet.open(1, 2))
+            RealSet.open(0, 1) + RealSet.open(1, 2)
+        """
+
+        def interval_input(i):
+            lower, upper = i.lower(), i.upper()
+            if i.is_point():
+                return sib.name('RealSet.point')(lower)
+            elif lower == minus_infinity and upper == infinity:
+                return sib.name('RealSet')(sib(minus_infinity), sib(infinity))
+            else:
+                if i.lower_closed():
+                    if i.upper_closed():
+                        t = 'RealSet.closed'
+                    else:
+                        t = 'RealSet.closed_open'
+                else:
+                    if i.upper_closed():
+                        t = 'RealSet.open_closed'
+                    else:
+                        t = 'RealSet.open'
+                return sib.name(t)(sib(lower), sib(upper))
+
+        if self.is_empty():
+            return sib.name('RealSet')()
+        else:
+            return sib.sum(interval_input(i) for i in self)

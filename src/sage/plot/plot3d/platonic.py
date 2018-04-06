@@ -435,6 +435,7 @@ def octahedron(center=(0, 0, 0), size=1, **kwds):
         sphinx_plot(G)
 
     """
+    kwds['enclosed'] = True
     if 'aspect_ratio' not in kwds:
         kwds['aspect_ratio'] = [1, 1, 1]
     return prep(Box(1,1,1).dual(**kwds), center, size, kwds)
@@ -592,6 +593,7 @@ def icosahedron(center=(0, 0, 0), size=1, **kwds):
         sphinx_plot(p)
 
     """
+    kwds['enclosed'] = True
     if 'aspect_ratio' not in kwds:
         kwds['aspect_ratio'] = [1, 1, 1]
     return prep(dodecahedron().dual(**kwds), center, size, kwds)

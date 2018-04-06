@@ -101,6 +101,25 @@ def roth_ruckenstein_root_finder(p, maxd=None, precision=None):
         p = p.polynomial(gens[1])
     return p.roots(multiplicities=False, degree_bound=maxd, algorithm="Roth-Ruckenstein")
 
+def alekhnovich_root_finder(p, maxd=None, precision=None):
+    """
+    Wrapper for Alekhnovich's algorithm to compute the roots of a polynomial
+    with coefficients in ``F[x]``.
+
+    TESTS::
+
+        sage: from sage.coding.guruswami_sudan.gs_decoder import alekhnovich_root_finder
+        sage: R.<x> = GF(13)[]
+        sage: S.<y> = R[]
+        sage: p = (y - x^2 - x - 1) * (y + x + 1)
+        sage: alekhnovich_root_finder(p, maxd = 2)
+        [12*x + 12, x^2 + x + 1]
+    """
+    gens = p.parent().gens()
+    if len(gens) == 2:
+        p = p.polynomial(gens[1])
+    return p.roots(multiplicities=False, degree_bound=maxd, algorithm="Alekhnovich")
+
 class GRSGuruswamiSudanDecoder(Decoder):
     r"""
     The Guruswami-Sudan list-decoding algorithm for decoding Generalized
@@ -152,6 +171,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     - ``root_finder`` -- (default: ``None``) the rootfinding algorithm that will
       be used. The following possibilities are currently available:
+
+        * ``"Alekhnovich"`` -- uses Alekhnovich's algorithm.
 
         * ``"RothRuckenstein"`` -- uses Roth-Ruckenstein algorithm.
 
@@ -340,10 +361,10 @@ class GRSGuruswamiSudanDecoder(Decoder):
             if s<=0 or l<=0:
                 return -1
             return gilt(n - n/2*(s+1)/(l+1) - (k-1)/2*l/s)
-        if l ==None and s==None:
+        if l is None and s is None:
             tau = gilt(johnson_radius(n, n - k + 1))
             return (tau, GRSGuruswamiSudanDecoder.parameters_given_tau(tau, n_k = (n, k)))
-        if l!=None and s!=None:
+        if l is not None and s is not None:
             return (get_tau(s,l), (s,l))
 
         # Either s or l is set, but not both. First a shared local function
@@ -360,7 +381,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
                 f_f, f_c = f(x_f), f(x_c)
                 return (x_f, f_f) if f_f >= f_c else (x_c, f_c)
 
-        if s!= None:
+        if s is not None:
             # maximising tau under condition
             # n*(s+1 choose 2) < (ell+1)*s*(n-tau) - (ell+1 choose 2)*(k-1)
             # knowing n and s, we can just minimise
@@ -372,7 +393,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             #Note that we have not proven that this ell is minimial in integral
             #sense! It just seems that this most often happens
             return (tau,(s,l))
-        if l!= None:
+        if l is not None:
             # Acquired similarly to when restricting s
             smax = sqrt((k-1.)/n*l*(l+1.))
             (s,tau) = find_integral_max(smax, lambda s: get_tau(s,l))
@@ -404,7 +425,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             - ``s`` is the multiplicity parameter, and
             - ``l`` is the list size parameter.
 
-        ..NOTE::
+        .. NOTE::
 
             One has to provide either ``C`` or ``(n, k)``. If neither or both
             are given, an exception will be raised.
@@ -468,7 +489,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         - ``n_k`` -- (default: ``None``) a tuple of integers, respectively the
           length and the dimension of the :class:`GeneralizedReedSolomonCode`
 
-        ..NOTE::
+        .. NOTE::
 
             One has to provide either ``C`` or ``(n, k)``. If none or both are
             given, an exception will be raised.
@@ -579,7 +600,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             raise ValueError("Specify either tau or parameters")
         if hasattr(interpolation_alg, '__call__'):
             self._interpolation_alg = interpolation_alg
-        elif interpolation_alg == None or interpolation_alg == "LeeOSullivan":
+        elif interpolation_alg is None or interpolation_alg == "LeeOSullivan":
             self._interpolation_alg = gs_interpolation_lee_osullivan
         elif interpolation_alg == "LinearAlgebra":
             self._interpolation_alg = gs_interpolation_linalg
@@ -587,8 +608,10 @@ class GRSGuruswamiSudanDecoder(Decoder):
             raise ValueError("Please provide a method or one of the allowed strings for interpolation_alg")
         if hasattr(root_finder, '__call__'):
             self._root_finder = root_finder
-        elif root_finder == None or root_finder == "RothRuckenstein":
+        elif root_finder == "RothRuckenstein":
             self._root_finder = roth_ruckenstein_root_finder
+        elif root_finder is None or root_finder == "Alekhnovich":
+            self._root_finder = alekhnovich_root_finder
         else:
             raise ValueError("Please provide a method or one of the allowed strings for root_finder")
         super(GRSGuruswamiSudanDecoder, self).__init__(code, code.ambient_space(), "EvaluationPolynomial")
@@ -668,11 +691,10 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         EXAMPLES::
 
-            sage: from sage.coding.guruswami_sudan.gs_decoder import roth_ruckenstein_root_finder
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
             sage: D = C.decoder("GuruswamiSudan", tau = 97)
             sage: D.rootfinding_algorithm()
-            <function roth_ruckenstein_root_finder at 0x...>
+            <function alekhnovich_root_finder at 0x...>
         """
         return self._root_finder
 
@@ -843,7 +865,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         return self._tau
 
 
-####################### registration ###############################
+####################### types ###############################
 
 GeneralizedReedSolomonCode._registered_decoders["GuruswamiSudan"] = GRSGuruswamiSudanDecoder
 GRSGuruswamiSudanDecoder._decoder_type = {"list-decoder", "always-succeed", "hard-decision"}

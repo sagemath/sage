@@ -294,7 +294,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 sage: DA = DescentAlgebra(QQ, 4)
                 sage: D = DA.D()
                 sage: B = DA.B()
-                sage: map(B, D.basis()) # indirect doctest
+                sage: list(map(B, D.basis()))  # indirect doctest
                 [B[4],
                  B[1, 3] - B[4],
                  B[2, 2] - B[4],
@@ -502,7 +502,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 sage: DA = DescentAlgebra(QQ, 4)
                 sage: B = DA.B()
                 sage: I = DA.I()
-                sage: map(I, B.basis()) # indirect doctest
+                sage: list(map(I, B.basis()))  # indirect doctest
                 [I[1, 1, 1, 1],
                  1/2*I[1, 1, 1, 1] + I[1, 1, 2],
                  1/2*I[1, 1, 1, 1] + I[1, 2, 1],
@@ -540,7 +540,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 sage: DA = DescentAlgebra(QQ, 4)
                 sage: B = DA.B()
                 sage: D = DA.D()
-                sage: map(D, B.basis()) # indirect doctest
+                sage: list(map(D, B.basis()))  # indirect doctest
                 [D{} + D{1} + D{1, 2} + D{1, 2, 3}
                   + D{1, 3} + D{2} + D{2, 3} + D{3},
                  D{} + D{1} + D{1, 2} + D{2},
@@ -558,7 +558,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 sage: DA = DescentAlgebra(QQ, 0)
                 sage: B = DA.B()
                 sage: D = DA.D()
-                sage: map(D, B.basis())
+                sage: list(map(D, B.basis()))
                 [D{}]
             """
             D = self.realization_of().D()
@@ -580,7 +580,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
                 sage: B = DescentAlgebra(QQ, 4).B()
                 sage: S = NonCommutativeSymmetricFunctions(QQ).Complete()
-                sage: map(S, B.basis()) # indirect doctest
+                sage: list(map(S, B.basis()))  # indirect doctest
                 [S[1, 1, 1, 1],
                  S[1, 1, 2],
                  S[1, 2, 1],
@@ -755,7 +755,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 sage: DA = DescentAlgebra(QQ, 4)
                 sage: B = DA.B()
                 sage: I = DA.I()
-                sage: map(B, I.basis()) # indirect doctest
+                sage: list(map(B, I.basis()))  # indirect doctest
                 [B[1, 1, 1, 1],
                  -1/2*B[1, 1, 1, 1] + B[1, 1, 2],
                  -1/2*B[1, 1, 1, 1] + B[1, 2, 1],

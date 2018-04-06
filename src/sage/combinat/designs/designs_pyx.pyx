@@ -9,9 +9,10 @@ Functions
 from __future__ import print_function, absolute_import
 
 include "sage/data_structures/bitset.pxi"
-include "cysignals/memory.pxi"
 
 from libc.string cimport memset
+from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
+
 from sage.misc.unknown import Unknown
 
 def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="OA"):

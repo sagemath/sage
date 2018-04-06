@@ -127,7 +127,7 @@ def padic_lseries(self, p, normalize = None, use_eclib = None, implementation = 
 
     -  ``use_eclib`` - deprecated, use ``implementation`` instead
 
-    - ``implementation`` - 'eclib' (default), 'sage', 'pollackstevens';
+    -  ``implementation`` - 'eclib' (default), 'sage', 'pollackstevens';
        Whether to use John Cremona's eclib, the Sage implementation,
        or Pollack-Stevens' implementation of overconvergent
        modular symbols.
@@ -252,8 +252,10 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
 
     If the rank is 0, we output 1.
 
-    TODO: - remove restriction that curve must be in minimal
-    Weierstrass form. This is currently required for E.gens().
+    .. TODO::
+
+        Remove restriction that curve must be in minimal
+        Weierstrass form. This is currently required for E.gens().
 
     AUTHORS:
 
@@ -364,8 +366,10 @@ def padic_height_pairing_matrix(self, p, prec=20, height=None, check_hypotheses=
     OUTPUT: The p-adic cyclotomic height pairing matrix of this curve
     to the given precision.
 
-    TODO: - remove restriction that curve must be in minimal
-    Weierstrass form. This is currently required for E.gens().
+    .. TODO::
+
+        remove restriction that curve must be in minimal
+        Weierstrass form. This is currently required for E.gens().
 
     AUTHORS:
 
@@ -1112,7 +1116,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
     A = (-X.a1()/2 - A) * f
 
     # Convert to a power series and remove the -1/x term.
-    # Also we artificially bump up the accuracy from N-2 to to N-1 digits;
+    # Also we artificially bump up the accuracy from N-2 to N-1 digits;
     # the constant term needs to be known to N-1 digits, so we compute
     # it directly
     assert A.valuation() == -1 and A[-1] == 1
@@ -1382,9 +1386,11 @@ def padic_E2(self, p, prec=20, check=False, check_hypotheses=True, algorithm="au
        then the result will not be returned mod `p^\text{prec}`,
        but it still *will* have prec *digits* of precision.
 
-    TODO: - Once we have a better implementation of the "standard"
-    algorithm, the algorithm selection strategy for "auto" needs to be
-    revisited.
+    .. TODO::
+
+        Once we have a better implementation of the "standard"
+        algorithm, the algorithm selection strategy for "auto" needs to be
+        revisited.
 
     AUTHORS:
 
@@ -1526,7 +1532,7 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
 
     INPUT:
 
-    -  ``p`` - prime (= 5) for which `E` is good
+    -  ``p`` - prime (>= 3) for which `E` is good
        and ordinary
 
     -  ``prec`` - (relative) `p`-adic precision for
@@ -1573,6 +1579,10 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
         6 + 10*11 + 10*11^2 + O(11^3)
         sage: E.ap(11)
         -5
+        sage: E = EllipticCurve('83a1')
+        sage: E.matrix_of_frobenius(3,6)
+        [                      2*3 + 3^5 + O(3^6)             2*3 + 2*3^2 + 2*3^3 + O(3^6)]
+        [              2*3 + 3^2 + 2*3^5 + O(3^6) 2 + 2*3^2 + 2*3^3 + 2*3^4 + 3^5 + O(3^6)]
 
     """
     # TODO change the basis back to the original equation.
@@ -1592,9 +1602,16 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
     # it selects an appropriate precision based on how large the prime
     # is
 
-    # todo: implement the p == 3 case
-    if p < 5:
-        raise NotImplementedError("p (=%s) must be at least 5" % p)
+    # for p = 3, we create the corresponding hyperelliptic curve
+    # and call matrix of frobenius on it
+
+    if p == 3:
+        from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+        f,g = self.hyperelliptic_polynomials()
+        return HyperellipticCurve(f + (g/2)**2).matrix_of_frobenius(p,prec)
+
+    if p < 3:
+        raise NotImplementedError("p (=%s) must be at least 3" % p)
 
     prec = int(prec)
     if prec < 1:

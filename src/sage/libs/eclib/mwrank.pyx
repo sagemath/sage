@@ -18,15 +18,15 @@ EXAMPLES::
     sage: t
     [[1:2:1]]
 """
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import os
 import sys
 
-from sage.libs.eclib cimport bigint, Curvedata, mw, two_descent
+from cysignals.memory cimport sig_free
+from cysignals.signals cimport sig_on, sig_off
 
-include "cysignals/signals.pxi"
-include "cysignals/memory.pxi"
+from sage.libs.eclib cimport bigint, Curvedata, mw, two_descent
 
 cdef extern from "wrap.cpp":
     ### misc functions ###
@@ -87,7 +87,7 @@ def get_precision():
 
     (int) The current precision in decimal digits.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.eclib.mwrank import get_precision
         sage: get_precision()
@@ -107,7 +107,7 @@ def set_precision(n):
 
     None.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.eclib.mwrank import set_precision
         sage: set_precision(50)
@@ -128,7 +128,7 @@ def initprimes(filename, verb=False):
     EXAMPLES::
 
         sage: file = os.path.join(SAGE_TMP, 'PRIMES')
-        sage: open(file,'w').write(' '.join([str(p) for p in prime_range(10^7,10^7+20)]))
+        sage: _ = open(file,'w').write(' '.join([str(p) for p in prime_range(10^7,10^7+20)]))
         sage: mwrank_initprimes(file, verb=True)
         Computed 78519 primes, largest is 1000253
         reading primes from file ...
@@ -330,7 +330,7 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
             sage: E.silverman_bound()
             6.52226179519101...
             sage: type(E.silverman_bound())
-            <type 'float'>
+            <... 'float'>
         """
         return Curvedata_silverman_bound(self.x)
 
@@ -508,7 +508,7 @@ cdef class _mw:
           rank; useful if an upper bound for the rank is already
           known).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.eclib.mwrank import _mw
             sage: from sage.libs.eclib.mwrank import _Curvedata
@@ -909,7 +909,7 @@ cdef class _mw:
         None.  The effect of the search is to update the list of
         generators.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.eclib.mwrank import _Curvedata
             sage: from sage.libs.eclib.mwrank import _mw
@@ -1003,7 +1003,7 @@ cdef class _two_descent:
           code in ``src/qrank/mrank1.cc`` in DEFAULT_NAUX: currently 8).
           Only relevant for curves with no 2-torsion, where full
           2-descent is carried out.  Worth increasing for curves
-          expected to be of of rank>6 to one or two more than the
+          expected to be of rank > 6 to one or two more than the
           expected rank.
 
         - ``second_descent`` (int, default 1) -- flag specifying

@@ -27,11 +27,11 @@ AUTHOR:
 #****************************************************************************
 
 from __future__ import print_function, absolute_import, division
-
 from sage import categories
 import cysignals
-from sage.structure.category_object import normalize_names
 import sage.rings.ring as ring
+from sage.structure.category_object import normalize_names
+from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from sage.categories.morphism import Morphism, IdentityMorphism
 
 def SkewPolynomialRing(base_ring, base_ring_automorphism=None, names=None, sparse=False):

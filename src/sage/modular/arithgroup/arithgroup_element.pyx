@@ -16,7 +16,7 @@ Elements of Arithmetic Subgroups
 from __future__ import absolute_import
 
 from sage.structure.element cimport MultiplicativeGroupElement, MonoidElement, Element
-from sage.structure.sage_object cimport richcmp
+from sage.structure.richcmp cimport richcmp
 from sage.rings.all import ZZ
 from sage.modular.cusps import Cusp
 
@@ -103,7 +103,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         r"""
         For unpickling objects pickled with the old ArithmeticSubgroupElement class.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: si = unpickle_newobj(sage.modular.arithgroup.arithgroup_element.ArithmeticSubgroupElement, ())
             sage: x = matrix(ZZ,2,[1,1,0,1])
@@ -111,7 +111,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         """
         from .congroup_sl2z import SL2Z
         oldparent, kwdict = state
-        self._set_parent(SL2Z)
+        self._parent = SL2Z
         if '_ArithmeticSubgroupElement__x' in kwdict:
             self.__x = M2Z(kwdict['_ArithmeticSubgroupElement__x'])
         elif '_CongruenceSubgroupElement__x' in kwdict:
@@ -400,7 +400,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         r"""
         Fetch entries by direct indexing.
 
-        EXAMPLE::
+        EXAMPLES::
             sage: SL2Z([3,2,1,1])[0,0]
             3
         """
@@ -410,10 +410,11 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         r"""
         Return a hash value.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: hash(SL2Z.0)
-            -4
+            -8192788425652673914  # 64-bit
+            -1995808122           # 32-bit
         """
         return hash(self.__x)
 
@@ -421,7 +422,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         r"""
         Used for pickling.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: (SL2Z.1).__reduce__()
             (Modular Group SL(2,Z), (

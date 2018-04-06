@@ -20,7 +20,7 @@ REFERENCES:
   and applications.  Springer-Verlag 1988, texts in Applied Mathematical
   Sciences, volume 75, 2nd edition.
 
-- http://en.wikipedia.org/wiki/Differential_form
+- :wikipedia:`Differential_form`
 
 """
 

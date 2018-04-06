@@ -61,11 +61,13 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.arith.all import binomial, integer_floor, is_prime_power
 from .incidence_structures import IncidenceStructure
-from sage.misc.decorators import rename_keyword
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
 from sage.matrix.matrix_space import MatrixSpace
+
+
+import six
 
 
 BlockDesign = IncidenceStructure
@@ -273,7 +275,7 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
             blocks.append(b)
         B = BlockDesign(len(points), blocks, name="ProjectiveGeometryDesign", check=check)
         if point_coordinates:
-            B.relabel({i:p[0] for p,i in points.iteritems()})
+            B.relabel({i:p[0] for p,i in six.iteritems(points)})
 
     elif algorithm == "gap":   # Requires GAP's Design
         from sage.interfaces.gap import gap
@@ -809,7 +811,7 @@ def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
     - ``F`` -- a finite field or a prime power.
 
     - ``point_coordinates`` -- (optional, default ``True``) whether we use
-      coordinates in `\GF(q)^n` or plain integers for the points of the design.
+      coordinates in `\GF{q}^n` or plain integers for the points of the design.
 
     - ``check`` -- (optional, default ``True``) whether to check the output.
 
@@ -870,7 +872,7 @@ def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
     B = BlockDesign(len(points), blocks, name="AffineGeometryDesign", check=check)
 
     if point_coordinates:
-        rd = {i:p[0][1:] for p,i in points.iteritems()}
+        rd = {i:p[0][1:] for p,i in six.iteritems(points)}
         for v in rd.values(): v.set_immutable()
         B.relabel(rd)
 
@@ -892,7 +894,7 @@ def CremonaRichmondConfiguration():
     For more information, see the
     :wikipedia:`Cremona-Richmond_configuration`.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: H = designs.CremonaRichmondConfiguration(); H
         Incidence structure with 15 points and 15 blocks
@@ -920,7 +922,7 @@ def WittDesign(n):
     `W_{12}`, the unique (up to isomorphism) `5-(12,6,1)` design.  The other
     values of `n` return a block design derived from these.
 
-    .. NOTE:
+    .. NOTE::
 
         Requires GAP's Design package (included in the gap_packages Sage spkg).
 
@@ -934,7 +936,7 @@ def WittDesign(n):
         sage: print(BD)                      # optional - gap_packages (design package)
         Incidence structure with 9 points and 12 blocks
     """
-    from sage.interfaces.gap import gap, GapElement
+    from sage.interfaces.gap import gap
     gap.load_package("design")
     gap.eval("B:=WittDesign(%s)"%n)
     v = eval(gap.eval("B.v"))
@@ -943,6 +945,7 @@ def WittDesign(n):
     for b in gblcks:
        gB.append([x-1 for x in b])
     return BlockDesign(v, gB, name="WittDesign", check=True)
+
 
 def HadamardDesign(n):
     """

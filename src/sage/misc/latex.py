@@ -19,8 +19,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six import iteritems, integer_types
 
 EMBEDDED_MODE = False
 
@@ -364,7 +364,7 @@ def dict_function(x):
     """
     return "".join([r"\left\{",
                     ", ".join(r"%s : %s" % (latex(key), latex(value))
-                              for key, value in x.iteritems()),
+                              for key, value in iteritems(x)),
                     r"\right\}"])
 
 # One can add to the latex_table in order to install latexing
@@ -403,13 +403,14 @@ latex_table = {type(None): None_function,
                bool: bool_function,
                dict: dict_function,
                float: float_function,
-               int: str,
                list: list_function,
-               long: str,
                str: str_function,
                tuple: tuple_function,
                type(NotImplemented): builtin_constant_function,
                type(Ellipsis): builtin_constant_function}
+
+for t in integer_types:
+    latex_table[t] = str
 
 
 class LatexExpr(str):
@@ -690,7 +691,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
         sage: from sage.misc.latex import _run_latex_, _latex_file_
         sage: file = os.path.join(SAGE_TMP, "temp.tex")
         sage: O = open(file, 'w')
-        sage: O.write(_latex_file_([ZZ['x'], RR])); O.close()
+        sage: _ = O.write(_latex_file_([ZZ['x'], RR])); O.close()
         sage: _run_latex_(file) # random - depends on whether latex is installed
         'dvi'
     """
@@ -1904,7 +1905,7 @@ class MathJax:
             sage: from sage.misc.latex import MathJax
             sage: MathJax()(3)
             <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
-            sage: str(MathJax().eval(ZZ[x], mode='display')) == str(MathJax()(ZZ[x]))
+            sage: str(MathJax().eval(ZZ['x'], mode='display')) == str(MathJax()(ZZ['x']))
             True
         """
         return self.eval(x, combine_all=combine_all)
@@ -2150,7 +2151,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
         sage: g = sage.misc.latex.latex_examples.graph()
         sage: latex.add_to_preamble(r"\usepackage{tkz-graph}")
         sage: file = os.path.join(SAGE_TMP, "temp.tex")
-        sage: O = open(file, 'w'); O.write(_latex_file_(g)); O.close()
+        sage: O = open(file, 'w'); _ = O.write(_latex_file_(g)); O.close()
         sage: _run_latex_(file, engine="pdflatex") # optional - latex
         'pdf'
 
@@ -2338,11 +2339,11 @@ def coeff_repr(c):
         return c._latex_coeff_repr()
     except AttributeError:
         pass
-    if isinstance(c, (int, long, float)):
+    if isinstance(c, integer_types + (float,)):
         return str(c)
     s = latex(c)
     if s.find("+") != -1 or s.find("-") != -1:
-        return "(%s)"%s
+        return "(%s)" % s
     return s
 
 def repr_lincomb(symbols, coeffs):

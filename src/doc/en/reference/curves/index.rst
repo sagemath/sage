@@ -65,6 +65,7 @@ Elliptic curves over number fields
 
    sage/schemes/elliptic_curves/ell_number_field
    sage/schemes/elliptic_curves/height
+   sage/schemes/elliptic_curves/saturation
 
    sage/schemes/elliptic_curves/ell_torsion
    sage/schemes/elliptic_curves/gal_reps
