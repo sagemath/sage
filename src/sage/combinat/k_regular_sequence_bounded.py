@@ -155,15 +155,16 @@ def construct_phi(matrices):
     """
     from sage.arith.srange import srange
     length = len(matrices)
-    phi = list(M.apply_map(lambda m: min(m, 2)) for M in matrices)
+
+    def get_immutable(M):
+        M.set_immutable()
+        return M
+    
+    phi = set(get_immutable(M.apply_map(lambda m: min(m, 2))) for M in matrices)
     for counter in range(1000000):
-        for A in matrices:
-            for B in phi:
-                prod = multiply_reduce(A, B)
-                if prod not in phi:
-                    phi.append(prod)
+        phi.update([get_immutable(multiply_reduce(A, B)) for A in matrices for B in phi])
         if len(phi) == length:
-            return phi
+            return list(phi)
         else:
             length = len(phi)
     raise RuntimeError('Phi too large.')
