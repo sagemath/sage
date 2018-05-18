@@ -845,6 +845,10 @@ class FileDocTestSource(DocTestSource):
         """
         expected = []
         rest = isinstance(self, RestSource)
+        # initialize starting_indent to silence pyflakes; note that this
+        # variable is only read once it has been set in the code block that
+        # sets in_block=True below.
+        starting_indent = None
         if rest:
             skipping = False
             in_block = False
