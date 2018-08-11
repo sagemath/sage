@@ -1,0 +1,12 @@
+{
+    "version": 1,
+    "project": "sage",
+    "project_url": "https://sagemath.org",
+    "repo": ".",
+    "plugins": ["sage_asv"],
+    "environment_type": "sage",
+    "env_dir": ".asv/env",
+    "results_dir": ".asv/results",
+    "html_dir": ".asv/html",
+    "benchmark_dir": "src/sage/benchmark/"
+}

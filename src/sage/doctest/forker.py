@@ -2290,6 +2290,8 @@ class DocTestTask(object):
         ['cputime', 'err', 'failures', 'optionals', 'walltime']
     """
 
+    runner = SageDocTestRunner
+
     if six.PY2:
         extra_globals = {}
     else:
@@ -2369,7 +2371,7 @@ class DocTestTask(object):
         """
         result = None
         try:
-            runner = SageDocTestRunner(
+            runner = DocTestTask.runner(
                     SageOutputChecker(),
                     verbose=options.verbose,
                     outtmpfile=outtmpfile,

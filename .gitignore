@@ -81,3 +81,8 @@ $RECYCLE.BIN/
 ###########
 .ipynb_checkpoints
 Untitled*.ipynb
+
+#####################
+# airspeed velocity #
+#####################
+/.asv
