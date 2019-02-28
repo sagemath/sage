@@ -1032,9 +1032,22 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             Multivariate Polynomial Ring in x, y, z over Integer Ring
             sage: F(RR)          # indirect doctest                                     # needs sage.rings.real_mpfr
             Multivariate Polynomial Ring in x, y, z over Real Field with 53 bits of precision
+
+        TESTS:
+
+        Check that :trac:`27364` is fixed::
+
+            sage: T = PolynomialRing(QQ, 't', 1); t = T.gen(); T
+            Multivariate Polynomial Ring in t over Rational Field
+            sage: F, R = T.construction()
+            sage: F(R) is T
+            True
+
+            sage: t * vector([1, 2])
+            (t, 2*t)
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        return PolynomialRing(R, self.vars)
+        return PolynomialRing(R, self.vars, len(self.vars))
 
     def __eq__(self, other):
         """
