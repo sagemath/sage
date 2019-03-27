@@ -17,7 +17,7 @@ from .gp import gp, gp_version, Gp
 from .gnuplot import gnuplot
 from .kash import  kash, kash_version, Kash
 from .lisp import lisp, Lisp
-from .magma import magma, magma_version, Magma
+from .magma import magma, Magma
 from .magma_free import magma_free
 from .macaulay2 import macaulay2, Macaulay2
 from .maple import maple, Maple
@@ -28,7 +28,8 @@ from .mathematica import mathematica, Mathematica
 from .matlab import matlab, matlab_version, Matlab
 from .mupad import mupad, Mupad  # NOT functional yet
 from .mwrank import mwrank, Mwrank
-from .octave import octave, octave_version, Octave
+from .octave import octave, Octave
+from .polymake import polymake
 from .qepcad import qepcad, qepcad_version, qepcad_formula
 from .qsieve import qsieve
 from .singular import singular, singular_version, Singular
@@ -73,3 +74,5 @@ if get_display_manager().is_in_terminal():
     from .sage0 import sage0_console
     from .lie import lie_console
     from .r import r_console
+
+del absolute_import

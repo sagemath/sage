@@ -13,10 +13,8 @@ AUTHORS:
 
 REFERENCES:
 
-- [Lee11]_ \J.M. Lee : *Introduction to Topological Manifolds*, 2nd ed.,
-  Springer (New York) (2011)
-- [KN63]_  \S. Kobayashi & K. Nomizu : *Foundations of Differential Geometry*,
-  vol. 1, Interscience Publishers (New York) (1963)
+- [Lee2011]_
+- [KN1963]_
 
 """
 #******************************************************************************
@@ -189,7 +187,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         r"""
         LaTeX representation of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()
@@ -276,7 +274,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
 
         - a :class:`~sage.manifolds.continuous_map.ContinuousMap`
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()
@@ -389,7 +387,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         - the identity map of `M`, as an instance of
           :class:`~sage.manifolds.continuous_map.ContinuousMap`
 
-        EXAMPLE:
+        EXAMPLES:
 
         The identity map of a 2-dimensional manifold::
 

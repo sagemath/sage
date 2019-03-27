@@ -125,7 +125,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         sage: grA = A.graded_algebra()
         sage: grA.category()
         Category of graded algebras with basis over Rational Field
-        sage: x,y,z = map(lambda s: grA.algebra_generators()[s], ['x','y','z'])
+        sage: x,y,z = [grA.algebra_generators()[s] for s in ['x','y','z']]
         sage: x
         bar(U['x'])
         sage: y * x + z
@@ -281,7 +281,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
             sage: A = Algebras(QQ).WithBasis().Filtered().example()
             sage: grA = A.graded_algebra()
             sage: grA.algebra_generators()
-            Finite family {'y': bar(U['y']), 'x': bar(U['x']), 'z': bar(U['z'])}
+            Finite family {'x': bar(U['x']), 'y': bar(U['y']), 'z': bar(U['z'])}
         """
         G = self._A.algebra_generators()
         return Family(G.keys(), lambda x: self(G[x]), name="generator")
@@ -302,7 +302,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
 
     @cached_method
     def one_basis(self):
-        """
+        r"""
         Return the basis index of the element `1` of
         `\operatorname{gr} A`.
 

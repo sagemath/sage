@@ -11,6 +11,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
@@ -345,7 +346,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             return sum(coeff * y[I] for (I, coeff) in x)
 
         def sum_of_partitions(self, la):
-            """
+            r"""
             Return the sum over all sets partitions whose shape is ``la``,
             scaled by `\prod_i m_i!` where `m_i` is the multiplicity
             of `i` in ``la``.
@@ -372,16 +373,16 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
         def _set_par_to_par(self, A):
             r"""
-            Return the the shape of ``A`` if ``A`` is the canonical standard
+            Return the shape of ``A`` if ``A`` is the canonical standard
             set partition `A_1 | A_2 | \cdots | A_k` where `|` is the pipe
             operation (see
-            :meth:~sage.combinat.set_partition.SetPartition.pipe()` )
+            :meth:`~sage.combinat.set_partition.SetPartition.pipe()` )
             and `A_i = [\lambda_i]` where `\lambda_1 \leq \lambda_2 \leq
             \cdots \leq \lambda_k`. Otherwise, return ``None``.
 
             This is the trailing term of `h_{\lambda}` mapped by `\chi` to
             the `\mathbf{w}` basis and is used by the coercion framework to
-            constuct the preimage `\chi^{-1}`.
+            construct the preimage `\chi^{-1}`.
 
             INPUT:
 
@@ -413,7 +414,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             cur = 1
             prev_len = 0
             for p in A:
-                if prev_len > len(p) or list(p) != range(cur, cur+len(p)):
+                if prev_len > len(p) or list(p) != list(range(cur, cur+len(p))):
                     return None
                 prev_len = len(p)
                 cur += len(p)

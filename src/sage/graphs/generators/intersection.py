@@ -5,23 +5,29 @@ Intersection graphs
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 """
 
-###########################################################################
+#*****************************************************************************
+#       Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
+#       Copyright (C) 2006 Emily A. Kirkman
+#       Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
 #
-#           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
-#                              and Emily A. Kirkman
-#           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
-#
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
-###########################################################################
-from __future__ import print_function
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
+from __future__ import absolute_import, print_function
+from six.moves import range
+from six import itervalues
 
 # import from Sage library
 from sage.graphs.graph import Graph
 
-def IntervalGraph(intervals, points_ordered = False):
+
+def IntervalGraph(intervals, points_ordered=False):
     r"""
-    Returns the graph corresponding to the given intervals.
+    Return the graph corresponding to the given intervals.
 
     An interval graph is built from a list `(a_i,b_i)_{1\leq i \leq n}` of
     intervals : to each interval of the list is associated one vertex, two
@@ -42,7 +48,7 @@ def IntervalGraph(intervals, points_ordered = False):
           to create the graph are saved with the graph and can be recovered
           using ``get_vertex()`` or ``get_vertices()``.
 
-    EXAMPLE:
+    EXAMPLES:
 
     The following line creates the sequence of intervals
     `(i, i+2)` for i in `[0, ..., 8]`::
@@ -85,29 +91,32 @@ def IntervalGraph(intervals, points_ordered = False):
         sage: g.edges() == h.edges()
         True
     """
-
+    intervals = list(intervals)
     n = len(intervals)
     g = Graph(n)
 
     if points_ordered:
-        for i in xrange(n-1):
+        for i in range(n-1):
             li,ri = intervals[i]
-            for j in xrange(i+1,n):
+            for j in range(i+1,n):
                 lj,rj = intervals[j]
-                if ri < lj or rj < li: continue
+                if ri < lj or rj < li:
+                    continue
                 g.add_edge(i,j)
     else:
-        for i in xrange(n-1):
+        for i in range(n-1):
             I = intervals[i]
-            for j in xrange(i+1,n):
+            for j in range(i+1,n):
                 J = intervals[j]
-                if max(I) < min(J) or max(J) < min(I): continue
+                if max(I) < min(J) or max(J) < min(I):
+                    continue
                 g.add_edge(i,j)
 
-    rep = dict( zip(range(n),intervals) )
+    rep = dict(zip(range(n), intervals))
     g.set_vertices(rep)
 
     return g
+
 
 def PermutationGraph(second_permutation, first_permutation = None):
     r"""
@@ -170,7 +179,7 @@ def PermutationGraph(second_permutation, first_permutation = None):
       ``sorted(second_permutation)``, which yields the expected ordering when
       the elements of the graph are integers.
 
-    .. SEEALSO:
+    .. SEEALSO::
 
       - Recognition of Permutation graphs in the :mod:`comparability module
         <sage.graphs.comparability>`.
@@ -294,7 +303,7 @@ def ToleranceGraph(tolrep):
         to create the graph is saved with the graph and can be recovered using
         ``get_vertex()`` or ``get_vertices()``.
 
-    EXAMPLE:
+    EXAMPLES:
 
     The following code creates a tolerance representation ``tolrep``, generates
     its tolerance graph ``g``, and applies some checks::
@@ -328,7 +337,7 @@ def ToleranceGraph(tolrep):
         sage: g.is_isomorphic(graphs.PathGraph(3))
         True
 
-    TEST:
+    TESTS:
 
     Giving negative third value::
 
@@ -340,15 +349,15 @@ def ToleranceGraph(tolrep):
     """
     n = len(tolrep)
 
-    for i in xrange(n):
+    for i in range(n):
         if tolrep[i][2] <= 0:
             raise ValueError("Invalid tolerance representation at position "+str(i)+"; third value must be positive!")
 
     g = Graph(n)
 
-    for i in xrange(n-1):
+    for i in range(n-1):
         li,ri,ti = tolrep[i]
-        for j in xrange(i+1,n):
+        for j in range(i+1,n):
             lj,rj,tj = tolrep[j]
             if min(ri,rj) - max(li,lj) >= min(ti,tj):
                 g.add_edge(i,j)
@@ -376,7 +385,7 @@ def OrthogonalArrayBlockGraph(k,n,OA=None):
     of them being adjacent if one of their coordinates match.
 
     For more information on these graphs, see `Andries Brouwer's page
-    on Orthogonal Array graphs <www.win.tue.nl/~aeb/graphs/OA.html>`_.
+    on Orthogonal Array graphs <https://www.win.tue.nl/~aeb/graphs/OA.html>`_.
 
     .. WARNING::
 
@@ -516,7 +525,7 @@ def IntersectionGraph(S):
             The elements of `S` must be finite, hashable, and the elements of
             any `s\in S` must be hashable too.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: graphs.IntersectionGraph([(1,2,3),(3,4,5),(5,6,7)])
         Intersection Graph: Graph on 3 vertices
@@ -545,8 +554,8 @@ def IntersectionGraph(S):
 
     g = Graph(name="Intersection Graph")
     g.add_vertices(S)
-    for clique in ground_set_to_sets.itervalues():
-        g.add_edges((u,v) for u,v in combinations(clique,2))
+    for clique in itervalues(ground_set_to_sets):
+        g.add_clique(set(clique))
 
     return g
 

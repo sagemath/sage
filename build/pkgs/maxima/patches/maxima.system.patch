@@ -1,5 +1,7 @@
---- src/src/maxima.system	2010-12-04 18:06:03.000000000 -0800
-+++ /Users/wstein/sage/install/sage-4.7.3.alpha1/spkg/build/maxima-5.23.2.p0/src/src/maxima.system	2011-10-30 23:52:09.000000000 -0700
+diff --git a/src/maxima.system b/src/maxima.system
+index 76f2452..cf25f51 100644
+--- a/src/maxima.system
++++ b/src/maxima.system
 @@ -1,5 +1,8 @@
  ;;; -*- Lisp -*-
  
@@ -9,3 +11,15 @@
  (in-package :cl-user)
  
  (pushnew :cl *features*)
+@@ -75,6 +78,11 @@
+ 			     ;; Convert dir/foo.fas to dir/foo.o
+ 			     (make-pathname :type "o" :defaults p))
+ 			 files)))
++	(c::build-fasl "binary-ecl/maxima" :lisp-files obj
++			  :ld-flags
++			  (let ((x (symbol-value (find-symbol "*AUTOCONF-LD-FLAGS*"
++							      (find-package "MAXIMA")))))
++			    (if (and x (not (string= x ""))) (list x))))
+ 	(c::build-program "binary-ecl/maxima" :lisp-files obj
+ 			  :ld-flags
+ 			  (let ((x (symbol-value (find-symbol "*AUTOCONF-LD-FLAGS*"

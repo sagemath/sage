@@ -54,7 +54,7 @@ def accept_size(f):
 
         sage: from sage.combinat.species.misc import accept_size
         sage: def f(*args, **kwds):
-        ....:       print("{} {}".format(args, list(sorted(kwds.items()))))
+        ....:       print("{} {}".format(args, sorted(kwds.items())))
         sage: f = accept_size(f)
         sage: f(min=1)
         () [('min', 1)]

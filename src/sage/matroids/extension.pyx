@@ -31,7 +31,7 @@ Methods
 from __future__ import print_function
 
 include 'sage/data_structures/bitset.pxi'
-from basis_matroid cimport BasisMatroid
+from .basis_matroid cimport BasisMatroid
 from sage.arith.all import binomial
 
 cdef class CutNode:
@@ -195,7 +195,7 @@ cdef class LinearSubclassesIter:
             sage: from sage.matroids.extension import LinearSubclasses
             sage: M = matroids.Uniform(3, 6)
             sage: type(LinearSubclasses(M).__iter__())
-            <type 'sage.matroids.extension.LinearSubclassesIter'>
+            <... 'sage.matroids.extension.LinearSubclassesIter'>
         """
         cdef CutNode first_cut = CutNode(MC)
         self._MC = MC

@@ -12,7 +12,8 @@ packages) is distributed under the terms of the GNU General Public
 License, either version 2 of the License, or (at your option) any later
 version.
 
-All documentation is released under the GNU Free Documentation License.
+All documentation is released under the `Creative Commons 3.0 BY-SA
+license <https://creativecommons.org/licenses/by-sa/3.0/legalcode>`__.
 
 ::
 

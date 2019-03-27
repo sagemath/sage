@@ -73,8 +73,10 @@ def SimpleGraphSpecies():
 
 @cached_function
 def BinaryTreeSpecies():
-    """
-    Returns the species of binary trees on n leaves. The species of
+    r"""
+    Return the species of binary trees on n leaves.
+
+    The species of
     binary trees B is defined by B = X + B\*B where X is the singleton
     species.
 

@@ -38,11 +38,11 @@ Sageでは，任意の代数多様体を定義することができるが，そ�
     sage: V.irreducible_components()
     [
     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      y - 1,
-      x,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
       y,
       x - 1,
+    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+      y - 1,
+      x,
     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
       x + y + 2,
       2*y^2 + 4*y + 3
@@ -65,12 +65,12 @@ Sageでは，3次元射影空間における捻れ3次曲線のトーリック�
     in a, b, c, d over Rational Field
     sage: F.reduced_groebner_bases ()
     [[-c^2 + b*d, -b*c + a*d, -b^2 + a*c],
-     [-c^2 + b*d, b^2 - a*c, -b*c + a*d],
-     [-c^2 + b*d, b*c - a*d, b^2 - a*c, -c^3 + a*d^2],
-     [c^3 - a*d^2, -c^2 + b*d, b*c - a*d, b^2 - a*c],
-     [c^2 - b*d, -b*c + a*d, -b^2 + a*c],
-     [c^2 - b*d, b*c - a*d, -b^2 + a*c, -b^3 + a^2*d],
-     [c^2 - b*d, b*c - a*d, b^3 - a^2*d, -b^2 + a*c],
+     [-b*c + a*d, -c^2 + b*d, b^2 - a*c],
+     [-c^3 + a*d^2, -c^2 + b*d, b*c - a*d, b^2 - a*c],
+     [-c^2 + b*d, b^2 - a*c, b*c - a*d, c^3 - a*d^2],
+     [-b*c + a*d, -b^2 + a*c, c^2 - b*d],
+     [-b^3 + a^2*d, -b^2 + a*c, c^2 - b*d, b*c - a*d],
+     [-b^2 + a*c, c^2 - b*d, b*c - a*d, b^3 - a^2*d],
      [c^2 - b*d, b*c - a*d, b^2 - a*c]]
     sage: F.polyhedralfan()
     Polyhedral fan in 4 dimensions of dimension 4

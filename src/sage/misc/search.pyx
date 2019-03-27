@@ -22,6 +22,7 @@ extra comparison.   Also, the function names make more sense.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 import bisect
 

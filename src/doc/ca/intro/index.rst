@@ -201,8 +201,10 @@ Per exemple::
     sage: C = Set(S)
     sage: S
     [121, 49, 25, 9, 9, 25, 49, 121]
-    sage: C
+    sage: C    # random
     {121, 9, 49, 25}
+    sage: sorted(C)
+    [9, 25, 49, 121]
 
 La `i`-èssima entrada d'una seqüència (o d'un conjunt) `C`
 és ``C[i]``. Però compte perquè Sage
@@ -257,7 +259,7 @@ de la manera següent::
 
 Podem aplicar una funció a tots els elements d'una llista de la manera següent::
 
-    sage: map(cos, [0,pi..6*pi])
+    sage: [cos(t) for t in [0,pi..6*pi]]
     [1, -1, 1, -1, 1, -1, 1]
 
 
@@ -495,7 +497,7 @@ repetim els primers exemples::
     sage: len(solutions)
     2
     sage: type(solutions[0])
-    <type 'dict'>
+    <... 'dict'>
     sage: for sol in solutions: print((sol[x].n(digits=3), sol[y].n(digits=3)))
     (5.00 - 5.59*I, 5.00 + 5.59*I)
     (5.00 + 5.59*I, 5.00 - 5.59*I)

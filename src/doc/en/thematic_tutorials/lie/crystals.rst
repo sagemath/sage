@@ -336,6 +336,12 @@ can be installed via::
 
     sage -i dot2tex
 
+This also requires various LaTeX packages. The following command
+checks whether those are available::
+
+    sage: from sage.graphs.graph_latex import check_tkz_graph
+    sage: check_tkz_graph() # random
+
 
 Crystals of tableaux in Sage
 ----------------------------
@@ -351,7 +357,8 @@ will consider how to draw pictures of these crystals.
 Once you have ``dot2tex`` installed, you may make images pictures of crystals
 with a command such as this::
 
-    sage: crystals.Tableaux("A2", shape=[2,1]).latex_file("/tmp/a2rho.tex") # optional - dot2tex graphviz
+    sage: fn = tmp_filename(ext=".tex")
+    sage: crystals.Tableaux("A2", shape=[2,1]).latex_file(fn)
 
 Here `\lambda = (2,1)=(2,1,0)`. The crystal ``C`` is
 `\mathcal{B}_{\lambda}`. The character `\chi_\lambda` will therefore
@@ -772,7 +779,7 @@ You can see how its done as follows::
     sage: T = crystals.Tableaux("A4",shape=[3,2])
     sage: v = T.highest_weight_vector().f(1).f(2).f(3).f(2).f(1).f(4).f(2).f(3); v
     [[1, 2, 5], [3, 4]]
-    sage: v._list
+    sage: list(v)
     [3, 1, 4, 2, 5]
 
 We've looked at the internal representation of `v`, where it is

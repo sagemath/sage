@@ -59,7 +59,7 @@ just a few examples:
 
 As the last example shows, some mathematical expressions return
 'exact' values, rather than numerical approximations. To get a
-numerical approximation, use either the function ``n`` or the method
+numerical approximation, use either the function ``N`` or the method
 ``n`` (and both of these have a longer name, ``numerical_approx``, and
 the function ``N`` is the same as ``n``)). These take optional
 arguments ``prec``, which is the requested number of bits of
@@ -95,7 +95,7 @@ hold values of any Python type within a given scope:
     <type 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # now a is a string
     sage: type(a)
-    <type 'str'>
+    <... 'str'>
 
 The C programming language, which is statically typed, is much
 different; a variable declared to hold an int can only hold an int

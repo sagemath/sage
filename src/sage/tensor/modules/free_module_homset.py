@@ -10,9 +10,8 @@ AUTHORS:
 
 REFERENCES:
 
-- Chaps. 13, 14 of R. Godement : *Algebra*, Hermann (Paris) / Houghton Mifflin
-  (Boston) (1968)
-- Chap. 3 of S. Lang : *Algebra*, 3rd ed., Springer (New York) (2002)
+- Chaps. 13, 14 of R. Godement : *Algebra* [God1968]_
+- Chap. 3 of S. Lang : *Algebra* [Lan2002]_
 
 """
 from __future__ import absolute_import
@@ -146,9 +145,9 @@ class FreeModuleHomset(Homset):
         [0 0 1]
 
     There is a canonical identification between endomorphisms of `M` and
-    tensors of type (1,1) on `M`. Accordingly, coercion maps have been
+    tensors of type `(1,1)` on `M`. Accordingly, coercion maps have been
     implemented between `\mathrm{End}(M)` and `T^{(1,1)}(M)` (the module of
-    all type-(1,1) tensors on `M`, see
+    all type-`(1,1)` tensors on `M`, see
     :class:`~sage.tensor.modules.tensor_free_module.TensorFreeModule`)::
 
         sage: T11 = M.tensor_module(1,1) ; T11
@@ -353,7 +352,7 @@ class FreeModuleHomset(Homset):
             [4 5 6]
             [7 8 9]
 
-        Coercion of a type-(1,1) tensor to an endomorphism::
+        Coercion of a type-`(1,1)` tensor to an endomorphism::
 
             sage: a = M.tensor((1,1))
             sage: a[:] = [[1,2,3],[4,5,6],[7,8,9]]
@@ -406,7 +405,7 @@ class FreeModuleHomset(Homset):
         r"""
         Construct some (unamed) element.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: N = FiniteRankFreeModule(ZZ, 2, name='N')
@@ -434,7 +433,7 @@ class FreeModuleHomset(Homset):
 
         EXAMPLES:
 
-        The module of type-(1,1) tensors coerces to ``self``, if the latter
+        The module of type-`(1,1)` tensors coerces to ``self``, if the latter
         is some endomorphism set::
 
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
@@ -485,7 +484,7 @@ class FreeModuleHomset(Homset):
           instance of
           :class:`~sage.tensor.modules.free_module_morphism.FiniteRankFreeModuleMorphism`
 
-        EXAMPLE:
+        EXAMPLES:
 
         Identity element of the set of endomorphisms of a free module
         over `\ZZ`::

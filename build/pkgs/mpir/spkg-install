@@ -1,26 +1,4 @@
-#!/usr/bin/env bash
-
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
 cd src
-
-###############################################################################
-# Apply patches (if any):
-###############################################################################
-
-echo "Applying patches to upstream sources..."
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue # ignore non-readable / non-existent files
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error: '$patch' failed to apply."
-        exit 1
-    fi
-done
 
 ###############################################################################
 # Previous MPIR installations are only removed after a *successful* (re)build,
@@ -53,18 +31,6 @@ echo "Machine type (mpir): $MACHINE_TYPE_MPIR"
 # Set up environment variables:
 ###############################################################################
 
-
-# The Yasm build uses PYTHON from the environment to find the Python interpreter,
-# so unset it in case it apparently contains nothing useful (like it did in Sage
-# versions prior to 5.0.beta10; cf. #10492), to not break Yasm's 'configure':
-if [ -n "$PYTHON" ]; then
-    if ! $PYTHON --version &>/dev/null; then
-        echo >&2 "Warning: Unsetting PYTHON (=\"$PYTHON\"), since it doesn't seem"
-        echo >&2 "         to contain the name of / path to a Python interpreter."
-        unset PYTHON
-    fi
-fi
-
 user_cflags=$CFLAGS # Save them. 'sage-env' sets CC, but not CFLAGS.
 required_cflags=""  # Additional mandatory settings required by Sage, accumulated below.
 user_ldflags=$LDFLAGS # Save them.
@@ -95,13 +61,7 @@ fi
 
 case "$UNAME" in
     SunOS)
-        if [ "$SAGE64" = yes ]; then
-            echo "Building a 64-bit version of MPIR."
-            ABI=64
-        else
-            echo "Building a 32-bit version of MPIR."
-            ABI=32
-        fi;;
+        true;;  # Auto-detect ABI
     Darwin)
         # In some cases (see SAGE_ROOT/spkg/bin/sage-env), on Darwin,
         # CC might be set to clang, but MPIR doesn't seem to build
@@ -111,31 +71,24 @@ case "$UNAME" in
         if [ -n "$CC" ] && [ "$CC" = "$CLANG" ] && [ -n "$GCC" ] ; then
             export CC="$GCC"
         fi
-        if [ "$SAGE64" = yes ]; then
-            # Note that we do not support 64-bit builds on MacOS X PPC at all,
-            # so we don't special-case on the architecture here.
-            echo "Building a 64-bit version of MPIR."
-            ABI=64
+        # Do not set ABI=32 on MacOS X 10.6 (Darwin 10) and later, since
+        # there everything defaults to 64-bit:
+        if [ "`uname -r | sed 's/\..*//'`" -lt 10 ]; then
+            # Assume MacOS X 10.4 or 10.5 (Darwin 8 or 9); also, PPC CPUs
+            # are only supported by these, not later versions.
+            echo "Building a 32-bit version of MPIR, which is the only supported option."
+            ABI=32
+            case "`uname -m`" in
+                ppc|ppc64|[Pp]ower*) # Apple's 'uname' returns strange strings
+                    # The Darwin assembler rejects code using an
+                    # extended instruction set by default (cf. #8664):
+                    required_cflags="$required_cflags -Wa,-force_cpusubtype_ALL"
+                    ;;
+            esac
         else
-            # Do not set ABI=32 on MacOS X 10.6 (Darwin 10) and later, since
-            # there everything defaults to 64-bit:
-            if [ "`uname -r | sed 's/\..*//'`" -lt 10 ]; then
-                # Assume MacOS X 10.4 or 10.5 (Darwin 8 or 9); also, PPC CPUs
-                # are only supported by these, not later versions.
-                echo "Building a 32-bit version of MPIR, which is the only supported option."
-                ABI=32
-                case "`uname -m`" in
-                    ppc|ppc64|[Pp]ower*) # Apple's 'uname' returns strange strings
-                        # The Darwin assembler rejects code using an
-                        # extended instruction set by default (cf. #8664):
-                        required_cflags="$required_cflags -Wa,-force_cpusubtype_ALL"
-                        ;;
-                esac
-            else
-                # Darwin 10 (MacOS X 10.6) or later, SAGE64 not "yes"
-                # We don't have to set ABI here.
-                echo "Building a 64-bit version of MPIR, which is the default."
-            fi
+            # Darwin 10 (MacOS X 10.6) or later.
+            # We don't have to set ABI here.
+            echo "Building a 64-bit version of MPIR, which is the default."
         fi
         ;; # Darwin
     Linux)
@@ -189,6 +142,23 @@ if [ "`uname -m`" = ppc64le ]; then
     export MPN_PATH=generic
 fi
 
+# Workaround old GNU as version by disabling assembly use.
+if [ "$UNAME" = Linux ]; then
+    as_version=`$AS --version | head -1 | awk 'NF>1{print $NF}'`
+    as_version_major=${as_version%%.*}
+    as_version_rest=${as_version#*.}
+    as_version_minor=${as_version_rest%%.*}
+    if [ $as_version_major -lt 2 ] || \
+       [ $as_version_major -eq 2 -a $as_version_minor -lt 24 ]; then
+        echo "Disable use of assembly because of GNU as <= 2.23."
+        export MPN_PATH=generic
+        if [ "$SAGE_FAT_BINARY" = "yes" ]; then
+            echo "Cannot build with SAGE_FAT_BINARY=yes."
+            exit 1
+        fi
+    fi
+fi
+
 # Work around a bug in GCC 4.7.0 which breaks the build on Itanium CPUs.
 # See #12765, #12751, and http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48496
 if [ "`uname -m`" = ia64 ] && [ "`testcc.sh $CC`" = GCC ] ; then
@@ -213,6 +183,17 @@ export ABI CFLAGS CXXFLAGS LDFLAGS # Partially redundant, but safe(r).
 
 MPIR_CONFIGURE="--enable-shared $MPIR_CONFIGURE"
 MPIR_CONFIGURE="--enable-gmpcompat $MPIR_CONFIGURE"
+
+# Fake yasm installation on non-x86[_64] system.
+# It is not installed but not needed.
+case `uname -m` in
+    i[3456]86|x86_64|amd64)
+        ;;
+    *) # Anything else
+        echo "Disabling check for yasm on non-x86[_64] system."
+        MPIR_CONFIGURE="--with-yasm=/bin/true $MPIR_CONFIGURE"
+        ;;
+esac
 
 # If we're bootstrapping GCC from the GCC spkg, don't build the C++
 # interface (cf. #12782), static libraries and disable fat binary.
@@ -324,23 +305,13 @@ echo "You can set MPIR_CONFIGURE to pass additional parameters."
 # Clear the cache of the previous configure run
 find . -name config.cache -exec rm -f {} \;
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" $MPIR_CONFIGURE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring MPIR. (See above for the options passed to it.)"
-    exit 1
-fi
+sdh_configure $MPIR_CONFIGURE
 
 ###############################################################################
 # Now build MPIR:
 ###############################################################################
 
-echo "Now building MPIR..."
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building MPIR."
-    exit 1
-fi
-
+sdh_make
 echo "Build succeeded."
 
 ###############################################################################
@@ -370,9 +341,4 @@ rm -f "$SAGE_SPKG_INST"/gmp-*
 # Now install MPIR:
 ###############################################################################
 
-echo "Now installing MPIR..."
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing MPIR."
-    exit 1
-fi
+sdh_make_install

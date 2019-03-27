@@ -1,0 +1,50 @@
+From c6623a8da5f9ff393008876455dfba70c1de1e3f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Fran=C3=A7ois=20Bissey?= <francois.bissey@canterbury.ac.nz>
+Date: Thu, 15 Dec 2016 15:16:46 +1300
+Subject: [PATCH] More prudent handling of SMP in Makefile.system. It may need
+ to extended to other makefiles.
+
+---
+ Makefile.system | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile.system b/Makefile.system
+index b05177b..f9c5995 100644
+--- a/Makefile.system
++++ b/Makefile.system
+@@ -297,7 +297,7 @@ ifneq ($(OSNAME), WINNT)
+ ifneq ($(OSNAME), CYGWIN_NT)
+ ifneq ($(OSNAME), Interix)
+ ifneq ($(OSNAME), Android)
+-ifdef SMP
++ifeq ($(SMP), 1)
+ EXTRALIB   += -lpthread
+ endif
+ endif
+@@ -843,7 +843,7 @@ ifeq ($(NO_AVX2), 1)
+ CCOMMON_OPT	+= -DNO_AVX2
+ endif
+ 
+-ifdef SMP
++ifeq ($(SMP), 1)
+ CCOMMON_OPT	+= -DSMP_SERVER
+ 
+ ifeq ($(ARCH), mips64)
+@@ -1044,7 +1044,7 @@ LIBSUFFIX = a
+ endif
+ 
+ ifneq ($(DYNAMIC_ARCH), 1)
+-ifndef SMP
++ifneq ($(SMP), 1)
+ LIBNAME		= $(LIBPREFIX)_$(LIBCORE)$(REVISION).$(LIBSUFFIX)
+ LIBNAME_P	= $(LIBPREFIX)_$(LIBCORE)$(REVISION)_p.$(LIBSUFFIX)
+ else
+@@ -1052,7 +1052,7 @@ LIBNAME		= $(LIBPREFIX)_$(LIBCORE)p$(REVISION).$(LIBSUFFIX)
+ LIBNAME_P	= $(LIBPREFIX)_$(LIBCORE)p$(REVISION)_p.$(LIBSUFFIX)
+ endif
+ else
+-ifndef SMP
++ifneq ($(SMP), 1)
+ LIBNAME		= $(LIBPREFIX)$(REVISION).$(LIBSUFFIX)
+ LIBNAME_P	= $(LIBPREFIX)$(REVISION)_p.$(LIBSUFFIX)
+ else

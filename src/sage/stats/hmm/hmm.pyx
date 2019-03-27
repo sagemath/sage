@@ -21,25 +21,28 @@ AUTHOR:
    - William Stein, 2010-03
 """
 
-#############################################################################
+#*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL) v2+.
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#############################################################################
+#*****************************************************************************
+
 from __future__ import print_function
 
-include "cysignals/signals.pxi"
-
-cdef extern from "math.h":
-    double log(double)
+from libc.math cimport log
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.finance.time_series cimport TimeSeries
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.matrix.all import matrix
 from sage.misc.randstate cimport current_randstate, randstate
+from cpython.object cimport PyObject_RichCompare
 
-from util cimport HMM_Util
+from .util cimport HMM_Util
 
 cdef HMM_Util util = HMM_Util()
 
@@ -60,7 +63,7 @@ cdef class HiddenMarkovModel:
             sage: pi = m.initial_probabilities(); pi
             [0.2000, 0.8000]
             sage: type(pi)
-            <type 'sage.finance.time_series.TimeSeries'>
+            <... 'sage.finance.time_series.TimeSeries'>
 
         The returned time series is a copy, so changing it does not
         change the model.
@@ -359,7 +362,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return unpickle_discrete_hmm_v1, \
                (self.A, self.B, self.pi, self.n_out, self._emission_symbols, self._emission_symbols_dict)
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         EXAMPLES::
 
@@ -375,9 +378,9 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             False
         """
         if not isinstance(other, DiscreteHiddenMarkovModel):
-            raise ValueError
-        return cmp(self.__reduce__()[1], other.__reduce__()[1])
-
+            return NotImplemented
+        return PyObject_RichCompare(self.__reduce__()[1],
+                                    other.__reduce__()[1], op)
 
     def emission_matrix(self):
         """
@@ -411,7 +414,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
 
     def __repr__(self):
-        """
+        r"""
         Return string representation of this discrete hidden Markov model.
 
         EXAMPLES::
@@ -1321,20 +1324,31 @@ def unpickle_discrete_hmm_v0(A, B, pi, emission_symbols, name):
     return DiscreteHiddenMarkovModel(A,B,pi,emission_symbols,normalize=False)
 
 def unpickle_discrete_hmm_v1(A, B, pi, n_out, emission_symbols, emission_symbols_dict):
-    """
+    r"""
+    Return a :class:`DiscreteHiddenMarkovModel`, restored from the arguments.
+
+    This function is used internally for unpickling.
+
     TESTS::
 
         sage: m = hmm.DiscreteHiddenMarkovModel([[0.4,0.6],[0.1,0.9]], [[0.0,1.0],[0.5,0.5]], [1,0],['a','b'])
-        sage: loads(dumps(m)) == m   # indirect test
+        sage: m2 = loads(dumps(m)) # indirect doctest
+        sage: m2 == m
+        True
+
+    Test that :trac:`15711` has been resolved::
+
+        sage: str(m2) == str(m)
+        True
+        sage: m2.log_likelihood('baa'*2) == m.log_likelihood('baa'*2)
         True
     """
     cdef DiscreteHiddenMarkovModel m = DiscreteHiddenMarkovModel.__new__(DiscreteHiddenMarkovModel)
     m.A = A
     m.B = B
     m.pi = pi
+    m.N = len(pi)
     m.n_out = n_out
     m._emission_symbols = emission_symbols
     m._emission_symbols_dict = emission_symbols_dict
     return m
-
-

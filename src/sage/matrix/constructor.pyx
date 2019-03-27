@@ -1,10 +1,11 @@
+# cython: binding=True
 """
 General matrix Constructor
 """
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
-#       Copyright (C) 2016 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#       Copyright (C) 2016 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,18 +14,12 @@ General matrix Constructor
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import types
-from .matrix_space import MatrixSpace
-from sage.rings.ring import is_Ring
-from sage.rings.all import ZZ, RDF, CDF
-from sage.arith.srange import srange
-from sage.structure.coerce cimport is_numpy_type, py_scalar_parent
-from sage.structure.element cimport Vector
-from sage.structure.sequence import Sequence
-from sage.misc.long cimport pyobject_to_long
+from __future__ import absolute_import
+
+from .args cimport MatrixArgs
 
 
-class MatrixFactory(object):
+def matrix(*args, **kwds):
     """
     Create a matrix.
 
@@ -59,28 +54,33 @@ class MatrixFactory(object):
     makes sense. Calling matrix() with a NumPy array will convert the
     array to a matrix.
 
-    The ring, number of rows, and number of columns of the matrix can
-    be specified by setting the ``ring``, ``nrows``, or ``ncols``
-    keyword parameters or by passing them as the first arguments to the
-    function in specified order. The ring defaults to ``ZZ`` if it is
-    not specified and cannot be determined from the entries. If the
-    number of rows and columns are not specified and cannot be
-    determined, then an empty 0x0 matrix is returned.
+    All arguments (even the positional) are optional.
 
-    INPUT:
+    Positional and keyword arguments:
 
-    -  ``ring`` -- the base ring for the entries of the
-       matrix.
+    - ``ring`` -- parent of the entries of the matrix (despite the
+      name, this is not a priori required to be a ring). By default,
+      determine this from the given entries, falling back to ``ZZ`` if
+      no entries are given.
 
-    -  ``nrows`` -- the number of rows in the matrix.
+    - ``nrows`` -- the number of rows in the matrix.
 
-    -  ``ncols`` -- the number of columns in the matrix.
-
-    -  ``sparse`` -- create a sparse matrix. This defaults to ``True``
-       when the entries are given as a dictionary, otherwise defaults to
-       ``False``.
+    - ``ncols`` -- the number of columns in the matrix.
 
     - ``entries`` -- see examples below.
+
+    If either ``nrows`` or ``ncols`` is given as keyword argument, then
+    no positional arguments ``nrows`` and ``ncols`` may be given.
+
+    Keyword-only arguments:
+
+    - ``sparse`` -- (boolean) create a sparse matrix. This defaults to
+      ``True`` when the entries are given as a dictionary, otherwise
+      defaults to ``False``.
+
+    - ``space`` -- matrix space which will be the parent of the output
+      matrix. This determines ``ring``, ``nrows``, ``ncols`` and
+      ``sparse``.
 
     OUTPUT:
 
@@ -185,6 +185,18 @@ class MatrixFactory(object):
         sage: m = matrix(GF(7), v); m; m.parent()
         [1 3 2]
         Full MatrixSpace of 1 by 3 dense matrices over Finite Field of size 7
+        sage: m = matrix(GF(7), 3, 1, v); m; m.parent()
+        [1]
+        [3]
+        [2]
+        Full MatrixSpace of 3 by 1 dense matrices over Finite Field of size 7
+
+    ::
+
+        sage: matrix(pari.mathilbert(3))
+        [  1 1/2 1/3]
+        [1/2 1/3 1/4]
+        [1/3 1/4 1/5]
 
     ::
 
@@ -288,7 +300,7 @@ class MatrixFactory(object):
         sage: matrix(QQ,2,3,1)
         Traceback (most recent call last):
         ...
-        TypeError: identity matrix must be square
+        TypeError: nonzero scalar matrix must be square
         sage: matrix(QQ,2,3,5)
         Traceback (most recent call last):
         ...
@@ -307,7 +319,7 @@ class MatrixFactory(object):
         sage: m = matrix(QQ,3,[[1,2,3],[4,5,6]]); m; m.parent()
         Traceback (most recent call last):
         ...
-        ValueError: number of rows does not match up with specified number
+        ValueError: inconsistent number of rows: should be 3 but got 2
         sage: m = matrix(QQ,2,3,[[1,2,3],[4,5,6]]); m; m.parent()
         [1 2 3]
         [4 5 6]
@@ -315,7 +327,7 @@ class MatrixFactory(object):
         sage: m = matrix(QQ,2,4,[[1,2,3],[4,5,6]]); m; m.parent()
         Traceback (most recent call last):
         ...
-        ValueError: number of columns does not match up with specified number
+        ValueError: sequence too short (expected length 4, got 3)
         sage: m = matrix([(1,2,3),(4,5,6)]); m; m.parent()
         [1 2 3]
         [4 5 6]
@@ -337,13 +349,11 @@ class MatrixFactory(object):
         sage: m = matrix(QQ,2,4,[1,2,3,4,5,6]); m; m.parent()
         Traceback (most recent call last):
         ...
-        ValueError: entries has the wrong length
+        ValueError: sequence too short (expected length 8, got 6)
         sage: m = matrix(QQ,5,[1,2,3,4,5,6]); m; m.parent()
         Traceback (most recent call last):
         ...
-        TypeError: cannot construct an element of
-        Full MatrixSpace of 5 by 1 dense matrices over Rational Field
-        from [1, 2, 3, 4, 5, 6]!
+        ValueError: sequence too long (expected length 5, got more)
 
     Matrices specified by a dict of entries::
 
@@ -376,7 +386,7 @@ class MatrixFactory(object):
         sage: m = matrix(QQ,1,{(1,1): 2}); m; m.parent()
         Traceback (most recent call last):
         ...
-        IndexError: invalid entries list
+        IndexError: invalid row index 1
         sage: m = matrix({}); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 sparse matrices over Integer Ring
@@ -411,7 +421,7 @@ class MatrixFactory(object):
         sage: m = matrix(0,[1]); m; m.parent()
         Traceback (most recent call last):
         ...
-        ValueError: entries has the wrong length
+        ValueError: sequence too long (expected length 0, got more)
         sage: m = matrix(1,0,[]); m; m.parent()
         []
         Full MatrixSpace of 1 by 0 dense matrices over Integer Ring
@@ -427,11 +437,11 @@ class MatrixFactory(object):
         sage: m = matrix(0,{(1,1):2}); m; m.parent()
         Traceback (most recent call last):
         ...
-        IndexError: invalid entries list
+        IndexError: invalid row index 1
         sage: m = matrix(2,0,{(1,1):2}); m; m.parent()
         Traceback (most recent call last):
         ...
-        IndexError: invalid entries list
+        IndexError: invalid column index 1
 
     Check conversion from numpy::
 
@@ -493,15 +503,19 @@ class MatrixFactory(object):
         [7 8 9]
         Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
         sage: n = matrix(QQ, 2, 2, [1, 1/2, 1/3, 1/4]).numpy(); n
-        array([[ 1.        ,  0.5       ],
-               [ 0.33333333,  0.25      ]])
+        array([[1.        , 0.5       ],
+               [0.33333333, 0.25      ]])
         sage: matrix(QQ, n)
         [  1 1/2]
         [1/3 1/4]
 
     The dimensions of a matrix may be given as numpy types::
 
-        sage: matrix(numpy.int32(2), ncols=numpy.int32(3))
+        sage: matrix(numpy.int32(2), numpy.int32(3))
+        [0 0 0]
+        [0 0 0]
+
+        sage: matrix(nrows=numpy.int32(2), ncols=numpy.int32(3))
         [0 0 0]
         [0 0 0]
 
@@ -510,7 +524,7 @@ class MatrixFactory(object):
         sage: matrix(RR, 2.0, 2.0)
         Traceback (most recent call last):
         ...
-        TypeError: invalid matrix constructor: type matrix? for help
+        TypeError: too many arguments in matrix constructor
 
     More tests::
 
@@ -536,11 +550,11 @@ class MatrixFactory(object):
         sage: matrix([[1],[2,3]])
         Traceback (most recent call last):
         ...
-        ValueError: list of rows is not valid (rows are wrong types or lengths)
+        ValueError: inconsistent number of columns: should be 1 but got 2
         sage: matrix([[1],2])
         Traceback (most recent call last):
         ...
-        ValueError: list of rows is not valid (rows are wrong types or lengths)
+        TypeError: 'sage.rings.integer.Integer' object is not iterable
         sage: matrix(vector(RR,[1,2,3])).parent()
         Full MatrixSpace of 1 by 3 dense matrices over Real Field with 53 bits of precision
 
@@ -549,27 +563,51 @@ class MatrixFactory(object):
         sage: matrix(ZZ, [[0] for i in range(10^5)]).is_zero()
         True
 
-    Test conversion using a ``_matrix_`` method::
+    Test a simple ``_matrix_`` method. Note that we are ignoring
+    ``base`` which is inefficient but allowed::
 
-        sage: A = gap(MatrixSpace(QQ, 2, 2)(range(4)))
-        sage: matrix(QQ, A)
-        [0 1]
-        [2 3]
-        sage: matrix(A, ring=QQ)
-        [0 1]
-        [2 3]
-        sage: matrix(A, QQ)
-        doctest:...: DeprecationWarning: when constructing a matrix, the ring must be the first argument
-        See http://trac.sagemath.org/20015 for details.
-        [0 1]
-        [2 3]
+        sage: class MatrixTest(object):
+        ....:     def _matrix_(self, base=None):
+        ....:         return matrix(ZZ, 2, 2, [1,2,3,4])
+        sage: e = MatrixTest()
+        sage: matrix(e)
+        [1 2]
+        [3 4]
+        sage: S = MatrixSpace(ZZ, 2, 2)
+        sage: M = S(e); M
+        [1 2]
+        [3 4]
+        sage: parent(M) is S
+        True
+        sage: matrix(RDF, e)
+        [1.0 2.0]
+        [3.0 4.0]
+        sage: S = MatrixSpace(RDF, 2, 2)
+        sage: M = S(e); M
+        [1.0 2.0]
+        [3.0 4.0]
+        sage: parent(M) is S
+        True
 
     A redundant ``ring`` argument::
 
         sage: matrix(ZZ, 3, 3, ring=ZZ)
         Traceback (most recent call last):
         ...
-        TypeError: invalid matrix constructor: type matrix? for help
+        TypeError: too many arguments in matrix constructor
+
+    Some calls using an iterator::
+
+        sage: from six.moves import range
+        sage: matrix(QQ, 3, 6, range(18), sparse=true)
+        [ 0  1  2  3  4  5]
+        [ 6  7  8  9 10 11]
+        [12 13 14 15 16 17]
+        sage: matrix(4, 4, range(16))
+        [ 0  1  2  3]
+        [ 4  5  6  7]
+        [ 8  9 10 11]
+        [12 13 14 15]
 
     AUTHORS:
 
@@ -580,340 +618,13 @@ class MatrixFactory(object):
 
     - Jeroen Demeyer (2016-02-05): major clean up, see :trac:`20015`
       and :trac:`20016`
+
+    - Jeroen Demeyer (2018-02-20): completely rewritten using
+      :class:`MatrixArgs`, see :trac:`24742`
     """
-    def __call__(self, *Args, ring=None, nrows=None, ncols=None, sparse=None):
-        cdef list args = list(Args)
+    return MatrixArgs(*args, **kwds).matrix()
 
-        # Check for deprecated (matrixable object, ring) argument
-        if len(args) == 2 and hasattr(args[0], '_matrix_'):
-            from sage.misc.superseded import deprecation
-            deprecation(20015, "when constructing a matrix, the ring must be the first argument")
-            args = [args[1], args[0]]
 
-        # ring argument
-        if ring is None and args and is_Ring(args[0]):
-            ring = args.pop(0)
-
-        # object with _matrix_ method
-        if args:
-            try:
-                makematrix = args[0]._matrix_
-            except AttributeError:
-                pass
-            else:
-                if ring is None:
-                    args.pop(0)
-                else:
-                    args[0] = ring
-                if sparse is None:
-                    return makematrix(*args)
-                else:
-                    return makematrix(*args, sparse=sparse)
-
-        # nrows argument
-        if nrows is None and args:
-            arg = args[0]
-            try:
-                if is_numpy_type(type(arg)):
-                    import numpy
-                    if isinstance(arg, numpy.ndarray):
-                        raise TypeError
-                nrows = pyobject_to_long(arg)
-            except TypeError:
-                pass
-            else:
-                args.pop(0)
-
-        # ncols argument
-        if ncols is None and args:
-            arg = args[0]
-            try:
-                if is_numpy_type(type(arg)):
-                    import numpy
-                    if isinstance(arg, numpy.ndarray):
-                        raise TypeError
-                ncols = pyobject_to_long(arg)
-            except TypeError:
-                pass
-            else:
-                args.pop(0)
-
-        # Now we've taken care of initial ring, nrows, and ncols arguments.
-        # We've also taken care of the Sage object case.
-
-        # Now the rest of the arguments are a list of rows, a flat list of
-        # entries, a callable, a dict, a numpy array, or a single value.
-        entry_ring = ZZ
-        if not args:
-            # If no entries are specified, pass back a zero matrix
-            entries = 0
-        elif len(args) == 1:
-            arg = args[0]
-            if isinstance(arg, (types.FunctionType, types.LambdaType, types.MethodType)):
-                if ncols is None and nrows is None:
-                    raise TypeError("when passing in a callable, the dimensions of the matrix must be specified")
-                if ncols is None:
-                    ncols = nrows
-                elif nrows is None:
-                    nrows = ncols
-
-                irange = srange(nrows)
-                jrange = srange(ncols)
-                arg = [[arg(i, j) for j in jrange] for i in irange]
-
-            if isinstance(arg, (list, tuple)):
-                if not arg:
-                    # no entries are specified, pass back the zero matrix
-                    entries = 0
-                elif isinstance(arg[0], (list, tuple)) or isinstance(arg[0], Vector):
-                    # Ensure we have a list of lists, each inner list having the same number of elements
-                    first_len = len(arg[0])
-                    if not all( (isinstance(v, (list, tuple)) or isinstance(v, Vector)) and len(v) == first_len for v in arg):
-                        raise ValueError("list of rows is not valid (rows are wrong types or lengths)")
-                    # We have a list of rows or vectors
-                    if nrows is None:
-                        nrows = len(arg)
-                    elif nrows != len(arg):
-                        raise ValueError("number of rows does not match up with specified number")
-                    if ncols is None:
-                        ncols = len(arg[0])
-                    elif ncols != len(arg[0]):
-                        raise ValueError("number of columns does not match up with specified number")
-
-                    entries = []
-                    for v in arg:
-                        entries.extend(v)
-
-                else:
-                    # We have a flat list; figure out nrows and ncols
-                    if nrows is None:
-                        nrows = 1
-
-                    if nrows > 0:
-                        if ncols is None:
-                            ncols = len(arg) // nrows
-                        elif ncols != len(arg) // nrows:
-                            raise ValueError("entries has the wrong length")
-                    elif len(arg) > 0:
-                        raise ValueError("entries has the wrong length")
-
-                    entries = arg
-
-                if nrows > 0 and ncols > 0 and ring is None:
-                    entries, ring = prepare(entries)
-
-            elif isinstance(arg, dict):
-                # We have a dictionary: default to sparse
-                if sparse is None:
-                    sparse = True
-                if not arg:
-                    # no entries are specified, pass back the zero matrix
-                    entries = 0
-                else:
-                    entries, entry_ring = prepare_dict(arg)
-                    if nrows is None:
-                        nrows = nrows_from_dict(entries)
-                        ncols = ncols_from_dict(entries)
-                    # note that ncols can still be None if nrows is set --
-                    # it will be assigned nrows down below.
-
-                # See the construction after the numpy case below.
-            else:
-                if is_numpy_type(type(arg)):
-                    import numpy
-                    if isinstance(arg, numpy.ndarray):
-                        # Convert to a numpy array if it was a matrix.
-                        if type(arg) is not numpy.ndarray:
-                            arg = numpy.array(arg)
-
-                        str_dtype = str(arg.dtype)
-
-                        if not (arg.flags.c_contiguous is True or arg.flags.f_contiguous is True):
-                            raise TypeError('numpy matrix must be either c_contiguous or f_contiguous')
-
-                        if str_dtype.count('float32') == 1:
-                            m = matrix(RDF, arg.shape[0], arg.shape[1], 0)
-                            m._replace_self_with_numpy32(arg)
-                        elif str_dtype.count('float64') == 1:
-                            m = matrix(RDF, arg.shape[0], arg.shape[1], 0)
-                            m._replace_self_with_numpy(arg)
-                        elif str_dtype.count('complex64') == 1:
-                            m = matrix(CDF, arg.shape[0], arg.shape[1], 0)
-                            m._replace_self_with_numpy32(arg)
-                        elif str_dtype.count('complex128') == 1:
-                            m = matrix(CDF, arg.shape[0], arg.shape[1], 0)
-                            m._replace_self_with_numpy(arg)
-                        elif str_dtype.count('int') == 1:
-                            m = matrix(ZZ, [list(row) for row in list(arg)])
-                        elif str_dtype.count('object') == 1:
-                            # Get the raw nested list from the numpy array
-                            # and feed it back into matrix
-                            m = matrix([list(row) for row in list(arg)])
-                        else:
-                            raise TypeError("cannot convert NumPy matrix to Sage matrix")
-
-                        if ring is not None and m.base_ring() is not ring:
-                            m = m.change_ring(ring)
-
-                        return m
-                elif nrows is not None and ncols is not None:
-                    # assume that we should just pass the thing into the
-                    # MatrixSpace constructor and hope for the best
-                    # This is not documented, but it is doctested
-                    if ring is None:
-                        entry_ring = arg.parent()
-                    entries = arg
-                else:
-                    raise TypeError("invalid matrix constructor: type matrix? for help")
-        else:  # len(args) >= 2
-            raise TypeError("invalid matrix constructor: type matrix? for help")
-
-        if ring is None:
-            ring = entry_ring
-        if nrows is None:
-            nrows = 0
-        if ncols is None:
-            ncols = nrows
-
-        return MatrixSpace(ring, nrows, ncols, sparse=sparse)(entries)
-
-Matrix = matrix = MatrixFactory()
-
-
-def prepare(w):
-    """
-    Given a list w of numbers, find a common ring that they all
-    canonically map to, and return the list of images of the elements
-    of w in that ring along with the ring.
-
-    This is for internal use by the matrix function.
-
-    INPUT:
-
-    - ``w`` - list
-
-    OUTPUT:
-
-    list, ring
-
-    EXAMPLES::
-
-        sage: sage.matrix.constructor.prepare([-2, Mod(1,7)])
-        ([5, 1], Ring of integers modulo 7)
-
-    Notice that the elements must all canonically coerce to a common
-    ring (since Sequence is called)::
-
-        sage: sage.matrix.constructor.prepare([2/1, Mod(1,7)])
-        Traceback (most recent call last):
-        ...
-        TypeError: unable to find a common ring for all elements
-
-    TESTS:
-
-    Check that :trac:`19920` is fixed::
-
-        sage: import numpy
-        sage: matrix([[numpy.int8(1)]])
-        [1]
-    """
-    if not w:
-        return Sequence([], ZZ), ZZ
-    entries = Sequence(w)
-    ring = entries.universe()
-    if isinstance(ring,type):
-        ring = py_scalar_parent(ring)
-    if not is_Ring(ring):
-        raise TypeError("unable to find a common ring for all elements")
-    return entries, ring
-
-def prepare_dict(w):
-    """
-    Given a dictionary w of numbers, find a common ring that they all
-    canonically map to, and return the dictionary of images of the
-    elements of w in that ring along with the ring.
-
-    This is for internal use by the matrix function.
-
-    INPUT:
-
-    - ``w`` - dict
-
-    OUTPUT:
-
-    dict, ring
-
-    EXAMPLES::
-
-        sage: sage.matrix.constructor.prepare_dict({(0,1):2, (4,10):Mod(1,7)})
-        ({(0, 1): 2, (4, 10): 1}, Ring of integers modulo 7)
-    """
-    Z = w.items()
-    X = [x for _, x in Z]
-    entries, ring = prepare(X)
-    return dict([(Z[i][0],entries[i]) for i in range(len(entries))]), ring
-
-def nrows_from_dict(d):
-    """
-    Given a dictionary that defines a sparse matrix, return the number
-    of rows that matrix should have.
-
-    This is for internal use by the matrix function.
-
-    INPUT:
-
-    - ``d`` - dict
-
-    OUTPUT:
-
-    integer
-
-    EXAMPLES::
-
-        sage: sage.matrix.constructor.nrows_from_dict({})
-        0
-
-    Here the answer is 301 not 300, since there is a 0-th row.
-
-    ::
-
-        sage: sage.matrix.constructor.nrows_from_dict({(300,4):10})
-        301
-    """
-    if 0 == len(d):
-        return 0
-    return max([0] + [ij[0] for ij in d.keys()]) + 1
-
-def ncols_from_dict(d):
-    """
-    Given a dictionary that defines a sparse matrix, return the number
-    of columns that matrix should have.
-
-    This is for internal use by the matrix function.
-
-    INPUT:
-
-    - ``d`` - dict
-
-    OUTPUT:
-
-    integer
-
-    EXAMPLES::
-
-        sage: sage.matrix.constructor.ncols_from_dict({})
-        0
-
-    Here the answer is 301 not 300, since there is a 0-th row.
-
-    ::
-
-        sage: sage.matrix.constructor.ncols_from_dict({(4,300):10})
-        301
-    """
-    if 0 == len(d):
-        return 0
-    return max([0] + [ij[1] for ij in d.keys()]) + 1
-
+Matrix = matrix
 
 from .special import *

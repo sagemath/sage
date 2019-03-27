@@ -75,9 +75,11 @@ from __future__ import absolute_import
 
 include 'sage/data_structures/bitset.pxi'
 
+from sage.structure.richcmp cimport rich_to_bool
 from .matroid cimport Matroid
 from .basis_exchange_matroid cimport BasisExchangeMatroid
 from .set_system cimport SetSystem
+from cpython.object cimport Py_EQ, Py_NE
 
 from sage.arith.all import binomial
 
@@ -721,7 +723,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
     cpdef _bases_invariant2(self):
         """
-        Return an isomophism invariant of the matroid.
+        Return an isomorphism invariant of the matroid.
 
         Compared to BasisMatroid._bases_invariant() this invariant
         distinguishes more frequently between nonisomorphic matroids but
@@ -797,7 +799,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: PM = M._bases_partition3()
             sage: PN = N._bases_partition3()
             sage: morphism = {}
-            sage: for i in xrange(len(M)): morphism[min(PM[i])]=min(PN[i])
+            sage: for i in range(len(M)): morphism[min(PM[i])] = min(PN[i])
             sage: M._is_isomorphism(N, morphism)
             True
         """
@@ -914,8 +916,12 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                 bitset_add(b2, morph[j])
                 j = bitset_next(self._b, j + 1)
             if bitset_in((<BasisMatroid>other)._bb, set_to_index(b2)):
+                bitset_free(b2)
+                bitset_free(bb_comp)
                 return False
             i = bitset_next(bb_comp, i + 1)
+        bitset_free(b2)
+        bitset_free(bb_comp)
         return True
 
     cpdef _is_isomorphism(self, other, morphism):
@@ -1044,7 +1050,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         OUTPUT:
 
         Boolean,
-        and, if certificate = True, a dictionary giving the isomophism or None
+        and, if certificate = True, a dictionary giving the isomorphism or None
 
         .. NOTE::
 
@@ -1152,19 +1158,14 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M == N
             False
         """
-        if op in [0, 1, 4, 5]:  # <, <=, >, >=
+        if op not in [Py_EQ, Py_NE]:
             return NotImplemented
-        if not isinstance(left, BasisMatroid) or not isinstance(right, BasisMatroid):
+        if type(left) is not type(right):
             return NotImplemented
-        if op == 2:  # ==
-            res = True
-        if op == 3:  # !=
-            res = False
-        # res gets inverted if matroids are deemed different.
         if left.equals(right):
-            return res
+            return rich_to_bool(op, 0)
         else:
-            return not res
+            return rich_to_bool(op, 1)
 
     def __copy__(self):
         """

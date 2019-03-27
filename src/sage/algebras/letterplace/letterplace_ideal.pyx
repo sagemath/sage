@@ -43,7 +43,7 @@ from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.libs.singular.function import lib, singular_function
 from sage.algebras.letterplace.free_algebra_letterplace cimport FreeAlgebra_letterplace
 from sage.algebras.letterplace.free_algebra_element_letterplace cimport FreeAlgebraElement_letterplace
-from sage.all import Infinity
+from sage.rings.infinity import Infinity
 
 #####################
 # Define some singular functions
@@ -161,7 +161,7 @@ class LetterplaceIdeal(Ideal_nc):
           is a left, right or twosided ideal. Groebner bases or
           only supported in the twosided case.
 
-        TEST::
+        TESTS::
 
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: from sage.algebras.letterplace.letterplace_ideal import LetterplaceIdeal
@@ -177,6 +177,7 @@ class LetterplaceIdeal(Ideal_nc):
             sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
             sage: TestSuite(I).run(skip=['_test_category'],verbose=True)
             running ._test_eq() . . . pass
+            running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
 
@@ -200,15 +201,15 @@ class LetterplaceIdeal(Ideal_nc):
         ideals, and the ring of coefficients must be a field. A
         `TypeError` is raised if one of these conditions is violated.
 
-        NOTES:
+        .. NOTE::
 
-        - The result is cached. The same Groebner basis is returned
-          if a smaller degree bound than the known one is requested.
-        - If the degree bound Infinity is requested, it is attempted to
-          compute a complete Groebner basis. But we can not guarantee
-          that the computation will terminate, since not all twosided
-          homogeneous ideals of a free algebra have a finite Groebner
-          basis.
+            - The result is cached. The same Groebner basis is returned
+              if a smaller degree bound than the known one is requested.
+            - If the degree bound ``Infinity`` is requested, it is attempted to
+              compute a complete Groebner basis. But we can not guarantee
+              that the computation will terminate, since not all twosided
+              homogeneous ideals of a free algebra have a finite Groebner
+              basis.
 
         EXAMPLES::
 

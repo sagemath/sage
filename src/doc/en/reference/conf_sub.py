@@ -16,6 +16,8 @@ from sage.env import SAGE_DOC_SRC, SAGE_DOC
 sys.path.append(SAGE_DOC_SRC)
 from common.conf import *
 
+from six.moves import range
+
 ref_src = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
 ref_out = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
 
@@ -25,7 +27,7 @@ rst_lines = rst_file.read().splitlines()
 rst_file.close()
 
 title = u''
-for i in xrange(len(rst_lines)):
+for i in range(len(rst_lines)):
     if rst_lines[i].startswith('==') and i > 0:
         title = rst_lines[i-1].strip()
         break

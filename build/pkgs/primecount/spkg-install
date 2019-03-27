@@ -1,0 +1,29 @@
+###############################################################################
+#
+# primecount Sage install script
+#
+###############################################################################
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
+   echo >&2 "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+cd src
+
+if [ "$SAGE_FAT_BINARY" = yes ]; then
+    EXTRA_OPTS="-DWITH_POPCNT=OFF"
+fi
+
+echo "Configuring primecount."
+cmake . -DCMAKE_INSTALL_PREFIX=${SAGE_LOCAL} \
+        -DCMAKE_VERBOSE_MAKEFILE=ON \
+        -DBUILD_STATIC_LIBS=OFF \
+        -DBUILD_SHARED_LIBS=ON \
+        -DBUILD_TESTS=ON \
+        ${EXTRA_OPTS}
+
+sdh_make
+
+sdh_make_install

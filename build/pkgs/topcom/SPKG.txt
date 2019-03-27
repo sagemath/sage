@@ -1,8 +1,8 @@
 = TOPCOM =
 
-== Description == 
+== Description ==
 TOPCOM is a collection of clients to compute Triangulations Of Point
-Configurations and Oriented Matroids, resp. 
+Configurations and Oriented Matroids, resp.
 
 The algorithms use only combinatorial data of the point configuration
 as is given by its oriented matroid. Some basic commands for computing
@@ -17,10 +17,10 @@ GPL v2
 
 == Upstream Contact ==
 Prof. Dr. Jörg Rambau <Joerg.Rambau@uni-bayreuth.de>
-Lehrstuhl für Wirtschaftsmathematik 
-Raum FAN-D.1.29 (Sekretariat: FAN-D.1.30) 
-Universität Bayreuth 
-D-95440 Bayreuth 
+Lehrstuhl für Wirtschaftsmathematik
+Raum FAN-D.1.29 (Sekretariat: FAN-D.1.30)
+Universität Bayreuth
+D-95440 Bayreuth
 Germany
 Tel: +49-921-55-7350,   Fax: +49-921-55-7352
 http://www.rambau.wm.uni-bayreuth.de

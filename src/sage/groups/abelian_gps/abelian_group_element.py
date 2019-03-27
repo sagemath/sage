@@ -149,7 +149,7 @@ class AbelianGroupElement(AbelianGroupElementBase):
            Don't use E (or other GAP-reserved letters) as a generator
            name.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AbelianGroup(2,[2,3], names="xy")
             sage: x,y = G.gens()

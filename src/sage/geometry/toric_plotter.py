@@ -46,6 +46,7 @@ You may change default plotting options as follows::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six import iteritems
 
 from copy import copy
 from math import pi
@@ -202,12 +203,12 @@ class ToricPlotter(SageObject):
         extra_options = dict()
         self.extra_options = extra_options
         toric_options = options()
-        for option, value in all_options.iteritems():
+        for option, value in iteritems(all_options):
             if option in toric_options:
                 sd[option] = value
             else:
                 extra_options[option] = value
-        for option, value in toric_options.iteritems():
+        for option, value in iteritems(toric_options):
             if option not in sd:
                 sd[option] = value
         if dimension not in [1, 2, 3]:
@@ -261,7 +262,7 @@ class ToricPlotter(SageObject):
             False
         """
         # Just to make TestSuite happy...
-        return self.__dict__ == other.__dict__
+        return type(self) is type(other) and self.__dict__ == other.__dict__
 
     def adjust_options(self):
         r"""
@@ -978,9 +979,11 @@ def options(option=None, **kwds):
 
     - ``font_size`` -- an integer, the size of font used for labels;
 
-    - ``ray_label`` -- a string or a list of strings used for ray labels;
+    - ``ray_label`` -- a string or a list of strings used for ray labels; use
+      ``None`` to hide labels;
 
-    - ``wall_label`` -- a string or a list of strings used for wall labels;
+    - ``wall_label`` -- a string or a list of strings used for wall labels; use
+      ``None`` to hide labels;
 
     - ``radius`` -- a positive number, the radius of the cut-off region for
       "round" mode;

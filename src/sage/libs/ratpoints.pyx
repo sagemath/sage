@@ -1,10 +1,21 @@
 r"""
-Hyperelliptic Curve Point Finding, via ratpoints.
+Hyperelliptic Curve Point Finding, via ratpoints (deprecated)
+
+This module is deprecated, use PARI instead::
+
+    sage: pari(EllipticCurve("389a1")).ellratpoints(4)
+    [[-2, 0], [-2, -1], [-1, 1], [-1, -2], [0, 0], [0, -1], [1, 0], [1, -1], [3, 5], [3, -6], [4, 8], [4, -9], [-3/4, 7/8], [-3/4, -15/8]]
+    sage: pari("[x^3 + x^2 - 2*x, 1]").hyperellratpoints(4)
+    [[-2, 0], [-2, -1], [-1, 1], [-1, -2], [0, 0], [0, -1], [1, 0], [1, -1], [3, 5], [3, -6], [4, 8], [4, -9], [-3/4, 7/8], [-3/4, -15/8]]
 """
+
 from __future__ import print_function
 
-include "cysignals/memory.pxi"
-include "cysignals/signals.pxi"
+from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
+from cysignals.signals cimport sig_on, sig_off
+
+from sage.misc.superseded import deprecation
+deprecation(24531, "the module sage.libs.ratpoints is deprecated; use pari.ellratpoints or pari.hyperellratpoints instead")
 
 
 cdef int process(long x, long z, mpz_t y, void *info0, int *quit):
@@ -57,9 +68,11 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
     `y^2 = a_n x^n + \cdots + a_1 x z^{n-1} + a_0 z^n` while if n is odd, it is
     `y^2 = a_n x^n z + \cdots + a_1 x z^n + a_0 z^{n+1}`.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.ratpoints import ratpoints
+        doctest:...: DeprecationWarning: the module sage.libs.ratpoints is deprecated; use pari.ellratpoints or pari.hyperellratpoints instead
+        See http://trac.sagemath.org/24531 for details.
         sage: for x,y,z in ratpoints([1..6], 200):
         ....:     print(-1*y^2 + 1*z^6 + 2*x*z^5 + 3*x^2*z^4 + 4*x^3*z^3 + 5*x^4*z^2 + 6*x^5*z)
         0
@@ -139,7 +152,7 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
 
     verby = ~0 if verbose else 0
 
-    # Set the soefficient array:
+    # Set the coefficient array:
     coeffs = [Integer(a) for a in coeffs]
     args.degree = len(coeffs)-1
     args.cof = <mpz_t *> sig_malloc((args.degree+1) * sizeof(mpz_t))

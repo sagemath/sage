@@ -1,20 +1,3 @@
-#!/usr/bin/env bash
-
-if [[ -z "$SAGE_LOCAL" ]]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
-check_error() {
-    if [[ $? -ne 0 ]]; then
-        echo >&2 "***********************************************************"
-        echo >&2 "Error:" $@
-        echo >&2 "***********************************************************"
-        exit 1
-    fi
-}
-
 # Sometimes, ECL gives interactive prompts when something goes wrong
 # during the build. Avoid this by redirecting stdin from /dev/null.
 # See http://trac.sagemath.org/sage_trac/ticket/11884#comment:34
@@ -29,16 +12,7 @@ exec </dev/null
 export EMACS=no
 
 
-CUR=`pwd`
-
 cd src/
-
-# Apply patches:
-echo "Applying patches (if any)..."
-for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
-    check_error "Patch '$patch' failed to apply."
-done
 
 # Use newer version of config.guess and config.sub (see Trac #19734)
 cp "$SAGE_ROOT"/config/config.* .
@@ -49,45 +23,41 @@ cp "$SAGE_ROOT"/config/config.* .
 
 echo
 echo "Now configuring Maxima..."
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --enable-ecl git_found=false
-check_error "Failed to configure Maxima."
+sdh_configure --enable-ecl git_found=false
 
+# Note the following is regression in maxima build system
+# see https://sourceforge.net/p/maxima/bugs/3278/
+# and https://sourceforge.net/p/maxima/bugs/2878/
+# For the previous time it was fixed.
+#---------------------------------------------------------------
+# Touching html and info file to avoid to regenerate them.
+# This must be done after configuration since the timestamp need
+# to be later than include-maxima.texi which is generated at
+# configuration time
+for i in doc/info/*.html ; do
+    touch "${i}"
+done
+touch doc/info/maxima.info*
+#---------------------------------------------------------------
 
-echo
-echo "Now building Maxima..."
-$MAKE
-check_error "Failed to build Maxima."
-
-
-echo
-echo "Now installing Maxima..."
-$MAKE install
-check_error "Failed to install Maxima."
-
-
-if [[ -f "$DOT_SAGE/maxima_commandlist_cache.sobj" ]]; then
-    echo
-    echo "Deleting Maxima commandlist cache."
-    echo "It will be recreated at the next start of Sage."
-    rm -f "$DOT_SAGE"/maxima_commandlist_cache.sobj
-fi
+sdh_make
+sdh_make_install
 
 
 # Install Maxima into ECL's library directory:
 ECLLIB=`ecl -eval "(princ (SI:GET-LIBRARY-PATHNAME))" -eval "(quit)"`
 echo
 echo "Now installing the Maxima library as '$ECLLIB/maxima.fas'..."
-cp -f "$CUR/src/src/binary-ecl/maxima.fas" "$ECLLIB/maxima.fas"
-check_error "Failed to install '$CUR/src/src/binary-ecl/maxima.fas' as '$ECLLIB/maxima.fas'."
+cp -f "src/binary-ecl/maxima.fas" "$ECLLIB/maxima.fas" \
+    || sdh_die "Failed to install 'src/binary-ecl/maxima.fas' as '$ECLLIB/maxima.fas'."
 
 
 if [[ "$SAGE_SPKG_INSTALL_DOCS" = yes ]] ; then
     # Install a copy of the Maxima HTML documentation locally.
-    cd "${CUR}/src"
 
     # The Maxima HTML docs are already built, we just need to copy
     # them to the sage installation.
-    MAXIMA_DOCS=$SAGE_ROOT/local/share/doc/maxima
+    MAXIMA_DOCS=$SAGE_SHARE/doc/maxima
     MAXIMA_FIGURES=$MAXIMA_DOCS/figures
 
     mkdir -p $MAXIMA_FIGURES

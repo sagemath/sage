@@ -3,7 +3,7 @@ C Function Profiler Using Google Perftools
 
 Note that the profiler samples 100x per second by default. In
 particular, you cannot profile anything shorter than 10ms. You can
-adjust the rate with the ``CPUPROFILE_FREQUENCY`` evironment variable
+adjust the rate with the ``CPUPROFILE_FREQUENCY`` environment variable
 if you want to change it.
 
 EXAMPLES::
@@ -18,7 +18,7 @@ EXAMPLES::
 REFERENCE:
 
 Uses the `Google performance analysis tools
-<https://code.google.com/p/gperftools>`_. Note that they are not
+<https://github.com/gperftools/gperftools>`_. Note that they are not
 included in Sage, you have to install them yourself on your system.
 
 AUTHORS:
@@ -34,9 +34,12 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import sys
+import ctypes
 import time
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
+from sage.misc.compat import find_library
 
 
 libc = None
@@ -112,13 +115,12 @@ class Profiler(SageObject):
 
             sage: from sage.misc.gperftools import Profiler
             sage: Profiler()._libc()
-            <CDLL '...libc...', handle ... at ...>
+            <CDLL '...', handle ... at ...>
         """
         global libc
         if libc is not None:
             return libc
-        import ctypes, ctypes.util
-        name = ctypes.util.find_library('c')
+        name = find_library('c')
         if name:
             libc = ctypes.CDLL(name)
             return libc
@@ -241,9 +243,8 @@ class Profiler(SageObject):
             sage: from sage.misc.gperftools import Profiler
             sage: prof = Profiler()
             sage: prof._executable()
-            '.../python'
+            '.../python...'
         """
-        import sys
         return sys.executable
 
     def _call_pprof(self, *args, **kwds):
@@ -387,8 +388,6 @@ def run_100ms():
     """
     t0 = time.time()   # start
     t1 = t0 + 0.1      # end
-    from sage.misc.functional import symbolic_sum
     from sage.symbolic.ring import SR
     while time.time() < t1:
-        sum(1/(1+SR(n) ** 2) for n in range(100))
-
+        sum(1 / (1 + SR(n) ** 2) for n in range(100))

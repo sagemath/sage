@@ -5,24 +5,24 @@ ctypedef struct MPopts:
     int rounding
 
 cdef mpz_set_integer(mpz_t v, x)
-cdef inline mpzi(mpz_t n)
-cdef inline mpzl(mpz_t n)
-cdef inline str rndmode_to_python(int rnd)
-cdef inline rndmode_from_python(str rnd)
+cdef mpzi(mpz_t n)
+cdef mpzl(mpz_t n)
+cdef str rndmode_to_python(int rnd)
+cdef rndmode_from_python(str rnd)
 
 ctypedef struct MPF:
     mpz_t man
     mpz_t exp
     int special
 
-cdef inline void MPF_init(MPF *x)
-cdef inline void MPF_clear(MPF *x)
-cdef inline void MPF_set(MPF *dest, MPF *src)
-cdef inline void MPF_set_zero(MPF *x)
-cdef inline void MPF_set_one(MPF *x)
-cdef inline void MPF_set_nan(MPF *x)
-cdef inline void MPF_set_inf(MPF *x)
-cdef inline void MPF_set_ninf(MPF *x)
+cdef void MPF_init(MPF *x)
+cdef void MPF_clear(MPF *x)
+cdef void MPF_set(MPF *dest, MPF *src)
+cdef void MPF_set_zero(MPF *x)
+cdef void MPF_set_one(MPF *x)
+cdef void MPF_set_nan(MPF *x)
+cdef void MPF_set_inf(MPF *x)
+cdef void MPF_set_ninf(MPF *x)
 cdef MPF_set_si(MPF *x, long n)
 cdef MPF_set_int(MPF *x, n)
 cdef MPF_set_man_exp(MPF *x, man, exp)

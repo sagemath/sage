@@ -1,47 +1,53 @@
 r"""
 Right-Angled Artin Groups
 
-A *right-angled Artin group* (often abbrivated as RAAG) is a group which
+A *right-angled Artin group* (often abbreviated as RAAG) is a group which
 has a presentation whose only relations are commutators between generators.
 These are also known as graph groups, since they are (uniquely) encoded by
-(simple) graphs, or partially commmutative groups.
+(simple) graphs, or partially commutative groups.
 
 AUTHORS:
 
 - Travis Scrimshaw (2013-09-01): Initial version
+- Travis Scrimshaw (2018-02-05): Made compatible with
+  :class:`~sage.groups.artin.ArtinGroup`
 """
 
-##############################################################################
-#       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
+#****************************************************************************
+#       Copyright (C) 2013,2018 Travis Scrimshaw <tcscrims at gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-##############################################################################
+#*****************************************************************************
+
+from __future__ import division, absolute_import, print_function
+import six
 
 from sage.misc.cachefunc import cached_method
-from sage.structure.list_clone import ClonableArray
+from sage.structure.richcmp import richcmp
 from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPresentedGroupElement
 from sage.groups.free_group import FreeGroup
-from sage.rings.integer import Integer
-from sage.rings.integer_ring import IntegerRing
+from sage.groups.artin import ArtinGroup, ArtinGroupElement
 from sage.graphs.graph import Graph
+from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
+from sage.combinat.root_system.coxeter_group import CoxeterGroup
 
-class RightAngledArtinGroup(FinitelyPresentedGroup):
+class RightAngledArtinGroup(ArtinGroup):
     r"""
     The right-angled Artin group defined by a graph `G`.
 
     Let `\Gamma = \{V(\Gamma), E(\Gamma)\}` be a simple graph.
-    A *right-angled Artin group* (commonly abbriated as RAAG) is the group
+    A *right-angled Artin group* (commonly abbreviated as RAAG) is the group
 
     .. MATH::
 
         A_{\Gamma} = \langle g_v : v \in V(\Gamma)
         \mid [g_u, g_v] \text{ if } \{u, v\} \notin E(\Gamma) \rangle.
 
-    These are sometimes known as graph groups or partitally commutative groups.
+    These are sometimes known as graph groups or partially commutative groups.
     This RAAG's contains both free groups, given by the complete graphs,
     and free abelian groups, given by disjoint vertices.
 
@@ -56,13 +62,13 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
     - The word problem is solvable.
     - They are known to be rigid; that is for any finite simple graphs
       `\Delta` and `\Gamma`, we have `A_{\Delta} \cong A_{\Gamma}` if and
-      only if `\Delta \cong \Gamma` [Droms1987]_.
+      only if `\Delta \cong \Gamma` [Dro1987]_.
     - They embed as a finite index subgroup of a right-angled Coxeter group
       (which is the same definition as above except with the additional
       relations `g_v^2 = 1` for all `v \in V(\Gamma)`).
-    - In [BB1997]_, it was shown they contain subgroups that statisfy the
+    - In [BB1997]_, it was shown they contain subgroups that satisfy the
       property `FP_2` but are not finitely presented by considering the
-      kernal of `\phi : A_{\Gamma} \to \ZZ` by `g_v \mapsto 1` (i.e. words of
+      kernel of `\phi : A_{\Gamma} \to \ZZ` by `g_v \mapsto 1` (i.e. words of
       exponent sum 0).
     - `A_{\Gamma}` has a finite `K(\pi, 1)` space.
     - `A_{\Gamma}` acts freely and cocompactly on a finite dimensional
@@ -73,6 +79,11 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
 
     The normal forms for RAAG's in Sage are those described in [VW1994]_ and
     gathers commuting groups together.
+
+    INPUT:
+
+    - ``G`` -- a graph
+    - ``names`` -- a string or a list of generator names
 
     EXAMPLES::
 
@@ -93,36 +104,33 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
         sage: G
         Right-angled Artin group of Cycle graph
         sage: a,b,c,d,e = G.gens()
+        sage: d*b*a*d
+        v1*v3^2*v0
         sage: e^-1*c*b*e*b^-1*c^-4
         v2^-3
 
+    We create the previous example but with different variable names::
+
+        sage: G.<a,b,c,d,e> = RightAngledArtinGroup(Gamma)
+        sage: G
+        Right-angled Artin group of Cycle graph
+        sage: d*b*a*d
+        b*d^2*a
+        sage: e^-1*c*b*e*b^-1*c^-4
+        c^-3
+
     REFERENCES:
 
-    .. [Charney2006] Ruth Charney.
-       *An introduction to right-angled Artin groups*.
-       http://people.brandeis.edu/~charney/papers/RAAGfinal.pdf,
-       :arxiv:`math/0610668`.
-
-    .. [BB1997] Mladen Bestvina and Noel Brady.
-       *Morse theory and finiteness properties of groups*. Invent. Math.
-       **129** (1997). No. 3, 445-470. www.math.ou.edu/~nbrady/papers/morse.ps.
-
-    .. [Droms1987] Carl Droms. *Isomorphisms of graph groups*. Proc. of
-       the Amer. Math. Soc. **100** (1987). No 3.
-       http://educ.jmu.edu/~dromscg/vita/preprints/Isomorphisms.pdf
-
-    .. [CP2001] John Crisp and Luis Paris. *The solution to a conjecture of
-       Tits on the subgroup generated by the squares of the generators of an
-       Artin group*. Invent. Math. **145** (2001). No 1, 19-36.
-       :arxiv:`math/0003133`.
-
-    .. [VW1994] Leonard Van Wyk. *Graph groups are biautomatic*. J. Pure Appl.
-       Alg. **94** (1994). no. 3, 341-352.
+    - [Cha2006]_
+    - [BB1997]_
+    - [Dro1987]_
+    - [CP2001]_
+    - [VW1994]_
 
     - :wikipedia:`Artin_group#Right-angled_Artin_groups`
     """
     @staticmethod
-    def __classcall_private__(cls, G):
+    def __classcall_private__(cls, G, names=None):
         """
         Normalize input to ensure a unique representation.
 
@@ -132,7 +140,8 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
             sage: Gamma = Graph([(0,1),(1,2),(2,3),(3,4),(4,0)])
             sage: G2 = RightAngledArtinGroup(Gamma)
             sage: G3 = RightAngledArtinGroup([(0,1),(1,2),(2,3),(3,4),(4,0)])
-            sage: G1 is G2 and G2 is G3
+            sage: G4 = RightAngledArtinGroup(Gamma, 'v')
+            sage: G1 is G2 and G2 is G3 and G3 is G4
             True
 
         Handle the empty graph::
@@ -148,15 +157,22 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
             G = G.copy(immutable=True)
         if G.num_verts() == 0:
             raise ValueError("the graph must not be empty")
-        return super(RightAngledArtinGroup, cls).__classcall__(cls, G)
+        if names is None:
+            names = 'v'
+        if isinstance(names, six.string_types):
+            if ',' in names:
+                names = [x.strip() for x in names.split(',')]
+            else:
+                names = [names + str(v) for v in G.vertices()]
+        names = tuple(names)
+        if len(names) != G.num_verts():
+            raise ValueError("the number of generators must match the"
+                             " number of vertices of the defining graph")
+        return super(RightAngledArtinGroup, cls).__classcall__(cls, G, names)
 
-    def __init__(self, G):
+    def __init__(self, G, names):
         """
         Initialize ``self``.
-
-        INPUT:
-
-        - ``G`` -- a graph
 
         TESTS::
 
@@ -164,10 +180,18 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
             sage: TestSuite(G).run()
         """
         self._graph = G
-        F = FreeGroup(names=['v{}'.format(v) for v in self._graph.vertices()])
-        CG = Graph(G).complement() # Make sure it's mutable
-        CG.relabel() # Standardize the labels
-        rels = tuple(F([i+1, j+1, -i-1, -j-1]) for i,j in CG.edges(False)) #+/- 1 for indexing
+        F = FreeGroup(names=names)
+        CG = Graph(G).complement()  # Make sure it's mutable
+        CG.relabel()  # Standardize the labels
+        cm = [[-1]*CG.num_verts() for _ in range(CG.num_verts())]
+        for i in range(CG.num_verts()):
+            cm[i][i] = 1
+        for u,v in CG.edge_iterator(labels=False):
+            cm[u][v] = 2
+            cm[v][u] = 2
+        self._coxeter_group = CoxeterGroup(CoxeterMatrix(cm, index_set=G.vertices()))
+        rels = tuple(F([i + 1, j + 1, -i - 1, -j - 1])
+                     for i, j in CG.edge_iterator(labels=False))  # +/- 1 for indexing
         FinitelyPresentedGroup.__init__(self, F, rels)
 
     def _repr_(self):
@@ -192,7 +216,7 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
             sage: G.gen(2)
             v2
         """
-        return self.element_class( self, ((i, 1),) )
+        return self.element_class(self, ([i, 1],))
 
     def gens(self):
         """
@@ -223,42 +247,6 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
             5
         """
         return self._graph.num_verts()
-
-    def cardinality(self):
-        r"""
-        Return the number of group elements.
-
-        OUTPUT:
-
-        Infinity.
-
-        EXAMPLES::
-
-            sage: Gamma = graphs.CycleGraph(5)
-            sage: G = RightAngledArtinGroup(Gamma)
-            sage: G.cardinality()
-            +Infinity
-        """
-        from sage.rings.infinity import Infinity
-        return Infinity
-
-    order = cardinality
-
-    def as_permutation_group(self):
-        r"""
-        Raise a ``ValueError`` error since right-angled Artin groups
-        are infinite, so they have no isomorphic permutation group.
-
-        EXAMPLES::
-
-            sage: Gamma = graphs.CycleGraph(5)
-            sage: G = RightAngledArtinGroup(Gamma)
-            sage: G.as_permutation_group()
-            Traceback (most recent call last):
-            ...
-            ValueError: the group is infinite
-        """
-        raise ValueError("the group is infinite")
 
     def graph(self):
         """
@@ -311,7 +299,7 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
         if x == 1:
             return self.one()
         verts = self._graph.vertices()
-        x = [ [verts.index(s[0]), s[1]] for s in x]
+        x = [[verts.index(s[0]), s[1]] for s in x]
         return self.element_class(self, self._normal_form(x))
 
     def _normal_form(self, word):
@@ -338,46 +326,50 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
         pos = 0
         G = self._graph
         v = G.vertices()
-        w = [list(_) for _ in word] # Make a (2 level) deep copy
+        w = [list(x) for x in word]  # Make a (2 level) deep copy
         while pos < len(w):
-            comm_set = [w[pos][0]] # The current set of totally commuting elements
+            comm_set = [w[pos][0]]
+            # The current set of totally commuting elements
             i = pos + 1
 
             while i < len(w):
-                letter = w[i][0] # The current letter
+                letter = w[i][0]  # The current letter
                 # Check if this could fit in the commuting set
                 if letter in comm_set:
                     # Try to move it in
-                    if any(G.has_edge(v[w[j][0]], v[letter]) for j in range(pos + len(comm_set), i)):
+                    if any(G.has_edge(v[w[j][0]], v[letter])
+                           for j in range(pos + len(comm_set), i)):
                         # We can't, so go onto the next letter
                         i += 1
                         continue
                     j = comm_set.index(letter)
-                    w[pos+j][1] += w[i][1]
+                    w[pos + j][1] += w[i][1]
                     w.pop(i)
-                    i -= 1 # Since we removed a syllable
+                    i -= 1  # Since we removed a syllable
                     # Check cancellations
-                    if w[pos+j][1] == 0:
-                        w.pop(pos+j)
+                    if w[pos + j][1] == 0:
+                        w.pop(pos + j)
                         comm_set.pop(j)
                         i -= 1
                         if not comm_set:
-                            pos = 0 # Start again since cancellation can be pronounced effects
+                            pos = 0
+                            # Start again since cancellation can be pronounced effects
                             break
-                elif all(not G.has_edge(v[w[j][0]], v[letter]) for j in range(pos, i)):
+                elif all(not G.has_edge(v[w[j][0]], v[letter])
+                         for j in range(pos, i)):
                     j = 0
                     for x in comm_set:
                         if x > letter:
                             break
                         j += 1
-                    w.insert(pos+j, w.pop(i))
+                    w.insert(pos + j, w.pop(i))
                     comm_set.insert(j, letter)
 
                 i += 1
             pos += len(comm_set)
         return tuple(w)
 
-    class Element(FinitelyPresentedGroupElement):
+    class Element(ArtinGroupElement):
         """
         An element of a right-angled Artin group (RAAG).
 
@@ -398,11 +390,11 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
             """
             self._data = lst
             elt = []
-            for i,p in lst:
+            for i, p in lst:
                 if p > 0:
-                    elt.extend([i+1]*p)
+                    elt.extend([i + 1] * p)
                 elif p < 0:
-                    elt.extend([-i-1]*-p)
+                    elt.extend([-i - 1] * -p)
             FinitelyPresentedGroupElement.__init__(self, parent, elt)
 
         def __reduce__(self):
@@ -419,7 +411,7 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
             """
             P = self.parent()
             V = P._graph.vertices()
-            return (P, ([[V[i], p] for i,p in self._data],))
+            return (P, ([[V[i], p] for i, p in self._data],))
 
         def _repr_(self):
             """
@@ -437,12 +429,21 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
                 sage: x,y,z = G.gens()
                 sage: z * y^-2 * x^3
                 vzeta*vy^-2*vx^3
+                sage: G.<a,b,c> = RightAngledArtinGroup(Gamma)
+                sage: c * b^-2 * a^3
+                c*b^-2*a^3
             """
             if not self._data:
                 return '1'
-            v = self.parent()._graph.vertices()
-            to_str = lambda name,p: "v{}".format(name) if p == 1 else "v{}^{}".format(name, p)
-            return '*'.join(to_str(v[i], p) for i,p in self._data)
+            v = self.parent().variable_names()
+
+            def to_str(name, p):
+                if p == 1:
+                    return "{}".format(name)
+                else:
+                    return "{}^{}".format(name, p)
+
+            return '*'.join(to_str(v[i], p) for i, p in self._data)
 
         def _latex_(self):
             r"""
@@ -469,7 +470,7 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
             from sage.misc.latex import latex
             latexrepr = ''
             v = self.parent()._graph.vertices()
-            for i,p in self._data:
+            for i, p in self._data:
                 latexrepr += "\\sigma_{{{}}}".format(latex(v[i]))
                 if p != 1:
                     latexrepr += "^{{{}}}".format(p)
@@ -520,11 +521,11 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
                 return P.one()
 
             if n < 0:
-                lst = sum([self._data for i in range(-n)], ()) # Positive product
-                lst = [ [x[0], -x[1]] for x in reversed(lst)] # Now invert
+                lst = sum((self._data for i in range(-n)), ())  # Positive product
+                lst = [[x[0], -x[1]] for x in reversed(lst)]  # Now invert
                 return self.__class__(P, P._normal_form(lst))
 
-            lst = sum([self._data for i in range(n)], ())
+            lst = sum((self._data for i in range(n)), ())
             return self.__class__(self.parent(), P._normal_form(lst))
 
         def __invert__(self):
@@ -540,6 +541,30 @@ class RightAngledArtinGroup(FinitelyPresentedGroup):
                 v1^-1*v0^-1*v1^-1*v0^-1
             """
             P = self.parent()
-            lst = [ [x[0], -x[1]] for x in reversed(self._data)]
+            lst = [[x[0], -x[1]] for x in reversed(self._data)]
             return self.__class__(P, P._normal_form(lst))
+
+        def _richcmp_(self, other, op):
+            """
+            Compare ``self`` and ``other``.
+
+            TESTS::
+
+                sage: A = ArtinGroup(['B',3])
+                sage: x = A([1, 2, 1])
+                sage: y = A([2, 1, 2])
+                sage: x == y
+                True
+                sage: x < y^(-1)
+                True
+                sage: A([]) == A.one()
+                True
+                sage: x = A([2, 3, 2, 3])
+                sage: y = A([3, 2, 3, 2])
+                sage: x == y
+                True
+                sage: x < y^(-1)
+                True
+            """
+            return richcmp(self._data, other._data, op)
 

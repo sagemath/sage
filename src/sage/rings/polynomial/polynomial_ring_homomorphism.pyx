@@ -24,7 +24,7 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
     The canonical ring homomorphism from `R[x]` to `S[x]` induced by a
     ring homomorphism from `R` to `S`.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: QQ['x'].coerce_map_from(ZZ['x'])
         Ring morphism:
@@ -94,3 +94,31 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             return P({a: f(b) for a, b in x.dict().iteritems()}, *args, **kwds)
         else:
             return P([f(b) for b in x], *args, **kwds)
+
+    def is_injective(self):
+        r"""
+        Return whether this morphism is injective.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: S.<x> = QQ[]
+            sage: R.hom(S).is_injective()
+            True
+
+        """
+        return self.underlying_map().is_injective()
+
+    def is_surjective(self):
+        r"""
+        Return whether this morphism is surjective.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: S.<x> = Zmod(2)[]
+            sage: R.hom(S).is_surjective()
+            True
+
+        """
+        return self.underlying_map().is_surjective()

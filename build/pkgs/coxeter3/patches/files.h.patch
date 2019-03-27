@@ -1,0 +1,23 @@
+See https://github.com/tscrim/coxeter/pull/15
+
+commit 34484c958bd664e9a2f7578c40d9034dc36386fe
+Author: Jeroen Demeyer <jdemeyer@cage.ugent.be>
+Date:   Mon Feb 26 15:56:52 2018 +0100
+
+    Remove duplicate declaration of printHeckeElt
+
+diff --git a/files.h b/files.h
+index f7bb9db..98a7350 100644
+--- a/files.h
++++ b/files.h
+@@ -101,10 +101,6 @@ template <class H>
+ 		     const Interface& I, OutputTraits& traits,
+ 		     const Length& l = undef_length);
+ template <class H>
+-  void printHeckeElt(FILE* file, const H& h, const SchubertContext& p,
+-		     const Interface& I, OutputTraits& traits,
+-		     const Length& l = undef_length);
+-template <class H>
+   void printHeckeElt(FILE* file, const H& h, const Permutation& a,
+ 		     const SchubertContext& p, const Interface& I,
+ 		     HeckeTraits& hTraits,

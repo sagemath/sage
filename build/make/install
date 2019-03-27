@@ -7,12 +7,20 @@
 # Assume current directory is SAGE_ROOT/build/make
 export SAGE_ROOT=`cd ../.. && pwd -P`
 export SAGE_SRC="$SAGE_ROOT/src"
-export SAGE_LOCAL="$SAGE_ROOT/local"
+
+# Determine SAGE_LOCAL
+. "$SAGE_SRC"/bin/sage-env-config
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to read sage-env-config.  Did you run configure?"
+    exit 1
+fi
+
 export SAGE_SHARE="$SAGE_LOCAL/share"
 export SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
 export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
 export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
-export SAGE_VERSION=`cat $SAGE_ROOT/VERSION.txt | sed 's+.*\ \(.*\),.*+\1+'`
+. "$SAGE_SRC"/bin/sage-version.sh
+export SAGE_VERSION
 
 if [ -z "${SAGE_ORIG_PATH_SET}" ]; then
     SAGE_ORIG_PATH=$PATH && export SAGE_ORIG_PATH
@@ -22,11 +30,6 @@ export PATH="$SAGE_ROOT/build/bin:$SAGE_SRC/bin:$SAGE_LOCAL/bin:$PATH"
 
 export PYTHONPATH="$SAGE_LOCAL"
 
-# Storing the start time of the build process. The time is stored in
-# seconds since 1970-01-01 in a hidden file called
-# "SAGE_ROOT/.BUILDSTART". See ticket #6744.
-echo `date -u "+%s"` > "$SAGE_ROOT/.BUILDSTART"
-
 ###############################################################################
 # Skip the rest if nothing to do (i.e., to [re]build).
 ###############################################################################
@@ -35,6 +38,11 @@ echo `date -u "+%s"` > "$SAGE_ROOT/.BUILDSTART"
 if [ -z "$MAKE" ]; then
     export MAKE=make
 fi
+
+# Make the special target _clean-broken-gcc before trying to build any other
+# packages.  This is necessary if configure detected a broken GCC installed
+# in Sage; Trac #25011
+$MAKE _clean-broken-gcc
 
 # If "make" doesn't understand the -q option (although we require
 # GNU make, which supports it), it should exit with a non-zero status

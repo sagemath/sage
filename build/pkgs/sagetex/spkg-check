@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # this runs Sage on the generated .sage files to see if they work ok
 
 typeset()

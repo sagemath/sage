@@ -1,0 +1,21 @@
+cd src
+
+./configure --disable-static --prefix="$SAGE_LOCAL" \
+    --with-gmp="$SAGE_LOCAL" --with-mpfr="$SAGE_LOCAL" \
+    --with-flint="$SAGE_LOCAL"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring deformation."
+    exit 1
+fi
+
+$MAKE
+if [ $? -ne 0 ]; then
+    echo >&2 "Error building deformation."
+    exit 1
+fi
+
+$MAKE install
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing deformation."
+    exit 1
+fi

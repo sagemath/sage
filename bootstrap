@@ -17,15 +17,28 @@
 # download.
 ########################################################################
 
-# Either run this script from SAGE_ROOT or make sure that SAGE_ROOT
-# is set
-test -z "$SAGE_ROOT" || cd "$SAGE_ROOT"
+# Set SAGE_ROOT to the path to this file and then cd into it
+SAGE_ROOT="$(cd "$(dirname "$0")" && pwd -P)"
+cd "$SAGE_ROOT"
+
+export PATH="$SAGE_ROOT/build/bin:$PATH"
 
 PKG=build/pkgs/configure
 MAKE="${MAKE:-make}"
 CONFVERSION=`cat $PKG/package-version.txt`
 
+
 bootstrap () {
+    rm -f m4/sage_spkg_configures.m4
+    spkg_configures=""
+    for filename in $(find build/pkgs -type f -name spkg-configure.m4); do
+        pkgname="$(echo $filename | cut -d/ -f3)"
+        echo "m4_sinclude([$filename])" >> m4/sage_spkg_configures.m4
+        spkg_configures="$spkg_configures
+SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
+    done
+    echo "$spkg_configures" >> m4/sage_spkg_configures.m4
+
     aclocal -I m4 && \
     automake --add-missing --copy build/make/Makefile-auto && \
     autoconf
@@ -55,7 +68,6 @@ bootstrap () {
 
 # Bootstrap by downloading the auto-generated files
 bootstrap-download () {
-    source src/bin/sage-env
     sage-download-file configure-$CONFVERSION.tar.gz
     if [ $? -ne 0 ]; then
         echo >&2 "Error: downloading configure-$CONFVERSION.tar.gz failed"
@@ -124,6 +136,12 @@ fi
 # Start cleanly (it's not a problem if this fails)
 $MAKE bootstrap-clean 2>/dev/null
 mkdir config 2>/dev/null
+
+# Get autotools from our own package into PATH (Trac #21214).
+# If Sage has not been built yet, this will fail due to a missing
+# sage-env-config. We just ignore that error.
+source src/bin/sage-env 2>/dev/null
+
 
 if [ $ALWAYSDOWNLOAD = yes ]; then
     bootstrap-download || exit $?

@@ -103,9 +103,9 @@ Comparison with the results from the Handbook of Combinatorial Designs (2ed)
     560|
     580|
 
-TODO:
+.. TODO::
 
-* Look at [ColDin01]_.
+    Look at [ColDin01]_.
 
 REFERENCES:
 
@@ -122,11 +122,14 @@ REFERENCES:
 Functions
 ---------
 """
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six import iteritems
+from six.moves import zip
 
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
+from sage.env import COMBINATORIAL_DESIGN_DATA_DIR
+
 
 def are_mutually_orthogonal_latin_squares(l, verbose=False):
     r"""
@@ -199,7 +202,8 @@ def are_mutually_orthogonal_latin_squares(l, verbose=False):
             return False
 
     from .designs_pyx import is_orthogonal_array
-    return is_orthogonal_array(zip(*[[x for R in M for x in R] for M in l]),k,n, verbose=verbose, terminology="MOLS")
+    return is_orthogonal_array(list(zip(*[[x for R in M for x in R] for M in l])),k,n, verbose=verbose, terminology="MOLS")
+
 
 def mutually_orthogonal_latin_squares(k,n, partitions = False, check = True, existence=False):
     r"""
@@ -350,7 +354,6 @@ def mutually_orthogonal_latin_squares(k,n, partitions = False, check = True, exi
     """
     from sage.combinat.designs.orthogonal_arrays import orthogonal_array
     from sage.matrix.constructor import Matrix
-    from sage.arith.all import factor
     from .database import MOLS_constructions
 
     # Is k is None we find the largest available
@@ -470,7 +473,7 @@ def latin_square_product(M,N,*others):
          for jj in range(n)}
 
     L = lambda i_j: i_j[0] * n + i_j[1]
-    D = {(L(c[0]),L(c[1])): L(v) for c,v in D.iteritems()}
+    D = {(L(c[0]), L(c[1])): L(v) for c, v in iteritems(D)}
     P = Matrix(D)
 
     if others:
@@ -544,8 +547,7 @@ def MOLS_table(start,stop=None,compare=False,width=None):
         return
 
     if compare:
-        from sage.env import SAGE_SHARE
-        handbook_file = open(SAGE_SHARE+"/combinatorial_designs/MOLS_table.txt",'r')
+        handbook_file = open("{}/MOLS_table.txt".format(COMBINATORIAL_DESIGN_DATA_DIR), 'r')
         hb = [int(_) for _ in handbook_file.readlines()[9].split(',')]
         handbook_file.close()
 

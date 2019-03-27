@@ -63,12 +63,7 @@ for `i \in I` satisfying the following properties for all `i \in I`:
 Some further conditions are required to guarantee that this data
 indeed models a representation of a Lie algebra. For finite simply
 laced types a complete characterization is given by Stembridge's local
-axioms [St2003]_.
-
-REFERENCES:
-
-.. [St2003] \J. Stembridge, *A local characterization of simply-laced crystals*,
-   Trans. Amer. Math. Soc. 355 (2003), no. 12, 4807-4823.
+axioms [Ste2003]_.
 
 EXAMPLES:
 
@@ -114,14 +109,14 @@ One can get (currently) crude plotting via::
 If dot2tex is installed, one can obtain nice latex pictures via::
 
     sage: K = crystals.KirillovReshetikhin(['A',3,1], 1,1)
-    sage: view(K, pdflatex=True, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(K, pdflatex=True) # optional - dot2tex graphviz, not tested (opens external window)
 
 or with colored edges::
 
     sage: K = crystals.KirillovReshetikhin(['A',3,1], 1,1)
     sage: G = K.digraph()
-    sage: G.set_latex_options(color_by_label = {0:"black", 1:"red", 2:"blue", 3:"green"}) #optional - dot2tex graphviz
-    sage: view(G, pdflatex=True, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: G.set_latex_options(color_by_label={0:"black", 1:"red", 2:"blue", 3:"green"})
+    sage: view(G, pdflatex=True) # optional - dot2tex graphviz, not tested (opens external window)
 
 For rank two crystals, there is an alternative method of getting
 metapost pictures. For more information see ``C.metapost?``.

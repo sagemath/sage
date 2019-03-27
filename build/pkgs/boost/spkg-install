@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ "$SAGE_LOCAL" = "" ]; then
    echo "SAGE_LOCAL undefined ... exiting";
    echo "Maybe run 'sage -sh'?"
@@ -9,7 +7,27 @@ fi
 cd src
 
 echo "Running boost bootstrap"
-./bootstrap.sh
+# We provide the toolset as the only toolset properly auto-detected are
+# gcc (or icc) on linux
+# clang on OS X
+# but not clang on linux for example
+# First sanitize toolset name from CC, it assume something of the form
+# CC=/path/to/CC_name-version at worst.
+# Please do not mix CC and CXX from different vendors.
+C_COMPILER_NAME=${CC##*/}
+C_COMPILER_NAME=${C_COMPILER_NAME%-*}
+BOOST_TOOLSET=""
+if [ "$UNAME" = "Darwin" ]; then
+    # On darwin provided the compiler is clang, default is fine.
+    # Remember that /usr/bin/gcc is clang.
+    if [ "$(which $C_COMPILER_NAME)" != "/usr/bin/gcc" -a "$C_COMPILER_NAME" != "clang" ]; then
+        BOOST_TOOLSET="--with-toolset=$C_COMPILER_NAME"
+    fi
+else
+    BOOST_TOOLSET="--with-toolset=$C_COMPILER_NAME"
+fi
+
+./bootstrap.sh $BOOST_TOOLSET
 if [[ $? -ne 0 ]]; then
     echo >&2 "Failed to bootstrap boost."
     exit 1

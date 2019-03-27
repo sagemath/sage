@@ -1,5 +1,6 @@
---- src/Lib/socket.py.orig	2011-05-20 15:28:49.980525832 +1200
-+++ src/Lib/socket.py	2011-05-20 15:28:53.943299694 +1200
+diff -ru a/Lib/socket.py b/Lib/socket.py
+--- a/Lib/socket.py	2018-04-15 00:06:30.000000000 +0200
++++ b/Lib/socket.py	2018-04-19 14:49:27.227076923 +0200
 @@ -51,6 +51,9 @@
  
  try:
@@ -17,4 +18,4 @@
 -    from _ssl import SSLError as sslerror
      from _ssl import \
           RAND_add, \
-          RAND_egd, \
+          RAND_status, \

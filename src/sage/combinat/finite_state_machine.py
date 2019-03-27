@@ -179,7 +179,7 @@ Conversion
     :widths: 30, 70
     :delim: |
 
-    :meth:`~FiniteStateMachine.adjacency_matrix` | (Weighted) adjacency :class:`matrix <sage.matrix.constructor.MatrixFactory>`
+    :meth:`~FiniteStateMachine.adjacency_matrix` | (Weighted) adjacency :func:`matrix`
     :meth:`~FiniteStateMachine.graph` | Underlying :class:`DiGraph`
     :meth:`~FiniteStateMachine.plot` | Plot
 
@@ -498,7 +498,7 @@ A simple transducer (binary inverter)
 -------------------------------------
 
 Let's build a simple transducer, which rewrites a binary word by
-iverting each bit::
+inverting each bit::
 
     sage: inverter = Transducer({'A': [('A', 0, 1), ('A', 1, 0)]},
     ....:     initial_states=['A'], final_states=['A'])
@@ -752,7 +752,7 @@ Finally, we check that this indeed computes the Gray code of the first
 Using the hook-functions
 ------------------------
 
-Let's use the :ref:`previous example "divison by
+Let's use the :ref:`previous example "division by
 3" <finite_state_machine_division_by_3_example>` to demonstrate the optional
 state and transition parameters ``hook``.
 
@@ -918,7 +918,7 @@ ACKNOWLEDGEMENT:
 Methods
 =======
 """
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2012--2015 Clemens Heuberger <clemens.heuberger@aau.at>
 #               2012--2015 Daniel Krenn <dev@danielkrenn.at>
 #               2012--2015 Sara Kropf <sara.kropf@aau.at>
@@ -926,16 +926,28 @@ Methods
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                http://www.gnu.org/licenses/
-#*****************************************************************************
+#                https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
+import six
+from six.moves import range, zip_longest, zip
 from six import itervalues
 
 import collections
 import itertools
-from six.moves import zip_longest
-import sage
+
+from sage.calculus.var import var
+from sage.functions.trig import atan2
+from sage.graphs.digraph import DiGraph
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_function
+from sage.misc.latex import latex
+from sage.misc.misc import verbose
+from sage.misc.sageinspect import sage_getargspec
+from sage.rings.qqbar import QQbar
+from sage.rings.real_mpfr import RR
+from sage.structure.sage_object import SageObject
 
 
 def full_group_by(l, key=lambda x: x):
@@ -960,14 +972,14 @@ def full_group_by(l, key=lambda x: x):
     - that the keys are sortable (in contrast to the
       approach via ``sorted`` and ``itertools.groupby``) and
     - that the keys are hashable (in contrast to the
-      implementation proposed in `<http://stackoverflow.com/a/15250161>`_).
+      implementation proposed in `<https://stackoverflow.com/a/15250161>`_).
 
     However, it is required
 
     - that distinct keys have distinct ``str``-representations.
 
     The implementation is inspired by
-    `<http://stackoverflow.com/a/15250161>`_, but non-hashable keys are
+    `<https://stackoverflow.com/a/15250161>`_, but non-hashable keys are
     allowed.
 
     EXAMPLES::
@@ -1019,7 +1031,7 @@ def equal(iterator):
 
     ``True`` or ``False``.
 
-    This implements `<http://stackoverflow.com/a/3844832/1052778>`_.
+    This implements `<https://stackoverflow.com/a/3844832/1052778>`_.
 
     EXAMPLES::
 
@@ -1161,7 +1173,7 @@ def is_FSMState(S):
     return isinstance(S, FSMState)
 
 
-class FSMState(sage.structure.sage_object.SageObject):
+class FSMState(SageObject):
     """
     Class for a state of a finite state machine.
 
@@ -1434,7 +1446,7 @@ class FSMState(sage.structure.sage_object.SageObject):
 
         True or False.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.combinat.finite_state_machine import FSMState
             sage: FSMState(0) < FSMState(1)
@@ -1819,6 +1831,52 @@ class FSMState(sage.structure.sage_object.SageObject):
         del self._deepcopy_relabel_
         return new
 
+    def __getstate__(self):
+        """
+        Return state for pickling excluding outgoing transitions.
+
+        INPUT:
+
+        None
+
+        OUTPUT:
+
+        A dictionary.
+
+        Outgoing transitions are in fact stored in states,
+        but must be pickled by the finite state machine
+        in order to avoid deep recursion.
+
+        TESTS::
+
+            sage: from sage.combinat.finite_state_machine import FSMState
+            sage: S = FSMState('S')
+            sage: S == loads(dumps(S))
+            True
+            sage: A = Automaton([[0, 1, 0]])
+            sage: T = A.state(0)
+            sage: T1 = loads(dumps(T))
+            sage: T == T1
+            True
+            sage: T.transitions
+            [Transition from 0 to 1: 0|-]
+            sage: T1.transitions
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'FSMState' object has no attribute 'transitions'
+            sage: A1 = loads(dumps(A))
+            sage: all(A.state(j) == A1.state(j) for j in [0, 1])
+            True
+            sage: all(A.state(j).transitions == A1.state(j).transitions
+            ....:     for j in [0, 1])
+            True
+        """
+        odict = self.__dict__.copy()  # copy the dict since we change it
+        try:
+            del odict['transitions']  # remove transitions entry
+        except KeyError:
+            pass                      # Standalone FSMState has no transitions
+        return odict
 
     def __hash__(self):
         """
@@ -1971,7 +2029,7 @@ class FSMState(sage.structure.sage_object.SageObject):
                 left.initial_probability == right.initial_probability)
 
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns True.
 
@@ -1986,10 +2044,13 @@ class FSMState(sage.structure.sage_object.SageObject):
         TESTS::
 
             sage: from sage.combinat.finite_state_machine import FSMState
-            sage: FSMState('A').__nonzero__()
+            sage: bool(FSMState('A'))
             True
         """
         return True  # A state cannot be zero (see __init__)
+
+
+    __nonzero__ = __bool__
 
 
     def _epsilon_successors_(self, fsm=None):
@@ -2055,7 +2116,7 @@ class FSMState(sage.structure.sage_object.SageObject):
         _epsilon_successors_dict_[self].remove([])  # delete starting state
         if not _epsilon_successors_dict_[self]:
             del _epsilon_successors_dict_[self]
-        for s, outputs in _epsilon_successors_dict_.iteritems():
+        for s, outputs in six.iteritems(_epsilon_successors_dict_):
             _epsilon_successors_dict_[s] = [t for t, _ in
                                             itertools.groupby(sorted(outputs))]
         return _epsilon_successors_dict_
@@ -2169,7 +2230,7 @@ def is_FSMTransition(T):
     return isinstance(T, FSMTransition)
 
 
-class FSMTransition(sage.structure.sage_object.SageObject):
+class FSMTransition(SageObject):
     """
     Class for a transition of a finite state machine.
 
@@ -2272,7 +2333,7 @@ class FSMTransition(sage.structure.sage_object.SageObject):
 
         True or False.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.combinat.finite_state_machine import FSMTransition
             sage: FSMTransition(0,1,0,0) < FSMTransition(1,0,0,0)
@@ -2498,7 +2559,7 @@ class FSMTransition(sage.structure.sage_object.SageObject):
         return (not (left == right))
 
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns True.
 
@@ -2513,10 +2574,12 @@ class FSMTransition(sage.structure.sage_object.SageObject):
         EXAMPLES::
 
             sage: from sage.combinat.finite_state_machine import FSMTransition
-            sage: FSMTransition('A', 'B', 0).__nonzero__()
+            sage: bool(FSMTransition('A', 'B', 0))
             True
         """
         return True  # A transition cannot be zero (see __init__)
+
+    __nonzero__ = __bool__
 
 
 #*****************************************************************************
@@ -2656,7 +2719,7 @@ def duplicate_transition_add_input(old_transition, new_transition):
     return old_transition
 
 
-class FiniteStateMachine(sage.structure.sage_object.SageObject):
+class FiniteStateMachine(SageObject):
     """
     Class for a finite state machine.
 
@@ -2696,7 +2759,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
       process.
 
     - ``store_states_dict`` -- If ``True``, then additionally the states
-      are stored in an interal dictionary for speed up.
+      are stored in an internal dictionary for speed up.
 
     - ``on_duplicate_transition`` -- A function which is called when a
       transition is inserted into ``self`` which already existed (same
@@ -2850,7 +2913,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         ``LookupError`` or return an empty list.
 
         When constructing a finite state machine in this way, some
-        inital states and an input alphabet have to be specified.
+        initial states and an input alphabet have to be specified.
 
         ::
 
@@ -3115,7 +3178,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         """
         See :class:`FiniteStateMachine` for more information.
 
-        TEST::
+        TESTS::
 
             sage: FiniteStateMachine()
             Empty finite state machine
@@ -3190,17 +3253,17 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
         if data is None:
             pass
-        elif hasattr(data, 'iteritems'):
+        elif hasattr(data, 'items'):
             # data is a dict (or something similar),
             # format: key = from_state, value = iterator of transitions
-            for (sf, iter_transitions) in data.iteritems():
+            for (sf, iter_transitions) in six.iteritems(data):
                 self.add_state(sf)
-                if hasattr(iter_transitions, 'iteritems'):
-                    for (st, transition) in iter_transitions.iteritems():
+                if hasattr(iter_transitions, 'items'):
+                    for (st, transition) in six.iteritems(iter_transitions):
                         self.add_state(st)
                         if is_FSMTransition(transition):
                             self.add_transition(transition)
-                        elif hasattr(transition, 'iteritems'):
+                        elif hasattr(transition, 'items'):
                             self.add_transition(sf, st, **transition)
                         elif hasattr(transition, '__iter__'):
                             self.add_transition(sf, st, *transition)
@@ -3224,7 +3287,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             for transition in data:
                 if is_FSMTransition(transition):
                     self.add_transition(transition)
-                elif hasattr(transition, 'iteritems'):
+                elif hasattr(transition, 'items'):
                     self.add_transition(transition)
                 elif hasattr(transition, '__iter__'):
                     self.add_transition(transition)
@@ -3396,7 +3459,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
         Nothing.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A = Automaton([(0, 0, 0)],
             ....:               initial_states=[0],
@@ -3436,6 +3499,62 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             for transition in other.iter_transitions():
                 self.add_transition(deepcopy(transition, memo))
 
+    def __getstate__(self):
+        """
+        Return state for pickling excluding outgoing transitions.
+
+        INPUT:
+
+        None
+
+        OUTPUT:
+
+        A dictionary.
+
+        Outgoing transitions are in fact stored in states,
+        but must be pickled by the finite state machine
+        in order to avoid deep recursion.
+
+        TESTS::
+
+            sage: A = Automaton([(0, 1, 0)])
+            sage: loads(dumps(A)) == A
+            True
+        """
+        odict = self.__dict__.copy() # copy the dict since we change it
+        odict.update({
+            'transitions': self.transitions()
+        })
+        return odict
+
+    def __setstate__(self, d):
+        """
+        Set state from pickling.
+
+        INPUT:
+
+        - `d` -- a dictionary
+
+        OUTPUT:
+
+        None.
+
+        As transitions are in fact stored in states but not saved
+        by states in order to avoid deep recursion, transitions
+        have to be manually restored here.
+
+        TESTS::
+
+            sage: A = Automaton([(0, 1, 0)])
+            sage: loads(dumps(A)) == A
+            True
+        """
+        transitions = d.pop('transitions')
+        self.__dict__.update(d)
+        for state in self.iter_states():
+            state.transitions = []   #  clean outgoing transitions
+        for transition in transitions:
+            self.add_transition(transition)
 
     def relabeled(self, memo=None, labels=None):
         """
@@ -3503,7 +3622,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         the given states and (deep copies) of all transitions of ``self``
         between these states.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: FSM = FiniteStateMachine([(0, 1, 0), (0, 2, 0),
             ....:                           (1, 2, 0), (2, 0, 0)])
@@ -3711,7 +3830,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             sage: T = Transducer([(0, 1, 0, 1), (0, 2, 0, 2)],
             ....:                initial_states=[0], final_states=[1])
             sage: T.process([0])
-            [(True, 1, [1]), (False, 2, [2])]
+            [(False, 2, [2]), (True, 1, [1])]
             sage: T([0])
             [1]
 
@@ -3780,7 +3899,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             ValueError: Got more than one output, but only allowed to show
             one. Change list_of_outputs option.
             sage: F([2, 2], format_output=f, list_of_outputs=True)
-            [(True, 13, 'bi'), (False, 14, 'bj')]
+            [(False, 14, 'bj'), (True, 13, 'bi')]
             sage: F([2, 3], format_output=f)
             Traceback (most recent call last):
             ...
@@ -3816,7 +3935,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             sage: A([2, 2], format_output=f)
             True
             sage: A([2, 2], format_output=f, list_of_outputs=True)
-            [True, False]
+            [False, True]
             sage: A([2, 3], format_output=f)
             True
             sage: A([2, 3], format_output=f, list_of_outputs=True)
@@ -3850,12 +3969,12 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             sage: T([2, 2], format_output=f)
             'bi'
             sage: T([2, 2], format_output=f, list_of_outputs=True)
-            ['bi', None]
+            [None, 'bi']
             sage: T([2, 2], format_output=f,
             ....:   list_of_outputs=True, only_accepted=True)
             ['bi']
             sage: T.process([2, 2], format_output=f, list_of_outputs=True)
-            [(True, 13, 'bi'), (False, 14, 'bj')]
+            [(False, 14, 'bj'), (True, 13, 'bi')]
             sage: T([2, 3], format_output=f)
             Traceback (most recent call last):
             ...
@@ -3879,14 +3998,14 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             sage: inverter(words.FibonacciWord(), automatic_output_type=True)
             word: 1011010110110101101011011010110110101101...
             sage: tuple(islice(inverter(words.FibonacciWord(),
-            ....:                       automatic_output_type=False), 10))
+            ....:                       automatic_output_type=False), 10r))
             (1, 0, 1, 1, 0, 1, 0, 1, 1, 0)
             sage: type(inverter((1, 0, 1, 1, 0, 1, 0, 1, 1, 0),
             ....:               automatic_output_type=False))
-            <type 'list'>
+            <... 'list'>
             sage: type(inverter((1, 0, 1, 1, 0, 1, 0, 1, 1, 0),
             ....:               automatic_output_type=True))
-            <type 'tuple'>
+            <... 'tuple'>
         """
         if len(args) == 0:
             raise TypeError("Called with too few arguments.")
@@ -3914,7 +4033,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
     #*************************************************************************
 
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns True if the finite state machine consists of at least
         one state.
@@ -3929,10 +4048,13 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
         TESTS::
 
-            sage: FiniteStateMachine().__nonzero__()
+            sage: bool(FiniteStateMachine())
             False
         """
         return len(self._states_) > 0
+
+
+    __nonzero__ = __bool__
 
 
     def __eq__(left, right):
@@ -4244,7 +4366,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         else:
             return "Finite state machine with %s states" % len(self._states_)
 
-    default_format_letter = sage.misc.latex.latex
+    default_format_letter = latex
     format_letter = default_format_letter
 
 
@@ -4265,7 +4387,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         EXAMPLES::
 
             sage: A = Automaton([(0, 0, -1)])
-            sage: map(A.format_letter_negative, [-1, 0, 1, 'a', None])
+            sage: list(map(A.format_letter_negative, [-1, 0, 1, 'a', None]))
             ['\\overline{1}', 0, 1, \text{\texttt{a}}, \mathrm{None}]
             sage: A.latex_options(format_letter=A.format_letter_negative)
             sage: print(latex(A))
@@ -4278,7 +4400,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         if letter in ZZ and letter < 0:
             return r'\overline{%d}' % -letter
         else:
-            return sage.misc.latex.latex(letter)
+            return latex(letter)
 
 
     def format_transition_label_reversed(self, word):
@@ -4303,7 +4425,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         right-most position. Therefore, the labels have to be
         reversed.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: T = Transducer([(0, 0, 0, [1, 2, 3])])
             sage: T.format_transition_label_reversed([1, 2, 3])
@@ -4315,7 +4437,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             \path[->] (v0) edge[loop above] node {$0\mid 3 2 1$} ();
             \end{tikzpicture}
 
-        TEST:
+        TESTS:
 
         Check that :trac:`16357` is fixed::
 
@@ -4396,7 +4518,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                 \path[->] (v0) edge node[rotate=360.00, anchor=south] {$t$} (v1);
                 \end{tikzpicture}
 
-        TEST:
+        TESTS:
 
         Check that :trac:`16357` is fixed::
 
@@ -4406,7 +4528,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             sage: T.default_format_transition_label(iter([]))
             '\\varepsilon'
         """
-        result = " ".join(itertools.imap(self.format_letter, word))
+        result = " ".join(self.format_letter(u) for u in word)
         if result:
             return result
         else:
@@ -4646,8 +4768,8 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             sage: T.latex_options(loop_where=lambda x: 'top')
             Traceback (most recent call last):
             ...
-            ValueError: loop_where for 4 must be in ['below',
-            'right', 'above', 'left'].
+            ValueError: loop_where for 4 must be in ['above',
+            'below', 'left', 'right'].
             sage: T.latex_options(initial_where=90)
             Traceback (most recent call last):
             ...
@@ -4656,13 +4778,13 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             sage: T.latex_options(initial_where=lambda x: 'top')
             Traceback (most recent call last):
             ...
-            ValueError: initial_where for 4 must be in ['below',
-            'right', 'above', 'left'].
+            ValueError: initial_where for 4 must be in ['above',
+            'below', 'left', 'right'].
             sage: T.latex_options(accepting_style='fancy')
             Traceback (most recent call last):
             ...
             ValueError: accepting_style must be in ['accepting by
-            double', 'accepting by arrow'].
+            arrow', 'accepting by double'].
             sage: T.latex_options(accepting_where=90)
             Traceback (most recent call last):
             ...
@@ -4671,13 +4793,13 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             sage: T.latex_options(accepting_where=lambda x: 'top')
             Traceback (most recent call last):
             ...
-            ValueError: accepting_where for 0 must be in ['below',
-            'right', 'above', 'left'].
+            ValueError: accepting_where for 0 must be in ['above',
+            'below', 'left', 'right'].
             sage: T.latex_options(accepting_where={0: 'above', 3: 'top'})
             Traceback (most recent call last):
             ...
             ValueError: accepting_where for 3 must be a real number or
-            be in ['below', 'right', 'above', 'left'].
+            be in ['above', 'below', 'left', 'right'].
         """
         if coordinates is not None:
             self.set_coordinates(coordinates)
@@ -4714,7 +4836,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                     state.loop_where = where
                 else:
                     raise ValueError('loop_where for %s must be in %s.' %
-                                     (state.label(), permissible))
+                                     (state.label(), sorted(permissible)))
 
         if initial_where is not None:
             permissible = list(tikz_automata_where)
@@ -4733,7 +4855,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                     state.initial_where = where
                 else:
                     raise ValueError('initial_where for %s must be in %s.' %
-                                     (state.label(), permissible))
+                                     (state.label(), sorted(permissible)))
 
         if accepting_style is not None:
             permissible = ['accepting by double',
@@ -4742,7 +4864,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                 self.accepting_style = accepting_style
             else:
                 raise ValueError('accepting_style must be in %s.' %
-                    permissible)
+                    sorted(permissible))
 
         if accepting_distance is not None:
             self.accepting_distance = accepting_distance
@@ -4764,20 +4886,19 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                     state.accepting_where = where
                 elif hasattr(state, 'final_word_out') \
                         and state.final_word_out:
-                    if where in sage.rings.real_mpfr.RR:
+                    if where in RR:
                         state.accepting_where = where
                     else:
                         raise ValueError('accepting_where for %s must '
                                          'be a real number or be in %s.' %
-                                         (state.label(), permissible))
+                                         (state.label(), sorted(permissible)))
 
                 else:
                     raise ValueError('accepting_where for %s must be in %s.' %
-                                     (state.label(), permissible))
+                                     (state.label(), sorted(permissible)))
 
         if accepting_show_empty is not None:
             self.accepting_show_empty = accepting_show_empty
-
 
     def _latex_(self):
         r"""
@@ -4907,7 +5028,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             elif hasattr(self, "format_state_label"):
                 label = self.format_state_label(vertex)
             else:
-                label = sage.misc.latex.latex(vertex.label())
+                label = latex(vertex.label())
             result += "\\node[state%s] (v%d) at (%f, %f) {$%s$};\n" % (
                 options, j, vertex.coordinates[0],
                 vertex.coordinates[1], label)
@@ -4917,7 +5038,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                 if hasattr(vertex, "accepting_where"):
                     angle = tikz_automata_where.get(vertex.accepting_where,
                                                     vertex.accepting_where)
-                result += "\\path[->] (v%d.%.2f) edge node[%s] {$%s \mid %s$} ++(%.2f:%s);\n" % (
+                result += "\\path[->] (v%d.%.2f) edge node[%s] {$%s \\mid %s$} ++(%.2f:%s);\n" % (
                     j, angle,
                     label_rotation(angle, False),
                     EndOfWordLaTeX,
@@ -4943,7 +5064,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                 key=key_function
                 ))
 
-        for ((source, target), transitions) in adjacent.iteritems():
+        for ((source, target), transitions) in six.iteritems(adjacent):
             if len(transitions) > 0:
                 labels = []
                 for transition in transitions:
@@ -4954,7 +5075,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                                 transition, self.format_transition_label))
                 label = ", ".join(labels)
                 if source != target:
-                    angle = sage.functions.trig.atan2(
+                    angle = atan2(
                         target.coordinates[1] - source.coordinates[1],
                         target.coordinates[0] - source.coordinates[0]) * 180/pi
                     both_directions = (target, source) in adjacent
@@ -4985,7 +5106,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
 
     def _latex_transition_label_(self, transition,
-                                 format_function=sage.misc.latex.latex):
+                                 format_function=None):
         r"""
         Returns the proper transition label.
 
@@ -5174,7 +5295,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         from sage.rings.integer_ring import ZZ
 
         def default_function(transitions):
-            x = sage.symbolic.ring.SR.var('x')
+            x = var('x')
             return x**sum(transition.word_out)
 
         if entry is None:
@@ -5199,7 +5320,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                     dictionary[(transition.from_state.label(),
                                 transition.to_state.label())] \
                                 = entry(transition)
-        return sage.matrix.constructor.matrix(
+        return matrix(
             len(relabeledFSM.states()), dictionary)
 
 
@@ -6155,8 +6276,11 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             [(True, 0, 'cdcd'), (True, 0, 'ced'),
              (True, 1, 'cdc'), (True, 1, 'ce')]
             sage: T.process([0, 0, 1], format_output=lambda o: ''.join(o))
-            [(True, 0, 'adcd'), (True, 0, 'aed'),
-             (True, 1, 'adc'), (True, 1, 'ae'), (False, 2, 'b')]
+            [(False, 2, 'b'),
+             (True, 0, 'adcd'),
+             (True, 0, 'aed'),
+             (True, 1, 'adc'),
+             (True, 1, 'ae')]
             sage: T.process([0, 0, 1], format_output=lambda o: ''.join(o),
             ....:           only_accepted=True)
             [(True, 0, 'adcd'), (True, 0, 'aed'),
@@ -6285,7 +6409,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         if (len(it_output) > 1 and options['list_of_outputs'] is None or
                 options['list_of_outputs']):
             return [self._process_convert_output_(out, **options)
-                    for out in it_output]
+                    for out in sorted(it_output)]
 
         # process output: cannot return output to due input parameters
         if options['list_of_outputs'] is False:
@@ -6307,7 +6431,6 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             it_output = [(False, NoneState, None)]
 
         return self._process_convert_output_(it_output[0], **options)
-
 
     def _process_convert_output_(self, output_data, **kwargs):
         """
@@ -6395,7 +6518,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
             sage: from itertools import islice
             sage: it = inverter.iter_process(words.FibonacciWord())
-            sage: for current in islice(it, 4):
+            sage: for current in islice(it, 4r):
             ....:     print(current)
             process (1 branch)
             + at state 'A'
@@ -6570,14 +6693,14 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                                    "'simple' iterator cannot be used "
                                    "here." %
                                    (len(current),))
-            pos, states = next(current.iteritems())
+            pos, states = next(six.iteritems(current))
             if len(states) > 1:
                 raise RuntimeError("Process has branched "
                                    "(visiting %s states in branch). The "
                                    "'simple' iterator cannot be used "
                                    "here." %
                                    (len(states),))
-            state, branch = next(states.iteritems())
+            state, branch = next(six.iteritems(states))
             if len(branch.outputs) > 1:
                 raise RuntimeError("Process has branched. "
                                    "(%s different outputs in branch). The "
@@ -6732,7 +6855,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                     return self._add_fsm_transition_(d)
             else:
                 d = next(itervalues(kwargs))
-            if hasattr(d, 'iteritems'):
+            if hasattr(d, 'items'):
                 args = []
                 kwargs = d
             elif hasattr(d, '__iter__'):
@@ -6858,7 +6981,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             sage: F.transitions()
             [Transition from 0 to 1: 0|-]
 
-        TEST::
+        TESTS::
 
             sage: F = FiniteStateMachine(initial_states=['A'])
             sage: def f(state, input):
@@ -7377,7 +7500,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             ...
             ValueError: Found more than one accepting path.
             sage: T.process([0])
-            [(True, (1, 0), [2]), (True, (0, 0), [1])]
+            [(True, (0, 0), [1]), (True, (1, 0), [2])]
 
         Handling of the input alphabet (see :trac:`18989`)::
 
@@ -7432,7 +7555,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
 
     def concatenation(self, other):
-        """
+        r"""
         Concatenate this finite state machine with another finite
         state machine.
 
@@ -7699,7 +7822,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             ....:                final_states=[1])
             sage: T.state(1).final_word_out = 2
             sage: S = T.kleene_star()
-            sage: S.process([0, 0])
+            sage: sorted(S.process([0, 0]))
             [(True, 0, [1, 2, 1, 2]), (True, 1, [1, 2, 1, 2])]
 
         Final output words may lead to undesirable situations if initial
@@ -8163,7 +8286,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             ....:                final_states=['A'])
             sage: F.transitions()[0].word_out is F.transitions()[1].word_out
             False
-            sage: G = Transducer([('C','C',0,1)],)
+            sage: G = Transducer([('C','C',0,1)],
             ....:                initial_states=['C'],
             ....:                final_states=['C'])
             sage: H = G.composition(F)
@@ -8782,7 +8905,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         leaving ``C``.
 
         The final components are the only parts of a transducer which
-        influence the main terms of the asympotic behaviour of the sum
+        influence the main terms of the asymptotic behaviour of the sum
         of output labels of a transducer, see [HKP2015]_ and [HKW2015]_.
 
         EXAMPLES::
@@ -9099,7 +9222,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             if not first_letters:
                 return tuple()
             first_item = first_letters.pop()
-            if all([item == first_item for item in first_letters]):
+            if all(item == first_item for item in first_letters):
                 return (first_item,)
             return tuple()
 
@@ -9132,7 +9255,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                                 + [common_output[0]]
                             found_inbound_transition = True
                     if not found_inbound_transition:
-                        sage.misc.misc.verbose(
+                        verbose(
                             "All transitions leaving state %s have an "
                             "output label with prefix %s. However, "
                             "there is no inbound transition and it is "
@@ -9142,7 +9265,6 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                             "outbound transitions." %
                             (state, common_output[0]),
                             level=0)
-
 
     def equivalence_classes(self):
         r"""
@@ -9383,7 +9505,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         A finite state machine with merged transitions. If no mergers occur,
         return ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.combinat.finite_state_machine import duplicate_transition_add_input
             sage: T = Transducer([[1, 2, 1/4, 1], [1, -2, 1/4, 1], [1, -2, 1/2, 1],
@@ -9455,7 +9577,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
         Simplified version of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.combinat.finite_state_machine import duplicate_transition_add_input
             sage: T = Transducer([[1, 2, 1/4, 0], [1, -2, 1/4, 0], [1, -2, 1/2, 0],
@@ -9827,7 +9949,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         # have been computed as it may not be permissible to stop at a
         # formerly non-final state unless a cycle has been completed.
 
-        for (state, position), final_word_out in cache.iteritems():
+        for (state, position), final_word_out in six.iteritems(cache):
             if position == 0 and final_word_out is not None:
                 state.is_final = True
                 state.final_word_out = final_word_out
@@ -9891,7 +10013,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                 graph_data.append((t.from_state.label(), t.to_state.label(),
                                    label_fct(t)))
 
-        G = sage.graphs.digraph.DiGraph(graph_data, multiedges=True, loops=True)
+        G = DiGraph(graph_data, multiedges=True, loops=True)
         G.add_vertices(isolated_vertices)
         return G
 
@@ -9978,8 +10100,8 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         return(done)
 
 
-    def number_of_words(self, variable=sage.symbolic.ring.SR.var('n'),
-                        base_ring=sage.rings.qqbar.QQbar):
+    def number_of_words(self, variable=var('n'),
+                        base_ring=None):
         r"""
         Return the number of successful input words of given length.
 
@@ -10033,8 +10155,8 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             x^2 - x - 1
             sage: R.<phi> = NumberField(x^2-x-1, embedding=1.6)
             sage: N = NAFp.number_of_words(base_ring=R); N
-            1/10*(1/2*sqrt(5) + 1/2)^n*(3*sqrt(5) + 5)
-            - 1/10*(-1/2*sqrt(5) + 1/2)^n*(3*sqrt(5) - 5)
+            1/2*(1/2*sqrt(5) + 1/2)^n*(3*sqrt(1/5) + 1)
+            - 1/2*(-1/2*sqrt(5) + 1/2)^n*(3*sqrt(1/5) - 1)
             sage: all(len(list(NAFp.language(s)))
             ....:     - len(list(NAFp.language(s-1))) == N.subs(n=s)
             ....:     for s in srange(1, 6))
@@ -10076,7 +10198,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
             sage: A = Automaton([(j, j+1, 0) for j in range(3)],
             ....:               initial_states=[0],
-            ....:               final_states=range(3))
+            ....:               final_states=list(range(3)))
             sage: A.number_of_words()
             1/2*0^(n - 2)*(n - 1)*n + 0^(n - 1)*n + 0^n
 
@@ -10089,11 +10211,12 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
             ...
             NotImplementedError: Finite State Machine must be deterministic.
         """
-        from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
         from sage.arith.all import falling_factorial
         from sage.rings.integer_ring import ZZ
         from sage.symbolic.ring import SR
+        if base_ring is None:
+            base_ring = QQbar
 
         def jordan_block_power(block, exponent):
             eigenvalue = SR(block[0, 0])
@@ -10117,8 +10240,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         left_T = (left * T).change_ring(SR)
         return left_T * Jpower * T_inv_right
 
-
-    def asymptotic_moments(self, variable=sage.symbolic.ring.SR.var('n')):
+    def asymptotic_moments(self, variable=var('n')):
         r"""
         Returns the main terms of expectation and variance of the sum
         of output labels and its covariance with the sum of input
@@ -10541,8 +10663,8 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
         (x, y, z) = R.gens()
         try:
             M = get_matrix(self, x, y)
-        except TypeError:
-            sage.misc.misc.verbose(
+        except (TypeError, ValueError):
+            verbose(
                 "Non-integer output weights lead to "
                 "significant performance degradation.", level=0)
             # fall back to symbolic ring
@@ -10584,7 +10706,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
     def moments_waiting_time(self, test=bool, is_zero=None,
                              expectation_only=False):
-        ur"""
+        r"""
         If this finite state machine acts as a Markov chain, return
         the expectation and variance of the number of steps until
         first writing ``True``.
@@ -10738,7 +10860,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                 ....:         - 2*h*p[i]^h * (1 - p[i])/(1 - p[i]^h)^2
                 ....:         for i in range(r)
                 ....:         ) * theory_expectation^2
-                ....:     alphabet = range(r)
+                ....:     alphabet = list(range(r))
                 ....:     counters = [
                 ....:         transducers.CountSubblockOccurrences([j]*h,
                 ....:                     alphabet)
@@ -10784,7 +10906,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
                 ....:     p = R.gens()
                 ....:     def is_zero(polynomial):
                 ....:         return polynomial in (sum(p) - 1) * R
-                ....:     alphabet = range(r)
+                ....:     alphabet = list(range(r))
                 ....:     counters = [
                 ....:         transducers.Wait([0, 1])(
                 ....:             transducers.CountSubblockOccurrences(
@@ -10929,7 +11051,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
 
         relabeled = self.relabeled()
         n = len(relabeled.states())
-        assert [s.label() for s in relabeled.states()] == range(n)
+        assert [s.label() for s in relabeled.states()] == list(range(n))
         from sage.rings.integer_ring import ZZ
         entry_vector = vector(ZZ(s.is_initial)
                               for s in relabeled.states())
@@ -11021,7 +11143,7 @@ class FiniteStateMachine(sage.structure.sage_object.SageObject):
           ``max_length`` will be considered. If ``None``, then this
           iterates over all possible words without length restrictions.
 
-        - ``kwargs`` -- will be passed on to to the :class:`process
+        - ``kwargs`` -- will be passed on to the :class:`process
           iterator <FSMProcessIterator>`. See :meth:`process` for a
           description.
 
@@ -11223,7 +11345,7 @@ class Automaton(FiniteStateMachine):
 
 
     def _latex_transition_label_(self, transition,
-                                 format_function=sage.misc.latex.latex):
+                                 format_function=None):
         r"""
         Returns the proper transition label.
 
@@ -11254,6 +11376,8 @@ class Automaton(FiniteStateMachine):
             sage: F._latex_transition_label_(t)
             \left[0\right]
         """
+        if format_function is None:
+            format_function = latex
         return format_function(transition.word_in)
 
 
@@ -11678,8 +11802,7 @@ class Automaton(FiniteStateMachine):
         EXAMPLES::
 
             sage: A = automata.Word([0, 1])
-            sage: [w for w in
-            ....:  [], [0], [1], [0, 0], [0, 1], [1, 0], [1, 1]
+            sage: [w for w in ([], [0], [1], [0, 0], [0, 1], [1, 0], [1, 1])
             ....:  if A(w)]
             [[0, 1]]
             sage: Ac = A.complement()
@@ -11692,8 +11815,7 @@ class Automaton(FiniteStateMachine):
              Transition from 1 to 3: 0|-,
              Transition from 3 to 3: 0|-,
              Transition from 3 to 3: 1|-]
-            sage: [w for w in
-            ....:  [], [0], [1], [0, 0], [0, 1], [1, 0], [1, 1]
+            sage: [w for w in ([], [0], [1], [0, 0], [0, 1], [1, 0], [1, 1])
             ....:  if Ac(w)]
             [[], [0], [1], [0, 0], [1, 0], [1, 1]]
 
@@ -11705,8 +11827,7 @@ class Automaton(FiniteStateMachine):
             ...
             ValueError: The finite state machine must be deterministic.
             sage: Ac = A.determinisation().complement()
-            sage: [w for w in
-            ....:  [], [0], [1], [0, 0], [0, 1], [1, 0], [1, 1]
+            sage: [w for w in ([], [0], [1], [0, 0], [0, 1], [1, 0], [1, 1])
             ....:  if Ac(w)]
             [[], [0], [1], [0, 0], [1, 0], [1, 1]]
         """
@@ -11752,7 +11873,7 @@ class Automaton(FiniteStateMachine):
 
         B = other.minimization().relabeled()
         labels = {B.process(path)[1].label(): state.label()
-                  for (state, path) in address.iteritems()}
+                  for (state, path) in six.iteritems(address)}
         try:
             return A == B.relabeled(labels=labels)
         except KeyError:
@@ -12296,7 +12417,7 @@ class Automaton(FiniteStateMachine):
           considered. If ``None``, then this iterates over all
           possible words without length restrictions.
 
-        - ``kwargs`` -- will be passed on to to the :class:`process
+        - ``kwargs`` -- will be passed on to the :class:`process
           iterator <FSMProcessIterator>`. See :meth:`process` for a
           description.
 
@@ -12435,7 +12556,7 @@ class Transducer(FiniteStateMachine):
 
 
     def _latex_transition_label_(self, transition,
-                                 format_function=sage.misc.latex.latex):
+                                 format_function=None):
         r"""
         Returns the proper transition label.
 
@@ -12466,6 +12587,8 @@ class Transducer(FiniteStateMachine):
             sage: F._latex_transition_label_(t)
             \left[0\right] \mid \left[1\right]
         """
+        if format_function is None:
+            format_function = latex
         return (format_function(transition.word_in) + "\\mid "
                 + format_function(transition.word_out))
 
@@ -12591,9 +12714,8 @@ class Transducer(FiniteStateMachine):
 
         return new
 
-
     def cartesian_product(self, other, only_accessible_components=True):
-        """
+        r"""
         Return a new transducer which can simultaneously process an
         input with the machines ``self`` and ``other`` where the
         output labels are `d`-tuples of the original output labels.
@@ -13239,7 +13361,7 @@ class Transducer(FiniteStateMachine):
 #*****************************************************************************
 
 
-class _FSMTapeCache_(sage.structure.sage_object.SageObject):
+class _FSMTapeCache_(SageObject):
     """
     This is a class for caching an input tape. It is used in
     :class:`FSMProcessIterator`.
@@ -13323,7 +13445,7 @@ class _FSMTapeCache_(sage.structure.sage_object.SageObject):
         """
         if not len(tape) == len(position) == len(tape_ended):
             raise TypeError('The lengths of the inputs do not match')
-        if sorted(p[1] for p in position) != range(len(tape)):
+        if sorted(p[1] for p in position) != list(range(len(tape))):
             raise TypeError('Tape position %s wrong.' % (position,))
         self.position = position
         self.tape = tape
@@ -13692,8 +13814,8 @@ class _FSMTapeCache_(sage.structure.sage_object.SageObject):
         it_word = iter(word)
 
         # check letters in cache
-        if any(letter_on_track != next(it_word)
-               for letter_on_track in track_cache):
+        if any(letter_on_track != letter_in_word
+               for letter_on_track, letter_in_word in zip(track_cache, it_word)):
             return False
 
         # check letters not already cached
@@ -13769,12 +13891,12 @@ class _FSMTapeCache_(sage.structure.sage_object.SageObject):
 
         if self.is_multitape:
             increments = tuple(length(word) for word in
-                               itertools.izip(*transition.word_in))
+                               zip(*transition.word_in))
         else:
             increments = (length(transition.word_in),)
 
         for track_number, (track_cache, inc) in \
-                enumerate(itertools.izip(self.cache, increments)):
+                enumerate(zip(self.cache, increments)):
             for _ in range(inc):
                 if not track_cache:
                     if not self.read(track_number)[0]:
@@ -14108,7 +14230,7 @@ def wordoftuples_to_tupleofwords(wordoftuples):
     def remove_empty_letters(word):
         return [letter for letter in word if letter is not None]
     return tuple(remove_empty_letters(word)
-                 for word in itertools.izip(*wordoftuples))
+                 for word in zip(*wordoftuples))
 
 
 #*****************************************************************************
@@ -14130,7 +14252,7 @@ def is_FSMProcessIterator(PI):
 #*****************************************************************************
 
 
-class FSMProcessIterator(sage.structure.sage_object.SageObject,
+class FSMProcessIterator(SageObject,
                          collections.Iterator):
     """
     This class takes an input, feeds it into a finite state machine
@@ -14290,7 +14412,7 @@ class FSMProcessIterator(sage.structure.sage_object.SageObject,
         ....:                 (1, 2, 1, 'c'), (2, 0, 0, 'd'),
         ....:                 (2, 1, None, 'd')],
         ....:                initial_states=[0], final_states=[2])
-        sage: T.process([0, 0, 1], format_output=lambda o: ''.join(o))
+        sage: sorted(T.process([0, 0, 1], format_output=lambda o: ''.join(o)))
         [(False, 1, 'abcd'), (True, 2, 'abc')]
         sage: it = FSMProcessIterator(T, input_tape=[0, 0, 1],
         ....:                         format_output=lambda o: ''.join(o))
@@ -14312,7 +14434,7 @@ class FSMProcessIterator(sage.structure.sage_object.SageObject,
         + at state 2
         +-- tape at 3, [['a', 'b', 'c']]
         process (0 branches)
-        sage: it.result()
+        sage: sorted(it.result())
         [Branch(accept=False, state=1, output='abcd'),
          Branch(accept=True, state=2, output='abc')]
 
@@ -14393,7 +14515,7 @@ class FSMProcessIterator(sage.structure.sage_object.SageObject,
 
             A string.
 
-            TEST::
+            TESTS::
 
                 sage: from sage.combinat.finite_state_machine import FSMProcessIterator
                 sage: T = Transducer([(0, 0, 0, 0)],
@@ -14411,8 +14533,8 @@ class FSMProcessIterator(sage.structure.sage_object.SageObject,
             """
             data = sorted(
                 (state, pos, tape_cache, outputs)
-                for pos, states in self.iteritems()
-                for state, (tape_cache, outputs) in states.iteritems())
+                for pos, states in six.iteritems(self)
+                for state, (tape_cache, outputs) in six.iteritems(states))
             branch = "branch" if len(data) == 1 else "branches"
             result = "process (%s %s)" % (len(data), branch)
             for s, sdata in itertools.groupby(data, lambda x: x[0]):
@@ -14690,7 +14812,7 @@ class FSMProcessIterator(sage.structure.sage_object.SageObject,
                     'but output is written.' % (state,))
 
         for eps_state, eps_outputs in \
-                state._epsilon_successors_(self.fsm).iteritems():
+                six.iteritems(state._epsilon_successors_(self.fsm)):
             if eps_state == state:
                 continue
                 # "eps_state == state" means epsilon cycle
@@ -14810,8 +14932,7 @@ class FSMProcessIterator(sage.structure.sage_object.SageObject,
             next_transitions = None
             state_said_finished = False
             if hasattr(current_state, 'hook'):
-                import inspect
-                if len(inspect.getargspec(current_state.hook).args) == 2:
+                if len(sage_getargspec(current_state.hook).args) == 2:
                     from sage.misc.superseded import deprecation
                     deprecation(16538, 'The hook of state %s cannot be '
                                 'processed: It seems that you are using an '
@@ -14879,7 +15000,7 @@ class FSMProcessIterator(sage.structure.sage_object.SageObject,
                      for _ in range(len(next_transitions) - 1)])
 
             # process transitions
-            for transition, (tape, out) in itertools.izip(next_transitions, new_currents):
+            for transition, (tape, out) in zip(next_transitions, new_currents):
                 if hasattr(transition, 'hook'):
                     transition.hook(transition, self)
                 write_word(out, transition.word_out)
@@ -14891,7 +15012,7 @@ class FSMProcessIterator(sage.structure.sage_object.SageObject,
             return
 
         states_dict = self._current_.pop(heapq.heappop(self._current_positions_))
-        for state, branch in states_dict.iteritems():
+        for state, branch in six.iteritems(states_dict):
             step(state, branch.tape_cache, branch.outputs)
 
         return self._current_
@@ -15441,7 +15562,7 @@ class _FSMProcessIteratorAll_(FSMProcessIterator):
         if max_length is None:
             kwargs['input_tape'] = itertools.count()
         else:
-            kwargs['input_tape'] = iter(0 for _ in xrange(max_length))
+            kwargs['input_tape'] = iter(0 for _ in range(max_length))
         self.TapeCache = _FSMTapeCacheDetectAll_
         self.visited_states = {}
         kwargs['check_epsilon_transitions'] = False
@@ -15451,7 +15572,7 @@ class _FSMProcessIteratorAll_(FSMProcessIterator):
 #*****************************************************************************
 
 
-@sage.misc.cachefunc.cached_function
+@cached_function
 def setup_latex_preamble():
     r"""
     This function adds the package ``tikz`` with support for automata
@@ -15473,14 +15594,10 @@ def setup_latex_preamble():
 
         sage: from sage.combinat.finite_state_machine import setup_latex_preamble
         sage: setup_latex_preamble()
-        sage: ("\usepackage{tikz}" in latex.extra_preamble()) == latex.has_file("tikz.sty")
+        sage: (r"\usepackage{tikz}" in latex.extra_preamble()) == latex.has_file("tikz.sty")
         True
     """
-    from sage.misc.latex import latex
     latex.add_package_to_preamble_if_available('tikz')
     latex.add_to_mathjax_avoid_list("tikz")
     if latex.has_file("tikz.sty"):
         latex.add_to_preamble(r'\usetikzlibrary{automata}')
-
-
-#*****************************************************************************

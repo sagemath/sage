@@ -184,7 +184,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
     @cached_method
     def one(self):
-        """
+        r"""
         Return the element `1` in ``self`` (which is the Kronecker
         delta `\delta(x, y)`).
 
@@ -644,6 +644,18 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             R[(0, 0)]
             sage: R[3, 11]
             R[(0, 1)]
+
+        TESTS:
+
+            sage: R[2, 5]
+            Traceback (most recent call last):
+            ...
+            ValueError: not an interval
+
+            sage: R[-1]
+            Traceback (most recent call last):
+            ...
+            ValueError: not an element of the poset
         """
         if not isinstance(A, (list, tuple)):
             if A not in self._ambient._poset.list():

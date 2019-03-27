@@ -20,10 +20,13 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-include "cysignals/signals.pxi"
-include "sage/ext/cdefs.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
+from sage.cpython.string cimport str_to_bytes
+
+from sage.libs.gmp.mpz cimport *
 from sage.libs.mpfr cimport *
 from sage.rings.integer cimport Integer
 
@@ -57,12 +60,13 @@ cdef class Lfunction:
             sage: Lfunction_from_character(DirichletGroup(5)[1])
             L-function with complex Dirichlet coefficients
         """
-        cdef int i              #for indexing loops
-        cdef Integer tmpi       #for accessing integer values
-        cdef RealNumber tmpr    #for accessing real values
-        cdef ComplexNumber tmpc #for accessing complexe values
+        cdef int i              # for indexing loops
+        cdef Integer tmpi       # for accessing integer values
+        cdef RealNumber tmpr    # for accessing real values
+        cdef ComplexNumber tmpc # for accessing complex values
 
-        cdef char *NAME = name
+        _name = str_to_bytes(name)
+        cdef char *NAME = _name
         cdef int what_type = what_type_L
 
         tmpi = Integer(period)
@@ -92,11 +96,10 @@ cdef class Lfunction:
 
         self.__init_fun(NAME, what_type, dirichlet_coefficient, Period, q,  w,  A, g, l, n_poles, p, r)
 
-        repr_name = str(NAME)
-        if str(repr_name) != "":
-            repr_name += ": "
+        if name:
+            name += ': '
 
-        self._repr = repr_name + "L-function"
+        self._repr = name + 'L-function'
 
         del_doubles(g)
         del_Complexes(l)
@@ -174,27 +177,27 @@ cdef class Lfunction:
 
         EXAMPLES::
 
-            sage: chi=DirichletGroup(5)[2] #This is a quadratic character
+            sage: chi = DirichletGroup(5)[2]  # Quadratic character
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: L=Lfunction_from_character(chi, type="int")
+            sage: L = Lfunction_from_character(chi, type="int")
             sage: L.hardy_z_function(0)
             0.231750947504... 
-            sage: L.hardy_z_function(.5).imag().abs() < 1.0e-16
-            True
+            sage: L.hardy_z_function(.5).imag()  # abs tol 1e-15
+            1.17253174178320e-17
             sage: L.hardy_z_function(.4+.3*I)
             0.2166144222685... - 0.00408187127850...*I
-            sage: chi=DirichletGroup(5)[1]
-            sage: L=Lfunction_from_character(chi,type="complex")
+            sage: chi = DirichletGroup(5)[1]
+            sage: L = Lfunction_from_character(chi, type="complex")
             sage: L.hardy_z_function(0)
-            0.7939675904771...
-            sage: L.hardy_z_function(.5).imag().abs() < 1.0e-16
-            True
-            sage: E=EllipticCurve([-82,0])
-            sage: L=Lfunction_from_elliptic_curve(E, number_of_coeffs=40000)
+            0.793967590477...
+            sage: L.hardy_z_function(.5).imag()  # abs tol 1e-15
+            0.000000000000000
+            sage: E = EllipticCurve([-82,0])
+            sage: L = Lfunction_from_elliptic_curve(E, number_of_coeffs=40000)
             sage: L.hardy_z_function(2.1)
             -0.00643179176869...
-            sage: L.hardy_z_function(2.1).imag().abs() < 1.0e-16
-            True
+            sage: L.hardy_z_function(2.1).imag()  # abs tol 1e-15
+            -3.93833660115668e-19
         """
         #This takes s -> .5 + I*s
         cdef ComplexNumber complexified_s = CCC(0.5)+ CCC(0,1)*CCC(s)
@@ -395,18 +398,18 @@ cdef class Lfunction_I(Lfunction):
     with integer Dirichlet Coefficients. We assume that L-functions
     satisfy the following functional equation.
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = \omega Q^s \overline{\Lambda(1-\bar s)}
 
     where
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = Q^s \left( \prod_{j=1}^a \Gamma(\kappa_j s + \gamma_j) \right) L(s)
 
 
-    See (23) in http://arxiv.org/abs/math/0412181
+    See (23) in :arxiv:`math/0412181`
 
     INPUT:
 
@@ -431,7 +434,7 @@ cdef class Lfunction_I(Lfunction):
 
     - ``residue`` - List of the residues of the L-function
 
-    NOTES:
+    .. NOTE::
 
         If an L-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
         by replacing `s` by `s+(k-1)/2`, one can get it in the form we need.
@@ -533,17 +536,17 @@ cdef class Lfunction_D(Lfunction):
     with real Dirichlet coefficients. We assume that L-functions
     satisfy the following functional equation.
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = \omega Q^s \overline{\Lambda(1-\bar s)}
 
     where
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = Q^s \left( \prod_{j=1}^a \Gamma(\kappa_j s + \gamma_j) \right) L(s)
 
-    See (23) in http://arxiv.org/abs/math/0412181
+    See (23) in :arxiv:`math/0412181`
 
     INPUT:
 
@@ -568,7 +571,7 @@ cdef class Lfunction_D(Lfunction):
 
     - ``residue`` - List of the residues of the L-function
 
-    NOTES:
+    .. NOTE::
 
         If an L-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
         by replacing `s` by `s+(k-1)/2`, one can get it in the form we need.
@@ -672,17 +675,17 @@ cdef class Lfunction_C:
     with complex Dirichlet Coefficients. We assume that L-functions
     satisfy the following functional equation.
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = \omega Q^s \overline{\Lambda(1-\bar s)}
 
     where
 
-    .. math::
+    .. MATH::
 
         \Lambda(s) = Q^s \left( \prod_{j=1}^a \Gamma(\kappa_j s + \gamma_j) \right) L(s)
 
-    See (23) in http://arxiv.org/abs/math/0412181
+    See (23) in :arxiv:`math/0412181`
 
     INPUT:
 
@@ -707,7 +710,7 @@ cdef class Lfunction_C:
 
     - ``residue`` - List of the residues of the L-function
 
-    NOTES:
+    .. NOTE::
 
         If an L-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
         by replacing `s` by `s+(k-1)/2`, one can get it in the form we need.
@@ -906,17 +909,17 @@ def Lfunction_from_character(chi, type="complex"):
     OMEGA=1.0/ ( CCC(0,1)**a * (CCC(modulus)).sqrt()/chi.gauss_sum() )
 
     if type == "complex":
-        dir_coeffs=[CCC(chi(n)) for n in xrange(1,modulus+1)]
+        dir_coeffs = [CCC(chi(n)) for n in xrange(1, modulus + 1)]
         return Lfunction_C("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
     if not type in ["double","int"]:
         raise ValueError("unknown type")
     if chi.order() != 2:
         raise ValueError("For non quadratic characters you must use type=\"complex\"")
     if type == "double":
-        dir_coeffs=[RRR(chi(n)) for n in xrange(1,modulus+1)]
+        dir_coeffs = [RRR(chi(n)) for n in xrange(1, modulus + 1)]
         return Lfunction_D("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
     if type == "int":
-        dir_coeffs=[Integer(chi(n)) for n in xrange(1,modulus+1)]
+        dir_coeffs = [Integer(chi(n)) for n in xrange(1, modulus + 1)]
         return Lfunction_I("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
 
 
@@ -948,11 +951,13 @@ def Lfunction_from_elliptic_curve(E, number_of_coeffs=10000):
         sage: L.value(0.5, derivative=1)
         0.305999...
     """
-    Q=(RRR(E.conductor())).sqrt()/(RRR(2*pi))
-    poles=[]
-    residues=[]
     import sage.libs.lcalc.lcalc_Lfunction
-    dir_coeffs=E.anlist(number_of_coeffs)
-    dir_coeffs=[RRR(dir_coeffs[i])/(RRR(i)).sqrt() for i in xrange(1,number_of_coeffs)]
-    OMEGA=E.root_number()
-    return Lfunction_D("", 2,dir_coeffs, 0,Q,OMEGA,[1],[.5],poles,residues)
+    Q = RRR(E.conductor()).sqrt() / RRR(2 * pi)
+    poles = []
+    residues = []
+    dir_coeffs = E.anlist(number_of_coeffs)
+    dir_coeffs = [RRR(dir_coeffs[i]) / (RRR(i)).sqrt()
+                  for i in xrange(1, number_of_coeffs)]
+    OMEGA = E.root_number()
+    return Lfunction_D("", 2, dir_coeffs, 0, Q, OMEGA, [1], [.5],
+                       poles, residues)

@@ -50,15 +50,15 @@ AUTHORS:
 - Volker Braun
 """
 
-##############################################################################
+# ****************************************************************************
 #       Copyright (C) 2012 Miguel Angel Marco Buzunariz <mmarco@unizar.es>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-##############################################################################
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import six
 from sage.groups.group import Group
@@ -69,7 +69,9 @@ from sage.libs.gap.element import GapElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
 from sage.structure.sequence import Sequence
+from sage.structure.element import coercion_model, parent
 
 
 def is_FreeGroup(x):
@@ -98,6 +100,7 @@ def is_FreeGroup(x):
         return True
     from sage.groups.indexed_free_group import IndexedFreeGroup
     return isinstance(x, IndexedFreeGroup)
+
 
 def _lexi_gen(zeroes=False):
     """
@@ -239,7 +242,7 @@ class FreeGroupElement(ElementLibGAP):
         return hash(self.Tietze())
 
     def _latex_(self):
-        """
+        r"""
         Return a LaTeX representation
 
         OUTPUT:
@@ -272,10 +275,10 @@ class FreeGroupElement(ElementLibGAP):
         """
         import re
         s = self._repr_()
-        s = re.sub('([a-z]|[A-Z])([0-9]+)', '\g<1>_{\g<2>}', s)
-        s = re.sub('(\^)(-)([0-9]+)', '\g<1>{\g<2>\g<3>}', s)
-        s = re.sub('(\^)([0-9]+)', '\g<1>{\g<2>}', s)
-        s = s.replace('*', '\cdot ')
+        s = re.sub('([a-z]|[A-Z])([0-9]+)', r'\g<1>_{\g<2>}', s)
+        s = re.sub(r'(\^)(-)([0-9]+)', r'\g<1>{\g<2>\g<3>}', s)
+        s = re.sub(r'(\^)([0-9]+)', r'\g<1>{\g<2>}', s)
+        s = s.replace('*', r'\cdot ')
         return s
 
     def __reduce__(self):
@@ -318,7 +321,7 @@ class FreeGroupElement(ElementLibGAP):
         TESTS::
 
             sage: type(a.Tietze())
-            <type 'tuple'>
+            <... 'tuple'>
             sage: type(a.Tietze()[0])
             <type 'sage.rings.integer.Integer'>
         """
@@ -385,19 +388,17 @@ class FreeGroupElement(ElementLibGAP):
         If ``im_gens`` are provided, the result lives in the
         algebra where ``im_gens`` live.
 
-        EXAMPLES:
-
-        ::
+        EXAMPLES::
 
             sage: G = FreeGroup(5)
             sage: G.inject_variables()
             Defining x0, x1, x2, x3, x4
             sage: (~x0*x1*x0*x2*~x0).fox_derivative(x0)
-            -B[x0^-1] + B[x0^-1*x1] - B[x0^-1*x1*x0*x2*x0^-1]
+            -x0^-1 + x0^-1*x1 - x0^-1*x1*x0*x2*x0^-1
             sage: (~x0*x1*x0*x2*~x0).fox_derivative(x1)
-            B[x0^-1]
+            x0^-1
             sage: (~x0*x1*x0*x2*~x0).fox_derivative(x2)
-            B[x0^-1*x1*x0]
+            x0^-1*x1*x0
             sage: (~x0*x1*x0*x2*~x0).fox_derivative(x3)
             0
 
@@ -407,7 +408,7 @@ class FreeGroupElement(ElementLibGAP):
             sage: F=FreeGroup(3)
             sage: a=F([2,1,3,-1,2])
             sage: a.fox_derivative(F([1]))
-            B[x1] - B[x1*x0*x2*x0^-1]
+            x1 - x1*x0*x2*x0^-1
             sage: R.<t>=LaurentPolynomialRing(ZZ)
             sage: a.fox_derivative(F([1]),[t,t,t])
             t - t^2
@@ -551,6 +552,35 @@ class FreeGroupElement(ElementLibGAP):
             1/2
             sage: w(i+1 for i in range(2))
             1/2
+
+        Check that :trac:`25017` is fixed::
+
+            sage: F = FreeGroup(2)
+            sage: x0, x1 = F.gens()
+            sage: u = F(1)
+            sage: parent(u.subs({x1:x0})) is F
+            True
+
+            sage: F = FreeGroup(2)
+            sage: x0, x1 = F.gens()
+            sage: u = x0*x1
+            sage: u.subs({x0:3, x1:2})
+            6
+            sage: u.subs({x0:1r, x1:2r})
+            2
+            sage: M0 = matrix(ZZ,2,[1,1,0,1])
+            sage: M1 = matrix(ZZ,2,[1,0,1,1])
+            sage: u.subs({x0: M0, x1: M1})
+            [2 1]
+            [1 1]
+
+        TESTS::
+
+            sage: F.<x,y> = FreeGroup()
+            sage: F.one().subs(x=x, y=1)
+            Traceback (most recent call last):
+            ...
+            TypeError: no common canonical parent for objects with parents: 'Free Group on generators {x, y}' and 'Integer Ring'
         """
         if len(values) == 1:
             try:
@@ -561,8 +591,13 @@ class FreeGroupElement(ElementLibGAP):
         if len(values) != G.ngens():
             raise ValueError('number of values has to match the number of generators')
         replace = dict(zip(G.gens(), values))
-        from sage.misc.all import prod
-        return prod( replace[gen] ** power for gen, power in self.syllables() )
+        new_parent = coercion_model.common_parent(*[parent(v) for v in values])
+        try:
+            return new_parent.prod(replace[gen] ** power
+                                   for gen, power in self.syllables())
+        except AttributeError:
+            return prod(new_parent(replace[gen]) ** power
+                        for gen, power in self.syllables())
 
 
 def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
@@ -571,7 +606,7 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
 
     INPUT:
 
-    - ``n`` -- integer or ``None`` (default). The nnumber of
+    - ``n`` -- integer or ``None`` (default). The number of
       generators. If not specified the ``names`` are counted.
 
     - ``names`` -- string or list/tuple/iterable of strings (default:
@@ -732,7 +767,6 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G.variable_names()
             ('a', 'b')
         """
-        n = len(generator_names)
         self._assign_names(generator_names)
         if libgap_free_group is None:
             libgap_free_group = libgap.FreeGroup(generator_names)
@@ -857,7 +891,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
         `i_1 \dots i_j`, such that the abelianization of the
         group is isomorphic to
 
-        .. math::
+        .. MATH::
 
             \ZZ / (i_1) \times \dots \times \ZZ / (i_j)
 

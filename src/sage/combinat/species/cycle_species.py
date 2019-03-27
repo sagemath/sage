@@ -19,7 +19,6 @@ from .generating_series import _integers_from
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.all import ZZ
 from sage.arith.all import divisors, euler_phi
-from sage.misc.cachefunc import cached_function
 from sage.combinat.species.misc import accept_size
 
 class CycleSpeciesStructure(GenericSpeciesStructure):
@@ -57,7 +56,7 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
             sage: a.permutation_group_element()
             (1,2,3)
         """
-        from sage.groups.all import PermutationGroupElement, SymmetricGroup
+        from sage.groups.all import PermutationGroupElement
         return PermutationGroupElement(tuple(self._list))
 
     def transport(self, perm):
@@ -241,14 +240,14 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         The cycle index series of the species of cyclic permutations is
         given by
 
-        .. math::
+        .. MATH::
 
              -\sum_{k=1}^\infty \phi(k)/k * log(1 - x_k)
 
 
         which is equal to
 
-        .. math::
+        .. MATH::
 
              \sum_{n=1}^\infty \frac{1}{n} * \sum_{k|n} \phi(k) * x_k^{n/k}
 

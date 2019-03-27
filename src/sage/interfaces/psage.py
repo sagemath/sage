@@ -67,16 +67,26 @@ class PSage(Sage):
         self._number = number
         number += 1
 
-    def __repr__(self):
+    def _repr_(self):
+        """
+        TESTS::
+
+            sage: from sage.interfaces.psage import PSage
+            sage: PSage()                                   # indirect doctest
+            A running non-blocking (parallel) instance of Sage (number ...)
+
+        """
         return 'A running non-blocking (parallel) instance of Sage (number %s)'%(self._number)
 
     def _unlock(self):
         self._locked = False
-        open(self.__tmp, 'w').write('__unlocked__')
+        with open(self.__tmp, 'w') as fobj:
+            fobj.write('__unlocked__')
 
     def _lock(self):
         self._locked = True
-        open(self.__tmp, 'w').write('__locked__')
+        with open(self.__tmp, 'w') as fobj:
+            fobj.write('__locked__')
 
     def _start(self):
         Sage._start(self)
@@ -84,13 +94,16 @@ class PSage(Sage):
         self.expect().delaybeforesend = 0.01
 
     def is_locked(self):
-        if open(self.__tmp).read() == '__locked__':
-            try:
-                self.expect().expect(self._prompt)
-                self.expect().expect(self._prompt)
-            except ExceptionPexpect:
-                pass
-        return open(self.__tmp).read() == '__locked__'
+        with open(self.__tmp) as fobj:
+            if fobj.read() == '__locked__':
+                try:
+                    self.expect().expect(self._prompt)
+                    self.expect().expect(self._prompt)
+                except ExceptionPexpect:
+                    pass
+
+        with open(self.__tmp) as fobj:
+            return fobj.read() == '__locked__'
 
     def __del__(self):
         print("deleting")

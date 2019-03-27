@@ -44,9 +44,16 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
             sage: f = CuspForms(37).newforms('a')[0]
             sage: f.abelian_variety()
             Newform abelian subvariety 37a of dimension 1 of J0(37)
+
+            sage: AbelianVariety(Newforms(1, 12)[0])
+            Traceback (most recent call last):
+            ...
+            TypeError: f must have weight 2
         """
         if not isinstance(f, Newform):
             raise TypeError("f must be a newform")
+        if f.weight() != 2:
+            raise TypeError("f must have weight 2")
         self.__f = f
         self._is_hecke_stable = True
         K = f.qexp().base_ring()
@@ -232,6 +239,7 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
                                    for i in range(1,d+1)])
             V = V+W
             n += 1
+            if n > bound: raise ArithmeticError("Error computing endomorphism generators")
 
         return V.saturation().basis()
 

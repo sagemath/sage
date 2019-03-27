@@ -89,7 +89,7 @@ groups in the GAP transitive groups database.
 ::
 
     sage: K.<a> = NumberField(x^3 - 2)
-    sage: K.galois_group(type="gap", algorithm='magma')  # optional - magma database_gap
+    sage: K.galois_group(type="gap", algorithm='magma')  # optional - magma
     Galois group Transitive group number 2 of degree 3 of
     the Number Field in a with defining polynomial x^3 - 2
 
@@ -309,7 +309,7 @@ ideal classes containing :math:`(5,\sqrt{-30})` and
     Class group of order 4 with structure C2 x C2 of Number Field
     in a with defining polynomial x^2 + 30
     sage: category(C)
-    Category of finite commutative groups
+    Category of finite enumerated commutative groups
     sage: C.gens()
     (Fractional ideal class (2, a), Fractional ideal class (3, a))
 

@@ -19,14 +19,14 @@ from __future__ import absolute_import
 from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure
 from .subset_species import SubsetSpecies
-from sage.misc.cachefunc import cached_function
 from sage.structure.unique_representation import UniqueRepresentation
 
-class ProductSpeciesStructure(GenericSpeciesStructure):   
+
+class ProductSpeciesStructure(GenericSpeciesStructure):
     def __init__(self, parent, labels, subset, left, right):
         """
         TESTS::
-        
+
             sage: S = species.SetSpecies()
             sage: F = S * S
             sage: a = F.structures(['a','b','c']).random_element()
@@ -38,7 +38,7 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
 
     def __repr__(self):
         """
-        Returns the string representation of this object.
+        Return the string representation of this object.
 
         EXAMPLES::
 
@@ -50,10 +50,10 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
         """
         left, right = map(repr, self._list)
         if "*" in left:
-            left = "(%s)"%left
+            left = "(%s)" % left
         if "*" in right:
-            right = "(%s)"%right
-        return "%s*%s"%(left, right)
+            right = "(%s)" % right
+        return "%s*%s" % (left, right)
 
     def transport(self, perm):
         """
@@ -177,12 +177,11 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
             sage: [a.transport(g) for g in a.automorphism_group()]
             [{2, 3}*{1, 4}, {2, 3}*{1, 4}, {2, 3}*{1, 4}, {2, 3}*{1, 4}]
         """
-        from sage.groups.all import PermutationGroupElement, PermutationGroup, SymmetricGroup
+        from sage.groups.all import PermutationGroupElement, PermutationGroup
         from sage.misc.misc import uniq
         from sage.combinat.species.misc import change_support
 
         left, right = self._list
-        n = len(self._labels)
 
         #Get the supports for each of the sides
         l_support = self._subset._list
@@ -198,8 +197,9 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
 
         gens = l_aut.gens() + r_aut.gens()
         gens = [g for g in gens if g != identity]
-        gens = uniq(gens) if len(gens) > 0 else [[]]
+        gens = uniq(gens) if gens else [[]]
         return PermutationGroup(gens)
+
 
 class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     def __init__(self, F, G, min=None, max=None, weight=None):
@@ -236,7 +236,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     def left_factor(self):
         """
         Returns the left factor of this product.
-        
+
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
@@ -250,7 +250,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     def right_factor(self):
         """
         Returns the right factor of this product.
-        
+
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
@@ -334,7 +334,6 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         if self.is_weighted():
             res = self._weight * res
         return res
-
 
     def _itgs(self, series_ring, base_ring):
         """

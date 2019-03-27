@@ -313,7 +313,7 @@ review, it might be included into the core Sage library, or it might
 become an optional download from the Sage website, so anybody can
 automatically install it by typing ``sage -p mypackage-version.spkg``.
 
-.. note::
+.. NOTE::
 
    For any spkg:
 
@@ -325,7 +325,7 @@ automatically install it by typing ``sage -p mypackage-version.spkg``.
 
    .. _trac ticket #299: http://trac.sagemath.org/sage_trac/ticket/299
 
-.. note::
+.. NOTE::
 
     External Magma code goes in ``SAGE_ROOT/src/ext/magma/user``, so
     if you want to redistribute Magma code with Sage as a package that

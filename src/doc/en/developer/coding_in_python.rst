@@ -213,7 +213,7 @@ replacements are made:
       sage: a
       393939
       sage: type(a)
-      <type 'int'>
+      <... 'int'>
       sage: b = 393939
       sage: type(b)
       <type 'sage.rings.integer.Integer'>
@@ -522,19 +522,17 @@ documentation for more information on its behaviour and optional arguments.
     lazy_import('sage.new.module.name', '*', deprecation=666)
     lazy_import('sage.other.module', ('func1', 'func2'), deprecation=666)
 
-* **Remove a name from the global namespace:** the function
-  :func:`~sage.misc.superseded.deprecated_callable_import` imports an object into
-  the global namespace. Any user who calls it sees a message inviting him to
-  import the object manually::
+* **Remove a name from a global namespace:** this is when you want to
+  remove a name from a global namespace (say, ``sage.all`` or some
+  other ``all.py`` file) but you want to keep the functionality
+  available with an explicit import.
+  This case is similar as the previous one: use a lazy import with
+  deprecation. One detail: in this case, you don't want the name
+  ``lazy_import`` to be visible in the global namespace, so we add
+  a leading underscore::
 
-      from sage.misc.superseded import deprecated_callable_import
-      deprecated_callable_import(666,
-                           'sage.combinat.name_of_the_module',
-                           globals(),
-                           locals(),
-                           ["name_of_the_function"])
-
-  Alternatively, a lazy_import with deprecation would also work in this case.
+    from sage.misc.lazy_import import lazy_import as _lazy_import
+    _lazy_import('sage.some.package', 'some_function', deprecation=666)
 
 * **Any other case:** if none of the cases above apply, call
   :func:`~sage.misc.superseded.deprecation` in the function that you want to

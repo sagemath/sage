@@ -1,10 +1,7 @@
 from .types cimport GF2E_c, GF2X_c, GF2_c, GF2XModulus_c, ZZ_c
 
-cdef extern from "ccobject.h":
-    void GF2E_from_str "_from_str<GF2E>"(GF2E_c* dest, char* s)
-    object GF2E_to_PyString "_to_PyString<GF2E>"(GF2E_c *x)
 
-cdef extern from "sage/libs/ntl/ntlwrap.cpp":
+cdef extern from "ntlwrap.h":
     void GF2E_init "GF2E::init"(GF2X_c x)
     long GF2E_degree "GF2E::degree"()
     GF2XModulus_c GF2E_modulus "GF2E::modulus"()

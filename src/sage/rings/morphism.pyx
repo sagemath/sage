@@ -3,7 +3,7 @@ Homomorphisms of rings
 
 We give a large number of examples of ring homomorphisms.
 
-EXAMPLE:
+EXAMPLES:
 
 Natural inclusion `\ZZ \hookrightarrow \QQ`::
 
@@ -24,7 +24,7 @@ There is no homomorphism in the other direction::
     sage: H([1])
     Traceback (most recent call last):
     ...
-    TypeError: images do not define a valid homomorphism
+    ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
 
 EXAMPLES:
 
@@ -60,7 +60,7 @@ Identity map on the real numbers::
     sage: f = RR.hom( [2.0] )
     Traceback (most recent call last):
     ...
-    TypeError: images do not define a valid homomorphism
+    ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
 
 Homomorphism from one precision of field to another.
 
@@ -70,7 +70,7 @@ From smaller to bigger doesn't make sense::
     sage: f = RR.hom( R200 )
     Traceback (most recent call last):
     ...
-    TypeError: Natural coercion morphism from Real Field with 53 bits of precision to Real Field with 200 bits of precision not defined.
+    TypeError: natural coercion morphism from Real Field with 53 bits of precision to Real Field with 200 bits of precision not defined
 
 From bigger to small does::
 
@@ -144,9 +144,10 @@ Inclusion of ``GF(2)`` into ``GF(4,'a')``::
     sage: k = GF(2)
     sage: i = k.hom(GF(4, 'a'))
     sage: i
-    Ring Coercion morphism:
+    Ring morphism:
       From: Finite Field of size 2
       To:   Finite Field in a of size 2^2
+      Defn: 1 |--> 1
     sage: i(0)
     0
     sage: a = i(1); a.parent()
@@ -157,7 +158,7 @@ We next compose the inclusion with reduction from the integers to
 
     sage: pi = ZZ.hom(k)
     sage: pi
-    Ring Coercion morphism:
+    Natural morphism:
       From: Integer Ring
       To:   Finite Field of size 2
     sage: f = i * pi
@@ -165,13 +166,14 @@ We next compose the inclusion with reduction from the integers to
     Composite map:
       From: Integer Ring
       To:   Finite Field in a of size 2^2
-      Defn:   Ring Coercion morphism:
+      Defn:   Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 2
             then
-              Ring Coercion morphism:
+              Ring morphism:
               From: Finite Field of size 2
               To:   Finite Field in a of size 2^2
+              Defn: 1 |--> 1
     sage: a = f(5); a
     1
     sage: a.parent()
@@ -181,7 +183,7 @@ Inclusion from `\QQ` to the 3-adic field::
 
     sage: phi = QQ.hom(Qp(3, print_mode = 'series'))
     sage: phi
-    Ring Coercion morphism:
+    Ring morphism:
       From: Rational Field
       To:   3-adic Field with capped relative precision 20
     sage: phi.codomain()
@@ -208,7 +210,7 @@ Note that Sage verifies that the morphism is valid::
     sage: c = S.hom([1-sqrt2])    # this is not valid
     Traceback (most recent call last):
     ...
-    TypeError: images do not define a valid homomorphism
+    ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
 
 Endomorphism of power series ring::
 
@@ -263,11 +265,11 @@ positive::
     sage: R.hom([1/t])
     Traceback (most recent call last):
     ...
-    TypeError: images do not define a valid homomorphism
+    ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
     sage: R.hom([1])
     Traceback (most recent call last):
     ...
-    TypeError: images do not define a valid homomorphism
+    ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
 
 Complex conjugation on cyclotomic fields::
 
@@ -341,6 +343,36 @@ TESTS::
     sage: f = R.hom([t^5])
     sage: f == loads(dumps(f))
     True
+
+We define the identity map in many possible ways. These should all
+compare equal::
+
+    sage: k = GF(2)
+    sage: R.<x> = k[]
+    sage: F4.<a> = R.quo(x^2+x+1)
+    sage: H = End(F4)
+
+    sage: from sage.rings.morphism import *
+    sage: phi1 = H.identity(); phi1
+    Identity endomorphism of Univariate Quotient Polynomial Ring in a over Finite Field of size 2 with modulus x^2 + x + 1
+    sage: phi2 = H([a]); phi2
+    Ring endomorphism of Univariate Quotient Polynomial Ring in a over Finite Field of size 2 with modulus x^2 + x + 1
+      Defn: a |--> a
+    sage: phi3 = RingHomomorphism_from_base(H, R.hom([x])); phi3
+    Ring endomorphism of Univariate Quotient Polynomial Ring in a over Finite Field of size 2 with modulus x^2 + x + 1
+      Defn: Induced from base ring by
+            Ring endomorphism of Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
+              Defn: x |--> x
+    sage: phi4 = RingHomomorphism_cover(H); phi4
+    Ring endomorphism of Univariate Quotient Polynomial Ring in a over Finite Field of size 2 with modulus x^2 + x + 1
+      Defn: Natural quotient map
+    sage: phi5 = F4.frobenius_endomorphism() ^ 2; phi5
+    Frobenius endomorphism x |--> x^(2^2) of Univariate Quotient Polynomial Ring in a over Finite Field of size 2 with modulus x^2 + x + 1
+    sage: maps = [phi1, phi2, phi3, phi4, phi5]
+    sage: for f in maps:
+    ....:     for g in maps:
+    ....:         if f != g:
+    ....:             print("{} != {}".format(f, g))
 """
 
 #*****************************************************************************
@@ -352,10 +384,15 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
-import ideal
-import homset
+from cpython.object cimport Py_EQ, Py_NE
+
+from . import ideal
+import sage.structure.all
+from sage.structure.richcmp cimport (richcmp, rich_to_bool,
+        richcmp_not_equal)
+
 
 def is_RingHomomorphism(phi):
     """
@@ -365,29 +402,36 @@ def is_RingHomomorphism(phi):
 
         sage: f = Zmod(8).cover()
         sage: sage.rings.morphism.is_RingHomomorphism(f)
+        doctest:warning
+        ...
+        DeprecationWarning: is_RingHomomorphism() should not be used anymore. Check whether the category_for() your morphism is a subcategory of Rings() instead.
+        See http://trac.sagemath.org/23204 for details.
         True
         sage: sage.rings.morphism.is_RingHomomorphism(2/3)
         False
     """
-    return isinstance(phi, RingHomomorphism)
+    sage.misc.superseded.deprecation(23204, "is_RingHomomorphism() should not be used anymore. Check whether the category_for() your morphism is a subcategory of Rings() instead.")
+    # We use the category framework to determine whether something is a ring homomorphism.
+    from sage.categories.map import Map
+    from sage.categories.all import Rings
+    return isinstance(phi, Map) and phi.category_for().is_subcategory(Rings())
+
 
 cdef class RingMap(Morphism):
     """
     Set-theoretic map between rings.
+
+    TESTS:
+
+    This is an abstract base class that is not directly instantiated,
+    but we will do so anyway as a test::
+
+        sage: f = sage.rings.morphism.RingMap(ZZ.Hom(ZZ))
+        sage: parent(f)
+        Set of Homomorphisms from Integer Ring to Integer Ring
+        sage: type(f)
+        <type 'sage.rings.morphism.RingMap'>
     """
-    def __init__(self, parent):
-        """
-        This is an abstract base class that isn't directly
-        instantiated, but we will do so anyways as a test.
-
-        TESTS::
-
-            sage: f = sage.rings.morphism.RingMap(ZZ.Hom(ZZ))
-            sage: type(f)
-            <type 'sage.rings.morphism.RingMap'>
-        """
-        Morphism.__init__(self, parent)
-
     def _repr_type(self):
         """
         TESTS::
@@ -401,9 +445,6 @@ cdef class RingMap(Morphism):
             Set-theoretic ring endomorphism of Integer Ring
         """
         return "Set-theoretic ring"
-
-    def __hash__(self):
-        return Morphism.__hash__(self)
 
 
 cdef class RingMap_lift(RingMap):
@@ -453,15 +494,26 @@ cdef class RingMap_lift(RingMap):
             <type 'sage.rings.integer.Integer'>
             sage: type(f)
             <type 'sage.rings.morphism.RingMap_lift'>
+
+        An invalid example::
+
+            sage: GF9.<one, a> = GaussianIntegers().quotient(3)
+            sage: from sage.rings.morphism import RingMap_lift
+            sage: RingMap_lift(GF9, ZZ)
+            Traceback (most recent call last):
+            ...
+            TypeError: no canonical coercion from Number Field in I with defining polynomial x^2 + 1 to Integer Ring
         """
+        self.S = <Parent?>S
+        x = <Element?>R(0).lift()
+        f = self.S.coerce_map_from(x._parent)
+        if f is None:
+            raise TypeError(f"no canonical coercion from {x._parent} to {S}")
+        self.to_S = f
+
         from sage.categories.sets_cat import Sets
         H = R.Hom(S, Sets())
         RingMap.__init__(self, H)
-        self.S = S  # for efficiency
-        try:
-            S._coerce_(R(0).lift())
-        except TypeError:
-            raise TypeError("No natural lift map")
 
     cdef _update_slots(self, dict _slots):
         """
@@ -479,9 +531,10 @@ cdef class RingMap_lift(RingMap):
             False
         """
         self.S = _slots['S']
+        self.to_S = _slots['to_S']
         Morphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -492,10 +545,12 @@ cdef class RingMap_lift(RingMap):
             sage: g(3) == f(3)
             True
         """
-        _slots['S'] = self.S
-        return Morphism._extra_slots(self, _slots)
+        slots = Morphism._extra_slots(self)
+        slots['S'] = self.S
+        slots['to_S'] = self.to_S
+        return slots
 
-    def __cmp__(self, other):
+    cpdef _richcmp_(self, other, int op):
         """
         Compare a ring lifting maps ``self`` to ``other``.
 
@@ -511,10 +566,6 @@ cdef class RingMap_lift(RingMap):
             True
             sage: f == g
             False
-            sage: f < g
-            True
-            sage: f > g
-            False
 
         Verify that :trac:`5758` has been fixed::
 
@@ -522,12 +573,10 @@ cdef class RingMap_lift(RingMap):
             False
         """
         if not isinstance(other, RingMap_lift):
-            return cmp(type(self), type(other))
-
-        # Since they are lifting maps they are determined by their
-        # parents, i.e., by the domain and codomain, since we just
-        # compare those.
-        return cmp(self.parent(), other.parent())
+            # Generic comparison
+            return RingMap._richcmp_(self, other, op)
+        # Two lifting maps with the same parent must be equal
+        return rich_to_bool(op, 0)
 
     def __hash__(self):
         """
@@ -579,7 +628,8 @@ cdef class RingMap_lift(RingMap):
             sage: type(f(-1))
             <type 'sage.rings.integer.Integer'>
         """
-        return self.S._coerce_c(x.lift())
+        return self.to_S(x.lift())
+
 
 cdef class RingHomomorphism(RingMap):
     """
@@ -591,56 +641,31 @@ cdef class RingHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: f = ZZ.hom(Zmod(6)); f
-            Ring Coercion morphism:
+            sage: f = ZZ.hom(Zp(3)); f
+            Ring morphism:
               From: Integer Ring
-              To:   Ring of integers modulo 6
+              To:   3-adic Ring with capped relative precision 20
+
+        TESTS::
+
             sage: isinstance(f, sage.rings.morphism.RingHomomorphism)
             True
+
         """
-        if not homset.is_RingHomset(parent):
+        from .homset import RingHomset_generic
+        if not isinstance(parent, RingHomset_generic):
             raise TypeError("parent must be a ring homset")
         RingMap.__init__(self, parent)
-
-    def __nonzero__(self):
-        """
-        Every ring map is nonzero unless the domain or codomain is the
-        0 ring, since there is no zero map between rings, since 1 goes
-        to 1.
-
-        EXAMPLES:
-
-        Usually ring morphisms are nonzero::
-
-            sage: bool(ZZ.hom(QQ,[1]))
-            True
-
-        However, they aren't if ``1 == 0`` in the codomain::
-
-            sage: R1 = Zmod(1)
-            sage: phi = R1.hom(R1, [1])
-            sage: bool(phi)
-            False
-            sage: bool(ZZ.hom(R1, [1]))
-            False
-        """
-        return bool(self.codomain().one())
 
     def _repr_type(self):
         """
         Used internally in printing this morphism.
 
-        TESTS:
+        TESTS::
 
-        This never actually gets called, since derived classes
-        override it.  Nevertheless, we call it directly to illustrate
-        that it works as a default.::
-
-            sage: phi = ZZ.hom(QQ,[1])
-            sage: phi._repr_type()
-            'Ring Coercion'
-            sage: sage.rings.morphism.RingHomomorphism._repr_type(phi)
+            sage: ZZ.hom(Zp(3))._repr_type()
             'Ring'
+
         """
         return "Ring"
 
@@ -661,16 +686,15 @@ cdef class RingHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: f = ZZ.hom(Zmod(7))
-            sage: f._set_lift(Zmod(7).lift())
-            sage: f.lift()
+            sage: R = ZZ.quo(3*ZZ)
+            sage: pi = R.cover() # indirect doctest
+            sage: pi.lift()
             Set-theoretic ring morphism:
-              From: Ring of integers modulo 7
+              From: Ring of integers modulo 3
               To:   Integer Ring
               Defn: Choice of lifting map
+
         """
-        if not isinstance(lift, RingMap):
-            raise TypeError("lift must be a RingMap")
         if lift.domain() != self.codomain():
             raise TypeError("lift must have correct domain")
         if lift.codomain() != self.domain():
@@ -696,7 +720,7 @@ cdef class RingHomomorphism(RingMap):
             self._lift = _slots['_lift']
         Morphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -711,11 +735,12 @@ cdef class RingHomomorphism(RingMap):
             sage: g(7)
             1
         """
+        slots = Morphism._extra_slots(self)
         try:
-            _slots['_lift'] = self._lift
+            slots['_lift'] = self._lift
         except AttributeError:
             pass
-        return Morphism._extra_slots(self, _slots)
+        return slots
 
     def _composition_(self, right, homset):
         """
@@ -734,11 +759,18 @@ cdef class RingHomomorphism(RingMap):
             sage: f = R.hom([a+b,a-b])
             sage: g = S.hom(Frac(S))
             sage: g*f # indirect doctest
-            Ring morphism:
+            Composite map:
               From: Multivariate Polynomial Ring in x, y over Rational Field
               To:   Fraction Field of Multivariate Polynomial Ring in a, b over Rational Field
-              Defn: x |--> a + b
-                    y |--> a - b
+              Defn:   Ring morphism:
+                      From: Multivariate Polynomial Ring in x, y over Rational Field
+                      To:   Multivariate Polynomial Ring in a, b over Rational Field
+                      Defn: x |--> a + b
+                            y |--> a - b
+                    then
+                      Coercion map:
+                      From: Multivariate Polynomial Ring in a, b over Rational Field
+                      To:   Fraction Field of Multivariate Polynomial Ring in a, b over Rational Field
 
         When ``right`` is defined by the images of generators, the
         result has the type of a homomorphism between its domain and
@@ -771,7 +803,7 @@ cdef class RingHomomorphism(RingMap):
                       From: Multivariate Polynomial Ring in x, y over Rational Field
                       To:   Multivariate Polynomial Ring in a, b over Rational Field
                     then
-                      Ring Coercion morphism:
+                      Coercion map:
                       From: Multivariate Polynomial Ring in a, b over Rational Field
                       To:   Fraction Field of Multivariate Polynomial Ring in a, b over Rational Field
 
@@ -780,7 +812,10 @@ cdef class RingHomomorphism(RingMap):
         - Simon King (2010-05)
         - Francis Clarke (2011-02)
         """
-        from sage.all import Rings
+        from sage.categories.morphism import IdentityMorphism
+        from sage.categories.rings import Rings
+        if isinstance(right, IdentityMorphism):
+            return self
         if homset.homset_category().is_subcategory(Rings()):
             if isinstance(right, RingHomomorphism_im_gens):
                 try:
@@ -794,62 +829,6 @@ cdef class RingHomomorphism(RingMap):
                 except ValueError:
                     pass
         return sage.categories.map.Map._composition_(self, right, homset)
-
-    def is_injective(self):
-        """
-        Return whether or not this morphism is injective, or raise
-        a ``NotImplementedError``.
-
-        EXAMPLES:
-
-        Note that currently this is not implemented in most
-        interesting cases::
-
-            sage: f = ZZ.hom(QQ)
-            sage: f.is_injective()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        raise NotImplementedError
-
-    def is_zero(self):
-        r"""
-        Return ``True`` if this is the zero map and ``False`` otherwise.
-
-        A *ring* homomorphism is considered to be 0 if and only if it
-        sends the 1 element of the domain to the 0 element of the codomain.
-        Since rings in Sage all have a 1 element, the zero homomorphism is
-        only to a ring of order 1, where ``1 == 0``, e.g., the ring
-        ``Integers(1)``.
-
-        EXAMPLES:
-
-        First an example of a map that is obviously nonzero::
-
-            sage: h = Hom(ZZ, QQ)
-            sage: f = h.natural_map()
-            sage: f.is_zero()
-            False
-
-        Next we make the zero ring as `\ZZ/1\ZZ`::
-
-            sage: R = Integers(1)
-            sage: R
-            Ring of integers modulo 1
-            sage: h = Hom(ZZ, R)
-            sage: f = h.natural_map()
-            sage: f.is_zero()
-            True
-
-        Finally we check an example in characteristic 2::
-
-            sage: h = Hom(ZZ, GF(2))
-            sage: f = h.natural_map()
-            sage: f.is_zero()
-            False
-        """
-        return self(self.domain()(1)) == self.codomain()(0)
 
     def pushforward(self, I):
         """
@@ -876,7 +855,7 @@ cdef class RingHomomorphism(RingMap):
 
         This is not implemented in any generality yet::
 
-            sage: f = ZZ.hom(ZZ)
+            sage: f = ZZ.hom(Zp(2))
             sage: f.inverse_image(ZZ.ideal(2))
             Traceback (most recent call last):
             ...
@@ -915,27 +894,41 @@ cdef class RingHomomorphism(RingMap):
             return self._lift
         return self._lift(x)
 
+
 cdef class RingHomomorphism_coercion(RingHomomorphism):
+    r"""
+    A ring homomorphism that is a coercion.
+
+    .. WARNING:;
+
+        This class is obsolete. Set the category of your morphism to a
+        subcategory of ``Rings`` instead.
+
+    TESTS:
+
+        sage: from sage.rings.morphism import RingHomomorphism_coercion
+        sage: parent = Hom(ZZ,ZZ)
+        sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
+        doctest:warning
+        ...
+        DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.
+        See http://trac.sagemath.org/23204 for details.
+        sage: TestSuite(f).run()
+
+    """
     def __init__(self, parent, check = True):
-        """
-        Initialize ``self``.
+        r"""
+        TESTS:
 
-        INPUT:
-
-        - ``parent`` -- ring homset
-
-        - ``check`` -- bool (default: ``True``)
-
-        EXAMPLES::
-
-            sage: f = ZZ.hom(QQ); f                    # indirect doctest
-            Ring Coercion morphism:
-              From: Integer Ring
-              To:   Rational Field
-
-            sage: f == loads(dumps(f))
+            sage: from sage.rings.morphism import RingHomomorphism_coercion
+            sage: parent = Hom(ZZ,ZZ)
+            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
+            sage: isinstance(f, RingHomomorphism_coercion)
             True
+
         """
+        sage.misc.superseded.deprecation(23204, "Set the category of your morphism to a subcategory of Rings instead.")
+
         RingHomomorphism.__init__(self, parent)
         # putting in check allows us to define subclasses of RingHomomorphism_coercion that implement _coerce_map_from
         if check and not self.codomain().has_coerce_map_from(self.domain()):
@@ -947,15 +940,16 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: f = ZZ.hom(QQ)
-            sage: type(f)
-            <type 'sage.rings.morphism.RingHomomorphism_coercion'>
+            sage: from sage.rings.morphism import RingHomomorphism_coercion
+            sage: parent = Hom(ZZ,ZZ)
+            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
             sage: f._repr_type()
             'Ring Coercion'
+
         """
         return "Ring Coercion"
 
-    def __cmp__(self, other):
+    cpdef _richcmp_(self, other, int op):
         """
         Compare a ring coercion morphism ``self`` to ``other``.
 
@@ -965,25 +959,19 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: f = ZZ.hom(QQ)
-            sage: g = ZZ.hom(ZZ)
-            sage: f == g
-            False
-            sage: f > g
+            sage: from sage.rings.morphism import RingHomomorphism_coercion
+            sage: parent = Hom(ZZ,ZZ)
+            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
+            sage: f == f
             True
-            sage: f < g
-            False
-            sage: h = Zmod(6).lift()
-            sage: f == h
+            sage: f != f
             False
         """
         if not isinstance(other, RingHomomorphism_coercion):
-            return cmp(type(self), type(other))
-
-        # Since they are coercion morphisms they are determined by
-        # their parents, i.e., by the domain and codomain, so we just
-        # compare those.
-        return cmp(self.parent(), other.parent())
+            # Generic comparison
+            return RingMap._richcmp_(self, other, op)
+        # Two coercion maps with the same parent must be equal
+        return rich_to_bool(op, 0)
 
     def __hash__(self):
         """
@@ -991,13 +979,13 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
 
         TESTS::
 
-            sage: f = ZZ.hom(QQ)
-            sage: type(f)
-            <type 'sage.rings.morphism.RingHomomorphism_coercion'>
-            sage: hash(f) == hash(f)
+            sage: from sage.rings.morphism import RingHomomorphism_coercion
+            sage: parent = Hom(ZZ,ZZ)
+            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
+            sage: g = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
+            sage: hash(f) == hash(g)
             True
-            sage: {f: 1}[f]
-            1
+
         """
         return hash((self.domain(), self.codomain()))
 
@@ -1007,16 +995,15 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: f = ZZ.hom(QQ); type(f)
-            <type 'sage.rings.morphism.RingHomomorphism_coercion'>
-            sage: f(2) == 2
-            True
-            sage: type(f(2))          # indirect doctest
-            <type 'sage.rings.rational.Rational'>
+            sage: from sage.rings.morphism import RingHomomorphism_coercion
+            sage: parent = Hom(ZZ,ZZ)
+            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
+            sage: f(0)
+            0
+
         """
         return self.codomain().coerce(x)
 
-import sage.structure.all
 
 cdef class RingHomomorphism_im_gens(RingHomomorphism):
     """
@@ -1060,21 +1047,18 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             if not isinstance(im_gens, (tuple, list)):
                 im_gens = [im_gens]
             im_gens = sage.structure.all.Sequence(im_gens, parent.codomain(),
-                    immutable=True)
+                                                  check=check, immutable=True)
         if check:
             if len(im_gens) != parent.domain().ngens():
                 raise ValueError("number of images must equal number of generators")
             t = parent.domain()._is_valid_homomorphism_(parent.codomain(), im_gens)
             if not t:
-                raise ValueError("relations do not all (canonically) map to 0 under map determined by images of generators.")
+                raise ValueError("relations do not all (canonically) map to 0 under map determined by images of generators")
         if not im_gens.is_immutable():
             import copy
             im_gens = copy.copy(im_gens)
             im_gens.set_immutable()
         self.__im_gens = im_gens
-
-    def __hash__(self):
-        return Morphism.__hash__(self)
 
     def im_gens(self):
         """
@@ -1119,7 +1103,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         self.__im_gens = _slots['__im_gens']
         RingHomomorphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1135,10 +1119,11 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             sage: g(y)
             x + y
         """
-        _slots['__im_gens'] = self.__im_gens
-        return RingHomomorphism._extra_slots(self, _slots)
+        slots = RingHomomorphism._extra_slots(self)
+        slots['__im_gens'] = self.__im_gens
+        return slots
 
-    cpdef int _cmp_(self, other) except -2:
+    cpdef _richcmp_(self, other, int op):
         r"""
         EXAMPLES:
 
@@ -1165,10 +1150,8 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         ::
 
             sage: R.<x,y> = QQ[]; f = R.hom([x,x+y]); g = R.hom([y,x])
-            sage: cmp(f,g)             # indirect doctest
-            1
-            sage: cmp(g,f)
-            -1
+            sage: f == g             # indirect doctest
+            False
 
         EXAMPLES:
 
@@ -1189,14 +1172,24 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             sage: f2(x^3 + x + y^2)
             a - b
 
-        TEST::
+        TESTS::
 
             sage: loads(dumps(f2)) == f2
             True
+
+        This was fixed in :trac:`24277`::
+
+            sage: H = End(QQ)
+            sage: H(1) == H.identity()
+            True
         """
         if not isinstance(other, RingHomomorphism_im_gens):
-            return cmp(type(self), type(other))
-        return cmp(self.__im_gens, (<RingHomomorphism_im_gens>other).__im_gens)
+            # Generic comparison
+            return RingMap._richcmp_(self, other, op)
+        # Check equality using the images of the generators.
+        self_im = self.__im_gens
+        other_im = (<RingHomomorphism_im_gens>other).__im_gens
+        return richcmp(self_im, other_im, op)
 
     def __hash__(self):
         """
@@ -1242,6 +1235,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             2*x + 3*y + 2*z
         """
         return x._im_gens_(self.codomain(), self.im_gens())
+
 
 cdef class RingHomomorphism_from_base(RingHomomorphism):
     """
@@ -1327,7 +1321,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         """
         Initialize ``self``.
 
-        TEST::
+        TESTS::
 
             sage: from sage.rings.morphism import RingHomomorphism_from_base
             sage: R.<x> = ZZ[]
@@ -1348,7 +1342,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
             sage: g = RingHomomorphism_from_base(P,f)
             Traceback (most recent call last):
             ...
-            ValueError: Domain and codomain must have the same functorial construction over their base rings
+            ValueError: domain (Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring) and codomain (Univariate Polynomial Ring in t over Univariate Polynomial Ring in x over Integer Ring) must have the same functorial construction over their base rings
         """
         RingHomomorphism.__init__(self, parent)
         if underlying.domain() != parent.domain().base():
@@ -1356,7 +1350,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         if underlying.codomain() != parent.codomain().base():
             raise ValueError("The given homomorphism has to have the codomain %s"%parent.codomain().base())
         if parent.domain().construction()[0] != parent.codomain().construction()[0]:
-            raise ValueError("Domain and codomain must have the same functorial construction over their base rings")
+            raise ValueError(f"domain ({parent.domain()}) and codomain ({parent.codomain()}) must have the same functorial construction over their base rings")
         self.__underlying = underlying
 
     def underlying_map(self):
@@ -1406,7 +1400,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         self.__underlying = _slots['__underlying']
         RingHomomorphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1433,10 +1427,11 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
             sage: psi(x*t)
             2*z*t
         """
-        _slots['__underlying'] = self.__underlying
-        return RingHomomorphism._extra_slots(self, _slots)
+        slots = RingHomomorphism._extra_slots(self)
+        slots['__underlying'] = self.__underlying
+        return slots
 
-    cpdef int _cmp_(self, other) except -2:
+    cpdef _richcmp_(self, other, int op):
         r"""
         EXAMPLES:
 
@@ -1462,10 +1457,8 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
             sage: R.<x,y> = QQ[]; f = R.hom([x,x+y]); g = R.hom([y,x])
             sage: S.<z> = R[]
             sage: fS = S.hom(f,S); gS = S.hom(g,S)
-            sage: cmp(fS,gS)   # indirect doctest
-            1
-            sage: cmp(gS,fS)   # indirect doctest
-            -1
+            sage: fS != gS   # indirect doctest
+            True
 
         EXAMPLES:
 
@@ -1488,8 +1481,11 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
             True
         """
         if not isinstance(other, RingHomomorphism_from_base):
-            return cmp(type(self), type(other))
-        return cmp(self.__underlying, (<RingHomomorphism_from_base>other).__underlying)
+            # Generic comparison
+            return RingMap._richcmp_(self, other, op)
+        self_underlying = self.__underlying
+        other_underlying = (<RingHomomorphism_from_base>other).__underlying
+        return richcmp(self_underlying, other_underlying, op)
 
     def _repr_defn(self):
         """
@@ -1541,20 +1537,6 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         except Exception:
             raise TypeError("invalid argument %s" % repr(x))
 
-    def is_identity(self):
-        """
-        Return ``True`` if this morphism is the identity morphism.
-
-        EXAMPLES::
-
-            sage: K.<z> = GF(4)
-            sage: phi = End(K)([z^2])
-            sage: R.<t> = K[]
-            sage: psi = End(R)(phi)
-            sage: psi.is_identity()
-            False
-        """
-        return self.__underlying.is_identity() and RingHomomorphism.is_identity(self)
 
 cdef class RingHomomorphism_cover(RingHomomorphism):
     r"""
@@ -1612,7 +1594,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
             sage: f._call_(1/2)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Inverse does not exist.
+            ZeroDivisionError: inverse of Mod(2, 6) does not exist
             sage: f(1/2)
             Traceback (most recent call last):
             ...
@@ -1647,7 +1629,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
         """
         return self.codomain().defining_ideal()
 
-    def __cmp__(self, other):
+    cpdef _richcmp_(self, other, int op):
         """
         Compare ``self`` to ``other``.
 
@@ -1662,8 +1644,10 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
             False
         """
         if not isinstance(other, RingHomomorphism_cover):
-            return cmp(type(self), type(other))
-        return cmp(self.parent(), other.parent())
+            # Generic comparison
+            return RingMap._richcmp_(self, other, op)
+        # Two cover maps with the same parent must be equal
+        return rich_to_bool(op, 0)
 
     def __hash__(self):
         """
@@ -1682,6 +1666,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
             1
         """
         return hash((self.domain(), self.codomain()))
+
 
 cdef class RingHomomorphism_from_quotient(RingHomomorphism):
     r"""
@@ -1748,7 +1733,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
             raise ValueError("Domain of phi must equal domain of covering (%s != %s)." % (pi.domain(), phi.domain()))
         for x in pi.kernel().gens():
             if phi(x) != 0:
-                raise ValueError("relations do not all (canonically) map to 0 under map determined by images of generators.")
+                raise ValueError("relations do not all (canonically) map to 0 under map determined by images of generators")
         self._lift = pi.lift()
         self.phi = phi
 
@@ -1779,7 +1764,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
         self.phi = _slots['phi']
         RingHomomorphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1801,10 +1786,10 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
             False
             sage: psi(a) == phi(a)
             True
-
         """
-        _slots['phi'] = self.phi
-        return RingHomomorphism._extra_slots(self, _slots)
+        slots = RingHomomorphism._extra_slots(self)
+        slots['phi'] = self.phi
+        return slots
 
     def _phi(self):
         """
@@ -1840,7 +1825,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
         """
         return self.phi
 
-    def __cmp__(self, other):
+    cpdef _richcmp_(self, other, int op):
         """
         Compare ``self`` to ``other``.
 
@@ -1857,8 +1842,12 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
             True
         """
         if not isinstance(other, RingHomomorphism_from_quotient):
-            return cmp(type(self), type(other))
-        return cmp(self.phi, (<RingHomomorphism_from_quotient>other).phi)
+            # Generic comparison
+            return RingMap._richcmp_(self, other, op)
+        # Generic comparison
+        self_phi = self.phi
+        other_phi = (<RingHomomorphism_from_quotient>other).phi
+        return richcmp(self_phi, other_phi, op)
 
     def __hash__(self):
         """
@@ -1940,7 +1929,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
             raise TypeError("The base ring must be a commutative ring")
         self._p = domain.characteristic()
         if not self._p.is_prime():
-            raise TypeError("The caracteristic of the base ring must be prime")
+            raise TypeError("the characteristic of the base ring must be prime")
         try:
             n = Integer(n)
         except TypeError:
@@ -2001,7 +1990,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         EXAMPLES::
 
             sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: Frob = K.frobenius_endomorphism(2);
+            sage: Frob = K.frobenius_endomorphism(2)
             sage: Frob._latex_()
             '\\verb"Frob"^{2}'
         """
@@ -2028,7 +2017,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
     def power(self):
         """
-        Return an integer `n` such that this endormorphism
+        Return an integer `n` such that this endomorphism
         is the `n`-th power of the absolute (arithmetic)
         Frobenius.
 
@@ -2095,20 +2084,3 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         domain = self.domain()
         codomain = self.codomain()
         return hash((domain, codomain, ('Frob', self._power)))
-
-    cpdef int _cmp_(left, right) except -2:
-        if left is right: return 0
-        domain = left.domain()
-        c = cmp(domain, right.domain())
-        if c: return c
-        c = cmp(left.codomain(), right.codomain())
-        if c: return c
-        if isinstance(right, FrobeniusEndomorphism_generic):
-            return cmp(left._power, (<FrobeniusEndomorphism_generic>right)._power)
-        try:
-            gens = domain.gens()
-            for x in gens:
-                c = cmp(left(x), right(x))
-                if c: return c
-        except (AttributeError, NotImplementedError):
-            raise NotImplementedError

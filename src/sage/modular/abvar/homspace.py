@@ -164,17 +164,22 @@ AUTHORS:
 
 - Craig Citro, Robert Bradshaw (2008-03): Rewrote with modabvar overhaul
 """
-from __future__ import absolute_import
 
-###########################################################################
-#       Copyright (C) 2007 William Stein <wstein@gmail.com>               #
-#  Distributed under the terms of the GNU General Public License (GPL)    #
-#                  http://www.gnu.org/licenses/                           #
-###########################################################################
+#*****************************************************************************
+#       Copyright (C) 2007 William Stein <wstein@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
+from __future__ import absolute_import
 
 from copy import copy
 
-from sage.categories.homset import HomsetWithBase, End
+from sage.categories.homset import HomsetWithBase
 from sage.structure.all import parent
 from sage.misc.lazy_attribute import lazy_attribute
 
@@ -185,8 +190,6 @@ import sage.rings.integer_ring
 import sage.rings.all
 
 from sage.rings.ring import Ring
-from sage.categories.category import Category
-from sage.categories.rings import Rings
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import Matrix, identity_matrix
 from sage.structure.element import is_Matrix
@@ -228,6 +231,29 @@ class Homspace(HomsetWithBase):
             raise TypeError("codomain must be a modular abelian variety")
         self._gens = None
         HomsetWithBase.__init__(self, domain, codomain, category=cat)
+
+    def identity(self):
+        """
+        Return the identity endomorphism.
+
+        EXAMPLES::
+
+            sage: E = End(J0(11))
+            sage: E.identity()
+            Abelian variety endomorphism of Abelian variety J0(11) of dimension 1
+            sage: E.one()
+            Abelian variety endomorphism of Abelian variety J0(11) of dimension 1
+
+            sage: H = Hom(J0(11), J0(22))
+            sage: H.identity()
+            Traceback (most recent call last):
+            ...
+            TypeError: the identity map is only defined for endomorphisms
+        """
+        if self.domain() is not self.codomain():
+            raise TypeError("the identity map is only defined for endomorphisms")
+        M = self.matrix_space().one()
+        return self.element_class(self, M)
 
     @lazy_attribute
     def _matrix_space(self):
@@ -579,10 +605,8 @@ class Homspace(HomsetWithBase):
             [0 0 0 0], [0 0 0 1]
             ]
         """
-
         Afactors = self.domain().decomposition(simple=False)
         Bfactors = self.codomain().decomposition(simple=False)
-        matrix_space = self.matrix_space()
         if len(Afactors) == 1 and len(Bfactors) == 1:
             Asimples = Afactors[0].decomposition()
             Bsimples = Bfactors[0].decomposition()
@@ -916,6 +940,17 @@ class EndomorphismSubring(Homspace, Ring):
         check_every determines how many Hecke operators we add in before
         checking to see if this condition is met.
 
+        INPUT:
+
+        - ``check_every`` -- integer (default: 1) If this integer is positive,
+          this integer determines how many Hecke operators we add in before
+          checking to see if the submodule spanned so far is maximal and
+          saturated.
+
+        OUTPUT:
+
+        - The image of the Hecke algebra as an subring of ``self``.
+
         EXAMPLES::
 
             sage: E = J0(33).endomorphism_ring()
@@ -963,6 +998,11 @@ class EndomorphismSubring(Homspace, Ring):
         V = EndVecZ.submodule([A.hecke_operator(1).matrix().list()])
 
         for n in range(2,M.sturm_bound()+1):
+            if (check_every > 0 and
+                    n % check_every == 0 and
+                    V.dimension() == d and
+                    V.index_in_saturation() == 1):
+                break
             V += EndVecZ.submodule([ A.hecke_operator(n).matrix().list() ])
 
         self.__hecke_algebra_image = EndomorphismSubring(A, V.basis())

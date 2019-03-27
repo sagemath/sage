@@ -196,26 +196,27 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 
-from sage.misc.cachefunc import cached_method, cached_in_parent_method
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.flatten import flatten
+#from six.moves import range
+
+from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.misc_c import prod
 from sage.categories.category import Category
 from sage.categories.permutation_groups import PermutationGroups
 from sage.categories.complex_reflection_groups import ComplexReflectionGroups
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+from sage.combinat.root_system.reflection_group_element import ComplexReflectionGroupElement, _gap_return
 from sage.sets.family import Family
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.rings.all import ZZ, QQ
 from sage.matrix.all import Matrix, identity_matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.interfaces.gap3 import gap3
 from sage.rings.universal_cyclotomic_field import E
-from sage.arith.misc import lcm
 from sage.modules.free_module_element import vector
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
+from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+
 
 from sage.misc.sage_eval import sage_eval
 
@@ -259,7 +260,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             if len(X) > 1:
                 raise ValueError("input data %s is invalid"%W_type)
             X = X[0]
-            type_dict = dict()
+            type_dict = {}
             type_dict["series"] = X.series.sage()
             type_dict["rank"] = X.rank.sage()
             type_dict["indices"] = X.indices.sage()
@@ -300,14 +301,14 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                                           canonicalize=False,
                                           category=category)
 
-        l_set = range(1, len(self.gens())+1)
+        l_set = list(range(1, len(self.gens()) + 1))
         if self._index_set is None:
             self._index_set = tuple(l_set)
         else:
             if len(self._index_set) != len(l_set):
                 raise ValueError("the given index set (= %s) does not have the right size"%self._index_set.values())
         self._index_set_inverse = {i: ii for ii,i in enumerate(self._index_set)}
-        Nstar_set = range(1,self.number_of_reflection_hyperplanes()+1)
+        Nstar_set = list(range(1, self.number_of_reflection_hyperplanes() + 1))
         if self._hyperplane_index_set is None:
             self._hyperplane_index_set = tuple(Nstar_set)
         else:
@@ -315,7 +316,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 raise ValueError("the given hyperplane index set (= %s) does not have the right size"%self._index_set.values())
         self._hyperplane_index_set_inverse = {i: ii for ii,i in enumerate(self._hyperplane_index_set)}
 
-        N_set = range(1, self.number_of_reflections()+1)
+        N_set = list(range(1, self.number_of_reflections() + 1))
         if self._reflection_index_set is None:
             self._reflection_index_set = tuple(N_set)
         else:
@@ -542,7 +543,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         return self.distinguished_reflections()[i]
 
     @cached_method
-    def reflection_hyperplanes(self, as_linear_functionals=False):
+    def reflection_hyperplanes(self, as_linear_functionals=False, with_order=False):
         r"""
         Return the list of all reflection hyperplanes of ``self``,
         either as a codimension 1 space, or as its linear functional.
@@ -593,6 +594,12 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             (1, -2)
             (0, 1)
             (1, 0)
+
+            sage: for H in W.reflection_hyperplanes(as_linear_functionals=True, with_order=True): H  # optional - gap3
+            ((1, -1), 2)
+            ((1, -2), 2)
+            ((0, 1), 2)
+            ((1, 0), 2)
         """
         Hs = []
         for r in self.distinguished_reflections():
@@ -601,10 +608,12 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 Hs.append( mat.row_space().gen() )
             else:
                 Hs.append( mat.right_kernel() )
+            if with_order:
+                Hs[-1] = (Hs[-1],r.order())
         return Family(self._hyperplane_index_set,
                       lambda i: Hs[self._hyperplane_index_set_inverse[i]])
 
-    def reflection_hyperplane(self, i, as_linear_functional=False):
+    def reflection_hyperplane(self, i, as_linear_functional=False, with_order=False):
         r"""
         Return the ``i``-th reflection hyperplane of ``self``.
 
@@ -631,7 +640,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             sage: W.reflection_hyperplane(3, True)                      # optional - gap3
             (0, 1)
         """
-        return self.reflection_hyperplanes(as_linear_functionals=as_linear_functional)[i]
+        return self.reflection_hyperplanes(as_linear_functionals=as_linear_functional, with_order=with_order)[i]
 
     @cached_method
     def reflection_index_set(self):
@@ -725,6 +734,122 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         """
         return self._gap_group.ReflectionCharacter().sage()
 
+    @cached_method
+    def discriminant(self):
+        r"""
+        Return the discriminant of ``self`` in the polynomial ring on
+        which the group acts.
+
+        This is the product
+
+        .. MATH::
+
+           \prod_H \alpha_H^{e_H},
+
+        where `\alpha_H` is the linear form of the hyperplane `H` and
+        `e_H` is its stabilizer order.
+
+        EXAMPLES::
+
+            sage: W = ReflectionGroup(['A',2])               # optional - gap3
+            sage: W.discriminant()                           # optional - gap3
+            x0^6 - 3*x0^5*x1 - 3/4*x0^4*x1^2 + 13/2*x0^3*x1^3
+             - 3/4*x0^2*x1^4 - 3*x0*x1^5 + x1^6
+
+            sage: W = ReflectionGroup(['B',2])               # optional - gap3
+            sage: W.discriminant()                           # optional - gap3
+            x0^6*x1^2 - 6*x0^5*x1^3 + 13*x0^4*x1^4 - 12*x0^3*x1^5 + 4*x0^2*x1^6
+        """
+        from sage.rings.polynomial.all import PolynomialRing
+        n = self.rank()
+        P = PolynomialRing(QQ, 'x', n)
+        x = P.gens()
+
+        return prod(sum(x[i] * alpha[i] for i in range(n)) ** o
+                    for alpha,o in self.reflection_hyperplanes(True, True))
+
+    @cached_method
+    def discriminant_in_invariant_ring(self, invariants=None):
+        r"""
+        Return the discriminant of ``self`` in the invariant ring.
+
+        This is the function `f` in the invariants such that
+        `f(F_1(x), \ldots, F_n(x))` is the discriminant.
+
+        EXAMPLES::
+
+            sage: W = ReflectionGroup(['A',3])               # optional - gap3
+            sage: W.discriminant_in_invariant_ring()         # optional - gap3
+            6*t0^3*t1^2 - 18*t0^4*t2 + 9*t1^4 - 36*t0*t1^2*t2 + 24*t0^2*t2^2 - 8*t2^3
+
+            sage: W = ReflectionGroup(['B',3])               # optional - gap3
+            sage: W.discriminant_in_invariant_ring()         # optional - gap3
+            -t0^2*t1^2*t2 + 16*t0^3*t2^2 + 2*t1^3*t2 - 36*t0*t1*t2^2 + 108*t2^3
+
+            sage: W = ReflectionGroup(['H',3])               # optional - gap3
+            sage: W.discriminant_in_invariant_ring()  # long time  # optional - gap3
+            (-829*E(5) - 1658*E(5)^2 - 1658*E(5)^3 - 829*E(5)^4)*t0^15
+             + (213700*E(5) + 427400*E(5)^2 + 427400*E(5)^3 + 213700*E(5)^4)*t0^12*t1
+             + (-22233750*E(5) - 44467500*E(5)^2 - 44467500*E(5)^3 - 22233750*E(5)^4)*t0^9*t1^2
+             + (438750*E(5) + 877500*E(5)^2 + 877500*E(5)^3 + 438750*E(5)^4)*t0^10*t2
+             + (1162187500*E(5) + 2324375000*E(5)^2 + 2324375000*E(5)^3 + 1162187500*E(5)^4)*t0^6*t1^3
+             + (-74250000*E(5) - 148500000*E(5)^2 - 148500000*E(5)^3 - 74250000*E(5)^4)*t0^7*t1*t2
+             + (-28369140625*E(5) - 56738281250*E(5)^2 - 56738281250*E(5)^3 - 28369140625*E(5)^4)*t0^3*t1^4
+             + (1371093750*E(5) + 2742187500*E(5)^2 + 2742187500*E(5)^3 + 1371093750*E(5)^4)*t0^4*t1^2*t2
+             + (1191796875*E(5) + 2383593750*E(5)^2 + 2383593750*E(5)^3 + 1191796875*E(5)^4)*t0^5*t2^2
+             + (175781250000*E(5) + 351562500000*E(5)^2 + 351562500000*E(5)^3 + 175781250000*E(5)^4)*t1^5
+             + (131835937500*E(5) + 263671875000*E(5)^2 + 263671875000*E(5)^3 + 131835937500*E(5)^4)*t0*t1^3*t2
+             + (-100195312500*E(5) - 200390625000*E(5)^2 - 200390625000*E(5)^3 - 100195312500*E(5)^4)*t0^2*t1*t2^2
+             + (395507812500*E(5) + 791015625000*E(5)^2 + 791015625000*E(5)^3 + 395507812500*E(5)^4)*t2^3
+        """
+        from sage.arith.functions import lcm
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        n = self.rank()
+
+        if invariants is None:
+            Fs = self.fundamental_invariants()
+        else:
+            Fs = invariants
+        D = self.discriminant()
+
+        if self.is_crystallographic():
+            R = QQ
+        else:
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+            R = UniversalCyclotomicField()
+
+        # TODO: The rest of this could be split off as a general function
+        #   to express a polynomial D as a polynomial in the polynomials Fs
+        #   with coefficients in the ring R.
+        Dd = D.degree()
+        Fd = [F.degree() for F in Fs]
+
+        Ps = multi_partitions(Dd, Fd)
+
+        m = len(Ps)
+        P = PolynomialRing(R, 'X', m)
+        X = P.gens()
+
+        T = PolynomialRing(R, 't', n)
+
+        FsPowers = [prod(power(val, part[j]) for j,val in enumerate(Fs)).change_ring(P)
+                    for part in Ps]
+
+        D = D.change_ring(P)
+        f = D - sum(X[i] * F for i,F in enumerate(FsPowers))
+        coeffs = f.coefficients()
+        lhs = Matrix(R, [[coeff.coefficient(X[i]) for i in range(m)]
+                         for coeff in coeffs])
+        rhs = vector([coeff.constant_coefficient() for coeff in coeffs])
+
+        coeffs = lhs.solve_right(rhs)
+        # Cancel denominators
+        coeffs = lcm(i.denominator() for i in coeffs) * coeffs
+        mons = vector([prod(tj**part[j] for j,tj in enumerate(T.gens()))
+                       for part in Ps])
+        return sum(coeffs[i] * mons[i] for i in range(m))
+
+    @cached_method
     def is_crystallographic(self):
         r"""
         Return ``True`` if self is crystallographic.
@@ -764,19 +889,6 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             False
         """
         return self.is_real() and all(t.to_matrix().base_ring() is QQ for t in self.simple_reflections())
-
-    def _element_class(self):
-        r"""
-        A temporary workaround for compatibility with Sage's
-        permutation groups.
-
-        TESTS::
-
-            sage: W = ReflectionGroup(23)                               # optional - gap3
-            sage: W._element_class() is W.element_class                 # optional - gap3
-            True
-        """
-        return self.element_class
 
     def number_of_irreducible_components(self):
         r"""
@@ -854,6 +966,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                  [1, 2, 1, 2, 3, 2, 1, 2, 3],
                  [1, 2, 1, 2, 1, 3, 2, 1, 2, 1, 3, 2, 1, 2, 3]]
         """
+        # This can be converted to usual GAP
         S = str(gap3('List(ConjugacyClasses(%s),Representative)'%self._gap_group._name))
         exec('_conjugacy_classes_representatives=' + _gap_return(S))
         return _conjugacy_classes_representatives
@@ -996,7 +1109,8 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 h = self.coxeter_number()
                 return tuple([h-d for d in self.degrees()])
             else:
-                return tuple(sorted(self._gap_group.ReflectionCoDegrees().sage(), reverse=True))
+                return tuple(sorted(self._gap_group.ReflectionCoDegrees().sage(),
+                                    reverse=True))
         else:
             return sum([comp.codegrees() for comp in self.irreducible_components()],tuple())
 
@@ -1018,7 +1132,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
             sage: W = ReflectionGroup((3,1,2))                          # optional - gap3
             sage: reflection_eigenvalues = W.reflection_eigenvalues_family()    # optional - gap3
-            sage: for elt in sorted(reflection_eigenvalues):     # optional - gap3
+            sage: for elt in sorted(reflection_eigenvalues.keys()):     # optional - gap3
             ....:     print('%s %s'%(elt, reflection_eigenvalues[elt])) # optional - gap3
             () [0, 0]
             (1,3,9)(2,4,10)(6,11,17)(8,12,18)(14,19,23)(15,16,20)(21,22,24) [1/3, 0]
@@ -1032,7 +1146,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
             sage: W = ReflectionGroup(23)                               # optional - gap3
             sage: reflection_eigenvalues = W.reflection_eigenvalues_family()    # optional - gap3
-            sage: for elt in sorted(reflection_eigenvalues):     # optional - gap3
+            sage: for elt in sorted(reflection_eigenvalues.keys()):     # optional - gap3
             ....:     print('%s %s'%(elt, reflection_eigenvalues[elt])) # optional - gap3
             () [0, 0, 0]
             (1,8,4)(2,21,3)(5,10,11)(6,18,17)(7,9,12)(13,14,15)(16,23,19)(20,25,26)(22,24,27)(28,29,30) [1/3, 2/3, 0]
@@ -1201,49 +1315,12 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             return Delta
 
         from sage.sets.family import Family
-        basis = dict()
-        for i,ind in enumerate(self._index_set):
+        basis = {}
+        for ind in self._index_set:
             vec = Delta[ind]
             if Matrix(basis.values()+[vec]).rank() == len(basis) + 1:
                 basis[ind] = vec
         return Family(basis)
-
-    @cached_method
-    def base_change_matrix(self):
-        r"""
-        Return the base change from the standard basis of the vector
-        space of ``self`` to the basis given by the independent roots of
-        ``self``.
-
-        .. TODO::
-
-            For non-well-generated groups there is a conflict with
-            construction of the matrix for an element.
-
-        EXAMPLES::
-
-            sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
-            sage: W.base_change_matrix()                                # optional - gap3
-            [1 0]
-            [0 1]
-
-            sage: W = ReflectionGroup(23)                               # optional - gap3
-            sage: W.base_change_matrix()                                # optional - gap3
-            [1 0 0]
-            [0 1 0]
-            [0 0 1]
-
-            sage: W = ReflectionGroup((3,1,2))                          # optional - gap3
-            sage: W.base_change_matrix()                                # optional - gap3
-            [1 0]
-            [1 1]
-
-            sage: W = ReflectionGroup((4,2,2))                          # optional - gap3
-            sage: W.base_change_matrix()                                # optional - gap3
-            [   1    0]
-            [E(4)    1]
-        """
-        return Matrix( list(self.independent_roots()) ).inverse()
 
     @cached_method
     def roots(self):
@@ -1315,8 +1392,12 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             sage: W.braid_relations()                                   # optional - gap3
             [[[2, 1, 2], [1, 2, 1]], [[3, 1], [1, 3]], [[3, 2, 3], [2, 3, 2]]]
         """
-        return self._gap_group.BraidRelations().sage()
+        if self.is_real():
+            return super(ComplexReflectionGroup,self).braid_relations()
+        else:
+            return self._gap_group.BraidRelations().sage()
 
+    @cached_method
     def fundamental_invariants(self):
         r"""
         Return the fundamental invariants of ``self``.
@@ -1338,18 +1419,94 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             return sum([W.fundamental_invariants() for W in self.irreducible_components() ],tuple())
 
         I = [ str(p) for p in gap3('List(Invariants(%s),x->ApplyFunc(x,List([0..%s],i->Mvp(SPrint("x",i)))))'%(self._gap_group._name,self.rank()-1)) ]
-        P = PolynomialRing(QQ,['x%s'%i for i in range(0,self.rank())])
+        P = PolynomialRing(QQ,['x%s'%i for i in range(self.rank())])
         x = P.gens()
         for i in range(len(I)):
             I[i] = I[i].replace('^','**')
-            I[i] = re.compile('E(\d\d*)').sub(r'E(\1)', I[i])
-            I[i] = re.compile('(\d)E\(').sub(r'\1*E(', I[i])
+            I[i] = re.compile(r'E(\d\d*)').sub(r'E(\1)', I[i])
+            I[i] = re.compile(r'(\d)E\(').sub(r'\1*E(', I[i])
             for j in range(len(x)):
                 I[i] = I[i].replace('x%s'%j,'*x[%s]'%j)
             I[i] = I[i].replace("+*","+").replace("-*","-").replace("ER(5)","*(E(5)-E(5)**2-E(5)**3+E(5)**4)").lstrip("*")
         # sage_eval is used since eval kills the rational entries!
-        I = [ sage_eval(p, locals={'x':x}) for p in I ]
-        return tuple(sorted(I,lambda f,g: cmp(f.degree(),g.degree())))
+        I = [sage_eval(p, locals={'x': x}) for p in I]
+        return tuple(sorted(I, key=lambda f: f.degree()))
+
+    @cached_method
+    def jacobian_of_fundamental_invariants(self, invs=None):
+        r"""
+        Return the matrix `[ \partial_{x_i} F_j ]`, where ``invs`` are
+        are any polynomials `F_1,\ldots,F_n` in `x_1,\ldots,x_n`.
+
+        INPUT:
+
+        - ``invs`` -- (default: the fundamental invariants) the polynomials
+          `F_1, \ldots, F_n`
+
+        EXAMPLES::
+
+            sage: W = ReflectionGroup(['A',2])               # optional - gap3
+            sage: W.fundamental_invariants()                 # optional - gap3
+            (-2*x0^2 + 2*x0*x1 - 2*x1^2, 6*x0^2*x1 - 6*x0*x1^2)
+
+            sage: W.jacobian_of_fundamental_invariants()     # optional - gap3
+            [     -4*x0 + 2*x1       2*x0 - 4*x1]
+            [12*x0*x1 - 6*x1^2 6*x0^2 - 12*x0*x1]
+        """
+        if invs is None:
+            invs = self.fundamental_invariants()
+        P = invs[0].parent()
+        X = P.gens()
+        return Matrix(P, [[ P(g).derivative(x) for x in X ] for g in invs ])
+
+    @cached_method
+    def primitive_vector_field(self, invs=None):
+        r"""
+        Return the primitive vector field of ``self`` is irreducible and
+        well-generated.
+
+        The primitive vector field is given as the coefficients (being rational
+        functions) in the basis `\partial_{x_1}, \ldots, \partial_{x_n}`.
+
+        This is the partial derivation along the unique invariant of
+        degree given by the Coxeter number. It can be computed as the
+        row of the inverse of the Jacobian given by the highest degree.
+
+        EXAMPLES::
+
+            sage: W = ReflectionGroup(['A',2])               # optional - gap3
+            sage: W.primitive_vector_field()                 # optional - gap3
+            (3*x1/(6*x0^2 - 6*x0*x1 - 12*x1^2), 1/(6*x0^2 - 6*x0*x1 - 12*x1^2))
+        """
+        if not self.is_irreducible():
+            raise ValueError("only possible for irreducible complex reflection groups")
+        if not self.is_well_generated():
+            raise ValueError("only possible for well-generated complex reflection groups")
+        h = self.coxeter_number()
+        if invs is None:
+            invs = self.fundamental_invariants()
+        degs = [ f.degree() for f in invs ]
+        J = self.jacobian_of_fundamental_invariants(invs)
+        return J.inverse().row(degs.index(h))
+
+    def apply_vector_field(self, f, vf=None):
+        r"""
+        Returns a rational function obtained by applying the vector
+        field ``vf`` to the rational function ``f``.
+
+        If ``vf`` is not given, the primitive vector field is used.
+
+        EXAMPLES::
+
+            sage: W = ReflectionGroup(['A',2])               # optional - gap3
+            sage: for x in W.primitive_vector_field()[0].parent().gens():  # optional - gap3
+            ....:     print(W.apply_vector_field(x))
+            3*x1/(6*x0^2 - 6*x0*x1 - 12*x1^2)
+            1/(6*x0^2 - 6*x0*x1 - 12*x1^2)
+        """
+        if vf is None:
+            vf = self.primitive_vector_field()
+        return sum( vf[i]*f.derivative(gen) for i,gen in enumerate(f.parent().gens()) )
 
     def cartan_matrix(self):
         r"""
@@ -1486,40 +1643,54 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             7 True
         """
         if brute_force:
-            return self._invariant_form_brute_force()
+            form = self._invariant_form_brute_force()
 
-        n = self.rank()
-        from sage.matrix.constructor import zero_matrix
-
-        if self.is_crystallographic():
-            ring = QQ
         else:
-            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
-            ring = UniversalCyclotomicField()
+            n = self.rank()
+            from sage.matrix.constructor import zero_matrix
 
-        form = zero_matrix(ring, n, n)
+            if self.is_crystallographic():
+                ring = QQ
+            else:
+                from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+                ring = UniversalCyclotomicField()
 
-        C = self.cartan_matrix()
-        if not self.is_well_generated():
-            indep_inds = sorted(self._index_set_inverse[key] for key in self.independent_roots())
-            C = C.matrix_from_rows_and_columns(indep_inds,indep_inds)
+            form = zero_matrix(ring, n, n)
 
-        for j in range(n):
-            for i in range(j):
-                if C[j,i] != 0:
-                    form[j,j] = form[i,i] * \
-                                ( C[i,j] * C[j,j].conjugate() ) / \
-                                ( C[j,i].conjugate() * C[i,i] )
-            if form[j,j] == 0:
-                form[j,j] = ring.one()
-        for j in range(n):
-            for i in range(j):
-                form[j, i] = C[i, j] * form[i, i] / C[i,i]
-                form[i, j] = form[j, i].conjugate()
+            C = self.cartan_matrix()
+            if not self.is_well_generated():
+                indep_inds = sorted(self._index_set_inverse[key]
+                                    for key in self.independent_roots().keys())
+                C = C.matrix_from_rows_and_columns(indep_inds,indep_inds)
 
-        B = self.base_change_matrix()
-        form = B*form*B.conjugate().transpose()
-        form /= form[0,0]
+            for j in range(n):
+                for i in range(j):
+                    if C[j,i] != 0:
+                        form[j,j] = (form[i,i]
+                                     * (C[i,j] * C[j,j].conjugate())
+                                     / (C[j,i].conjugate() * C[i,i]))
+                if form[j,j] == 0:
+                    form[j,j] = ring.one()
+            for j in range(n):
+                for i in range(j):
+                    form[j, i] = C[i, j] * form[i, i] / C[i,i]
+                    form[i, j] = form[j, i].conjugate()
+
+            B = self.base_change_matrix()
+            form = B * form * B.conjugate().transpose()
+            form /= form[0,0]
+
+        # normalization
+        try:
+            form = form.change_ring(QQ)
+        except TypeError:
+            pass
+        else:
+            try:
+                form = form.change_ring(ZZ)
+            except TypeError:
+                pass
+
         form.set_immutable()
         return form
 
@@ -1536,10 +1707,6 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             [1 0]
             [0 1]
         """
-        from sage.misc.cachefunc import cached_function
-
-        Phi = self.roots()
-
         base_change = self.base_change_matrix()
         Delta = tuple(self.independent_roots())
         basis_is_Delta = base_change.is_one()
@@ -1572,7 +1739,46 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 coeff = QQ(coeff)
             coeffs.append(coeff)
 
-        return Matrix([ [ invariant_value(i,j)/self.cardinality() for j in range(n) ] for i in range(n) ])
+        return Matrix([[invariant_value(i,j) / self.cardinality() for j in range(n)]
+                       for i in range(n)])
+
+    def invariant_form_standardization(self):
+        r"""
+        Return the transformation of the space that turns the invariant
+        form of ``self`` into the standard scalar product.
+
+        Let `I` be the invariant form of a complex reflection group, and
+        let `A` be the Hermitian matrix such that `A^2 = I`. The matrix
+        `A` defines a change of basis such that the identity matrix is
+        the invariant form. Indeed, we have
+
+        .. MATH::
+
+            (A^{-1} x A) \mathcal{I} (A^{-1} y A)^* = A^{-1} x I y^* A^{-1}
+            = A^{-1} I A^{-1} = \mathcal{I},
+
+        where `\mathcal{I}` is the identity matrix.
+
+        EXAMPLES::
+
+            sage: W = ReflectionGroup((4,2,5))             # optional - gap3
+            sage: I = W.invariant_form()                   # optional - gap3
+            sage: A = W.invariant_form_standardization()   # optional - gap3
+            sage: A^2 == I                                 # optional - gap3
+            True
+
+        TESTS::
+
+            sage: W = ReflectionGroup(9)                              # optional - gap3
+            sage: A = W.invariant_form_standardization()              # optional - gap3
+            sage: S = W.simple_reflections()                          # optional - gap3
+            sage: Ainv = A.inverse()                                  # optional - gap3
+            sage: T = {i: Ainv * S[i] * A for i in W.index_set()}     # optional - gap3
+            sage: all(T[i] * T[i].conjugate_transpose()               # optional - gap3
+            ....:     == 1 for i in W.index_set() )
+            True
+        """
+        return self.invariant_form().principal_square_root()
 
     def set_reflection_representation(self,refl_repr=None):
         r"""
@@ -1640,8 +1846,89 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         else:
             raise ValueError("the reflection representation must be defined for the complete index set")
 
-    class Element(PermutationGroupElement):
+    def fake_degrees(self):
+        r"""
+        Return the list of the fake degrees associated to ``self``.
 
+        The fake degrees are `q`-versions of the degree of the character.
+        In particular, they sum to Hilbert series of the coinvariant
+        algebra of ``self``.
+
+        ..NOTE::
+
+            The ordering follows the one in Chevie and is not compatible with
+            the current implementation of :meth:`irredubile_characters()`.
+
+        EXAMPLES::
+
+            sage: W = ReflectionGroup(12)                              # optional - gap3
+            sage: W.fake_degrees()                                     # optional - gap3
+            [1, q^12, q^11 + q, q^8 + q^4, q^7 + q^5, q^6 + q^4 + q^2,
+             q^10 + q^8 + q^6, q^9 + q^7 + q^5 + q^3]
+
+            sage: W = ReflectionGroup(["H",4])                         # optional - gap3
+            sage: W.cardinality()                                      # optional - gap3
+            14400
+            sage: sum(fdeg.subs(q=1)**2 for fdeg in W.fake_degrees())  # optional - gap3
+            14400
+        """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        R = PolynomialRing(ZZ, 'q')
+        fake_deg_list = []
+        gap_fak_deg = gap3.FakeDegrees(self._gap_group, 'X(Rationals)')
+
+        for fake_poly in gap_fak_deg:
+            fake_coef = fake_poly.coefficients.sage()
+            coeffs = [ZZ.zero()] * (fake_poly.Degree().sage()-len(fake_coef)+1)
+            coeffs.extend(fake_coef)
+            fake_deg_list.append(R(coeffs))
+
+        return fake_deg_list
+
+    def coxeter_number(self, chi=None):
+        r"""
+        Return the Coxeter number associated to the irreducible character
+        chi of the reflection group ``self``.
+
+        The *Coxeter number* of a complex reflection group `W` is the trace
+        in a character `\chi` of `\sum_t (Id - t)`, where `t` runs over all
+        reflections. The result is always an integer.
+
+        When `\chi` is the reflection representation, the Coxeter number
+        is equal to `\frac{N + N^*}{n}` where `N` is the number of
+        reflections, `N^*` is the number of reflection hyperplanes, and
+        `n` is the rank of `W`. If `W` is further well-generated, the
+        Coxeter number is equal to the highest degree d_n and to the
+        order of a Coxeter element `c` of `W`.
+
+        EXAMPLES::
+
+            sage: W = ReflectionGroup(["H",4])               # optional - gap3
+            sage: W.coxeter_number()                         # optional - gap3
+            30
+            sage: all([W.coxeter_number(chi).is_integer()    # optional - gap3
+            ....:     for chi in W.irreducible_characters()])
+            True
+            sage: W = ReflectionGroup(14)                    # optional - gap3
+            sage: W.coxeter_number()                         # optional - gap3
+            24
+        """
+        if chi is None:
+            return super(ComplexReflectionGroup, self).coxeter_number()
+
+        G = self.gens()
+        cox_chi = 0
+        gap_hyp_rec = self._gap_group.HyperplaneOrbits()
+        # We access gap3:
+        # rec is a record of a hyperplane orbit;
+        # rec.s is the first generator in that orbit and rec.e_s its order;
+        # rec.N_s is the size of the orbit
+        for rec in gap_hyp_rec:
+            for k in range(1, int(rec.e_s)):
+                cox_chi += chi( G[int(rec.s)-1]**k ) * rec.N_s.sage()
+        return self.number_of_reflections() - cox_chi // chi.degree()
+
+    class Element(ComplexReflectionGroupElement):
         #@cached_in_parent_method
         def conjugacy_class_representative(self):
             r"""
@@ -1701,97 +1988,6 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             W._conjugacy_classes[self] = orbit_set
             return orbit_set
 
-        def reduced_word(self):
-            r"""
-            Return a word in the simple reflections to obtain ``self``.
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup((5,1,1), index_set=['a'], hyperplane_index_set=['x'], reflection_index_set=['A','B','C','D']) # optional - gap3
-                sage: [w.reduced_word() for w in W]                     # optional - gap3
-                [[], ['a'], ['a', 'a'], ['a', 'a', 'a'], ['a', 'a', 'a', 'a']]
-
-            .. SEEALSO:: :meth:`reduced_word_in_reflections`
-            """
-            I = self.parent()._index_set
-            return [I[i] for i in self._reduced_word]
-
-        @lazy_attribute
-        def _reduced_word(self):
-            r"""
-            Computes a reduced word and stores it into ``self._reduced_word``.
-
-            TESTS::
-
-                sage: W = ReflectionGroup((5,1,1))                      # optional - gap3
-                sage: w = W.an_element()                                # optional - gap3
-                sage: w._reduced_word                                   # optional - gap3
-                [0]
-            """
-            W = self.parent()
-            gens = [W.simple_reflection(j) for j in W._index_set]
-            return _gap_factorization(self, gens)
-
-        #@cached_in_parent_method
-        def reduced_word_in_reflections(self):
-            r"""
-            Return a word in the reflections to obtain ``self``.
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup((5,1,1), index_set=['a'], reflection_index_set=['A','B','C','D']) # optional - gap3
-                sage: [w.reduced_word_in_reflections() for w in W]      # optional - gap3
-                [[], ['A'], ['B'], ['C'], ['D']]
-
-            .. SEEALSO:: :meth:`reduced_word`
-            """
-            if self.is_one():
-                return []
-
-            W = self.parent()
-            gens = [W.reflection(j) for j in W._reflection_index_set]
-            word = _gap_factorization(self, gens)
-            return [self.parent()._reflection_index_set[i] for i in word]
-
-        def length(self):
-            r"""
-            Return the length of ``self`` in generating reflections.
-
-            This is the minimal numbers of generating reflections needed
-            to obtain ``self``.
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(4)                            # optional - gap3
-                sage: for w in W:         # optional - gap3
-                ....:     print("{} {}".format(w.reduced_word(), w.length()))
-                [] 0
-                [1] 1
-                [2] 1
-                [1, 1] 2
-                [1, 2] 2
-                [2, 1] 2
-                [2, 2] 2
-                [1, 1, 2] 3
-                [1, 2, 1] 3
-                [1, 2, 2] 3
-                [2, 1, 1] 3
-                [2, 2, 1] 3
-                [1, 1, 2, 1] 4
-                [1, 1, 2, 2] 4
-                [1, 2, 1, 1] 4
-                [1, 2, 2, 1] 4
-                [2, 1, 1, 2] 4
-                [2, 2, 1, 1] 4
-                [1, 1, 2, 1, 1] 5
-                [1, 1, 2, 2, 1] 5
-                [1, 2, 1, 1, 2] 5
-                [1, 2, 2, 1, 1] 5
-                [1, 1, 2, 1, 1, 2] 6
-                [1, 1, 2, 2, 1, 1] 6
-            """
-            return len(self.reduced_word())
-
         #@cached_in_parent_method
         def reflection_length(self, in_unitary_group=False):
             r"""
@@ -1837,497 +2033,6 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 assert w in self.parent().conjugacy_classes_representatives()
                 return w.reflection_length(in_unitary_group=in_unitary_group)
 
-        #@cached_in_parent_method
-        def to_matrix(self, on_space="primal"):
-            r"""
-            Return ``self`` as a matrix acting on the underlying vector
-            space.
-
-            - ``on_space`` -- optional (default: ``"primal"``) whether
-              to act as the reflection representation on the given
-              basis, or to act on the dual reflection representation
-              on the dual basis
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup((3,1,2))          # optional - gap3
-                sage: for w in W:                           # optional - gap3
-                ....:     w.reduced_word()                  # optional - gap3
-                ....:     [w.to_matrix(), w.to_matrix(on_space="dual")] # optional - gap3
-                []
-                [
-                [1 0]  [1 0]
-                [0 1], [0 1]
-                ]
-                [1]
-                [
-                [E(3)    0]  [E(3)^2      0]
-                [   0    1], [     0      1]
-                ]
-                [2]
-                [
-                [0 1]  [0 1]
-                [1 0], [1 0]
-                ]
-                [1, 1]
-                [
-                [E(3)^2      0]  [E(3)    0]
-                [     0      1], [   0    1]
-                ]
-                [1, 2]
-                [
-                [   0 E(3)]  [     0 E(3)^2]
-                [   1    0], [     1      0]
-                ]
-                [2, 1]
-                [
-                [   0    1]  [     0      1]
-                [E(3)    0], [E(3)^2      0]
-                ]
-                [1, 1, 2]
-                [
-                [     0 E(3)^2]  [   0 E(3)]
-                [     1      0], [   1    0]
-                ]
-                [1, 2, 1]
-                [
-                [   0 E(3)]  [     0 E(3)^2]
-                [E(3)    0], [E(3)^2      0]
-                ]
-                [2, 1, 1]
-                [
-                [     0      1]  [   0    1]
-                [E(3)^2      0], [E(3)    0]
-                ]
-                [2, 1, 2]
-                [
-                [   1    0]  [     1      0]
-                [   0 E(3)], [     0 E(3)^2]
-                ]
-                [1, 1, 2, 1]
-                [
-                [     0 E(3)^2]  [     0   E(3)]
-                [  E(3)      0], [E(3)^2      0]
-                ]
-                [1, 2, 1, 1]
-                [
-                [     0   E(3)]  [     0 E(3)^2]
-                [E(3)^2      0], [  E(3)      0]
-                ]
-                [1, 2, 1, 2]
-                [
-                [E(3)    0]  [E(3)^2      0]
-                [   0 E(3)], [     0 E(3)^2]
-                ]
-                [2, 1, 1, 2]
-                [
-                [     1      0]  [   1    0]
-                [     0 E(3)^2], [   0 E(3)]
-                ]
-                [1, 1, 2, 1, 1]
-                [
-                [     0 E(3)^2]  [   0 E(3)]
-                [E(3)^2      0], [E(3)    0]
-                ]
-                [1, 1, 2, 1, 2]
-                [
-                [E(3)^2      0]  [  E(3)      0]
-                [     0   E(3)], [     0 E(3)^2]
-                ]
-                [1, 2, 1, 1, 2]
-                [
-                [  E(3)      0]  [E(3)^2      0]
-                [     0 E(3)^2], [     0   E(3)]
-                ]
-                [1, 1, 2, 1, 1, 2]
-                [
-                [E(3)^2      0]  [E(3)    0]
-                [     0 E(3)^2], [   0 E(3)]
-                ]
-            """
-            W = self.parent()
-            if W._reflection_representation is None:
-                Delta = W.independent_roots()
-                Phi = W.roots()
-                inds = [W._index_set_inverse[i] for i in W.independent_roots()]
-                M = Matrix([Phi[self(i+1)-1] for i in inds])
-                mat = W.base_change_matrix() * M
-            else:
-                refl_repr = W._reflection_representation
-                id_mat = identity_matrix(QQ, refl_repr[W.index_set()[0]].nrows())
-                mat = prod([refl_repr[i] for i in self.reduced_word()], id_mat)
-
-            if on_space == "primal":
-                pass
-            elif on_space == "dual":
-                mat = mat.inverse().transpose()
-            else:
-                raise ValueError('on_space must be "primal" or "dual"')
-
-            mat.set_immutable()
-            return mat
-
-        matrix = to_matrix
-
-        def action(self, vec, on_space="primal"):
-            r"""
-            Return the image of ``vec`` under the action of ``self``.
-
-            INPUT:
-
-            - ``vec`` -- vector in the basis given by the simple root
-
-            - ``on_space`` -- optional (default: ``"primal"``) whether
-              to act as the reflection representation on the given
-              basis, or to act on the dual reflection representation
-              on the dual basis
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup((3,1,2))                      # optional - gap3
-                sage: w = W.from_reduced_word([1, 2, 1, 1, 2])          # optional - gap3
-                sage: for alpha in W.independent_roots():               # optional - gap3
-                ....:     print("%s -> %s"%(alpha,w.action(alpha)))     # optional - gap3
-                (1, 0) -> (E(3), 0)
-                (-1, 1) -> (-E(3), E(3)^2)
-            """
-            mat = self.matrix(on_space=on_space)
-            return vec * mat
-
-        def _act_on_(self, vec, self_on_left):
-            r"""
-            Defines the action of ``self`` as a linear transformation
-            on the vector space, in the basis given by the simple
-            roots.
-
-            - ``vec`` -- the vector (an iterable) to act on
-
-            - ``self_on_left`` -- whether the action of ``self`` is on
-              the left or on the right
-
-            .. WARNING::
-
-                This coercion is currently only defined for
-                ``self_on_left`` being ``False``.
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(['A',2])          # optional - gap3
-                sage: w = W.from_reduced_word([1,2])        # optional - gap3
-                sage: for root in W.positive_roots():       # optional - gap3
-                ....:     print("%s -> %s"%(root, w*root))  # optional - gap3
-                (1, 0) -> (0, 1)
-                (0, 1) -> (-1, -1)
-                (1, 1) -> (-1, 0)
-
-                sage: for root in W.positive_roots():       # optional - gap3
-                ....:     print("%s -> %s"%(root, root*w))  # optional - gap3
-                (1, 0) -> (-1, -1)
-                (0, 1) -> (1, 0)
-                (1, 1) -> (0, -1)
-            """
-            if not self_on_left:
-                return self.action(vec, side="right")
-
-        def action_on_root_indices(self, i):
-            """
-            Return the right action on the set of roots.
-
-            INPUT:
-
-            - ``i`` -- index of the root to act on
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(['A',3])           # optional - gap3
-                sage: w = W.w0                               # optional - gap3
-                sage: N = len(W.roots())                     # optional - gap3
-                sage: [w.action_on_root_indices(i) for i in range(N)]    # optional - gap3
-                [8, 7, 6, 10, 9, 11, 2, 1, 0, 4, 3, 5]
-
-                sage: W = ReflectionGroup(['A',2], reflection_index_set=['A','B','C'])   # optional - gap3
-                sage: w = W.w0                               # optional - gap3
-                sage: N = len(W.roots())                     # optional - gap3
-                sage: [w.action_on_root_indices(i) for i in range(N)]    # optional - gap3
-                [4, 3, 5, 1, 0, 2]
-
-            TESTS::
-
-                sage: W = ReflectionGroup(4)                 # optional - gap3
-                sage: N = len(W.roots())                     # optional - gap3
-                sage: all(sorted([w.action_on_root_indices(i) for i in range(N)]) == range(N) for w in W)   # optional - gap3
-                True
-            """
-            return self(i + 1) - 1
-
-        def action_on_root(self, root):
-            r"""
-            Return the root obtained by applying ``self`` to ``root``
-            on the right.
-
-            INPUT:
-
-            - ``root`` -- the root to act on
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(['A',2])                      # optional - gap3
-                sage: for w in W:                                       # optional - gap3
-                ....:     print("%s %s"%(w.reduced_word(),              # optional - gap3
-                ....:           [w.action_on_root(beta,side="left") for beta in W.positive_roots()]))  # optional - gap3
-                [] [(1, 0), (0, 1), (1, 1)]
-                [2] [(1, 1), (0, -1), (1, 0)]
-                [1] [(-1, 0), (1, 1), (0, 1)]
-                [1, 2] [(0, 1), (-1, -1), (-1, 0)]
-                [2, 1] [(-1, -1), (1, 0), (0, -1)]
-                [1, 2, 1] [(0, -1), (-1, 0), (-1, -1)]
-
-            TESTS::
-
-                sage: W = ReflectionGroup(4); Phi = sorted(W.roots())   # optional - gap3
-                sage: all(sorted([w.action_on_root(beta) for beta in Phi]) == Phi for w in W)   # optional - gap3
-                True
-            """
-            Phi = self.parent().roots()
-            return Phi[self.action_on_root_indices(Phi.index(root))]
-
-        def to_permutation_of_roots(self):
-            r"""
-            Return ``self`` as a permutation of the roots with indexing
-            starting at `1`.
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup((1,1,3))                      # optional - gap3
-                sage: for w in W:       # optional - gap3
-                ....:     perm = w.to_permutation_of_roots()
-                ....:     print("{} {}".format(perm, perm == w))
-                () True
-                (1,3)(2,5)(4,6) True
-                (1,4)(2,3)(5,6) True
-                (1,6,2)(3,5,4) True
-                (1,2,6)(3,4,5) True
-                (1,5)(2,4)(3,6) True
-            """
-            return PermutationGroupElement(self)
-
-        #@cached_in_parent_method
-        def fix_space(self):
-            r"""
-            Return the fix space of ``self``.
-
-            This is the sub vector space of the underlying vector space
-            on which ``self`` acts trivially.
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup((1,1,3))                      # optional - gap3
-                sage: for w in W:                                       # optional - gap3
-                ....:     w.reduced_word()                              # optional - gap3
-                ....:     w.fix_space()                                 # optional - gap3
-                []
-                Vector space of degree 2 and dimension 2 over Rational Field
-                Basis matrix:
-                [1 0]
-                [0 1]
-                [2]
-                Vector space of degree 2 and dimension 1 over Rational Field
-                Basis matrix:
-                [1 0]
-                [1]
-                Vector space of degree 2 and dimension 1 over Rational Field
-                Basis matrix:
-                [0 1]
-                [1, 2]
-                Vector space of degree 2 and dimension 0 over Rational Field
-                Basis matrix:
-                []
-                [2, 1]
-                Vector space of degree 2 and dimension 0 over Rational Field
-                Basis matrix:
-                []
-                [1, 2, 1]
-                Vector space of degree 2 and dimension 1 over Rational Field
-                Basis matrix:
-                [ 1 -1]
-
-                sage: W = ReflectionGroup(23)                           # optional - gap3
-                sage: W.an_element().fix_space()                        # optional - gap3
-                Vector space of degree 3 and dimension 2 over Universal Cyclotomic Field
-                Basis matrix:
-                [0 1 0]
-                [0 0 1]
-            """
-            I = identity_matrix(QQ, self.parent().rank())
-            return (self.to_matrix() - I).right_kernel()
-
-        #@cached_in_parent_method
-        def reflection_eigenvalues(self, is_class_representative=False):
-            r"""
-            Return the reflection eigenvalues of ``self``.
-
-            INPUT:
-
-            - ``is_class_representative`` -- (default: ``False``) whether
-              to first replace ``self`` by the representative of its
-              conjugacy class
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(4)                            # optional - gap3
-                sage: for w in W: w.reflection_eigenvalues()            # optional - gap3
-                [0, 0]
-                [1/3, 0]
-                [1/3, 0]
-                [2/3, 0]
-                [1/6, 1/2]
-                [1/6, 1/2]
-                [2/3, 0]
-                [1/4, 3/4]
-                [1/4, 3/4]
-                [1/4, 3/4]
-                [1/4, 3/4]
-                [1/4, 3/4]
-                [1/3, 0]
-                [1/2, 5/6]
-                [1/3, 0]
-                [1/2, 5/6]
-                [1/2, 5/6]
-                [1/2, 5/6]
-                [1/6, 1/2]
-                [2/3, 0]
-                [1/6, 1/2]
-                [2/3, 0]
-                [1/2, 1/2]
-                [1/4, 3/4]
-            """
-            return self.parent().reflection_eigenvalues(self, is_class_representative=is_class_representative)
-
-        #@cached_in_parent_method
-        def galois_conjugates(self):
-            r"""
-            Return all Galois conjugates of ``self``.
-
-            EXAMPLES::
-
-                sage: W = ReflectionGroup(4)                            # optional - gap3
-                sage: for w in W: print(w.galois_conjugates())          # optional - gap3
-                [[1 0]
-                 [0 1]]
-                [[   1    0]
-                 [   0 E(3)], [     1      0]
-                 [     0 E(3)^2]]
-                [[ 1/3*E(3) - 1/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]
-                 [ 4/3*E(3) + 2/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2],
-                 [-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2]
-                 [ 2/3*E(3) + 4/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2]]
-                [[     1      0]
-                 [     0 E(3)^2], [   1    0]
-                 [   0 E(3)]]
-                [[ 1/3*E(3) - 1/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]
-                 [-2/3*E(3) + 2/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2],
-                 [-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2]
-                 [ 2/3*E(3) - 2/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2]]
-                [[ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2]
-                 [ 4/3*E(3) + 2/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2],
-                 [-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2]
-                 [ 2/3*E(3) + 4/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2]]
-                [[-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2]
-                 [ 2/3*E(3) + 4/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2],
-                 [ 1/3*E(3) - 1/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]
-                 [ 4/3*E(3) + 2/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2]]
-                [[ 1/3*E(3) - 1/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]
-                 [-2/3*E(3) - 4/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2],
-                 [-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2]
-                 [-4/3*E(3) - 2/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2]]
-                [[ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2]
-                 [-2/3*E(3) + 2/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2],
-                 [-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2]
-                 [ 2/3*E(3) - 2/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2]]
-                [[-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2]
-                 [-4/3*E(3) - 2/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2],
-                 [ 1/3*E(3) - 1/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]
-                 [-2/3*E(3) - 4/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2]]
-                [[ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2]
-                 [ 4/3*E(3) + 2/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2],
-                 [-1/3*E(3) + 1/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2]
-                 [ 2/3*E(3) + 4/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2]]
-                [[-1/3*E(3) + 1/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2]
-                 [ 2/3*E(3) + 4/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2],
-                 [ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2]
-                 [ 4/3*E(3) + 2/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2]]
-                [[ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2]
-                 [-2/3*E(3) - 4/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2],
-                 [-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2]
-                 [-4/3*E(3) - 2/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2]]
-                [[-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2]
-                 [ 2/3*E(3) - 2/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2],
-                 [ 1/3*E(3) - 1/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]
-                 [-2/3*E(3) + 2/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]]
-                [[ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2]
-                 [-2/3*E(3) + 2/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2],
-                 [-1/3*E(3) + 1/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2]
-                 [ 2/3*E(3) - 2/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2]]
-                [[-1/3*E(3) + 1/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2]
-                 [-4/3*E(3) - 2/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2],
-                 [ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2]
-                 [-2/3*E(3) - 4/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]]
-                [[   -1     0]
-                 [    0 -E(3)], [     -1       0]
-                 [      0 -E(3)^2]]
-                [[-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2]
-                 [ 2/3*E(3) + 4/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2],
-                 [ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2]
-                 [ 4/3*E(3) + 2/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]]
-                [[ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2]
-                 [-2/3*E(3) - 4/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2],
-                 [-1/3*E(3) + 1/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2]
-                 [-4/3*E(3) - 2/3*E(3)^2  1/3*E(3) + 2/3*E(3)^2]]
-                [[-1/3*E(3) + 1/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2]
-                 [ 2/3*E(3) - 2/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2],
-                 [ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2]
-                 [-2/3*E(3) + 2/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2]]
-                [[     -1       0]
-                 [      0 -E(3)^2], [   -1     0]
-                 [    0 -E(3)]]
-                [[-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2]
-                 [-4/3*E(3) - 2/3*E(3)^2 -2/3*E(3) - 1/3*E(3)^2],
-                 [ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2]
-                 [-2/3*E(3) - 4/3*E(3)^2 -1/3*E(3) - 2/3*E(3)^2]]
-                [[-1  0]
-                 [ 0 -1]]
-                [[-1/3*E(3) + 1/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2]
-                 [ 2/3*E(3) - 2/3*E(3)^2  1/3*E(3) - 1/3*E(3)^2],
-                 [ 1/3*E(3) - 1/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2]
-                 [-2/3*E(3) + 2/3*E(3)^2 -1/3*E(3) + 1/3*E(3)^2]]
-            """
-            rk = self.parent().rank()
-            M = self.to_matrix().list()
-            m = lcm([x.conductor() if hasattr(x,"conductor") else 1 for x in M])
-            M_gals = [x.galois_conjugates(m) if hasattr(x,"galois_conjugates") else [x] for x in M]
-            conjugates = []
-            for i in range(len(M_gals[0])):
-                conjugates.append(Matrix(rk, [X[i] for X in M_gals]))
-            return conjugates
-
-        def __cmp__(self, other):
-            r"""
-            Compare ``self`` with ``other``.
-
-            Without this comparison method, the initialization of this
-            permutation group fails :-(.
-
-            TESTS::
-
-                sage: W = ReflectionGroup((1,1,3))                      # optional - gap3
-                sage: a,b = W.gens()                                    # optional - gap3
-                sage: a.__cmp__(b)                                      # optional - gap3
-                1
-                sage: b.__cmp__(a)                                      # optional - gap3
-                -1
-            """
-            return super(ComplexReflectionGroup.Element, self).__cmp__(other)
-
 class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
 
     def _repr_(self):
@@ -2344,249 +2049,6 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
         type_str = self._irrcomp_repr_(self._type[0])
         return 'Irreducible complex reflection group of rank %s and type %s'%(self._rank,type_str)
 
-    def elements_below_coxeter_element(self, c=None):
-        r"""
-        Return all elements in ``self`` in the interval `[1,c]` in the
-        absolute order of ``self``.
-
-        This order is defined by
-
-        .. MATH::
-
-            \omega \leq_R \tau \Leftrightarrow \ell_R(\omega) +
-            \ell_R(\omega^{-1} \tau) = \ell_R(\tau),
-
-        where `\ell_R` denotes the reflection length.
-
-        .. NOTE::
-
-            ``self`` is assumed to be well-generated.
-
-        INPUT:
-
-        - ``c`` -- (default: ``None``) if an element ``c`` is given, it
-          is used as the maximal element in the interval; if a list is
-          given, the union of the various maximal elements is computed
-
-        EXAMPLES::
-
-            sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
-
-            sage: sorted( w.reduced_word() for w in W.elements_below_coxeter_element() )    # optional - gap3
-            [[], [1], [1, 2], [1, 2, 1], [2]]
-
-            sage: sorted( w.reduced_word() for w in W.elements_below_coxeter_element(W.from_reduced_word([2,1])) )  # optional - gap3
-            [[], [1], [1, 2, 1], [2], [2, 1]]
-
-            sage: sorted( w.reduced_word() for w in W.elements_below_coxeter_element(W.from_reduced_word([2])) )    # optional - gap3
-            [[], [2]]
-        """
-        if c in self:
-            cs = [c]
-        elif c is None:
-            cs = [self.coxeter_element()]
-        else:
-            cs = list(c)
-        l = cs[0].reflection_length(in_unitary_group=True)
-        f = lambda pi: any(pi.reflection_length(in_unitary_group=True)
-                           + (c*pi**-1).reflection_length(in_unitary_group=True) == l
-                           for c in cs)
-        # first computing the conjugacy classes only needed if the interaction with gap3 is slow due to a bug
-        #self.conjugacy_classes()
-        return filter(f, self)
-
-    # TODO: lift to ComplexReflectionGroups.Finite
-    #       this method can be defined for well-generated, finite,
-    #       irreducible complex reflection group. The current
-    #       implementation uses this particular connection to chevie.
-    # TODO: have a cached and an uncached version
-    @cached_method
-    def noncrossing_partition_lattice(self, c=None, L=None, in_unitary_group=False):
-        r"""
-        Return the interval `[1,c]` in the absolute order of
-        ``self`` as a finite lattice.
-
-        .. SEEALSO:: :meth:`elements_below_coxeter_element`
-
-        INPUT:
-
-        - ``c`` -- (default: ``None``) if an element ``c`` in ``self`` is
-          given, it is used as the maximal element in the interval
-
-        - ``L`` -- (default: ``None``) if a subset ``L`` (must be hashable!)
-          of ``self`` is given, it is used as the underlying set (only
-          cover relations are checked)
-
-        - ``in_unitary_group`` -- (default: ``False``) if ``False``, the
-          relation is given by `\sigma \leq \tau` if
-          `l_R(\sigma) + l_R(\sigma^{-1}\tau) = l_R(\tau)`;
-          if ``True``, the relation is given by `\sigma \leq \tau` if
-          `\dim(\mathrm{Fix}(\sigma)) + \dim(\mathrm{Fix}(\sigma^{-1}\tau))
-          = \dim(\mathrm{Fix}(\tau))`
-
-        EXAMPLES::
-
-            sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
-
-            sage: sorted( w.reduced_word() for w in W.noncrossing_partition_lattice() ) # optional - gap3
-            [[], [1], [1, 2], [1, 2, 1], [2]]
-
-            sage: sorted( w.reduced_word() for w in W.noncrossing_partition_lattice(W.from_reduced_word([2,1])) )   # optional - gap3
-            [[], [1], [1, 2, 1], [2], [2, 1]]
-
-            sage: sorted( w.reduced_word() for w in W.noncrossing_partition_lattice(W.from_reduced_word([2])) ) # optional - gap3
-            [[], [2]]
-        """
-        from sage.combinat.posets.all import Poset, LatticePoset
-        if c is None:
-            c = self.coxeter_element()
-
-        smart_covers = not in_unitary_group
-
-        if self.is_real():
-            smart_covers = in_unitary_group = True
-
-        R = self.reflections()
-        if L is None:
-            L = self.elements_below_coxeter_element(c=c)
-            if c.is_coxeter_element():
-                smart_covers = in_unitary_group = True
-        rels = []
-        ref_lens = {w: w.reflection_length(in_unitary_group=in_unitary_group)
-                    for w in L}
-        if smart_covers:
-            for pi in L:
-                for t in R:
-                    tau = pi*t
-                    if tau in L and ref_lens[pi] + 1 == ref_lens[tau]:
-                        rels.append((pi,tau))
-        else:
-            rels = [(pi,tau) for pi in L for tau in L
-                    if ref_lens[pi] + ref_lens[pi.inverse()*tau] == ref_lens[tau]]
-        P = Poset((L,rels), cover_relations=smart_covers, facade=True)
-        if P.is_lattice():
-            return LatticePoset(P)
-        else:
-            return P
-
-    # TODO: lift to ComplexReflectionGroups.Finite
-    #       this method can be defined for well-generated, finite,
-    #       irreducible complex reflection group. The current
-    #       implementation uses this particular connection to chevie.
-    def generalized_noncrossing_partitions(self, m, c=None, positive=False):
-        r"""
-        Return the set of all chains of length ``m`` in the noncrossing
-        partition lattice of ``self``, see
-        :meth:`noncrossing_partition_lattice`.
-
-        .. NOTE::
-
-            ``self`` is assumed to be well-generated
-
-        INPUT:
-
-        - ``c`` -- (default: ``None``) if an element ``c`` in ``self``
-          is given, it is used as the maximal element in the interval
-
-        - ``positive`` -- (default: ``False``) if ``True``, only those
-          generalized noncrossing partitions of full support are returned
-
-        EXAMPLES::
-
-            sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
-
-            sage: sorted([w.reduced_word() for w in chain]              # optional - gap3
-            ....:        for chain in W.generalized_noncrossing_partitions(2))  # optional - gap3
-            [[[], [], [1, 2]],
-             [[], [1], [2]],
-             [[], [1, 2], []],
-             [[], [1, 2, 1], [1]],
-             [[], [2], [1, 2, 1]],
-             [[1], [], [2]],
-             [[1], [2], []],
-             [[1, 2], [], []],
-             [[1, 2, 1], [], [1]],
-             [[1, 2, 1], [1], []],
-             [[2], [], [1, 2, 1]],
-             [[2], [1, 2, 1], []]]
-
-            sage: sorted([w.reduced_word() for w in chain]              # optional - gap3
-            ....:        for chain in W.generalized_noncrossing_partitions(2, positive=True))   # optional - gap3
-            [[[], [1, 2], []],
-             [[], [1, 2, 1], [1]],
-             [[1], [2], []],
-             [[1, 2], [], []],
-             [[1, 2, 1], [], [1]],
-             [[1, 2, 1], [1], []],
-             [[2], [1, 2, 1], []]]
-        """
-        from sage.combinat.combination import Combinations
-        NC = self.noncrossing_partition_lattice(c=c)
-        one = self.one()
-        if c is None:
-            c = self.coxeter_element()
-        chains = NC.chains()
-        NCm = set()
-        iter = chains.breadth_first_search_iterator()
-        chain = next(iter)
-        chain = next(iter)
-        while len(chain) <= m:
-            chain.append( c )
-            for i in range(len(chain)-1, 0, -1):
-                chain[i] = chain[i-1]**-1 * chain[i]
-            k = m + 1 - len(chain)
-            for positions in Combinations(range(m+1),k):
-                ncm = []
-                for l in range(m+1):
-                    if l in positions:
-                        ncm.append(one)
-                    else:
-                        l_prime = l - len([i for i in positions if i <= l])
-                        ncm.append(chain[l_prime])
-                if not positive or prod(ncm[:-1]).has_full_support():
-                    NCm.add(tuple(ncm))
-            try:
-                chain = next(iter)
-            except StopIteration:
-                chain = range(m + 1)
-        return NCm
-
-    # TODO: lift to ComplexReflectionGroups.Finite
-    #       this method can be defined for well-generated, finite,
-    #       irreducible complex reflection group. The current
-    #       implementation uses this particular connection to chevie.
-    # TODO: have a cached and an uncached version
-    def absolute_poset(self, in_unitary_group=False):
-        r"""
-        Return the poset induced by the absolute order of ``self`` as a
-        finite lattice.
-
-        INPUT:
-
-        - ``in_unitary_group`` -- (default: ``False``) if ``False``, the
-          relation is given by ``\sigma \leq \tau`` if
-          `l_R(\sigma) + l_R(\sigma^{-1}\tau) = l_R(\tau)`
-          If ``True``, the relation is given by `\sigma \leq \tau` if
-          `\dim(\mathrm{Fix}(\sigma)) + \dim(\mathrm{Fix}(\sigma^{-1}\tau))
-          = \dim(\mathrm{Fix}(\tau))`.
-
-        .. SEEALSO:: :meth:`noncrossing_partition_lattice`
-
-        EXAMPLES::
-
-            sage: P = ReflectionGroup((1,1,3)).absolute_poset(); P      # optional - gap3
-            Finite poset containing 6 elements
-
-            sage: sorted(w.reduced_word() for w in P)                   # optional - gap3
-            [[], [1], [1, 2], [1, 2, 1], [2], [2, 1]]
-
-            sage: W = ReflectionGroup(4); W                             # optional - gap3
-            Irreducible complex reflection group of rank 2 and type ST4
-            sage: W.absolute_poset()                                    # optional - gap3
-            Finite poset containing 24 elements
-        """
-        return self.noncrossing_partition_lattice(L=self)
-
     class Element(ComplexReflectionGroup.Element):
 
         # TODO: lift to ComplexReflectionGroups.Finite
@@ -2597,6 +2059,9 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
         def is_coxeter_element(self, which_primitive=1, is_class_representative=False):
             r"""
             Return ``True`` if ``self`` is a Coxeter element.
+
+            This is, whether ``self`` has an eigenvalue that is a
+            primitive `h`-th root of unity.
 
             INPUT:
 
@@ -2610,6 +2075,7 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
             .. SEEALSO::
 
                 :meth:`~IrreducibleComplexReflectionGroup.coxeter_element`
+                :meth:`~sage.categories.finite_complex_reflection_groups.coxeter_elements`
 
             EXAMPLES::
 
@@ -2663,15 +2129,19 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
             r"""
             Return whether ``self`` is regular.
 
-            This is, if ``self`` has an eigenvector with eigenvalue
+            This is, if ``self`` has an eigenvector with eigenvalue of order
             ``h`` and which does not lie in any reflection hyperplane.
 
+            INPUT:
+
+            - ``h`` -- the order of the eigenvalue
             - ``is_class_representative`` -- boolean (default ``True``) whether
               to compute instead on the conjugacy class representative
 
             EXAMPLES::
 
-                sage: W = ReflectionGroup((1,1,3)); h = W.coxeter_number()  # optional - gap3
+                sage: W = ReflectionGroup((1,1,3))                      # optional - gap3
+                sage: h = W.coxeter_number()                            # optional - gap3
                 sage: for w in W:                                       # optional - gap3
                 ....:     print("{} {}".format(w.reduced_word(), w.is_regular(h)))
                 [] False
@@ -2709,108 +2179,93 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
                 [2, 1, 2, 3, 2, 1, 2, 1, 3, 2, 1]
                 [2, 1, 2, 3, 2, 1, 2, 1, 3, 2, 1, 2, 3]
                 [1, 2, 1, 3, 2, 1, 2, 1, 3, 2, 1, 2, 3]
+
+            Check that :trac:`25478` is fixed::
+
+                sage: W = ReflectionGroup(["A",5])                      # optional - gap3
+                sage: w = W.from_reduced_word([1,2,3,5])                # optional - gap3
+                sage: w.is_regular(4)                                   # optional - gap3
+                False
+                sage: W = ReflectionGroup(["A",3])                      # optional - gap3
+                sage: len([w for w in W if w.is_regular(w.order())])    # optional - gap3
+                18
             """
             evs = self.reflection_eigenvalues(is_class_representative=is_class_representative)
-            I = identity_matrix(self.parent().rank())
+            P = self.parent()
+            I = identity_matrix(P.rank())
+            UCF = UniversalCyclotomicField()
+            mat = self.to_matrix().transpose()
+
             for ev in evs:
                 ev = QQ(ev)
                 if h == ev.denom():
-                    M = self.to_matrix() - E(ev.denom(),ev.numer()) * I
-                    V = M.right_kernel()
-                    if all(not V.is_subspace(H) for H in self.parent().reflection_hyperplanes()):
+                    M = mat - E(ev.denom(), ev.numer()) * I
+                    if all(not M.right_kernel().is_subspace( H.change_ring(UCF) )
+                           for H in P.reflection_hyperplanes()):
                         return True
             return False
 
-def _gap_factorization(w, gens):
+def multi_partitions(n, S, i=None):
     r"""
-    Return a factorization of ``w`` using the generators ``gens``.
-
-    .. WARNING::
-
-        This is only available through GAP3 and Chevie.
+    Return all vectors as lists of the same length as ``S`` whose
+    standard inner product with ``S`` equals ``n``.
 
     EXAMPLES::
 
-        sage: from sage.combinat.root_system.reflection_group_complex import _gap_factorization
-        sage: W = ReflectionGroup((1,1,3))                              # optional - gap3
-        sage: gens = [ W.simple_reflection(i) for i in W.index_set() ]  # optional - gap3
-        sage: for w in W: _gap_factorization(w,gens)                    # optional - gap3
-        []
-        [1]
-        [0]
-        [0, 1]
-        [1, 0]
-        [0, 1, 0]
+        sage: from sage.combinat.root_system.reflection_group_complex import multi_partitions
+        sage: multi_partitions(10, [2,3,3,4])
+        [[5, 0, 0, 0],
+         [3, 0, 0, 1],
+         [2, 2, 0, 0],
+         [2, 1, 1, 0],
+         [2, 0, 2, 0],
+         [1, 0, 0, 2],
+         [0, 2, 0, 1],
+         [0, 1, 1, 1],
+         [0, 0, 2, 1]]
     """
-    gap3.execute('W := GroupWithGenerators(%s)'%str(gens))
-    gap3.execute(_gap_factorization_code)
-    fac = gap3('MinimalWord(W,%s)'%str(w)).sage()
-    return [i-1 for i in fac]
+    if i is None:
+        i = 0
+        S = sorted(S)
+    if n == 0:
+        return [[0]*len(S)]
+    if i == len(S):
+        return []
 
-_gap_factorization_code = """
-# MinimalWord(G,w)
-# given a permutation group G find some expression of minimal length in the
-# generators of G and their inverses of the element w (an inverse is
-# representated by a negative index).
-# To speed up  later calls to  the same function  the fields G.base, G.words,
-# G.nbwordslength are kept.
-MinimalWord:=function(G,w)
-  local decode,i,p,g,h,n,bag,nbe,nbf,new,gens,inds;
-  # to save space elements of G are represented as image of the base, and
-  # words are represented as: index of previous elt, last generator applied;
-  if not IsBound(G.base) then
-    StabChain(G);g:=G; G.base:=[];
-    while IsBound(g.orbit) do Add(G.base,g.orbit[1]); g:=g.stabilizer; od;
-  fi;
-  w:=OnTuples(G.base,w);
-  if not IsBound(G.words) then
-    G.words:=[G.base]; G.lastmult:=[[0,0]];
-    G.nbwordslength:=[1];
-  fi;
-  gens:=ShallowCopy(G.generators);inds:=[1..Length(gens)];
-  #  for g in G.generators do
-  #    if g<>g^-1 then Add(gens,g^-1);Add(inds,-Position(gens,g));fi;
-  #  od;
-  bag:=Set(G.words);
-  nbe:=0;nbf:=0;
-  decode:=function(i)local w;w:=[];
-    while i<>1 do Add(w,G.lastmult[i][2]); i:=G.lastmult[i][1];od;
-    return Reversed(w);
-  end;
-  while true do
-    if w in bag then return decode(Position(G.words,w));fi;
-    new:=Length(G.words);
-    for g in [1..Length(gens)] do
-      for h in [1+Sum(G.nbwordslength{[1..Length(G.nbwordslength)-1]})..new] do
-         n:=OnTuples(G.words[h],gens[g]);
-         if n in bag then
-           nbe:=nbe+1;# if nbe mod 500=1 then Print(".\c");fi;
-         else
-           nbf:=nbf+1;# if nbf mod 500=1 then Print("*\c");fi;
-       Add(G.words,n);Add(G.lastmult,[h,inds[g]]);AddSet(bag,n);
-         fi;
-       od;
-    od;
-    Add(G.nbwordslength,Length(G.words)-new);
-    Print("\n",G.nbwordslength[Length(G.nbwordslength)]," elements of length ",
-      Length(G.nbwordslength)-1);
-  od;
-end;"""
+    k = S[i]
+    if k > n:
+        return []
 
-def _gap_return(S, coerce_obj='self'):
+    coeffs1 = multi_partitions(n-k, S, i  )
+    coeffs2 = multi_partitions(n  , S, i+1)
+    for coeff in coeffs1:
+        coeff[i] += 1
+    coeffs = coeffs1 + coeffs2
+    return coeffs
+
+@cached_function
+def power(f, k):
     r"""
-    Return the string ``S`` after a few modifications are done.
+    Return `f^k` and caching all intermediate results.
 
-    This is a stupid internal function to take GAP output as a string,
-    replace a few things, to then turn it into a Sage object.
+    Speeds the computation if one has to compute `f^k`'s for many
+    values of `k`.
 
-    TESTS::
+    EXAMPLES::
 
-        sage: from sage.combinat.root_system.reflection_group_complex import _gap_return
-        sage: _gap_return("[ (), (1,4)(2,3)(5,6), (1,6,2)(3,5,4) ]")    # optional - gap3
-        "[self('()',check=False),self('(1,4)(2,3)(5,6)',check=False),self('(1,6,2)(3,5,4)',check=False)]"
+        sage: P.<x,y,z> = PolynomialRing(QQ)
+        sage: f = -2*x^2 + 2*x*y - 2*y^2 + 2*y*z - 2*z^2
+        sage: all( f^k == power(f,k) for k in range(20) )
+        True
     """
-    S = S.replace(' ','').replace('\n','')
-    S = S.replace(',(','\',check=False),%s(\'('%coerce_obj).replace('[','[%s(\''%coerce_obj).replace(']','\',check=False)]')
-    return S
+    if k == 1:
+        return f
 
+    b = [int(a) for a in reversed(ZZ(k).binary())]
+    if sum(b) == 1:
+        if b[1] == 1:
+            return f**2
+        else:
+            return power(f,2**b.index(1)/2)**2
+    else:
+        return prod(power(f,2**i) for i,a in enumerate(b) if a)

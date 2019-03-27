@@ -56,7 +56,8 @@ arithmetic_operators = {add_vararg: '+',
                         operator.add: '+',
                         operator.sub: '-',
                         operator.mul: '*',
-                        operator.div: '/',
+                        operator.truediv: '/',
+                        operator.floordiv: '//',
                         operator.pow: '^'}
 
 relation_operators = {operator.eq:'==',
@@ -89,7 +90,7 @@ class FDerivativeOperator(object):
             sage: f = function('foo')
             sage: op = FDerivativeOperator(f, [0,1])
             sage: op(x,y)
-            D[0, 1](foo)(x, y)
+            diff(foo(x, y), x, y)
             sage: op(x,x^2)
             D[0, 1](foo)(x, x^2)
 

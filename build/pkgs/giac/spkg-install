@@ -1,42 +1,24 @@
-#!/usr/bin/env bash
-
 ###########################################
 ## Giac
 ###########################################
 
-
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
 
 #############################################################
 #    Environment Variables
 #############################################################
 # If CFLAGS and CXXFLAGS are unset, giac looks to set -g -O2,
 #   but if they are not empty, the -g -O2 is not added
+CFLAGS="-g -O2 $CFLAGS"
 CXXFLAGS="-g -O2 $CXXFLAGS"
 CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
 
+if [ `uname -m` = "ppc64" ]; then
+    CPPFLAGS="-Dx86_64 $CPPFLAGS"
+fi
 
+export CFLAGS CXXFLAGS CPPFLAGS
 
 cd src
-
-#############################################################
-#   Patches
-#############################################################
-
-echo "Applying patches..."
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 
 #############################################################
 #   configure
@@ -53,40 +35,43 @@ done
 echo "Configuring giac..."
 
 
-#    --disable-gmpxx  (broken built)
-
-./configure --prefix="$SAGE_LOCAL" --disable-gui --disable-gmpxx
-
-if [ $? -ne 0 ]; then
-    exit 1
+#    --disable-ao     (avoid libao deps)
+#    --disable-lapack (avoid lapack and blas deps because they could be from the base system)
+#   On OS X (10.12) the built in intl is broken
+DISABLENLS=""
+if [ "$UNAME" = "Darwin" ]; then
+    echo "OS X Building without Native Language Support"
+    DISABLENLS="--disable-nls"
 fi
 
-#############################################################
-#   Build and Install
-#############################################################
-
-echo "Building  giac..."
-$MAKE
-
-if [ $? -ne 0 ]; then
-    exit 1
-fi
-
-echo "Installing giac..."
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing Giac."
-    exit 1
-fi
-
+sdh_configure --disable-gui --disable-ao --disable-lapack "$DISABLENLS"
 
 #############################################################
-#   Build dir for the pexpect interface
+#   Build
 #############################################################
-# create the script_subdirectory for the pexpect giac interface by running a trivial instruction
-sage -c "giac(1)"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error running the pexpect interface of giac"
-    exit 1
-fi
 
+sdh_make
+
+#############################################################
+#   Clean old install
+#############################################################
+echo "Cleaning giac..."
+rm -f ${SAGE_LOCAL}/lib/libgiac*
+rm -f ${SAGE_LOCAL}/bin/icas
+rm -f ${SAGE_LOCAL}/bin/xcas
+rm -f ${SAGE_LOCAL}/bin/cas_help
+rm -f ${SAGE_LOCAL}/bin/pgiac
+rm -f ${SAGE_LOCAL}/bin/en_cas_help
+rm -f ${SAGE_LOCAL}/bin/es_cas_help
+rm -f ${SAGE_LOCAL}/bin/fr_cas_help
+rm -f ${SAGE_LOCAL}/bin/giac
+rm -f ${SAGE_LOCAL}/bin/xcasnew
+rm -rf ${SAGE_LOCAL}/share/giac
+rm -rf ${SAGE_LOCAL}/share/doc/giac
+rm -rf ${SAGE_LOCAL}/include/giac
+
+#############################################################
+#   Install
+#############################################################
+
+sdh_make_install

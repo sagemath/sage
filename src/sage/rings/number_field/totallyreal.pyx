@@ -105,20 +105,18 @@ Authors
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
-include 'sage/ext/stdsage.pxi'
+from __future__ import absolute_import, print_function
+
+from cysignals.memory cimport check_calloc, sig_free
 
 import math
 import sys
 
 from sage.libs.gmp.mpz cimport *
-from sage.libs.pari.types cimport *
-from sage.libs.pari.pari_instance cimport PariInstance
-from sage.libs.pari.gen cimport gen as pari_gen
-
-import sage.libs.pari.pari_instance
-cdef PariInstance pari = sage.libs.pari.pari_instance.pari
+from sage.libs.pari.all import pari
+from cypari2.gen cimport Gen as pari_gen
+from sage.libs.pari.misc cimport new_t_POL_from_int_star
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
@@ -136,7 +134,7 @@ cpdef double odlyzko_bound_totallyreal(int n):
     This function returns the unconditional Odlyzko bound for the root
     discriminant of a totally real number field of degree n.
 
-    .. note::
+    .. NOTE::
 
         The bounds for n > 50 are not necessarily optimal.
 
@@ -175,6 +173,7 @@ cpdef double odlyzko_bound_totallyreal(int n):
         dB = 33.9508
     return dB
 
+
 def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False,
                                       phc=False, keep_fields=False, t_2=False,
                                       just_print=False,
@@ -190,7 +189,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
 
     where ``length(a) = d+1``, so in particular always ``a[d] = 1``.
 
-    .. note::
+    .. NOTE::
 
         This is guaranteed to give all primitive such fields, and
         seems in practice to give many imprimitive ones.
@@ -253,8 +252,8 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
 
         sage: enumerate_totallyreal_fields_prim(2, 10)
         [[5, x^2 - x - 1], [8, x^2 - 2]]
-        sage: enumerate_totallyreal_fields_prim(2, 10)[0][1].parent()
-        Interface to the PARI C library
+        sage: type(enumerate_totallyreal_fields_prim(2, 10)[0][1])
+        <type 'cypari2.gen.Gen'>
         sage: enumerate_totallyreal_fields_prim(2, 10, return_pari_objects=False)[0][0].parent()
         Integer Ring
         sage: enumerate_totallyreal_fields_prim(2, 10, return_pari_objects=False)[0][1].parent()
@@ -298,7 +297,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     ng = B_pari
     pari_tmp1 = B_pari
 
-    dB = PY_NEW(Integer)
+    dB = Integer.__new__(Integer)
     dB_odlyzko = odlyzko_bound_totallyreal(n_int)
     mpz_set_d(dB.value, dB_odlyzko)
     dB = 40000*((dB+1)**n_int)
@@ -306,10 +305,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         counts[i] = 0
 
     B_pari = pari(B)
-    f_out = <int *>sig_malloc((n_int+1)*sizeof(int))
-    if f_out == NULL: raise MemoryError
-    for i from 0 <= i < n_int:
-        f_out[i] = 0
+    f_out = <int *>check_calloc(n_int + 1, sizeof(int))
     f_out[n_int] = 1
 
     if keep_fields:
@@ -372,7 +368,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         T.incr(f_out,0,0,phc_flag)
 
     while f_out[n]:
-        nf = pari.new_t_POL_from_int_star(f_out, n_int+1, 0)
+        nf = new_t_POL_from_int_star(f_out, n_int+1, 0)
         if verb_int:
             print("==>", nf, "[")
             for j from 0 <= j < n-1:
@@ -487,12 +483,12 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     # Make sure to return elements that belong to Sage
     if return_seqs:
         return [[ZZ(counts[i]) for i in range(4)],
-                [[ZZ(s[0]), map(QQ, s[1].polrecip().Vec())] for s in S]]
+                [[ZZ(s[0]), [QQ(x) for x in s[1].polrecip().Vec()]] for s in S]]
     elif return_pari_objects:
         return S
     else:
         Px = PolynomialRing(QQ, 'x')
-        return [[ZZ(s[0]), Px(map(QQ, s[1].list()))]
+        return [[ZZ(s[0]), Px([QQ(x) for x in s[1].list()])]
                 for s in S]
 
 def weed_fields(S, Py_ssize_t lenS=0):
@@ -536,41 +532,3 @@ def weed_fields(S, Py_ssize_t lenS=0):
        i += 1
 
     return lenS
-
-def timestr(m):
-    r"""
-    Converts seconds to a human-readable time string.
-
-    INPUT:
-
-    - m -- integer, number of seconds
-
-    OUTPUT:
-
-    The time in days, hours, etc.
-
-    EXAMPLES::
-
-        sage: sage.rings.number_field.totallyreal.timestr(3765)
-        '1h 2m 45.0s'
-    """
-
-    n = math.floor(m)
-    p = m-n
-    outstr = ''
-    if m >= 60*60*24:
-        t = n//(60*60*24)
-        outstr += str(t)[:len(str(t))-2] + 'd '
-        n -= t*(60*60*24)
-    if m >= 60*60:
-        t = n//(60*60)
-        outstr += str(t)[:len(str(t))-2] + 'h '
-        n -= t*(60*60)
-    if m >= 60:
-        t = n//60
-        outstr += str(t)[:len(str(t))-2] + 'm '
-        n -= t*60
-    n += p
-    outstr += '%.1f' % n + 's'
-
-    return outstr

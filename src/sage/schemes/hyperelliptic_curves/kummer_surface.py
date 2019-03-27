@@ -9,7 +9,7 @@ Kummer surfaces over a general ring
 #*****************************************************************************
 
 from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.schemes.generic.algebraic_scheme \
+from sage.schemes.projective.projective_subscheme\
      import AlgebraicScheme_subscheme_projective
 from sage.categories.homset import Hom
 from sage.categories.all import Schemes

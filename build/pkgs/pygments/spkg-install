@@ -1,28 +1,14 @@
-#!/usr/bin/env bash
-
 if [ "$SAGE_LOCAL" = "" ]; then
    echo "SAGE_LOCAL undefined ... exiting";
    echo "Maybe run 'sage -sh'?"
    exit 1
 fi
 
-#Remove old version
-rm -rf "$SAGE_LOCAL"/lib/python/site-packages/Pygments-*
-
 #Install new version
 cd src
 
-# Apply patches
-echo "Patching Pygments..."
-for p in ../patches/*.patch; do
-    patch -p1 <$p
-    if [ $? -ne 0 ]; then
-        echo "Error applying patch $p"
-        exit 1
-    fi
-done
+sdh_pip_install .
 
-python setup.py install
 if [ $? -ne 0 ]; then
    echo "Error installing Pygments."
    exit 1

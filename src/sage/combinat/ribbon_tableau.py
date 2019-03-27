@@ -1,7 +1,7 @@
 r"""
 Ribbon Tableaux
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,16 +13,17 @@ Ribbon Tableaux
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-# python3
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import division, print_function, absolute_import
 
 from sage.structure.parent import Parent
+from sage.structure.element import parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
 from sage.rings.all import QQ, ZZ
+from sage.rings.integer import Integer
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.skew_partition import SkewPartition, SkewPartitions
 from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, SemistandardSkewTableaux
@@ -31,6 +32,8 @@ from sage.combinat.partition import Partition, _Partitions
 from sage.misc.superseded import deprecated_function_alias
 from . import permutation
 import functools
+
+from sage.combinat.permutation import to_standard
 
 
 class RibbonTableau(SkewTableau):
@@ -91,7 +94,7 @@ class RibbonTableau(SkewTableau):
             return RibbonTableaux().from_expr(expr)
 
         try:
-            rt = map(tuple, rt)
+            rt = [tuple(row) for row in rt]
         except TypeError:
             raise TypeError("each element of the ribbon tableau must be an iterable")
         if not all(row for row in rt):
@@ -117,8 +120,8 @@ class RibbonTableau(SkewTableau):
         l = 0
         t = 0
         for k in range(len(tableau)):
-            t += len([ x for x in tableau[k] if x is not None and x > -1])
-            l += len([ x for x in tableau[k] if x is not None and x > 0])
+            t += len([x for x in tableau[k] if x is not None and x > -1])
+            l += len([x for x in tableau[k] if x is not None and x > 0])
 
         if l == 0:
             return t
@@ -142,14 +145,12 @@ class RibbonTableau(SkewTableau):
             word: 2041100030
         """
         from sage.combinat.words.word import Word
-        w = []
-        for row in reversed(self):
-            w += row
-        return Word(w)
+        return Word([letter for row in reversed(self) for letter in row])
 
 #####################
 # Ribbon Tableaux   #
 #####################
+
 
 class RibbonTableaux(UniqueRepresentation, Parent):
     r"""
@@ -269,7 +270,7 @@ class RibbonTableaux(UniqueRepresentation, Parent):
 
     Element = RibbonTableau
     options = Tableaux.options
-    global_options = deprecated_function_alias(18555, options)
+
 
 class RibbonTableaux_shape_weight_length(RibbonTableaux):
     """
@@ -331,11 +332,12 @@ class RibbonTableaux_shape_weight_length(RibbonTableaux):
             sage: RibbonTableaux([[2,1],[]], [1,1,1], 1)
             Ribbon tableaux of shape [2, 1] / [] and weight [1, 1, 1] with 1-ribbons
         """
-        return "Ribbon tableaux of shape %s and weight %s with %s-ribbons"%(repr(self._shape), list(self._weight), self._length)
+        return "Ribbon tableaux of shape %s and weight %s with %s-ribbons" % (repr(self._shape), list(self._weight), self._length)
 
     def __contains__(self, x):
         """
         Note that this just checks to see if ``x`` appears in ``self``.
+
         This should be improved to provide actual checking.
 
         EXAMPLES::
@@ -406,7 +408,8 @@ class RibbonTableaux_shape_weight_length(RibbonTableaux):
         """
         # Strip zeros for graph_implementation_rec
         wt = [i for i in self._weight if i != 0]
-        return graph_implementation_rec(self._shape, wt, self._length, count_rec)[0]
+        return Integer(graph_implementation_rec(self._shape, wt, self._length, count_rec)[0])
+
 
 def insertion_tableau(skp, perm, evaluation, tableau, length):
     """
@@ -452,7 +455,7 @@ def insertion_tableau(skp, perm, evaluation, tableau, length):
     tableau = SkewTableau(expr=tableau).to_expr()[1]
 
     for k in range(len(tableau)):
-        tableau[-(k+1)] += [0]* ( skp[0][k] - partc[k] - len(tableau[-(k+1)]))
+        tableau[-(k+1)] += [0] * ( skp[0][k] - partc[k] - len(tableau[-(k+1)]))
 
     ## We construct a tableau from the southwest corner to the northeast one
     tableau = [[0] * (skp[0][k] - partc[k])
@@ -508,6 +511,7 @@ def count_rec(nexts, current, part, weight, length):
         return [sum(sum(j for j in i) for i in nexts)]
     else:
         return [len(current)]
+
 
 def list_rec(nexts, current, part, weight, length):
     """
@@ -596,27 +600,26 @@ def spin_rec(t, nexts, current, part, weight, length):
         sage: spin_rec(t, [[t^5], [t^4], [t^6 + t^4 + t^2]], [[[2, 2, 2, 2, 1], [0, 0, 3]], [[3, 3, 1, 1, 1], [0, 3, 0]], [[3, 3, 3], [3, 0, 0]]], sp([[3, 3, 3, 2, 1], []]), [2, 1, 1], 3)
         [2*t^7 + 2*t^5 + t^3]
     """
-    from sage.combinat.words.word import Word
-    R = ZZ['t']
-    if current == []:
-        return [R(0)]
+    if not current:
+        return [parent(t).zero()]
 
     tmp = []
     partp = part[0].conjugate()
+    ell = len(partp)
 
     #compute the contribution of the ribbons added at
     #the current node
-    for perms in [current[i][1] for i in range(len(current))]:
-        perm = [partp[i] + len(partp) - (i + 1) - perms[i]
-                for i in range(len(partp))]
-        perm.reverse()
-        perm = Word(perm).standard_permutation()
-        tmp.append( (weight[-1]*(length-1)-perm.number_of_inversions()) )
+    for val in current:
+        perms = val[1]
+        perm = [partp[i] + ell - (i + 1) - perms[i] for i in reversed(range(ell))]
+        perm = to_standard(perm)
+        tmp.append( weight[-1]*(length-1) - perm.number_of_inversions() )
 
-    if nexts != []:
-        return [sum([sum([t**tmp[i]*nexts[i][j] for j in range(len(nexts[i]))]) for i in range(len(tmp))])]
+    if nexts:
+        return [ sum(sum(t**tval * nval for nval in nexts[i])
+                     for i, tval in enumerate(tmp)) ]
     else:
-        return [sum([t**tmp[i] for i in range(len(tmp))])]
+        return [ sum(t**val for val in tmp) ]
 
 
 def spin_polynomial_square(part, weight, length):
@@ -643,7 +646,6 @@ def spin_polynomial_square(part, weight, length):
         3*t^18 + 5*t^16 + 9*t^14 + 6*t^12 + 3*t^10
     """
     R = ZZ['t']
-    t = R.gen()
 
     if part in _Partitions:
         part = SkewPartition([part,_Partitions([])])
@@ -651,9 +653,11 @@ def spin_polynomial_square(part, weight, length):
         part = SkewPartition(part)
 
     if part == [[],[]] and weight == []:
-        return t.parent()(1)
+        return R.one()
 
+    t = R.gen()
     return R(graph_implementation_rec(part, weight, length, functools.partial(spin_rec,t))[0])
+
 
 def spin_polynomial(part, weight, length):
     """
@@ -679,10 +683,11 @@ def spin_polynomial(part, weight, length):
         3*t^9 + 5*t^8 + 9*t^7 + 6*t^6 + 3*t^5
     """
     from sage.symbolic.ring import SR
-    sp = spin_polynomial_square(part,weight,length)
+    sp = spin_polynomial_square(part, weight, length)
     t = SR.var('t')
-    c = sp.coefficients(sparse=False)
-    return sum([c[i]*t**(QQ(i)/2) for i in range(len(c))])
+    coeffs = sp.list()
+    return sum(c * t**(QQ(i)/2) for i,c in enumerate(coeffs))
+
 
 def cospin_polynomial(part, weight, length):
     """
@@ -708,20 +713,18 @@ def cospin_polynomial(part, weight, length):
         3*t^4 + 6*t^3 + 9*t^2 + 5*t + 3
     """
     R = ZZ['t']
-    t = R.gen()
 
     # The power in the spin polynomial are all half integers
     # or all integers.  Manipulation of expressions need to
     # separate cases
     sp = spin_polynomial_square(part, weight, length)
     if sp == 0:
-        return R(0)
+        return R.zero()
 
-    coeffs = [c for c in sp.coefficients(sparse=False) if c != 0]
-    d = len(coeffs)-1
-    exponents = [d-e for e in range(len(coeffs))]
-
-    return R(sum([ coeffs[i]*t**exponents[i] for i in range(len(coeffs))]))
+    coeffs = [c for c in sp.list() if c != 0]
+    d = len(coeffs) - 1
+    t = R.gen()
+    return R( sum(c * t**(d-i) for i,c in enumerate(coeffs)) )
 
 
 ##     //////////////////////////////////////////////////////////////////////////////////////////
@@ -752,6 +755,9 @@ def graph_implementation_rec(skp, weight, length, function):
         weight = []
 
     partp = skp[0].conjugate()
+    ell = len(partp)
+    outer = skp[1]
+    outer_len = len(outer)
 
     ## Some tests in order to know if the shape and the weight are compatible.
     if weight != [] and weight[-1] <= len(partp):
@@ -762,22 +768,22 @@ def graph_implementation_rec(skp, weight, length, function):
     selection = []
 
     for j in range(len(perms)):
-        retire = [(partp[i]+ len(partp) - (i+1) - perms[j][i]) for i in range(len(partp))]
+        retire = [(val + ell - (i+1) - perms[j][i]) for i,val in enumerate(partp)]
         retire.sort(reverse=True)
-        retire = [ retire[i] - len(partp) + (i+1) for i in range(len(retire))]
+        retire = [val - ell + (i+1) for i,val in enumerate(retire)]
 
-        if retire[-1] >= 0 and retire == [i for i in reversed(sorted(retire))]:
-            retire = Partition([x for x in retire if x != 0]).conjugate()
+        if retire[-1] >= 0 and retire == sorted(retire, reverse=True):
+            retire = Partition(retire).conjugate()
 
             # Cutting branches if the retired partition has a line strictly included into the inner one
-            append = True
-            padded_retire = retire + [0]*(len(skp[1])-len(retire))
-            for k in range(len(skp[1])):
-                if padded_retire[k] - skp[1][k] < 0:
-                    append = False
-                    break
-            if append:
-                selection.append([retire, perms[j]])
+            if len(retire) >= outer_len:
+                append = True
+                for k in range(outer_len):
+                    if retire[k] - outer[k] < 0:
+                        append = False
+                        break
+                if append:
+                    selection.append([retire, perms[j]])
 
     #selection contains the list of current nodes
 
@@ -786,12 +792,11 @@ def graph_implementation_rec(skp, weight, length, function):
     else:
         #The recursive calls permit us to construct the list of the sons
         #of all current nodes in selection
-        a = [graph_implementation_rec([p[0], skp[1]], weight[:-1], length, function) for p in selection]
+        a = [graph_implementation_rec([p[0], outer], weight[:-1], length, function)
+             for p in selection]
         return function(a, selection, skp, weight, length)
 
-
 ##############################################################
-
 
 
 class MultiSkewTableau(CombinatorialElement):
@@ -995,6 +1000,7 @@ class MultiSkewTableaux(UniqueRepresentation, Parent):
 
     Element = MultiSkewTableau
 
+
 class SemistandardMultiSkewTableaux(MultiSkewTableaux):
     """
     Semistandard multi skew tableaux.
@@ -1133,6 +1139,7 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
                 restmp.append( S.from_shape_and_word(parts[i], w) )
             yield self.element_class(self, restmp)
 
+
 class RibbonTableau_class(RibbonTableau):
     """
     This exists solely for unpickling ``RibbonTableau_class`` objects.
@@ -1143,7 +1150,7 @@ class RibbonTableau_class(RibbonTableau):
 
         TESTS::
 
-            sage: loads('x\x9c5\xcc\xbd\x0e\xc2 \x14@\xe1\xb4Z\x7f\xd0\x07\xc1\x85D}\x8f\x0e\x8d\x1d\t\xb9\x90\x1bJ\xa44\x17\xe8h\xa2\x83\xef-\xda\xb8\x9do9\xcf\xda$\xb0(\xcc4j\x17 \x8b\xe8\xb4\x9e\x82\xca\xa0=\xc2\xcc\xba\x1fo\x8b\x94\xf1\x90\x12\xa3\xea\xf4\xa2\xfaA+\xde7j\x804\xd0\xba-\xe5]\xca\xd4H\xdapI[\xde.\xdf\xe8\x82M\xc2\x85\x8c\x16#\x1b\xe1\x8e\xea\x0f\xda\xf5\xd5\xf9\xdd\xd1\x1e%1>\x14]\x8a\x0e\xdf\xb8\x968"\xceZ|\x00x\xef5\x11')
+            sage: loads(b'x\x9c5\xcc\xbd\x0e\xc2 \x14@\xe1\xb4Z\x7f\xd0\x07\xc1\x85D}\x8f\x0e\x8d\x1d\t\xb9\x90\x1bJ\xa44\x17\xe8h\xa2\x83\xef-\xda\xb8\x9do9\xcf\xda$\xb0(\xcc4j\x17 \x8b\xe8\xb4\x9e\x82\xca\xa0=\xc2\xcc\xba\x1fo\x8b\x94\xf1\x90\x12\xa3\xea\xf4\xa2\xfaA+\xde7j\x804\xd0\xba-\xe5]\xca\xd4H\xdapI[\xde.\xdf\xe8\x82M\xc2\x85\x8c\x16#\x1b\xe1\x8e\xea\x0f\xda\xf5\xd5\xf9\xdd\xd1\x1e%1>\x14]\x8a\x0e\xdf\xb8\x968"\xceZ|\x00x\xef5\x11')
             [[None, 1], [2, 3]]
             sage: loads(dumps( RibbonTableau([[None, 1],[2,3]]) ))
             [[None, 1], [2, 3]]
@@ -1151,8 +1158,7 @@ class RibbonTableau_class(RibbonTableau):
         self.__class__ = RibbonTableau
         self.__init__(RibbonTableaux(), state['_list'])
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.ribbon_tableau', 'RibbonTableau_class', RibbonTableau_class)
 register_unpickle_override('sage.combinat.ribbon_tableau', 'RibbonTableaux_shapeweightlength', RibbonTableaux)
 register_unpickle_override('sage.combinat.ribbon_tableau', 'SemistandardMultiSkewTtableaux_shapeweight', SemistandardMultiSkewTableaux)
-

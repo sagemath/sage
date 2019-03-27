@@ -76,6 +76,7 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/gp
    sage/interfaces/jmoldata
    sage/interfaces/kash
+   sage/interfaces/latte
    sage/interfaces/lie
    sage/interfaces/lisp
    sage/interfaces/macaulay2
@@ -91,6 +92,7 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/mwrank
    sage/interfaces/octave
    sage/interfaces/phc
+   sage/interfaces/polymake
    sage/interfaces/povray
    sage/interfaces/psage
    sage/interfaces/qepcad
@@ -100,6 +102,7 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/sage0
    sage/interfaces/scilab
    sage/interfaces/singular
+   sage/interfaces/sympy
    sage/interfaces/tachyon
    sage/interfaces/tides
 

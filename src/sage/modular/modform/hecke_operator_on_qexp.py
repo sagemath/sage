@@ -132,7 +132,7 @@ def _hecke_operator_on_basis(B, V, n, k, eps):
         [       0 14348908]
 
     The following used to cause a segfault due to accidentally
-    transposed second and third argument (#2107)::
+    transposed second and third argument (:trac:`2107`)::
 
         sage: B = victor_miller_basis(100,30)
         sage: t2 = hecke_operator_on_basis(B, 100, 2)

@@ -34,8 +34,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
     REFERENCES:
 
-    .. [Kac] Kac, *Infinite-dimensional Lie algebras*, Third Edition.
-       Cambridge, 1990.
+    - [Ka1990]_
 
     .. [KMPS] Kass, Moody, Patera and Slansky, *Affine Lie algebras,
        weight multiplicities, and branching rules*. Vols. 1, 2. University
@@ -62,10 +61,10 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
     where `(\, | \,)` is the invariant inner product on the weight
     lattice and `\rho` is the Weyl vector. Moreover if `m(\mu)>0`
     then `\mu\in\operatorname{supp}(V)` differs from `\Lambda` by an element
-    of the root lattice ([Kac]_, Propositions 11.3 and 11.4).
+    of the root lattice ([Ka1990]_, Propositions 11.3 and 11.4).
     
     Let `\delta` be the nullroot, which is the lowest positive imaginary
-    root. Then by [Kac]_, Proposition 11.3 or Corollary 11.9, for fixed `\mu`
+    root. Then by [Ka1990]_, Proposition 11.3 or Corollary 11.9, for fixed `\mu`
     the function `m(\mu - k\delta)` is a monotone increasing function of
     `k`. It is useful to take `\mu` to be such that this function is nonzero
     if and only if `k \geq 0`. Therefore we make the following definition.  If
@@ -186,7 +185,10 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
             sage: Lambda = RootSystem(['A',3,1]).weight_lattice(extended=true).fundamental_weights()
             sage: V = IntegrableRepresentation(Lambda[1]+Lambda[2]+Lambda[3])
-            sage: TestSuite(V).run()
+
+        Some methods required by the category are not implemented::
+
+            sage: TestSuite(V).run()  # known bug (#21387)
         """
         CategoryObject.__init__(self, base=ZZ, category=Modules(ZZ))
 
@@ -262,11 +264,11 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
     @cached_method
     def level(self):
-        """
+        r"""
         Return the level of ``self``.
 
         The level of a highest weight representation `V_{\Lambda}` is
-        defined as `(\Lambda | \delta)` See [Kac]_ section 12.4.
+        defined as `(\Lambda | \delta)` See [Ka1990]_ section 12.4.
 
         EXAMPLES::
 
@@ -281,7 +283,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         """
         Return the Coxeter number of the Cartan type of ``self``.
 
-        The Coxeter number is defined in [Kac]_ Chapter 6, and commonly
+        The Coxeter number is defined in [Ka1990]_ Chapter 6, and commonly
         denoted `h`.
 
         EXAMPLES::
@@ -298,7 +300,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         r"""
         Return the dual Coxeter number of the Cartan type of ``self``.
 
-        The dual Coxeter number is defined in [Kac]_ Chapter 6, and commonly
+        The dual Coxeter number is defined in [Ka1990]_ Chapter 6, and commonly
         denoted `h^{\vee}`.
 
         EXAMPLES::
@@ -323,7 +325,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         return "Integrable representation of %s with highest weight %s"%(self._cartan_type, self._Lam)
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::
@@ -366,7 +368,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             [   0    0   -1    1 -1/2]
             [   0    0    0 -1/2    1]
 
-        .. WARNING:
+        .. WARNING::
 
             If ``qelt1`` or ``qelt1`` accidentally gets coerced into
             the extended weight lattice, this will return an answer,
@@ -387,7 +389,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Symmetric form between an element of the weight and root lattices
         associated to ``self``.
 
-        .. WARNING:
+        .. WARNING::
 
             If ``qelt`` accidentally gets coerced into the extended weight
             lattice, this will return an answer, and it will be wrong. To make
@@ -631,7 +633,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Iterate over the set of real positive roots `\alpha \in \Delta^+`
         in ``self`` such that `\nu - \alpha \in Q^+`.
         
-        See [Kac]_ Proposition 6.3 for the way to compute the set of real
+        See [Ka1990]_ Proposition 6.3 for the way to compute the set of real
         roots for twisted affine case.
         
         INPUT:
@@ -643,13 +645,13 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             sage: Lambda = RootSystem(['B',3,1]).weight_lattice(extended=true).fundamental_weights()
             sage: V = IntegrableRepresentation(Lambda[0]+Lambda[1]+Lambda[3])
             sage: mw = V.dominant_maximal_weights()[0]
-            sage: list(V._freudenthal_roots_real(V.highest_weight() - mw))
+            sage: sorted(V._freudenthal_roots_real(V.highest_weight() - mw), key=str)
             [alpha[1],
-             alpha[2],
-             alpha[3],
              alpha[1] + alpha[2],
+             alpha[1] + alpha[2] + alpha[3],
+             alpha[2],
              alpha[2] + alpha[3],
-             alpha[1] + alpha[2] + alpha[3]]
+             alpha[3]]
         """
         for al in self._classical_positive_roots:
             if min(self._from_weight_helper(nu-al)) >= 0:
@@ -722,8 +724,8 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             sage: V = IntegrableRepresentation(Lambda[0]+Lambda[1]+Lambda[3])
             sage: mw = V.dominant_maximal_weights()[0]
             sage: F = V._freudenthal_roots_real(V.highest_weight() - mw)
-            sage: [V._freudenthal_accum(mw, al) for al in F]
-            [4, 4, 3, 4, 3, 3]
+            sage: sorted([V._freudenthal_accum(mw, al) for al in F])
+            [3, 3, 3, 4, 4, 4]
         """
         ret = 0
         n = list(self._from_weight_helper(self._Lam - nu))
@@ -848,6 +850,50 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         self._mdict[n] = ret
         return ret
 
+    def mult(self, mu):
+        """
+        Return the weight multiplicity of ``mu``.
+
+        INPUT:
+
+        - ``mu`` -- an element of the weight lattice
+
+        EXAMPLES::
+
+            sage: L = RootSystem("B3~").weight_lattice(extended=True)
+            sage: Lambda = L.fundamental_weights()
+            sage: delta = L.null_root()
+            sage: W = L.weyl_group(prefix="s")
+            sage: [s0,s1,s2,s3] = W.simple_reflections()
+            sage: V = IntegrableRepresentation(Lambda[0])
+            sage: V.mult(Lambda[2]-2*delta)
+            3
+            sage: V.mult(Lambda[2]-Lambda[1])
+            0
+            sage: weights = [w.action(Lambda[1]-4*delta) for w in [s1,s2,s0*s1*s2*s3]]
+            sage: weights
+            [-Lambda[1] + Lambda[2] - 4*delta,
+            Lambda[1] - 4*delta,
+            -Lambda[1] + Lambda[2] - 4*delta]
+            sage: [V.mult(mu) for mu in weights]
+            [35, 35, 35]
+
+        TESTS::
+
+            sage: L = RootSystem("B3~").weight_lattice(extended=True)
+            sage: La = L.fundamental_weights()
+            sage: V = IntegrableRepresentation(La[0])
+            sage: Q = RootSystem("B3~").root_space()
+            sage: al = Q.simple_roots()
+            sage: V.mult(1/2*al[1])
+            0
+        """
+        try:
+            n = self.from_weight(mu)
+        except TypeError:
+            return ZZ.zero()
+        return self.m(n)
+
     @cached_method
     def dominant_maximal_weights(self):
         r"""
@@ -855,7 +901,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         A weight `\mu` is *maximal* if it has nonzero multiplicity but
         `\mu + \delta`` has multiplicity zero. There are a finite number
-        of dominant maximal weights. Indeed, [Kac]_ Proposition 12.6
+        of dominant maximal weights. Indeed, [Ka1990]_ Proposition 12.6
         shows that the dominant maximal weights are in bijection with
         the classical weights in `k \cdot F` where `F` is the fundamental
         alcove and `k` is the level. The construction used in this
@@ -890,7 +936,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         return tuple(ret)
 
     def string(self, max_weight, depth=12):
-        """
+        r"""
         Return the list of multiplicities `m(\Lambda - k \delta)` in
         ``self``, where `\Lambda` is ``max_weight`` and `k` runs from `0`
         to ``depth``.
@@ -958,7 +1004,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         """
         S = self.strings(depth=depth)
         for mw in self.dominant_maximal_weights():
-            print( "{}: {}".format(mw, ' '.join(str(x) for x in S[mw])) )
+            print("{}: {}".format(mw, ' '.join(str(x) for x in S[mw])) )
 
     def modular_characteristic(self, mu=None):
         r"""
@@ -967,7 +1013,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         The modular characteristic is a rational number introduced
         by Kac and Peterson [KacPeterson]_, required to interpret the
         string functions as Fourier coefficients of modular forms. See
-        [Kac]_ Section 12.7. Let `k` be the level, and let `h^\vee`
+        [Ka1990]_ Section 12.7. Let `k` be the level, and let `h^\vee`
         be the dual Coxeter number. Then
 
         .. MATH::

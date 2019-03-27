@@ -30,7 +30,7 @@ https://pypi.python.org/pypi/pyhull (see also documentation at http://pythonhost
 == Upstream Contact ==
 
 C. Bradford Barber
-bradb@shore.net 
+bradb@shore.net
 or qhull@qhull.org
 
 == Dependencies ==

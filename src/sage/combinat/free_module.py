@@ -2,832 +2,39 @@
 """
 Free modules
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007      Mike Hansen <mhansen@gmail.com>,
 #                     2007-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #                     2010      Christian Stump <christian.stump@univie.ac.at>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import Element, have_same_parent
 from sage.structure.parent import Parent
-from sage.structure.indexed_generators import IndexedGenerators
-from sage.misc.misc import repr_lincomb
+from sage.structure.indexed_generators import IndexedGenerators, parse_indices_names
 from sage.modules.module import Module
 from sage.rings.all import Integer
-import sage.structure.element
-from sage.combinat.family import Family
+from sage.structure.element import parent
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.combinat.cartesian_product import CartesianProduct_iters
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.categories.morphism import SetMorphism
 from sage.categories.all import Category, Sets, ModulesWithBasis
-from sage.combinat.dict_addition import dict_addition, dict_linear_combination
-from sage.typeset.ascii_art import AsciiArt, empty_ascii_art
-from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art
+from sage.categories.tensor import tensor
+import sage.data_structures.blas_dict as blas
+from sage.typeset.ascii_art import AsciiArt
+from sage.typeset.unicode_art import UnicodeArt
+from sage.misc.superseded import deprecation
 
-# TODO: move the content of this class to CombinatorialFreeModule.Element and ModulesWithBasis.Element
-class CombinatorialFreeModuleElement(Element):
-    def __init__(self, M, x):
-        """
-        Create a combinatorial module element. This should never be
-        called directly, but only through the parent combinatorial
-        free module's :meth:`__call__` method.
+import six
 
-        TESTS::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: f = B['a'] + 3*B['c']; f
-            B['a'] + 3*B['c']
-            sage: f == loads(dumps(f))
-            True
-        """
-        Element.__init__(self, M)
-        self._monomial_coefficients = x
-
-    def __iter__(self):
-        """
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: f = B['a'] + 3*B['c']
-            sage: [i for i in sorted(f)]
-            [('a', 1), ('c', 3)]
-
-        ::
-
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: a = s([2,1]) + s([3])
-            sage: [i for i in sorted(a)]
-            [([2, 1], 1), ([3], 1)]
-        """
-        return self._monomial_coefficients.iteritems()
-
-    def __contains__(self, x):
-        """
-        Returns whether or not a combinatorial object x indexing a basis
-        element is in the support of self.
-
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: f = B['a'] + 3*B['c']
-            sage: 'a' in f
-            True
-            sage: 'b' in f
-            False
-
-        ::
-
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: a = s([2,1]) + s([3])
-            sage: Partition([2,1]) in a
-            True
-            sage: Partition([1,1,1]) in a
-            False
-        """
-        return x in self._monomial_coefficients and self._monomial_coefficients[x] != 0
-
-    @cached_method
-    def __hash__(self):
-        """
-        Return the hash value for ``self``.
-
-        The result is cached.
-
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: f = B['a'] + 3*B['c']
-            sage: hash(f)
-            6429418278783588506           # 64-bit
-            726440090                     # 32-bit
-
-            sage: F = RootSystem(['A',2]).ambient_space()
-            sage: f = F.simple_root(0)
-            sage: hash(f)
-            6920829894162680369           # 64-bit
-            -528971215                    # 32-bit
-
-        This uses the recipe that was proposed for frozendicts in `PEP
-        0416 <http://legacy.python.org/dev/peps/pep-0416/>`_ (and adds
-        the hash of the parent). This recipe relies on the hash
-        function for frozensets which uses tricks to mix the hash
-        values of the items in case they are similar.
-
-        .. TODO::
-
-            It would be desirable to make the hash value depend on the
-            hash value of the parent. See :trac:`15959`.
-        """
-        return hash(frozenset(self._monomial_coefficients.items()))
-
-    def monomial_coefficients(self, copy=True):
-        """
-        Return the internal dictionary which has the combinatorial objects
-        indexing the basis as keys and their corresponding coefficients as
-        values.
-
-        INPUT:
-
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
-          represented by a dictionary ``d``, then make a copy of ``d``;
-          if ``False``, then this can cause undesired behavior by
-          mutating ``d``
-
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: f = B['a'] + 3*B['c']
-            sage: d = f.monomial_coefficients()
-            sage: d['a']
-            1
-            sage: d['c']
-            3
-
-        To run through the monomials of an element, it is better to
-        use the idiom::
-
-            sage: for (t,c) in f:
-            ....:     print("{} {}".format(t,c))
-            a 1
-            c 3
-
-        ::
-
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: a = s([2,1])+2*s([3,2])
-            sage: d = a.monomial_coefficients()
-            sage: type(d)
-            <type 'dict'>
-            sage: d[ Partition([2,1]) ]
-            1
-            sage: d[ Partition([3,2]) ]
-            2
-        """
-        if copy:
-            return dict(self._monomial_coefficients)
-        return self._monomial_coefficients
-
-    def _sorted_items_for_printing(self):
-        """
-        Returns the items (i.e terms) of ``self``, sorted for printing
-
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: f = B['a'] + 2*B['c'] + 3 * B['b']
-            sage: f._sorted_items_for_printing()
-            [('a', 1), ('b', 3), ('c', 2)]
-            sage: F.print_options(sorting_reverse=True)
-            sage: f._sorted_items_for_printing()
-            [('c', 2), ('b', 3), ('a', 1)]
-            sage: F.print_options(sorting_reverse=False) #reset to original state
-
-        .. seealso:: :meth:`_repr_`, :meth:`_latex_`, :meth:`print_options`
-        """
-        print_options = self.parent().print_options()
-        v = self._monomial_coefficients.items()
-        try:
-            v.sort(key=lambda monomial_coeff:
-                        print_options['sorting_key'](monomial_coeff[0]),
-                   reverse=print_options['sorting_reverse'])
-        except Exception: # Sorting the output is a plus, but if we can't, no big deal
-            pass
-        return v
-
-    def _repr_(self):
-        """
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'], prefix='F')
-            sage: e = F.basis()
-            sage: e['a'] + 2*e['b'] # indirect doctest
-            F['a'] + 2*F['b']
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'], prefix='')
-            sage: e = F.basis()
-            sage: e['a'] + 2*e['b'] # indirect doctest
-            ['a'] + 2*['b']
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'], prefix='', scalar_mult=' ', bracket=False)
-            sage: e = F.basis()
-            sage: e['a'] + 2*e['b'] # indirect doctest
-            'a' + 2 'b'
-
-        Controling the order of terms by providing a comparison
-        function on elements of the support::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'],
-            ....:                             sorting_reverse=True)
-            sage: e = F.basis()
-            sage: e['a'] + 3*e['b'] + 2*e['c']
-            2*B['c'] + 3*B['b'] + B['a']
-
-            sage: F = CombinatorialFreeModule(QQ, ['ac', 'ba', 'cb'],
-            ....:                             sorting_key=lambda x: x[1])
-            sage: e = F.basis()
-            sage: e['ac'] + 3*e['ba'] + 2*e['cb']
-            3*B['ba'] + 2*B['cb'] + B['ac']
-        """
-        return repr_lincomb(self._sorted_items_for_printing(),
-                            scalar_mult=self.parent()._print_options['scalar_mult'],
-                            repr_monomial = self.parent()._repr_term,
-                            strip_one = True)
-
-    def _ascii_art_(self):
-        """
-        TESTS::
-
-            sage: M = QuasiSymmetricFunctions(QQ).M()
-            sage: ascii_art(M[1,3]**2)  # indirect doctest
-            4*M      + 2*M       + 2*M      + 2*M       + 2*M       + M
-                 ***      ******        ***         ***         ***     ******
-               ***        *             *        ****         ***      **
-               *          *           ***        *           **
-               *                      *
-        """
-        from sage.misc.misc import coeff_repr
-        terms = self._sorted_items_for_printing()
-        scalar_mult = self.parent()._print_options['scalar_mult']
-        repr_monomial = self.parent()._ascii_art_term
-        strip_one = True
-
-        if repr_monomial is None:
-            repr_monomial = str
-
-        s = empty_ascii_art # ""
-        first = True
-
-        if scalar_mult is None:
-            scalar_mult = "*"
-
-        for (monomial,c) in terms:
-            b = repr_monomial(monomial) # PCR
-            if c != 0:
-                break_points = []
-                coeff = coeff_repr(c, False)
-                if coeff != "0":
-                    if coeff == "1":
-                        coeff = ""
-                    elif coeff == "-1":
-                        coeff = "-"
-                    elif b._l > 0:
-                        if len(coeff) > 0 and monomial == 1 and strip_one:
-                            b = empty_ascii_art # ""
-                        else:
-                            b = AsciiArt([scalar_mult]) + b
-                    if not first:
-                        if len(coeff) > 0 and coeff[0] == "-":
-                            coeff = " - %s"%coeff[1:]
-                        else:
-                            coeff = " + %s"%coeff
-                        break_points = [2]
-                    else:
-                        coeff = "%s"%coeff
-                s += AsciiArt([coeff], break_points) + b
-                first = False
-        if first:
-            return "0"
-        elif s == empty_ascii_art:
-            return AsciiArt(["1"])
-        else:
-            return s
-
-    def _unicode_art_(self):
-        """
-        TESTS::
-
-            sage: M = QuasiSymmetricFunctions(QQ).M()
-            sage: unicode_art(M[1,1]**2)  # indirect doctest
-            6*M   + 2*M    + 2*M    + 2*M    + M
-               ┌┐      ┌┬┐       ┌┐       ┌┐     ┌┬┐
-               ├┤      ├┼┘      ┌┼┤       ├┤    ┌┼┼┘
-               ├┤      ├┤       ├┼┘      ┌┼┤    └┴┘
-               ├┤      └┘       └┘       └┴┘
-               └┘
-        """
-        from sage.misc.misc import coeff_repr
-        terms = self._sorted_items_for_printing()
-        scalar_mult = self.parent()._print_options['scalar_mult']
-        repr_monomial = self.parent()._unicode_art_term
-        strip_one = True
-
-        if repr_monomial is None:
-            repr_monomial = str
-
-        s = empty_unicode_art  # ""
-        first = True
-
-        if scalar_mult is None:
-            scalar_mult = "*"
-
-        for (monomial, c) in terms:
-            b = repr_monomial(monomial)  # PCR
-            if c != 0:
-                break_points = []
-                coeff = coeff_repr(c, False)
-                if coeff != "0":
-                    if coeff == "1":
-                        coeff = ""
-                    elif coeff == "-1":
-                        coeff = "-"
-                    elif b._l > 0:
-                        if len(coeff) > 0 and monomial == 1 and strip_one:
-                            b = empty_unicode_art  # ""
-                        else:
-                            b = UnicodeArt([scalar_mult]) + b
-                    if not first:
-                        if len(coeff) > 0 and coeff[0] == "-":
-                            coeff = " - %s" % coeff[1:]
-                        else:
-                            coeff = " + %s" % coeff
-                        break_points = [2]
-                    else:
-                        coeff = "%s" % coeff
-                s += UnicodeArt([coeff], break_points) + b
-                first = False
-        if first:
-            return "0"
-        elif s == empty_unicode_art:
-            return UnicodeArt(["1"])
-        else:
-            return s
-
-    def _latex_(self):
-        r"""
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: f = B['a'] + 3*B['c']
-            sage: latex(f)
-            B_{a} + 3B_{c}
-
-        ::
-
-            sage: QS3 = SymmetricGroupAlgebra(QQ,3)
-            sage: a = 2 + QS3([2,1,3])
-            sage: latex(a) #indirect doctest
-            2[1, 2, 3] + [2, 1, 3]
-
-       ::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b'], prefix='beta', latex_prefix='\\beta')
-            sage: x = F.an_element()
-            sage: x
-            2*beta['a'] + 2*beta['b']
-            sage: latex(x)
-            2\beta_{a} + 2\beta_{b}
-
-        Controling the order of terms by providing a comparison
-        function on elements of the support::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'],
-            ....:                             sorting_reverse=True)
-            sage: e = F.basis()
-            sage: latex(e['a'] + 3*e['b'] + 2*e['c'])
-            2B_{c} + 3B_{b} + B_{a}
-
-            sage: F = CombinatorialFreeModule(QQ, ['ac', 'ba', 'cb'],
-            ....:                             sorting_key=lambda x: x[1])
-            sage: e = F.basis()
-            sage: latex(e['ac'] + 3*e['ba'] + 2*e['cb'])
-            3B_{ba} + 2B_{cb} + B_{ac}
-        """
-        return repr_lincomb(self._sorted_items_for_printing(),
-                            scalar_mult       = self.parent()._print_options['scalar_mult'],
-                            latex_scalar_mult = self.parent()._print_options['latex_scalar_mult'],
-                            repr_monomial = self.parent()._latex_term,
-                            is_latex=True, strip_one = True)
-
-    def __eq__(self, other):
-        """
-        EXAMPLES::
-
-            sage: F1 = CombinatorialFreeModule(QQ, [1, 2, 3])
-            sage: F2 = CombinatorialFreeModule(QQ, [1, 2, 3], prefix = "g")
-            sage: F1.zero() == F1.zero()
-            True
-            sage: F1.zero() == F1.an_element()
-            False
-            sage: F1.an_element() == F1.an_element()
-            True
-            sage: F1.an_element() is None
-            False
-
-        .. TODO::
-
-            Currently, if ``self`` and ``other`` do not have the same parent,
-            seemingly equal elements do not evaluate equal, since conversions
-            between different modules have not been established.
-
-        ::
-
-            sage: F1.zero() == 0
-            True
-            sage: F1(0)
-            0
-
-        ::
-
-            sage: F1.zero() == F2.zero()
-            False
-            sage: F1(F2.zero())
-            Traceback (most recent call last):
-            ...
-            TypeError: do not know how to make x (= 0) an element of self (=Free module generated by {1, 2, 3} over Rational Field)
-            sage: F = AlgebrasWithBasis(QQ).example()
-            sage: F.one() == 1
-            True
-            sage: 1 == F.one()
-            True
-            sage: 2 * F.one() == int(2)
-            True
-            sage: int(2) == 2 * F.one()
-            True
-
-            sage: S = SymmetricFunctions(QQ); s = S.s(); p = S.p()
-            sage: p[2] == s[2] - s[1, 1]
-            True
-            sage: p[2] == s[2]
-            False
-
-        This feature is disputable, in particular since it can make
-        equality testing costly. It may be removed at some point.
-
-        Equality testing can be a bit tricky when the order of terms
-        can vary because their indices are incomparable with
-        ``cmp``. The following test did fail before :trac:`12489` ::
-
-            sage: F = CombinatorialFreeModule(QQ, Subsets([1,2,3]))
-            sage: x = F.an_element()
-            sage: (x+F.zero()).terms()  # random
-            [2*B[{1}], 3*B[{2}], B[{}]]
-            sage: x.terms()             # random
-            [2*B[{1}], B[{}], 3*B[{2}]]
-            sage: x+F.zero() == x
-            True
-
-        TESTS::
-
-            sage: TestSuite(F1).run()
-            sage: TestSuite(F).run()
-        """
-        if have_same_parent(self, other):
-            return self._monomial_coefficients == other._monomial_coefficients
-        from sage.structure.element import get_coercion_model
-        import operator
-        try:
-            return get_coercion_model().bin_op(self, other, operator.eq)
-        except TypeError:
-            return False
-
-    def __ne__(left, right):
-        """
-        EXAMPLES::
-
-            sage: F1 = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: F1.an_element() != F1.an_element()
-            False
-            sage: F1.an_element() != F1.zero()
-            True
-        """
-        return not left == right
-
-    def __cmp__(left, right):
-        """
-        The ordering is the one on the underlying sorted list of
-        (monomial,coefficients) pairs.
-
-        EXAMPLES::
-
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: a = s([2,1])
-            sage: b = s([1,1,1])
-            sage: cmp(a,b) #indirect doctest
-            1
-        """
-        if have_same_parent(left, right) and left._monomial_coefficients == right._monomial_coefficients:
-            return 0
-        v = sorted(mc for mc in left._monomial_coefficients.items() if mc[1] != 0)
-        w = sorted(mc for mc in right._monomial_coefficients.items() if mc[1] != 0)
-        return cmp(v, w)
-
-    def _add_(self, other):
-        """
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: B['a'] + 3*B['c']
-            B['a'] + 3*B['c']
-
-        ::
-
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: s([2,1]) + s([5,4]) # indirect doctest
-            s[2, 1] + s[5, 4]
-            sage: a = s([2,1]) + 0
-            sage: len(a.monomial_coefficients())
-            1
-        """
-        assert have_same_parent(self, other)
-
-        F = self.parent()
-        return F._from_dict( dict_addition( [ self._monomial_coefficients, other._monomial_coefficients ] ), remove_zeros=False )
-
-    def _neg_(self):
-        """
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: f = B['a'] + 3*B['c']
-            sage: -f
-            -B['a'] - 3*B['c']
-
-        ::
-
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: -s([2,1]) # indirect doctest
-            -s[2, 1]
-        """
-        F = self.parent()
-        return F._from_dict( dict_linear_combination( [ ( self._monomial_coefficients, -1 ) ] ), remove_zeros=False )
-
-    def _sub_(self, other):
-        """
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: B['a'] - 3*B['c']
-            B['a'] - 3*B['c']
-
-        ::
-
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: s([2,1]) - s([5,4]) # indirect doctest
-            s[2, 1] - s[5, 4]
-        """
-        assert have_same_parent(self, other)
-        F = self.parent()
-        return F._from_dict( dict_linear_combination( [ ( self._monomial_coefficients, 1 ), (other._monomial_coefficients, -1 ) ] ), remove_zeros=False )
-
-    def _coefficient_fast(self, m):
-        """
-        Return the coefficient of ``m`` in ``self``, where ``m`` is key in
-        ``self._monomial_coefficients``.
-
-        EXAMPLES::
-
-            sage: p = Partition([2,1])
-            sage: q = Partition([1,1,1])
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: a = s(p)
-            sage: a._coefficient_fast([2,1])
-            Traceback (most recent call last):
-            ...
-            TypeError: unhashable type: 'list'
-
-        ::
-
-            sage: a._coefficient_fast(p)
-            1
-            sage: a._coefficient_fast(q)
-            0
-            sage: a[p]
-            1
-            sage: a[q]
-            0
-        """
-        return self._monomial_coefficients.get(m, self.base_ring().zero())
-
-    __getitem__ = _coefficient_fast
-
-    def _vector_(self, new_base_ring=None):
-        """
-        Returns ``self`` as a dense vector
-
-        INPUT:
-
-        - ``new_base_ring`` -- a ring (default: ``None``)
-
-        OUTPUT: a dense :func:`FreeModule` vector
-
-        .. WARNING:: This will crash/run forever if ``self`` is infinite dimensional!
-
-        .. SEEALSO::
-
-            - :func:`vector`
-            - :meth:`CombinatorialFreeModule.get_order`
-            - :meth:`CombinatorialFreeModule.from_vector`
-            - :meth:`CombinatorialFreeModule._dense_free_module`
-
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: f = B['a'] - 3*B['c']
-            sage: f._vector_()
-            (1, 0, -3)
-
-        One can use equivalently::
-
-            sage: f.to_vector()
-            (1, 0, -3)
-            sage: vector(f)
-            (1, 0, -3)
-
-        More examples::
-
-            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
-            sage: a = 2*QS3([1,2,3])+4*QS3([3,2,1])
-            sage: a._vector_()
-            (2, 0, 0, 0, 0, 4)
-            sage: a.to_vector()
-            (2, 0, 0, 0, 0, 4)
-            sage: vector(a)
-            (2, 0, 0, 0, 0, 4)
-            sage: a == QS3.from_vector(a.to_vector())
-            True
-
-        If ``new_base_ring`` is specified, then a vector over
-        ``new_base_ring`` is returned::
-
-            sage: a._vector_(RDF)
-            (2.0, 0.0, 0.0, 0.0, 0.0, 4.0)
-
-        .. NOTE::
-
-            :trac:`13406`: the current implementation has been optimized, at
-            the price of breaking the encapsulation for FreeModule
-            elements creation, with the following use case as metric,
-            on a 2008' Macbook Pro::
-
-                sage: F = CombinatorialFreeModule(QQ, range(10))
-                sage: f = F.an_element()
-                sage: %timeit f._vector_()   # not tested
-                625 loops, best of 3: 17.5 micros per loop
-
-             Other use cases may call for different or further
-             optimizations.
-        """
-        parent = self.parent()
-        dense_free_module = parent._dense_free_module(new_base_ring)
-        d = self._monomial_coefficients
-        return dense_free_module.element_class(dense_free_module,
-                                               [d.get(m, 0) for m in parent.get_order()],
-                                               coerce=True, copy=False)
-
-    to_vector = _vector_
-
-    def _acted_upon_(self, scalar, self_on_left=False):
-        """
-        Return the action of ``scalar`` (an element of the base ring) on
-        ``self``.
-
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-            sage: B = F.basis()
-            sage: B['a']*(1/2)  # indirect doctest
-            1/2*B['a']
-            sage: B['a']/2
-            1/2*B['a']
-            sage: B['a']*2      # indirect doctest
-            2*B['a']
-            sage: B['a']*int(2) # indirect doctest
-            2*B['a']
-
-            sage: 1/2*B['a']
-            1/2*B['a']
-            sage: 2*B['a']      # indirect doctest
-            2*B['a']
-            sage: int(2)*B['a'] # indirect doctest
-            2*B['a']
-
-        TESTS::
-
-            sage: F.get_action(QQ, operator.mul, True)
-            Right action by Rational Field on Free module generated by {'a', 'b', 'c'} over Rational Field
-            sage: F.get_action(QQ, operator.mul, False)
-            Left action by Rational Field on Free module generated by {'a', 'b', 'c'} over Rational Field
-            sage: F.get_action(ZZ, operator.mul, True)
-            Right action by Integer Ring on Free module generated by {'a', 'b', 'c'} over Rational Field
-            sage: F.get_action(F, operator.mul, True)
-            sage: F.get_action(F, operator.mul, False)
-
-        This also works when a coercion of the coefficient is needed, for
-        example with polynomials or fraction fields (:trac:`8832`)::
-
-            sage: P.<q> = QQ['q']
-            sage: V = CombinatorialFreeModule(P, Permutations())
-            sage: el = V(Permutation([3,1,2]))
-            sage: (3/2)*el
-            3/2*B[[3, 1, 2]]
-
-            sage: P.<q> = QQ['q']
-            sage: F = FractionField(P)
-            sage: V = CombinatorialFreeModule(F, Words())
-            sage: w = Words()('abc')
-            sage: (1+q)*V(w)
-            (q+1)*B[word: abc]
-            sage: ((1+q)/q)*V(w)
-            ((q+1)/q)*B[word: abc]
-
-        TODO:
-         - add non commutative tests
-        """
-        # With the current design, the coercion model does not have
-        # enough information to detect a priori that this method only
-        # accepts scalars; so it tries on some elements(), and we need
-        # to make sure to report an error.
-        if isinstance(scalar, Element) and scalar.parent() is not self.base_ring():
-            # Temporary needed by coercion (see Polynomial/FractionField tests).
-            if self.base_ring().has_coerce_map_from(scalar.parent()):
-                scalar = self.base_ring()( scalar )
-            else:
-                return None
-
-        F = self.parent()
-        D = self._monomial_coefficients
-        if self_on_left:
-            D = dict_linear_combination( [ ( D, scalar ) ], factor_on_left = False )
-        else:
-            D = dict_linear_combination( [ ( D, scalar ) ] )
-
-        return F._from_dict( D, remove_zeros=False )
-
-    # For backward compatibility
-    _lmul_ = _acted_upon_
-    _rmul_ = _acted_upon_
-
-    def __truediv__(self, x):
-        """
-        Division by coefficients.
-
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, [1,2,3])
-            sage: x = F._from_dict({1:2, 2:3})
-            sage: x/2
-            B[1] + 3/2*B[2]
-
-        ::
-
-            sage: F = CombinatorialFreeModule(QQ, [1,2,3])
-            sage: B = F.basis()
-            sage: f = 2*B[2] + 4*B[3]
-            sage: f/2
-            B[2] + 2*B[3]
-        """
-        if not self.base_ring().is_field():
-            return self.map_coefficients(lambda c: _divide_if_possible(c, x))
-
-        F = self.parent()
-        x = self.base_ring()( x )
-        x_inv = x**-1
-        D = self._monomial_coefficients
-        D = dict_linear_combination( [ ( D, x_inv ) ] )
-
-        return F._from_dict( D, remove_zeros=False )
-
-    __div__ = __truediv__
-
-
-def _divide_if_possible(x, y):
-    """
-    EXAMPLES::
-
-        sage: from sage.combinat.free_module import _divide_if_possible
-        sage: _divide_if_possible(4, 2)
-        2
-        sage: _.parent()
-        Integer Ring
-
-    ::
-
-        sage: _divide_if_possible(4, 3)
-        Traceback (most recent call last):
-        ...
-        ValueError: 4 is not divisible by 3
-    """
-    q, r = x.quo_rem(y)
-    if r != 0:
-        raise ValueError("%s is not divisible by %s"%(x, y))
-    else:
-        return q
 
 class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     r"""
@@ -843,7 +50,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     - ``element_class`` - the class of which elements of this module
       should be instances (optional, default None, in which case the
       elements are instances of
-      :class:`CombinatorialFreeModuleElement`)
+      :class:`~sage.modules.with_basis.indexed_element.IndexedFreeModuleElement`)
 
     - ``category`` - the category in which this module lies (optional,
       default None, in which case use the "category of modules with
@@ -870,7 +77,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         sage: e = F.basis()
         sage: e
-        Finite family {'a': B['a'], 'c': B['c'], 'b': B['b']}
+        Finite family {'a': B['a'], 'b': B['b'], 'c': B['c']}
 
     ::
 
@@ -890,7 +97,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     Some uses of
     :meth:`sage.categories.commutative_additive_semigroups.CommutativeAdditiveSemigroups.ParentMethods.summation`
-    and :meth:`.sum`::
+    and :meth:`sum`::
 
         sage: F = CombinatorialFreeModule(QQ, [1,2,3,4])
         sage: F.summation(F.monomial(1), F.monomial(3))
@@ -974,7 +181,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
          ('latex_bracket', False), ('latex_prefix', None),
          ('latex_scalar_mult', None), ('prefix', 'x'),
          ('scalar_mult', '*'),
-         ('sorting_key', <function <lambda> at ...>),
+         ('sorting_key', <function ...<lambda> at ...>),
          ('sorting_reverse', False), ('string_quotes', True),
          ('tensor_symbol', None)]
 
@@ -1032,10 +239,30 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         sage: g = 2*G.monomial(3) +     G.monomial(4)
         sage: tensor([f, g])
         2*x[1] # y[3] + x[1] # y[4] + 4*x[2] # y[3] + 2*x[2] # y[4]
+
+    We check that we can use the shorthand ``C.<a,b,...> = ...``::
+
+        sage: C.<x,y,z> = CombinatorialFreeModule(QQ)
+        sage: C
+        Free module generated by {'x', 'y', 'z'} over Rational Field
+        sage: a = x - y + 4*z; a
+        x - y + 4*z
+        sage: a.parent() is C
+        True
+
+    TESTS::
+
+        sage: XQ = SchubertPolynomialRing(QQ)
+        sage: XZ = SchubertPolynomialRing(ZZ)
+        sage: XQ == XZ
+        False
+        sage: XQ == XQ
+        True
     """
 
     @staticmethod
-    def __classcall_private__(cls, base_ring, basis_keys, category = None, prefix="B", **keywords):
+    def __classcall_private__(cls, base_ring, basis_keys=None, category=None,
+                              prefix=None, names=None, **keywords):
         """
         TESTS::
 
@@ -1066,6 +293,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F is G
             False
         """
+        if isinstance(basis_keys, range):
+            basis_keys = tuple(basis_keys)
         if isinstance(basis_keys, (list, tuple)):
             basis_keys = FiniteEnumeratedSet(basis_keys)
         category = ModulesWithBasis(base_ring).or_subcategory(category)
@@ -1077,11 +306,57 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         latex_bracket = keywords.get('latex_bracket', None)
         if isinstance(latex_bracket, list):
             keywords['latex_bracket'] = tuple(latex_bracket)
-        return super(CombinatorialFreeModule, cls).__classcall__(cls, base_ring, basis_keys, category = category, prefix=prefix, **keywords)
 
-    Element = CombinatorialFreeModuleElement
+        names, basis_keys, prefix = parse_indices_names(names, basis_keys, prefix, keywords)
+        if prefix is None:
+            prefix = "B"
 
-    def __init__(self, R, basis_keys, element_class = None, category = None, prefix="B", **kwds):
+        return super(CombinatorialFreeModule, cls).__classcall__(cls,
+            base_ring, basis_keys, category=category, prefix=prefix, names=names,
+            **keywords)
+
+    # We make this explicitly a Python class so that the methods,
+    #   specifically _mul_, from category framework still works. -- TCS
+    # We also need to deal with the old pickles too. -- TCS
+    Element = IndexedFreeModuleElement
+
+    @lazy_attribute
+    def element_class(self):
+        """
+        The (default) class for the elements of this parent
+
+        Overrides :meth:`Parent.element_class` to force the
+        construction of Python class. This is currently needed to
+        inherit really all the features from categories, and in
+        particular the initialization of ``_mul_`` in
+        :meth:`Magmas.ParentMethods.__init_extra__`.
+
+        EXAMPLES::
+
+            sage: A = Algebras(QQ).WithBasis().example(); A
+            An example of an algebra with basis: 
+            the free algebra on the generators ('a', 'b', 'c') over Rational Field
+
+            sage: A.element_class.mro()
+            [<class 'sage.categories.examples.algebras_with_basis.FreeAlgebra_with_category.element_class'>,
+             <... 'sage.modules.with_basis.indexed_element.IndexedFreeModuleElement'>,
+             ...]
+            sage: a,b,c = A.algebra_generators()
+            sage: a * b
+            B[word: ab]
+
+        TESTS::
+
+            sage: A.__class__.element_class.__module__
+            'sage.combinat.free_module'
+        """
+        return self.__make_element_class__(self.Element,
+                                           name="%s.element_class"%self.__class__.__name__,
+                                           module=self.__class__.__module__,
+                                           inherit=True)
+
+    def __init__(self, R, basis_keys=None, element_class=None, category=None,
+                 prefix=None, names=None, **kwds):
         r"""
         TESTS::
 
@@ -1105,7 +380,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
             sage: F = CombinatorialFreeModule(QQ, ['a','b','c'], category = FiniteDimensionalModulesWithBasis(QQ))
             sage: F.basis()
-            Finite family {'a': B['a'], 'c': B['c'], 'b': B['b']}
+            Finite family {'a': B['a'], 'b': B['b'], 'c': B['c']}
             sage: F.category()
             Category of finite dimensional vector spaces with basis over Rational Field
 
@@ -1122,10 +397,10 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         turn triggers ``self._repr_()``::
 
             sage: class MyAlgebra(CombinatorialFreeModule):
-            ...       def _repr_(self):
-            ...           return "MyAlgebra on %s"%(self.basis().keys())
-            ...       def product_on_basis(self,i,j):
-            ...           pass
+            ....:     def _repr_(self):
+            ....:         return "MyAlgebra on %s"%(self.basis().keys())
+            ....:     def product_on_basis(self,i,j):
+            ....:         pass
             sage: MyAlgebra(ZZ, ZZ, category = AlgebrasWithBasis(QQ))
             MyAlgebra on Integer Ring
 
@@ -1152,15 +427,14 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         # (e.g. root systems passes lists)
         basis_keys = Sets()(basis_keys, enumerated_set=True)
 
+        # This is needed for the Cartesian product
+        # TODO: Remove this duplication from __classcall_private__
+        names, basis_keys, prefix = parse_indices_names(names, basis_keys, prefix, kwds)
+        if prefix is None:
+            prefix = "B"
+
         # ignore the optional 'key' since it only affects CachedRepresentation
         kwds.pop('key', None)
-        # This needs to be first as per #10127
-        if 'monomial_cmp' in kwds:
-            from sage.misc.superseded import deprecation
-            deprecation(17229, "Option monomial_cmp is deprecated, use sorting_key and sorting_reverse instead.")
-            from functools import cmp_to_key
-            kwds['sorting_key'] = cmp_to_key(kwds['monomial_cmp'])
-            del kwds['monomial_cmp']
         if 'monomial_key' in kwds:
             kwds['sorting_key'] = kwds.pop('monomial_key')
         if 'monomial_reverse' in kwds:
@@ -1174,9 +448,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         if basis_keys in Sets().Finite():
             category = category.FiniteDimensional()
 
-        Parent.__init__(self, base = R, category = category,
-                        # Could we get rid of this?
-                        element_constructor = self._element_constructor_)
+        Parent.__init__(self, base=R, category=category, names=names)
 
         self._order = None
 
@@ -1194,7 +466,6 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: ascii_art(R.one())  # indirect doctest
             1
         """
-        from sage.typeset.ascii_art import AsciiArt
         try:
             if m == self.one_basis():
                 return AsciiArt(["1"])
@@ -1266,7 +537,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         return x
 
     # What semantic do we want for containment?
-    # Accepting anything that can be coerced is not reasonnable, especially
+    # Accepting anything that can be coerced is not reasonable, especially
     # if we allow coercion from the enumerated set.
     # Accepting anything that can be converted is an option, but that would
     # be expensive. So far, x in self if x.parent() == self
@@ -1286,7 +557,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: 5/3 in F
             False
         """
-        return sage.structure.element.parent(x) == self # is self?
+        return parent(x) == self # is self?
 
     def _element_constructor_(self, x):
         """
@@ -1404,7 +675,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         elif ((hasattr(self._indices, 'element_class') and
                isinstance(self._indices.element_class, type) and
                isinstance(x, self._indices.element_class))
-              or (sage.structure.element.parent(x) == self._indices)):
+              or (parent(x) == self._indices)):
             return self.monomial(x)
         elif x in self._indices:
             return self.monomial(self._indices(x))
@@ -1416,7 +687,32 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
                     pass
             raise TypeError("do not know how to make x (= %s) an element of self (=%s)"%(x,self))
 
-    def _an_element_impl(self):
+    def _convert_map_from_(self, S):
+        """
+        Implement the conversion from formal sums.
+
+        EXAMPLES::
+
+            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"])
+            sage: f = FormalSum([[2, "a"], [3, "b"]]); f
+            2*a + 3*b
+            sage: E._convert_map_from_(f.parent())
+            Generic morphism:
+              From: Abelian Group of all Formal Finite Sums over Integer Ring
+              To:   Free module generated by {'a', 'b', 'c'} over Rational Field
+            sage: E(f)
+            2*B['a'] + 3*B['b']
+
+            sage: E._convert_map_from_(ZZ)
+        """
+        from sage.structure.formal_sum import FormalSums
+        K = self.base_ring()
+        if isinstance(S, FormalSums) and K.has_coerce_map_from(S.base_ring()):
+            G = self.basis().keys()
+            return SetMorphism(S.Hom(self, category=self.category() | S.category()),
+                               lambda x: self.sum_of_terms( (G(g), K(c)) for c,g in x ))
+
+    def _an_element_impl(self): # TODO: REMOVE?
         """
         Return an element of ``self``, namely the zero element.
 
@@ -1429,6 +725,30 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             True
         """
         return self.element_class(self, {})
+
+    def _first_ngens(self, n):
+        """
+        Used by the preparser for ``F.<x> = ...``.
+
+        EXAMPLES::
+
+            sage: C = CombinatorialFreeModule(QQ, ZZ)
+            sage: C._first_ngens(3)
+            (B[0], B[1], B[-1])
+
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
+            sage: x,y
+            (x, y)
+        """
+        try:
+            # Try gens first for compatibility with classes that
+            #   rely on this (e.g., FreeAlgebra)
+            return tuple(self.gens())[:n]
+        except (AttributeError, ValueError, TypeError):
+            pass
+        B = self.basis()
+        it = iter(self._indices)
+        return tuple(B[next(it)] for i in range(n))
 
     def dimension(self):
         """
@@ -1460,17 +780,29 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     rank = dimension
 
-    def gens(self):
-        """
-        Return a tuple consisting of the basis elements of ``self``.
+    def is_exact(self):
+        r"""
+        Return ``True`` if elements of ``self`` have exact representations,
+        which is true of ``self`` if and only if it is true of
+        ``self.basis().keys()`` and ``self.base_ring()``.
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, ['a', 'b', 'c'])
-            sage: F.gens()
-            (B['a'], B['b'], B['c'])
+            sage: GroupAlgebra(GL(3, GF(7))).is_exact()
+            True
+            sage: GroupAlgebra(GL(3, GF(7)), RR).is_exact()
+            False
+            sage: GroupAlgebra(GL(3, pAdicRing(7))).is_exact() # not implemented correctly (not my fault)!
+            False
         """
-        return tuple(self.basis().values())
+        # The index set may not have a check for exactness
+        # Assume the index set is exact if we cannot check
+        try:
+            if not self.basis().keys().is_exact():
+                return False
+        except AttributeError:
+            pass
+        return self.base_ring().is_exact()
 
     def set_order(self, order):
         """
@@ -1521,23 +853,32 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         Return a comparison function on the basis indices that is
         compatible with the current term order.
 
+        DEPRECATED by :trac:`24548`.
+
         EXAMPLES::
 
             sage: A = FiniteDimensionalAlgebrasWithBasis(QQ).example()
             sage: Acmp = A.get_order_cmp()
-            sage: sorted(A.basis().keys(), Acmp)
+            doctest:warning...:
+            DeprecationWarning: comparison should use keys
+            See http://trac.sagemath.org/24548 for details.
+
+            sage: sorted(A.basis().keys(), Acmp) # py2
             ['x', 'y', 'a', 'b']
             sage: A.set_order(list(reversed(A.basis().keys())))
             sage: Acmp = A.get_order_cmp()
-            sage: sorted(A.basis().keys(), Acmp)
+            sage: sorted(A.basis().keys(), Acmp) # py2
             ['b', 'a', 'y', 'x']
         """
+        deprecation(24548, 'comparison should use keys')
         self.get_order()
         return self._order_cmp
 
     def _order_cmp(self, x, y):
         """
         Compare `x` and `y` w.r.t. the term order.
+
+        DEPRECATED by :trac:`24548`.
 
         INPUT:
 
@@ -1553,13 +894,24 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: A = CombinatorialFreeModule(QQ, ['x','y','a','b'])
             sage: A.set_order(['x', 'y', 'a', 'b'])
             sage: A._order_cmp('x', 'y')
+            doctest:warning...:
+            DeprecationWarning: comparison should use keys
+            See http://trac.sagemath.org/24548 for details.
             -1
             sage: A._order_cmp('y', 'y')
             0
             sage: A._order_cmp('a', 'y')
             1
         """
-        return cmp( self._rank_basis(x), self._rank_basis(y) )
+        deprecation(24548, 'comparison should use keys')
+        ix = self._rank_basis(x)
+        iy = self._rank_basis(y)
+        if ix < iy:
+            return -1
+        elif ix > iy:
+            return 1
+        else:
+            return 0
 
     def get_order_key(self):
         """
@@ -1602,36 +954,6 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         """
         return self._rank_basis(x)
 
-    @cached_method
-    def _dense_free_module(self, base_ring=None):
-        """
-        Returns a dense free module of the same dimension
-
-        INPUT:
-
-        - ``base_ring`` -- a ring or ``None``
-
-        If ``base_ring`` is ``None``, then the base ring of ``self`` is used.
-
-        This method is mostly used by
-        :meth:`CombinatorialFreeModule.Element._vector_`
-
-        .. SEEALSO:: :meth:`from_vector`
-
-        EXAMPLES::
-
-            sage: C = CombinatorialFreeModule(QQ['x'], ['a','b','c']); C
-            Free module generated by {'a', 'b', 'c'} over Univariate Polynomial Ring in x over Rational Field
-            sage: C._dense_free_module()
-            Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
-            sage: C._dense_free_module(QQ['x,y'])
-            Ambient free module of rank 3 over the integral domain Multivariate Polynomial Ring in x, y over Rational Field
-        """
-        if base_ring is None:
-            base_ring = self.base_ring()
-        from sage.modules.free_module import FreeModule
-        return FreeModule(base_ring, self.dimension())
-
     def from_vector(self, vector):
         """
         Build an element of ``self`` from a (sparse) vector.
@@ -1648,24 +970,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             True
         """
         cc = self.get_order()
-        return self._from_dict(dict( (cc[index], coeff) for (index,coeff) in vector.iteritems()))
-
-    def __cmp__(self, other):
-        """
-        EXAMPLES::
-
-            sage: XQ = SchubertPolynomialRing(QQ)
-            sage: XZ = SchubertPolynomialRing(ZZ)
-            sage: XQ == XZ #indirect doctest
-            False
-            sage: XQ == XQ
-            True
-        """
-        if not isinstance(other, self.__class__):
-            return -1
-        c = cmp(self.base_ring(), other.base_ring())
-        if c: return c
-        return 0
+        return self._from_dict({cc[index]: coeff for (index,coeff) in six.iteritems(vector)})
 
     def sum(self, iter_of_elements):
         """
@@ -1686,11 +991,11 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F.sum( f for _ in range(5) )
             10*B[1] + 10*B[2]
         """
-        D = dict_addition( element._monomial_coefficients for element in iter_of_elements )
-        return self._from_dict( D, remove_zeros=False )
+        D = blas.sum(element._monomial_coefficients for element in iter_of_elements)
+        return self._from_dict(D, remove_zeros=False)
 
     def linear_combination(self, iter_of_elements_coeff, factor_on_left=True):
-        """
+        r"""
         Return the linear combination `\lambda_1 v_1 + \cdots +
         \lambda_k v_k` (resp.  the linear combination `v_1 \lambda_1 +
         \cdots + v_k \lambda_k`) where ``iter_of_elements_coeff`` iterates
@@ -1713,7 +1018,10 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F.linear_combination( (f,i) for i in range(5) )
             20*B[1] + 20*B[2]
         """
-        return self._from_dict( dict_linear_combination( ( ( element._monomial_coefficients, coeff ) for element, coeff in iter_of_elements_coeff ), factor_on_left=factor_on_left ), remove_zeros=False )
+        return self._from_dict(blas.linear_combination( ((element._monomial_coefficients, coeff)
+                                                        for element, coeff in iter_of_elements_coeff),
+                                                        factor_on_left=factor_on_left ),
+                               remove_zeros=False)
 
     def term(self, index, coeff=None):
         """
@@ -1736,7 +1044,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         """
         if coeff is None:
             coeff = self.base_ring().one()
-        return self._from_dict( {index: coeff} )
+        return self._from_dict({index: coeff})
 
     def _monomial(self, index):
         """
@@ -1746,7 +1054,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F._monomial('a')
             B['a']
         """
-        return self._from_dict( {index: self.base_ring().one()}, remove_zeros = False )
+        return self._from_dict({index: self.base_ring().one()}, remove_zeros=False)
 
     @lazy_attribute
     def monomial(self):
@@ -1874,10 +1182,11 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         assert isinstance(d, dict)
         if coerce:
             R = self.base_ring()
-            d = {key: R(coeff) for key,coeff in d.iteritems()}
+            d = {key: R(coeff) for key, coeff in six.iteritems(d)}
         if remove_zeros:
-            d = {key: coeff for key, coeff in d.iteritems() if coeff}
-        return self.element_class( self, d )
+            d = {key: coeff for key, coeff in six.iteritems(d) if coeff}
+        return self.element_class(self, d)
+
 
 class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         """
@@ -1906,7 +1215,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         The basis of T is indexed by tuples of basis indices of F and G::
 
             sage: T.basis().keys()
-            Image of Cartesian product of {1, 2}, {3, 4} by <type 'tuple'>
+            Image of Cartesian product of {1, 2}, {3, 4} by <... 'tuple'>
             sage: T.basis().keys().list()
             [(1, 3), (1, 4), (2, 3), (2, 4)]
 
@@ -2004,7 +1313,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             self._print_options['tensor_symbol'] = options.get('tensor_symbol', tensor.symbol)
 
         def _repr_(self):
-            """
+            r"""
             This is customizable by setting
             ``self.print_options('tensor_symbol'=...)``.
 
@@ -2047,7 +1356,6 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                  ##      #
                          ##
             """
-            from sage.categories.tensor import tensor
             if hasattr(self, "_print_options"):
                 symb = self._print_options['tensor_symbol']
                 if symb is None:
@@ -2077,7 +1385,6 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                  └┴┘      ├┼┐
                           └┴┘
             """
-            from sage.categories.tensor import tensor
             if hasattr(self, "_print_options"):
                 symb = self._print_options['tensor_symbol']
                 if symb is None:
@@ -2095,7 +1402,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         _unicode_art_term = _unicode_art_
 
         def _latex_(self):
-            """
+            r"""
             TESTS::
 
                 sage: F = CombinatorialFreeModule(ZZ, [1,2,3])
@@ -2124,7 +1431,6 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 sage: tensor([f, g]) # indirect doctest
                 2*F[1] # G[3] + F[1] # G[4] + 4*F[2] # G[3] + 2*F[2] # G[4]
             """
-            from sage.categories.tensor import tensor
             if hasattr(self, "_print_options"):
                 symb = self._print_options['tensor_symbol']
                 if symb is None:
@@ -2134,7 +1440,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             return symb.join(module._repr_term(t) for (module, t) in zip(self._sets, term))
 
         def _latex_term(self, term):
-            """
+            r"""
             TESTS::
 
                 sage: F = CombinatorialFreeModule(ZZ, [1,2,3], prefix='x')
@@ -2182,7 +1488,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 2*B[1] # B[3] # B[5] + 2*B[1] # B[3] # B[6] + B[1] # B[4] # B[5] + B[1] # B[4] # B[6] + 4*B[2] # B[3] # B[5] + 4*B[2] # B[3] # B[6] + 2*B[2] # B[4] # B[5] + 2*B[2] # B[4] # B[6]
             """
             assert(module in ModulesWithBasis(self.base_ring()) for module in modules)
-            assert(sage.categories.tensor.tensor(modules) == self)
+            assert(tensor(modules) == self)
             # a list l such that l[i] is True if modules[i] is readily a tensor product
             is_tensor = [isinstance(module, CombinatorialFreeModule_Tensor) for module in modules]
             # the tensor_constructor, on basis elements
@@ -2195,7 +1501,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         def _tensor_of_elements(self, elements):
             """
             Returns the tensor product of the specified elements.
-            The result should be in self.
+            The result should be in ``self``.
 
             EXAMPLES::
 
@@ -2397,7 +1703,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
             sage: CP._sets_keys()
             [0, 1]
         """
-        return range(len(self._sets))
+        return list(range(len(self._sets)))
 
     def _repr_(self):
         """
@@ -2457,7 +1763,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
          - ``i`` -- an integer
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.__custom_name = "F"
             sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.__custom_name = "G"
@@ -2521,4 +1827,3 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
         pass
 
 CombinatorialFreeModule.CartesianProduct = CombinatorialFreeModule_CartesianProduct
-

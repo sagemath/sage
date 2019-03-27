@@ -11,11 +11,11 @@ TeX-System "installieren", wobei "installieren" hier eine einzige Datei
 kopieren bedeutet. Siehe hierfür auch :ref:`installation` in diesem
 Tutorial und den Abschnitt "Make SageTeX known to TeX" des `Sage installation guide
 <http://doc.sagemath.org/html/en/installation/index.html>`_ (`dieser Link
-<../installation/index.html>`_ sollte Sie zu einer lokalen Kopie der
+<../../en/installation/index.html>`_ sollte Sie zu einer lokalen Kopie der
 Installationsanleitung führen) um weitere Informationen zu erhalten.
 
 Hier stellen wir ein sehr kurzes Beispiel vor wie man SageTeX nutzt.
-Die komplette Dokumentation finden Sie unter ``SAGE_ROOT/local/share/texmf/tex/generic/sagetex``,
+Die komplette Dokumentation finden Sie unter ``SAGE_ROOT/local/share/texmf/tex/latex/sagetex``,
 wobei ``SAGE_ROOT`` das Installationsverzeichnis von Sage ist. Dieses Verzeichnis
 enthält die Dokumentation, eine Beispieldatei und einige nützliche Python Skripte.
 
@@ -103,4 +103,4 @@ an den Sage Befehlen in Ihrem Dokument vorgenommen haben.
 
 Es gibt noch viel mehr über SageTeX zu sagen, aber da sowohl Sage alsauch
 LaTeX komplexe und mächtige Werkzeuge sind, sollten Sie die Dokumentation
-über SageTeX in ``SAGE_ROOT/local/share/texmf/tex/generic/sagetex`` lesen.
+über SageTeX in ``SAGE_ROOT/local/share/texmf/tex/latex/sagetex`` lesen.

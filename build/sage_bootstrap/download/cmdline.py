@@ -107,7 +107,7 @@ def format_error(message):
         import traceback
         traceback.print_exc(file=sys.stderr)
         sys.stderr.write(stars)
-    except:
+    except BaseException:
         pass
     sys.stderr.write(message)
     sys.stderr.write(stars)
@@ -116,13 +116,12 @@ def format_error(message):
 def run_safe():
     try:
         run()
-    except StandardError as error:
+    except Exception as error:
         try:
             format_error(error)
         finally:
             sys.exit(1)
 
-                
         
 if __name__ == '__main__':
     run_safe()

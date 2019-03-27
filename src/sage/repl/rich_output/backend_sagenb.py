@@ -64,6 +64,7 @@ Tables are typeset as html in SageNB::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import io
 import os
 import stat
 from sage.misc.cachefunc import cached_method
@@ -77,15 +78,15 @@ from sage.repl.rich_output.output_video import OutputVideoBase
 
 def world_readable(filename):
     """
-    All SageNB temporary files must be world-writeable.
-    
+    All SageNB temporary files must be world-readable.
+
     Discussion of this design choice can be found at :trac:`17743`.
 
     EXAMPLES::
 
         sage: import os, stat
         sage: f = tmp_filename()
-    
+
     At least on a sane system the temporary files are only readable by
     the user, but not by others in the group or total strangers::
 
@@ -117,7 +118,7 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
         sage: SageNbOutputSceneJmol.example()
         SageNbOutputSceneJmol container
     """
-    
+
     @cached_method
     def sagenb_launch_script_filename(self):
         """
@@ -135,8 +136,7 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
             'sage0-size32.jmol'
         """
         import PIL.Image
-        from six import StringIO
-        width, height = PIL.Image.open(StringIO(self.preview_png.get())).size
+        width, height = PIL.Image.open(io.BytesIO(self.preview_png.get())).size
         ext = '-size{0}.jmol'.format(width)
         return graphics_filename(ext=ext)
 
@@ -164,7 +164,7 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
         filename = self.sagenb_launch_script_filename()
         assert filename.endswith(dot_jmol)
         return filename[:-len(dot_jmol)]
-    
+
     @cached_method
     def scene_zip_filename(self):
         """
@@ -211,7 +211,7 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
     def save_launch_script(self):
         """
         Save the Jmol launch script
-        
+
         See :meth:`sagenb_launch_script_filename`.
 
         EXAMPLES::
@@ -220,8 +220,8 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
             sage: j = SageNbOutputSceneJmol.example()
             sage: os.path.exists('sage0-size32.jmol')
             False
-            sage: j.save_launch_script()
-            sage: os.path.exists('sage0-size32.jmol')
+            sage: j.save_launch_script()  # py2: requires sagenb
+            sage: os.path.exists('sage0-size32.jmol')  # py2
             True
         """
         from sagenb.notebook.interact import SAGE_CELL_ID
@@ -236,7 +236,7 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
     def save_preview(self):
         """
         Save the preview PNG image
-        
+
         See :meth:`preview_filename`.
 
         EXAMPLES::
@@ -246,18 +246,18 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
             sage: import shutil
             sage: shutil.rmtree('.jmol_images', ignore_errors=True)
             sage: j.save_preview()
-            sage: os.listdir('.jmol_images')
+            sage: os.listdir('.jmol_images')  # py2
             ['sage1-size32.jmol.png']
         """
         from sage.misc.misc import sage_makedirs
         sage_makedirs('.jmol_images')
         self.preview_png.save_as(self.preview_filename())
         world_readable(self.preview_filename())
-    
+
     def embed(self):
         """
         Save all files necessary to embed jmol
-        
+
         EXAMPLES:
 
         Switch to a new empty temporary directory::
@@ -266,10 +266,10 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
 
             sage: from sage.repl.rich_output.backend_sagenb import SageNbOutputSceneJmol
             sage: j = SageNbOutputSceneJmol.example()
-            sage: j.embed()
-            sage: sorted(os.listdir('.'))
+            sage: j.embed()  # py2 - requires sagenb
+            sage: sorted(os.listdir('.'))  # py2
             ['.jmol_images', 'sage0-size32-....jmol.zip', 'sage0-size32.jmol']
-            sage: sorted(os.listdir('.jmol_images'))
+            sage: sorted(os.listdir('.jmol_images'))  # py2
             ['sage0-size32.jmol.png']
         """
         self.save_preview()
@@ -278,12 +278,22 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
         world_readable(self.scene_zip_filename())
 
 
+IFRAME_TEMPLATE = \
+"""
+<iframe src="{html}"
+        width="{width}"
+        height="{height}"
+        style="border: 0;">
+</iframe>
+"""
+
+
 class BackendSageNB(BackendBase):
 
     def _repr_(self):
         """
         Return the string representation
-        
+
         OUTPUT:
 
         String
@@ -296,7 +306,7 @@ class BackendSageNB(BackendBase):
             'SageNB'
         """
         return 'SageNB'
-    
+
     def supported_output(self):
         """
         Return the outputs that are supported by the SageNB backend.
@@ -312,7 +322,7 @@ class BackendSageNB(BackendBase):
             sage: from sage.repl.rich_output.backend_sagenb import BackendSageNB
             sage: backend = BackendSageNB()
             sage: supp = backend.supported_output();  supp     # random output
-            set([<class 'sage.repl.rich_output.output_graphics.OutputPlainText'>, 
+            set([<class 'sage.repl.rich_output.output_graphics.OutputPlainText'>,
                  ...,
                  <class 'sage.repl.rich_output.output_graphics.OutputCanvas3d'>])
             sage: from sage.repl.rich_output.output_basic import OutputLatex
@@ -324,7 +334,7 @@ class BackendSageNB(BackendBase):
             OutputHtml,
             OutputImagePng, OutputImageGif, OutputImageJpg,
             OutputImagePdf, OutputImageSvg,
-            SageNbOutputSceneJmol,
+            SageNbOutputSceneJmol, OutputSceneThreejs,
             OutputSceneCanvas3d,
             OutputVideoOgg, OutputVideoWebM, OutputVideoMp4,
         ])
@@ -380,12 +390,23 @@ class BackendSageNB(BackendBase):
             self.embed_image(rich_output.svg, '.svg')
         elif isinstance(rich_output, OutputSceneJmol):
             rich_output.embed()
+        elif isinstance(rich_output, OutputSceneThreejs):
+            filename = graphics_filename(ext='.html')
+            rich_output.html.save_as(filename)
+            world_readable(filename)
+            iframe = IFRAME_TEMPLATE.format(
+                html='cell://' + filename,
+                width=700,
+                height=400,
+            )
+            from pretty_print import pretty_print
+            pretty_print(html(iframe))
         elif isinstance(rich_output, OutputSceneCanvas3d):
             self.embed_image(rich_output.canvas3d, '.canvas3d')
         elif isinstance(rich_output, OutputVideoBase):
             self.embed_video(rich_output)
         else:
-            raise TypeError('rich_output type not supported, got {0}'.format(rich_output))
+            raise TypeError('rich_output type not supported, got {}'.format(rich_output))
 
     def embed_image(self, output_buffer, file_ext):
         """
@@ -399,7 +420,7 @@ class BackendSageNB(BackendBase):
         - ``output_buffer`` --
           :class:`~sage.repl.rich_output.buffer.Buffer`. A buffer
           holding the image data.
-        
+
         - ``file_ext`` -- string. The file extension to use for saving
           the image.
 
@@ -431,3 +452,21 @@ class BackendSageNB(BackendBase):
             url='cell://' + filename,
             link_attrs='class="file_link"',
         ))
+
+    def threejs_offline_scripts(self):
+        """
+        Three.js scripts for the Sage notebook
+
+        OUTPUT:
+
+        String containing script tags
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output.backend_sagenb import BackendSageNB
+            sage: backend = BackendSageNB()
+            sage: backend.threejs_offline_scripts()
+            '...<script ...</script>...'
+        """
+        from sage.repl.rich_output import get_display_manager
+        return get_display_manager().threejs_scripts(online=True)

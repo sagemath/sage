@@ -1,9 +1,20 @@
 # -*- coding: utf-8 -*-
 """
 Elements of modular forms spaces
-"""
-from __future__ import absolute_import
 
+Class hierarchy:
+
+- :class:`ModularForm_abstract`
+
+  - :class:`Newform`
+
+  - :class:`ModularFormElement`
+
+    - :class:`ModularFormElement_elliptic_curve`
+
+    - :class:`EisensteinSeries`
+
+"""
 #*****************************************************************************
 #       Copyright (C) 2004-2008 William Stein <wstein@gmail.com>
 #
@@ -13,23 +24,28 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import absolute_import, division
+from six.moves import range
 
 import sage.modular.hecke.element as element
-import sage.rings.all as rings
 
+from sage.arith.all import lcm, divisors, moebius, sigma, factor, crt
+from sage.arith.srange import xsrange
+from sage.matrix.constructor import matrix
+from sage.misc.all import prod
+from sage.misc.cachefunc import cached_method
+from sage.misc.misc import verbose
+from sage.misc.superseded import deprecated_function_alias
+from sage.modular.dirichlet import DirichletGroup
+from sage.modular.modsym.modsym import ModularSymbols
+from sage.modular.modsym.p1list import lift_to_sl2z
+from sage.modular.modsym.space import is_ModularSymbolsSpace
+from sage.modules.free_module_element import vector
+from sage.rings.all import ZZ, QQ, Integer, RealField, ComplexField
 from sage.rings.fast_arith import prime_range
 from sage.rings.morphism import RingHomomorphism
 from sage.rings.number_field.number_field_morphisms import NumberFieldEmbedding
-from sage.modular.modsym.space import is_ModularSymbolsSpace
-from sage.modular.modsym.modsym import ModularSymbols
-from sage.modules.free_module_element import vector
-from sage.misc.misc import verbose
-from sage.arith.srange import xsrange
-from sage.modular.dirichlet import DirichletGroup
-from sage.misc.superseded import deprecated_function_alias
-from sage.arith.all import lcm, divisors, moebius, sigma, factor
-from sage.structure.element import get_coercion_model, ModuleElement
+from sage.structure.element import coercion_model, ModuleElement
 
 
 def is_ModularFormElement(x):
@@ -159,6 +175,7 @@ class ModularForm_abstract(ModuleElement):
         """
         return self.q_expansion(prec)(x)
 
+    @cached_method
     def valuation(self):
         """
         Return the valuation of self (i.e. as an element of the power
@@ -175,22 +192,16 @@ class ModularForm_abstract(ModuleElement):
             sage: ModularForms(25,6).6.valuation()
             7
         """
-        try:
-            return self.__valuation
-        except AttributeError:
-            v = self.qexp().valuation()
-            if v != self.qexp().prec():
-                self.__valuation = v
-                return v
-            v = self.qexp(self.parent().sturm_bound()).valuation()
-            self.__valuation = v
+        v = self.qexp().valuation()
+        if v != self.qexp().prec():
             return v
+        return self.qexp(self.parent().sturm_bound()).valuation()
 
     def qexp(self, prec=None):
         """
         Same as ``self.q_expansion(prec)``.
 
-        .. seealso:: :meth:`q_expansion`
+        .. SEEALSO:: :meth:`q_expansion`
 
         EXAMPLES::
 
@@ -300,8 +311,8 @@ class ModularForm_abstract(ModuleElement):
             self.__coefficients
         except AttributeError:
             self.__coefficients = {}
-        if isinstance(X, rings.Integer):
-            X = range(1,X+1)
+        if isinstance(X, Integer):
+            X = list(range(1, X + 1))
         Y = [n for n in X   if  not (n in self.__coefficients.keys())]
         v = self._compute(Y)
         for i in range(len(v)):
@@ -353,7 +364,8 @@ class ModularForm_abstract(ModuleElement):
         """
         Return the LaTeX expression of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ModularForms(25,4).0._latex_()
             'q + O(q^{6})'
 
@@ -411,16 +423,18 @@ class ModularForm_abstract(ModuleElement):
                 vals.append(df[i] / self[i])
             return G(vals)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
-        Return True if self is nonzero, and False if not.
+        Return ``True`` if ``self`` is nonzero, and ``False`` if not.
 
         EXAMPLES::
 
-            sage: ModularForms(25,6).6.__nonzero__()
+            sage: bool(ModularForms(25,6).6)
             True
         """
         return not self.element().is_zero()
+
+    __nonzero__ = __bool__
 
     def prec(self):
         """
@@ -479,7 +493,7 @@ class ModularForm_abstract(ModuleElement):
         """
         if prec is None:
             prec = self.parent().prec()
-        prec = rings.Integer(prec)
+        prec = Integer(prec)
         try:
             current_prec, f = self.__q_expansion
         except AttributeError:
@@ -495,20 +509,46 @@ class ModularForm_abstract(ModuleElement):
             self.__q_expansion = (prec, f)
             return f
 
-    def atkin_lehner_eigenvalue(self, d=None):
-        r"""
-        Return the eigenvalue of the Atkin-Lehner operator W_d acting on self
-        (which is either 1 or -1), or None if this form is not an eigenvector
-        for this operator. If d is not given or is None, use d = the level.
+    def atkin_lehner_eigenvalue(self, d=None, embedding=None):
+        """
+        Return the eigenvalue of the Atkin-Lehner operator `W_d`
+        acting on ``self``.
+
+        INPUT:
+
+        - ``d`` -- a positive integer exactly dividing the level `N`
+          of ``self``, i.e. `d` divides `N` and is coprime to `N/d`
+          (default: `d = N`)
+
+        - ``embedding`` -- (optional) embedding of the base ring of
+          ``self`` into another ring
+
+        OUTPUT:
+
+        The Atkin-Lehner eigenvalue of `W_d` on ``self``.  This is
+        returned as an element of the codomain of ``embedding`` if
+        specified, and in (a suitable extension of) the base field of
+        ``self`` otherwise.
+
+        If ``self`` is not an eigenform for `W_d`, a ``ValueError`` is
+        raised.
+
+        .. SEEALSO::
+
+            :meth:`sage.modular.hecke.module.HeckeModule_free_module.atkin_lehner_operator`
+            (especially for the conventions used to define the operator `W_d`).
 
         EXAMPLES::
 
-            sage: sage.modular.modform.element.ModularForm_abstract.atkin_lehner_eigenvalue(CuspForms(2, 8).0)
+            sage: CuspForms(1, 12).0.atkin_lehner_eigenvalue()
+            1
+            sage: CuspForms(2, 8).0.atkin_lehner_eigenvalue()
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            NotImplementedError: Don't know how to compute Atkin-Lehner matrix acting on this space (try using a newform constructor instead)
         """
-        raise NotImplementedError
+        raise NotImplementedError("Don't know how to compute Atkin-Lehner matrix acting on this space" \
+            + " (try using a newform constructor instead)")
 
     # The methods period() and lseries() below currently live
     # in ModularForm_abstract so they are inherited by Newform (which
@@ -534,7 +574,7 @@ class ModularForm_abstract(ModuleElement):
         is defined by the following integral over the complex upper
         half-plane, for any `\alpha` in `\Bold{P}^1(\QQ)`:
 
-        .. math::
+        .. MATH::
 
             P_f(M) = 2 \pi i \int_\alpha^{M(\alpha)} f(z) dz.
 
@@ -584,7 +624,7 @@ class ModularForm_abstract(ModuleElement):
 
         ALGORITHM:
 
-        We use the series expression from [Cremona]_, Chapter II,
+        We use the series expression from [Cre1997]_, Chapter II,
         Proposition 2.10.3.  The algorithm sums the first `T` terms of
         this series, where `T` is chosen in such a way that the result
         would approximate `P_f(M)` with an absolute error of at most
@@ -592,11 +632,6 @@ class ModularForm_abstract(ModuleElement):
 
         Since the actual precision is finite, the output is currently
         *not* guaranteed to be correct to ``prec`` bits of precision.
-
-        REFERENCE:
-
-        .. [Cremona] J. E. Cremona, Algorithms for Modular Elliptic
-           Curves.  Cambridge University Press, 1997.
 
         TESTS::
 
@@ -636,7 +671,7 @@ class ModularForm_abstract(ModuleElement):
             -1.35975973348831 + 1.09365931898146e-16*I
 
         """
-        R = rings.RealField(prec)
+        R = RealField(prec)
 
         N = self.level()
         if not self.character().is_trivial():
@@ -757,6 +792,15 @@ class ModularForm_abstract(ModuleElement):
             See http://trac.sagemath.org/19668 for details.
             L-series associated to the cusp form q + a1*q^2 - a1*q^3 + (-a1 + 2)*q^5 + O(q^6), a1=1.41421356237310
 
+        An example with a non-real coefficient field (`\QQ(\zeta_3)`
+        in this case)::
+
+            sage: f = Newforms(Gamma1(13), 2, names='a')[0]
+            sage: f.lseries(embedding=0)(1)
+            0.298115272465799 - 0.0402203326076734*I
+            sage: f.lseries(embedding=1)(1)
+            0.298115272465799 + 0.0402203326076732*I
+
         We compute with the L-series of the Eisenstein series `E_4`::
 
             sage: f = ModularForms(1,4).0
@@ -786,7 +830,17 @@ class ModularForm_abstract(ModuleElement):
             sage: Lh(1), LE(1)
             (0.725681061936153, 0.725681061936153)
             sage: CuspForms(1, 30).0.lseries().eps
-            -1
+            -1.00000000000000
+
+        We check that :trac:`25369` is fixed::
+
+            sage: f5 = Newforms(Gamma1(4), 5, names='a')[0]; f5
+            q - 4*q^2 + 16*q^4 - 14*q^5 + O(q^6)
+            sage: L5 = f5.lseries()
+            sage: abs(L5.check_functional_equation()) < 1e-15
+            True
+            sage: abs(L5(4) - (gamma(1/4)^8/(3840*pi^2)).n()) < 1e-15
+            True
 
         We can change the precision (in bits)::
 
@@ -806,21 +860,31 @@ class ModularForm_abstract(ModuleElement):
             sage: L(1)
             0.588879583428483
         """
+        from sage.lfunctions.all import Dokchitser
 
+        # compute the requested embedding
+        C = ComplexField(prec)
         if conjugate is not None:
             from sage.misc.superseded import deprecation
             deprecation(19668, "The argument 'conjugate' for 'lseries' is deprecated -- use the synonym 'embedding'")
             embedding=conjugate
-        from sage.lfunctions.all import Dokchitser
+        K = self.base_ring()
+        if isinstance(embedding, RingHomomorphism):
+            # Target of embedding might have precision less than desired, so
+            # need to refine
+            emb = NumberFieldEmbedding(K, C, embedding(K.gen()))
+        else:
+            emb = self.base_ring().embeddings(C)[embedding]
+
         # key = (prec, max_imaginary_part, max_asymp_coeffs)
         l = self.weight()
         N = self.level()
-        w = self.atkin_lehner_eigenvalue()
-        if w is None:
-            raise ValueError("Form is not an eigenform for Atkin-Lehner")
-        e = (-1) ** (l // 2) * w
 
-        if self.q_expansion()[0] == 0:
+        # get global root number
+        w = self.atkin_lehner_eigenvalue(N, embedding=emb)
+        e = ~C.gen()**l * w
+
+        if self.is_cuspidal():
             poles = []  # cuspidal
         else:
             poles = [l] # non-cuspidal
@@ -834,29 +898,21 @@ class ModularForm_abstract(ModuleElement):
         # Find out how many coefficients of the Dirichlet series are needed
         # in order to compute to the required precision
         num_coeffs = L.num_coeffs()
-        coeffs = self.q_expansion(num_coeffs+1).padded_list()
+        coeffs = self.q_expansion(num_coeffs+1).padded_list()[1:]
 
         # renormalize so that coefficient of q is 1
-        b = coeffs[1]
+        b = coeffs[0]
         if b != 1:
             invb = 1/b
             coeffs = (invb*c for c in coeffs)
 
-        # compute the requested embedding
-        K = self.base_ring()
-        if isinstance(embedding, RingHomomorphism):
-            # Target of embedding might have precision less than desired, so
-            # need to refine
-            emb = NumberFieldEmbedding(K, rings.ComplexField(prec), embedding(K.gen()))
-        else:
-            emb = self.base_ring().embeddings(rings.ComplexField(prec))[embedding]
-
-        s = 'coeff = %s;' % [emb(_) for _ in coeffs]
-        L.init_coeffs('coeff[k+1]',pari_precode = s,
+        v = [emb(c) for c in coeffs]
+        w = [c.conjugate() for c in v]
+        L.init_coeffs(v=v, w=w,
                       max_imaginary_part=max_imaginary_part,
                       max_asymp_coeffs=max_asymp_coeffs)
         L.check_functional_equation()
-        if K == rings.QQ:
+        if K == QQ:
             L.rename('L-series associated to the cusp form %s'%self)
         else:
             L.rename('L-series associated to the cusp form %s, %s=%s' \
@@ -866,7 +922,7 @@ class ModularForm_abstract(ModuleElement):
     cuspform_lseries = deprecated_function_alias(16917, lseries)
 
     def symsquare_lseries(self, chi=None, embedding=0, prec=53):
-        """
+        r"""
         Compute the symmetric square L-series of this modular form, twisted by
         the character `\chi`.
 
@@ -910,6 +966,13 @@ class ModularForm_abstract(ModuleElement):
             sage: CuspForms(1, 12).0.symsquare_lseries(prec=1000)(22) # long time (20s)
             0.999645711124771397835729622033153189549796658647254961493709341358991830134499267117001769570658192128781135161587571716303826382489492569725002840546129937149159065273765309218543427544527498868033604310899372849565046516553245752253255585377793879866297612679545029546953895098375829822346290125161
 
+        Check that :trac:`23247` is fixed::
+
+            sage: F = Newforms(1,12)[0]
+            sage: chi = DirichletGroup(7).0
+            sage: abs(F.symsquare_lseries(chi).check_functional_equation()) < 1e-5
+            True
+
         AUTHORS:
 
         - Martin Raum (2011) -- original code posted to sage-nt
@@ -918,7 +981,7 @@ class ModularForm_abstract(ModuleElement):
         """
         from sage.lfunctions.all import Dokchitser
         weight = self.weight()
-        C = rings.ComplexField(prec)
+        C = ComplexField(prec)
         if self.level() != 1:
             raise NotImplementedError("Symmetric square L-functions only implemented for level 1")
 
@@ -927,9 +990,9 @@ class ModularForm_abstract(ModuleElement):
             # Target of embedding might have precision less than desired, so
             # need to refine
             K = self.base_ring()
-            emb = NumberFieldEmbedding(K, rings.ComplexField(prec), embedding(K.gen()))
+            emb = NumberFieldEmbedding(K, ComplexField(prec), embedding(K.gen()))
         else:
-            emb = self.base_ring().embeddings(rings.ComplexField(prec))[embedding]
+            emb = self.base_ring().embeddings(ComplexField(prec))[embedding]
 
         if chi is None:
             eps = 1
@@ -937,10 +1000,15 @@ class ModularForm_abstract(ModuleElement):
         else:
             assert chi.is_primitive()
             chi = chi.change_ring(C)
-            eps = chi.gauss_sum()**3 / chi.base_ring()(chi.conductor())**rings.QQ( (3, 2) )
+            eps = chi.gauss_sum()**3 / chi.base_ring()(chi.conductor())**QQ( (3, 2) )
             N = chi.conductor()**3
 
-        L = Dokchitser(N, [0, 1, -weight + 2], 2 * weight - 1, eps, prec=prec)
+        if (chi is None) or chi.is_even():
+            L = Dokchitser(N, [0, 1, -weight + 2], 2 * weight - 1,
+                           eps, prec=prec)
+        else:
+            L = Dokchitser(N, [0, 1, -weight + 1], 2 * weight - 1,
+                           eps * C((0, 1)), prec=prec)
         lcoeffs_prec = L.num_coeffs()
 
         t = verbose("Computing %s coefficients of F" % lcoeffs_prec, level=1)
@@ -950,7 +1018,7 @@ class ModularForm_abstract(ModuleElement):
         # utility function for Dirichlet convolution of series
         def dirichlet_convolution(A, B):
             return [sum(A[d-1] * B[n/d - 1] for d in divisors(n))
-                for n in xrange(1, 1 + min(len(A), len(B)))]
+                for n in range(1, 1 + min(len(A), len(B)))]
 
         # The Dirichlet series for \zeta(2 s - 2 k + 2)
         riemann_series = [ n**(weight - 1) if n.is_square() else 0
@@ -963,7 +1031,7 @@ class ModularForm_abstract(ModuleElement):
 
         # If the base ring is QQ we pass the coefficients to GP/PARI as exact
         # rationals. Otherwise, need to use the embedding.
-        if self.base_ring() != rings.QQ:
+        if self.base_ring() != QQ:
             dirichlet_series = map(emb, dirichlet_series)
 
         if chi is not None:
@@ -982,7 +1050,7 @@ class ModularForm_abstract(ModuleElement):
         r"""
         Compute the Petersson scalar product of f with itself:
 
-        .. math::
+        .. MATH::
 
             \langle f, f \rangle = \int_{\Gamma_0(N) \backslash \mathbb{H}} |f(x + iy)|^2 y^k\, \mathrm{d}x\, \mathrm{d}y.
 
@@ -990,7 +1058,7 @@ class ModularForm_abstract(ModuleElement):
         coefficients. The norm is computed as a special value of the symmetric
         square L-function, using the identity
 
-        .. math::
+        .. MATH::
 
             \langle f, f \rangle = \frac{(k-1)! L(\mathrm{Sym}^2 f, k)}{2^{2k-1} \pi^{k+1}}
 
@@ -1001,7 +1069,7 @@ class ModularForm_abstract(ModuleElement):
           (default: 0)
         - ``prec`` (integer, default 53): precision in bits
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: CuspForms(1, 16).0.petersson_norm()
             verbose -1 (...: dokchitser.py, __call__) Warning: Loss of 2 decimal digits due to cancellation
@@ -1025,10 +1093,172 @@ class ModularForm_abstract(ModuleElement):
             sage: (X(F + G) + X(F - G) - 2*X(F) - 2*X(G)).abs() < 1e-25
             True
         """
-        pi = rings.RealField(prec).pi()
+        pi = RealField(prec).pi()
         L = self.symsquare_lseries(prec=prec, embedding=embedding)
         k = self.weight()
-        return (rings.ZZ(k - 1).factorial() / 2**(2*k - 1) / pi**(k+1)) * L(k).real_part()
+        return (ZZ(k - 1).factorial() / 2**(2*k - 1) / pi**(k+1)) * L(k).real_part()
+
+    def _q_expansion_bound(self, eps):
+        r"""
+        This function takes as input a modular form, ``self`` and a
+        Dirichlet character ``eps`` and returns an integer bound such
+        that if ``self`` and its twist by ``eps`` have the same
+        q-expansion up to this bound, then they are equal.
+
+        The bound is taken from [Mu1997]_. See also [Shi1971]_, Proposition
+        3.64.
+
+        INPUT:
+
+        - ``eps`` -- a Dirichlet character
+
+        OUTPUT:
+
+        A positive integer.
+
+        EXAMPLES:
+
+        Here is an example that can easily be checked by hand. ::
+
+            sage: M = ModularForms(Gamma0(11), 2)
+            sage: C = M.cuspidal_submodule()
+            sage: f = C.gens()[0]
+            sage: F = CyclotomicField(5)
+            sage: D = DirichletGroup(11, F)
+            sage: eps = D.gens()[0]
+            sage: f._q_expansion_bound(eps)
+            22
+
+        The level of ``self`` does not have to be related to the conductor
+        of eps. ::
+
+            sage: M = ModularForms(Gamma0(1), 12)
+            sage: C = M.cuspidal_submodule()
+            sage: Delta = C.gens()[0]
+            sage: F = CyclotomicField(12)
+            sage: D = DirichletGroup(13, F)
+            sage: eps = D.gens()[0]
+            sage: Delta._q_expansion_bound(eps)
+            182
+        """
+        chi = self.character()
+        M = lcm([self.level(), eps.conductor()**2,
+                 chi.conductor() * eps.conductor()])
+        y = QQ(self.weight()) / QQ(12) * M
+        for p in M.prime_divisors():
+            y *= (1 + 1/QQ(p))
+        return y.ceil()
+
+    @cached_method
+    def has_cm(self):
+        r"""
+        Return whether the modular form ``self`` has complex multiplication.
+
+        OUTPUT:
+
+        Boolean
+
+        .. SEEALSO::
+
+            - :meth:`cm_discriminant` (to return the CM field)
+            - :meth:`sage.schemes.elliptic_curves.ell_rational_field.has_cm`
+
+        EXAMPLES::
+
+            sage: G = DirichletGroup(21); eps = G.0 * G.1
+            sage: Newforms(eps, 2)[0].has_cm()
+            True
+
+        This example illustrates what happens when
+        candidate_characters(self) is the empty list. ::
+
+            sage: M = ModularForms(Gamma0(1), 12)
+            sage: C = M.cuspidal_submodule()
+            sage: Delta = C.gens()[0]
+            sage: Delta.has_cm()
+            False
+
+        We now compare the function has_cm between elliptic curves and
+        their associated modular forms. ::
+
+            sage: E = EllipticCurve([-1, 0])
+            sage: f = E.modular_form()
+            sage: f.has_cm()
+            True
+            sage: E.has_cm() == f.has_cm()
+            True
+
+        Here is a non-cm example coming from elliptic curves. ::
+
+            sage: E = EllipticCurve('11a')
+            sage: f = E.modular_form()
+            sage: f.has_cm()
+            False
+            sage: E.has_cm() == f.has_cm()
+            True
+        """
+        N = self.level()
+        M = self.character().conductor()
+
+        for p in N.prime_factors():
+            if M % p and N.valuation(p) == 1:
+                verbose("Form is Steinberg at %s, cannot be CM" % p, level=1)
+                return False
+        cand_chars = [(x, self._q_expansion_bound(x)) for x in DirichletGroup(N, QQ) if x.is_odd()]
+
+        verbose("Conductors of candidate characters: %s" % (", ".join(str(x[0].conductor()) for x in cand_chars)), level=1)
+        verbose("Qexp bounds: %s" % (", ".join(str(x[1]) for x in cand_chars)), level=1)
+        # If there are no candidate characters, then self cannot have CM.
+        if not cand_chars:
+            return False
+
+        # Test each prime and discard characters for which eps(p) != 1 when f[p] != 0.
+        p = ZZ(2)
+        while p <= min(B for (eps, B) in cand_chars):
+            verbose("Checking p = %s (%s candidate characters left))" % (p, len(cand_chars)), level=1)
+            # We only have to test the CM condition at primes that do not
+            # divide the level of self.
+            if not self.level() % p:
+                p = p.next_prime()
+                continue
+
+            # Evaluating characters is cheap, while computing f[p] is
+            # expensive, so if eps(p) = 1 for all p, then we don't bother to
+            # compute f[p].
+            cand_chars = [(eps, B) for (eps, B) in cand_chars if (eps(p) == 1 or self[p] == 0)]
+
+            if len(cand_chars) == 0:
+                # f doesn't have CM
+                return False
+
+            # go on to next prime
+            p = p.next_prime()
+
+        B0 = min(B for (eps, B) in cand_chars)
+        C = [eps for (eps, B) in cand_chars if B == B0]
+        if len(C) > 1:
+            # can't happen (except in weight 1, which isn't implemented yet
+            # anyway)
+            raise ArithmeticError("Got multiple characters in has_cm")
+        self.__cm_char = C[0].primitive_character()
+        return True
+
+    def cm_discriminant(self):
+        r"""
+        Return the discriminant of the CM field associated to this form. An
+        error will be raised if the form isn't of CM type.
+
+        EXAMPLES::
+
+            sage: Newforms(49, 2)[0].cm_discriminant()
+            -7
+            sage: CuspForms(1, 12).gen(0).cm_discriminant()
+            Traceback (most recent call last):
+            ...
+            ValueError: Not a CM form
+        """
+        if not self.has_cm(): raise ValueError("Not a CM form")
+        return -self.__cm_char.conductor()
 
 class Newform(ModularForm_abstract):
     def __init__(self, parent, component, names, check=True):
@@ -1154,6 +1384,7 @@ class Newform(ModularForm_abstract):
         # other is a ModularFormElement
         return self.element() == other
 
+    @cached_method
     def abelian_variety(self):
         """
         Return the abelian variety associated to self.
@@ -1164,13 +1395,14 @@ class Newform(ModularForm_abstract):
             q - q^2 - 2*q^3 + q^4 + O(q^6)
             sage: Newforms(14,2)[0].abelian_variety()
             Newform abelian subvariety 14a of dimension 1 of J0(14)
+            sage: Newforms(1, 12)[0].abelian_variety()
+            Traceback (most recent call last):
+            ...
+            TypeError: f must have weight 2
+
         """
-        try:
-            return self.__abelian_variety
-        except AttributeError:
-            from sage.modular.abvar.abvar_newform import ModularAbelianVariety_newform
-            self.__abelian_variety = ModularAbelianVariety_newform(self)
-            return self.__abelian_variety
+        from sage.modular.abvar.abvar_newform import ModularAbelianVariety_newform
+        return ModularAbelianVariety_newform(self)
 
     def hecke_eigenvalue_field(self):
         r"""
@@ -1275,12 +1507,23 @@ class Newform(ModularForm_abstract):
             q - 2*q^2 + (-a1 - 2)*q^3 + 4*q^4 + (2*a1 + 10)*q^5 + O(q^6),
             q + 2*q^2 + (1/2*a2 - 1)*q^3 + 4*q^4 + (-3/2*a2 + 12)*q^5 + O(q^6)]
             sage: type(ls2[0])
-            <class 'sage.modular.modform.element.CuspidalSubmodule_g0_Q_with_category.element_class'>
+            <class 'sage.modular.modform.cuspidal_submodule.CuspidalSubmodule_g0_Q_with_category.element_class'>
             sage: ls2[2][3].minpoly()
             x^2 - 9*x + 2
         """
         S = self.parent()
         return S(self.q_expansion(S.sturm_bound()))
+
+    def is_cuspidal(self):
+        """
+        Return True. For compatibility with elements of modular forms spaces.
+
+        EXAMPLES::
+
+            sage: Newforms(11, 2)[0].is_cuspidal()
+            True
+        """
+        return True
 
     def modular_symbols(self, sign=0):
         """
@@ -1296,6 +1539,57 @@ class Newform(ModularForm_abstract):
             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 11 for Gamma_0(18) of weight 4 with sign 1 over Rational Field
         """
         return self.__modsym_space.modular_symbols_of_sign(sign)
+
+    @cached_method
+    def modsym_eigenspace(self, sign=0):
+        """
+        Return a submodule of dimension 1 or 2 of the ambient space of
+        the sign 0 modular symbols space associated to ``self``,
+        base-extended to the Hecke eigenvalue field, which is an
+        eigenspace for the Hecke operators with the same eigenvalues
+        as this newform, *and* is an eigenspace for the star
+        involution of the appropriate sign if the sign is not 0.
+
+        EXAMPLES::
+
+            sage: N = Newform("37a")
+            sage: N.modular_symbols(0)
+            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 5 for Gamma_0(37) of weight 2 with sign 0 over Rational Field
+            sage: M = N.modular_symbols(0)
+            sage: V = N.modsym_eigenspace(1); V
+            Vector space of degree 5 and dimension 1 over Rational Field
+            Basis matrix:
+            [ 0  1 -1  1  0]
+            sage: V.0 in M.free_module()
+            True
+            sage: V=N.modsym_eigenspace(-1); V
+            Vector space of degree 5 and dimension 1 over Rational Field
+            Basis matrix:
+            [   0    0    0    1 -1/2]
+            sage: V.0 in M.free_module()
+            True
+        """
+        M = self.modular_symbols(sign=0)
+        if sign != 0:
+            Ms = M.sign_submodule(sign)
+            r = 1
+        else:
+            Ms = M
+            r = 2
+        # silly thing: can't do Ms.eigenvector(), even when Ms is simple,
+        # because it can't be relied on to choose the coefficient fields
+        # consistently
+        A = M.ambient()
+        X = Ms.free_module().base_extend(self.hecke_eigenvalue_field())
+        p = ZZ(2)
+        while X.rank() > r:
+            assert p <= M.sturm_bound()
+            X = (A.hecke_matrix(p).base_extend(self.hecke_eigenvalue_field()) - self[p]).kernel_on(X)
+            p = p.next_prime()
+
+        # should really return a modular symbol submodule object, but these are
+        # not implemented over non-minimal base rings
+        return X
 
     def _defining_modular_symbols(self):
         """
@@ -1330,16 +1624,18 @@ class Newform(ModularForm_abstract):
         """
         return self._defining_modular_symbols().ambient().cuspidal_subspace().new_subspace().decomposition().index(self._defining_modular_symbols())
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
-        Return True, as newforms are never zero.
+        Return ``True``, as newforms are never zero.
 
         EXAMPLES::
 
-            sage: Newforms(14,2)[0].__nonzero__()
+            sage: bool(Newforms(14,2)[0])
             True
         """
         return True
+
+    __nonzero__ = __bool__
 
     def character(self):
         r"""
@@ -1355,23 +1651,398 @@ class Newform(ModularForm_abstract):
         """
         return self._defining_modular_symbols().q_eigenform_character(self._name())
 
-    def atkin_lehner_eigenvalue(self, d=None):
-        r"""
-        Return the eigenvalue of the Atkin-Lehner operator W_d acting on this newform
-        (which is either 1 or -1). A ValueError will be raised if the character
-        of this form is not either trivial or quadratic. If d is not given or
-        is None, then d defaults to the level of self.
+    ###########################
+    # Atkin--Lehner operators #
+    ###########################
 
-        EXAMPLE::
+    def _atkin_lehner_eigenvalue_from_qexp(self, Q):
+        """
+        Return the arithmetically-normalized `W_Q`-pseudoeigenvalue of
+        ``self``, using a formula based on `q`-expansions (Theorem 2.1 of
+        [AL1978]_).
+
+        INPUT:
+
+        - ``self`` -- a newform `f`
+
+        - ``Q`` -- an integer exactly dividing the level of ``self``
+
+        .. NOTE::
+
+            This method assumes that the `Q`-th coefficient in the
+            `q`-expansion of ``self`` is non-zero.
+
+        TESTS::
+
+            sage: f = Newforms(Gamma0(18), 4)[0]; f
+            q + 2*q^2 + 4*q^4 - 6*q^5 + O(q^6)
+            sage: f._atkin_lehner_eigenvalue_from_qexp(2)
+            -2
+            sage: f._atkin_lehner_eigenvalue_from_qexp(9)
+            Traceback (most recent call last):
+            ...
+            ValueError: a_Q must be nonzero
+
+        An example with odd weight::
+
+            sage: f = Newforms(Gamma1(15), 3, names='a')[2]; f
+            q + a2*q^2 + (-a2 - 2)*q^3 - q^4 - a2*q^5 + O(q^6)
+            sage: f._atkin_lehner_eigenvalue_from_qexp(5)
+            a2
+
+        """
+        if Q == 1: return ZZ(1)
+        a_Q = self[Q]
+        if not a_Q:
+            raise ValueError("a_Q must be nonzero")
+
+        l = ZZ(1)
+        M = self.character().conductor()
+        for p, e in Q.factor():
+            if p.divides(M): # principal series at p
+                l *= (p**(self.weight() - 2) / self[p])**e
+            else: # special at p
+                l *= -self[p]
+        return l
+
+    def _atkin_lehner_eigenvalue_from_modsym(self, Q):
+        """
+        Return the arithmetically-normalized `W_Q`-pseudoeigenvalue of
+        ``self``, using the action of `W_Q` on modular symbols.
+
+        INPUT:
+
+        - ``self`` -- a newform `f`
+
+        - ``Q`` -- a positive integer exactly dividing the level of ``self``
+
+        .. NOTE::
+
+            This algorithm is only valid if, for every prime `p` dividing `Q`,
+            the `p`-part of the level of `f` is strictly larger than the
+            `p`-part of the conductor of its character.
+
+        EXAMPLES::
+
+            sage: F = Newforms(Gamma1(15), 3, names='a')[2]
+            sage: F._atkin_lehner_eigenvalue_from_modsym(5)
+            a2
+            sage: _ == F._atkin_lehner_eigenvalue_from_qexp(5)
+            True
+        """
+        if Q == 1: return ZZ(1)
+
+        S = self._defining_modular_symbols()
+        A = S.ambient()
+        N = self.level()
+        M = self.character().conductor()
+        Q0 = M // M.prime_to_m_part(Q)
+
+        W = self.group().atkin_lehner_matrix(Q)
+        if Q0 == 1:
+            L = [ W ]
+        else:
+            L = []
+            for a in xsrange(Q0):
+                if a.gcd(Q0) > 1: continue
+                aa = crt(a, 1, Q, N.prime_to_m_part(Q))
+                diam = matrix(ZZ, 2, lift_to_sl2z(0,aa,N) )
+                L.append( (W * diam * matrix(QQ, 2, [1,a/Q0,0,1]) ).change_ring(ZZ) )
+
+        W = A._matrix_of_operator_on_modular_symbols(A, [x.list() for x in L])
+        e = S.dual_eigenvector(names=self._name())
+        i = e.nonzero_positions()[0]
+        w = (W*e)[i]/e[i]
+        if W*e != w*e: raise ArithmeticError("Bug in Atkin--Lehner computation: eigenspace not invariant")
+        sign = prod([eps(-1) for eps in self.character().decomposition() if eps.conductor().divides(Q)])
+        return w / Q0 / sign * self.character()(crt(1, Q//Q0, Q, N//Q))
+
+    def atkin_lehner_action(self, d=None, normalization='analytic', embedding=None):
+        r"""
+        Return the result of the Atkin-Lehner operator `W_d` on this form `f`,
+        in the form of a constant `\lambda_d(f)` and a normalized newform `f'`
+        such that
+
+        .. math::
+
+            f \mid W_d = \lambda_d(f) f'.
+
+        See :meth:`atkin_lehner_eigenvalue` for further details.
+
+        EXAMPLES::
+
+            sage: f = Newforms(DirichletGroup(30).1^2, 2, names='a')[0]
+            sage: emb = f.base_ring().complex_embeddings()[0]
+            sage: for d in divisors(30):
+            ....:     print(f.atkin_lehner_action(d, embedding=emb))
+            (1.00000000000000, q + a0*q^2 - a0*q^3 - q^4 + (a0 - 2)*q^5 + O(q^6))
+            (-1.00000000000000*I, q + a0*q^2 - a0*q^3 - q^4 + (a0 - 2)*q^5 + O(q^6))
+            (1.00000000000000*I, q + a0*q^2 - a0*q^3 - q^4 + (a0 - 2)*q^5 + O(q^6))
+            (-0.894427190999916 + 0.447213595499958*I, q - a0*q^2 + a0*q^3 - q^4 + (-a0 - 2)*q^5 + O(q^6))
+            (1.00000000000000, q + a0*q^2 - a0*q^3 - q^4 + (a0 - 2)*q^5 + O(q^6))
+            (-0.447213595499958 - 0.894427190999916*I, q - a0*q^2 + a0*q^3 - q^4 + (-a0 - 2)*q^5 + O(q^6))
+            (0.447213595499958 + 0.894427190999916*I, q - a0*q^2 + a0*q^3 - q^4 + (-a0 - 2)*q^5 + O(q^6))
+            (-0.894427190999916 + 0.447213595499958*I, q - a0*q^2 + a0*q^3 - q^4 + (-a0 - 2)*q^5 + O(q^6))
+
+        The above computation can also be done exactly::
+
+            sage: K.<z> = CyclotomicField(20)
+            sage: f = Newforms(DirichletGroup(30).1^2, 2, names='a')[0]
+            sage: emb = f.base_ring().embeddings(CyclotomicField(20, 'z'))[0]
+            sage: for d in divisors(30):
+            ....:     print(f.atkin_lehner_action(d, embedding=emb))
+            (1, q + a0*q^2 - a0*q^3 - q^4 + (a0 - 2)*q^5 + O(q^6))
+            (z^5, q + a0*q^2 - a0*q^3 - q^4 + (a0 - 2)*q^5 + O(q^6))
+            (-z^5, q + a0*q^2 - a0*q^3 - q^4 + (a0 - 2)*q^5 + O(q^6))
+            (-2/5*z^7 + 4/5*z^6 + 1/5*z^5 - 4/5*z^4 - 2/5*z^3 - 2/5, q - a0*q^2 + a0*q^3 - q^4 + (-a0 - 2)*q^5 + O(q^6))
+            (1, q + a0*q^2 - a0*q^3 - q^4 + (a0 - 2)*q^5 + O(q^6))
+            (4/5*z^7 + 2/5*z^6 - 2/5*z^5 - 2/5*z^4 + 4/5*z^3 - 1/5, q - a0*q^2 + a0*q^3 - q^4 + (-a0 - 2)*q^5 + O(q^6))
+            (-4/5*z^7 - 2/5*z^6 + 2/5*z^5 + 2/5*z^4 - 4/5*z^3 + 1/5, q - a0*q^2 + a0*q^3 - q^4 + (-a0 - 2)*q^5 + O(q^6))
+            (-2/5*z^7 + 4/5*z^6 + 1/5*z^5 - 4/5*z^4 - 2/5*z^3 - 2/5, q - a0*q^2 + a0*q^3 - q^4 + (-a0 - 2)*q^5 + O(q^6))
+
+        We can compute the eigenvalue of `W_{p^e}` in certain cases
+        where the `p`-th coefficient of `f` is zero::
+
+            sage: f = Newforms(169, names='a')[0]; f
+            q + a0*q^2 + 2*q^3 + q^4 - a0*q^5 + O(q^6)
+            sage: f[13]
+            0
+            sage: f.atkin_lehner_eigenvalue(169)
+            -1
+
+        An example showing the non-multiplicativity of the pseudo-eigenvalues::
+
+            sage: chi = DirichletGroup(18).0^4
+            sage: f = Newforms(chi, 2)[0]
+            sage: w2, _ = f.atkin_lehner_action(2); w2
+            zeta6
+            sage: w9, _ = f.atkin_lehner_action(9); w9
+            -zeta18^4
+            sage: w18,_ = f.atkin_lehner_action(18); w18
+            -zeta18
+            sage: w18 == w2 * w9 * chi( crt(2, 9, 9, 2) )
+            True
+
+        TESTS::
+
+            sage: K.<a> = QuadraticField(1129)
+            sage: f = Newforms(Gamma0(20), 8, base_ring=K)[2]; f
+            q + (2*a - 10)*q^3 + 125*q^5 + O(q^6)
+            sage: f.atkin_lehner_action(2)
+            (-1, q + (2*a - 10)*q^3 + 125*q^5 + O(q^6))
+
+            sage: f = Newforms(Gamma1(11), 2)[0]
+            sage: f.atkin_lehner_action(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: d (= 2) does not divide the level (= 11)
+        """
+        # normalise d
+        N = self.level()
+        if d is None:
+            d = N
+        else:
+            d = ZZ(d)
+            if not d.divides(N):
+                raise ValueError('d (= {}) does not divide the level (= {})'.format(d, N))
+            d = N // N.prime_to_m_part(d)
+
+        if d == 1:
+            w = self.base_ring().one()
+            if embedding is not None:
+                w = embedding(w)
+            return w, self
+
+        eps_d = prod([eps.extend(d) for eps in self.character().decomposition() if eps.modulus().divides(d)])
+        if eps_d.is_trivial():
+            g = self
+        else:
+            g = self.twist(~eps_d, level=N)
+        l = self.atkin_lehner_eigenvalue(d, normalization, embedding)
+        return l, g
+
+    def atkin_lehner_eigenvalue(self, d=None, normalization='analytic', embedding=None):
+        r"""
+        Return the pseudo-eigenvalue of the Atkin-Lehner operator `W_d`
+        acting on this form `f`.
+
+        INPUT:
+
+        - ``d`` -- a positive integer exactly dividing the level `N` of `f`,
+          i.e. `d` divides `N` and is coprime to `N/d`. The default is `d = N`.
+
+          If `d` does not divide `N` exactly, then it will be replaced with a
+          multiple `D` of `d` such that `D` exactly divides `N` and `D` has the
+          same prime factors as `d`. An error will be raised if `d` does not
+          divide `N`.
+
+        - ``normalization`` -- either ``'analytic'`` (the default) or
+          ``'arithmetic'``; see below.
+
+        - ``embedding`` -- (optional) embedding of the coefficient field of `f`
+          into another ring. Ignored if `'normalization='arithmetic'``.
+
+        OUTPUT:
+
+        The Atkin-Lehner pseudo-eigenvalue of `W_d` on `f`, as an element of
+        the coefficient field of `f`, or the codomain of ``embedding`` if
+        specified.
+
+        As defined in [AL1978]_, the pseudo-eigenvalue is the constant
+        `\lambda_d(f)` such that
+
+        ..math::
+
+            f \mid W_d = \lambda_d(f) f'
+
+        where `f'` is some normalised newform (not necessarily equal to `f`).
+
+        If ``normalisation='analytic'`` (the default), this routine will
+        compute `\lambda_d`, using the conventions of [AL1978]_ for the weight
+        `k` action, which imply that `\lambda_d` has complex absolute value 1.
+        However, with these conventions `\lambda_d` is not in the Hecke
+        eigenvalue field of `f` in general, so it is often necessary to specify
+        an embedding of the eigenvalue field into a larger ring (which needs to
+        contain roots of unity of sufficiently large order, and a square root
+        of `d` if `k` is odd).
+
+        If ``normalisation='arithmetic'`` we compute instead the quotient
+
+        ..math::
+
+            d^{k/2-1} \lambda_d(f) \varepsilon_{N/d}(d / d_0) / G(\varepsilon_d),
+
+        where `G(\varepsilon_d)` is the Gauss sum of the `d`-primary part of
+        the nebentype of `f` (more precisely, of its associated primitive
+        character), and `d_0` its conductor. This ratio is always in the Hecke
+        eigenvalue field of `f` (and can be computed using only arithmetic in
+        this field), so specifying an embedding is not needed, although we
+        still allow it for consistency.
+
+        (Note that if `k = 2` and `\varepsilon` is trivial, both
+        normalisations coincide.)
+
+        .. SEEALSO::
+
+            - :meth:`sage.modular.hecke.module.atkin_lehner_operator`
+              (especially for the conventions used to define the operator
+              `W_d`)
+
+            - :meth:`atkin_lehner_action`, which returns both the
+              pseudo-eigenvalue and the newform `f'`.
+
+        EXAMPLES::
 
             sage: [x.atkin_lehner_eigenvalue() for x in ModularForms(53).newforms('a')]
             [1, -1]
-            sage: CuspForms(DirichletGroup(5).0, 5).newforms()[0].atkin_lehner_eigenvalue()
+
+            sage: f = Newforms(Gamma1(15), 3, names='a')[2]; f
+            q + a2*q^2 + (-a2 - 2)*q^3 - q^4 - a2*q^5 + O(q^6)
+            sage: f.atkin_lehner_eigenvalue(5)
             Traceback (most recent call last):
             ...
-            ValueError: Atkin-Lehner only leaves space invariant when character is trivial or quadratic.  In general it sends M_k(chi) to M_k(1/chi)
+            ValueError: Unable to compute square root. Try specifying an embedding into a larger ring
+            sage: L = f.hecke_eigenvalue_field(); x = polygen(QQ); M.<sqrt5> = L.extension(x^2 - 5)
+            sage: f.atkin_lehner_eigenvalue(5, embedding=M.coerce_map_from(L))
+            1/5*a2*sqrt5
+            sage: f.atkin_lehner_eigenvalue(5, normalization='arithmetic')
+            a2
+
+            sage: Newforms(DirichletGroup(5).0^2, 6, names='a')[0].atkin_lehner_eigenvalue()
+            Traceback (most recent call last):
+            ...
+            ValueError: Unable to compute Gauss sum. Try specifying an embedding into a larger ring
+
+        TESTS:
+
+        Check that the bug reported at :trac:`18061` is fixed::
+
+            sage: K.<i> = CyclotomicField(4)
+            sage: f = Newforms(DirichletGroup(30, QQ).1, 2, K)[0]
+            sage: f.atkin_lehner_eigenvalue(embedding=K.embeddings(QQbar)[0])
+            -0.8944271909999159? - 0.4472135954999580?*I
+
+        Check that :trac:`24086` is fixed::
+
+            sage: f = Newforms(24, 4)[0]
+            sage: f.atkin_lehner_eigenvalue(8)
+            -1
+            sage: f.atkin_lehner_eigenvalue(3)
+            -1
+
+        A case where the eigenvalue isn't in the coefficient field of `f`::
+
+            sage: chi = DirichletGroup(7, QQ).0
+            sage: f = Newforms(chi, 3)[0]
+            sage: f.atkin_lehner_eigenvalue()
+            Traceback (most recent call last):
+            ...
+            ValueError: Unable to compute square root. Try specifying an embedding into a larger ring
+            sage: emb = f.hecke_eigenvalue_field().embeddings(QQbar)[0]
+            sage: f.atkin_lehner_eigenvalue(embedding=emb)
+            0.?e-18 - 1.000000000000000?*I
+
+        A case where the embeddings really matter::
+
+            sage: chi2 = chi.extend(63)
+            sage: g = Newforms(chi2, 3, names='a')[2]
+            sage: g.atkin_lehner_eigenvalue(7)
+            Traceback (most recent call last):
+            ...
+            ValueError: Unable to compute Gauss sum. Try specifying an embedding into a larger ring
+            sage: g.atkin_lehner_eigenvalue(7, embedding=g.hecke_eigenvalue_field().embeddings(QQbar)[0])
+            0.?e-18 + 1.000000000000000?*I
         """
-        return self.modular_symbols(sign=1).atkin_lehner_operator(d).matrix()[0,0]
+        if normalization not in ['arithmetic', 'analytic']:
+            raise ValueError("unknown normalization %s" % normalization)
+        N = self.level()
+        if d is None:
+            d = N
+        d = ZZ(d)
+        if (N % d): raise ValueError("d should divide N")
+        d = N // N.prime_to_m_part(d)
+
+        d1 = d2 = d3 = 1
+        for (p, e) in d.factor():
+            if self[p] == 0: d1 *= p**e
+            elif self.character().conductor().valuation(p) == e: d2 *= p**e
+            else: d3 *= p**e
+
+        verbose("computing W_%s using modsym, W_%s using qexp, W_%s using both" % (d1, d2, d3), level=2)
+        w1 = self._atkin_lehner_eigenvalue_from_modsym(d1)
+        w2 = self._atkin_lehner_eigenvalue_from_qexp(d2)
+        w3a = self._atkin_lehner_eigenvalue_from_modsym(d3)
+        w3b = self._atkin_lehner_eigenvalue_from_qexp(d3)
+        assert w3a == w3b
+        w = w1*w2*w3a
+
+        if embedding is None:
+            R = self.hecke_eigenvalue_field()
+            embedding = R.Hom(R).identity()
+        else:
+            R = embedding.codomain()
+
+        if normalization=='arithmetic':
+            return embedding(w)
+        else:
+            # get rid of the normalisation factors
+            from sage.modular.dirichlet import trivial_character
+
+            epsd = prod([eps.extend(d) for eps in self.character().decomposition() if eps.modulus().divides(d)], trivial_character(d))
+            epsd = epsd.primitive_character()
+            d0 = epsd.modulus()
+            epsdR = epsd.change_ring(embedding)
+            if d0 > 1:
+                try:
+                    G = epsdR.gauss_sum()
+                except NotImplementedError:
+                    raise ValueError("Unable to compute Gauss sum. Try specifying an embedding into a larger ring")
+            else:
+                G = R(1)
+            if not R(d**(self.weight()-2)).is_square():
+                raise ValueError("Unable to compute square root. Try specifying an embedding into a larger ring")
+            ratio = R(d**(self.weight()-2)).sqrt() * embedding(self.character()( crt(1, d//d0, d, N//d) )) / G
+            return embedding(w) / ratio
 
     def twist(self, chi, level=None, check=True):
         r"""
@@ -1381,14 +2052,14 @@ class Newform(ModularForm_abstract):
         If ``self`` is a newform `f` with character `\epsilon` and
         `q`-expansion
 
-        .. math::
+        .. MATH::
 
             f(q) = \sum_{n=1}^\infty a_n q^n,
 
         then the twist by `\chi` is the unique newform `f\otimes\chi`
         with character `\epsilon\chi^2` and `q`-expansion
 
-        .. math::
+        .. MATH::
 
             (f\otimes\chi)(q) = \sum_{n=1}^\infty b_n q^n
 
@@ -1402,7 +2073,7 @@ class Newform(ModularForm_abstract):
 
         - ``level`` -- (optional) the level `N` of the twisted form.
           By default, the algorithm tries to compute `N` using
-          [Atkin-Li]_, Theorem 3.1.
+          [AL1978]_, Theorem 3.1.
 
         - ``check`` -- (optional) boolean; if ``True`` (default), ensure that
           the space of modular symbols that is computed is genuinely simple and
@@ -1462,7 +2133,6 @@ class Newform(ModularForm_abstract):
 
         """
         from sage.modular.all import CuspForms
-        coercion_model = get_coercion_model()
         R = coercion_model.common_parent(self.base_ring(), chi.base_ring())
         N = self.level()
         epsilon = self.character()
@@ -1474,7 +2144,7 @@ class Newform(ModularForm_abstract):
             epsilon_chi = G(epsilon) * G(chi)
             N_epsilon_chi = epsilon_chi.conductor()
             for q in N_chi.prime_divisors():
-                # See [Atkin-Li], Theorem 3.1.
+                # See [AL1978], Theorem 3.1.
                 alpha = N_epsilon.valuation(q)
                 beta = N_chi.valuation(q)
                 gamma = N.valuation(q)
@@ -1652,7 +2322,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
             newparent = ModularForms(newchar, self.weight() + other.weight(), base_ring = newchar.base_ring())
             verbose("parent is %s" % newparent)
         else:
-            newparent = ModularForms(self.group(), self.weight() + other.weight(), base_ring = rings.ZZ)
+            newparent = ModularForms(self.group(), self.weight() + other.weight(), base_ring = ZZ)
         m = newparent.sturm_bound()
         newqexp = self.qexp(m) * other.qexp(m)
 
@@ -1661,32 +2331,51 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
     modform_lseries = deprecated_function_alias(16917,
             ModularForm_abstract.lseries)
 
-    def atkin_lehner_eigenvalue(self, d=None):
-        r"""
-        Return the eigenvalue of the Atkin-Lehner operator W_d acting on this
-        modular form (which is either 1 or -1), or None if this form is not an
-        eigenvector for this operator.
-
-        EXAMPLE::
-
-             sage: CuspForms(1, 30).0.atkin_lehner_eigenvalue()
-             1
-             sage: CuspForms(2, 8).0.atkin_lehner_eigenvalue()
-             Traceback (most recent call last):
-             ...
-             NotImplementedError: Don't know how to compute Atkin-Lehner matrix acting on this space (try using a newform constructor instead)
+    def atkin_lehner_eigenvalue(self, d=None, embedding=None):
         """
+        Return the result of the Atkin-Lehner operator `W_d` on
+        ``self``.
+
+        INPUT:
+
+        - ``d`` -- a positive integer exactly dividing the level `N` of
+          ``self``, i.e. `d` divides `N` and is coprime to `N/d`. (Default: `d
+          = N`)
+
+        - ``embedding`` -- ignored (but accepted for compatibility with
+          :meth:`Newform.atkin_lehner_eigenvalue`)
+
+        OUTPUT:
+
+        The Atkin-Lehner eigenvalue of `W_d` on ``self``. If ``self`` is not an
+        eigenform for `W_d`, a ``ValueError`` is raised.
+
+        .. SEEALSO::
+
+            For the conventions used to define the operator `W_d`, see
+            :meth:`sage.modular.hecke.module.HeckeModule_free_module.atkin_lehner_operator`.
+
+        EXAMPLES::
+
+            sage: CuspForms(1, 30).0.atkin_lehner_eigenvalue()
+            1
+            sage: CuspForms(2, 8).0.atkin_lehner_eigenvalue()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Don't know how to compute Atkin-Lehner matrix acting on this space (try using a newform constructor instead)
+        """
+        if d is None: d = self.level()
         try:
             f = self.parent().atkin_lehner_operator(d)(self)
         except NotImplementedError:
             raise NotImplementedError("Don't know how to compute Atkin-Lehner matrix acting on this space" \
                 + " (try using a newform constructor instead)")
-        if f == self:
-            return 1
-        elif f == -self:
-            return -1
+        w = self.element().nonzero_positions()[0]
+        t = f.element()[w] / self.element()[w]
+        if f.element() == self.element() * t:
+            return t
         else:
-            return None
+            raise ValueError("%r is not an eigenform for W_%r" % (self, d))
 
     def twist(self, chi, level=None):
         r"""
@@ -1696,14 +2385,14 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         If ``self`` is a modular form `f` with character `\epsilon`
         and `q`-expansion
 
-        .. math::
+        .. MATH::
 
             f(q) = \sum_{n=0}^\infty a_n q^n,
 
         then the twist by `\chi` is a modular form `f_\chi` with
         character `\epsilon\chi^2` and `q`-expansion
 
-        .. math::
+        .. MATH::
 
             f_\chi(q) = \sum_{n=0}^\infty \chi(n) a_n q^n.
 
@@ -1713,8 +2402,8 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         - ``level`` -- (optional) the level `N` of the twisted form.
           By default, the algorithm chooses some not necessarily
-          minimal value for `N` using [Atkin-Li]_, Proposition 3.1,
-          (See also [Koblitz]_, Proposition III.3.17, for a simpler
+          minimal value for `N` using [AL1978]_, Proposition 3.1,
+          (See also [Kob1993]_, Proposition III.3.17, for a simpler
           but slightly weaker bound.)
 
         OUTPUT:
@@ -1761,12 +2450,9 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         REFERENCES:
 
-        .. [Atkin-Li] \A. O. L. Atkin and Wen-Ch'ing Winnie Li, Twists
-           of newforms and pseudo-eigenvalues of `W`-operators.
-           Inventiones math. 48 (1978), 221-243.
+        - [AL1978]_
 
-        .. [Koblitz] Neal Koblitz, Introduction to Elliptic Curves and
-           Modular Forms.  Springer GTM 97, 1993.
+        - [Kob1993]_
 
         AUTHORS:
 
@@ -1777,7 +2463,6 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         """
         from sage.modular.all import CuspForms, ModularForms
         from sage.rings.all import PowerSeriesRing
-        coercion_model = get_coercion_model()
         R = coercion_model.common_parent(self.base_ring(), chi.base_ring())
         N = self.level()
         Q = chi.modulus()
@@ -1788,25 +2473,25 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         constructor = CuspForms if self.is_cuspidal() else ModularForms
         if epsilon is not None:
             if level is None:
-                # See [Atkin-Li], Proposition 3.1.
+                # See [AL1978], Proposition 3.1.
                 level = lcm([N, epsilon.conductor() * Q, Q**2])
             G = DirichletGroup(level, base_ring=R)
             M = constructor(G(epsilon) * G(chi)**2, self.weight(), base_ring=R)
         else:
             from sage.modular.arithgroup.all import Gamma1
             if level is None:
-                # See [Atkin-Li], Proposition 3.1.
+                # See [AL1978], Proposition 3.1.
                 level = lcm([N, Q]) * Q
             M = constructor(Gamma1(level), self.weight(), base_ring=R)
         bound = M.sturm_bound() + 1
         S = PowerSeriesRing(R, 'q')
-        f_twist = S([self[i] * chi(i) for i in xrange(bound)], prec=bound)
+        f_twist = S([self[i] * chi(i) for i in range(bound)], prec=bound)
         return M(f_twist)
 
 
 class ModularFormElement_elliptic_curve(ModularFormElement):
-    """
-    A modular form attached to an elliptic curve.
+    r"""
+    A modular form attached to an elliptic curve over `\QQ`.
     """
     def __init__(self, parent, E):
         """
@@ -1886,14 +2571,26 @@ class ModularFormElement_elliptic_curve(ModularFormElement):
         """
         return self.__E.q_expansion(prec)
 
-    def atkin_lehner_eigenvalue(self, d=None):
-        r"""
-        Calculate the eigenvalue of the Atkin-Lehner operator W_d acting on
-        this form. If d is None, default to the level of the form. As this form
-        is attached to an elliptic curve, we can read this off from the root
-        number of the curve if d is the level.
+    def atkin_lehner_eigenvalue(self, d=None, embedding=None):
+        """
+        Return the result of the Atkin-Lehner operator `W_d` on
+        ``self``.
 
-        EXAMPLE::
+        INPUT:
+
+        - ``d`` -- a positive integer exactly dividing the level `N` of
+          ``self``, i.e. `d` divides `N` and is coprime to `N/d`. (Defaults to
+          `d = N` if not given.)
+
+        - ``embedding`` -- ignored (but accepted for compatibility with
+          :meth:`Newform.atkin_lehner_action`)
+
+        OUTPUT:
+
+        The Atkin-Lehner eigenvalue of `W_d` on ``self``. This is either `1` or
+        `-1`.
+
+        EXAMPLES::
 
             sage: EllipticCurve('57a1').newform().atkin_lehner_eigenvalue()
             1
@@ -1902,10 +2599,13 @@ class ModularFormElement_elliptic_curve(ModularFormElement):
             sage: EllipticCurve('57b1').newform().atkin_lehner_eigenvalue(19)
             1
         """
-        if d is None:
-            return -self.__E.root_number()
+        if d == self.level():
+            w = -self.__E.root_number()
         else:
-            return self.__E.modular_symbol_space().atkin_lehner_operator(d).matrix()[0,0]
+            # The space of modular symbols attached to E is
+            # one-dimensional.
+            w = self.__E.modular_symbol_space().atkin_lehner_operator(d).matrix()[0,0]
+        return w
 
 
 class EisensteinSeries(ModularFormElement):
@@ -1989,7 +2689,7 @@ class EisensteinSeries(ModularFormElement):
         """
         if prec is None:
             prec = self.parent().prec()
-        F = self._compute(range(prec))
+        F = self._compute(list(range(prec)))
         R = self.parent()._q_expansion_ring()
         return R(F, prec)
 
@@ -2036,14 +2736,14 @@ class EisensteinSeries(ModularFormElement):
                 v.append(F(t-1)/F(24))
             else:
                 an = sigma(n,1)
-                if n%t == 0:
-                    an -= t * sigma(n/t,1)
+                if n % t == 0:
+                    an -= t * sigma(n//t,1)
                 v.append(an)
         return v
 
     def __compute_general_case(self, X):
-        """
-        Returns the list coefficients of `q^n` of the power series of self,
+        r"""
+        Return the list coefficients of `q^n` of the power series of self,
         for `n` in the list `X`.  The results are not cached.  (Use
         coefficients for cached results).
 
@@ -2052,7 +2752,7 @@ class EisensteinSeries(ModularFormElement):
         `\psi` is a primitive character of conductor `M` We have
         `MLt \mid N`, and
 
-        .. math::
+        .. MATH::
 
           E_k(chi,psi,t) =
            c_0 + sum_{m \geq 1}[sum_{n|m} psi(n) * chi(m/n) * n^(k-1)] q^{mt},
@@ -2087,6 +2787,7 @@ class EisensteinSeries(ModularFormElement):
                               for d in divisors(m)]))
         return v
 
+    @cached_method
     def __defining_parameters(self):
         r"""
         Return defining parameters for ``self``.
@@ -2096,23 +2797,19 @@ class EisensteinSeries(ModularFormElement):
             sage: EisensteinForms(11,2).eisenstein_series()[0]._EisensteinSeries__defining_parameters()
             (-1/24, Dirichlet character modulo 1 of conductor 1, Dirichlet character modulo 1 of conductor 1, Rational Field, 2, 11, 1, 1)
         """
-        try:
-            return self.__defining_params
-        except AttributeError:
-            chi = self.__chi.primitive_character()
-            psi = self.__psi.primitive_character()
-            k = self.weight()
-            t = self.__t
-            L = chi.conductor()
-            M = psi.conductor()
-            K = chi.base_ring()
-            n = K.zeta_order()
-            if L == 1:
-                c0 = K(-psi.bernoulli(k))/K(2*k)
-            else:
-                c0 = K(0)
-            self.__defining_params = (c0, chi, psi, K, n, t, L, M)
-        return self.__defining_params
+        chi = self.__chi.primitive_character()
+        psi = self.__psi.primitive_character()
+        k = self.weight()
+        t = self.__t
+        L = chi.conductor()
+        M = psi.conductor()
+        K = chi.base_ring()
+        n = K.zeta_order()
+        if L == 1:
+            c0 = K(-psi.bernoulli(k))/K(2*k)
+        else:
+            c0 = K(0)
+        return (c0, chi, psi, K, n, t, L, M)
 
     def chi(self):
         """
@@ -2180,6 +2877,7 @@ class EisensteinSeries(ModularFormElement):
         """
         return self.__psi.conductor()
 
+    @cached_method
     def character(self):
         """
         Return the character associated to self.
@@ -2208,11 +2906,7 @@ class EisensteinSeries(ModularFormElement):
             sage: [ [ f.character() == chi for f in EisensteinForms(chi).eisenstein_series() ] for chi in DirichletGroup(16) ]
             [[True, True, True, True, True], [], [True, True], [], [True, True, True, True], [], [True, True], []]
         """
-        try:
-            return self.__character
-        except AttributeError:
-            self.__character = self.__chi * self.__psi
-        return self.__character
+        return self.__chi * self.__psi
 
     def new_level(self):
         """

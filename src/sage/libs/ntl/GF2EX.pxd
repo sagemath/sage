@@ -1,10 +1,7 @@
 from .types cimport GF2EX_c
 
-cdef extern from "ccobject.h":
-    void GF2EX_from_str "_from_str<GF2EX>"(GF2EX_c* dest, char* s)
-    object GF2EX_to_PyString "_to_PyString<GF2EX>"(GF2EX_c *x)
 
-cdef extern from "sage/libs/ntl/ntlwrap.cpp":
+cdef extern from "ntlwrap.h":
     void GF2EX_add "add"( GF2EX_c x, GF2EX_c a, GF2EX_c b)
     void GF2EX_sub "sub"( GF2EX_c x, GF2EX_c a, GF2EX_c b)
     void GF2EX_mul "mul"( GF2EX_c x, GF2EX_c a, GF2EX_c b)

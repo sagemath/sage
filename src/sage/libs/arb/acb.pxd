@@ -1,4 +1,4 @@
-# distutils: libraries = arb
+# distutils: libraries = gmp flint arb
 
 from sage.libs.arb.types cimport *
 from sage.libs.flint.types cimport fmpz_t, fmpq_t
@@ -45,6 +45,7 @@ cdef extern from "acb.h":
     bint acb_eq(const acb_t x, const acb_t y)
     bint acb_ne(const acb_t x, const acb_t y)
     bint acb_overlaps(const acb_t x, const acb_t y)
+    void acb_union(acb_t z, const acb_t x, const acb_t y, long prec)
     void acb_get_abs_ubound_arf(arf_t u, const acb_t z, long prec)
     void acb_get_abs_lbound_arf(arf_t u, const acb_t z, long prec)
     void acb_get_rad_ubound_arf(arf_t u, const acb_t z, long prec)
@@ -168,4 +169,5 @@ cdef extern from "acb.h":
     void acb_agm1_cpx(acb_ptr m, const acb_t z, long len, long prec)
 
     acb_ptr _acb_vec_init(long n)
+    void _acb_vec_sort_pretty(acb_ptr vec, long len)
     void _acb_vec_clear(acb_ptr v, long n)

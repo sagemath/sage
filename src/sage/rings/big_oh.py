@@ -9,6 +9,7 @@ Big O for various types (power series, p-adics, etc.)
     - `polynomials <../../../polynomial_rings/index.html>`_
 """
 from __future__ import absolute_import
+from six import integer_types
 
 import sage.arith.all as arith
 from . import laurent_series_ring_element
@@ -82,8 +83,6 @@ def O(*x, **kwds):
     We can also work with `asymptotic expansions`_::
 
         sage: A.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ * log(n)^QQ', coefficient_ring=QQ); A
-        doctest:...: FutureWarning:
-        This class/method/function is marked as experimental. ...
         Asymptotic Ring <QQ^n * n^QQ * log(n)^QQ> over Rational Field
         sage: O(n)
         O(n)
@@ -134,7 +133,7 @@ def O(*x, **kwds):
         return laurent_series_ring_element.LaurentSeries(x.parent(), 0).\
             add_bigoh(x.valuation(), **kwds)
 
-    elif isinstance(x, (int, long, integer.Integer, rational.Rational)):
+    elif isinstance(x, integer_types + (integer.Integer, rational.Rational)):
         # p-adic number
         if x <= 0:
             raise ArithmeticError("x must be a prime power >= 2")

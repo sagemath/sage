@@ -9,7 +9,8 @@ AUTHORS:
 """
 from __future__ import print_function
 
-include "cysignals/memory.pxi"
+from cysignals.memory cimport sig_malloc, sig_free
+
 from cpython.ref cimport PyObject, Py_INCREF, Py_XDECREF
 
 cdef binary_tree_node *BinaryTreeNode(int key, object value):
@@ -204,7 +205,7 @@ cdef class BinaryTree:
             ....:         CompiledPolynomialFunction(L)  # this creates and deallocs a binary tree
             ....:     gc.collect()
             ....:     post=Counter(type(o) for o in gc.get_objects() if id(o) not in pre)
-            ....:     return [(k,v) for (k,v) in post.iteritems() if v>10]
+            ....:     return [(k,v) for (k,v) in post.items() if v>10]
             sage: test()   # indirect doctest
             []
 

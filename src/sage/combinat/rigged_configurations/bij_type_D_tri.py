@@ -247,9 +247,10 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
             sage: RC = RiggedConfigurations(['D', 4, 3], [[2, 1]])
             sage: from sage.combinat.rigged_configurations.bij_type_D_tri import RCToKRTBijectionTypeDTri
             sage: bijection = RCToKRTBijectionTypeDTri(RC(partition_list=[[3],[2]]))
-            sage: bijection.next_state(1)
+            sage: bijection.next_state(2)
             -3
         """
+        height -= 1 # indexing
         ell = [None] * 6
         case_S = [False] * 3
         case_Q = False
@@ -336,7 +337,7 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
         if case_S[1]:
             row1 = [self.cur_partitions[1].remove_cell(ell[4], 2)]
         else:
-            row1 = [self.cur_partitions[1].remove_cell(ell[1]), 
+            row1 = [self.cur_partitions[1].remove_cell(ell[1]),
                     self.cur_partitions[1].remove_cell(ell[4])]
 
         if case_S[0]:
@@ -344,7 +345,7 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
             row0.append( self.cur_partitions[0].remove_cell(ell[3], 2) )
         else:
             if case_Q:
-                if ell[0] < ell[2]:
+                if ell[0] is None or ell[0] < ell[2]:
                     row0 = [self.cur_partitions[0].remove_cell(ell[2]),
                             self.cur_partitions[0].remove_cell(ell[0])]
                 else:
@@ -369,7 +370,7 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
             if l is not None:
                 self.cur_partitions[0].rigging[l] = self.cur_partitions[0].vacancy_numbers[l]
 
-        # If case (Q,S) holds, then we must make the larger string quasisingular    
+        # If case (Q,S) holds, then we must make the larger string quasisingular
         if case_Q and case_S[2]:
             P = self.cur_partitions[0]
             vac_num = P.vacancy_numbers[quasi]

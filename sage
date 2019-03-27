@@ -22,8 +22,6 @@
 # automatically.
 #SAGE_ROOT=/path/to/sage-version
 
-
-
 # Resolve all symbolic links in a filename.  This more or less behaves
 # like "readlink -f" except that it does not convert the filename to an
 # absolute path (a relative path remains relative), nor does it treat
@@ -127,12 +125,17 @@ export SAGE_ROOT
 # Note: relocate-once.py deletes itself upon successful completion
 if [ -x "$SAGE_ROOT/relocate-once.py" ]; then
     "$SAGE_ROOT/relocate-once.py"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error running the script 'relocate-once.py'."
+        exit 1
+    fi
 fi
 
 # Run the actual Sage script
 if [ -x "$SAGE_ROOT/src/bin/sage" ]; then
     exec "$SAGE_ROOT/src/bin/sage" "$@"
 elif [ -x "$SAGE_ROOT/local/bin/sage" ]; then # if in a stripped binary
+    # Note in this case we assume that SAGE_LOCAL is the "local" subdirectory
     exec "$SAGE_ROOT/local/bin/sage" "$@"
 else
     echo >&2 "$0: no Sage installation found in \$SAGE_ROOT=$SAGE_ROOT"

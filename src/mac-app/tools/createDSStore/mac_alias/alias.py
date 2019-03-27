@@ -14,6 +14,11 @@ import sys
 if sys.platform == 'darwin':
     from . import osx
 
+try:
+    long
+except NameError:
+    long = int
+
 from .utils import *
     
 ALIAS_KIND_FILE = 0
@@ -29,6 +34,16 @@ ALIAS_1_44MB_FLOPPY_DISK = 4
 ALIAS_EJECTABLE_DISK = 5
 
 ALIAS_NO_CNID = 0xffffffff
+
+def encode_utf8(s):
+    if isinstance(s, bytes):
+        return s
+    return s.encode('utf-8')
+
+def decode_utf8(s):
+    if isinstance(s, bytes):
+        return s.decode('utf-8')
+    return s
 
 class AppleShareInfo (object):
     def __init__(self, zone=None, server=None, user=None):
@@ -323,6 +338,8 @@ class Alias (object):
         """Create an :class:`Alias` that points at the specified file."""
         if sys.platform != 'darwin':
             raise Exception('Not implemented (requires special support)')
+
+        path = encode_utf8(path)
         
         a = Alias()
 
@@ -337,7 +354,7 @@ class Alias (object):
         volinfo = osx.getattrlist(vol_path, attrs, 0)
 
         vol_crtime = volinfo[0]
-        vol_name = volinfo[1]
+        vol_name = encode_utf8(volinfo[1])
         
         # Also grab various attributes of the file
         attrs = [(osx.ATTR_CMN_OBJTYPE
@@ -357,7 +374,7 @@ class Alias (object):
         
         dirname, filename = os.path.split(path)
 
-        if dirname == '' or dirname == '.':
+        if dirname == b'' or dirname == b'.':
             dirname = os.getcwd()
 
         foldername = os.path.basename(dirname)
@@ -382,10 +399,10 @@ class Alias (object):
         rel_path = os.path.relpath(path, vol_path)
 
         # Leave off the initial '/' if vol_path is '/' (no idea why)
-        if vol_path == '/':
+        if vol_path == b'/':
             a.target.posix_path = rel_path
         else:
-            a.target.posix_path = '/' + rel_path
+            a.target.posix_path = b'/' + rel_path
 
         # Construct the Carbon and CNID paths
         carbon_path = []
@@ -398,10 +415,11 @@ class Alias (object):
                 attrs = [osx.ATTR_CMN_FILEID, 0, 0, 0, 0]
                 info = osx.getattrlist(os.path.join(vol_path, head), attrs, 0)
                 cnid_path.append(info[0])
-            carbon_tail = tail.replace(':','/')
+            carbon_tail = tail.replace(b':',b'/')
             carbon_path.insert(0, carbon_tail)
             head, tail = os.path.split(head)
-        carbon_path = vol_name + ':' + ':\0'.join(carbon_path)
+
+        carbon_path = vol_name + b':' + b':\0'.join(carbon_path)
 
         a.target.carbon_path = carbon_path
         a.target.cnid_path = cnid_path
@@ -413,8 +431,8 @@ class Alias (object):
         pos = b.tell()
         b.write(struct.pack(b'>4shh', self.appinfo, 0, self.version))
 
-        carbon_volname = self.volume.name.replace(':','/').encode('utf-8')
-        carbon_filename = self.target.filename.replace(':','/').encode('utf-8')
+        carbon_volname = encode_utf8(self.volume.name).replace(b':',b'/')
+        carbon_filename = encode_utf8(self.target.filename).replace(b':',b'/')
         voldate = (self.volume.creation_date - mac_epoch).total_seconds()
         crdate = (self.target.creation_date - mac_epoch).total_seconds()
 
@@ -422,13 +440,13 @@ class Alias (object):
         #       (so doing so is ridiculous, and nothing could rely on it).
         b.write(struct.pack(b'>h28pI2shI64pII4s4shhI2s10s',
                             self.target.kind,
-                            carbon_volname, voldate,
+                            carbon_volname, int(voldate),
                             self.volume.fs_type,
                             self.volume.disk_type,
                             self.target.folder_cnid,
                             carbon_filename,
                             self.target.cnid,
-                            crdate,
+                            int(crdate),
                             self.target.creator_code,
                             self.target.type_code,
                             self.target.levels_from,
@@ -439,8 +457,8 @@ class Alias (object):
 
         # Excuse the odd order; we're copying Finder
         if self.target.folder_name:
-            carbon_foldername = self.target.folder_name.replace(':','/')\
-              .encode('utf-8')
+            carbon_foldername = encode_utf8(self.target.folder_name)\
+                                .replace(b':',b'/')
             b.write(struct.pack(b'>hh', TAG_CARBON_FOLDER_NAME,
                                 len(carbon_foldername)))
             b.write(carbon_foldername)
@@ -461,7 +479,7 @@ class Alias (object):
             b.write(cnid_path)
 
         if self.target.carbon_path:
-            carbon_path=self.target.carbon_path.encode('utf-8')
+            carbon_path=encode_utf8(self.target.carbon_path)
             b.write(struct.pack(b'>hh', TAG_CARBON_PATH,
                                  len(carbon_path)))
             b.write(carbon_path)
@@ -490,7 +508,7 @@ class Alias (object):
                     b.write(b'\0')
 
         if self.volume.driver_name:
-            driver_name = self.volume.driver_name.encode('utf-8')
+            driver_name = encode_utf8(self.volume.driver_name)
             b.write(struct.pack(b'>hh', TAG_DRIVER_NAME,
                                 len(driver_name)))
             b.write(driver_name)
@@ -511,20 +529,22 @@ class Alias (object):
             if len(self.volume.network_mount_info) & 1:
                 b.write(b'\0')
 
-        utf16 = self.target.filename.replace(':','/').encode('utf-16-be')
+        utf16 = decode_utf8(self.target.filename)\
+                .replace(':','/').encode('utf-16-be')
         b.write(struct.pack(b'>hhh', TAG_UNICODE_FILENAME,
                             len(utf16) + 2,
                             len(utf16) // 2))
         b.write(utf16)
 
-        utf16 = self.volume.name.replace(':','/').encode('utf-16-be')
+        utf16 = decode_utf8(self.volume.name)\
+                .replace(':','/').encode('utf-16-be')
         b.write(struct.pack(b'>hhh', TAG_UNICODE_VOLUME_NAME,
                             len(utf16) + 2,
                             len(utf16) // 2))
         b.write(utf16)
 
         if self.target.posix_path:
-            posix_path = self.target.posix_path.encode('utf-8')
+            posix_path = encode_utf8(self.target.posix_path)
             b.write(struct.pack(b'>hh', TAG_POSIX_PATH,
                                 len(posix_path)))
             b.write(posix_path)
@@ -532,7 +552,7 @@ class Alias (object):
                 b.write(b'\0')
 
         if self.volume.posix_path:
-            posix_path = self.volume.posix_path.encode('utf-8')
+            posix_path = encode_utf8(self.volume.posix_path)
             b.write(struct.pack(b'>hh', TAG_POSIX_PATH_TO_MOUNTPOINT,
                                 len(posix_path)))
             b.write(posix_path)

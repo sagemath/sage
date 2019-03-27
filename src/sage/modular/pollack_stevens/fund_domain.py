@@ -6,14 +6,7 @@ Code to create the Manin Relations class, which solves the "Manin relations".
 That is, a description of `Div^0(P^1(\QQ))` as a `\ZZ[\Gamma_0(N)]`-module in
 terms of generators and relations is found. The method used is geometric,
 constructing a nice fundamental domain for `\Gamma_0(N)` and reading the
-relevant Manin relations off of that picture. The algorithm follows [PS2011].
-
-REFERENCES:
-
-.. [PS2011] R. Pollack, and G. Stevens.
-   *Overconvergent modular symbols and p-adic L-functions.*
-   Annales scientifiques de l'Ecole normale superieure.
-   Vol. 44. No. 1. Elsevier, 2011.
+relevant Manin relations off of that picture. The algorithm follows [PS2011]_.
 
 AUTHORS:
 
@@ -29,8 +22,9 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six import iteritems
+
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modular.modsym.all import P1List
 from sage.rings.integer import Integer
@@ -283,7 +277,7 @@ class PollackStevensModularDomain(SageObject):
 
     def indices(self, n=None):
         r"""
-        Return the ``n``-th index of the coset representatives which were
+        Return the `n`-th index of the coset representatives which were
         chosen as our generators.
 
         In particular, the divisors associated to these coset representatives
@@ -822,7 +816,7 @@ class ManinRelations(PollackStevensModularDomain):
             ## interior path on either of the last two cusps
 
             for s in range(r + 2, len(cusps)):
-            ## s is in the index of the cusp on the the right of the path
+            ## s is in the index of the cusp on the right of the path
                 cusp1 = cusps[r]
                 cusp2 = cusps[s]
                 if self.is_unimodular_path(cusp1, cusp2):
@@ -1126,9 +1120,9 @@ class ManinRelations(PollackStevensModularDomain):
         the real axis.
 
         The construction of this fundamental domain follows the arguments of
-        [PS2011] Section 2.  The boundary of this fundamental domain consists
+        [PS2011]_ Section 2.  The boundary of this fundamental domain consists
         entirely of unimodular paths when `\Gamma_0(N)` has no elements of
-        order 3.  (See [PS2011] Section 2.5 for the case when there are
+        order 3.  (See [PS2011]_ Section 2.5 for the case when there are
         elements of order 3.)
 
         OUTPUT:
@@ -1154,13 +1148,6 @@ class ManinRelations(PollackStevensModularDomain):
         """
         ## Get the level
         N = self.level()
-
-        ## Checks that the level N is > 1
-        # TODO: I'm commenting this out; I see no reason not to allow
-        # level 1, except possibly the bug here that I fixed:
-        # http://trac.sagemath.org/sage_trac/ticket/12772
-        #if not (N > 1):
-        #    raise TypeError("Error in form_list_of_cusps: level should be > 1")
 
         ## Some convenient shortcuts
         P = self.P1()
@@ -1358,7 +1345,7 @@ class ManinRelations(PollackStevensModularDomain):
         Here the fundamental domain is for `\Gamma_0(N)`.  (In the
         case when `\Gamma_0(N)` has elements of order three the shape
         cut out by these unimodular matrices is a little smaller than
-        a fundamental domain.  See Section 2.5 of [PS2011].)
+        a fundamental domain.  See Section 2.5 of [PS2011]_.)
 
         INPUT:
 
@@ -1437,7 +1424,7 @@ class ManinRelations(PollackStevensModularDomain):
         r"""
         This function does some precomputations needed to compute `T_l`.
 
-        In particular, if `phi` is a modular symbol and `D_m` is the divisor
+        In particular, if `\phi` is a modular symbol and `D_m` is the divisor
         associated to the generator ``gen``, to compute `(\phi|T_{l})(D_m)` one
         needs to compute `\phi(\gamma_a D_m)|\gamma_a` where `\gamma_a` runs
         through the `l+1` matrices defining `T_l`.  One
@@ -1529,7 +1516,7 @@ class ManinRelations(PollackStevensModularDomain):
     def prep_hecke_on_gen_list(self, l, gen, modulus=None):
         r"""
         Return the precomputation to compute `T_l` in a way that
-        speeds up the hecke calculation.
+        speeds up the Hecke calculation.
 
         Namely, returns a list of the form [h,A].
 
@@ -1553,7 +1540,7 @@ class ManinRelations(PollackStevensModularDomain):
             4
         """
         ans = []
-        for h, vh in self.prep_hecke_on_gen(l, gen, modulus=modulus).iteritems():
+        for h, vh in iteritems(self.prep_hecke_on_gen(l, gen, modulus=modulus)):
             ans.extend([(h, v) for v in vh])
         return ans
 

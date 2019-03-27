@@ -1,7 +1,7 @@
 "Quadratic form extras"
 
 from sage.matrix.constructor import matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.arith.all import legendre_symbol
 from sage.rings.integer_ring import ZZ
 
@@ -47,12 +47,13 @@ def is_triangular_number(n, return_value=False):
 
     TESTS::
 
-        sage: F1 = filter(is_triangular_number, range(1,100*(100+1)/2))
+        sage: F1 = [n for n in range(1,100*(100+1)/2)
+        ....:       if is_triangular_number(n)]
         sage: F2 = [n*(n+1)/2 for n in range(1,100)]
         sage: F1 == F2
         True
 
-        sage: for n in xrange(1000):
+        sage: for n in range(1000):
         ....:     res,v = is_triangular_number(n,return_value=True)
         ....:     assert res == is_triangular_number(n)
         ....:     if res: assert v*(v+1)/2 == n

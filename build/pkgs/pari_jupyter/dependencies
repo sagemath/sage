@@ -1,1 +1,1 @@
-pari jupyter_core | cython
+$(PYTHON) pari | pip cython notebook jupyter_core

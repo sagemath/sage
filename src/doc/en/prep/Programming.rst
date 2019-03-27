@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-programming:
+
 Sage Introductory Programming Tutorial
 ======================================
 
@@ -270,7 +272,7 @@ powers of the original matrix come in the same order as the list.
 Python.)
 
 For the curious: this is better, but still not perfect.  It would be
-best to find a quicker way to write the the possible values for
+best to find a quicker way to write the possible values for
 :math:`i`.  There are two ways to do this in Sage.
 
 ::
@@ -301,8 +303,9 @@ Below, we show that one can get step sizes other than one as well.
 
 ::
 
-    sage: range(3, 23, 2); [3,5..21]
+    sage: range(3, 23, 2)   # py2
     [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
+    sage: [3,5..21]
     [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
 
 .. note::

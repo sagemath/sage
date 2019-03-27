@@ -17,10 +17,10 @@ Affinization Crystals
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
 
-from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import Element
+from sage.structure.richcmp import richcmp
 from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.infinity import Infinity
@@ -71,7 +71,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    - [HK02]_ Chapter 10
+    - [HK2002]_ Chapter 10
     """
     def __init__(self, B):
         """
@@ -91,8 +91,8 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
         self._B = B
         self._cartan_type = B.cartan_type()
         Parent.__init__(self, category=(RegularCrystals(), InfiniteEnumeratedSets()))
-        mg_elt = lambda b: self.element_class(self, b, 0)
-        self.module_generators = tuple(map(mg_elt, B.module_generators))
+        self.module_generators = tuple([self.element_class(self, b, 0)
+                                        for b in B.module_generators])
 
     def _repr_(self):
         """
@@ -104,37 +104,6 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
             Affinization of Kirillov-Reshetikhin crystal of type ['A', 2, 1] with (r,s)=(1,1)
         """
         return "Affinization of {}".format(self._B)
-
-    def weight_lattice_realization(self):
-        """
-        Return the weight lattice realization of ``self``.
-
-        EXAMPLES::
-
-            sage: A = crystals.KirillovReshetikhin(['A',2,1], 1, 1).affinization()
-            sage: A.weight_lattice_realization()
-            Extended weight lattice of the Root system of type ['A', 2, 1]
-        """
-        return self.cartan_type().root_system().weight_lattice(extended=True)
-
-    # TODO: This should become unnecessary once we have a proper category for KR crystals
-    def digraph(self, subset=None, index_set=None):
-        """
-        Return the DiGraph associated with ``self``. See
-        :meth:`~sage.categories.crystals.ParentMethods.digraph()` for more
-        information.
-
-        EXAMPLES::
-
-            sage: A = crystals.KirillovReshetikhin(['A',2,1], 2, 2).affinization()
-            sage: S = A.subcrystal(max_depth=3)
-            sage: G = A.digraph(subset=S)
-        """
-        G = super(AffinizationOfCrystal, self).digraph(subset, index_set)
-        from sage.graphs.dot2tex_utils import have_dot2tex
-        if have_dot2tex():
-            G.set_latex_options(edge_options=lambda u_v_label: ({}))
-        return G
 
     class Element(Element):
         """
@@ -194,13 +163,12 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
 
                 sage: A = crystals.KirillovReshetikhin(['A',2,1], 2, 2).affinization()
                 sage: mg = A.module_generators[0]
-                sage: hash(mg)
-                -6948036233304877976 # 64-bit
-                -1420700568          # 32-bit
+                sage: hash(mg) == hash(mg._b) ^^ hash(mg._m)
+                True
             """
             return hash(self._b) ^ hash(self._m)
 
-        def __cmp__(self, other):
+        def _richcmp_(self, other, op):
             """
             Comparison.
 
@@ -236,12 +204,8 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
                  [[1, 2], [2, 3]](1),
                  [[1, 2], [3, 3]](1),
                  [[2, 2], [3, 3]](2)]
-
             """
-            if parent(self) is parent(other):
-                return cmp(self._m, other._m) or cmp(self._b, other._b)
-            else:
-                return cmp(parent(self), parent(other))
+            return richcmp((self._m, self._b), (other._m, other._b), op)
 
         def e(self, i):
             """

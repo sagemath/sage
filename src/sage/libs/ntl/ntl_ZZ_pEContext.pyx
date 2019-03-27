@@ -131,7 +131,7 @@ cdef class ntl_ZZ_pEContext_class(object):
         sage: c.ZZ_pE([4,3])
         [4 3]
         """
-        from ntl_ZZ_pE import ntl_ZZ_pE
+        from .ntl_ZZ_pE import ntl_ZZ_pE
         return ntl_ZZ_pE(v,modulus=self)
 
     def ZZ_pEX(self, v = None):
@@ -143,7 +143,7 @@ cdef class ntl_ZZ_pEContext_class(object):
         sage: c.ZZ_pEX([4,3])
         [[4] [3]]
         """
-        from ntl_ZZ_pEX import ntl_ZZ_pEX
+        from .ntl_ZZ_pEX import ntl_ZZ_pEX
         return ntl_ZZ_pEX(v, modulus=self)
 
 def ntl_ZZ_pEContext( ntl_ZZ_pX f):

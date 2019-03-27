@@ -13,14 +13,16 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import division, print_function
+from __future__ import absolute_import, division, print_function
 
-include "cysignals/signals.pxi"
-include "sage/ext/stdsage.pxi"
+from cysignals.signals cimport sig_on, sig_off
+from sage.ext.cplusplus cimport ccrepr, ccreadstr
+
 include 'misc.pxi'
 include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
+from sage.cpython.string cimport char_to_str
 from sage.rings.integer cimport Integer
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
@@ -102,9 +104,7 @@ cdef class ntl_ZZ_pX(object):
                 ZZ_pX_SetCoeff(self.x, i, cc.x)
         elif v is not None:
             s = str(v).replace(',',' ').replace('L','')
-            sig_on()
-            ZZ_pX_from_str(&self.x, s)
-            sig_off()
+            ccreadstr(self.x, s)
 
     def __cinit__(self, v=None, modulus=None):
         #################### WARNING ###################
@@ -160,11 +160,7 @@ cdef class ntl_ZZ_pX(object):
             '[1 0 3]'
         """
         self.c.restore_c()
-        #cdef char* s = ZZ_pX_repr(&self.x)
-        #t = str(s)
-        #sig_free(s)
-        return ZZ_pX_to_PyString(&self.x)
-        #return t
+        return ccrepr(self.x)
 
     def __copy__(self):
         """
@@ -290,7 +286,7 @@ cdef class ntl_ZZ_pX(object):
             sage: i
             13
             sage: type(i)
-            <type 'int'>
+            <... 'int'>
             sage: x._getitem_as_int_doctest(15)
             0
         """
@@ -1248,7 +1244,9 @@ cdef class ntl_ZZ_pX(object):
         sig_on()
         cdef char* t
         t = ZZ_pX_trace_list(&self.x)
-        return eval(string_delete(t).replace(' ', ','))
+        r = eval(char_to_str(t).replace(' ', ','))
+        string_delete(t)
+        return r
 
     def resultant(self, ntl_ZZ_pX other):
         """
@@ -1421,7 +1419,7 @@ cdef class ntl_ZZ_pX_Modulus(object):
         return "NTL ZZ_pXModulus %s (mod %s)"%(self.poly, self.poly.c.p)
 
     def degree(self):
-        cdef Integer ans = PY_NEW(Integer)
+        cdef Integer ans = Integer.__new__(Integer)
         mpz_set_ui(ans.value, ZZ_pX_Modulus_deg(self.x))
         return ans
 

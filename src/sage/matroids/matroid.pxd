@@ -37,10 +37,36 @@ cdef class Matroid(SageObject):
     cpdef _line_length(self, F)
     cpdef _extension(self, element, hyperplanes)
 
-    # ** user-facing methods **
+    cdef inline __subset(self, X):
+        """
+        Convert ``X`` to a ``frozenset`` and check that it is a subset
+        of the groundset.
 
-    # cpdef _latex_(self)  # Disabled, because not overridden by current subclasses
-    # cpdef show(self)  # Disabled, because not implemented yet
+        See ``_subset`` for the corresponding Python method.
+        """
+        S = frozenset(X)
+        if not self.groundset().issuperset(S):
+            raise ValueError(f"{X!r} is not a subset of the groundset")
+        return S
+
+    cdef inline __subset_all(self, X):
+        """
+        If ``X`` is ``None``, return the groundset.
+
+        Otherwise, do like ``_subset``:
+        convert ``X`` to a ``frozenset`` and check that it is a subset
+        of the groundset.
+
+        See ``_subset_all`` for the corresponding Python method.
+        """
+        if X is None:
+            return self.groundset()
+        S = frozenset(X)
+        if not self.groundset().issuperset(S):
+            raise ValueError(f"{X!r} is not a subset of the groundset")
+        return S
+
+    # ** user-facing methods **
     cpdef size(self)
 
     # matroid oracle
@@ -119,8 +145,8 @@ cdef class Matroid(SageObject):
     cpdef dual(self)
     cpdef truncation(self)
     cpdef has_minor(self, N, bint certificate=*)
-    cpdef has_line_minor(self, k, hyperlines=*)
-    cpdef _has_line_minor(self, k, hyperlines)
+    cpdef has_line_minor(self, k, hyperlines=*, certificate=*)
+    cpdef _has_line_minor(self, k, hyperlines, certificate=*)
 
     # extension
     cpdef extension(self, element=*, subsets=*)
@@ -185,8 +211,8 @@ cdef class Matroid(SageObject):
     cpdef _internal(self, B)
     cpdef _external(self, B)
     cpdef tutte_polynomial(self, x=*, y=*)
-    cpdef flat_cover(self)
-    
+    cpdef flat_cover(self, solver=*, verbose=*)
+
     # visualization
     cpdef plot(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*)
     cpdef show(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*,lims=*)

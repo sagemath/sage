@@ -76,7 +76,7 @@ example::
 
 Just like :mod:`sage.numerical.linear_functions`, (in)equalities
 become symbolic inequalities. See
-:mod:`~sage.numerical.linear_tensor_constraints` for detais.
+:mod:`~sage.numerical.linear_tensor_constraints` for details.
 
 .. NOTE::
 
@@ -337,7 +337,7 @@ class LinearTensorParent_class(Parent):
 
         OUTPUT:
 
-        A :meth:`free_module`` element.
+        A :meth:`free_module` element.
 
         EXAMPLES::
 

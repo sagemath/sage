@@ -16,7 +16,7 @@ pour tracer des courbes, mais pas dérivées ou intégrées symboliquement::
 
     sage: def f(z): return z^2
     sage: type(f)
-    <type 'function'>
+    <... 'function'>
     sage: f(3)
     9
     sage: plot(f, 0, 2)
@@ -25,11 +25,11 @@ pour tracer des courbes, mais pas dérivées ou intégrées symboliquement::
 Remarquez la syntaxe de la dernière ligne. Écrire plutôt ``plot(f(z), 0, 2)``
 provoquerait une erreur : en effet, le ``z`` qui apparaît dans
 la définition de ``f`` est une variable muette qui n'a pas de sens
-en-dehors de la définition. Un simple ``f(z)`` déclenche la même erreur.
+en dehors de la définition. Un simple ``f(z)`` déclenche la même erreur.
 En l'occurrence, faire de ``z`` une variable symbolique comme dans
 l'exemple ci-dessous fonctionne, mais cette façon de faire soulève
 d'autres problèmes (voir le point 4 ci-dessous), et il vaut mieux
-s'abstenir de l'utiliser
+s'abstenir de l'utiliser.
 
 .. link
 
@@ -134,7 +134,7 @@ est donc évaluée.
     sage: type(x < 2)
     <type 'sage.symbolic.expression.Expression'>
 
-Or, l'évaluation d'une inégalité symbolique renvoie False quand la
+Or, l'évaluation d'une inégalité symbolique renvoie ``False`` quand la
 condition n'est pas clairement vraie. Ainsi, ``h(x)`` s'évalue en
 ``x - 2``, et c'est cette expression-là qui est finalement tracée.
 

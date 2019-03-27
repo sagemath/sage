@@ -1,4 +1,4 @@
-$(PYTHON) mpmath
+$(PYTHON) mpmath | pip
 
 ----------
 All lines of this file are ignored except the first.

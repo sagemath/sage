@@ -24,9 +24,9 @@ Development supported by NSF award No. 0702939.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.misc.decorators import options
 from sage.plot.all import list_plot, Graphics
@@ -37,11 +37,11 @@ from sage.rings.all import CDF
 
 from sage.arith.srange import srange
 
-from sage.gsl.interpolation import spline
+from sage.calculus.interpolation import spline
 
 from sage.plot.complex_plot import ComplexPlot
 
-from sage.gsl.integration import numerical_integral
+from sage.calculus.integration import numerical_integral
 
 
 import numpy as np
@@ -87,7 +87,7 @@ cdef class Riemann_Map:
     inaccurate. Error computations for the ellipse can be found in the
     documentation for :meth:`analytic_boundary` and :meth:`analytic_interior`.
 
-    [BSV]_ provides an overview of the Riemann map and discusses the research
+    [BSV2010]_ provides an overview of the Riemann map and discusses the research
     that lead to the creation of this module.
 
     INPUT:
@@ -192,17 +192,9 @@ cdef class Riemann_Map:
     ALGORITHM:
 
     This class computes the Riemann Map via the Szego kernel using an
-    adaptation of the method described by [KT]_.
+    adaptation of the method described by [KT1986]_.
 
-    REFERENCES:
 
-    .. [KT] \N. Kerzman and M. R. Trummer. "Numerical Conformal Mapping via
-      the Szego kernel". Journal of Computational and Applied Mathematics,
-      14(1-2): 111--123, 1986.
-
-    .. [BSV] \M. Bolt, S. Snoeyink, E. Van Andel. "Visual representation of
-      the Riemann map and Ahlfors map via the Kerzman-Stein equation".
-      Involve 3-4 (2010), 405-420.
     """
     cdef int N, B, ncorners
     cdef f
@@ -309,7 +301,7 @@ cdef class Riemann_Map:
     cdef _generate_theta_array(self):
         """
         Generates the essential data for the Riemann map, primarily the
-        Szego kernel and boundary correspondence.  See [KT]_ for the algorithm.
+        Szego kernel and boundary correspondence.  See [KT1986]_ for the algorithm.
 
         TESTS::
 
@@ -332,7 +324,7 @@ cdef class Riemann_Map:
         adp = abs(dp)
         sadp = np.sqrt(adp)
         h = 1 / (TWOPI * I) * ((dp / adp) / (self.a - cp))
-        hconj = np.array(map(np.complex.conjugate, h), dtype=COMPLEX)
+        hconj = h.conjugate()
         g = -sadp * hconj
         normalized_dp=dp/adp
         C = I / N * sadp # equivalent to -TWOPI / N * 1 / (TWOPI * I) * sadp
@@ -440,7 +432,7 @@ cdef class Riemann_Map:
             sage: hfprime(t) = 0.5*-I*e^(-I*t)
             sage: m = Riemann_Map([f, hf], [fprime, hfprime], 0.5 + 0.5*I)
 
-        Getting the szego for a specifc boundary::
+        Getting the szego for a specific boundary::
 
             sage: sz0 = m.get_szego(boundary=0)
             sage: sz1 = m.get_szego(boundary=1)
@@ -513,7 +505,7 @@ cdef class Riemann_Map:
             sage: hfprime(t) = 0.5*-I*e^(-I*t)
             sage: m = Riemann_Map([f, hf], [hf, hfprime], 0.5 + 0.5*I)
 
-        Getting the boundary correspondence for a specifc boundary::
+        Getting the boundary correspondence for a specific boundary::
 
             sage: tp0 = m.get_theta_points(boundary=0)
             sage: tp1 = m.get_theta_points(boundary=1)
@@ -587,7 +579,7 @@ cdef class Riemann_Map:
         the interior of the mapped region, ``riemann_map`` will return
         the point on the unit disk that ``pt`` maps to. Note that this
         method only works for interior points; accuracy breaks down very close
-        to the boundary. To get boundary corrospondance, use
+        to the boundary. To get boundary correspondance, use
         :meth:`get_theta_points`.
 
         INPUT:
@@ -761,7 +753,7 @@ cdef class Riemann_Map:
             sage: m.plot_boundaries(plotjoined=False, rgbcolor=[0,0,1], thickness=6)
             Graphics object consisting of 1 graphics primitive
         """
-        plots = range(self.B)
+        plots = list(range(self.B))
         for k in xrange(self.B):
             # This conditional should be eliminated when the thickness/pointsize
             # issue is resolved later. Same for the others in plot_spiderweb().
@@ -954,13 +946,13 @@ cdef class Riemann_Map:
         if self.B == 1: #The efficient simply connected
             edge = self.plot_boundaries(plotjoined=plotjoined,
                 rgbcolor=rgbcolor, thickness=thickness)
-            circle_list = range(circles)
+            circle_list = list(range(circles))
             theta_array = self.theta_array[0]
             s = spline(np.column_stack([self.theta_array[0], self.tk2]).tolist())
             tmax = self.theta_array[0, self.N]
             tmin = self.theta_array[0, 0]
             for k in xrange(circles):
-                temp = range(pts*2)
+                temp = list(range(pts*2))
                 for i in xrange(2*pts):
                     temp[i] = self.inverse_riemann_map(
                         (k + 1) / (circles + 1.0) * exp(I*i * TWOPI / (2*pts)))
@@ -970,9 +962,9 @@ cdef class Riemann_Map:
                 else:
                     circle_list[k] = list_plot(comp_pt(temp, 1),
                         rgbcolor=rgbcolor, pointsize=thickness)
-            line_list = range(spokes)
+            line_list = list(range(spokes))
             for k in xrange(spokes):
-                temp = range(pts)
+                temp = list(range(pts))
                 angle = (k*1.0) / spokes * TWOPI
                 if angle >= tmax:
                     angle -= TWOPI
@@ -1089,11 +1081,9 @@ cdef comp_pt(clist, loop=True):
         sage: m.plot_spiderweb()
         Graphics object consisting of 21 graphics primitives
     """
-    list2 = range(len(clist) + 1) if loop else range(len(clist))
-    for i in xrange(len(clist)):
-        list2[i] = (clist[i].real, clist[i].imag)
+    list2 = [(c.real, c.imag) for c in clist]
     if loop:
-        list2[len(clist)] = list2[0]
+        list2.append(list2[0])
     return list2
 
 cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
@@ -1201,30 +1191,30 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
         sage: zval = numpy.array([[0, 1, 1000],[.2+.3j,1,-.3j],[0,0,0]],dtype = numpy.complex128)
         sage: deriv = numpy.array([[.1]],dtype = numpy.float64)
         sage: complex_to_spiderweb(zval, deriv,deriv, 4,4,[0,0,0],1,False,0.001)
-        array([[[ 1.,  1.,  1.],
-                [ 1.,  1.,  1.],
-                [ 1.,  1.,  1.]],
+        array([[[1., 1., 1.],
+                [1., 1., 1.],
+                [1., 1., 1.]],
         <BLANKLINE>
-               [[ 1.,  1.,  1.],
-                [ 0.,  0.,  0.],
-                [ 1.,  1.,  1.]],
+               [[1., 1., 1.],
+                [0., 0., 0.],
+                [1., 1., 1.]],
         <BLANKLINE>
-               [[ 1.,  1.,  1.],
-                [ 1.,  1.,  1.],
-                [ 1.,  1.,  1.]]])
+               [[1., 1., 1.],
+                [1., 1., 1.],
+                [1., 1., 1.]]])
 
         sage: complex_to_spiderweb(zval, deriv,deriv, 4,4,[0,0,0],1,True,0.001)
-        array([[[ 1.        ,  1.        ,  1.        ],
-                [ 1.        ,  0.05558355,  0.05558355],
-                [ 0.17301243,  0.        ,  0.        ]],
+        array([[[1.        , 1.        , 1.        ],
+                [1.        , 0.05558355, 0.05558355],
+                [0.17301243, 0.        , 0.        ]],
         <BLANKLINE>
-               [[ 1.        ,  0.96804683,  0.48044583],
-                [ 0.        ,  0.        ,  0.        ],
-                [ 0.77351965,  0.5470393 ,  1.        ]],
+               [[1.        , 0.96804683, 0.48044583],
+                [0.        , 0.        , 0.        ],
+                [0.77351965, 0.5470393 , 1.        ]],
         <BLANKLINE>
-               [[ 1.        ,  1.        ,  1.        ],
-                [ 1.        ,  1.        ,  1.        ],
-                [ 1.        ,  1.        ,  1.        ]]])
+               [[1.        , 1.        , 1.        ],
+                [1.        , 1.        , 1.        ],
+                [1.        , 1.        , 1.        ]]])
      """
     cdef Py_ssize_t i, j, imax, jmax
     cdef FLOAT_T x, y, mag, arg, width, target, precision, dmag, darg
@@ -1289,14 +1279,14 @@ cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim = 2] z_values):
         sage: from sage.calculus.riemann import complex_to_rgb
         sage: import numpy
         sage: complex_to_rgb(numpy.array([[0, 1, 1000]], dtype = numpy.complex128))
-        array([[[ 1.        ,  1.        ,  1.        ],
-                [ 1.        ,  0.05558355,  0.05558355],
-                [ 0.17301243,  0.        ,  0.        ]]])
+        array([[[1.        , 1.        , 1.        ],
+                [1.        , 0.05558355, 0.05558355],
+                [0.17301243, 0.        , 0.        ]]])
 
         sage: complex_to_rgb(numpy.array([[0, 1j, 1000j]], dtype = numpy.complex128))
-        array([[[ 1.        ,  1.        ,  1.        ],
-                [ 0.52779177,  1.        ,  0.05558355],
-                [ 0.08650622,  0.17301243,  0.        ]]])
+        array([[[1.        , 1.        , 1.        ],
+                [0.52779177, 1.        , 0.05558355],
+                [0.08650622, 0.17301243, 0.        ]]])
 
 
     TESTS::
@@ -1319,9 +1309,9 @@ cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim = 2] z_values):
         dtype=FLOAT, shape=(imax, jmax, 3))
 
     sig_on()
-    for i from 0 <= i < imax: #replace with xrange?
+    for i in xrange(imax):
         row = z_values[i]
-        for j from 0 <= j < jmax: #replace with xrange?
+        for j in xrange(jmax):
             z = row[j]
             mag = abs(z)
             arg = phase(z)
@@ -1470,7 +1460,7 @@ cpdef cauchy_kernel(t, args):
 
 cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):
     """
-    Provides a nearly exact compuation of the Riemann Map of an interior
+    Provides a nearly exact computation of the Riemann Map of an interior
     point of the ellipse with axes 1 + epsilon and 1 - epsilon. It is
     primarily useful for testing the accuracy of the numerical Riemann Map.
 

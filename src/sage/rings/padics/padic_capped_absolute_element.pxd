@@ -1,5 +1,5 @@
 from sage.libs.gmp.types cimport mpz_t
-from sage.libs.pari.gen cimport gen as pari_gen
+from cypari2.gen cimport Gen as pari_gen
 from sage.rings.padics.padic_capped_relative_element cimport CRElement
 
 ctypedef mpz_t celement

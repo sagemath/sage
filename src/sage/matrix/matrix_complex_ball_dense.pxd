@@ -9,3 +9,5 @@ cdef Matrix_generic_dense acb_mat_to_matrix(
 
 cdef class Matrix_complex_ball_dense(Matrix_dense):
     cdef acb_mat_t value
+    cdef Matrix_complex_ball_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols)
+    cpdef _pow_int(self, n)

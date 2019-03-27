@@ -6,11 +6,17 @@ TESTS:
 Check that a ``MemoryError`` is raised if we try to allocate a
 ridiculously large integer, see :trac:`15363`::
 
-    sage: 2^(2^63-2)
+    sage: 2^(2^63-2)                                           # optional - mpir
     Traceback (most recent call last):
     ...
-    RuntimeError: exponent must be at most 2147483647          # 32-bit
+    OverflowError: exponent must be at most 2147483647         # 32-bit
     MemoryError: failed to allocate 1152921504606847008 bytes  # 64-bit
+
+    sage: 2^(2^63-3)                                           # optional - gmp
+    Traceback (most recent call last):
+    ...
+    OverflowError: exponent must be at most 2147483647         # 32-bit
+    RuntimeError: Aborted                                      # 64-bit
 
 AUTHORS:
 
@@ -31,8 +37,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
+from cysignals.signals cimport sig_error
+
 from sage.libs.gmp.misc cimport mp_set_memory_functions
-include "cysignals/memory.pxi"
 
 cdef extern from "Python.h":
     # Declare as returning void without except value

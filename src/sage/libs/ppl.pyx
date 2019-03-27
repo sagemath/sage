@@ -82,7 +82,7 @@ documentation, in particular:
       5
 
 * PPL supports (topologically) closed polyhedra
-  (:class:`C_Polyhedron`) as well as not neccesarily closed polyhedra
+  (:class:`C_Polyhedron`) as well as not necessarily closed polyhedra
   (:class:`NNC_Polyhedron`). Only the latter allows closure points
   (=points of the closure but not of the actual polyhedron) and strict
   inequalities (``>`` and ``<``)
@@ -102,22 +102,19 @@ Finally, PPL is fast. For example, here is the permutahedron of 5
 basis vectors::
 
     sage: from sage.libs.ppl import Variable, Generator_System, point, C_Polyhedron
-    sage: basis = range(0,5)
+    sage: basis = list(range(5))
     sage: x = [ Variable(i) for i in basis ]
-    sage: gs = Generator_System();
+    sage: gs = Generator_System()
     sage: for coeff in Permutations(basis):
     ....:    gs.insert(point( sum( (coeff[i]+1)*x[i] for i in basis ) ))
     sage: C_Polyhedron(gs)
     A 4-dimensional polyhedron in QQ^5 defined as the convex hull of 120 points
 
-The above computation (using PPL) finishes without noticeable delay (timeit
-measures it to be 90 microseconds on sage.math). Below we do the same
-computation with cddlib, which needs more than 3 seconds on the same
-hardware::
+The same computation with cddlib which is slightly slower::
 
-    sage: basis = range(0,5)
+    sage: basis = list(range(5))
     sage: gs = [ tuple(coeff) for coeff in Permutations(basis) ]
-    sage: Polyhedron(vertices=gs, backend='cdd')  # long time (3s on sage.math, 2011)
+    sage: Polyhedron(vertices=gs, backend='cdd')
     A 4-dimensional polyhedron in QQ^5 defined as the convex hull of 120 vertices
 
 DIFFERENCES VS. C++
@@ -126,7 +123,7 @@ Since Python and C++ syntax are not always compatible, there are
 necessarily some differences. The main ones are:
 
 * The :class:`Linear_Expression` also accepts an iterable as input for
-  the homogeneous cooefficients.
+  the homogeneous coefficients.
 
 * :class:`Polyhedron` and its subclasses as well as
   :class:`Generator_System` and :class:`Constraint_System` can be set
@@ -150,15 +147,16 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.structure.sage_object cimport SageObject
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmpxx cimport mpz_class
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 
-include "cysignals/signals.pxi"
-
 from libcpp cimport bool as cppbool
+from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 ####################################################
 # Potentially expensive operations:
@@ -892,7 +890,7 @@ cdef class MIP_Problem(_mutable_or_immutable):
             sage: m.space_dimension()
             7
         """
-        self.assert_mutable("The MIP_Problem is not mutable!");
+        self.assert_mutable("The MIP_Problem is not mutable!")
         sig_on()
         self.thisptr.add_space_dimensions_and_embed(m)
         sig_off()
@@ -969,7 +967,7 @@ cdef class MIP_Problem(_mutable_or_immutable):
             ValueError: PPL::MIP_Problem::add_constraint(c):
             c.space_dimension() == 3 exceeds this->space_dimension == 2.
         """
-        self.assert_mutable("The MIP_Problem is not mutable!");
+        self.assert_mutable("The MIP_Problem is not mutable!")
         sig_on()
         try:
             self.thisptr.add_constraint(c.thisptr[0])
@@ -1005,7 +1003,7 @@ cdef class MIP_Problem(_mutable_or_immutable):
             ValueError: PPL::MIP_Problem::add_constraints(cs):
             cs.space_dimension() == 10 exceeds this->space_dimension() == 2.
         """
-        self.assert_mutable("The MIP_Problem is not mutable!");
+        self.assert_mutable("The MIP_Problem is not mutable!")
         sig_on()
         try:
             self.thisptr.add_constraints(cs.thisptr[0])
@@ -1033,7 +1031,7 @@ cdef class MIP_Problem(_mutable_or_immutable):
             sage: m.optimal_value()
             3
         """
-        self.assert_mutable("The MIP_Problem is not mutable!");
+        self.assert_mutable("The MIP_Problem is not mutable!")
         sig_on()
         try:
             self.thisptr.add_to_integer_space_dimensions(i_vars.thisptr[0])
@@ -1067,7 +1065,7 @@ cdef class MIP_Problem(_mutable_or_immutable):
             ValueError: PPL::MIP_Problem::set_objective_function(obj):
             obj.space_dimension() == 3 exceeds this->space_dimension == 2.
         """
-        self.assert_mutable("The MIP_Problem is not mutable!");
+        self.assert_mutable("The MIP_Problem is not mutable!")
         self.thisptr.set_objective_function(obj.thisptr[0])
 
     def set_optimization_mode(self, mode):
@@ -2525,7 +2523,7 @@ cdef class Polyhedron(_mutable_or_immutable):
         This method assigns the intersection to ``self`` and does not
         return anything.
 
-        Raises a ``ValueError`` if ``self`` and and ``y`` are
+        Raises a ``ValueError`` if ``self`` and ``y`` are
         topology-incompatible or dimension-incompatible.
 
         EXAMPLES::
@@ -2575,7 +2573,7 @@ cdef class Polyhedron(_mutable_or_immutable):
         This method assigns the poly-hull to ``self`` and does not
         return anything.
 
-        Raises a ``ValueError`` if ``self`` and and ``y`` are
+        Raises a ``ValueError`` if ``self`` and ``y`` are
         topology-incompatible or dimension-incompatible.
 
         EXAMPLES::
@@ -2640,7 +2638,7 @@ cdef class Polyhedron(_mutable_or_immutable):
         This method assigns the poly-difference to ``self`` and does
         not return anything.
 
-        Raises a ``ValueError`` if ``self`` and and ``y`` are
+        Raises a ``ValueError`` if ``self`` and ``y`` are
         topology-incompatible or dimension-incompatible.
 
         EXAMPLES::
@@ -2702,7 +2700,7 @@ cdef class Polyhedron(_mutable_or_immutable):
 
         .. NOTE::
 
-            The modified polyhedron is not neccessarily a lattice
+            The modified polyhedron is not necessarily a lattice
             polyhedron; Some vertices will, in general, still be
             rational. Lattice points interior to the polyhedron may be
             lost in the process.
@@ -2868,7 +2866,7 @@ cdef class Polyhedron(_mutable_or_immutable):
         r"""
         Assign to ``self`` the concatenation of ``self`` and ``y``.
 
-        This functions returns the Cartiesian product of ``self`` and
+        This function returns the Cartesian product of ``self`` and
         ``y``.
 
         Viewing a polyhedron as a set of tuples (its points), it is
@@ -3131,17 +3129,17 @@ cdef class Polyhedron(_mutable_or_immutable):
         """
         cdef result
         sig_on()
-        if op==0:      # <   0
+        if op == Py_LT:
             result = rhs.strictly_contains(lhs)
-        elif op==1:    # <=  1
+        elif op == Py_LE:
             result = rhs.contains(lhs)
-        elif op==2:    # ==  2
+        elif op == Py_EQ:
             result = (lhs.thisptr[0] == rhs.thisptr[0])
-        elif op==4:    # >   4
+        elif op == Py_GT:
             result = lhs.strictly_contains(rhs)
-        elif op==5:    # >=  5
+        elif op == Py_GE:
             result = lhs.contains(rhs)
-        elif op==3:    # !=  3
+        elif op == Py_NE:
             result = (lhs.thisptr[0] != rhs.thisptr[0])
         else:
             assert False  # unreachable
@@ -4314,7 +4312,7 @@ cdef class Linear_Expression(object):
         - ``self``, ``other`` -- anything that can be used to
           construct a :class:`Linear_Expression`. One of them, not
           necessarily ``self``, is guaranteed to be a
-          :class:``Linear_Expression``, otherwise Python would not
+          :class:`Linear_Expression`, otherwise Python would not
           have called this method.
 
         OUTPUT:
@@ -4345,7 +4343,7 @@ cdef class Linear_Expression(object):
         - ``self``, ``other`` -- anything that can be used to
           construct a :class:`Linear_Expression`. One of them, not
           necessarily ``self``, is guaranteed to be a
-          :class:``Linear_Expression``, otherwise Python would not
+          :class:`Linear_Expression`, otherwise Python would not
           have called this method.
 
         OUTPUT:
@@ -4376,7 +4374,7 @@ cdef class Linear_Expression(object):
         - ``self``, ``other`` -- anything that can be used to
           construct a :class:`Linear_Expression`. One of them, not
           necessarily ``self``, is guaranteed to be a
-          :class:``Linear_Expression``, otherwise Python would not
+          :class:`Linear_Expression`, otherwise Python would not
           have called this method.
 
         OUTPUT:
@@ -5149,7 +5147,7 @@ cdef class Generator(object):
         TESTS::
 
             sage: from sage.libs.ppl import Generator, Variable, line, ray, point, closure_point
-            sage: x = Variable(0); y = Variable(1);
+            sage: x = Variable(0); y = Variable(1)
             sage: loads(dumps(Generator.point(2*x+7*y, 3)))
             point(2/3, 7/3)
             sage: loads(dumps(Generator.closure_point(2*x+7*y, 3)))
@@ -5655,17 +5653,17 @@ cdef _wrap_Constraint(PPL_Constraint constraint):
 cdef _make_Constraint_from_richcmp(lhs_, rhs_, op):
     cdef Linear_Expression lhs = Linear_Expression(lhs_)
     cdef Linear_Expression rhs = Linear_Expression(rhs_)
-    if op==0:      # <   0
+    if op == Py_LT:
         return _wrap_Constraint(lhs.thisptr[0] <  rhs.thisptr[0])
-    elif op==1:    # <=  1
+    elif op == Py_LE:
         return _wrap_Constraint(lhs.thisptr[0] <= rhs.thisptr[0])
-    elif op==2:    # ==  2
+    elif op == Py_EQ:
         return _wrap_Constraint(lhs.thisptr[0] == rhs.thisptr[0])
-    elif op==4:    # >   4
+    elif op == Py_GT:
         return _wrap_Constraint(lhs.thisptr[0] >  rhs.thisptr[0])
-    elif op==5:    # >=  5
+    elif op == Py_GE:
         return _wrap_Constraint(lhs.thisptr[0] >= rhs.thisptr[0])
-    elif op==3:    # !=  3
+    elif op == Py_NE:
         raise NotImplementedError
     else:
         assert(False)
@@ -6893,8 +6891,8 @@ cdef class Poly_Con_Relation(object):
         sage: from sage.matrix.constructor import matrix
         sage: m = matrix(5,5)
         sage: for i, rel_i in enumerate(rels):
-        ...       for j, rel_j in enumerate(rels):
-        ...           m[i,j] = rel_i.implies(rel_j)
+        ....:     for j, rel_j in enumerate(rels):
+        ....:         m[i,j] = rel_i.implies(rel_j)
         sage: m
         [1 0 0 0 0]
         [1 1 0 0 0]
@@ -7099,7 +7097,7 @@ cdef class Poly_Con_Relation(object):
         if self.implies(Poly_Con_Relation.saturates()):
             rel.append('saturates')
 
-        if len(rel)>0:
+        if rel:
             return ', '.join(rel)
         else:
             return 'nothing'

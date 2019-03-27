@@ -147,7 +147,7 @@ resources can be found by a web search.
   `Python standard documentation <http://docs.python.org>`_
 * `Snakefood <http://furius.ca/snakefood>`_
 * `Sphinx <http://sphinx.pocoo.org>`_
-* `XDot <http://code.google.com/p/jrfonseca/wiki/XDot>`_
+* `XDot <https://github.com/jrfonseca/xdot.py>`_
 
 **Tutorials and books**
 
@@ -181,9 +181,7 @@ Are there any coding conventions I need to follow?
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
 You should follow the standard Python conventions as documented at
-`PEP 0008 <http://www.python.org/dev/peps/pep-0008>`_
-and
-`PEP 0257 <http://www.python.org/dev/peps/pep-0257>`_.
+:pep:`8` and :pep:`257`.
 Also consult the Sage Developer's Guide, especially the chapter
 `Conventions for Coding in Sage <http://doc.sagemath.org/html/en/developer/conventions.html>`_.
 

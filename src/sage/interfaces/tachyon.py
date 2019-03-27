@@ -18,9 +18,11 @@ from __future__ import print_function
 
 import os
 
+from sage.cpython.string import bytes_to_str
 from sage.misc.pager import pager
 from sage.misc.temporary_file import tmp_filename
 from sage.structure.sage_object import SageObject
+from sage.cpython.string import bytes_to_str
 
 
 class TachyonRT(SageObject):
@@ -123,7 +125,8 @@ class TachyonRT(SageObject):
 
             sage: from sage.env import SAGE_EXTCODE
             sage: filename = os.path.join(SAGE_EXTCODE, 'doctest', 'invalid', 'syntax_error.tachyon')
-            sage: syntax_error = open(filename, 'r').read()
+            sage: with open(filename, 'r') as f:
+            ....:    syntax_error = f.read()
             sage: t(syntax_error, outfile=os.devnull)
             Traceback (most recent call last):
             ...
@@ -153,7 +156,7 @@ class TachyonRT(SageObject):
         if verbose:
             print(' '.join(cmd))
         import subprocess
-        out = subprocess.check_output(cmd)
+        out = bytes_to_str(subprocess.check_output(cmd))
         if verbose >= 1:
             print(out)
         if out.rstrip().endswith('Aborting render.'):
@@ -173,7 +176,7 @@ class TachyonRT(SageObject):
             Tachyon Parallel/Multiprocessor Ray Tracer   Version...
         """
         r = os.popen('tachyon').read()
-        if use_pager == True:
+        if use_pager:
             pager()(r)
         else:
             print(r)
@@ -281,7 +284,7 @@ the field of view is decreased slightly.  The zoom effect is
 implemented as a scaling factor on the height and width of the image
 plane relative to the world.
 
-  The {\bf ASPECRATIO} parameter controls the aspect ratio of the resulting
+  The {\bf ASPECTRATIO} parameter controls the aspect ratio of the resulting
 image.  By using the aspect ratio parameter, one can produce images which
 look correct on any screen.  Aspect ratio alters the relative width of the
 image plane, while keeping the height of the image plane constant.  In
@@ -510,7 +513,7 @@ TRI
 
 \subsubsection{Smoothed Triangles}
   Smoothed triangles are just like regular triangles, except that the
-  surface normal for each of the three vertexes is used to determine the
+  surface normal for each of the three vertices is used to determine the
   surface normal across the triangle by linear interpolation.
   Smoothed triangles yield curved looking objects and have nice
   reflections.
@@ -781,7 +784,7 @@ properly.
         from sage.misc.sagedoc import format
         f = format(s)
         f = f.replace('{ ','').replace('}','').replace('{','')
-        if use_pager == True:
+        if use_pager:
             pager()(f)
         else:
             print(f)

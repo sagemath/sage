@@ -65,11 +65,11 @@ class SandpileExamples(object):
         EXAMPLES::
 
             sage: sandpiles()
-            Try sandpile.FOO() where FOO is in the list:
+            Try sandpiles.FOO() where FOO is in the list:
             <BLANKLINE>
                 Complete, Cycle, Diamond, Fan, Grid, House, Wheel
         """
-        print('Try sandpile.FOO() where FOO is in the list:\n')
+        print('Try sandpiles.FOO() where FOO is in the list:\n')
         print("    " + ", ".join([str(i) for i in dir(sandpiles)
                                   if i[0] != '_']))
 

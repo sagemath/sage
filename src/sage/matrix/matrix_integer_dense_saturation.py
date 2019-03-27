@@ -2,6 +2,7 @@
 Saturation over ZZ
 """
 from __future__ import absolute_import
+from six.moves import range
 
 from sage.rings.all import ZZ, GF
 from sage.arith.all import binomial, gcd
@@ -89,13 +90,13 @@ def random_sublist_of_size(k, n):
     if n > k:
         raise ValueError("n must be <= len(v)")
     if n == k:
-        return range(k)
-    if n >= k//2+5:
+        return list(range(k))
+    if n >= k // 2 + 5:
         # use complement
-        w = random_sublist_of_size(k, k-n)
+        w = random_sublist_of_size(k, k - n)
         m = set(w)
-        w = [z for z in xrange(k) if z not in m]
-        assert(len(w)) == n
+        w = [z for z in range(k) if z not in m]
+        assert(len(w) == n)
         return w
 
     randrange = current_randstate().python_random().randrange
@@ -105,8 +106,8 @@ def random_sublist_of_size(k, n):
         z = randrange(k)
         if not z in w:
             w.add(z)
-    w = sorted(w)
-    return w
+    return sorted(w)
+
 
 def solve_system_with_difficult_last_row(B, A):
     """

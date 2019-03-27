@@ -7,8 +7,7 @@ by Graphviz a more LaTeX friendly look and feel. This is accomplished
 by converting xdot output from Graphviz to a series of PSTricks or
 PGF/TikZ commands.
 
-See http://www.fauskes.net/code/dot2tex/
-or http://dot2tex.googlecode.com/
+See https://github.com/kjellmf/dot2tex/
 
 == License ==
  * MIT

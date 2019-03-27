@@ -18,11 +18,9 @@ AUTHORS:
 
 REFERENCES:
 
-- Chap. 2 of [Lee11]_ \J.M. Lee: *Introduction to Topological Manifolds*,
-  2nd ed., Springer (New York) (2011)
+- Chap. 2 of [Lee2011]_
+- Chap. 1 of [Lee2013]_
 
-- Chap. 1 of [Lee13]_ \J.M. Lee : *Introduction to Smooth Manifolds*,
-  2nd ed., Springer (New York) (2013)
 """
 
 #*****************************************************************************
@@ -45,6 +43,10 @@ from sage.symbolic.ring import SR
 from sage.rings.infinity import Infinity
 from sage.misc.latex import latex
 from sage.misc.decorators import options
+from sage.manifolds.chart_func import ChartFunctionRing
+from sage.manifolds.calculus_method import CalculusMethod
+from sage.symbolic.expression import Expression
+from sage.ext.fast_callable import fast_callable
 
 class Chart(UniqueRepresentation, SageObject):
     r"""
@@ -69,6 +71,15 @@ class Chart(UniqueRepresentation, SageObject):
       ``coordinates`` is not provided; it must then be a tuple containing
       the coordinate symbols (this is guaranteed if the shortcut operator
       ``<,>`` is used)
+    - ``calc_method`` -- (default: ``None``) string defining the calculus
+      method for computations involving coordinates of the chart; must be
+      one of
+
+      - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
+      - ``'sympy'``: SymPy
+      - ``None``: the default of
+        :class:`~sage.manifolds.calculus_method.CalculusMethod` will be
+        used
 
     The string ``coordinates`` has the space ``' '`` as a separator and each
     item has at most two fields, separated by a colon (``:``):
@@ -239,7 +250,7 @@ class Chart(UniqueRepresentation, SageObject):
         manifolds over `\RR`.
 
     """
-    def __init__(self, domain, coordinates='', names=None):
+    def __init__(self, domain, coordinates='', names=None, calc_method=None):
         r"""
         Construct a chart.
 
@@ -266,6 +277,10 @@ class Chart(UniqueRepresentation, SageObject):
             coordinates = coordinates[:-1]
         self._manifold = domain.manifold()
         self._domain = domain
+        # Handling of calculus methods available on this chart:
+        self._calc_method = CalculusMethod(current=calc_method,
+                             base_field_type=self.manifold().base_field_type())
+        self.simplify = self._calc_method.simplify
         # Treatment of the coordinates:
         if ' ' in coordinates:
             coord_list = coordinates.split()
@@ -324,6 +339,7 @@ class Chart(UniqueRepresentation, SageObject):
             if hasattr(dom, '_one_scalar_field'):
                 # dom is an open set
                 dom._one_scalar_field._express[self] = self.function_ring().one()
+
 
     def _init_coordinates(self, coord_list):
         r"""
@@ -627,7 +643,8 @@ class Chart(UniqueRepresentation, SageObject):
             coordinates = ""
             for coord in self._xx:
                 coordinates += repr(coord) + ' '
-            res = type(self)(subset, coordinates)
+            res = type(self)(subset, coordinates,
+                             calc_method=self._calc_method._current)
             res._restrictions.extend(self._restrictions)
             # The coordinate restrictions are added to the result chart and
             # possibly transformed into coordinate bounds:
@@ -700,18 +717,66 @@ class Chart(UniqueRepresentation, SageObject):
             substitutions = dict(zip(self._xx, coordinates))
             if parameters:
                 substitutions.update(parameters)
-            for restrict in self._restrictions:
-                if isinstance(restrict, tuple): # case of or conditions
-                    combine = False
-                    for expr in restrict:
-                        combine = combine or bool(expr.subs(substitutions))
-                    if not combine:
-                        return False
-                else:
-                    if not bool(restrict.subs(substitutions)):
-                        return False
-        # All tests have been passed:
+            return self._check_restrictions(self._restrictions, substitutions)
         return True
+
+    def _check_restrictions(self, restrict, substitutions):
+        r"""
+        Recursive helper function to check the validity of coordinates
+        given some restrictions
+
+        INPUT:
+
+        - restrict: a tuple of conditions (combined with 'or'), a list of
+          conditions (combined with 'and') or a single coordinate condition
+        - substitutions: dictionary (keys: coordinates of ``self``) giving the
+          value of each coordinate
+
+        OUTPUT:
+
+        - boolean stating whether the conditions are fulfilled by the
+          coordinate values
+
+        TESTS::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart()
+            sage: X._check_restrictions(x>0, {x: pi, y: 0})
+            True
+            sage: X._check_restrictions(x>0, {x: -sqrt(2), y: 0})
+            False
+            sage: X._check_restrictions((x>0, [x<y, y<0]), {x: 1, y: 2})
+            True
+            sage: X._check_restrictions((x>0, [x<y, y<0]), {x: -1, y: 2})
+            False
+            sage: X._check_restrictions((x>0, [x<y, y<0]), {x: -1, y: -1/2})
+            True
+            sage: X._check_restrictions([(x<y, y<0), x>0], {x: 1, y: 2})
+            True
+            sage: X._check_restrictions([(x<y, y<0), x>0], {x: -1, y: 2})
+            False
+            sage: X._check_restrictions([(x<y, y<0), x>0], {x: 1, y: -2})
+            True
+            sage: X._check_restrictions([(x<y, y<0), x>0], {x: 2, y: 1})
+            False
+
+        """
+        if isinstance(restrict, tuple): # case of 'or' conditions
+            combine = False
+            for cond in restrict:
+                combine = combine or self._check_restrictions(cond,
+                                                              substitutions)
+            return combine
+        elif isinstance(restrict, list): # case of 'and' conditions
+            combine = True
+            for cond in restrict:
+                combine = combine and self._check_restrictions(cond,
+                                                               substitutions)
+            return combine
+        # Case of a single condition:
+        return bool(restrict.subs(substitutions))
+
+
 
     def transition_map(self, other, transformations, intersection_name=None,
                        restrictions1=None, restrictions2=None):
@@ -849,12 +914,12 @@ class Chart(UniqueRepresentation, SageObject):
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()
             sage: X.function_ring()
-            Ring of coordinate functions on Chart (M, (x, y))
+            Ring of chart functions on Chart (M, (x, y))
         """
-        from sage.manifolds.coord_func_symb import CoordFunctionSymbRing
-        return CoordFunctionSymbRing(self)
 
-    def function(self, expression):
+        return ChartFunctionRing(self)
+
+    def function(self, expression, calc_method=None):
         r"""
         Define a coordinate function to the base field.
 
@@ -871,30 +936,27 @@ class Chart(UniqueRepresentation, SageObject):
         where `V` is the chart codomain and `(x^1, \ldots, x^n)` are the
         chart coordinates.
 
-        The coordinate function can be either a symbolic one or a numerical
-        one, depending on the parameter ``expression`` (see below).
-
-        See :class:`~sage.manifolds.coord_func.CoordFunction`
-        and :class:`~sage.manifolds.coord_func_symb.CoordFunctionSymb`
+        See :class:`~sage.manifolds.chart_func.ChartFunction`
         for a complete documentation.
 
         INPUT:
 
-        - ``expression`` -- material defining the coordinate function; it can
-          be either:
+        - ``expression`` -- a symbolic expression involving the chart
+          coordinates, to represent `f(x^1,\ldots, x^n)`
 
-          - a symbolic expression involving the chart coordinates, to represent
-            `f(x^1,\ldots, x^n)`
-          - a string representing the name of a file where the data
-            to construct a numerical coordinate function is stored
+        - ``calc_method`` -- string (default: ``None``): the calculus method
+          with respect to which the internal expression of the function must be
+          initialized from ``expression``; one of
+
+          - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
+          - ``'sympy'``: SymPy
+          - ``None``: the chart current calculus method is assumed
 
         OUTPUT:
 
-        - instance of a subclass of the base class
-          :class:`~sage.manifolds.coord_func.CoordFunction`
-          representing the coordinate function `f`; this is
-          :class:`~sage.manifolds.coord_func_symb.CoordFunctionSymb` if
-          if  ``expression`` is a symbolic expression.
+        - instance of
+          :class:`~sage.manifolds.chart_func.ChartFunction`
+          representing the coordinate function `f`
 
         EXAMPLES:
 
@@ -906,18 +968,27 @@ class Chart(UniqueRepresentation, SageObject):
             sage: f
             sin(x*y)
             sage: type(f)
-            <class 'sage.manifolds.coord_func_symb.CoordFunctionSymbRing_with_category.element_class'>
+            <class 'sage.manifolds.chart_func.ChartFunctionRing_with_category.element_class'>
             sage: f.display()
             (x, y) |--> sin(x*y)
             sage: f(2,3)
             sin(6)
 
+        Using SymPy for the internal representation of the function (dictionary
+        ``_express``)::
+
+            sage: g = X.function(x^2 + x*cos(y), calc_method='sympy')
+            sage: g._express
+            {'sympy': x**2 + x*cos(y)}
+
+        On the contrary, for ``f``, only the ``SR`` part has been initialized::
+
+            sage: f._express
+            {'SR': sin(x*y)}
+
         """
-        if isinstance(expression, str):
-            raise NotImplementedError("numerical coordinate function not " +
-                                      "implemented yet")
-        else:
-            return self.function_ring()(expression)
+        parent = self.function_ring()
+        return parent.element_class(parent, expression, calc_method=calc_method)
 
     def zero_function(self):
         r"""
@@ -935,12 +1006,12 @@ class Chart(UniqueRepresentation, SageObject):
 
         where `V` is the chart codomain.
 
-        See class :class:`~sage.manifolds.coord_func_symb.CoordFunctionSymb`
+        See class :class:`~sage.manifolds.chart_func.ChartFunction`
         for a complete documentation.
 
         OUTPUT:
 
-        - a :class:`~sage.manifolds.coord_func_symb.CoordFunctionSymb`
+        - a :class:`~sage.manifolds.chart_func.ChartFunction`
           representing the zero coordinate function `f`
 
         EXAMPLES::
@@ -952,7 +1023,7 @@ class Chart(UniqueRepresentation, SageObject):
             sage: X.zero_function().display()
             (x, y) |--> 0
             sage: type(X.zero_function())
-            <class 'sage.manifolds.coord_func_symb.CoordFunctionSymbRing_with_category.element_class'>
+            <class 'sage.manifolds.chart_func.ChartFunctionRing_with_category.element_class'>
 
         The result is cached::
 
@@ -989,12 +1060,12 @@ class Chart(UniqueRepresentation, SageObject):
 
         where `V` is the chart codomain.
 
-        See class :class:`~sage.manifolds.coord_func_symb.CoordFunctionSymb`
+        See class :class:`~sage.manifolds.chart_func.ChartFunction`
         for a complete documentation.
 
         OUTPUT:
 
-        - a :class:`~sage.manifolds.coord_func_symb.CoordFunctionSymb`
+        - a :class:`~sage.manifolds.chart_func.ChartFunction`
           representing the one coordinate function `f`
 
         EXAMPLES::
@@ -1006,7 +1077,7 @@ class Chart(UniqueRepresentation, SageObject):
             sage: X.one_function().display()
             (x, y) |--> 1
             sage: type(X.one_function())
-            <class 'sage.manifolds.coord_func_symb.CoordFunctionSymbRing_with_category.element_class'>
+            <class 'sage.manifolds.chart_func.ChartFunctionRing_with_category.element_class'>
 
         The result is cached::
 
@@ -1027,6 +1098,54 @@ class Chart(UniqueRepresentation, SageObject):
         """
         return self.function_ring().one()
 
+    def set_calculus_method(self, method):
+        r"""
+        Set the calculus method for computations involving coordinates of
+        this chart.
+
+        INPUT:
+
+        - ``method`` -- string; one of
+
+          - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
+          - ``'sympy'``: SymPy
+
+        EXAMPLES:
+
+        The default calculus method relies on Sage's Symbolic Ring::
+
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: X.<x,y,z> = M.chart()
+            sage: f = X.function(sin(x)*cos(y) + z^2)
+            sage: f.expr()
+            z^2 + cos(y)*sin(x)
+            sage: type(f.expr())
+            <type 'sage.symbolic.expression.Expression'>
+            sage: parent(f.expr())
+            Symbolic Ring
+            sage: f.display()
+            (x, y, z) |--> z^2 + cos(y)*sin(x)
+
+        Changing to SymPy::
+
+            sage: X.set_calculus_method('sympy')
+            sage: f.expr()
+            z**2 + sin(x)*cos(y)
+            sage: type(f.expr())
+            <class 'sympy.core.add.Add'>
+            sage: parent(f.expr())
+            <class 'sympy.core.add.Add'>
+            sage: f.display()
+            (x, y, z) |--> z**2 + sin(x)*cos(y)
+
+        Changing back to the Symbolic Ring::
+
+            sage: X.set_calculus_method('SR')
+            sage: f.display()
+            (x, y, z) |--> z^2 + cos(y)*sin(x)
+
+        """
+        self._calc_method.set(method)
 
     def multifunction(self, *expressions):
         r"""
@@ -1049,7 +1168,7 @@ class Chart(UniqueRepresentation, SageObject):
         `K^m`-valued function of the coordinates associated to the chart
         `(U, \varphi)`.
 
-        See :class:`~sage.manifolds.coord_func.MultiCoordFunction` for a
+        See :class:`~sage.manifolds.chart_func.MultiCoordFunction` for a
         complete documentation.
 
         INPUT:
@@ -1062,7 +1181,7 @@ class Chart(UniqueRepresentation, SageObject):
 
         OUTPUT:
 
-        - a :class:`~sage.manifolds.coord_func.MultiCoordFunction`
+        - a :class:`~sage.manifolds.chart_func.MultiCoordFunction`
           representing `f`
 
         EXAMPLES:
@@ -1079,10 +1198,10 @@ class Chart(UniqueRepresentation, SageObject):
         TESTS::
 
             sage: type(f)
-            <class 'sage.manifolds.coord_func.MultiCoordFunction'>
+            <class 'sage.manifolds.chart_func.MultiCoordFunction'>
 
         """
-        from sage.manifolds.coord_func import MultiCoordFunction
+        from sage.manifolds.chart_func import MultiCoordFunction
         return MultiCoordFunction(self, expressions)
 
 
@@ -1110,6 +1229,15 @@ class RealChart(Chart):
       ``coordinates`` is not provided; it must then be a tuple containing
       the coordinate symbols (this is guaranteed if the shortcut operator
       ``<,>`` is used)
+    - ``calc_method`` -- (default: ``None``) string defining the calculus
+      method for computations involving coordinates of the chart; must be
+      one of
+
+      - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
+      - ``'sympy'``: SymPy
+      - ``None``: the default of
+        :class:`~sage.manifolds.calculus_method.CalculusMethod` will be
+        used
 
     The string ``coordinates`` has the space ``' '`` as a separator and each
     item has at most three fields, separated by a colon (``:``):
@@ -1316,7 +1444,7 @@ class RealChart(Chart):
     :meth:`plot`.
 
     """
-    def __init__(self, domain, coordinates='', names=None):
+    def __init__(self, domain, coordinates='', names=None, calc_method=None):
         r"""
         Construct a chart on a real topological manifold.
 
@@ -1334,7 +1462,9 @@ class RealChart(Chart):
             sage: TestSuite(X).run()
 
         """
-        Chart.__init__(self, domain, coordinates=coordinates, names=names)
+        Chart.__init__(self, domain, coordinates=coordinates, names=names,
+                       calc_method=calc_method)
+        self._fast_valid_coordinates = None
 
     def _init_coordinates(self, coord_list):
         r"""
@@ -1403,12 +1533,12 @@ class RealChart(Chart):
             coord_var = SR.var(coord_symb, domain='real',
                                latex_name=coord_latex)
             assume(coord_var, 'real')
-            if xmin != -Infinity:
+            if not (xmin == -Infinity):
                 if xmin_included:
                     assume(coord_var >= xmin)
                 else:
                     assume(coord_var > xmin)
-            if xmax != Infinity:
+            if not (xmax == Infinity):
                 if xmax_included:
                     assume(coord_var <= xmax)
                 else:
@@ -1635,8 +1765,8 @@ class RealChart(Chart):
         for restrict in self._restrictions:
             restrict_used = False # determines whether restrict is used
                                   # to set some coordinate bound
-            if not isinstance(restrict, tuple): # case of 'or' conditions
-                                                # excluded
+            if not isinstance(restrict, (tuple, list)): # case of combined
+                                                        # conditions excluded
                 operands = restrict.operands()
                 left = operands[0]
                 right = operands[1]
@@ -1676,6 +1806,7 @@ class RealChart(Chart):
                 new_restrictions.append(restrict)
         self._bounds = tuple(bounds)
         self._restrictions = new_restrictions
+        self._fast_valid_coordinates = None
 
 
     def restrict(self, subset, restrictions=None):
@@ -1751,7 +1882,8 @@ class RealChart(Chart):
             coordinates = ""
             for coord in self._xx:
                 coordinates += repr(coord) + ' '
-            res = type(self)(subset, coordinates)
+            res = type(self)(subset, coordinates,
+                             calc_method=self._calc_method._current)
             res._bounds = self._bounds
             res._restrictions.extend(self._restrictions)
             # The coordinate restrictions are added to the result chart and
@@ -1814,6 +1946,20 @@ class RealChart(Chart):
             sage: XD.valid_coordinates(0,0)
             True
 
+        Another open subset of the square, defined by `x^2+y^2<1` or
+        (`x>0` and `|y|<1`)::
+
+            sage: B = M.open_subset('B',
+            ....:                   coord_def={X: (x^2+y^2<1,
+            ....:                                  [x>0, abs(y)<1])})
+            sage: XB = X.restrict(B)
+            sage: XB.valid_coordinates(-1/2, 0)
+            True
+            sage: XB.valid_coordinates(-1/2, 3/2)
+            False
+            sage: XB.valid_coordinates(3/2, 1/2)
+            True
+
         """
         n = len(coordinates)
         if n != self._manifold._dim:
@@ -1838,36 +1984,150 @@ class RealChart(Chart):
             if min_included:
                 if x < xmin:
                     return False
-            else:
-                if x <= xmin:
-                    return False
+            elif x <= xmin:
+                return False
             if max_included:
                 if x > xmax:
                     return False
-            else:
-                if x >= xmax:
-                    return False
+            elif x >= xmax:
+                return False
         # Check of additional restrictions:
-        if self._restrictions != []:
+        if self._restrictions:
             substitutions = dict(zip(self._xx, coordinates))
             if parameters:
                 substitutions.update(parameters)
-            for restrict in self._restrictions:
-                if isinstance(restrict, tuple): # case of or conditions
-                    combine = False
-                    for expr in restrict:
-                        combine = combine or bool(expr.subs(substitutions))
-                    if not combine:
-                        return False
-                else:
-                    if not bool(restrict.subs(substitutions)):
-                        return False
-        # All tests have been passed:
+            return self._check_restrictions(self._restrictions, substitutions)
         return True
 
-    @options(color='red',  style='-', thickness=1, plot_points=75, label_axes=True)
+    def valid_coordinates_numerical(self, *coordinates):
+        r"""
+        Check whether a tuple of float coordinates can be the coordinates
+        of a point in the chart domain.
+
+        This version is optimized for float numbers, and cannot accept
+        parameters nor tolerance. The chart restriction must also be
+        specified in CNF (i.e. a list of tuples).
+
+        INPUT:
+
+        - ``*coordinates`` -- coordinate values
+
+        OUTPUT:
+
+        - ``True`` if the coordinate values are admissible in the chart
+          range and ``False`` otherwise
+
+        EXAMPLES:
+
+        Cartesian coordinates on a square interior::
+
+            sage: forget()  # for doctest only
+            sage: M = Manifold(2, 'M', structure='topological')  # the square interior
+            sage: X.<x,y> = M.chart('x:(-2,2) y:(-2,2)')
+            sage: X.valid_coordinates_numerical(0,1)
+            True
+            sage: X.valid_coordinates_numerical(-3/2,5/4)
+            True
+            sage: X.valid_coordinates_numerical(0,3)
+            False
+
+        The unit open disk inside the square::
+
+            sage: D = M.open_subset('D', coord_def={X: x^2+y^2<1})
+            sage: XD = X.restrict(D)
+            sage: XD.valid_coordinates_numerical(0,1)
+            False
+            sage: XD.valid_coordinates_numerical(-3/2,5/4)
+            False
+            sage: XD.valid_coordinates_numerical(-1/2,1/2)
+            True
+            sage: XD.valid_coordinates_numerical(0,0)
+            True
+
+        Another open subset of the square, defined by `x^2 + y^2 < 1` or
+        (`x > 0` and `|y| < 1`)::
+
+            sage: B = M.open_subset('B',coord_def={X: [(x^2+y^2<1, x>0),
+            ....:                   (x^2+y^2<1,  abs(y)<1)]})
+            sage: XB = X.restrict(B)
+            sage: XB.valid_coordinates_numerical(-1/2, 0)
+            True
+            sage: XB.valid_coordinates_numerical(-1/2, 3/2)
+            False
+            sage: XB.valid_coordinates_numerical(3/2, 1/2)
+            True
+
+        """
+        # case fast callable already computed
+        if self._fast_valid_coordinates is not None:
+            return self._fast_valid_coordinates(*coordinates)
+
+        # case fast callable has to be computed
+        from operator import lt, gt
+
+        if not isinstance(self._restrictions, list):
+            if isinstance(self._restrictions, tuple):
+                self._restrictions = [self._restrictions]
+            elif isinstance(self._restrictions, Expression):
+                self._restrictions = [(self._restrictions,)]
+            else:
+                raise ValueError("restrictions must be in CNF (list of tuples)")
+
+        list_of_clause = []
+        for clause in self._restrictions:
+            if not isinstance(clause, tuple):
+                if isinstance(clause, Expression):
+                    clause = (clause,)
+                else:
+                    raise ValueError("restrictions must be in CNF (list of tuples)")
+            list_of_fast_callable = []
+            for litteral in clause:
+                if not isinstance(litteral, Expression):
+                    raise ValueError("Restrictions must be in CNF (list of tuples)")
+                # End of checks
+
+                fl = fast_callable(litteral.lhs(), vars=self[:], domain=float)
+                fr = fast_callable(litteral.rhs(), vars=self[:], domain=float)
+                op = litteral.operator()
+                list_of_fast_callable.append((fl, fr, op))
+            list_of_clause.append(list_of_fast_callable)
+
+        # adding bounds as restrictions
+        for x, bounds in zip(self[:], self._bounds):
+            xmin = bounds[0][0]
+            xmax = bounds[1][0]
+
+            if x <= xmin:
+                return False
+            if x >= xmax:
+                return False
+
+            if xmin is not -Infinity:
+                fl = fast_callable(x, vars=self[:], domain=float)
+                fr = fast_callable(SR(xmin), vars=self[:], domain=float)
+                list_of_clause.append(((fl, fr, gt),))
+            if xmax is not Infinity:
+                fl = fast_callable(x, vars=self[:], domain=float)
+                fr = fast_callable(SR(xmax), vars=self[:], domain=float)
+                list_of_clause.append(((fl, fr, lt),))
+
+        # final call
+        def evaluate_fast_callable(*coordinates):
+            for clause in list_of_clause:
+                temp = False
+                for fl, fr, op in clause:
+                    temp = temp or op(fl(*coordinates), fr(*coordinates))
+                if not temp:
+                    return False
+            return True
+
+        self._fast_valid_coordinates = evaluate_fast_callable
+        return self._fast_valid_coordinates(*coordinates)
+
+    @options(max_range=8, color='red',  style='-', thickness=1, plot_points=75,
+             label_axes=True)
     def plot(self, chart=None, ambient_coords=None, mapping=None,
-             fixed_coords=None, ranges=None, max_range=8, nb_values=None,
+             fixed_coords=None, ranges=None, number_values=None,
              steps=None, parameters=None, **kwds):
         r"""
         Plot ``self`` as a grid in a Cartesian graph based on
@@ -1908,27 +2168,27 @@ class RealChart(Chart):
           entire coordinate range declared during the chart construction
           is considered (with ``-Infinity`` replaced by ``-max_range``
           and ``+Infinity`` by ``max_range``)
+        - ``number_values`` -- (default: ``None``) either an integer or a
+          dictionary with keys the coordinates to be drawn and values the
+          number of constant values of the coordinate to be considered; if
+          ``number_values`` is a single integer, it represents the number of
+          constant values for all coordinates; if ``number_values`` is ``None``,
+          it is set to 9 for a 2D plot and to 5 for a 3D plot
+        - ``steps`` -- (default: ``None``) dictionary with keys the coordinates
+          to be drawn and values the step between each constant value of
+          the coordinate; if ``None``, the step is computed from the coordinate
+          range (specified in ``ranges``) and ``number_values``. On the contrary
+          if the step is provided for some coordinate, the corresponding
+          number of constant values is deduced from it and the coordinate range.
+        - ``parameters`` -- (default: ``None``) dictionary giving the numerical
+          values of the parameters that may appear in the relation between
+          the two coordinate systems
         - ``max_range`` -- (default: 8) numerical value substituted to
           +Infinity if the latter is the upper bound of the range of a
           coordinate for which the plot is performed over the entire coordinate
           range (i.e. for which no specific plot range has been set in
           ``ranges``); similarly ``-max_range`` is the numerical valued
           substituted for ``-Infinity``
-        - ``nb_values`` -- (default: ``None``) either an integer or a dictionary
-          with keys the coordinates to be drawn and values the number of
-          constant values of the coordinate to be considered; if ``nb_values``
-          is a single integer, it represents the number of constant values for
-          all coordinates; if ``nb_values`` is ``None``, it is set to 9 for a
-          2D plot and to 5 for a 3D plot
-        - ``steps`` -- (default: ``None``) dictionary with keys the coordinates
-          to be drawn and values the step between each constant value of
-          the coordinate; if ``None``, the step is computed from the coordinate
-          range (specified in ``ranges``) and ``nb_values``. On the contrary
-          if the step is provided for some coordinate, the corresponding
-          number of constant values is deduced from it and the coordinate range.
-        - ``parameters`` -- (default: ``None``) dictionary giving the numerical
-          values of the parameters that may appear in the relation between
-          the two coordinate systems
         - ``color`` -- (default: ``'red'``) either a single color or a
           dictionary of colors, with keys the coordinates to be drawn,
           representing the colors of the lines along which the coordinate
@@ -1964,11 +2224,25 @@ class RealChart(Chart):
 
         EXAMPLES:
 
-        Grid of polar coordinates in terms of Cartesian coordinates in the
-        Euclidean plane::
+        A 2-dimensional chart plotted in terms of itself results in a
+        rectangular grid::
 
             sage: R2 = Manifold(2, 'R^2', structure='topological') # the Euclidean plane
             sage: c_cart.<x,y> = R2.chart() # Cartesian coordinates
+            sage: g = c_cart.plot()  # equivalent to c_cart.plot(c_cart)
+            sage: g
+            Graphics object consisting of 18 graphics primitives
+
+        .. PLOT::
+
+            R2 = Manifold(2, 'R^2', structure='topological')
+            c_cart = R2.chart('x y')
+            g = c_cart.plot()
+            sphinx_plot(g)
+
+        Grid of polar coordinates in terms of Cartesian coordinates in the
+        Euclidean plane::
+
             sage: U = R2.open_subset('U', coord_def={c_cart: (y!=0, x<0)}) # the complement of the segment y=0 and x>0
             sage: c_pol.<r,ph> = U.chart(r'r:(0,+oo) ph:(0,2*pi):\phi') # polar coordinates on U
             sage: pol_to_cart = c_pol.transition_map(c_cart, [r*cos(ph), r*sin(ph)])
@@ -1988,8 +2262,10 @@ class RealChart(Chart):
 
         Call with non-default values::
 
-            sage: g = c_pol.plot(c_cart, ranges={ph:(pi/4,pi)}, nb_values={r:7, ph:17},
-            ....:                color={r:'red', ph:'green'}, style={r:'-', ph:'--'})
+            sage: g = c_pol.plot(c_cart, ranges={ph:(pi/4,pi)},
+            ....:                number_values={r:7, ph:17},
+            ....:                color={r:'red', ph:'green'},
+            ....:                style={r:'-', ph:'--'})
 
         .. PLOT::
 
@@ -1998,7 +2274,7 @@ class RealChart(Chart):
             U = R2.open_subset('U', coord_def={c_cart: (y!=0, x<0)})
             c_pol = U.chart(r'r:(0,+oo) ph:(0,2*pi):\phi'); r, ph = c_pol[:]
             pol_to_cart = c_pol.transition_map(c_cart, [r*cos(ph), r*sin(ph)])
-            g = c_pol.plot(c_cart, ranges={ph:(pi/4,pi)}, nb_values={r:7, ph:17}, \
+            g = c_pol.plot(c_cart, ranges={ph:(pi/4,pi)}, number_values={r:7, ph:17},
                            color={r:'red', ph:'green'}, style={r:'-', ph:'--'})
             sphinx_plot(g)
 
@@ -2030,22 +2306,9 @@ class RealChart(Chart):
             g = c_pol.plot(c_cart, fixed_coords={ph: pi/4})
             sphinx_plot(g)
 
-        A chart can be plotted in terms of itself, resulting in a rectangular
-        grid::
-
-            sage: g = c_cart.plot()  # equivalent to c_cart.plot(c_cart)
-            sage: g # a rectangular grid
-            Graphics object consisting of 18 graphics primitives
-
-        .. PLOT::
-
-            R2 = Manifold(2, 'R^2', structure='topological')
-            c_cart = R2.chart('x y'); x, y = c_cart[:]
-            g = c_cart.plot()
-            sphinx_plot(g)
-
-        An example with the ambient chart given by the coordinate expression of
-        some manifold map: 3D plot of the stereographic charts on the
+        An example with the ambient chart lying in an another manifold (the
+        plot is then performed via some manifold map passed as the
+        argument ``mapping``): 3D plot of the stereographic charts on the
         2-sphere::
 
             sage: S2 = Manifold(2, 'S^2', structure='topological') # the 2-sphere
@@ -2067,8 +2330,31 @@ class RealChart(Chart):
             sage: g = c_xy.plot(c_cart, mapping=Phi)
             sage: g
             Graphics3d Object
-            sage: type(g)
-            <class 'sage.plot.plot3d.base.Graphics3dGroup'>
+
+        .. PLOT::
+
+            S2 = Manifold(2, 'S^2', structure='topological')
+            U = S2.open_subset('U') ; V = S2.open_subset('V')
+            S2.declare_union(U,V)
+            c_xy = U.chart('x y'); x, y = c_xy[:]
+            c_uv = V.chart('u v'); u, v = c_uv[:]
+            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)),
+                             intersection_name='W', restrictions1= x**2+y**2!=0,
+                             restrictions2= u**2+v**2!=0)
+            uv_to_xy = xy_to_uv.inverse()
+            R3 = Manifold(3, 'R^3', structure='topological')
+            c_cart = R3.chart('X Y Z')
+            Phi = S2.continuous_map(R3, {(c_xy, c_cart): [2*x/(1+x**2+y**2),
+                              2*y/(1+x**2+y**2), (x**2+y**2-1)/(1+x**2+y**2)],
+                              (c_uv, c_cart): [2*u/(1+u**2+v**2),
+                              2*v/(1+u**2+v**2), (1-u**2-v**2)/(1+u**2+v**2)]},
+                              name='Phi', latex_name=r'\Phi')
+            sphinx_plot(c_xy.plot(c_cart, mapping=Phi))
+
+        NB: to get a better coverage of the whole sphere, one should increase
+        the coordinate sampling via the argument ``number_values`` or the
+        argument ``steps`` (only the default value, ``number_values = 5``, is
+        used here, which is pretty low).
 
         The same plot without the ``(X,Y,Z)`` axes labels::
 
@@ -2079,6 +2365,28 @@ class RealChart(Chart):
             sage: g2 = c_uv.plot(c_cart, mapping=Phi, color='green')
             sage: g + g2
             Graphics3d Object
+
+        .. PLOT::
+
+            S2 = Manifold(2, 'S^2', structure='topological')
+            U = S2.open_subset('U') ; V = S2.open_subset('V')
+            S2.declare_union(U,V)
+            c_xy = U.chart('x y'); x, y = c_xy[:]
+            c_uv = V.chart('u v'); u, v = c_uv[:]
+            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)),
+                             intersection_name='W', restrictions1= x**2+y**2!=0,
+                             restrictions2= u**2+v**2!=0)
+            uv_to_xy = xy_to_uv.inverse()
+            R3 = Manifold(3, 'R^3', structure='topological')
+            c_cart = R3.chart('X Y Z')
+            Phi = S2.continuous_map(R3, {(c_xy, c_cart): [2*x/(1+x**2+y**2),
+                              2*y/(1+x**2+y**2), (x**2+y**2-1)/(1+x**2+y**2)],
+                              (c_uv, c_cart): [2*u/(1+u**2+v**2),
+                              2*v/(1+u**2+v**2), (1-u**2-v**2)/(1+u**2+v**2)]},
+                              name='Phi', latex_name=r'\Phi')
+            g = c_xy.plot(c_cart, mapping=Phi, label_axes=False)
+            g2 = c_uv.plot(c_cart, mapping=Phi, color='green')
+            sphinx_plot(g+g2)
 
         South stereographic chart drawned in terms of the North one (we split
         the plot in four parts to avoid the singularity at `(u,v)=(0,0)`)::
@@ -2097,8 +2405,8 @@ class RealChart(Chart):
             U = S2.open_subset('U'); V = S2.open_subset('V'); S2.declare_union(U,V)
             c_xy = U.chart('x y'); x, y = c_xy[:]
             c_uv = V.chart('u v'); u, v = c_uv[:]
-            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)), \
-                              intersection_name='W', restrictions1= x**2+y**2!=0, \
+            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)),
+                              intersection_name='W', restrictions1= x**2+y**2!=0,
                               restrictions2= u**2+v**2!=0)
             uv_to_xy = xy_to_uv.inverse()
             c_uvW = c_uv.restrict(U.intersection(V))
@@ -2123,13 +2431,14 @@ class RealChart(Chart):
             U = S2.open_subset('U'); V = S2.open_subset('V'); S2.declare_union(U,V)
             c_xy = U.chart('x y'); x, y = c_xy[:]
             c_uv = V.chart('u v'); u, v = c_uv[:]
-            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)), \
-                              intersection_name='W', restrictions1= x**2+y**2!=0, \
+            xy_to_uv = c_xy.transition_map(c_uv, (x/(x**2+y**2), y/(x**2+y**2)),
+                              intersection_name='W', restrictions1= x**2+y**2!=0,
                               restrictions2= u**2+v**2!=0)
             uv_to_xy = xy_to_uv.inverse()
             c_uvW = c_uv.restrict(U.intersection(V))
             gu1 = c_uvW.plot(c_xy, fixed_coords={u: 1}, max_range=20, plot_points=300)
-            gv1 = c_uvW.plot(c_xy, fixed_coords={v: 1}, max_range=20, plot_points=300, color='green')
+            gv1 = c_uvW.plot(c_xy, fixed_coords={v: 1}, max_range=20, plot_points=300,
+                             color='green')
             sphinx_plot(gu1+gv1)
 
         Note that we have set ``max_range=20`` to have a wider range for
@@ -2140,8 +2449,14 @@ class RealChart(Chart):
         rectangular grid::
 
             sage: g = c_cart.plot() # equivalent to c_cart.plot(c_cart)  # long time
-            sage: g  # a 3D mesh cube  # long time
+            sage: g  # long time
             Graphics3d Object
+
+        .. PLOT::
+
+            R3 = Manifold(3, 'R^3', structure='topological')
+            c_cart = R3.chart('X Y Z')
+            sphinx_plot(c_cart.plot())
 
         A 4-dimensional chart plotted in terms of itself (the plot is
         performed for at most 3 coordinates, which must be specified via
@@ -2150,10 +2465,20 @@ class RealChart(Chart):
             sage: M = Manifold(4, 'M', structure='topological')
             sage: X.<t,x,y,z> = M.chart()
             sage: g = X.plot(ambient_coords=(t,x,y)) # the coordinate z is not depicted  # long time
-            sage: g  # a 3D mesh cube  # long time
+            sage: g  # long time
             Graphics3d Object
+
+        .. PLOT::
+
+            M = Manifold(4, 'M', structure='topological')
+            X = M.chart('t x y z'); t,x,y,z = X[:]
+            g = X.plot(ambient_coords=(t,x,y))
+            sphinx_plot(g)
+
+        ::
+
             sage: g = X.plot(ambient_coords=(t,y)) # the coordinates x and z are not depicted
-            sage: g  # a 2D mesh square
+            sage: g
             Graphics object consisting of 18 graphics primitives
 
         .. PLOT::
@@ -2163,6 +2488,22 @@ class RealChart(Chart):
             g = X.plot(ambient_coords=(t,y))
             sphinx_plot(g)
 
+        Note that the default values of some arguments of the method ``plot``
+        are stored in the dictionary ``plot.options``::
+
+            sage: X.plot.options  # random (dictionary output)
+            {'color': 'red', 'label_axes': True, 'max_range': 8,
+             'plot_points': 75, 'style': '-', 'thickness': 1}
+
+        so that they can be adjusted by the user::
+
+            sage: X.plot.options['color'] = 'blue'
+
+        From now on, all chart plots will use blue as the default color.
+        To restore the original default options, it suffices to type::
+
+            sage: X.plot.reset()
+
         """
         from sage.misc.functional import numerical_approx
         from sage.plot.graphics import Graphics
@@ -2171,13 +2512,14 @@ class RealChart(Chart):
         from .utilities import set_axes_labels
 
         # Extract the kwds options
+        max_range = kwds['max_range']
         color = kwds['color']
         style = kwds['style']
         thickness = kwds['thickness']
         plot_points = kwds['plot_points']
         label_axes = kwds['label_axes']
 
-        def _plot_xx_list(xx_list, rem_coords, ranges, steps, nb_values):
+        def _plot_xx_list(xx_list, rem_coords, ranges, steps, number_values):
             r"""
             Helper function to plot the coordinate grid.
             """
@@ -2187,7 +2529,7 @@ class RealChart(Chart):
             resu = []
             for xx in xx_list:
                 xc = xmin
-                for i in range(nb_values[coord]):
+                for i in range(number_values[coord]):
                     nxx = list(xx)
                     nxx[self._xx.index(coord)] = xc
                     resu.append(nxx)
@@ -2197,7 +2539,7 @@ class RealChart(Chart):
             else:
                 rem_coords.remove(coord)
                 return _plot_xx_list(resu, rem_coords, ranges, steps,
-                                     nb_values)
+                                     number_values)
 
         if chart is None:
             chart = self
@@ -2296,25 +2638,25 @@ class RealChart(Chart):
                     xmax = numerical_approx(bounds[1][0] - 1.e-3)
                 ranges0[coord] = (xmin, xmax)
         ranges = ranges0
-        if nb_values is None:
+        if number_values is None:
             if nca == 2: # 2D plot
-                nb_values = 9
+                number_values = 9
             else:   # 3D plot
-                nb_values = 5
-        if not isinstance(nb_values, dict):
-            nb_values0 = {}
+                number_values = 5
+        if not isinstance(number_values, dict):
+            number_values0 = {}
             for coord in coords:
-                nb_values0[coord] = nb_values
-            nb_values = nb_values0
+                number_values0[coord] = number_values
+            number_values = number_values0
         if steps is None:
             steps = {}
         for coord in coords:
             if coord not in steps:
                 steps[coord] = ((ranges[coord][1] - ranges[coord][0])
-                                / (nb_values[coord]-1))
+                                / (number_values[coord]-1))
             else:
                 from sage.functions.other import floor
-                nb_values[coord] = 1 + floor((ranges[coord][1] - ranges[coord][0])
+                number_values[coord] = 1 + floor((ranges[coord][1] - ranges[coord][0])
                                              / steps[coord])
         if not isinstance(color, dict):
             color0 = {}
@@ -2343,7 +2685,7 @@ class RealChart(Chart):
         if fixed_coords is not None:
             if len(fixed_coords) != nc - len(coords):
                 raise ValueError("bad number of fixed coordinates")
-            for fc, val in fixed_coords.iteritems():
+            for fc, val in fixed_coords.items():
                 xx0[self._xx.index(fc)] = val
         ind_a = [chart._xx.index(ac) for ac in ambient_coords]
         resu = Graphics()
@@ -2355,7 +2697,7 @@ class RealChart(Chart):
             xx_list = [xx0]
             if len(rem_coords) >= 1:
                 xx_list = _plot_xx_list(xx_list, rem_coords, ranges, steps,
-                                        nb_values)
+                                        number_values)
             xmin, xmax = ranges[coord]
             nbp = plot_points[coord]
             dx = (xmax - xmin) / (nbp-1)
@@ -2631,21 +2973,24 @@ class CoordChange(SageObject):
 
         EXAMPLES:
 
-        Inverse of a coordinate transformation corresponding to a
-        `\pi/3`-rotation in the plane::
+        Inverse of a coordinate transformation corresponding to a rotation
+        in the Cartesian plane::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: c_xy.<x,y> = M.chart()
             sage: c_uv.<u,v> = M.chart()
-            sage: xy_to_uv = c_xy.transition_map(c_uv, ((x - sqrt(3)*y)/2, (sqrt(3)*x + y)/2))
+            sage: phi = var('phi', domain='real')
+            sage: xy_to_uv = c_xy.transition_map(c_uv,
+            ....:                                [cos(phi)*x + sin(phi)*y,
+            ....:                                 -sin(phi)*x + cos(phi)*y])
             sage: M.coord_changes()
             {(Chart (M, (x, y)),
               Chart (M, (u, v))): Change of coordinates from Chart (M, (x, y)) to Chart (M, (u, v))}
             sage: uv_to_xy = xy_to_uv.inverse(); uv_to_xy
             Change of coordinates from Chart (M, (u, v)) to Chart (M, (x, y))
             sage: uv_to_xy.display()
-            x = 1/2*sqrt(3)*v + 1/2*u
-            y = -1/2*sqrt(3)*u + 1/2*v
+            x = u*cos(phi) - v*sin(phi)
+            y = v*cos(phi) + u*sin(phi)
             sage: M.coord_changes()  # random (dictionary output)
             {(Chart (M, (u, v)),
               Chart (M, (x, y))): Change of coordinates from Chart (M, (u, v)) to Chart (M, (x, y)),
@@ -2654,8 +2999,7 @@ class CoordChange(SageObject):
 
         """
         from sage.symbolic.relation import solve
-        from sage.manifolds.utilities import simplify_chain_real, \
-                                             simplify_chain_generic
+        from sage.symbolic.assumptions import assumptions
         if self._inverse is not None:
             return self._inverse
         # The computation is necessary:
@@ -2692,14 +3036,14 @@ class CoordChange(SageObject):
         if len(solutions) == 1:
             x2_to_x1 = [solutions[0][x1[i]].subs(substitutions)
                                                             for i in range(n1)]
+            x2_to_x1_simpl = [] # to store simplified transformations
             for transf in x2_to_x1:
                 try:
-                    if self._domain.base_field_type() == 'real':
-                        transf = simplify_chain_real(transf)
-                    else:
-                        transf = simplify_chain_generic(transf)
+                    transf = self._chart2.simplify(transf)
                 except AttributeError:
                     pass
+                x2_to_x1_simpl.append(transf)
+            x2_to_x1 = x2_to_x1_simpl
         else:
             list_x2_to_x1 = []
             for sol in solutions:
@@ -2707,15 +3051,18 @@ class CoordChange(SageObject):
                     raise ValueError("the system could not be solved; use " +
                                      "set_inverse() to set the inverse " +
                                      "manually")
-                x2_to_x1 = [sol[x1[i]].subs(substitutions) for i in range(n1)]
+                try:
+                    x2_to_x1 = [sol[x1[i]].subs(substitutions) for i in range(n1)]
+                except KeyError: # sol is not a valid solution
+                    continue
+                x2_to_x1_simpl = [] # to store simplified transformations
                 for transf in x2_to_x1:
                     try:
-                        if self._domain.base_field_type() == 'real':
-                            transf = simplify_chain_real(transf)
-                        else:
-                            transf = simplify_chain_generic(transf)
+                        transf = self._chart2.simplify(transf)
                     except AttributeError:
                         pass
+                    x2_to_x1_simpl.append(transf)
+                x2_to_x1 = x2_to_x1_simpl
                 if self._chart1.valid_coordinates(*x2_to_x1):
                     list_x2_to_x1.append(x2_to_x1)
             if len(list_x2_to_x1) == 0:
@@ -2730,6 +3077,12 @@ class CoordChange(SageObject):
                    "manually")
             x2_to_x1 = list_x2_to_x1[0]
         self._inverse = type(self)(self._chart2, self._chart1, *x2_to_x1)
+        # Some cleaning: the local symbolic variables (xxxx0, xxxx1, ...) are
+        # removed from the list of assumptions
+        for asm in assumptions():
+            for xxxx in xp2:
+                if asm.has(xxxx):
+                    asm.forget()
         return self._inverse
 
     def set_inverse(self, *transformations, **kwds):
@@ -2790,9 +3143,11 @@ class CoordChange(SageObject):
             x2 = self._chart2._xx
             n1 = len(x1)
             for i in range(n1):
-                print("  {} == {}".format(x1[i], self._inverse(*(self(*x1)))[i]))
+                print("  {} == {}".format(x1[i],
+                      self._chart1.simplify(self._inverse(*(self(*x1)))[i])))
             for i in range(n1):
-                print("  {} == {}".format(x2[i], self(*(self._inverse(*x2)))[i]))
+                print("  {} == {}".format(x2[i],
+                      self._chart2.simplify(self(*(self._inverse(*x2)))[i])))
 
     def __mul__(self, other):
         r"""
@@ -2909,7 +3264,7 @@ class CoordChange(SageObject):
         from sage.tensor.modules.format_utilities import FormattedExpansion
         coords2 = self._chart2[:]
         n2 = len(coords2)
-        expr = self._transf.expr()
+        expr = self._transf.expr('SR')
         rtxt = ""
         if n2 == 1:
             rlatex = r"\begin{array}{lcl}"
@@ -2927,4 +3282,3 @@ class CoordChange(SageObject):
         return FormattedExpansion(rtxt, rlatex)
 
     disp = display
-

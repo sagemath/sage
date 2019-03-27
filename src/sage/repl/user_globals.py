@@ -26,12 +26,12 @@ global::
 
     sage: from sage.repl.user_globals import get_global, set_global
     sage: get_global("Matrix")
-    <sage.matrix.constructor.MatrixFactory object at ...>
+    <cyfunction matrix at ...>
 
 This is exactly the same::
 
     sage: ui_globals["Matrix"]
-    <sage.matrix.constructor.MatrixFactory object at ...>
+    <cyfunction matrix at ...>
 
 We inject a global::
 
@@ -94,7 +94,7 @@ def get_globals():
         sage: from sage.repl.user_globals import get_globals, initialize_globals
         sage: initialize_globals(sage.all)
         sage: get_globals()["Matrix"]
-        <sage.matrix.constructor.MatrixFactory object at ...>
+        <cyfunction matrix at ...>
     """
     _check()
     return user_globals
@@ -141,7 +141,7 @@ def initialize_globals(all, g=None):
         sage: my_globs["foo"]
         'bar'
         sage: my_globs["Matrix"]
-        <sage.matrix.constructor.MatrixFactory object at ...>
+        <cyfunction matrix at ...>
 
     Remove ``Matrix`` from the globals and initialize again without
     changing the dictionary::
@@ -149,7 +149,7 @@ def initialize_globals(all, g=None):
         sage: del my_globs["Matrix"]
         sage: initialize_globals(sage.all)
         sage: my_globs["Matrix"]
-        <sage.matrix.constructor.MatrixFactory object at ...>
+        <cyfunction matrix at ...>
     """
     if g is not None:
         set_globals(g)

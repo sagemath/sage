@@ -2,14 +2,15 @@
 """
 Callable dictionaries
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Nicolas M. Thiéry <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 
 cdef class CallableDict(dict):
     r"""
@@ -47,7 +48,6 @@ cdef class CallableDict(dict):
         Traceback (most recent call last):
         ....
         ValueError: 1 is not in dict
-
     """
     def __call__(self, key):
         r"""
@@ -62,7 +62,6 @@ cdef class CallableDict(dict):
         TESTS::
 
             sage: from sage.misc.callable_dict import CallableDict
-            sage: from sage.combinat.words.morphism import CallableDict
             sage: d = CallableDict({'one': 1, 'zwei': 2, 'trois': 3})
             sage: d('one'), d('zwei'), d('trois')
             (1, 2, 3)
@@ -74,4 +73,17 @@ cdef class CallableDict(dict):
         try:
             return self[key]
         except KeyError:
-            raise ValueError(repr(key)+" is not in dict")
+            raise ValueError(repr(key) + " is not in dict")
+
+    def __repr__(self):
+        """
+        Return the string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.misc.callable_dict import CallableDict
+            sage: d = CallableDict({1: 'a', 3: 'b', 2: 'c'}); d
+            {1: 'a', 2: 'c', 3: 'b'}
+        """
+        from pprint import pformat
+        return pformat(dict(self))

@@ -1,0 +1,54 @@
+# Here is the list of TeXlive packages required by Sage.
+#
+# Note: 
+# - Dependencies are installed automatically by TeXlive.
+# - Whitespace and Lines starting with a hash are ignored.
+
+
+latex
+titlesec
+framed
+threeparttable
+wrapfig
+multirow
+makecmds
+collection-fontsrecommended
+tkz-berge
+tkz-graph
+
+# Some dependencies that TeXlive 2014 missed
+cmap
+fancybox
+fancyvrb
+mdwtools
+parskip
+jknapltx
+etoolbox
+
+# Used by IPython nbconvert (ipynb -> latex -> pdf conversion)
+adjustbox
+xkeyval
+booktabs
+collectbox
+ucs
+
+# Language support for localizations of the Sage docs
+collection-langcyrillic
+babel-basque
+babel-catalan
+babel-czech
+babel-english
+babel-french
+babel-galician
+babel-german
+babel-hungarian
+babel-italian
+babel-polish
+babel-portuges
+babel-russian
+babel-slovak
+babel-spanish
+
+# Japanese
+jsclasses
+ptex

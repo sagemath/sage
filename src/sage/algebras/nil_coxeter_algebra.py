@@ -16,7 +16,9 @@ from sage.combinat.partition import Partitions
 
 class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
     r"""
-    Construct the Nil-Coxeter algebra of given type. This is the algebra
+    Construct the Nil-Coxeter algebra of given type.
+
+    This is the algebra
     with generators `u_i` for every node `i` of the corresponding Dynkin
     diagram. It has the usual braid relations (from the Weyl group) as well
     as the quadratic relation `u_i^2 = 0`.
@@ -25,7 +27,7 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
 
     - ``W`` -- a Weyl group
 
-    OPTIONAL ARGUEMENTS:
+    OPTIONAL ARGUMENTS:
 
     - ``base_ring`` -- a ring (default is the rational numbers)
     - ``prefix`` -- a label for the generators (default "u")
@@ -143,11 +145,8 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
 
     def k_schur_noncommutative_variables(self, la):
         r"""
-        In type `A^{(1)}` this is the `k`-Schur function in noncommutative variables defined by Thomas Lam.
-
-        REFERENCES:
-
-           .. [Lam2005] \T. Lam, Affine Stanley symmetric functions, Amer. J. Math.  128  (2006),  no. 6, 1553--1586.
+        In type `A^{(1)}` this is the `k`-Schur function in noncommutative variables
+        defined by Thomas Lam [Lam2005]_.
 
         This function is currently only defined in type `A^{(1)}`.
 

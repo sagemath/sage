@@ -68,8 +68,9 @@ We can also construct polynomials over relative number fields::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-from polynomial_element_generic import Polynomial_generic_dense_field
+from .polynomial_element_generic import Polynomial_generic_dense_field
 from sage.rings.rational_field import QQ
 from sage.structure.element import coerce_binop
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -102,11 +103,12 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
 
         EXAMPLES::
 
-            sage: f = QQ[I][x].random_element()
+            sage: P.<x> = QQ[I][]
+            sage: f = P.random_element()
             sage: from sage.rings.polynomial.polynomial_number_field import Polynomial_absolute_number_field_dense
             sage: isinstance(f, Polynomial_absolute_number_field_dense)
             True
-            sage: a = QQ[I][x](x)
+            sage: a = P(x)
             sage: a.is_gen()
             True
         """
@@ -152,9 +154,9 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
             sage: N = NumberField(x-3, 'a')
             sage: a = N.gen()
             sage: R = N['x']
-            sage: f = R.random_element()
-            sage: g1 = R.random_element()
-            sage: g2 = g1*R.random_element() + 1
+            sage: f = R._random_nonzero_element()
+            sage: g1 = R._random_nonzero_element()
+            sage: g2 = g1 * R._random_nonzero_element() + 1
             sage: g1 *= f
             sage: g2 *= f
             sage: d = gcd(g1, g2)
@@ -278,7 +280,7 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
             sage: x = var('x')
             sage: R = NumberField([x^2-2, x^2-3], 'a')['x']
-            sage: f = R.random_element()
+            sage: f = R._random_nonzero_element()
             sage: g1 = R.random_element()
             sage: g2 = R.random_element()*g1+1
             sage: g1 *= f

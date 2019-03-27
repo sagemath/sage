@@ -65,7 +65,9 @@ def _dbz_to_integer_list(name):
     """
     from sage.rings.integer import Integer
     data = _dbz_to_string(name)
-    return [map(Integer, row.strip().split(" ")) for row in data.split("\n")[:-1]]
+    return [[Integer(v) for v in row.strip().split(" ")]
+            for row in data.split("\n")[:-1]]
+
 
 def _dbz_to_integers(name):
     r"""
@@ -76,7 +78,8 @@ def _dbz_to_integers(name):
         [0, 1]
     """
     from sage.rings.integer import Integer
-    return map(Integer, _dbz_to_string(name).split())
+    return [Integer(i) for i in _dbz_to_string(name).split()]
+
 
 class ModularPolynomialDatabase:
     def _dbpath(self, level):
@@ -89,7 +92,7 @@ class ModularPolynomialDatabase:
             sage: C._dbpath(8)
             'PolMod/Cls/pol.008.dbz'
         """
-        return "PolMod/%s/pol.%03d.dbz"%(self.model, level)
+        return "PolMod/%s/pol.%03d.dbz" % (self.model, level)
 
     def __repr__(self):
         r"""
@@ -199,13 +202,15 @@ class DedekindEtaModularPolynomialDatabase(ModularPolynomialDatabase):
     """
     model = "Eta"
 
+
 class DedekindEtaModularCorrespondenceDatabase(ModularCorrespondenceDatabase):
-    """
+    r"""
     The database of modular correspondences in $X_0(p) \times X_0(p)$, where
     the model of the curves $X_0(p) = \Bold{P}^1$ are specified by quotients of
     Dedekind's eta function.
     """
     model = "EtaCrr"
+
 
 class AtkinModularPolynomialDatabase(ModularPolynomialDatabase):
     """

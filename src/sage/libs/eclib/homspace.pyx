@@ -1,10 +1,18 @@
 "Cremona modular symbols"
-from __future__ import print_function
+from __future__ import absolute_import, print_function
 
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
+from cython.operator cimport dereference as deref
+from cython.operator cimport preincrement as inc
+from libcpp.map cimport map
 
-from ..eclib cimport mat
+from ..eclib cimport vec, svec, mat, smat
 from .mat cimport MatrixFactory
+
+from sage.matrix.all import MatrixSpace
+from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
+from sage.rings.all import ZZ
+from sage.rings.integer cimport Integer
 
 cdef MatrixFactory MF = MatrixFactory()
 
@@ -205,3 +213,77 @@ cdef class ModularSymbols:
         cdef mat M = self.H.heckeop(p, dual, verbose)
         sig_off()
         return MF.new_matrix(M)
+
+    def sparse_hecke_matrix(self, long p, dual=False, verbose=False, base_ring=ZZ):
+        """
+        Return the matrix of the ``p``-th Hecke operator acting on
+        this space of modular symbols as a sparse Sage matrix over
+        ``base_ring``. This is more memory-efficient than creating a
+        Cremona matrix and then applying sage_matrix_over_ZZ with sparse=True.
+
+        The result of this command is not cached.
+
+        INPUT:
+
+        - ``p`` -- a prime number
+
+        - ``dual`` -- (default: False) whether to compute the Hecke
+                    operator acting on the dual space, i.e., the
+                    transpose of the Hecke operator
+
+        - ``verbose`` -- (default: False) print verbose output
+
+        OUTPUT:
+
+        (matrix) If ``p`` divides the level, the matrix of the
+        Atkin-Lehner involution `W_p` at ``p``; otherwise the matrix of the
+        Hecke operator `T_p`,
+
+        EXAMPLES::
+
+            sage: M = CremonaModularSymbols(37)
+            sage: t = M.sparse_hecke_matrix(2); type(t)
+            <type 'sage.matrix.matrix_integer_sparse.Matrix_integer_sparse'>
+            sage: print(t)
+            [ 3  0  0  0  0]
+            [-1 -1  1  1  0]
+            [ 0  0 -1  0  1]
+            [-1  1  0 -1 -1]
+            [ 0  0  1  0 -1]
+            sage: M = CremonaModularSymbols(5001)
+            sage: T = M.sparse_hecke_matrix(2)
+            sage: U = M.hecke_matrix(2).sage_matrix_over_ZZ(sparse=True)
+            sage: print(T == U)
+            True
+            sage: T = M.sparse_hecke_matrix(2, dual=True)
+            sage: print(T == U.transpose())
+            True
+            sage: T = M.sparse_hecke_matrix(2, base_ring=GF(7))
+            sage: print(T == U.change_ring(GF(7)))
+            True
+
+        This concerns an issue reported on :trac:`21303`::
+
+            sage: C = CremonaModularSymbols(45, cuspidal=True,sign=-1)
+            sage: T2a = C.hecke_matrix(2).sage_matrix_over_ZZ()
+            sage: T2b = C.sparse_hecke_matrix(2)
+            sage: print(T2a == T2b)
+            True
+        """
+        cdef long i, n = self.dimension()
+        cdef svec sv
+        d = {}
+        sig_on()
+        cdef smat M = self.H.s_heckeop(p, dual, verbose)
+        sig_off()
+        for i in range(n):
+            sv = M.row(i+1)
+            iter = sv.begin()
+            while iter != sv.end():
+                d[(i,deref(iter).first-1)] = deref(iter).second
+                inc(iter)
+        MS = MatrixSpace(base_ring, n, sparse=True)
+        # The next step is the bottleneck.
+        ans = MS(entries=d)
+        return ans
+

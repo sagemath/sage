@@ -24,6 +24,7 @@ from sage.arith.all import GCD, LCM
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
+from sage.structure.richcmp import richcmp
 
 
 class AbelianGroupElementBase(MultiplicativeGroupElement):
@@ -167,25 +168,27 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         else:
             return '1'
 
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         """
         Compare ``self`` and ``other``.
 
+        The comparison is based on the exponents.
+
         OUTPUT:
 
-        ``-1``, ``0``, or ``+1``
+        boolean
 
         EXAMPLES::
 
             sage: G.<a,b> = AbelianGroup([2,3])
-            sage: cmp(a,b)
-            1
+            sage: a > b
+            True
 
             sage: Gd.<A,B> = G.dual_group()
-            sage: cmp(A,B)
-            1
+            sage: A > B
+            True
         """
-        return cmp(self._exponents, other._exponents)
+        return richcmp(self._exponents, other._exponents, op)
 
     @cached_method
     def order(self):
@@ -286,7 +289,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         Returns the inverse element.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G.<a,b> = AbelianGroup([0,5])
             sage: a.inverse()

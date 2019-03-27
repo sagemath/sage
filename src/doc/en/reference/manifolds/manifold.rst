@@ -17,3 +17,5 @@ Topological Manifolds
    scalarfield
 
    continuous_map
+
+   sage/manifolds/topological_submanifold

@@ -17,10 +17,10 @@ We import the hypellfrob function and call it on a polynomial over
     sage: R.<x> = PolynomialRing(ZZ)
     sage: f = x^5 + 2*x^2 + x + 1; p = 101
     sage: M = hypellfrob(p, 1, f); M
-    [ 0 + O(101)  0 + O(101) 93 + O(101) 62 + O(101)]
-    [ 0 + O(101)  0 + O(101) 55 + O(101) 19 + O(101)]
-    [ 0 + O(101)  0 + O(101) 65 + O(101) 42 + O(101)]
-    [ 0 + O(101)  0 + O(101) 89 + O(101) 29 + O(101)]
+    [     O(101)      O(101) 93 + O(101) 62 + O(101)]
+    [     O(101)      O(101) 55 + O(101) 19 + O(101)]
+    [     O(101)      O(101) 65 + O(101) 42 + O(101)]
+    [     O(101)      O(101) 89 + O(101) 29 + O(101)]
 
 We do the same calculation but in :math:`\ZZ/101^4\ZZ`,
 which gives enough precision to recognize the exact characteristic
@@ -45,8 +45,7 @@ the curve :math:`y^2= f(x)`.
 ::
 
     sage: M.charpoly()
-    (1 + O(101^4))*x^4 + (7 + O(101^4))*x^3 + (167 + O(101^4))*x^2
-     + (707 + O(101^4))*x + (10201 + O(101^4))
+    (1 + O(101^4))*x^4 + (7 + O(101^4))*x^3 + (167 + O(101^4))*x^2 + (707 + O(101^4))*x + 10201 + O(101^4)
 
 .. note::
 

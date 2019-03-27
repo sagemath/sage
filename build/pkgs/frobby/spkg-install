@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 if [ "$SAGE_LOCAL" = "" ]; then
    echo "SAGE_LOCAL undefined ... exiting";
    echo "Maybe run 'sage -sh'?"
@@ -12,17 +10,6 @@ GMP_INC_DIR="$SAGE_LOCAL/include"; export GMP_INC_DIR
 ldflags="-Wl,-rpath,$SAGE_LOCAL/lib -L$SAGE_LOCAL/lib/ -lgmpxx -lgmp"; export ldflags
 
 cd src
-
-# Apply fixes to upstream source
-echo "Applying patches..."
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p0 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
 
 $MAKE MODE=release
 

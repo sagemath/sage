@@ -7,10 +7,10 @@ AUTHORS:
 - John H. Palmieri (2009-08)
 
 This module implements the basic structure of finite
-`\Delta`-complexes.  For full mathematical details, see Hatcher [Hat]_,
+`\Delta`-complexes.  For full mathematical details, see Hatcher [Hat2002]_,
 especially Section 2.1 and the Appendix on "Simplicial CW Structures".
 As Hatcher points out, `\Delta`-complexes were first introduced by Eilenberg
-and Zilber [EZ]_, although they called them "semi-simplicial complexes".
+and Zilber [EZ1950]_, although they called them "semi-simplicial complexes".
 
 A `\Delta`-complex is a generalization of a :mod:`simplicial complex
 <sage.homology.simplicial_complex>`; a `\Delta`-complex `X` consists
@@ -21,7 +21,7 @@ functions `d_i` from `X_n` to `X_{n-1}`, with `d_i(s)` equal to the
 `i`-th face of `s` for each simplex `s \in X_n`.  These maps must
 satisfy the *simplicial identity*
 
-  .. math::
+  .. MATH::
 
     d_i d_j = d_{j-1} d_i \text{ for all } i<j.
 
@@ -47,15 +47,10 @@ vertex.
    inherits its methods.  Some of those methods are not listed here;
    see the :mod:`Generic Cell Complex <sage.homology.cell_complex>`
    page instead.
-
-REFERENCES:
-
-.. [Hat] Allen Hatcher, "Algebraic Topology", Cambridge University Press (2002).
-
-.. [EZ] \S. Eilenberg and J. Zilber, "Semi-Simplicial Complexes and Singular
-        Homology", Ann. Math. (2) 51 (1950), 499-513.
 """
 from __future__ import absolute_import
+from six.moves import range
+from six import integer_types
 
 from copy import copy
 from sage.homology.cell_complex import GenericCellComplex
@@ -68,7 +63,7 @@ from sage.homology.chain_complex import ChainComplex
 from sage.graphs.graph import Graph
 from sage.arith.all import binomial
 from sage.misc.cachefunc import cached_method
-from sage.misc.decorators import rename_keyword
+
 
 class DeltaComplex(GenericCellComplex):
     r"""
@@ -301,7 +296,7 @@ class DeltaComplex(GenericCellComplex):
                     new_data[dim] = s
                     dim += 1
             elif isinstance(data, dict):
-                if all(isinstance(a, (Integer, int, long)) for a in data):
+                if all(isinstance(a, (Integer,) + integer_types) for a in data):
                     # a dictionary indexed by integers
                     new_data = data
                     if -1 not in new_data:
@@ -480,12 +475,10 @@ class DeltaComplex(GenericCellComplex):
         r"""
         TESTS::
 
-            sage: hash(delta_complexes.Sphere(2))
-            -789842226           # 32-bit
-            -5090854238868998450 # 64-bit
-            sage: hash(delta_complexes.Sphere(4))
-            376965290           # 32-bit
-            8539734868592429226 # 64-bit
+            sage: hash(delta_complexes.Sphere(2)) == hash(delta_complexes.Sphere(2))
+            True
+            sage: hash(delta_complexes.Sphere(4)) == hash(delta_complexes.Sphere(4))
+            True
         """
         return hash(frozenset(self._cells_dict.items()))
 
@@ -578,7 +571,6 @@ class DeltaComplex(GenericCellComplex):
             cells[-1] = (None,)
         return cells
 
-    @rename_keyword(deprecation=20723, check_diffs='check')
     def chain_complex(self, subcomplex=None, augmented=False,
                       verbose=False, check=False, dimensions=None,
                       base_ring=ZZ, cochain=False):
@@ -1013,7 +1005,9 @@ class DeltaComplex(GenericCellComplex):
                             # Simplex, as well as the function
                             # 'lattice_paths', in
                             # simplicial_complex.py.)
-                            for path in lattice_paths(range(k+1), range(n+1), length=d+1):
+                            for path in lattice_paths(list(range(k + 1)),
+                                                      list(range(n + 1)),
+                                                      length=d+1):
                                 path = tuple(path)
                                 new[(k, k_idx, n, n_idx, path)] = len(simplices)
                                 bdry_list = []
@@ -1233,7 +1227,7 @@ class DeltaComplex(GenericCellComplex):
 
         *Elementary subdivision* of a simplex means replacing that
         simplex with the cone on its boundary.  That is, given a
-        `\Delta`-complex containing an `d`-simplex `S` with vertices
+        `\Delta`-complex containing a `d`-simplex `S` with vertices
         `v_0`, ..., `v_d`, form a new `\Delta`-complex by
 
         - removing `S`
@@ -1266,13 +1260,8 @@ class DeltaComplex(GenericCellComplex):
         of a single top-dimensional simplex without subdividing every
         simplex in the complex.
 
-        The term "elementary subdivison" is taken from p. 112 in John
-        M. Lee's book [Lee]_.
-
-        REFERENCES:
-
-        .. [Lee] John M. Lee, Introduction to Topological Manifolds,
-           Springer-Verlag, GTM volume 202.
+        The term "elementary subdivision" is taken from p. 112 in John
+        M. Lee's book [Lee2011]_.
 
         EXAMPLES::
 
@@ -1309,7 +1298,11 @@ class DeltaComplex(GenericCellComplex):
             new_cells = {}
             # for each n-cell in the standard simplex, add an
             # (n+1)-cell to the subdivided complex.
-            for simplex in pi[n]:
+            try:
+                simplices = sorted(pi[n])
+            except TypeError:
+                simplices = pi[n]
+            for simplex in simplices:
                 # compute the faces of the new (n+1)-cell.
                 cell = []
                 for i in simplex:
@@ -1369,10 +1362,10 @@ class DeltaComplex(GenericCellComplex):
         to the same place::
 
             sage: T = delta_complexes.Torus()
-            sage: T._epi_from_standard_simplex()[1]
-            {(1, 0): 1, (2, 0): 2, (2, 1): 0}
-            sage: T._epi_from_standard_simplex()[0]
-            {(0,): 0, (1,): 0, (2,): 0}
+            sage: sorted(T._epi_from_standard_simplex()[1].items())
+            [((1, 0), 1), ((2, 0), 2), ((2, 1), 0)]
+            sage: sorted(T._epi_from_standard_simplex()[0].items())
+            [((0,), 0), ((1,), 0), ((2,), 0)]
         """
         if dim is None:
             dim = self.dimension()
@@ -1553,7 +1546,7 @@ class DeltaComplex(GenericCellComplex):
         coefficients in ``base_ring``.
 
         The term "algebraic topological model" is defined by Pilarczyk
-        and Réal [PR]_.
+        and Réal [PR2015]_.
 
         INPUT:
 
@@ -1728,13 +1721,13 @@ class DeltaComplexExamples():
         return DeltaComplex({Simplex(n): True})
 
     def SurfaceOfGenus(self, g, orientable=True):
-        """
+        r"""
         A surface of genus g as a `\Delta`-complex.
 
         :param g: the genus
         :type g: non-negative integer
         :param orientable: whether the surface should be orientable
-        :type orientable: bool, optional, default True
+        :type orientable: bool, optional, default ``True``
 
         In the orientable case, return a sphere if `g` is zero, and
         otherwise return a `g`-fold connected sum of a torus with
@@ -1757,7 +1750,7 @@ class DeltaComplexExamples():
 
             sage: delta_g4 = delta_complexes.SurfaceOfGenus(4)
             sage: delta_g4.f_vector()
-            [1, 5, 33, 22]
+            [1, 3, 27, 18]
             sage: simpl_g4 = simplicial_complexes.SurfaceOfGenus(4)
             sage: simpl_g4.f_vector()
             [1, 19, 75, 50]

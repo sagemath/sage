@@ -15,16 +15,17 @@
 
 == License ==
 
- * GNU General Public License Version 3 or later (see src/COPYING)
+MIT License
 
 == Upstream Contact ==
 
- * Authors: Mate Soos
- * Email:   soos.mate@gmail.com
- * Website: http://www.msoos.org/cryptominisat2
+ * Authors:  Mate Soos
+ * Email:    soos.mate@gmail.com
+ * Website:  http://www.msoos.org/
+ * Releases: https://github.com/msoos/cryptominisat/releases
 
 == Special Update/Build Instructions ==
 
-CryptoMiniSat's tarball is called cmsat-VERSION.tar.gz and unpacks to
-cmsat-VERSION. It should be unpacked, renamed to cryptominisat-VERSION and
-repackaged.
+CryptoMiniSat's tarball downloaded from github is called VERSION.tar.gz
+and should be renamed to cryptominisat-VERSION.tar.gz
+

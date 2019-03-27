@@ -16,7 +16,7 @@ def BezoutianQuadraticForm(f, g):
     r"""
     Compute the Bezoutian of two polynomials defined over a common base ring.  This is defined by
 
-    .. math::
+    .. MATH::
 
         {\rm Bez}(f, g) := \frac{f(x) g(y) - f(y) g(x)}{y - x}
 

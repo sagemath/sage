@@ -39,6 +39,7 @@ import pexpect
 import time
 from . import cleaner
 
+from sage.cpython.string import bytes_to_str
 from sage.groups.perm_gps.cubegroup import index2singmaster
 
 
@@ -66,7 +67,8 @@ class SingNot:
     This class is to resolve difference between various Singmaster notation.
     Case is ignored, and the second and third letters may be swapped.
 
-    EXAMPLE:
+    EXAMPLES::
+
         sage: from sage.interfaces.rubik import SingNot
         sage: SingNot("acb") == SingNot("ACB")
         True
@@ -128,7 +130,8 @@ class OptimalSolver:
 
         TODO: Let it keep searching once it found a solution?
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.interfaces.rubik import *
             sage: solver = DikSolver()
             sage: solver = OptimalSolver()  # long time (28s on sage.math, 2012)
@@ -148,7 +151,7 @@ class OptimalSolver:
         self.child.sendline(self.format_cube(facets))
         self.child.expect(r"([LRUDBF'2 ]+)\s+\((\d+)q\*?, (\d+)f\*?\)")
         self.child.sendline(chr(3)) # send ctrl-c
-        return self.child.match.groups()[0].strip()
+        return bytes_to_str(self.child.match.groups()[0]).strip()
 
     def format_cube(self, facets):
         L = []
@@ -185,7 +188,8 @@ class CubexSolver:
 
     def solve(self, facets):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.interfaces.rubik import *
             sage: C = RubiksCube("R U")
             sage: CubexSolver().solve(C.facets())
@@ -205,19 +209,19 @@ class CubexSolver:
         """
         s = self.format_cube(facets)
         child = pexpect.spawn(self.__cmd+" "+s)
-        ix = child.expect(['210.*?:', '^5\d+(.*)'])
+        ix = child.expect(['210.*?:', r'^5\d+(.*)'])
         if ix == 0:
             child.expect(['211', pexpect.EOF])
-            moves = child.before.strip().replace(',','').split(' ')
+            moves = bytes_to_str(child.before).strip().replace(',', '').split(' ')
             return " ".join([move_map[m] for m in reversed(moves)])
         else:
             s = child.after
-            while child.expect(['^5\d+', pexpect.EOF]) == 0:
+            while child.expect([r'^5\d+', pexpect.EOF]) == 0:
                 s += child.after
-            raise ValueError(s)
+            raise ValueError(bytes_to_str(s))
 
     def format_cube(self, facets):
-        colors = sum([[i]*8 for i in range(1,7)], [])
+        colors = sum([[i]*8 for i in range(1, 7)], [])
         facet_colors = [0] * 54
         for i in range(48):
             f = facets[i]-1
@@ -239,7 +243,8 @@ class DikSolver:
 
     def solve(self, facets, timeout=10, extra_time=2):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.interfaces.rubik import *
             sage: C = RubiksCube().move("R U")
             sage: DikSolver().solve(C.facets())
@@ -279,11 +284,12 @@ class DikSolver:
                     extra_time = 0
             # format the string into our notation
             child.close(True)
+            sol = bytes_to_str(sol)
             return ' '.join([self.rot_map[m[0]]+str(4-int(m[1])) for m in reversed(sol.split(' '))]).replace('1', '').replace('3',"'")
         elif ix == 1:
             # invalid format
             child.close(True)
-            raise ValueError(child.before)
+            raise ValueError(bytes_to_str(child.before))
         else:
             child.close(True)
             raise RuntimeError("timeout")

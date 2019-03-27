@@ -18,11 +18,9 @@ from __future__ import print_function
 
 import operator as _operator
 from sage.rings.rational_field import QQ
-from sage.symbolic.ring import SR
-from sage.symbolic.pynac import I
+from sage.symbolic.all import I, SR
 from sage.functions.all import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
-from sage.functions.piecewise import piecewise
 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
 from functools import reduce
 GaussianField = I.pyobject().parent()
@@ -46,8 +44,8 @@ class FakeExpression(object):
 
             sage: from sage.symbolic.expression_conversions import FakeExpression
             sage: import operator; x,y = var('x,y')
-            sage: FakeExpression([x, y], operator.div)
-            FakeExpression([x, y], <built-in function div>)
+            sage: FakeExpression([x, y], operator.truediv)
+            FakeExpression([x, y], <built-in function truediv>)
         """
         self._operands = operands
         self._operator = operator
@@ -58,8 +56,8 @@ class FakeExpression(object):
 
             sage: from sage.symbolic.expression_conversions import FakeExpression
             sage: import operator; x,y = var('x,y')
-            sage: FakeExpression([x, y], operator.div)
-            FakeExpression([x, y], <built-in function div>)
+            sage: FakeExpression([x, y], operator.truediv)
+            FakeExpression([x, y], <built-in function truediv>)
         """
         return "FakeExpression(%r, %r)"%(self._operands, self._operator)
 
@@ -69,7 +67,7 @@ class FakeExpression(object):
 
             sage: from sage.symbolic.expression_conversions import FakeExpression
             sage: import operator; x,y = var('x,y')
-            sage: f = FakeExpression([x, y], operator.div)
+            sage: f = FakeExpression([x, y], operator.truediv)
             sage: f.pyobject()
             Traceback (most recent call last):
             ...
@@ -83,7 +81,7 @@ class FakeExpression(object):
 
             sage: from sage.symbolic.expression_conversions import FakeExpression
             sage: import operator; x,y = var('x,y')
-            sage: f = FakeExpression([x, y], operator.div)
+            sage: f = FakeExpression([x, y], operator.truediv)
             sage: f.operands()
             [x, y]
         """
@@ -95,7 +93,7 @@ class FakeExpression(object):
 
             sage: from sage.symbolic.expression_conversions import FakeExpression
             sage: import operator; x,y = var('x,y')
-            sage: f = FakeExpression([x, y], operator.div)
+            sage: f = FakeExpression([x, y], operator.truediv)
             sage: f[0]
             x
         """
@@ -107,9 +105,9 @@ class FakeExpression(object):
 
             sage: from sage.symbolic.expression_conversions import FakeExpression
             sage: import operator; x,y = var('x,y')
-            sage: f = FakeExpression([x, y], operator.div)
+            sage: f = FakeExpression([x, y], operator.truediv)
             sage: f.operator()
-            <built-in function div>
+            <built-in function truediv>
         """
         return self._operator
 
@@ -119,7 +117,7 @@ class FakeExpression(object):
 
             sage: from sage.symbolic.expression_conversions import FakeExpression
             sage: import operator; x,y = var('x,y')
-            sage: f = FakeExpression([x, y], operator.div)
+            sage: f = FakeExpression([x, y], operator.truediv)
             sage: fast_callable(f, vars=['x','y']).op_list()
             [('load_arg', 0), ('load_arg', 1), 'div', 'return']
         """
@@ -131,7 +129,7 @@ class FakeExpression(object):
 
             sage: from sage.symbolic.expression_conversions import FakeExpression
             sage: import operator; x,y = var('x,y')
-            sage: f = FakeExpression([x, y], operator.div)
+            sage: f = FakeExpression([x, y], operator.truediv)
             sage: fast_float(f, 'x', 'y').op_list()
             [('load_arg', 0), ('load_arg', 1), 'div', 'return']
         """
@@ -142,7 +140,7 @@ class Converter(object):
         """
         If use_fake_div is set to True, then the converter will try to
         replace expressions whose operator is operator.mul with the
-        corresponding expression whose operator is operator.div.
+        corresponding expression whose operator is operator.truediv.
 
         EXAMPLES::
 
@@ -155,10 +153,10 @@ class Converter(object):
 
     def __call__(self, ex=None):
         """
-        .. note::
+        .. NOTE::
 
-           If this object does not have an attribute *ex*, then an argument
-           must be passed into :meth`__call__`::
+            If this object does not have an attribute ``ex``, then an argument
+            must be passed into :meth:`__call__`.
 
         EXAMPLES::
 
@@ -184,7 +182,7 @@ class Converter(object):
             Traceback (most recent call last):
             ...
             NotImplementedError: composition
-            sage: c(function('f', x).diff(x))
+            sage: c(function('f')(x).diff(x))
             Traceback (most recent call last):
             ...
             NotImplementedError: derivative
@@ -205,7 +203,7 @@ class Converter(object):
             obj = ex.pyobject()
             return self.pyobject(ex, obj)
         except TypeError as err:
-            if 'self must be a numeric expression' not in err:
+            if 'self must be a numeric expression' not in err.args:
                 raise err
 
         operator = ex.operator()
@@ -233,18 +231,18 @@ class Converter(object):
             sage: from sage.symbolic.expression_conversions import Converter
             sage: c = Converter(use_fake_div=True)
             sage: c.get_fake_div(sin(x)/x)
-            FakeExpression([sin(x), x], <built-in function div>)
+            FakeExpression([sin(x), x], <built-in function truediv>)
             sage: c.get_fake_div(-1*sin(x))
             FakeExpression([sin(x)], <built-in function neg>)
             sage: c.get_fake_div(-x)
             FakeExpression([x], <built-in function neg>)
             sage: c.get_fake_div((2*x^3+2*x-1)/((x-2)*(x+1)))
-            FakeExpression([2*x^3 + 2*x - 1, FakeExpression([x + 1, x - 2], <built-in function mul>)], <built-in function div>)
+            FakeExpression([2*x^3 + 2*x - 1, FakeExpression([x + 1, x - 2], <built-in function mul>)], <built-in function truediv>)
 
         Check if :trac:`8056` is fixed, i.e., if numerator is 1.::
 
             sage: c.get_fake_div(1/pi/x)
-            FakeExpression([1, FakeExpression([pi, x], <built-in function mul>)], <built-in function div>)
+            FakeExpression([1, FakeExpression([pi, x], <built-in function mul>)], <built-in function truediv>)
         """
         d = []
         n = []
@@ -272,13 +270,13 @@ class Converter(object):
             d = FakeExpression(d, _operator.mul)
 
         if len(n) == 0:
-            return FakeExpression([SR.one(), d], _operator.div)
+            return FakeExpression([SR.one(), d], _operator.truediv)
         elif len(n) == 1:
             n = n[0]
         else:
             n = FakeExpression(n, _operator.mul)
 
-        return FakeExpression([n,d], _operator.div)
+        return FakeExpression([n,d], _operator.truediv)
 
     def pyobject(self, ex, obj):
         """
@@ -348,8 +346,8 @@ class Converter(object):
         TESTS::
 
             sage: from sage.symbolic.expression_conversions import Converter
-            sage: a = function('f', x).diff(x); a
-            D[0](f)(x)
+            sage: a = function('f')(x).diff(x); a
+            diff(f(x), x)
             sage: Converter().derivative(a, a.operator())
             Traceback (most recent call last):
             ...
@@ -494,7 +492,7 @@ class InterfaceInit(Converter):
             sage: m = InterfaceInit(maxima)
             sage: f = function('f')
             sage: a = f(x).diff(x); a
-            D[0](f)(x)
+            diff(f(x), x)
             sage: print(m.derivative(a, a.operator()))
             diff('f(_SAGE_VAR_x), _SAGE_VAR_x, 1)
             sage: b = f(x).diff(x, x)
@@ -523,9 +521,9 @@ class InterfaceInit(Converter):
 
         ::
 
-            sage: f = function('f', x)
+            sage: f = function('f')(x)
             sage: df = f.diff(x); df
-            D[0](f)(x)
+            diff(f(x), x)
             sage: maxima(df)
             'diff('f(_SAGE_VAR_x),_SAGE_VAR_x,1)
 
@@ -534,7 +532,7 @@ class InterfaceInit(Converter):
             sage: a = df.subs(x=exp(x)); a
             D[0](f)(e^x)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR_t0),_SAGE_VAR_t0,1),[_SAGE_VAR_t0=%e^_SAGE_VAR_x])
+            %at('diff('f(_SAGE_VAR_t0),_SAGE_VAR_t0,1),_SAGE_VAR_t0=%e^_SAGE_VAR_x)
             sage: bool(b.sage() == a)
             True
 
@@ -543,7 +541,7 @@ class InterfaceInit(Converter):
             sage: a = df.subs(x=4); a
             D[0](f)(4)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR_t0),_SAGE_VAR_t0,1),[_SAGE_VAR_t0=4])
+            %at('diff('f(_SAGE_VAR_t0),_SAGE_VAR_t0,1),_SAGE_VAR_t0=4)
             sage: bool(b.sage() == a)
             True
 
@@ -554,7 +552,7 @@ class InterfaceInit(Converter):
             sage: x, y = var('x y')
             sage: f = function('f')(x, y)
             sage: f_x = f.diff(x); f_x
-            D[0](f)(x, y)
+            diff(f(x, y), x)
             sage: maxima(f_x)
             'diff('f(_SAGE_VAR_x,_SAGE_VAR_y),_SAGE_VAR_x,1)
 
@@ -563,7 +561,7 @@ class InterfaceInit(Converter):
             sage: a = f_x.subs(x=4); a
             D[0](f)(4, y)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR_t0,_SAGE_VAR_t1),_SAGE_VAR_t0,1),[_SAGE_VAR_t0=4,_SAGE_VAR_t1=_SAGE_VAR_y])
+            %at('diff('f(_SAGE_VAR_t0,_SAGE_VAR_y),_SAGE_VAR_t0,1),_SAGE_VAR_t0=4)
             sage: bool(b.sage() == a)
             True
 
@@ -572,7 +570,7 @@ class InterfaceInit(Converter):
             sage: a = f_x.subs(x=4).subs(y=8); a
             D[0](f)(4, 8)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR_t0,_SAGE_VAR_t1),_SAGE_VAR_t0,1),[_SAGE_VAR_t0=4,_SAGE_VAR_t1=8])
+            %at('diff('f(_SAGE_VAR_t0,8),_SAGE_VAR_t0,1),_SAGE_VAR_t0=4)
             sage: bool(b.sage() == a)
             True
 
@@ -580,7 +578,7 @@ class InterfaceInit(Converter):
 
             sage: x,y = var('x,y')
             sage: (gamma_inc(x,y).diff(x))
-            D[0](gamma)(x, y)
+            diff(gamma(x, y), x)
             sage: (gamma_inc(x,x+1).diff(x)).simplify()
             -(x + 1)^(x - 1)*e^(-x - 1) + D[0](gamma)(x, x + 1)
         """
@@ -604,7 +602,7 @@ class InterfaceInit(Converter):
             subs = ["%s = %s"%(t._maxima_init_(),a._maxima_init_()) for t,a in zip(temp_args,args)]
             outstr = "at(diff(%s, %s), [%s])"%(f._maxima_init_(),
                 ", ".join(params),
-                ", ".join(subs))            
+                ", ".join(subs))
         else:
             f = operator.function()(*args)
             params = operator.parameter_set()
@@ -612,7 +610,7 @@ class InterfaceInit(Converter):
             outstr = "diff(%s, %s)"%(f._maxima_init_(),
                                         ", ".join(params))
         return outstr
-    
+
     def arithmetic(self, ex, operator):
         """
         EXAMPLES::
@@ -661,7 +659,7 @@ class SympyConverter(Converter):
     """
     Converts any expression to SymPy.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: import sympy
         sage: var('x,y')
@@ -685,6 +683,10 @@ class SympyConverter(Converter):
         x + I
 
     """
+    def __init__(self):
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+
     def pyobject(self, ex, obj):
         """
         EXAMPLES::
@@ -742,6 +744,27 @@ class SympyConverter(Converter):
         import sympy
         return sympy.symbols(repr(ex))
 
+    def relation(self, ex, op):
+        """
+        EXAMPLES::
+
+            sage: import operator
+            sage: from sage.symbolic.expression_conversions import SympyConverter
+            sage: s = SympyConverter()
+            sage: s.relation(x == 3, operator.eq)
+            Eq(x, 3)
+            sage: s.relation(pi < 3, operator.lt)
+            pi < 3
+            sage: s.relation(x != pi, operator.ne)
+            Ne(x, pi)
+            sage: s.relation(x > 0, operator.gt)
+            x > 0
+        """
+        from operator import eq, ne, gt, lt, ge, le
+        from sympy import Eq, Ne, Gt, Lt, Ge, Le
+        ops = {eq : Eq, ne : Ne, gt : Gt, lt : Lt, ge : Ge, le : Le}
+        return ops.get(op)(self(ex.lhs()), self(ex.rhs()), evaluate=False)
+
     def composition(self, ex, operator):
         """
         EXAMPLES::
@@ -757,17 +780,140 @@ class SympyConverter(Converter):
             sage: s.composition(f, f.operator())
             asin(2)
         """
-        f = operator._sympy_init_()
         g = ex.operands()
+        try:
+            return operator._sympy_(*g)
+        except (AttributeError, TypeError):
+            pass
+        f = operator._sympy_init_()
         import sympy
 
         f_sympy = getattr(sympy, f, None)
         if f_sympy:
             return f_sympy(*sympy.sympify(g, evaluate=False))
         else:
-            raise NotImplementedError("SymPy function '%s' doesn't exist" % f)
+            return sympy.Function(str(f))(*g, evaluate=False)
 
-sympy = SympyConverter()
+    def derivative(self, ex, operator):
+        """
+        Convert the derivative of ``self`` in sympy.
+
+        INPUT:
+
+        - ``ex`` -- a symbolic expression
+
+        - ``operator`` -- operator
+
+        TESTS::
+
+            sage: var('x','y')
+            (x, y)
+
+            sage: f_sage = function('f_sage')(x, y)
+            sage: f_sympy = f_sage._sympy_()
+
+            sage: df_sage = f_sage.diff(x, 2, y, 1); df_sage
+            diff(f_sage(x, y), x, x, y)
+            sage: df_sympy = df_sage._sympy_(); df_sympy
+            Derivative(f_sage(x, y), (x, 2), y)
+            sage: df_sympy == f_sympy.diff(x, 2, y, 1)
+            True
+        """
+        import sympy
+
+        # retrieve derivated function
+        f = operator.function()
+        f_sympy = self.composition(ex, f)
+
+        # retrieve order
+        order = operator._parameter_set
+        # arguments
+        _args = ex.arguments()
+
+        sympy_arg = []
+        for i, a in enumerate(_args):
+            gg = order.count(i)
+            if gg > 0:
+                sympy_arg.append(a)
+                sympy_arg.append(gg)
+
+        return f_sympy.diff(*sympy_arg)
+
+
+sympy_converter = SympyConverter()
+
+##########
+# FriCAS #
+##########
+class FriCASConverter(InterfaceInit):
+    """
+    Converts any expression to FriCAS.
+
+    EXAMPLES::
+
+        sage: var('x,y')
+        (x, y)
+        sage: f = exp(x^2) - arcsin(pi+x)/y
+        sage: f._fricas_()                                                      # optional - fricas
+             2
+            x
+        y %e   - asin(x + %pi)
+        ----------------------
+                   y
+
+    """
+    def __init__(self):
+        import sage.interfaces.fricas
+        super(FriCASConverter, self).__init__(sage.interfaces.fricas.fricas)
+
+    def derivative(self, ex, operator):
+        """
+        Convert the derivative of ``self`` in FriCAS.
+
+        INPUT:
+
+        - ``ex`` -- a symbolic expression
+
+        - ``operator`` -- operator
+
+        EXAMPLES::
+
+            sage: var('x,y,z')
+            (x, y, z)
+            sage: f = function("F")
+            sage: f(x)._fricas_()                                               # optional - fricas
+            F(x)
+            sage: diff(f(x,y,z), x, z, x)._fricas_()                            # optional - fricas
+            F      (x,y,z)
+             ,1,1,3
+
+        Check that :trac:`25838` is fixed::
+
+            sage: var('x')
+            x
+            sage: F = function('F')
+            sage: integrate(F(x), x, algorithm="fricas")                        # optional - fricas
+            integral(F(x), x)
+
+            sage: integrate(diff(F(x), x)*sin(F(x)), x, algorithm="fricas")     # optional - fricas
+            -cos(F(x))
+        """
+        from sage.symbolic.ring import is_SymbolicVariable
+        args = ex.operands()
+        if (not all(is_SymbolicVariable(v) for v in args) or
+            len(args) != len(set(args))):
+            raise NotImplementedError
+        else:
+            f = operator.function()(*args)
+            params = operator.parameter_set()
+            params_set = set(params)
+            vars = "[" + ",".join(args[i]._fricas_init_() for i in params_set) + "]"
+            mult = "[" + ",".join(str(params.count(i)) for i in params_set) + "]"
+            outstr = "D(%s, %s, %s)"%(f._fricas_init_(), vars, mult)
+
+        return outstr
+
+fricas_converter = FriCASConverter()
 
 #############
 # Algebraic #
@@ -870,6 +1016,40 @@ class AlgebraicConverter(Converter):
             Traceback (most recent call last):
             ...
             TypeError: unable to convert zeta(7) to Algebraic Field
+
+        Test :trac:`22571`::
+
+            sage: a.composition(exp(0, hold=True), exp)
+            1
+            sage: a.composition(exp(1, hold=True), exp)
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to represent as an algebraic number
+            sage: a.composition(exp(pi*I*RR(1), hold=True), exp)
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert e^(1.00000000000000*I*pi) to Algebraic Field
+            sage: a.composition(exp(pi*CC.gen(), hold=True), exp)
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert e^(1.00000000000000*I*pi) to Algebraic Field
+            sage: bool(sin(pi*RR("0.7000000000000002")) > 0)
+            True
+
+        Check that :trac:`24440` is fixed::
+
+            sage: QQbar(tanh(pi + 0.1))
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to represent as an algebraic number
+            sage: QQbar(sin(I*pi/7))
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to represent as an algebraic number
+            sage: QQbar(sin(I*pi/7, hold=True))
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to represent as an algebraic number
         """
         func = operator
         operand, = ex.operands()
@@ -878,16 +1058,17 @@ class AlgebraicConverter(Converter):
         # Note that comparing functions themselves goes via maxima, and is SLOW
         func_name = repr(func)
         if func_name == 'exp':
-            rat_arg = (operand.imag()/(2*ex.parent().pi()))._rational_()
-            if rat_arg == 0:
-                # here we will either try and simplify, or return
-                raise ValueError("Unable to represent as an algebraic number.")
-            real = operand.real()
-            if real:
-                mag = exp(operand.real())._algebraic_(QQbar)
-            else:
-                mag = 1
-            res = mag * QQbar.zeta(rat_arg.denom())**rat_arg.numer()
+            if operand.is_trivial_zero():
+                return self.field(1)
+            if not (SR(-1).sqrt()*operand).is_real():
+                raise ValueError("unable to represent as an algebraic number")
+            # Coerce (not convert, see #22571) arg to a rational
+            arg = operand.imag()/(2*ex.parent().pi())
+            try:
+                rat_arg = QQ.coerce(arg.pyobject())
+            except TypeError:
+                raise TypeError("unable to convert %r to %s"%(ex, self.field))
+            res = QQbar.zeta(rat_arg.denom())**rat_arg.numer()
         elif func_name in ['sin', 'cos', 'tan']:
             exp_ia = exp(SR(-1).sqrt()*operand)._algebraic_(QQbar)
             if func_name == 'sin':
@@ -897,6 +1078,8 @@ class AlgebraicConverter(Converter):
             else:
                 res = -QQbar.zeta(4)*(exp_ia - ~exp_ia)/(exp_ia + ~exp_ia)
         elif func_name in ['sinh', 'cosh', 'tanh']:
+            if not (SR(-1).sqrt()*operand).is_real():
+                raise ValueError("unable to represent as an algebraic number")
             exp_a = exp(operand)._algebraic_(QQbar)
             if func_name == 'sinh':
                 res = (exp_a - ~exp_a)/2
@@ -964,6 +1147,10 @@ def algebraic(ex, field):
 class PolynomialConverter(Converter):
     def __init__(self, ex, base_ring=None, ring=None):
         """
+        A converter from symbolic expressions to polynomials.
+
+        See :func:`polynomial` for details.
+
         EXAMPLES::
 
             sage: from sage.symbolic.expression_conversions import PolynomialConverter
@@ -991,7 +1178,11 @@ class PolynomialConverter(Converter):
             ...
             TypeError: y is not a variable of Univariate Polynomial Ring in x over Rational Field
 
+        TESTS::
 
+            sage: t, x, z = SR.var('t,x,z')
+            sage: QQ[i]['x,y,z,t'](4*I*t + 2*x -12*z + 2)
+            2*x - 12*z + (4*I)*t + 2
         """
         if not (ring is None or base_ring is None):
             raise TypeError("either base_ring or ring must be specified, but not both")
@@ -1132,10 +1323,21 @@ class PolynomialConverter(Converter):
 
 def polynomial(ex, base_ring=None, ring=None):
     """
-    Returns a polynomial from the symbolic expression *ex*.  Either a
-    base ring *base_ring* or a polynomial ring *ring* can be specified
-    for the parent of result.  If just a base ring is given, then the variables
-    of the base ring will be the variables of the expression *ex*.
+    Return a polynomial from the symbolic expression ``ex``.
+
+    INPUT:
+
+    - ``ex`` -- a symbolic expression
+
+    - ``base_ring``, ``ring`` -- Either a
+      ``base_ring`` or a polynomial ``ring`` can be
+      specified for the parent of result.
+      If just a ``base_ring`` is given, then the variables
+      of the ``base_ring`` will be the variables of the expression ``ex``.
+
+    OUTPUT:
+
+    A polynomial.
 
     EXAMPLES::
 
@@ -1181,6 +1383,75 @@ def polynomial(ex, base_ring=None, ring=None):
     converter = PolynomialConverter(ex, base_ring=base_ring, ring=ring)
     res = converter()
     return converter.ring(res)
+
+
+class LaurentPolynomialConverter(PolynomialConverter):
+    def __init__(self, ex, base_ring=None, ring=None):
+        """
+        A converter from symbolic expressions to Laurent polynomials.
+
+        See :func:`laurent_polynomial` for details.
+
+        TESTS::
+
+            sage: from sage.symbolic.expression_conversions import LaurentPolynomialConverter
+            sage: x, y = var('x,y')
+            sage: p = LaurentPolynomialConverter(x+1/y, base_ring=QQ)
+            sage: p.base_ring
+            Rational Field
+            sage: p.ring
+            Multivariate Laurent Polynomial Ring in x, y over Rational Field
+        """
+        super(LaurentPolynomialConverter, self).__init__(ex, base_ring, ring)
+
+        if ring is None and base_ring is not None:
+            from sage.rings.all import LaurentPolynomialRing
+            self.ring = LaurentPolynomialRing(self.base_ring,
+                                              names=self.varnames)
+
+
+def laurent_polynomial(ex, base_ring=None, ring=None):
+    """
+    Return a Laurent polynomial from the symbolic expression ``ex``.
+
+    INPUT:
+
+    - ``ex`` -- a symbolic expression
+
+    - ``base_ring``, ``ring`` -- Either a
+      ``base_ring`` or a Laurent polynomial ``ring`` can be
+      specified for the parent of result.
+      If just a ``base_ring`` is given, then the variables
+      of the ``base_ring`` will be the variables of the expression ``ex``.
+
+    OUTPUT:
+
+    A Laurent polynomial.
+
+    EXAMPLES::
+
+         sage: from sage.symbolic.expression_conversions import laurent_polynomial
+         sage: f = x^2 + 2/x
+         sage: laurent_polynomial(f, base_ring=QQ)
+         2*x^-1 + x^2
+         sage: _.parent()
+         Univariate Laurent Polynomial Ring in x over Rational Field
+
+         sage: laurent_polynomial(f, ring=LaurentPolynomialRing(QQ, 'x, y'))
+         x^2 + 2*x^-1
+         sage: _.parent()
+         Multivariate Laurent Polynomial Ring in x, y over Rational Field
+
+         sage: x, y = var('x, y')
+         sage: laurent_polynomial(x + 1/y^2, ring=LaurentPolynomialRing(QQ, 'x, y'))
+         x + y^-2
+         sage: _.parent()
+         Multivariate Laurent Polynomial Ring in x, y over Rational Field
+    """
+    converter = LaurentPolynomialConverter(ex, base_ring=base_ring, ring=ring)
+    res = converter()
+    return converter.ring(res)
+
 
 ##############
 # Fast Float #
@@ -1492,13 +1763,13 @@ class FastCallableConverter(Converter):
         if operator is _operator.pow:
             exponent = operands[1]
             if exponent == -1:
-                return self.etb.call(_operator.div, 1, operands[0])
+                return self.etb.call(_operator.truediv, 1, operands[0])
             elif exponent == 0.5:
                 from sage.functions.all import sqrt
                 return self.etb.call(sqrt, operands[0])
             elif exponent == -0.5:
                 from sage.functions.all import sqrt
-                return self.etb.call(_operator.div, 1, self.etb.call(sqrt, operands[0]))
+                return self.etb.call(_operator.truediv, 1, self.etb.call(sqrt, operands[0]))
         elif operator is _operator.neg:
             return self.etb.call(operator, operands[0])
         if operator == add_vararg:
@@ -1602,8 +1873,9 @@ class RingConverter(Converter):
 
     def symbol(self, ex):
         """
-        All symbols appearing in the expression must appear in *subs_dict*
-        in order for the conversion to be successful.
+        All symbols appearing in the expression must either appear in *subs_dict*
+        or be convertable by the ring's element constructor in order for the
+        conversion to be successful.
 
         EXAMPLES::
 
@@ -1616,12 +1888,18 @@ class RingConverter(Converter):
             sage: R(x+pi)
             Traceback (most recent call last):
             ...
-            TypeError
+            TypeError: unable to simplify to a real interval approximation
+
+            sage: R = RingConverter(QQ['x'])
+            sage: R(x^2+x)
+            x^2 + x
+            sage: R(x^2+x).parent()
+            Univariate Polynomial Ring in x over Rational Field
         """
         try:
             return self.ring(self.subs_dict[ex])
         except KeyError:
-            raise TypeError
+            return self.ring(ex)
 
     def pyobject(self, ex, obj):
         """
@@ -1667,7 +1945,7 @@ class RingConverter(Converter):
         if operator == add_vararg:
             operator = _operator.add
         elif operator == mul_vararg:
-            operator = _operator.mul         
+            operator = _operator.mul
         return reduce(operator, map(self, operands))
 
     def composition(self, ex, operator):
@@ -1850,7 +2128,7 @@ class SubstituteFunction(ExpressionTreeWalker):
             sage: s = SubstituteFunction(foo(x), foo, bar)
             sage: f = foo(x).diff(x)
             sage: s.derivative(f, f.operator())
-            D[0](bar)(x)
+            diff(bar(x), x)
 
         TESTS:
 
@@ -1894,9 +2172,7 @@ class HoldRemover(ExpressionTreeWalker):
             arctan2(0, 0) + 1
             sage: h = HoldRemover(ex, [hypergeometric])
             sage: h()
-            Traceback (most recent call last):
-            ...
-            RuntimeError: arctan2_eval(): arctan2(0,0) encountered
+            NaN + hypergeometric((1, 2), (3, 4), 0)
         """
         self.ex = ex
         if exclude is None:
@@ -1914,10 +2190,15 @@ class HoldRemover(ExpressionTreeWalker):
             sage: h()
             0
         """
+        from sage.functions.other import Function_sum, Function_prod
+        from sage.calculus.calculus import symbolic_sum, symbolic_product
         if not operator:
             return self
+        if isinstance(operator, Function_sum):
+            return symbolic_sum(*map(self, ex.operands()))
+        if isinstance(operator, Function_prod):
+            return symbolic_product(*map(self, ex.operands()))
         if operator in self._exclude:
             return operator(*map(self, ex.operands()), hold=True)
         else:
             return operator(*map(self, ex.operands()))
-

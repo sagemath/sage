@@ -19,16 +19,15 @@ Möbius Algebras
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.algebras import Algebras
 from sage.categories.realizations import Realizations, Category_realization_of_parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.posets.lattices import LatticePoset
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.all import ZZ
+
 
 class BasisAbstract(CombinatorialFreeModule, BindableClass):
     """
@@ -235,7 +234,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
     natural = E
 
     class I(BasisAbstract):
-        """
+        r"""
         The (orthogonal) idempotent basis of a Möbius algebra.
 
         Let `I_x` and `I_y` be basis elements of `M_L` for some lattice `L`.
@@ -362,6 +361,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
 
     idempotent = I
 
+
 class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
     r"""
     The quantum Möbius algebra of a lattice.
@@ -389,6 +389,13 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             sage: L = posets.BooleanLattice(4)
             sage: M = L.quantum_moebius_algebra()
             sage: TestSuite(M).run() # long time
+
+            sage: from sage.combinat.posets.moebius_algebra import QuantumMoebiusAlgebra
+            sage: L = posets.Crown(2)
+            sage: QuantumMoebiusAlgebra(L)
+            Traceback (most recent call last):
+            ...
+            ValueError: L must be a lattice
         """
         if not L.is_lattice():
             raise ValueError("L must be a lattice")
@@ -593,7 +600,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
     characteristic_basis = C
 
     class KL(BasisAbstract):
-        """
+        r"""
         The Kazhdan-Lusztig basis of a quantum Möbius algebra.
 
         The Kazhdan-Lusztig basis `\{ B_x \mid x \in L \}` of `M_L`

@@ -8,7 +8,7 @@ through :mod:`matroids. <sage.matroids.matroids_catalog>` and
 
 The docstrings include educational information about each named matroid with
 the hopes that this class can be used as a reference. However, for a more
-comprehensive list of properties we refer to the appendix of [Oxley]_.
+comprehensive list of properties we refer to the appendix of [Oxl2011]_.
 
 .. TODO::
 
@@ -34,10 +34,10 @@ Functions
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from itertools import combinations
 
-import sage.matrix.matrix
 from sage.matrix.constructor import Matrix
 from sage.graphs.all import Graph, graphs
 
@@ -49,7 +49,9 @@ import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
 from sage.matroids.basis_matroid import BasisMatroid
 from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
-from sage.matroids.linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
+from sage.matroids.linear_matroid import (LinearMatroid, RegularMatroid,
+                                          BinaryMatroid, TernaryMatroid,
+                                          QuaternaryMatroid)
 from sage.matroids.rank_matroid import RankMatroid
 from sage.matroids.constructor import Matroid
 
@@ -63,7 +65,7 @@ def Q6():
     The matroid `Q_6` is a 6-element matroid of rank-3.
     It is representable over a field if and only if that field has at least
     four elements. It is the unique relaxation of the rank-3 whirl.
-    See [Oxley]_, p. 641.
+    See [Oxl2011]_, p. 641.
 
     EXAMPLES::
 
@@ -98,7 +100,7 @@ def P6():
     five elements.
     It is the unique relaxation of `Q_6`.
     It is an excluded minor for the class of quaternary matroids.
-    See [Oxley]_, p. 641.
+    See [Oxl2011]_, p. 641.
 
     EXAMPLES::
 
@@ -131,7 +133,7 @@ def R6():
     It is representable over a field if and only if that field has at least
     three elements.
     It is isomorphic to the 2-sum of two copies of `U_{2, 4}`.
-    See [Oxley]_, p. 642.
+    See [Oxl2011]_, p. 642.
 
     EXAMPLES::
 
@@ -155,7 +157,7 @@ def R6():
 
 
 def Fano():
-    """
+    r"""
     Return the Fano matroid, represented over `GF(2)`.
 
     The Fano matroid, or Fano plane, or `F_7`, is a 7-element matroid of
@@ -163,7 +165,7 @@ def Fano():
     It is representable over a field if and only if that field has
     characteristic two.
     It is also the projective plane of order two, i.e. `\mathrm{PG}(2, 2)`.
-    See [Oxley]_, p. 643.
+    See [Oxl2011]_, p. 643.
 
     EXAMPLES::
 
@@ -171,8 +173,8 @@ def Fano():
         sage: M = matroids.named_matroids.Fano(); M
         Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
         sage: setprint(sorted(M.nonspanning_circuits()))
-        [{'b', 'c', 'd'}, {'a', 'c', 'e'}, {'d', 'e', 'f'}, {'a', 'b', 'f'},
-         {'c', 'f', 'g'}, {'b', 'e', 'g'}, {'a', 'd', 'g'}]
+        [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'}, {'b', 'c', 'd'},
+         {'b', 'e', 'g'}, {'c', 'f', 'g'}, {'d', 'e', 'f'}]
         sage: M.delete(M.groundset_list()[randrange(0,
         ....:                  7)]).is_isomorphic(matroids.CompleteGraphic(4))
         True
@@ -194,7 +196,7 @@ def NonFano():
     The non-Fano matroid, or `F_7^-`, is a 7-element matroid of rank-3.
     It is representable over a field if and only if that field has
     characteristic other than two.
-    It is the unique relaxation of `F_7`. See [Oxley]_, p. 643.
+    It is the unique relaxation of `F_7`. See [Oxl2011]_, p. 643.
 
     EXAMPLES::
 
@@ -202,8 +204,8 @@ def NonFano():
         sage: M = matroids.named_matroids.NonFano(); M
         NonFano: Ternary matroid of rank 3 on 7 elements, type 0-
         sage: setprint(M.nonbases())
-        [{'b', 'c', 'd'}, {'a', 'c', 'e'}, {'a', 'b', 'f'}, {'c', 'f', 'g'},
-         {'b', 'e', 'g'}, {'a', 'd', 'g'}]
+        [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'}, {'b', 'c', 'd'},
+         {'b', 'e', 'g'}, {'c', 'f', 'g'}]
         sage: M.delete('f').is_isomorphic(matroids.CompleteGraphic(4))
         True
         sage: M.delete('g').is_isomorphic(matroids.CompleteGraphic(4))
@@ -227,7 +229,7 @@ def O7():
     It is representable over a field if and only if that field has at least
     three elements.
     It is obtained by freely adding a point to any line of `M(K_4)`.
-    See [Oxley]_, p. 644
+    See [Oxl2011]_, p. 644
 
     EXAMPLES::
 
@@ -256,7 +258,7 @@ def P7():
     It is representable over a field if and only if that field has at least
     3 elements.
     It is one of two ternary 3-spikes, with the other being `F_7^-`.
-    See [Oxley]_, p. 644.
+    See [Oxl2011]_, p. 644.
 
     EXAMPLES::
 
@@ -287,33 +289,34 @@ def AG32prime():
 
     The matroid `AG(3, 2)'` is a 8-element matroid of rank-4.
     It is a smallest non-representable matroid.
-    It is the unique relaxation of `AG(3, 2)`. See [Oxley]_, p. 646.
+    It is the unique relaxation of `AG(3, 2)`. See [Oxl2011]_, p. 646.
 
     EXAMPLES::
 
         sage: from sage.matroids.advanced import setprint
         sage: M = matroids.named_matroids.AG32prime(); M
         AG(3, 2)': Matroid of rank 4 on 8 elements with circuit-closures
-        {3: {{'c', 'd', 'e', 'h'}, {'b', 'e', 'g', 'h'}, {'d', 'e', 'f', 'g'},
-             {'a', 'b', 'd', 'e'}, {'b', 'c', 'd', 'g'}, {'c', 'f', 'g', 'h'},
-             {'a', 'c', 'd', 'f'}, {'b', 'c', 'e', 'f'}, {'a', 'c', 'e', 'g'},
-             {'a', 'b', 'f', 'g'}, {'a', 'b', 'c', 'h'}, {'a', 'e', 'f', 'h'},
-             {'a', 'd', 'g', 'h'}},
+        {3: {{'a', 'b', 'c', 'h'}, {'a', 'b', 'd', 'e'}, {'a', 'b', 'f', 'g'},
+             {'a', 'c', 'd', 'f'}, {'a', 'c', 'e', 'g'}, {'a', 'd', 'g', 'h'},
+             {'a', 'e', 'f', 'h'}, {'b', 'c', 'd', 'g'}, {'b', 'c', 'e', 'f'},
+             {'b', 'e', 'g', 'h'}, {'c', 'd', 'e', 'h'}, {'c', 'f', 'g', 'h'},
+             {'d', 'e', 'f', 'g'}},
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         sage: M.contract('c').is_isomorphic(matroids.named_matroids.Fano())
         True
         sage: setprint(M.noncospanning_cocircuits())
-        [{'b', 'd', 'f', 'h'}, {'a', 'd', 'g', 'h'}, {'c', 'd', 'e', 'h'},
-         {'a', 'c', 'd', 'f'}, {'b', 'c', 'd', 'g'}, {'a', 'b', 'd', 'e'},
-         {'d', 'e', 'f', 'g'}, {'c', 'f', 'g', 'h'}, {'b', 'c', 'e', 'f'},
-         {'a', 'b', 'f', 'g'}, {'a', 'b', 'c', 'h'}, {'a', 'e', 'f', 'h'},
-         {'b', 'e', 'g', 'h'}]
+        [{'a', 'b', 'c', 'h'}, {'a', 'b', 'd', 'e'}, {'a', 'b', 'f', 'g'},
+         {'a', 'c', 'd', 'f'}, {'a', 'd', 'g', 'h'}, {'a', 'e', 'f', 'h'},
+         {'b', 'c', 'd', 'g'}, {'b', 'c', 'e', 'f'}, {'b', 'd', 'f', 'h'},
+         {'b', 'e', 'g', 'h'}, {'c', 'd', 'e', 'h'}, {'c', 'f', 'g', 'h'},
+         {'d', 'e', 'f', 'g'}]
         sage: M.is_valid() # long time
         True
     """
     E = 'abcdefgh'
     CC = {
-        3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'abed', 'cfgh', 'bcef', 'adgh', 'acdf', 'begh', 'aceg'],
+        3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'abed',
+            'cfgh', 'bcef', 'adgh', 'acdf', 'begh', 'aceg'],
         4: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
@@ -328,7 +331,7 @@ def R8():
     The matroid `R_8` is a 8-element matroid of rank-4.
     It is representable over a field if and only if the characteristic of that
     field is not two.
-    It is the real affine cube. See [Oxley]_, p. 646.
+    It is the real affine cube. See [Oxl2011]_, p. 646.
 
     EXAMPLES::
 
@@ -358,17 +361,17 @@ def F8():
     Return the matroid `F_8`, represented as circuit closures.
 
     The matroid `F_8` is a 8-element matroid of rank-4.
-    It is a smallest non-representable matroid. See [Oxley]_, p. 647.
+    It is a smallest non-representable matroid. See [Oxl2011]_, p. 647.
 
     EXAMPLES::
 
         sage: from sage.matroids.advanced import *
         sage: M = matroids.named_matroids.F8(); M
         F8: Matroid of rank 4 on 8 elements with circuit-closures
-        {3: {{'c', 'd', 'e', 'h'}, {'d', 'e', 'f', 'g'}, {'a', 'b', 'd', 'e'},
-             {'b', 'c', 'd', 'g'}, {'c', 'f', 'g', 'h'}, {'a', 'c', 'd', 'f'},
-             {'b', 'c', 'e', 'f'}, {'a', 'c', 'e', 'g'}, {'a', 'b', 'f', 'g'},
-             {'a', 'b', 'c', 'h'}, {'a', 'e', 'f', 'h'}, {'a', 'd', 'g', 'h'}},
+        {3: {{'a', 'b', 'c', 'h'}, {'a', 'b', 'd', 'e'}, {'a', 'b', 'f', 'g'},
+             {'a', 'c', 'd', 'f'}, {'a', 'c', 'e', 'g'}, {'a', 'd', 'g', 'h'},
+             {'a', 'e', 'f', 'h'}, {'b', 'c', 'd', 'g'}, {'b', 'c', 'e', 'f'},
+             {'c', 'd', 'e', 'h'}, {'c', 'f', 'g', 'h'}, {'d', 'e', 'f', 'g'}},
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         sage: D = get_nonisomorphic_matroids([M.contract(i)
         ....:                                         for i in M.groundset()])
@@ -383,7 +386,8 @@ def F8():
     """
     E = 'abcdefgh'
     CC = {
-        3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'abed', 'cfgh', 'bcef', 'adgh', 'acdf', 'aceg'],
+        3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'abed',
+            'cfgh', 'bcef', 'adgh', 'acdf', 'aceg'],
         4: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
@@ -396,17 +400,17 @@ def Q8():
     Return the matroid `Q_8`, represented as circuit closures.
 
     The matroid `Q_8` is a 8-element matroid of rank-4.
-    It is a smallest non-representable matroid. See [Oxley]_, p. 647.
+    It is a smallest non-representable matroid. See [Oxl2011]_, p. 647.
 
     EXAMPLES::
 
         sage: from sage.matroids.advanced import setprint
         sage: M = matroids.named_matroids.Q8(); M
         Q8: Matroid of rank 4 on 8 elements with circuit-closures
-        {3: {{'c', 'd', 'e', 'h'}, {'d', 'e', 'f', 'g'}, {'a', 'b', 'd', 'e'},
-             {'b', 'c', 'd', 'g'}, {'c', 'f', 'g', 'h'}, {'a', 'c', 'd', 'f'},
-             {'b', 'c', 'e', 'f'}, {'a', 'b', 'f', 'g'}, {'a', 'b', 'c', 'h'},
-             {'a', 'e', 'f', 'h'}, {'a', 'd', 'g', 'h'}},
+        {3: {{'a', 'b', 'c', 'h'}, {'a', 'b', 'd', 'e'}, {'a', 'b', 'f', 'g'},
+             {'a', 'c', 'd', 'f'}, {'a', 'd', 'g', 'h'}, {'a', 'e', 'f', 'h'},
+             {'b', 'c', 'd', 'g'}, {'b', 'c', 'e', 'f'}, {'c', 'd', 'e', 'h'},
+             {'c', 'f', 'g', 'h'}, {'d', 'e', 'f', 'g'}},
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         sage: setprint(M.flats(3))
         [{'a', 'b', 'c', 'h'}, {'a', 'b', 'd', 'e'}, {'a', 'b', 'f', 'g'},
@@ -422,7 +426,8 @@ def Q8():
     """
     E = 'abcdefgh'
     CC = {
-        3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'abed', 'cfgh', 'bcef', 'adgh', 'acdf'],
+        3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'abed',
+            'cfgh', 'bcef', 'adgh', 'acdf'],
         4: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
@@ -436,16 +441,16 @@ def L8():
 
     The matroid `L_8` is a 8-element matroid of rank-4.
     It is representable over all fields with at least five elements.
-    It is a cube, yet it is not a tipless spike. See [Oxley]_, p. 648.
+    It is a cube, yet it is not a tipless spike. See [Oxl2011]_, p. 648.
 
     EXAMPLES::
 
         sage: from sage.matroids.advanced import setprint
         sage: M = matroids.named_matroids.L8(); M
         L8: Matroid of rank 4 on 8 elements with circuit-closures
-        {3: {{'b', 'd', 'f', 'h'}, {'c', 'd', 'e', 'h'}, {'d', 'e', 'f', 'g'},
-             {'b', 'c', 'd', 'g'}, {'a', 'c', 'e', 'g'}, {'a', 'b', 'f', 'g'},
-             {'a', 'b', 'c', 'h'}, {'a', 'e', 'f', 'h'}},
+        {3: {{'a', 'b', 'c', 'h'}, {'a', 'b', 'f', 'g'}, {'a', 'c', 'e', 'g'},
+             {'a', 'e', 'f', 'h'}, {'b', 'c', 'd', 'g'}, {'b', 'd', 'f', 'h'},
+             {'c', 'd', 'e', 'h'}, {'d', 'e', 'f', 'g'}},
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         sage: M.equals(M.dual())
         True
@@ -470,7 +475,7 @@ def S8():
     It is representable over a field if and only if that field has
     characteristic two.
     It is the unique deletion of a non-tip element from the binary 4-spike.
-    See [Oxley]_, p. 648.
+    See [Oxl2011]_, p. 648.
 
     EXAMPLES::
 
@@ -512,15 +517,15 @@ def Vamos():
     rank-4.
     It violates Ingleton's condition for representability over a division
     ring.
-    It is not algebraic. See [Oxley]_, p. 649.
+    It is not algebraic. See [Oxl2011]_, p. 649.
 
     EXAMPLES::
 
         sage: from sage.matroids.advanced import setprint
         sage: M = matroids.named_matroids.Vamos(); M
         Vamos: Matroid of rank 4 on 8 elements with circuit-closures
-        {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'}, {'e', 'f', 'g', 'h'},
-             {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'}},
+        {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'}, {'a', 'b', 'g', 'h'},
+             {'c', 'd', 'e', 'f'}, {'e', 'f', 'g', 'h'}},
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         sage: setprint(M.nonbases())
         [{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'}, {'a', 'b', 'g', 'h'},
@@ -547,7 +552,7 @@ def T8():
     The matroid `T_8` is a 8-element matroid of rank-4.
     It is representable over a field if and only if that field has
     characteristic three.
-    It is an excluded minor for the dyadic matroids. See [Oxley]_, p. 649.
+    It is an excluded minor for the dyadic matroids. See [Oxl2011]_, p. 649.
 
     EXAMPLES::
 
@@ -578,7 +583,7 @@ def J():
 
     The matroid `J` is a 8-element matroid of rank-4.
     It is representable over a field if and only if that field has at least
-    three elements. See [Oxley]_, p. 650.
+    three elements. See [Oxl2011]_, p. 650.
 
     EXAMPLES::
 
@@ -586,7 +591,7 @@ def J():
         sage: M = matroids.named_matroids.J(); M
         J: Ternary matroid of rank 4 on 8 elements, type 0-
         sage: setprint(M.truncation().nonbases())
-        [{'a', 'c', 'g'}, {'a', 'b', 'f'}, {'a', 'd', 'h'}]
+        [{'a', 'b', 'f'}, {'a', 'c', 'g'}, {'a', 'd', 'h'}]
         sage: M.is_isomorphic(M.dual())
         True
         sage: M.has_minor(matroids.CompleteGraphic(4))
@@ -613,7 +618,7 @@ def P8():
     It is uniquely representable over all fields of characteristic other than
     two.
     It is an excluded minor for all fields of characteristic two with four or
-    more elements. See [Oxley]_, p. 650.
+    more elements. See [Oxl2011]_, p. 650.
 
     EXAMPLES::
 
@@ -648,16 +653,16 @@ def P8pp():
     circuit-hyperplanes.
     It is an excluded minor for `GF(4)`-representability.
     It is representable over all fields with at least five elements.
-    See [Oxley]_, p. 651.
+    See [Oxl2011]_, p. 651.
 
     EXAMPLES::
 
         sage: from sage.matroids.advanced import *
         sage: M = matroids.named_matroids.P8pp(); M
         P8'': Matroid of rank 4 on 8 elements with circuit-closures
-        {3: {{'a', 'c', 'g', 'h'}, {'a', 'b', 'f', 'h'}, {'b', 'c', 'e', 'g'},
-             {'a', 'd', 'e', 'g'}, {'c', 'd', 'f', 'h'}, {'b', 'd', 'f', 'g'},
-             {'a', 'c', 'e', 'f'}, {'b', 'd', 'e', 'h'}},
+        {3: {{'a', 'b', 'f', 'h'}, {'a', 'c', 'e', 'f'}, {'a', 'c', 'g', 'h'},
+             {'a', 'd', 'e', 'g'}, {'b', 'c', 'e', 'g'}, {'b', 'd', 'e', 'h'},
+             {'b', 'd', 'f', 'g'}, {'c', 'd', 'f', 'h'}},
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         sage: M.is_isomorphic(M.dual())
         True
@@ -684,7 +689,7 @@ def K33dual():
     The matroid `M*(K_{3, 3})` is a 9-element matroid of rank-4.
     It is an excluded minor for the class of graphic matroids.
     It is the graft matroid of the 4-wheel with every vertex except the hub
-    being coloured. See [Oxley]_, p. 652.
+    being coloured. See [Oxl2011]_, p. 652.
 
     EXAMPLES::
 
@@ -699,7 +704,7 @@ def K33dual():
     """
     E = 'abcdefghi'
     G = graphs.CompleteBipartiteGraph(3, 3)
-    M = Matroid(groundset=E, graph=G)
+    M = Matroid(groundset=E, graph=G, regular=True)
     M = M.dual()
     M.rename('M*(K3, 3): ' + repr(M))
     return M
@@ -714,7 +719,7 @@ def TernaryDowling3():
     The matroid `Q_3(GF(3)^\times)` is a 9-element matroid of rank-3.
     It is the rank-3 ternary Dowling geometry.
     It is representable over a field if and only if that field does not have
-    characteristic two. See [Oxley]_, p. 654.
+    characteristic two. See [Oxl2011]_, p. 654.
 
     EXAMPLES::
 
@@ -749,16 +754,14 @@ def CompleteGraphic(n):
 
     OUTPUT:
 
-    The regular matroid associated with the `n`-vertex complete graph.
+    The graphic matroid associated with the `n`-vertex complete graph.
     This matroid has rank `n - 1`.
-
-    The maximum-sized regular matroid of rank `n` is `M(K_n)`.
 
     EXAMPLES::
 
         sage: from sage.matroids.advanced import setprint
         sage: M = matroids.CompleteGraphic(5); M
-        M(K5): Regular matroid of rank 4 on 10 elements with 125 bases
+        M(K5): Graphic matroid of rank 4 on 10 elements
         sage: M.has_minor(matroids.Uniform(2, 4))
         False
         sage: simplify(M.contract(randrange(0,
@@ -769,20 +772,20 @@ def CompleteGraphic(n):
         sage: M.is_valid()
         True
     """
-    M = Matroid(groundset=range((n * (n - 1)) // 2),
+    M = Matroid(groundset=list(range((n * (n - 1)) // 2)),
                 graph=graphs.CompleteGraph(n))
     M.rename('M(K' + str(n) + '): ' + repr(M))
     return M
 
 
 def Wheel(n, field=None, ring=None):
-    """
+    r"""
     Return the rank-`n` wheel.
 
     INPUT:
 
     - ``n`` -- a positive integer. The rank of the desired matroid.
-    - ``ring`` -- any ring. If provided, output will be a linear matroid 
+    - ``ring`` -- any ring. If provided, output will be a linear matroid
       over the ring or field ``ring``. If the ring is `\ZZ`, then output
       will be a regular matroid.
     - ``field`` -- any field. Same as ``ring``, but only fields are allowed.
@@ -791,7 +794,7 @@ def Wheel(n, field=None, ring=None):
 
     The rank-`n` wheel matroid, represented as a regular matroid.
 
-    See [Oxley]_, p. 659.
+    See [Oxl2011]_, p. 659.
 
     EXAMPLES::
 
@@ -811,16 +814,16 @@ def Wheel(n, field=None, ring=None):
         Wheel(3): Ternary matroid of rank 3 on 6 elements, type 0+
     """
     base_ring = ZZ
-    if field != None and ring != None :
+    if field is not None and ring is not None:
         raise ValueError("only one of ring and field can be specified.")
-    if field != None :
+    if field is not None:
         base_ring = field
         try:
             if not base_ring.is_field():
                 raise TypeError("specified ``field`` is not a field.")
         except AttributeError:
             raise TypeError("specified ``field`` is not a field.")
-    if ring  != None :
+    if ring is not None:
         base_ring = ring
     A = Matrix(base_ring, n, 2 * n, sparse=True)
     for i in range(n):
@@ -850,7 +853,7 @@ def Whirl(n):
 
     The rank-`n` whirl matroid, represented as a ternary matroid.
 
-    The whirl is the unique relaxation of the wheel. See [Oxley]_, p. 659.
+    The whirl is the unique relaxation of the wheel. See [Oxl2011]_, p. 659.
 
     EXAMPLES::
 
@@ -905,7 +908,7 @@ def Uniform(r, n):
     All subsets of size `r` or less are independent; all larger subsets are
     dependent. Representable when the field is sufficiently large. The precise
     bound is the subject of the MDS conjecture from coding theory.
-    See [Oxley]_, p. 660.
+    See [Oxl2011]_, p. 660.
 
     EXAMPLES::
 
@@ -922,13 +925,13 @@ def Uniform(r, n):
         sage: M.is_valid()
         True
 
-    Check that bug #15292 was fixed::
+    Check that bug :trac:`15292` was fixed::
 
         sage: M = matroids.Uniform(4,4)
         sage: len(M.circuit_closures())
         0
     """
-    E = range(n)
+    E = list(range(n))
     if r < n:
         CC = {r: [E]}
     else:
@@ -981,7 +984,7 @@ def PG(n, q, x=None):
 
 
 def AG(n, q, x=None):
-    """
+    r"""
     Return the affine geometry of dimension ``n`` over the finite field of
     order ``q``.
 
@@ -1033,7 +1036,7 @@ def R10():
     The matroid `R_{10}` is a 10-element regular matroid of rank-5.
     It is the unique splitter for the class of regular matroids.
     It is the graft matroid of `K_{3, 3}` in which every vertex is coloured.
-    See [Oxley]_, p. 656.
+    See [Oxl2011]_, p. 656.
 
     EXAMPLES::
 
@@ -1077,7 +1080,7 @@ def R12():
     It induces a 3-separation in its 3-connected majors within the class of
     regular matroids.
     An excluded minor for the class of graphic or cographic matroids.
-    See [Oxley]_, p. 657.
+    See [Oxl2011]_, p. 657.
 
     EXAMPLES::
 
@@ -1109,15 +1112,15 @@ def NonVamos():
 
     The non-Vamos matroid, or `V_8^+` is an 8-element matroid of rank 4. It is
     a tightening of the Vamos matroid. It is representable over some field.
-    See [Oxley]_, p. 72, 84.
+    See [Oxl2011]_, p. 72, 84.
 
     EXAMPLES::
 
         sage: from sage.matroids.advanced import setprint
         sage: M = matroids.named_matroids.NonVamos(); M
         NonVamos: Matroid of rank 4 on 8 elements with circuit-closures
-        {3: {{'a', 'b', 'g', 'h'}, {'a', 'b', 'c', 'd'}, {'e', 'f', 'g', 'h'},
-            {'c', 'd', 'e', 'f'}, {'a', 'b', 'e', 'f'}, {'c', 'd', 'g', 'h'}},
+        {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'}, {'a', 'b', 'g', 'h'},
+             {'c', 'd', 'e', 'f'}, {'c', 'd', 'g', 'h'}, {'e', 'f', 'g', 'h'}},
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         sage: setprint(M.nonbases())
         [{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'}, {'a', 'b', 'g', 'h'},
@@ -1145,20 +1148,20 @@ def Pappus():
     It is representable over a field if and only if that field either has 4
     elements or more than 7 elements.
     It is an excluded minor for the class of GF(5)-representable matroids.
-    See [Oxley]_, p. 655.
+    See [Oxl2011]_, p. 655.
 
     EXAMPLES::
 
         sage: from sage.matroids.advanced import setprint
         sage: M = matroids.named_matroids.Pappus(); M
         Pappus: Matroid of rank 3 on 9 elements with circuit-closures
-        {2: {{'a', 'b', 'c'}, {'a', 'f', 'h'}, {'c', 'e', 'g'},
-             {'b', 'f', 'g'}, {'c', 'd', 'h'}, {'d', 'e', 'f'},
-             {'a', 'e', 'i'}, {'b', 'd', 'i'}, {'g', 'h', 'i'}},
+        {2: {{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'},
+             {'b', 'd', 'i'}, {'b', 'f', 'g'}, {'c', 'd', 'h'},
+             {'c', 'e', 'g'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}},
          3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}
         sage: setprint(M.nonspanning_circuits())
-        [{'a', 'b', 'c'}, {'a', 'f', 'h'}, {'c', 'e', 'g'}, {'b', 'f', 'g'},
-         {'c', 'd', 'h'}, {'b', 'd', 'i'}, {'a', 'e', 'i'}, {'d', 'e', 'f'},
+        [{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'}, {'b', 'd', 'i'},
+         {'b', 'f', 'g'}, {'c', 'd', 'h'}, {'c', 'e', 'g'}, {'d', 'e', 'f'},
          {'g', 'h', 'i'}]
         sage: M.is_dependent(['d', 'e', 'f'])
         True
@@ -1181,20 +1184,20 @@ def NonPappus():
 
     The non-Pappus matroid is a 9-element matroid of rank-3.
     It is not representable over any commutative field.
-    It is the unique relaxation of the Pappus matroid. See [Oxley]_, p. 655.
+    It is the unique relaxation of the Pappus matroid. See [Oxl2011]_, p. 655.
 
     EXAMPLES::
 
         sage: from sage.matroids.advanced import setprint
         sage: M = matroids.named_matroids.NonPappus(); M
         NonPappus: Matroid of rank 3 on 9 elements with circuit-closures
-        {2: {{'a', 'b', 'c'}, {'a', 'f', 'h'}, {'c', 'e', 'g'},
-             {'b', 'f', 'g'}, {'c', 'd', 'h'}, {'b', 'd', 'i'},
-             {'a', 'e', 'i'}, {'g', 'h', 'i'}},
+        {2: {{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'},
+             {'b', 'd', 'i'}, {'b', 'f', 'g'}, {'c', 'd', 'h'},
+             {'c', 'e', 'g'}, {'g', 'h', 'i'}},
          3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}
         sage: setprint(M.nonspanning_circuits())
-        [{'a', 'b', 'c'}, {'a', 'f', 'h'}, {'c', 'e', 'g'}, {'b', 'f', 'g'},
-         {'c', 'd', 'h'}, {'b', 'd', 'i'}, {'a', 'e', 'i'}, {'g', 'h', 'i'}]
+        [{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'}, {'b', 'd', 'i'},
+         {'b', 'f', 'g'}, {'c', 'd', 'h'}, {'c', 'e', 'g'}, {'g', 'h', 'i'}]
         sage: M.is_dependent(['d', 'e', 'f'])
         False
         sage: M.is_valid() # long time
@@ -1215,7 +1218,7 @@ def TicTacToe():
     Return the TicTacToe matroid.
 
     The dual of the TicTacToe matroid is not algebraic; it is unknown whether
-    the TicTacToe matroid itself is algebraic. See [Hochstaettler]_.
+    the TicTacToe matroid itself is algebraic. See [Hoc]_.
 
     EXAMPLES::
 
@@ -1226,7 +1229,8 @@ def TicTacToe():
     """
     E = 'abcdefghi'
     CC = {
-        4: ['abcdg', 'adefg', 'abceh', 'abcfi', 'cdefi', 'adghi', 'beghi', 'cfghi'],
+        4: ['abcdg', 'adefg', 'abceh', 'abcfi', 'cdefi', 'adghi',
+            'beghi', 'cfghi'],
         5: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
@@ -1235,11 +1239,11 @@ def TicTacToe():
 
 
 def Q10():
-    """
-    Return the matroid `Q_{10}`, represented over `\GF(4)`.
+    r"""
+    Return the matroid `Q_{10}`, represented over `\GF{4}`.
 
     `Q_{10}` is a 10-element, rank-5, self-dual matroid. It is representable
-    over `\GF(3)` and `\GF(4)`, and hence is a sixth-roots-of-unity matroid.
+    over `\GF{3}` and `\GF{4}`, and hence is a sixth-roots-of-unity matroid.
     `Q_{10}` is a splitter for the class of sixth-root-of-unity matroids.
 
     EXAMPLES::
@@ -1275,10 +1279,10 @@ def Q10():
 
 
 def N1():
-    """
-    Return the matroid `N_1`, represented over `\GF(3)`.
+    r"""
+    Return the matroid `N_1`, represented over `\GF{3}`.
 
-    `N_1` is an excluded minor for the dyadic matroids. See [Oxley]_, p. 554.
+    `N_1` is an excluded minor for the dyadic matroids. See [Oxl2011]_, p. 554.
 
     EXAMPLES::
 
@@ -1302,10 +1306,10 @@ def N1():
 
 
 def N2():
-    """
-    Return the matroid `N_2`, represented over `\GF(3)`.
+    r"""
+    Return the matroid `N_2`, represented over `\GF{3}`.
 
-    `N_2` is an excluded minor for the dyadic matroids. See [Oxley]_, p. 554.
+    `N_2` is an excluded minor for the dyadic matroids. See [Oxl2011]_, p. 554.
 
     EXAMPLES::
 
@@ -1348,7 +1352,8 @@ def BetsyRoss():
     """
     E = 'abcdefghijk'
     CC = {
-        2: ['acfg', 'bdgh', 'cehi', 'befj', 'adij', 'dfk', 'egk', 'ahk', 'bik', 'cjk'],
+        2: ['acfg', 'bdgh', 'cehi', 'befj', 'adij', 'dfk',
+            'egk', 'ahk', 'bik', 'cjk'],
         3: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
@@ -1372,7 +1377,9 @@ def Block_9_4():
     """
     E = 'abcdefghi'
     CC = {
-        3: ['abcd', 'acef', 'bdef', 'cdeg', 'abfg', 'adeh', 'bcfh', 'acgh', 'begh', 'dfgh', 'abei', 'cdfi', 'bcgi', 'adgi', 'efgi', 'bdhi', 'cehi', 'afhi'],
+        3: ['abcd', 'acef', 'bdef', 'cdeg', 'abfg', 'adeh', 'bcfh', 'acgh',
+            'begh', 'dfgh', 'abei', 'cdfi', 'bcgi', 'adgi', 'efgi', 'bdhi',
+            'cehi', 'afhi'],
         4: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
@@ -1397,7 +1404,12 @@ def Block_10_5():
 
     E = 'abcdefghij'
     CC = {
-        4: ['abcde', 'acdfg', 'bdefg', 'bcdfh', 'abefh', 'abcgh', 'adegh', 'cefgh', 'bcefi', 'adefi', 'bcdgi', 'acegi', 'abfgi', 'abdhi', 'cdehi', 'acfhi', 'beghi', 'dfghi', 'abdfj', 'acefj', 'abegj', 'cdegj', 'bcfgj', 'acdhj', 'bcehj', 'defhj', 'bdghj', 'afghj', 'abcij', 'bdeij', 'cdfij', 'adgij', 'efgij', 'aehij', 'bfhij', 'cghij'],
+        4: ['abcde', 'acdfg', 'bdefg', 'bcdfh', 'abefh', 'abcgh', 'adegh',
+            'cefgh', 'bcefi', 'adefi', 'bcdgi', 'acegi', 'abfgi', 'abdhi',
+            'cdehi', 'acfhi', 'beghi', 'dfghi', 'abdfj', 'acefj', 'abegj',
+            'cdegj', 'bcfgj', 'acdhj', 'bcehj', 'defhj', 'bdghj', 'afghj',
+            'abcij', 'bdeij', 'cdfij', 'adgij', 'efgij', 'aehij', 'bfhij',
+            'cghij'],
         5: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
@@ -1410,14 +1422,14 @@ def ExtendedBinaryGolayCode():
     Return the matroid of the extended binary Golay code.
 
     See
-    :func:`ExtendedBinaryGolayCode <sage.coding.code_constructions.ExtendedBinaryGolayCode>`
+    :class:`GolayCode <sage.coding.golay_code.GolayCode>`
     documentation for more on this code.
 
     EXAMPLES::
 
         sage: M = matroids.named_matroids.ExtendedBinaryGolayCode()
         sage: C = LinearCode(M.representation())
-        sage: C.is_permutation_equivalent(codes.ExtendedBinaryGolayCode()) # long time
+        sage: C.is_permutation_equivalent(codes.GolayCode(GF(2))) # long time
         True
         sage: M.is_valid()
         True
@@ -1446,14 +1458,13 @@ def ExtendedTernaryGolayCode():
     Return the matroid of the extended ternary Golay code.
 
     See
-    :func:`ExtendedTernaryGolayCode <sage.coding.code_constructions.ExtendedTernaryGolayCode>`
-    documentation for more on this code.
+    :class:`GolayCode <sage.coding.golay_code.GolayCode>`
 
     EXAMPLES::
 
         sage: M = matroids.named_matroids.ExtendedTernaryGolayCode()
         sage: C = LinearCode(M.representation())
-        sage: C.is_permutation_equivalent(codes.ExtendedTernaryGolayCode()) # long time
+        sage: C.is_permutation_equivalent(codes.GolayCode(GF(3))) # long time
         True
         sage: M.is_valid()
         True
@@ -1477,7 +1488,7 @@ def AG23minus():
 
     This is a sixth-roots-of-unity matroid, and an excluded minor for the
     class of near-regular matroids.
-    See [Oxley]_, p. 653.
+    See [Oxl2011]_, p. 653.
 
     EXAMPLES::
 
@@ -1498,7 +1509,7 @@ def NotP8():
     """
     Return the matroid ``NotP8``.
 
-    This is a matroid that is not `P_8`, found on page 512 of [Oxley1]_ (the
+    This is a matroid that is not `P_8`, found on page 512 of [Oxl1992]_ (the
     first edition).
 
     EXAMPLES::
@@ -1528,7 +1539,7 @@ def D16():  # A.K.A. the Carolyn Chun Matroid
     Let `M` be a 4-connected binary matroid and `N` an internally 4-connected
     proper minor of `M` with at least 7 elements. Then some element of `M` can
     be deleted or contracted preserving an `N`-minor, unless `M` is `D_{16}`.
-    See [CMO12]_.
+    See [CMO2012]_.
 
     EXAMPLES::
 
@@ -1559,7 +1570,7 @@ def Terrahawk():  # A.K.A. the Dillon Mayhew Matroid
     Return the Terrahawk matroid.
 
     The Terrahawk is a binary matroid that is a sporadic exception in a chain
-    theorem for internally 4-connected binary matroids. See [CMO11]_.
+    theorem for internally 4-connected binary matroids. See [CMO2011]_.
 
     EXAMPLES::
 
@@ -1602,7 +1613,8 @@ def R9A():
 
     """
     E = 'abcdefghi'
-    CC = {3: ['abde', 'bcdf', 'aceg', 'abch', 'aefh', 'adgh', 'acdi', 'abfi', 'defi', 'begi', 'bdhi', 'cehi', 'fghi'],
+    CC = {3: ['abde', 'bcdf', 'aceg', 'abch', 'aefh', 'adgh', 'acdi', 'abfi',
+              'defi', 'begi', 'bdhi', 'cehi', 'fghi'],
           4: [E]}
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
     M.rename('R9A: ' + repr(M))
@@ -1626,7 +1638,8 @@ def R9B():
 
     """
     E = 'abcdefghi'
-    CC = {3: ['abde', 'bcdf', 'aceg', 'abch', 'befh', 'cdgh', 'bcei', 'adfi', 'abgi', 'degi', 'bdhi', 'aehi', 'fghi'],
+    CC = {3: ['abde', 'bcdf', 'aceg', 'abch', 'befh', 'cdgh', 'bcei', 'adfi',
+              'abgi', 'degi', 'bdhi', 'aehi', 'fghi'],
           4: [E]}
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
     M.rename('R9B: ' + repr(M))
@@ -1641,7 +1654,7 @@ def T12():
     `T_{12}` so that two edges are adjacent if and only if the corresponding
     4-circuits overlap in exactly two elements.
     Relaxing a circuit-hyperplane yields an excluded minor for the class of
-    matroids that are either binary or ternary. See [Oxley]_, p. 658.
+    matroids that are either binary or ternary. See [Oxl2011]_, p. 658.
 
     EXAMPLES::
 

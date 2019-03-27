@@ -72,9 +72,9 @@ quadric and `d` binomials of degree `d`::
 Finally, the example in [GRIN]_ ::
 
     sage: A = matrix(ZZ, [ [15,  4, 14, 19,  2,  1, 10, 17],
-    ...                    [18, 11, 13,  5, 16, 16,  8, 19],
-    ...                    [11,  7,  8, 19, 15, 18, 14,  6],
-    ...                    [17, 10, 13, 17, 16, 14, 15, 18] ])
+    ....:                  [18, 11, 13,  5, 16, 16,  8, 19],
+    ....:                  [11,  7,  8, 19, 15, 18, 14,  6],
+    ....:                  [17, 10, 13, 17, 16, 14, 15, 18] ])
     sage: IA = ToricIdeal(A)     # long time
     sage: IA.ngens()             # long time
     213
@@ -82,32 +82,32 @@ Finally, the example in [GRIN]_ ::
 TESTS::
 
     sage: A = matrix(ZZ, [[1, 1, 0, 0, -1,  0,  0, -1],
-    ...                   [0, 0, 1, 1,  0, -1, -1,  0],
-    ...                   [1, 0, 0, 1,  1,  1,  0,  0],
-    ...                   [1, 0, 0, 1,  0,  0, -1, -1]])
+    ....:                 [0, 0, 1, 1,  0, -1, -1,  0],
+    ....:                 [1, 0, 0, 1,  1,  1,  0,  0],
+    ....:                 [1, 0, 0, 1,  0,  0, -1, -1]])
     sage: IA = ToricIdeal(A)
     sage: R = IA.ring()
     sage: R.inject_variables()
     Defining z0, z1, z2, z3, z4, z5, z6, z7
     sage: IA == R.ideal([z4*z6-z5*z7, z2*z5-z3*z6, -z3*z7+z2*z4,
-    ...       -z2*z6+z1*z7, z1*z4-z3*z6, z0*z7-z3*z6, -z1*z5+z0*z6, -z3*z5+z0*z4,
-    ...       z0*z2-z1*z3])  # Computed with Maple 12
+    ....:     -z2*z6+z1*z7, z1*z4-z3*z6, z0*z7-z3*z6, -z1*z5+z0*z6, -z3*z5+z0*z4,
+    ....:     z0*z2-z1*z3])  # Computed with Maple 12
     True
 
 The next example first appeared in Example 12.7 in [GBCP]_. It is also
 used by the Maple 12 help system as example::
 
     sage: A = matrix(ZZ, [[1, 2, 3, 4, 0, 1, 4, 5],
-    ...                   [2, 3, 4, 1, 1, 4, 5, 0],
-    ...                   [3, 4, 1, 2, 4, 5, 0, 1],
-    ...                   [4, 1, 2, 3, 5, 0, 1, 4]])
+    ....:                 [2, 3, 4, 1, 1, 4, 5, 0],
+    ....:                 [3, 4, 1, 2, 4, 5, 0, 1],
+    ....:                 [4, 1, 2, 3, 5, 0, 1, 4]])
     sage: IA = ToricIdeal(A, 'z1, z2, z3, z4, z5, z6, z7, z8')
     sage: R = IA.ring()
     sage: R.inject_variables()
     Defining z1, z2, z3, z4, z5, z6, z7, z8
     sage: IA == R.ideal([z4^4-z6*z8^3, z3^4-z5*z7^3, -z4^3+z2*z8^2,
-    ...       z2*z4-z6*z8, -z4^2*z6+z2^2*z8, -z4*z6^2+z2^3, -z3^3+z1*z7^2,
-    ...       z1*z3-z5*z7, -z3^2*z5+z1^2*z7, z1^3-z3*z5^2])
+    ....:     z2*z4-z6*z8, -z4^2*z6+z2^2*z8, -z4*z6^2+z2^3, -z3^3+z1*z7^2,
+    ....:     z1*z3-z5*z7, -z3^2*z5+z1^2*z7, z1^3-z3*z5^2])
     True
 
 
@@ -161,6 +161,9 @@ from sage.misc.misc_c import prod
 from sage.matrix.constructor import matrix
 from sage.rings.all import ZZ, QQ
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+
+
+import six
 
 
 class ToricIdeal(MPolynomialIdeal):
@@ -426,7 +429,7 @@ class ToricIdeal(MPolynomialIdeal):
         """
         N = self.nvariables()
         y = list(ring.gens())
-        x = [ y[i-n] for i in range(0,N) ]
+        x = [ y[i-n] for i in range(N) ]
         y_to_x = dict(zip(x,y))
         x_to_y = dict(zip(y,x))
         # swap variables such that the n-th variable becomes the last one
@@ -437,17 +440,18 @@ class ToricIdeal(MPolynomialIdeal):
         # [GRIN]?
         basis = J.groebner_basis()
 
-        x_n = y[0]   # the cheapest variable in the revlex order
-        def subtract(e,power):
+        # x_n = y[0]   # the cheapest variable in the revlex order
+        def subtract(e, power):
             l = list(e)
             return tuple([l[0]-power] + l[1:])
+
         def divide_by_x_n(p):
             d_old = p.dict()
             power = min([ e[0] for e in d_old.keys() ])
-            d_new = dict( (subtract(exponent,power), coefficient)
-                          for exponent, coefficient in d_old.iteritems() )
+            d_new = dict( (subtract(exponent, power), coefficient)
+                          for exponent, coefficient in six.iteritems(d_old) )
             return p.parent()(d_new)
-        basis = [divide_by_x_n(_) for _ in basis]
+        basis = [divide_by_x_n(b) for b in basis]
         quotient = ring.ideal(basis)
         return quotient.subs(x_to_y)
 

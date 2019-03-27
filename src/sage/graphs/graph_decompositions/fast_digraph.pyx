@@ -14,39 +14,43 @@ set if element i belongs to the set.
 """
 from __future__ import print_function
 
-include "cysignals/memory.pxi"
-include 'sage/ext/cdefs.pxi'
-
 from libc.stdint cimport uint8_t
+from cysignals.memory cimport check_allocarray, check_calloc, sig_free
 
 cdef class FastDigraph:
 
-    def __cinit__(self, D):
+    def __cinit__(self, D, vertex_list=None):
         r"""
         Constructor for ``FastDigraph``.
 
         If the input parameter ``D`` is a Graph, it is handled as a symmetric
         DiGraph.
+
+        INPUT:
+
+        - ``D`` -- a (Di)Graph
+
+        - ``vertex_list`` -- list (default: ``None``); specifies a mapping
+          between `[0..n-1]` and the set of vertices of the input (Di)Graph,
+          ``list(D)`` by default
         """
         if D.order() > 8*sizeof(int):
             raise OverflowError("Too many vertices. This structure can only encode digraphs on at most %i vertices"%(8*sizeof(int)))
 
         self.n = D.order()
-        self.graph = NULL
-
-        self.graph = <int *> sig_malloc(self.n*sizeof(int))
-
-        memset(self.graph, 0, self.n * sizeof(int))
+        self.graph = <int *>check_calloc(self.n, sizeof(int))
 
         cdef int i, j
         cdef int tmp
 
         # When the vertices are not consecutive integers
-        cdef dict vertices_to_int = {}
-        self.int_to_vertices = {}
-        for i,v in enumerate(D.vertices()):
-            vertices_to_int[v] = i
-            self.int_to_vertices[i] = v
+        if vertex_list is None:
+            self.int_to_vertices = list(D)
+        elif len(vertex_list) == self.n and not set(vertex_list).symmetric_difference(D):
+            self.int_to_vertices = list(vertex_list)
+        else:
+            raise ValueError("the input vertex_list is incorrect")
+        cdef dict vertices_to_int = {v: i for i, v in enumerate(self.int_to_vertices)}
 
         if D.is_directed():
             for u in D:
@@ -61,7 +65,7 @@ cdef class FastDigraph:
                     tmp |= 1 << vertices_to_int[v]
                 self.graph[vertices_to_int[u]] = tmp
 
-        self.degree = <int *> sig_malloc(self.n*sizeof(int))
+        self.degree = <int *>check_allocarray(self.n, sizeof(int))
         for i in range(self.n):
             self.degree[i] = popcount32(self.graph[i])
 
@@ -69,8 +73,7 @@ cdef class FastDigraph:
         r"""
         Destructor.
         """
-        if self.graph != NULL:
-            sig_free(self.graph)
+        sig_free(self.graph)
         sig_free(self.degree)
 
     def print_adjacency_matrix(self):
@@ -121,7 +124,7 @@ def test_popcount():
    """
    Correction test for popcount32.
 
-   EXAMPLE::
+   EXAMPLES::
 
        sage: from sage.graphs.graph_decompositions.fast_digraph import test_popcount
        sage: test_popcount() # not tested

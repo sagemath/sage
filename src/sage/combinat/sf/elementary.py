@@ -128,7 +128,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
             `s` = Schur).
 
-            :meth:`omega_involution()` is a synonym for the :meth`omega()`
+            :meth:`omega_involution` is a synonym for the :meth:`omega`
             method.
 
             EXAMPLES::
@@ -243,7 +243,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             TESTS:
 
             Let us check that this method on the elementary basis gives the
-            same result as the implementation in :module`sage.combinat.sf.sfa`
+            same result as the implementation in :mod:`sage.combinat.sf.sfa`
             on the complete homogeneous basis::
 
                 sage: Sym = SymmetricFunctions(QQ)
@@ -306,5 +306,5 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             return self._expand(condition, n, alphabet)
 
 # Backward compatibility for unpickling
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.elementary', 'SymmetricFunctionAlgebraElement_elementary',  SymmetricFunctionAlgebra_elementary.Element)

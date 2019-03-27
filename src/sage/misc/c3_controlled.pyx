@@ -70,12 +70,17 @@ algorithm easily fails if the order of the bases is not chosen
 consistently (here for ``A2`` w.r.t. ``A1``)::
 
     sage: class B6(A1,A2): pass
-    sage: class B7(B6,A5): pass
+    sage: class B7(B6,A5): pass  # py2
     Traceback (most recent call last):
     ...
     TypeError: Error when calling the metaclass bases
         Cannot create a consistent method resolution
     order (MRO) for bases ...
+    sage: class B7(B6,A5): pass  # py3
+    Traceback (most recent call last):
+    ...
+    TypeError: Cannot create a consistent method resolution
+    order (MRO) for bases A1, A2
 
 There actually exist hierarchies of classes for which ``C3`` fails
 whatever order of the bases is chosen; the smallest such example,
@@ -104,9 +109,9 @@ A strategy to solve the problem
 We should recall at this point a design decision that we took for the
 hierarchy of classes derived from categories: *the semantic shall only
 depend on the inheritance order*, not on the specific MRO, and in
-particular not on the order of the bases (see the section
-``On the order of super categories`` in the
-:mod:`category primer <sage.categories.primer>`).
+particular not on the order of the bases (see
+:ref:`On the order of super categories <category-primer-category-order>`).
+
 If a choice needs to be made (for example for efficiency reasons),
 then this should be done explicitly, on a method-by-method basis. In
 practice this design goal is not yet met.
@@ -179,10 +184,10 @@ seamless. Given a hierarchy and a total order on this hierarchy, it
 calculates for each element of the hierarchy the smallest list of
 additional bases that forces ``C3`` to return the desired MRO. This is
 achieved by implementing an instrumented variant of the ``C3``
-algorithm (which we call *instrumented ``C3``*) that detects when
+algorithm (which we call *instrumented* ``C3``) that detects when
 ``C3`` is about to take a wrong decision and adds one base to force
 the right decision. Then, running the standard ``C3`` algorithm with
-the updated list of bases (which we call *controlled ``C3``*) yields
+the updated list of bases (which we call *controlled* ``C3``) yields
 the desired MRO.
 
 EXAMPLES:
@@ -199,7 +204,7 @@ no MRO whatsoever::
 
     sage: P = Poset({10: [9,8,7], 9:[6,1], 8:[5,2], 7:[4,3], 6: [3,2], 5:[3,1], 4: [2,1] }, linear_extension=True, facade=True)
 
-And build a `HierarchyElement` from it::
+And build a :class:`HierarchyElement` from it::
 
     sage: from sage.misc.c3_controlled import HierarchyElement
     sage: x = HierarchyElement(10, P)
@@ -225,10 +230,9 @@ default linear extension for `P`::
     sage: list(P)
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
-Now, we play with the fifth linear extension of `P`::
+Now we play with a specific linear extension of `P`::
 
-    sage: L = P.linear_extensions()
-    sage: Q = L[5].to_poset()
+    sage: Q = P.linear_extension([10, 9, 8, 7, 6, 5, 4, 1, 2, 3]).to_poset()
     sage: Q.cover_relations()
     [[10, 9], [10, 8], [10, 7], [9, 6], [9, 3], [8, 5], [8, 2], [7, 4], [7, 1], [6, 2], [6, 1], [5, 3], [5, 1], [4, 3], [4, 2]]
     sage: x = HierarchyElement(10, Q)
@@ -274,6 +278,7 @@ We now check that the ``C3`` algorithm fails for all linear extensions
 `l` of this poset, whereas both the instrumented and controlled ``C3``
 algorithms succeed; along the way, we collect some statistics::
 
+    sage: L = P.linear_extensions()
     sage: stats = []
     sage: for l in L:
     ....:     x = HierarchyElement(10, l.to_poset())
@@ -292,7 +297,7 @@ Depending on the linear extension `l` it was necessary to add between
 one and five bases for control; for example, `216` linear extensions
 required the addition of four bases::
 
-    sage: Word(stats).evaluation_sparse()
+    sage: sorted(Word(stats).evaluation_sparse())
     [(1, 36), (2, 108), (3, 180), (4, 216), (5, 180)]
 
 We now consider a hierarchy of categories::
@@ -316,9 +321,9 @@ For a typical category, few bases, if any, need to be added to force
     sage: x.mro == x.mro_standard
     False
     sage: x.all_bases_len()
-    67
-    sage: x.all_bases_controlled_len()
     70
+    sage: x.all_bases_controlled_len()
+    74
 
     sage: C = GradedHopfAlgebrasWithBasis(QQ)
     sage: x = HierarchyElement(C, attrcall("super_categories"), attrgetter("_cmp_key"))
@@ -326,9 +331,9 @@ For a typical category, few bases, if any, need to be added to force
     sage: x.mro == x.mro_standard
     False
     sage: x.all_bases_len()
-    92
+    94
     sage: x.all_bases_controlled_len()
-    100
+    101
 
 The following can be used to search through the Sage named categories
 for any that requires the addition of some bases. The output may
@@ -344,9 +349,10 @@ doctest::
      Category of fields,
      Category of finite dimensional algebras with basis over Rational Field,
      Category of finite dimensional hopf algebras with basis over Rational Field,
-     Category of finite permutation groups,
+     Category of finite enumerated permutation groups,
      Category of finite weyl groups,
-     Category of graded hopf algebras with basis over Rational Field]
+     Category of group algebras over Rational Field,
+     Category of number fields]
 
 AUTHOR:
 
@@ -711,14 +717,14 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
         sage: C3_sorted_merge([[1],[2]])
         ([2, 1], [2, 1])
 
-    And indeed ``C3_merge`` now returns the desired result::
+    And indeed :func:`C3_merge` now returns the desired result::
 
         sage: C3_merge([[1],[2,1]])
         [2, 1]
 
     From now on, we use this little wrapper that checks that
-    ``C3_merge``, with the suggestion of ``C3_sorted_merge``, returns
-    a sorted list::
+    :func:`C3_merge`, with the suggestion of :func:`C3_sorted_merge`,
+    returns a sorted list::
 
         sage: def C3_sorted_merge_check(lists):
         ....:     result, suggestion = C3_sorted_merge(lists)
@@ -892,7 +898,8 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
             # last list. Later, we will make sure that it is actually
             # in the tail of the last list.
             if not last_list_non_empty:
-                # Reinstate the last list for the suggestion if it had disapeared before
+                # Reinstate the last list for the suggestion
+                # if it had disappeared before
                 heads.append(O)
                 tails.append([])
                 tailsets.append(set())
@@ -949,7 +956,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
     #assert C3_merge(lists[:-1]+[suggestion_list]) == out
     return (out, suggestion_list)
 
-class HierarchyElement(object):
+class HierarchyElement(object, metaclass=ClasscallMetaclass):
     """
     A class for elements in a hierarchy.
 
@@ -960,8 +967,8 @@ class HierarchyElement(object):
     hierarchy, we call the elements just above `x` its *bases*, and
     the linear extension of all elements above `x` its *MRO*.
 
-    By convention, the bases are given as lists of
-    ``HierarchyElement`` s, and MROs are given a list of the
+    By convention, the bases are given as lists of instances of
+    :class:`HierarchyElement`, and MROs are given a list of the
     corresponding values.
 
     INPUT:
@@ -975,7 +982,7 @@ class HierarchyElement(object):
 
     .. NOTE::
 
-        Constructing a ``HierarchyElement`` immediately constructs the
+        Constructing a :class:`HierarchyElement` immediately constructs the
         whole hierarchy above it.
 
     EXAMPLES:
@@ -1040,10 +1047,8 @@ class HierarchyElement(object):
         sage: x.cls
         <class '44.cls'>
         sage: x.cls.mro()
-        [<class '44.cls'>, <class '43.cls'>, <class '42.cls'>, <class '41.cls'>, <class '40.cls'>, <class '39.cls'>, <class '38.cls'>, <class '37.cls'>, <class '36.cls'>, <class '35.cls'>, <class '34.cls'>, <class '33.cls'>, <class '32.cls'>, <class '31.cls'>, <class '30.cls'>, <class '29.cls'>, <class '28.cls'>, <class '27.cls'>, <class '26.cls'>, <class '25.cls'>, <class '24.cls'>, <class '23.cls'>, <class '22.cls'>, <class '21.cls'>, <class '20.cls'>, <class '19.cls'>, <class '18.cls'>, <class '17.cls'>, <class '16.cls'>, <class '15.cls'>, <class '14.cls'>, <class '13.cls'>, <class '12.cls'>, <class '11.cls'>, <class '10.cls'>, <class '9.cls'>, <class '8.cls'>, <class '7.cls'>, <class '6.cls'>, <class '5.cls'>, <class '4.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <class '0.cls'>, <type 'object'>]
+        [<class '44.cls'>, <class '43.cls'>, <class '42.cls'>, <class '41.cls'>, <class '40.cls'>, <class '39.cls'>, <class '38.cls'>, <class '37.cls'>, <class '36.cls'>, <class '35.cls'>, <class '34.cls'>, <class '33.cls'>, <class '32.cls'>, <class '31.cls'>, <class '30.cls'>, <class '29.cls'>, <class '28.cls'>, <class '27.cls'>, <class '26.cls'>, <class '25.cls'>, <class '24.cls'>, <class '23.cls'>, <class '22.cls'>, <class '21.cls'>, <class '20.cls'>, <class '19.cls'>, <class '18.cls'>, <class '17.cls'>, <class '16.cls'>, <class '15.cls'>, <class '14.cls'>, <class '13.cls'>, <class '12.cls'>, <class '11.cls'>, <class '10.cls'>, <class '9.cls'>, <class '8.cls'>, <class '7.cls'>, <class '6.cls'>, <class '5.cls'>, <class '4.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <class '0.cls'>, <... 'object'>]
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall__(cls, value, succ, key = None):
         """
@@ -1126,8 +1131,9 @@ class HierarchyElement(object):
         """
         The bases of ``self``.
 
-        The bases are given as a list of ``HierarchyElement``s, sorted
-        decreasingly accoding to the ``key`` function.
+        The bases are given as a list of instances of
+        :class:`HierarchyElement`, sorted decreasingly according to
+        the ``key`` function.
 
         EXAMPLES::
 
@@ -1230,7 +1236,8 @@ class HierarchyElement(object):
     @lazy_attribute
     def mro_controlled(self):
         """
-        The MRO for this object, calculated with :meth:`C3_merge`, under control of `C3_sorted_merge`
+        The MRO for this object, calculated with :meth:`C3_merge`, under
+        control of :func:`C3_sorted_merge`
 
         EXAMPLES::
 
@@ -1308,12 +1315,12 @@ class HierarchyElement(object):
             sage: x.cls
             <class '1.cls'>
             sage: x.cls.mro()
-            [<class '1.cls'>, <type 'object'>]
+            [<class '1.cls'>, <... 'object'>]
             sage: x = HierarchyElement(30, P)
             sage: x.cls
             <class '30.cls'>
             sage: x.cls.mro()
-            [<class '30.cls'>, <class '15.cls'>, <class '10.cls'>, <class '6.cls'>, <class '5.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <type 'object'>]
+            [<class '30.cls'>, <class '15.cls'>, <class '10.cls'>, <class '6.cls'>, <class '5.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <... 'object'>]
         """
         super_classes = tuple(self._from_value(base).cls for base in self._bases_controlled)
         if not super_classes:
@@ -1324,7 +1331,8 @@ class HierarchyElement(object):
     @cached_method
     def all_bases(self):
         """
-        Return the set of all the ``HierarchyElement``s above ``self``, ``self`` included.
+        Return the set of all instances of :class:`HierarchyElement` above
+        ``self``, ``self`` included.
 
         EXAMPLES::
 

@@ -90,16 +90,15 @@ EXAMPLES::
     sage: genus(T1, T2)
     1
 
-To do:
+.. TODO::
 
+    #. Latin squares with symbols from a ring instead of the integers
+       `\{ 0, 1, \dots, n-1 \}`.
 
-#. Latin squares with symbols from a ring instead of the integers
-   `\{ 0, 1, \dots, n-1 \}`.
+    #. Isotopism testing of latin squares and bitrades via graph
+       isomorphism (nauty?).
 
-#. Isotopism testing of latin squares and bitrades via graph
-   isomorphism (nauty?).
-
-#. Combinatorial constructions for bitrades.
+    #. Combinatorial constructions for bitrades.
 
 
 AUTHORS:
@@ -114,8 +113,7 @@ TESTS::
     True
 
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Carlo Hamalainen <carlo.hamalainen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -127,10 +125,10 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
+from six.moves import range
 
 from sage.matrix.all import matrix
 from sage.rings.all import ZZ
@@ -146,11 +144,9 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.misc.misc import uniq
 from sage.misc.flatten import flatten
 
-#load "dancing_links.spyx"
-#load "dancing_links.sage"
-
 from .dlxcpp import DLXCPP
 from functools import reduce
+
 
 class LatinSquare:
     def __init__(self, *args):
@@ -192,11 +188,11 @@ class LatinSquare:
         elif len(args) == 1 and isinstance(args[0], Matrix_integer_dense):
             self.square = args[0]
         else:
-            raise NotImplemented
+            raise TypeError("bad input for latin square")
 
     def dumps(self):
         """
-        Since the latin square class doesn't hold any other private
+        Since the latin square class does not hold any other private
         variables we just call dumps on self.square:
 
         EXAMPLES::
@@ -295,7 +291,8 @@ class LatinSquare:
             sage: L = LatinSquare(matrix(ZZ, [[0, 1], [2, 3]]))
             sage: L.set_immutable()
             sage: L.__hash__()
-            12
+            1677951251422179082  # 64-bit
+            -479138038           # 32-bit
         """
         return hash(self.square)
 
@@ -375,7 +372,7 @@ class LatinSquare:
 
     def row(self, x):
         """
-        Returns row x of the latin square.
+        Return row x of the latin square.
 
         EXAMPLES::
 
@@ -388,7 +385,7 @@ class LatinSquare:
 
     def column(self, x):
         """
-        Returns column x of the latin square.
+        Return column x of the latin square.
 
         EXAMPLES::
 
@@ -413,7 +410,7 @@ class LatinSquare:
 
     def nr_filled_cells(self):
         """
-        Returns the number of filled cells (i.e. cells with a positive
+        Return the number of filled cells (i.e. cells with a positive
         value) in the partial latin square self.
 
         EXAMPLES::
@@ -441,7 +438,7 @@ class LatinSquare:
            right of self, and that the used symbols are in the range
            {0, 1, ..., m} (no holes in that list).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.combinat.matrices.latin import *
             sage: B = back_circulant(3)
@@ -500,10 +497,10 @@ class LatinSquare:
 
     def nr_distinct_symbols(self):
         """
-        Returns the number of distinct symbols in the partial latin square
+        Return the number of distinct symbols in the partial latin square
         self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.combinat.matrices.latin import *
             sage: back_circulant(5).nr_distinct_symbols()
@@ -584,7 +581,8 @@ class LatinSquare:
             sage: from sage.combinat.matrices.latin import *
             sage: (a, b, c, G) = alternating_group_bitrade_generators(1)
             sage: (T1, T2) = bitrade_from_group(a, b, c, G)
-            sage: T1.filled_cells_map()
+            sage: D = T1.filled_cells_map()
+            sage: {i: v for i,v in D.items() if i in ZZ}
             {1: (0, 0),
              2: (0, 2),
              3: (0, 3),
@@ -596,8 +594,9 @@ class LatinSquare:
              9: (2, 2),
              10: (3, 0),
              11: (3, 1),
-             12: (3, 3),
-             (0, 0): 1,
+             12: (3, 3)}
+            sage: {i: v for i,v in D.items() if i not in ZZ}
+            {(0, 0): 1,
              (0, 2): 2,
              (0, 3): 3,
              (1, 1): 4,
@@ -629,7 +628,7 @@ class LatinSquare:
 
     def top_left_empty_cell(self):
         """
-        Returns the least [r, c] such that self[r, c] is an empty cell. If
+        Return the least [r, c] such that self[r, c] is an empty cell. If
         all cells are filled then we return None.
 
         INPUT:
@@ -726,13 +725,12 @@ class LatinSquare:
             sage: forward_circulant(7).is_latin_square()
             True
         """
-
-        # We don't allow latin rectangles:
+        # We do not allow latin rectangles:
         if self.nrows() != self.ncols():
             return False
 
         # Every cell must be filled:
-        if len([x for x in self.list() if x >= 0]) != self.nrows()*self.ncols():
+        if any(x < 0 for x in self.list()):
             return False
 
         # By necessity self must be a partial latin square:
@@ -749,13 +747,11 @@ class LatinSquare:
 
         INPUT:
 
-
         -  ``self`` - LatinSquare
 
         -  ``r`` - int; row of the latin square
 
         -  ``c`` - int; column of the latin square
-
 
         EXAMPLES::
 
@@ -819,7 +815,7 @@ class LatinSquare:
         for r in range(self.nrows()):
             for c in range(self.ncols()):
                 if self[r, c] < 0:
-                    cells[ (r,c) ] = True
+                    cells[(r, c)] = True
 
         cells = list(cells)
 
@@ -832,7 +828,7 @@ class LatinSquare:
 
     def is_uniquely_completable(self):
         """
-        Returns True if the partial latin square self has exactly one
+        Return True if the partial latin square self has exactly one
         completion to a latin square. This is just a wrapper for the
         current best-known algorithm, Dancing Links by Knuth. See
         dancing_links.spyx
@@ -860,7 +856,7 @@ class LatinSquare:
 
     def is_completable(self):
         """
-        Returns True if the partial latin square can be completed to a
+        Return True if the partial latin square can be completed to a
         latin square.
 
         EXAMPLES:
@@ -964,7 +960,7 @@ class LatinSquare:
 
     def vals_in_row(self, r):
         """
-        Returns a dictionary with key e if and only if row r of self has
+        Return a dictionary with key e if and only if row r of self has
         the symbol e.
 
         EXAMPLES::
@@ -987,7 +983,7 @@ class LatinSquare:
 
     def vals_in_col(self, c):
         """
-        Returns a dictionary with key e if and only if column c of self has
+        Return a dictionary with key e if and only if column c of self has
         the symbol e.
 
         EXAMPLES::
@@ -1009,7 +1005,7 @@ class LatinSquare:
 
     def latex(self):
         r"""
-        Returns LaTeX code for the latin square.
+        Return LaTeX code for the latin square.
 
         EXAMPLES::
 
@@ -1197,7 +1193,7 @@ class LatinSquare:
                 # If this is an empty cell of self then we do nothing.
                 if self[r, c] < 0: continue
 
-                for e in uniq(valsrow.keys() + valscol.keys()):
+                for e in uniq(list(valsrow) + list(valscol)):
                     # These should be constants
                     c_OFFSET  = e + c*n
                     r_OFFSET  = e + r*n + n*n
@@ -1281,7 +1277,7 @@ class LatinSquare:
 
     def contained_in(self, Q):
         r"""
-        Returns True if self is a subset of Q?
+        Return True if self is a subset of Q?
 
         EXAMPLES::
 
@@ -1293,23 +1289,29 @@ class LatinSquare:
             sage: back_circulant(4).contained_in(elementary_abelian_2group(2))
             False
         """
-
         for r in range(self.nrows()):
             for c in range(self.ncols()):
-                if self[r, c] >= 0 and Q[r, c] < 0: return False
-                if self[r, c] >= 0 and (self[r, c] != Q[r, c]): return False
+                if self[r, c] >= 0 and Q[r, c] < 0:
+                    return False
+                if self[r, c] >= 0 and self[r, c] != Q[r, c]:
+                    return False
         return True
+
 
 def genus(T1, T2):
     """
-    Returns the genus of hypermap embedding associated with the bitrade
-    (T1, T2). Informally, we compute the [tau_1, tau_2, tau_3]
+    Return the genus of hypermap embedding associated with the bitrade
+    (T1, T2).
+
+    Informally, we compute the [tau_1, tau_2, tau_3]
     permutation representation of the bitrade. Each cycle of tau_1,
     tau_2, and tau_3 gives a rotation scheme for a black, white, and
     star vertex (respectively). The genus then comes from Euler's
-    formula. For more details see Carlo Hamalainen: Partitioning
-    3-homogeneous latin bitrades. To appear in Geometriae Dedicata,
-    available at http://arxiv.org/abs/0710.0938
+    formula.
+
+    For more details see Carlo Hamalainen: *Partitioning
+    3-homogeneous latin bitrades*. To appear in Geometriae Dedicata,
+    available at :arxiv:`0710.0938`
 
     EXAMPLES::
 
@@ -1323,13 +1325,15 @@ def genus(T1, T2):
         sage: genus(T1, T2)
         3
     """
-
     cells_map, t1, t2, t3 = tau123(T1, T2)
     return (len(t1.to_cycles()) + len(t2.to_cycles()) + len(t3.to_cycles()) - T1.nr_filled_cells() - 2) // (-2)
 
+
 def tau123(T1, T2):
-    """
-    Compute the tau_i representation for a bitrade (T1, T2). See the
+    r"""
+    Compute the tau_i representation for a bitrade (T1, T2).
+
+    See the
     functions tau1, tau2, and tau3 for the mathematical definitions.
 
     OUTPUT:
@@ -1361,7 +1365,8 @@ def tau123(T1, T2):
         [ 6  1  5 -1 -1 -1 -1]
         [ 0  2  6 -1 -1 -1 -1]
         sage: (cells_map, t1, t2, t3) = tau123(T1, T2)
-        sage: cells_map
+        sage: D = cells_map
+        sage: {i: v for i,v in D.items() if i in ZZ}
         {1: (0, 0),
          2: (0, 1),
          3: (0, 2),
@@ -1382,8 +1387,9 @@ def tau123(T1, T2):
          18: (5, 2),
          19: (6, 0),
          20: (6, 1),
-         21: (6, 2),
-         (0, 0): 1,
+         21: (6, 2)}
+        sage: {i: v for i,v in D.items() if i not in ZZ}
+        {(0, 0): 1,
          (0, 1): 2,
          (0, 2): 3,
          (1, 0): 4,
@@ -1433,7 +1439,6 @@ def tau123(T1, T2):
         sage: len((t1*t2*t3).fixed_points()) == T1.nr_filled_cells()
         True
     """
-
     assert is_bitrade(T1, T2)
 
     cells_map = T1.filled_cells_map()
@@ -1443,6 +1448,7 @@ def tau123(T1, T2):
     t3 = tau3(T1, T2, cells_map)
 
     return (cells_map, t1, t2, t3)
+
 
 def isotopism(p):
     """
@@ -1535,11 +1541,12 @@ def isotopism(p):
             return x
 
     # Not sure what we got!
-    raise NotImplemented
+    raise TypeError("unable to convert {!r} to isotopism".format(p))
+
 
 def cells_map_as_square(cells_map, n):
     """
-    Returns a LatinSquare with cells numbered from 1, 2, ... to given
+    Return a LatinSquare with cells numbered from 1, 2, ... to given
     the dictionary cells_map.
 
     .. note::
@@ -1710,7 +1717,7 @@ def tau1(T1, T2, cells_map):
     r"""
     The definition of `\tau_1` is
 
-    .. math::
+    .. MATH::
 
        \tau_1 : T1 \rightarrow T1 \\
        \tau_1 = \beta_2^{-1} \beta_3
@@ -1761,7 +1768,7 @@ def tau2(T1, T2, cells_map):
     r"""
     The definition of `\tau_2` is
 
-    .. math::
+    .. MATH::
 
        \tau_2 : T1 \rightarrow T1 \\
        \tau_2 = \beta_3^{-1} \beta_1
@@ -1812,7 +1819,7 @@ def tau3(T1, T2, cells_map):
     r"""
     The definition of `\tau_3` is
 
-    .. math::
+    .. MATH::
 
        \tau_3 : T1 \rightarrow T1 \\
        \tau_3 = \beta_1^{-1} \beta_2
@@ -1969,9 +1976,10 @@ def direct_product(L1, L2, L3, L4):
 
     return D
 
+
 def elementary_abelian_2group(s):
     """
-    Returns the latin square based on the Cayley table for the
+    Return the latin square based on the Cayley table for the
     elementary abelian 2-group of order 2s.
 
     INPUT:
@@ -2326,7 +2334,7 @@ def group_to_LatinSquare(G):
 
 
 def alternating_group_bitrade_generators(m):
-    """
+    r"""
     Construct generators a, b, c for the alternating group on 3m+1
     points, such that a\*b\*c = 1.
 
@@ -2353,12 +2361,11 @@ def alternating_group_bitrade_generators(m):
         [ 2  1  3 -1]
         [ 0  3 -1  2]
     """
-
     assert m >= 1
 
     a = tuple(range(1, 2*m+1 + 1))
 
-    b = tuple(range(m+1, 0, -1) + range(2*m+2, 3*m+1 + 1))
+    b = tuple(range(m + 1, 0, -1)) + tuple(range(2*m+2, 3*m+1 + 1))
 
     a = PermutationGroupElement(a)
     b = PermutationGroupElement(b)
@@ -2458,7 +2465,7 @@ def p3_group_bitrade_generators(p):
 
 
 def check_bitrade_generators(a, b, c):
-    """
+    r"""
     Three group elements a, b, c will generate a bitrade if a\*b\*c = 1
     and the subgroups a, b, c intersect (pairwise) in just the
     identity.
@@ -2477,7 +2484,8 @@ def check_bitrade_generators(a, b, c):
     B = PermutationGroup([b])
     C = PermutationGroup([c])
 
-    if a*b != c**(-1): return False
+    if a*b != c**(-1):
+        return False
 
     X = gap.Intersection(gap.Intersection(A, B), C)
     return X.Size() == 1
@@ -2533,7 +2541,7 @@ def tau_to_bitrade(t1, t2, t3):
     convert them to an explicit latin bitrade (T1, T2). The result is
     unique up to isotopism.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.matrices.latin import *
         sage: T1 = back_circulant(5)
@@ -2806,7 +2814,7 @@ def dlxcpp_rows_and_map(P):
 
 def dlxcpp_find_completions(P, nr_to_find = None):
     """
-    Returns a list of all latin squares L of the same order as P such
+    Return a list of all latin squares L of the same order as P such
     that P is contained in L. The optional parameter nr_to_find
     limits the number of latin squares that are found.
 

@@ -32,12 +32,14 @@ function).
     sage: QQ((3*x)/(4*x))
     3/4
 
-TEST::
+TESTS::
 
     sage: Q = RationalField()
     sage: Q == loads(dumps(Q))
     True
     sage: RationalField() is RationalField()
+    True
+    sage: Q in Fields().Infinite()
     True
 
 AUTHORS:
@@ -48,8 +50,16 @@ AUTHORS:
 - Travis Scrimshaw (2012-10-18): Added additional docstrings for full coverage.
   Removed duplicates of ``discriminant()`` and ``signature()``.
 
+- Anna Haensch (2018-03): Added function ``quadratic_defect()``
+
 """
 from __future__ import print_function, absolute_import
+
+import six
+if six.PY2:
+    _long_type = long
+else:
+    _long_type = int
 
 from .rational import Rational
 from .integer import Integer
@@ -60,6 +70,7 @@ from sage.structure.parent_gens import ParentWithGens
 from sage.structure.sequence import Sequence
 import sage.rings.number_field.number_field_base as number_field_base
 from sage.misc.fast_methods import Singleton
+
 
 class RationalField(Singleton, number_field_base.NumberField):
     r"""
@@ -158,7 +169,9 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: Q.is_field()
             True
             sage: Q.category()
-            Join of Category of quotient fields and Category of metric spaces
+            Join of Category of number fields
+             and Category of quotient fields
+             and Category of metric spaces
             sage: Q.zeta()
             -1
 
@@ -219,11 +232,17 @@ class RationalField(Singleton, number_field_base.NumberField):
             'x'
             sage: QQ.variable_names()
             ('x',)
+            sage: QQ._element_constructor_((2, 3))
+            2/3
         """
         from sage.categories.basic import QuotientFields
-        ParentWithGens.__init__(self, self, category=QuotientFields().Metric())
+        from sage.categories.number_fields import NumberFields
+        ParentWithGens.__init__(self, self, category=[QuotientFields().Metric(),
+                                                      NumberFields()])
         self._assign_names(('x',),normalize=False) # ???
-        self._populate_coercion_lists_(element_constructor=Rational, init_no_parent=True)
+        self._populate_coercion_lists_(init_no_parent=True)
+
+    _element_constructor_ = Rational
 
     def _repr_(self):
         """
@@ -260,7 +279,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: latex(QQ) # indirect doctest
             \Bold{Q}
         """
-        return "\Bold{Q}"
+        return r"\Bold{Q}"
 
     def __reduce__(self):
         r"""
@@ -317,7 +336,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         from sage.rings.infinity import Infinity
         if p == Infinity:
-            from sage.rings.real_mpfr import create_RealField
+            from sage.rings.real_field import create_RealField
             return create_RealField(prec, **extras)
         else:
             from sage.rings.padics.factory import Qp
@@ -339,24 +358,17 @@ class RationalField(Singleton, number_field_base.NumberField):
             0
             sage: f = QQ.coerce_map_from(int); f # indirect doctest
             Native morphism:
-              From: Set of Python objects of type 'int'
+              From: Set of Python objects of class 'int'
               To:   Rational Field
             sage: f(44)
             44
 
         ::
 
-            sage: QQ.coerce_map_from(long) # indirect doctest
-            Composite map:
-              From: Set of Python objects of type 'long'
+            sage: QQ.coerce_map_from(long) # indirect doctest py2
+            Native morphism:
+              From: Set of Python objects of class 'long'
               To:   Rational Field
-              Defn:   Native morphism:
-                      From: Set of Python objects of type 'long'
-                      To:   Integer Ring
-                    then
-                      Natural morphism:
-                      From: Integer Ring
-                      To:   Rational Field
         """
         global ZZ
         from . import rational
@@ -365,6 +377,8 @@ class RationalField(Singleton, number_field_base.NumberField):
             ZZ = integer_ring.ZZ
         if S is ZZ:
             return rational.Z_to_Q()
+        elif S is _long_type:
+            return rational.long_to_Q()
         elif S is int:
             return rational.int_to_Q()
         elif ZZ.has_coerce_map_from(S):
@@ -403,7 +417,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         The first 17 rational numbers, ordered by height::
 
             sage: import itertools
-            sage: lst = [a for a in itertools.islice(Rationals(),17)]
+            sage: lst = [a for a in itertools.islice(Rationals(), 17r)]
             sage: lst
             [0, 1, -1, 1/2, -1/2, 2, -2, 1/3, -1/3, 3, -3, 2/3, -2/3, 3/2, -3/2, 1/4, -1/4]
             sage: [a.height() for a in lst]
@@ -421,6 +435,24 @@ class RationalField(Singleton, number_field_base.NumberField):
                     yield self(-other/height)
                     yield self(height/other)
                     yield self(-height/other)
+
+    def __truediv__(self, I):
+        """
+        Form the quotient by an integral ideal.
+
+        EXAMPLES::
+
+            sage: QQ / ZZ
+            Q/Z
+        """
+        from sage.rings.ideal import Ideal_generic
+        from sage.groups.additive_abelian.qmodnz import QmodnZ
+        if I is ZZ:
+            return QmodnZ(1)
+        elif isinstance(I, Ideal_generic) and I.base_ring() is ZZ:
+            return QmodnZ(I.gen())
+        else:
+            return super(RationalField, self).__truediv__(I)
 
     def range_by_height(self, start, end=None):
         r"""
@@ -505,8 +537,8 @@ class RationalField(Singleton, number_field_base.NumberField):
         except (TypeError, AttributeError):
             raise TypeError("%s is not valid bound on prime ideals" % B)
 
-        if B<2:
-            raise StopIteration
+        if B < 2:
+            return
 
         from sage.arith.all import primes
         for p in primes(B+1):
@@ -575,11 +607,11 @@ class RationalField(Singleton, number_field_base.NumberField):
         EXAMPLES::
 
             sage: QQ.embeddings(QQ)
-            [Ring Coercion endomorphism of Rational Field]
+            [Identity endomorphism of Rational Field]
             sage: QQ.embeddings(CyclotomicField(5))
-            [Ring Coercion morphism:
-              From: Rational Field
-              To:   Cyclotomic Field of order 5 and degree 4]
+            [Coercion map:
+               From: Rational Field
+               To:   Cyclotomic Field of order 5 and degree 4]
 
         `K` must have characteristic 0::
 
@@ -778,38 +810,6 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return True
 
-    def is_subring(self, K):
-        r"""
-        Return ``True`` if `\QQ` is a subring of `K`.
-
-        We are only able to determine this in some cases, e.g., when
-        `K` is a field or of positive characteristic.
-
-        EXAMPLES::
-
-            sage: QQ.is_subring(QQ)
-            True
-            sage: QQ.is_subring(QQ['x'])
-            True
-            sage: QQ.is_subring(GF(7))
-            False
-            sage: QQ.is_subring(CyclotomicField(7))
-            True
-            sage: QQ.is_subring(ZZ)
-            False
-            sage: QQ.is_subring(Frac(ZZ))
-            True
-        """
-        if K.is_field():
-            return K.characteristic() == 0
-        if K.characteristic() != 0:
-            return False
-        try:
-            self.embeddings(K)
-        except (TypeError, ValueError):
-            return False
-        return True
-
     def is_field(self, proof = True):
         """
         Return ``True``, since the rational field is a field.
@@ -1002,11 +1002,11 @@ class RationalField(Singleton, number_field_base.NumberField):
             yield Rational((-b, a))
 
     def random_element(self, num_bound=None, den_bound=None, *args, **kwds):
-        """
+        r"""
         Return an random element of `\QQ`.
 
         Elements are constructed by randomly choosing integers
-        for the numerator and denominator, not neccessarily coprime.
+        for the numerator and denominator, not necessarily coprime.
 
         INPUT:
 
@@ -1043,7 +1043,6 @@ class RationalField(Singleton, number_field_base.NumberField):
             0
             sage: QQ.random_element(distribution='1/n')
             -1
-
         """
         global ZZ
         if ZZ is None:
@@ -1189,6 +1188,57 @@ class RationalField(Singleton, number_field_base.NumberField):
             yield prod((p**e for p,e in zip(KSgens, ev)), one)
 
 
+    def quadratic_defect(self, a, p, check=True):
+        r"""
+        Return the valuation of the quadratic defect of `a` at `p`.
+
+        INPUT:
+
+        - ``a`` -- an element of ``self``
+        - ``p`` -- a prime ideal or a prime number
+        - ``check`` -- (default: ``True``); check if `p` is prime
+
+        REFERENCE:
+
+        [Kir2016]_
+
+        EXAMPLES::
+
+            sage: QQ.quadratic_defect(0, 7)
+            +Infinity
+            sage: QQ.quadratic_defect(5, 7)
+            0
+            sage: QQ.quadratic_defect(5, 2)
+            2
+            sage: QQ.quadratic_defect(5, 5)
+            1
+        """
+        from sage.rings.all import Infinity
+        from sage.arith.misc import legendre_symbol
+        if not a in self:
+            raise TypeError(str(a) + " must be an element of " + str(self))
+        if p.parent() == ZZ.ideal_monoid():
+            p = p.gen()
+        if check and not p.is_prime():
+            raise ValueError(str(p) + " must be prime")
+        if a.is_zero():
+            return Infinity
+        v, u = self(a).val_unit(p)
+        if v % 2 == 1:
+            return v
+        if p != 2:
+            if legendre_symbol(u, p) == 1:
+                return Infinity
+            else:
+                return v
+        if p == 2:
+            if u % 8 == 1:
+                return Infinity
+            if u % 8 == 5:
+                return v + 2
+            if u % 8 in [3, 7]:
+                return v + 1
+
     #################################
     ## Coercions to interfaces
     #################################
@@ -1247,6 +1297,18 @@ class RationalField(Singleton, number_field_base.NumberField):
         return 'Fraction Integer'
 
     _fricas_init_ = _axiom_init_
+
+    def _polymake_init_(self):
+        r"""
+        Return the polymake representation of `\QQ`.
+
+        EXAMPLES::
+
+            sage: polymake(QQ)    #optional - polymake # indirect doctest
+            Rational
+
+        """
+        return '"Rational"'
 
     def _sage_input_(self, sib, coerced):
         r"""
@@ -1310,6 +1372,26 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         from sage.structure.factorization import Factorization
         return Factorization(F, f.leading_coefficient())
+
+    def valuation(self, p):
+        r"""
+        Return the discrete valuation with uniformizer ``p``.
+
+        EXAMPLES::
+
+            sage: v = QQ.valuation(3); v
+            3-adic valuation
+            sage: v(1/3)
+            -1
+
+        .. SEEALSO::
+
+            :meth:`NumberField_generic.valuation() <sage.rings.number_field.number_field.NumberField_generic.valuation>`,
+            :meth:`IntegerRing_class.valuation() <sage.rings.integer_ring.IntegerRing_class.valuation>`
+
+        """
+        from sage.rings.padics.padic_valuation import pAdicValuation
+        return pAdicValuation(self, p)
 
 QQ = RationalField()
 Q = QQ

@@ -61,7 +61,7 @@ class CooperativeGame(SageObject):
         42 &\text{if } c = \{1,2,3\}. \\
         \end{cases}
 
-    The function `v` can be thought of as as a record of contribution of
+    The function `v` can be thought of as a record of contribution of
     individuals and coalitions of individuals. Of interest, becomes how to
     fairly share the value of the grand coalition (`\Omega`)? This class
     allows for such an answer to be formulated by calculating the Shapley
@@ -251,26 +251,6 @@ class CooperativeGame(SageObject):
         True
         sage: letter_game.is_symmetric({'A': 0, 'C': 35, 'B': 3})
         True
-
-    REFERENCES:
-
-    .. [CEW2011] Georgios Chalkiadakis, Edith Elkind, and Michael Wooldridge.
-       *Computational Aspects of Cooperative Game Theory*.
-       Morgan & Claypool Publishers, (2011).
-       ISBN 9781608456529, :doi:`10.2200/S00355ED1V01Y201107AIM016`.
-
-    .. [MSZ2013] Michael Maschler, Solan Eilon, and Zamir Shmuel.
-       *Game Theory*.
-       Cambridge: Cambridge University Press, (2013).
-       ISBN 9781107005488.
-
-    .. [XP1994] Deng Xiaotie, and Christos Papadimitriou.
-       *On the complexity of cooperative solution concepts.*
-       Mathematics of Operations Research 19.2 (1994): 257-266.
-
-    .. [SWJ2008] Fatima Shaheen, Michael Wooldridge, and Nicholas Jennings.
-       *A linear approximation method for the Shapley value.*
-       Artificial Intelligence 172.14 (2008): 1673-1699.
     """
     def __init__(self, characteristic_function):
         r"""
@@ -326,22 +306,23 @@ class CooperativeGame(SageObject):
             ...
             ValueError: characteristic function must be the power set
         """
-        if type(characteristic_function) is not dict:
+        if not isinstance(characteristic_function, dict):
             raise TypeError("characteristic function must be a dictionary")
 
         self.ch_f = characteristic_function
-        for key in self.ch_f:
-            if len(str(key)) == 1 and type(key) is not tuple:
+        for key in list(self.ch_f):
+            if len(str(key)) == 1 and not isinstance(key, tuple):
                 self.ch_f[(key,)] = self.ch_f.pop(key)
-            elif type(key) is not tuple:
+            elif not isinstance(key, tuple):
                 raise TypeError("key must be a tuple")
-        for key in self.ch_f:
-            sortedkey = tuple(sorted(list(key)))
+
+        for key in list(self.ch_f):
+            sortedkey = tuple(sorted(key))
             self.ch_f[sortedkey] = self.ch_f.pop(key)
 
-        self.player_list = max(characteristic_function.keys(), key=lambda key: len(key))
+        self.player_list = max(characteristic_function, key=lambda key: len(key))
         for coalition in powerset(self.player_list):
-            if tuple(sorted(list(coalition))) not in sorted(self.ch_f.keys()):
+            if tuple(sorted(coalition)) not in self.ch_f:
                 raise ValueError("characteristic function must be the power set")
 
         self.number_players = len(self.player_list)
@@ -473,8 +454,8 @@ class CooperativeGame(SageObject):
             sage: long_game.is_monotone()
             True
         """
-        return not any([set(p1) <= set(p2) and self.ch_f[p1] > self.ch_f[p2]
-                        for p1, p2 in permutations(self.ch_f.keys(), 2)])
+        return not any(set(p1) <= set(p2) and self.ch_f[p1] > self.ch_f[p2]
+                       for p1, p2 in permutations(self.ch_f.keys(), 2))
 
     def is_superadditive(self):
         r"""
@@ -606,22 +587,22 @@ class CooperativeGame(SageObject):
             v(c) = \begin{cases}
             0, & \text{if } c = \emptyset \\
             6, & \text{if } c = \{A\} \\
-            42, & \text{if } c = \{C\} \\
             12, & \text{if } c = \{B\} \\
-            42, & \text{if } c = \{B, C\} \\
+            42, & \text{if } c = \{C\} \\
             12, & \text{if } c = \{A, B\} \\
             42, & \text{if } c = \{A, C\} \\
+            42, & \text{if } c = \{B, C\} \\
             42, & \text{if } c = \{A, B, C\} \\
             \end{cases}
         """
         cf = self.ch_f
         output = "v(c) = \\begin{cases}\n"
-        for key in sorted(cf.keys(), key=lambda key: len(key)):
+        for key, val in sorted(cf.items(), key=lambda kv: (len(kv[0]), kv[0])):
             if not key:  # == ()
                 coalition = "\\emptyset"
             else:
                 coalition = "\\{" + ", ".join(str(player) for player in key) + "\\}"
-            output += "{}, & \\text{{if }} c = {} \\\\\n".format(cf[key], coalition)
+            output += "{}, & \\text{{if }} c = {} \\\\\n".format(val, coalition)
         output += "\\end{cases}"
         return output
 
@@ -799,7 +780,7 @@ class CooperativeGame(SageObject):
 
         EXAMPLES:
 
-        A payoff pector that has the symmetry property::
+        A payoff vector that has the symmetry property::
 
             sage: letter_function = {(): 0,
             ....:                    ('A',): 6,

@@ -38,6 +38,7 @@ AUTHORS:
 
 - John Cremona and Charlie Turner <charlotteturner@gmail.com> (06-2010):
   improvements to clarity and documentation.
+
 """
 
 #*****************************************************************************
@@ -49,9 +50,9 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
-
-from sage.rings.all import ZZ
+from sage.rings.all import ZZ, QQ
 from sage.misc.all import cartesian_product_iterator
 from sage.schemes.generic.scheme import is_Scheme
 
@@ -84,25 +85,28 @@ def enum_affine_rational_field(X, B):
     ::
 
         sage: A.<w,x,y,z> = AffineSpace(4, QQ)
-        sage: S = A.subscheme([x^2-y*z+3, w^3+z+y^2])
+        sage: S = A.subscheme([x^2-y*z+1, w^3+z+y^2])
+        sage: enum_affine_rational_field(S(QQ), 1)
+        [(0, 0, -1, -1)]
         sage: enum_affine_rational_field(S(QQ), 2)
-        []
-        sage: enum_affine_rational_field(S(QQ), 3)
-        [(-2, 0, -3, -1)]
+        [(0, 0, -1, -1), (1, -1, -1, -2), (1, 1, -1, -2)]
 
     ::
 
         sage: A.<x,y> = AffineSpace(2, QQ)
         sage: C = Curve(x^2+y-x)
-        sage: enum_affine_rational_field(C, 10)
-        [(-2, -6), (-1, -2), (0, 0), (1, 0), (2, -2), (3, -6)]
-
+        sage: enum_affine_rational_field(C, 10) # long time (3 s)
+        [(-2, -6), (-1, -2), (-2/3, -10/9), (-1/2, -3/4), (-1/3, -4/9),
+        (0, 0), (1/3, 2/9), (1/2, 1/4), (2/3, 2/9), (1, 0),
+        (4/3, -4/9), (3/2, -3/4), (5/3, -10/9), (2, -2), (3, -6)]
 
     AUTHORS:
 
     - David R. Kohel <kohel@maths.usyd.edu.au>: original version.
 
     - Charlie Turner (06-2010): small adjustments.
+
+    - Raman Raghukul 2018: updated.
     """
     from sage.schemes.affine.affine_space import is_AffineSpace
     if(is_Scheme(X)):
@@ -114,54 +118,69 @@ def enum_affine_rational_field(X, B):
             raise TypeError("codomain must be affine space over the rational field")
 
     n = X.codomain().ambient_space().ngens()
-    if X.value_ring() is ZZ:
-        Q = [ 1 ]
-    else: # rational field
-        Q = range(1, B + 1)
-    R = [ 0 ] + [ s*k for k in range(1, B+1) for s in [1, -1] ]
+    VR = X.value_ring()
+    if VR is ZZ:
+        R = [ 0 ] + [ s*k for k in range(1, B+1) for s in [1, -1] ]
+        iters = [ iter(R) for _ in range(n) ]
+    else:  # rational field
+        iters = [ QQ.range_by_height(B + 1) for _ in range(n) ]
     pts = []
     P = [0] * n
-    m = ZZ(0)
     try:
         pts.append(X(P))
     except TypeError:
         pass
-    iters = [ iter(R) for _ in range(n) ]
+
     for it in iters:
         next(it)
     i = 0
     while i < n:
         try:
-            a = ZZ(next(iters[i]))
+            a = VR(next(iters[i]))
         except StopIteration:
-            iters[i] = iter(R) # reset
+            if VR is ZZ:
+                iters[i] = iter(R)
+            else:  # rational field
+                iters[i] = QQ.range_by_height(B + 1)
             P[i] = next(iters[i]) # reset P[i] to 0 and increment
             i += 1
             continue
-        m = m.gcd(a)
         P[i] = a
-        for b in Q:
-            if m.gcd(b) == 1:
-                try:
-                    pts.append(X([ num/b for num in P ]))
-                except TypeError:
-                    pass
+        try:
+            pts.append(X(P))
+        except TypeError:
+            pass
         i = 0
-        m = ZZ(0)
     pts.sort()
     return pts
 
 
-def enum_affine_number_field(X, B):
+def enum_affine_number_field(X, **kwds):
     """
     Enumerates affine points on scheme ``X`` defined over a number field. Simply checks all of the
     points of absolute height up to ``B`` and adds those that are on the scheme to the list.
 
+    This algorithm computes 2 lists: L containing elements x in `K` such that
+    H_k(x) <= B, and a list L' containing elements x in `K` that, due to
+    floating point issues,
+    may be slightly larger then the bound. This can be controlled
+    by lowering the tolerance.
+
+    ALGORITHM:
+
+    This is an implementation of the revised algorithm (Algorithm 4) in
+    [Doyle-Krumm]_. Algorithm 5 is used for imaginary quadratic fields.
+
+
     INPUT:
 
-    - ``X`` - a scheme defined over a number field.
+    kwds:
 
-    - ``B`` - a real number.
+    - ``bound`` - a real number
+
+    - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+
+    - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
 
     OUTPUT:
 
@@ -175,7 +194,7 @@ def enum_affine_number_field(X, B):
         sage: K = NumberField(u^2 + 2, 'v')
         sage: A.<x,y,z> = AffineSpace(K, 3)
         sage: X = A.subscheme([y^2 - x])
-        sage: enum_affine_number_field(X(K), 4)
+        sage: enum_affine_number_field(X(K), bound=2**0.5)
         [(0, 0, -1), (0, 0, -v), (0, 0, -1/2*v), (0, 0, 0), (0, 0, 1/2*v), (0, 0, v), (0, 0, 1),
         (1, -1, -1), (1, -1, -v), (1, -1, -1/2*v), (1, -1, 0), (1, -1, 1/2*v), (1, -1, v), (1, -1, 1),
         (1, 1, -1), (1, 1, -v), (1, 1, -1/2*v), (1, 1, 0), (1, 1, 1/2*v), (1, 1, v), (1, 1, 1)]
@@ -187,10 +206,13 @@ def enum_affine_number_field(X, B):
         sage: A.<x,y> = AffineSpace(K, 2)
         sage: X=A.subscheme(x-y)
         sage: from sage.schemes.affine.affine_rational_point import enum_affine_number_field
-        sage: enum_affine_number_field(X, 3)
+        sage: enum_affine_number_field(X, bound=3**0.25)
         [(-1, -1), (-1/2*v - 1/2, -1/2*v - 1/2), (1/2*v - 1/2, 1/2*v - 1/2), (0, 0), (-1/2*v + 1/2, -1/2*v + 1/2),
         (1/2*v + 1/2, 1/2*v + 1/2), (1, 1)]
     """
+    B = kwds.pop('bound')
+    tol = kwds.pop('tolerance', 1e-2)
+    prec = kwds.pop('precision', 53)
     from sage.schemes.affine.affine_space import is_AffineSpace
     if(is_Scheme(X)):
         if (not is_AffineSpace(X.ambient_space())):
@@ -203,7 +225,7 @@ def enum_affine_number_field(X, B):
     R = X.codomain().ambient_space()
 
     pts = []
-    for P in R.points_of_bounded_height(B):
+    for P in R.points_of_bounded_height(bound=B, tolerance=tol, precision=prec):
         try:
             pts.append(X(P))
         except TypeError:

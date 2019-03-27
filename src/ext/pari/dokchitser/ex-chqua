@@ -7,7 +7,7 @@ read("computel");                 \\ read the ComputeL package
                                   \\ and set the default values
 default(realprecision,28);        \\ set working precision; used throughout
 
-P = 37;                     \\ May change this to to any other odd prime
+P = 37;                     \\ May change this to any other odd prime
                             \\ Chi = Legendre character modulo this P
 
                             \\ initialize L-function parameters

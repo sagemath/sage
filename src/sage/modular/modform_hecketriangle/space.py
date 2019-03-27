@@ -20,7 +20,6 @@ from __future__ import absolute_import
 from sage.rings.all import ZZ, QQ, infinity
 
 from sage.modules.module import Module
-from sage.categories.all import Modules
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
 from sage.structure.unique_representation import UniqueRepresentation
@@ -56,7 +55,7 @@ def canonical_parameters(group, base_ring, k, ep, n=None):
 
     n = group.n()
     k = QQ(k)
-    if (ep == None):
+    if (ep is None):
         if (n == infinity):
             ep = (-1)**(k/ZZ(2))
         elif (ZZ(2).divides(n)):
@@ -114,13 +113,15 @@ class QuasiMeromorphicModularForms(FormsSpace_abstract, Module, UniqueRepresenta
             sage: MF.analytic_type()
             quasi meromorphic modular
             sage: MF.category()
-            Category of vector spaces over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of modules over Integer Ring
+            sage: MF in MF.category()
+            True
             sage: MF.ambient_space() == MF
             True
         """
 
         FormsSpace_abstract.__init__(self, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
-        Module.__init__(self, base=self.coeff_ring())
+        Module.__init__(self, base=base_ring)
         self._analytic_type=self.AT(["quasi", "mero"])
 
 class QuasiWeakModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
@@ -159,13 +160,15 @@ class QuasiWeakModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF.analytic_type()
             quasi weakly holomorphic modular
             sage: MF.category()
-            Category of vector spaces over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of modules over Integer Ring
+            sage: MF in MF.category()
+            True
             sage: MF.is_ambient()
             True
         """
 
         FormsSpace_abstract.__init__(self, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
-        Module.__init__(self, base=self.coeff_ring())
+        Module.__init__(self, base=base_ring)
         self._analytic_type=self.AT(["quasi", "weak"])
 
 class QuasiModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
@@ -204,13 +207,15 @@ class QuasiModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF.analytic_type()
             quasi modular
             sage: MF.category()
-            Category of vector spaces over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of modules over Integer Ring
+            sage: MF in MF.category()
+            True
             sage: MF.is_ambient()
             True
         """
 
         FormsSpace_abstract.__init__(self, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
-        Module.__init__(self, base=self.coeff_ring())
+        Module.__init__(self, base=base_ring)
         self._analytic_type=self.AT(["quasi", "holo"])
         self._module = FreeModule(self.coeff_ring(), self.dimension())
 
@@ -364,7 +369,9 @@ class QuasiCuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF.analytic_type()
             quasi cuspidal
             sage: MF.category()
-            Category of vector spaces over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of modules over Integer Ring
+            sage: MF in MF.category()
+            True
             sage: MF.is_ambient()
             True
 
@@ -373,7 +380,7 @@ class QuasiCuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
         """
 
         FormsSpace_abstract.__init__(self, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
-        Module.__init__(self, base=self.coeff_ring())
+        Module.__init__(self, base=base_ring)
         self._analytic_type=self.AT(["quasi", "cusp"])
         self._module = FreeModule(self.coeff_ring(), self.dimension())
 
@@ -534,13 +541,15 @@ class MeromorphicModularForms(FormsSpace_abstract, Module, UniqueRepresentation)
             sage: MF.analytic_type()
             meromorphic modular
             sage: MF.category()
-            Category of vector spaces over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of modules over Integer Ring
+            sage: MF in MF.category()
+            True
             sage: MF.is_ambient()
             True
         """
 
         FormsSpace_abstract.__init__(self, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
-        Module.__init__(self, base=self.coeff_ring())
+        Module.__init__(self, base=base_ring)
         self._analytic_type=self.AT(["mero"])
 
 class WeakModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
@@ -579,11 +588,13 @@ class WeakModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF.analytic_type()
             weakly holomorphic modular
             sage: MF.category()
-            Category of vector spaces over Fraction Field of Univariate Polynomial Ring in d over Complex Field with 53 bits of precision
+            Category of vector spaces over Complex Field with 53 bits of precision
+            sage: MF in MF.category()
+            True
         """
 
         FormsSpace_abstract.__init__(self, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
-        Module.__init__(self, base=self.coeff_ring())
+        Module.__init__(self, base=base_ring)
         self._analytic_type=self.AT(["weak"])
 
 class ModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
@@ -622,7 +633,9 @@ class ModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF.analytic_type()
             modular
             sage: MF.category()
-            Category of vector spaces over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of modules over Integer Ring
+            sage: MF in MF.category()
+            True
             sage: MF.module()
             Vector space of dimension 1 over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
             sage: MF.ambient_module() == MF.module()
@@ -636,11 +649,13 @@ class ModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF.analytic_type()
             modular
             sage: MF.category()
-            Category of vector spaces over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of modules over Integer Ring
+            sage: MF in MF.category()
+            True
         """
 
         FormsSpace_abstract.__init__(self, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
-        Module.__init__(self, base=self.coeff_ring())
+        Module.__init__(self, base=base_ring)
         self._analytic_type = self.AT(["holo"])
         self._module = FreeModule(self.coeff_ring(), self.dimension())
 
@@ -771,7 +786,9 @@ class CuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF.analytic_type()
             cuspidal
             sage: MF.category()
-            Category of vector spaces over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of modules over Integer Ring
+            sage: MF in MF.category()
+            True
             sage: MF.module()
             Vector space of dimension 1 over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
             sage: MF.ambient_module() == MF.module()
@@ -781,7 +798,7 @@ class CuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
         """
 
         FormsSpace_abstract.__init__(self, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
-        Module.__init__(self, base=self.coeff_ring())
+        Module.__init__(self, base=base_ring)
         self._analytic_type=self.AT(["cusp"])
         self._module = FreeModule(self.coeff_ring(), self.dimension())
 
@@ -924,7 +941,9 @@ class ZeroForm(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF.analytic_type()
             zero
             sage: MF.category()
-            Category of vector spaces over Fraction Field of Univariate Polynomial Ring in d over Complex Field with 53 bits of precision
+            Category of vector spaces over Complex Field with 53 bits of precision
+            sage: MF in MF.category()
+            True
             sage: MF.module()
             Vector space of dimension 0 over Fraction Field of Univariate Polynomial Ring in d over Complex Field with 53 bits of precision
             sage: MF.ambient_module() == MF.module()
@@ -934,7 +953,7 @@ class ZeroForm(FormsSpace_abstract, Module, UniqueRepresentation):
         """
 
         FormsSpace_abstract.__init__(self, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
-        Module.__init__(self, base=self.coeff_ring())
+        Module.__init__(self, base=base_ring)
         self._analytic_type=self.AT([])
         self._module = FreeModule(self.coeff_ring(), self.dimension())
 
@@ -1009,7 +1028,7 @@ class ZeroForm(FormsSpace_abstract, Module, UniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.space import ZeroForm
-            sage: MF = ZeroForm(6, CC, 3, -1)
+            sage: MF = ZeroForm(6, QQ, 3, -1)
             sage: el = MF(0)
             sage: el
             O(q^5)
@@ -1017,7 +1036,7 @@ class ZeroForm(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: vec
             ()
             sage: vec.parent()
-            Vector space of dimension 0 over Fraction Field of Univariate Polynomial Ring in d over Complex Field with 53 bits of precision
+            Vector space of dimension 0 over Fraction Field of Univariate Polynomial Ring in d over Rational Field
             sage: vec.parent() == MF.module()
             True
         """

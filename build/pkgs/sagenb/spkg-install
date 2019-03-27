@@ -1,29 +1,23 @@
-#!/usr/bin/env bash
-
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
 cd src
 
-# Install a flat package (not an egg), which is the same as how pip
-# installs packages.
-python setup.py install --single-version-externally-managed --record dummy
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing SageNB"
-    exit 1
-fi
+sdh_pip_install .
 
-# let sagenb use mathjax
-cd "${SAGE_LOCAL}/lib/python/site-packages/sagenb/data"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error: Cannot find SageNB data directory."
-    exit 1
-fi
-ln -s ../../../../../share/mathjax/ mathjax
-if [ ! -d mathjax ]; then
-    echo >&2 "Error: Cannot symlink mathjax into the SageNB data directory."
-    exit 1
-fi
+cd doc
+$MAKE html || sdh_die "Error building the documentation"
+docdir="$SAGE_LOCAL/share/doc/sagenb"
+rm -rf "$docdir"
+mv build/html "$docdir"
+
+cd "${SAGE_DESTDIR}"
+
+# SageNB installation path, relative either to / (for real install)
+# or to SAGE_DESTDIR.
+SAGENB_INSTALL=$(echo ."$SAGE_LOCAL"/lib/python*/site-packages/sagenb)
+
+# Completely remove the old sagenb installation, including bad mathjax
+# installations.
+( cd / && rm -rf "$SAGENB_INSTALL" )
+
+# Let sagenb use mathjax
+ln -s -n "$SAGE_SHARE/mathjax/" "$SAGENB_INSTALL/data/mathjax" || \
+    sdh_die "Error: Cannot symlink mathjax into the SageNB data directory."

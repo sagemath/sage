@@ -248,7 +248,7 @@ Hecke triangle groups and elements:
   Note that for hyperbolic (and parabolic) fixed points there is a
   1-1 correspondence with primitive hyperbolic/parabolic group
   elements (at least if ``n < infinity``). The group action on
-  fixed points resp. on matrices is compatible with this correpondence.
+  fixed points resp. on matrices is compatible with this correspondence.
 
   EXAMPLES::
 
@@ -376,7 +376,7 @@ Hecke triangle groups and elements:
       sage: el.is_hecke_symmetric()
       False
       sage: (el.simple_fixed_point_set(), el.inverse().simple_fixed_point_set())
-      ({1/2*e, (-1/2*lam + 1/2)*e}, {(1/2*lam - 1/2)*e, -1/2*e})
+      ({1/2*e, (-1/2*lam + 1/2)*e}, {-1/2*e, (1/2*lam - 1/2)*e})
       sage: el = G.V(2)*G.V(3)
       sage: el.is_hecke_symmetric()
       True
@@ -930,7 +930,7 @@ Modular forms ring and spaces for Hecke triangle groups:
       sage: L.taylor_series(1, 3)
       -0.0304484570583... - 0.0504570844798...*z - 0.0350657360354...*z^2 + O(z^3)
       sage: coeffs = f.q_expansion_vector(min_exp=0, max_exp=20, fix_d=True)
-      sage: abs(L(10) - sum([coeffs[k]*k^(-10) for k in range(1,len(coeffs))]).n(53)) < 10^(-7)
+      sage: abs(L(10) - sum([coeffs[k] * ZZ(k)^(-10) for k in range(1,len(coeffs))]).n(53)) < 10^(-7)
       True
 
       sage: L = ModularForms(n=6, k=6, ep=-1).E6().lseries(num_prec=200)

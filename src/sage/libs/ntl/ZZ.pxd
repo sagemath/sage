@@ -2,18 +2,12 @@
 
 from .types cimport ZZ_c
 
-cdef extern from "ccobject.h":
-    void ZZ_from_str "_from_str<ZZ>"(ZZ_c* dest, char* s)
-    object ZZ_to_PyString "_to_PyString<ZZ>"(ZZ_c *x)
 
-cdef extern from "sage/libs/ntl/ntlwrap.cpp":
+cdef extern from "ntlwrap.h":
     void ZZ_conv_from_int "conv"(ZZ_c x, int i)
     void ZZ_conv_to_int "conv"(int i, ZZ_c x)
     void ZZ_conv_from_long "conv"(ZZ_c x, long l)
     void ZZ_conv_to_long "conv"(long l, ZZ_c x)
-    cdef int ZZ_to_int(ZZ_c* x)
-    cdef ZZ_c* int_to_ZZ(int value)
-    cdef void ZZ_set_from_int(ZZ_c* x, int value)
 
     long ZZ_sign "sign"(ZZ_c a)
     long ZZ_IsZero "IsZero"(ZZ_c a)
@@ -92,4 +86,7 @@ cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     long ZZ_Jacobi "Jacobi"(ZZ_c a, ZZ_c n)
     void ZZ_SqrRootMod "SqrRootMod"(ZZ_c x, ZZ_c a, ZZ_c n)
 
-    long ZZ_remove(ZZ_c x, ZZ_c a, ZZ_c p) # a la mpz_remove.  Written in ntlwrap.cpp.
+
+cdef extern from "ntlwrap_impl.h":
+    cdef int ZZ_to_int(ZZ_c* x)
+    long ZZ_remove(ZZ_c x, ZZ_c a, ZZ_c p)  # like mpz_remove.

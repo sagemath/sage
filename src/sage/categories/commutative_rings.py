@@ -45,6 +45,46 @@ class CommutativeRings(CategoryWithAxiom):
         True
 
     """
+    class ParentMethods:
+        def _test_divides(self, **options):
+            r"""
+            Run generic tests on the method :meth:`divides`.
+
+            EXAMPLES::
+
+                sage: ZZ._test_divides()
+            """
+            tester = self._tester(**options)
+
+            # 1. is there a divides method ?
+            a = self.an_element()
+            try:
+                a.divides
+            except AttributeError:
+                return
+
+            # 2. divisibility of 0 and 1
+            z = self.zero()
+            o = self.one()
+
+            tester.assertTrue(z.divides(z))
+            tester.assertTrue(o.divides(o))
+            tester.assertTrue(o.divides(z))
+            tester.assertTrue(z.divides(o) is self.is_zero())
+
+            if not self.is_exact():
+                return
+
+            # 3. divisibility of some elements
+            S = tester.some_elements()
+            for a,b in tester.some_elements(repeat=2):
+                try:
+                    test = a.divides(a*b)
+                except NotImplementedError:
+                    pass
+                else:
+                    tester.assertTrue(test)
+
     class ElementMethods:
         pass
 
@@ -74,7 +114,7 @@ class CommutativeRings(CategoryWithAxiom):
                 primitive element `z` of `GF(q^k)`. The minimal polynomial of
                 `z^s` over `GF(q)` is given by
 
-                .. math::
+                .. MATH::
 
                          M_s(x) = \prod_{i \in C_s} (x - z^i),
 
@@ -85,7 +125,7 @@ class CommutativeRings(CategoryWithAxiom):
                 .. NOTE::
 
                     When `R = \ZZ / n \ZZ` the smallest element of each coset is
-                    sometimes callled a *coset leader*. This function returns
+                    sometimes called a *coset leader*. This function returns
                     sorted lists so that the coset leader will always be the
                     first element of the coset.
 
@@ -168,7 +208,7 @@ class CommutativeRings(CategoryWithAxiom):
                     sage: R = cartesian_product([GF(7), Zmod(14)])
                     sage: a = R((3,5))
                     sage: R.cyclotomic_cosets((3,5), [(1,1)])
-                    [[(1, 1), (3, 5), (2, 11), (6, 13), (4, 9), (5, 3)]]
+                    [[(1, 1), (2, 11), (3, 5), (4, 9), (5, 3), (6, 13)]]
                 """
                 q = self(q)
 

@@ -1,12 +1,12 @@
 # distutils: depends = NTL/ZZ.h
 
-include "cysignals/signals.pxi"
-include "cysignals/memory.pxi"
+from cysignals.memory cimport sig_free
+from cysignals.signals cimport sig_off
 
 # Unset the signal handler and create a string from the buffer,
 # then free the memory in the buffer.
-cdef extern from "sage/libs/ntl/ntlwrap.h":
-    void del_charstar(char*)
+cdef extern from *:
+    void del_charstar "delete[]"(char*)
 
 cdef object string(char* s):
     """

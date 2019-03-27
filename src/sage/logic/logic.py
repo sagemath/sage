@@ -278,7 +278,7 @@ class SymbolicLogic:
 
         OUTPUT:
 
-        A new staement which or'd the given statements together.
+        A new statement which or'd the given statements together.
 
         EXAMPLES::
 
@@ -303,7 +303,8 @@ class SymbolicLogic:
              ['a', 'b', 'b']]       
         """
         toks = ['OPAREN'] + statement1[0] + ['OR'] + statement2[0] + ['CPAREN']
-        variables = dict(statement1[1].items() + statement2[1].items())
+        variables = dict(statement1[1])
+        variables.update(statement2[1])
         var_order = statement1[2] + statement2[2]
         return [toks, variables, var_order]
 
@@ -866,10 +867,10 @@ def tokenize(s, toks):
                 i += 1
 
             if len(tok) > 0:
-                if tok[0] not in string.letters:
+                if tok[0] not in string.ascii_letters:
                     valid = 0
                 for c in tok:
-                    if c not in string.letters and c not in string.digits and c != '_':
+                    if c not in string.ascii_letters and c not in string.digits and c != '_':
                         valid = 0
 
             if valid == 1:

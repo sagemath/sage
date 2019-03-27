@@ -1,15 +1,12 @@
 """
 Automorphisms of Quadratic Forms
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.libs.pari.all import pari
 from sage.matrix.constructor import Matrix
@@ -21,12 +18,15 @@ from sage.arith.all import GCD
 
 
 @cached_method
-def basis_of_short_vectors(self, show_lengths=False, safe_flag=None):
-    """
-    Return a basis for `ZZ^n` made of vectors with minimal lengths Q(`v`).
+def basis_of_short_vectors(self, show_lengths=False):
+    r"""
+    Return a basis for `\ZZ^n` made of vectors with minimal lengths Q(`v`).
 
-    OUTPUT: a tuple of vectors, and optionally a tuple of values for
-    each vector.
+    OUTPUT:
+
+    a tuple of vectors, and optionally a tuple of values for each vector.
+
+    This uses :pari:`qfminim`.
 
     EXAMPLES::
 
@@ -46,17 +46,13 @@ def basis_of_short_vectors(self, show_lengths=False, safe_flag=None):
         ...
         ValueError: vector is immutable; please change a copy instead (use copy())
     """
-    if safe_flag is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(18673, "The safe_flag argument to basis_of_short_vectors() is deprecated and no longer used")
-
-    ## Set an upper bound for the number of vectors to consider
+    # Set an upper bound for the number of vectors to consider
     Max_number_of_vectors = 10000
 
-    ## Generate a PARI matrix for the associated Hessian matrix
-    M_pari = self._pari_()
+    # Generate a PARI matrix for the associated Hessian matrix
+    M_pari = self.__pari__()
 
-    ## Run through all possible minimal lengths to find a spanning set of vectors
+    # Run through all possible minimal lengths to find a spanning set of vectors
     n = self.dim()
     M1 = Matrix([[0]])
     vec_len = 0
@@ -69,32 +65,32 @@ def basis_of_short_vectors(self, show_lengths=False, safe_flag=None):
             new_vec = vector([ZZ(x) for x in list(pari_mat[i])])
             vector_list.append(new_vec)
 
-        ## Make a matrix from the short vectors
-        if len(vector_list) > 0:
+        # Make a matrix from the short vectors
+        if vector_list:
             M1 = Matrix(vector_list)
 
-    ## Organize these vectors by length (and also introduce their negatives)
+    # Organize these vectors by length (and also introduce their negatives)
     max_len = vec_len // 2
     vector_list_by_length = [[] for _ in range(max_len + 1)]
     for v in vector_list:
         l = self(v)
         vector_list_by_length[l].append(v)
-        vector_list_by_length[l].append(vector([-x  for x in v]))
+        vector_list_by_length[l].append(vector([-x for x in v]))
 
-    ## Make a matrix from the column vectors (in order of ascending length).
+    # Make a matrix from the column vectors (in order of ascending length).
     sorted_list = []
     for i in range(len(vector_list_by_length)):
         for v in vector_list_by_length[i]:
             sorted_list.append(v)
     sorted_matrix = Matrix(sorted_list).transpose()
 
-    ## Determine a basis of vectors of minimal length
+    # Determine a basis of vectors of minimal length
     pivots = sorted_matrix.pivots()
     basis = tuple(sorted_matrix.column(i) for i in pivots)
     for v in basis:
         v.set_immutable()
 
-    ## Return the appropriate result
+    # Return the appropriate result
     if show_lengths:
         pivot_lengths = tuple(self(v) for v in basis)
         return basis, pivot_lengths
@@ -106,11 +102,11 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     """
     Return a list of lists of short vectors `v`, sorted by length, with
     Q(`v`) < len_bound.
-    
+
     INPUT:
 
     - ``len_bound`` -- bound for the length of the vectors.
-    
+
     - ``up_to_sign_flag`` -- (default: ``False``) if set to True, then
       only one of the vectors of the pair `[v, -v]` is listed.
 
@@ -172,19 +168,20 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
         ...
         ValueError: Quadratic form must be positive definite in order to enumerate short vectors
 
-    Check that PARI doesn't return vectors which are too long::
+    Check that PARI does not return vectors which are too long::
 
         sage: Q = QuadraticForm(matrix(2, [72, 12, 12, 120]))
         sage: len_bound_pari = 2*22953421 - 2; len_bound_pari
         45906840
-        sage: vs = list(Q._pari_().qfminim(len_bound_pari)[2])  # long time (18s on sage.math, 2014)
+        sage: vs = list(Q.__pari__().qfminim(len_bound_pari)[2])  # long time (18s on sage.math, 2014)
         sage: v = vs[0]; v  # long time
         [66, -623]~
-        sage: v.Vec() * Q._pari_() * v  # long time
+        sage: v.Vec() * Q.__pari__() * v  # long time
         45902280
     """
-    if not self.is_positive_definite() :
-        raise ValueError( "Quadratic form must be positive definite in order to enumerate short vectors" )
+    if not self.is_positive_definite():
+        raise ValueError("Quadratic form must be positive definite "
+                         "in order to enumerate short vectors")
 
     if len_bound <= 0:
         return []
@@ -195,10 +192,10 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     # Adjust length for PARI. We need to subtract 1 because PARI returns
     # returns vectors of length less than or equal to b, but we want
     # strictly less. We need to double because the matrix is doubled.
-    len_bound_pari = 2*(len_bound - 1)
+    len_bound_pari = 2 * (len_bound - 1)
 
     # Call PARI's qfminim()
-    parilist = self._pari_().qfminim(len_bound_pari)[2].Vec()
+    parilist = self.__pari__().qfminim(len_bound_pari)[2].Vec()
 
     # List of lengths
     parilens = pari(r"(M,v) -> vector(#v, i, (v[i]~ * M * v[i])\2)")(self, parilist)
@@ -212,7 +209,7 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
         if length < len_bound:
             sagevec = V(list(parilist[i]))
             vec_sorted_list[length].append(sagevec)
-            if not up_to_sign_flag :
+            if not up_to_sign_flag:
                 vec_sorted_list[length].append(-sagevec)
 
     # Add the zero vector by hand
@@ -222,13 +219,15 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
 
 
 def short_primitive_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
-    """
+    r"""
     Return a list of lists of short primitive vectors `v`, sorted by length, with
     Q(`v`) < len_bound.  The list in output `[i]` indexes all vectors of
-    length `i`.  If the up_to_sign_flag is set to True, then only one of
+    length `i`.  If the up_to_sign_flag is set to ``True``, then only one of
     the vectors of the pair `[v, -v]` is listed.
 
-    Note:  This processes the PARI/GP output to always give elements of type `ZZ`.
+    .. NOTE::
+
+        This processes the PARI/GP output to always give elements of type `\ZZ`.
 
     OUTPUT: a list of lists of vectors.
 
@@ -244,19 +243,22 @@ def short_primitive_vector_list_up_to_length(self, len_bound, up_to_sign_flag=Fa
         sage: Q.short_primitive_vector_list_up_to_length(5, True)
         [[], [(1, 0, 0, 0)], [], [(0, 1, 0, 0)], [(1, 1, 0, 0), (1, -1, 0, 0)]]
     """
-    ## Get a list of short vectors
+    # Get a list of short vectors
     full_vec_list = self.short_vector_list_up_to_length(len_bound, up_to_sign_flag)
 
-    ## Make a new list of the primitive vectors
-    prim_vec_list = [[v  for v in L  if GCD(list(v)) == 1]   for L in full_vec_list]                 ## TO DO:  Arrange for GCD to take a vector argument!
+    # Make a new list of the primitive vectors
+    prim_vec_list = [[v for v in L if GCD(v) == 1]
+                     for L in full_vec_list]
 
-    ## Return the list of primitive vectors
+    # Return the list of primitive vectors
     return prim_vec_list
 
 
 def _compute_automorphisms(self):
     """
     Call PARI to compute the automorphism group of the quadratic form.
+
+    This uses :pari:`qfauto`.
 
     OUTPUT: None, this just caches the result.
 
@@ -279,7 +281,7 @@ def _compute_automorphisms(self):
     if hasattr(self, "__automorphisms_pari"):
         return
 
-    A = self._pari_().qfauto()
+    A = self.__pari__().qfauto()
     self.__number_of_automorphisms = A[0]
     self.__automorphisms_pari = A[1]
 
@@ -354,28 +356,28 @@ def automorphisms(self):
         sage: aut = Q.automorphisms()
         sage: len(aut)
         16
-        sage: print([Q(M) == Q for M in aut])
-        [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
+        sage: all(Q(M) == Q for M in aut)
+        True
 
         sage: Q = QuadraticForm(ZZ, 3, [2, 1, 2, 2, 1, 3])
-        sage: Q.automorphisms()
+        sage: sorted(Q.automorphisms())
         [
-        [1 0 0]  [-1  0  0]
-        [0 1 0]  [ 0 -1  0]
-        [0 0 1], [ 0  0 -1]
+        [-1  0  0]  [1 0 0]
+        [ 0 -1  0]  [0 1 0]
+        [ 0  0 -1], [0 0 1]
         ]
     """
-    return [x.matrix() for x in self.automorphism_group().list()]
+    return [x.matrix() for x in self.automorphism_group()]
 
 
-def number_of_automorphisms(self, recompute=None):
+def number_of_automorphisms(self):
     """
-    Return a list of the number of automorphisms (of det 1 and -1) of
+    Return the number of automorphisms (of det 1 and -1) of
     the quadratic form.
 
     OUTPUT:
 
-        an integer >= 2.
+    an integer >= 2.
 
     EXAMPLES::
 
@@ -391,15 +393,12 @@ def number_of_automorphisms(self, recompute=None):
         sage: 2^4 * factorial(4)
         384
     """
-    if recompute is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(6326, "the 'recompute' argument is no longer used")
-
     try:
         return self.__number_of_automorphisms
     except AttributeError:
         self._compute_automorphisms()
         return self.__number_of_automorphisms
+
 
 def set_number_of_automorphisms(self, num_autos):
     """
@@ -409,9 +408,6 @@ def set_number_of_automorphisms(self, num_autos):
     The fact that this result was set externally is recorded in the
     internal list of external initializations, accessible by the
     method list_external_initializations().
-
-    Return a list of the number of
-    automorphisms (of det 1 and -1) of the quadratic form.
 
     OUTPUT: None
 
@@ -425,9 +421,8 @@ def set_number_of_automorphisms(self, num_autos):
         -3
         sage: Q.list_external_initializations()
         ['number_of_automorphisms']
-
     """
     self.__number_of_automorphisms = num_autos
     text = 'number_of_automorphisms'
-    if not text in self._external_initialization_list:
+    if text not in self._external_initialization_list:
         self._external_initialization_list.append(text)

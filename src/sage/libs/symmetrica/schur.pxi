@@ -402,9 +402,10 @@ def compute_schur_with_alphabet_det_symmetrica(part, length, alphabet='x'):
 
 def part_part_skewschur_symmetrica(outer, inner):
     """
-    Returns the skew schur function s_{outer/inner}
+    Return the skew Schur function s_{outer/inner}.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.part_part_skewschur([3,2,1],[2,1])
         s[1, 1, 1] + 2*s[2, 1] + s[3]
     """

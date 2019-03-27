@@ -74,18 +74,19 @@ Check that Cython source code appears in tracebacks::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
-    sage: shell.run_cell('1/0')
-    ---------------------------------------------------------------------------
-    ZeroDivisionError                         Traceback (most recent call last)
+    sage: print("dummy line"); shell.run_cell('1/0') # see #25320 for the reason of the `...` and the dummy line in this test
+    dummy line
+    ...
+    ZeroDivisionError...Traceback (most recent call last)
     <ipython-input-...> in <module>()
     ----> 1 Integer(1)/Integer(0)
     <BLANKLINE>
-    .../src/sage/rings/integer.pyx in sage.rings.integer.Integer.__div__ (.../cythonized/sage/rings/integer.c:...)()
-       ...          if type(left) is type(right):
-       ...              if mpz_sgn((<Integer>right).value) == 0:
+    .../sage/rings/integer.pyx in sage.rings.integer.Integer.__div__ (.../cythonized/sage/rings/integer.c:...)()
+       ....:        if type(left) is type(right):
+       ....:            if mpz_sgn((<Integer>right).value) == 0:
     -> ...                  raise ZeroDivisionError("rational division by zero")
-       ...              x = <Rational> Rational.__new__(Rational)
-       ...              mpq_div_zz(x.value, (<Integer>left).value, (<Integer>right).value)
+       ....:            x = <Rational> Rational.__new__(Rational)
+       ....:            mpq_div_zz(x.value, (<Integer>left).value, (<Integer>right).value)
     <BLANKLINE>
     ZeroDivisionError: rational division by zero
     sage: shell.quit()
@@ -125,7 +126,7 @@ def embedded():
     import sage.server.support
     return sage.server.support.EMBEDDED_MODE
 
-#TODO: This global variable do_preparse should be associtated with an
+#TODO: This global variable do_preparse should be associated with an
 #IPython InteractiveShell as opposed to a global variable in this
 #module.
 _do_preparse=True
@@ -355,11 +356,8 @@ class SageTestShell(SageShellOverride, TerminalInteractiveShell):
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: rc = shell.run_cell('1/0')
-            ---------------------------------------------------------------------------
-            ZeroDivisionError                         Traceback (most recent call last)
-            ...
-            ZeroDivisionError: rational division by zero
+            sage: rc = shell.run_cell('2^50')
+            1125899906842624
             sage: rc is None
             True
             sage: shell.quit()
@@ -477,7 +475,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
            a list of hold onto interface objects and keep them from being
            garbage collected
 
-        .. seealso:: :func:`interface_shell_embed`
+        .. SEEALSO:: :func:`interface_shell_embed`
 
         EXAMPLES::
 
@@ -587,10 +585,7 @@ def interface_shell_embed(interface):
         sage: shell = interface_shell_embed(gap)
         sage: shell.run_cell('List( [1..10], IsPrime )')
         [ false, true, true, false, true, false, true, false, false, false ]
-        <repr(<IPython.core.interactiveshell.ExecutionResult at 0x...>) failed: 
-        AttributeError: type object 'ExecutionResult' has no attribute '__qualname__'>
-
-    Note that the repr error is https://github.com/ipython/ipython/issues/9756
+        <ExecutionResult object at ..., execution_count=None error_before_exec=None error_in_exec=None result=[ false, true, true, false, true, false, true, false, false, false ]>
     """
     cfg = sage_ipython_config.copy()
     ipshell = InteractiveShellEmbed(config=cfg,

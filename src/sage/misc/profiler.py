@@ -27,10 +27,10 @@ class Profiler:
 
     It's probably not a good idea to use this class in an inner loop :-)
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: def f():                        # not tested
-        ...       p = Profiler()              # not tested
+        ....:     p = Profiler()              # not tested
 
     Calling ``p(message)`` creates a checkpoint::
 
@@ -60,7 +60,7 @@ class Profiler:
            15.240s -- line 17: y = factor(25)
          5000.190s -- last step
 
-    .. seealso:: :func:`runsnake`
+    .. SEEALSO:: :func:`runsnake`
 
     .. todo::
 

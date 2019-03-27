@@ -116,7 +116,7 @@ say, ``/home/mvngu/totient.sage``, organizing it as follows to enhance
 readability. ::
 
     L = []
-    for n in xrange(1, 21):
+    for n in range(1, 21):
         if gcd(n, 20) == 1:
             L.append(n)
     L
@@ -400,7 +400,7 @@ practice. In Sage, we can obtain an integer representation of our
 message as follows::
 
     sage: m = "HELLOWORLD"
-    sage: m = map(ord, m); m
+    sage: m = [ord(x) for x in m]; m
     [72, 69, 76, 76, 79, 87, 79, 82, 76, 68]
     sage: m = ZZ(list(reversed(m)), 100) ; m
     72697676798779827668

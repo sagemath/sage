@@ -69,8 +69,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
     - :meth:`ComplexReflectionOrGeneralizedCoxeterGroups.ElementMethods.apply_simple_reflection_right`
     - :meth:`ComplexReflectionOrGeneralizedCoxeterGroups.ElementMethods._mul_`
 
-    It's recommended to implement either `_mul` or both
-    `apply_simple_reflection_left` and `apply_simple_reflection_right`.
+    It's recommended to implement either ``_mul_`` or both
+    ``apply_simple_reflection_left`` and ``apply_simple_reflection_right``.
 
     .. SEEALSO::
 
@@ -83,7 +83,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
         sage: C = ComplexReflectionOrGeneralizedCoxeterGroups(); C
         Category of complex reflection or generalized coxeter groups
         sage: C.super_categories()
-        [Category of finitely generated groups]
+        [Category of finitely generated enumerated groups]
 
         sage: C.required_methods()
         {'element': {'optional': ['reflection_length'],
@@ -120,8 +120,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             is *reducible* if its simple reflections can be split in
             two sets `X` and `Y` such that the elements of `X` commute
             with that of `Y`. In particular, the group is then direct
-            product of `\langle X\rangle` and `\langle Y\rangle`. It's
-            *irreducible* otherwise.
+            product of `\langle X \rangle` and `\langle Y \rangle`.
+            It's *irreducible* otherwise.
 
             EXAMPLES::
 
@@ -208,8 +208,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
         @cached_method
         def simple_reflections(self):
             r"""
-            Return the simple reflections `(s_i)_{i\in I}` of ``self`` as a family
-            indexed by :meth:`index_set`.
+            Return the simple reflections `(s_i)_{i\in I}` of ``self`` as
+            a family indexed by :meth:`index_set`.
 
             .. SEEALSO::
 
@@ -361,7 +361,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 sage: W = SymmetricGroup(4); W
                 Symmetric group of order 4! as a permutation group
                 sage: W.an_element()               # indirect doctest
-                (1,2,3,4)
+                (2,3,4)
 
             For a complex reflection group::
 
@@ -464,7 +464,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             .. SEEALSO::
 
                 - :meth:`reflection`
-                - :meth:`reflections_index_set`
+                - :meth:`reflection_index_set`
 
             EXAMPLES::
 
@@ -663,7 +663,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             .. SEEALSO::
 
                 - :meth:`index_set`
-                - :meth:`reflections_index_set`
+                - :meth:`reflection_index_set`
                 - :meth:`hyperplane_index_set`
                 - :meth:`~ComplexReflectionOrGeneralizedCoxeterGroups.ElementMethods.apply_simple_reflections`
                 - :meth:`~CoxeterGroup.ElementMethods.reduced_word`
@@ -682,7 +682,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 sage: s[0]*s[2]*s[0]*s[1]
                 (0, 3, 1, 2)
 
-            We now experiment with the the different values for
+            We now experiment with the different values for
             ``word_type`` for the colored symmetric group::
 
                 sage: W = ColoredPermutations(1,4)
@@ -691,6 +691,21 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
                 sage: W.from_reduced_word([1, 2, 3]).reduced_word()
                 [1, 2, 3]
+                              
+                sage: W = WeylGroup("A3", prefix='s')
+                sage: AS = W.domain()
+                sage: r1 = AS.roots()[4]
+                sage: r1
+                (0, 1, 0, -1)
+                sage: r2 = AS.roots()[5]
+                sage: r2
+                (0, 0, 1, -1)
+                sage: W.from_reduced_word([r1, r2], word_type='all')
+                s3*s2
+                
+                sage: W = WeylGroup("G2", prefix='s')
+                sage: W.from_reduced_word(W.domain().positive_roots(), word_type='all')
+                s1*s2
 
                 sage: W = ReflectionGroup((1,1,4))           # optional - gap3
                 sage: W.from_reduced_word([1,2,3], word_type='all').reduced_word()  # optional - gap3
@@ -738,9 +753,9 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             ALGORITHM:
 
-                Take the connected components of the graph on the
-                index set with edges (i,j) where s[i] and s[j] don't
-                commute.
+            Take the connected components of the graph on the
+            index set with edges ``(i,j)``, where ``s[i]`` and
+            ``s[j]`` do not commute.
             """
             I = self.index_set()
             s = self.simple_reflections()
@@ -1050,6 +1065,20 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 (0, 1, 3, 2)
 
 
+                sage: W = WeylGroup("A3", prefix='s')
+                sage: w = W.an_element(); w
+                s1*s2*s3
+                sage: AS = W.domain()
+                sage: r1 = AS.roots()[4]
+                sage: r1
+                (0, 1, 0, -1)
+                sage: r2 = AS.roots()[5]
+                sage: r2
+                (0, 0, 1, -1)
+                sage: w.apply_reflections([r1, r2], word_type='all')
+                s1
+                
+                
                 sage: W = ReflectionGroup((1,1,3))          # optional - gap3
                 sage: W.one().apply_reflections([1], word_type='distinguished')   # optional - gap3
                 (1,4)(2,3)(5,6)

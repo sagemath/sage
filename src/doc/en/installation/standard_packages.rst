@@ -57,7 +57,7 @@ Here is a list of some of the software included with Sage:
 
 * lcalc: Rubinstein's L-functions calculator
 
-* libfplll: contains different implementations of the floating-point LLL
+* fplll: contains different implementations of the floating-point LLL
   reduction algorithm, offering different speed/guarantees ratios
 
 * linbox: C++ template library for exact, high-performance linear

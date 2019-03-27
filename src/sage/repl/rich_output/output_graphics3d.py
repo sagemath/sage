@@ -17,6 +17,7 @@ This module defines the rich output types for 3-d scenes.
 
 import os
 
+from sage.cpython.string import bytes_to_str, FS_ENCODING
 from sage.repl.rich_output.output_basic import OutputBase
 from sage.repl.rich_output.buffer import OutputBuffer
 
@@ -66,7 +67,8 @@ class OutputSceneJmol(OutputBase):
             OutputSceneJmol container
             sage: filename = rich_output.launch_script_filename();  filename
             '/.../scene.spt'
-            sage: print(open(filename).read())
+            sage: with open(filename) as fobj:
+            ....:     print(fobj.read())
             set defaultdirectory "/.../scene.spt.zip"
             script SCRIPT
         """
@@ -79,7 +81,7 @@ class OutputSceneJmol(OutputBase):
             f.write('set defaultdirectory "{0}"\n'.format(scene_filename))
             f.write('script SCRIPT\n')
         return script_filename
-            
+
     @classmethod
     def example(cls):
         r"""
@@ -91,7 +93,7 @@ class OutputSceneJmol(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputSceneJmol`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputSceneJmol
@@ -100,25 +102,25 @@ class OutputSceneJmol(OutputBase):
 
             sage: rich_output.scene_zip
             buffer containing 654 bytes
-            sage: rich_output.scene_zip.get().startswith('PK')
+            sage: rich_output.scene_zip.get().startswith(b'PK')
             True
 
             sage: rich_output.preview_png
             buffer containing 608 bytes
-            sage: rich_output.preview_png.get().startswith('\x89PNG')
+            sage: rich_output.preview_png.get().startswith(b'\x89PNG')
             True
         """
         from sage.env import SAGE_EXTCODE
         example_png_filename = os.path.join(
             SAGE_EXTCODE, 'doctest', 'rich_output', 'example.png')
-        with open(example_png_filename) as f:
+        with open(example_png_filename, 'rb') as f:
             example_png = f.read()
         scene_zip_filename = os.path.join(
             SAGE_EXTCODE, 'doctest', 'rich_output', 'example_jmol.spt.zip')
-        with open(scene_zip_filename) as f:
+        with open(scene_zip_filename, 'rb') as f:
             scene_zip = f.read()
         return cls(scene_zip, example_png)
-        
+
 
 class OutputSceneCanvas3d(OutputBase):
 
@@ -149,7 +151,7 @@ class OutputSceneCanvas3d(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputSceneCanvas3d`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputSceneCanvas3d
@@ -157,15 +159,34 @@ class OutputSceneCanvas3d(OutputBase):
             OutputSceneCanvas3d container
 
             sage: rich_output.canvas3d
-            buffer containing 649 bytes
-            sage: rich_output.canvas3d.get()
-            "[{vertices:[{x:1,y:1,z:1},...{x:1,y:-1,z:-1}],faces:[[0,1,2,3]],color:'008000'}]"
+            buffer containing 829 bytes
+            sage: rich_output.canvas3d.get_str()
+            '[{"vertices":[{"x":1,"y":1,"z":1},...{"x":1,"y":-1,"z":-1}],"faces":[[0,1,2,3]],"color":"008000"}]'
         """
         from sage.env import SAGE_EXTCODE
         filename = os.path.join(
             SAGE_EXTCODE, 'doctest', 'rich_output', 'example.canvas3d')
         return cls(OutputBuffer.from_file(filename))
-        
+
+
+class OutputSceneThreejs(OutputBase):
+
+    def __init__(self, html):
+        """
+        Three.js Scene
+
+        INPUT:
+
+        - ``html`` -- string/bytes. The Three.js HTML data.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output.output_catalog import OutputSceneThreejs
+            sage: OutputSceneThreejs('<html></html>')
+            OutputSceneThreejs container
+        """
+        self.html = OutputBuffer(html)
+
 
 class OutputSceneWavefront(OutputBase):
 
@@ -176,12 +197,12 @@ class OutputSceneWavefront(OutputBase):
         The Wavefront format consists of two files, an ``.obj`` file
         defining the geometry data (mesh points, normal vectors, ...)
         together with a ``.mtl`` file defining texture data.
-        
+
         INPUT:
 
         - ``obj`` -- bytes. The Wavefront obj file format describing
           the mesh shape.
-        
+
         - ``mtl`` -- bytes. The Wavefront mtl file format describing
           textures.
 
@@ -234,7 +255,7 @@ class OutputSceneWavefront(OutputBase):
         if os.path.split(filename)[0]:
             raise ValueError('must be pure filename, got directory component: {0}'
                              .format(filename))
-        
+
     def mtllib(self):
         """
         Return the ``mtllib`` filename
@@ -254,12 +275,13 @@ class OutputSceneWavefront(OutputBase):
             sage: rich_output.mtllib()
             'scene.mtl'
         """
-        marker = 'mtllib '
+        marker = b'mtllib '
         for line in self.obj.get().splitlines():
             if line.startswith(marker):
-                return line[len(marker):]
+                return bytes_to_str(line[len(marker):], FS_ENCODING,
+                                    'surrogateescape')
         return 'scene.mtl'
-        
+
     def obj_filename(self):
         """
         Return the file name of the ``.obj`` file
@@ -279,7 +301,8 @@ class OutputSceneWavefront(OutputBase):
             OutputSceneWavefront container
             sage: obj = rich_output.obj_filename();  obj
             '/.../scene.obj'
-            sage: print(open(obj).read())
+            sage: with open(obj) as fobj:
+            ....:     print(fobj.read())
             mtllib scene.mtl
             g obj_1
             ...
@@ -292,7 +315,8 @@ class OutputSceneWavefront(OutputBase):
             True
             sage: os.path.dirname(obj) == os.path.dirname(mtl)
             True
-            sage: print(open(mtl).read())
+            sage: with open(mtl) as fobj:
+            ....:     print(fobj.read())
             newmtl texture177
             Ka 0.2 0.2 0.5
             ...
@@ -317,7 +341,7 @@ class OutputSceneWavefront(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputSceneCanvas3d`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputSceneWavefront
@@ -326,12 +350,12 @@ class OutputSceneWavefront(OutputBase):
 
             sage: rich_output.obj
             buffer containing 227 bytes
-            sage: rich_output.obj.get()
+            sage: rich_output.obj.get_str()
             'mtllib scene.mtl\ng obj_1\n...\nf 1 5 6 2\nf 1 4 7 5\nf 6 5 7 8\nf 7 4 3 8\nf 3 2 6 8\n'
 
             sage: rich_output.mtl
             buffer containing 80 bytes
-            sage: rich_output.mtl.get()
+            sage: rich_output.mtl.get_str()
             'newmtl texture177\nKa 0.2 0.2 0.5\nKd 0.4 0.4 1.0\nKs 0.0 0.0 0.0\nillum 1\nNs 1\nd 1\n'
         """
         from sage.env import SAGE_EXTCODE

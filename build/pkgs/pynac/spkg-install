@@ -1,44 +1,18 @@
-#!/usr/bin/env bash
 ###########################################
 ## pynac
 ###########################################
 
-
-# The makefile system sets this variable, which screws up autoconf...
-unset PYTHON
-
-if [ "$SAGE_LOCAL" = "" ]; then
-    echo "SAGE_LOCAL undefined ... exiting";
-    echo "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
-if [ "$SAGE64" = "yes" ]; then
-    echo "Building a 64-bit version of pynac"
-    CXXFLAGS="-m64 -O2 -g"; export CXXFLAGS
-    LDFLAGS="-m64 $LDFLAGS"; export LDFLAGS
-    CC="$CC -m64" ; export CC
-    CXX="$CXX -m64" ; export CXX
-fi
+export CXXFLAGS="-O2 -g $CXXFLAGS"
 
 WORKDIR=${PWD}/src
 PYNACDIR=${WORKDIR}
-
-patch()
-{
-    true
-}
 
 build_pynac()
 {
     cd ${PYNACDIR}
     PKG_CONFIG_PATH=${SAGE_LOCAL}/lib/pkgconfig; export PKG_CONFIG_PATH
-    ./configure --disable-static --prefix=${SAGE_LOCAL} --with-giac=no --libdir="$SAGE_LOCAL/lib"
-    $MAKE
-    if [ $? -ne 0 ]; then
-        echo "Error building pynac."
-        exit 1
-    fi
+    sdh_configure --disable-static --with-giac=no PYTHON=sage-python23
+    sdh_make
     cd ${WORKDIR}
 }
 
@@ -49,11 +23,7 @@ install_pynac()
     rm -rf ${SAGE_LOCAL}/include/ginac
     rm -rf ${SAGE_LOCAL}/include/pynac
     cd ${PYNACDIR}
-    $MAKE install
-    if [ $? -ne 0 ]; then
-        echo "Error installing pynac."
-        exit 1
-    fi
+    sdh_make_install
     cd ${WORKDIR}
 }
 
@@ -61,8 +31,6 @@ clean_pynac()
 {
     true
 }
-
-patch
 
 
 cd src

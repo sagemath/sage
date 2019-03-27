@@ -26,7 +26,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
     .. SEEALSO::
 
-        :class:`FinitePosets`, :class:`LatticePosets`, :class:`LatticePoset`
+        :class:`FinitePosets`, :class:`LatticePosets`, :class:`~sage.combinat.posets.lattices.FiniteLatticePoset`
 
     TESTS::
 
@@ -55,9 +55,9 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
             .. SEEALSO::
 
-                :meth:`meet_irreducibles`,
-                :meth:`~sage.combinat.posets.lattices.FiniteLatticePoset.double_irreducibles`,
-                :meth:`meet_irreducibles_poset`
+                - Dual function: :meth:`meet_irreducibles`
+                - Other: :meth:`~sage.combinat.posets.lattices.FiniteLatticePoset.double_irreducibles`,
+                  :meth:`join_irreducibles_poset`
             """
             return [x for x in self if len(self.lower_covers(x)) == 1]
 
@@ -75,7 +75,10 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 sage: L.join_irreducibles_poset()
                 Finite poset containing 3 elements
 
-            .. SEEALSO:: :meth:`join_irreducibles`
+            .. SEEALSO::
+
+                - Dual function: :meth:`meet_irreducibles_poset`
+                - Other: :meth:`join_irreducibles`
             """
             return self.subposet(self.join_irreducibles())
 
@@ -95,9 +98,9 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
             .. SEEALSO::
 
-                :meth:`join_irreducibles`,
-                :meth:`~sage.combinat.posets.lattices.FiniteLatticePoset.double_irreducibles`,
-                :meth:`meet_irreducibles_poset`
+                - Dual function: :meth:`join_irreducibles`
+                - Other: :meth:`~sage.combinat.posets.lattices.FiniteLatticePoset.double_irreducibles`,
+                  :meth:`meet_irreducibles_poset`
             """
             return [x for x in self if len(self.upper_covers(x)) == 1]
 
@@ -115,10 +118,51 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 sage: L.join_irreducibles_poset()
                 Finite poset containing 3 elements
 
-            .. SEEALSO:: :meth:`meet_irreducibles`
+            .. SEEALSO::
+
+                - Dual function: :meth:`join_irreducibles_poset`
+                - Other: :meth:`meet_irreducibles`
             """
             return self.subposet(self.meet_irreducibles())
 
+        def irreducibles_poset(self):
+            """
+            Return the poset of meet- or join-irreducibles of the lattice.
+
+            A *join-irreducible* element of a lattice is an element with
+            exactly one lower cover. Dually a *meet-irreducible* element
+            has exactly one upper cover.
+
+            This is the smallest poset with completion by cuts being
+            isomorphic to the lattice. As a special case this returns
+            one-element poset from one-element lattice.
+
+            .. SEEALSO::
+
+                :meth:`~sage.combinat.posets.posets.FinitePoset.completion_by_cuts`.
+
+            EXAMPLES::
+
+                sage: L = LatticePoset({1: [2, 3, 4], 2: [5, 6], 3: [5],
+                ....:                   4: [6], 5: [9, 7], 6: [9, 8], 7: [10],
+                ....:                   8: [10], 9: [10], 10: [11]})
+                sage: L_ = L.irreducibles_poset()
+                sage: sorted(L_)
+                [2, 3, 4, 7, 8, 9, 10, 11]
+                sage: L_.completion_by_cuts().is_isomorphic(L)
+                True
+
+            TESTS::
+
+                sage: LatticePoset().irreducibles_poset()
+                Finite poset containing 0 elements
+                sage: posets.ChainPoset(1).irreducibles_poset()
+                Finite poset containing 1 elements
+            """
+            if self.cardinality() == 1:
+                from sage.combinat.posets.posets import Poset
+                return Poset({self[0]: []})
+            return self.subposet(self.join_irreducibles()+self.meet_irreducibles())
 
         ##########################################################################
         # Lattice morphisms
@@ -155,7 +199,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
             We construct the boolean lattice `B_2`::
 
-                sage: B = Posets.BooleanLattice(2)
+                sage: B = posets.BooleanLattice(2)
                 sage: B.cover_relations()
                 [[0, 1], [0, 2], [1, 3], [2, 3]]
 

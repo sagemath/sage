@@ -17,11 +17,11 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from cysignals.signals cimport sig_on, sig_off
+from cysignals.memory cimport sig_malloc, sig_free
+
 from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.ulong_extras cimport *
-
-include "cysignals/memory.pxi"
-include "cysignals/signals.pxi"
 
 
 cdef inline celement *celement_new(unsigned long n):
@@ -35,7 +35,8 @@ cdef inline int celement_delete(nmod_poly_t e, unsigned long n):
 
 cdef inline int celement_construct(nmod_poly_t e, unsigned long n):
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
 
         sage: Q.<x> = GF(7)[]
@@ -44,7 +45,8 @@ cdef inline int celement_construct(nmod_poly_t e, unsigned long n):
 
 cdef inline int celement_destruct(nmod_poly_t e, unsigned long n):
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: del x
 
@@ -55,7 +57,8 @@ cdef inline int celement_destruct(nmod_poly_t e, unsigned long n):
 
 cdef inline int celement_gen(nmod_poly_t e, long i, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
 
         sage: Q.<x> = GF(7)[]
@@ -68,7 +71,8 @@ cdef object celement_repr(nmod_poly_t e, unsigned long n):
 
 cdef inline int celement_set(nmod_poly_t res, nmod_poly_t a, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: y = copy(x)
         sage: y is x
@@ -100,7 +104,8 @@ cdef inline int celement_set(nmod_poly_t res, nmod_poly_t a, unsigned long n) ex
 
 cdef inline int celement_set_si(nmod_poly_t res, long i, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: P(32003)
         0
@@ -128,7 +133,8 @@ cdef inline long celement_get_si(nmod_poly_t res, unsigned long n) except -2:
 
 cdef inline bint celement_is_zero(nmod_poly_t a, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: P(1).is_zero()
         False
@@ -145,7 +151,8 @@ cdef inline bint celement_is_zero(nmod_poly_t a, unsigned long n) except -2:
 
 cdef inline bint celement_is_one(nmod_poly_t a, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: P(1).is_one()
         True
@@ -163,7 +170,8 @@ cdef inline bint celement_is_one(nmod_poly_t a, unsigned long n) except -2:
 
 cdef inline bint celement_equal(nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: (3*2)*x == 3*(2*x)
         True
@@ -184,7 +192,8 @@ cdef inline bint celement_equal(nmod_poly_t a, nmod_poly_t b, unsigned long n) e
 
 cdef inline int celement_cmp(nmod_poly_t l, nmod_poly_t r, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: x > x
         False
@@ -228,17 +237,20 @@ cdef inline int celement_cmp(nmod_poly_t l, nmod_poly_t r, unsigned long n) exce
         if nmod_poly_equal(l, r):
             return 0
         i = deg_right
-        rcoeff = nmod_poly_get_coeff_ui(r, i)
-        lcoeff = nmod_poly_get_coeff_ui(l, i)
-        while rcoeff == lcoeff and i > 0:
-            i -= 1
+        while i >= 0:
             rcoeff = nmod_poly_get_coeff_ui(r, i)
             lcoeff = nmod_poly_get_coeff_ui(l, i)
-        return cmp(lcoeff, rcoeff)
+            if lcoeff < rcoeff:
+                return -1
+            if lcoeff > rcoeff:
+                return 1
+            i -= 1
+        return 0
 
 cdef long celement_len(nmod_poly_t a, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: (x + 1).degree()
         1
@@ -259,7 +271,8 @@ cdef long celement_len(nmod_poly_t a, unsigned long n) except -2:
 
 cdef inline int celement_add(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: x + 1
         x + 1
@@ -272,7 +285,8 @@ cdef inline int celement_add(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
 
 cdef inline int celement_sub(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: x - 1
         x + 32002
@@ -285,7 +299,8 @@ cdef inline int celement_sub(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
 
 cdef inline int celement_neg(nmod_poly_t res, nmod_poly_t a, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: -(x + 2)
         32002*x + 32001
@@ -302,17 +317,18 @@ cdef inline int celement_mul_scalar(nmod_poly_t res, nmod_poly_t p,
     TESTS::
 
         sage: P.<x> = GF(32003)[]
-        sage: p = P.random_element()
+        sage: p = P.random_element(degree=2)
         sage: 389*p
-        12219*x^2 + 2340*x + 11045
+        10573*x^2 + 12219*x + 2340
         sage: p*983
-        29561*x^2 + 18665*x + 17051
+        26142*x^2 + 29561*x + 18665
     """
     nmod_poly_scalar_mul_nmod(res, p, (<unsigned long>c)%n)
 
 cdef inline int celement_mul(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: (x + 1) * (x + 2)
         x^2 + 3*x + 2
@@ -328,7 +344,8 @@ cdef inline int celement_div(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
 
 cdef inline int celement_floordiv(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: (x + 1) // (x + 2)
         1
@@ -353,7 +370,8 @@ cdef inline int celement_floordiv(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b,
 
 cdef inline int celement_mod(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: f = 24998*x^2 + 29761*x + 2252
         sage: g = 20778*x^2 + 15346*x + 12697
@@ -396,7 +414,8 @@ cdef inline int celement_mod(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
 
 cdef inline int celement_quorem(nmod_poly_t q, nmod_poly_t r, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: R.<x> = Integers(125)[]
         sage: f = x^5+1; g = (x+1)^2
         sage: q, r = f.quo_rem(g)
@@ -513,20 +532,21 @@ cdef inline int celement_pow(nmod_poly_t res, nmod_poly_t x, long e, nmod_poly_t
 
 cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: f = P.random_element(degree=4); f
-        16660*x^4 + 10640*x^3 + 1430*x^2 + 16460*x + 3566
+        5847*x^4 + 16660*x^3 + 10640*x^2 + 1430*x + 16460
         sage: g = P.random_element(degree=3); g
-        28452*x^3 + 2561*x^2 + 22429*x + 5847
+        28238*x^3 + 18622*x^2 + 28452*x + 2561
         sage: h = P.random_element(degree=2); h
-        24731*x^2 + 28238*x + 18622
+        27698*x^2 + 27711*x + 4790
         sage: F = f*g; F
-        13887*x^7 + 19164*x^6 + 25146*x^5 + 25986*x^4 + 21143*x^3 + 14830*x^2 + 14916*x + 16449
+        4109*x^7 + 9608*x^6 + 20844*x^5 + 10711*x^4 + 8036*x^3 + 18420*x^2 + 1906*x + 6109
         sage: G = f*h; G
-        11838*x^6 + 10154*x^5 + 15609*x^4 + 26164*x^3 + 11353*x^2 + 8656*x + 31830
+        15026*x^6 + 24454*x^5 + 17583*x^4 + 7748*x^3 + 18182*x^2 + 17362*x + 20011
         sage: d = (F).gcd(G); d
-        x^4 + 18557*x^3 + 22917*x^2 + 30813*x + 4914
+        x^4 + 10468*x^3 + 28469*x^2 + 668*x + 24250
         sage: (F//d)*d == F
         True
         sage: (G//d)*d == G
@@ -534,17 +554,17 @@ cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
 
         sage: Q.<x> = GF(7)[]
         sage: f = Q.random_element(degree=4); f
-        5*x^4 + 3*x^3 + 6*x^2 + 6*x + 1
+        2*x^4 + 5*x^3 + 2*x^2 + 3*x + 5
         sage: g = Q.random_element(degree=3); g
-        2*x^3 + 5*x^2 + 2*x + 3
+        2*x^3 + 4*x^2 + 4*x + 4
         sage: h = Q.random_element(degree=2); h
-        4*x^2 + 4*x + 6
+        6*x^2 + 5*x + 6
         sage: F = f*g; F
-        3*x^7 + 3*x^6 + 2*x^5 + 4*x^3 + 6*x + 3
+        4*x^7 + 4*x^6 + 4*x^5 + x^3 + 5*x^2 + 4*x + 6
         sage: G = f*h; G
-        6*x^6 + 4*x^5 + 3*x^4 + 3*x^3 + x^2 + 5*x + 6
+        5*x^6 + 5*x^5 + 2*x^3 + x^2 + x + 2
         sage: d = (F).gcd(G); d
-        x^4 + 2*x^3 + 4*x^2 + 4*x + 3
+        x^4 + 6*x^3 + x^2 + 5*x + 6
         sage: (F//d)*d == F
         True
         sage: (G//d)*d == G
@@ -562,20 +582,21 @@ cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
 
 cdef inline int celement_xgcd(nmod_poly_t res, nmod_poly_t s, nmod_poly_t t, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
-    EXAMPLE:
+    EXAMPLES::
+
         sage: P.<x> = GF(32003)[]
         sage: f = P.random_element(degree=4); f
-        16660*x^4 + 10640*x^3 + 1430*x^2 + 16460*x + 3566
+        5847*x^4 + 16660*x^3 + 10640*x^2 + 1430*x + 16460
         sage: g = P.random_element(degree=3); g
-        28452*x^3 + 2561*x^2 + 22429*x + 5847
+        28238*x^3 + 18622*x^2 + 28452*x + 2561
         sage: h = P.random_element(degree=2); h
-        24731*x^2 + 28238*x + 18622
+        27698*x^2 + 27711*x + 4790
         sage: F = f*g; F
-        13887*x^7 + 19164*x^6 + 25146*x^5 + 25986*x^4 + 21143*x^3 + 14830*x^2 + 14916*x + 16449
+        4109*x^7 + 9608*x^6 + 20844*x^5 + 10711*x^4 + 8036*x^3 + 18420*x^2 + 1906*x + 6109
         sage: G = f*h; G
-        11838*x^6 + 10154*x^5 + 15609*x^4 + 26164*x^3 + 11353*x^2 + 8656*x + 31830
+        15026*x^6 + 24454*x^5 + 17583*x^4 + 7748*x^3 + 18182*x^2 + 17362*x + 20011
         sage: d,s,t = (F).xgcd(G); d
-        x^4 + 18557*x^3 + 22917*x^2 + 30813*x + 4914
+        x^4 + 10468*x^3 + 28469*x^2 + 668*x + 24250
         sage: (F//d)*d == F
         True
         sage: (G//d)*d == G
@@ -583,17 +604,17 @@ cdef inline int celement_xgcd(nmod_poly_t res, nmod_poly_t s, nmod_poly_t t, nmo
 
         sage: Q.<x> = GF(7)[]
         sage: f = Q.random_element(degree=4); f
-        5*x^4 + 3*x^3 + 6*x^2 + 6*x + 1
+        2*x^4 + 5*x^3 + 2*x^2 + 3*x + 5
         sage: g = Q.random_element(degree=3); g
-        2*x^3 + 5*x^2 + 2*x + 3
+        2*x^3 + 4*x^2 + 4*x + 4
         sage: h = Q.random_element(degree=2); h
-        4*x^2 + 4*x + 6
+        6*x^2 + 5*x + 6
         sage: F = f*g; F
-        3*x^7 + 3*x^6 + 2*x^5 + 4*x^3 + 6*x + 3
+        4*x^7 + 4*x^6 + 4*x^5 + x^3 + 5*x^2 + 4*x + 6
         sage: G = f*h; G
-        6*x^6 + 4*x^5 + 3*x^4 + 3*x^3 + x^2 + 5*x + 6
+        5*x^6 + 5*x^5 + 2*x^3 + x^2 + x + 2
         sage: d,s,t = (F).xgcd(G); d
-        x^4 + 2*x^3 + 4*x^2 + 4*x + 3
+        x^4 + 6*x^3 + x^2 + 5*x + 6
         sage: (F//d)*d == F
         True
         sage: (G//d)*d == G
@@ -607,10 +628,10 @@ cdef factor_helper(Polynomial_zmod_flint poly, bint squarefree=False):
     EXAMPLES::
 
         sage: P.<x> = GF(1009)[]
-        sage: (prod(P.random_element() for i in range(5))).factor()
-        (920) * (x + 96) * (x + 288) * (x + 362) * (x + 432) * (x + 603) * (x + 709) * (x^2 + x + 585) * (x^2 + 40*x + 888)
+        sage: (prod(P.random_element(degree=2) for i in range(5))).factor()
+        (224) * (x + 141) * (x + 326) * (x + 654) * (x + 801) * (x^2 + 40*x + 888) * (x^2 + 639*x + 134) * (x^2 + 723*x + 116)
         sage: (prod(P.random_element()^i for i in range(5))).squarefree_decomposition()
-        (54) * (x^2 + 55*x + 839) * (x^2 + 48*x + 496)^2 * (x^2 + 435*x + 104)^3 * (x^2 + 176*x + 156)^4
+        (435) * (x + 595) * (x^2 + 375*x + 415)^3 * (x^2 + 617*x + 569)^4
     """
     cdef nmod_poly_factor_t factors_c
     nmod_poly_factor_init(factors_c)

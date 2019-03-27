@@ -15,7 +15,8 @@ size of the modulus.
 -  ``IntegerMod_int64`` stores its value in a
    ``int_fast64_t`` (typically a ``long
    long``); this is used if the modulus is less than
-   `2^{31}-1`.
+   `2^{31}-1`. In many places, we assume that the values and the modulus
+   actually fit inside an ``unsigned long``.
 
 -  ``IntegerMod_gmp`` stores its value in a
    ``mpz_t``; this can be used for an arbitrarily large
@@ -67,10 +68,9 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, division
+from __future__ import print_function, division, absolute_import
 
-include "cysignals/signals.pxi"
-include "sage/ext/stdsage.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
 from cpython.int cimport *
 from cpython.list cimport *
@@ -84,6 +84,8 @@ import operator
 
 cdef bint use_32bit_type(int_fast64_t modulus):
     return modulus <= INTEGER_MOD_INT32_LIMIT
+
+from sage.arith.long cimport integer_check_long, integer_check_long_py, ERR_OVERFLOW
 
 import sage.rings.rational as rational
 from sage.libs.pari.all import pari, PariError
@@ -103,7 +105,7 @@ from sage.structure.element cimport RingElement, ModuleElement, Element
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 from sage.misc.superseded import deprecated_function_alias
 
 from sage.structure.parent cimport Parent
@@ -144,12 +146,10 @@ def Mod(n, m, parent=None):
 
     # m is non-zero, so return n mod m
     cdef IntegerMod_abstract x
-    import integer_mod_ring
-    x = IntegerMod(integer_mod_ring.IntegerModRing(m), n)
     if parent is None:
-        return x
-    x._parent = parent
-    return x
+        from .integer_mod_ring import IntegerModRing
+        parent = IntegerModRing(m)
+    return IntegerMod(parent, n)
 
 
 mod = Mod
@@ -162,25 +162,40 @@ def IntegerMod(parent, value):
     Create an integer modulo `n` with the given parent.
 
     This is mainly for internal use.
+
+    EXAMPLES::
+
+        sage: from sage.rings.finite_rings.integer_mod import IntegerMod
+        sage: R = IntegerModRing(100)
+        sage: type(R._pyx_order.table)
+        <type 'list'>
+        sage: IntegerMod(R, 42)
+        42
+        sage: IntegerMod(R, 142)
+        42
+        sage: IntegerMod(R, 10^100 + 42)
+        42
+        sage: IntegerMod(R, -9158)
+        42
     """
-    cdef NativeIntStruct modulus
-    cdef Py_ssize_t res
-    modulus = parent._pyx_order
+    cdef NativeIntStruct modulus = parent._pyx_order
+
+    cdef long val = 0
+    cdef int err
+
     if modulus.table is not None:
-        if isinstance(value, sage.rings.integer.Integer) or isinstance(value, int) or isinstance(value, long):
-            res = value % modulus.int64
-            if res < 0:
-                res = res + modulus.int64
-            a = modulus.lookup(res)
-            if (<Element>a)._parent is not parent:
-               (<Element>a)._parent = parent
+        # Try to return an element from the precomputed table
+        integer_check_long(value, &val, &err)
+        if not err:
+            val = (<int_fast64_t>val) % modulus.int64
+            if val < 0:
+                val += modulus.int64
+            a = <Element>modulus.table[val]
+            assert a._parent is parent
             return a
-    if modulus.int32 != -1:
-        return IntegerMod_int(parent, value)
-    elif modulus.int64 != -1:
-        return IntegerMod_int64(parent, value)
-    else:
-        return IntegerMod_gmp(parent, value)
+    t = modulus.element_class()
+    return t(parent, value)
+
 
 def is_IntegerMod(x):
     """
@@ -197,17 +212,13 @@ def is_IntegerMod(x):
     """
     return isinstance(x, IntegerMod_abstract)
 
-def makeNativeIntStruct(sage.rings.integer.Integer z):
-    """
-    Function to convert a Sage Integer into class NativeIntStruct.
 
-    .. note::
+cdef inline inverse_or_None(x):
+    try:
+        return ~x
+    except ArithmeticError:
+        return None
 
-       This function is only used for the unpickle override below.
-    """
-    return NativeIntStruct(z)
-
-register_unpickle_override('sage.rings.integer_mod', 'makeNativeIntStruct', makeNativeIntStruct)
 
 cdef class NativeIntStruct:
     """
@@ -217,27 +228,50 @@ cdef class NativeIntStruct:
     We may also store a cached table of all elements of a given ring in
     this class.
     """
-    def __init__(NativeIntStruct self, sage.rings.integer.Integer z):
-        self.int64 = -1
+    def __cinit__(self):
         self.int32 = -1
-        self.table = None # NULL
-        self.sageInteger = z
-        if mpz_cmp_si(z.value, INTEGER_MOD_INT64_LIMIT) <= 0:
-            self.int64 = mpz_get_si(z.value)
+        self.int64 = -1
+
+    def __init__(self, m):
+        self.sageInteger = Integer(m)
+        cdef mpz_srcptr z = self.sageInteger.value
+        if mpz_cmp_si(z, INTEGER_MOD_INT64_LIMIT) <= 0:
+            self.int64 = mpz_get_si(z)
             if use_32bit_type(self.int64):
                 self.int32 = self.int64
 
-    def __reduce__(NativeIntStruct self):
-        return sage.rings.finite_rings.integer_mod.makeNativeIntStruct, (self.sageInteger, )
+    def __repr__(self):
+        return f"{type(self).__name__}({self.sageInteger})"
 
-    def precompute_table(NativeIntStruct self, parent, inverses=True):
+    def __reduce__(self):
+        """
+        TESTS::
+
+            sage: from sage.rings.finite_rings.integer_mod import NativeIntStruct
+            sage: M = NativeIntStruct(12345); M
+            NativeIntStruct(12345)
+            sage: loads(dumps(M))
+            NativeIntStruct(12345)
+        """
+        return type(self), (self.sageInteger, )
+
+    def precompute_table(self, parent):
         """
         Function to compute and cache all elements of this class.
 
         If ``inverses == True``, also computes and caches the inverses
         of the invertible elements.
 
-        EXAMPLES:
+        EXAMPLES::
+
+            sage: from sage.rings.finite_rings.integer_mod import NativeIntStruct
+            sage: R = IntegerModRing(10)
+            sage: M = NativeIntStruct(R.order())
+            sage: M.precompute_table(R)
+            sage: M.table
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            sage: M.inverses
+            [None, 1, None, 7, None, None, None, 3, None, 9]
 
         This is used by the :class:`sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic` constructor::
 
@@ -256,68 +290,110 @@ cdef class NativeIntStruct:
             sage: R = IntegerModRing_generic(1, cache=True)  # indirect doctest
             sage: R(0)^-1 is R(0)
             True
+
+        TESTS::
+
+            sage: R = IntegerModRing(10^50)
+            sage: M = NativeIntStruct(R.order())
+            sage: M.precompute_table(R)
+            Traceback (most recent call last):
+            ...
+            OverflowError: precompute_table() is only supported for small moduli
         """
-        self.table = PyList_New(self.int64)
-        cdef Py_ssize_t i
-        if self.int32 != -1:
-            for i from 0 <= i < self.int32:
-                z = IntegerMod_int(parent, i)
-                Py_INCREF(z); PyList_SET_ITEM(self.table, i, z)
+        cdef Py_ssize_t i, m = self.int64
+
+        # Verify that the modulus m fits in a Py_ssize_t
+        if m <= 0 or (<int_fast64_t>m != self.int64):
+            raise OverflowError("precompute_table() is only supported for small moduli")
+
+        t = self.element_class()
+        self.table = [t(parent, i) for i in range(m)]
+
+        if m == 1:
+            # Special case for integers modulo 1
+            self.inverses = self.table
         else:
-            for i from 0 <= i < self.int64:
-                z = IntegerMod_int64(parent, i)
-                Py_INCREF(z); PyList_SET_ITEM(self.table, i, z)
+            self.inverses = [inverse_or_None(x) for x in self.table]
 
-        if inverses:
-            if self.int64 == 1:
-                # Special case for integers modulo 1
-                self.inverses = self.table
-            else:
-                tmp = [None] * self.int64
-                for i from 1 <= i < self.int64:
-                    try:
-                        tmp[i] = ~self.table[i]
-                    except ZeroDivisionError:
-                        pass
-                self.inverses = tmp
 
-    def _get_table(self):
-        return self.table
-
-    cdef lookup(NativeIntStruct self, Py_ssize_t value):
-        return <object>PyList_GET_ITEM(self.table, value)
+# For unpickling
+makeNativeIntStruct = NativeIntStruct
+register_unpickle_override('sage.rings.integer_mod', 'makeNativeIntStruct', NativeIntStruct)
 
 
 cdef class IntegerMod_abstract(FiniteRingElement):
 
-    def __init__(self, parent):
+    def __init__(self, parent, value=None):
         """
         EXAMPLES::
 
-            sage: a = Mod(10,30^10); a
+            sage: a = Mod(10, 30^10); a
             10
+            sage: type(a)
+            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
             sage: loads(a.dumps()) == a
             True
+
+        TESTS::
+
+            sage: TestSuite(Zmod(1)).run()
+            sage: TestSuite(Zmod(2)).run()
+            sage: TestSuite(Zmod(3)).run()
+            sage: TestSuite(Zmod(4)).run()
+            sage: TestSuite(Zmod(5)).run()
+            sage: TestSuite(Zmod(6)).run()
+            sage: TestSuite(Zmod(2^10 * 3^5)).run()
+            sage: TestSuite(Zmod(2^30 * 3^50 * 5^20)).run()
         """
         self._parent = parent
         self.__modulus = parent._pyx_order
 
+        if value is None:
+            return
+
+        cdef long longval = 0
+        cdef int err = 0
+        cdef Integer z
+
+        if isinstance(value, Integer):
+            z = <Integer>value
+        elif isinstance(value, rational.Rational):
+            z = value % self.__modulus.sageInteger
+        elif integer_check_long_py(value, &longval, &err) and not err:
+            self.set_from_long(longval)
+            return
+        else:
+            z = sage.rings.integer_ring.Z(value)
+        self.set_from_mpz(z.value)
+
+    cdef IntegerMod_abstract _new_c_fast(self, unsigned long value):
+        cdef type t = type(self)
+        x = <IntegerMod_abstract>t.__new__(t)
+        x._parent = self._parent
+        x.__modulus = self.__modulus
+        x.set_from_ulong_fast(value)
+        return x
 
     cdef _new_c_from_long(self, long value):
         cdef type t = type(self)
         cdef IntegerMod_abstract x = <IntegerMod_abstract>t.__new__(t)
-        if isinstance(x, IntegerMod_gmp):
-            mpz_init((<IntegerMod_gmp>x).value) # should be done by the new method
         x._parent = self._parent
         x.__modulus = self.__modulus
         x.set_from_long(value)
         return x
 
     cdef void set_from_mpz(self, mpz_t value):
-        raise NotImplementedError("Must be defined in child class.")
+        raise NotImplementedError("must be defined in child class")
 
     cdef void set_from_long(self, long value):
-        raise NotImplementedError("Must be defined in child class.")
+        raise NotImplementedError("must be defined in child class")
+
+    cdef void set_from_ulong_fast(self, unsigned long value):
+        """
+        Set ``self`` to the value in ``value`` where ``value`` is
+        assumed to be less than the modulus
+        """
+        raise NotImplementedError("must be defined in child class")
 
     def __abs__(self):
         """
@@ -341,7 +417,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             4
             sage: loads(a.dumps()) == a
             True
-            sage: a = Mod(-1,5^30)^25;
+            sage: a = Mod(-1,5^30)^25
             sage: loads(a.dumps()) == a
             True
         """
@@ -352,7 +428,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         Return the image of ``self`` under the map that sends the
         generators of the parent to ``im_gens``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: a = Mod(7, 10)
             sage: R = ZZ.quotient(5)
@@ -389,7 +465,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         if not isinstance(self, IntegerMod_abstract):
             # something % Mod(x,y) makes no sense
             return NotImplemented
-        from integer_mod_ring import IntegerModRing
+        from .integer_mod_ring import IntegerModRing
         R = IntegerModRing(modulus)
         if (<Element>self)._parent._IntegerModRing_generic__order % R.order():
             raise ArithmeticError(f"reduction modulo {modulus!r} not defined")
@@ -434,8 +510,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     def _pari_init_(self):
         return 'Mod(%s,%s)'%(str(self), self.__modulus.sageInteger)
 
-    def _pari_(self):
-        return self.lift()._pari_().Mod(self.__modulus.sageInteger)
+    def __pari__(self):
+        return self.lift().__pari__().Mod(self.__modulus.sageInteger)
 
     def _gap_init_(self):
         r"""
@@ -488,7 +564,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
             sage: aa = fricas(a); aa #optional - fricas
             4
-            sage: aa.type()          #optional - fricas
+            sage: aa.typeOf()        #optional - fricas
             IntegerMod(15)
 
         """
@@ -523,7 +599,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         else:
             return sib(self.parent())(v)
 
-    def log(self, b=None):
+    def log(self, b=None, logarithm_exists=False):
         r"""
         Return an integer `x` such that `b^x = a`, where
         `a` is ``self``.
@@ -537,10 +613,15 @@ cdef class IntegerMod_abstract(FiniteRingElement):
            ``R.multiplicative_generator()`` is used, where
            ``R`` is the parent of ``self``.
 
+        -  ``logarithm_exists`` - a boolean (default ``False``). If ``True``
+           it assumes that the logarithm exists in order to speed up
+           the computation, the code might end up in an infinite loop if this
+           is set to ``True`` but the logarithm does not exist.
+
 
         OUTPUT: Integer `x` such that `b^x = a`, if this exists; a ValueError otherwise.
 
-        .. note::
+        .. NOTE::
 
            If the modulus is prime and b is a generator, this calls Pari's ``znlog``
            function, which is rather fast. If not, it falls back on the generic
@@ -575,12 +656,14 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: Mod(3, 7).log(Mod(2, 7))
             Traceback (most recent call last):
             ...
-            ValueError: No discrete log of 3 found to base 2
+            ValueError: No discrete log of 3 found to base 2 modulo 7
             sage: a = Mod(16, 100); b = Mod(4,100)
             sage: a.log(b)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Inverse does not exist.
+            ValueError: logarithm of 16 is not defined since it is not a unit modulo 100
+
+        TESTS:
 
         We check that :trac:`9205` is fixed::
 
@@ -597,6 +680,13 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: pari(b)
             b
 
+        We test that :trac:`23927` is fixed::
+
+            sage: x = mod(48475563673907791151, 10^20 + 763)^2
+            sage: e = 25248843418589594761
+            sage: (x^e).log(x)==e
+            True
+
         AUTHORS:
 
         - David Joyner and William Stein (2005-11)
@@ -606,23 +696,34 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         - Simon King (2010-07-07): fix a side effect on PARI
         """
+        if not self.is_unit():
+            raise ValueError("logarithm of %s is not defined since it is not a unit modulo %s"%(self, self.modulus()))
+
         if b is None:
             b = self._parent.multiplicative_generator()
+            logarithm_exists = True
         else:
             b = self._parent(b)
+            if not (logarithm_exists or b.is_unit()):
+                raise ValueError("logarithm with base %s is not defined since it is not a unit modulo %s"%(b, b.modulus()))
 
-        if self.modulus().is_prime() and b.multiplicative_order() == b.parent().unit_group_order():
+        if logarithm_exists or self.modulus().is_prime():
+            if not logarithm_exists:
+                oa = self.multiplicative_order()
+                ob = b.multiplicative_order()
+                if not oa.divides(ob):
+                    raise ValueError("No discrete log of %s found to base %s modulo %s"%(self, b, self.modulus()))
 
-            # use PARI
-
-            cmd = 'if(znorder(Mod(%s,%s))!=eulerphi(%s),-1,znlog(%s,Mod(%s,%s)))'%(b, self.__modulus.sageInteger,
-                                                      self.__modulus.sageInteger,
-                                             self, b, self.__modulus.sageInteger)
             try:
-                n = Integer(pari(cmd))
-                return n
+                n = pari(self).znlog(pari(b), pari(b.multiplicative_order()))
+                n = n.sage()
             except PariError as msg:
-                raise ValueError("%s\nPARI failed to compute discrete log (perhaps base is not a generator or is too large)" % msg)
+                raise RuntimeError("%s\nPARI failed to compute discrete log (perhaps base is not a generator or is too large)" % msg)
+            else:
+                if n == []:
+                    raise ValueError("No discrete log of %s found to base %s modulo %s"%(self, b, self.modulus()))
+                return n
+
 
         else: # fall back on slower native implementation
 
@@ -633,7 +734,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         r"""
         Return integers `[n_1, \ldots, n_d]` such that
 
-        ..math::
+        .. MATH::
 
             \prod_{i=1}^d x_i^{n_i} = \text{self},
 
@@ -648,7 +749,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: prod([Zmod(1568).unit_gens()[i] ** v[i] for i in [0..2]])
             3
 
-        .. seealso::
+        .. SEEALSO::
 
             The method :meth:`log`.
 
@@ -824,6 +925,31 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     cpdef bint is_unit(self):
         raise NotImplementedError
 
+    @coerce_binop
+    def divides(self, other):
+        r"""
+        Test wheter ``self`` divides ``other``.
+
+        EXAMPLES::
+
+            sage: R = Zmod(6)
+            sage: R(2).divides(R(4))
+            True
+            sage: R(4).divides(R(2))
+            True
+            sage: R(2).divides(R(3))
+            False
+        """
+        if not other:
+            return True
+        elif not self:
+            return False
+        mod = self.modulus()
+        sl = self.lift().gcd(mod)
+        if sl.is_one():
+            return True
+        return sl.divides(other.lift().gcd(mod))
+
     def is_square(self):
         r"""
         EXAMPLES::
@@ -854,7 +980,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             ....:             n = p^ep * q^eq * r^er * 2^e2
             ....:             for _ in range(2):
             ....:                 a = Zmod(n).random_element()
-            ....:                 if a.is_square().__xor__(a._pari_().issquare()):
+            ....:                 if a.is_square().__xor__(a.__pari__().issquare()):
             ....:                     print(a, n)
 
         ALGORITHM: Calculate the Jacobi symbol
@@ -893,7 +1019,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             return 0
         # We need to factor the modulus.  We do it here instead of
         # letting PARI do it, so that we can cache the factorisation.
-        return lift._pari_().Zn_issquare(self._parent.factored_order()._pari_())
+        return lift.__pari__().Zn_issquare(self._parent.factored_order())
 
     def sqrt(self, extend=True, all=False):
         r"""
@@ -1017,7 +1143,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 R = self.parent()['x']
                 modulus = R.gen()**2 - R(self)
                 if self._parent.is_field():
-                    from finite_field_constructor import FiniteField
+                    from .finite_field_constructor import FiniteField
                     Q = FiniteField(self.__modulus.sageInteger**2, y, modulus)
                 else:
                     R = self.parent()['x']
@@ -1213,16 +1339,16 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         TESTS::
 
             sage: for p in [1009,2003,10007,100003]:
-            ...       K = GF(p)
-            ...       for r in (p-1).divisors():
-            ...           if r == 1: continue
-            ...           x = K.random_element()
-            ...           y = x^r
-            ...           if y.nth_root(r)**r != y: raise RuntimeError
-            ...           if (y^41).nth_root(41*r)**(41*r) != y^41: raise RuntimeError
-            ...           if (y^307).nth_root(307*r)**(307*r) != y^307: raise RuntimeError
+            ....:     K = GF(p)
+            ....:     for r in (p-1).divisors():
+            ....:         if r == 1: continue
+            ....:         x = K.random_element()
+            ....:         y = x^r
+            ....:         if y.nth_root(r)**r != y: raise RuntimeError
+            ....:         if (y^41).nth_root(41*r)**(41*r) != y^41: raise RuntimeError
+            ....:         if (y^307).nth_root(307*r)**(307*r) != y^307: raise RuntimeError
 
-            sage: for t in xrange(200):
+            sage: for t in range(200):
             ....:     n = randint(1,2^63)
             ....:     K = Integers(n)
             ....:     b = K.random_element()
@@ -1376,28 +1502,24 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         TESTS::
 
             sage: for n in range(2,100): # long time
-            ....:     K=Integers(n)
-            ....:     elist = range(1,min(2*n+2,100))
+            ....:     K = Integers(n)
+            ....:     elist = list(range(1,min(2*n+2,100)))
             ....:     for e in random_sublist(elist, 5/len(elist)):
             ....:         for a in random_sublist(range(1,n), min((n+2)//2,10)/(n-1)):
             ....:             b = K(a)
             ....:             try:
             ....:                 L = b.nth_root(e, all=True)
-            ....:                 if len(L) > 0:
+            ....:                 if L:
             ....:                     c = b.nth_root(e)
             ....:             except Exception:
             ....:                 L = [-1]
             ....:             M = b._nth_root_naive(e)
             ....:             if sorted(L) != M:
             ....:                 print("mod(%s, %s).nth_root(%s,all=True), mod(%s, %s)._nth_root_naive(%s)" % (a,n,e,a,n,e))
-            ....:             if len(L) > 0 and (c not in L):
+            ....:             if L and (c not in L):
             ....:                 print("mod(%s, %s).nth_root(%s), mod(%s, %s).nth_root(%s,all=True)" % (a,n,e,a,n,e))
         """
-        L = []
-        for a in self.parent():
-            if a**n == self:
-                L.append(a)
-        return L
+        return [a for a in self.parent() if a**n == self]
 
     def _balanced_abs(self):
         """
@@ -1405,14 +1527,13 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         positive representative in `-n/2 < x \leq n/2`.
 
         This is used so that the same square root is always returned,
-        despite the possibly probabalistic nature of the underlying
+        despite the possibly probabilistic nature of the underlying
         algorithm.
         """
         if self.lift() > self.__modulus.sageInteger >> 1:
             return -self
         else:
             return self
-
 
     def rational_reconstruction(self):
         """
@@ -1513,7 +1634,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         return self.__crt(other)
 
-
     def additive_order(self):
         r"""
         Returns the additive order of self.
@@ -1564,9 +1684,26 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             ....:                 if not a.is_unit(): continue
             ....:                 if a.is_primitive_root().__xor__(a.multiplicative_order()==phin):
             ....:                     print("mod(%s,%s) incorrect" % (a, n))
+
+        `0` is not a primitive root mod `n` (:trac:`23624`) except for `n=0`::
+
+            sage: mod(0, 17).is_primitive_root()
+            False
+            sage: all(not mod(0, n).is_primitive_root() for n in srange(2, 20))
+            True
+            sage: mod(0, 1).is_primitive_root()
+            True
+
+            sage: all(not mod(p^j, p^k).is_primitive_root()
+            ....:     for p in prime_range(3, 12)
+            ....:     for k in srange(1, 4)
+            ....:     for j in srange(0, k))
+            True
         """
         cdef Integer p1, q = Integer(2)
         m = self.modulus()
+        if m == 1:
+            return True
         if m == 2:
             return self == 1
         if m == 4:
@@ -1587,6 +1724,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             # self**(p**(k-1)*(p-1)//q) = 1 for some q
             # iff mod(self,p)**((p-1)//q) = 1 for some q
             self = self % p
+        if self == 0:
+            return False
         # Now self is modulo a prime and need the factorization of p-1.
         p1 = p - 1
         while mpz_cmpabs_ui(p1.value, 1):
@@ -1620,7 +1759,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             ArithmeticError: multiplicative order of 0 not defined since it is not a unit modulo 5
         """
         try:
-            return sage.rings.integer.Integer(self._pari_().znorder())
+            return sage.rings.integer.Integer(self.__pari__().znorder())
         except PariError:
             raise ArithmeticError("multiplicative order of %s not defined since it is not a unit modulo %s"%(
                 self, self.__modulus.sageInteger))
@@ -1708,7 +1847,22 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     def _rational_(self):
         return rational.Rational(self.lift())
 
+    def _vector_(self):
+        """
+        Return self as a vector of its parent viewed as a one-dimensional
+        vector space.
 
+        This is to support prime finite fields, which are implemented as
+        `IntegerMod` ring.
+
+        EXAMPLES::
+
+            sage: F.<a> = GF(13)
+            sage: V = F.vector_space()
+            sage: V(a)
+            (1)
+        """
+        return self.parent().vector_space()([self])
 
 
 ######################################################################
@@ -1726,36 +1880,12 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
     - Robert Bradshaw (2006-08-24)
     """
 
-    def __init__(IntegerMod_gmp self, parent, value, empty=False):
-        """
-        EXAMPLES::
-
-            sage: a = mod(5,14^20)
-            sage: type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
-            sage: loads(dumps(a)) == a
-            True
-        """
+    def __cinit__(self):
         mpz_init(self.value)
-        IntegerMod_abstract.__init__(self, parent)
-        if empty:
-            return
-        cdef sage.rings.integer.Integer z
-        if isinstance(value, sage.rings.integer.Integer):
-            z = value
-        elif isinstance(value, rational.Rational):
-            z = value % self.__modulus.sageInteger
-        elif isinstance(value, int):
-            self.set_from_long(value)
-            return
-        else:
-            z = sage.rings.integer_ring.Z(value)
-        self.set_from_mpz(z.value)
 
     cdef IntegerMod_gmp _new_c(self):
         cdef IntegerMod_gmp x
         x = IntegerMod_gmp.__new__(IntegerMod_gmp)
-        mpz_init(x.value)
         x.__modulus = self.__modulus
         x._parent = self._parent
         return x
@@ -1766,23 +1896,21 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
     cdef void set_from_mpz(self, mpz_t value):
         cdef sage.rings.integer.Integer modulus
         modulus = self.__modulus.sageInteger
-        if mpz_sgn(value) == -1 or mpz_cmp(value, modulus.value) >= 0:
-            mpz_mod(self.value, value, modulus.value)
-        else:
-            mpz_set(self.value, value)
+        mpz_mod(self.value, value, modulus.value)
 
     cdef void set_from_long(self, long value):
-        r"""        
+        r"""
         EXAMPLES::
 
             sage: p = next_prime(2^32)
             sage: GF(p)(int(p+1))
             1
-        """        
-        cdef sage.rings.integer.Integer modulus
+        """
         mpz_set_si(self.value, value)
-        if value < 0 or mpz_cmp_si(self.__modulus.sageInteger.value, value) <= 0:
-            mpz_mod(self.value, self.value, self.__modulus.sageInteger.value)
+        mpz_mod(self.value, self.value, self.__modulus.sageInteger.value)
+
+    cdef void set_from_ulong_fast(self, unsigned long value):
+        mpz_set_ui(self.value, value)
 
     def __lshift__(IntegerMod_gmp self, k):
         r"""
@@ -1921,8 +2049,8 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
         modulus = self.__modulus.sageInteger
         other_modulus = other.__modulus.sageInteger
-        import integer_mod_ring
-        lift = IntegerMod_gmp(integer_mod_ring.IntegerModRing(modulus*other_modulus), None, empty=True)
+        from .integer_mod_ring import IntegerModRing
+        lift = IntegerMod_gmp(IntegerModRing(modulus*other_modulus))
         try:
             if mpz_cmp(self.value, other.value) > 0:
                 x = (other - IntegerMod_gmp(other._parent, self.lift())) / IntegerMod_gmp(other._parent, modulus)
@@ -2067,7 +2195,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         instead::
 
             sage: from sage.rings.finite_rings.integer_mod \
-            ...       import IntegerMod_gmp
+            ....:     import IntegerMod_gmp
             sage: zero = IntegerMod_gmp(Integers(1),0)
             sage: type(zero)
             <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
@@ -2096,17 +2224,16 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
             sage: ~mod(2,10^100)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Inverse does not exist.
+            ZeroDivisionError: inverse of Mod(2, 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) does not exist
         """
         if self.is_zero():
-            raise ZeroDivisionError("Inverse does not exist.")
+            raise ZeroDivisionError(f"inverse of Mod(0, {self.__modulus.sageInteger}) does not exist")
 
         cdef IntegerMod_gmp x
         x = self._new_c()
-        if mpz_invert(x.value, self.value, self.__modulus.sageInteger.value):
-            return x
-        else:
-            raise ZeroDivisionError("Inverse does not exist.")
+        if not mpz_invert(x.value, self.value, self.__modulus.sageInteger.value):
+            raise ZeroDivisionError(f"inverse of Mod({self}, {self.__modulus.sageInteger}) does not exist")
+        return x
 
     def lift(IntegerMod_gmp self):
         """
@@ -2181,45 +2308,18 @@ cdef class IntegerMod_int(IntegerMod_abstract):
     AUTHORS:
 
     - Robert Bradshaw (2006-08-24)
+
+    EXAMPLES::
+
+        sage: a = Mod(10,30); a
+        10
+        sage: loads(a.dumps()) == a
+        True
     """
-
-    def __init__(self, parent, value, empty=False):
-        """
-        EXAMPLES::
-
-            sage: a = Mod(10,30); a
-            10
-            sage: loads(a.dumps()) == a
-            True
-        """
-        IntegerMod_abstract.__init__(self, parent)
-        if empty:
-            return
-        if self.__modulus.int32 == 1:
-            self.ivalue = 0
-            return
-        cdef long x
-        if isinstance(value, int):
-            x = value
-            self.ivalue = x % self.__modulus.int32
-            if self.ivalue < 0:
-                self.ivalue = self.ivalue + self.__modulus.int32
-            return
-        elif isinstance(value, IntegerMod_int):
-            self.ivalue = (<IntegerMod_int>value).ivalue % self.__modulus.int32
-            return
-        cdef sage.rings.integer.Integer z
-        if isinstance(value, sage.rings.integer.Integer):
-            z = value
-        elif isinstance(value, rational.Rational):
-            z = value % self.__modulus.sageInteger
-        else:
-            z = sage.rings.integer_ring.Z(value)
-        self.set_from_mpz(z.value)
 
     cdef IntegerMod_int _new_c(self, int_fast32_t value):
         if self.__modulus.table is not None:
-            return self.__modulus.lookup(value)
+            return self.__modulus.table[value]
         cdef IntegerMod_int x = IntegerMod_int.__new__(IntegerMod_int)
         x._parent = self._parent
         x.__modulus = self.__modulus
@@ -2227,13 +2327,15 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         return x
 
     cdef void set_from_mpz(self, mpz_t value):
-        if mpz_sgn(value) == -1 or mpz_cmp_si(value, self.__modulus.int32) >= 0:
-            self.ivalue = mpz_fdiv_ui(value, self.__modulus.int32)
-        else:
-            self.ivalue = mpz_get_si(value)
+        self.ivalue = mpz_fdiv_ui(value, self.__modulus.int32)
 
     cdef void set_from_long(self, long value):
         self.ivalue = value % self.__modulus.int32
+        if self.ivalue < 0:
+            self.ivalue += self.__modulus.int32
+
+    cdef void set_from_ulong_fast(self, unsigned long value):
+        self.ivalue = value
 
     cdef void set_from_int(IntegerMod_int self, int_fast32_t ivalue):
         if ivalue < 0:
@@ -2281,8 +2383,12 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             True
             sage: mod(0,5).is_one()
             False
+            sage: mod(1, 1).is_one()
+            True
+            sage: Zmod(1).one().is_one()
+            True
         """
-        return self.ivalue == 1
+        return self.ivalue == 1 or self.__modulus.int32 == 1
 
     def __nonzero__(IntegerMod_int self):
         """
@@ -2334,8 +2440,8 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         cdef IntegerMod_int lift
         cdef int_fast32_t x
 
-        import integer_mod_ring
-        lift = IntegerMod_int(integer_mod_ring.IntegerModRing(self.__modulus.int32 * other.__modulus.int32), None, empty=True)
+        from .integer_mod_ring import IntegerModRing
+        lift = IntegerMod_int(IntegerModRing(self.__modulus.int32 * other.__modulus.int32))
 
         try:
             x = (other.ivalue - self.ivalue % other.__modulus.int32) * mod_inverse_int(self.__modulus.int32, other.__modulus.int32)
@@ -2414,7 +2520,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         if self.__modulus.inverses is not None:
             right_inverse = self.__modulus.inverses[(<IntegerMod_int>right).ivalue]
             if right_inverse is None:
-                raise ZeroDivisionError("Inverse does not exist.")
+                raise ZeroDivisionError(f"inverse of Mod({right}, {self.__modulus.sageInteger}) does not exist")
             else:
                 return self._new_c((self.ivalue * (<IntegerMod_int>right_inverse).ivalue) % self.__modulus.int32)
 
@@ -2423,6 +2529,13 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         return self._new_c(x% self.__modulus.int32)
 
     def __int__(IntegerMod_int self):
+        """
+        TESTS::
+
+            sage: e = Mod(8, 31)
+            sage: int(e)
+            8
+        """
         return self.ivalue
 
     def __index__(self):
@@ -2507,8 +2620,6 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             sage: e = Mod(8, 2^5 - 1)
             sage: e >> 3
             1
-            sage: int(e)/int(2^3)  # optional - python2
-            1
         """
         if k == 0:
             return self
@@ -2535,7 +2646,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             sage: mod(2, 100)^-1
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Inverse does not exist.
+            ZeroDivisionError: inverse of Mod(2, 100) does not exist
             sage: mod(2, 100)^-100000000
             Traceback (most recent call last):
             ...
@@ -2608,7 +2719,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         if self.__modulus.inverses is not None:
             x = self.__modulus.inverses[self.ivalue]
             if x is None:
-                raise ZeroDivisionError("Inverse does not exist.")
+                raise ZeroDivisionError(f"inverse of Mod({self}, {self.__modulus.sageInteger}) does not exist")
             else:
                 return x
         else:
@@ -2666,7 +2777,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             return 0
         # We need to factor the modulus.  We do it here instead of
         # letting PARI do it, so that we can cache the factorisation.
-        return lift._pari_().Zn_issquare(self._parent.factored_order()._pari_())
+        return lift.__pari__().Zn_issquare(self._parent.factored_order())
 
     def sqrt(self, extend=True, all=False):
         r"""
@@ -2909,7 +3020,7 @@ cdef int_fast32_t mod_inverse_int(int_fast32_t x, int_fast32_t n) except 0:
         last_t = t
         t = next_t
         next_t = last_t - q * t
-    raise ZeroDivisionError("Inverse does not exist.")
+    raise ZeroDivisionError(f"inverse of Mod({x}, {n}) does not exist")
 
 
 cdef int_fast32_t mod_pow_int(int_fast32_t base, int_fast32_t exp, int_fast32_t n):
@@ -3002,42 +3113,21 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
     Elements of `\ZZ/n\ZZ` for n small enough to
     be operated on in 64 bits
 
+    EXAMPLES::
+
+        sage: a = Mod(10,3^10); a
+        10
+        sage: type(a)
+        <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+        sage: loads(a.dumps()) == a
+        True
+        sage: Mod(5, 2^31)
+        5
+
     AUTHORS:
 
     - Robert Bradshaw (2006-09-14)
     """
-
-    def __init__(self, parent, value, empty=False):
-        """
-        EXAMPLES::
-
-            sage: a = Mod(10,3^10); a
-            10
-            sage: type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
-            sage: loads(a.dumps()) == a
-            True
-            sage: Mod(5, 2^31)
-            5
-        """
-        IntegerMod_abstract.__init__(self, parent)
-        if empty:
-            return
-        cdef int_fast64_t x
-        if isinstance(value, int):
-            x = value
-            self.ivalue = x % self.__modulus.int64
-            if self.ivalue < 0:
-                self.ivalue = self.ivalue + self.__modulus.int64
-            return
-        cdef sage.rings.integer.Integer z
-        if isinstance(value, sage.rings.integer.Integer):
-            z = value
-        elif isinstance(value, rational.Rational):
-            z = value % self.__modulus.sageInteger
-        else:
-            z = sage.rings.integer_ring.Z(value)
-        self.set_from_mpz(z.value)
 
     cdef IntegerMod_int64 _new_c(self, int_fast64_t value):
         cdef IntegerMod_int64 x
@@ -3048,13 +3138,15 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         return x
 
     cdef void set_from_mpz(self, mpz_t value):
-        if mpz_sgn(value) == -1 or mpz_cmp_si(value, self.__modulus.int64) >= 0:
-            self.ivalue = mpz_fdiv_ui(value, self.__modulus.int64)
-        else:
-            self.ivalue = mpz_get_si(value)
+        self.ivalue = mpz_fdiv_ui(value, self.__modulus.int64)
 
     cdef void set_from_long(self, long value):
         self.ivalue = value % self.__modulus.int64
+        if self.ivalue < 0:
+            self.ivalue += self.__modulus.int64
+
+    cdef void set_from_ulong_fast(self, unsigned long value):
+        self.ivalue = value
 
     cdef void set_from_int(IntegerMod_int64 self, int_fast64_t ivalue):
         if ivalue < 0:
@@ -3160,8 +3252,8 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         cdef IntegerMod_int64 lift
         cdef int_fast64_t x
 
-        import integer_mod_ring
-        lift = IntegerMod_int64(integer_mod_ring.IntegerModRing(self.__modulus.int64 * other.__modulus.int64), None, empty=True)
+        from .integer_mod_ring import IntegerModRing
+        lift = IntegerMod_int64(IntegerModRing(self.__modulus.int64 * other.__modulus.int64))
 
         try:
             x = (other.ivalue - self.ivalue % other.__modulus.int64) * mod_inverse_int64(self.__modulus.int64, other.__modulus.int64)
@@ -3348,7 +3440,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             sage: R(17)^-1
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Inverse does not exist.
+            ZeroDivisionError: inverse of Mod(17, 1419857) does not exist
             sage: R(17)^-100000000
             Traceback (most recent call last):
             ...
@@ -3376,7 +3468,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         instead::
 
             sage: from sage.rings.finite_rings.integer_mod \
-            ...       import IntegerMod_int64
+            ....:     import IntegerMod_int64
             sage: zero = IntegerMod_int64(Integers(1),0)
             sage: type(zero)
             <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
@@ -3586,7 +3678,7 @@ cdef int_fast64_t mod_inverse_int64(int_fast64_t x, int_fast64_t n) except 0:
         last_t = t
         t = next_t
         next_t = last_t - q * t
-    raise ZeroDivisionError("Inverse does not exist.")
+    raise ZeroDivisionError(f"inverse of Mod({x}, {n}) does not exist")
 
 
 cdef int_fast64_t mod_pow_int64(int_fast64_t base, int_fast64_t exp, int_fast64_t n):
@@ -3696,6 +3788,8 @@ def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
         sage: b=square_root_mod_prime_power(a,97,10)
         sage: b^2 == a
         True
+        sage: mod(100, 5^7).sqrt()^2
+        100
     """
     if a.is_zero() or a.is_one():
         return a
@@ -3723,7 +3817,9 @@ def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
     # lift p-adically using Newton iteration
     # this is done to higher precision than necessary except at the last step
     one_half = ~(a._new_c_from_long(2))
-    cdef int n = <int>ceil(log(e)/log(2)) - val//2
+    # need at least (e - val//2) p-adic digits of precision, which doubles
+    # at each step
+    cdef int n = <int>ceil(log(e - val//2)/log(2))
     for i in range(n):
         x = (x+unit/x) * one_half
 
@@ -3784,8 +3880,8 @@ cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
 
         sage: from sage.rings.finite_rings.integer_mod import square_root_mod_prime   # sqrt() uses brute force for small p
         sage: all([square_root_mod_prime(a*a)^2 == a*a
-        ...        for p in prime_range(100)
-        ...        for a in Integers(p)])
+        ....:      for p in prime_range(100)
+        ....:      for a in Integers(p)])
         True
     """
     if not a or a.is_one():
@@ -3793,8 +3889,7 @@ cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
 
     if p is None:
         p = a._parent.order()
-    if p < PyInt_GetMax():
-        p = int(p)
+    p = Integer(p)
 
     cdef int p_mod_16 = p % 16
     cdef double bits = log(float(p))/log(2)
@@ -3901,40 +3996,6 @@ def lucas_q1(mm, IntegerMod_abstract P):
     else:
         return d1*d1 - two
 
-from sage.misc.superseded import deprecated_function_alias
-fast_lucas = deprecated_function_alias(11802, lucas_q1)
-
-def slow_lucas(k, P, Q=1):
-    """
-    Lucas function defined using the standard definition, for
-    consistency testing. This is deprecated in :trac:`11802`. Use
-    ``BinaryRecurrenceSequence(P, -Q, 2, P)(k)`` instead.
-
-    .. SEEALSO::
-
-        :class:`~sage.combinat.binary_recurrence_sequences.BinaryRecurrenceSequence`
-
-    REFERENCES:
-
-    - :wikipedia:`Lucas_sequence`
-
-    TESTS::
-
-        sage: from sage.rings.finite_rings.integer_mod import slow_lucas
-        sage: [slow_lucas(k, 1, -1) for k in range(10)]
-        doctest:...: DeprecationWarning: slow_lucas() is deprecated. Use BinaryRecurrenceSequence instead.
-        See http://trac.sagemath.org/11802 for details.
-        [2, 1, 3, 4, 7, 11, 18, 29, 47, 76]
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(11802, 'slow_lucas() is deprecated. Use BinaryRecurrenceSequence instead.')
-    if k == 0:
-        return 2
-    elif k == 1:
-        return P
-    from sage.combinat.binary_recurrence_sequences import BinaryRecurrenceSequence
-    B = BinaryRecurrenceSequence(P, -Q, 2, P)
-    return B(k)
 
 def lucas(k, P, Q=1, n=None):
     r"""
@@ -3976,7 +4037,7 @@ def lucas(k, P, Q=1, n=None):
         sage: q = randint(0,100000)
         sage: n = randint(0,100)
         sage: all([lucas(k,p,q,n)[0] == Mod(lucas_number2(k,p,q),n)
-        ...        for k in Integers(20)])
+        ....:      for k in Integers(20)])
         True
         sage: from sage.rings.finite_rings.integer_mod import lucas
         sage: p = randint(0,100000)
@@ -4054,7 +4115,7 @@ cdef class IntegerMod_hom(Morphism):
         self.zero = C._element_constructor_(0)
         self.modulus = C._pyx_order
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for pickling and copying.
 
@@ -4076,9 +4137,10 @@ cdef class IntegerMod_hom(Morphism):
             sage: psi(R15(7))
             2
         """
-        _slots['zero'] = self.zero
-        _slots['modulus'] = self.modulus
-        return Morphism._extra_slots(self, _slots)
+        slots = Morphism._extra_slots(self)
+        slots['zero'] = self.zero
+        slots['modulus'] = self.modulus
+        return slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -4135,17 +4197,46 @@ cdef class IntegerMod_to_IntegerMod(IntegerMod_hom):
 
     cpdef Element _call_(self, x):
         cdef IntegerMod_abstract a
+        zero = <IntegerMod_abstract>self.zero
+        cdef unsigned long value
         if isinstance(x, IntegerMod_int):
-            return (<IntegerMod_int>self.zero)._new_c((<IntegerMod_int>x).ivalue % self.modulus.int32)
+            value = (<IntegerMod_int>x).ivalue
+            value %= <unsigned long>self.modulus.int32
+            return zero._new_c_fast(value)
         elif isinstance(x, IntegerMod_int64):
-            return self.zero._new_c_from_long((<IntegerMod_int64>x).ivalue  % self.modulus.int64)
-        else: # isinstance(x, IntegerMod_gmp)
-            a = self.zero._new_c_from_long(0)
-            a.set_from_mpz((<IntegerMod_gmp>x).value)
-            return a
+            value = (<IntegerMod_int64>x).ivalue
+            value %= <unsigned long>self.modulus.int64
+            return zero._new_c_fast(value)
+        a = zero._new_c_fast(0)
+        a.set_from_mpz((<IntegerMod_gmp?>x).value)
+        return a
 
     def _repr_type(self):
         return "Natural"
+
+    def is_surjective(self):
+        r"""
+        Return whether this morphism is surjective.
+
+        EXAMPLES::
+
+            sage: Zmod(4).hom(Zmod(2)).is_surjective()
+            True
+
+        """
+        return True
+
+    def is_injective(self):
+        r"""
+        Return whether this morphism is injective.
+
+        EXAMPLES::
+
+            sage: Zmod(4).hom(Zmod(2)).is_injective()
+            False
+
+        """
+        return self.domain().order() == self.codomain().order()
 
 cdef class Integer_to_IntegerMod(IntegerMod_hom):
     r"""
@@ -4177,7 +4268,7 @@ cdef class Integer_to_IntegerMod(IntegerMod_hom):
             res = x % self.modulus.int64
             if res < 0:
                 res += self.modulus.int64
-            a = self.modulus.lookup(res)
+            a = self.modulus.table[res]
 #            if a._parent is not self._codomain:
             a._parent = self._codomain
             return a
@@ -4191,6 +4282,31 @@ cdef class Integer_to_IntegerMod(IntegerMod_hom):
 
     def section(self):
         return IntegerMod_to_Integer(self._codomain)
+
+    def is_surjective(self):
+        r"""
+        Return whether this morphism is surjective.
+
+        EXAMPLES::
+
+            sage: ZZ.hom(Zmod(2)).is_surjective()
+            True
+
+        """
+        return True
+
+    def is_injective(self):
+        r"""
+        Return whether this morphism is injective.
+
+        EXAMPLES::
+
+            sage: ZZ.hom(Zmod(2)).is_injective()
+            False
+
+        """
+        return False
+
 
 cdef class IntegerMod_to_Integer(Map):
     """
@@ -4218,17 +4334,18 @@ cdef class IntegerMod_to_Integer(Map):
         Morphism.__init__(self, sage.categories.homset.Hom(R, integer_ring.ZZ, Sets()))
 
     cpdef Element _call_(self, x):
-        cdef Integer ans = PY_NEW(Integer)
+        cdef Integer ans = Integer.__new__(Integer)
         if isinstance(x, IntegerMod_gmp):
             mpz_set(ans.value, (<IntegerMod_gmp>x).value)
         elif isinstance(x, IntegerMod_int):
-            mpz_set_si(ans.value, (<IntegerMod_int>x).ivalue)
+            mpz_set_ui(ans.value, (<IntegerMod_int>x).ivalue)
         elif isinstance(x, IntegerMod_int64):
-            mpz_set_si(ans.value, (<IntegerMod_int64>x).ivalue)
+            mpz_set_ui(ans.value, (<IntegerMod_int64>x).ivalue)
         return ans
 
     def _repr_type(self):
         return "Lifting"
+
 
 cdef class Int_to_IntegerMod(IntegerMod_hom):
     """
@@ -4248,27 +4365,26 @@ cdef class Int_to_IntegerMod(IntegerMod_hom):
     """
     def __init__(self, R):
         import sage.categories.homset
-        from sage.structure.parent import Set_PythonType
+        from sage.sets.pythonclass import Set_PythonType
         IntegerMod_hom.__init__(self, sage.categories.homset.Hom(Set_PythonType(int), R))
 
     cpdef Element _call_(self, x):
         cdef IntegerMod_abstract a
-        cdef long res = PyInt_AS_LONG(x)
-        if isinstance(self.zero, IntegerMod_gmp):
-            if 0 <= res < INTEGER_MOD_INT64_LIMIT:
-                return self.zero._new_c_from_long(res)
-            else:
-                return IntegerMod_gmp(self.zero._parent, x)
-        else:
-            res %= self.modulus.int64
-            if res < 0:
-                res += self.modulus.int64
-            if self.modulus.table is not None:
-                a = self.modulus.lookup(res)
-                a._parent = self._codomain
-                return a
-            else:
-                return self.zero._new_c_from_long(res)
+        zero = <IntegerMod_abstract>self.zero
+
+        cdef long res
+        cdef int err
+
+        if not integer_check_long_py(x, &res, &err):
+            raise TypeError(f"{x} is not an integer")
+
+        if not err:
+            return zero._new_c_from_long(res)
+
+        cdef Integer z = Integer(x)
+        a = zero._new_c_fast(0)
+        a.set_from_mpz(z.value)
+        return a
 
     def _repr_type(self):
         return "Native"

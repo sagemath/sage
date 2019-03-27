@@ -18,12 +18,11 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.knots.link import Link
-from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod import Mod
 
 
 class Knot(Link):
-    """
+    r"""
     A knot.
 
     A knot is defined as embedding of the circle `\mathbb{S}^1` in the
@@ -249,9 +248,9 @@ class Knot(Link):
             sage: B = BraidGroup(2)
             sage: trefoil = Knot(B([1,1,1]))
             sage: K = trefoil.connected_sum(trefoil); K
-            Knot represented by 7 crossings
+            Knot represented by 6 crossings
             sage: K.braid()
-            s0^3*s2^3*s1
+            s0^3*s1^-1*s0^3*s1
 
         .. PLOT::
             :width: 300 px
@@ -265,9 +264,9 @@ class Knot(Link):
 
             sage: rev_trefoil = Knot(B([-1,-1,-1]))
             sage: K = trefoil.connected_sum(rev_trefoil); K
-            Knot represented by 7 crossings
+            Knot represented by 6 crossings
             sage: K.braid()
-            s0^3*s2^-3*s1
+            s0^3*s1^-1*s0^-3*s1
 
         .. PLOT::
             :width: 300 px
@@ -282,16 +281,16 @@ class Knot(Link):
 
         - :wikipedia:`Connected_sum`
         """
-        from sage.groups.braid import BraidGroup
-        b1 = self.braid()
-        b2 = other.braid()
-
-        b1s = b1.strands()
-        b2s = b2.strands()
-
-        B = BraidGroup(b1s + b2s)
-
-        return Knot(B(list(b1.Tietze())
-                      + [(abs(i) + b2s) * Integer(i).sign() for i in b2.Tietze()]
-                      + [b1s]))
+        from copy import deepcopy
+        from sage.functions.generalized import sign
+        ogc1 = deepcopy(self.oriented_gauss_code())
+        ogc2 = deepcopy(other.oriented_gauss_code())
+        # how much we have to "displace" the numbering of the crossings of other
+        m1 = max([abs(i) for i in ogc1[0][0]])
+        m2 = min([abs(i) for i in ogc2[0][0]])
+        n = m1 - m2 + 1
+        # construct the oriented gauss code of the result
+        ogc2[0][0] = [a+int(sign(a))*n for a in ogc2[0][0]]
+        nogc = [[ogc1[0][0]+ogc2[0][0]],ogc1[1]+ogc2[1]]
+        return Knot(nogc)
 

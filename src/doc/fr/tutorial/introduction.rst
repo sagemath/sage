@@ -61,7 +61,7 @@ Installation
 ============
 
 Si Sage n'est pas installé sur votre ordinateur, vous pouvez essayer
-quelques commandes en ligne à l'adresse http://www.sagenb.org.
+quelques commandes en ligne à l'adresse http://sagecell.sagemath.org.
 
 Des instructions pour installer Sage sur votre ordinateur sont
 disponibles dans le guide d'installation (*Installation Guide*), dans
@@ -99,7 +99,7 @@ Nous nous limiterons ici à quelques remarques.
    d'environnement.
 
    La documentation de SageTeX se trouve dans le répertoire
-   ``$SAGE_ROOT/local/share/texmf/tex/generic/sagetex/``, où
+   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, où
    "``$SAGE_ROOT``" est le répertoire où vous avez installé Sage, par
    exemple ``/opt/sage-4.3.4``.
 

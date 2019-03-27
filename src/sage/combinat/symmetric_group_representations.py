@@ -28,6 +28,8 @@ Representations of the Symmetric Group
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+import six
+from six.moves import range
 
 from sage.symbolic.ring import SR
 from sage.functions.all import sqrt
@@ -219,7 +221,7 @@ def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
         Seminormal representations of the symmetric group of order 3! over Rational Field
         sage: sgn = snorm([1,1,1]); sgn
         Seminormal representation of the symmetric group corresponding to [1, 1, 1]
-        sage: map(sgn, Permutations(3))
+        sage: list(map(sgn, Permutations(3)))
         [[1], [-1], [-1], [1], [1], [-1]]
 
     The Specht Representation.
@@ -378,8 +380,8 @@ class SymmetricGroupRepresentation_generic_class(SageObject):
         """
         n = self._partition.size()
         transpositions = []
-        for i in range(1,n):
-            si = Permutation(range(1,i) + [i+1,i] + range(i+2,n+1))
+        for i in range(1, n):
+            si = Permutation(list(range(1,i)) + [i+1,i] + list(range(i+2,n+1)))
             transpositions.append(si)
         repn_matrices = [self.representation_matrix(_) for _ in transpositions]
         for (i,si) in enumerate(repn_matrices):
@@ -426,7 +428,7 @@ class SymmetricGroupRepresentation_generic_class(SageObject):
             sage: triv = SymmetricGroupRepresentation([4])
             sage: hook = SymmetricGroupRepresentation([3,1])
             sage: def_rep = lambda p : triv(p).block_sum(hook(p)).trace()
-            sage: map(def_rep, Permutations(4))
+            sage: list(map(def_rep, Permutations(4)))
             [4, 2, 2, 1, 1, 2, 2, 0, 1, 0, 0, 1, 1, 0, 2, 1, 0, 0, 0, 1, 1, 2, 0, 0]
             sage: [p.to_matrix().trace() for p in Permutations(4)]
             [4, 2, 2, 1, 1, 2, 2, 0, 1, 0, 0, 1, 1, 0, 2, 1, 0, 0, 0, 1, 1, 2, 0, 0]
@@ -568,7 +570,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
              (2, 0, 1, -1, 0): (2, 4, 1, 3, 5)}
         """
         word_dict = {}
-        for (v,t) in self._tableau_dict.iteritems():
+        for (v,t) in six.iteritems(self._tableau_dict):
             word_dict[v] = sum(reversed(t), ())
         return word_dict
 

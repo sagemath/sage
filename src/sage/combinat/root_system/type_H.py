@@ -41,6 +41,17 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
         assert n in [3, 4]
         CartanType_standard_finite.__init__(self, "H", n)
 
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: latex(CartanType(['H',3]))
+            H_3
+        """
+        return "H_{}".format(self.n)
+
     def coxeter_diagram(self):
         """
         Returns a Coxeter diagram for type H.

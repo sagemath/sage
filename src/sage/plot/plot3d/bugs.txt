@@ -51,7 +51,7 @@ checklist -- each option is documented
 General TODO:
   * implement frame_thickness and frame_color for everything in platonic.py, not just for cube.
 
-  * Make it so all extra parameters to any ploting commands (in 2d or 3d)
+  * Make it so all extra parameters to any plotting commands (in 2d or 3d)
     are saved and passed through to show -- or at least those that
     are relevant, e.g., xmin, xmax, etc.
   * Fix all doctests now that show is not needed by default.
@@ -70,8 +70,6 @@ Jmol bugs:
    We should draw axis and allow for aspect ratios.
  * Invalid color doesn't yield an error message, e.g., Icosahedron(texture="yello")
  * color --> rgbcolor
- * In parametricsurface:
-        except:       # TODO -- this would catch control-C,etc. -- FIX THIS TO CATCH WHAT IS RAISED!!!!
  * Observation:
       jmol embedded applets *crash* when more than 10 or so appear in
       a page... unless I make them all small (e.g. 50 pixels) in which
@@ -87,6 +85,3 @@ Jmol todo:
 
 Tachyon bugs:
  * Text3D doesn't work
-
-
-

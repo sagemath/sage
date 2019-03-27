@@ -121,7 +121,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         from sage.misc.latex import latex
-        return "{}_{{ n={} }}({},\ {})({})".format(self._analytic_type.latex_space_name(), self._group.n(), self._weight, self._ep, latex(self._base_ring))
+        return r"{}_{{ n={} }}({},\ {})({})".format(self._analytic_type.latex_space_name(), self._group.n(), self._weight, self._ep, latex(self._base_ring))
 
     def _element_constructor_(self, el):
         r"""
@@ -348,10 +348,9 @@ class FormsSpace_abstract(FormsRing_abstract):
     @cached_method
     def one(self):
         r"""
-        Return the one element from the corresponding space
-        of constant forms.
+        Return the one element from the corresponding space of constant forms.
 
-        Note: The one element does not lie in ``self`` in general.
+        .. NOTE:: The one element does not lie in ``self`` in general.
 
         EXAMPLES::
 
@@ -363,28 +362,6 @@ class FormsSpace_abstract(FormsRing_abstract):
             ModularForms(n=3, k=0, ep=1) over Integer Ring
         """
         return self.extend_type("holo", ring=True)(1).reduce()
-
-    def one_element(self):
-        r"""
-        Return the one element from the corresponding space
-        of constant forms.
-
-        Note: The one element does not lie in ``self`` in general.
-
-        EXAMPLES::
-
-            sage: from sage.modular.modform_hecketriangle.space import CuspForms
-            sage: MF = CuspForms(k=12)
-            sage: (MF.Delta()^(-1)).parent()
-            MeromorphicModularForms(n=3, k=-12, ep=1) over Integer Ring
-            sage: MF.one_element()
-            doctest:...: DeprecationWarning: .one_element() is deprecated. Use .one() instead.
-            See http://trac.sagemath.org/17694 for details.
-            1 + O(q^5)
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(17694, ".one_element() is deprecated. Use .one() instead.")
-        return self.one()
 
     def is_ambient(self):
         r"""
@@ -399,7 +376,6 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.subspace([MF.gen(0)]).is_ambient()
             False
         """
-
         return self._ambient_space == self
 
     def ambient_space(self):
@@ -1155,7 +1131,7 @@ class FormsSpace_abstract(FormsRing_abstract):
     def F_basis_pol(self, m, order_1=ZZ(0)):
         r"""
         Returns a polynomial corresponding to the basis element of
-        the correponding space of weakly holomorphic forms of
+        the corresponding space of weakly holomorphic forms of
         the same degree as ``self``. The basis element is determined
         by the property that the Fourier expansion is of the form
         ``q^m + O(q^(order_inf + 1))``, where ``order_inf = self._l1 - order_1``.
@@ -1853,7 +1829,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         for gen in basis:
             A = A.augment(gen.q_expansion_vector(min_exp=min_exp, max_exp=prec-1))
 
-        # So far this case never happened but potentiall A could be singular!
+        # So far this case never happened but potentially A could be singular!
         # In this case we want to increase the row size until A has maximal
         # rank (i.e. column size).
 
@@ -1899,10 +1875,10 @@ class FormsSpace_abstract(FormsRing_abstract):
         uniquely determine a corresponding (quasi) form in ``self`` with the given
         lower bound ``min_exp`` for the order at infinity (for each quasi part).
 
-        .. NOTE:
+        .. NOTE::
 
-        For ``n=infinity`` only the holomorphic case (``min_exp >= 0``)
-        is supported (in particular a non-negative order at ``-1`` is assumed).
+            For ``n=infinity`` only the holomorphic case (``min_exp >= 0``)
+            is supported (in particular a non-negative order at ``-1`` is assumed).
 
         INPUT:
 
@@ -2056,7 +2032,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         (min_exp, order_1) = self._canonical_min_exp(min_exp1, order_1)
 
         if (min_exp != min_exp1):
-            raise ValueError("Due to the behavior at infinity the given laurent series cannot possibly be an element of {}".format(self))
+            raise ValueError("Due to the behavior at infinity the given Laurent series cannot possibly be an element of {}".format(self))
 
         # if a q_basis is available we can construct the form much faster
         if (self.q_basis.is_in_cache(min_exp=min_exp, order_1=order_1)):
@@ -2310,7 +2286,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         series_prec = laurent_series.prec()
 
         # If the coefficients already coerce to our coefficient ring
-        # and are in polynomial form we simply return the laurent series
+        # and are in polynomial form we simply return the Laurent series
         if (is_PolynomialRing(base_ring.base())):
             if (self.coeff_ring().has_coerce_map_from(base_ring)):
                 return laurent_series
@@ -2364,7 +2340,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             cor_exp = max(-first_exp, 0)
             m += cor_exp
 
-            if (self.group().is_arithmetic()):
+            if self.group().is_arithmetic():
                 return ZZ(1/dvalue)**m
 
             hecke_n = self.hecke_n()
@@ -2420,9 +2396,9 @@ class FormsSpace_abstract(FormsRing_abstract):
         r"""
         Return the dimension of ``self``.
 
-        .. NOTE:
+        .. NOTE::
 
-        This method should be overloaded by subclasses.
+            This method should be overloaded by subclasses.
 
         EXAMPLES::
 

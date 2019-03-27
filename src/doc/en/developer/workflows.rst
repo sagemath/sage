@@ -24,7 +24,7 @@ third person.
 Simple Workflow
 ===============
 
-.. image:: static/flowchart.*
+.. IMAGE:: static/flowchart.*
     :align: center
 
 

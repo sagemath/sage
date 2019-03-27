@@ -26,7 +26,7 @@ Website: http://rpy.sourceforge.net/rpy2.html
 
 === rpy2-2.7.4 (Emmanuel Charpentier, December 1st, 2015) ===
  * Trac #19638 : upgrade to allow interaction with Jupyter notebook
- * Updated cygwin.patch to add "|| #defined(__CyGWIN__)" to ALL occurences
+ * Updated cygwin.patch to add "|| #defined(__CyGWIN__)" to ALL occurrences
    of "#defined(Win32) || #defined(Win64)". This should be reviewed by
    someone who knows what (he|she)'s doing with Cygwin (I don't).
  * Removed setup.patch, which as no target now.

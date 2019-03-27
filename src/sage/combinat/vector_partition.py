@@ -70,7 +70,7 @@ def IntegerVectorsIterator(vect, min = None):
 
     OUTPUT:
 
-    A list in lexicograohic order of all integer vectors (as lists) which are
+    A list in lexicographic order of all integer vectors (as lists) which are
     dominated elementwise by ``vect`` and are greater than or equal to ``min`` in
     lexicographic order.
 
@@ -257,7 +257,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
             sage: VP.cardinality()
             9
         """
-        if all([coord==0 for coord in self._vec]):
+        if all(coord == 0 for coord in self._vec):
             yield self.element_class(self, []) # the zero vector has only the empty partition
         else:
             for vec in IntegerVectorsIterator(list(self._vec), min = list(self._min)): # choose the first part

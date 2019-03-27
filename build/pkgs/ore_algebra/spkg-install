@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo >&2 "SAGE_LOCAL undefined ... exiting"
     echo >&2 "Maybe run 'sage --sh'?"
@@ -7,9 +5,9 @@ if [ -z "$SAGE_LOCAL" ]; then
 fi
 
 cd src
-export PYTHONPATH="."
 echo "building ore_algebra"
-python setup.py install
+
+sdh_pip_install .
 
 if [ $? -ne 0 ]; then
     echo >&2 "Error building ore_algebra"

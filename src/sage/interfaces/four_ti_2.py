@@ -34,6 +34,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six import iteritems
 
 from sage.rings.integer_ring import ZZ
 import os
@@ -126,7 +127,7 @@ class FourTi2(object):
             sage: four_ti_2.write_matrix([[1,2],[3,4]], "test_file")
         """
         from sage.matrix.constructor import matrix
-        from sage.matrix.matrix import is_Matrix
+        from sage.structure.element import is_Matrix
         if not is_Matrix(mat):
             mat = matrix(ZZ, mat)
         if mat.base_ring() != ZZ:
@@ -255,12 +256,12 @@ class FourTi2(object):
         if project is None:
             project = self.temp_project()
 
-        for ext, value in kwds.iteritems():
+        for ext, value in iteritems(kwds):
             if value is None:
                 continue
 
             if (isinstance(value, list) and
-                not (len(value) > 0 and isinstance(value[0], list))):
+                not (len(value) and isinstance(value[0], list))):
                 self.write_single_row(value, project + "." + ext)
             else:
                 self.write_matrix(value, project + "." + ext)

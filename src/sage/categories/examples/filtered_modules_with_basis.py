@@ -63,10 +63,10 @@ class FilteredPartitionModule(CombinatorialFreeModule):
           'P[4, 3]'
 
     - There is a class for elements, which inherits from
-      :class:`CombinatorialFreeModuleElement
-      <sage.combinat.free_module.CombinatorialFreeModuleElement>`.  An
-      element is determined by a dictionary whose keys are partitions and whose
-      corresponding values are the coefficients.  The class implements
+      :class:`IndexedFreeModuleElement
+      <sage.modules.with_basis.indexed_element.IndexedFreeModuleElement>`.
+      An element is determined by a dictionary whose keys are partitions and
+      whose corresponding values are the coefficients.  The class implements
       two things: an :meth:`is_homogeneous
       <FilteredModules.Element.is_homogeneous>` method and a
       :meth:`degree <FilteredModules.Element.degree>` method.

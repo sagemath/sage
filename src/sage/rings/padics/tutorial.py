@@ -53,42 +53,42 @@ different types of `p`-adics.
 We can think of `p`-adics in two ways. First, as a
 projective limit of finite groups:
 
-.. math::
+.. MATH::
 
-    \mathbb{Z}_p = \lim_{\leftarrow n} \mathbb{Z}/p^n\mathbb{Z}.
+    \ZZ_p = \lim_{\leftarrow n} \ZZ/p^n\ZZ.
 
 Secondly, as Cauchy sequences of rationals (or integers, in the
-case of `\mathbb{Z}_p`) under the `p`-adic metric.
+case of `\ZZ_p`) under the `p`-adic metric.
 Since we only need to consider these sequences up to equivalence,
 this second way of thinking of the `p`-adics is the same as
 considering power series in `p` with integral coefficients
 in the range `0` to `p-1`. If we only allow
 nonnegative powers of `p` then these power series converge
-to elements of `\mathbb{Z}_p`, and if we allow bounded
-negative powers of `p` then we get `\mathbb{Q}_p`.
+to elements of `\ZZ_p`, and if we allow bounded
+negative powers of `p` then we get `\QQ_p`.
 
 Both of these representations give a natural way of thinking about
 finite approximations to a `p`-adic element. In the first
 representation, we can just stop at some point in the projective
-limit, giving an element of `\mathbb{Z}/p^n\mathbb{Z}`. As
-`\mathbb{Z}_p / p^n\mathbb{Z}_p \cong \mathbb{Z}/p^n\mathbb{Z}`, this
+limit, giving an element of `\ZZ/p^n\ZZ`. As
+`\ZZ_p / p^n\ZZ_p \cong \ZZ/p^n\ZZ`, this
 is equivalent to specifying our element modulo
-`p^n\mathbb{Z}_p`.
+`p^n\ZZ_p`.
 
 The *absolute precision* of a finite approximation
-`\bar{x} \in \mathbb{Z}/p^n\mathbb{Z}` to `x \in \mathbb{Z}_p`
+`\bar{x} \in \ZZ/p^n\ZZ` to `x \in \ZZ_p`
 is the non-negative integer `n`.
 
 In the second representation, we can achieve the same thing by
 truncating a series
 
-.. math::
+.. MATH::
 
       a_0 + a_1 p + a_2 p^2 + \cdots
 
 at `p^n`, yielding
 
-.. math::
+.. MATH::
 
      a_0 + a_1 p + \cdots + a_{n-1} p^{n-1} + O(p^n).
 
@@ -96,10 +96,10 @@ at `p^n`, yielding
 As above, we call this `n` the absolute precision of our
 element.
 
-Given any `x \in \mathbb{Q}_p` with `x \ne 0`, we
+Given any `x \in \QQ_p` with `x \ne 0`, we
 can write `x = p^v u` where `v \in \ZZ` and
-`u \in \mathbb{Z}_p^{\times}`. We could thus also store an element
-of `\mathbb{Q}_p` (or `\mathbb{Z}_p`) by storing
+`u \in \ZZ_p^{\times}`. We could thus also store an element
+of `\QQ_p` (or `\ZZ_p`) by storing
 `v` and a finite approximation of `u`. This
 motivates the following definition: the *relative precision* of an
 approximation to `x` is defined as the absolute precision
@@ -111,8 +111,8 @@ then the absolute precision of `x` is `n`, the
 valuation of `x` is `k` and the relative precision
 of `x` is `n-k`.
 
-There are three different representations of `\mathbb{Z}_p`
-in Sage and one representation of `\mathbb{Q}_p`:
+There are three different representations of `\ZZ_p`
+in Sage and one representation of `\QQ_p`:
 
 -  the fixed modulus ring
 
@@ -125,8 +125,8 @@ in Sage and one representation of `\mathbb{Q}_p`:
 Fixed Modulus Rings
 -------------------
 
-The first, and simplest, type of `\mathbb{Z}_p` is basically
-a wrapper around `\mathbb{Z}/p^n\mathbb{Z}`, providing a unified
+The first, and simplest, type of `\ZZ_p` is basically
+a wrapper around `\ZZ/p^n\ZZ`, providing a unified
 interface with the rest of the `p`-adics. You specify a
 precision, and all elements are stored to that absolute precision.
 If you perform an operation that would normally lose precision, the
@@ -137,7 +137,7 @@ but it is also the one that has the lowest computational overhead.
 Once we have ironed out some bugs, the fixed modulus elements will
 be those most optimized for speed.
 
-As with all of the implementations of `\mathbb{Z}_p`, one
+As with all of the implementations of `\ZZ_p`, one
 creates a new ring using the constructor ``Zp``, and passing in
 ``'fixed-mod'`` for the ``type`` parameter. For example,
 
@@ -151,25 +151,25 @@ One can create elements as follows::
 
     sage: a = R(375)
     sage: a
-    3*5^3 + O(5^10)
+    3*5^3
     sage: b = R(105)
     sage: b
-    5 + 4*5^2 + O(5^10)
+    5 + 4*5^2
 
 Now that we have some elements, we can do arithmetic in the ring.
 
 ::
 
     sage: a + b
-    5 + 4*5^2 + 3*5^3 + O(5^10)
+    5 + 4*5^2 + 3*5^3
     sage: a * b
-    3*5^4 + 2*5^5 + 2*5^6 + O(5^10)
+    3*5^4 + 2*5^5 + 2*5^6
 
 Floor division (//) divides even though the result isn't really
 known to the claimed precision; note that division isn't defined::
 
     sage: a // 5
-    3*5^2 + O(5^10)
+    3*5^2
 
 ::
 
@@ -182,7 +182,7 @@ Since elements don't actually store their actual precision, one can
 only divide by units::
 
     sage: a / 2
-    4*5^3 + 2*5^4 + 2*5^5 + 2*5^6 + 2*5^7 + 2*5^8 + 2*5^9 + O(5^10)
+    4*5^3 + 2*5^4 + 2*5^5 + 2*5^6 + 2*5^7 + 2*5^8 + 2*5^9
     sage: a / b
     Traceback (most recent call last):
     ...
@@ -192,12 +192,12 @@ If you want to divide by a non-unit, do it using the ``//``
 operator::
 
     sage: a // b
-    3*5^2 + 3*5^3 + 2*5^5 + 5^6 + 4*5^7 + 2*5^8 + O(5^10)
+    3*5^2 + 3*5^3 + 2*5^5 + 5^6 + 4*5^7 + 2*5^8 + 3*5^9
 
 Capped Absolute Rings
 ---------------------
 
-The second type of implementation of `\mathbb{Z}_p` is
+The second type of implementation of `\ZZ_p` is
 similar to the fixed modulus implementation, except that individual
 elements track their known precision. The absolute precision of
 each element is limited to be less than the precision cap of the
@@ -302,22 +302,21 @@ yielding a capped relative precision field element.
 Unramified Extensions
 ---------------------
 
-One can create unramified extensions of `\mathbb{Z}_p` and
-`\mathbb{Q}_p` using the functions ``Zq`` and ``Qq``.
+One can create unramified extensions of `\ZZ_p` and
+`\QQ_p` using the functions ``Zq`` and ``Qq``.
 
 In addition to requiring a prime power as the first argument,
 ``Zq`` also requires a name for the generator of the residue field.
 One can specify this name as follows::
 
     sage: R.<c> = Zq(125, prec = 20); R
-    Unramified Extension of 5-adic Ring with capped absolute precision 20
-    in c defined by (1 + O(5^20))*x^3 + (O(5^20))*x^2 + (3 + O(5^20))*x + (3 + O(5^20))
+    5-adic Unramified Extension Ring in c defined by x^3 + 3*x + 3
 
 Eisenstein Extensions
 ---------------------
 
-It is also possible to create Eisenstein extensions of `\mathbb{Z}_p`
-and `\mathbb{Q}_p`.  In order to do so, create the ground field first::
+It is also possible to create Eisenstein extensions of `\ZZ_p`
+and `\QQ_p`.  In order to do so, create the ground field first::
 
     sage: R = Zp(5, 2)
 
@@ -337,7 +336,7 @@ You can do arithmetic in this Eisenstein extension::
     1 + 2*w + w^2 + w^5 + 3*w^6 + 3*w^7 + 3*w^8 + w^9 + O(w^10)
 
 Note that the precision cap increased by a factor of 5, since the
-ramification index of this extension over `\mathbb{Z}_p` is 5.
+ramification index of this extension over `\ZZ_p` is 5.
 """
 
 # Lazy Rings and Fields

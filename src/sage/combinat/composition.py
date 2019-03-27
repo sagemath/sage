@@ -43,7 +43,6 @@ from .integer_lists import IntegerListsLex
 from six.moves import builtins
 from sage.rings.integer import Integer
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 
 
 class Composition(CombinatorialElement):
@@ -198,7 +197,7 @@ class Composition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: loads("x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\x011\n\xf2\x8b3K2\xf3\xf3\xb8\x9c\x11\xec\xf8\xe4\x9c\xc4\xe2b\xaeBF\xcd\xc6B\xa6\xdaBf\x8dP\xd6\xf8\x8c\xc4\xe2\x8cB\x16? +'\xb3\xb8\xa4\x905\xb6\x90M\x03bZQf^z\xb1^f^Ijzj\x11Wnbvj<\x8cS\xc8\x1e\xcah\xd8\x1aT\xc8\x91\x01d\x18\x01\x19\x9c\x19P\x11\xae\xd4\xd2$=\x00eW0g")
+            sage: loads(b"x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\x011\n\xf2\x8b3K2\xf3\xf3\xb8\x9c\x11\xec\xf8\xe4\x9c\xc4\xe2b\xaeBF\xcd\xc6B\xa6\xdaBf\x8dP\xd6\xf8\x8c\xc4\xe2\x8cB\x16? +'\xb3\xb8\xa4\x905\xb6\x90M\x03bZQf^z\xb1^f^Ijzj\x11Wnbvj<\x8cS\xc8\x1e\xcah\xd8\x1aT\xc8\x91\x01d\x18\x01\x19\x9c\x19P\x11\xae\xd4\xd2$=\x00eW0g")
             [1, 2, 1]
             sage: loads(dumps( Composition([1,2,1]) ))  # indirect doctest
             [1, 2, 1]
@@ -1085,11 +1084,11 @@ class Composition(CombinatorialElement):
         size `n = 8`::
 
             sage: n = 8
-            sage: all(Composition(from_subset=(S, n)).to_subset() == S \
-            ...       for S in Subsets(n-1))
+            sage: all(Composition(from_subset=(S, n)).to_subset() == S
+            ....:     for S in Subsets(n-1))
             True
-            sage: all(Composition(from_subset=(I.to_subset(), n)) == I \
-            ...       for I in Compositions(n))
+            sage: all(Composition(from_subset=(I.to_subset(), n)) == I
+            ....:     for I in Compositions(n))
             True
         """
         from sage.sets.set import Set
@@ -1227,7 +1226,7 @@ class Composition(CombinatorialElement):
 
         OUTPUT:
 
-        An enumerated set (allowing for mutliplicities)
+        An enumerated set (allowing for multiplicities)
 
         EXAMPLES:
 
@@ -1268,8 +1267,8 @@ class Composition(CombinatorialElement):
             [[]]
         """
         if overlap:
-            from sage.combinat.words.shuffle_product import ShuffleProduct_overlapping
-            return ShuffleProduct_overlapping(self, other)
+            from sage.combinat.shuffle import ShuffleProduct_overlapping
+            return ShuffleProduct_overlapping(self, other, Compositions())
         else:
             from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
             return ShuffleProduct_w1w2(self, other)
@@ -1594,7 +1593,7 @@ class Compositions(UniqueRepresentation, Parent):
                     raise ValueError("n must be an integer")
             else:
                 # FIXME: should inherit from IntegerListLex, and implement repr, or _name as a lazy attribute
-                kwargs['name'] = "Compositions of the integer %s satisfying constraints %s"%(n, ", ".join( ["%s=%s"%(key, kwargs[key]) for key in sorted(kwargs.keys())] ))
+                kwargs['name'] = "Compositions of the integer %s satisfying constraints %s"%(n, ", ".join( ["%s=%s"%(key, kwargs[key]) for key in sorted(kwargs)] ))
                 kwargs['element_class'] = Composition
                 if 'min_part' not in kwargs:
                     kwargs['min_part'] = 1
@@ -1940,11 +1939,11 @@ class Compositions_n(Compositions):
             1
         """
         if self.n >= 1:
-            return 2**(self.n-1)
+            return ZZ(2) ** (self.n-1)
         elif self.n == 0:
-            return 1
+            return ZZ(1)
         else:
-            return 0
+            return ZZ(0)
 
     def random_element(self):
         r"""
@@ -1964,7 +1963,7 @@ class Compositions_n(Compositions):
 
         TESTS::
 
-            sage: all([Compositions(10).random_element() in Compositions(10) for i in range(20)])
+            sage: all(Compositions(10).random_element() in Compositions(10) for i in range(20))
             True
         """
         from sage.misc.prandom import choice
@@ -1997,7 +1996,7 @@ def composition_iterator_fast(n):
         sage: L = list(composition_iterator_fast(4)); L
         [[1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [1, 3], [2, 1, 1], [2, 2], [3, 1], [4]]
         sage: type(L[0])
-        <type 'list'>
+        <... 'list'>
     """
     # Special cases
     if n < 0:
@@ -2019,6 +2018,6 @@ def composition_iterator_fast(n):
         else:
             cur.append(Integer(0))
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.composition', 'Composition_class', Composition)
 

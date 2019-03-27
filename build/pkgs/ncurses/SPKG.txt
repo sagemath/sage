@@ -38,8 +38,4 @@ None
 
 == Special Update/Build Instructions ==
 
-=== Patches ===
-
- * xopen_source.patch: remove harmful check from aclocal.m4 which may
-   reintroduce XOPEN_SOURCE on systems where it should not be used.
-
+None

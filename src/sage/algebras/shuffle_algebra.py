@@ -20,7 +20,6 @@ from sage.categories.rings import Rings
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.coalgebras_with_basis import CoalgebrasWithBasis
-from sage.categories.tensor import TensorProductsCategory, tensor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.alphabet import Alphabet
 from sage.combinat.words.words import Words
@@ -30,6 +29,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.sets.family import Family
+
 
 class ShuffleAlgebra(CombinatorialFreeModule):
     r"""
@@ -285,13 +285,13 @@ class ShuffleAlgebra(CombinatorialFreeModule):
                         ((w, self.one_basis()), 1),
                         ((self.one_basis(), w), 1) ], distinct=True)
 
-        B = self.basis()
         result = self.coproduct_on_basis(Word([w[0]]))
         for i in w[1:]:
             result = self.tensor_square().sum_of_terms([
-                    ((Word(v1)*Word(u1), Word(v2)*Word(u2)), coeff1 * coeff2)
-                    for ((u1,u2),coeff1) in self.coproduct_on_basis(Word([i]))
-                    for ((v1,v2),coeff2) in result ])
+                    ((Word(v1) * Word(u1), Word(v2) * Word(u2)),
+                     coeff1 * coeff2)
+                    for ((u1, u2), coeff1) in self.coproduct_on_basis(Word([i]))
+                    for ((v1, v2), coeff2) in result])
         return result
 
     def coproduct(self, S):
@@ -396,18 +396,17 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         else:
             return self.from_base_ring_from_one_basis(x)
 
-    def _coerce_impl(self, x):
+    def _coerce_map_from_(self, R):
         r"""
-        Canonical coercion of ``x`` into ``self``.
+        Return ``True`` if there is a coercion from ``R`` into ``self``
+        and ``False`` otherwise.
 
-        Here is what canonically coerces to ``self``:
+        The things that coerce into ``self`` are
 
-        - this shuffle algebra,
+        - Shuffle Algebras in the same variables over a base with a coercion
+          map into ``self.base_ring()``.
 
-        - anything that coerces to the base ring of this shuffle algebra,
-
-        - any shuffle algebra on the same variables, whose base ring
-          coerces to the base ring of this shuffle algebra.
+        - Anything with a coercion into ``self.base_ring()``.
 
         EXAMPLES::
 
@@ -457,39 +456,6 @@ class ShuffleAlgebra(CombinatorialFreeModule):
             TypeError: no canonical coercion from Shuffle Algebra on 3 generators
             ['x', 'y', 'z'] over Finite Field of size 7 to Shuffle Algebra on 3
             generators ['x', 'y', 'z'] over Integer Ring
-        """
-        try:
-            R = x.parent()
-
-            # shuffle algebras in the same variables over any base
-            # that coerces in:
-            if isinstance(R,ShuffleAlgebra):
-                if R.variable_names() == self.variable_names():
-                    if self.has_coerce_map_from(R.base_ring()):
-                        return self(x)
-                    else:
-                        raise TypeError("no natural map between bases of shuffle algebras")
-
-            if isinstance(R, DualPBWBasis):
-                return self(R.expansion(x))
-
-        except AttributeError:
-            pass
-
-        # any ring that coerces to the base ring of this shuffle algebra.
-        return self._coerce_try(x, [self.base_ring()])
-
-    def _coerce_map_from_(self, R):
-        r"""
-        Return ``True`` if there is a coercion from ``R`` into ``self``
-        and ``False`` otherwise.
-
-        The things that coerce into ``self`` are
-
-        - Shuffle Algebras in the same variables over a base with a coercion
-          map into ``self.base_ring()``.
-
-        - Anything with a coercion into ``self.base_ring()``.
 
         TESTS::
 
@@ -581,7 +547,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
 
 class DualPBWBasis(CombinatorialFreeModule):
     r"""
-    The basis dual to the Poincare-Birkhoff-Witt basis of the free algebra.
+    The basis dual to the Poincaré-Birkhoff-Witt basis of the free algebra.
 
     We recursively define the dual PBW basis as the basis of the
     shuffle algebra given by
@@ -600,18 +566,13 @@ class DualPBWBasis(CombinatorialFreeModule):
     where `S \ast T` denotes the shuffle product of `S` and `T` and
     `\mathrm{Lyn}(X)` is the set of Lyndon words in the alphabet `X`.
 
-    The definition may be found in Theorem 5.3 of [Reuten1993]_.
+    The definition may be found in Theorem 5.3 of [Reu1993]_.
 
     INPUT:
 
     - ``R`` -- ring
 
     - ``names`` -- names of the generators (string or an alphabet)
-
-    REFERENCES:
-
-    .. [Reuten1993] \C. Reutenauer. *Free Lie Algebras*. Number 7 in
-       London Math. Soc. Monogr. (N.S.). Oxford University Press. (1993).
 
     EXAMPLES::
 

@@ -363,7 +363,7 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - decompose_powers - whether to decompose prime power
+            - decompose_powers -- whether to decompose prime power
                                  denominators as opposed to having a single
                                  term for each irreducible factor of the
                                  denominator (default: True)
@@ -584,7 +584,7 @@ class QuotientFields(Category_singleton):
             documentation for the global derivative() function for more
             details.
 
-            .. seealso::
+            .. SEEALSO::
 
                :meth:`_derivative`
 
@@ -626,7 +626,7 @@ class QuotientFields(Category_singleton):
 
             - Derivative of ``self`` with respect to ``var``
 
-            .. seealso::
+            .. SEEALSO::
 
                :meth:`derivative`
 

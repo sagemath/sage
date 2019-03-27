@@ -28,7 +28,7 @@ package and passed to the core of the system. This core consists of
 programs representing some 100 mathematical functions. The interpreter
 offers on-line facilities which explain operations and functions, and
 which give background information about Lie group theoretical concepts
-and about currently valid definitions and values. 
+and about currently valid definitions and values.
 
 (from http://www-math.univ-poitiers.fr/~maavl/LiE/description.html )
 

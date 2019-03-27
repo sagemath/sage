@@ -192,6 +192,7 @@ from __future__ import absolute_import
 import os
 
 from .expect import Expect, ExpectElement
+from sage.docs.instancedoc import instancedoc
 
 
 class Scilab(Expect):
@@ -235,7 +236,8 @@ class Scilab(Expect):
 
     def set_seed(self, seed=None):
         """
-        Sets the seed for gp interpeter.
+        Set the seed for gp interpreter.
+
         The seed should be an integer.
 
         EXAMPLES::
@@ -425,6 +427,7 @@ class Scilab(Expect):
         return ScilabElement
 
 
+@instancedoc
 class ScilabElement(ExpectElement):
     def __getitem__(self, n):
         """

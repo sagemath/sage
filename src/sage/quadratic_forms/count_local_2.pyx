@@ -4,75 +4,13 @@ Optimised Cython code for counting congruence solutions
 from __future__ import print_function
 
 from sage.arith.all import valuation, kronecker_symbol, is_prime
-from sage.rings.finite_rings.integer_mod import IntegerMod, Mod
+from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 from sage.rings.integer_ring import ZZ
 
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_gmp
 from sage.sets.set import Set
-
-
-
-
-def extract_sublist_indices(Biglist, Smalllist):
-    """
-    Returns the indices of Biglist which index the entries of
-    Smalllist appearing in Biglist.  (Note that Smalllist may not be a
-    sublist of Biglist.)
-
-    NOTE 1: This is an internal routine which deals with re-indexing
-    lists, and is not exported to the QuadraticForm namespace!
-
-    NOTE 2: This should really by applied only when BigList has no
-    repeated entries.
-
-    TO DO: *** Please revisit this routine, and eliminate it! ***
-
-    INPUT:
-        Biglist, Smalllist -- two lists of a common type, where Biglist has no
-        repeated entries.
-
-    OUTPUT:
-        a list of integers >= 0
-
-    EXAMPLES::
-
-        sage: from sage.quadratic_forms.count_local_2 import extract_sublist_indices
-
-        sage: biglist = [1,3,5,7,8,2,4]
-        sage: sublist = [5,3,2]
-        sage: sublist == [biglist[i]  for i in extract_sublist_indices(biglist, sublist)]  ## Ok whenever Smalllist is a sublist of Biglist
-        True
-
-        sage: extract_sublist_indices([1,2,3,6,9,11], [1,3,2,9])
-        [0, 2, 1, 4]
-
-        sage: extract_sublist_indices([1,2,3,6,9,11], [1,3,10,2,9,0])
-        [0, 2, 1, 4]
-
-        sage: extract_sublist_indices([1,3,5,3,8], [1,5])
-        Traceback (most recent call last):
-        ...
-        TypeError: Biglist must not have repeated entries!
-    """
-    ## Check that Biglist has no repeated entries
-    Big_set = Set(Biglist)
-    if len(Set(Biglist)) != len(Biglist):
-        raise TypeError("Biglist must not have repeated entries!")
-
-    ## Extract the indices of Biglist needed to make Sublist
-    index_list = []
-    for x in Smalllist:
-        try:
-            index_list.append(Biglist.index(x))
-        except ValueError:                                   ## This happens when an entry of Smalllist is not contained in Biglist
-            None
-
-    ## Return the list if indices
-    return index_list
-
-
 
 
 def count_modp__by_gauss_sum(n, p, m, Qdet):
@@ -302,7 +240,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     ## DIAGNOSTIC
     #print("IsLocalSolutionType: Finished the Zero congruence condition test \n")
 
-    if (zero_flag is False):
+    if not zero_flag:
         return <long> 0
 
     ## DIAGNOSTIC
@@ -317,12 +255,12 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     else:
         nonzero_flag = False
         i = 0
-        while ((nonzero_flag == False) and (i < len(nzvec))):
+        while ((not nonzero_flag) and (i < len(nzvec))):
             if ((w[nzvec[i]] % p) != 0):
                 nonzero_flag = True           ## The non-zero condition is satisfied when we find one non-zero entry
             i += 1
 
-    if (nonzero_flag == False):
+    if not nonzero_flag:
         return <long> 0
 
 
@@ -344,7 +282,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     for i from 0 <= i < n:
         if ((w[i] % p) != 0):
             Zero_flag = False
-    if (Zero_flag == True):
+    if Zero_flag:
         return <long> 2
 
 

@@ -335,7 +335,7 @@ class mwrank_EllipticCurve(SageObject):
                     second_limit = 8,
                     n_aux = -1,
                     second_descent = True):
-        """
+        r"""
         Compute 2-descent data for this curve.
 
         INPUT:
@@ -410,7 +410,6 @@ class mwrank_EllipticCurve(SageObject):
             True
             sage: E.two_descent(verbose=False)
             True
-
         """
         from sage.libs.eclib.mwrank import _two_descent # import here to save time
         first_limit = int(first_limit)
@@ -770,7 +769,7 @@ class mwrank_MordellWeil(SageObject):
       rank; useful if an upper bound for the rank is already
       known).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: E = mwrank_EllipticCurve([1,0,1,4,-6])
         sage: EQ = mwrank_MordellWeil(E)
@@ -894,7 +893,7 @@ class mwrank_MordellWeil(SageObject):
 
         See the docstring of this class for full documentation.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: E = mwrank_EllipticCurve([1,0,1,4,-6])
             sage: EQ = mwrank_MordellWeil(E)
@@ -935,7 +934,7 @@ class mwrank_MordellWeil(SageObject):
 
         (string) String representation of this Mordell-Weil subgroup.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: E = mwrank_EllipticCurve([0,0,1,-7,6])
             sage: EQ = mwrank_MordellWeil(E, verbose=False)
@@ -1014,7 +1013,7 @@ class mwrank_MordellWeil(SageObject):
             WARNING: saturation at primes p > 2 will not be done;
             ...
             Gained index 2
-            New regulator =  93.857300720636393209
+            New regulator =  93.857...
             (False, 2, '[ ]')
             sage: EQ.points()
             [[-2, 3, 1], [2707496766203306, 864581029138191, 2969715140223272], [-13422227300, -49322830557, 12167000000]]
@@ -1025,7 +1024,7 @@ class mwrank_MordellWeil(SageObject):
             WARNING: saturation at primes p > 3 will not be done;
             ...
             Gained index 3
-            New regulator =  10.4285889689595992455
+            New regulator =  10.428...
             (False, 3, '[ ]')
             sage: EQ.points()
             [[-2, 3, 1], [-14, 25, 8], [-13422227300, -49322830557, 12167000000]]
@@ -1036,7 +1035,7 @@ class mwrank_MordellWeil(SageObject):
             WARNING: saturation at primes p > 5 will not be done;
             ...
             Gained index 5
-            New regulator =  0.417143558758383969818
+            New regulator =  0.417...
             (False, 5, '[ ]')
             sage: EQ.points()
             [[-2, 3, 1], [-14, 25, 8], [1, -1, 1]]
@@ -1152,7 +1151,7 @@ class mwrank_MordellWeil(SageObject):
 
         - ``odd_primes_only`` (bool, default ``False``) -- only do
           saturation at odd primes.  (If the points have been found
-          via :meth:``two_descent()`` they should already be 2-saturated.)
+          via :meth:`two_descent` they should already be 2-saturated.)
 
         OUTPUT:
 
@@ -1221,7 +1220,7 @@ class mwrank_MordellWeil(SageObject):
             WARNING: saturation at primes p > 2 will not be done;
             ...
             Gained index 2
-            New regulator =  93.857300720636393209
+            New regulator =  93.857...
             (False, 2, '[ ]')
             sage: EQ
             Subgroup of Mordell-Weil group: [[-2:3:1], [2707496766203306:864581029138191:2969715140223272], [-13422227300:-49322830557:12167000000]]
@@ -1235,7 +1234,7 @@ class mwrank_MordellWeil(SageObject):
             WARNING: saturation at primes p > 3 will not be done;
             ...
             Gained index 3
-            New regulator =  10.4285889689595992455
+            New regulator =  10.428...
             (False, 3, '[ ]')
             sage: EQ
             Subgroup of Mordell-Weil group: [[-2:3:1], [-14:25:8], [-13422227300:-49322830557:12167000000]]
@@ -1249,7 +1248,7 @@ class mwrank_MordellWeil(SageObject):
             WARNING: saturation at primes p > 5 will not be done;
             ...
             Gained index 5
-            New regulator =  0.417143558758383969818
+            New regulator =  0.417...
             (False, 5, '[ ]')
             sage: EQ
             Subgroup of Mordell-Weil group: [[-2:3:1], [-14:25:8], [1:-1:1]]

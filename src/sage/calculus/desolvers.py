@@ -14,32 +14,40 @@ symbolic variables, for example with ``var("_C")``.
 
 Commands:
 
-- ``desolve`` - Compute the "general solution" to a 1st or 2nd order
+- :func:`desolve` - Compute the "general solution" to a 1st or 2nd order
   ODE via Maxima.
 
-- ``desolve_laplace`` - Solve an ODE using Laplace transforms via
+- :func:`desolve_laplace` - Solve an ODE using Laplace transforms via
   Maxima. Initial conditions are optional.
 
-- ``desolve_rk4`` - Solve numerically IVP for one first order
+- :func:`desolve_rk4` - Solve numerically an IVP for one first order
   equation, return list of points or plot.
 
-- ``desolve_system_rk4`` - Solve numerically IVP for system of first
+- :func:`desolve_system_rk4` - Solve numerically an IVP for a system of first
   order equations, return list of points.
 
-- ``desolve_odeint`` - Solve numerically a system of first-order ordinary
-  differential equations using ``odeint`` from scipy.integrate module.
+- :func:`desolve_odeint` - Solve numerically a system of first-order ordinary
+  differential equations using ``odeint`` from `scipy.integrate module.
+  <https://docs.scipy.org/doc/scipy/reference/integrate.html#module-scipy.integrate>`_
 
-- ``desolve_system`` - Solve any size system of 1st order odes using
+- :func:`desolve_system` - Solve a system of 1st order ODEs of any size using
   Maxima. Initial conditions are optional.
 
-- ``eulers_method`` - Approximate solution to a 1st order DE,
+- :func:`eulers_method` - Approximate solution to a 1st order DE,
   presented as a table.
 
-- ``eulers_method_2x2`` - Approximate solution to a 1st order system
+- :func:`eulers_method_2x2` - Approximate solution to a 1st order system
   of DEs, presented as a table.
 
-- ``eulers_method_2x2_plot`` - Plot the sequence of points obtained
+- :func:`eulers_method_2x2_plot` - Plot the sequence of points obtained
   from Euler's method.
+
+The following functions require the optional package ``tides``:
+
+- :func:`desolve_mintides` - Numerical solution of a system of 1st order ODEs via
+  the Taylor series integrator method implemented in TIDES.
+
+- :func:`desolve_tides_mpfr` - Arbitrary precision Taylor series integrator implemented in TIDES.
 
 AUTHORS:
 
@@ -61,8 +69,12 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL):
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##########################################################################
+from __future__ import division
+
+import shutil
+import os
 
 from sage.interfaces.maxima import Maxima
 from sage.plot.all import line
@@ -70,67 +82,160 @@ from sage.symbolic.expression import is_SymbolicEquation
 from sage.symbolic.ring import is_SymbolicVariable
 from sage.calculus.functional import diff
 from sage.misc.functional import N
-from sage.misc.decorators import rename_keyword
-from tempfile import mkdtemp
-import shutil
-import os
 from sage.rings.real_mpfr import RealField
 
 
 maxima = Maxima()
 
-def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False):
+def fricas_desolve(de, dvar, ics, ivar):
     r"""
-    Solves a 1st or 2nd order linear ODE via maxima. Including IVP and BVP.
+    Solve an ODE using FriCAS.
 
-    *Use* ``desolve? <tab>`` *if the output in truncated in notebook.*
+    EXAMPLES::
+
+        sage: x = var('x')
+        sage: y = function('y')(x)
+        sage: desolve(diff(y,x) + y - 1, y, algorithm="fricas")             # optional - fricas
+        _C0*e^(-x) + 1
+
+        sage: desolve(diff(y, x) + y == y^3*sin(x), y, algorithm="fricas")  # optional - fricas
+        -1/5*(2*cos(x)*y(x)^2 + 4*sin(x)*y(x)^2 - 5)*e^(-2*x)/y(x)^2
+
+    TESTS::
+
+        sage: from sage.calculus.desolvers import fricas_desolve
+        sage: Y = fricas_desolve(diff(y,x) + y - 1, y, [42,1783], x)  # optional - fricas
+        sage: Y.subs(x=42)                                            # optional - fricas
+        1783
+    """
+    from sage.interfaces.fricas import fricas
+    from sage.symbolic.ring import SR
+    if ics is None:
+        y = fricas(de).solve(dvar.operator(), ivar).sage()
+    else:
+        eq = fricas.equation(ivar, ics[0])
+        y = fricas(de).solve(dvar.operator(), eq, ics[1:]).sage()
+
+    if isinstance(y, dict):
+        basis = y["basis"]
+        particular = y["particular"]
+        return particular + sum(SR.var("_C"+str(i))*v for i, v in enumerate(basis))
+    else:
+        return y
+
+def fricas_desolve_system(des, dvars, ics, ivar):
+    r"""
+    Solve a system of first order ODEs using FriCAS.
+
+    EXAMPLES::
+
+        sage: t = var('t')
+        sage: x = function('x')(t)
+        sage: y = function('y')(t)
+        sage: de1 = diff(x,t) + y - 1 == 0
+        sage: de2 = diff(y,t) - x + 1 == 0
+        sage: desolve_system([de1, de2], [x, y], algorithm="fricas")          # optional - fricas
+        [x(t) == _C0*cos(t) + cos(t)^2 + _C1*sin(t) + sin(t)^2,
+         y(t) == -_C1*cos(t) + _C0*sin(t) + 1]
+
+        sage: desolve_system([de1, de2], [x,y], [0,1,2], algorithm="fricas")  # optional - fricas
+        [x(t) == cos(t)^2 + sin(t)^2 - sin(t), y(t) == cos(t) + 1]
+
+    TESTS::
+
+        sage: from sage.calculus.desolvers import fricas_desolve_system
+        sage: t = var('t')
+        sage: x = function('x')(t)
+        sage: fricas_desolve_system([diff(x,t) + 1 == 0], [x], None, t)   # optional - fricas
+        [x(t) == _C0 - t]
+
+        sage: y = function('y')(t)
+        sage: de1 = diff(x,t) + y - 1 == 0
+        sage: de2 = diff(y,t) - x + 1 == 0
+        sage: sol = fricas_desolve_system([de1,de2], [x,y], [0,1,-1], t)  # optional - fricas
+        sage: sol                                                         # optional - fricas
+        [x(t) == cos(t)^2 + sin(t)^2 + 2*sin(t), y(t) == -2*cos(t) + 1]
+
+    """
+    from sage.interfaces.fricas import fricas
+    from sage.symbolic.ring import SR
+    from sage.symbolic.relation import solve
+    ops = [dvar.operator() for dvar in dvars]
+    y = fricas(des).solve(ops, ivar).sage()
+    basis = y["basis"]
+    particular = y["particular"]
+    pars = [SR.var("_C"+str(i)) for i in range(len(basis))]
+    solv = particular + sum(p*v for p, v in zip(pars, basis))
+
+    if ics is None:
+        sols = solv
+    else:
+        ics0 = ics[0]
+        eqs = [val == sol.subs({ivar: ics0}) for val, sol in zip(ics[1:], solv)]
+        pars_values = solve(eqs, pars, solution_dict=True)
+        sols = [sol.subs(pars_values[0]) for sol in solv]
+
+    return [dvar == sol for dvar, sol in zip(dvars, sols)]
+
+def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
+            algorithm="maxima"):
+    r"""
+    Solve a 1st or 2nd order linear ODE, including IVP and BVP.
 
     INPUT:
 
-    - ``de`` - an expression or equation representing the ODE
+    - ``de`` -- an expression or equation representing the ODE
 
-    - ``dvar`` - the dependent variable (hereafter called ``y``)
+    - ``dvar`` -- the dependent variable (hereafter called `y`)
 
-    - ``ics`` - (optional) the initial or boundary conditions
+    - ``ics`` -- (optional) the initial or boundary conditions
 
-      - for a first-order equation, specify the initial ``x`` and ``y``
+      - for a first-order equation, specify the initial `x` and `y`
 
-      - for a second-order equation, specify the initial ``x``, ``y``,
-        and ``dy/dx``, i.e. write `[x_0, y(x_0), y'(x_0)]`
+      - for a second-order equation, specify the initial `x`, `y`,
+        and `dy/dx`, i.e. write `[x_0, y(x_0), y'(x_0)]`
 
       - for a second-order boundary solution, specify initial and
-        final ``x`` and ``y`` boundary conditions, i.e. write `[x_0, y(x_0), x_1, y(x_1)]`.
+        final `x` and `y` boundary conditions, i.e. write `[x_0, y(x_0), x_1, y(x_1)]`.
 
       - gives an error if the solution is not SymbolicEquation (as happens for
         example for a Clairaut equation)
 
-    - ``ivar`` - (optional) the independent variable (hereafter called
-      x), which must be specified if there is more than one
-      independent variable in the equation.
+    - ``ivar`` -- (optional) the independent variable (hereafter called
+      `x`), which must be specified if there is more than one
+      independent variable in the equation
 
-    - ``show_method`` - (optional) if true, then Sage returns pair
+    - ``show_method`` -- (optional) if ``True``, then Sage returns pair
       ``[solution, method]``, where method is the string describing
       the method which has been used to get a solution (Maxima uses the
       following order for first order equations: linear, separable,
       exact (including exact with integrating factor), homogeneous,
       bernoulli, generalized homogeneous) - use carefully in class,
-      see below for the example of the equation which is separable but
+      see below the example of an equation which is separable but
       this property is not recognized by Maxima and the equation is solved
       as exact.
 
-    - ``contrib_ode`` - (optional) if true, desolve allows to solve
+    - ``contrib_ode`` -- (optional) if ``True``, ``desolve`` allows to solve
       Clairaut, Lagrange, Riccati and some other equations. This may take
       a long time and is thus turned off by default.  Initial conditions
       can be used only if the result is one SymbolicEquation (does not
-      contain a singular solution, for example)
+      contain a singular solution, for example).
+
+    - ``algorithm`` -- (default: ``'maxima'``) one of
+
+      * ``'maxima'`` - use maxima
+      * ``'fricas'`` - use FriCAS (the optional fricas spkg has to be installed)
 
     OUTPUT:
 
     In most cases return a SymbolicEquation which defines the solution
-    implicitly.  If the result is in the form y(x)=... (happens for
-    linear eqs.), return the right-hand side only.  The possible
-    constant solutions of separable ODE's are omitted.
+    implicitly.  If the result is in the form `y(x)=\ldots` (happens for
+    linear eqs.), return the right-hand side only. The possible
+    constant solutions of separable ODEs are omitted.
 
+    .. NOTE::
+
+        Use ``desolve? <tab>`` if the output in the Sage notebook is truncated.
 
     EXAMPLES::
 
@@ -149,14 +254,13 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False)
         sage: plot(f)
         Graphics object consisting of 1 graphics primitive
 
-    We can also solve second-order differential equations.::
+    We can also solve second-order differential equations::
 
         sage: x = var('x')
         sage: y = function('y')(x)
         sage: de = diff(y,x,2) - y == x
         sage: desolve(de, y)
         _K2*e^(-x) + _K1*e^x - x
-
 
     ::
 
@@ -260,9 +364,9 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False)
 
     You can solve Bessel equations, also using initial
     conditions, but you cannot put (sometimes desired) the initial
-    condition at x=0, since this point is a singular point of the
-    equation. Anyway, if the solution should be bounded at x=0, then
-    _K2=0.::
+    condition at `x=0`, since this point is a singular point of the
+    equation. Anyway, if the solution should be bounded at `x=0`, then
+    ``_K2=0``. ::
 
         sage: desolve(x^2*diff(y,x,x)+x*diff(y,x)+(x^2-4)*y==0,y)
         _K1*bessel_J(2, x) + _K2*bessel_Y(2, x)
@@ -274,14 +378,14 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False)
         ...
         NotImplementedError, "Maxima was unable to solve this ODE. Consider to set option contrib_ode to True."
 
-    Another difficult ODE with error - moreover, it takes a long time ::
+    Another difficult ODE with error - moreover, it takes a long time::
 
         sage: desolve(sqrt(y)*diff(y,x)+e^(y)+cos(x)-sin(x+y)==0,y,contrib_ode=True) # not tested
 
-    Some more types of ODE's::
+    Some more types of ODEs::
 
         sage: desolve(x*diff(y,x)^2-(1+x*y)*diff(y,x)+y==0,y,contrib_ode=True,show_method=True)
-        [[y(x) == _C*e^x, y(x) == _C + log(x)], 'factor']
+        [[y(x) == _C + log(x), y(x) == _C*e^x], 'factor']
 
     ::
 
@@ -290,7 +394,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False)
 
     These two examples produce an error (as expected, Maxima 5.18 cannot
     solve equations from initial conditions). Maxima 5.18
-    returns false answer in this case!::
+    returns false answer in this case! ::
 
         sage: desolve(diff(y,x,2)+y*(diff(y,x,1))^3==0,y,[0,1,2]).expand() # not tested
         Traceback (click to the left for traceback)
@@ -364,6 +468,27 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False)
         sage: desolve(diff(y,x,2)+2*diff(y,x)+y == 0,y,[0,3,pi/2,2],show_method=True)
         [(2*x*(2*e^(1/2*pi) - 3)/pi + 3)*e^(-x), 'constcoeff']
 
+    Using ``algorithm='fricas'`` we can invoke the differential
+    equation solver from FriCAS.  For example, it can solve higher
+    order linear equations::
+
+        sage: de = x^3*diff(y, x, 3) + x^2*diff(y, x, 2) - 2*x*diff(y, x) + 2*y - 2*x^4
+        sage: Y = desolve(de, y, algorithm="fricas"); Y               # optional - fricas
+        (2*x^3 - 3*x^2 + 1)*_C0/x + (x^3 - 1)*_C1/x
+         + (x^3 - 3*x^2 - 1)*_C2/x + 1/15*(x^5 - 10*x^3 + 20*x^2 + 4)/x
+
+    The initial conditions are then interpreted as `[x_0, y(x_0),
+    y'(x_0), \ldots, y^(n)(x_0)]`::
+
+        sage: Y = desolve(de, y, ics=[1,3,7], algorithm="fricas"); Y  # optional - fricas
+        1/15*(x^5 + 15*x^3 + 50*x^2 - 21)/x
+
+    FriCAS can also solve some non-linear equations::
+
+        sage: de = diff(y, x) == y / (x+y*log(y))
+        sage: Y = desolve(de, y, algorithm="fricas"); Y               # optional - fricas
+        1/2*(log(y(x))^2*y(x) - 2*x)/y(x)
+
     TESTS:
 
     :trac:`9961` fixed (allow assumptions on the dependent variable in desolve)::
@@ -383,7 +508,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False)
         sage: assume(x>0)
         sage: assume(y>0)
         sage: desolve(x*diff(y,x)-x*sqrt(y^2+x^2)-y == 0, y, contrib_ode=True)
-        [x - arcsinh(y(x)^2/(x*sqrt(y(x)^2))) - arcsinh(y(x)/x) + 1/2*log(4*(x^2 + 2*y(x)^2 + 2*x*sqrt((x^2*y(x)^2 + y(x)^4)/x^2))/x^2) == _C]
+        [x - arcsinh(y(x)^2/(x*sqrt(y(x)^2))) - arcsinh(y(x)/x) + 1/2*log(4*(x^2 + 2*y(x)^2 + 2*sqrt(x^2*y(x)^2 + y(x)^4))/x^2) == _C]
 
     :trac:`6479` fixed::
 
@@ -419,15 +544,11 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False)
         sage: desolve(diff(y, x) == sqrt(abs(y)), dvar=y, ivar=x)
         sqrt(-y(x))*(sgn(y(x)) - 1) + (sgn(y(x)) + 1)*sqrt(y(x)) == _C + x
 
-
     AUTHORS:
 
     - David Joyner (1-2006)
-
     - Robert Bradshaw (10-2008)
-
     - Robert Marik (10-2009)
-
     """
     if is_SymbolicEquation(de):
         de = de.lhs() - de.rhs()
@@ -442,6 +563,12 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False)
         if len(ivars) != 1:
             raise ValueError("Unable to determine independent variable, please specify.")
         ivar = ivars[0]
+
+    if algorithm == "fricas":
+        return fricas_desolve(de, dvar, ics, ivar)
+    elif algorithm != "maxima":
+        raise ValueError("unknown algorithm %s" % algorithm)
+
     de00 = de._maxima_()
     P = de00.parent()
     dvar_str=P(dvar.operator()).str()
@@ -524,7 +651,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False)
     soln=soln.sage()
     if is_SymbolicEquation(soln) and soln.lhs() == dvar:
         # Remark: Here we do not check that the right hand side does not depend on dvar.
-        # This probably will not hapen for soutions obtained via ode2, anyway.
+        # This probably will not happen for solutions obtained via ode2, anyway.
         soln = soln.rhs()
     if show_method:
         return [soln,maxima_method.str()]
@@ -547,7 +674,8 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False)
 ##                  with symbols allowed which are represented by strings
 ##                  (eg, f(0)=1, f'(0)=2 is ics = [0,1,2])
 
-##     EXAMPLES:
+##     EXAMPLES::
+
 ##         sage: from sage.calculus.desolvers import desolve_laplace
 ##         sage: x = var('x')
 ##         sage: f = function('f')(x)
@@ -580,17 +708,17 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
 
     INPUT:
 
-    - ``de`` - a lambda expression representing the ODE (eg, de =
-      diff(y,x,2) == diff(y,x)+sin(x))
+    - ``de`` - a lambda expression representing the ODE (e.g. ``de =
+      diff(y,x,2) == diff(y,x)+sin(x)``)
 
-    - ``dvar`` - the dependent variable (eg y)
+    - ``dvar`` - the dependent variable (e.g. ``y``)
 
     - ``ivar`` - (optional) the independent variable (hereafter called
-      x), which must be specified if there is more than one
+      `x`), which must be specified if there is more than one
       independent variable in the equation.
 
-    - ``ics`` - a list of numbers representing initial conditions, (eg,
-      f(0)=1, f'(0)=2 is ics = [0,1,2])
+    - ``ics`` - a list of numbers representing initial conditions, (e.g.
+      ``f(0)=1``, ``f'(0)=2`` corresponds to ``ics = [0,1,2]``)
 
     OUTPUT:
 
@@ -636,11 +764,11 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
 
     TESTS:
 
-    Trac #4839 fixed::
+    Check that :trac:`4839` is fixed::
 
-        sage: t=var('t')
-        sage: x=function('x')(t)
-        sage: soln=desolve_laplace(diff(x,t)+x==1, x, ics=[0,2])
+        sage: t = var('t')
+        sage: x = function('x')(t)
+        sage: soln = desolve_laplace(diff(x,t)+x==1, x, ics=[0,2])
         sage: soln
         e^(-t) + 1
 
@@ -701,25 +829,31 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
     return soln
 
 
-def desolve_system(des, vars, ics=None, ivar=None):
-    """
-    Solve any size system of 1st order ODE's. Initial conditions are optional.
+def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
+    r"""
+    Solve a system of any size of 1st order ODEs. Initial conditions
+    are optional.
 
-    Onedimensional systems are passed to :meth:`desolve_laplace`.
+    One dimensional systems are passed to :meth:`desolve_laplace`.
 
     INPUT:
 
-    - ``des`` - list of ODEs
+    - ``des`` -- list of ODEs
 
-    - ``vars`` - list of dependent variables
+    - ``vars`` -- list of dependent variables
 
-    - ``ics`` - (optional) list of initial values for ivar and vars.
-      If ics is defined, it should provide initial conditions for each variable,
-      otherwise an exception would be raised.
+    - ``ics`` -- (optional) list of initial values for ``ivar`` and ``vars``;
+      if ``ics`` is defined, it should provide initial conditions for each
+      variable, otherwise an exception would be raised
 
-    - ``ivar`` - (optional) the independent variable, which must be
+    - ``ivar`` -- (optional) the independent variable, which must be
       specified if there is more than one independent variable in the
-      equation.
+      equation
+
+    - ``algorithm`` -- (default: ``'maxima'``) one of
+
+      * ``'maxima'`` - use maxima
+      * ``'fricas'`` - use FriCAS (the optional fricas spkg has to be installed)
 
     EXAMPLES::
 
@@ -731,6 +865,12 @@ def desolve_system(des, vars, ics=None, ivar=None):
         sage: desolve_system([de1, de2], [x,y])
         [x(t) == (x(0) - 1)*cos(t) - (y(0) - 1)*sin(t) + 1,
          y(t) == (y(0) - 1)*cos(t) + (x(0) - 1)*sin(t) + 1]
+
+    The same system solved using FriCAS::
+
+        sage: desolve_system([de1, de2], [x,y], algorithm='fricas')  # optional - fricas
+        [x(t) == _C0*cos(t) + cos(t)^2 + _C1*sin(t) + sin(t)^2,
+         y(t) == -_C1*cos(t) + _C0*sin(t) + 1]
 
     Now we give some initial conditions::
 
@@ -777,7 +917,7 @@ def desolve_system(des, vars, ics=None, ivar=None):
         sage: P1 = plot([solx,soly], (0,1))
         sage: P2 = parametric_plot((solx,soly), (0,1))
 
-    Now type show(P1), show(P2) to view these plots.
+    Now type ``show(P1)``, ``show(P2)`` to view these plots.
 
     Check that :trac:`9824` is fixed::
 
@@ -794,7 +934,6 @@ def desolve_system(des, vars, ics=None, ivar=None):
         ...
         ValueError: Initial conditions aren't complete: number of vars is different from number of dependent variables. Got ics = [1, 1], vars = [x1(t), x2(t)]
 
-
     AUTHORS:
 
     - Robert Bradshaw (10-2008)
@@ -804,7 +943,7 @@ def desolve_system(des, vars, ics=None, ivar=None):
         if len(ics) != (len(vars) + 1):
             raise ValueError("Initial conditions aren't complete: number of vars is different from number of dependent variables. Got ics = {0}, vars = {1}".format(ics, vars))
 
-    if len(des)==1:
+    if len(des) == 1 and algorithm == "maxima":
         return desolve_laplace(des[0], vars[0], ics=ics, ivar=ivar)
     ivars = set([])
     for i, de in enumerate(des):
@@ -816,6 +955,12 @@ def desolve_system(des, vars, ics=None, ivar=None):
         if len(ivars) != 1:
             raise ValueError("Unable to determine independent variable, please specify.")
         ivar = list(ivars)[0]
+
+    if algorithm == "fricas":
+        return fricas_desolve_system(des, vars, ics, ivar)
+    elif algorithm != "maxima":
+        raise ValueError("unknown algorithm %s" % algorithm)
+
     dvars = [v._maxima_() for v in vars]
     if ics is not None:
         ivar_ic = ics[0]
@@ -833,17 +978,19 @@ def desolve_system(des, vars, ics=None, ivar=None):
             dvar.atvalue(ivar==ivar_ic, dvar)
     return soln
 
-@rename_keyword(deprecation=6094, method="algorithm")
+
 def eulers_method(f,x0,y0,h,x1,algorithm="table"):
     r"""
     This implements Euler's method for finding numerically the
-    solution of the 1st order ODE ``y' = f(x,y)``, ``y(a)=c``. The "x"
-    column of the table increments from ``x0`` to ``x1`` by ``h`` (so
-    ``(x1-x0)/h`` must be an integer). In the "y" column, the new
-    y-value equals the old y-value plus the corresponding entry in the
+    solution of the 1st order ODE `y' = f(x,y)`, `y(a)=c`. The ``x``
+    column of the table increments from `x_0` to `x_1` by `h` (so
+    `(x_1-x_0)/h` must be an integer). In the ``y`` column, the new
+    `y`-value equals the old `y`-value plus the corresponding entry in the
     last column.
 
-    *For pedagogical purposes only.*
+    .. NOTE::
+
+        This function is for pedagogical purposes only.
 
     EXAMPLES::
 
@@ -918,24 +1065,29 @@ def eulers_method(f,x0,y0,h,x1,algorithm="table"):
     if algorithm!="table":
         return soln
 
-@rename_keyword(deprecation=6094, method="algorithm")
+
 def eulers_method_2x2(f,g, t0, x0, y0, h, t1,algorithm="table"):
     r"""
     This implements Euler's method for finding numerically the
     solution of the 1st order system of two ODEs
 
-    ``x' = f(t, x, y), x(t0)=x0.``
+    .. MATH::
 
-    ``y' = g(t, x, y), y(t0)=y0.``
+        \begin{aligned}
+        x' &= f(t, x, y), x(t_0)=x_0 \\
+        y' &= g(t, x, y), y(t_0)=y_0.
+        \end{aligned}
 
-    The "t" column of the table increments from `t_0` to `t_1` by `h`
-    (so `\\frac{t_1-t_0}{h}` must be an integer). In the "x" column,
-    the new x-value equals the old x-value plus the corresponding
-    entry in the next (third) column.  In the "y" column, the new
-    y-value equals the old y-value plus the corresponding entry in the
+    The ``t`` column of the table increments from `t_0` to `t_1` by `h`
+    (so `\frac{t_1-t_0}{h}` must be an integer). In the ``x`` column,
+    the new `x`-value equals the old `x`-value plus the corresponding
+    entry in the next (third) column.  In the ``y`` column, the new
+    `y`-value equals the old `y`-value plus the corresponding entry in the
     next (last) column.
 
-    *For pedagogical purposes only.*
+    .. NOTE::
+
+        This function is for pedagogical purposes only.
 
     EXAMPLES::
 
@@ -969,7 +1121,7 @@ def eulers_method_2x2(f,g, t0, x0, y0, h, t1,algorithm="table"):
     To numerically approximate `y(1)`, where `(1+t^2)y''+y'-y=0`,
     `y(0)=1`, `y'(0)=-1`, using 4 steps of Euler's method, first
     convert to a system: `y_1' = y_2`, `y_1(0)=1`; `y_2' =
-    \\frac{y_1-y_2}{1+t^2}`, `y_2(0)=-1`.::
+    \frac{y_1-y_2}{1+t^2}`, `y_2(0)=-1`.::
 
          sage: RR = RealField(sci_not=0, prec=4, rnd='RNDU')
          sage: t, x, y=PolynomialRing(RR,3,"txy").gens()
@@ -982,7 +1134,7 @@ def eulers_method_2x2(f,g, t0, x0, y0, h, t1,algorithm="table"):
            3/4                 0.63                   -0.0078               -0.031                 0.11
              1                 0.63                     0.020                0.079                0.071
 
-    To numerically approximate y(1), where `y''+ty'+y=0`, `y(0)=1`, `y'(0)=0`::
+    To numerically approximate `y(1)`, where `y''+ty'+y=0`, `y(0)=1`, `y'(0)=0`::
 
         sage: t,x,y=PolynomialRing(RR,3,"txy").gens()
         sage: f = y; g = -x-y*t
@@ -1018,16 +1170,16 @@ def eulers_method_2x2_plot(f,g, t0, x0, y0, h, t1):
     r"""
     Plot solution of ODE.
 
-    This plots the soln in the rectangle ``(xrange[0],xrange[1])
-    x (yrange[0],yrange[1])`` and plots using Euler's method the
+    This plots the solution in the rectangle with sides ``(xrange[0],xrange[1])`` and
+    ``(yrange[0],yrange[1])``, and plots using Euler's method the
     numerical solution of the 1st order ODEs `x' = f(t,x,y)`,
     `x(a)=x_0`, `y' = g(t,x,y)`, `y(a) = y_0`.
 
-    *For pedagogical purposes only.*
+    .. NOTE::
 
-    EXAMPLES::
+        This function is for pedagogical purposes only.
 
-        sage: from sage.calculus.desolvers import eulers_method_2x2_plot
+    EXAMPLES:
 
     The following example plots the solution to
     `\theta''+\sin(\theta)=0`, `\theta(0)=\frac 34`, `\theta'(0) =
@@ -1035,34 +1187,38 @@ def eulers_method_2x2_plot(f,g, t0, x0, y0, h, t1):
     ``(P[0]+P[1]).show()`` to plot `(t,\theta(t))` and
     `(t,\theta'(t))`::
 
+        sage: from sage.calculus.desolvers import eulers_method_2x2_plot
         sage: f = lambda z : z[2]; g = lambda z : -sin(z[1])
         sage: P = eulers_method_2x2_plot(f,g, 0.0, 0.75, 0.0, 0.1, 1.0)
     """
-    n=int((1.0)*(t1-t0)/h)
-    t00 = t0; x00 = x0; y00 = y0
-    soln = [[t00,x00,y00]]
-    for i in range(n+1):
-        x01 = x00 + h*f([t00,x00,y00])
-        y00 = y00 + h*g([t00,x00,y00])
+    n = int((1.0)*(t1-t0)/h)
+    t00 = t0
+    x00 = x0
+    y00 = y0
+    soln = [[t00, x00, y00]]
+    for i in range(n + 1):
+        x01 = x00 + h * f([t00, x00, y00])
+        y00 = y00 + h * g([t00, x00, y00])
         x00 = x01
         t00 = t00 + h
-        soln.append([t00,x00,y00])
-    Q1 = line([[x[0],x[1]] for x in soln], rgbcolor=(1/4,1/8,3/4))
-    Q2 = line([[x[0],x[2]] for x in soln], rgbcolor=(1/2,1/8,1/4))
-    return [Q1,Q2]
+        soln.append([t00, x00, y00])
+    Q1 = line([[x[0], x[1]] for x in soln], rgbcolor=(.25, .125, .75))
+    Q2 = line([[x[0], x[2]] for x in soln], rgbcolor=(.5, .125, .25))
+    return [Q1, Q2]
+
 
 def desolve_rk4_determine_bounds(ics,end_points=None):
     """
     Used to determine bounds for numerical integration.
 
-    - If end_points is None, the interval for integration is from ics[0]
-      to ics[0]+10
+    - If ``end_points`` is None, the interval for integration is from ``ics[0]``
+      to ``ics[0]+10``
 
-    - If end_points is a or [a], the interval for integration is from min(ics[0],a)
-      to max(ics[0],a)
+    - If ``end_points`` is ``a`` or ``[a]``, the interval for integration is from ``min(ics[0],a)``
+      to ``max(ics[0],a)``
 
-    - If end_points is [a,b], the interval for integration is from min(ics[0],a)
-      to max(ics[0],b)
+    - If ``end_points`` is ``[a,b]``, the interval for integration is from ``min(ics[0],a)``
+      to ``max(ics[0],b)``
 
     EXAMPLES::
 
@@ -1099,12 +1255,12 @@ def desolve_rk4_determine_bounds(ics,end_points=None):
 def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output='list', **kwds):
     """
     Solve numerically one first-order ordinary differential
-    equation. See also ``ode_solver``.
+    equation.
 
     INPUT:
 
-    input is similar to ``desolve`` command. The differential equation can be
-    written in a form close to the plot_slope_field or desolve command
+    Input is similar to ``desolve`` command. The differential equation can be
+    written in a form close to the ``plot_slope_field`` or ``desolve`` command.
 
     - Variant 1 (function in two variables)
 
@@ -1122,25 +1278,28 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 
       - ``ivar`` - should be specified, if there are more variables or if the equation is autonomous
 
-      - ``ics`` - initial conditions in the form [x0,y0]
+      - ``ics`` - initial conditions in the form ``[x0,y0]``
 
       - ``end_points`` - the end points of the interval
 
-        - if end_points is a or [a], we integrate on between min(ics[0],a) and max(ics[0],a)
-        - if end_points is None, we use end_points=ics[0]+10
+        - if ``end_points`` is a or [a], we integrate between ``min(ics[0],a)`` and ``max(ics[0],a)``
+        - if ``end_points`` is None, we use ``end_points=ics[0]+10``
 
-        - if end_points is [a,b] we integrate on between min(ics[0],a) and max(ics[0],b)
+        - if end_points is [a,b] we integrate between ``min(ics[0], a)`` and ``max(ics[0], b)``
 
       - ``step`` - (optional, default:0.1) the length of the step (positive number)
 
-      - ``output`` - (optional, default: 'list') one of 'list',
-        'plot', 'slope_field' (graph of the solution with slope field)
+      - ``output`` - (optional, default: ``'list'``) one of ``'list'``,
+        ``'plot'``, ``'slope_field'`` (graph of the solution with slope field)
 
     OUTPUT:
 
-    Return a list of points, or plot produced by list_plot,
+    Return a list of points, or plot produced by ``list_plot``,
     optionally with slope field.
 
+    .. SEEALSO::
+
+        :func:`ode_solver`.
 
     EXAMPLES::
 
@@ -1153,7 +1312,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
         [[0, 1], [0.5, 1.12419127424558], [1.0, 1.461590162288825]]
 
     Variant 1 for input - we can pass ODE in the form used by
-    desolve function In this example we integrate bakwards, since
+    desolve function In this example we integrate backwards, since
     ``end_points < ics[0]``::
 
         sage: y = function('y')(x)
@@ -1161,7 +1320,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
         [[0.0, 8.904257108962112], [0.5, 1.909327945361535], [1, 1]]
 
     Here we show how to plot simple pictures. For more advanced
-    aplications use list_plot instead. To see the resulting picture
+    applications use list_plot instead. To see the resulting picture
     use ``show(P)`` in Sage notebook. ::
 
         sage: x,y = var('x,y')
@@ -1247,7 +1406,7 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
     r"""
     Solve numerically a system of first-order ordinary differential
     equations using the 4th order Runge-Kutta method. Wrapper for
-    Maxima command ``rk``. See also ``ode_solver``.
+    Maxima command ``rk``.
 
     INPUT:
 
@@ -1261,20 +1420,24 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
       if the equation is autonomous and the independent variable is
       missing
 
-    - ``ics`` - initial conditions in the form [x0,y01,y02,y03,....]
+    - ``ics`` - initial conditions in the form ``[x0,y01,y02,y03,....]``
 
     - ``end_points`` - the end points of the interval
 
-      - if end_points is a or [a], we integrate on between min(ics[0],a) and max(ics[0],a)
-      - if end_points is None, we use end_points=ics[0]+10
+      - if ``end_points`` is a or [a], we integrate on between ``min(ics[0], a)`` and ``max(ics[0], a)``
+      - if ``end_points`` is None, we use ``end_points=ics[0]+10``
 
-      - if end_points is [a,b] we integrate on between min(ics[0],a) and max(ics[0],b)
+      - if ``end_points`` is [a,b] we integrate on between ``min(ics[0], a)`` and ``max(ics[0], b)``
 
     - ``step`` -- (optional, default: 0.1) the length of the step
 
     OUTPUT:
 
     Return a list of points.
+
+    .. SEEALSO::
+
+        :func:`ode_solver`.
 
     EXAMPLES::
 
@@ -1360,20 +1523,20 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
     - ``times`` -- a sequence of time points in which the solution must be found
 
     - ``dvars`` -- dependent variables. ATTENTION: the order must be the same as
-      in des, that means: d(dvars[i])/dt=des[i]
+      in ``des``, that means: ``d(dvars[i])/dt=des[i]``
 
     - ``ivar`` -- independent variable, optional.
 
     - ``compute_jac`` -- boolean. If True, the Jacobian of des is computed and
       used during the integration of Stiff Systems. Default value is False.
 
-    Other Parameters (taken from the documentation of odeint function from
-      scipy.integrate module)
+    Other Parameters (taken from the documentation of odeint function from `scipy.integrate module.
+    <https://docs.scipy.org/doc/scipy/reference/integrate.html#module-scipy.integrate>`_)
 
     - ``rtol``, ``atol`` : float
-      The input parameters rtol and atol determine the error
+      The input parameters ``rtol`` and ``atol`` determine the error
       control performed by the solver.  The solver will control the
-      vector, e, of estimated local errors in y, according to an
+      vector, `e`, of estimated local errors in `y`, according to an
       inequality of the form:
 
         max-norm of (e / ewt) <= 1
@@ -1382,7 +1545,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
         ewt = rtol * abs(y) + atol
 
-      rtol and atol can be either vectors the same length as y or scalars.
+      ``rtol`` and ``atol`` can be either vectors the same length as `y` or scalars.
 
     - ``tcrit`` : array
       Vector of critical points (e.g. singularities) where integration
@@ -1415,7 +1578,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
     OUTPUT:
 
-    Return a list with the solution of the system at each time in times.
+    Return a list with the solution of the system at each time in ``times``.
 
     EXAMPLES:
 
@@ -1551,7 +1714,7 @@ def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16)
     INPUT:
 
     - ``f`` -- symbolic function. Its first argument will be the independent
-      variable. Its output should be de derivatives of the deppendent variables.
+      variable. Its output should be de derivatives of the dependent variables.
 
     - ``ics`` -- a list or tuple with the initial conditions.
 
@@ -1603,9 +1766,9 @@ def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16)
     - A. Abad, R. Barrio, F. Blesa, M. Rodriguez. Algorithm 924. *ACM
       Transactions on Mathematical Software* , *39* (1), 1-28.
 
-    - (http://www.unizar.es/acz/05Publicaciones/Monografias/MonografiasPublicadas/Monografia36/IndMonogr36.htm)
-      A. Abad, R. Barrio, F. Blesa, M. Rodriguez.
-      TIDES tutorial: Integrating ODEs by using the Taylor Series Method.
+    - A. Abad, R. Barrio, F. Blesa, M. Rodriguez.
+      `TIDES tutorial: Integrating ODEs by using the Taylor Series Method.
+      <http://www.unizar.es/acz/05Publicaciones/Monografias/MonografiasPublicadas/Monografia36/IndMonogr36.htm>`_
     """
     import subprocess
     if subprocess.call('command -v gcc', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
@@ -1620,9 +1783,9 @@ def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16)
     genfiles_mintides(intfile, drfile, f, [N(_) for _ in ics], N(initial), N(final), N(delta), N(tolrel),
                      N(tolabs), fileoutput)
     subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
-                          os.path.join('$SAGE_ROOT','local','lib','libTIDES.a') + ' $LDFLAGS '
-                          + os.path.join('-L$SAGE_ROOT','local','lib ') +' -lm  -O2 ' +
-                          os.path.join('-I$SAGE_ROOT','local','include '),
+                          os.path.join('$SAGE_LOCAL','lib','libTIDES.a') + ' $LDFLAGS '
+                          + os.path.join('-L$SAGE_LOCAL','lib ') +' -lm  -O2 ' +
+                          os.path.join('-I$SAGE_LOCAL','include '),
                           shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outfile = open(fileoutput)
@@ -1637,12 +1800,12 @@ def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16)
 def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16, digits=50):
     r"""
     Solve numerically a system of first order differential equations using the
-    taylor series integrator in arbitrary precission implemented in tides.
+    taylor series integrator in arbitrary precision implemented in tides.
 
     INPUT:
 
     - ``f`` -- symbolic function. Its first argument will be the independent
-      variable. Its output should be de derivatives of the deppendent variables.
+      variable. Its output should be de derivatives of the dependent variables.
 
     - ``ics`` -- a list or tuple with the initial conditions.
 
@@ -1656,7 +1819,7 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
 
     - ``tolabs`` -- the absolute tolerance for the method.
 
-    - ``digits`` -- the digits of precission used in the computation.
+    - ``digits`` -- the digits of precision used in the computation.
 
 
     OUTPUT:
@@ -1667,7 +1830,7 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
     EXAMPLES:
 
     We integrate the Lorenz equations with Salztman values for the parameters
-    along 10 periodic orbits with 100 digits of precission::
+    along 10 periodic orbits with 100 digits of precision::
 
         sage: var('t,x,y,z')
         (t, x, y, z)
@@ -1703,12 +1866,12 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
 
     REFERENCES:
 
-    .. A. Abad, R. Barrio, F. Blesa, M. Rodriguez. Algorithm 924. *ACM
+    .. [ABBR1] \A. Abad, R. Barrio, F. Blesa, M. Rodriguez. Algorithm 924. *ACM
        Transactions on Mathematical Software* , *39* (1), 1-28.
 
-    .. (http://www.unizar.es/acz/05Publicaciones/Monografias/MonografiasPublicadas/Monografia36/IndMonogr36.htm)
-       A. Abad, R. Barrio, F. Blesa, M. Rodriguez.
-       TIDES tutorial: Integrating ODEs by using the Taylor Series Method.
+    .. [ABBR2] \A. Abad, R. Barrio, F. Blesa, M. Rodriguez.
+      `TIDES tutorial: Integrating ODEs by using the Taylor Series Method.
+      <http://www.unizar.es/acz/05Publicaciones/Monografias/MonografiasPublicadas/Monografia36/IndMonogr36.htm>`_
 
     """
     import subprocess
@@ -1726,9 +1889,9 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
     genfiles_mpfr(intfile, drfile, f, ics, initial, final, delta, [], [],
                       digits, tolrel, tolabs, fileoutput)
     subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
-                          os.path.join('$SAGE_ROOT','local','lib','libTIDES.a') + ' $LDFLAGS '
-                          + os.path.join('-L$SAGE_ROOT','local','lib ') + '-lmpfr -lgmp -lm  -O2 -w ' +
-                          os.path.join('-I$SAGE_ROOT','local','include ') ,
+                          os.path.join('$SAGE_LOCAL','lib','libTIDES.a') + ' $LDFLAGS '
+                          + os.path.join('-L$SAGE_LOCAL','lib ') + '-lmpfr -lgmp -lm  -O2 -w ' +
+                          os.path.join('-I$SAGE_LOCAL','include ') ,
                           shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outfile = open(fileoutput)
@@ -1738,5 +1901,3 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
         res[i] = [RealField(ceil(digits*log(10,2)))(_) for _ in res[i].split(' ') if len(_) > 2]
     shutil.rmtree(tempdir)
     return res
-
-

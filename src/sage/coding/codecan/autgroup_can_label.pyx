@@ -38,12 +38,6 @@ AUTHORS:
 
 - Thomas Feulner (2012-11-15): initial version
 
-REFERENCES:
-
-.. [Feu2009] \T. Feulner. The Automorphism Groups of Linear Codes and
-  Canonical Representatives of Their Semilinear Isometry Classes.
-  Advances in Mathematics of Communications 3 (4), pp. 363-383, Nov 2009
-
 EXAMPLES::
 
     sage: from sage.coding.codecan.autgroup_can_label import LinearCodeAutGroupCanLabel
@@ -73,13 +67,16 @@ coordinates. This is just a list of lists, telling the algorithm which
 columns do share the same coloring::
 
     sage: C = codes.HammingCode(GF(4, 'a'), 3).dual_code()
-    sage: P = LinearCodeAutGroupCanLabel(C, P=[ [0], [1], range(2, C.length()) ])
+    sage: P = LinearCodeAutGroupCanLabel(C, P=[ [0], [1], list(range(2, C.length())) ])
     sage: P.get_autom_order()
     864
     sage: A = [a.get_perm() for a in P.get_autom_gens()]
     sage: H = SymmetricGroup(21).subgroup(A)
     sage: H.orbits()
-    [[1], [2], [3, 5, 4], [6, 10, 13, 20, 17, 9, 8, 11, 18, 15, 14, 16, 12, 19, 21, 7]]
+    [[1],
+     [2],
+     [3, 5, 4],
+     [6, 19, 9, 21, 16, 14, 11, 20, 15, 8, 10, 12, 7, 13, 18, 17]]
 
 We can also restrict the group action to linear isometries::
 
@@ -114,7 +111,7 @@ def _cyclic_shift(n, p):
 
     Note that the domain of a ``Permutation`` is ``range(1, n+1)``.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.coding.codecan.autgroup_can_label import _cyclic_shift
         sage: p = _cyclic_shift(10, [2,7,4,1]); p
@@ -122,12 +119,12 @@ def _cyclic_shift(n, p):
 
     We prove that the action is as expected::
 
-        sage: t = range(10)
+        sage: t = list(range(10))
         sage: p.action(t)
         [0, 2, 7, 3, 1, 5, 6, 4, 8, 9]
     """
-    x = range(1, n + 1)
-    for i in range(1, len(p)):
+    x = list(xrange(1, n + 1))
+    for i in xrange(1, len(p)):
         x[p[i - 1]] = p[i] + 1
     x[p[len(p) - 1]] = p[0] + 1
     return Permutation(x)
@@ -231,17 +228,17 @@ class LinearCodeAutGroupCanLabel:
         S = SemimonomialTransformationGroup(F, mat.ncols())
 
         if P is None:
-            P = [range(mat.ncols())]
+            P = [list(xrange(mat.ncols()))]
 
         pos2P = [-1] * mat.ncols()
-        for i in range(len(P)):
+        for i in xrange(len(P)):
             P[i].sort(reverse=True)
             for x in P[i]:
                 pos2P[x] = i
 
         col_list = mat.columns()
-        nz = [i for i in range(mat.ncols()) if not col_list[i].is_zero()]
-        z = [(pos2P[i], i) for i in range(mat.ncols()) if col_list[i].is_zero()]
+        nz = [i for i in xrange(mat.ncols()) if not col_list[i].is_zero()]
+        z = [(pos2P[i], i) for i in xrange(mat.ncols()) if col_list[i].is_zero()]
         z.sort()
         z = [i for (p, i) in z]
 
@@ -261,13 +258,12 @@ class LinearCodeAutGroupCanLabel:
         col2pos = []
         col2P = []
         for c in col_set:
-            X = [(pos2P[y], y) for y in range(mat.ncols()) if col_list[y] == c ]
+            X = [(pos2P[y], y) for y in xrange(mat.ncols()) if col_list[y] == c ]
             X.sort()
             col2pos.append([b for (a, b) in X ])
             col2P.append([a for (a, b) in X ])
 
-        zipped = zip(col2P, col_set, col2pos)
-        zipped.sort()
+        zipped = sorted(zip(col2P, col_set, col2pos))
 
         col2P = [qty for (qty, c, pos) in zipped]
         col_set = [c for (qty, c, pos) in zipped]
@@ -275,7 +271,7 @@ class LinearCodeAutGroupCanLabel:
         P_refined = []
         p = [0]
         act_qty = col2P[0]
-        for i in range(1, len(col_set)):
+        for i in xrange(1, len(col_set)):
             if act_qty == col2P[i]:
                 p.append(i)
             else:
@@ -293,7 +289,7 @@ class LinearCodeAutGroupCanLabel:
             pr = PartitionRefinementLinearCode(len(col_set),
                 matrix(col_set).transpose(), P=P_refined, algorithm_type=algorithm_type)
 
-            # this command allows you some advanced debuging
+            # this command allows you some advanced debugging
             # it prints the backtrack tree -> must be activated when installing
             # pr._latex_view(title="MyTitle") #this will provide you some visual representation of what is going on
 
@@ -360,7 +356,7 @@ class LinearCodeAutGroupCanLabel:
         perm = [-1] * mat.ncols()
         mult = [F.one()] * mat.ncols()
 
-        for i in range(len(can_col_set)):
+        for i in xrange(len(can_col_set)):
             img = can_transp.get_perm()(i + 1)
             for j in col2pos[img - 1]:
                 pos = P[ pos2P[j] ].pop()
@@ -370,7 +366,7 @@ class LinearCodeAutGroupCanLabel:
 
         it = iter(z)
         for p in P:
-            while len(p) > 0:
+            while p:
                 pos = p.pop()
                 perm[pos] = next(it) + 1
 
@@ -381,7 +377,7 @@ class LinearCodeAutGroupCanLabel:
         self._full_autom_order *= a
 
 
-        for i in range(len(col2P)):
+        for i in xrange(len(col2P)):
             if len(col2P[i]) > 1:
                 A, a = self._compute_trivial_automs(normalization,
                     normalization_inverse, col2pos[i], col2P[i])
@@ -511,11 +507,11 @@ class LinearCodeAutGroupCanLabel:
         n = S.degree()
         A = []
         for g in gens:
-            perm = range(1, n + 1)
+            perm = list(xrange(1, n + 1))
             mult = [S.base_ring().one()] * n
             short_perm = g.get_perm()
             short_mult = g.get_v()
-            for i in range(len(col2pos)):
+            for i in xrange(len(col2pos)):
                 c = col2pos[i]
                 img_iter = iter(col2pos[short_perm(i + 1) - 1])
                 for x in c:

@@ -60,7 +60,7 @@ EXAMPLES::
 """
 
 class TensorProductsCategory(CovariantConstructionCategory):
-    """
+    r"""
     An abstract base class for all TensorProducts's categories
 
     TESTS::

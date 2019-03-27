@@ -105,7 +105,7 @@ class LazyFormat(str):
         TESTS::
 
             sage: from sage.misc.lazy_format import LazyFormat
-            sage: form = LazyFormat("<%s>");
+            sage: form = LazyFormat("<%s>")
             sage: form
             unbound LazyFormat("<%s>")
             sage: print(form)

@@ -1,15 +1,7 @@
-#!/usr/bin/env bash
-
 if [ "$SAGE_LOCAL" = "" ]; then
    echo "SAGE_LOCAL undefined ... exiting";
    echo "Maybe run 'sage -sh'?"
    exit 1
-fi
-
-if [ "x$SAGE64" = xyes ]; then
-   echo "Building a 64-bit version of matplotlib"
-   CFLAGS="-O2 -g -m64 "; export CFLAGS
-   LDFLAGS="-m64 $LDFLAGS"; export LDFLAGS
 fi
 
 # Write a configuration file to src/setup.cfg
@@ -17,34 +9,10 @@ python make-setup-config.py
 
 cd src
 
-# Apply patches.  See SPKG.txt for information about what each patch
-# does.
-for patch in ../patches/*.patch; do
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
-# Now build
-python setup.py build
-if [ $? -ne 0 ]; then
-    echo "Error building matplotlib package."
-    exit 1
-fi
-
-rm -rf "$SAGE_LOCAL"/lib/python/site-packages/matplotlib
-
 # Finally install
-python setup.py install
+sdh_pip_install .
+
 if [ $? -ne 0 ]; then
     echo "Error installing matplotlib package."
     exit 1
 fi
-
-# Print value of MPLCONFIGDIR
-VERSION=`python -c 'import pkg_resources; print(pkg_resources.get_distribution("matplotlib").version)'`
-echo
-echo "When Sage runs, MPLCONFIGDIR will be set to '\$DOT_SAGE/matplotlib-$VERSION'."
-echo

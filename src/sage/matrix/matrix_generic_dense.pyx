@@ -1,17 +1,20 @@
 """
 Dense Matrices over a general ring
 """
+from __future__ import absolute_import
+
 cimport cython
 from cpython.list cimport *
 from cpython.number cimport *
 from cpython.ref cimport *
 
-cimport matrix_dense
-import matrix_dense
+cimport sage.matrix.matrix_dense as matrix_dense
+from . import matrix_dense
+from .args cimport MatrixArgs_init
 
-cimport matrix
+cimport sage.matrix.matrix as matrix
 
-from sage.structure.element cimport parent_c
+from sage.structure.element cimport parent as parent_c
 
 cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     r"""
@@ -24,8 +27,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     EXAMPLES::
 
         sage: A = random_matrix(Integers(25)['x'],2); A
-        [    x^2 + 12*x + 2   4*x^2 + 13*x + 8]
-        [ 22*x^2 + 2*x + 17 19*x^2 + 22*x + 14]
+        [       0  8*x + 1]
+        [17*x + 4        0]
         sage: type(A)
         <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
         sage: TestSuite(A).run()
@@ -33,26 +36,37 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     Test comparisons::
 
         sage: A = random_matrix(Integers(25)['x'],2)
-        sage: cmp(A,A)
-        0
-        sage: cmp(A,A+1)
-        -1
-        sage: cmp(A+1,A)
-        1
+        sage: A == A
+        True
+        sage: A < A + 1
+        True
+        sage: A+1 < A
+        False
+
+    Test hashing::
+
+        sage: A = random_matrix(Integers(25)['x'], 2)
+        sage: hash(A)
+        Traceback (most recent call last):
+        ...
+        TypeError: mutable matrices are unhashable
+        sage: A.set_immutable()
+        sage: H = hash(A)
     """
-    ########################################################################
-    # LEVEL 1 functionality
-    # 0 * __cinit__   (not needed)
-    # x * __init__
-    # 0 * __dealloc__   (not needed)
-    # x * set_unsafe
-    # x * get_unsafe
-    # x * def _pickle
-    # x * def _unpickle
-    ########################################################################
-    def __init__(self, parent, entries, copy, coerce):
+    def __init__(self, parent, entries=None, copy=None, bint coerce=True):
         r"""
-        See :class:`Matrix_generic_dense` for documentation.
+        Initialize a dense matrix.
+
+        INPUT:
+
+        - ``parent`` -- a matrix space
+
+        - ``entries`` -- see :func:`matrix`
+
+        - ``copy`` -- ignored (for backwards compatibility)
+
+        - ``coerce`` -- if False, assume without checking that the
+          entries lie in the base ring
 
         TESTS:
 
@@ -67,82 +81,39 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             sage: Matrix_generic_dense(M, (x, y), True, True)
             [x y]
         """
-        matrix.Matrix.__init__(self, parent)
-
-        cdef Py_ssize_t i,j
-        cdef bint is_list
-
-        R = parent.base_ring()
-        zero = R.zero()
-
-        # determine if entries is a list or a scalar
-        if entries is None:
-            entries = zero
-            is_list = False
-        elif parent_c(entries) is R:
-            is_list = False
-        elif type(entries) is list:
-            # here we do a strong type checking as we potentially want to
-            # assign entries to self._entries without copying it
-            self._entries = entries
-            is_list = True
-        elif isinstance(entries, (list,tuple)):
-            # it is needed to check for list here as for example Sequence
-            # inherits from it but fails the strong type checking above
-            self._entries = list(entries)
-            is_list = True
-            copy = False
-        else:
-            # not sure what entries is at this point... try scalar first
-            try:
-                entries = R(entries)
-                is_list = False
-            except TypeError:
-                try:
-                    self._entries = list(entries)
-                    is_list = True
-                    copy = False
-                except TypeError:
-                    raise TypeError("entries must be coercible to a list or the base ring")
-
-        # now set self._entries
-        if is_list:
-            if len(self._entries) != self._nrows * self._ncols:
-                raise TypeError("entries has the wrong length")
-            if coerce:
-                self._entries = [R(x) for x in self._entries]
-            elif copy:
-                self._entries = self._entries[:]
-        elif self._nrows == self._ncols:
-            self._entries = [zero]*(self._nrows*self._nrows)
-            for i in range(self._nrows):
-                self._entries[i+self._ncols*i]=entries
-        elif entries == zero:
-            self._entries = [zero]*(self._nrows*self._ncols)
-        else:
-            raise TypeError("nonzero scalar matrix must be square")
+        ma = MatrixArgs_init(parent, entries)
+        self._entries = ma.list(coerce)
 
     cdef Matrix_generic_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols):
         r"""
         Return a new dense matrix with no entries set.
         """
-        cdef Matrix_generic_dense res
-        res = self.__class__.__new__(self.__class__, 0, 0, 0)
-
         if nrows == self._nrows and ncols == self._ncols:
-            res._parent = self._parent
+            MS = self._parent
         else:
-            res._parent = self.matrix_space(nrows, ncols)
-        res._ncols  = ncols
-        res._nrows  = nrows
-        res._base_ring = self._base_ring
-        return res
+            MS = self.matrix_space(nrows, ncols)
+
+        cdef type t = <type>type(self)
+        return <Matrix_generic_dense>t.__new__(t, MS)
 
     cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         self._entries[i*self._ncols + j] = value
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries[i*self._ncols + j]
+
+
+    def _reverse_unsafe(self):
+        r"""
+        TESTS::
+
+            sage: m = matrix(ZZ['x,y'], 2, 3, range(6))
+            sage: m._reverse_unsafe()
+            sage: m
+            [5 4 3]
+            [2 1 0]
+        """
+        self._entries.reverse()
 
     def _pickle(self):
         """
@@ -167,24 +138,9 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         else:
             raise RuntimeError("unknown matrix version")
 
-    def __hash__(self):
-        """
-        EXAMPLES:
-            sage: A = random_matrix(Integers(25)['x'],2)
-            sage: hash(A)
-            Traceback (most recent call last):
-            ...
-            TypeError: mutable matrices are unhashable
-            sage: A.set_immutable()
-            sage: hash(A)
-            139665060168050560   # 64-bit
-            -623270016           # 32-bit
-        """
-        return self._hash()
-
     ########################################################################
     # LEVEL 2 functionality
-    #    * cdef _add_
+    # X  * cdef _add_
     #    * cdef _mul_
     #    * cpdef _cmp_
     #    * __neg__
@@ -251,6 +207,52 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         if self._subdivisions is not None:
             A.subdivide(*self.subdivisions())
         return A
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef _add_(self, right):
+        """
+        Add two generic dense matrices with the same parent.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = FreeAlgebra(QQ,2)
+            sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
+            sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
+            sage: a._add_(b)
+            [        2         4]
+            [x*y + y*x     2*y*x]
+        """
+        cdef Py_ssize_t k
+        cdef Matrix_generic_dense other = <Matrix_generic_dense> right
+        cdef Matrix_generic_dense res = self._new(self._nrows, self._ncols)
+        res._entries = [None]*(self._nrows*self._ncols)
+        for k in range(self._nrows*self._ncols):
+            res._entries[k] = self._entries[k] + other._entries[k]
+        return res
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef _sub_(self, right):
+        """
+        Subtract two generic dense matrices with the same parent.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = FreeAlgebra(QQ,2)
+            sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
+            sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
+            sage: a._sub_(b)
+            [        0         0]
+            [x*y - y*x         0]
+        """
+        cdef Py_ssize_t k
+        cdef Matrix_generic_dense other = <Matrix_generic_dense> right
+        cdef Matrix_generic_dense res = self._new(self._nrows, self._ncols)
+        res._entries = [None]*(self._nrows*self._ncols)
+        for k in range(self._nrows*self._ncols):
+            res._entries[k] = self._entries[k] - other._entries[k]
+        return res
 
     @cython.boundscheck(False)
     @cython.wraparound(False)

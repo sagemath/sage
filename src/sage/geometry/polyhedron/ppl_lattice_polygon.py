@@ -177,7 +177,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
     def _find_cyclic_isomorphism_matching_edge(self, polytope,
                                                polytope_origin, p_ray_left,
                                                p_ray_right):
-        """
+        r"""
         Helper to find an isomorphism of polygons
 
         INPUT:
@@ -243,7 +243,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
         raise LatticePolytopesNotIsomorphicError('different polygons')
 
     def find_isomorphism(self, polytope):
-        """
+        r"""
         Return a lattice isomorphism with ``polytope``.
 
         INPUT:
@@ -363,7 +363,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
     def sub_polytopes(self):
         """
-        Returns a list of all lattice sub-polygons up to isomorphsm.
+        Return a list of all lattice sub-polygons up to isomorphism.
 
         OUTPUT:
 

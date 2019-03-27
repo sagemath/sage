@@ -434,7 +434,7 @@ def _datetime_from_timespec(ts):
     return unix_epoch + td
 
 def _decode_utf8_nul(sz):
-    nul = sz.find('\0')
+    nul = sz.find(b'\0')
     if nul > -1:
         sz = sz[:nul]
     return sz.decode('utf-8')
@@ -757,6 +757,8 @@ def _get_errno():
     return __error().contents.value
                 
 def getattrlist(path, attrs, options):
+    if not isinstance(path, bytes):
+        path = path.encode('utf-8')
     attrs = list(attrs)
     if attrs[1]:
         attrs[1] |= ATTR_VOL_INFO
@@ -805,6 +807,8 @@ def fgetattrlist(fd, attrs, options):
     return _decode_attrlist_result(buf, attrs, options)
 
 def statfs(path):
+    if not isinstance(path, bytes):
+        path = path.encode('utf-8')
     result = struct_statfs()
     ret = _statfs(path, byref(result))
     if ret < 0:

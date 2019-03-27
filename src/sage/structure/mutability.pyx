@@ -1,7 +1,6 @@
 """
 Mutability Cython Implementation
 """
-
 ##########################################################################
 #
 #   Sage: System for Algebra and Geometry Experimentation
@@ -9,9 +8,11 @@ Mutability Cython Implementation
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##########################################################################
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+
+from sage.misc.decorators import sage_wraps
 
 
 cdef class Mutability:
@@ -47,12 +48,12 @@ cdef class Mutability:
 
     def is_immutable(self):
         """
-        Return True if this object is immutable (can not be changed)
-        and False if it is not.
+        Return ``True`` if this object is immutable (can not be changed)
+        and ``False`` if it is not.
 
         To make this object immutable use self.set_immutable().
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: v = Sequence([1,2,3,4/5])
             sage: v[0] = 5
@@ -72,9 +73,8 @@ cdef class Mutability:
     def __reduce__(self):
         return Mutability, (self._is_immutable, )
 
-#################################################################################
+##########################################################################
 ## Method decorators for mutating methods resp. methods that assume immutability
-from sage.misc.decorators import sage_wraps
 
 def require_mutable(f):
     """
@@ -83,30 +83,30 @@ def require_mutable(f):
     EXAMPLES::
 
         sage: from sage.structure.mutability import require_mutable, require_immutable
-        sage: class A:
-        ...    def __init__(self, val):
-        ...        self._m = val
-        ...    @require_mutable
-        ...    def change(self, new_val):
-        ...        'change self'
-        ...        self._m = new_val
-        ...    @require_immutable
-        ...    def __hash__(self):
-        ...        'implement hash'
-        ...        return hash(self._m)
+        sage: class A(object):
+        ....:     def __init__(self, val):
+        ....:         self._m = val
+        ....:     @require_mutable
+        ....:     def change(self, new_val):
+        ....:         'change self'
+        ....:         self._m = new_val
+        ....:     @require_immutable
+        ....:     def __hash__(self):
+        ....:         'implement hash'
+        ....:         return hash(self._m)
         sage: a = A(5)
         sage: a.change(6)
         sage: hash(a)
         Traceback (most recent call last):
         ...
-        ValueError: <type 'instance'> instance is mutable, <function __hash__ at ...> must not be called
+        ValueError: <class '__main__.A'> instance is mutable, <function ...__hash__ at ...> must not be called
         sage: a._is_immutable = True
         sage: hash(a)
         6
         sage: a.change(7)   # indirect doctest
         Traceback (most recent call last):
         ...
-        ValueError: <type 'instance'> instance is immutable, <function change at ...> must not be called
+        ValueError: <class '__main__.A'> instance is immutable, <function ...change at ...> must not be called
         sage: from sage.misc.sageinspect import sage_getdoc
         sage: print(sage_getdoc(a.change))
         change self
@@ -117,42 +117,43 @@ def require_mutable(f):
     """
     @sage_wraps(f)
     def new_f(self, *args,**kwds):
-        if getattr(self,'_is_immutable',False):
-            raise ValueError("%s instance is immutable, %s must not be called"%(type(self), repr(f)))
-        return f(self, *args,**kwds)
+        if getattr(self, '_is_immutable', False):
+            raise ValueError("%s instance is immutable, %s must not be called" % (type(self), repr(f)))
+        return f(self, *args, **kwds)
     return new_f
+
 
 def require_immutable(f):
     """
-    A decorator that requires mutability for a method to be called.
+    A decorator that requires immutability for a method to be called.
 
     EXAMPLES::
 
         sage: from sage.structure.mutability import require_mutable, require_immutable
-        sage: class A:
-        ...    def __init__(self, val):
-        ...        self._m = val
-        ...    @require_mutable
-        ...    def change(self, new_val):
-        ...        'change self'
-        ...        self._m = new_val
-        ...    @require_immutable
-        ...    def __hash__(self):
-        ...        'implement hash'
-        ...        return hash(self._m)
+        sage: class A(object):
+        ....:  def __init__(self, val):
+        ....:      self._m = val
+        ....:  @require_mutable
+        ....:  def change(self, new_val):
+        ....:      'change self'
+        ....:      self._m = new_val
+        ....:  @require_immutable
+        ....:  def __hash__(self):
+        ....:      'implement hash'
+        ....:      return hash(self._m)
         sage: a = A(5)
         sage: a.change(6)
         sage: hash(a)   # indirect doctest
         Traceback (most recent call last):
         ...
-        ValueError: <type 'instance'> instance is mutable, <function __hash__ at ...> must not be called
+        ValueError: <class '__main__.A'> instance is mutable, <function ...__hash__ at ...> must not be called
         sage: a._is_immutable = True
         sage: hash(a)
         6
         sage: a.change(7)
         Traceback (most recent call last):
         ...
-        ValueError: <type 'instance'> instance is immutable, <function change at ...> must not be called
+        ValueError: <class '__main__.A'> instance is immutable, <function ...change at ...> must not be called
         sage: from sage.misc.sageinspect import sage_getdoc
         sage: print(sage_getdoc(a.__hash__))
         implement hash
@@ -164,6 +165,6 @@ def require_immutable(f):
     @sage_wraps(f)
     def new_f(self, *args,**kwds):
         if not getattr(self,'_is_immutable',False):
-            raise ValueError("%s instance is mutable, %s must not be called"%(type(self), repr(f)))
+            raise ValueError("%s instance is mutable, %s must not be called" % (type(self), repr(f)))
         return f(self, *args,**kwds)
     return new_f

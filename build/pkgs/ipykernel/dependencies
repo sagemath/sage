@@ -1,4 +1,4 @@
-$(PYTHON)
+$(PYTHON) | ipython jupyter_client pip scandir
 
 ----------
 All lines of this file are ignored except the first.

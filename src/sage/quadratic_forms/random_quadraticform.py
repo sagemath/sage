@@ -11,7 +11,7 @@ from sage.rings.all import ZZ
 ################################################
 
 def random_quadraticform(R, n, rand_arg_list=[]):
-    """
+    r"""
     Create a random quadratic form in `n` variables defined over the ring `R`.
 
     The last (and optional) argument ``rand_arg_list`` is a list of at most 3
@@ -113,7 +113,7 @@ def random_quadraticform_with_conditions(R, n, condition_list=[], rand_arg_list=
                 bool_ans = c(Q)
 
             ## Create a new quadratic form if a condition fails
-            if (bool_ans == False):
+            if not bool_ans:
                 Q = random_quadraticform(R, n, rand_arg_list)
                 Done_Flag = True
                 break
@@ -208,7 +208,7 @@ def random_ternaryqf_with_conditions(condition_list=[], rand_arg_list=[]):
                 bool_ans = c(Q)
 
             ## Create a new quadratic form if a condition fails
-            if (bool_ans == False):
+            if not bool_ans:
                 Q = random_ternaryqf(rand_arg_list)
                 Done_Flag = True
                 break

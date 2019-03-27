@@ -3,8 +3,8 @@
 == Description ==
 
 This provides files necessary for Jmol(java) and JSmol
-(javascript) to operate from the command line and the 
-Notebook. It does not contain the Notebook javascript 
+(javascript) to operate from the command line and the
+Notebook. It does not contain the Notebook javascript
 library jmol_lib.js or changes to Notebook or Sage code.
 
 == License ==
@@ -28,7 +28,7 @@ The commandline jmol requires java at runtime.
 First, unpack the upstream release (actual version number will of
 course differ):
 
-$ unzip ~/Download/Jmol-14.2.4_2014.08.03-binary.zip 
+$ unzip ~/Download/Jmol-14.2.4_2014.08.03-binary.zip
 $ cd jmol-14.2.4_2014.08.03/
 
 Extract and then delete the contained jsmol.zip

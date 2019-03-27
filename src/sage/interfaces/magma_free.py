@@ -29,7 +29,8 @@ def magma_free_eval(code, strip=True, columns=0):
     LIMITATIONS: The code must evaluate in at most 20 seconds
     and there is a limitation on the amount of RAM.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: magma_free("Factorization(9290348092384)")  # optional - internet
         [ <2, 5>, <290323377887, 1> ]
     """
@@ -74,7 +75,8 @@ class MagmaFree:
     Evaluate MAGMA code without requiring that MAGMA be installed
     on your computer by using the free online MAGMA calculator.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: magma_free("Factorization(9290348092384)")  # optional - internet
         [ <2, 5>, <290323377887, 1> ]
     """

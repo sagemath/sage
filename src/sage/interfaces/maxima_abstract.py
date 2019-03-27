@@ -50,6 +50,7 @@ and library interfaces to Maxima.
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
+from six import string_types
 
 import os
 import re
@@ -59,15 +60,17 @@ import subprocess
 from sage.env import DOT_SAGE
 COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj'%DOT_SAGE
 
+from sage.cpython.string import bytes_to_str
+
+from sage.misc.misc import ECL_TMP
 from sage.misc.multireplace import multiple_replace
-
+from sage.structure.richcmp import richcmp, rich_to_bool
 import sage.server.support
-
-##import sage.rings.all
 
 from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
   InterfaceFunction, AsciiArtString)
 from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.docs.instancedoc import instancedoc
 
 # The Maxima "apropos" command, e.g., apropos(det) gives a list
 # of all identifiers that begin in a certain way.  This could
@@ -169,17 +172,20 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         if sage.server.support.EMBEDDED_MODE:
             cmd += '< /dev/null'
 
+        env = os.environ.copy()
+        env['TMPDIR'] = str(ECL_TMP)
+
         if redirect:
-            p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            res = p.stdout.read()
+            res = bytes_to_str(subprocess.check_output(cmd, shell=True,
+                                                       env=env))
             # We get 4 lines of commented verbosity
             # every time Maxima starts, so we need to get rid of them
             for _ in range(4):
                 res = res[res.find('\n')+1:]
+
             return AsciiArtString(res)
         else:
-            subprocess.Popen(cmd, shell=True)
+            subprocess.check_call(cmd, shell=True, env=env)
 
     def help(self, s):
         r"""
@@ -404,7 +410,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         OUTPUT: float
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: t = maxima.cputime()
             sage: _ = maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'], [1,1,1])
             sage: maxima.cputime(t) # output random
@@ -425,8 +432,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: maxima.version()
-            '5.35.1'
+            sage: maxima.version()  # random
+            '5.41.0'
         """
         return maxima_version()
 
@@ -534,7 +541,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: maxima._function_class()
-            <class 'sage.interfaces.maxima.MaximaFunction'>
+            <class 'sage.interfaces.interface.InterfaceFunction'>
         """
         return MaximaAbstractFunction
 
@@ -564,7 +571,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: maxima._function_element_class()
-            <class 'sage.interfaces.maxima.MaximaFunctionElement'>
+            <class 'sage.interfaces.interface.InterfaceFunctionElement'>
         """
         return MaximaAbstractFunctionElement
 
@@ -639,13 +646,13 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         name = self._next_var_name()
         if isinstance(defn, MaximaAbstractElement):
             defn = defn.str()
-        elif not isinstance(defn, str):
+        elif not isinstance(defn, string_types):
             defn = str(defn)
         if isinstance(args, MaximaAbstractElement):
             args = args.str()
-        elif not isinstance(args, str):
+        elif not isinstance(args, string_types):
             args = str(args)
-        cmd = '%s(%s) := %s'%(name, args, defn)
+        cmd = '%s(%s) := %s' % (name, args, defn)
         self._eval_line(cmd)
         if rep is None:
             rep = defn
@@ -845,11 +852,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'])
             y=%k1*%e^x+%k2*%e^-x+3*x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'])
-            y=(%c-3*(-x-1)*%e^-x)*%e^x
+            y=(%c-3*((-x)-1)*%e^-x)*%e^x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'],[1,1])
             y=-%e^-1*(5*%e^x-3*%e*x-3*%e)
         """
-        if not isinstance(vars, str):
+        if not isinstance(vars, string_types):
             str_vars = '%s, %s'%(vars[1], vars[0])
         else:
             str_vars = vars
@@ -979,7 +986,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         if n < 1:
             raise ValueError("n (=%s) must be >= 1" % n)
         s = repr(self('qunit(%s)' % n)).lower()
-        r = re.compile('sqrt\(.*\)')
+        r = re.compile(r'sqrt\(.*\)')
         a = QuadraticField(n, 'a').gen()
         s = r.sub('a', s)
         return eval(s)
@@ -1072,6 +1079,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             self('plot2d('+cmd+','+options+')')
 
 
+@instancedoc
 class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     r"""
     Element of Maxima through an abstract interface.
@@ -1089,6 +1097,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         sage: type(xl)
         <class 'sage.interfaces.maxima_lib.MaximaLibElement'>
     """
+    _cached_repr = True
 
     def __str__(self):
         """
@@ -1128,7 +1137,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         P = self._check_valid()
         return P.eval('is(%s = 0);'%self.name()) == P._false_symbol() # but be careful, since for relations things like is(equal(a,b)) are what Maxima needs
 
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         """
         Compare this Maxima object with ``other``.
 
@@ -1136,7 +1145,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         - ``other`` - an object to compare to
 
-        OUTPUT: integer
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1158,22 +1167,21 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: -f == g.diff('x')
             True
         """
-
         # thanks to David Joyner for telling me about using "is".
         # but be careful, since for relations things like is(equal(a,b))
         # are what Maxima needs
         P = self.parent()
         try:
             if P.eval("is (%s < %s)"%(self.name(), other.name())) == P._true_symbol():
-                return -1
+                return rich_to_bool(op, -1)
             elif P.eval("is (%s > %s)"%(self.name(), other.name())) == P._true_symbol():
-                return 1
+                return rich_to_bool(op, 1)
             elif P.eval("is (%s = %s)"%(self.name(), other.name())) == P._true_symbol():
-                return 0
+                return rich_to_bool(op, 0)
         except TypeError:
             pass
-        return cmp(repr(self),repr(other))
-        # everything is supposed to be comparable in Python,
+        return richcmp(repr(self), repr(other), op)
+        # everything is supposed to be comparable in Python2,
         # so we define the comparison thus when no comparable
         # in interfaced system.
 
@@ -1410,30 +1418,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         P = self._check_valid()
         return P.get(self._name)
 
-    def __repr__(self):
-        """
-        Return print representation of this Maxima object.
-
-        INPUT: none
-
-        OUTPUT: string
-
-        The result is cached.
-
-        EXAMPLES::
-
-            sage: maxima('sqrt(2) + 1/3').__repr__()
-            'sqrt(2)+1/3'
-        """
-        P = self._check_valid()
-        try:
-            return self.__repr
-        except AttributeError:
-            pass
-        r = P.get(self._name)
-        self.__repr = r
-        return r
-
     def diff(self, var='x', n=1):
         """
         Return the n-th derivative of self.
@@ -1572,7 +1556,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         ::
 
             sage: f = maxima('exp(x^2)').integral('x',0,1); f
-            -sqrt(%pi)*%i*erf(%i)/2
+            -(sqrt(%pi)*%i*erf(%i))/2
             sage: f.numer()
             1.46265174590718...
         """
@@ -1741,7 +1725,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         return P('%s, %s'%(self.name(), args))
 
     def _latex_(self):
-        """
+        r"""
         Return Latex representation of this Maxima object.
 
         INPUT: none
@@ -1759,7 +1743,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: y,d = var('y,d')
             sage: f = function('f')
             sage: latex(maxima(derivative(f(x*y), x)))
-            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it t_0}}}\,f\left({\it t_0}\right)  \right|_{\left[ {\it t_0}={\it x}\,  {\it y} \right] }\right)\,{\it y}
+            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it t}_{0}}}\,f\left({\it t}_{0}\right)  \right|_{{\it t}_{0}={\it x}\,  {\it y}}\right)\,{\it y}
             sage: latex(maxima(derivative(f(x,y,d), d,x,x,y)))
             {{{\it \partial}^4}\over{{\it \partial}\,{\it d}\,  {\it \partial}\,{\it x}^2\,{\it \partial}\,  {\it y}}}\,f\left({\it x} ,  {\it y} , {\it d}\right)
             sage: latex(maxima(d/(d-2)))
@@ -1787,7 +1771,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         # This regex matches a string of spaces preceded by either a '}', a
         # decimal digit, or a ')', and followed by a decimal digit. The spaces
         # get replaced by a '\cdot'.
-        s = re.sub(r'(?<=[})\d]) +(?=\d)', '\cdot', s)
+        s = re.sub(r'(?<=[})\d]) +(?=\d)', r'\\cdot', s)
 
         return s
 
@@ -1930,12 +1914,8 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             raise TypeError(msg)
 
 
-class MaximaAbstractFunctionElement(InterfaceFunctionElement):
-    pass
-
-
-class MaximaAbstractFunction(InterfaceFunction):
-    pass
+MaximaAbstractFunctionElement = InterfaceFunctionElement
+MaximaAbstractFunction = InterfaceFunction
 
 
 class MaximaAbstractElementFunction(MaximaAbstractElement):
@@ -2031,7 +2011,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
             args = '(%s)'%args
         return P('%s%s'%(self.name(), args))
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return print representation of this Maxima function.
 
@@ -2042,16 +2022,14 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         EXAMPLES::
 
             sage: f = maxima.function('x,y','sin(x+y)')
-            sage: repr(f)
+            sage: repr(f)    # indirect doctest
             'sin(x+y)'
         """
         return self.definition()
 
     def _latex_(self):
-        """
+        r"""
         Return latex representation of this Maxima function.
-
-        INPUT: none
 
         OUTPUT: string
 
@@ -2062,7 +2040,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
             \mathrm{sin(x+y)}
         """
         if self.__latex is None:
-            return r'\mathrm{%s}'%self.__defn
+            return r'\mathrm{%s}' % self.__defn
         else:
             return self.__latex
 
@@ -2175,17 +2153,17 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         """
         P = self._check_valid()
         if isinstance(f, P._object_function_class()):
-            tmp = list(sorted(set(self.arguments() + f.arguments())))
+            tmp = sorted(set(self.arguments() + f.arguments()))
             args = ','.join(tmp)
-            defn = "(%s)%s(%s)"%(self.definition(), operation, f.definition())
+            defn = "(%s)%s(%s)" % (self.definition(), operation, f.definition())
         elif f is None:
             args = self.arguments(split=False)
-            defn = "%s(%s)"%(operation, self.definition())
+            defn = "%s(%s)" % (operation, self.definition())
         else:
             args = self.arguments(split=False)
-            defn = "(%s)%s(%s)"%(self.definition(), operation, repr(f))
+            defn = "(%s)%s(%s)" % (self.definition(), operation, repr(f))
 
-        return P.function(args,P.eval(defn))
+        return P.function(args, P.eval(defn))
 
 
 def reduce_load_MaximaAbstract_function(parent, defn, args, latex):
@@ -2212,10 +2190,12 @@ def maxima_version():
     EXAMPLES::
 
         sage: from sage.interfaces.maxima_abstract import maxima_version
-        sage: maxima_version()
-        '5.35.1'
+        sage: maxima_version()  # random
+        '5.41.0'
     """
-    return os.popen('maxima --version').read().split()[-1]
+    with os.popen('maxima --version') as p:
+        return p.read().split()[-1]
+
 
 def maxima_console():
     """

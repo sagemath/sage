@@ -4,7 +4,7 @@ Local data for elliptic curves over number fields
 
 Let `E` be an elliptic curve over a number field `K` (including `\QQ`).
 There are several local invariants at a finite place `v` that
-can be computed via Tate's algorithm (see [Sil2] IV.9.4 or [Ta]).
+can be computed via Tate's algorithm (see [Sil1994]_ IV.9.4 or [Tate1975]_).
 
 These include the type of reduction (good, additive, multiplicative),
 a minimal equation of `E` over `K_v`,
@@ -63,15 +63,6 @@ Or how the minimal equation changes::
     sage: da.minimal_model()
     Elliptic Curve defined by y^2 = x^3 + (-i) over Number Field in i with defining polynomial x^2 + 1
 
-REFERENCES:
-
-- [Sil2] Silverman, Joseph H., Advanced topics in the arithmetic of elliptic curves.
-  Graduate Texts in Mathematics, 151. Springer-Verlag, New York, 1994.
-
-- [Ta] Tate, John, Algorithm for determining the type of a singular fiber in an elliptic pencil.
-  Modular functions of one variable, IV, pp. 33--52. Lecture Notes in Math., Vol. 476,
-  Springer, Berlin, 1975.
-
 AUTHORS:
 
 - John Cremona: First version 2008-09-21 (refactoring code from
@@ -80,8 +71,6 @@ AUTHORS:
 - Chris Wuthrich: more documentation 2010-01
 
 """
-from __future__ import absolute_import
-
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -96,13 +85,13 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import absolute_import
+from six import integer_types
 
 from sage.structure.sage_object import SageObject
 from sage.misc.misc import verbose
 
 from sage.rings.all import PolynomialRing, QQ, ZZ, Integer
-from sage.rings.number_field.number_field_element import is_NumberFieldElement
 from sage.rings.number_field.number_field_ideal import is_NumberFieldFractionalIdeal
 
 from sage.rings.number_field.number_field import is_NumberField
@@ -157,7 +146,7 @@ class EllipticCurveLocalData(SageObject):
         Tamagawa Number: 2
 
     """
-    
+
     def __init__(self, E, P, proof=None, algorithm="pari", globally=False):
         r"""
         Initializes the reduction data for the elliptic curve `E` at the prime `P`.
@@ -179,7 +168,7 @@ class EllipticCurveLocalData(SageObject):
           ``ellglobalred`` implementation of Tate's algorithm over
           `\QQ`. If "generic", use the general number field
           implementation.
-          
+
         - ``globally`` (bool, default: False) -- If True, the algorithm
           uses the generators of principal ideals rather than an arbitrary
           uniformizer.
@@ -269,9 +258,9 @@ class EllipticCurveLocalData(SageObject):
         if algorithm=="pari" and K is QQ:
             Eint = E.integral_model()
             data = Eint.pari_curve().elllocalred(p)
-            self._fp = data[0].python()
-            self._KS = KodairaSymbol(data[1].python())
-            self._cp = data[3].python()
+            self._fp = data[0].sage()
+            self._KS = KodairaSymbol(data[1].sage())
+            self._cp = data[3].sage()
             # We use a global minimal model since we can:
             self._Emin_reduced = Eint.minimal_model()
             self._val_disc = self._Emin_reduced.discriminant().valuation(p)
@@ -643,7 +632,7 @@ class EllipticCurveLocalData(SageObject):
             (Fractional ideal (2*a + 1), True)]
         """
         return self._reduction_type == 0
-       
+
     def _tate(self, proof = None, globally = False):
         r"""
         Tate's algorithm for an elliptic curve over a number field.
@@ -659,7 +648,7 @@ class EllipticCurveLocalData(SageObject):
 
         The optional argument globally, when set to True, tells the algorithm to use the generator of the prime ideal if it is principal. Otherwise just any uniformizer will be used.
 
-        .. note:: 
+        .. note::
 
            Called only by ``EllipticCurveLocalData.__init__()``.
 
@@ -707,7 +696,7 @@ class EllipticCurveLocalData(SageObject):
             4
 
         This is to show that the bug :trac:`11630` is fixed. (The computation of the class group would produce a warning)::
-        
+
             sage: K.<t> = NumberField(x^7-2*x+177)
             sage: E = EllipticCurve([0,1,0,t,t])
             sage: P = K.ideal(2,t^3 + t + 1)
@@ -732,12 +721,12 @@ class EllipticCurveLocalData(SageObject):
         # uniformiser pi which has non-positive valuation at all other
         # primes, so that we can divide by it without losing
         # integrality at other primes.
-           
+
         if globally:
             principal_flag = P.is_principal()
-        else: 
+        else:
             principal_flag = False
-            
+
         if (K is QQ) or principal_flag :
             pi = P.gens_reduced()[0]
             verbose("P is principal, generator pi = %s"%pi, t, 1)
@@ -762,7 +751,7 @@ class EllipticCurveLocalData(SageObject):
         from sage.categories.pushout import pushout, CoercionException
         try:
             if hasattr(F.p.ring(), 'maximal_order'): # it is not ZZ
-                _tmp_ = pushout(F.p.ring().maximal_order(),K)
+                pushout(F.p.ring().maximal_order(), K)
             pinv = lambda x: F.lift(~F(x))
             proot = lambda x,e: F.lift(F(x).nth_root(e, extend = False, all = True)[0])
             preduce = lambda x: F.lift(F(x))
@@ -808,13 +797,13 @@ class EllipticCurveLocalData(SageObject):
             for i in range(7):
                 if A[i] != 0:
                     A[i] *= pie**i
-            verbose("P-integral model is %s, with valuations %s"%([A[i] for i in indices], [pval(A[i]) for i in indices]), t, 1)
+            verbose("P-integral model is %s, with valuations %s" % ([A[i] for i in indices], [pval(A[i]) for i in indices]), t, 1)
 
         split = None # only relevant for multiplicative reduction
 
         (a1, a2, a3, a4, a6) = (A[1], A[2], A[3], A[4], A[6])
         while True:
-            C = EllipticCurve([a1, a2, a3, a4, a6]);
+            C = EllipticCurve([a1, a2, a3, a4, a6])
             (b2, b4, b6, b8) = C.b_invariants()
             (c4, c6) = C.c_invariants()
             delta = C.discriminant()
@@ -1111,6 +1100,8 @@ def check_prime(K,P):
         sage: from sage.schemes.elliptic_curves.ell_local_data import check_prime
         sage: check_prime(QQ,3)
         3
+        sage: check_prime(QQ,QQ(3))
+        3
         sage: check_prime(QQ,ZZ.ideal(31))
         31
         sage: K.<a>=NumberField(x^2-5)
@@ -1120,36 +1111,41 @@ def check_prime(K,P):
         Fractional ideal (a + 1)
         sage: [check_prime(K,P) for P in K.primes_above(31)]
         [Fractional ideal (5/2*a + 1/2), Fractional ideal (5/2*a - 1/2)]
+        sage: L.<b> = NumberField(x^2+3)
+        sage: check_prime(K, L.ideal(5))
+        Traceback (most recent call last):
+        ..
+        TypeError: The ideal Fractional ideal (5) is not a prime ideal of Number Field in a with defining polynomial x^2 - 5
+        sage: check_prime(K, L.ideal(b))
+        Traceback (most recent call last):
+        TypeError: No compatible natural embeddings found for Number Field in a with defining polynomial x^2 - 5 and Number Field in b with defining polynomial x^2 + 3
     """
     if K is QQ:
-        if isinstance(P, (int,long,Integer)):
+        if P in ZZ or isinstance(P, integer_types + (Integer,)):
             P = Integer(P)
             if P.is_prime():
                 return P
             else:
-                raise TypeError("%s is not prime"%P)
-        else:
-            if is_Ideal(P) and P.base_ring() is ZZ and P.is_prime():
+                raise TypeError("The element %s is not prime" % (P,) )
+        elif P in QQ:
+            raise TypeError("The element %s is not prime" % (P,) )
+        elif is_Ideal(P) and P.base_ring() is ZZ:
+            if P.is_prime():
                 return P.gen()
-        raise TypeError("%s is not a prime ideal of %s"%(P,ZZ))
+            else:
+                raise TypeError("The ideal %s is not a prime ideal of %s" % (P, ZZ))
+        else:
+            raise TypeError("%s is neither an element of QQ or an ideal of %s" % (P, ZZ))
 
     if not is_NumberField(K):
-        raise TypeError("%s is not a number field"%K)
+        raise TypeError("%s is not a number field" % (K,) )
 
-    if is_NumberFieldFractionalIdeal(P):
+    if is_NumberFieldFractionalIdeal(P) or P in K:
+        # if P is an ideal, making sure it is an fractional ideal of K
+        P = K.fractional_ideal(P)
         if P.is_prime():
             return P
         else:
-            raise TypeError("%s is not a prime ideal of %s"%(P,K))
+            raise TypeError("The ideal %s is not a prime ideal of %s" % (P, K))
 
-    if is_NumberFieldElement(P):
-        if P in K:
-            P = K.ideal(P)
-        else:
-            raise TypeError("%s is not an element of %s"%(P,K))
-        if P.is_prime():
-            return P
-        else:
-            raise TypeError("%s is not a prime ideal of %s"%(P,K))
-
-    raise TypeError("%s is not a valid prime of %s"%(P,K))
+    raise TypeError("%s is not a valid prime of %s" % (P, K))

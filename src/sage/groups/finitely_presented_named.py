@@ -5,7 +5,7 @@ Construct groups of small order and "named" groups as quotients of free groups. 
 groups are available through tab completion by typing ``groups.presentation.<tab>``
 or by importing the required methods. Tab completion is made available through
 Sage's :ref:`group catalog <sage.groups.groups_catalog>`. Some examples are engineered
-from entries in [THOMAS-WOODS]_.
+from entries in [TW1980]_.
 
 Groups available as finite presentations:
 
@@ -24,6 +24,9 @@ Groups available as finite presentations:
 
 - Finitely generated abelian group, `\ZZ_{n_1} \times \ZZ_{n_2} \times \cdots \times \ZZ_{n_k}` --
   :func:`groups.presentation.FGAbelian <sage.groups.finitely_presented_named.FinitelyGeneratedAbelianPresentation>`
+
+- Finitely generated Heisenberg group --
+  :func:`groups.presentation.Heisenberg <sage.groups.finitely_presented_named.FinitelyGeneratedHeisenbergPresentation>`
 
 - Klein four group, `C_2 \times C_2` --
   :func:`groups.presentation.KleinFour <sage.groups.finitely_presented_named.KleinFourPresentation>`
@@ -197,6 +200,97 @@ def FinitelyGeneratedAbelianPresentation(int_list):
     ret_rls = ret_rls + [x[0]**(-1)*x[1]**(-1)*x[0]*x[1] for x in gen_pairs]
     return FinitelyPresentedGroup(F, tuple(ret_rls))
 
+def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
+    r"""
+    Return a finite presentation of the Heisenberg group.
+
+    The Heisenberg group is the group of `(n+2) \times (n+2)` matrices
+    over a ring `R` with diagonal elements equal to 1, first row and
+    last column possibly nonzero, and all the other entries equal to zero.
+
+    INPUT:
+
+    - ``n`` -- the degree of the Heisenberg group
+
+    - ``p`` -- (optional) a prime number, where we construct the
+      Heisenberg group over the finite field `\ZZ/p\ZZ`
+ 
+    OUTPUT:
+
+    Finitely generated Heisenberg group over the finite field
+    of order ``p`` or over the integers.
+
+    .. SEEALSO::
+
+        :class:`~sage.groups.matrix_gps.heisenberg.HeisenbergGroup`
+
+    EXAMPLES::
+
+        sage: H = groups.presentation.Heisenberg(); H
+        Finitely presented group < x1, y1, z |
+         x1*y1*x1^-1*y1^-1*z^-1, z*x1*z^-1*x1^-1, z*y1*z^-1*y1^-1 >
+        sage: H.order()
+        +Infinity
+        sage: r1, r2, r3 = H.relations()
+        sage: A = matrix([[1, 1, 0], [0, 1, 0], [0, 0, 1]])
+        sage: B = matrix([[1, 0, 0], [0, 1, 1], [0, 0, 1]])
+        sage: C = matrix([[1, 0, 1], [0, 1, 0], [0, 0, 1]])
+        sage: r1(A, B, C)
+        [1 0 0]
+        [0 1 0]
+        [0 0 1]
+        sage: r2(A, B, C)
+        [1 0 0]
+        [0 1 0]
+        [0 0 1]
+        sage: r3(A, B, C)
+        [1 0 0]
+        [0 1 0]
+        [0 0 1]
+        sage: p = 3
+        sage: Hp = groups.presentation.Heisenberg(p=3)
+        sage: Hp.order() == p**3 
+        True
+        sage: Hnp = groups.presentation.Heisenberg(n=2, p=3)
+        sage: len(Hnp.relations())
+        13
+
+    REFERENCES:
+
+    - :wikipedia:`Heisenberg_group`
+    """
+    n = Integer(n)
+    if n < 1:
+        raise ValueError('n must be a positive integer')
+
+    # generators' names are x1, .., xn, y1, .., yn, z
+    vx = ['x' + str(i) for i in range(1,n+1)]
+    vy = ['y' + str(i) for i in range(1,n+1)]
+    str_generators = ', '.join(vx + vy + ['z'])
+
+    F = FreeGroup(str_generators)
+    x = F.gens()[0:n] # list of generators x1, x2, ..., xn
+    y = F.gens()[n:2*n] # list of generators x1, x2, ..., xn
+    z = F.gen(n*2)
+
+    def commutator(a, b): return a * b * a**-1 * b**-1
+    # First set of relations: [xi, yi] = z
+    r1 = [commutator(x[i], y[i]) * z**-1 for i in range(n)]
+    # Second set of relations: [z, xi] = 1
+    r2 = [commutator(z, x[i]) for i in range(n)]
+    # Third set of relations: [z, yi] = 1
+    r3 = [commutator(z, y[i]) for i in range(n)]
+    # Fourth set of relations: [xi, yi] = 1 for i != j
+    r4 = [commutator(x[i], y[j]) for i in range(n) for j in range(n) if i!=j]
+    rls = r1 + r2 + r3 + r4
+
+    from sage.sets.primes import Primes
+    if p not in Primes() and p != 0:
+        raise ValueError("p must be 0 or a prime number")
+    if p > 0:
+        rls += [w**p for w in F.gens()]
+    return FinitelyPresentedGroup(F, tuple(rls))
+
 def DihedralPresentation(n):
     r"""
     Build the Dihedral group of order `2n` as a finitely presented group.
@@ -353,6 +447,7 @@ def QuaternionPresentation():
         sage: Q.order(), Q.is_abelian()
         (8, False)
         sage: Q.is_isomorphic(groups.presentation.DiCyclic(2))
+        #I  Forcing finiteness test
         True
     """
     F = FreeGroup(['a','b'])
@@ -421,3 +516,46 @@ def KleinFourPresentation():
     F = FreeGroup(['a','b'])
     rls = F([1])**2, F([2])**2, F([-1])*F([-2])*F([1])*F([2])
     return FinitelyPresentedGroup(F, rls)
+
+def BinaryDihedralPresentation(n):
+    r"""
+    Build a binary dihedral group of order `4n` as a finitely presented group.
+
+    The binary dihedral group `BD_n` has the following presentation
+    (note that there is a typo in [Sun]_):
+
+    .. MATH::
+
+        BD_n = \langle x, y, z | x^2 = y^2 = z^n = x y z \rangle.
+
+    INPUT:
+
+    - ``n`` -- the value `n`
+
+    OUTPUT:
+
+    The binary dihedral group of order `4n` as finite presentation.
+
+    EXAMPLES::
+
+        sage: groups.presentation.BinaryDihedral(9)
+        Finitely presented group < x, y, z | x^-2*y^2, x^-2*z^9, x^-1*y*z >
+
+    TESTS::
+
+        sage: for n in range(3, 9):
+        ....:     P = groups.presentation.BinaryDihedral(n)
+        ....:     M = groups.matrix.BinaryDihedral(n)
+        ....:     assert P.is_isomorphic(M)
+        #I  Forcing finiteness test
+        #I  Forcing finiteness test
+        #I  Forcing finiteness test
+        #I  Forcing finiteness test
+        #I  Forcing finiteness test
+        #I  Forcing finiteness test
+    """
+    F = FreeGroup('x,y,z')
+    x,y,z = F.gens()
+    rls = (x**-2 * y**2, x**-2 * z**n, x**-2 * x*y*z)
+    return FinitelyPresentedGroup(F, rls)
+

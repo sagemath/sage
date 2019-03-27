@@ -11,6 +11,7 @@ Stopgaps
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 import warnings
 
@@ -34,8 +35,8 @@ def set_state(bint mode):
         sage: sage.misc.stopgap.set_state(True)
         sage: sage.misc.stopgap.stopgap("Displays something.", 123456)
         doctest:...:
-        StopgapWarning: Displays something.
-        This issue is being tracked at http://trac.sagemath.org/sage_trac/ticket/123456.
+        ...StopgapWarning: Displays something.
+        This issue is being tracked at https://trac.sagemath.org/sage_trac/ticket/123456.
         sage: sage.misc.stopgap.set_state(False)
     """
     global ENABLED
@@ -68,8 +69,8 @@ def stopgap(message, int ticket_no):
         sage: sage.misc.stopgap.set_state(True)
         sage: sage.misc.stopgap.stopgap("Computation of heights on elliptic curves over number fields can return very imprecise results.", 12509)
         doctest:...
-        StopgapWarning: Computation of heights on elliptic curves over number fields can return very imprecise results.
-        This issue is being tracked at http://trac.sagemath.org/sage_trac/ticket/12509.
+        ...StopgapWarning: Computation of heights on elliptic curves over number fields can return very imprecise results.
+        This issue is being tracked at https://trac.sagemath.org/sage_trac/ticket/12509.
         sage: sage.misc.stopgap.stopgap("This is not printed", 12509)
         sage: sage.misc.stopgap.set_state(False)  # so rest of doctesting fine
     """
@@ -80,7 +81,7 @@ def stopgap(message, int ticket_no):
     def my_format(message, category, filename, lineno, line=None):
         return "%s:%s:\n%s\n%s\n%s\n" % (filename, lineno, "*"*80, message, "*"*80)
     warnings.formatwarning = my_format
-    message = message + "\nThis issue is being tracked at http://trac.sagemath.org/sage_trac/ticket/%s."%ticket_no
+    message = message + "\nThis issue is being tracked at https://trac.sagemath.org/sage_trac/ticket/%s." % ticket_no
     warnings.warn(StopgapWarning(message), stacklevel=2)
     warnings.formatwarning = old_format
     _stopgap_cache.add(ticket_no)

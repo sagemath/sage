@@ -27,7 +27,7 @@ cdef class _lazy_attribute(object):
     """
     Cython base class for lazy attributes.
 
-    EXAMPLE:
+    EXAMPLES:
 
     Only Python subclasses of this class are supposed to be instantiated::
 
@@ -86,9 +86,9 @@ cdef class _lazy_attribute(object):
             sage: g = lazy_attribute(banner)
             sage: (src, lines) = sage_getsourcelines(g)
             sage: src[0]
-            'def banner(full=None):\n'
+            'def banner():\n'
             sage: lines
-            87
+            82
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)
@@ -338,20 +338,20 @@ class lazy_attribute(_lazy_attribute):
     Old style and new style classes play a bit differently with
     @property and attribute setting::
 
-        sage: class A:
+        sage: class A:  # py2 - no old-style classes on python 3
         ....:     @property
         ....:     def x(self):
         ....:         print("calculating x")
         ....:         return 3
         ....:
-        sage: a = A()
-        sage: a.x = 4
-        sage: a.__dict__
+        sage: a = A()  # py2
+        sage: a.x = 4  # py2
+        sage: a.__dict__  # py2
         {'x': 4}
-        sage: a.x
+        sage: a.x  # py2
         4
-        sage: a.__dict__['x']=5
-        sage: a.x
+        sage: a.__dict__['x']=5  # py2
+        sage: a.x  # py2
         5
 
         sage: class A (object):
@@ -647,7 +647,7 @@ class lazy_class_attribute(lazy_attribute):
         sage: Cl1().x
         1
 
-    ..WARNING::
+    .. WARNING::
 
         The behavior of lazy class attributes with respect to inheritance is
         not specified. It currently depends on the evaluation order::

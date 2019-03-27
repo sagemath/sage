@@ -228,7 +228,7 @@ Command-line Sage help
 If you know only part of the name of a Sage command and want to
 know where it occurs in Sage, a new option for 0.10.11 has been
 added to make it easier to hunt it down. Just type
-``sage -grep <string>`` to find all occurences of ``<string>`` in the
+``sage -grep <string>`` to find all occurrences of ``<string>`` in the
 Sage source code. For example,
 
 ::

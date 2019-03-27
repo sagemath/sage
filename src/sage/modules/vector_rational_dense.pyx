@@ -44,24 +44,28 @@ TESTS::
     True
 """
 
-###############################################################################
-#   Sage: System for Algebra and Geometry Experimentation
+#*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
-from __future__ import print_function
+#*****************************************************************************
 
-include "cysignals/signals.pxi"
-include "cysignals/memory.pxi"
+from __future__ import absolute_import, print_function
+
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
 
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 
-cimport free_module_element
-from free_module_element import vector
+cimport sage.modules.free_module_element as free_module_element
+from .free_module_element import vector
 
 from sage.libs.gmp.mpq cimport *
 
@@ -77,23 +81,27 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
     cdef bint is_sparse_c(self):
         return 0
 
-    cdef _new_c(self):
-        cdef Vector_rational_dense y
-        y = Vector_rational_dense.__new__(Vector_rational_dense)
-        y._init(self._degree, self._parent)
-        return y
-
     def __copy__(self):
         cdef Vector_rational_dense y
         y = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpq_init(y._entries[i])
+        for i in range(self._degree):
             mpq_set(y._entries[i], self._entries[i])
         return y
 
-    cdef _init(self, Py_ssize_t degree, parent):
+    cdef int _init(self, Py_ssize_t degree, Parent parent) except -1:
         """
+        Initialize the C data structures in this vector. After calling
+        this, ``self`` is a zero vector of degree ``degree`` with
+        parent ``parent``.
+
+        Only if you call ``__new__`` without a ``parent`` argument, it
+        is needed to call this function manually. The only reason to do
+        that is for efficiency: calling ``__new__`` without any
+        additional arguments besides the type and then calling ``_init``
+        is (slightly) more efficient than calling ``__new__`` with a
+        ``parent`` argument.
+
         TESTS:
 
         Check implicitly that :trac:`10257` works::
@@ -116,22 +124,28 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             *...
             allocation failed
         """
+        # Assign variables only when the array is fully initialized
+        cdef mpq_t* entries = <mpq_t*>check_allocarray(degree, sizeof(mpq_t))
+        cdef Py_ssize_t i
+        sig_on()
+        for i in range(degree):
+            mpq_init(entries[i])
+        sig_off()
+        self._entries = entries
         self._degree = degree
         self._parent = parent
-        self._entries = <mpq_t *>check_allocarray(degree, sizeof(mpq_t))
 
-    def __cinit__(self, parent=None, x=None, coerce=True,copy=True):
+    def __cinit__(self, parent=None, x=None, coerce=True, copy=True):
         self._entries = NULL
         self._is_mutable = 1
-        if not parent is None:
-            self._init(parent.degree(), parent)
+        if parent is None:
+            self._degree = 0
+            return
+        self._init(parent.degree(), <Parent?>parent)
 
     def __init__(self, parent, x, coerce=True, copy=True):
         cdef Py_ssize_t i
         cdef Rational z
-        # we have to do this to avoid a garbage collection error in dealloc
-        for i from 0 <= i < self._degree:
-            mpq_init(self._entries[i])
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
                 raise TypeError("entries must be a list of length %s"%self._degree)
@@ -147,7 +161,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         if self._entries:
             # Do *not* use sig_on() here, since __dealloc__
             # cannot raise exceptions!
-            for i from 0 <= i < self._degree:
+            for i in range(self._degree):
                 mpq_clear(self._entries[i])
             sig_free(self._entries)
 
@@ -247,8 +261,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpq_init(z._entries[i])
+        for i in range(self._degree):
             mpq_add(z._entries[i], self._entries[i], r._entries[i])
         return z
 
@@ -258,8 +271,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpq_init(z._entries[i])
+        for i in range(self._degree):
             mpq_sub(z._entries[i], self._entries[i], r._entries[i])
         return z
 
@@ -301,12 +313,11 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpq_init(z._entries[i])
+        for i  in range(self._degree):
             mpq_mul(z._entries[i], self._entries[i], r._entries[i])
         return z
 
-    cpdef _rmul_(self, RingElement left):
+    cpdef _rmul_(self, Element left):
         cdef Vector_rational_dense z
         cdef Rational a
         if isinstance(left, Rational):
@@ -319,13 +330,11 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             raise TypeError("Cannot convert %s to %s" % (type(left).__name__, Rational.__name__))
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpq_init(z._entries[i])
+        for i in range(self._degree):
             mpq_mul(z._entries[i], self._entries[i], a.value)
         return z
 
-
-    cpdef _lmul_(self, RingElement right):
+    cpdef _lmul_(self, Element right):
         cdef Vector_rational_dense z
         cdef Rational a
         if isinstance(right, Rational):
@@ -338,8 +347,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             raise TypeError("Cannot convert %s to %s" % (type(right).__name__, Rational.__name__))
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpq_init(z._entries[i])
+        for i in range(self._degree):
             mpq_mul(z._entries[i], self._entries[i], a.value)
         return z
 
@@ -347,8 +355,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         cdef Vector_rational_dense z
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpq_init(z._entries[i])
+        for i in range(self._degree):
             mpq_neg(z._entries[i], self._entries[i])
         return z
 
@@ -362,9 +369,9 @@ def unpickle_v0(parent, entries, degree):
     v = Vector_rational_dense.__new__(Vector_rational_dense)
     v._init(degree, parent)
     cdef Rational z
-    for i from 0 <= i < degree:
+    cdef Py_ssize_t i
+    for i in range(degree):
         z = Rational(entries[i])
-        mpq_init(v._entries[i])
         mpq_set(v._entries[i], z.value)
     return v
 
@@ -373,9 +380,9 @@ def unpickle_v1(parent, entries, degree, is_mutable):
     v = Vector_rational_dense.__new__(Vector_rational_dense)
     v._init(degree, parent)
     cdef Rational z
-    for i from 0 <= i < degree:
+    cdef Py_ssize_t i
+    for i in range(degree):
         z = Rational(entries[i])
-        mpq_init(v._entries[i])
         mpq_set(v._entries[i], z.value)
     v._is_mutable = is_mutable
     return v

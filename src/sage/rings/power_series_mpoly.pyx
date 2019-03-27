@@ -1,14 +1,15 @@
 # NOT ready to be used -- possibly should be deleted.
 
+from __future__ import absolute_import
 
-from power_series_ring_element cimport PowerSeries
+from .power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, ModuleElement, RingElement
-from infinity import infinity, is_Infinite
+from .infinity import infinity, is_Infinite
 from sage.libs.all import PariError
-from power_series_ring_element import is_PowerSeries
-import rational_field
-from polynomial.multi_polynomial_ring_generic import is_MPolynomialRing
-import power_series_poly
+from .power_series_ring_element import is_PowerSeries
+from . import rational_field
+from .polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+from . import power_series_poly
 
 cdef class PowerSeries_mpoly(PowerSeries):
 
@@ -145,10 +146,10 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return PowerSeries_mpoly(self._parent, self.__f - right.__f, \
                                          self.common_prec_c(right), check=True)
 
-    cpdef _rmul_(self, RingElement c):
+    cpdef _rmul_(self, Element c):
         return PowerSeries_mpoly(self._parent, self.__f._rmul_(c), self._prec, check=False)
 
-    cpdef _lmul_(self, RingElement c):
+    cpdef _lmul_(self, Element c):
         return PowerSeries_mpoly(self._parent, self.__f._lmul_(c), self._prec, check=False)
 
 

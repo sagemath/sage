@@ -349,7 +349,7 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
         if prev != debug_level:
             pari.set_debug_level(debug_level)
 
-        p, e = n._pari_().factor(proof=proof)
+        p, e = n.__pari__().factor(proof=proof)
         if int_:
             return [(int(p[i]), int(e[i])) for i in range(len(p))]
         else:

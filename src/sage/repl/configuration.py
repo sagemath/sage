@@ -1,5 +1,18 @@
 r"""
 Sage's IPython Configuration
+
+TESTS:
+
+We check that Sage stdin can be piped in even if stdout is a tty; In that case
+the IPython simple prompt is being used::
+
+    sage: cmd = 'print([sys.stdin.isatty(), sys.stdout.isatty()])'
+    sage: import pexpect
+    sage: output = pexpect.run(
+    ....:     'bash -c \'echo "{0}" | sage\''.format(cmd),
+    ....: ).decode('utf-8', 'surrogateescape')
+    sage: 'sage: [False, True]' in output
+    True
 """
 
 #*****************************************************************************
@@ -33,38 +46,38 @@ class SageIpythonConfiguration(object):
         This returns ``True`` during doctests.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config._doctest_mode()
             True
         """
         from sage.doctest import DOCTEST_MODE
         return DOCTEST_MODE
-    
+
     def _allow_ansi(self):
         """
         Whether to allow ANSI escape sequences
 
-        This returns ``False`` during doctests to avoid ANSI escape 
+        This returns ``False`` during doctests to avoid ANSI escape
         sequences.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config._allow_ansi()
             False
         """
-        return (not self._doctest_mode()) and sys.stdout.isatty()
+        return (not self._doctest_mode()) and sys.stdin.isatty() and sys.stdout.isatty()
 
     def colors(self):
         """
         Return the IPython color palette
 
-        This returns ``'NoColor'`` during doctests to avoid ANSI escape 
+        This returns ``'NoColor'`` during doctests to avoid ANSI escape
         sequences.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config.simple_prompt()
             True
@@ -78,7 +91,7 @@ class SageIpythonConfiguration(object):
         This returns ``True`` during doctests to avoid ANSI escape sequences.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config.simple_prompt()
             True
@@ -92,7 +105,7 @@ class SageIpythonConfiguration(object):
         This returns false during doctests to avoid ANSI escape sequences.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config.term_title()
             False
@@ -104,7 +117,7 @@ class SageIpythonConfiguration(object):
         Return a new default configuration object
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config.default()
             {'InteractiveShell': {'colors': ...
@@ -138,7 +151,7 @@ class SageIpythonConfiguration(object):
         Return a copy of the current configuration
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config.copy()
             {'InteractiveShell': {'colors': ...

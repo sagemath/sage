@@ -86,7 +86,7 @@ previous and ongoing work of many authors of included components.
 A list of (some) direct contributors can be found on the
 `Sage Development Map <http://www.sagemath.org/development-map.html>`_
 and the history of changes can be found in the high-level
-`changelog <http://www.sagemath.org/mirror/src/changelog.txt>`_. Refer
+`changelogs <http://www.sagemath.org/changelogs/>`_. Refer
 to the
 `acknowledgment page <http://www.sagemath.org/development-ack.html>`_
 of the Sage website for an up-to-date list of financial and
@@ -188,7 +188,7 @@ functionalities are made possible through FOSS projects such as
   theory.
 * `Maxima <http://maxima.sourceforge.net>`_ --- system for symbolic
   and numerical computation.
-* `mpmath <http://code.google.com/p/mpmath>`_ --- a pure-Python
+* `mpmath <https://github.com/fredrik-johansson/mpmath>`_ --- a pure-Python
   library for multiprecision floating-point arithmetic.
 * `NumPy <http://numpy.scipy.org>`_ --- numerical linear algebra and
   other numerical computing capabilities for Python.

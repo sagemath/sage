@@ -35,7 +35,6 @@ Special Base Classes, Decorators, etc.
    sage/misc/decorators
    sage/misc/constant_function
    sage/misc/classcall_metaclass
-   sage/misc/cython_metaclass
    sage/misc/inherit_comparison
    sage/misc/method_decorator
    sage/misc/object_multiplexer
@@ -51,11 +50,11 @@ Lists and Iteration, etc.
    sage/misc/converting_dict
    sage/misc/flatten
    sage/misc/search
-   sage/misc/sage_itertools
    sage/misc/mrange
    sage/misc/multireplace
    sage/misc/map_threaded
    sage/arith/srange
+   sage/misc/element_with_label
 
 File and OS Access
 ~~~~~~~~~~~~~~~~~~
@@ -154,7 +153,6 @@ Code Evaluation
 .. toctree::
    :maxdepth: 1
 
-   sage/misc/cython_c
    sage/misc/cython
    sage/misc/inline_fortran
    sage/misc/parser
@@ -236,6 +234,14 @@ Distribution
 
    sage/misc/package
    sage/misc/dist
+   sage/features
+   sage/features/bliss
+   sage/features/csdp
+   sage/features/databases
+   sage/features/fes
+   sage/features/gap
+   sage/features/graph_generators
+   sage/features/lrs
 
 Credits
 ~~~~~~~
@@ -277,13 +283,13 @@ Miscellaneous Inspection and Development Tools
 .. toctree::
    :maxdepth: 1
 
+   sage/docs/instancedoc
    sage/misc/sageinspect
    sage/misc/edit_module
    sage/misc/getusage
    sage/misc/classgraph
    sage/misc/dev_tools
    sage/misc/function_mangling
-   sage/misc/memory_info
    sage/misc/rest_index_of_methods
 
 Low-Level Utilities

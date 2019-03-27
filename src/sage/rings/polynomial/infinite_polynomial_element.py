@@ -1,4 +1,4 @@
-"""
+r"""
 Elements of Infinite Polynomial Rings
 
 AUTHORS:
@@ -6,7 +6,7 @@ AUTHORS:
 - Simon King <simon.king@nuigalway.ie>
 - Mike Hansen <mhansen@gmail.com>
 
-An Infinite Polynomial Ring has generators `x_\\ast, y_\\ast,...`, so
+An Infinite Polynomial Ring has generators `x_\ast, y_\ast,...`, so
 that the variables are of the form `x_0, x_1, x_2, ..., y_0, y_1,
 y_2,...,...` (see :mod:`~sage.rings.polynomial.infinite_polynomial_ring`).
 Using the generators, we can create elements as follows::
@@ -88,12 +88,15 @@ finite polynomial rings are merged with infinite polynomial rings::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.structure.element import RingElement
+from sage.structure.richcmp import richcmp
 from sage.misc.cachefunc import cached_method
 import copy
+
 
 def InfinitePolynomial(A, p):
     """
@@ -344,11 +347,14 @@ class InfinitePolynomial_sparse(RingElement):
         EXAMPLES::
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
-            sage: import sagenb.misc.support as s
+            sage: import sage.interfaces.tab_completion as s
             sage: p = x[3]*x[2]
-            sage: s.completions('p.co',globals(),system='python') # indirect doctest
-            ['p.coefficient', 'p.coefficients', 'p.constant_coefficient', 'p.content']
-
+            sage: s.completions('p.co',globals()) # indirect doctest
+            ['p.coefficient',
+             'p.coefficients',
+             'p.constant_coefficient',
+             'p.content',
+             'p.content_ideal']
         """
         return dir(self._p)
 
@@ -359,10 +365,14 @@ class InfinitePolynomial_sparse(RingElement):
         TESTS::
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
-            sage: import sagenb.misc.support as s
+            sage: import sage.interfaces.tab_completion as s
             sage: p = x[3]*x[2]
-            sage: s.completions('p.co',globals(),system='python') # indirect doc test
-            ['p.coefficient', 'p.coefficients', 'p.constant_coefficient', 'p.content']
+            sage: s.completions('p.co',globals()) # indirect doc test
+            ['p.coefficient',
+             'p.coefficients',
+             'p.constant_coefficient',
+             'p.content',
+             'p.content_ideal']
             sage: 'constant_coefficient' in dir(p) # indirect doctest
             True
         """
@@ -391,10 +401,14 @@ class InfinitePolynomial_sparse(RingElement):
         ``__methods__`` is treated in a special way, which
         makes introspection and tab completion work::
 
-            sage: import sagenb.misc.support as s
+            sage: import sage.interfaces.tab_completion as s
             sage: p = alpha[3]*alpha[2]^2
-            sage: s.completions('p.co',globals(),system='python') # indirect doc test
-            ['p.coefficient', 'p.coefficients', 'p.constant_coefficient', 'p.content']
+            sage: s.completions('p.co',globals()) # indirect doc test
+            ['p.coefficient',
+             'p.coefficients',
+             'p.constant_coefficient',
+             'p.content',
+             'p.content_ideal']
             sage: 'constant_coefficient' in dir(p) # indirect doctest
             True
 
@@ -426,13 +440,10 @@ class InfinitePolynomial_sparse(RingElement):
 
     def is_unit(self):
         r"""
-        Answers whether ``self`` is a unit
+        Answer whether ``self`` is a unit.
 
         EXAMPLES::
 
-            sage: R1.<x,y> = InfinitePolynomialRing(ZZ)
-            sage: R2.<x,y> = InfinitePolynomialRing(QQ)
-            sage: p = 1 + x[2]
             sage: R1.<x,y> = InfinitePolynomialRing(ZZ)
             sage: R2.<a,b> = InfinitePolynomialRing(QQ)
             sage: (1+x[2]).is_unit()
@@ -446,16 +457,49 @@ class InfinitePolynomial_sparse(RingElement):
             sage: (1+a[2]).is_unit()
             False
 
+        Check that :trac:`22454` is fixed::
+
+            sage: _.<x> = InfinitePolynomialRing(Zmod(4))
+            sage: (1 + 2*x[0]).is_unit()
+            True
+            sage: (x[0]*x[1]).is_unit()
+            False
+            sage: _.<x> = InfinitePolynomialRing(Zmod(900))
+            sage: (7+150*x[0] + 30*x[1] + 120*x[1]*x[100]).is_unit()
+            True
+
         TESTS::
 
             sage: R.<x> = InfinitePolynomialRing(ZZ.quotient_ring(8))
             sage: [R(i).is_unit() for i in range(8)]
             [False, True, False, True, False, True, False, True]
         """
-        if len(self.variables()) > 0:
-            return False
-        else:
-            return self.base_ring()(self._p).is_unit()
+        return self._p.is_unit()
+
+    def is_nilpotent(self):
+        r"""
+        Return ``True`` if ``self`` is nilpotent, i.e., some power of ``self``
+        is 0.
+
+        EXAMPLES::
+
+            sage: R.<x> = InfinitePolynomialRing(QQbar)
+            sage: (x[0]+x[1]).is_nilpotent()
+            False
+            sage: R(0).is_nilpotent()
+            True
+            sage: _.<x> = InfinitePolynomialRing(Zmod(4))
+            sage: (2*x[0]).is_nilpotent()
+            True
+            sage: (2+x[4]*x[7]).is_nilpotent()
+            False
+            sage: _.<y> = InfinitePolynomialRing(Zmod(100))
+            sage: (5+2*y[0] + 10*(y[0]^2+y[1]^2)).is_nilpotent()
+            False
+            sage: (10*y[2] + 20*y[5] - 30*y[2]*y[5] + 70*(y[2]^2+y[5]^2)).is_nilpotent()
+            True
+        """
+        return self._p.is_nilpotent()
 
     @cached_method
     def variables(self):
@@ -566,7 +610,7 @@ class InfinitePolynomial_sparse(RingElement):
 
     def _rmul_(self, left):
         """
-        TEST::
+        TESTS::
 
             sage: R.<alpha,beta> = InfinitePolynomialRing(QQ, implementation='sparse')
             sage: R.from_base_ring(4)   # indirect doctest
@@ -577,7 +621,7 @@ class InfinitePolynomial_sparse(RingElement):
 
     def _lmul_(self, right):
         """
-        TEST::
+        TESTS::
 
             sage: R.<alpha,beta> = InfinitePolynomialRing(QQ, implementation='sparse')
             sage: alpha[3]*4   # indirect doctest
@@ -712,16 +756,17 @@ class InfinitePolynomial_sparse(RingElement):
     # Basic tools for Buchberger algorithm:
     # order, leading term/monomial, symmetric cancellation order
 
-    def __cmp__(self, x):
+    def _richcmp_(self, x, op):
         """
         Comparison of Infinite Polynomials.
 
         NOTE:
 
-        Let x and y are generators of the parent of self. We only consider
+        Let x and y be generators of the parent of self. We only consider
         monomial orderings in which
             x[m] > y[n] iff x appears earlier in the list of generators than y, or
                             x==y and m>n
+
         Under this restriction, the monomial ordering can be 'lex' (default),
         'degrevlex' or 'deglex'.
 
@@ -778,7 +823,7 @@ class InfinitePolynomial_sparse(RingElement):
         R1 = parent(self._p)
         R2 = parent(x._p)
         if (hasattr(R1,'has_coerce_map_from') and R1.has_coerce_map_from(R2)) or (hasattr(R2,'has_coerce_map_from') and R2.has_coerce_map_from(R1)):
-            return cmp(self._p, x._p)
+            return richcmp(self._p, x._p, op)
         VarList = list(set(self._p.parent().variable_names()).union(x._p.parent().variable_names()))
         VarList.sort(key=self.parent().varname_key, reverse=True)
         if VarList:
@@ -794,7 +839,7 @@ class InfinitePolynomial_sparse(RingElement):
                 fx = x._p.base_ring()
         else:
             fx = x._p.parent().hom(x._p.parent().variable_names(),R)
-        return cmp(fself(self._p), fx(x._p))
+        return richcmp(fself(self._p), fx(x._p), op)
 
     @cached_method
     def lm(self):
@@ -1006,33 +1051,36 @@ class InfinitePolynomial_sparse(RingElement):
         other = PARENT(other)
         slt = self.lt()
         olt = other.lt()
-        rawcmp = cmp(self.lm(),other.lm())
-        if rawcmp == 0:
-            if olt==0:
+        if self.lm() == other.lm():
+            if olt == 0:
                 return (0, 1, 1)
-            return (0, 1, self.lc()/other.lc())
-        if rawcmp == -1:
-            Fsmall = dict([[k[0], [e for e in k[1]]] for k in self.footprint().items()])
-            Fbig = dict([[k[0], [e for e in k[1]]] for k in other.footprint().items()])
+            return (0, 1, self.lc() / other.lc())
+        if self.lm() < other.lm():
+            rawcmp = -1
+            Fsmall = dict([[k[0], [e for e in k[1]]]
+                           for k in self.footprint().items()])
+            Fbig = dict([[k[0], [e for e in k[1]]]
+                         for k in other.footprint().items()])
             ltsmall = slt
             ltbig = olt
         else:
+            rawcmp = 1
             Fbig = dict([[k[0], [e for e in k[1]]] for k in self.footprint().items()])
             Fsmall = dict([[k[0], [e for e in k[1]]] for k in other.footprint().items()])
             ltbig = slt
             ltsmall = olt
-        # Case 1: one of the Infintie Polynomials is scalar.
+        # Case 1: one of the Infinite Polynomials is scalar.
         if not Fsmall:
             return (rawcmp, 1, ltbig/ltsmall)
         # "not Fbig" is now impossible, because we only consider *global* monomial orderings.
         # These are the occurring shifts:
         Lsmall = sorted(Fsmall.keys())
         Lbig   = sorted(Fbig.keys())
-        P = range(Lbig[-1]+1)
-        gens = xrange(PARENT.ngens())
-        if Lsmall[0]==0:
+        P = list(range(Lbig[-1] + 1))
+        gens = list(range(PARENT.ngens()))
+        if Lsmall[0] == 0:
             if 0 not in Fbig:
-                return (None,1,1)
+                return (None, 1, 1)
             Lsmall.pop(0)
             Lbig.pop(0)
             ExpoSmall = Fsmall[0]
@@ -1136,7 +1184,7 @@ class InfinitePolynomial_sparse(RingElement):
                     res = R(self._p).coefficient(R(monomial._p))
         elif isinstance(monomial, dict):
             if monomial:
-                I = monomial.iterkeys()
+                I = iter(monomial)
                 K = next(I)
                 del monomial[K]
                 res = self.coefficient(K).coefficient(monomial)
@@ -1148,7 +1196,7 @@ class InfinitePolynomial_sparse(RingElement):
 
     ## Essentials for Buchberger
     def reduce(self, I, tailreduce=False, report=None):
-        """
+        r"""
         Symmetrical reduction of ``self`` with respect to a symmetric ideal (or list of Infinite Polynomials).
 
         INPUT:
@@ -1270,6 +1318,22 @@ class InfinitePolynomial_sparse(RingElement):
         P = lambda n: k*n
         return self ** P
 
+    def __iter__(self):
+        """
+        Return an iterator over all pairs ``(coefficient, monomial)``
+        of this polynomial.
+
+        EXAMPLES::
+
+            sage: X.<x,y> = InfinitePolynomialRing(QQ)
+            sage: a = x[0] + 2*x[1] + y[0]*y[1]
+            sage: list(a)
+            [(2, x_1), (1, x_0), (1, y_1*y_0)]
+        """
+        return iter((coefficient,
+                     self.__class__(self.parent(), monomial))
+                    for coefficient, monomial in self._p)
+
 
 class InfinitePolynomial_dense(InfinitePolynomial_sparse):
     """
@@ -1325,7 +1389,7 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
         except ValueError:
             return res
 
-    def __cmp__(self, x):
+    def _richcmp_(self, x, op):
         """
         TESTS::
 
@@ -1365,7 +1429,7 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
             x._p = x.parent()._P(x._p)
         except Exception:
             pass
-        return cmp(self._p,x._p)
+        return richcmp(self._p, x._p, op)
 
     # Basic arithmetics
     def _add_(self, x):
@@ -1398,7 +1462,7 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
 
     def _rmul_(self, left):
         """
-        TEST::
+        TESTS::
 
             sage: R.<alpha,beta> = InfinitePolynomialRing(QQ)
             sage: R.from_base_ring(4)   # indirect doctest
@@ -1409,7 +1473,7 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
 
     def _lmul_(self, right):
         """
-        TEST::
+        TESTS::
 
             sage: R.<alpha,beta> = InfinitePolynomialRing(QQ)
             sage: alpha[3]*4   # indirect doctest

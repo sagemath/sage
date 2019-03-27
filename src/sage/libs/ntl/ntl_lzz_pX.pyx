@@ -10,24 +10,20 @@ AUTHORS:
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import division
+from __future__ import absolute_import, division
 
-include "cysignals/signals.pxi"
-include "sage/ext/cdefs.pxi"
+from cysignals.signals cimport sig_on, sig_off
+
 include 'misc.pxi'
 include 'decl.pxi'
+from sage.libs.gmp.mpz cimport *
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer import Integer
@@ -432,7 +428,7 @@ cdef class ntl_zz_pX(object):
         """
         Returns the whole part of $self / right$.
 
-        EXAMPLE:
+        EXAMPLES:
             sage: f = ntl.zz_pX(range(10), 19); g = ntl.zz_pX([1]*5, 19)
             sage: f // g ## indirect doctest
             [8, 18, 18, 18, 18, 9]
@@ -449,7 +445,7 @@ cdef class ntl_zz_pX(object):
         """
         Shifts this polynomial to the left, which is multiplication by $x^n$.
 
-        EXAMPLE:
+        EXAMPLES:
             sage: f = ntl.zz_pX([2,4,6], 17)
             sage: f << 2 ## indirect doctest
             [0, 0, 2, 4, 6]
@@ -463,7 +459,7 @@ cdef class ntl_zz_pX(object):
         """
         Shifts this polynomial to the right, which is division by $x^n$ (and truncation).
 
-        EXAMPLE:
+        EXAMPLES:
             sage: f = ntl.zz_pX([1,2,3], 17)
             sage: f >> 2 ## indirect doctest
             [3]
@@ -477,7 +473,7 @@ cdef class ntl_zz_pX(object):
         """
         The formal derivative of self.
 
-        EXAMPLE:
+        EXAMPLES:
             sage: f = ntl.zz_pX(range(10), 17)
             sage: f.diff()
             [1, 4, 9, 16, 8, 2, 15, 13, 13]
@@ -491,7 +487,7 @@ cdef class ntl_zz_pX(object):
         """
         Returns self with coefficients reversed, i.e. $x^n self(x^{-n})$.
 
-        EXAMPLE:
+        EXAMPLES:
             sage: f = ntl.zz_pX([2,4,6], 17)
             sage: f.reverse()
             [6, 4, 2]
@@ -555,7 +551,7 @@ cdef class ntl_zz_pX(object):
             sage: f.list()
             [3, 5, 0, 1]
             sage: type(f.list()[0])
-            <type 'int'>
+            <... 'int'>
         """
         cdef long i
         self.c.restore_c()

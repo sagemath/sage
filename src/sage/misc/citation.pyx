@@ -1,10 +1,14 @@
-"Dependency usage tracking for citations"
+# cython: old_style_globals=True
+"""
+Dependency usage tracking for citations
+"""
+from __future__ import absolute_import
 
 from sage.misc.all import tmp_filename
 from sage.env import SAGE_ROOT
 
 systems = {}
-systems['PARI'] = ['sage.libs.pari', 'sage.interfaces.gp']
+systems['PARI'] = ['cypari2', 'sage.interfaces.gp']
 systems['Singular'] = ['sage.interfaces.singular', '_libsingular',
                        'sage.libs.singular']
 systems['Maxima'] = ['sage.interfaces.maxima']
@@ -46,20 +50,29 @@ systems['PolyBoRi'] = ['sage.rings.polynomial.pbori']
 
 def get_systems(cmd):
     """
-    Returns a list of the systems used in running the command
-    cmd.  Note that the results can sometimes include systems
-    that did not actually contribute to the computation. Due
-    to caching and the inability to follow all C calls, it
+    Returns a list of the systems used in running the command ``cmd``.
+    Note that the results can sometimes include systems that did not
+    actually contribute to the computation. Due to caching, it
     could miss some dependencies as well.
 
     INPUT:
 
     - ``cmd`` - a string to run
 
+    .. WARNING::
+
+        In order to properly support Cython code, this requires that
+        Sage was compiled with the environment variable
+        ``SAGE_PROFILE=yes``. If this was not the case, a warning will
+        be given when calling this function.
+
     EXAMPLES::
 
         sage: from sage.misc.citation import get_systems
-        sage: s = get_systems('integrate(x^2, x)'); #priming coercion model
+        sage: get_systems('print("hello")')  # random (may print warning)
+        []
+        sage: integrate(x^2, x)  # Priming coercion model
+        1/3*x^3
         sage: get_systems('integrate(x^2, x)')
         ['ginac', 'Maxima']
         sage: R.<x,y,z> = QQ[]
@@ -67,11 +80,23 @@ def get_systems(cmd):
         sage: get_systems('I.primary_decomposition()')
         ['Singular']
 
+    Here we get a spurious ``MPFR`` because some coercions need to be
+    initialized. The second time it is gone::
+
         sage: a = var('a')
+        sage: get_systems('((a+1)^2).expand()')
+        ['MPFR', 'ginac']
         sage: get_systems('((a+1)^2).expand()')
         ['ginac']
     """
     import cProfile, pstats, re
+
+    if not cython_profile_enabled():
+        from warnings import warn
+        warn("get_systems() requires Cython profiling to be enabled, "
+             "otherwise the results will be very unreliable. "
+             "Rebuild Sage with the environment variable 'SAGE_PROFILE=yes' "
+             "to enable profiling.")
 
     if not isinstance(cmd, basestring):
         raise TypeError("command must be a string")
@@ -88,7 +113,7 @@ def get_systems(cmd):
     strings = [a[0].replace(SAGE_ROOT, "") + " " + a[2] for a in stats.stats.keys()]
 
     #Remove trivial functions
-    bad_res = [re.compile(r'is_.*Element')]
+    bad_res = [re.compile(r'is_.*Element'), re.compile("is_[a-z_]*_type")]
     for bad_re in bad_res:
         i = 0
         while i < len(strings):
@@ -97,9 +122,34 @@ def get_systems(cmd):
             else:
                 i += 1
 
-    #Check to see which systems appear in the profiled run
+    # Check to see which systems appear in the profiled run
     systems_used = []
     for system in systems:
-        if any([(r in s) or (r.replace('.','/') in s) for r in systems[system] for s in strings]):
+        if any((r in s) or (r.replace('.', '/') in s)
+               for r in systems[system] for s in strings):
             systems_used.append(system)
     return systems_used
+
+
+cdef extern from *:
+    int CYTHON_PROFILE """
+        #ifdef CYTHON_PROFILE
+        CYTHON_PROFILE
+        #else
+        0
+        #endif
+        """
+
+cpdef inline bint cython_profile_enabled():
+    """
+    Return whether Cython profiling is enabled.
+
+    EXAMPLES::
+
+        sage: from sage.misc.citation import cython_profile_enabled
+        sage: cython_profile_enabled()  # random
+        False
+        sage: type(cython_profile_enabled()) is bool
+        True
+    """
+    return CYTHON_PROFILE

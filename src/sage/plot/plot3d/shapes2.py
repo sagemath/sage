@@ -23,8 +23,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
 import math
 from . import shapes
@@ -42,9 +41,8 @@ TACHYON_PIXEL = 1/200.0
 
 from .shapes import Text, Sphere
 
-from sage.structure.element import is_Vector
 
-
+@rename_keyword(alpha='opacity')
 def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
     r"""
     Draw a 3d line joining a sequence of points.
@@ -94,7 +92,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
         ....:        color='green') + line3d([(0,1,0), (1,0,2)])
         Graphics3d Object
 
-    A Dodecahedral complex of 5 tetrahedrons (a more elaborate example
+    A Dodecahedral complex of 5 tetrahedra (a more elaborate example
     from Peter Jipsen)::
 
         sage: def tetra(col):
@@ -118,10 +116,10 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
 
         sage: mypoints = [vector([1,2,3]), vector([4,5,6])]
         sage: type(mypoints[0])
-        <type 'sage.modules.vector_integer_dense.Vector_integer_dense'>
+        <... 'sage.modules.vector_integer_dense.Vector_integer_dense'>
         sage: L = line3d(mypoints)
         sage: type(mypoints[0])
-        <type 'sage.modules.vector_integer_dense.Vector_integer_dense'>
+        <... 'sage.modules.vector_integer_dense.Vector_integer_dense'>
 
     The copies are converted to a list, so we can pass in immutable objects too::
 
@@ -134,7 +132,8 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
         Graphics3d Object
         sage: line3d((x, x^2, x^3) for x in range(5))
         Graphics3d Object
-        sage: from itertools import izip; line3d(izip([2,3,5,7], [11, 13, 17, 19], [-1, -2, -3, -4]))
+        sage: from builtins import zip
+        sage: line3d(zip([2,3,5,7], [11, 13, 17, 19], [-1, -2, -3, -4]))
         Graphics3d Object
     """
     points = list(points)
@@ -146,6 +145,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
     if radius is None:
         L = Line(points, thickness=thickness, arrow_head=arrow_head, **kwds)
         L._set_extra_kwds(kwds)
+        L._extra_kwds['thickness'] = thickness  # remove this line if json_repr is defined
         return L
     else:
         v = []
@@ -161,6 +161,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
         w._set_extra_kwds(kwds)
         return w
 
+@rename_keyword(alpha='opacity')
 @options(opacity=1, color="blue", aspect_ratio=[1,1,1], thickness=2)
 def bezier3d(path, **options):
     """
@@ -280,11 +281,44 @@ def polygon3d(points, **options):
 
     A bent transparent green triangle::
 
+        sage: polygon3d([[1, 2, 3], [0,1,0], [1,0,1], [3,0,0]], color=(0,1,0), opacity=0.7)
+        Graphics3d Object
+
+    This is the same as using ``alpha=0.7``::
+
         sage: polygon3d([[1, 2, 3], [0,1,0], [1,0,1], [3,0,0]], color=(0,1,0), alpha=0.7)
         Graphics3d Object
     """
     from sage.plot.plot3d.index_face_set import IndexFaceSet
     return IndexFaceSet([range(len(points))], points, **options)
+
+@rename_keyword(alpha='opacity')
+@options(opacity=1, color=(0,0,1))
+def polygons3d(faces, points, **options):
+    """
+    Draw the union of several polygons in 3d.
+
+    Useful to plot a polyhedron as just one ``IndexFaceSet``.
+
+    INPUT:
+
+    - ``faces`` -- list of faces, every face given by the list
+      of indices of its vertices
+
+    - ``points`` -- coordinates of the vertices in the union
+
+    EXAMPLES:
+
+    Two adjacent triangles::
+
+        sage: f = [[0,1,2],[1,2,3]]
+        sage: v = [(-1,0,0),(0,1,1),(0,-1,1),(1,0,0)]
+        sage: polygons3d(f, v, color='red')
+        Graphics3d Object
+    """
+    from sage.plot.plot3d.index_face_set import IndexFaceSet
+    return IndexFaceSet(faces, points, **options)
+
 
 def frame3d(lower_left, upper_right, **kwds):
     """
@@ -300,9 +334,6 @@ def frame3d(lower_left, upper_right, **kwds):
 
     - ``upper_right`` -- the upper right corner of the frame, as a
       list, tuple, or vector.
-
-    Type ``line3d.options`` for a dictionary of the default
-    options for lines, which are also available.
 
     EXAMPLES:
 
@@ -360,9 +391,6 @@ def frame_labels(lower_left, upper_right,
 
     - ``eps`` -- (default: 1) a parameter for how far away from the frame
       to put the labels.
-
-    Type ``line3d.options`` for a dictionary of the default
-    options for lines, which are also available.
 
     EXAMPLES:
 
@@ -452,9 +480,6 @@ def ruler(start, end, ticks=4, sub_ticks=4, absolute=False, snap=False, **kwds):
 
     - ``snap`` -- (default: ``False``) if ``True``, snaps to an implied
       grid.
-
-    Type ``line3d.options`` for a dictionary of the default
-    options for lines, which are also available.
 
     EXAMPLES:
 
@@ -562,9 +587,6 @@ def ruler_frame(lower_left, upper_right, ticks=4, sub_ticks=4, **kwds):
     - ``sub_ticks`` -- (default: 4) the number of shown
       subdivisions between each major tick.
 
-    Type ``line3d.options`` for a dictionary of the default
-    options for lines, which are also available.
-
     EXAMPLES:
 
     A ruler frame::
@@ -587,7 +609,7 @@ def ruler_frame(lower_left, upper_right, ticks=4, sub_ticks=4, **kwds):
 
 ###########################
 
-
+@rename_keyword(alpha='opacity')
 def sphere(center=(0,0,0), size=1, **kwds):
     r"""
     Return a plot of a sphere of radius ``size`` centered at
@@ -695,7 +717,7 @@ class Point(PrimitiveObject):
 
     -  ``size`` -- (default: 1)
 
-    EXAMPLE:
+    EXAMPLES:
 
     We normally access this via the ``point3d`` function.  Note that extra
     keywords are correctly used::
@@ -752,7 +774,12 @@ class Point(PrimitiveObject):
             cen = self.loc
         else:
             cen = transform.transform_point(self.loc)
-        return "Sphere center %s %s %s Rad %s %s" % (cen[0], cen[1], cen[2], self.size * TACHYON_PIXEL, self.texture.id)
+
+        radius = self.size * TACHYON_PIXEL
+        texture = self.texture.id
+        return ("Sphere center {center[0]!r} {center[1]!r} {center[2]!r} "
+                "Rad {radius!r} {texture}").format(center=cen, radius=radius,
+                                                   texture=texture)
 
     def obj_repr(self, render_params):
         """
@@ -891,7 +918,7 @@ class Line(PrimitiveObject):
 
             sage: L = line3d([(cos(i),sin(i),i^2) for i in srange(0,10,.01)],color='red')
             sage: L.tachyon_repr(L.default_render_params())[0]
-            'FCylinder base 1.0 0.0 0.0 apex 0.999950000417 0.00999983333417 0.0001 rad 0.005 texture...'
+            'FCylinder base 1.0 0.0 0.0 apex 0.9999500004166653 0.009999833334166664 0.0001 rad 0.005 texture...'
         """
         T = render_params.transform
         cmds = []
@@ -905,10 +932,12 @@ class Line(PrimitiveObject):
                 cmds.append(A.tachyon_repr(render_params))
                 render_params.pop_transform()
             else:
-                cmds.append("FCylinder base %s %s %s apex %s %s %s rad %s %s" % (px, py, pz,
-                                                                                 x, y, z,
-                                                                                 radius,
-                                                                                 self.texture.id))
+                cmd = ('FCylinder base {pos[0]!r} {pos[1]!r} {pos[2]!r} '
+                       'apex {apex[0]!r} {apex[1]!r} {apex[2]!r} '
+                       'rad {radius!r} {texture}').format(
+                               pos=(px, py, pz), apex=(x, y, z), radius=radius,
+                               texture=self.texture.id)
+                cmds.append(cmd)
             px, py, pz = x, y, z
         return cmds
 
@@ -921,7 +950,9 @@ class Line(PrimitiveObject):
             sage: from sage.plot.plot3d.shapes2 import Line
             sage: L = Line([(cos(i),sin(i),i^2) for i in srange(0,10,.01)],color='red')
             sage: L.obj_repr(L.default_render_params())[0][0][0][2][:3]
-            ['v 0.99995 0.00999983 0.0001', 'v 1.00007 0.0102504 -0.0248984', 'v 1.02376 0.010195 -0.00750607']
+            ['v 0.99995 0.00999983 0.0001',
+             'v 1.02376 0.010195 -0.00750607',
+             'v 1.00007 0.0102504 -0.0248984']
         """
         T = render_params.transform
         if T is None:
@@ -950,23 +981,24 @@ class Line(PrimitiveObject):
         corners = set(corners)
         cmds = []
         cmd = None
+        name = ''
         for P in self.points:
             TP = P if T is None else T(P)
             if P in corners:
                 if cmd:
                     cmds.append(cmd + " {%s %s %s} " % TP)
-                    cmds.append(self.texture.jmol_str('$'+name))
+                    cmds.append(self.texture.jmol_str('$' + name))
                 type = 'arrow' if self.arrow_head and P is last_corner else 'curve'
                 name = render_params.unique_name('line')
                 cmd = "draw %s diameter %s %s {%s %s %s} " % (name, int(self.thickness), type, TP[0], TP[1], TP[2])
             else:
                 cmd += " {%s %s %s} " % TP
         cmds.append(cmd)
-        cmds.append(self.texture.jmol_str('$'+name))
+        cmds.append(self.texture.jmol_str('$' + name))
         return cmds
 
     def corners(self, corner_cutoff=None, max_len=None):
-        """
+        r"""
         Figure out where the curve turns too sharply to pretend it is
         smooth.
 
@@ -1062,7 +1094,7 @@ class Line(PrimitiveObject):
                 count += 1
             return corners
 
-
+@rename_keyword(alpha='opacity')
 def point3d(v, size=5, **kwds):
     """
     Plot a point or list of points in 3d space.
@@ -1135,7 +1167,7 @@ def point3d(v, size=5, **kwds):
     if l == 3:
         try:
             # check if the first element can be changed to a float
-            tmp = RDF(v[0])
+            RDF(v[0])
             return Point(v, size, **kwds)
         except TypeError:
             pass

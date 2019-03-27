@@ -136,16 +136,16 @@ def eval_op(op, lv, rv):
         True
     """
     lval = rval = None
-    if lv == False:
+    if lv is False:
         lval = False
-    elif lv == True:
+    elif lv is True:
         lval = True
     elif lv is not None:
         lval = __vars[lv]
 
-    if rv == False:
+    if rv is False:
         rval = False
-    elif rv == True:
+    elif rv is True:
         rval = True
     elif rv is not None:
         rval = __vars[rv]

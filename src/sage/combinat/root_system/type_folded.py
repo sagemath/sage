@@ -19,6 +19,9 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.sets.family import Family
 from sage.combinat.root_system.cartan_type import CartanType
 
+import six
+
+
 class CartanTypeFolded(UniqueRepresentation, SageObject):
     r"""
     A Cartan type realized from a (Dynkin) diagram folding.
@@ -58,7 +61,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
     and were chosen based on virtual crystals. In particular, the diagram
     foldings extend to crystal morphisms and gives a realization of
     Kirillov-Reshetikhin crystals for non-simply-laced types as simply-laced
-    types. See [OSShimo03]_ and [FOS09]_ for more details. Here we can compute
+    types. See [OSShimo03]_ and [FOS2009]_ for more details. Here we can compute
     `\gamma_i = \max(c) / c_i` where `(c_i)_i` are the translation factors
     of the root system. In a more type-dependent way, we can define `\gamma_i`
     as follows:
@@ -178,7 +181,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
         if isinstance(orbit, dict):
             i_set = cartan_type.index_set()
             orb = [None]*len(i_set)
-            for k,v in orbit.iteritems():
+            for k,v in six.iteritems(orbit):
                 orb[i_set.index(k)] = tuple(v)
             orbit = tuple(orb)
         else:
@@ -249,7 +252,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
 
     @cached_method
     def folding_orbit(self):
-        """
+        r"""
         Return the orbits under the automorphism `\sigma` as a
         dictionary (of tuples).
 

@@ -163,7 +163,7 @@ class HyperbolicIsometry(Morphism):
             \end{array}\right)
         """
         if self.domain().is_isometry_group_projective():
-            return "\pm " + latex(self._matrix)
+            return r"\pm " + latex(self._matrix)
         else:
             return latex(self._matrix)
 
@@ -215,7 +215,8 @@ class HyperbolicIsometry(Morphism):
         """
         if self.domain().is_isometry_group_projective():
             # Special care must be taken for projective groups
-            m = matrix(self._matrix.nrows(), map(abs, self._matrix.list()))
+            m = matrix(self._matrix.nrows(),
+                       [abs(x) for x in  self._matrix.list()])
             m.set_immutable()
         else:
             m = self._matrix
@@ -358,16 +359,16 @@ class HyperbolicIsometry(Morphism):
         EXAMPLES::
 
             sage: HyperbolicPlane().UHP().get_isometry(identity_matrix(2)).model()
-            Hyperbolic plane in the Upper Half Plane Model model
+            Hyperbolic plane in the Upper Half Plane Model
 
             sage: HyperbolicPlane().PD().get_isometry(identity_matrix(2)).model()
-            Hyperbolic plane in the Poincare Disk Model model
+            Hyperbolic plane in the Poincare Disk Model
 
             sage: HyperbolicPlane().KM().get_isometry(identity_matrix(3)).model()
-            Hyperbolic plane in the Klein Disk Model model
+            Hyperbolic plane in the Klein Disk Model
 
             sage: HyperbolicPlane().HM().get_isometry(identity_matrix(3)).model()
-            Hyperbolic plane in the Hyperboloid Model model
+            Hyperbolic plane in the Hyperboloid Model
         """
         return self.domain()
 
@@ -443,7 +444,7 @@ class HyperbolicIsometry(Morphism):
 
     def preserves_orientation(self):
         r"""
-        Return ``True`` if ``self`` is orientation preserving and ``False``
+        Return ``True`` if ``self`` is orientation-preserving and ``False``
         otherwise.
 
         EXAMPLES::
@@ -536,12 +537,12 @@ class HyperbolicIsometry(Morphism):
 
     def fixed_point_set(self):
         r"""
-        Return the a list containing the fixed point set of orientation-
-        preserving isometries.
+        Return a list containing the fixed point set of
+        orientation-preserving isometries.
 
         OUTPUT:
 
-        - a list of hyperbolic points or a hyperbolic geodesic
+        list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 
@@ -658,7 +659,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
 
     def preserves_orientation(self): #UHP
         r"""
-        Return ``True`` if ``self`` is orientation preserving and ``False``
+        Return ``True`` if ``self`` is orientation-preserving and ``False``
         otherwise.
 
         EXAMPLES::
@@ -746,18 +747,18 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         """
         d = sqrt(self._matrix.det()**2)
         tau = sqrt((self._matrix / sqrt(d)).trace()**2)
-        if self.classification() in ['hyperbolic', 'oriention-reversing hyperbolic']:
-            return 2 * arccosh(tau/2)
+        if self.classification() in ['hyperbolic', 'orientation-reversing hyperbolic']:
+            return 2 * arccosh(tau / 2)
         raise TypeError("translation length is only defined for hyperbolic transformations")
 
-    def fixed_point_set(self): #UHP
+    def fixed_point_set(self):  # UHP
         r"""
-        Return the a list or geodesic containing the fixed point set of
+        Return a list or geodesic containing the fixed point set of
         orientation-preserving isometries.
 
         OUTPUT:
 
-        - a list of hyperbolic points or a hyperbolic geodesic
+        list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 
@@ -1058,7 +1059,7 @@ def moebius_transform(A, z):
     The matrix can be symbolic or can be a matrix over the real
     or complex numbers, but must be provably invertible::
 
-        sage: a,b,c,d = var('a,b,c,d');
+        sage: a,b,c,d = var('a,b,c,d')
         sage: moebius_transform(matrix(2,[a,b,c,d]),I)
         (I*a + b)/(I*c + d)
         sage: moebius_transform(matrix(2,[1,b,c,b*c+1]),I)
@@ -1075,7 +1076,7 @@ def moebius_transform(A, z):
                 return infinity
             return a/c
         if a*d - b*c < 0:
-            w = z.conjugate() # Reverses orientation
+            w = z.conjugate()  # Reverses orientation
         else:
             w = z
         if c*z + d == 0:

@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Rank Decompositions of graphs
 
@@ -13,8 +14,8 @@ of `S` in `G`, denoted `rw_G(S)`, is equal to the rank in `GF(2)` of the `|S|
 `\overline S` is the complement of `S` in `V(G)`.
 
 A *rank-decomposition* of `G` is a tree whose `n` leaves are the elements of
-`V(G)`, and whose internal noes have degree 3. In a tree, ay edge naturally
-corresponds to a bipartition of the vertex set : indeed, the reoal of any edge
+`V(G)`, and whose internal nodes have degree 3. In a tree, any edge naturally
+corresponds to a bipartition of the vertex set : indeed, the removal of any edge
 splits the tree into two connected components, thus splitting the set of leaves
 (i.e. vertices of `G`) into two sets. Hence we can define for any edge `e\in
 E(G)` a width equal to the value `rw_G(S)` or `rw_G(\overline S)`, where
@@ -32,8 +33,10 @@ rank-decompositions. It is based on ideas from :
 
     * "Computing rank-width exactly" by Sang-il Oum [Oum]_
     * "Sopra una formula numerica" by Ernesto Pascal
-    * "Generation of a Vector from the Lexicographical Index" by B.P. Buckles and M. Lybanon [BL]_
-    * "Fast additions on masked integers" by Michael D. Adams and David S. Wise [AW]_
+    * "Generation of a Vector from the Lexicographical Index" by B.P. Buckles
+      and M. Lybanon [BL]_
+    * "Fast additions on masked integers" by Michael D. Adams and David S. Wise
+      [AW]_
 
 **OUTPUT:**
 
@@ -50,7 +53,7 @@ i.e. singletons.
 
 The internal nodes are sets of the decomposition. This way, it is easy to deduce
 the bipartition associated to an edge from the tree. Indeed, two adjacent
-vertices of the tree are comarable sets : they yield the bipartition obtained
+vertices of the tree are comparable sets : they yield the bipartition obtained
 from the smaller of the two and its complement.
 
 ::
@@ -75,7 +78,7 @@ from the smaller of the two and its complement.
       it to us, what we need is some information on the hardware you run to know
       where it comes from !
 
-EXAMPLE::
+EXAMPLES::
 
         sage: g = graphs.PetersenGraph()
         sage: g.rank_decomposition()
@@ -83,8 +86,8 @@ EXAMPLE::
 
 AUTHORS:
 
-- Philipp Klaus Krause : Implementation of the C algorithm [RWKlause]_.
-- Nathann Cohen : Interface with Sage and documentation.
+- Philipp Klaus Krause : Implementation of the C algorithm [RWKlause]_
+- Nathann Cohen : Interface with Sage and documentation
 
 REFERENCES:
 
@@ -116,24 +119,28 @@ Methods
 """
 
 #*****************************************************************************
-#      Copyright (C) 2011 Nathann Cohen <nathann.cohen@gail.com>
+#       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 from __future__ import print_function
 
-include "cysignals/memory.pxi"
-include "cysignals/signals.pxi"
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport *
 
 from libc.string cimport memset
 
 cdef list id_to_vertices
 cdef dict vertices_to_id
 
-def rank_decomposition(G, verbose = False):
+def rank_decomposition(G, verbose=False):
     r"""
-    Computes an optimal rank-decomposition of the given graph.
+    Compute an optimal rank-decomposition of the given graph.
 
     This function is available as a method of the :class:`Graph
     <sage.graphs.graph>` class. See :meth:`rank_decomposition
@@ -141,8 +148,8 @@ def rank_decomposition(G, verbose = False):
 
     INPUT:
 
-    - ``verbose`` (boolean) -- whether to display progress information while
-      computing the decomposition.
+    - ``verbose`` -- boolean (default: ``False``); whether to display progress
+      information while computing the decomposition
 
     OUTPUT:
 
@@ -150,7 +157,7 @@ def rank_decomposition(G, verbose = False):
     numerical value and ``decomposition_tree`` is a ternary tree describing the
     decomposition (cf. the module's documentation).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.rankwidth import rank_decomposition
         sage: g = graphs.PetersenGraph()
@@ -174,21 +181,21 @@ def rank_decomposition(G, verbose = False):
     cdef int n = G.order()
 
     if n >= 32:
-        raise RuntimeError("the rank decomposition cannot be computed "+
-                        "on graphs of >= 32 vertices")
+        raise RuntimeError("the rank decomposition cannot be computed "
+                           "on graphs of >= 32 vertices")
 
-    elif n == 0:
+    elif not n:
         from sage.graphs.graph import Graph
         return (0, Graph())
 
     cdef int i
 
     if sage_graph_to_matrix(G):
-        raise RuntimeError("There has been a mistake while converting the Sage "+
-                        "graph to a C structure. The memory is probably "+
-                        "insufficient (2^(n+1) is a *LOT*).")
+        raise RuntimeError("there has been a mistake while converting the Sage "
+                           "graph to a C structure, the memory is probably "
+                           "insufficient (2^(n+1) is a *LOT*)")
 
-    for 0 <= i < n+1:
+    for i in range(n + 1):
 
         if verbose:
             print("Calculating for subsets of size ", i, "/", n + 1)
@@ -208,8 +215,8 @@ def rank_decomposition(G, verbose = False):
 
     cdef int rank_width = <int> get_rw()
 
-    #Original way of displaying the decomposition
-    #print_rank_dec(0x7ffffffful >> (31 - num_vertices), 0)
+    # Original way of displaying the decomposition
+    # print_rank_dec(0x7ffffffful >> (31 - num_vertices), 0)
     g = mkgraph(n)
 
     # Free the memory
@@ -219,19 +226,14 @@ def rank_decomposition(G, verbose = False):
 
 cdef int sage_graph_to_matrix(G):
     r"""
-    Converts the given Sage graph as an adjacency matrix.
+    Convert the given Sage graph as an adjacency matrix.
     """
     global id_to_vertices
     global vertices_to_id
     global adjacency_matrix
     global cslots
 
-    id_to_vertices = []
-    vertices_to_id = {}
-
     cdef int num_vertices = G.order()
-
-    cdef int i,j
 
     # Prepares the C structure for the computation
     if init_rw_dec(num_vertices):
@@ -243,13 +245,13 @@ cdef int sage_graph_to_matrix(G):
     memset(adjacency_matrix, 0, sizeof(subset_t) * num_vertices)
 
     # Initializing the lists of vertices
-    for i,v in enumerate(G.vertices()):
-        id_to_vertices.append(v)
-        vertices_to_id[v] = i
+    cdef int i
+    id_to_vertices = list(G)
+    vertices_to_id = {v: i for i, v in enumerate(id_to_vertices)}
 
     # Filling the matrix
-    for u,v in G.edges(labels = False):
-        if u==v:
+    for u,v in G.edge_iterator(labels=False):
+        if u == v:
             continue
         set_am(vertices_to_id[u], vertices_to_id[v], 1)
 
@@ -257,7 +259,7 @@ cdef int sage_graph_to_matrix(G):
     return 0
 
 cdef uint_fast32_t bitmask(int i):
-    return(1ul << i)
+    return (1ul << i)
 
 cdef void set_am(int i, int j, int val):
     r"""
@@ -276,7 +278,7 @@ cdef void set_am(int i, int j, int val):
 
 cdef void print_rank_dec(subset_t s, int l):
     r"""
-    Prints the current rank decomposition as a text
+    Print the current rank decomposition as a text
 
     This function is a copy of the C routine printing the rank-decomposition is
     the original source code. It s not used at the moment, but can still prove
@@ -287,18 +289,18 @@ cdef void print_rank_dec(subset_t s, int l):
     print('\t' * l, end="")
 
     print("cslot: ", <unsigned int> s)
-    if cslots[s] == 0:
+    if not cslots[s]:
         return
     print_rank_dec(cslots[s], l + 1)
     print_rank_dec(s & ~cslots[s], l + 1)
 
 def mkgraph(int num_vertices):
     r"""
-    Returns the graph corresponding the the current rank-decomposition.
+    Return the graph corresponding to the current rank-decomposition.
 
     (This function is for internal use)
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.rankwidth import rank_decomposition
         sage: g = graphs.PetersenGraph()
@@ -313,7 +315,7 @@ def mkgraph(int num_vertices):
     from sage.graphs.graph import Graph
     g = Graph()
 
-    cdef subset_t * tab = <subset_t *> sig_malloc(sizeof(subset_t) * (2*num_vertices -1))
+    cdef subset_t * tab = <subset_t *>check_allocarray(2 * num_vertices - 1, sizeof(subset_t))
     tab[0] = 0x7ffffffful >> (31 - num_vertices)
 
     cdef int beg = 0
@@ -324,13 +326,13 @@ def mkgraph(int num_vertices):
         s = tab[beg]
         beg += 1
 
-        if cslots[s] == 0:
+        if not cslots[s]:
             continue
 
-        g.add_edge(bitset_to_vertex_set(s), bitset_to_vertex_set(s&~cslots[s]))
+        g.add_edge(bitset_to_vertex_set(s), bitset_to_vertex_set(s & ~cslots[s]))
         g.add_edge(bitset_to_vertex_set(s), bitset_to_vertex_set(cslots[s]))
 
-        tab[end] = s&~cslots[s]
+        tab[end] = s & ~cslots[s]
         end += 1
         tab[end] = cslots[s]
         end += 1
@@ -340,7 +342,7 @@ def mkgraph(int num_vertices):
 
 cdef bitset_to_vertex_set(subset_t s):
     """
-    Returns as a Set object the set corresponding to the given subset_t
+    Return as a Set object the set corresponding to the given subset_t
     variable.
     """
     from sage.rings.integer import Integer

@@ -54,7 +54,7 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     R = list(W.reflections())
     if j != i:
         t = R[min(r, r_minus)]
-        for k in range(min(i, j) + 1, max(i, j) + 1):
+        for k in xrange(min(i, j) + 1, max(i, j) + 1):
             extended_root_conf_indices[k] = t.action_on_root_indices(extended_root_conf_indices[k],side="left")
     return j
 
@@ -89,7 +89,7 @@ cpdef list _construct_facets_c(tuple Q, w, int n=-1, int pos=0, int l=-1):
         first = False
     
     if l == 0:
-        return [range(pos, n)]
+        return [list(xrange(pos, n))]
     elif n < l + pos:
         return []
     

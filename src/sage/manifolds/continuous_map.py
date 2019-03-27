@@ -12,10 +12,8 @@ AUTHORS:
 
 REFERENCES:
 
-- Chap. 1 of [KN63]_ \S. Kobayashi & K. Nomizu : *Foundations of Differential
-  Geometry*, vol. 1, Interscience Publishers (New York) (1963)
-- [Lee11]_ \J.M. Lee : *Introduction to Topological Manifolds*, 2nd ed.,
-  Springer (New York) (2011)
+- Chap. 1 of [KN1963]_
+- [Lee2011]_
 
 """
 
@@ -114,7 +112,7 @@ class ContinuousMap(Morphism):
         sage: Phi.parent() is Hom(M, N)
         True
         sage: type(Phi)
-        <class 'sage.manifolds.continuous_map.TopologicalManifoldHomset_with_category.element_class'>
+        <class 'sage.manifolds.manifold_homset.TopologicalManifoldHomset_with_category.element_class'>
         sage: Phi.display()
         Phi: S^2 --> R^3
         on U: (x, y) |--> (X, Y, Z) = (2*x/(x^2 + y^2 + 1), 2*y/(x^2 + y^2 + 1), (x^2 + y^2 - 1)/(x^2 + y^2 + 1))
@@ -411,7 +409,7 @@ class ContinuousMap(Morphism):
                                      " have the same dimension")
             if coord_functions is not None:
                 n2 = self._codomain.dim()
-                for chart_pair, expression in coord_functions.iteritems():
+                for chart_pair, expression in coord_functions.items():
                     if chart_pair[0] not in self._domain.atlas():
                         raise ValueError("{} is not a chart ".format(
                                                               chart_pair[0]) +
@@ -509,6 +507,32 @@ class ContinuousMap(Morphism):
         else:
            return self._latex_name
 
+    #
+    # Hash and equality
+    #
+
+    def __hash__(self):
+        """
+        Hash function.
+
+        TESTS::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart()
+            sage: N = Manifold(2, 'N', structure='topological')
+            sage: Y.<u,v> = N.chart()
+            sage: f = M.continuous_map(N, {(X,Y): (x+y,x*y)})
+            sage: hash(f) == f.__hash__()
+            True
+
+        Let us check that ``f`` can be used as a dictionary key::
+
+            sage: {f: 1}[f]
+            1
+
+        """
+        return hash((self._domain, self._codomain))
+
     def __eq__(self, other):
         r"""
         Comparison (equality) operator.
@@ -546,7 +570,7 @@ class ContinuousMap(Morphism):
             return other.is_identity()
         if other._is_identity:
             return self.is_identity()
-        for charts, coord_functions in self._coord_expression.iteritems():
+        for charts, coord_functions in self._coord_expression.items():
             try:
                 if coord_functions.expr() != other.expr(*charts):
                     return False
@@ -854,9 +878,36 @@ class ContinuousMap(Morphism):
             {}
             sage: f._inverse
 
+        ``_extensions_graph`` and ``_restrictions_graph`` were not originally
+        derived quantities, but this induced a bug when dealing with other
+        derived quantities (see :trac:`26012`)::
+
+            sage: M = Manifold(2, 'M')
+            sage: C.<x, y> = M.chart()
+            sage: U = M.open_subset('U', coord_def={C:x>0})
+            sage: g = M.metric('g')
+            sage: g[:] = [[1, 0], [0, 1]]
+            sage: gU = g.restrict(U)
+            sage: g[:] = [[1, 0], [0, 2]]
+            sage: g.inverse()[:]
+            [  1   0]
+            [  0 1/2]
+            sage: g.inverse().restrict(U)[:] # used to be wrong
+            [  1   0]
+            [  0 1/2]
+
         """
         self._restrictions = {} # dict. of restrictions to subdomains of
                                 # self._domain
+        self._restrictions_graph = {(self._domain, self._codomain): self}
+        # dict. of known extensions of self on bigger domains,
+        # including self, with pairs of domain codomain as keys.
+        # Its elements can be seen as incomming edges on a graph.
+        self._extensions_graph = {(self._domain, self._codomain): self}
+        # dict. of known restrictions of self on samller domains,
+        # including self, with pairs of domain codomain as keys.
+        # Its elements can be seen as outgoing edges on a graph.
+
         if self._is_identity:
             self._inverse = self
         else:
@@ -866,7 +917,7 @@ class ContinuousMap(Morphism):
         r"""
         Delete the derived quantities of ``self``.
 
-        TEST::
+        TESTS::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()
@@ -880,6 +931,8 @@ class ContinuousMap(Morphism):
 
         """
         self._restrictions.clear()
+        self._restrictions_graph = {(self._domain, self._codomain): self}
+        self._extensions_graph = {(self._domain, self._codomain): self}
         if not self._is_identity:
             self._inverse = None
 
@@ -978,6 +1031,22 @@ class ContinuousMap(Morphism):
             on U: (x, y) |--> (X, Y, Z) = (2*x/(x^2 + y^2 + 1), 2*y/(x^2 + y^2 + 1), (x^2 + y^2 - 1)/(x^2 + y^2 + 1))
             on V: (u, v) |--> (X, Y, Z) = (2*u/(u^2 + v^2 + 1), 2*v/(u^2 + v^2 + 1), -(u^2 + v^2 - 1)/(u^2 + v^2 + 1))
 
+        Display when SymPy is the symbolic engine::
+
+            sage: M.set_calculus_method('sympy')
+            sage: N.set_calculus_method('sympy')
+            sage: Phi.display(c_xy, c_cart)
+            Phi: S^2 --> R^3
+            on U: (x, y) |--> (X, Y, Z) = (2*x/(x**2 + y**2 + 1),
+             2*y/(x**2 + y**2 + 1), (x**2 + y**2 - 1)/(x**2 + y**2 + 1))
+            sage: latex(Phi.display(c_xy, c_cart))
+            \begin{array}{llcl} \Phi:& S^2 & \longrightarrow & \RR^3
+             \\ \mbox{on}\ U : & \left(x, y\right) & \longmapsto
+             & \left(X, Y, Z\right) = \left(\frac{2 x}{x^{2} + y^{2} + 1},
+               \frac{2 y}{x^{2} + y^{2} + 1},
+               \frac{x^{2} + y^{2} - 1}{x^{2} + y^{2} + 1}\right)
+             \end{array}
+
         """
         from sage.misc.latex import latex
         from sage.tensor.modules.format_utilities import FormattedExpansion
@@ -988,7 +1057,8 @@ class ContinuousMap(Morphism):
             """
             from sage.misc.latex import latex
             try:
-                expression = self.expr(chart1, chart2)
+                coord_func = self.coord_functions(chart1, chart2)
+                expression = coord_func.expr()
                 coords1 = chart1[:]
                 if len(coords1) == 1:
                     coords1 = coords1[0]
@@ -1007,21 +1077,21 @@ class ContinuousMap(Morphism):
                 if chart2 == chart1:
                     if len(expression) == 1:
                         result._txt += repr(expression[0]) + "\n"
-                        result._latex += latex(expression[0]) + r"\\"
+                        result._latex += latex(coord_func[0]) + r"\\"
                     else:
                         result._txt += repr(expression) + "\n"
-                        result._latex += latex(expression) + r"\\"
+                        result._latex += latex(coord_func) + r"\\"
                 else:
                     if len(expression) == 1:
                         result._txt += repr(coords2[0]) + " = " + \
                                       repr(expression[0]) + "\n"
                         result._latex += latex(coords2[0]) + " = " + \
-                                        latex(expression[0]) + r"\\"
+                                        latex(coord_func[0]) + r"\\"
                     else:
                         result._txt += repr(coords2) + " = " + \
                                       repr(expression) + "\n"
                         result._latex += latex(coords2) + " = " + \
-                                        latex(expression) + r"\\"
+                                        latex(coord_func) + r"\\"
             except (TypeError, ValueError):
                 pass
 
@@ -1076,7 +1146,7 @@ class ContinuousMap(Morphism):
 
         OUTPUT:
 
-        - a :class:`~sage.manifolds.coord_func.MultiCoordFunction`
+        - a :class:`~sage.manifolds.chart_func.MultiCoordFunction`
           representing the continuous map in the above two charts
 
         EXAMPLES:
@@ -1098,7 +1168,7 @@ class ContinuousMap(Morphism):
             sage: Phi.coord_functions() # equivalent to above since 'uv' and 'xyz' are default charts
             Coordinate functions (u*v, u/v, u + v) on the Chart (M, (u, v))
             sage: type(Phi.coord_functions())
-            <class 'sage.manifolds.coord_func.MultiCoordFunction'>
+            <class 'sage.manifolds.chart_func.MultiCoordFunction'>
 
         Coordinate representation in other charts::
 
@@ -1147,6 +1217,23 @@ class ContinuousMap(Morphism):
 
             sage: Phi1.coord_functions(c_uv.restrict(A), c_xyz)
             Coordinate functions (u*v, u/v, u + v) on the Chart (A, (u, v))
+
+        Same example with SymPy as the symbolic calculus engine::
+
+            sage: M.set_calculus_method('sympy')
+            sage: N.set_calculus_method('sympy')
+            sage: Phi = M.continuous_map(N, (u*v, u/v, u+v), name='Phi',
+            ....:                        latex_name=r'\Phi')
+            sage: Phi.coord_functions(c_uv, c_xyz)
+            Coordinate functions (u*v, u/v, u + v) on the Chart (M, (u, v))
+            sage: Phi.coord_functions(c_UV, c_xyz)
+            Coordinate functions (-U**2/4 + V**2/4, -(U + V)/(U - V), V)
+             on the Chart (M, (U, V))
+            sage: Phi.coord_functions(c_UV, c_XYZ)
+            Coordinate functions ((-U**3 + U**2*V + U*V**2 + 2*U*V + 6*U - V**3
+             - 2*V**2 + 6*V)/(2*(U - V)), (U**3/4 - U**2*V/4 - U*V**2/4 + U*V
+             - U + V**3/4 - V**2 - V)/(U - V), (U**3 - U**2*V - U*V**2 - 4*U*V
+             - 8*U + V**3 + 4*V**2 - 8*V)/(4*(U - V))) on the Chart (M, (U, V))
 
         """
         dom1 = self._domain; dom2 = self._codomain
@@ -1354,7 +1441,7 @@ class ContinuousMap(Morphism):
 
         EXAMPLES:
 
-        Polar representation of a planar rotation initally defined in
+        Polar representation of a planar rotation initially defined in
         Cartesian coordinates::
 
             sage: M = Manifold(2, 'R^2', latex_name=r'\RR^2', structure='topological')  # the Euclidean plane R^2
@@ -1479,7 +1566,7 @@ class ContinuousMap(Morphism):
 
         EXAMPLES:
 
-        Polar representation of a planar rotation initally defined in
+        Polar representation of a planar rotation initially defined in
         Cartesian coordinates::
 
             sage: M = Manifold(2, 'R^2', latex_name=r'\RR^2', structure='topological')  # the Euclidean plane R^2
@@ -1683,6 +1770,46 @@ class ContinuousMap(Morphism):
             if self._is_identity:
                 self._restrictions[(subdomain, subcodomain)] = subdomain.identity_map()
                 return self._restrictions[(subdomain, subcodomain)]
+
+            # First one tries to get the restriction from a tighter domain:
+            for dom, rst in self._restrictions.items():
+                if subdomain.is_subset(dom[0]) and (subdomain, subcodomain) in rst._restrictions:
+                    res = rst._restrictions[(subdomain, subcodomain)]
+                    self._restrictions[(subdomain, subcodomain)] = res
+                    self._restrictions.update(res._restrictions)
+                    self._restrictions_graph.update(res._restrictions_graph)
+                    res._extensions_graph.update(self._extensions_graph)
+                    for ext in self._extensions_graph.values():
+                        ext._restrictions[subdomain] = res
+                        ext._restrictions.update(res._restrictions)
+                        ext._restrictions_graph.update(res._restrictions_graph)
+                    return self._restrictions[(subdomain, subcodomain)]
+
+            # Maybe it didn't exist but could have:
+            for dom, rst in self._restrictions.items():
+                if subdomain.is_subset(dom[0]) and subcodomain.is_subset(dom[1]):
+                    res = rst.restrict(subdomain,subcodomain) # all propagation
+                                                              # is done here
+                    # should be useless:
+                    self._restrictions[(subdomain,subcodomain)] = res
+                    self._restrictions_graph[(subdomain, subcodomain)] = res
+                    return self._restrictions[(subdomain,subcodomain)]
+
+            # Secondly one tries to get the restriction from one previously
+            # defined on a larger domain:
+            for dom, ext in self._extensions_graph.items():
+                if (subdomain,subcodomain) in ext._restrictions:
+                    res = ext._restrictions[(subdomain,subcodomain)]
+                    self._restrictions[(subdomain, subcodomain)] = res
+                    self._restrictions.update(res._restrictions)
+                    self._restrictions_graph.update(res._restrictions_graph)
+                    res._extensions_graph.update(self._extensions_graph)
+                    for ext in self._extensions_graph.values():
+                        ext._restrictions[subdomain] = res
+                        ext._restrictions.update(res._restrictions)
+                        ext._restrictions_graph.update(res._restrictions_graph)
+                    return self._restrictions[(subdomain, subcodomain)]
+
             # Generic case:
             homset = Hom(subdomain, subcodomain)
             resu = type(self)(homset, name=self._name,
@@ -1702,7 +1829,24 @@ class ContinuousMap(Morphism):
                                     coord_functions = self._coord_expression[charts].expr()
                                     resu._coord_expression[(ch1, ch2)] = \
                                             ch1.multifunction(*coord_functions)
+
+            # propagate extensions
+            for dom, ext in self._extensions_graph.items(): # includes self
+                ext._restrictions[(subdomain, subcodomain)] = resu
+                ext._restrictions_graph[(subdomain, subcodomain)] = resu
+
+            # propagate restrictions
+            for dom, rst in self._restrictions.items():
+                if dom[0].is_subset(subdomain) and dom[1].is_subset(subcodomain):
+                    if rst is not resu:
+                        resu._restrictions.update(rst._restrictions_graph)
+                        resu._restrictions_graph.update(rst._restrictions_graph)
+                        rst._extensions_graph.update(resu._extensions_graph)
+
             self._restrictions[(subdomain, subcodomain)] = resu
+            self._restrictions_graph[(subdomain, subcodomain)] = resu
+            resu._extensions_graph.update(self._extensions_graph)
+
         return self._restrictions[(subdomain, subcodomain)]
 
     def __invert__(self):
@@ -1797,7 +1941,7 @@ class ContinuousMap(Morphism):
             # New symbolic variables (different from chart2._xx to allow for a
             #  correct solution even when chart2 = chart1):
             x2 = [SR.var('xxxx' + str(i)) for i in range(n2)]
-            equations = [x2[i] == coord_map._functions[i]._express
+            equations = [x2[i] == coord_map._functions[i].expr()
                          for i in range(n2)]
             solutions = solve(equations, chart1._xx, solution_dict=True)
             if not solutions:
@@ -1811,7 +1955,8 @@ class ContinuousMap(Morphism):
             for i in range(n1):
                 x = inv_functions[i]
                 try:
-                    inv_functions[i] = chart2._simplify(x)
+                    # simplify derived from calculus_method
+                    inv_functions[i] = chart2.simplify(x)
                 except AttributeError:
                     pass
             coord_functions[(chart2, chart1)] = inv_functions
@@ -1830,4 +1975,3 @@ class ContinuousMap(Morphism):
         return self._inverse
 
     inverse = __invert__
-

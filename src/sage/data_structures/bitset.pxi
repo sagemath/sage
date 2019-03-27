@@ -25,8 +25,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "cysignals/memory.pxi"
 from libc.string cimport strlen
+from cysignals.memory cimport check_calloc, check_reallocarray, sig_malloc, sig_free
+
+from sage.cpython.string cimport char_to_str, str_to_bytes, bytes_to_str
 from sage.libs.gmp.mpn cimport *
 from sage.data_structures.bitset cimport *
 from cython.operator import preincrement as preinc
@@ -82,9 +84,9 @@ cdef inline bint bitset_init(bitset_t bits, mp_bitcnt_t size) except -1:
     bits.limbs = (size - 1) / (8 * sizeof(mp_limb_t)) + 1
     bits.bits = <mp_limb_t*>check_calloc(bits.limbs, sizeof(mp_limb_t))
 
-cdef inline bint bitset_realloc(bitset_t bits, mp_bitcnt_t size) except -1:
+cdef inline int bitset_realloc(bitset_t bits, mp_bitcnt_t size) except -1:
     """
-    Reallocate a bitset to size size. If reallocation is larger, new bitset
+    Reallocate a bitset to size ``size``. If reallocation is larger, new bitset
     does not contain any of the extra bits.
     """
     cdef mp_size_t limbs_old = bits.limbs
@@ -94,14 +96,10 @@ cdef inline bint bitset_realloc(bitset_t bits, mp_bitcnt_t size) except -1:
     if size <= 0:
         raise ValueError("bitset capacity must be greater than 0")
 
-    bits.limbs = (size - 1) / (8 * sizeof(mp_limb_t)) + 1
-    tmp = <mp_limb_t*>sig_realloc(bits.bits, bits.limbs * sizeof(mp_limb_t))
-    if tmp != NULL:
-        bits.bits = tmp
-    else:
-        bits.limbs = limbs_old
-        raise MemoryError
+    cdef mp_size_t limbs_new = (size - 1) / (8 * sizeof(mp_limb_t)) + 1
+    bits.bits = <mp_limb_t*>check_reallocarray(bits.bits, limbs_new, sizeof(mp_limb_t))
     bits.size = size
+    bits.limbs = limbs_new
 
     if bits.limbs > limbs_old:
         # Zero any extra limbs
@@ -737,10 +735,11 @@ cdef char* bitset_chars(char* s, bitset_t bits, char zero=c'0', char one=c'1'):
     s[bits.size] = 0
     return s
 
-cdef int bitset_from_str(bitset_t bits, char* s, char zero=c'0', char one=c'1') except -1:
+
+cdef int bitset_from_char(bitset_t bits, char* s, char zero=c'0', char one=c'1') except -1:
     """
-    Initialize a bitset with a set derived from the character string
-    s, where one represents the character indicating set membership.
+    Initialize a bitset with a set derived from the C string s, where one
+    represents the character indicating set membership.
     """
     bitset_init(bits, strlen(s))
     cdef long i
@@ -748,15 +747,36 @@ cdef int bitset_from_str(bitset_t bits, char* s, char zero=c'0', char one=c'1') 
         bitset_set_to(bits, i, s[i] == one)
     return 0
 
+
+cdef int bitset_from_str(bitset_t bits, object s, char zero=c'0', char one=c'1') except -1:
+    """
+    Initialize a bitset with a set derived from the Python str s, where one
+    represents the character indicating set membership.
+    """
+    cdef bytes b = str_to_bytes(s)
+    return bitset_from_char(bits, b, zero, one)
+
+
 cdef bitset_string(bitset_t bits):
     """
     Return a python string representing the bitset.
     """
+    return bytes_to_str(bitset_bytes(bits))
+
+
+cdef bitset_bytes(bitset_t bits):
+    """
+    Return a python bytes string representing the bitset.
+
+    On Python 2 this is equivalent to bitset_string.
+    """
+
     cdef char* s = bitset_chars(NULL, bits)
     cdef object py_s
     py_s = s
     sig_free(s)
     return py_s
+
 
 cdef list bitset_list(bitset_t bits):
     """

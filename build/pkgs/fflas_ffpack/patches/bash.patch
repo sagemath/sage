@@ -1,9 +1,0 @@
-diff -ruN src/fflas-ffpack-config.in b/fflas-ffpack-config.in
---- src/fflas-ffpack-config.in	2012-01-12 22:41:19.000000000 +0100
-+++ b/fflas-ffpack-config.in	2013-02-05 11:58:35.127513006 +0100
-@@ -1,4 +1,4 @@
--#! /bin/bash
-+#!/usr/bin/env bash
- # Coypright (c) 2011 FFLAS-FFPACK
- # written by BB <bboyer@imag.fr>
- # adapted from LinBox configuration

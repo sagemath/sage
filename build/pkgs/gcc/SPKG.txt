@@ -21,6 +21,4 @@ http://gcc.gnu.org/
 
 == Special Update/Build Instructions ==
 
-=== Patches ===
-
- * bug-63740.patch: let GCC build on ARM.
+None.

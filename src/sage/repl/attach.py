@@ -13,7 +13,7 @@ Check that no file clutter is produced::
     sage: dir = tmp_dir()
     sage: src = os.path.join(dir, 'foobar.sage')
     sage: with open(src, 'w') as f:
-    ....:     f.write('print("<output from attached file>")\n')
+    ....:     _ = f.write('print("<output from attached file>")\n')
     sage: attach(src)
     <output from attached file>
     sage: os.listdir(dir)
@@ -27,10 +27,10 @@ character-by-character::
 
     sage: import traceback
     sage: with open(src, 'w') as f:
-    ....:     f.write('# first line\n')
-    ....:     f.write('# second line\n')
-    ....:     f.write('raise ValueError("third")   # this should appear in the source snippet\n')
-    ....:     f.write('# fourth line\n')
+    ....:     _ = f.write('# first line\n')
+    ....:     _ = f.write('# second line\n')
+    ....:     _ = f.write('raise ValueError("third")   # this should appear in the source snippet\n')
+    ....:     _ = f.write('# fourth line\n')
 
     sage: load_attach_mode(attach_debug=False)
     sage: try:
@@ -39,7 +39,7 @@ character-by-character::
     ....:     traceback.print_exc()
     Traceback (most recent call last):
     ...
-        exec(preparse_file(open(fpath).read()) + "\n", globals)
+        exec(preparse_file(f.read()) + "\n", globals)
       File "<string>", line 3, in <module>
     ValueError: third
     sage: detach(src)
@@ -72,6 +72,8 @@ from __future__ import print_function
 import os
 import six
 import time
+from IPython import get_ipython
+
 from sage.repl.load import load, load_wrap
 import sage.repl.inputhook
 import sage.env
@@ -165,7 +167,7 @@ def load_attach_path(path=None, replace=False):
         ['.']
         sage: t_dir = tmp_dir()
         sage: fullpath = os.path.join(t_dir, 'test.py')
-        sage: open(fullpath, 'w').write("print(37 * 3)")
+        sage: _ = open(fullpath, 'w').write("print(37 * 3)")
         sage: attach('test.py')
         Traceback (most recent call last):
         ...
@@ -313,9 +315,9 @@ def attach(*files):
 
         sage: sage.repl.attach.reset()
         sage: t1 = tmp_filename(ext='.py')
-        sage: open(t1,'w').write("print('hello world')")
+        sage: _ = open(t1,'w').write("print('hello world')")
         sage: t2 = tmp_filename(ext='.py')
-        sage: open(t2,'w').write("print('hi there xxx')")
+        sage: _ = open(t2,'w').write("print('hi there xxx')")
         sage: attach(t1, t2)
         hello world
         hi there xxx
@@ -389,7 +391,7 @@ def attached_files():
 
         sage: sage.repl.attach.reset()
         sage: t = tmp_filename(ext='.py')
-        sage: open(t,'w').write("print('hello world')")
+        sage: _ = open(t,'w').write("print('hello world')")
         sage: attach(t)
         hello world
         sage: attached_files()
@@ -415,7 +417,7 @@ def detach(filename):
 
         sage: sage.repl.attach.reset()
         sage: t = tmp_filename(ext='.py')
-        sage: open(t,'w').write("print('hello world')")
+        sage: _ = open(t,'w').write("print('hello world')")
         sage: attach(t)
         hello world
         sage: attached_files() == [t]
@@ -429,7 +431,7 @@ def detach(filename):
         ['.']
         sage: t_dir = tmp_dir()
         sage: fullpath = os.path.join(t_dir, 'test.py')
-        sage: open(fullpath, 'w').write("print(37 * 3)")
+        sage: _ = open(fullpath, 'w').write("print(37 * 3)")
         sage: load_attach_path(t_dir)
         sage: attach('test.py')
         111
@@ -441,7 +443,7 @@ def detach(filename):
         sage: attach('test.py')
         111
         sage: fullpath = os.path.join(t_dir, 'test2.py')
-        sage: open(fullpath, 'w').write("print(3)")
+        sage: _ = open(fullpath, 'w').write("print(3)")
         sage: attach('test2.py')
         3
         sage: detach(attached_files())
@@ -485,7 +487,7 @@ def reset():
 
         sage: sage.repl.attach.reset()
         sage: t = tmp_filename(ext='.py')
-        sage: open(t,'w').write("print('hello world')")
+        sage: _ = open(t,'w').write("print('hello world')")
         sage: attach(t)
         hello world
         sage: attached_files() == [t]
@@ -518,7 +520,7 @@ def modified_file_iterator():
         sage: list(modified_file_iterator())
         []
         sage: sleep(1)   # filesystem mtime granularity
-        sage: open(t, 'w').write('1')
+        sage: _ = open(t, 'w').write('1')
         sage: list(modified_file_iterator())
         [('/.../tmp_....py', time.struct_time(...))]
     """
@@ -559,12 +561,12 @@ def reload_attached_files_if_modified():
         sage: from sage.repl.interpreter import get_test_shell
         sage: shell = get_test_shell()
         sage: tmp = tmp_filename(ext='.py')
-        sage: open(tmp, 'w').write('a = 2\n')
+        sage: _ = open(tmp, 'w').write('a = 2\n')
         sage: shell.run_cell('attach({0})'.format(repr(tmp)))
         sage: shell.run_cell('a')
         2
         sage: sleep(1)   # filesystem mtime granularity
-        sage: open(tmp, 'w').write('a = 3\n')
+        sage: _ = open(tmp, 'w').write('a = 3\n')
 
     Note that the doctests are never really at the command prompt
     where the automatic reload is triggered. So we have to do it
@@ -581,11 +583,20 @@ def reload_attached_files_if_modified():
         []
         sage: shell.quit()
     """
+    ip = get_ipython()
     for filename, mtime in modified_file_iterator():
         basename = os.path.basename(filename)
         timestr = time.strftime('%T', mtime)
-        from sage.libs.readline import interleaved_output
-        with interleaved_output():
-            print('### reloading attached file {0} modified at {1} ###'.format(basename, timestr))
+        notice = '### reloading attached file {0} modified at {1} ###'.format(basename, timestr)
+        if ip and ip.pt_cli:
+            with ip.pt_cli.patch_stdout_context(raw=True):
+                print(notice)
+                code = load_wrap(filename, attach=True)
+                ip.run_cell(code)
+        elif ip:
+            print(notice)
             code = load_wrap(filename, attach=True)
-            get_ipython().run_cell(code)
+            ip.run_cell(code)
+        else:
+            print(notice)
+            load(filename, globals(), attach=True)

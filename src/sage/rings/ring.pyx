@@ -65,13 +65,14 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.element cimport coercion_model
 from sage.structure.parent cimport Parent
 from sage.structure.category_object import check_default_category
+from sage.structure.sequence import Sequence
 from sage.misc.prandom import randint
 from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
@@ -104,10 +105,12 @@ cdef class Ring(ParentWithGens):
         running ._test_category() . . . pass
         running ._test_characteristic() . . . pass
         running ._test_distributivity() . . . pass
+        running ._test_divides() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_nonzero_equal() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
@@ -118,7 +121,9 @@ cdef class Ring(ParentWithGens):
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
         running ._test_euclidean_degree() . . . pass
+        running ._test_fraction_field() . . . pass
         running ._test_gcd_vs_xgcd() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_one() . . . pass
         running ._test_pickling() . . . pass
@@ -131,29 +136,29 @@ cdef class Ring(ParentWithGens):
         sage: TestSuite(ZZ['x','y']).run()
         sage: TestSuite(ZZ['x','y']['t']).run()
 
-    Test agaings another bug fixed in :trac:`9944`::
+    Test against another bug fixed in :trac:`9944`::
 
         sage: QQ['x'].category()
-        Join of Category of euclidean domains
-             and Category of commutative algebras over (quotient fields and metric spaces)
+        Join of Category of euclidean domains and Category of commutative algebras over
+        (number fields and quotient fields and metric spaces) and Category of infinite sets
         sage: QQ['x','y'].category()
-        Join of Category of unique factorization domains
-             and Category of commutative algebras over (quotient fields and metric spaces)
+        Join of Category of unique factorization domains and Category of commutative algebras over
+        (number fields and quotient fields and metric spaces) and Category of infinite sets
         sage: PolynomialRing(MatrixSpace(QQ,2),'x').category()
-        Category of algebras over (algebras over
-         (quotient fields and metric spaces) and infinite sets)
+        Category of infinite algebras over (finite dimensional algebras with basis over
+        (number fields and quotient fields and metric spaces) and infinite sets)
         sage: PolynomialRing(SteenrodAlgebra(2),'x').category()
-        Category of algebras over graded hopf algebras with basis over Finite Field of size 2
+        Category of infinite algebras over graded hopf algebras with basis over Finite Field of size 2
 
-     TESTS::
+    TESTS::
 
-         sage: Zp(7)._repr_option('element_is_atomic')
-         False
-         sage: QQ._repr_option('element_is_atomic')
-         True
-         sage: CDF._repr_option('element_is_atomic')
-         False
-     """
+        sage: Zp(7)._repr_option('element_is_atomic')
+        False
+        sage: QQ._repr_option('element_is_atomic')
+        True
+        sage: CDF._repr_option('element_is_atomic')
+        False
+    """
     def __init__(self, base, names=None, normalize=True, category = None):
         """
         Initialize ``self``.
@@ -575,7 +580,7 @@ cdef class Ring(ParentWithGens):
             sage: R.<a> = K[]
             sage: L.<a> = K.extension(a^2-3)
             sage: L.ideal(a)
-            Principal ideal (1 + O(a^40)) of Eisenstein Extension of 3-adic Field with capped relative precision 20 in a defined by (1 + O(3^20))*a^2 + (O(3^21))*a + (2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13 + 2*3^14 + 2*3^15 + 2*3^16 + 2*3^17 + 2*3^18 + 2*3^19 + 2*3^20 + O(3^21))
+            Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
 
         """
         if self._zero_ideal is None:
@@ -641,7 +646,7 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: QQ / ZZ
+            sage: QQ['x'] / ZZ
             Traceback (most recent call last):
             ...
             TypeError: Use self.quo(I) or self.quotient(I) to construct the quotient ring.
@@ -835,7 +840,16 @@ cdef class Ring(ParentWithGens):
             sage: ZZ.is_subring(GF(19))
             False
 
-        TESTS:
+        TESTS::
+
+            sage: QQ.is_subring(QQ['x'])
+            True
+            sage: QQ.is_subring(GF(7))
+            False
+            sage: QQ.is_subring(CyclotomicField(7))
+            True
+            sage: QQ.is_subring(ZZ)
+            False
 
         Every ring is a subring of itself, :trac:`17287`::
 
@@ -856,7 +870,7 @@ cdef class Ring(ParentWithGens):
             return True
         try:
             return self.Hom(other).natural_map().is_injective()
-        except TypeError:
+        except (TypeError, AttributeError):
             return False
 
     def is_prime_field(self):
@@ -900,7 +914,7 @@ cdef class Ring(ParentWithGens):
         """
         if self.is_zero():
             return True
-        raise NotImplementedError
+        return super(Ring, self).is_finite()
 
     def cardinality(self):
         """
@@ -918,7 +932,7 @@ cdef class Ring(ParentWithGens):
             +Infinity
         """
         if not self.is_finite():
-            from infinity import Infinity
+            from .infinity import Infinity
             return Infinity
         raise NotImplementedError
 
@@ -972,9 +986,9 @@ cdef class Ring(ParentWithGens):
 
         Make sure :trac:`10481` is fixed::
 
-            sage: var(x)
+            sage: var('x')
             x
-            sage: R.<a>=ZZ[x].quo(x^2)
+            sage: R.<a> = ZZ['x'].quo(x^2)
             sage: R.fraction_field()
             Traceback (most recent call last):
             ...
@@ -983,8 +997,17 @@ cdef class Ring(ParentWithGens):
             Traceback (most recent call last):
             ...
             NotImplementedError
+
+        Forward the proof flag to ``is_field``, see :trac:`22910`::
+
+            sage: R1.<x> = GF(5)[]
+            sage: F1 = R1.quotient_ring(x^2+x+1)
+            sage: R2.<x> = F1[]
+            sage: F2 = R2.quotient_ring(x^2+x+1)
+            sage: F2.is_integral_domain(False)
+            False
         """
-        if self.is_field():
+        if self.is_field(proof):
             return True
 
         if self.is_zero():
@@ -1159,11 +1182,11 @@ cdef class Ring(ParentWithGens):
         ring class by a random integer::
 
             sage: R = sage.rings.ring.Ring(ZZ); R
-            <type 'sage.rings.ring.Ring'>
+            <sage.rings.ring.Ring object at ...>
             sage: R.random_element()
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            NotImplementedError: cannot construct elements of <sage.rings.ring.Ring object at ...>
         """
         return self(randint(-bound,bound))
 
@@ -1455,7 +1478,7 @@ cdef class CommutativeRing(Ring):
             self.__ideal_monoid = M
             return M
 
-    def extension(self, poly, name=None, names=None, embedding=None, structure=None):
+    def extension(self, poly, name=None, names=None, **kwds):
         """
         Algebraically extends self by taking the quotient ``self[x] / (f(x))``.
 
@@ -1499,10 +1522,11 @@ cdef class CommutativeRing(Ring):
             name = name[0]
         if name is None:
             name = str(poly.parent().gen(0))
-        if embedding is not None:
-            raise NotImplementedError("ring extension with prescripted embedding is not implemented")
-        if structure is not None:
-            raise NotImplementedError("ring extension with additional structure is not implemented")
+        for key, val in kwds.items():
+            if key not in ['structure', 'implementation', 'prec', 'embedding']:
+                raise TypeError("extension() got an unexpected keyword argument '%s'"%key)
+            if not (val is None or isinstance(val, list) and all(c is None for c in val)):
+                raise NotImplementedError("ring extension with prescripted %s is not implemented"%key)
         R = self[name]
         I = R.ideal(R(poly.list()))
         return R.quotient(I, name)
@@ -1511,7 +1535,7 @@ cdef class CommutativeRing(Ring):
         """
         INPUT:
 
-        -  ``n`` -- a nonnegative integer (default: 1)
+        - ``n`` -- a nonnegative integer (default: 1)
 
         OUTPUT:
 
@@ -1533,8 +1557,169 @@ cdef class CommutativeRing(Ring):
             sage: f(1+u)
             1 + u^25
         """
-        from morphism import FrobeniusEndomorphism_generic
+        from .morphism import FrobeniusEndomorphism_generic
         return FrobeniusEndomorphism_generic(self, n)
+
+    def derivation_module(self, codomain=None, twist=None):
+        r"""
+        Returns the module of derivations over this ring.
+
+        INPUT:
+
+        - ``codomain`` -- an algebra over this ring or a ring homomorphism
+          whose domain is this ring or ``None`` (default: ``None``); if it
+          is a morphism, the codomain of derivations will be the codomain
+          of the morphism viewed as an algebra over ``self`` through the
+          given morphism; if ``None``, the codomain will be this ring
+
+        - ``twist`` -- a morphism from this ring to ``codomain``
+          or ``None`` (default: ``None``); if ``None``, the coercion
+          map from this ring to ``codomain`` will be used
+
+        .. NOTE::
+
+            A twisted derivation with respect to `\theta` (or a
+            `\theta`-derivation for short) is an additive map `d`
+            satisfying the following axiom for all `x, y` in the domain:
+
+            .. MATH::
+
+                d(xy) = \theta(x) d(y) + d(x) y.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: M = R.derivation_module(); M
+            Module of derivations over Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.gens()
+            (d/dx, d/dy, d/dz)
+
+        We can specify a different codomain::
+
+            sage: K = R.fraction_field()
+            sage: M = R.derivation_module(K); M
+            Module of derivations from Multivariate Polynomial Ring in x, y, z over
+             Rational Field to Fraction Field of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.gen() / x
+            1/x*d/dx
+
+        Here is an example with a non-canonical defining morphism::
+
+            sage: ev = R.hom([QQ(0), QQ(1), QQ(2)])
+            sage: ev
+            Ring morphism:
+              From: Multivariate Polynomial Ring in x, y, z over Rational Field
+              To:   Rational Field
+              Defn: x |--> 0
+                    y |--> 1
+                    z |--> 2
+            sage: M = R.derivation_module(ev)
+            sage: M
+            Module of derivations from Multivariate Polynomial Ring in x, y, z over Rational Field to Rational Field
+
+        Elements in `M` acts as derivations at `(0,1,2)`::
+
+            sage: Dx = M.gen(0); Dx
+            d/dx
+            sage: Dy = M.gen(1); Dy
+            d/dy
+            sage: Dz = M.gen(2); Dz
+            d/dz
+            sage: f = x^2 + y^2 + z^2
+            sage: Dx(f)  # = 2*x evaluated at (0,1,2)
+            0
+            sage: Dy(f)  # = 2*y evaluated at (0,1,2)
+            2
+            sage: Dz(f)  # = 2*z evaluated at (0,1,2)
+            4
+
+        An example with a twisting homomorphism::
+
+            sage: theta = R.hom([x^2, y^2, z^2])
+            sage: M = R.derivation_module(twist=theta); M
+            Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
+             over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
+
+        .. SEEALSO::
+
+            :meth:`derivation`
+
+        """
+        from sage.rings.derivation import RingDerivationModule
+        if codomain is None:
+            codomain = self
+        return RingDerivationModule(self, codomain, twist)
+
+    def derivation(self, arg=None, twist=None):
+        r"""
+        Return the twisted or untwisted derivation over this ring
+        specified by ``arg``.
+
+        .. NOTE::
+
+            A twisted derivation with respect to `\theta` (or a
+            `\theta`-derivation for short) is an additive map `d`
+            satisfying the following axiom for all `x, y` in the domain:
+
+            .. MATH::
+
+                d(xy) = \theta(x) d(y) + d(x) y.
+
+        INPUT:
+
+        - ``arg`` -- (optional) a generator or a list of coefficients
+          that defines the derivation
+
+        - ``twist`` -- (optional) the twisting homomorphism
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: R.derivation()
+            d/dx
+
+        In that case, ``arg`` could be a generator::
+
+            sage: R.derivation(y)
+            d/dy
+
+        or a list of coefficients::
+
+            sage: R.derivation([1,2,3])
+            d/dx + 2*d/dy + 3*d/dz
+
+        It is not possible to define derivations with respect to a
+        polynomial which is not a variable::
+
+            sage: R.derivation(x^2)
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to create the derivation
+
+        Here is an example with twisted derivations::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: theta = R.hom([x^2, y^2, z^2])
+            sage: f = R.derivation(twist=theta); f
+            0
+            sage: f.parent()
+            Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
+             over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
+
+        Specifying a scalar, the returned twisted derivation is the
+        corresponding multiple of `\theta - id`::
+
+            sage: R.derivation(1, twist=theta)
+            [x |--> x^2, y |--> y^2, z |--> z^2] - id
+            sage: R.derivation(x, twist=theta)
+            x*([x |--> x^2, y |--> y^2, z |--> z^2] - id)
+
+        """
+        if isinstance(arg, (list, tuple)):
+            codomain = Sequence([self(0)] + list(arg)).universe()
+        else:
+            codomain = self
+        return self.derivation_module(codomain, twist=twist)(arg)
 
 
 cdef class IntegralDomain(CommutativeRing):
@@ -1680,7 +1865,7 @@ cdef class IntegralDomain(CommutativeRing):
             sage: R.is_field()
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            NotImplementedError: cannot construct elements of <sage.rings.ring.IntegralDomain object at ...>
         """
         if self.is_finite():
             return True
@@ -2228,114 +2413,6 @@ cdef class Field(PrincipalIdealDomain):
         """
         raise NotImplementedError("Algebraic closures of general fields not implemented.")
 
-    def _gcd_univariate_polynomial(self, a, b):
-        """
-        Return the gcd of ``a`` and ``b`` as a monic polynomial.
-
-        .. WARNING:
-
-            If the base ring is inexact, the results may not be
-            entirely stable.
-
-        TESTS::
-
-            sage: for A in (RR, CC, QQbar):
-            ....:     g = A._gcd_univariate_polynomial
-            ....:     R.<x> = A[]
-            ....:     z = R.zero()
-            ....:     assert(g(2*x, 2*x^2) == x and
-            ....:            g(z, 2*x) == x and
-            ....:            g(2*x, z) == x and
-            ....:            g(z, z) == z)
-
-            sage: R.<x> = RR[]
-            sage: (x^3).gcd(x^5+1)
-            1.00000000000000
-            sage: (x^3).gcd(x^5+x^2)
-            x^2
-            sage: f = (x+3)^2 * (x-1)
-            sage: g = (x+3)^5
-            sage: f.gcd(g)
-            x^2 + 6.00000000000000*x + 9.00000000000000
-
-        The following example illustrates the fact that for inexact
-        base rings, the returned gcd is often 1 due to rounding::
-
-            sage: f = (x+RR.pi())^2 * (x-1)
-            sage: g = (x+RR.pi())^5
-            sage: f.gcd(g)
-            1.00000000000000
-
-        """
-        while b:
-            q, r = a.quo_rem(b)
-            a, b = b, r
-        if a:
-            a = a.monic()
-        return a
-
-    def _xgcd_univariate_polynomial(self, a, b):
-        """
-        Return an extended gcd of ``a`` and ``b``.
-
-        INPUT:
-
-        - ``a``, ``b`` -- two univariate polynomials
-
-        OUTPUT:
-
-        A tuple ``(d, u, v)`` of polynomials such that ``d`` is the
-        greatest common divisor (monic or zero) of ``a`` and ``b``,
-        and ``u``, ``v`` satisfy ``d = u*a + v*b``.
-
-        .. WARNING:
-
-            If the base ring is inexact, the results may not be
-            entirely stable.
-
-        ALGORITHM:
-
-        This uses the extended Euclidean algorithm; see for example
-        [Cohen1996]_, Algorithm 3.2.2.
-
-        REFERENCES:
-
-        .. [Cohen1996] \H. Cohen, A Course in Computational Algebraic
-           Number Theory.  Graduate Texts in Mathematics 138.
-           Springer-Verlag, 1996.
-
-        TESTS::
-
-            sage: for A in (RR, CC, QQbar):
-            ....:     g = A._xgcd_univariate_polynomial
-            ....:     R.<x> = A[]
-            ....:     z, h = R(0), R(1/2)
-            ....:     assert(g(2*x, 2*x^2) == (x, h, z) and
-            ....:            g(z, 2*x) == (x, z, h) and
-            ....:            g(2*x, z) == (x, h, z) and
-            ....:            g(z, z) == (z, z, z))
-
-        """
-        R = a.parent()
-        zero = R.zero()
-        if not b:
-            if not a:
-                return (zero, zero, zero)
-            c = ~a.leading_coefficient()
-            return (c*a, R(c), zero)
-        elif not a:
-            c = ~b.leading_coefficient()
-            return (c*b, zero, R(c))
-        (u, d, v1, v3) = (R.one(), a, zero, b)
-        while v3:
-            q, r = d.quo_rem(v3)
-            (u, d, v1, v3) = (v1, v3, u - v1*q, r)
-        v = (d - a*u) // b
-        if d:
-            c = ~d.leading_coefficient()
-            d, u, v = c*d, c*u, c*v
-        return d, u, v
-
 
 cdef class Algebra(Ring):
     """
@@ -2348,7 +2425,7 @@ cdef class Algebra(Ring):
         EXAMPLES::
 
             sage: A = Algebra(ZZ); A
-            <type 'sage.rings.ring.Algebra'>
+            <sage.rings.ring.Algebra object at ...>
         """
         # This is a low-level class. For performance, we trust that the category
         # is fine, if it is provided. If it isn't, we use the category of Algebras(base_ring).
@@ -2368,7 +2445,7 @@ cdef class Algebra(Ring):
         EXAMPLES::
 
             sage: A = Algebra(ZZ); A
-            <type 'sage.rings.ring.Algebra'>
+            <sage.rings.ring.Algebra object at ...>
             sage: A.characteristic()
             0
             sage: A = Algebra(GF(7^3, 'a'))
@@ -2380,7 +2457,7 @@ cdef class Algebra(Ring):
     def has_standard_involution(self):
         r"""
         Return ``True`` if the algebra has a standard involution and ``False`` otherwise.
-        This algorithm follows Algorithm 2.10 from John Voight's `Identifying the Matrix Ring`.
+        This algorithm follows Algorithm 2.10 from John Voight's *Identifying the Matrix Ring*.
         Currently the only type of algebra this will work for is a quaternion algebra.
         Though this function seems redundant, once algebras have more functionality, in particular
         have a method to construct a basis, this algorithm will have more general purpose.
@@ -2407,7 +2484,7 @@ cdef class Algebra(Ring):
         except AttributeError:
             raise AttributeError("Basis is not yet implemented for this algebra.")
         try:
-            # TODO: The following code is specific to the quaterion algebra
+            # TODO: The following code is specific to the quaternion algebra
             #   and should belong there
             #step 1
             for i in range(1,4):
@@ -2445,12 +2522,12 @@ cdef class CommutativeAlgebra(CommutativeRing):
         Standard init function. This just checks that the base is a commutative
         ring and then passes the buck.
 
-        EXAMPLE::
+        EXAMPLES::
 
-            sage: sage.rings.ring.CommutativeAlgebra(QQ) # indirect doctest
-            <type 'sage.rings.ring.CommutativeAlgebra'>
+            sage: sage.rings.ring.CommutativeAlgebra(QQ)
+            <sage.rings.ring.CommutativeAlgebra object at ...>
 
-            sage: sage.rings.ring.CommutativeAlgebra(QuaternionAlgebra(QQ,-1,-1)) # indirect doctest
+            sage: sage.rings.ring.CommutativeAlgebra(QuaternionAlgebra(QQ,-1,-1))
             Traceback (most recent call last):
             ...
             TypeError: base ring must be a commutative ring

@@ -62,7 +62,7 @@ question mark:
             0.69314718055994530941723212145817656807   # 64-bit
     sage: sudoku?
     File:        sage/local/lib/python2.5/site-packages/sage/games/sudoku.py
-    Type:        <type 'function'>
+    Type:        <... 'function'>
     Definition:  sudoku(A)
     Docstring:
 
@@ -255,11 +255,13 @@ and make a table of squares and cubes.
 
 The most basic data structure in Sage is the list, which is -- as
 the name suggests -- just a list of arbitrary objects. For example,
-the ``range`` command that we used creates a list:
+the ``range`` command that we used creates a list (in python 2):
 
 ::
 
-    sage: range(2,10)
+    sage: range(2,10)   # py2
+    [2, 3, 4, 5, 6, 7, 8, 9]
+    sage: list(range(2,10))   # py3
     [2, 3, 4, 5, 6, 7, 8, 9]
 
 Here is a more complicated list:

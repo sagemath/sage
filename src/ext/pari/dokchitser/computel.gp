@@ -1,7 +1,12 @@
-/************* ComputeL v1.3.3, 2001-2013, (c) Tim Dokchitser ************/
+/************* ComputeL v1.3.8, 2001-2018, (c) Tim Dokchitser ************/
 /**************** computing special values of L-functions ****************/
 /* arXiv.org/abs/math.NT/0207280, Exper. Math. 13 (2004), no. 2, 137-150 */
 /****** Questions/comments welcome! -> tim.dokchitser@bristol.ac.uk ******/
+
+\\ ACKNOWLEDGEMENTS: I'd like to thank Mark Watkins, Steve Donnelly,
+\\ William Stein, Anton Mellit, Almasa Odzak, Karim Belabas, Myoungil Kim,
+\\ Chris King, F. Patrick Rabarison, Neil Dummigan, Maciej Radziejewski,
+\\ François Brunault and Alex Best, for examples, bug fixes and suggestions
 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \\ Distributed under the terms of the GNU General Public License (GPL)
@@ -238,7 +243,7 @@ fullgamma(ss) =
 fullgammaseries(ss,extraterms)=
   local(digts,GSD);
 
-  digts=default(realprecision);
+  digts=lfundigits;
   if (lastFGSs!=ss || lastFGSterms!=extraterms,
     GSD=sum(j=1,numpoles,(abs((ss+poles[j])/2-round(real((ss+poles[j])/2)))<10^(2-digts)) * PoleOrders[j] )+extraterms;
     lastFGSs=ss;
@@ -353,7 +358,7 @@ cflength(cutoff=1.2)=
     t  = if(t1,(t1+t2)\2,t2);
     tt = t/cutoff/vA;
     res = coefgrow(t) * asympconstf*exp(-d*tt^(2/d))*tt^expdifff;
-    if (t1,if(res>err,t1=t,t2=t),if(res<err,t1=t2/2,t2*=2));
+    if (t1,if(abs(res)>err,t1=t,t2=t),if(abs(res)<err,t1=t2/2,t2*=2));
   );
   ceil(t2)
 }

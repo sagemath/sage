@@ -49,7 +49,7 @@ where `(a_{ij})` is a Cartan matrix.  Then
     f_iM &= A_{i,k_f}^{-1} M.
     \end{aligned}
 
-It is shown in [KKS07]_ that the connected component of `\widehat{\mathcal{M}}`
+It is shown in [KKS2007]_ that the connected component of `\widehat{\mathcal{M}}`
 containing the element `\boldsymbol{1}`, which we denote by
 `\mathcal{M}(\infty)`, is crystal isomorphic to the crystal `B(\infty)`.
 
@@ -62,7 +62,7 @@ that
     f_iM = \begin{cases} 0 & \text{if } \varphi_i(M) = 0, \\
     A_{i,k_f}^{-1}M & \text{if } \varphi_i(M) > 0. \end{cases}
 
-Then Kashiwara [Kash03]_ showed that the connected component in
+Then Kashiwara [Ka2003]_ showed that the connected component in
 `\widetilde{\mathcal{M}}` containing a monomial `M` such that `e_iM = 0`, for
 all `i \in I`, is crystal isomorphic to the irreducible highest weight
 crystal `B(\mathrm{wt}(M))`.
@@ -73,17 +73,6 @@ WARNING:
     `C = (c_{ij})_{i\neq j}` satisfying the condition `c_{ij}+c_{ji}=1`.
     We have chosen such integers uniformly such that `c_{ij} = 1` if
     `i < j` and `c_{ij} = 0` if `i>j`.
-
-REFERENCES:
-
-.. [KKS07] \S.-J. Kang, J.-A. Kim, and D.-U. Shin.
-   Modified Nakajima Monomials and the Crystal `B(\infty)`.
-   J. Algebra **308**, pp. 524--535, 2007.
-
-.. [Kash03] \M. Kashiwara.
-   Realizations of Crystals.
-   Combinatorial and geometric representation theory (Seoul, 2001),
-   Contemp. Math. **325**, Amer. Math. Soc., pp. 133--139, 2003.
 """
 
 #******************************************************************************
@@ -106,11 +95,12 @@ from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
-from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
-from sage.matrix.matrix import is_Matrix
 from sage.matrix.matrix_space import MatrixSpace
+
+import six
+
 
 class NakajimaMonomial(Element):
     r"""
@@ -187,7 +177,7 @@ class NakajimaMonomial(Element):
         if not self._Y:
             return "1"
 
-        L = sorted(self._Y.iteritems(), key=lambda x: (x[0][0], x[0][1]))
+        L = sorted(six.iteritems(self._Y), key=lambda x: (x[0][0], x[0][1]))
         exp = lambda e: "^{}".format(e) if e != 1 else ""
         return ' '.join("Y({},{})".format(mon[0][0], mon[0][1]) + exp(mon[1])
                         for mon in L)
@@ -205,13 +195,13 @@ class NakajimaMonomial(Element):
         """
         try:
             Y = {(i,0): c for i,c in self.parent().hw}
-        except:
+        except Exception:
             Y = {}
 
         if not Y and not self._A:
             return "1"
 
-        L = sorted(Y.iteritems(), key=lambda x: (x[0][0], x[0][1]))
+        L = sorted(six.iteritems(Y), key=lambda x: (x[0][0], x[0][1]))
         exp = lambda e: "^{}".format(e) if e != 1 else ""
         ret = ' '.join("Y({},{})".format(mon[0][0], mon[0][1]) + exp(mon[1])
                         for mon in L)
@@ -219,7 +209,7 @@ class NakajimaMonomial(Element):
             return ret
         if Y:
             ret += ' '
-        L = sorted(self._A.iteritems(), key=lambda x: (x[0][0], x[0][1]))
+        L = sorted(six.iteritems(self._A), key=lambda x: (x[0][0], x[0][1]))
         return ret + ' '.join("A({},{})".format(mon[0][0], mon[0][1]) + exp(mon[1])
                               for mon in L)
 
@@ -233,7 +223,7 @@ class NakajimaMonomial(Element):
             4715601665014767730  # 64-bit
             -512614286           # 32-bit
         """
-        return hash(frozenset(tuple(self._Y.iteritems())))
+        return hash(frozenset(tuple(six.iteritems(self._Y))))
 
     def __eq__(self, other):
         r"""
@@ -310,7 +300,7 @@ class NakajimaMonomial(Element):
         if not self._Y:
             return "\\boldsymbol{1}"
 
-        L = sorted(self._Y.iteritems(), key=lambda x:(x[0][0],x[0][1]))
+        L = sorted(six.iteritems(self._Y), key=lambda x:(x[0][0],x[0][1]))
         return_str = ''
         for x in L:
             if x[1] != 1:
@@ -332,20 +322,20 @@ class NakajimaMonomial(Element):
         """
         try:
             Y = {(i,0): c for i,c in self.parent().hw}
-        except:
+        except Exception:
             Y = {}
 
         if not Y and not self._A:
             return "\\boldsymbol{1}"
 
-        L = sorted(Y.iteritems(), key=lambda x:(x[0][0],x[0][1]))
+        L = sorted(six.iteritems(Y), key=lambda x:(x[0][0],x[0][1]))
         return_str = ''
         for x in L:
             if x[1] != 1:
                 return_str += "Y_{%s,%s}"%(x[0][0],x[0][1]) + "^{%s} "%x[1]
             else:
                 return_str += "Y_{%s,%s} "%(x[0][0],x[0][1])
-        L = sorted(self._A.iteritems(), key=lambda x:(x[0][0],x[0][1]))
+        L = sorted(six.iteritems(self._A), key=lambda x:(x[0][0],x[0][1]))
         for x in L:
             if x[1] != 1:
                 return_str += "A_{%s,%s}"%(x[0][0],x[0][1]) + "^{%s} "%x[1]
@@ -372,7 +362,7 @@ class NakajimaMonomial(Element):
         """
         P = self.parent().weight_lattice_realization()
         La = P.fundamental_weights()
-        return P(sum(v*La[k[0]] for k,v in self._Y.iteritems()))
+        return P(sum(v*La[k[0]] for k,v in six.iteritems(self._Y)))
 
     def weight_in_root_lattice(self):
         r"""
@@ -398,7 +388,7 @@ class NakajimaMonomial(Element):
         """
         Q = RootSystem(self.parent().cartan_type()).root_lattice()
         al = Q.simple_roots()
-        return Q.sum(e*al[k[0]] for k,e in self._A.iteritems())
+        return Q.sum(e*al[k[0]] for k,e in six.iteritems(self._A))
 
     def weight(self):
         r"""
@@ -476,7 +466,7 @@ class NakajimaMonomial(Element):
                 continue
             else:
                 d[(i,a)] = 0
-        S = sorted((x for x in d.iteritems() if x[0][0] == i), key=lambda x: x[0][1])
+        S = sorted((x for x in six.iteritems(d) if x[0][0] == i), key=lambda x: x[0][1])
         return max(sum(S[k][1] for k in range(s)) for s in range(1,len(S)+1))
 
     def _ke(self, i):
@@ -508,7 +498,7 @@ class NakajimaMonomial(Element):
                 d[(i,a)] = 0
         total = ZZ.zero()
         L = []
-        S = sorted((x for x in d.iteritems() if x[0][0] == i), key=lambda x: x[0][1])
+        S = sorted((x for x in six.iteritems(d) if x[0][0] == i), key=lambda x: x[0][1])
         for var,exp in S:
             total += exp
             if total == phi:
@@ -541,7 +531,7 @@ class NakajimaMonomial(Element):
                 continue
             else:
                 d[(i,a)] = 0
-        S = sorted((x for x in d.iteritems() if x[0][0] == i), key=lambda x: x[0][1])
+        S = sorted((x for x in six.iteritems(d) if x[0][0] == i), key=lambda x: x[0][1])
         sum = 0
         phi = self.phi(i)
         for var,exp in S:
@@ -611,7 +601,7 @@ class NakajimaMonomial(Element):
             if cm[j_index,i-shift] != 0:
                 Aik[(j, ke+c)] = cm[j_index,i-shift]
         # Multiply by Aik
-        for key,value in Aik.iteritems():
+        for key,value in six.iteritems(Aik):
             if key in newdict:
                 if newdict[key] == -value: # The result would be a 0 exponent
                     del newdict[key]
@@ -660,7 +650,7 @@ class NakajimaMonomial(Element):
             if cm[j_index,i-shift] != 0:
                 Aik[(j, kf+c)] = -cm[j_index,i-shift]
         # Multiply by Aik
-        for key,value in Aik.iteritems():
+        for key,value in six.iteritems(Aik):
             if key in newdict:
                 if newdict[key] == -value: # The result would be a 0 exponent
                     del newdict[key]
@@ -727,7 +717,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
         f_iM &= A_{i,k_f}^{-1} M.
         \end{aligned}
 
-    It is shown in [KKS07]_ that the connected component of
+    It is shown in [KKS2007]_ that the connected component of
     `\widehat{\mathcal{M}}` containing the element `\boldsymbol{1}`,
     which we denote by `\mathcal{M}(\infty)`, is crystal isomorphic
     to the crystal `B(\infty)`.
@@ -829,7 +819,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
         return c
 
     @staticmethod
-    def __classcall_private__(cls, ct, c=None, use_Y=None):
+    def __classcall_private__(cls, ct, c=None):
         r"""
         Normalize input to ensure a unique representation.
 
@@ -845,20 +835,11 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
             sage: M is M1 is M2
             True
         """
-        if use_Y is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(18895, 'use_Y is deprecated; use the set_variables() method instead.')
-        else:
-            use_Y = True
-
         cartan_type = CartanType(ct)
         n = len(cartan_type.index_set())
         c = InfinityCrystalOfNakajimaMonomials._normalize_c(c, n)
         M = super(InfinityCrystalOfNakajimaMonomials, cls).__classcall__(cls, cartan_type, c)
-        if not use_Y:
-            M.set_variables('A')
-        else:
-            M.set_variables('Y')
+        M.set_variables('Y')
         return M
 
     def __init__(self, ct, c, category=None):
@@ -921,7 +902,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
             if ct.is_finite():
                 shift = 1
             Y = {}
-            for k,v in A.iteritems():
+            for k,v in six.iteritems(A):
                 Y[k] = Y.get(k, 0) + v
                 Y[(k[0],k[1]+1)] = Y.get((k[0],k[1]+1), 0) + v
                 for j_index,j in enumerate(I):
@@ -930,7 +911,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
                     c = self._c[j_index,k[0]-shift]
                     if cm[j_index,k[0]-shift] != 0:
                         Y[(j,k[1]+c)] = Y.get((j,k[1]+c), 0) + v*cm[j_index,k[0]-shift]
-            for k in Y.keys():
+            for k in list(Y):
                 if Y[k] == 0:
                     del Y[k]
         return self.element_class(self, Y, A)
@@ -978,30 +959,6 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
             +Infinity
         """
         return Infinity
-
-    def weight_lattice_realization(self):
-        r"""
-        Return the weight lattice realization of ``self``.
-
-        EXAMPLES::
-
-            sage: M = crystals.infinity.NakajimaMonomials(['A',3,2])
-            sage: M.weight_lattice_realization()
-            Extended weight lattice of the Root system of type ['B', 2, 1]^*
-            sage: M = crystals.infinity.NakajimaMonomials(['A',2])
-            sage: M.weight_lattice_realization()
-            Ambient space of the Root system of type ['A', 2]
-            sage: A = CartanMatrix([[2,-3],[-3,2]])
-            sage: M = crystals.infinity.NakajimaMonomials(A)
-            sage: M.weight_lattice_realization()
-            Weight lattice of the Root system of type Dynkin diagram of rank 2
-        """
-        F = self.cartan_type().root_system()
-        if self.cartan_type().is_finite() and F.ambient_space() is not None:
-            return F.ambient_space()
-        if self.cartan_type().is_affine():
-            return F.weight_lattice(extended=True)
-        return F.weight_lattice()
 
     def set_variables(self, letter):
         r"""
@@ -1146,7 +1103,7 @@ class CrystalOfNakajimaMonomials(InfinityCrystalOfNakajimaMonomials):
         f_iM = \begin{cases} 0 & \text{if } \varphi_i(M) = 0, \\
         A_{i,k_f}^{-1}M & \text{if } \varphi_i(M) > 0. \end{cases}
 
-    Then Kashiwara [Kash03]_ showed that the connected component in
+    Then Kashiwara [Ka2003]_ showed that the connected component in
     `\widetilde{\mathcal{M}}` containing a monomial `M` such that `e_iM = 0`,
     for all `i \in I`, is crystal isomorphic to the irreducible highest weight
     crystal `B(\mathrm{wt}(M))`.

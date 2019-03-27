@@ -140,7 +140,7 @@ class ChainComplexMorphism(Morphism):
             raise ValueError('degree of differential does not match')
             
         from sage.misc.misc import uniq
-        degrees = uniq(C.differential().keys() + D.differential().keys())
+        degrees = uniq(list(C.differential()) + list(D.differential()))
         initial_matrices = dict(matrices)
         matrices = dict()
         for i in degrees:

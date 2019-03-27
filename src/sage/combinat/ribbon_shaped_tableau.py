@@ -18,11 +18,12 @@ Ribbon Shaped Tableaux
 
 from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, StandardSkewTableaux
 from sage.combinat.tableau import Tableaux
-from sage.combinat.permutation import Permutation, descents_composition_first, descents_composition_list, descents_composition_last
+from sage.combinat.permutation import descents_composition_first, descents_composition_list, descents_composition_last
 from sage.rings.integer import Integer
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
+
 
 class RibbonShapedTableau(SkewTableau):
     r"""
@@ -69,7 +70,7 @@ class RibbonShapedTableau(SkewTableau):
         [1, 1, 1, 1]
     """
     @staticmethod
-    def __classcall_private__(cls, r):
+    def __classcall_private__(cls, rows):
         r"""
         Return a ribbon shaped tableau object.
 
@@ -79,9 +80,9 @@ class RibbonShapedTableau(SkewTableau):
             [[None, None, 2, 3], [1, 4, 5]]
         """
         try:
-            r = map(tuple, r)
+            r = [tuple(r) for r in rows]
         except TypeError:
-            raise TypeError("r must be a list of positive integers")
+            raise TypeError("rows must be lists of positive integers")
         if not r:
             return StandardRibbonShapedTableaux()(r)
         if all(all(j is None or (isinstance(j, (int, Integer)) and j>0) for j in i) for i in r):
@@ -150,8 +151,7 @@ class RibbonShapedTableau(SkewTableau):
             sage: RibbonShapedTableau([]).width()
             0
         """
-        #return 1+sum([len(r)-1 for r in self])
-        return len(self[0]) if len(self) > 0 else 0
+        return len(self[0]) if self else 0
 
 
 class RibbonShapedTableaux(SkewTableaux):
@@ -286,11 +286,11 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
              [[1, 2]],
              [[1], [2]],
              [[1, 2, 3]],
-             [[None, 2], [1, 3]],
              [[None, 1], [2, 3]],
+             [[None, 2], [1, 3]],
              [[1], [2], [3]],
              [[1, 2, 3, 4]],
-             [[None, None, 3], [1, 2, 4]]]
+             [[None, None, 1], [2, 3, 4]]]
         """
         from sage.combinat.partition import _Partitions
         for p in _Partitions:
@@ -336,7 +336,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
         if p == []:
             return self.element_class(self, [])
 
-        comp = p.descents(from_zero=False)
+        comp = p.descents()
 
         if comp == []:
             return self.element_class(self, [p[:]])
@@ -364,11 +364,11 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
         sage: StandardRibbonShapedTableaux([2,2]).cardinality()
         5
         sage: StandardRibbonShapedTableaux([2,2]).list()
-        [[[None, 2, 4], [1, 3]],
+        [[[None, 1, 3], [2, 4]],
+         [[None, 1, 2], [3, 4]],
          [[None, 2, 3], [1, 4]],
-         [[None, 1, 4], [2, 3]],
-         [[None, 1, 3], [2, 4]],
-         [[None, 1, 2], [3, 4]]]
+         [[None, 2, 4], [1, 3]],
+         [[None, 1, 4], [2, 3]]]
         sage: StandardRibbonShapedTableaux([3,2,2]).cardinality()
         155
     """
@@ -434,11 +434,12 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
         EXAMPLES::
 
             sage: [t for t in StandardRibbonShapedTableaux([2,2])]
-            [[[None, 2, 4], [1, 3]],
+            [[[None, 1, 3], [2, 4]],
+             [[None, 1, 2], [3, 4]],
              [[None, 2, 3], [1, 4]],
-             [[None, 1, 4], [2, 3]],
-             [[None, 1, 3], [2, 4]],
-             [[None, 1, 2], [3, 4]]]
+             [[None, 2, 4], [1, 3]],
+             [[None, 1, 4], [2, 3]]]
+
         """
         for p in descents_composition_list(self.shape):
             yield self.from_permutation(p)
@@ -453,7 +454,7 @@ class Ribbon_class(RibbonShapedTableau):
 
         EXAMPLES::
 
-            sage: loads('x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\xd1+\xcaLJ\xca\xcf\xe3\n\x02S\xf1\xc99\x89\xc5\xc5\\\x85\x8c\x9a\x8d\x85L\xb5\x85\xcc\x1a\xa1\xac\xf1\x19\x89\xc5\x19\x85,~@VNfqI!kl!\x9bFl!\xbb\x06\xc4\x9c\xa2\xcc\xbc\xf4b\xbd\xcc\xbc\x92\xd4\xf4\xd4"\xae\xdc\xc4\xec\xd4x\x18\xa7\x90#\x94\xd1\xb05\xa8\x903\x03\xc80\x022\xb8Rc\x0b\xb95@<c \x8f\x07\xc40\x012xSSK\x93\xf4\x00l\x811\x17')
+            sage: loads(b'x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\xd1+\xcaLJ\xca\xcf\xe3\n\x02S\xf1\xc99\x89\xc5\xc5\\\x85\x8c\x9a\x8d\x85L\xb5\x85\xcc\x1a\xa1\xac\xf1\x19\x89\xc5\x19\x85,~@VNfqI!kl!\x9bFl!\xbb\x06\xc4\x9c\xa2\xcc\xbc\xf4b\xbd\xcc\xbc\x92\xd4\xf4\xd4"\xae\xdc\xc4\xec\xd4x\x18\xa7\x90#\x94\xd1\xb05\xa8\x903\x03\xc80\x022\xb8Rc\x0b\xb95@<c \x8f\x07\xc40\x012xSSK\x93\xf4\x00l\x811\x17')
             [[None, 1, 2], [3, 4]]
             sage: loads(dumps( RibbonShapedTableau([[3,2,1], [1,1]]) ))  # indirect doctest
             [[None, 3, 2, 1], [1, 1]]
@@ -461,7 +462,7 @@ class Ribbon_class(RibbonShapedTableau):
         self.__class__ = RibbonShapedTableau
         self.__init__(RibbonShapedTableaux(), state['_list'])
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.ribbon', 'Ribbon_class', Ribbon_class)
 register_unpickle_override('sage.combinat.ribbon', 'StandardRibbons_shape', StandardRibbonShapedTableaux)
 

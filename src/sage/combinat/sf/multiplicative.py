@@ -1,4 +1,4 @@
-"""
+r"""
 Multiplicative symmetric functions
 
 A realization `h` of the ring of symmetric functions is multiplicative if for
@@ -24,7 +24,7 @@ from . import classical
 import sage.combinat.partition
 
 class SymmetricFunctionAlgebra_multiplicative(classical.SymmetricFunctionAlgebra_classical):
-    """
+    r"""
     The class of multiplicative bases of the ring of symmetric functions.
 
     A realization `q` of the ring of symmetric functions is multiplicative if

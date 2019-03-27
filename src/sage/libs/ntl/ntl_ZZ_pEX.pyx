@@ -20,10 +20,11 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import division, absolute_import, print_function
 
-from __future__ import division
+from cysignals.signals cimport sig_on, sig_off
+from sage.ext.cplusplus cimport ccrepr
 
-include "cysignals/signals.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
 
@@ -35,8 +36,8 @@ from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
 from sage.libs.ntl.ntl_ZZ_pEContext import ntl_ZZ_pEContext
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
+from sage.arith.power cimport generic_power_pos
 
 ##############################################################################
 #
@@ -115,7 +116,7 @@ cdef class ntl_ZZ_pEX(object):
             self.c = (<ntl_ZZ_pEX>v).c
         elif isinstance(v, ntl_ZZ_pE):
             self.c = (<ntl_ZZ_pE>v).c
-        elif (isinstance(v, list) or isinstance(v, tuple)) and len(v) > 0:
+        elif isinstance(v, (list, tuple)) and v:
             if isinstance(v[0], ntl_ZZ_pEX):
                 self.c = (<ntl_ZZ_pEX>v[0]).c
             elif isinstance(v[0], ntl_ZZ_pE):
@@ -137,7 +138,7 @@ cdef class ntl_ZZ_pEX(object):
 
     def __reduce__(self):
         """
-        TEST:
+        TESTS:
         sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7))
         sage: a = ntl.ZZ_pE([3,2], c)
         sage: b = ntl.ZZ_pE([1,2], c)
@@ -151,7 +152,7 @@ cdef class ntl_ZZ_pEX(object):
         """
         Returns a string representation of self.
 
-        TEST:
+        TESTS:
         sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7))
         sage: a = ntl.ZZ_pE([3,2], c)
         sage: b = ntl.ZZ_pE([1,2], c)
@@ -160,14 +161,13 @@ cdef class ntl_ZZ_pEX(object):
         [[3 2] [1 2] [1 2]]
         """
         self.c.restore_c()
-        return ZZ_pEX_to_PyString(&self.x)
-        #return string_delete(ZZ_pEX_to_str(&self.x))
+        return ccrepr(self.x)
 
     def __copy__(self):
         """
         Return a copy of self.
 
-        TEST:
+        TESTS:
         sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7))
         sage: a = ntl.ZZ_pE([3,2], c)
         sage: b = ntl.ZZ_pE([1,2], c)
@@ -453,19 +453,29 @@ cdef class ntl_ZZ_pEX(object):
         """
         Return the n-th nonnegative power of self.
 
-        EXAMPLES:
-        sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7))
-        sage: a = ntl.ZZ_pE([3,2], c)
-        sage: b = ntl.ZZ_pE([1,2], c)
-        sage: f = ntl.ZZ_pEX([a, b, b])
-        sage: f^5
-        [[5 1] [2 6] [4 5] [5 1] [] [6 2] [2 3] [0 1] [1 4] [3 6] [2 4]]
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7))
+            sage: a = ntl.ZZ_pE([3,2], c)
+            sage: b = ntl.ZZ_pE([1,2], c)
+            sage: f = ntl.ZZ_pEX([a, b, b])
+            sage: f ^ 5
+            [[5 1] [2 6] [4 5] [5 1] [] [6 2] [2 3] [0 1] [1 4] [3 6] [2 4]]
+            sage: f ^ 0
+            [[1]]
+            sage: f ^ 1
+            [[3 2] [1 2] [1 2]]
+            sage: f ^ (-1)
+            Traceback (most recent call last):
+            ...
+            ArithmeticError
         """
         self.c.restore_c()
+        if n == 0:
+            return ntl_ZZ_pEX([[1]], self.c)
         if n < 0:
-            raise NotImplementedError
-        import sage.groups.generic as generic
-        return generic.power(self, n, ntl_ZZ_pEX([[1]],self.c))
+            raise ArithmeticError
+        return generic_power_pos(self, <unsigned long>n)
 
     def __richcmp__(ntl_ZZ_pEX self, other, int op):
         """
@@ -1074,7 +1084,7 @@ cdef class ntl_ZZ_pEX(object):
         modulus must be monic, and of positive degree strictly greater
         than the degree of self.
 
-        EXAMPLE:
+        EXAMPLES:
         sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 11))
         sage: a = ntl.ZZ_pE([3,2], c)
         sage: b = ntl.ZZ_pE([1,2], c)

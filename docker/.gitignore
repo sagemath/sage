@@ -1,0 +1,2 @@
+# Stores the commit that was used to create a sagemath-dev image
+.commit

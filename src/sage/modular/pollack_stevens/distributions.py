@@ -1,8 +1,36 @@
 # -*- coding: utf-8 -*-
-"""
-Spaces of Distributions for overconvergent modular symbols
+r"""
+Spaces of Distributions for Pollack-Stevens modular symbols
 
-""" ## mm TODO
+The Pollack-Stevens version of modular symbols take values on a
+`\Sigma_0(N)`-module which can be either a symmetric power of the standard
+representation of GL2, or a finite approximation module to the module of
+overconvergent distributions.
+
+EXAMPLES::
+
+    sage: from sage.modular.pollack_stevens.distributions import Symk
+    sage: S = Symk(6); S
+    Sym^6 Q^2
+    sage: v = S(list(range(7))); v
+    (0, 1, 2, 3, 4, 5, 6)
+    sage: v.act_right([1,2,3,4])
+    (18432, 27136, 39936, 58752, 86400, 127008, 186624)
+
+    sage: S = Symk(4,Zp(5)); S
+    Sym^4 Z_5^2
+    sage: S([1,2,3,4,5])
+    (1 + O(5^20), 2 + O(5^20), 3 + O(5^20), 4 + O(5^20), 5 + O(5^21))
+
+::
+
+    sage: from sage.modular.pollack_stevens.distributions import OverconvergentDistributions
+    sage: D = OverconvergentDistributions(3, 11, 5); D
+    Space of 11-adic distributions with k=3 action and precision cap 5
+    sage: D([1,2,3,4,5])
+    (1 + O(11^5), 2 + O(11^4), 3 + O(11^3), 4 + O(11^2), 5 + O(11))
+
+"""
 #*****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
@@ -13,6 +41,8 @@ Spaces of Distributions for overconvergent modular symbols
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
+from six.moves import range
+
 from sage.modules.module import Module
 from sage.structure.parent import Parent
 from sage.rings.padics.factory import ZpCA, QpCR
@@ -56,7 +86,7 @@ class OverconvergentDistributions_factory(UniqueFactory):
         sage: v.act_right([2,1,0,1])
         (8 + O(11^5), 4 + O(11^4), 2 + O(11^3), 1 + O(11^2), 6 + O(11))
 
-    Note that we would expect something more `p`-adic, but fine...::
+    ::
 
         sage: D = OverconvergentDistributions(3, 11, 20, dettwist=1)
         sage: v = D([1,0,0,0,0])
@@ -134,7 +164,7 @@ class Symk_factory(UniqueFactory):
       on the left rather than the right.
     - ``dettwist`` (integer or None) -- power of determinant to twist by
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: D = Symk(4)
         sage: loads(dumps(D)) is D
@@ -168,7 +198,7 @@ class Symk_factory(UniqueFactory):
         r"""
         Sanitize input.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.distributions import Symk
             sage: Symk(6) # indirect doctest
@@ -187,7 +217,7 @@ class Symk_factory(UniqueFactory):
 
     def create_object(self, version, key):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.distributions import Symk
             sage: Symk(6) # indirect doctest
@@ -253,7 +283,7 @@ class OverconvergentDistributions_abstract(Module):
         """
         if not isinstance(base, ring.Ring):
             raise TypeError("base must be a ring")
-        from sage.rings.padics.pow_computer import PowComputer
+        #from sage.rings.padics.pow_computer import PowComputer
         # should eventually be the PowComputer on ZpCA once that uses longs.
         Dist, WeightKAction = get_dist_classes(p, prec_cap, base,
                                                self.is_symk(), implementation)
@@ -277,7 +307,7 @@ class OverconvergentDistributions_abstract(Module):
 
         self._populate_coercion_lists_(action_list=[self._act])
 
-    def _element_constructor_(self, val):
+    def _element_constructor_(self, val, **kwargs):
         """
         Construct a distribution from data in ``val``
 
@@ -287,7 +317,10 @@ class OverconvergentDistributions_abstract(Module):
             sage: v = V([1,2,3,4,5,6,7]); v
             (1, 2, 3, 4, 5, 6, 7)
         """
-        return self.Element(val, self)
+        ordp = kwargs.get('ord',0)
+        check = kwargs.get('check',True)
+        normalize= kwargs.get('normalize',True)
+        return self.Element(val, self, ordp, check, normalize)
 
     def _coerce_map_from_(self, other):
         """
@@ -320,7 +353,7 @@ class OverconvergentDistributions_abstract(Module):
         Return the matrix for the action of `g` on ``self``, truncated to
         the first `M` moments.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: V = Symk(3)
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
@@ -329,8 +362,16 @@ class OverconvergentDistributions_abstract(Module):
             [ 0  9 24 48]
             [ 0  0  3 12]
             [ 0  0  0  1]
+
+            sage: from sage.modular.btquotients.pautomorphicform import _btquot_adjuster
+            sage: V = Symk(3, adjuster = _btquot_adjuster())
+            sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
+            sage: V.acting_matrix(Sigma0(1)([3,4,0,1]), 4)
+            [  1   4  16  64]
+            [  0   3  24 144]
+            [  0   0   9 108]
+            [  0   0   0  27]
         """
-        # TODO: Add examples with a non-default action adjuster
         return self._act.acting_matrix(g, M)
 
     def prime(self):
@@ -601,7 +642,7 @@ class Symk_class(OverconvergentDistributions_abstract):
     def __init__(self, k, base, character, adjuster, act_on_left, dettwist,
                  act_padic, implementation):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: D = sage.modular.pollack_stevens.distributions.Symk(4); D
             Sym^4 Q^2
@@ -619,7 +660,7 @@ class Symk_class(OverconvergentDistributions_abstract):
         r"""
         Return a representative element of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.distributions import Symk
             sage: D = Symk(3, base=QQ); D
@@ -627,7 +668,7 @@ class Symk_class(OverconvergentDistributions_abstract):
             sage: D.an_element()                  # indirect doctest
             (0, 1, 2, 3)
         """
-        return self(range(self.weight() + 1))
+        return self(list(range(self.weight() + 1)))
 
     def _repr_(self):
         """
@@ -705,7 +746,7 @@ class Symk_class(OverconvergentDistributions_abstract):
         r"""
         Extend scalars to a new base ring.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Symk(3).base_extend(Qp(3))
             Sym^3 Q_3^2
@@ -717,12 +758,18 @@ class Symk_class(OverconvergentDistributions_abstract):
 
 class OverconvergentDistributions_class(OverconvergentDistributions_abstract):
     r"""
+    The class of overconvergent distributions
+
+    This class represents the module of finite approximation modules, which are finite-dimensional
+    spaces with a `\Sigma_0(N)` action which approximate the module of overconvergent distributions.
+    There is a specialization map to the finite-dimensional Symk module as well.
+
     EXAMPLES::
 
         sage: from sage.modular.pollack_stevens.distributions import OverconvergentDistributions
         sage: D = OverconvergentDistributions(0, 5, 10)
         sage: TestSuite(D).run()
-    """ # mm TODO
+    """
 
     def _repr_(self):
         """

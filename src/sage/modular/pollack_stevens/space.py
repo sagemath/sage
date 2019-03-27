@@ -3,7 +3,7 @@ r"""
 Pollack-Stevens' Modular Symbols Spaces
 
 This module contains a class for spaces of modular symbols that use Glenn
-Stevens' conventions.
+Stevens' conventions, as explained in [PS]_.
 
 There are two main differences between the modular symbols in this directory
 and the ones in :mod:`sage.modular.modsym`:
@@ -12,9 +12,57 @@ and the ones in :mod:`sage.modular.modsym`:
   there.
 
 - There is a duality: these modular symbols are functions from
-  `Div^0(P^1(\QQ))` (cohomological objects), the others are formal linear
-  combinations of `Div^0(P^1(\QQ))` (homological objects).
-"""## mm TODO examples?
+  `\textrm{Div}^0(P^1(\QQ))` (cohomological objects), the others are formal linear
+  combinations of `\textrm{Div}^0(P^1(\QQ))` (homological objects).
+
+EXAMPLES:
+
+First we create the space of modular symbols of weight 0 (`k=2`) and level 11::
+
+    sage: M = PollackStevensModularSymbols(Gamma0(11), 0); M
+    Space of modular symbols for Congruence Subgroup Gamma0(11) with sign 0 and values in Sym^0 Q^2
+
+One can also create a space of overconvergent modular symbols, by specifying a prime and a precision::
+
+    sage: M = PollackStevensModularSymbols(Gamma0(11), p = 5, prec_cap = 10, weight = 0); M
+    Space of overconvergent modular symbols for Congruence Subgroup Gamma0(11) with sign 0 and values in Space of 5-adic distributions with k=0 action and precision cap 10
+
+Currently not much functionality is available on the whole space, and these
+spaces are mainly used as parents for the modular symbols. These can be constructed from the corresponding
+classical modular symbols (or even elliptic curves) as follows::
+
+    sage: A = ModularSymbols(13, sign=1, weight=4).decomposition()[0]
+    sage: A.is_cuspidal()
+    True
+    sage: from sage.modular.pollack_stevens.space import ps_modsym_from_simple_modsym_space
+    sage: f = ps_modsym_from_simple_modsym_space(A); f
+    Modular symbol of level 13 with values in Sym^2 Q^2
+    sage: f.values()
+    [(-13, 0, -1),
+     (247/2, 13/2, -6),
+     (39/2, 117/2, 42),
+     (-39/2, 39, 111/2),
+     (-247/2, -117, -209/2)]
+    sage: f.parent()
+    Space of modular symbols for Congruence Subgroup Gamma0(13) with sign 1 and values in Sym^2 Q^2
+
+::
+
+    sage: E = EllipticCurve('37a1')
+    sage: phi = E.pollack_stevens_modular_symbol(); phi
+    Modular symbol of level 37 with values in Sym^0 Q^2
+    sage: phi.values()
+    [0, 1, 0, 0, 0, -1, 1, 0, 0]
+    sage: phi.parent()
+    Space of modular symbols for Congruence Subgroup Gamma0(37) with sign 0 and values in Sym^0 Q^2
+
+REFERENCES:
+
+.. [PS] Overconvergent modular symbols and p-adic L-functions
+   Robert Pollack, Glenn Stevens
+   Annales Scientifiques de l'Ecole Normale Superieure, serie 4, 44 fascicule 1 (2011), 1--42.
+
+"""
 #*****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
@@ -68,7 +116,7 @@ class PollackStevensModularSymbols_factory(UniqueFactory):
     They are only relevant if ``coefficients`` is ``None``, in which case the
     coefficient module is inferred from the other data.
 
-    .. WARNING::
+    .. note::
 
         We emphasize that in the Pollack-Stevens notation, the
         ``weight`` is the usual weight minus 2, so a classical weight
@@ -79,7 +127,7 @@ class PollackStevensModularSymbols_factory(UniqueFactory):
         sage: M = PollackStevensModularSymbols(Gamma0(7), weight=0, prec_cap = None); M
         Space of modular symbols for Congruence Subgroup Gamma0(7) with sign 0 and values in Sym^0 Q^2
 
-    An example with an explict coefficient module::
+    An example with an explicit coefficient module::
 
         sage: D = OverconvergentDistributions(3, 7, prec_cap=10)
         sage: M = PollackStevensModularSymbols(Gamma0(7), coefficients=D); M
@@ -157,7 +205,7 @@ class PollackStevensModularSymbolspace(Module):
     r"""
     A class for spaces of modular symbols that use Glenn Stevens' conventions.
     This class should not be instantiated directly by the user: this is handled
-    by the factory object :class:`PollackStevensModularSymbols`.
+    by the factory object :class:`PollackStevensModularSymbols_factory`.
 
     INPUT:
 
@@ -193,7 +241,7 @@ class PollackStevensModularSymbolspace(Module):
         """
         Module.__init__(self, coefficients.base_ring())
         if sign not in [0, -1, 1]:
-            # sign must be be 0, -1 or 1
+            # sign must be 0, -1 or 1
             raise ValueError("sign must be 0, -1, or 1")
         self._group = group
         self._coefficients = coefficients
@@ -242,7 +290,7 @@ class PollackStevensModularSymbolspace(Module):
         r"""
         Used for comparison and coercion.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M1 = PollackStevensModularSymbols(Gamma0(11), coefficients=Symk(3))
             sage: M2 = PollackStevensModularSymbols(Gamma0(11), coefficients=Symk(3,Qp(11)))
@@ -290,7 +338,7 @@ class PollackStevensModularSymbolspace(Module):
 
         OUTPUT:
 
-        A :class:`sage.modular.pollack_stevens.fund_domain.PollackStevensModularSymbolsDomain`
+        A :class:`sage.modular.pollack_stevens.fund_domain.PollackStevensModularDomain`
 
         EXAMPLES::
 
@@ -713,7 +761,8 @@ class PollackStevensModularSymbolspace(Module):
             if (not g in manin.reps_with_two_torsion()) and (not g in manin.reps_with_three_torsion()):
                 t += D[g] * manin.gammas[g] - D[g]
             else:
-                if g in MR.reps_with_two_torsion():  # What is MR ??
+                # this was previously MR.reps_with_two_torsion() but there is no variable MR defined...
+                if g in manin.reps_with_two_torsion():
                     t -= D[g]
                 else:
                     t -= D[g]
@@ -721,7 +770,7 @@ class PollackStevensModularSymbolspace(Module):
         ## If k = 0, then t has total measure zero.  However, this is not true when k != 0
         ## (unlike Prop 5.1 of [PS1] this is not a lift of classical symbol).
         ## So instead we simply add (const)*mu_1 to some (non-torsion) v[j] to fix this
-        ## here since (mu_1 |_k ([a,b,c,d]-1))(trival char) = chi(a) k a^{k-1} c ,
+        ## here since (mu_1 |_k ([a,b,c,d]-1))(trivial char) = chi(a) k a^{k-1} c ,
         ## we take the constant to be minus the total measure of t divided by (chi(a) k a^{k-1} c)
 
         if k != 0:
@@ -823,7 +872,7 @@ def ps_modsym_from_elliptic_curve(E, sign = 0, implementation='eclib'):
       the plus (if ``sign`` == 1) or the minus (if ``sign`` == -1) modular
       symbol. The default of 0 returns the sum of the plus and minus symbols.
 
-    - ``implementation`` --  either 'eclib' (default) or 'sage'. This 
+    - ``implementation`` --  either 'eclib' (default) or 'sage'. This
       determines which implementation of the underlying classical
       modular symbols is used.
 
@@ -855,11 +904,12 @@ def ps_modsym_from_elliptic_curve(E, sign = 0, implementation='eclib'):
     V = PollackStevensModularSymbols(Gamma0(N), 0)
     D = V.coefficient_module()
     manin = V.source()
-    # currently this uses eclib and the normalization given by 'L_ratio' in modular_symbol
+    # if sage's modular symbols are used we take the
+    # normalization given by 'L_ratio' in modular_symbol
+    if sign <= 0:
+        minus_sym = E.modular_symbol(sign=-1, implementation=implementation)
     if sign >= 0:
         plus_sym = E.modular_symbol(sign=1, implementation=implementation)
-    if sign <= 0:
-        minus_sym = E.modular_symbol(sign=-1, implementation='sage')
     val = {}
     for g in manin.gens():
         ac, bd = cusps_from_mat(g)
@@ -1001,7 +1051,7 @@ def ps_modsym_from_simple_modsym_space(A, name="alpha"):
         sage: ps_modsym_from_simple_modsym_space(A)
         Traceback (most recent call last):
         ...
-        ValueError: A must positive dimension
+        ValueError: A must have positive dimension
 
     We check that forms of nontrivial character are getting handled correctly::
 
@@ -1014,7 +1064,7 @@ def ps_modsym_from_simple_modsym_space(A, name="alpha"):
         [0, 0, 0, 0, 0]
     """
     if A.dimension() == 0:
-        raise ValueError("A must positive dimension")
+        raise ValueError("A must have positive dimension")
 
     if A.sign() == 0:
         raise ValueError("A must have sign +1 or -1 (otherwise it is"

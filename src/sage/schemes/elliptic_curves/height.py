@@ -43,18 +43,20 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 from __future__ import print_function
+from six.moves import zip
 
 import numpy
-import math, bisect
+import math
+import bisect
 
-from sage.rings.all import (ZZ, QQ, RR, RDF, RIF, CC, CDF, CIF,
-    infinity, RealField, ComplexField)
+from sage.rings.all import (ZZ, QQ, RR, RDF, RIF, CC, CDF, CIF, infinity)
 
 from sage.misc.all import cached_method, cartesian_product_iterator
-from sage.arith.all import lcm, factor, factorial
+from sage.arith.all import lcm, factorial
 from sage.ext.fast_callable import fast_callable
 from sage.functions.log import log, exp
 from sage.symbolic.all import SR
+
 
 class UnionOfIntervals:
     r"""
@@ -134,12 +136,12 @@ class UnionOfIntervals:
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.height import UnionOfIntervals
-            sage: UnionOfIntervals(range(10)).intervals()
+            sage: UnionOfIntervals(list(range(10))).intervals()
             [(0, 1), (2, 3), (4, 5), (6, 7), (8, 9)]
             sage: UnionOfIntervals([-infinity, pi, 17, infinity]).intervals()
             [(-Infinity, pi), (17, +Infinity)]
         """
-        return zip(self._endpoints[::2], self._endpoints[1::2])
+        return list(zip(self._endpoints[::2], self._endpoints[1::2]))
 
     def is_empty(self):
         r"""
@@ -452,8 +454,6 @@ class UnionOfIntervals:
             False
             sage: -infinity in A
             False
-            sage: 'a' in A
-            False
         """
         return x in self._endpoints or bisect.bisect_left(self._endpoints, x) % 2 == 1
 
@@ -481,6 +481,7 @@ class UnionOfIntervals:
             ([1, 3] U [5, 7])
         """
         return "(%s)" % " U ".join(str(list(I)) for I in self.intervals())
+
 
 def nonneg_region(f):
     r"""
@@ -533,7 +534,7 @@ def inf_max_abs(f, g, D):
 
     INPUT:
 
-    - ``f``, ``g`` (polynomials) -- real univariate polynomaials
+    - ``f``, ``g`` (polynomials) -- real univariate polynomials
 
     - ``D`` (UnionOfIntervals) -- a subset of `\RR`
 
@@ -590,7 +591,7 @@ def min_on_disk(f, tol, max_iter=10000):
     contained in the disk `|z|\le1`, at which `f` takes its minumum
     value.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.height import min_on_disk
         sage: f = lambda x: (x^2+100).abs()
@@ -632,10 +633,10 @@ def min_on_disk(f, tol, max_iter=10000):
             if in_disk:
                 s_in_disk = True     # if the original region si in the disk so are all its children
             else:
-                 r = abs(s)          # otherwise we test each one
-                 if r > 1:
-                     continue        # skip this subregion if it is entirely outside the disk
-                 s_in_disk = r < 1   # meaning it is entirely inside the disk
+                r = abs(s)          # otherwise we test each one
+                if r > 1:
+                    continue        # skip this subregion if it is entirely outside the disk
+                s_in_disk = r < 1   # meaning it is entirely inside the disk
 
             fs = f(s)
 
@@ -652,11 +653,13 @@ def min_on_disk(f, tol, max_iter=10000):
     # If we get here, then even after max_iter iterations the tolerance has not been reached.
     raise ValueError("too many iterations")
 
-two_pi_i_CDF = CDF(0, 2*RDF.pi())
-two_pi_i_CIF = CIF(0, 2*RIF.pi())
+
+two_pi_i_CDF = CDF(0, 2 * RDF.pi())
+two_pi_i_CIF = CIF(0, 2 * RIF.pi())
 
 # Ideas: We know tau, so we know the direction of the diagonal.
-#        We can solve for x in p1, will this allow us to find the maxima exactly?
+# We can solve for x in p1, will this allow us to find the maxima exactly?
+
 
 def rat_term_CIF(z, try_strict=True):
     r"""
@@ -705,8 +708,6 @@ def rat_term_CIF(z, try_strict=True):
             # = r^2*x + 2*r*x^2 - 4*r + x
 
         df_dr = (r**2-1) * p2
-        df_dx = p1 * r
-
         dg_dr = p1 * y
         dg_dx = r * df_dr / y
 
@@ -724,6 +725,7 @@ def rat_term_CIF(z, try_strict=True):
         imag_part = -(r**2-1)*y*r/denom
 
     return CIF(real_part, imag_part)
+
 
 def eps(err, is_real):
     r"""
@@ -941,14 +943,13 @@ class EllipticCurveCanonicalHeight:
             return min(min_fg, min_FG) ** (-1/QQ(3))
 
         else:
-            def pair_max(f, g):
-                f = f.change_ring(CIF)
-                g = g.change_ring(CIF)
-                max = type(RIF(0)).max
-                def max_f_g(z):
-                    return max(abs(f(z)), abs(g(z)))
-                return max_f_g
-            pair_max_old = pair_max
+            # def pair_max(f, g):
+            #     f = f.change_ring(CIF)
+            #     g = g.change_ring(CIF)
+            #     max = type(RIF(0)).max
+            #     def max_f_g(z):
+            #         return max(abs(f(z)), abs(g(z)))
+            #     return max_f_g
             def pair_max(f, g):
                 f = f.change_ring(CDF)
                 g = g.change_ring(CDF)
@@ -1043,7 +1044,6 @@ class EllipticCurveCanonicalHeight:
             [0, 2*log(5) + 2*log(2), 0, 2*log(13) + 2*log(5) + 4*log(2), 0]
         """
         s = 0
-        N = self.E.conductor()
         B = (n+1) ** max(2, self.K.degree())
         for p in self.K.primes_of_bounded_norm_iter(B):
             ep = self.e_p(p)
@@ -1378,7 +1378,7 @@ class EllipticCurveCanonicalHeight:
 
         (Real) `c>0` such that
 
-        .. math::
+        .. MATH::
 
             |\wp(z) - z^-2| \le \frac{c^2|z|^2}{1-c|z|^2}
 
@@ -1625,18 +1625,18 @@ class EllipticCurveCanonicalHeight:
         even::
 
             sage: H.wp_on_grid(v,4)
-            array([[ 25.43920182,   5.28760943,   5.28760943,  25.43920182],
-            [  6.05099485,   1.83757786,   1.83757786,   6.05099485],
-            [  6.05099485,   1.83757786,   1.83757786,   6.05099485],
-            [ 25.43920182,   5.28760943,   5.28760943,  25.43920182]])
+            array([[25.43920182,  5.28760943,  5.28760943, 25.43920182],
+                   [ 6.05099485,  1.83757786,  1.83757786,  6.05099485],
+                   [ 6.05099485,  1.83757786,  1.83757786,  6.05099485],
+                   [25.43920182,  5.28760943,  5.28760943, 25.43920182]])
 
         The array of values on the half-grid::
 
             sage: H.wp_on_grid(v,4,True)
-            array([[ 25.43920182,   5.28760943],
-            [  6.05099485,   1.83757786],
-            [  6.05099485,   1.83757786],
-            [ 25.43920182,   5.28760943]])
+            array([[25.43920182,  5.28760943],
+                   [ 6.05099485,  1.83757786],
+                   [ 6.05099485,  1.83757786],
+                   [25.43920182,  5.28760943]])
         """
         tau = self.tau(v)
         fk, err = self.fk_intervals(v, 15, CDF)
@@ -1774,7 +1774,7 @@ class EllipticCurveCanonicalHeight:
 
         - ``mu`` (real) - a positive real number
 
-        - ``N`` (integer) - upper bounf do the multiples to be used.
+        - ``N`` (integer) - upper bound on the multiples to be used.
 
         - ``verbose`` (boolean, default True) - verbosity flag.
 
@@ -1790,7 +1790,7 @@ class EllipticCurveCanonicalHeight:
             the attempt failed: trying again with larger `N` may yield
             ``True``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K.<a> = NumberField(x^3-2)
             sage: E = EllipticCurve([0,0,0,0,a])
@@ -1799,7 +1799,8 @@ class EllipticCurveCanonicalHeight:
         This curve does have a point of good reduction whose canonical
         point is approximately 1.68::
 
-            sage: P = E.gens(lim3=5)[0]
+            sage: P = E.gens(lim3=5)[0]; P
+            (1/3*a^2 + a + 5/3 : -2*a^2 - 4/3*a - 5/3 : 1)
             sage: P.height()
             1.68038085233673
             sage: P.has_good_reduction()
@@ -1835,12 +1836,12 @@ class EllipticCurveCanonicalHeight:
         # of these is 1 we can return True right away (see [TT]_,
         # Proposition 5.1).
         Bk = []
-        for n in ZZ.range(1, N+1):
+        for n in ZZ.range(1, N + 1):
             b = self.B(n, mu)
             if verbose:
                 print("B_%s(%s) = %s" % (n, mu, b))
             if b < 1:
-               return True
+                return True
             Bk.append(b)
 
         # Each real or complex embedding of the number field gives us
@@ -1902,7 +1903,7 @@ class EllipticCurveCanonicalHeight:
             sage: E = EllipticCurve([0,1-i,i,-i,0])
             sage: H = E.height_function()
             sage: H.min_gr(0.01,5)
-            0.015043796434657225
+            0.020153685521979152
 
         In this example the point `P=(0,0)` has height 0.023 so our
         lower bound is quite good::
@@ -1922,6 +1923,26 @@ class EllipticCurveCanonicalHeight:
             sage: H.min_gr(0.1,5) # long time (7.2s)
             0.25
 
+        TESTS:
+
+        This example from the LMFDB gave problems before the fix in :trac:`8829`::
+
+            sage: K.<a> = NumberField(x^2-x-1)
+            sage: phi = a
+            sage: E = EllipticCurve([phi + 1, -phi + 1, 1, 20*phi - 39, 196*phi + 237])
+            sage: H = E.height_function()
+            sage: H.min_gr(.1,5,True) # long time (~22s)
+            B_1(1) = 1540.199246369678
+            ...
+            halving mu to 0.25 and increasing n_max to 6
+            ...
+            halving mu to 0.001953125 and increasing n_max to 13
+            doubling mu to 0.0078125
+            doubling mu to 0.015625
+            height bound in [0.0078125, 0.015625] using n_max = 13
+            ...
+            height bound in [0.0120485220735, 0.0131390064883] using n_max = 13
+            0.012048522073499539
         """
         test = self.test_mu
         if test(1, n_max, verbose):
@@ -1933,14 +1954,30 @@ class EllipticCurveCanonicalHeight:
             mu = .5
             while not test(mu, n_max, False):
                 mu /= 2
+                n_max += 1
+                if verbose:
+                    print("halving mu to %s and increasing n_max to %s" % (mu,n_max))
+            # now we have (mu,n_max) which work we can try to increase
+            # mu again using this larger n_max:
+            mu *= 2
+            while test(mu, n_max, False):
+                mu *= 2
+                if verbose:
+                    print("doubling mu to %s" % mu)
+            mu /= 2
+
         # The true value lies between mu and eps * mu.
         eps = 2.0
-        while eps > tol+1:
+        while eps > tol + 1:
             if verbose:
-                print("height bound in [%s, %s]" % (mu, mu * eps))
+                print("height bound in [%s, %s] using n_max = %s"
+                      % (mu, mu * eps, n_max))
             eps = math.sqrt(eps)
-            if test(mu*eps, n_max, False):
-                mu = mu*eps
+            if test(mu * eps, n_max, False):
+                mu = mu * eps
+        if verbose:
+            print("height bound in [%s, %s] using n_max = %s"
+                  % (mu, mu * eps, n_max))
         return RDF(mu)
 
     def min(self, tol, n_max, verbose=False):
@@ -1988,7 +2025,7 @@ class EllipticCurveCanonicalHeight:
             sage: E = EllipticCurve([0,1-i,i,-i,0])
             sage: H = E.height_function()
             sage: H.min(0.01,5) # long time (4s)
-            0.015043796434657225
+            0.020153685521979152
 
         In this example the point `P=(0,0)` has height 0.023 so our
         lower bound is quite good::
@@ -2034,13 +2071,13 @@ class EllipticCurveCanonicalHeight:
         tp = lcm([L.tamagawa_exponent() for L in self.E.local_data()] + [ZZ(1)])
 
         # Include infinite places:
-        if tp%2==1:
+        if tp % 2 == 1:
             if self.K == QQ:
-                if self.E.real_components()==2:
-                    tp*=2
-            elif any([v(self.E.discriminant()>0)
-                      for v in self.K.real_places()]):
-                tp *=2
+                if self.E.real_components() == 2:
+                    tp *= 2
+            elif any(v(self.E.discriminant()) > 0
+                     for v in self.K.real_places()):
+                tp *= 2
         # Now tp is such that tp*P has good reduction at all places
         # for all points P:
         return self.min_gr(tol, n_max, verbose) / tp ** 2

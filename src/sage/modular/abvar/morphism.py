@@ -898,7 +898,7 @@ class HeckeOperator(Morphism):
         return self.__abvar.homology(R).hecke_operator(self.index())
 
     def matrix(self):
-        """
+        r"""
         Return the matrix of self acting on the homology
         `H_1(A, ZZ)` of this abelian variety with coefficients in
         `\ZZ`.

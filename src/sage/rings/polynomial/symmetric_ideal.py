@@ -55,6 +55,7 @@ equal to `x_1` in ``Q``. Indeed, we have
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
@@ -108,12 +109,12 @@ class SymmetricIdeal( Ideal_generic ):
     the Buchberger algorithm in these cases.
 
     .. [AB2007] \M. Aschenbrenner, C. Hillar,
-       Finite generation of symmetric ideals.
+       *Finite generation of symmetric ideals*.
        Trans. Amer. Math. Soc. 359 (2007), no. 11, 5171--5192.
 
     .. [AB2008] \M. Aschenbrenner, C. Hillar,
-       `An Algorithm for Finding Symmetric Groebner Bases in Infinite Dimensional Rings.
-       <http://de.arxiv.org/abs/0801.4439>`_
+       *An Algorithm for Finding Symmetric Groebner Bases in Infinite
+       Dimensional Rings*. :arxiv:`0801.4439`.
 
     EXAMPLES::
 
@@ -261,7 +262,7 @@ class SymmetricIdeal( Ideal_generic ):
         polynomials. Hence, when multiplying two symmetric ideals, it
         does not suffice to simply multiply the respective generators.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: I=X*(x[1])
@@ -275,11 +276,11 @@ class SymmetricIdeal( Ideal_generic ):
             if hasattr(other,'gens'):
                 other = SymmetricIdeal(PARENT, other.gens(), coerce=True)
         other = other.symmetrisation()
-        sN = max([X.max_index() for X in self.gens()]+[1])
-        oN = max([X.max_index() for X in other.gens()]+[1])
+        sN = max([X.max_index() for X in self.gens()] + [1])
+        oN = max([X.max_index() for X in other.gens()] + [1])
 
         from sage.combinat.permutation import Permutation
-        P = Permutation(range(2,sN+oN+1)+[1])
+        P = Permutation(list(range(2, sN + oN + 1)) + [1])
         oGen = list(other.gens())
         SymL = oGen
         for i in range(sN):
@@ -309,9 +310,9 @@ class SymmetricIdeal( Ideal_generic ):
             Symmetric Ideal (x_1^2, x_2*x_1) of Infinite polynomial ring in x over Rational Field
 
         """
-        OUT = SymmetricIdeal(self.ring(),[1])
+        OUT = SymmetricIdeal(self.ring(), [1])
         for i in range(n):
-            OUT = self*OUT
+            OUT = self * OUT
         return OUT
 
     def is_maximal(self):
@@ -362,7 +363,7 @@ class SymmetricIdeal( Ideal_generic ):
         return set(V) == set(self.ring().variable_names())
 
     def reduce(self, I, tailreduce=False):
-        """
+        r"""
         Symmetric reduction of self by another Symmetric Ideal or list of Infinite Polynomials,
         or symmetric reduction of a given Infinite Polynomial by self.
 

@@ -6,13 +6,13 @@ REFERENCES:
 .. [LLT1997] Alain Lascoux, Bernard Leclerc, Jean-Yves Thibon,
    Ribbon tableaux, Hall-Littlewood functions, quantum affine algebras, and unipotent varieties,
    J. Math. Phys. 38 (1997), no. 2, 1041-1068,
-   arXiv:q-alg/9512-31v1 [math.q.alg]
+   :arxiv:`q-alg/9512031v1` [math.q.alg]
 
 .. [LT2000] Bernard Leclerc and Jean-Yves Thibon,
    Littlewood-Richardson coefficients and Kazhdan-Lusztig polynomials,
    in: Combinatorial methods in representation theory (Kyoto)
    Adv. Stud. Pure Math., vol. 28, Kinokuniya, Tokyo, 2000, pp 155-220
-   arXiv:math/9809122v3 [math.q-alg]
+   :arxiv:`math/9809122v3` [math.q-alg]
 """
 from __future__ import absolute_import
 #*****************************************************************************
@@ -35,7 +35,7 @@ from . import sfa
 import sage.combinat.ribbon_tableau as ribbon_tableau
 import sage.combinat.skew_partition
 from sage.rings.all import ZZ
-import sage.combinat.partition
+from sage.combinat.partition import Partition, Partitions, _Partitions
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.rings.rational_field import QQ
@@ -117,6 +117,13 @@ class LLT_class(UniqueRepresentation):
             True
             sage: L3p != SymmetricFunctions(QQ).llt(3,t=1)
             True
+
+            sage: Sym = SymmetricFunctions(QQ['t'])
+            sage: ks3 = Sym.kschur(3)
+            sage: llt3 = Sym.llt(3)
+            sage: f = llt3.cospin([[1],[2,1],[1,1]]).omega()
+            sage: ks3(f)
+            ks3[2, 2, 1, 1] + ks3[2, 2, 2] + t*ks3[3, 1, 1, 1] + t^2*ks3[3, 2, 1]
         """
         self._k = k
         self._sym = Sym
@@ -126,7 +133,7 @@ class LLT_class(UniqueRepresentation):
         if str(t) !='t':
             self._name_suffix += " with t=%s"%self.t
         self._name += self._name_suffix+" over %s"%self._sym.base_ring()
-        self._m = sage.combinat.sf.sf.SymmetricFunctions(QQt).monomial()
+        self._m = Sym.monomial()
 
     def __repr__(self):
         r"""
@@ -240,22 +247,22 @@ class LLT_class(UniqueRepresentation):
             sage: L3._llt_generic([[[2,2],[1]],[[2,1],[]]],f)
             m[1, 1, 1, 1] + m[2, 1, 1] + m[2, 2] + m[3, 1] + m[4]
         """
-        if skp in sage.combinat.partition.Partitions():
+        if skp in _Partitions:
             m = (sum(skp) / self.level()).floor()
             if m == 0:
                 raise ValueError("level (%=) must divide %s "%(sum(skp), self.level()))
-            mu = sage.combinat.partition.Partitions( ZZ(sum(skp) / self.level()) )
+            mu = Partitions( ZZ(sum(skp) / self.level()) )
 
         elif isinstance(skp, list) and skp[0] in sage.combinat.skew_partition.SkewPartitions():
             #skp is a list of skew partitions
-            skp2 =  [sage.combinat.partition.Partition(core=[], quotient=[skp[i][0] for i in range(len(skp))])]
-            skp2 += [sage.combinat.partition.Partition(core=[], quotient=[skp[i][1] for i in range(len(skp))])]
-            mu = sage.combinat.partition.Partitions(ZZ((skp2[0].size()-skp2[1].size()) / self.level()))
+            skp2 =  [Partition(core=[], quotient=[skp[i][0] for i in range(len(skp))])]
+            skp2 += [Partition(core=[], quotient=[skp[i][1] for i in range(len(skp))])]
+            mu = Partitions(ZZ((skp2[0].size()-skp2[1].size()) / self.level()))
             skp = skp2
-        elif isinstance(skp, list) and skp[0] in sage.combinat.partition.Partitions():
+        elif isinstance(skp, list) and skp[0] in _Partitions:
             #skp is a list of partitions
-            skp = sage.combinat.partition.Partition(core=[], quotient=skp)
-            mu = sage.combinat.partition.Partitions( ZZ(sum(skp) / self.level() ))
+            skp = Partition(core=[], quotient=skp)
+            mu = Partitions( ZZ(sum(skp) / self.level()) )
         else:
             raise ValueError("LLT polynomials not defined for %s"%skp)
 
@@ -734,6 +741,6 @@ class LLT_cospin(LLT_generic):
         pass
 
 # Backward compatibility for unpickling
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_spin',  LLT_spin.Element)
 register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_cospin',  LLT_cospin.Element)

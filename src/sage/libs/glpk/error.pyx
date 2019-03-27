@@ -12,9 +12,11 @@ Error handler for the GLPK library
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_error
+
 from .env cimport *
 from cpython.exc cimport PyErr_SetObject
+from sage.cpython.string cimport char_to_str
 from sage.numerical.mip import MIPSolverException
 
 class GLPKError(MIPSolverException):
@@ -43,7 +45,7 @@ cdef int sage_glpk_term_hook(void *info, const char *s) with gil:
     global error_message
     if glp_at_error():
         # Save error message and skip normal printing
-        error_message += s
+        error_message += char_to_str(s)
         return 1
     else:
         # Normal non-error output: the return value 0 means that GLPK
@@ -69,9 +71,9 @@ def setup_glpk_error_handler():
     TESTS::
 
         sage: cython('''
-        ....: #clib glpk z gmp
+        ....: # distutils: libraries = glpk z gmp
+        ....: from cysignals.signals cimport sig_on, sig_off
         ....: from sage.libs.glpk.env cimport glp_term_out
-        ....: include "cysignals/signals.pxi"
         ....:
         ....: sig_on()
         ....: glp_term_out(12345)  # invalid value

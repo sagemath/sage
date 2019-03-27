@@ -15,10 +15,11 @@ from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.all import FiniteCoxeterGroups
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.functional import is_odd, is_even
+from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 
 
 class DihedralGroup(UniqueRepresentation, Parent):
-    """
+    r"""
     An example of finite Coxeter group: the `n`-th dihedral group of order `2n`.
 
     The purpose of this class is to provide a minimal template for
@@ -166,6 +167,18 @@ class DihedralGroup(UniqueRepresentation, Parent):
         """
         from sage.rings.integer_ring import ZZ
         return (ZZ(2), ZZ(self.n))
+
+    def coxeter_matrix(self):
+        """
+        Return the Coxeter matrix of ``self``.
+
+        EXAMPLES::
+
+            sage: FiniteCoxeterGroups().example(6).coxeter_matrix()
+            [1 6]
+            [6 1]
+        """
+        return CoxeterMatrix([[1, self.n], [self.n, 1]])
 
     class Element(ElementWrapper):
         wrapped_class = tuple

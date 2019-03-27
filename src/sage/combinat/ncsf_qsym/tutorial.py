@@ -3,7 +3,7 @@ r"""
 Introduction to Quasisymmetric Functions
 
 In this document we briefly explain the quasisymmetric function bases and
-related functionality in Sage.   We assume the reader is familar with the
+related functionality in Sage.   We assume the reader is familiar with the
 package :class:`SymmetricFunctions`.
 
 Quasisymmetric functions, denoted `QSym`, form a subring of the power
@@ -46,10 +46,14 @@ names. ::
 
     sage: QSym = QuasiSymmetricFunctions(QQ)
     sage: QSym.inject_shorthands()
-    Injecting M as shorthand for Quasisymmetric functions over the Rational Field in the Monomial basis
-    Injecting F as shorthand for Quasisymmetric functions over the Rational Field in the Fundamental basis
-    Injecting dI as shorthand for Quasisymmetric functions over the Rational Field in the dualImmaculate basis
-    Injecting QS as shorthand for Quasisymmetric functions over the Rational Field in the Quasisymmetric Schur basis
+    Defining M as shorthand for Quasisymmetric functions over the Rational Field in the Monomial basis
+    Defining F as shorthand for Quasisymmetric functions over the Rational Field in the Fundamental basis
+    Defining E as shorthand for Quasisymmetric functions over the Rational Field in the Essential basis
+    Defining dI as shorthand for Quasisymmetric functions over the Rational Field in the dualImmaculate basis
+    Defining QS as shorthand for Quasisymmetric functions over the Rational Field in the Quasisymmetric Schur basis
+    Defining YQS as shorthand for Quasisymmetric functions over the Rational Field in the Young Quasisymmetric Schur basis
+    Defining phi as shorthand for Quasisymmetric functions over the Rational Field in the phi basis
+    Defining psi as shorthand for Quasisymmetric functions over the Rational Field in the psi basis
 
 Now one can start constructing quasisymmetric functions.
 
@@ -141,7 +145,13 @@ related to the monomial symmetric functions by `m_\lambda =
 means the partition obtained by sorting the composition `c`::
 
     sage: SymmetricFunctions(QQ).inject_shorthands()
-    doctest:...: RuntimeWarning: redefining global value `e`
+    Defining e as shorthand for Symmetric Functions over Rational Field in the elementary basis
+    Defining f as shorthand for Symmetric Functions over Rational Field in the forgotten basis
+    Defining h as shorthand for Symmetric Functions over Rational Field in the homogeneous basis
+    Defining m as shorthand for Symmetric Functions over Rational Field in the monomial basis
+    Defining p as shorthand for Symmetric Functions over Rational Field in the powersum basis
+    Defining s as shorthand for Symmetric Functions over Rational Field in the Schur basis
+
     sage: m[2,1]
     m[2, 1]
     sage: M(m[2,1])

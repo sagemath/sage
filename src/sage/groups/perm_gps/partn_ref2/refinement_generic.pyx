@@ -1,7 +1,7 @@
 r"""
 Automorphism groups and canonical labels.
 
-For details see section 3 of [Feu13]_.
+For details see section 3 of [Feu2013]_.
 
 Definitions
 ###########
@@ -104,7 +104,7 @@ We are able to speed up the computation by making use of refinements
 (i.e. `(S_n)_C`-homomorphisms). Suppose we constructed a node
 `(C, I_C, y, G_{\Pi^{(I_C)}(y))})`. We define
 `Y := \{z \in X^n \mid \Pi^{(I_C)}(z) = \Pi^{(I_C)}(y)\}`
-and we search for functions `\omega: Y \rightarrow \mathbb{Z}^n` which are
+and we search for functions `\omega: Y \rightarrow \ZZ^n` which are
 constant on the orbits of `G_{\Pi^{(I_C)}(y)}` and compatible with the action
 of `(S_n)_C` on both sides. Then we compute a permutation `\pi \in (S_n)_C`
 which cell-wisely sorts the entries of `\omega(y)`. Afterwards we are allowed
@@ -169,11 +169,7 @@ AUTHORS:
 
 REFERENCES:
 
-.. [Feu13] Feulner, Thomas, "Eine kanonische Form
-           zur Darstellung aequivalenter Codes --
-           Computergestuetzte Berechnung und ihre Anwendung
-           in der Codierungstheorie, Kryptographie und Geometrie --",
-           Dissertation, University of Bayreuth, 2013.
+- [Feu2013]_
 """
 
 #*****************************************************************************
@@ -184,11 +180,16 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
-include 'sage/groups/perm_gps/partn_ref/data_structures_pyx.pxi'
+from __future__ import absolute_import, print_function
 
 from copy import copy
+
+from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
+
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
+include "sage/data_structures/bitset.pxi"
+
 
 cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best,
                          int begin, int end,
@@ -258,6 +259,7 @@ cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best,
         i += 1
     return (True, newly_fixed)
 
+
 cdef class _BestValStore:
     r"""
     This class implements a dynamic array of integer vectors of length `n`.
@@ -273,9 +275,7 @@ cdef class _BestValStore:
         """
         self.default_data_length = n
         self.storage_length = 0
-        self.values = <long *> sig_malloc(0)
-        if self.values is NULL:
-            raise MemoryError('allocating _BestValStore')
+        self.values = NULL
 
     def __dealloc__(self):
         """
@@ -297,6 +297,7 @@ cdef class _BestValStore:
                 raise MemoryError('resizing _BestValStore')
             self.storage_length = i + 1
         return self.values+(i*self.default_data_length)
+
 
 cdef class LabelledBranching:
     r"""
@@ -333,11 +334,13 @@ cdef class LabelledBranching:
             sage: L = LabelledBranching(3)
         """
         from sage.libs.gap.libgap import libgap
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 
         self.n = n
         self.group = libgap.eval("Group(())")
         self.ClosureGroup = libgap.eval("ClosureGroup")
         self.father = < int *> sig_malloc(n * sizeof(int))
+        self.sym_gp = SymmetricGroup(self.n)
         if self.father is NULL:
             raise MemoryError('allocating LabelledBranching')
         self.act_perm = < int *> sig_malloc(n * sizeof(int))
@@ -432,8 +435,7 @@ cdef class LabelledBranching:
             [(1,2,3)]
         """
         from sage.libs.gap.libgap import libgap
-
-        return libgap.SmallGeneratingSet(self.group).sage()
+        return libgap.SmallGeneratingSet(self.group).sage(parent=self.sym_gp)
 
     def get_order(self):
         r"""
@@ -797,7 +799,7 @@ cdef class PartitionRefinement_generic:
          - if the inner group has changed -> sets ``inner_group_changed`` to True
          - if the partition has changed -> sets ``changed_partition`` to True
 
-         The string ``refine_name`` is only neccessary for printing within the
+         The string ``refine_name`` is only necessary for printing within the
          latex output (if activated).
         """
         cdef tuple res = PS_refinement(self._part, self._refine_vals_scratch, best, begin, end,
@@ -808,7 +810,7 @@ cdef class PartitionRefinement_generic:
                 self._latex_act_node("autcut in " + refine_name)
                 return False
 
-            if len( res[1] ) > 0:
+            if res[1]:
                 self._fixed_not_minimized += res[1]
                 if self._inner_min_unminimized(inner_group_changed):
                     return True
@@ -827,7 +829,7 @@ cdef class PartitionRefinement_generic:
 
     cdef void _leaf_computations(self):
         r"""
-        All neccessary computations which have to be performed in a leaf.
+        All necessary computations which have to be performed in a leaf.
 
         There are to possibilities depending on the flag
         ``self._is_candidate_initialized``:

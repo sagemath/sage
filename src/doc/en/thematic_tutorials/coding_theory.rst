@@ -87,7 +87,7 @@ By just typing the name of our code, we get a sentence which briefly
 describes it and gives its parameters::
 
     sage: C
-    Linear code of length 7, dimension 3 over Finite Field of size 3
+    [7, 3] linear code over GF(3)
 
 As the aim of this tutorial is not to give a comprehensive view of the methods,
 we won't describe any other methods.
@@ -189,7 +189,7 @@ All these parameters are summarized inside the string representation
 of our code::
 
     sage: C
-    [12, 6, 7] Generalized Reed-Solomon Code over Finite Field of size 13
+    [12, 6, 7] Generalized Reed-Solomon Code over GF(13)
 
 .. NOTE::
 
@@ -299,13 +299,14 @@ Let us see how one can explore this::
     sage: C.encoders_available()
     ['EvaluationPolynomial', 'EvaluationVector', 'Systematic']
     sage: C.decoders_available()
-    ['Syndrome',
-     'NearestNeighbor',
+    ['BerlekampWelch',
      'ErrorErasure',
      'Gao',
      'GuruswamiSudan',
+     'InformationSet',
      'KeyEquationSyndrome',
-     'BerlekampWelch']
+     'NearestNeighbor',
+     'Syndrome']
 
 We got a list of the available encoders and decoders for our GRS code.
 Rather than using the default ones as we did before,
@@ -313,14 +314,14 @@ we can now ask for specific encoder and decoder::
 
     sage: Evect = C.encoder("EvaluationVector")
     sage: Evect
-    Evaluation vector-style encoder for [40, 12, 29] Generalized Reed-Solomon Code over Finite Field of size 59
+    Evaluation vector-style encoder for [40, 12, 29] Generalized Reed-Solomon Code over GF(59)
     sage: type(Evect)
     <class 'sage.coding.grs.GRSEvaluationVectorEncoder'>
     sage: msg = random_vector(GF(59), C.dimension()) #random
     sage: c = Evect.encode(msg)
     sage: NN = C.decoder("NearestNeighbor")
     sage: NN
-    Nearest neighbor decoder for [40, 12, 29] Generalized Reed-Solomon Code over Finite Field of size 59
+    Nearest neighbor decoder for [40, 12, 29] Generalized Reed-Solomon Code over GF(59)
 
 Calling::
 
@@ -359,7 +360,7 @@ let us investigate the one we left behind in the part just before::
 
     sage: Epoly = C.encoder("EvaluationPolynomial")
     sage: Epoly
-    Evaluation polynomial-style encoder for [40, 12, 29] Generalized Reed-Solomon Code over Finite Field of size 59
+    Evaluation polynomial-style encoder for [40, 12, 29] Generalized Reed-Solomon Code over GF(59)
     sage: Epoly.message_space()
     Univariate Polynomial Ring in x over Finite Field of size 59
     sage: msg_p = Epoly.message_space().random_element(degree=C.dimension()-1); msg_p #random
@@ -491,7 +492,7 @@ We can describe these boundaries in two ways:
     Static error rate channel creating between 1 and 14 errors, of input and output space Vector space of dimension 40 over Finite Field of size 59
 
 We already know that a channel has a
-:meth:`sage.coding.channel_constuctions.Channel.transmit` method which will
+:meth:`sage.coding.channel_constructions.Channel.transmit` method which will
 perform transmission over the channel; in this case it will return
 the transmitted word with some errors in it.
 This method will always check if the provided word belongs to
@@ -502,7 +503,7 @@ if one is simulating millions of transmissions.
 For this usage there is
 :meth:`sage.coding.channel_constructions.Channel.transmit_unsafe` which does
 the same as
-:meth:`sage.coding.channel_constuctions.Channel.transmit`
+:meth:`sage.coding.channel_constructions.Channel.transmit`
 but without checking the input, as illustrated thereafter::
 
     sage: c = C.random_element()
@@ -513,7 +514,7 @@ but without checking the input, as illustrated thereafter::
     False
 
 Note there exists a useful shortcut for
-:meth:`sage.coding.channel_constuctions.Channel.transmit` ::
+:meth:`sage.coding.channel_constructions.Channel.transmit` ::
 
     sage: r = Chan(c)
     sage: r in C
@@ -544,7 +545,7 @@ with the errors added and erased positions set to 0.
 The second one is the erasure vector whose erased positions contain ones.
 This is reflected in :meth:`sage.coding.channel_constructions.output_space`::
 
-    sage: C = codes.RandomLinearCode(10, 5, GF(7))
+    sage: C = codes.random_linear_code(GF(7), 10, 5)
     sage: Chan.output_space()
     The Cartesian product of (Vector space of dimension 40 over Finite Field of size 59, Vector space of dimension 40 over Finite Field of size 2)
     sage: Chan(c) # random

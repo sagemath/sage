@@ -31,14 +31,18 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 import weakref
+from cysignals.memory cimport sig_malloc, sig_free
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.rings.infinity import infinity
 from sage.libs.gmp.mpz cimport *
+from sage.structure.richcmp cimport richcmp_not_equal, richcmp
+from cpython.object cimport Py_EQ, Py_NE
 
 from sage.ext.stdsage cimport PY_NEW
-include "cysignals/signals.pxi"
-include "cysignals/memory.pxi"
 
 cdef long maxpreccap = (1L << (sizeof(long) * 8 - 2)) - 1
 
@@ -88,14 +92,15 @@ cdef class PowComputer_class(SageObject):
             9
         """
         self.prime = prime
+        self.p2 = prime // 2
         self.in_field = in_field
         self.cache_limit = cache_limit
         self.prec_cap = prec_cap
         self.ram_prec_cap = ram_prec_cap
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, int op):
         """
-        Compares self to other
+        Compares ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -111,30 +116,30 @@ cdef class PowComputer_class(SageObject):
             sage: P is Q
             True
         """
-        a = cmp(type(self), type(other))
-        cdef PowComputer_class o
-        if a == 0:
-            o = <PowComputer_class>other
-            if self.prime < o.prime:
-                return -1
-            elif self.prime > o.prime:
-                return 1
-            elif self.prec_cap < o.prec_cap:
-                return -1
-            elif self.prec_cap > o.prec_cap:
-                return 1
-            elif self.cache_limit < o.cache_limit:
-                return -1
-            elif self.cache_limit > o.cache_limit:
-                return 1
-            elif self.in_field < o.in_field:
-                return -1
-            elif self.in_field > o.in_field:
-                return 1
-            else:
-                return 0
-        else:
-            return cmp(type(self), type(other))
+        if not isinstance(other, PowComputer_class):
+            if op in [Py_EQ, Py_NE]:
+                return (op == Py_NE)
+            return NotImplemented
+
+        cdef PowComputer_class s = self
+        cdef PowComputer_class o = other
+
+        lx = s.prime
+        rx = o.prime
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
+
+        lx = s.prec_cap
+        rx = o.prec_cap
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
+
+        lx = s.cache_limit
+        rx = o.cache_limit
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
+
+        return richcmp(s.in_field, o.in_field, op)
 
     cdef Integer pow_Integer(self, long n):
         """
@@ -186,7 +191,7 @@ cdef class PowComputer_class(SageObject):
                 raise ValueError("result too big")
             return self.pow_Integer(mpz_get_ui(_n.value))
 
-    cdef mpz_srcptr pow_mpz_t_tmp(self, unsigned long n):
+    cdef mpz_srcptr pow_mpz_t_tmp(self, long n) except NULL:
         """
         Provides fast access to an ``mpz_srcptr`` pointing to self.prime^n.
 
@@ -268,7 +273,7 @@ cdef class PowComputer_class(SageObject):
         """
         cdef Integer _n = Integer(n)
         cdef Integer ans = PY_NEW(Integer)
-        mpz_set(ans.value, self.pow_mpz_t_tmp(mpz_get_ui(_n.value)))
+        mpz_set(ans.value, self.pow_mpz_t_tmp(mpz_get_si(_n.value)))
         return ans
 
     cdef mpz_srcptr pow_mpz_t_top(self):
@@ -438,14 +443,34 @@ cdef class PowComputer_base(PowComputer_class):
             try:
                 mpz_init(self.top_power)
                 try:
-                    for i in range(cache_limit + 1):
+                    mpz_init(self.powhelper_oneunit)
+                    try:
+                        mpz_init(self.powhelper_teichdiff)
                         try:
-                            mpz_init(self.small_powers[i])
+                            mpz_init(self.shift_rem)
+                            try:
+                                mpz_init(self.aliasing)
+                                try:
+                                    for i in range(cache_limit + 1):
+                                        try:
+                                            mpz_init(self.small_powers[i])
+                                        except BaseException:
+                                            while i:
+                                                i-=1
+                                                mpz_clear(self.small_powers[i])
+                                            raise
+                                except BaseException:
+                                    mpz_clear(self.aliasing)
+                                    raise
+                            except BaseException:
+                                mpz_clear(self.shift_rem)
+                                raise
                         except BaseException:
-                            while i:
-                                i-=1
-                                mpz_clear(self.small_powers[i])
+                            mpz_clear(self.powhelper_teichdiff)
                             raise
+                    except BaseException:
+                        mpz_clear(self.powhelper_oneunit)
+                        raise
                 except BaseException:
                     mpz_clear(self.top_power)
                     raise
@@ -478,7 +503,9 @@ cdef class PowComputer_base(PowComputer_class):
             mpz_set(self.small_powers[1], prime.value)
         for i in range(2, cache_limit + 1):
             mpz_mul(self.small_powers[i], self.small_powers[i - 1], prime.value)
+        sig_on()
         mpz_pow_ui(self.top_power, prime.value, prec_cap)
+        sig_off()
         self.deg = 1
         self.e = 1
         self.f = 1
@@ -501,6 +528,10 @@ cdef class PowComputer_base(PowComputer_class):
             for i in range(self.cache_limit + 1):
                 mpz_clear(self.small_powers[i])
             mpz_clear(self.top_power)
+            mpz_clear(self.powhelper_oneunit)
+            mpz_clear(self.powhelper_teichdiff)
+            mpz_clear(self.shift_rem)
+            mpz_clear(self.aliasing)
             mpz_clear(self.temp_m)
             sig_free(self.small_powers)
 
@@ -529,7 +560,7 @@ cdef class PowComputer_base(PowComputer_class):
         """
         return self.top_power
 
-    cdef mpz_srcptr pow_mpz_t_tmp(self, unsigned long n):
+    cdef mpz_srcptr pow_mpz_t_tmp(self, long n) except NULL:
         """
         Computes self.prime^n.
 
@@ -538,12 +569,27 @@ cdef class PowComputer_base(PowComputer_class):
             sage: PC = PowComputer(3, 5, 10)
             sage: PC._pow_mpz_t_tmp_test(4)
             81
+            sage: PC._pow_mpz_t_tmp_test(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be non-negative
+
         """
+        if n < 0:
+            raise ValueError("n must be non-negative")
         if n <= self.cache_limit:
             return self.small_powers[n]
         if n == self.prec_cap:
             return self.top_power
+        # n may exceed self.prec_cap. Very large values can, however, lead to
+        # out-of-memory situations in the following computation. This
+        # sig_on()/sig_off() prevents sage from crashing in such cases.
+        # It does not have a significant impact on performance. For small
+        # values of n the powers are taken from self.small_powers, for large
+        # values, the computation dominates the cost of the sig_on()/sig_off().
+        sig_on()
         mpz_pow_ui(self.temp_m, self.prime.value, n)
+        sig_off()
         return self.temp_m
 
 pow_comp_cache = {}
@@ -570,11 +616,13 @@ cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec
         if PC is not None:
             return PC
     if prec_type == 'capped-rel':
-        from padic_capped_relative_element import PowComputer_ as PC_class
+        from .padic_capped_relative_element import PowComputer_ as PC_class
     elif prec_type == 'capped-abs':
-        from padic_capped_absolute_element import PowComputer_ as PC_class
+        from .padic_capped_absolute_element import PowComputer_ as PC_class
     elif prec_type == 'fixed-mod':
-        from padic_fixed_mod_element import PowComputer_ as PC_class
+        from .padic_fixed_mod_element import PowComputer_ as PC_class
+    elif prec_type == 'floating-point':
+        from .padic_floating_point_element import PowComputer_ as PC_class
     else:
         PC_class = PowComputer_base
     PC = PC_class(m, mpz_get_ui(cache_limit.value), mpz_get_ui(prec_cap.value), mpz_get_ui(prec_cap.value), in_field)

@@ -194,22 +194,18 @@ class LoggingBackend (GenericBackend):
         else:
             return self._backend.base_ring()
 
+
 # Override all methods that we inherited from GenericBackend
 # by delegating methods
 def _override_attr(attr):
     """
     Override a method by a delegating method.
-
-    TESTS::
-
-        sage: from sage.numerical.backends.logging_backend import _override_attr
     """
     a = getattr(LoggingBackend, attr)
     if callable(a):
-        # make an unbound method
-        import types
-        _mm = types.MethodType(_make_wrapper(GenericBackend(), attr), None, LoggingBackend)
-        setattr(LoggingBackend, attr, _mm)
+        m = _make_wrapper(GenericBackend(), attr)
+        setattr(LoggingBackend, attr, m)
+
 
 for attr in dir(LoggingBackend):
     if not attr.startswith("_") and attr not in ("zero", "base_ring"):
@@ -222,7 +218,7 @@ r'''
         """
         Run tests on ...
 
-        TEST::
+        TESTS::
 
             SAGE: from sage.numerical.backends.generic_backend import GenericBackend
             SAGE: p = GenericBackend()
@@ -299,7 +295,7 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
         ....:                                                  doctest_file=fname))
         4711
         sage: with open(fname) as f:
-        ....:     for line in f.readlines(): sys.stdout.write('|{}'.format(line))
+        ....:     for line in f.readlines(): _ = sys.stdout.write('|{}'.format(line))
         |        sage: p = get_solver(solver='GLPK')
         |        sage: p.add_variable(obj=42, name='Helloooooo')
         |        0
@@ -326,14 +322,14 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
         ....:                                                 test_method='something'))
         4711
         sage: with open(fname) as f:
-        ....:     for line in f.readlines(): sys.stdout.write('|{}'.format(line))
+        ....:     for line in f.readlines(): _ = sys.stdout.write('|{}'.format(line))
         |
         |    @classmethod
         |    def _test_something(cls, tester=None, **options):
         |        ...
         |        Run tests on ...
         |
-        |        TEST::
+        |        TESTS::
         |
         |            sage: from sage.numerical.backends.generic_backend import GenericBackend
         |            sage: p = GenericBackend()

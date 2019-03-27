@@ -4,7 +4,7 @@
 .. toctree::
    :maxdepth: 2
 
-   sage/plot/plot3d/examples
+   sage/plot/plot3d/introduction
 
 Function and Data Plots
 -----------------------
@@ -51,5 +51,6 @@ Backends
    :maxdepth: 2
 
    sage/plot/plot3d/tachyon
+   threejs
 
 .. include:: ../footer.txt

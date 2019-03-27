@@ -1,0 +1,1 @@
+sdh_install -T src/static/main-built.js "$SAGE_SHARE/thebe/thebe.js"

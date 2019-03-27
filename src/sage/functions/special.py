@@ -35,7 +35,7 @@ implemented here.
 -  Spherical harmonics: Laplace's equation in spherical coordinates
    is:
 
-   .. math::
+   .. MATH::
 
        \frac{1}{r^2} \frac{\partial}{\partial r}
        \left( r^2 \frac{\partial f}{\partial r} \right) +
@@ -53,14 +53,14 @@ implemented here.
    The general solution which remains finite towards infinity is a
    linear combination of functions of the form
 
-   .. math::
+   .. MATH::
 
          r^{-1-\ell} \cos (m \varphi) P_\ell^m (\cos{\theta} )
 
 
    and
 
-   .. math::
+   .. MATH::
 
          r^{-1-\ell} \sin (m \varphi) P_\ell^m (\cos{\theta} )
 
@@ -72,7 +72,7 @@ implemented here.
    `- \ell\leq m\leq \ell`, can be written as linear
    combinations of:
 
-   .. math::
+   .. MATH::
 
          U_{\ell,m}(r,\theta , \varphi ) =
          r^{-1-\ell} Y_\ell^m( \theta , \varphi )
@@ -82,7 +82,7 @@ implemented here.
    functions with parameters `\ell`, `m`, which can be
    written as:
 
-   .. math::
+   .. MATH::
 
          Y_\ell^m( \theta , \varphi ) = (-1)^m
          \sqrt{ \frac{(2\ell+1)}{4\pi} \frac{(\ell-m)!}{(\ell+m)!} }
@@ -93,7 +93,7 @@ implemented here.
    The spherical harmonics obey the normalisation condition
 
 
-   .. math::
+   .. MATH::
 
      \int_{\theta=0}^\pi\int_{\varphi=0}^{2\pi}
      Y_\ell^mY_{\ell'}^{m'*}\,d\Omega =
@@ -103,7 +103,7 @@ implemented here.
 
    -  The incomplete elliptic integrals (of the first kind, etc.) are:
 
-      .. math::
+      .. MATH::
 
          \begin{array}{c}
          \displaystyle\int_0^\phi \frac{1}{\sqrt{1 - m\sin(x)^2}}\, dx,\\
@@ -121,9 +121,9 @@ REFERENCES:
 - Abramowitz and Stegun: Handbook of Mathematical Functions,
   http://www.math.sfu.ca/~cbm/aands/
 
-- http://en.wikipedia.org/wiki/Spherical_harmonics
+- :wikipedia:`Spherical_harmonics`
 
-- http://en.wikipedia.org/wiki/Helmholtz_equation
+- :wikipedia:`Helmholtz_equation`
 
 - Online Encyclopedia of Special Function
   http://algo.inria.fr/esf/index.html
@@ -142,7 +142,7 @@ Added 16-02-2008 (wdj): optional calls to scipy and replace all
    by hardware floats precision.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #                     2006 David Joyner <wdj@usna.edu>
 #
@@ -155,25 +155,25 @@ Added 16-02-2008 (wdj): optional calls to scipy and replace all
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer import Integer
 from sage.rings.real_mpfr import RealField
 from sage.rings.complex_field import ComplexField
 from sage.misc.latex import latex
 from sage.rings.all import ZZ, RR, RDF, CDF
-from sage.functions.other import real, imag, log_gamma
+from .gamma import log_gamma
+from .other import real, imag
 from sage.symbolic.constants import pi
-from sage.symbolic.function import BuiltinFunction, is_inexact
+from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
 from sage.calculus.calculus import maxima
-from sage.structure.coerce import parent
-from sage.structure.element import get_coercion_model
-from sage.structure.parent import Parent
+from sage.structure.element import parent
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.functions.all import sqrt, sin, cot, exp
 from sage.symbolic.all import I
+
 
 class SphericalHarmonic(BuiltinFunction):
     r"""
@@ -186,9 +186,9 @@ class SphericalHarmonic(BuiltinFunction):
 
         sage: x, y = var('x, y')
         sage: spherical_harmonic(3, 2, x, y)
-        15/4*sqrt(7/30)*cos(x)*e^(2*I*y)*sin(x)^2/sqrt(pi)
+        1/8*sqrt(30)*sqrt(7)*cos(x)*e^(2*I*y)*sin(x)^2/sqrt(pi)
         sage: spherical_harmonic(3, 2, 1, 2)
-        15/4*sqrt(7/30)*cos(1)*e^(4*I)*sin(1)^2/sqrt(pi)
+        1/8*sqrt(30)*sqrt(7)*cos(1)*e^(4*I)*sin(1)^2/sqrt(pi)
         sage: spherical_harmonic(3 + I, 2., 1, 2)
         -0.351154337307488 - 0.415562233975369*I
         sage: latex(spherical_harmonic(3, 2, x, y, hold=True))
@@ -223,17 +223,29 @@ class SphericalHarmonic(BuiltinFunction):
             sage: spherical_harmonic(1/2, 2, x, y)
             spherical_harmonic(1/2, 2, x, y)
             sage: spherical_harmonic(3, 2, x, y)
-            15/4*sqrt(7/30)*cos(x)*e^(2*I*y)*sin(x)^2/sqrt(pi)
+            1/8*sqrt(30)*sqrt(7)*cos(x)*e^(2*I*y)*sin(x)^2/sqrt(pi)
             sage: spherical_harmonic(3, 2, 1, 2)
-            15/4*sqrt(7/30)*cos(1)*e^(4*I)*sin(1)^2/sqrt(pi)
+            1/8*sqrt(30)*sqrt(7)*cos(1)*e^(4*I)*sin(1)^2/sqrt(pi)
             sage: spherical_harmonic(3 + I, 2., 1, 2)
             -0.351154337307488 - 0.415562233975369*I
+
+        Check that :trac:`20939` is fixed::
+
+            sage: ex = spherical_harmonic(3,2,1,2*pi/3)
+            sage: QQbar(ex * sqrt(pi)/cos(1)/sin(1)^2).minpoly()
+            x^4 + 105/32*x^2 + 11025/1024
         """
         if n in ZZ and m in ZZ and n > -1:
             if abs(m) > n:
                 return ZZ(0)
-            return maxima("spherical_harmonic({},{},{},{})".format(
-                ZZ(n), ZZ(m), maxima(theta), maxima(phi))).sage()
+            if m == 0 and theta.is_zero():
+                return sqrt((2*n+1)/4/pi)
+            from sage.arith.misc import factorial
+            from sage.functions.trig import cos
+            from sage.functions.orthogonal_polys import gen_legendre_P
+            return (sqrt(factorial(n-m) * (2*n+1) / (4*pi * factorial(n+m))) *
+                    exp(I*m*phi) * gen_legendre_P(n, m, cos(theta)) *
+                    (-1)**m).simplify_trig()
 
     def _evalf_(self, n, m, theta, phi, parent, **kwds):
         r"""
@@ -349,7 +361,7 @@ class EllipticE(BuiltinFunction):
     Return the incomplete elliptic integral of the
     second kind:
 
-    .. math::
+    .. MATH::
 
         E(\varphi\,|\,m)=\int_0^\varphi \sqrt{1 - m\sin(x)^2}\, dx.
 
@@ -388,13 +400,16 @@ class EllipticE(BuiltinFunction):
 
             sage: loads(dumps(elliptic_e))
             elliptic_e
+            sage: elliptic_e(x, x)._sympy_()
+            elliptic_e(x, x)
         """
         BuiltinFunction.__init__(self, 'elliptic_e', nargs=2,
                                  # Maple conversion left out since it uses
                                  # k instead of m as the second argument
                                  conversions=dict(mathematica='EllipticE',
                                                   maxima='elliptic_e',
-                                                  sympy='elliptic_e'))
+                                                  sympy='elliptic_e',
+                                              ))
 
     def _eval_(self, z, m):
         """
@@ -460,7 +475,7 @@ class EllipticE(BuiltinFunction):
             return (elliptic_e(z, m) - elliptic_f(z, m)) / (Integer(2) * m)
 
     def _print_latex_(self, z, m):
-        """
+        r"""
         EXAMPLES::
 
             sage: latex(elliptic_e(pi, x))
@@ -470,11 +485,12 @@ class EllipticE(BuiltinFunction):
 
 elliptic_e = EllipticE()
 
+
 class EllipticEC(BuiltinFunction):
-    """
+    r"""
     Return the complete elliptic integral of the second kind:
 
-    .. math::
+    .. MATH::
 
         E(m)=\int_0^{\pi/2} \sqrt{1 - m\sin(x)^2}\, dx.
 
@@ -505,7 +521,8 @@ class EllipticEC(BuiltinFunction):
         BuiltinFunction.__init__(self, 'elliptic_ec', nargs=1, latex_name='E',
                                  conversions=dict(mathematica='EllipticE',
                                                   maxima='elliptic_ec',
-                                                  sympy='elliptic_e'))
+                                                  sympy='elliptic_e',
+                                                  fricas='ellipticE'))
  
     def _eval_(self, x):
         """
@@ -553,7 +570,7 @@ class EllipticEU(BuiltinFunction):
     r"""
     Return Jacobi's form of the incomplete elliptic integral of the second kind:
 
-    .. math::
+    .. MATH::
 
         E(u,m)=
         \int_0^u \mathrm{dn}(x,m)^2\, dx = \int_0^\tau
@@ -677,7 +694,7 @@ class EllipticF(BuiltinFunction):
     r"""
     Return the incomplete elliptic integral of the first kind.
 
-    .. math::
+    .. MATH::
 
         F(\varphi\,|\,m)=\int_0^\varphi \frac{dx}{\sqrt{1 - m\sin(x)^2}},
 
@@ -773,7 +790,7 @@ class EllipticF(BuiltinFunction):
                       sqrt(Integer(1) - m * sin(z) ** Integer(2)))))
 
     def _print_latex_(self, z, m):
-        """
+        r"""
         EXAMPLES::
 
             sage: latex(elliptic_f(x,pi))
@@ -783,11 +800,12 @@ class EllipticF(BuiltinFunction):
  
 elliptic_f = EllipticF()
 
+
 class EllipticKC(BuiltinFunction):
     r"""
     Return the complete elliptic integral of the first kind:
 
-    .. math::
+    .. MATH::
 
         K(m)=\int_0^{\pi/2} \frac{dx}{\sqrt{1 - m\sin(x)^2}}.
 
@@ -820,7 +838,8 @@ class EllipticKC(BuiltinFunction):
         BuiltinFunction.__init__(self, 'elliptic_kc', nargs=1, latex_name='K',
                                  conversions=dict(mathematica='EllipticK',
                                                   maxima='elliptic_kc',
-                                                  sympy='elliptic_k'))
+                                                  sympy='elliptic_k',
+                                                  fricas='ellipticK'))
  
     def _eval_(self, z):
         """
@@ -879,7 +898,7 @@ class EllipticPi(BuiltinFunction):
     r"""
     Return the incomplete elliptic integral of the third kind:
 
-    .. math::
+    .. MATH::
 
         \Pi(n, t, m) = \int_0^t \frac{dx}{(1 - n \sin(x)^2)\sqrt{1 - m \sin(x)^2}}.
 
@@ -987,7 +1006,7 @@ class EllipticPi(BuiltinFunction):
                      sqrt(Integer(1) - m * sin(z) ** Integer(2)))))
 
     def _print_latex_(self, n, z, m):
-        """
+        r"""
         EXAMPLES::
 
             sage: latex(elliptic_pi(x,pi,0))
@@ -996,36 +1015,3 @@ class EllipticPi(BuiltinFunction):
         return r"\Pi(%s,%s,%s)" % (latex(n), latex(z), latex(m))
  
 elliptic_pi = EllipticPi()
-
-
-def error_fcn(t):
-    r"""
-    The complementary error function
-    `\frac{2}{\sqrt{\pi}}\int_t^\infty e^{-x^2} dx` (t belongs
-    to RR).  This function is currently always
-    evaluated immediately.
-
-    EXAMPLES::
-
-        sage: error_fcn(6)
-        2.15197367124989e-17
-        sage: error_fcn(RealField(100)(1/2))
-        0.47950012218695346231725334611
-
-    Note this is literally equal to `1 - erf(t)`::
-
-        sage: 1 - error_fcn(0.5)
-        0.520499877813047
-        sage: erf(0.5)
-        0.520499877813047
-    """
-    try:
-        return t.erfc()
-    except AttributeError:
-        try:
-            return RR(t).erfc()
-        except Exception:
-            raise NotImplementedError
-
-
-

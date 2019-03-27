@@ -1,3 +1,1 @@
-#!/usr/bin/env bash
-
-cd src && $MAKE test
+cd src && $MAKE test PYTHON=sage-python23

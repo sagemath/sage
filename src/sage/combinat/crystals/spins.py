@@ -41,7 +41,6 @@ representing the elements of the spin crystal by sequences of signs
 #****************************************************************************
 from __future__ import print_function
 
-from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.classical_crystals import ClassicalCrystals

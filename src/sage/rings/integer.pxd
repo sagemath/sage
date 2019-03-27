@@ -1,19 +1,25 @@
-from sage.libs.gmp.types cimport mpz_t, mpz_ptr
+from sage.libs.gmp.types cimport __mpz_struct, mpz_t, mpz_ptr
 from sage.libs.ntl.types cimport ZZ_c
 
 from sage.structure.element cimport EuclideanDomainElement, RingElement
 from sage.categories.morphism cimport Morphism
 
 cdef class Integer(EuclideanDomainElement):
-    cdef mpz_t value
+    # This is really of type mpz_t, but we don't use the mpz_t typedef
+    # to work around Cython bug
+    # https://github.com/cython/cython/issues/1984
+    cdef __mpz_struct value[1]
 
-    cdef void _to_ZZ(self, ZZ_c *z)
+    cdef int _to_ZZ(self, ZZ_c *z) except -1
     cdef void set_from_mpz(self, mpz_t value)
     cdef hash_c(self)
 
-    cpdef _pari_(self)
+    cpdef __pari__(self)
 
     cpdef _shift_helper(Integer self, y, int sign)
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
+    cpdef _pow_(self, other)
     cdef _and(Integer self, Integer other)
     cdef _or(Integer self, Integer other)
     cdef _xor(Integer self, Integer other)
@@ -27,8 +33,6 @@ cdef class Integer(EuclideanDomainElement):
 
     cdef bint _pseudoprime_is_prime(self, proof) except -1
     cpdef list _pari_divisors_small(self)
-
-    cdef _reduce_set(self, s) # do not use, since integers are immutable.
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo >&2 "SAGE_LOCAL undefined ... exiting"
     echo >&2 "Maybe run 'sage --sh'?"
@@ -7,17 +5,7 @@ if [ -z "$SAGE_LOCAL" ]; then
 fi
 
 # Apply fixes to upstream source
-echo "Applying patches..."
 cd src
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    echo "Using $patch"
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
 
 # Exit on error
 set -e
@@ -134,10 +122,13 @@ $MAKE BOOT_LDFLAGS="-Wl,-rpath,$SAGE_LOCAL/lib"
 $MAKE install
 
 
-# Force re-installation of gmp, mpir, mpfr and mpc with the GCC we just built.
+# Force re-installation of gmp, mpir, mpfr and mpc with the GCC that we
+# just built. This is needed in particular because gmp/mpir was first
+# built without C++ support. Also mark gfortran as not installed in case
+# somebody first built gfortran and then GCC.
 cd "$SAGE_SPKG_INST"
-rm -f gmp-* mpir-* mpfr-* mpc-*
+rm -f gmp-* mpir-* mpfr-* mpc-* gfortran-*
 
-# Force re-configuration: the next time that "make" is run, we don't
-# want GCC to be built again, see Trac #19324
+# Force re-configuration: the next time that "make" is run, we need to
+# rebuild all packages (#24703) but we should not rebuild gcc (#19324)
 touch "$SAGE_ROOT/configure"

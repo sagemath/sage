@@ -14,8 +14,9 @@
 #*****************************************************************************
 from __future__ import print_function
 
-include "cysignals/signals.pxi"
-include "sage/ext/cdefs.pxi"
+from cysignals.signals cimport sig_on, sig_off
+from sage.ext.cplusplus cimport ccrepr, ccreadstr
+
 include 'misc.pxi'
 include 'decl.pxi'
 
@@ -105,14 +106,13 @@ cdef class ntl_ZZ_p(object):
         cdef ZZ_c temp, num, den
         cdef long failed
         if v is not None:
-            sig_on()
             if isinstance(v, ntl_ZZ_p):
                 self.x = (<ntl_ZZ_p>v).x
-            elif isinstance(v, int):
-                self.x = int_to_ZZ_p(v)
             elif isinstance(v, long):
                 PyLong_to_ZZ(&temp, v)
                 self.x = ZZ_to_ZZ_p(temp)
+            elif isinstance(v, int):
+                self.x = int_to_ZZ_p(v)
             elif isinstance(v, Integer):
                 (<Integer>v)._to_ZZ(&temp)
                 self.x = ZZ_to_ZZ_p(temp)
@@ -121,9 +121,7 @@ cdef class ntl_ZZ_p(object):
                 (<Integer>v.denominator())._to_ZZ(&den)
                 ZZ_p_div(self.x, ZZ_to_ZZ_p(num), ZZ_to_ZZ_p(den))
             else:
-                v = str(v)
-                ZZ_p_from_str(&self.x, v)
-            sig_off()
+                ccreadstr(self.x, str(v))
 
     def __cinit__(self, v=None, modulus=None):
         #################### WARNING ###################
@@ -189,7 +187,7 @@ cdef class ntl_ZZ_p(object):
             '7'
         """
         self.c.restore_c()
-        return ZZ_p_to_PyString(&self.x)
+        return ccrepr(self.x)
 
     def __richcmp__(ntl_ZZ_p self, other, int op):
         r"""
@@ -327,7 +325,7 @@ cdef class ntl_ZZ_p(object):
             sage: x.__int__()
             3
             sage: type(x.__int__())
-            <type 'int'>
+            <... 'int'>
         """
         return self.get_as_int()
 
@@ -352,7 +350,7 @@ cdef class ntl_ZZ_p(object):
             sage: i
             2
             sage: type(i)
-            <type 'int'>
+            <... 'int'>
         """
         self.c.restore_c()
         return self.get_as_int()

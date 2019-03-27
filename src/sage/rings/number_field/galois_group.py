@@ -30,6 +30,7 @@ from sage.rings.infinity import infinity
 from sage.rings.number_field.number_field import refine_embedding
 from sage.rings.number_field.morphism import NumberFieldHomomorphism_im_gens
 
+
 class GaloisGroup_v1(SageObject):
     r"""
     A wrapper around a class representing an abstract transitive group.
@@ -64,28 +65,50 @@ class GaloisGroup_v1(SageObject):
         self.__group = group
         self.__number_field = number_field
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
-        Compare two number field Galois groups.  First the number
-        fields are compared, then the Galois groups if the number
-        fields are equal.  (Of course, if the number fields are the
-        same, the Galois groups are automatically equal.)
+        Compare two number field Galois groups.
+
+        First the number fields are compared, then the Galois groups
+        if the number fields are equal.  (Of course, if the number
+        fields are the same, the Galois groups are automatically
+        equal.)
 
         EXAMPLES::
 
             sage: G = NumberField(x^3 + 2, 'alpha').galois_group(type="pari")
             sage: H = QQ[sqrt(2)].galois_group(type="pari")
-            sage: cmp(G,H)
-            -1
+            sage: H == G
+            False
             sage: H == H
             True
             sage: G == G
             True
         """
         if not isinstance(other, GaloisGroup_v1):
-            return cmp(type(self), type(other))
-        return cmp( (self.__number_field, self.__group),
-                    (other.__number_field, other.__group) )
+            return False
+        if self.__number_field == other.__number_field:
+            return True
+        if self.__group == other.__group:
+            return True
+        return False
+
+    def __ne__(self, other):
+        """
+        Test for unequality.
+
+        EXAMPLES::
+
+            sage: G = NumberField(x^3 + 2, 'alpha').galois_group(type="pari")
+            sage: H = QQ[sqrt(2)].galois_group(type="pari")
+            sage: H != G
+            True
+            sage: H != H
+            False
+            sage: G != G
+            False
+        """
+        return not (self == other)
 
     def __repr__(self):
         """
@@ -97,8 +120,8 @@ class GaloisGroup_v1(SageObject):
             sage: G.__repr__()
             'Galois group PARI group [24, -1, 5, "S4"] of degree 4 of the Number Field in a with defining polynomial x^4 + 2*x + 2'
         """
-        return "Galois group %s of the %s"%(
-            self.__group, self.__number_field)
+        return "Galois group %s of the %s" % (self.__group,
+                                              self.__number_field)
 
     def group(self):
         """
@@ -109,10 +132,10 @@ class GaloisGroup_v1(SageObject):
             sage: G = NumberField(x^3 + 2*x + 2, 'theta').galois_group(type="pari")
             sage: H = G.group(); H
             PARI group [6, -1, 2, "S3"] of degree 3
-            sage: P = H.permutation_group(); P  # optional - database_gap
+            sage: P = H.permutation_group(); P
             Transitive group number 2 of degree 3
-            sage: list(P)                       # optional - database_gap
-            [(), (1,2), (1,2,3), (2,3), (1,3,2), (1,3)]
+            sage: sorted(P)
+            [(), (2,3), (1,2), (1,2,3), (1,3,2), (1,3)]
         """
         return self.__group
 
@@ -144,7 +167,6 @@ class GaloisGroup_v1(SageObject):
 
 
 class GaloisGroup_v2(PermutationGroup_generic):
-
     r"""
     The Galois group of an (absolute) number field.
 
@@ -175,9 +197,21 @@ class GaloisGroup_v2(PermutationGroup_generic):
             TypeError: You must specify the name of the generator.
             sage: NumberField(x^3 - 2, 'b').galois_group(names="c")
             Galois group of Galois closure in c of Number Field in b with defining polynomial x^3 - 2
-        """
 
-        from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+        TESTS::
+
+            sage: F.<z> = CyclotomicField(7)
+            sage: G = F.galois_group()
+
+        We test that a method inherited from PermutationGroup_generic returns
+        the right type of element (see :trac:`133`)::
+
+            sage: phi = G.random_element()
+            sage: type(phi) is G.element_class
+            True
+            sage: phi(z) # random
+            z^3
+        """
         self._number_field = number_field
 
         if not number_field.is_galois():
@@ -185,40 +219,18 @@ class GaloisGroup_v2(PermutationGroup_generic):
         else:
             self._galois_closure, self._gc_map = (number_field, number_field.hom(number_field.gen(), number_field))
 
-        self._pari_gc = self._galois_closure._pari_()
+        self._pari_gc = self._galois_closure.__pari__()
 
         g = self._pari_gc.galoisinit()
         self._pari_data = g
 
-        # Sort the vector of permutations using cmp() to avoid errors
+        # Sort the vector of permutations using .list() as key to avoid errors
         # from using comparison operators on non-scalar PARI objects.
-        PermutationGroup_generic.__init__(self, sorted(g[6], cmp=cmp))
+        PermutationGroup_generic.__init__(self,
+                                          sorted(g[6], key=lambda x: x.list()))
 
         # PARI computes all the elements of self anyway, so we might as well store them
         self._elts = sorted([self(x, check=False) for x in g[5]])
-
-    def _element_class(self):
-        r"""
-        Return the class to be used for creating elements of this group, which
-        is GaloisGroupElement.
-
-        EXAMPLE::
-
-            sage: F.<z> = CyclotomicField(7)
-            sage: G = F.galois_group()
-            sage: G._element_class()
-            <class 'sage.rings.number_field.galois_group.GaloisGroupElement'>
-
-        We test that a method inherited from PermutationGroup_generic returns
-        the right type of element (see :trac:`133`)::
-
-            sage: phi = G.random_element()
-            sage: type(phi)
-            <class 'sage.rings.number_field.galois_group.GaloisGroupElement'>
-            sage: phi(z) # random
-            z^3
-        """
-        return GaloisGroupElement
 
     def __call__(self, x, check=True):
         r""" Create an element of self from x. Here x had better be one of:
@@ -247,15 +259,16 @@ class GaloisGroup_v2(PermutationGroup_generic):
         from sage.rings.number_field.morphism import NumberFieldHomomorphism_im_gens
         if isinstance(x, NumberFieldHomomorphism_im_gens) and x.parent() == self.number_field().Hom(self.number_field()):
             l = [g for g in self if g.as_hom() == x]
-            if len(l) != 1: raise ArithmeticError
+            if len(l) != 1:
+                raise ArithmeticError
             return l[0]
-        return GaloisGroupElement(x, parent=self, check=check)
+        return self.element_class(x, parent=self, check=check)
 
     def is_galois(self):
         r"""
         Return True if the underlying number field of self is actually Galois.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: NumberField(x^3 - x + 1,'a').galois_group(names='b').is_galois()
             False
@@ -270,7 +283,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
     def ngens(self):
         r""" Number of generators of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: QuadraticField(-23, 'a').galois_group().ngens()
             1
@@ -281,7 +294,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
         r"""
         String representation of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = QuadraticField(-23, 'a').galois_group()
             sage: G._repr_()
@@ -299,7 +312,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
         r"""
         The ambient number field.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K = NumberField(x^3 - x + 1, 'a')
             sage: K.galois_group(names='b').number_field() is K
@@ -311,7 +324,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
         r"""
         The Galois closure of the ambient number field.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K = NumberField(x^3 - x + 1, 'a')
             sage: K.galois_group(names='b').splitting_field()
@@ -325,18 +338,54 @@ class GaloisGroup_v2(PermutationGroup_generic):
         r"""
         List of the elements of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: NumberField(x^3 - 3*x + 1,'a').galois_group().list()
             [(), (1,2,3), (1,3,2)]
         """
         return self._elts
 
+    def unrank(self, i):
+        r"""
+        Return the ``i``-th element of ``self``.
+
+        INPUT:
+
+        - ``i`` -- integer between ``0`` and ``n-1`` where
+          ``n`` is the cardinality of this set
+
+        EXAMPLES::
+
+            sage: G = NumberField(x^3 - 3*x + 1,'a').galois_group()
+            sage: [G.unrank(i) for i in range(G.cardinality())]
+            [(), (1,2,3), (1,3,2)]
+
+        TESTS::
+
+            sage: G = NumberField(x^3 - 3*x + 1,'a').galois_group()
+            sage: L = [G.unrank(i) for i in range(G.cardinality())]
+            sage: L == G.list()
+            True
+        """
+        return self._elts[i]
+
+    def __iter__(self):
+        """
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: G = NumberField(x^3 - 3*x + 1,'a').galois_group()
+            sage: list(G) == G.list()
+            True
+        """
+        return iter(self._elts)
+
     def subgroup(self, elts):
         r"""
         Return the subgroup of self with the given elements. Mostly for internal use.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = NumberField(x^3 - x - 1, 'a').galois_closure('b').galois_group()
             sage: G.subgroup([ G(1), G([(1,2,3),(4,5,6)]), G([(1,3,2),(4,6,5)]) ])
@@ -351,7 +400,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
     # unless the field is Galois.
 
     def decomposition_group(self, P):
-        """
+        r"""
         Decomposition group of a prime ideal P, i.e. the subgroup of elements
         that map P to itself. This is the same as the Galois group of the
         extension of local fields obtained by completing at P.
@@ -361,7 +410,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
 
         P can also be an infinite prime, i.e. an embedding into `\RR` or `\CC`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K.<a> = NumberField(x^4 - 2*x^2 + 2,'b').galois_closure()
             sage: P = K.ideal([17, a^2])
@@ -404,7 +453,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
         for a specified embedding P into the complex numbers. If P is not
         specified, use the "standard" embedding, whenever that is well-defined.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: L.<z> = CyclotomicField(7)
             sage: G = L.galois_group()
@@ -437,7 +486,8 @@ class GaloisGroup_v2(PermutationGroup_generic):
         g = self.number_field().gen()
         gconj = P(g).conjugate()
         elts = [s for s in self if P(s(g)) == gconj]
-        if len(elts) != 1: raise ArithmeticError("Something has gone very wrong here")
+        if len(elts) != 1:
+            raise ArithmeticError("Something has gone very wrong here")
         return elts[0]
 
     def ramification_group(self, P, v):
@@ -446,7 +496,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
         of elements s of self such that s acts trivially modulo P^(v+1). This
         is only defined for Galois fields.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K.<b> = NumberField(x^3 - 3,'a').galois_closure()
             sage: G=K.galois_group()
@@ -468,7 +518,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
         Return the inertia group of the prime P, i.e. the group of elements acting
         trivially modulo P. This is just the 0th ramification group of P.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K.<b> = NumberField(x^2 - 3,'a')
             sage: G = K.galois_group()
@@ -487,7 +537,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
         set of indices i such that the ramification group `G_{i+1} \ne G_{i}`.
         This is only defined for Galois fields.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K.<b> = NumberField(x^8 - 20*x^6 + 104*x^4 - 40*x^2 + 1156)
             sage: G = K.galois_group()
@@ -540,11 +590,13 @@ class GaloisGroup_v2(PermutationGroup_generic):
         t = []
         gens = self.number_field().ring_of_integers().ring_generators()
         for s in self.decomposition_group(P):
-            w = [ (s(g) - g**p).valuation(P) for g in gens]
+            w = [(s(g) - g**p).valuation(P) for g in gens]
             if min(w) >= 1:
                 t.append(s)
-        if len(t) > 1: raise ValueError("%s is ramified" % P)
+        if len(t) > 1:
+            raise ValueError("%s is ramified" % P)
         return t[0]
+
 
 class GaloisGroup_subgroup(GaloisGroup_v2):
     r"""
@@ -556,7 +608,7 @@ class GaloisGroup_subgroup(GaloisGroup_v2):
         Create a subgroup of a Galois group with the given elements. It is generally better to
         use the subgroup() method of the parent group.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.rings.number_field.galois_group import GaloisGroup_subgroup
             sage: G = NumberField(x^3 - x - 1, 'a').galois_closure('b').galois_group()
@@ -576,7 +628,7 @@ class GaloisGroup_subgroup(GaloisGroup_v2):
             sage: G.artin_symbol(P)
             ()
         """
-        #XXX: This should be fixed so that this can use GaloisGroup_v2.__init__
+        # XXX This should be fixed so that this can use GaloisGroup_v2.__init__
         PermutationGroup_generic.__init__(self, elts, canonicalize=True,
                                           domain=ambient.domain())
         self._ambient = ambient
@@ -592,7 +644,7 @@ class GaloisGroup_subgroup(GaloisGroup_v2):
         Return the fixed field of this subgroup (as a subfield of the Galois
         closure of the number field associated to the ambient Galois group).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: L.<a> = NumberField(x^4 + 1)
             sage: G = L.galois_group()
@@ -605,7 +657,7 @@ class GaloisGroup_subgroup(GaloisGroup_v2):
 
         """
         if self.order() == 1:
-            return self._galois_closure # work around a silly error
+            return self._galois_closure  # work around a silly error
 
         vecs = [pari(g.domain()).Vecsmall() for g in self._elts]
         v = self._ambient._pari_data.galoisfixedfield(vecs)
@@ -616,7 +668,7 @@ class GaloisGroup_subgroup(GaloisGroup_v2):
         r"""
         String representation of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = NumberField(x^3 - x - 1, 'a').galois_closure('b').galois_group()
             sage: H = G.subgroup([ G(1), G([(1,2,3),(4,5,6)]), G([(1,3,2),(4,6,5)])])
@@ -625,13 +677,14 @@ class GaloisGroup_subgroup(GaloisGroup_v2):
         """
         return "Subgroup %s of %s" % (self._elts, self._ambient)
 
+
 class GaloisGroupElement(PermutationGroupElement):
     r"""
     An element of a Galois group. This is stored as a permutation, but may also
     be made to act on elements of the field (generally returning elements of
     its Galois closure).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: K.<w> = QuadraticField(-7); G = K.galois_group()
         sage: G[1]
@@ -655,7 +708,7 @@ class GaloisGroupElement(PermutationGroupElement):
         Return the homomorphism L -> L corresponding to self, where L is the
         Galois closure of the ambient number field.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = QuadraticField(-7,'w').galois_group()
             sage: G[1].as_hom()
@@ -693,7 +746,7 @@ class GaloisGroupElement(PermutationGroupElement):
         Return the action of self on an element x in the number field of self
         (or its Galois closure).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K.<w> = QuadraticField(-7)
             sage: f = K.galois_group()[1]
@@ -703,14 +756,14 @@ class GaloisGroupElement(PermutationGroupElement):
         if x.parent() == self.parent().splitting_field():
             return self.as_hom()(x)
         else:
-            return self.as_hom()( self.parent()._gc_map(x) )
+            return self.as_hom()(self.parent()._gc_map(x))
 
     def ramification_degree(self, P):
         """
         Return the greatest value of v such that s acts trivially modulo P^v.
         Should only be used if P is prime and s is in the decomposition group of P.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K.<b> = NumberField(x^3 - 3, 'a').galois_closure()
             sage: G = K.galois_group()
@@ -722,11 +775,11 @@ class GaloisGroupElement(PermutationGroupElement):
         if not self.parent().is_galois():
             raise TypeError("Ramification degree only defined for Galois extensions")
         gens = self.parent().number_field().ring_of_integers().ring_generators()
-        w = [ (self(g) - g).valuation(P) for g in gens]
+        w = [(self(g) - g).valuation(P) for g in gens]
         return min(w)
 
+GaloisGroup_v2.Element = GaloisGroupElement
 
 # For unpickling purposes we rebind GaloisGroup as GaloisGroup_v1.
 
 GaloisGroup = GaloisGroup_v1
-

@@ -3,7 +3,7 @@ Calculus functions
 """
 from __future__ import absolute_import
 from sage.matrix.all import matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.structure.element import is_Vector
 from sage.symbolic.ring import is_SymbolicVariable
 from .functional import diff
@@ -67,9 +67,9 @@ def wronskian(*args):
         sage: wronskian(1, e^(-x), e^(2*x))
         -6*e^x
 
-    NOTES:
+    REFERENCES:
 
-    - http://en.wikipedia.org/wiki/Wronskian
+    - :wikipedia:`Wronskian`
     - http://planetmath.org/encyclopedia/WronskianDeterminant.html
 
     AUTHORS:

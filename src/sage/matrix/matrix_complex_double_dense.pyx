@@ -3,8 +3,8 @@ Dense matrices over the Complex Double Field using NumPy
 
 EXAMPLES::
 
-    sage: b=Mat(CDF,2,3).basis()
-    sage: b[0]
+    sage: b = Mat(CDF,2,3).basis()
+    sage: b[0,0]
     [1.0 0.0 0.0]
     [0.0 0.0 0.0]
 
@@ -36,8 +36,7 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
-
-import matrix_double_dense
+from __future__ import absolute_import
 
 from sage.rings.complex_double import CDF
 
@@ -45,7 +44,7 @@ cimport numpy as cnumpy
 
 numpy=None
 
-cdef class Matrix_complex_double_dense(matrix_double_dense.Matrix_double_dense):
+cdef class Matrix_complex_double_dense(Matrix_double_dense):
     """
     Class that implements matrices over the real double field. These
     are supposed to be fast matrix operations using C doubles. Most
@@ -83,18 +82,7 @@ cdef class Matrix_complex_double_dense(matrix_double_dense.Matrix_double_dense):
     See the commands qr, lu, and svd for QR, LU, and singular value
     decomposition.
     """
-
-
-    ########################################################################
-    # LEVEL 1 functionality
-    #   * __cinit__
-    #   * __dealloc__
-    #   * __init__
-    #   * set_unsafe
-    #   * get_unsafe
-    #   * __hash__       -- always simple
-    ########################################################################
-    def __cinit__(self, parent, entries, copy, coerce):
+    def __cinit__(self):
         global numpy
         if numpy is None:
             import numpy

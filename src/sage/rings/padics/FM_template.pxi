@@ -33,7 +33,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.ext.stdsage cimport PY_NEW
 include "padic_template_element.pxi"
 from cpython.int cimport *
 
@@ -76,16 +75,19 @@ cdef class FMElement(pAdicTemplateElement):
 
             sage: R = ZpFM(5)
             sage: a = R(17,5); a #indirect doctest
-            2 + 3*5 + O(5^20)
+            2 + 3*5
             sage: R = ZpFM(5,5)
             sage: a = R(25/9); a #indirect doctest
-            4*5^2 + 2*5^3 + O(5^5)
+            4*5^2 + 2*5^3
         """
+        IF CELEMENT_IS_PY_OBJECT:
+            polyt = type(self.prime_pow.modulus)
+            self.value = <celement>polyt.__new__(polyt)
         cconstruct(self.value, self.prime_pow)
         if isinstance(x,FMElement) and x.parent() is self.parent():
-            cshift(self.value, (<FMElement>x).value, 0, 0, self.prime_pow, False)
+            cshift_notrunc(self.value, (<FMElement>x).value, 0, 0, self.prime_pow, False)
         else:
-            cconv(self.value, x, self.prime_pow.prec_cap, 0, self.prime_pow)
+            cconv(self.value, x, self.prime_pow.ram_prec_cap, 0, self.prime_pow)
 
     cdef FMElement _new_c(self):
         """
@@ -94,14 +96,33 @@ cdef class FMElement(pAdicTemplateElement):
         TESTS::
 
             sage: R = ZpFM(5); R(6) * R(7) #indirect doctest
-            2 + 3*5 + 5^2 + O(5^20)
+            2 + 3*5 + 5^2
         """
         cdef type t = type(self)
         cdef FMElement ans = t.__new__(t)
         ans._parent = self._parent
         ans.prime_pow = self.prime_pow
+        IF CELEMENT_IS_PY_OBJECT:
+            polyt = type(self.prime_pow.modulus)
+            ans.value = <celement>polyt.__new__(polyt)
         cconstruct(ans.value, ans.prime_pow)
         return ans
+
+    cdef pAdicTemplateElement _new_with_value(self, celement value, long absprec):
+        """
+        Creates a new element with a given value and absolute precision.
+
+        Used by code that doesn't know the precision type.
+        """
+        cdef FMElement ans = self._new_c()
+        creduce(ans.value, value, ans.prime_pow.prec_cap, ans.prime_pow)
+        return ans
+
+    cdef int _get_unit(self, celement value) except -1:
+        """
+        Sets ``value`` to the unit of this p-adic element.
+        """
+        cremove(value, self.value, self.prime_pow.ram_prec_cap, self.prime_pow)
 
     cdef int check_preccap(self) except -1:
         """
@@ -111,7 +132,7 @@ cdef class FMElement(pAdicTemplateElement):
         TESTS::
 
             sage: ZpFM(5)(1).lift_to_precision(30) # indirect doctest
-            1 + O(5^20)
+            1
         """
         pass
 
@@ -166,11 +187,11 @@ cdef class FMElement(pAdicTemplateElement):
 
             sage: R = Zp(7, 4, 'fixed-mod', 'series')
             sage: -R(7) #indirect doctest
-            6*7 + 6*7^2 + 6*7^3 + O(7^4)
+            6*7 + 6*7^2 + 6*7^3
         """
         cdef FMElement ans = self._new_c()
-        cneg(ans.value, self.value, ans.prime_pow.prec_cap, ans.prime_pow)
-        creduce_small(ans.value, ans.value, ans.prime_pow.prec_cap, ans.prime_pow)
+        cneg(ans.value, self.value, ans.prime_pow.ram_prec_cap, ans.prime_pow)
+        creduce_small(ans.value, ans.value, ans.prime_pow.ram_prec_cap, ans.prime_pow)
         return ans
 
     cpdef _add_(self, _right):
@@ -181,16 +202,16 @@ cdef class FMElement(pAdicTemplateElement):
 
             sage: R = Zp(7, 4, 'fixed-mod', 'series')
             sage: x = R(1721); x
-            6 + 5*7^3 + O(7^4)
+            6 + 5*7^3
             sage: y = R(1373); y
-            1 + 4*7^3 + O(7^4)
+            1 + 4*7^3
             sage: x + y #indirect doctest
-            7 + 2*7^3 + O(7^4)
+            7 + 2*7^3
         """
         cdef FMElement right = _right
         cdef FMElement ans = self._new_c()
-        cadd(ans.value, self.value, right.value, ans.prime_pow.prec_cap, ans.prime_pow)
-        creduce_small(ans.value, ans.value, ans.prime_pow.prec_cap, ans.prime_pow)
+        cadd(ans.value, self.value, right.value, ans.prime_pow.ram_prec_cap, ans.prime_pow)
+        creduce_small(ans.value, ans.value, ans.prime_pow.ram_prec_cap, ans.prime_pow)
         return ans
 
     cpdef _sub_(self, _right):
@@ -201,16 +222,16 @@ cdef class FMElement(pAdicTemplateElement):
 
             sage: R = Zp(7, 4, 'fixed-mod', 'series')
             sage: x = R(1721); x
-            6 + 5*7^3 + O(7^4)
+            6 + 5*7^3
             sage: y = R(1373); y
-            1 + 4*7^3 + O(7^4)
+            1 + 4*7^3
             sage: x - y #indirect doctest
-            5 + 7^3 + O(7^4)
+            5 + 7^3
         """
         cdef FMElement right = _right
         cdef FMElement ans = self._new_c()
-        csub(ans.value, self.value, right.value, ans.prime_pow.prec_cap, ans.prime_pow)
-        creduce_small(ans.value, ans.value, ans.prime_pow.prec_cap, ans.prime_pow)
+        csub(ans.value, self.value, right.value, ans.prime_pow.ram_prec_cap, ans.prime_pow)
+        creduce_small(ans.value, ans.value, ans.prime_pow.ram_prec_cap, ans.prime_pow)
         return ans
 
     def __invert__(self):
@@ -222,7 +243,7 @@ cdef class FMElement(pAdicTemplateElement):
 
             sage: R = Zp(7, 4, 'fixed-mod', 'series')
             sage: ~R(2)
-            4 + 3*7 + 3*7^2 + 3*7^3 + O(7^4)
+            4 + 3*7 + 3*7^2 + 3*7^3
             sage: ~R(0)
             Traceback (most recent call last):
             ...
@@ -235,7 +256,7 @@ cdef class FMElement(pAdicTemplateElement):
         if not cisunit(self.value, self.prime_pow):
             raise ValueError("cannot invert non-unit")
         cdef FMElement ans = self._new_c()
-        cinvert(ans.value, self.value, ans.prime_pow.prec_cap, ans.prime_pow)
+        cinvert(ans.value, self.value, ans.prime_pow.ram_prec_cap, ans.prime_pow)
         return ans
 
     cpdef _mul_(self, _right):
@@ -246,14 +267,14 @@ cdef class FMElement(pAdicTemplateElement):
 
             sage: R = Zp(7, 4, 'fixed-mod', 'series')
             sage: R(3) * R(2) #indirect doctest
-            6 + O(7^4)
+            6
             sage: R(1/2) * R(2)
-            1 + O(7^4)
+            1
         """
         cdef FMElement right = _right
         cdef FMElement ans = self._new_c()
-        cmul(ans.value, self.value, right.value, ans.prime_pow.prec_cap, ans.prime_pow)
-        creduce(ans.value, ans.value, ans.prime_pow.prec_cap, ans.prime_pow)
+        cmul(ans.value, self.value, right.value, ans.prime_pow.ram_prec_cap, ans.prime_pow)
+        creduce(ans.value, ans.value, ans.prime_pow.ram_prec_cap, ans.prime_pow)
         return ans
 
     cpdef _div_(self, _right):
@@ -265,7 +286,7 @@ cdef class FMElement(pAdicTemplateElement):
 
             sage: R = Zp(7, 4, 'fixed-mod', 'series')
             sage: R(3) / R(2) #indirect doctest
-            5 + 3*7 + 3*7^2 + 3*7^3 + O(7^4)
+            5 + 3*7 + 3*7^2 + 3*7^3
             sage: R(5) / R(0)
             Traceback (most recent call last):
             ...
@@ -279,11 +300,54 @@ cdef class FMElement(pAdicTemplateElement):
         cdef FMElement ans = self._new_c()
         if not cisunit(right.value, self.prime_pow):
             raise ValueError("cannot invert non-unit")
-        cdivunit(ans.value, self.value, right.value, ans.prime_pow.prec_cap, ans.prime_pow)
-        creduce(ans.value, ans.value, ans.prime_pow.prec_cap, ans.prime_pow)
+        cdivunit(ans.value, self.value, right.value, ans.prime_pow.ram_prec_cap, ans.prime_pow)
+        creduce(ans.value, ans.value, ans.prime_pow.ram_prec_cap, ans.prime_pow)
         return ans
 
-    def __pow__(FMElement self, _right, dummy): # NOTE: dummy ignored, always use self.prime_pow.prec_cap
+    def _quo_rem(self, _right):
+        """
+        Quotient with remainder.
+
+        EXAMPLES::
+
+            sage: R = ZpFM(3, 5)
+            sage: R(12).quo_rem(R(2)) # indirect doctest
+            (2*3, 0)
+            sage: R(2).quo_rem(R(12))
+            (0, 2)
+            sage: q, r = R(4).quo_rem(R(12)); q, r
+            (1 + 2*3 + 2*3^3, 1)
+            sage: 12*q + r == 4
+            True
+        """
+        cdef FMElement right = _right
+        if ciszero(right.value, right.prime_pow):
+            raise ZeroDivisionError
+        cdef FMElement q = self._new_c()
+        cdef FMElement r = self._new_c()
+        cdef long sval, rval, diff, pcap = self.prime_pow.ram_prec_cap
+        sval = self.valuation_c()
+        rval = right.valuation_c()
+        diff = sval - rval
+        if ciszero(self.value, self.prime_pow):
+            csetzero(q.value, q.prime_pow)
+            csetzero(r.value, r.prime_pow)
+        elif diff >= 0:
+            # shift right and self by the same power of the uniformizer
+            cshift_notrunc(r.value, right.value, -rval, pcap, r.prime_pow, False)
+            cshift_notrunc(q.value, self.value, -rval, pcap, q.prime_pow, False)
+            # divide
+            cdivunit(q.value, q.value, r.value, pcap, q.prime_pow)
+            csetzero(r.value, r.prime_pow)
+        else:
+            cshift(q.value, r.value, self.value, -rval, pcap, q.prime_pow, False)
+            cshift_notrunc(q.prime_pow.shift_rem, right.value, -rval, pcap, q.prime_pow, False)
+            cdivunit(q.value, q.value, q.prime_pow.shift_rem, pcap, q.prime_pow)
+        creduce(q.value, q.value, pcap, q.prime_pow)
+        return q, r
+
+
+    def __pow__(FMElement self, _right, dummy): # NOTE: dummy ignored, always use self.prime_pow.ram_prec_cap
         """
         Exponentiation by an integer
 
@@ -291,13 +355,13 @@ cdef class FMElement(pAdicTemplateElement):
 
             sage: R = ZpFM(11, 5)
             sage: R(1/2)^5
-            10 + 7*11 + 11^2 + 5*11^3 + 4*11^4 + O(11^5)
+            10 + 7*11 + 11^2 + 5*11^3 + 4*11^4
             sage: R(1/32)
-            10 + 7*11 + 11^2 + 5*11^3 + 4*11^4 + O(11^5)
+            10 + 7*11 + 11^2 + 5*11^3 + 4*11^4
             sage: R(1/2)^5 == R(1/32)
             True
             sage: R(3)^1000 #indirect doctest
-            1 + 4*11^2 + 3*11^3 + 7*11^4 + O(11^5)
+            1 + 4*11^2 + 3*11^3 + 7*11^4
 
         TESTS:
 
@@ -313,7 +377,7 @@ cdef class FMElement(pAdicTemplateElement):
         if right < 0:
             self = ~self
             mpz_neg(right.value, right.value)
-        cpow(ans.value, self.value, right.value, self.prime_pow.prec_cap, self.prime_pow)
+        cpow(ans.value, self.value, right.value, self.prime_pow.ram_prec_cap, self.prime_pow)
         return ans
 
     cdef pAdicTemplateElement _lshift_c(self, long shift):
@@ -328,39 +392,39 @@ cdef class FMElement(pAdicTemplateElement):
         We create a fixed modulus ring::
 
             sage: R = ZpFM(5, 20); a = R(1000); a
-            3*5^3 + 5^4 + O(5^20)
+            3*5^3 + 5^4
 
         Shifting to the right is the same as dividing by a power of
         the uniformizer `\pi` of the `p`-adic ring.::
 
             sage: a >> 1
-            3*5^2 + 5^3 + O(5^20)
+            3*5^2 + 5^3
 
         Shifting to the left is the same as multiplying by a power of
         `\pi`::
 
             sage: a << 2
-            3*5^5 + 5^6 + O(5^20)
+            3*5^5 + 5^6
             sage: a*5^2
-            3*5^5 + 5^6 + O(5^20)
+            3*5^5 + 5^6
 
         Shifting by a negative integer to the left is the same as
         right shifting by the absolute value::
 
             sage: a << -3
-            3 + 5 + O(5^20)
+            3 + 5
             sage: a >> 3
-            3 + 5 + O(5^20)
+            3 + 5
         """
         if shift < 0:
             return self._rshift_c(-shift)
         elif shift == 0:
             return self
         cdef FMElement ans = self._new_c()
-        if shift >= self.prime_pow.prec_cap:
+        if shift >= self.prime_pow.ram_prec_cap:
             csetzero(ans.value, ans.prime_pow)
         else:
-            cshift(ans.value, self.value, shift, ans.prime_pow.prec_cap, ans.prime_pow, False)
+            cshift_notrunc(ans.value, self.value, shift, ans.prime_pow.ram_prec_cap, ans.prime_pow, True)
         return ans
 
     cdef pAdicTemplateElement _rshift_c(self, long shift):
@@ -373,28 +437,28 @@ cdef class FMElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = ZpFM(997, 7); a = R(123456878908); a
-            964*997 + 572*997^2 + 124*997^3 + O(997^7)
+            964*997 + 572*997^2 + 124*997^3
 
         Shifting to the right divides by a power of `\pi`, but
         dropping terms with negative valuation::
 
             sage: a >> 3
-            124 + O(997^7)
+            124
 
         A negative shift multiplies by that power of `\pi`::
 
             sage: a >> -3
-            964*997^4 + 572*997^5 + 124*997^6 + O(997^7)
+            964*997^4 + 572*997^5 + 124*997^6
         """
         if shift < 0:
             return self._lshift_c(-shift)
         elif shift == 0:
             return self
         cdef FMElement ans = self._new_c()
-        if shift >= self.prime_pow.prec_cap:
+        if shift >= self.prime_pow.ram_prec_cap:
             csetzero(ans.value, ans.prime_pow)
         else:
-            cshift(ans.value, self.value, -shift, ans.prime_pow.prec_cap, ans.prime_pow, False)
+            cshift(ans.value, ans.prime_pow.shift_rem, self.value, -shift, ans.prime_pow.ram_prec_cap, ans.prime_pow, True)
         return ans
 
     def add_bigoh(self, absprec):
@@ -403,7 +467,7 @@ cdef class FMElement(pAdicTemplateElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer
+        - ``absprec`` -- an integer or infinity
 
         OUTPUT:
 
@@ -412,16 +476,36 @@ cdef class FMElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = Zp(7,4,'fixed-mod','series'); a = R(8); a.add_bigoh(1)
-            1 + O(7^4)
+            1
+
+        TESTS:
+
+        We handle very large and very small values for ``absprec`` correctly::
+
+            sage: a = R(7)
+            sage: a.add_bigoh(2^1000)
+            7
+            sage: a.add_bigoh(-2^1000)
+            0
+
         """
-        cdef long aprec, newprec
+        cdef long aprec
+        if absprec is infinity:
+            return self
         if isinstance(absprec, int):
             aprec = absprec
         else:
             if not isinstance(absprec, Integer):
                 absprec = Integer(absprec)
-            aprec = mpz_get_si((<Integer>absprec).value)
-        if aprec >= self.prime_pow.prec_cap:
+            if mpz_sgn((<Integer>absprec).value) == -1:
+                return self.parent().fraction_field()(0)
+            elif mpz_fits_slong_p((<Integer>absprec).value) == 0:
+                return self
+            else:
+                aprec = mpz_get_si((<Integer>absprec).value)
+        if aprec < 0:
+            return self.parent().fraction_field()(self, absprec)
+        elif aprec >= self.prime_pow.prec_cap:
             return self
         cdef FMElement ans = self._new_c()
         creduce(ans.value, self.value, aprec, ans.prime_pow)
@@ -476,7 +560,7 @@ cdef class FMElement(pAdicTemplateElement):
             return iszero
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
-        if mpz_cmp_si((<Integer>absprec).value, self.prime_pow.prec_cap) >= 0:
+        if mpz_cmp_si((<Integer>absprec).value, self.prime_pow.ram_prec_cap) >= 0:
             return iszero
         cdef long val = self.valuation_c()
         return mpz_cmp_si((<Integer>absprec).value, val) <= 0
@@ -528,7 +612,7 @@ cdef class FMElement(pAdicTemplateElement):
             right = self.parent()(_right)
         if absprec is None:
             # The default absolute precision is given by the precision cap
-            aprec = self.prime_pow.prec_cap
+            aprec = self.prime_pow.ram_prec_cap
         else:
             if not isinstance(absprec, Integer):
                 absprec = Integer(absprec)
@@ -538,15 +622,15 @@ cdef class FMElement(pAdicTemplateElement):
                 return True
             # If absprec is bigger than the precision cap, we use it
             # instead.
-            if mpz_cmp_si((<Integer>absprec).value, self.prime_pow.prec_cap) >= 0:
-                aprec = self.prime_pow.prec_cap
+            if mpz_cmp_si((<Integer>absprec).value, self.prime_pow.ram_prec_cap) >= 0:
+                aprec = self.prime_pow.ram_prec_cap
             else:
                 aprec = mpz_get_si((<Integer>absprec).value)
         return ccmp(self.value,
                     right.value,
                     aprec,
-                    aprec < self.prime_pow.prec_cap,
-                    aprec < right.prime_pow.prec_cap,
+                    aprec < self.prime_pow.ram_prec_cap,
+                    aprec < right.prime_pow.ram_prec_cap,
                     self.prime_pow) == 0
 
     cdef int _cmp_units(self, pAdicGenericElement _right) except -2:
@@ -563,7 +647,7 @@ cdef class FMElement(pAdicTemplateElement):
             True
         """
         cdef FMElement right = _right
-        return ccmp(self.value, right.value, self.prime_pow.prec_cap, False, False, self.prime_pow)
+        return ccmp(self.value, right.value, self.prime_pow.ram_prec_cap, False, False, self.prime_pow)
 
     cdef pAdicTemplateElement lift_to_precision_c(self, long absprec):
         """
@@ -574,110 +658,13 @@ cdef class FMElement(pAdicTemplateElement):
 
         EXAMPLES::
 
-            sage: R = ZpFM(5);
+            sage: R = ZpFM(5)
             sage: a = R(77, 2); a
-            2 + 3*5^2 + O(5^20)
+            2 + 3*5^2
             sage: a.lift_to_precision(17) # indirect doctest
-            2 + 3*5^2 + O(5^20)
+            2 + 3*5^2
         """
         return self
-
-    def list(self, lift_mode = 'simple'):
-        r"""
-        Returns a list of coefficients of `\pi^i` starting with `\pi^0`.
-
-        INPUT:
-
-        - ``lift_mode`` -- ``'simple'``, ``'smallest'`` or ``'teichmuller'``
-          (default: ``'simple'``:)
-
-        OUTPUT:
-
-        The list of coefficients of this element.
-
-        .. NOTE::
-
-            - Returns a list `[a_0, a_1, \ldots, a_n]` so that each `a_i`
-              is an integer and `\sum_{i = 0}^n a_i \cdot p^i` is equal to
-              this element modulo the precision cap.
-
-            - If ``lift_mode`` is ``'simple'``, `0 \leq a_i < p`.
-
-            - If ``lift_mode`` is ``'smallest'``, `-p/2 < a_i \leq p/2`.
-
-            - If ``lift_mode`` is ``'teichmuller'``, `a_i^q = a_i`, modulo
-              the precision cap.
-
-        EXAMPLES::
-
-            sage: R = ZpFM(7,6); a = R(12837162817); a
-            3 + 4*7 + 4*7^2 + 4*7^4 + O(7^6)
-            sage: L = a.list(); L
-            [3, 4, 4, 0, 4]
-            sage: sum([L[i] * 7^i for i in range(len(L))]) == a
-            True
-            sage: L = a.list('smallest'); L
-            [3, -3, -2, 1, -3, 1]
-            sage: sum([L[i] * 7^i for i in range(len(L))]) == a
-            True
-            sage: L = a.list('teichmuller'); L
-            [3 + 4*7 + 6*7^2 + 3*7^3 + 2*7^5 + O(7^6),
-            O(7^6),
-            5 + 2*7 + 3*7^3 + 6*7^4 + 4*7^5 + O(7^6),
-            1 + O(7^6),
-            3 + 4*7 + 6*7^2 + 3*7^3 + 2*7^5 + O(7^6),
-            5 + 2*7 + 3*7^3 + 6*7^4 + 4*7^5 + O(7^6)]
-            sage: sum([L[i] * 7^i for i in range(len(L))])
-            3 + 4*7 + 4*7^2 + 4*7^4 + O(7^6)
-        """
-        if ciszero(self.value, self.prime_pow):
-            return []
-        if lift_mode == 'teichmuller':
-            return self.teichmuller_list()
-        elif lift_mode == 'simple':
-            return clist(self.value, self.prime_pow.prec_cap, True, self.prime_pow)
-        elif lift_mode == 'smallest':
-            return clist(self.value, self.prime_pow.prec_cap, False, self.prime_pow)
-        else:
-            raise ValueError("unknown lift_mode")
-
-    def teichmuller_list(self):
-        r"""
-        Returns a list [`a_0`, `a_1`,..., `a_n`] such that
-
-        - `a_i^q = a_i`
-
-        - self.unit_part() = `\sum_{i = 0}^n a_i \pi^i`
-
-        EXAMPLES::
-
-            sage: R = ZpFM(5,5); R(14).list('teichmuller') #indirect doctest
-            [4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5),
-            3 + 3*5 + 2*5^2 + 3*5^3 + 5^4 + O(5^5),
-            2 + 5 + 2*5^2 + 5^3 + 3*5^4 + O(5^5),
-            1 + O(5^5),
-            4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5)]
-        """
-        ans = PyList_New(0)
-        if ciszero(self.value, self.prime_pow):
-            return ans
-        cdef long curpower = self.prime_pow.prec_cap
-        cdef long prec_cap = self.prime_pow.prec_cap
-        cdef FMElement list_elt
-        cdef FMElement tmp = self._new_c()
-        ccopy(tmp.value, self.value, self.prime_pow)
-        while not ciszero(tmp.value, tmp.prime_pow) and curpower > 0:
-            list_elt = self._new_c()
-            cteichmuller(list_elt.value, tmp.value, prec_cap, self.prime_pow)
-            if ciszero(list_elt.value, self.prime_pow):
-                cshift_notrunc(tmp.value, tmp.value, -1, prec_cap, self.prime_pow)
-            else:
-                csub(tmp.value, tmp.value, list_elt.value, prec_cap, self.prime_pow)
-                cshift_notrunc(tmp.value, tmp.value, -1, prec_cap, self.prime_pow)
-                creduce(tmp.value, tmp.value, prec_cap, self.prime_pow)
-            curpower -= 1
-            PyList_Append(ans, list_elt)
-        return ans
 
     def _teichmuller_set_unsafe(self):
         """
@@ -693,24 +680,56 @@ cdef class FMElement(pAdicTemplateElement):
 
             sage: R = ZpFM(17,5); a = R(11)
             sage: a
-            11 + O(17^5)
+            11
             sage: a._teichmuller_set_unsafe(); a
-            11 + 14*17 + 2*17^2 + 12*17^3 + 15*17^4 + O(17^5)
-            sage: a.list('teichmuller')
-            [11 + 14*17 + 2*17^2 + 12*17^3 + 15*17^4 + O(17^5)]
+            11 + 14*17 + 2*17^2 + 12*17^3 + 15*17^4
+            sage: E = a.expansion(lift_mode='teichmuller'); E
+            17-adic expansion of 11 + 14*17 + 2*17^2 + 12*17^3 + 15*17^4 (teichmuller)
+            sage: list(E)
+            [11 + 14*17 + 2*17^2 + 12*17^3 + 15*17^4, 0, 0, 0, 0]
 
         Note that if you set an element which is congruent to 0 you
         get 0 to maximum precision::
 
             sage: b = R(17*5); b
-            5*17 + O(17^5)
+            5*17
             sage: b._teichmuller_set_unsafe(); b
-            O(17^5)
+            0
         """
         if cisunit(self.value, self.prime_pow):
-            cteichmuller(self.value, self.value, self.prime_pow.prec_cap, self.prime_pow)
+            cteichmuller(self.value, self.value, self.prime_pow.ram_prec_cap, self.prime_pow)
         else:
             csetzero(self.value, self.prime_pow)
+
+    def polynomial(self, var='x'):
+        """
+        Returns a polynomial over the base ring that yields this element
+        when evaluated at the generator of the parent.
+
+        INPUT:
+
+        - ``var`` -- string, the variable name for the polynomial
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqFM(5^3)
+            sage: a.polynomial()
+            x
+            sage: a.polynomial(var='y')
+            y
+            sage: (5*a^2 + 25).polynomial()
+            5*x^2 + 5^2
+        """
+        R = self.base_ring()
+        S = R[var]
+        prec = self.precision_absolute()
+        e = self.parent().relative_e()
+        L = ccoefficients(self.value, 0, self.prime_pow.prec_cap, self.prime_pow)
+        if e == 1:
+            L = [R(c, prec) for c in L]
+        else:
+            L = [R(c, (prec - i - 1) // e + 1) for i, c in enumerate(L)]
+        return S(L)
 
     def precision_absolute(self):
         """
@@ -721,8 +740,8 @@ cdef class FMElement(pAdicTemplateElement):
             sage: R = Zp(7,4,'fixed-mod'); a = R(7); a.precision_absolute()
             4
         """
-        cdef Integer ans = PY_NEW(Integer)
-        mpz_set_si(ans.value, self.prime_pow.prec_cap)
+        cdef Integer ans = Integer.__new__(Integer)
+        mpz_set_si(ans.value, self.prime_pow.ram_prec_cap)
         return ans
 
     def precision_relative(self):
@@ -736,8 +755,8 @@ cdef class FMElement(pAdicTemplateElement):
             sage: a = R(0); a.precision_relative()
             0
         """
-        cdef Integer ans = PY_NEW(Integer)
-        mpz_set_si(ans.value, self.prime_pow.prec_cap - self.valuation_c())
+        cdef Integer ans = Integer.__new__(Integer)
+        mpz_set_si(ans.value, self.prime_pow.ram_prec_cap - self.valuation_c())
         return ans
 
     cpdef pAdicTemplateElement unit_part(FMElement self):
@@ -751,18 +770,18 @@ cdef class FMElement(pAdicTemplateElement):
 
             sage: R = Zp(17, 4, 'fixed-mod')
             sage: R(5).unit_part()
-            5 + O(17^4)
+            5
             sage: R(18*17).unit_part()
-            1 + 17 + O(17^4)
+            1 + 17
             sage: R(0).unit_part()
-            O(17^4)
+            0
             sage: type(R(5).unit_part())
             <type 'sage.rings.padics.padic_fixed_mod_element.pAdicFixedModElement'>
             sage: R = ZpFM(5, 5); a = R(75); a.unit_part()
-            3 + O(5^5)
+            3
         """
         cdef FMElement ans = (<FMElement>self)._new_c()
-        cremove(ans.value, (<FMElement>self).value, (<FMElement>self).prime_pow.prec_cap, (<FMElement>self).prime_pow)
+        cremove(ans.value, (<FMElement>self).value, (<FMElement>self).prime_pow.ram_prec_cap, (<FMElement>self).prime_pow)
         return ans
 
     cdef long valuation_c(self):
@@ -794,7 +813,7 @@ cdef class FMElement(pAdicTemplateElement):
             2
         """
         # for backward compatibility
-        return cvaluation(self.value, self.prime_pow.prec_cap, self.prime_pow)
+        return cvaluation(self.value, self.prime_pow.ram_prec_cap, self.prime_pow)
 
     cpdef val_unit(self):
         """
@@ -808,13 +827,13 @@ cdef class FMElement(pAdicTemplateElement):
             sage: R = ZpFM(5,5)
             sage: a = R(75); b = a - a
             sage: a.val_unit()
-            (2, 3 + O(5^5))
+            (2, 3)
             sage: b.val_unit()
-            (5, O(5^5))
+            (5, 0)
         """
         cdef FMElement unit = self._new_c()
-        cdef Integer valuation = PY_NEW(Integer)
-        mpz_set_si(valuation.value, cremove(unit.value, self.value, self.prime_pow.prec_cap, self.prime_pow))
+        cdef Integer valuation = Integer.__new__(Integer)
+        mpz_set_si(valuation.value, cremove(unit.value, self.value, self.prime_pow.ram_prec_cap, self.prime_pow))
         return valuation, unit
 
     def __hash__(self):
@@ -823,22 +842,27 @@ cdef class FMElement(pAdicTemplateElement):
 
         EXAMPLES::
 
-            sage: R = ZpCA(11, 5)
+            sage: R = ZpFM(11, 5)
             sage: hash(R(3)) == hash(3)
             True
         """
-        return chash(self.value, 0, self.prime_pow.prec_cap, self.prime_pow)
+        return chash(self.value, 0, self.prime_pow.ram_prec_cap, self.prime_pow)
 
-cdef class pAdicCoercion_ZZ_FM(RingHomomorphism_coercion):
+cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
     """
     The canonical inclusion from ZZ to a fixed modulus ring.
 
     EXAMPLES::
 
         sage: f = ZpFM(5).coerce_map_from(ZZ); f
-        Ring Coercion morphism:
+        Ring morphism:
           From: Integer Ring
           To:   5-adic Ring of fixed modulus 5^20
+
+    TESTS::
+
+        sage: TestSuite(f).run()
+
     """
     def __init__(self, R):
         """
@@ -849,11 +873,11 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism_coercion):
             sage: f = ZpFM(5).coerce_map_from(ZZ); type(f)
             <type 'sage.rings.padics.padic_fixed_mod_element.pAdicCoercion_ZZ_FM'>
         """
-        RingHomomorphism_coercion.__init__(self, ZZ.Hom(R), check=False)
-        self._zero = R._element_constructor(R, 0)
+        RingHomomorphism.__init__(self, ZZ.Hom(R))
+        self._zero = R.element_class(R, 0)
         self._section = pAdicConvert_FM_ZZ(R)
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -864,13 +888,14 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism_coercion):
             sage: g == f
             True
             sage: g(6)
-            1 + 5 + O(5^20)
+            1 + 5
             sage: g(6) == f(6)
             True
         """
+        _slots = RingHomomorphism._extra_slots(self)
         _slots['_zero'] = self._zero
-        _slots['_section'] = self._section
-        return RingHomomorphism_coercion._extra_slots(self, _slots)
+        _slots['_section'] = self.section() # use method since it copies coercion-internal sections.
+        return _slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -883,13 +908,13 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism_coercion):
             sage: g == f
             True
             sage: g(6)
-            1 + 5 + O(5^20)
+            1 + 5
             sage: g(6) == f(6)
             True
         """
         self._zero = _slots['_zero']
         self._section = _slots['_section']
-        RingHomomorphism_coercion._update_slots(self, _slots)
+        RingHomomorphism._update_slots(self, _slots)
 
     cpdef Element _call_(self, x):
         """
@@ -901,12 +926,12 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism_coercion):
             sage: f(0).parent()
             5-adic Ring of fixed modulus 5^20
             sage: f(5)
-            5 + O(5^20)
+            5
         """
         if mpz_sgn((<Integer>x).value) == 0:
             return self._zero
         cdef FMElement ans = self._zero._new_c()
-        cconv_mpz_t(ans.value, (<Integer>x).value, ans.prime_pow.prec_cap, True, ans.prime_pow)
+        cconv_mpz_t(ans.value, (<Integer>x).value, ans.prime_pow.ram_prec_cap, True, ans.prime_pow)
         return ans
 
     cpdef Element _call_with_args(self, x, args=(), kwds={}):
@@ -930,22 +955,22 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism_coercion):
             sage: type(R(10,2))
             <type 'sage.rings.padics.padic_fixed_mod_element.pAdicFixedModElement'>
             sage: R(30,2)
-            5 + 5^2 + O(5^4)
+            5 + 5^2
             sage: R(30,3,1)
-            5 + 5^2 + O(5^4)
+            5 + 5^2
             sage: R(30,absprec=2)
-            5 + 5^2 + O(5^4)
+            5 + 5^2
             sage: R(30,relprec=2)
-            5 + 5^2 + O(5^4)
+            5 + 5^2
             sage: R(30,absprec=1)
-            5 + 5^2 + O(5^4)
+            5 + 5^2
             sage: R(30,empty=True)
-            5 + 5^2 + O(5^4)
+            5 + 5^2
         """
         if mpz_sgn((<Integer>x).value) == 0:
             return self._zero
         cdef FMElement ans = self._zero._new_c()
-        cconv_mpz_t(ans.value, (<Integer>x).value, ans.prime_pow.prec_cap, True, ans.prime_pow)
+        cconv_mpz_t(ans.value, (<Integer>x).value, ans.prime_pow.ram_prec_cap, True, ans.prime_pow)
         return ans
 
     def section(self):
@@ -959,11 +984,15 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism_coercion):
             sage: f(ZpFM(5)(-1)) - 5^20
             -1
         """
+        from sage.misc.constant_function import ConstantFunction
+        if not isinstance(self._section.domain, ConstantFunction):
+            import copy
+            self._section = copy.copy(self._section)
         return self._section
 
 cdef class pAdicConvert_FM_ZZ(RingMap):
     """
-    The map from a fixed modulus ring back to ZZ that returns the the smallest
+    The map from a fixed modulus ring back to ZZ that returns the smallest
     non-negative integer approximation to its input which is accurate up to the precision.
 
     If the input is not in the closure of the image of ZZ, raises a ValueError.
@@ -986,7 +1015,7 @@ cdef class pAdicConvert_FM_ZZ(RingMap):
             sage: f.category()
             Category of homsets of sets
         """
-        if R.degree() > 1 or R.characteristic() != 0 or R.residue_characteristic() == 0:
+        if R.absolute_degree() > 1 or R.characteristic() != 0 or R.residue_characteristic() == 0:
             RingMap.__init__(self, Hom(R, ZZ, SetsWithPartialMaps()))
         else:
             RingMap.__init__(self, Hom(R, ZZ, Sets()))
@@ -1003,9 +1032,9 @@ cdef class pAdicConvert_FM_ZZ(RingMap):
             sage: f(ZpFM(5)(0))
             0
         """
-        cdef Integer ans = PY_NEW(Integer)
+        cdef Integer ans = Integer.__new__(Integer)
         cdef FMElement x = _x
-        cconv_mpz_t_out(ans.value, x.value, 0, x.prime_pow.prec_cap, x.prime_pow)
+        cconv_mpz_t_out(ans.value, x.value, 0, x.prime_pow.ram_prec_cap, x.prime_pow)
         return ans
 
 cdef class pAdicConvert_QQ_FM(Morphism):
@@ -1030,9 +1059,9 @@ cdef class pAdicConvert_QQ_FM(Morphism):
             <type 'sage.rings.padics.padic_fixed_mod_element.pAdicConvert_QQ_FM'>
         """
         Morphism.__init__(self, Hom(QQ, R, SetsWithPartialMaps()))
-        self._zero = R._element_constructor(R, 0)
+        self._zero = R.element_class(R, 0)
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1043,12 +1072,13 @@ cdef class pAdicConvert_QQ_FM(Morphism):
             sage: g == f # todo: comparison not implemented
             True
             sage: g(1/6)
-            1 + 4*5 + 4*5^3 + 4*5^5 + 4*5^7 + 4*5^9 + 4*5^11 + 4*5^13 + 4*5^15 + 4*5^17 + 4*5^19 + O(5^20)
+            1 + 4*5 + 4*5^3 + 4*5^5 + 4*5^7 + 4*5^9 + 4*5^11 + 4*5^13 + 4*5^15 + 4*5^17 + 4*5^19
             sage: g(1/6) == f(1/6)
             True
         """
+        _slots = Morphism._extra_slots(self)
         _slots['_zero'] = self._zero
-        return Morphism._extra_slots(self, _slots)
+        return _slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1061,7 +1091,7 @@ cdef class pAdicConvert_QQ_FM(Morphism):
             sage: g == f # todo: comparison not implemented
             True
             sage: g(1/6)
-            1 + 4*5 + 4*5^3 + 4*5^5 + 4*5^7 + 4*5^9 + 4*5^11 + 4*5^13 + 4*5^15 + 4*5^17 + 4*5^19 + O(5^20)
+            1 + 4*5 + 4*5^3 + 4*5^5 + 4*5^7 + 4*5^9 + 4*5^11 + 4*5^13 + 4*5^15 + 4*5^17 + 4*5^19
             sage: g(1/6) == f(1/6)
             True
         """
@@ -1076,14 +1106,14 @@ cdef class pAdicConvert_QQ_FM(Morphism):
 
             sage: f = ZpFM(5,4).convert_map_from(QQ)
             sage: f(1/7)
-            3 + 3*5 + 2*5^3 + O(5^4)
+            3 + 3*5 + 2*5^3
             sage: f(0)
-            O(5^4)
+            0
         """
         if mpq_sgn((<Rational>x).value) == 0:
             return self._zero
         cdef FMElement ans = self._zero._new_c()
-        cconv_mpq_t(ans.value, (<Rational>x).value, ans.prime_pow.prec_cap, True, ans.prime_pow)
+        cconv_mpq_t(ans.value, (<Rational>x).value, ans.prime_pow.ram_prec_cap, True, ans.prime_pow)
         return ans
 
     cpdef Element _call_with_args(self, x, args=(), kwds={}):
@@ -1107,40 +1137,409 @@ cdef class pAdicConvert_QQ_FM(Morphism):
             sage: type(R(1/7,2))
             <type 'sage.rings.padics.padic_fixed_mod_element.pAdicFixedModElement'>
             sage: R(1/7,2)
-            3 + 3*5 + 2*5^3 + O(5^4)
+            3 + 3*5 + 2*5^3
             sage: R(1/7,3,1)
-            3 + 3*5 + 2*5^3 + O(5^4)
+            3 + 3*5 + 2*5^3
             sage: R(1/7,absprec=2)
-            3 + 3*5 + 2*5^3 + O(5^4)
+            3 + 3*5 + 2*5^3
             sage: R(1/7,relprec=2)
-            3 + 3*5 + 2*5^3 + O(5^4)
+            3 + 3*5 + 2*5^3
             sage: R(1/7,absprec=1)
-            3 + 3*5 + 2*5^3 + O(5^4)
+            3 + 3*5 + 2*5^3
             sage: R(1/7,empty=True)
-            3 + 3*5 + 2*5^3 + O(5^4)
+            3 + 3*5 + 2*5^3
         """
         if mpq_sgn((<Rational>x).value) == 0:
             return self._zero
         cdef FMElement ans = self._zero._new_c()
-        cconv_mpq_t(ans.value, (<Rational>x).value, ans.prime_pow.prec_cap, True, ans.prime_pow)
+        cconv_mpq_t(ans.value, (<Rational>x).value, ans.prime_pow.ram_prec_cap, True, ans.prime_pow)
         return ans
+
+cdef class pAdicCoercion_FM_frac_field(RingHomomorphism):
+    """
+    The canonical inclusion of Zq into its fraction field.
+
+    EXAMPLES::
+
+        sage: R.<a> = ZqFM(27, implementation='FLINT')
+        sage: K = R.fraction_field()
+        sage: f = K.coerce_map_from(R); f
+        Ring morphism:
+          From: 3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
+          To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
+
+    TESTS::
+
+        sage: TestSuite(f).run()
+
+    """
+    def __init__(self, R, K):
+        """
+        Initialization.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqFM(27)
+            sage: K = R.fraction_field()
+            sage: f = K.coerce_map_from(R); type(f)
+            <type 'sage.rings.padics.qadic_flint_FM.pAdicCoercion_FM_frac_field'>
+        """
+        RingHomomorphism.__init__(self, R.Hom(K))
+        self._zero = K(0)
+        self._section = pAdicConvert_FM_frac_field(K, R)
+
+    cpdef Element _call_(self, _x):
+        """
+        Evaluation.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqFM(27)
+            sage: K = R.fraction_field()
+            sage: f = K.coerce_map_from(R)
+            sage: f(a)
+            a
+        """
+        cdef FMElement x = _x
+        if ciszero(x.value, x.prime_pow):
+            return self._zero
+        cdef FPElement ans = self._zero._new_c()
+        ans.ordp = cremove(ans.unit, x.value, x.prime_pow.ram_prec_cap, x.prime_pow)
+        IF CELEMENT_IS_PY_OBJECT:
+            # The base ring is wrong, so we fix it.
+            K = ans.unit.base_ring()
+            ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+        return ans
+
+    cpdef Element _call_with_args(self, _x, args=(), kwds={}):
+        """
+        This function is used when some precision cap is passed in
+        (relative or absolute or both).
+
+        See the documentation for
+        :meth:`pAdicCappedAbsoluteElement.__init__` for more details.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqFM(27)
+            sage: K = R.fraction_field()
+            sage: f = K.coerce_map_from(R)
+            sage: f(a, 3)
+            a
+            sage: b = 117*a
+            sage: f(b, 3)
+            a*3^2
+            sage: f(b, 4, 1)
+            a*3^2
+            sage: f(b, 4, 3)
+            a*3^2 + a*3^3
+            sage: f(b, absprec=4)
+            a*3^2 + a*3^3
+            sage: f(b, relprec=3)
+            a*3^2 + a*3^3 + a*3^4
+            sage: f(b, absprec=1)
+            0
+            sage: f(R(0))
+            0
+        """
+        cdef long aprec, rprec
+        cdef FMElement x = _x
+        if ciszero(x.value, x.prime_pow):
+            return self._zero
+        cdef FPElement ans = self._zero._new_c()
+        cdef bint reduce = False
+        _process_args_and_kwds(&aprec, &rprec, args, kwds, False, x.prime_pow)
+        ans.ordp = cremove(ans.unit, x.value, aprec, x.prime_pow)
+        if aprec < ans.ordp + rprec:
+            rprec = aprec - ans.ordp
+        if rprec <= 0:
+            return self._zero
+        creduce(ans.unit, ans.unit, rprec, x.prime_pow)
+        IF CELEMENT_IS_PY_OBJECT:
+            # The base ring is wrong, so we fix it.
+            K = ans.unit.base_ring()
+            ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+        return ans
+
+    def section(self):
+        """
+        Returns a map back to the ring that converts elements of
+        non-negative valuation.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqFM(27)
+            sage: K = R.fraction_field()
+            sage: f = K.coerce_map_from(R)
+            sage: f.section()(K.gen())
+            a
+        """
+        from sage.misc.constant_function import ConstantFunction
+        if not isinstance(self._section.domain, ConstantFunction):
+            import copy
+            self._section = copy.copy(self._section)
+        return self._section
+
+    cdef dict _extra_slots(self):
+        """
+        Helper for copying and pickling.
+
+        TESTS::
+
+            sage: R.<a> = ZqFM(27)
+            sage: K = R.fraction_field()
+            sage: f = K.coerce_map_from(R)
+            sage: g = copy(f)   # indirect doctest
+            sage: g
+            Ring morphism:
+              From: 3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
+              To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
+            sage: g == f
+            True
+            sage: g is f
+            False
+            sage: g(a)
+            a
+            sage: g(a) == f(a)
+            True
+        """
+        _slots = RingHomomorphism._extra_slots(self)
+        _slots['_zero'] = self._zero
+        _slots['_section'] = self.section() # use method since it copies coercion-internal sections.
+        return _slots
+
+    cdef _update_slots(self, dict _slots):
+        """
+        Helper for copying and pickling.
+
+        TESTS::
+
+            sage: R.<a> = ZqFM(9)
+            sage: K = R.fraction_field()
+            sage: f = K.coerce_map_from(R)
+            sage: g = copy(f)   # indirect doctest
+            sage: g
+            Ring morphism:
+              From: 3-adic Unramified Extension Ring in a defined by x^2 + 2*x + 2
+              To:   3-adic Unramified Extension Field in a defined by x^2 + 2*x + 2
+            sage: g == f
+            True
+            sage: g is f
+            False
+            sage: g(a)
+            a
+            sage: g(a) == f(a)
+            True
+
+        """
+        self._zero = _slots['_zero']
+        self._section = _slots['_section']
+        RingHomomorphism._update_slots(self, _slots)
+
+    def is_injective(self):
+        r"""
+        Return whether this map is injective.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqFM(9)
+            sage: K = R.fraction_field()
+            sage: f = K.coerce_map_from(R)
+            sage: f.is_injective()
+            True
+
+        """
+        return True
+
+    def is_surjective(self):
+        r"""
+        Return whether this map is surjective.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqFM(9)
+            sage: K = R.fraction_field()
+            sage: f = K.coerce_map_from(R)
+            sage: f.is_surjective()
+            False
+
+        """
+        return False
+
+
+cdef class pAdicConvert_FM_frac_field(Morphism):
+    r"""
+    The section of the inclusion from `\ZZ_q`` to its fraction field.
+
+    EXAMPLES::
+
+        sage: R.<a> = ZqFM(27)
+        sage: K = R.fraction_field()
+        sage: f = R.convert_map_from(K); f
+        Generic morphism:
+          From: 3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
+          To:   3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
+    """
+    def __init__(self, K, R):
+        """
+        Initialization.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqFM(27)
+            sage: K = R.fraction_field()
+            sage: f = R.convert_map_from(K); type(f)
+            <type 'sage.rings.padics.qadic_flint_FM.pAdicConvert_FM_frac_field'>
+        """
+        Morphism.__init__(self, Hom(K, R, SetsWithPartialMaps()))
+        self._zero = R(0)
+
+    cpdef Element _call_(self, _x):
+        """
+        Evaluation.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqFM(27)
+            sage: K = R.fraction_field()
+            sage: f = R.convert_map_from(K)
+            sage: f(K.gen())
+            a
+        """
+        cdef FPElement x = _x
+        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp >= self._zero.prime_pow.ram_prec_cap:
+            return self._zero
+        cdef FMElement ans = self._zero._new_c()
+        cshift_notrunc(ans.value, x.unit, x.ordp, ans.prime_pow.ram_prec_cap, ans.prime_pow, x.ordp > 0)
+        IF CELEMENT_IS_PY_OBJECT:
+            # The base ring is wrong, so we fix it.
+            R = ans.value.base_ring()
+            ans.value.__coeffs = [R(c) for c in ans.value.__coeffs]
+        return ans
+
+    cpdef Element _call_with_args(self, _x, args=(), kwds={}):
+        """
+        This function is used when some precision cap is passed in
+        (relative or absolute or both).
+
+        See the documentation for
+        :meth:`pAdicCappedAbsoluteElement.__init__` for more details.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqFM(27)
+            sage: K = R.fraction_field()
+            sage: f = R.convert_map_from(K); a = K(a)
+            sage: f(a, 3)
+            a
+            sage: b = 117*a
+            sage: f(b, 3)
+            a*3^2
+            sage: f(b, 4, 1)
+            a*3^2
+            sage: f(b, 4, 3)
+            a*3^2 + a*3^3
+            sage: f(b, absprec=4)
+            a*3^2 + a*3^3
+            sage: f(b, relprec=3)
+            a*3^2 + a*3^3 + a*3^4
+            sage: f(b, absprec=1)
+            0
+            sage: f(K(0))
+            0
+        """
+        cdef long aprec, rprec
+        cdef FPElement x = _x
+        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp >= self._zero.prime_pow.ram_prec_cap:
+            return self._zero
+        cdef FMElement ans = self._zero._new_c()
+        _process_args_and_kwds(&aprec, &rprec, args, kwds, True, ans.prime_pow)
+        if rprec < aprec - x.ordp:
+            aprec = x.ordp + rprec
+        cshift_notrunc(ans.value, x.unit, x.ordp, aprec, ans.prime_pow, x.ordp > 0)
+        IF CELEMENT_IS_PY_OBJECT:
+            # The base ring is wrong, so we fix it.
+            R = ans.value.base_ring()
+            ans.value.__coeffs = [R(c) for c in ans.value.__coeffs]
+        return ans
+
+    cdef dict _extra_slots(self):
+        """
+        Helper for copying and pickling.
+
+        TESTS::
+
+            sage: R.<a> = ZqFM(27)
+            sage: K = R.fraction_field()
+            sage: f = R.convert_map_from(K)
+            sage: a = K(a)
+            sage: g = copy(f)   # indirect doctest
+            sage: g
+            Generic morphism:
+             From: 3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
+             To:   3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
+            sage: g == f
+            True
+            sage: g is f
+            False
+            sage: g(a)
+            a
+            sage: g(a) == f(a)
+            True
+        """
+        _slots = Morphism._extra_slots(self)
+        _slots['_zero'] = self._zero
+        return _slots
+
+    cdef _update_slots(self, dict _slots):
+        """
+        Helper for copying and pickling.
+
+        TESTS::
+
+            sage: R.<a> = ZqFM(9)
+            sage: K = R.fraction_field()
+            sage: f = R.convert_map_from(K)
+            sage: a = f(a)
+            sage: g = copy(f)   # indirect doctest
+            sage: g
+            Generic morphism:
+              From: 3-adic Unramified Extension Field in a defined by x^2 + 2*x + 2
+              To:   3-adic Unramified Extension Ring in a defined by x^2 + 2*x + 2
+            sage: g == f
+            True
+            sage: g is f
+            False
+            sage: g(a)
+            a
+            sage: g(a) == f(a)
+            True
+
+        """
+        self._zero = _slots['_zero']
+        Morphism._update_slots(self, _slots)
 
 def unpickle_fme_v2(cls, parent, value):
     """
-    Unpickles a capped relative element.
+    Unpickles a fixed-mod element.
 
     EXAMPLES::
 
         sage: from sage.rings.padics.padic_fixed_mod_element import pAdicFixedModElement, unpickle_fme_v2
         sage: R = ZpFM(5)
         sage: a = unpickle_fme_v2(pAdicFixedModElement, R, 17*25); a
-        2*5^2 + 3*5^3 + O(5^20)
+        2*5^2 + 3*5^3
         sage: a.parent() is R
         True
     """
     cdef FMElement ans = cls.__new__(cls)
     ans._parent = parent
     ans.prime_pow = <PowComputer_?>parent.prime_pow
+    IF CELEMENT_IS_PY_OBJECT:
+        polyt = type(ans.prime_pow.modulus)
+        ans.value = <celement>polyt.__new__(polyt)
     cconstruct(ans.value, ans.prime_pow)
     cunpickle(ans.value, value, ans.prime_pow)
     return ans

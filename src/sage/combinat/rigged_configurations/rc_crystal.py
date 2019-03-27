@@ -24,7 +24,6 @@ Kirillov-Reshetikhin structure, and we extend this to symmetrizable types.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -45,12 +44,14 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
 
     The crystal structure for finite simply-laced types is given
     in [CrysStructSchilling06]_. These were then shown to be the crystal
-    operators in all finite types in [SchScr]_ and all simply-laced and
-    a large class of foldings of simply-laced types in [SalScr]_.
+    operators in all finite types in [SS2015]_, all simply-laced and
+    a large class of foldings of simply-laced types in [SS2015II]_,
+    and all symmetrizable types (uniformly) in [SS2017]_.
 
     INPUT:
 
-    - ``cartan_type`` -- (optional) a Cartan type
+    - ``cartan_type`` -- (optional) a Cartan type or a Cartan type
+      given as a folding
 
     - ``wt`` -- the highest weight vector in the weight lattice
 
@@ -78,18 +79,38 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
         sage: RC.digraph().is_isomorphic(T.digraph(), edge_labels=True)
         True
 
+    We construct a non-simply-laced affine type::
+
+        sage: La = RootSystem(['C', 3]).weight_lattice().fundamental_weights()
+        sage: RC = crystals.RiggedConfigurations(La[2])
+        sage: mg = RC.highest_weight_vector()
+        sage: mg.f_string([2,3])
+        (/)   1[ ]1   -1[ ]-1
+        sage: T = crystals.Tableaux(['C', 3], shape=[1,1])
+        sage: RC.digraph().is_isomorphic(T.digraph(), edge_labels=True)
+        True
+
+    We can construct rigged configurations using a diagram folding of
+    a simply-laced type. This yields an equivalent but distinct crystal::
+
+        sage: vct = CartanType(['C', 3]).as_folding()
+        sage: RC = crystals.RiggedConfigurations(vct, La[2])
+        sage: mg = RC.highest_weight_vector()
+        sage: mg.f_string([2,3])
+        (/)   0[ ]0   -1[ ]-1
+        sage: T = crystals.Tableaux(['C', 3], shape=[1,1])
+        sage: RC.digraph().is_isomorphic(T.digraph(), edge_labels=True)
+        True
+
     We reset the global options::
 
         sage: RiggedConfigurations.options._reset()
 
     REFERENCES:
 
-    .. [SchScr] Anne Schilling and Travis Scrimshaw.
-       *Crystal structure on rigged configurations and the filling map*.
-       :arxiv:`1409.2920`.
-
-    .. [SalScr] Ben Salisbury and Travis Scrimshaw.
-       *A rigged configuration model for* `B(\infty)`. :arxiv:`1404.6539`.
+    - [SS2015]_
+    - [SS2015II]_
+    - [SS2017]_
     """
     @staticmethod
     def __classcall_private__(cls, cartan_type, wt=None, WLR=None):
@@ -112,20 +133,22 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
             sage: RC is RCE
             False
         """
+        from sage.combinat.root_system.type_folded import CartanTypeFolded
+
         if wt is None:
             wt = cartan_type
             cartan_type = wt.parent().cartan_type()
         else:
-            cartan_type = CartanType(cartan_type)
+            if not isinstance(cartan_type, CartanTypeFolded):
+                cartan_type = CartanType(cartan_type)
 
         if WLR is None:
             WLR = wt.parent()
         else:
             wt = WLR(wt)
 
-        if not cartan_type.is_simply_laced():
-            vct = cartan_type.as_folding()
-            return CrystalOfNonSimplyLacedRC(vct, wt, WLR)
+        if isinstance(cartan_type, CartanTypeFolded):
+            return CrystalOfNonSimplyLacedRC(cartan_type, wt, WLR)
 
         return super(CrystalOfRiggedConfigurations, cls).__classcall__(cls, wt, WLR=WLR)
 
@@ -146,7 +169,8 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
         self._cartan_type = WLR.cartan_type()
         self._wt = wt
         self._rc_index = self._cartan_type.index_set()
-        # We store the cartan matrix for the vacancy number calculations for speed
+        self._rc_index_inverse = {i: ii for ii,i in enumerate(self._rc_index)}
+        # We store the Cartan matrix for the vacancy number calculations for speed
         self._cartan_matrix = self._cartan_type.cartan_matrix()
         if self._cartan_type.is_finite():
             category = ClassicalCrystals()
@@ -246,8 +270,13 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
         """
         vac_num = self._wt[self.index_set()[a]]
 
-        for b in range(self._cartan_matrix.ncols()):
-            vac_num -= self._cartan_matrix[a,b] * partitions[b].get_num_cells_to_column(i)
+        for b,nu in enumerate(partitions):
+            val = self._cartan_matrix[a,b]
+            if val:
+                if i == float('inf'):
+                    vac_num -= val * sum(nu)
+                else:
+                    vac_num -= val * nu.get_num_cells_to_column(i)
 
         return vac_num
 
@@ -292,7 +321,8 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
         EXAMPLES::
 
             sage: La = RootSystem(['C', 2, 1]).weight_lattice().fundamental_weights()
-            sage: RC = crystals.RiggedConfigurations(La[0])
+            sage: vct = CartanType(['C', 2, 1]).as_folding()
+            sage: RC = crystals.RiggedConfigurations(vct, La[0])
             sage: RC
             Crystal of rigged configurations of type ['C', 2, 1] and weight Lambda[0]
             sage: RC.virtual
@@ -319,7 +349,8 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
         TESTS::
 
             sage: La = RootSystem(['C', 3]).weight_lattice().fundamental_weights()
-            sage: RC = crystals.RiggedConfigurations(La[2])
+            sage: vct = CartanType(['C', 3]).as_folding()
+            sage: RC = crystals.RiggedConfigurations(vct, La[2])
             sage: elt = RC(partition_list=[[], [1], [1]])
             sage: RC._calc_vacancy_number(elt.nu(), 1, 1)
             0
@@ -330,11 +361,15 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
         ia = I[a]
         vac_num = self._wt[ia]
 
+        if i == float('inf'):
+            return vac_num - sum(self._cartan_matrix[a,b] * sum(nu)
+                                 for b,nu in enumerate(partitions))
+
         gamma = self._folded_ct.scaling_factors()
         g = gamma[ia]
-        for b in range(self._cartan_matrix.ncols()):
+        for b, nu in enumerate(partitions):
             ib = I[b]
-            q = partitions[b].get_num_cells_to_column(g*i, gamma[ib])
+            q = nu.get_num_cells_to_column(g*i, gamma[ib])
             vac_num -= self._cartan_matrix[a,b] * q / gamma[ib]
 
         return vac_num
@@ -350,7 +385,8 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
         EXAMPLES::
 
             sage: La = RootSystem(['C', 3]).weight_lattice().fundamental_weights()
-            sage: RC = crystals.RiggedConfigurations(La[2])
+            sage: vct = CartanType(['C', 3]).as_folding()
+            sage: RC = crystals.RiggedConfigurations(vct, La[2])
             sage: elt = RC(partition_list=[[], [1], [1]]); elt
             <BLANKLINE>
             (/)
@@ -388,7 +424,7 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
 
     def from_virtual(self, vrc):
         """
-        Convert ``vrc`` in the virtual crystal into a rigged configution of
+        Convert ``vrc`` in the virtual crystal into a rigged configuration of
         the original Cartan type.
 
         INPUT:
@@ -398,7 +434,8 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
         EXAMPLES::
 
             sage: La = RootSystem(['C', 3]).weight_lattice().fundamental_weights()
-            sage: RC = crystals.RiggedConfigurations(La[2])
+            sage: vct = CartanType(['C', 3]).as_folding()
+            sage: RC = crystals.RiggedConfigurations(vct, La[2])
             sage: elt = RC(partition_list=[[0], [1], [1]])
             sage: elt == RC.from_virtual(RC.to_virtual(elt))
             True
@@ -421,3 +458,4 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
 # deprecations from trac:18555
 from sage.misc.superseded import deprecated_function_alias
 CrystalOfRiggedConfigurations.global_options = deprecated_function_alias(18555, CrystalOfRiggedConfigurations.options)
+

@@ -61,5 +61,5 @@ spkg. If you edit this, you must update Makefile.build using the
 spkg-write-makefile script. After optionally updating the git repos
 using spkg-src, you need to run
   ./spkg-write-makefile >Makefile.build
-This must be run in a Sage shell, with the the autotools spkg
+This must be run in a Sage shell, with the autotools spkg
 installed.

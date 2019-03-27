@@ -40,8 +40,7 @@ relevant functionality::
 
 REFERENCES:
 
-..  [WpJacobianVariety]
-    http://en.wikipedia.org/wiki/Jacobian_variety
+..  [WpJacobianVariety] :wikipedia:`Jacobian_variety`
 """
 
 ##############################################################################
@@ -54,10 +53,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.rings.all import QQ
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
-
-
 
 
 def Jacobian(X, **kwds):
@@ -241,4 +237,3 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
     X, Y, Z = WeierstrassForm(polynomial, variables=variables, transformation=True)
     from sage.schemes.elliptic_curves.weierstrass_transform import WeierstrassTransformation
     return WeierstrassTransformation(curve, E, [X*Z, Y, Z**3], 1)
-

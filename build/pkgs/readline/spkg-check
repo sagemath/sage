@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 echo "Unfortunately, there is no way to check the readline package"
 echo "as there are no self-tests. However, we will run 'make check'"
 echo "in case a target is added at a later date"

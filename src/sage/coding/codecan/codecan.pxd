@@ -2,6 +2,7 @@ from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.groups.semimonomial_transformations.semimonomial_transformation cimport SemimonomialTransformation
 from sage.modules.free_module_element cimport FreeModuleElement
 from sage.groups.perm_gps.partn_ref2.refinement_generic cimport *
+from sage.data_structures.bitset cimport bitset_t
 
 cdef class InnerGroup:
     cdef int rank

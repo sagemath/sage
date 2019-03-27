@@ -27,10 +27,11 @@ cdef extern from "meataxe.h":
     cdef extern int FfChar              # Current characteristic
     cdef extern FEL FfGen               # Generator
     cdef extern int FfNoc               # Number of columns for row ops
+    cdef extern int MPB                 # Number of marks stored in a single byte
     cdef extern size_t FfCurrentRowSize # The byte size of a single row in memory,
                                         # always a multiple of sizeof(long)
-    cdef extern size_t FfCurrentRowSizeIo # The number of bytes actually used in a row.
-    cdef extern char MtxLibDir[250]     # Where to search/create multiplication tables
+    cdef extern size_t FfCurrentRowSizeIo # The number of bytes actually used in a row
+    cdef extern char MtxLibDir[1024]    # Where to search/create multiplication tables
 
     # we only wrap MeatAxe for small fields (size < 255)
     cdef extern FEL mtx_tmult[256][256]
@@ -50,12 +51,12 @@ cdef extern from "meataxe.h":
     int FfSetNoc(int ncols) except -1
 
     ## Finite Fields
-    # FEL FfAdd(FEL a,FEL b)
-    # FEL FfSub(FEL a, FEL b)
-    # FEL FfNeg(FEL a)
-    # FEL FfMul(FEL a, FEL b)
-    # FEL FfDiv(FEL a, FEL b)
-    # FEL FfInv(FEL a)
+    FEL FfAdd(FEL a, FEL b)
+    FEL FfSub(FEL a, FEL b)
+    FEL FfNeg(FEL a)
+    FEL FfMul(FEL a, FEL b)
+    FEL FfDiv(FEL a, FEL b)
+    FEL FfInv(FEL a)
     # FEL FfEmbed(FEL a, int subfield) except 255
     # FEL FfRestrict(FEL a, int subfield) except 255
     FEL FfFromInt(int l)
@@ -64,8 +65,11 @@ cdef extern from "meataxe.h":
     ## Rows
     void FfMulRow(PTR row, FEL mark)
     void FfAddMulRow(PTR dest, PTR src, FEL f)
+    void FfAddMulRowPartial(PTR dest, PTR src, FEL f, int first, int len)
     PTR FfAddRow(PTR dest, PTR src)
+    PTR FfAddRowPartial(PTR dest, PTR src, int first, int len)
     PTR FfSubRow(PTR dest, PTR src)
+    PTR FfSubRowPartial(PTR dest, PTR src, int first, int len)
     FEL FfExtract(PTR row, int col)
     void FfInsert(PTR row, int col, FEL mark)
     int FfFindPivot(PTR row, FEL *mark)
@@ -89,11 +93,11 @@ cdef extern from "meataxe.h":
     ## Matrices
     ############
     ctypedef struct Matrix_t:
-        unsigned long Magic         #/* Used internally */
-        int Field, Nor, Noc     #/* Field, #rows, #columns */
-        PTR Data            #/* Pointer to data area */
-        int RowSize                     # Size (in bytes) of one row
-        int *PivotTable                 # Pivot table (if matrix is in echelon form
+        int Field, Nor, Noc        # Field, #rows, #columns
+        PTR Data                   # Pointer to data area
+        int RowSize                # Size (in bytes) of one row
+        int *PivotTable            # Pivot table (if matrix is in echelon form)
+
     ## Basic memory operations
     Matrix_t *MatAlloc(int field, int nor, int noc) except NULL
     int MatFree(Matrix_t *mat)
@@ -104,7 +108,7 @@ cdef extern from "meataxe.h":
     Matrix_t *MatCutRows(Matrix_t *src, int row1, int nrows) except NULL
     Matrix_t *MatDup(Matrix_t *src) except NULL
     Matrix_t *MatId(int fl, int nor) except NULL
-    Matrix_t *MatLoad(char *fn) except NULL
+    Matrix_t *MatLoad(char *fn) except? NULL
     int MatSave(Matrix_t *mat, char *fn) except -1
 
 
@@ -123,13 +127,14 @@ cdef extern from "meataxe.h":
     ## "Higher" Arithmetic
     Matrix_t *MatTensor(Matrix_t *m1, Matrix_t *m2) except NULL
     Matrix_t *TensorMap(Matrix_t *vec, Matrix_t *a, Matrix_t *b) except NULL
-    
+
     int MatClean(Matrix_t *mat, Matrix_t *sub) except -1
     int MatEchelonize(Matrix_t *mat) except -1
     int MatOrder(Matrix_t *mat) except? -1
     long MatNullity(Matrix_t *mat)
     Matrix_t *MatInverse(Matrix_t *src) except NULL
     Matrix_t *MatNullSpace(Matrix_t *mat) except NULL
+    Matrix_t *MatNullSpace__(Matrix_t *mat) except NULL
 
     ## Error handling
     cdef extern int MTX_ERR_NOMEM, MTX_ERR_GAME_OVER, MTX_ERR_DIV0, MTX_ERR_FILEFMT, MTX_ERR_BADARG
@@ -146,3 +151,5 @@ cdef extern from "meataxe.h":
 
     ctypedef void MtxErrorHandler_t(MtxErrorRecord_t*)
     MtxErrorHandler_t *MtxSetErrorHandler(MtxErrorHandler_t *h)
+
+cdef Matrix_t *rawMatrix(int Field, list entries) except NULL

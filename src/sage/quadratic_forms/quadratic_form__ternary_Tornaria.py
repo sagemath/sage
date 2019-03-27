@@ -11,7 +11,7 @@ Tornaria Methods for Computing with Quadratic Forms
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 
 from sage.rings.integer_ring import ZZ
 from sage.misc.functional import is_odd
@@ -37,7 +37,7 @@ from sage.modules.free_module_element import vector
 
 def disc(self):
     r"""
-    Returns the discriminant of the quadratic form, defined as
+    Return the discriminant of the quadratic form, defined as
 
     - `(-1)^n {\rm det}(B)` for even dimension `2n`
     - `{\rm det}(B)/2` for odd dimension
@@ -65,8 +65,8 @@ def disc(self):
 
 
 def content(self):
-    """
-    Returns the GCD of the coefficients of the quadratic form.
+    r"""
+    Return the GCD of the coefficients of the quadratic form.
 
     .. warning::
 
@@ -103,7 +103,7 @@ def content(self):
 ## in quadratic_form.py
 #def primitive(self):
 #    """
-#    Returns a primitive quadratic forms in the similarity class of the given form.
+#    Return a primitive quadratic forms in the similarity class of the given form.
 #
 #    This only works when we have GCDs... so over ZZ.
 #    """
@@ -250,7 +250,7 @@ def delta(self):
 
 def level__Tornaria(self):
     """
-    Returns the level of the quadratic form,
+    Return the level of the quadratic form,
     defined as
 
         level(B)    for even dimension
@@ -277,7 +277,7 @@ def level__Tornaria(self):
 
 def discrec(self):
     """
-    Returns the discriminant of the reciprocal form.
+    Return the discriminant of the reciprocal form.
 
     EXAMPLES::
 
@@ -318,8 +318,9 @@ def hasse_conductor(self):
         sage: QuadraticForm(ZZ, 3, [2, -2, 0, 2, 0, 5]).hasse_conductor()
         10
     """
-    D = self.disc()
-    return prod([x[0] for x in factor(2 * self.level()) if self.hasse_invariant(x[0]) == -1])
+    return prod([x[0] for x in factor(2 * self.level())
+                 if self.hasse_invariant(x[0]) == -1])
+
 
 def clifford_invariant(self, p):
     """
@@ -354,6 +355,7 @@ def clifford_invariant(self, p):
     elif n == 7 or n == 0:
         s = hilbert_symbol(-1, self.disc(), p)
     return s * self.hasse_invariant(p)
+
 
 def clifford_conductor(self):
     """
@@ -391,15 +393,14 @@ def clifford_conductor(self):
         1
         sage: (H + H + H + H).clifford_conductor()
         1
-
     """
-    D = self.disc()
-    return prod([x[0] for x in factor(2 * self.level()) if self.clifford_invariant(x[0]) == -1])
+    return prod([x[0] for x in factor(2 * self.level())
+                 if self.clifford_invariant(x[0]) == -1])
 
 
 ### Genus theory
 
-def basiclemma(self,M):
+def basiclemma(self, M):
     """
     Finds a number represented by self and coprime to M.
 
@@ -408,13 +409,13 @@ def basiclemma(self,M):
         sage: Q = QuadraticForm(ZZ, 2, [2, 1, 3])
         sage: Q.basiclemma(6)
         71
-
     """
-    a=self(self.basiclemmavec(M))
-    assert gcd(a,M) == 1
+    a = self(self.basiclemmavec(M))
+    assert gcd(a, M) == 1
     return a
 
-def basiclemmavec(self,M):
+
+def basiclemmavec(self, M):
     """
     Finds a vector where the value of the quadratic form is coprime to M.
 
@@ -425,10 +426,8 @@ def basiclemmavec(self,M):
         (6, 5)
         sage: Q(_)
         227
-
     """
-    V=FreeModule(self.base_ring(),self.dim())
-    mat = self.matrix()
+    V = FreeModule(self.base_ring(), self.dim())
     vec = []
     mod = []
     M0 = abs(M)
@@ -442,7 +441,7 @@ def basiclemmavec(self,M):
             mod.append(M1)
         M0 = M0/M1
         if M0 == 1:
-            return tuple(CRT_vectors(vec,mod))
+            return tuple(CRT_vectors(vec, mod))
 
     for i in range(self.dim()):
         for j in range(i):
@@ -452,7 +451,7 @@ def basiclemmavec(self,M):
                 mod.append(M1)
             M0 = M0/M1
             if M0 == 1:
-                return __crt_list(vec,mod)
+                return tuple(CRT_vectors(vec, mod))
 
     raise ValueError("not primitive form")
 
@@ -489,7 +488,7 @@ def xi(self,p):
 
 def xi_rec(self,p):
     """
-    Returns Xi(`p`) for the reciprocal form.
+    Return Xi(`p`) for the reciprocal form.
 
     EXAMPLES::
 
@@ -503,9 +502,9 @@ def xi_rec(self,p):
         [480, 480]
         sage: factor(480)
         2^5 * 3 * 5
-        sage: map(Q1.xi_rec, [-1,2,3,5])
+        sage: list(map(Q1.xi_rec, [-1,2,3,5]))
         [-1, -1, -1, 1]
-        sage: map(Q2.xi_rec, [-1,2,3,5])
+        sage: list(map(Q2.xi_rec, [-1,2,3,5]))
         [-1, -1, -1, -1]
 
     """
@@ -514,7 +513,7 @@ def xi_rec(self,p):
 
 def lll(self):
     """
-    Returns an LLL-reduced form of Q (using Pari).
+    Return an LLL-reduced form of Q (using Pari).
 
     EXAMPLES::
 
@@ -534,22 +533,23 @@ def lll(self):
 
 def representation_number_list(self, B):
     """
-    Returns the vector of representation numbers < B.
+    Return the vector of representation numbers < B.
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ,[1,1,1,1,1,1,1,1])
         sage: Q.representation_number_list(10)
         [1, 16, 112, 448, 1136, 2016, 3136, 5504, 9328, 12112]
-
     """
-    ans = pari(1).concat(self._pari_().qfrep(B-1, 1) * 2)
-    return ans._sage_()
+    ans = pari(1).concat(self.__pari__().qfrep(B - 1, 1) * 2)
+    return ans.sage()
 
 
-def representation_vector_list(self, B, maxvectors = 10**8):
+def representation_vector_list(self, B, maxvectors=10**8):
     """
-    Find all vectors v where Q(v) < B.
+    Find all vectors `v` where `Q(v) < B`.
+
+    This only works for positive definite quadratic forms.
 
     EXAMPLES::
 
@@ -565,18 +565,26 @@ def representation_vector_list(self, B, maxvectors = 10**8):
          [],
          [(2, 2), (-2, -2), (2, -2), (-2, 2)],
          [(0, 3), (0, -3), (3, 0), (-3, 0)]]
-        sage: map(len, _)
+        sage: list(map(len, _))
         [1, 4, 4, 0, 4, 8, 0, 0, 4, 4]
         sage: Q.representation_number_list(10)
         [1, 4, 4, 0, 4, 8, 0, 0, 4, 4]
 
+    TESTS::
+
+        sage: R = QuadraticForm(ZZ,2,[-4,-3,0])
+        sage: R.representation_vector_list(10)
+        Traceback (most recent call last):
+        ...
+        PariError: domain error in minim0: form is not positive definite
     """
-    n, m, vs = self._pari_().qfminim(2*(B-1), maxvectors)
+    n, m, vs = self.__pari__().qfminim(2 * (B - 1), maxvectors)
+
     if n != 2 * len(vs):
         raise RuntimeError("insufficient number of vectors")
-    ms = [[] for _ in xrange(B)]
+    ms = [[] for _ in range(B)]
     ms[0] = [vector([0] * self.dim())]
-    for v in vs._sage_().columns():
+    for v in vs.sage().columns():
         ms[int(self(v))] += [v, -v]
     return ms
 

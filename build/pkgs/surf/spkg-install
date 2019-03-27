@@ -1,0 +1,12 @@
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "SAGE_LOCAL undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+set -e
+
+cd src
+./configure --prefix="$SAGE_LOCAL" --disable-gui --disable-cups
+$MAKE
+$MAKE install

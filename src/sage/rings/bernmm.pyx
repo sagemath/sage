@@ -14,8 +14,9 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/cdefs.pxi"
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
+
+from sage.libs.gmp.types cimport mpq_t
 
 
 cdef extern from "bernmm/bern_rat.h":

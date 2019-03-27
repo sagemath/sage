@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 qe=$SAGE_LOCAL && export qe
 

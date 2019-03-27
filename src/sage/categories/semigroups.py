@@ -23,7 +23,8 @@ from sage.categories.subquotients import SubquotientsCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.quotients import QuotientsCategory
 from sage.categories.magmas import Magmas
-from sage.structure.element import generic_power
+from sage.arith.power import generic_power
+
 
 all_axioms += ("HTrivial", "Aperiodic", "LTrivial", "RTrivial", "JTrivial")
 
@@ -119,7 +120,7 @@ class Semigroups(CategoryWithAxiom):
             S = tester.some_elements()
             from sage.misc.misc import some_tuples
             for x,y,z in some_tuples(S, 3, tester._max_runs):
-                tester.assert_((x * y) * z == x * (y * z))
+                tester.assertTrue((x * y) * z == x * (y * z))
 
         @abstract_method(optional=True)
         def semigroup_generators(self):
@@ -337,7 +338,8 @@ class Semigroups(CategoryWithAxiom):
                     target not in elements):
                     return
                 if simple:
-                    result.add_edge([source, target])
+                    if source != target:
+                        result.add_edge([source, target])
                 elif side == "twosided":
                     result.add_edge([source, target, (label, side_label)])
                 else:
@@ -397,7 +399,7 @@ class Semigroups(CategoryWithAxiom):
 
             In the following example `M` is a group; however its unit
             does not coincide with that of `R`, so `M` is only a
-            subsemigroup, and we need to specify its unit explictly::
+            subsemigroup, and we need to specify its unit explicitly::
 
                 sage: M = R.subsemigroup([R(5)],
                 ....:     category=Semigroups().Finite().Subobjects() & Groups()); M
@@ -437,7 +439,7 @@ class Semigroups(CategoryWithAxiom):
                                       category=category)
 
         def trivial_representation(self, base_ring=None, side="twosided"):
-            """
+            r"""
             Return the trivial representation of ``self`` over ``base_ring``.
 
             INPUT:
@@ -480,7 +482,7 @@ class Semigroups(CategoryWithAxiom):
 
     class ElementMethods:
 
-        def _pow_(self, n):
+        def _pow_int(self, n):
             """
             Return ``self`` to the `n^{th}` power.
 
@@ -497,18 +499,16 @@ class Semigroups(CategoryWithAxiom):
                 sage: x^0
                 Traceback (most recent call last):
                 ...
-                AssertionError
+                ArithmeticError: only positive powers are supported in a semigroup
 
             TESTS::
 
-                sage: x._pow_(17)
+                sage: x._pow_int(17)
                 'x'
-
             """
-            assert n > 0
+            if n <= 0:
+                raise ArithmeticError("only positive powers are supported in a semigroup")
             return generic_power(self, n)
-
-        __pow__ = _pow_
 
 
     class SubcategoryMethods:
@@ -885,6 +885,57 @@ class Semigroups(CategoryWithAxiom):
                     Finite family {0: B['a'], 1: B['b'], 2: B['c'], 3: B['d']}
                 """
                 return self.basis().keys().semigroup_generators().map(self.monomial)
+
+            # Once there will be some guarantee on the consistency between
+            # gens / monoid/group/*_generators, these methods could possibly
+            # be removed in favor of aliases gens -> xxx_generators in
+            # the Algebras.FinitelyGenerated hierachy
+            def gens(self):
+                r"""
+                Return the generators of ``self``.
+
+                EXAMPLES::
+
+                    sage: a, b = SL2Z.algebra(ZZ).gens(); a, b
+                    ([ 0 -1]
+                     [ 1  0],
+                     [1 1]
+                     [0 1])
+                    sage: 2*a + b
+                    2*[ 0 -1]
+                      [ 1  0]
+                    +
+                    [1 1]
+                    [0 1]
+                """
+                return tuple(self.monomial(g) for g in self.basis().keys().gens())
+
+            def ngens(self):
+                r"""
+                Return the number of generators of ``self``.
+
+                EXAMPLES::
+
+                    sage: SL2Z.algebra(ZZ).ngens()
+                    2
+                    sage: DihedralGroup(4).algebra(RR).ngens()
+                    2
+                """
+                return self.basis().keys().ngens()
+
+            def gen(self, i=0):
+                r"""
+                Return the ``i``-th generator of ``self``.
+
+                EXAMPLES::
+
+                    sage: A = GL(3, GF(7)).algebra(ZZ)
+                    sage: A.gen(0)
+                    [3 0 0]
+                    [0 1 0]
+                    [0 0 1]
+                """
+                return self.monomial(self.basis().keys().gen(i))
 
             def product_on_basis(self, g1, g2):
                 r"""

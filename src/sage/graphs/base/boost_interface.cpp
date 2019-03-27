@@ -12,7 +12,10 @@
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/johnson_all_pairs_shortest.hpp>
+#include <boost/graph/biconnected_components.hpp>
+#include <boost/graph/properties.hpp>
 
+#include <map>
 #include <iostream>
 
 typedef int v_index;
@@ -38,7 +41,6 @@ typedef struct {
     std::vector<v_index> predecessors; // For each vertex v, the first vertex in a shortest
                                   // path from the starting vertex to v.
 } result_distances;
-
 
 template <class OutEdgeListS, // How neighbors are stored
           class VertexListS,  // How vertices are stored
@@ -70,6 +72,13 @@ private:
     typedef typename boost::graph_traits<adjacency_list>::edge_descriptor edge_descriptor;
     typedef typename std::vector<edge_descriptor> edge_container;
     typedef typename boost::property_map<adjacency_list, boost::vertex_index_t>::type vertex_to_int_map;
+
+    // This struct is used for biconnected_components function
+    struct order_edges {
+        bool operator()(const edge_descriptor& x, const edge_descriptor& y) const { return x.get_property() < y.get_property(); }
+    };
+    // This map is a parameter/output for biconnected_components function
+    typedef typename std::map<edge_descriptor, int, order_edges> edge_map;
 
 public:
     adjacency_list graph;
@@ -105,7 +114,7 @@ public:
         std::back_insert_iterator<edge_container> inserter(disconnecting_set);
         to_return.ec = boost::edge_connectivity(graph, inserter);
 
-        for (v_index i = 0; i < disconnecting_set.size(); i++) {
+        for (size_t i = 0; i < disconnecting_set.size(); i++) {
             edge_descriptor edge = disconnecting_set[i];
             to_return.edges.push_back(index[boost::source(edge, graph)]);
             to_return.edges.push_back(index[boost::target(edge, graph)]);
@@ -156,7 +165,7 @@ public:
             boost::king_ordering(graph, inv_perm.rbegin());
         }
 
-        for (int i = 0; i < inv_perm.size(); i++) {
+        for (size_t i = 0; i < inv_perm.size(); i++) {
             to_return.push_back(index[inv_perm[i]]);
         }
         return to_return;
@@ -187,6 +196,24 @@ public:
                 to_return.push_back(index[predecessors[i]]);
             }
         }
+        return to_return;
+    }
+
+    // This function returns the biconnected components of the graph.
+    std::vector<std::vector<v_index>> blocks_and_cut_vertices() {
+        edge_map bicmp_map;
+        boost::associative_property_map<edge_map> bimap(bicmp_map);
+        std::size_t num_comps = biconnected_components(graph, bimap);
+
+        // We iterate over every edge and add the vertices of block i into to_return[i].
+        // to_return[i] could contain repetitions.
+        std::vector<std::vector<v_index>> to_return(num_comps, std::vector<v_index>(0));
+        typename boost::graph_traits<adjacency_list>::edge_iterator ei, ei_end;
+        for (boost::tie(ei, ei_end) = edges(graph); ei != ei_end; ++ei) {
+            to_return[bimap[*ei]].push_back(index[source(*ei, graph)]);
+            to_return[bimap[*ei]].push_back(index[target(*ei, graph)]);
+        }
+
         return to_return;
     }
 

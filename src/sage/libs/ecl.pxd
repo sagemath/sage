@@ -1,3 +1,4 @@
+# distutils: libraries = ecl gmp
 ###############################################################################
 #   Sage: Open Source Mathematical Software
 #       Copyright (C) 2009 Nils Bruin <nbruin@sfu.ca>

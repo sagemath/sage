@@ -136,7 +136,7 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
         return self.monomial(i+j)
 
     def coproduct_on_basis(self, i):
-        """
+        r"""
         The coproduct of a basis element.
 
         .. MATH::
@@ -156,7 +156,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
             sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
             sage: H.monomial(3).coproduct()
             P0 # P3 + 3*P1 # P2 + 3*P2 # P1 + P3 # P0
-
         """
         return self.sum_of_terms(
             ((i-j, j), binomial(i, j))

@@ -9,6 +9,7 @@ Points on schemes
 #*******************************************************************************
 
 from sage.structure.element import Element
+from sage.structure.richcmp import richcmp
 
 ########################################################
 # Base class for points on a scheme, either topological
@@ -210,7 +211,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         """
         return self.__P
 
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         """
         Compare ``self`` to ``other``.
 
@@ -222,7 +223,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
             sage: x == y
             False
         """
-        return cmp(self.__P, other.__P)
+        return richcmp(self.__P, other.__P, op)
 
 ########################################################
 # Points on a scheme defined by a morphism

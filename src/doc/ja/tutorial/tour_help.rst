@@ -60,7 +60,7 @@ Sageには充実したドキュメントが組込まれていて，(例えば)�
             0.69314718055994530941723212145817656807   # 同じく64ビット
     sage: sudoku?
     File:        sage/local/lib/python2.5/site-packages/sage/games/sudoku.py
-    Type:        <type 'function'>
+    Type:        <... 'function'>
     Definition:  sudoku(A)
     Docstring:
 
@@ -254,7 +254,9 @@ Sageにおける最も基本的なデータ構造はリストで，名前の示�
 
 ::
 
-    sage: range(2,10)
+    sage: range(2,10)   # py2
+    [2, 3, 4, 5, 6, 7, 8, 9]
+    sage: list(range(2,10))   # py3
     [2, 3, 4, 5, 6, 7, 8, 9]
 
 もう少し複雑なリストの例として:

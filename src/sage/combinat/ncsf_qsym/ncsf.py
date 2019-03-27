@@ -45,9 +45,8 @@ from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutations
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
-from sage.categories.morphism import SetMorphism
-from sage.categories.homset import Hom
 from sage.combinat.sf.sf import SymmetricFunctions
+
 
 class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
     r"""
@@ -460,7 +459,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.complete()
 
-    _shorthands = tuple(['S', 'R', 'L', 'Phi', 'Psi', 'nM', 'I'])
+    _shorthands = tuple(['S', 'R', 'L', 'Phi', 'Psi', 'nM', 'I', 'dQS', 'dYQS', 'ZL', 'ZR'])
 
     def dual(self):
         r"""
@@ -584,70 +583,54 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             def to_ncsym_on_basis(self, I):
                 r"""
-                The image of the basis element indexed by ``I`` under the
-                map `\kappa` to the symmetric functions in non-commuting
-                variables such that for the natural maps `\chi : NCSym \to Sym`
-                and `\rho : NSym \to Sym`, we have `\chi \circ \kappa = \rho`.
+                The image of the basis element indexed by ``I`` under
+                the map to `NCSym`.
 
-                This default implementation does a change of basis and
-                computes the image in the complete basis.
-
-                .. SEEALSO::
-
-                    :meth:`~sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Complete.to_ncsym_on_basis`
-
-                INPUT:
-
-                - ``I`` -- a composition
+                This function is deprecated. Use the ``to_ncsym`` on the
+                corresponding element.
 
                 EXAMPLES::
 
-                    sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                    sage: S.to_ncsym(S[2,1])
-                    1/2*m{{1}, {2}, {3}} + 1/2*m{{1}, {2, 3}} + m{{1, 2}, {3}}
-                     + m{{1, 2, 3}} + 1/2*m{{1, 3}, {2}}
                     sage: R = NonCommutativeSymmetricFunctions(QQ).R()
                     sage: R.to_ncsym_on_basis(Composition([2,1]))
-                    1/3*m{{1}, {2}, {3}} + 1/6*m{{1}, {2, 3}} + 2/3*m{{1, 2}, {3}} + 1/6*m{{1, 3}, {2}}
+                    doctest:warning
+                    ...
+                    DeprecationWarning: This method is deprecated.
+                     Use to_ncsym on the corresponding element.
+                    See https://trac.sagemath.org/25141 for details.
+                    1/3*m{{1}, {2}, {3}} + 1/6*m{{1}, {2, 3}}
+                     + 2/3*m{{1, 2}, {3}} + 1/6*m{{1, 3}, {2}}
                 """
-                S = self.realization_of().complete()
-                return S.to_ncsym(S(self[I]))
+                from sage.misc.superseded import deprecation
+                deprecation(25141, "This method is deprecated."
+                                   " Use to_ncsym on the corresponding element.")
+                return self.monomial(I).to_ncsym()
 
             @lazy_attribute
             def to_ncsym(self):
-                r"""
-                Morphism `\kappa` of ``self`` to the algebra of symmetric
-                functions in non-commuting variables that for the natural
-                maps `\chi : NCSym \to Sym` and `\rho : NSym \to Sym`, we
-                have `\chi \circ \kappa = \rho`.
+                """
+                The image of the basis element indexed by ``I`` under
+                the map to `NCSym`.
 
-                This is constructed by extending the method
-                :meth:`~sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Complete.to_ncsym_on_basis`
-                linearly.
+                This function is deprecated. Use the ``to_ncsym`` on the
+                corresponding element.
 
                 EXAMPLES::
 
-                    sage: N = NonCommutativeSymmetricFunctions(QQ)
-                    sage: R = N.ribbon()
-                    sage: x = R.an_element(); x
-                    2*R[] + 2*R[1] + 3*R[1, 1]
-                    sage: R.to_ncsym(x)
-                    2*m{} + 2*m{{1}} + 3/2*m{{1}, {2}}
-                    sage: S = N.complete()
-                    sage: S.to_ncsym(S[1,2])
-                    1/2*m{{1}, {2}, {3}} + m{{1}, {2, 3}} + 1/2*m{{1, 2}, {3}}
-                     + m{{1, 2, 3}} + 1/2*m{{1, 3}, {2}}
-                    sage: Phi = N.Phi()
-                    sage: Phi.to_ncsym(Phi[1,3])
-                    -1/4*m{{1}, {2}, {3, 4}} - 1/4*m{{1}, {2, 3}, {4}} + m{{1}, {2, 3, 4}}
-                     + 1/2*m{{1}, {2, 4}, {3}} - 1/4*m{{1, 2}, {3, 4}} - 1/4*m{{1, 2, 3}, {4}}
-                     + m{{1, 2, 3, 4}} + 1/2*m{{1, 2, 4}, {3}} + 1/2*m{{1, 3}, {2, 4}}
-                     - 1/4*m{{1, 3, 4}, {2}} - 1/4*m{{1, 4}, {2, 3}}
+                    sage: R = NonCommutativeSymmetricFunctions(QQ).ribbon()
                     sage: R.to_ncsym
+                    doctest:warning
+                    ...
+                    DeprecationWarning: This method is deprecated.
+                     Use to_ncsym on the corresponding element.
+                    See https://trac.sagemath.org/25141 for details.
                     Generic morphism:
                       From: Non-Commutative Symmetric Functions over the Rational Field in the Ribbon basis
                       To:   Symmetric functions in non-commuting variables over the Rational Field in the monomial basis
                 """
+                from sage.misc.superseded import deprecation
+                deprecation(25141, "This method is deprecated."
+                                   " Use to_ncsym on the corresponding element.")
                 from sage.combinat.ncsym.ncsym import SymmetricFunctionsNonCommutingVariables
                 codomain = SymmetricFunctionsNonCommutingVariables(self.base_ring()).monomial()
                 return self.module_morphism(self.to_ncsym_on_basis, codomain=codomain)
@@ -1758,23 +1741,219 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             def to_ncsym(self):
                 r"""
-                Return the image of ``self`` in the symmetric functions in
-                non-commuting variables under the map described in
-                :meth:`~sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Complete.to_ncsym_on_basis`.
+                Return the image of ``self`` under the injective
+                algebra homomorphism `\kappa : NSym \to NCSym`
+                that fixes the symmetric functions.
+
+                As usual, `NCSym` denotes the ring of symmetric
+                functions in non-commuting variables.
+                Let `S_n` denote a generator of the complete basis.
+                The algebra homomorphism `\kappa : NSym \to NCSym`
+                is defined by
+
+                .. MATH::
+
+                    S_n \mapsto \sum_{A \vdash [n]}
+                    \frac{\lambda(A)! \lambda(A)^!}{n!} \mathbf{m}_A .
+
+                It has the property that the canonical maps
+                `\chi : NCSym \to Sym` and `\rho : NSym \to Sym`
+                satisfy `\chi \circ \kappa = \rho`.
+
+                .. NOTE::
+
+                    A remark in [BRRZ08]_  makes it clear that the embedding
+                    of `NSym` into `NCSym` that preserves the projection into
+                    the symmetric functions is not unique.  While this seems
+                    to be a natural embedding, any free set of algebraic
+                    generators of `NSym` can be sent to a set of free elements
+                    in `NCSym` to form another embedding.
+
+                .. SEEALSO::
+
+                    :class:`NonCommutativeSymmetricFunctions` for a definition
+                    of `NCSym`.
 
                 EXAMPLES::
 
                     sage: N = NonCommutativeSymmetricFunctions(QQ)
+                    sage: S = N.complete()
+                    sage: S[2].to_ncsym()
+                    1/2*m{{1}, {2}} + m{{1, 2}}
+                    sage: S[1,2,1].to_ncsym()
+                    1/2*m{{1}, {2}, {3}, {4}} + 1/2*m{{1}, {2}, {3, 4}} + m{{1}, {2, 3}, {4}}
+                     + m{{1}, {2, 3, 4}} + 1/2*m{{1}, {2, 4}, {3}} + 1/2*m{{1, 2}, {3}, {4}}
+                     + 1/2*m{{1, 2}, {3, 4}} + m{{1, 2, 3}, {4}} + m{{1, 2, 3, 4}}
+                     + 1/2*m{{1, 2, 4}, {3}} + 1/2*m{{1, 3}, {2}, {4}} + 1/2*m{{1, 3}, {2, 4}}
+                     + 1/2*m{{1, 3, 4}, {2}} + 1/2*m{{1, 4}, {2}, {3}} + m{{1, 4}, {2, 3}}
+                    sage: S[1,2].to_ncsym()
+                    1/2*m{{1}, {2}, {3}} + m{{1}, {2, 3}} + 1/2*m{{1, 2}, {3}}
+                     + m{{1, 2, 3}} + 1/2*m{{1, 3}, {2}}
+                    sage: S[[]].to_ncsym()
+                    m{}
+
                     sage: R = N.ribbon()
                     sage: x = R.an_element(); x
                     2*R[] + 2*R[1] + 3*R[1, 1]
                     sage: x.to_ncsym()
                     2*m{} + 2*m{{1}} + 3/2*m{{1}, {2}}
-                    sage: y = N.Phi()[1,2]
-                    sage: y.to_ncsym()
+                    sage: R[2,1].to_ncsym()
+                    1/3*m{{1}, {2}, {3}} + 1/6*m{{1}, {2, 3}}
+                     + 2/3*m{{1, 2}, {3}} + 1/6*m{{1, 3}, {2}}
+
+                    sage: Phi = N.Phi()
+                    sage: Phi[1,2].to_ncsym()
                     m{{1}, {2, 3}} + m{{1, 2, 3}}
+                    sage: Phi[1,3].to_ncsym()
+                    -1/4*m{{1}, {2}, {3, 4}} - 1/4*m{{1}, {2, 3}, {4}} + m{{1}, {2, 3, 4}}
+                     + 1/2*m{{1}, {2, 4}, {3}} - 1/4*m{{1, 2}, {3, 4}} - 1/4*m{{1, 2, 3}, {4}}
+                     + m{{1, 2, 3, 4}} + 1/2*m{{1, 2, 4}, {3}} + 1/2*m{{1, 3}, {2, 4}}
+                     - 1/4*m{{1, 3, 4}, {2}} - 1/4*m{{1, 4}, {2, 3}}
+
+                TESTS:
+
+                Check that `\chi \circ \kappa = \rho`::
+
+                    sage: S = NonCommutativeSymmetricFunctions(QQ).S()
+                    sage: m = SymmetricFunctionsNonCommutingVariables(QQ).monomial()
+                    sage: mon = SymmetricFunctions(QQ).monomial()
+                    sage: all(S[c].to_ncsym().to_symmetric_function()
+                    ....:     == S[c].to_symmetric_function()
+                    ....:     for i in range(5) for c in Compositions(i))
+                    True
+
+                We also check that the `NCSym` monomials agree on the homogeneous
+                and complete basis::
+
+                    sage: h = SymmetricFunctions(QQ).h()
+                    sage: all(m.from_symmetric_function(h[i])
+                    ....:     == S[i].to_ncsym() for i in range(6))
+                    True
                 """
-                return self.parent().to_ncsym(self)
+                from sage.combinat.ncsym.ncsym import SymmetricFunctionsNonCommutingVariables
+                from sage.combinat.set_partition import SetPartitions
+                P = self.parent()
+                S = P.realization_of().complete()
+                R = P.base_ring()
+                m = SymmetricFunctionsNonCommutingVariables(R).m()
+                SP = SetPartitions()
+
+                def on_basis(I):
+                    if not I._list:
+                        return m.one()
+                    c_num = lambda A: R(prod(factorial(i) for i in A.shape()))
+                    return prod(m.sum_of_terms([(SP(A), R(c_num(A) / factorial(n)))
+                                                for A in SetPartitions(n)], distinct=True)
+                                for n in I)
+
+                return m.linear_combination((on_basis(I), coeff)
+                                            for I, coeff in S(self))
+
+            def to_fqsym(self):
+                r"""
+                Return the image of the non-commutative symmetric
+                function ``self`` under the morphism
+                `\iota : NSym \to FQSym`.
+
+                This morphism is the injective algebra homomorphism
+                `NSym \to FQSym` that sends each Complete generator
+                `S_n` to `F_{[1, 2, \ldots, n]}`. It is the inclusion
+                map, if we regard both `NSym` and `FQSym` as rings of
+                noncommutative power series.
+
+                .. SEEALSO::
+
+                    :class:`FreeQuasisymmetricFunctions` for a definition
+                    of `FQSym`.
+
+                EXAMPLES::
+
+                    sage: N = NonCommutativeSymmetricFunctions(QQ)
+                    sage: R = N.ribbon()
+                    sage: x = 2*R[[]] + 2*R[1] + 3*R[2]
+                    sage: x.to_fqsym()
+                    2*F[] + 2*F[1] + 3*F[1, 2]
+                    sage: R[2,1].to_fqsym()
+                    F[1, 3, 2] + F[3, 1, 2]
+                    sage: x = R.an_element(); x
+                    2*R[] + 2*R[1] + 3*R[1, 1]
+                    sage: x.to_fqsym()
+                    2*F[] + 2*F[1] + 3*F[2, 1]
+
+                    sage: y = N.Phi()[1,2]
+                    sage: y.to_fqsym()
+                    F[1, 2, 3] - F[1, 3, 2] + F[2, 1, 3] + F[2, 3, 1]
+                     - F[3, 1, 2] - F[3, 2, 1]
+
+                    sage: S = NonCommutativeSymmetricFunctions(QQ).S()
+                    sage: S[2].to_fqsym()
+                    F[1, 2]
+                    sage: S[1,2].to_fqsym()
+                    F[1, 2, 3] + F[2, 1, 3] + F[2, 3, 1]
+                    sage: S[2,1].to_fqsym()
+                    F[1, 2, 3] + F[1, 3, 2] + F[3, 1, 2]
+                    sage: S[1,2,1].to_fqsym()
+                    F[1, 2, 3, 4] + F[1, 2, 4, 3] + F[1, 4, 2, 3]
+                     + F[2, 1, 3, 4] + F[2, 1, 4, 3] + F[2, 3, 1, 4]
+                     + F[2, 3, 4, 1] + F[2, 4, 1, 3] + F[2, 4, 3, 1]
+                     + F[4, 1, 2, 3] + F[4, 2, 1, 3] + F[4, 2, 3, 1]
+                """
+                from sage.combinat.fqsym import FreeQuasisymmetricFunctions
+                P = self.parent()
+                S = P.realization_of().complete()
+                F = FreeQuasisymmetricFunctions(P.base_ring()).F()
+                def on_basis(I):
+                    return F.prod(F[Permutations(i)(range(1, i+1))] for i in I)
+                return F.linear_combination((on_basis(I), coeff)
+                                            for I, coeff in S(self))
+
+            def to_fsym(self):
+                r"""
+                Return the image of ``self`` under the natural map to
+                `FSym`.
+
+                There is an injective Hopf algebra morphism from `NSym` to
+                `FSym` (see
+                :class:`~sage.combinat.chas.fsym.FreeSymmetricFunctions`),
+                which maps the ribbon `R_\alpha` indexed by a composition
+                `\alpha` to the sum of all tableaux whose descent
+                composition is `\alpha`.
+                If we regard `NSym` as a Hopf subalgebra of `FQSym` via
+                the morphism `\iota : NSym \to FQSym` (implemented as
+                :meth:`to_fqsym`), then this injective morphism is just
+                the inclusion map.
+
+                EXAMPLES::
+
+                    sage: N = NonCommutativeSymmetricFunctions(QQ)
+                    sage: R = N.ribbon()
+                    sage: x = 2*R[[]] + 2*R[1] + 3*R[2]
+                    sage: x.to_fsym()
+                    2*G[] + 2*G[1] + 3*G[12]
+                    sage: R[2,1].to_fsym()
+                    G[12|3]
+                    sage: R[1,2].to_fsym()
+                    G[13|2]
+                    sage: R[2,1,2].to_fsym()
+                    G[12|35|4] + G[125|3|4]
+                    sage: x = R.an_element(); x
+                    2*R[] + 2*R[1] + 3*R[1, 1]
+                    sage: x.to_fsym()
+                    2*G[] + 2*G[1] + 3*G[1|2]
+
+                    sage: y = N.Phi()[1,2]
+                    sage: y.to_fsym()
+                    -G[1|2|3] - G[12|3] + G[123] + G[13|2]
+
+                    sage: S = NonCommutativeSymmetricFunctions(QQ).S()
+                    sage: S[2].to_fsym()
+                    G[12]
+                    sage: S[2,1].to_fsym()
+                    G[12|3] + G[123]
+                """
+                from sage.combinat.chas.fsym import FreeSymmetricFunctions
+                G = FreeSymmetricFunctions(self.base_ring()).G()
+                return G(self)
 
             def expand(self, n, alphabet='x'):
                 r"""
@@ -2237,7 +2416,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 return T.sum_of_monomials( (C(j), C(i-j)) for j in range(0,i+1) )
 
     class MultiplicativeBasesOnPrimitiveElements(Category_realization_of_parent):
-        """
+        r"""
         Category of multiplicative bases of the non-commutative symmetric
         functions whose generators are primitive elements.
 
@@ -2972,74 +3151,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             J = [j-1 for j in I.to_subset()]
             return sga.sum_of_monomials( p for K in Set(J).subsets()
                                          for p in Permutations(descents=(K,n)) )
-
-        def to_ncsym_on_basis(self, I):
-            r"""
-            Return the image of the complete non-commutative symmetric function
-            in the symmetric functions in non-commuting variables under the
-            embedding `\mathcal{I}` which fixes the symmetric functions.
-
-            This map is defined by
-
-            .. MATH::
-
-                S_n \mapsto \sum_{A \vdash [n]}
-                \frac{\lambda(A)! \lambda(A)^!}{n!} \mathbf{m}_A
-
-            and extended as an algebra homomorphism.
-
-            .. NOTE::
-
-                A remark in [BRRZ08]_  makes it clear that the embedding of ``NCSF``
-                into ``NCSym`` that preserves the projection into the symmetric
-                functions is not unique.  While this seems to be a natural embedding,
-                any set of algebraic generators can be sent to a set of free elements
-                in ``NCSym`` is also an embedding.
-
-            EXAMPLES::
-
-                sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                sage: S.to_ncsym_on_basis(Composition([2]))
-                1/2*m{{1}, {2}} + m{{1, 2}}
-                sage: S.to_ncsym_on_basis(Composition([1,2,1]))
-                1/2*m{{1}, {2}, {3}, {4}} + 1/2*m{{1}, {2}, {3, 4}} + m{{1}, {2, 3}, {4}}
-                 + m{{1}, {2, 3, 4}} + 1/2*m{{1}, {2, 4}, {3}} + 1/2*m{{1, 2}, {3}, {4}}
-                 + 1/2*m{{1, 2}, {3, 4}} + m{{1, 2, 3}, {4}} + m{{1, 2, 3, 4}}
-                 + 1/2*m{{1, 2, 4}, {3}} + 1/2*m{{1, 3}, {2}, {4}} + 1/2*m{{1, 3}, {2, 4}}
-                 + 1/2*m{{1, 3, 4}, {2}} + 1/2*m{{1, 4}, {2}, {3}} + m{{1, 4}, {2, 3}}
-                sage: S.to_ncsym_on_basis(Composition([]))
-                m{}
-
-            TESTS:
-
-            Check that the image under `\mathcal{I}` fixes the
-            symmetric functions::
-
-                sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).monomial()
-                sage: mon = SymmetricFunctions(QQ).monomial()
-                sage: all(S[c].to_ncsym().to_symmetric_function() == S[c].to_symmetric_function()
-                ....:     for i in range(5) for c in Compositions(i))
-                True
-
-            We also check that the `NCSym` monomials agree on the homogeneous
-            and complete basis::
-
-                sage: h = SymmetricFunctions(QQ).h()
-                sage: all(m.from_symmetric_function(h[i]) == S[i].to_ncsym() for i in range(6))
-                True
-            """
-            from sage.combinat.ncsym.ncsym import SymmetricFunctionsNonCommutingVariables
-            m = SymmetricFunctionsNonCommutingVariables(self.base_ring()).m()
-            if not I._list:
-                return m.one()
-
-            from sage.combinat.set_partition import SetPartitions
-            R = self.base_ring()
-            P = SetPartitions()
-            c_num = lambda A: prod([factorial(i) for i in A.shape()], R.one())
-            return prod(m.sum_of_terms([(P(A), R(c_num(A) / factorial(n))) for A in SetPartitions(n)], distinct=True)
-                        for n in I)
 
         class Element(CombinatorialFreeModule.Element):
             """
@@ -5058,4 +5169,538 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             return s[Partition(sorted(I,reverse=True))]
 
     dQS = dualQuasisymmetric_Schur
+
+    class dualYoungQuasisymmetric_Schur(CombinatorialFreeModule, BindableClass):
+        r"""
+        The basis of NCSF dual to the Young Quasisymmetric-Schur basis of QSym.
+
+        The
+        :class:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.YoungQuasisymmetric_Schur`
+        functions are given in Definition 5.2.1 of [LMvW13]_.  The dual basis
+        in the algebra of non-commutative symmetric functions are related by
+        an involution reversing the indexing composition of the complete
+        expansion of a quasi-Schur basis element.  This basis has many of the
+        same properties as the Quasisymmetric Schur basis and is related to
+        that basis by an algebraic transformation.
+
+        EXAMPLES::
+
+            sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+            sage: dYQS = NCSF.dYQS()
+            sage: dYQS([1,3,2])*dYQS([1])
+            dYQS[1, 3, 2, 1] + dYQS[1, 3, 3] + dYQS[1, 4, 2] + dYQS[2, 3, 2]
+            sage: dYQS([1])*dYQS([1,3,2])
+            dYQS[1, 1, 3, 2] + dYQS[2, 3, 2] + dYQS[3, 3, 1] + dYQS[4, 1, 2]
+            sage: dYQS([1,3])*dYQS([1,1])
+            dYQS[1, 3, 1, 1] + dYQS[1, 4, 1] + dYQS[2, 3, 1] + dYQS[2, 4]
+            sage: dYQS([3,1])*dYQS([2,1])
+            dYQS[3, 1, 2, 1] + dYQS[3, 2, 2] + dYQS[3, 3, 1] + dYQS[4, 1, 1, 1]
+             + dYQS[4, 1, 2] + dYQS[4, 2, 1] + dYQS[4, 3] + dYQS[5, 1, 1]
+             + dYQS[5, 2]
+            sage: dYQS([1,1]).coproduct()
+            dYQS[] # dYQS[1, 1] + dYQS[1] # dYQS[1] + dYQS[1, 1] # dYQS[]
+            sage: dYQS([3,3]).coproduct().monomial_coefficients()[(Composition([1,2]),Composition([2,1]))]
+            1
+            sage: S = NCSF.complete()
+            sage: dYQS(S[1,3,1])
+            dYQS[1, 3, 1] + dYQS[1, 4] + dYQS[2, 3] + dYQS[4, 1] + dYQS[5]
+            sage: S(dYQS[1,3,1])
+            S[1, 3, 1] - S[1, 4] - S[2, 3] + S[5]
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(S(dYQS([2,1,3])).to_symmetric_function())
+            s[3, 2, 1]
+        """
+
+        def __init__(self, NCSF):
+            r"""
+            Initialize ``self``.
+
+            EXAMPLES::
+
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+                sage: S = NCSF.complete()
+                sage: dYQS = NCSF.dualYoungQuasisymmetric_Schur()
+                sage: dYQS(S(dYQS.an_element())) == dYQS.an_element()
+                True
+                sage: S(dYQS(S.an_element())) == S.an_element()
+                True
+                sage: TestSuite(dYQS).run() # long time
+            """
+            category = NCSF.Bases()
+            CombinatorialFreeModule.__init__(self, NCSF.base_ring(), Compositions(),
+                                             prefix='dYQS', bracket=False,
+                                             category=category)
+
+            self._S = NCSF.complete()
+            self._dQS = NCSF.dualQuasisymmetric_Schur()
+            self.module_morphism(on_basis=self._to_complete_on_basis,
+                                 codomain=self._S,
+                                 category=category).register_as_coercion()
+
+            self._S.module_morphism(on_basis=self._from_complete_on_basis,
+                                    codomain=self,
+                                    category=category).register_as_coercion()
+
+        def _realization_name(self):
+            r"""
+            TESTS::
+
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+                sage: dYQS = NCSF.dYQS()
+                sage: dYQS._realization_name()
+                'dual Young Quasisymmetric-Schur'
+            """
+            return "dual Young Quasisymmetric-Schur"
+
+        def _to_complete_on_basis(self, comp):
+            r"""
+            The expansion of the dual Quasisymmetric-Schur basis element
+            indexed by ``comp`` in the complete basis.
+
+            INPUT:
+
+            - ``comp`` -- a composition
+
+            OUTPUT:
+
+            - a quasi-symmetric function in the complete basis
+
+            EXAMPLES::
+
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+                sage: dYQS = NCSF.dYQS()
+                sage: dYQS._to_complete_on_basis(Composition([1,3,1]))
+                S[1, 3, 1] - S[1, 4] - S[2, 3] + S[5]
+            """
+            elt = self._dQS._to_complete_on_basis(comp.reversed())
+            return self._S._from_dict({al.reversed(): c for al, c in elt},
+                                      coerce=False, remove_zeros=False)
+
+        def _from_complete_on_basis(self, comp):
+            r"""
+            Return the expansion of a complete basis element in the
+            dual Young Quasisymmetric-Schur basis.
+
+            INPUT:
+
+            - ``comp`` -- a composition
+
+            OUTPUT:
+
+            - the expansion in the dual Young Quasisymmetric-Schur basis of
+              the basis element in the complete basis indexed by the
+              composition ``comp``
+
+            EXAMPLES::
+
+                sage: dYQS=NonCommutativeSymmetricFunctions(QQ).dYQS()
+                sage: dYQS._from_complete_on_basis(Composition([]))
+                dYQS[]
+                sage: dYQS._from_complete_on_basis(Composition([2,1,1]))
+                dYQS[2, 1, 1] + dYQS[2, 2] + 2*dYQS[3, 1] + dYQS[4]
+            """
+            elt = self._dQS._from_complete_on_basis(comp.reversed())
+            return self._from_dict({al.reversed(): c for al, c in elt},
+                                   coerce=False, remove_zeros=False)
+
+        def dual(self):
+            r"""
+            The dual basis to the dual Quasisymmetric-Schur basis of NCSF.
+
+            The basis returned is the
+            :class:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Quasisymmetric_Schur`
+            basis of QSym.
+
+            OUTPUT:
+
+            - the Young Quasisymmetric-Schur basis of quasi-symmetric functions
+
+            EXAMPLES::
+
+                sage: dYQS=NonCommutativeSymmetricFunctions(QQ).dualYoungQuasisymmetric_Schur()
+                sage: dYQS.dual()
+                Quasisymmetric functions over the Rational Field in the Young
+                Quasisymmetric Schur basis
+                sage: dYQS.duality_pairing_matrix(dYQS.dual(),3)
+                [1 0 0 0]
+                [0 1 0 0]
+                [0 0 1 0]
+                [0 0 0 1]
+            """
+            return self.realization_of().dual().Young_Quasisymmetric_Schur()
+
+        def to_symmetric_function_on_basis(self, I):
+            r"""
+            The commutative image of a dual Young quasi-symmetric
+            Schur element.
+
+            The commutative image of a basis element is obtained by sorting
+            the indexing composition of the basis element.
+
+            INPUT:
+
+            - ``I`` -- a composition
+
+            OUTPUT:
+
+            - The commutative image of the dual Young quasi-Schur basis element
+              indexed by ``I``. The result is the Schur symmetric function
+              indexed by the partition obtained by sorting ``I``.
+
+            EXAMPLES::
+
+                sage: dYQS=NonCommutativeSymmetricFunctions(QQ).dYQS()
+                sage: dYQS.to_symmetric_function_on_basis([2,1,3])
+                s[3, 2, 1]
+                sage: dYQS.to_symmetric_function_on_basis([])
+                s[]
+            """
+            s = SymmetricFunctions(self.base_ring()).s()
+            return s[Partition(sorted(I,reverse=True))]
+
+    dYQS = dualYoungQuasisymmetric_Schur
+
+    class Zassenhaus_left(CombinatorialFreeModule, BindableClass):
+        r"""
+        The Hopf algebra of non-commutative symmetric functions in the
+        left Zassenhaus basis.
+
+        This basis is the left-version of the basis defined in Section 2.5.1
+        of [HLNT09]_.
+        It is multiplicative, with `Z_n` defined as the element of `NCSF_n`
+        satisfying the equation
+
+        .. MATH::
+
+            \sigma_1 = \cdots exp(Z_n) \cdots exp(Z_2) exp(Z_1),
+
+        where
+
+        .. MATH::
+
+            \sigma_1 = \sum_{n \geq 0} S_n .
+
+        It can be recursively computed by the formula
+
+        .. MATH::
+
+            S_n = \sum_{\lambda \vdash n}
+            \frac{1}{m_1(\lambda)! m_2(\lambda)! m_3(\lambda)! \cdots}
+            Z_{\lambda_1} Z_{\lambda_2} Z_{\lambda_3} \cdots
+
+        for all `n \geq 0`.
+        """
+        def __init__(self, NCSF):
+            r"""
+            EXAMPLES::
+
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+                sage: ZL = NCSF.Zassenhaus_left(); ZL
+                Non-Commutative Symmetric Functions over the Rational Field
+                 in the Zassenhaus_left basis
+                sage: TestSuite(ZL).run()
+
+            TESTS:
+
+            Test coproduct and antipode on the multiplicative identity::
+
+                sage: ZL.one()
+                ZL[]
+                sage: ZL.one().coproduct()
+                ZL[] # ZL[]
+                sage: ZL.one().antipode()
+                ZL[]
+
+            We include some sanity tests to verify that conversions between
+            this basis and other bases work the way they should::
+
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+                sage: ZL = NCSF.ZL()
+                sage: R = NCSF.ribbon()
+                sage: S = NCSF.complete()
+                sage: ZL(S[3])
+                1/6*ZL[1, 1, 1] + ZL[2, 1] + ZL[3]
+                sage: all(S(ZL(S[comp])) == S[comp] for comp in Compositions(5))
+                True
+                sage: all(ZL(S(ZL[comp])) == ZL[comp] for comp in Compositions(5))
+                True
+                sage: all(R(ZL(R[comp])) == R[comp] for comp in Compositions(5))
+                True
+                sage: all(ZL(R(ZL[comp])) == ZL[comp] for comp in Compositions(5))
+                True
+            """
+            cat = NCSF.MultiplicativeBasesOnPrimitiveElements()
+            CombinatorialFreeModule.__init__(self, NCSF.base_ring(), Compositions(),
+                                                prefix='ZL', bracket=False,
+                                                category=cat)
+
+            # Register coercions
+            S = self.realization_of().S()
+
+            to_complete = self.algebra_morphism(self._to_complete_on_generator,
+                                                codomain=S)
+            to_complete.register_as_coercion()
+
+            from_complete = S.module_morphism(on_basis=self._from_complete_on_basis,
+                                              codomain=self)
+            from_complete.register_as_coercion()
+
+        def _to_complete_on_generator(self, n):
+            r"""
+            Expand a (left) Zassenhaus generator of non-commutative symmetric
+            functions in the complete basis.
+
+            INPUT:
+
+            - ``n`` -- a positive integer
+
+            OUTPUT:
+
+            The expansion of the (left) Zassenhaus generator indexed by ``n``
+            into the complete basis.
+
+            TESTS::
+
+                sage: ZL = NonCommutativeSymmetricFunctions(QQ).Zassenhaus_left()
+                sage: ZL._to_complete_on_generator(1)
+                S[1]
+                sage: ZL._to_complete_on_generator(2)
+                -1/2*S[1, 1] + S[2]
+            """
+            S = self.realization_of().S()
+            if n <= 1:
+                return S[n]
+
+            from sage.combinat.partitions import ZS1_iterator
+            from sage.rings.integer_ring import ZZ
+            it = ZS1_iterator(n)
+            next(it) # Skip the unique length 1 partition
+            res = S[n]
+            for p in it:
+                d = {}
+                for part in p:
+                    d[part] = d.get(part, 0) + 1
+                coeff = ZZ(prod(factorial(d[l]) for l in d))
+                res = res - prod(self._to_complete_on_generator(i) for i in p) / coeff
+            return res
+
+        @cached_method
+        def _complete_to_zassenhaus_transition_matrix_inverse(self, n):
+            r"""
+            The change of basis matrix from the S basis to the ZL basis.
+
+            EXAMPLES::
+
+                sage: ZL = NonCommutativeSymmetricFunctions(QQ).Zassenhaus_left()
+                sage: ZL._complete_to_zassenhaus_transition_matrix_inverse(3)
+                [  1   0   0   0]
+                [1/2   1   0   0]
+                [1/2   0   1   0]
+                [1/6   0   1   1]
+            """
+            from sage.matrix.constructor import matrix
+            S = self.realization_of().S()
+            m = []
+            for I in Compositions(n):
+                x = S(self.basis()[I])
+                m.append([x.coefficient(J) for J in Compositions(n)])
+            M = matrix(m).inverse()
+            M.set_immutable()
+            return M
+
+        def _from_complete_on_basis(self, I):
+            """
+            Convert the Complete basis element indexed by ``I`` to ``self``.
+
+            EXAMPLES::
+
+                sage: ZL = NonCommutativeSymmetricFunctions(QQ).Zassenhaus_left()
+                sage: ZL._from_complete_on_basis(Composition([1,3,2]))
+                1/12*ZL[1, 1, 1, 1, 1, 1] + 1/6*ZL[1, 1, 1, 1, 2]
+                 + 1/2*ZL[1, 2, 1, 1, 1] + ZL[1, 2, 1, 2]
+                 + 1/2*ZL[1, 3, 1, 1] + ZL[1, 3, 2]
+            """
+            n = I.size()
+            m = self._complete_to_zassenhaus_transition_matrix_inverse(n)
+            C = Compositions(n)
+            coeffs = m[C.rank(I)]
+            return self._from_dict({J: coeffs[i] for i,J in enumerate(C)})
+
+    ZL = Zassenhaus_left
+
+    class Zassenhaus_right(CombinatorialFreeModule, BindableClass):
+        r"""
+        The Hopf algebra of non-commutative symmetric functions in
+        the right Zassenhaus basis.
+
+        This basis is defined in Section 2.5.1 of [HLNT09]_.
+        It is multiplicative, with `Z_n` defined as the element of `NCSF_n`
+        satisfying the equation
+
+        .. MATH::
+
+            \sigma_1 = exp(Z_1) exp(Z_2) exp(Z_3) \cdots exp(Z_n) \cdots
+
+        where
+
+        .. MATH::
+
+            \sigma_1 = \sum_{n \geq 0} S_n .
+            
+        It can be recursively computed by the formula
+
+        .. MATH::
+
+            S_n = \sum_{\lambda \vdash n}
+            \frac{1}{m_1(\lambda)! m_2(\lambda)! m_3(\lambda)! \cdots}
+            \cdots Z_{\lambda_3} Z_{\lambda_2} Z_{\lambda_1}
+
+        for all `n \geq 0`.
+
+        Note that there is a variant (called the "noncommutative
+        power sum symmetric functions of the third kind")
+        in Definition 5.26 of [NCSF2]_ that satisfies:
+
+        .. MATH::
+
+            \sigma_1 = exp(Z_1) exp(Z_2/2) exp(Z_3/3) \cdots exp(Z_n/n) \cdots.
+        """
+        def __init__(self, NCSF):
+            r"""
+            EXAMPLES::
+
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+                sage: ZR = NCSF.Zassenhaus_right(); ZR
+                Non-Commutative Symmetric Functions over the Rational Field
+                 in the Zassenhaus_right basis
+                sage: TestSuite(ZR).run()
+
+            TESTS:
+
+            Test coproduct and antipode on the multiplicative identity::
+
+                sage: ZR = NCSF.ZR()
+                sage: ZR.one()
+                ZR[]
+                sage: ZR.one().coproduct()
+                ZR[] # ZR[]
+                sage: ZR.one().antipode()
+                ZR[]
+
+            We include some sanity tests to verify that conversions between
+            this basis and other bases work the way they should::
+
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+                sage: ZR = NCSF.Zassenhaus_right()
+                sage: R = NCSF.ribbon()
+                sage: S = NCSF.complete()
+                sage: ZR(S[3])
+                1/6*ZR[1, 1, 1] + ZR[1, 2] + ZR[3]
+                sage: all(S(ZR(S[comp])) == S[comp] for comp in Compositions(5))
+                True
+                sage: all(ZR(S(ZR[comp])) == ZR[comp] for comp in Compositions(5))
+                True
+                sage: all(R(ZR(R[comp])) == R[comp] for comp in Compositions(5))
+                True
+                sage: all(ZR(R(ZR[comp])) == ZR[comp] for comp in Compositions(5))
+                True
+            """
+            cat = NCSF.MultiplicativeBasesOnPrimitiveElements()
+            CombinatorialFreeModule.__init__(self, NCSF.base_ring(), Compositions(),
+                                                prefix='ZR', bracket=False,
+                                                category=cat)
+
+            # Register coercions
+            S = self.realization_of().S()
+            to_complete = self.algebra_morphism(self._to_complete_on_generator,
+                                                codomain=S)
+            to_complete.register_as_coercion()
+
+            from_complete = S.module_morphism(on_basis=self._from_complete_on_basis,
+                                              codomain=self)
+            from_complete.register_as_coercion()
+
+        def _to_complete_on_generator(self, n):
+            r"""
+            Expand a (right) Zassenhaus generator of non-commutative symmetric
+            functions in the complete basis.
+
+            INPUT:
+
+            - ``n`` -- a positive integer
+
+            OUTPUT:
+
+            The expansion of the (right) Zassenhaus generator indexed by ``n``
+            into the complete basis.
+
+            TESTS::
+
+                sage: ZR = NonCommutativeSymmetricFunctions(QQ).Zassenhaus_right()
+                sage: ZR._to_complete_on_generator(1)
+                S[1]
+                sage: ZR._to_complete_on_generator(2)
+                -1/2*S[1, 1] + S[2]
+            """
+            S = self.realization_of().S()
+
+            if n <= 1:
+                return S[n]
+
+            from sage.combinat.partitions import ZS1_iterator
+            from sage.rings.integer_ring import ZZ
+            it = ZS1_iterator(n)
+            next(it) # Skip the unique length 1 partition
+            res = S[n]
+            for p in it:
+                d = {}
+                for part in p:
+                    d[part] = d.get(part, 0) + 1
+                coeff = ZZ(prod(factorial(d[e]) for e in d))
+                res = res - prod(self._to_complete_on_generator(i) for i in reversed(p)) / coeff
+            return res
+
+        @cached_method
+        def _complete_to_zassenhaus_transition_matrix_inverse(self, n):
+            r"""
+            The change of basis matrix from the S basis to the ZR basis.
+
+            EXAMPLES::
+
+                sage: ZR = NonCommutativeSymmetricFunctions(QQ).Zassenhaus_right()
+                sage: ZR._complete_to_zassenhaus_transition_matrix_inverse(3)
+                [  1   0   0   0]
+                [1/2   1   0   0]
+                [1/2   0   1   0]
+                [1/6   1   0   1]
+            """
+            from sage.matrix.constructor import matrix
+            S = self.realization_of().S()
+            m = []
+            for I in Compositions(n):
+                x = S(self.basis()[I])
+                m.append([x.coefficient(J) for J in Compositions(n)])
+            M = matrix(m).inverse()
+            M.set_immutable()
+            return M
+
+        def _from_complete_on_basis(self, I):
+            """
+            Convert the Complete basis element indexed by ``I`` to ``self``.
+
+            EXAMPLES::
+
+                sage: ZR = NonCommutativeSymmetricFunctions(QQ).Zassenhaus_right()
+                sage: ZR._from_complete_on_basis(Composition([1,3,2]))
+                1/12*ZR[1, 1, 1, 1, 1, 1] + 1/6*ZR[1, 1, 1, 1, 2]
+                 + 1/2*ZR[1, 1, 2, 1, 1] + ZR[1, 1, 2, 2]
+                 + 1/2*ZR[1, 3, 1, 1] + ZR[1, 3, 2]
+            """
+            n = I.size()
+            m = self._complete_to_zassenhaus_transition_matrix_inverse(n)
+            C = Compositions(n)
+            coeffs = m[C.rank(I)]
+            return self._from_dict({J: coeffs[i] for i,J in enumerate(C)})
+
+    ZR = Zassenhaus_right
 

@@ -3,7 +3,7 @@ Parallelization control
 
 This module defines the singleton class :class:`Parallelism` to govern the
 parallelization of computations in some specific topics. It allows the user to
-set the number of  processes to be used for parallelization.
+set the number of processes to be used for parallelization.
 
 Some examples of use are provided in the documentation of
 :meth:`sage.tensor.modules.comp.Components.contract`.
@@ -84,7 +84,7 @@ class Parallelism(Singleton, SageObject):
         r"""
         Construct the single instance of class Parallelism (singleton model).
 
-        TEST::
+        TESTS::
 
             sage: par = Parallelism()
             sage: par
@@ -109,7 +109,7 @@ class Parallelism(Singleton, SageObject):
         r"""
         String representation of the object.
 
-        TEST::
+        TESTS::
 
             sage: Parallelism()._repr_()
             'Number of processes for parallelization:\n - tensor computations: 1'
@@ -125,7 +125,7 @@ class Parallelism(Singleton, SageObject):
         Put the singleton object ``Parallelism()`` in the same state as
         immediately after its creation.
 
-        EXAMPLE:
+        EXAMPLES:
 
         State of ``Parallelism()`` just after its creation::
 

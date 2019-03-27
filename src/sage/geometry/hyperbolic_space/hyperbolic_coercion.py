@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Coercion Maps Between Hyperbolic Plane Models
 
@@ -19,7 +20,7 @@ AUTHORS:
 #***********************************************************************
 
 from sage.categories.morphism import Morphism
-from sage.symbolic.pynac import I
+from sage.symbolic.all import I
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
@@ -138,8 +139,8 @@ class HyperbolicModelCoercion(Morphism):
             sage: phi = UHP.coerce_map_from(PD)
             sage: ~phi
             Coercion Isometry morphism:
-              From: Hyperbolic plane in the Upper Half Plane Model model
-              To:   Hyperbolic plane in the Poincare Disk Model model
+              From: Hyperbolic plane in the Upper Half Plane Model
+              To:   Hyperbolic plane in the Poincare Disk Model
         """
         return self.domain().coerce_map_from(self.codomain())
 
@@ -654,17 +655,19 @@ def SL2R_to_SO21(A):
     a, b, c, d = (A/A.det().sqrt()).list()
 
     # Kill ~0 imaginary parts
-    B = matrix(3, map(real,
-                      [a*d + b*c, a*c - b*d, a*c + b*d, a*b - c*d,
-                       Integer(1)/Integer(2)*a**2 - Integer(1)/Integer(2)*b**2 -
-                       Integer(1)/Integer(2)*c**2 + Integer(1)/Integer(2)*d**2,
-                       Integer(1)/Integer(2)*a**2 + Integer(1)/Integer(2)*b**2 -
-                       Integer(1)/Integer(2)*c**2 - Integer(1)/Integer(2)*d**2,
-                       a*b + c*d, Integer(1)/Integer(2)*a**2 -
-                       Integer(1)/Integer(2)*b**2 + Integer(1)/Integer(2)*c**2 -
-                       Integer(1)/Integer(2)*d**2, Integer(1)/Integer(2)*a**2 +
-                       Integer(1)/Integer(2)*b**2 + Integer(1)/Integer(2)*c**2 +
-                       Integer(1)/Integer(2)*d**2]))
+    components = [
+        a*d + b*c, a*c - b*d, a*c + b*d, a*b - c*d,
+        Integer(1)/Integer(2)*a**2 - Integer(1)/Integer(2)*b**2 -
+                Integer(1)/Integer(2)*c**2 + Integer(1)/Integer(2)*d**2,
+        Integer(1)/Integer(2)*a**2 + Integer(1)/Integer(2)*b**2 -
+                Integer(1)/Integer(2)*c**2 - Integer(1)/Integer(2)*d**2,
+        a*b + c*d, Integer(1)/Integer(2)*a**2 -
+                Integer(1)/Integer(2)*b**2 + Integer(1)/Integer(2)*c**2 -
+        Integer(1)/Integer(2)*d**2, Integer(1)/Integer(2)*a**2 +
+                Integer(1)/Integer(2)*b**2 + Integer(1)/Integer(2)*c**2 +
+        Integer(1)/Integer(2)*d**2
+    ]
+    B = matrix(3, [real(c) for c in components])
 
     #B = B.apply_map(attrcall('real'))
     if A.det() > 0:

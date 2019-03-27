@@ -92,7 +92,7 @@ class ParametrizedSurface3D(SageObject):
     specified explicitly. This is mainly useful for plotting. Here we
     construct half of an ellipsoid::
 
-        sage: u1, u2 = var ('u1, u2', domain='real');
+        sage: u1, u2 = var ('u1, u2', domain='real')
         sage: coords = ((u1, -pi/2, pi/2), (u2, 0, pi))
         sage: ellipsoid_eq = (cos(u1)*cos(u2), 2*sin(u1)*cos(u2), 3*sin(u2))
         sage: ellipsoid = ParametrizedSurface3D(ellipsoid_eq, coords, 'ellipsoid'); ellipsoid
@@ -185,8 +185,8 @@ class ParametrizedSurface3D(SageObject):
 
     We find the area of the sphere of radius $R$::
 
-        sage: R = var('R', domain='real');
-        sage: u, v = var('u,v', domain='real');
+        sage: R = var('R', domain='real')
+        sage: u, v = var('u,v', domain='real')
         sage: assume(R>0)
         sage: assume(cos(v)>0)
         sage: sphere = ParametrizedSurface3D([R*cos(u)*cos(v),R*sin(u)*cos(v),R*sin(v)],[u,v],'sphere')
@@ -235,7 +235,7 @@ class ParametrizedSurface3D(SageObject):
     We can easily generate a color plot of the Gaussian curvature of a surface.
     Here we deal with the ellipsoid::
 
-        sage: u1, u2 = var('u1,u2', domain='real');
+        sage: u1, u2 = var('u1,u2', domain='real')
         sage: u = [u1,u2]
         sage: ellipsoid_equation(u1,u2) = [2*cos(u1)*cos(u2),1.5*cos(u1)*sin(u2),sin(u1)]
         sage: ellipsoid = ParametrizedSurface3D(ellipsoid_equation(u1,u2), [u1, u2],'ellipsoid')
@@ -341,20 +341,19 @@ class ParametrizedSurface3D(SageObject):
         """
         self.equation = tuple(equation)
 
-        if len(variables[0]) > 0:
+        if len(variables[0]):
             self.variables_range = (variables[0][1:3], variables[1][1:3])
-            self.variables_list  = (variables[0][0], variables[1][0])
+            self.variables_list = (variables[0][0], variables[1][0])
         else:
             self.variables_range = None
             self.variables_list = variables
 
-        self.variables = {1:self.variables_list[0],2:self.variables_list[1]}
+        self.variables = {1:self.variables_list[0], 2:self.variables_list[1]}
         self.name = name
-
 
     def _latex_(self):
         r"""
-        Returns the LaTeX representation of this parametrized surface.
+        Return the LaTeX representation of this parametrized surface.
 
         EXAMPLES::
 
@@ -654,11 +653,10 @@ class ParametrizedSurface3D(SageObject):
         """
         coefficients = {}
         for index in product((1, 2), repeat=2):
-            sorted_index = list(sorted(index))
+            sorted_index = sorted(index)
             coefficients[index] = \
                 self._compute_first_fundamental_form_coefficient(index)
         return coefficients
-
 
     def first_fundamental_form(self, vector1, vector2):
         r"""
@@ -842,7 +840,7 @@ class ParametrizedSurface3D(SageObject):
             [                1/2 -1/2*sqrt(3)/cos(v)]
             [ 1/2*sqrt(3)*cos(v)                 1/2]
 
-        We verify that three succesive rotations over $\pi/3$ yield minus the identity::
+        We verify that three successive rotations over $\pi/3$ yield minus the identity::
 
             sage: rotation^3
             [-1  0]
@@ -1433,9 +1431,20 @@ class ParametrizedSurface3D(SageObject):
            sage: torus = ParametrizedSurface3D([(R+r*cos(v))*cos(u),(R+r*cos(v))*sin(u),r*sin(v)],[u,v],'torus')
            sage: torus.principal_directions()
            [(-cos(v)/(r*cos(v) + R), [(1, 0)], 1), (-1/r, [(0, 1)], 1)]
+           
+        ::
+        
+            sage: u, v = var('u, v', domain='real')
+            sage: V = vector([u*cos(u+v), u*sin(u+v), u+v])
+            sage: helicoid = ParametrizedSurface3D(V, (u, v))
+            sage: helicoid.principal_directions()
+            [(-1/(u^2 + 1), [(1, -(u^2 - sqrt(u^2 + 1) + 1)/(u^2 + 1))], 1),
+            (1/(u^2 + 1), [(1, -(u^2 + sqrt(u^2 + 1) + 1)/(u^2 + 1))], 1)]
+
+
 
         """
-        return self.shape_operator().eigenvectors_left()
+        return self.shape_operator().eigenvectors_right()
 
 
     @cached_method
@@ -1507,7 +1516,7 @@ class ParametrizedSurface3D(SageObject):
 
         """
         from sage.ext.fast_eval import fast_float
-        from sage.gsl.ode import ode_solver
+        from sage.calculus.ode import ode_solver
 
         u1 = self.variables[1]
         u2 = self.variables[2]
@@ -1542,7 +1551,7 @@ class ParametrizedSurface3D(SageObject):
         ALGORITHM:
 
         The geodesic equations are integrated forward in time using
-        the ode solvers from ``sage.gsl.ode``.  See the member
+        the ode solvers from ``sage.calculus.ode``.  See the member
         function ``_create_geodesic_ode_system`` for more details.
 
         INPUT:
@@ -1621,7 +1630,7 @@ class ParametrizedSurface3D(SageObject):
         """
 
         from sage.ext.fast_eval import fast_float
-        from sage.gsl.ode import ode_solver
+        from sage.calculus.ode import ode_solver
 
         u1 = self.variables[1]
         u2 = self.variables[2]
@@ -1660,7 +1669,7 @@ class ParametrizedSurface3D(SageObject):
         ALGORITHM:
 
         The parallel transport equations are integrated forward in time using
-        the ode solvers from ``sage.gsl.ode``. See :meth:`_create_pt_ode_system`
+        the ode solvers from ``sage.calculus.ode``. See :meth:`_create_pt_ode_system`
         for more details.
 
         INPUT:

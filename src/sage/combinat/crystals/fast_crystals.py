@@ -25,6 +25,7 @@ from sage.structure.parent import Parent
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.structure.element import Element, parent
 from sage.combinat.root_system.cartan_type import CartanType
+from sage.structure.richcmp import richcmp
 
 
 class FastCrystal(UniqueRepresentation, Parent):
@@ -43,7 +44,7 @@ class FastCrystal(UniqueRepresentation, Parent):
     - ``shape`` -- A shape is of the form ``[l1,l2]`` where ``l1`` and ``l2``
       are either integers or (in type `B_2`) half integers such that
       ``l1 - l2`` is integral. It is assumed that ``l1 >= l2 >= 0``. If
-      ``l1`` and ``l2` are integers, this will produce the a crystal
+      ``l1`` and ``l2` are integers, this will produce a crystal
       isomorphic to the one obtained by
       ``crystals.Tableaux(type, shape=[l1,l2])``. Furthermore
       ``crystals.FastRankTwo(['B', 2], l1+1/2, l2+1/2)`` produces a crystal
@@ -374,7 +375,7 @@ class FastCrystal(UniqueRepresentation, Parent):
             """
             return hash(self.value)
 
-        def __cmp__(self, other):
+        def _richcmp_(self, other, op):
             """
             EXAMPLES::
 
@@ -406,10 +407,7 @@ class FastCrystal(UniqueRepresentation, Parent):
                 sage: C(1) <= C(1)
                 True
             """
-            if parent(self) is parent(other):
-                return cmp(self.value, other.value)
-            else:
-                return cmp(parent(self), parent(other))
+            return richcmp(self.value, other.value, op)
 
         def e(self, i):
             """

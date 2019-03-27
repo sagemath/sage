@@ -81,6 +81,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_nonzero_equal() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
@@ -90,6 +91,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         running ._test_elements_eq_transitive() . . . pass
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_one() . . . pass
         running ._test_pickling() . . . pass
@@ -99,7 +101,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         sage: A.__class__
         <class 'sage.categories.examples.hopf_algebras_with_basis.MyGroupAlgebra_with_category'>
         sage: A.element_class
-        <class 'sage.combinat.free_module.MyGroupAlgebra_with_category.element_class'>
+        <class 'sage.categories.examples.hopf_algebras_with_basis.MyGroupAlgebra_with_category.element_class'>
 
     Let us look at the code for implementing A::
 
@@ -144,9 +146,14 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 #         """
 #         return self
 
-    FiniteDimensional = LazyImport('sage.categories.finite_dimensional_hopf_algebras_with_basis', 'FiniteDimensionalHopfAlgebrasWithBasis')
-    Graded = LazyImport('sage.categories.graded_hopf_algebras_with_basis', 'GradedHopfAlgebrasWithBasis')
-    Super = LazyImport('sage.categories.super_hopf_algebras_with_basis',  'SuperHopfAlgebrasWithBasis')
+    FiniteDimensional = LazyImport('sage.categories.finite_dimensional_hopf_algebras_with_basis',
+                                   'FiniteDimensionalHopfAlgebrasWithBasis')
+    Filtered = LazyImport('sage.categories.filtered_hopf_algebras_with_basis',
+                          'FilteredHopfAlgebrasWithBasis')
+    Graded = LazyImport('sage.categories.graded_hopf_algebras_with_basis',
+                        'GradedHopfAlgebrasWithBasis')
+    Super = LazyImport('sage.categories.super_hopf_algebras_with_basis',
+                       'SuperHopfAlgebrasWithBasis')
 
     class ParentMethods:
 
@@ -169,7 +176,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A = HopfAlgebrasWithBasis(QQ).example()
                 sage: W = A.basis().keys(); W
                 Dihedral group of order 6 as a permutation group
-                sage: w = W.an_element(); w
+                sage: w = W.gen(0); w
                 (1,2,3)
                 sage: A.antipode_on_basis(w)
                 B[(1,3,2)]
@@ -252,13 +259,13 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 # antipode is an anti-homomorphism
                 for y in tester.some_elements():
-                    tester.assert_(S(x) * S(y) == S(y * x))
+                    tester.assertTrue(S(x) * S(y) == S(y * x))
 
                 # mu * (S # I) * delta == counit * unit
-                tester.assert_(SI(x) == self.counit(x) * self.one())
+                tester.assertTrue(SI(x) == self.counit(x) * self.one())
 
                 # mu * (I # S) * delta == counit * unit
-                tester.assert_(IS(x) == self.counit(x) * self.one())
+                tester.assertTrue(IS(x) == self.counit(x) * self.one())
 
     class ElementMethods:
         pass

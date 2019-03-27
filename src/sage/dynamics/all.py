@@ -1,3 +1,5 @@
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.dynamics.interval_exchanges.all", "*", overwrite=False)
-lazy_import("sage.dynamics.flat_surfaces.all", "*", overwrite=False)
+from sage.dynamics.interval_exchanges.all import *
+from sage.dynamics.flat_surfaces.all import *
+from sage.dynamics.arithmetic_dynamics.all import *
+from sage.dynamics.complex_dynamics.all import *
+from sage.dynamics.cellular_automata.all import *

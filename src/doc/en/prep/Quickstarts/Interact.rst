@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-quickstart-interact:
+
 Sage Interact Quickstart
 ========================
 
@@ -12,9 +14,8 @@ Mathematics Software with Undergraduates" (funding provided by NSF DUE
 
 Invaluable resources are the Sage wiki
 `http://wiki.sagemath.org/interact <http://wiki.sagemath.org/interact>`_
-(type "sage interact" into Google), `http://interact.sagemath.org <http://interact.sagemath.org>`_
-(a collection of contributed interacts), and the `interact documentation
-<http://doc.sagemath.org/html/en/reference/notebook/sagenb/notebook/interact.html#sagenb.notebook.interact.interact>`_.
+(type "sage interact" into Google), `UTMOST Sage Cell Repository <http://utmost-sage-cell.org/interacts>`_
+(a collection of contributed interacts).
 
 Start with just one command
 ---------------------------
@@ -213,8 +214,6 @@ interactive control.  Sage has all of the following:
 - plain text
 
 We illustrate some more of these below.
-For complete detail, see the official
-`interact documentation <http://doc.sagemath.org/html/en/reference/notebook/sagenb/notebook/interact.html#sagenb.notebook.interact.interact>`_.
 
 .. skip
 

@@ -15,16 +15,16 @@ Sage example in ./mpoly.tex, line 40::
 Sage example in ./mpoly.tex, line 44::
 
   sage: x = R.gens()
-  sage: sum(x[i] for i in xrange(5))
+  sage: sum(x[i] for i in range(5))
   x0 + x1 + x2 + x3 + x4
 
 Sage example in ./mpoly.tex, line 52::
 
   sage: def test_poly(ring, deg=3):
-  ...       monomials = Subsets(
-  ...           flatten([(x,)*deg for x in (1,) + ring.gens()]),
-  ...           deg, submultiset=True)
-  ...       return add(mul(m) for m in monomials)
+  ....:     monomials = Subsets(
+  ....:         flatten([(x,)*deg for x in (1,) + ring.gens()]),
+  ....:         deg, submultiset=True)
+  ....:     return add(mul(m) for m in monomials)
 
 Sage example in ./mpoly.tex, line 59::
 
@@ -77,7 +77,7 @@ Sage example in ./mpoly.tex, line 255::
 
   sage: R.<x,y> = QQ[]; p = x^2 + y^2; q = x + y
   sage: print("({quo})*({q}) + ({rem}) == {p}".format( \
-  ...           quo=p//q, q=q, rem=p%q, p=p//q*q+p%q))
+  ....:         quo=p//q, q=q, rem=p%q, p=p//q*q+p%q))
   (-x + y)*(x + y) + (2*x^2) == x^2 + y^2
   sage: p.mod(q)  # n'est PAS équivalent à p%q
   2*y^2
@@ -92,8 +92,8 @@ Sage example in ./mpoly.tex, line 325::
 
   sage: R.<x,y,z> = QQ[]
   sage: J = R.ideal(x^2 * y * z - 18,
-  ...               x * y^3 * z - 24,
-  ...               x * y * z^4 - 6);
+  ....:             x * y^3 * z - 24,
+  ....:             x * y * z^4 - 6);
 
 Sage example in ./mpoly.tex, line 333::
 
@@ -149,11 +149,11 @@ Sage example in ./mpoly.tex, line 401::
 Sage example in ./mpoly.tex, line 413::
 
   sage: def polar_form(z):
-  ...       rho = z.abs(); rho.simplify()
-  ...       theta = 2 * pi * z.rational_argument()
-  ...       return (SR(rho) * exp(I*theta))
+  ....:     rho = z.abs(); rho.simplify()
+  ....:     theta = 2 * pi * z.rational_argument()
+  ....:     return (SR(rho) * exp(I*theta))
   sage: [tuple(polar_form(pt[i]) for i in [xx,yy,zz])
-  ...    for pt in V[-3:]]
+  ....:  for pt in V[-3:]]
   [(3*e^(-6/17*I*pi), 2*e^(14/17*I*pi), e^(-2/17*I*pi)),
   (3*e^(6/17*I*pi), 2*e^(-14/17*I*pi), e^(2/17*I*pi)), (3, 2, 1)]
 
@@ -163,7 +163,7 @@ Sage example in ./mpoly.tex, line 432::
   [Ideal (z^17 - 1, y - 2*z^10, x - 3*z^3) of Multivariate
   Polynomial Ring in x, y, z over Rational Field]
   sage: J.transformed_basis()
-  [z^17 - 1, -2*z^10 + y, -3*z^3 + x]
+  [z^17 - 1, -2*z^10 + y, -3/4*y^2 + x]
 
 Sage example in ./mpoly.tex, line 534::
 

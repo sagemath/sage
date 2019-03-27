@@ -10,10 +10,12 @@ AUTHORS:
 - John H. Palmieri (2012-11)
 """
 from __future__ import absolute_import
-
 from six.moves import cStringIO as StringIO
+from six.moves import range, zip
+
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
+
 
 class table(SageObject):
     r"""
@@ -105,7 +107,7 @@ class table(SageObject):
     information.  The same goes for ``header_column``. Passing lists
     for both arguments simultaneously is not supported. ::
 
-        sage: table([(x,n(sin(x), digits=2)) for x in [0..3]], header_row=["$x$", "$\sin(x)$"], frame=True)
+        sage: table([(x,n(sin(x), digits=2)) for x in [0..3]], header_row=["$x$", r"$\sin(x)$"], frame=True)
         +-----+-----------+
         | $x$ | $\sin(x)$ |
         +=====+===========+
@@ -121,7 +123,7 @@ class table(SageObject):
     You can create the transpose of this table in several ways, for
     example, "by hand," that is, changing the data defining the table::
 
-        sage: table(rows=[[x for x in [0..3]], [n(sin(x), digits=2) for x in [0..3]]], header_column=['$x$', '$\sin(x)$'], frame=True)
+        sage: table(rows=[[x for x in [0..3]], [n(sin(x), digits=2) for x in [0..3]]], header_column=['$x$', r'$\sin(x)$'], frame=True)
         +-----------++------+------+------+------+
         | $x$       || 0    | 1    | 2    | 3    |
         +-----------++------+------+------+------+
@@ -131,7 +133,7 @@ class table(SageObject):
     or by passing the original data as the ``columns`` of the table
     and using ``header_column`` instead of ``header_row``::
 
-        sage: table(columns=[(x,n(sin(x), digits=2)) for x in [0..3]], header_column=['$x$', '$\sin(x)$'], frame=True)
+        sage: table(columns=[(x,n(sin(x), digits=2)) for x in [0..3]], header_column=['$x$', r'$\sin(x)$'], frame=True)
         +-----------++------+------+------+------+
         | $x$       || 0    | 1    | 2    | 3    |
         +-----------++------+------+------+------+
@@ -140,7 +142,7 @@ class table(SageObject):
 
     or by taking the :meth:`transpose` of the original table::
 
-        sage: table(rows=[(x,n(sin(x), digits=2)) for x in [0..3]], header_row=['$x$', '$\sin(x)$'], frame=True).transpose()
+        sage: table(rows=[(x,n(sin(x), digits=2)) for x in [0..3]], header_row=['$x$', r'$\sin(x)$'], frame=True).transpose()
         +-----------++------+------+------+------+
         | $x$       || 0    | 1    | 2    | 3    |
         +-----------++------+------+------+------+
@@ -167,11 +169,10 @@ class table(SageObject):
         |   4 | 5 | 60 |
         +-----+---+----+
 
-    To generate HTML you should use ``html(table(...))`` but that
-    doesn't work :trac:`18292`; A workaround is ::
+    To generate HTML you should use ``html(table(...))``::
 
-        sage: output = table([["$x$", "$\sin(x)$"]] + [(x,n(sin(x), digits=2)) for x in [0..3]], 
-        ....:                     header_row=True, frame=True)._html_()
+        sage: data = [["$x$", r"$\sin(x)$"]] + [(x,n(sin(x), digits=2)) for x in [0..3]]
+        sage: output = html(table(data, header_row=True, frame=True))
         sage: type(output)
         <class 'sage.misc.html.HtmlFragment'>
         sage: print(output)
@@ -233,8 +234,8 @@ class table(SageObject):
 
     TESTS::
 
-        sage: TestSuite(table([["$x$", "$\sin(x)$"]] + 
-        ....:                  [(x,n(sin(x), digits=2)) for x in [0..3]], 
+        sage: TestSuite(table([["$x$", r"$\sin(x)$"]] +
+        ....:                  [(x,n(sin(x), digits=2)) for x in [0..3]],
         ....:                 header_row=True, frame=True)).run()
 
     .. automethod:: _rich_repr_
@@ -254,7 +255,7 @@ class table(SageObject):
             raise ValueError("Don't set both 'rows' and 'columns' when defining a table.")
         # If columns is set, use its transpose for rows.
         if columns:
-            rows = zip(*columns)
+            rows = list(zip(*columns))
         # Set the rest of the options.
         self._options = {}
         if header_row is True:
@@ -397,7 +398,7 @@ class table(SageObject):
             | z || 3 | 6 |
             +---++---+---+
         """
-        return table(zip(*self._rows),
+        return table(list(zip(*self._rows)),
                      header_row=self._options['header_column'],
                      header_column=self._options['header_row'],
                      frame=self._options['frame'],
@@ -471,7 +472,7 @@ class table(SageObject):
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: t = table([1, 2, 3])
-            sage: t._rich_repr_(dm)    # the doctest backend does not suppot html
+            sage: t._rich_repr_(dm)    # the doctest backend does not support html
         """
         OutputHtml = display_manager.types.OutputHtml
         if OutputHtml in display_manager.supported_output():
@@ -582,7 +583,6 @@ class table(SageObject):
             \end{tabular}
         """
         from .latex import latex, LatexExpr
-        import types
 
         rows = self._rows
         nc = len(rows[0])
@@ -670,11 +670,10 @@ class table(SageObject):
             </table>
             </div>
 
-        Note that calling ``html(table(...))`` will have the same
-        effect as ``table(...)._html_()` after the deprecation period
-        in :trac:`18292`::
+        Note that calling ``html(table(...))`` has the same effect as
+        calling ``table(...)._html_()``::
 
-            sage: T = table([["$x$", "$\sin(x)$"]] + [(x,n(sin(x), digits=2)) for x in [0..3]], header_row=True, frame=True)
+            sage: T = table([["$x$", r"$\sin(x)$"]] + [(x,n(sin(x), digits=2)) for x in [0..3]], header_row=True, frame=True)
             sage: T
             +-----+-----------+
             | $x$ | $\sin(x)$ |
@@ -715,7 +714,6 @@ class table(SageObject):
             </table>
             </div>
         """
-        import types
         from itertools import cycle
         rows = self._rows
         header_row = self._options['header_row']
@@ -724,7 +722,7 @@ class table(SageObject):
         else:
             frame = ''
         s = StringIO()
-        if len(rows) > 0:
+        if rows:
             s.writelines([
                 # If the table has < 100 rows, don't truncate the output in the notebook
                 '<div class="notruncate">\n' if len(rows) <= 100 else '<div class="truncate">' ,
@@ -750,7 +748,7 @@ class table(SageObject):
     def _html_table_row(self, file, row, header=False):
         r"""
         Write table row
-        
+
         Helper method used by the :meth:`_html_` method.
 
         INPUT:
@@ -811,7 +809,7 @@ class table(SageObject):
             file.write(first_column_tag % ('<script type="math/tex">%s</script>' % latex(entry)))
 
         # Other entries:
-        for column in xrange(1,len(row)):
+        for column in range(1, len(row)):
             if isinstance(row[column], Graphics):
                 file.write(column_tag % row[column].show(linkmode = True))
             elif isinstance(row[column], str):

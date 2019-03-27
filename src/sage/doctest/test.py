@@ -134,6 +134,28 @@ Test the ``--initial`` option::
     ...
     1
 
+Test the ``--exitfirst`` option::
+
+    sage: subprocess.call(["sage", "-t", "--warn-long", "0", "--exitfirst", "initial.rst"], **kwds)  # long time
+    Running doctests...
+    Doctesting 1 file.
+    sage -t --warn-long 0.0 initial.rst
+    **********************************************************************
+    File "initial.rst", line 4, in sage.doctest.tests.initial
+    Failed example:
+        a = binomiak(10,5)  # random to test that we still get the exception
+    Exception raised:
+        Traceback (most recent call last):
+        ...
+        NameError: name 'binomiak' is not defined
+    **********************************************************************
+    ...
+    ----------------------------------------------------------------------
+    sage -t  --warn-long 0.0 initial.rst  # 1 doctest failed
+    ----------------------------------------------------------------------
+    ...
+    1
+
 Test a timeout using the ``SAGE_TIMEOUT`` environment variable::
 
     sage: from copy import deepcopy
@@ -213,12 +235,9 @@ in max(20, 120 * 0.05) = 20 seconds::
 
     sage: pid = int(open(F).read())    # long time
     sage: time.sleep(2)                # long time
-    sage: os.kill(pid, signal.SIGHUP)  # long time; 2 seconds passed => still alive
+    sage: os.kill(pid, signal.SIGQUIT) # long time; 2 seconds passed => still alive
     sage: time.sleep(23)               # long time
-    sage: os.kill(pid, signal.SIGHUP)  # long time; 25 seconds passed => dead
-    Traceback (most recent call last):
-    ...
-    OSError: ...
+    sage: os.kill(pid, signal.SIGQUIT) # long time; 25 seconds passed => dead
 
 Test a doctest failing with ``abort()``::
 
@@ -360,7 +379,7 @@ Test the ``--debug`` option::
         s...: b = 5
         s...: a + b
         8
-    In [1]:
+    sage:
     <BLANKLINE>
     Returning to doctests...
     **********************************************************************
@@ -378,7 +397,7 @@ Test running under gdb, without and with a timeout::
     sage: subprocess.call(["sage", "-t",  "--warn-long", "0", "--gdb", "1second.rst"], stdin=open(os.devnull), **kwds)  # long time, optional: gdb
     exec gdb ...
     Running doctests...
-    Doctesting 1 file.
+    Doctesting 1 file...
     sage -t... 1second.rst...
         [2 tests, ... s]
     ----------------------------------------------------------------------
@@ -405,7 +424,8 @@ Test the ``--show-skipped`` option::
         2 tests not run due to known bugs
         1 gap test not run
         1 long test not run
-        1 other test skipped
+        1 not tested test not run
+        0 tests not run because we ran out of time
         [1 test, ... s]
     ----------------------------------------------------------------------
     All tests passed!
@@ -421,7 +441,8 @@ Optional tests are run correctly::
     sage -t --long --warn-long 0.0 show_skipped.rst
         1 unlabeled test not run
         2 tests not run due to known bugs
-        1 other test skipped
+        1 not tested test not run
+        0 tests not run because we ran out of time
         [3 tests, ... s]
     ----------------------------------------------------------------------
     All tests passed!
@@ -435,8 +456,9 @@ Optional tests are run correctly::
     sage -t --long --warn-long 0.0 show_skipped.rst
         1 unlabeled test not run
         2 tests not run due to known bugs
+        1 not tested test not run
         1 sage test not run
-        1 other test skipped
+        0 tests not run because we ran out of time
         [2 tests, ... s]
     ----------------------------------------------------------------------
     All tests passed!
@@ -476,4 +498,17 @@ Test ``atexit`` support in the doctesting framework::
     ....:     os.unlink(F)
     ....: except OSError:
     ....:     pass
+
+Test the ``--memlimit`` option and ``# optional - memlimit``
+(but only on Linux). If this test fails, the memory needed to
+run it may have increased. Try increasing the limit. ::
+
+    sage: from platform import system
+    sage: ok = True
+    sage: if system() == "Linux":
+    ....:     P = subprocess.Popen(["sage", "-t", "--warn-long", "0", "--memlimit=2000", "memlimit.rst"], stdout=subprocess.PIPE, **kwds)
+    ....:     out, err = P.communicate()
+    ....:     ok = ("MemoryError: failed to allocate" in out)
+    sage: ok or out
+    True
 """

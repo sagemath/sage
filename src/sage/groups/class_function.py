@@ -24,6 +24,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.structure.sage_object import SageObject
+from sage.structure.richcmp import richcmp, richcmp_method
 from sage.interfaces.gap import gap, GapElement
 from sage.rings.all import Integer
 from sage.rings.all import CyclotomicField
@@ -77,6 +78,8 @@ def ClassFunction(group, values):
 ###
 #####################################################################
 
+
+@richcmp_method
 class ClassFunction_gap(SageObject):
     """
     A wrapper of GAP's ClassFunction function.
@@ -184,13 +187,12 @@ class ClassFunction_gap(SageObject):
         for v in self._gap_classfunction:
             yield self._base_ring(v)
 
-
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
         Rich comparison for class functions.
 
         Compares groups and then the values of the class function on the
-        conjugacy classes. Otherwise, compares types of objects.
+        conjugacy classes.
 
         EXAMPLES::
 
@@ -208,14 +210,12 @@ class ClassFunction_gap(SageObject):
             False
             sage: xi < chi
             True
-
         """
         if isinstance(other, ClassFunction_gap):
-            return cmp((self._group, self.values()),
-                       (other._group, other.values()))
+            return richcmp((self._group, self.values()),
+                           (other._group, other.values()), op)
         else:
-            return cmp(type(self), type(other))
-
+            return NotImplemented
 
     def __reduce__(self):
         r"""
@@ -267,7 +267,7 @@ class ClassFunction_gap(SageObject):
             zeta3
             sage: G = GL(2,3)
             sage: chi = G.irreducible_characters()[3]
-            sage: g = G.conjugacy_class_representatives()[6]
+            sage: g = G.conjugacy_classes_representatives()[6]
             sage: chi(g)
             zeta8^3 + zeta8
 
@@ -580,7 +580,7 @@ class ClassFunction_gap(SageObject):
             sage: irr = chi.irreducible_constituents(); irr
             (Character of Symmetric group of order 5! as a permutation group,
              Character of Symmetric group of order 5! as a permutation group)
-            sage: map(list, irr)
+            sage: list(map(list, irr))
             [[4, -2, 0, 1, 1, 0, -1], [5, -1, 1, -1, -1, 1, 0]]
             sage: G = GL(2,3)
             sage: chi = ClassFunction(G, [-1, -1, -1, -1, -1, -1, -1, -1])
@@ -596,7 +596,7 @@ class ClassFunction_gap(SageObject):
             sage: ic = chi.irreducible_constituents(); ic
             (Character of General Linear Group of degree 2 over Finite Field of size 3,
              Character of General Linear Group of degree 2 over Finite Field of size 3)
-            sage: map(list, ic)
+            sage: list(map(list, ic))
             [[2, -1, 2, -1, 2, 0, 0, 0], [3, 0, 3, 0, -1, 1, 1, -1]]
         """
         L = self._gap_classfunction.ConstituentsOfCharacter()
@@ -758,6 +758,44 @@ class ClassFunction_gap(SageObject):
         return ClassFunction(G, rest)
 
 
+    def adams_operation(self, k):
+        r"""
+        Return the ``k``-th Adams operation on ``self``.
+
+        Let `G` be a finite group. The `k`-th Adams operation `\Psi^k`
+        is given by
+
+        .. MATH::
+
+            \Psi^k(\chi)(g) = \chi(g^k).
+
+        The Adams operations turn the representation ring of `G`
+        into a `\lambda`-ring.
+
+        EXAMPLES::
+
+            sage: G = groups.permutation.Alternating(5)
+            sage: chars = G.irreducible_characters()
+            sage: [chi.adams_operation(2).values() for chi in chars]
+            [[1, 1, 1, 1, 1],
+             [3, 3, 0, -zeta5^3 - zeta5^2, zeta5^3 + zeta5^2 + 1],
+             [3, 3, 0, zeta5^3 + zeta5^2 + 1, -zeta5^3 - zeta5^2],
+             [4, 4, 1, -1, -1],
+             [5, 5, -1, 0, 0]]
+            sage: chars[4].adams_operation(2).decompose()
+            ((1, Character of Alternating group of order 5!/2 as a permutation group),
+             (-1, Character of Alternating group of order 5!/2 as a permutation group),
+             (-1, Character of Alternating group of order 5!/2 as a permutation group),
+             (2, Character of Alternating group of order 5!/2 as a permutation group))
+
+        REFERENCES:
+
+        - :wikipedia:`Adams_operation`
+        """
+        reprs = self._group.conjugacy_classes_representatives()
+        return ClassFunction(self._group, [self(x**k) for x in reprs])
+
+
 
 
 
@@ -768,6 +806,8 @@ class ClassFunction_gap(SageObject):
 ###
 #####################################################################
 
+
+@richcmp_method
 class ClassFunction_libgap(SageObject):
     """
     A wrapper of GAP's ``ClassFunction`` function.
@@ -829,6 +869,8 @@ class ClassFunction_libgap(SageObject):
         """
         return self._gap_classfunction
 
+    _libgap_ = _gap_ = gap
+
 
     def _repr_(self):
         r"""
@@ -865,13 +907,12 @@ class ClassFunction_libgap(SageObject):
         for v in self._gap_classfunction.List():
             yield v.sage(ring=self._base_ring)
 
-
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
         Rich comparison for class functions.
 
         Compares groups and then the values of the class function on the
-        conjugacy classes. Otherwise, compares types of objects.
+        conjugacy classes.
 
         EXAMPLES::
 
@@ -889,14 +930,12 @@ class ClassFunction_libgap(SageObject):
             False
             sage: xi < chi
             True
-
         """
         if isinstance(other, ClassFunction_libgap):
-            return cmp((self._group, self.values()),
-                       (other._group, other.values()))
+            return richcmp((self._group, self.values()),
+                           (other._group, other.values()), op)
         else:
-            return cmp(type(self), type(other))
-
+            return NotImplemented
 
     def __reduce__(self):
         r"""
@@ -950,7 +989,7 @@ class ClassFunction_libgap(SageObject):
 
             sage: G = GL(2,3)
             sage: chi = G.irreducible_characters()[3]
-            sage: g = G.conjugacy_class_representatives()[6]
+            sage: g = G.conjugacy_classes_representatives()[6]
             sage: chi(g)
             zeta8^3 + zeta8
 
@@ -1265,7 +1304,7 @@ class ClassFunction_libgap(SageObject):
             sage: irr = chi.irreducible_constituents(); irr
             (Character of Symmetric group of order 5! as a permutation group,
              Character of Symmetric group of order 5! as a permutation group)
-            sage: map(list, irr)
+            sage: list(map(list, irr))
             [[4, -2, 0, 1, 1, 0, -1], [5, -1, 1, -1, -1, 1, 0]]
 
             sage: G = GL(2,3)
@@ -1282,7 +1321,7 @@ class ClassFunction_libgap(SageObject):
             sage: ic = chi.irreducible_constituents(); ic
             (Character of General Linear Group of degree 2 over Finite Field of size 3,
              Character of General Linear Group of degree 2 over Finite Field of size 3)
-            sage: map(list, ic)
+            sage: list(map(list, ic))
             [[2, -1, 2, -1, 2, 0, 0, 0], [3, 0, 3, 0, -1, 1, 1, -1]]
         """
         L = self._gap_classfunction.ConstituentsOfCharacter()
@@ -1456,4 +1495,45 @@ class ClassFunction_libgap(SageObject):
             gapG = libgap(G)
         ind = self._gap_classfunction.InducedClassFunction(gapG)
         return ClassFunction(G, ind)
+
+
+    def adams_operation(self, k):
+        r"""
+        Return the ``k``-th Adams operation on ``self``.
+
+        Let `G` be a finite group. The `k`-th Adams operation `\Psi^k`
+        is given by
+
+        .. MATH::
+
+            \Psi^k(\chi)(g) = \chi(g^k).
+
+        The Adams operations turn the representation ring of `G`
+        into a `\lambda`-ring.
+
+        EXAMPLES::
+
+            sage: G = GL(2,3)
+            sage: chars = G.irreducible_characters()
+            sage: [chi.adams_operation(2).values() for chi in chars]
+            [[1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1],
+             [2, -1, 2, -1, 2, 2, 2, 2],
+             [2, -1, 2, -1, -2, 0, 0, 2],
+             [2, -1, 2, -1, -2, 0, 0, 2],
+             [3, 0, 3, 0, 3, -1, -1, 3],
+             [3, 0, 3, 0, 3, -1, -1, 3],
+             [4, 1, 4, 1, -4, 0, 0, 4]]
+            sage: chars[5].adams_operation(3).decompose()
+            ((1, Character of General Linear Group of degree 2 over Finite Field of size 3),
+             (1, Character of General Linear Group of degree 2 over Finite Field of size 3),
+             (-1, Character of General Linear Group of degree 2 over Finite Field of size 3),
+             (1, Character of General Linear Group of degree 2 over Finite Field of size 3))
+
+        REFERENCES:
+
+        - :wikipedia:`Adams_operation`
+        """
+        reprs = self._group.conjugacy_classes_representatives()
+        return ClassFunction(self._group, [self(x**k) for x in reprs])
 

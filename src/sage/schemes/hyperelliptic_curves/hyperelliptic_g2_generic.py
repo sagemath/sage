@@ -75,7 +75,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def clebsch_invariants(self):
         r"""
-        Return the Clebsch invariants `(A, B, C, D)` of Mestre, p 317, [M]_.
+        Return the Clebsch invariants `(A, B, C, D)` of Mestre, p 317, [MJ1991]_.
 
         .. SEEALSO::
 
@@ -111,7 +111,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def igusa_clebsch_invariants(self):
         r"""
-        Return the Igusa-Clebsch invariants `I_2, I_4, I_6, I_{10}` of Igusa and Clebsch [I]_.
+        Return the Igusa-Clebsch invariants `I_2, I_4, I_6, I_{10}` of Igusa and Clebsch [IJ1960]_.
 
         .. SEEALSO::
 
@@ -147,7 +147,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def absolute_igusa_invariants_wamelen(self):
         r"""
-        Return the three absolute Igusa invariants used by van Wamelen [W]_.
+        Return the three absolute Igusa invariants used by van Wamelen [Wam1999]_.
 
         EXAMPLES::
 
@@ -162,7 +162,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def absolute_igusa_invariants_kohel(self):
         r"""
-        Return the three absolute Igusa invariants used by Kohel [K]_.
+        Return the three absolute Igusa invariants used by Kohel [KohECHIDNA]_.
 
         .. SEEALSO::
 
@@ -183,7 +183,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def clebsch_invariants(self):
         r"""
-        Return the Clebsch invariants `(A, B, C, D)` of Mestre, p 317, [M]_.
+        Return the Clebsch invariants `(A, B, C, D)` of Mestre, p 317, [MJ1991]_.
 
         .. SEEALSO::
 
@@ -219,7 +219,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def igusa_clebsch_invariants(self):
         r"""
-        Return the Igusa-Clebsch invariants `I_2, I_4, I_6, I_{10}` of Igusa and Clebsch [I]_.
+        Return the Igusa-Clebsch invariants `I_2, I_4, I_6, I_{10}` of Igusa and Clebsch [IJ1960]_.
 
         .. SEEALSO::
 
@@ -256,7 +256,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def absolute_igusa_invariants_wamelen(self):
         r"""
-        Return the three absolute Igusa invariants used by van Wamelen [W]_.
+        Return the three absolute Igusa invariants used by van Wamelen [Wam1999]_.
 
         EXAMPLES::
 
@@ -271,7 +271,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def absolute_igusa_invariants_kohel(self):
         r"""
-        Return the three absolute Igusa invariants used by Kohel [K]_.
+        Return the three absolute Igusa invariants used by Kohel [KohECHIDNA]_.
 
         .. SEEALSO::
 

@@ -83,11 +83,7 @@ class EuclideanDomains(Category_singleton):
             ALGORITHM:
 
             Naive implementation of the algorithm described in Section 4.8 of
-            Bach & Shallit [BachShallit1996]_.
-
-            .. [BachShallit1996] Eric Bach, Jeffrey Shallit.
-                *Algorithmic Number Theory, Vol. 1: Efficient Algorithms*.
-                MIT Press, 1996. ISBN 978-0262024051.
+            Bach & Shallit [BS1996]_.
 
             EXAMPLES::
 
@@ -97,9 +93,9 @@ class EuclideanDomains(Category_singleton):
                 [2, 15, 7]
 
                 sage: Pol.<x> = QQ[]
-                sage: Pol.gcd_free_basis([
+                sage: sorted(Pol.gcd_free_basis([
                 ....:     (x+1)^3*(x+2)^3*(x+3), (x+1)*(x+2)*(x+3),
-                ....:     (x+1)*(x+2)*(x+4)])
+                ....:     (x+1)*(x+2)*(x+4)]))
                 [x + 3, x + 4, x^2 + 3*x + 2]
 
             TESTS::
@@ -136,7 +132,7 @@ class EuclideanDomains(Category_singleton):
 
         def _test_euclidean_degree(self, **options):
             r"""
-            Test that the assumptions on a euclidean degree are met.
+            Test that the assumptions on an Euclidean degree are met.
 
             EXAMPLES::
 
@@ -201,7 +197,7 @@ class EuclideanDomains(Category_singleton):
         @abstract_method
         def euclidean_degree(self):
             r"""
-            Return the degree of this element as an element of a euclidean
+            Return the degree of this element as an element of an Euclidean
             domain, i.e., for elements `a`, `b` the euclidean degree `f`
             satisfies the usual properties:
 
@@ -241,12 +237,7 @@ class EuclideanDomains(Category_singleton):
 
             ALGORITHM:
 
-            Algorithm 3.2.1 in [Coh1996]_.
-
-            REFERENCES:
-
-            .. [Coh1996] Henri Cohen. *A Course in Computational Algebraic
-               Number Theory*. Springer, 1996.
+            Algorithm 3.2.1 in [Coh1993]_.
 
             EXAMPLES::
 
@@ -282,3 +273,4 @@ class EuclideanDomains(Category_singleton):
                 sage: x.quo_rem(x)
                 (1, 0)
             """
+

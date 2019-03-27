@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 r"""
 Word classes
 
@@ -37,7 +37,7 @@ from .word_infinite_datatypes import (
                             WordDatatype_callable)
 from sage.monoids.free_monoid_element import FreeMonoidElement
 
-# TODO. Word needs to be replaced by Word. Consider renameing
+# TODO. Word needs to be replaced by Word. Consider renaming
 # Word_class to Word and imbedding Word as its __call__ method.
 
 def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK_data=None):
@@ -60,7 +60,7 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
        For iterators: Infinity if you know the iterator will not
        terminate (default); ``"unknown"`` if you do not know whether the
        iterator terminates; ``"finite"`` if you know that the iterator
-       terminates, but do know know the length.
+       terminates, but do not know the length.
 
     -  ``datatype`` -- (default: ``None``) ``None``, ``"list"``, ``"str"``,
        ``"tuple"``, ``"iter"``, ``"callable"``. If ``None``, then the function
@@ -160,7 +160,7 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
         sage: w = Word("abbabaab"); w
         word: abbabaab
         sage: w.parent()
-        Finite words over Set of Python objects of type 'object'
+        Finite words over Set of Python objects of class 'object'
 
     We can also input a semistandard tableau and a standard tableau to
     obtain a word from the inverse RSK algorithm using the
@@ -229,7 +229,7 @@ class FiniteWord_char(WordDatatype_char, FiniteWord_class):
 
         sage: W = Words(range(20))
 
-        sage: w = W(range(1,10)*2)
+        sage: w = W(list(range(1, 10)) * 2)
         sage: type(w)
         <class 'sage.combinat.words.word.FiniteWord_char'>
         sage: w
@@ -244,7 +244,7 @@ class FiniteWord_char(WordDatatype_char, FiniteWord_class):
 
         sage: w.is_lyndon()
         False
-        sage: W(range(10)+[10,10]).is_lyndon()
+        sage: W(list(range(10)) + [10, 10]).is_lyndon()
         True
 
         sage: w.is_square_free()
@@ -511,7 +511,7 @@ class InfiniteWord_iter_with_caching(WordDatatype_iter_with_caching, InfiniteWor
         sage: dumps(w)
         Traceback (most recent call last):
         ...
-        PicklingError: Can't pickle <type 'generator'>: attribute lookup __builtin__.generator failed
+        TypeError: can't pickle generator objects
     """
     pass
 
@@ -549,7 +549,7 @@ class InfiniteWord_iter(WordDatatype_iter, InfiniteWord_class):
         sage: dumps(w)
         Traceback (most recent call last):
         ...
-        PicklingError: Can't pickle <type 'generator'>: attribute lookup __builtin__.generator failed
+        TypeError: can't pickle generator objects
     """
     pass
 
@@ -648,7 +648,7 @@ class Word_iter_with_caching(WordDatatype_iter_with_caching, Word_class):
         sage: dumps(w)
         Traceback (most recent call last):
         ...
-        PicklingError: Can't pickle <type 'generator'>: attribute lookup __builtin__.generator failed
+        TypeError: can't pickle generator objects
     """
     pass
 
@@ -684,7 +684,7 @@ class Word_iter(WordDatatype_iter, Word_class):
         sage: dumps(w)
         Traceback (most recent call last):
         ...
-        PicklingError: Can't pickle <type 'generator'>: attribute lookup __builtin__.generator failed
+        TypeError: can't pickle generator objects
     """
     pass
 

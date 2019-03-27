@@ -61,7 +61,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
     When we specialize `q = \pm 1`, we obtain the group algebra of
     the complex reflection group `G(d, 1, n) = (\ZZ / d\ZZ) \wr S_n`.
     Moreover for `d = 1`, the Yokonuma-Hecke algebra is equal to the
-    :class`Iwahori-Hecke <IwahoriHeckeAlgebra>` of type `A_{n-1}`.
+    :class:`Iwahori-Hecke <IwahoriHeckeAlgebra>` of type `A_{n-1}`.
 
     INPUT:
 
@@ -107,21 +107,13 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
 
     REFERENCES:
 
-    .. [CL13] Maria Chlouveraki and Sofia Lambropoulou.
-       *The Yokonuma-Hecke algebras and the HOMFLYPT polynomial*.
-       (2015) :arxiv:`1204.1871v4`.
+    - [CL2013]_
 
-    .. [CPdA14] Maria Chlouveraki and Loic Poulain d'Andecy.
-       *Representation theory of the Yokonuma-Hecke algebra*.
-       (2014) :arxiv:`1302.6225v2`.
+    - [CPdA2014]_
 
-    .. [ERH15] Jorge Espanoza and Steen Ryom-Hansen.
-       *Cell structures for the Yokonuma-Hecke algebra and the algebra
-       of braids and ties*. (2015) :arxiv:`1506.00715`.
+    - [ERH2015]_
 
-    .. [JPdA15] \N. Jacon and L. Poulain d'Andecy.
-       *An isomorphism theorem for Yokonuma-Hecke algebras and
-       applications to link invariants*. (2015) :arxiv:`1501.06389v3`.
+    - [JPdA15]_
     """
     @staticmethod
     def __classcall_private__(cls, d, n, q=None, R=None):
@@ -385,7 +377,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         if g1 == one:
             return self.monomial((tuple(t), g2))
         ret = self.monomial((tuple(t), g1))
-        # We have to revserse the reduced word due to Sage's convention
+        # We have to reverse the reduced word due to Sage's convention
         #   for permutation multiplication
         for i in g2.reduced_word():
             ret = self.linear_combination((self._product_by_basis_gen(m, i), c)
@@ -480,13 +472,30 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
                    + (q^-1+q)*t1^2*t2^2*t3^2 + 3*t1^2*t2^2*t3^2*g[1],
                  (q^-1+q)*t1^2*t3 + (q^-1+q)*t1^2*t2
                    + (q^-1+q)*t1^2*t2^2*t3^2 + 3*t1^2*t2^2*t3^2*g[2]]
+
+            TESTS:
+
+            Check that :trac:`26424` is fixed::
+
+                sage: Y = algebras.YokonumaHecke(3, 3)
+                sage: t = 3 * prod(Y.t())
+                sage: ~t
+                1/3*t1^2*t2^2*t3^2
+
+                sage: ~Y.zero()
+                Traceback (most recent call last):
+                ...
+                ZeroDivisionError
             """
+            if not self:
+                raise ZeroDivisionError
             if len(self) != 1:
                 raise NotImplementedError("inverse only implemented for basis elements (monomials in the generators)"%self)
             H = self.parent()
             t,w = self.support_of_term()
+            c = ~self.coefficients()[0]
             telt = H.monomial( (tuple((H._d - e) % H._d for e in t), H._Pn.one()) )
-            return telt * H.prod(H.inverse_g(i) for i in reversed(w.reduced_word()))
+            return c * telt * H.prod(H.inverse_g(i) for i in reversed(w.reduced_word()))
 
         __invert__ = inverse
 

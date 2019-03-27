@@ -16,10 +16,17 @@ See if :trac:`15118` is fixed::
     ...
     ZeroDivisionError
 """
-from __future__ import print_function
 
-include "cysignals/signals.pxi"
-include "sage/ext/stdsage.pxi"
+#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
+from __future__ import absolute_import, print_function
+
 from cpython.int cimport *
 from cpython.long cimport *
 from cpython.float cimport *
@@ -29,6 +36,9 @@ from cpython.number cimport *
 from libc.math cimport sqrt as fsqrt
 from libc.math cimport frexp
 
+from cysignals.signals cimport sig_check
+
+from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.all cimport *
 from sage.libs.mpfr cimport *
 from sage.rings.integer cimport Integer
@@ -36,10 +46,10 @@ from sage.rings.integer cimport Integer
 from sage.libs.gmp.pylong cimport *
 
 cdef mpz_set_integer(mpz_t v, x):
-    if isinstance(x, int):
-        mpz_set_si(v, PyInt_AS_LONG(x))
-    elif isinstance(x, long):
+    if isinstance(x, long):
         mpz_set_pylong(v, x)
+    elif isinstance(x, int):
+        mpz_set_si(v, PyInt_AS_LONG(x))
     elif isinstance(x, Integer):
         mpz_set(v, (<Integer>x).value)
     else:
@@ -1450,10 +1460,10 @@ def cos_sin_fixed(Integer x, int prec, pi2=None):
 
         sage: from sage.libs.mpmath.ext_impl import cos_sin_fixed
         sage: c, s = cos_sin_fixed(1<<53, 53)
-        sage: print(float(c) / 2^53)
-        0.540302305868
-        sage: print(float(s) / 2^53)
-        0.841470984808
+        sage: float(c) / 2^53
+        0.5403023058681398
+        sage: float(s) / 2^53
+        0.8414709848078965
 
     """
     cdef Integer cv, sv
@@ -1501,10 +1511,10 @@ def log_int_fixed(n, long prec, ln2=None):
     EXAMPLES::
 
         sage: from sage.libs.mpmath.ext_impl import log_int_fixed
-        sage: print(float(log_int_fixed(5, 53)) / 2^53)
-        1.60943791243
-        sage: print(float(log_int_fixed(5, 53)) / 2^53)   # exercise cache
-        1.60943791243
+        sage: float(log_int_fixed(5, 53)) / 2^53
+        1.6094379124341003
+        sage: float(log_int_fixed(5, 53)) / 2^53   # exercise cache
+        1.6094379124341003
 
     """
     global log_int_cache_initialized

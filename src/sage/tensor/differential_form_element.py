@@ -7,7 +7,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Joris Vankerschaver <joris.vankerschaver@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -19,8 +19,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 
@@ -28,6 +28,9 @@ from sage.symbolic.ring import SR
 from sage.structure.element import RingElement, AlgebraElement
 from sage.rings.integer import Integer
 from sage.combinat.permutation import Permutation
+
+
+import six
 
 
 def sort_subscript(subscript):
@@ -103,6 +106,8 @@ class DifferentialFormFormatter:
         sage: from sage.tensor.differential_form_element import DifferentialFormFormatter
         sage: x, y, z = var('x, y, z')
         sage: U = CoordinatePatch((x, y, z))
+        doctest:...: DeprecationWarning: Use Manifold instead.
+        See http://trac.sagemath.org/24444 for details.
         sage: D = DifferentialFormFormatter(U)
         sage: D.repr((0, 2), sin(x*y))
         'sin(x*y)*dx/\\dz'
@@ -126,6 +131,8 @@ class DifferentialFormFormatter:
             sage: from sage.tensor.differential_form_element import DifferentialFormFormatter
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z))
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             sage: D = DifferentialFormFormatter(U)
             sage: D.repr((0, 2), sin(x*y))
             'sin(x*y)*dx/\\dz'
@@ -151,6 +158,8 @@ class DifferentialFormFormatter:
             sage: from sage.tensor.differential_form_element import DifferentialFormFormatter
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z))
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             sage: D = DifferentialFormFormatter(U)
             sage: D.repr((0, 1), z^3)
             'z^3*dx/\\dy'
@@ -192,6 +201,8 @@ class DifferentialFormFormatter:
             sage: from sage.tensor.differential_form_element import DifferentialFormFormatter
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z))
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             sage: D = DifferentialFormFormatter(U)
             sage: D.latex((0, 1), z^3)
             'z^{3} d x \\wedge d y'
@@ -236,6 +247,8 @@ class DifferentialFormFormatter:
 
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z))
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             sage: from sage.tensor.differential_form_element import DifferentialFormFormatter
             sage: D = DifferentialFormFormatter(U)
             sage: D._is_atomic('a + b')
@@ -271,8 +284,17 @@ class DifferentialForm(AlgebraElement):
 
         sage: x, y, z = var('x, y, z')
         sage: U = CoordinatePatch((x, y, z))
+        doctest:...: DeprecationWarning: Use Manifold instead.
+        See http://trac.sagemath.org/24444 for details.
         sage: F = DifferentialForms(U)
+        doctest:...:  DeprecationWarning: For the set of differential forms of
+         degree p, use U.diff_form_module(p), where U is the base manifold
+         (type U.diff_form_module? for details).
+        See http://trac.sagemath.org/24444 for details.
         sage: form1 = DifferentialForm(F, 0, sin(x*y)); form1
+        doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+         where U is the base manifold (type U.diff_form? for details).
+        See http://trac.sagemath.org/24444 for details.
         sin(x*y)
 
     In the previous example, we created a zero-form from a given function.
@@ -285,12 +307,15 @@ class DifferentialForm(AlgebraElement):
         sage: form2[1] = exp(cos(x))
         sage: form2[2] = 1/ln(y)
         sage: form2
-        1/log(y)*dz + dx + e^cos(x)*dy
+        dx + e^cos(x)*dy + 1/log(y)*dz
 
     We may calculate the exterior derivative of a form, and observe that
     applying the exterior derivative twice always yields zero::
 
         sage: dform = form1.diff(); dform
+        doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+         where U is the base manifold (type U.diff_form? for details).
+        See http://trac.sagemath.org/24444 for details.
         y*cos(x*y)*dx + x*cos(x*y)*dy
         sage: dform.diff()
         0
@@ -310,11 +335,11 @@ class DifferentialForm(AlgebraElement):
 
         sage: from sage.tensor.differential_form_element import d
         sage: form2
-        1/log(y)*dz + dx + e^cos(x)*dy
+        dx + e^cos(x)*dy + 1/log(y)*dz
         sage: d(form2)
-        -(1/y)/log(y)^2*dy/\dz + -e^cos(x)*sin(x)*dx/\dy
+        -e^cos(x)*sin(x)*dx/\dy + -1/(y*log(y)^2)*dy/\dz
         sage: form2.diff()
-        -(1/y)/log(y)^2*dy/\dz + -e^cos(x)*sin(x)*dx/\dy
+        -e^cos(x)*sin(x)*dx/\dy + -1/(y*log(y)^2)*dy/\dz
         sage: d(form1) == form1.diff()
         True
 
@@ -327,6 +352,9 @@ class DifferentialForm(AlgebraElement):
         sage: form2 = DifferentialForm(F, 1)
         sage: form2[2] = exp(-z)
         sage: form1.wedge(form2)
+        doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+         where U is the base manifold (type U.diff_form? for details).
+        See http://trac.sagemath.org/24444 for details.
         dx/\dy/\dz
 
     For this member function, there exists again a procedural function
@@ -341,7 +369,7 @@ class DifferentialForm(AlgebraElement):
         True
 
 
-    NOTES:
+    .. NOTE::
 
         Differential forms are stored behind the screens as dictionaries,
         where the keys are the subscripts of the non-zero components, and
@@ -378,13 +406,25 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y, z = var('x, y, z')
             sage: F = DifferentialForms(); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: f = DifferentialForm(F, 0, sin(z)); f
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sin(z)
 
         """
 
         from sage.tensor.differential_forms import DifferentialForms
+        from sage.misc.superseded import deprecation
+        deprecation(24444, 'Use U.diff_form(degree) instead, where U is ' +
+                    'the base manifold (type U.diff_form? for details).')
         if not isinstance(parent, DifferentialForms):
             raise TypeError("Parent not an algebra of differential forms.")
 
@@ -409,8 +449,15 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y, z = var('x, y, z')
             sage: F = DifferentialForms(); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: f = DifferentialForm(F, 0, sin(x*y)); f
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sin(x*y)
             sage: f[()]
             sin(x*y)
@@ -430,12 +477,12 @@ class DifferentialForm(AlgebraElement):
             subscript = tuple(subscript)
 
         dim = self.parent().base_space().dim()
-        if any([s >= dim for s in subscript]):
+        if any(s >= dim for s in subscript):
             raise ValueError("Index out of bounds.")
 
         if len(subscript) != self._degree:
-            raise TypeError("%s is not a subscript of degree %s" %\
-                (subscript, self._degree))
+            raise TypeError("%s is not a subscript of degree %s" %
+                            (subscript, self._degree))
 
         sign, subscript = sort_subscript(subscript)
 
@@ -456,8 +503,15 @@ class DifferentialForm(AlgebraElement):
         EXAMPLES::
 
             sage: F = DifferentialForms(); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: f = DifferentialForm(F, 2)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f[1, 2] = x; f
             x*dy/\dz
         """
@@ -468,12 +522,12 @@ class DifferentialForm(AlgebraElement):
             subscript = tuple(subscript)
 
         dim = self.parent().base_space().dim()
-        if any([s >= dim for s in subscript]):
+        if any(s >= dim for s in subscript):
             raise ValueError("Index out of bounds.")
 
         if len(subscript) != self._degree:
-            raise TypeError("%s is not a subscript of degree %s" %\
-                (subscript, self._degree))
+            raise TypeError("%s is not a subscript of degree %s" %
+                            (subscript, self._degree))
 
         sign, subscript = sort_subscript(subscript)
         self._components[subscript] = sign*SR(fun)
@@ -486,7 +540,14 @@ class DifferentialForm(AlgebraElement):
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1); f
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             0
             sage: f.is_zero()
             True
@@ -510,8 +571,15 @@ class DifferentialForm(AlgebraElement):
         EXAMPLES::
 
             sage: F = DifferentialForms(); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: f = DifferentialForm(F, 2)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f[1, 2] = x; f
             x*dy/\dz
             sage: f.degree()
@@ -534,8 +602,15 @@ class DifferentialForm(AlgebraElement):
         EXAMPLES::
 
             sage: F = DifferentialForms(); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: f = DifferentialForm(F, 2)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f[1,2] = x; f
             x*dy/\dz
             sage: f == f
@@ -569,8 +644,8 @@ class DifferentialForm(AlgebraElement):
                 # pairs as we go along.
 
                 for (key1, val1), (key2, val2) in \
-                        zip(self._components.iteritems(), \
-                            other._components.iteritems()):
+                        zip(six.iteritems(self._components), \
+                            six.iteritems(other._components)):
                     if key1 != key2 or str(val1) != str(val2):
                         return False
                 return True
@@ -585,8 +660,15 @@ class DifferentialForm(AlgebraElement):
         EXAMPLES::
 
             sage: F = DifferentialForms(); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: f = DifferentialForm(F, 2)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f[1,2] = x; f
             x*dy/\dz
             sage: g = DifferentialForm(F, 3)
@@ -605,12 +687,22 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y, z = var('x, y, z')
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f[0] = y
             sage: f[1] = -x
             sage: f
             y*dx + -x*dy
             sage: -f
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             -y*dx + x*dy
             sage: -f == f._neg_()
             True
@@ -630,13 +722,23 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y, z = var('x, y, z')
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: g = DifferentialForm(F, 1)
             sage: f[0] = exp(x); f
             e^x*dx
             sage: g[1] = sin(y); g
             sin(y)*dy
             sage: f + g
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             e^x*dx + sin(y)*dy
             sage: f + g == f._add_(g)
             True
@@ -651,31 +753,7 @@ class DifferentialForm(AlgebraElement):
             ...
             TypeError: Cannot add forms of degree 1 and 2
 
-        """
-
-        if self.is_zero():
-            return other
-        if other.is_zero():
-            return self
-
-        if self._degree != other._degree:
-            raise TypeError("Cannot add forms of degree %s and %s" % \
-                    (self._degree, other._degree))
-
-        sumform = DifferentialForm(self.parent(), self._degree)
-        sumform._components = self._components.copy()
-        for comp, fun in other._components.items():
-            sumform[comp] += fun
-
-        sumform._cleanup()
-        return sumform
-
-
-    def _sub_(self, other):
-        r"""
-        Subtract other from self.
-
-        EXAMPLES::
+        Subtraction is implemented by adding the negative::
 
             sage: x, y, z = var('x, y, z')
             sage: F = DifferentialForms()
@@ -699,10 +777,24 @@ class DifferentialForm(AlgebraElement):
             Traceback (most recent call last):
             ...
             TypeError: Cannot add forms of degree 1 and 2
-
         """
-        return self._add_(-other)
 
+        if self.is_zero():
+            return other
+        if other.is_zero():
+            return self
+
+        if self._degree != other._degree:
+            raise TypeError("Cannot add forms of degree %s and %s" % \
+                    (self._degree, other._degree))
+
+        sumform = DifferentialForm(self.parent(), self._degree)
+        sumform._components = self._components.copy()
+        for comp, fun in other._components.items():
+            sumform[comp] += fun
+
+        sumform._cleanup()
+        return sumform
 
     def _cleanup(self):
         r"""
@@ -712,12 +804,19 @@ class DifferentialForm(AlgebraElement):
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f[0] = 0
             sage: f[1] = 1
             sage: f[2] = 0
             sage: f._dump_all()
-            {(2,): 0, (0,): 0, (1,): 1}
+            {(0,): 0, (1,): 1, (2,): 0}
             sage: f._cleanup()
             sage: f._dump_all()
             {(1,): 1}
@@ -741,13 +840,20 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y, z = var('x, y, z')
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f[1] = exp(cos(x))
             sage: f[2] = sin(ln(y))
             sage: f
-            sin(log(y))*dz + e^cos(x)*dy
+            e^cos(x)*dy + sin(log(y))*dz
             sage: f._dump_all()
-            {(2,): sin(log(y)), (1,): e^cos(x)}
+            {(1,): e^cos(x), (2,): sin(log(y))}
             sage: g = DifferentialForm(F, 2)
             sage: g[1, 2] = x+y+z
             sage: g
@@ -756,8 +862,8 @@ class DifferentialForm(AlgebraElement):
             {(1, 2): x + y + z}
 
         """
-        print(self._components)
-
+        from pprint import pprint
+        pprint(self._components)
 
     def diff(self):
         r"""
@@ -767,7 +873,14 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y, z = var('x, y, z')
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 0, sin(x*y)); f
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sin(x*y)
             sage: f.diff()
             y*cos(x*y)*dx + x*cos(x*y)*dy
@@ -837,8 +950,17 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y = var('x, y')
             sage: U = CoordinatePatch((x, y))
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             sage: F = DifferentialForms(U)
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: q = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: q[0] = -y/2
             sage: q[1] =  x/2
             sage: q.diff()
@@ -880,7 +1002,14 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y, z = var('x, y, z')
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f[0] = x^2
             sage: f[1] = y
             sage: f
@@ -890,14 +1019,14 @@ class DifferentialForm(AlgebraElement):
             sage: g
             z^3*dz
             sage: f.wedge(g)
-            y*z^3*dy/\dz + x^2*z^3*dx/\dz
+            x^2*z^3*dx/\dz + y*z^3*dy/\dz
 
         The wedge product is graded commutative::
 
             sage: f.wedge(g)
-            y*z^3*dy/\dz + x^2*z^3*dx/\dz
+            x^2*z^3*dx/\dz + y*z^3*dy/\dz
             sage: g.wedge(f)
-            -y*z^3*dy/\dz + -x^2*z^3*dx/\dz
+            -x^2*z^3*dx/\dz + -y*z^3*dy/\dz
             sage: f.wedge(f)
             0
 
@@ -906,6 +1035,8 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y, p, q = var('x, y, p, q')
             sage: F = DifferentialForms(CoordinatePatch((x, y)))
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             sage: G = DifferentialForms(CoordinatePatch((p, q)))
             sage: f = DifferentialForm(F, 0, 1); f
             1
@@ -947,7 +1078,14 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y, z = var('x, y, z')
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = F.gen(0); f
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             dx
             sage: g = F.gen(1); g
             dy
@@ -972,7 +1110,14 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y, z = var('x, y, z')
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f[1] = exp(z); f
             e^z*dy
             sage: latex(f)
@@ -990,7 +1135,7 @@ class DifferentialForm(AlgebraElement):
 
         format = DifferentialFormFormatter(self.parent().base_space())
         output = [format.latex(comp, fun) \
-                      for (comp, fun) in self._components.items()]
+                      for (comp, fun) in sorted(self._components.items())]
         return ' + '.join(output)
 
 
@@ -1002,7 +1147,14 @@ class DifferentialForm(AlgebraElement):
 
             sage: x, y, z = var('x, y, z')
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f[1] = exp(z); f
             e^z*dy
             sage: print(f)
@@ -1015,7 +1167,7 @@ class DifferentialForm(AlgebraElement):
 
         format = DifferentialFormFormatter(self.parent().base_space())
         output = [format.repr(comp, fun) \
-                      for (comp, fun) in self._components.items()]
+                      for (comp, fun) in sorted(self._components.items())]
         return ' + '.join(output)
 
 
@@ -1029,7 +1181,14 @@ class DifferentialForm(AlgebraElement):
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.abs()
             Traceback (most recent call last):
             ...
@@ -1039,14 +1198,21 @@ class DifferentialForm(AlgebraElement):
         raise NotImplementedError("Absolute value not defined for differential forms.")
 
 
-    def leading_coefficient(self, cmp=None):
+    def leading_coefficient(self, key=None):
         """
         Method not defined for differential forms.
 
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.leading_coefficient()
             Traceback (most recent call last):
             ...
@@ -1056,14 +1222,21 @@ class DifferentialForm(AlgebraElement):
         raise NotImplementedError("leading_coefficient not defined for differential forms.")
 
 
-    def leading_item(self, cmp=None):
+    def leading_item(self, key=None):
         """
         Method not defined for differential forms.
 
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.leading_item()
             Traceback (most recent call last):
             ...
@@ -1073,14 +1246,21 @@ class DifferentialForm(AlgebraElement):
         raise NotImplementedError("leading_item not defined for differential forms.")
 
 
-    def leading_monomial(self, cmp=None):
+    def leading_monomial(self, key=None):
         """
         Method not defined for differential forms.
 
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.leading_monomial()
             Traceback (most recent call last):
             ...
@@ -1090,14 +1270,21 @@ class DifferentialForm(AlgebraElement):
         raise NotImplementedError("leading_monomial not defined for differential forms.")
 
 
-    def leading_support(self, cmp=None):
+    def leading_support(self, key=None):
         """
         Method not defined for differential forms.
 
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.leading_support()
             Traceback (most recent call last):
             ...
@@ -1107,14 +1294,21 @@ class DifferentialForm(AlgebraElement):
         raise NotImplementedError("leading_support not defined for differential forms.")
 
 
-    def leading_term(self, cmp=None):
+    def leading_term(self, key=None):
         """
         Method not defined for differential forms.
 
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.leading_term()
             Traceback (most recent call last):
             ...
@@ -1124,14 +1318,21 @@ class DifferentialForm(AlgebraElement):
         raise NotImplementedError("leading_term not defined for differential forms.")
 
 
-    def trailing_coefficient(self, cmp=None):
+    def trailing_coefficient(self, key=None):
         """
         Method not defined for differential forms.
 
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.trailing_coefficient()
             Traceback (most recent call last):
             ...
@@ -1141,14 +1342,21 @@ class DifferentialForm(AlgebraElement):
         raise NotImplementedError("trailing_coefficient not defined for differential forms.")
 
 
-    def trailing_item(self, cmp=None):
+    def trailing_item(self, key=None):
         """
         Method not defined for differential forms.
 
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.trailing_item()
             Traceback (most recent call last):
             ...
@@ -1158,14 +1366,21 @@ class DifferentialForm(AlgebraElement):
         raise NotImplementedError("leading_coefficient not defined for differential forms.")
 
 
-    def trailing_monomial(self, cmp=None):
+    def trailing_monomial(self, key=None):
         """
         Method not defined for differential forms.
 
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.trailing_monomial()
             Traceback (most recent call last):
             ...
@@ -1175,14 +1390,21 @@ class DifferentialForm(AlgebraElement):
         raise NotImplementedError("trailing_monomial not defined for differential forms.")
 
 
-    def trailing_support(self, cmp=None):
+    def trailing_support(self, key=None):
         """
         Method not defined for differential forms.
 
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.trailing_support()
             Traceback (most recent call last):
             ...
@@ -1192,14 +1414,21 @@ class DifferentialForm(AlgebraElement):
         raise NotImplementedError("trailing_support not defined for differential forms.")
 
 
-    def trailing_term(self, cmp=None):
+    def trailing_term(self, key=None):
         """
         Method not defined for differential forms.
 
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.trailing_term()
             Traceback (most recent call last):
             ...
@@ -1216,7 +1445,14 @@ class DifferentialForm(AlgebraElement):
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.map_coefficients(lambda x: x)
             Traceback (most recent call last):
             ...
@@ -1233,7 +1469,14 @@ class DifferentialForm(AlgebraElement):
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.map_item(lambda x: x)
             Traceback (most recent call last):
             ...
@@ -1250,7 +1493,14 @@ class DifferentialForm(AlgebraElement):
         EXAMPLES::
 
             sage: F = DifferentialForms()
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f = DifferentialForm(F, 1)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sage: f.map_support(lambda x: x)
             Traceback (most recent call last):
             ...
@@ -1272,7 +1522,14 @@ def d(form):
         sage: from sage.tensor.differential_form_element import d
         sage: x, y, z = var('x, y, z')
         sage: F = DifferentialForms()
+        doctest:...:  DeprecationWarning: For the set of differential forms of
+         degree p, use U.diff_form_module(p), where U is the base manifold
+         (type U.diff_form_module? for details).
+        See http://trac.sagemath.org/24444 for details.
         sage: f = DifferentialForm(F, 1)
+        doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+         where U is the base manifold (type U.diff_form? for details).
+        See http://trac.sagemath.org/24444 for details.
         sage: f[2] = cos(x); f
         cos(x)*dz
         sage: d(f)
@@ -1295,7 +1552,14 @@ def wedge(left, right):
         sage: from sage.tensor.differential_form_element import wedge
         sage: x, y, z = var('x, y, z')
         sage: F = DifferentialForms()
+        doctest:...:  DeprecationWarning: For the set of differential forms of
+         degree p, use U.diff_form_module(p), where U is the base manifold
+         (type U.diff_form_module? for details).
+        See http://trac.sagemath.org/24444 for details.
         sage: f = DifferentialForm(F, 1)
+        doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+         where U is the base manifold (type U.diff_form? for details).
+        See http://trac.sagemath.org/24444 for details.
         sage: f[2] = cos(x); f
         cos(x)*dz
         sage: g = DifferentialForm(F, 1)

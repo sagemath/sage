@@ -6,20 +6,31 @@ AUTHORS:
 - Travis Scrimshaw (2015-09): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2015 Travis Scrimshaw <tscrimsh at umn.edu>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from six import iteritems
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.magmatic_algebras import MagmaticAlgebras
+from sage.categories.magmas import Magmas
+from sage.categories.pushout import (ConstructionFunctor,
+                                     CompositeConstructionFunctor,
+                                     IdentityConstructionFunctor)
 from sage.categories.rings import Rings
+from sage.categories.functor import Functor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
 from sage.combinat.words.alphabet import Alphabet
 from sage.sets.family import Family
+from sage.structure.coerce_exceptions import CoercionException
+
 
 class FreeZinbielAlgebra(CombinatorialFreeModule):
     r"""
@@ -32,8 +43,9 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
 
         a \circ (b \circ c) = a \circ (b \circ c) + a \circ (c \circ b).
 
-    Zinbiel algebras were first introduced by Loday as the Koszul
-    dual to Leibniz algebras (hence the name coined by Lemaire).
+    Zinbiel algebras were first introduced by Loday (see [Lod1995]_ and
+    [LV2012]_) as the Koszul dual to Leibniz algebras (hence the name
+    coined by Lemaire).
 
     Zinbiel algebras are divided power algebras, in that for
 
@@ -90,8 +102,8 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
     .. WARNING::
 
         Currently the basis is indexed by all words over the variables,
-        incuding the empty word. This is a slight abuse as it is suppose
-        to be the indexed by all non-empty words.
+        including the empty word. This is a slight abuse as it is supposed
+        to be indexed by all non-empty words.
 
     EXAMPLES:
 
@@ -132,13 +144,9 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
 
     - :wikipedia:`Zinbiel_algebra`
 
-    .. [Loday95] Jean-Louis Loday.
-       *Cup-product for Leibniz cohomology and dual Leibniz algebras*.
-       Math. Scand., pp. 189--196 (1995).
-       http://www.math.uiuc.edu/K-theory/0015/cup_product.pdf
-    .. [LV12] Jean-Louis Loday and Bruno Vallette. *Algebraic Operads*.
-       Springer-Verlag Berlin Heidelberg (2012).
-       :doi:`10.1007/978-3-642-30362-3`.
+    - [Lod1995]_
+
+    - [LV2012]_
     """
     @staticmethod
     def __classcall_private__(cls, R, n=None, names=None):
@@ -153,8 +161,13 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
             sage: Z4.<x,y,z> = algebras.FreeZinbiel(QQ, 'x,y,z')
             sage: Z1 is Z2 and Z1 is Z3 and Z1 is Z4
             True
+
+            sage: algebras.FreeZinbiel(QQ, ['x', 'y'])
+            Free Zinbiel algebra on generators (Z[x], Z[y]) over Rational Field
+            sage: algebras.FreeZinbiel(QQ, ('x', 'y'))
+            Free Zinbiel algebra on generators (Z[x], Z[y]) over Rational Field
         """
-        if isinstance(n, (list,tuple)):
+        if isinstance(n, (list, tuple)):
             names = n
             n = len(names)
         elif isinstance(n, str):
@@ -164,6 +177,8 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
             names = names.split(',')
         elif n is None:
             n = len(names)
+        if R not in Rings():
+            raise TypeError("argument R must be a ring")
         return super(FreeZinbielAlgebra, cls).__classcall__(cls, R, n, tuple(names))
 
     def __init__(self, R, n, names):
@@ -174,11 +189,18 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
 
             sage: Z.<x,y,z> = algebras.FreeZinbiel(QQ)
             sage: TestSuite(Z).run()
+
+        TESTS::
+
+            sage: Z.<x,y,z> = algebras.FreeZinbiel(5)
+            Traceback (most recent call last):
+            ...
+            TypeError: argument R must be a ring
         """
         if R not in Rings:
             raise TypeError("argument R must be a ring")
         indices = Words(Alphabet(n, names=names))
-        cat = MagmaticAlgebras(R).WithBasis()
+        cat = MagmaticAlgebras(R).WithBasis().Graded()
         self._n = n
         CombinatorialFreeModule.__init__(self, R, indices, prefix='Z',
                                          category=cat)
@@ -202,9 +224,9 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: Z.<x,y,z> = algebras.FreeZinbiel(QQ)
+            sage: Z.<x,y> = algebras.FreeZinbiel(QQ)
             sage: Z
-            Free Zinbiel algebra on generators (Z[x], Z[y], Z[z]) over Rational Field
+            Free Zinbiel algebra on generators (Z[x], Z[y]) over Rational Field
         """
         return "Free Zinbiel algebra on generators {} over {}".format(
             self.gens(), self.base_ring())
@@ -221,7 +243,25 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
             [Z[x], Z[y], Z[z]]
         """
         A = self.variable_names()
-        return Family( A, lambda g: self.monomial(self._indices(g)) )
+        return Family(A, lambda g: self.monomial(self._indices(g)))
+
+    def change_ring(self, R):
+        """
+        Return the free Zinbiel algebra in the same variables over ``R``.
+
+        INPUT:
+
+        - ``R`` -- a ring
+
+        EXAMPLES::
+
+            sage: A = algebras.FreeZinbiel(ZZ, 'f,g,h')
+            sage: A.change_ring(QQ)
+            Free Zinbiel algebra on generators (Z[f], Z[g], Z[h])
+            over Rational Field
+        """
+        A = self.variable_names()
+        return FreeZinbielAlgebra(R, n=len(A), names=A)
 
     @cached_method
     def gens(self):
@@ -236,18 +276,361 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         """
         return tuple(self.algebra_generators())
 
+    def degree_on_basis(self, t):
+        """
+        Return the degree of a word in the free Zinbiel algebra.
+
+        This is the length.
+
+        EXAMPLES::
+
+            sage: A = algebras.FreeZinbiel(QQ, 'x,y')
+            sage: W = A.basis().keys()
+            sage: A.degree_on_basis(W('xy'))
+            2
+        """
+        return len(t)
+
     def product_on_basis(self, x, y):
         """
         Return the product of the basis elements indexed by ``x`` and ``y``.
+
+        INPUT:
+
+        - ``x``, ``y`` -- two words
 
         EXAMPLES::
 
             sage: Z.<x,y,z> = algebras.FreeZinbiel(QQ)
             sage: (x*y)*z  # indirect doctest
             Z[xyz] + Z[xzy]
+
+        TESTS::
+
+            sage: Z.<x,y> = algebras.FreeZinbiel(QQ)
+            sage: Z.product_on_basis(Word(), Word('y'))
+            Z[y]
         """
         if not x:
             return self.monomial(y)
         x0 = self._indices(x[0])
         return self.sum_of_monomials(x0 + sh for sh in x[1:].shuffle(y))
 
+    def _element_constructor_(self, x):
+        r"""
+        Convert ``x`` into ``self``.
+
+        EXAMPLES::
+
+            sage: R = algebras.FreeZinbiel(QQ, 'x,y')
+            sage: x, y = R.gens()
+            sage: R(x)
+            Z[x]
+            sage: R(x+4*y)
+            Z[x] + 4*Z[y]
+
+            sage: W = R.basis().keys()
+            sage: R(W('x'))
+            Z[x]
+            sage: D = algebras.FreeZinbiel(ZZ, 'x,y')
+            sage: X, Y = D.gens()
+            sage: R(X-Y).parent()
+            Free Zinbiel algebra on generators (Z[x], Z[y]) over Rational Field
+
+        TESTS::
+
+            sage: R.<x,y> = algebras.FreeZinbiel(QQ)
+            sage: S.<z> = algebras.FreeZinbiel(GF(3))
+            sage: R(z)
+            Traceback (most recent call last):
+            ...
+            TypeError: not able to convert this to this algebra
+        """
+        if x in self.basis().keys():
+            return self.monomial(x)
+        try:
+            P = x.parent()
+        except AttributeError:
+            raise TypeError('not able to convert this to this algebra')
+        if isinstance(P, FreeZinbielAlgebra) and self._coerce_map_from_(P):
+            return self.element_class(self, x.monomial_coefficients(copy=False))
+        else:
+            raise TypeError('not able to convert this to this algebra')
+        # Ok, not a Zinbiel algebra element (or should not be viewed as one).
+
+    def _coerce_map_from_(self, R):
+        r"""
+        Return ``True`` if there is a coercion from ``R`` into ``self``
+        and ``False`` otherwise.
+
+        The things that coerce into ``self`` are
+
+        - free Zinbiel algebras whose set `E` of labels is
+          a subset of the corresponding self of ``set`, and whose base
+          ring has a coercion map into ``self.base_ring()``
+
+        EXAMPLES::
+
+            sage: F = algebras.FreeZinbiel(GF(7), 'x,y,z'); F
+            Free Zinbiel algebra on generators (Z[x], Z[y], Z[z])
+            over Finite Field of size 7
+
+        Elements of the free Zinbiel algebra canonically coerce in::
+
+            sage: x, y, z = F.gens()
+            sage: F.coerce(x+y) == x+y
+            True
+
+        The free Zinbiel algebra over `\ZZ` on `x, y, z` coerces in, since
+        `\ZZ` coerces to `\GF{7}`::
+
+            sage: G = algebras.FreeZinbiel(ZZ, 'x,y,z')
+            sage: Gx,Gy,Gz = G.gens()
+            sage: z = F.coerce(Gx+Gy); z
+            Z[x] + Z[y]
+            sage: z.parent() is F
+            True
+
+        However, `\GF{7}` does not coerce to `\ZZ`, so the free Zinbiel
+        algebra over `\GF{7}` does not coerce to the one over `\ZZ`::
+
+            sage: G.coerce(y)
+            Traceback (most recent call last):
+            ...
+            TypeError: no canonical coercion from Free Zinbiel algebra on
+            generators (Z[x], Z[y], Z[z]) over Finite Field of size 7 to
+            Free Zinbiel algebra on generators (Z[x], Z[y], Z[z])
+            over Integer Ring
+
+        TESTS::
+
+            sage: F = algebras.FreeZinbiel(ZZ, 'x,y,z')
+            sage: G = algebras.FreeZinbiel(QQ, 'x,y,z')
+            sage: H = algebras.FreeZinbiel(ZZ, 'y')
+            sage: F._coerce_map_from_(G)
+            False
+            sage: G._coerce_map_from_(F)
+            True
+            sage: F._coerce_map_from_(H)
+            True
+            sage: F._coerce_map_from_(QQ)
+            False
+            sage: G._coerce_map_from_(QQ)
+            False
+            sage: F.has_coerce_map_from(PolynomialRing(ZZ, 3, 'x,y,z'))
+            False
+        """
+        # free Zinbiel algebras in a subset of variables
+        # over any base that coerces in:
+        return (isinstance(R, FreeZinbielAlgebra)
+                and all(x in self.variable_names() for x in R.variable_names())
+                and self.base_ring().has_coerce_map_from(R.base_ring()))
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a :class:`ZinbielFunctor`
+        and `R` is a ring, such that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: P = algebras.FreeZinbiel(ZZ, 'x,y')
+            sage: x,y = P.gens()
+            sage: F, R = P.construction()
+            sage: F
+            Zinbiel[x,y]
+            sage: R
+            Integer Ring
+            sage: F(ZZ) is P
+            True
+            sage: F(QQ)
+            Free Zinbiel algebra on generators (Z[x], Z[y]) over Rational Field
+        """
+        return ZinbielFunctor(self.variable_names()), self.base_ring()
+
+
+class ZinbielFunctor(ConstructionFunctor):
+    """
+    A constructor for free Zinbiel algebras.
+
+    EXAMPLES::
+
+        sage: P = algebras.FreeZinbiel(ZZ, 'x,y')
+        sage: x,y = P.gens()
+        sage: F = P.construction()[0]; F
+        Zinbiel[x,y]
+
+        sage: A = GF(5)['a,b']
+        sage: a, b = A.gens()
+        sage: F(A)
+        Free Zinbiel algebra on generators (Z[x], Z[y])
+        over Multivariate Polynomial Ring in a, b over Finite Field of size 5
+
+        sage: f = A.hom([a+b,a-b],A)
+        sage: F(f)
+        Generic endomorphism of Free Zinbiel algebra on generators (Z[x], Z[y])
+        over Multivariate Polynomial Ring in a, b over Finite Field of size 5
+
+
+        sage: F(f)(a * F(A)(x))
+        (a+b)*Z[x]
+    """
+    rank = 9
+
+    def __init__(self, vars):
+        """
+        EXAMPLES::
+
+            sage: F = sage.algebras.free_zinbiel_algebra.ZinbielFunctor(['x','y'])
+            sage: F
+            Zinbiel[x,y]
+            sage: F(ZZ)
+            Free Zinbiel algebra on generators (Z[x], Z[y]) over Integer Ring
+        """
+        Functor.__init__(self, Rings(), Magmas())
+        self.vars = vars
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: R = algebras.FreeZinbiel(ZZ, 'x,y,z')
+            sage: F = R.construction()[0]; F
+            Zinbiel[x,y,z]
+            sage: type(F)
+            <class 'sage.algebras.free_zinbiel_algebra.ZinbielFunctor'>
+            sage: F(ZZ)          # indirect doctest
+            Free Zinbiel algebra on generators (Z[x], Z[y], Z[z])
+            over Integer Ring
+        """
+        return FreeZinbielAlgebra(R, len(self.vars), self.vars)
+
+    def _apply_functor_to_morphism(self, f):
+        """
+        Apply the functor ``self`` to the ring morphism `f`.
+
+        TESTS::
+
+            sage: R = algebras.FreeZinbiel(ZZ, 'x').construction()[0]
+            sage: R(ZZ.hom(GF(3)))  # indirect doctest
+            Generic morphism:
+              From: Free Zinbiel algebra on generators (Z[x],) over Integer Ring
+              To:   Free Zinbiel algebra on generators (Z[x],) over Finite Field of size 3
+        """
+        dom = self(f.domain())
+        codom = self(f.codomain())
+
+        def action(x):
+            return codom._from_dict({a: f(b)
+                                     for a, b in iteritems(x.monomial_coefficients(copy=False))})
+        return dom.module_morphism(function=action, codomain=codom)
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: F = algebras.FreeZinbiel(ZZ, 'x,y,z').construction()[0]
+            sage: G = algebras.FreeZinbiel(QQ, 'x,y,z').construction()[0]
+            sage: F == G
+            True
+            sage: G == loads(dumps(G))
+            True
+            sage: G = algebras.FreeZinbiel(QQ, 'x,y').construction()[0]
+            sage: F == G
+            False
+        """
+        if not isinstance(other, ZinbielFunctor):
+            return False
+        return self.vars == other.vars
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: F = algebras.FreeZinbiel(ZZ, 'x,y,z').construction()[0]
+            sage: G = algebras.FreeZinbiel(QQ, 'x,y,z').construction()[0]
+            sage: hash(F) == hash(G)
+            True
+        """
+        return hash(repr(self))
+    
+    def __mul__(self, other):
+        """
+        If two Zinbiel functors are given in a row, form a single
+        Zinbiel functor with all of the variables.
+
+        EXAMPLES::
+
+            sage: F = sage.algebras.free_zinbiel_algebra.ZinbielFunctor(['x','y'])
+            sage: G = sage.algebras.free_zinbiel_algebra.ZinbielFunctor(['t'])
+            sage: G * F
+            Zinbiel[x,y,t]
+        """
+        if isinstance(other, IdentityConstructionFunctor):
+            return self
+        if isinstance(other, ZinbielFunctor):
+            if set(self.vars).intersection(other.vars):
+                raise CoercionException("Overlapping variables (%s,%s)" %
+                                        (self.vars, other.vars))
+            return ZinbielFunctor(other.vars + self.vars)
+        elif (isinstance(other, CompositeConstructionFunctor) and
+              isinstance(other.all[-1], ZinbielFunctor)):
+            return CompositeConstructionFunctor(other.all[:-1],
+                                                self * other.all[-1])
+        else:
+            return CompositeConstructionFunctor(other, self)
+
+    def merge(self, other):
+        """
+        Merge ``self`` with another construction functor, or return None.
+
+        EXAMPLES::
+
+            sage: F = sage.algebras.free_zinbiel_algebra.ZinbielFunctor(['x','y'])
+            sage: G = sage.algebras.free_zinbiel_algebra.ZinbielFunctor(['t'])
+            sage: F.merge(G)
+            Zinbiel[x,y,t]
+            sage: F.merge(F)
+            Zinbiel[x,y]
+
+        Now some actual use cases::
+
+            sage: R = algebras.FreeZinbiel(ZZ, 'x,y,z')
+            sage: x,y,z = R.gens()
+            sage: 1/2 * x
+            1/2*Z[x]
+            sage: parent(1/2 * x)
+            Free Zinbiel algebra on generators (Z[x], Z[y], Z[z])
+            over Rational Field
+
+            sage: S = algebras.FreeZinbiel(QQ, 'z,t')
+            sage: z,t = S.gens()
+            sage: x + t
+            Z[t] + Z[x]
+            sage: parent(x + t)
+            Free Zinbiel algebra on generators (Z[z], Z[t], Z[x], Z[y])
+            over Rational Field
+        """
+        if isinstance(other, ZinbielFunctor):
+            if self.vars == other.vars:
+                return self
+            ret = list(self.vars)
+            cur_vars = set(ret)
+            for v in other.vars:
+                if v not in cur_vars:
+                    ret.append(v)
+            return ZinbielFunctor(ret)
+        else:
+            return None
+
+    def _repr_(self):
+        """
+        TESTS::
+
+            sage: algebras.FreeZinbiel(QQ,'x,y,z,t').construction()[0]
+            Zinbiel[x,y,z,t]
+        """
+        return "Zinbiel[%s]" % ','.join(self.vars)

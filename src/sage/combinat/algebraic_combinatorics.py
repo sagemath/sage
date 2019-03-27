@@ -23,14 +23,6 @@ Enumerated sets of combinatorial objects
 - :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPattern`, :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPatterns`
 - :class:`~sage.combinat.knutson_tao_puzzles.KnutsonTaoPuzzleSolver`
 
-Combinatorial Hopf Algebras
----------------------------
-
-- :ref:`sage.combinat.sf`
-- :ref:`sage.combinat.ncsf_qsym`
-- :ref:`sage.combinat.schubert_polynomial`
-- :ref:`sage.combinat.ncsym`
-
 Groups and Algebras
 -------------------
 
@@ -60,5 +52,7 @@ Combinatorial Representation Theory
 Operads and their algebras
 --------------------------
 
+- :ref:`sage.combinat.free_dendriform_algebra`
 - :ref:`sage.combinat.free_prelie_algebra`
+- :ref:`sage.algebras.free_zinbiel_algebra`
 """

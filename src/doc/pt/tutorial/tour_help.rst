@@ -61,7 +61,7 @@ função ou constante (por exemplo), seguido pelo ponto de interrogação:
             0.69314718055994530941723212145817656807   # 64-bit
     sage: sudoku?
     File:        sage/local/lib/python2.5/site-packages/sage/games/sudoku.py
-    Type:        <type 'function'>
+    Type:        <... 'function'>
     Definition:  sudoku(A)
     Docstring: 
     
@@ -260,7 +260,9 @@ exemplo, o comando ``range`` que usamos acima cria uma lista:
 
 ::
 
-    sage: range(2,10)
+    sage: range(2,10)   # py2
+    [2, 3, 4, 5, 6, 7, 8, 9]
+    sage: list(range(2,10))   # py3
     [2, 3, 4, 5, 6, 7, 8, 9]
 
 Abaixo segue uma lista mais complicada:

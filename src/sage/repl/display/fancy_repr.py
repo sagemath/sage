@@ -12,15 +12,12 @@ Representations of objects.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
 import types
 
 from IPython.lib.pretty import (
     _safe_getattr, _baseclass_reprs,
     _type_pprinters,
 )
-
-from IPython.lib import pretty
 
 from sage.repl.display.util import format_list
 
@@ -209,7 +206,7 @@ class LargeMatrixHelpRepr(ObjectReprABC):
         if obj.nrows() < max_rows and obj.ncols() < max_cols:
             return False
         p.text(
-            str(obj) + " (use the '.str()' method to see the entries)"
+            repr(obj) + " (use the '.str()' method to see the entries)"
         )
         return True
 

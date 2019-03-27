@@ -25,11 +25,14 @@ REFERENCE:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 from __future__ import print_function
 
 from libc.string cimport memcmp
-include 'data_structures_pyx.pxi' # includes bitsets
 
+from .data_structures cimport *
+include "sage/data_structures/bitset.pxi"
+from sage.rings.integer cimport Integer
 from sage.misc.misc import uniq
 from sage.matrix.constructor import Matrix
 from .refinement_binary cimport NonlinearBinaryCodeStruct, refine_by_bip_degree
@@ -94,7 +97,7 @@ cdef class MatrixStruct:
         """
         Display the matrix, and associated data.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
             sage: M = MatrixStruct(Matrix(GF(5), [[0,1,1,4,4],[0,4,4,1,1]]))
@@ -181,7 +184,7 @@ cdef class MatrixStruct:
 
         For more examples, see self.run().
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
 
@@ -292,7 +295,11 @@ cdef int compare_matrices(int *gamma_1, int *gamma_2, void *S1, void *S2, int de
     for i from 0 <= i < degree:
         MM1.set_column(i, M1.column(gamma_1[i]))
         MM2.set_column(i, M2.column(gamma_2[i]))
-    return cmp(sorted(MM1.rows()), sorted(MM2.rows()))
+    rows1 = sorted(MM1.rows())
+    rows2 = sorted(MM2.rows())
+    if rows1 == rows2:
+        return 0
+    return -1 if rows1 < rows2 else 1
 
 cdef bint all_matrix_children_are_equivalent(PartitionStack *PS, void *S):
     return 0

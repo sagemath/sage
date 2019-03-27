@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ -z "$SAGE_LOCAL" ]; then
     echo "Error: SAGE_LOCAL undefined - exiting ..."
     echo "Maybe run 'sage -sh'?"
@@ -13,14 +11,10 @@ success() {
     fi
 }
 
-# Remove old versions of Jinja2
-rm -rf "$SAGE_LOCAL"/lib/python/site-packages/Jinja2-*
-success 'Error deleting previous version(s) of Jinja2'
-
 # Install new version
 cd src
 
-python setup.py install
+sdh_pip_install .
 success 'Error installing Jinja2'
 
 ### The Jinja2 docs use Sphinx which requires Jinja2... do not build!

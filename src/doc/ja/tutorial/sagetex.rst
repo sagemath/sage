@@ -13,7 +13,7 @@ SageTeXパッケージを使うと，Sageによる処理結果をLaTeX文書に�
 
 ここでは，ごく簡単な例題を通してSageTeXの利用手順を紹介する．
 完全な解説ドキュメントと例題ファイルは，ディレクトリ ``SAGE_ROOT/local/share/doc/sagetex`` に置いてある．
-``SAGE_ROOT/local/share/texmf/tex/generic/sagetex`` にあるPythonスクリプトは何か役に立つ場面があるはずだ．
+``SAGE_ROOT/local/share/texmf/tex/latex/sagetex`` にあるPythonスクリプトは何か役に立つ場面があるはずだ．
 以上の ``SAGE_ROOT`` は，Sageをインストールしたディレクトリである．
 
 
@@ -118,7 +118,7 @@ SageTeXはデフォルトでSageにインストールされるが，LaTeX文書�
 
 鍵になるのは， TeXが ``sagetex.sty`` を発見できるかどうかである．
 この ``sagetex.sty`` は， ``SAGE_ROOT`` をSageがビルトあるいはインストールされたディレクトリとすると，
-``SAGE_ROOT/local/share/texmf/tex/generic/sagetex/`` に置かれているはずだ．
+``SAGE_ROOT/local/share/texmf/tex/latex/sagetex/`` に置かれているはずだ．
 TeXが ``sagetex.sty`` を読めるようにしてやらなければ，SageTeXも動作できないのである．
 これを実現するには何通りかのやり方がある．
 
@@ -212,7 +212,7 @@ SageTeXドキュメント
 厳密にはSageのインストール一式には含まれないものの，ここで
 SageTeXのドキュメントが ``SAGE_ROOT/local/share/doc/sagetex/sagetex.pdf`` に配置されていることに触れておきたい．
 同じディレクトリには例題ファイルと，これをLaTeXとSageTeXによってすでに組版処理した結果も用意されている(``example.tex`` と ``example.pdf`` を参照)．
-これらのファイルは `SageTeX bitbucket ページ <https://bitbucket.org/ddrake/sagetex/downloads>`_ からダンロードすることもできる．
+これらのファイルは `SageTeX ページ <https://github.com/sagemath/sagetex>`_ からダンロードすることもできる．
 
 
 

@@ -33,6 +33,8 @@ linear in ``capacity``.
 from __future__ import print_function
 
 include "bitset.pxi"
+from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+
 
 cdef class FrozenBitset:
     r"""
@@ -48,7 +50,7 @@ cdef class FrozenBitset:
 
     The interface in this class mirrors the interface in the ``frozenset``
     data type of Python. See the Python documentation on `set types
-    <http://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
+    <https://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
     for more details on Python's ``set`` and ``frozenset`` classes.
 
     .. warning::
@@ -93,11 +95,11 @@ cdef class FrozenBitset:
     `\{0, 1, 2, \dots, k\}` and the membership in ``FB`` of each `i` is
     determined by the binary value `b_i`.
 
-    .. seealso::
+    .. SEEALSO::
 
         - :class:`Bitset`
 
-        - Python's `set types <http://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
+        - Python's `set types <https://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
 
     EXAMPLES:
 
@@ -388,7 +390,7 @@ cdef class FrozenBitset:
             bitset_from_str(self._bitset, iter)
         else:  # an iterable
             iter = list(iter)
-            if len(iter) > 0:
+            if iter:
                 need_capacity = max(iter) + 1
             else:
                 need_capacity = 0
@@ -413,16 +415,16 @@ cdef class FrozenBitset:
 
     def __getstate__(self):
         """
-        Return the current state of the object as a string.
+        Return the current state of the object as a bytes string.
 
         EXAMPLES::
 
-            sage: FrozenBitset('1101').__getstate__()
-            '1101'
-            sage: FrozenBitset('110'*32).__getstate__()
-            '110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110'
+            sage: FrozenBitset('1101').__getstate__() == b'1101'
+            True
+            sage: FrozenBitset('110'*32).__getstate__() == (b'110' * 32)
+            True
         """
-        return str(self)
+        return bytes(self)
 
     def __setstate__(self, state):
         """
@@ -431,15 +433,15 @@ cdef class FrozenBitset:
         EXAMPLES::
 
             sage: a = FrozenBitset()
-            sage: a.__setstate__('1101')
+            sage: a.__setstate__(b'1101')
             sage: a
             1101
-            sage: a.__setstate__('110'*32)
+            sage: a.__setstate__(b'110'*32)
             sage: a
             110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110
         """
         bitset_realloc(self._bitset, len(state))
-        bitset_from_str(self._bitset, state)
+        bitset_from_char(self._bitset, state)
 
     def __iter__(self):
         """
@@ -657,17 +659,17 @@ cdef class FrozenBitset:
             left = self
             right = other._larger_capacity_(self._bitset.size)
 
-        if op == 2:  # ==
+        if op == Py_EQ:
             return bitset_eq(left._bitset, right._bitset)
-        elif op == 3:  # !=
+        elif op == Py_NE:
             return not bitset_eq(left._bitset, right._bitset)
-        elif op == 0:  # <
+        elif op == Py_LT:
             return bitset_issubset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 1:  # <=
+        elif op == Py_LE:
             return bitset_issubset(left._bitset, right._bitset)
-        elif op == 4:  # >
+        elif op == Py_GT:
             return bitset_issuperset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 5:  # >=
+        elif op == Py_GE:
             return bitset_issuperset(left._bitset, right._bitset)
 
     cpdef bint issubset(self, FrozenBitset other) except -1:
@@ -842,6 +844,21 @@ cdef class FrozenBitset:
             '110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110'
         """
         return bitset_string(self._bitset)
+
+    def __bytes__(self):
+        """
+        Return a bytes object representing the bitset as a binary vector.
+
+        EXAMPLES::
+
+            sage: a = FrozenBitset('10110')
+            sage: bytes(a) == b'10110'
+            True
+            sage: bytes(FrozenBitset('110' * 32)) == b'110' * 32
+            True
+        """
+        return bitset_bytes(self._bitset)
+
 
     def __repr__(self):
         """
@@ -1257,10 +1274,10 @@ cdef class Bitset(FrozenBitset):
         for a Python set type, the Python ``set`` data type may be
         faster.
 
-    .. seealso::
+    .. SEEALSO::
 
         - :class:`FrozenBitset`
-        - Python's `set types <http://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
+        - Python's `set types <https://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
 
     EXAMPLES::
 
@@ -1300,7 +1317,7 @@ cdef class Bitset(FrozenBitset):
         """
         Raise an error, since mutable ``Bitset``s are not hashable.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: hash(Bitset('110'))
             Traceback (most recent call last):
@@ -1399,17 +1416,17 @@ cdef class Bitset(FrozenBitset):
             left = self
             right = other._larger_capacity_(self._bitset.size)
 
-        if op == 2:  # ==
+        if op == Py_EQ:
             return bitset_eq(left._bitset, right._bitset)
-        elif op == 3:  # !=
+        elif op == Py_NE:
             return not bitset_eq(left._bitset, right._bitset)
-        elif op == 0:  # <
+        elif op == Py_LT:
             return bitset_issubset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 1:  # <=
+        elif op == Py_LE:
             return bitset_issubset(left._bitset, right._bitset)
-        elif op == 4:  # >
+        elif op == Py_GT:
             return bitset_issuperset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 5:  # >=
+        elif op == Py_GE:
             return bitset_issuperset(left._bitset, right._bitset)
 
     cdef FrozenBitset _new(self, long int capacity):

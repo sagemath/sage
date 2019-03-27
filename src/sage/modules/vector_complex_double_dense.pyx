@@ -39,13 +39,14 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 from sage.rings.complex_double import CDF
 
 cimport numpy
 
 
-cdef class Vector_complex_double_dense(vector_double_dense.Vector_double_dense):
+cdef class Vector_complex_double_dense(Vector_double_dense):
     """
     Vectors over the Complex Double Field.  These are supposed to be
     fast vector operations using C doubles. Most operations are
@@ -72,7 +73,7 @@ cdef class Vector_complex_double_dense(vector_double_dense.Vector_double_dense):
         """
         Pickling
 
-        EXAMPLE:
+        EXAMPLES:
             sage: a = vector(CDF, range(9))
             sage: loads(dumps(a)) == a
             True
@@ -85,7 +86,7 @@ def unpickle_v0(parent, entries, degree):
     """
     Create a complex double vector containing the entries.
 
-    EXAMPLE:
+    EXAMPLES:
         sage: v = vector(CDF, [1,2,3])
         sage: w = sage.modules.vector_complex_double_dense.unpickle_v0(v.parent(), list(v), v.degree())
         sage: v == w
@@ -98,7 +99,7 @@ def unpickle_v1(parent, entries, degree, is_mutable=None):
     Create a complex double vector with the given parent, entries,
     degree, and mutability.
 
-    EXAMPLE:
+    EXAMPLES:
         sage: v = vector(CDF, [1,2,3])
         sage: w = sage.modules.vector_complex_double_dense.unpickle_v1(v.parent(), list(v), v.degree(), v.is_mutable())
         sage: v == w

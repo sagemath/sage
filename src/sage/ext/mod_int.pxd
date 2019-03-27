@@ -17,7 +17,7 @@ The `mod_int` Data Type
 #*****************************************************************************
 
 
-cdef extern from "sage/ext/mod_int.h":
+cdef extern from "mod_int.h":
     ctypedef long mod_int
     mod_int MOD_INT_MAX
     mod_int MOD_INT_OVERFLOW

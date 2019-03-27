@@ -22,7 +22,6 @@ from __future__ import print_function
 from sage.rings.integer import Integer
 from sage.arith.all import factorial
 from sage.rings.number_field.all import NumberField
-from sage.rings.number_field.number_field_base import is_NumberField
 from sage.rings.polynomial.all import PolynomialRing
 from sage.rings.rational_field import RationalField, is_RationalField
 from sage.libs.pari.all import pari, PariError
@@ -124,7 +123,7 @@ class SplittingData:
 
 
 def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=None, simplify=True, simplify_all=False):
-    """
+    r"""
     Compute the splitting field of a given polynomial, defined over a
     number field.
 
@@ -354,7 +353,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
     # Fgen = the generator of F as element of Q[y]/Kpol
     # (only needed if map=True)
     if map:
-        Fgen = F.gen()._pari_()
+        Fgen = F.gen().__pari__()
     verbose("Starting field: %s"%Kpol)
 
     # L and Lred are lists of SplittingData.

@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 r"""
 Word paths
 
@@ -155,19 +155,18 @@ a callable or a finite iterator::
 
 REFERENCES:
 
-- [1] Freeman, H.: On the encoding of arbitrary geometric configurations.
+- [1] Freeman, H.: *On the encoding of arbitrary geometric configurations*.
   IRE Trans. Electronic Computer 10 (1961) 260-268.
-- [2] Freeman, H.: Boundary encoding and processing. In Lipkin, B., Rosenfeld,
+- [2] Freeman, H.: *Boundary encoding and processing*. In Lipkin, B., Rosenfeld,
   A., eds.: Picture Processing and Psychopictorics, Academic Press, New York
   (1970) 241-266.
-- [3] Braquelaire, J.P., Vialard, A.: Euclidean paths: A new representation of
-  boundary of discrete regions. Graphical Models and Image Processing 61 (1999)
+- [3] Braquelaire, J.P., Vialard, A.: *Euclidean paths: A new representation of
+  boundary of discrete regions*. Graphical Models and Image Processing 61 (1999)
   16-43.
-- [4] http://en.wikipedia.org/wiki/Regular_tiling
-- [5] http://en.wikipedia.org/wiki/Dyck_word
+- [4] :wikipedia:`Regular_tiling`
+- [5] :wikipedia:`Dyck_word`
 
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Arnaud bergeron <abergeron@gmail.coms>,
 #       Copyright (C) 2009 Sebastien Labbe <slabqc@gmail.com>,
@@ -178,8 +177,10 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-from itertools import izip
+from builtins import zip
+
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -487,7 +488,7 @@ of alphabet (=%s) or half the size of alphabet."%(len(steps),alphabet.cardinalit
 
             sage: d = WordPaths('ab',steps=[(1,2),(3,4)])._element_classes
             sage: type(d)
-            <type 'dict'>
+            <... 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -650,7 +651,7 @@ class WordPaths_square_grid(WordPaths_all):
 
             sage: d = WordPaths('abcd')._element_classes
             sage: type(d)
-            <type 'dict'>
+            <... 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -731,7 +732,7 @@ class WordPaths_triangle_grid(WordPaths_all):
             sage: len(d)
             7
             sage: type(d)
-            <type 'dict'>
+            <... 'dict'>
             sage: d['tuple']
             <class 'sage.combinat.words.paths.FiniteWordPath_triangle_grid_tuple'>
         """
@@ -797,7 +798,7 @@ class WordPaths_hexagonal_grid(WordPaths_triangle_grid):
 
             sage: d = WordPaths('abcdef', steps='hexagon')._element_classes
             sage: type(d)
-            <type 'dict'>
+            <... 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -865,7 +866,7 @@ class WordPaths_cube_grid(WordPaths_all):
 
             sage: d = WordPaths('abcdef', steps='cube')._element_classes
             sage: type(d)
-            <type 'dict'>
+            <... 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -932,7 +933,7 @@ class WordPaths_dyck(WordPaths_all):
 
             sage: d = WordPaths('ab', steps='dyck')._element_classes
             sage: type(d)
-            <type 'dict'>
+            <... 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -999,7 +1000,7 @@ class WordPaths_north_east(WordPaths_all):
 
             sage: d = WordPaths('ab', steps='NE')._element_classes
             sage: type(d)
-            <type 'dict'>
+            <... 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -1402,7 +1403,7 @@ class FiniteWordPath_all(SageObject):
             start = next(it)
         elif kind != 'left':
             raise ValueError('unknown value for kind (=%s)'%kind)
-        tout = [point([c], color=color[a], size=size) for a, c in izip(self, it) if a in letters]
+        tout = [point([c], color=color[a], size=size) for a, c in zip(self, it) if a in letters]
         return sum(tout)
 
     def projected_path(self, v=None, ring=None):
@@ -1495,7 +1496,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
           the path is closed, the inside is colored
 
         - ``filloptions`` - (dict,
-          default:dict(rgbcolor='red',alpha=0.2)), ptions for the
+          default:dict(rgbcolor='red',alpha=0.2)), options for the
           inside filling
 
         - ``startpoint`` - (boolean, default: True), draw the start point?
@@ -1608,8 +1609,6 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             Animation with 9 frames
             sage: show(a)               # optional -- ImageMagick
             sage: a.gif(delay=35, iterations=3)    # optional -- ImageMagick
-            doctest:...: DeprecationWarning: use tmp_filename instead
-            See http://trac.sagemath.org/17234 for details.
 
         ::
 
@@ -2028,7 +2027,7 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
             sage: [words.dual_fibonacci_tile(i).area() for i in range(6)]
             [1, 5, 29, 169, 985, 5741]
             sage: oeis(_)[0]                            # optional -- internet
-            A001653: Numbers n such that 2*n^2 - 1 is a square.
+            A001653: Numbers k such that 2*k^2 - 1 is a square.
             sage: _.first_terms()                       # optional -- internet
             (1,
              5,

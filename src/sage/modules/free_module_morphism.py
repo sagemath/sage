@@ -41,12 +41,12 @@ from __future__ import absolute_import
 # returns a vector that the defining matrix can hit from the left, or
 # be coercible into vector space of appropriate dimension.
 
-import sage.misc.misc as misc
 import sage.modules.free_module as free_module
 from . import matrix_morphism
 from sage.structure.sequence import Sequence
 
 from . import free_module_homspace
+
 
 def is_FreeModuleMorphism(x):
     """
@@ -157,7 +157,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             Domain: Vector space of dimension 40 over Rational Field
             Codomain: Vector space of dimension 40 over Rational Field
         """
-        r = "Free module morphism defined by the matrix\n{0}\nDomain: {1}\nCodomain: {2}"
+        r = "Free module morphism defined by the matrix\n{!r}\nDomain: {}\nCodomain: {}"
         return r.format(self.matrix(), self.domain(), self.codomain())
 
     def change_ring(self, R):
@@ -268,6 +268,15 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             [  6   0 8/3]
             sage: phi(Y) == Z
             True
+
+        We test that :trac:`24590` is resolved::
+
+            sage: A = FreeQuadraticModule(ZZ,1,matrix([2]))
+            sage: f = A.Hom(A).an_element()
+            sage: f.inverse_image(A)
+            Free module of degree 1 and rank 1 over Integer Ring
+            Echelon basis matrix:
+            [1]
         """
         if self.rank() == 0:
             # Special case -- if this is the 0 map, then the only possibility
@@ -318,11 +327,10 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         # Finally take the linear combinations of the basis for the
         # domain defined by C. Together with the kernel K, this spans
         # the inverse image of V.
-        if self.domain().is_ambient():
-            L = C.row_module(R)
-        else:
-            L = (C*self.domain().basis_matrix()).row_module(R)
-
+        dom = self.domain()
+        if not dom.is_ambient():
+            C = C * dom.basis_matrix()
+        L = dom.submodule(C.rows())
         return K + L
 
     def lift(self, x):
@@ -334,7 +342,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         that the return value is a coset representative of the domain
         modulo the kernel of the morphism.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X = QQ**2
             sage: V = X.span([[2, 0], [0, 8]], ZZ)

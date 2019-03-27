@@ -43,7 +43,7 @@ Pythonは(ダイナミックではあっても)強い型付けがなされる言
     sage: R.<c> = PolynomialRing(ZZ, implementation='NTL')
     sage: type(a); type(b); type(c)
     <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
-    <class 'sage.rings.polynomial.polynomial_element_generic.PolynomialRing_integral_domain_with_category.element_class'>
+    <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category.element_class'>
     <type 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
 
 
@@ -355,7 +355,7 @@ Sageが宗とするのは歩み寄りだ．
     sage: x+y
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+    TypeError: unsupported operand parent(s) for +: 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
 
 だめな理由は，Sageが有望そうな候補 ``QQ['x']['y']`` ， ``QQ['y']['x']`` ， ``QQ['x','y']`` あるいは ``QQ['y','x']`` のどれも選択できないことである．
 と言うのも，これら4つの相異なる構造はどれも共通なペアレントとして相応しく，基準となるべき選択肢にならないからだ．

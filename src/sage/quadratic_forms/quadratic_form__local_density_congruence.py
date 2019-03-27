@@ -295,7 +295,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
                     nz_flag = True
 
         ## Remember the (vector) index if it's not part of a Jordan block of norm divisible by 8
-        if (nz_flag == True):
+        if nz_flag:
             Not8vec += [i]
 
 
@@ -660,7 +660,7 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 
     ## Check that S1 is non-empty and p|m to proceed, otherwise return no solutions.
-    if (S1_empty_flag == True) or (m % p != 0):
+    if S1_empty_flag or m % p != 0:
         return 0
 
     ## Check some conditions for no bad-type I solutions to exist

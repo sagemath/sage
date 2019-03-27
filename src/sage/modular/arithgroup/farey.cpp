@@ -29,14 +29,8 @@
 #include <Python.h>
 
 #include "farey.hpp"
+#include "sage/modular/arithgroup/farey_symbol.h"
 
-// The following functions are defined in farey_symbols.h, but direct inclusion
-// of this file breaks compilation on cygwin, see trac #13336.
-extern "C" long convert_to_long(PyObject *);
-extern "C" PyObject *convert_to_Integer(mpz_class);
-extern "C" PyObject *convert_to_rational(mpq_class);
-extern "C" PyObject *convert_to_cusp(mpq_class);
-extern "C" PyObject *convert_to_SL2Z(SL2Z);
 
 using namespace std;
 
@@ -91,7 +85,7 @@ istream& operator>>(istream& is, FareySymbol& F) {
      >> F.generators
      >> F.cusps
      >> F.cusp_widths
-     >> F.reductions 
+     >> F.reductions
      >> F.even
      >> F.pairing_in_group;
   return is;
@@ -134,7 +128,7 @@ operator*(const SL2Z& M, const mpq_class& z) {
   return result;
 }
 
-inline 
+inline
 vector<mpq_class>
 operator*(const SL2Z& M, const vector<mpq_class>& v) {
   vector<mpq_class> result;
@@ -142,8 +136,8 @@ operator*(const SL2Z& M, const vector<mpq_class>& v) {
   return result;
 }
 
-inline 
-mpz_class 
+inline
+mpz_class
 floor(const mpq_class r) {
   mpz_class result = mpz_class(r.get_num()/r.get_den());
   if( r >= 0 ) {
@@ -177,9 +171,9 @@ mpz_class gcd(const mpz_class& a, const mpz_class& b) {
 }
 
 inline
-void 
+void
 gcd_ext(mpz_class& g, mpz_class& r, mpz_class& s, const mpz_class& a, const mpz_class& b) {
-  mpz_gcdext(g.get_mpz_t(), 
+  mpz_gcdext(g.get_mpz_t(),
 	     r.get_mpz_t(), s.get_mpz_t(),
 	     a.get_mpz_t(), b.get_mpz_t());
 }
@@ -302,9 +296,9 @@ FareySymbol::FareySymbol(istream& is) {
 // User defined group and restoring from pickle
 
 FareySymbol::FareySymbol(PyObject* o) {
-  if( PyString_Check(o) ) {
+  if( PyBytes_Check(o) ) {
     // restoration from data
-    istringstream is(PyString_AsString(o));
+    istringstream is(PyBytes_AsString(o));
     is >> (*this);
   } else {
     // init with user defined group
@@ -553,7 +547,7 @@ SL2Z FareySymbol::pairing_matrix(const size_t i) const {
 }
 
 SL2Z FareySymbol::pairing_matrix_in_group(const size_t i) const {
-  if (pairing_in_group[i]) 
+  if (pairing_in_group[i])
     return pairing_matrix(i);
   else
     return SL2Z::I*pairing_matrix(i);
@@ -634,7 +628,7 @@ vector<SL2Z> FareySymbol::init_coset_reps() const {
 
 vector<bool> FareySymbol::init_sl2z_lift(const is_element_group *group) const {
   vector<bool> result;
-  for (size_t i=0; i<pairing.size(); i++) 
+  for (size_t i=0; i<pairing.size(); i++)
     if (group->is_member(pairing_matrix(i)) )
       result.push_back(true);
     else
@@ -715,7 +709,7 @@ vector<mpq_class> FareySymbol::init_cusps() const {
 }
 
 vector<SL2Z> FareySymbol::init_reductions() const {
-  vector<SL2Z> reduction(x.size(), SL2Z::E); 
+  vector<SL2Z> reduction(x.size(), SL2Z::E);
   for(size_t j=0; j<x.size(); j++) {
     if( binary_search(cusps.begin(), cusps.end(), x[j]) ) continue;
     size_t k = j;
@@ -776,10 +770,10 @@ size_t FareySymbol::level() const {
 long FareySymbol::side_index(const mpz_class& a0, const mpz_class& b0,
                              const mpz_class& a1, const mpz_class& b1) const {
   if( b0 == 0) {
-    if( ( a1 == a[0] and b1 == b[0]) or 
+    if( ( a1 == a[0] and b1 == b[0]) or
         (-a1 == a[0] and -b1 == b[0])) return 0;
   } else if( b1 == 0 ) {
-        if( ( a0 == a.back() and  b0 == b.back()) or 
+        if( ( a0 == a.back() and  b0 == b.back()) or
             (-a0 == a.back() and -b0 == b.back())) return a.size();
   } else {
     mpq_class p = a1/b1, q = a0/b0;
@@ -790,12 +784,12 @@ long FareySymbol::side_index(const mpz_class& a0, const mpz_class& b0,
   return -1;
 }
 
-void 
+void
 FareySymbol::LLT_algorithm(const SL2Z& M, vector<int>& p, SL2Z& beta) const {
   // Based on: Kurth/Long - Computations with finite index subgroups
   // of PSL_2(ZZ) using Farey Symbols, p.13f
   beta = M;
-  p.clear();  
+  p.clear();
   bool found = false;
   mpq_class m;
   for(;;) {
@@ -868,9 +862,9 @@ FareySymbol::LLT_algorithm(const SL2Z& M, vector<int>& p, SL2Z& beta) const {
         beta = pairing_matrix_in_group(k)*beta;
         p.push_back((int)k + 1);
       } else {
-        //Based on Lemma 4 of the article by Kurth/Long, 
+        //Based on Lemma 4 of the article by Kurth/Long,
         //this case can not occure.
-        throw string("Mathematical compilcations in ") + 
+        throw string("Mathematical complications in ") +
               __FUNCTION__;
 	return;
       }
@@ -883,7 +877,7 @@ FareySymbol::LLT_algorithm(const SL2Z& M, vector<int>& p, SL2Z& beta) const {
 
 bool FareySymbol::is_element(const SL2Z& M) const {
   // based on the same article as LLT_algorithm:
-  // Kurth/Long - Computations with finite index ... 
+  // Kurth/Long - Computations with finite index ...
   vector<int> p;
   SL2Z beta = SL2Z::E;
   size_t k = 0;
@@ -906,13 +900,13 @@ bool FareySymbol::is_element(const SL2Z& M) const {
   // Case (2) of the article
   if( beta.c() != 0 and beta.d() != 0 ) {
     // Find index of the "edge beta"
-    smaller = !((beta.b()/beta.d())<(beta.a()/beta.c())) ? 
+    smaller = !((beta.b()/beta.d())<(beta.a()/beta.c())) ?
       (beta.a()/beta.c()) : (beta.b()/beta.d());
     for(size_t i=0; i<x.size(); i++)
       if( x[i] == smaller ) {
 	k = i;
 	break;
-      }	  
+      }
     // Is it a free pairing?
       if( pairing[k+1] > NO ) {
 	size_t s = paired_side(pairing, k+1);
@@ -926,9 +920,9 @@ bool FareySymbol::is_element(const SL2Z& M) const {
 	    if ( beta == SL2Z::E ) return true;
 	    else return false;
 	  }
-	
-	if( s == pairing.size() -1 and 
-	    x.back() == 0  and 
+
+	if( s == pairing.size() -1 and
+	    x.back() == 0  and
 	    beta.a()/beta.c() > beta.b()/beta.d() ) {
 	  // paired with (0,infty) at the end?
 	  return true;
@@ -982,7 +976,7 @@ size_t FareySymbol::cusp_class(const mpq_class& q) const {
 
 //--- communication with sage ------------------------------------------------
 
-PyObject* FareySymbol::get_transformation_to_cusp(const mpz_t a, 
+PyObject* FareySymbol::get_transformation_to_cusp(const mpz_t a,
 						  const mpz_t b) const {
   mpz_class p(a), q(b);
   if( q == 0 ) return convert_to_SL2Z(SL2Z::E);
@@ -996,7 +990,7 @@ size_t FareySymbol::index() const {
   return coset.size();
 }
 
-PyObject* FareySymbol::is_element(const mpz_t a, const mpz_t b, 
+PyObject* FareySymbol::is_element(const mpz_t a, const mpz_t b,
 				  const mpz_t c, const mpz_t d) const {
   const SL2Z M = SL2Z(mpz_class(a), mpz_class(b), mpz_class(c), mpz_class(d));
   if( is_element(M) ) {
@@ -1006,7 +1000,7 @@ PyObject* FareySymbol::is_element(const mpz_t a, const mpz_t b,
   }
 }
 
-PyObject* FareySymbol::word_problem(const mpz_t a, const mpz_t b, 
+PyObject* FareySymbol::word_problem(const mpz_t a, const mpz_t b,
 				    const mpz_t c, const mpz_t d, SL2Z *beta) const {
   const SL2Z M = SL2Z(mpz_class(a), mpz_class(b), mpz_class(c), mpz_class(d));
   vector<int> p;
@@ -1070,13 +1064,13 @@ PyObject* FareySymbol::get_cusp_widths() const {
 }
 
 
-size_t 
+size_t
 FareySymbol::get_cusp_class(const mpz_t p, const mpz_t q) const {
   mpz_class a(p), b(q);
   if( a != 0 and b == 0 ) return cusp_classes.back();
   mpq_class c(a, b);
   c.canonicalize();
-  return cusp_class(c); 
+  return cusp_class(c);
 }
 
 PyObject* FareySymbol::get_fractions() const {
@@ -1132,7 +1126,7 @@ PyObject* FareySymbol::get_pairing_matrices() const {
 PyObject* FareySymbol::dumps() const {
   std::ostringstream os(ostringstream::out|ostringstream::binary);
   os << (*this);
-  PyObject* d = PyString_FromString(os.str().c_str());
+  PyObject* d = PyBytes_FromString(os.str().c_str());
   return d;
 }
 

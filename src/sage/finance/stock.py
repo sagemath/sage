@@ -15,6 +15,11 @@ This module's main class is :class:`Stock`. It defines the following methods:
     :meth:`~sage.finance.stock.Stock.close` | Return the time series of all historical closing prices for this stock.
     :meth:`~sage.finance.stock.Stock.load_from_file` | Load historical data from a local csv formatted data file.
 
+.. WARNING::
+
+    The `Stock` class is currently broken due to the change in the Yahoo
+    interface. See :trac:`25473`.
+
 AUTHORS:
 
 - William Stein, 2008
@@ -25,7 +30,8 @@ AUTHORS:
 
 TESTS::
 
-    sage: ohlc = sage.finance.stock.OHLC('18-Aug-04', 100.01, 104.06, 95.96, 100.34, 22353092)
+    sage: from sage.finance.stock import OHLC
+    sage: ohlc = OHLC('18-Aug-04', 100.01, 104.06, 95.96, 100.34, 22353092)
     sage: loads(dumps(ohlc)) == ohlc
     True
 
@@ -57,12 +63,16 @@ class OHLC:
 
         EXAMPLES::
 
-            sage: sage.finance.stock.OHLC('18-Aug-04', 100.01, 104.06, 95.96, 100.34, 22353092)
+            sage: from sage.finance.stock import OHLC
+            sage: OHLC('18-Aug-04', 100.01, 104.06, 95.96, 100.34, 22353092)
              18-Aug-04 100.01 104.06 95.96 100.34   22353092
         """
         self.timestamp = timestamp
-        self.open=float(open); self.high=float(high); self.low=float(low); self.close=float(close)
-        self.volume=int(volume)
+        self.open = float(open)
+        self.high = float(high)
+        self.low = float(low)
+        self.close = float(close)
+        self.volume = int(volume)
 
     def __repr__(self):
         """
@@ -70,27 +80,65 @@ class OHLC:
 
         EXAMPLES::
 
-            sage: sage.finance.stock.OHLC('18-Aug-04', 100.01, 104.06, 95.96, 100.34, 22353092).__repr__()
+            sage: from sage.finance.stock import OHLC
+            sage: OHLC('18-Aug-04', 100.01, 104.06, 95.96, 100.34, 22353092).__repr__()
             ' 18-Aug-04 100.01 104.06 95.96 100.34   22353092'
         """
-        return '%10s %4.2f %4.2f %4.2f %4.2f %10d'%(self.timestamp, self.open, self.high,
+        return '%10s %4.2f %4.2f %4.2f %4.2f %10d' % (self.timestamp, self.open, self.high,
                    self.low, self.close, self.volume)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Compare ``self`` and ``other``.
 
         EXAMPLES::
 
-            sage: ohlc = sage.finance.stock.OHLC('18-Aug-04', 100.01, 104.06, 95.96, 100.34, 22353092)
-            sage: ohlc2 = sage.finance.stock.OHLC('18-Aug-04', 101.01, 104.06, 95.96, 100.34, 22353092)
-            sage: cmp(ohlc, ohlc2)
-            -1
+            sage: from sage.finance.stock import OHLC
+            sage: ohlc = OHLC('18-Aug-04', 100.01, 104.06, 95.96, 100.34, 22353092)
+            sage: ohlc2 = OHLC('18-Aug-04', 101.01, 104.06, 95.96, 100.34, 22353092)
+            sage: ohlc == ohlc2
+            False
         """
         if not isinstance(other, OHLC):
-            return cmp(type(self), type(other))
-        return cmp((self.timestamp, self.open, self.high, self.low, self.close, self.volume),
-                   (other.timestamp, other.open, other.high, other.low, other.close, other.volume))
+            return False
+        return (self.timestamp == other.timestamp and
+                self.open == other.open and
+                self.high == other.high and
+                self.low == other.low and
+                self.close == other.close and
+                self.volume == other.volume)
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.finance.stock import OHLC
+            sage: ohlc = OHLC('18-Aug-04', 100.01, 104.06, 95.96, 100.34, 22353092)
+            sage: H = hash(ohlc)
+        """
+        return hash((self.timestamp,
+                     self.open,
+                     self.high,
+                     self.low,
+                     self.close ,
+                     self.volume))
+
+    def __ne__(self, other):
+        """
+        Compare ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.finance.stock import OHLC
+            sage: ohlc = OHLC('18-Aug-04', 100.01, 104.06, 95.96, 100.34, 22353092)
+            sage: ohlc2 = OHLC('18-Aug-04', 101.01, 104.06, 95.96, 100.34, 22353092)
+            sage: ohlc != ohlc2
+            True
+        """
+        return not (self == other)
+    
 
 class Stock:
     """
@@ -119,7 +167,7 @@ class Stock:
         EXAMPLES::
 
             sage: S = finance.Stock('ibm') # optional -- internet
-            sage: S        # optional -- internet
+            sage: S        # optional -- internet # known bug
             IBM (...)
         """
         self.symbol = symbol.upper()
@@ -131,7 +179,7 @@ class Stock:
 
         EXAMPLES::
 
-            sage: finance.Stock('ibm').__repr__()     # optional -- internet
+            sage: finance.Stock('ibm').__repr__()     # optional -- internet # known bug
             'IBM (...)'
         """
         return "%s (%s)"%(self.symbol, self.market_value())
@@ -146,7 +194,7 @@ class Stock:
 
         EXAMPLES::
 
-            sage: finance.Stock('goog').market_value()   # random; optional - internet
+            sage: finance.Stock('goog').market_value()   # random; optional - internet # known bug
             575.83000000000004
         """
         return float(self.current_price_data()['price'])
@@ -155,7 +203,7 @@ class Stock:
         r"""
         Get Yahoo current price data for this stock.
 
-        This method returns a dictionary wit the following keys:
+        This method returns a dictionary with the following keys:
 
 
         .. csv-table::
@@ -171,7 +219,7 @@ class Stock:
 
         EXAMPLES::
 
-            sage: finance.Stock('GOOG').current_price_data()  #  random; optional - internet
+            sage: finance.Stock('GOOG').current_price_data()  #  random; optional - internet # known bug
             {'200day_moving_avg': '536.57',
              '50day_moving_avg': '546.01',
              '52_week_high': '599.65',
@@ -195,7 +243,7 @@ class Stock:
 
         TESTS::
 
-            sage: finance.Stock('GOOG').current_price_data()  # optional -- internet
+            sage: finance.Stock('GOOG').current_price_data()  # optional -- internet # known bug
             {'200day_moving_avg': ...,
              '50day_moving_avg': ...,
              '52_week_high': ...,
@@ -280,7 +328,7 @@ class Stock:
 
         We get the first five days of VMware's stock history::
 
-            sage: finance.Stock('vmw').history('Aug+13,+2007')[:5] # optional -- internet
+            sage: finance.Stock('vmw').history('Aug+13,+2007')[:5] # optional -- internet # known bug
             [
              14-Aug-07 50.00 55.50 48.00 51.00   38262850,
              15-Aug-07 52.11 59.87 51.50 57.71   10689100,
@@ -288,7 +336,7 @@ class Stock:
              17-Aug-07 59.00 59.00 54.45 55.55    3087000,
              20-Aug-07 56.05 57.50 55.61 57.33    2141900
             ]
-            sage: finance.Stock('F').history('Aug+20,+1992', 'Jul+7,+2008')[:5] # optional -- internet
+            sage: finance.Stock('F').history('Aug+20,+1992', 'Jul+7,+2008')[:5] # optional -- internet # known bug
             [
              20-Aug-92 0.00 7.90 7.73 7.83    5492698,
              21-Aug-92 0.00 7.92 7.66 7.68    5345999,
@@ -302,7 +350,7 @@ class Stock:
         leading up to the specified end date.  For example, Apple's (AAPL)
         stock history only dates back to September 7, 1984::
 
-            sage: finance.Stock('AAPL').history('Sep+1,+1900', 'Jan+1,+2000')[0:5] # optional -- internet
+            sage: finance.Stock('AAPL').history('Sep+1,+1900', 'Jan+1,+2000')[0:5] # optional -- internet # known bug
             [
               4-Jan-99 0.00 1.51 1.43 1.47  238221200,
               5-Jan-99 0.00 1.57 1.48 1.55  352522800,
@@ -314,7 +362,7 @@ class Stock:
         Here is an example where we create and get the history of a stock
         that is not in NASDAQ or NYSE::
 
-            sage: finance.Stock("OTC:NTDOY").history(startdate="Jan+1,+2007", enddate="Jan+1,+2008")[:5]  # optional -- internet
+            sage: finance.Stock("OTC:NTDOY").history(startdate="Jan+1,+2007", enddate="Jan+1,+2008")[:5]  # optional -- internet # known bug
             [
               3-Jan-07 32.44 32.75 32.30 32.44     156283,
               4-Jan-07 31.70 32.40 31.20 31.70     222643,
@@ -329,7 +377,7 @@ class Stock:
         the symbol and cid do not match, the history based on the
         contract id will be returned. ::
 
-            sage: sage.finance.stock.Stock("AAPL", 22144).history(startdate='Jan+1,+1990')[:5] #optional -- internet
+            sage: sage.finance.stock.Stock("AAPL", 22144).history(startdate='Jan+1,+1990')[:5] #optional -- internet # known bug
             [
               8-Jun-99 0.00 1.74 1.70 1.70   78414000,
               9-Jun-99 0.00 1.73 1.69 1.73   88446400,
@@ -341,10 +389,9 @@ class Stock:
         if enddate is None:
             enddate = date.today().strftime("%b+%d,+%Y")
 
-        cid = self.cid
         symbol = self.symbol
 
-        if self.cid=='':
+        if self.cid == '':
             if ':' in symbol:
                 R = self._get_data('', startdate, enddate, histperiod)
             else:
@@ -382,14 +429,14 @@ class Stock:
 
         You can directly obtain Open data as so::
 
-            sage: finance.Stock('vmw').open(startdate='Jan+1,+2008', enddate='Feb+1,+2008')                 # optional -- internet
+            sage: finance.Stock('vmw').open(startdate='Jan+1,+2008', enddate='Feb+1,+2008')                 # optional -- internet # known bug
             [85.4900, 84.9000, 82.0000, 81.2500, ... 82.0000, 58.2700, 54.4900, 55.6000, 56.9800]
 
         Or, you can initialize stock data first and then extract the Open
         data::
 
-            sage: c = finance.Stock('vmw') # optional -- internet
-            sage: c.history(startdate='Feb+1,+2008', enddate='Mar+1,+2008')[:5]    # optional -- internet
+            sage: c = finance.Stock('vmw') # optional -- internet # known bug
+            sage: c.history(startdate='Feb+1,+2008', enddate='Mar+1,+2008')[:5]    # optional -- internet # known bug
             [
               1-Feb-08 56.98 58.14 55.06 57.85    2490481,
               4-Feb-08 58.00 60.47 56.91 58.05    1840709,
@@ -397,13 +444,13 @@ class Stock:
               6-Feb-08 60.32 62.00 59.50 61.52    2211775,
               7-Feb-08 60.50 62.75 59.56 60.80    1521651
             ]
-            sage: c.open()    # optional -- internet
+            sage: c.open()    # optional -- internet # known bug
             [56.9800, 58.0000, 57.6000, 60.3200, ... 56.5500, 59.3000, 60.0000, 59.7900, 59.2600]
 
         Otherwise, :meth:`history` will be called with the default
         arguments returning a year's worth of data::
 
-            sage: finance.Stock('vmw').open()   # random; optional -- internet
+            sage: finance.Stock('vmw').open()   # random; optional -- internet # known bug
             [52.1100, 60.9900, 59.0000, 56.0500, 57.2500, ... 83.0500, 85.4900, 84.9000, 82.0000, 81.2500]
         """
 
@@ -441,14 +488,14 @@ class Stock:
 
         You can directly obtain close data as so::
 
-            sage: finance.Stock('vmw').close(startdate='Jan+1,+2008', enddate='Feb+1,+2008')                 # optional -- internet
+            sage: finance.Stock('vmw').close(startdate='Jan+1,+2008', enddate='Feb+1,+2008')                 # optional -- internet # known bug
             [84.6000, 83.9500, 80.4900, 72.9900, ... 83.0000, 54.8700, 56.4200, 56.6700, 57.8500]
 
         Or, you can initialize stock data first and then extract the Close
         data::
 
-            sage: c = finance.Stock('vmw')  # optional -- internet
-            sage: c.history(startdate='Feb+1,+2008', enddate='Mar+1,+2008')[:5]    # optional -- internet
+            sage: c = finance.Stock('vmw')  # optional -- internet # known bug
+            sage: c.history(startdate='Feb+1,+2008', enddate='Mar+1,+2008')[:5]    # optional -- internet # known bug
             [
               1-Feb-08 56.98 58.14 55.06 57.85    2490481,
               4-Feb-08 58.00 60.47 56.91 58.05    1840709,
@@ -456,19 +503,19 @@ class Stock:
               6-Feb-08 60.32 62.00 59.50 61.52    2211775,
               7-Feb-08 60.50 62.75 59.56 60.80    1521651
             ]
-            sage: c.close()    # optional -- internet
+            sage: c.close()    # optional -- internet # known bug
             [57.8500, 58.0500, 59.3000, 61.5200, ... 58.2900, 60.1800, 59.8600, 59.9500, 58.6700]
 
         Otherwise, :meth:`history` will be called with the default
         arguments returning a year's worth of data::
 
-            sage: finance.Stock('vmw').close()   # random; optional -- internet
+            sage: finance.Stock('vmw').close()   # random; optional -- internet # known bug
             [57.7100, 56.9900, 55.5500, 57.3300, 65.9900 ... 84.9900, 84.6000, 83.9500, 80.4900, 72.9900]
         """
 
         from .time_series import TimeSeries
 
-        if len(args) != 0:
+        if args:
             return TimeSeries([x.close for x in self.history(*args, **kwds)])
 
         try:
@@ -503,7 +550,8 @@ class Stock:
         object like so. Note that the path must be explicit::
 
             sage: filename = tmp_filename(ext='.csv')
-            sage: open(filename,'w').write("Date,Open,High,Low,Close,Volume\n1212405780,187.80,187.80,187.80,187.80,100\n1212407640,187.75,188.00,187.75,188.00,2000\n1212407700,188.00,188.00,188.00,188.00,1000\n1212408000,188.00,188.11,188.00,188.00,2877\n1212408060,188.00,188.00,188.00,188.00,687")
+            sage: with open(filename, 'w') as fobj:
+            ....:     _ = fobj.write("Date,Open,High,Low,Close,Volume\n1212405780,187.80,187.80,187.80,187.80,100\n1212407640,187.75,188.00,187.75,188.00,2000\n1212407700,188.00,188.00,188.00,188.00,1000\n1212408000,188.00,188.11,188.00,188.00,2877\n1212408060,188.00,188.00,188.00,188.00,687")
             sage: finance.Stock('aapl').load_from_file(filename)[:5]
             [
             1212408060 188.00 188.00 188.00 188.00        687,
@@ -528,20 +576,11 @@ class Stock:
             1212407640 187.75 188.00 187.75 188.00       2000,
             1212405780 187.80 187.80 187.80 187.80        100
             ]
-
-        This tests a file that doesn't exist::
-
-            sage: finance.Stock("AAPL").load_from_file("I am not a file")
-            Traceback (most recent call last):
-            ...
-            IOError: [Errno 2] No such file or directory: 'I am not a file'
         """
-        file_obj = open(file, 'r')
-        R = file_obj.read();
-        self.__historical = self._load_from_csv(R)
-        file_obj.close()
+        with open(file) as file_obj:
+            R = file_obj.read()
+            self.__historical = self._load_from_csv(R)
         return self.__historical
-
 
     def _load_from_csv(self, R):
         r"""
@@ -550,7 +589,8 @@ class Stock:
         This indirectly tests ``_load_from_csv()``::
 
             sage: filename = tmp_filename(ext='.csv')
-            sage: open(filename,'w').write("Date,Open,High,Low,Close,Volume\n1212405780,187.80,187.80,187.80,187.80,100\n1212407640,187.75,188.00,187.75,188.00,2000\n1212407700,188.00,188.00,188.00,188.00,1000\n1212408000,188.00,188.11,188.00,188.00,2877\n1212408060,188.00,188.00,188.00,188.00,687")
+            sage: with open(filename,'w') as fobj:
+            ....:     _ = fobj.write("Date,Open,High,Low,Close,Volume\n1212405780,187.80,187.80,187.80,187.80,100\n1212407640,187.75,188.00,187.75,188.00,2000\n1212407700,188.00,188.00,188.00,188.00,1000\n1212408000,188.00,188.11,188.00,188.00,2877\n1212408060,188.00,188.00,188.00,188.00,687")
             sage: finance.Stock('aapl').load_from_file(filename)
             [
             1212408060 188.00 188.00 188.00 188.00        687,
@@ -561,12 +601,11 @@ class Stock:
             ]
         """
         R = R.splitlines()
-        headings = R[0].split(',')
         hist_data = []
         for x in reversed(R[1:]):
             try:
                 timestamp, opn, high, low, close, volume = x.split(',')
-                ohlc = OHLC(timestamp, opn,high,low,close,volume)
+                ohlc = OHLC(timestamp, opn, high, low, close, volume)
                 hist_data.append(ohlc)
             except ValueError:
                 pass
@@ -581,7 +620,7 @@ class Stock:
 
         This indirectly tests the use of ``_get_data()``::
 
-            sage: finance.Stock('aapl').history(startdate='Jan+1,+1990',enddate='Jan+1,+1991')[:2]    # optional -- internet
+            sage: finance.Stock('aapl').history(startdate='Jan+1,+1990',enddate='Jan+1,+1991')[:2]    # optional -- internet # known bug
             [
               2-Jan-90 0.00 1.34 1.25 1.33   45799600,
               3-Jan-90 0.00 1.36 1.34 1.34   51998800
@@ -589,7 +628,7 @@ class Stock:
 
         TESTS::
 
-            sage: finance.Stock('whatever').history() # optional -- internet
+            sage: finance.Stock('whatever').history() # optional -- internet # known bug
             Traceback (most recent call last):
             ...
             RuntimeError: Google reported a wrong request (did you specify a cid?)

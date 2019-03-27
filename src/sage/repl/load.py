@@ -16,6 +16,8 @@ Load Python, Sage, Cython, Fortran and Magma files in Sage
 import os
 import base64
 
+from sage.cpython.string import str_to_bytes, bytes_to_str, FS_ENCODING
+
 def is_loadable_filename(filename):
     """
     Returns whether a file can be loaded into Sage.  This checks only
@@ -96,33 +98,36 @@ def load(filename, globals, attach=False):
     Note that ``.py`` files are *not* preparsed::
 
         sage: t = tmp_filename(ext='.py')
-        sage: open(t,'w').write("print 'hi', 2/3; z = -2/7")
+        sage: with open(t, 'w') as f:
+        ....:     _ = f.write("print(('hi', 2^3)); z = -2^7")
         sage: z = 1
-        sage: sage.repl.load.load(t, globals())  # optional - python2
-        hi 0
-        sage: z  # optional - python2
-        -1
+        sage: sage.repl.load.load(t, globals())
+        ('hi', 1)
+        sage: z
+        -7
 
     A ``.sage`` file *is* preparsed::
 
         sage: t = tmp_filename(ext='.sage')
-        sage: open(t,'w').write("print 'hi', 2/3; z = -2/7")
+        sage: with open(t, 'w') as f:
+        ....:     _ = f.write("print(('hi', 2^3)); z = -2^7")
         sage: z = 1
         sage: sage.repl.load.load(t, globals())
-        hi 2/3
+        ('hi', 8)
         sage: z
-        -2/7
+        -128
 
     Cython files are *not* preparsed::
 
         sage: t = tmp_filename(ext='.pyx')
-        sage: open(t,'w').write("print 'hi', 2/3; z = -2/7")
+        sage: with open(t, 'w') as f:
+        ....:     _ = f.write("print(('hi', 2^3)); z = -2^7")
         sage: z = 1
         sage: sage.repl.load.load(t, globals())
         Compiling ...
-        hi 0
+        ('hi', 1)
         sage: z
-        -1
+        -7
 
     If the file isn't a Cython, Python, or a Sage file, a ValueError
     is raised::
@@ -145,7 +150,8 @@ def load(filename, globals, attach=False):
     We attach a file::
 
         sage: t = tmp_filename(ext='.py')
-        sage: open(t,'w').write("print 'hello world'")
+        sage: with open(t, 'w') as f:
+        ....:     _ = f.write("print('hello world')")
         sage: sage.repl.load.load(t, globals(), attach=True)
         hello world
         sage: t in attached_files()
@@ -166,10 +172,12 @@ def load(filename, globals, attach=False):
         sage: load_attach_path()
         ['.']
         sage: t_dir = tmp_dir()
-        sage: fullpath = os.path.join(t_dir, 'test.py')
-        sage: open(fullpath, 'w').write("print 37 * 3")
+        sage: fname = 'test.py'
+        sage: fullpath = os.path.join(t_dir, fname)
+        sage: with open(fullpath, 'w') as f:
+        ....:     _ = f.write("print(37 * 3)")
         sage: load_attach_path(t_dir)
-        sage: attach('test.py')
+        sage: attach(fname)
         111
         sage: sage.repl.attach.reset(); reset_load_attach_path() # clean up
 
@@ -185,7 +193,9 @@ def load(filename, globals, attach=False):
 
     Make sure that load handles filenames with spaces in the name or path::
 
-        sage: t = tmp_filename(ext=' b.sage'); open(t,'w').write("print 2")
+        sage: t = tmp_filename(ext=' b.sage')
+        sage: with open(t, 'w') as f:
+        ....:     _ = f.write("print(2)")
         sage: sage.repl.load.load(t, globals())
         2
 
@@ -195,58 +205,20 @@ def load(filename, globals, attach=False):
         Traceback (most recent call last):
         ...
         IOError: did not find file 'this file should not exist' to load or attach
-
-    Evaluating a filename is deprecated::
-
-        sage: sage.repl.load.load("tmp_filename(ext='.py')", globals())
-        doctest:...: DeprecationWarning: using unevaluated expressions as argument to load() is dangerous and deprecated
-        See http://trac.sagemath.org/17654 for details.
-
-    Test filenames separated by spaces (deprecated)::
-
-        sage: t = tmp_filename(ext='.py')
-        sage: with open(t, 'w') as f:
-        ....:     f.write("print 'hello'\n")
-        sage: sage.repl.load.load(t + " " + t, globals())
-        hello
-        hello
-        doctest:...: DeprecationWarning: using multiple filenames separated by spaces as load() argument is dangerous and deprecated
-        See http://trac.sagemath.org/17654 for details.
     """
     if attach:
         from sage.repl.attach import add_attached_file
 
+    if isinstance(filename, bytes):
+        # For Python 3 in particular, convert bytes filenames to str since the
+        # rest of this functions operate on filename as a str
+        filename = bytes_to_str(filename, FS_ENCODING, 'surrogateescape')
+
     filename = os.path.expanduser(filename)
-    if not os.path.exists(filename):
-        try:
-            # Try *evaluating* the filename
-            filename = eval(filename, globals).strip()
-        except Exception:
-            # Handle multiple input files separated by spaces, which was
-            # maybe a bad idea, but which we have to handle for backwards
-            # compatibility.
-            v = filename.split()
-            if len(v) > 1:
-                try:
-                    for f in v:
-                        load(f, globals, attach=attach)
-                except IOError:
-                    # Splitting the filename didn't work, pretend it
-                    # didn't happen :-)
-                    pass
-                else:
-                    # Only show deprecation message if the filename
-                    # splitting worked.
-                    from sage.misc.superseded import deprecation
-                    deprecation(17654, 'using multiple filenames separated by spaces as load() argument is dangerous and deprecated')
-                    return
-        else:
-            from sage.misc.superseded import deprecation
-            deprecation(17654, 'using unevaluated expressions as argument to load() is dangerous and deprecated')
 
     if filename.lower().startswith(('http://', 'https://')):
         if attach:
-            # But see http://en.wikipedia.org/wiki/HTTP_ETag for how
+            # But see https://en.wikipedia.org/wiki/HTTP_ETag for how
             # we will do this.
             # http://www.diveintopython.net/http_web_services/etags.html
             raise NotImplementedError("you can't attach a URL")
@@ -287,7 +259,8 @@ def load(filename, globals, attach=False):
             # Preparse in memory only for speed.
             if attach:
                 add_attached_file(fpath)
-            exec(preparse_file(open(fpath).read()) + "\n", globals)
+            with open(fpath) as f:
+                exec(preparse_file(f.read()) + "\n", globals)
     elif ext == '.spyx' or ext == '.pyx':
         if attach:
             add_attached_file(fpath)
@@ -329,8 +302,14 @@ def load_wrap(filename, attach=False):
         'sage.repl.load.load(sage.repl.load.base64.b64decode("Zm9vLnB5"),globals(),True)'
         sage: sage.repl.load.load_wrap('foo.sage')
         'sage.repl.load.load(sage.repl.load.base64.b64decode("Zm9vLnNhZ2U="),globals(),False)'
-        sage: sage.repl.load.base64.b64decode("Zm9vLnNhZ2U=")
-        'foo.sage'
+        sage: m = sage.repl.load.base64.b64decode("Zm9vLnNhZ2U=")
+        sage: m == b'foo.sage'
+        True
     """
+
+    # Note: On Python 3 b64encode only accepts bytes, and returns bytes (yet
+    # b64decode does accept str, but always returns bytes)
+    b64 = base64.b64encode(str_to_bytes(filename, FS_ENCODING,
+                                        "surrogateescape"))
     return 'sage.repl.load.load(sage.repl.load.base64.b64decode("{}"),globals(),{})'.format(
-        base64.b64encode(filename), attach)
+            bytes_to_str(b64, 'ascii'), attach)

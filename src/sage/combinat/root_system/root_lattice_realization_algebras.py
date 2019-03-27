@@ -13,13 +13,16 @@ Group algebras of root lattice realizations
 from __future__ import print_function
 
 import functools, operator
-from sage.misc.cachefunc import cached_method, cached_function
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.categories.algebra_functor import AlgebrasCategory
 lazy_import('sage.rings.integer_ring', 'ZZ')
 from sage.modules.free_module_element import vector
 from sage.combinat.root_system.hecke_algebra_representation import HeckeAlgebraRepresentation
+
+import six
+
 
 class Algebras(AlgebrasCategory):
     """
@@ -40,9 +43,9 @@ class Algebras(AlgebrasCategory):
             EXAMPLES::
 
                 sage: RootSystem(["A",2,1]).ambient_space().algebra(QQ) # indirect doctest
-                Group algebra of the Ambient space of the Root system of type ['A', 2, 1] over Rational Field
+                Algebra of the Ambient space of the Root system of type ['A', 2, 1] over Rational Field
             """
-            return "Group algebra of the %s over %s"%(self.basis().keys(),self.base_ring())
+            return "Algebra of the %s over %s"%(self.basis().keys(),self.base_ring())
 
         def some_elements(self):
             r"""
@@ -116,7 +119,7 @@ class Algebras(AlgebrasCategory):
             .. TODO:: make this work for Laurent polynomials too
             """
             L = self.basis().keys()
-            return self.sum_of_terms((L.from_vector(vector(t)), c) for (t,c) in p.dict().iteritems())
+            return self.sum_of_terms((L.from_vector(vector(t)), c) for (t,c) in six.iteritems(p.dict()))
 
         @cached_method
         def divided_difference_on_basis(self, weight, i):
@@ -253,13 +256,13 @@ class Algebras(AlgebrasCategory):
             This is indeed a Schur function::
 
                 sage: s = SymmetricFunctions(QQ).s()
-                sage: s[2,1].expand(3, P.gens())
+                sage: s[2,1].expand(3, P.variable_names())
                 x^2*y + x*y^2 + x^2*z + 2*x*y*z + y^2*z + x*z^2 + y*z^2
 
             Let us check this systematically on Schur functions of degree 6::
 
                 sage: for p in Partitions(6, max_length=3).list():
-                ....:     assert s.monomial(p).expand(3, P.gens()) == pi0(KL.monomial(L(tuple(p)))).expand(P.gens())
+                ....:     assert s.monomial(p).expand(3, P.variable_names()) == pi0(KL.monomial(L(tuple(p)))).expand(P.gens())
 
             We check systematically that these operators satisfy the Iwahori-Hecke algebra relations::
 
@@ -734,7 +737,7 @@ class Algebras(AlgebrasCategory):
             # In type BC dual we used q^2 and q elsewhere
             # Not sure this is the right thing to do or just a workaround ...
             # This probably makes up for the fact that, in type BC
-            # dual, the null null coroot is twice Sage's deltacheck
+            # dual, the null coroot is twice Sage's deltacheck
             # whereas the null root is delta. So we need to map delta
             # to q^2 in the q_projection.
             # Should this go in q_project instead?
@@ -864,12 +867,12 @@ class Algebras(AlgebrasCategory):
 
                 sage: KL = RootSystem(["A",2,1]).ambient_space().algebra(QQ)
                 sage: KL.classical()
-                Group algebra of the Ambient space of the Root system of type ['A', 2] over Rational Field
+                Algebra of the Ambient space of the Root system of type ['A', 2] over Rational Field
             """
             return self.basis().keys().classical().algebra(self.base_ring())
 
         def q_project_on_basis(self, l, q):
-            """
+            r"""
             Return the monomial `c * cl(l)`  in the group algebra of the classical lattice.
 
             INPUT:
@@ -897,7 +900,7 @@ class Algebras(AlgebrasCategory):
             return KL0.term(L0(l), q**l["delta"])
 
         def q_project(self, x, q):
-            """
+            r"""
             Implement the `q`-projection morphism from ``self`` to the group algebra of the classical space.
 
             INPUT:
@@ -1089,7 +1092,7 @@ class Algebras(AlgebrasCategory):
                     sage: T = KL.twisted_demazure_lusztig_operators(q1,q2, convention="dominant")
                     sage: T._test_relations()
                     Traceback (most recent call last):
-                    ... tester.assert_(Ti(Ti(x,i,-q2),i,-q1).is_zero()) ...
+                    ... tester.assertTrue(Ti(Ti(x,i,-q2),i,-q1).is_zero()) ...
                     AssertionError: False is not true
 
             Comparison with T0::
@@ -1167,13 +1170,13 @@ class Algebras(AlgebrasCategory):
             TESTS::
 
                 sage: type(p.expand(F.gens()))
-                <type 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <... 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
 
                 sage: p = KL.zero()
                 sage: p.expand(F.gens())
                 0
                 sage: type(p.expand(F.gens()))
-                <type 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <... 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
             """
             codomain = alphabet[0].parent()
             return codomain.sum( c * prod(X**int(n) for X,n in zip(alphabet,vector(m))) for m,c in self)

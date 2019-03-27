@@ -14,7 +14,7 @@ cdef extern from "math.h":
 def black_scholes(double spot_price, double strike_price, double time_to_maturity, double risk_free_rate, double vol, opt_type):
     r"""
     Calculates call/put price of European style options
-    using Black-Scholes formula.  See [S]_ for one of many
+    using Black-Scholes formula.  See [Shr2004]_ for one of many
     standard references for this formula.
 
     INPUT:
@@ -45,11 +45,6 @@ def black_scholes(double spot_price, double strike_price, double time_to_maturit
         Traceback (most recent call last):
         ...
         ValueError: 'whichever makes me more money' is not a valid string
-
-    REFERENCES:
-
-    .. [S] Shreve, S. Stochastic Calculus for Finance II: Continuous-Time
-      Models.  New York: Springer, 2004
     """
     #First we calculate d1, d1=d11*d12, d12=d121+d122*d123
     cdef double d11 = 1/(vol*sqrt(time_to_maturity))

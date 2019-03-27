@@ -10,7 +10,7 @@ Point counting on curves
 How do you count points on an elliptic curve over a finite field in
 Sage?
 
-Over prime finite fields, includes both the the baby step giant step
+Over prime finite fields, includes both the baby step giant step
 method and the SEA (Schoof-Elkies-Atkin) algorithm (implemented in PARI
 by Christophe Doche and Sylvain Duquesne). An example taken form the
 Reference manual:
@@ -164,7 +164,7 @@ Other methods
        sage: klein1 = f.Adj_div(); print(klein1)
        [1]:
           [1]:
-             //   characteristic : 2
+             //   coefficients: ZZ/2
        //   number of vars : 2
        //        block   1 : ordering lp
        //                  : names    x y
@@ -187,13 +187,13 @@ Other methods
        sage: print(klein1)
        [1]:
           [1]:
-             //   characteristic : 2
+             //   coefficients: ZZ/2
        //   number of vars : 2
        //        block   1 : ordering lp
        //                  : names    x y
        //        block   2 : ordering C
           [2]:
-             //   characteristic : 2
+             //   coefficients: ZZ/2
        //   number of vars : 3
        //        block   1 : ordering lp
        //                  : names    x y z
@@ -210,7 +210,7 @@ Other methods
        [5]:
           [1]:
              [1]:
-                //   characteristic : 2
+                //   coefficients: ZZ/2
        //   number of vars : 3
        //        block   1 : ordering ls
        //                  : names    x y t
@@ -325,7 +325,7 @@ Singular itself to help an understanding of how the wrapper works.
        sage: X = Curve(f); pts = X.rational_points()
        sage: D = X.divisor([ (3, pts[0]), (-1,pts[1]), (10, pts[5]) ])
        sage: X.riemann_roch_basis(D)
-       [(-2*x + y)/(x + y), (-x + z)/(x + y)]
+       [(-x - 2*y)/(-2*x - 2*y), (-x + z)/(x + y)]
 
 -  Using Singular's ``BrillNoether`` command (for details see the section
    Brill-Noether in the Singular online documentation

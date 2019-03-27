@@ -11,13 +11,14 @@ Partially ordered monoids
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.basic import Posets, Monoids
 
+
 class PartiallyOrderedMonoids(Category_singleton):
-    """
+    r"""
     The category of partially ordered monoids, that is partially ordered sets
     which are also monoids, and such that multiplication preserves the
     ordering: `x \leq y` implies `x*z < y*z` and `z*x < z*y`.
 
-    http://en.wikipedia.org/wiki/Ordered_monoid
+    See :wikipedia:`Ordered_monoid`
 
     EXAMPLES::
 

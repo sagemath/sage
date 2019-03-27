@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Interfaces to R
 
@@ -91,7 +92,7 @@ R will recognize it as the correct thing::
     sage: r.seq(length=10, from_=-1, by=.2)
     [1] -1.0 -0.8 -0.6 -0.4 -0.2  0.0  0.2  0.4  0.6  0.8
 
-    sage: x = r([10.4,5.6,3.1,6.4,21.7]);
+    sage: x = r([10.4,5.6,3.1,6.4,21.7])
     sage: x.rep(2)
     [1] 10.4  5.6  3.1  6.4 21.7 10.4  5.6  3.1  6.4 21.7
     sage: x.rep(times=2)
@@ -155,9 +156,9 @@ Index vectors; selecting and modifying subsets of a data set::
 
 Distributions::
 
-    sage: r.options(width="60");
+    sage: r.options(width="60")
     $width
-    [1] 100
+    [1] 80
 
     sage: rr = r.dnorm(r.seq(-3,3,0.1))
     sage: rr
@@ -222,7 +223,7 @@ After execution of this code, the %R and %%R magics are available :
    possible via the -i and -o options. Do "%R?" in a standalone cell
    to get the documentation.
 
-- %%R alows the execution in R of the whole text of a cell, with
+- %%R allows the execution in R of the whole text of a cell, with
     similar options (do "%%R?" in a standalone cell for
     documentation).
 
@@ -263,22 +264,28 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #
 ##########################################################################
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six.moves import range
+import six
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
+from .interface import Interface, InterfaceElement, InterfaceFunction, InterfaceFunctionElement
 from sage.env import DOT_SAGE
 import re
-import six
-import sage.rings.integer
 from sage.structure.element import parent
-from sage.misc.cachefunc import cached_method
 from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.docs.instancedoc import instancedoc
 
+# see the _lazy_init for some reasoning behind the lazy imports
+from sage.misc.lazy_import import lazy_import
+lazy_import("rpy2", "robjects")
+lazy_import("rpy2.robjects", "packages", "rpy2_packages")
+lazy_import("rpy2.robjects.conversion", "localconverter")
+
+# for help page fetching
+lazy_import("rpy2.robjects.help", "Package")
+lazy_import("rpy2", "rinterface")
 
 COMMANDS_CACHE = '%s/r_commandlist.sobj'%DOT_SAGE
-PROMPT = '__SAGE__R__PROMPT__> '
-prompt_re = re.compile("^>", re.M)
 
 #there is a mirror network, but lets take #1 for now
 RRepositoryURL = "http://cran.r-project.org/"
@@ -288,12 +295,161 @@ RFilteredPackages = ['.GlobalEnv']
 # but package:base should cover this. i think.
 RBaseCommands = ['c', "NULL", "NA", "True", "False", "Inf", "NaN"]
 
-class R(ExtraTabCompletion, Expect):
+def _setup_r_to_sage_converter():
+    """
+    Set up a the converter used to convert from rpy2's
+    representation of R objects to the one sage expects.
+
+    EXAMPLES::
+
+    Test
+
+    Simple numeric values are represented as vectors in R. So `1` would actually
+    be an array of length 1. We convert all vectors of length 1 to simple values,
+    whether or not they "originally" were simple values or not:
+
+        sage: r([42]).sage()
+        42
+
+        sage: r(42).sage()
+        42
+
+        sage: r('c("foo")').sage()
+        'foo'
+
+    Arrays of length greater than one are treated normally:
+
+        sage: r([42, 43]).sage()
+        [42, 43]
+
+    We also convert all numeric values to integers if that is possible without
+    loss of precision:
+
+        sage: type(r([1.0]).sage()) == int
+        True
+
+        sage: r([1.0, 42.5]).sage()
+        [1, 42.5]
+
+    Matrices are converted to sage matrices:
+
+        sage: r('matrix(c(2,4,3,1,5,7), nrow=2, ncol=3)').sage()
+        [2 3 5]
+        [4 1 7]
+
+    More complex r structures are represented by dictionaries:
+
+        sage: r.summary(1).sage()
+        {'DATA': [1, 1, 1, 1, 1, 1],
+         '_Names': ['Min.', '1st Qu.', 'Median', 'Mean', '3rd Qu.', 'Max.'],
+         '_r_class': ['summaryDefault', 'table']}
+
+        sage: r.options(width="60").sage()
+        {'DATA': {'width': 60}, '_Names': 'width'}
+
+    The conversion can handle "not a number", infintiy, imaginary values and
+    missing values:
+
+        sage: r(-17).sqrt().sage()
+        nan
+        sage: r('-17+0i').sqrt().sage()
+        4.123105625617661j
+        sage: r('NA').sage()
+        NA
+        sage: inf = r('Inf'); inf.sage()
+        inf
+
+
+    Character Vectors are represented by regular python arrays:
+
+        sage: labs = r.paste('c("X","Y")', '1:10', sep='""'); labs.sage()
+        ['X1', 'Y2', 'X3', 'Y4', 'X5', 'Y6', 'X7', 'Y8', 'X9', 'Y10']
+    """
+    from rpy2.rinterface import SexpVector, ListSexpVector, FloatSexpVector
+    from rpy2.robjects.conversion import Converter
+
+    # convert rpy2's representation of r objects to the one sage expects (as defined by the old
+    # expect interface)
+    cv = Converter('r to sage converter')
+
+    # fallback
+    cv.ri2py.register(object, lambda obj: obj)
+
+    def float_to_int_if_possible(f):
+        # First, round the float to at most 15 significant places.
+        # This is what R does by default when using `dput`. It prevents
+        # platform-specific fluctuations.
+        f = float('%.15g' % f)
+        # Preserve the behaviour of the old r parser, e.g. return 1 instead of 1.0
+        float_or_int = int(f) if isinstance(f, int) or f.is_integer() else f
+        return float_or_int
+    cv.ri2py.register(float, float_to_int_if_possible)
+
+    def list_to_singleton_if_possible(l):
+        if len(l) == 1:
+            return l[0]
+        else:
+            return l
+
+    def _vector(vec):
+        attrs = vec.list_attrs()
+        # Recursive calls have to be made explicitly
+        # https://bitbucket.org/rpy2/rpy2/issues/363/custom-converters-are-not-applied
+        data = list_to_singleton_if_possible([ cv.ri2py(val) for val in vec ])
+        rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
+
+        if 'names' in attrs:
+            # separate names and values, call ri2py recursively to convert elements
+            names = list_to_singleton_if_possible(list(vec.do_slot('names')))
+            return {
+                'DATA': data,
+                '_Names': names,
+                '_r_class': rclass,
+            }
+        else:
+            # if no names are present, convert to a normal list or a single value
+            return data
+    cv.ri2py.register(SexpVector, _vector)
+
+    def _matrix(mat):
+        if 'dim' in mat.list_attrs():
+            try:
+                from sage.matrix.constructor import matrix
+                dimensions = mat.do_slot("dim")
+                if len(dimensions) != 2:
+                    raise NotImplementedError("Higher-dimension matrices are currently not supported")
+                (nrow, ncol) = dimensions
+                # Since R does it the other way round, we assign transposed and
+                # then transpose the matrix :)
+                m = matrix(ncol, nrow, [cv.ri2py(i) for i in mat])
+                return m.transpose()
+            except TypeError:
+                pass
+        else:
+            return _vector(mat)
+    cv.ri2py.register(FloatSexpVector, _matrix)
+
+    def _list_vector(vec):
+        # we have a R list (vector of arbitrary elements)
+        attrs = vec.list_attrs()
+        names = vec.do_slot('names')
+        values = [ cv.ri2py(val) for val in vec ]
+        rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
+        data = zip(names, values)
+        return {
+            'DATA': dict(data),
+            '_Names': cv.ri2py(names),
+            # We don't give the rclass here because the old expect interface
+            # didn't do that either and we want to maintain compatibility.
+        };
+    cv.ri2py.register(ListSexpVector, _list_vector)
+
+    return cv
+
+class R(ExtraTabCompletion, Interface):
     def __init__(self,
-                 maxread=None, script_subdirectory=None,
-                 server_tmpdir = None,
+                 maxread=None,
                  logfile=None,
-                 server=None,
                  init_list_length=1024,
                  seed=None):
         """
@@ -319,49 +475,74 @@ class R(ExtraTabCompletion, Expect):
             sage: r == loads(dumps(r))
             True
         """
-        Expect.__init__(self,
 
-                  # The capitalized version of this is used for printing.
-                  name = 'r',
-
-                  # This is regexp of the input prompt.  If you can change
-                  # it to be very obfuscated that would be better.   Even
-                  # better is to use sequence numbers.
-                  # options(prompt=\"<prompt> \")
-                  prompt = '> ', #default, later comes the change
-
-                  # This is the command that starts up your program
-                  command = "R --vanilla --quiet",
-
-                  server=server,
-                  server_tmpdir=server_tmpdir,
-
-                  script_subdirectory = script_subdirectory,
-
-                  # If this is true, then whenever the user presses Control-C to
-                  # interrupt a calculation, the whole interface is restarted.
-                  restart_on_ctrlc = False,
-
-                  # If true, print out a message when starting
-                  # up the command when you first send a command
-                  # to this interface.
-                  verbose_start = False,
-
-                  logfile=logfile,
-
-                  # If an input is longer than this number of characters, then
-                  # try to switch to outputting to a file.
-                  eval_using_file_cutoff=1024)
-
-        self.__seq = 0
-        self.__var_store_len = 0
-        self.__init_list_length = init_list_length
-        self._prompt_wait = [self._prompt]
+        Interface.__init__(
+                self,
+                name = 'r', # The capitalized version of this is used for printing.
+        )
         self._seed = seed
+        self._initialized = False # done lazily
+
+
+    def _lazy_init(self):
+        """
+        Initialize the R interpreter. This will set the initial options and
+        implicitly (through lazy_import) import rpy2 if it is not alreay
+        imported.
+
+        Importing rpy2 takes something in the order of hundreds of milliseconds.
+        It also takes tens of megabytes of RAM. Since an instance of R is
+        assigned to the global variable `r` at sage startup, it is important to
+        be as lazy as possible here.
+        For some discussion, see https://bitbucket.org/rpy2/rpy2/issues/490.
+
+        Also, importing rpy2 too early (e.g. before numpy) can cause issues with
+        the blas implementation that is used.
+        For details, see https://bitbucket.org/rpy2/rpy2/issues/491.
+
+        TESTS::
+
+        Initialization happens on eval:
+
+             sage: my_r = R()
+             sage: my_r._initialized
+             False
+             sage: my_r(42) # indirect doctest
+             [1] 42
+             sage: my_r._initialized
+             True
+
+        And on package import:
+
+             sage: my_r = R()
+             sage: my_r._initialized
+             False
+             sage: my_r.library('grid')
+             sage: my_r._initialized
+             True
+
+        And when fetching help pages:
+
+             sage: my_r = R()
+             sage: my_r._initialized
+             False
+             sage: _ = my_r.help('c')
+             sage: my_r._initialized
+             True
+        """
+        if not self._initialized:
+            # Set this to True *before* the call to start, since that will call eval() which will in turn call this function.
+            # Setting this to True early prevents infinite recursion.
+            self._initialized = True
+            self._r_to_sage_converter = _setup_r_to_sage_converter()
+            self._start()
+
+
 
     def set_seed(self, seed=None):
         """
-        Sets the seed for R interpeter.
+        Set the seed for R interpreter.
+
         The seed should be an integer.
 
         EXAMPLES::
@@ -389,14 +570,9 @@ class R(ExtraTabCompletion, Expect):
             sage: r = R()
             sage: r._start()
         """
-        Expect._start(self)
-
-        # width is line width, what's a good value? maximum is 10000!
         # pager needed to replace help view from less to printout
         # option device= is for plotting, is set to x11, NULL would be better?
-        self._change_prompt(PROMPT)
-        self.eval('options(prompt=\"%s\",continue=\"%s\", width=100,pager="cat",device="png")'%(PROMPT, PROMPT))
-        self.expect().expect(PROMPT)
+        self.eval('options(pager="cat",device="png")')
         self.eval('options(repos="%s")'%RRepositoryURL)
         self.eval('options(CRAN="%s")'%RRepositoryURL)
 
@@ -441,7 +617,7 @@ class R(ExtraTabCompletion, Expect):
         """
         #Check to see if R has PNG support
         s = self.eval('capabilities("png")')
-        t = r.eval('capabilities("aqua")')
+        t = self.eval('capabilities("aqua")')
         if "TRUE" not in s+t:
             raise RuntimeError("R was not compiled with PNG support")
 
@@ -468,12 +644,10 @@ class R(ExtraTabCompletion, Expect):
              'Autoloads',
              'package:base']
         """
-        pl = []
-        l = "".join(l.split("\n"))
-        l = l[2:len(l)-1]
-        for l in l.split(","):
-            pl.append(l.strip().strip('"'))
-        return pl
+        # This function is only kept for legacy reasons. It was used internally
+        # in the old expect based interface and for some reason was made part
+        # of the public api.
+        return self(l).sage()
 
     def install_packages(self, package_name):
         """
@@ -493,14 +667,14 @@ class R(ExtraTabCompletion, Expect):
         os.system("time echo '%s' | R --vanilla"%cmd)
         print("Please restart Sage in order to use '%s'." % package_name)
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return string representation of this R interface.
 
         EXAMPLES::
 
-            sage: r.__repr__()
-            'R Interpreter'
+            sage: r                 # indirect doctest
+            R Interpreter
         """
         return 'R Interpreter'
 
@@ -529,22 +703,17 @@ class R(ExtraTabCompletion, Expect):
             sage: type(c)
             <class 'sage.interfaces.r.RFunction'>
         """
-        if attrname[:1] == "_":
-            raise AttributeError
-        return RFunction(self, attrname)
+        try:
+            # First try to get a regular python attribute. This makes it
+            # possible to still use attributes like _r_to_sage_converter
+            # internally.
+            self.__getattribute__(attrname)
+        except AttributeError:
+            # if there is no such attribute, get the r attribute
+            if attrname[:1] == "_":
+                raise AttributeError("Attribute {} is not allowed to start with an underscore.".format(attrname))
+            return RFunction(self, attrname)
 
-
-    def _quit_string(self):
-        r"""
-        Return the string that when typed into R causes the R
-        interpreter to exit.
-
-        EXAMPLES::
-
-            sage: r._quit_string()
-            'quit(save="no")'
-        """
-        return 'quit(save="no")'
 
     def _read_in_file_command(self, filename):
         r"""
@@ -567,7 +736,7 @@ class R(ExtraTabCompletion, Expect):
 
             sage: filename = tmp_filename()
             sage: f = open(filename, 'w')
-            sage: f.write('a <- 2+2\n')
+            sage: _ = f.write('a <- 2+2\n')
             sage: f.close()
             sage: r.read(filename)
             sage: r.get('a')
@@ -595,7 +764,7 @@ class R(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: print(r._source("c"))
-            function (..., recursive = FALSE)  .Primitive("c")
+            function (...)  .Primitive("c")
         """
         if s[-2:] == "()":
             s = s[-2:]
@@ -614,7 +783,7 @@ class R(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: print(r.source("c"))
-            function (..., recursive = FALSE)  .Primitive("c")
+            function (...)  .Primitive("c")
         """
         return self._source(s)
 
@@ -634,9 +803,9 @@ class R(ExtraTabCompletion, Expect):
             sage: rstr.startswith('R version')
             True
         """
-        major_re = re.compile('^major\s*(\d.*?)$', re.M)
-        minor_re = re.compile('^minor\s*(\d.*?)$', re.M)
-        version_string_re = re.compile('^version.string\s*(R.*?)$', re.M)
+        major_re = re.compile(r'^major\s*(\d.*?)$', re.M)
+        minor_re = re.compile(r'^minor\s*(\d.*?)$', re.M)
+        version_string_re = re.compile(r'^version.string\s*(R.*?)$', re.M)
 
         s = self.eval('version')
 
@@ -667,17 +836,18 @@ class R(ExtraTabCompletion, Expect):
             ...
             ImportError: ...
         """
-        ret = self.eval('require("%s")'%library_name)
-        # try hard to parse the message string in a locale-independent way
-        if ' library(' in ret:       # locale-independent key-word
-            raise ImportError("%s"%ret)
+        self._lazy_init()
+        if rpy2_packages.isinstalled(library_name):
+            rpy2_packages.importr(library_name)
         else:
-            try:
-                # We need to rebuild keywords!
-                del self.__tab_completion
-            except AttributeError:
-                pass
-            self._tab_completion(verbose=False, use_disk_cache=False)
+            raise ImportError("R library {} not installed".format(library_name))
+
+        try:
+            # We need to rebuild keywords!
+            del self.__tab_completion
+        except AttributeError:
+            pass
+        self._tab_completion(verbose=False, use_disk_cache=False)
 
     require = library #overwrites require
 
@@ -707,7 +877,7 @@ class R(ExtraTabCompletion, Expect):
         #The following was more structural, but breaks on my machine.  (stein)
         #p = p._sage_()
         #s = p['_Dim'][0]
-        #l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in xrange(0,s)]
+        #l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in range(0,s)]
         #return l
 
     def _object_class(self):
@@ -733,13 +903,6 @@ class R(ExtraTabCompletion, Expect):
 
             sage: r._true_symbol()
             '[1] TRUE'
-
-        This is used behinds the scenes to implement comparison::
-
-            sage: r('1') == r('1')
-            [1] TRUE
-            sage: r('1') == r('2')
-            [1] FALSE
         """
         # return the string rep of truth, i.e., what the system outputs
         # when you type 1==1.
@@ -770,6 +933,25 @@ class R(ExtraTabCompletion, Expect):
         # return the symbol for checking equality, e.g., == or eq.
         return "=="
 
+    # A replacement for rpy2's help.pages that only considers loaded packages
+    # (as R's help function does by default). Hopefully upstream will support
+    # this in the future: https://bitbucket.org/rpy2/rpy2/issues/498
+    def _loaded_package_pages(self, topic):
+        # for some reason `except` doesn't work with lazy import, so import this here
+        from rpy2.robjects.help import HelpNotFoundError
+        self._lazy_init()
+        res = list()
+
+        for name in rinterface.baseenv['loadedNamespaces']():
+            pack = Package(name)
+            try:
+                page = pack.fetch(topic)
+                res.append(page)
+            except HelpNotFoundError:
+                pass
+
+        return tuple(res)
+
     def help(self, command):
         """
         Returns help string for a given command.
@@ -782,17 +964,32 @@ class R(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: r.help('c')
-            c                     package:base                     R Documentation
+            title
+            -----
+            <BLANKLINE>
+            Combine Values into a Vector or List
+            <BLANKLINE>
+            name
+            ----
+            <BLANKLINE>
+            c
             ...
-
-            .. note::
-
-            This is similar to typing r.command?.
         """
-        s = self.eval('help("%s")'%command).strip()     # ?cmd is only an unsafe shortcut
+        # This is looking for the topic in all existing namespaces.
+        # Theoretically, there may be multiple options. We ignore that.
+        pages_for_topic = self._loaded_package_pages(command)
+        if len(pages_for_topic) == 0:
+            raise ValueError("There is no help page for the given topic")
+
+        s = pages_for_topic[0].to_docstring()
+
+        # Maybe this can be removed now (it is a leftover from the old expect
+        # interface). Since I don't understand why it was needed in the first
+        # place, I'm keeping it for now.
         import sage.plot.plot
         if sage.plot.plot.EMBEDDED_MODE:
             s = s.replace('_\x08','')
+
         return HelpExpression(s)
 
     def _assign_symbol(self):
@@ -905,11 +1102,10 @@ class R(ExtraTabCompletion, Expect):
             sage: r.set('a', '2 + 3')
             sage: r.get('a')
             '[1] 5'
+
         """
         cmd = '%s <- %s'%(var,value)
         out = self.eval(cmd)
-        if out.find("error") != -1:
-            raise TypeError("Error executing code in R\nCODE:\n\t%s\nR ERROR:\n\t%s"%(cmd, out))
 
     def get(self, var):
         """
@@ -927,9 +1123,7 @@ class R(ExtraTabCompletion, Expect):
             sage: r.get('a')
             '[1] 2'
         """
-        s = self.eval('%s'%var)
-        #return self._remove_indices_re.sub("", s).strip()
-        return s
+        return self.eval('%s'%var)
 
     def na(self):
         """
@@ -958,8 +1152,8 @@ class R(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: dummy = r._tab_completion(use_disk_cache=False)    #clean doctest
-            sage: r.completions('tes')
-            ['testInheritedMethods', 'testPlatformEquivalence', 'testVirtual']
+            sage: 'testInheritedMethods' in r.completions('tes')
+            True
         """
         return [name for name in self._tab_completion() if name[:len(s)] == s]
 
@@ -979,8 +1173,7 @@ class R(ExtraTabCompletion, Expect):
         """
         v = RBaseCommands
 
-        ll = self.eval('dput(search())') # loaded libs
-        ll = self.convert_r_list(ll)
+        ll = self('search()')._sage_() # loaded libs
 
         for lib in ll:
             if lib in RFilteredPackages:
@@ -989,9 +1182,7 @@ class R(ExtraTabCompletion, Expect):
             if lib.find("package:") != 0:
                 continue #only packages
 
-            raw = self.eval('dput(objects("%s"))'%lib)
-            raw = self.convert_r_list(raw)
-            raw = [x.replace(".","_") for x in raw]
+            raw = self('objects("%s")'%lib)._sage_()
 
             #TODO are there others? many of them are shortcuts or
             #should be done on another level, like selections in lists
@@ -1065,7 +1256,7 @@ class R(ExtraTabCompletion, Expect):
         a filename like ``Rplot001.png`` - from the command line, in
         the current directory, and in the cell directory in the notebook::
 
-            sage: d=r.setwd('"%s"'%SAGE_TMP)    # for doctesting only; ignore if you are trying this;
+            sage: d=r.setwd('"%s"'%SAGE_TMP)    # for doctesting only; ignore if you are trying this
             sage: r.plot("1:10")                # optional -- rgraphics
             null device
                       1
@@ -1116,25 +1307,7 @@ class R(ExtraTabCompletion, Expect):
         RFunction(self, 'plot')(*args, **kwds)
         return RFunction(self, 'dev.off')()
 
-    def _strip_prompt(self, code):
-        """
-        Remove the standard R prompt from the beginning of lines in code.
-
-        INPUT:
-
-        - code -- a string
-
-        OUTPUT: a string
-
-        EXAMPLES::
-
-            sage: s = '> a <- 2\n> b <- 3'
-            sage: r._strip_prompt(s)
-            ' a <- 2\n b <- 3'
-        """
-        return prompt_re.sub("", code)
-
-    def eval(self, code, globals=None, locals=None, synchronize=True, *args, **kwds):
+    def eval(self, code, *args, **kwds):
         """
         Evaluates a command inside the R interpreter and returns the output
         as a string.
@@ -1144,9 +1317,9 @@ class R(ExtraTabCompletion, Expect):
             sage: r.eval('1+1')
             '[1] 2'
         """
-        # TODO split code at ";" outside of quotes and send them as individual
-        #      lines without ";".
-        return Expect.eval(self, code, synchronize=synchronize, *args, **kwds)
+        self._lazy_init()
+        return str(robjects.r(code)).rstrip()
+
 
     def _r_to_sage_name(self, s):
         """
@@ -1248,14 +1421,8 @@ class R(ExtraTabCompletion, Expect):
         self.execute('setwd(%r)' % dir)
 
 
-# patterns for _sage_()
-rel_re_param = re.compile('\s([\w\.]+)\s=')
-rel_re_xrange = re.compile('([\d]+):([\d]+)')
-rel_re_integer = re.compile('([^\d])([\d]+)L')
-rel_re_terms = re.compile('terms\s*=\s*(.*?),')
-rel_re_call = re.compile('call\s*=\s*(.*?)\),')
-
-class RElement(ExtraTabCompletion, ExpectElement):
+@instancedoc
+class RElement(ExtraTabCompletion, InterfaceElement):
 
     def _tab_completion(self):
         """
@@ -1294,6 +1461,20 @@ class RElement(ExtraTabCompletion, ExpectElement):
 
     stat_model = tilde
 
+    def is_string(self):
+        """
+        Tell whether this element is a string.
+
+        EXAMPLES::
+
+            sage: r('"abc"').is_string()
+            True
+            sage: r([1,2,3]).is_string()
+            False
+
+        """
+        return isinstance(self.sage(), str)
+
     def __len__(self):
         """
         Return the length of this object.
@@ -1306,7 +1487,7 @@ class RElement(ExtraTabCompletion, ExpectElement):
             sage: len(x)
             5
         """
-        return int(self.parent().eval('dput(length(%s))'%self.name())[:-1] )
+        return self.parent()('length(%s)'%self.name()).sage()
 
     def __getattr__(self, attrname):
         """
@@ -1328,10 +1509,16 @@ class RElement(ExtraTabCompletion, ExpectElement):
             sage: length()
             [1] 3
         """
-        self._check_valid()
-        if attrname[:1] == "_":
-            raise AttributeError
-        return RFunctionElement(self, attrname)
+        try:
+            # First try to get a regular python attribute. This makes it
+            # possible to still use attributes like _r_to_sage_converter
+            # internally.
+            self.__getattribute__(attrname)
+        except AttributeError:
+            self._check_valid()
+            if attrname[:1] == "_":
+                raise AttributeError("Attribute {} is not allowed to start with an underscore.".format(attrname))
+            return RFunctionElement(self, attrname)
 
     def __getitem__(self, n):
         """
@@ -1386,14 +1573,14 @@ class RElement(ExtraTabCompletion, ExpectElement):
             return P.new('%s[%s]'%(self._name, n))
         else:
             L = []
-            for i in xrange(len(n)):
+            for i in range(len(n)):
                 if parent(n[i]) is P:
                     L.append(n[i].name())
                 else:
                     L.append(str(n[i]))
             return P.new('%s[%s]'%(self._name, ','.join(L)))
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Implements bool(self).
 
@@ -1415,6 +1602,8 @@ class RElement(ExtraTabCompletion, ExpectElement):
             True
         """
         return "FALSE" in repr(self==0)
+
+    __nonzero__ = __bool__
 
     def _comparison(self, other, symbol):
         """
@@ -1552,43 +1741,6 @@ class RElement(ExtraTabCompletion, ExpectElement):
         """
         return self._comparison(other, "!=")
 
-    def __cmp__(self, other):
-        r"""
-        Return 0, 1, or -1 depending on how self and other compare.
-
-        This is *not* called by the comparison operators, which
-        do term-by-term comparison and return R elements.
-
-        INPUT:
-
-        - self, other -- R elements
-
-        OUTPUT: 0, 1, or -1
-
-        EXAMPLES::
-
-            sage: one = r(1)
-            sage: two = r(2)
-            sage: cmp(one,one)
-            0
-            sage: cmp(one,two)
-            -1
-            sage: cmp(two,one)
-            1
-        """
-        P = self.parent()
-        if P.eval("%s %s %s"%(self.name(), P._equality_symbol(),
-                                 other.name())) == P._true_symbol():
-            return 0
-        elif P.eval("%s %s %s"%(self.name(), P._lessthan_symbol(), other.name())) == P._true_symbol():
-            return -1
-        elif P.eval("%s %s %s"%(self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
-            return 1
-        else:
-            return -1  # everything is supposed to be comparable in Python, so we define
-                       # the comparison thus when no comparable in interfaced system.
-
-
     def dot_product(self, other):
         """
         Implements the notation self . other.
@@ -1619,167 +1771,6 @@ class RElement(ExtraTabCompletion, ExpectElement):
         # the R operator is %*% for matrix multiplication
         return P('%s %%*%% %s'%(self.name(), Q.name()))
 
-    def _subs_dots(self, x):
-        """
-        Replace dots by underscores; used internally to implement
-        conversation from R expression to Sage objects.
-
-        INPUT:
-
-        - x -- regular expression match: ``<type '_sre.SRE_Match'>``
-
-        OUTPUT: string
-
-        EXAMPLES::
-
-            sage: import re
-            sage: a = r([1,2,3])
-            sage: rel_re_param = re.compile('\s([\w\.]+)\s=')
-            sage: rel_re_param.sub(a._subs_dots, ' test.test =')
-             ' test_test ='
-        """
-        return x.group().replace('.','_')
-
-    def _subs_xrange(self, x):
-        """
-        Change endpoints of xranges.  This is used internally in the
-        code for converting R expressions to Sage objects.
-
-        INPUT:
-
-        - x -- regular expression match: ``<type '_sre.SRE_Match'>``
-
-        OUTPUT: string
-
-        EXAMPLES::
-
-            sage: import re
-            sage: a = r([1,2,3])
-            sage: rel_re_xrange = re.compile('([\d]+):([\d]+)')
-            sage: rel_re_xrange.sub(a._subs_xrange, ' 1:10')
-            ' xrange(1,11)'
-        """
-        g = x.groups()
-        g1 = int(g[1]) + 1
-        return 'xrange(%s,%s)'%(g[0],g1)
-
-    def _subs_integer(self, x):
-        """
-        Replaces strings like 'dL' with 'Integer(d)' where d is some
-        integer.  This is used internally in the code for converting R
-        expressions to Sage objects.
-
-        EXAMPLES::
-
-            sage: import re
-            sage: a = r([1,2,3])
-            sage: rel_re_integer = re.compile('([^\d])([\d]+)L')
-            sage: rel_re_integer.sub(a._subs_integer, ' 1L 2L')
-            ' Integer(1) Integer(2)'
-            sage: rel_re_integer.sub(a._subs_integer, '1L 2L')
-            '1L Integer(2)'
-
-        """
-        return '%sInteger(%s)'%x.groups()
-
-    def _convert_nested_r_list(self, exp):
-        """
-        Converts a string representing a (possibly) nested list in R
-        to a (possibly) nested Python list.  This is used internally
-        in the code for converting R expressions to Sage objects.
-
-        INPUT:
-
-        - exp -- a string
-
-        OUTPUT: a string
-
-        EXAMPLES::
-
-            sage: a = r([1,2,3])
-            sage: s = 'c(1, 2, 3)'
-            sage: a._convert_nested_r_list(s)
-            '[1, 2, 3]'
-        """
-        from re import compile as re_compile
-        from re import split   as re_split
-        splt = re_compile('(c\(|\(|\))') # c( or ( or )
-        lvl = 0
-        ret = []
-        for token in re_split(splt, exp):
-            if token == 'c(':
-                ret.append('[')
-                lvl += 1
-            elif token == '(':
-                ret.append(token)
-                if lvl > 0 : lvl += 1
-            elif token == ')':
-                if lvl == 1:
-                    ret.append(']')
-                    lvl -= 1
-                else:
-                    ret.append(token)
-                    if lvl > 0:
-                        lvl -= 1
-            else:
-                ret.append(token)
-
-        return ''.join(ret)
-
-
-    def _r_list(self, *args, **kwds):
-        """
-        This is used internally in the code for converting R
-        expressions to Sage objects.
-
-        EXAMPLES::
-
-            sage: a = r([1,2,3])
-            sage: list(sorted(a._r_list(1,2,3,k=5).items()))
-            [('#0', 1), ('#1', 2), ('#2', 3), ('k', 5)]
-        """
-        ret = dict(kwds)
-        i = 0
-        for k in args:
-            ret['#%s'%i] = k
-            i += 1
-        return ret
-
-    def _r_structure(self, __DATA__, **kwds):
-        """
-        This is used internally in the code for converting R
-        expressions to Sage objects.
-
-        EXAMPLES::
-
-            sage: a = r([1,2,3])
-            sage: d = a._r_structure('data', a=1, b=2)
-            sage: list(sorted(d.items()))
-            [('DATA', 'data'), ('a', 1), ('b', 2)]
-            sage: a._r_structure([1,2,3,4], _Dim=(2,2))
-            [1 3]
-            [2 4]
-
-        """
-        if '_Dim' in kwds: #we have a matrix
-            # TODO what about more than 2 dimensions?
-            #      additional checks!!
-            try:
-                from sage.matrix.constructor import matrix
-                d = kwds.get('_Dim')
-                # TODO: higher dimensions? happens often in statistics
-                if len(d) != 2:
-                    raise TypeError
-                #since R does it the other way round, we assign
-                #transposed and then transpose the matrix :)
-                m = matrix(d[1], d[0], [i for i in __DATA__])
-                return m.transpose()
-            except TypeError:
-                pass
-        d = dict(DATA=__DATA__)
-        d.update(kwds)
-        return d
-
     def _sage_(self):
         r"""
         Returns Sage representation of the R object.
@@ -1796,7 +1787,7 @@ class RElement(ExtraTabCompletion, ExpectElement):
 
             sage: rs = r.summary(r.c(1,4,3,4,3,2,5,1))
             sage: d = rs._sage_()
-            sage: list(sorted(d.items()))
+            sage: sorted(d.items())
             [('DATA', [1, 1.75, 3, 2.875, 4, 5]),
              ('_Names', ['Min.', '1st Qu.', 'Median', 'Mean', '3rd Qu.', 'Max.']),
              ('_r_class', ['summaryDefault', 'table'])]
@@ -1804,95 +1795,9 @@ class RElement(ExtraTabCompletion, ExpectElement):
         self._check_valid()
         P = self.parent()
 
-        # This is the core of the trick: using dput
-        # dput prints out the internal structure of R's data elements
-        # options via .deparseOpts(control=...)
-        # TODO: dput also works with a file, if things get huge!
-        # [[However, using a file for output often isn't necessary
-        # since pipe buffering works pretty well for output.
-        # That said, benchmark this.  -- William Stein]]
-        exp = P.eval('dput(%s)'%self.name())
-
-        # Preprocess expression
-        # example what this could be:
-        # structure(list(statistic = structure(0.233549683248457, .Names = "t"),
-        # parameter = structure(5.58461538461538, .Names = "df"), p.value = 0.823657802106985,
-        # conf.int = structure(c(-2.41722062247400, 2.91722062247400
-        # ), conf.level = 0.95), estimate = structure(c(2.75, 2.5), .Names = c("mean of x",
-        # "mean of y")), null.value = structure(0, .Names = "difference in means"),
-        # alternative = "two.sided", method = "Welch Two Sample t-test",
-        # data.name = "c(1, 2, 3, 5) and c(1, 2, 3, 4)"), .Names = c("statistic",
-        # "parameter", "p.value", "conf.int", "estimate", "null.value",
-        # "alternative", "method", "data.name"), class = "htest")
-
-        # R's structure (from help):
-        # structure(.Data, ...)
-        #    .Data: an object which will have various attributes attached to it.
-        #    ...: attributes, specified in 'tag=value' form, which will be
-        #         attached to data.
-        #For historical reasons (these names are used when deparsing),
-        # attributes '".Dim"', '".Dimnames"', '".Names"', '".Tsp"' and
-        # '".Label"' are renamed to '"dim"', '"dimnames"', '"names"',
-        # '"tsp"' and '"levels"'.
-
-
-
-        # we want this in a single line
-        exp.replace('\n','')
-        exp = "".join(exp.split("\n"))
-
-        # python compatible parameters
-        exp = rel_re_param.sub(self._subs_dots, exp)
-
-        # Rename class since it is a Python keyword
-        exp = re.sub(' class = ', ' _r_class = ',exp)
-
-        # Change 'structure' to '_r_structure'
-        # TODO: check that we are outside of quotes ""
-        exp = re.sub(' structure\(', ' _r_structure(', exp)
-        exp = re.sub('^structure\(', '_r_structure(', exp) #special case
-
-        # Change 'list' to '_r_list'
-        exp = re.sub(' list\(', ' _r_list(', exp)
-        exp = re.sub('\(list\(', '(_r_list(', exp)
-
-        # Change 'a:b' to 'xrange(a,b+1)'
-        exp = rel_re_xrange.sub(self._subs_xrange, exp)
-
-        # Change 'dL' to 'Integer(d)'
-        exp = rel_re_integer.sub(self._subs_integer, exp)
-
-        # Wrap the right hand side of terms = ... in quotes since it
-        # has a ~ in it.
-        exp = rel_re_terms.sub(r'terms = "\1",', exp)
-
-
-        # Change call = ..., to call = "...",
-        exp = rel_re_call.sub(r'call = "\1",', exp)
-
-        # seems to work for
-        # rr = r.summary(r.princomp(r.matrix(r.c(1,2,3,4,3,4,1,2,2),4)))
-        # rr._sage_()
-        # but the call expression get's evaluated. why?!? TODO
-
-
-        # translation:
-        # c is an ordered list
-        # list is a dictionary (where _Names give the entries names.
-        #    map entries in names to (value, name) in each entry?
-        # structure is .. see above .. strucuture(DATA,**kw)
-        # TODO: thinking of just replacing c( with ( to get a long tuple?
-
-
-        exp = self._convert_nested_r_list(exp)
-
-        # Set up the globals
-        globs = {'NA':None, 'NULL':None, 'FALSE':False, 'TRUE':True,
-                 '_r_list':self._r_list, '_r_structure':self._r_structure,
-                 'Integer':sage.rings.integer.Integer,
-                 'character':str}
-
-        return eval(exp, globs, globs)
+        with localconverter(P._r_to_sage_converter) as cv:
+            parsed = robjects.r(self.name())
+            return parsed
 
 
     def _latex_(self):
@@ -1916,11 +1821,11 @@ class RElement(ExtraTabCompletion, ExpectElement):
             P.library('Hmisc')
         except ImportError:
             raise RuntimeError("The R package 'Hmisc' is required for R to LaTeX conversion, but it is not available.")
-        return LatexExpr(P.eval('latex(%s, file="");'%self.name()))
+        return LatexExpr(P.eval('latex(%s, file="");' % self.name()))
 
 
-
-class RFunctionElement(FunctionElement):
+@instancedoc
+class RFunctionElement(InterfaceFunctionElement):
     def __reduce__(self):
         """
         EXAMPLES::
@@ -1935,7 +1840,7 @@ class RFunctionElement(FunctionElement):
         """
         raise NotImplementedError("pickling of R element methods is not yet supported")
 
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         Returns the help for self as a string.
 
@@ -1943,10 +1848,17 @@ class RFunctionElement(FunctionElement):
 
             sage: a = r([1,2,3])
             sage: length = a.length
-            sage: print(length._sage_doc_())
-            length                 package:base                 R Documentation
-            ...
+            sage: print(length.__doc__)
+            title
+            -----
             <BLANKLINE>
+            Length of an Object 
+            <BLANKLINE>
+            name
+            ----
+            <BLANKLINE>
+            length
+            ...
         """
         M = self._obj.parent()
         return M.help(self._name)
@@ -1977,7 +1889,8 @@ class RFunctionElement(FunctionElement):
         return self._obj.parent().function_call(self._name, args=[self._obj] + list(args), kwds=kwds)
 
 
-class RFunction(ExpectFunction):
+@instancedoc
+class RFunction(InterfaceFunction):
     def __init__(self, parent, name, r_name=None):
         """
         A Function in the R interface.
@@ -2002,7 +1915,7 @@ class RFunction(ExpectFunction):
         else:
             self._name = parent._sage_to_r_name(name)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         EXAMPLES::
 
@@ -2011,21 +1924,38 @@ class RFunction(ExpectFunction):
             sage: r.mean == r.lr
             False
         """
-        if not isinstance(other, RFunction):
-            return cmp(type(self), type(other))
-        return cmp(self._name, other._name)
+        return (isinstance(other, RFunction) and
+            self._name == other._name)
 
-    def _sage_doc_(self):
+    def __ne__(self, other):
+        """
+        EXAMPLES::
+
+            sage: r.mean != loads(dumps(r.mean))
+            False
+            sage: r.mean != r.lr
+            True
+        """
+        return not (self == other)
+
+    def _instancedoc_(self):
         """
         Returns the help for self.
 
         EXAMPLES::
 
             sage: length = r.length
-            sage: print(length._sage_doc_())
-            length                 package:base                 R Documentation
-            ...
+            sage: print(length.__doc__)
+            title
+            -----
             <BLANKLINE>
+            Length of an Object 
+            <BLANKLINE>
+            name
+            ----
+            <BLANKLINE>
+            length
+            ...
         """
         M = self._parent
         return M.help(self._name)

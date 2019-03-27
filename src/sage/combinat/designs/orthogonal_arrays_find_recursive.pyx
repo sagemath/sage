@@ -46,12 +46,11 @@ Functions
 """
 from __future__ import print_function, absolute_import
 
-from six import itervalues
-
 from sage.misc.cachefunc import cached_function
 from .orthogonal_arrays import orthogonal_array
 from sage.rings.integer cimport Integer, smallInteger
 from sage.arith.all import prime_powers
+import sage.combinat.designs.database
 
 @cached_function
 def find_recursive_construction(k, n):
@@ -234,16 +233,16 @@ cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n):
         sage: _ = f(*args)
     """
     cdef int r,m_min,m_max,m,r1_min,r1_max,r1,r2,r1_p_r2
-    for r in [1] + range(k+1,n-2): # as r*1+1+1 <= n and because we need
+    for r in [1] + list(xrange(k+1, n-2)): # as r*1+1+1 <= n and because we need
                                    # an OA(k+2,r), necessarily r=1 or r >= k+1
         if not is_available(k+2,r):
             continue
         m_min = (n - (2*r-2))/r
         m_max = (n - 2)/r
         if m_min > 1:
-            m_values = range(max(m_min,k-1), m_max+1)
+            m_values = list(xrange(max(m_min, k - 1), m_max + 1))
         else:
-            m_values = [1] + range(k-1, m_max+1)
+            m_values = [1] + list(xrange(k - 1, m_max + 1))
         for m in m_values:
             r1_p_r2 = n-r*m # the sum of r1+r2
                             # it is automatically >= 2 since m <= m_max
@@ -256,9 +255,9 @@ cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n):
             r1_min = r1_p_r2 - (r-1)
             r1_max = min(r-1, r1_p_r2)
             if r1_min > 1:
-                r1_values = range(max(k-1,r1_min), r1_max+1)
+                r1_values = list(xrange(max(k - 1, r1_min), r1_max + 1))
             else:
-                r1_values = [1] + range(k-1, r1_max+1)
+                r1_values = [1] + list(xrange(k-1, r1_max + 1))
             for r1 in r1_values:
                 if not is_available(k,r1):
                     continue
@@ -466,7 +465,7 @@ cpdef find_q_x(int k,int n):
 
         :func:`~sage.combinat.designs.orthogonal_arrays_build_recursive.construction_q_x`
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.designs.orthogonal_arrays_find_recursive import find_q_x
         sage: find_q_x(10,9)
@@ -721,7 +720,7 @@ cpdef find_brouwer_separable_design(int k,int n):
     documentation of
     :func:`~sage.combinat.designs.orthogonal_arrays_build_recursive.brouwer_separable_design`.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.designs.orthogonal_arrays_find_recursive import find_brouwer_separable_design
         sage: find_brouwer_separable_design(5,13)[1]
@@ -798,9 +797,9 @@ cpdef find_brouwer_separable_design(int k,int n):
 
 # Associates to n the list of k,x with x>1 such that there exists an
 # OA(k,n+x)-OA(k,x). Useful in find_brouwer_separable_design
-from sage.combinat.designs.database import QDM as _QDM
+cdef dict _QDM = sage.combinat.designs.database.QDM
 cdef dict ioa_indexed_by_n_minus_x = {}
-for x in itervalues(_QDM):
+for x in _QDM.itervalues():
     for (n,_,_,u),(k,_) in x.items():
         if u>1:
             if not n in ioa_indexed_by_n_minus_x:
@@ -821,7 +820,7 @@ def int_as_sum(int value, list S, int k_max):
 
     - ``k_max`` (integer)
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.designs.orthogonal_arrays_find_recursive import int_as_sum
         sage: D = int_as_sum(21,[5,12],100)
@@ -896,7 +895,7 @@ cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n):
 
     - ``k,n`` (integers)
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.designs.orthogonal_arrays_find_recursive import find_brouwer_van_rees_with_one_truncated_column
         sage: find_brouwer_van_rees_with_one_truncated_column(5,53)[1]

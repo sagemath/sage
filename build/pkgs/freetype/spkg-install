@@ -1,36 +1,9 @@
-#!/usr/bin/env bash
-
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
-if [  "$SAGE64" = "yes" ]; then
-   CFLAGS="-O2 -g -m64 "; export CFLAGS
-   LDFLAGS="-m64 $LDFLAGS"; export LDFLAGS
-fi
-
 cd src
 
 # Disabling harfbuzz until upstream properly check for suitable version
-GNUMAKE=${MAKE} ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --with-harfbuzz=no
-
-if [ $? -ne 0 ]; then
-    exit 1;
-fi;
-
-${MAKE}
-
-if [ $? -ne 0 ]; then
-    exit 1;
-fi;
-
-${MAKE} install
-
-if [ $? -ne 0 ]; then
-    exit 1;
-fi;
+GNUMAKE=${MAKE} sdh_configure --with-harfbuzz=no
+sdh_make
+sdh_make_install
 
 # The following file may be present from old builds of freetype, and
 # its presence can break the matplotlib build. So remove it. (The

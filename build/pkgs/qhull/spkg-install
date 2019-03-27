@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [ "$SAGE_LOCAL" = "" ]; then
    echo "SAGE_LOCAL undefined ... exiting";
    echo "Maybe run 'sage -sh'?"
@@ -8,24 +6,13 @@ fi
 
 cd src/
 
-# Apply all patches
-for patch in ../patches/*.patch; do
-	echo "Applying $patch"
-	patch -p1 <"$patch"
-	if [ $? -ne 0 ]; then
-		echo >&2 "Error applying '$patch'"
-		return 1
-	fi
-done
+cmake -DCMAKE_INSTALL_PREFIX="${SAGE_LOCAL}" -DCMAKE_VERBOSE_MAKEFILE=ON
 
-make -j1
-if [ $? -ne 0 ]; then
-   echo "Error building qhull"
-   exit 1
-fi
+sdh_make
 
-make -j1 install
-if [ $? -ne 0 ]; then
-    echo "Error installing qhull"
-    exit 1
-fi
+# clean old install
+rm -rf "${SAGE_LOCAL}"/include/libqhull
+rm -rf "${SAGE_LOCAL}"/include/qhull
+rm -rf "${SAGE_LOCAL}"/lib/libqhull*
+
+sdh_make_install

@@ -22,7 +22,6 @@ from .constructor import (EllipticCurve,
                          EllipticCurve_from_c4c6,
                          EllipticCurve_from_j,
                          EllipticCurve_from_cubic,
-                         EllipticCurve_from_plane_curve,
                          EllipticCurves_with_good_reduction_outside_S)
 
 from sage.misc.lazy_import import lazy_import

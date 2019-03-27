@@ -29,6 +29,7 @@ Concrete implementations
    sage/matroids/circuit_closures_matroid
    sage/matroids/linear_matroid
    sage/matroids/rank_matroid
+   sage/matroids/graphic_matroid
 
 Abstract matroid classes
 ------------------------

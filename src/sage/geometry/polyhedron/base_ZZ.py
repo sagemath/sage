@@ -11,20 +11,21 @@ Base class for polyhedra over `\ZZ`
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
 from sage.rings.all import ZZ, QQ
 from sage.misc.all import cached_method
 from sage.modules.free_module_element import vector
+from .base_QQ import Polyhedron_QQ
 from sage.arith.all import gcd
 from .constructor import Polyhedron
 from .base import Polyhedron_base
+from sage.misc.superseded import deprecated_function_alias
 
 
 #########################################################################
-class Polyhedron_ZZ(Polyhedron_base):
-    """
+class Polyhedron_ZZ(Polyhedron_QQ):
+    r"""
     Base class for Polyhedra over `\ZZ`
 
     TESTS::
@@ -33,72 +34,6 @@ class Polyhedron_ZZ(Polyhedron_base):
         A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex
         sage: TestSuite(p).run(skip='_test_pickling')
     """
-    def _is_zero(self, x):
-        """
-        Test whether ``x`` is zero.
-
-        INPUT:
-
-        - ``x`` -- a number in the base ring.
-
-        OUTPUT:
-
-        Boolean.
-
-        EXAMPLES::
-
-            sage: p = Polyhedron([(0,0)], base_ring=ZZ)
-            sage: p._is_zero(0)
-            True
-            sage: p._is_zero(1/100000)
-            False
-        """
-        return x==0
-
-    def _is_nonneg(self, x):
-        """
-        Test whether ``x`` is nonnegative.
-
-        INPUT:
-
-        - ``x`` -- a number in the base ring.
-
-        OUTPUT:
-
-        Boolean.
-
-        EXAMPLES::
-
-            sage: p = Polyhedron([(0,0)], base_ring=ZZ)
-            sage: p._is_nonneg(1)
-            True
-            sage: p._is_nonneg(-1/100000)
-            False
-        """
-        return x>=0
-
-    def _is_positive(self, x):
-        """
-        Test whether ``x`` is positive.
-
-        INPUT:
-
-        - ``x`` -- a number in the base ring.
-
-        OUTPUT:
-
-        Boolean.
-
-        EXAMPLES::
-
-            sage: p = Polyhedron([(0,0)], base_ring=ZZ)
-            sage: p._is_positive(1)
-            True
-            sage: p._is_positive(0)
-            False
-        """
-        return x>0
-
     _base_ring = ZZ
 
     def is_lattice_polytope(self):
@@ -116,8 +51,16 @@ class Polyhedron_ZZ(Polyhedron_base):
             True
             sage: polytopes.regular_polygon(5).is_lattice_polytope()
             False
+
+        TESTS:
+
+        Check :trac:`22622`::
+
+            sage: P1 = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]])
+            sage: P1.is_lattice_polytope()
+            False
         """
-        return True
+        return self.is_compact()
 
     def ehrhart_polynomial(self, verbose=False, dual=None,
             irrational_primal=None, irrational_all_primal=None, maxdet=None,
@@ -178,6 +121,10 @@ class Polyhedron_ZZ(Polyhedron_base):
         for lattice point enumeration (see
         https://www.math.ucdavis.edu/~latte/).
 
+        .. SEEALSO::
+
+            :mod:`~sage.interfaces.latte` the interface to LattE integrale
+
         EXAMPLES::
 
             sage: P = Polyhedron(vertices=[(0,0,0),(3,3,3),(-3,2,1),(1,-1,-2)])
@@ -224,7 +171,7 @@ class Polyhedron_ZZ(Polyhedron_base):
             sage: p = P.ehrhart_polynomial(maxdet=5, verbose=True)  # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' '--maxdet=5' --cdd ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd '--maxdet=5' /dev/stdin
             ...
             sage: p    # optional - latte_int
             1/2*t^2 + 3/2*t + 1
@@ -232,7 +179,7 @@ class Polyhedron_ZZ(Polyhedron_base):
             sage: p = P.ehrhart_polynomial(dual=True, verbose=True)  # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --dual --cdd ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd --dual /dev/stdin
             ...
             sage: p   # optional - latte_int
             1/2*t^2 + 3/2*t + 1
@@ -240,7 +187,7 @@ class Polyhedron_ZZ(Polyhedron_base):
             sage: p = P.ehrhart_polynomial(irrational_primal=True, verbose=True)   # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --irrational-primal --cdd ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd --irrational-primal /dev/stdin
             ...
             sage: p   # optional - latte_int
             1/2*t^2 + 3/2*t + 1
@@ -248,7 +195,8 @@ class Polyhedron_ZZ(Polyhedron_base):
             sage: p = P.ehrhart_polynomial(irrational_all_primal=True, verbose=True)  # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --irrational-all-primal --cdd ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd --irrational-all-primal /dev/stdin
+            ...
             sage: p   # optional - latte_int
             1/2*t^2 + 3/2*t + 1
 
@@ -257,21 +205,16 @@ class Polyhedron_ZZ(Polyhedron_base):
             sage: P.ehrhart_polynomial(bim_bam_boum=19)   # optional - latte_int
             Traceback (most recent call last):
             ...
-            RuntimeError: LattE integrale failed with exit code 1 to execute...
+            RuntimeError: LattE integrale program failed (exit code 1):
+            ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd '--bim-bam-boum=19' /dev/stdin
+            Unknown command/option --bim-bam-boum=19
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        R = PolynomialRing(QQ, 't')
         if self.is_empty():
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            from sage.rings.rational_field import QQ
+            R = PolynomialRing(QQ, 't')
             return R.zero()
-
-        from sage.misc.misc import SAGE_TMP
-        from subprocess import Popen, PIPE
-
-        ine = self.cdd_Hrepresentation()
-
-        args = ['count', '--ehrhart-polynomial']
-        if 'redundancy_check' not in kwds:
-            args.append('--redundancy-check=none')
 
         # note: the options below are explicitely written in the function
         # declaration in order to keep tab completion (see #18211).
@@ -287,40 +230,9 @@ class Polyhedron_ZZ(Polyhedron_base):
             'triangulation'           : triangulation,
             'triangulation_max_height': triangulation_max_height})
 
-        for key,value in kwds.items():
-            if value is None or value is False:
-                continue
-
-            key = key.replace('_','-')
-            if value is True:
-                args.append('--{}'.format(key))
-            else:
-                args.append('--{}={}'.format(key, value))
-        args += ['--cdd', '/dev/stdin']
-
-        try:
-            # The cwd argument is needed because latte
-            # always produces diagnostic output files.
-            latte_proc = Popen(args,
-                               stdin=PIPE, stdout=PIPE,
-                               stderr=(None if verbose else PIPE),
-                               cwd=str(SAGE_TMP))
-        except OSError:
-            from sage.misc.package import PackageNotFoundError
-            raise PackageNotFoundError('latte_int')
-
-        ans, err = latte_proc.communicate(ine)
-        ret_code = latte_proc.poll()
-        if ret_code:
-            if err is None:
-                err = ", see error message above"
-            else:
-                err = ":\n" + err
-            raise RuntimeError("LattE integrale failed with exit code {} to execute {}".format(ret_code, ' '.join(args)) + err.strip())
-
-        p = ans.splitlines()[-2]
-
-        return R(p)
+        from sage.interfaces.latte import count
+        ine = self.cdd_Hrepresentation()
+        return count(ine, cdd=True, ehrhart_polynomial=True, verbose=verbose, **kwds)
 
     @cached_method
     def polar(self):
@@ -343,7 +255,7 @@ class Polyhedron_ZZ(Polyhedron_base):
             sage: p.polar()
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
             sage: type(_)
-            <class 'sage.geometry.polyhedron.backend_ppl.Polyhedra_ZZ_ppl_with_category.element_class'>
+            <class 'sage.geometry.polyhedron.parent.Polyhedra_ZZ_ppl_with_category.element_class'>
             sage: p.polar().base_ring()
             Integer Ring
         """
@@ -397,12 +309,7 @@ class Polyhedron_ZZ(Polyhedron_base):
 
         REFERENCES:
 
-        ..  [PALP]
-            Maximilian Kreuzer, Harald Skarke:
-            "PALP: A Package for Analyzing Lattice Polytopes
-            with Applications to Toric Geometry"
-            Comput.Phys.Commun. 157 (2004) 87-106
-            :arxiv:`math/0204356`
+        - [PALP]_
         """
         return self.is_compact() and self.interior_contains(self.ambient_space().zero())
 
@@ -454,7 +361,7 @@ class Polyhedron_ZZ(Polyhedron_base):
                 plane._delete()
 
     def find_translation(self, translated_polyhedron):
-        """
+        r"""
         Return the translation vector to ``translated_polyhedron``.
 
         INPUT:
@@ -493,7 +400,7 @@ class Polyhedron_ZZ(Polyhedron_base):
         return v
 
     def _subpoly_parallel_facets(self):
-        """
+        r"""
         Generator for all lattice sub-polyhedra with parallel facets.
 
         In a sub-polyhedron `Y\subset X` not all edges of `Y` need to
@@ -512,7 +419,7 @@ class Polyhedron_ZZ(Polyhedron_base):
 
             sage: X = Polyhedron(vertices=[(0,0), (0,1), (1,0), (1,1)])
             sage: X._subpoly_parallel_facets()
-            <generator object _subpoly_parallel_facets at 0x...>
+            <generator object ..._subpoly_parallel_facets at 0x...>
             sage: for p in X._subpoly_parallel_facets():
             ....:     print(p.Vrepresentation())
             (A vertex at (0, 0),)
@@ -561,8 +468,8 @@ class Polyhedron_ZZ(Polyhedron_base):
             yield parent([v, [], []], None)
 
     @cached_method
-    def Minkowski_decompositions(self):
-        """
+    def minkowski_decompositions(self):
+        r"""
         Return all Minkowski sums that add up to the polyhedron.
 
         OUTPUT:
@@ -575,7 +482,7 @@ class Polyhedron_ZZ(Polyhedron_base):
         EXAMPLES::
 
             sage: square = Polyhedron(vertices=[(0,0),(1,0),(0,1),(1,1)])
-            sage: square.Minkowski_decompositions()
+            sage: square.minkowski_decompositions()
             ((A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex,
               A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices),
              (A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices,
@@ -585,7 +492,7 @@ class Polyhedron_ZZ(Polyhedron_base):
 
             sage: Q = Polyhedron(vertices=[(4,0), (6,0), (0,3), (4,3)])
             sage: R = Polyhedron(vertices=[(0,0), (5,0), (8,4), (3,2)])
-            sage: (Q+R).Minkowski_decompositions()
+            sage: (Q+R).minkowski_decompositions()
             ((A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex,
               A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 7 vertices),
              (A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices,
@@ -603,13 +510,21 @@ class Polyhedron_ZZ(Polyhedron_base):
              (A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices,
               A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 6 vertices))
 
-           sage: [ len(square.dilation(i).Minkowski_decompositions())
-           ...     for i in range(6) ]
+           sage: [ len(square.dilation(i).minkowski_decompositions())
+           ....:   for i in range(6) ]
            [1, 2, 5, 8, 13, 18]
            sage: [ ceil((i^2+2*i-1)/2)+1 for i in range(10) ]
            [1, 2, 5, 8, 13, 18, 25, 32, 41, 50]
+
+        TESTS::
+
+            sage: Q = Polyhedron(vertices=[(4,0), (6,0), (0,3), (4,3)])
+            sage: D = Q.Minkowski_decompositions()
+            doctest:warning...:
+            DeprecationWarning: Minkowski_decompositions is deprecated. Please use minkowski_decompositions instead.
+            See http://trac.sagemath.org/23685 for details.
         """
-        if self.dim()>2 or not self.is_compact():
+        if self.dim() > 2 or not self.is_compact():
             raise NotImplementedError('only implemented for bounded polygons')
         summands = []
         def is_known_summand(poly):
@@ -626,7 +541,9 @@ class Polyhedron_ZZ(Polyhedron_base):
             Y = self - X
             if X+Y != self:
                 continue
-            decompositions.append((X,Y))
+            decompositions.append((X, Y))
             summands += [X, Y]
         return tuple(decompositions)
 
+    Minkowski_decompositions = deprecated_function_alias(23685,
+                                                         minkowski_decompositions)

@@ -22,7 +22,9 @@ from __future__ import absolute_import
 
 
 from .padic_extension_generic import pAdicExtensionGeneric
+from .misc import precprint
 from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.misc.cachefunc import cached_method
 
 class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
     """
@@ -53,69 +55,41 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
         self._res_field = GF(self.prime_pow.pow_Integer_Integer(poly.degree()), name = names[1], modulus = poly.change_ring(poly.base_ring().residue_field()))
 
-    def _repr_(self, do_latex = False):
-        r"""
-        Representation.
+    def _extension_type(self):
+        """
+        Return the type (``Unramified``, ``Eisenstein``) of this 
+        extension as a string, if any.
+
+        Used for printing.
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125); R #indirect doctest
-            Unramified Extension of 5-adic Ring with capped absolute precision 20 in a defined by (1 + O(5^20))*x^3 + (O(5^20))*x^2 + (3 + O(5^20))*x + (3 + O(5^20))
-            sage: latex(R) #indirect doctest
-            \mathbf{Z}_{5^{3}}
+            sage: K.<a> = Qq(5^3)
+            sage: K._extension_type()
+            'Unramified'
+
+            sage: L.<pi> = Qp(5).extension(x^2 - 5)
+            sage: L._extension_type()
+            'Eisenstein'
         """
-        if do_latex:
-            if self.base_ring() is self.ground_ring_of_tower():
-                if self.is_field():
-                    return "\\mathbf{Q}_{%s^{%s}}" % (self.prime(), self.degree())
-                else:
-                    return "\\mathbf{Z}_{%s^{%s}}" % (self.prime(), self.degree())
-            else:
-                raise NotImplementedError
-        return "Unramified Extension of %s in %s defined by %s"%(
-            self.ground_ring(), self.variable_name(), self.modulus())
+        return "Unramified"
 
-    def ramification_index(self, K = None):
+    def absolute_f(self):
         """
-        Returns the ramification index of self over the subring K.
-
-        INPUT:
-
-            - K -- a subring (or subfield) of self.  Defaults to the
-              base.
+        Return the degree of the residue field of this ring/field
+        over its prime subfield
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125); R.ramification_index()
+            sage: K.<a> = Qq(3^5)
+            sage: K.absolute_f()
+            5
+
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)
+            sage: L.absolute_f()
             1
         """
-        if K is None:
-            return 1
-        elif K is self:
-            return 1
-        else:
-            raise NotImplementedError
-
-    def inertia_degree(self, K = None):
-        """
-        Returns the inertia degree of self over the subring K.
-
-        INPUT:
-
-            - K -- a subring (or subfield) of self.  Defaults to the
-              base.
-
-        EXAMPLES::
-
-            sage: R.<a> = Zq(125); R.inertia_degree()
-            3
-        """
-        if K is None:
-            return self.modulus().degree()
-        elif K is self:
-            return 1
-        else:
-            raise NotImplementedError
+        return self.modulus().degree() * self.base_ring().absolute_f()
 
     #def extension(self, *args, **kwds):
     #    raise NotImplementedError
@@ -137,6 +111,28 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         #\code{unramified_extension_of_degree} over the automatic
         #coercion base.
         return self._res_field
+
+    def residue_ring(self, n):
+        """
+        Return the quotient of the ring of integers by the nth power of its maximal ideal.
+
+        EXAMPLES::
+
+            sage: R.<a> = Zq(125)
+            sage: R.residue_ring(1)
+            Finite Field in a0 of size 5^3
+
+        The following requires implementing more general Artinian rings::
+
+            sage: R.residue_ring(2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+        """
+        if n == 1:
+            return self._res_field
+        else:
+            raise NotImplementedError
 
     def discriminant(self, K=None):
         """
@@ -212,6 +208,29 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         if n != 0:
             raise IndexError("only one generator")
         return self([0,1])
+
+    @cached_method
+    def _frob_gen(self, arithmetic = True):
+        """
+        Returns frobenius of the generator for this unramified extension
+
+        EXAMPLES::
+
+            sage: R.<a> = Zq(9)
+            sage: R._frob_gen()
+            (2*a + 1) + (2*a + 2)*3 + (2*a + 2)*3^2 + (2*a + 2)*3^3 + (2*a + 2)*3^4 + (2*a + 2)*3^5 + (2*a + 2)*3^6 + (2*a + 2)*3^7 + (2*a + 2)*3^8 + (2*a + 2)*3^9 + (2*a + 2)*3^10 + (2*a + 2)*3^11 + (2*a + 2)*3^12 + (2*a + 2)*3^13 + (2*a + 2)*3^14 + (2*a + 2)*3^15 + (2*a + 2)*3^16 + (2*a + 2)*3^17 + (2*a + 2)*3^18 + (2*a + 2)*3^19 + O(3^20)
+        """
+        p = self.prime()
+        exp = p
+        a = self.gen()
+        if not arithmetic:
+            exp = p**(self.absolute_degree()-1)
+        approx = (self(a.residue()**exp)).lift_to_precision(self.precision_cap()) #first approximation
+        f = self.defining_polynomial()
+        g = f.derivative()
+        while(f(approx) != 0): #hensel lift frobenius(a)
+            approx = approx - f(approx)/g(approx)
+        return approx
 
     def uniformizer_pow(self, n):
         """
@@ -289,19 +308,18 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         return self.ground_ring().has_pth_root()
 
     def has_root_of_unity(self, n):
-        """
-        Returns whether or not `\ZZ_p` has a primitive `n^{\mbox{th}}`
+        r"""
+        Return whether or not `\ZZ_p` has a primitive `n^{\mbox{th}}`
         root of unity.
 
         INPUT:
 
-            - self -- a p-adic ring
-            - n -- an integer
+        - ``self`` -- a p-adic ring
+        - ``n`` -- an integer
 
         OUTPUT:
 
-            - boolean -- whether self has primitive `n^{\mbox{th}}`
-              root of unity
+        - boolean
 
         EXAMPLES::
 
@@ -313,7 +331,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
             sage: R.has_root_of_unity(11)
             False
         """
-        if (self.prime() == 2):
-            return n.divides(2*(self.residue_class_field().order()-1))
+        if self.prime() == 2:
+            return n.divides(2 * (self.residue_class_field().order() - 1))
         else:
             return n.divides(self.residue_class_field().order() - 1)

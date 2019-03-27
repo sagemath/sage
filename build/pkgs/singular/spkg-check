@@ -1,0 +1,5 @@
+Singular -c 'LIB "freegb.lib"; exit;'
+if [ $? -ne 0 ]; then
+    echo >&2 "Error loading the freegb library in Singular."
+    exit 1
+fi

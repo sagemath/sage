@@ -13,11 +13,12 @@ slopes (and hence a last infinite slope).
 #
 #                  http://www.gnu.org/licenses/
 #############################################################################
+from __future__ import division
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element
-from sage.structure.sage_object import op_EQ, op_NE, op_LE, op_GE, op_LT
+from sage.structure.richcmp import op_EQ, op_NE, op_LE, op_GE, op_LT
 from sage.misc.cachefunc import cached_method
 
 from sage.rings.infinity import Infinity
@@ -229,7 +230,7 @@ class NewtonPolygon_element(Element):
 
         The Newton polygon, which is the Minkowski sum of this Newton polygon and ``other``.
 
-        NOTE::
+        .. NOTE::
 
             If ``self`` and ``other`` are respective Newton polygons of some polynomials
             `f` and `g` the self*other is the Newton polygon of the product `fg`
@@ -255,7 +256,7 @@ class NewtonPolygon_element(Element):
             sage: NP.slopes()
             [1, 3/2]
         """
-        polyhedron = self._polyhedron.Minkowski_sum(other._polyhedron)
+        polyhedron = self._polyhedron.minkowski_sum(other._polyhedron)
         return self.parent()(polyhedron)
 
     def __pow__(self, exp, ignored=None):
@@ -368,9 +369,10 @@ class NewtonPolygon_element(Element):
             return vertices[-1][1]
         if x > vertices[-1][0]:
             return vertices[-1][1] + lastslope * (x - vertices[-1][0])
-        a = 0; b = len(vertices)
+        a = 0
+        b = len(vertices)
         while b - a > 1:
-            c = floor((a+b)/2)
+            c = (a + b) // 2
             if vertices[c][0] < x:
                 a = c
             else:
@@ -482,7 +484,7 @@ class NewtonPolygon_element(Element):
                      + line([(xend+0.5, yend + 0.5*self.last_slope()), (xend+1, yend+self.last_slope())], linestyle="--", **kwargs)
 
     def reverse(self, degree=None):
-        """
+        r"""
         Returns the symmetric of ``self``
 
         INPUT:
@@ -524,7 +526,7 @@ class NewtonPolygon_element(Element):
 
 
 class ParentNewtonPolygon(Parent, UniqueRepresentation):
-    """
+    r"""
     Construct a Newton polygon.
 
     INPUT:
@@ -676,7 +678,7 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
         return self(Polyhedron(base_ring=self.base_ring(), ambient_dim=2))
 
     def _element_constructor_(self, arg, sort_slopes=True, last_slope=Infinity):
-        """
+        r"""
         INPUT:
 
         - ``arg`` -- an argument describing the Newton polygon

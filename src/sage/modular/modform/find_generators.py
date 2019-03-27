@@ -8,8 +8,6 @@ AUTHORS:
 
 - William Stein (2007-08-24): first version
 """
-from __future__ import absolute_import
-
 #*****************************************************************************
 #       Copyright (C) 2007 William Stein
 #
@@ -19,9 +17,12 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
+from six.moves import range
+from six import integer_types
 
-
-from sage.rings.all import Integer, QQ, ZZ, PowerSeriesRing
+from sage.structure.richcmp import richcmp_method, richcmp
+from sage.rings.all import Integer, QQ, ZZ
 from sage.misc.all import prod, verbose
 from sage.misc.cachefunc import cached_method
 from sage.modular.arithgroup.all import Gamma0, is_CongruenceSubgroup
@@ -110,8 +111,8 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
             raise ValueError("stop_dim must be provided if use_random is True")
         shuffle(wts)
 
-        for c in xrange(N):
-            w = V(prod(shortforms[i]**wts[c][i] for i in xrange(n)).padded_list(prec))
+        for c in range(N):
+            w = V(prod(shortforms[i]**wts[c][i] for i in range(n)).padded_list(prec))
             if w in W: continue
             W = V.span(list(W.gens()) + [w])
             if stop_dim and W.rank() == stop_dim:
@@ -121,7 +122,7 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
         verbose("Nothing worked", t)
         return W
     else:
-        G = [V(prod(forms[i][1]**c[i] for i in xrange(n)).padded_list(prec)) for c in wts]
+        G = [V(prod(forms[i][1]**c[i] for i in range(n)).padded_list(prec)) for c in wts]
         t = verbose('found %s candidates' % N, t)
         W = V.span(G)
         verbose('span has dimension %s' % W.rank(), t)
@@ -133,7 +134,7 @@ def find_generators(*args):
     replaced by the :meth:`~ModularFormsRing.generators` method of
     ModularFormsRing objects.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.modform.find_generators import find_generators
         sage: find_generators()
@@ -149,7 +150,7 @@ def basis_for_modform_space(*args):
     replaced by the :meth:`~ModularFormsRing.q_expansion_basis` method of
     ModularFormsRing objects.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.modform.find_generators import basis_for_modform_space
         sage: basis_for_modform_space()
@@ -159,6 +160,8 @@ def basis_for_modform_space(*args):
     """
     raise NotImplementedError("basis_for_modform_space has been removed -- use ModularFormsRing.q_expansion_basis()")
 
+
+@richcmp_method
 class ModularFormsRing(SageObject):
 
     def __init__(self, group, base_ring=QQ):
@@ -215,7 +218,7 @@ class ModularFormsRing(SageObject):
             ...
             ValueError: Base ring (=Univariate Polynomial Ring in x over Integer Ring) should be QQ, ZZ or a finite prime field
         """
-        if isinstance(group, (int, long, Integer)):
+        if isinstance(group, integer_types + (Integer,)):
             group = Gamma0(group)
         elif not is_CongruenceSubgroup(group):
             raise ValueError("Group (=%s) should be a congruence subgroup" % group)
@@ -234,7 +237,7 @@ class ModularFormsRing(SageObject):
         r"""
         Return the congruence subgroup for which this is the ring of modular forms.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R = ModularFormsRing(Gamma1(13))
             sage: R.group() is Gamma1(13)
@@ -246,7 +249,7 @@ class ModularFormsRing(SageObject):
         r"""
         Return the coefficient ring of this modular forms ring.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularFormsRing(Gamma1(13)).base_ring()
             Rational Field
@@ -255,12 +258,13 @@ class ModularFormsRing(SageObject):
         """
         return self.__base_ring
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
-        Compare self to other. Rings are equal if and only if their groups and
-        base rings are.
+        Compare self to other.
 
-        EXAMPLE::
+        Rings are equal if and only if their groups and base rings are.
+
+        EXAMPLES::
 
             sage: ModularFormsRing(3) == 3
             False
@@ -269,11 +273,11 @@ class ModularFormsRing(SageObject):
             sage: ModularFormsRing(Gamma0(3)) == ModularFormsRing(Gamma0(3))
             True
         """
-
         if not isinstance(other, ModularFormsRing):
-            return cmp( type(self), type(other) )
-        else:
-            return cmp(self.group(), other.group()) or cmp(self.base_ring(), other.base_ring())
+            return NotImplemented
+
+        return richcmp((self.group(), self.base_ring()),
+                       (other.group(), other.base_ring()), op)
 
     def _repr_(self):
         r"""
@@ -337,7 +341,7 @@ class ModularFormsRing(SageObject):
         a list of pairs (k, f), where f is the q-expansion to precision
         ``prec`` of a modular form of weight k.
 
-        .. seealso::
+        .. SEEALSO::
 
             :meth:`gen_forms`, which does exactly the same thing, but returns
             Sage modular form objects rather than bare power series, and keeps
@@ -473,7 +477,7 @@ class ModularFormsRing(SageObject):
             :meth:`generators`). If called with non-default values for these
             parameters, caching will be disabled.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A = ModularFormsRing(Gamma0(11), Zmod(5)).gen_forms(); A
             [1 + 12*q^2 + 12*q^3 + 12*q^4 + 12*q^5 + O(q^6), q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6), q - 9*q^4 - 10*q^5 + O(q^6)]
@@ -504,7 +508,7 @@ class ModularFormsRing(SageObject):
 
         a list of tuples, formatted as with ``start_gens``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R = ModularFormsRing(Gamma1(4))
             sage: R._find_generators(8, (), 2)
@@ -590,7 +594,7 @@ class ModularFormsRing(SageObject):
                     # work around a silly free module bug
                     qc = V.coordinates(q.lift())
                 qcZZ = [ZZ(_) for _ in qc] # lift to ZZ so we can define F
-                f = sum([B[i] * qcZZ[i] for i in xrange(len(B))])
+                f = sum([B[i] * qcZZ[i] for i in range(len(B))])
                 F = M(f)
                 G.append((k, f.change_ring(self.base_ring()), F))
 
@@ -675,7 +679,7 @@ class ModularFormsRing(SageObject):
         Calculate generators for the ideal of cuspidal forms in this ring, as a
         module over the whole ring.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularFormsRing(Gamma0(3)).cuspidal_ideal_generators(maxweight=12)
             [(6, q - 6*q^2 + 9*q^3 + 4*q^4 + O(q^5), q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6))]
@@ -733,7 +737,7 @@ class ModularFormsRing(SageObject):
                     # work around a silly free module bug
                     qc = V.coordinates(q.lift())
                 qcZZ = [ZZ(_) for _ in qc] # lift to ZZ so we can define F
-                f = sum([B[i] * qcZZ[i] for i in xrange(len(B))])
+                f = sum([B[i] * qcZZ[i] for i in range(len(B))])
                 F = S(f)
                 G.append((k, f.change_ring(self.base_ring()), F))
 

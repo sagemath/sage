@@ -264,21 +264,21 @@ def plot(hyperplane_arrangement, **kwds):
             newk['opacity'] = hyperplane_opacities[i]
         if dim == 1:
             newk['point_size'] = point_sizes[i]
-        if dim in [1,2] and hyperplane_legend != False: # more options than T/F
+        if dim in [1,2] and hyperplane_legend: # more options than T/F
             newk['legend_label'] = legend_labels[i]
         if ranges_set:
             newk['ranges'] = ranges[i]
         p += plot_hyperplane(hyperplane_arrangement[i], rgbcolor=hyp_colors[i], **newk)
     if dim == 1:
-        if hyperplane_legend != False: # there are more options than T/F
+        if hyperplane_legend: # there are more options than T/F
             p.legend(True)
         return p
     elif dim == 2:
-        if hyperplane_legend != False: # there are more options than T/F
+        if hyperplane_legend: # there are more options than T/F
             p.legend(True)
         return p
     else: # dim==3
-        if hyperplane_legend != False: # there are more options than T/F
+        if hyperplane_legend: # there are more options than T/F
             return p, legend3d
         else:
             return p
@@ -370,7 +370,7 @@ def plot_hyperplane(hyperplane, **kwds):
     # handle extra keywords
     if 'hyperplane_label' in kwds:
         hyp_label = kwds.pop('hyperplane_label')
-        if hyp_label == False:
+        if not hyp_label:
             has_hyp_label = False
         else:
             has_hyp_label = True
@@ -378,7 +378,7 @@ def plot_hyperplane(hyperplane, **kwds):
         hyp_label = True
         has_hyp_label = True
     if has_hyp_label:
-        if hyp_label == True: # then label hyperplane with its equation
+        if hyp_label: # then label hyperplane with its equation
             if hyperplane.dimension() == 2: # jmol does not like latex
                 label = hyperplane._repr_linear(include_zero=False)
             else:
@@ -496,18 +496,18 @@ def legend_3d(hyperplane_arrangement, hyperplane_colors, length):
 
         sage: a = hyperplane_arrangements.semiorder(3)
         sage: from sage.geometry.hyperplane_arrangement.plot import legend_3d
-        sage: legend_3d(a, colors.values()[:6],length='long')
+        sage: legend_3d(a, list(colors.values())[:6],length='long')
         Graphics object consisting of 6 graphics primitives
 
         sage: b = hyperplane_arrangements.semiorder(4)
         sage: c = b.essentialization()
-        sage: legend_3d(c, colors.values()[:12], length='long')
+        sage: legend_3d(c, list(colors.values())[:12], length='long')
         Graphics object consisting of 12 graphics primitives
 
-        sage: legend_3d(c, colors.values()[:12], length='short')
+        sage: legend_3d(c, list(colors.values())[:12], length='short')
         Graphics object consisting of 12 graphics primitives
 
-        sage: p = legend_3d(c, colors.values()[:12], length='short')
+        sage: p = legend_3d(c, list(colors.values())[:12], length='short')
         sage: p.set_legend_options(ncol=4)
         sage: type(p)
         <class 'sage.plot.graphics.Graphics'>

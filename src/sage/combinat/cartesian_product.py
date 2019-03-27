@@ -17,6 +17,11 @@ Cartesian Products
 #*****************************************************************************
 from __future__ import absolute_import
 
+from six.moves import range
+
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.sets.set_from_iterator import EnumeratedSetFromIterator
+
 from inspect import isgenerator
 import sage.misc.prandom as rnd
 from sage.misc.mrange import xmrange_iter, _is_finite, _len
@@ -86,7 +91,6 @@ def CartesianProduct(*iters):
     deprecation(18411, "CartesianProduct is deprecated. Use cartesian_product instead")
 
     from sage.combinat.misc import IterableFunctionCall
-    from sage.sets.set_from_iterator import EnumeratedSetFromIterator
     deprecate_ifc = False
     iiters = []
     for a in iters:
@@ -103,7 +107,8 @@ def CartesianProduct(*iters):
     from sage.categories.cartesian_product import cartesian_product
     return cartesian_product(iters)
 
-class CartesianProduct_iters(CombinatorialClass):
+
+class CartesianProduct_iters(EnumeratedSetFromIterator):
     r"""
     Cartesian product of finite sets.
 
@@ -135,7 +140,7 @@ class CartesianProduct_iters(CombinatorialClass):
         sage: c = cartesian_product([F1, F2, F3])
 
         sage: type(C.an_element())
-        <type 'list'>
+        <... 'list'>
         sage: type(c.an_element())
         <class 'sage.sets.cartesian_product.CartesianProduct_with_category.element_class'>
 
@@ -156,15 +161,37 @@ class CartesianProduct_iters(CombinatorialClass):
         """
         TESTS::
 
-            sage: import sage.combinat.cartesian_product as cartesian_product
-            sage: cp = cartesian_product.CartesianProduct_iters([1,2],[3,4]); cp
+            sage: from sage.combinat.cartesian_product import CartesianProduct_iters
+            sage: cp = CartesianProduct_iters([1,2],[3,4]); cp
             Cartesian product of [1, 2], [3, 4]
             sage: loads(dumps(cp)) == cp
             True
+            sage: TestSuite(cp).run(skip='_test_an_element')
+
+        Check that :trac:`24558` is fixed::
+
+            sage: from sage.combinat.cartesian_product import CartesianProduct_iters
+            sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
+            sage: I = EnumeratedSetFromIterator(Integers)
+            sage: CartesianProduct_iters(I, I)
+            Cartesian product of {0, 1, -1, 2, -2, ...}, {0, 1, -1, 2, -2, ...}
         """
         self.iters = iters
         self._mrange = xmrange_iter(iters)
-        CombinatorialClass.__init__(self)
+        category = EnumeratedSets()
+        try:
+            category = category.Finite() if self.is_finite() else category.Infinite()
+        except ValueError: # Unable to determine if it is finite or not
+            pass
+        def iterfunc():
+            # we can not use self.__iterate__ directly because
+            # that leads to an infinite recursion in __eq__
+            return self.__iterate__()
+        name = "Cartesian product of " + ", ".join(map(str, self.iters))
+        EnumeratedSetFromIterator.__init__(self, iterfunc,
+                                           name=name,
+                                           category=category,
+                                           cache=False)
 
     def __contains__(self, x):
         """
@@ -190,18 +217,30 @@ class CartesianProduct_iters(CombinatorialClass):
         except (TypeError, IndexError):
             return False
 
+    def __reduce__(self):
+        r"""
+        Support for pickle.
+
+        TESTS::
+
+            sage: cp = cartesian_product([[1,2],range(0,9)])
+            sage: loads(dumps(cp)) == cp
+            True
+        """
+        return (self.__class__, (self.iters))
+
     def __repr__(self):
         """
         EXAMPLES::
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
-            sage: CartesianProduct_iters(range(2), range(3))
+            sage: CartesianProduct_iters(list(range(2)), list(range(3)))
             Cartesian product of [0, 1], [0, 1, 2]
         """
         return "Cartesian product of " + ", ".join(map(str, self.iters))
 
     def cardinality(self):
-        """
+        r"""
         Returns the number of elements in the Cartesian product of
         everything in \*iters.
 
@@ -210,9 +249,9 @@ class CartesianProduct_iters(CombinatorialClass):
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: CartesianProduct_iters(range(2), range(3)).cardinality()
             6
-            sage: CartesianProduct_iters(range(2), xrange(3)).cardinality()
+            sage: CartesianProduct_iters(range(2), range(3)).cardinality()
             6
-            sage: CartesianProduct_iters(range(2), xrange(3), xrange(4)).cardinality()
+            sage: CartesianProduct_iters(range(2), range(3), range(4)).cardinality()
             24
 
         This works correctly for infinite objects::
@@ -241,7 +280,7 @@ class CartesianProduct_iters(CombinatorialClass):
         EXAMPLES::
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
-            sage: C = CartesianProduct_iters(xrange(3), xrange(4))
+            sage: C = CartesianProduct_iters(range(3), range(4))
             sage: len(C)
             12
             sage: C = CartesianProduct_iters(ZZ, QQ)
@@ -277,9 +316,8 @@ class CartesianProduct_iters(CombinatorialClass):
         """
         return [e for e in self]
 
-
-    def __iter__(self):
-        """
+    def __iterate__(self):
+        r"""
         An iterator for the elements in the Cartesian product of the
         iterables \*iters.
 
@@ -337,7 +375,7 @@ class CartesianProduct_iters(CombinatorialClass):
         EXAMPLES::
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
-            sage: C = CartesianProduct_iters(xrange(1000), xrange(1000), xrange(1000))
+            sage: C = CartesianProduct_iters(range(1000), range(1000), range(1000))
             sage: C[238792368]
             [238, 792, 368]
 
@@ -366,7 +404,7 @@ class CartesianProduct_iters(CombinatorialClass):
         return [unrank(L, i) for L,i in zip(self.iters, positions)]
 
     def random_element(self):
-        """
+        r"""
         Returns a random element from the Cartesian product of \*iters.
 
         EXAMPLES::

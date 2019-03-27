@@ -1,15 +1,5 @@
 """
 Finite Fields of Characteristic 2
-
-TESTS:
-
-Test backwards compatibility::
-
-    sage: from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
-    sage: FiniteField_ntl_gf2e(16, 'a')
-    doctest:...: DeprecationWarning: constructing a FiniteField_ntl_gf2e without giving a polynomial as modulus is deprecated, use the more general FiniteField constructor instead
-    See http://trac.sagemath.org/16983 for details.
-    Finite Field in a of size 2^4
 """
 
 #*****************************************************************************
@@ -27,8 +17,8 @@ Test backwards compatibility::
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.libs.pari.all import pari
-from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
+
 
 def late_import():
     """
@@ -147,17 +137,9 @@ class FiniteField_ntl_gf2e(FiniteField):
             raise ValueError("q must be a 2-power")
         FiniteField.__init__(self, GF2, names, normalize=True)
 
-        self._kwargs = {'repr':repr}
-
         from sage.rings.polynomial.polynomial_element import is_Polynomial
         if not is_Polynomial(modulus):
-            from sage.misc.superseded import deprecation
-            deprecation(16983, "constructing a FiniteField_ntl_gf2e without giving a polynomial as modulus is deprecated, use the more general FiniteField constructor instead")
-            R = GF2['x']
-            if modulus is None or isinstance(modulus, str):
-                modulus = R.irreducible_element(k, algorithm=modulus)
-            else:
-                modulus = R(modulus)
+            raise TypeError("modulus must be a polynomial")
 
         self._cache = Cache_ntl_gf2e(self, k, modulus)
         self._modulus = modulus

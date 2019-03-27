@@ -25,7 +25,7 @@ def sidon_sets(N, g = 1):
     that any integer `M` can be obtain at most `g` times as sums of unordered pairs of
     elements of `A` (the two elements are not necessary distinct):
 
-    .. math::
+    .. MATH::
 
         \#\{ (a_i, a_j) | a_i, a_j \in A, a_i + a_j = M,a_i \leq a_j \} \leq g
 
@@ -41,8 +41,8 @@ def sidon_sets(N, g = 1):
     EXAMPLES::
 
         sage: S = sidon_sets(3, 2)
-        sage: S
-        {{2}, {3}, {1, 2}, {}, {2, 3}, {1}, {1, 3}, {1, 2, 3}}
+        sage: sorted(S, key=str)
+        [{1, 2, 3}, {1, 2}, {1, 3}, {1}, {2, 3}, {2}, {3}, {}]
         sage: S.cardinality()
         8
         sage: S.category()
@@ -67,10 +67,10 @@ def sidon_sets(N, g = 1):
         sage: n = 1
         sage: L = []
         sage: for i in range(1,19):
-        ...       nb = max([S.cardinality() for S in sidon_sets(i)])
-        ...       if nb > n:
-        ...           L.append(i-1)
-        ...           n = nb
+        ....:     nb = max([S.cardinality() for S in sidon_sets(i)])
+        ....:     if nb > n:
+        ....:         L.append(i-1)
+        ....:         n = nb
         sage: L
         [1, 3, 6, 11, 17]
 
@@ -117,8 +117,8 @@ def sidon_sets_rec(N, g = 1):
     TESTS::
 
         sage: from sage.combinat.sidon_sets import sidon_sets_rec
-        sage: sidon_sets_rec(3,2)
-        {{2}, {3}, {1, 2}, {}, {2, 3}, {1}, {1, 3}, {1, 2, 3}}
+        sage: sorted(sidon_sets_rec(3,2), key=str)
+        [{1, 2, 3}, {1, 2}, {1, 3}, {1}, {2, 3}, {2}, {3}, {}]
     """
     if N == 1 :
         return Set([Set([]), Set([1])])

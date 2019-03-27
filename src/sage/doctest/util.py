@@ -19,6 +19,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six import iteritems
 
 from sage.misc.misc import walltime, cputime
 
@@ -79,7 +80,7 @@ def dict_difference(self, other):
         {'foobar': 'hello', 'timeout': 100}
     """
     D = dict()
-    for (k,v) in self.iteritems():
+    for k, v in iteritems(self):
         try:
             if other[k] == v:
                 continue
@@ -175,7 +176,7 @@ class Timer:
         """
         return str(self.__dict__)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Comparison.
 
@@ -188,9 +189,25 @@ class Timer:
             sage: loads(dumps(t)) == t
             True
         """
-        c = cmp(type(self), type(other))
-        if c: return c
-        return cmp(self.__dict__, other.__dict__)
+        if not isinstance(other, Timer):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        """
+        Test for unequality
+
+        EXAMPLES::
+
+            sage: from sage.doctest.util import Timer
+            sage: Timer() == Timer()
+            True
+            sage: t = Timer().start()
+            sage: loads(dumps(t)) != t
+            False
+        """
+        return not (self == other)
+
 
 # Inheritance rather then delegation as globals() must be a dict
 class RecordingDict(dict):
@@ -468,7 +485,7 @@ class NestedName:
         """
         return '.'.join(a for a in self.all if a is not None)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Comparison is just comparison of the underlying lists.
 
@@ -486,6 +503,26 @@ class NestedName:
             sage: qname == qname2
             False
         """
-        c = cmp(type(self), type(other))
-        if c: return c
-        return cmp(self.all, other.all)
+        if not isinstance(other, NestedName):
+            return False
+        return self.all == other.all
+
+    def __ne__(self, other):
+        """
+        Test for unequality.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.util import NestedName
+            sage: qname = NestedName('sage.categories.algebras')
+            sage: qname2 = NestedName('sage.categories.algebras')
+            sage: qname != qname2
+            False
+            sage: qname[0] = 'Algebras'
+            sage: qname2[2] = 'Algebras'
+            sage: repr(qname) == repr(qname2)
+            True
+            sage: qname != qname2
+            True
+        """
+        return not (self == other)

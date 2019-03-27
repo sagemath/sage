@@ -43,7 +43,7 @@ polynomial or matrix, will have our new method. So you can do
 ``PariError`` in this case.
 
 The ``gen`` class is defined in
-:file:`SAGE_ROOT/src/sage/libs/pari/gen.pyx`, and this is where we
+:file:`SAGE_ROOT/src/sage/libs/cypari2/gen.pyx`, and this is where we
 add the method ``matfrobenius``::
 
     def matfrobenius(self, flag=0):
@@ -138,7 +138,7 @@ convert output from PARI to Sage objects::
         if not self.is_square():
             raise ArithmeticError("frobenius matrix of non-square matrix not defined.")
 
-        v = self._pari_().matfrobenius(flag)
+        v = self.__pari__().matfrobenius(flag)
         if flag==0:
             return self.matrix_space()(v.python())
         elif flag==1:
@@ -401,7 +401,8 @@ interface to Singular::
 
     sage: singular.LIB("brnoeth.lib")
     sage: singular.ring(5,'(x,y)','lp')
-        //   characteristic : 5
+        polynomial ring, over a field, global ordering
+        //   coefficients: ZZ/5
         //   number of vars : 2
         //        block   1 : ordering lp
         //                  : names    x y
@@ -690,19 +691,22 @@ dumps the user into an Octave interactive shell::
             Use octave to compute a solution x to A*x = b, as a list.
 
             INPUT:
-                A -- mxn matrix A with entries in QQ or RR
-                b -- m-vector b entries in QQ or RR (resp)
+            
+            - A -- mxn matrix A with entries in QQ or RR
+            - b -- m-vector b entries in QQ or RR (resp)
 
             OUTPUT:
-                An list x (if it exists) which solves M*x = b
 
-            EXAMPLES:
+            An list x (if it exists) which solves M*x = b
+
+            EXAMPLES::
+
                 sage: M33 = MatrixSpace(QQ,3,3)
                 sage: A   = M33([1,2,3,4,5,6,7,8,0])
                 sage: V3  = VectorSpace(QQ,3)
                 sage: b   = V3([1,2,3])
                 sage: octave.solve_linear_system(A,b)    # optional - octave
-                [-0.33333299999999999, 0.66666700000000001, -3.5236600000000002e-18]
+                [-0.333333, 0.666667, 0]
 
             AUTHOR: David Joyner and William Stein
             """

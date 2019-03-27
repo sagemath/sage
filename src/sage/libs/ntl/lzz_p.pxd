@@ -2,7 +2,7 @@
 
 from .types cimport zz_p_c
 
-cdef extern from "sage/libs/ntl/ntlwrap.cpp":
+cdef extern from "ntlwrap.h":
     long zz_p_rep "rep"(zz_p_c x)
     long zz_p_isZero "IsZero"(zz_p_c x)
     void zz_p_add "add"(zz_p_c x, zz_p_c a, zz_p_c b)

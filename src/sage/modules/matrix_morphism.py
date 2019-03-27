@@ -53,8 +53,9 @@ AUTHOR:
 
 import sage.categories.morphism
 import sage.categories.homset
-import sage.matrix.all as matrix
 from sage.structure.all import Sequence, parent
+from sage.structure.richcmp import richcmp, op_NE, op_EQ
+
 
 def is_MatrixMorphism(x):
     """
@@ -95,21 +96,33 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             raise TypeError("parent must be a Hom space")
         sage.categories.morphism.Morphism.__init__(self, parent)
 
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
-        Compare two matrix morphisms.
+        Rich comparison of morphisms.
 
         EXAMPLES::
 
-            sage: V = ZZ^2; phi = V.hom([3*V.0, 2*V.1])
-            sage: phi == 3
-            False
+            sage: V = ZZ^2
+            sage: phi = V.hom([3*V.0, 2*V.1])
+            sage: psi = V.hom([5*V.0, 5*V.1])
+            sage: id = V.hom([V.0, V.1])
             sage: phi == phi
             True
+            sage: phi == psi
+            False
+            sage: psi == End(V)(5)
+            True
+            sage: psi == 5 * id
+            True
+            sage: psi == 5  # no coercion
+            False
+            sage: id == End(V).identity()
+            True
         """
-        return cmp(self.matrix(), other.matrix())
-
-    __cmp__ = _cmp_
+        if not isinstance(other, MatrixMorphism) or op not in (op_EQ, op_NE):
+            # Generic comparison
+            return sage.categories.morphism.Morphism._richcmp_(self, other, op)
+        return richcmp(self.matrix(), other.matrix(), op)
 
     def _call_(self, x):
         """
@@ -200,9 +213,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: f((1, 0))
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce entries (=[1.00000000000000*I, 0.000000000000000]) to coefficients in Real Field with 53 bits of precision
+            TypeError: Unable to coerce entries (=[1.00000000000000*I, 0]) to coefficients in Real Field with 53 bits of precision
             sage: f((1, 0), coerce=False)
-            (1.00000000000000*I, 0.000000000000000)
+            (1.00000000000000*I, 0)
 
         """
         if self.domain().is_ambient():
@@ -291,9 +304,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
             sage: M = ZZ^4
             sage: p = matrix(ZZ, [[ 0, -1,  1, -2],
-            ...                   [ 1, -3,  2, -3],
-            ...                   [ 0,  4, -3,  4],
-            ...                   [-2,  8, -4,  3]])
+            ....:                 [ 1, -3,  2, -3],
+            ....:                 [ 0,  4, -3,  4],
+            ....:                 [-2,  8, -4,  3]])
             sage: phi = M.hom(p, M)
             sage: x = vector(ZZ, [1, -3, 5, -2])
             sage: y = phi(x); y
@@ -395,7 +408,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         return self.parent()(R(left) * self.matrix())
 
     def __mul__(self, right):
-        """
+        r"""
         Composition of morphisms, denoted by \*.
 
         EXAMPLES::
@@ -520,10 +533,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: phi + psi
             Traceback (most recent call last):
             ...
-            ValueError: a matrix from
-            Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
-            cannot be converted to a matrix in
-            Full MatrixSpace of 2 by 2 dense matrices over Integer Ring!
+            ValueError: inconsistent number of rows: should be 2 but got 3
         """
         # TODO: move over to any coercion model!
         if not isinstance(right, MatrixMorphism):
@@ -936,7 +946,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: phi.is_identity()
             True
 
-        TEST::
+        TESTS::
 
             sage: V = QQ^10
             sage: H = Hom(V, V)
@@ -980,7 +990,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: phi.is_zero()
             False
 
-        TEST::
+        TESTS::
 
             sage: V = QQ^10
             sage: W = QQ^3
@@ -1028,24 +1038,24 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         Two are equal, the third is different from both of the others.  ::
 
             sage: B = matrix(QQ, [[-3,  5, -4,  2],
-            ...                   [-1,  2, -1,  4],
-            ...                   [ 4, -6,  5, -1],
-            ...                   [-5,  7, -6,  1]])
+            ....:                 [-1,  2, -1,  4],
+            ....:                 [ 4, -6,  5, -1],
+            ....:                 [-5,  7, -6,  1]])
             sage: U = (QQ^4).subspace_with_basis(B.rows())
             sage: C = matrix(QQ, [[-1, -6, -4],
-            ...                   [ 3, -5,  6],
-            ...                   [ 1,  2,  3]])
+            ....:                 [ 3, -5,  6],
+            ....:                 [ 1,  2,  3]])
             sage: V = (QQ^3).subspace_with_basis(C.rows())
             sage: H = Hom(U, V)
 
             sage: D = matrix(QQ, [[-7, -2, -5,  2],
-            ...                   [-5,  1, -4, -8],
-            ...                   [ 1, -1,  1,  4],
-            ...                   [-4, -1, -3,   1]])
+            ....:                 [-5,  1, -4, -8],
+            ....:                 [ 1, -1,  1,  4],
+            ....:                 [-4, -1, -3,   1]])
             sage: X = (QQ^4).subspace_with_basis(D.rows())
             sage: E = matrix(QQ, [[ 4, -1,  4],
-            ...                   [ 5, -4, -5],
-            ...                   [-1,  0, -2]])
+            ....:                 [ 5, -4, -5],
+            ....:                 [-1,  0, -2]])
             sage: Y = (QQ^3).subspace_with_basis(E.rows())
             sage: K = Hom(X, Y)
 
@@ -1065,7 +1075,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: phi.is_equal_function(zeta)
             False
 
-        TEST::
+        TESTS::
 
             sage: H = Hom(ZZ^2, ZZ^2)
             sage: phi = H(matrix(ZZ, 2, range(4)))
@@ -1283,7 +1293,6 @@ class MatrixMorphism(MatrixMorphism_abstract):
             raise ValueError("no parent given when creating this matrix morphism")
         if isinstance(A, MatrixMorphism_abstract):
             A = A.matrix()
-        R = A.base_ring()
         if A.nrows() != parent.domain().rank():
             raise ArithmeticError("number of rows of matrix (={}) must equal rank of domain (={})".format(A.nrows(), parent.domain().rank()))
         if A.ncols() != parent.codomain().rank():
@@ -1354,7 +1363,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
         """
         Tell whether ``self`` is injective.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: V1 = QQ^2
             sage: V2 = QQ^3

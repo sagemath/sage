@@ -6,15 +6,14 @@ from the PADS library by David Eppstein, which is available at
 http://www.ics.uci.edu/~eppstein/PADS/ under the MIT license. It has a
 quadratic runtime and has been described in [Eppstein2008]_.
 
-For more information on partial cubes, see the
-:wikipedia:`Partial cube`.
+For more information on partial cubes, see the :wikipedia:`Partial cube`.
 
 REFERENCE:
 
 .. [Eppstein2008] David Eppstein,
   "Recognizing partial cubes in quadratic time",
   J. Graph Algorithms and Applications 15 (2): 269-293, 2011.
-  Available at http://arxiv.org/abs/0705.1025
+  :arxiv:`0705.1025`
 
 Recognition algorithm
 ---------------------
@@ -115,7 +114,7 @@ def breadth_first_level_search(G, start):
 
     - ``start`` -- vertex or list of vertices from which to start the traversal.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: H = digraphs.DeBruijn(3,2)
         sage: list(sage.graphs.partial_cube.breadth_first_level_search(H, '00'))
@@ -166,7 +165,7 @@ def depth_first_traversal(G, start):
       if the algorithm is progressing via the edge ``vw``, or ``False`` if the
       algorithm is backtracking via the edge ``wv``.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: H = digraphs.DeBruijn(3,2)
         sage: t = list(sage.graphs.partial_cube.depth_first_traversal(H, '00'))
@@ -174,8 +173,8 @@ def depth_first_traversal(G, start):
         16
 
     """
-    neighbors=G.neighbor_out_iterator
-    seen=set([])
+    neighbors = G.neighbor_out_iterator
+    seen = set()
     if not isinstance(start, list):
         start = [start]
 
@@ -214,13 +213,13 @@ def is_partial_cube(G, certificate=False):
 
     INPUT:
 
-    - ``certificate`` (boolean; ``False``) -- The function returns ``True``
-      or ``False`` according to the graph, when ``certificate = False``. When
-      ``certificate = True`` and the graph is a partial cube, the function
-      returns ``(True, mapping)``, where ``mapping`` is an isometric mapping of
-      the vertices of the graph to the vertices of a hypercube ((0, 1)-strings
-      of a fixed length). When ``certificate = True`` and the graph is not a
-      partial cube, ``(False, None)`` is returned.
+    - ``certificate`` -- boolean (default: ``False``); this function returns
+      ``True`` or ``False`` according to the graph, when ``certificate =
+      False``. When ``certificate = True`` and the graph is a partial cube, the
+      function returns ``(True, mapping)``, where ``mapping`` is an isometric
+      mapping of the vertices of the graph to the vertices of a hypercube
+      ((0, 1)-strings of a fixed length). When ``certificate = True`` and the
+      graph is not a partial cube, ``(False, None)`` is returned.
 
     EXAMPLES:
 
@@ -241,7 +240,7 @@ def is_partial_cube(G, certificate=False):
     The returned mapping is an isometric embedding into a hypercube::
 
         sage: g = graphs.DesarguesGraph()
-        sage: _, m = g.is_partial_cube(certificate = True)
+        sage: _, m = g.is_partial_cube(certificate=True)
         sage: m # random
         {0: '00000',
          1: '00001',
@@ -268,13 +267,13 @@ def is_partial_cube(G, certificate=False):
 
     A graph without vertices is trivially a partial cube::
 
-        sage: Graph().is_partial_cube(certificate = True)
+        sage: Graph().is_partial_cube(certificate=True)
         (True, {})
 
     """
     G._scream_if_not_simple()
 
-    if G.order() == 0:
+    if not G.order():
         if certificate:
             return (True, {})
         else:
@@ -308,19 +307,19 @@ def is_partial_cube(G, certificate=False):
     from sage.graphs.graph import Graph
     from sage.sets.disjoint_set import DisjointSet
     contracted = DiGraph({v: {w: (v, w) for w in G[v]} for v in G})
-    unionfind = DisjointSet(contracted.edges(labels = False))
-    available = n-1
+    unionfind = DisjointSet(contracted.edges(labels=False))
+    available = n - 1
 
     # Main contraction loop in place of the original algorithm's recursion
     while contracted.order() > 1:
         # Find max degree vertex in contracted, and update label limit
-        deg, root = max((contracted.out_degree(v), v) for v in contracted)
+        deg, root = max([(contracted.out_degree(v), v) for v in contracted], key=lambda x: x[0])
         if deg > available:
             return fail
         available -= deg
 
         # Set up bitvectors on vertices
-        bitvec = {v:0 for v in contracted}
+        bitvec = {v: 0 for v in contracted}
         neighbors = {}
         for i, neighbor in enumerate(contracted[root]):
             bitvec[neighbor] = 1 << i
@@ -334,9 +333,9 @@ def is_partial_cube(G, certificate=False):
 
         # Make graph of labeled edges and union them together
         labeled = Graph([contracted.vertices(), []])
-        for v, w in contracted.edge_iterator(labels = False):
+        for v, w in contracted.edge_iterator(labels=False):
             diff = bitvec[v]^bitvec[w]
-            if not diff or bitvec[w] &~ bitvec[v] == 0:
+            if not diff or not bitvec[w] &~ bitvec[v]:
                 continue    # zero edge or wrong direction
             if diff not in neighbors:
                 return fail

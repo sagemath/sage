@@ -1,0 +1,41 @@
+From 04d878728603db345c0a0b01718864a12bcfa97d Mon Sep 17 00:00:00 2001
+From: Emmanuel Charpentier <emm.charpentier@free.fr>
+Date: Wed, 14 Mar 2018 19:30:36 +0100
+Subject: [PATCH 1/9] autoconf_verb_dash
+
+Bug in autoconf and R macros.
+Use -### instead of -v to detect linker options.
+See Sage ticket #12787 and R ticket
+* https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14865
+The corresponding patch to m4/clibs.m4 is not included, as
+autoconf-2.68 gives errors, even on the clean upstream sources.
+
+---
+ configure | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure b/configure
+index a314719..dee602f 100755
+--- a/configure
++++ b/configure
+@@ -24837,7 +24837,7 @@ _ACEOF
+ if ac_fn_f77_try_compile "$LINENO"; then :
+   ac_cv_prog_f77_v=
+ # Try some options frequently used verbose output
+-for ac_verb in -v -verbose --verbose -V -\#\#\#; do
++for ac_verb in -\#\#\# -v -verbose --verbose -V ; do
+   cat > conftest.$ac_ext <<_ACEOF
+       program main
+ 
+@@ -25193,7 +25193,7 @@ _ACEOF
+ if ac_fn_c_try_compile "$LINENO"; then :
+   r_cv_prog_c_v=
+ # Try some options frequently used verbose output
+-for r_verb in -v -verbose --verbose -V -\#\#\#; do
++for r_verb in -\#\#\# -v -verbose --verbose -V ; do
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+-- 
+2.16.1
+

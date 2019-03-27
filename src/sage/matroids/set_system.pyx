@@ -27,7 +27,7 @@ Methods
 #*****************************************************************************
 from __future__ import print_function
 
-include "cysignals/memory.pxi"
+from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 include 'sage/data_structures/bitset.pxi'
 
 # SetSystem
@@ -90,7 +90,7 @@ cdef class SetSystem:
         self._groundset_size = len(groundset)
         self._bitset_size = max(self._groundset_size, 1)
         self._capacity = capacity
-        self._subsets = <bitset_t*> sig_malloc(self._capacity * sizeof(bitset_t))
+        self._subsets = <bitset_t*>check_allocarray(self._capacity, sizeof(bitset_t))
         bitset_init(self._temp, self._bitset_size)
         self._len = 0
 
@@ -271,7 +271,7 @@ cdef class SetSystem:
             bitset_free(self._subsets[i])
         self._len = min(self._len, k)
         k2 = max(k, 1)
-        self._subsets = <bitset_t*> sig_realloc(self._subsets, k2 * sizeof(bitset_t))
+        self._subsets = <bitset_t*>check_reallocarray(self._subsets, k2, sizeof(bitset_t))
         self._capacity = k2
 
     cdef inline _append(self, bitset_t X):
@@ -600,7 +600,7 @@ cdef class SetSystem:
         partition ``P``, and while ``P`` has a partition element ``p`` with
         more than one element, select an arbitrary ``e`` from the first such
         ``p`` and split ``p`` into ``p-e``. Then replace ``P`` with
-        the equitabele refinement of this partition.
+        the equitable refinement of this partition.
 
         INPUT:
 
@@ -777,7 +777,7 @@ cdef class SetSystemIterator:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: type(S.__iter__())
-            <type 'sage.matroids.set_system.SetSystemIterator'>
+            <... 'sage.matroids.set_system.SetSystemIterator'>
         """
         self._H = H
         self._pointer = -1

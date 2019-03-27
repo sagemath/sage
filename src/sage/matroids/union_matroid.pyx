@@ -257,13 +257,16 @@ cdef class PartitionMatroid(Matroid):
             Traceback (most recent call last):
             ...
             ValueError: not an iterator of disjoint sets
+            sage: PartitionMatroid([])
+            Partition Matroid of rank 0 on 0 elements
         """
-        P2 = map(set,list(partition))
-        if len(set.union(*P2)) != sum(map(len,P2)):
-            raise ValueError("not an iterator of disjoint sets")
+        P2 = [set(p) for p in partition]
+        if P2:
+            if len(set.union(*P2)) != sum(len(pi) for pi in P2):
+                raise ValueError("not an iterator of disjoint sets")
         self.p = {}
-        for i in range(len(P2)):
-            for j in P2[i]:
+        for i, pi in enumerate(P2):
+            for j in pi:
                 self.p[j] = i
         E = set()
         for P in partition:

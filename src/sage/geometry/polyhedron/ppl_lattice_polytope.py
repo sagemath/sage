@@ -1,4 +1,4 @@
-"""
+r"""
 Fast Lattice Polytopes using PPL.
 
 The :func:`LatticePolytope_PPL` class is a thin wrapper around PPL
@@ -10,7 +10,7 @@ polytopes in 4 dimensions.
 .. NOTE::
 
     For general lattice polyhedra you should use
-    :func:`~sage.geometry.polyhedon.constructor.Polyhedron` with
+    :func:`~sage.geometry.polyhedron.constructor.Polyhedron` with
     ``base_ring=ZZ``.
 
 The class derives from the PPL :class:`sage.libs.ppl.C_Polyhedron`
@@ -97,7 +97,7 @@ def _class_for_LatticePolytope(dim):
 
     INPUT:
 
-    - ``dim`` -- integer. The ambient space dimenson.
+    - ``dim`` -- integer. The ambient space dimension.
 
     OUTPUT:
 
@@ -342,7 +342,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             return tuple()
         box_min, box_max = self.bounding_box()
         from sage.geometry.integral_points import rectangular_box_points
-        return rectangular_box_points(box_min, box_max, self, count_only=True)
+        return rectangular_box_points(list(box_min), list(box_max), self, count_only=True)
 
     @cached_method
     def integral_points(self):
@@ -410,7 +410,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             return tuple()
         box_min, box_max = self.bounding_box()
         from sage.geometry.integral_points import rectangular_box_points
-        points = rectangular_box_points(box_min, box_max, self)
+        points = rectangular_box_points(list(box_min), list(box_max), self)
         if not self.n_integral_points.is_in_cache():
             self.n_integral_points.set_cache(len(points))
         return points
@@ -427,7 +427,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         A tuple of pairs (one for each integral point) consisting of a
         pair ``(point, Hrep)``, where ``point`` is the coordinate
-        vector of the intgeral point and ``Hrep`` is the set of
+        vector of the integral point and ``Hrep`` is the set of
         indices of the :meth:`minimized_constraints` that are
         saturated at the point.
 
@@ -446,7 +446,8 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             return tuple()
         box_min, box_max = self.bounding_box()
         from sage.geometry.integral_points import rectangular_box_points
-        points= rectangular_box_points(box_min, box_max, self, return_saturated=True)
+        points = rectangular_box_points(list(box_min), list(box_max), self,
+                                        return_saturated=True)
         if not self.n_integral_points.is_in_cache():
             self.n_integral_points.set_cache(len(points))
         if not self.integral_points.is_in_cache():
@@ -508,7 +509,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         return tuple(points)
 
     def vertices_saturating(self, constraint):
-        """
+        r"""
         Return the vertices saturating the constraint
 
         INPUT:
@@ -680,7 +681,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
                                               point_labels=tuple(range(len(points))))
         indexsets = set([ frozenset([points.index(p) for p in ps]) for ps in pointsets ])
         orbits = []
-        while len(indexsets)>0:
+        while indexsets:
             idx = indexsets.pop()
             orbits.append(frozenset([points[i] for i in idx]))
             for g in Aut:
@@ -873,7 +874,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         return matrix(ZZ, fiber.vertices()).right_kernel_matrix()
 
     def base_rays(self, fiber, points):
-        """
+        r"""
         Return the primitive lattice vectors that generate the
         direction given by the base projection of points.
 
@@ -975,22 +976,21 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         REFERENCES:
 
-        [BSS]_
+        [BSS2009]_
 
         EXAMPLES::
 
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: Z3square = LatticePolytope_PPL((0,0), (1,2), (2,1), (3,3))
-            sage: Z3square.restricted_automorphism_group(vertex_labels=(1,2,3,4))
-            Permutation Group with generators [(2,3), (1,2)(3,4), (1,4)]
-            sage: G = Z3square.restricted_automorphism_group(); G
-            Permutation Group with generators [((1,2),(2,1)),
-            ((0,0),(1,2))((2,1),(3,3)), ((0,0),(3,3))]
-            sage: tuple(G.domain()) == Z3square.vertices()
+            sage: Z3square.restricted_automorphism_group(vertex_labels=(1,2,3,4)) == PermutationGroup([[(2,3)],[(1,2),(3,4)]])
             True
-            sage: G.orbit(Z3square.vertices()[0])
-            ((0, 0), (1, 2), (3, 3), (2, 1))
-
+            sage: G = Z3square.restricted_automorphism_group()
+            sage: G == PermutationGroup([[((1,2),(2,1))],[((0,0),(1,2)),((2,1),(3,3))],[((0,0),(3,3))]])
+            True
+            sage: set(G.domain()) == set(Z3square.vertices())
+            True
+            sage: set(map(tuple,G.orbit(Z3square.vertices()[0]))) == set([(0, 0), (1, 2), (3, 3), (2, 1)])
+            True
             sage: cell24 = LatticePolytope_PPL(
             ....: (1,0,0,0),(0,1,0,0),(0,0,1,0),(0,0,0,1),(1,-1,-1,1),(0,0,-1,1),
             ....: (0,-1,0,1),(-1,0,0,1),(1,0,0,-1),(0,1,0,-1),(0,0,1,-1),(-1,1,1,-1),
@@ -1059,8 +1059,9 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: G1.cardinality()
             4
 
-            sage: G2 = Z3square.restricted_automorphism_group(vertex_labels=(1,2,3,4)); G2
-            Permutation Group with generators [(2,3), (1,2)(3,4), (1,4)]
+            sage: G2 = Z3square.restricted_automorphism_group(vertex_labels=(1,2,3,4))
+            sage: G2 == PermutationGroup([[(2,3)], [(1,2),(3,4)], [(1,4)]])
+            True
             sage: G2.cardinality()
             8
 

@@ -19,10 +19,3 @@ cdef class ParentWithGens(ParentWithBase):
     cdef public object _gens
     cdef public object _latex_names
     cdef public object _list
-
-
-cdef class ParentWithMultiplicativeAbelianGens(ParentWithGens):
-    cdef public object _generator_orders
-
-cdef class ParentWithAdditiveAbelianGens(ParentWithGens):
-    cdef public object _generator_orders

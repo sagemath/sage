@@ -1,3 +1,4 @@
+# cython: binding=True
 """
 Matching Polynomial
 
@@ -25,19 +26,22 @@ Methods
 """
 
 #*****************************************************************************
-#                       Copyright (C) 2010 Robert Miller
+#       Copyright (C) 2010 Robert Miller
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.misc.all import prod
-include "cysignals/signals.pxi"
-include 'sage/ext/cdefs.pxi'
-include "cysignals/memory.pxi"
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
@@ -202,24 +206,18 @@ def matching_polynomial(G, complement=True, name=None):
     
     Non-integer labels should work, (:trac:`15545`):: 
     
-        sage: G = Graph(10);
+        sage: G = Graph(10)
         sage: G.add_vertex((0,1))
         sage: G.add_vertex('X')
         sage: G.matching_polynomial()
         x^12
     """
-
-    cdef int nverts, nedges, i, j, cur
-    cdef int *edges1
-    cdef int *edges2
-    cdef int *edges_mem
-    cdef int **edges
-    cdef fmpz_poly_t pol
-
     if G.has_multiple_edges():
         raise NotImplementedError
 
-    nverts = G.num_verts()
+    cdef int i, j, d
+    cdef fmpz_poly_t pol
+    cdef nverts = G.num_verts()
 
     # Using Godsil's duality theorem when the graph is dense
 
@@ -231,19 +229,16 @@ def matching_polynomial(G, complement=True, name=None):
             f += complete_poly(j) * f_comp[j] * (-1)**i
         return f
 
-    nedges = G.num_edges()
+    cdef int nedges = G.num_edges()
 
     # Relabelling the vertices of the graph as [0...n-1] so that they are sorted
     # in increasing order of degree
 
-    L = []
+    cdef list L = []
     for v, d in G.degree_iterator(labels=True):
         L.append((d, v))
-    L.sort()
-    d = {}
-    for i from 0 <= i < nverts:
-        d[L[i][1]] = i
-    G = G.relabel(d, inplace=False)
+    L.sort(key=lambda pair: pair[0])
+    G = G.relabel(perm={L[i][1]: i for i in range(nverts)}, inplace=False)
     G.allow_loops(False)
 
     # Initialization of pol, edges* variables.
@@ -251,29 +246,23 @@ def matching_polynomial(G, complement=True, name=None):
     # The edges_mem table is of size (2 * nedges * nedges), and is to be read as
     # nedges blocks of size (2 * nedges). These blocks of size (2 * nedges) are
     # themselves to be read as two blocks of length nedges, addressed as edges1
-    # and edges2
-
-    # Only the first block of size (2*nedges) is here filled. The function
+    # and edges2.
+    #
+    # Only the first block of size (2 * nedges) is here filled. The function
     # delete_and_add will need the rest of the memory.
 
     fmpz_poly_init(pol)  # sets to zero
-    edges_mem = <int *> sig_malloc(2 * nedges * nedges * sizeof(int))
-    edges = <int **> sig_malloc(2 * nedges * sizeof(int *))
-    if edges_mem is NULL or edges is NULL:
-        if edges_mem is not NULL:
-            sig_free(edges_mem)
-        if edges is not NULL:
-            sig_free(edges)
-        raise MemoryError("Error allocating memory for matchpoly.")
+    cdef int** edges = <int**>check_allocarray(2 * nedges, sizeof(int*))
+    cdef int* edges_mem = <int*>check_allocarray(2 * nedges * nedges, sizeof(int))
 
-    for i from 0 <= i < 2 * nedges:
+    for i in range(2 * nedges):
         edges[i] = edges_mem + i * nedges
 
-    edges1 = edges[0]
-    edges2 = edges[1]
+    cdef int* edges1 = edges_mem           # edges[0]
+    cdef int* edges2 = edges_mem + nedges  # edges[1]
 
-    cur = 0
-    for i, j in sorted(map(sorted, G.edges(labels=False))):
+    cdef int cur = 0
+    for i, j in sorted(map(sorted, G.edge_iterator(labels=False))):
         edges1[cur] = i
         edges2[cur] = j
         cur += 1
@@ -286,12 +275,12 @@ def matching_polynomial(G, complement=True, name=None):
 
     # Building the actual matching polynomial
 
-    coeffs_ZZ = []
+    cdef list coeffs_ZZ = []
     cdef Integer c_ZZ
-    for i from 0 <= i <= nverts:
+    for i in range(nverts + 1):
         c_ZZ = Integer(0)
         fmpz_poly_get_coeff_mpz(c_ZZ.value, pol, i)
-        coeffs_ZZ.append(c_ZZ * (-1)**((nverts - i) / 2))
+        coeffs_ZZ.append(c_ZZ * (-1)**((nverts - i) // 2))
 
     f = x.parent()(coeffs_ZZ)
     sig_free(edges_mem)
@@ -364,12 +353,7 @@ cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int 
     NOTE : at the end of this function, pol represents the *SIGNLESS*
     matching polynomial.
     """
-    cdef int i, j, k, edge1, edge2, new_edge1, new_edge2, new_nedges
-    cdef int *edges1
-    cdef int *edges2
-    cdef int *new_edges1
-    cdef int *new_edges2
-    cdef fmpz * coeff
+    cdef fmpz* coeff
 
     if nverts == 3:
         coeff = fmpz_poly_get_coeff_ptr(pol, 3)
@@ -384,7 +368,7 @@ cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int 
             fmpz_add_ui(coeff, coeff, nedges)
         return
 
-    if nedges == 0:
+    if not nedges:
         coeff = fmpz_poly_get_coeff_ptr(pol, nverts)
         if coeff is NULL:
             fmpz_poly_set_coeff_ui(pol, nverts, 1)
@@ -392,21 +376,22 @@ cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int 
             fmpz_add_ui(coeff, coeff, 1)
         return
 
-    edges1 = edges[2 * depth]
-    edges2 = edges[2 * depth + 1]
-    new_edges1 = edges[2 * depth + 2]
-    new_edges2 = edges[2 * depth + 3]
+    cdef int* edges1 = edges[2 * depth]
+    cdef int* edges2 = edges[2 * depth + 1]
+    cdef int* new_edges1 = edges[2 * depth + 2]
+    cdef int* new_edges2 = edges[2 * depth + 3]
 
     nedges -= 1
 
     # The last edge is (edge1, edge2)
-    edge1 = edges1[nedges]
-    edge2 = edges2[nedges]
-    new_nedges = 0
+    cdef int edge1 = edges1[nedges]
+    cdef int edge2 = edges2[nedges]
+    cdef int new_nedges = 0
+    cdef int i, new_edge1, new_edge2
 
     # The new edges are all the edges that are not incident with (edge1, edge2)
 
-    for i from 0 <= i < nedges:
+    for i in range(nedges):
         if edge1 == edges1[i]:
             break  # since the rest of the edges are incident to edge1
                    # (the edges

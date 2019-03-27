@@ -36,7 +36,6 @@ ComplexBallField).
    :maxdepth: 2
 
    sage/rings/real_mpfi
-   sage/rings/real_interval_field
    sage/rings/real_interval_absolute
    sage/rings/complex_interval_field
    sage/rings/complex_interval

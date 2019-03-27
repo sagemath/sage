@@ -51,6 +51,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.abstract_method import abstract_method
 from sage.structure.factory import UniqueFactory
 from sage.structure.element import MonoidElement
+from sage.structure.richcmp import richcmp
 from sage.categories.monoids import Monoids
 from sage.categories.morphism import Morphism
 from sage.structure.parent import Parent
@@ -61,26 +62,28 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 class Sigma0ActionAdjuster(UniqueRepresentation):
 
-    # Can one make an abstract class in Sage?
-
     @abstract_method
     def __call__(self, x):
         r"""
         Given a :class:`Sigma0element` ``x``, return four integers.
 
-        EXAMPLE::
+        This is used to allow for other conventions for the action of Sigma0
+        on the space of distributions.
+
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import _default_adjuster
             sage: A = _default_adjuster()
-            sage: A(matrix(ZZ, 2, [1,2,3,4])) # indirect doctest
-            (1, 2, 3, 4)
-        """# mm TODO
+            sage: A(matrix(ZZ, 2, [3,4,5,6])) # indirect doctest
+            (3, 4, 5, 6)
+        """
         pass
 
 
 class _default_adjuster(Sigma0ActionAdjuster):
     """
-    A callable object that does nothing to a matrix, returning its entries in the natural order.
+    A callable object that does nothing to a matrix, returning its entries
+    in the natural, by-row, order.
 
     INPUT:
 
@@ -106,7 +109,6 @@ class _default_adjuster(Sigma0ActionAdjuster):
         """
         return tuple(g.list())
 
-
 class Sigma0_factory(UniqueFactory):
     r"""
     Create the monoid of non-singular matrices, upper triangular mod `N`.
@@ -120,7 +122,7 @@ class Sigma0_factory(UniqueFactory):
       a 4-tuple of integers. This is supplied in order to support differing
       conventions for the action of `2 \times 2` matrices on distributions.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
         sage: Sigma0(3)
@@ -129,7 +131,7 @@ class Sigma0_factory(UniqueFactory):
 
     def create_key(self, N, base_ring=ZZ, adjuster=None):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: Sigma0.create_key(3)
@@ -152,7 +154,7 @@ class Sigma0_factory(UniqueFactory):
 
     def create_object(self, version, key):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: Sigma0(3) # indirect doctest
@@ -166,10 +168,29 @@ Sigma0 = Sigma0_factory('sage.modular.pollack_stevens.sigma0.Sigma0')
 class Sigma0Element(MonoidElement):
     r"""
     An element of the monoid Sigma0. This is a wrapper around a `2 \times 2` matrix.
-    """##mm TODO
+
+    EXAMPLES::
+
+        sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
+        sage: S = Sigma0(7)
+        sage: g = S([2,3,7,1])
+        sage: g.det()
+        -19
+        sage: h = S([1,2,0,1])
+        sage: g * h
+        [ 2  7]
+        [ 7 15]
+        sage: g.inverse()
+        Traceback (most recent call last):
+        ...
+        TypeError: no conversion of this rational to integer
+        sage: h.inverse()
+        [ 1 -2]
+        [ 0  1]
+    """
     def __init__(self, parent, mat):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: s = Sigma0(3)([1,4,3,3]) # indirect doctest
@@ -180,14 +201,13 @@ class Sigma0Element(MonoidElement):
 
     def __hash__(self):
         r"""
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: s = Sigma0(3)([1,4,3,3])
             sage: hash(s) # indirect doctest
-            11
-
-        # TODO: the doctest is probably wrong on 32-bit machines
+            8095169151987216923  # 64-bit
+            619049499            # 32-bit
         """
         return hash(self.matrix())
 
@@ -195,7 +215,7 @@ class Sigma0Element(MonoidElement):
         r"""
         Return the determinant of this matrix, which is (by assumption) non-zero.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: s = Sigma0(3)([1,4,3,3])
@@ -208,7 +228,7 @@ class Sigma0Element(MonoidElement):
         r"""
         Return the product of two Sigma0 elements.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: s = Sigma0(3)([1,4,3,3])
@@ -223,11 +243,11 @@ class Sigma0Element(MonoidElement):
         """
         return self.parent()(self._mat * other._mat, check=False)
 
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         r"""
         Compare two elements (of a common Sigma0 object).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: s = Sigma0(3)([1,4,3,3])
@@ -237,18 +257,18 @@ class Sigma0Element(MonoidElement):
             sage: s == Sigma0(1)([1,4,3,3])
             True
 
-        This uses the coercion model to find a common parent, with occasionally surprising results:
+        This uses the coercion model to find a common parent, with occasionally surprising results::
 
             sage: t == Sigma0(5)([4, 0, 0, 1])
             False
         """
-        return cmp(self._mat, other._mat)
+        return richcmp(self._mat, other._mat, op)
 
     def _repr_(self):
         r"""
         String representation of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: s = Sigma0(3)([1,4,3,3])
@@ -261,7 +281,7 @@ class Sigma0Element(MonoidElement):
         r"""
         Return self as a matrix (forgetting the additional data that it is in Sigma0(N)).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: s = Sigma0(3)([1,4,3,3])
@@ -279,7 +299,7 @@ class Sigma0Element(MonoidElement):
         r"""
         Return the inverse of self. This will raise an error if the result is not in the monoid.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: s = Sigma0(3)([1,4,3,13])
@@ -335,11 +355,11 @@ class _Sigma0Embedding(Morphism):
         """
         return x.matrix()
 
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         r"""
         Required for pickling.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0, _Sigma0Embedding
             sage: S = Sigma0(3)
@@ -347,13 +367,26 @@ class _Sigma0Embedding(Morphism):
             sage: x == loads(dumps(x))
             True
         """
-        return cmp(type(self), type(other)) or cmp(self.domain(), other.domain())
+        return richcmp(self.domain(), other.domain(), op)
 
 
 class Sigma0_class(Parent):
     r"""
+    The class representing the monoid `\Sigma_0(N)`.
 
-    """ #mm TODO
+    EXAMPLES::
+
+        sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
+        sage: S = Sigma0(5); S
+        Monoid Sigma0(5) with coefficients in Integer Ring
+        sage: S([1,2,1,1])
+        Traceback (most recent call last):
+        ...
+        TypeError: level 5^1 does not divide 1
+        sage: S([1,2,5,1])
+        [1 2]
+        [5 1]
+    """
     Element = Sigma0Element
 
     def __init__(self, N, base_ring, adjuster):
@@ -361,7 +394,7 @@ class Sigma0_class(Parent):
         Standard init function. For args documentation see the factory
         function.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: S = Sigma0(3) # indirect doctest
@@ -379,7 +412,7 @@ class Sigma0_class(Parent):
         r"""
         Return an element of self. This is implemented in a rather dumb way.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: S = Sigma0(3)
@@ -393,7 +426,7 @@ class Sigma0_class(Parent):
         r"""
         If this monoid is `\Sigma_0(N)`, return `N`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: S = Sigma0(3)
@@ -406,7 +439,7 @@ class Sigma0_class(Parent):
         r"""
         Return the base ring.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: S = Sigma0(3)
@@ -452,7 +485,7 @@ class Sigma0_class(Parent):
         - ``check`` (boolean, default True) -- if True, then check that this
           matrix actually satisfies the conditions.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: S = Sigma0(3)
@@ -486,7 +519,7 @@ class Sigma0_class(Parent):
         r"""
         String representation of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: S = Sigma0(3)

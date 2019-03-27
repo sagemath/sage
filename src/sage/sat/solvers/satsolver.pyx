@@ -3,7 +3,7 @@ Abstract SAT Solver
 
 All SAT solvers must inherit from this class.
 
-.. note::
+.. NOTE::
 
     Our SAT solver interfaces are 1-based, i.e., literals start at
     1. This is consistent with the popular DIMACS format for SAT
@@ -14,14 +14,14 @@ AUTHORS:
 
 - Martin Albrecht (2012): first version
 """
-from sage.misc.package import PackageNotFoundError
+from __future__ import absolute_import
 
 cdef class SatSolver:
     def __cinit__(self, *args, **kwds):
         """
         Constuct a new SATSolver.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
@@ -36,7 +36,7 @@ cdef class SatSolver:
 
         - ``decision`` - is this variable a decision variable?
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
@@ -51,7 +51,7 @@ cdef class SatSolver:
         """
         Return the number of variables.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
@@ -70,13 +70,13 @@ cdef class SatSolver:
 
         - ``lits`` - a tuple of integers != 0
 
-        .. note::
+        .. NOTE::
 
             If any element ``e`` in ``lits`` has ``abs(e)`` greater
             than the number of variables generated so far, then new
             variables are created automatically.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
@@ -91,27 +91,30 @@ cdef class SatSolver:
         r"""
         Reads DIMAC files.
 
-        Reads in DIMAC formatted lines (lazily) from a
-        file or file object and adds the corresponding
-        clauses into this solver instance. Note that the
+        Reads in DIMAC formatted lines (lazily) from a file or file object and
+        adds the corresponding clauses into this solver instance. Note that the
         DIMACS format is not well specified, see
         http://people.sc.fsu.edu/~jburkardt/data/cnf/cnf.html,
-        http://www.satcompetition.org/2009/format-benchmarks2009.html,
-        and http://elis.dvo.ru/~lab_11/glpk-doc/cnfsat.pdf.
-        The differences were summarized in the discussion on
-        the ticket :trac:`16924`. This method assumes the following
-        DIMACS format
+        http://www.satcompetition.org/2009/format-benchmarks2009.html, and
+        http://elis.dvo.ru/~lab_11/glpk-doc/cnfsat.pdf.
+
+        The differences were summarized in the discussion on the ticket
+        :trac:`16924`. This method assumes the following DIMACS format:
 
         - Any line starting with "c" is a comment
         - Any line starting with "p" is a header
         - Any variable 1-n can be used
         - Every line containing a clause must end with a "0"
 
+        The format is extended to allow lines starting with "x" defining ``xor``
+        clauses, with the notation introduced in cryptominisat, see
+        https://www.msoos.org/xor-clauses/
+
         INPUT:
 
         - ``filename`` - The name of a file as a string or a file object
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from six import StringIO # for python 2/3 support
             sage: file_object = StringIO("c A sample .cnf file.\np cnf 3 2\n1 -3 0\n2 3 -1 0 ")
@@ -120,21 +123,53 @@ cdef class SatSolver:
             sage: solver.read(file_object)
             sage: solver.clauses()
             [((1, -3), False, None), ((2, 3, -1), False, None)]
+
+        With xor clauses::
+
+            sage: from six import StringIO # for python 2/3 support
+            sage: file_object = StringIO("c A sample .cnf file with xor clauses.\np cnf 3 3\n1 2 0\n3 0\nx1 2 3 0")
+            sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat          # optional - cryptominisat
+            sage: solver = CryptoMiniSat()                                          # optional - cryptominisat
+            sage: solver.read(file_object)                                          # optional - cryptominisat
+            sage: solver.clauses()                                                  # optional - cryptominisat
+            [((1, 2), False, None), ((3,), False, None), ((1, 2, 3), True, True)]
+            sage: solver()                                                          # optional - cryptominisat
+            (None, True, True, True)
+
+        TESTS::
+
+            sage: from six import StringIO # for python 2/3 support
+            sage: file_object = StringIO("c A sample .cnf file with xor clauses.\np cnf 3 3\n1 2 0\n3 0\nx1 2 3 0")
+            sage: from sage.sat.solvers.sat_lp import SatLP
+            sage: solver = SatLP()
+            sage: solver.read(file_object)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: the solver "an ILP-based SAT Solver" does not support xor clauses
         """
-        if isinstance(filename,str):
-            file_object = open(filename,"r")
+        if isinstance(filename, str):
+            file_object = open(filename, "r")
         else:
             file_object = filename
         for line in file_object:
             if line.startswith("c"):
-                continue # comment
+                continue  # comment
             if line.startswith("p"):
-                continue # header
-            line = line.split(" ")
-            clause = map(int,[e for e in line if e])
-            clause = clause[:-1] # strip trailing zero
-            self.add_clause(clause)
-
+                continue  # header
+            if line.startswith("x"):
+                line = line[1:].split(" ")
+                clause = [int(e) for e in line if e]
+                clause = clause[:-1] # strip trailing zero
+                try:
+                    self.add_xor_clause(clause)
+                except AttributeError:
+                    file_object.close()
+                    raise NotImplementedError('the solver "{}" does not support xor clauses'.format(self))
+            else:
+                line = line.split(" ")
+                clause = [int(e) for e in line if e]
+                clause = clause[:-1] # strip trailing zero
+                self.add_clause(clause)
 
     def __call__(self, assumptions=None):
         """
@@ -155,7 +190,7 @@ cdef class SatSolver:
         - If the solver was interrupted before deciding satisfiability
           ``None``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
@@ -171,7 +206,7 @@ cdef class SatSolver:
         Return conflict clause if this instance is UNSAT and the last
         call used assumptions.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
@@ -190,7 +225,7 @@ cdef class SatSolver:
 
         - ``unitary_only`` - return only unitary learnt clauses (default: ``False``)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
@@ -236,7 +271,7 @@ cdef class SatSolver:
             clauses is written to that file in DIMACS format.
 
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
@@ -249,7 +284,7 @@ cdef class SatSolver:
 
     def __getattr__(self, name):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
@@ -267,7 +302,7 @@ cdef class SatSolver:
         """
         Allow alias to appear in tab completion.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
@@ -276,7 +311,7 @@ cdef class SatSolver:
         """
         return ["gens"]
 
-def SAT(solver=None):
+def SAT(solver=None, *args, **kwds):
     r"""
     Return a :class:`SatSolver` instance.
 
@@ -290,13 +325,15 @@ def SAT(solver=None):
         - ``"cryptominisat"`` -- note that the cryptominisat package must be
           installed.
 
+        - ``"picosat"`` -- note that the pycosat package must be installed.
+
         - ``"LP"`` -- use :class:`~sage.sat.solvers.sat_lp.SatLP` to solve the
           SAT instance.
 
-        - ``None`` (default) -- use CryptoMiniSat if available, and a LP solver
-          otherwise.
+        - ``None`` (default) -- use CryptoMiniSat if available, else PicoSAT if
+          available, and a LP solver otherwise.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: SAT(solver="LP")
         an ILP-based SAT Solver
@@ -311,25 +348,31 @@ def SAT(solver=None):
     Forcing CryptoMiniSat::
 
         sage: SAT(solver="cryptominisat") # optional - cryptominisat
-        CryptoMiniSat
-        #vars:       0, #lits:       0, #clauses:       0, #learnt:       0, #assigns:       0
+        CryptoMiniSat solver: 0 variables, 0 clauses.
 
+    Forcing PicoSat::
+
+        sage: SAT(solver="picosat") # optional - pycosat
+        PicoSAT solver: 0 variables, 0 clauses.
     """
     if solver is None:
-        try:
-            from sage.sat.solvers.cryptominisat.cryptominisat import CryptoMiniSat
+        import pkgutil
+        if pkgutil.find_loader('pycryptosat') is not None:
             solver = "cryptominisat"
-        except ImportError:
+        elif pkgutil.find_loader('pycosat') is not None:
+            solver = "picosat"
+        else:
             solver = "LP"
 
     if solver == 'cryptominisat':
-        try:
-            from sage.sat.solvers.cryptominisat.cryptominisat import CryptoMiniSat
-        except ImportError:
-            raise PackageNotFoundError("cryptominisat")
-        return CryptoMiniSat()
+        from sage.sat.solvers.cryptominisat import CryptoMiniSat
+        return CryptoMiniSat(*args, **kwds)
+    elif solver == 'picosat':
+        from sage.sat.solvers.picosat import PicoSAT
+        return PicoSAT(*args, **kwds)
     elif solver == "LP":
-        from sat_lp import SatLP
+        from .sat_lp import SatLP
         return SatLP()
     else:
         raise ValueError("Solver '{}' is not available".format(solver))
+

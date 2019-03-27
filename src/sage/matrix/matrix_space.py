@@ -24,23 +24,22 @@ TESTS::
     [0 0]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
+from six.moves import range
+from six import iteritems, integer_types
 
 # System imports
 import sys
-import types
 import operator
 
 # Sage matrix imports
-from . import matrix
 from . import matrix_generic_dense
 from . import matrix_generic_sparse
 
@@ -55,26 +54,28 @@ from . import matrix_integer_sparse
 from . import matrix_rational_dense
 from . import matrix_rational_sparse
 
+from . import matrix_polynomial_dense
 from . import matrix_mpolynomial_dense
 
 # Sage imports
 from sage.misc.superseded import deprecation
 import sage.structure.coerce
-import sage.structure.parent_gens as parent_gens
+from sage.structure.parent import Parent
+from sage.structure.element import is_Matrix
 from sage.structure.unique_representation import UniqueRepresentation
 import sage.rings.integer as integer
 import sage.rings.number_field.all
 import sage.rings.finite_rings.integer_mod_ring
 import sage.rings.finite_rings.finite_field_constructor
-import sage.rings.polynomial.multi_polynomial_ring_generic
+import sage.rings.polynomial.multi_polynomial_ring_base
 import sage.misc.latex as latex
 import sage.modules.free_module
-from sage.structure.sequence import Sequence
 
 from sage.misc.all import lazy_attribute
 
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
+from sage.categories.enumerated_sets import EnumeratedSets
 
 _Rings = Rings()
 _Fields = Fields()
@@ -82,8 +83,7 @@ _Fields = Fields()
 
 def is_MatrixSpace(x):
     """
-    Returns True if self is an instance of MatrixSpace returns false if
-    self is not an instance of MatrixSpace
+    Return whether ``self`` is an instance of ``MatrixSpace``.
 
     EXAMPLES::
 
@@ -100,106 +100,349 @@ def is_MatrixSpace(x):
     return isinstance(x, MatrixSpace)
 
 
-class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
-    """
-    The space of all nrows x ncols matrices over base_ring.
+def get_matrix_class(R, nrows, ncols, sparse, implementation):
+    r"""
+    Return a matrix class according to the input.
+
+    .. NOTE::
+
+        This returns the base class without the category.
 
     INPUT:
 
-    -  ``base_ring`` - a ring
-    -  ``nrows`` - int, the number of rows
-    -  ``ncols`` - (default nrows) int, the number of
-       columns
-    -  ``sparse`` - (default false) whether or not matrices
-       are given a sparse representation
+    - ``R`` -- a base ring
+
+    - ``nrows`` -- number of rows
+
+    - ``ncols`` -- number of columns
+
+    - ``sparse`` -- (boolean) whether the matrix class should be sparse
+
+    - ``implementation`` -- (``None`` or string or a matrix class) a possible
+      implementation. See the documentation of the constructor of :class:`MatrixSpace`.
 
     EXAMPLES::
+
+        sage: from sage.matrix.matrix_space import get_matrix_class
+
+        sage: get_matrix_class(ZZ, 4, 5, False, None)
+        <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+        sage: get_matrix_class(ZZ, 4, 5, True, None)
+        <type 'sage.matrix.matrix_integer_sparse.Matrix_integer_sparse'>
+
+        sage: get_matrix_class(ZZ, 3, 3, False, 'flint')
+        <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+        sage: get_matrix_class(ZZ, 3, 3, False, 'gap')
+        <type 'sage.matrix.matrix_gap.Matrix_gap'>
+        sage: get_matrix_class(ZZ, 3, 3, False, 'generic')
+        <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+
+        sage: get_matrix_class(GF(2), 2, 2, False, 'm4ri')
+        <type 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
+        sage: get_matrix_class(GF(4), 2, 2, False, 'm4ri')
+        <type 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
+        sage: get_matrix_class(GF(7), 2, 2, False, 'linbox-float')
+        <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+        sage: get_matrix_class(GF(7), 2, 2, False, 'linbox-double')
+        <type 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+
+        sage: get_matrix_class(RDF, 2, 2, False, 'numpy')
+        <type 'sage.matrix.matrix_real_double_dense.Matrix_real_double_dense'>
+        sage: get_matrix_class(CDF, 2, 3, False, 'numpy')
+        <type 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
+
+        sage: get_matrix_class(ZZ, 3, 5, False, 'crazy_matrix')
+        Traceback (most recent call last):
+        ...
+        ValueError: unknown matrix implementation 'crazy_matrix' over Integer Ring
+        sage: get_matrix_class(GF(3), 2, 2, False, 'm4ri')
+        Traceback (most recent call last):
+        ...
+        ValueError: m4ri matrices are only available in characteristic 2
+        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-float')
+        Traceback (most recent call last):
+        ...
+        ValueError: linbox-float can only deal with order < 256
+        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-double')
+        Traceback (most recent call last):
+        ...
+        ValueError: linbox-double can only deal with order < 8388608
+
+        sage: type(matrix(SR, 2, 2, 0))
+        <type 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
+        sage: type(matrix(GF(7), 2, range(4)))
+        <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+        sage: type(matrix(GF(16007), 2, range(4)))
+        <type 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+        sage: type(matrix(CBF, 2, range(4)))
+        <type 'sage.matrix.matrix_complex_ball_dense.Matrix_complex_ball_dense'>
+        sage: type(matrix(GF(2), 2, range(4)))
+        <type 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
+        sage: type(matrix(GF(64,'z'), 2, range(4)))
+        <type 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
+        sage: type(matrix(GF(125,'z'), 2, range(4)))     # optional: meataxe
+        <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+    """
+    if isinstance(implementation, type):
+        return implementation
+
+    if not sparse:
+        if implementation == 'generic':
+            return matrix_generic_dense.Matrix_generic_dense
+
+        elif implementation == 'gap':
+            from .matrix_gap import Matrix_gap
+            return Matrix_gap
+
+        if R is sage.rings.integer_ring.ZZ:
+            if implementation is None or implementation == 'flint':
+                return matrix_integer_dense.Matrix_integer_dense
+
+        elif R is sage.rings.rational_field.QQ:
+            if implementation is None or implementation == 'flint':
+                return matrix_rational_dense.Matrix_rational_dense
+
+        elif sage.rings.number_field.number_field.is_CyclotomicField(R):
+            if implementation is None or implementation == 'rational':
+                from . import matrix_cyclo_dense
+                return matrix_cyclo_dense.Matrix_cyclo_dense
+
+        elif R is sage.rings.real_double.RDF:
+            if implementation is None or implementation == 'numpy':
+                from . import matrix_real_double_dense
+                return matrix_real_double_dense.Matrix_real_double_dense
+
+        elif R is sage.rings.complex_double.CDF:
+            if implementation is None or implementation == 'numpy':
+                from . import matrix_complex_double_dense
+                return matrix_complex_double_dense.Matrix_complex_double_dense
+
+        elif sage.rings.finite_rings.integer_mod_ring.is_IntegerModRing(R):
+            from . import matrix_modn_dense_double, matrix_modn_dense_float
+
+            if implementation is None:
+                if R.order() == 2:
+                    implementation = 'm4ri'
+                elif R.order() < matrix_modn_dense_float.MAX_MODULUS:
+                    implementation = 'linbox-float'
+                elif R.order() < matrix_modn_dense_double.MAX_MODULUS:
+                    implementation = 'linbox-double'
+                else:
+                    implementation = 'generic'
+
+            if implementation == 'm4ri':
+                if R.order() != 2:
+                    raise ValueError('m4ri matrices are only available in characteristic 2')
+                else:
+                    return matrix_mod2_dense.Matrix_mod2_dense
+            elif implementation == 'linbox-float':
+                if R.order() >= matrix_modn_dense_float.MAX_MODULUS:
+                    raise ValueError('linbox-float can only deal with order < %s' % matrix_modn_dense_float.MAX_MODULUS)
+                else:
+                    return matrix_modn_dense_float.Matrix_modn_dense_float
+            elif implementation == 'linbox-double':
+                if R.order() >= matrix_modn_dense_double.MAX_MODULUS:
+                    raise ValueError('linbox-double can only deal with order < %s' % matrix_modn_dense_double.MAX_MODULUS)
+                else:
+                    return matrix_modn_dense_double.Matrix_modn_dense_double
+
+        elif sage.rings.finite_rings.finite_field_constructor.is_FiniteField(R):
+            if implementation is None:
+                if R.characteristic() == 2 and R.order() <= 65536:
+                    implementation = 'm4ri'
+                elif R.order() <= 255:
+                    try:
+                        from . import matrix_gfpn_dense
+                    except ImportError:
+                        implementation = 'generic'
+                    else:
+                        implementation = 'meataxe'
+                else:
+                    implementation = 'generic'
+
+            if implementation == 'm4ri':
+                if R.characteristic() != 2 or R.order() > 65536:
+                    raise ValueError('m4ri matrices are only available in characteristic 2 and order <= 65536')
+                else:
+                    return matrix_gf2e_dense.Matrix_gf2e_dense
+
+            elif implementation == 'meataxe':
+                if R.order() > 255:
+                    raise ValueError('meataxe library only deals with finite fields of order < 256')
+                else:
+                    try:
+                        from . import matrix_gfpn_dense
+                    except ImportError:
+                        from sage.misc.package import PackageNotFoundError
+                        raise PackageNotFoundError('meataxe')
+                    else:
+                        return matrix_gfpn_dense.Matrix_gfpn_dense
+
+        elif sage.rings.polynomial.polynomial_ring.is_PolynomialRing(R) and R.base_ring() in _Fields:
+            if implementation is None:
+                return matrix_polynomial_dense.Matrix_polynomial_dense
+
+        elif sage.rings.polynomial.multi_polynomial_ring_base.is_MPolynomialRing(R) and R.base_ring() in _Fields:
+            if implementation is None:
+                return matrix_mpolynomial_dense.Matrix_mpolynomial_dense
+
+        else:
+            # deal with late imports here
+
+            # importing SR causes circular imports
+            from sage.symbolic.ring import SR
+            if R is SR:
+                if implementation is None:
+                    from . import matrix_symbolic_dense
+                    return matrix_symbolic_dense.Matrix_symbolic_dense
+
+            # avoid importing ComplexBallField
+            from sage.rings.complex_arb import ComplexBallField
+            if isinstance(R, ComplexBallField):
+                if implementation is None:
+                    from . import matrix_complex_ball_dense
+                    return matrix_complex_ball_dense.Matrix_complex_ball_dense
+
+        # generic fallback
+        if implementation != 'generic' and implementation is not None:
+            raise ValueError("unknown matrix implementation %r over %r" % (implementation, R))
+        else:
+            return matrix_generic_dense.Matrix_generic_dense
+
+    else:
+        if implementation is not None:
+            raise ValueError("can not choose an implementation for sparse matrices")
+
+        if sage.rings.finite_rings.integer_mod_ring.is_IntegerModRing(R) and R.order() < matrix_modn_sparse.MAX_MODULUS:
+            return matrix_modn_sparse.Matrix_modn_sparse
+        elif sage.rings.rational_field.is_RationalField(R):
+            return matrix_rational_sparse.Matrix_rational_sparse
+        elif sage.rings.integer_ring.is_IntegerRing(R):
+            return matrix_integer_sparse.Matrix_integer_sparse
+
+        # the default
+        return matrix_generic_sparse.Matrix_generic_sparse
+
+
+class MatrixSpace(UniqueRepresentation, Parent):
+    """
+    The space of matrices of given size and base ring
+
+    EXAMPLES:
+
+    Some examples of square 2 by 2 rational matrices::
+
+        sage: MS = MatrixSpace(QQ, 2)
+        sage: MS.dimension()
+        4
+        sage: MS.dims()
+        (2, 2)
+        sage: B = MS.basis()
+        sage: list(B)
+        [
+        [1 0]  [0 1]  [0 0]  [0 0]
+        [0 0], [0 0], [1 0], [0 1]
+        ]
+        sage: B[0,0]
+        [1 0]
+        [0 0]
+        sage: B[0,1]
+        [0 1]
+        [0 0]
+        sage: B[1,0]
+        [0 0]
+        [1 0]
+        sage: B[1,1]
+        [0 0]
+        [0 1]
+        sage: A = MS.matrix([1,2,3,4])
+        sage: A
+        [1 2]
+        [3 4]
+
+    The above matrix ``A`` can be multiplied by a 2 by 3 integer matrix::
+
+        sage: MS2 = MatrixSpace(ZZ, 2, 3)
+        sage: B = MS2.matrix([1,2,3,4,5,6])
+        sage: A * B
+        [ 9 12 15]
+        [19 26 33]
+
+    Check categories::
 
         sage: MatrixSpace(ZZ,10,5)
         Full MatrixSpace of 10 by 5 dense matrices over Integer Ring
         sage: MatrixSpace(ZZ,10,5).category()
-        Category of infinite modules over (euclidean domains
-             and infinite enumerated sets and metric spaces)
+        Category of infinite enumerated finite dimensional modules with basis over
+         (euclidean domains and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(ZZ,10,10).category()
-        Category of infinite algebras over (euclidean domains
-             and infinite enumerated sets and metric spaces)
+        Category of infinite enumerated finite dimensional algebras with basis over
+         (euclidean domains and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(QQ,10).category()
-        Category of infinite algebras over (quotient fields and metric spaces)
+        Category of infinite finite dimensional algebras with basis over
+         (number fields and quotient fields and metric spaces)
 
     TESTS::
 
         sage: MatrixSpace(ZZ, 1, 2^63)
         Traceback (most recent call last):
         ...
-        ValueError: number of rows and columns may be at most...
+        OverflowError: number of rows and columns may be at most...
         sage: MatrixSpace(ZZ, 2^100, 10)
         Traceback (most recent call last):
         ...
-        ValueError: number of rows and columns may be at most...
+        OverflowError: number of rows and columns may be at most...
+
+    Check that different implementations play together as expected::
+
+        sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')
+        sage: M2 = MatrixSpace(ZZ, 2, implementation='generic')
+
+        sage: type(M1(range(4)))
+        <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+        sage: type(M2(range(4)))
+        <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+
+        sage: M1(M2.an_element())
+        [ 0  1]
+        [-1  2]
+        sage: M2(M1.an_element())
+        [ 0  1]
+        [-1  2]
+
+        sage: all(((A.get_action(B) is not None) == (A is B)) for A in [M1,M2] for B in [M1,M2])
+        True
+
+    Check that libgap matrices over finite fields are working properly::
+
+        sage: M2 = MatrixSpace(GF(2), 5, implementation='gap')
+        sage: M2.one()
+        [1 0 0 0 0]
+        [0 1 0 0 0]
+        [0 0 1 0 0]
+        [0 0 0 1 0]
+        [0 0 0 0 1]
+        sage: m = M2.random_element()
+        sage: M1 = MatrixSpace(GF(2), 5)
+        sage: M1(m * m) == M1(m) * M1(m)
+        True
     """
     _no_generic_basering_coercion = True
 
     @staticmethod
-    def __classcall__(cls, base_ring, nrows, ncols=None, sparse=False, implementation='flint'):
+    def __classcall__(cls, base_ring, nrows, ncols=None, sparse=False, implementation=None):
         """
-        Create with the command
+        Normalize the arguments to call the ``__init__`` constructor.
 
-        MatrixSpace(base_ring , nrows [, ncols] [, sparse])
+        See the documentation in ``__init__``.
 
-        The default value of the optional argument sparse is False. The
-        default value of the optional argument ncols is nrows.
+        TESTS::
 
-        INPUT:
-
-        - ``base_ring`` -- a ring
-        - ``nrows`` -- int, the number of rows
-        - ``ncols`` -- (default nrows) int, the number of
-          columns
-        - ``sparse`` -- (default false) whether or not matrices
-          are given a sparse representation
-        - ``implementation`` -- (default 'flint') choose an
-          implementation (only applicable over `\Z`)
-
-        OUTPUT:
-
-        The unique space of all nrows x ncols matrices over base_ring.
-
-        EXAMPLES::
-
-            sage: MS = MatrixSpace(RationalField(),2)
-            sage: MS.base_ring()
-            Rational Field
-            sage: MS.dimension()
-            4
-            sage: MS.dims()
-            (2, 2)
-            sage: B = MS.basis()
-            sage: B
-            [
-            [1 0]  [0 1]  [0 0]  [0 0]
-            [0 0], [0 0], [1 0], [0 1]
-            ]
-            sage: B[0]
-            [1 0]
-            [0 0]
-            sage: B[1]
-            [0 1]
-            [0 0]
-            sage: B[2]
-            [0 0]
-            [1 0]
-            sage: B[3]
-            [0 0]
-            [0 1]
-            sage: A = MS.matrix([1,2,3,4])
-            sage: A
-            [1 2]
-            [3 4]
-            sage: MS2 = MatrixSpace(RationalField(),2,3)
-            sage: B = MS2.matrix([1,2,3,4,5,6])
-            sage: A*B
-            [ 9 12 15]
-            [19 26 33]
+            sage: M1 = MatrixSpace(QQ, 2)
+            sage: M2 = MatrixSpace(QQ, 2)
+            sage: M3 = MatrixSpace(QQ, 2, implementation='flint')
+            sage: M1 is M2 and M1 is M3
+            True
 
         ::
 
@@ -209,27 +452,83 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             sage: loads(M.dumps()) is M
             True
 
-        TESTS::
-
             sage: MatrixSpace(ZZ, 10, implementation="foobar")
             Traceback (most recent call last):
             ...
-            ValueError: unknown matrix implementation 'foobar'
+            ValueError: unknown matrix implementation 'foobar' over Integer Ring
         """
         if base_ring not in _Rings:
             raise TypeError("base_ring (=%s) must be a ring"%base_ring)
-        if ncols is None: ncols = nrows
-        nrows = int(nrows); ncols = int(ncols); sparse=bool(sparse)
-        return super(MatrixSpace, cls).__classcall__(
-                cls, base_ring, nrows, ncols, sparse, implementation)
+        nrows = int(nrows)
+        if ncols is None:
+            ncols = nrows
+        else:
+            ncols = int(ncols)
+        sparse = bool(sparse)
 
-    def __init__(self,  base_ring,
-                        nrows,
-                        ncols=None,
-                        sparse=False,
-                        implementation='flint'):
-        """
-        TEST:
+        if nrows < 0:
+            raise ArithmeticError("nrows must be nonnegative")
+        if ncols < 0:
+            raise ArithmeticError("ncols must be nonnegative")
+        if nrows > sys.maxsize or ncols > sys.maxsize:
+            raise OverflowError("number of rows and columns may be at most %s" % sys.maxsize)
+
+        matrix_cls = get_matrix_class(base_ring, nrows, ncols, sparse, implementation)
+        return super(MatrixSpace, cls).__classcall__(
+                cls, base_ring, nrows, ncols, sparse, matrix_cls)
+
+    def __init__(self, base_ring, nrows, ncols, sparse, implementation):
+        r"""
+        INPUT:
+
+        - ``base_ring`
+
+        -  ``nrows`` - (positive integer) the number of rows
+
+        -  ``ncols`` - (positive integer, default nrows) the number of
+           columns
+
+        -  ``sparse`` - (boolean, default false) whether or not matrices
+           are given a sparse representation
+
+        - ``implementation`` -- (optional, a string or a matrix class) a possible
+          implementation. Depending on the base ring the string can be
+
+           - ``'generic'`` - on any base rings
+
+           - ``'flint'`` - for integers and rationals
+
+           - ``'meataxe'`` - finite fields, needs to install the optional package meataxe
+
+           - ``m4ri`` - for characteristic 2 using M4RI library
+
+           - ``linbox-float`` - for integer mod rings up to `2^8 = 256`
+
+           - ``linbox-double`` - for integer mod rings up to `2^23 = 8388608`
+
+           - ``numpy`` - for real and complex floating point numbers
+
+        EXAMPLES::
+
+            sage: MatrixSpace(QQ, 2)
+            Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+            sage: MatrixSpace(ZZ, 3, 2)
+            Full MatrixSpace of 3 by 2 dense matrices over Integer Ring
+            sage: MatrixSpace(ZZ, 3, sparse=False)
+            Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
+
+            sage: MatrixSpace(ZZ,10,5)
+            Full MatrixSpace of 10 by 5 dense matrices over Integer Ring
+            sage: MatrixSpace(ZZ,10,5).category()
+            Category of infinite enumerated finite dimensional modules with basis over
+             (euclidean domains and infinite enumerated sets and metric spaces)
+            sage: MatrixSpace(ZZ,10,10).category()
+            Category of infinite enumerated finite dimensional algebras with basis over
+             (euclidean domains and infinite enumerated sets and metric spaces)
+            sage: MatrixSpace(QQ,10).category()
+            Category of infinite finite dimensional algebras with basis over (number fields and quotient fields and metric spaces)
+
+        TESTS:
 
         We test that in the real or complex double dense case,
         conversion from the base ring is done by a call morphism.
@@ -239,12 +538,12 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
 
             sage: MS = MatrixSpace(RDF, 2, 2)
             sage: MS.convert_map_from(RDF)
-            Call morphism:
+            Coercion map:
               From: Real Double Field
               To:   Full MatrixSpace of 2 by 2 dense matrices over Real Double Field
             sage: MS = MatrixSpace(CDF, 2, 2)
             sage: MS.convert_map_from(CDF)
-            Call morphism:
+            Coercion map:
               From: Complex Double Field
               To:   Full MatrixSpace of 2 by 2 dense matrices over Complex Double Field
 
@@ -273,62 +572,43 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             sage: MatrixSpace(ZZ,2) in Sets().Infinite()
             True
         """
-        self._implementation = implementation
+        # Checks of input data are supposed to be done in __classcall__
+        assert isinstance(implementation, type)
 
-        if ncols is None: ncols = nrows
-        from sage.categories.all import Modules, Algebras
-        parent_gens.ParentWithGens.__init__(self, base_ring) # category = Modules(base_ring)
-        # Temporary until the inheritance glitches are fixed
-        if base_ring not in _Rings:
-            raise TypeError("base_ring must be a ring")
-        nrows = int(nrows)
-        ncols = int(ncols)
-        if nrows < 0:
-            raise ArithmeticError("nrows must be nonnegative")
-        if ncols < 0:
-            raise ArithmeticError("ncols must be nonnegative")
-
-        if nrows > sys.maxsize or ncols > sys.maxsize:
-            raise ValueError("number of rows and columns may be at most %s" % sys.maxsize)
-
+        self.Element = implementation
         self.__nrows = nrows
+        self.__ncols = ncols
         self.__is_sparse = sparse
-        if ncols is None:
-            self.__ncols = nrows
-        else:
-            self.__ncols = ncols
-        self.__matrix_class = self._get_matrix_class()
+
+        from sage.categories.all import Modules, Algebras
         if nrows == ncols:
-            # For conversion from the base ring, multiplication with the one element is *slower*
-            # than creating a new diagonal matrix. Hence, we circumvent
-            # the conversion that is provided by Algebras(base_ring).parent_class.
-#            from sage.categories.morphism import CallMorphism
-#            from sage.categories.homset import Hom
-#            self.register_coercion(CallMorphism(Hom(base_ring,self)))
             category = Algebras(base_ring.category())
         else:
             category = Modules(base_ring.category())
 
+        category = category.WithBasis().FiniteDimensional()
+
         if not self.__nrows or not self.__ncols:
             is_finite = True
         else:
-            is_finite = None
             try:
                 is_finite = base_ring.is_finite()
-            except (AttributeError,NotImplementedError):
-                pass
+            except (AttributeError, NotImplementedError):
+                is_finite = None
 
         if is_finite is True:
             category = category.Finite()
         elif is_finite is False:
             category = category.Infinite()
 
-        sage.structure.parent.Parent.__init__(self, category=category)
-        #sage.structure.category_object.CategoryObject._init_category_(self, category)
+        if base_ring in EnumeratedSets:
+            category = category.Enumerated()
+
+        Parent.__init__(self, base_ring, category=category)
 
     def cardinality(self):
         r"""
-        Return the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -345,35 +625,52 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
         else:
             return self.base_ring().cardinality() ** (self.__nrows * self.__ncols)
 
-    def full_category_initialisation(self):
-        """
-        Make full use of the category framework.
-
-        .. NOTE::
-
-            It turns out that it causes a massive speed regression in
-            computations with elliptic curves, if a full initialisation
-            of the category framework of matrix spaces happens at
-            initialisation: The elliptic curves code treats matrix spaces
-            as containers, not as objects of a category. Therefore,
-            making full use of the category framework is now provided by
-            a separate method (see :trac:`11900`).
+    def characteristic(self):
+        r"""
+        Return the characteristic.
 
         EXAMPLES::
 
-            sage: MS = MatrixSpace(QQ,8)
-            sage: TestSuite(MS).run()
-            sage: type(MS)
-            <class 'sage.matrix.matrix_space.MatrixSpace_with_category'>
-            sage: MS.full_category_initialisation()
-            doctest:...: DeprecationWarning: the full_category_initialization
-             method does nothing, as a matrix space now has its category
-             systematically fully initialized
-            See http://trac.sagemath.org/15801 for details.
+            sage: MatrixSpace(ZZ, 2).characteristic()
+            0
+            sage: MatrixSpace(GF(9), 0).characteristic()
+            3
         """
-        deprecation(15801, "the full_category_initialization method does nothing,"
-                           " as a matrix space now has its category"
-                           " systematically fully initialized")
+        return self.base_ring().characteristic()
+
+    def _has_default_implementation(self):
+        r"""
+        EXAMPLES::
+
+            sage: MatrixSpace(ZZ, 2, implementation='generic')._has_default_implementation()
+            False
+            sage: MatrixSpace(ZZ, 2, implementation='flint')._has_default_implementation()
+            True
+        """
+        default = get_matrix_class(self.base_ring(), self.nrows(), self.ncols(), self.is_sparse(), None)
+        return self.Element is default
+
+    @lazy_attribute
+    def transposed(self):
+        """
+        The transposed matrix space, having the same base ring and sparseness,
+        but number of columns and rows is swapped.
+
+        EXAMPLES::
+
+            sage: MS = MatrixSpace(GF(3), 7, 10)
+            sage: MS.transposed
+            Full MatrixSpace of 10 by 7 dense matrices over Finite Field of size 3
+            sage: MS = MatrixSpace(GF(3), 7, 7)
+            sage: MS.transposed is MS
+            True
+
+            sage: M = MatrixSpace(ZZ, 2, 3)
+            sage: M.transposed
+            Full MatrixSpace of 3 by 2 dense matrices over Integer Ring
+        """
+        return MatrixSpace(self._base, self.__ncols, self.__nrows,
+                self.__is_sparse, self.Element)
 
     @lazy_attribute
     def _copy_zero(self):
@@ -381,7 +678,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
         Is it faster to copy a zero matrix or is it faster to create a
         new matrix from scratch?
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: MS = MatrixSpace(GF(2),20,20)
             sage: MS._copy_zero
@@ -411,16 +708,16 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
         """
         if self.__is_sparse:
             return False
-        elif self.__matrix_class is sage.matrix.matrix_mod2_dense.Matrix_mod2_dense:
+        elif self.Element is sage.matrix.matrix_mod2_dense.Matrix_mod2_dense:
             return False
-        elif self.__matrix_class == sage.matrix.matrix_rational_dense.Matrix_rational_dense:
+        elif self.Element is sage.matrix.matrix_rational_dense.Matrix_rational_dense:
             return False
         elif self.__nrows > 40 and self.__ncols > 40:
-                return False
+            return False
         else:
             return True
 
-    def __call__(self, entries=None, coerce=True, copy=True, sparse = False):
+    def __call__(self, entries=None, coerce=True, copy=None):
         """
         EXAMPLES::
 
@@ -478,13 +775,13 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
 
             sage: x = polygen(QQ)
             sage: for R in [ZZ, QQ, RealField(100), ComplexField(100), RDF, CDF,
-            ...             SR, GF(2), GF(11), GF(2^8,'a'), GF(3^19,'a'),
-            ...             NumberField(x^3+2,'a'), CyclotomicField(4),
-            ...             PolynomialRing(QQ,'x'), PolynomialRing(CC,2,'x')]:
-            ...       A = MatrixSpace(R,60,30,sparse=False)(0)
-            ...       B = A.augment(A)
-            ...       A = MatrixSpace(R,60,30,sparse=True)(0)
-            ...       B = A.augment(A)
+            ....:           SR, GF(2), GF(11), GF(2^8,'a'), GF(3^19,'a'),
+            ....:           NumberField(x^3+2,'a'), CyclotomicField(4),
+            ....:           PolynomialRing(QQ,'x'), PolynomialRing(CC,2,'x')]:
+            ....:     A = MatrixSpace(R,60,30,sparse=False)(0)
+            ....:     B = A.augment(A)
+            ....:     A = MatrixSpace(R,60,30,sparse=True)(0)
+            ....:     B = A.augment(A)
 
         Check that :trac:`13012` is fixed::
 
@@ -500,17 +797,11 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             sage: M(m)
             Traceback (most recent call last):
             ...
-            ValueError: a matrix from
-            Full MatrixSpace of 2 by 3 dense matrices over Integer Ring
-            cannot be converted to a matrix in
-            Full MatrixSpace of 3 by 5 dense matrices over Integer Ring!
+            ValueError: inconsistent number of rows: should be 3 but got 2
             sage: M.matrix(m)
             Traceback (most recent call last):
             ...
-            ValueError: a matrix from
-            Full MatrixSpace of 2 by 3 dense matrices over Integer Ring
-            cannot be converted to a matrix in
-            Full MatrixSpace of 3 by 5 dense matrices over Integer Ring!
+            ValueError: inconsistent number of rows: should be 3 but got 2
 
         Check that :trac:`15110` is fixed::
 
@@ -523,11 +814,11 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             sage: MS(t)       # given as a scalar matrix
             [t]
         """
-        return self.matrix(entries, coerce, copy)
+        return self.element_class(self, entries, copy, coerce)
 
     def change_ring(self, R):
         """
-        Return matrix space over R with otherwise same parameters as self.
+        Return matrix space over R with otherwise same parameters as ``self``.
 
         INPUT:
 
@@ -590,12 +881,52 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
         from sage.categories.pushout import MatrixFunctor
         return MatrixFunctor(self.__nrows, self.__ncols, is_sparse=self.is_sparse()), self.base_ring()
 
-    def get_action_impl(self, S, op, self_on_left):
-        try:
-            if op is operator.mul:
+    def _get_action_(self, S, op, self_on_left):
+        r"""
+        Return the action of S on ``self``.
+
+        INPUT:
+
+        - ``S`` -- a parent
+
+        - ``op`` -- an operator
+
+        - ``self_on_left`` -- whether the operation is on left or on right
+
+        EXAMPLES::
+
+            sage: V = QQ^(2,3)
+            sage: W1 = QQ^(3,4); W2 = QQ^(2,2)
+            sage: V.get_action(W1, operator.mul)
+            Left action by Full MatrixSpace of 2 by 3 dense matrices over Rational Field on Full MatrixSpace of 3 by 4 dense matrices over Rational Field
+            sage: V.get_action(W2, operator.mul)
+            sage: V.get_action(W1, operator.mul, self_on_left=False)
+            sage: V.get_action(W2, operator.mul, self_on_left=False)
+            Left action by Full MatrixSpace of 2 by 2 dense matrices over Rational Field on Full MatrixSpace of 2 by 3 dense matrices over Rational Field
+
+        ::
+
+            sage: V2 = QQ^2; V3 = QQ^3
+            sage: V.get_action(V3, operator.mul)
+            Left action by Full MatrixSpace of 2 by 3 dense matrices over Rational Field on Vector space of dimension 3 over Rational Field
+            sage: V.get_action(V2, operator.mul)
+            sage: V.get_action(V3, operator.mul, self_on_left=False)
+            sage: V.get_action(V2, operator.mul, self_on_left=False)
+            Right action by Full MatrixSpace of 2 by 3 dense matrices over Rational Field on Vector space of dimension 2 over Rational Field
+
+        ::
+
+            sage: V.get_action(ZZ, operator.mul)
+            Right scalar multiplication by Integer Ring on Full MatrixSpace of 2 by 3 dense matrices over Rational Field
+            sage: V.get_action(ZZ, operator.mul, self_on_left=False)
+            Left scalar multiplication by Integer Ring on Full MatrixSpace of 2 by 3 dense matrices over Rational Field
+        """
+        if op is operator.mul:
+            try:
                 from . import action as matrix_action
                 if self_on_left:
                     if is_MatrixSpace(S):
+                        # matrix multiplications
                         return matrix_action.MatrixMatrixAction(self, S)
                     elif sage.modules.free_module.is_FreeModule(S):
                         return matrix_action.MatrixVectorAction(self, S)
@@ -603,46 +934,178 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
                         # action of base ring
                         return sage.structure.coerce.RightModuleAction(S, self)
                 else:
-                    if sage.modules.free_module.is_FreeModule(S):
+                    if is_MatrixSpace(S):
+                        # matrix multiplications
+                        return matrix_action.MatrixMatrixAction(S, self)
+                    elif sage.modules.free_module.is_FreeModule(S):
                         return matrix_action.VectorMatrixAction(self, S)
                     else:
                         # action of base ring
                         return sage.structure.coerce.LeftModuleAction(S, self)
-            else:
+            except TypeError:
                 return None
-        except TypeError:
-            return None
 
-    def _coerce_impl(self, x):
+    def _coerce_map_from_(self, S):
         """
+        Canonical coercion from ``S`` to this matrix space.
+
         EXAMPLES::
 
-            sage: MS1 = MatrixSpace(QQ,3)
-            sage: MS2 = MatrixSpace(ZZ,4,5,true)
-            sage: A = MS1(range(9))
-            sage: D = MS2(range(20))
-            sage: MS1._coerce_(A)
-            [0 1 2]
-            [3 4 5]
-            [6 7 8]
-            sage: MS2._coerce_(D)
-            [ 0  1  2  3  4]
-            [ 5  6  7  8  9]
-            [10 11 12 13 14]
-            [15 16 17 18 19]
+            sage: MS1 = MatrixSpace(QQ, 3)
+            sage: MS2 = MatrixSpace(ZZ, 3)
+            sage: MS1.coerce_map_from(MS2)
+            Coercion map:
+              From: Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
+              To:   Full MatrixSpace of 3 by 3 dense matrices over Rational Field
+            sage: MS2.coerce_map_from(MS1)
+            sage: MS1.coerce_map_from(QQ)
+            Coercion map:
+              From: Rational Field
+              To:   Full MatrixSpace of 3 by 3 dense matrices over Rational Field
+            sage: MS1.coerce_map_from(ZZ)
+            Composite map:
+              From: Integer Ring
+              To:   Full MatrixSpace of 3 by 3 dense matrices over Rational Field
+              Defn:   Natural morphism:
+                      From: Integer Ring
+                      To:   Rational Field
+                    then
+                      Coercion map:
+                      From: Rational Field
+                      To:   Full MatrixSpace of 3 by 3 dense matrices over Rational Field
+            sage: MS2.coerce_map_from(QQ)
+            sage: MS2.coerce_map_from(ZZ)
+            Coercion map:
+              From: Integer Ring
+              To:   Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
+
+        There are also coercions possible from matrix group and
+        arithmetic subgroups::
+
+            sage: MS = MatrixSpace(GF(3), 2, 2)
+            sage: MS.coerce_map_from(GL(2, 3))
+            Coercion map:
+              From: General Linear Group of degree 2 over Finite Field of size 3
+              To:   Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 3
+            sage: MS.coerce_map_from(GL(2, 2))
+            sage: MS.coerce_map_from(Gamma1(5))
+            Coercion map:
+              From: Congruence Subgroup Gamma1(5)
+              To:   Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 3
+
+        TESTS:
+
+        Check that :trac:`22091` is fixed::
+
+            sage: A = Zmod(4)
+            sage: R = MatrixSpace(A, 2)
+            sage: G = GL(2, A)
+            sage: R.coerce_map_from(G)
+            Coercion map:
+              From: General Linear Group of degree 2 over Ring of integers modulo 4
+              To:   Full MatrixSpace of 2 by 2 dense matrices over Ring of integers modulo 4
+            sage: R.coerce_map_from(GL(2, ZZ))
+            Coercion map:
+              From: General Linear Group of degree 2 over Integer Ring
+              To:   Full MatrixSpace of 2 by 2 dense matrices over Ring of integers modulo 4
+
+            sage: m = R([[1, 0], [0, 1]])
+            sage: m in G
+            True
+            sage: m in list(G)
+            True
+            sage: m == G(m)
+            True
+
+            sage: G = SL(3, QQ)
+            sage: M = MatrixSpace(QQ, 3)
+            sage: G.one() == M.identity_matrix()
+            True
+            sage: G.one() + M.identity_matrix()
+            [2 0 0]
+            [0 2 0]
+            [0 0 2]
+
+        Verify which coercion maps are allowed (this should form a
+        poset)::
+
+            sage: M1 = MatrixSpace(ZZ, 3, implementation='flint')
+            sage: M2 = MatrixSpace(ZZ, 3, implementation='generic')
+            sage: M3 = MatrixSpace(ZZ, 3, implementation='gap')
+            sage: M4 = MatrixSpace(ZZ, 3, sparse=True)
+            sage: S = [M1, M2, M3, M4]
+            sage: mult = ''
+            sage: for A in S:
+            ....:     for B in S:
+            ....:         if A.has_coerce_map_from(B):
+            ....:             mult += 'X'
+            ....:         else:
+            ....:             mult += ' '
+            ....:     mult += '\n'
+            sage: print(mult)
+            XXXX
+             X X
+              XX
+               X
+
+        Thanks to the coercion model, arithmetic is allowed between all
+        these parents::
+
+            sage: for A in S:
+            ....:     for B in S:
+            ....:         a = A.an_element()
+            ....:         b = B.an_element()
+            ....:         dummy = (a * b) + (a - b)
         """
-        if isinstance(x, matrix.Matrix):
-            if self.is_sparse() and x.is_dense():
-                raise TypeError("cannot coerce dense matrix into sparse space for arithmetic")
-            if x.nrows() == self.nrows() and x.ncols() == self.ncols():
-                if self.base_ring().has_coerce_map_from(x.base_ring()):
-                    return self(x)
-                raise TypeError("no canonical coercion")
-        return self._coerce_try(x, self.base_ring())
+        B = self.base()
+
+        if S is B:
+            # Coercion from base ring to a scalar matrix,
+            # but only if matrices are square.
+            return self.nrows() == self.ncols()
+
+        if isinstance(S, MatrixSpace):
+            # Disallow coercion if dimensions do not match
+            if self.nrows() != S.nrows() or self.ncols() != S.ncols():
+                return False
+            T = S.base()
+            if B is not T:
+                # Matrix spaces over different base rings.
+                # TODO: make this an actual map induced by the map
+                # on the bases, see Trac #25540
+                return B.has_coerce_map_from(T)
+
+            # Base ring and dimensions are the same. So the only
+            # difference can be the implementation and sparseness.
+            if self.is_sparse() != S.is_sparse():
+                # Allow coercion sparse -> dense
+                return S.is_sparse()
+
+            # Allow coercion to the default implementation.
+            # As a consequence, the default implementation is considered
+            # the "common parent" when mixing implementations.
+            return self._has_default_implementation()
+
+        # Check for other parents whose elements are some kind of matrices
+        try:
+            meth_matrix_space = S.matrix_space
+        except AttributeError:
+            pass
+        else:
+            MS = meth_matrix_space()
+            from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
+            from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
+            if is_MatrixGroup(S) or is_ArithmeticSubgroup(S):
+                return self.has_coerce_map_from(MS)
+            else:
+                return False
+
+        # The parent is not matrix-like: coerce via base ring
+        return (self.nrows() == self.ncols()) and self._coerce_map_via([B], S)
 
     def _repr_(self):
         """
-        Returns the string representation of a MatrixSpace
+        Return the string representation of a MatrixSpace.
 
         EXAMPLES::
 
@@ -651,13 +1114,23 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             'Full MatrixSpace of 2 by 4 sparse matrices over Integer Ring'
             sage: MS
             Full MatrixSpace of 2 by 4 sparse matrices over Integer Ring
+
+            sage: MatrixSpace(ZZ, 2, implementation='flint')
+            Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
+            sage: MatrixSpace(ZZ, 2, implementation='generic')
+            Full MatrixSpace of 2 by 2 dense matrices over Integer Ring (using Matrix_generic_dense)
         """
         if self.is_sparse():
             s = "sparse"
         else:
             s = "dense"
-        return "Full MatrixSpace of %s by %s %s matrices over %s"%(
+        s = "Full MatrixSpace of %s by %s %s matrices over %s"%(
                     self.__nrows, self.__ncols, s, self.base_ring())
+
+        if not self._has_default_implementation():
+            s += " (using {})".format(self.Element.__name__)
+
+        return s
 
     def _repr_option(self, key):
         """
@@ -677,7 +1150,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
 
     def _latex_(self):
         r"""
-        Returns the latex representation of a MatrixSpace
+        Return the latex representation of a MatrixSpace.
 
         EXAMPLES::
 
@@ -703,10 +1176,16 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             729
             sage: 3^(2*3)
             729
-            sage: len(MatrixSpace(GF(2003),3,2))
+
+            sage: len(MatrixSpace(GF(2003),3,2))  # py2
             Traceback (most recent call last):
             ...
             OverflowError: long int too large to convert to int
+            sage: len(MatrixSpace(GF(2003),3,2))  # py3
+            Traceback (most recent call last):
+            ...
+            OverflowError: cannot fit 'int' into an index-sized integer
+
             sage: len(MatrixSpace(QQ,3,2))
             Traceback (most recent call last):
             ...
@@ -716,7 +1195,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
 
     def __iter__(self):
         r"""
-        Returns a generator object which iterates through the elements of
+        Return a generator object which iterates through the elements of
         self. The order in which the elements are generated is based on a
         'weight' of a matrix which is the number of iterations on the base
         ring that are required to reach that matrix.
@@ -902,7 +1381,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
         #yield the empty matrix in that case and return
         if number_of_entries == 0:
             yield self(0)
-            raise StopIteration
+            return
 
         import sage.combinat.integer_vector
 
@@ -923,7 +1402,6 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             #the "weight" of each entry is bounded by the number
             #of elements in the base ring
             order = base_ring.order()
-            done = False
             base_elements = list(base_ring)
             for weight in range((order-1)*number_of_entries+1):
                 for iv in sage.combinat.integer_vector.IntegerVectors(weight, number_of_entries, max_part=(order-1)):
@@ -941,7 +1419,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
         should eventually be implemented in the corresponding category rather
         than here.)
 
-        ..SEEALSO::
+        .. SEEALSO::
 
             :meth:`sage.categories.rings.Rings.ParentMethod.__getitem__`,
             :meth:`sage.structure.parent.Parent.__getitem__`
@@ -964,136 +1442,63 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             sage: MS[2]
             Traceback (most recent call last):
             ...
-            NotImplementedError: since it is infinite, cannot list Full MatrixSpace of 7 by 7 dense matrices over Rational Field
+            AttributeError: 'MatrixSpace_with_category' object has no attribute 'list'
         """
-        if isinstance(x, (int, long, integer.Integer)):
+        if isinstance(x, integer_types + (integer.Integer,)):
             return self.list()[x]
-        return Rings.ParentMethods.__getitem__.__func__(self, x)
-
-    def _get_matrix_class(self):
-        r"""
-        Returns the class of self
-
-        EXAMPLES::
-
-            sage: MS1 = MatrixSpace(QQ,4)
-            sage: MS2 = MatrixSpace(ZZ,4,5,true)
-            sage: MS1._get_matrix_class()
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
-            sage: MS2._get_matrix_class()
-            <type 'sage.matrix.matrix_integer_sparse.Matrix_integer_sparse'>
-            sage: type(matrix(SR, 2, 2, 0))
-            <type 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
-            sage: type(matrix(GF(7), 2, range(4)))
-            <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
-            sage: type(matrix(GF(16007), 2, range(4)))
-            <type 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
-            sage: type(matrix(CBF, 2, range(4)))
-            <type 'sage.matrix.matrix_complex_ball_dense.Matrix_complex_ball_dense'>
-            sage: type(matrix(GF(2), 2, range(4)))
-            <type 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
-            sage: type(matrix(GF(64,'z'), 2, range(4)))
-            <type 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
-            sage: type(matrix(GF(125,'z'), 2, range(4)))     # optional: meataxe
-            <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
-        """
-        R = self.base_ring()
-        if self.is_dense():
-            if sage.rings.integer_ring.is_IntegerRing(R):
-                if self._implementation != 'flint':
-                    raise ValueError("unknown matrix implementation %r" % self._implementation)
-                return matrix_integer_dense.Matrix_integer_dense
-            elif sage.rings.rational_field.is_RationalField(R):
-                return matrix_rational_dense.Matrix_rational_dense
-            elif sage.rings.number_field.number_field.is_CyclotomicField(R):
-                from . import matrix_cyclo_dense
-                return matrix_cyclo_dense.Matrix_cyclo_dense
-            elif R==sage.rings.real_double.RDF:
-                from . import matrix_real_double_dense
-                return matrix_real_double_dense.Matrix_real_double_dense
-            elif R==sage.rings.complex_double.CDF:
-                from . import matrix_complex_double_dense
-                return matrix_complex_double_dense.Matrix_complex_double_dense
-            elif sage.rings.finite_rings.integer_mod_ring.is_IntegerModRing(R):
-                from . import matrix_modn_dense_double, matrix_modn_dense_float
-                if R.order() == 2:
-                    return matrix_mod2_dense.Matrix_mod2_dense
-                elif R.order() < matrix_modn_dense_float.MAX_MODULUS:
-                    return matrix_modn_dense_float.Matrix_modn_dense_float
-                elif R.order() < matrix_modn_dense_double.MAX_MODULUS:
-                    return matrix_modn_dense_double.Matrix_modn_dense_double
-                return matrix_generic_dense.Matrix_generic_dense
-            elif sage.rings.finite_rings.finite_field_constructor.is_FiniteField(R):
-                if R.characteristic() == 2:
-                    if R.order() <= 65536:
-                        return matrix_gf2e_dense.Matrix_gf2e_dense
-                elif R.order() <= 255:
-                    try:
-                        from . import matrix_gfpn_dense
-                        return matrix_gfpn_dense.Matrix_gfpn_dense
-                    except ImportError:
-                        pass
-            elif sage.rings.polynomial.multi_polynomial_ring_generic.is_MPolynomialRing(R) and R.base_ring() in _Fields:
-                return matrix_mpolynomial_dense.Matrix_mpolynomial_dense
-            #elif isinstance(R, sage.rings.padics.padic_ring_capped_relative.pAdicRingCappedRelative):
-            #    return padics.matrix_padic_capped_relative_dense
-
-            from sage.symbolic.ring import SR   # causes circular imports
-            if R is SR:
-                from . import matrix_symbolic_dense
-                return matrix_symbolic_dense.Matrix_symbolic_dense
-
-            # ComplexBallField might become a lazy import,
-            # thus do not import it here too early.
-            from sage.rings.complex_arb import ComplexBallField
-            if isinstance(R, ComplexBallField):
-                from . import matrix_complex_ball_dense
-                return matrix_complex_ball_dense.Matrix_complex_ball_dense
-            return matrix_generic_dense.Matrix_generic_dense
-
-        else:
-            if sage.rings.finite_rings.integer_mod_ring.is_IntegerModRing(R) and R.order() < matrix_modn_sparse.MAX_MODULUS:
-                return matrix_modn_sparse.Matrix_modn_sparse
-            elif sage.rings.rational_field.is_RationalField(R):
-                return matrix_rational_sparse.Matrix_rational_sparse
-            elif sage.rings.integer_ring.is_IntegerRing(R):
-                return matrix_integer_sparse.Matrix_integer_sparse
-            # the default
-            return matrix_generic_sparse.Matrix_generic_sparse
+        return super(MatrixSpace, self).__getitem__(x)
 
     def basis(self):
         """
-        Returns a basis for this matrix space.
+        Return a basis for this matrix space.
 
-        .. warning::
+        .. WARNING::
 
            This will of course compute every generator of this matrix
-           space. So for large matrices, this could take a long time,
+           space. So for large dimensions, this could take a long time,
            waste a massive amount of memory (for dense matrices), and
            is likely not very useful. Don't use this on large matrix
            spaces.
 
         EXAMPLES::
 
-            sage: Mat(ZZ,2,2).basis()
+            sage: list(Mat(ZZ,2,2).basis())
             [
             [1 0]  [0 1]  [0 0]  [0 0]
             [0 0], [0 0], [1 0], [0 1]
             ]
+
+        TESTS::
+
+            sage: B = Mat(ZZ,2,2).basis()
+            sage: B[0]
+            doctest:warning...:
+            DeprecationWarning: integer indices are deprecated. Use B[r,c] instead of B[i].
+            See http://trac.sagemath.org/22955 for details.
+            [1 0]
+            [0 0]
         """
-        v = [self.zero_matrix().__copy__() for _ in range(self.dimension())]
-        one = self.base_ring()(1)
-        i = 0
+        v = {(r,c): self.zero_matrix().__copy__() for r in range(self.__nrows)
+             for c in range(self.__ncols)}
+        one = self.base_ring().one()
+        keys = []
         for r in range(self.__nrows):
             for c in range(self.__ncols):
-                v[i][r,c] = one
-                v[i].set_immutable()
-                i += 1
-        return Sequence(v, universe=self, check=False, immutable=True, cr=True)
+                keys.append((r,c))
+                v[r,c][r,c] = one
+                v[r,c].set_immutable()
+        from sage.sets.family import Family
+        def old_index(i):
+            from sage.misc.superseded import deprecation
+            deprecation(22955, "integer indices are deprecated. Use B[r,c] instead of B[i].")
+            return v[keys[i]]
+        return Family(keys, v.__getitem__,
+                      hidden_keys=list(range(self.dimension())),
+                      hidden_function=old_index)
 
     def dimension(self):
-        """
-        Returns (m rows) \* (n cols) of self as Integer
+        r"""
+        Return (m rows) \* (n cols) of ``self`` as ``Integer``.
 
         EXAMPLES::
 
@@ -1106,7 +1511,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
 
     def dims(self):
         """
-        Returns (m row, n col) representation of self dimension
+        Return (m row, n col) representation of ``self`` dimension.
 
         EXAMPLES::
 
@@ -1120,7 +1525,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
     @cached_method
     def identity_matrix(self):
         """
-        Returns the identity matrix in ``self``.
+        Return the identity matrix in ``self``.
 
         ``self`` must be a space of square
         matrices. The returned matrix is immutable. Please use ``copy`` if
@@ -1147,12 +1552,23 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             Traceback (most recent call last):
             ...
             ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
+
+        Check different implementations::
+
+            sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')
+            sage: M2 = MatrixSpace(ZZ, 2, implementation='generic')
+
+            sage: type(M1.identity_matrix())
+            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            sage: type(M2.identity_matrix())
+            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+
         """
         if self.__nrows != self.__ncols:
             raise TypeError("identity matrix must be square")
         A = self.zero_matrix().__copy__()
-        for i in xrange(self.__nrows):
-            A[i,i] = 1
+        for i in range(self.__nrows):
+            A[i, i] = 1
         A.set_immutable()
         return A
 
@@ -1160,7 +1576,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
 
     def is_dense(self):
         """
-        Returns True if matrices in self are dense and False otherwise.
+        Return whether matrices in ``self`` are dense.
 
         EXAMPLES::
 
@@ -1173,7 +1589,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
 
     def is_sparse(self):
         """
-        Returns True if matrices in self are sparse and False otherwise.
+        Return whether matrices in ``self`` are sparse.
 
         EXAMPLES::
 
@@ -1186,6 +1602,8 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
 
     def is_finite(self):
         """
+        Return whether this matrix space is finite.
+
         EXAMPLES::
 
             sage: MatrixSpace(GF(101), 10000).is_finite()
@@ -1199,7 +1617,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
         """
         Return the n-th generator of this matrix space.
 
-        This doesn't compute all basis matrices, so it is reasonably
+        This does not compute all basis matrices, so it is reasonably
         intelligent.
 
         EXAMPLES::
@@ -1224,7 +1642,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
     @cached_method
     def zero_matrix(self):
         """
-        Returns the zero matrix in ``self``.
+        Return the zero matrix in ``self``.
 
         ``self`` must be a space of square matrices. The returned matrix is
         immutable. Please use ``copy`` if you want a modified copy.
@@ -1250,7 +1668,8 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             sage: MM.zero().is_mutable()
             False
         """
-        res = self.__matrix_class(self, 0, coerce=False, copy=False)
+        zero = self.base_ring().zero()
+        res = self.element_class(self, zero, False, False)
         res.set_immutable()
         return res
 
@@ -1258,8 +1677,9 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
 
     def ngens(self):
         """
-        Return the number of generators of this matrix space, which is the
-        number of entries in the matrices in this space.
+        Return the number of generators of this matrix space.
+
+        This is the number of entries in the matrices in this space.
 
         EXAMPLES::
 
@@ -1268,31 +1688,16 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
         """
         return self.dimension()
 
-    def matrix(self, x=0, coerce=True, copy=True):
+    def matrix(self, x=None, **kwds):
         r"""
         Create a matrix in ``self``.
 
         INPUT:
 
-        - ``x`` -- (default: 0) data to construct a new matrix from. Can be one
-          of the following:
+        - ``x`` -- data to construct a new matrix from. See :func:`matrix`
 
-          * 0, corresponding to the zero matrix;
-
-          * 1, corresponding to the identity_matrix;
-
-          * a matrix, whose dimensions must match ``self`` and whose base ring
-            must be convertible to the base ring of ``self``;
-
-          * a list of entries corresponding to all elements of the new matrix;
-
-          * a list of rows with each row given as an iterable;
-
-        - ``coerce`` -- (default: ``True``) whether to coerce ``x`` into self;
-
-        - ``copy`` -- (default: ``True``) whether to copy ``x`` during
-          construction (makes a difference only if ``x`` is a matrix in
-          ``self``).
+        - ``coerce`` -- (default: ``True``) if False, assume without
+          checking that the values in ``x`` lie in the base ring
 
         OUTPUT:
 
@@ -1311,9 +1716,9 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             [1 2]
             [3 4]
 
-        Note that the last "flip" cannot be performed if ``x`` is a matrix, no
-        matter what is ``rows`` (it used to be possible but was fixed by
-        Trac 10793)::
+        Note that the last "flip" cannot be performed if ``x`` is a
+        matrix, no matter what is ``rows`` (it used to be possible but
+        was fixed by :trac:`10793`)::
 
             sage: projection = matrix(ZZ,[[1,0,0],[0,1,0]])
             sage: projection
@@ -1327,10 +1732,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             sage: M(projection)
             Traceback (most recent call last):
             ...
-            ValueError: a matrix from
-            Full MatrixSpace of 2 by 3 dense matrices over Integer Ring
-            cannot be converted to a matrix in
-            Full MatrixSpace of 3 by 2 dense matrices over Integer Ring!
+            ValueError: inconsistent number of rows: should be 3 but got 2
 
         If you really want to make from a matrix another matrix of different
         dimensions, use either transpose method or explicit conversion to a
@@ -1364,21 +1766,14 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             sage: MS.matrix([MS0([1,2,3,4]), MS0([5,6,7,8])])
             Traceback (most recent call last):
             ...
-            TypeError: cannot construct an element of
-            Full MatrixSpace of 4 by 2 dense matrices over Integer Ring
-            from [[1 2]
-            [3 4], [5 6]
-            [7 8]]!
+            TypeError: unable to coerce <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'> to an integer
 
         A mixed list of matrices and vectors is prohibited as well::
 
             sage: MS.matrix( [MS0([1,2,3,4])] + list(MS0([5,6,7,8])) )
             Traceback (most recent call last):
             ...
-            TypeError: cannot construct an element of
-            Full MatrixSpace of 4 by 2 dense matrices over Integer Ring
-            from [[1 2]
-            [3 4], (5, 6), (7, 8)]!
+            TypeError: unable to coerce <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'> to an integer
 
         Check that :trac:`13302` is fixed::
 
@@ -1407,80 +1802,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             sage: md.parent() is MS
             True
         """
-        if x is None or isinstance(x, (int, integer.Integer)) and x == 0:
-            if self._copy_zero: # faster to copy than to create a new one.
-                return self.zero_matrix().__copy__()
-            else:
-                return self.__matrix_class(self, None, False, False)
-        if isinstance(x, (int, integer.Integer)) and x == 1:
-            return self.identity_matrix().__copy__()
-        m, n, sparse = self.__nrows, self.__ncols, self.__is_sparse
-        if matrix.is_Matrix(x):
-            if x.parent() is self:
-                if x.is_immutable():
-                    return x
-                else:
-                    return x.__copy__()
-            else:
-                if x.nrows() == m and x.ncols() == n:
-                    if (x.base_ring() == self.base_ring()
-                        and x.is_sparse() and not sparse):
-                        # If x is sparse and large, calling x.dense_matrix()
-                        # is much faster than calling x.list(). See #20470.
-                        return x.dense_matrix()
-                    x = x.list()
-                else:
-                    raise ValueError("a matrix from %s cannot be converted to "
-                                     "a matrix in %s!" % (x.parent(), self))
-        from sage.groups.matrix_gps.group_element import \
-            is_MatrixGroupElement
-        from sage.modular.arithgroup.arithgroup_element import \
-            ArithmeticSubgroupElement
-        if is_MatrixGroupElement(x) or isinstance(x, ArithmeticSubgroupElement):
-            return self(x.matrix(), copy=False)
-        if isinstance(x, (types.GeneratorType, xrange)):
-            x = list(x)
-        if not sparse and isinstance(x, dict):
-            x = dict_to_list(x, m, n)
-            coerce = True
-            copy = False
-        MC = self.__matrix_class
-        if isinstance(x, (list, tuple)) and x:
-            if len(x) == m:     # Try unpacking elements
-                unpacked = True
-                new_x = []
-                for v in x:
-                    l = len(new_x)
-                    try:
-                        from sage.structure.element import is_Vector
-                        if isinstance(v, (list, tuple)) or is_Vector(v):
-                            # The isinstance check should prevent the "flattening"
-                            # of v if v is an iterable but not meant to be
-                            # iterated (e.g., an element of a combinatorial free
-                            # module).
-                            new_x.extend(v)
-                        else:
-                            raise TypeError
-                        if len(new_x) - l != n:
-                            raise TypeError
-                    except TypeError:
-                        unpacked = False
-                if unpacked:
-                    try:
-                        if sparse:
-                            return MC(self, list_to_dict(new_x, m, n),
-                                      copy=False, coerce=coerce)
-                        else:
-                            return MC(self, new_x, copy=False, coerce=coerce)
-                    except (TypeError, ValueError):
-                        pass
-            if len(x) != m * n:
-                raise TypeError("cannot construct an element of {} from {}!"
-                                .format(self, x))
-            if sparse:
-                x = list_to_dict(x, m, n)
-                copy = False
-        return MC(self, x, copy=copy, coerce=coerce)
+        return self(x, **kwds)
 
     def matrix_space(self, nrows=None, ncols=None, sparse=False):
         """
@@ -1567,7 +1889,7 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
 
     def random_element(self, density=None, *args, **kwds):
         """
-        Returns a random element from this matrix space.
+        Return a random element from this matrix space.
 
         INPUT:
 
@@ -1609,16 +1931,16 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             [ -8   2   0   0   1]
             [ -1   2   1 -95  -1]
             sage: Mat(QQ,2,5).random_element(density=0.5)
-            [ 2  0  0  0  1]
-            [ 0  0  0 -1  0]
+            [  2   0   0   0   1]
+            [  0   0   0 1/2   0]
             sage: Mat(QQ,3,sparse=True).random_element()
-            [  -1   -1   -1]
-            [  -3 -1/3   -1]
-            [   0   -1    1]
+            [  -1  1/3    1]
+            [   0   -1    0]
+            [  -1    1 -1/4]
             sage: Mat(GF(9,'a'),3,sparse=True).random_element()
-            [    a   2*a     1]
-            [    2     1 a + 2]
-            [  2*a     2     2]
+            [      1       2       1]
+            [  a + 2     2*a       2]
+            [      2 2*a + 2       1]
         """
         Z = self.zero_matrix().__copy__()
         if density is None:
@@ -1628,6 +1950,103 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             Z.randomize(density=density, nonzero=kwds.pop('nonzero', True), \
                 *args, **kwds)
         return Z
+
+    def _an_element_(self):
+        """
+        Create a typical element of this matrix space.
+
+        This uses ``some_elements`` of the base ring.
+
+        EXAMPLES::
+
+            sage: MatrixSpace(QQ, 3, 3).an_element()  # indirect doctest
+            [ 1/2 -1/2    2]
+            [  -2    0    1]
+            [  -1   42  2/3]
+
+        TESTS::
+
+            sage: MatrixSpace(ZZ, 0, 0).an_element()
+            []
+
+        Check that this works for large matrices and that it returns a
+        matrix which is not too trivial::
+
+            sage: M = MatrixSpace(GF(2), 100, 100).an_element()
+            sage: M.rank() >= 2
+            True
+
+        Check that this works for sparse matrices::
+
+            sage: M = MatrixSpace(ZZ, 1000, 1000, sparse=True).an_element()
+            sage: M.density()
+            99/1000000
+        """
+        from .args import MatrixArgs
+        dim = self.dimension()
+        if dim > 100 and self.is_sparse():
+            # Sparse case: add 100 elements
+            D = {}
+            nr = self.nrows()
+            nc = self.ncols()
+            from random import randrange
+            n = 0
+            while True:
+                for el in self.base().some_elements():
+                    if n == 100:
+                        ma = MatrixArgs(D, space=self)
+                        del D
+                        return ma.matrix()
+                    D[randrange(nr), randrange(nc)] = el
+                    n += 1
+                assert D
+        else:
+            # Dense case
+            # Keep appending to L until we have enough elements
+            L = []
+            while True:
+                for el in self.base().some_elements():
+                    if len(L) == dim:
+                        ma = MatrixArgs(L, space=self)
+                        del L  # for efficiency: this may avoid a copy of L
+                        return ma.matrix()
+                    L.append(el)
+                assert L
+
+    def some_elements(self):
+        r"""
+        Return some elements of this matrix space.
+
+        See :class:`TestSuite` for a typical use case.
+
+        OUTPUT:
+
+        An iterator.
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(ZZ, 2, 2)
+            sage: tuple(M.some_elements())
+            (
+            [ 0  1]  [1 0]  [0 1]  [0 0]  [0 0]
+            [-1  2], [0 0], [0 0], [1 0], [0 1]
+            )
+            sage: M = MatrixSpace(QQ, 2, 3)
+            sage: tuple(M.some_elements())
+            (
+            [ 1/2 -1/2    2]  [1 0 0]  [0 1 0]  [0 0 1]  [0 0 0]  [0 0 0]  [0 0 0]
+            [  -2    0    1], [0 0 0], [0 0 0], [0 0 0], [1 0 0], [0 1 0], [0 0 1]
+            )
+            sage: M = MatrixSpace(SR, 2, 2)
+            sage: tuple(M.some_elements())
+            (
+            [some_variable some_variable]  [1 0]  [0 1]  [0 0]  [0 0]
+            [some_variable some_variable], [0 0], [0 0], [1 0], [0 1]
+            )
+        """
+        yield self.an_element()
+        for g in self.gens():
+            yield g
 
     def _magma_init_(self, magma):
         r"""
@@ -1650,8 +2069,53 @@ class MatrixSpace(UniqueRepresentation, parent_gens.ParentWithGens):
             s = 'RMatrixSpace(%s,%s,%s)'%(K.name(), self.__nrows, self.__ncols)
         return s
 
+    def _polymake_init_(self):
+        r"""
+        Return the polymake representation of the matrix space.
+
+        EXAMPLES::
+
+            sage: polymake(MatrixSpace(QQ,3))                   # optional - polymake
+            Matrix<Rational>
+            sage: polymake(MatrixSpace(QuadraticField(5),3))    # optional - polymake
+            Matrix<QuadraticExtension>
+        """
+        from sage.interfaces.polymake import polymake
+        K = polymake(self.base_ring())
+        return '"Matrix<{}>"'.format(K)
+
+    def _random_nonzero_element(self, *args, **kwds):
+        """
+        Return a random non-zero matrix.
+
+        This function repeatedly calls ``random_element`` until a non-zero
+        matrix is obtained.
+
+        INPUT:
+
+        - ``*args``, ``**kwds`` - Parameters that can be forwarded to the 
+          ``random_element`` method
+        
+        OUTPUT:
+
+        - Random non-zero matrix
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(ZZ, 4)
+            sage: M._random_nonzero_element()
+            [ -8   2   0   0]
+            [  1  -1   2   1]
+            [-95  -1  -2 -12]
+            [  0   0   1  -1]
+        """
+        rand_matrix = self.random_element(*args, **kwds)
+        while rand_matrix.is_zero():
+            rand_matrix = self.random_element(*args, **kwds)
+        return rand_matrix
+
 def dict_to_list(entries, nrows, ncols):
-    """
+    r"""
     Given a dictionary of coordinate tuples, return the list given by
     reading off the nrows\*ncols matrix in row order.
 
@@ -1666,42 +2130,14 @@ def dict_to_list(entries, nrows, ncols):
         sage: dict_to_list(d, 2, 3)
         [1, 0, 0, 0, 2, 0]
     """
-    v = [0]*(nrows*ncols)
-    for ij, y in entries.iteritems():
-        i,j = ij
-        v[i*ncols + j] = y
+    v = [0] * (nrows * ncols)
+    for ij, y in iteritems(entries):
+        i, j = ij
+        v[i * ncols + j] = y
     return v
 
-def list_to_dict(entries, nrows, ncols, rows=True):
-    """
-    Given a list of entries, create a dictionary whose keys are
-    coordinate tuples and values are the entries.
 
-    EXAMPLES::
-
-        sage: from sage.matrix.matrix_space import list_to_dict
-        sage: d = list_to_dict([1,2,3,4],2,2)
-        sage: d[(0,1)]
-        2
-        sage: d = list_to_dict([1,2,3,4],2,2,rows=False)
-        sage: d[(0,1)]
-        3
-    """
-    d = {}
-    if ncols == 0 or nrows == 0:
-        return d
-    for i, x in enumerate(entries):
-        if x != 0:
-            col = i % ncols
-            row = i // ncols
-            if rows:
-                d[(row,col)] = x
-            else:
-                d[(col,row)] = x
-    return d
-
-
-def test_trivial_matrices_inverse(ring, sparse=True, checkrank=True):
+def test_trivial_matrices_inverse(ring, sparse=True, implementation=None, checkrank=True):
     """
     Tests inversion, determinant and is_invertible for trivial matrices.
 
@@ -1739,9 +2175,11 @@ def test_trivial_matrices_inverse(ring, sparse=True, checkrank=True):
 
         sage: from sage.matrix.matrix_space import test_trivial_matrices_inverse as tinv
         sage: tinv(ZZ, sparse=True)
-        sage: tinv(ZZ, sparse=False)
+        sage: tinv(ZZ, sparse=False, implementation='flint')
+        sage: tinv(ZZ, sparse=False, implementation='generic')
         sage: tinv(QQ, sparse=True)
-        sage: tinv(QQ, sparse=False)
+        sage: tinv(QQ, sparse=False, implementation='flint')
+        sage: tinv(QQ, sparse=False, implementation='generic')
         sage: tinv(GF(11), sparse=True)
         sage: tinv(GF(11), sparse=False)
         sage: tinv(GF(2), sparse=True)
@@ -1818,7 +2256,7 @@ def test_trivial_matrices_inverse(ring, sparse=True, checkrank=True):
 # Fix unpickling Matrix_modn_dense and Matrix_integer_2x2
 from sage.matrix.matrix_modn_dense_double import Matrix_modn_dense_double
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 def _MatrixSpace_ZZ_2x2():
     from sage.rings.integer_ring import ZZ
     return MatrixSpace(ZZ,2)

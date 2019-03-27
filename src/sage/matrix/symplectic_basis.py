@@ -29,7 +29,7 @@ not efficient (see Section 5, Number 1, Theorem 1, page 79):
 Bourbaki, N.  Elements of Mathematics, Algebra III, Springer
 Verlag 2007.
 
-Kuperburg gives a more efficient and constructive exposition (see
+Kuperberg gives a more efficient and constructive exposition (see
 Theorem 18).
 
 Kuperberg, Greg.  Kasteleyn Cokernels.  Electr. J. Comb. 9(1), 2002.

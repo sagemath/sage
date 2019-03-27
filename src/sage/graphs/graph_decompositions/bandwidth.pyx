@@ -100,15 +100,20 @@ This module contains the following methods
 Functions
 ---------
 """
+
 #*****************************************************************************
-#          Copyright (C) 2015 Nathann Cohen <nathann.cohen@gmail.com>
+#       Copyright (C) 2015 Nathann Cohen <nathann.cohen@gmail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
-include "cysignals/signals.pxi"
 
 from libc.stdint cimport uint16_t
+from cysignals.signals cimport sig_check
+
 from sage.graphs.distances_all_pairs cimport all_pairs_shortest_path_BFS
 from sage.graphs.base.boost_graph import bandwidth_heuristics
 from sage.ext.memory_allocator cimport MemoryAllocator
@@ -213,9 +218,9 @@ def bandwidth(G, k=None):
     if G.order() <= 1:
         from sage.matrix.constructor import Matrix
         if k is None:
-            return (0,G.vertices())
+            return 0, list(G)
         else:
-            return (G.vertices())
+            return list(G)
 
     if not G.is_connected():
         max_k = 0 if k is None else k
@@ -234,7 +239,8 @@ def bandwidth(G, k=None):
     # bandwidth_C
 
     cdef int n = G.order()
-    cdef list int_to_vertex = G.vertices()
+    # Must be the same order than in all_pairs_shortest_path_BFS
+    cdef list int_to_vertex = list(G)
 
     cdef MemoryAllocator mem = MemoryAllocator()
 
@@ -249,7 +255,8 @@ def bandwidth(G, k=None):
     cdef range_t *         range_array_tmp  = <range_t *>         mem.allocarray(n,   sizeof(range_t))
 
     cdef int i,j,kk
-    all_pairs_shortest_path_BFS(G,NULL,distances,NULL) # compute the distance matrix
+    # compute the distance matrix
+    all_pairs_shortest_path_BFS(G, NULL, distances, NULL, vertex_list=int_to_vertex)
 
     # fill d so that d[i][j] works
     for i in range(n):
@@ -263,7 +270,6 @@ def bandwidth(G, k=None):
     for i in range(n):
         left_to_order[i] = i
 
-    sig_on()
     if k is None:
         for kk in range((n-1)//G.diameter(),n):
             if bandwidth_C(n,kk,d,current,ordering,left_to_order,index_array_tmp,ith_range_array,range_array_tmp):
@@ -275,12 +281,11 @@ def bandwidth(G, k=None):
     if ans:
         order = [int_to_vertex[ordering[i]] for i in range(n)]
 
-    sig_off()
-
     if ans:
         ans = (kk, order) if k is None else order
 
     return ans
+
 
 cdef bint bandwidth_C(int n, int k,
                      unsigned short ** d,
@@ -304,6 +309,7 @@ cdef bint bandwidth_C(int n, int k,
 
     i = 0
     while True:
+        sig_check()
 
         # There are (n-i) choices for vertex i, as i-1 have already been
         # determined. Thus, i<=current[i]<n.
@@ -414,6 +420,7 @@ cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_arr
         index_array_tmp[v] = 0
 
     for v in range(n):
+        sig_check()
         for j in range(range_array_tmp[v].m, range_array_tmp[v].M+1):
             if not index_array_tmp[j]:
                 index_array_tmp[j] = 1

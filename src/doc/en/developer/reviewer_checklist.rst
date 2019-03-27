@@ -103,12 +103,12 @@ example by the author of the original patch.
 
 For more advice on reviewing, see [WSblog]_.
 
-.. note::
+.. NOTE::
 
     "The perfect is the enemy of the good"
 
     The point of the review is to ensure that the Sage code guidelines
-    are followed and that the the implementation is mathematically
+    are followed and that the implementation is mathematically
     correct. Please refrain from additional feature requests or
     open-ended discussion about alternative implementations. If you
     want the patch written differently, your suggestion should be a

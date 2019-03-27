@@ -35,7 +35,7 @@ from sage.structure.sequence import Sequence
 from sage.structure.element import is_Vector
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.matrix.constructor import Matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve
 
@@ -200,7 +200,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
 
             sage: P.<t> = GF(2)[]
             sage: c = Conic([t, 1, t^2, 1, 1, 0]); c
-            Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 2 (using NTL) defined by t*x^2 + x*y + y^2 + t^2*x*z + y*z
+            Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X) defined by t*x^2 + x*y + y^2 + t^2*x*z + y*z
             sage: c.is_smooth()
             True
             sage: c.derivative_matrix()
@@ -208,9 +208,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             [  1   0   1]
             [t^2   1   0]
         """
-        from sage.matrix.constructor import matrix
-        [a,b,c,d,e,f] = self.coefficients()
-        return matrix([[ 2*a ,   b ,   c ],
+        a, b, c, d, e, f = self.coefficients()
+        return Matrix([[ 2*a ,   b ,   c ],
                        [   b , 2*d ,   e ],
                        [   c ,   e , 2*f ]])
 
@@ -434,7 +433,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: C.has_rational_point(algorithm='magma') # optional - magma
             True
             sage: C.has_rational_point(algorithm='magma', point=True) # optional - magma
-            (True, (t : 1 : 1))
+            (True, (-t : 1 : 1))
 
             sage: D = Conic([t,1,t^2])
             sage: D.has_rational_point(algorithm='magma') # optional - magma
@@ -498,7 +497,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
                 pass
 
             # The second attempt tries to split Magma elements into
-            # numerators and denominators first. This is neccessary
+            # numerators and denominators first. This is necessary
             # for the field of rational functions, because (at the moment of
             # writing) fraction field elements are not converted automatically
             # from Magma to Sage.
@@ -587,7 +586,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
 
             sage: P.<t> = GF(2)[]
             sage: C = Conic(P, [t,t,1]); C
-            Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 2 (using NTL) defined by t*x^2 + t*y^2 + z^2
+            Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X) defined by t*x^2 + t*y^2 + z^2
             sage: C.has_singular_point(point = False)
             Traceback (most recent call last):
             ...
@@ -723,8 +722,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: c.diagonalization()[0].is_diagonal()
             True
         """
-        return all([self.coefficients()[i] == 0 for i in [1,2,4]])
-
+        return all(self.coefficients()[i] == 0 for i in [1, 2, 4])
 
     def is_smooth(self):
         r"""
@@ -1020,10 +1018,10 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
 
             sage: P.<x> = QQ[]
             sage: L.<b> = NumberField(x^3-5)
-            sage: C = Conic(L, [3, 2, -5])
+            sage: C = Conic(L, [3, 2, -b])
             sage: p = C.rational_point(algorithm = 'rnfisnorm')
             sage: p                                         # output is random
-            (60*b^2 - 196*b + 161 : -120*b^2 - 6*b + 361 : 1)
+            (1/3*b^2 - 4/3*b + 4/3 : b^2 - 2 : 1)
             sage: C.defining_polynomial()(list(p))
             0
 
@@ -1044,10 +1042,10 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
 
             sage: q = C.rational_point(algorithm = 'magma', read_cache=False) # optional - magma
             sage: q                       # output is random, optional - magma
-            (-1 : -1 : 1)
+            (1/5*b^2 : 1/5*b^2 : 1)
             sage: C.defining_polynomial()(list(p))          # optional - magma
             0
-            sage: len(str(p)) / len(str(q)) > 2             # optional - magma
+            sage: len(str(p)) > 1.5*len(str(q))             # optional - magma
             True
 
             sage: D.rational_point(algorithm = 'magma', read_cache=False) # random, optional - magma
@@ -1140,15 +1138,14 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: v * C.symmetric_matrix() * v
             x^2 + 2*x*y + y^2 + 3*x*z + z^2
         """
-        [a,b,c,d,e,f] = self.coefficients()
+        a, b, c, d, e, f = self.coefficients()
         if self.base_ring().characteristic() == 2:
             if b == 0 and c == 0 and e == 0:
-                return matrix([[a,0,0],[0,d,0],[0,0,f]])
+                return Matrix([[a,0,0],[0,d,0],[0,0,f]])
             raise ValueError("The conic self (= %s) has no symmetric matrix " \
                               "because the base field has characteristic 2" % \
                               self)
-        from sage.matrix.constructor import matrix
-        return matrix([[  a , b/2, c/2 ],
+        return Matrix([[  a , b/2, c/2 ],
                        [ b/2,  d , e/2 ],
                        [ c/2, e/2,  f  ]])
 

@@ -58,9 +58,7 @@ Polytopes::
 
 :mod:`Symmetric functions and combinatorial Hopf algebras <sage.combinat.algebraic_combinatorics>`::
 
-    sage: Sym = SymmetricFunctions(QQ); Sym.inject_shorthands()
-    ...
-    doctest:...: RuntimeWarning: redefining global value `e`
+    sage: Sym = SymmetricFunctions(QQ); Sym.inject_shorthands(verbose=False)
     sage: m( ( h[2,1] * (1 + 3 * p[2,1]) ) + s[2](s[3]) )
     3*m[1, 1, 1] + ... + 10*m[5, 1] + 4*m[6]
 
@@ -69,7 +67,7 @@ Polytopes::
     sage: S = SymmetricGroup(4)
     sage: M = PolynomialRing(QQ, 'x0,x1,x2,x3')
     sage: M.an_element() * S.an_element()
-    x1
+    x0
 
 Graph theory, posets, lattices (:ref:`sage.graphs`, :ref:`sage.combinat.posets`)::
 

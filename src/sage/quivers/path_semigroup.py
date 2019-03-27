@@ -18,10 +18,9 @@ Path Semigroups
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
+from six import integer_types, string_types
 
-import six
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
@@ -66,7 +65,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         sage: S.gens()
         (e_1, e_2, e_3, a, b, c, d)
         sage: S.category()
-        Join of Category of finite semigroups and Category of finite enumerated sets
+        Category of finite enumerated semigroups
 
     In the test suite, we skip the associativity test, as in this example the
     paths used for testing can't be concatenated::
@@ -83,7 +82,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         sage: M
         Monoid formed by the directed paths of Looped multi-digraph on 1 vertex
         sage: M.category()
-        Join of Category of monoids and Category of infinite enumerated sets
+        Category of infinite enumerated monoids
         sage: TestSuite(M).run()
     """
     Element = QuiverPath
@@ -173,7 +172,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         # Check validity of input: vertices have to be labelled 1,2,3,... and
         # edge labels must be unique
         for v in Q:
-            if not isinstance(v, (int,long,Integer)):
+            if not isinstance(v, integer_types + (Integer,)):
                 raise ValueError("vertices of the digraph must be labelled by integers")
 
         ## Determine the category which this (partial) semigroup belongs to
@@ -185,12 +184,13 @@ class PathSemigroup(UniqueRepresentation, Parent):
         self._labels = tuple([x[2] for x in self._sorted_edges])
         self._label_index = {s[2]: i for i,s in enumerate(self._sorted_edges)}
         self._nb_arrows = max(len(self._sorted_edges), 1)
-        names = ['e_{0}'.format(v) for v in Q.vertices()] + list(self._labels)
+        names = ['e_{0}'.format(v) for v in Q.vertex_iterator()]
+        names += list(self._labels)
         self._quiver = Q
         if Q.num_verts() == 1:
-            cat = cat.join([cat,Monoids()])
+            cat = cat.join([cat, Monoids()])
         else:
-            cat = cat.join([cat,Semigroups()])
+            cat = cat.join([cat, Semigroups()])
         Parent.__init__(self, names=names, category=cat)
 
     def _repr_(self):
@@ -247,7 +247,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: d*c3
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '*':
+            TypeError: unsupported operand parent(s) for *:
              'Partial semigroup formed by the directed paths of Multi-digraph on 3 vertices'
              and 'Partial semigroup formed by the directed paths of Multi-digraph on 3 vertices'
         """
@@ -340,7 +340,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         elif data == 1:
             start = end = next(self._quiver.vertex_iterator())
             path = []
-        elif isinstance(data, six.string_types): # one edge
+        elif isinstance(data, string_types): # one edge
             i = L.get(data, None)
             if i is None:
                 raise ValueError("data={!r} is not the label of an edge".format(data))
@@ -348,7 +348,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             path = [i]
         elif not isinstance(data, (tuple,list)):
             raise TypeError("data={} is not valid. A path must be initialized from either a tuple or a list".format(data))
-        elif isinstance(data[0], six.string_types):  # a list of labels
+        elif isinstance(data[0], string_types):  # a list of labels
             start = L.get(data[0])
             if start is None:
                 raise ValueError("data[0]={!r} is not the label of an edge".format(data[0]))
@@ -408,8 +408,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: P.arrows()
             (a, b, c, d)
         """
-        Q = self._quiver
-        return tuple(self.element_class(self, e[0],e[1], [i]) for i,e in enumerate(self._sorted_edges))
+        return tuple(self.element_class(self, e[0], e[1], [i])
+                     for i, e in enumerate(self._sorted_edges))
 
     @cached_method
     def idempotents(self):
@@ -423,7 +423,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: P.idempotents()
             (e_1, e_2, e_3)
         """
-        return tuple(self.element_class(self, v,v, []) for v in self._quiver.vertices())
+        return tuple(self.element_class(self, v,v, [])
+                     for v in self._quiver.vertex_iterator())
 
     def ngens(self):
         """
@@ -541,7 +542,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: list(A.basis())
             Traceback (most recent call last):
             ...
-            NotImplementedError: infinite list
+            ValueError: the underlying quiver has cycles, thus, there may be an infinity of directed paths
         """
         from sage.all import ZZ
         if self._quiver.is_directed_acyclic() and not self._quiver.has_loops():
@@ -606,8 +607,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
         length_d_available = True
         while length_d_available:
             length_d_available = False
-            for v in self._quiver.vertices():
-                for w in self.iter_paths_by_length_and_startpoint(d,v):
+            for v in self._quiver.vertex_iterator():
+                for w in self.iter_paths_by_length_and_startpoint(d, v):
                     length_d_available = True
                     yield w
             d += 1
@@ -634,7 +635,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: list(P.iter_paths_by_length_and_startpoint(5,2))
             [d*c*a*d*c, d*c*b*d*c]
 
-        TEST::
+        TESTS::
 
              sage: Q = DiGraph({1:{1:['a','b', 'c', 'd']}})
              sage: P = Q.path_semigroup()
@@ -708,7 +709,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         """
         Return the underlying quiver (i.e., digraph) of this path semigroup.
 
-        .. NOTE:
+        .. NOTE::
 
             The returned digraph always is an immutable copy of the originally
             given digraph that is made weighted.

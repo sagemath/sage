@@ -23,12 +23,16 @@ pairs of integers.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six import iteritems, integer_types
 
 from sage.rings.integer import Integer
 from sage.structure.element import MonoidElement
+from sage.structure.richcmp import richcmp, richcmp_not_equal
+
 
 def is_FreeMonoidElement(x):
     return isinstance(x, FreeMonoidElement)
+
 
 class FreeMonoidElement(MonoidElement):
     """
@@ -45,7 +49,7 @@ class FreeMonoidElement(MonoidElement):
         sage: x**(-1)
         Traceback (most recent call last):
         ...
-        TypeError: bad operand type for unary ~: 'FreeMonoid_class_with_category.element_class'
+        TypeError: bad operand type for unary ~: 'FreeMonoid_with_category.element_class'
     """
     def __init__(self, F, x, check=True):
         """
@@ -54,7 +58,7 @@ class FreeMonoidElement(MonoidElement):
         This should typically be called by a FreeMonoid.
         """
         MonoidElement.__init__(self, F)
-        if isinstance(x, (int, long, Integer)):
+        if isinstance(x, integer_types + (Integer,)):
             if x == 1:
                 self._element_list = []
             else:
@@ -65,8 +69,8 @@ class FreeMonoidElement(MonoidElement):
                 for v in x:
                     if not isinstance(v, tuple) and len(v) == 2:
                         raise TypeError("x (= %s) must be a list of 2-tuples or 1."%x)
-                    if not (isinstance(v[0], (int,long,Integer)) and \
-                            isinstance(v[1], (int,long,Integer))):
+                    if not (isinstance(v[0], integer_types + (Integer,)) and
+                            isinstance(v[1], integer_types + (Integer,))):
                         raise TypeError("x (= %s) must be a list of 2-tuples of integers or 1."%x)
                     if len(x2) > 0 and v[0] == x2[len(x2)-1][0]:
                         x2[len(x2)-1] = (v[0], v[1]+x2[len(x2)-1][1])
@@ -107,41 +111,25 @@ class FreeMonoidElement(MonoidElement):
             sage: list(a[0]*a[1]*a[4]**3*a[0])
             [(a0, 1), (a1, 1), (a4, 3), (a0, 1)]
         """
-        gens=self.parent().gens()
-        return ((gens[index], exponent) \
+        gens = self.parent().gens()
+        return ((gens[index], exponent)
                 for (index, exponent) in self._element_list)
-
-##     def __cmp__(left, right):
-##         """
-##         Compare two free monoid elements with the same parents.
-
-##         The ordering is the one on the underlying sorted list of
-##         (monomial,coefficients) pairs.
-
-##         EXAMPLES:
-##             sage: R.<x,y> = FreeMonoid(2)
-##             sage: x < y
-##             True
-##             sage: x * y < y * x
-##             True
-##             sage: x * y * x^2 < x * y * x^3
-##             True
-##         """
-##         return cmp(left._element_list, right._element_list)
 
     def _repr_(self):
         s = ""
         v = self._element_list
         x = self.parent().variable_names()
         for i in range(len(v)):
-            if len(s) > 0: s += "*"
+            if len(s) > 0:
+                s += "*"
             g = x[int(v[i][0])]
             e = v[i][1]
             if e == 1:
                 s += "%s"%g
             else:
                 s += "%s^%s"%(g,e)
-        if len(s) == 0: s = "1"
+        if len(s) == 0:
+            s = "1"
         return s
 
     def _latex_(self):
@@ -168,7 +156,8 @@ class FreeMonoidElement(MonoidElement):
                 s += "%s"%(g,)
             else:
                 s += "%s^{%s}"%(g,e)
-        if len(s) == 0: s = "1"
+        if len(s) == 0:
+            s = "1"
         return s
 
     def __call__(self, *x, **kwds):
@@ -204,12 +193,12 @@ class FreeMonoidElement(MonoidElement):
 
         if kwds:
             x = self.gens()
-            gens_dict = dict([(name, i) for i, name in enumerate(P.variable_names())])
-            for key, value in kwds.iteritems():
+            gens_dict = {name: i for i, name in enumerate(P.variable_names())}
+            for key, value in iteritems(kwds):
                 if key in gens_dict:
                     x[gens_dict[key]] = value
 
-        if isinstance(x[0],tuple):
+        if isinstance(x[0], tuple):
             x = x[0]
 
         if len(x) != self.parent().ngens():
@@ -292,56 +281,36 @@ class FreeMonoidElement(MonoidElement):
             s += x[1]
         return s
 
-    def __cmp__(self,y):
-##         """
-##         The comparison operator, defined via x = self:
-##             x < y <=> x.__cmp__(y) == -1
-##             x == y <=> x.__cmp__(y) == 0
-##             x > y <=> x.__cmp__(y) == 1
-##         It is not possible to use __cmp__ to define a
-##         non-totally ordered poset.
-##         Question: How can the operators <, >, ==, !=,
-##         <=, and >= be defined for a general poset?
-##         N.B. An equal operator __equal__ may or may not
-##         have been introduced to define == and != but can
-##         not be used in conjunction with __cmp__.
-##        """
-        if not isinstance(y,FreeMonoidElement) or y.parent() != self.parent():
-            #raise TypeError, "Argument y (= %s) is of the wrong type."%y
-            return 1
-        n = len(self)
-        m = len(y)
-        if n < m:
-            return -1
-        elif m < n:
-            return 1
-        elif n == 0:
-            return 0 # n = m = 0 hence x = y = 1
-        x_elt = self._element_list
-        y_elt = y._element_list
-        for i in range(len(x_elt)):
-            k = x_elt[i][0]
-            l = y_elt[i][0]
-            if k < l:
-                return -1
-            elif k > l:
-                return 1
-            e = x_elt[i][1]
-            f = y_elt[i][1]
-            if e < f:
-                # x_elt is longer so compare next index
-                if x_elt[i+1][0] < l:
-                    return -1
-                else:
-                    return 1
-            elif f < e:
-                # y_elt is longer so compare next index
-                if k < y_elt[i+1][0]:
-                    return -1
-                else:
-                    return 1
-        return 0 # x = self and y are equal
+    def _richcmp_(self, other, op):
+        """
+        Compare two free monoid elements with the same parents.
 
+        The ordering is first by increasing length, then lexicographically
+        on the underlying word.
+
+        EXAMPLES::
+
+            sage: S = FreeMonoid(3, 'a')
+            sage: (x,y,z) = S.gens()
+            sage: x * y < y * x
+            True
+
+            sage: a = FreeMonoid(5, 'a').gens()
+            sage: x = a[0]*a[1]*a[4]**3
+            sage: x < x
+            False
+            sage: x == x
+            True
+            sage: x >= x*x
+            False
+        """
+        m = sum(i for x, i in self._element_list)
+        n = sum(i for x, i in other._element_list)
+        if m != n:
+            return richcmp_not_equal(m, n, op)
+        v = tuple([x for x, i in self._element_list for j in range(i)])
+        w = tuple([x for x, i in other._element_list for j in range(i)])
+        return richcmp(v, w, op)
 
     def _acted_upon_(self, x, self_on_left):
         """
@@ -389,7 +358,7 @@ class FreeMonoidElement(MonoidElement):
         return W(sum([ [alph[gens.index(i[0])]] * i[1] for i in list(self) ], []))
 
     def to_list(self, indices=False):
-        """
+        r"""
         Return ``self`` as a list of generators.
 
         If ``self`` equals `x_{i_1} x_{i_2} \cdots x_{i_n}`, with

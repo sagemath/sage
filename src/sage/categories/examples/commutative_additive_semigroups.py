@@ -49,6 +49,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           pass
@@ -57,6 +58,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
         running ._test_elements_eq_transitive() . . . pass
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
@@ -106,7 +108,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
             sage: F.summation(a,b)
             a + b
             sage: (a+b) + (a+c)
-            2*a + c + b
+            2*a + b + c
         """
         assert x in self
         assert y in self
@@ -136,7 +138,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
             sage: F = CommutativeAdditiveSemigroups().example()
             sage: F.an_element()
-            a + 3*c + 2*b + 4*d
+            a + 2*b + 3*c + 4*d
         """
         return self((a, (ord(a)-96)) for a in self.alphabet)
 
@@ -173,13 +175,13 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
                 sage: F = CommutativeAdditiveSemigroups().example()
                 sage: F.an_element() # indirect doctest
-                a + 3*c + 2*b + 4*d
+                a + 2*b + 3*c + 4*d
 
                 sage: F(())
                 0
             """
             d = self.value
-            result = ' + '.join( ("%s*%s"%(d[a],a) if d[a] != 1 else a) for a in d.keys() if d[a] != 0)
+            result = ' + '.join( ("%s*%s"%(d[a],a) if d[a] != 1 else a) for a in sorted(d.keys()) if d[a] != 0)
             return '0' if result == '' else result
 
         def __hash__(self):
@@ -188,7 +190,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
                 sage: F = CommutativeAdditiveSemigroups().example()
                 sage: type(hash(F.an_element()))
-                <type 'int'>
+                <... 'int'>
             """
             return hash(tuple(self.value.items()))
 

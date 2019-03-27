@@ -11,7 +11,7 @@ die () {
 
 rm -rf bliss/
 git clone -b sage_package https://github.com/mkoeppe/bliss.git  || die "Failed to git clone"
-cd bliss/ 
+cd bliss/
 
 VERSION=`autoconf --trace='AC_INIT:$2'`
 libtoolize || die "Failed to autoreconf"
@@ -23,6 +23,6 @@ rm -f bliss-$VERSION.tar.gz
 make dist || die "make dist failed"
 mv bliss-$VERSION.tar.gz ../
 cd ..
-rm -rf bliss/ 
+rm -rf bliss/
 
 

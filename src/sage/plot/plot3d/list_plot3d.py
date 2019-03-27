@@ -2,7 +2,9 @@
 List Plots
 """
 from __future__ import absolute_import
-from sage.matrix.matrix import is_Matrix
+from six.moves import range
+
+from sage.structure.element import is_Matrix
 from sage.matrix.all import matrix
 from sage.rings.all import RDF
 
@@ -27,21 +29,20 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
 
     OPTIONAL KEYWORDS:
 
-    - ``interpolation_type`` - 'linear', 'nn' (natural neighbor), 'spline'
+    - ``interpolation_type`` - 'linear', 'clough' (CloughTocher2D), 'spline'
 
       'linear' will perform linear interpolation
 
-      The option 'nn' An interpolation method for multivariate data in a 
-      Delaunay triangulation. The value for an interpolation point is 
-      estimated using weighted values of the closest surrounding points in 
-      the triangulation. These points, the natural neighbors, are the ones 
-      the interpolation point would connect to if inserted into the 
-      triangulation.
+      The option 'clough' will interpolate by using a piecewise cubic interpolating
+      Bezier polynomial on each triangle, using a Clough-Tocher scheme.
+      The interpolant is guaranteed to be continuously differentiable.
+      The gradients of the interpolant are chosen so that the curvature of the
+      interpolating surface is approximatively minimized.
 
       The option 'spline' interpolates using a bivariate B-spline.
 
       When v is a matrix the default is to use linear interpolation, when
-      v is a list of points the default is nearest neighbor.
+      v is a list of points the default is 'clough'.
 
     - ``degree`` - an integer between 1 and 5, controls the degree of spline
       used for spline interpolation. For data that is highly oscillatory
@@ -91,14 +92,14 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
 
         sage: import warnings
         sage: warnings.simplefilter('ignore', UserWarning)
-        sage: list_plot3d(m, texture='yellow', interpolation_type='nn', frame_aspect_ratio=[1, 1, 1/3])
+        sage: list_plot3d(m, texture='yellow', interpolation_type='clough', frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
 
     We can make this look better by increasing the number of samples.
 
     ::
 
-        sage: list_plot3d(m, texture='yellow', interpolation_type='nn', frame_aspect_ratio=[1, 1, 1/3], num_points=40)
+        sage: list_plot3d(m, texture='yellow', interpolation_type='clough', frame_aspect_ratio=[1, 1, 1/3], num_points=40)
         Graphics3d Object
 
     Let's try a spline.
@@ -128,8 +129,8 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
 
         sage: l = []
         sage: for i in range(6):
-        ...      for j in range(6):
-        ...         l.append((float(i*pi/5), float(j*pi/5), m[i, j]))
+        ....:     for j in range(6):
+        ....:         l.append((float(i*pi/5), float(j*pi/5), m[i, j]))
         sage: list_plot3d(l, texture='yellow')
         Graphics3d Object
 
@@ -137,10 +138,16 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
 
         sage: l = []
         sage: for i in range(-5, 5):
-        ...    for j in range(-5, 5):
-        ...      l.append((normalvariate(0, 1), normalvariate(0, 1), normalvariate(0, 1)))
-        sage: list_plot3d(l, interpolation_type='nn', texture='yellow', num_points=100)
+        ....:     for j in range(-5, 5):
+        ....:         l.append((normalvariate(0, 1), normalvariate(0, 1), normalvariate(0, 1)))
+        sage: L = list_plot3d(l, interpolation_type='clough', texture='yellow', num_points=100)
+        sage: L
         Graphics3d Object
+
+    Check that no NaNs are produced (see :trac:`13135`)::
+
+        sage: any(math.isnan(c) for v in L.vertices() for c in v)
+        False
 
     TESTS:
 
@@ -163,7 +170,7 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
     different z coordinates, an exception will be raised::
 
         sage: pts =[(-4/5, -2/5, -2/5), (-4/5, -2/5, 2/5), (-4/5, 2/5, -2/5), (-4/5, 2/5, 2/5), (-2/5, -4/5, -2/5), (-2/5, -4/5, 2/5), (-2/5, -2/5, -4/5), (-2/5, -2/5, 4/5), (-2/5, 2/5, -4/5), (-2/5, 2/5, 4/5), (-2/5, 4/5, -2/5), (-2/5, 4/5, 2/5), (2/5, -4/5, -2/5), (2/5, -4/5, 2/5), (2/5, -2/5, -4/5), (2/5, -2/5, 4/5), (2/5, 2/5, -4/5), (2/5, 2/5, 4/5), (2/5, 4/5, -2/5), (2/5, 4/5, 2/5), (4/5, -2/5, -2/5), (4/5, -2/5, 2/5), (4/5, 2/5, -2/5), (4/5, 2/5, 2/5)]
-        sage: show(list_plot3d(pts, interpolation_type='nn'))
+        sage: show(list_plot3d(pts, interpolation_type='clough'))
         Traceback (most recent call last):
         ...
         ValueError: Two points with same x,y coordinates and different z coordinates were given. Interpolation cannot handle this.
@@ -171,7 +178,7 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
     Additionally we need at least 3 points to do the interpolation::
 
         sage: mat = matrix(RDF, 1, 2, [3.2, 1.550])
-        sage: show(list_plot3d(mat, interpolation_type='nn'))
+        sage: show(list_plot3d(mat, interpolation_type='clough'))
         Traceback (most recent call last):
         ...
         ValueError: We need at least 3 points to perform the interpolation
@@ -184,8 +191,8 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
             return list_plot3d_matrix(v, texture=texture, **kwds)
         else:
             l = []
-            for i in xrange(v.nrows()):
-                for j in xrange(v.ncols()):
+            for i in range(v.nrows()):
+                for j in range(v.ncols()):
                     l.append((i, j, v[i, j]))
             return list_plot3d_tuples(l, interpolation_type, texture, **kwds)
 
@@ -205,11 +212,12 @@ def list_plot3d(v, interpolation_type='default', texture="automatic", point_list
             # return a line
             from .shapes2 import line3d
             return line3d(v, **kwds)
-        elif isinstance(v[0], tuple) or point_list == True and len(v[0]) == 3:
+        elif isinstance(v[0], tuple) or point_list and len(v[0]) == 3:
             return list_plot3d_tuples(v, interpolation_type, texture=texture, **kwds)
         else:
             return list_plot3d_array_of_arrays(v, interpolation_type, texture, **kwds)
     raise TypeError("v must be a matrix or list")
+
 
 def list_plot3d_matrix(m, texture, **kwds):
     """
@@ -247,12 +255,31 @@ def list_plot3d_matrix(m, texture, **kwds):
         Graphics3d Object
         sage: list_plot3d(m, texture='yellow', interpolation_type='linear') # indirect doctest
         Graphics3d Object
+
+    Here is a colored example, using a colormap and a coloring function
+    which must take values in (0, 1)::
+
+        sage: cm = colormaps.rainbow
+        sage: n = 20
+        sage: cf = lambda x, y: ((2*(x-y)/n)**2) % 1
+        sage: list_plot3d(matrix(RDF, n, [cos(pi*(i+j)/n) for i in [1..n]
+        ....:   for j in [1..n]]), color=(cf,cm))
+        Graphics3d Object
+
+    .. PLOT::
+
+        cm = colormaps.rainbow
+        cf = lambda x, y: ((2*(x-y)/20)**2) % 1
+        expl = list_plot3d(matrix(RDF,20,20,[cos(pi*(i+j)/20) for i in range(1,21) for j in range(1,21)]),color=(cf,cm))
+        sphinx_plot(expl)    
     """
     from .parametric_surface import ParametricSurface
     f = lambda i,j: (i, j, float(m[int(i), int(j)]))
-    G = ParametricSurface(f, (range(m.nrows()), range(m.ncols())), texture=texture, **kwds)
+    G = ParametricSurface(f, (list(range(m.nrows())), list(range(m.ncols()))),
+                          texture=texture, **kwds)
     G._set_extra_kwds(kwds)
     return G
+
 
 def list_plot3d_array_of_arrays(v, interpolation_type, texture, **kwds):
     """
@@ -317,18 +344,18 @@ def list_plot3d_tuples(v, interpolation_type, texture, **kwds):
 
     OPTIONAL KEYWORDS:
 
-    - ``interpolation_type`` - 'linear', 'nn' (natural neighbor), 'spline'
+    - ``interpolation_type`` - 'linear', 'clough' (CloughTocher2D), 'spline'
 
       'linear' will perform linear interpolation
 
-      The option 'nn' will interpolate by using natural neighbors. The 
-      value for an interpolation point is estimated using weighted values 
-      of the closest surrounding points in the triangulation.
+      The option 'clough' will interpolate by using a piecewise cubic interpolating
+      Bezier polynomial on each triangle, using a Clough-Tocher scheme.
+      The interpolant is guaranteed to be continuously differentiable.
 
       The option 'spline' interpolates using a bivariate B-spline.
 
       When v is a matrix the default is to use linear interpolation, when
-      v is a list of points the default is nearest neighbor.
+      v is a list of points the default is 'clough'.
 
     - ``degree`` - an integer between 1 and 5, controls the degree of spline
       used for spline interpolation. For data that is highly oscillatory
@@ -367,12 +394,11 @@ def list_plot3d_tuples(v, interpolation_type, texture, **kwds):
 
     ::
 
-        sage: list_plot3d([(1, 2, 3), (0, 1, 3), (2, 1, 4), (1, 0, -2)], texture='yellow', num_points=50)
+        sage: list_plot3d([(1, 2, 3), (0, 1, 3), (2, 1, 4), (1, 0, -2)], texture='yellow', num_points=50)  # long time
         Graphics3d Object
     """
-    from matplotlib import tri, delaunay
+    from matplotlib import tri
     import numpy
-    import scipy
     from random import random
     from scipy import interpolate
     from .plot3d import plot3d
@@ -436,25 +462,20 @@ def list_plot3d_tuples(v, interpolation_type, texture, **kwds):
         G._set_extra_kwds(kwds)
         return G
 
-    if interpolation_type == 'nn'  or interpolation_type =='default':
+    if interpolation_type == 'clough'  or interpolation_type =='default':
 
-        T=delaunay.Triangulation(x,y)
-        f=T.nn_interpolator(z)
-        f.default_value=0.0
-        j=numpy.complex(0,1)
-        vals=f[ymin:ymax:j*num_points,xmin:xmax:j*num_points]
+        points=[[x[i],y[i]] for i in range(len(x))]
+        j = numpy.complex(0, 1)
+        f = interpolate.CloughTocher2DInterpolator(points,z)
         from .parametric_surface import ParametricSurface
-        def g(x,y):
-            i=round( (x-xmin)/(xmax-xmin)*(num_points-1) )
-            j=round( (y-ymin)/(ymax-ymin)*(num_points-1) )
-            z=vals[int(j),int(i)]
-            return (x,y,z)
+        def g(x, y):
+            z = f([x, y])
+            return (x, y, z)
         G = ParametricSurface(g, (list(numpy.r_[xmin:xmax:num_points*j]), list(numpy.r_[ymin:ymax:num_points*j])), texture=texture, **kwds)
         G._set_extra_kwds(kwds)
         return G
 
     if interpolation_type == 'spline':
-        from .plot3d import plot3d
         kx = kwds['kx'] if 'kx' in kwds else 3
         ky = kwds['ky'] if 'ky' in kwds else 3
         if 'degree' in kwds:
@@ -464,4 +485,3 @@ def list_plot3d_tuples(v, interpolation_type, texture, **kwds):
         s = interpolate.bisplrep(x, y, z, [int(1)]*len(x), xmin, xmax, ymin, ymax, kx=kx, ky=ky, s=s)
         f = lambda x,y: interpolate.bisplev(x, y, s)
         return plot3d(f, (xmin, xmax), (ymin, ymax), texture=texture, plot_points=[num_points, num_points], **kwds)
-

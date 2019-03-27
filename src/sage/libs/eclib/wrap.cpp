@@ -73,17 +73,17 @@ char* Curvedata_repr(struct Curvedata* curve)
   return stringstream_to_char(instore);
 }
 
-double Curvedata_silverman_bound(const struct Curvedata* curve)
+double Curvedata_silverman_bound(const Curvedata* curve)
 {
   return silverman_bound(*curve);
 }
 
-double Curvedata_cps_bound(const struct Curvedata* curve)
+double Curvedata_cps_bound(const Curvedata* curve)
 {
   return cps_bound(*curve);
 }
 
-double Curvedata_height_constant(const struct Curvedata* curve)
+double Curvedata_height_constant(const Curvedata* curve)
 {
   return height_constant(*curve);
 }
@@ -133,8 +133,8 @@ char* Curvedata_isogeny_class(struct Curvedata* E, int verbose)
 
 
 int mw_process(struct Curvedata* curve, struct mw* m,
-                      const struct bigint* x, const struct bigint* y,
-                      const struct bigint* z, int sat)
+                      const bigint* x, const bigint* y,
+                      const bigint* z, int sat)
 {
   Point P(*curve, *x, *y, *z);
   if (!P.isvalid())
@@ -188,7 +188,7 @@ int mw_rank(struct mw* m)
 }
 
 /* Returns index and unsat long array, which user must deallocate */
-int mw_saturate(struct mw* m, struct bigint* index, char** unsat,
+int mw_saturate(struct mw* m, bigint* index, char** unsat,
                        long sat_bd, int odd_primes_only)
 {
   vector<long> v;
@@ -238,12 +238,12 @@ char* two_descent_get_basis(struct two_descent* t)
   return p2point_vector_to_str(t->getbasis());
 }
 
-int two_descent_ok(const struct two_descent* t)
+int two_descent_ok(const two_descent* t)
 {
   return t->ok();
 }
 
-long two_descent_get_certain(const struct two_descent* t)
+long two_descent_get_certain(const two_descent* t)
 {
   return t->getcertain();
 }

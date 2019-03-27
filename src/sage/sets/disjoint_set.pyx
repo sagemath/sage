@@ -1,14 +1,19 @@
+# -*- coding: utf-8 -*-
 r"""
 Disjoint-set data structure
 
 The main entry point is :func:`DisjointSet` which chooses the appropriate
 type to return. For more on the data structure, see :func:`DisjointSet`.
 
+This module defines a class for mutable partitioning of a set, which
+can not be used as a key of a dictionary, vertex of a graph etc. For
+immutable partitioning see :class:`SetPartition`.
+
 AUTHORS:
 
-- Sebastien Labbe (2008) - Initial version.
-- Sebastien Labbe (2009-11-24) - Pickling support
-- Sebastien Labbe (2010-01) - Inclusion into sage (:trac:`6775`).
+- Sébastien Labbé (2008) - Initial version.
+- Sébastien Labbé (2009-11-24) - Pickling support
+- Sébastien Labbé (2010-01) - Inclusion into sage (:trac:`6775`).
 
 EXAMPLES:
 
@@ -26,7 +31,7 @@ Disjoint set of integers from ``0`` to ``n - 1``::
     1
     sage: s.find(5)
     1
-    sage: map(s.find, range(6))
+    sage: list(map(s.find, range(6)))
     [0, 1, 2, 1, 2, 1]
 
 Disjoint set of hashables objects::
@@ -42,18 +47,22 @@ Disjoint set of hashables objects::
     sage: d.find('c')
     'a'
 """
+
 #*****************************************************************************
-#      Copyright (C) 2009 Sebastien Labbe <slabqc at gmail.com>
+#       Copyright (C) 2009 Sebastien Labbe <slabqc at gmail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include '../groups/perm_gps/partn_ref/data_structures_pyx.pxi'
-
-import itertools
 from sage.rings.integer import Integer
 from sage.structure.sage_object cimport SageObject
+from cpython.object cimport PyObject_RichCompare
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
+
 
 def DisjointSet(arg):
     r"""
@@ -67,6 +76,7 @@ def DisjointSet(arg):
 
     - :meth:`~sage.sets.disjoint_set.DisjointSet_of_hashables.find` --
       Determine which set a particular element is in.
+
     - :meth:`~sage.sets.disjoint_set.DisjointSet_of_hashables.union` --
       Combine or merge two sets into a single set.
 
@@ -159,11 +169,11 @@ cdef class DisjointSet_class(SageObject):
             '{{0}, {1}, {2, 4}, {3}}'
         """
         res = []
-        for l in self.root_to_elements_dict().itervalues():
+        for l in (<dict?>self.root_to_elements_dict()).itervalues():
             l.sort()
-            res.append('{%s}'% ', '.join(itertools.imap(repr, l)))
+            res.append('{%s}' % ', '.join(repr(u) for u in l))
         res.sort()
-        return '{%s}'% ', '.join(res)
+        return '{%s}' % ', '.join(res)
 
     def __iter__(self):
         """
@@ -180,9 +190,9 @@ cdef class DisjointSet_class(SageObject):
             sage: sorted(d)
             [['a'], ['b'], ['c']]
         """
-        return self.root_to_elements_dict().itervalues()
+        return iter((<dict?>self.root_to_elements_dict()).itervalues())
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, int op):
         r"""
         Compare the disjoint sets ``self`` and ``other``.
 
@@ -229,8 +239,11 @@ cdef class DisjointSet_class(SageObject):
         """
         from sage.sets.all import Set
         s = Set(map(Set, self.root_to_elements_dict().values()))
-        t = Set(map(Set, other.root_to_elements_dict().values()))
-        return cmp(s,t)
+        try:
+            t = Set(map(Set, other.root_to_elements_dict().values()))
+        except AttributeError:
+            return NotImplemented
+        return PyObject_RichCompare(s, t, op)
 
     def cardinality(self):
         r"""
@@ -515,14 +528,14 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         EXAMPLES::
 
             sage: d = DisjointSet(5)
-            sage: d.root_to_elements_dict()
-            {0: [0], 1: [1], 2: [2], 3: [3], 4: [4]}
+            sage: sorted(d.root_to_elements_dict().items())
+            [(0, [0]), (1, [1]), (2, [2]), (3, [3]), (4, [4])]
             sage: d.union(2,3)
-            sage: d.root_to_elements_dict()
-            {0: [0], 1: [1], 2: [2, 3], 4: [4]}
+            sage: sorted(d.root_to_elements_dict().items())
+            [(0, [0]), (1, [1]), (2, [2, 3]), (4, [4])]
             sage: d.union(3,0)
-            sage: d.root_to_elements_dict()
-            {1: [1], 2: [0, 2, 3], 4: [4]}
+            sage: sorted(d.root_to_elements_dict().items())
+            [(1, [1]), (2, [0, 2, 3]), (4, [4])]
             sage: d
             {{0, 2, 3}, {1}, {4}}
         """
@@ -705,7 +718,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         cdef int i
         for i from 0 <= i < self.cardinality():
             l.append(self._int_to_el[gs[i]])
-        return zip(self._int_to_el, l)
+        return list(zip(self._int_to_el, l))
 
     def __setstate__(self, l):
         r"""
@@ -813,8 +826,9 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d = DisjointSet(range(5))
             sage: d.union(2,3)
             sage: d.union(4,1)
-            sage: e = d.root_to_elements_dict(); e
-            {0: [0], 2: [2, 3], 4: [1, 4]}
+            sage: e = d.root_to_elements_dict()
+            sage: sorted(e.items())
+            [(0, [0]), (2, [2, 3]), (4, [1, 4])]
         """
         s = {}
         for e in self._int_to_el:
@@ -834,8 +848,9 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d = DisjointSet(range(5))
             sage: d.union(2,3)
             sage: d.union(4,1)
-            sage: e = d.element_to_root_dict(); e
-            {0: 0, 1: 4, 2: 2, 3: 2, 4: 4}
+            sage: e = d.element_to_root_dict()
+            sage: sorted(e.items())
+            [(0, 0), (1, 4), (2, 2), (3, 2), (4, 4)]
             sage: WordMorphism(e)
             WordMorphism: 0->0, 1->4, 2->2, 3->2, 4->4
         """

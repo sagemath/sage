@@ -18,7 +18,7 @@ class AffineWeylGroups(Category_singleton):
 
     .. todo:: add a description of this category
 
-    .. seealso::
+    .. SEEALSO::
 
         - :wikipedia:`Affine_weyl_group`
         - :class:`WeylGroups`, :class:`WeylGroup`
@@ -35,7 +35,7 @@ class AffineWeylGroups(Category_singleton):
         sage: W = WeylGroup(["A",4,1]); W
         Weyl Group of type ['A', 4, 1] (as a matrix group acting on the root space)
         sage: W.category()
-        Category of affine weyl groups
+        Category of irreducible affine weyl groups
 
     TESTS::
 
@@ -123,7 +123,7 @@ class AffineWeylGroups(Category_singleton):
 
              - all reduced words for self end with 0.
              - self is the identity, or 0 is its single right descent.
-             - self is a mimimal coset representative for W / cl W.
+             - self is a minimal coset representative for W / cl W.
 
             EXAMPLES::
 

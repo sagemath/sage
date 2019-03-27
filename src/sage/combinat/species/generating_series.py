@@ -245,7 +245,7 @@ class ExponentialGeneratingSeries(LazyPowerSeries):
         `g = \sum_{n=0}^{\infty} g_n \frac{x^n}{n!}`, then
         functorial composition `f \Box g` is defined as
 
-        .. math::
+        .. MATH::
 
              f \Box g = \sum_{n=0}^{\infty} f_{g_n} \frac{x^n}{n!}
 
@@ -438,13 +438,13 @@ class CycleIndexSeries(LazyPowerSeries):
 
         If
 
-        .. math::
+        .. MATH::
 
            f = \sum_{n=0}^{\infty} f_n(p_1, p_2, p_3, \ldots ),
 
         then the stretch `g` of `f` by `k` is
 
-        .. math::
+        .. MATH::
 
            g = \sum_{n=0}^{\infty} f_n(p_k, p_{2k}, p_{3k}, \ldots ).
 
@@ -586,7 +586,7 @@ class CycleIndexSeries(LazyPowerSeries):
             yield self.coefficient(i).coefficient([1]*i)
 
     def __invert__(self):
-        """
+        r"""
         Return the multiplicative inverse of ``self``.
 
         This algorithm is derived from [BLL]_.
@@ -645,7 +645,7 @@ class CycleIndexSeries(LazyPowerSeries):
 
         It can be shown (as in section 2.2 of [BLL]_) that there is a corresponding operation on cycle indices:
 
-        .. math::
+        .. MATH::
 
             Z_{F} \Box Z_{G} = \sum_{n \geq 0} \frac{1}{n!} \sum_{\sigma \in \mathfrak{S}_{n}} \operatorname{fix} F[ (G[\sigma])_{1}, (G[\sigma])_{2}, \dots ] \, p_{1}^{\sigma_{1}} p_{2}^{\sigma_{2}} \dots.
 
@@ -701,7 +701,7 @@ class CycleIndexSeries(LazyPowerSeries):
             n += 1
 
     def arithmetic_product(self, g, check_input = True):
-        """
+        r"""
         Return the arithmetic product of ``self`` with ``g``.
 
         For species `M` and `N` such that `M[\\varnothing] = N[\\varnothing] = \\varnothing`,
@@ -773,10 +773,9 @@ class CycleIndexSeries(LazyPowerSeries):
             # `\\gcd (a, b)`` parts of size `\\lcm (a, b)` to `l_1 \\boxtimes l_2`. If `l_1` and `l_2`
             # are partitions of integers `n` and `m`, respectively, then `l_1 \\boxtimes l_2` is a
             # partition of `nm`.
-            term_iterable = chain.from_iterable( repeat(lcm(pair), times=gcd(pair)) for pair in product(l1, l2) )
-            term_list = sorted(term_iterable, reverse=True)
-            res = Partition(term_list)
-            return res
+            term_iterable = chain.from_iterable(repeat(lcm(pair), gcd(pair))
+                                                for pair in product(l1, l2))
+            return Partition(sorted(term_iterable, reverse=True))
 
         # We then extend this to an operation on symmetric functions as per eq. (52) of [MM]_.
         # (Maia and Mendez, in [MM]_, are talking about polynomials instead of symmetric
@@ -1252,10 +1251,9 @@ def _exp_term(n, R = RationalField()):
         sage: [_exp_term(i) for i in range(4)]
         [p[], p[1], 1/2*p[1, 1] + 1/2*p[2], 1/6*p[1, 1, 1] + 1/2*p[2, 1] + 1/3*p[3]]
     """
+    p = SymmetricFunctions(R).power()
+    return sum(p(part) / part.aut() for part in Partitions(n))
 
-    p = SymmetricFunctions(R)
-    res = sum(p(part)/part.aut() for part in Partitions(n))
-    return res
 
 def _exp_gen(R = RationalField()):
     """
@@ -1277,7 +1275,7 @@ def ExponentialCycleIndexSeries(R = RationalField()):
 
     This cycle index satisfies
 
-    .. math::
+    .. MATH::
 
         Z_{E} = \\sum_{n \\geq 0} \\sum_{\\lambda \\vdash n} \\frac{p_{\\lambda}}{z_{\\lambda}}.
 
@@ -1290,9 +1288,10 @@ def ExponentialCycleIndexSeries(R = RationalField()):
     CIS = CycleIndexSeriesRing(R)
     return CIS(_exp_gen(R))
 
+
 @cached_function
 def _cl_term(n, R = RationalField()):
-    """
+    r"""
     Compute the order-n term of the cycle index series of the virtual species `\Omega`,
     the compositional inverse of the species `E^{+}` of nonempty sets.
 
@@ -1302,8 +1301,7 @@ def _cl_term(n, R = RationalField()):
         sage: [_cl_term(i) for i in range(4)]
         [0, p[1], -1/2*p[1, 1] - 1/2*p[2], 1/3*p[1, 1, 1] - 1/3*p[3]]
     """
-
-    n = Integer(n) #check that n is an integer
+    n = Integer(n)  # check that n is an integer
 
     p = SymmetricFunctions(R).power()
 
@@ -1311,12 +1309,13 @@ def _cl_term(n, R = RationalField()):
     if n == 1:
         res = p([1])
     elif n > 1:
-        res = 1/n * ((-1)**(n-1) * p([1])**n - sum(d * p([Integer(n/d)]).plethysm(_cl_term(d, R)) for d in divisors(n)[:-1]))
+        res = 1/n * ((-1)**(n-1) * p([1])**n - sum(d * p([n // d]).plethysm(_cl_term(d, R)) for d in divisors(n)[:-1]))
 
     return res
 
+
 def _cl_gen (R = RationalField()):
-    """
+    r"""
     Produce a generator which yields the terms of the cycle index series of the virtual species
     `\Omega`, the compositional inverse of the species `E^{+}` of nonempty sets.
 
@@ -1329,9 +1328,10 @@ def _cl_gen (R = RationalField()):
     """
     return (_cl_term(i, R) for i in _integers_from(0))
 
+
 @cached_function
 def LogarithmCycleIndexSeries(R = RationalField()):
-    """
+    r"""
     Return the cycle index series of the virtual species `\Omega`, the compositional inverse
     of the species `E^{+}` of nonempty sets.
 

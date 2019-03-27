@@ -61,7 +61,7 @@ Note that the function is recomputed each time::
 #THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 #(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 from cpython.object cimport PyObject_Call, PyObject_RichCompare
 
@@ -115,7 +115,7 @@ def lazy_string(f, *args, **kwargs):
         sage: s == 'this is a test'
         determining string representation
         True
-        sage: unicode(s)
+        sage: unicode(s)  # py2
         determining string representation
         u'this is a test'
 
@@ -188,7 +188,7 @@ cdef class _LazyString(object):
         sage: s == 'this is a test'
         determining string representation
         True
-        sage: unicode(s)
+        sage: unicode(s)  # py2
         determining string representation
         u'this is a test'
 
@@ -324,6 +324,23 @@ cdef class _LazyString(object):
         """
         return str(self.val())
 
+    def __fspath__(self):
+        """
+        Return the file system representation of ``self``, assuming that
+        ``self`` is a path.
+
+        This is for Python 3 compatibility: see :trac:`24046`, and also
+        :pep:`519` and
+        https://docs.python.org/3/library/os.html#os.fspath
+
+        Test :trac:`24046`::
+
+            sage: from sage.misc.misc import SAGE_TMP
+            sage: tmp = os.path.join(SAGE_TMP, 'hello')
+            sage: _ = os.path.exists(tmp)
+        """
+        return str(self)
+
     def __unicode__(self):
         """
         EXAMPLES::
@@ -331,7 +348,7 @@ cdef class _LazyString(object):
             sage: from sage.misc.lazy_string import lazy_string
             sage: f = lambda: "laziness"
             sage: s = lazy_string(f)
-            sage: unicode(s) # indirect doctest
+            sage: unicode(s)  # indirect doctest py2 only
             u'laziness'
         """
         return unicode(self.val())
@@ -388,7 +405,7 @@ cdef class _LazyString(object):
         else:
             return self * (<_LazyString>other).val()
 
-    def __richcmp__(self, other, int op):
+    def __richcmp__(_LazyString self, other, int op):
         """
         EXAMPLES::
 
@@ -432,8 +449,7 @@ cdef class _LazyString(object):
             sage: s >= s
             True
         """
-        self = (<_LazyString?>self).val()
-        return PyObject_RichCompare(self, other, op)
+        return PyObject_RichCompare(self.val(), other, op)
 
     def __getattr__(self, name):
         """
@@ -529,18 +545,18 @@ cdef class _LazyString(object):
         EXAMPLES::
 
             sage: from sage.misc.lazy_string import lazy_string
-            sage: f = lambda op,A,B:"unsupported operand parent(s) for '%s': '%s' and '%s'"%(op,A,B)
+            sage: f = lambda op,A,B:"unsupported operand parent(s) for %s: '%s' and '%s'"%(op,A,B)
             sage: R = GF(5)
             sage: S = GF(3)
             sage: D = lazy_string(f, '+', R, S)
             sage: D
-            l"unsupported operand parent(s) for '+': 'Finite Field of size 5' and 'Finite Field of size 3'"
+            l"unsupported operand parent(s) for +: 'Finite Field of size 5' and 'Finite Field of size 3'"
             sage: D.update_lazy_string(('+', S, R), {})
 
         Apparently, the lazy string got changed in-place::
 
             sage: D
-            l"unsupported operand parent(s) for '+': 'Finite Field of size 3' and 'Finite Field of size 5'"
+            l"unsupported operand parent(s) for +: 'Finite Field of size 3' and 'Finite Field of size 5'"
 
         TESTS::
 

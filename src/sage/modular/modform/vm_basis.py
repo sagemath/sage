@@ -1,4 +1,4 @@
-"""
+r"""
 The Victor Miller Basis
 
 This module contains functions for quick calculation of a basis of
@@ -27,7 +27,7 @@ from __future__ import absolute_import
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from six.moves import range
 import math
 
 from sage.rings.all import QQ, ZZ, Integer, \
@@ -183,7 +183,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     else:
         ls = [A] * (n+1)
 
-    for i in xrange(1,n+1):
+    for i in range(1,n+1):
         ls[n-i] *= Fprod
         ls[i] *= Dprod
         ls[n-i]._unsafe_mutate_truncate(prec)
@@ -197,14 +197,14 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
 
     P = PowerSeriesRing(ZZ,var)
     if cusp_only :
-        for i in xrange(1,n+1) :
-            for j in xrange(1, i) :
+        for i in range(1,n+1) :
+            for j in range(1, i) :
                 ls[j] = ls[j] - ls[j][i]*ls[i]
 
         return Sequence([P(l.list()).add_bigoh(prec) for l in ls[1:]],cr=True)
     else :
-        for i in xrange(1,n+1) :
-            for j in xrange(i) :
+        for i in range(1,n+1) :
+            for j in range(i) :
                 ls[j] = ls[j] - ls[j][i]*ls[i]
 
         return Sequence([P(l.list()).add_bigoh(prec) for l in ls], cr=True)
@@ -243,7 +243,7 @@ def _delta_poly(prec=10):
     stop = int((-1+math.sqrt(1+8*prec))/2.0)
     # make list of index/value pairs for the sparse poly
     values = [(n*(n+1)//2, ((-2*n-1) if (n & 1) else (2*n+1))) \
-              for n in xrange(stop+1)]
+              for n in range(stop+1)]
 
     for (i1, v1) in values:
         for (i2, v2) in values:
@@ -265,8 +265,9 @@ def _delta_poly(prec=10):
 
     return f
 
+
 def _delta_poly_modulo(N, prec=10):
-    """
+    r"""
     Return the q-expansion of `\Delta` modulo `N`. Used internally by
     the :func:`~delta_qexp` function. See the docstring of :func:`~delta_qexp`
     for more information.
@@ -300,7 +301,7 @@ def _delta_poly_modulo(N, prec=10):
 
     stop = int((-1+math.sqrt(8*prec))/2.0)
 
-    for n in xrange(stop+1):
+    for n in range(stop+1):
         v[n*(n+1)//2] = ((N-1)*(2*n+1) if (n & 1) else (2*n+1))
 
     from sage.rings.all import Integers
@@ -322,7 +323,7 @@ def _delta_poly_modulo(N, prec=10):
 
 
 def delta_qexp(prec=10, var='q', K=ZZ) :
-    """
+    r"""
     Return the `q`-expansion of the weight 12 cusp form `\Delta` as a power
     series with coefficients in the ring K (`= \ZZ` by default).
 
@@ -343,7 +344,7 @@ def delta_qexp(prec=10, var='q', K=ZZ) :
 
     Compute the theta series
 
-    .. math::
+    .. MATH::
 
         \sum_{n \ge 0} (-1)^n (2n+1) q^{n(n+1)/2},
 
@@ -371,7 +372,7 @@ def delta_qexp(prec=10, var='q', K=ZZ) :
 
     TESTS:
 
-    Test algorithm with modular arithmetic (see also #11804)::
+    Test algorithm with modular arithmetic (see also :trac:`11804`)::
 
         sage: delta_qexp(10^4).change_ring(GF(13)) == delta_qexp(10^4, K=GF(13))
         True

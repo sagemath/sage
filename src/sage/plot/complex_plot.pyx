@@ -16,10 +16,10 @@ Complex Plots
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
 # TODO: use NumPy buffers and complex fast_callable (when supported)
-
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
 cimport numpy as cnumpy
 
@@ -61,9 +61,9 @@ cdef inline double mag_to_lightness(double r):
 
         sage: from sage.plot.complex_plot import complex_to_rgb
         sage: complex_to_rgb([[0, 1, 10]])
-        array([[[ 0.        ,  0.        ,  0.        ],
-                [ 0.77172568,  0.        ,  0.        ],
-                [ 1.        ,  0.22134776,  0.22134776]]])
+        array([[[0.        , 0.        , 0.        ],
+                [0.77172568, 0.        , 0.        ],
+                [1.        , 0.22134776, 0.22134776]]])
     """
     return atan(log(sqrt(r)+1)) * (4/PI) - 1
 
@@ -82,13 +82,13 @@ def complex_to_rgb(z_values):
 
         sage: from sage.plot.complex_plot import complex_to_rgb
         sage: complex_to_rgb([[0, 1, 1000]])
-        array([[[ 0.        ,  0.        ,  0.        ],
-                [ 0.77172568,  0.        ,  0.        ],
-                [ 1.        ,  0.64421177,  0.64421177]]])
+        array([[[0.        , 0.        , 0.        ],
+                [0.77172568, 0.        , 0.        ],
+                [1.        , 0.64421177, 0.64421177]]])
         sage: complex_to_rgb([[0, 1j, 1000j]])
-        array([[[ 0.        ,  0.        ,  0.        ],
-                [ 0.38586284,  0.77172568,  0.        ],
-                [ 0.82210588,  1.        ,  0.64421177]]])
+        array([[[0.        , 0.        , 0.        ],
+                [0.38586284, 0.77172568, 0.        ],
+                [0.82210588, 1.        , 0.64421177]]])
     """
     import numpy
     cdef unsigned int i, j, imax, jmax

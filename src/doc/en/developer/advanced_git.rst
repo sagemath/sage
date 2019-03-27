@@ -66,6 +66,112 @@ branch -D my_branch`` at the end to delete the local branch that you
 created only to review the ticket.
 
 
+.. _section-git-update-latest:
+
+Update Branch to Latest SageMath Version (and Minimizing Recompilation Time)
+============================================================================
+
+- You have a compiled and working new SageMath version ``n``, and
+- you want to work on a branch ``some_code`` which is based on some old SageMath version ``o``
+- by updating this branch from version ``o`` to ``n``
+- with only recompiling changed files (and not all touched files from ``o`` to ``n``),
+- then continue reading this section.
+
+
+Introduction
+------------
+
+When developing, quite frequently one ends up with a branch which is
+not based on the latest (beta) version of SageMath.
+
+.. NOTE::
+
+    Continue working on a feature based on an old branch is perfecly
+    fine and usually there is no need to merge in this latest SageMath
+    version.
+
+However sometimes there is a need for a merge, for example
+
+- if there are conflicts with the latest version or
+- one needs a recent feature or
+- simply because the old SageMath version is not available on your machine
+  any longer.
+
+Then merging in the latest SageMath version has to be done.
+
+
+Merge in the Latest SageMath Version
+------------------------------------
+
+(This is the easy way without minimizing the recompilation time.)
+
+Suppose we are on our current working branch ``some_code``
+(branch is checked out). Then
+::
+
+   git merge develop
+
+does the merging, i.e. we merge the latest development version into
+our working branch.
+
+However, after this merge, we need to (partially) recompile
+SageMath. Sometimes this can take ages (as many files are touched and
+their timestamps are renewed) and there is a way to avoid it.
+
+
+Minimize the Recompilation Time
+-------------------------------
+
+Suppose we are on some new SageMath (e.g. on branch ``develop``) which
+was already compiled and runs successfully, and we have an "old"
+branch ``some_code``, that we want to bring onto this SageMath version
+(without triggering unnecessary recompilations).
+
+We first create a new working tree in a directory ``new_worktree`` and switch
+to this directory::
+
+    git worktree add new_worktree
+    cd new_worktree
+
+Here we have a new copy of our source files. Thus no timestamps
+etc. of the original repository will be changed. Now we do the merge::
+
+    git checkout some_code
+    git merge develop
+
+And go back to our original repository::
+
+    git checkout develop
+    cd ..
+
+We can now safely checkout ``some_code``::
+
+    git checkout some_code
+
+We still need to call
+::
+
+    make
+
+but only changed files will be recompiled.
+
+To remove the new working tree simply use
+::
+
+    rm -r new_worktree
+
+
+Why not Merging the Other Way Round?
+------------------------------------
+
+Being on some new SageMath (e.g. on branch ``develop``) which runs
+successfully, it would be possible to merge in our branch
+``some_code`` into develop. This would produce the same source files
+and avoid unnecessary recompilations. However, it makes reading git's
+history very unpleasant: For example, it is hard to keep track of changes etc.,
+as one cannot simply pursue the first parent of each git commit.
+
+
 .. _section-git-recovery:
 
 Reset and Recovery
@@ -97,7 +203,7 @@ which is some 40-digit hexadecimal number (the SHA1 hash). Then use
     ...
     [user@localhost sage]$ git reset --hard eafae
 
-.. warning::
+.. WARNING::
 
     Any *uncommitted* changes will be lost!
 

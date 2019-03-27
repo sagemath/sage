@@ -1,0 +1,77 @@
+From 983b0b8630c41d2ce966877709184564432436cf Mon Sep 17 00:00:00 2001
+From: Moritz Firsching <moritz@math.fu-berlin.de>
+Date: Tue, 17 Apr 2018 11:09:35 +0200
+Subject: [PATCH] added cmake ipopt patch
+
+---
+ scip/cmake/Modules/FindIPOPT.cmake | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/scip/cmake/Modules/FindIPOPT.cmake b/scip/cmake/Modules/FindIPOPT.cmake
+index 4d65120..00f4c34 100644
+--- a/scip/cmake/Modules/FindIPOPT.cmake
++++ b/scip/cmake/Modules/FindIPOPT.cmake
+@@ -35,6 +35,7 @@
+ # (To distribute this file outside of YCM, substitute the full
+ #  License text for the above reference.)
+ 
++SET(IPOPT_FOUND FALSE)
+ 
+ if(NOT WIN32)
+   # On non Windows systems we use PkgConfig to find IPOPT
+@@ -62,6 +63,7 @@ if(NOT WIN32)
+                      PATHS ${_PC_IPOPT_LIBRARY_DIRS})
+         list(APPEND IPOPT_LIBRARIES ${${_LIBRARY}_PATH})
+       endforeach()
++      set(IPOPT_FOUND TRUE)
+     else()
+       set(IPOPT_DEFINITIONS "")
+     endif()
+@@ -114,6 +116,7 @@ if(NOT WIN32)
+           endif()
+           mark_as_advanced(IPOPT_SEARCH_FOR_${LIB})
+         endforeach()
++        set(IPOPT_FOUND TRUE)
+       endif()
+     endif()
+ 
+@@ -180,6 +183,7 @@ else()
+         endif()
+         mark_as_advanced(IPOPT_SEARCH_FOR_${LIB})
+       endforeach()
++      set(IPOPT_FOUND TRUE)
+     endif()
+   endif()
+ 
+@@ -188,16 +192,18 @@ else()
+ endif()
+ 
+ # parse the version number
+-if(EXISTS ${IPOPT_INCLUDE_DIRS} )
+-  file(STRINGS ${IPOPT_INCLUDE_DIRS}/IpoptConfig.h CONFIGFILE)
+-
+-  foreach(STR ${CONFIGFILE})
+-    if("${STR}" MATCHES "^#define IPOPT_VERSION ")
+-      string(REGEX REPLACE "#define IPOPT_VERSION " "" IPOPT_VERSION ${STR})
+-      string(REGEX REPLACE "\"" "" IPOPT_VERSION ${IPOPT_VERSION})
+-    endif()
+-  endforeach()
+-  # MESSAGE("found Ipopt ${IPOPT_VERSION}")
++if(IPOPT_FOUND)
++  if(EXISTS ${IPOPT_INCLUDE_DIRS} )
++    file(STRINGS ${IPOPT_INCLUDE_DIRS}/IpoptConfig.h CONFIGFILE)
++
++    foreach(STR ${CONFIGFILE})
++      if("${STR}" MATCHES "^#define IPOPT_VERSION ")
++        string(REGEX REPLACE "#define IPOPT_VERSION " "" IPOPT_VERSION ${STR})
++        string(REGEX REPLACE "\"" "" IPOPT_VERSION ${IPOPT_VERSION})
++      endif()
++    endforeach()
++    # MESSAGE("found Ipopt ${IPOPT_VERSION}")
++  endif()
+ endif()
+ 
+ mark_as_advanced(IPOPT_INCLUDE_DIRS
+-- 
+2.17.0
+

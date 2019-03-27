@@ -89,7 +89,7 @@ Aussi, Sage se comporte différemment de Python à plusieurs égards.
    exclusif n'est que rarement utilisé. Par commodité, Sage prétraite
    chaque ligne de commande avant de la transmettre
    à Python, en remplaçant par exemple les apparitions de ``^``
-   (en-dehors des chaînes de caractères) par des ``**``:
+   (en dehors des chaînes de caractères) par des ``**``:
 
    ::
 
@@ -132,7 +132,7 @@ Aussi, Sage se comporte différemment de Python à plusieurs égards.
        Rational Field
        sage: 2//3
        0
-       sage: int(2)/int(3)   # optional - python2
+       sage: int(2)/int(3)   # py2
        0
 
 -  **Entiers longs :** Python possède nativement un support pour les entiers de
@@ -160,7 +160,7 @@ faut taper ``sage -python setup.py install``.)
 Comment puis-je contribuer ?
 ============================
 
-Si vous souhaitez contribuer au developpement de Sage, votre aide sera grandement
+Si vous souhaitez contribuer au développement de Sage, votre aide sera grandement
 appréciée ! Cela peut aller de contributions substantielles en code au
 signalement de bogues en passant par l'enrichissement de la documentation.
 
@@ -195,4 +195,3 @@ discussion plus approfondie de ce point.
 Si vous venez de lire d'une traite ce tutoriel et que vous avez une idée du temps qu'il vous a fallu pour le parcourir, merci de nous le faire savoir sur le groupe Google ``sage-devel``.
 
 Amusez-vous bien avec Sage !
-

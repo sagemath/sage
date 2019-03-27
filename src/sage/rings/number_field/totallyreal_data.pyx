@@ -22,12 +22,14 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
-include "sage/ext/cdefs.pxi"
-include "cysignals/memory.pxi"
+from __future__ import absolute_import, print_function
+
+from libc.math cimport sqrt
+from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.arith.all import binomial, gcd
+from sage.libs.gmp.mpz cimport *
 from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.real_mpfi import RealIntervalField
@@ -54,7 +56,7 @@ def hermite_constant(n):
     The nth Hermite constant (typically denoted `\gamma_n`), is defined
     to be
 
-    .. math::
+    .. MATH::
 
         \max_L \min_{0 \neq x \in L} ||x||^2
 
@@ -125,7 +127,7 @@ cdef double eval_seq_as_poly(int *f, int n, double x):
     r"""
     Evaluates the sequence a, thought of as a polynomial with
 
-    .. math::
+    .. MATH::
 
         f[n]*x^n + f[n-1]*x^(n-1) + ... + f[0].
     """
@@ -145,7 +147,7 @@ cdef double newton(int *f, int *df, int n, double x0, double eps):
     root.
     The sequence a corresponds to the polynomial f with
 
-    .. math::
+    .. MATH::
 
         f(x) = x^n + a[n-1]*x^(n-1) + ... + a[0].
 
@@ -313,8 +315,8 @@ cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
 
         rts = RRx(fcoeff).roots()
 
-        if len(rts) > 0:
-            rts = [rts[i][0] for i in range(len(rts))]
+        if rts:
+            rts = [rtsi[0] for rtsi in rts]
             z4minmax = [min(rts + z4minmax), max(rts + z4minmax)]
 
     if not z4minmax:
@@ -360,7 +362,7 @@ cdef int eval_seq_as_poly_int(int *f, int n, int x):
     r"""
     Evaluates the sequence a, thought of as a polynomial with
 
-    .. math::
+    .. MATH::
 
         f[n]*x^n + f[n-1]*x^(n-1) + ... + f[0].
     """
@@ -450,7 +452,7 @@ def easy_is_irreducible_py(f):
 cdef double eps_global
 eps_global = 10.**(-4)
 
-from totallyreal_phc import __lagrange_bounds_phc
+from .totallyreal_phc import __lagrange_bounds_phc
 
 cdef class tr_data:
     r"""
@@ -818,7 +820,7 @@ cdef class tr_data:
                     elif k == n-5 and phc:
                         # New bounds using phc/Lagrange multiplier in degree 4.
                         bminmax = __lagrange_bounds_phc(n, 4, [self.a[i] for i from 0 <= i <= n])
-                        if len(bminmax) > 0:
+                        if bminmax:
                             self.b_lower = bminmax[0]
                             self.b_upper = bminmax[1]
                         else:

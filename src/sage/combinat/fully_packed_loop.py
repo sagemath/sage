@@ -1,28 +1,103 @@
 r"""
 Fully packed loops
+
+AUTHORS:
+
+- Vincent Knight, James Campbell, Kevin Dilks, Emily Gunawan (2015): Initial version
+- Vincent Delecroix (2017): cleaning and enhanced plotting function
 """
+#*****************************************************************************
+#       Copyright (C) 2015 Vincent Knight <vincent.knight@gmail.com>
+#                          James Campbell <james.campbell@tanti.org.uk>
+#                          Kevin Dilks <kdilks@gmail.com>
+#                          Emily Gunawan <egunawan@umn.edu>
+#                     2017 Vincent Delecroix <20100.delecroix@gmail.com>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#
+#    This code is distributed in the hope that it will be useful, but
+#    WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#    General Public License for more details.
+#
+#  The full text of the GPL is available at:
+#
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 # python3
 from __future__ import division, print_function
+from six import add_metaclass
 
-from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.structure.element import Element
+from sage.structure.element import parent, Element
+
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.six_vertex_model import SquareIceModel, \
-SixVertexConfiguration, SixVertexModel
+from sage.combinat.six_vertex_model import (SquareIceModel,
+                                            SixVertexConfiguration,
+                                            SixVertexModel)
 from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix
-from sage.plot.graphics import Graphics
+
+from sage.misc.decorators import options
 from sage.matrix.constructor import matrix
-from sage.plot.line import line
-from sage.combinat.perfect_matching import PerfectMatching
 from sage.arith.all import factorial
 from sage.rings.integer import Integer
 from sage.misc.all import prod
-from sage.misc.lazy_attribute import lazy_attribute
 
+# edges of a fpl in terms of the six vertex possible configurations
+R = (1, 0)
+L = (-1, 0)
+U = (0, 1)
+D = (0, -1)
 
+FPL_edges = (
+#   0 UD   1 RD,  2 UR,  3 LR,  4 LD   5 LU
+   ((D,U), (L,D), (D,R), (R,L), (L,U), (R,U)),  # even
+   ((R,L), (R,U), (L,U), (D,U), (D,R), (L,D))   # odd
+   )
+
+FPL_turns = (
+# 0 UD          1 RD          2 UR          3 LR          4 LD          5 LU
+ ({U: U, D: D}, {R: D, U: L}, {U: R, L: D}, {L: L, R: R}, {R: U, D: L}, {L: U, D: R}), # even
+ ({L: L, R: R}, {L: U, D: R}, {R: U, D: L}, {U: U, D: D}, {U: R, L: D}, {R: D, U: L})  # odd
+ )
+
+def _make_color_list(n, colors=None,  color_map=None, randomize=False):
+    r"""
+    TESTS::
+
+        sage: from sage.combinat.fully_packed_loop import _make_color_list
+        sage: _make_color_list(5)
+        sage: _make_color_list(5, ['blue', 'red'])
+        ['blue', 'red', 'blue', 'red', 'blue']
+        sage: _make_color_list(5, color_map='summer')
+        [(0.0, 0.5, 0.4),
+         (0.25098039215686274, 0.6254901960784314, 0.4),
+         (0.5019607843137255, 0.7509803921568627, 0.4),
+         (0.7529411764705882, 0.8764705882352941, 0.4),
+         (1.0, 1.0, 0.4)]
+        sage: _make_color_list(8, ['blue', 'red'], randomize=True)
+        ['blue', 'blue', 'red', 'blue', 'red', 'red', 'red', 'blue']
+    """
+    if colors:
+        dim = len(colors)
+        colors = [colors[i % dim] for i in range(n)]
+
+    elif color_map:
+        from matplotlib import cm
+        if not color_map in cm.datad:
+            raise ValueError('unknown color map %s' % color_map)
+        cmap = cm.__dict__[color_map]
+        colors = [cmap(i/float(n-1))[:3] for i in range(n)]
+
+    if colors and randomize:
+        from sage.misc.prandom import shuffle
+        shuffle(colors)
+
+    return colors
+
+@add_metaclass(InheritComparisonClasscallMetaclass)
 class FullyPackedLoop(Element):
     r"""
     A class for fully packed loops.
@@ -80,7 +155,7 @@ class FullyPackedLoop(Element):
     The class also has a plot method::
 
         sage: fpl.plot()
-        Graphics object consisting of 15 graphics primitives
+        Graphics object consisting of 3 graphics primitives
 
     which gives:
 
@@ -228,7 +303,7 @@ class FullyPackedLoop(Element):
         ....:         a,b=a%6+1,b%6+1;
         ....:     rotated_ncp.append((a,b))
         sage: PerfectMatching(ASMs[1].gyration().to_fully_packed_loop().link_pattern()) ==\
-        PerfectMatching(rotated_ncp)
+        ....:     PerfectMatching(rotated_ncp)
         True
 
         sage: fpl = FullyPackedLoop(ASMs[0])
@@ -239,11 +314,11 @@ class FullyPackedLoop(Element):
         ....:         a,b=a%6+1,b%6+1;
         ....:     rotated_ncp.append((a,b))
         sage: PerfectMatching(ASMs[0].gyration().to_fully_packed_loop().link_pattern()) ==\
-        PerfectMatching(rotated_ncp)
+        ....:     PerfectMatching(rotated_ncp)
         True
 
-        sage: mat = AlternatingSignMatrix([[0,0,1,0,0,0,0],[1,0,-1,0,1,0,0],\
-        [0,0,1,0,0,0,0],[0,1,-1,0,0,1,0],[0,0,1,0,0,0,0],[0,0,0,1,0,0,0],[0,0,0,0,0,0,1]])
+        sage: mat = AlternatingSignMatrix([[0,0,1,0,0,0,0],[1,0,-1,0,1,0,0],
+        ....:     [0,0,1,0,0,0,0],[0,1,-1,0,0,1,0],[0,0,1,0,0,0,0],[0,0,0,1,0,0,0],[0,0,0,0,0,0,1]])
         sage: fpl = FullyPackedLoop(mat) # n=7
         sage: ncp = fpl.link_pattern()
         sage: rotated_ncp=[]
@@ -252,11 +327,11 @@ class FullyPackedLoop(Element):
         ....:         a,b=a%14+1,b%14+1;
         ....:     rotated_ncp.append((a,b))
         sage: PerfectMatching(mat.gyration().to_fully_packed_loop().link_pattern()) ==\
-        PerfectMatching(rotated_ncp)
+        ....:     PerfectMatching(rotated_ncp)
         True
 
-        sage: mat = AlternatingSignMatrix([[0,0,0,1,0,0], [0,0,1,-1,1,0],\
-        [0,1,0,0,-1,1], [1,0,-1,1,0,0], [0,0,1,0,0,0], [0,0,0,0,1,0]])
+        sage: mat = AlternatingSignMatrix([[0,0,0,1,0,0], [0,0,1,-1,1,0],
+        ....:     [0,1,0,0,-1,1], [1,0,-1,1,0,0], [0,0,1,0,0,0], [0,0,0,0,1,0]])
         sage: fpl = FullyPackedLoop(mat) # n =6
         sage: ncp = fpl.link_pattern()
         sage: rotated_ncp=[]
@@ -265,7 +340,7 @@ class FullyPackedLoop(Element):
         ....:         a,b=a%12+1,b%12+1;
         ....:     rotated_ncp.append((a,b))
         sage: PerfectMatching(mat.gyration().to_fully_packed_loop().link_pattern()) ==\
-        PerfectMatching(rotated_ncp)
+        ....:     PerfectMatching(rotated_ncp)
         True
 
     More examples::
@@ -373,19 +448,19 @@ class FullyPackedLoop(Element):
             sage: FullyPackedLoop([[3,1],[5,5]])
             Traceback (most recent call last):
             ...
-            ValueError: Invalid alternating sign matrix
+            ValueError: invalid alternating sign matrix
 
             sage: FullyPackedLoops(2)([[3,1],[5,5]])
             Traceback (most recent call last):
             ...
-            ValueError: Invalid alternating sign matrix
+            ValueError: invalid alternating sign matrix
 
         Note that if anything else is used to generate the fully packed loop an error will occur::
 
             sage: fpl = FullyPackedLoop(5)
             Traceback (most recent call last):
             ...
-            ValueError: Invalid alternating sign matrix
+            ValueError: invalid alternating sign matrix
 
             sage: fpl = FullyPackedLoop((1, 2, 3))
             Traceback (most recent call last):
@@ -396,7 +471,7 @@ class FullyPackedLoop(Element):
             sage: FullyPackedLoop(SVM)
             Traceback (most recent call last):
             ...
-            ValueError: Invalid alternating sign matrix
+            ValueError: invalid alternating sign matrix
 
     REFERENCES:
 
@@ -410,8 +485,6 @@ class FullyPackedLoop(Element):
        Electron. J. Combin. 22 (2015) no. 2
        :arxiv:`1503.08898`
     """
-    __metaclass__ = InheritComparisonClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(cls, generator):
         """
@@ -456,8 +529,8 @@ class FullyPackedLoop(Element):
             SVM = generator
         elif isinstance(generator, SixVertexConfiguration):
             # Check that this is an ice square model
-            generator = SixVertexModel(generator.parent()._nrows, \
-            boundary_conditions='ice')(generator)
+            generator = SixVertexModel(generator.parent()._nrows,
+                                       boundary_conditions='ice')(generator)
             M = generator.to_alternating_sign_matrix().to_matrix()
             M = AlternatingSignMatrix(M)
             SVM = generator
@@ -472,8 +545,8 @@ class FullyPackedLoop(Element):
                 SVM = generator
 
         if not SVM:
-            raise TypeError('generator for FullyPackedLoop must either be an \
-            AlternatingSignMatrix or a SquareIceModel.Element')
+            raise TypeError('generator for FullyPackedLoop must either be an '
+                            'AlternatingSignMatrix or a SquareIceModel.Element')
         FPLs = FullyPackedLoops(len(SVM))
         return FPLs(generator)
 
@@ -493,8 +566,6 @@ class FullyPackedLoop(Element):
         elif isinstance(generator, SquareIceModel.Element):
             self._six_vertex_model = generator
 
-        self.configuration = matrix(list(self._six_vertex_model))
-        self._n = len(self._end_point_dictionary) // 2
         Element.__init__(self, parent)
 
     def _repr_(self):
@@ -540,7 +611,7 @@ class FullyPackedLoop(Element):
         """
         # List are in the order of URDL
         # One set of rules for how to draw around even vertex, one set of rules for odd vertex
-        n=len(self._six_vertex_model)-1
+        n = len(self._six_vertex_model) - 1
         ascii1 = [[r'     ', ' -', r'     ', '- '], # LR
                  [r'  |  ', '  ', r'     ', '- '], # LU
                  [r'     ', '  ', r'  |  ', '- '], # LD
@@ -612,9 +683,9 @@ class FullyPackedLoop(Element):
 
         return ret
 
-    def __eq__(self, other):
+    def _richcmp_(self, other, op):
         """
-        Check equality.
+        Check equality or inequality.
 
         EXAMPLES::
 
@@ -624,19 +695,26 @@ class FullyPackedLoop(Element):
             True
 
             sage: FullyPackedLoop(A([[1, 0, 0],[0, 1, 0],[0, 0, 1]])) ==\
-            FullyPackedLoop(A([[1, 0, 0],[0, 0, 1],[0, 1, 0]]))
+            ....:    FullyPackedLoop(A([[1, 0, 0],[0, 0, 1],[0, 1, 0]]))
             False
 
             sage: FullyPackedLoop(M) == M
             False
+
+            sage: M = A.random_element()
+            sage: FullyPackedLoop(M) != M.to_fully_packed_loop()
+            False
+
+            sage: f0 = FullyPackedLoop(A([[1, 0, 0],[0, 1, 0],[0, 0, 1]]))
+            sage: f1 = FullyPackedLoop(A([[1, 0, 0],[0, 0, 1],[0, 1, 0]]))
+            sage: f0 != f1
+            True
         """
-        return repr(self) == repr(other) and \
-        self._end_point_dictionary == other._end_point_dictionary\
-        and self._six_vertex_model == other._six_vertex_model
+        return self._six_vertex_model._richcmp_(other._six_vertex_model, op)
 
     def to_alternating_sign_matrix(self):
         """
-        Returns the alternating sign matrix corresponding to this class.
+        Return the alternating sign matrix corresponding to this class.
 
         .. SEEALSO::
 
@@ -662,17 +740,56 @@ class FullyPackedLoop(Element):
         """
         return self._six_vertex_model.to_alternating_sign_matrix()
 
-    def plot(self):
+
+    @options(link=True, loop=True, loop_fill=False)
+    def plot(self, **options):
         r"""
-        Return a graphical object of the Fully Packed Loop
+        Return a graphical object of the Fully Packed Loop.
+
+        Each option can be specified separately for links (the curves that join
+        boundary points) and the loops. In order to do so, you need to prefix
+        its name with either ``'link_'`` or ``'loop_'``. As an example, setting
+        ``color='red'`` will color both links and loops in red while setting
+        ``link_color='red'`` will only apply the color option for the links.
+
+        INPUT:
+
+        - ``link``, ``loop`` - (boolean, default ``True``) whether to plot the links
+          or the loops
+
+        - ``color``, ``link_color``, ``loop_color`` - (optional, a string or a
+          RGB triple)
+
+        - ``colors``, ``link_colors``, ``loop_colors`` - (optional, list) a list of
+          colors
+
+        - ``color_map``, ``link_color_map``, ``loop_color_map`` - (string,
+          optional) a name of a matplotlib color map for the link or the loop
+
+        - ``link_color_randomize`` - (boolean, default ``False``) when
+          ``link_colors`` or ``link_color_map`` is specified it randomizes
+          its order. Setting this option to ``True`` makes it unlikely to
+          have two neighboring links with the same color.
+
+        - ``loop_fill`` - (boolean, optional) whether to fill the interior of the loops
 
         EXAMPLES:
 
-        Here is the fully packed loop for
+        To plot the fully packed loop associated to the following alternating sign
+        matrix
 
         .. MATH::
 
-            \begin{pmatrix} 0&1&1 \\ 1&-1&1 \\ 0&1&0 \end{pmatrix}:
+            \begin{pmatrix} 0&1&1 \\ 1&-1&1 \\ 0&1&0 \end{pmatrix}
+
+        simply do::
+
+            sage: A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
+            sage: fpl = FullyPackedLoop(A)
+            sage: fpl.plot()
+            Graphics object consisting of 3 graphics primitives
+
+        The resulting graphics is as follows
 
         .. PLOT::
             :width: 200 px
@@ -682,201 +799,142 @@ class FullyPackedLoop(Element):
             p = fpl.plot()
             sphinx_plot(p)
 
-        Here is how Sage represents this::
+        You can also have the three links in different colors with::
 
             sage: A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
             sage: fpl = FullyPackedLoop(A)
-            sage: print(fpl.plot().description())
-            Line defined by 2 points:       [(-1.0, 1.0), (0.0, 1.0)]
-            Line defined by 2 points:       [(0.0, 0.0), (0.0, -1.0)]
-            Line defined by 2 points:       [(0.0, 0.0), (1.0, 0.0)]
-            Line defined by 2 points:       [(0.0, 2.0), (0.0, 3.0)]
-            Line defined by 2 points:       [(0.0, 2.0), (0.0, 3.0)]
-            Line defined by 2 points:       [(0.0, 2.0), (1.0, 2.0)]
-            Line defined by 2 points:       [(1.0, 1.0), (0.0, 1.0)]
-            Line defined by 2 points:       [(1.0, 1.0), (2.0, 1.0)]
-            Line defined by 2 points:       [(2.0, 0.0), (1.0, 0.0)]
-            Line defined by 2 points:       [(2.0, 0.0), (2.0, -1.0)]
-            Line defined by 2 points:       [(2.0, 2.0), (1.0, 2.0)]
-            Line defined by 2 points:       [(2.0, 2.0), (2.0, 3.0)]
-            Line defined by 2 points:       [(2.0, 2.0), (2.0, 3.0)]
-            Line defined by 2 points:       [(3.0, 1.0), (2.0, 1.0)]
-            Line defined by 2 points:       [(3.0, 1.0), (2.0, 1.0)]
-
-        Here are the other 3 by 3 Alternating Sign Matrices and their corresponding
-        fully packed loops:
-
-        .. MATH::
-
-            A = \begin{pmatrix} 1&0&0 \\ 0&1&0 \\ 0&0&1 \\ \end{pmatrix}
-
-        gives:
+            sage: fpl.plot(link_color_map='rainbow')
+            Graphics object consisting of 3 graphics primitives
 
         .. PLOT::
             :width: 200 px
 
-            A = AlternatingSignMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+            A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
             fpl = FullyPackedLoop(A)
-            p = fpl.plot()
+            p = fpl.plot(link_color_map='rainbow')
             sphinx_plot(p)
 
-        .. MATH::
+        You can plot the 42 fully packed loops of size `4 \times 4` using::
 
-            A = \begin{pmatrix} 1&0&0 \\ 0&0&1 \\ 0&1&0 \\ \end{pmatrix}
-
-        gives:
+            sage: G = [fpl.plot(link_color_map='winter', loop_color='black') for fpl in FullyPackedLoops(4)]
+            sage: graphics_array(G, 7, 6)
+            Graphics Array of size 7 x 6
 
         .. PLOT::
-            :width: 200 px
+            :width: 600 px
 
-            A = AlternatingSignMatrix([[1, 0, 0], [0, 0, 1], [0, 1, 0]])
-            fpl = FullyPackedLoop(A)
-            p = fpl.plot()
+            G = [fpl.plot(link_color_map='winter', loop_color='black') for fpl in FullyPackedLoops(4)]
+            p = graphics_array(G, 7, 6)
             sphinx_plot(p)
 
-        .. MATH::
+        Here is an example of a `20 \times 20` fully packed loop::
 
-            A = \begin{pmatrix} 0&1&0\\ 1&0&0\\ 0&0&1\\ \end{pmatrix}
-
-        gives:
+            sage: s = "00000000000+0000000000000000+00-0+00000000000+00-00+0-+00000\
+            ....: 0000+-00+00-+00000000+00-0000+0000-+00000000+000-0+0-+0-+000\
+            ....: 000+-000+-00+0000000+-+-000+00-+0-000+000+-000+-0+0000000-0+\
+            ....: 0000+0-+0-+00000-+00000+-+0-0+-00+0000000000+-0000+0-00+0000\
+            ....: 000000+0-000+000000000000000+0000-00+00000000+0000-000+00000\
+            ....: 00+0-00+0000000000000000+-0000+000000-+000000+00-0000+-00+00\
+            ....: 00000000+-0000+00000000000000+0000000000"
+            sage: a = matrix(20, [{'0':0, '+':1, '-': -1}[i] for i in s])
+            sage: fpl = FullyPackedLoop(a)
+            sage: fpl.plot(loop_fill=True, loop_color_map='rainbow')
+            Graphics object consisting of 27 graphics primitives
 
         .. PLOT::
-            :width: 200 px
+            :width: 400 px
 
-            A = AlternatingSignMatrix([[0, 1, 0], [1, 0, 0], [0, 0, 1]])
-            fpl = FullyPackedLoop(A)
-            p = fpl.plot()
+            s = "00000000000+0000000000000000+00-0+00000000000+00-00+0-+00000\
+            0000+-00+00-+00000000+00-0000+0000-+00000000+000-0+0-+0-+000\
+            000+-000+-00+0000000+-+-000+00-+0-000+000+-000+-0+0000000-0+\
+            0000+0-+0-+00000-+00000+-+0-0+-00+0000000000+-0000+0-00+0000\
+            000000+0-000+000000000000000+0000-00+00000000+0000-000+00000\
+            00+0-00+0000000000000000+-0000+000000-+000000+00-0000+-00+00\
+            00000000+-0000+00000000000000+0000000000"
+            a = matrix(20, [{'0':0, '+':1, '-': -1}[i] for i in s])
+            p = FullyPackedLoop(a).plot(loop_fill=True, loop_color_map='rainbow')
             sphinx_plot(p)
-
-        .. MATH::
-
-            A = \begin{pmatrix} 0&1&0\\ 0&0&1\\ 1&0&0\\ \end{pmatrix}
-
-        gives:
-
-        .. PLOT::
-            :width: 200 px
-
-            A = AlternatingSignMatrix([[0, 1, 0], [0, 0, 1], [1, 0, 0]])
-            fpl = FullyPackedLoop(A)
-            p = fpl.plot()
-            sphinx_plot(p)
-
-        .. MATH::
-
-            A = \begin{pmatrix} 0&0&1\\ 1&0&0\\ 0&1&0\\ \end{pmatrix}
-
-        gives:
-
-        .. PLOT::
-            :width: 200 px
-
-            A = AlternatingSignMatrix([[0, 0, 1], [1, 0, 0], [0, 1, 0]])
-            fpl = FullyPackedLoop(A)
-            p = fpl.plot()
-            sphinx_plot(p)
-
-        .. MATH::
-
-            A = \begin{pmatrix} 0&0&1\\ 0&1&0\\ 1&0&0\\ \end{pmatrix}
-
-        gives:
-
-        .. PLOT::
-            :width: 200 px
-
-            A = AlternatingSignMatrix([[0, 0, 1], [0, 1, 0], [1, 0, 0]])
-            fpl = FullyPackedLoop(A)
-            p = fpl.plot()
-            sphinx_plot(p)
-
-        EXAMPLES::
-
-            sage: A = AlternatingSignMatrix([[0, 1, 0, 0], [1, -1, 0, 1], \
-            [0, 1, 0, 0],[0, 0, 1, 0]])
-            sage: fpl = FullyPackedLoop(A)
-            sage: print(fpl.plot().description())
-            Line defined by 2 points:       [(-1.0, 0.0), (0.0, 0.0)]
-            Line defined by 2 points:       [(-1.0, 2.0), (0.0, 2.0)]
-            Line defined by 2 points:       [(0.0, 1.0), (0.0, 0.0)]
-            Line defined by 2 points:       [(0.0, 1.0), (1.0, 1.0)]
-            Line defined by 2 points:       [(0.0, 3.0), (0.0, 4.0)]
-            Line defined by 2 points:       [(0.0, 3.0), (0.0, 4.0)]
-            Line defined by 2 points:       [(0.0, 3.0), (1.0, 3.0)]
-            Line defined by 2 points:       [(1.0, 0.0), (1.0, -1.0)]
-            Line defined by 2 points:       [(1.0, 0.0), (2.0, 0.0)]
-            Line defined by 2 points:       [(1.0, 2.0), (0.0, 2.0)]
-            Line defined by 2 points:       [(1.0, 2.0), (2.0, 2.0)]
-            Line defined by 2 points:       [(2.0, 1.0), (1.0, 1.0)]
-            Line defined by 2 points:       [(2.0, 1.0), (2.0, 2.0)]
-            Line defined by 2 points:       [(2.0, 3.0), (1.0, 3.0)]
-            Line defined by 2 points:       [(2.0, 3.0), (2.0, 4.0)]
-            Line defined by 2 points:       [(2.0, 3.0), (2.0, 4.0)]
-            Line defined by 2 points:       [(3.0, 0.0), (2.0, 0.0)]
-            Line defined by 2 points:       [(3.0, 0.0), (3.0, -1.0)]
-            Line defined by 2 points:       [(3.0, 2.0), (3.0, 1.0)]
-            Line defined by 2 points:       [(3.0, 2.0), (3.0, 3.0)]
-            Line defined by 2 points:       [(4.0, 1.0), (3.0, 1.0)]
-            Line defined by 2 points:       [(4.0, 1.0), (3.0, 1.0)]
-            Line defined by 2 points:       [(4.0, 3.0), (3.0, 3.0)]
-            Line defined by 2 points:       [(4.0, 3.0), (3.0, 3.0)]
-
-        Here is the plot:
-
-        .. PLOT::
-            :width: 300 px
-
-            A = AlternatingSignMatrix([[0, 1, 0, 0], [1, -1, 0, 1], [0, 1, 0, 0],[0, 0, 1, 0]])
-            fpl = FullyPackedLoop(A)
-            p = fpl.plot()
-            sphinx_plot(p)
-
         """
+        from sage.plot.graphics import Graphics
+        from sage.plot.line import line2d
+        from sage.plot.polygon import polygon2d
+
+        link_options = {}
+        loop_options = {}
+        for k, v in options.items():
+            if k == 'link':
+                link = v
+            elif k == 'loop':
+                loop = v
+            elif k.startswith('link_'):
+                link_options[k[5:]] = v
+            elif k.startswith('loop_'):
+                loop_options[k[5:]] = v
+            else:
+                link_options[k] = v
+                loop_options[k] = v
+
+        sv = self._six_vertex_model
+        n = len(sv)
+
+        # LR boudaries => odd sum
+        # UD boundaries => even sum
+        rank = self.parent()._boundary_index
+        unrank = self.parent()._boundary
+        seen = [False] * (2*n)
+
+        squares = set((i,j) for i in range(n) for j in range(n))
+
+        colors = _make_color_list(2*n,
+                colors = link_options.pop('colors', None),
+                color_map = link_options.pop('color_map', None),
+                randomize = link_options.pop('color_randomize', False))
+
         G = Graphics()
-        n=len(self._six_vertex_model)-1
-        for j,row in enumerate(reversed(self._six_vertex_model)):
-            for i,entry in enumerate(row):
-                if i == 0 and (i+j+n+1) % 2 ==0:
-                    G+= line([(i-1,j),(i,j)])
-                if i == n and (i+j+n+1) % 2 ==0:
-                    G+= line([(i+1,j),(i,j)])
-                if j == 0 and (i+j+n) % 2 ==0:
-                    G+= line([(i,j),(i,j-1)])
-                if j == n and (i+j+n) % 2 ==0:
-                    G+= line([(i,j),(i,j+1)])
-                if entry == 0: # LR
-                    if (i+j+n) % 2==0:
-                        G += line([(i,j), (i+1,j)])
-                    else:
-                        G += line([(i,j),(i,j+1)])
-                elif entry == 1: # LU
-                    if (i+j+n) % 2 ==0:
-                        G += line([(i,j), (i,j+1)])
-                    else:
-                        G += line([(i+1,j), (i,j)])
-                elif entry == 2: # LD
-                    if (i+j+n) % 2 == 0:
-                        pass
-                    else:
-                        G += line([(i,j+1), (i,j)])
-                        G += line([(i+1,j), (i,j)])
-                elif entry == 3: # UD
-                    if (i+j+n) % 2 == 0:
-                        G += line([(i,j), (i,j+1)])
-                    else:
-                        G += line([(i+1,j), (i,j)])
-                elif entry == 4: # UR
-                    if (i+j+n) % 2 ==0:
-                        G += line([(i,j), (i,j+1)])
-                        G += line([(i,j), (i+1,j)])
-                    else:
-                        pass
-                elif entry == 5: # RD
-                    if (i+j+n) % 2 ==0:
-                        G += line([(i,j), (i+1,j)])
-                    else:
-                        G += line([(i,j+1), (i,j)])
+        for i in range(2*n):
+            if seen[i]:
+                continue
+            orbit = self._link_or_loop_from(unrank(i))
+            j = rank(orbit[-1])
+            seen[i] = seen[j] = True
+            squares.difference_update(orbit)
+
+            if link:
+                if colors:
+                    link_options['color'] = colors.pop()
+
+                # make it upside down
+                orbit = [(j, n - i - 1) for i, j in orbit]
+                G += line2d(orbit, **link_options)
+
+        loops = []
+        while squares:
+            orbit = self._link_or_loop_from(squares.pop())
+            loops.append(orbit)
+            squares.difference_update(orbit)
+
+        if loop:
+            colors = _make_color_list(len(loops),
+                    colors = loop_options.pop('colors', None),
+                    color_map = loop_options.pop('color_map', None),
+                    randomize = loop_options.pop('color_randomize', False))
+
+            fill = loop_options.pop('fill')
+
+            for orbit in loops:
+                if colors:
+                    loop_options['color'] = colors.pop()
+
+                # make it upside down
+                orbit = [(j, n - i - 1) for i,j in orbit]
+
+                if fill:
+                    G += polygon2d(orbit, **loop_options)
+                else:
+                    G += line2d(orbit, **loop_options)
+
         G.axes(False)
+        G.set_aspect_ratio(1)
         return G
 
     def gyration(self):
@@ -884,7 +942,7 @@ class FullyPackedLoop(Element):
         Return the fully packed loop obtained by applying gyration
         to the alternating sign matrix in bijection with ``self``.
 
-        Gyration was first defined in [Wieland00]_ as an action on 
+        Gyration was first defined in [Wieland00]_ as an action on
         fully-packed loops.
 
         REFERENCES:
@@ -909,9 +967,87 @@ class FullyPackedLoop(Element):
         """
         return FullyPackedLoop(self.to_alternating_sign_matrix().gyration())
 
+    def _link_or_loop_from(self, pos, d0=None):
+        r"""
+        Return the coordinates of the line passing through ``pos``.
+
+        EXAMPLES:
+
+        A link::
+
+            sage: fpl = FullyPackedLoops(4).first()
+            sage: fpl._link_or_loop_from((2,2))
+            [(0, 4), (0, 3), (1, 3), (1, 2), (2, 2), (3, 2), (3, 1), (4, 1)]
+            sage: fpl._link_or_loop_from((-1, 0))
+            [(-1, 0), (0, 0), (1, 0), (1, -1)]
+
+        A loop::
+
+            sage: a = AlternatingSignMatrix([[0,1,0,0], [0,0,0,1], [1,0,0,0], [0,0,1,0]])
+            sage: fpl = FullyPackedLoop(a)
+            sage: fpl._link_or_loop_from((1,1))
+            [(1, 1), (2, 1), (2, 2), (1, 2), (1, 1)]
+        """
+        global R, L, U, D, FPL_turns, FPL_edges
+
+        orbit = [pos]
+        sv = self._six_vertex_model
+        n = len(sv)
+        i,j = pos
+
+        # deal with boundary cases
+        if i < -1 or i > n or j < -1 or j > n:
+            raise ValueError('indices out of range')
+        if (i == -1 or i == n) and (i+j)%2 != 1:
+            raise ValueError('left and right boundary values must have odd sum')
+        if (j == -1 or j == n) and (i+j)%2 != 0:
+            raise ValueError('up and down boundary values must have even sum')
+
+        if i == -1:
+            d = R
+        elif i == n:
+            d = L
+        elif j == -1:
+            d = U
+        elif j == n:
+            d = D
+        elif d0 is None:
+            d = FPL_edges[(i + j)%2][sv[i][j]][0]
+        elif d0 in FPL_edges[(i+j)%2][sv[i][j]]:
+            d = d0
+        else:
+            raise ValueError('invalid direction')
+
+        # compute the link or loop
+        while True:
+            i += d[0]
+            j += d[1]
+            orbit.append((i, j))
+            if (i, j) == orbit[0] or i == -1 or j == -1 or i == n or j == n:
+                break
+
+            conf = sv[i][j]
+            parity = (i + j) % 2
+
+            d = FPL_turns[parity][conf][d]
+            if d is None:
+                raise RuntimeError
+
+        if i == -1 or j == -1 or i == n or j == n:
+            i0,j0 = orbit[0]
+            if d0 is None and i0 != -1 and i0 != n and j0 != -1 and j0 != n:
+                # only half of a link -> compute the other half
+                i1,j1 = orbit[1]
+                d = (i0-i1, j0-j1)
+                orbit2 = self._link_or_loop_from(orbit[1], d)
+                assert orbit2[0] == (i1,j1) and orbit2[1] == (i0,j0)
+                return orbit2[:1:-1] + orbit
+            return orbit
+        else:
+            return orbit
 
     def link_pattern(self):
-        """
+        r"""
         Return a link pattern corresponding to a fully packed loop.
 
         Here we define a link pattern `LP` to be a partition of the list
@@ -964,7 +1100,7 @@ class FullyPackedLoop(Element):
             ....:         a,b=a%6+1,b%6+1;
             ....:     rotated_ncp.append((a,b))
             sage: PerfectMatching(ASMs[1].gyration().to_fully_packed_loop().link_pattern()) ==\
-            PerfectMatching(rotated_ncp)
+            ....:     PerfectMatching(rotated_ncp)
             True
 
             sage: fpl = FullyPackedLoop(ASMs[0])
@@ -975,11 +1111,11 @@ class FullyPackedLoop(Element):
             ....:         a,b=a%6+1,b%6+1;
             ....:     rotated_ncp.append((a,b))
             sage: PerfectMatching(ASMs[0].gyration().to_fully_packed_loop().link_pattern()) ==\
-            PerfectMatching(rotated_ncp)
+            ....:     PerfectMatching(rotated_ncp)
             True
 
-            sage: mat = AlternatingSignMatrix([[0,0,1,0,0,0,0],[1,0,-1,0,1,0,0],[0,0,1,0,0,0,0],\
-            [0,1,-1,0,0,1,0],[0,0,1,0,0,0,0],[0,0,0,1,0,0,0],[0,0,0,0,0,0,1]])
+            sage: mat = AlternatingSignMatrix([[0,0,1,0,0,0,0],[1,0,-1,0,1,0,0],[0,0,1,0,0,0,0],
+            ....:     [0,1,-1,0,0,1,0],[0,0,1,0,0,0,0],[0,0,0,1,0,0,0],[0,0,0,0,0,0,1]])
             sage: fpl = FullyPackedLoop(mat) # n=7
             sage: ncp = fpl.link_pattern()
             sage: rotated_ncp=[]
@@ -988,11 +1124,11 @@ class FullyPackedLoop(Element):
             ....:         a,b=a%14+1,b%14+1;
             ....:     rotated_ncp.append((a,b))
             sage: PerfectMatching(mat.gyration().to_fully_packed_loop().link_pattern()) ==\
-            PerfectMatching(rotated_ncp)
+            ....:     PerfectMatching(rotated_ncp)
             True
 
-            sage: mat = AlternatingSignMatrix([[0,0,0,1,0,0], [0,0,1,-1,1,0], [0,1,0,0,-1,1], [1,0,-1,1,0,0], \
-            [0,0,1,0,0,0], [0,0,0,0,1,0]])
+            sage: mat = AlternatingSignMatrix([[0,0,0,1,0,0], [0,0,1,-1,1,0], [0,1,0,0,-1,1], [1,0,-1,1,0,0], 
+            ....:     [0,0,1,0,0,0], [0,0,0,0,1,0]])
             sage: fpl = FullyPackedLoop(mat)
             sage: ncp = fpl.link_pattern()
             sage: rotated_ncp=[]
@@ -1001,7 +1137,7 @@ class FullyPackedLoop(Element):
             ....:         a,b=a%12+1,b%12+1;
             ....:     rotated_ncp.append((a,b))
             sage: PerfectMatching(mat.gyration().to_fully_packed_loop().link_pattern()) ==\
-            PerfectMatching(rotated_ncp)
+            ....:     PerfectMatching(rotated_ncp)
             True
 
         TESTS:
@@ -1015,35 +1151,43 @@ class FullyPackedLoop(Element):
             sage: E = C.link_pattern()
             sage: D == E
             True
-
         """
+        global L, R, U, D, FPL_turns
+
         link_pattern = []
-        boundary_d = self._end_point_dictionary.copy()
-        vertices_d = self._vertex_dictionary.copy()
+        n = len(self._six_vertex_model)
+        seen = [False] * (2*n)
+        unrank = self.parent()._boundary
+        rank = self.parent()._boundary_index
+        sv = self._six_vertex_model
 
-        while len(boundary_d) > 2:
-            startpoint = boundary_d.keys()[0]
-            position = boundary_d[startpoint]
+        for k in range(2*n):
+            if seen[k]:
+                continue
 
-            boundary_d.pop(startpoint)
-            vertices_d[position] = False # allows us to start
+            i,j = unrank(k)
 
-            while not vertices_d[position]:
-                vertices_d.pop(position)
-                choices = self._get_coordinates(position)
-                if choices[0] in vertices_d:
-                    position = choices[0]
-                elif choices[1] in vertices_d:
-                    position = choices[1]
-                else:
-                    raise ValueError('No valid choices')
+            # initial direction
+            if i == -1: d = R
+            elif i == n: d = L
+            elif j == -1: d = U
+            elif j == n: d = D
 
-            endpoint = vertices_d[position]
-            vertices_d.pop(position)
-            link_pattern.append((startpoint, endpoint))
-            boundary_d.pop(endpoint)
+            # go through the link
+            while True:
+                i += d[0]
+                j += d[1]
+                if i == -1 or j == -1 or i == n or j == n:
+                    break
 
-        link_pattern.append(tuple(boundary_d.keys()))
+                conf = sv[i][j]
+                parity = (i + j) % 2
+                d = FPL_turns[parity][conf][d]
+
+            # update seen and link_pattern
+            l = rank((i,j))
+            seen[k] = seen[l] = True
+            link_pattern.append((k+1, l+1))
 
         return link_pattern
 
@@ -1081,159 +1225,6 @@ class FullyPackedLoop(Element):
                 V    V    V
         """
         return self._six_vertex_model
-
-    @lazy_attribute
-    def _vertex_dictionary(self):
-        """
-        A helper function for :meth:`link_pattern`.
-        Return a dictionary where the keys are the coordinates of each vertex and
-        the values are either 0 or the values 1 ,..., 2n. The vertices connected to
-        endpoints of paths have values 1, ..., 2n. Other vertices have values 0.
-
-        TESTS::
-
-            sage: B = AlternatingSignMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-            sage: fpl = FullyPackedLoop(B)
-            sage: fpl._vertex_dictionary
-            {(0, 0): 1,
-             (0, 1): 0,
-             (0, 2): 2,
-             (1, 0): 6,
-             (1, 1): 0,
-             (1, 2): 3,
-             (2, 0): 5,
-             (2, 1): 0,
-             (2, 2): 4}
-             sage: fpl._vertex_dictionary[(2,2)]
-             4
-        """
-        n = len(self._six_vertex_model)
-        vertices = {}
-        for i in range(n):
-            for j in range(n):
-                vertices[(i, j)] = 0
-
-        for end, vertex in self._end_point_dictionary.iteritems():
-            vertices[vertex] = end
-
-        return vertices
-
-    def _get_coordinates(self, current_pos):
-        """
-        Return a list of 2 coordinates that refer to the moves that could
-        potentialy be made.
-
-        TESTS::
-
-            sage: B = AlternatingSignMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-            sage: fpl = FullyPackedLoop(B)
-            sage: matrix(list(fpl._six_vertex_model))
-            [3 1 1]
-            [5 3 1]
-            [5 5 3]
-            sage: fpl._get_coordinates((0, 1))
-            [(1, 1), (0, 2)]
-            sage: fpl._get_coordinates((1, 1))
-            [(2, 1), (0, 1)]
-            sage: fpl._get_coordinates((0, 0))
-            [(1, 0), (-1, 0)]
-            sage: fpl._get_coordinates((0, 2))
-            [(-1, 2), (0, 1)]
-            sage: fpl._get_coordinates((2, 1))
-            [(1, 1), (2, 0)]
-
-            sage: B = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
-            sage: fpl = FullyPackedLoop(B)
-            sage: matrix(list(fpl._six_vertex_model))
-            [4 3 1]
-            [3 0 3]
-            [5 3 2]
-            sage: fpl._get_coordinates((1, 1))
-            [(1, 0), (1, 2)]
-            sage: fpl._get_coordinates((0, 0))
-            [(-1, 0), (0, 1)]
-            sage: fpl._get_coordinates((0, 2))
-            [(-1, 2), (0, 1)]
-            sage: fpl._get_coordinates((2, 1))
-            [(2, 0), (2, 2)]
-        """
-        # 0 UD, 1 RD, 2 UR, 3 LR, 4 LD, 5 LU
-        odd = {0: [(1, 0), (-1, 0)],
-                1: [(1, 0), (0, 1)],
-                2: [(-1, 0), (0, 1)],
-                3: [(0, -1), (0, 1)],
-                4: [(0, -1), (1, 0)],
-                5: [(-1, 0), (0, -1)]
-                }
-
-        # 0 LR, 1 LU, 2 LD, 3 UD, 4 UR, 5 RD
-        even = {0: [(0, -1), (0, 1)],
-               1: [(-1, 0), (0, -1)],
-               2: [(0, -1), (1, 0)],
-               3: [(1, 0), (-1, 0)],
-               4: [(-1, 0), (0, 1)],
-               5: [(1, 0), (0, 1)]
-               }
-
-        parity = sum(current_pos)
-        conf = self.configuration[current_pos]
-
-        if parity % 2 == 0:
-            potential_directions = even[conf]
-        else:
-            potential_directions = odd[conf]
-
-        return [(current_pos[0] + d[0], current_pos[1] + d[1]) for d in potential_directions]
-
-    @lazy_attribute
-    def _end_point_dictionary(self):
-        r"""
-        A helper function for :meth:`link_pattern`.
-        Return a dictionary where the keys are the labels 1, ..., 2n and the values
-        are the coordinates of the endpoints of the paths of ``self``.
-
-        TESTS::
-
-            sage: B = AlternatingSignMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-            sage: fpl = FullyPackedLoop(B)
-            sage: fpl._end_point_dictionary
-            {1: (0, 0), 2: (0, 2), 3: (1, 2), 4: (2, 2), 5: (2, 0), 6: (1, 0)}
-            sage: fpl._end_point_dictionary[2]
-            (0, 2)
-
-        """
-        n = len(self._six_vertex_model)
-        end_points = {}
-
-        for k in range(n):
-            if k % 2 == 0:
-                # top row
-                end_points[1 + k // 2] = (0, k)
-
-                # bottom row
-                end_points[n + 1 + k // 2] = (n-1, n-1-k)
-
-        # sides for even case
-        if n % 2 == 0:
-            for k in range(n):
-                if k % 2 == 0:
-                    # left side
-                    end_points[((3*n + 2 + k) // 2)] = (n-1-k, 0)
-
-                    # right side
-                    end_points[(n + 2 + k) // 2] = (k, n-1)
-
-        # side for odd case
-        if n % 2 == 1:
-            for k in range(n):
-                if k % 2 == 1:
-                    # left side
-                    end_points[(3*n + 2 + k) // 2] = (n-1-k, 0)
-
-                    # right side
-                    end_points[(n + 2 + k) // 2] = (k, n-1)
-
-        return end_points
 
 class FullyPackedLoops(Parent, UniqueRepresentation):
     r"""
@@ -1326,9 +1317,7 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
             sage: [1,2,3] in FPLs
             False
         """
-        if isinstance(fpl, FullyPackedLoop):
-            return fpl._n == self._n
-        return False
+        return parent(fpl) is self
 
     def _element_constructor_(self, generator):
         """
@@ -1389,11 +1378,10 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
                 SVM = AlternatingSignMatrix(generator).to_six_vertex_model()
             except (TypeError, ValueError):
                 SVM = SixVertexModel(self._n, boundary_conditions='ice')(generator)
-                M = SVM.to_alternating_sign_matrix()
-
+                SVM.to_alternating_sign_matrix()
         if len(SVM) != self._n:
             raise ValueError("invalid size")
-        return self.element_class(self,SVM)
+        return self.element_class(self, SVM)
 
     Element = FullyPackedLoop
 
@@ -1452,3 +1440,91 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         #SVM = ASM.to_six_vertex_model()
         SVM = SixVertexModel(self._n,boundary_conditions='ice').an_element()
         return self.element_class(self, SVM)
+
+    def _boundary(self, k):
+        r"""
+        Return the coordinates of the ``k``-th boundary.
+
+        TESTS::
+
+            sage: F = FullyPackedLoops(5)
+            sage: [F._boundary(k) for k in range(10)] == F._boundaries()
+            True
+            sage: all(F._boundary_index(F._boundary(k)) == k for k in range(10))
+            True
+
+            sage: F = FullyPackedLoops(6)
+            sage: [F._boundary(k) for k in range(12)] == F._boundaries()
+            True
+            sage: all(F._boundary_index(F._boundary(k)) == k for k in range(12))
+            True
+        """
+        n = self._n
+        n_LR = n//2 if n%2 == 0 else (n+1) // 2
+        n_TB = n//2 if n%2 == 0 else (n-1) // 2
+        if k < n_LR:
+            return (-1, 2*k)
+        k -= n_LR
+        if k < n_TB:
+            return (n%2 + 2*k, n)
+        k -= n_TB
+        if k < n_LR:
+            return (n, n - 1 - 2*k)
+        k -= n_LR
+        if k < n_TB:
+            return (n - 1 - n%2 - 2*k, -1)
+
+    def _boundary_index(self, pos):
+        r"""
+        Return the index of the boundary at position ``pos``.
+
+        TESTS::
+
+            sage: F = FullyPackedLoops(5)
+            sage: [F._boundary_index(b) for b in F._boundaries()]
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            sage: all(F._boundary(F._boundary_index(b)) == b for b in F._boundaries())
+            True
+
+            sage: F = FullyPackedLoops(6)
+            sage: [F._boundary_index(b) for b in F._boundaries()]
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+            sage: all(F._boundary(F._boundary_index(b)) == b for b in F._boundaries())
+            True
+        """
+        n = self._n
+        i, j = pos
+        if i == -1:
+            return j//2
+        elif j == n:
+            return (n + 1) // 2 + i // 2
+        elif i == n:
+            return n + (n - j) // 2
+        elif j == -1:
+            return 3 * n // 2 + (n - i) // 2
+
+    def _boundaries(self):
+        r"""
+        Return the list of coordinates for the link in the boundaries.
+
+        TESTS::
+
+            sage: FullyPackedLoops(5)._boundaries()
+            [(-1, 0), (-1, 2), (-1, 4), (1, 5), (3, 5),
+             (5, 4),  (5, 2), (5, 0), (3, -1), (1, -1)]
+
+            sage: FullyPackedLoops(6)._boundaries()
+            [(-1, 0), (-1, 2), (-1, 4), (0, 6), (2, 6), (4, 6),
+             (6, 5), (6, 3), (6, 1), (5, -1), (3, -1), (1, -1)]
+        """
+        n = self._n
+        boundaries = []
+        # left side: j = 0 mod 2
+        boundaries.extend((-1, j) for j in range(0, n, 2))
+        # top side: i = n mod 2
+        boundaries.extend((i, n) for i in range(n % 2, n, 2))
+        # right side: j = n+1 mod 2
+        boundaries.extend((n, j) for j in range(n - 1, -1, -2))
+        # bottom side: i = 1 mod 2
+        boundaries.extend((i, -1) for i in range(n - 1 - n % 2, -1, -2))
+        return boundaries

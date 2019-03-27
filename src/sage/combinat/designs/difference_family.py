@@ -48,10 +48,12 @@ Functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 # python3
-from __future__ import division, print_function
-from __future__ import absolute_import
+from __future__ import division, print_function, absolute_import
 
+from builtins import zip
+import six
 from six import itervalues
+from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 
@@ -114,7 +116,7 @@ def block_stabilizer(G, B):
         sage: block_stabilizer(C, [C((0,0)),C((2,0)),C((0,1)),C((2,1))])
         [(0, 0), (2, 0)]
 
-        sage: b = map(Zmod(45),[1, 3, 7, 10, 22, 25, 30, 35, 37, 38, 44])
+        sage: b = list(map(Zmod(45),[1, 3, 7, 10, 22, 25, 30, 35, 37, 38, 44]))
         sage: block_stabilizer(Zmod(45),b)
         [0]
     """
@@ -423,7 +425,7 @@ def df_q_6_1(K, existence=False, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import is_difference_family, df_q_6_1
-        sage: prime_powers = [v for v in xrange(31,500,30) if is_prime_power(v)]
+        sage: prime_powers = [v for v in range(31,500,30) if is_prime_power(v)]
         sage: parameters = [v for v in prime_powers if df_q_6_1(GF(v,'a'), existence=True)]
         sage: parameters
         [31, 151, 181, 211, 241, 271, 331, 361, 421]
@@ -450,7 +452,7 @@ def df_q_6_1(K, existence=False, check=True):
 
     # we now compute the cosets of x**i
     xx = x**5
-    to_coset = {x**i * xx**j: i for i in xrange(5) for j in xrange((v-1)/5)}
+    to_coset = {x**i * xx**j: i for i in range(5) for j in range((v-1)/5)}
 
     for c in to_coset: # the loop runs through all nonzero elements of K
         if c == one or c == r or c == r2:
@@ -459,7 +461,7 @@ def df_q_6_1(K, existence=False, check=True):
             if existence:
                 return True
             B = [one,r,r2,c,c*r,c*r2]
-            D = [[xx**i * b for b in B] for i in xrange(t)]
+            D = [[xx**i * b for b in B] for i in range(t)]
             break
     else:
         if existence:
@@ -803,7 +805,7 @@ def one_radical_difference_family(K, k):
     from sage.groups.generic import discrete_log
     logA = [discrete_log(a,x)%c for a in A]
 
-    # if two elments of A are equal modulo c then no tiling is possible
+    # if two elements of A are equal modulo c then no tiling is possible
     if len(set(logA)) != m:
         return None
 
@@ -1092,7 +1094,7 @@ def mcfarland_1973_construction(q, s):
     .. [McF1973] Robert L. McFarland
        "A family of difference sets in non-cyclic groups"
        J. Combinatorial Theory (A) 15 (1973) 1--10.
-       http://dx.doi.org/10.1016/0097-3165(73)90031-9
+       :doi:`10.1016/0097-3165(73)90031-9`
 
     EXAMPLES::
 
@@ -1109,7 +1111,6 @@ def mcfarland_1973_construction(q, s):
     from sage.modules.free_module import VectorSpace
     from sage.rings.finite_rings.integer_mod_ring import Zmod
     from sage.categories.cartesian_product import cartesian_product
-    from itertools import izip
 
     r = (q**(s+1)-1) // (q-1)
     F = GF(q,'a')
@@ -1119,7 +1120,7 @@ def mcfarland_1973_construction(q, s):
     G = cartesian_product([F]*(s+1) + [K])
 
     D = []
-    for k,H in izip(K, V.subspaces(s)):
+    for k, H in zip(K, V.subspaces(s)):
         for v in H:
             D.append(G((tuple(v) + (k,))))
 
@@ -1266,7 +1267,8 @@ def turyn_1965_3x3xK(k=4):
          [(0,0),(1,2),(2,1)],                   # x+y=0
          [(0,0),(0,1),(0,2)]]                   # x=0
 
-    return G, [[G(v+k) for l,k in zip(L,K) for v in l]]
+    return G, [[G(v + k) for l, k in zip(L, K) for v in l]]
+
 
 def difference_family(v, k, l=1, existence=False, explain_construction=False, check=True):
     r"""
@@ -1352,7 +1354,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
         sage: from itertools import islice
         sage: l6 = {True:[], False: [], Unknown: []}
-        sage: for q in islice(prime_power_mod(1,30), 60):
+        sage: for q in islice(prime_power_mod(1,30), int(60)):
         ....:     l6[designs.difference_family(q,6,existence=True)].append(q)
         sage: l6[True]
         [31, 121, 151, 181, 211, ...,  3061, 3121, 3181]
@@ -1362,7 +1364,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         []
 
         sage: l7 = {True: [], False: [], Unknown: []}
-        sage: for q in islice(prime_power_mod(1,42), 60):
+        sage: for q in islice(prime_power_mod(1,42), int(60)):
         ....:     l7[designs.difference_family(q,7,existence=True)].append(q)
         sage: l7[True]
         [169, 337, 379, 421, 463, 547, 631, 673, 757, 841, 883, 967, ...,  4621, 4957, 5167]
@@ -1373,10 +1375,10 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
     List available constructions::
 
-        sage: for v in xrange(2,100):
+        sage: for v in range(2,100):
         ....:     constructions = []
-        ....:     for k in xrange(2,10):
-        ....:         for l in xrange(1,10):
+        ....:     for k in range(2,10):
+        ....:         for l in range(1,10):
         ....:             if designs.difference_family(v,k,l,existence=True):
         ....:                 constructions.append((k,l))
         ....:                 _ = designs.difference_family(v,k,l)
@@ -1516,6 +1518,23 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         ...
         NotImplementedError: No construction available for (9,3,1)-difference family
 
+    Check that when ``existence=True`` we always obtain ``True``, ``False`` or ``Unknown``
+    and when ``explain_construction=True``it is a string (see :trac:`24513`)::
+
+        sage: designs.difference_family(3, 2, 1, existence=True)
+        True
+        sage: designs.difference_family(3, 2, 1, explain_construction=True)
+        'Trivial difference family'
+
+        sage: for _ in range(100):
+        ....:     v = randint(1, 30)
+        ....:     k = randint(2, 30)
+        ....:     l = randint(1, 30)
+        ....:     res = designs.difference_family(v, k, l, existence=True)
+        ....:     assert res is True or res is False or res is Unknown
+        ....:     if res is True:
+        ....:         assert isinstance(designs.difference_family(3, 2, 1, explain_construction=True), str)
+
     .. TODO::
 
         Implement recursive constructions from Buratti "Recursive for difference
@@ -1536,7 +1555,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         elif explain_construction:
             return "The database contains a ({},{},{})-difference family".format(v,k,l)
 
-        vv, blocks = next(DF[v,k,l].iteritems())
+        vv, blocks = next(six.iteritems(DF[v,k,l]))
 
         # Build the group
         from sage.rings.finite_rings.integer_mod_ring import Zmod
@@ -1568,7 +1587,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         else:
             K = G = GF(v,'a',modulus=poly)
 
-        B = map(K,B)
+        B = [K(b) for b in B]
         e = k*(k-1)//2
         xe = G.multiplicative_generator()**e
         df = [[xe**j*b for b in B] for j in range((v-1)//(2*e))]
@@ -1587,9 +1606,14 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
     # trivial construction
     if k == (v-1) and l == (v-2):
+        if existence:
+            return True
+        elif explain_construction:
+            return "Trivial difference family"
+
         from sage.rings.finite_rings.integer_mod_ring import Zmod
         G = Zmod(v)
-        return G, [range(1,v)]
+        return G, [list(range(1, v))]
 
     factorization = arith.factor(v)
     if len(factorization) == 1:

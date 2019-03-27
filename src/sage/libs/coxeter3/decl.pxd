@@ -1,13 +1,12 @@
 #*****************************************************************************
 #       Copyright (C) 2009-2013 Mike Hansen <mhansen@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-cdef extern from "ccobject.h":
-    #We do this to get access to Construct_p, etc.
-    pass
 
 cdef extern from "globals.h":
     ctypedef unsigned long Ulong
@@ -19,70 +18,64 @@ cdef extern from "globals.h":
 cdef extern from "bits.h":
     ctypedef Ulong LFlags
 
-cdef extern from "coxtypes.h":
+cdef extern from "coxtypes.h" namespace "coxtypes":
     ctypedef unsigned short Rank
-    ctypedef Ulong CoxSize         # should hold at least 32 bits */
-    ctypedef Ulong BettiNbr        # should hold at least 32 bits */
-    ctypedef unsigned CoxNbr         # should fit into a CoxSize */
-    ctypedef CoxNbr ParSize          # this should not be changed */
-    ctypedef unsigned short ParNbr   # should fit into a CoxNbr */
+    ctypedef Ulong CoxSize            # should hold at least 32 bits
+    ctypedef Ulong BettiNbr           # should hold at least 32 bits
+    ctypedef unsigned CoxNbr          # should fit into a CoxSize
+    ctypedef CoxNbr ParSize           # this should not be changed
+    ctypedef unsigned short ParNbr    # should fit into a CoxNbr
     ctypedef ParNbr *CoxArr
-    ctypedef unsigned char CoxLetter # for string representations */
-    ctypedef CoxLetter Generator     # internal representation of generators*/
+    ctypedef unsigned char CoxLetter  # for string representations
+    ctypedef CoxLetter Generator      # internal representation of generators
     ctypedef unsigned short Length
-    ctypedef Ulong StarOp          # for numbering star operations */
+    ctypedef Ulong StarOp             # for numbering star operations
 
 
     #################
     #    CoxWord    #
     #################
-    ctypedef struct c_CoxWord "coxtypes::CoxWord":
-        CoxLetter get_index "operator[]"(Length j)
+    cdef cppclass c_CoxWord "coxtypes::CoxWord":
+        CoxLetter operator[](Length j)
         Length length()
         void setLength(Length n)
-        c_CoxWord append_letter "append" (CoxLetter a)
+        c_CoxWord append(CoxLetter& a)
         c_CoxWord reset()
-        c_CoxWord set "operator="(c_CoxWord w)
-
-    void CoxWord_destruct "Destruct<coxtypes::CoxWord>"(c_CoxWord *mem)
-    c_CoxWord* CoxWord_construct "Construct<coxtypes::CoxWord>" (void *mem)
 
 
 ################
 #    String    #
 ################
-cdef extern from "io.h":
-    ctypedef struct c_String "io::String":
-        void setLength(Ulong n)
+cdef extern from "io.h" namespace "io":
+    cdef cppclass c_String "io::String":
+        c_String()
+        c_String(char* s)
+        void setLength(Ulong& n)
         Ulong length()
         char* ptr()
         void setData(char* source, Ulong r)
-
-    c_String* String_new "New<io::String>"()
-    c_String* String_construct_str "Construct_p<io::String, char*>"(void *mem, char* s)
-    void String_destruct "Destruct<io::String>"(c_String *mem)
 
 
 ##############
 #    Type    #
 ##############
 cdef extern from "type.h":
-    ctypedef struct c_Type "type::Type":
+    cdef cppclass c_Type "coxeter::Type":
+        c_Type()
+        c_Type(char* s)
         c_String name()
-    void Type_destruct "Destruct<type::Type>"(c_Type *mem)
-    c_Type* Type_construct "Construct_p<type::Type, char*>" (void *mem, char* s)
-    c_Type* Type_construct_str "Construct_p<type::Type, char*>" (void *mem, char* s)
+
 
 ##############
 #    Bits    #
 ##############
-cdef extern from "bits.h":
-    Generator firstBit "bits::firstBit"(Ulong n)
+cdef extern from "bits.h" namespace "bits":
+    Generator firstBit(Ulong n)
 
 ##################
 #    CoxGraph    #
 ##################
-cdef extern from "graph.h":
+cdef extern from "graph.h" namespace "graph":
     ctypedef unsigned short CoxEntry
     ctypedef struct c_CoxGraph "graph::CoxGraph":
         pass
@@ -90,64 +83,64 @@ cdef extern from "graph.h":
 ###############
 #    KLPol    #
 ###############
-cdef extern from "kl.h":
+cdef extern from "kl.h" namespace "kl":
     cdef cppclass c_KLPol "kl::KLPol":
-        const unsigned short& operator[](int)
+        const unsigned short& operator[](Ulong j)
         unsigned long deg()
         int isZero()
 
-cdef extern from "polynomials.h":
+cdef extern from "polynomials.h" namespace "polynomials":
     c_String klpoly_append "polynomials::append"(c_String str, c_KLPol, char* x)
 
 ##################
 #    List    #
 ##################
-cdef extern from "list.h":
-    ctypedef struct c_List_CoxWord "list::List<coxtypes::CoxWord>":
-        c_CoxWord get_index "operator[]"(Length j)
+cdef extern from "list.h" namespace "list":
+    cdef cppclass c_List_CoxWord "list::List<coxtypes::CoxWord> ":
+        c_List_CoxWord()
+        c_List_CoxWord(Ulong len)
+        c_CoxWord operator[](Ulong j)
         Ulong size()
-    c_List_CoxWord  c_List_CoxWord_factory "list::List<coxtypes::CoxWord>"(Ulong len)
-    void List_CoxWord_destruct "Destruct< list::List<coxtypes::CoxWord> >"(c_List_CoxWord *mem)
 
 
 ###################
 #     CoxGroup    #
 ###################
 cdef extern from "coxgroup.h":
-    ctypedef struct c_CoxGroup "coxgroup::CoxGroup":
+    cdef cppclass c_CoxGroup "coxeter::CoxGroup":
+        c_CoxGroup()
+        c_CoxGroup(c_Type t, Rank r)
+
         Rank rank()
         c_Type type()
         CoxSize order()
-        c_CoxWord reduced(c_CoxWord res, c_CoxWord w)
-        c_CoxWord normalForm(c_CoxWord w)
-        c_CoxWord prod(c_CoxWord g, c_CoxWord h)
-        int prod_nbr "prod"(c_CoxWord g, CoxNbr x)
+        c_CoxWord reduced(c_CoxWord& res, c_CoxWord& w)
+        c_CoxWord normalForm(c_CoxWord& w)
+        c_CoxWord prod(c_CoxWord& g, c_CoxWord& h)
+        int prod_nbr "prod"(c_CoxWord& g, CoxNbr& x)
 
         c_CoxGraph graph()
         CoxEntry M(Generator s, Generator t)
-        CoxNbr extendContext(c_CoxWord w)
-        c_KLPol klPol(CoxNbr x, CoxNbr y)
-        bint inOrder_word "inOrder"(c_CoxWord u, c_CoxWord w)
-        bint inOrder_nbr "inOrder"(CoxNbr x, CoxNbr y)
+        CoxNbr extendContext(c_CoxWord& w)
+        c_KLPol klPol(CoxNbr& x, CoxNbr& y)
+        bint inOrder(c_CoxWord& u, c_CoxWord& w)
+        bint inOrder(CoxNbr x, CoxNbr y)
 
-        LFlags descent(c_CoxWord w)
-        LFlags ldescent(c_CoxWord w)
-        LFlags rdescent(c_CoxWord w)
-        bint isDescent(c_CoxWord w, Generator s)
+        LFlags descent(c_CoxWord& w)
+        LFlags ldescent(c_CoxWord& w)
+        LFlags rdescent(c_CoxWord& w)
+        bint isDescent(c_CoxWord& w, Generator& s)
 
-        void coatoms(c_List_CoxWord, c_CoxWord u)
+        void coatoms(c_List_CoxWord& l, c_CoxWord& u)
 
-        unsigned short mu(CoxNbr x, CoxNbr y) #KLCoeff
-
-    c_CoxGroup* CoxGroup_construct_type_rank "Construct_pp<coxgroup::CoxGroup, type::Type, Rank>" (void *mem, c_Type t, Rank r)
-    void CoxGroup_delete "Delete<coxgroup::CoxGroup>"(c_CoxGroup *mem)
+        unsigned short mu(CoxNbr& x, CoxNbr& y)
 
 
 #####################
 #    Interactive    #
 #####################
-cdef extern from "interactive.h":
-    c_CoxGroup* coxeterGroup "interactive::coxeterGroup"(c_Type x, Rank l)
+cdef extern from "interactive.h" namespace "interactive":
+    c_CoxGroup* coxeterGroup(c_Type x, Rank l)
 
 cdef extern from "constants.h":
     void initConstants()
@@ -155,18 +148,18 @@ cdef extern from "constants.h":
 ###############################
 #    Finite Coxeter groups    #
 ###############################
-cdef extern from "fcoxgroup.h":
+cdef extern from "fcoxgroup.h" namespace "fcoxgroup":
     ctypedef struct c_FiniteCoxGroup "fcoxgroup::FiniteCoxGroup":
         void fullContext()
         bint isFullContext()
         Length maxLength()
         c_CoxWord longest_coxword()
 
-    bint isFiniteType "fcoxgroup::isFiniteType"(c_CoxGroup *W)
+    bint isFiniteType(c_CoxGroup *W)
 
 
 ######################
 #    Sage specific   #
 ######################
-cdef extern from "sage.h":
-    void interval "sage::interval"(c_List_CoxWord, c_CoxGroup W, c_CoxWord g, c_CoxWord h)
+cdef extern from "sage.h" namespace "sage":
+    void interval(c_List_CoxWord& l, c_CoxGroup& W, c_CoxWord& g, c_CoxWord& h)

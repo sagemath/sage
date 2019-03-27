@@ -13,6 +13,7 @@
 #    they won't be available in child programs.
 #  - This script has a version number such that a newer version of
 #    sage-env can be sourced when upgrading.  See below.
+#  - It uses bash features, so it cannot be used with other shells.
 #
 #  If you want to set all environment variables for your shell like
 #  they are during the build of Sage packages, type
@@ -146,17 +147,6 @@ if [ "$SAGE_ROOT" != "$NEW_SAGE_ROOT" -a -n "$SAGE_ROOT" ]; then
     echo >&2 "New SAGE_ROOT=$NEW_SAGE_ROOT"
 fi
 
-# Display the Sage startup banner, used in src/bin/sage
-sage_banner() {
-    if [ "$SAGE_BANNER" = "bare" ]; then
-        cat "$SAGE_ROOT/VERSION.txt"
-    elif [ "$SAGE_BANNER" != "no" ]; then
-        # This file sage-banner is not yet available during the build
-        # of Sage, so we ignore errors from cat.
-        cat "$SAGE_LOCAL/bin/sage-banner" 2>/dev/null
-    fi
-}
-
 
 # Don't execute the commands more than once for the same version of
 # sage-env.  Check this after checking the validity of SAGE_ROOT, but
@@ -186,27 +176,70 @@ export SAGE_ENV_SOURCED=$SAGE_ENV_VERSION
 export SAGE_ROOT="$NEW_SAGE_ROOT"
 
 
-# sage-env must know where the Sage's script files are
+# sage-env must know where the Sage's script files are.
+# Note that SAGE_SCRIPTS_DIR is only used here, so it does not need to
+# be exported.
 if [ -z "$SAGE_SCRIPTS_DIR" ]; then
-    if [ -f "`dirname $0`/sage-env" ]; then
-        SAGE_SCRIPTS_DIR=`dirname $0`
-    elif [ -f "$SAGE_ROOT/local/bin/sage-env" ]; then
-        SAGE_SCRIPTS_DIR="$SAGE_ROOT/local/bin"
-    elif [ -f "$SAGE_ROOT/src/bin/sage-env" ]; then
+    if [ -n "$SAGE_LOCAL" ] && [ -f "$SAGE_LOCAL/bin/sage-env-config" ]; then
+        SAGE_SCRIPTS_DIR="$SAGE_LOCAL/bin"
+    elif [ -f "$SAGE_ROOT/src/bin/sage-env-config" ]; then
         SAGE_SCRIPTS_DIR="$SAGE_ROOT/src/bin"
     else
-        echo >&2 "Error: You must set the SAGE_SCRIPTS_DIR environment variable to run this"
+        echo >&2 "Error: You must set either the SAGE_LOCAL or SAGE_SCRIPTS_DIR environment variable to run this"
         return 1
     fi
-elif [ ! -f "$SAGE_SCRIPTS_DIR/sage-env" ]; then
+elif [ ! -f "$SAGE_SCRIPTS_DIR/sage-env-config" ]; then
     echo >&2 "Error: SAGE_SCRIPTS_DIR is set to a bad value:"
     echo >&2 "SAGE_SCRIPTS_DIR=$SAGE_SCRIPTS_DIR"
     echo >&2 "You must correct it or erase it and rerun this script"
     return 1
 fi
 
-# Make SAGE_SCRIPTS_DIR absolute
-export SAGE_SCRIPTS_DIR="`cd "$SAGE_SCRIPTS_DIR" && pwd -P`"
+# Set environment variables (like SAGE_LOCAL) depending on ./configure
+. "$SAGE_SCRIPTS_DIR/sage-env-config"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: failed to source $SAGE_SCRIPTS_DIR/sage-env-config"
+    return 1
+fi
+
+# The compilers are set in order of priority by
+# 1) environment variables
+# 2) compiler installed by sage
+# 3) compiler set at configuration time 
+if [ -z "$CC" ]; then
+    if [ -x "$SAGE_LOCAL/bin/gcc" ]; then
+        CC=gcc
+    else
+        CC="$CONFIGURED_CC"
+    fi
+    export CC
+fi
+if [ -z "$CXX" ]; then
+    if [ -x "$SAGE_LOCAL/bin/g++" ]; then
+        CXX=g++
+    else
+        CXX="$CONFIGURED_CXX"
+    fi
+    export CXX
+fi
+if [ -z "$FC" ]; then
+    if [ -x "$SAGE_LOCAL/bin/gfortran" ]; then
+        FC=gfortran
+    else
+        FC="$CONFIGURED_FC"
+    fi
+    export FC
+fi
+if [ "$UNAME" = "Darwin" ]; then
+    OBJC="$CONFIGURED_OBJC"
+    OBJCXX="$CONFIGURED_OBJCXX"
+    export OBJC OBJCXX
+fi
+
+# Set other Fortran-related compiler variables
+export F77="$FC"
+export F90="$FC"   # Needed for SciPy
+export F95="$FC"
 
 # Call with: contains_spaces X${VAR}X
 # i.e., WITHOUT quotes but some character(s) around the environment variable to test.
@@ -245,7 +278,6 @@ if [ 1 = 2 ]; then
     echo "MAKE        The make program (e.g. make, /usr/bin/make or /usr/local/bin/gmake)"
     echo "MAKEFLAGS   Flag(s) to make (e.g. -j4)."
     echo "RANLIB      Archiver ranlib (e.g. ranlib, /usr/ccs/bin/ranlib etc)"
-    echo "SAGE64      Set to \"yes\" to build a 64-bit binary (Solaris SPARC or Solaris x86 only)"
     echo "SHAREDFLAGS Flag(s) necessary for building a shared library (e.g. -fPIC or -xcode=pic32)"
     echo "We attempt to set this to sensible values, but check below to"
     echo "ensure they are OK. If you wish to override any then please use:"
@@ -256,21 +288,22 @@ if [ 1 = 2 ]; then
     echo "if you use sh, bash or a similar shell"
 fi
 
-# Setting Sage-related location environment variables.
-export SAGE_LOCAL="$SAGE_ROOT/local"
+# Setting Sage-related location environment variables,
+# depending on SAGE_ROOT and SAGE_LOCAL which are already defined.
 export SAGE_ETC="$SAGE_LOCAL/etc"
 export SAGE_SHARE="$SAGE_LOCAL/share"
 export SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
 export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
+export SAGE_SPKG_SCRIPTS="$SAGE_LOCAL/var/lib/sage/scripts"
 export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
 export SAGE_SRC="$SAGE_ROOT/src"
 export SAGE_DOC_SRC="$SAGE_SRC/doc"
 export SAGE_DOC="$SAGE_SHARE/doc/sage"
 
-if [ -z "${SAGE_ORIG_PATH_SET}" ]; then 
-    SAGE_ORIG_PATH=$PATH && export SAGE_ORIG_PATH 
-    SAGE_ORIG_PATH_SET=True && export SAGE_ORIG_PATH_SET 
-fi 
+if [ -z "${SAGE_ORIG_PATH_SET}" ]; then
+    SAGE_ORIG_PATH=$PATH && export SAGE_ORIG_PATH
+    SAGE_ORIG_PATH_SET=True && export SAGE_ORIG_PATH_SET
+fi
 export PATH="$SAGE_ROOT/build/bin:$SAGE_SRC/bin:$SAGE_LOCAL/bin:$PATH"
 
 # We offer a toolchain option, so if $SAGE_LOCAL/toolchain/toolchain-env exists source it.
@@ -300,6 +333,12 @@ if [ "$UNAME" = "Darwin" ]; then
         MACOSX_DEPLOYMENT_TARGET=10.$[$MACOSX_VERSION-4]
     fi
     export MACOSX_DEPLOYMENT_TARGET MACOSX_VERSION
+
+    # Work around problems on recent OS X crashing with an error message
+    # "... may have been in progress in another thread when fork() was called"
+    # when objective-C functions are called after fork(). See Trac #25921.
+    # Most likely, these errors are false positives, so we disable them:
+    export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 fi
 
 # Compile-time path for libraries.  This is the equivalent of
@@ -333,8 +372,8 @@ if [ -z "$SAGE_REPO_ANONYMOUS" ]; then
     export SAGE_REPO_ANONYMOUS
 fi
 if [ -z "$SAGE_REPO_AUTHENTICATED" ]; then
-	SAGE_REPO_AUTHENTICATED="ssh://git@trac.sagemath.org:2222/sage.git"
-	export SAGE_REPO_AUTHENTICATED
+        SAGE_REPO_AUTHENTICATED="ssh://git@trac.sagemath.org:2222/sage.git"
+        export SAGE_REPO_AUTHENTICATED
 fi
 if [ -z "$SAGE_DISTFILES" ]; then
     SAGE_DISTFILES="$SAGE_ROOT/upstream"
@@ -370,11 +409,6 @@ if [ "$SAGE_STARTUP_FILE" = "" ]; then
     export SAGE_STARTUP_FILE
 fi
 
-IPYTHONDIR=`find "$SAGE_SPKG_INST" -name "ipython*"`
-if [ -n "$IPYTHONDIR" ]; then
-    export IPYTHONDIR="$DOT_SAGE/${IPYTHONDIR##*/}"
-fi
-
 if [ "$PYTHON_EGG_CACHE" = "" ]; then
     PYTHON_EGG_CACHE="$DOT_SAGE/.python-eggs"
     export PYTHON_EGG_CACHE
@@ -393,30 +427,39 @@ if [ "$PYTHONUSERBASE" = "" ]; then
     export PYTHONUSERBASE
 fi
 
-if [ -d "$SAGE_LOCAL/lib/python" ]; then
-    PYTHONPATH="$SAGE_LOCAL/lib/python:$SAGE_LOCAL/lib/python/site_packages"
-    if [ -n "$SAGE_PATH" ]; then
-        PYTHONPATH="$SAGE_PATH:$PYTHONPATH"
-    fi
-    PYTHONHOME="$SAGE_LOCAL"
-    export PYTHONPATH
-    export PYTHONHOME
+if [ -n "$PYTHONHOME" ]; then
+    >&2 echo "Warning: PYTHONHOME must not be set when running Sage, clearing env..."
+    unset PYTHONHOME
 fi
 
 LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
 export LDFLAGS
 
-# Use a matplotlib config directory specific to Sage and specific to
-# the version number of matplotlib, by setting the environment
-# variable MPLCONFIGDIR. Note that we can't find the version number by
-# importing matplotlib, because that could create matplotlib's standard
-# config directory. So we use pkg_resources.
-"$SAGE_ROOT/local/bin/python" -c 'import pkg_resources; pkg_resources.get_distribution("matplotlib").version' 2>/dev/null
-if [ $? -eq 0 ]; then
-    MPLVERSION=`"$SAGE_ROOT/local/bin/python" -c 'import pkg_resources; print (pkg_resources.get_distribution("matplotlib").version)'`
-    MPLCONFIGDIR="$DOT_SAGE/matplotlib-$MPLVERSION"
-    export MPLCONFIGDIR
-    # The directory is created when Sage starts (see sage.misc.misc).
+if [ -z "$IPYTHONDIR" ]; then
+    # We hardcode a version number in the directory name. The idea is
+    # that we keep using the same version number as long as that is
+    # possible. Only when some future IPython version really requires
+    # a new structure for the $IPYTHONDIR should this version number be
+    # changed to the new IPython version.
+    export IPYTHONDIR="$DOT_SAGE/ipython-5.0.0"
+fi
+
+if [ -z "$JUPYTER_CONFIG_DIR" ]; then
+    # We hardcode a version number in the directory name. The idea is
+    # that we keep using the same version number as long as that is
+    # possible. Only when some future Jupyter version really requires
+    # a new structure for the $JUPYTER_CONFIG_DIR should this version
+    # number be changed to the new jupyter_core version.
+    export JUPYTER_CONFIG_DIR="$DOT_SAGE/jupyter-4.1"
+fi
+
+if [ -z "$MPLCONFIGDIR" ]; then
+    # We hardcode a version number in the directory name. The idea is
+    # that we keep using the same version number as long as that is
+    # possible. Only when some future Matplotlib version really requires
+    # a new structure for the $MPLCONFIGDIR should this version
+    # number be changed to the new matplotlib version.
+    export MPLCONFIGDIR="$DOT_SAGE/matplotlib-1.5.1"
 fi
 
 # Make sure that a system-wide R installation does not interfere
@@ -428,41 +471,39 @@ if [ -d "$SAGE_LOCAL/lib/R/share" ] ; then
    R_MAKEVARS_SITE="$SAGE_LOCAL/lib/R/share/Makevars.site" && export R_MAKEVARS_SITE
    if ! [ -f "$R_MAKEVARS_SITE" ] ; then
        if ! [ -a "$R_MAKEVARS_SITE" ] ; then
-	   echo "## Empty site-wide Makevars file for Sage's R" > "$R_MAKEVARS_SITE"
+           echo "## Empty site-wide Makevars file for Sage's R" > "$R_MAKEVARS_SITE"
        else
-	   >&2 echo "Warning: $R_MAKEVARS_SITE exists and is not a file : trouble ahead..."
+           >&2 echo "Warning: $R_MAKEVARS_SITE exists and is not a file : trouble ahead..."
        fi
    fi
 fi
 if [ -d "$DOT_SAGE" ] ; then
     if ! [ -d "$DOT_SAGE/R" ] ; then
-	if ! [ -a  "$DOT_SAGE/R" ] ; then
-	    mkdir -p "$DOT_SAGE/R"
-	else
-	    >&2 echo "Warning: $DOT_SAGE/R exists and is not a directory : trouble ahead..."
-	fi
+        if ! [ -a  "$DOT_SAGE/R" ] ; then
+            mkdir -p "$DOT_SAGE/R"
+        else
+            >&2 echo "Warning: $DOT_SAGE/R exists and is not a directory : trouble ahead..."
+        fi
     fi
     R_MAKEVARS_USER="$DOT_SAGE/R/Makevars.user" && export R_MAKEVARS_USER
     if ! [ -f "$R_MAKEVARS_USER" ] ; then
-	if ! [ -a "$R_MAKEVARS_USER" ] ; then
-	    echo "## Empty user-specific Makevars file for Sage's R" > "$R_MAKEVARS_USER"
-	else
-	    >&2 echo "Warning: $R_MAKEVARS_USER exists and is not a file : trouble ahead..."
-	fi
+        if ! [ -a "$R_MAKEVARS_USER" ] ; then
+            echo "## Empty user-specific Makevars file for Sage's R" > "$R_MAKEVARS_USER"
+        else
+            >&2 echo "Warning: $R_MAKEVARS_USER exists and is not a file : trouble ahead..."
+        fi
     fi
 fi
-MAXIMA_PREFIX="$SAGE_ROOT/local" && export MAXIMA_PREFIX
+
+export MAXIMA_PREFIX="$SAGE_LOCAL"
+export MAXIMA_USERDIR="$DOT_SAGE/maxima"
 
 PERL5LIB="$SAGE_LOCAL/lib/perl5:$PERL5LIB" && export PERL5LIB
 
-############ architecture flags
-
-# Support flags to change the build architecture.  Currently, this is
-# only SAGE64.
-# Whenever a flag like SAGE64 has been set once, it needs to be
-# restored in every run of sage, as mixing 64-bit and 32-bit code is
-# bad idea at best.  This script takes care of that.
-. "$SAGE_SCRIPTS_DIR/sage-arch-env"
+# Allow SAGE_BROWSER to override BROWSER (Trac #22449)
+if [ -n "$SAGE_BROWSER" ]; then
+    export BROWSER="$SAGE_BROWSER"
+fi
 
 ############ compilation flags
 
@@ -470,65 +511,6 @@ PERL5LIB="$SAGE_LOCAL/lib/perl5:$PERL5LIB" && export PERL5LIB
 # This could be used in code to make special changes only when
 # code is being built as part of Sage.
 export __sage__=""
-
-# Set the C and C++ compilers
-if [ -z "$CC" ]; then
-    # On OS X 10.7 (Lion) or later when building GCC, use clang as
-    # default C compiler as some older versions of XCode 4 ship broken
-    # versions of GCC which fail to bootstrap GCC-4.6.3.
-    # See http://trac.sagemath.org/sage_trac/ticket/12820
-    if [ "$SAGE_BUILD_TOOLCHAIN" = yes ] && [ "$UNAME" = "Darwin" ] && [ "$MACOSX_VERSION" -ge 11 ]; then
-        CC=`which clang 2>/dev/null`
-        CXX=`which clang++ 2>/dev/null`
-    fi
-fi
-if [ -z "$CC" ]; then
-    CC=gcc
-fi
-if [ -z "$CXX" ]; then
-    CXX=g++
-fi
-if [ -z "$FC" ]; then
-    if command -v gfortran >/dev/null 2>/dev/null; then
-        FC=gfortran
-    elif command -v g95 >/dev/null 2>/dev/null; then
-        FC=g95
-    elif command -v g77 >/dev/null 2>/dev/null; then
-        FC=g77
-    fi
-fi
-
-# An Objective-C compiler is needed for R on Darwin.
-# On Darwin, /usr/bin/cc supports Objective-C.  The gcc shipped with
-# Sage doesn't.
-if [ "$UNAME" = "Darwin" ]; then
-    if [ -z "$OBJC" -a -x "/usr/bin/cc" ]; then
-        export OBJC=/usr/bin/cc
-    fi
-    if [ -z "$OBJCXX" -a -x "/usr/bin/c++" ]; then
-        export OBJCXX=/usr/bin/c++
-    fi
-fi
-
-# Override CC, CPP, CXX, FC if the GCC spkg was installed.
-if [ -x "$SAGE_LOCAL/bin/gcc" ]; then
-    CC=gcc
-fi
-if [ -x "$SAGE_LOCAL/bin/cpp" ]; then
-    CPP=cpp
-fi
-if [ -x "$SAGE_LOCAL/bin/g++" ]; then
-    CXX=g++
-fi
-if [ -x "$SAGE_LOCAL/bin/gfortran" ]; then
-    FC=gfortran
-fi
-export CC CPP CXX FC
-
-# Set other Fortran-related compiler variables
-export F77="$FC"
-export F90="$FC"   # Needed for SciPy
-export F95="$FC"
 
 # Setup env varariables if ccache is installed
 if [ -d "$SAGE_LOCAL/libexec/ccache" ]; then
@@ -583,6 +565,11 @@ if [ -n "$CFLAGS" -a -z "$CXXFLAGS" ]; then
     export CXXFLAGS="$CFLAGS"
 fi
 
+if [ "$UNAME" = "Darwin" ]; then
+    # Trac #21175 - export empty ARCHFLAGS for the benefit of Perl modules
+    ARCHFLAGS="" && export ARCHFLAGS
+fi
+
 if [ "$CP" = "" ]; then
     CP="cp"  && export CP
 fi
@@ -634,6 +621,16 @@ SAGE_NUM_THREADS_PARALLEL=${sage_num_threads_array[1]}
 export SAGE_NUM_THREADS
 export SAGE_NUM_THREADS_PARALLEL
 
+# Multithreading in OpenBLAS does not seem to play well with Sage's attempts to
+# spawn new processes, see #26118. Apparently, OpenBLAS sets the thread
+# affinity and, e.g., parallel doctest jobs, remain on the same core.
+# Disabling that thread-affinity with OPENBLAS_MAIN_FREE=1 leads to hangs in
+# some computations.
+# So we disable OpenBLAS' threading completely; we might loose some performance
+# here but strangely the opposite seems to be the case. Note that callers such
+# as LinBox use a single-threaded OpenBLAS anyway.
+export OPENBLAS_NUM_THREADS=1
+
 if [ "$MAKE" = "" ]; then
     MAKE="make"
 fi
@@ -644,6 +641,8 @@ if [ "${MAKEFLAGS-__unset__}" != "__unset__" ]; then
     MAKE=`echo "$MAKE" | sed 's/ .*//'`
 fi
 export MAKE
+
+export PIP_FORMAT="columns"
 
 # When building documentation, use MathJax by default. To turn it off,
 # set SAGE_DOC_MATHJAX to be "no" or "False".

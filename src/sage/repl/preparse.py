@@ -199,7 +199,9 @@ Behind the scenes what happens is the following::
     sage: preparse('v = [ 2r * i for i in range(10000r)]')
     'v = [ 2 * i for i in range(10000)]'
 
-.. warning: The result of the above two expressions is different.  The
+.. WARNING::
+
+   The results of the above two expressions are different.  The
    first one computes a list of Sage integers, whereas the second
    creates a list of Python integers.  Python integers are typically
    much more efficient than Sage integers when they are very small;
@@ -421,27 +423,34 @@ def strip_string_literals(code, state=None):
     return "".join(new_code), literals, (in_quote, raw)
 
 
-def containing_block(code, ix, delimiters=['()','[]','{}'], require_delim=True):
+def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True):
     """
-    Returns the smallest range (start,end) such that code[start,end]
-    is delimited by balanced delimiters (e.g., parentheses, brackets,
-    and braces).
+    Find the code block given by balanced delimiters that contains the position ``idx``.
 
     INPUT:
 
     - ``code`` - a string
 
-    - ``ix`` - an integer; a starting position
+    - ``idx`` - an integer; a starting position
 
     - ``delimiters`` - a list of strings (default: ['()', '[]',
-      '{}']); the delimiters to balance
+      '{}']); the delimiters to balance. A delimiter must be a single
+      character and no character can at the same time be opening and
+      closing delimiter.
 
     - ``require_delim`` - a boolean (default: True); whether to raise
-      a SyntaxError if delimiters are unbalanced
+      a SyntaxError if delimiters are present. If the delimiters are
+      unbalanced, an error will be raised in any case.
 
     OUTPUT:
 
-    - a 2-tuple of integers
+    - a 2-tuple ``(a,b)`` of integers, such that ``code[a:b]`` is
+      delimited by balanced delimiters, ``a<=idx<b``, and ``a``
+      is maximal and ``b`` is minimal with that property. If that
+      does not exist, a ``SyntaxError`` is raised.
+
+    - If ``require_delim`` is false and ``a,b`` as above can not be
+      found, then ``0, len(code)`` is returned.
 
     EXAMPLES::
 
@@ -462,41 +471,97 @@ def containing_block(code, ix, delimiters=['()','[]','{}'], require_delim=True):
         '(L[5]+1)'
         sage: start, end = containing_block(s, 10); s[start:end]
         '(next_prime(L[5]+1))'
+
+    TESTS::
+
+        sage: containing_block('((a{))',0)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('((a{))',1)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('((a{))',2)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('((a{))',3)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('((a{))',4)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('((a{))',5)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('(()()',1)
+        (1, 3)
+        sage: containing_block('(()()',3)
+        (3, 5)
+        sage: containing_block('(()()',4)
+        (3, 5)
+        sage: containing_block('(()()',0)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: Unbalanced delimiters
+        sage: containing_block('(()()',0, require_delim=False)
+        (0, 5)
+        sage: containing_block('((})()',1, require_delim=False)
+        (0, 6)
+        sage: containing_block('abc',1, require_delim=False)
+        (0, 3)
+
     """
     openings = "".join([d[0] for d in delimiters])
     closings = "".join([d[-1] for d in delimiters])
     levels = [0] * len(openings)
     p = 0
-    start = ix
+    start = idx
     while start >= 0:
-        start -= 1
-        if start == -1:
-            if require_delim:
-                raise SyntaxError("Unbalanced or missing ()'s")
-            else:
-                break
         if code[start] in openings:
             p = openings.index(code[start])
             levels[p] -= 1
             if levels[p] == -1:
                 break
-        elif code[start] in closings:
+        elif code[start] in closings and start < idx:
             p = closings.index(code[start])
             levels[p] += 1
+        start -= 1
     if start == -1:
-        return 0, len(code)
-    end = ix
-    level = 0
+        if require_delim:
+            raise SyntaxError("Unbalanced or missing delimiters")
+        else:
+            return 0, len(code)
+    if levels.count(0) != len(levels)-1:
+        if require_delim:
+            raise SyntaxError("Unbalanced delimiters")
+        else:
+            return 0, len(code)
+    p0 = p
+    # We now have levels[p0]==-1. We go to the right hand side
+    # till we find a closing delimiter of type p0 that makes
+    # levels[p0]==0.
+    end = idx
     while end < len(code):
-        end += 1
-        if end == len(code):
-            raise SyntaxError("Unbalanced or missing ()'s")
-        if code[end] == openings[p]:
-            level += 1
-        elif code[end] == closings[p]:
-            level -= 1
-            if level == -1:
+        if code[end] in closings:
+            p = closings.index(code[end])
+            levels[p] += 1
+            if p==p0 and levels[p] == 0:
                 break
+        elif code[end] in openings and end > idx:
+            p = openings.index(code[end])
+            levels[p] -= 1
+        end += 1
+    if levels.count(0) != len(levels):
+        # This also occurs when end==len(code) without finding a closing delimiter
+        if require_delim:
+            raise SyntaxError("Unbalanced delimiters")
+        else:
+            return 0, len(code)
     return start, end+1
 
 
@@ -694,9 +759,14 @@ def preparse_numeric_literals(code, extract=False):
         postfix = m.groups()[-1].upper()
 
         if 'R' in postfix:
+            if not six.PY2:
+                postfix = postfix.replace('L', '')
             num_name = num_make = num + postfix.replace('R', '')
         elif 'L' in postfix:
-            continue
+            if six.PY2:
+                continue
+            else:
+                num_name = num_make = num + postfix.replace('L', '')
         else:
 
             # The Sage preparser does extra things with numbers, which we need to handle here.
@@ -831,7 +901,7 @@ def preparse_calculus(code):
 
     TESTS:
 
-    The arguments in the definition must be symbolic variables #10747::
+    The arguments in the definition must be symbolic variables (:trac:`10747`)::
 
         sage: preparse_calculus(";f(_sage_const_)=x;")
         Traceback (most recent call last):
@@ -1092,9 +1162,9 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         sage: 9^^1
         8
 
-        sage: preparse("A \ B")
+        sage: preparse("A \\ B")
         'A  * BackslashOperator() * B'
-        sage: preparse("A^2 \ B + C")
+        sage: preparse("A^2 \\ B + C")
         'A**Integer(2)  * BackslashOperator() * B + C'
         sage: preparse("a \\ b \\") # There is really only one backslash here, it's just being escaped.
         'a  * BackslashOperator() * b \\'
@@ -1276,7 +1346,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
     return '\n'.join(F)
 
 def implicit_mul(code, level=5):
-    """
+    r"""
     Inserts \*'s to make implicit multiplication explicit.
 
     INPUT:
@@ -1455,19 +1525,17 @@ def handle_encoding_declaration(contents, out):
         '#!/usr/local/bin/python\nimport os, sys'
 
 
-    NOTES:
+    .. NOTE::
 
-    - PEP 263: http://www.python.org/dev/peps/pep-0263/
+        - :pep:`263` says that Python will interpret a UTF-8
+          byte order mark as a declaration of UTF-8 encoding, but I don't
+          think we do that; this function only sees a Python string so it
+          can't account for a BOM.
 
-    - PEP 263 says that Python will interpret a UTF-8 byte order mark
-      as a declaration of UTF-8 encoding, but I don't think we do
-      that; this function only sees a Python string so it can't
-      account for a BOM.
+        - We default to UTF-8 encoding even though PEP 263 says that
+          Python files should default to ASCII.
 
-    - We default to UTF-8 encoding even though PEP 263 says that
-      Python files should default to ASCII.
-
-    - Also see http://docs.python.org/ref/encodings.html.
+        - Also see https://docs.python.org/ref/encodings.html.
 
     AUTHORS:
 
@@ -1492,7 +1560,8 @@ def preparse_file_named_to_stream(name, out):
     stream \code{out}.
     """
     name = os.path.abspath(name)
-    contents = open(name).read()
+    with open(name) as f:
+        contents = f.read()
     contents = handle_encoding_declaration(contents, out)
     parsed = preparse_file(contents)
     out.write('#'*70+'\n')
@@ -1507,7 +1576,6 @@ def preparse_file_named(name):
     """
     from sage.misc.temporary_file import tmp_filename
     tmpfilename = tmp_filename(os.path.basename(name)) + '.py'
-    out = open(tmpfilename, 'w')
-    preparse_file_named_to_stream(name, out)
-    out.close()
+    with open(tmpfilename, 'w') as out:
+        preparse_file_named_to_stream(name, out)
     return tmpfilename

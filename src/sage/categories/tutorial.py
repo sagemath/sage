@@ -19,7 +19,7 @@ Or by browsing the source code of
 :class:`sage.categories.examples.finite_semigroups.LeftRegularBand`.
 
 Copy-paste this code into, say, a cell of the notebook, and replace
-every occurence of ``FiniteSemigroups().example(...)`` in the
+every occurrence of ``FiniteSemigroups().example(...)`` in the
 documentation by ``LeftRegularBand``. This will be equivalent to::
 
     sage: from sage.categories.examples.finite_semigroups import LeftRegularBand

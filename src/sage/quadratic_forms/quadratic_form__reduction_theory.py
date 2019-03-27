@@ -35,7 +35,7 @@ def reduced_binary_form1(self):
     Q = deepcopy(self)
     M = matrix(R, 2, 2, [1,0,0,1])
 
-    while (interior_reduced_flag == False):
+    while not interior_reduced_flag:
         interior_reduced_flag = True
 
         ## Arrange for a <= c
@@ -104,7 +104,7 @@ def reduced_binary_form(self):
         M[i,i] = 1
 
 
-    while (interior_reduced_flag == False):
+    while not interior_reduced_flag:
         interior_reduced_flag = True
 
         #print Q
@@ -148,7 +148,7 @@ def minkowski_reduction(self):
     Find a Minkowski-reduced form equivalent to the given one.
     This means that
 
-    .. math::
+    .. MATH::
 
             Q(v_k) <= Q(s_1 * v_1 + ... + s_n * v_n)
 
@@ -164,7 +164,7 @@ def minkowski_reduction(self):
 
     EXAMPLES::
 
-        sage: Q = QuadraticForm(ZZ,4,[30,17,11,12,29,25,62,64,25,110])
+        sage: Q = QuadraticForm(ZZ,4,[30, 17, 11, 12, 29, 25, 62, 64, 25, 110])
         sage: Q
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 30 17 11 12 ]
@@ -184,25 +184,67 @@ def minkowski_reduction(self):
         [ 0  0  1  0]
         [ 0  0  0  1]
         )
+
+    ::
+
+        sage: Q=QuadraticForm(ZZ,4,[1, -2, 0, 0, 2, 0, 0, 2, 0, 2])
+        sage: Q
+        Quadratic form in 4 variables over Integer Ring with coefficients:
+        [ 1 -2 0 0 ]
+        [ * 2 0 0 ]
+        [ * * 2 0 ]
+        [ * * * 2 ]
+        sage: Q.minkowski_reduction()
+        (
+        Quadratic form in 4 variables over Integer Ring with coefficients:
+        [ 1 0 0 0 ]
+        [ * 1 0 0 ]
+        [ * * 2 0 ]
+        [ * * * 2 ]                                                        ,
+        <BLANKLINE>
+        [1 1 0 0]
+        [0 1 0 0]
+        [0 0 1 0]
+        [0 0 0 1]
+        )
+
+    ::
+
+        sage: Q=QuadraticForm(ZZ,5,[2,2,0,0,0,2,2,0,0,2,2,0,2,2,2])
+        sage: Q.Gram_matrix()
+        [2 1 0 0 0]
+        [1 2 1 0 0]
+        [0 1 2 1 0]
+        [0 0 1 2 1]
+        [0 0 0 1 2]
+        sage: Q.minkowski_reduction()
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: This algorithm is only for dimensions less than 5
     """
+    from sage.quadratic_forms.quadratic_form import QuadraticForm
+    from sage.quadratic_forms.quadratic_form import matrix
+    if not self.is_positive_definite():
+        raise TypeError("Minkowksi reduction only works for positive definite forms")
+    if self.dim() > 4:
+        raise NotImplementedError("This algorithm is only for dimensions less than 5")
+
     R = self.base_ring()
     n = self.dim()
-    interior_reduced_flag = False
     Q = deepcopy(self)
     M = matrix(R, n, n)
     for i in range(n):
-        M[i,i] = 1
-
+        M[i, i] = 1
 
     ## Begin the reduction
     done_flag = False
-    while done_flag == False:
+    while not done_flag:
 
         ## Loop through possible shorted vectors until
         done_flag = True
         #print " j_range = ", range(n-1, -1, -1)
         for j in range(n-1, -1, -1):
-            for a_first in mrange([2  for i in range(j)]):
+            for a_first in mrange([3  for i in range(j)]):
                 y = [x-1 for x in a_first] + [1] + [0 for k in range(n-1-j)]
                 e_j = [0  for k in range(n)]
                 e_j[j] = 1
@@ -221,7 +263,7 @@ def minkowski_reduction(self):
 
                     ## Perform the reduction and restart the loop
                     #print "Q_before = ", Q
-                    Q = Q(M_new)
+                    Q = QuadraticForm(M_new.transpose()*Q.matrix()*M_new)
                     M = M * M_new
                     done_flag = False
 
@@ -300,7 +342,7 @@ def minkowski_reduction_for_4vars__SP(self):
 
     ## Step 1: Begin the reduction
     done_flag = False
-    while done_flag == False:
+    while not done_flag:
 
         ## Loop through possible shorter vectors
         done_flag = True

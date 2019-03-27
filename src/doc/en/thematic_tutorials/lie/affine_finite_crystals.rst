@@ -1,3 +1,5 @@
+.. _AffineFinite:
+
 ======================
 Affine Finite Crystals
 ======================
@@ -494,7 +496,7 @@ classical decomposition::
     sage: K.cardinality()
     249
     sage: L = [x for x in K if x.is_highest_weight([1,2,3,4,5,6,7,8])]
-    sage: map(lambda x: x.weight(), L)
+    sage: [x.weight() for x in L]
     [-2*Lambda[0] + Lambda[8], 0]
 
 

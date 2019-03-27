@@ -367,7 +367,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
         from .vector_space_morphism import is_VectorSpaceMorphism, VectorSpaceMorphism
         D = self.domain()
         C = self.codomain()
-        from sage.matrix.matrix import is_Matrix
+        from sage.structure.element import is_Matrix
         if is_Matrix(A):
             pass
         elif is_VectorSpaceMorphism(A):
@@ -402,7 +402,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
         r"""
         Text representation of a space of vector space morphisms.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: H = Hom(QQ^2, QQ^3)
             sage: H._repr_().split(' ')

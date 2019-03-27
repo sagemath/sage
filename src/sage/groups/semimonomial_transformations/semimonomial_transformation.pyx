@@ -19,7 +19,7 @@ with
 
 is defined by
 
-.. math::
+.. MATH::
 
     (\phi, \pi, \alpha)(\psi, \sigma, \beta) =
     (\phi \cdot \psi^{\pi, \alpha}, \pi\sigma, \alpha \circ \beta)
@@ -52,6 +52,7 @@ TESTS::
 
     sage: TestSuite(G[0]).run()
 """
+from cpython.object cimport PyObject_RichCompare
 
 
 def _is_id(f, R):
@@ -186,7 +187,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
         
         is defined by:
         
-        .. math::
+        .. MATH::
 
             (\phi, \pi, \alpha)(\psi, \sigma, \beta) =
             (\phi \cdot \psi^{\pi, \alpha}, \pi\sigma, \alpha \circ \beta)
@@ -245,7 +246,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
         return "(%s; %s, %s)"%(self.v, self.perm.cycle_string(),
                                self.get_autom())
 
-    cpdef int _cmp_(left, _right) except -2:
+    cpdef _richcmp_(left, _right, int op):
         """
         Compare group elements ``self`` and ``right``.
 
@@ -259,8 +260,9 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
             True
         """
         cdef SemimonomialTransformation right = <SemimonomialTransformation> _right
-        return cmp([left.v, left.perm, left.get_autom()],
-                   [right.v, right.perm, right.get_autom()])
+        return PyObject_RichCompare([left.v, left.perm, left.get_autom()],
+                                    [right.v, right.perm, right.get_autom()],
+                                    op)
 
     def __reduce__(self):
         """
@@ -327,7 +329,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
 
     def invert_v(self):
         """
-        Elementwisely inverts all entries of ``self`` which
+        Elementwisely invert all entries of ``self`` which
         correspond to the component `{R^{\times}}^n`.
 
         The other components of ``self`` keep unchanged.
@@ -336,7 +338,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
 
             sage: F.<a> = GF(9)
             sage: x = copy(SemimonomialTransformationGroup(F, 4).an_element())
-            sage: x.invert_v();
+            sage: x.invert_v()
             sage: x.get_v() == SemimonomialTransformationGroup(F, 4).an_element().get_v_inverse()
             True
         """

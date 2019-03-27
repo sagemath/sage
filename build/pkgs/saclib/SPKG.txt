@@ -11,7 +11,7 @@ Saclib 2.2
 Copyright (c) 1993, 2008, RISC-Linz (contact wcbrown@usna.edu)
 
 Permission to use, copy, modify, and/or distribute this software, including
-source files, README files, etc., for any purpose with or without fee is 
+source files, README files, etc., for any purpose with or without fee is
 hereby granted, provided that the above copyright notice and this permission
 notice appear in all copies.
 
@@ -25,7 +25,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 == Upstream Contact ==
 
-Website: http://www.usna.edu/CS/qepcadweb/B/QEPCAD.html
+- Website: http://www.usna.edu/CS/qepcadweb/B/QEPCAD.html
+- Alternative location (sometimes more up-to-date):
+  https://www.usna.edu/Users/cs/wcbrown/qepcad/B/QEPCAD.html
 
 == Dependencies ==
 

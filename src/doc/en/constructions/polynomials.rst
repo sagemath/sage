@@ -114,8 +114,7 @@ This example illustrates multivariate polynomial GCD's:
 
 ::
 
-    sage: R = PolynomialRing(RationalField(),3, ['x','y','z'], 'lex')
-    sage: x,y,z = PolynomialRing(RationalField(),3, ['x','y','z'], 'lex').gens()
+    sage: R.<x,y,z> = PolynomialRing(RationalField(), order='lex')
     sage: f = 3*x^2*(x+y)
     sage: g = 9*x*(y^2 - x^2)
     sage: f.gcd(g)

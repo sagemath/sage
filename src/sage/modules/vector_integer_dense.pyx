@@ -52,33 +52,28 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-
-include 'sage/ext/stdsage.pxi'
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
 
 from sage.rings.integer cimport Integer
 
-cimport free_module_element
+cimport sage.modules.free_module_element as free_module_element
 
-from free_module_element import vector
+from .free_module_element import vector
 
 from sage.libs.gmp.mpz cimport *
 
 
 cdef inline _Integer_from_mpz(mpz_t e):
-    cdef Integer z = PY_NEW(Integer)
+    cdef Integer z = Integer.__new__(Integer)
     mpz_set(z.value, e)
     return z
 
 cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
-    cdef _new_c(self):
-        cdef Vector_integer_dense y
-        y = Vector_integer_dense.__new__(Vector_integer_dense)
-        y._init(self._degree, self._parent)
-        return y
-
     cdef bint is_dense_c(self):
         return 1
     cdef bint is_sparse_c(self):
@@ -88,30 +83,45 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         cdef Vector_integer_dense y
         y = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpz_init_set(y._entries[i], self._entries[i])
+        for i in range(self._degree):
+            mpz_set(y._entries[i], self._entries[i])
         return y
 
-    cdef _init(self, Py_ssize_t degree, parent):
+    cdef int _init(self, Py_ssize_t degree, Parent parent) except -1:
+        """
+        Initialize the C data structures in this vector. After calling
+        this, ``self`` is a zero vector of degree ``degree`` with
+        parent ``parent``.
+
+        Only if you call ``__new__`` without a ``parent`` argument, it
+        is needed to call this function manually. The only reason to do
+        that is for efficiency: calling ``__new__`` without any
+        additional arguments besides the type and then calling ``_init``
+        is (slightly) more efficient than calling ``__new__`` with a
+        ``parent`` argument.
+        """
+        # Assign variables only when the array is fully initialized
+        cdef mpz_t* entries = <mpz_t*>check_allocarray(degree, sizeof(mpz_t))
+        cdef Py_ssize_t i
+        sig_on()
+        for i in range(degree):
+            mpz_init(entries[i])
+        sig_off()
+        self._entries = entries
         self._degree = degree
         self._parent = parent
-        self._is_mutable = 1
-        self._entries = <mpz_t *> sig_malloc(sizeof(mpz_t) * degree)
-        if self._entries == NULL:
-            raise MemoryError
 
-    def __cinit__(self, parent=None, x=None, coerce=True,copy=True):
+    def __cinit__(self, parent=None, x=None, coerce=True, copy=True):
         self._entries = NULL
         self._is_mutable = 1
-        if not parent is None:
-            self._init(parent.degree(), parent)
+        if parent is None:
+            self._degree = 0
+            return
+        self._init(parent.degree(), <Parent?>parent)
 
     def __init__(self, parent, x, coerce=True, copy=True):
         cdef Py_ssize_t i
         cdef Integer z
-        # we have to do this to avoid a garbage collection error in dealloc
-        for i from 0 <= i < self._degree:
-            mpz_init(self._entries[i])
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
                 raise TypeError("x must be a list of the right length")
@@ -125,7 +135,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
     def __dealloc__(self):
         cdef Py_ssize_t i
         if self._entries:
-            for i from 0 <= i < self._degree:
+            for i in range(self._degree):
                 mpz_clear(self._entries[i])
             sig_free(self._entries)
 
@@ -173,7 +183,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             sage: v[::-1]
             (3, 2, 1)
         """
-        cdef Integer z = PY_NEW(Integer)
+        cdef Integer z = Integer.__new__(Integer)
         mpz_set(z.value, self._entries[i])
         return z
 
@@ -218,8 +228,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpz_init(z._entries[i])
+        for i in range(self._degree):
             mpz_add(z._entries[i], self._entries[i], r._entries[i])
         return z
 
@@ -229,8 +238,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpz_init(z._entries[i])
+        for i in range(self._degree):
             mpz_sub(z._entries[i], self._entries[i], r._entries[i])
         return z
 
@@ -247,13 +255,12 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             4
         """
         cdef Vector_integer_dense r = right
-        cdef Integer z
-        z = PY_NEW(Integer)
+        cdef Integer z = Integer.__new__(Integer)
         cdef mpz_t t
         mpz_init(t)
         mpz_set_si(z.value, 0)
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
+        for i in range(self._degree):
             mpz_mul(t, self._entries[i], r._entries[i])
             mpz_add(z.value, z.value, t)
         mpz_clear(t)
@@ -271,30 +278,27 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpz_init(z._entries[i])
+        for i in range(self._degree):
             mpz_mul(z._entries[i], self._entries[i], r._entries[i])
         return z
 
-    cpdef _rmul_(self, RingElement left):
+    cpdef _rmul_(self, Element left):
         cdef Vector_integer_dense z
         cdef Integer a
         a = left
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpz_init(z._entries[i])
+        for i in range(self._degree):
             mpz_mul(z._entries[i], self._entries[i], a.value)
         return z
 
-    cpdef _lmul_(self, RingElement right):
+    cpdef _lmul_(self, Element right):
         cdef Vector_integer_dense z
         cdef Integer a
         a = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpz_init(z._entries[i])
+        for i in range(self._degree):
             mpz_mul(z._entries[i], self._entries[i], a.value)
         return z
 
@@ -302,8 +306,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         cdef Vector_integer_dense z
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
-            mpz_init(z._entries[i])
+        for i in range(self._degree):
             mpz_neg(z._entries[i], self._entries[i])
         return z
 
@@ -346,9 +349,10 @@ def unpickle_v0(parent, entries, degree):
     v = Vector_integer_dense.__new__(Vector_integer_dense)
     v._init(degree, parent)
     cdef Integer z
-    for i from 0 <= i < degree:
+    cdef Py_ssize_t i
+    for i in range(degree):
         z = Integer(entries[i])
-        mpz_init_set(v._entries[i], z.value)
+        mpz_set(v._entries[i], z.value)
     return v
 
 def unpickle_v1(parent, entries, degree, is_mutable):
@@ -356,8 +360,9 @@ def unpickle_v1(parent, entries, degree, is_mutable):
     v = Vector_integer_dense.__new__(Vector_integer_dense)
     v._init(degree, parent)
     cdef Integer z
-    for i from 0 <= i < degree:
+    cdef Py_ssize_t i
+    for i in range(degree):
         z = Integer(entries[i])
-        mpz_init_set(v._entries[i], z.value)
+        mpz_set(v._entries[i], z.value)
     v._is_mutable = is_mutable
     return v

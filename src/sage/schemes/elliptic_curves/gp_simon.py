@@ -24,7 +24,7 @@ from sage.interfaces.gp import Gp
 from sage.misc.sage_eval import sage_eval
 from sage.misc.randstate import current_randstate
 from sage.rings.all import QQ, ZZ
-from .constructor import EllipticCurve
+
 
 gp = None
 def init():
@@ -57,7 +57,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         sage: import sage.schemes.elliptic_curves.gp_simon
         sage: E=EllipticCurve('389a1')
         sage: sage.schemes.elliptic_curves.gp_simon.simon_two_descent(E)
-        (2, 2, [(5/4 : 5/8 : 1), (-3/4 : 7/8 : 1)])
+        (2, 2, [(1 : 0 : 1), (-11/9 : 28/27 : 1)])
 
     TESTS::
 
@@ -94,7 +94,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
 
     K = E.base_ring()
     K_orig = K
-    # The following is to correct the bug at \#5204: the gp script
+    # The following is to correct the bug at #5204: the gp script
     # fails when K is a number field whose generator is called 'x'.
     # It also deals with relative number fields.
     E_orig = E
@@ -118,7 +118,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
     # The block below mimicks the defaults in Simon's scripts, and needs to be changed
     # when these are updated.
     if K is QQ:
-        cmd = 'ellrank(%s, %s);' % (list(E.ainvs()), [P._pari_() for P in known_points])
+        cmd = 'ellrank(%s, %s);' % (list(E.ainvs()), [P.__pari__() for P in known_points])
         if lim1 is None:
             lim1 = 5
         if lim3 is None:
@@ -126,7 +126,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         if limtriv is None:
             limtriv = 3
     else:
-        cmd = 'bnfellrank(K, %s, %s);' % (list(E.ainvs()), [P._pari_() for P in known_points])
+        cmd = 'bnfellrank(K, %s, %s);' % (list(E.ainvs()), [P.__pari__() for P in known_points])
         if lim1 is None:
             lim1 = 2
         if lim3 is None:

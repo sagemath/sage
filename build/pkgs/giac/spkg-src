@@ -13,9 +13,8 @@ fi
 # Exit on failure
 set -e
 
-# TODO on the next update: l71 switch from gz to bz2 as wished in #18826
-VERSION="1.2.2"
-VERSIONREV="37"
+VERSION="1.4.9"
+VERSIONREV="45"
 
 # The upstream tarball name is: giac"$SOURCEORIG".tar.gz
 SOURCEORIG=_"$VERSION"-"$VERSIONREV"
@@ -47,7 +46,7 @@ mv giac-"$VERSION" src
 
 # removing french html doc, but keep keywords, and working makefiles.
 # NB: the french html doc is huge and not GPL.
-# it is freely redistibuable only for non commercial purposes.
+# it is freely redistributable only for non commercial purposes.
 cd src/doc/fr
 rm -rf [^Mkx]*
 rm -rf *.pdf *.eps *.pdf *.png *.cxx *.cas *.jpg *.tex *.stamp *html* cas* *.fig fig*
@@ -67,9 +66,7 @@ touch html_vall
 
 # building giac source tarball for the spkg
 cd ../../../
-tar -cz src -f "$OUTPUTFILEBASENAME".tar.gz
-# On the next update don't forget to change to bz2 as wished in #18826
-#tar -cj src -f  -f "$OUTPUTFILEBASENAME".tar.bz2
+tar -cj src -f "$OUTPUTFILEBASENAME".tar.bz2
 
 
 

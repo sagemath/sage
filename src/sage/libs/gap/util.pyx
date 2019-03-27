@@ -2,24 +2,44 @@
 Utility functions for libGAP
 """
 
-###############################################################################
-#       Copyright (C) 2012, Volker Braun <vbraun.name@gmail.com>
+#*****************************************************************************
+#       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
-#   Distributed under the terms of the GNU General Public License (GPL)
-#   as published by the Free Software Foundation; either version 2 of
-#   the License, or (at your option) any later version.
-#                   http://www.gnu.org/licenses/
-###############################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
 from __future__ import print_function, absolute_import
 
-from sage.env import SAGE_LOCAL
-from libc.stdint cimport uintptr_t
+import os
+import signal
+import warnings
+
+from libc.string cimport strcpy, strlen
+
+from cpython.exc cimport PyErr_SetObject, PyErr_Occurred, PyErr_Fetch
+from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+from cpython.ref cimport PyObject
+from cysignals.memory cimport sig_malloc
+from cysignals.pysignals import changesignal
+from cysignals.signals cimport sig_on, sig_off, sig_error
+
+import sage.env
+
+from .gap_includes cimport *
 from .element cimport *
+from sage.cpython.string import FS_ENCODING
+from sage.cpython.string cimport str_to_bytes, char_to_str
+from sage.interfaces.gap_workspace import prepare_workspace_dir
 
 
 ############################################################################
 ### Hooking into the GAP memory management #################################
 ############################################################################
+
 
 cdef class ObjWrapper(object):
     """
@@ -36,7 +56,7 @@ cdef class ObjWrapper(object):
 
     def __richcmp__(ObjWrapper self, ObjWrapper other, int op):
         r"""
-        Comparison wrapped libGAP_Obj.
+        Comparison wrapped Obj.
 
         INPUT:
 
@@ -57,19 +77,19 @@ cdef class ObjWrapper(object):
             True
         """
         cdef result
-        cdef libGAP_Obj self_value = self.value
-        cdef libGAP_Obj other_value = other.value
-        if op==0:      # <   0
+        cdef Obj self_value = self.value
+        cdef Obj other_value = other.value
+        if op == Py_LT:
             return self_value < other_value
-        elif op==1:    # <=  1
+        elif op == Py_LE:
             return self_value <= other_value
-        elif op==2:    # ==  2
+        elif op == Py_EQ:
             return self_value == other_value
-        elif op==4:    # >   4
+        elif op == Py_GT:
             return self_value > other_value
-        elif op==5:    # >=  5
+        elif op == Py_GE:
             return self_value >= other_value
-        elif op==3:    # !=  3
+        elif op == Py_NE:
             return self_value != other_value
         else:
             assert False  # unreachable
@@ -88,7 +108,7 @@ cdef class ObjWrapper(object):
         return <int>(self.value)
 
 
-cdef ObjWrapper wrap_obj(libGAP_Obj obj):
+cdef ObjWrapper wrap_obj(Obj obj):
     """
     Constructor function for :class:`ObjWrapper`
     """
@@ -97,8 +117,14 @@ cdef ObjWrapper wrap_obj(libGAP_Obj obj):
     return result
 
 
-owned_objects_refcount = dict()
+# a dictionary to keep all GAP elements
+# needed for GASMAN callbacks
+#
+cdef dict owned_objects_refcount = dict()
 
+#
+# used in Sage's libgap.Gap.count_GAP_objects
+#
 cpdef get_owned_objects():
     """
     Helper to access the refcount dictionary from Python code
@@ -106,19 +132,20 @@ cpdef get_owned_objects():
     return owned_objects_refcount
 
 
-cdef void reference_obj(libGAP_Obj obj):
+cdef void reference_obj(Obj obj):
     """
     Reference ``obj``
     """
     cdef ObjWrapper wrapped = wrap_obj(obj)
     global owned_objects_refcount
+#    print("reference_obj called "+ crepr(obj) +"\n")
     if wrapped in owned_objects_refcount:
         owned_objects_refcount[wrapped] += 1
     else:
         owned_objects_refcount[wrapped] = 1
 
 
-cdef void dereference_obj(libGAP_Obj obj):
+cdef void dereference_obj(Obj obj):
     """
     Reference ``obj``
     """
@@ -135,7 +162,7 @@ cdef void gasman_callback():
     """
     global owned_objects_refcount
     for obj in owned_objects_refcount:
-        libGAP_MARK_BAG((<ObjWrapper>obj).value)
+        MarkBag((<ObjWrapper>obj).value)
 
 
 
@@ -156,16 +183,67 @@ def gap_root():
         sage: gap_root()   # random output
         '/home/vbraun/opt/sage-5.3.rc0/local/gap/latest'
     """
-    import os.path
-    gapdir = os.path.join(SAGE_LOCAL, 'gap', 'latest')
-    if os.path.exists(gapdir):
-        return gapdir
-    print('The gap-4.5.5.spkg (or later) seems to be not installed!')
+    if os.path.exists(sage.env.GAP_ROOT_DIR):
+        return sage.env.GAP_ROOT_DIR
+
+    # Attempt to figure out the appropriate GAP_ROOT by reading the
+    # local/bin/gap shell script; this is an ugly hack that exists for
+    # historical reasons; the best approach to setting where Sage looks for
+    # the appropriate GAP_ROOT is to set the GAP_ROOT_DIR variable
+    SAGE_LOCAL = sage.env.SAGE_LOCAL
     gap_sh = open(os.path.join(SAGE_LOCAL, 'bin', 'gap')).read().splitlines()
-    gapdir = filter(lambda dir:dir.strip().startswith('GAP_DIR'), gap_sh)[0]
+    gapdir = filter(lambda dir:dir.strip().startswith('GAP_ROOT'), gap_sh)[0]
     gapdir = gapdir.split('"')[1]
     gapdir = gapdir.replace('$SAGE_LOCAL', SAGE_LOCAL)
     return gapdir
+
+
+# To ensure that we call initialize_libgap only once.
+cdef bint _gap_is_initialized = False
+cdef extern char **environ
+
+
+cdef char* _reset_error_output_cmd = """\
+libgap_errout := "";
+MakeReadWriteGlobal("ERROR_OUTPUT");
+ERROR_OUTPUT := OutputTextString(libgap_errout, false);
+MakeReadOnlyGlobal("ERROR_OUTPUT");
+"""
+
+cdef char* _close_error_output_cmd = """\
+CloseStream(ERROR_OUTPUT);
+MakeReadWriteGlobal("ERROR_OUTPUT");
+ERROR_OUTPUT := "*errout*";
+MakeReadOnlyGlobal("ERROR_OUTPUT");
+MakeImmutable(libgap_errout);
+"""
+
+
+cdef char** copy_environ(char** env):
+    """
+    Make a copy of the environment block given by ``env``.
+
+    Returns a pointer to the copy, which is the caller's responsibility to
+    free.
+    """
+
+    cdef char** env_copy
+    cdef int envc = 0;
+    cdef int idx
+    cdef size_t size
+
+    while env[envc]:
+        envc += 1
+
+    env_copy = <char**>sig_malloc((envc + 1) * sizeof(char*))
+
+    for idx in range(envc):
+        size = strlen(env[idx]) + 1
+        env_copy[idx] = <char*>sig_malloc(size)
+        strcpy(env_copy[idx], env[idx])
+
+    env_copy[envc] = NULL
+    return env_copy
 
 
 cdef initialize():
@@ -178,20 +256,21 @@ cdef initialize():
         sage: libgap(123)   # indirect doctest
         123
     """
-    global _gap_is_initialized
+    global _gap_is_initialized, environ
     if _gap_is_initialized: return
 
     # Define argv and environ variables, which we will pass in to
     # initialize GAP. Note that we must pass define the memory pool
     # size!
-    cdef char* argv[14]
+    cdef char** env
+    cdef char* argv[18]
     argv[0] = "sage"
     argv[1] = "-l"
-    s = gap_root()
+    s = str_to_bytes(gap_root(), FS_ENCODING, "surrogateescape")
     argv[2] = s
 
     from sage.interfaces.gap import _get_gap_memory_pool_size_MB
-    memory_pool = _get_gap_memory_pool_size_MB()
+    memory_pool = str_to_bytes(_get_gap_memory_pool_size_MB())
     argv[3] = "-o"
     argv[4] = memory_pool
     argv[5] = "-s"
@@ -201,49 +280,78 @@ cdef initialize():
     argv[8] = "64m"
 
     argv[9] = "-q"    # no prompt!
-    argv[10] = "-T"    # no debug loop
-    argv[11] = NULL
-    cdef int argc = 11   # argv[argc] must be NULL
+    argv[10] = "-E"   # don't use readline as this will interfere with Python
+    argv[11] = "--nointeract"  # Implies -T
+    argv[12] = "-x"    # set the "screen" width so that GAP is less likely to
+    argv[13] = "4096"  # insert newlines when printing objects
+                       # 4096 unfortunately is the hard-coded max, but should
+                       # be long enough for most cases
+
+    cdef int argc = 14   # argv[argc] must be NULL
 
     from .saved_workspace import workspace
     workspace, workspace_is_up_to_date = workspace()
+    ws = str_to_bytes(workspace, FS_ENCODING, "surrogateescape")
     if workspace_is_up_to_date:
-        argv[11] = "-L"
-        argv[12] = workspace
-        argv[13] = NULL
-        argc = 13
+        argv[argc] = "-L"
+        argv[argc + 1] = ws
+        argc += 2
+
+    # Get the path to the sage.gaprc file and check that it exists
+    sage_gaprc = os.path.join(os.path.dirname(__file__), 'sage.gaprc')
+    if not os.path.exists(sage_gaprc):
+        warnings.warn(f"Sage's GAP initialization file {sage_gaprc} is "
+                       "is missing; some functionality may be limited")
+    else:
+        sage_gaprc = str_to_bytes(sage_gaprc, FS_ENCODING, "surrogateescape")
+        argv[argc] = sage_gaprc
+        argc += 1
+
+    argv[argc] = NULL
+
+    env = copy_environ(environ)
 
     # Initialize GAP and capture any error messages
     # The initialization just prints error and does not use the error handler
-    libgap_start_interaction('')
-    libgap_initialize(argc, argv)
-    gap_error_msg = str(libgap_get_output())
-    libgap_finish_interaction()
-    if gap_error_msg:
-        raise RuntimeError('libGAP initialization failed\n' + gap_error_msg)
+    sig_on()
+    try:
+        with changesignal(signal.SIGCHLD, signal.SIG_DFL), \
+                changesignal(signal.SIGINT, signal.SIG_DFL):
+            # Need to save/restore current SIGINT handling since GAP_Initialize
+            # currently clobbers it; it doesn't matter what we set SIGINT to
+            # temporarily.
+            GAP_Initialize(argc, argv, env, &gasman_callback,
+                           &error_handler)
+    except RuntimeError as msg:
+        raise RuntimeError('libGAP initialization failed\n' + msg)
+    finally:
+        sig_off()
 
-    # The error handler is called if a GAP evaluation fails, e.g. 1/0
-    libgap_set_error_handler(&error_handler)
+    # Set the ERROR_OUTPUT global in GAP to an output stream in which to
+    # receive error output
+    GAP_EvalString(_reset_error_output_cmd)
 
     # Prepare global GAP variable to hold temporary GAP objects
     global reference_holder
-    libgap_enter()
-    reference_holder = libGAP_GVarName("$SAGE_libgap_reference_holder")
-    libgap_exit()
+    reference_holder = GVarName("$SAGE_libgap_reference_holder")
 
     # Finished!
     _gap_is_initialized = True
 
     # Save a new workspace if necessary
     if not workspace_is_up_to_date:
-        gap_eval('SaveWorkspace("{0}")'.format(workspace))
+        prepare_workspace_dir()
+        from sage.misc.temporary_file import atomic_write
+        with atomic_write(workspace) as f:
+            f.close()
+            gap_eval('SaveWorkspace("{0}")'.format(f.name))
 
 
 ############################################################################
 ### Evaluate string in GAP #################################################
 ############################################################################
 
-cdef libGAP_Obj gap_eval(str gap_string) except? NULL:
+cdef Obj gap_eval(str gap_string) except? NULL:
     r"""
     Evaluate a string in GAP.
 
@@ -254,65 +362,119 @@ cdef libGAP_Obj gap_eval(str gap_string) except? NULL:
     OUTPUT:
 
     The resulting GAP object or NULL+Python Exception in case of error.
+    The result object may also be NULL without a Python exception set for
+    statements that do not return a value.
 
     EXAMPLES::
 
         sage: libgap.eval('if 4>3 then\nPrint("hi");\nfi')
-        NULL
-        sage: libgap.eval('1+1')   # testing that we have sucessfully recovered
+        sage: libgap.eval('1+1')   # testing that we have successfully recovered
         2
 
         sage: libgap.eval('if 4>3 thenPrint("hi");\nfi')
         Traceback (most recent call last):
         ...
-        ValueError: libGAP: Syntax error: then expected
+        ValueError: libGAP: Syntax error: then expected in stream:1
         if 4>3 thenPrint("hi");
-        fi;
-                       ^
-        sage: libgap.eval('1+1')   # testing that we have sucessfully recovered
+               ^^^^^^^^^
+        sage: libgap.eval('1+1')   # testing that we have successfully recovered
+        2
+
+    TESTS:
+
+    A bad eval string that results in multiple statement evaluations by GAP
+    and hence multiple errors should still result in a single exception
+    with a message capturing all errors that occurrer::
+
+        sage: libgap.eval('Complex Field with 53 bits of precision;')
+        Traceback (most recent call last):
+        ...
+        ValueError: libGAP: Error, Variable: 'Complex' must have a value
+        Syntax error: ; expected in stream:1
+        Complex Field with 53 bits of precision;;
+         ^^^^^^^^^^^^
+        Error, Variable: 'with' must have a value
+        Syntax error: ; expected in stream:1
+        Complex Field with 53 bits of precision;;
+         ^^^^^^^^^^^^^^^^^^^^
+        Error, Variable: 'bits' must have a value
+        Syntax error: ; expected in stream:1
+        Complex Field with 53 bits of precision;;
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        Error, Variable: 'precision' must have a value
+
+
+    Test that on a subsequent attemt we get the same message (no garbage was
+    left in the error stream)::
+
+        sage: libgap.eval('Complex Field with 53 bits of precision;')
+        Traceback (most recent call last):
+        ...
+        ValueError: libGAP: Error, Variable: 'Complex' must have a value
+        ...
+        Error, Variable: 'precision' must have a value
+
+        sage: libgap.eval('1+1')  # test that we successfully recover
         2
     """
     initialize()
-    cdef libGAP_ExecStatus status
+    cdef Obj result
+    cdef int i, j, nresults
 
-    cmd = gap_string + ';\n'
+    # Careful: We need to keep a reference to the bytes object here
+    # so that Cython doesn't dereference it before libGAP is done with
+    # its contents.
+    cmd = str_to_bytes(gap_string + ';\n')
+    sig_on()
     try:
-        libgap_enter()
-        libgap_start_interaction(cmd)
-        try:
-            sig_on()
-            status = libGAP_ReadEvalCommand(libGAP_BottomLVars, NULL)
-            if status != libGAP_STATUS_END:
-                libgap_call_error_handler()
-            sig_off()
-        except RuntimeError as msg:
-            raise ValueError('libGAP: '+str(msg).strip())
+        GAP_Enter()
+        result = GAP_EvalString(cmd)
+        # We can assume that the result object is a GAP PList (plain list)
+        # and we should use functions for PLists directly for now; see
+        # https://github.com/gap-system/gap/pull/2988/files#r233021437
 
-        if libGAP_Symbol != libGAP_S_SEMICOLON:
-            raise ValueError('did not end with semicolon')
-        libGAP_GetSymbol()
-        if libGAP_Symbol != libGAP_S_EOF:
+        # If an error occurred in GAP_EvalString we won't even get
+        # here if the error handler was set; but in case it wasn't
+        # let's still check the result...
+        nresults = LEN_LIST(result)
+        if nresults > 1:  # to mimick the old libGAP
+            # TODO: Get rid of this restriction eventually?
             raise ValueError('can only evaluate a single statement')
 
+        # Get the result of the first statement
+        result = ELM0_LIST(result, 1) # 1-indexed!
+
+        if ELM0_LIST(result, 1) != GAP_True:
+            # An otherwise unhandled error occurred in GAP (such as a
+            # syntax error).  Try running the error handler manually
+            # to capture the error output, if any.
+            # This should result in a RuntimeError being set.
+            error_handler_check_exception()
+
+        # The actual resultant object, if any, is in the second entry
+        # (which may be unassigned--see previous github comment; in this case
+        # 0 is returned without setting a a Python exception, so we should treat
+        # this like returning None)
+
+        return ELM0_LIST(result, 2)
+    except RuntimeError as msg:
+        raise ValueError(f'libGAP: {msg}')
     finally:
-        libgap_finish_interaction()
-        libgap_exit()
-
-    if libGAP_ReadEvalResult != NULL:
-        libgap_enter()
-        libGAP_AssGVar(libGAP_Last3, libGAP_VAL_GVAR(libGAP_Last2))
-        libGAP_AssGVar(libGAP_Last2, libGAP_VAL_GVAR(libGAP_Last))
-        libGAP_AssGVar(libGAP_Last, libGAP_ReadEvalResult)
-        libgap_exit()
-
-    return libGAP_ReadEvalResult   # may be NULL, thats ok
+        GAP_Leave()
+        sig_off()
 
 
-############################################################################
+###########################################################################
 ### Helper to protect temporary objects from deletion ######################
 ############################################################################
 
-cdef void hold_reference(libGAP_Obj obj):
+# Hold a reference (inside the GAP kernel) to obj so that it doesn't
+# get deleted this works by assigning it to a global variable. This is
+# very simple, but you can't use it to keep two objects alive. Be
+# careful.
+cdef UInt reference_holder
+
+cdef void hold_reference(Obj obj):
     """
     Hold a reference (inside the GAP kernel) to obj
 
@@ -321,180 +483,79 @@ cdef void hold_reference(libGAP_Obj obj):
     very simple, but you can't use it to keep two objects alive. Be
     careful.
     """
-    libgap_enter()
     global reference_holder
-    libGAP_AssGVar(reference_holder, obj)
-    libgap_exit()
+    AssGVar(reference_holder, obj)
 
 
 ############################################################################
 ### Error handler ##########################################################
 ############################################################################
 
-include "cysignals/signals.pxi"
-from cpython.exc cimport PyErr_SetObject
 
-cdef void error_handler(char* msg):
+cdef object extract_libgap_errout():
     """
-    The libgap error handler
-
-    We call ``sig_error()`` which causes us to jump back to the Sage
-    signal handler. Since we wrap libGAP C calls in ``sig_on`` /
-    ``sig_off`` blocks, this then jumps back to the ``sig_on`` where
-    the ``RuntimeError`` we raise here will be seen.
+    Reads the global variable libgap_errout and returns a Python string
+    containing the error message (with some boilerplate removed).
     """
-    msg_py = msg
-    msg_py = msg_py.replace('For debugging hints type ?Recovery from NoMethodFound\n', '')
-    PyErr_SetObject(RuntimeError, msg_py)
-    sig_error()
+    cdef Obj r
+    cdef char *msg
+
+    r = GAP_ValueGlobalVariable("libgap_errout")
+
+    # Grab a pointer to the C string underlying the GAP string libgap_errout
+    # then copy it to a Python str (char_to_str contains an implicit strcpy)
+    msg = CSTR_STRING(r)
+    if msg != NULL:
+        msg_py = char_to_str(msg)
+        msg_py = msg_py.replace('For debugging hints type ?Recovery from '
+                                'NoMethodFound\n', '').strip()
+    else:
+        # Shouldn't happen but just in case...
+        msg_py = ""
+
+    return msg_py
 
 
-############################################################################
-### Debug functions ########################################################
-############################################################################
-
-cdef inline void DEBUG_CHECK(libGAP_Obj obj):
+cdef void error_handler():
     """
-    Check that ``obj`` is valid.
+    The libgap error handler.
 
-    This function is only useful for debugging.
+    If an error occurred we set a RuntimeError; when the original
+    GAP_EvalString returns this exception will be raised.
+
+    TODO: We should probably prevent re-entering this function if we
+    are already handling an error; if there is an error in our stream
+    handling code below it could result in a stack overflow.
     """
-    libgap_enter()
-    libGAP_CheckMasterPointers()
-    libgap_exit()
-    if obj == NULL:
-        print('DEBUG_CHECK: Null pointer!')
+    cdef PyObject* exc_type
+    cdef PyObject* exc_val
+    cdef PyObject* exc_tb
 
-
-
-
-cpdef memory_usage():
-    """
-    Return information about the memory useage.
-
-    See :meth:`~sage.libs.gap.libgap.Gap.mem` for details.
-    """
-    cdef size_t SizeMptrsArea = libGAP_OldBags - libGAP_MptrBags
-    cdef size_t SizeOldBagsArea = libGAP_YoungBags - libGAP_OldBags
-    cdef size_t SizeYoungBagsArea = libGAP_AllocBags - libGAP_YoungBags
-    cdef size_t SizeAllocationArea = libGAP_StopBags - libGAP_AllocBags
-    cdef size_t SizeUnavailableArea = libGAP_EndBags - libGAP_StopBags
-    return (SizeMptrsArea, SizeOldBagsArea, SizeYoungBagsArea, SizeAllocationArea, SizeUnavailableArea)
-
-
-cpdef error_enter_libgap_block_twice():
-    """
-    Demonstrate that we catch errors from entering a block twice.
-
-    EXAMPLES::
-
-        sage: from sage.libs.gap.util import error_enter_libgap_block_twice
-        sage: error_enter_libgap_block_twice()
-        Traceback (most recent call last):
-        ...
-        RuntimeError: Entered a critical block twice
-    """
-    from sage.libs.gap.libgap import libgap
+    # Close the error stream: This flushes any remaining output and closes
+    # the stream for further writing; reset ERROR_OUTPUT to something sane
+    # just in case (trying to print to a closed stream segfaults GAP)
     try:
-        # The exception will be seen by this sig_on() after being
-        # raised by the second libgap_enter().
-        sig_on()
-        libgap_enter()
-        libgap_enter()
-        sig_off()
+        GAP_EnterStack()
+        GAP_EvalStringNoExcept(_close_error_output_cmd)
+        msg = extract_libgap_errout()
+
+        if PyErr_Occurred() != NULL and msg:
+            # Sometimes error_handler() can be called multiple times from a
+            # single GAP_EvalString call before it returns; in this case we
+            # just update the exception by appending to the existing exception
+            # message
+            PyErr_Fetch(&exc_type, &exc_val, &exc_tb)
+            if exc_val != NULL:
+                msg = str(<object>exc_val) + '\n' + msg
+        elif not msg:
+            msg = "An unknown error occurred in libGAP"
+
+        PyErr_SetObject(RuntimeError, msg)
     finally:
-        libgap_exit()
+        # Reset ERROR_OUTPUT with a new text string stream
+        GAP_EvalStringNoExcept(_reset_error_output_cmd)
+        GAP_LeaveStack()
 
 
-cpdef error_exit_libgap_block_without_enter():
-    """
-    Demonstrate that we catch errors from omitting libgap_enter.
-
-    EXAMPLES::
-
-        sage: from sage.libs.gap.util import error_exit_libgap_block_without_enter
-        sage: error_exit_libgap_block_without_enter()
-        Traceback (most recent call last):
-        ...
-        RuntimeError: Called libgap_exit without previous libgap_enter
-    """
-    from sage.libs.gap.libgap import libgap
-    sig_on()
-    libgap_exit()
-    sig_off()
-
-############################################################################
-### Auxilliary functions ###################################################
-############################################################################
-
-
-def command(command_string):
-    """
-    Playground for accessing Gap via libGap.
-
-    You should not use this function in your own programs. This is
-    just here for convenience if you want to play with the libgap
-    libray code.
-
-    EXAMPLES::
-
-        sage: from sage.libs.gap.util import command
-        sage: command('1')
-        Output follows...
-        1
-
-        sage: command('1/0')
-        Traceback (most recent call last):
-        ...
-        ValueError: libGAP: Error, Rational operations: <divisor> must not be zero
-
-        sage: command('NormalSubgroups')
-        Output follows...
-        <Attribute "NormalSubgroups">
-
-        sage: command('rec(a:=1, b:=2)')
-        Output follows...
-        rec( a := 1, b := 2 )
-    """
-    initialize()
-    cdef libGAP_ExecStatus status
-
-    cmd = command_string + ';\n'
-    try:
-        libgap_enter()
-        libgap_start_interaction(cmd)
-        try:
-            sig_on()
-            status = libGAP_ReadEvalCommand(libGAP_BottomLVars, NULL)
-            if status != libGAP_STATUS_END:
-                libgap_call_error_handler()
-            sig_off()
-        except RuntimeError as msg:
-            raise ValueError('libGAP: '+str(msg).strip())
-
-        assert libGAP_Symbol == libGAP_S_SEMICOLON, 'Did not end with semicolon?'
-        libGAP_GetSymbol()
-        if libGAP_Symbol != libGAP_S_EOF:
-            raise ValueError('command() expects a single statement.')
-
-        if libGAP_ReadEvalResult:
-            libGAP_ViewObjHandler(libGAP_ReadEvalResult)
-            s = libgap_get_output()
-            print('Output follows...')
-            print(s.strip())
-        else:
-            print('No output.')
-
-    finally:
-        libgap_exit()
-        libgap_finish_interaction()
-
-    DEBUG_CHECK(libGAP_ReadEvalResult)
-
-    if libGAP_ReadEvalResult != NULL:
-        libgap_enter()
-        libGAP_AssGVar(libGAP_Last3, libGAP_VAL_GVAR(libGAP_Last2))
-        libGAP_AssGVar(libGAP_Last2, libGAP_VAL_GVAR(libGAP_Last))
-        libGAP_AssGVar(libGAP_Last, libGAP_ReadEvalResult)
-        libgap_exit()
-
+cdef void error_handler_check_exception() except *:
+    error_handler()

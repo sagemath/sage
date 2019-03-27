@@ -13,3 +13,11 @@ this C++-library we provide a Python interface. This allows parsing of
 complex polynomial systems, as well as sophisticated and extendable
 strategies for Gröbner base computation. PolyBoRi features a powerful
 reference implementation for Gröbner basis computation.
+
+== License ==
+
+GPL version 2 or later
+
+== Upstream Contact ==
+
+https://github.com/BRiAl/BRiAl

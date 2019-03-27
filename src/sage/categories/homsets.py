@@ -137,8 +137,8 @@ class HomsetsCategory(FunctorialConstructionCategory):
         #from sage.categories.objects    import Objects
         #from sage.categories.sets_cat import Sets
         tester = self._tester(**options)
-        tester.assert_(self.is_subcategory(Category.join(self.base_category().structure()).Homsets()))
-        tester.assert_(self.is_subcategory(Homsets()))
+        tester.assertTrue(self.is_subcategory(Category.join(self.base_category().structure()).Homsets()))
+        tester.assertTrue(self.is_subcategory(Homsets()))
 
     @cached_method
     def base(self):
@@ -311,3 +311,41 @@ class Homsets(Category_singleton):
             """
             from .monoids import Monoids
             return [Monoids()]
+
+        class ParentMethods:
+            def is_endomorphism_set(self):
+                """
+                Return ``True`` as ``self`` is in the category
+                of ``Endsets``.
+
+                EXAMPLES::
+
+                    sage: P.<t> = ZZ[]
+                    sage: E = End(P)
+                    sage: E.is_endomorphism_set()
+                    True
+                """
+                return True
+
+    class ParentMethods:
+        def is_endomorphism_set(self):
+            """
+            Return ``True`` if the domain and codomain of ``self`` are the same
+            object.
+
+            EXAMPLES::
+
+                sage: P.<t> = ZZ[]
+                sage: f = P.hom([1/2*t])
+                sage: f.parent().is_endomorphism_set()
+                False
+                sage: g = P.hom([2*t])
+                sage: g.parent().is_endomorphism_set()
+                True
+            """
+            sD = self.domain()
+            sC = self.codomain()
+            if sC is None or sD is None:
+                raise RuntimeError("Domain or codomain of this homset have been deallocated")
+            return sD is sC
+

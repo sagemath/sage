@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-L-series for elliptic curves
+`L`-series for elliptic curves
 
 AUTHORS:
 
@@ -21,12 +21,15 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.structure.sage_object import SageObject
 from sage.rings.all import RealField, RationalField
-from math import sqrt, exp, log, ceil
+from math import sqrt, log, ceil
 import sage.functions.exp_integral as exp_integral
-import sage.misc.all as misc
+from sage.misc.all import verbose
+from sage.misc.cachefunc import cached_method
+
 
 class Lseries_ell(SageObject):
     """
@@ -160,7 +163,6 @@ class Lseries_ell(SageObject):
                        eps = self.__E.root_number(),
                        poles = [],
                        prec = prec)
-        gp = L.gp()
         s = 'e = ellinit(%s);'%list(self.__E.minimal_model().a_invariants())
         s += 'a(k) = ellak(e, k);'
         L.init_coeffs('a(k)', 1, pari_precode = s,
@@ -211,17 +213,17 @@ class Lseries_ell(SageObject):
 
         INPUT:
 
-        -   n -- integer
+        - n -- integer
 
-        -   prec -- integer
+        - prec -- integer
 
-        -   d -- integer
+        - d -- integer
 
         OUTPUT:
 
         - a string, exactly as output by sympow
 
-        .. note ::
+        .. NOTE::
 
             To use this function you may have to run a few commands
             like ``sympow('-new_data 1d2')``, each which takes a few
@@ -373,7 +375,7 @@ class Lseries_ell(SageObject):
 
             sage: E = EllipticCurve('37a')
             sage: vals = E.lseries().twist_values(1, -12, -4)
-            sage: vals  # abs tol 1e-17
+            sage: vals  # abs tol 1e-15
             [(-11, 1.47824342), (-8, 8.9590946e-18), (-7, 1.85307619), (-4, 2.45138938)]
             sage: F = E.quadratic_twist(-8)
             sage: F.rank()
@@ -520,7 +522,7 @@ class Lseries_ell(SageObject):
         Rerror = RealField(24, rnd='RNDU')
 
         if self.__E.root_number() == -1:
-           return (R.zero(), Rerror.zero())
+            return (R.zero(), Rerror.zero())
 
         an = self.__E.anlist(k)  # list of Sage Integers
         pi = R.pi()
@@ -532,7 +534,7 @@ class Lseries_ell(SageObject):
         L = R.zero()
         error = Rerror.zero()
 
-        for n in xrange(1,k+1):
+        for n in range(1, k + 1):
             term = (zpow * an[n])/n
             zpow *= z
             L += term
@@ -672,9 +674,9 @@ class Lseries_ell(SageObject):
         Rerror = RealField(24, rnd='RNDU')
 
         if self.__E.root_number() == 1:
-           # Order of vanishing at 1 of L(E) is even and assumed to be
-           # positive, so L'(E,1) = 0.
-           return (R.zero(), Rerror.zero())
+            # Order of vanishing at 1 of L(E) is even and assumed to be
+            # positive, so L'(E,1) = 0.
+            return (R.zero(), Rerror.zero())
 
         an = self.__E.anlist(k)  # list of Sage Integers
         pi = R.pi()
@@ -687,7 +689,7 @@ class Lseries_ell(SageObject):
         # Sum of |an[n]|/n
         sumann = Rerror.zero()
 
-        for n in xrange(1,k+1):
+        for n in range(1, k + 1):
             term = (v[n-1] * an[n])/n
             L += term
             error += term.epsilon(Rerror)*5 + L.ulp(Rerror)
@@ -766,10 +768,12 @@ class Lseries_ell(SageObject):
         """
         return self.L_ratio() == 0
 
+    @cached_method
     def L_ratio(self):
         r"""
-        Returns the ratio `L(E,1)/\Omega` as an exact rational
-        number. The result is *provably* correct if the Manin
+        Return the ratio `L(E,1) / \Omega` as an exact rational number.
+
+        The result is *provably* correct if the Manin
         constant of the associated optimal quotient is `\leq 2`.  This
         hypothesis on the Manin constant is true for all semistable
         curves (i.e., squarefree conductor), by a theorem of Mazur
@@ -814,19 +818,12 @@ class Lseries_ell(SageObject):
 
         AUTHOR: William Stein, 2005-04-20.
         """
-        try:
-            return self.__lratio
-        except AttributeError:
-            pass
-
         if not self.__E.is_minimal():
-            self.__lratio = self.__E.minimal_model().lseries().L_ratio()
-            return self.__lratio
+            return self.__E.minimal_model().lseries().L_ratio()
 
         QQ = RationalField()
         if self.__E.root_number() == -1:
-            self.__lratio = QQ.zero()
-            return self.__lratio
+            return QQ.zero()
 
         # Even root number.  Decide if L(E,1) = 0.  If E is a modular
         # *OPTIMAL* quotient of J_0(N) elliptic curve, we know that T *
@@ -863,38 +860,38 @@ class Lseries_ell(SageObject):
         t = self.__E.torsion_subgroup().order()
         omega = self.__E.period_lattice().basis()[0]
         d = self.__E._multiple_of_degree_of_isogeny_to_optimal_curve()
-        C = 8*d*t
+        C = 8 * d * t
         eps = omega / C
 
-        sqrtN = 2*int(sqrt(self.__E.conductor()))
+        sqrtN = 2 * self.__E.conductor().isqrt()
         k = sqrtN + 10
         while True:
             L1, error_bound = self.at1(k)
             if error_bound < eps:
-                n = int(round(L1*C/omega))
-                quo = QQ((n,C))
-                self.__lratio = quo / self.__E.real_components()
-                return self.__lratio
+                n = (L1 * C / omega).round()
+                quo = QQ((n, C))
+                return quo / self.__E.real_components()
             k += sqrtN
-            misc.verbose("Increasing precision to %s terms."%k)
+            verbose("Increasing precision to %s terms." % k)
 
     def zero_sums(self, N=None):
         r"""
-        Return an LFunctionZeroSum class object for efficient computation
-        of sums over the zeros of self. This can be used to bound analytic
-        rank from above without having to compute with the $L$-series
-        directly.
+        Return an ``LFunctionZeroSum`` class object for efficient computation
+        of sums over the zeros of ``self``.
+
+        This can be used to bound analytic rank from above without
+        having to compute with the `L`-series directly.
 
         INPUT:
 
-        - ``N`` -- (default: None) If not None, the conductor of the
-          elliptic curve attached to self. This is passable so that zero
+        - ``N`` -- (default: ``None``) If not ``None``, the conductor of the
+          elliptic curve attached to ``self``. This is passable so that zero
           sum computations can be done on curves for which the conductor
           has been precomputed.
 
         OUTPUT:
 
-        A LFunctionZeroSum_EllipticCurve instance.
+        A ``LFunctionZeroSum_EllipticCurve`` instance.
 
         EXAMPLES::
 

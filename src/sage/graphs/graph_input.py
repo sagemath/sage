@@ -18,7 +18,11 @@ Functions
 ---------
 
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, division
+from six import iteritems 
+from six.moves import range
+from sage.cpython.string import bytes_to_str
+
 
 def from_graph6(G, g6_string):
     r"""
@@ -30,7 +34,7 @@ def from_graph6(G, g6_string):
 
     - ``g6_string`` -- a graph6 string
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_graph6
         sage: g = Graph()
@@ -40,23 +44,25 @@ def from_graph6(G, g6_string):
     """
     from .generic_graph_pyx import length_and_string_from_graph6, binary_string_from_graph6
 
-    if not isinstance(g6_string, str):
-        raise ValueError('If input format is graph6, then g6_string must be a string.')
+    if isinstance(g6_string, bytes):
+        g6_string = bytes_to_str(g6_string)
+    elif not isinstance(g6_string, str):
+        raise ValueError('if input format is graph6, then g6_string must be a string')
     n = g6_string.find('\n')
     if n == -1:
         n = len(g6_string)
     ss = g6_string[:n]
     n, s = length_and_string_from_graph6(ss)
     m = binary_string_from_graph6(s, n)
-    expected = n*(n-1)/2 + (6 - n*(n-1)/2)%6
+    expected = n*(n-1)//2 + (6 - n*(n-1)//2)%6
     if len(m) > expected:
-        raise RuntimeError("The string (%s) seems corrupt: for n = %d, the string is too long."%(ss,n))
+        raise RuntimeError("the string (%s) seems corrupt: for n = %d, the string is too long"%(ss, n))
     elif len(m) < expected:
-        raise RuntimeError("The string (%s) seems corrupt: for n = %d, the string is too short."%(ss,n))
+        raise RuntimeError("the string (%s) seems corrupt: for n = %d, the string is too short"%(ss, n))
     G.add_vertices(range(n))
     k = 0
-    for i in xrange(n):
-        for j in xrange(i):
+    for i in range(n):
+        for j in range(i):
             if m[k] == '1':
                 G._backend.add_edge(i, j, None, False)
             k += 1
@@ -71,7 +77,7 @@ def from_sparse6(G, g6_string):
 
     - ``g6_string`` -- a sparse6 string
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_sparse6
         sage: g = Graph()
@@ -80,38 +86,47 @@ def from_sparse6(G, g6_string):
         True
     """
     from .generic_graph_pyx import length_and_string_from_graph6, int_to_binary_string
-    from math import ceil, floor
-    from sage.misc.functional import log
+
+    if isinstance(g6_string, bytes):
+        g6_string = bytes_to_str(g6_string)
+    elif not isinstance(g6_string, str):
+        raise ValueError('if input format is graph6, then g6_string must be a string')
+
     n = g6_string.find('\n')
     if n == -1:
         n = len(g6_string)
     s = g6_string[:n]
     n, s = length_and_string_from_graph6(s[1:])
-    if n == 0:
+    if not n:
         edges = []
     else:
-        k = int(ceil(log(n,2)))
+        from sage.rings.integer_ring import ZZ
+        k = int((ZZ(n) - 1).nbits())
         ords = [ord(i) for i in s]
         if any(o > 126 or o < 63 for o in ords):
-            raise RuntimeError("The string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in xrange(63,127)]))
+            raise RuntimeError("the string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in range(63,127)]))
         bits = ''.join([int_to_binary_string(o-63).zfill(6) for o in ords])
-        b = []
-        x = []
-        for i in xrange(int(floor(len(bits)/(k+1)))):
-            b.append(int(bits[(k+1)*i:(k+1)*i+1],2))
-            x.append(int(bits[(k+1)*i+1:(k+1)*i+k+1],2))
+        if not k:
+            b = [int(x) for x in bits]
+            x = [0] * len(b)
+        else:
+            b = []
+            x = []
+            for i in range(0, len(bits)-k, k+1):
+                b.append(int(bits[i:i+1], 2))
+                x.append(int(bits[i+1:i+k+1], 2))
         v = 0
         edges = []
-        for i in xrange(len(b)):
-            if b[i] == 1:
-                v += 1
+        for i in range(len(b)):
+            v += b[i] # +1 if b[i] == 1 else 0
             if x[i] > v:
                 v = x[i]
             else:
                 if v < n:
-                    edges.append((x[i],v))
+                    edges.append((x[i], v))
     G.add_vertices(range(n))
     G.add_edges(edges)
+
 
 def from_dig6(G, dig6_string):
     r"""
@@ -123,7 +138,7 @@ def from_dig6(G, dig6_string):
 
     - ``dig6_string`` -- a dig6 string
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_dig6
         sage: g = DiGraph()
@@ -132,8 +147,10 @@ def from_dig6(G, dig6_string):
         True
     """
     from .generic_graph_pyx import length_and_string_from_graph6, binary_string_from_dig6
-    if not isinstance(dig6_string, str):
-        raise ValueError('If input format is dig6, then dig6_string must be a string.')
+    if isinstance(dig6_string, bytes):
+        dig6_string = bytes_to_str(dig6_string)
+    elif not isinstance(dig6_string, str):
+        raise ValueError('if input format is dig6, then dig6_string must be a string')
     n = dig6_string.find('\n')
     if n == -1:
         n = len(dig6_string)
@@ -142,13 +159,13 @@ def from_dig6(G, dig6_string):
     m = binary_string_from_dig6(s, n)
     expected = n**2
     if len(m) > expected:
-        raise RuntimeError("The string (%s) seems corrupt: for n = %d, the string is too long."%(ss,n))
+        raise RuntimeError("the string (%s) seems corrupt: for n = %d, the string is too long"%(ss, n))
     elif len(m) < expected:
-        raise RuntimeError("The string (%s) seems corrupt: for n = %d, the string is too short."%(ss,n))
+        raise RuntimeError("the string (%s) seems corrupt: for n = %d, the string is too short"%(ss, n))
     G.add_vertices(range(n))
     k = 0
-    for i in xrange(n):
-        for j in xrange(n):
+    for i in range(n):
+        for j in range(n):
             if m[k] == '1':
                 G._backend.add_edge(i, j, None, True)
             k += 1
@@ -163,7 +180,7 @@ def from_seidel_adjacency_matrix(G, M):
 
     - ``M`` -- a Seidel adjacency matrix
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_seidel_adjacency_matrix
         sage: g = Graph()
@@ -171,7 +188,7 @@ def from_seidel_adjacency_matrix(G, M):
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
     """
-    from sage.matrix.matrix import is_Matrix
+    from sage.structure.element import is_Matrix
     from sage.rings.integer_ring import ZZ
     assert is_Matrix(M)
 
@@ -179,7 +196,7 @@ def from_seidel_adjacency_matrix(G, M):
         try:
             M = M.change_ring(ZZ)
         except TypeError:
-            raise ValueError("Graph's Seidel adjacency matrix must"+
+            raise ValueError("the adjacency matrix of a Seidel graph must" +
                              " have only 0,1,-1 integer entries")
 
     if M.is_sparse():
@@ -188,20 +205,16 @@ def from_seidel_adjacency_matrix(G, M):
         entries = set(M.list())
 
     if any(e <  -1 or e > 1 for e in entries):
-        raise ValueError("Graph's Seidel adjacency matrix must"+
+        raise ValueError("the adjacency matrix of a Seidel graph must" +
                          " have only 0,1,-1 integer entries")
-    if any(i==j for i,j in M.nonzero_positions()):
-        raise ValueError("Graph's Seidel adjacency matrix must"+
+    if any(i == j for i, j in M.nonzero_positions()):
+        raise ValueError("the adjacency matrix of a Seidel graph must" +
                          " have 0s on the main diagonal")
     if not M.is_symmetric():
-        raise ValueError("Graph's Seidel adjacency matrix must"+
-                         " be symmetric")
+        raise ValueError("the adjacency matrix of a Seidel graph must be symmetric")
+
     G.add_vertices(range(M.nrows()))
-    e = []
-    for i,j in M.nonzero_positions():
-       if i <= j and M[i,j] < 0:
-                e.append((i,j))
-    G.add_edges(e)
+    G.add_edges((i, j) for i, j in M.nonzero_positions() if i <= j and M[i,j] < 0)
 
 def from_adjacency_matrix(G, M, loops=False, multiedges=False, weighted=False):
     r"""
@@ -209,14 +222,14 @@ def from_adjacency_matrix(G, M, loops=False, multiedges=False, weighted=False):
 
     INPUT:
 
-    - ``G`` -- a :class:`Graph` or :class:`DiGraph`.
+    - ``G`` -- a :class:`Graph` or :class:`DiGraph`
 
     - ``M`` -- an adjacency matrix
 
-    - ``loops``, ``multiedges``, ``weighted`` (booleans) -- whether to consider
-      the graph as having loops, multiple edges, or weights. Set to ``False`` by default.
+    - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
+      whether to consider the graph as having loops, multiple edges, or weights
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_adjacency_matrix
         sage: g = Graph()
@@ -224,7 +237,7 @@ def from_adjacency_matrix(G, M, loops=False, multiedges=False, weighted=False):
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
     """
-    from sage.matrix.matrix import is_Matrix
+    from sage.structure.element import is_Matrix
     from sage.rings.integer_ring import ZZ
     assert is_Matrix(M)
     # note: the adjacency matrix might be weighted and hence not
@@ -234,9 +247,8 @@ def from_adjacency_matrix(G, M, loops=False, multiedges=False, weighted=False):
             M = M.change_ring(ZZ)
         except TypeError:
             if weighted is False:
-                raise ValueError("Non-weighted graph's"+
-                " adjacency matrix must have only nonnegative"+
-                " integer entries")
+                raise ValueError("the adjacency matrix of a non-weighted graph" +
+                                 " must have only nonnegative integer entries")
             weighted = True
 
     if M.is_sparse():
@@ -246,42 +258,37 @@ def from_adjacency_matrix(G, M, loops=False, multiedges=False, weighted=False):
 
     if not weighted and any(e < 0 for e in entries):
         if weighted is False:
-            raise ValueError("Non-weighted digraph's"+
-            " adjacency matrix must have only nonnegative"+
-            " integer entries")
+            raise ValueError("the adjacency matrix of a non-weighted graph" +
+                             " must have only nonnegative integer entries")
         weighted = True
-        if multiedges is None: multiedges = False
+        if multiedges is None:
+            multiedges = False
     if weighted is None:
         weighted = False
 
     if multiedges is None:
         multiedges = ((not weighted) and any(e != 0 and e != 1 for e in entries))
 
-    if not loops and any(M[i,i] for i in xrange(M.nrows())):
+    if not loops and any(M[i,i] for i in range(M.nrows())):
         if loops is False:
-            raise ValueError("Non-looped digraph's adjacency"+
-            " matrix must have zeroes on the diagonal.")
+            raise ValueError("the adjacency matrix of a non-weighted graph" +
+                             " must have zeroes on the diagonal")
         loops = True
     if loops is None:
         loops = False
     G.allow_loops(loops, check=False)
     G.allow_multiple_edges(multiedges, check=False)
     G.add_vertices(range(M.nrows()))
-    e = []
     if G.is_directed():
         pairs = M.nonzero_positions()
     else:
-        pairs = ((i,j) for i,j in M.nonzero_positions() if i<=j)
+        pairs = ((i, j) for i, j in M.nonzero_positions() if i <= j)
     if weighted:
-        for i,j in pairs:
-            e.append((i,j,M[i][j]))
+        G.add_edges((i, j, M[i][j]) for i, j in pairs)
     elif multiedges:
-        for i,j in pairs:
-            e += [(i,j)]*int(M[i][j])
+        G.add_edges((i, j) for i, j in pairs for _ in range(int(M[i][j])))
     else:
-        for i,j in pairs:
-            e.append((i,j))
-    G.add_edges(e)
+        G.add_edges((i, j) for i, j in pairs)
     G._weighted = weighted
 
 def from_incidence_matrix(G, M, loops=False, multiedges=False, weighted=False):
@@ -294,10 +301,10 @@ def from_incidence_matrix(G, M, loops=False, multiedges=False, weighted=False):
 
     - ``M`` -- an incidence matrix
 
-    - ``loops``, ``multiedges``, ``weighted`` (booleans) -- whether to consider
-      the graph as having loops, multiple edges, or weights. Set to ``False`` by default.
+    - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
+      whether to consider the graph as having loops, multiple edges, or weights
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_incidence_matrix
         sage: g = Graph()
@@ -305,7 +312,7 @@ def from_incidence_matrix(G, M, loops=False, multiedges=False, weighted=False):
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
     """
-    from sage.matrix.matrix import is_Matrix
+    from sage.structure.element import is_Matrix
     assert is_Matrix(M)
 
     oriented = any(M[pos] < 0 for pos in M.nonzero_positions(copy=False))
@@ -315,20 +322,20 @@ def from_incidence_matrix(G, M, loops=False, multiedges=False, weighted=False):
         NZ = M.nonzero_positions_in_column(i)
         if len(NZ) == 1:
             if oriented:
-                raise ValueError("Column {} of the (oriented) incidence "
+                raise ValueError("column {} of the (oriented) incidence "
                                  "matrix contains only one nonzero value".format(i))
             elif M[NZ[0],i] != 2:
-                raise ValueError("Each column of a non-oriented incidence "
+                raise ValueError("each column of a non-oriented incidence "
                                  "matrix must sum to 2, but column {} does not".format(i))
             if loops is None:
                 loops = True
-            positions.append((NZ[0],NZ[0]))
+            positions.append((NZ[0], NZ[0]))
         elif len(NZ) != 2 or \
-             (oriented and not ((M[NZ[0],i] == +1 and M[NZ[1],i] == -1) or \
-                                (M[NZ[0],i] == -1 and M[NZ[1],i] == +1))) or \
-             (not oriented and (M[NZ[0],i] != 1 or M[NZ[1],i] != 1)):
-            msg  = "There must be one or two nonzero entries per column in an incidence matrix. "
-            msg += "Got entries {} in column {}".format([M[j,i] for j in NZ], i)
+             (oriented and not ((M[NZ[0], i] == +1 and M[NZ[1], i] == -1) or \
+                                (M[NZ[0], i] == -1 and M[NZ[1], i] == +1))) or \
+             (not oriented and (M[NZ[0], i] != 1 or M[NZ[1], i] != 1)):
+            msg  = "there must be one or two nonzero entries per column in an incidence matrix, "
+            msg += "got entries {} in column {}".format([M[j, i] for j in NZ], i)
             raise ValueError(msg)
         else:
             positions.append(tuple(NZ))
@@ -336,7 +343,7 @@ def from_incidence_matrix(G, M, loops=False, multiedges=False, weighted=False):
     if weighted   is None: G._weighted  = False
     if multiedges is None:
         total = len(positions)
-        multiedges = (len(set(positions)) < total  )
+        multiedges = len(set(positions)) < total
     G.allow_loops(False if loops is None else loops, check=False)
     G.allow_multiple_edges(multiedges, check=False)
     G.add_vertices(range(M.nrows()))
@@ -356,39 +363,47 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
 
     - ``M`` -- an incidence matrix
 
-    - ``loops``, ``multiedges``, ``weighted`` (booleans) -- whether to consider
-      the graph as having loops, multiple edges, or weights. Set to ``False`` by default.
+    - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
+      whether to consider the graph as having loops, multiple edges, or weights
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_oriented_incidence_matrix
         sage: g = DiGraph()
         sage: from_oriented_incidence_matrix(g, digraphs.Circuit(10).incidence_matrix())
         sage: g.is_isomorphic(digraphs.Circuit(10))
         True
+
+    TESTS:
+
+    Fix bug reported in :trac:`22985`::
+
+        sage: DiGraph(matrix ([[1,0,0,1],[0,0,1,1],[0,0,1,1]]).transpose())
+        Traceback (most recent call last):
+        ...
+        ValueError: each column represents an edge: -1 goes to 1
     """
-    from sage.matrix.matrix import is_Matrix
+    from sage.structure.element import is_Matrix
     assert is_Matrix(M)
 
     positions = []
     for c in M.columns():
         NZ = c.nonzero_positions()
         if len(NZ) != 2:
-            raise ValueError("There must be two nonzero entries (-1 & 1) per column.")
+            raise ValueError("there must be two nonzero entries (-1 & 1) per column")
         L = sorted(set(c.list()))
-        if L != [-1,0,1]:
-            msg += "Each column represents an edge: -1 goes to 1."
-            raise ValueError(msg)
+        if L != [-1, 0, 1]:
+            raise ValueError("each column represents an edge: -1 goes to 1")
         if c[NZ[0]] == -1:
             positions.append(tuple(NZ))
         else:
-            positions.append((NZ[1],NZ[0]))
+            positions.append((NZ[1], NZ[0]))
     if weighted   is None: weighted  = False
     if multiedges is None:
         total = len(positions)
-        multiedges = (  len(set(positions)) < total  )
-    G.allow_loops(True if loops else False,check=False)
-    G.allow_multiple_edges(multiedges,check=False)
+        multiedges = len(set(positions)) < total
+    G.allow_loops(True if loops else False, check=False)
+    G.allow_multiple_edges(multiedges, check=False)
     G.add_vertices(range(M.nrows()))
     G.add_edges(positions)
 
@@ -400,15 +415,16 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
 
     - ``G`` -- a graph
 
-    - ``M`` -- a dictionary of dictionaries.
+    - ``M`` -- a dictionary of dictionaries
 
-    - ``loops``, ``multiedges``, ``weighted`` (booleans) -- whether to consider
-      the graph as having loops, multiple edges, or weights. Set to ``False`` by default.
+    - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
+      whether to consider the graph as having loops, multiple edges, or weights
 
-    - ``convert_empty_dict_labels_to_None`` (boolean) -- whether to adjust for
-      empty dicts instead of None in NetworkX default edge labels.
+    - ``convert_empty_dict_labels_to_None`` -- booleans (default: ``False``);
+      whether to adjust for empty dicts instead of ``None`` in NetworkX default
+      edge labels
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_dict_of_dicts
         sage: g = Graph()
@@ -416,53 +432,53 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
     """
-    if not all(isinstance(M[u], dict) for u in M):
-        raise ValueError("Input dict must be a consistent format.")
+    if any(not isinstance(M[u], dict) for u in M):
+        raise ValueError("input dict must be a consistent format")
 
-    if not loops and any(u in neighb for u,neighb in M.iteritems()):
-        if loops is False:
-            u = next(u for u,neighb in M.iteritems() if u in neighb)
-            raise ValueError("The graph was built with loops=False but input M has a loop at {}.".format(u))
-        loops = True
-    if loops is None:
-        loops = False
-
-    if weighted is None: G._weighted = False
-    for u in M:
-        for v in M[u]:
-            if multiedges is not False and not isinstance(M[u][v], list):
-                if multiedges is None: multiedges = False
-                if multiedges:
-                    raise ValueError("Dict of dicts for multigraph must be in the format {v : {u : list}}")
-    if multiedges is None and len(M) > 0:
-        multiedges = True
+    if not loops:
+        if any(u in neighb for u,neighb in iteritems(M)):
+            if loops is False:
+                u = next(u for u,neighb in iteritems(M) if u in neighb)
+                raise ValueError("the graph was built with loops=False but input M has a loop at {}".format(u))
+            loops = True
+        if loops is None:
+            loops = False
+    if weighted is None:
+        G._weighted = False
+    if multiedges is not False:
+        if not all(isinstance(M[u][v], list) for u in M for v in M[u]):
+            if multiedges:
+                raise ValueError("dict of dicts for multigraph must be in the format {v: {u: list}}")
+            multiedges = False
+        if multiedges is None and M:
+            multiedges = True
 
     G.allow_loops(loops, check=False)
     G.allow_multiple_edges(multiedges, check=False)
     verts = set().union(M.keys(), *M.values())
     G.add_vertices(verts)
     if convert_empty_dict_labels_to_None:
-        relabel = lambda x : x if x!={} else None
+        relabel = lambda x: x if x != {} else None
     else:
-        relabel = lambda x : x
+        relabel = lambda x: x
 
     is_directed = G.is_directed()
     if not is_directed and multiedges:
-        v_to_id = {v:i for i,v in enumerate(verts)}
+        v_to_id = {v: i for i, v in enumerate(verts)}
         for u in M:
             for v in M[u]:
                 if v_to_id[u] <= v_to_id[v] or v not in M or u not in M[v] or u == v:
                     for l in M[u][v]:
-                        G._backend.add_edge(u,v,relabel(l),False)
+                        G._backend.add_edge(u, v, relabel(l), False)
     elif multiedges:
         for u in M:
             for v in M[u]:
                 for l in M[u][v]:
-                    G._backend.add_edge(u,v,relabel(l),is_directed)
+                    G._backend.add_edge(u, v, relabel(l), is_directed)
     else:
         for u in M:
             for v in M[u]:
-                G._backend.add_edge(u,v,relabel(M[u][v]),is_directed)
+                G._backend.add_edge(u, v, relabel(M[u][v]), is_directed)
 
 def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
     r"""
@@ -470,14 +486,14 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
 
     INPUT:
 
-    - ``G`` -- a :class:`Graph` or :class:`DiGraph`.
+    - ``G`` -- a :class:`Graph` or :class:`DiGraph`
 
-    - ``D`` -- a dictionary of lists.
+    - ``D`` -- a dictionary of lists
 
-    - ``loops``, ``multiedges``, ``weighted`` (booleans) -- whether to consider
-      the graph as having loops, multiple edges, or weights. Set to ``False`` by default.
+    - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
+      whether to consider the graph as having loops, multiple edges, or weights
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_dict_of_lists
         sage: g = Graph()
@@ -485,43 +501,43 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
     """
-    verts = set().union(D.keys(),*D.values())
-    if loops is None or loops is False:
-        for u in D:
-            if u in D[u]:
-                if loops is None:
-                    loops = True
-                elif loops is False:
-                    u = next(u for u,neighb in D.iteritems() if u in neighb)
-                    raise ValueError("The graph was built with loops=False but input D has a loop at {}.".format(u))
-                break
+    verts = set().union(D.keys(), *D.values())
+    if not loops:
+        if any(u in neighb for u, neighb in iteritems(D)):
+            if loops is False:
+                u = next(u for u, neighb in iteritems(D) if u in neighb)
+                raise ValueError("the graph was built with loops=False but input D has a loop at {}".format(u))
+            loops = True
         if loops is None:
             loops = False
-    if weighted is None: G._weighted = False
-    for u in D:
-        if len(set(D[u])) != len(D[u]):
-            if multiedges is False:
-                v = next((v for v in D[u] if D[u].count(v) > 1))
-                raise ValueError("Non-multigraph got several edges (%s,%s)"%(u,v))
-            if multiedges is None:
+    if weighted is None:
+        G._weighted = False
+    if not multiedges:
+        for u in D:
+            if len(set(D[u])) != len(D[u]):
+                if multiedges is False:
+                    v = next((v for v in D[u] if D[u].count(v) > 1))
+                    raise ValueError("non-multigraph got several edges (%s, %s)"%(u, v))
                 multiedges = True
-    if multiedges is None: multiedges = False
+                break
+        if multiedges is None:
+            multiedges = False
     G.allow_loops(loops, check=False)
     G.allow_multiple_edges(multiedges, check=False)
     G.add_vertices(verts)
 
     is_directed = G.is_directed()
     if not is_directed and multiedges:
-        v_to_id = {v:i for i,v in enumerate(verts)}
+        v_to_id = {v: i for i, v in enumerate(verts)}
         for u in D:
             for v in D[u]:
                 if (v_to_id[u] <= v_to_id[v] or
                     v not in D or u not in D[v] or u == v):
-                    G._backend.add_edge(u,v,None,False)
+                    G._backend.add_edge(u, v, None, False)
     else:
         for u in D:
             for v in D[u]:
-                G._backend.add_edge(u,v,None,is_directed)
+                G._backend.add_edge(u, v, None, is_directed)
 
 from sage.misc.rest_index_of_methods import gen_rest_table_index
 import sys

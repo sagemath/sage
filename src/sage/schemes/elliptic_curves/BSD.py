@@ -18,7 +18,7 @@ class BSD_data:
     """
     Helper class used to keep track of information in proving BSD.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.BSD import BSD_data
         sage: D = BSD_data()
@@ -50,7 +50,7 @@ class BSD_data:
         """
         Updates some properties from ``curve``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.BSD import BSD_data
             sage: D = BSD_data()
@@ -206,7 +206,7 @@ def heegner_index_work(E):
 
         - the discriminant used
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.BSD import heegner_index_work
         sage: heegner_index_work(EllipticCurve('14a'))
@@ -287,7 +287,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
        groups. Algebraic geometry, 94--121, Lecture Notes in Math., 1479,
        Springer, Berlin, 1991.
     .. [LawsonWuthrich] \T. Lawson and C. Wuthrich, Vanishing of some Galois
-       cohomology groups for elliptic curves, http://arxiv.org/abs/1505.02940
+       cohomology groups for elliptic curves, :arxiv:`1505.02940`
     .. [LumStein] \A. Lum, W. Stein. Verification of the Birch and
        Swinnerton-Dyer Conjecture for Elliptic Curves with Complex
        Multiplication (unpublished)
@@ -332,14 +332,12 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         p = 2: True by 2-descent
         True for p not in {2, 3, 5} by Kolyvagin.
         Kolyvagin's bound for p = 3 applies by Lawson-Wuthrich
+        Kolyvagin's bound for p = 5 applies by Lawson-Wuthrich
         True for p = 3 by Kolyvagin bound
-        Remaining primes:
-        p = 5: reducible, not surjective, additive, divides a Tamagawa number
-            (no bounds found)
-            ord_p(#Sha_an) = 0
-        [5]
+        True for p = 5 by Kolyvagin bound
+        []
         sage: E.prove_BSD(two_desc='simon')
-        [5]
+        []
 
     A rank two curve::
 
@@ -369,7 +367,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         sage: E.rank()
         1
         sage: E._EllipticCurve_rational_field__rank
-        {True: 1}
+        (1, True)
         sage: E.analytic_rank = lambda : 0
         sage: E.prove_BSD()
         Traceback (most recent call last):
@@ -382,7 +380,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         sage: S = E.sha(); S
         Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
         sage: def foo(use_database):
-        ...    return 4
+        ....:  return 4
         sage: S.an = foo
         sage: E.prove_BSD()
         Traceback (most recent call last):
@@ -395,11 +393,9 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         sage: E.prove_BSD(verbosity=2)
         p = 2: True by 2-descent
         True for p not in {2, 5} by Kolyvagin.
-        Remaining primes:
-        p = 5: reducible, not surjective, good ordinary, divides a Tamagawa number
-            (no bounds found)
-            ord_p(#Sha_an) = 0
-        [5]
+        Kolyvagin's bound for p = 5 applies by Lawson-Wuthrich
+        True for p = 5 by Kolyvagin bound
+        []
 
     A curve for which 3 divides the order of the Tate-Shafarevich group::
 
@@ -528,16 +524,15 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
        rank_lower_bd > rank_upper_bd:
         raise RuntimeError("Something went wrong with 2-descent.")
     if BSD.rank != len(gens):
-        if BSD.rank != len(BSD.curve._EllipticCurve_rational_field__gens[True]):
+        gens = BSD.curve.gens(proof=True)
+        if BSD.rank != len(gens):
             raise RuntimeError("Could not get generators")
-        gens = BSD.curve._EllipticCurve_rational_field__gens[True]
     BSD.gens = [BSD.curve.point(x, check=True) for x in gens]
 
     if BSD.rank != BSD.curve.analytic_rank():
         raise RuntimeError("It seems that the rank conjecture does not hold for this curve (%s)! This may be a counterexample to BSD, but is more likely a bug."%(BSD.curve))
 
     # reduce set of remaining primes to a finite set
-    import signal
     kolyvagin_primes = []
     heegner_index = None
     if BSD.rank == 0:
@@ -667,7 +662,6 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         for p in kolyvagin_primes:
             BSD.primes.remove(p)
     # apply other hypotheses which imply Kolyvagin's bound holds
-    bounded_primes = []
     D_K = rings.QuadraticField(D, 'a').disc()
 
     # Cha's hypothesis
@@ -708,7 +702,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                 else:  # p == 5
                     Et = BSD.curve.quadratic_twist(5)
                     if Et.torsion_order() % p != 0 and C.torsion_order() % p != 0:
-                        crite_lw = True
+                        crit_lw = True
         if crit_lw:
             if verbosity > 0:
                 print('Kolyvagin\'s bound for p = %d applies by Lawson-Wuthrich' % p)

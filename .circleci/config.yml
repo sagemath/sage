@@ -1,0 +1,89 @@
+# This file configures automatic builds of Sage on [CircleCI](https://circleci.com).
+# To make the build time not too excessive, we seed the build cache with
+# sagemath/sagemath-dev:develop. When basic SPKGs change, this does not help much,
+# as the full build will often exceed CircleCI's limits for open source
+# projcets (five hours on 2 vCPUs as of early 2018.)
+# You might want to try to build locally or with GitLab CI, see
+# `.gitlab-ci.yml` for more options.
+
+# As of early 2018, a run on CircleCI takes usually about 25 minutes. Most of
+# the time is spent pulling/pushing from/to Docker Hub and copying files
+# locally during the docker build. We could probably save five minutes by not
+# building and testing the sagemath-dev image for most branches.
+
+version: 2
+jobs:
+  build-test-release: &build-test-release
+    docker:
+      - image: docker:latest
+    environment:
+      DEFAULT_ARTIFACT_BASE: sagemath/sagemath-dev:develop
+    steps:
+      - run: apk --update add git openssh
+      - checkout
+      - setup_remote_docker:
+          version: 18.05.0-ce
+      - run: &build
+          # The docker commands sometimes take a while to produce output
+          no_output_timeout: 30m
+          name: build
+          command: |
+            . .circleci/before-script.sh
+            .ci/build-docker.sh
+      - run: &test-dev
+          name: test-dev
+          command: |
+            . .circleci/before-script.sh
+            .ci/test-dev.sh $DOCKER_IMAGE_DEV
+      - run: &test-cli
+          name: test-cli
+          command: |
+            . .circleci/before-script.sh
+            .ci/test-cli.sh $DOCKER_IMAGE_CLI
+      - run: &test-jupyter
+          name: test-jupyter
+          command: |
+            . .circleci/before-script.sh
+            .ci/test-jupyter.sh $DOCKER_IMAGE_CLI localhost
+      - run: &release
+          # The docker commands sometimes take a while to produce output
+          no_output_timeout: 30m
+          name: release
+          command: |
+            . .circleci/before-script.sh
+            # Push docker images to dockerhub if a dockerhub user has been configured
+            .ci/push-dockerhub.sh sagemath-dev
+            .ci/push-dockerhub.sh sagemath
+  build-from-latest-test-release:
+    <<: *build-test-release
+  build-from-clean-test-release:
+    <<: *build-test-release
+    environment:
+      ARTIFACT_BASE: source-clean
+
+workflows:
+  version: 2
+  build-branch-from-clean:
+    jobs:
+      - build-from-clean-test-release:
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+  build-tag-from-clean:
+    jobs:
+      - build-from-clean-test-release:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /.*/
+  build-branch-from-latest:
+    jobs:
+      - build-from-latest-test-release:
+          filters:
+            branches:
+              ignore:
+                - master
+                - develop

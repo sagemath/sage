@@ -17,9 +17,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/stdsage.pxi"
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
 from cpython.list cimport PyList_Check, PyList_New, PyList_Append
+
+from sage.ext.stdsage cimport PY_NEW
 
 from sage.rings.padics.common_conversion cimport cconv_mpz_t_out_shared, cconv_mpz_t_shared, cconv_mpq_t_out_shared, cconv_mpq_t_shared, cconv_shared
 
@@ -31,6 +32,8 @@ from sage.rings.finite_rings.integer_mod_ring import Zmod
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+
+DEF CELEMENT_IS_PY_OBJECT = False
 
 cdef inline int cconstruct(celement value, PowComputer_ prime_pow) except -1:
     """
@@ -176,7 +179,7 @@ cdef inline bint creduce_small(celement out, celement a, long prec, PowComputer_
     """
     return creduce(out, a, prec, prime_pow)
 
-cdef inline long cremove(celement out, celement a, long prec, PowComputer_ prime_pow) except -1:
+cdef inline long cremove(celement out, celement a, long prec, PowComputer_ prime_pow, bint reduce_relative=False) except -1:
     """
     Extract the maximum power of the uniformizer dividing this element.
 
@@ -186,6 +189,9 @@ cdef inline long cremove(celement out, celement a, long prec, PowComputer_ prime
     - ``a`` -- the element whose valuation and unit are desired.
     - ``prec`` -- a long, used if `a = 0`.
     - ``prime_pow`` -- the PowComputer for the ring.
+    - ``reduce_relative`` -- a bint: whether the final result          
+      should be reduced at precision ``prec`` (case ``False``)
+      or ``prec - valuation`` (case ``True``)
 
     OUTPUT:
 
@@ -251,15 +257,17 @@ cdef inline bint cisunit(celement a, PowComputer_ prime_pow) except -1:
     fmpz_poly_scalar_mod_fmpz(prime_pow.poly_cisunit, a, prime_pow.fprime)
     return not ciszero(prime_pow.poly_cisunit, prime_pow)
 
-cdef inline int cshift(celement out, celement a, long n, long prec, PowComputer_ prime_pow, bint reduce_afterward) except -1:
+cdef inline int cshift(celement out, celement rem, celement a, long n, long prec, PowComputer_ prime_pow, bint reduce_afterward) except -1:
     """
     Mulitplies by a power of the uniformizer.
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the result.  If `n >= 0`
+    - ``out`` -- a ``celement`` to store the result.  If `n >= 0`
       then out will be set to `a * p^n`.
       If `n < 0`, out will be set to `a // p^-n`.
+    - ``rem`` -- a ``celement`` to store the remainder of the division.
+      Should not be aliased with `a`.
     - ``a`` -- the element to shift.
     - ``n`` -- long, the amount to shift by.
     - ``prec`` -- long, a precision modulo which to reduce.
@@ -267,17 +275,20 @@ cdef inline int cshift(celement out, celement a, long n, long prec, PowComputer_
     - ``reduce_afterward`` -- whether to reduce afterward.
     """
     if n > 0:
+        fmpz_poly_zero(rem)
         fmpz_poly_scalar_mul_fmpz(out, a, prime_pow.pow_fmpz_t_tmp(n)[0])
     elif n < 0:
         sig_on()
+        fmpz_poly_scalar_mod_fmpz(rem, a, prime_pow.pow_fmpz_t_tmp(-n)[0])
         fmpz_poly_scalar_fdiv_fmpz(out, a, prime_pow.pow_fmpz_t_tmp(-n)[0])
         sig_off()
     else:
+        fmpz_poly_zero(rem)
         fmpz_poly_set(out, a)
     if reduce_afterward:
         creduce(out, out, prec, prime_pow)
 
-cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowComputer_ prime_pow) except -1:
+cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowComputer_ prime_pow, bint reduce_afterward) except -1:
     """
     Mulitplies by a power of the uniformizer, assuming that the
     valuation of a is at least -n.
@@ -292,6 +303,7 @@ cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowC
     - ``n`` -- long, the amount to shift by.
     - ``prec`` -- long, a precision modulo which to reduce.
     - ``prime_pow`` -- the PowComputer for the ring.
+    - ``reduce_afterward`` -- whether to reduce afterward.
     """
     if n > 0:
         fmpz_poly_scalar_mul_fmpz(out, a, prime_pow.pow_fmpz_t_tmp(n)[0])
@@ -301,6 +313,8 @@ cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowC
         sig_off()
     else:
         fmpz_poly_set(out, a)
+    if reduce_afterward:
+        creduce(out, out, prec, prime_pow)
 
 cdef inline int csub(celement out, celement a, celement b, long prec, PowComputer_ prime_pow) except -1:
     """
@@ -370,7 +384,7 @@ cdef inline int cdivunit(celement out, celement a, celement b, long prec, PowCom
     """
     Division.
 
-    The inversion is perfomed modulo p^prec.  Note that no reduction
+    The inversion is performed modulo p^prec.  Note that no reduction
     is performed after the product.
 
     INPUT:
@@ -381,8 +395,8 @@ cdef inline int cdivunit(celement out, celement a, celement b, long prec, PowCom
     - ``prec`` -- a long, the precision.
     - ``prime_pow`` -- the PowComputer for the ring.
     """
-    cinvert(out, b, prec, prime_pow)
-    cmul(out, a, out, prec, prime_pow)
+    cinvert(prime_pow.aliasing, b, prec, prime_pow)
+    cmul(out, a, prime_pow.aliasing, prec, prime_pow)
 
 cdef inline int csetone(celement out, PowComputer_ prime_pow) except -1:
     """
@@ -492,12 +506,12 @@ cdef inline cpickle(celement a, PowComputer_ prime_pow):
 
 cdef inline int cunpickle(celement out, x, PowComputer_ prime_pow) except -1:
     """
-    Reconstruction from the output of meth:`cpickle`.
+    Reconstruction from the output of :meth:`cpickle`.
 
     INPUT:
 
     - ``out`` -- the ``celement`` in which to store the result.
-    - ``x`` -- the result of `meth`:cpickle.
+    - ``x`` -- the result of :meth:`cpickle`.
     - ``prime_pow`` -- the PowComputer for the ring.
     """
     byte_string = x.encode("UTF-8")
@@ -510,7 +524,7 @@ cdef inline long chash(celement a, long ordp, long prec, PowComputer_ prime_pow)
 
     INPUT:
 
-    - ``a`` -- an ``celement`` storing the underlying element to hash.
+    - ``a`` -- a ``celement`` storing the underlying element to hash.
     - ``ordp`` -- a long storing the valuation.
     - ``prec`` -- a long storing the precision.
     - ``prime_pow`` -- a PowComputer for the ring.
@@ -522,52 +536,127 @@ cdef inline long chash(celement a, long ordp, long prec, PowComputer_ prime_pow)
     fmpz_poly_get_coeff_mpz(h.value, a, 0)
     return hash(h)
 
-cdef clist(celement a, long prec, bint pos, PowComputer_ prime_pow):
+cdef inline cmodp_rep(fmpz_poly_t rep, fmpz_poly_t value, expansion_mode mode, bint return_list, PowComputer_ prime_pow):
     """
-    Returns a list of digits in the series expansion.
-
-    This function is used in printing, and expresses ``a`` as a series
-    in the standard uniformizer ``p``.
+    Compute a polynomial that is reduced modulo p and equivalent to the given value.
 
     INPUT:
 
-    - ``a`` -- an ``celement`` giving the underlying `p`-adic element.
-    - ``prec`` -- a precision giving the number of digits desired.
-    - ``pos`` -- if True then representatives in 0..(p-1) are used;
-                 otherwise the range (-p/2..p/2) is used.
+    - ``rep`` -- the reduction mod p.
+    - ``value`` -- the element to be reduced.
+    - ``mode`` -- if ``smallest_mode``, the coefficients of the reduction
+`     will be between -p/2 and p/2 instead of between 0 and p.
+    - ``return_list`` -- boolean, whether to return a list of integers giving the coefficients of the expansion.
     - ``prime_pow`` -- a PowComputer for the ring.
-
-    OUTPUT:
-
-    A list of `p`-adic digits `[a_0, a_1, \ldots]` so that `a = a_0 + a_1*p +
-    \cdots` modulo `p^{prec}`. The digits are represented as lists themselves.
-    The returned list might omit trailing zeros and therefore contain less than
-    ``prec`` elements.
     """
-
-    ret = []
-    cdef Integer digit, zero = Integer(0)
-    cdef long i,j
-    for i in range(fmpz_poly_length(a)):
-        fmpz_poly_get_coeff_fmpz(prime_pow.fmpz_clist, a, i)
-        j = 0
-        while j < prec:
-            if fmpz_is_zero(prime_pow.fmpz_clist): break
-            fmpz_fdiv_qr(prime_pow.fmpz_clist, prime_pow.fmpz_clist2, prime_pow.fmpz_clist, prime_pow.fprime)
-            if not fmpz_is_zero(prime_pow.fmpz_clist2):
-                if not pos and fmpz_cmp(prime_pow.fmpz_clist2, prime_pow.half_prime) > 0:
-                    fmpz_sub(prime_pow.fmpz_clist2, prime_pow.fmpz_clist2, prime_pow.fprime)
-                    fmpz_add_ui(prime_pow.fmpz_clist, prime_pow.fmpz_clist, 1)
-                while len(ret) <= j: ret.append([])
-                while len(ret[j]) <= i: ret[j].append(zero)
+    cdef long i
+    cdef fmpz* c
+    cdef Integer digit
+    sig_on()
+    fmpz_poly_scalar_mod_fmpz(rep, value, prime_pow.fprime)
+    sig_off()
+    if return_list or mode == smallest_mode:
+        L = []
+        for i in range(fmpz_poly_length(rep)):
+            c = fmpz_poly_get_coeff_ptr(rep, i)
+            if mode == smallest_mode and fmpz_cmp(c, prime_pow.half_prime) > 0:
+                fmpz_sub(c, c, prime_pow.fprime)
+            if return_list:
                 digit = PY_NEW(Integer)
-                fmpz_get_mpz(digit.value, prime_pow.fmpz_clist2)
-                ret[j][i] =digit
-            j += 1
-    return ret
+                fmpz_get_mpz(digit.value, c)
+                L.append(digit)
+        if return_list:
+            return L
 
-# The element is filled in for zero in the output of clist if necessary.
-_list_zero = []
+# the expansion_mode enum is defined in padic_template_element_header.pxi
+cdef inline cexpansion_next(fmpz_poly_t value, expansion_mode mode, long curpower, PowComputer_ prime_pow):
+    """
+    Return the next digit in a `p`-adic expansion of ``value``.
+
+    INPUT:
+
+    - ``value`` -- the `p`-adic element whose expansion is desired.
+    - ``mode`` -- either ``simple_mode`` or ``smallest_mode``
+    - ``curpower`` -- the current power of `p` for which the coefficient
+      is being found.  Only used in ``smallest_mode``.
+    - ``prime_pow`` -- A ``PowComputer`` holding `p`-adic data.
+    """
+    if mode == teichmuller_mode: raise NotImplementedError
+    ans = []
+    cdef fmpz* c
+    cdef long i
+    cdef Integer digit
+    for i in range(fmpz_poly_length(value)):
+        c = fmpz_poly_get_coeff_ptr(value, i)
+        fmpz_fdiv_qr(c, prime_pow.fmpz_cexp, c, prime_pow.fprime)
+        if mode == smallest_mode and fmpz_cmp(prime_pow.fmpz_cexp, prime_pow.half_prime) > 0:
+            fmpz_sub(prime_pow.fmpz_cexp, prime_pow.fmpz_cexp, prime_pow.fprime)
+            fmpz_add_ui(c, c, 1)
+        digit = PY_NEW(Integer)
+        fmpz_get_mpz(digit.value, prime_pow.fmpz_cexp)
+        ans.append(digit)
+    _fmpz_poly_normalise(value)
+    return trim_zeros(ans) # defined in sage.rings.padics.misc and imported in padic_template_element
+
+cdef inline cexpansion_getitem(fmpz_poly_t value, long m, PowComputer_ prime_pow):
+    """
+    Return the `m`th `p`-adic digit in the ``simple_mode`` expansion.
+
+    INPUT:
+
+    - ``value`` -- the `p`-adic element whose expansion is desired.
+    - ``m`` -- a non-negative integer: which entry in the `p`-adic expansion to return.
+    - ``prime_pow`` -- A ``PowComputer`` holding `p`-adic data.
+    """
+    ans = []
+    cdef fmpz* c
+    cdef long i
+    cdef Integer digit
+    for i in range(fmpz_poly_length(value)):
+        c = fmpz_poly_get_coeff_ptr(value, i)
+        if m > 0:
+            fmpz_fdiv_q(prime_pow.fmpz_cexp, c, prime_pow.pow_fmpz_t_tmp(m)[0])
+            fmpz_mod(prime_pow.fmpz_cexp, prime_pow.fmpz_cexp, prime_pow.fprime)
+        else:
+            fmpz_mod(prime_pow.fmpz_cexp, c, prime_pow.fprime)
+        digit = PY_NEW(Integer)
+        fmpz_get_mpz(digit.value, prime_pow.fmpz_cexp)
+        ans.append(digit)
+    _fmpz_poly_normalise(value)
+    return trim_zeros(ans) # defined in sage.rings.padics.misc and imported in padic_template_element
+
+# The element is filled in for zero in the p-adic expansion if necessary.
+_expansion_zero = []
+
+cdef list ccoefficients(celement x, long valshift, long prec, PowComputer_ prime_pow):
+    """
+    Return a list of coefficients, as elements that can be converted into the base ring.
+
+    INPUT:
+
+    - ``x`` -- a ``celement`` giving the underlying `p`-adic element, or possibly its unit part.
+    - ``valshift`` -- a long giving the power of the uniformizer to shift `x` by.
+    - ``prec`` -- a long, the (relative) precision desired, used in rational reconstruction
+    - ``prime_pow`` -- the ``PowComputer`` of the ring
+    """
+    cdef Integer ansz
+    cdef Rational ansq
+    cdef long i
+    ans = []
+    for i in range(fmpz_poly_length(x)):
+        if valshift >= 0:
+            ansz = PY_NEW(Integer)
+            fmpz_poly_get_coeff_mpz(ansz.value, x, i)
+            if valshift > 0:
+                mpz_mul(ansz.value, ansz.value, prime_pow.pow_mpz_t_tmp(valshift))
+            ans.append(ansz)
+        else:
+            ansq = Rational.__new__(Rational)
+            fmpz_poly_get_coeff_mpz(mpq_numref(ansq.value), x, i)
+            mpz_set(mpq_denref(ansq.value), prime_pow.pow_mpz_t_tmp(-valshift))
+            mpq_canonicalize(ansq.value)
+            ans.append(ansq)
+    return ans
 
 cdef int cteichmuller(celement out, celement value, long prec, PowComputer_ prime_pow) except -1:
     """
@@ -580,14 +669,14 @@ cdef int cteichmuller(celement out, celement value, long prec, PowComputer_ prim
                  \pmod{\pi}`.
     - ``value`` -- an ``celement``, the element mod `\pi` to lift.
     - ``prec`` -- a long, the precision to which to lift.
-    - ``prime_pow`` -- the Powcomputer of the ring.
+    - ``prime_pow`` -- the ``PowComputer`` of the ring.
 
     ALGORITHM:
 
     We use Hensel lifting to solve the equation `f(T)=T^q-T`. Instead of
     dividing by the derivative of `f`, we divide by `( q - 1 )` whose first
     digits coincide with `f'`. This does probably not yield quadratic
-    convergence but taking inverses would be much more expansive than what is
+    convergence but taking inverses would be much more expensive than what is
     done here.
 
     """
@@ -762,7 +851,7 @@ cdef cmatrix_mod_pn(celement a, long aprec, long valshift, PowComputer_ prime_po
     cdef IntegerMod_abstract zero = R(0)
     cdef IntegerMod_abstract item
     L = []
-    cshift(prime_pow.poly_matmod, a, valshift, aprec, prime_pow, True)
+    cshift_notrunc(prime_pow.poly_matmod, a, valshift, aprec, prime_pow, True)
     for i in range(deg):
         L.append([])
         d = fmpz_poly_degree(prime_pow.poly_matmod)

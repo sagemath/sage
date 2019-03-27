@@ -82,7 +82,7 @@ However, you cannot "mix wrong lattices" in your expressions::
     sage: n + m
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+':
+    TypeError: unsupported operand parent(s) for +:
     '3-d lattice N' and '3-d lattice M'
     sage: n * n
     Traceback (most recent call last):
@@ -151,6 +151,8 @@ from sage.geometry.toric_lattice_element import (ToricLatticeElement,
 from sage.geometry.toric_plotter import ToricPlotter
 from sage.misc.all import latex
 from sage.structure.all import parent
+from sage.structure.richcmp import (richcmp_method, richcmp, rich_to_bool,
+                                    richcmp_not_equal)
 from sage.modules.fg_pid.fgp_element import FGP_Element
 from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.modules.free_module import (FreeModule_ambient_pid,
@@ -176,7 +178,7 @@ def is_ToricLattice(x):
     EXAMPLES::
 
         sage: from sage.geometry.toric_lattice import (
-        ...     is_ToricLattice)
+        ....:   is_ToricLattice)
         sage: is_ToricLattice(1)
         False
         sage: N = ToricLattice(3)
@@ -203,7 +205,7 @@ def is_ToricLatticeQuotient(x):
     EXAMPLES::
 
         sage: from sage.geometry.toric_lattice import (
-        ...     is_ToricLatticeQuotient)
+        ....:   is_ToricLatticeQuotient)
         sage: is_ToricLatticeQuotient(1)
         False
         sage: N = ToricLattice(3)
@@ -580,7 +582,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         def make_name(N1, N2, use_latex=False):
             if use_latex:
-                return latex(N1)+ ' \oplus ' +latex(N2)
+                return latex(N1)+ r' \oplus ' +latex(N2)
             else:
                 return N1._name+ '+' +N2._name
 
@@ -754,7 +756,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
         return S if is_ToricLattice(S) else self.ambient_module().submodule(S)
 
     def span(self, gens, base_ring=ZZ, *args, **kwds):
-        """
+        r"""
         Return the span of the given generators.
 
         INPUT:
@@ -859,6 +861,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
                                             basis, base_ring, *args, **kwds)
 
 
+@richcmp_method
 class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
     r"""
     Create a toric lattice.
@@ -897,7 +900,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
         self._latex_name = latex_name
         self._latex_dual_name = latex_dual_name
 
-    def __cmp__(self, right):
+    def __richcmp__(self, right, op):
         r"""
         Compare ``self`` and ``right``.
 
@@ -907,36 +910,38 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
 
         OUTPUT:
 
-        - 0 if ``right`` is a toric lattice of the same dimension as ``self``
-          and their associated names are the same, 1 or -1 otherwise.
+        boolean
+
+        There is equality if ``right`` is a toric lattice of the same
+        dimension as ``self`` and their associated names are the
+        same.
 
         TESTS::
 
             sage: N3 = ToricLattice(3)
             sage: N4 = ToricLattice(4)
             sage: M3 = N3.dual()
-            sage: cmp(N3, N4)
-            -1
-            sage: cmp(N3, M3)
-            1
-            sage: abs( cmp(N3, 3) )
-            1
-            sage: cmp(N3, ToricLattice(3))
-            0
+            sage: N3 < N4
+            True
+            sage: N3 > M3
+            True
+            sage: N3 == ToricLattice(3)
+            True
         """
         if self is right:
-            return 0
-        c = cmp(type(self), type(right))
-        if c:
-            return c
-        c = cmp(self.rank(), right.rank())
-        if c:
-            return c
+            return rich_to_bool(op, 0)
+        if type(self) != type(right):
+            return NotImplemented
+
+        lx = self.rank()
+        rx = right.rank()
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
         # If lattices are the same as ZZ-modules, compare associated names
-        return cmp([self._name, self._dual_name,
-                    self._latex_name, self._latex_dual_name],
-                   [right._name, right._dual_name,
-                    right._latex_name, right._latex_dual_name])
+        return richcmp([self._name, self._dual_name,
+                        self._latex_name, self._latex_dual_name],
+                       [right._name, right._dual_name,
+                        right._latex_name, right._latex_dual_name], op)
 
     def _latex_(self):
         r"""
@@ -1634,7 +1639,7 @@ class ToricLattice_quotient(FGP_Module_class):
         return ToricLattice_quotient(V,W,check)
 
     def base_extend(self, R):
-        """
+        r"""
         Return the base change of ``self`` to the ring ``R``.
 
         INPUT:

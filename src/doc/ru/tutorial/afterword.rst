@@ -106,7 +106,7 @@ Sage ведет себя немного другим образом.
        Rational Field
        sage: 2//3
        0
-       sage: int(2)/int(3)   # optional - python2
+       sage: int(2)/int(3)   # py2
        0
 
 -  **Большие целые числа:** Python имеет встроенную поддержку целых чисел

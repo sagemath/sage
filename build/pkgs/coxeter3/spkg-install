@@ -1,40 +1,6 @@
-#!/usr/bin/env bash
-
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo >&2 "SAGE_LOCAL undefined ... exiting";
-   echo >&2 "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
-# Configure
-cd patches
-cp directories.h directories.tmpl
-sed -i "s|SAGE_LOCAL|$SAGE_LOCAL|g" directories.tmpl
-
 # Patch the Coxeter3 sources
-cd ../src
-cp ../patches/directories.tmpl directories.h
-cp ../patches/sage.cpp ../patches/sage.h .
-cp ../patches/test.input ../patches/test.output.expected .
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
+cd src
+sed -i.bak "s|@SAGE_LOCAL@|$SAGE_LOCAL|g" directories.h
 
-# Build
-$MAKE all
-if [ $? -ne 0 ]; then
-   echo >&2 "Error building coxeter3"
-   exit 1
-fi
-
-# Install
-$MAKE install
-if [ $? -ne 0 ]; then
-   echo >&2 "Error installing coxeter3"
-   exit 1
-fi
+sdh_make
+sdh_make_install

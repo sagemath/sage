@@ -8,6 +8,11 @@ See :mod:`~sage.combinat.crystals.elementary_crystals`.
   or :class:`B <sage.combinat.crystals.elementary_crystals.ElementaryCrystal>`
 * :class:`R <sage.combinat.crystals.elementary_crystals.RCrystal>`
 * :class:`T <sage.combinat.crystals.elementary_crystals.TCrystal>`
+
+TESTS::
+
+     sage: 'absolute_import' in dir(crystals.elementary)
+     False
 """
 from __future__ import absolute_import
 
@@ -17,3 +22,4 @@ from .elementary_crystals import ElementaryCrystal as Elementary
 from .elementary_crystals import ElementaryCrystal as B
 from .elementary_crystals import ComponentCrystal as Component
 
+del absolute_import

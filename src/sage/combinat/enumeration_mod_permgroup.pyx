@@ -23,13 +23,13 @@ cpdef list all_children(ClonableIntArray v, int max_part):
     That means this function adds `1` on the last non zero entries and the
     following ones. For an integer vector `v` such that
 
-    .. math::
+    .. MATH::
 
         v = [ \dots, a , 0, 0 ]  \text{ with } a \neq 0,
 
     then, the list of children is
 
-    .. math::
+    .. MATH::
 
         [ [ \dots, a+1 , 0, 0 ] , [ \dots, a , 1, 0 ], [ \dots, a , 0, 1 ] ].
 
@@ -147,7 +147,7 @@ cpdef bool is_canonical(list sgs, ClonableIntArray v):
     generating system.  An integer vector `v` is said to be
     canonical under the action of `G` if and only if:
 
-    .. math::
+    .. MATH::
 
         v = \max_{\text{lex order}} \{g \cdot v | g \in G \}
 
@@ -195,7 +195,7 @@ cpdef ClonableIntArray canonical_representative_of_orbit_of(list sgs, ClonableIn
     generating system.  An integer vector `v` is said to be
     canonical under the action of `G` if and only if:
 
-    .. math::
+    .. MATH::
 
         v = \max_{\text{lex order}} \{g \cdot v | g \in G \}
 

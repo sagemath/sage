@@ -15,10 +15,11 @@ from __future__ import print_function
 
 import os
 
-from sage_bootstrap.uncompress.tar_file import SageTarFile
+from sage_bootstrap.uncompress.tar_file import SageTarFile, SageTarXZFile
 from sage_bootstrap.uncompress.zip_file import SageZipFile
+from sage_bootstrap.util import retry
 
-ARCHIVE_TYPES = [SageTarFile, SageZipFile]
+ARCHIVE_TYPES = [SageTarFile, SageZipFile, SageTarXZFile]
 
 
 
@@ -66,6 +67,14 @@ def unpack_archive(archive, dirname=None):
     try:
         archive.extractall(members=archive.names)
         if dirname and top_level:
-            os.rename(top_level, dirname)
+            # On Windows os.rename can fail unexpectedly with a permission
+            # error if a virus scanner or other background process is
+            # inspecting the newly extracted files
+            rename = lambda: os.rename(top_level, dirname)
+            retry(rename, OSError)
+
+            # Apply strict umask to the top-level directory in case it wasn't
+            # already; see https://trac.sagemath.org/ticket/24567
+            os.chmod(dirname, os.stat(dirname).st_mode & ~0o077)
     finally:
         os.chdir(prev_cwd)

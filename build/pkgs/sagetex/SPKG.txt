@@ -27,7 +27,7 @@ Dan Drake (dr.dan.drake at gmail)
 
 == Upstream Contact ==
 
-Author: Dan Drake. Web: [[https://github.com/dandrake/sagetex]]
+Author: Dan Drake. Web: [[https://github.com/sagemath/sagetex]]
 
 == Dependencies ==
 

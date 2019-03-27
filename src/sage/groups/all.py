@@ -8,7 +8,16 @@ from .abelian_gps.all import *
 
 from .perm_gps.all import *
 
-from .generic import *
+from .generic import (discrete_log, discrete_log_rho, discrete_log_lambda,
+                      linear_relation, multiple, multiples)
+lazy_import('sage.groups.generic',
+            ['bsgs', 'discrete_log_generic', 'multiplication_names',
+             'addition_names', 'order_from_multiple', 'order_from_bounds',
+             'merge_points', 'structure_description'],
+            deprecation=(25785, "this is being removed from the global namespace"))
+
+# deprecation(24256)
+from sage.structure.element import generic_power as power
 
 lazy_import('sage.groups.class_function', 'ClassFunction')
 
@@ -22,6 +31,7 @@ lazy_import('sage.groups.braid', 'BraidGroup')
 lazy_import('sage.groups.affine_gps.affine_group', 'AffineGroup')
 lazy_import('sage.groups.affine_gps.euclidean_group', 'EuclideanGroup')
 
+lazy_import('sage.groups.artin', 'ArtinGroup')
 lazy_import('sage.groups.raag', 'RightAngledArtinGroup')
 
 lazy_import('sage.groups', 'groups_catalog', 'groups')

@@ -1,4 +1,4 @@
-$(PYTHON) setuptools backports_abc backports_ssl_match_hostname certifi singledispatch
+$(PYTHON) backports_abc backports_ssl_match_hostname certifi singledispatch | setuptools pip
 
 ----------
 All lines of this file are ignored except the first.

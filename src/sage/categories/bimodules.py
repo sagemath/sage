@@ -71,7 +71,9 @@ class Bimodules(CategoryWithParameters):
         EXAMPLES::
 
             sage: Bimodules(QQ,ZZ)._make_named_class_key('parent_class')
-            (Join of Category of quotient fields and Category of metric spaces,
+            (Join of Category of number fields
+                 and Category of quotient fields
+                 and Category of metric spaces,
              Join of Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
@@ -84,7 +86,9 @@ class Bimodules(CategoryWithParameters):
              and Category of metric spaces)
 
             sage: Bimodules(QQ, Rings())._make_named_class_key('element_class')
-            (Join of Category of quotient fields and Category of metric spaces,
+            (Join of Category of number fields
+                 and Category of quotient fields
+                 and Category of metric spaces,
              Category of rings)
 
             sage: Bimodules(Fields(), Rings())._make_named_class_key('element_class')
@@ -141,7 +145,7 @@ class Bimodules(CategoryWithParameters):
         return self._right_base_ring
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::

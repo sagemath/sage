@@ -11,7 +11,6 @@ Integer vectors modulo the action of a permutation group
 #*****************************************************************************
 from __future__ import print_function
 
-from itertools import imap
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.semirings.all import NN
 
@@ -37,7 +36,7 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
     is maximal in its orbit under the action of `G`. `v` is
     canonical if and only if
 
-    .. math::
+    .. MATH::
 
         v = \max_{\text{lex order}} \{g \cdot v | g \in G \}
 
@@ -45,7 +44,7 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
     simple transposition `s_1 = (1, 2)` swaps the first and the second entries
     of any integer vector `v = [a_1, a_2, a_3, \dots , a_n]`
 
-    .. math::
+    .. MATH::
 
         s_1 \cdot v = [a_2, a_1, a_3, \dots , a_n]
 
@@ -83,13 +82,13 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
 
         sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3)]]))
         sage: I.category()
-        Join of Category of infinite enumerated sets and Category of quotients of sets
+        Category of infinite enumerated quotients of sets
         sage: I.cardinality()
         +Infinity
         sage: I.list()
         Traceback (most recent call last):
         ...
-        NotImplementedError: infinite list
+        NotImplementedError: cannot list an infinite set
         sage: p = iter(I)
         sage: for i in range(10): next(p)
         [0, 0, 0]
@@ -159,8 +158,8 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
         sage: I = IntegerVectorsModPermutationGroup(SymmetricGroup(5)) # long time
         sage: p = iter(I) # long time
         sage: for i in range(100): # long time
-        ...       v = list(next(p))
-        ...       assert sorted(v, reverse=True) == v
+        ....:     v = list(next(p))
+        ....:     assert sorted(v, reverse=True) == v
 
     We now check that there is as much of canonical vectors under the
     symmetric group `S_n` whose entries sum to `d` than partitions of
@@ -274,7 +273,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
             sage: I
             Integer vectors of length 4 enumerated up to the action of Permutation Group with generators [(1,2,3,4)]
             sage: I.category()
-            Join of Category of infinite enumerated sets and Category of quotients of sets
+            Category of infinite enumerated quotients of sets
             sage: TestSuite(I).run()
         """
         SearchForest.__init__(self, algorithm = 'breadth', category = InfiniteEnumeratedSets().Quotients())
@@ -304,15 +303,9 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
 
             sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]))
             sage: S.ambient()
-            Integer vectors
+            Integer vectors of length 4
         """
-        ## TODO: Fix me once 'IntegerVectors(length=bla)' will return
-        ## the integer vectors of length bla
-        #return IntegerVectors(length=self.n)
-
-        # (#17927) The previous line was replaced by the following, as
-        # IntegerVectors(length=k) is invalid at the moment.
-        return IntegerVectors()
+        return IntegerVectors(length=self.n)
 
     def lift(self, elt):
         r"""
@@ -324,7 +317,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
             sage: v = S.lift(S([4,3,0,1])); v
             [4, 3, 0, 1]
             sage: type(v)
-            <type 'list'>
+            <... 'list'>
         """
         # TODO: For now, Sage integer vectors are just python list.
         # Once Integer vectors will have an element class, update this
@@ -418,7 +411,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
         define ``self``.  Such integer vectors are said to be
         canonical. A vector `v` is canonical if and only if
 
-        .. math::
+        .. MATH::
 
             v = \max_{\text{lex order}} \{g \cdot v | g \in G \}
 
@@ -438,7 +431,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
             assert isinstance(v, (ClonableIntArray, list)), '%s should be a list or a integer vector'%v
             assert (self.n == len(v)), '%s should be of length %s'%(v, self.n)
             for p in v:
-                assert (p == NN(p)), 'Elements of %s should be integers'%s
+                assert (p == NN(p)), 'Elements of %s should be integers' % v
         return is_canonical(self._sgs, self.element_class(self, list(v), check=False))
 
     def __contains__(self, v):
@@ -477,7 +470,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
             if v.parent() is self:
                 return v
             else:
-                raise ValueError('%s shoud be a Python list of integer'%(v))
+                raise ValueError('%s should be a Python list of integer'%(v))
         except Exception:
             return self.element_class(self, list(v), check=check)
 
@@ -503,7 +496,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
             sage: I.orbit([1,1,1,1])
             {[1, 1, 1, 1]}
         """
-        assert isinstance(v, (list, ClonableIntArray)), '%s shoud be a Python list or an element of %s'%(v, self)
+        assert isinstance(v, (list, ClonableIntArray)), '%s should be a Python list or an element of %s'%(v, self)
         try:
             if v.parent() is self:
                 return orbit(self._sgs, v)
@@ -529,8 +522,8 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
     class Element(ClonableIntArray):
         r"""
         Element class for the set of integer vectors of given sum enumerated modulo
-        the action of a permutation group. These vector are clonable lists of integers
-        which must check conditions comming form the parent appearing in the method
+        the action of a permutation group. These vectors are clonable lists of integers
+        which must satisfy conditions coming from the parent appearing in the method
         :meth:`~sage.structure.list_clone.ClonableIntArray.check`.
 
         TESTS::
@@ -590,8 +583,8 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
 
     Here is the enumeration of unlabeled graphs over 5 vertices::
 
-        sage: G = IntegerVectorsModPermutationGroup(TransitiveGroup(10,12), max_part=1) # optional - database_gap
-        sage: G.cardinality()  # optional - database_gap
+        sage: G = IntegerVectorsModPermutationGroup(TransitiveGroup(10,12), max_part=1)
+        sage: G.cardinality()
         34
 
     TESTS::
@@ -722,7 +715,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
             if v.parent() is self:
                 return v
             else:
-                raise ValueError('%s shoud be a Python list of integer'%(v))
+                raise ValueError('%s should be a Python list of integer'%(v))
         except Exception:
             return self.element_class(self, list(v), check=check)
 
@@ -773,7 +766,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
         define ``self``.  Such integer vectors are said to be
         canonical. A vector `v` is canonical if and only if
 
-        .. math::
+        .. MATH::
 
             v = \max_{\text{lex order}} \{g \cdot v | g \in G \}
 
@@ -788,10 +781,10 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
             True
         """
         if check:
-            assert isinstance(v, (ClonableIntArray, list)), '%s should be a list or a integer vector'%v
-            assert (self.n == len(v)), '%s should be of length %s'%(v, self.n)
+            assert isinstance(v, (ClonableIntArray, list)), '%s should be a list or a integer vector' % v
+            assert (self.n == len(v)), '%s should be of length %s' % (v, self.n)
             for p in v:
-                assert (p == NN(p)), 'Elements of %s should be integers'%s
+                assert (p == NN(p)), 'Elements of %s should be integers' % v
         return is_canonical(self._sgs, self.element_class(self, list(v), check=False))
 
     def ambient(self):
@@ -804,14 +797,8 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
             Integer vectors that sum to 6
             sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), 6, max_part=12); S.ambient()
             Integer vectors that sum to 6 with constraints: max_part=12
-
-        .. todo::
-
-         Integer vectors should accept ``max_part`` as a single argument, and the following should change::
-
             sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), max_part=12); S.ambient()
-            Integer vectors
-
+            Integer vectors with constraints: max_part=12
         """
         if self._sum is not None:
             if self._max_part <= -1:
@@ -819,13 +806,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
             else:
                 return IntegerVectors(n=self._sum, max_part=self._max_part)
         else:
-            ## Fix me once max_part should be accepted as a single
-            ## argument for integer vectors
-            #return IntegerVectors(max_part=self._max_part)
-
-            # (#17927) The previous line was replaced by the following, as
-            # IntegerVectors(max_part=k) is invalid at the moment.
-            return IntegerVectors()
+            return IntegerVectors(max_part=self._max_part)
 
     def lift(self, elt):
         r"""
@@ -938,7 +919,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
             sage: sorted(I.orbit([3,0,0,1]))
             [[0, 0, 1, 3], [0, 1, 3, 0], [1, 3, 0, 0], [3, 0, 0, 1]]
         """
-        assert isinstance(v, (list, ClonableIntArray)), '%s shoud be a Python list or an element of %s'%(v, self)
+        assert isinstance(v, (list, ClonableIntArray)), '%s should be a Python list or an element of %s' % (v, self)
         try:
             if v.parent() is self:
                 return orbit(self._sgs, v)
@@ -949,7 +930,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
         r"""
         Element class for the set of integer vectors with constraints enumerated
         modulo the action of a permutation group. These vectors are clonable lists
-        of integers which must check conditions comming form the parent as in
+        of integers which must satisfy conditions coming from the parent as in
         the method :meth:`~sage.combinat.integer_vectors_mod_permgroup.IntegerVectorsModPermutationGroup_with_constraints.Element.check`.
 
         TESTS::

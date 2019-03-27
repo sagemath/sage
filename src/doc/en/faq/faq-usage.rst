@@ -10,14 +10,15 @@ How do I get started?
 
 You can try out Sage without downloading anything:
 
-* **SageMathCloud™:** Go to http://cloud.sagemath.org and set up a free
-  account.
+* **CoCalc™:** Go to https://cocalc.com and set up a free account.
 
   If you log in, you will gain access to the latest version of Sage and to 
   many other programs.
 
+  Note that this website is an independent commercial service.
+
 * **Sage cell:** A "one-off" version of Sage, available for doing one
-  computation at a time. http://sagecell.sagemath.org/
+  computation at a time. https://sagecell.sagemath.org/
 
 To download a **pre-built binary** Sage distribution, visit
 http://sagemath.org/download.html and click on the link for the binary for your
@@ -36,10 +37,6 @@ You can also run it from the command line of sage::
 
     sage: notebook() # not tested
 
-Where can I find more information about using SageMathCloud™?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-Visit the Frequently Asked Questions page for SageMathCloud™ at https://github.com/sagemath/cloud/wiki/FAQ .
 
 What are the prerequisites for installing a copy of Sage on my computer?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -48,8 +45,8 @@ Most of the dependencies of Sage are shipped with Sage itself. In most
 cases, you can download a pre-built binary and use that without
 installing any dependencies. If you use Windows, you will need to
 install
-`VirtualBox <http://www.virtualbox.org>`_, which can be downloaded
-from the page http://www.virtualbox.org/wiki/Downloads. After
+`VirtualBox <https://www.virtualbox.org>`_, which can be downloaded
+from the page https://www.virtualbox.org/wiki/Downloads. After
 installing VirtualBox, you need to download a VirtualBox distribution
 of Sage available at
 http://www.sagemath.org/download-windows.html. Ensure you follow the
@@ -143,17 +140,20 @@ and repeat this command every time that we change the file simple.py. However, i
 
 every change applied to the file simple.py will be automatically updated in Sage.
 
-Can I use Sage with Python 3.x?
-"""""""""""""""""""""""""""""""
+Can I use SageMath with Python 3.x?
+"""""""""""""""""""""""""""""""""""
 
-Currently, no. Sage depends on the
-`SciPy <http://www.scipy.org>`_
-stack of Python numerical and scientific packages. As of 2010, SciPy
-still uses Python 2.x. So until SciPy is ported to run with Python
-3.x and
-`Cython <http://www.cython.org>`_
-supports Python 3.x, Sage will continue to use Python 2.x.
+Currently, (September 2018) you can build the source code of SageMath with
+Python 3 using the instructions at the bottom of
+https://wiki.sagemath.org/Python3-compatible%20code
 
+Beware that this is still at an experimental stage.
+
+Work in progress aims to allow usage of Python 3 in the not-so-far
+future. Until this task is completed, SageMath will continue to use
+Python 2.x.
+
+See :trac:`15530` and :trac:`26212` for tracking the current progress.
 
 I'm seeing an error about "Permission denied" on a file called "sage-flags.txt".
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -181,9 +181,7 @@ it probably means that you compiled/installed Sage as one user, but
 have not run it to let it generate the ``sage-flags.txt`` file. Just
 run Sage one time as whatever user installed it and this problem
 should go away. This would also be easy to fix by having Sage run once
-as part of the install process; see
-`trac ticket #6375 <http://trac.sagemath.org/sage_trac/ticket/6375>`_
-for this fix.
+as part of the install process; see :trac:`6375` for this fix.
 
 
 I downloaded a Sage binary and it crashes on startup with "Illegal instruction". What can I do?
@@ -214,7 +212,7 @@ from the
 `download page <http://www.sagemath.org/download.html>`_.
 If you would like to help with updating the Debian/Ubuntu version of
 Sage, please email the
-`sage-devel <http://groups.google.com/group/sage-devel>`_
+`sage-devel <https://groups.google.com/group/sage-devel>`_
 mailing list.
 
 
@@ -223,9 +221,9 @@ Should I use the official version or development version?
 
 You are encouraged to use the latest official version of
 Sage. Development versions are frequently announced on the
-`sage-devel <http://groups.google.com/group/sage-devel>`_
+`sage-devel <https://groups.google.com/group/sage-devel>`_
 and
-`sage-release <http://groups.google.com/group/sage-release>`_
+`sage-release <https://groups.google.com/group/sage-release>`_
 mailing lists. An easy way of helping out with Sage development is to
 download the latest development release, compile it on your system,
 run all doctests, and report any compilation errors or doctest
@@ -247,9 +245,9 @@ by a web search.
 * `Dive into Python <http://www.diveintopython.net>`_ by Mark Pilgrim
 * `How to Think Like a Computer Scientist <http://www.openbookproject.net/thinkCSpy>`_
   by Jeffrey Elkner, Allen B. Downey, and Chris Meyers
-* `Official Python Tutorial <http://docs.python.org/tutorial>`_
+* `Official Python Tutorial <https://docs.python.org/tutorial>`_
 * `Python <http://www.python.org>`_ home page and the
-  `Python standard documentation <http://docs.python.org>`_
+  `Python standard documentation <https://docs.python.org>`_
 
 
 Can I do X in Sage?
@@ -278,7 +276,7 @@ When you type "0.6**2" in Python, it returns something like
 0.35999999999999999. But when you do the same in Sage it returns
 0.360000000000000. To understand why Python behaves as it does, see
 the
-`Python Tutorial <http://docs.python.org/tutorial/floatingpoint.html>`_,
+`Python Tutorial <https://docs.python.org/tutorial/floatingpoint.html>`_,
 especially the chapter "Floating Point Arithmetic: Issues and
 Limitations". What Sage does is "preparse" the input and transforms it
 like this::
@@ -310,7 +308,7 @@ arrow key and then press down arrow key, then the next line in history
 is fetched. This feature allows you to fetch as many successive lines
 in history as you like. However, Sage does not have a similar
 feature. The
-`IPython <http://ipython.scipy.org>`_
+`IPython <https://ipython.org>`_
 command prompt uses the readline library (via pyreadline), which
 evidently does not support this feature. Magma has its own custom
 "readline-like" library, which does support this feature. (Since so
@@ -343,7 +341,7 @@ ints. For example::
     sage: RealNumber = float; Integer = int
     sage: from scipy import stats
     sage: stats.ttest_ind(list([1,2,3,4,5]),list([2,3,4,5,.6]))
-    Ttest_indResult(statistic=0.076752955645333687, pvalue=0.94070490247380478)
+    Ttest_indResult(statistic=0.0767529..., pvalue=0.940704...)
     sage: stats.uniform(0,15).ppf([0.5,0.7])
     array([  7.5,  10.5])
 
@@ -387,12 +385,34 @@ You might want to convert ASCII characters such as "Big Mac" to ASCII
 numerals for further processing. In Sage and Python, you can use ``ord``,
 e.g. ::
 
-    sage: map(ord, "abcde")
+    sage: list(map(ord, "abcde"))
     [97, 98, 99, 100, 101]
-    sage: map(ord, "Big Mac")
+    sage: list(map(ord, "Big Mac"))
     [66, 105, 103, 32, 77, 97, 99]
 
+How can I wrote multiplication implicitly as in Mathematica?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+Sage has a function that enables this::
+
+    sage: implicit_multiplication(True)
+    sage: x 2 x  # Not tested
+    2*x^2
+    sage: implicit_multiplication(False)
+
+This is preparsed by Sage into Python code. It may not work in a
+complicated situation. To see what the preparser does::
+
+    sage: implicit_multiplication(True)
+    sage: preparse("2 x")
+    'Integer(2)*x'
+    sage: implicit_multiplication(False)
+    sage: preparse("2 x")
+    'Integer(2) x'
+
+See https://wiki.sagemath.org/sage_mathematica for more information
+about Mathematica vs. SageMath.
+    
 Can I make Sage automatically execute commands on startup?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -467,27 +487,6 @@ with a graphical session. Then build your Sage source distribution
 from within your text based session. You need to make sure that you
 can first restore your graphical session, before you attempt to log
 into a text based session.
-
-
-When I run doctests on Mac OS X I see the messages with "malloc", but in the end Sage reports that everything went fine.
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-The "malloc" messages you refer to might be something such as the
-following::
-
-    sage -t  src/sage/libs/pari/gen.pyx
-    python(4563) malloc: *** vm_allocate(size=4096000000) failed (error code=3)
-    python(4563) malloc: *** error: can't allocate region
-    python(4563) malloc: *** set a breakpoint in szone_error to debug
-
-The issue above is not a doctest failure. It is an error message
-printed by the system and it is exactly what one expects to see. In
-that particular doctest, we try to allocate a very large list in Pari
-that does not fit into physical memory (it is at least 100GB in
-size). So Mac OS X tells you that it could not allocate a chunk of
-memory roughly 4 GB in size, which is expected, if you are using Sage
-on a 32-bit version of OS X and you have compiled Sage in 32-bit bit
-mode or your binary Sage distribution is 32-bit.
 
 
 Sage 2.9 and higher fails compiling ATLAS on Linux. How can I fix this?
@@ -579,11 +578,11 @@ You need to give hints to Sage so that it uses C++ (both Givaro and
 NTL are C++ libraries), and it also needs the GMP and STDC C++
 libraries. Here is a small example::
 
-    # These comments are hints to Sage/Pyrex about the compiler and
+    # These comments are hints to Cython about the compiler and
     # libraries needed for the Givaro library:
     #
-    #clang c++
-    #clib givaro gmpxx gmp m stdc++
+    # distutils: language = c++
+    # distutils: libraries = givaro gmpxx gmp m
     cimport sage.rings.finite_field_givaro
     # Construct a finite field of order 11.
     cdef sage.rings.finite_field_givaro.FiniteField_givaro K
@@ -647,7 +646,7 @@ methods mentioned in the plot documentation, but this one is easiest::
 
 The *reason* this is necessary is that Sage returns complex numbers
 for odd roots of negative numbers when numerically approximated, which
-is a `standard convention <http://en.wikipedia.org/wiki/Cube_root#Complex_numbers>`_.
+is a `standard convention <https://en.wikipedia.org/wiki/Cube_root#Complex_numbers>`_.
 
     sage: N((-1)^(1/3))
     0.500000000000000 + 0.866025403784439*I
@@ -729,9 +728,34 @@ You will need to do this from the command line.  Just run a command like this.
 
 * Linux (assuming you have Sage in ``/usr/bin``)::
 
-    env SAGE_BROWSER=opera /usr/bin/sage -notebook
+    env BROWSER=opera /usr/bin/sage --notebook
 
-* Mac (assuming you are in the directory of your downloaded Sage)::
+* Mac (assuming you are in the directory of your downloaded Sage).
+  With the Jupyter notebook::
 
-    SAGE_BROWSER='open -a Firefox' ./sage -notebook
-    SAGE_BROWSER='open -a Google\ Chrome' ./sage -notebook
+    BROWSER='open -a Firefox %s' ./sage --notebook jupyter
+    BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter
+
+  With the old SageNB notebook::
+
+    BROWSER='open -a Firefox' ./sage --notebook
+    BROWSER='open -a Google\ Chrome' ./sage --notebook
+
+
+Where is the source code for ``<function>``?
+""""""""""""""""""""""""""""""""""""""""""""
+
+Functions and classes written in Python or Cython are in general accessible
+on the IPython command line with the ``??`` shortcut::
+
+    sage: plot??                            # not tested
+    Signature: plot(*args, **kwds)
+    Source:   
+    ...
+
+Objects that are built into Python or IPython are compiled and will
+not show, however. There are many functions in Sage implemented as
+symbolic functions, i.e., they can be used unevaluated as part of
+symbolic expressions. Their source code may also not be accessible
+from the command line, especially with elementary functions, because
+they are coded in C++ for efficiency reasons.

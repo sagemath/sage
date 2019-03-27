@@ -96,5 +96,7 @@ Libraries of algorithms
    sage/graphs/tutte_polynomial
    sage/graphs/partial_cube
    sage/graphs/generic_graph_pyx
+   sage/graphs/orientations
+   sage/graphs/connectivity
 
 .. include:: ../footer.txt

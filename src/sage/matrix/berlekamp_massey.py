@@ -24,8 +24,9 @@ AUTHORS:
 
 import sage.rings.rational_field
 
+
 def berlekamp_massey(a):
-    """
+    r"""
     Use the Berlekamp-Massey algorithm to find the minimal polynomial
     of a linearly recurrence sequence a.
 

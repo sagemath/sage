@@ -77,7 +77,8 @@ accessed via the standard tableaux classes::
     [([[5]], [[1, 2], [3, 4]]), ([[4]], [[1, 2], [3, 5]])]
 
 These residue sequences are particularly useful in the graded representation
-theory of the cyclotomic Hecke algebras of type~A [BK]_.
+theory of the cyclotomic KLR algebrasand the cyclotomic Hecke algebras of type~A;
+see [DJM1998]_ and [BK2009]_.
 
 This module implements the following classes:
 
@@ -86,14 +87,16 @@ This module implements the following classes:
 
 .. SEEALSO::
 
-    * :class:`PartitionTuples`
     * :class:`Partitions`
-    * :class:`StandardTableau`
-    * :class:`~sage.combinat.tableau_tuple.StandardTableaux_residue_shape`
+    * :class:`PartitionTuples`
     * :class:`~sage.combinat.tableau_tuple.StandardTableaux_residue`
+    * :class:`~sage.combinat.tableau_tuple.StandardTableaux_residue_shape`
+    * :class:`~sage.combinat.tableau_tuple.RowStandardTableauTuples_residue`
+    * :class:`~sage.combinat.tableau_tuple.RowStandardTableauTuples_residue_shape`
     * :class:`StandardTableaux`
-    * :class:`Tableau`
+    * :class:`StandardTableauTuples`
     * :class:`Tableaux`
+    * :class:`TableauTuples`
 
 .. TODO::
 
@@ -115,8 +118,8 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 from __future__ import absolute_import, print_function
+from six import add_metaclass
 
 from sage.categories.sets_cat import Sets
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -127,11 +130,17 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 from .partition_tuple import PartitionTuple
-from .tableau_tuple import StandardTableaux_residue, StandardTableaux_residue_shape
+from .tableau_tuple import (StandardTableaux_residue,
+                            StandardTableaux_residue_shape,
+                            RowStandardTableauTuples_residue,
+                            RowStandardTableauTuples_residue_shape)
 
 #--------------------------------------------------
 # Residue sequences
 #--------------------------------------------------
+
+# needed for __classcall_private__
+@add_metaclass(InheritComparisonClasscallMetaclass)
 class ResidueSequence(ClonableArray):
     r"""
     A residue sequence.
@@ -175,8 +184,8 @@ class ResidueSequence(ClonableArray):
         [0, 2, 1, 1, 0, 2, 0]
         sage: res.restrict(2)
         3-residue sequence (0,2) with multicharge (0,2)
-        sage: res.standard_tableaux([[2,1],[1],[2,1,1]])
-        Standard (2,1|1|2,1^2)-tableaux with 3-residue sequence (0,2,1,1,0,2,0) and multicharge (0,2)
+        sage: res.standard_tableaux([[2,1],[1],[2,1]])
+        Standard (2,1|1|2,1)-tableaux with 3-residue sequence (0,2,1,1,0,2,0) and multicharge (0,2)
         sage: res.standard_tableaux([[2,2],[3]]).list()
         []
         sage: res.standard_tableaux([[2,2],[3]])[:]
@@ -203,9 +212,6 @@ class ResidueSequence(ClonableArray):
         sage: from sage.combinat.tableau_residues import ResidueSequence
         sage: TestSuite( ResidueSequence(3,(0,0,1), [0,1,2])).run(skip='_test_pickling')
     """
-
-    __metaclass__ = InheritComparisonClasscallMetaclass    # needed for __classcall_private__
-
     @staticmethod
     def __classcall_private__(cls, e, multicharge, residues=None, check=True):
         r"""
@@ -367,6 +373,60 @@ class ResidueSequence(ClonableArray):
         return ResidueSequence(self.quantum_characteristic(),
                                self.multicharge(), self.residues()[:m])
 
+    def restrict_row(self, cell, row):
+        r"""
+        Return a residue sequence for the tableau obtained by swapping the row
+        in ending in `cell` with the row that is `row` rows above it and which
+        has the same length.
+
+        The residue sequence ``self`` is of the form `(r_1, \ldots, r_n)`.
+        The function returns the residue sequence `(r_1, \ldots, r_m)`, with
+        the same  :meth:`quantum_characteristic` and :meth:`multicharge`.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.tableau_residues import ResidueSequence
+            sage: ResidueSequence(3, [0,1,2,2,0,1]).restrict_row((1,2),1)
+            3-residue sequence (2,0,1,0,1) with multicharge (0)
+            sage: ResidueSequence(3, [1,0], [0,1,2,2,0,1]).restrict_row((1,1,2),1)
+            3-residue sequence (2,0,1,0,1) with multicharge (1,0)
+        """
+        residues = self.residues() # residue sequence
+        residues.reverse()         # reversed residue sequence
+
+        if residues[0] + row == residues[0]:
+            # if the residues in the two rows are the same we don't need to do
+            # anything special
+            return self.restrict(len(residues)-1)
+
+        # determine the sets of residues, one_res and two_res, that need to be
+        # interchanged in order to swap the corresponding rows
+        row_len = cell[-1] # length of the row being swapped
+        one_res = [0]      # last row of tableau will move
+        two_res = [0]      # will prune this entry later
+        try:
+            for c in range(1, row_len+1):
+                # residues decrease by 1 from right to left in each row
+                one_res.append(residues.index(residues[0]-c, one_res[c-1]+1))
+            for c in range(row_len+1):
+                two_res.append(residues.index(residues[0]-c+row, two_res[c]+1))
+                while two_res[-1] in one_res:
+                    # entries in one_res and two_res must be disjoint
+                    two_res[-1] = residues.index(residues[0]-c+row, two_res[-1]+1)
+        except ValueError:
+            return None
+
+        # now add row to the residues in two_res and subtract row from those in
+        # one_res
+        for c in range(row_len+1):
+            residues[one_res[c]] += row
+            residues[two_res[c+1]] -= row # jump over two_res[0]
+
+        # remove the first residue, reverse the order and return
+        return ResidueSequence(self.quantum_characteristic(),
+                               self.multicharge(),
+                               residues[1:][::-1])
+
     def swap_residues(self, i, j):
         r"""
         Return the *new* residue sequence obtained by swapping the residues
@@ -392,14 +452,20 @@ class ResidueSequence(ClonableArray):
             sage: res == ser
             False
 
+        TESTS::
+
+            sage: res.swap_residues(22,26)
+            Traceback (most recent call last):
+            ...
+            IndexError: 22 and 26 must be between 1 and 8
         """
         with self.clone() as swap:
             try:
                 # we have overridden __getitem__ so that indices are 1-based but
                 # __setitem__ is still 0-based so we need to renormalise the LHS
-                swap[i-1],swap[j-1] = self[j], self[i]
-            except:
-                raise IndexError('%s and %s must be between 1 and %s' % (i,j,self.size))
+                swap[i-1], swap[j-1] = self[j], self[i]
+            except IndexError:
+                raise IndexError('%s and %s must be between 1 and %s' % (i, j, self.size()))
         return swap
 
     def standard_tableaux(self, shape=None):
@@ -434,6 +500,38 @@ class ResidueSequence(ClonableArray):
         else:
             return StandardTableaux_residue_shape(residue=self,shape=PartitionTuple(shape))
 
+    def row_standard_tableaux(self, shape=None):
+        r"""
+        Return the residue-class of row standard tableaux that have residue
+        sequence ``self``.
+
+        INPUT:
+
+        - ``shape`` -- (optional) a partition or partition tuple of
+          the correct level
+
+        OUTPUT:
+
+        An iterator for the row standard tableaux with this residue sequence. If
+        the ``shape`` is given then only tableaux of this shape are returned,
+        otherwise all of the full residue-class of row standard tableaux, or row
+        standard tableaux tuples, is returned. The residue sequence ``self``
+        specifies the :meth:`multicharge` of the tableaux which, in turn,
+        determines the :meth:`level` of the tableaux in the residue class.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.tableau_residues import ResidueSequence
+            sage: ResidueSequence(3,(0,0,0),[0,1,2,0,1,2,0,1,2]).row_standard_tableaux()
+            Row standard tableaux with 3-residue sequence (0,1,2,0,1,2,0,1,2) and multicharge (0,0,0)
+            sage: ResidueSequence(3,(0,0,0),[0,1,2,0,1,2,0,1,2]).row_standard_tableaux([[3],[3],[3]])
+            Row standard (3|3|3)-tableaux with 3-residue sequence (0,1,2,0,1,2,0,1,2) and multicharge (0,0,0)
+        """
+        if shape is None:
+            return RowStandardTableauTuples_residue(residue=self)
+        else:
+            return RowStandardTableauTuples_residue_shape(residue=self, shape=PartitionTuple(shape))
+
     def negative(self):
         r"""
         Return the negative of the residue sequence ``self``.
@@ -457,23 +555,26 @@ class ResidueSequence(ClonableArray):
         Return a dictionary `\beta` that determines the block associated to
         the residue sequence ``self``.
 
-        In more detail, in tis dictionary `\beta[i]` is equal to the
-        number of nodes of residue ``i``. This corresponds to
+        Two Specht modules for a cyclotomic Hecke algebra of type `A` belong to
+        the same block, in this sense, if and only if the residue sequences of
+        their standard tableaux have the same block in this sense.  The blocks
+        of these algebras are actually indexed by positive roots in the root
+        lattice of an affine special linear group. Instead of than constructing
+        the root lattice, this method simply returns a dictionary `\beta` where
+        the keys are residues `i` and where the value of the  key `i` is equal
+        to the numbers of nodes in the residue sequence ``self`` that are equal
+        to `i`. The dictionary `\beta` corresponds to the positive root:
 
         .. MATH::
 
             \sum_{i\in I} \beta_i \alpha_i \in Q^+,
 
-        a element of the positive root lattice of the corresponding
-        Kac-Moody algebra.
+        These positive roots also index the blocks of the cyclotomic KLR
+        algebras of type `A`.
 
-        This is a useful statistics because two Specht modules for a cyclotomic
-        Hecke algebra of type `A` belong to the same block if and only if they
-        correspond to same element `\beta` of the root lattice, given above.
-
-        We return a dictionary because when the quantum characteristic is `0`,
+        We return a dictionary because when the :meth:`quantum_characteristic` is `0`,
         the Cartan type is `A_{\infty}`, in which case the simple roots are
-        indexed by the integers.
+        indexed by the integers, which is infinite.
 
         EXAMPLES::
 
@@ -751,4 +852,3 @@ class ResidueSequences(UniqueRepresentation, Parent):
         """
         if any(r not in self._base_ring for r in element):
             raise ValueError('not a {}-residue sequence {}'.format(self._quantum_characteristic))
-

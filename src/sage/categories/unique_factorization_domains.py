@@ -9,6 +9,7 @@ Unique factorization domains
 #******************************************************************************
 
 from sage.misc.lazy_attribute import lazy_class_attribute
+from sage.misc.misc_c import prod
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_singleton import Category_contains_method_by_parent_class
 from sage.categories.gcd_domains import GcdDomains
@@ -139,7 +140,7 @@ class UniqueFactorizationDomains(Category_singleton):
 
             ALGORITHM:
 
-            Algorithm 3.3.1 in [GTM138]_, based on pseudo-division.
+            Algorithm 3.3.1 in [Coh1993]_, based on pseudo-division.
 
             EXAMPLES::
 
@@ -153,10 +154,14 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: (-x^2 - 4*x - 5)^(3-2+1) * p == quo*q + rem
                 True
 
-            REFERENCES:
+            Check that :trac:`23620` has been resolved::
 
-            .. [GTM138] Henri Cohen. A Course in Computational Number Theory.
-               Graduate Texts in Mathematics, vol. 138. Springer, 1993.
+                sage: R.<x> = ZpFM(2)[]
+                sage: f = 2*x + 2
+                sage: g = 4*x + 2
+                sage: f.gcd(g).parent() is R
+                True
+
             """
             if f.degree() < g.degree():
                 A,B = g, f
@@ -201,10 +206,87 @@ class UniqueFactorizationDomains(Category_singleton):
 
                 return d*B // b
 
-            return d
+            return f.parent()(d)
 
     class ElementMethods:
         # prime?
         # squareFree
         # factor
-        pass
+
+        def radical(self, *args, **kwds):
+            r"""
+            Return the radical of this element, i.e. the product of its
+            irreducible factors.
+
+            This default implementation calls ``squarefree_decomposition`` if
+            available, and ``factor`` otherwise.
+
+            .. seealso:: :meth:`squarefree_part`
+
+            EXAMPLES::
+
+                sage: Pol.<x> = QQ[]
+                sage: (x^2*(x-1)^3).radical()
+                x^2 - x
+                sage: pol = 37 * (x-1)^3 * (x-2)^2 * (x-1/3)^7 * (x-3/7)
+                sage: pol.radical()
+                37*x^4 - 2923/21*x^3 + 1147/7*x^2 - 1517/21*x + 74/7
+
+                sage: Integer(10).radical()
+                10
+                sage: Integer(-100).radical()
+                10
+                sage: Integer(0).radical()
+                Traceback (most recent call last):
+                ...
+                ArithmeticError: Radical of 0 not defined.
+
+            The next example shows how to compute the radical of a number,
+            assuming no prime > 100000 has exponent > 1 in the factorization::
+
+                sage: n = 2^1000-1; n / radical(n, limit=100000)
+                125
+
+            TESTS::
+
+                sage: radical(pol)
+                37*x^4 - 2923/21*x^3 + 1147/7*x^2 - 1517/21*x + 74/7
+
+                sage: Integer(20).radical()
+                10
+            """
+            if self.is_zero():
+                raise ArithmeticError("Radical of 0 not defined.")
+            try:
+                decomp = self.squarefree_decomposition()
+            except AttributeError:
+                return self.factor(*args, **kwds).radical_value()
+            else:
+                return prod(fac for fac, mult in decomp)
+
+        def squarefree_part(self):
+            r"""
+            Return the square-free part of this element, i.e. the product
+            of its irreducible factors appearing with odd multiplicity.
+
+            This default implementation calls ``squarefree_decomposition``.
+
+            .. seealso:: :meth:`radical`
+
+            EXAMPLES::
+
+                sage: Pol.<x> = QQ[]
+                sage: (x^2*(x-1)^3).squarefree_part()
+                x - 1
+                sage: pol = 37 * (x-1)^3 * (x-2)^2 * (x-1/3)^7 * (x-3/7)
+                sage: pol.squarefree_part()
+                37*x^3 - 1369/21*x^2 + 703/21*x - 37/7
+
+            TESTS::
+
+                sage: squarefree_part(pol)
+                37*x^3 - 1369/21*x^2 + 703/21*x - 37/7
+
+            """
+            decomp = self.squarefree_decomposition()
+            return prod(fac for fac, mult in decomp if mult%2 == 1)

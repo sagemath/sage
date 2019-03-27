@@ -2,6 +2,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. _constructions:
+
 Welcome to the Sage Constructions documentation!
 ================================================
 
@@ -21,8 +23,8 @@ Please send suggestions, additions, corrections to the ``sage-devel``
 Google group!
 
 The Sage wiki http://wiki.sagemath.org/ contains a wealth of
-information. Moreover, all these can be tested in the Sage notebook
-interface http://www.sagenb.org/ on the web.
+information. Moreover, all these can be tested in the Sage
+interface http://sagecell.sagemath.org/ on the web.
 
 
 .. toctree::

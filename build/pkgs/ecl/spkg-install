@@ -1,40 +1,4 @@
-#!/usr/bin/env bash
-
-if [ -z "$SAGE_LOCAL" ] ; then
-    echo >&2 "Error - SAGE_LOCAL undefined ... exiting"
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
 cd src
-
-# Patch sources. Note that some patches (in the patches/src directory)
-# have been applied to the source tarball.
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
-if [ -z "$CFLAG64" ] ; then
-    CFLAG64=-m64
-fi
-
-if [ -z "$CXXFLAG64" ] ; then
-    CXXFLAG64=-m64
-fi
-
-
-# Compile for 64-bit if SAGE64 is set to 'yes'
-if [ "x$SAGE64" = "xyes" ]  ; then
-    echo "Building a 64-bit version of ECL"
-    CFLAGS="$CFLAGS $CFLAG64"
-    CXXFLAGS="$CXXFLAGS $CXXFLAG64"
-    LDFLAGS="$LDFLAGS $CFLAG64"
-fi
 
 if [ "x$SAGE_DEBUG" = "xyes" ] ; then
     CFLAGS="-g -O0 $CFLAGS"
@@ -42,6 +6,13 @@ if [ "x$SAGE_DEBUG" = "xyes" ] ; then
 else
     CFLAGS="-g -O2 $CFLAGS"
     CXXFLAGS="-g -O2 $CXXFLAGS"
+fi
+
+if [ "$UNAME" = "CYGWIN" ]; then
+    # Some of ECL's sources rely on GNU-isms that are allowed by default on
+    # most glibcs, but not in newlib; https://trac.sagemath.org/ticket/25057
+    CFLAGS="$CFLAGS -D_GNU_SOURCE"
+    CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE"
 fi
 
 export CFLAGS
@@ -63,26 +34,11 @@ echo "configure scripts and/or makefiles might override these later"
 echo ""
 
 
-if [ "`uname -sm`" = "SunOS i86pc" ] && [ "x$SAGE64" = xyes ]; then
-    # Need to add --with-dffi=no to disable assembly code on OpenSolaris x64.
-    # and Solaris 10 on x64.
-    # The option is only given if all the following are true
-    # 1) Solaris, Solaris Express or OpenSolaris (SunOS)
-    # 2) Intel or AMD CPU
-    # 3) 64-bit build
-    ECL_CONFIGURE="--with-dffi=no $ECL_CONFIGURE"
-fi
-
 # Use newer version of config.guess and config.sub (see Trac #19732)
 cp "$SAGE_ROOT"/config/config.* src
 
-./configure --prefix="$SAGE_LOCAL" --with-gmp-prefix=$SAGE_LOCAL \
-    --libdir="$SAGE_LOCAL/lib" --disable-threads \
-    --enable-unicode=yes $ECL_CONFIGURE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error - Failed to configure ECL ... exiting"
-    exit 1
-fi
+sdh_configure --with-gmp-prefix=$SAGE_LOCAL --disable-threads \
+              --enable-unicode=yes $ECL_CONFIGURE
 
 # Before running make we touch build/TAGS so its building process is never triggered
 touch build/TAGS
@@ -91,11 +47,7 @@ touch build/TAGS
 # pressing CTRL-C during the build)
 exec </dev/null
 
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error - Failed to build ECL ... exiting"
-    exit 1
-fi
+sdh_make
 
 # Remove old install of ECL, if any.
 rm -rf "$SAGE_LOCAL/lib/ecl-"*
@@ -104,22 +56,18 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error - Failed to install ECL ... exiting"
-    exit 1
-fi
+sdh_make_install
 
 # Create symbolic link to lib/ecl-version directory.
 # Also create a symbolic link lib/ecl/ecl -> include/ecl.
 # This is important when the Sage install is moved, see Trac #14662.
-cd "$SAGE_LOCAL/lib/" && rm -f ecl && ln -s ecl-* ecl
+cd "$SAGE_DESTDIR$SAGE_LOCAL/lib/" && rm -f ecl && ln -s ecl-* ecl
 if [ $? -ne 0 ]; then
     echo >&2 "Error - Failed to create symbolic link to ECL library"
     echo >&2 "directory ... exiting"
     exit 1
 fi
-cd "$SAGE_LOCAL/lib/ecl" && rm -f ecl && ln -s ../../include/ecl ecl
+cd "$SAGE_DESTDIR$SAGE_LOCAL/lib/ecl" && rm -f ecl && ln -s ../../include/ecl ecl
 if [ $? -ne 0 ]; then
     echo >&2 "Error - Failed to create symbolic link to ECL include"
     echo >&2 "directory ... exiting"

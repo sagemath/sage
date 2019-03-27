@@ -18,15 +18,17 @@ EXAMPLES::
     sage: t
     [[1:2:1]]
 """
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import os
 import sys
 
-from sage.libs.eclib cimport bigint, Curvedata, mw, two_descent
+from cysignals.memory cimport sig_free
+from cysignals.signals cimport sig_on, sig_off
 
-include "cysignals/signals.pxi"
-include "cysignals/memory.pxi"
+from sage.cpython.string cimport char_to_str, str_to_bytes
+from sage.cpython.string import FS_ENCODING
+from sage.libs.eclib cimport bigint, Curvedata, mw, two_descent
 
 cdef extern from "wrap.cpp":
     ### misc functions ###
@@ -72,7 +74,7 @@ cdef extern from "wrap.cpp":
 cdef object string_sigoff(char* s):
     sig_off()
     # Makes a python string and deletes what is pointed to by s.
-    t = str(s)
+    t = char_to_str(s)
     sig_free(s)
     return t
 
@@ -87,7 +89,7 @@ def get_precision():
 
     (int) The current precision in decimal digits.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.eclib.mwrank import get_precision
         sage: get_precision()
@@ -107,7 +109,7 @@ def set_precision(n):
 
     None.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.eclib.mwrank import set_precision
         sage: set_precision(50)
@@ -128,7 +130,8 @@ def initprimes(filename, verb=False):
     EXAMPLES::
 
         sage: file = os.path.join(SAGE_TMP, 'PRIMES')
-        sage: open(file,'w').write(' '.join([str(p) for p in prime_range(10^7,10^7+20)]))
+        sage: with open(file, 'w') as fobj:
+        ....:     _ = fobj.write(' '.join([str(p) for p in prime_range(10^7,10^7+20)]))
         sage: mwrank_initprimes(file, verb=True)
         Computed 78519 primes, largest is 1000253
         reading primes from file ...
@@ -143,6 +146,7 @@ def initprimes(filename, verb=False):
     """
     if not os.path.exists(filename):
         raise IOError('No such file or directory: %s' % filename)
+    filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
     mwrank_initprimes(filename, verb)
     if verb:
         sys.stdout.flush()
@@ -181,7 +185,7 @@ cdef class _bigint:
         """
         s = str(x)
         if s.isdigit() or s[0] == "-" and s[1:].isdigit():
-            self.x = str_to_bigint(s)
+            self.x = str_to_bigint(str_to_bytes(s))
         else:
             raise ValueError("invalid _bigint: %r"%x)
 
@@ -508,7 +512,7 @@ cdef class _mw:
           rank; useful if an upper bound for the rank is already
           known).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.eclib.mwrank import _mw
             sage: from sage.libs.eclib.mwrank import _Curvedata
@@ -677,7 +681,7 @@ cdef class _mw:
           efficient to add several points at once and then saturate
           just once at the end).
 
-        .. note::
+        .. NOTE::
 
            The eclib function which implements this only carries out
            any saturation if the rank of the points increases upon
@@ -895,7 +899,7 @@ cdef class _mw:
           some details of the processing, finding linear relations,
           and partial saturation are output.
 
-        .. note::
+        .. NOTE::
 
            The effect of the search is also governed by the class
            options, notably whether the points found are processed:
@@ -909,7 +913,7 @@ cdef class _mw:
         None.  The effect of the search is to update the list of
         generators.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.eclib.mwrank import _Curvedata
             sage: from sage.libs.eclib.mwrank import _mw
@@ -930,13 +934,11 @@ cdef class _mw:
             10 None []
             11 None [[3639568:106817593:4096]]
         """
-        cdef char* _h_lim
 
-        h_lim = str(h_lim)
-        _h_lim = h_lim
+        h_lim = str_to_bytes(str(h_lim))
 
         sig_on()
-        mw_search(self.x, _h_lim, moduli_option, verb)
+        mw_search(self.x, h_lim, moduli_option, verb)
         if verb:
             sys.stdout.flush()
             sys.stderr.flush()
@@ -1003,7 +1005,7 @@ cdef class _two_descent:
           code in ``src/qrank/mrank1.cc`` in DEFAULT_NAUX: currently 8).
           Only relevant for curves with no 2-torsion, where full
           2-descent is carried out.  Worth increasing for curves
-          expected to be of of rank>6 to one or two more than the
+          expected to be of rank > 6 to one or two more than the
           expected rank.
 
         - ``second_descent`` (int, default 1) -- flag specifying
@@ -1232,9 +1234,9 @@ cdef class _two_descent:
             sage: D2.saturate()
             Searching for points (bound = 8)...done:
               found points which generate a subgroup of rank 3
-              and regulator 0.417143558758383969817119544618093396749810106098479
+              and regulator 0.417...
             Processing points found during 2-descent...done:
-              now regulator = 0.417143558758383969817119544618093396749810106098479
+              now regulator = 0.417...
             No saturation being done
             sage: D2.getbasis()
             '[[1:-1:1], [-2:3:1], [-14:25:8]]'
@@ -1251,7 +1253,7 @@ cdef class _two_descent:
         `\ZZ/2\ZZ`-basis for `E(\QQ)/2E(\QQ)` (modulo torsion),
         otherwise possibly only for a proper subgroup.
 
-        .. note::
+        .. NOTE::
 
            You must call ``saturate()`` first, or a RunTimeError will be raised.
 
@@ -1279,9 +1281,9 @@ cdef class _two_descent:
             sage: D2.saturate()
             Searching for points (bound = 8)...done:
               found points which generate a subgroup of rank 3
-              and regulator 0.417143558758383969817119544618093396749810106098479
+              and regulator 0.417...
             Processing points found during 2-descent...done:
-              now regulator = 0.417143558758383969817119544618093396749810106098479
+              now regulator = 0.417...
             No saturation being done
             sage: D2.getbasis()
             '[[1:-1:1], [-2:3:1], [-14:25:8]]'
@@ -1327,9 +1329,9 @@ cdef class _two_descent:
             sage: D2.saturate()
             Searching for points (bound = 8)...done:
               found points which generate a subgroup of rank 3
-              and regulator 0.417143558758383969817119544618093396749810106098479
+              and regulator 0.417...
             Processing points found during 2-descent...done:
-              now regulator = 0.417143558758383969817119544618093396749810106098479
+              now regulator = 0.417...
             No saturation being done
             sage: D2.getbasis()
             '[[1:-1:1], [-2:3:1], [-14:25:8]]'

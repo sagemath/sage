@@ -15,10 +15,8 @@ AUTHORS:
 
 REFERENCES:
 
-- [Lee11]_ \J.M. Lee : *Introduction to Topological Manifolds*, 2nd ed.,
-  Springer (New York) (2011)
-- [KN63]_ \S. Kobayashi & K. Nomizu : *Foundations of Differential Geometry*,
-  vol. 1, Interscience Publishers (New York) (1963)
+- [Lee2011]_
+- [KN1963]_
 
 """
 
@@ -304,7 +302,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         sage: s.display()
         M --> R
         on U: (x, y) |--> 1/2*sqrt(2)*arctan(x^2 + y^2)/pi
-        on V: (u, v) |--> 1/4*(sqrt(2)*pi - 2*sqrt(2)*arctan(u^2 + v^2))/pi
+        on V: (u, v) |--> 1/4*sqrt(2)*(pi - 2*arctan(u^2 + v^2))/pi
 
     ::
 
@@ -455,7 +453,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             if self._domain.is_subset(coord_expression._domain):
                 # restriction of the scalar field to self._domain:
                 sexpress = {}
-                for chart, funct in coord_expression._express.iteritems():
+                for chart, funct in coord_expression._express.items():
                     for schart in self._domain.atlas():
                         if schart in chart._subcharts:
                             sexpress[schart] = funct.expr()
@@ -563,7 +561,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         This is nothing but the constant scalar field `0` on the manifold,
         where `0` is the zero element of the base field.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()
@@ -618,4 +616,3 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         return self.element_class(self,
                                   coord_expression=coord_express,
                                   name='1', latex_name='1')
-

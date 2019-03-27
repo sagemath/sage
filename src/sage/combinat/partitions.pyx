@@ -1,8 +1,7 @@
 # The actual algorithm is implemented in the C++ file partitions_c.cc
-# which requires the gmp and mpfr libraries.
+# which requires the GMP, MPFR and NTL libraries.
 #
-# distutils: sources = sage/combinat/partitions_c.cc
-# distutils: libraries = gmp mpfr
+# distutils: libraries = gmp mpfr ntl
 # distutils: language = c++
 """
 Number of partitions of an integer
@@ -24,17 +23,17 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import sys
 
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.libs.gmp.types cimport mpz_t
 
-cdef extern from "partitions_c.h":
-    int part(mpz_t answer, unsigned int n)
+cdef extern from "partitions_c.cc":
+    void part(mpz_t answer, unsigned int n)
     int test(bint longtest, bint forever)
-
-include "cysignals/signals.pxi"
 
 from sage.rings.integer cimport Integer
 
@@ -45,6 +44,12 @@ def number_of_partitions(n):
     EXAMPLES::
 
         sage: from sage.combinat.partitions import number_of_partitions
+        sage: number_of_partitions(0)
+        1
+        sage: number_of_partitions(1)
+        1
+        sage: number_of_partitions(2)
+        2
         sage: number_of_partitions(3)
         3
         sage: number_of_partitions(10)
@@ -90,14 +95,11 @@ def number_of_partitions(n):
 
         sage: len([n for n in [1..500] if number_of_partitions(n) != Partitions(n).cardinality(algorithm='pari')])
         0
-
     """
     n = Integer(n)
     if n < 0:
         raise ValueError("n (=%s) must be a nonnegative integer"%n)
-    elif n <= 1:
-        return Integer(1)  # part hangs on n=1 as input.
-    if n >= Integer('4294967296'):
+    if n >= Integer(4294967296):
         raise ValueError("input must be a nonnegative integer less than 4294967296.")
     cdef unsigned int nn = n
 
@@ -151,7 +153,7 @@ def ZS1_iterator(int n):
         sage: next(it)
         [4]
         sage: type(_)
-        <type 'list'>
+        <... 'list'>
     """
     # Easy cases.
     if n < 0:
@@ -191,7 +193,7 @@ def ZS1_iterator(int n):
                 if t > 1:
                     h += 1
                     x[h] = t
-        #yield [x[i] for i in xrange(m+1)]
+        #yield [x[i] for i in range(m+1)]
         yield x[:m+1]
     #free(x)
 
@@ -211,7 +213,7 @@ def ZS1_iterator_nk(int n, int k):
         sage: next(it)
         [4]
         sage: type(_)
-        <type 'list'>
+        <... 'list'>
     """
     # Easy cases.
     if n <= 0:

@@ -1,9 +1,7 @@
-#!/bin/sh
-
 TARGET="$SAGE_SHARE/symbolic_data/"
 
 if [ -d "$TARGET" ]; then
-    rm -rf "$TARGET" 
+    rm -rf "$TARGET"
 fi
 
 mkdir "$TARGET"

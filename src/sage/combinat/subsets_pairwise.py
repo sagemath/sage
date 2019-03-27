@@ -9,12 +9,13 @@ Subsets whose elements satisfy a predicate pairwise
 #******************************************************************************
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.sets.set import Set, Set_object_enumerated
+from sage.sets.set import Set_object_enumerated
 from sage.combinat.backtrack import SearchForest
 from sage.combinat.subset import Subsets
 
+
 class PairwiseCompatibleSubsets(SearchForest):
-    """
+    r"""
     The set of all subsets of ``ambient`` whose elements satisfy
     ``predicate`` pairwise
 

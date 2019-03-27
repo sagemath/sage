@@ -18,41 +18,40 @@ import os
 import copy
 import tarfile
 import stat
+import subprocess
+import time
+
+from io import BytesIO
 
 from sage_bootstrap.uncompress.filter_os_files import filter_os_files
 
 
-class SageTarFile(tarfile.TarFile):
+class SageBaseTarFile(tarfile.TarFile):
     """
-    Sage as tarfile.TarFile, but applies the user's current umask to the
+    Sage as tarfile.TarFile, but applies a reasonable umask (0022) to the
     permissions of all extracted files and directories.
 
-    This mimics the default behavior of the ``tar`` utility.
+    Previously this applied the user's current umask per the default behavior
+    of the ``tar`` utility, but this did not provide sufficiently reliable
+    behavior in all cases, such as when the user's umask is not strict enough.
 
-    See http://trac.sagemath.org/ticket/20218#comment:16 for more background.
+    This also sets the modified timestamps on all extracted files to the same
+    time (the current time), not the timestamps stored in the tarball. This
+    is meant to work around https://bugs.python.org/issue32773
+
+    See http://trac.sagemath.org/ticket/20218#comment:16 and
+    https://trac.sagemath.org/ticket/24567 for more background.
     """
 
-    def __new__(cls, *args, **kwargs):
-        # This is is that SageTarFile() is equivalent to TarFile.open() which
-        # is more flexible than the basic TarFile.__init__
-        inst = tarfile.TarFile.open(*args, **kwargs)
-        inst.__class__ = cls
-        return inst
+    umask = 0o022
 
     def __init__(self, *args, **kwargs):
         # Unfortunately the only way to get the current umask is to set it
         # and then restore it
-        self.umask = os.umask(0o777)
-        os.umask(self.umask)
+        super(SageBaseTarFile, self).__init__(*args, **kwargs)
 
-    @classmethod
-    def can_read(cls, filename):
-        """
-        Given an archive filename, returns True if this class can read and
-        process the archive format of that file.
-        """
-
-        return tarfile.is_tarfile(filename)
+        # Extracted files will have this timestamp
+        self._extracted_mtime = time.time()
 
     @property
     def names(self):
@@ -65,23 +64,35 @@ class SageTarFile(tarfile.TarFile):
 
         return filter_os_files(self.getnames())
 
-    def chmod(self, tarinfo, target):
+    def chmod(self, tarinfo, targetpath):
+        """Apply ``self.umask`` instead of the permissions in the TarInfo."""
         tarinfo = copy.copy(tarinfo)
         tarinfo.mode &= ~self.umask
         tarinfo.mode &= ~(stat.S_ISUID | stat.S_ISGID)
-        return super(SageTarFile, self).chmod(tarinfo, target)
+        return super(SageBaseTarFile, self).chmod(tarinfo, targetpath)
 
-    def extractall(self, path='.', members=None):
+    def utime(self, tarinfo, targetpath):
+        """Override to keep the extraction time as the file's timestamp."""
+        tarinfo.mtime = self._extracted_mtime
+        return super(SageBaseTarFile, self).utime(tarinfo, targetpath)
+
+    def extractall(self, path='.', members=None, **kwargs):
         """
         Same as tarfile.TarFile.extractall but allows filenames for
         the members argument (like zipfile.ZipFile).
+
+        .. note::
+            The additional ``**kwargs`` are for Python 2/3 compatibility, since
+            different versions of this method accept additional arguments.
         """
         if members:
             name_to_member = dict([member.name, member] for member in self.getmembers())
             members = [m if isinstance(m, tarfile.TarInfo)
                        else name_to_member[m]
                        for m in members]
-        return super(SageTarFile, self).extractall(path=path, members=members)
+        return super(SageBaseTarFile, self).extractall(path=path,
+                                                       members=members,
+                                                       **kwargs)
 
     def extractbytes(self, member):
         """
@@ -94,4 +105,61 @@ class SageTarFile(tarfile.TarFile):
             reader = self.extractfile(member)
             return reader.read()
 
+    def _extract_member(self, tarinfo, targetpath, **kwargs):
+        """
+        Override to ensure that our custom umask is applied over the entire
+        directory tree, even for directories that are not explicitly listed in
+        the tarball.
 
+        .. note::
+            The additional ``**kwargs`` are for Python 2/3 compatibility, since
+            different versions of this method accept additional arguments.
+        """
+        old_umask = os.umask(self.umask)
+        try:
+            super(SageBaseTarFile, self)._extract_member(tarinfo, targetpath,
+                                                         **kwargs)
+        finally:
+            os.umask(old_umask)
+
+
+class SageTarFile(SageBaseTarFile):
+    """
+    A wrapper around SageBaseTarFile such that SageTarFile(filename) is
+    essentially equivalent to TarFile.open(filename) which is more
+    flexible than the basic TarFile.__init__
+    """
+    def __new__(cls, filename):
+        return SageBaseTarFile.open(filename)
+
+    @staticmethod
+    def can_read(filename):
+        """
+        Given an archive filename, returns True if this class can read and
+        process the archive format of that file.
+        """
+        return tarfile.is_tarfile(filename)
+
+
+class SageTarXZFile(SageBaseTarFile):
+    """
+    A ``.tar.xz`` file which is uncompressed in memory.
+    """
+    def __new__(cls, filename):
+        # Read uncompressed data through a pipe
+        proc = subprocess.Popen(["xz", "-d", "-c", filename], stdout=subprocess.PIPE)
+        data, _ = proc.communicate()
+        return SageBaseTarFile(mode="r", fileobj=BytesIO(data))
+
+    @staticmethod
+    def can_read(filename):
+        """
+        Given an archive filename, returns True if this class can read and
+        process the archive format of that file.
+        """
+        devnull = open(os.devnull, 'w')
+        try:
+            subprocess.check_call(["xz", "-l", filename], stdout=devnull, stderr=devnull)
+        except Exception:
+            return False
+        return True

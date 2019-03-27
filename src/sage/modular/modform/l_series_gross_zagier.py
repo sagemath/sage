@@ -57,7 +57,7 @@ class GrossZagierLseries(SageObject):
         self._dokchister = Dokchitser(N ** 2 * D ** 2,
                                       [0, 0, 1, 1],
                                       weight=2, eps=epsilon, prec=prec)
-        self._nterms = nterms = Integer(self._dokchister.gp()('cflength()'))
+        self._nterms = nterms = Integer(self._dokchister.num_coeffs())
         if nterms > 1e6:
             # just takes way to long
             raise ValueError("Too many terms: {}".format(nterms))

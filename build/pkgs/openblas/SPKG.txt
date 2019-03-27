@@ -16,6 +16,6 @@ OpenBLAS is an optimized BLAS library based on GotoBLAS2 1.13 BSD version
 
 * OpenBLAS users mailing list:
   https://groups.google.com/forum/#!forum/openblas-users
-  
+
 * OpenBLAS developers mailing list:
   https://groups.google.com/forum/#!forum/openblas-dev

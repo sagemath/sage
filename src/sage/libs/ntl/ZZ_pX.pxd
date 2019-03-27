@@ -3,11 +3,8 @@
 from .types cimport (ZZ_c, ZZX_c, ZZ_p_c, vec_ZZ_p_c, ZZ_pContext_c,
         ZZ_pX_c, ZZ_pX_Modulus_c, ZZ_pX_Multiplier_c)
 
-cdef extern from "ccobject.h":
-    void ZZ_pX_from_str "_from_str<ZZ_pX>"(ZZ_pX_c* dest, char* s)
-    object ZZ_pX_to_PyString "_to_PyString<ZZ_pX>"(ZZ_pX_c *x)
 
-cdef extern from "sage/libs/ntl/ntlwrap.cpp":
+cdef extern from "ntlwrap.h":
     long ZZ_pX_IsZero "IsZero"(ZZ_pX_c a)
     long ZZ_pX_IsOne "IsOne"(ZZ_pX_c a)
 
@@ -69,7 +66,6 @@ cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     void ZZ_pX_InvMod "InvMod"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c f)
     long ZZ_pX_InvModStatus "InvModStatus"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c f)
 
-    void ZZ_pX_Modulus_from_str "_from_str<ZZ_pXModulus>"(ZZ_pX_Modulus_c* dest, char* s)
     void ZZ_pX_Modulus_build "build"(ZZ_pX_Modulus_c F, ZZ_pX_c f) # MUST be called before using the modulus
     long ZZ_pX_Modulus_deg "deg"(ZZ_pX_Modulus_c F)
 
@@ -86,7 +82,6 @@ cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     void ZZ_pX_div_pre "div"(ZZ_pX_c q, ZZ_pX_c a, ZZ_pX_Modulus_c F)
     void ZZ_pX_InvMod_pre "InvMod"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_Modulus_c F)
 
-    void ZZ_pX_Multiplier_from_str "_from_str<ZZ_pXMultiplier>"(ZZ_pX_Multiplier_c* dest, char* s)
     void ZZ_pX_Multiplier_build "build"(ZZ_pX_Multiplier_c F, ZZ_pX_c b, ZZ_pX_Modulus_c F) # MUST be called before using the multiplier
     void ZZ_pX_MulMod_premul "MulMod"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_Multiplier_c B, ZZ_pX_Modulus_c F)
 
@@ -110,13 +105,13 @@ cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     void ZZ_pX_to_ZZX "conv"(ZZX_c x, ZZ_pX_c a)
     void ZZX_to_ZZ_pX "conv"(ZZ_pX_c x, ZZX_c a)
 
-    char* ZZ_pX_trace_list(ZZ_pX_c* x)
 
+cdef extern from "ntlwrap_impl.h":
+    char* ZZ_pX_trace_list(ZZ_pX_c* x)
     void ZZ_pX_factor(ZZ_pX_c*** v, long** e, long* n, ZZ_pX_c* x, long verbose)
     void ZZ_pX_linear_roots(ZZ_p_c*** v, long* n, ZZ_pX_c* x)
 
-    # The following are ZZ_pX functions written in ntlwrap, used for padics.
-
+    # The following are all used for padics.
     void ZZ_pX_conv_modulus(ZZ_pX_c fout, ZZ_pX_c fin, ZZ_pContext_c c)
     void ZZ_pX_min_val_coeff(long valuation, long index, ZZ_pX_c f, ZZ_c p)
     long ZZ_pX_get_val_coeff(ZZ_pX_c f, ZZ_c p, long i)

@@ -47,7 +47,13 @@ class Gnuplot(SageObject):
         self(line)
         return ''
 
-    def __repr__(self):
+    def _repr_(self):
+        """
+        TESTS::
+
+            sage: gnuplot               # indirect doctests
+            Interface to Gnuplot
+        """
         return "Interface to Gnuplot"
 
     def plot(self, cmd, file=None, verbose=True, reset=True):
@@ -133,11 +139,10 @@ class Gnuplot(SageObject):
                           range1='[u=-pi:pi]',
                           range2='[v=-0.2:0.2]', samples=50, title=None,
                           interact=True):
-        """
+        r"""
         Draw a parametric 3d surface and rotate it interactively.
 
         INPUT:
-
 
         -  ``f`` - (string) a function of two variables, e.g.,
            'cos(u)\*(3 + v\*cos(u/2)), sin(u)\*(3 + v\*cos(u/2)),
@@ -153,7 +158,6 @@ class Gnuplot(SageObject):
 
         -  ``title`` - (string) title of the graph.
 
-
         EXAMPLES::
 
             sage: gnuplot.plot3d_parametric('v^2*sin(u), v*cos(u), v*(1-v)')   # optional - gnuplot  (not tested, since something pops up).
@@ -168,7 +172,7 @@ class Gnuplot(SageObject):
         set title "%s"
         set pm3d; set palette; set parametric
         splot %s %s %s
-        """%(samples, title, range1, range2, f)
+        """ % (samples, title, range1, range2, f)
         cmd = cmd.replace('^','**')
         if interact:
             self.interact(cmd)

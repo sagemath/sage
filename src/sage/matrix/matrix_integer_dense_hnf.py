@@ -6,6 +6,7 @@ AUTHORS:
 - Clement Pernet and William Stein (2008-02-07): initial version
 """
 from __future__ import print_function
+from six.moves import range
 
 from copy import copy
 
@@ -517,9 +518,9 @@ def pivots_of_hnf_matrix(H):
     """
     pivots = []
     r = -1
-    for j in xrange(H.ncols()):
+    for j in range(H.ncols()):
         # Find first nonzero position (counting from bottom) in the j-th column
-        for i in reversed(xrange(H.nrows())):
+        for i in reversed(range(H.nrows())):
             if H[i,j]:
                 if i > r:
                     pivots.append(j)
@@ -833,19 +834,19 @@ def is_in_hnf_form(H, pivots):
     tt = verbose('testing if matrix is in HNF')
     r = 0
     pivots_set = set(pivots)
-    for j in xrange(H.ncols()):
+    for j in range(H.ncols()):
         if j in pivots_set:
-            for i in xrange(r+1, H.nrows()):
+            for i in range(r + 1, H.nrows()):
                 if H[i,j]:
                     verbose('not HNF because nonzeros below pivot position',tt)
                     return False
-            for i in xrange(r):
+            for i in range(r):
                 if H[i,j] < 0 or H[i,j] >= H[r,j]:
                     verbose('not HNF because negative or too big above pivot position',tt)
                     return False
             r += 1
         else:
-            for i in xrange(r,H.nrows()):
+            for i in range(r, H.nrows()):
                 if H[i,j]:
                     verbose('not HNF nonzero in wrong place in nonpivot column',tt)
                     return False

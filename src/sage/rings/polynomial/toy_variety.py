@@ -1,4 +1,4 @@
-"""
+r"""
 Educational Versions of Groebner Basis Algorithms: Triangular Factorization.
 
 In this file is the implementation of two algorithms in [Laz92]_.
@@ -34,6 +34,7 @@ REFERENCES:
   in Journal of Symbolic Computation (1992) vol\. 13, pp\. 117-131
 
 """
+from six.moves import range
 
 def is_triangular(B):
   """
@@ -52,7 +53,7 @@ def is_triangular(B):
 
       ``True`` if the basis is triangular; ``False`` otherwise.
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: from sage.rings.polynomial.toy_variety import is_triangular
       sage: R.<x,y,z> = PolynomialRing(QQ)
@@ -77,7 +78,7 @@ def is_triangular(B):
   n = len(G)
   # We expect the polynomials of G to be ordered G[i].lm() > G[i+1].lm();
   # by definition, the largest variable that appears in G[i] must be vars[i].
-  for i in xrange(n):
+  for i in range(n):
     for t in G[i].monomials():
       for x in vars[0:i]:
         if t.degree(x) != 0:
@@ -99,7 +100,7 @@ def coefficient_matrix(polys):
 
       A matrix ``M`` of the coefficients of ``polys``.
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: from sage.rings.polynomial.toy_variety import coefficient_matrix
       sage: R.<x,y> = PolynomialRing(QQ)
@@ -122,10 +123,10 @@ def coefficient_matrix(polys):
   mons = list(mons)
   mons.sort(reverse=True)
   M = matrix(R, len(polys), len(mons))
-  for i in xrange(len(polys)):
+  for i in range(len(polys)):
     imons = polys[i].monomials()
     icoeffs = polys[i].coefficients()
-    for j in xrange(len(imons)):
+    for j in range(len(imons)):
       M[i,mons.index(imons[j])] = icoeffs[j]
   return M
 
@@ -155,7 +156,7 @@ def is_linearly_dependent(polys):
       ``True`` if the elements of ``polys`` are linearly dependent;
       ``False`` otherwise.
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: from sage.rings.polynomial.toy_variety import is_linearly_dependent
       sage: R.<x,y> = PolynomialRing(QQ)
@@ -174,7 +175,7 @@ def is_linearly_dependent(polys):
     return False
   R = polys[0].base_ring()
   M = coefficient_matrix(polys).echelon_form()
-  return any(M.row(each).is_zero() for each in xrange(M.nrows()))
+  return any(M.row(each).is_zero() for each in range(M.nrows()))
 
 def linear_representation(p, polys):
   """
@@ -203,7 +204,7 @@ def linear_representation(p, polys):
       If ``n == len(polys)``, returns ``[a[0],a[1],...,a[n-1]]``
       such that ``p == a[0]*poly[0] + ... + a[n-1]*poly[n-1]``.
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: from sage.rings.polynomial.toy_variety import linear_representation
       sage: R.<x,y> = PolynomialRing(GF(32003))
@@ -215,12 +216,12 @@ def linear_representation(p, polys):
   """
   from sage.matrix.constructor import diagonal_matrix
   R = p.base_ring()
-  M = coefficient_matrix(polys + [p]).augment(diagonal_matrix(R, [1 for each in xrange(len(polys) + 1)]))
+  M = coefficient_matrix(polys + [p]).augment(diagonal_matrix(R, [1 for each in range(len(polys) + 1)]))
   M.echelonize()
   j = M.ncols() - 1
   n = M.nrows() - 1
   offset = M.ncols() - M.nrows()
-  return [M[n,offset+each] / (-M[n,j]) for each in xrange(len(polys))]
+  return [M[n,offset+each] / (-M[n,j]) for each in range(len(polys))]
 
 def triangular_factorization(B, n=-1):
   """
@@ -240,7 +241,7 @@ def triangular_factorization(B, n=-1):
 
       A list ``T`` of triangular sets ``T_0``, ``T_1``, etc.
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: set_verbose(0)
       sage: from sage.rings.polynomial.toy_variety import triangular_factorization
@@ -314,7 +315,7 @@ def elim_pol(B, n=-1):
   - ``B`` - a list/tuple of polynomials or a multivariate polynomial ideal
   - ``n`` - the variable to check (see above) (default: ``-1``)
 
-  EXAMPLE::
+  EXAMPLES::
 
       sage: set_verbose(0)
       sage: from sage.rings.polynomial.toy_variety import elim_pol
@@ -351,6 +352,6 @@ def elim_pol(B, n=-1):
     nfm = monom.reduce(G)
   result = monom
   coeffs = linear_representation(nfm, lnf)
-  for each in xrange(len(coeffs)):
+  for each in range(len(coeffs)):
     result = result - coeffs[each] * lnf[each]
   return result

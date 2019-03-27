@@ -92,11 +92,13 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #**************************************************************************************
 from __future__ import print_function
+from six.moves import range
 
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 import random
 
 from sage.structure.sage_object import SageObject
+from sage.structure.richcmp import richcmp, richcmp_method
 
 from sage.rings.all      import RationalField, Integer, RDF
 #from sage.matrix.all     import MatrixSpace
@@ -210,7 +212,7 @@ def inv_list(lst):
         sage: inv_list(L)
         [3, 1, 2]
     """
-    return [lst.index(i)+1 for i in range(1,1+len(lst))]
+    return [lst.index(i) + 1 for i in range(1, 1 + len(lst))]
 
 face_polys = {
 ### bottom layer L, F, R, B
@@ -346,7 +348,7 @@ def index2singmaster(facet):
 
     EXAMPLES::
 
-        sage: from sage.groups.perm_gps.cubegroup import *
+        sage: from sage.groups.perm_gps.cubegroup import index2singmaster
         sage: index2singmaster(41)
         'dlf'
     """
@@ -358,7 +360,7 @@ def color_of_square(facet, colors=['lpurple', 'yellow', 'red', 'green', 'orange'
 
     EXAMPLES::
 
-        sage: from sage.groups.perm_gps.cubegroup import *
+        sage: from sage.groups.perm_gps.cubegroup import color_of_square
         sage: color_of_square(41)
         'blue'
     """
@@ -453,7 +455,7 @@ def plot3d_cubie(cnt, clrs):
 
     EXAMPLES::
 
-        sage: from sage.groups.perm_gps.cubegroup import *
+        sage: from sage.groups.perm_gps.cubegroup import plot3d_cubie, blue, red, green
         sage: clrF = blue; clrU = red; clrR = green
         sage: P = plot3d_cubie([1/2,1/2,1/2],[clrF,clrU,clrR])
     """
@@ -663,7 +665,7 @@ class CubeGroup(PermutationGroup_generic):
         EXAMPLES::
 
             sage: C = CubeGroup()
-            sage: C.parse(range(1,49))
+            sage: C.parse(list(range(1,49)))
             ()
             sage: g = C.parse("L"); g
             (1,17,41,40)(4,20,44,37)(6,22,46,35)(9,11,16,14)(10,13,15,12)
@@ -748,14 +750,14 @@ class CubeGroup(PermutationGroup_generic):
         EXAMPLES::
 
             sage: rubik = CubeGroup()
-            sage: rubik.facets() == range(1,49)
+            sage: rubik.facets() == list(range(1,49))
             True
         """
-        fcts = range(1,49)
+        fcts = range(1, 49)
         if g is not None:
             return [g(i) for i in fcts]
         else:
-            return fcts
+            return list(fcts)
 
     def faces(self, mv):
         r"""
@@ -929,7 +931,7 @@ class CubeGroup(PermutationGroup_generic):
         centers = [create_poly('%s_center' % "ulfrbd"[i], colors[i]) for i in range(6)]
         clrs = sum(cubies) + sum(centers)
         clrs.axes(show=False)
-        if title == True:
+        if title:
             t = text('sagemath.org', (7.8,-3.5),rgbcolor=lgrey)
             P = clrs+t
             P.axes(show=False)
@@ -959,7 +961,7 @@ class CubeGroup(PermutationGroup_generic):
         g = self.parse(mv)
         state = self.facets(g)
         clr_any = white
-        shown_labels = range(1,9)+range(17,33)
+        shown_labels = list(range(1, 9)) + list(range(17, 33))
         clr = [color_of_square(state[c-1]) for c in shown_labels]
         cubiesR = [plot3d_cubie(cubie_centers(c),cubie_colors(c,state)) for c in [32,31,30,29,28,27,26,25]]
         cubeR = sum(cubiesR)
@@ -973,7 +975,7 @@ class CubeGroup(PermutationGroup_generic):
         centers = centerF+centerR+centerU
         P = cubeR+cubeF+cubeU+centers
         P.axes(show=False)
-        if title == True:
+        if title:
             t1 = text('Up, Front, and Right faces. '   , (-0.2,-2.5))
             t2  = text('      sagemath.org', (0.8,-3.1),rgbcolor=lgrey)
             t3 = text("     ",(3.5,0),rgbcolor=white)
@@ -1153,6 +1155,7 @@ cubie_face_list = cubie_faces()
 rand_colors = [(RDF.random_element(), RDF.random_element(), RDF.random_element()) for _ in range(56)]
 
 
+@richcmp_method
 class RubiksCube(SageObject):
     r"""
     The Rubik's cube (in a given state).
@@ -1216,7 +1219,7 @@ class RubiksCube(SageObject):
             sage: RubiksCube().move("R*U") == RubiksCube("R*U")
             True
         """
-        if not isinstance(g, self._group._element_class()):
+        if not isinstance(g, self._group.element_class):
             g = self._group.move(g)[0]
         return RubiksCube(self._state * g, self._history + [g], self.colors)
 
@@ -1359,9 +1362,15 @@ class RubiksCube(SageObject):
         """
         return self.plot3d().show()
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Comparison.
+
+        INPUT:
+
+        - ``other`` -- anything
+
+        - ``op`` -- comparison operator
 
         EXAMPLES::
 
@@ -1376,11 +1385,9 @@ class RubiksCube(SageObject):
             sage: C != D
             True
         """
-        c = cmp(type(self), type(other))
-        if c == 0:
-            return cmp(self._state, other._state)
-        else:
-            return c
+        if not isinstance(other, RubiksCube):
+            return NotImplemented
+        return richcmp(self._state, other._state, op)
 
     def solve(self, algorithm="hybrid", timeout=15):
         r"""

@@ -76,12 +76,9 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
 
     REFERENCES:
 
-    .. [CE01] Raul Cordovil and Gwihen Etienne.
-       *A note on the Orlik-Solomon algebra*.
-       Europ. J. Combinatorics. **22** (2001). pp. 165-170.
-       http://www.math.ist.utl.pt/~rcordov/Ce.pdf
-
     - :wikipedia:`Arrangement_of_hyperplanes#The_Orlik-Solomon_algebra`
+
+    - [CE2001]_
     """
     @staticmethod
     def __classcall_private__(cls, R, M, ordering=None):
@@ -164,7 +161,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             sage: OS._repr_term(frozenset([0]))
             'OS{0}'
         """
-        return "OS{{{}}}".format(str(list(m))[1:-1])
+        return "OS{{{}}}".format(', '.join(str(t) for t in sorted(m)))
 
     def _repr_(self):
         """
@@ -196,7 +193,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
 
     @cached_method
     def algebra_generators(self):
-        """
+        r"""
         Return the algebra generators of ``self``.
 
         These form a family indexed by the ground set `X` of `M`. For
@@ -224,7 +221,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
 
     @cached_method
     def product_on_basis(self, a, b):
-        """
+        r"""
         Return the product in ``self`` of the basis elements
         indexed by ``a`` and ``b``.
 
@@ -255,7 +252,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         subset `S = \{ s_1 < s_2 < \cdots < s_k \}` of the ground set::
 
             sage: G = Graph([[1,2],[1,2],[2,3],[3,4],[4,2]], multiedges=True)
-            sage: M = Matroid(G)
+            sage: M = Matroid(G).regular_matroid()
             sage: E = M.groundset_list()
             sage: OS = M.orlik_solomon_algebra(ZZ)
             sage: G = OS.algebra_generators()
@@ -287,7 +284,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
 
             return R(coeff) * self.subset_image(ns)
 
-        # r is the accumalator
+        # r is the accumulator
         # we reverse a in the product, so add a sign
         # note that l>=2 here
         if len(a) % 4 < 2:
@@ -346,18 +343,18 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             sage: OS.subset_image(frozenset([(1,2),(3,4),(1,4),(2,3)]))
             0
             sage: OS.subset_image(frozenset([(2,3),(1,2),(3,4)]))
-            OS{(1, 2), (3, 4), (2, 3)}
+            OS{(1, 2), (2, 3), (3, 4)}
             sage: OS.subset_image(frozenset([(1,4),(3,4),(2,3),(3,6),(5,6)]))
-            -OS{(1, 2), (5, 6), (2, 3), (1, 4), (3, 6)}
-             + OS{(1, 2), (5, 6), (3, 4), (1, 4), (3, 6)}
-             - OS{(1, 2), (5, 6), (3, 4), (2, 3), (3, 6)}
+            -OS{(1, 2), (1, 4), (2, 3), (3, 6), (5, 6)}
+             + OS{(1, 2), (1, 4), (3, 4), (3, 6), (5, 6)}
+             - OS{(1, 2), (2, 3), (3, 4), (3, 6), (5, 6)}
             sage: OS.subset_image(frozenset([(1,4),(3,4),(2,3),(3,6),(3,5)]))
-            OS{(1, 2), (5, 6), (2, 3), (1, 4), (3, 5)}
-             - OS{(1, 2), (5, 6), (2, 3), (1, 4), (3, 6)}
-             + OS{(1, 2), (5, 6), (3, 4), (1, 4), (3, 5)}
-             + OS{(1, 2), (5, 6), (3, 4), (1, 4), (3, 6)}
-             - OS{(1, 2), (5, 6), (3, 4), (2, 3), (3, 5)}
-             - OS{(1, 2), (5, 6), (3, 4), (2, 3), (3, 6)}
+            OS{(1, 2), (1, 4), (2, 3), (3, 5), (5, 6)}
+             - OS{(1, 2), (1, 4), (2, 3), (3, 6), (5, 6)}
+             + OS{(1, 2), (1, 4), (3, 4), (3, 5), (5, 6)}
+             + OS{(1, 2), (1, 4), (3, 4), (3, 6), (5, 6)}
+             - OS{(1, 2), (2, 3), (3, 4), (3, 5), (5, 6)}
+             - OS{(1, 2), (2, 3), (3, 4), (3, 6), (5, 6)}
 
         TESTS::
 

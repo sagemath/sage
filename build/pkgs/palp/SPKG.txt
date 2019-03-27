@@ -70,7 +70,7 @@ facet enumeration compares well with existing packages.
  * #8477: Work around apparent GNU make problem when building spkgs in
     parallel.
  * SPKG.txt cleanup. The description is based on the abstract of this
-   paper: http://arxiv.org/abs/math/0204356
+   paper: https://arxiv.org/abs/math/0204356
 
 === palp-1.1.p1 (Tim Abbott, William Stein) ===
 

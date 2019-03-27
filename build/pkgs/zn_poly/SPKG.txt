@@ -5,7 +5,11 @@
 zn_poly is a C library for polynomial arithmetic in Z/nZ[x], where n is any
 modulus that fits into an unsigned long.
 
-Website: http://cims.nyu.edu/~harvey/zn_poly/
+Website: https://gitlab.com/sagemath/zn_poly
+
+Note: Original website is at http://cims.nyu.edu/~harvey/zn_poly/ but is no
+longer maintained.  Sage maintains an "official" continuation of the project
+at the above link.
 
 == License ==
 
@@ -15,6 +19,7 @@ the file src/COPYING for details.
 == Upstream Contact ==
 
  * David Harvey
+ * E. M. Bray <erik.m.bray@gmail.com>
 
 == Dependencies ==
 
@@ -44,23 +49,29 @@ the file src/COPYING for details.
 
 === Patches ===
 
- * makemakefile.py.patch:
-   Improves the Python script creating the Makeefile for better use at least
-   within Sage; see patch for details.  (Last modified at #12433, which added
-   and changed a lot.)
- * profiler.c.patch, zn_poly.h.patch:
-   Fix potential redefinition of `ulong` (in combination with other headers).
- * mpn_mulmid-tune.c.patch, mulmid-tune.c.patch, mul-tune.c.patch:
-   Fix "jump into scope of identifier with variably modified type" errors.
-   (See #8771).
- * mpn_mulmid-test.c.patch:
-   Fix a potential problem when the value of ZNP_mpn_smp_kara_thresh is
-   SIZE_MAX, this is usually irrealistic but can happen at least on linux
-   on power7 with gcc-4.7.1 (see #14098).
- * fix_fudge_factor_in_nuss-test.c.patch:
-   As the name says; fix provided by upstream (David Harvey); see #13947.
+ * All patches from Sage have been merged into upstream.  These include:
+     * makemakefile.py.patch:
+       Improves the Python script creating the Makeefile for better use at
+       least within Sage; see patch for details.  (Last modified at #12433,
+       which added and changed a lot.)
+     * profiler.c.patch, zn_poly.h.patch:
+       Fix potential redefinition of `ulong` (in combination with other
+       headers).
+     * mpn_mulmid-tune.c.patch, mulmid-tune.c.patch, mul-tune.c.patch:
+       Fix "jump into scope of identifier with variably modified type"
+       errors.  (See #8771).
+     * mpn_mulmid-test.c.patch:
+       Fix a potential problem when the value of ZNP_mpn_smp_kara_thresh is
+       SIZE_MAX, this is usually irrealistic but can happen at least on
+       linux on power7 with gcc-4.7.1 (see #14098).
+     * fix_fudge_factor_in_nuss-test.c.patch:
+       As the name says; fix provided by upstream (David Harvey); see
+       #13947.
 
 == Changelog ==
+
+=== zn_poly-0.9.1 ===
+ * Update to new upstream sources.
 
 === zn_poly-0.9.p11 (Leif Leonhardy, May 24th, 2013) ===
  * #13947: Fix `nuss_mul()` test failing especially if tuning happened
@@ -147,7 +158,7 @@ the file src/COPYING for details.
  *  Ticket #8280: cygwin: zn_poly shared library named incorrectly on cygwin
 
 === zn_poly-0.9.p1 (David Kirkby, June 29th, 2009) ===
- *  Ticket #6443 A GNUism in zn_poly-0.9.p0 causes linking problems wiith Sun's linker
+ *  Ticket #6443 A GNUism in zn_poly-0.9.p0 causes linking problems with Sun's linker
     This was an easy fix - just substitue -soname for -h in src/makemakefile.py
     I did this with a sed script in spkg-install
 

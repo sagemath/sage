@@ -1,5 +1,5 @@
 r"""
-Conductor and Reduction Types for Genus 2 Curves
+Conductor and reduction types for genus 2 curves
 
 AUTHORS:
 
@@ -11,19 +11,17 @@ AUTHORS:
 - Jeroen Demeyer (2014-09-17): replace genus2reduction program by PARI
   library call (:trac:`15808`)
 
-ACKNOWLEDGMENT: (From Liu's website:) Many thanks to Henri Cohen
-who started writing this program. After this program is available,
-many people pointed out to me (mathematical as well as programming)
-bugs : B. Poonen, E. Schaefer, C. Stahlke, M. Stoll, F. Villegas.
-So thanks to all of them. Thanks also go to Ph. Depouilly who help
-me to compile the program.
+ACKNOWLEDGMENT: (From Liu's website:) Many thanks to Henri Cohen who started
+writing this program. After this program is available, many people pointed out
+to me (mathematical as well as programming) bugs : B. Poonen, E. Schaefer, C.
+Stahlke, M. Stoll, F. Villegas.  So thanks to all of them. Thanks also go to
+Ph. Depouilly who help me to compile the program.
 
-Also Liu has given me explicit permission to include
-genus2reduction with Sage and for people to modify the C source
-code however they want.
+Also Liu has given me explicit permission to include genus2reduction with Sage
+and for people to modify the C source code however they want.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2014 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -31,8 +29,8 @@ code however they want.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
@@ -101,7 +99,7 @@ class ReductionData(SageObject):
        the reduction (Namikawa, Ueno:"The complete classification of
        fibers in pencils of curves of genus two", Manuscripta Math., vol.
        9, (1973), pages 143-186.) The reduction symbol is followed by the
-       corresponding page number (or just an indiction) in the above
+       corresponding page number (or just an indication) in the above
        article. The lower index is printed by , for instance, [I2-II-5]
        means [I_2-II-5]. Note that if `K` and `K'` are
        Kodaira symbols for singular fibers of elliptic curves, [K-K'-m]
@@ -130,7 +128,7 @@ class ReductionData(SageObject):
 
        Be careful regarding the formula:
 
-       .. math::
+       .. MATH::
 
           \text{valuation of the naive minimal discriminant} = f + n - 1 + 11c(X).
 
@@ -290,7 +288,7 @@ class Genus2reduction(SageObject):
         sage: factor(genus2reduction(x^3 + x + 1, x^5 + 2*x^4 + 2*x^3 + x^2 - x - 1).conductor)
         5^6
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: genus2reduction(0, x^6 + 3*x^3 + 63)
         Reduction data about this proper smooth genus 2 curve:
@@ -318,7 +316,7 @@ class Genus2reduction(SageObject):
     Consider the modular curve `X_1(13)` defined by an
     equation
 
-    .. math::
+    .. MATH::
 
                    y^2 + (x^3-x^2-1)y = x^2 - x.
 
@@ -360,76 +358,6 @@ class Genus2reduction(SageObject):
             Genus 2 reduction PARI interface
         """
         return "Genus 2 reduction PARI interface"
-
-    def raw(self, Q, P):
-        r"""
-        Return a string emulating the raw output of running the old
-        ``genus2reduction`` program on the hyperelliptic curve
-        `y^2 + Q(x)y = P(x)`.
-
-        INPUT:
-
-        -  ``Q`` - something coercible to a univariate
-           polynomial over Q.
-
-        -  ``P`` - something coercible to a univariate
-           polynomial over Q.
-
-        OUTPUT:
-
-        -  ``string`` - raw output
-
-        -  ``Q`` - what Q was actually input to auxiliary
-           genus2reduction program
-
-        -  ``P`` - what P was actually input to auxiliary
-           genus2reduction program
-
-        EXAMPLES::
-
-            sage: x = QQ['x'].0
-            sage: print(genus2reduction.raw(x^3 - 2*x^2 - 2*x + 1, -5*x^5)[0])
-            doctest:...: DeprecationWarning: the raw() method is provided for backwards compatibility only, use the result of the genus2reduction() call instead of parsing strings
-            See http://trac.sagemath.org/15808 for details.
-            a minimal equation over Z[1/2] is :
-            y^2 = x^6-240*x^4-2550*x^3-11400*x^2-24100*x-19855
-            <BLANKLINE>
-            factorization of the minimal (away from 2) discriminant :
-            [2,3;5,5;2267,1]
-            <BLANKLINE>
-            p=2
-            (potential) stable reduction :  (II), j=1
-            p=5
-            (potential) stable reduction :  (I)
-            reduction at p : [V] page 156, (3), f=4
-            p=2267
-            (potential) stable reduction :  (II), j=432
-            reduction at p : [I{1-0-0}] page 170, (1), f=1
-            <BLANKLINE>
-            the prime to 2 part of the conductor is 1416875
-            in factorized form : [5,4;2267,1]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(15808, 'the raw() method is provided for backwards compatibility only, use the result of the genus2reduction() call instead of parsing strings')
-
-        d = self(Q, P)
-
-        s = "a minimal equation over Z[1/2] is :\n"
-        s += "y^2 = %s\n\n" % str(d.minimal_equation).replace(" ", "")
-        s += "factorization of the minimal (away from 2) discriminant :\n"
-        s += "%s\n\n" % str(pari(d.minimal_disc).factor()).replace(" ", "")
-
-        for p in sorted(d.local_data.keys()):
-            s += "p=%s\n" % p
-            s += d.local_data[p].replace(":", " :") + "\n"
-
-        if d.prime_to_2_conductor_only:
-            s += "the prime to 2 part of the conductor is %s\n" % d.conductor
-        else:
-            s += "the conductor is %s\n" % d.conductor
-        s += "in factorized form : %s" % str(pari(d.conductor).factor()).replace(" ", "")
-
-        return s, d.Q, d.P
 
     def __call__(self, Q, P):
         """
@@ -503,11 +431,11 @@ class Genus2reduction(SageObject):
         P = R(P)
         Q = R(Q)
         if P.degree() > 6:
-            raise ValueError("P (=%s) must have degree at most 6"%P)
-        if Q.degree() >=4:
-            raise ValueError("Q (=%s) must have degree at most 3"%Q)
+            raise ValueError("P (=%s) must have degree at most 6" % P)
+        if Q.degree() >= 4:
+            raise ValueError("Q (=%s) must have degree at most 3" % Q)
 
-        res = pari.genus2red([P,Q])
+        res = pari.genus2red([P, Q])
 
         conductor = ZZ(res[0])
         minimal_equation = R(res[2])

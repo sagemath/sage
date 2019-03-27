@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Enumerate Points of a Toric Variety
+Enumerate points of a toric variety
 
-The classes here are not meant to be instatiated manually. Instead,
+The classes here are not meant to be instantiated manually. Instead,
 you should always use the methods of the :class:`point set
 <sage.schemes.toric.homset.SchemeHomset_points_toric_field>` of the
 variety.
@@ -38,21 +38,21 @@ from __future__ import print_function
 import itertools
 from copy import copy
 
-from sage.misc.all import powerset, prod
+from sage.misc.all import prod
 from sage.misc.cachefunc import cached_method
 from sage.arith.all import gcd
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.parallel.decorate import parallel
+from sage.parallel.decorate import Parallel
 
 
 class InfinitePointEnumerator(object):
-    
+
     def __init__(self, fan, ring):
         """
         Point enumerator for infinite fields.
 
         INPUT:
-        
+
         - ``fan`` -- fan of the toric variety.
 
         - ``ring`` -- infinite base ring over which to enumerate
@@ -109,15 +109,15 @@ class InfinitePointEnumerator(object):
 
 
 class NaiveFinitePointEnumerator(object):
-    
+
     def __init__(self, fan, ring):
         """
         The naive point enumerator.
 
         This is very slow.
-        
+
         INPUT:
-        
+
         - ``fan`` -- fan of the toric variety.
 
         - ``ring`` -- finite base ring over which to enumerate points.
@@ -170,7 +170,7 @@ class NaiveFinitePointEnumerator(object):
             (1, 2, 3, 4)
         """
         return tuple(x for x in self.ring if x != 0)
-        
+
     @cached_method
     def roots(self, n):
         """
@@ -196,7 +196,7 @@ class NaiveFinitePointEnumerator(object):
             (1, 2, 3, 4)
         """
         return tuple(x for x in self.ring if x**n == self.ring.one())
-        
+
     def _Chow_group_free(self):
         r"""
         Return the relations coming from the free part of the Chow group
@@ -227,12 +227,12 @@ class NaiveFinitePointEnumerator(object):
 
     def _Chow_group_torsion(self):
         r"""
-        Return the relations coming from the torison part of the Chow group
+        Return the relations coming from the torsion part of the Chow group.
 
         OUTPUT:
 
         A tuple containing the non-identity elements of
-        $Hom(A_{d-1,\text{tors}}, F^\times)$
+        `Hom(A_{d-1,\text{tors}}, F^\times)`
 
         EXAMPLES::
 
@@ -259,7 +259,7 @@ class NaiveFinitePointEnumerator(object):
 
     @cached_method
     def rescalings(self):
-        """
+        r"""
         Return the rescalings of homogeneous coordinates.
 
         OUTPUT:
@@ -267,7 +267,7 @@ class NaiveFinitePointEnumerator(object):
         A tuple containing all points that are equivalent to
         `[1:1:\dots:1]`, the distinguished point of the big torus
         orbit.
-        
+
         EXAMPLES::
 
             sage: ni = toric_varieties.P2_123(base_ring=GF(5)).point_set()._naive_enumerator()
@@ -331,7 +331,7 @@ class NaiveFinitePointEnumerator(object):
         EXAMPLES::
 
             sage: ne = toric_varieties.dP6(base_ring=GF(11)).point_set()._naive_enumerator()
-            sage: for cone in ne.cone_iter(): 
+            sage: for cone in ne.cone_iter():
             ....:     print(cone.ambient_ray_indices())
             (0, 1)
             (1, 2)
@@ -351,14 +351,14 @@ class NaiveFinitePointEnumerator(object):
         for d in range(fan.dim(), -1, -1):
             for cone in fan.cones(d):
                 yield cone
-            
+
     def coordinate_iter(self):
         """
         Iterate over all distinct homogeneous coordinates.
 
         This method does NOT identify homogeneous coordinates that are
         equivalent by a homogeneous rescaling.
-        
+
         OUTPUT:
 
         An iterator over the points.
@@ -412,10 +412,10 @@ class NaiveFinitePointEnumerator(object):
             [(0, 0, 1), (1, 0, 0), (0, 1, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0), (1, 1, 1)]
 
             sage: ni = toric_varieties.P1xP1(base_ring=GF(3)).point_set()._naive_enumerator()
-            sage: list(ni) 
-            [(0, 1, 0, 1), (1, 0, 0, 1), (1, 0, 1, 0), (0, 1, 1, 0), 
-             (0, 1, 1, 1), (0, 1, 1, 2), (1, 0, 1, 1), (1, 0, 1, 2), 
-             (1, 1, 0, 1), (1, 2, 0, 1), (1, 1, 1, 0), (1, 2, 1, 0), 
+            sage: list(ni)
+            [(0, 1, 0, 1), (1, 0, 0, 1), (1, 0, 1, 0), (0, 1, 1, 0),
+             (0, 1, 1, 1), (0, 1, 1, 2), (1, 0, 1, 1), (1, 0, 1, 2),
+             (1, 1, 0, 1), (1, 2, 0, 1), (1, 1, 1, 0), (1, 2, 1, 0),
              (1, 1, 1, 1), (1, 1, 1, 2), (1, 2, 1, 1), (1, 2, 1, 2)]
         """
         seen = set()
@@ -449,7 +449,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
     @cached_method
     def multiplicative_group_order(self):
         return self.ring.multiplicative_generator().multiplicative_order()
-        
+
     @cached_method
     def root_generator(self, n):
         """
@@ -554,7 +554,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
             result.add(phases)
         assert tuple(self.ring.one() for r in self.rays()) not in result  # because we excluded 1 as root
         return tuple(sorted(result))
-    
+
     def log(self, z):
         """
         Return the component-wise log of ``z``
@@ -575,11 +575,11 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
             sage: point_set = toric_varieties.P2_123(base_ring=F).point_set()
             sage: ffe = point_set._finite_field_enumerator()
             sage: z = tuple(a^i for i in range(25));  z
-            (1, a, a + 3, 4*a + 3, 2*a + 2, 4*a + 1, 2, 2*a, 2*a + 1, 3*a + 1, 
-             4*a + 4, 3*a + 2, 4, 4*a, 4*a + 2, a + 2, 3*a + 3, a + 4, 3, 3*a, 
+            (1, a, a + 3, 4*a + 3, 2*a + 2, 4*a + 1, 2, 2*a, 2*a + 1, 3*a + 1,
+             4*a + 4, 3*a + 2, 4, 4*a, 4*a + 2, a + 2, 3*a + 3, a + 4, 3, 3*a,
              3*a + 4, 2*a + 4, a + 1, 2*a + 3, 1)
             sage: ffe.log(z)
-            (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
+            (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
              17, 18, 19, 20, 21, 22, 23, 0)
             sage: ffe.exp(ffe.log(z)) == z
             True
@@ -607,10 +607,10 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
             sage: F.<a> = GF(5^2)
             sage: point_set = toric_varieties.P2_123(base_ring=F).point_set()
             sage: ffe = point_set._finite_field_enumerator()
-            sage: powers = range(24)
+            sage: powers = list(range(24))
             sage: ffe.exp(powers)
-            (1, a, a + 3, 4*a + 3, 2*a + 2, 4*a + 1, 2, 2*a, 2*a + 1, 3*a + 1, 
-             4*a + 4, 3*a + 2, 4, 4*a, 4*a + 2, a + 2, 3*a + 3, a + 4, 3, 3*a, 
+            (1, a, a + 3, 4*a + 3, 2*a + 2, 4*a + 1, 2, 2*a, 2*a + 1, 3*a + 1,
+             4*a + 4, 3*a + 2, 4, 4*a, 4*a + 2, a + 2, 3*a + 3, a + 4, 3, 3*a,
              3*a + 4, 2*a + 4, a + 1, 2*a + 3)
             sage: ffe.log(ffe.exp(powers)) == tuple(powers)
             True
@@ -627,14 +627,14 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
         A tuple containing the logarithms (see :meth:`log`) of the
         generators of the multiplicative group of :meth:`rescalings`.
-        
+
         EXAMPLES::
 
             sage: point_set = toric_varieties.P2_123(base_ring=GF(5)).point_set()
             sage: ffe = point_set._finite_field_enumerator()
             sage: ffe.rescalings()
             ((1, 1, 1), (1, 4, 4), (4, 2, 3), (4, 3, 2))
-            sage: map(ffe.log, ffe.rescalings())
+            sage: list(map(ffe.log, ffe.rescalings()))
             [(0, 0, 0), (0, 2, 2), (2, 1, 3), (2, 3, 1)]
             sage: ffe.rescaling_log_generators()
             ((2, 3, 1),)
@@ -647,7 +647,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
     def cone_points_iter(self):
         """
         Iterate over the open torus orbits and yield distinct points.
-        
+
         OUTPUT:
 
         For each open torus orbit (cone): A triple consisting of the
@@ -684,7 +684,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         # ZZ/N is not a integral domain. Instead: work over ZZ
         log_generators = self.rescaling_log_generators()
         log_relations = block_matrix(2, 1, [
-            matrix(ZZ, len(log_generators), nrays, log_generators), 
+            matrix(ZZ, len(log_generators), nrays, log_generators),
             N * identity_matrix(ZZ, nrays)])
         for cone in self.cone_iter():
             nrays = self.fan().nrays() + len(self.fan().virtual_rays())
@@ -719,9 +719,9 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
             sage: point_set = X.point_set()
             sage: ffe = point_set._finite_field_enumerator()
             sage: list(ffe)
-            [(1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (0, 1, 3), (1, 0, 1), 
-             (1, 0, 3), (1, 1, 0), (1, 3, 0), (1, 1, 1), (1, 1, 3), (1, 1, 2), 
-             (1, 1, 6), (1, 1, 4), (1, 1, 5), (1, 3, 2), (1, 3, 6), (1, 3, 4), 
+            [(1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (0, 1, 3), (1, 0, 1),
+             (1, 0, 3), (1, 1, 0), (1, 3, 0), (1, 1, 1), (1, 1, 3), (1, 1, 2),
+             (1, 1, 6), (1, 1, 4), (1, 1, 5), (1, 3, 2), (1, 3, 6), (1, 3, 4),
              (1, 3, 5), (1, 3, 1), (1, 3, 3)]
             sage: set(point_set._naive_enumerator()) == set(ffe)
             True
@@ -766,7 +766,7 @@ class NaiveSubschemePointEnumerator(object):
         Point enumerator for algebraic subschemes of toric varieties.
 
         INPUT:
-        
+
         - ``polynomials`` -- list/tuple/iterabel of polynomials. The
           defining polynomials.
 
@@ -879,7 +879,7 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
             sage: point_set = X.point_set()
             sage: ffe = point_set._enumerator()
             sage: ffe.solutions_serial([s^2-1, s^6-s^2], [range(6)])
-            <generator object solutions_serial at 0x...>
+            <generator object ...solutions_serial at 0x...>
             sage: list(_)
             [(0,), (3,)]
         """
@@ -907,7 +907,7 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
             sage: point_set = X.point_set()
             sage: ffe = point_set._enumerator()
             sage: ffe.solutions([s^2-1, s^6-s^2], [range(6)])
-            <generator object solutions at 0x...>
+            <generator object ...solutions at 0x...>
             sage: sorted(_)
             [(0,), (3,)]
         """
@@ -915,10 +915,9 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
         if len(log_range) <= 2:
             for log_t in self.solutions_serial(inhomogeneous_equations, log_range):
                 yield log_t
-            raise StopIteration
+            return
         # Parallelize the outermost loop of the Cartesian product
         work = [([[r]] + log_range[1:],) for r in log_range[0]]
-        from sage.parallel.decorate import Parallel
         parallel = Parallel()
         def partial_solution(work_range):
             return list(self.solutions_serial(inhomogeneous_equations, work_range))
@@ -929,10 +928,10 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
     def homogeneous_coordinates(self, log_t, nonzero_coordinates, cokernel):
         """
         Convert the log of inhomogeneous coordinates back to homogeneous coordinates
-        
+
         INPUT:
 
-        - ``log_t`` -- log of inhomogeneous coordinates of a point. 
+        - ``log_t`` -- log of inhomogeneous coordinates of a point.
 
         - ``nonzero_coordinates`` -- the nonzero homogeneous
           coordinates in the patch.
@@ -989,12 +988,14 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
             sage: ffe = point_set._enumerator()
             sage: list(ffe)   # indirect doctest
             [(1, 4, 3), (1, 1, 6), (1, 2, 5)]
-        """ 
+        """
         for cone, nonzero_coordinates, cokernel in self.ambient.cone_points_iter():
             R = PolynomialRing(self.ambient.ring, cokernel.ngens(), 't')
             inhomogeneous = self.inhomogeneous_equations(R, nonzero_coordinates, cokernel)
-            for log_t in self.solutions(inhomogeneous, map(range, cokernel.invariants())):
-                yield self.homogeneous_coordinates(log_t, nonzero_coordinates, cokernel)
+            log_range = [range(I) for I in cokernel.invariants()]
+            for log_t in self.solutions(inhomogeneous, log_range):
+                yield self.homogeneous_coordinates(log_t, nonzero_coordinates,
+                                                   cokernel)
 
     def cardinality(self):
         """
@@ -1026,7 +1027,8 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
         for cone, nonzero_coordinates, cokernel in self.ambient.cone_points_iter():
             R = PolynomialRing(self.ambient.ring, cokernel.ngens(), 't')
             inhomogeneous = self.inhomogeneous_equations(R, nonzero_coordinates, cokernel)
-            for log_t in self.solutions(inhomogeneous, map(range, cokernel.invariants())):
+            log_range = [range(I) for I in cokernel.invariants()]
+            for log_t in self.solutions(inhomogeneous, log_range):
                 n += 1
         return n
 

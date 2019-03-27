@@ -1,5 +1,6 @@
 from sage.libs.gmp.types cimport mpz_t
-from sage.libs.pari.gen cimport gen as pari_gen
+from cypari2.gen cimport Gen as pari_gen
+from sage.rings.padics.padic_floating_point_element cimport FPElement
 
 ctypedef mpz_t celement
 include "FM_template_header.pxi"

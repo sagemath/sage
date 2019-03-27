@@ -1,5 +1,4 @@
-cdef extern from "sage/libs/lcalc/lcalc_sage.h":
-
+cdef extern from "lcalc_sage.h":
     ctypedef struct doublevec "std::vector<double>":
         int (*size)()
         double ind "operator[]"(int i)

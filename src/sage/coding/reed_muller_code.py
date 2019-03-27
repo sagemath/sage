@@ -4,7 +4,7 @@ Reed-Muller code
 Given integers `m, r` and a finite field `F`,
 the corresponding Reed-Muller Code is the set:
 
-.. math::
+.. MATH::
 
     \{ (f(\alpha_i)\mid \alpha_i \in F^m)  \mid  f \in F[x_1,x_2,\ldots,x_m], \deg f \leq r \}
 
@@ -24,6 +24,7 @@ This file contains the following elements:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from operator import mul
 from sage.matrix.constructor import matrix
@@ -70,14 +71,14 @@ def _binomial_sum(n, k):
 
 def _multivariate_polynomial_interpolation(evaluation, order, polynomial_ring):
     r"""
-    Returns `f \in \GF(q)[X_1,...,X_m]` such that `f(\mathbf a) = v[i(\mathbf a)]`
-    for all `\mathbf a \in \GF(q^m)`, where `v \in GF(q){qm}` is a given
-    vector of evaluations, and `i(a)` is a specific ordering of `GF(q^m)` (see below for details)
+    Returns `f \in \GF{q}[X_1,...,X_m]` such that `f(\mathbf a) = v[i(\mathbf a)]`
+    for all `\mathbf a \in \GF{q^m}`, where `v \in \GF{q}^{q^m}` is a given
+    vector of evaluations, and `i(a)` is a specific ordering of `\GF{q^m}` (see below for details)
 
     The ordering `i(a)` is the one used by Sage when listing the elements
     of a Finite Field with a call to the method ``list``.
 
-    In case the polynomial `f` does not exist, this method returns an arbitray polynomial.
+    In case the polynomial `f` does not exist, this method returns an arbitrary polynomial.
 
     INPUT:
 
@@ -119,7 +120,7 @@ def _multivariate_polynomial_interpolation(evaluation, order, polynomial_ring):
             polyVector = uni_poly_ring.lagrange_polynomial(
                 points).coefficients(sparse=False)
             if len(polyVector) < d:
-                # adding zeros to represet a (d-1) degree polynomial
+                # adding zeros to represent a (d-1) degree polynomial
                 polyVector += [base_field_zero] * (d - len(polyVector))
             multipoint_evaluation_list.append(polyVector)
         poly = polynomial_ring.zero()
@@ -139,7 +140,7 @@ def ReedMullerCode(base_field, order, num_of_var):
 
     A Reed-Muller Code of order `r` and number of variables `m` over a finite field `F` is the set:
 
-    .. math::
+    .. MATH::
 
         \{ (f(\alpha_i)\mid \alpha_i \in F^m)  \mid  f \in F[x_1,x_2,\ldots,x_m], \deg f \leq r \}
 
@@ -568,7 +569,7 @@ class ReedMullerVectorEncoder(Encoder):
 
         If ``code`` is not a Reed-Muller code, an error is raised::
 
-            sage: C  = codes.RandomLinearCode(10, 4, GF(11))
+            sage: C  = codes.random_linear_code(GF(11), 10, 4)
             sage: codes.encoders.ReedMullerVectorEncoder(C)
             Traceback (most recent call last):
             ...
@@ -657,11 +658,13 @@ class ReedMullerVectorEncoder(Encoder):
         matrix_list = []
         max_individual_degree = min(order, (q - 1))
         for degree in range(order + 1):
-            exponents = Subsets(range(num_of_var) * max_individual_degree,
+            exponents = Subsets(list(range(num_of_var)) * max_individual_degree,
                                 degree, submultiset=True)
             matrix_list += [[reduce(mul, [x[i] for i in exponent], 1)
                              for x in points] for exponent in exponents]
-        return matrix(base_field, matrix_list)
+        M = matrix(base_field, matrix_list)
+        M.set_immutable()
+        return M
 
     def points(self):
         r"""
@@ -682,7 +685,7 @@ class ReedMullerVectorEncoder(Encoder):
 
 class ReedMullerPolynomialEncoder(Encoder):
     r"""
-    Encoder for Reed-Muller codes which encodes appropiate multivariate polynomials into codewords.
+    Encoder for Reed-Muller codes which encodes appropriate multivariate polynomials into codewords.
 
     Consider a Reed-Muller code of order `r`, number of variables `m`, length `n`,
     dimension `k` over some finite field `F`.
@@ -743,7 +746,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
         If ``code`` is not a Reed-Muller code, an error is raised::
 
-            sage: C  = codes.RandomLinearCode(10, 4, GF(11))
+            sage: C  = codes.random_linear_code(GF(11), 10, 4)
             sage: codes.encoders.ReedMullerPolynomialEncoder(C)
             Traceback (most recent call last):
             ...

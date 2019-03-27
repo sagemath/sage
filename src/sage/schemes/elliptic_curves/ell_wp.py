@@ -5,7 +5,7 @@ Weierstrass `\wp`-function for elliptic curves
 The Weierstrass `\wp` function associated to an elliptic curve over a
 field `k` is a Laurent series of the form
 
-.. math::
+.. MATH::
 
     \wp(z) = \frac{1}{z^2} +  c_2 \cdot z^2 + c_4 \cdot z^4 + \cdots.
 
@@ -19,7 +19,7 @@ coefficients where `p` is the characteristic of `k`. It can be defined
 via the formal group as `x+c` in the variable `z=\log_E(t)` for a
 constant `c` such that the constant term `c_0` in `\wp(z)` is zero.
 
-EXAMPLE::
+EXAMPLES::
 
     sage: E = EllipticCurve([0,1])
     sage: E.weierstrass_p()
@@ -49,6 +49,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.power_series_ring import PowerSeriesRing
@@ -176,13 +177,13 @@ def compute_wp_pari(E,prec):
         sage: compute_wp_pari(E, prec=30)
         z^-2 - 1/7*z^4 + 1/637*z^10 - 1/84721*z^16 + 3/38548055*z^22 - 4/8364927935*z^28 + O(z^30)
     """
-    ep = E._pari_()
+    ep = E.__pari__()
     wpp = ep.ellwp(n=prec)
     k = E.base_ring()
     R = LaurentSeriesRing(k,'z')
     z = R.gen()
     wp = z**(-2)
-    for i in xrange(prec):
+    for i in range(prec):
         wp += k(wpp[i]) * z**i
     wp = wp.add_bigoh(prec)
     return wp
@@ -229,7 +230,7 @@ def compute_wp_quadratic(k, A, B, prec):
 
     """
     m = (prec + 1)//2
-    c = [0 for j in xrange(m)]
+    c = [0 for j in range(m)]
     c[0] = -A/5
     c[1] = -B/7
 
@@ -238,9 +239,9 @@ def compute_wp_quadratic(k, A, B, prec):
     Z = R.gen()
     pe = Z**-1 + c[0]*Z + c[1]*Z**2
 
-    for i in xrange(3, m):
+    for i in range(3, m):
         t = 0
-        for j in xrange(1,i-1):
+        for j in range(1, i - 1):
             t += c[j-1]*c[i-2-j]
         ci = (3*t)/((i-2)*(2*i+3))
         pe += ci * Z**i
@@ -258,7 +259,7 @@ def compute_wp_fast(k, A, B, m):
 
      - ``k`` - the base field of the curve
      - ``A`` - and
-     - ``B`` - as the coeffients of the short Weierstrass model `y^2 = x^3 +Ax +B`, and
+     - ``B`` - as the coefficients of the short Weierstrass model `y^2 = x^3 +Ax +B`, and
      - ``m`` - the precision to which the function is computed to.
 
     OUTPUT:

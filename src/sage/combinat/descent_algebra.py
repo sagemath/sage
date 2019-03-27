@@ -53,7 +53,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
     We follow the notations and conventions in [GR1989]_, apart from the
     order of multiplication being different from the one used in that
-    article. Schocker's exposition [Schocker2004]_, in turn, uses the
+    article. Schocker's exposition [Sch2004]_, in turn, uses the
     same order of multiplication as we are, but has different notations
     for the bases.
 
@@ -65,22 +65,13 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [GR1989] \C. Reutenauer, A. M. Garsia. *A decomposition of Solomon's
-       descent algebra.* Adv. Math. **77** (1989).
-       http://www.lacim.uqam.ca/~christo/Publi%C3%A9s/1989/Decomposition%20Solomon.pdf
+    - [GR1989]_
 
-    .. [Atkinson] \M. D. Atkinson. *Solomon's descent algebra revisited.*
-       Bull. London Math. Soc. 24 (1992) 545-551.
-       http://www.cs.otago.ac.nz/staffpriv/mike/Papers/Descent/DescAlgRevisited.pdf
+    - [At1992]_
 
-    .. [MR-Desc] \C. Malvenuto, C. Reutenauer, *Duality between
-       quasi-symmetric functions and the Solomon descent algebra*,
-       Journal of Algebra 177 (1995), no. 3, 967-982.
-       http://www.lacim.uqam.ca/~christo/Publi%C3%A9s/1995/Duality.pdf
+    - [MR1995]_
 
-    .. [Schocker2004] Manfred Schocker, *The descent algebra of the
-       symmetric group*. Fields Inst. Comm. 40 (2004), pp. 145-161.
-       http://www.mathematik.uni-bielefeld.de/~ringel/schocker-neu.ps
+    - [Sch2004]_
 
     EXAMPLES::
 
@@ -186,7 +177,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
         The basis element corresponding to a composition `p` (or to
         the subset of `\{1, 2, \ldots, n-1\}`) is denoted `\Delta^p`
-        in [Schocker2004]_.
+        in [Sch2004]_.
 
         EXAMPLES::
 
@@ -294,7 +285,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 sage: DA = DescentAlgebra(QQ, 4)
                 sage: D = DA.D()
                 sage: B = DA.B()
-                sage: map(B, D.basis()) # indirect doctest
+                sage: list(map(B, D.basis()))  # indirect doctest
                 [B[4],
                  B[1, 3] - B[4],
                  B[2, 2] - B[4],
@@ -399,7 +390,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
         (where `i_1 < i_2 < \cdots < i_k`), which is what Sage uses to
         index the basis.
 
-        The basis element `B_p` is denoted `\Xi^p` in [Schocker2004]_.
+        The basis element `B_p` is denoted `\Xi^p` in [Sch2004]_.
 
         By using compositions of `n`, the product `B_p B_q` becomes a
         sum over the non-negative-integer matrices `M` with row sum `p`
@@ -502,7 +493,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 sage: DA = DescentAlgebra(QQ, 4)
                 sage: B = DA.B()
                 sage: I = DA.I()
-                sage: map(I, B.basis()) # indirect doctest
+                sage: list(map(I, B.basis()))  # indirect doctest
                 [I[1, 1, 1, 1],
                  1/2*I[1, 1, 1, 1] + I[1, 1, 2],
                  1/2*I[1, 1, 1, 1] + I[1, 2, 1],
@@ -540,7 +531,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 sage: DA = DescentAlgebra(QQ, 4)
                 sage: B = DA.B()
                 sage: D = DA.D()
-                sage: map(D, B.basis()) # indirect doctest
+                sage: list(map(D, B.basis()))  # indirect doctest
                 [D{} + D{1} + D{1, 2} + D{1, 2, 3}
                   + D{1, 3} + D{2} + D{2, 3} + D{3},
                  D{} + D{1} + D{1, 2} + D{2},
@@ -558,7 +549,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 sage: DA = DescentAlgebra(QQ, 0)
                 sage: B = DA.B()
                 sage: D = DA.D()
-                sage: map(D, B.basis())
+                sage: list(map(D, B.basis()))
                 [D{}]
             """
             D = self.realization_of().D()
@@ -580,7 +571,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
                 sage: B = DescentAlgebra(QQ, 4).B()
                 sage: S = NonCommutativeSymmetricFunctions(QQ).Complete()
-                sage: map(S, B.basis()) # indirect doctest
+                sage: list(map(S, B.basis()))  # indirect doctest
                 [S[1, 1, 1, 1],
                  S[1, 1, 2],
                  S[1, 2, 1],
@@ -755,7 +746,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 sage: DA = DescentAlgebra(QQ, 4)
                 sage: B = DA.B()
                 sage: I = DA.I()
-                sage: map(B, I.basis()) # indirect doctest
+                sage: list(map(B, I.basis()))  # indirect doctest
                 [B[1, 1, 1, 1],
                  -1/2*B[1, 1, 1, 1] + B[1, 1, 2],
                  -1/2*B[1, 1, 1, 1] + B[1, 2, 1],
@@ -788,7 +779,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
         def idempotent(self, la):
             """
-            Return the idemponent corresponding to the partition ``la``
+            Return the idempotent corresponding to the partition ``la``
             of `n`.
 
             EXAMPLES::

@@ -165,7 +165,7 @@ Coercion from symbolic ring::
     sage: type(x)
     <type 'sage.symbolic.expression.Expression'>
     sage: type(S(x))
-    <class 'sage.rings.multi_power_series_ring_element.MPowerSeriesRing_generic_with_category.element_class'>
+    <class 'sage.rings.multi_power_series_ring.MPowerSeriesRing_generic_with_category.element_class'>
 
     sage: f = S(2/7 -100*x^2 + 1/3*x*y + y^2).O(3); f
     5 - x^2 + 4*x*y + y^2 + O(x, y)^3
@@ -206,9 +206,7 @@ AUTHORS:
 
 from sage.rings.ring import CommutativeRing
 from sage.rings.polynomial.all import PolynomialRing
-from sage.rings.polynomial.polynomial_element import is_Polynomial
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.power_series_ring import PowerSeriesRing, PowerSeriesRing_generic, is_PowerSeriesRing
@@ -223,6 +221,7 @@ _CommutativeRings = CommutativeRings()
 from sage.categories.integral_domains import IntegralDomains
 _IntegralDomains = IntegralDomains()
 
+
 def is_MPowerSeriesRing(x):
     """
     Return true if input is a multivariate power series ring.
@@ -231,7 +230,7 @@ def is_MPowerSeriesRing(x):
 
         sage: from sage.rings.power_series_ring import is_PowerSeriesRing
         sage: from sage.rings.multi_power_series_ring import is_MPowerSeriesRing
-        sage: M = PowerSeriesRing(ZZ,4,'v');
+        sage: M = PowerSeriesRing(ZZ,4,'v')
         sage: is_PowerSeriesRing(M)
         False
         sage: is_MPowerSeriesRing(M)
@@ -288,25 +287,26 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         Initializes a multivariate power series ring.  See PowerSeriesRing
         for complete documentation.
 
-        INPUT
+        INPUT:
 
-            - ``base_ring`` - a commutative ring
+        - ``base_ring`` -- a commutative ring
 
-            - ``num_gens`` - number of generators
+        - ``num_gens`` -- number of generators
 
-            - ``name_list`` - List of indeterminate names or a single name.
-                If a single name is given, indeterminates will be this name
-                followed by a number from 0 to num_gens - 1.  If a list is
-                given, these will be the indeterminate names and the length
-                of the list must be equal to num_gens.
+        - ``name_list`` -- List of indeterminate names or a single name.
+            If a single name is given, indeterminates will be this name
+            followed by a number from 0 to num_gens - 1.  If a list is
+            given, these will be the indeterminate names and the length
+            of the list must be equal to num_gens.
 
-            - ``order`` - ordering of variables; default is
-              negative degree lexicographic
+        - ``order`` -- ordering of variables; default is
+          negative degree lexicographic
 
-            - ``default_prec`` - The default total-degree precision for
-              elements.  The default value of default_prec is 10.
+        - ``default_prec`` -- The default total-degree precision for
+          elements.  The default value of default_prec is 10.
 
-            - ``sparse`` - whether or not power series are sparse
+        - ``sparse`` -- whether or not the power series are sparse.
+          The underlying polynomial ring is always sparse.
 
         EXAMPLES::
 
@@ -353,7 +353,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         Nonexact.__init__(self, default_prec)
 
         # underlying polynomial ring in which to represent elements
-        self._poly_ring_ = PolynomialRing(base_ring, self.variable_names(), sparse=sparse, order=order)
+        self._poly_ring_ = PolynomialRing(base_ring, self.variable_names(), order=order)
         # because sometimes PowerSeriesRing_generic calls self.__poly_ring
         self._PowerSeriesRing_generic__poly_ring = self._poly_ring()
 
@@ -441,13 +441,13 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         EXAMPLES::
 
-            sage: M.<x,y,z> = PowerSeriesRing(ZZ,3);
+            sage: M.<x,y,z> = PowerSeriesRing(ZZ,3)
             sage: M.term_order()
             Negative degree lexicographic term order
             sage: m = y*z^12 - y^6*z^8 - x^7*y^5*z^2 + x*y^2*z + M.O(15); m
             x*y^2*z + y*z^12 - x^7*y^5*z^2 - y^6*z^8 + O(x, y, z)^15
 
-            sage: N = PowerSeriesRing(ZZ,3,'x,y,z', order="deglex");
+            sage: N = PowerSeriesRing(ZZ,3,'x,y,z', order="deglex")
             sage: N.term_order()
             Degree lexicographic term order
             sage: N(m)
@@ -479,10 +479,10 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             Multivariate Power Series Ring in f0, f1, f2, f3 over Rational Field
 
             sage: (c,R) = M.construction(); (c,R)
-            (Completion[('f0', 'f1', 'f2', 'f3')],
+            (Completion[('f0', 'f1', 'f2', 'f3'), prec=12],
             Multivariate Polynomial Ring in f0, f1, f2, f3 over Rational Field)
             sage: c
-            Completion[('f0', 'f1', 'f2', 'f3')]
+            Completion[('f0', 'f1', 'f2', 'f3'), prec=12]
             sage: c(R)
             Multivariate Power Series Ring in f0, f1, f2, f3 over Rational Field
             sage: c(R) == M
@@ -640,7 +640,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: R.<a,b,c> = PowerSeriesRing(Zmod(8)); R
             Multivariate Power Series Ring in a, b, c over Ring of integers
             modulo 8
-            sage: M = PowerSeriesRing(ZZ,3,'x,y,z');
+            sage: M = PowerSeriesRing(ZZ,3,'x,y,z')
             sage: M._is_valid_homomorphism_(R,[a,c,b])
             True
 
@@ -723,7 +723,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         TESTS::
 
-            sage: M = PowerSeriesRing(ZZ,3,'x,y,z');
+            sage: M = PowerSeriesRing(ZZ,3,'x,y,z')
             sage: M._coerce_map_from_(M)
             True
             sage: M._coerce_map_from_(M.remove_var(x))
@@ -768,8 +768,8 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         """
         TESTS::
 
-            sage: M = PowerSeriesRing(ZZ,5,'t');
-            sage: t = M.gens();
+            sage: M = PowerSeriesRing(ZZ,5,'t')
+            sage: t = M.gens()
             sage: m = -2*t[0]*t[3]^6*t[4] - 12*t[0]^2*t[3]*t[4]^6 + t[1]*t[2]*t[3]^4*t[4]^3 + M.O(10)
             sage: M._element_constructor_(m)
             -2*t0*t3^6*t4 - 12*t0^2*t3*t4^6 + t1*t2*t3^4*t4^3 +
@@ -792,51 +792,13 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
                 prec = infinity
         return self.element_class(parent=self, x=f, prec=prec)
 
-    def __cmp__(self, other):
-        """
-        Compare this multivariate power series ring to something else.
-
-        Power series rings are considered equal if the base ring, variable
-        names, and default truncation precision are the same.  Note that we
-        don't compare term-ordering.
-
-        First the base rings are compared, then the variable names, then
-        the default precision.
-
-        EXAMPLES::
-
-            sage: R.<t,u> = PowerSeriesRing(ZZ)
-            sage: S.<t,u> = PowerSeriesRing(ZZ)
-            sage: R is S
-            True
-            sage: R == S
-            True
-            sage: S.<t,u> = PowerSeriesRing(ZZ, default_prec=30)
-            sage: R == S
-            False
-            sage: PowerSeriesRing(QQ,3,'t') == PowerSeriesRing(ZZ,3,'t')
-            False
-            sage: PowerSeriesRing(QQ,5,'t') == 5
-            False
-        """
-        if not isinstance(other, MPowerSeriesRing_generic):
-            return -1
-        c = cmp(self.base_ring(), other.base_ring())
-        if c: return c
-        c = cmp(self.variable_names(), other.variable_names())
-        if c: return c
-        c = cmp(self.default_prec(), other.default_prec())
-        if c: return c
-        return 0
-
-
     def laurent_series_ring(self):
         """
-        Laruent series not yet implemented for multivariate power series rings
+        Laurent series not yet implemented for multivariate power series rings
 
         TESTS::
 
-            sage: M = PowerSeriesRing(ZZ,3,'x,y,z');
+            sage: M = PowerSeriesRing(ZZ,3,'x,y,z')
             sage: M.laurent_series_ring()
             Traceback (most recent call last):
             ...
@@ -938,7 +900,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         EXAMPLES::
 
-            sage: M = PowerSeriesRing(ZZ,10,'v');
+            sage: M = PowerSeriesRing(ZZ,10,'v')
             sage: M.gen(6)
             v6
         """
@@ -953,7 +915,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         EXAMPLES::
 
-            sage: M = PowerSeriesRing(ZZ,10,'v');
+            sage: M = PowerSeriesRing(ZZ,10,'v')
             sage: M.ngens()
             10
         """

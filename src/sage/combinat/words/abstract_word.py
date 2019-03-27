@@ -31,12 +31,19 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
+
+from builtins import zip
 
 from sage.structure.sage_object import SageObject
 from sage.combinat.words.word_options import word_options
-from itertools import islice, izip, groupby
+from itertools import islice, groupby
 from sage.rings.all import Integers, ZZ, Infinity
+from sage.structure.richcmp import (richcmp_method, rich_to_bool,
+                                    richcmp_item)
 
+
+@richcmp_method
 class Word_class(SageObject):
     def parent(self):
         r"""
@@ -45,10 +52,10 @@ class Word_class(SageObject):
         TESTS::
 
             sage: Word(iter([1,2,3]), length="unknown").parent()
-            Finite words over Set of Python objects of type 'object'
+            Finite words over Set of Python objects of class 'object'
             sage: Word(range(12)).parent()
-            Finite words over Set of Python objects of type 'object'
-            sage: Word(range(4), alphabet=range(6)).parent()
+            Finite words over Set of Python objects of class 'object'
+            sage: Word(range(4), alphabet=list(range(6))).parent()
             Finite words over {0, 1, 2, 3, 4, 5}
             sage: Word(iter('abac'), alphabet='abc').parent()
             Finite words over {'a', 'b', 'c'}
@@ -63,12 +70,11 @@ class Word_class(SageObject):
 
             sage: Word(iter([1,2,3]), length="unknown")._repr_()
             'word: 123'
-            sage: Word(xrange(100), length="unknown")._repr_()
+            sage: Word(range(100), length="unknown")._repr_()
             'word: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,...'
             sage: Word(lambda x:x%3)._repr_()
             'word: 0120120120120120120120120120120120120120...'
         """
-        global word_options
         if word_options['old_repr']:
             return "Word over %s" % (str(self.parent().alphabet())[17:])
         return word_options['identifier'] + self.string_rep()
@@ -115,10 +121,9 @@ class Word_class(SageObject):
             sage: print(w)
             0123401234012340123401234012340123401234...
         """
-        global word_options
         l = word_options['truncate_length']
-        letters = list(islice(self, l+1))
-        if len(letters) == l+1:
+        letters = list(islice(self, int(l + 1)))
+        if len(letters) == l + 1:
             letters.pop()
             suffix = "..."
         else:
@@ -205,16 +210,16 @@ class Word_class(SageObject):
 
     def __len__(self):
         r"""
-        Returns the length of self (as a python integer).
+        Return the length of self (as a python integer).
 
-        ..NOTE::
+        .. NOTE::
 
             For infinite words or words of unknown length,
             use `length()` method instead.
 
         OUTPUT:
 
-            positive integer
+        positive integer
 
         EXAMPLES::
 
@@ -254,90 +259,43 @@ class Word_class(SageObject):
             raise TypeError(msg)
         return int(L)
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
-        Compares two words lexicographically according to the ordering
-        defined by the parent of self. This corresponds to Python's built-in
+        Compare two words lexicographically according to the ordering
+        defined by the parent of ``self``.
+
+        This corresponds to Python's built-in
         ordering when no parent nor alphabet was used to defined the word.
 
         Provides for all normal comparison operators.
 
         .. NOTE::
 
-            This function will not terminate if self and other are equal
-            infinite words!
+            This function will not terminate if ``self`` and ``other``
+            are equal infinite words!
 
         EXAMPLES::
 
             sage: W = Word
             sage: from itertools import count
-            sage: W(range(1,10)).__cmp__(W(range(10))) > 0
+            sage: W(range(1,10)) > W(range(10))
             True
-            sage: W(range(10)).__cmp__(W(range(1,10))) < 0
+            sage: W(range(10)) < W(range(1,10))
             True
-            sage: W(range(10)).__cmp__(W(range(10))) == 0
+            sage: W(range(10)) == W(range(10))
             True
-            sage: W(range(10)).__cmp__(W(count())) < 0
+            sage: W(range(10)) < W(count())
             True
-            sage: W(count()).__cmp__(W(range(10))) > 0
+            sage: W(count()) > W(range(10))
             True
 
         ::
 
             sage: W = Words(['a', 'b', 'c'])
-            sage: W('a').__cmp__(W([]))
-            1
-            sage: W([]).__cmp__(W('a'))
-            -1
-        """
-        if not isinstance(other, Word_class):
-            return NotImplemented
-        self_it, other_it = iter(self), iter(other)
-        cmp_fcn = self._parent.cmp_letters
-        while True:
-            try:
-                cs = next(self_it)
-            except StopIteration:
-                try:
-                    co = next(other_it)
-                except StopIteration:
-                    # If both self_it and other_it are exhausted then
-                    # self == other. Return 0.
-                    return 0
-                else:
-                    # If self_it is exhausted, but not other_it, then
-                    # self is a proper prefix of other: return -1
-                    return -1
-            else:
-                try:
-                    co = next(other_it)
-                except StopIteration:
-                    # If self_it is not exhausted but other_it is, then
-                    # other is a proper prefix of self: return 1.
-                    return 1
-                else:
-                    r = cmp_fcn(cs, co)
-                    if r != 0:
-                        return r
-
-    def __eq__(self, other):
-        r"""
-        Returns True if self is equal to other and False otherwise.
-
-        INPUT:
-
-        - ``other`` - a word
-
-        OUTPUT:
-
-            boolean
-
-        .. NOTE:
-
-            This function will not terminate if self and other are equal
-            infinite words!
-
-        EXAMPLES::
+            sage: W('a') > W([])
+            True
+            sage: W([]) < W('a')
+            True
 
             sage: Word('abc') == Word(['a','b','c'])
             True
@@ -350,8 +308,6 @@ class Word_class(SageObject):
 
             sage: Words([0,1,2])([0,1,0,1]) ==  Words([0,1])([0,1,0,1])
             True
-            sage: Words('abc')('abab') == Words([0,9])([0,0,9])
-            False
             sage: Word('ababa') == Words('abcd')('ababa')
             True
 
@@ -362,10 +318,20 @@ class Word_class(SageObject):
             sage: Word(lambda n:n) == Word(range(20))
             False
 
-        Beware the following does not halt!::
+        Beware the following does not halt! ::
 
             sage: from itertools import count
             sage: Word(lambda n:n) == Word(count()) #not tested
+
+        Examples for unequality::
+
+            sage: w = Word(range(10))
+            sage: z = Word(range(10))
+            sage: w != z
+            False
+            sage: u = Word(range(12))
+            sage: u != w
+            True
 
         TESTS::
 
@@ -381,6 +347,7 @@ class Word_class(SageObject):
         if not isinstance(other, Word_class):
             return NotImplemented
         self_it, other_it = iter(self), iter(other)
+        cmp_key = self._parent.sortkey_letters
         while True:
             try:
                 cs = next(self_it)
@@ -390,50 +357,24 @@ class Word_class(SageObject):
                 except StopIteration:
                     # If both self_it and other_it are exhausted then
                     # self == other. Return 0.
-                    return True
+                    return rich_to_bool(op, 0)
                 else:
                     # If self_it is exhausted, but not other_it, then
                     # self is a proper prefix of other: return -1
-                    return False
+                    return rich_to_bool(op, -1)
             else:
                 try:
                     co = next(other_it)
                 except StopIteration:
                     # If self_it is not exhausted but other_it is, then
                     # other is a proper prefix of self: return 1.
-                    return False
+                    return rich_to_bool(op, 1)
                 else:
-                    if cs != co:
-                        return False
-
-    def __ne__(self, other):
-        r"""
-        Returns True if self is not equal to other and False otherwise.
-
-        INPUT:
-
-        - ``other`` - a word
-
-        OUTPUT:
-
-            boolean
-
-        .. NOTE:
-
-            This function will not terminate if self and other are equal
-            infinite words!
-
-        EXAMPLES::
-
-            sage: w = Word(range(10))
-            sage: z = Word(range(10))
-            sage: w != z
-            False
-            sage: u = Word(range(12))
-            sage: u != w
-            True
-        """
-        return not self == other
+                    key_cs = cmp_key(cs)
+                    key_co = cmp_key(co)
+                    res = richcmp_item(key_cs, key_co, op)
+                    if res is not NotImplemented:
+                        return res
 
     def _longest_common_prefix_iterator(self, other):
         r"""
@@ -459,13 +400,11 @@ class Word_class(SageObject):
             sage: w = Word(it, length="finite"); w
             word: 0100101001
         """
-        for (b,c) in izip(self, other):
+        for (b, c) in zip(self, other):
             if b == c:
                 yield b
             else:
-                raise StopIteration
-        else:
-            raise StopIteration
+                break
 
     def longest_common_prefix(self, other, length='unknown'):
         r"""
@@ -593,11 +532,11 @@ class Word_class(SageObject):
             sage: list(Word([1,2,1,2,1,3])._longest_periodic_prefix_iterator(2))
             [1, 2, 1, 2, 1]
         """
-        for i,l in enumerate(self):
-            if self[i%period] == l:
+        for i, l in enumerate(self):
+            if self[i % period] == l:
                 yield l
             else:
-                raise StopIteration
+                break
 
     def longest_periodic_prefix(self, period=1):
         r"""
@@ -795,7 +734,7 @@ class Word_class(SageObject):
         """
         return self > other
 
-    def apply_morphism(self,morphism):
+    def apply_morphism(self, morphism):
         r"""
         Returns the word obtained by applying the morphism to self.
 
@@ -867,13 +806,14 @@ class Word_class(SageObject):
 
     def delta(self):
         r"""
-        Returns the image of self under the delta morphism. This is the
-        word composed of the length of consecutive runs of the same letter
-        in a given word.
+        Returns the image of self under the delta morphism.
+
+        This is the word composed of the length of consecutive runs of
+        the same letter in a given word.
 
         OUTPUT:
 
-            Word over integers
+        Word over integers
 
         EXAMPLES:
 
@@ -896,7 +836,8 @@ class Word_class(SageObject):
             word: 1211222112112112221122211222112112112221...
         """
         from sage.combinat.words.word import Word
-        return Word(self._delta_iterator())
+        from sage.rings.semirings.non_negative_integer_semiring import NN
+        return Word(self._delta_iterator(), alphabet=NN)
 
     def _iterated_right_palindromic_closure_iterator(self, f=None):
         r"""
@@ -1377,7 +1318,7 @@ class Word_class(SageObject):
 
     def _finite_differences_iterator(self, mod=None):
         r"""
-        Iterator over the diffences of consecutive letters of self.
+        Iterator over the differences of consecutive letters of ``self``.
 
         INPUT:
 
@@ -1427,25 +1368,33 @@ class Word_class(SageObject):
         if mod in (None, 0):
             i = iter(self)
             j = iter(self)
-            next(j)
-            while True:
-                yield next(j) - next(i)
+
+            try:
+                next(j)
+                while True:
+                    yield next(j) - next(i)
+            except StopIteration:
+                return
 
         elif mod in ZZ:
             Zn = Integers(mod)
             i = iter(self)
             j = iter(self)
-            next(j)
-            while True:
-                yield Zn(next(j) - next(i))
+
+            try:
+                next(j)
+                while True:
+                    yield Zn(next(j) - next(i))
+            except StopIteration:
+                return
 
         else:
             raise TypeError('mod(=%s) must be None or an integer'%mod)
 
     def finite_differences(self, mod=None):
         r"""
-        Returns the word obtained by the diffences of consecutive letters
-        of self.
+        Return the word obtained by the differences of consecutive letters
+        of ``self``.
 
         INPUT:
 
@@ -1518,7 +1467,7 @@ class Word_class(SageObject):
         -  ``mod`` - modulo (default: ``None``), can take the following
            values:
 
-           - integer - the modulo
+           - integer -- the modulo
 
            - ``None`` - the value ``base`` is considered for the modulo.
 
@@ -1580,9 +1529,9 @@ class Word_class(SageObject):
 
         # The alphabet
         if mod is None and base >= 2:
-            alphabet = range(base)
+            alphabet = list(range(base))
         elif mod in ZZ and mod >= 2:
-            alphabet = range(mod)
+            alphabet = list(range(mod))
         else:
             raise ValueError("base (=%s) and mod (=%s) must be integers greater or equal to 2"%(base, mod))
 
@@ -1674,11 +1623,14 @@ class Word_class(SageObject):
             word: 011010010110
         """
         it = self.factor_occurrences_iterator(fact)
-        i = next(it)
-        while True:
-            j = next(it)
-            yield self[i:j]
-            i = j
+        try:
+            i = next(it)
+            while True:
+                j = next(it)
+                yield self[i:j]
+                i = j
+        except StopIteration:
+            return
 
     def complete_return_words_iterator(self, fact):
         r"""
@@ -1722,9 +1674,12 @@ class Word_class(SageObject):
         """
         it = self.factor_occurrences_iterator(fact)
         L = fact.length()
-        i = next(it)
-        while True:
-            j = next(it)
-            yield self[i:j+L]
-            i = j
+        try:
+            i = next(it)
+            while True:
+                j = next(it)
+                yield self[i:j+L]
+                i = j
+        except StopIteration:
+            return
 

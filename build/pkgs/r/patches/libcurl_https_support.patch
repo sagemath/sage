@@ -1,0 +1,116 @@
+From 996ded767d76952d9aae596219f8fb1b9469ef57 Mon Sep 17 00:00:00 2001
+From: Emmanuel Charpentier <emm.charpentier@free.fr>
+Date: Wed, 14 Mar 2018 19:30:37 +0100
+Subject: [PATCH 4/9] libcurl_https_support
+
+Don't check for HTTPS support in libcurl; see https://trac.sagemath.org/ticket/20523
+
+---
+ configure | 43 +------------------------------------------
+ m4/R.m4   | 23 ++---------------------
+ 2 files changed, 3 insertions(+), 63 deletions(-)
+
+diff --git a/configure b/configure
+index fadb84e..02e210e 100755
+--- a/configure
++++ b/configure
+@@ -41069,47 +41069,6 @@ if test "x${r_cv_have_curl722}" = xno; then
+   have_libcurl=no
+ fi
+ 
+-if test "x${have_libcurl}" = "xyes"; then
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if libcurl supports https" >&5
+-$as_echo_n "checking if libcurl supports https... " >&6; }
+-if ${r_cv_have_curl_https+:} false; then :
+-  $as_echo_n "(cached) " >&6
+-else
+-  if test "$cross_compiling" = yes; then :
+-  r_cv_have_curl_https=no
+-else
+-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-/* end confdefs.h.  */
+-
+-#include <string.h>
+-#include <curl/curl.h>
+-int main()
+-{
+-    curl_version_info_data *data = curl_version_info(CURLVERSION_NOW);
+-    const char * const *p  = data->protocols;
+-    int found = 0;
+-    for (; *p; p++)
+-	if(strcmp(*p, "https") == 0) {found = 1; break;}
+-    exit(found ? 0 : 1);
+-}
+-
+-_ACEOF
+-if ac_fn_c_try_run "$LINENO"; then :
+-  r_cv_have_curl_https=yes
+-else
+-  r_cv_have_curl_https=no
+-fi
+-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+-  conftest.$ac_objext conftest.beam conftest.$ac_ext
+-fi
+-
+-fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $r_cv_have_curl_https" >&5
+-$as_echo "$r_cv_have_curl_https" >&6; }
+-fi
+-if test "x${r_cv_have_curl_https}" = xno; then
+-  have_libcurl=no
+-fi
+ if test "x${have_libcurl}" = xyes; then
+ 
+ $as_echo "#define HAVE_LIBCURL 1" >>confdefs.h
+@@ -41119,7 +41078,7 @@ $as_echo "#define HAVE_LIBCURL 1" >>confdefs.h
+ 
+ 
+ else
+-  as_fn_error $? "libcurl >= 7.22.0 library and headers are required with support for https" "$LINENO" 5
++  as_fn_error $? "libcurl >= 7.22.0 library and headers are required" "$LINENO" 5
+ fi
+ 
+ 
+diff --git a/m4/R.m4 b/m4/R.m4
+index 3fe8b27..fb35a5f 100644
+--- a/m4/R.m4
++++ b/m4/R.m4
+@@ -4205,33 +4205,14 @@ if test "x${r_cv_have_curl722}" = xno; then
+   have_libcurl=no
+ fi
+ 
+-if test "x${have_libcurl}" = "xyes"; then
+-AC_CACHE_CHECK([if libcurl supports https], [r_cv_have_curl_https],
+-[AC_RUN_IFELSE([AC_LANG_SOURCE([[
+-#include <string.h>
+-#include <curl/curl.h>
+-int main()
+-{
+-    curl_version_info_data *data = curl_version_info(CURLVERSION_NOW);
+-    const char * const *p  = data->protocols;
+-    int found = 0;
+-    for (; *p; p++)
+-	if(strcmp(*p, "https") == 0) {found = 1; break;}
+-    exit(found ? 0 : 1);
+-}
+-]])], [r_cv_have_curl_https=yes], [r_cv_have_curl_https=no], [r_cv_have_curl_https=no])])
+-fi
+-if test "x${r_cv_have_curl_https}" = xno; then
+-  have_libcurl=no
+-fi
+ if test "x${have_libcurl}" = xyes; then
+-  AC_DEFINE(HAVE_LIBCURL, 1, [Define if your system has libcurl >= 7.22.0 with support for https.])
++  AC_DEFINE(HAVE_LIBCURL, 1, [Define if your system has libcurl >= 7.22.0.])
+   CPPFLAGS="${r_save_CPPFLAGS}"
+   LIBS="${r_save_LIBS}"
+   AC_SUBST(CURL_CPPFLAGS)
+   AC_SUBST(CURL_LIBS)
+ else
+-  AC_MSG_ERROR([libcurl >= 7.22.0 library and headers are required with support for https])
++  AC_MSG_ERROR([libcurl >= 7.22.0 library and headers are required])
+ fi
+ ])# R_LIBCURL
+ 
+-- 
+2.16.1
+

@@ -12,7 +12,7 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2011-2014 Travis Scrimshaw <tscrim@ucdavis.edu>
+#       Copyright (C) 2011-2015 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -53,6 +53,9 @@ from sage.combinat.rigged_configurations.bij_type_A2_odd import RCToKRTBijection
 from sage.combinat.rigged_configurations.bij_type_D_tri import KRTToRCBijectionTypeDTri
 from sage.combinat.rigged_configurations.bij_type_D_tri import RCToKRTBijectionTypeDTri
 
+from sage.combinat.rigged_configurations.bij_type_E67 import KRTToRCBijectionTypeE67
+from sage.combinat.rigged_configurations.bij_type_E67 import RCToKRTBijectionTypeE67
+
 def KRTToRCBijection(tp_krt):
     r"""
     Return the correct KR tableaux to rigged configuration bijection helper class.
@@ -64,30 +67,33 @@ def KRTToRCBijection(tp_krt):
         sage: bijection = KRTToRCBijection(KRT(pathlist=[[5,2]]))
     """
     ct = tp_krt.cartan_type()
-    type = ct.type()
+    typ = ct.type()
     if ct.is_untwisted_affine():
-        if type == 'A':
+        if typ == 'A':
             return KRTToRCBijectionTypeA(tp_krt)
-        if type == 'B':
+        if typ == 'B':
             return KRTToRCBijectionTypeB(tp_krt)
-        if type == 'C':
+        if typ == 'C':
             return KRTToRCBijectionTypeC(tp_krt)
-        if type == 'D':
+        if typ == 'D':
             return KRTToRCBijectionTypeD(tp_krt)
-        #if type == 'E':
-        #if type == 'F':
-        #if type == 'G':
+        if typ == 'E':
+            if ct.classical().rank() < 8:
+                return KRTToRCBijectionTypeE67(tp_krt)
+        #if typ == 'F':
+        #if typ == 'G':
     else:
-        if type == 'BC': # A_{2n}^{(2)}
+        if typ == 'BC': # A_{2n}^{(2)}
             return KRTToRCBijectionTypeA2Even(tp_krt)
-        if ct.dual().type() == 'BC': # A_{2n}^{(2)\dagger}
+        typ = ct.dual().type()
+        if typ == 'BC': # A_{2n}^{(2)\dagger}
             return KRTToRCBijectionTypeA2Dual(tp_krt)
-        if ct.dual().type() == 'B': # A_{2n-1}^{(2)}
+        if typ == 'B': # A_{2n-1}^{(2)}
             return KRTToRCBijectionTypeA2Odd(tp_krt)
-        if ct.dual().type() == 'C': # D_{n+1}^{(2)}
+        if typ == 'C': # D_{n+1}^{(2)}
             return KRTToRCBijectionTypeDTwisted(tp_krt)
-        #if ct.dual().type() == 'F': # E_6^{(2)}
-        if ct.dual().type() == 'G': # D_4^{(3)}
+        #if typ == 'F': # E_6^{(2)}
+        if typ == 'G': # D_4^{(3)}
             return KRTToRCBijectionTypeDTri(tp_krt)
     raise NotImplementedError
 
@@ -102,30 +108,33 @@ def RCToKRTBijection(rigged_configuration_elt):
         sage: bijection = RCToKRTBijection(RC(partition_list=[[1],[1],[1],[1]]))
     """
     ct = rigged_configuration_elt.cartan_type()
-    type = ct.type()
+    typ = ct.type()
     if not ct.is_affine() or ct.is_untwisted_affine():
-        if type == 'A':
+        if typ == 'A':
             return RCToKRTBijectionTypeA(rigged_configuration_elt)
-        if type == 'B':
+        if typ == 'B':
             return RCToKRTBijectionTypeB(rigged_configuration_elt)
-        if type == 'C':
+        if typ == 'C':
             return RCToKRTBijectionTypeC(rigged_configuration_elt)
-        if type == 'D':
+        if typ == 'D':
             return RCToKRTBijectionTypeD(rigged_configuration_elt)
-        #if type == 'E':
-        #if type == 'F':
-        #if type == 'G':
+        if typ == 'E':
+            if ct.classical().rank() < 8:
+                return RCToKRTBijectionTypeE67(rigged_configuration_elt)
+        #if typ == 'F':
+        #if typ == 'G':
     else:
-        if type == 'BC': # A_{2n}^{(2)}
+        if typ == 'BC': # A_{2n}^{(2)}
             return RCToKRTBijectionTypeA2Even(rigged_configuration_elt)
-        if ct.dual().type() == 'BC': # A_{2n}^{(2)\dagger}
+        typ = ct.dual().type()
+        if typ == 'BC': # A_{2n}^{(2)\dagger}
             return RCToKRTBijectionTypeA2Dual(rigged_configuration_elt)
-        if ct.dual().type() == 'B': # A_{2n-1}^{(2)}
+        if typ == 'B': # A_{2n-1}^{(2)}
             return RCToKRTBijectionTypeA2Odd(rigged_configuration_elt)
-        if ct.dual().type() == 'C': # D_{n+1}^{(2)}
+        if typ == 'C': # D_{n+1}^{(2)}
             return RCToKRTBijectionTypeDTwisted(rigged_configuration_elt)
-        #if ct.dual().type() == 'F': # E_6^{(2)}
-        if ct.dual().type() == 'G': # D_4^{(3)}
+        #if typ == 'F': # E_6^{(2)}
+        if typ == 'G': # D_4^{(3)}
             return RCToKRTBijectionTypeDTri(rigged_configuration_elt)
     raise NotImplementedError
 

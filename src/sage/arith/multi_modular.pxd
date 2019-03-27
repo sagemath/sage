@@ -1,5 +1,3 @@
-# distutils: extra_compile_args = -std=c99
-
 from sage.ext.mod_int cimport *
 from sage.libs.gmp.types cimport mpz_t
 

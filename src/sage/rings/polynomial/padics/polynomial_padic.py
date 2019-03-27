@@ -22,10 +22,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from six.moves import range
+from builtins import zip
+import re
 
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.infinity import infinity
+from sage.structure.factorization import Factorization
+
 
 class Polynomial_padic(Polynomial):
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
@@ -38,44 +42,53 @@ class Polynomial_padic(Polynomial):
             sage: R.<w> = PolynomialRing(Zp(5, prec=5, type = 'capped-abs', print_mode = 'val-unit'))
             sage: f = 24 + R(4/3)*w + w^4
             sage: f._repr()
-            '(1 + O(5^5))*w^4 + (O(5^5))*w^3 + (O(5^5))*w^2 + (1043 + O(5^5))*w + (24 + O(5^5))'
+            '(1 + O(5^5))*w^4 + O(5^5)*w^3 + O(5^5)*w^2 + (1043 + O(5^5))*w + 24 + O(5^5)'
             sage: f._repr(name='z')
-            '(1 + O(5^5))*z^4 + (O(5^5))*z^3 + (O(5^5))*z^2 + (1043 + O(5^5))*z + (24 + O(5^5))'
+            '(1 + O(5^5))*z^4 + O(5^5)*z^3 + O(5^5)*z^2 + (1043 + O(5^5))*z + 24 + O(5^5)'
 
         TESTS::
 
             sage: k = Qp(5,10)
             sage: R.<x> = k[]
             sage: f = R([k(0,-3), 0, k(0,-1)]); f
-            (O(5^-1))*x^2 + (O(5^-3))
+            O(5^-1)*x^2 + O(5^-3)
             sage: f + f
-            (O(5^-1))*x^2 + (O(5^-3))
+            O(5^-1)*x^2 + O(5^-3)
 
         AUTHOR:
 
         - David Roe (2007-03-03), based on Polynomial_generic_dense._repr()
         """
-        s = ""
-        coeffs = self.list()
+        s = " "
+        coeffs = self.list(copy=False)
+        m = len(coeffs)
         if name is None:
             name = self.parent().variable_name()
-        for n in reversed(xrange(len(coeffs))):
-            x = coeffs[n]
-            if x.valuation() != infinity:
-                if s:
+        for n in reversed(range(m)):
+            x = y = str(coeffs[n])
+            if n == m-1 or x != "0":
+                if n != m-1:
                     s += " + "
-                x = "(%s)"%repr(x)
+                if y.find("-") == 0:
+                    y = y[1:]
+                if n > 0 and ("+" in y or ("-" in y and y[0] != "O")):
+                    x = "(%s)" % x
                 if n > 1:
-                    var = "*%s^%s"%(name,n)
-                elif n==1:
-                    var = "*%s"%name
+                    var = "*%s^%s" % (name, n)
+                elif n == 1:
+                    var = "*%s" % name
                 else:
                     var = ""
-                s += (x + var)
-        return s or "0"
+                s += x + var
+        s = s.replace(" + -", " - ")
+        s = re.sub(r' 1\*',' ', s)
+        s = re.sub(r' -1\*',' -', s)
+        if s == " ":
+            return "0"
+        return s[1:]
 
     def content(self):
-        """
+        r"""
         Compute the content of this polynomial.
 
         OUTPUT:
@@ -95,7 +108,7 @@ class Polynomial_padic(Polynomial):
             sage: R(0).content()
             0
             sage: f = R(K(0,3)); f
-            (O(13^3))
+            O(13^3)
             sage: f.content()
             O(13^3)
 
@@ -105,7 +118,7 @@ class Polynomial_padic(Polynomial):
             1
             sage: fp = f.change_ring(pAdicRing(2, 10))
             sage: fp
-            (1 + O(2^10))*x + (2 + O(2^11))
+            (1 + O(2^10))*x + 2 + O(2^11)
             sage: fp.content()
             1 + O(2^10)
             sage: (2*fp).content()
@@ -137,7 +150,7 @@ class Polynomial_padic(Polynomial):
             return self.base_ring()(self.base_ring().prime_pow(min([x.valuation() for x in self.coefficients(sparse=False)])))
 
     def factor(self):
-        """
+        r"""
         Return the factorization of this polynomial.
 
         EXAMPLES::
@@ -146,19 +159,19 @@ class Polynomial_padic(Polynomial):
             sage: pol = t^8 - 1
             sage: for p,e in pol.factor():
             ....:     print("{} {}".format(e, p))
-            1 (1 + O(3^3))*t + (1 + O(3^3))
-            1 (1 + O(3^3))*t + (-1 + O(3^3))
-            1 (1 + O(3^3))*t^2 + (5 + O(3^3))*t + (-1 + O(3^3))
-            1 (1 + O(3^3))*t^2 + (-5 + O(3^3))*t + (-1 + O(3^3))
-            1 (1 + O(3^3))*t^2 + (0 + O(3^3))*t + (1 + O(3^3))
+            1 (1 + O(3^3))*t + 1 + O(3^3)
+            1 (1 + O(3^3))*t - 1 + O(3^3)
+            1 (1 + O(3^3))*t^2 + (5 + O(3^3))*t - 1 + O(3^3)
+            1 (1 + O(3^3))*t^2 + (-5 + O(3^3))*t - 1 + O(3^3)
+            1 (1 + O(3^3))*t^2 + O(3^3)*t + 1 + O(3^3)
             sage: R.<t> = PolynomialRing(Qp(5,6,print_mode='terse',print_pos=False))
             sage: pol = 100 * (5*t - 1) * (t - 5)
             sage: pol
-            (500 + O(5^9))*t^2 + (-2600 + O(5^8))*t + (500 + O(5^9))
+            (500 + O(5^9))*t^2 + (-2600 + O(5^8))*t + 500 + O(5^9)
             sage: pol.factor()
-            (500 + O(5^9)) * ((1 + O(5^5))*t + (-1/5 + O(5^5))) * ((1 + O(5^6))*t + (-5 + O(5^6)))
+            (500 + O(5^9)) * ((1 + O(5^5))*t - 1/5 + O(5^5)) * ((1 + O(5^6))*t - 5 + O(5^6))
             sage: pol.factor().value()
-            (500 + O(5^8))*t^2 + (-2600 + O(5^8))*t + (500 + O(5^8))
+            (500 + O(5^8))*t^2 + (-2600 + O(5^8))*t + 500 + O(5^8)
 
         The same factorization over `\ZZ_p`. In this case, the "unit"
         part is a `p`-adic unit and the power of `p` is considered to be
@@ -167,11 +180,11 @@ class Polynomial_padic(Polynomial):
             sage: R.<t> = PolynomialRing(Zp(5,6,print_mode='terse',print_pos=False))
             sage: pol = 100 * (5*t - 1) * (t - 5)
             sage: pol
-            (500 + O(5^9))*t^2 + (-2600 + O(5^8))*t + (500 + O(5^9))
+            (500 + O(5^9))*t^2 + (-2600 + O(5^8))*t + 500 + O(5^9)
             sage: pol.factor()
-            (4 + O(5^6)) * ((5 + O(5^7)))^2 * ((1 + O(5^6))*t + (-5 + O(5^6))) * ((5 + O(5^6))*t + (-1 + O(5^6)))
+            (4 + O(5^6)) * (5 + O(5^7))^2 * ((1 + O(5^6))*t - 5 + O(5^6)) * ((5 + O(5^6))*t - 1 + O(5^6))
             sage: pol.factor().value()
-            (500 + O(5^8))*t^2 + (-2600 + O(5^8))*t + (500 + O(5^8))
+            (500 + O(5^8))*t^2 + (-2600 + O(5^8))*t + 500 + O(5^8)
 
         In the following example, the discriminant is zero, so the `p`-adic
         factorization is not well defined::
@@ -181,12 +194,18 @@ class Polynomial_padic(Polynomial):
             ...
             PrecisionError: p-adic factorization not well-defined since the discriminant is zero up to the requestion p-adic precision
 
+        An example of factoring a constant polynomial (see :trac:`26669`)::
+
+            sage: R.<x> = Qp(5)[]
+            sage: R(2).factor()
+            2 + O(5^20)
+
         More examples over `\ZZ_p`::
 
             sage: R.<w> = PolynomialRing(Zp(5, prec=6, type = 'capped-abs', print_mode = 'val-unit'))
             sage: f = w^5-1
             sage: f.factor()
-            ((1 + O(5^6))*w + (3124 + O(5^6))) * ((1 + O(5^6))*w^4 + (12501 + O(5^6))*w^3 + (9376 + O(5^6))*w^2 + (6251 + O(5^6))*w + (3126 + O(5^6)))
+            ((1 + O(5^6))*w + 3124 + O(5^6)) * ((1 + O(5^6))*w^4 + (12501 + O(5^6))*w^3 + (9376 + O(5^6))*w^2 + (6251 + O(5^6))*w + 3126 + O(5^6))
 
         See :trac:`4038`::
 
@@ -198,7 +217,7 @@ class Polynomial_padic(Polynomial):
             sage: EK = E.base_extend(K)
             sage: g = EK.division_polynomial_0(3)
             sage: g.factor()
-            (3 + O(7^10)) * ((1 + O(7^10))*x + (1 + 2*7 + 4*7^2 + 2*7^3 + 5*7^4 + 7^5 + 5*7^6 + 3*7^7 + 5*7^8 + 3*7^9 + O(7^10))) * ((1 + O(7^10))*x^3 + (6 + 4*7 + 2*7^2 + 4*7^3 + 7^4 + 5*7^5 + 7^6 + 3*7^7 + 7^8 + 3*7^9 + O(7^10))*x^2 + (6 + 3*7 + 5*7^2 + 2*7^4 + 7^5 + 7^6 + 2*7^8 + 3*7^9 + O(7^10))*x + (2 + 5*7 + 4*7^2 + 2*7^3 + 6*7^4 + 3*7^5 + 7^6 + 4*7^7 + O(7^10)))
+            (3 + O(7^10)) * ((1 + O(7^10))*x + 1 + 2*7 + 4*7^2 + 2*7^3 + 5*7^4 + 7^5 + 5*7^6 + 3*7^7 + 5*7^8 + 3*7^9 + O(7^10)) * ((1 + O(7^10))*x^3 + (6 + 4*7 + 2*7^2 + 4*7^3 + 7^4 + 5*7^5 + 7^6 + 3*7^7 + 7^8 + 3*7^9 + O(7^10))*x^2 + (6 + 3*7 + 5*7^2 + 2*7^4 + 7^5 + 7^6 + 2*7^8 + 3*7^9 + O(7^10))*x + 2 + 5*7 + 4*7^2 + 2*7^3 + 6*7^4 + 3*7^5 + 7^6 + 4*7^7 + O(7^10))
 
         TESTS:
 
@@ -207,10 +226,20 @@ class Polynomial_padic(Polynomial):
             sage: R.<T> = Qp(3)[]
             sage: f = 1926*T^2 + 312*T + 387
             sage: f.factor()
-            (3^2 + 2*3^3 + 2*3^4 + 3^5 + 2*3^6 + O(3^22)) * ((1 + O(3^19))*T + (2*3^-1 + 3 + 3^2 + 2*3^5 + 2*3^6 + 2*3^7 + 3^8 + 3^9 + 2*3^11 + 3^15 + 3^17 + O(3^19))) * ((1 + O(3^20))*T + (2*3 + 3^2 + 3^3 + 3^5 + 2*3^6 + 2*3^7 + 3^8 + 3^10 + 3^11 + 2*3^12 + 2*3^14 + 2*3^15 + 2*3^17 + 2*3^18 + O(3^20)))
+            (3^2 + 2*3^3 + 2*3^4 + 3^5 + 2*3^6 + O(3^22)) * ((1 + O(3^19))*T + 2*3^-1 + 3 + 3^2 + 2*3^5 + 2*3^6 + 2*3^7 + 3^8 + 3^9 + 2*3^11 + 3^15 + 3^17 + O(3^19)) * ((1 + O(3^20))*T + 2*3 + 3^2 + 3^3 + 3^5 + 2*3^6 + 2*3^7 + 3^8 + 3^10 + 3^11 + 2*3^12 + 2*3^14 + 2*3^15 + 2*3^17 + 2*3^18 + O(3^20))
+
+        Check that :trac:`24065` is fixed::
+
+            sage: R = Zp(2, type='fixed-mod', prec=3)
+            sage: P.<x> = R[]
+            sage: ((1 + 2)*x + (1 + 2)*x^2).factor()
+            (1 + 2) * (x + 1) * x
         """
         if self == 0:
-            raise ArithmeticError("factorization of 0 not defined")
+            raise ArithmeticError("factorization of {!r} is not defined".format(self))
+        elif self.is_constant():
+            return Factorization((), self.constant_coefficient())
+
         # Scale self such that 0 is the lowest valuation
         # amongst the coefficients
         try:
@@ -223,8 +252,53 @@ class Polynomial_padic(Polynomial):
         if self_normal.discriminant().valuation() >= absprec:
             raise PrecisionError(
                 "p-adic factorization not well-defined since the discriminant is zero up to the requestion p-adic precision")
-        G = self_normal._pari_().factorpadic(self.base_ring().prime(), absprec)
+        G = self_normal.__pari__().factorpadic(self.base_ring().prime(), absprec)
         return _pari_padic_factorization_to_sage(G, self.parent(), self.leading_coefficient())
+
+
+    def root_field(self, names, check_irreducible=True, **kwds):
+        """
+        Return the p-adic extension field generated by the roots of the irreducible
+        polynomial self.
+
+        INPUT:
+
+        * ``names`` -- name of the generator of the extension
+
+        * ``check_irreducible`` -- check whether the polynomial is irreducible
+
+        * ``kwds`` -- see :meth:`sage.ring.padics.padic_generic.pAdicGeneric.extension`
+
+        EXAMPLES::
+
+            sage: R.<x> = Qp(3,5,print_mode='digits')[]
+            sage: f = x^2 - 3
+            sage: f.root_field('x')
+            3-adic Eisenstein Extension Field in x defined by x^2 - 3
+
+        ::
+
+            sage: R.<x> = Qp(5,5,print_mode='digits')[]
+            sage: f = x^2 - 3
+            sage: f.root_field('x', print_mode='bars')
+            5-adic Unramified Extension Field in x defined by x^2 - 3
+
+        ::
+
+            sage: R.<x> = Qp(11,5,print_mode='digits')[]
+            sage: f = x^2 - 3
+            sage: f.root_field('x', print_mode='bars')
+            Traceback (most recent call last):
+            ...
+            ValueError: polynomial must be irreducible
+
+        """
+
+        if check_irreducible and not self.is_irreducible():
+            raise ValueError("polynomial must be irreducible")
+
+        return self.base_ring().extension(self, names=names, **kwds)
+
 
 def _pari_padic_factorization_to_sage(G, R, leading_coeff):
     """
@@ -261,7 +335,7 @@ def _pari_padic_factorization_to_sage(G, R, leading_coeff):
         # When the base ring is a field, we normalize
         # the irreducible factors so they have leading
         # coefficient 1.
-        for i in xrange(len(pols)):
+        for i in range(len(pols)):
             lc = pols[i].leading_coefficient()
             lc = lc.lift_to_precision()  # Ensure we don't lose precision
             pols[i] *= ~lc
@@ -270,7 +344,7 @@ def _pari_padic_factorization_to_sage(G, R, leading_coeff):
         # the irreducible factors so that the leading term
         # is a power of p.
         c, leading_coeff = leading_coeff.val_unit()
-        for i in xrange(len(pols)):
+        for i in range(len(pols)):
             v, upart = pols[i].leading_coefficient().val_unit()
             upart = upart.lift_to_precision()  # Ensure we don't lose precision
             pols[i] *= ~upart
@@ -280,5 +354,4 @@ def _pari_padic_factorization_to_sage(G, R, leading_coeff):
             pols.append(R(p))
             exps.append(c)
 
-    from sage.structure.factorization import Factorization
     return Factorization(zip(pols, exps), leading_coeff)

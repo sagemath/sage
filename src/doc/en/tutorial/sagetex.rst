@@ -15,7 +15,7 @@ Here is a very brief example of using SageTeX. The full documentation
 can be found in ``SAGE_ROOT/local/share/doc/sagetex``,
 where ``SAGE_ROOT`` is the directory where your Sage installation is
 located. That directory contains the documentation and an example file.
-See ``SAGE_ROOT/local/share/texmf/tex/generic/sagetex`` for
+See ``SAGE_ROOT/local/share/texmf/tex/latex/sagetex`` for
 some possibly useful Python scripts.
 
 To see how SageTeX works, follow the directions for installing SageTeX (in
@@ -120,7 +120,7 @@ installation aware of it before it will work.
 
 The key to this is that TeX needs to be able to find ``sagetex.sty``,
 which can be found in
-``SAGE_ROOT/local/share/texmf/tex/generic/sagetex/``, where
+``SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, where
 ``SAGE_ROOT`` is the directory where you built or installed Sage. If
 TeX can find ``sagetex.sty``, then SageTeX will work. There are several
 ways to accomplish this.
@@ -228,8 +228,7 @@ the documentation for SageTeX is maintained in
 ``SAGE_ROOT/local/share/doc/sagetex/sagetex.pdf``. There is also an
 example file in the same directory -- see ``example.tex`` and
 ``example.pdf``, the pre-built result of typesetting that file with
-LaTeX and Sage. You can also get those files from the `SageTeX bitbucket
-page <https://bitbucket.org/ddrake/sagetex/downloads>`_.
+LaTeX and Sage. You can also get those files from the `SageTeX page <https://github.com/sagemath/sagetex>`_.
 
 SageTeX and TeXLive
 -------------------

@@ -21,20 +21,22 @@ Check that operations with numpy elements work well (see :trac:`18076` and
     sage: numpy.float32('1.5') * x
     1.50000000000000*x
 """
+from __future__ import absolute_import
 
-include "cysignals/signals.pxi"
-include "cysignals/memory.pxi"
+from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 from cpython cimport PyInt_AS_LONG, PyFloat_AS_DOUBLE
 
 from sage.structure.parent cimport Parent
-from polynomial_element cimport Polynomial
+from .polynomial_element cimport Polynomial, _dict_to_list
 from sage.rings.real_mpfr cimport RealField_class, RealNumber
 from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.rational cimport Rational
 
 from sage.structure.element cimport Element, ModuleElement, RingElement
-from sage.structure.element import parent, canonical_coercion, bin_op, coerce_binop
+from sage.structure.element cimport parent
+from sage.structure.element import coerce_binop
 from sage.libs.mpfr cimport *
 
 from sage.libs.all import pari_gen
@@ -122,7 +124,7 @@ cdef class PolynomialRealDense(Polynomial):
         elif isinstance(x, (int, float, Integer, Rational, RealNumber)):
             x = [x]
         elif isinstance(x, dict):
-            x = self._dict_to_list(x,self._base_ring.zero())
+            x = _dict_to_list(x, self._base_ring.zero())
         elif isinstance(x, pari_gen):
             x = [self._base_ring(w) for w in x.list()]
         elif not isinstance(x, list):
@@ -343,7 +345,7 @@ cdef class PolynomialRealDense(Polynomial):
                 mpfr_set(f._coeffs[i], self._coeffs[i-n], self._base_ring.rnd)
         return f
 
-    def list(self):
+    cpdef list list(self, bint copy=True):
         """
         EXAMPLES::
 
@@ -442,7 +444,7 @@ cdef class PolynomialRealDense(Polynomial):
         f._normalize()
         return f
 
-    cpdef _lmul_(self, RingElement c):
+    cpdef _lmul_(self, Element c):
         """
         EXAMPLES::
 
@@ -511,7 +513,7 @@ cdef class PolynomialRealDense(Polynomial):
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polynomial_real_mpfr_dense import PolynomialRealDense
-            sage: f = PolynomialRealDense(RR['x'], [pi, 0, 2, 1]);
+            sage: f = PolynomialRealDense(RR['x'], [pi, 0, 2, 1])
             sage: f.derivative()
             3.00000000000000*x^2 + 4.00000000000000*x
         """

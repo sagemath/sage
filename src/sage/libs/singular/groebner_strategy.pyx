@@ -21,9 +21,10 @@ cdef extern from *: # hack to get at cython macro
     int unlikely(int)
     int likely(int)
 
+from sage.structure.richcmp cimport richcmp
 from sage.libs.singular.decl cimport ideal, ring, poly, currRing
 from sage.libs.singular.decl cimport rChangeCurrRing
-from sage.libs.singular.decl cimport new_skStrategy, delete_skStrategy, idRankFreeModule
+from sage.libs.singular.decl cimport new_skStrategy, delete_skStrategy, id_RankFreeModule
 from sage.libs.singular.decl cimport initEcartBBA, enterSBba, initBuchMoraCrit, initS, pNorm, id_Delete, kTest
 from sage.libs.singular.decl cimport omfree, redNF, p_Copy, redtailBba
 
@@ -117,7 +118,7 @@ cdef class GroebnerStrategy(SageObject):
         cdef ideal *i = sage_ideal_to_singular_ideal(L)
         self._strat = new_skStrategy()
 
-        self._strat.ak = idRankFreeModule(i, R._ring)
+        self._strat.ak = id_RankFreeModule(i, R._ring)
         #- creating temp data structures
         initBuchMoraCrit(self._strat)
         self._strat.initEcart = initEcartBBA
@@ -129,9 +130,10 @@ cdef class GroebnerStrategy(SageObject):
 
         cdef int j
         cdef bint base_ring_is_field = R.base_ring().is_field()
-        if (R._ring != currRing): rChangeCurrRing(R._ring)
+        if (R._ring != currRing):
+            rChangeCurrRing(R._ring)
         if base_ring_is_field:
-            for j in range(self._strat.sl+1)[::-1]:
+            for j in range(self._strat.sl, -1, -1):
                 pNorm(self._strat.S[j])
 
         id_Delete(&i, R._ring)
@@ -139,7 +141,7 @@ cdef class GroebnerStrategy(SageObject):
 
     def __dealloc__(self):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.libs.singular.groebner_strategy import GroebnerStrategy
             sage: P.<x,y,z> = PolynomialRing(GF(32003))
@@ -174,7 +176,7 @@ cdef class GroebnerStrategy(SageObject):
 
     def _repr_(self):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.libs.singular.groebner_strategy import GroebnerStrategy
             sage: P.<x,y,z> = PolynomialRing(GF(32003))
@@ -190,7 +192,7 @@ cdef class GroebnerStrategy(SageObject):
         """
         Return the ideal this strategy object is defined for.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.groebner_strategy import GroebnerStrategy
             sage: P.<x,y,z> = PolynomialRing(GF(32003))
@@ -205,7 +207,7 @@ cdef class GroebnerStrategy(SageObject):
         """
         Return the ring this strategy object is defined over.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.groebner_strategy import GroebnerStrategy
             sage: P.<x,y,z> = PolynomialRing(GF(32003))
@@ -216,9 +218,9 @@ cdef class GroebnerStrategy(SageObject):
         """
         return self._parent
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.groebner_strategy import GroebnerStrategy
             sage: P.<x,y,z> = PolynomialRing(GF(19))
@@ -230,14 +232,17 @@ cdef class GroebnerStrategy(SageObject):
             sage: strat == GroebnerStrategy(I)
             False
         """
-        if not isinstance(other, GroebnerStrategy):
-            return cmp(type(self),other(type))
-        else:
-            return cmp(self._ideal.gens(),(<GroebnerStrategy>other)._ideal.gens())
+        try:
+            lx = <GroebnerStrategy?>self
+            rx = <GroebnerStrategy?>other
+        except TypeError:
+            return NotImplemented
+        return richcmp(lx._ideal.gens(),
+                       rx._ideal.gens(), op)
 
     def __reduce__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.groebner_strategy import GroebnerStrategy
             sage: P.<x,y,z> = PolynomialRing(GF(32003))
@@ -253,7 +258,7 @@ cdef class GroebnerStrategy(SageObject):
         Compute the normal form of ``p`` with respect to the
         generators of this object.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.groebner_strategy import GroebnerStrategy
             sage: P.<x,y,z> = PolynomialRing(QQ)
@@ -353,7 +358,7 @@ cdef class NCGroebnerStrategy(SageObject):
         cdef ideal *i = sage_ideal_to_singular_ideal(L)
         self._strat = new_skStrategy()
 
-        self._strat.ak = idRankFreeModule(i, R._ring)
+        self._strat.ak = id_RankFreeModule(i, R._ring)
         #- creating temp data structures
         initBuchMoraCrit(self._strat)
         self._strat.initEcart = initEcartBBA
@@ -365,7 +370,7 @@ cdef class NCGroebnerStrategy(SageObject):
 
         cdef int j
         if R.base_ring().is_field():
-            for j in range(self._strat.sl+1)[::-1]:
+            for j in range(self._strat.sl,-1,-1):
                 pNorm(self._strat.S[j])
 
         id_Delete(&i, R._ring)
@@ -373,7 +378,7 @@ cdef class NCGroebnerStrategy(SageObject):
 
     def __dealloc__(self):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.libs.singular.groebner_strategy import NCGroebnerStrategy
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
@@ -405,7 +410,7 @@ cdef class NCGroebnerStrategy(SageObject):
 
     def _repr_(self):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.libs.singular.groebner_strategy import NCGroebnerStrategy
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
@@ -421,7 +426,7 @@ cdef class NCGroebnerStrategy(SageObject):
         """
         Return the ideal this strategy object is defined for.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.groebner_strategy import NCGroebnerStrategy
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
@@ -438,7 +443,7 @@ cdef class NCGroebnerStrategy(SageObject):
         """
         Return the ring this strategy object is defined over.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.groebner_strategy import NCGroebnerStrategy
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
@@ -450,9 +455,9 @@ cdef class NCGroebnerStrategy(SageObject):
         """
         return self._parent
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.groebner_strategy import NCGroebnerStrategy
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
@@ -465,16 +470,17 @@ cdef class NCGroebnerStrategy(SageObject):
             sage: strat == NCGroebnerStrategy(I)
             False
         """
-        if not isinstance(other, NCGroebnerStrategy):
-            return cmp(type(self),other(type))
-        else:
-            return cmp((self._ideal.gens(),self._ideal.side()),
-                       ((<NCGroebnerStrategy>other)._ideal.gens(),
-                        (<NCGroebnerStrategy>other)._ideal.side()))
+        try:
+            lx = <NCGroebnerStrategy?>self
+            rx = <NCGroebnerStrategy?>other
+        except TypeError:
+            return NotImplemented
+        return richcmp((lx._ideal.gens(), lx._ideal.side()),
+                       (rx._ideal.gens(), rx._ideal.side()), op)
 
     def __reduce__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.groebner_strategy import NCGroebnerStrategy
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
@@ -491,7 +497,7 @@ cdef class NCGroebnerStrategy(SageObject):
         Compute the normal form of ``p`` with respect to the
         generators of this object.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H.<x,y,z> = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
@@ -519,7 +525,7 @@ cdef class NCGroebnerStrategy(SageObject):
 
 def unpickle_NCGroebnerStrategy0(I):
     """
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.singular.groebner_strategy import NCGroebnerStrategy
         sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
@@ -533,7 +539,7 @@ def unpickle_NCGroebnerStrategy0(I):
 
 def unpickle_GroebnerStrategy0(I):
     """
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.singular.groebner_strategy import GroebnerStrategy
         sage: P.<x,y,z> = PolynomialRing(GF(32003))

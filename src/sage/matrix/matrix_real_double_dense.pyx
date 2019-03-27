@@ -3,8 +3,8 @@ Dense matrices over the Real Double Field using NumPy
 
 EXAMPLES::
 
-    sage: b=Mat(RDF,2,3).basis()
-    sage: b[0]
+    sage: b = Mat(RDF,2,3).basis()
+    sage: b[0,0]
     [1.0 0.0 0.0]
     [0.0 0.0 0.0]
 
@@ -38,6 +38,8 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
+from __future__ import absolute_import
+
 from sage.rings.real_double import RDF
 
 cimport numpy as cnumpy
@@ -45,7 +47,7 @@ cimport numpy as cnumpy
 numpy=None
 scipy=None
 
-cdef class Matrix_real_double_dense(matrix_double_dense.Matrix_double_dense):
+cdef class Matrix_real_double_dense(Matrix_double_dense):
     """
     Class that implements matrices over the real double field. These
     are supposed to be fast matrix operations using C doubles. Most
@@ -85,18 +87,7 @@ cdef class Matrix_real_double_dense(matrix_double_dense.Matrix_double_dense):
     See the commands qr, lu, and svd for QR, LU, and singular value
     decomposition.
     """
-
-
-    ########################################################################
-    # LEVEL 1 functionality
-    #   * __cinit__
-    #   * __dealloc__
-    #   * __init__
-    #   * set_unsafe
-    #   * get_unsafe
-    #   * __hash__       -- always simple
-    ########################################################################
-    def __cinit__(self, parent, entries, copy, coerce):
+    def __cinit__(self):
         global numpy
         if numpy is None:
             import numpy

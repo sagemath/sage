@@ -8,7 +8,7 @@ Mpmath is a pure-Python library for multiprecision floating-point arithmetic. It
 
  * Author: Fredrik Johansson
  * Email: fredrik.johansson@gmail.com
- * Website: http://code.google.com/p/mpmath/
+ * Website: https://github.com/fredrik-johansson/mpmath/
 
 == Dependencies ==
 

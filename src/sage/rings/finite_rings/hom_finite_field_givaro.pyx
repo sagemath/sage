@@ -27,22 +27,22 @@ AUTHOR:
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
-from hom_finite_field cimport SectionFiniteFieldHomomorphism_generic
-from hom_finite_field cimport FiniteFieldHomomorphism_generic
-from hom_finite_field cimport FrobeniusEndomorphism_finite_field
+from .hom_finite_field cimport SectionFiniteFieldHomomorphism_generic
+from .hom_finite_field cimport FiniteFieldHomomorphism_generic
+from .hom_finite_field cimport FrobeniusEndomorphism_finite_field
 
-from hom_prime_finite_field cimport FiniteFieldHomomorphism_prime
+from .hom_prime_finite_field cimport FiniteFieldHomomorphism_prime
 
 from sage.categories.homset import Hom
 from sage.structure.element cimport Element
 from sage.rings.morphism cimport RingHomomorphism_im_gens
 
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
-from element_givaro cimport FiniteField_givaroElement
+from .element_givaro cimport FiniteField_givaroElement
 #from element_givaro cimport make_FiniteField_givaroElement
 
 from sage.structure.parent cimport Parent
-from element_givaro cimport Cache_givaro
+from .element_givaro cimport Cache_givaro
 
 
 cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_generic):

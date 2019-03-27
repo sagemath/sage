@@ -1,13 +1,24 @@
 #*****************************************************************************
-#      Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
+#       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'data_structures_pxd.pxi' # includes bitsets
-
+from .data_structures cimport *
+from sage.data_structures.bitset cimport bitset_t
 from sage.rings.integer cimport Integer
+
+cdef inline int int_cmp(int a, int b):
+    if a < b:
+        return -1
+    elif a == b:
+        return 0
+    else:
+        return 1
 
 cdef struct dc_work_space:
     int degree
@@ -31,6 +42,3 @@ cdef int double_coset( void *, void *, PartitionStack *, int *, int,
     int (*)(PartitionStack *, void *, int *, int),
     int (*)(int *, int *, void *, void *, int),
     StabilizerChain *, dc_work_space *, int *) except -1
-
-
-

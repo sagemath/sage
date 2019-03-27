@@ -19,8 +19,7 @@ AUTHORS:
 
 REFERENCES:
 
-- Chap. 1 of [Lee13]_ \J.M. Lee : *Introduction to Smooth Manifolds*,
-  2nd ed., Springer (New York) (2013)
+- Chap. 1 of [Lee2013]_
 
 """
 
@@ -34,7 +33,9 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.manifolds.chart import Chart, RealChart, CoordChange
+from sage.manifolds.differentiable.vectorframe import CoordFrame
 
 class DiffChart(Chart):
     r"""
@@ -71,6 +72,15 @@ class DiffChart(Chart):
       ``coordinates`` is not provided; it must then be a tuple containing
       the coordinate symbols (this is guaranteed if the shortcut operator
       ``<,>`` is used).
+    - ``calc_method`` -- (default: ``None``) string defining the calculus
+      method for computations involving coordinates of the chart; must be
+      one of
+
+      - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
+      - ``'sympy'``: SymPy
+      - ``None``: the default of
+        :class:`~sage.manifolds.calculus_method.CalculusMethod` will be
+        used
 
     EXAMPLES:
 
@@ -217,13 +227,27 @@ class DiffChart(Chart):
         sage: X(p) == p.coord(X)
         True
 
+    A vector frame is naturally associated to each chart::
+
+        sage: X.frame()
+        Coordinate frame (M, (d/dx,d/dy))
+        sage: Y.frame()
+        Coordinate frame (U, (d/dz1,d/dz2))
+
+    as well as a dual frame (basis of 1-forms)::
+
+        sage: X.coframe()
+        Coordinate coframe (M, (dx,dy))
+        sage: Y.coframe()
+        Coordinate coframe (U, (dz1,dz2))
+
     .. SEEALSO::
 
         :class:`~sage.manifolds.differentiable.chart.RealDiffChart` for charts
         on differentiable manifolds over `\RR`.
 
     """
-    def __init__(self, domain, coordinates='', names=None):
+    def __init__(self, domain, coordinates='', names=None, calc_method=None):
         r"""
         Construct a chart.
 
@@ -240,8 +264,11 @@ class DiffChart(Chart):
             sage: TestSuite(X).run()
 
         """
-        Chart.__init__(self, domain, coordinates=coordinates, names=names)
-
+        Chart.__init__(self, domain, coordinates=coordinates, names=names,
+                       calc_method=calc_method)
+        # Construction of the coordinate frame associated to the chart:
+        self._frame = CoordFrame(self)
+        self._coframe = self._frame._coframe
 
     def transition_map(self, other, transformations, intersection_name=None,
                        restrictions1=None, restrictions2=None):
@@ -371,6 +398,262 @@ class DiffChart(Chart):
                 transformations = [transformations]
         return DiffCoordChange(chart1, chart2, *transformations)
 
+    def frame(self):
+        r"""
+        Return the vector frame (coordinate frame) associated with ``self``.
+
+        OUTPUT:
+
+        - a :class:`~sage.manifolds.differentiable.vectorframe.CoordFrame`
+          representing the coordinate frame
+
+        EXAMPLES:
+
+        Coordinate frame associated with some chart on a 2-dimensional
+        manifold::
+
+            sage: M = Manifold(2, 'M')
+            sage: c_xy.<x,y> = M.chart()
+            sage: c_xy.frame()
+            Coordinate frame (M, (d/dx,d/dy))
+            sage: type(c_xy.frame())
+            <class 'sage.manifolds.differentiable.vectorframe.CoordFrame'>
+
+        Check that ``c_xy.frame()`` is indeed the coordinate frame associated
+        with the coordinates `(x,y)`::
+
+            sage: ex = c_xy.frame()[0] ; ex
+            Vector field d/dx on the 2-dimensional differentiable manifold M
+            sage: ey = c_xy.frame()[1] ; ey
+            Vector field d/dy on the 2-dimensional differentiable manifold M
+            sage: ex(M.scalar_field(x)).display()
+            M --> R
+            (x, y) |--> 1
+            sage: ex(M.scalar_field(y)).display()
+            M --> R
+            (x, y) |--> 0
+            sage: ey(M.scalar_field(x)).display()
+            M --> R
+            (x, y) |--> 0
+            sage: ey(M.scalar_field(y)).display()
+            M --> R
+            (x, y) |--> 1
+
+        """
+        return self._frame
+
+    def coframe(self):
+        r"""
+        Return the coframe (basis of coordinate differentials) associated
+        with ``self``.
+
+        OUTPUT:
+
+        - a :class:`~sage.manifolds.differentiable.vectorframe.CoordCoFrame`
+          representing the coframe
+
+        EXAMPLES:
+
+        Coordinate coframe associated with some chart on a 2-dimensional
+        manifold::
+
+            sage: M = Manifold(2, 'M')
+            sage: c_xy.<x,y> = M.chart()
+            sage: c_xy.coframe()
+            Coordinate coframe (M, (dx,dy))
+            sage: type(c_xy.coframe())
+            <class 'sage.manifolds.differentiable.vectorframe.CoordCoFrame'>
+
+        Check that ``c_xy.coframe()`` is indeed the coordinate coframe
+        associated with the coordinates `(x, y)`::
+
+            sage: dx = c_xy.coframe()[0] ; dx
+            1-form dx on the 2-dimensional differentiable manifold M
+            sage: dy = c_xy.coframe()[1] ; dy
+            1-form dy on the 2-dimensional differentiable manifold M
+            sage: ex = c_xy.frame()[0] ; ex
+            Vector field d/dx on the 2-dimensional differentiable manifold M
+            sage: ey = c_xy.frame()[1] ; ey
+            Vector field d/dy on the 2-dimensional differentiable manifold M
+            sage: dx(ex).display()
+             dx(d/dx): M --> R
+               (x, y) |--> 1
+            sage: dx(ey).display()
+            dx(d/dy): M --> R
+               (x, y) |--> 0
+            sage: dy(ex).display()
+            dy(d/dx): M --> R
+               (x, y) |--> 0
+            sage: dy(ey).display()
+            dy(d/dy): M --> R
+               (x, y) |--> 1
+
+        """
+        return self._coframe
+
+    def restrict(self, subset, restrictions=None):
+        r"""
+        Return the restriction of ``self`` to some subset.
+
+        If the current chart is `(U, \varphi)`, a *restriction* (or
+        *subchart*) is a chart `(V, \psi)` such that `V \subset U`
+        and `\psi = \varphi |_V`.
+
+        If such subchart has not been defined yet, it is constructed here.
+
+        The coordinates of the subchart bare the same names as the
+        coordinates of the original chart.
+
+        INPUT:
+
+        - ``subset`` -- open subset `V` of the chart domain `U`
+        - ``restrictions`` -- (default: ``None``) list of coordinate
+          restrictions defining the subset `V`
+
+        A restriction can be any symbolic equality or inequality involving
+        the coordinates, such as ``x > y`` or ``x^2 + y^2 != 0``. The items
+        of the list ``restrictions`` are combined with the ``and`` operator;
+        if some restrictions are to be combined with the ``or`` operator
+        instead, they have to be passed as a tuple in some single item
+        of the list ``restrictions``. For example::
+
+          restrictions = [x > y, (x != 0, y != 0), z^2 < x]
+
+        means ``(x > y) and ((x != 0) or (y != 0)) and (z^2 < x)``.
+        If the list ``restrictions`` contains only one item, this
+        item can be passed as such, i.e. writing ``x > y`` instead
+        of the single element list ``[x > y]``.
+
+        OUTPUT:
+
+        - a :class:`DiffChart` `(V, \psi)`
+
+        EXAMPLES:
+
+        Coordinates on the unit open ball of  `\CC^2` as a subchart
+        of the global coordinates of `\CC^2`::
+
+            sage: M = Manifold(2, 'C^2', field='complex')
+            sage: X.<z1, z2> = M.chart()
+            sage: B = M.open_subset('B')
+            sage: X_B = X.restrict(B, abs(z1)^2 + abs(z2)^2 < 1); X_B
+            Chart (B, (z1, z2))
+
+        """
+        if subset == self._domain:
+            return self
+        if subset not in self._dom_restrict:
+            resu = Chart.restrict(self, subset, restrictions=restrictions)
+            # Update of superframes and subframes:
+            resu._frame._superframes.update(self._frame._superframes)
+            for sframe in self._frame._superframes:
+                sframe._subframes.add(resu._frame)
+                sframe._restrictions[subset] = resu._frame
+            # The subchart frame is not a "top frame" in the supersets
+            # (including self._domain):
+            for dom in self._domain._supersets:
+                if resu._frame in dom._top_frames:
+                    # it was added by the Chart constructor invoked in
+                    # Chart.restrict above
+                    dom._top_frames.remove(resu._frame)
+        return self._dom_restrict[subset]
+
+    def symbolic_velocities(self, left='D', right=None):
+        r"""
+        Return a list of symbolic variables ready to be used by the
+        user as the derivatives of the coordinate functions with respect
+        to a curve parameter (i.e. the velocities along the curve).
+        It may actually serve to denote anything else than velocities,
+        with a name including the coordinate functions.
+        The choice of strings provided as 'left' and 'right' arguments
+        is not entirely free since it must comply with Python
+        prescriptions.
+
+        INPUT:
+
+        - ``left`` -- (default: ``D``) string to concatenate to the left
+          of each coordinate functions of the chart
+        - ``right`` -- (default: ``None``) string to concatenate to the
+          right of each coordinate functions of the chart
+
+        OUTPUT:
+
+        - a list of symbolic expressions with the desired names
+
+        EXAMPLES:
+
+        Symbolic derivatives of the Cartesian coordinates of the
+        3-dimensional Euclidean space::
+
+            sage: R3 = Manifold(3, 'R3', start_index=1)
+            sage: cart.<X,Y,Z> = R3.chart()
+            sage: D = cart.symbolic_velocities(); D
+            [DX, DY, DZ]
+            sage: D = cart.symbolic_velocities(left='d', right="/dt"); D
+            Traceback (most recent call last):
+            ...
+            ValueError: The name "dX/dt" is not a valid Python
+             identifier.
+            sage: D = cart.symbolic_velocities(left='d', right="_dt"); D
+            [dX_dt, dY_dt, dZ_dt]
+            sage: D = cart.symbolic_velocities(left='', right="'"); D
+            Traceback (most recent call last):
+            ...
+            ValueError: The name "X'" is not a valid Python
+             identifier.
+            sage: D = cart.symbolic_velocities(left='', right="_dot"); D
+            [X_dot, Y_dot, Z_dot]
+            sage: R.<t> = RealLine()
+            sage: canon_chart = R.default_chart()
+            sage: D = canon_chart.symbolic_velocities() ; D
+            [Dt]
+
+        """
+
+        from sage.symbolic.ring import var
+
+        # The case len(self[:]) = 1 is treated apart due to the
+        # following fact.
+        # In the case of several coordinates, the argument of 'var' (as
+        # implemented below after the case len(self[:]) = 1) is a list
+        # of strings of the form ['Dx1', 'Dx2', ...] and not a unique
+        # string of the form 'Dx1 Dx2 ...'.
+        # Although 'var' is supposed to accept both syntaxes, the first
+        # one causes an error when it contains only one argument, due to
+        # line 784 of sage/symbolic/ring.pyx :
+        # "return self.symbol(name, latex_name=formatted_latex_name, domain=domain)"
+        # In this line, the first argument 'name' of 'symbol' is a list
+        # and not a string if the argument of 'var' is a list of one
+        # string (of the type ['Dt']), which causes error in 'symbol'.
+        # This might be corrected.
+        if len(self[:]) == 1:
+            string_vel = left + format(self[:][0]) # will raise an error
+            # in case left is not a string
+            if right is not None:
+                string_vel += right # will raise an error in case right
+                # is not a string
+
+            # If the argument of 'var' contains only one word, for
+            # instance:
+            # sage: var('Dt')
+            # then 'var' does not return a tuple containing one symbolic
+            # expression, but the symbolic expression itself.
+            # This is taken into account below in order to return a list
+            # containing one symbolic expression.
+            return [var(string_vel)]
+
+        list_strings_velocities = [left + format(coord_func)
+                                   for coord_func in self[:]] # will
+        # raise an error in case left is not a string
+
+        if right is not None:
+            list_strings_velocities = [string_vel + right for string_vel
+                                       in list_strings_velocities] # will
+            # raise an error in case right is not a string
+
+        return list(var(list_strings_velocities))
+
+
 
 #*****************************************************************************
 
@@ -419,6 +702,15 @@ class RealDiffChart(DiffChart, RealChart):
       ``coordinates`` is not provided; it must then be a tuple containing
       the coordinate symbols (this is guaranteed if the shortcut operator
       ``<,>`` is used).
+    - ``calc_method`` -- (default: ``None``) string defining the calculus
+      method for computations involving coordinates of the chart; must be
+      one of
+
+      - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
+      - ``'sympy'``: SymPy
+      - ``None``: the default of
+        :class:`~sage.manifolds.calculus_method.CalculusMethod` will be
+        used
 
     EXAMPLES:
 
@@ -597,11 +889,25 @@ class RealDiffChart(DiffChart, RealChart):
         sage: c_cart.valid_coordinates(1,0,2)
         True
 
+    A vector frame is naturally associated to each chart::
+
+        sage: c_cart.frame()
+        Coordinate frame (R^3, (d/dx,d/dy,d/dz))
+        sage: c_spher.frame()
+        Coordinate frame (U, (d/dr,d/dth,d/dph))
+
+    as well as a dual frame (basis of 1-forms)::
+
+        sage: c_cart.coframe()
+        Coordinate coframe (R^3, (dx,dy,dz))
+        sage: c_spher.coframe()
+        Coordinate coframe (U, (dr,dth,dph))
+
     Chart grids can be drawn in 2D or 3D graphics thanks to the method
     :meth:`~sage.manifolds.chart.RealChart.plot`.
 
     """
-    def __init__(self, domain, coordinates='', names=None):
+    def __init__(self, domain, coordinates='', names=None, calc_method=None):
         r"""
         Construct a chart on a real differentiable manifold.
 
@@ -619,10 +925,96 @@ class RealDiffChart(DiffChart, RealChart):
             sage: TestSuite(X).run()
 
         """
-        RealChart.__init__(self, domain, coordinates=coordinates, names=names)
-        #!# vector frame shall be initialized here in ticket #18843
+        RealChart.__init__(self, domain, coordinates=coordinates, names=names,
+                           calc_method = calc_method)
+        # Construction of the coordinate frame associated to the chart:
+        self._frame = CoordFrame(self)
+        self._coframe = self._frame._coframe
 
-#*****************************************************************************
+
+    def restrict(self, subset, restrictions=None):
+        r"""
+        Return the restriction of the chart to some subset.
+
+        If the current chart is `(U, \varphi)`, a *restriction* (or
+        *subchart*) is a chart `(V, \psi)` such that `V \subset U`
+        and `\psi = \varphi |_V`.
+
+        If such subchart has not been defined yet, it is constructed here.
+
+        The coordinates of the subchart bare the same names as the
+        coordinates of the original chart.
+
+        INPUT:
+
+        - ``subset`` -- open subset `V` of the chart domain `U`
+        - ``restrictions`` -- (default: ``None``) list of coordinate
+          restrictions defining the subset `V`
+
+        A restriction can be any symbolic equality or inequality involving
+        the coordinates, such as ``x > y`` or ``x^2 + y^2 != 0``. The items
+        of the list ``restrictions`` are combined with the ``and`` operator;
+        if some restrictions are to be combined with the ``or`` operator
+        instead, they have to be passed as a tuple in some single item
+        of the list ``restrictions``. For example::
+
+          restrictions = [x > y, (x != 0, y != 0), z^2 < x]
+
+        means ``(x > y) and ((x != 0) or (y != 0)) and (z^2 < x)``.
+        If the list ``restrictions`` contains only one item, this
+        item can be passed as such, i.e. writing ``x > y`` instead
+        of the single element list ``[x > y]``.
+
+        OUTPUT:
+
+        - a :class:`RealDiffChart` `(V, \psi)`
+
+        EXAMPLES:
+
+        Cartesian coordinates on the unit open disc in `\RR^2` as a subchart
+        of the global Cartesian coordinates::
+
+            sage: M = Manifold(2, 'R^2')
+            sage: c_cart.<x,y> = M.chart() # Cartesian coordinates on R^2
+            sage: D = M.open_subset('D') # the unit open disc
+            sage: c_cart_D = c_cart.restrict(D, x^2+y^2<1)
+            sage: p = M.point((1/2, 0))
+            sage: p in D
+            True
+            sage: q = M.point((1, 2))
+            sage: q in D
+            False
+
+        Cartesian coordinates on the annulus `1 < \sqrt{x^2+y^2} < 2`::
+
+            sage: A = M.open_subset('A')
+            sage: c_cart_A = c_cart.restrict(A, [x^2+y^2>1, x^2+y^2<4])
+            sage: p in A, q in A
+            (False, False)
+            sage: a = M.point((3/2,0))
+            sage: a in A
+            True
+
+        """
+        if subset == self._domain:
+            return self
+        if subset not in self._dom_restrict:
+            resu = RealChart.restrict(self, subset, restrictions=restrictions)
+            # Update of superframes and subframes:
+            resu._frame._superframes.update(self._frame._superframes)
+            for sframe in self._frame._superframes:
+                sframe._subframes.add(resu._frame)
+                sframe._restrictions[subset] = resu._frame
+            # The subchart frame is not a "top frame" in the supersets
+            # (including self._domain):
+            for dom in self._domain._supersets:
+                if resu._frame in dom._top_frames:
+                    # it was added by the Chart constructor invoked in
+                    # Chart.restrict above
+                    dom._top_frames.remove(resu._frame)
+        return self._dom_restrict[subset]
+
+#******************************************************************************
 
 class DiffCoordChange(CoordChange):
     r"""
@@ -696,6 +1088,103 @@ class DiffCoordChange(CoordChange):
         CoordChange.__init__(self, chart1, chart2, *transformations)
         # Jacobian matrix:
         self._jacobian  = self._transf.jacobian()
-        # Jacobian determinant:
-        if self._n1 == self._n2:
-            self._jacobian_det = self._transf.jacobian_det()
+        # If the two charts are on the same open subset, the Jacobian matrix is
+        # added to the dictionary of changes of frame:
+        if chart1._domain == chart2._domain:
+            domain = chart1._domain
+            frame1 = chart1._frame
+            frame2 = chart2._frame
+            vf_module = domain.vector_field_module()
+            ch_basis = vf_module.automorphism()
+            ch_basis.add_comp(frame1)[:, chart1] = self._jacobian
+            ch_basis.add_comp(frame2)[:, chart1] = self._jacobian
+            vf_module._basis_changes[(frame2, frame1)] = ch_basis
+            for sdom in domain._supersets:
+                sdom._frame_changes[(frame2, frame1)] = ch_basis
+            # The inverse is computed only if it does not exist already
+            # (because if it exists it may have a simpler expression than that
+            #  obtained from the matrix inverse)
+            if (frame1, frame2) not in vf_module._basis_changes:
+                ch_basis_inv = ch_basis.inverse()
+                vf_module._basis_changes[(frame1, frame2)] = ch_basis_inv
+                for sdom in domain._supersets:
+                    sdom._frame_changes[(frame1, frame2)] = ch_basis_inv
+
+    def jacobian(self):
+        r"""
+        Return the Jacobian matrix of ``self``.
+
+        If ``self`` corresponds to the change of coordinates
+
+        .. MATH::
+
+            y^i = Y^i(x^1,\ldots,x^n)\qquad 1\leq i \leq n
+
+        the Jacobian matrix `J` is given by
+
+        .. MATH::
+
+            J_{ij} = \frac{\partial Y^i}{\partial x^j}
+
+        where `i` is the row index and `j` the column one.
+
+        OUTPUT:
+
+        - Jacobian matrix `J`, the elements `J_{ij}` of which being
+          coordinate functions
+          (cf. :class:`~sage.manifolds.chart_func.ChartFunction`)
+
+        EXAMPLES:
+
+        Jacobian matrix of a 2-dimensional transition map::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: Y.<u,v> = M.chart()
+            sage: X_to_Y = X.transition_map(Y, [x+y^2, 3*x-y])
+            sage: X_to_Y.jacobian()
+            [  1 2*y]
+            [  3  -1]
+
+        Each element of the Jacobian matrix is a coordinate function::
+
+            sage: parent(X_to_Y.jacobian()[0,0])
+            Ring of chart functions on Chart (M, (x, y))
+
+        """
+        return self._jacobian  # has been computed in __init__
+
+    @cached_method
+    def jacobian_det(self):
+        r"""
+        Return the Jacobian determinant of ``self``.
+
+        The Jacobian determinant is the determinant of the Jacobian
+        matrix (see :meth:`jacobian`).
+
+        OUTPUT:
+
+        - determinant of the Jacobian matrix `J` as a coordinate
+          function
+          (cf. :class:`~sage.manifolds.chart_func.ChartFunction`)
+
+        EXAMPLES:
+
+        Jacobian determinant of a 2-dimensional transition map::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: Y.<u,v> = M.chart()
+            sage: X_to_Y = X.transition_map(Y, [x+y^2, 3*x-y])
+            sage: X_to_Y.jacobian_det()
+            -6*y - 1
+            sage: X_to_Y.jacobian_det() == det(X_to_Y.jacobian())
+            True
+
+        The Jacobian determinant is a coordinate function::
+
+            sage: parent(X_to_Y.jacobian_det())
+            Ring of chart functions on Chart (M, (x, y))
+
+        """
+        return self._transf.jacobian_det()

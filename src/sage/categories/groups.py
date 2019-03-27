@@ -16,7 +16,6 @@ from sage.misc.lazy_import import LazyImport
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.monoids import Monoids
-from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.cartesian_product import CartesianProductsCategory, cartesian_product
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.topological_spaces import TopologicalSpacesCategory
@@ -93,9 +92,9 @@ class Groups(CategoryWithAxiom):
 
         def group_generators(self):
             """
-            Returns group generators for self.
+            Return group generators for ``self``.
 
-            This default implementation calls :meth:`.gens`, for
+            This default implementation calls :meth:`gens`, for
             backward compatibility.
 
             EXAMPLES::
@@ -148,8 +147,8 @@ class Groups(CategoryWithAxiom):
             """
             tester = self._tester(**options)
             for x in tester.some_elements():
-                tester.assertEquals(x * ~x, self.one())
-                tester.assertEquals(~x * x, self.one())
+                tester.assertEqual(x * ~x, self.one())
+                tester.assertEqual(~x * x, self.one())
 
         def semidirect_product(self, N, mapping, check = True):
             r"""
@@ -247,40 +246,40 @@ class Groups(CategoryWithAxiom):
                 sage: G = DiCyclicGroup(3)
                 sage: T = G.cayley_table()
                 sage: T.column_keys()
-                ((), (1,3,2,4)(5,7), ..., (1,2)(3,4)(5,7,6))
+                ((), (5,6,7), ..., (1,4,2,3)(5,7))
                 sage: T
                 *  a b c d e f g h i j k l
                  +------------------------
                 a| a b c d e f g h i j k l
-                b| b e f j i h d k a l c g
-                c| c g d e h b k l j f i a
-                d| d k e h l g i a f b j c
-                e| e i h l a k j c b g f d
-                f| f d j i k e c g l h a b
-                g| g h b f j l e i c a d k
-                h| h j l a c i f d g k b e
-                i| i a k g b c l f e d h j
-                j| j c i k g d a b h e l f
-                k| k l g b f a h j d c e i
-                l| l f a c d j b e k i g h
+                b| b c a e f d i g h l j k
+                c| c a b f d e h i g k l j
+                d| d e f a b c j k l g h i
+                e| e f d b c a l j k i g h
+                f| f d e c a b k l j h i g
+                g| g h i j k l d e f a b c
+                h| h i g k l j f d e c a b
+                i| i g h l j k e f d b c a
+                j| j k l g h i a b c d e f
+                k| k l j h i g c a b f d e
+                l| l j k i g h b c a e f d
 
             ::
 
-                sage: M=SL(2,2)
+                sage: M = SL(2, 2)
                 sage: M.cayley_table()
                 *  a b c d e f
                  +------------
-                a| a b c d e f
-                b| b a d c f e
-                c| c f e b a d
-                d| d e f a b c
-                e| e d a f c b
-                f| f c b e d a
+                a| c e a f b d
+                b| d f b e a c
+                c| a b c d e f
+                d| b a d c f e
+                e| f d e b c a
+                f| e c f a d b
                 <BLANKLINE>
 
             ::
 
-                sage: A=AbelianGroup([2,3])
+                sage: A = AbelianGroup([2, 3])
                 sage: A.cayley_table()
                 *  a b c d e f
                  +------------
@@ -318,18 +317,18 @@ class Groups(CategoryWithAxiom):
             ::
 
                 sage: G=QuaternionGroup()
-                sage: names=['1', 'I', 'J', '-1', '-K', 'K', '-I', '-J']
+                sage: names=['1', 'I', '-1', '-I', 'J', '-K', '-J', 'K']
                 sage: G.cayley_table(names=names)
-                 *   1  I  J -1 -K  K -I -J
+                 *   1  I -1 -I  J -K -J  K
                   +------------------------
-                 1|  1  I  J -1 -K  K -I -J
-                 I|  I -1  K -I  J -J  1 -K
-                 J|  J -K -1 -J -I  I  K  1
-                -1| -1 -I -J  1  K -K  I  J
-                -K| -K -J  I  K -1  1  J -I
-                 K|  K  J -I -K  1 -1 -J  I
-                -I| -I  1 -K  I -J  J -1  K
-                -J| -J  K  1  J  I -I -K -1
+                 1|  1  I -1 -I  J -K -J  K
+                 I|  I -1 -I  1  K  J -K -J
+                -1| -1 -I  1  I -J  K  J -K
+                -I| -I  1  I -1 -K -J  K  J
+                 J|  J -K -J  K -1 -I  1  I
+                -K| -K -J  K  J  I -1 -I  1
+                -J| -J  K  J -K  1  I -1 -I
+                 K|  K  J -K -J -I  1  I -1
 
             ::
 
@@ -383,29 +382,30 @@ class Groups(CategoryWithAxiom):
             ::
 
                 sage: from sage.matrix.operation_table import OperationTable
-                sage: G=DiCyclicGroup(3)
+                sage: G = DiCyclicGroup(3)
                 sage: commutator = lambda x, y: x*y*x^-1*y^-1
-                sage: T=OperationTable(G, commutator)
+                sage: T = OperationTable(G, commutator)
                 sage: T
                 .  a b c d e f g h i j k l
                  +------------------------
                 a| a a a a a a a a a a a a
-                b| a a h d a d h h a h d d
-                c| a d a a a d d a d d d a
-                d| a h a a a h h a h h h a
-                e| a a a a a a a a a a a a
-                f| a h h d a a d h h d a d
-                g| a d h d a h a h d a h d
-                h| a d a a a d d a d d d a
-                i| a a h d a d h h a h d d
-                j| a d h d a h a h d a h d
-                k| a h h d a a d h h d a d
-                l| a h a a a h h a h h h a
+                b| a a a a a a c c c c c c
+                c| a a a a a a b b b b b b
+                d| a a a a a a a a a a a a
+                e| a a a a a a c c c c c c
+                f| a a a a a a b b b b b b
+                g| a b c a b c a c b a c b
+                h| a b c a b c b a c b a c
+                i| a b c a b c c b a c b a
+                j| a b c a b c a c b a c b
+                k| a b c a b c b a c b a c
+                l| a b c a b c c b a c b a
+
                 sage: trans = T.translation()
-                sage: comm = [trans['a'], trans['d'],trans['h']]
+                sage: comm = [trans['a'], trans['b'], trans['c']]
                 sage: comm
-                [(), (5,7,6), (5,6,7)]
-                sage: P=G.cayley_table(elements=comm)
+                [(), (5,6,7), (5,7,6)]
+                sage: P = G.cayley_table(elements=comm)
                 sage: P
                 *  a b c
                  +------
@@ -413,12 +413,12 @@ class Groups(CategoryWithAxiom):
                 b| b c a
                 c| c a b
 
-            TODO:
+            .. TODO::
 
-            Arrange an ordering of elements into cosets of a normal
-            subgroup close to size `\sqrt{n}`.  Then the quotient
-            group structure is often apparent in the table.  See
-            comments on :trac:`7555`.
+                Arrange an ordering of elements into cosets of a normal
+                subgroup close to size `\sqrt{n}`.  Then the quotient
+                group structure is often apparent in the table.  See
+                comments on :trac:`7555`.
 
             AUTHOR:
 
@@ -480,12 +480,12 @@ class Groups(CategoryWithAxiom):
             """
             return self.parent().conjugacy_class(self)
 
-    Finite = LazyImport('sage.categories.finite_groups', 'FiniteGroups')
+    Finite = LazyImport('sage.categories.finite_groups', 'FiniteGroups', at_startup=True)
     Lie = LazyImport('sage.categories.lie_groups', 'LieGroups', 'Lie')
-    #Algebras = LazyImport('sage.categories.group_algebras', 'GroupAlgebras')
+    Algebras = LazyImport('sage.categories.group_algebras', 'GroupAlgebras', at_startup=True)
 
     class Commutative(CategoryWithAxiom):
-        """
+        r"""
         Category of commutative (abelian) groups.
 
         A group `G` is *commutative* if `xy = yx` for all `x,y \in G`.
@@ -534,312 +534,6 @@ class Groups(CategoryWithAxiom):
 
             from sage.groups.indexed_free_group import IndexedFreeAbelianGroup
             return IndexedFreeAbelianGroup(index_set, names=names, **kwds)
-
-    class Algebras(AlgebrasCategory):
-        r"""
-        The category of group algebras over a given base ring.
-
-        EXAMPLES::
-
-            sage: GroupAlgebras(IntegerRing())
-            Category of group algebras over Integer Ring
-            sage: GroupAlgebras(IntegerRing()).super_categories()
-            [Category of hopf algebras with basis over Integer Ring,
-             Category of monoid algebras over Integer Ring]
-
-        Here is how to create the group algebra of a group `G`::
-
-            sage: G = DihedralGroup(5)
-            sage: QG = G.algebra(QQ); QG
-            Group algebra of Dihedral group of order 10 as a permutation group over Rational Field
-
-        and an example of computation::
-
-            sage: g = G.an_element(); g
-            (1,2,3,4,5)
-            sage: (QG.term(g) + 1)**3
-            B[()] + 3*B[(1,2,3,4,5)] + 3*B[(1,3,5,2,4)] + B[(1,4,2,5,3)]
-
-        .. TODO::
-
-            - Check which methods would be better located in
-              ``Monoid.Algebras`` or ``Groups.Finite.Algebras``.
-
-        TESTS::
-
-            sage: A = GroupAlgebras(QQ).example(GL(3, GF(11)))
-            sage: A.one_basis()
-            [1 0 0]
-            [0 1 0]
-            [0 0 1]
-            sage: A = SymmetricGroupAlgebra(QQ,4)
-            sage: x = Permutation([4,3,2,1])
-            sage: A.product_on_basis(x,x)
-            [1, 2, 3, 4]
-
-            sage: C = GroupAlgebras(ZZ)
-            sage: TestSuite(C).run()
-        """
-
-        def extra_super_categories(self):
-            """
-            Implement the fact that the algebra of a group is a Hopf
-            algebra.
-
-            EXAMPLES::
-
-                sage: C = Groups().Algebras(QQ)
-                sage: C.extra_super_categories()
-                [Category of hopf algebras over Rational Field]
-                sage: sorted(C.super_categories(), key=str)
-                [Category of hopf algebras with basis over Rational Field,
-                 Category of monoid algebras over Rational Field]
-            """
-            from sage.categories.hopf_algebras import HopfAlgebras
-            return [HopfAlgebras(self.base_ring())]
-
-        def example(self, G = None):
-            """
-            Return an example of group algebra.
-
-            EXAMPLES::
-
-                sage: GroupAlgebras(QQ['x']).example()
-                Group algebra of Dihedral group of order 8 as a permutation group over Univariate Polynomial Ring in x over Rational Field
-
-            An other group can be specified as optional argument::
-
-                sage: GroupAlgebras(QQ).example(AlternatingGroup(4))
-                Group algebra of Alternating group of order 4!/2 as a permutation group over Rational Field
-            """
-            from sage.groups.perm_gps.permgroup_named import DihedralGroup
-            if G is None:
-                G = DihedralGroup(4)
-            return G.algebra(self.base_ring())
-
-        class ParentMethods:
-
-            def _repr_(self):
-                r"""
-                Return the string representation of `self`.
-
-                EXAMPLES::
-
-                    sage: A = Groups().example().algebra(QQ); A
-                    Group algebra of General Linear Group of degree 4 over Rational Field over Rational Field
-                    sage: A._name= "foo"
-                    sage: A
-                    foo over Rational Field
-                """
-                if hasattr(self, "_name"):
-                    return self._name + " over {}".format(self.base_ring())
-                else:
-                    return 'Group algebra of {} over {}'.format(self.basis().keys(),
-                                                                self.base_ring())
-
-            def group(self):
-                r"""
-                Return the underlying group of the group algebra.
-
-                EXAMPLES::
-
-                    sage: GroupAlgebras(QQ).example(GL(3, GF(11))).group()
-                    General Linear Group of degree 3 over Finite Field of size 11
-                    sage: SymmetricGroup(10).algebra(QQ).group()
-                    Symmetric group of order 10! as a permutation group
-                """
-                return self.basis().keys()
-
-            def algebra_generators(self):
-                r"""
-                Return generators of this group algebra (as an algebra).
-
-                EXAMPLES::
-
-                    sage: GroupAlgebras(QQ).example(AlternatingGroup(10)).algebra_generators()
-                    Finite family {(8,9,10): B[(8,9,10)], (1,2,3,4,5,6,7,8,9): B[(1,2,3,4,5,6,7,8,9)]}
-                """
-                from sage.sets.family import Family
-                return Family(self.group().gens(), self.term)
-
-            def center_basis(self):
-                r"""
-                Return a basis of the center of the group algebra.
-
-                The canonical basis of the center of the group algebra
-                is the family `(f_\sigma)_{\sigma\in C}`, where `C` is
-                any collection of representatives of the conjugacy
-                classes of the group, and `f_\sigma` is the sum of the
-                elements in the conjugacy class of `\sigma`.
-
-                OUTPUT:
-
-                - ``list`` of elements of ``self``
-
-                .. WARNING::
-
-                    - This method requires the underlying group to
-                      have a method ``conjugacy_classes``
-                      (every permutation group has one, thanks GAP!).
-
-                EXAMPLES::
-
-                    sage: SymmetricGroup(3).algebra(QQ).center_basis()
-                    [(), (2,3) + (1,2) + (1,3), (1,2,3) + (1,3,2)]
-
-                .. SEEALSO::
-
-                    - :meth:`Groups.Algebras.ElementMethods.central_form`
-                    - :meth:`Monoids.Algebras.ElementMethods.is_central`
-                """
-                return [self.sum_of_monomials(conj) for conj  in
-                        self.basis().keys().conjugacy_classes()]
-
-            # Coalgebra structure
-
-            def coproduct_on_basis(self, g):
-                r"""
-                Return the coproduct of the element ``g`` of the basis.
-
-                Each basis element ``g`` is group-like. This method is
-                used to compute the coproduct of any element.
-
-                EXAMPLES::
-
-                    sage: A=CyclicPermutationGroup(6).algebra(ZZ);A
-                    Group algebra of Cyclic group of order 6 as a permutation group over Integer Ring
-                    sage: g=CyclicPermutationGroup(6).an_element();g
-                    (1,2,3,4,5,6)
-                    sage: A.coproduct_on_basis(g)
-                    B[(1,2,3,4,5,6)] # B[(1,2,3,4,5,6)]
-                    sage: a=A.an_element();a
-                    B[()] + 3*B[(1,2,3,4,5,6)] + 3*B[(1,3,5)(2,4,6)]
-                    sage: a.coproduct()
-                    B[()] # B[()] + 3*B[(1,2,3,4,5,6)] # B[(1,2,3,4,5,6)] + 3*B[(1,3,5)(2,4,6)] # B[(1,3,5)(2,4,6)]
-                """
-                from sage.categories.tensor import tensor
-                g = self.term(g)
-                return tensor([g, g])
-
-            def antipode_on_basis(self,g):
-                r"""
-                Return the antipode of the element ``g`` of the basis.
-
-                Each basis element ``g`` is group-like, and so has
-                antipode `g^{-1}`. This method is used to compute the
-                antipode of any element.
-
-                EXAMPLES::
-
-                    sage: A=CyclicPermutationGroup(6).algebra(ZZ);A
-                    Group algebra of Cyclic group of order 6 as a permutation group over Integer Ring
-                    sage: g=CyclicPermutationGroup(6).an_element();g
-                    (1,2,3,4,5,6)
-                    sage: A.antipode_on_basis(g)
-                    B[(1,6,5,4,3,2)]
-                    sage: a=A.an_element();a
-                    B[()] + 3*B[(1,2,3,4,5,6)] + 3*B[(1,3,5)(2,4,6)]
-                    sage: a.antipode()
-                    B[()] + 3*B[(1,5,3)(2,6,4)] + 3*B[(1,6,5,4,3,2)]
-                """
-                return self.term(~g)
-
-            def counit_on_basis(self,g):
-                r"""
-                Return the counit of the element ``g`` of the basis.
-
-                Each basis element ``g`` is group-like, and so has
-                counit `1`. This method is used to compute the
-                counit of any element.
-
-                EXAMPLES::
-
-                    sage: A=CyclicPermutationGroup(6).algebra(ZZ);A
-                    Group algebra of Cyclic group of order 6 as a permutation group over Integer Ring
-                    sage: g=CyclicPermutationGroup(6).an_element();g
-                    (1,2,3,4,5,6)
-                    sage: A.counit_on_basis(g)
-                    1
-                """
-                return self.base_ring().one()
-
-            def counit(self,x):
-                r"""
-                Return the counit of the element ``x`` of the group
-                algebra.
-
-                This is the sum of all coefficients of ``x`` with respect
-                to the standard basis of the group algebra.
-
-                EXAMPLES::
-
-                    sage: A=CyclicPermutationGroup(6).algebra(ZZ);A
-                    Group algebra of Cyclic group of order 6 as a permutation group over Integer Ring
-                    sage: a=A.an_element();a
-                    B[()] + 3*B[(1,2,3,4,5,6)] + 3*B[(1,3,5)(2,4,6)]
-                    sage: a.counit()
-                    7
-                """
-                return self.base_ring().sum(x.coefficients())
-
-        class ElementMethods:
-
-            def central_form(self):
-                r"""
-                Return ``self`` expressed in the canonical basis of the center
-                of the group algebra.
-
-                INPUT:
-
-                - ``self`` -- an element of the center of the group algebra
-
-                OUTPUT:
-
-                - A formal linear combination of the conjugacy class
-                  representatives representing its coordinates in the
-                  canonical basis of the center. See
-                  :meth:`Groups.Algebras.ParentMethods.center_basis` for
-                  details.
-
-                .. WARNING::
-
-                    - This method requires the underlying group to
-                      have a method ``conjugacy_classes_representatives``
-                      (every permutation group has one, thanks GAP!).
-                    - This method does not check that the element is
-                      indeed central. Use the method
-                      :meth:`Monoids.Algebras.ElementMethods.is_central`
-                      for this purpose.
-                    - This function has a complexity linear in the
-                      number of conjugacy classes of the group. One
-                      could easily implement a function whose
-                      complexity is linear in the size of the support
-                      of ``self``.
-
-                EXAMPLES::
-
-                    sage: QS3 = SymmetricGroup(3).algebra(QQ)
-                    sage: A = QS3([2,3,1]) + QS3([3,1,2])
-                    sage: A.central_form()
-                    B[(1,2,3)]
-                    sage: QS4 = SymmetricGroup(4).algebra(QQ)
-                    sage: B = sum(len(s.cycle_type())*QS4(s) for s in Permutations(4))
-                    sage: B.central_form()
-                    4*B[()] + 3*B[(1,2)] + 2*B[(1,2)(3,4)] + 2*B[(1,2,3)] + B[(1,2,3,4)]
-
-                    sage: QG = GroupAlgebras(QQ).example(PermutationGroup([[(1,2,3),(4,5)],[(3,4)]]))
-                    sage: sum(i for i in QG.basis()).central_form()
-                    B[()] + B[(4,5)] + B[(3,4,5)] + B[(2,3)(4,5)] + B[(2,3,4,5)] + B[(1,2)(3,4,5)] + B[(1,2,3,4,5)]
-
-                .. SEEALSO::
-
-                    - :meth:`Groups.Algebras.ParentMethods.center_basis`
-                    - :meth:`Monoids.Algebras.ElementMethods.is_central`
-                """
-                from sage.combinat.free_module import CombinatorialFreeModule
-                conj_classes_reps = self.parent().basis().keys().conjugacy_classes_representatives()
-                Z = CombinatorialFreeModule(self.base_ring(), conj_classes_reps)
-                return sum(self[i] * Z.basis()[i] for i in Z.basis().keys())
 
     class CartesianProducts(CartesianProductsCategory):
         """
@@ -945,6 +639,27 @@ class Groups(CategoryWithAxiom):
                 """
                 from sage.misc.misc_c import prod
                 return prod(c.cardinality() for c in self.cartesian_factors())
+
+        class ElementMethods:
+            def multiplicative_order(self):
+                r"""
+                Return the multiplicative order of this element.
+
+                EXAMPLES::
+
+                    sage: G1 = SymmetricGroup(3)
+                    sage: G2 = SL(2,3)
+                    sage: G = cartesian_product([G1,G2])
+                    sage: G((G1.gen(0), G2.gen(1))).multiplicative_order()
+                    12
+                """
+                from sage.rings.infinity import Infinity
+                orders = [x.multiplicative_order() for x in self.cartesian_factors()]
+                if any(o is Infinity for o in orders):
+                    return Infinity
+                else:
+                    from sage.arith.functions import LCM_list
+                    return LCM_list(orders)
 
     class Topological(TopologicalSpacesCategory):
         """

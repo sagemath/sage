@@ -46,8 +46,9 @@ def have_chomp(program='homsimpl'):
         _have_chomp[program] = have_program(program)
     return _have_chomp[program]
 
+
 class CHomP:
-    """
+    r"""
     Interface to the CHomP package.
 
     :param program: which CHomP program to use
@@ -114,8 +115,8 @@ class CHomP:
         EXAMPLES::
 
             sage: from sage.interfaces.chomp import CHomP
-            sage: CHomP().__repr__()
-            'CHomP interface'
+            sage: CHomP()           # indirect doctest
+            CHomP interface
         """
         return "CHomP interface"
 
@@ -295,7 +296,7 @@ class CHomP:
                 if hom_str.find("^") != -1:
                     rk_srch = re.search(r'\^([0-9]*)\s?', hom_str)
                     rk = int(rk_srch.group(1))
-                rk += len(re.findall("(Z$)|(Z\s)", hom_str))
+                rk += len(re.findall(r"(Z$)|(Z\s)", hom_str))
                 if mod_p:
                     rk = rk if rk != 0 else 1
                     if verbose:
@@ -664,7 +665,7 @@ def process_generators_cubical(gen_string, dim):
         # drop the first coordinate and eliminate duplicates, at least
         # in positive dimensions, drop any line containing a
         # degenerate cube
-        g = re.sub('\([01],', '(', g)
+        g = re.sub(r'\([01],', '(', g)
         if dim > 0:
             lines = g.splitlines()
             newlines = []

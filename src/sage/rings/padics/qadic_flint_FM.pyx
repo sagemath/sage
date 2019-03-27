@@ -1,5 +1,3 @@
-from types import MethodType
-
 include "sage/libs/linkages/padics/fmpz_poly_unram.pxi"
 include "sage/libs/linkages/padics/unram_shared.pxi"
 include "FM_template.pxi"
@@ -24,9 +22,9 @@ cdef class PowComputer_(PowComputer_flint_unram):
         PowComputer_flint_unram.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly)
 
 cdef class qAdicFixedModElement(FMElement):
-    frobenius = MethodType(frobenius_unram, None, qAdicFixedModElement)
-    trace = MethodType(trace_unram, None, qAdicFixedModElement)
-    norm = MethodType(norm_unram, None, qAdicFixedModElement)
+    frobenius = frobenius_unram
+    trace = trace_unram
+    norm = norm_unram
 
     def matrix_mod_pn(self):
         """
@@ -64,7 +62,7 @@ cdef class qAdicFixedModElement(FMElement):
             sage: (1+a).inverse_of_unit()._flint_rep()
             41*x^2 + 40*x + 42
             sage: (1+a)*(41*a^2+40*a+42)
-            1 + O(3^4)
+            1
         """
         return self.prime_pow._new_fmpz_poly(self.value, var)
 
@@ -79,3 +77,32 @@ cdef class qAdicFixedModElement(FMElement):
             (3*x + 3, 0)
         """
         return self._flint_rep(var), Integer(0)
+
+    def _modp_rep(self, use_smallest_mode=False, return_list=True):
+        r"""
+        Return the element with the same reduction mod p that can be expressed
+        with coefficients between 0 and p-1.  The absolute precision will be maximal.
+
+        This method is used in printing and computing p-adic expansions.
+
+        INPUT:
+
+        - ``use_smallest_mode`` -- if True, use reps between -p/2 and p/2 instead.
+        - ``return_list`` -- if True, return a list of coefficients (as integers).
+            For use in printing.
+
+        EXAMPLES::
+
+            sage: R.<a> = ZqFM(27,4)
+            sage: b = a^2 + 5*a - 3
+            sage: b._modp_rep()
+            ((a^2 + 2*a), [0, 2, 1])
+            sage: b._modp_rep(use_smallest_mode=True)[1]
+            [0, -1, 1]
+        """
+        cdef FMElement rep = self._new_c()
+        L = cmodp_rep(rep.value, self.value, smallest_mode if use_smallest_mode else simple_mode, return_list, self.prime_pow)
+        if return_list:
+            return rep, L
+        else:
+            return rep

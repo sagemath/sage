@@ -8,27 +8,26 @@ dimension `k=\frac{q^{r}-1}{q-1} - r` and minimum distance
 
 REFERENCES:
 
-    .. [R] Introduction to Coding Theory, Ron Roth, Cambridge University Press, 2006
+- [Rot2006]_
 """
 from __future__ import absolute_import
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 David Lucas <david.lucas@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from .linear_code import (AbstractLinearCode,
-                         LinearCodeParityCheckEncoder)
+from .linear_code import AbstractLinearCode
 from sage.matrix.matrix_space import MatrixSpace
 from sage.schemes.projective.projective_space import ProjectiveSpace
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
-from sage.rings.ring import Field
-from copy import copy
+
 
 class HammingCode(AbstractLinearCode):
     r"""
@@ -44,7 +43,7 @@ class HammingCode(AbstractLinearCode):
 
         sage: C = codes.HammingCode(GF(7), 3)
         sage: C
-        [57, 54] Hamming Code over Finite Field of size 7
+        [57, 54] Hamming Code over GF(7)
     """
     _registered_encoders = {}
     _registered_decoders = {}
@@ -66,13 +65,6 @@ class HammingCode(AbstractLinearCode):
             ...
             ValueError: order has to be a Sage Integer or a Python int
         """
-        if isinstance(base_field, (Integer, int)) and isinstance(order, Field):
-            from sage.misc.superseded import deprecation
-            deprecation(19930, "codes.HammingCode(r, F) is now deprecated. Please use codes.HammingCode(F, r) instead.")
-            tmp = copy(order)
-            order = copy(base_field)
-            base_field = copy(tmp)
-
         if not base_field.is_finite():
             raise ValueError("base_field has to be a finite field")
         if not isinstance(order, (Integer, int)):
@@ -85,7 +77,7 @@ class HammingCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality of Hamming Code objects.
+        Test equality of Hamming Code objects.
 
         EXAMPLES::
 
@@ -98,43 +90,56 @@ class HammingCode(AbstractLinearCode):
                 and self.length() == other.length()\
                 and self.dimension() == other.dimension()
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: C1 = codes.HammingCode(GF(7), 3)
+            sage: C2 = codes.HammingCode(GF(7), 3)
+            sage: hash(C1) == hash(C2)
+            True
+        """
+        return hash((self.length(), self.dimension()))
+
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(7), 3)
             sage: C
-            [57, 54] Hamming Code over Finite Field of size 7
+            [57, 54] Hamming Code over GF(7)
         """
-        return "[%s, %s] Hamming Code over %s"\
-                % (self.length(), self.dimension(), self.base_field())
+        return "[%s, %s] Hamming Code over GF(%s)"\
+                % (self.length(), self.dimension(), self.base_field().cardinality())
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(7), 3)
             sage: latex(C)
-            [57, 54] \textnormal{ Hamming Code over Finite Field of size 7}
+            [57, 54] \textnormal{ Hamming Code over }\Bold{F}_{7}
         """
-        return "[%s, %s] \\textnormal{ Hamming Code over %s}"\
-                % (self.length(), self.dimension(), self.base_field())
+        return "[%s, %s] \\textnormal{ Hamming Code over }%s"\
+                % (self.length(), self.dimension(), self.base_field()._latex_())
 
-
+    @cached_method
     def parity_check_matrix(self):
         r"""
-        Returns a parity check matrix of ``self``.
+        Return a parity check matrix of ``self``.
 
         The construction of the parity check matrix in case ``self``
         is not a binary code is not really well documented.
         Regarding the choice of projective geometry, one might check:
 
-        - the note over section 2.3 in [R]_, pages 47-48
-        - the dedicated paragraph in [HP]_, page 30
+        - the note over section 2.3 in [Rot2006]_, pages 47-48
+        - the dedicated paragraph in [HP2003]_, page 30
 
         EXAMPLES::
 
@@ -143,22 +148,24 @@ class HammingCode(AbstractLinearCode):
             [1 0 1 1 0 1 0 1 1 1 0 1 1]
             [0 1 1 2 0 0 1 1 2 0 1 1 2]
             [0 0 0 0 1 1 1 1 1 2 2 2 2]
+
         """
         n = self.length()
         F = self.base_field()
         m = n - self.dimension()
-        MS = MatrixSpace(F,n,m)
-        X = ProjectiveSpace(m-1,F)
-        PFn = [list(p) for p in X.point_set(F).points(F)]
+        MS = MatrixSpace(F, n, m)
+        X = ProjectiveSpace(m - 1, F)
+        PFn = [list(p) for p in X.point_set(F).points()]
 
         H = MS(PFn).transpose()
         H = H[::-1, :]
-
+        H.set_immutable()
         return H
 
     def minimum_distance(self):
         r"""
-        Returns the minimum distance of ``self``.
+        Return the minimum distance of ``self``.
+
         It is always 3 as ``self`` is a Hamming Code.
 
         EXAMPLES::
@@ -168,8 +175,3 @@ class HammingCode(AbstractLinearCode):
             3
         """
         return 3
-
-
-####################### registration ###############################
-
-HammingCode._registered_encoders["ParityCheck"] = LinearCodeParityCheckEncoder

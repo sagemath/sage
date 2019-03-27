@@ -7,7 +7,7 @@ arrangement of pseudolines in several different ways, and to translate one
 description into another, as well as to display *Wiring diagrams* via the
 :meth:`show <sage.geometry.pseudolines.PseudolineArrangement.show>` method.
 
-In the following, we try to stick to the terminology given in [Felsner]_, which
+In the following, we try to stick to the terminology given in [Fe1997]_, which
 can be checked in case of doubt. And please fix this module's documentation
 afterwards :-)
 
@@ -110,7 +110,7 @@ corresponds in the wiring diagram to a line going up while the line immediately
 above it goes down -- those two lines cross. Each time such a pattern is found
 it yields a new transposition, and the matrix can be updated so that this
 pattern disappears. A more detailed description of this algorithm is given in
-[Felsner]_.
+[Fe1997]_.
 
 ::
 
@@ -129,10 +129,9 @@ them are parallel by making sure all of the `a` chosen are different, and we
 avoid a common crossing of three lines by adding a random noise to `b`::
 
     sage: n = 20
-    sage: l = zip(Subsets(20*n,n).random_element(), [randint(0,20*n)+random() for i in range(n)])
+    sage: l = sorted(zip(Subsets(20*n,n).random_element(), [randint(0,20*n)+random() for i in range(n)]))
     sage: print(l[:5])                            # not tested
     [(96, 278.0130613051349), (74, 332.92512282478714), (13, 155.65820951249867), (209, 34.753946221755307), (147, 193.51376457741441)]
-    sage: l.sort()
 
 We can now compute for each `i` the order in which line `i` meets the other lines::
 
@@ -149,14 +148,6 @@ And finally build the line arrangement::
     sage: print(p)
     Arrangement of pseudolines of size 20
     sage: p.show(figsize=[20,8])
-
-
-References
-^^^^^^^^^^
-
-.. [Felsner] On the Number of Arrangements of Pseudolines,
-  Stefan Felsner,
-  http://page.math.tu-berlin.de/~felsner/Paper/numarr.pdf
 
 Author
 ^^^^^^
@@ -274,7 +265,7 @@ class PseudolineArrangement:
 
             seq = deepcopy(seq)
             self._n = len(seq)
-            ordering = range(self._n)
+            ordering = list(range(self._n))
 
             self._permutations = [[] for i in range(self._n)]
 
@@ -317,7 +308,7 @@ class PseudolineArrangement:
         See the :mod:`pseudolines module <sage.geometry.pseudolines>`'s
         documentation for more information on this encoding.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
@@ -374,7 +365,7 @@ class PseudolineArrangement:
         See the :mod:`pseudolines module <sage.geometry.pseudolines>`'s
         documentation for more information on this encoding.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
@@ -391,7 +382,7 @@ class PseudolineArrangement:
         See the :mod:`pseudolines module <sage.geometry.pseudolines>`'s
         documentation for more information on this encoding.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
@@ -421,7 +412,7 @@ class PseudolineArrangement:
           particular, to tune the dimensions, use the ``figsize`` argument
           (example below).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
@@ -479,7 +470,7 @@ class PseudolineArrangement:
         r"""
         A short txt description of the pseudoline arrangement.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
@@ -493,7 +484,7 @@ class PseudolineArrangement:
         r"""
         Test of equality.
 
-        TEST::
+        TESTS::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]

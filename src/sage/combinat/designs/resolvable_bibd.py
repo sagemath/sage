@@ -32,7 +32,7 @@ References:
    A survey of Kirkman triple systems and related designs,
    Volume 92, Issues 1-3, 17 November 1991, Pages 371-393,
    Discrete Mathematics,
-   http://dx.doi.org/10.1016/0012-365X(91)90294-C.
+   :doi:`10.1016/0012-365X(91)90294-C`
 
 .. [RCW71] \D. K. Ray-Chaudhuri, R. M. Wilson,
    Solution of Kirkman's schoolgirl problem,
@@ -48,6 +48,7 @@ Functions
 ---------
 """
 from __future__ import print_function, absolute_import, division
+from six.moves import range
 
 from sage.arith.all import is_prime_power
 from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
@@ -80,7 +81,7 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
         - :meth:`IncidenceStructure.is_resolvable`
         - :func:`~sage.combinat.designs.bibd.balanced_incomplete_block_design`
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: KTS15 = designs.resolvable_balanced_incomplete_block_design(15,3); KTS15
         (15,3,1)-Balanced Incomplete Block Design
@@ -221,7 +222,7 @@ def kirkman_triple_system(v,existence=False):
         first_class = [[(0,1),(0,2),'inf']]
         b0 = K.one(); b1 = a**t; b2 = a**m
         first_class.extend([(b0*a**i,1),(b1*a**i,1),(b2*a**i,2)]
-                            for i in range(t)+range(2*t,3*t)+range(4*t,5*t))
+                            for i in list(range(t))+list(range(2*t,3*t))+list(range(4*t,5*t)))
         b0 = a**(m+t); b1=a**(m+3*t); b2=a**(m+5*t)
         first_class.extend([[(b0*a**i,2),(b1*a**i,2),(b2*a**i,2)]
                             for i in range(t)])
@@ -271,7 +272,7 @@ def kirkman_triple_system(v,existence=False):
         classes = [[[relabel[action(p,x)] for x in tr] for tr in B0]
                    for p in K]
 
-        for i in range(t)+range(2*t,3*t)+range(4*t,5*t):
+        for i in list(range(t))+list(range(2*t,3*t))+list(range(4*t,5*t)):
             classes.append([[relabel[action(p,x)] for x in A[i]] for p in K])
 
         KTS = BalancedIncompleteBlockDesign(v,[tr for cl in classes for tr in cl],k=3,lambd=1,copy=False)
@@ -376,7 +377,7 @@ def v_4_1_rbibd(v,existence=False):
         that `v=3q+1\equiv 1\pmod{3}` where `q` is a prime power (see VII.7.5.a
         from [BJL99]_).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: rBIBD = designs.resolvable_balanced_incomplete_block_design(28,4)
         sage: rBIBD.is_resolvable()
@@ -434,11 +435,11 @@ def PBD_4_7(v,check=True, existence=False):
     This construction of PBD is used by the construction of Kirkman Triple
     Systems.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.designs.resolvable_bibd import PBD_4_7
         sage: PBD_4_7(22)
-        Pairwise Balanced Design on 22 points with sets of sizes in set([4, 7])
+        Pairwise Balanced Design on 22 points with sets of sizes in [4, 7]
 
     TESTS:
 
@@ -465,7 +466,7 @@ def PBD_4_7(v,check=True, existence=False):
         # Beth/Jungnickel/Lenz: take KTS(15) and extend each of the 7 classes
         # with a new point. Make those new points a 7-set.
         KTS15 = kirkman_triple_system(15)
-        blocks = [S+[i+15] for i,classs in enumerate(KTS15._classes) for S in classs]+[range(15,22)]
+        blocks = [S+[i+15] for i,classs in enumerate(KTS15._classes) for S in classs]+[list(range(15, 22))]
 
     elif v == 34:
         # [BJL99] (p527,vol1), but originally Brouwer
@@ -480,7 +481,7 @@ def PBD_4_7(v,check=True, existence=False):
         D = [[(x+i,  y+i)     for x,y in D]+[33]   for i in range(9)]
 
         blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*9+(x[0]%9) for x in S]
-                  for S in A+B+C+D+[range(27,34)]]
+                  for S in A+B+C+D+[list(range(27,34))]]
     elif v == 46:
         # [BJL99] (p527,vol1), but originally Brouwer
         A = [(1,0),(3,0),(9,0),(0,1)]
@@ -496,7 +497,7 @@ def PBD_4_7(v,check=True, existence=False):
         E = [[(x+i,  y+i) for x,y in E]+[45]   for i in range(13)]
 
         blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*13+(x[0]%13) for x in S]
-                  for S in A+B+C+D+E+[range(39,46)]]
+                  for S in A+B+C+D+E+[list(range(39, 46))]]
 
     elif v == 58:
         # [BJL99] (p527,vol1), but originally Brouwer
@@ -515,7 +516,7 @@ def PBD_4_7(v,check=True, existence=False):
         F = [[(x+i,  y+i) for x,y in F]+[57]   for i in range(17)]
 
         blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*17+(x[0]%17) for x in S]
-                  for S in A+B+C+D+E+F+[range(51,58)]]
+                  for S in A+B+C+D+E+F+[list(range(51,58))]]
 
     elif v == 70:
         # [BJL99] (p527,vol1), but originally Brouwer
@@ -537,7 +538,7 @@ def PBD_4_7(v,check=True, existence=False):
 
         blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*21+(x[0]%21)
                    for x in S]
-                  for S in A+B+C+D+E+F+H+[range(63,70)]]
+                  for S in A+B+C+D+E+F+H+[list(range(63,70))]]
 
     elif v == 82:
         # This construction is Theorem IX.3.16 from [BJL99] (p.627).
@@ -566,7 +567,7 @@ def PBD_4_7(v,check=True, existence=False):
             for i in range(5):
                 GDD2.append([x+i*15 if x<15 else x+60 for x in B])
 
-        GDD2.append(range(75,82))
+        GDD2.append(list(range(75,82)))
         blocks = GDD2
 
     elif v == 94:
@@ -607,11 +608,11 @@ def PBD_4_7(v,check=True, existence=False):
                for i,classs in enumerate(rBIBD4._classes)
                for S in classs]
         if points_to_add == 7:
-            GDD.append(range(40,40+points_to_add))
+            GDD.append(list(range(40, 40 + points_to_add)))
             groups = [[x] for x in range(40+points_to_add)]
         else:
             groups = [[x] for x in range(40)]
-            groups.append(range(40,40+points_to_add))
+            groups.append(list(range(40,40+points_to_add)))
         GDD = GroupDivisibleDesign(40+points_to_add,
                                    groups = groups,
                                    blocks = GDD,
@@ -694,18 +695,18 @@ def PBD_4_7_from_Y(gdd,check=True):
       guys), you may want to disable it whenever you want speed. Set to ``True``
       by default.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.designs.resolvable_bibd import PBD_4_7_from_Y
         sage: PBD_4_7_from_Y(designs.transversal_design(7,8))
-        Pairwise Balanced Design on 169 points with sets of sizes in set([4, 7])
+        Pairwise Balanced Design on 169 points with sets of sizes in [4, 7]
 
     TESTS::
 
         sage: PBD_4_7_from_Y(designs.balanced_incomplete_block_design(10,10))
         Traceback (most recent call last):
         ...
-        ValueError: The GDD should only contain blocks of size {4,5,7} but there are other: set([10])
+        ValueError: The GDD should only contain blocks of size {4,5,7} but there are other: [10]
         sage: PBD_4_7_from_Y(designs.transversal_design(4,3))
         Traceback (most recent call last):
         ...
@@ -715,9 +716,10 @@ def PBD_4_7_from_Y(gdd,check=True):
     from .bibd import PairwiseBalancedDesign
     block_sizes = set(map(len,gdd._blocks))
     group_sizes = set(map(len,gdd._groups))
-    if not block_sizes.issubset([4,5,7]):
+    if not block_sizes.issubset([4, 5, 7]):
+        txt = list(block_sizes.difference([4, 5, 7]))
         raise ValueError("The GDD should only contain blocks of size {{4,5,7}} "
-                         "but there are other: {}".format(block_sizes.difference([4,5,7])))
+                         "but there are other: {}".format(txt))
 
     for gs in group_sizes:
         if not PBD_4_7(3*gs+1,existence=True):

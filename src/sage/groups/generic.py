@@ -45,6 +45,7 @@ Some examples in the multiplicative group of a finite field:
 
 - Orders of elements::
 
+    sage: from sage.groups.generic import order_from_multiple, order_from_bounds
     sage: k.<a> = GF(5^5)
     sage: b = a^4
     sage: order_from_multiple(b,5^5-1,operation='*')
@@ -56,14 +57,14 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 - Discrete logs::
 
-    sage: F=GF(37^2,'a')
-    sage: E=EllipticCurve(F,[1,1])
-    sage: F.<a>=GF(37^2,'a')
-    sage: E=EllipticCurve(F,[1,1])
-    sage: P=E(25*a + 16 , 15*a + 7 )
+    sage: F = GF(37^2,'a')
+    sage: E = EllipticCurve(F,[1,1])
+    sage: F.<a> = GF(37^2,'a')
+    sage: E = EllipticCurve(F,[1,1])
+    sage: P = E(25*a + 16 , 15*a + 7 )
     sage: P.order()
     672
-    sage: Q=39*P; Q
+    sage: Q = 39*P; Q
     (36*a + 32 : 5*a + 12 : 1)
     sage: discrete_log(Q,P,P.order(),operation='+')
     39
@@ -81,6 +82,7 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 - Orders of elements::
 
+    sage: from sage.groups.generic import order_from_multiple, order_from_bounds
     sage: k.<a> = GF(5^5)
     sage: E = EllipticCurve(k,[2,4])
     sage: P = E(3*a^4 + 3*a , 2*a + 1 )
@@ -94,6 +96,16 @@ Some examples in the group of points of an elliptic curve over a finite field:
     7
     sage: order_from_bounds(Q, Hasse_bounds(5^5), operation='+')
     7
+
+TESTS:
+
+Check deprecation from :trac:`25785`::
+
+    sage: bsgs
+    doctest:warning...:
+    DeprecationWarning: this is being removed from the global namespace
+    See https://trac.sagemath.org/25785 for details.
+    ...
 """
 
 #*****************************************************************************
@@ -109,7 +121,7 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 from copy import copy
 
-import sage.misc.all as misc
+from sage.misc.all import prod
 import sage.rings.integer_ring as integer_ring
 import sage.rings.integer
 from sage.arith.srange import xsrange
@@ -121,7 +133,9 @@ from sage.arith.srange import xsrange
 multiplication_names = ( 'multiplication', 'times', 'product', '*')
 addition_names       = ( 'addition', 'plus', 'sum', '+')
 
+# deprecation(24256)
 from sage.structure.element import generic_power as power
+
 
 def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
     r"""
@@ -335,8 +349,7 @@ class multiples:
         self.bound = n
         self.indexed = indexed
 
-
-    def next(self):
+    def __next__(self):
         """
         Returns the next item in this multiples iterator.
         """
@@ -350,6 +363,9 @@ class multiples:
             return (i,val)
         else:
             return val
+
+    next = __next__
+
     def __iter__(self):
         """
         Standard member function making this class an iterator.
@@ -398,6 +414,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     EXAMPLES::
 
+        sage: from sage.groups.generic import bsgs
         sage: b = Mod(2,37);  a = b^20
         sage: bsgs(b, a, (0,36))
         20
@@ -493,6 +510,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     raise ValueError("Log of %s to the base %s does not exist in %s."%(b,a,bounds))
 
+
 def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
     """
     Pollard Rho algorithm for computing discrete logarithm in cyclic
@@ -574,6 +592,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
     - Yann Laigle-Chapuy (2009-09-05)
 
     """
+    from six.moves import range
     from sage.rings.integer import Integer
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
     from operator import mul, add, pow
@@ -612,11 +631,11 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
 
     I=IntegerModRing(ord)
 
-    for s in xrange(10): # to avoid infinite loops
+    for s in range(10): # to avoid infinite loops
         # random walk function setup
-        m=[I.random_element() for i in xrange(partition_size)]
-        n=[I.random_element() for i in xrange(partition_size)]
-        M=[mult(power(base,Integer(m[i])),power(a,Integer(n[i]))) for i in xrange(partition_size)]
+        m=[I.random_element() for i in range(partition_size)]
+        n=[I.random_element() for i in range(partition_size)]
+        M=[mult(power(base,Integer(m[i])),power(a,Integer(n[i]))) for i in range(partition_size)]
 
         ax = I.random_element()
         x = power(base,Integer(ax))
@@ -629,7 +648,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
         H={} # memory
         i0=0
         nextsigma = 0
-        for i in xrange(reset_bound):
+        for i in range(reset_bound):
                     #random walk, we need an efficient hash
             s=hash_function(x) % partition_size
             (x,ax,bx) = (mult(M[s],x), ax+m[s], bx+n[s])
@@ -656,6 +675,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
                 H[x]=(ax,bx)
 
     raise ValueError("Pollard rho algorithm failed to find a logarithm")
+
 
 def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None):
     r"""
@@ -720,7 +740,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         ...
         ValueError: No discrete log of 2 found to base 1
 
-        See trac\#2356:
+    See :trac:`2356`::
+
         sage: F.<w> = GF(121)
         sage: v = w^120
         sage: v.log(w)
@@ -820,11 +841,13 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     except ValueError:
         raise ValueError("No discrete log of %s found to base %s"%(a,base))
 
+
 def discrete_log_generic(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None):
     """
     Alias for ``discrete_log``.
     """
     return discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None)
+
 
 def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
     """
@@ -835,10 +858,10 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
 
     INPUT:
 
-    - a - a group element
-    - base - a group element
-    - bounds - a couple (lb,ub) representing the range where we look for a logarithm
-    - operation - string: '+', '*' or 'other'
+    - a -- a group element
+    - base -- a group element
+    - bounds -- a couple (lb,ub) representing the range where we look for a logarithm
+    - operation -- string: '+', '*' or 'other'
     - hash_function -- having an efficient hash function is critical for this algorithm
 
     OUTPUT: Returns an integer `n` such that `a=base^n` (or `a=n*base`)
@@ -855,7 +878,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
         sage: F.<a> = GF(37^5)
         sage: E = EllipticCurve(F, [1,1])
         sage: P = E.lift_x(a); P
-        (a : 9*a^4 + 22*a^3 + 23*a^2 + 30 : 1)
+        (a : 28*a^4 + 15*a^3 + 14*a^2 + 7 : 1)
 
     This will return a multiple of the order of P::
 
@@ -872,6 +895,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
         -- Yann Laigle-Chapuy (2009-01-25)
 
     """
+    from six.moves import range
     from sage.rings.integer import Integer
     from operator import mul, add, pow
 
@@ -895,7 +919,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
     N = width.isqrt()+1
 
     M = dict()
-    for s in xrange(10): #to avoid infinite loops
+    for s in range(10): #to avoid infinite loops
         #random walk function setup
         k = 0
         while (2**k<N):
@@ -905,7 +929,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
         #first random walk
         H = power(base,ub)
         c = ub
-        for i in xrange(N):
+        for i in range(N):
             if mut: H.set_immutable()
             r,e = M[hash_function(H)%k]
             H = mult(H,e)
@@ -931,6 +955,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
 # Generic linear relation finder
 #
 ################################################################
+
 
 def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
     r"""
@@ -1031,6 +1056,7 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
 #
 ################################################################
 
+
 def order_from_multiple(P, m, plist=None, factorization=None, check=True,
                         operation='+'):
     r"""
@@ -1057,6 +1083,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
 
     EXAMPLES::
 
+        sage: from sage.groups.generic import order_from_multiple
         sage: k.<a> = GF(5^5)
         sage: b = a^4
         sage: order_from_multiple(b,5^5-1,operation='*')
@@ -1086,7 +1113,6 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: order_from_multiple(a, 3^60-1, operation='*', check=False)
         42391158275216203514294433200
     """
-    from operator import mul, add
     Z = integer_ring.ZZ
 
     if operation in multiplication_names:
@@ -1138,7 +1164,6 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         else:
             # try to split the list wisely
             sum_left = 0
-            i = 0
             for k in range(l):
                 p,e = L[k]
                 # multiplying by p**e require roughly 'e log_2(p) / 2' additions
@@ -1150,7 +1175,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             L2 = L[k:]
             # recursive calls
             o1 = _order_from_multiple_helper(
-                multiple(Q, misc.prod([p**e for p,e in L2]), operation),
+                multiple(Q, prod([p**e for p,e in L2]), operation),
                 L1,
                 sum_left)
             o2 = _order_from_multiple_helper(
@@ -1160,8 +1185,6 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             return o1*o2
 
     return _order_from_multiple_helper(P, F, sage.functions.log.log(float(M)) )
-
-
 
 
 def order_from_bounds(P, bounds, d=None, operation='+',
@@ -1199,6 +1222,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
 
     EXAMPLES::
 
+        sage: from sage.groups.generic import order_from_bounds
         sage: k.<a> = GF(5^5)
         sage: b = a^4
         sage: order_from_bounds(b,(5^4,5^5),operation='*')
@@ -1219,7 +1243,6 @@ def order_from_bounds(P, bounds, d=None, operation='+',
 
     """
     from operator import mul, add
-    Z = integer_ring.ZZ
 
     if operation in multiplication_names:
         op = mul
@@ -1247,6 +1270,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
 
     return order_from_multiple(P, m, operation=operation, check=False)
 
+
 def merge_points(P1,P2, operation='+',
                          identity=None, inverse=None, op=None, check=True):
     r"""
@@ -1272,6 +1296,7 @@ def merge_points(P1,P2, operation='+',
 
     EXAMPLES::
 
+        sage: from sage.groups.generic import merge_points
         sage: F.<a>=GF(3^6,'a')
         sage: b = a^7
         sage: c = a^13
@@ -1299,7 +1324,6 @@ def merge_points(P1,P2, operation='+',
         True
     """
     from operator import mul, add
-    Z = integer_ring.ZZ
 
     g1, n1 = P1
     g2, n2 = P2
@@ -1331,13 +1355,12 @@ def merge_points(P1,P2, operation='+',
     g2 = multiple(g2,m2,operation=operation)
     return (op(g1,g2), m)
 
+
 def structure_description(G, latex=False):
     r"""
     Return a string that tries to describe the structure of ``G``.
 
     This methods wraps GAP's ``StructureDescription`` method.
-
-    Requires the *optional* ``database_gap`` package.
 
     For full details, including the form of the returned string and the
     algorithm to build it, see `GAP's documentation
@@ -1363,50 +1386,44 @@ def structure_description(G, latex=False):
     EXAMPLES::
 
         sage: G = CyclicPermutationGroup(6)
-        sage: G.structure_description()             # optional - database_gap
+        sage: G.structure_description()
         'C6'
-        sage: G.structure_description(latex=True)   # optional - database_gap
+        sage: G.structure_description(latex=True)
         'C_{6}'
         sage: G2 = G.direct_product(G, maps=False)
-        sage: LatexExpr(G2.structure_description(latex=True))   # optional - database_gap
+        sage: LatexExpr(G2.structure_description(latex=True))
         C_{6} \times C_{6}
 
     This method is mainly intended for small groups or groups with few
     normal subgroups. Even then there are some surprises::
 
         sage: D3 = DihedralGroup(3)
-        sage: D3.structure_description()    # optional - database_gap
+        sage: D3.structure_description()
         'S3'
 
     We use the Sage notation for the degree of dihedral groups::
 
         sage: D4 = DihedralGroup(4)
-        sage: D4.structure_description()    # optional - database_gap
+        sage: D4.structure_description()
         'D4'
 
     Works for finitely presented groups (:trac:`17573`)::
 
         sage: F.<x, y> = FreeGroup()
         sage: G=F / [x^2*y^-1, x^3*y^2, x*y*x^-1*y^-1]
-        sage: G.structure_description()     # optional - database_gap
+        sage: G.structure_description()
         'C7'
 
     And matrix groups (:trac:`17573`)::
 
-        sage: groups.matrix.GL(4,2).structure_description() # optional - database_gap
+        sage: groups.matrix.GL(4,2).structure_description()
         'A8'
     """
     import re
-    from sage.misc.package import is_package_installed
     def correct_dihedral_degree(match):
-        return "%sD%d" % (match.group(1), int(match.group(2))/2)
+        return "%sD%d" % (match.group(1), int(match.group(2)) // 2)
 
-    try:
-        description = str(G._gap_().StructureDescription())
-    except RuntimeError:
-        if not is_package_installed('database_gap'):
-            raise RuntimeError("You must install the optional database_gap package first.")
-        raise
+    description = str(G._gap_().StructureDescription())
 
     description = re.sub(r"(\A|\W)D(\d+)", correct_dihedral_degree, description)
     if not latex:
@@ -1416,4 +1433,3 @@ def structure_description(G, latex=False):
     description = re.sub(r"O([+-])", r"O^{\g<1>}", description)
 
     return description
-

@@ -7,8 +7,8 @@ cdef class Map(Element):
     cdef public int _coerce_cost # a rough measure of the cost of using this morphism in the coercion system.
                           # 10 by default, 100 if a DefaultCoercionMorphism, 10000 if inexact.
 
-    cdef _update_slots(self, dict _dict)
-    cdef dict _extra_slots(self, dict _dict)
+    cdef _update_slots(self, dict)
+    cdef dict _extra_slots(self)
 
     # these methods require x is an element of domain, and returns an element with parent codomain
     cpdef Element _call_(self, x)
@@ -20,6 +20,9 @@ cdef class Map(Element):
     cdef object _category_for  # category in which this is a morphism
 
     cdef public _repr_type_str
+    cdef public bint _is_coercion
+
+    cpdef _pow_int(self, n)
 
 
 cdef class Section(Map):

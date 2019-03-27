@@ -2,7 +2,7 @@
 
 == Description ==
 
-TIDES is a library for integration of ODE's with high precission.
+TIDES is a library for integration of ODE's with high precision.
 
 == License ==
 

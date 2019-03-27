@@ -1,5 +1,6 @@
+#cython: wraparound=False, boundscheck=False
 r"""
-This contains a few time-critial auxillary cython functions for
+This contains a few time-critical auxillary cython functions for
 finite complex or real reflection groups.
 """
 #*****************************************************************************
@@ -15,23 +16,26 @@ finite complex or real reflection groups.
 
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from collections import deque
+from cysignals.memory cimport sig_malloc
+from cpython.list cimport *
 
 cdef class Iterator(object):
     """
     Iterator class for reflection groups.
     """
     cdef int n
-    cdef int N # number of refections/positive roots
+    cdef int N  # number of reflections / positive roots
     cdef tuple S
     cdef str algorithm
     cdef bint tracking_words
     cdef list noncom
+    cdef list order
 
     cdef list noncom_letters(self):
         """
         Return a list ``L`` of lists such that ...
 
-        WARNING:: This is not used as it slows down the computation.
+        .. WARNING:: This is not used as it slows down the computation.
 
         EXAMPLES::
 
@@ -54,10 +58,11 @@ cdef class Iterator(object):
                 else:
                     noncom_i.append(j)
             noncom.append(noncom_i)
-        noncom.append(range(n))
+        noncom.append(list(range(n)))
         return noncom
 
-    def __init__(self, W, int N, str algorithm="depth", bint tracking_words=True):
+    def __init__(self, W, int N, str algorithm="depth", bint tracking_words=True,
+                 order=None):
         """
         Initalize ``self``.
 
@@ -73,10 +78,13 @@ cdef class Iterator(object):
         self.N = N
         self.tracking_words = tracking_words
 
+        if order is None:
+            self.order = list(range(self.n))
+
         # "breadth" is 1.5x slower than "depth" since it uses
         # a deque with popleft instead of a list with pop
-        if algorithm not in ["depth","breadth"]:
-            raise ValueError('the algorithm (="%s") must be either "depth" or "breadth"')
+        if algorithm not in ["depth", "breadth", "parabolic"]:
+            raise ValueError('the algorithm (="%s") must be either "depth", "breadth", or "parabolic"')
         self.algorithm = algorithm
 
 #        self.noncom = self.noncom_letters()
@@ -92,13 +100,13 @@ cdef class Iterator(object):
         for i in range(first):
             si = <PermutationGroupElement>(S[i])
             if self.test(u, si, i):
-                successors.append((si._mul_(u), i))
+                successors.append((_new_mul_(si,u), i))
         for i in range(first+1,self.n):
 #        for i in nc:
             if u.perm[i] < N:
                 si = <PermutationGroupElement>(S[i])
                 if self.test(u, si, i):
-                    successors.append((si._mul_(u), i))
+                    successors.append((_new_mul_(si,u), i))
         return successors
 
     cdef list succ_words(self, PermutationGroupElement u, list word, int first):
@@ -112,7 +120,7 @@ cdef class Iterator(object):
         for i in range(first):
             si = <PermutationGroupElement>(S[i])
             if self.test(u, si, i):
-                u1 = <PermutationGroupElement>(si._mul_(u))
+                u1 = <PermutationGroupElement>(_new_mul_(si,u))
                 # try to use word+[i] and the reversed
                 word_new = [i] + word
                 u1._reduced_word = word_new
@@ -121,21 +129,20 @@ cdef class Iterator(object):
             if u.perm[i] < self.N:
                 si = <PermutationGroupElement>(S[i])
                 if self.test(u, si, i):
-                    u1 = <PermutationGroupElement>(si._mul_(u))
+                    u1 = <PermutationGroupElement>(_new_mul_(si,u))
                     word_new = [i] + word
                     u1._reduced_word = word_new
                     successors.append((u1, word_new, i))
         return successors
 
-    cdef bint test(self, PermutationGroupElement u, PermutationGroupElement si, int i):
-        cdef int j, sij
+    cdef inline bint test(self, PermutationGroupElement u, PermutationGroupElement si, int i):
+        cdef int j
         cdef int N = self.N
         cdef int* siperm = si.perm
         cdef int* uperm = u.perm
 
         for j in range(i):
-            sij = siperm[j]
-            if uperm[sij] >= N:
+            if uperm[siperm[j]] >= N:
                 return False
         return True
 
@@ -144,9 +151,17 @@ cdef class Iterator(object):
         EXAMPLES::
 
             sage: from sage.combinat.root_system.reflection_group_c import Iterator
-            sage: W = ReflectionGroup(["B", 4])               # optional - gap3
-            sage: I = Iterator(W, W.number_of_reflections())  # optional - gap3
-            sage: len(list(I)) == W.cardinality()             # optional - gap3
+            sage: W = ReflectionGroup(["B", 4])            # optional - gap3
+            sage: N = W.number_of_reflections()            # optional - gap3
+            sage: I = Iterator(W, N)                       # optional - gap3
+            sage: len(list(I)) == W.cardinality()          # optional - gap3
+            True
+
+            sage: I = Iterator(W, N, "breadth", False)     # optional - gap3
+            sage: len(list(I)) == W.cardinality()          # optional - gap3
+            True
+            sage: I = Iterator(W, N, "parabolic")          # optional - gap3
+            sage: len(list(I)) == W.cardinality()          # optional - gap3
             True
         """
         # the breadth search iterator is ~2x slower as it
@@ -161,6 +176,8 @@ cdef class Iterator(object):
                 return self.iter_words_breadth()
             else:
                 return self.iter_breadth()
+        elif self.algorithm == "parabolic":
+            return self.iter_parabolic()
 
     def iter_depth(self):
         """
@@ -169,9 +186,9 @@ cdef class Iterator(object):
         EXAMPLES::
 
             sage: from sage.combinat.root_system.reflection_group_c import Iterator
-            sage: W = ReflectionGroup(['B', 2])               # optional - gap3
-            sage: I = Iterator(W, W.number_of_reflections())  # optional - gap3
-            sage: list(I.iter_depth())                        # optional - gap3
+            sage: W = CoxeterGroup(['B',2], implementation="permutation")
+            sage: I = Iterator(W, W.number_of_reflections())
+            sage: list(I.iter_depth())
             [(),
              (1,3)(2,6)(5,7),
              (1,5)(2,4)(6,8),
@@ -206,9 +223,9 @@ cdef class Iterator(object):
         EXAMPLES::
 
             sage: from sage.combinat.root_system.reflection_group_c import Iterator
-            sage: W = ReflectionGroup(['B', 2])               # optional - gap3
-            sage: I = Iterator(W, W.number_of_reflections())  # optional - gap3
-            sage: for w in I.iter_words_depth(): w._reduced_word  # optional - gap3
+            sage: W = CoxeterGroup(['B',2], implementation="permutation")
+            sage: I = Iterator(W, W.number_of_reflections())
+            sage: for w in I.iter_words_depth(): w._reduced_word
             []
             [1]
             [0]
@@ -247,9 +264,9 @@ cdef class Iterator(object):
         EXAMPLES::
 
             sage: from sage.combinat.root_system.reflection_group_c import Iterator
-            sage: W = ReflectionGroup(['B', 2])               # optional - gap3
-            sage: I = Iterator(W, W.number_of_reflections())  # optional - gap3
-            sage: list(I.iter_breadth())                      # optional - gap3
+            sage: W = CoxeterGroup(['B',2], implementation="permutation")
+            sage: I = Iterator(W, W.number_of_reflections())
+            sage: list(I.iter_breadth())
             [(),
              (1,3)(2,6)(5,7),
              (1,5)(2,4)(6,8),
@@ -284,9 +301,9 @@ cdef class Iterator(object):
         EXAMPLES::
 
             sage: from sage.combinat.root_system.reflection_group_c import Iterator
-            sage: W = ReflectionGroup(['B', 2])               # optional - gap3
-            sage: I = Iterator(W, W.number_of_reflections())  # optional - gap3
-            sage: for w in I.iter_words_breadth(): w._reduced_word  # optional - gap3
+            sage: W = CoxeterGroup(['B',2], implementation="permutation")
+            sage: I = Iterator(W, W.number_of_reflections())
+            sage: for w in I.iter_words_breadth(): w._reduced_word
             []
             [1]
             [0]
@@ -316,6 +333,49 @@ cdef class Iterator(object):
             u, word, first = cur.pop()
             yield u
             L.append(self.succ_words(u, word, first))
+
+    def iter_parabolic(self):
+        r"""
+        This algorithm is an alternative to the one in *chevie* and about
+        20% faster. It yields indeed all elements in the group rather than
+        applying a given function.
+
+        The output order is not deterministic.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.root_system.reflection_group_c import Iterator
+            sage: W = CoxeterGroup(['B',2], implementation="permutation")
+            sage: I = Iterator(W, W.number_of_reflections())
+            sage: sorted(I.iter_parabolic())
+            [(),
+             (2,8)(3,7)(4,6),
+             (1,3)(2,6)(5,7),
+             (1,3,5,7)(2,8,6,4),
+             (1,5)(2,4)(6,8),
+             (1,5)(2,6)(3,7)(4,8),
+             (1,7)(3,5)(4,8),
+             (1,7,5,3)(2,4,6,8)]
+        """
+        cdef int i,j
+        cdef list coset_reps
+        W = self.S[0].parent()
+
+        cdef list elts = [W.one()]
+
+        for i in range(1, self.n):
+            coset_reps = reduced_coset_representatives(W, self.order[:i],
+                                                       self.order[:i-1], True)
+            elts = [_new_mul_(<PermutationGroupElement>w, <PermutationGroupElement>v)
+                    for w in elts for v in coset_reps]
+        # the list ``elts`` now contains all prods of red coset reps
+
+        coset_reps = reduced_coset_representatives(W, self.order,
+                                                   self.order[:len(self.order)-1], True)
+
+        for w in elts:
+            for v in coset_reps:
+                yield _new_mul_(<PermutationGroupElement>w, <PermutationGroupElement>v)
 
 def iterator_tracking_words(W):
     r"""
@@ -355,8 +415,8 @@ def iterator_tracking_words(W):
         ((1,12)(2,24)(3,19)(4,22)(5,17)(6,20)(7,23)(8,9)(10,21)(11,13)(14,18)(15,16), [0, 0, 1, 0, 0, 1])
         ((1,24,12,2)(3,20,19,6)(4,5,22,17)(7,13,23,11)(8,10,9,21)(14,15,18,16), [0, 0, 1, 1, 0, 0])
     """
-    cdef tuple I = tuple(W.simple_reflections())
-    cdef list index_list = range(len(I))
+    cdef tuple S = tuple(W.simple_reflections())
+    cdef list index_list = list(range(len(S)))
 
     cdef list level_set_cur = [(W.one(), [])]
     cdef set level_set_old = set([ W.one() ])
@@ -368,26 +428,141 @@ def iterator_tracking_words(W):
         for x, word in level_set_cur:
             yield x, word
             for i in index_list:
-                y = x._mul_(I[i])
+                y = _new_mul_(x, <PermutationGroupElement>(S[i]))
                 if y not in level_set_old:
                     level_set_old.add(y)
                     level_set_new.append((y, word+[i]))
         level_set_cur = level_set_new
 
-cdef bint has_descent(PermutationGroupElement w, int i, int N):
+cdef inline bint has_left_descent(PermutationGroupElement w, int i, int N):
     return w.perm[i] >= N
 
-cdef int first_descent(PermutationGroupElement w, int n, int N):
+cdef int first_descent(PermutationGroupElement w, int n, int N, bint left):
     cdef int i
+    if not left:
+        w = ~w
     for i in range(n):
-        if has_descent(w,i,N):
+        if has_left_descent(w, i, N):
             return i
     return -1
 
-cpdef list reduced_word_c(W,w):
+cdef int first_descent_in_parabolic(PermutationGroupElement w, list parabolic,
+                                    int N, bint left):
+    cdef int i
+    if not left:
+        w = ~w
+    # this loop over a list might be slow
+    for i in parabolic:
+        if has_left_descent(w, i, N):
+            return i
+    return -1
+
+cpdef PermutationGroupElement reduce_in_coset(PermutationGroupElement w, tuple S,
+                                              list parabolic, int N, bint right):
+    """
+    Return the minimal length coset representative of ``w`` of the parabolic
+    subgroup indexed by ``parabolic`` (with indices `\{0, \ldots, n\}`).
+
+    EXAMPLES::
+
+        sage: from sage.combinat.root_system.reflection_group_c import reduce_in_coset
+        sage: W = CoxeterGroup(['B',3], implementation="permutation")
+        sage: N = W.number_of_reflections()
+        sage: s = W.simple_reflections()
+        sage: w = s[2] * s[1] * s[3]
+        sage: reduce_in_coset(w, tuple(s), [], N, True).reduced_word()
+        [2, 1, 3]
+        sage: reduce_in_coset(w, tuple(s), [], N, False).reduced_word()
+        [2, 1, 3]
+        sage: reduce_in_coset(w, tuple(s), [0], N, True).reduced_word()
+        [2, 1, 3]
+        sage: reduce_in_coset(w, tuple(s), [0], N, False).reduced_word()
+        [2, 3]
+        sage: reduce_in_coset(w, tuple(s), [0,2], N, True).reduced_word()
+        [2, 1, 3]
+        sage: reduce_in_coset(w, tuple(s), [0,2], N, False).reduced_word()
+        [2]
+    """
+    cdef int i
+    cdef PermutationGroupElement si
+
+    if right:
+        while True:
+            i = first_descent_in_parabolic(w, parabolic, N, True)
+            if i == -1:
+                return w
+            si = <PermutationGroupElement>(S[i])
+            w = _new_mul_(si, w)
+    else:
+        while True:
+            i = first_descent_in_parabolic(w, parabolic, N, False)
+            if i == -1:
+                return w
+            si = <PermutationGroupElement>(S[i])
+            w = _new_mul_(w, si)
+
+cdef list reduced_coset_representatives(W, list parabolic_big, list parabolic_small,
+                                       bint right):
+    cdef tuple S = tuple(W.simple_reflections())
+    cdef int N = W.number_of_reflections()
+    cdef set totest = set([W.one()])
+    cdef set res = set(totest)
+    cdef set new
+
+    while totest:
+        new = set()
+        for w in totest:
+            new.update([reduce_in_coset(_new_mul_(w, <PermutationGroupElement>(S[i])),
+                                        S, parabolic_small, N, right)
+                        for i in parabolic_big])
+        res.update(totest)
+        totest = new.difference(res)#[ w for w in new if w not in res ]
+    return list(res)
+
+cdef parabolic_recursive(PermutationGroupElement x, list v, f):
+    if not v:
+        f(x)
+    else:
+        for y in v[0]:
+            parabolic_recursive(_new_mul_(x, <PermutationGroupElement>y), v[1:], f)
+
+
+def parabolic_iteration_application(W, f):
     r"""
-    Computes a reduced word for the element `w` in the
-    reflection group `W` in the positions ``range(n)``.
+    This is the word-for-word translation of the algorithm in chevie.
+
+    .. NOTE::
+
+        It keeps all products of elements of the reduced coset
+        representatives in memory.
+
+    INPUT:
+
+    - ``W`` -- a real reflection group
+    - ``f`` -- a function with one argument: an element of ``W``
+
+    EXAMPLES::
+
+        sage: W = CoxeterGroup(['E',6], implementation="permutation")
+        sage: from sage.combinat.root_system.reflection_group_c import parabolic_iteration_application
+        sage: lst = []
+        sage: def f(x):
+        ....:     lst.append(x)
+        sage: parabolic_iteration_application(W, f)
+        sage: len(lst) == W.cardinality()
+        True
+    """
+    cdef int i
+    cdef list coset_reps = [reduced_coset_representatives(W, list(range(i+1)),
+                                                          list(range(i)), True)
+                            for i in range(W.rank())]
+
+    parabolic_recursive(W.one(), coset_reps, f)
+
+cpdef list reduced_word_c(W, PermutationGroupElement w):
+    r"""
+    Computes a reduced word for the element ``w`` in the
+    reflection group ``W`` in the positions ``range(n)``.
 
     EXAMPLES::
 
@@ -402,9 +577,37 @@ cpdef list reduced_word_c(W,w):
     cdef int fdes = 0
     cdef list word = []
 
-    while fdes != -1:
-        fdes = first_descent(w,n,N)
-        si = S[fdes]
-        w = si._mul_(w)
+    while True:
+        fdes = first_descent(w, n, N, True)
+        if fdes == -1:
+            break
+        w = _new_mul_(<PermutationGroupElement>(S[fdes]), w)
         word.append(fdes)
-    return word[:-1]
+    return word
+
+cdef PermutationGroupElement _new_mul_(PermutationGroupElement left, PermutationGroupElement right):
+    """
+    Multiply two :class:`PermutationGroupElement` directly without the
+    coercion framework.
+    """
+    cdef type t = type(left)
+    cdef PermutationGroupElement prod = t.__new__(t)
+    cdef int n = left.n
+    cdef int sizeofint = sizeof(int)
+    cdef int n_sizeofint = sizeofint * n
+
+#    if HAS_DICTIONARY(left):
+#        prod.__class__ = left.__class__
+    prod._parent = left._parent
+    prod.n = n
+    if n_sizeofint <= sizeof(prod.perm_buf):
+        prod.perm = prod.perm_buf
+    else:
+        prod.perm = <int *> sig_malloc(n_sizeofint)
+
+    cdef int i
+    for i in range(n):
+        prod.perm[i] = right.perm[left.perm[i]]
+
+    return prod
+

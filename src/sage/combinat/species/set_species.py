@@ -16,10 +16,11 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
+
 from .species import GenericCombinatorialSpecies
 from .generating_series import factorial_stream, _integers_from
 from sage.combinat.species.structure import GenericSpeciesStructure
-from sage.misc.cachefunc import cached_function
 from sage.combinat.species.misc import accept_size
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -45,7 +46,7 @@ class SetSpeciesStructure(GenericSpeciesStructure):
             sage: a.canonical_label()
             {'a', 'b', 'c'}
         """
-        rng = range(1, len(self._labels)+1)
+        rng = list(range(1, len(self._labels) + 1))
         return SetSpeciesStructure(self.parent(), self._labels, rng)
 
     def transport(self, perm):

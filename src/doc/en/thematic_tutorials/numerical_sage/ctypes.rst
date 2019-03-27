@@ -199,8 +199,8 @@ Note the line laplace.timestep.restype=c
 double. By default ctypes assumes the return values are ints. If
 they are not you need to tell it by setting restype to the correct
 return type. If you execute the above code, then solve(u) will
-solve the system. It is comparable to the weave or fortran
-solutions taking around .2 seconds. Alternatively you could do
+solve the system. It is comparable to the fortran solution taking 
+around .2 seconds. Alternatively you could do
 
 ::
 
@@ -209,8 +209,8 @@ solutions taking around .2 seconds. Alternatively you could do
     laplace.solve_in_C(n.ctypes.data_as(c_void_p),n,n,dx,dx)
 
 which computes the solution entirely in C. This is very fast.
-Admittedly we could have had our fortran or weave routines do the
-entire solution at the C/Fortran level and we would have the same
+Admittedly we could have had our fortran routines do the
+entire solution at the Fortran level and we would have the same
 speed.
 
 As I said earlier you can just as easily call a shared object

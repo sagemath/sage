@@ -2,8 +2,9 @@ from __future__ import absolute_import
 
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('sage.functions.piecewise_old', 'Piecewise')   # deprecated
 lazy_import('sage.functions.piecewise', 'piecewise')
+lazy_import('sage.functions.error', ['erf', 'erfc', 'erfi', 'erfinv',
+    'fresnel_sin', 'fresnel_cos'])
 
 from .trig import ( sin, cos, sec, csc, cot, tan,
                    asin, acos, atan,
@@ -19,13 +20,11 @@ from .hyperbolic import ( tanh, sinh, cosh, coth, sech, csch,
 reciprocal_trig_functions = {'sec': cos, 'csc': sin, 'cot': tan, 'sech': cosh, 'csch': sinh, 'coth': tanh}
 
 
-
-from .other import ( ceil, floor, gamma, psi, factorial, beta, binomial,
-                    abs_symbolic, erf, sqrt, log_gamma,
-                    gamma_inc, incomplete_gamma, gamma_inc_lower,
+from .other import ( ceil, floor, abs_symbolic, sqrt,
                     arg, real_part, real, frac,
-                    imag_part, imag, imaginary, conjugate)
-
+                    factorial, binomial,
+                    imag_part, imag, imaginary, conjugate, cases,
+                    complex_root_of)
 from .log import (exp, exp_polar, log, ln, polylog, dilog, lambert_w, harmonic_number)
 
 
@@ -37,8 +36,7 @@ from .bessel import (bessel_I, bessel_J, bessel_K, bessel_Y,
                                    spherical_bessel_J, spherical_bessel_Y,
                                    spherical_hankel1, spherical_hankel2)
 
-from .special import (spherical_harmonic,
-                     error_fcn, elliptic_e,
+from .special import (spherical_harmonic, elliptic_e,
                      elliptic_f, elliptic_ec, elliptic_eu,
                      elliptic_kc, elliptic_pi, elliptic_j)
 
@@ -84,3 +82,6 @@ from .exp_integral import (exp_integral_e, exp_integral_e1, log_integral, li, Li
                           exponential_integral_1, Ei, exp_integral_ei)
 
 from .hypergeometric import hypergeometric, hypergeometric_M, hypergeometric_U
+
+from .gamma import (gamma, psi, beta, log_gamma,
+                    gamma_inc, gamma_inc_lower)

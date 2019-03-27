@@ -44,11 +44,11 @@ class Cryptosystem(parent_old.Parent, Set_generic):
     specialized child classes that implement specific cryptosystems.
     A cryptosystem is a pair of maps
 
-    .. math::
+    .. MATH::
 
         E : {\mathcal K} \rightarrow {\rm Hom}({\mathcal M},{\mathcal C})
 
-    .. math::
+    .. MATH::
 
         D : {\mathcal K} \rightarrow {\rm Hom}({\mathcal C},{\mathcal M})
 

@@ -43,5 +43,3 @@ latex_docclass = {'manual': 'jsbook'}
 # the definition of \\at in the standard preamble of the sphinx doc
 # conflicts with that in babel/french[b]
 latex_elements['preamble'] += '\\let\\at\\undefined'
-
-html_use_smartypants = False

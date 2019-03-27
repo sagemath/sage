@@ -19,6 +19,7 @@ from sage.categories.groups import Groups
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.sets.family import Family
 from sage.combinat.root_system.root_system import RootSystem
@@ -27,6 +28,7 @@ from sage.categories.category import Category
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.rings.integer_ring import ZZ
 from sage.sets.family import LazyFamily
+
 
 def FundamentalGroupOfExtendedAffineWeylGroup(cartan_type, prefix='pi', general_linear=None):
     r"""
@@ -199,6 +201,7 @@ def FundamentalGroupOfExtendedAffineWeylGroup(cartan_type, prefix='pi', general_
             raise ValueError("General Linear Fundamental group is untwisted type A")
     return FundamentalGroupOfExtendedAffineWeylGroup_Class(cartan_type,prefix,finite=True)
 
+
 class FundamentalGroupElement(MultiplicativeGroupElement):
     def __init__(self, parent, x):
         r"""
@@ -269,7 +272,7 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
 
     __invert__ = inverse
 
-    def __cmp__(self, x):
+    def _richcmp_(self, x, op):
         r"""
         Compare ``self`` with `x`.
 
@@ -278,16 +281,16 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
             sage: from sage.combinat.root_system.fundamental_group import FundamentalGroupOfExtendedAffineWeylGroup
             sage: F = FundamentalGroupOfExtendedAffineWeylGroup(['A',3,1])
             sage: x = F(0); y = F(2)
-            sage: y.__cmp__(x)
-            1
-            sage: y.__cmp__(y)
-            0
-            sage: x.__cmp__(y)
-            -1
+            sage: y > x
+            True
+            sage: y == y
+            True
+            sage: y != y
+            False
+            sage: x <= y
+            True
         """
-        if self.__class__  != x.__class__:
-            return cmp(self.__class__,x.__class__)
-        return cmp(self.value(), x.value())
+        return richcmp(self.value(), x.value(), op)
 
     def act_on_affine_weyl(self, w):
         r"""

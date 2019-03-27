@@ -34,7 +34,7 @@ Simplification (note that ``simplify_full`` does not yet call
     sage: a.simplify_hypergeometric()
     1/((-e^x + 1)^e^x)
     sage: a.simplify_hypergeometric(algorithm='sage')
-    (-e^x + 1)^(-e^x)
+    1/((-e^x + 1)^e^x)
 
 Equality testing::
 
@@ -46,7 +46,8 @@ Equality testing::
 
 Computing terms and series::
 
-    sage: z = var('z')
+    sage: var('z')
+    z
     sage: hypergeometric([], [], z).series(z, 0)
     Order(1)
     sage: hypergeometric([], [], z).series(z, 1)
@@ -85,9 +86,11 @@ Computing terms and series::
 
 Plotting::
 
-    sage: plot(hypergeometric([1, 1], [3, 3, 3], x), x, -30, 30)
+    sage: f(x) = hypergeometric([1, 1], [3, 3, 3], x)
+    sage: plot(f, x, -30, 30)
     Graphics object consisting of 1 graphics primitive
-    sage: complex_plot(hypergeometric([x], [], 2), (-1, 1), (-1, 1))
+    sage: g(x) = hypergeometric([x], [], 2)
+    sage: complex_plot(g, (-1, 1), (-1, 1))
     Graphics object consisting of 1 graphics primitive
 
 Numeric evaluation::
@@ -103,7 +106,7 @@ Numeric evaluation::
     sage: hypergeometric([1, 2, 3], [4, 5, 6], 1/2).n(digits=30)
     1.02573619590133865036584139535
     sage: hypergeometric([5 - 3*I], [3/2, 2 + I, sqrt(2)], 4 + I).n()
-    5.52605111678805 - 7.86331357527544*I
+    5.52605111678803 - 7.86331357527540*I
     sage: hypergeometric((10, 10), (50,), 2.)
     -1705.75733163554 - 356.749986056024*I
 
@@ -130,7 +133,8 @@ The confluent hypergeometric functions can arise as solutions to second-order
 differential equations (example from `here <http://ask.sagemath.org/question/
 1168/how-can-one-use-maxima-kummer-confluent-functions>`_)::
 
-    sage: m = var('m')
+    sage: var('m')
+    m
     sage: y = function('y')(x)
     sage: desolve(diff(y, x, 2) + 2*x*diff(y, x) - 4*m*y, y,
     ....:         contrib_ode=true, ivar=x)
@@ -141,7 +145,7 @@ Series expansions of confluent hypergeometric functions::
 
     sage: hypergeometric_M(2, 2, x).series(x, 3)
     1 + 1*x + 1/2*x^2 + Order(x^3)
-    sage: hypergeometric_U(2, 2, x).series(x == 3, 100).subs(x=1).n()
+    sage: hypergeometric_U(2, 2, x).series(x == 3, 100).subs(x=1).n() # known bug (see :trac:`25688`)
     0.403652637676806
     sage: hypergeometric_U(2, 2, 1).n()
     0.403652637676806
@@ -157,19 +161,14 @@ Series expansions of confluent hypergeometric functions::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 from sage.arith.all import binomial, rising_factorial, factorial
-from sage.functions.other import sqrt, gamma, real_part
-from sage.functions.log import exp, log
-from sage.functions.trig import sin
-from sage.functions.hyperbolic import cosh, sinh
-from sage.functions.other import erf
 from sage.symbolic.constants import pi
-from sage.symbolic.all import I
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.ring import SR
 from sage.structure.element import get_coercion_model
@@ -179,6 +178,12 @@ from sage.libs.mpmath import utils as mpmath_utils
 from sage.symbolic.expression import Expression
 from sage.calculus.functional import derivative
 from functools import reduce
+
+from .gamma import gamma
+from .other import sqrt, real_part
+from .log import exp, log
+from .hyperbolic import cosh, sinh
+from .error import erf
 
 
 def rational_param_as_tuple(x):
@@ -226,7 +231,7 @@ class Hypergeometric(BuiltinFunction):
     def __init__(self):
         """
         Initialize class.
-        
+
         EXAMPLES::
 
             sage: maxima(hypergeometric)
@@ -236,18 +241,19 @@ class Hypergeometric(BuiltinFunction):
                                  conversions={'mathematica':
                                               'HypergeometricPFQ',
                                               'maxima': 'hypergeometric',
-                                              'sympy': 'hyper'})
+                                              'sympy': 'hyper',
+                                              'fricas': 'hypergeometricF'})
 
     def __call__(self, a, b, z, **kwargs):
         """
         Return symbolic hypergeometric function expression.
-         
+
         INPUT:
-    
+
         - ``a`` -- a list or tuple of parameters
         - ``b`` -- a list or tuple of parameters
         - ``z`` -- a number or symbolic expression
-    
+
         EXAMPLES::
 
             sage: hypergeometric([], [], 1)
@@ -260,7 +266,7 @@ class Hypergeometric(BuiltinFunction):
             hypergeometric((), (), x)
             sage: hypergeometric([x], [], x^2)
             hypergeometric((x,), (), x^2)
-    
+
         The only simplification that is done automatically is returning 1
         if ``z`` is 0. For other simplifications use the
         ``simplify_hypergeometric`` method.
@@ -291,8 +297,9 @@ class Hypergeometric(BuiltinFunction):
             sage: hypergeometric([], [], 0)
             1
         """
-        if not isinstance(a,tuple) or not isinstance(b,tuple):
+        if not isinstance(a, tuple) or not isinstance(b, tuple):
             raise TypeError("The first two parameters must be of type list")
+
         if not isinstance(z, Expression) and z == 0:  # Expression is excluded
             return Integer(1)                         # to avoid call to Maxima
 
@@ -321,8 +328,9 @@ class Hypergeometric(BuiltinFunction):
         # We need to override this for hypergeometric functions since
         # the first 2 arguments are tuples and the generic _evalf_try_
         # cannot handle that.
-        if not isinstance(a,tuple) or not isinstance(b,tuple):
+        if not isinstance(a, tuple) or not isinstance(b, tuple):
             return None
+
         args = list(a) + list(b) + [z]
         if any(self._is_numerical(x) for x in args):
             if not any(isinstance(x, Expression) for x in args):
@@ -372,7 +380,7 @@ class Hypergeometric(BuiltinFunction):
                 hypergeometric([c + 1 for c in a], [c + 1 for c in b], z))
 
     class EvaluationMethods(object):
-        def _fast_float_(cls, self, *args):
+        def _fast_float_(self, *args):
             """
             Do not support the old ``fast_float``.
 
@@ -391,7 +399,7 @@ class Hypergeometric(BuiltinFunction):
             """
             raise NotImplementedError
 
-        def _fast_callable_(cls, self, a, b, z, etb):
+        def _fast_callable_(self, a, b, z, etb):
             """
             Override the ``fast_callable`` method.
 
@@ -408,14 +416,17 @@ class Hypergeometric(BuiltinFunction):
                 sage: h._fast_callable_(etb)
                 {hypergeometric((), (), x)}(v_0)
 
-                sage: y = var('y')
-                sage: fast_callable(hypergeometric([y], [], x),
-                ....:               vars=[x, y])(3, 4)
+                sage: var('x, y')
+                (x, y)
+                sage: f = fast_callable(hypergeometric([y], [], x), vars=[x, y])
+                sage: f(3, 4)
+                doctest:...: DeprecationWarning: Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)
+                See http://trac.sagemath.org/5930 for details.
                 hypergeometric((4,), (), 3)
             """
             return etb.call(self, *map(etb.var, etb._vars))
 
-        def sorted_parameters(cls, self, a, b, z):
+        def sorted_parameters(self, a, b, z):
             """
             Return with parameters sorted in a canonical order.
 
@@ -427,7 +438,7 @@ class Hypergeometric(BuiltinFunction):
             """
             return hypergeometric(sorted(a), sorted(b), z)
 
-        def eliminate_parameters(cls, self, a, b, z):
+        def eliminate_parameters(self, a, b, z):
             """
             Eliminate repeated parameters by pairwise cancellation of identical
             terms in ``a`` and ``b``.
@@ -460,7 +471,7 @@ class Hypergeometric(BuiltinFunction):
                 return hypergeometric(aa, bb, z)
             return self
 
-        def is_termwise_finite(cls, self, a, b, z):
+        def is_termwise_finite(self, a, b, z):
             """
             Determine whether all terms of ``self`` are finite. Any infinite
             terms or ambiguous terms beyond the first zero, if one exists,
@@ -508,7 +519,7 @@ class Hypergeometric(BuiltinFunction):
                     return False
             return True
 
-        def is_terminating(cls, self, a, b, z):
+        def is_terminating(self, a, b, z):
             r"""
             Determine whether the series represented by self terminates
             after a finite number of terms, i.e. whether any of the
@@ -533,7 +544,7 @@ class Hypergeometric(BuiltinFunction):
                     return self.is_termwise_finite()
             return False
 
-        def is_absolutely_convergent(cls, self, a, b, z):
+        def is_absolutely_convergent(self, a, b, z):
             r"""
             Determine whether ``self`` converges absolutely as an infinite
             series. ``False`` is returned if not all terms are finite.
@@ -615,7 +626,7 @@ class Hypergeometric(BuiltinFunction):
                         return True
             return False
 
-        def terms(cls, self, a, b, z, n=None):
+        def terms(self, a, b, z, n=None):
             """
             Generate the terms of ``self`` (optionally only ``n`` terms).
 
@@ -644,7 +655,7 @@ class Hypergeometric(BuiltinFunction):
                 t /= k
                 k += 1
 
-        def deflated(cls, self, a, b, z):
+        def deflated(self, a, b, z):
             r"""
             Rewrite as a linear combination of functions of strictly lower
             degree by eliminating all parameters ``a[i]`` and ``b[j]`` such
@@ -679,10 +690,10 @@ class Hypergeometric(BuiltinFunction):
             """
             return sum(map(prod, self._deflated()))
 
-        def _deflated(cls, self, a, b, z):
+        def _deflated(self, a, b, z):
             """
             Private helper to return list of deflated terms.
-            
+
             EXAMPLES::
 
                 sage: x = hypergeometric([5], [4], 3)
@@ -703,7 +714,7 @@ class Hypergeometric(BuiltinFunction):
                         aaaa = aa[:i] + aa[i + 1:]
                         bbbb = bb[:j] + bb[j + 1:]
                         terms = []
-                        for k in xrange(m + 1):
+                        for k in range(m + 1):
                             # TODO: could rewrite prefactors as recurrence
                             term = binomial(m, k)
                             for c in aaaa:
@@ -763,7 +774,7 @@ def closed_form(hyp):
         sage: closed_form(hypergeometric([], [], z))
         e^z
         sage: closed_form(hypergeometric([a], [], z))
-        (-z + 1)^(-a)
+        1/((-z + 1)^a)
         sage: closed_form(hypergeometric([1, 1, 2], [1, 1], z))
         (z - 1)^(-2)
         sage: closed_form(hypergeometric([2, 3], [1], x))
@@ -837,21 +848,21 @@ def closed_form(hyp):
                 if m <= n:
                     return (exp(z) * sum(rf(m - n, k) * (-z) ** k /
                             factorial(k) / rf(m, k) for k in
-                            xrange(n - m + 1)))
+                            range(n - m + 1)))
                 else:
                     T = sum(rf(n - m + 1, k) * z ** k /
                             (factorial(k) * rf(2 - m, k)) for k in
-                            xrange(m - n))
+                            range(m - n))
                     U = sum(rf(1 - n, k) * (-z) ** k /
                             (factorial(k) * rf(2 - m, k)) for k in
-                            xrange(n))
+                            range(n))
                     return (factorial(m - 2) * rf(1 - m, n) *
                             z ** (1 - m) / factorial(n - 1) *
                             (T - exp(z) * U))
 
         if p == 2 and q == 1:
-            R12 = QQ('1/2')
-            R32 = QQ('3/2')
+            R12 = QQ((1, 2))
+            R32 = QQ((3, 2))
 
             def _2f1(a, b, c, z):
                 """
@@ -918,7 +929,7 @@ class Hypergeometric_M(BuiltinFunction):
     `y = M(a,b,z)`, is defined to be the solution to Kummer's differential
     equation
 
-    .. math::
+    .. MATH::
 
              zy'' + (b-z)y' - ay = 0.
 
@@ -946,9 +957,9 @@ class Hypergeometric_M(BuiltinFunction):
         1/2*sqrt(pi)*erf(1)*e
     """
     def __init__(self):
-        """
+        r"""
         TESTS::
-        
+
             sage: maxima(hypergeometric_M(1,1,x))
             kummer_m(1,1,_SAGE_VAR_x)
             sage: latex(hypergeometric_M(1,1,x))
@@ -957,13 +968,14 @@ class Hypergeometric_M(BuiltinFunction):
         BuiltinFunction.__init__(self, 'hypergeometric_M', nargs=3,
                                  conversions={'mathematica':
                                               'Hypergeometric1F1',
-                                              'maxima': 'kummer_m'},
+                                              'maxima': 'kummer_m',
+                                              'fricas': 'kummerM'},
                                  latex_name='M')
 
     def _eval_(self, a, b, z, **kwargs):
         """
         TESTS::
-        
+
             sage: (a,b)=var('a,b')
             sage: hypergeometric_M(a,b,0)
             1
@@ -975,7 +987,7 @@ class Hypergeometric_M(BuiltinFunction):
     def _evalf_(self, a, b, z, parent, algorithm=None):
         """
         TESTS::
-        
+
             sage: hypergeometric_M(1,1,1).n()
             2.71828182845905
         """
@@ -985,7 +997,7 @@ class Hypergeometric_M(BuiltinFunction):
     def _derivative_(self, a, b, z, diff_param):
         """
         TESTS::
-        
+
             sage: diff(hypergeometric_M(1,1,x),x,3)
             hypergeometric_M(4, 4, x)
             sage: diff(hypergeometric_M(x,1,1),x,3)
@@ -998,14 +1010,15 @@ class Hypergeometric_M(BuiltinFunction):
         raise NotImplementedError('derivative of hypergeometric function '
                                   'with respect to parameters')
 
-    class EvaluationMethods:
-        def generalized(cls, self, a, b, z):
+    class EvaluationMethods(object):
+        def generalized(self, a, b, z):
             """
             Return as a generalized hypergeometric function
 
             EXAMPLES::
 
-                sage: a, b, z = var('a b z')
+                sage: var('a b z')
+                (a, b, z)
                 sage: hypergeometric_M(a, b, z).generalized()
                 hypergeometric((a,), (b,), z)
 
@@ -1020,7 +1033,7 @@ class Hypergeometric_U(BuiltinFunction):
     `y = U(a,b,z)`, is defined to be the solution to Kummer's differential
     equation
 
-    .. math::
+    .. MATH::
 
              zy'' + (b-z)y' - ay = 0.
 
@@ -1055,9 +1068,9 @@ class Hypergeometric_U(BuiltinFunction):
 
     """
     def __init__(self):
-        """
+        r"""
         TESTS::
-        
+
             sage: maxima(hypergeometric_U(1,1,x))
             kummer_u(1,1,_SAGE_VAR_x)
             sage: latex(hypergeometric_U(1,1,x))
@@ -1066,7 +1079,8 @@ class Hypergeometric_U(BuiltinFunction):
         BuiltinFunction.__init__(self, 'hypergeometric_U', nargs=3,
                                  conversions={'mathematica':
                                               'HypergeometricU',
-                                              'maxima': 'kummer_u'},
+                                              'maxima': 'kummer_u',
+                                              'fricas': 'kummerU'},
                                  latex_name='U')
 
     def _eval_(self, a, b, z, **kwargs):
@@ -1075,7 +1089,7 @@ class Hypergeometric_U(BuiltinFunction):
     def _evalf_(self, a, b, z, parent, algorithm=None):
         """
         TESTS::
-        
+
             sage: hypergeometric_U(1,1,1).n()
             0.596347362323194
         """
@@ -1085,7 +1099,7 @@ class Hypergeometric_U(BuiltinFunction):
     def _derivative_(self, a, b, z, diff_param):
         """
         TESTS::
-        
+
             sage: diff(hypergeometric_U(1,1,x),x,3)
             -6*hypergeometric_U(4, 4, x)
             sage: diff(hypergeometric_U(x,1,1),x,3)
@@ -1098,16 +1112,17 @@ class Hypergeometric_U(BuiltinFunction):
         raise NotImplementedError('derivative of hypergeometric function '
                                   'with respect to parameters')
 
-    class EvaluationMethods:
-        def generalized(cls, self, a, b, z):
+    class EvaluationMethods(object):
+        def generalized(self, a, b, z):
             """
             Return in terms of the generalized hypergeometric function
 
             EXAMPLES::
 
-                sage: a, b, z = var('a b z')
+                sage: var('a b z')
+                (a, b, z)
                 sage: hypergeometric_U(a, b, z).generalized()
-                z^(-a)*hypergeometric((a, a - b + 1), (), -1/z)
+                hypergeometric((a, a - b + 1), (), -1/z)/z^a
                 sage: hypergeometric_U(1, 3, 1/2).generalized()
                 2*hypergeometric((1, -1), (), -2)
                 sage: hypergeometric_U(3, I, 2).generalized()

@@ -1,4 +1,2 @@
-#!/usr/bin/env bash
-
 cd src
-python setup.py install
+sdh_pip_install .

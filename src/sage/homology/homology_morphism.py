@@ -33,6 +33,7 @@ from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
 from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
 from sage.rings.rational_field import QQ
+from sage.homology.simplicial_complex import SimplicialComplex
 
 class InducedHomologyMorphism(Morphism):
     r"""
@@ -77,7 +78,7 @@ class InducedHomologyMorphism(Morphism):
         sage: T = simplicial_complexes.Torus()
         sage: y = T.homology_with_basis(QQ).basis()[(1,1)]
         sage: y.to_cycle()
-        (0, 2) - (0, 5) + (2, 5)
+        (0, 5) - (0, 6) + (5, 6)
 
     Since `(0,2) - (0,5) + (2,5)` is a cycle representing a homology
     class in the torus, we can define a map `S^1 \to T` inducing an
@@ -95,22 +96,22 @@ class InducedHomologyMorphism(Morphism):
         sage: g_star.to_matrix(0)
         [1]
         sage: g_star.to_matrix(1)
-        [0]
-        [1]
+        [-1]
+        [ 0]
         sage: g_star.to_matrix()
-        [1|0]
-        [-+-]
-        [0|0]
-        [0|1]
-        [-+-]
-        [0|0]
+        [ 1| 0]
+        [--+--]
+        [ 0|-1]
+        [ 0| 0]
+        [--+--]
+        [ 0| 0]
 
     We can evaluate such a map on (co)homology classes::
 
         sage: H = S1.homology_with_basis(QQ)
         sage: a = H.basis()[(1,0)]
         sage: g_star(a)
-        h_{1,1}
+        -h_{1,0}
 
         sage: T = S1.product(S1, is_mutable=False)
         sage: diag = Hom(S1,T).diagonal_morphism()
@@ -119,7 +120,7 @@ class InducedHomologyMorphism(Morphism):
         sage: diag_c(b)
         h^{1,0}
         sage: diag_c(c)
-        0
+        h^{1,0}
     """
     def __init__(self, map, base_ring=None, cohomology=False):
         """
@@ -156,8 +157,9 @@ class InducedHomologyMorphism(Morphism):
             sage: g = Hom(S1, S1).identity()
             sage: h = g.induced_homology_morphism(QQ)
         """
-        if map.domain().is_mutable() or map.codomain().is_mutable():
-            raise ValueError('the domain and codomain complexes must be immutable')
+        if (isinstance(map.domain(), SimplicialComplex)
+            and (map.domain().is_mutable() or map.codomain().is_mutable())):
+                raise ValueError('the domain and codomain complexes must be immutable')
         if base_ring is None:
             base_ring = QQ
         if not base_ring.is_field():
@@ -167,8 +169,8 @@ class InducedHomologyMorphism(Morphism):
         self._map = map
         self._base_ring = base_ring
         if cohomology:
-            domain = map.domain().cohomology_ring(base_ring=base_ring)
-            codomain = map.codomain().cohomology_ring(base_ring=base_ring)
+            domain = map.codomain().cohomology_ring(base_ring=base_ring)
+            codomain = map.domain().cohomology_ring(base_ring=base_ring)
             Morphism.__init__(self, Hom(domain, codomain,
                                         category=GradedAlgebrasWithBasis(base_ring)))
         else:
@@ -221,15 +223,17 @@ class InducedHomologyMorphism(Morphism):
             [0|2]
         """
         base_ring = self.base_ring()
-        if self._cohomology:
-            domain = self._map.codomain()
-            codomain = self._map.domain()
-        else:
-            domain = self._map.domain()
-            codomain = self._map.codomain()
+        # Compute homology case first.
+        domain = self._map.domain()
+        codomain = self._map.codomain()
         phi_codomain, H_codomain = codomain.algebraic_topological_model(base_ring)
         phi_domain, H_domain = domain.algebraic_topological_model(base_ring)
-        mat = phi_codomain.pi().to_matrix(deg) * self._map.associated_chain_complex_morphism(self.base_ring(), cochain=self._cohomology).to_matrix(deg) * phi_domain.iota().to_matrix(deg)
+        mat = (phi_codomain.pi().to_matrix(deg)
+               * self._map.associated_chain_complex_morphism(self.base_ring()).to_matrix(deg)
+               * phi_domain.iota().to_matrix(deg))
+        if self._cohomology:
+            mat = mat.transpose()
+            H_domain, H_codomain = H_codomain, H_domain
         if deg is None:
             import numpy as np
             betti_domain = [H_domain.free_module_rank(n)

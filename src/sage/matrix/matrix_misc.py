@@ -17,6 +17,8 @@ Miscellaneous matrix functions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from six.moves import range
+from six import iteritems
 
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -24,180 +26,8 @@ from sage.rings.integer_ring import ZZ
 _Fields = Fields()
 
 def row_iterator(A):
-    for i in xrange(A.nrows()):
+    for i in range(A.nrows()):
         yield A.row(i)
-
-def weak_popov_form(M,ascend=True):
-    from sage.misc.superseded import deprecation
-    deprecation(16888, 'You should call row_reduced_form() instead')
-    return row_reduced_form(M)
-
-def row_reduced_form(M,transformation=False):
-    """
-    This function computes a row reduced form of a matrix over a rational
-    function field `k(x)`, for `k` a field.
-
-    INPUT:
-
-     - `M` - a matrix over `k(x)` or `k[x]` for `k` a field.
-     - `transformation` - A boolean (default: `False`). If this boolean is set to `True` a second matrix is output (see OUTPUT).
-     
-    OUTPUT:
-
-    If `transformation` is `False`, the output is `W`, a row reduced form of `M`.
-    
-    If `transformation` is `True`, this function will output a pair `(W,N)` consisting of two matrices over `k(x)`:
-
-    1. `W` - a row reduced form of `M`.
-    2. `N` - an invertible matrix over `k(x)` satisfying `NW = M`.
-
-    EXAMPLES:
-
-    The function expects matrices over the rational function field, but
-    other examples below show how one can provide matrices over the ring
-    of polynomials (whose quotient field is the rational function field).
-
-    ::
-
-        sage: R.<t> = GF(3)['t']
-        sage: K = FractionField(R)
-        sage: import sage.matrix.matrix_misc
-        sage: sage.matrix.matrix_misc.row_reduced_form(matrix([[(t-1)^2/t],[(t-1)]]))
-        [(2*t + 1)/t]
-        [          0]
-
-    The last example shows the usage of the transformation parameter.
-        
-    ::
-        sage: Fq.<a> = GF(2^3)
-        sage: Fx.<x> = Fq[]
-        sage: A = matrix(Fx,[[x^2+a,x^4+a],[x^3,a*x^4]])
-        sage: from sage.matrix.matrix_misc import row_reduced_form
-        sage: row_reduced_form(A,transformation=True)
-        (
-        [(a^2 + 1)*x^3 + x^2 + a                       a]  [      1 a^2 + 1]
-        [                    x^3                   a*x^4], [      0                 1]
-        )
-            
-    NOTES:
-
-    See docstring for row_reduced_form method of matrices for
-    more information.
-    """
-
-    # determine whether M has polynomial or rational function coefficients
-    R0 = M.base_ring()
-
-    #Compute the base polynomial ring
-    if R0 in _Fields:
-        R = R0.base()
-    else:
-        R = R0
-    from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-    if not is_PolynomialRing(R) or not R.base_ring().is_field():
-        raise TypeError("the coefficients of M must lie in a univariate polynomial ring over a field")
-
-    t = R.gen()
-
-    # calculate least-common denominator of matrix entries and clear
-    # denominators. The result lies in R
-    from sage.arith.all import lcm
-    from sage.matrix.constructor import matrix
-    from sage.misc.functional import numerator
-    if R0 in _Fields:
-        den = lcm([a.denominator() for a in M.list()])
-        num = matrix([[numerator(_) for _ in v] for v in (M*den).rows()])
-    else:
-        # No need to clear denominators
-        num = M
-
-    r = [list(v) for v in num.rows()]
-
-    if transformation:
-        N = matrix(num.nrows(), num.nrows(), R(1)).rows()
-
-
-    rank = 0
-    num_zero = 0
-    if M.is_zero():
-        num_zero = len(r)
-    while rank != len(r) - num_zero:
-        # construct matrix of leading coefficients
-        v = []
-        for w in map(list, r):
-            # calculate degree of row (= max of degree of entries)
-            d = max([e.numerator().degree() for e in w])
-
-            # extract leading coefficients from current row
-            x = []
-            for y in w:
-                if y.degree() >= d and d >= 0:   x.append(y.coefficients(sparse=False)[d])
-                else:                            x.append(0)
-            v.append(x)
-        l = matrix(v)
-
-        # count number of zero rows in leading coefficient matrix
-        # because they do *not* contribute interesting relations
-        num_zero = 0
-        for v in l.rows():
-            is_zero = 1
-            for w in v:
-                if w != 0:
-                    is_zero = 0
-            if is_zero == 1:
-                num_zero += 1
-
-        # find non-trivial relations among the columns of the
-        # leading coefficient matrix
-        kern = l.kernel().basis()
-        rank = num.nrows() - len(kern)
-
-        # do a row operation if there's a non-trivial relation
-        if not rank == len(r) - num_zero:
-            for rel in kern:
-                # find the row of num involved in the relation and of
-                # maximal degree
-                indices = []
-                degrees = []
-                for i in range(len(rel)):
-                    if rel[i] != 0:
-                        indices.append(i)
-                        degrees.append(max([e.degree() for e in r[i]]))
-
-                # find maximum degree among rows involved in relation
-                max_deg = max(degrees)
-
-                # check if relation involves non-zero rows
-                if max_deg != -1:
-                    i = degrees.index(max_deg)
-                    rel /= rel[indices[i]]
-
-                    for j in range(len(indices)):
-                        if j != i:
-                            # do the row operation
-                            v = []
-                            for k in range(len(r[indices[i]])):
-                                v.append(r[indices[i]][k] + rel[indices[j]] * t**(max_deg-degrees[j]) * r[indices[j]][k])
-                            r[indices[i]] = v
-
-                            if transformation:
-                                # If the user asked for it, record the row operation 
-                                v = []
-                                for k in range(len(N[indices[i]])):
-                                    v.append(N[indices[i]][k] + rel[indices[j]] * t**(max_deg-degrees[j]) * N[indices[j]][k])
-                                N[indices[i]] = v
-
-                    # remaining relations (if any) are no longer valid,
-                    # so continue onto next step of algorithm
-                    break
-    if is_PolynomialRing(R0):
-        A = matrix(R, r)
-    else:
-        A = matrix(R, r)/den
-    if transformation:
-        return (A, matrix(N))
-    else:
-        return A
 
 def prm_mul(p1, p2, mask_free, prec):
     """
@@ -228,10 +58,10 @@ def prm_mul(p1, p2, mask_free, prec):
     p = {}
     if not p2:
         return p
-    for exp1, v1 in p1.iteritems():
+    for exp1, v1 in iteritems(p1):
         if v1.is_zero():
             continue
-        for exp2, v2 in p2.iteritems():
+        for exp2, v2 in iteritems(p2):
             if exp1 & exp2:
                 continue
             v = v1 * v2
@@ -272,7 +102,7 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
     ``A.permanental_minor(i)``).
 
     The algorithm implemented by that function has been developed by P. Butera
-    and M. Pernici, see [ButPer]. Its complexity is `O(2^n m^2 n)` where `m` and
+    and M. Pernici, see [BP2015]_. Its complexity is `O(2^n m^2 n)` where `m` and
     `n` are the number of rows and columns of `A`.  Moreover, if `A` is a banded
     matrix with width `w`, that is `A_{ij}=0` for `|i - j| > w` and `w < n/2`,
     then the complexity of the algorithm is `O(4^w (w+1) n^2)`.
@@ -418,7 +248,7 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
         `k` rows of `A`;  `\eta_i` is associated to the i-th column;
         nilpotency avoids having twice the same column in a product of `A`'s.
 
-        For more details, see the article [ButPer].
+        For more details, see the article [BP2015]_.
 
         From a technical point of view, the product in
         `K[\eta_1, \ldots, \eta_n][t]` is implemented as a subroutine in
@@ -432,11 +262,6 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
         to the key `6 = (110)_2` while `\eta_0 \eta_3` has key `9 = (1001)_2`.
         In particular all operations on monomials are implemented via bitwise
         operations on the keys.
-
-    REFERENCES:
-
-    .. [ButPer] \P. Butera and M. Pernici "Sums of permanental minors
-       using Grassmann algebra", :arxiv:`1406.5337`
     """
     if permanent_only:
         prec = None
@@ -451,7 +276,7 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
     A = A.rows()
     p = {0: K.one()}
     t = K.gen()
-    vars_to_do = range(ncols)
+    vars_to_do = list(range(ncols))
     for i in range(nrows):
         # build the polynomial p1 = 1 + t sum A_{ij} eta_j
         if permanent_only:

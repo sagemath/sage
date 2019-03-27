@@ -55,7 +55,7 @@ with root discriminant `\le 10`.
     [False, True, True, True, False, False, True, True, False, False, False, False, False, True, True, False, False, True, False, False, False]
 
 Eight out of 21 such fields are Galois (with Galois group `C_4`
-or `C_2 \times C_2`); the others have have Galois closure of degree 8
+or `C_2 \times C_2`); the others have Galois closure of degree 8
 (with Galois group `D_8`).
 
 Finally, we compute the cubic extensions of `\QQ(\zeta_7)^+` with
@@ -144,7 +144,6 @@ def integral_elements_in_box(K, C):
         [-1/2*a + 2, 1/4*a^2 + 1/2*a, 0, 1, 2, 3, 4,...-1/4*a^2 - 1/2*a + 5, 1/2*a + 3, -1/4*a^2 + 5]
     """
     d = K.degree()
-    Z_F = K.maximal_order()
     Foo = K.real_embeddings()
     B = K.reduced_basis()
 
@@ -195,20 +194,17 @@ def integral_elements_in_box(K, C):
 
     from sage.geometry.lattice_polytope import LatticePolytope
     P = LatticePolytope(M)
-    S = []
 
     try:
         pts = P.points()
     except ValueError:
         return []
 
+    S = []
     for p in pts:
-        theta = sum([ p.list()[i]*B[i] for i in range(d)])
-        inbounds = True
-        for i in range(d):
-            inbounds = inbounds and Foo[i](theta) >= C[i][0] and Foo[i](theta) <= C[i][1]
-
-        if inbounds:
+        theta = sum(a * b for a, b in zip(p.list(), B))
+        if all((C[i][0] <= Foo[i](theta) <= C[i][1])
+               for i in range(d)):
             S.append(theta)
 
     return S
@@ -261,7 +257,7 @@ class tr_data_rel:
         self.m = m
         d = F.degree()
         self.d = d
-        self.n = m*d
+        self.n = n = m*d
         self.B = B
         self.gamma = hermite_constant(self.n-self.d)
 
@@ -288,7 +284,7 @@ class tr_data_rel:
                 for j in range(len(anm1s)):
                     anm1s[j] = [ anm1s[j] + [i] for i in range(m)]
                 anm1s = sum(anm1s, [])
-            anm1s = [sum([Z_Fbasis[i]*a[i] for i in range(self.d)]) for a in anm1s]
+            anm1s = [sum([Z_Fbasis[i] * aa[i] for i in range(self.d)]) for aa in anm1s]
             # Minimize trace in class.
             import numpy
             for i in range(len(anm1s)):
@@ -322,7 +318,7 @@ class tr_data_rel:
             self.k = k
             a = [0]*(k+1) + a
             self.amaxvals = [[]]*m
-            for i in range(0,n+1):
+            for i in range(n+1):
                 self.a[i] = a[i]
 
             # Bounds come from an application of Lagrange multipliers in degrees 2,3.
@@ -373,11 +369,9 @@ class tr_data_rel:
 
         the successor polynomial as a coefficient list.
         """
-
         import numpy
 
         m = self.m
-        n = self.n
         k = self.k
         d = self.d
 
@@ -702,8 +696,8 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
     Each of the outputs must be elements of Sage if ``return_pari_objects``
     is set to ``False``::
 
-        sage: enumerate_totallyreal_fields_rel(F, 2, 2000)[0][1].parent()
-        Interface to the PARI C library
+        sage: type(enumerate_totallyreal_fields_rel(F, 2, 2000)[0][1])
+        <type 'cypari2.gen.Gen'>
         sage: enumerate_totallyreal_fields_rel(F, 2, 2000, return_pari_objects=False)[0][0].parent()
         Integer Ring
         sage: enumerate_totallyreal_fields_rel(F, 2, 2000, return_pari_objects=False)[0][1].parent()
@@ -855,9 +849,9 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
                 S[(d, ng)] = Fx([-1,6,-5,1])
 
     # Convert S to a sorted list of triples [d, fabs, f], taking care
-    # to use cmp() and not the comparison operators on PARI polynomials.
+    # not to use the comparison operators on PARI polynomials.
     S = [[s[0], s[1], t] for s, t in S.items()]
-    S.sort(cmp=lambda x, y: cmp(x[0], y[0]) or cmp(x[1], y[1]))
+    S.sort(key=lambda x: (x[0], [QQ(cf) for cf in x[1].polrecip().Vec()]))
 
     # Now check for isomorphic fields
     weed_fields(S)
@@ -930,8 +924,8 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
 
         sage: enumerate_totallyreal_fields_all(2, 10)
         [[5, x^2 - x - 1], [8, x^2 - 2]]
-        sage: enumerate_totallyreal_fields_all(2, 10)[0][1].parent()
-        Interface to the PARI C library
+        sage: type(enumerate_totallyreal_fields_all(2, 10)[0][1])
+        <type 'cypari2.gen.Gen'>
         sage: enumerate_totallyreal_fields_all(2, 10, return_pari_objects=False)[0][1].parent()
         Univariate Polynomial Ring in x over Rational Field
 
@@ -969,13 +963,12 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
                     S += [[t[0],pari(t[1]).Polrev()] for t in T[1]]
                 else:
                     S += [[t[0],t[1]] for t in T]
-                j = i+1
                 for E in enumerate_totallyreal_fields_prim(n/d, int(math.floor((1.*B)**(1./d)/(1.*Sds[i][0])**(n*1./d**2)))):
                     for EF in F.composite_fields(NumberField(ZZx(E[1]), 'u')):
                         if EF.degree() == n and EF.disc() <= B:
                             S.append([EF.disc(), pari(EF.absolute_polynomial())])
     S += enumerate_totallyreal_fields_prim(n, B, verbose=verbose)
-    S.sort(cmp=lambda x, y: cmp(x[0], y[0]) or cmp(x[1], y[1]))
+    S.sort(key=lambda x: (x[0], [QQ(cf) for cf in x[1].polrecip().Vec()]))
     weed_fields(S)
 
     # Output.

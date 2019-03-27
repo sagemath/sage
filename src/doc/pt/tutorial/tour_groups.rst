@@ -50,7 +50,7 @@ O Sage também inclui grupos clássicos matriciais sobre corpos finitos:
     sage: MS = MatrixSpace(GF(7), 2)
     sage: gens = [MS([[1,0],[-1,1]]),MS([[1,1],[0,1]])]
     sage: G = MatrixGroup(gens)
-    sage: G.conjugacy_class_representatives()
+    sage: G.conjugacy_classes_representatives()
     (
     [1 0]  [0 6]  [0 4]  [6 0]  [0 6]  [0 4]  [0 6]  [0 6]  [0 6]  [4 0]
     [0 1], [1 5], [5 5], [0 6], [1 2], [5 2], [1 0], [1 4], [1 3], [0 2],

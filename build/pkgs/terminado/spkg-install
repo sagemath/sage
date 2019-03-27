@@ -1,3 +1,1 @@
-#!/usr/bin/env bash
-
-cd src && pip install --verbose --no-index .
+cd src && sdh_pip_install .

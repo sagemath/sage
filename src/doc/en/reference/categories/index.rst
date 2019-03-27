@@ -57,6 +57,7 @@ Individual Categories
    sage/categories/commutative_rings
    sage/categories/complete_discrete_valuation
    sage/categories/complex_reflection_groups
+   sage/categories/complex_reflection_or_generalized_coxeter_groups
    sage/categories/coxeter_group_algebras
    sage/categories/coxeter_groups
    sage/categories/crystals
@@ -78,8 +79,11 @@ Individual Categories
    sage/categories/finite_dimensional_algebras_with_basis
    sage/categories/finite_dimensional_bialgebras_with_basis
    sage/categories/finite_dimensional_coalgebras_with_basis
+   sage/categories/finite_dimensional_graded_lie_algebras_with_basis
    sage/categories/finite_dimensional_hopf_algebras_with_basis
+   sage/categories/finite_dimensional_lie_algebras_with_basis
    sage/categories/finite_dimensional_modules_with_basis
+   sage/categories/finite_dimensional_nilpotent_lie_algebras_with_basis
    sage/categories/finite_dimensional_semisimple_algebras_with_basis
    sage/categories/finite_enumerated_sets
    sage/categories/finite_fields
@@ -105,6 +109,8 @@ Individual Categories
    sage/categories/graded_coalgebras_with_basis
    sage/categories/graded_hopf_algebras
    sage/categories/graded_hopf_algebras_with_basis
+   sage/categories/graded_lie_algebras
+   sage/categories/graded_lie_algebras_with_basis
    sage/categories/graded_modules
    sage/categories/graded_modules_with_basis
    sage/categories/graphs
@@ -119,9 +125,13 @@ Individual Categories
    sage/categories/infinite_enumerated_sets
    sage/categories/integral_domains
    sage/categories/j_trivial_semigroups
+   sage/categories/kac_moody_algebras
    sage/categories/lattice_posets
    sage/categories/left_modules
+   sage/categories/lie_algebras
+   sage/categories/lie_algebras_with_basis
    sage/categories/lie_groups
+   sage/categories/loop_crystals
    sage/categories/l_trivial_semigroups
    sage/categories/magmas
    sage/categories/magmas_and_additive_magmas
@@ -143,7 +153,9 @@ Individual Categories
    sage/categories/posets
    sage/categories/principal_ideal_domains
    sage/categories/quotient_fields
+   sage/categories/quantum_group_representations
    sage/categories/regular_crystals
+   sage/categories/regular_supercrystals
    sage/categories/right_modules
    sage/categories/ring_ideals
    sage/categories/rings
@@ -158,12 +170,14 @@ Individual Categories
    sage/categories/sets_with_partial_maps
    sage/categories/shephard_groups
    sage/categories/simplicial_complexes
+   sage/categories/simplicial_sets
    sage/categories/super_algebras
    sage/categories/super_algebras_with_basis
    sage/categories/super_hopf_algebras_with_basis
    sage/categories/super_modules
    sage/categories/super_modules_with_basis
    sage/categories/topological_spaces
+   sage/categories/triangular_kac_moody_algebras
    sage/categories/unique_factorization_domains
    sage/categories/unital_algebras
    sage/categories/vector_spaces
@@ -217,6 +231,7 @@ Examples of parents using categories
    sage/categories/examples/finite_coxeter_groups
    sage/categories/examples/finite_dimensional_algebras_with_basis
    sage/categories/examples/finite_enumerated_sets
+   sage/categories/examples/finite_dimensional_lie_algebras_with_basis
    sage/categories/examples/finite_monoids
    sage/categories/examples/finite_semigroups
    sage/categories/examples/finite_weyl_groups
@@ -226,6 +241,8 @@ Examples of parents using categories
    sage/categories/examples/hopf_algebras_with_basis
    sage/categories/examples/infinite_enumerated_sets
    sage/categories/examples/manifolds
+   sage/categories/examples/lie_algebras
+   sage/categories/examples/lie_algebras_with_basis
    sage/categories/examples/monoids
    sage/categories/examples/posets
    sage/categories/examples/semigroups_cython

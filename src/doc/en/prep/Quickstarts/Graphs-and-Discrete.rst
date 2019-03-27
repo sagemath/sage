@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-quickstart-graphs-and-discrete:
+
 Sage Quickstart for Graph Theory and Discrete Mathematics
 =========================================================
 
@@ -318,12 +320,16 @@ Start with a generator matrix over :math:`\ZZ/2\ZZ`.
 
     sage: D = C.dual_code()
     sage: D
-    Linear code of length 7, dimension 3 over Finite Field of size 2
+    [7, 3] linear code over GF(2)
 
 ::
 
     sage: D.basis()
-    [(1, 0, 1, 0, 1, 0, 1), (0, 1, 1, 0, 0, 1, 1), (0, 0, 0, 1, 1, 1, 1)]
+    [
+    (1, 0, 1, 0, 1, 0, 1),
+    (0, 1, 1, 0, 0, 1, 1),
+    (0, 0, 0, 1, 1, 1, 1)
+    ]
 
 ::
 

@@ -41,11 +41,11 @@ class Point(GraphicPrimitive_xydata):
 
     INPUT:
 
-    - xdata - list of x values for points in Point object
+    - xdata -- list of x values for points in Point object
 
-    - ydata - list of y values for points in Point object
+    - ydata -- list of y values for points in Point object
 
-    - options - dict of valid plot options to pass to constructor
+    - options -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -214,13 +214,13 @@ class Point(GraphicPrimitive_xydata):
         from sage.plot.plot3d.shapes2 import point3d
         options = self._plot3d_options()
         options.update(kwds)
-        zdata=[]
+        zdata = []
         if isinstance(z, list):
-            zdata=z
+            zdata = z
         else:
-            zdata=[z]*len(self.xdata)
-        if len(zdata)==len(self.xdata):
-            all = [point3d([(x, y, z) for x, y, z in zip(self.xdata, self.ydata, zdata)], **options)]
+            zdata = [z] * len(self.xdata)
+        if len(zdata) == len(self.xdata):
+            all = [point3d(list(zip(self.xdata, self.ydata, zdata)), **options)]
             if len(all) == 1:
                 return all[0]
             else:
@@ -270,7 +270,7 @@ class Point(GraphicPrimitive_xydata):
         #method does not interpret it as a list of 3 floating
         #point color specifications when there are
         #three points. This is mentioned in the matplotlib 0.98
-        #documentation and fixes \#2076
+        #documentation and fixes #2076
         from matplotlib.colors import rgb2hex
         c = rgb2hex(to_mpl_color(options['rgbcolor']))
 

@@ -21,7 +21,7 @@ def benchmark(n=-1):
         list -- summary of timings for each benchmark.
         int -- if n == -1, also return the total time
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.misc.benchmark import *
         sage: _ = benchmark()
@@ -146,7 +146,7 @@ def bench3():
     """
     desc = """Some basic arithmetic with very large Rational numbers: '(2/3)^100001 * (17/19)^100001"""
     t = cputime()
-    a = QQ('2/3')**100001 * QQ('17/19')**100001
+    a = QQ((2, 3))**100001 * QQ((17, 19))**100001
     return (desc, cputime(t))
 
 def bench4():

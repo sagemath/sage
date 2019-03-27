@@ -9,7 +9,7 @@ AUTHOR:
 class LibSingularGBDefaultContext:
     def __init__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.standard_options import LibSingularGBDefaultContext
             sage: from sage.libs.singular.option import opt
@@ -34,7 +34,7 @@ class LibSingularGBDefaultContext:
 
     def __enter__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.standard_options import LibSingularGBDefaultContext
             sage: from sage.libs.singular.option import opt
@@ -71,7 +71,7 @@ class LibSingularGBDefaultContext:
 
     def __exit__(self, typ, value, tb):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.standard_options import LibSingularGBDefaultContext
             sage: from sage.libs.singular.option import opt

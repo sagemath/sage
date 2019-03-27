@@ -1,7 +1,7 @@
 r"""
-Guava error-correcting code constructions
+Constructions of generator matrices using the GUAVA package for GAP
 
-This module only contains Guava wrappers (Guava is an optional GAP package).
+This module only contains Guava wrappers (GUAVA is an optional GAP package).
 
 AUTHORS:
 
@@ -16,10 +16,13 @@ AUTHORS:
 - David Joyner (2008-03): removed QR, XQR, cyclic and ReedSolomon codes
 
 - David Joyner (2009-05): added "optional package" comments, fixed some
-  docstrings to to be sphinx compatible
+  docstrings to be sphinx compatible
 
-Functions
----------
+
+REFERENCES:
+
+.. [BM] Bazzi and Mitter, {\it Some constructions of codes from group actions}, (preprint
+    March 2003, available on Mitter's MIT website).
 """
 #*****************************************************************************
 #       Copyright (C) 2007 David Joyner <wdj@usna.edu>
@@ -37,16 +40,19 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.interfaces.gap import gfq_gap_to_sage
 from .linear_code import LinearCode
+from sage.features.gap import GapPackage
 
 
 def QuasiQuadraticResidueCode(p):
     r"""
-    A (binary) quasi-quadratic residue code (or QQR code), as defined by
-    Proposition 2.2 in [BM]_, has a generator matrix in the block form `G=(Q,N)`.
-    Here `Q` is a `p \times p` circulant matrix whose top row
-    is `(0,x_1,...,x_{p-1})`, where `x_i=1` if and only if `i`
-    is a quadratic residue `\mod p`, and `N` is a `p \times p` circulant
-    matrix whose top row is `(0,y_1,...,y_{p-1})`, where `x_i+y_i=1` for all `i`.
+    A (binary) quasi-quadratic residue code (or QQR code).
+
+    Follows the definition of Proposition 2.2 in [BM]. The code has a generator
+    matrix in the block form `G=(Q,N)`. Here `Q` is a `p \times p` circulant
+    matrix whose top row is `(0,x_1,...,x_{p-1})`, where `x_i=1` if and only if
+    `i` is a quadratic residue `\mod p`, and `N` is a `p \times p` circulant
+    matrix whose top row is `(0,y_1,...,y_{p-1})`, where `x_i+y_i=1` for all
+    `i`.
 
     INPUT:
 
@@ -59,20 +65,13 @@ def QuasiQuadraticResidueCode(p):
     EXAMPLES::
 
         sage: C = codes.QuasiQuadraticResidueCode(11); C   # optional - gap_packages (Guava package)
-        Linear code of length 22, dimension 11 over Finite Field of size 2
-
-    REFERENCES:
-
-    .. [BM] Bazzi and Mitter, {\it Some constructions of codes from group actions}, (preprint
-      March 2003, available on Mitter's MIT website).
-
-    .. [Jresidue] \D. Joyner, {\it On quadratic residue codes and hyperelliptic curves},
-      (preprint 2006)
+        [22, 11] linear code over GF(2)
 
     These are self-orthogonal in general and self-dual when $p \\equiv 3 \\pmod 4$.
 
     AUTHOR: David Joyner (11-2005)
     """
+    GapPackage("guava", spkg="gap_packages").require()
     F = GF(2)
     gap.load_package("guava")
     gap.eval("C:=QQRCode(" + str(p) + ")")
@@ -104,15 +103,16 @@ def RandomLinearCodeGuava(n, k, F):
     EXAMPLES::
 
         sage: C = codes.RandomLinearCodeGuava(30,15,GF(2)); C      # optional - gap_packages (Guava package)
-        Linear code of length 30, dimension 15 over Finite Field of size 2
+        [30, 15] linear code over GF(2)
         sage: C = codes.RandomLinearCodeGuava(10,5,GF(4,'a')); C      # optional - gap_packages (Guava package)
-        Linear code of length 10, dimension 5 over Finite Field in a of size 2^2
+        [10, 5] linear code over GF(4)
 
     AUTHOR: David Joyner (11-2005)
     """
     current_randstate().set_seed_gap()
 
     q = F.order()
+    GapPackage("guava", spkg="gap_packages").require()
     gap.load_package("guava")
     gap.eval("C:=RandomLinearCode("+str(n)+","+str(k)+", GF("+str(q)+"))")
     gap.eval("G:=GeneratorMat(C)")

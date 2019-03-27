@@ -4,7 +4,7 @@ Reporting doctest results
 This module determines how doctest results are reported to the user.
 
 It also computes the exit status in the ``error_status`` attribute of
-:class:DocTestReporter. This is a bitwise OR of the following bits:
+:class:`DocTestReporter`. This is a bitwise OR of the following bits:
 
 - 1: Doctest failure
 - 2: Bad command line syntax or invalid options
@@ -39,6 +39,7 @@ import signal
 from sage.structure.sage_object import SageObject
 from sage.doctest.util import count_noun
 from sage.doctest.sources import DictAsObject
+from .external import available_software
 
 def signal_name(sig):
     """
@@ -112,6 +113,39 @@ class DocTestReporter(SageObject):
         self.stats = {}
         self.error_status = 0
 
+    def have_optional_tag(self, tag):
+        r"""
+        Return whether doctests marked with this tag are run.
+
+        INPUT:
+
+        - ``tag`` -- string
+
+        EXAMPLES::
+
+            sage: from sage.doctest.reporting import DocTestReporter
+            sage: from sage.doctest.control import DocTestController, DocTestDefaults
+            sage: from sage.env import SAGE_SRC
+            sage: import os
+            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','reporting.py')
+            sage: DC = DocTestController(DocTestDefaults(),[filename])
+            sage: DTR = DocTestReporter(DC)
+
+        ::
+
+            sage: DTR.have_optional_tag('sage')
+            True
+            sage: DTR.have_optional_tag('nice_unavailable_package')
+            False
+
+        """
+        if tag in self.controller.options.optional:
+            return True
+        if 'external' in self.controller.options.optional:
+            if tag in available_software.seen():
+                return True
+        return False
+
     def report_head(self, source):
         """
         Return the "sage -t [options] file.py" line as string.
@@ -144,6 +178,7 @@ class DocTestReporter(SageObject):
         cmd = "sage -t"
         if self.controller.options.long:
             cmd += " --long"
+
         warnlong = self.controller.options.warn_long
         if warnlong is not None:
             cmd += " --warn-long"
@@ -291,7 +326,8 @@ class DocTestReporter(SageObject):
                 1 unlabeled test not run
                 4 long tests not run
                 5 magma tests not run
-                2 other tests skipped
+                2 not tested tests not run
+                0 tests not run because we ran out of time
                 [... tests, ... s]
 
         Test an internal error in the reporter::
@@ -300,6 +336,28 @@ class DocTestReporter(SageObject):
             Traceback (most recent call last):
             ...
             AttributeError: 'NoneType' object has no attribute 'basename'
+
+        The only-errors mode does not output anything on success::
+
+            sage: DD = DocTestDefaults(only_errors=True)
+            sage: FDS = FileDocTestSource(filename, DD)
+            sage: DC = DocTestController(DD, [filename])
+            sage: DTR = DocTestReporter(DC)
+            sage: doctests, extras = FDS.create_doctests(globals())
+            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: Timer().start().stop().annotate(runner)
+            sage: D = DictAsObject({'err':None})
+            sage: runner.update_results(D)
+            0
+            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Good tests")
+
+        However, failures are still output in the errors-only mode::
+
+            sage: runner.failures = 1
+            sage: runner.update_results(D)
+            1
+            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Failed test")
+                [... tests, 1 failure, ... s]
         """
         log = self.controller.log
         process_name = 'process (pid={0})'.format(pid) if pid else 'process'
@@ -308,13 +366,11 @@ class DocTestReporter(SageObject):
             stats = self.stats
             basename = source.basename
             cmd = self.report_head(source)
-
             try:
                 ntests, result_dict = results
             except (TypeError, ValueError):
                 ntests = 0
                 result_dict = DictAsObject(dict(err='badresult'))
-
             if timeout:
                 fail_msg = "Timed out"
                 if ntests > 0:
@@ -323,7 +379,9 @@ class DocTestReporter(SageObject):
                     fail_msg += " (with error after interrupt)"
                 elif return_code < 0:
                     sig = -return_code
-                    if sig == signal.SIGKILL:
+                    if sig == signal.SIGQUIT:
+                        pass  # and interrupt succeeded
+                    elif sig == signal.SIGKILL:
                         fail_msg += " (and interrupt failed)"
                     else:
                         fail_msg += " (with %s after interrupt)"%signal_name(sig)
@@ -415,34 +473,57 @@ class DocTestReporter(SageObject):
                     postscript['cputime'] += cpu
                     postscript['walltime'] += wall
 
-                    if self.controller.options.show_skipped:
-                        try:
-                            optionals = result_dict.optionals
-                        except AttributeError:
-                            optionals = dict()
-                        if self.controller.options.optional is not True: # if True we test all optional tags
-                            untested = 0  # Report not tested/implemented tests at the end
-                            seen_other = False
-                            for tag in sorted(optionals.keys()):
-                                nskipped = optionals[tag]
-                                if tag == "long time":
-                                    if not self.controller.options.long:
-                                        seen_other = True
-                                        log("    %s not run"%(count_noun(nskipped, "long test")))
-                                elif tag in ("not tested", "not implemented"):
-                                    untested += nskipped
+                    try:
+                        optionals = result_dict.optionals
+                    except AttributeError:
+                        optionals = dict()
+                    for tag in sorted(optionals):
+                        nskipped = optionals[tag]
+                        if tag == "long time":
+                            if not self.controller.options.long:
+                                if self.controller.options.show_skipped:
+                                    log("    %s not run"%(count_noun(nskipped, "long test")))
+                        elif tag == "high_mem":
+                            if self.controller.options.memlimit <= 0:
+                                seen_other = True
+                                log("    %s not run"%(count_noun(nskipped, "high mem")))
+                        elif tag == "not tested":
+                            if self.controller.options.show_skipped:
+                                log("    %s not run"%(count_noun(nskipped, "not tested test")))
+                        elif tag == "not implemented":
+                            if self.controller.options.show_skipped:
+                                log("    %s for not implemented functionality not run"%(count_noun(nskipped, "test")))
+                        else:
+                            if not self.have_optional_tag(tag):
+                                if tag == "bug":
+                                    if self.controller.options.show_skipped:
+                                        log("    %s not run due to known bugs"%(count_noun(nskipped, "test")))
+                                elif tag == "":
+                                    if self.controller.options.show_skipped:
+                                        log("    %s not run"%(count_noun(nskipped, "unlabeled test")))
                                 else:
-                                    if tag not in self.controller.options.optional:
-                                        seen_other = True
-                                        if tag == "bug":
-                                            log("    %s not run due to known bugs"%(count_noun(nskipped, "test")))
-                                        elif tag == "":
-                                            log("    %s not run"%(count_noun(nskipped, "unlabeled test")))
-                                        else:
-                                            log("    %s not run"%(count_noun(nskipped, tag + " test")))
-                            if untested:
-                                log ("    %s skipped"%(count_noun(untested, "%stest"%("other " if seen_other else ""))))
-                    log("    [%s, %s%.2f s]" % (count_noun(ntests, "test"), "%s, "%(count_noun(f, "failure")) if f else "", wall))
+                                    if self.controller.options.show_skipped:
+                                        log("    %s not run"%(count_noun(nskipped, tag + " test")))
+
+                    nskipped = result_dict.walltime_skips
+                    if self.controller.options.show_skipped:
+                        log("    %s not run because we ran out of time"%(count_noun(nskipped, "test")))
+
+                    if nskipped != 0:
+                        # It would be nice to report "a/b tests run" instead of
+                        # the percentage that is printed here.  However, it is
+                        # not clear how to pull out the actual part of "ntests"
+                        # that has been run for a variety of reasons, such as
+                        # the sig_on_count() tests, the possibility to run
+                        # tests multiple times, and some other unclear mangling
+                        # of these numbers that was not clear to the author.
+                        ntests_run = result_dict.tests
+                        total = "%d%% of tests run"%(round(100*ntests_run/float(ntests_run + nskipped)))
+                    else:
+                        total = count_noun(ntests, "test")
+                    if not (self.controller.options.only_errors and not f):
+                        log("    [%s, %s%.2f s]" % (total, "%s, "%(count_noun(f, "failure")) if f else "", wall))
+
             self.sources_completed += 1
 
         except Exception:
@@ -452,7 +533,7 @@ class DocTestReporter(SageObject):
 
     def finalize(self):
         """
-        Print out the postcript that summarizes the doctests that were run.
+        Print out the postscript that summarizes the doctests that were run.
 
         EXAMPLES:
 

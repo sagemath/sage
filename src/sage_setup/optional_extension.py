@@ -19,7 +19,7 @@ package which must be installed.
 
 
 from distutils.extension import Extension
-from sage.misc.package import is_package_installed, list_packages
+from sage.misc.package import list_packages
 
 all_packages = list_packages(local=True)
 
@@ -76,6 +76,7 @@ def OptionalExtension(*args, **kwds):
         condition = kwds.pop("condition")
     except KeyError:
         pkg = kwds.pop("package")
+        from sage.misc.package import is_package_installed
         try:
             pkginfo = all_packages[pkg]
         except KeyError:

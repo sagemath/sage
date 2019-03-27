@@ -298,23 +298,50 @@ class ComplexField_class(ring.Field):
             self.__real_field = RealField(self._prec)
             return self.__real_field
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
-        Compare ``self`` to ``other``.
+        Check whether ``self`` is not equal to ``other``.
 
-        If ``other`` is not a :class:`ComplexField_class', then this compares
-        by their types. Otherwise it compares by their precision.
+        If ``other`` is not a :class:`ComplexField_class`, then this 
+        return ``False``. Otherwise it compares their precision.
 
         EXAMPLES::
 
-            sage: cmp(ComplexField(), ComplexField())
-            0
-            sage: cmp(ComplexField(10), ComplexField(15))
-            -1
+            sage: ComplexField() == ComplexField()
+            True
+            sage: ComplexField(10) == ComplexField(15)
+            False
         """
         if not isinstance(other, ComplexField_class):
-            return cmp(type(self), type(other))
-        return cmp(self._prec, other._prec)
+            return NotImplemented
+        return self._prec == other._prec
+
+    def __hash__(self):
+         """
+         Return the hash.
+
+         EXAMPLES::
+
+             sage: C = ComplexField(200)
+             sage: from sage.rings.complex_field import ComplexField_class
+             sage: D = ComplexField_class(200)
+             sage: hash(C) == hash(D)
+             True
+         """
+         return hash((self.__class__, self._prec))
+
+    def __ne__(self, other):
+        """
+        Check whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: ComplexField() != ComplexField()
+            False
+            sage: ComplexField(10) != ComplexField(15)
+            True
+        """
+        return not (self == other)
 
     def __call__(self, x=None, im=None):
         """
@@ -333,9 +360,11 @@ class ComplexField_class(ring.Field):
             sage: CC(QQ[I].gen())
             1.00000000000000*I
             sage: CC.gen() + QQ[I].gen()
+            2.00000000000000*I
+            sage: CC.gen() + QQ.extension(x^2 + 1, 'I', embedding=None).gen()
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for '+': 'Complex Field with 53 bits of precision' and 'Number Field in I with defining polynomial x^2 + 1'
+            TypeError: unsupported operand parent(s) for +: 'Complex Field with 53 bits of precision' and 'Number Field in I with defining polynomial x^2 + 1'
 
         In the absence of arguments we return zero::
 
@@ -424,22 +453,22 @@ class ComplexField_class(ring.Field):
             return RRtoCC(RR, self) * RR._internal_coerce_map_from(S)
         if is_ComplexField(S):
             if self._prec <= S._prec:
-                return self._generic_convert_map(S)
+                return self._generic_coerce_map(S)
             else:
                 return None
         if S is complex:
             if self._prec <= 53:
-                return self._generic_convert_map(S)
+                return self._generic_coerce_map(S)
             else:
                 return None
         late_import()
         if S is CDF:
             if self._prec <= 53:
-                return self._generic_convert_map(S)
+                return self._generic_coerce_map(S)
             else:
                 return None
         if S in [AA, QQbar, CLF, RLF]:
-            return self._generic_convert_map(S)
+            return self._generic_coerce_map(S)
         return self._coerce_map_via([CLF], S)
 
     def _repr_(self):
@@ -740,9 +769,10 @@ class ComplexField_class(ring.Field):
         # factor it over the reals. To make sure it has complex coefficients we
         # multiply with I.
         I = R.base_ring().gen()
-        g = f*I if f.leading_coefficient()!=I else f
+        g = f * I if f.leading_coefficient() != I else f
 
         F = list(g._pari_with_name().factor())
 
         from sage.structure.factorization import Factorization
-        return Factorization([(R(g).monic(),e) for g,e in zip(*F)], f.leading_coefficient())
+        return Factorization([(R(gg).monic(), e) for gg, e in zip(*F)],
+                             f.leading_coefficient())

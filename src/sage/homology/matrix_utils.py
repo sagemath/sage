@@ -16,7 +16,7 @@ some utility functions for this purpose.
 #                  http://www.gnu.org/licenses/
 ########################################################################
 from __future__ import print_function
-
+from six.moves import range
 
 # TODO: this module is a clear candidate for cythonizing. Need to
 # evaluate speed benefits.
@@ -27,7 +27,7 @@ from sage.matrix.constructor import matrix
 def dhsw_snf(mat, verbose=False):
     """
     Preprocess a matrix using the "Elimination algorithm" described by
-    Dumas et al. [DHSW]_, and then call ``elementary_divisors`` on the
+    Dumas et al. [DHSW2003]_, and then call ``elementary_divisors`` on the
     resulting (smaller) matrix.
 
     .. NOTE::
@@ -71,12 +71,6 @@ def dhsw_snf(mat, verbose=False):
         sage: mat = random_matrix(ZZ, 20, 20, x=-1, y=2)
         sage: mat.elementary_divisors() == dhsw_snf(mat)
         True
-
-    REFERENCES:
-
-    .. [DHSW] Dumas, Heckenbach, Saunders, and Welker. *Computing simplicial
-       homology based on efficient Smith normal form algorithms*.
-       Algebra, geometry, and software systems. (2003) 177-206.
     """
     ring = mat.base_ring()
     rows = mat.nrows()
@@ -136,7 +130,7 @@ def dhsw_snf(mat, verbose=False):
     new_mat = new_mat.matrix_from_columns(range(cols))
     if verbose:
         print("starting pass 2")
-    keep_columns = range(cols)
+    keep_columns = list(range(cols))
     check_leading = True
     while check_leading:
         check_leading = False

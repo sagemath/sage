@@ -14,6 +14,7 @@ Monomial expansion of `(aX + bY)^i (cX + dY)^{j-i}`
 
 from sage.ext.stdsage cimport PY_NEW
 
+from sage.libs.flint.fmpz_poly cimport *
 from sage.rings.integer cimport Integer
 
 cdef class Apply:
@@ -62,7 +63,7 @@ def apply_to_monomial(int i, int j, int a, int b, int c, int d):
     r"""
     Return a list of the coefficients of
 
-    .. math::
+    .. MATH::
 
         (aX + bY)^i (cX + dY)^{j-i},
 
@@ -80,7 +81,7 @@ def apply_to_monomial(int i, int j, int a, int b, int c, int d):
     list of ints, which are the coefficients
     of `Y^j, Y^{j-1}X, \ldots, X^j`, respectively.
 
-    EXAMPLE:
+    EXAMPLES:
 
     We compute that `(X+Y)^2(X-Y) = X^3 + X^2Y - XY^2 - Y^3`::
 

@@ -35,7 +35,8 @@ AUTHORS:
 
 from sage.libs.ntl.ntl_lzz_pX import ntl_zz_pX
 from sage.structure.factorization import Factorization
-from sage.structure.element import coerce_binop, parent
+from sage.structure.element cimport parent
+from sage.structure.element import coerce_binop
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 
 # We need to define this stuff before including the templating stuff
@@ -64,6 +65,8 @@ cdef extern from "zn_poly/zn_poly.h":
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.nmod_poly cimport *
 
+from sage.misc.cachefunc import cached_method
+
 cdef class Polynomial_zmod_flint(Polynomial_template):
     r"""
     Polynomial on `\ZZ/n\ZZ` implemented via FLINT.
@@ -84,7 +87,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
     """
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: P.<x> = GF(32003)[]
             sage: f = 24998*x^2 + 29761*x + 2252
@@ -145,7 +148,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         The modulus of P must coincide with the modulus of this element.
         That assumption is not verified!
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R.<x> = GF(3)[]
             sage: x._new_constant_poly(4,R)
@@ -272,7 +275,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
           polynomial is a keyword it is substituted in; otherwise this
           polynomial is returned unchanged.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: P.<x> = PolynomialRing(GF(7))
             sage: f = x^2 + 1
@@ -361,7 +364,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         See :func:`sage.rings.polynomial.polynomial_modn_dense_ntl.small_roots`
         for the documentation of this function.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: N = 10001
             sage: K = Zmod(10001)
@@ -419,7 +422,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         OUTPUT: (Polynomial) the product self*right.
 
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: P.<x> = PolynomialRing(GF(next_prime(2^30)))
             sage: f = P.random_element(1000)
@@ -624,9 +627,10 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         return t1, t0
 
+    @cached_method
     def is_irreducible(self):
         """
-        Return True if this polynomial is irreducible.
+        Return whether this polynomial is irreducible.
 
         EXAMPLES::
 
@@ -635,6 +639,14 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             False
             sage: (x^3 + x + 1).is_irreducible()
             True
+
+        Not implemented when the base ring is not a field::
+
+            sage: S.<s> = Zmod(10)[]
+            sage: (s^2).is_irreducible()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: checking irreducibility of polynomials over rings with composite characteristic is not implemented
 
         TESTS::
 
@@ -645,17 +657,21 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: R(2).is_irreducible()
             False
 
-            sage: S.<s> = Zmod(10)[]
-            sage: (s^2).is_irreducible()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: checking irreducibility of polynomials over rings with composite characteristic is not implemented
             sage: S(1).is_irreducible()
             False
             sage: S(2).is_irreducible()
             Traceback (most recent call last):
             ...
             NotImplementedError: checking irreducibility of polynomials over rings with composite characteristic is not implemented
+
+        Test that caching works::
+
+            sage: S.<s> = Zmod(7)[]
+            sage: s.is_irreducible()
+            True
+            sage: s.is_irreducible.cache
+            True
+
         """
         if not self:
             return False

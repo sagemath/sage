@@ -1,39 +1,15 @@
-#!/usr/bin/env bash
-
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
-if [ "$SAGE64" = "yes" ]; then
-    if [ -z "$CFLAG64" ]; then
-        CFLAG64=-m64
-    fi
-    echo "Building a 64-bit version of MPFI (using '$CFLAG64')."
-    CFLAGS="-O2 -g -fPIC $CFLAGS $CFLAG64"; export CFLAGS
-    CXXFLAGS="-O2 -g -fPIC $CXXFLAGS $CFLAG64"; export CXXFLAGS
-    LDFLAGS="$LDFLAGS $CFLAG64"; export LDFLAGS
-else
-    CFLAGS="-O2 -g -fPIC $CFLAGS"; export CFLAGS
-fi
+export CFLAGS="-O2 -g -fPIC $CFLAGS"
 
 cd src
 
 # Use newer version of config.guess and config.sub (see Trac #19716)
 cp "$SAGE_ROOT"/config/config.* .
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --with-mpfr="$SAGE_LOCAL" --with-gmp="$SAGE_LOCAL"
+sdh_configure --with-mpfr="$SAGE_LOCAL" --with-gmp="$SAGE_LOCAL"
+sdh_make
+sdh_make_install
 
-if [ $? -ne 0 ]; then
-    echo "Error configuring MPFI"
-    exit 1
-fi
-
-echo "Building and installing MPFI"
-$MAKE install
-
-if ! [ $? -eq 0 -a -f $SAGE_LOCAL/include/mpfi.h ]; then
+if ! [ $? -eq 0 -a -f $SAGE_DESTDIR$SAGE_LOCAL/include/mpfi.h ]; then
     echo "An error occurred while building MPFI."
     exit 1
 fi

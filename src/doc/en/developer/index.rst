@@ -1,3 +1,5 @@
+.. _developers-guide:
+
 ======================================
 Welcome to the Sage Developer's Guide!
 ======================================
@@ -22,8 +24,8 @@ Here are brief overviews of each part; for more details, see the extended table
 of contents below.  No matter where you start, good luck and welcome to Sage
 development!
 
-- **Trac server:** all changes go through the `the Sage Trac server
-  <http://trac.sagemath.org>`_ at some point. It contains bug reports, upgrade
+- **Trac server:** all changes go through `the Sage Trac server
+  <https://trac.sagemath.org>`_ at some point. It contains bug reports, upgrade
   requests, changes in progress, and those already part of Sage
   today. :ref:`Click here <chapter-sage-trac>` for more information.
 

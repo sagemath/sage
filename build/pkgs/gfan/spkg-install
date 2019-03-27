@@ -1,53 +1,15 @@
-#!/usr/bin/env bash
-
 if [[ -z "$SAGE_LOCAL" ]]; then
     echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
     echo >&2 "Maybe run 'sage -sh'?"
     exit 1
 fi
 
-
-# set LDFLAGS with proper flags to link against gmp/mpir and cddlib
-LDFLAGS="-L$SAGE_LOCAL/lib -lcddgmp -lgmp -lm $LDFLAGS"
-
-if [[ -z $CFLAG64 ]]; then
-    CFLAG64=-m64
-fi
-if [[ -z $CXXFLAG64 ]]; then
-    CXXFLAG64="$CFLAG64"
-fi
-if [[ "$SAGE64" = yes ]]; then
-    echo "Building a 64-bit version of gfan."
-    CFLAGS="$CFLAGS $CFLAG64"
-    CXXFLAGS="$CXXFLAGS $CXXFLAG64"
-    export CXXFLAG64 # Used in the patched Makefile.
-    # TODO: It would be much better to (also) modify LDFLAGS here and use
-    #       these instead in the Makefile when linking. (Cf. SPKG.txt.)
-else
-    unset CXXFLAG64 # Might come from the "global" environment.
-fi
-
 # C++11 workaround https://trac.sagemath.org/ticket/20926
-CXXFLAGS="$CXXFLAGS -std=c++98"
+CXXFLAGS="$CXXFLAGS -std=c++11 -DNOCDDPREFIX"
 
 export CC CXX CFLAGS CXXFLAGS LDFLAGS
 
 cd src
-
-# Patch the Makefile so it can build in Sage:
-echo "Copying a revised Makefile, to improve portability..."
-patch -p1 <../patches/Makefile.patch
-if [[ $? -ne 0 ]]; then
-    echo >&2 "Error: Patch to improve portability did not copy correctly."
-    exit 1
-fi
-
-echo "Copying patched file to fix an issue with GCC 4.7.0..."
-patch -p1 <../patches/app_minkowski.cpp.patch
-if [[ $? -ne 0 ]]; then
-    echo >&2 "Error: Patch to fix GCC 4.7.0 issue did not copy correctly."
-    exit 1
-fi
 
 echo "Now building gfan..."
 # We don't use the makefile to install gfan so we don't need to set PREFIX

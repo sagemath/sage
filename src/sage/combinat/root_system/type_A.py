@@ -24,6 +24,26 @@ class AmbientSpace(ambient_space.AmbientSpace):
         sage: e = R.ambient_space(); e
         Ambient space of the Root system of type ['A', 3]
         sage: TestSuite(e).run()
+
+    By default, this ambient space uses the barycentric projection for plotting::
+
+        sage: L = RootSystem(["A",2]).ambient_space()
+        sage: e = L.basis()
+        sage: L._plot_projection(e[0])
+        (1/2, 989/1142)
+        sage: L._plot_projection(e[1])
+        (-1, 0)
+        sage: L._plot_projection(e[2])
+        (1/2, -989/1142)
+        sage: L = RootSystem(["A",3]).ambient_space()
+        sage: l = L.an_element(); l
+        (2, 2, 3, 0)
+        sage: L._plot_projection(l)
+        (0, -1121/1189, 7/3)
+
+    .. SEEALSO::
+
+        - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods._plot_projection`
     """
     @classmethod
     def smallest_base_ring(cls, cartan_type=None):
@@ -148,28 +168,8 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         return self.sum(self.monomial(j)*k for j in range(self.n))
 
-    __doc__ += """
-    By default, this ambient space uses the barycentric projection for plotting::
-
-        sage: L = RootSystem(["A",2]).ambient_space()
-        sage: e = L.basis()
-        sage: L._plot_projection(e[0])
-        (1/2, 989/1142)
-        sage: L._plot_projection(e[1])
-        (-1, 0)
-        sage: L._plot_projection(e[2])
-        (1/2, -989/1142)
-        sage: L = RootSystem(["A",3]).ambient_space()
-        sage: l = L.an_element(); l
-        (2, 2, 3, 0)
-        sage: L._plot_projection(l)
-        (0, -1121/1189, 7/3)
-
-    .. SEEALSO::
-
-        - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods._plot_projection`
-    """
     _plot_projection = RootLatticeRealizations.ParentMethods.__dict__['_plot_projection_barycentric']
+
 
 from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, CartanType_simple
 class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType_simple):
@@ -259,7 +259,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             sage: sorted(a.edges())
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
 
-        TEST::
+        TESTS::
 
             sage: a = DynkinDiagram(['A',1])
             sage: a
@@ -338,5 +338,5 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
         return ret
 
 # For unpickling backward compatibility (Sage <= 4.1)
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_A', 'ambient_space',  AmbientSpace)

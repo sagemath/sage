@@ -5,7 +5,7 @@ Sage interacts are applications of the `@interact decorator <../../sagenb/notebo
 They are conveniently accessible in the Sage Notebook via ``interacts.[TAB].[TAB]()``.
 The first ``[TAB]`` lists categories and the second ``[TAB]`` reveals the interact examples.
 
-EXAMPLE:
+EXAMPLES:
 
 Invoked in the notebook, the following command will produce the fully formatted
 interactive mathlet.  In the command line, it will simply return the underlying
@@ -32,36 +32,66 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
 from sage.all import *
-from sagenb.notebook.interact import *
-
 x = SR.var('x')
+
+# It is important that this file is lazily imported for this to work
+from sage.repl.user_globals import get_global
+
+# Get a bunch of functions from the user globals. In SageNB, this will
+# refer to SageNB functions; in Jupyter, this will refer to Jupyter
+# functions. In the command-line and for doctests, we import the
+# SageNB functions as fall-back.
+for name in ("interact", "checkbox", "input_box", "input_grid",
+        "range_slider", "selector", "slider", "text_control"):
+    try:
+        obj = get_global(name)
+    except NameError:
+        import sagenb.notebook.interact
+        obj = sagenb.notebook.interact.__dict__[name]
+    globals()[name] = obj
+
 
 def library_interact(f):
     """
     This is a decorator for using interacts in the Sage library.
 
+    This is just the ``interact`` function wrapped in an additional
+    function call: ``library_interact(f)()`` is equivalent to
+    executing ``interact(f)``.
+
     EXAMPLES::
 
         sage: import sage.interacts.library as library
         sage: @library.library_interact
-        ....: def f(n=5): print(n)
-        ....:
-        sage: f()  # an interact appears, if using the notebook, else code
+        ....: def f(n=5):
+        ....:     print(n)
+        sage: f()  # an interact appears if using the notebook, else code
         <html>...</html>
     """
     @sage_wraps(f)
     def library_wrapper():
-       # Maybe program around bug (?) in the notebook:
-       html("</pre>")
-       # This prints out the relevant html code to make
-       # the interact appear:
-       interact(f)
+        # This will display the interact, no need to return anything
+        interact(f)
     return library_wrapper
 
+
+def html(obj):
+    """
+    Shorthand to pretty print HTML
+
+    EXAMPLES::
+
+        sage: from sage.interacts.library import html
+        sage: html("<h1>Hello world</h1>")
+        <h1>Hello world</h1>
+    """
+    from sage.all import html
+    pretty_print(html(obj))
+
+
 @library_interact
-def demo(n=tuple(range(10)), m=tuple(range(10))):
+def demo(n=slider(range(10)), m=slider(range(10))):
     """
     This is a demo interact that sums two numbers.
 
@@ -108,9 +138,11 @@ def taylor_polynomial(
     dot = point((x0,f(x=x0)),pointsize=80,rgbcolor=(1,0,0))
     ft = f.taylor(x,x0,order)
     pt = plot(ft,(-1, 5), color='green', thickness=2)
-    html('$f(x)\;=\;%s$'%latex(f))
-    html('$\hat{f}(x;%s)\;=\;%s+\mathcal{O}(x^{%s})$'%(x0,latex(ft),order+1))
+    html(r'$f(x)\;=\;%s$' % latex(f))
+    html(r'$\hat{f}(x;%s)\;=\;%s+\mathcal{O}(x^{%s})$' % (x0, latex(ft),
+                                                          order + 1))
     show(dot + p + pt, ymin = -.5, ymax = 1)
+
 
 @library_interact
 def definite_integral(
@@ -226,9 +258,10 @@ def function_derivative(
     else:
         show(plots, xmin=x_range[0], xmax=x_range[1], ymin=y_range[0], ymax=y_range[1])
 
-    html("<center>$\color{Blue}{f(x) = %s}$</center>"%latex(f(x)))
-    html("<center>$\color{Green}{f'(x) = %s}$</center>"%latex(df(x)))
-    html("<center>$\color{Red}{f''(x) = %s}$</center>"%latex(ddf(x)))
+    html(r"<center>$\color{Blue}{f(x) = %s}$</center>" % latex(f(x)))
+    html(r"<center>$\color{Green}{f'(x) = %s}$</center>" % latex(df(x)))
+    html(r"<center>$\color{Red}{f''(x) = %s}$</center>" % latex(ddf(x)))
+
 
 @library_interact
 def difference_quotient(
@@ -260,14 +293,14 @@ def difference_quotient(
     """
     html('<h2>Difference Quotient</h2>')
     html('<div style="white-space: normal;">\
-         <a href="http://en.wikipedia.org/wiki/Difference_quotient" target="_blank">\
+         <a href="https://en.wikipedia.org/wiki/Difference_quotient" target="_blank">\
          Wikipedia article about difference quotient</a></div>'
          )
 
     x = SR.var('x')
     f = symbolic_expression(f).function(x)
-    fmax = f.find_maximum_on_interval(interval[0], interval[1])[0]
-    fmin = f.find_minimum_on_interval(interval[0], interval[1])[0]
+    fmax = f.find_local_maximum(interval[0], interval[1])[0]
+    fmin = f.find_local_minimum(interval[0], interval[1])[0]
     f_height = fmax - fmin
     measure_y = fmin - 0.1*f_height
 
@@ -497,10 +530,7 @@ def unit_circle(
     C_graph += Cf_point + Cf_line1 + Cf_line2
     G_graph += Gf + Gf_point + Gf_line
 
-    pretty_print(table([
-        [r"$\text{Unit Circle}$", r"$\text{Function}$"],
-        [C_graph, G_graph]
-    ], header=True))
+    show(graphics_array([C_graph, G_graph]))
 
 
 @library_interact
@@ -558,7 +588,7 @@ def special_points(
 
     # Returns the line (graph) going through points (x1,y1) and (x2,y2)
     def line_to_points(x1_y1, x2_y2, **plot_kwargs):
-        (x1, y1) = x1_y1 
+        (x1, y1) = x1_y1
         (x2, y2) = x2_y2
         return plot((y2-y1) / (x2-x1) * (x-x1) + y1, (x,-3,3), **plot_kwargs)
 
@@ -851,7 +881,7 @@ def newton_method(
     interval = range_slider(-10,10, default = (0,6), label="Interval"),
     list_steps = checkbox(default=False, label="List steps")):
     """
-    Interact explaining the newton method, based on work by
+    Interact explaining the Newton method, based on work by
     Lauri Ruotsalainen, 2010.
     Originally this is based on work by William Stein.
 
@@ -895,10 +925,10 @@ def newton_method(
     html(r"${f(c) = }%s"%latex(f(c)))
     html(r"$%s \text{ iterations}"%len(midpoints))
     if list_steps:
-        s = [["$n$","$x_n$","$f(x_n)$", "$f(x_n-h)\,f(x_n+h)$"]]
+        s = [["$n$", "$x_n$", "$f(x_n)$", r"$f(x_n-h)\,f(x_n+h)$"]]
         for i, c in enumerate(midpoints):
             s.append([i+1, c, f(c), (c-h)*f(c+h)])
-        pretty_print(table(s, header=True))
+        pretty_print(table(s, header_row=True))
     else:
         P = plot(f, x, interval, color="blue")
         L = sum(line([(c, 0), (c, f(c))], color="green") for c in midpoints[:-1])
@@ -985,7 +1015,7 @@ def trapezoid_integration(
         sum_values_html = r"\frac{%.2f}{2} \cdot \left[%.2f + %s + %.2f\right]" % (
             h,
             N(ys[0], digits=5),
-            ' + '.join([ "2\cdot %.2f" % N(i, digits=5) for i in ys[1:-1]]),
+            ' + '.join([ r"2\cdot %.2f" % N(i, digits=5) for i in ys[1:-1]]),
             N(ys[n], digits=5)
             )
 
@@ -1005,14 +1035,14 @@ def trapezoid_integration(
                 N(approx, digits=7)
         ))
     elif output_form == 'table':
-        s = [['$i$','$x_i$','$f(x_i)$','$m$','$m\cdot f(x_i)$']]
+        s = [['$i$', '$x_i$', '$f(x_i)$', '$m$', r'$m\cdot f(x_i)$']]
         for i in range(0,n+1):
             if i==0 or i==n:
                 j = 1
             else:
                 j = 2
             s.append([i, xs[i], ys[i],j,N(j*ys[i])])
-        pretty_print(table(s, header=True))
+        pretty_print(table(s, header_row=True))
 
 @library_interact
 def simpson_integration(
@@ -1124,15 +1154,15 @@ def simpson_integration(
                 N(approx,digits=7)
                 ))
     elif output_form == 'table':
-        s = [['$i$','$x_i$','$f(x_i)$','$m$','$m\cdot f(x_i)$']]
+        s = [['$i$', '$x_i$', '$f(x_i)$', '$m$', r'$m\cdot f(x_i)$']]
         for i in range(0,n+1):
             if i==0 or i==n:
                 j = 1
             else:
                 j = (i+1)%2*(-2)+4
             s.append([i, xs[i], ys[i],j,N(j*ys[i])])
-        s.append(['','','','$\sum$','$%s$'%latex(3/dx*approx)])
-        pretty_print(table(s, header=True))
+        s.append(['', '', '', r'$\sum$', '$%s$' % latex(3/dx*approx)])
+        pretty_print(table(s, header_row=True))
         html(r'$\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x}\approx\frac {%.2f}{3}\cdot %s=%s$'%
              (interval[0], interval[1],dx,latex(3/dx*approx),latex(approx)))
 
@@ -1203,14 +1233,14 @@ def riemann_sum(
     delka_intervalu=[division[i+1]-division[i] for i in range(n)]
     if list_table:
         pretty_print(table([
-            ["$i$", "$[x_{i-1},x_i]$", "$\eta_i$", "$f(\eta_i)$", "$x_{i}-x_{i-1}$"]
+            ["$i$", "$[x_{i-1},x_i]$", r"$\eta_i$", r"$f(\eta_i)$", "$x_{i}-x_{i-1}$"]
         ] + [
             [i+1,[division[i],division[i+1]],xs[i],ys[i],delka_intervalu[i]] for i in range(n)
-        ],  header=True))
+        ],  header_row=True))
 
-    html('Riemann sum: $\displaystyle\sum_{i=1}^{%s} f(\eta_i)(x_i-x_{i-1})=%s$ '%
+    html(r'Riemann sum: $\displaystyle\sum_{i=1}^{%s} f(\eta_i)(x_i-x_{i-1})=%s$ '%
          (latex(n),latex(sum([ys[i]*delka_intervalu[i] for i in range(n)]))))
-    html('Exact value of the integral $\displaystyle\int_{%s}^{%s}%s\,\mathrm{d}x=%s$'%
+    html(r'Exact value of the integral $\displaystyle\int_{%s}^{%s}%s\,\mathrm{d}x=%s$'%
          (latex(a),latex(b),latex(func(x)),latex(integral_numerical(func(x),a,b)[0])))
 
 
@@ -1238,7 +1268,7 @@ def function_tool(f=sin(x), g=cos(x), xrange=range_slider(-3,3,default=(0,1),lab
       - ``action`` -- select given operation on or combination of functions
       - ``do_plot`` -- if true, a plot is drawn
 
-    EXAMPLE:
+    EXAMPLES:
 
     Invoked in the notebook, the following command will produce
     the fully formatted interactive mathlet.  In the command line,
@@ -1355,7 +1385,7 @@ def julia(expo = slider(-10,10,0.1,2),
         - ``plot_points`` -- number of points to plot
         - ``dpi`` -- dots-per-inch parameter for the plot
 
-    EXAMPLE:
+    EXAMPLES:
 
     Invoked in the notebook, the following command will produce
     the fully formatted interactive mathlet.  In the command line,
@@ -1396,7 +1426,7 @@ def mandelbrot(expo = slider(-10,10,0.1,2),
         - ``plot_points`` -- number of points to plot
         - ``dpi`` -- dots-per-inch parameter for the plot
 
-    EXAMPLE:
+    EXAMPLES:
 
     Invoked in the notebook, the following command will produce
     the fully formatted interactive mathlet.  In the command line,
@@ -1434,7 +1464,7 @@ def cellular_automaton(
         - ``rule_number`` -- rule number (0 to 255)
         - ``size`` -- size of the shown picture
 
-    EXAMPLE:
+    EXAMPLES:
 
     Invoked in the notebook, the following command will produce
     the fully formatted interactive mathlet.  In the command line,
@@ -1489,7 +1519,7 @@ def polar_prime_spiral(
         - ``n`` -- number `n`
         - ``dpi`` -- dots per inch resolution for plotting
 
-    EXAMPLE:
+    EXAMPLES:
 
     Invoked in the notebook, the following command will produce
     the fully formatted interactive mathlet.  In the command line,
@@ -1527,9 +1557,9 @@ def polar_prime_spiral(
     f2 = fast_float(sqrt(nn)*sin(2*pi*sqrt(nn)), 'nn')
     f = lambda x: (f1(x), f2(x))
 
-    list =[]
-    list2=[]
-    if show_factors == False:
+    list = []
+    list2 = []
+    if not show_factors:
         for i in srange(start, end, include_endpoint = True):
             if Integer(i).is_pseudoprime(): list.append(f(i-start+1)) #Primes list
             else: list2.append(f(i-start+1)) #Composites list
@@ -1539,7 +1569,9 @@ def polar_prime_spiral(
         for i in srange(start, end, include_endpoint = True):
             list.append(disk((f(i-start+1)),0.05*pow(2,len(factor(i))-1), (0,2*pi))) #resizes each of the dots depending of the number of factors of each number
             if Integer(i).is_pseudoprime() and highlight_primes: list2.append(f(i-start+1))
-        P = plot(list)
+        P = Graphics()
+        for g in list:
+            P += g
         p_size = 5 #the orange dot size of the prime markers
         if not highlight_primes: list2 = [(f(n-start+1))]
         R = points(list2, hue = .1, pointsize = p_size)
@@ -1548,12 +1580,12 @@ def polar_prime_spiral(
         html('$n = %s$' % factor(n))
 
         p = 1
-    #The X which marks the given n
-        W1 = disk((f(n-start+1)), p, (pi/6, 2*pi/6))
-        W2 = disk((f(n-start+1)), p, (4*pi/6, 5*pi/6))
-        W3 = disk((f(n-start+1)), p, (7*pi/6, 8*pi/6))
-        W4 = disk((f(n-start+1)), p, (10*pi/6, 11*pi/6))
-        Q = plot(W1 + W2 + W3 + W4, alpha = .1)
+        #The X which marks the given n
+        W1 = disk((f(n-start+1)), p, (pi/6, 2*pi/6), alpha=.1)
+        W2 = disk((f(n-start+1)), p, (4*pi/6, 5*pi/6), alpha=.1)
+        W3 = disk((f(n-start+1)), p, (7*pi/6, 8*pi/6), alpha=.1)
+        W4 = disk((f(n-start+1)), p, (10*pi/6, 11*pi/6), alpha=.1)
+        Q = W1 + W2 + W3 + W4
 
         n = n - start +1        #offsets the n for different start values to ensure accurate plotting
         if show_curves:
@@ -1587,6 +1619,3 @@ def polar_prime_spiral(
             show(R+P+S1+S2+Q, aspect_ratio = 1, axes = False, dpi = dpi)
         else: show(R+P+Q, aspect_ratio = 1, axes = False, dpi = dpi)
     else: show(R+P, aspect_ratio = 1, axes = False, dpi = dpi)
-
-
-

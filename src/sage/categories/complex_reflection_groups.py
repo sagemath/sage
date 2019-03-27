@@ -39,11 +39,6 @@ class ComplexReflectionGroups(Category_singleton):
 
         :func:`ReflectionGroup` for usage examples of this category.
 
-    REFERENCES:
-
-    .. [LT2009] G.I. Lehrer and D.E. Taylor. *Unitary reflection groups*.
-       Australian Mathematical Society Lecture Series, 2009.
-
     EXAMPLES::
 
         sage: from sage.categories.complex_reflection_groups import ComplexReflectionGroups

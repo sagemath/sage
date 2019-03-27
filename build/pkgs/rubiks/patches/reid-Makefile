@@ -1,8 +1,0 @@
-all: optimal twist
-
-
-clean:
-	rm -f *.o
-
-distclean: clean
-	rm -f optimal twist

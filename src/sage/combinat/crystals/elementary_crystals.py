@@ -48,13 +48,9 @@ AUTHORS:
 
 REFERENCES:
 
-.. [Kashiwara93] \M. Kashiwara.
-   The Crystal Base and Littelmann's Refined Demazure Character Formula.
-   Duke Math. J. **71** (3), pp. 839--858, 1993.
+- [Ka1993]_
 
-.. [NZ97] \T. Nakashima and A. Zelevinsky.
-   Polyhedral Realizations of Crystal Bases for Quantized Kac-Moody Algebras.
-   Adv. Math. **131**, pp. 253--278, 1997.
+- [NZ1997]_
 """
 
 #*****************************************************************************
@@ -80,11 +76,11 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
-from sage.combinat.root_system.ambient_space import AmbientSpace
+from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+
 
 class AbstractSingleCrystalElement(Element):
     r"""
@@ -198,7 +194,7 @@ class TCrystal(UniqueRepresentation, Parent):
     r"""
     The crystal `T_{\lambda}`.
 
-    Let `\lambda` be a weight. As defined in [Kashiwara93]_ the crystal
+    Let `\lambda` be a weight. As defined in [Ka1993]_ the crystal
     `T_{\lambda} = \{ t_{\lambda} \}` is a single element crystal with the
     crystal structure defined by
 
@@ -468,25 +464,13 @@ class RCrystal(UniqueRepresentation, Parent):
         sage: T = crystals.TensorProduct(R, B)
         sage: mg = T(R.highest_weight_vector(), B.highest_weight_vector())
         sage: S = T.subcrystal(generators=[mg])
-        sage: for x in S: x.weight()
-        (2, 1, 0)
-        (2, 0, 1)
-        (1, 2, 0)
-        (1, 1, 1)
-        (1, 1, 1)
-        (1, 0, 2)
-        (0, 2, 1)
-        (0, 1, 2)
+        sage: sorted([x.weight() for x in S], key=str)
+        [(0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 1, 1),
+         (1, 1, 1), (1, 2, 0), (2, 0, 1), (2, 1, 0)]
         sage: C = crystals.Tableaux("A2", shape=[2,1])
-        sage: for x in C: x.weight()
-        (2, 1, 0)
-        (1, 2, 0)
-        (1, 1, 1)
-        (1, 0, 2)
-        (0, 1, 2)
-        (2, 0, 1)
-        (1, 1, 1)
-        (0, 2, 1)
+        sage: sorted([x.weight() for x in C], key=str)
+        [(0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 1, 1),
+         (1, 1, 1), (1, 2, 0), (2, 0, 1), (2, 1, 0)]
         sage: GT = T.digraph(subset=S)
         sage: GC = C.digraph()
         sage: GT.is_isomorphic(GC, edge_labels=True)
@@ -724,7 +708,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
         B(\infty) \hookrightarrow B_i \otimes B(\infty),
 
-    satisfying certain properties (see [Kashiwara93]_).  The above embedding
+    satisfying certain properties (see [Ka1993]_).  The above embedding
     may be iterated to obtain a new embedding
 
     .. MATH::
@@ -733,7 +717,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
         \otimes \cdots \otimes B_{i_2} \otimes B_{i_1} \otimes B(\infty),
 
     which is a foundational object in the study of *polyhedral realizations of
-    crystals* (see, for example, [NZ97]_).
+    crystals* (see, for example, [NZ1997]_).
     """
 
     @staticmethod
@@ -1010,7 +994,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
     r"""
     The component crystal.
 
-    Defined in [Kashiwara93]_, the component crystal `C = \{c\}` is the single
+    Defined in [Ka1993]_, the component crystal `C = \{c\}` is the single
     element crystal whose crystal structure is defined by
 
     .. MATH::

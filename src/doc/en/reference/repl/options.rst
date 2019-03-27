@@ -49,8 +49,10 @@ Command-line options for Sage
 
 .. rubric:: Running the notebook
 
-- ``-n``, ``--notebook`` -- start the Sage notebook, passing all
-  remaining arguments to the 'notebook' command in Sage
+- ``-n [...]``, ``--notebook=[...]`` -- start the notebook, valid options
+  are ``default``, ``sagenb``, ``jupyter`` and ``export`` (see the
+  output of ``sage --notebook --help`` for more details and examples of
+  how to pass optional arguments)
 - ``-bn [...]``, ``--build-and-notebook [...]`` -- build the Sage
   library (as by running ``sage -b``) then start the Sage notebook
 - ``--inotebook [...]`` -- start the *insecure* Sage notebook
@@ -69,7 +71,8 @@ Command-line options for Sage
 - ``--M2 [...]`` -- run Sage's Macaulay2 with the given arguments
 - ``--maxima [...]`` -- run Sage's Maxima with the given arguments
 - ``--mwrank [...]`` -- run Sage's mwrank with the given arguments
-- ``--python [...]`` -- run the Python interpreter
+- ``--python [...]``, ``--python2 [...]`` -- run the Python 2 interpreter
+- ``--python3 [...]`` -- run the Python 3 interpreter
 - ``-R [...]`` -- run Sage's R with the given arguments
 - ``--scons [...]`` -- run Sage's scons
 - ``--singular [...]`` -- run Sage's singular with the given arguments
@@ -129,6 +132,10 @@ Command-line options for Sage
     run the lines which are unlabeled or labeled ``#optional`` or labeled
     ``#optional tag`` for any of the tags given.
   - ``--randorder[=seed]`` -- randomize order of tests
+  - ``--short[=seconds]`` -- run as many doctests as possible in about 300
+    seconds (or the number of seconds given.) This runs the tests for each
+    module from the top of the file and skips tests once it exceeds the budget
+    allocated for that file.
 
 - ``-tnew [...]`` -- like ``-t`` above, but only tests files
   modified since last commit

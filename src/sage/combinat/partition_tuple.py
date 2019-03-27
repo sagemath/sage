@@ -85,10 +85,8 @@ tuples. Four different classes of tuples of partitions are currently supported:
 
 REFERENCES:
 
-.. [DJM99] \R. Dipper, G. James and A. Mathas "The cyclotomic q-Schur algebra", Math. Z,
-      229 (1999), 385-416.
-.. [BK09] \J. Brundan and A. Kleshchev "Graded decomposition numbers for cyclotomic Hecke algebras",
-      Adv. Math., 222 (2009), 1883-1942"
+- [DJM1998]_
+- [BK2009]_
 
 AUTHORS:
 
@@ -257,6 +255,8 @@ subgroup::
 #*****************************************************************************
 from __future__ import print_function, absolute_import
 
+from six.moves import range
+
 import itertools
 
 from .combinat import CombinatorialElement
@@ -268,11 +268,14 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.interfaces.all import gp
 from sage.misc.cachefunc import cached_method
+from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.rings.all import NN, ZZ, IntegerModRing
 from sage.rings.integer import Integer
 from sage.sets.positive_integers import PositiveIntegers
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.cachefunc import cached_method
 
 #--------------------------------------------------
 # Partition tuple - element class
@@ -422,20 +425,20 @@ class PartitionTuple(CombinatorialElement):
             return mu
 
         # one way or another these two cases need to be treated separately
-        if mu==[] or mu==[[]]:
-            return Partition([])
+        if mu == [] or mu == [[]]:
+            return _Partitions([])
 
         # We must check mu is a list of partitions
         try:
-            mu=[Partition(mu)]
+            mu = [_Partitions(mu)]
         except ValueError:
             try:
-                mu=[Partition(nu) for nu in mu]
+                mu = [_Partitions(nu) for nu in mu]
             except ValueError:
                 raise ValueError('%s is not a tuple of Partitions' % mu)
 
-        if len(mu)==1:
-            return Partition(mu[0])
+        if len(mu) == 1:
+            return _Partitions(mu[0])
         else:
             return PartitionTuples_all().element_class(PartitionTuples_all(), mu)
 
@@ -457,7 +460,7 @@ class PartitionTuple(CombinatorialElement):
             ValueError: [[], [], [2, 1, 2, 1]] is not a tuple of Partitions
 
         """
-        mu = [Partition(nu) for nu in mu]
+        mu = [_Partitions(nu) for nu in mu]
         CombinatorialElement.__init__(self, parent, mu)
 
     def level(self):
@@ -481,7 +484,7 @@ class PartitionTuple(CombinatorialElement):
 
         The length is also known as the level.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: len( PartitionTuple([[2,1],[3,2],[1,1,1]]) )
             3
@@ -514,7 +517,7 @@ class PartitionTuple(CombinatorialElement):
             2, 1 | 3, 2 | 1^3
             sage: PartitionTuples.options._reset()
 
-            sage: Partitions.options(convention="French");
+            sage: Partitions.options(convention="French")
             sage: PartitionTuples.options(display="diagram"); mu
             *
             *    **    *
@@ -742,11 +745,10 @@ class PartitionTuple(CombinatorialElement):
         the \"components\" of partition tuples of level 1 (partitions) and for
         higher levels.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: for t in PartitionTuple([[2,1],[3,2],[3]]).components():
             ....:     print('%s\n' % t.ferrers_diagram())
-            ...
             **
             *
             <BLANKLINE>
@@ -757,7 +759,6 @@ class PartitionTuple(CombinatorialElement):
             <BLANKLINE>
             sage: for t in PartitionTuple([3,2]).components():
             ....:     print('%s\n' % t.ferrers_diagram())
-            ...
             ***
             **
         """
@@ -839,20 +840,32 @@ class PartitionTuple(CombinatorialElement):
         """
         return sum(mu.size() for mu in self)
 
+    def row_standard_tableaux(self):
+        """
+        Return the :class:`row standard tableau tuples
+        <sage.combinat.tableau_tuple.RowStandardTableauTuples>`
+        of shape ``self``.
+
+        EXAMPLES::
+
+            sage: PartitionTuple([[],[3,2,2,1],[2,2,1],[3]]).row_standard_tableaux()
+            Row standard tableau tuples of shape ([], [3, 2, 2, 1], [2, 2, 1], [3])
+        """
+        from .tableau_tuple import RowStandardTableauTuples
+        return RowStandardTableauTuples(shape=self)
 
     def standard_tableaux(self):
         """
-        Return the :class:`standard tableau tuples<StandardTableauTuples>` of
-        this shape.
+        Return the :class:`standard tableau tuples<StandardTableauTuples>`
+        of shape ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: PartitionTuple([[],[3,2,2,1],[2,2,1],[3]]).standard_tableaux()
             Standard tableau tuples of shape ([], [3, 2, 2, 1], [2, 2, 1], [3])
         """
         from .tableau_tuple import StandardTableauTuples
         return StandardTableauTuples(shape=self)
-
 
     def up(self):
         r"""
@@ -966,6 +979,36 @@ class PartitionTuple(CombinatorialElement):
         """
         return multicharge[k]-r+c
 
+    def content_tableau(self,multicharge):
+        """
+        Return the tableau which has (k,r,c)th entry equal to the content
+        ``multicharge[k]-r+c`` of this cell.
+
+        As with the content function, by setting the ``multicharge``
+        appropriately the tableau containing the residues is returned.
+
+        EXAMPLES::
+
+            sage: PartitionTuple([[2,1],[2],[1,1,1]]).content_tableau([0,0,0])
+            ([[0, 1], [-1]], [[0, 1]], [[0], [-1], [-2]])
+            sage: PartitionTuple([[2,1],[2],[1,1,1]]).content_tableau([0,0,1]).pp()
+                0  1     0  1     1
+               -1                 0
+                                 -1
+
+        as with the content function the multicharge can be used to return the
+        tableau containing the residues of the cells::
+
+            sage: multicharge=[ IntegerModRing(3)(c) for c in [0,0,1] ]
+            sage: PartitionTuple([[2,1],[2],[1,1,1]]).content_tableau(multicharge).pp()
+                0  1     0  1     1
+                2                 0
+                                  2
+        """
+        from sage.combinat.tableau_tuple import TableauTuple
+        return TableauTuple([[[multicharge[k]-r+c for c in range(self[k][r])]
+                        for r in range(len(self[k]))] for k in range(len(self))])
+
     def conjugate(self):
         """
         Return the conjugate partition tuple of ``self``.
@@ -1042,7 +1085,7 @@ class PartitionTuple(CombinatorialElement):
         entered in order from left to right along the rows of each component,
         where the components are ordered from left to right.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: PartitionTuple([ [2,1],[3,2] ]).initial_tableau()
             ([[1, 2], [3]], [[4, 5, 6], [7, 8]])
@@ -1055,13 +1098,13 @@ class PartitionTuple(CombinatorialElement):
         r"""
         Return the initial column tableau of shape ``self``.
 
-        The initial column tableau of shape `\lambda` is the standard tableau 
+        The initial column tableau of shape `\lambda` is the standard tableau
         that has the numbers `1` to `n`, where `n` is the :meth:`size`
         of `\lambda`, entered in order from top to bottom, and then left
         to right, down the columns of each component, starting from the
         rightmost component and working to the left.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: PartitionTuple([ [3,1],[3,2] ]).initial_column_tableau()
             ([[6, 8, 9], [7]], [[1, 3, 5], [2, 4]])
@@ -1139,8 +1182,8 @@ class PartitionTuple(CombinatorialElement):
             raise ValueError('(comp, row+1, col) must be inside the diagram')
         g = self.initial_tableau().to_list()
         a = g[comp][row][col]
-        g[comp][row][col:] = range(a+col+1, g[comp][row+1][col]+1)
-        g[comp][row+1][:col+1] = range(a, a+col+1)
+        g[comp][row][col:] = list(range(a+col+1, g[comp][row+1][col]+1))
+        g[comp][row+1][:col+1] = list(range(a, a+col+1))
         from .tableau_tuple import TableauTuple
         g = TableauTuple(g)
         g._garnir_cell = (comp,row,col)
@@ -1444,7 +1487,7 @@ class PartitionTuple(CombinatorialElement):
         Return the corresponding Young, or parabolic, subgroup of the
         symmetric group.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: PartitionTuple([[2,1],[4,2],[1]]).young_subgroup()
             Permutation Group with generators [(), (8,9), (6,7), (5,6), (4,5), (1,2)]
@@ -1455,7 +1498,7 @@ class PartitionTuple(CombinatorialElement):
             for row in comp:
                 gens.extend([(c,c+1) for c in range(m+1,m+row)])
                 m+=row
-        gens.append( range(1,self.size()+1) )  # to ensure we get a subgroup of Sym_n
+        gens.append(list(range(1,self.size()+1)))  # to ensure we get a subgroup of Sym_n
         return PermutationGroup( gens )
 
     def young_subgroup_generators(self):
@@ -1463,7 +1506,7 @@ class PartitionTuple(CombinatorialElement):
         Return an indexing set for the generators of the corresponding Young
         subgroup.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: PartitionTuple([[2,1],[4,2],[1]]).young_subgroup_generators()
             [1, 4, 5, 6, 8]
@@ -1551,7 +1594,7 @@ class PartitionTuple(CombinatorialElement):
         Therefore,  the Gram determinant of `S(2,1|2,2)` when the Hecke parameter
         `q` is "generic" is
 
-        ..math::
+        .. MATH::
 
             q^N \Phi_2(q)^{532}\Phi_3(q)^{259}\Phi_4(q)^{196}\Phi_5(q)^{105}\Phi_6(q)^{105}
 
@@ -1601,7 +1644,7 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[2,1],[2,2]]).prime_degree(7)
             0
 
-       Therefore, the Gram determinant of `S(2,1|2,2)` when `q=1` is 
+       Therefore, the Gram determinant of `S(2,1|2,2)` when `q=1` is
        `2^{728} 3^{259}5^{105}`. Compare with :meth:`degree`.
         """
         ps = [p]
@@ -1610,6 +1653,67 @@ class PartitionTuple(CombinatorialElement):
             ps.append(ps[-1] * p)
         multicharge=tuple([i*self.size() for i in range(self.size())])
         return sum(t.degree(pk, multicharge) for pk in ps for t in self.standard_tableaux())
+
+    @cached_method
+    def block(self, e, multicharge):
+        r"""
+        Return a dictionary `\beta` that determines the block associated to
+        the partition ``self`` and the
+        :meth:`~sage.combinat.tableau_residues.ResidueSequence.quantum_characteristic` ``e``.
+
+        INPUT:
+
+        - ``e`` -- the quantum characteritic
+
+        - ``multicharge`` -- the multicharge (default `(0,)`)
+
+        OUTPUT:
+
+        - a dictionary giving the multiplicities of the residues in the
+          partition tuple ``self``
+
+        In more detail, the value ``beta[i]`` is equal to the
+        number of nodes of residue ``i``. This corresponds to
+        the positive root
+
+        .. MATH::
+
+            \sum_{i\in I} \beta_i \alpha_i \in Q^+,
+
+        a element of the positive root lattice of the corresponding
+        Kac-Moody algebra. See [DJM1998]_ and [BK2009]_ for more details.
+
+        This is a useful statistics because two Specht modules for a cyclotomic
+        Hecke algebra of type `A` belong to the same block if and only if they
+        correspond to same element `\beta` of the root lattice, given above.
+
+        We return a dictionary because when the quantum characteristic is `0`,
+        the Cartan type is `A_{\infty}`, in which case the simple roots are
+        indexed by the integers.
+
+        EXAMPLES::
+
+            sage: PartitionTuple([[2,2],[2,2]]).block(0,(0,0))
+            {-1: 2, 0: 4, 1: 2}
+            sage: PartitionTuple([[2,2],[2,2]]).block(2,(0,0))
+            {0: 4, 1: 4}
+            sage: PartitionTuple([[2,2],[2,2]]).block(2,(0,1))
+            {0: 4, 1: 4}
+            sage: PartitionTuple([[2,2],[2,2]]).block(3,(0,2))
+            {0: 3, 1: 2, 2: 3}
+            sage: PartitionTuple([[2,2],[2,2]]).block(3,(0,2))
+            {0: 3, 1: 2, 2: 3}
+            sage: PartitionTuple([[2,2],[2,2]]).block(3,(3,2))
+            {0: 3, 1: 2, 2: 3}
+            sage: PartitionTuple([[2,2],[2,2]]).block(4,(0,0))
+            {0: 4, 1: 2, 3: 2}
+        """
+        block = {}
+        Ie = IntegerModRing(e)
+        for (k,r,c) in self.cells():
+            i = Ie(multicharge[k] + c - r)
+            block[i] = block.get(i, 0) + 1
+        return block
 
     def defect(self, e, multicharge):
         r"""
@@ -1620,14 +1724,25 @@ class PartitionTuple(CombinatorialElement):
 
         The defect of a partition tuple is given by
 
-        .. MATH: 
+        .. MATH::
 
-            \text{defect}(\beta) = (\Lambda, \beta) - \tfrac12(\beta, \beta)
+            \text{defect}(\beta) = (\Lambda, \beta) - \tfrac12(\beta, \beta),
 
         where `\Lambda = \sum_r \Lambda_{\kappa_r}` for the multicharge
-        `(\kappa_1, \ldots, \kappa_{\ell})` and 
+        `(\kappa_1, \ldots, \kappa_{\ell})` and
         `\beta = \sum_{(r,c)} \alpha_{(c-r) \pmod e}`, with the sum
         being over the cells in the partition.
+
+        INPUT:
+
+        - ``e`` -- the quantum characteritic
+
+        - ``multicharge`` -- the multicharge (default `(0,)`)
+
+        OUTPUT:
+
+        - a non-negative integer, which is the defect of the block
+          containing the partition tuple ``self``
 
         EXAMPLES::
 
@@ -1638,26 +1753,21 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[2,2],[2,2]]).defect(2,(0,1))
             8
             sage: PartitionTuple([[2,2],[2,2]]).defect(3,(0,2))
-            7
+            5
             sage: PartitionTuple([[2,2],[2,2]]).defect(3,(0,2))
-            7
+            5
             sage: PartitionTuple([[2,2],[2,2]]).defect(3,(3,2))
-            7
+            2
             sage: PartitionTuple([[2,2],[2,2]]).defect(4,(0,0))
             0
         """
         # Will correspond to an element of the positive root lattice
         #   corresponding to the block.
         # We use a dictionary to cover the case when e = 0.
-        beta = {}
-
+        beta = self.block(e, multicharge)
         Ie = IntegerModRing(e)
-        for (k,r,c) in self.cells():
-            r = Ie(multicharge[k]+r-c)
-            beta[r] = beta[r] + 1 if r in beta else 1
-
-        return sum(beta[r] for r in beta) - sum(beta[r]**2 - beta[r] * beta.get(Ie(r+1),0)
-                                                for r in beta)
+        return (sum(beta.get(r, 0) for r in multicharge)
+                - sum(beta[r]**2 - beta[r] * beta.get(Ie(r+1), 0) for r in beta))
 
 #--------------------------------------------------
 # Partition tuples - parent classes
@@ -1785,14 +1895,14 @@ class PartitionTuples(UniqueRepresentation, Parent):
         if mu == [] or mu == () or mu == [[]]:
             if mu not in self:
                 raise ValueError('{} is not a {}'.format(mu, self))
-            return self.element_class(self, [Partition([])])
+            return self.element_class(self, [_Partitions([])])
 
         # As partitions are 1-tuples of partitions we need to treat them separately
         try:
-            mu = [Partition(mu)]
+            mu = [_Partitions(mu)]
         except ValueError:
             try:
-                mu = [Partition(nu) for nu in mu]
+                mu = [_Partitions(nu) for nu in mu]
             except ValueError:
                 raise ValueError('{} is not a {}'.format(mu, self))
 
@@ -1931,7 +2041,7 @@ class PartitionTuples_all(PartitionTuples):
         r"""
         Initializes the class.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: TestSuite( PartitionTuples() ).run()
         """
@@ -1978,7 +2088,7 @@ class PartitionTuples_all(PartitionTuples):
              ([], [], [], [])]
         """
         for size in NN:
-            for level in xrange(size+1):
+            for level in range(size+1):
                 for mu in PartitionTuples_level_size(level+1,size-level):
                     yield self._element_constructor_(mu)
 
@@ -2350,7 +2460,7 @@ class PartitionTuples_level_size(PartitionTuples):
 
         TESTS::
 
-            sage: loads("x\x9cM\x90\xcdN\xc30\x0c\x80\xd5\xc1\x06\xeb\x80\xf1{\xe0\r\xe0\xd2\x0b\x07\x1e\x02)B\x88\x9c-7\xb5\xba\xa8MR')\x12\x07$8p\xe0\xadq\x996q\xb1b\xfb\xb3\xf59\x9f3\x93\xb0\xa5\xca\x04W[\x8f\xb9\x1a0f\x9bm\xf0\xe5\xf3\xee\xf5:\x0e=%\xf0]\xc9\xc5\xfd\x17\xcf>\xf8\xe0N_\x83\xf5\xd2\xc5\x1e\xd0L\x10\xf46e>T\xba\x04r55\x8d\xf5-\xcf\x95p&\xf87\x8a\x19\x1c\xe5Mh\xc0\xa3#^(\xbd\x00\xd3`F>Rz\t\x063\xb5!\xbe\xf3\xf1\xd4\x98\x90\xc4K\xa5\x0b\xbf\xb5\x8b\xb2,U\xd6\x0bD\xb1t\xd8\x11\xec\x12.u\xf1\xf0\xfd\xc2+\xbd\x82\x96<E\xcc!&>Qz\x0e5&\xe2S\xa5\xd70X\xd3\xf5\x04\xe2\x91\xc4\x95\xcf\x9e\n\x11\xa3\x9e\x1c\xf9<\t\xa6\x1cG#\x83\xbcV\xfaf\x7f\xd9\xce\xfc\xef\xb4s\xa5o\xf7#\x13\x01\x03\xa6$!J\x81/~t\xd1m\xc4\xe5Q\\.\xff\xfd\x8e\t\x14\rmW\\\xa9\xb1\xae~\x01/\x8f\x85\x02")
+            sage: loads(b"x\x9cM\x90\xcdN\xc30\x0c\x80\xd5\xc1\x06\xeb\x80\xf1{\xe0\r\xe0\xd2\x0b\x07\x1e\x02)B\x88\x9c-7\xb5\xba\xa8MR')\x12\x07$8p\xe0\xadq\x996q\xb1b\xfb\xb3\xf59\x9f3\x93\xb0\xa5\xca\x04W[\x8f\xb9\x1a0f\x9bm\xf0\xe5\xf3\xee\xf5:\x0e=%\xf0]\xc9\xc5\xfd\x17\xcf>\xf8\xe0N_\x83\xf5\xd2\xc5\x1e\xd0L\x10\xf46e>T\xba\x04r55\x8d\xf5-\xcf\x95p&\xf87\x8a\x19\x1c\xe5Mh\xc0\xa3#^(\xbd\x00\xd3`F>Rz\t\x063\xb5!\xbe\xf3\xf1\xd4\x98\x90\xc4K\xa5\x0b\xbf\xb5\x8b\xb2,U\xd6\x0bD\xb1t\xd8\x11\xec\x12.u\xf1\xf0\xfd\xc2+\xbd\x82\x96<E\xcc!&>Qz\x0e5&\xe2S\xa5\xd70X\xd3\xf5\x04\xe2\x91\xc4\x95\xcf\x9e\n\x11\xa3\x9e\x1c\xf9<\t\xa6\x1cG#\x83\xbcV\xfaf\x7f\xd9\xce\xfc\xef\xb4s\xa5o\xf7#\x13\x01\x03\xa6$!J\x81/~t\xd1m\xc4\xe5Q\\.\xff\xfd\x8e\t\x14\rmW\\\xa9\xb1\xae~\x01/\x8f\x85\x02")
             Partition tuples of level 7 and size 3
             sage: loads(dumps( PartitionTuples(7,3) ))  # indirect doctest for unpickling a Tableau element
             Partition tuples of level 7 and size 3
@@ -2366,7 +2476,7 @@ class PartitionTuples_level_size(PartitionTuples):
 ## Regular partition tuples
 
 class RegularPartitionTuples(PartitionTuples):
-    """
+    r"""
     Abstract base class for `\ell`-regular partition tuples.
     """
     def __init__(self, regular, **kwds):
@@ -2440,7 +2550,7 @@ class RegularPartitionTuples(PartitionTuples):
         return self.element_class(self, list(elt))
 
 class RegularPartitionTuples_all(RegularPartitionTuples):
-    """
+    r"""
     Class of `\ell`-regular partition tuples.
     """
     def __init__(self, regular):
@@ -2498,8 +2608,9 @@ class RegularPartitionTuples_all(RegularPartitionTuples):
                 for mu in RegularPartitionTuples_level_size(N-size+1, size, self._ell):
                     yield self.element_class(self, list(mu))
 
+
 class RegularPartitionTuples_level(RegularPartitionTuples):
-    """
+    r"""
     Class of `\ell`-regular partition tuples with a fixed level.
     """
     def __init__(self, level, regular):
@@ -2586,7 +2697,7 @@ class RegularPartitionTuples_level(RegularPartitionTuples):
                 yield self.element_class(self, list(mu))
 
 class RegularPartitionTuples_size(RegularPartitionTuples):
-    """
+    r"""
     Class of `\ell`-regular partition tuples with a fixed size.
     """
     def __init__(self, size, regular):
@@ -2669,8 +2780,9 @@ class RegularPartitionTuples_size(RegularPartitionTuples):
             for mu in RegularPartitionTuples_level_size(level, self._size, self._ell):
                 yield self.element_class(self, list(mu))
 
+
 class RegularPartitionTuples_level_size(RegularPartitionTuples):
-    """
+    r"""
     Class of `\ell`-regular partition tuples with a fixed level and a fixed
     size.
     """
@@ -2771,7 +2883,3 @@ class RegularPartitionTuples_level_size(RegularPartitionTuples):
                 mu[0] = [1]
                 mu[-1] = [self._size-1]
         return self.element_class(self, mu)
-
-# Deprecations from trac:18555. July 2016
-from sage.misc.superseded import deprecated_function_alias
-PartitionTuples.global_options=deprecated_function_alias(18555, PartitionTuples.options)

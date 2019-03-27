@@ -3,12 +3,15 @@
 from sage.libs.gmp.types cimport mpz_t
 from .types cimport ZZ_c, vec_ZZ_c, ZZX_c
 
-cdef extern from "ccobject.h":
-    void ZZX_swap "swap"(ZZX_c x, ZZX_c y)
-    void ZZX_from_str "_from_str<ZZX>"(ZZX_c* dest, char* s)
-    object ZZX_to_PyString "_to_PyString<ZZX>"(ZZX_c *x)
 
-cdef extern from "sage/libs/ntl/ntlwrap.cpp":
+cdef extern from *:
+    ## for cleaning up after ZZX_repr:
+    void cpp_delete_array "delete[]"(char*)
+
+
+cdef extern from "ntlwrap.h":
+    void ZZX_swap "swap"(ZZX_c& x, ZZX_c& y)
+
     ctypedef struct pair_ZZX_long_c "pair_ZZX_long":
         ZZX_c a
         long b
@@ -39,18 +42,19 @@ cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     void ZZX_content "content"(ZZ_c d, ZZX_c f)
     void ZZX_factor "factor"(ZZ_c c, vec_pair_ZZX_long_c factors, ZZX_c f, long verbose, long bnd)
 
-    void ZZX_squarefree_decomposition(ZZX_c*** v, long** e, long* n, ZZX_c* x)
+    int ZZX_IsZero "IsZero"(ZZX_c x)
+    int ZZX_IsOne "IsOne"(ZZX_c x)
 
+
+cdef extern from "ntlwrap_impl.h":
     char* ZZX_repr(ZZX_c* x)
-    ## for cleaning up after ZZX_repr:
-    void cpp_delete_array "delete []"(char *str)
     ZZX_c* ZZX_copy(ZZX_c* x)
+    cdef void ZZX_setitem_from_int(ZZX_c* x, long i, int value)
+    cdef int ZZX_getitem_as_int(ZZX_c* x, long i)
+    void ZZX_getitem_as_mpz(mpz_t output, ZZX_c* x, long i)
     ZZX_c* ZZX_div(ZZX_c* x, ZZX_c* y, int* divisible)
     void ZZX_quo_rem(ZZX_c* x, ZZX_c* other, ZZX_c** r, ZZX_c** q)
     ZZX_c* ZZX_square(ZZX_c* x)
-    int ZZX_IsZero "IsZero"(ZZX_c x)
-    int ZZX_IsOne "IsOne"(ZZX_c x)
-    int ZZX_is_monic(ZZX_c* x)
     ZZX_c* ZZX_neg(ZZX_c* x)
     ZZX_c* ZZX_left_shift(ZZX_c* x, long n)
     ZZX_c* ZZX_right_shift(ZZX_c* x, long n)
@@ -59,7 +63,7 @@ cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     ZZX_c* ZZX_gcd(ZZX_c* x, ZZX_c* y)
     ZZX_c* ZZX_xgcd(ZZX_c* x, ZZX_c* y, ZZ_c** r, ZZX_c** s, ZZX_c** t, int proof)
     void ZZX_set_x(ZZX_c* x)
-    int ZZX_is_x(ZZX_c* x)
+    bint ZZX_is_x(ZZX_c* x)
     ZZX_c* ZZX_derivative(ZZX_c* x)
     ZZX_c* ZZX_reverse(ZZX_c* x)
     ZZX_c* ZZX_reverse_hi(ZZX_c* x, long hi)
@@ -73,11 +77,8 @@ cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     ZZ_c* ZZX_resultant(ZZX_c* x, ZZX_c* y, int proof)
     ZZ_c* ZZX_norm_mod(ZZX_c* x, ZZX_c* y, int proof)
     ZZ_c* ZZX_discriminant(ZZX_c* x, int proof)
-    ZZ_c* ZZX_polyeval(ZZX_c* x, ZZ_c* a)
     ZZX_c* ZZX_charpoly_mod(ZZX_c* x, ZZX_c* y, int proof)
     ZZX_c* ZZX_minpoly_mod(ZZX_c* x, ZZX_c* y)
     void ZZX_clear(ZZX_c* x)
     void ZZX_preallocate_space(ZZX_c* x, long n)
-    void ZZX_getitem_as_mpz(mpz_t output, ZZX_c* x, long i)
-    cdef void ZZX_setitem_from_int(ZZX_c* x, long i, int value)
-    cdef int ZZX_getitem_as_int(ZZX_c* x, long i)
+    void ZZX_squarefree_decomposition(ZZX_c*** v, long** e, long* n, ZZX_c* x)

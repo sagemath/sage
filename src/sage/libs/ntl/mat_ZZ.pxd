@@ -1,24 +1,12 @@
 from .types cimport mat_ZZ_c, ZZ_c, ZZX_c
 
-cdef extern from "ccobject.h":
-    object mat_ZZ_to_PyString "_to_PyString<mat_ZZ>"(mat_ZZ_c *x)
 
-cdef extern from "sage/libs/ntl/ntlwrap.cpp":
+cdef extern from "ntlwrap.h":
     void mat_ZZ_mul "mul"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
     void mat_ZZ_add "add"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
     void mat_ZZ_sub "sub"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
     void mat_ZZ_power "NTL::power"( mat_ZZ_c x, mat_ZZ_c a, long e)
     void mat_ZZ_CharPoly "CharPoly"(ZZX_c r, mat_ZZ_c m)
-
-    mat_ZZ_c* mat_ZZ_pow(mat_ZZ_c* x, long e)
-    void mat_ZZ_setitem(mat_ZZ_c* x, int i, int j, ZZ_c* z)
-    ZZ_c* mat_ZZ_getitem(mat_ZZ_c* x, int i, int j)
-    ZZ_c* mat_ZZ_determinant(mat_ZZ_c* x, long deterministic)
-    mat_ZZ_c* mat_ZZ_HNF(mat_ZZ_c* A, ZZ_c* D)
-    ZZX_c* mat_ZZ_charpoly(mat_ZZ_c* A)
-
-    cdef long mat_ZZ_LLL(ZZ_c **det, mat_ZZ_c *x, long a, long b, long verbose)
-    cdef long mat_ZZ_LLL_U(ZZ_c **det, mat_ZZ_c *x, mat_ZZ_c *U, long a, long b, long verbose)
 
     cdef long mat_ZZ_LLL_FP   "LLL_FP"(mat_ZZ_c B, double delta, int deep, int check , int verbose)
     cdef long mat_ZZ_LLL_FP_U "LLL_FP"(mat_ZZ_c B, mat_ZZ_c U, double delta, int deep, int check , int verbose)
@@ -59,3 +47,12 @@ cdef extern from "sage/libs/ntl/ntlwrap.cpp":
     cdef long mat_ZZ_G_BKZ_QP1_U  "G_BKZ_QP1"(mat_ZZ_c B, mat_ZZ_c U, double delta, long BlockSize, long prune, int check, long verbose)
     cdef long mat_ZZ_G_BKZ_RR     "G_BKZ_RR"(mat_ZZ_c B, double delta, long BlockSize, long prune, int check, long verbose)
     cdef long mat_ZZ_G_BKZ_RR_U   "G_BKZ_RR"(mat_ZZ_c B, mat_ZZ_c U, double delta, long BlockSize, long prune, int check, long verbose)
+
+
+cdef extern from "ntlwrap_impl.h":
+    void mat_ZZ_setitem(mat_ZZ_c* x, int i, int j, ZZ_c* z)
+    ZZ_c* mat_ZZ_getitem(mat_ZZ_c* x, int i, int j)
+    ZZ_c* mat_ZZ_determinant(mat_ZZ_c* x, long deterministic)
+    mat_ZZ_c* mat_ZZ_HNF(mat_ZZ_c* A, ZZ_c* D)
+    cdef long mat_ZZ_LLL(ZZ_c **det, mat_ZZ_c *x, long a, long b, long verbose)
+    cdef long mat_ZZ_LLL_U(ZZ_c **det, mat_ZZ_c *x, mat_ZZ_c *U, long a, long b, long verbose)

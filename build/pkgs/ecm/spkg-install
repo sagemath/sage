@@ -1,26 +1,4 @@
-#!/usr/bin/env bash
-
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    exit 1
-fi
-
 cd src/
-
-###############################################################################
-# Apply patches (if any):
-###############################################################################
-
-# Apply patches.  See SPKG.txt for information about what each patch
-# does.
-for patch in ../patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    patch -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
 
 # Use newer version of config.guess and config.sub (see Trac #19724)
 cp "$SAGE_ROOT"/config/config.* .
@@ -75,16 +53,6 @@ if [ -n "$system_gmp_h" ]; then
 fi
 
 
-if [ "$SAGE64" = yes ]; then
-    echo "Building a 64-bit version of GMP-ECM."
-    if [ -z "$CFLAG64" ]; then
-        CFLAG64=-m64
-    fi
-    CFLAGS="$CFLAGS $CFLAG64"
-    LDFLAGS="$LDFLAGS $CFLAG64"; export LDFLAGS
-fi
-
-
 # libtool should add the proper flags, but doesn't use "-fPIC"
 # for the *static* library (which the Sage library links to unless
 # we also build the shared one). The following only handles the
@@ -100,6 +68,11 @@ else
     # for the shared one we also build, which then will be used by Sage.
     echo "Not adding '-fPIC' since we also build a shared library Sage will link"
     echo "to, or '--with-pic' was given in ECM_CONFIGURE."
+fi
+
+if [ "$UNAME" == "CYGWIN" ]; then
+    # Force shared library build only on Cygwin; it will not build otherwise
+    ECM_CONFIGURE="$ECM_CONFIGURE --enable-shared --disable-static"
 fi
 
 
@@ -147,11 +120,11 @@ else
         # The compiler supports '-march=native', but the assembler might not
         # support (some of) the instructions emitted with this (e.g. the
         # Apple assembler doesn't know AVX yet).
-        cat >foo.c <<-"EOF"
-		double d;
-		unsigned long fancy_insns() { return (unsigned long) d; }
-		int main () { return 0; }
-	EOF
+        cat >foo.c <<EOF
+                double d;
+                unsigned long fancy_insns() { return (unsigned long) d; }
+                int main () { return 0; }
+EOF
         if $CC -march=native -o foo foo.c &>/dev/null && ./foo >/dev/null; then
             cpu_params="-march=native"
         else
@@ -248,26 +221,13 @@ if [ -z "$ECM_CONFIGURE" ]; then
 fi
 echo
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
-            --with-gmp="$SAGE_LOCAL" \
-            $ECM_CONFIGURE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring GMP-ECM."
-    echo >&2 "(See above for the options passed to its 'configure'.)"
-    exit 1
-fi
+sdh_configure --with-gmp="$SAGE_LOCAL" $ECM_CONFIGURE
 
 ###############################################################################
 # Now build ECM:
 ###############################################################################
 
-echo
-echo "Now building GMP-ECM..."
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building GMP-ECM."
-    exit 1
-fi
+sdh_make
 
 ###############################################################################
 # Remove old executable/header/libraries/manpage:
@@ -284,9 +244,4 @@ rm -f "$SAGE_LOCAL"/share/man/man1/ecm.1
 # Now install ECM:
 ###############################################################################
 
-echo "Now installing GMP-ECM..."
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing GMP-ECM (though it appears to have built fine)."
-    exit 1
-fi
+sdh_make_install

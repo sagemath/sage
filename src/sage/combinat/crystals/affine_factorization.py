@@ -23,7 +23,7 @@ from sage.combinat.rsk import RSK
 class AffineFactorizationCrystal(UniqueRepresentation, Parent):
     r"""
     The crystal on affine factorizations with a cut-point, as introduced
-    by [MS14]_.
+    by [MS2015]_.
 
     INPUT:
 
@@ -92,13 +92,6 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
         Traceback (most recent call last):
         ...
         ValueError: x cannot be in reduced word of s0*s3*s2
-
-    REFERENCES:
-
-    .. [MS14] Jennifer Morse and Anne Schilling.
-       *Crystal approach to affine Schubert calculus*.
-       Int. Math. Res. Not. (2015).
-       :doi:`10.1093/imrn/rnv194`, :arxiv:`1408.0320`.
     """
     @staticmethod
     def __classcall_private__(cls, w, n, x = None, k = None):
@@ -334,7 +327,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             Return the tableau representation of ``self``.
 
             Uses the recording tableau of a minor variation of
-            Edelman-Greene insertion. See Theorem 4.11 in [MS14]_.
+            Edelman-Greene insertion. See Theorem 4.11 in [MS2015]_.
 
             EXAMPLES::
 
@@ -373,7 +366,7 @@ def affine_factorizations(w, l, weight=None):
 
     - ``w`` -- an (affine) permutation or element of the (affine) Weyl group
 
-    - ``l`` -- nonegative integer
+    - ``l`` -- nonnegative integer
 
     - ``weight`` -- (default: None) tuple of nonnegative integers specifying the length of the factors
 

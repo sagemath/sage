@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-python23
 # -*- coding: utf-8 -*-
 
 import os
@@ -23,7 +23,7 @@ class NotebookSageNB(object):
     @classmethod
     def print_help(cls):
         cls([], help=True)
-    
+
     def cmdline2argspec(self, cmdline_args):
         """
         Convert command line arguments to Python argspec
@@ -32,11 +32,11 @@ class NotebookSageNB(object):
         notebook, do not use.
 
         INPUT:
-    
+
         - ``cmdline_args`` -- list of string.
-    
+
         OUTPUT:
-    
+
         A python argspec: A pair consisting of a tuple and a dict.
         """
         args = []
@@ -100,6 +100,27 @@ class NotebookJupyter(object):
         main(argv)
 
 
+class NotebookJupyterlab(object):
+    def print_banner(self):
+        banner()
+        print('Please wait while the Jupyterlab server starts...')
+
+    @classmethod
+    def print_help(cls):
+        cls(['help'])
+
+    def __init__(self, argv):
+        try:
+            from jupyterlab.labapp import main
+        except ImportError:
+            print("Jupyterlab is not installed (at least not in this Sage installation).")
+            print("You can install it by running")
+            print("  sage --pip install jupyterlab")
+            raise SystemExit(1)
+        self.print_banner()
+        main(argv)
+
+
 class SageNBExport(NotebookJupyter):
 
     def print_banner(self):
@@ -115,11 +136,11 @@ class SageNBExport(NotebookJupyter):
             SAGENB_EXPORT = 'sagenb-export'
             os.execvp(SAGENB_EXPORT, [SAGENB_EXPORT] + argv)
         argv += [
-            "--NotebookApp.server_extensions=['sagenb_export.nbextension']",
+            "--NotebookApp.nbserver_extensions={'sagenb_export.nbextension':True}",
             "--NotebookApp.default_url='/sagenb'",
         ]
         super(SageNBExport, self).__init__(argv)
-        
+
 
 description = \
 """
@@ -136,7 +157,7 @@ show this help message and exit. Can be combined with
 
 epilog = \
 """
-EXAMPLES: 
+EXAMPLES:
 
 * Run default notebook on port 1234. Note that the first argument
   after "-n" will be interpreted as notebook name unless you stop
@@ -149,16 +170,26 @@ EXAMPLES:
 * Run Jupyter notebook in custom directory:
 
       sage --notebook=jupyter --notebook-dir=/home/foo/bar
+
+* List available legacy Sage notebooks:
+
+      sage --notebook=export --list
+
+* Export a legacy Sage notebook as a Jupyter notebook:
+
+      sage --notebook=export --ipynb=Output.ipynb admin:10
+
 """
 
 
 notebook_launcher = {
-    'default': NotebookSageNB,   # change this to change the default
+    'default': SageNBExport,   # change this to change the default
     'sagenb': NotebookSageNB,
     'ipython': NotebookJupyter,
     'jupyter': NotebookJupyter,
+    'jupyterlab': NotebookJupyterlab,
     'export': SageNBExport,
-} 
+}
 
 notebook_names = ', '.join(notebook_launcher.keys())
 
@@ -176,7 +207,7 @@ def make_parser():
         add_help=False)
     parser.add_argument('-h', '--help',
                         dest='option_help', action='store_true',
-                        default=False, 
+                        default=False,
                         help=help_help)
     parser.add_argument('--log', dest='log', default=None,
                         help='one of [DEBUG, INFO, ERROR, WARNING, CRITICAL]')
@@ -195,11 +226,23 @@ def make_parser():
     return parser
 
 
+def trac_23428_browser_workaround():
+    """
+    Running 'sage -n" with the Jupyter notebook on Darwin fails to
+    open a browser automatically. See :trac:`23428`.
+    """
+    if sys.platform != 'darwin':
+        return
+    if not os.environ.get('BROWSER', False):
+        os.environ['BROWSER'] = 'open'
+
+
 if __name__ == '__main__':
     parser = make_parser()
     args, unknown = parser.parse_known_args(sys.argv[1:])
     if len(unknown) > 0 and unknown[0] == '--':
         unknown = unknown[1:]
+    trac_23428_browser_workaround()
     if args.log is not None:
         import logging
         level = getattr(logging, args.log.upper())

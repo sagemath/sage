@@ -49,13 +49,23 @@ equivalent::
     sage: libgap.eval('5/3 + 7*E(3)').sage()
     7*zeta3 + 5/3
 
-    sage: generators = libgap.AlternatingGroup(4).GeneratorsOfGroup().sage()
+    sage: gens_of_group = libgap.AlternatingGroup(4).GeneratorsOfGroup()
+    sage: generators = gens_of_group.sage()
     sage: generators   # a Sage list of Sage permutations!
-    [(1,2,3), (2,3,4)]
+    [[2, 3, 1], [1, 3, 4, 2]]
     sage: PermutationGroup(generators).cardinality()   # computed in Sage
     12
     sage: libgap.AlternatingGroup(4).Size()            # computed in GAP
     12
+
+We can also specify which group in Sage the permutations should
+consider themselves as elements of when converted to Sage::
+
+    sage: A4 = groups.permutation.Alternating(4)
+    sage: generators = gens_of_group.sage(parent=A4); generators
+    [(1,2,3), (2,3,4)]
+    sage: all(gen.parent() is A4 for gen in generators)
+    True
 
 So far, the following GAP data types can be directly converted to the
 corresponding Sage datatype:
@@ -150,53 +160,10 @@ using the recursive expansion of the
 Using the libGAP C library from Cython
 ======================================
 
-The lower-case ``libgap_foobar`` functions are ones that we added to
-make the libGAP C shared library. The ``libGAP_foobar`` methods are
-the original GAP methods simply prefixed with the string
-``libGAP_``. The latter were originally not designed to be in a
-library, so some care needs to be taken to call them.
+.. TODO:: Update the following text
 
-In particular, you must call ``libgap_mark_stack_bottom()`` in every
-function that calls into the libGAP C functions. The reason is that
-the GAP memory manager will automatically keep objects alive that are
-referenced in local (stack-allocated) variables. While convenient,
-this requires to look through the stack to find anything that looks
-like an address to a memory bag. But this requires vigilance against
-the following pattern::
-
-    cdef f()
-      libgap_mark_stack_bottom()
-      libGAP_function()
-
-    cdef g()
-      libgap_mark_stack_bottom();
-      f()                #  f() changed the stack bottom marker
-      libGAP_function()  #  boom
-
-The solution is to re-order ``g()`` to first call ``f()``. In order to
-catch this error, it is recommended that you wrap calls into libGAP in
-``libgap_enter`` / ``libgap_exit`` blocks and not call
-``libgap_mark_stack_bottom`` manually. So instead, always write
-
-    cdef f()
-      libgap_enter()
-      libGAP_function()
-      libgap_exit()
-
-    cdef g()
-      f()
-      libgap_enter()
-      libGAP_function()
-      libgap_exit()
-
-If you accidentally call ``libgap_enter()`` twice then an error
-message is printed to help you debug this::
-
-    sage: from sage.libs.gap.util import error_enter_libgap_block_twice
-    sage: error_enter_libgap_block_twice()
-    Traceback (most recent call last):
-    ...
-    RuntimeError: Entered a critical block twice
+   We are using libgap API provided by the GAP project since
+   GAP 4.10.
 
 AUTHORS:
 
@@ -205,6 +172,8 @@ AUTHORS:
     almost complete rewrite; first usable version.
   - Volker Braun (2012-08-28, GAP/Singular workshop): update to
     gap-4.5.5, make it ready for public consumption.
+  - Dima Pasechnik (2018-09-18, GAP Days): started the port to native
+    libgap API
 """
 
 ###############################################################################
@@ -241,33 +210,35 @@ AUTHORS:
 # stuff. Talk to me (Volker) if you want to work on that.
 #
 ##############################################################################
-from __future__ import print_function
 
-from gap_includes cimport *
+from __future__ import print_function, absolute_import
+
+from pprint import pprint
+
+from .gap_includes cimport *
+from .util cimport *
+from .element cimport *
 
 from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent
-from sage.structure.element cimport ModuleElement, RingElement
+from sage.structure.element cimport ModuleElement, RingElement, Vector
 from sage.rings.all import ZZ
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecated_function_alias
-from sage.libs.gap.element cimport *
+from sage.misc.randstate cimport current_randstate
+from sage.misc.superseded import deprecated_function_alias, deprecation
 
 
 ############################################################################
 ### Debugging ##############################################################
 ############################################################################
 
-cdef void report(libGAP_Obj bag):
-    print(libGAP_TNAM_OBJ(bag), <int>libGAP_TNUM_BAG(bag), <int>libGAP_SIZE_BAG(bag))
+
+cdef void report(Obj bag):
+    print(TNAM_OBJ(bag),  <int>SIZE_OBJ(bag))
 
 
 cdef void print_gasman_objects():
-    libgap_enter()
-    libGAP_CallbackForAllBags(report)
-    libgap_exit()
-
-
+    CallbackForAllBags(report)
 
 
 from sage.misc.lazy_import import is_during_startup
@@ -342,16 +313,23 @@ class Gap(Parent):
             0
             sage: libgap(int(0))
             0
+            sage: libgap(vector((0,1,2)))
+            [ 0, 1, 2 ]
+            sage: libgap(vector((1/3,2/3,4/5)))
+            [ 1/3, 2/3, 4/5 ]
+            sage: libgap(vector((1/3, 0.8, 3)))
+            [ 0.333333, 0.8, 3. ]
+
         """
         if isinstance(x, GapElement):
             return x
-        elif isinstance(x, (list, tuple)):
+        elif isinstance(x, (list, tuple, Vector)):
             return make_GapElement_List(self, make_gap_list(x))
         elif isinstance(x, dict):
             return make_GapElement_Record(self, make_gap_record(x))
         elif isinstance(x, bool):
             # attention: must come before int
-            return make_GapElement_Boolean(self, libGAP_True if x else libGAP_False)
+            return make_GapElement_Boolean(self, GAP_True if x else GAP_False)
         elif isinstance(x, int):
             return make_GapElement_Integer(self, make_gap_integer(x))
         elif isinstance(x, basestring):
@@ -424,9 +402,18 @@ class Gap(Parent):
             sage: libgap.eval('"string"')
             "string"
         """
+        cdef GapElement elem
+
         if not isinstance(gap_command, basestring):
             gap_command = str(gap_command._gap_init_())
-        return make_any_gap_element(self, gap_eval(gap_command))
+
+        elem = make_any_gap_element(self, gap_eval(gap_command))
+
+        # If the element is NULL just return None instead
+        if elem.value == NULL:
+            return None
+
+        return elem
 
     @cached_method
     def function_factory(self, function_name):
@@ -501,9 +488,11 @@ class Gap(Parent):
             ...
             ValueError: libGAP: Error, VAL_GVAR: No value bound to FooBar
         """
+        is_readonlyglobal = self.function_factory('IsReadOnlyGlobal')
         make_readwrite = self.function_factory('MakeReadWriteGlobal')
         unbind_global = self.function_factory('UnbindGlobal')
-        make_readwrite(variable)
+        if is_readonlyglobal(variable):
+            make_readwrite(variable)
         unbind_global(variable)
 
     def get_global(self, variable):
@@ -560,6 +549,28 @@ class Gap(Parent):
         from sage.libs.gap.context_managers import GlobalVariableContext
         return GlobalVariableContext(variable, value)
 
+    def set_seed(self, seed=None):
+        """
+        Reseed the standard GAP pseudo-random sources with the given seed.
+
+        Uses a random seed given by ``current_randstate().ZZ_seed()`` if
+        ``seed=None``.  Otherwise the seed should be an integer.
+
+        EXAMPLES::
+
+            sage: libgap.set_seed(0)
+            0
+            sage: [libgap.Random(1, 10) for i in range(5)]
+            [2, 3, 3, 4, 2]
+        """
+        if seed is None:
+            seed = current_randstate().ZZ_seed()
+
+        Reset = self.function_factory("Reset")
+        Reset(self.GlobalMersenneTwister, seed)
+        Reset(self.GlobalRandomSource, seed)
+        return seed
+
     def _an_element_(self):
         r"""
         Return a :class:`GapElement`.
@@ -587,17 +598,8 @@ class Gap(Parent):
 
             sage: libgap.zero()
             0
-
-        TESTS::
-
-            sage: libgap.zero_element()
-            doctest:...: DeprecationWarning: zero_element is deprecated. Please use zero instead.
-            See http://trac.sagemath.org/17694 for details.
-            0
         """
         return self(0)
-
-    zero_element = deprecated_function_alias(17694, zero)
 
     def one(self):
         r"""
@@ -624,7 +626,6 @@ class Gap(Parent):
             <class 'sage.libs.gap.libgap.Gap'>
         """
         initialize()
-        libgap_set_gasman_callback(gasman_callback)
         from sage.rings.integer_ring import ZZ
         Parent.__init__(self, base=ZZ)
 
@@ -653,12 +654,13 @@ class Gap(Parent):
            sage: 'OctaveAlgebra' in dir(libgap)
            True
         """
-        from sage.libs.gap.gap_functions import common_gap_functions
-        return dir(self.__class__) + list(common_gap_functions)
+        from sage.libs.gap.gap_globals import common_gap_globals
+        return dir(self.__class__) + sorted(common_gap_globals)
 
     def __getattr__(self, name):
         r"""
-        The attributes of the Gap object are the Gap functions.
+        The attributes of the Gap object are the Gap functions, and in some
+        cases other global variables from GAP.
 
         INPUT:
 
@@ -667,32 +669,52 @@ class Gap(Parent):
 
         OUTPUT:
 
-        A :class:`GapElement_Function`. A ``AttributeError`` is raised
-        if there is no such function.
+        A :class:`GapElement`. A ``AttributeError`` is raised
+        if there is no such function or global variable.
 
         EXAMPLES::
 
             sage: libgap.List
             <Gap function "List">
+            sage: libgap.GlobalRandomSource
+            <RandomSource in IsGlobalRandomSource>
         """
         if name in dir(self.__class__):
             return getattr(self.__class__, name)
+
         from sage.libs.gap.gap_functions import common_gap_functions
+        from sage.libs.gap.gap_globals import common_gap_globals
         if name in common_gap_functions:
-            f = make_GapElement_Function(self, gap_eval(str(name)))
-            assert f.is_function()
-            self.__dict__[name] = f
-            return f
+            g = make_GapElement_Function(self, gap_eval(name))
+            assert g.is_function()
+        elif name in common_gap_globals:
+            g = make_any_gap_element(self, gap_eval(name))
         else:
-            raise AttributeError('No such attribute: '+name+'.')
+            raise AttributeError(f'No such attribute: {name}.')
+
+        self.__dict__[name] = g
+        return g
 
     def show(self):
         """
-        Print statistics about the GAP owned object list
+        Return statistics about the GAP owned object list
 
-        Slight complication is that we want to do it without accessing
-        libgap objects, so we don't create new GapElements as a side
-        effect.
+        This includes the total memory allocated by GAP as returned by
+        ``libgap.eval('TotalMemoryAllocated()'), as well as garbage collection
+        / object count statistitics as returned by
+        ``libgap.eval('GasmanStatistics')``, and finally the total number of
+        GAP objects held by Sage as :class:`~sage.libs.gap.element.GapElement`
+        instances.
+
+        The value ``livekb + deadkb`` will roughly equal the total memory
+        allocated for GAP objects (see
+        ``libgap.eval('TotalMemoryAllocated()')``).
+
+        .. note::
+
+            Slight complication is that we want to do it without accessing
+            libgap objects, so we don't create new GapElements as a side
+            effect.
 
         EXAMPLES::
 
@@ -700,15 +722,25 @@ class Gap(Parent):
             sage: b = libgap(456)
             sage: c = libgap(789)
             sage: del b
-            sage: libgap.show() # random output
-            11 LibGAP elements currently alive
-            rec( full := rec( cumulative := 122, deadbags := 9,
-            deadkb := 0, freekb := 7785, livebags := 304915,
-            livekb := 47367, time := 33, totalkb := 68608 ),
-            nfull := 3, npartial := 14 )
+            sage: libgap.collect()
+            sage: libgap.show()  # random output
+            {'gasman_stats': {'full': {'cumulative': 110,
+               'deadbags': 321400,
+               'deadkb': 12967,
+               'freekb': 15492,
+               'livebags': 396645,
+               'livekb': 37730,
+               'time': 110,
+               'totalkb': 65536},
+              'nfull': 1,
+              'npartial': 1},
+             'nelements': 23123,
+             'total_alloc': 3234234}
         """
-        print('{} LibGAP elements currently alive'.format(self.count_GAP_objects()))
-        print(self.eval('GasmanStatistics()'))
+        d = {'nelements': self.count_GAP_objects()}
+        d['total_alloc'] = self.eval('TotalMemoryAllocated()').sage()
+        d['gasman_stats'] = self.eval('GasmanStatistics()').sage()
+        return d
 
     def count_GAP_objects(self):
         """
@@ -724,57 +756,19 @@ class Gap(Parent):
             sage: libgap.count_GAP_objects()   # random output
             5
         """
-        return sum([1 for obj in get_owned_objects()])
+        return len(get_owned_objects())
 
     def mem(self):
         """
-        Return information about libGAP memory usage
+        Return information about GAP memory usage
 
-        The GAP workspace is partitioned into 5 pieces (see gasman.c
-        in the GAP sources for more details):
-
-        * The **masterpointer area**  contains  all the masterpointers  of  the bags.
-
-        * The **old bags area** contains the bodies of all the  bags that survived at
-          least one  garbage collection.  This area is  only  scanned for dead bags
-          during a full garbage collection.
-
-        * The **young bags area** contains the bodies of all  the bags that have been
-          allocated since the  last garbage collection.  This  area is scanned  for
-          dead  bags during  each garbage  collection.
-
-        * The **allocation area** is the storage  that is available for allocation of
-          new bags.  When a new bag is allocated the storage for  the body is taken
-          from  the beginning of   this area,  and  this  area  is  correspondingly
-          reduced.   If  the body does not   fit in the  allocation  area a garbage
-          collection is  performed.
-
-        * The **unavailable  area** is  the free  storage that  is not  available for
-          allocation.
-
-        OUTPUT:
-
-        This function returns a tuple containing 5 integers. Each is
-        the size (in bytes) of the five partitions of the
-        workspace. This will potentially change after each GAP garbage
-        collection.
-
-        EXAMPLES::
-
-            sage: libgap.collect()
-            sage: libgap.mem()   # random output
-            (1048576, 6706782, 0, 960930, 0)
-
-            sage: libgap.FreeGroup(3)
-            <free group on the generators [ f1, f2, f3 ]>
-            sage: libgap.mem()   # random output
-            (1048576, 6706782, 47571, 913359, 0)
-
-            sage: libgap.collect()
-            sage: libgap.mem()   # random output
-            (1048576, 6734785, 0, 998463, 0)
+        This method is deprecated and is a no-op.  Use :meth:`Gap.show` to
+        display memory-usage and bag count statistics from GASMAN.
         """
-        return memory_usage()
+
+        deprecation(22626, 'this functionality is not supported by GAP; use '
+                           'libgap.show() for GAP memory usage statistics')
+        return (0, 0, 0, 0, 0)
 
     def collect(self):
         """
@@ -786,9 +780,7 @@ class Gap(Parent):
             sage: del a
             sage: libgap.collect()
         """
-        libgap_enter()
-        rc = libGAP_CollectBags(0, 1)
-        libgap_exit()
+        rc = CollectBags(0, 1)
         if rc != 1:
             raise RuntimeError('Garbage collection failed.')
 

@@ -50,7 +50,7 @@ cdef class ArgumentFixer:
     ::
 
         sage: def f(x = 10):
-        ...       return min(1,x)
+        ....:     return min(1,x)
 
     the following calls are equivalent,
     ::
@@ -92,11 +92,11 @@ cdef class ArgumentFixer:
 
         sage: from sage.misc.function_mangling import ArgumentFixer
         sage: def wrap2(g):
-        ...       af = ArgumentFixer(g)
-        ...       def _g(*args, **kwargs):
-        ...           print(af.fix_to_pos())
-        ...           return g(*args,**kwargs)
-        ...       return _g
+        ....:     af = ArgumentFixer(g)
+        ....:     def _g(*args, **kwargs):
+        ....:         print(af.fix_to_pos())
+        ....:         return g(*args,**kwargs)
+        ....:     return _g
         sage: h2 = wrap2(f)
         sage: t = h2()
         ((10,), ())
@@ -108,8 +108,8 @@ cdef class ArgumentFixer:
     ::
 
         sage: class one:
-        ...      def __init__(self, x = 1):
-        ...         self.x = x
+        ....:    def __init__(self, x = 1):
+        ....:       self.x = x
         sage: af = ArgumentFixer(one.__init__.__func__, classmethod=True)
         sage: af.fix_to_pos(1,2,3,a=31,b=2,n=3)
         ((1, 2, 3), (('a', 31), ('b', 2), ('n', 3)))
@@ -201,11 +201,11 @@ cdef class ArgumentFixer:
 
         in all cases.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.function_mangling import ArgumentFixer
             sage: def sum3(a,b,c=3,*args,**kwargs):
-            ...       return a+b+c
+            ....:     return a+b+c
             sage: AF = ArgumentFixer(sum3)
             sage: AF.fix_to_named(1,2,3,4,5,6,f=14,e=16)
             ((4, 5, 6), (('a', 1), ('b', 2), ('c', 3), ('e', 16), ('f', 14)))
@@ -269,19 +269,20 @@ cdef class ArgumentFixer:
         The names `n_1, ..., n_m` are given in alphabetical
         order.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.function_mangling import ArgumentFixer
-            sage: def do_something(a,b,c=3,*args,**kwargs):
-            ....:     print("{} {} {} {} {}".format(a,b,c, args, kwargs))
+            sage: def do_something(a, b, c=3, *args, **kwargs):
+            ....:     print("{} {} {} {} {}".format(a, b, c, args,
+            ....:                                   sorted(kwargs.items())))
             sage: AF = ArgumentFixer(do_something)
-            sage: A,K = AF.fix_to_pos(1,2,3,4,5,6,f=14,e=16)
+            sage: A, K = AF.fix_to_pos(1, 2, 3, 4, 5, 6, f=14, e=16)
             sage: print("{} {}".format(A, K))
             (1, 2, 3, 4, 5, 6) (('e', 16), ('f', 14))
-            sage: do_something(*A,**dict(K))
-            1 2 3 (4, 5, 6) {'e': 16, 'f': 14}
-            sage: do_something(1,2,3,4,5,6,f=14,e=16)
-            1 2 3 (4, 5, 6) {'e': 16, 'f': 14}
+            sage: do_something(*A, **dict(K))
+            1 2 3 (4, 5, 6) [('e', 16), ('f', 14)]
+            sage: do_something(1, 2, 3, 4, 5, 6, f=14, e=16)
+            1 2 3 (4, 5, 6) [('e', 16), ('f', 14)]
         """
         return self.fix_to_pos_args_kwds(args, kwds)
 
@@ -313,6 +314,5 @@ cdef class ArgumentFixer:
             else:
                 val = defaults[name]
             Largs.append(val)
-        cdef list Items = kwargs.items()
-        Items.sort()
+        cdef list Items = sorted(kwargs.items())
         return tuple(Largs), tuple(Items)

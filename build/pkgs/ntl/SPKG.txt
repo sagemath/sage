@@ -8,7 +8,7 @@ matrices, and polynomials over the integers and over finite fields.
 Website: http://www.shoup.net/ntl/
 
 == License ==
- * GNU GPLv2+
+ * GNU LGPLv2.1+
 
 == Upstream Contact ==
  * Victor Shoup - for contact info see http://www.shoup.net/
@@ -18,5 +18,4 @@ Website: http://www.shoup.net/ntl/
  * gf2x
 
 == Special Update/Build Instructions ==
- * We generate our own libtool by running the configure in the src/libtool
-   directory, see spkg-src for details.
+ * None

@@ -15,3 +15,4 @@ class UTC (datetime.tzinfo):
 utc = UTC()
 mac_epoch = datetime.datetime(1904,1,1,0,0,0,0,utc)
 unix_epoch = datetime.datetime(1970,1,1,0,0,0,0,utc)
+osx_epoch = datetime.datetime(2001,1,1,0,0,0,0,utc)

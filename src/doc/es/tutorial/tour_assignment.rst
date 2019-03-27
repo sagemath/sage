@@ -94,7 +94,7 @@ contener valores de cualquier tipo Python dentro de un ámbito dado:
     <type 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # ahora es una cadena
     sage: type(a)
-    <type 'str'>
+    <... 'str'>
 
 El lenguaje de programación C, que es un lenguaje de tipado estático, es muy
 diferente; una variable declarada como int solo puede contener un int

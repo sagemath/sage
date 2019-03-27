@@ -61,6 +61,7 @@ from xml.dom.minidom import parse
 from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
+
 class SymbolicData:
     """
     Database of ideals as distributed by the The SymbolicData Project
@@ -71,7 +72,8 @@ class SymbolicData:
     """
     def __init__(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: sd = SymbolicData(); sd # optional - database_symbolic_data
             SymbolicData with 372 ideals
         """
@@ -112,7 +114,7 @@ class SymbolicData:
                 if n.nodeType == n.TEXT_NODE:
                     t += str(n.nodeValue)
                 else:
-                    raise NotTextNodeError
+                    raise TypeError('not a text node')
             return t
 
         def _dom2ideal(node):

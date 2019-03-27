@@ -22,7 +22,8 @@ Functions and classes
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+from six import iteritems
 
 from warnings import warn
 import inspect
@@ -65,9 +66,10 @@ def _check_trac_number(trac_number):
     try:
         trac_number = trac_number.__index__()
     except Exception:
-        raise TypeError('%r is not a valid trac issue number'%trac_number)
+        raise TypeError('%r is not a valid trac issue number' % trac_number)
     if trac_number <= 0:
-        raise ValueError('%r is not a valid trac issue number'%trac_number)
+        raise ValueError('%r is not a valid trac issue number' % trac_number)
+
 
 def deprecation(trac_number, message, stacklevel=4):
     r"""
@@ -99,6 +101,7 @@ def deprecation(trac_number, message, stacklevel=4):
     """
     warning(trac_number, message, DeprecationWarning, stacklevel)
 
+
 def warning(trac_number, message, warning_class=Warning, stacklevel=3):
     r"""
     Issue a warning.
@@ -125,7 +128,7 @@ def warning(trac_number, message, warning_class=Warning, stacklevel=3):
         ....:         FutureWarning)
         sage: foo()
         doctest:...: FutureWarning: The syntax will change in future.
-        See http://trac.sagemath.org/99999 for details.
+        See https://trac.sagemath.org/99999 for details.
 
     .. SEEALSO::
 
@@ -135,10 +138,15 @@ def warning(trac_number, message, warning_class=Warning, stacklevel=3):
     """
     _check_trac_number(trac_number)
     message += '\n'
-    message += 'See http://trac.sagemath.org/'+ str(trac_number) + ' for details.'
+    if trac_number < 24800:  # to avoid changing all previous doctests
+        message += 'See http://trac.sagemath.org/'+ str(trac_number) + ' for details.'
+    else:
+        message += 'See https://trac.sagemath.org/'+ str(trac_number) + ' for details.'
+
     # Stack level 3 to get the line number of the code which called
     # the deprecated function which called this function.
     warn(message, warning_class, stacklevel)
+
 
 def experimental_warning(trac_number, message, stacklevel=4):
     r"""
@@ -164,7 +172,7 @@ def experimental_warning(trac_number, message, stacklevel=4):
         sage: foo()
         doctest:...: FutureWarning: This function is experimental and
         might change in future.
-        See http://trac.sagemath.org/66666 for details.
+        See https://trac.sagemath.org/66666 for details.
 
     .. SEEALSO::
 
@@ -198,7 +206,7 @@ class experimental(object):
             doctest:...: FutureWarning: This class/method/function is
             marked as experimental. It, its functionality or its
             interface might change without a formal deprecation.
-            See http://trac.sagemath.org/79997 for details.
+            See https://trac.sagemath.org/79997 for details.
             (7,) {'what': 'Hello'}
 
         ::
@@ -211,7 +219,7 @@ class experimental(object):
             doctest:...: FutureWarning: This class/method/function is
             marked as experimental. It, its functionality or its
             interface might change without a formal deprecation.
-            See http://trac.sagemath.org/99999 for details.
+            See https://trac.sagemath.org/99999 for details.
             piep (99,) {}
 
         TESTS:
@@ -226,7 +234,7 @@ class experimental(object):
             doctest:...: FutureWarning: This class/method/function is
             marked as experimental. It, its functionality or its
             interface might change without a formal deprecation.
-            See http://trac.sagemath.org/88888 for details.
+            See https://trac.sagemath.org/88888 for details.
             I'm A
 
         .. SEEALSO::
@@ -260,7 +268,7 @@ class experimental(object):
             doctest:...: FutureWarning: This class/method/function is
             marked as experimental. It, its functionality or its
             interface might change without a formal deprecation.
-            See http://trac.sagemath.org/99399 for details.
+            See https://trac.sagemath.org/99399 for details.
             (3,) {'what': 'Hello'}
         """
         from sage.misc.decorators import sage_wraps
@@ -290,7 +298,7 @@ class __experimental_self_test(SageObject):
     already been issued by a previous doc-test in the @experimental code. Note
     that this behaviour can not be demonstrated within a single documentation
     string: Sphinx will itself supress multiple issued warnings.
-    
+
     TESTS::
 
         sage: from sage.misc.superseded import __experimental_self_test
@@ -304,16 +312,15 @@ class __experimental_self_test(SageObject):
 
 class DeprecatedFunctionAlias(object):
     """
-    A wrapper around methods or functions which automatically print
-    the correct deprecation message. See
-    :func:`deprecated_function_alias`.
+    A wrapper around methods or functions which automatically prints a
+    deprecation message. See :func:`deprecated_function_alias`.
 
     AUTHORS:
 
     - Florent Hivert (2009-11-23), with the help of Mike Hansen.
     - Luca De Feo (2011-07-11), printing the full module path when different from old path
     """
-    def __init__(self, trac_number, func, module, instance = None, unbound = None):
+    def __init__(self, trac_number, func, module, instance=None, unbound=None):
         r"""
         TESTS::
 
@@ -374,7 +381,7 @@ class DeprecatedFunctionAlias(object):
         """
         # first look through variables in stack frames
         for frame in inspect.stack():
-            for name, obj in frame[0].f_globals.iteritems():
+            for name, obj in iteritems(frame[0].f_globals):
                 if obj is self:
                     return name
         # then search object that contains self as method
@@ -390,7 +397,7 @@ class DeprecatedFunctionAlias(object):
         for ref in gc.get_referrers(search_for):
             if is_class(ref) and ref is not self.__dict__:
                 ref_copy = copy.copy(ref)
-                for key, val in ref_copy.iteritems():
+                for key, val in iteritems(ref_copy):
                     if val is search_for:
                         return key
         raise AttributeError("The name of this deprecated function can not be determined")
@@ -413,13 +420,14 @@ class DeprecatedFunctionAlias(object):
             other = self.func.__name__
 
         deprecation(self.trac_number,
-                    "%s is deprecated. Please use %s instead."%(self.__name__, other))
+                    "{} is deprecated. Please use {} instead.".format(
+                        self.__name__, other))
         if self.instance is None:
             return self.func(*args, **kwds)
         else:
             return self.func(self.instance, *args, **kwds)
 
-    def __get__(self, inst, cls = None):
+    def __get__(self, inst, cls=None):
         """
         TESTS::
 
@@ -450,12 +458,18 @@ class DeprecatedFunctionAlias(object):
             3
 
         """
-        return self if (inst is None) else DeprecatedFunctionAlias(self.trac_number, self.func, self.__module__, instance = inst, unbound = self)
+        if inst is None:
+            return self  # Unbound method lookup on class
+        else:
+            # Return a bound method wrapper
+            return DeprecatedFunctionAlias(self.trac_number, self.func,
+                                           self.__module__, instance=inst,
+                                           unbound=self)
 
 
 def deprecated_function_alias(trac_number, func):
     """
-    Create an aliased version of a function or a method which raise a
+    Create an aliased version of a function or a method which raises a
     deprecation warning message.
 
     If f is a function or a method, write
@@ -501,85 +515,12 @@ def deprecated_function_alias(trac_number, func):
      - Florent Hivert (2009-11-23), with the help of Mike Hansen.
      - Luca De Feo (2011-07-11), printing the full module path when different from old path
     """
-    _check_trac_number(trac_number)
-    module_name = inspect.getmodulename(
-        inspect.currentframe(1).f_code.co_filename)
+    module_name = None
+    frame0 = inspect.currentframe()
+    if frame0:
+        frame1 = frame0.f_back
+        if frame1:
+            module_name = inspect.getmodulename(frame1.f_code.co_filename)
     if module_name is None:
         module_name = '__main__'
     return DeprecatedFunctionAlias(trac_number, func, module_name)
-
-
-def deprecated_callable_import(trac_number, module_name, globs, locs, fromlist, message=None):
-    """
-    Imports a list of callables into the namespace from
-    which it is called.  These callables however give a deprecation
-    warning whenever they are called.  This is primarily used from
-    deprecating things from Sage's ``all.py`` files.
-
-    INPUT:
-
-    - ``trac_number`` -- integer. The trac ticket number where the
-      deprecation is introduced.
-
-    - ``param module_name`` -- string or ``None``. The name of the
-      module from which to import the callables or ``None``.
-
-    - ``globs`` -- dictionary. The ``globals()`` from where this is being called.
-
-    - ``locs`` -- dictionary. The ``locals()`` from where this is being called.
-
-    - ``fromlist`` -- list of strings. The list the names of the
-      callables to deprecate
-
-    - ``message`` -- string. Message to display when the deprecated functions are called.
-
-    .. note::
-
-       If ``module_name`` is ``None``, then no importing will be done, and
-       it will be assumed that the functions have already been
-       imported and are present in ``globs``
-
-    .. warning::
-
-       This should really only be used for functions.
-
-    EXAMPLES::
-
-       sage: from sage.misc.superseded import deprecated_callable_import
-       sage: is_prime(3)
-       True
-       sage: message = "Using %(name)s from here is deprecated."
-       sage: deprecated_callable_import(13109, None, globals(), locals(), ['is_prime'], message)
-       sage: is_prime(3)
-       doctest:...: DeprecationWarning:
-       Using is_prime from here is deprecated.
-       See http://trac.sagemath.org/13109 for details.
-       True
-       sage: del is_prime
-       sage: deprecated_callable_import(13109, 'sage.arith.all', globals(), locals(), ['is_prime'])
-       sage: is_prime(3)
-       doctest:...: DeprecationWarning:
-       Using is_prime from here is deprecated.  If you need to use it, please import it directly from sage.arith.all.
-       See http://trac.sagemath.org/13109 for details.
-       True
-    """
-    _check_trac_number(trac_number)
-    if message is None:
-        message = '\nUsing %(name)s from here is deprecated. ' + \
-            'If you need to use it, please import it directly from %(module_name)s.'
-    from functools import partial
-    from sage.misc.decorators import sage_wraps
-    if module_name is None:
-        mod_dict = globs
-    else:
-        mod_dict = __import__(module_name, globs, locs, fromlist).__dict__
-    for name in fromlist:
-        func = mod_dict[name]
-        def wrapper(func, name, *args, **kwds):
-            from sage.misc.superseded import deprecation
-            deprecation(trac_number, message%{'name': name, 'module_name': module_name})
-            return func(*args, **kwds)
-        wrapped_function = sage_wraps(func)(partial(wrapper, func, name))
-        wrapped_function.__doc__ = message%{'name': name, 'module_name': module_name}
-        globs[name] = wrapped_function
-    del name

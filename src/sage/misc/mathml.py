@@ -22,21 +22,24 @@ method _mathml_(self) that returns its MathML representation.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-
+from __future__ import absolute_import
+from six import iteritems, integer_types
 
 
 def list_function(x):
-    return 'MATHML version of the list %s'%(x,)
+    return 'MATHML version of the list %s' % (x,)
+
 
 def tuple_function(x):
-    return 'MATHML version of the tuple %s'%(x,)
+    return 'MATHML version of the tuple %s' % (x,)
+
 
 def bool_function(x):
-    return 'MATHML version of %s'%(x,)
+    return 'MATHML version of %s' % (x,)
+
 
 def str_function(x):
-    return 'MATHML version of the string %s'%(x,)
+    return 'MATHML version of the string %s' % (x,)
 
 # One can add to the latex_table in order to install latexing
 # functionality for other types.
@@ -45,9 +48,9 @@ mathml_table = {list: list_function,
                tuple:tuple_function,
                bool:bool_function,
                str: str_function,
-               int:str,
-               long:str,
                float:str}
+for x in integer_types:
+    mathml_table[x] = str
 
 class MathML(str):
     def __repr__(self):
@@ -59,12 +62,9 @@ def mathml(x):
     Output x formatted for inclusion in a MathML document.
     """
     try:
-
         return MathML(x._mathml_())
-
     except (AttributeError, TypeError):
-
-        for k, f in mathml_table.iteritems():
+        for k, f in iteritems(mathml_table):
             if isinstance(x, k):
                 return MathML(f(x))
 

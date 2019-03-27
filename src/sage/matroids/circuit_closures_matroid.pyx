@@ -67,9 +67,11 @@ Methods
 #*****************************************************************************
 from __future__ import absolute_import
 
+from sage.structure.richcmp cimport rich_to_bool, richcmp
 from .matroid cimport Matroid
 from .set_system cimport SetSystem
 from .utilities import setprint_s
+from cpython.object cimport Py_EQ, Py_NE
 
 
 cdef class CircuitClosuresMatroid(Matroid):
@@ -119,9 +121,9 @@ cdef class CircuitClosuresMatroid(Matroid):
         sage: M = CircuitClosuresMatroid(matroids.named_matroids.Fano())
         sage: M
         Matroid of rank 3 on 7 elements with circuit-closures
-        {2: {{'b', 'e', 'g'}, {'b', 'c', 'd'}, {'a', 'c', 'e'},
-             {'c', 'f', 'g'}, {'d', 'e', 'f'}, {'a', 'd', 'g'},
-             {'a', 'b', 'f'}}, 3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g'}}}
+        {2: {{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'},
+             {'b', 'c', 'd'}, {'b', 'e', 'g'}, {'c', 'f', 'g'},
+             {'d', 'e', 'f'}}, 3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g'}}}
         sage: M = CircuitClosuresMatroid(groundset='abcdefgh',
         ....:            circuit_closures={3: ['edfg', 'acdg', 'bcfg', 'cefh',
         ....:                 'afgh', 'abce', 'abdf', 'begh', 'bcdh', 'adeh'],
@@ -142,9 +144,10 @@ cdef class CircuitClosuresMatroid(Matroid):
             sage: M = CircuitClosuresMatroid(matroids.named_matroids.Fano())
             sage: M
             Matroid of rank 3 on 7 elements with circuit-closures
-            {2: {{'b', 'e', 'g'}, {'b', 'c', 'd'}, {'a', 'c', 'e'},
-                 {'c', 'f', 'g'}, {'d', 'e', 'f'}, {'a', 'd', 'g'},
-                 {'a', 'b', 'f'}}, 3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g'}}}
+            {2: {{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'},
+                 {'b', 'c', 'd'}, {'b', 'e', 'g'}, {'c', 'f', 'g'},
+                 {'d', 'e', 'f'}},
+             3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g'}}}
 
             sage: M = CircuitClosuresMatroid(groundset='abcdefgh',
             ....:        circuit_closures={3: ['edfg', 'acdg', 'bcfg', 'cefh',
@@ -372,7 +375,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         OUTPUT:
 
         Boolean,
-        and, if certificate = True, a dictionary giving the isomophism or None
+        and, if certificate = True, a dictionary giving the isomorphism or None
 
         .. NOTE::
 
@@ -422,8 +425,8 @@ cdef class CircuitClosuresMatroid(Matroid):
             sage: print(M._repr_())
             Matroid of rank 4 on 8 elements with circuit-closures
             {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},
-                 {'e', 'f', 'g', 'h'}, {'a', 'b', 'g', 'h'},
-                 {'c', 'd', 'e', 'f'}},
+                 {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'},
+                 {'e', 'f', 'g', 'h'}},
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         """
         return Matroid._repr_(self) + " with circuit-closures\n" + setprint_s(self._circuit_closures)
@@ -476,24 +479,17 @@ cdef class CircuitClosuresMatroid(Matroid):
             False
         """
         cdef CircuitClosuresMatroid lt, rt
-        if op in [0, 1, 4, 5]:  # <, <=, >, >=
+        if op not in [Py_EQ, Py_NE]:
             return NotImplemented
-        if not isinstance(left, CircuitClosuresMatroid) or not isinstance(right, CircuitClosuresMatroid):
+        if type(left) is not type(right):
             return NotImplemented
         lt = <CircuitClosuresMatroid> left
         rt = <CircuitClosuresMatroid> right
-        if op == 2:  # ==
-            res = True
-        if op == 3:  # !=
-            res = False
-        # res gets inverted if matroids are deemed different.
         if lt.groundset() != rt.groundset():
-            return not res
+            return rich_to_bool(op, 1)
         if lt.full_rank() != rt.full_rank():
-            return not res
-        if lt._circuit_closures == rt._circuit_closures:
-            return res
-        return not res
+            return rich_to_bool(op, 1)
+        return richcmp(lt._circuit_closures, rt._circuit_closures, op)
 
     # COPYING, LOADING, SAVING
 
@@ -565,10 +561,9 @@ cdef class CircuitClosuresMatroid(Matroid):
             sage: loads(dumps(M))
             Matroid of rank 4 on 8 elements with circuit-closures
             {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},
-                 {'e', 'f', 'g', 'h'}, {'a', 'b', 'g', 'h'},
-                 {'c', 'd', 'e', 'f'}},
+                 {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'},
+                 {'e', 'f', 'g', 'h'}},
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
-
         """
         import sage.matroids.unpickling
         data = (self._groundset, self._circuit_closures, getattr(self, '__custom_name'))

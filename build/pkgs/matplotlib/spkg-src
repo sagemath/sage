@@ -7,8 +7,8 @@ set -e
 
 
 # Set the version and its download URL.
-VERSION=1.5.1
-DOWNLOAD_URL="https://pypi.python.org/packages/source/m/matplotlib/matplotlib-${VERSION}.tar.gz"
+VERSION=2.2.2
+DOWNLOAD_URL="https://github.com/matplotlib/matplotlib/archive/v${VERSION}.tar.gz"
 
 # fetch and unpack latest version
 tar xzf <( curl -L ${DOWNLOAD_URL} )
@@ -25,5 +25,5 @@ rm -rf matplotlib-${VERSION}
 
 # update package info
 echo "${VERSION}" > "${SAGE_ROOT}/build/pkgs/matplotlib/package-version.txt"
-"$SAGE_ROOT"/sage -sh 'sage-fix-pkg-checksums'
+"$SAGE_ROOT"/sage --package fix-checksum matplotlib
 

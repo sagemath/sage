@@ -3,7 +3,7 @@
 == Description ==
 
 This is a fast SDP solver written in C, with a callable library
-namely, an autotool'ed version of CSDP, by Brian Borchers, 
+namely, an autotool'ed version of CSDP, by Brian Borchers,
 see https://projects.coin-or.org/Csdp
 
 == License ==
@@ -27,15 +27,15 @@ configure.ac and rerun autotools (autoreconf -fiv).
 Any changes should be merged to the upstream repo.
 
 The build is done with NOSHORTS variable defined; this makes it compatible
-with packages, where NOSHORTS must be defined, e.g. 
-https://github.com/dimpase/pycsdp; 
+with packages, where NOSHORTS must be defined, e.g.
+https://github.com/dimpase/pycsdp;
 also the Sage Cython interface needs NOSHORTS defined.
 
-Detailed steps to build the spkg are as follows. You need 
+Detailed steps to build the spkg are as follows. You need
  * git
  * autotools and libtool (the full autohell suite, version at least 2.67)
 
 With these ready:
  * ./spkg-src
- * copy the resulting csdp-<version>.tar.gz to SAGE_ROOT/upstream, 
+ * copy the resulting csdp-<version>.tar.gz to SAGE_ROOT/upstream,
    or somewhere else appropriate

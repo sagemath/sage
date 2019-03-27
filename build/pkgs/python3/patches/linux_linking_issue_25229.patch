@@ -1,0 +1,13 @@
+diff --git a/Lib/distutils/unixccompiler.py b/Lib/distutils/unixccompiler.py
+index 3f321c2..cc295a3 100644
+--- a/Lib/distutils/unixccompiler.py
++++ b/Lib/distutils/unixccompiler.py
+@@ -236,7 +236,7 @@ class UnixCCompiler(CCompiler):
+         elif sys.platform[:7] == "irix646" or sys.platform[:6] == "osf1V5":
+             return ["-rpath", dir]
+         else:
+-            if self._is_gcc(compiler):
++            if sys.platform[:5] == "linux" or self._is_gcc(compiler):
+                 # gcc on non-GNU systems does not need -Wl, but can
+                 # use it anyway.  Since distutils has always passed in
+                 # -Wl whenever gcc was used in the past it is probably

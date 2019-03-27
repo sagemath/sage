@@ -1,4 +1,4 @@
-$(PYTHON) setuptools
+python2 python3 setuptools
 
 ----------
 All lines of this file are ignored except the first.

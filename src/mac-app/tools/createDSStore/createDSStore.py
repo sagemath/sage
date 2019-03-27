@@ -7,7 +7,7 @@ a certain background image, and places the icons.
 This file is intended to be placed into the directory from which a dmg is
 created for packaging an application. It needs as additional information the
 name of the volume that will be used when creating the dmg and the name of the
-application, including the .app, e.g., Sage-6.9.app.
+application, including the .app, e.g., Sage-8.1.app.
 
 We could just always use the same .DS_Store that if the volume name and
 application name were not changing.
@@ -18,6 +18,7 @@ puts the .DS_Store file into it, and converts it to a read-only dmg. We avoid
 this by using the volume name of the dmg instead.
 See getBackgroundImage_alias.
 """
+from __future__ import print_function
 
 import ds_store, mac_alias, biplist
 import datetime, sys, os
@@ -73,14 +74,14 @@ def getBackgroundImage_alias(volume_name):
 
     global backgroundImageName
 
-    carbon_path = '%s:%s' % (volume_name, backgroundImageName)
-
     volume = mac_alias.VolumeInfo(volume_name,
                                   getSomeTime(),
                                   'H+',
                                   0,
                                   0,
                                   '\x00\x00')
+
+    carbon_path = '%s:%s' % (volume_name, backgroundImageName)
 
     target = mac_alias.TargetInfo(0,
                                   backgroundImageName,
@@ -135,9 +136,10 @@ def createDSStore(target_dir, volume_name, app_name):
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
-        print >>sys.stderr, (
-            "Usage: %s TARGET_DIR VOLUME_NAME APP_NAME.app" % sys.argv[0])
-        print >>sys.stderr, "       creates .DS_Store"
+        print(
+            "Usage: %s TARGET_DIR VOLUME_NAME APP_NAME.app" % sys.argv[0],
+            file=sys.stderr)
+        print("       creates .DS_Store", file=sys.stderr)
         sys.exit(1)
         
     createDSStore(

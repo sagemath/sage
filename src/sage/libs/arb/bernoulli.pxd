@@ -1,4 +1,4 @@
-# distutils: libraries = arb
+# distutils: libraries = gmp flint arb
 
 from ..flint.types cimport fmpq_t, ulong
 

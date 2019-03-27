@@ -82,7 +82,7 @@ class AdditiveSemigroups(CategoryWithAxiom_singleton):
             S = tester.some_elements()
             from sage.misc.misc import some_tuples
             for x,y,z in some_tuples(S, 3, tester._max_runs):
-                tester.assert_((x + y) + z == x + (y + z))
+                tester.assertTrue((x + y) + z == x + (y + z))
 
     class Homsets(HomsetsCategory):
 
@@ -172,7 +172,7 @@ class AdditiveSemigroups(CategoryWithAxiom_singleton):
                     sage: A = S.algebra(QQ)
                     sage: a,b,c,d = A.algebra_generators()
                     sage: a * b + b * d * c
-                    B[c + b + d] + B[a + b]
+                    B[b + c + d] + B[a + b]
                 """
                 return self.monomial(g1 + g2)
 

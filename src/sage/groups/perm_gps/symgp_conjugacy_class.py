@@ -3,9 +3,10 @@ Conjugacy Classes Of The Symmetric Group
 
 AUTHORS:
 
-- Vincent Delacroix, Travis Scrimshaw (2014-11-23)
+- Vincent Delecroix, Travis Scrimshaw (2014-11-23)
 """
 from __future__ import print_function
+from six.moves import range
 
 from sage.groups.conjugacy_classes import ConjugacyClass, ConjugacyClassGAP
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
@@ -14,6 +15,7 @@ from sage.combinat.set_partition import SetPartitions
 from sage.combinat.permutation import Permutation, from_cycles
 from sage.sets.set import Set
 import itertools
+
 
 class SymmetricGroupConjugacyClassMixin(object):
     r"""
@@ -50,7 +52,7 @@ class SymmetricGroupConjugacyClassMixin(object):
         """
         return "Conjugacy class of cycle type %s in %s"%(self._part, self._parent)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         r"""
         Comparison of conjugacy classes is done by comparing the
         defining cycle types.
@@ -64,10 +66,24 @@ class SymmetricGroupConjugacyClassMixin(object):
             sage: C == Cp
             True
         """
-        c = cmp(type(self), type(other))
-        if c:
-             return c
-        return cmp(self._part, other._part)
+        if not isinstance(other, SymmetricGroupConjugacyClassMixin):
+            return False
+        return self._part == other._part
+
+    def __ne__(self, other):
+        """
+        Test for unequality.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(5)
+            sage: g = G([(1,3), (2,4,5)])
+            sage: C = G.conjugacy_class(Partition([3,2]))
+            sage: Cp = G.conjugacy_class(g)
+            sage: C != Cp
+            False
+        """
+        return not (self == other)
 
     def partition(self):
         """
@@ -80,6 +96,7 @@ class SymmetricGroupConjugacyClassMixin(object):
             sage: C = G.conjugacy_class(g)
         """
         return self._part
+
 
 class SymmetricGroupConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyClassGAP):
     """
@@ -275,6 +292,7 @@ def default_representative(part, G):
     #   once SymmetricGroup is a proper parent.
     return PermutationGroupElement(cycles, G, check=False)
 
+
 def conjugacy_class_iterator(part, S=None):
     r"""
     Return an iterator over the conjugacy class associated to
@@ -302,12 +320,10 @@ def conjugacy_class_iterator(part, S=None):
         [(1, 3), (2, 4)]
         [(1, 4), (2, 3)]
 
-    In order to get permutations, one can use ``imap`` from the Python
-    module ``itertools``::
+    In order to get permutations, one just has to wrap::
 
-        sage: from itertools import imap
         sage: S = SymmetricGroup(5)
-        sage: for p in imap(S, conjugacy_class_iterator([3,2])): print(p)
+        sage: for p in conjugacy_class_iterator([3,2]): print(S(p))
         (1,2)(3,4,5)
         (1,2)(3,5,4)
         (1,3)(2,4,5)
@@ -344,9 +360,10 @@ def conjugacy_class_iterator(part, S=None):
 
     m = len(part)
     for s in SetPartitions(S, part):
-        firsts = [t[0] for t in s]
-        rests = [t[1:] for t in s]
+        its = [iter(t) for t in s]
+        firsts = [next(t) for t in its]
+        rests = [list(t) for t in its]
         iterator = tuple(itertools.permutations(r) for r in rests)
         for r in itertools.product(*iterator):
-            yield [(firsts[i],)+r[i] for i in xrange(m)]
+            yield [(firsts[i],) + r[i] for i in range(m)]
 

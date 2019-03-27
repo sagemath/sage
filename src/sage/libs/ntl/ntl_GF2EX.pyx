@@ -12,16 +12,19 @@
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-include "cysignals/signals.pxi"
+from cysignals.signals cimport sig_on, sig_off
+from sage.ext.cplusplus cimport ccrepr, ccreadstr
+
 include 'misc.pxi'
 include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
-from ntl_ZZ import unpickle_class_args
-from ntl_GF2EContext import ntl_GF2EContext
-from ntl_GF2EContext cimport ntl_GF2EContext_class
-from ntl_GF2E cimport ntl_GF2E
+from .ntl_ZZ import unpickle_class_args
+from .ntl_GF2EContext import ntl_GF2EContext
+from .ntl_GF2EContext cimport ntl_GF2EContext_class
+from .ntl_GF2E cimport ntl_GF2E
 
 ##############################################################################
 #
@@ -48,10 +51,7 @@ cdef class ntl_GF2EX(object):
         if modulus is None:
             raise ValueError("You must specify a modulus when creating a GF2E.")
 
-        s = str(x)
-        sig_on()
-        GF2EX_from_str(&self.x, s)
-        sig_off()
+        ccreadstr(self.x, str(x))
 
     def __cinit__(self, modulus=None, x=[]):
         #################### WARNING ###################
@@ -145,7 +145,7 @@ cdef class ntl_GF2EX(object):
             sage: ntl.GF2EX(ctx, '[[1 0] [2 1]]').__repr__()
             '[[1] [0 1]]'
         """
-        return GF2EX_to_PyString(&self.x)
+        return ccrepr(self.x)
 
     def __mul__(ntl_GF2EX self, other):
         """

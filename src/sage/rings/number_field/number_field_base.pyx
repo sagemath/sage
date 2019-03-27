@@ -40,6 +40,50 @@ cdef class NumberField(Field):
     # This token docstring is mostly there to prevent Sphinx from pasting in
     # the docstring of the __init__ method inherited from IntegralDomain, which
     # is rather confusing.
+    def _pushout_(self, other):
+        r"""
+        TESTS:
+
+        Pushout is implemented for number field embedded in ``AA``::
+
+            sage: K.<a> = NumberField(x^2 - 3, embedding=AA(3)**(1/2))
+            sage: L.<b> = NumberField(x^2 - 2, embedding=AA(2)**(1/2))
+            sage: cm = sage.structure.element.get_coercion_model()
+            sage: cm.explain(K,L,operator.add)
+            Coercion on left operand via
+                Generic morphism:
+                  From: Number Field in a with defining polynomial x^2 - 3
+                  To:   Algebraic Real Field
+                  Defn: a -> 1.732050807568878?
+            Coercion on right operand via
+                Generic morphism:
+                  From: Number Field in b with defining polynomial x^2 - 2
+                  To:   Algebraic Real Field
+                  Defn: b -> 1.414213562373095?
+            Arithmetic performed after coercions.
+            Result lives in Algebraic Real Field
+            Algebraic Real Field
+
+        As a consequence, operations and comparisons work nicely::
+
+            sage: a + b
+            3.146264369941973?
+            sage: a < b
+            False
+            sage: 3*a < 4*b
+            True
+
+        Using number field with other classes::
+
+            sage: K.<cbrt2> = NumberField(x^3 - 2, embedding=AA(2)**(1/3))
+            sage: (cbrt2 + a) * b
+            4.231287179063857?
+        """
+        if isinstance(other, NumberField) and \
+            self._embedded_real and \
+            (<NumberField>other)._embedded_real:
+            from sage.rings.qqbar import AA
+            return AA
 
     def ring_of_integers(self, *args, **kwds):
         r"""
@@ -145,12 +189,13 @@ cdef class NumberField(Field):
 
     def minkowski_bound(self):
         r"""
-        Return the Minkowski bound associated to this number field,
-        which is a bound B so that every integral ideal is equivalent
+        Return the Minkowski bound associated to this number field.
+
+        This is a bound B so that every integral ideal is equivalent
         modulo principal fractional ideals to an integral ideal of
         norm at most B.
 
-        .. seealso::
+        .. SEEALSO::
 
             :meth:`~bach_bound`
 
@@ -220,11 +265,12 @@ cdef class NumberField(Field):
     def bach_bound(self):
         r"""
         Return the Bach bound associated to this number field.
+
         Assuming the General Riemann Hypothesis, this is a bound B so
         that every integral ideal is equivalent modulo principal
         fractional ideals to an integral ideal of norm at most B.
 
-        .. seealso::
+        .. SEEALSO::
 
             :meth:`~minkowski_bound`
 
@@ -349,4 +395,3 @@ cdef class NumberField(Field):
             return self._gen_approx[i]
         else:
             raise ValueError("No embedding set. You need to specify a a real embedding.")
-

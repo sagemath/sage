@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 ###############################################################################
 #
 # FLINT Sage install script
@@ -12,11 +10,6 @@ if [ "$SAGE_LOCAL" = "" ]; then
    exit 1
 fi
 
-if [ "$SAGE64" = "yes" ]; then
-    echo "Building a 64-bit version of FLINT."
-    ABI="64"; export ABI
-fi
-
 if [ "$SAGE_DEBUG" = "yes" ]; then
     echo "Building a debug version of FLINT."
     CFLAGS="-O0 -g $CFLAGS"; export CFLAGS
@@ -25,16 +18,6 @@ if [ "$SAGE_DEBUG" = "yes" ]; then
 fi
 
 cd src
-
-echo "Patching FLINT."
-for patch in ../patches/*.patch; do
-   [ -f "$patch" ] || continue
-   patch -p1 <"$patch"
-   if [ $? -ne 0 ]; then
-       echo >&2 "Error applying '$patch'"
-       exit 1
-   fi
-done
 
 echo "Configuring FLINT."
 ./configure \

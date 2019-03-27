@@ -147,7 +147,7 @@ and ``.h`` files in the header of our ``~/my_dir/hello_sage.pyx`` file:
 
 .. code-block:: cython
 
-   #clib /home/username/my_dir/hello
+   # distutils: libraries = /home/username/my_dir/hello
 
    cdef extern from "hello.h":
        void hello_world()
@@ -157,10 +157,11 @@ and ``.h`` files in the header of our ``~/my_dir/hello_sage.pyx`` file:
 
 .. NOTE::
 
-   The instruction ``#clib /home/username/my_dir/hello`` indicates that the
-   library is actually named ``/home/username/my_dir/hello``. Change it
-   according to your needs. For more information about these instructions, see
-   :func:`~sage.misc.cython.cython`.
+   The instruction ``# distutils: libraries = /home/username/my_dir/hello``
+   indicates that the library is actually named ``/home/username/my_dir/hello``.
+   Change it according to your needs.
+   For more information about these instructions, see
+   http://cython.readthedocs.io/en/latest/src/reference/compilation.html#configuring-the-c-build
 
 We can now **load** this file in Sage and **call** the function::
 

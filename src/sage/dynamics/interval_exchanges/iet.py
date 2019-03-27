@@ -1,7 +1,13 @@
 r"""
 Interval Exchange Transformations and Linear Involution
 
-An interval exchage transformation is a map defined on an interval (see
+.. WARNING::
+
+    This module is deprecated. You are advised to install and use the
+    surface_dynamics package instead available at
+    https://pypi.python.org/pypi/surface_dynamics/
+
+An interval exchange transformation is a map defined on an interval (see
 help(iet.IntervalExchangeTransformation) for a more complete help.
 
 EXAMPLES:
@@ -9,6 +15,32 @@ EXAMPLES:
 Initialization of a simple iet with integer lengths::
 
     sage: T = iet.IntervalExchangeTransformation(Permutation([3,2,1]), [3,1,2])
+    doctest:warning
+    ...
+    DeprecationWarning: IntervalExchangeTransformation is deprecated and will be removed from Sage.
+    You are advised to install the surface_dynamics package via:
+    sage -pip install surface_dynamics
+    If you do not have write access to the Sage installation you can
+    alternatively do
+    sage -pip install surface_dynamics --user
+    The package surface_dynamics subsumes all flat surface related
+    computation that are currently available in Sage. See more
+    information at
+    http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+    See http://trac.sagemath.org/20695 for details.
+    doctest:warning
+    ...
+    DeprecationWarning: Permutation is deprecated and will be removed from Sage.
+    You are advised to install the surface_dynamics package via:
+    sage -pip install surface_dynamics
+    If you do not have write access to the Sage installation you can
+    alternatively do
+    sage -pip install surface_dynamics --user
+    The package surface_dynamics subsumes all flat surface related
+    computation that are currently available in Sage. See more
+    information at
+    http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+    See http://trac.sagemath.org/20695 for details.
     sage: T
     Interval exchange transformation of [0, 6[ with permutation
     1 2 3
@@ -42,13 +74,13 @@ There are two plotting methods for iet::
     sage: T.plot_function()
     Graphics object consisting of 3 graphics primitives
 """
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
 from copy import copy
 from sage.structure.sage_object import SageObject
 
 from .template import side_conversion, interval_conversion
+
 
 class IntervalExchangeTransformation(SageObject):
     r"""
@@ -111,7 +143,7 @@ class IntervalExchangeTransformation(SageObject):
 
         - ``lengths`` - the list of lengths
 
-        TEST::
+        TESTS::
 
             sage: p=iet.IntervalExchangeTransformation(('a','a'),[1])
             sage: p == loads(dumps(p))
@@ -525,7 +557,7 @@ class IntervalExchangeTransformation(SageObject):
 
         label -- a label corresponding to an interval
 
-        TEST:
+        TESTS:
 
         ::
 
@@ -589,7 +621,7 @@ class IntervalExchangeTransformation(SageObject):
         list -- two lists of positive numbers which corresponds to extremities
             of subintervals
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: t = iet.IntervalExchangeTransformation(('a b','b a'),[1/2,3/2])
             sage: t.singularities()
@@ -713,7 +745,7 @@ class IntervalExchangeTransformation(SageObject):
 
         - ``side`` - must be 0 or -1 (no verification)
 
-        TEST::
+        TESTS::
 
             sage: t = iet.IntervalExchangeTransformation(('a b c','c b a'),[1,1,3])
             sage: t
@@ -797,7 +829,7 @@ class IntervalExchangeTransformation(SageObject):
             Graphics object consisting of 4 graphics primitives
         """
         from sage.plot.all import Graphics
-        from sage.plot.plot import line2d
+        from sage.plot.line import line2d
 
         G = Graphics()
         l = self.singularities()
@@ -843,8 +875,8 @@ class IntervalExchangeTransformation(SageObject):
             Graphics object consisting of 8 graphics primitives
         """
         from sage.plot.all import Graphics
-        from sage.plot.plot import line2d
-        from sage.plot.plot import text
+        from sage.plot.line import line2d
+        from sage.plot.text import text
         from sage.plot.colors import rainbow
 
         G = Graphics()

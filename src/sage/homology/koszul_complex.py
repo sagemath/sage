@@ -11,6 +11,7 @@ Koszul Complexes
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from six.moves import range
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -130,7 +131,7 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
         # Generate the differentials
         self._elements = elements
         n = len(elements)
-        I = range(n)
+        I = list(range(n))
         diff = {}
         zero = R.zero()
         for i in I:

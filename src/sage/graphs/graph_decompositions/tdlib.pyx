@@ -40,8 +40,8 @@ general.
     :widths: 30, 70
     :delim: |
 
-    :meth:`treedecomposition_exact` | Computes a tree decomposition of exact width
-    :meth:`get_width` | Returns the width of a given tree decomposition
+    :meth:`treedecomposition_exact` | Compute a tree decomposition of exact width
+    :meth:`get_width` | Return the width of a given tree decomposition
 
 
 AUTHOR: Lukas Larisch (10-25-2015): Initial version
@@ -65,60 +65,63 @@ Methods
 """
 
 from libcpp.vector cimport vector
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.sets.set import Set
 from sage.graphs.graph import Graph
-
-include "cysignals/signals.pxi"
 
 cdef extern from "tdlib/sage_tdlib.cpp":
      int sage_exact_decomposition(vector[unsigned int] &V_G, vector[unsigned int] &E_G, vector[vector[int]] &V_T, vector[unsigned int] &E_T, int lb)
 
 ##############################################################
 ############ GRAPH/DECOMPOSITION ENCODING/DECODING ###########
-#the following will be used implicitly do the translation
-#between Sage graph encoding and BGL graph encoding.
+# the following will be used implicitly to do the translation
+# between Sage graph encoding and BGL graph encoding.
 
-cdef make_tdlib_graph(G, vector[unsigned int] &V, vector[unsigned int] &E):
-    for v in G.vertices():
-        V.push_back(v)
+cdef make_tdlib_graph(G, vertex_to_int, vector[unsigned int] &V, vector[unsigned int] &E):
+    for i in range(G.order()):
+        V.push_back(i)
 
-    for u,v in G.edges(labels=False):
-        E.push_back(u)
-        E.push_back(v)
+    for u,v in G.edge_iterator(labels=False):
+        E.push_back(vertex_to_int[u])
+        E.push_back(vertex_to_int[v])
 
-cdef make_sage_decomp(G, vector[vector[int]] &V, vector[unsigned int] &E, label_map):
+cdef make_sage_decomp(G, vector[vector[int]] &V, vector[unsigned int] &E, int_to_vertex):
+    cdef int i, j
     for i in range(0, len(V)):
-        G.add_vertex(Set([label_map[j] for j in V[i]]))
+        G.add_vertex(Set([int_to_vertex[j] for j in V[i]]))
 
     for i in range(0, len(E), 2):
-        G.add_edge(Set(V[E[i]]), Set(V[E[i+1]]))
+        G.add_edge(Set([int_to_vertex[j] for j in V[E[i]]]), Set([int_to_vertex[j] for j in V[E[i+1]]]))
 
 ##############################################################
 ############ EXACT ALGORITHMS ################################
 
 def treedecomposition_exact(G, lb=-1):
     r"""
-    Computes a tree decomposition of exact width, iff the given lower bound
-    is not greater than the treewidth of the input graph. Otherwise
-    a tree decomposition of a width than matches the given lower bound
-    will be computed.
+    Compute a tree decomposition of exact width.
+
+    The returned tree decomposition is exact iff the given lower bound is not
+    greater than the treewidth of the input graph. Otherwise a tree
+    decomposition of a width than matches the given lower bound will be
+    computed.
 
     INPUT:
 
     - ``G`` -- a generic graph
 
-    - ``lb`` -- a lower bound to the treewidth of G, e.g. computed by lower_bound (default: ``'-1'``)
+    - ``lb`` -- integer (default: -1); a lower bound to the treewidth of G,
+      e.g. computed by lower_bound
 
     OUTPUT:
 
     A tree decomposition of ``G`` of ``tw(G)``, if the lower bound was not
     greater than ``tw(G)``, otherwise a tree decomposition of ``width = lb``.
 
-..  WARNING::
+    ..  WARNING::
 
-    The computation can take a lot of time for a graph `G` on more than about 30
-    vertices and `tw(G) > 3`.
+        The computation can take a lot of time for a graph `G` on more than
+        about 30 vertices and `tw(G) > 3`.
 
     EXAMPLES::
 
@@ -127,7 +130,7 @@ def treedecomposition_exact(G, lb=-1):
         sage: T = tdlib.treedecomposition_exact(G)                   # optional - tdlib
         sage: T.show(vertex_size=2000)                               # optional - tdlib
 
-    TEST::
+    TESTS::
 
         sage: import sage.graphs.graph_decompositions.tdlib as tdlib # optional - tdlib
         sage: G = graphs.HouseGraph()                                # optional - tdlib
@@ -139,10 +142,10 @@ def treedecomposition_exact(G, lb=-1):
     cdef vector[unsigned int] V_G, E_G, E_T
     cdef vector[vector[int]] V_T
 
-    V = G.vertices()
-    G_int = G.relabel(inplace=False)
+    cdef list int_to_vertex = list(G)
+    cdef dict vertex_to_int = {v: i for i, v in enumerate(G)}
 
-    make_tdlib_graph(G_int, V_G, E_G)
+    make_tdlib_graph(G, vertex_to_int, V_G, E_G)
 
     cdef int c_lb = lb
 
@@ -150,15 +153,16 @@ def treedecomposition_exact(G, lb=-1):
     sage_exact_decomposition(V_G, E_G, V_T, E_T, c_lb)
     sig_off()
 
-    T = Graph()
-    T.name("Tree decomposition")
-    make_sage_decomp(T, V_T, E_T, V)
+    T = Graph(name="Tree decomposition")
+    make_sage_decomp(T, V_T, E_T, int_to_vertex)
 
     return T
 
 def get_width(T):
     """
-    Returns the width (maximal size of a bag minus one) of a given tree decomposition.
+    Return the width of a given tree decomposition.
+
+    The width of a tree decompositions is the maximal size of a bag minus one.
 
     INPUT:
 
@@ -175,4 +179,4 @@ def get_width(T):
         sage: tdlib.get_width(T)                                     # optional - tdlib
         4
     """
-    return max(len(x) for x in T)-1 if len(T) > 0 else -1
+    return (max(len(x) for x in T) - 1) if T else -1

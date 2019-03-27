@@ -1,4 +1,4 @@
-"""
+r"""
 Helper Classes to implement Tensor Operations
 
 .. warning::
@@ -52,21 +52,22 @@ vectors of the vector collection ``VW`` ::
           2   (1, 2)    2   (-1, 1)   6   (-1, 1, -2, 2)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from six.moves import range
 
-from sage.structure.sage_object import SageObject
-from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
-from sage.misc.all import cached_method, prod
-from sage.matrix.constructor import vector, matrix
+from collections import defaultdict
+
+from sage.modules.free_module import FreeModule_ambient_field
+from sage.misc.all import prod
+from sage.matrix.constructor import matrix
 from sage.rings.all import ZZ
-
 
 
 def symmetrized_coordinate_sums(dim, n):
@@ -87,18 +88,19 @@ def symmetrized_coordinate_sums(dim, n):
 
         sage: from sage.modules.tensor_operations import symmetrized_coordinate_sums
         sage: symmetrized_coordinate_sums(2, 2)
-        ((0, 1) + (1, 0), (0, 0), (1, 1))
+        ((0, 0), (0, 1) + (1, 0), (1, 1))
     """
     from sage.structure.formal_sum import FormalSum
-    coordinates = [range(dim) for i in range(n)]
-    table = dict()
     from sage.categories.cartesian_product import cartesian_product
+
+    coordinates = [list(range(dim)) for i in range(n)]
+    table = defaultdict(list)
+
     for i in cartesian_product(coordinates):
         sort_i = tuple(sorted(i))
-        x = table.get(sort_i, [])
-        x.append([+1, tuple(i)])
-        table[sort_i] = x
-    return tuple(FormalSum(x) for x in table.values())
+        table[sort_i].append([1, tuple(i)])
+
+    return tuple(sorted(FormalSum(x) for x in table.values()))
 
 
 def antisymmetrized_coordinate_sums(dim, n):
@@ -191,7 +193,7 @@ class VectorCollection(FreeModule_ambient_field):
             r.set_immutable()
         if matrix(base_ring, self._vectors).rank() != self.degree():
             raise ValueError('the vectors must span the ambient vector space')
-        self._all_indices = tuple(map(ZZ, range(0, self._n_vectors)))
+        self._all_indices = tuple(ZZ(i) for i in range(self._n_vectors))
 
     def vectors(self):
         """
@@ -317,7 +319,7 @@ class TensorOperation(VectorCollection):
         This method mutates the :class:`TensorOperation` instance. In
         particular, the tensor product of the vectors of the vector
         collection is computed, and added to the elements of the
-        tensor operation if it has not been encountered before. 
+        tensor operation if it has not been encountered before.
 
         The index of this tensor product vector is returned as an
         integer.
@@ -347,7 +349,7 @@ class TensorOperation(VectorCollection):
         v = []
         # Note: convert to list, as cartesian_product of vectors is unrelated
         from sage.categories.cartesian_product import cartesian_product
-        for r in cartesian_product(map(list, rays)):
+        for r in cartesian_product(rays):
             v.append(prod(r))   # build up the tensor product
         v = tuple(v)
         # Use index of pre-existing tensor product vector if there is one
@@ -370,7 +372,7 @@ class TensorOperation(VectorCollection):
 
         - ``linear_combination`` -- formal linear combination of
           vector indices in the vectors specified by $i$.
-        
+
         EXAMPLES::
 
             sage: from sage.modules.tensor_operations import \
@@ -378,7 +380,7 @@ class TensorOperation(VectorCollection):
             sage: R = VectorCollection([(1,0), (1,2), (-1,-2)], QQ, 2)
             sage: Sym2_R = TensorOperation([R,R], operation='symmetric')
             sage: Sym2_R.vectors()    # indirect doctest
-            ((0, 1, 0), (2, 1, 0), (-2, -1, 0), (4, 1, 4), (-4, -1, -4))
+            ((1, 0, 0), (1, 2, 0), (-1, -2, 0), (1, 4, 4), (-1, -4, -4))
             sage: Alt2_R = TensorOperation([R, R], operation='antisymmetric')
             sage: Alt2_R.vectors()    # indirect doctest
             ((2), (-2))
@@ -411,10 +413,10 @@ class TensorOperation(VectorCollection):
             sage: R = VectorCollection([(1,0), (1,2), (-1,-2)], QQ, 2)
             sage: S = VectorCollection([(1,), (-1,)], QQ, 1)
             sage: R_tensor_S = TensorOperation([R,S], operation='product')
-            sage: sorted(R_tensor_S._index_map.iteritems())   # indirect doctest
+            sage: sorted(R_tensor_S._index_map.items())   # indirect doctest
             [((0, 0), 0), ((0, 1), 1), ((1, 0), 2), ((1, 1), 3), ((2, 0), 3), ((2, 1), 2)]
         """
-        V_list_indices = [range(V.n_vectors()) for V in self._V]
+        V_list_indices = [list(range(V.n_vectors())) for V in self._V]
         from sage.categories.cartesian_product import cartesian_product
         for i in cartesian_product(V_list_indices):
             self._index_map[tuple(i)] = self._init_product_vectors(i)
@@ -430,12 +432,13 @@ class TensorOperation(VectorCollection):
             ....:      VectorCollection, TensorOperation
             sage: R = VectorCollection([(1,0), (1,2), (-1,-2)], QQ, 2)
             sage: Sym2_R = TensorOperation([R,R], operation='symmetric')  # indirect doctest
-            sage: sorted(Sym2_R._index_map.iteritems())
+            sage: sorted(Sym2_R._index_map.items())
             [((0, 0), 0), ((0, 1), 1), ((0, 2), 2), ((1, 1), 3), ((1, 2), 4), ((2, 2), 3)]
         """
-        V_list_indices = [range(V.n_vectors()) for V in self._V]
-        Sym = symmetrized_coordinate_sums(self._V[0].dimension(), len(self._V))
         from sage.categories.cartesian_product import cartesian_product
+        V_list_indices = [list(range(V.n_vectors())) for V in self._V]
+        Sym = symmetrized_coordinate_sums(self._V[0].dimension(),
+                                          len(self._V))
         N = len(V_list_indices)
         for i in cartesian_product(V_list_indices):
             if any(i[j - 1] > i[j] for j in range(1, N)):
@@ -453,7 +456,7 @@ class TensorOperation(VectorCollection):
             ....:      VectorCollection, TensorOperation
             sage: R = VectorCollection([(1,0), (1,2), (-1,-2)], QQ, 2)
             sage: Alt2_R = TensorOperation([R, R], operation='antisymmetric')  # indirect doctest
-            sage: sorted(Alt2_R._index_map.iteritems())
+            sage: sorted(Alt2_R._index_map.items())
             [((0, 1), 0), ((0, 2), 1)]
         """
         n = len(self._V)
@@ -500,9 +503,9 @@ class TensorOperation(VectorCollection):
             4
 
         In suitable coordinates, this is the vector::
-        
+
             sage: Sym3_R.vectors()[4]
-            (-4, 0, -1, -4)
+            (-1, -4, -4, 0)
 
         The product is symmetric::
 
@@ -524,7 +527,7 @@ class TensorOperation(VectorCollection):
 
         TESTS::
 
-            sage: sorted(detR._index_map.iteritems())
+            sage: sorted(detR._index_map.items())
             [((0, 1), 0), ((0, 2), 1), ((1, 2), 2)]
             sage: detR.vectors()
             ((1), (-3), (2))

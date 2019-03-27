@@ -14,10 +14,8 @@ AUTHORS:
 
 REFERENCES:
 
-- [Lee11]_ \J.M. Lee : *Introduction to Topological Manifolds*, 2nd ed.,
-  Springer (New York) (2011)
-- [Lee13]_ \J.M. Lee : *Introduction to Smooth Manifolds*, 2nd ed.,
-  Springer (New York, 2013)
+- [Lee2011]_
+- [Lee2013]_
 
 EXAMPLES:
 
@@ -76,6 +74,7 @@ Points can be compared::
 
 from sage.structure.element import Element
 from sage.misc.decorators import options
+from sage.symbolic.expression import Expression
 
 class ManifoldPoint(Element):
     r"""
@@ -613,8 +612,24 @@ class ManifoldPoint(Element):
                     common_chart = chart
                     break
         if common_chart is None:
+            # A commont chart is searched via a coordinate transformation,
+            # privileging the default chart
+            if def_chart in self._coordinates:
+                try:
+                    other.coordinates(def_chart)
+                    common_chart = def_chart
+                except ValueError:
+                    pass
+        if common_chart is None:
+            if def_chart in other._coordinates:
+                try:
+                    self.coordinates(def_chart)
+                    common_chart = def_chart
+                except ValueError:
+                    pass
+        if common_chart is None:
             # At this stage, a commont chart is searched via a coordinate
-            # transformation:
+            # transformation from any chart
             for chart in self._coordinates:
                 try:
                     other.coordinates(chart)
@@ -636,7 +651,14 @@ class ManifoldPoint(Element):
             #!# Another option would be:
             # raise ValueError("no common chart has been found to compare " +
             #                  "{} and {}".format(self, other))
-        return self._coordinates[common_chart] == other._coordinates[common_chart]
+        for xs, xo in zip(self._coordinates[common_chart],
+                          other._coordinates[common_chart]):
+            diff = xs - xo
+            if isinstance(diff, Expression) and not diff.is_trivial_zero():
+                return False
+            elif not (diff == 0):
+                return False
+        return True
 
     def __ne__(self, other):
         r"""
@@ -814,7 +836,7 @@ class ManifoldPoint(Element):
             sage: g = p.plot()
             sage: print(g)
             Graphics3d Object
-            sage: gX = X.plot(nb_values=5) # coordinate mesh cube
+            sage: gX = X.plot(number_values=5) # coordinate mesh cube
             sage: g + gX # display of the point atop the coordinate mesh
             Graphics3d Object
 
@@ -838,7 +860,7 @@ class ManifoldPoint(Element):
             F: S^2 --> M
             on U: (th, ph) |--> (x, y, z) = (cos(ph)*sin(th), sin(ph)*sin(th), cos(th))
             sage: g = p.plot(chart=X, mapping=F)
-            sage: gS2 = XS.plot(chart=X, mapping=F, nb_values=9)
+            sage: gS2 = XS.plot(chart=X, mapping=F, number_values=9)
             sage: g + gS2
             Graphics3d Object
 
@@ -849,11 +871,11 @@ class ManifoldPoint(Element):
             sage: X.<t,x,y,z> = M.chart()
             sage: p = M.point((1,2,3,4), name='p')
             sage: g = p.plot(X, ambient_coords=(t,x,y), label_offset=0.4)  # the coordinate z is skipped
-            sage: gX = X.plot(X, ambient_coords=(t,x,y), nb_values=5)  # long time
+            sage: gX = X.plot(X, ambient_coords=(t,x,y), number_values=5)  # long time
             sage: g + gX # 3D plot  # long time
             Graphics3d Object
             sage: g = p.plot(X, ambient_coords=(t,y,z), label_offset=0.4)  # the coordinate x is skipped
-            sage: gX = X.plot(X, ambient_coords=(t,y,z), nb_values=5)  # long time
+            sage: gX = X.plot(X, ambient_coords=(t,y,z), number_values=5)  # long time
             sage: g + gX # 3D plot  # long time
             Graphics3d Object
             sage: g = p.plot(X, ambient_coords=(y,z), label_offset=0.4)  # the coordinates t and x are skipped

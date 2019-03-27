@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 die () {
     echo "$@" 1>&2
     exit 1
@@ -8,14 +6,11 @@ die () {
 [ -n "$SAGE_LOCAL" ] || die 'Error: $SAGE_LOCAL not set. Source sage-env or run this script from `sage -sh`.'
 
 cd src
-patch -p1 < ../patches/no_static_stuff.patch || die "Error: Couldn't apply patch."
 
-export CXXFLAGS="-I$SAGE_LOCAL/include $CXXFLAGS $LDFLAGS"
-cd source
-$MAKE || die "Error building Normaliz."
-
-cp -pf normaliz "$SAGE_LOCAL/bin/" || die "Error installing Normaliz."
-
-cd ../Singular
-cp -pf normaliz.lib "$SAGE_LOCAL/share/singular/" || die "Error installing normaliz.lib for Singular."
+# Disable features that require packages SCIP and CoCoA, both of which are experimental packages.
+# FLINT is a standard package.  We pass --enable-flint to configure so that an error will be signalled
+# if FLINT cannot be found, rather than building normaliz without it.
+./configure --disable-scip --disable-nmzintegrate --enable-flint --prefix=$SAGE_LOCAL || die "Error configuring normaliz"
+$MAKE || die "Error building normaliz"
+$MAKE install || die "Error installing normaliz"
 

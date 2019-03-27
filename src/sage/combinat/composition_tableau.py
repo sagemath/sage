@@ -5,13 +5,13 @@ AUTHORS:
 
 - Chris Berg, Jeff Ferreira (2012-9): Initial version
 """
+from six.moves import range
+from six import add_metaclass
+
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.family import Family
-from sage.misc.misc_c import prod
 from sage.misc.classcall_metaclass import ClasscallMetaclass
-from sage.functions.other import factorial
-from sage.misc.cachefunc import cached_function
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -22,6 +22,8 @@ from sage.rings.integer import Integer
 from sage.combinat.backtrack import GenericBacktracker
 import copy
 
+
+@add_metaclass(ClasscallMetaclass)
 class CompositionTableau(CombinatorialElement):
     r"""
     A composition tableau.
@@ -50,8 +52,6 @@ class CompositionTableau(CombinatorialElement):
         sage: CompositionTableau([])
         []
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(self, t):
         r"""
@@ -80,7 +80,7 @@ class CompositionTableau(CombinatorialElement):
 
             sage: t = CompositionTableaux()([[1],[2,2]])
             sage: s = CompositionTableaux(3)([[1],[2,2]])
-            sage: s==t
+            sage: s == t
             True
             sage: t.parent()
             Composition Tableaux
@@ -119,7 +119,7 @@ class CompositionTableau(CombinatorialElement):
         for i in range(l):
             for j in range(i+1,l):
                 for k in range(1,m):
-                    if TT[j][k] != 0 and TT[j][k] >= TT[i][k] and TT[j][k] <= TT[i][k-1]:
+                    if TT[j][k] and TT[i][k] <= TT[j][k] <= TT[i][k-1]:
                         raise ValueError("Triple condition must be satisfied.")
 
         CombinatorialElement.__init__(self, parent, t)
@@ -136,7 +136,8 @@ class CompositionTableau(CombinatorialElement):
               3  2
               4  4
         """
-        return '\n'.join(("".join(("%3s"%str(x) for x in row)) for row in self))
+        return '\n'.join(("".join(("%3s" % str(x) for x in row))
+                          for row in self))
 
     def __call__(self, *cell):
         r"""
@@ -155,9 +156,9 @@ class CompositionTableau(CombinatorialElement):
             IndexError: The cell (2,2) is not contained in [[1], [3, 2], [4, 4]]
         """
         try:
-            i,j = cell
+            i, j = cell
         except ValueError:
-            i,j = cell[0]
+            i, j = cell[0]
 
         try:
             return self[i][j]
@@ -186,7 +187,7 @@ class CompositionTableau(CombinatorialElement):
             sage: CompositionTableau([[1],[3,2],[4,4]]).size()
             5
         """
-        return sum([len(row) for row in self])
+        return sum(len(row) for row in self)
 
     def weight(self):
         r"""
@@ -198,11 +199,11 @@ class CompositionTableau(CombinatorialElement):
             sage: CompositionTableau([[1],[3,2],[4,4]]).weight()
             [1, 1, 1, 2, 0]
         """
-        w = {i:0 for i in range(1,self.size()+1)}
+        w = {i: 0 for i in range(1, self.size() + 1)}
         for row in self:
             for i in row:
                 w[i] += 1
-        return Composition([w[i] for i in range(1,self.size()+1)])
+        return Composition([w[i] for i in range(1, self.size()+1)])
 
     def descent_set(self):
         r"""
@@ -273,7 +274,7 @@ class CompositionTableau(CombinatorialElement):
             True
         """
         entries = sum(self,[])
-        return sorted(entries) == range(1, self.size() + 1)
+        return sorted(entries) == list(range(1, self.size() + 1))
 
 class CompositionTableaux(UniqueRepresentation, Parent):
     r"""
@@ -318,7 +319,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
          [[3, 3, 3]]]
 
         sage: CT = CompositionTableaux([1,2,1]); CT
-        Composition tableaux of shape [1, 2, 1] and maximun entry 4
+        Composition tableaux of shape [1, 2, 1] and maximum entry 4
         sage: list(CT)
         [[[1], [2, 2], [3]],
          [[1], [2, 2], [4]],
@@ -327,7 +328,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
          [[2], [3, 3], [4]]]
 
         sage: CT = CompositionTableaux(shape=[1,2,1],max_entry=3); CT
-        Composition tableaux of shape [1, 2, 1] and maximun entry 3
+        Composition tableaux of shape [1, 2, 1] and maximum entry 3
         sage: list(CT)
         [[[1], [2, 2], [3]]]
 
@@ -363,17 +364,17 @@ class CompositionTableaux(UniqueRepresentation, Parent):
             sage: CT = CompositionTableaux(size=3); CT
             Composition Tableaux of size 3 and maximum entry 3
             sage: CT = CompositionTableaux([1,2]); CT
-            Composition tableaux of shape [1, 2] and maximun entry 3
+            Composition tableaux of shape [1, 2] and maximum entry 3
             sage: CT = CompositionTableaux(shape=[1,2]); CT
-            Composition tableaux of shape [1, 2] and maximun entry 3
+            Composition tableaux of shape [1, 2] and maximum entry 3
             sage: CT = CompositionTableaux(shape=[]); CT
-            Composition tableaux of shape [] and maximun entry 0
+            Composition tableaux of shape [] and maximum entry 0
             sage: CT = CompositionTableaux(0); CT
             Composition Tableaux of size 0 and maximum entry 0
             sage: CT = CompositionTableaux(max_entry=3); CT
             Composition tableaux with maximum entry 3
             sage: CT = CompositionTableaux([1,2],max_entry=3); CT
-            Composition tableaux of shape [1, 2] and maximun entry 3
+            Composition tableaux of shape [1, 2] and maximum entry 3
             sage: CT = CompositionTableaux(size=2,shape=[1,2]); CT
             Traceback (most recent call last):
             ...
@@ -737,11 +738,11 @@ class CompositionTableaux_shape(CompositionTableaux):
         TESTS::
 
             sage: CompositionTableaux([1,2,1])
-            Composition tableaux of shape [1, 2, 1] and maximun entry 4
+            Composition tableaux of shape [1, 2, 1] and maximum entry 4
             sage: CompositionTableaux([1,2,1],max_entry=3)
-            Composition tableaux of shape [1, 2, 1] and maximun entry 3
+            Composition tableaux of shape [1, 2, 1] and maximum entry 3
         """
-        return "Composition tableaux of shape %s and maximun entry %s"%(str(self.shape), str(self.max_entry))
+        return "Composition tableaux of shape %s and maximum entry %s" % (str(self.shape), str(self.max_entry))
 
     def an_element(self):
         r"""
@@ -757,6 +758,7 @@ class CompositionTableaux_shape(CompositionTableaux):
             return self.element_class(self, [])
         t = [[i]*len for (i,len) in enumerate(self.shape,start=1)]
         return self.element_class(self, t)
+
 
 class CompositionTableauxBacktracker(GenericBacktracker):
     r"""
@@ -806,16 +808,17 @@ class CompositionTableauxBacktracker(GenericBacktracker):
              ([[5], [None, None, None], [None, None]], (1, 0), False),
              ([[6], [None, None, None], [None, None]], (1, 0), False)]
         """
-        #Append zeros to a copy of obj
+        # Append zeros to a copy of obj
         obj_copy = copy.deepcopy(obj)
+        N = max(len(u) for u in obj_copy)
         for a in range(len(obj_copy)):
-            for b in range(len(max(obj_copy))-len(obj_copy[a])):
-                obj_copy[a].append(0)
+            Na = len(obj_copy[a])
+            obj_copy[a] += [0] * (N - Na)
 
-        #We need to set the i,j^th entry.
+        # We need to set the i,j^th entry.
         i, j = state
 
-        #Get the next state
+        # Get the next state
         new_state = self.get_next_pos(i, j)
         yld = True if new_state is None else False
 
