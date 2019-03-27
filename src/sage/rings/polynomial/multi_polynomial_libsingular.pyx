@@ -191,7 +191,7 @@ from sage.libs.singular.decl cimport (
     p_ISet, rChangeCurrRing, p_Copy, p_Init, p_SetCoeff, p_Setm, p_SetExp, p_Add_q,
     p_NSet, p_GetCoeff, p_Delete, p_GetExp, pNext, rRingVar, omAlloc0, omStrDup,
     omFree, p_Divide, p_SetCoeff0, n_Init, p_DivisibleBy, pLcm, p_LmDivisibleBy,
-    pMDivide, p_IsConstant, p_ExpVectorEqual, p_String, p_LmInit, n_Copy,
+    pMDivide, p_MDivide, p_IsConstant, p_ExpVectorEqual, p_String, p_LmInit, n_Copy,
     p_IsUnit, p_Series, p_Head, idInit, fast_map_common_subexp, id_Delete,
     p_IsHomogeneous, p_Homogen, p_Totaldegree,pLDeg1_Totaldegree, singclap_pdivide, singclap_factorize,
     idLift, IDELEMS, On, Off, SW_USE_CHINREM_GCD, SW_USE_EZGCD,
@@ -219,7 +219,7 @@ from sage.libs.singular.ring cimport singular_ring_new, singular_ring_reference,
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict, MPolynomialRing_polydict_domain
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-from sage.rings.polynomial.polydict import ETuple
+from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 
 # base ring imports
@@ -241,12 +241,8 @@ from sage.structure.parent_base cimport ParentWithBase
 from sage.structure.parent_gens cimport ParentWithGens
 from sage.structure.category_object cimport CategoryObject
 
-from sage.structure.element cimport EuclideanDomainElement
-from sage.structure.element cimport RingElement
-from sage.structure.element cimport ModuleElement
-from sage.structure.element cimport Element
-from sage.structure.element cimport CommutativeRingElement
-from sage.structure.element cimport coercion_model
+from sage.structure.coerce cimport coercion_model
+from sage.structure.element cimport Element, CommutativeRingElement
 
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.factorization import Factorization
@@ -960,7 +956,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             variable_names_t = self.variable_names()
 
             if variable_names_s.issubset(variable_names_t):
-                return eval(str(element),self.gens_dict())
+                return eval(str(element),self.gens_dict(copy=False))
 
             elif element.parent().ngens() <= self.ngens():
                 Q = element.parent()
@@ -1544,7 +1540,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         """
         Serializes self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: P.<x,y,z> = PolynomialRing(QQ, order='degrevlex')
             sage: P == loads(dumps(P))
             True
@@ -2565,7 +2562,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: P.<x,y,z> = QQ[]
             sage: f = - 1*x^2*y - 25/27 * y^3 - z^2
             sage: latex(f)  # indirect doctest
-            - x^{2} y - \frac{25}{27} y^{3} - z^{2}
+            -x^{2} y - \frac{25}{27} y^{3} - z^{2}
         """
         cdef ring *_ring = self._parent_ring
         gens = self.parent().latex_variable_names()
@@ -2833,6 +2830,14 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: f.coefficient(x)
             y^2 + y + 1
 
+        Note that exponents have all variables specified::
+
+            sage: x.coefficient(x.exponents()[0])
+            1
+            sage: f.coefficient([1,0])
+            1
+            sage: f.coefficient({x:1,y:0})
+            1
 
         Be aware that this may not be what you think! The physical
         appearance of the variable x is deceiving -- particularly if
@@ -2877,6 +2882,9 @@ cdef class MPolynomial_libsingular(MPolynomial):
                     exps[i] = -1
                 else:
                     exps[i] = int(degrees[i])
+        elif isinstance(degrees, ETuple):
+            for i in range(gens):
+                exps[i] = int((<ETuple>degrees).get_exp(i))
         elif isinstance(degrees, dict):
             # Extract the ordered list of degree specifications from the dictionary
             poly_vars = self.parent().gens()
@@ -3427,7 +3435,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             try_symbolic = 1
 
         if not try_symbolic and fixed is not None:
-            for m,v in fixed.iteritems():
+            for m,v in fixed.items():
                 if isinstance(m, (int, Integer)):
                     mi = m+1
                 elif isinstance(m,MPolynomial_libsingular) and m.parent() is parent:
@@ -3468,7 +3476,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         cdef dict gd
 
         if not try_symbolic:
-            gd = parent.gens_dict()
+            gd = parent.gens_dict(copy=False)
             for m,v in kw.iteritems():
                 m = gd[m]
                 for i from 0 < i <= _ring.N:
@@ -3533,7 +3541,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         cdef list g = list(parent.gens())
 
         if fixed is not None:
-            for m,v in fixed.iteritems():
+            for m,v in fixed.items():
                 if isinstance(m, (int, Integer)):
                     mi = m+1
                 elif isinstance(m, MPolynomial_libsingular) and m.parent() is parent:
@@ -3548,7 +3556,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
 
                 g[mi-1] = v
 
-        gd = parent.gens_dict()
+        gd = parent.gens_dict(copy=False)
         for m,v in kw.iteritems():
             m = gd[m]
             for i from 0 < i <= _ring.N:
@@ -4040,26 +4048,21 @@ cdef class MPolynomial_libsingular(MPolynomial):
 
         if right.is_zero():
             raise ZeroDivisionError
+        elif right.is_one():
+            return self
 
         if self._parent._base.is_finite() and self._parent._base.characteristic() > 1<<29:
             raise NotImplementedError("Division of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
         _right = <MPolynomial_libsingular>right
 
-        if r is not currRing:
-            rChangeCurrRing(r)
-
         if r.cf.type != n_unknown:
-            if r.cf.type == n_Z:
-                P = parent.change_ring(QQ)
-                f = (<MPolynomial_libsingular>P(self))._floordiv_(P(right))
-                return parent(sum([c.floor() * m for c, m in f]))
             if _right.is_monomial():
                 p = self._poly
                 quo = p_ISet(0,r)
                 while p:
                     if p_DivisibleBy(_right._poly, p, r):
-                        temp = pMDivide(p, _right._poly)
+                        temp = p_MDivide(p, _right._poly, r)
                         p_SetCoeff0(temp, n_Copy(p_GetCoeff(p, r), r), r)
                         quo = p_Add_q(quo, temp, r)
                     p = pNext(p)
@@ -4068,11 +4071,24 @@ cdef class MPolynomial_libsingular(MPolynomial):
                 raise NotImplementedError("Division of multivariate polynomials over non fields by non-monomials not implemented.")
 
         count = singular_polynomial_length_bounded(self._poly, 15)
+
+        # fast in the most common case where the division is exact; returns zero otherwise
         if count >= 15:  # note that _right._poly must be of shorter length than self._poly for us to care about this call
             sig_on()
-        quo = singclap_pdivide(self._poly, _right._poly, r)
+        quo = p_Divide(p_Copy(self._poly, r), p_Copy(_right._poly, r), r)
         if count >= 15:
             sig_off()
+
+        if quo == NULL:
+            if r.cf.type == n_Z:
+                P = parent.change_ring(QQ)
+                f = (<MPolynomial_libsingular>P(self))._floordiv_(P(right))
+                return parent(sum([c.floor() * m for c, m in f]))
+            else:
+                sig_on()
+                quo = singclap_pdivide(self._poly, _right._poly, r)
+                sig_off()
+
         return new_MP(parent, quo)
 
     def factor(self, proof=None):

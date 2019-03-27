@@ -646,7 +646,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             sage: E = EllipticCurve(j=1728*b).change_ring(G)
             sage: EF = E.descend_to(F); EF
             [Elliptic Curve defined by y^2 = x^3 + (27*b-621)*x + (-1296*b+2484) over Number Field in b with defining polynomial x^2 - 23]
-            sage: all([Ei.change_ring(G).is_isomorphic(E) for Ei in EF])
+            sage: all(Ei.change_ring(G).is_isomorphic(E) for Ei in EF)
             True
 
         ::
@@ -657,7 +657,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             sage: EK = E.descend_to(K); EK
             [Elliptic Curve defined by y^2 = x^3 + b*x over Number Field in b with defining polynomial x^2 - 7,
             Elliptic Curve defined by y^2 = x^3 + 7*b*x over Number Field in b with defining polynomial x^2 - 7]
-            sage: all([Ei.change_ring(L).is_isomorphic(E) for Ei in EK])
+            sage: all(Ei.change_ring(L).is_isomorphic(E) for Ei in EK)
             True
 
         ::
@@ -723,7 +723,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
                 if f.codomain() != L:
                     raise ValueError("embedding has wrong codomain")
             except AttributeError:
-                raise ValueError("invalid embedding: %s" % f)
+                raise ValueError("invalid embedding: {}".format(f))
             try:
                 jK = f.preimage(j)
             except Exception:
@@ -791,10 +791,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
         - ``E``         - an elliptic curve, the domain of the isogeny to
                           initialize.
 
-        - ``kernel``    - a kernel, either a point in ``E``, a list of points
-                          in ``E``, a univariate kernel polynomial or ``None``.
-                          If initiating from a domain/codomain, this must be
-                          set to None.  Validity of input is *not* fully checked.
+        - ``kernel`` - a kernel, either a point in ``E``, a list of
+                          points in ``E``, a univariate kernel
+                          polynomial or ``None``.  If initiating from
+                          a domain/codomain, this must be set to None.
+                          Validity of input is checked (unless
+                          check=False).
 
         - ``codomain``  - an elliptic curve (default:None).  If ``kernel`` is
                           None, then this must be the codomain of a separable
@@ -819,12 +821,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
                           number field, then the codomain is a global
                           minimum model where this exists.
 
-        - ``check`` (default: True) does some partial checks that the
-                          input is valid (e.g., that the points
-                          defined by the kernel polynomial are
-                          torsion); however, invalid input can in some
-                          cases still pass, since that the points define
-                          a group is not checked.
+        - ``check`` (default: True) checks that the input is valid,
+                          i.e., that the polynomial provided is a
+                          kernel polynomial, meaning that its roots
+                          are the x-coordinates of a finite subgroup.
 
         OUTPUT:
 
@@ -859,21 +859,20 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             sage: phi = E.isogeny([14,27,4,1])
             Traceback (most recent call last):
             ...
-            ValueError: The polynomial does not define a finite subgroup of the elliptic curve.
+            ValueError: The polynomial x^3 + 4*x^2 + 27*x + 14 does not define a finite subgroup of Elliptic Curve defined by y^2 + x*y = x^3 + x + 2 over Finite Field of size 31.
 
-        An example in which we construct an invalid morphism, which
-        illustrates that the check for correctness of the input is not
-        sufficient. (See :trac:`11578`.)::
+        Until the checking of kernel polynomials was implemented in
+        :trac:`23222`, the following raised no error but returned an
+        invalid morphism.  See also :trac:`11578`::
 
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(x^2-x-1)
             sage: E = EllipticCurve(K, [-13392, -1080432])
             sage: R.<x> = K[]
             sage: phi = E.isogeny( (x-564)*(x - 396/5*a + 348/5) )
-            sage: phi.codomain().conductor().norm().factor()
-            5^2 * 11^2 * 3271 * 15806939 * 4169267639351
-            sage: phi.domain().conductor().norm().factor()
-            11^2
+            Traceback (most recent call last):
+            ...
+            ValueError: The polynomial x^2 + (-396/5*a - 2472/5)*x + 223344/5*a - 196272/5 does not define a finite subgroup of Elliptic Curve defined by y^2 = x^3 + (-13392)*x + (-1080432) over Number Field in a with defining polynomial x^2 - x - 1.
         """
         try:
             return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)

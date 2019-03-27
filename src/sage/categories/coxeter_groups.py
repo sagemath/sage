@@ -16,7 +16,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_import import LazyImport
 from sage.misc.constant_function import ConstantFunction
-from sage.misc.misc import attrcall, uniq
+from sage.misc.misc import attrcall
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -1926,14 +1926,15 @@ class CoxeterGroups(Category_singleton):
                 sage: set(S) == set(C)
                 True
             """
-            Covers = []
+            Covers = set()
             for i in self.parent().index_set():
                 if i in self.descents(side='right'):
-                    Covers += [ x.apply_simple_reflection(i, side='right') for x in self.apply_simple_reflection(i,side='right').bruhat_upper_covers()
-                                if i not in x.descents(side='right') ]
+                    Covers.update(x.apply_simple_reflection(i, side='right')
+                                  for x in self.apply_simple_reflection(i,side='right').bruhat_upper_covers()
+                                  if i not in x.descents(side='right'))
                 else:
-                    Covers += [ self.apply_simple_reflection(i,side='right') ]
-            return uniq(Covers)
+                    Covers.add(self.apply_simple_reflection(i,side='right'))
+            return sorted(Covers)
 
         @cached_in_parent_method
         def bruhat_lower_covers_reflections(self):
@@ -1994,17 +1995,16 @@ class CoxeterGroups(Category_singleton):
                 sage: w = W.from_reduced_word([3,1,2,1])
                 sage: w.bruhat_upper_covers_reflections()
                 [(s1*s2*s3*s2*s1, s3), (s2*s3*s1*s2*s1, s2*s3*s2), (s3*s4*s1*s2*s1, s4), (s4*s3*s1*s2*s1, s1*s2*s3*s4*s3*s2*s1)]
-
             """
-
-            Covers = []
+            Covers = set()
             for i in self.parent().index_set():
                 wi = self.apply_simple_reflection(i)
                 if i in self.descents():
-                    Covers += [(u.apply_simple_reflection(i), r.apply_conjugation_by_simple_reflection(i)) for u, r in wi.bruhat_upper_covers_reflections() if i not in u.descents()]
+                    Covers.update((u.apply_simple_reflection(i), r.apply_conjugation_by_simple_reflection(i))
+                                  for u, r in wi.bruhat_upper_covers_reflections() if i not in u.descents())
                 else:
-                    Covers += [(wi, self.parent().simple_reflection(i))]
-            return uniq(Covers)
+                    Covers.add((wi, self.parent().simple_reflection(i)))
+            return sorted(Covers)
 
         def cover_reflections(self, side='right'):
             r"""

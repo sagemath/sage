@@ -13,18 +13,22 @@ AUTHORS:
 - Vincent Neiger (2018-06-13): added basic functions (row/column degrees,
   leading positions, leading matrix, testing reduced and canonical forms)
 
+- Vincent Neiger (2018-09-29): added functions for computing and for verifying
+  minimal approximant bases
+
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Kwankyu Lee <ekwankyu@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.misc.superseded import deprecated_function_alias
 
@@ -146,8 +150,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         """
         if self.nrows() == 0 or self.ncols() == 0:
             raise ValueError('empty matrix does not have a degree')
-        return max([ self[i,j].degree()
-            for i in range(self.nrows()) for j in range(self.ncols()) ])
+        return max(self[i, j].degree()
+                   for i in range(self.nrows()) for j in range(self.ncols()))
 
     def degree_matrix(self, shifts=None, row_wise=True):
         r"""
@@ -1462,3 +1466,532 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             U.set_immutable()
 
         return (A, U) if transformation else A
+
+    def is_minimal_approximant_basis(self,
+            pmat,
+            order,
+            shifts=None,
+            row_wise=True,
+            normal_form=False):
+        r"""
+        Return ``True`` if and only if this matrix is an approximant basis in
+        ``shifts``-ordered weak Popov form for the polynomial matrix ``pmat``
+        at order ``order``.
+        
+        If ``normal_form`` is ``True``, then the polynomial matrix must
+        furthermore be in ``shifts``-Popov form. An error is raised if the
+        input dimensions are not sound. If a single integer is provided for
+        ``order``, then it is interpreted as a list of repeated integers with
+        this value. (See :meth:`minimal_approximant_basis` for definitions and 
+        more details.)
+
+        INPUT:
+
+        - ``pmat`` -- a polynomial matrix.
+
+        - ``order`` -- a list of positive integers, or a positive integer.
+
+        - ``shifts`` -- (optional, default: ``None``) list of integers;
+          ``None`` is interpreted as ``shifts=[0,...,0]``.
+
+        - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True``
+          then the basis considered row-wise and operates on the left of
+          ``pmat``; otherwise it is column-wise and operates on the right of
+          ``pmat``.
+
+        - ``normal_form`` -- (optional, default: ``False``) boolean, if
+          ``True`` then checks for a basis in ``shifts``-Popov form.
+
+        OUTPUT: a boolean.
+
+        ALGORITHM:
+
+        Verification that the matrix is formed by approximants is done via a
+        truncated matrix product; verification that the matrix is square,
+        nonsingular and in shifted weak Popov form is done via
+        :meth:`is_weak_popov`; verification that the matrix generates the
+        module of approximants is done via the characterization in Theorem 2.1
+        of [GN2018]_ .
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(97)[]
+
+        We consider the following example from [Arne Storjohann, Notes on
+        computing minimal approximant bases, 2006]::
+
+            sage: order = 8; shifts = [1,1,0,0,0]
+            sage: pmat = Matrix(pR, 5, 1, [ \
+                    pR([35,  0, 41, 87,  3, 42, 22, 90]), \
+                    pR([80, 15, 62, 87, 14, 93, 24,  0]), \
+                    pR([42, 57, 90, 87, 22, 80, 71, 53]), \
+                    pR([37, 72, 74,  6,  5, 75, 23, 47]), \
+                    pR([36, 10, 74,  1, 29, 44, 87, 74]) ])
+            sage: appbas = Matrix(pR, [ \
+                   [x+47,   57, 58*x+44,     9*x+23,      93*x+76], \
+                   [  15, x+18, 52*x+23,     15*x+58,     93*x+88], \
+                   [  17,   86, x^2+77*x+16, 76*x+29,     90*x+78], \
+                   [  44,   36, 3*x+42,      x^2+50*x+26, 85*x+44], \
+                   [   2,   22, 54*x+94,     73*x+24,     x^2+2*x+25] ])
+            sage: appbas.is_minimal_approximant_basis(pmat,\
+                    order, shifts, row_wise=True, normal_form=True)
+            True
+
+        The matrix `x^8 \mathrm{Id}_5` is square, nonsingular, in Popov form,
+        and its rows are approximants for ``pmat`` at order 8. However, it is
+        not an approximant basis since its rows generate a module strictly
+        contained in the set of approximants for ``pmat`` at order 8::
+
+            sage: (x^8*Matrix.identity(pR, 5)).is_minimal_approximant_basis(\
+                                                                    pmat, 8)
+            False
+
+        Since ``pmat`` is a single column, with nonzero constant coefficient,
+        its column-wise approximant bases at order 8 are all `1\times 1`
+        matrices `[c x^8]` for some nonzero field element `c`::
+
+            sage: Matrix(pR, [x^8]).is_minimal_approximant_basis(pmat, \
+                    8, row_wise=False, normal_form=True)
+            True
+
+        Exceptions are raised if input dimensions are not sound::
+
+            sage: appbas.is_minimal_approximant_basis(pmat, [8,8], shifts)
+            Traceback (most recent call last):
+            ...
+            ValueError: order length should be the column dimension 
+                        of the input matrix
+
+            sage: appbas.is_minimal_approximant_basis(pmat, \
+                    order, shifts, row_wise=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: shifts length should be the column dimension 
+                        of the input matrix
+
+            sage: Matrix(pR, [x^8]).is_minimal_approximant_basis(pmat, 8)
+            Traceback (most recent call last):
+            ...
+            ValueError: column dimension should be the row dimension of the
+            input matrix
+
+        .. SEEALSO::
+
+            :meth:`minimal_approximant_basis` .
+        """
+        m = pmat.nrows()
+        n = pmat.ncols()
+
+        # set default shifts / check shifts dimension
+        if shifts == None:
+            shifts = [0]*m if row_wise else [0]*n
+        elif row_wise and len(shifts) != m:
+            raise ValueError('shifts length should be the row dimension of' \
+                                                      + ' the input matrix')
+        elif (not row_wise) and len(shifts) != n:
+            raise ValueError('shifts length should be the column dimension' \
+                                                   + ' of the input matrix')
+
+        # set default order / check order dimension
+        if not isinstance(order,list):
+            order = [order]*n if row_wise else [order]*m
+
+        if row_wise and len(order) != n:
+            raise ValueError("order length should be the column dimension" \
+                                                  + " of the input matrix")
+        elif (not row_wise) and len(order) != m:
+            raise ValueError("order length should be the row dimension of" \
+                                                     + " the input matrix")
+
+        # raise an error if self does not have the right dimension
+        if row_wise and self.ncols() != m:
+            raise ValueError("column dimension should be the row dimension" \
+                                                    + " of the input matrix")
+        elif (not row_wise) and self.nrows() != n:
+            raise ValueError("row dimension should be the column dimension" \
+                                                    + " of the input matrix")
+
+        # check square
+        if not self.is_square():
+            return False
+        # check nonsingular and shifts-(ordered weak) Popov form
+        if normal_form:
+            if not self.is_popov(shifts, row_wise, False, False):
+                return False
+        else:
+            if not self.is_weak_popov(shifts, row_wise, True, False):
+                return False
+
+        # check that self is a basis of the set of approximants
+        if row_wise:
+            # check that self * pmat is 0 bmod x^order
+            # and compute certificate matrix ``cert_mat`` which is
+            # the constant term of (self * pmat) * x^(-order)
+            residual = self * pmat
+            for i in range(m):
+                for j in range(n):
+                    if residual[i,j].truncate(order[j]) != 0:
+                        return False
+                    residual[i,j] = residual[i,j].shift(-order[j])
+            cert_mat = residual(0)
+
+            # check that self generates the set of approximants
+            # 1/ determinant of self should be a monomial c*x^d,
+            # with d the sum of pivot degrees
+            d = sum([self[i,i].degree() for i in range(m)])
+            X = self.base_ring().gen()
+            if self.determinant() != (self(1).determinant() * X**d):
+                return False
+            # 2/ the m x (m+n) constant matrix [self(0) | cert_mat] should have
+            # full rank, that is, rank m
+            from sage.matrix.constructor import block_matrix
+            if block_matrix([[self(0), cert_mat]]).rank() < m:
+                return False
+
+        else:
+            # check that pmat * self is 0 bmod x^order
+            # and compute certificate matrix ``cert_mat`` which is
+            # the constant term of x^(-order) * (pmat * self)
+            residual = pmat * self
+            for i in range(m):
+                for j in range(n):
+                    if residual[i,j].truncate(order[i]) != 0:
+                        return False
+                    residual[i,j] = residual[i,j].shift(-order[i])
+            cert_mat = residual(0)
+
+            # check that self generates the set of approximants
+            # 1/ determinant of self should be a monomial c*x^d,
+            # with d the sum of pivot degrees
+            d = sum([self[i,i].degree() for i in range(n)])
+            X = self.base_ring().gen()
+            if self.determinant() != (self(1).determinant() * X**d):
+                return False
+            # 2/ the (m+n) x n constant matrix [self(0).T | cert_mat.T].T
+            # should have full rank, that is, rank n
+            from sage.matrix.constructor import block_matrix
+            if block_matrix([[self(0)], [cert_mat]]).rank() < n:
+                return False
+
+        return True
+
+
+    def minimal_approximant_basis(self,
+            order,
+            shifts=None,
+            row_wise=True,
+            normal_form=False):
+        r"""
+        Return an approximant basis in ``shifts``-ordered weak Popov form for
+        this polynomial matrix at order ``order``.
+
+        Assuming we work row-wise, if `F` is an `m \times n` polynomial matrix
+        and `(d_0,\ldots,d_{n-1})` are positive integers, then an approximant
+        basis for `F` at order `(d_0,\ldots,d_{n-1})` is a polynomial matrix
+        whose rows form a basis of the module of approximants for `F` at order
+        `(d_0,\ldots,d_{n-1})`. The latter approximants are the polynomial
+        vectors `p` of size `m` such that the column `j` of `p F` has valuation
+        at least `d_j`, for all `0 \le j \le n-1`.
+
+        If ``normal_form`` is ``True``, then the output basis `P` is
+        furthermore in ``shifts``-Popov form. By default, `P` is considered
+        row-wise, that is, its rows are left-approximants for ``self``; if
+        ``row_wise`` is ``False`` then its columns are right-approximants for
+        ``self``. It is guaranteed that the degree of the output basis is at
+        most the maximum of the entries of ``order``, independently of
+        ``shifts``.
+
+        An error is raised if the input dimensions are not sound: if working
+        row-wise (resp. column-wise), the length of ``order`` must be the
+        number of columns (resp. rows) of ``self``, while the length of
+        ``shifts`` must be the number of rows (resp. columns) of ``self``.
+
+        If a single integer is provided for ``order``, then it is converted
+        into a list of repeated integers with this value.
+
+        INPUT:
+
+        - ``order`` -- a list of positive integers, or a positive integer.
+
+        - ``shifts`` -- (optional, default: ``None``) list of integers;
+          ``None`` is interpreted as ``shifts=[0,...,0]``.
+
+        - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True``
+          then the output basis considered row-wise and operates on the left
+          of ``self``; otherwise it is column-wise and operates on the right
+          of ``self``.
+
+        - ``normal_form`` -- (optional, default: ``False``) boolean, if
+          ``True`` then the output basis is in ``shifts``-Popov form.
+
+        OUTPUT: a polynomial matrix.
+
+        ALGORITHM:
+
+        The implementation is inspired from the iterative algorithms described
+        in [VBB1992]_ and [BL1994]_ ; for obtaining the normal form, it relies
+        directly on Lemmas 3.3 and 4.1 in [JNSV2016]_ .
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(7)[]
+
+            sage: order = [4, 3]; shifts = [-1, 2, 0]
+            sage: F = Matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6, 5*x^2 + 4*x + 1], \
+                                  [        2*x^2 + 2*x + 3, 6*x^2 + 6*x + 3], \
+                                  [4*x^3         +   x + 1, 4*x^2 + 2*x + 3] ])
+            sage: P = F.minimal_approximant_basis(order, shifts)
+            sage: P.is_minimal_approximant_basis(F, order, shifts)
+            True
+
+        By default, the computed basis is not required to be in normal form
+        (and will not be except in rare special cases)::
+
+            sage: P.is_minimal_approximant_basis(F, order, shifts, \
+                                                    normal_form=True)
+            False
+            sage: P = F.minimal_approximant_basis(order, shifts, normal_form=True)
+            sage: P.is_minimal_approximant_basis(F, order, shifts, \
+                                                    normal_form=True)
+            True
+
+        If shifts are not specified, they are chosen as uniform `[0,\ldots,0]`
+        by default. Besides, if the orders are all the same, one can rather
+        give a single integer::
+
+            sage: F.minimal_approximant_basis(3) == \
+                    F.minimal_approximant_basis([3,3], shifts=None)
+            True
+
+        One can work column-wise by specifying ``row_wise=False``::
+
+            sage: P = F.minimal_approximant_basis([5,2,2], [0,1], row_wise=False)
+            sage: P.is_minimal_approximant_basis(F, [5,2,2], \
+                                shifts=[0,1], row_wise=False)
+            True
+            sage: F.minimal_approximant_basis(3, row_wise=True) == \
+                F.transpose().minimal_approximant_basis(3, row_wise=False).transpose()
+            True
+
+        Errors are raised if the input dimensions are not sound::
+
+            sage: P = F.minimal_approximant_basis([4], shifts)
+            Traceback (most recent call last):
+            ...
+            ValueError: order length should be the column dimension
+
+            sage: P = F.minimal_approximant_basis(order, [0,0,0,0])
+            Traceback (most recent call last):
+            ...
+            ValueError: shifts length should be the row dimension
+
+        An error is raised if order does not contain only positive integers::
+
+            sage: P = F.minimal_approximant_basis([1,0], shifts)
+            Traceback (most recent call last):
+            ...
+            ValueError: order should consist of positive integers
+        """
+        m = self.nrows()
+        n = self.ncols()
+
+        # set default shifts / check shifts dimension
+        if shifts == None:
+            shifts = [0]*m if row_wise else [0]*n
+        elif row_wise and len(shifts) != m:
+            raise ValueError('shifts length should be the row dimension')
+        elif (not row_wise) and len(shifts) != n:
+            raise ValueError('shifts length should be the column dimension')
+
+        # set default order / check order dimension
+        if not isinstance(order,list):
+            order = [order]*n if row_wise else [order]*m
+
+        if row_wise and len(order) != n:
+            raise ValueError("order length should be the column dimension")
+        elif (not row_wise) and len(order) != m:
+            raise ValueError("order length should be the row dimension")
+
+        for o in order:
+            if o < 1:
+                raise ValueError("order should consist of positive integers")
+
+        # compute approximant basis
+        # if required, normalize it into shifted Popov form
+        if row_wise:
+            P,rdeg = self._approximant_basis_iterative(order, shifts)
+            if normal_form:
+                # compute the list "- pivot degree"
+                # (since weak Popov, pivot degree is rdeg-shifts entrywise)
+                # Note: -deg(P[i,i]) = shifts[i] - rdeg[i]
+                degree_shifts = [shifts[i] - rdeg[i] for i in range(m)]
+                # compute approximant basis with that list as shifts
+                P,rdeg = self._approximant_basis_iterative(order,
+                        degree_shifts)
+                # left-multiply by inverse of leading matrix
+                lmat = P.leading_matrix(shifts=degree_shifts)
+                P = lmat.inverse() * P
+        else:
+            P,rdeg = self.transpose()._approximant_basis_iterative(order,
+                    shifts)
+            if normal_form:
+                # compute the list "- pivot degree"
+                # (since weak Popov, pivot degree is rdeg-shifts entrywise)
+                degree_shifts = [shifts[i] - rdeg[i] for i in range(n)]
+                # compute approximant basis with that list as shifts
+                P,rdeg = self.transpose()._approximant_basis_iterative( \
+                                                order, degree_shifts)
+                P = P.transpose()
+                # right-multiply by inverse of leading matrix
+                lmat = P.leading_matrix(shifts=degree_shifts,row_wise=False)
+                P = P * lmat.inverse()
+            else:
+                P = P.transpose()
+
+        return P
+
+    def _approximant_basis_iterative(self, order, shifts):
+        r"""
+        Return a ``shifts``-ordered weak Popov approximant basis for this
+        polynomial matrix at order ``order`` 
+        (see :meth:`minimal_approximant_basis` for definitions).
+
+        The output basis is considered row-wise, that is, its rows are
+        left-approximants for the columns of ``self``. It is guaranteed that
+        the degree of the output basis is at most the maximum of the entries of
+        ``order``, independently of ``shifts``.
+
+        The input dimensions are supposed to be sound: the length of ``order``
+        must be the number of columns of ``self``, while the length of
+        ``shifts`` must be the number of rows of ``self``.
+
+        INPUT:
+
+        - ``order`` -- a list of positive integers.
+
+        - ``shifts`` -- a list of integers.
+
+        OUTPUT:
+
+        - a polynomial matrix (the approximant basis ``P``).
+
+        - a list of integers (the shifts-row degrees of ``P``).
+
+        ALGORITHM:
+
+        This is inspired from the iterative algorithms described in [VBB1992]_
+        and [BL1994]_ .
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(7)[]
+
+        This method supports any number of columns or rows, as well as
+        arbitrary shifts and orders::
+
+            sage: order = [4, 1, 2]; shifts = [-3, 4]
+            sage: pmat = Matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6, 5, 4], \
+                    [2*x^3 + 2*x^2 + 2*x + 3, 6, 6*x + 3]])
+            sage: appbas,rdeg = pmat._approximant_basis_iterative(order, \
+                                                                    shifts)
+            sage: appbas.is_minimal_approximant_basis(pmat, order, shifts)
+            True
+
+        The returned list is the shifted row degrees of ``appbas``::
+
+            sage: rdeg == appbas.row_degrees(shifts)
+            True
+
+        Approximant bases for the zero matrix are all constant unimodular
+        matrices; in fact, this algorithm returns the identity::
+
+            sage: pmat = Matrix(pR, 3, 2)
+            sage: appbas,rdeg = pmat._approximant_basis_iterative([2,5], \
+                                                                [5,0,-4])
+            sage: rdeg == [5,0,-4] and appbas == Matrix.identity(pR, 3)
+            True
+        """
+        # Define parameters and perform some sanity checks
+        m = self.nrows()
+        n = self.ncols()
+        polynomial_ring = self.base_ring()
+        X = polynomial_ring.gen()
+
+        # 'rest_order': the orders that remains to be dealt with
+        # 'rest_index': indices of orders that remains to be dealt with
+        rest_order = list(order)
+        rest_index = list(range(n))
+
+        # initialization of the residuals (= input self)
+        # and of the approximant basis (= identity matrix)
+        from sage.matrix.constructor import identity_matrix
+        appbas = identity_matrix(polynomial_ring, m)
+        residuals = self.__copy__()
+
+        # throughout the algorithm, 'rdeg' will be the shifts-row degrees of
+        # 'appbas'
+        # --> initially, 'rdeg' is the shift-row degree of the identity matrix
+        rdeg = list(shifts)
+
+        while rest_order:
+            # invariant:
+            #   * appbas is a shifts-ordered weak Popov approximant basis for
+            #   (self,doneorder)
+            #   where doneorder = the already processed order, that is, the
+            #   tuple order-rest_order (entrywise subtraction)
+            #   * rdeg is the shifts-row degree of appbas
+            #   * residuals is the submatrix of columns (appbas * self)[:,j]
+            #   for all j such that rest_order[j] > 0
+
+            # choice for the next coefficient to be dealt with: first of the
+            # largest entries in order (--> process 'self' degree-wise, and
+            # left to right)
+            # Note: one may also consider the first one in order (--> process
+            # 'self' columnwise, from left column to right column, set j=0
+            # instead of the below), but it seems to often be (barely) slower
+            max_rest_order = max(rest_order)
+            for ind, value in enumerate(rest_order):
+                if value == max_rest_order:
+                    j = ind
+                    break
+            d = order[rest_index[j]] - rest_order[j]
+
+            # coefficient = the coefficient of degree d of the column j of the
+            # residual matrix
+            # --> this is very likely nonzero and we want to make it zero, so
+            # that this column becomes zero mod X^{d+1}
+            coefficient = [residuals[i, j][d] for i in range(m)]
+
+            # Lambda: collect rows [i] with nonzero coefficient[i]
+            # pi: index of the first row with smallest shift, among those in
+            # Lambda
+            Lambda = []
+            pi = -1
+            for i in range(m):
+                if coefficient[i] != 0:
+                    Lambda.append(i)
+                    if pi < 0 or rdeg[i] < rdeg[pi]:
+                        pi = i
+            if Lambda: # otherwise, nothing to do
+                # update all rows in Lambda--{pi}
+                Lambda.remove(pi)
+                for row in Lambda:
+                    scalar = -coefficient[row]/coefficient[pi]
+                    appbas.add_multiple_of_row(row, pi, scalar)
+                    residuals.add_multiple_of_row(row, pi, scalar)
+                # update row pi
+                rdeg[pi] += 1
+                appbas.rescale_row(pi, X)
+                residuals.rescale_row(pi, X)
+
+            # Decrement rest_order[j], unless there is no more work to do in
+            # this column, i.e. if rest_order[j] was 1:
+            # in this case remove the column j of
+            # residual,rest_order,rest_index
+            if rest_order[j] == 1:
+                residuals = residuals.delete_columns([j])
+                rest_order.pop(j)
+                rest_index.pop(j)
+            else:
+                rest_order[j] -= 1
+        return appbas, rdeg

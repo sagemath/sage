@@ -88,7 +88,7 @@ The following example shows all these steps::
       x_3 is an integer variable (min=0.0, max=+oo)
     sage: print('Objective Value: {}'.format(p.solve()))
     Objective Value: 2.0
-    sage: for i, v in p.get_values(w).iteritems():
+    sage: for i, v in sorted(p.get_values(w).items()):
     ....:     print('w_%s = %s' % (i, int(round(v))))
     w_0 = 15
     w_1 = 10
@@ -224,14 +224,14 @@ AUTHORS:
 - Risan (2012/02): added extension for exact computation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Nathann Cohen <nathann.cohen@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from copy import copy
@@ -240,6 +240,7 @@ from sage.structure.element cimport Element
 from sage.structure.element import is_Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
+
 
 cdef class MixedIntegerLinearProgram(SageObject):
     r"""
@@ -777,7 +778,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         An exception is raised when two types are supplied ::
 
-            sage: z = p.new_variable(real = True, integer = True)
+            sage: z = p.new_variable(real=True, integer=True)
             Traceback (most recent call last):
             ...
             ValueError: Exactly one of the available types has to be True
@@ -1420,7 +1421,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         values for the corresponding variables ::
 
             sage: x_sol = p.get_values(x)
-            sage: x_sol.keys()
+            sage: sorted(x_sol)
             [3, 5]
 
         Obviously, it also works with variables of higher dimension::
@@ -3155,7 +3156,7 @@ cdef class MIPVariable(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: v = p.new_variable(nonnegative=True)
             sage: p.set_objective(v[0] + v[1])
-            sage: list(v.keys())
+            sage: sorted(v.keys())
             [0, 1]
         """
         return self._dict.keys()
@@ -3169,7 +3170,7 @@ cdef class MIPVariable(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: v = p.new_variable(nonnegative=True)
             sage: p.set_objective(v[0] + v[1])
-            sage: list(v.items())
+            sage: sorted(v.items())
             [(0, x_0), (1, x_1)]
         """
         return self._dict.items()
@@ -3183,7 +3184,7 @@ cdef class MIPVariable(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: v = p.new_variable(nonnegative=True)
             sage: p.set_objective(v[0] + v[1])
-            sage: list(v.values())
+            sage: sorted(v.values(), key=str)
             [x_0, x_1]
         """
         return self._dict.values()

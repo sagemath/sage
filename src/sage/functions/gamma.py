@@ -494,7 +494,7 @@ class Function_gamma_inc_lower(BuiltinFunction):
         :class:`Function_gamma_inc`
         """
         BuiltinFunction.__init__(self, "gamma_inc_lower", nargs=2, latex_name=r"\gamma",
-                conversions={'maxima':'gamma_greek', 'mathematica':'Gamma',
+                conversions={'maxima':'gamma_greek',
                     'maple':'GAMMA', 'sympy':'lowergamma', 'giac':'igamma'})
 
     def _eval_(self, x, y):
@@ -599,6 +599,24 @@ class Function_gamma_inc_lower(BuiltinFunction):
         else:
             return exp(-y)*y**(x - 1)
 
+    def _mathematica_init_evaled_(self, *args):
+        r"""
+        EXAMPLES::
+
+            sage: gamma_inc_lower(4/3, 1)._mathematica_()  # indirect doctest, optional - mathematica
+            Gamma[4/3, 0, 1]
+        """
+        args_mathematica = []
+        for a in args:
+            if isinstance(a, str):
+                args_mathematica.append(a)
+            elif hasattr(a, '_mathematica_init_'):
+                args_mathematica.append(a._mathematica_init_())
+            else:
+                args_mathematica.append(str(a))
+        x, z = args_mathematica
+        return "Gamma[%s,0,%s]" % (x, z)
+
 # synonym.
 gamma_inc_lower = Function_gamma_inc_lower()
 
@@ -683,6 +701,30 @@ def gamma(a, *args, **kwds):
 # We have to add the wrapper function manually to the symbol_table when we have
 # two functions with different number of arguments and the same name
 symbol_table['functions']['gamma'] = gamma
+
+
+def _mathematica_gamma(*args):
+    r"""
+    EXAMPLES::
+
+        sage: gamma(4/3)._mathematica_().sage()       # indirect doctest, optional - mathematica
+        gamma(4/3)
+        sage: gamma(4/3, 1)._mathematica_().sage()    # indirect doctest, optional - mathematica
+        gamma(4/3, 1)
+        sage: mathematica('Gamma[4/3, 0, 1]').sage()  # indirect doctest, optional - mathematica
+        gamma(4/3) - gamma(4/3, 1)
+    """
+    if not args or len(args) > 3:
+        raise TypeError("Mathematica function Gamma takes 1 to 3 arguments"
+                        " (%s given)" % (len(args)))
+    elif len(args) == 3:
+        return gamma_inc(args[0], args[1]) - gamma_inc(args[0], args[2])
+    else:
+        return gamma(*args)
+
+
+register_symbol(_mathematica_gamma, dict(mathematica='Gamma'))
+
 
 class Function_psi1(GinacFunction):
     def __init__(self):

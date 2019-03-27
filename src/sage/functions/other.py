@@ -1860,11 +1860,11 @@ class Function_limit(BuiltinFunction):
 
             sage: t = var('t')
             sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x),t=x,dir='-'))
-            \lim_{t \to x^-}\, \sqrt{-t + x} exp_integral_e\left(\frac{1}{2}, i \, t - i \, x\right)
+            \lim_{t \to x^-}\, \sqrt{-t + x} E_{\frac{1}{2}}\left(i \, t - i \, x\right)
             sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x),t=x,dir='+'))
-            \lim_{t \to x^+}\, \sqrt{-t + x} exp_integral_e\left(\frac{1}{2}, i \, t - i \, x\right)
+            \lim_{t \to x^+}\, \sqrt{-t + x} E_{\frac{1}{2}}\left(i \, t - i \, x\right)
             sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x),t=x))
-            \lim_{t \to x}\, \sqrt{-t + x} exp_integral_e\left(\frac{1}{2}, i \, t - i \, x\right)
+            \lim_{t \to x}\, \sqrt{-t + x} E_{\frac{1}{2}}\left(i \, t - i \, x\right)
         """
         if repr(direction) == 'minus':
             dir_str = '^-'

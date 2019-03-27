@@ -713,16 +713,16 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         self._find_maxshift = re.compile('_([0-9]+)')  # findall yields stringrep of the shifts
         self._find_variables = re.compile('[a-zA-Z0-9]+_[0-9]+')
         self._find_varpowers = re.compile(r'([a-zA-Z0-9]+)_([0-9]+)\^?([0-9]*)') # findall yields triple "generator_name", "index", "exponent"
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
         # Create some small underlying polynomial ring.
         # It is used to ensure that the parent of the underlying
         # polynomial of an element of self is actually a *multi*variate
         # polynomial ring.
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        if len(names)==1:
-            VarList = [names[0]+'_0',names[0]+'_1']
+        if len(names) == 1:
+            VarList = [names[0] + '_0', names[0] + '_1']
         else:
-            VarList = [X+'_0' for X in names]
+            VarList = [X + '_0' for X in names]
         VarList.sort(key=self.varname_key, reverse=True)
         self._minP = PolynomialRing(R, len(VarList), VarList)
         self._populate_coercion_lists_()
@@ -828,18 +828,17 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             sage: X.<x> = InfinitePolynomialRing(R)
             sage: a[2]*x[3]+x[1]*a[4]^2
             a_4^2*x_1 + a_2*x_3
-
         """
         # Use Construction Functors!
-        from sage.categories.pushout import pushout, construction_tower
+        from sage.categories.pushout import pushout
         try:
             # the following line should not test "pushout is self", but
             # only "pushout == self", since we also allow coercion from
             # dense to sparse implementation!
-            P = pushout(self,S)
-            # We don't care about the orders. But base ring and generators
+            P = pushout(self, S)
+            # We do not care about the orders. But base ring and generators
             # of the pushout should remain the same as in self.
-            return (P._names == self._names and P._base == self._base)
+            return P._names == self._names and P._base == self._base
         except Exception:
             return False
 
@@ -1064,16 +1063,19 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
     # -- some stuff that is useful for quotient rings etc.
     def is_noetherian(self):
         """
+        Return ``False``, since polynomial rings in infinitely many
+        variables are never Noetherian rings.
+
         Since Infinite Polynomial Rings must have at least one
         generator, they have infinitely many variables and are thus
         not noetherian, as a ring.
 
-        NOTE:
+        .. NOTE::
 
-        Infinite Polynomial Rings over a field `F` are noetherian as
-        `F(G)` modules, where `G` is the symmetric group of the
-        natural numbers. But this is not what the method
-        ``is_noetherian()`` is answering.
+            Infinite Polynomial Rings over a field `F` are noetherian as
+            `F(G)` modules, where `G` is the symmetric group of the
+            natural numbers. But this is not what the method
+            ``is_noetherian()`` is answering.
 
         TESTS::
 
@@ -1083,21 +1085,24 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             sage: R.is_noetherian()
             False
 
+            sage: R.<x> = InfinitePolynomialRing(QQ)
+            sage: R.is_noetherian()
+            False
         """
         return False
 
     def is_field(self, *args, **kwds):
         """
-        Return ``False``: Since Infinite Polynomial Rings must have at
-        least one generator, they have infinitely many variables and thus
-        never are fields.
+        Return ``False`` since Infinite Polynomial Rings are never fields.
+
+        Since Infinite Polynomial Rings must have at least one generator,
+        they have infinitely many variables and thus never are fields.
 
         EXAMPLES::
 
             sage: R.<x, y> = InfinitePolynomialRing(QQ)
             sage: R.is_field()
             False
-
 
         TESTS::
 
@@ -1112,8 +1117,6 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             sage: W = PowerSeriesRing(InfinitePolynomialRing(QQ,'a'),'x')
             sage: W.is_field()
             False
-
-
         """
         return False
  
@@ -1295,23 +1298,6 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             True
         """
         return self._base.is_integral_domain(*args, **kwds)
-
-    def is_noetherian(self, *args, **kwds):
-        """
-        Return ``False``, since polynomial rings in infinitely many
-        variables are never Noetherian rings.
-
-        Note, however, that they are noetherian modules over the group
-        ring of the symmetric group of the natural numbers
-
-        EXAMPLES::
-
-            sage: R.<x> = InfinitePolynomialRing(QQ)
-            sage: R.is_noetherian()
-            False
-
-        """
-        return False
 
     def krull_dimension(self, *args, **kwds):
         """

@@ -47,10 +47,14 @@ from sage.rings.integer cimport Integer
 # Copied from sage.misc.fast_methods, used in __hash__() below.
 cdef int SIZEOF_VOID_P_SHIFT = 8*sizeof(void *) - 4
 
-
 cdef class FiniteField(Field):
     """
     Abstract base class for finite fields.
+
+    TESTS::
+
+        sage: GF(997).is_finite()
+        True
     """
     def __init__(self, base, names, normalize, category=None):
         """
@@ -759,17 +763,6 @@ cdef class FiniteField(Field):
 
             sage: k.<a> = FiniteField(3^4)
             sage: k.is_field()
-            True
-        """
-        return True
-
-    def is_finite(self):
-        """
-        Return ``True`` since a finite field is finite.
-
-        EXAMPLES::
-
-            sage: GF(997).is_finite()
             True
         """
         return True
@@ -1606,7 +1599,7 @@ cdef class FiniteField(Field):
         """
         Return ``True`` if self is defined by a Conway polynomial.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: GF(5^3, 'a').is_conway()
             True

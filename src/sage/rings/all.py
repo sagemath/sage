@@ -1,17 +1,26 @@
 """
 Rings
-"""
 
-#*****************************************************************************
+Test for deprecations of imports into global namespace::
+
+    sage: convergents
+    doctest:warning...:
+    DeprecationWarning:
+    Importing convergents from here is deprecated. If you need to use it, please import it directly from sage.rings.continued_fraction
+    See https://trac.sagemath.org/27066 for details.
+    <function convergents at ...>
+"""
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
+from sage.misc.lazy_import import lazy_import
 
 # Ring base classes
 from .ring import (Ring, Field, CommutativeRing, IntegralDomain,
@@ -147,11 +156,14 @@ from .invariants.all import *
 from .fast_arith import prime_range
 
 # continued fractions
-from sage.rings.continued_fraction import (convergents,
-    continued_fraction, continued_fraction_list)
+from sage.rings.continued_fraction import (continued_fraction,
+                                           continued_fraction_list)
+lazy_import("sage.rings.continued_fraction", 'convergents', deprecation=27066)
 
 # asymptotic ring
 from .asymptotic.all import *
 
 # Register classes in numbers abc
 from . import numbers_abc
+
+del absolute_import

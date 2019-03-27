@@ -1,12 +1,12 @@
 """
 Hyperelliptic curves of genus 2 over a general ring
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import absolute_import
 
 from . import hyperelliptic_generic
 from . import jacobian_g2
@@ -69,8 +69,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
             pass
         if not self.is_odd_degree():
             raise TypeError("Kummer embedding not determined for even degree model curves.")
-        J = self.jacobian()
-        K = J.kummer_surface()
+        self.jacobian().kummer_surface()
         return self._kummer_morphism
 
     def clebsch_invariants(self):

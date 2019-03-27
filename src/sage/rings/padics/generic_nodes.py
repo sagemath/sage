@@ -508,7 +508,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
         Elements of a parent with some label do not coerce to a parent
         with a different label. However conversions are allowed.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R = ZpLC(5)
             sage: R.label()  # no label by default

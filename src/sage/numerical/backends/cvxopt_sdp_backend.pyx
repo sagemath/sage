@@ -728,7 +728,7 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             [0.0 0.0]
             sage: B1.is_positive_definite()
             True
-            sage: x = p.get_values(x).values()
+            sage: x = sorted(p.get_values(x).values())
             sage: x[0]*b1 + x[1]*b2 - b3 + B1       # tol 1e-09
             [0.0 0.0]
             [0.0 0.0]

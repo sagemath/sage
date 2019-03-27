@@ -50,6 +50,7 @@ cdef unsigned long valuation(mpz_t a, mpz_t p):
     mpz_clear(aa)
     return v
 
+
 def test_valuation(a, p):
     """
     Doctest function for cdef long valuation(mpz_t, mpz_t).
@@ -58,7 +59,7 @@ def test_valuation(a, p):
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_valuation as tv
         sage: for i in [1..20]:
-        ....:     print('{:>10} {} {} {}'.format(factor(i), tv(i,2), tv(i,3), tv(i,5)))
+        ....:     print('{:>10} {} {} {}'.format(str(factor(i)), tv(i,2), tv(i,3), tv(i,5)))
                  1 0 0 0
                  2 1 0 0
                  3 0 1 0
@@ -84,6 +85,7 @@ def test_valuation(a, p):
     cdef Integer A = Integer(a)
     cdef Integer P = Integer(p)
     return valuation(A.value, P.value)
+
 
 cdef int padic_square(mpz_t a, mpz_t p):
     """

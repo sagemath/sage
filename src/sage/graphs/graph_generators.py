@@ -121,6 +121,7 @@ __append_to_doc(
      "FranklinGraph",
      "FruchtGraph",
      "GoldnerHararyGraph",
+     "GolombGraph",
      "GossetGraph",
      "GrayGraph",
      "GrotzschGraph",
@@ -757,7 +758,8 @@ class GraphGenerators():
             return
 
         if property is None:
-            property = lambda x: True
+            def property(x):
+                return True
 
         from sage.graphs.all import Graph
         from copy import copy as copyfun
@@ -769,15 +771,25 @@ class GraphGenerators():
                 raise ValueError("Invalid degree sequence.")
             degree_sequence = sorted(degree_sequence)
             if augment == 'edges':
-                property = lambda x: all([degree_sequence[i] >= d for i,d in enumerate(sorted(x.degree()))])
-                extra_property = lambda x: degree_sequence == sorted(x.degree())
+                def property(x):
+                    D = sorted(x.degree())
+                    return all(degree_sequence[i] >= d for i, d in enumerate(D))
+                def extra_property(x):
+                    return degree_sequence == sorted(x.degree())
             else:
-                property = lambda x: all([degree_sequence[i] >= d for i,d in enumerate(sorted(x.degree() + [0]*(vertices-x.num_verts()) ))])
-                extra_property = lambda x: x.num_verts() == vertices and degree_sequence == sorted(x.degree())
+                def property(x):
+                    D = sorted(x.degree() + [0] * (vertices - x.num_verts()))
+                    return all(degree_sequence[i] >= d for i, d in enumerate(D))
+                def extra_property(x):
+                    if x.num_verts() != vertices:
+                        return False
+                    return degree_sequence == sorted(x.degree())
         elif size is not None:
-            extra_property = lambda x: x.size() == size
+            def extra_property(x):
+                return x.size() == size
         else:
-            extra_property = lambda x: True
+            def extra_property(x):
+                return True
 
         if augment == 'vertices':
             if vertices is None:
@@ -1956,6 +1968,7 @@ class GraphGenerators():
     FranklinGraph            = staticmethod(sage.graphs.generators.smallgraphs.FranklinGraph)
     FruchtGraph              = staticmethod(sage.graphs.generators.smallgraphs.FruchtGraph)
     GoldnerHararyGraph       = staticmethod(sage.graphs.generators.smallgraphs.GoldnerHararyGraph)
+    GolombGraph              = staticmethod(sage.graphs.generators.smallgraphs.GolombGraph)
     GossetGraph              = staticmethod(sage.graphs.generators.smallgraphs.GossetGraph)
     GrayGraph                = staticmethod(sage.graphs.generators.smallgraphs.GrayGraph)
     GrotzschGraph            = staticmethod(sage.graphs.generators.smallgraphs.GrotzschGraph)

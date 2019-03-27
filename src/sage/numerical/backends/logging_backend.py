@@ -91,7 +91,7 @@ def _make_wrapper(backend, attr):
     update_wrapper(m, getattr(backend, attr))
     return m
 
-class LoggingBackend (GenericBackend):
+class LoggingBackend(GenericBackend):
 
     """
     See :class:`LoggingBackendFactory` for documentation.

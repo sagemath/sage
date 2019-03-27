@@ -92,6 +92,9 @@ static void print_object(void* pyobj)
     else pointer_check_constant(tp->attr, PyObject_GenericSetAttr) \
     else pointer_check_constant(tp->attr, _Py_HashPointer) \
     else pointer_check_constant(tp->attr, PyObject_HashNotImplemented) \
+    else pointer_check_constant(tp->attr, subtype_traverse) \
+    else pointer_check_constant(tp->attr, subtype_clear) \
+    else pointer_check_constant(tp->attr, subtype_dealloc) \
     else \
     { \
         PyObject* mro = tp->tp_mro; \

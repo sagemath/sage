@@ -70,7 +70,7 @@ class IncidenceStructure(object):
           defines the ground set as the union of the blocks::
 
               sage: H = IncidenceStructure([['a','b','c'],['c','d','e']])
-              sage: H.ground_set()
+              sage: sorted(H.ground_set())
               ['a', 'b', 'c', 'd', 'e']
 
     - ``blocks`` -- (i.e. edges, i.e. sets) the blocks defining the incidence
@@ -205,10 +205,7 @@ class IncidenceStructure(object):
                 self._points = list(range(points))
                 self._point_to_index = None
             else:
-                # if points are tuple, sort None before int types and str after int types
-                sortkey = lambda e: [(0 if x is None else 2 if isinstance(x, str) else 1, x) for x in e]\
-                    if isinstance(e, tuple) else e
-                self._points = sorted(points, key=sortkey)
+                self._points = list(points)
                 if self._points == list(range(len(points))) and all(isinstance(x, (int, Integer)) for x in self._points):
                     self._point_to_index = None
                 else:

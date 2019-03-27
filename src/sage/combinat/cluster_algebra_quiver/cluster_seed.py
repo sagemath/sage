@@ -1252,7 +1252,7 @@ class ClusterSeed(SageObject):
             sage: S.free_vertices()
             ['a', 'c', 'e']
 
-            sage: S=ClusterSeed(DiGraph([[5, 'b']]))
+            sage: S = ClusterSeed(DiGraph([[5, 'b']]))
             sage: S.free_vertices()
             [5, 'b']
         """

@@ -105,7 +105,7 @@ def _minimal_vanishing_polynomial(R, eval_pts):
 
     The minimal vanishing polynomial.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.skew_polynomial_ring import _minimal_vanishing_polynomial
         sage: k.<t> = GF(5^3)
@@ -738,7 +738,7 @@ class SkewPolynomialRing_general(Algebra, UniqueRepresentation):
             Since sparse skew polynomials are not yet implemented, this
             function always returns ``False``.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<t> = RR[]
             sage: sigma = R.hom([t+1])

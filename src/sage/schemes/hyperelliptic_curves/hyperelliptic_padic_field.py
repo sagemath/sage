@@ -17,7 +17,8 @@ from six.moves import range
 
 from . import hyperelliptic_generic
 
-from sage.rings.all import PowerSeriesRing, PolynomialRing, ZZ, QQ, O, pAdicField, GF, RR, RationalField, Infinity
+from sage.rings.all import (PowerSeriesRing, PolynomialRing, ZZ, QQ,
+                            pAdicField, GF, RR, RationalField, Infinity)
 from sage.functions.log import log
 from sage.modules.free_module import VectorSpace
 from sage.matrix.constructor import matrix
@@ -471,7 +472,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         K = P[0].parent()
         x = K.teichmuller(P[0])
         pts = self.lift_x(x, all=True)
-        p = K.prime()
         if (pts[0][1] - P[1]).valuation() > 0:
             return pts[0]
         else:
@@ -585,7 +585,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             prof("teichmuller")
             PP = TP = self.teichmuller(P)
             QQ = TQ = self.teichmuller(Q)
-            evalP, evalQ = TP, TQ
         else:
             prof("frobPQ")
             TP = self.frobenius(P)
@@ -1163,9 +1162,8 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         """
         prec = self.base_ring().precision_cap()
         deg = S[0].parent().defining_polynomial().degree()
-        prec2= prec*deg
+        prec2 = prec * deg
         x,y = self.local_coord(P,prec2)
-        g = self.genus()
         int_sing = (w.coeff()(x,y)*x.derivative()/(2*y)).integral()
         int_sing_a = int_sing(S[1])
         return int_sing_a
@@ -1250,16 +1248,15 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         b = V(L)
         M_sys = matrix(K, M_frob).transpose() - 1
         B = (~M_sys)
-        BL = B.list()
         v = [c.valuation() for c in B.list()]
-        vv= min(v)
+        vv = min(v)
         B = (p**(-vv)*B).change_ring(K)
         B = p**(vv)*B
         return B*(b-S_to_FS-FQ_to_Q)
 
     def coleman_integral_S_to_Q(self,w,S,Q):
         r"""
-        Computes the Coleman integral `\int_S^Q w`
+        Compute the Coleman integral `\int_S^Q w`
 
         **one should be able to feed `S,Q` into coleman_integral,
         but currently that segfaults**

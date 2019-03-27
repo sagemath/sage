@@ -18,6 +18,7 @@ EXAMPLES::
     sage: t
     [[1:2:1]]
 """
+
 from __future__ import print_function, absolute_import
 
 import os
@@ -54,7 +55,7 @@ cdef extern from "wrap.cpp":
                    bigint* x, bigint* y,
                    bigint* z, int sat)
     char* mw_getbasis(mw* m)
-    char* mw_regulator(mw* m)
+    double mw_regulator(mw* m)
     int mw_rank(mw* m)
     int mw_saturate(mw* m, bigint* index, char** unsat,
                     long sat_bd, int odd_primes_only)
@@ -64,7 +65,7 @@ cdef extern from "wrap.cpp":
     int two_descent_ok(two_descent* t)
     long two_descent_get_certain(two_descent* t)
     char* two_descent_get_basis(two_descent* t)
-    char* two_descent_regulator(two_descent* t)
+    double two_descent_regulator(two_descent* t)
     long two_descent_get_rank(two_descent* t)
     long two_descent_get_rank_bound(two_descent* t)
     long two_descent_get_selmer_rank(two_descent* t)
@@ -78,44 +79,69 @@ cdef object string_sigoff(char* s):
     sig_free(s)
     return t
 
-# set the default
-mwrank_set_precision(50)
+
+# set the default bit precision
+mwrank_set_precision(150)
 
 def get_precision():
     """
-    Returns the working floating point precision of mwrank.
+    Returns the working floating point bit precision of mwrank, which is
+    equal to the global NTL real number precision.
 
     OUTPUT:
 
-    (int) The current precision in decimal digits.
+    (int) The current precision in bits.
+
+    See also :meth:`set_precision`.
 
     EXAMPLES::
 
-        sage: from sage.libs.eclib.mwrank import get_precision
-        sage: get_precision()
-        50
+        sage: mwrank_get_precision()
+        150
     """
     return mwrank_get_precision()
 
+
 def set_precision(n):
     """
-    Sets the working floating point precision of mwrank.
+    Sets the working floating point bit precision of mwrank, which is
+    equal to the global NTL real number precision.
+
+    NTL real number bit precision.  This has a massive effect on the
+    speed of mwrank calculations.  The default (used if this function is
+    not called) is ``n=150``, but it might have to be increased if a
+    computation fails.
 
     INPUT:
 
-    - ``n`` (int) -- a positive integer: the number of decimal digits.
+    - ``n`` -- a positive integer: the number of bits of precision.
 
-    OUTPUT:
+    .. warning::
 
-    None.
+       This change is global and affects *all* future calls of eclib
+       functions by Sage.
+
+    .. note::
+
+        The minimal value to which the precision may be set is 53.
+        Lower values will be increased to 53.
+
+    See also :meth:`get_precision`.
 
     EXAMPLES::
 
-        sage: from sage.libs.eclib.mwrank import set_precision
+        sage: from sage.libs.eclib.mwrank import set_precision, get_precision
+        sage: old_prec = get_precision(); old_prec
+        150
         sage: set_precision(50)
-
+        sage: get_precision()
+        53
+        sage: set_precision(old_prec)
+        sage: get_precision()
+        150
     """
     mwrank_set_precision(n)
+
 
 def initprimes(filename, verb=False):
     """
@@ -148,9 +174,6 @@ def initprimes(filename, verb=False):
         raise IOError('No such file or directory: %s' % filename)
     filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
     mwrank_initprimes(filename, verb)
-    if verb:
-        sys.stdout.flush()
-        sys.stderr.flush()
 
 ############# bigint ###########################################
 #
@@ -322,10 +345,12 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
         + B`, where `h(P)` is the naive height and `\hat{h}(P)` the
         canonical height.
 
-        .. TODO::
+        .. note::
 
-            Since eclib can compute this to arbitrary precision it would
-            make sense to return a Sage real.
+            Since eclib can compute this to arbitrary precision, we
+            could return a Sage real, but this is only a bound and in
+            the contexts in which it is used extra precision is
+            irrelevant.
 
         EXAMPLES::
 
@@ -349,26 +374,25 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
         + B`, where `h(P)` is the naive height and `\hat{h}(P)` the
         canonical height.
 
-        .. TODO::
+        .. note::
 
-            Since eclib can compute this to arbitrary precision it would
-            make sense to return a Sage real.
+            Since eclib can compute this to arbitrary precision, we
+            could return a Sage real, but this is only a bound and in
+            the contexts in which it is used extra precision is
+            irrelevant.
 
         EXAMPLES::
 
             sage: from sage.libs.eclib.mwrank import _Curvedata
             sage: E = _Curvedata(1,2,3,4,5)
             sage: E.cps_bound()
-            0.11912451909250982
+            0.11912451909250982...
 
         Note that this is a better bound than Silverman's in this case::
 
             sage: E.silverman_bound()
             6.52226179519101...
         """
-        cdef double x
-        # We declare x so there are *no* Python library
-        # calls within the sig_on()/sig_off().
         sig_on()
         x = Curvedata_cps_bound(self.x)
         sig_off()
@@ -386,17 +410,19 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
         canonical height.  This is the minimum of the Silverman and
         Cremona_Prickett-Siksek height bounds.
 
-        .. TODO::
+        .. note::
 
-            Since eclib can compute this to arbitrary precision it would
-            make sense to return a Sage real.
+            Since eclib can compute this to arbitrary precision, we
+            could return a Sage real, but this is only a bound and in
+            the contexts in which it is used extra precision is
+            irrelevant.
 
         EXAMPLES::
 
             sage: from sage.libs.eclib.mwrank import _Curvedata
             sage: E = _Curvedata(1,2,3,4,5)
             sage: E.height_constant()
-            0.11912451909250982
+            0.119124519092509...
         """
         return Curvedata_height_constant(self.x)
 
@@ -474,9 +500,6 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
         """
         sig_on()
         s = string_sigoff(Curvedata_isogeny_class(self.x, verbose))
-        if verbose:
-            sys.stdout.flush()
-            sys.stderr.flush()
         return eval(s)
 
 
@@ -761,7 +784,7 @@ cdef class _mw:
 
         OUTPUT:
 
-        (float) The current regulator.
+        (double) The current regulator.
 
         .. TODO::
 
@@ -780,11 +803,11 @@ cdef class _mw:
             sage: EQ.rank()
             2
             sage: EQ.regulator()
-            0.15246017277240753
+            0.15246017794314376
         """
-        cdef float f
         sig_on()
-        f = float(string_sigoff(mw_regulator(self.x)))
+        f = mw_regulator(self.x)
+        sig_off()
         return f
 
     def rank(self):
@@ -939,9 +962,6 @@ cdef class _mw:
 
         sig_on()
         mw_search(self.x, h_lim, moduli_option, verb)
-        if verb:
-            sys.stdout.flush()
-            sys.stderr.flush()
         sig_off()
 
 
@@ -1043,9 +1063,6 @@ cdef class _two_descent:
         """
         sig_on()
         self.x = new two_descent(curve.x, verb, sel, firstlim, secondlim, n_aux, second_descent)
-        if verb:
-            sys.stdout.flush()
-            sys.stderr.flush()
         sig_off()
 
     def getrank(self):
@@ -1297,7 +1314,7 @@ cdef class _two_descent:
 
         OUTPUT:
 
-        (float) The regulator (of the subgroup found by 2-descent).
+        (double) The regulator (of the subgroup found by 2-descent).
 
         EXAMPLES::
 
@@ -1339,4 +1356,6 @@ cdef class _two_descent:
             0.417143558758384
         """
         sig_on()
-        return float(string_sigoff(two_descent_regulator(self.x)))
+        reg = two_descent_regulator(self.x)
+        sig_off()
+        return reg

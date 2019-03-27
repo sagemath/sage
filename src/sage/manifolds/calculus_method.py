@@ -100,15 +100,16 @@ def _Sympy_to_SR(expression):
     """
     try:
         return SR(expression)
-    except:
+    except Exception:
         # If SR cannot transform a sympy expression is because it is a
         # sympy abstract function.
         a = expression._sage_()
         # As all sage objects have a ._sage_ operator, they have to be
         # catched
-        if type(a) == type(expression):
+        if type(a) is type(expression):
             raise TypeError
         return a
+
 
 class CalculusMethod(SageObject):
     r"""

@@ -1241,13 +1241,13 @@ class Constellations_p(UniqueRepresentation, Parent):
         sage: C.first()
         Constellation of length 3 and degree 4
         g0 (1)(2,3,4)
-        g1 (1,3,4)(2)
-        g2 (1,3)(2,4)
+        g1 (1,2,3)(4)
+        g2 (1,2)(3,4)
         sage: C.last()
         Constellation of length 3 and degree 4
-        g0 (1,3,2)(4)
+        g0 (1,4,3)(2)
         g1 (1,4,2)(3)
-        g2 (1,3)(2,4)
+        g2 (1,2)(3,4)
 
     Note that the cardinality can also be computed using characters of the
     symmetric group (Frobenius formula)::
@@ -1381,21 +1381,21 @@ class Constellations_p(UniqueRepresentation, Parent):
             sage: for c in C: print(c)
             Constellation of length 3 and degree 4
             g0 (1)(2,3,4)
-            g1 (1,3,4)(2)
-            g2 (1,3)(2,4)
+            g1 (1,2,3)(4)
+            g2 (1,2)(3,4)
             Constellation of length 3 and degree 4
             g0 (1)(2,3,4)
             g1 (1,4,2)(3)
             g2 (1,4)(2,3)
             ...
             Constellation of length 3 and degree 4
-            g0 (1,3,2)(4)
-            g1 (1,3,4)(2)
+            g0 (1,4,3)(2)
+            g1 (1,2,3)(4)
             g2 (1,4)(2,3)
             Constellation of length 3 and degree 4
-            g0 (1,3,2)(4)
+            g0 (1,4,3)(2)
             g1 (1,4,2)(3)
-            g2 (1,3)(2,4)
+            g2 (1,2)(3,4)
 
             sage: C = Constellations([(3,1),(3,1),(2,2)], domain='abcd')
             sage: for c in sorted(C): print(c)

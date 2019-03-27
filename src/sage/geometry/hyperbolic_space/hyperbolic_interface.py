@@ -40,7 +40,7 @@ EXAMPLES::
     sage: HyperbolicPlane().PD().get_point(1/2 + I/2)
     Point in PD 1/2*I + 1/2
 """
-#***********************************************************************
+# **********************************************************************
 #
 #       Copyright (C) 2013 Greg Laun <glaun@math.umd.edu>
 #
@@ -49,13 +49,12 @@ EXAMPLES::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#***********************************************************************
+#                  https://www.gnu.org/licenses/
+# **********************************************************************
 from __future__ import division
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.misc.abstract_method import abstract_method
 from sage.categories.sets_cat import Sets
 from sage.categories.realizations import Realizations, Category_realization_of_parent
 from sage.geometry.hyperbolic_space.hyperbolic_model import (

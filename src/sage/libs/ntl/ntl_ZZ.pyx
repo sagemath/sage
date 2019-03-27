@@ -102,7 +102,8 @@ cdef class ntl_ZZ(object):
         """
         Return the string representation of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ntl.ZZ(5).__repr__()
             '5'
         """
@@ -244,7 +245,8 @@ cdef class ntl_ZZ(object):
         """
         Return self as an int.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ntl.ZZ(22).__int__()
             22
             sage: type(ntl.ZZ(22).__int__())
@@ -310,7 +312,8 @@ cdef class ntl_ZZ(object):
         r"""
         Sets the value from a sage int.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: n=ntl.ZZ(2983)
             sage: n
             2983
@@ -394,7 +397,8 @@ def unpickle_class_value(cls, x):
     """
     Here for unpickling.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: sage.libs.ntl.ntl_ZZ.unpickle_class_value(ntl.ZZ, 3)
         3
         sage: type(sage.libs.ntl.ntl_ZZ.unpickle_class_value(ntl.ZZ, 3))
@@ -406,7 +410,8 @@ def unpickle_class_args(cls, x):
     """
     Here for unpickling.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: sage.libs.ntl.ntl_ZZ.unpickle_class_args(ntl.ZZ, [3])
         3
         sage: type(sage.libs.ntl.ntl_ZZ.unpickle_class_args(ntl.ZZ, [3]))

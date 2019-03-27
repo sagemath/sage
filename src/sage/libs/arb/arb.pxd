@@ -182,6 +182,8 @@ cdef extern from "arb.h":
     void arb_cos_pi_fmpq(arb_t c, const fmpq_t x, long prec)
     void arb_tan_pi(arb_t y, const arb_t x, long prec)
     void arb_cot_pi(arb_t y, const arb_t x, long prec)
+    void arb_sec(arb_t s, const arb_t x, long prec)
+    void arb_csc(arb_t c, const arb_t x, long prec)
 
     void arb_atan_arf(arb_t z, const arf_t x, long prec)
     void arb_atan(arb_t z, const arb_t x, long prec)
@@ -194,6 +196,8 @@ cdef extern from "arb.h":
     void arb_sinh_cosh(arb_t s, arb_t c, const arb_t x, long prec)
     void arb_tanh(arb_t y, const arb_t x, long prec)
     void arb_coth(arb_t y, const arb_t x, long prec)
+    void arb_sech(arb_t s, const arb_t x, long prec)
+    void arb_csch(arb_t c, const arb_t x, long prec)
 
     void arb_asinh(arb_t z, const arb_t x, long prec)
     void arb_acosh(arb_t z, const arb_t x, long prec)

@@ -93,12 +93,11 @@ class TwoGraph(IncidenceStructure):
                                     incidence_matrix=incidence_matrix,
                                     name=name, check=False, copy=copy)
         if check:  # it is a very slow, O(|points|^4), test...
-           from sage.combinat.designs.twographs import is_twograph
            assert is_twograph(self), "the structure is not a 2-graph!"
 
     def is_regular_twograph(self, alpha=False):
         r"""
-        Tests if the :class:`TwoGraph` is regular, i.e. is a 2-design.
+        Test if the :class:`TwoGraph` is regular, i.e. is a 2-design.
 
         Namely, each pair of elements of :meth:`ground_set` is contained in
         exactly ``alpha`` triples.

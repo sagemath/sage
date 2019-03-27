@@ -204,22 +204,16 @@ class SageSphinxLogger(object):
         Verify that :trac:`25160` has been resolved::
 
             sage: logger = SageSphinxLogger(stdout, "#25160")
-            sage: raise Exception("artificial exception")
-            Traceback (most recent call last):
-            ...
-            Exception: artificial exception
             sage: import traceback
-            sage: for line in traceback.format_exc().split('\n'):
-            ....:     logger._log_line(line)
+            sage: try:
+            ....:     raise Exception("artificial exception")
+            ....: except Exception:
+            ....:     for line in traceback.format_exc().split('\n'):
+            ....:         logger._log_line(line)
             [#25160   ] Traceback (most recent call last):
-            [#25160   ]   File ...
-            [#25160   ]     self.compile_and_execute(example, compiler, test.globs)
-            [#25160   ]   File ...
-            [#25160   ]     exec(compiled, globs)
             [#25160   ]   File ...
             [#25160   ]     raise Exception("artificial exception")
             [#25160   ] Exception: artificial exception
-
         """
         skip_this_line = self._filter_out(line)
         self._check_errors(line)

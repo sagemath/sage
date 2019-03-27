@@ -52,7 +52,7 @@ def graph_to_js(g):
     string += 'num_vertices=' + str(len(vertex_list)) + ';'
     string += 'edges=['
     for i, e in enumerate(g.edges()):
-        if(i != 0):
+        if i:
             string += ','
         string += '[' + str(vertex_list.index(e[0])) + ',' + str(vertex_list.index(e[1])) + ']'
     string += '];'
@@ -67,7 +67,7 @@ def graph_to_js(g):
     if max_y == 0:
         max_y = 1
     for i, v in enumerate(vertex_list):
-        if(i != 0):
+        if i:
             string += ','
         new_pos = [float(pos[v][0] - min_x) / (max_x - min_x),
                    1.0 - float(pos[v][1] - min_y) / (max_y - min_y)]
@@ -75,6 +75,7 @@ def graph_to_js(g):
     string += '];'
     string = string.replace(' ', '')
     return string
+
 
 def graph_editor(graph=None, graph_name=None,
                  replace_input=True, **layout_options):

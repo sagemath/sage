@@ -379,7 +379,6 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             raise TypeError('base ring must be a number field')
 
         PP = X.ambient_space().change_ring(F)
-        from sage.schemes.projective.projective_space import is_ProjectiveSpace
         if not is_ProjectiveSpace(X) and X.base_ring() in Fields():
             #Then it must be a subscheme
             dim_ideal = X.defining_ideal().dimension()
@@ -398,7 +397,6 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
                 R = PolynomialRing(BR, N + 1, PS.variable_names(), order='lex')
                 RF = R.change_ring(F)
                 I = R.ideal(X.defining_polynomials())
-                I0 = R.ideal(0)
                 #Determine the points through elimination
                 #This is much faster than using the I.variety() function on each affine chart.
                 for k in range(N + 1):

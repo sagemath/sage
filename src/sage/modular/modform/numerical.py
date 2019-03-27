@@ -72,12 +72,12 @@ class NumericalEigenforms(SageObject):
         sage: n = numerical_eigenforms(23)
         sage: n == loads(dumps(n))
         True
-        sage: n.ap(2)  # rel tol 2e-15
-        [3.0, 0.6180339887498941, -1.618033988749895]
-        sage: n.systems_of_eigenvalues(7)  # rel tol 2e-15
+        sage: n.ap(2)  # rel tol 2e-14
+        [3.0, -1.6180339887498947, 0.6180339887498968]
+        sage: n.systems_of_eigenvalues(7)  # rel tol 2e-14
         [
-        [-1.618033988749895, 2.23606797749979, -3.23606797749979],
-        [0.6180339887498941, -2.2360679774997902, 1.2360679774997883],
+        [-1.6180339887498947, 2.2360679774997894, -3.2360679774997894],
+        [0.6180339887498968, -2.236067977499788, 1.2360679774997936],
         [3.0, 4.0, 6.0]
         ]
         sage: n.systems_of_abs(7)
@@ -86,10 +86,10 @@ class NumericalEigenforms(SageObject):
         [1.6180339887..., 2.236067977..., 3.236067977...],
         [3.0, 4.0, 6.0]
         ]
-        sage: n.eigenvalues([2,3,5])  # rel tol 2e-15
-        [[3.0, 0.6180339887498941, -1.618033988749895],
-         [4.0, -2.2360679774997902, 2.23606797749979],
-         [6.0, 1.2360679774997883, -3.23606797749979]]
+        sage: n.eigenvalues([2,3,5])  # rel tol 2e-14
+        [[3.0, -1.6180339887498947, 0.6180339887498968],
+         [4.0, 2.2360679774997894, -2.236067977499788],
+         [6.0, -3.2360679774997894, 1.2360679774997936]]
     """
     def __init__(self, group, weight=2, eps=1e-20,
                  delta=1e-2, tp=[2,3,5]):
@@ -212,7 +212,7 @@ class NumericalEigenforms(SageObject):
 
             sage: n = numerical_eigenforms(61, eps=2.0)
             sage: evectors = n._eigenvectors()
-            sage: evalues = diagonal_matrix(CDF, [-283.0, 108.522012456, 142.0])
+            sage: evalues = diagonal_matrix(CDF, [-283.0, 142.0, 108.522012456])
             sage: diff = n._hecke_matrix*evectors - evectors*evalues
             sage: sum([abs(diff[i,j]) for i in range(5) for j in range(3)]) < 1.0e-9
             True
@@ -295,7 +295,7 @@ class NumericalEigenforms(SageObject):
             EXAMPLES::
 
                 sage: numerical_eigenforms(61)._easy_vector() # indirect doctest
-                (1.0, 1.0, 0.0, 0.0, 0.0)
+                (1.0, 0.0, 0.0, 0.0, 1.0)
             """
             R = M.rows()
             v = [len(support(r, delta)) for r in R]
@@ -309,14 +309,14 @@ class NumericalEigenforms(SageObject):
 
         while True:
             s = set(support(e, delta))
-            zp = [i for i in range(e.degree()) if not i in s]
-            if len(zp) == 0:
+            zp = [j for j in range(e.degree()) if j not in s]
+            if not zp:
                 break
             C = E.matrix_from_columns(zp)
             # best row
             i, f = best_row(C)
             x[i] += 1   # simplistic
-            e = x*E
+            e = x * E
 
         self.__easy_vector = x
         return x
@@ -502,7 +502,7 @@ def support(v, eps):
         []
 
         sage: sage.modular.modform.numerical.support( numerical_eigenforms(61)._easy_vector(), 0.5 )
-        [0, 1]
+        [0, 4]
 
     """
     return [i for i in range(v.degree()) if abs(v[i]) > eps]

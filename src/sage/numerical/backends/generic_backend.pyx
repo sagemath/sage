@@ -156,13 +156,13 @@ cdef class GenericBackend:
         if obj is None:
             obj = self.zero()
         for i in range(n):
-            value = self.add_variable(lower_bound = lower_bound,
-                                      upper_bound = upper_bound,
-                                      binary = binary,
-                                      continuous = continuous,
-                                      integer = integer,
-                                      obj = obj,
-                                      name = None if names is None else names[i])
+            value = self.add_variable(lower_bound=lower_bound,
+                                      upper_bound=upper_bound,
+                                      binary=binary,
+                                      continuous=continuous,
+                                      integer=integer,
+                                      obj=obj,
+                                      name=None if names is None else names[i])
         return value
 
     @classmethod
@@ -540,7 +540,7 @@ cdef class GenericBackend:
             p.add_linear_constraint_vector(2, coeffs, lower, upper, 'foo')
         # FIXME: Tests here. Careful what we expect regarding ranged constraints with some solvers.
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         """
         Add a column.
 

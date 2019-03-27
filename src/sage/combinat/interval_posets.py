@@ -3388,7 +3388,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
                 voisins_in[u] = restricted_embedding[u][1:]
             else:
                 voisins_in[u] = list(restricted_embedding[u])
-            voisins_in[u].reverse()  # pour les avoir dans le bon sens
+            voisins_in[u].reverse()  # To have them in the right order
 
         graph0.set_embedding(restricted_embedding)
 

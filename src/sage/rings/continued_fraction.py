@@ -2503,6 +2503,7 @@ def convergents(x):
 
     EXAMPLES::
 
+        sage: from sage.rings.continued_fraction import convergents
         sage: convergents(143/255)
         [0, 1, 1/2, 4/7, 5/9, 9/16, 14/25, 23/41, 60/107, 143/255]
     """

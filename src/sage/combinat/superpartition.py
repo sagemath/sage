@@ -89,7 +89,7 @@ from sage.rings.integer import Integer
 from sage.structure.global_options import GlobalOptions
 from sage.rings.all import ZZ
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.misc.all import uniq
+
 
 @richcmp_method
 @add_metaclass(InheritComparisonClasscallMetaclass)
@@ -701,7 +701,7 @@ class SuperPartition(ClonableArray):
                             # TODO: Check that this is not suppose to be
                             #   a tuple of size 1
                            + [(i) for i in circ_list if row_changed[i[0]] == 0]]
-            if len(uniq([k for (j,k) in new_sp[1]])) == len(new_sp[1]):
+            if len(set([k for (j,k) in new_sp[1]])) == len(new_sp[1]):
                 out += [SuperPartition.from_circled_diagram(*new_sp)]
         return out
 

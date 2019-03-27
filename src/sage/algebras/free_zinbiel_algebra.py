@@ -608,9 +608,9 @@ class ZinbielFunctor(ConstructionFunctor):
 
             sage: S = algebras.FreeZinbiel(QQ, 'z,t')
             sage: z,t = S.gens()
-            sage: x + t
-            Z[t] + Z[x]
-            sage: parent(x + t)
+            sage: x * t
+            Z[xt]
+            sage: parent(x * t)
             Free Zinbiel algebra on generators (Z[z], Z[t], Z[x], Z[y])
             over Rational Field
         """

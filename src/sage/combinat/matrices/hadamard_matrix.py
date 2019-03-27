@@ -719,20 +719,19 @@ def RSHCD_324(e):
         sage: for e in [1,-1]:  # long time
         ....:     M = RSHCD_324(e)
         ....:     print("{} {} {}".format(M==M.T,is_hadamard_matrix(M),all([M[i,i]==1 for i in range(324)])))
-        ....:     print(set(map(sum,M)))
+        ....:     print(list(set(sum(x) for x in M)))
         True True True
-        set([18])
+        [18]
         True True True
-        set([-18])
+        [-18]
 
     REFERENCE:
 
     .. [CP16] \N. Cohen, D. Pasechnik,
-       Implementing Brouwer's database of strongly regular graphs,
+       *Implementing Brouwer's database of strongly regular graphs*,
        Designs, Codes, and Cryptography, 2016
        :doi:`10.1007/s10623-016-0264-x`
     """
-
     from sage.graphs.generators.smallgraphs import JankoKharaghaniTonchevGraph as JKTG
     M = JKTG().adjacency_matrix()
     M = J(324) - 2*M
@@ -983,11 +982,10 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
         92 x 92 dense matrix over Integer Ring...
         sage: GS_skew_hadamard_smallcases(100)
     """
-    from sage.combinat.matrices.hadamard_matrix import\
-         williamson_goethals_seidel_skew_hadamard_matrix as WGS
+    WGS = williamson_goethals_seidel_skew_hadamard_matrix
 
     def pmtoZ(s):
-       return [1 if x == '+' else -1 for x in s]
+        return [1 if x == '+' else -1 for x in s]
 
     if existence:
         return n in [36, 52, 92]
@@ -1209,6 +1207,7 @@ def symmetric_conference_matrix(n, check=True):
         assert (C==C.T and C**2==(n-1)*I(n))
     return C
 
+
 def szekeres_difference_set_pair(m, check=True):
     r"""
     Construct Szekeres `(2m+1,m,1)`-cyclic difference family
@@ -1248,16 +1247,18 @@ def szekeres_difference_set_pair(m, check=True):
     t = F.multiplicative_generator()**2
     G = F.cyclotomic_cosets(t, cosets=[F.one()])[0]
     sG = set(G)
-    A = filter(lambda a: a-F.one() in sG, G)
-    B = filter(lambda b: b+F.one() in sG, G)
+    A = [a for a in G if a - F.one() in sG]
+    B = [b for b in G if b + F.one() in sG]
     if check:
         from itertools import product, chain
-        assert(len(list(A)) == len(list(B)) == m)
-        if m>1:
-            assert(sG==set([xy[0]/xy[1] for xy in chain(product(A,A), product(B,B))]))
-        assert(all(F.one()/b+F.one() in sG for b in B))
-        assert(not any(F.one()/a-F.one() in sG for a in A))
-    return G,A,B
+        assert(len(A) == len(B) == m)
+        if m > 1:
+            assert(sG == set([xy[0] / xy[1]
+                              for xy in chain(product(A, A), product(B, B))]))
+        assert(all(F.one() / b + F.one() in sG for b in B))
+        assert(not any(F.one() / a - F.one() in sG for a in A))
+    return G, A, B
+
 
 def typeI_matrix_difference_set(G,A):
     r"""

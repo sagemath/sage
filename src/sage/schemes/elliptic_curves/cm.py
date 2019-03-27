@@ -97,11 +97,10 @@ def hilbert_class_polynomial(D, algorithm=None):
 
     TESTS::
 
-        sage: all([hilbert_class_polynomial(d, algorithm="arb") == \
-        ....:      hilbert_class_polynomial(d, algorithm="sage") \
-        ....:        for d in range(-1,-100,-1) if d%4 in [0,1]])
+        sage: all(hilbert_class_polynomial(d, algorithm="arb") ==
+        ....:      hilbert_class_polynomial(d, algorithm="sage")
+        ....:        for d in range(-1,-100,-1) if d % 4 in [0, 1])
         True
-
     """
     if algorithm is None:
         algorithm = "arb"
@@ -617,9 +616,8 @@ def is_cm_j_invariant(j, method='new'):
     TESTS::
 
         sage: from sage.schemes.elliptic_curves.cm import is_cm_j_invariant
-        sage: all([is_cm_j_invariant(j) == (True, (d,f)) for d,f,j in cm_j_invariants_and_orders(QQ)])
+        sage: all(is_cm_j_invariant(j) == (True, (d,f)) for d,f,j in cm_j_invariants_and_orders(QQ))
         True
-
     """
     # First we check that j is an algebraic number:
 

@@ -149,7 +149,8 @@ cdef class ntl_zz_p(object):
         """
         Quick and dirty zz_p object creation.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x = ntl.zz_p(23,75)
             sage: y = x*x ## indirect doctest
         """
@@ -183,7 +184,8 @@ cdef class ntl_zz_p(object):
 
     def __add__(ntl_zz_p self, other):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ntl.zz_p(5,23) + ntl.zz_p(6,23)
             11
         """
@@ -199,7 +201,8 @@ cdef class ntl_zz_p(object):
 
     def __sub__(ntl_zz_p self, other):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ntl.zz_p(5,23) - ntl.zz_p(6,23)
             22
         """
@@ -215,7 +218,8 @@ cdef class ntl_zz_p(object):
 
     def __mul__(ntl_zz_p self, other):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ntl.zz_p(5,23) * ntl.zz_p(6,23)
             7
         """
@@ -231,7 +235,8 @@ cdef class ntl_zz_p(object):
 
     def __truediv__(ntl_zz_p self, other):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ntl.zz_p(5,23) / ntl.zz_p(2,23)
             14
         """
@@ -297,7 +302,8 @@ cdef class ntl_zz_p(object):
         """
         Return the negative of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.zz_p(5,234)
             sage: -f ## indirect doctest
             229
@@ -343,7 +349,8 @@ cdef class ntl_zz_p(object):
         """
         Return self as an int.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ntl.zz_p(3,next_prime(100)).__int__()
             3
             sage: int(ntl.zz_p(3,next_prime(100)))
@@ -357,7 +364,8 @@ cdef class ntl_zz_p(object):
         """
         Return f*f.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.zz_p(15,23)
             sage: f*f
             18
@@ -372,7 +380,8 @@ cdef class ntl_zz_p(object):
         """
         Return True exactly if this element is 0.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.zz_p(0,20)
             sage: f.is_zero()
             True
@@ -387,7 +396,8 @@ cdef class ntl_zz_p(object):
         """
         Return True exactly if this element is 1.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.zz_p(1,11)
             sage: f.is_one()
             True
@@ -402,7 +412,8 @@ cdef class ntl_zz_p(object):
         """
         Reset this element to 0.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x = ntl.zz_p(5,102) ; x
             5
             sage: x.clear() ; x

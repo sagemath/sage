@@ -79,7 +79,7 @@ With power series the behavior is the same.
     x
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #                     2017 Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -92,8 +92,8 @@ With power series the behavior is the same.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 
 import operator
@@ -111,7 +111,6 @@ from . import rational_field
 from . import integer_ring
 from .integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.misc.superseded import deprecated_function_alias, deprecation
 from warnings import warn
 
 from sage.categories.fields import Fields
@@ -2188,9 +2187,6 @@ cdef class PowerSeries(AlgebraElement):
         """
         return self.parent()([self[i] / arith.factorial(i) for i in range(self.degree()+1)])
 
-    ogf = deprecated_function_alias(15705, egf_to_ogf)
-    egf = deprecated_function_alias(15705, ogf_to_egf)
-
     def __pari__(self):
         """
         Return a PARI representation of this series.
@@ -2227,28 +2223,28 @@ cdef class PowerSeries(AlgebraElement):
             s = s.Ser(v, n - s.valuation(v) if s else n)
         return s
 
+
 def _solve_linear_de(R, N, L, a, b, f0):
     r"""
     Internal function used by PowerSeries.solve_linear_de().
 
     INPUT:
 
+    - ``R`` -- a PolynomialRing
 
-    -  ``R`` - a PolynomialRing
+    - ``N`` -- integer >= 0
 
-    -  ``N`` - integer = 0
+    - ``L`` -- integer >= 1
 
-    -  ``L`` - integer = 1
+    - ``a`` -- list of coefficients of `a`, any
+      length, all coefficients should belong to base ring of R.
 
-    -  ``a`` - list of coefficients of `a`, any
-       length, all coefficients should belong to base ring of R.
+    - ``b`` -- list of coefficients of `b`, length
+      at least `L` (only first `L` coefficients are
+      used), all coefficients should belong to base ring of R.
 
-    -  ``b`` - list of coefficients of `b`, length
-       at least `L` (only first `L` coefficients are
-       used), all coefficients should belong to base ring of R.
-
-    -  ``f0`` - constant term of `f` (only used if
-       `N == 0`), should belong to base ring of R.
+    - ``f0`` -- constant term of `f` (only used if
+      `N == 0`), should belong to base ring of R.
 
 
     OUTPUT: List of coefficients of `f` (length exactly

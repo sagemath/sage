@@ -97,7 +97,6 @@ The following relate to elliptic curves over local nonarchimedean fields.
    sage/schemes/elliptic_curves/ell_local_data
    sage/schemes/elliptic_curves/kodaira_symbol
    sage/schemes/elliptic_curves/ell_tate_curve
-   sage/schemes/elliptic_curves/padics
 
 Analytic properties over `\CC`.
 

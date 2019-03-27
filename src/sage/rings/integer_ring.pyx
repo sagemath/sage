@@ -294,6 +294,11 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         Traceback (most recent call last):
         ...
         NotImplementedError: len() of an infinite set
+
+        sage: ZZ.is_finite()
+        False
+        sage: ZZ.cardinality()
+        +Infinity
     """
 
     def __init__(self):
@@ -832,17 +837,6 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         EXAMPLES::
 
             sage: ZZ.is_field()
-            False
-        """
-        return False
-
-    def is_finite(self):
-        """
-        Return ``False`` since the integers are an infinite ring.
-
-        EXAMPLES::
-
-            sage: ZZ.is_finite()
             False
         """
         return False

@@ -171,12 +171,13 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
             if not invariant_form.is_symmetric():
                 raise ValueError("invariant_form must be symmetric")
 
-            inserted_text =  'with respect to symmetrc form'
             try:
-                if not invariant_form.is_positive_definite():
-                   inserted_text =  'with respect to non positive definite symmetrc form'
-            except:
-                pass
+                if invariant_form.is_positive_definite():
+                   inserted_text = "with respect to positive definite symmetric form"
+                else:
+                   inserted_text = "with respect to non positive definite symmetric form"
+            except ValueError:
+                inserted_text = "with respect to symmetric form"
 
             name = '{0} Orthogonal Group of degree {1} over {2} {3}\n{4}'.format(
                             prefix, degree, ring, inserted_text,invariant_form)
@@ -295,6 +296,11 @@ def GO(n, R, e=0, var='a', invariant_form=None):
         NotImplementedError: invariant_form for finite groups is fixed by GAP
         sage: 5+5
         10
+        sage: R.<x> = ZZ[]
+        sage: GO(2, R, invariant_form=[[x,0],[0,1]])
+        General Orthogonal Group of degree 2 over Univariate Polynomial Ring in x over Integer Ring with respect to symmetric form
+        [x 0]
+        [0 1]
 
     TESTS::
 
@@ -441,7 +447,7 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
         sage: m=matrix(CF3, 3,3, [[1,e3,0],[e3,2,0],[0,0,1]])
         sage: G = SO(3, CF3, invariant_form=m)
         sage: latex(G)
-        \text{SO}_{3}(\Bold{Q}(\zeta_{3}))\text{ with respect to non positive definite symmetrc form }\left(\begin{array}{rrr}
+        \text{SO}_{3}(\Bold{Q}(\zeta_{3}))\text{ with respect to non positive definite symmetric form }\left(\begin{array}{rrr}
         1 & \zeta_{3} & 0 \\
         \zeta_{3} & 2 & 0 \\
         0 & 0 & 1

@@ -107,7 +107,7 @@ import sage.libs.symmetrica.all as symmetrica
 import sage.misc.prandom as random
 from sage.combinat import permutation
 from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.misc.all import uniq, prod
+from sage.misc.all import prod
 from sage.misc.misc import powerset
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
@@ -1908,7 +1908,7 @@ class Tableau(ClonableList):
 
         - ``secondtab`` -- a tableau of the same shape as ``self``
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: T = Tableau([[1, 2], [3]])
             sage: S = Tableau([[1, 3], [3]])
@@ -1998,7 +1998,7 @@ class Tableau(ClonableList):
             if new_s == []:
                 res.append(0)
                 continue
-            x = uniq([ (i-j)%(k+1) for i,j in new_s ])
+            x = set((i-j) % (k+1) for i, j in new_s)
             res.append(len(x))
 
         return res
@@ -3441,7 +3441,7 @@ class Tableau(ClonableList):
         there are no more opening parentheses standing left of closing
         parentheses. Then, let `a` be the number of opening
         parentheses in the word, and `b` the number of closing
-        parentheses (notice that all opening parentheses are left of
+        parentheses (notice that all opening parentheses are right of
         all closing parentheses). Replace the first `a` parentheses
         by the letters `i`, and replace the remaining `b` parentheses
         by the letters `i+1`. Let `w'` be the resulting word. Let
@@ -3449,11 +3449,11 @@ class Tableau(ClonableList):
         word `w'`. This tableau `T'` can be shown to be semistandard.
         We define the image of `T` under the action of the simple
         transposition `s_i = (i, i+1) \in S_n` to be this tableau `T'`.
-        It can be shown that these actions `s_1, s_2, \ldots, s_{n-1}`
-        satisfy the Moore-Coxeter relations of `S_n`, and thus this
-        extends to a unique action of the symmetric group `S_n` on
-        the set of semistandard tableaux with ceiling `n`. This is the
-        Lascoux-Schuetzenberger action.
+        It can be shown that these actions of the transpositions
+        `s_1, s_2, \ldots, s_{n-1}` satisfy the Moore-Coxeter relations
+        of `S_n`, and thus this extends to a unique action of the
+        symmetric group `S_n` on the set of semistandard tableaux with
+        ceiling `n`. This is the Lascoux-Schuetzenberger action.
 
         This action of the symmetric group `S_n` on the set of all
         semistandard tableaux of given shape `\lambda` with entries
@@ -8131,6 +8131,19 @@ class StandardTableaux_shape(StandardTableaux):
 ##########################
 def unmatched_places(w, open, close):
     """
+    Given a word ``w`` and two letters ``open`` and
+    ``close`` to be treated as opening and closing
+    parentheses (respectively), return a pair ``(xs, ys)``
+    that encodes the positions of the unmatched
+    parentheses after the standard parenthesis matching
+    procedure is applied to ``w``.
+
+    More precisely, ``xs`` will be the list of all ``i``
+    such that ``w[i]`` is an unmatched closing parenthesis,
+    while ``ys`` will be the list of all ``i`` such that
+    ``w[i]`` is an unmatched opening parenthesis. Both
+    lists returned are in increasing order.
+
     EXAMPLES::
 
         sage: from sage.combinat.tableau import unmatched_places
@@ -8164,6 +8177,17 @@ def unmatched_places(w, open, close):
 
 def symmetric_group_action_on_values(word, perm):
     """
+    Return the image of the word ``word`` under the
+    Lascoux-Schuetzenberger action of the permutation
+    ``perm``.
+
+    See :meth:`Tableau.symmetric_group_action_on_values`
+    for the definition of the Lascoux-Schuetzenberger
+    action on semistandard tableaux. The transformation that
+    the reading word of the tableau undergoes in said
+    definition is precisely the Lascoux-Schuetzenberger
+    action on words.
+
     EXAMPLES::
 
         sage: from sage.combinat.tableau import symmetric_group_action_on_values
@@ -8201,7 +8225,7 @@ def symmetric_group_action_on_values(word, perm):
             for i in places_l[:dif]:
                 w[i] = r
         else:
-            for i in places_r[nbr-dif:ma]:
+            for i in places_r[nbr-dif:]:
                 w[i] = l
     return w
 

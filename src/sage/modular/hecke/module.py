@@ -1448,8 +1448,8 @@ class HeckeModule_free_module(HeckeModule_generic):
             [-zeta4      0]
             [     0 -zeta4]
             sage: ModularSymbols(Gamma1(5), 3).diamond_bracket_matrix(3)
-            [ 0 -1  0  0]
-            [ 1  0  0  0]
+            [ 0  1  0  0]
+            [-1  0  0  0]
             [ 0  0  0  1]
             [ 0  0 -1  0]
         """
@@ -1631,9 +1631,11 @@ class HeckeModule_free_module(HeckeModule_generic):
             Modular Symbols subspace of dimension 3 of Modular Symbols space of dimension 5 for Gamma_0(53) of weight 2 with sign 1 over Rational Field
             sage: p = S.projection()
             sage: S.basis()
-            ((1,33) - (1,37), (1,35), (1,49))
+            ((1,43) - (1,45), (1,47), (1,50))
             sage: [ p(x) for x in S.basis() ]
-            [(1,33) - (1,37), (1,35), (1,49)]
+            [(1,43) - (1,45), (1,47), (1,50)]
+            sage: all([p(x)==x for x in S.basis()])
+            True
         """
 
         # Compute the Hecke-stable projection map pi from the ambient

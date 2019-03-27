@@ -1,5 +1,5 @@
 cimport cython
-from cpython cimport PyObject
+from cpython.object cimport PyObject
 
 
 cdef struct mono_cell:

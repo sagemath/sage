@@ -22,6 +22,7 @@ from sage.structure.indexed_generators import standardize_names_index_set
 from sage.rings.integer_ring import ZZ
 from collections import defaultdict
 
+
 class NilpotentLieAlgebra_dense(LieAlgebraWithStructureCoefficients):
     r"""
     A nilpotent Lie algebra `L` over a base ring.
@@ -67,6 +68,7 @@ class NilpotentLieAlgebra_dense(LieAlgebraWithStructureCoefficients):
         ....:                     ('Y','Z'): {'T': 1}}, nilpotent=True)
         sage: TestSuite(L).run()
     """
+
     @staticmethod
     def __classcall_private__(cls, R, s_coeff, names=None, index_set=None,
                               category=None, **kwds):
@@ -155,6 +157,7 @@ class NilpotentLieAlgebra_dense(LieAlgebraWithStructureCoefficients):
             Nilpotent Lie algebra on 4 generators (X, Y, Z, W) over Rational Field
         """
         return "Nilpotent %s" % (super(NilpotentLieAlgebra_dense, self)._repr_())
+
 
 class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
     r"""
@@ -302,6 +305,13 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
         sage: l = [LieAlgebra(QQ, 3, step=k) for k in range(1, 4)]
         sage: [L.dimension() for L in l]
         [3, 6, 14]
+
+    Verify that a free nilpotent Lie algebra of step `>2` with `>10`
+    generators can be created, see :trac:`27018` (see also :trac:`27069`)::
+
+        sage: L = LieAlgebra(QQ, 11, step=3)
+        sage: L.dimension() == 11 + (11^2-11)/2 + (11^3-11)/3
+        True
     """
     @staticmethod
     def __classcall_private__(cls, R, r, s, names=None, naming=None, category=None, **kwds):
@@ -323,7 +333,7 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
         category = cat.Graded().Stratified().or_subcategory(category)
 
         return super(FreeNilpotentLieAlgebra, cls).__classcall__(
-            cls, R,r, s, names=tuple(names), naming=naming,
+            cls, R, r, s, names=tuple(names), naming=naming,
             category=category, **kwds)
 
     def __init__(self, R, r, s, names, naming, category, **kwds):
@@ -349,10 +359,10 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
         from sage.algebras.lie_algebras.lie_algebra import LieAlgebra
 
         free_gen_names = ['F%d' % k for k in range(r)]
-        free_gen_names_inv = {val: i+1 for i,val in enumerate(free_gen_names)}
+        free_gen_names_inv = {val: i + 1 for i, val in enumerate(free_gen_names)}
         L = LieAlgebra(R, free_gen_names).Lyndon()
 
-        basis_by_deg = {d: [] for d in range(1, s+1)}
+        basis_by_deg = {d: [] for d in range(1, s + 1)}
         for d in range(1, s + 1):
             for X in L.graded_basis(d):
                 # convert brackets of form [X_1, [X_1, X_2]] to words (1,1,2)
@@ -389,18 +399,18 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
                 if dx == dy:
                     for i, val in enumerate(basis_by_deg[dx]):
                         X_ind, X = val
-                        for Y_ind, Y in basis_by_deg[dy][i+1:]:
+                        for Y_ind, Y in basis_by_deg[dy][i + 1:]:
                             Z = L[X, Y]
                             if not Z.is_zero():
                                 s_coeff[(X_ind, Y_ind)] = {W_ind: Z[W.leading_support()]
-                                                           for W_ind, W in basis_by_deg[dx+dy]}
+                                                           for W_ind, W in basis_by_deg[dx + dy]}
                 else:
                     for X_ind, X in basis_by_deg[dx]:
                         for Y_ind, Y in basis_by_deg[dy]:
                             Z = L[X, Y]
                             if not Z.is_zero():
                                 s_coeff[(X_ind, Y_ind)] = {W_ind: Z[W.leading_support()]
-                                                           for W_ind, W in basis_by_deg[dx+dy]}
+                                                           for W_ind, W in basis_by_deg[dx + dy]}
 
         names, index_set = standardize_names_index_set(names, index_set)
         s_coeff = LieAlgebraWithStructureCoefficients._standardize_s_coeff(

@@ -110,7 +110,7 @@ def repr_from_monomials(monomials, term_repr, use_latex=False):
         sage: c*(a*a + 2)*b
         (-x - 2)*e1*e2 - 4*x - 8
         sage: latex(c*(a*a + 2)*b)
-        \left( - x - 2 \right)  e_{1} e_{2} - 4 x - 8
+        \left( -x - 2 \right)  e_{1} e_{2} - 4 x - 8
     """
     if not monomials:
         if use_latex:

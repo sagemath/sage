@@ -330,7 +330,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
         - ``seq`` -- A sequence of integers.
 
-        EXAMPLES:
+        EXAMPLES::
 
            sage: Sequences =  DeBruijnSequences(2, 3)
            sage: Sequences.an_element() in Sequences

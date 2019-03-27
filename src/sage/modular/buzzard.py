@@ -10,13 +10,12 @@ AUTHORS:
 
 - Kevin Buzzard: PARI program that implements underlying functionality
 """
-
 #############################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #############################################################################
 
 from sage.interfaces.gp import Gp
@@ -30,10 +29,10 @@ def gp():
 
     EXAMPLES::
 
+        sage: import sage.modular.buzzard
         sage: sage.modular.buzzard.gp()
         PARI/GP interpreter
     """
-
     global _gp
     if _gp is None:
         _gp = Gp(script_subdirectory='buzzard')
@@ -66,7 +65,7 @@ def gp():
 ##         <boom!>  which is why this is commented out!
 ##     """
 ##     s = gp().eval('DimensionCuspForms(%s, %s)'%(eps,k))
-##     print s
+##     print(s)
 ##     return Integer(s)
 
 
@@ -83,6 +82,7 @@ def buzzard_tpslopes(p, N, kmax):
 
     EXAMPLES::
 
+        sage: from sage.modular.buzzard import buzzard_tpslopes
         sage: c = buzzard_tpslopes(2,1,50)
         sage: c[50]
         [4, 8, 13]
@@ -103,10 +103,9 @@ def buzzard_tpslopes(p, N, kmax):
 
     - Kevin Buzzard: several PARI/GP scripts
 
-    - William Stein (2006-03-17): small Sage wrapper of Buzzard's
-      scripts
+    - William Stein (2006-03-17): small Sage wrapper of Buzzard's scripts
     """
-    v = gp().eval('tpslopes(%s, %s, %s)'%(p,N,kmax))
+    v = gp().eval('tpslopes(%s, %s, %s)' % (p, N, kmax))
     v = sage_eval(v)
     v.insert(0, [])   # so v[k] = info about weight k (since python is 0-based)
     return v

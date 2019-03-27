@@ -371,12 +371,12 @@ def OrthogonalPolarGraph(m, q, sign="+"):
         ...
         ValueError: sign must be equal to either '' or '+' when m is odd
     """
-    from sage.graphs.generators.classical_geometries import _orthogonal_polar_graph
     G = _orthogonal_polar_graph(m, q, sign=sign)
-    if m % 2 != 0:
+    if m % 2:
         sign = ""
     G.name("Orthogonal Polar Graph O" + ("^" + sign if sign else "") + str((m, q)))
     return G
+
 
 def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
     r"""
@@ -484,13 +484,12 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
         ValueError: for m even q must be 2 or 3
 
     """
-    from sage.graphs.generators.classical_geometries import _orthogonal_polar_graph
-    p, k = is_prime_power(q,get_data=True)
-    if k==0:
+    p, k = is_prime_power(q, get_data=True)
+    if k == 0:
         raise ValueError('q must be a prime power')
     dec = ''
     if m % 2 == 0:
-        if q in [2,3]:
+        if q in [2, 3]:
             G = _orthogonal_polar_graph(m, q, sign=sign, point_type=[1])
         else:
             raise ValueError("for m even q must be 2 or 3")
@@ -762,7 +761,7 @@ def UnitaryDualPolarGraph(m, q):
         sage: graphs.UnitaryDualPolarGraph(6,6)
         Traceback (most recent call last):
         ...
-        ValueError: libGAP: Error, <subfield> must be a prime or a finite field
+        GAPError: Error, <subfield> must be a prime or a finite field
     """
     from sage.libs.gap.libgap import libgap
     G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
@@ -803,7 +802,7 @@ def SymplecticDualPolarGraph(m, q):
         sage: graphs.SymplecticDualPolarGraph(6,6)
         Traceback (most recent call last):
         ...
-        ValueError: libGAP: Error, <subfield> must be a prime or a finite field
+        GAPError: Error, <subfield> must be a prime or a finite field
 
     REFERENCE:
 
@@ -1212,7 +1211,7 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
         I_ks[O.index(tuple(Pi))].append(i)
 
     # perform the adjustment of the edges, as described.
-    G.relabel()
+    G.relabel(range(G.order()))
     cliques = []
     for i,j in hyperoval_matching:
         Pij = set(I_ks[i]+I_ks[j])

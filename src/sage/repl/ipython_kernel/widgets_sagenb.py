@@ -458,10 +458,14 @@ def selector(values, label=None, default=None, nrows=None, ncols=None, width=Non
     is not ordered, it is better to use an :class:`OrderedDict`::
 
         sage: from collections import OrderedDict
-        sage: selector(OrderedDict(one=1, two=2, three=3))
+        sage: selector(OrderedDict(one=1, two=2, three=3))  # py2
         Dropdown(options=OrderedDict([('one', 1), ('three', 3), ('two', 2)]), value=1)
-        sage: selector(OrderedDict(one=1, two=2, three=3), buttons=True)
+        sage: selector(OrderedDict(one=1, two=2, three=3))  # py3
+        Dropdown(options=OrderedDict([('one', 1), ('two', 2), ('three', 3)]), value=1)
+        sage: selector(OrderedDict(one=1, two=2, three=3), buttons=True) # py2
         ToggleButtons(options=OrderedDict([('one', 1), ('three', 3), ('two', 2)]), value=1)
+        sage: selector(OrderedDict(one=1, two=2, three=3), buttons=True) # py3
+        ToggleButtons(options=OrderedDict([('one', 1), ('two', 2), ('three', 3)]), value=1)
 
     The values can be any kind of object:
 

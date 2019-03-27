@@ -33,23 +33,19 @@ unset SHARED_FLAG # Currently leave the Makefile default ('-shared'); for safety
 
 cd src/
 
-# use 2to3 if we are running on python3
-if python -c 'import sys; sys.exit(sys.version_info.major != 3)'; then
-    2to3 -n -w --no-diffs makemakefile.py
-fi
-
 ###############################################################################
 # Configure, tune, build and test zn_poly:
 ###############################################################################
 
-echo "Now configuring zn_poly..."
+echo "Now generating Makefile for zn_poly..."
 # Note: The '--cppflags' and '--cxxflags' options are added by our patch to
 #       'makemakefile.py', and aren't available with vanilla upstream.
 #       Moreover, the generated Makefile now takes CC, CXX and CPP from the
 #       environment, so no need to pass them later explicitly to 'make'.
-./configure --prefix="$SAGE_LOCAL" --cflags="$CFLAGS" --ldflags="$LDFLAGS" \
-              --cppflags="$CPPFLAGS" --cxxflags="$CXXFLAGS" \
-              --gmp-prefix="$SAGE_LOCAL" || sdh_die "Error configuring zn_poly."
+sage-system-python makemakefile.py >Makefile \
+    --prefix="$SAGE_LOCAL" --cflags="$CFLAGS" --ldflags="$LDFLAGS" \
+    --cppflags="$CPPFLAGS" --cxxflags="$CXXFLAGS" \
+    --gmp-prefix="$SAGE_LOCAL" || sdh_die "Error generating Makefile."
 
 echo "Now building zn_poly with its tuning parameters..."
 sdh_make

@@ -68,6 +68,7 @@ class SageBaseTarFile(tarfile.TarFile):
         """Apply ``self.umask`` instead of the permissions in the TarInfo."""
         tarinfo = copy.copy(tarinfo)
         tarinfo.mode &= ~self.umask
+        tarinfo.mode |= stat.S_IWUSR
         tarinfo.mode &= ~(stat.S_ISUID | stat.S_ISGID)
         return super(SageBaseTarFile, self).chmod(tarinfo, targetpath)
 

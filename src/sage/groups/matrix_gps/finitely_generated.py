@@ -21,10 +21,10 @@ subgroups of matrix groups::
     sage: SL2Z = SL(2,ZZ)
     sage: S, T = SL2Z.gens()
     sage: SL2Z.subgroup([T^2])
-    Matrix group over Integer Ring with 1 generators (
+    Subgroup with 1 generators (
     [1 2]
     [0 1]
-    )
+    ) of Special Linear Group of degree 2 over Integer Ring
 
 AUTHORS:
 
@@ -48,6 +48,7 @@ AUTHORS:
 - Volker Braun (2013-1) port to new Parent, libGAP.
 
 - Sebastian Oehms (2018-07): Added _permutation_group_element_ (Trac #25706)
+- Sebastian Oehms (2019-01): Revision of :trac:`25706` (:trac:`26903`and :trac:`27143`).
 """
 
 ##############################################################################
@@ -204,6 +205,7 @@ def QuaternionMatrixGroupGF3():
     aye = MS([1,1,1,2])
     jay = MS([2,1,1,1])
     return MatrixGroup([aye, jay])
+
 
 def MatrixGroup(*gens, **kwds):
     r"""
@@ -512,7 +514,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         return (MatrixGroup,
                 tuple(g.matrix() for g in self.gens()) + ({'check':False},))
 
-    def as_permutation_group(self, algorithm=None):
+    def as_permutation_group(self, algorithm=None, seed=None):
         r"""
         Return a permutation group representation for the group.
 
@@ -527,13 +529,19 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         - ``algorithm`` -- ``None`` or ``'smaller'``. In the latter
           case, try harder to find a permutation representation of
           small degree.
+        - ``seed`` -- ``None`` or an integer specifying the seed
+          to fix results depending on pseudo-random-numbers. Here
+          it makes sense to be used with respect to the ``'smaller'``
+          option, since gap produces random output in that context.
 
         OUTPUT:
 
         A permutation group isomorphic to ``self``. The
         ``algorithm='smaller'`` option tries to return an isomorphic
         group of low degree, but is not guaranteed to find the
-        smallest one.
+        smallest one and must not even differ from the one obtained
+        without the option. In that case repeating the invocation
+        may help (see the example below).
 
         EXAMPLES::
 
@@ -550,25 +558,42 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: G = MatrixGroup(GG.GeneratorsOfGroup())
             sage: G.cardinality()
             21499084800
-            sage: set_random_seed(0); current_randstate().set_seed_gap()
             sage: P = G.as_permutation_group()
+            sage: Psmaller = G.as_permutation_group(algorithm="smaller", seed=6)
+            sage: P == Psmaller  # see the note below
+            True
+            sage: Psmaller = G.as_permutation_group(algorithm="smaller")
+            sage: P == Psmaller
+            False
             sage: P.cardinality()
             21499084800
-            sage: P.degree()  # random output
+            sage: P.degree()
             144
-            sage: set_random_seed(3); current_randstate().set_seed_gap()
-            sage: Psmaller = G.as_permutation_group(algorithm="smaller")
             sage: Psmaller.cardinality()
             21499084800
-            sage: Psmaller.degree()  # random output
-            108
+            sage: Psmaller.degree()
+            80
 
-        In this case, the "smaller" option returned an isomorphic group of
-        lower degree. The above example used GAP's library of irreducible
-        maximal finite ("imf") integer matrix groups to construct the
-        MatrixGroup G over GF(7). The section "Irreducible Maximal Finite
-        Integral Matrix Groups" in the GAP reference manual has more
-        details.
+        ..  NOTE::
+
+            In this case, the "smaller" option returned an isomorphic
+            group of lower degree. The above example used GAP's library
+            of irreducible maximal finite ("imf") integer matrix groups
+            to construct the MatrixGroup G over GF(7). The section
+            "Irreducible Maximal Finite Integral Matrix Groups" in the
+            GAP reference manual has more details.
+
+        ..  NOTE::
+
+            Concerning the option ``algorithm='smaller'`` you should note
+            the following from GAP documentation: "The methods used might
+            involve the use of random elements and the permutation
+            representation (or even the degree of the representation) is
+            not guaranteed to be the same for different calls of
+            SmallerDegreePermutationRepresentation."
+
+            To obtain a reproducible result the optional argument ``seed``
+            may be used as in the example above.
 
         TESTS::
 
@@ -580,8 +605,8 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         The above example in GL(12,Z), reduced modulo 7::
 
-            sage: MS = MatrixSpace( GF(7), 12, 12)
-            sage: G = MatrixGroup(map(MS, GG.GeneratorsOfGroup()))
+            sage: MS = MatrixSpace(GF(7), 12, 12)
+            sage: G = MatrixGroup([MS(g) for g in GG.GeneratorsOfGroup()])
             sage: G.cardinality()
             21499084800
             sage: P = G.as_permutation_group()
@@ -593,12 +618,12 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: Sp(6,3).as_permutation_group().cardinality()
             9170703360
 
-        Check that ``_permutation_group_morphism`` works (:trac:`25706`)::
+        Check that :trac:`25706` still works after :trac:`26903`::
 
             sage: MG = GU(3,2).as_matrix_group()
-            sage: PG = MG.as_permutation_group()  # this constructs the morphism
+            sage: PG = MG.as_permutation_group()
             sage: mg = MG.an_element()
-            sage: MG._permutation_group_morphism(mg)
+            sage: PG(mg)
             (1,2,6,19,35,33)(3,9,26,14,31,23)(4,13,5)(7,22,17)(8,24,12)(10,16,32,27,20,28)(11,30,18)(15,25,36,34,29,21) 
         """
         # Note that the output of IsomorphismPermGroup() depends on
@@ -607,21 +632,15 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         from sage.groups.perm_gps.permgroup import PermutationGroup
         if not self.is_finite():
             raise NotImplementedError("Group must be finite.")
+        if seed is not None:
+            from sage.libs.gap.libgap import libgap
+            libgap.set_seed(ZZ(seed))
         iso=self._libgap_().IsomorphismPermGroup()
         if algorithm == "smaller":
             iso=iso.Image().SmallerDegreePermutationRepresentation()
-        PG = PermutationGroup(iso.Image().GeneratorsOfGroup().sage(), \
-                       canonicalize=False) # applying gap() - as PermutationGroup is not libGAP
+        return PermutationGroup(iso.Image().GeneratorsOfGroup().sage(), \
+                       canonicalize=False)
 
-        def permutation_group_map(element):
-            return PG(iso.ImageElm(element.gap()).sage()) 
-
-        from sage.categories.homset import Hom
-        self._permutation_group_morphism = Hom(self, PG)(permutation_group_map)
-
-        return PG
-
-    _permutation_group_ = as_permutation_group
 
     def module_composition_factors(self, algorithm=None):
         r"""

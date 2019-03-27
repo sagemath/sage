@@ -169,7 +169,7 @@ classical) does not apply.
 #                     2008-9 David Loeffler <d.loeffler.01@cantab.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
 from six.moves import range
@@ -178,7 +178,6 @@ from six import integer_types
 from sage.matrix.all        import matrix, MatrixSpace, diagonal_matrix
 from sage.misc.misc         import verbose
 from sage.misc.cachefunc    import cached_method
-from sage.misc.superseded   import deprecated_function_alias
 from sage.modular.all       import (trivial_character, EtaProduct,
                                     j_invariant_qexp, hecke_operator_on_qexp)
 from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
@@ -1018,12 +1017,12 @@ class OverconvergentModularFormsSpace(Module):
                             mat[i,j] = mat[i,j] + mat[i-u-1, j-v-1]*self.recurrence_matrix()[u,v]
 
         else:
-            if( n*self.prime() > self.prec()):
+            if n * self.prime() > self.prec():
                 raise ValueError("n is too large")
             for j in range(self.prime(), n):
                 l = self._convert_to_basis(self.hecke_operator(self._basis_cache[j], m))
                 for i in range(n):
-                    mat[i,j] = l[i]
+                    mat[i, j] = l[i]
         return mat
 
     def slopes(self, n, use_recurrence=False):

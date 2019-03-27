@@ -494,7 +494,7 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
         """
         Return the prime, that is the characteristic of the residue field.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R = Zp(3)
             sage: A.<x,y> = TateAlgebra(R)

@@ -17,7 +17,6 @@ from __future__ import print_function
 
 from sage.misc.misc import attrcall
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecated_function_alias
 
 from sage.categories.sets_cat import Sets
 
@@ -213,8 +212,6 @@ class CartesianProduct(UniqueRepresentation, Parent):
             raise ValueError("i (={}) must be in {}".format(i, self._sets_keys()))
         return attrcall("cartesian_projection", i)
 
-    summand_projection = deprecated_function_alias(10963, cartesian_projection)
-
     def _cartesian_product_of_elements(self, elements):
         """
         Return the Cartesian product of the given ``elements``.
@@ -307,11 +304,6 @@ class CartesianProduct(UniqueRepresentation, Parent):
                 sage: x = C.an_element(); x
                 (47, 42, 1)
                 sage: x.cartesian_projection(1)
-                42
-
-                sage: x.summand_projection(1)
-                doctest:...: DeprecationWarning: summand_projection is deprecated. Please use cartesian_projection instead.
-                See http://trac.sagemath.org/10963 for details.
                 42
             """
             return self.value[i]

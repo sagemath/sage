@@ -36,14 +36,14 @@ TESTS::
     sage: TestSuite(a).run()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004,2005,2006 Joshua Kantor <kantor.jm@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 
 import math
@@ -608,7 +608,7 @@ cdef class Matrix_double_dense(Matrix_dense):
             sage: B.condition()
             doctest:warning
             ...
-            ComplexWarning: Casting complex values to real discards the imaginary part
+            ...ComplexWarning: Casting complex values to real discards the imaginary part
             203.851798...
             sage: B.condition(p='frob')
             203.851798...
@@ -993,7 +993,7 @@ cdef class Matrix_double_dense(Matrix_dense):
             [35.13996365902..., 2.27661020871472..., 0.0, 0.0]
             sage: set_verbose(0)
 
-            sage: all([s in RDF for s in sv])
+            sage: all(s in RDF for s in sv)
             True
 
         TESTS:
@@ -3046,7 +3046,7 @@ cdef class Matrix_double_dense(Matrix_dense):
             [               0.0 0.9999999999999996                0.0                0.0]
             [               0.0                0.0 0.9999999999999992                0.0]
             [               0.0                0.0                0.0 0.9999999999999999]
-            sage: all([T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i)])
+            sage: all(T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i))
             True
             sage: (Q*T*Q.conjugate().transpose()-A).zero_at(1.0e-11)
             [0.0 0.0 0.0 0.0]
@@ -3073,7 +3073,7 @@ cdef class Matrix_double_dense(Matrix_dense):
             [               0.0                0.0                0.0 1.0000000000000007]
             sage: T.parent()
             Full MatrixSpace of 4 by 4 dense matrices over Complex Double Field
-            sage: all([T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i)])
+            sage: all(T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i))
             True
             sage: (Q*T*Q.conjugate().transpose()-A).zero_at(1.0e-11)
             [0.0 0.0 0.0 0.0]
@@ -3098,9 +3098,9 @@ cdef class Matrix_double_dense(Matrix_dense):
             [               0.0 1.0000000000000013                0.0                0.0]
             [               0.0                0.0 1.0000000000000004                0.0]
             [               0.0                0.0                0.0 1.0000000000000016]
-            sage: all([T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i)])
+            sage: all(T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i))
             False
-            sage: all([T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i-1)])
+            sage: all(T.zero_at(1.0e-12)[i,j] == 0 for i in range(4) for j in range(i-1))
             True
             sage: (Q*T*Q.conjugate().transpose()-A).zero_at(1.0e-11)
             [0.0 0.0 0.0 0.0]
@@ -3210,7 +3210,7 @@ cdef class Matrix_double_dense(Matrix_dense):
             sage: A = matrix(RDF, 2, 2, [[0, -1], [1, 0]])
             sage: Qr, Tr = A.schur(base_ring=RDF)
             sage: Qc, Tc = A.schur(base_ring=CDF)
-            sage: all([M.is_immutable() for M in [Qr, Tr, Qc, Tc]])
+            sage: all(M.is_immutable() for M in [Qr, Tr, Qc, Tc])
             True
             sage: Tr.round(6) != Tc.round(6)
             True

@@ -356,7 +356,9 @@ class Polyhedron_base(Element):
         consistent state any more and neither the polyhedron nor its
         H/V-representation objects may be used any more.
 
-        .. SEEALSO:: :meth:`~sage.geometry.polyhedron.parent.Polyhedra_base.recycle`
+        .. SEEALSO::
+
+            :meth:`~sage.geometry.polyhedron.parent.Polyhedra_base.recycle`
 
         EXAMPLES::
 
@@ -421,6 +423,93 @@ class Polyhedron_base(Element):
         """
         new_parent = self.parent().base_extend(base_ring, backend)
         return new_parent(self)
+
+    def change_ring(self, base_ring, backend=None):
+        """
+        Return the polyhedron obtained by coercing the entries of the
+        vertices/lines/rays of this polyhedron into the given ring.
+
+        This method can also be used to change the backend.
+
+        INPUT:
+
+        - ``base_ring`` -- the new base ring.
+
+        - ``backend`` -- the new backend or ``None`` (default), see
+            :func:`~sage.geometry.polyhedron.constructor.Polyhedron`.
+            If ``None`` (the default), use the same defaulting behavior
+            as described there; it is not attempted to keep the same
+            backend.
+
+        EXAMPLES::
+
+            sage: P = Polyhedron(vertices=[(1,0), (0,1)], rays=[(1,1)], base_ring=QQ); P
+            A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 1 ray
+            sage: P.change_ring(ZZ)
+            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices and 1 ray
+            sage: P.change_ring(ZZ) == P
+            True
+
+            sage: P = Polyhedron(vertices=[(-1.3,0), (0,2.3)], base_ring=RDF); P.vertices()
+            (A vertex at (-1.3, 0.0), A vertex at (0.0, 2.3))
+            sage: P.change_ring(QQ).vertices()
+            (A vertex at (-13/10, 0), A vertex at (0, 23/10))
+            sage: P == P.change_ring(QQ)
+            True
+            sage: P.change_ring(ZZ)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot change the base ring to the Integer Ring (cannot coerce -1.3 into the Integer Ring)
+
+            sage: P = polytopes.regular_polygon(3); P
+            A 2-dimensional polyhedron in AA^2 defined as the convex hull of 3 vertices
+            sage: P.vertices()
+            (A vertex at (0.?e-16, 1.000000000000000?),
+             A vertex at (0.866025403784439?, -0.500000000000000?),
+             A vertex at (-0.866025403784439?, -0.500000000000000?))
+            sage: P.change_ring(QQ)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot change the base ring to the Rational Field (cannot coerce 0.866025403784439? into the Rational Field)
+
+        .. WARNING::
+
+            The base ring ``RDF`` should be used with care. As it is
+            not an exact ring, certain computations may break or
+            silently produce wrong results, for example changing the
+            base ring from an exact ring into ``RDF`` may cause a
+            loss of data::
+
+                sage: P = Polyhedron([[2/3,0],[6666666666666667/10^16,0]], base_ring=AA); P
+                A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
+                sage: P.change_ring(RDF)
+                A 0-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex
+                sage: P == P.change_ring(RDF)
+                False
+       """
+
+        from sage.categories.all import Rings
+        from sage.rings.all import RDF, RR
+
+        if base_ring not in Rings:
+            raise ValueError("invalid base ring")
+
+        if not base_ring.is_exact():
+            if base_ring is RR:
+                base_ring = RDF
+            elif base_ring is not RDF:
+                raise ValueError("the only allowed inexact ring is 'RDF' with backend 'cdd'")
+
+        try:
+            vertices = [[base_ring(x) for x in vertex] for vertex in self.vertices_list()]
+            rays = [[base_ring(x) for x in ray] for ray in self.rays_list()]
+            lines = [[base_ring(x) for x in line] for line in self.lines_list()]
+
+        except(TypeError, ValueError):
+            raise TypeError("cannot change the base ring to the {0} (cannot coerce {1} into the {0})".format(base_ring, x))
+
+        new_parent = self.parent().change_ring(base_ring, backend)
+        return new_parent([vertices, rays, lines], None)
 
     def _richcmp_(self, other, op):
         """
@@ -2300,7 +2389,9 @@ class Polyhedron_base(Element):
         """
         Return the average of the vertices.
 
-        See also :meth:`representative_point`.
+        .. SEEALSO::
+
+            :meth:`representative_point`.
 
         OUTPUT:
 
@@ -2329,7 +2420,9 @@ class Polyhedron_base(Element):
         """
         Return a "generic" point.
 
-        See also :meth:`center`.
+        .. SEEALSO::
+
+            :meth:`center`.
 
         OUTPUT:
 
@@ -2665,7 +2758,7 @@ class Polyhedron_base(Element):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.base.face_fan`.
+            :meth:`face_fan`.
 
         EXAMPLES::
 
@@ -2720,7 +2813,7 @@ class Polyhedron_base(Element):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.base.normal_fan`.
+            :meth:`normal_fan`.
 
         EXAMPLES::
 
@@ -4671,9 +4764,9 @@ class Polyhedron_base(Element):
         """
         Return a projection object.
 
-        See also
-        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.schlegel_projection`
-        for a more interesting projection.
+        .. SEEALSO::
+
+            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.schlegel_projection` for a more interesting projection.
 
         OUTPUT:
 
@@ -5144,14 +5237,16 @@ class Polyhedron_base(Element):
             raise NotImplementedError("The polytope must be full-dimensional.")
         else:
             from sage.interfaces.latte import integrate
-            return integrate(self.cdd_Hrepresentation(), polynomial, cdd=True)
+            return integrate(self.cdd_Hrepresentation(), polynomial,
+                             cdd=True, **kwds)
 
     def contains(self, point):
         """
         Test whether the polyhedron contains the given ``point``.
 
-        See also :meth:`interior_contains` and
-        :meth:`relative_interior_contains`.
+        .. SEEALSO::
+
+            :meth:`interior_contains`, :meth:`relative_interior_contains`.
 
         INPUT:
 
@@ -5229,8 +5324,9 @@ class Polyhedron_base(Element):
         Test whether the interior of the polyhedron contains the
         given ``point``.
 
-        See also :meth:`contains` and
-        :meth:`relative_interior_contains`.
+        .. SEEALSO::
+
+            :meth:`contains`, :meth:`relative_interior_contains`.
 
         INPUT:
 
@@ -5285,7 +5381,9 @@ class Polyhedron_base(Element):
         Test whether the relative interior of the polyhedron
         contains the given ``point``.
 
-        See also :meth:`contains` and :meth:`interior_contains`.
+        .. SEEALSO::
+
+            :meth:`contains`, :meth:`interior_contains`.
 
         INPUT:
 
@@ -6588,7 +6686,7 @@ class Polyhedron_base(Element):
         - ``as_affine_map`` (boolean, default = False) -- If ``False``, return
           a polyhedron. If ``True``, return the affine transformation,
           that sends the embedded polytope to a fulldimensional one.
-          It is given as a pair ``(A,b)``, where A is a linear transformation
+          It is given as a pair ``(A, b)``, where A is a linear transformation
           and ``b`` is a vector, and the affine transformation sends ``v`` to
           ``A(v)+b``.
 
@@ -6651,6 +6749,11 @@ class Polyhedron_base(Element):
 
             sage: S = polytopes.simplex(); S
             A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 4 vertices
+            sage: S.vertices()
+            (A vertex at (0, 0, 0, 1),
+             A vertex at (0, 0, 1, 0),
+             A vertex at (0, 1, 0, 0),
+             A vertex at (1, 0, 0, 0))
             sage: A = S.affine_hull(); A
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
             sage: A.vertices()
@@ -6752,7 +6855,7 @@ class Polyhedron_base(Element):
             sage: Pentagon = polytopes.dodecahedron().faces(2)[0].as_polyhedron()
             sage: Pnormal = Pentagon.affine_hull(orthonormal=True, extend=True)
             sage: Pgonal = Pentagon.affine_hull(orthogonal=True)
-            sage: A,b = Pentagon.affine_hull(orthogonal = True, as_affine_map=True)
+            sage: A, b = Pentagon.affine_hull(orthogonal=True, as_affine_map=True)
             sage: Adet = (A.matrix().transpose()*A.matrix()).det()
             sage: Pnormal.volume()
             1.53406271079097?
@@ -6766,7 +6869,7 @@ class Polyhedron_base(Element):
         An other example with ``as_affine_map=True``::
 
             sage: P = polytopes.permutahedron(4)
-            sage: A,b = P.affine_hull(orthonormal=True, as_affine_map=True, extend=True)
+            sage: A, b = P.affine_hull(orthonormal=True, as_affine_map=True, extend=True)
             sage: Q = P.affine_hull(orthonormal=True, extend=True)
             sage: Q.center()
             (0.7071067811865475?, 1.224744871391589?, 1.732050807568878?)

@@ -14,7 +14,7 @@ from __future__ import print_function, absolute_import
 
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
-from sage.structure.element cimport coercion_model
+from sage.structure.coerce cimport coercion_model
 from sage.misc.derivative import multi_derivative
 from sage.rings.infinity import infinity
 from sage.structure.element cimport Element

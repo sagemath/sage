@@ -622,12 +622,12 @@ def solve(f, *args, **kwds):
        some solutions of trigonometric equations are lost).
 
     - ``algorithm`` - string (default: 'maxima'); to use SymPy's
-       solvers set this to 'sympy'. Note that SymPy is always used
-       for diophantine equations.
+      solvers set this to 'sympy'. Note that SymPy is always used
+      for diophantine equations.
 
     - ``domain`` - string (default: 'complex'); setting this to 'real'
-       changes the way SymPy solves single equations; inequalities
-       are always solvedin the real domain.
+      changes the way SymPy solves single equations; inequalities
+      are always solved in the real domain.
 
     EXAMPLES::
 

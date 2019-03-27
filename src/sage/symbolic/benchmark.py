@@ -43,7 +43,7 @@ Problem R5::
     ....:        L.append( (L[i] + L[i+1]) * L[i+2] )
     sage: L = list(var('x,y,z'))
     sage: blowup(L,15)
-    sage: len(uniq(L))
+    sage: len(set(L))
     19
 
 Problem R6::

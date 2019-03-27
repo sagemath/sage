@@ -12,12 +12,12 @@ from six.moves import range
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.categories.category_singleton import Category_singleton
 from sage.categories.sets_cat import Sets
 from sage.categories.sets_cat import EmptySetError
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.rings.integer", "Integer")
+
 
 class EnumeratedSets(CategoryWithAxiom):
     """
@@ -553,7 +553,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 sage: Q.is_finite()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'super' object has no attribute 'is_finite'
+                AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'is_finite'
                 sage: Q.list()   # indirect test
                 Traceback (most recent call last):
                 ...

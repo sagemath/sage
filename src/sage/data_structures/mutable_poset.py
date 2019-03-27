@@ -140,14 +140,14 @@ ACKNOWLEDGEMENT:
 Classes and their Methods
 =========================
 """
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2015 Daniel Krenn <dev@danielkrenn.at>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                http://www.gnu.org/licenses/
-#*****************************************************************************
+#                https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from six import itervalues
@@ -3223,20 +3223,21 @@ class MutablePoset(SageObject):
             +-- null
             |   +-- successors:   (1, 3, 'abe'), (2, 1, 'c')
             |   +-- no predecessors
-            sage: for k in P.keys():
+            sage: for k in sorted(P.keys()):
             ....:     Q = copy(P)
             ....:     Q.merge(k)
             ....:     print('merging %s: %s' % (k, Q))
-            merging (1, 2): poset((1, 2, 'ae'), (1, 3, 'b'),
-                                  (2, 1, 'c'), (2, 2, 'f'), (4, 4, 'd'))
-            merging (1, 3): poset((1, 3, 'abe'), (2, 1, 'c'),
-                                  (2, 2, 'f'), (4, 4, 'd'))
-            merging (4, 4): poset((4, 4, 'abcdef'))
-            merging (2, 1): poset((1, 2, 'e'), (1, 3, 'b'),
-                                  (2, 1, 'ac'), (2, 2, 'f'), (4, 4, 'd'))
-            merging (2, 2): poset((1, 3, 'b'), (2, 2, 'acef'), (4, 4, 'd'))
             merging (1, 1): poset((1, 1, 'a'), (1, 2, 'e'), (1, 3, 'b'),
                                   (2, 1, 'c'), (2, 2, 'f'), (4, 4, 'd'))
+            merging (1, 2): poset((1, 2, 'ae'), (1, 3, 'b'), (2, 1, 'c'),
+                                  (2, 2, 'f'), (4, 4, 'd'))
+            merging (1, 3): poset((1, 3, 'abe'), (2, 1, 'c'), (2, 2, 'f'),
+                                  (4, 4, 'd'))
+            merging (2, 1): poset((1, 2, 'e'), (1, 3, 'b'), (2, 1, 'ac'),
+                                  (2, 2, 'f'), (4, 4, 'd'))
+            merging (2, 2): poset((1, 3, 'b'), (2, 2, 'acef'), (4, 4, 'd'))
+            merging (4, 4): poset((4, 4, 'abcdef'))
+
             sage: Q = copy(P)
             sage: Q.merge(); Q
             poset((4, 4, 'abcdef'))

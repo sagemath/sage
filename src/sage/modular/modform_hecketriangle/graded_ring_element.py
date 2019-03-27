@@ -250,7 +250,7 @@ class FormsRingElement(six.with_metaclass(
             f_{\rho}^{3} -  f_{i}^{2}
 
             sage: latex(QuasiModularFormsRing(n=infinity)(x*(x-y^2)*z))
-            - E_{4} f_{i}^{2} E_{2} + E_{4}^{2} E_{2}
+            -E_{4} f_{i}^{2} E_{2} + E_{4}^{2} E_{2}
         """
 
         from sage.misc.latex import latex

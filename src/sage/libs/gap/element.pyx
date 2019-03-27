@@ -1,20 +1,20 @@
 """
-libGAP element wrapper
+GAP element wrapper
 
 This document describes the individual wrappers for various GAP
-elements. For general information about libGAP, you should read the
+elements. For general information about GAP, you should read the
 :mod:`~sage.libs.gap.libgap` module documentation.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from __future__ import absolute_import, print_function
 
@@ -23,6 +23,7 @@ from cysignals.signals cimport sig_on, sig_off
 
 from .gap_includes cimport *
 from .util cimport *
+from .util import GAPError
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object cimport SageObject
@@ -31,6 +32,7 @@ from sage.rings.all import ZZ, QQ, RDF
 
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.combinat.permutation import Permutation
+from sage.structure.coerce cimport coercion_model as cm
 
 decode_type_number = {
     0: 'T_INT (integer)',
@@ -84,6 +86,43 @@ cdef Obj make_gap_list(sage_list) except NULL:
     return l.value
 
 
+cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL:
+    """
+    Convert Sage lists into Gap matrices
+
+    INPUT:
+
+    - ``sage_list`` -- list of :class:`GapElement`.
+
+    - ``gap_ring`` -- the base ring
+
+    If ``gap_ring`` is ``None``, nothing is made to make sure
+    that all coefficients live in the same Gap ring. The resulting Gap list
+    may not be recognized as a matrix by Gap.
+
+    OUTPUT:
+
+    The list of the elements in ``sage_list`` as a Gap ``Obj``.
+    """
+    from sage.libs.gap.libgap import libgap
+    cdef GapElement l = libgap.eval('[]')
+    cdef GapElement elem
+    cdef GapElement one
+    if gap_ring is not None:
+        one = <GapElement>gap_ring.One()
+    else:
+        one = <GapElement>libgap(1)
+    for x in sage_list:
+        if not isinstance(x, GapElement):
+            elem = <GapElement>libgap(x)
+            elem = elem * one
+        else:
+            elem = <GapElement>x
+
+        AddList(l.value, elem.value)
+    return l.value
+
+
 cdef char *crepr(Obj obj):
     cdef Obj s, stream, output_text_string, view_obj
     cdef UInt res
@@ -103,8 +142,8 @@ cdef char *crepr(Obj obj):
         stream = CALL_2ARGS(output_text_string, s, GAP_True)
 
         if not OpenOutputStream(stream):
-            raise RuntimeError("failed to open output capture stream for "
-                               "representing GAP object")
+            raise GAPError("failed to open output capture stream for "
+                           "representing GAP object")
 
         viewobj = GAP_ValueGlobalVariable("ViewObj")
         CALL_1ARGS(viewobj, obj)
@@ -209,7 +248,7 @@ cdef Obj make_gap_string(sage_string) except NULL:
 
 cdef GapElement make_any_gap_element(parent, Obj obj):
     """
-    Return the libGAP element wrapper of ``obj``
+    Return the GAP element wrapper of ``obj``
 
     The most suitable subclass of GapElement is determined
     automatically. Use this function to wrap GAP objects unless you
@@ -344,19 +383,20 @@ cdef class GapElement(RingElement):
         sage: libgap(0)
         0
 
-    If Gap finds an error while evaluating, a corresponding assertion is raised::
+    If Gap finds an error while evaluating, a :class:`GAPError`
+    exception is raised::
 
         sage: libgap.eval('1/0')
         Traceback (most recent call last):
         ...
-        ValueError: libGAP: Error, Rational operations: <divisor> must not be zero
+        GAPError: Error, Rational operations: <divisor> must not be zero
 
-    Also, a ``ValueError`` is raised if the input is not a simple expression::
+    Also, a ``GAPError`` is raised if the input is not a simple expression::
 
         sage: libgap.eval('1; 2; 3')
         Traceback (most recent call last):
         ...
-        ValueError: can only evaluate a single statement
+        GAPError: can only evaluate a single statement
     """
 
     def __cinit__(self):
@@ -370,7 +410,6 @@ cdef class GapElement(RingElement):
         """
         self.value = NULL
         self._compare_by_id = False
-
 
     def __init__(self):
         """
@@ -418,7 +457,6 @@ cdef class GapElement(RingElement):
         if obj is NULL:
             return
         reference_obj(obj)
-
 
     def __dealloc__(self):
         r"""
@@ -538,7 +576,7 @@ cdef class GapElement(RingElement):
             sage: libgap.eval('Integers') in libgap(1)
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, no method found! Error, no 1st choice method found for `in' on 2 arguments
+            GAPError: Error, no method found! Error, no 1st choice method found for `in' on 2 arguments
         """
         from sage.libs.gap.libgap import libgap
         GAP_IN = libgap.eval(r'\in')
@@ -609,24 +647,24 @@ cdef class GapElement(RingElement):
             sage: lst.Adddddd(1)
             Traceback (most recent call last):
             ...
-            AttributeError: name "Adddddd" is not defined in GAP.
+            AttributeError: 'Adddddd' is not defined in GAP
 
             sage: libgap.eval('some_name := 1')
             1
             sage: lst.some_name
             Traceback (most recent call last):
             ...
-            AttributeError: name "some_name" does not define a GAP function.
+            AttributeError: 'some_name' does not define a GAP function
         """
         if name in ('__dict__', '_getAttributeNames', '__custom_name', 'keys'):
             raise AttributeError('Python special name, not a GAP function.')
         try:
             proxy = make_GapElement_MethodProxy\
                 (self.parent(), gap_eval(name), self)
-        except ValueError:
-            raise AttributeError('name "'+str(name)+'" is not defined in GAP.')
+        except GAPError:
+            raise AttributeError(f"'{name}' is not defined in GAP")
         if not proxy.is_function():
-            raise AttributeError('name "'+str(name)+'" does not define a GAP function.')
+            raise AttributeError(f"'{name}' does not define a GAP function")
         return proxy
 
     def _repr_(self):
@@ -653,15 +691,15 @@ cdef class GapElement(RingElement):
         """
         Set comparison to compare by ``id``
 
-        By default, GAP is used to compare libGAP objects. However,
-        this is not defined for all GAP objects. To have libGAP play
+        By default, GAP is used to compare GAP objects. However,
+        this is not defined for all GAP objects. To have GAP play
         nice with ``UniqueRepresentation``, comparison must always
         work. This method allows one to override the comparison to
         sort by the (unique) Python ``id``.
 
         Obviously it is a bad idea to change the comparison of objects
         after you have inserted them into a set/dict. You also must
-        not mix libGAP objects with different sort methods in the same
+        not mix GAP objects with different sort methods in the same
         container.
 
         EXAMPLES::
@@ -671,7 +709,7 @@ cdef class GapElement(RingElement):
             sage: F1 < F2
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: cannot compare less than: Error, no method found!
+            GAPError: Error, no method found!
             Error, no 1st choice method found for `<' on 2 arguments
 
             sage: F1._set_compare_by_id()
@@ -705,13 +743,13 @@ cdef class GapElement(RingElement):
             sage: x._assert_compare_by_id()
             Traceback (most recent call last):
             ...
-            ValueError: requires a libGAP objects whose comparison is by "id"
+            ValueError: this requires a GAP object whose comparison is by "id"
 
             sage: x._set_compare_by_id()
             sage: x._assert_compare_by_id()
         """
         if not self._compare_by_id:
-            raise ValueError('requires a libGAP objects whose comparison is by "id"')
+            raise ValueError('this requires a GAP object whose comparison is by "id"')
 
     def __hash__(self):
         """
@@ -760,7 +798,7 @@ cdef class GapElement(RingElement):
             sage: F1 < F2
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: cannot compare less than: Error, no method found!
+            GAPError: Error, no method found!
             Error, no 1st choice method found for `<' on 2 arguments
 
             sage: F1._set_compare_by_id()
@@ -786,7 +824,7 @@ cdef class GapElement(RingElement):
             True
         """
         if self._compare_by_id != (<GapElement>other)._compare_by_id:
-            raise ValueError('comparison style must be the same for both operands')
+            raise ValueError("comparison style must be the same for both operands")
         if op==Py_LT:
             return self._compare_less(other)
         elif op==Py_LE:
@@ -820,8 +858,6 @@ cdef class GapElement(RingElement):
         try:
             GAP_Enter()
             return EQ(self.value, c_other.value)
-        except RuntimeError as msg:
-            raise ValueError('libGAP: cannot compare equality: '+str(msg))
         finally:
             GAP_Leave()
             sig_off()
@@ -844,8 +880,6 @@ cdef class GapElement(RingElement):
         try:
             GAP_Enter()
             return LT(self.value, c_other.value)
-        except RuntimeError as msg:
-            raise ValueError('libGAP: cannot compare less than: '+str(msg))
         finally:
             GAP_Leave()
             sig_off()
@@ -866,21 +900,18 @@ cdef class GapElement(RingElement):
             sage: libgap(1) + libgap.CyclicGroup(2)
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, no method found!
+            GAPError: Error, no method found!
             Error, no 1st choice method found for `+' on 2 arguments
         """
         cdef Obj result
-        sig_on()
         try:
-            GAP_Enter()
+            sig_GAP_Enter()
+            sig_on()
             result = SUM(self.value, (<GapElement>right).value)
-            return make_any_gap_element(self.parent(), result)
-        except RuntimeError as msg:
-            raise ValueError('libGAP: '+str(msg))
+            sig_off()
         finally:
             GAP_Leave()
-            sig_off()
-
+        return make_any_gap_element(self.parent(), result)
 
     cpdef _sub_(self, right):
         r"""
@@ -898,19 +929,17 @@ cdef class GapElement(RingElement):
             sage: libgap(1) - libgap.CyclicGroup(2)
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, no method found! ...
+            GAPError: Error, no method found! ...
         """
         cdef Obj result
-        sig_on()
         try:
-            GAP_Enter()
+            sig_GAP_Enter()
+            sig_on()
             result = DIFF(self.value, (<GapElement>right).value)
-            return make_any_gap_element(self.parent(), result)
-        except RuntimeError as msg:
-            raise ValueError('libGAP: {}'.format(msg))
+            sig_off()
         finally:
             GAP_Leave()
-            sig_off()
+        return make_any_gap_element(self.parent(), result)
 
 
     cpdef _mul_(self, right):
@@ -929,21 +958,18 @@ cdef class GapElement(RingElement):
             sage: libgap(1) * libgap.CyclicGroup(2)
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, no method found!
+            GAPError: Error, no method found!
             Error, no 1st choice method found for `*' on 2 arguments
         """
         cdef Obj result
-        sig_on()
         try:
-            GAP_Enter()
+            sig_GAP_Enter()
+            sig_on()
             result = PROD(self.value, (<GapElement>right).value)
-            return make_any_gap_element(self.parent(), result)
-        except RuntimeError as msg:
-            raise ValueError('libGAP: {}'.format(msg))
+            sig_off()
         finally:
             GAP_Leave()
-            sig_off()
-
+        return make_any_gap_element(self.parent(), result)
 
     cpdef _div_(self, right):
         r"""
@@ -961,25 +987,23 @@ cdef class GapElement(RingElement):
             sage: libgap(1) / libgap.CyclicGroup(2)
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, no method found!
+            GAPError: Error, no method found!
             Error, no 1st choice method found for `/' on 2 arguments
 
             sage: libgap(1) / libgap(0)
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, Rational operations: <divisor> must not be zero
+            GAPError: Error, Rational operations: <divisor> must not be zero
         """
         cdef Obj result
-        sig_on()
         try:
-            GAP_Enter()
+            sig_GAP_Enter()
+            sig_on()
             result = QUO(self.value, (<GapElement>right).value)
-            return make_any_gap_element(self.parent(), result)
-        except RuntimeError as msg:
-            raise ValueError('libGAP: '+str(msg))
+            sig_off()
         finally:
             GAP_Leave()
-            sig_off()
+        return make_any_gap_element(self.parent(), result)
 
     cpdef _mod_(self, right):
         r"""
@@ -995,60 +1019,76 @@ cdef class GapElement(RingElement):
             sage: libgap(1) % libgap.CyclicGroup(2)
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, no method found!
+            GAPError: Error, no method found!
             Error, no 1st choice method found for `mod' on 2 arguments
         """
         cdef Obj result
-        sig_on()
         try:
-            GAP_Enter()
+            sig_GAP_Enter()
+            sig_on()
             result = MOD(self.value, (<GapElement>right).value)
-            return make_any_gap_element(self.parent(), result)
-        except RuntimeError as msg:
-            raise ValueError('libGAP: '+str(msg))
+            sig_off()
         finally:
             GAP_Leave()
-            sig_off()
+        return make_any_gap_element(self.parent(), result)
 
-
-    def __pow__(GapElement self, right, dummy):
+    cpdef _pow_(self, other):
         r"""
         Exponentiation of two GapElement objects.
 
         EXAMPLES::
 
-            sage: g1 = libgap(5)
-            sage: g2 = libgap(2)
-            sage: g1 ^ g2
+            sage: r = libgap(5) ^ 2; r
             25
+            sage: parent(r)
+            C library interface to GAP
+            sage: r = 5 ^ libgap(2); r
+            25
+            sage: parent(r)
+            C library interface to GAP
+            sage: g, = libgap.CyclicGroup(5).GeneratorsOfGroup()
+            sage: g ^ 5
+            <identity> of ...
+
+        TESTS:
+
+        Check that this can be interrupted gracefully::
+
+            sage: a, b = libgap.GL(1000, 3).GeneratorsOfGroup(); g = a * b
+            sage: alarm(0.5); g ^ (2 ^ 10000)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
 
             sage: libgap.CyclicGroup(2) ^ 2
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, no method found!
+            GAPError: Error, no method found!
             Error, no 1st choice method found for `^' on 2 arguments
 
             sage: libgap(3) ^ Infinity
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, no method found! Error, no 1st choice
+            GAPError: Error, no method found! Error, no 1st choice
             method found for `InverseMutable' on 1 arguments
         """
-        if not isinstance(right, GapElement):
-            libgap = self.parent()
-            right = libgap(right)
-        cdef Obj result
-        sig_on()
         try:
-            GAP_Enter()
-            result = POW(self.value, (<GapElement>right).value)
-            return make_any_gap_element(self.parent(), result)
-        except RuntimeError as msg:
-            raise ValueError('libGAP: ' + str(msg))
+            sig_GAP_Enter()
+            sig_on()
+            result = POW(self.value, (<GapElement>other).value)
+            sig_off()
         finally:
             GAP_Leave()
-            sig_off()
+        return make_any_gap_element(self._parent, result)
 
+    cpdef _pow_int(self, other):
+        """
+        TESTS::
+
+            sage: libgap(5)._pow_int(int(2))
+            25
+        """
+        return self._pow_(self._parent(other))
 
     def is_function(self):
         """
@@ -1069,7 +1109,6 @@ cdef class GapElement(RingElement):
         """
         return IS_FUNC(self.value)
 
-
     def is_list(self):
         r"""
         Return whether the wrapped GAP object is a GAP List.
@@ -1087,7 +1126,6 @@ cdef class GapElement(RingElement):
         """
         return IS_LIST(self.value)
 
-
     def is_record(self):
         r"""
         Return whether the wrapped GAP object is a GAP record.
@@ -1104,7 +1142,6 @@ cdef class GapElement(RingElement):
             True
         """
         return IS_REC(self.value)
-
 
     cpdef is_bool(self):
         r"""
@@ -1139,7 +1176,6 @@ cdef class GapElement(RingElement):
         """
         return IS_STRING(self.value)
 
-
     def is_permutation(self):
         r"""
         Return whether the wrapped GAP object is a GAP permutation.
@@ -1159,7 +1195,6 @@ cdef class GapElement(RingElement):
         """
         return (TNUM_OBJ(self.value) == T_PERM2 or
                 TNUM_OBJ(self.value) == T_PERM4)
-
 
     def sage(self):
         r"""
@@ -1196,6 +1231,26 @@ cdef class GapElement(RingElement):
             'this is a string'
             sage: type(_)
             <... 'str'>
+
+            sage: x = libgap.eval('Indeterminate(Integers, "x")')
+
+            sage: p = x^2 - 2*x + 3
+            sage: p.sage()
+            x^2 - 2*x + 3
+            sage: p.sage().parent()
+            Univariate Polynomial Ring in x over Integer Ring
+
+            sage: p = x^-2 + 3*x
+            sage: p.sage()
+            x^-2 + 3*x
+            sage: p.sage().parent()
+            Univariate Laurent Polynomial Ring in x over Integer Ring
+
+            sage: p = (3 * x^2 + x) / (x^2 - 2)
+            sage: p.sage()
+            (3*x^2 + x)/(x^2 - 2)
+            sage: p.sage().parent()
+            Fraction Field of Univariate Polynomial Ring in x over Integer Ring
         """
         if self.value is NULL:
             return None
@@ -1204,14 +1259,38 @@ cdef class GapElement(RingElement):
         if self.IsInfinity():
             from sage.rings.infinity import Infinity
             return Infinity
+
         elif self.IsNegInfinity():
             from sage.rings.infinity import Infinity
             return -Infinity
 
+        elif self.IsUnivariateRationalFunction():
+            var = self.IndeterminateOfUnivariateRationalFunction().String()
+            var = var.sage()
+            num, den, val = self.CoefficientsOfUnivariateRationalFunction()
+            num = num.sage()
+            den = den.sage()
+            val = val.sage()
+            base_ring = cm.common_parent(*(num + den))
+
+            if self.IsUnivariatePolynomial():
+                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                R = PolynomialRing(base_ring, var)
+                return R(num)
+
+            elif self.IsLaurentPolynomial():
+                from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+                R = LaurentPolynomialRing(base_ring, var)
+                x = R.gen()
+                return x**val * R(num)
+
+            else:
+                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                R = PolynomialRing(base_ring, var)
+                x = R.gen()
+                return x**val * R(num) / R(den)
+
         raise NotImplementedError('cannot construct equivalent Sage object')
-
-
-
 
 
 ############################################################################
@@ -1346,12 +1425,14 @@ cdef class GapElement_Integer(GapElement):
             sage: int(libgap(3))
             3
             sage: type(_)
-            <... 'int'>
+            <type 'int'>
 
             sage: int(libgap(2)**128)
             340282366920938463463374607431768211456L
-            sage: type(_)
+            sage: type(_)  # py2
             <type 'long'>
+            sage: type(_)  # py3
+            <class 'int'>
         """
         return self.sage(ring=int)
 
@@ -1892,7 +1973,6 @@ cdef class GapElement_Ring(GapElement):
         """
         return ZZ
 
-
     def ring_rational(self):
         """
         Construct the Sage rationals.
@@ -1903,7 +1983,6 @@ cdef class GapElement_Ring(GapElement):
             Rational Field
         """
         return ZZ.fraction_field()
-
 
     def ring_integer_mod(self):
         """
@@ -1945,6 +2024,25 @@ cdef class GapElement_Ring(GapElement):
         from sage.rings.number_field.number_field import CyclotomicField
         return CyclotomicField(conductor.sage())
 
+    def ring_polynomial(self):
+        """
+        Construct a polynomial ring.
+
+        EXAMPLES::
+
+            sage: B = libgap(QQ['x'])
+            sage: B.ring_polynomial()
+            Univariate Polynomial Ring in x over Rational Field
+
+            sage: B = libgap(ZZ['x','y'])
+            sage: B.ring_polynomial()
+            Multivariate Polynomial Ring in x, y over Integer Ring
+        """
+        base_ring = self.CoefficientsRing().sage()
+        vars = [x.String().sage()
+                for x in self.IndeterminatesOfPolynomialRing()]
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        return PolynomialRing(base_ring, vars)
 
     def sage(self, **kwds):
         r"""
@@ -1975,6 +2073,9 @@ cdef class GapElement_Ring(GapElement):
 
             sage: libgap.CyclotomicField(6).sage()
             Cyclotomic Field of order 3 and degree 2
+
+            sage: libgap(QQ['x','y']).sage()
+            Multivariate Polynomial Ring in x, y over Rational Field
         """
         if self.IsField():
             if self.IsRationals():
@@ -1988,6 +2089,8 @@ cdef class GapElement_Ring(GapElement):
                 return self.ring_integer(**kwds)
             if self.IsFinite():
                 return self.ring_integer_mod(**kwds)
+            if self.IsPolynomialRing():
+                return self.ring_polynomial(**kwds)
         raise NotImplementedError('cannot convert GAP ring to Sage')
 
 
@@ -2278,7 +2381,7 @@ cdef class GapElement_Function(GapElement):
             sage: s(libgap(1), libgap(2))
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, no method found!
+            GAPError: Error, no method found!
             Error, no 1st choice method found for `SumOp' on 2 arguments
 
             sage: for i in range(0,100):
@@ -2304,9 +2407,9 @@ cdef class GapElement_Function(GapElement):
             libgap = self.parent()
             a = [x if isinstance(x, GapElement) else libgap(x) for x in args]
 
-        sig_on()
         try:
-            GAP_Enter()
+            sig_GAP_Enter()
+            sig_on()
             if n == 0:
                 result = CALL_0ARGS(self.value)
             elif n == 1:
@@ -2345,17 +2448,13 @@ cdef class GapElement_Function(GapElement):
             elif n >= 7:
                 arg_list = make_gap_list(args)
                 result = CALL_XARGS(self.value, arg_list)
-
-            if result == NULL:
-                # We called a procedure that does not return anything
-                return None
-
-            return make_any_gap_element(self.parent(), result)
-        except RuntimeError as msg:
-            raise ValueError('libGAP: ' + str(msg))
+            sig_off()
         finally:
             GAP_Leave()
-            sig_off()
+        if result == NULL:
+            # We called a procedure that does not return anything
+            return None
+        return make_any_gap_element(self.parent(), result)
 
 
 
@@ -2917,8 +3016,7 @@ cdef class GapElement_Record(GapElement):
         sage: rec['no_such_element']
         Traceback (most recent call last):
         ...
-        IndexError: libGAP: Error, Record Element: '<rec>.no_such_element' must
-        have an assigned value
+        GAPError: Error, Record Element: '<rec>.no_such_element' must have an assigned value
     """
 
     def __len__(self):
@@ -2936,7 +3034,6 @@ cdef class GapElement_Record(GapElement):
             3
         """
         return LEN_PREC(self.value)
-
 
     def __iter__(self):
         r"""
@@ -2956,7 +3053,6 @@ cdef class GapElement_Record(GapElement):
             [('a', 123), ('b', 456)]
         """
         return GapElement_RecordIterator(self)
-
 
     cpdef UInt record_name_to_index(self, name):
         r"""
@@ -3007,13 +3103,10 @@ cdef class GapElement_Record(GapElement):
         try:
             GAP_Enter()
             result = ELM_REC(self.value, i)
-            return make_any_gap_element(self.parent(), result)
-        except RuntimeError as msg:
-            raise IndexError('libGAP: ' + str(msg))
         finally:
             GAP_Leave()
             sig_off()
-
+        return make_any_gap_element(self.parent(), result)
 
     def sage(self):
         r"""

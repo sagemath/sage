@@ -700,8 +700,8 @@ def tarjan_strongly_connected_components(G):
         sage: D.strongly_connected_components()
         [[3], [0, 1, 2], [6], [5], [4]]
         sage: D = DiGraph([('a','b'), ('b','c'), ('c', 'd'), ('d', 'b'), ('c', 'e')])
-        sage: D.strongly_connected_components()
-        [['e'], ['c', 'b', 'd'], ['a']]
+        sage: [sorted(scc) for scc in D.strongly_connected_components()]
+        [['e'], ['b', 'c', 'd'], ['a']]
 
     TESTS:
 

@@ -23,7 +23,7 @@ from __future__ import absolute_import
 from cpython cimport *
 
 import sage.modules.free_module
-from sage.structure.element cimport coercion_model
+from sage.structure.coerce cimport coercion_model
 
 
 cdef class Matrix(Matrix0):
@@ -291,9 +291,7 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES:
 
-        We first coerce a square matrix.
-
-        ::
+        We first coerce a square matrix. ::
 
             sage: A = MatrixSpace(QQ,3)([1,2,3,4/3,5/3,6/4,7,8,9])
             sage: B = magma(A); B                       # (indirect doctest) optional - magma
@@ -306,9 +304,7 @@ cdef class Matrix(Matrix0):
             Full Matrix Algebra of degree 3 over Rational Field
 
         We coerce a non-square matrix over
-        `\ZZ/8\ZZ`.
-
-        ::
+        `\ZZ/8\ZZ`. ::
 
             sage: A = MatrixSpace(Integers(8),2,3)([-1,2,3,4,4,-2])
             sage: B = magma(A); B                       # optional - magma
@@ -319,15 +315,11 @@ cdef class Matrix(Matrix0):
             sage: B.Parent()                            # optional - magma
             Full RMatrixSpace of 2 by 3 matrices over IntegerRing(8)
 
-        ::
-
             sage: R.<x,y> = QQ[]
             sage: A = MatrixSpace(R,2,2)([x+y,x-1,y+5,x*y])
             sage: B = magma(A); B                       # optional - magma
             [x + y x - 1]
             [y + 5   x*y]
-
-        ::
 
             sage: R.<x,y> = ZZ[]
             sage: A = MatrixSpace(R,2,2)([x+y,x-1,y+5,x*y])
@@ -336,9 +328,7 @@ cdef class Matrix(Matrix0):
             [y + 5   x*y]
 
         We coerce a matrix over a cyclotomic field, where the generator
-        must be named during the coercion.
-
-        ::
+        must be named during the coercion. ::
 
             sage: K = CyclotomicField(9) ; z = K.0
             sage: M = matrix(K,3,3,[0,1,3,z,z**4,z-1,z**17,1,0])
@@ -352,10 +342,27 @@ cdef class Matrix(Matrix0):
             [-zeta9^5 - zeta9^2                  1                  0]
             sage: magma(M**2) == magma(M)**2           # optional - magma
             True
+
+        One sparse matrix::
+
+            sage: M = matrix(QQ,2,2,[4,6,55,0],sparse=True)
+            sage: T = magma(M); T    # optional - magma
+            Sparse matrix with 2 rows and 2 columns over Rational Field
+            sage: T.Determinant()    # optional - magma
+            -330
         """
-        P = magma(self.parent())
-        v = [x._magma_init_(magma) for x in self.list()]
-        return '%s![%s]'%(P.name(), ','.join(v))
+        if self.is_sparse():
+            R = magma(self.base_ring())
+            s = "SparseMatrix({}, {}, {}, ["
+            s = s.format(R.name(), self.nrows(), self.ncols())
+            entries = ("<{}, {}, {}>".format(ij[0] + 1, ij[1] + 1,
+                                             mij._magma_init_(magma))
+                       for ij, mij in self.dict().items())
+            return s + ', '.join(entries) + "])"
+        else:
+            P = magma(self.parent())
+            v = [x._magma_init_(magma) for x in self.list()]
+            return '%s![%s]' % (P.name(), ','.join(v))
 
     def _maple_init_(self):
         """
@@ -442,7 +449,7 @@ cdef class Matrix(Matrix0):
         """
         Returns a string defining a Scilab representation of self.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: a = matrix([[1,2,3],[4,5,6],[7,8,9]]); a
             [1 2 3]
@@ -471,7 +478,7 @@ cdef class Matrix(Matrix0):
         """
         Creates a ScilabElement object based on self and returns it.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: a = matrix([[1,2,3],[4,5,6],[7,8,9]]); a
             [1 2 3]

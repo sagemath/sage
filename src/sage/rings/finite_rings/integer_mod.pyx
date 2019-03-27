@@ -70,7 +70,7 @@ TESTS::
 #*****************************************************************************
 from __future__ import print_function, division, absolute_import
 
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on, sig_off, sig_check
 
 from cpython.int cimport *
 from cpython.list cimport *
@@ -90,14 +90,15 @@ from sage.arith.long cimport integer_check_long, integer_check_long_py, ERR_OVER
 import sage.rings.rational as rational
 from sage.libs.pari.all import pari, PariError
 import sage.rings.integer_ring as integer_ring
+import sage.rings.rational_field
 
 import sage.interfaces.all
 
 import sage.rings.integer
-import sage.rings.integer_ring
 cimport sage.rings.integer
 from sage.rings.integer cimport Integer
 
+from sage.structure.coerce cimport py_scalar_to_element
 import sage.structure.element
 cimport sage.structure.element
 coerce_binop = sage.structure.element.coerce_binop
@@ -344,6 +345,15 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: TestSuite(Zmod(6)).run()
             sage: TestSuite(Zmod(2^10 * 3^5)).run()
             sage: TestSuite(Zmod(2^30 * 3^50 * 5^20)).run()
+
+            sage: GF(29)(SR(1/3))
+            10
+            sage: Integers(30)(QQ['x'](1/7))
+            13
+            sage: Integers(30)(SR(1/4))
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: inverse of Mod(4, 30) does not exist
         """
         self._parent = parent
         self.__modulus = parent._pyx_order
@@ -363,7 +373,19 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             self.set_from_long(longval)
             return
         else:
-            z = sage.rings.integer_ring.Z(value)
+            try:
+                z = integer_ring.Z(value)
+            except (TypeError, ValueError):
+                from sage.symbolic.expression import Expression
+                if isinstance(value, Expression):
+                    value = value.pyobject()
+                else:
+                    value = py_scalar_to_element(value)
+                if isinstance(value, Element) and value.parent().is_exact():
+                    value = sage.rings.rational_field.QQ(value)
+                    z = value % self.__modulus.sageInteger
+                else:
+                    raise
         self.set_from_mpz(z.value)
 
     cdef IntegerMod_abstract _new_c_fast(self, unsigned long value):
@@ -813,7 +835,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         Returns the minimal polynomial of this element.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: GF(241, 'a')(1).minpoly()
             x + 240
         """
@@ -823,7 +846,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         Returns the minimal polynomial of this element.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: GF(241, 'a')(1).minimal_polynomial(var = 'z')
             z + 240
         """
@@ -2161,7 +2185,8 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
     def __pow__(IntegerMod_gmp self, exp, m): # NOTE: m ignored, always use modulus of parent ring
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: R = Integers(10^10)
             sage: R(2)^1000
             5668069376
@@ -2207,9 +2232,9 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         sig_on()
         try:
             mpz_pow_helper(x.value, self.value, exp, self.__modulus.sageInteger.value)
-            return x
         finally:
             sig_off()
+        return x
 
     def __invert__(IntegerMod_gmp self):
         """
@@ -2630,7 +2655,8 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
     def __pow__(IntegerMod_int self, exp, m): # NOTE: m ignored, always use modulus of parent ring
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: R = Integers(10)
             sage: R(2)^10
             4
@@ -2682,15 +2708,16 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         elif type(exp) is Integer and mpz_cmpabs_ui((<Integer>exp).value, 100000) == -1:
             long_exp = mpz_get_si((<Integer>exp).value)
         else:
+            base = self.lift()
             sig_on()
             try:
                 mpz_init(res_mpz)
-                base = self.lift()
                 mpz_pow_helper(res_mpz, (<Integer>base).value, exp, self.__modulus.sageInteger.value)
-                return self._new_c(mpz_get_ui(res_mpz))
-            finally:
+                res = mpz_get_ui(res_mpz)
                 mpz_clear(res_mpz)
+            finally:
                 sig_off()
+            return self._new_c(res)
 
         if long_exp == 0 and self.ivalue == 0:
             # Return 0 if the modulus is 1, otherwise return 1.
@@ -3421,7 +3448,8 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
 
     def __pow__(IntegerMod_int64 self, exp, m): # NOTE: m ignored, always use modulus of parent ring
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: R = Integers(10)
             sage: R(2)^10
             4
@@ -3484,19 +3512,16 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         elif type(exp) is Integer and mpz_cmpabs_ui((<Integer>exp).value, 100000) == -1:
             long_exp = mpz_get_si((<Integer>exp).value)
         else:
+            base = self.lift()
             sig_on()
             try:
                 mpz_init(res_mpz)
-                base = self.lift()
                 mpz_pow_helper(res_mpz, (<Integer>base).value, exp, self.__modulus.sageInteger.value)
-                if mpz_fits_ulong_p(res_mpz):
-                    res = mpz_get_ui(res_mpz)
-                else:
-                    res = mpz_get_pyintlong(res_mpz)
-                return self._new_c(res)
-            finally:
+                res = mpz_get_ui(res_mpz)
                 mpz_clear(res_mpz)
+            finally:
                 sig_off()
+            return self._new_c(res)
 
         if long_exp == 0 and self.ivalue == 0:
             # Return 0 if the modulus is 1, otherwise return 1.
@@ -3604,9 +3629,10 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             g = 0
         return self._new_c(g)
 
+
 ### Helper functions
 
-cdef mpz_pow_helper(mpz_t res, mpz_t base, object exp, mpz_t modulus):
+cdef int mpz_pow_helper(mpz_t res, mpz_t base, object exp, mpz_t modulus) except -1:
     cdef bint invert = False
     cdef long long_exp
 
@@ -3944,6 +3970,7 @@ cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
             b *= g*g
         return res
 
+
 def lucas_q1(mm, IntegerMod_abstract P):
     """
     Return `V_k(P, 1)` where `V_k` is the Lucas
@@ -3981,16 +4008,15 @@ def lucas_q1(mm, IntegerMod_abstract P):
     d1 = P
     d2 = P*P - two
 
-    sig_on()
     cdef int j
     for j from mpz_sizeinbase(m.value, 2)-1 > j > 0:
+        sig_check()
         if mpz_tstbit(m.value, j):
             d1 = d1*d2 - P
             d2 = d2*d2 - two
         else:
             d2 = d1*d2 - P
             d1 = d1*d1 - two
-    sig_off()
     if mpz_odd_p(m.value):
         return d1*d2 - P
     else:
@@ -4087,9 +4113,9 @@ def lucas(k, P, Q=1, n=None):
     q0 = p._new_c_from_long(1)
     q1 = p._new_c_from_long(1)
 
-    sig_on()
     cdef int j
     for j from mpz_sizeinbase(m.value, 2)-1 >= j >= 0:
+        sig_check()
         q0 = q0*q1
         if mpz_tstbit(m.value, j):
             q1 = q0*Q
@@ -4099,8 +4125,8 @@ def lucas(k, P, Q=1, n=None):
             q1 = q0
             v1 = v0*v1 - p*q0
             v0 = v0*v0 - two*q0
-    sig_off()
     return [v0,q0]
+
 
 ############# Homomorphisms ###############
 

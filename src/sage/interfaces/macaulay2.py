@@ -98,15 +98,14 @@ AUTHORS:
 from __future__ import print_function
 
 import os
+import re
 
-from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
-                                    AsciiArtString)
-
+from sage.interfaces.expect import Expect, ExpectElement, ExpectFunction
+from sage.interfaces.interface import AsciiArtString
 from sage.misc.multireplace import multiple_replace
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
 
-import re
 
 def remove_output_labels(s):
     r"""

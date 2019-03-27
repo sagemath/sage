@@ -85,9 +85,8 @@ from .real_mpfr import mpfr_prec_min, mpfr_prec_max
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.categories.fields import Fields
 
-IF HAVE_GMPY2:
-    cimport gmpy2
-    gmpy2.import_gmpy2()
+cimport gmpy2
+gmpy2.import_gmpy2()
 
 NumberFieldElement_quadratic = None
 AlgebraicNumber_base = None
@@ -313,6 +312,9 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         TESTS::
 
             sage: TestSuite(MPComplexField(17)).run()
+
+            sage: MPComplexField(17).is_finite()
+            False
         """
         if prec < mpfr_prec_min() or prec > mpfr_prec_max():
             raise ValueError("prec (=%s) must be >= %s and <= %s." % (
@@ -594,17 +596,6 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         """
         return False
 
-    def is_finite(self):
-        """
-        Return ``False``, since the field of complex numbers is not finite.
-
-        EXAMPLES::
-
-            sage: MPComplexField(17).is_finite()
-            False
-        """
-        return False
-
     def characteristic(self):
         """
         Return 0, since the field of complex numbers has characteristic 0.
@@ -821,18 +812,18 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
         Conversion from gmpy2 numbers::
 
-            sage: from gmpy2 import *           # optional - gmpy2
-            sage: MPC(mpc(int(2),int(1)))       # optional - gmpy2
+            sage: from gmpy2 import *
+            sage: MPC(mpc(int(2),int(1)))
             2.0000000000000000000000000000 + 1.0000000000000000000000000000*I
-            sage: MPC(mpfr(2.5))                # optional - gmpy2
+            sage: MPC(mpfr(2.5))
             2.5000000000000000000000000000
-            sage: MPC(mpq('3/2'))               # optional - gmpy2
+            sage: MPC(mpq('3/2'))
             1.5000000000000000000000000000
-            sage: MPC(mpz(int(5)))              # optional - gmpy2
+            sage: MPC(mpz(int(5)))
             5.0000000000000000000000000000
-            sage: re = mpfr('2.5')              # optional - gmpy2
-            sage: im = mpz(int(2))              # optional - gmpy2
-            sage: MPC(re, im)                   # optional - gmpy2
+            sage: re = mpfr('2.5')
+            sage: im = mpz(int(2))
+            sage: MPC(re, im)
             2.5000000000000000000000000000 + 2.0000000000000000000000000000*I
         """
         # This should not be called except when the number is being created.
@@ -874,17 +865,17 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
                 zz = sage.rings.complex_field.ComplexField(self._parent.prec())(z)
                 self._set(zz)
                 return
-            elif HAVE_GMPY2 and type(z) is gmpy2.mpc:
+            elif type(z) is gmpy2.mpc:
                 mpc_set(self.value, (<gmpy2.mpc>z).c, rnd)
                 return
             # then, no imaginary part
-            elif HAVE_GMPY2 and type(z) is gmpy2.mpfr:
+            elif type(z) is gmpy2.mpfr:
                 mpc_set_fr(self.value, (<gmpy2.mpfr>z).f, rnd)
                 return
-            elif HAVE_GMPY2 and type(z) is gmpy2.mpq:
+            elif type(z) is gmpy2.mpq:
                 mpc_set_q(self.value, (<gmpy2.mpq>z).q, rnd)
                 return
-            elif HAVE_GMPY2 and type(z) is gmpy2.mpz:
+            elif type(z) is gmpy2.mpz:
                 mpc_set_z(self.value, (<gmpy2.mpz>z).z, rnd)
                 return
             elif isinstance(z, RealNumber):
@@ -1268,40 +1259,30 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
             sage: MPC = MPComplexField()
             sage: c = MPC(2,1)
-            sage: c.__mpc__()                               # optional - gmpy2
+            sage: c.__mpc__()
             mpc('2.0+1.0j')
-            sage: from gmpy2 import mpc                     # optional - gmpy2
-            sage: mpc(c)                                    # optional - gmpy2
+            sage: from gmpy2 import mpc
+            sage: mpc(c)
             mpc('2.0+1.0j')
             sage: MPCF = MPComplexField(42)
-            sage: mpc(MPCF(12, 12)).precision               # optional - gmpy2
+            sage: mpc(MPCF(12, 12)).precision
             (42, 42)
             sage: MPCF = MPComplexField(236)
-            sage: mpc(MPCF(12, 12)).precision               # optional - gmpy2
+            sage: mpc(MPCF(12, 12)).precision
             (236, 236)
             sage: MPCF = MPComplexField(63)
             sage: x = MPCF('15.64E+128', '15.64E+128')
-            sage: y = mpc(x)                                # optional - gmpy2
-            sage: y.precision                               # optional - gmpy2
+            sage: y = mpc(x)
+            sage: y.precision
             (63, 63)
-            sage: MPCF(y) == x                              # optional - gmpy2
+            sage: MPCF(y) == x
             True
-            sage: x = mpc('1.324+4e50j', precision=(70,70)) # optional - gmpy2
-            sage: y = MPComplexField(70)(x)                 # optional - gmpy2
-            sage: mpc(y) == x                               # optional - gmpy2
+            sage: x = mpc('1.324+4e50j', precision=(70,70))
+            sage: y = MPComplexField(70)(x)
+            sage: mpc(y) == x
             True
-
-        TESTS::
-
-            sage: c.__mpc__(); raise NotImplementedError("gmpy2 is not installed")
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: gmpy2 is not installed
         """
-        IF HAVE_GMPY2:
-            return gmpy2.GMPy_MPC_From_mpfr(self.value.re, self.value.im)
-        ELSE:
-            raise NotImplementedError("gmpy2 is not installed")
+        return gmpy2.GMPy_MPC_From_mpfr(self.value.re, self.value.im)
 
     cpdef int _cmp_(self, other) except -2:
         r"""

@@ -177,7 +177,7 @@ def bell_number(n, algorithm='flint', **options):
 
       - ``'flint'`` -- Wrap FLINT's ``arith_bell_number``
 
-      - ``'gap'`` -- Wrap libGAP's ``Bell``
+      - ``'gap'`` -- Wrap GAP's ``Bell``
 
       - ``'mpmath'`` -- Wrap mpmath's ``bell``
 

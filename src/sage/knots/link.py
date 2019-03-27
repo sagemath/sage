@@ -36,7 +36,7 @@ AUTHORS:
 - Amit Jamadagni
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014  Miguel Angel Marco Buzunariz
 #                           Amit Jamadagni
 #
@@ -44,8 +44,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import division
 
 import six
@@ -65,9 +65,10 @@ from sage.misc.flatten import flatten
 from sage.misc.cachefunc import cached_method
 from copy import deepcopy, copy
 from itertools import combinations
+from sage.structure.sage_object import SageObject
 
 
-class Link(object):
+class Link(SageObject):
     r"""
     A link.
 
@@ -511,7 +512,7 @@ class Link(object):
                 rels.append(ela * elb / elc / elb)
             return F.quotient(rels)
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return a string representation.
 
@@ -1722,6 +1723,16 @@ class Link(object):
         """
         Return the signature of ``self``.
 
+        This is defined as the signature of the symmetric matrix
+
+        .. MATH::
+
+             V + V^{t},
+
+        where `V` is the :meth:`Seifert matrix <seifert_matrix>`.
+
+        .. SEEALSO:: :meth:`omega_signature`, :meth:`seifert_matrix`
+
         EXAMPLES::
 
             sage: B = BraidGroup(4)
@@ -1736,8 +1747,56 @@ class Link(object):
             sage: L.signature()
             -2
         """
-        m = 2 * (self.seifert_matrix() + self.seifert_matrix().transpose())
-        return sum([j.real().sign() for j in m.eigenvalues()], ZZ.zero())
+        V = self.seifert_matrix()
+        m = V + V.transpose()
+        return ZZ.sum(j.real().sign() for j in m.eigenvalues())
+
+    def omega_signature(self, omega):
+        r"""
+        Compute the `\omega`-signature of ``self``.
+
+        INPUT:
+
+        - `\omega` -- a complex number of modulus 1. This is assumed to be
+          coercible to ``QQbar``.
+
+        This is defined as the signature of the Hermitian matrix
+
+        .. MATH::
+
+             (1 - \omega) V + (1 - \omega^{-1}) V^{t},
+
+        where `V` is the :meth:`Seifert matrix <seifert_matrix>`,
+        as explained on page 122 of [Livi1993]_.
+
+        According to [Conway2018]_, this is also known as the
+        Levine-Tristram signature, the equivariant signature or the
+        Tristram-Levine signature.
+
+        .. SEEALSO:: :meth:`signature`, :meth:`seifert_matrix`
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: K = Knot(B([1,1,1,2,-1,2,-3,2,-3]))
+            sage: omega = QQbar.zeta(3)
+            sage: K.omega_signature(omega)
+            -2
+
+        REFERENCES:
+
+        .. [Livi1993] Charles Livingston, *Knot Theory*, Carus Mathematical
+           Monographs, number 24.
+
+        .. [Conway2018] Anthony Conway, *Notes On The Levine-Tristram
+           Signature Function*, July 2018
+           http://www.unige.ch/math/folks/conway/Notes/LevineTristramSurvey.pdf
+        """
+        from sage.rings.qqbar import QQbar
+        omega = QQbar(omega)
+        V = self.seifert_matrix()
+        m = (1 - omega) * V + (1 - omega.conjugate()) * V.transpose()
+        return ZZ.sum(j.real().sign() for j in m.eigenvalues())
 
     def alexander_polynomial(self, var='t'):
         """

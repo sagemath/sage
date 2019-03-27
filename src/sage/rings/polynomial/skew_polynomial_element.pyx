@@ -2251,7 +2251,7 @@ cdef class SkewPolynomial_generic_dense(SkewPolynomial):
         Return the generic dense skew polynomial corresponding to the
         current parameters provided ``self``.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])

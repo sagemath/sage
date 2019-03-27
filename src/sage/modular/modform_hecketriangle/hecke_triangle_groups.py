@@ -732,7 +732,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         - ``D`` -- An element of the base ring of ``self``
                    corresponding to a discriminant.
 
-        - ``K`` -- A field to which we want the (correct) embeddding.
+        - ``K`` -- A field to which we want the (correct) embedding.
                    If ``K=None`` (default) then ``AlgebraicField()`` is
                    used for positive ``D`` and ``AlgebraicRealField()``
                    otherwise.

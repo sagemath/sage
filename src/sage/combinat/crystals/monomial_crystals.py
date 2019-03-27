@@ -75,15 +75,15 @@ WARNING:
     `i < j` and `c_{ij} = 0` if `i>j`.
 """
 
-#******************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2013
 #
 #  Arthur Lubovsky (alubovsky at albany dot edu)
 #  Ben Salisbury (ben dot salisbury at cmich dot edu)
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from copy import copy
 from sage.structure.element import Element
@@ -219,9 +219,9 @@ class NakajimaMonomial(Element):
 
             sage: M = crystals.infinity.NakajimaMonomials(['C',5])
             sage: m1 = M.module_generators[0].f(1)
-            sage: hash(m1)
-            4715601665014767730  # 64-bit
-            -512614286           # 32-bit
+            sage: m2 = M.module_generators[0].f(2)
+            sage: hash(m1) != hash(m2)
+            True
         """
         return hash(frozenset(tuple(six.iteritems(self._Y))))
 
@@ -1164,16 +1164,16 @@ class CrystalOfNakajimaMonomials(InfinityCrystalOfNakajimaMonomials):
         sage: c = matrix([[0,1,0],[0,0,1],[1,0,0]])
         sage: La = RootSystem(['A',2,1]).weight_lattice(extended=True).fundamental_weights()
         sage: M = crystals.NakajimaMonomials(2*La[1], c=c)
-        sage: list(M.subcrystal(max_depth=3))
-        [Y(1,0)^2,
-         Y(0,1) Y(1,0) Y(1,1)^-1 Y(2,0),
-         Y(0,2)^-1 Y(1,0) Y(2,0) Y(2,2),
-         Y(0,1)^2 Y(1,1)^-2 Y(2,0)^2,
-         Y(0,0) Y(0,1) Y(1,0) Y(2,1)^-1,
+        sage: sorted(M.subcrystal(max_depth=3), key=str)
+        [Y(0,0) Y(0,1) Y(1,0) Y(2,1)^-1,
+         Y(0,0) Y(0,1)^2 Y(1,1)^-1 Y(2,0) Y(2,1)^-1,
          Y(0,0) Y(0,2)^-1 Y(1,0) Y(1,1) Y(2,1)^-1 Y(2,2),
          Y(0,1) Y(0,2)^-1 Y(1,1)^-1 Y(2,0)^2 Y(2,2),
-         Y(0,0) Y(0,1)^2 Y(1,1)^-1 Y(2,0) Y(2,1)^-1,
-         Y(1,0) Y(1,3) Y(2,0) Y(2,3)^-1]
+         Y(0,1) Y(1,0) Y(1,1)^-1 Y(2,0),
+         Y(0,1)^2 Y(1,1)^-2 Y(2,0)^2,
+         Y(0,2)^-1 Y(1,0) Y(2,0) Y(2,2),
+         Y(1,0) Y(1,3) Y(2,0) Y(2,3)^-1,
+         Y(1,0)^2]
     """
     @staticmethod
     def __classcall_private__(cls, cartan_type, La=None, c=None):

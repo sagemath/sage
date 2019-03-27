@@ -125,6 +125,8 @@ cdef extern from "acb.h":
     void acb_sin_cos(arb_t s, arb_t c, const acb_t z, long prec)
     void acb_tan(acb_t s, const acb_t z, long prec)
     void acb_cot(acb_t s, const acb_t z, long prec)
+    void acb_sec(acb_t s, const acb_t z, long prec)
+    void acb_csc(acb_t c, const acb_t z, long prec)
     void acb_sin_pi(acb_t s, const acb_t z, long prec)
     void acb_cos_pi(acb_t s, const acb_t z, long prec)
     void acb_sin_cos_pi(acb_t s, acb_t c, const acb_t z, long prec)
@@ -143,6 +145,8 @@ cdef extern from "acb.h":
     void acb_sinh_cosh(acb_t s, acb_t c, const acb_t z, long prec)
     void acb_tanh(acb_t s, const acb_t z, long prec)
     void acb_coth(acb_t s, const acb_t z, long prec)
+    void acb_sech(acb_t s, const acb_t z, long prec)
+    void acb_csch(acb_t c, const acb_t z, long prec)
 
     void acb_rising_ui_bs(acb_t z, const acb_t x, unsigned long n, long prec)
     void acb_rising_ui_rs(acb_t z, const acb_t x, unsigned long n, unsigned long step, long prec)

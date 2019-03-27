@@ -36,6 +36,15 @@ from sage.rings.ring cimport Field
 cdef class NumberField(Field):
     r"""
     Base class for all number fields.
+
+    TESTS::
+
+        sage: z = polygen(QQ)
+        sage: K.<theta, beta> = NumberField([z^3 - 3, z^2 + 1])
+        sage: K.is_finite()
+        False
+        sage: K.order()
+        +Infinity
     """
     # This token docstring is mostly there to prevent Sphinx from pasting in
     # the docstring of the __init__ method inherited from IntegralDomain, which
@@ -119,21 +128,6 @@ cdef class NumberField(Field):
             Maximal Order in Number Field in b with defining polynomial x^3 - 2
         """
         raise NotImplementedError
-
-    def is_finite(self):
-        """
-        Return False since number fields are not finite.
-
-        EXAMPLES::
-
-            sage: z = polygen(QQ)
-            sage: K.<theta, beta> = NumberField([z^3 - 3, z^2 + 1])
-            sage: K.is_finite()
-            False
-            sage: K.order()
-            +Infinity
-        """
-        return False
 
     def is_absolute(self):
         """

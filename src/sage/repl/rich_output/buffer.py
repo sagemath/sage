@@ -21,14 +21,14 @@ EXAMPLES::
     sage: type(buf.get()) is bytes
     True
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 import os
@@ -135,7 +135,6 @@ class OutputBuffer(SageObject):
             sage: stat.S_IMODE(os.stat(tmp).st_mode) & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
             0
         """
-        import os
         from sage.env import SAGE_EXTCODE
         filename = os.path.abspath(filename)
         if filename.startswith(os.path.abspath(SAGE_EXTCODE)):

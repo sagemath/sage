@@ -1020,10 +1020,10 @@ class ParallelogramPolyomino(ClonableList):
         for i in range(len(upper_path)-1):
             p_up[1-upper_path[i]] += 1
             p_down[1-lower_path[i]] += 1
-            if(p_up[0] <= p_down[0] or p_down[1] <= p_up[1]):
+            if (p_up[0] <= p_down[0] or p_down[1] <= p_up[1]):
                 raise ValueError("the lower and upper paths are crossing")
-        p_up[1-upper_path[-1]] += 1
-        p_down[1-lower_path[-1]] += 1
+        p_up[1 - upper_path[-1]] += 1
+        p_down[1 - lower_path[-1]] += 1
         if (p_up[0] != p_down[0] or p_up[1] != p_down[1]):
             raise ValueError("the two paths have distinct ends")
 
@@ -1338,7 +1338,7 @@ class ParallelogramPolyomino(ClonableList):
         See :meth:`_to_dyck_delest_viennot` for the exact references.
         See also :meth:`to_ordered_tree()`.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: pp = ParallelogramPolyomino([[0, 1], [1, 0]])
             sage: pp._to_ordered_tree_via_dyck()

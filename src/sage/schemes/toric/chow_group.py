@@ -69,7 +69,7 @@ EXAMPLES::
     (Z, C7, C2 x C2 x Z^5, Z)
     sage: A.degree(2).ngens()
     7
-    sage: a = sum( A.gen(i) * (i+1) for i in range(0,A.ngens()) )   # an element of A
+    sage: a = sum( A.gen(i) * (i+1) for i in range(A.ngens()) )   # an element of A
     sage: a  # long time (2s on sage.math, 2011)
     ( 3 | 1 mod 7 | 0 mod 2, 1 mod 2, 4, 5, 6, 7, 8 | 9 )
 
@@ -116,17 +116,17 @@ Chow cycles can be of mixed degrees::
     ( 1 | 4 mod 7 | 1 mod 2, 1 mod 2, 1, 1, 1, 1, 1 | 1 )
     sage: mixed.project_to_degree(1)
     ( 0 | 4 mod 7 | 0 mod 2, 0 mod 2, 0, 0, 0, 0, 0 | 0 )
-    sage: sum( mixed.project_to_degree(i) for i in range(0,X.dimension()+1) ) == mixed
+    sage: sum( mixed.project_to_degree(i) for i in range(X.dimension()+1) ) == mixed
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Volker Braun  <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.all import flatten
 from sage.misc.fast_methods import WithEqualityById
@@ -193,7 +193,6 @@ class ChowCycle(FGP_Element):
         """
         FGP_Element.__init__(self, parent, v, check)
 
-
     def _repr_(self):
         r"""
         Return a string representation of the Chow cycle.
@@ -217,29 +216,28 @@ class ChowCycle(FGP_Element):
             sage: A = X.Chow_group()
             sage: A.degree()
             (Z, 0, C2 x Z^5, Z)
-            sage: sum( A.gen(i) * (i+1) for i in range(0,A.ngens()) )
+            sage: sum( A.gen(i) * (i+1) for i in range(A.ngens()) )
             ( 2 || 1 mod 2, 3, 4, 5, 6, 7 | 8 )
         """
         A = self.parent()
         s = '('
-        for degree in range(0,A.scheme().dimension()+1):
-            if degree>0:
+        for degree in range(A.scheme().dimension() + 1):
+            if degree:
                 s += '|'
             generators = A.gens(degree=degree)
             coefficients = A.coordinate_vector(self, degree=degree)
-            if len(generators)>0:
+            if generators:
                 s += ' '
             for i, gen in enumerate(generators):
-                if i>0:
+                if i > 0:
                     s += ', '
                 s += str(coefficients[i])
                 if gen.order() != Infinity:
-                    s += ' mod '+str(gen.order())
-            if len(generators)>0:
+                    s += ' mod ' + str(gen.order())
+            if generators:
                 s += ' '
         s += ')'
         return s
-
 
     def degree(self):
         r"""
@@ -296,7 +294,7 @@ class ChowCycle(FGP_Element):
         """
         ambient_dim = self.parent()._variety.dimension()
         v = list(self.lift())
-        for i in range(0,len(v)):
+        for i in range(len(v)):
             cone = self.parent()._cones[i]
             if cone.dim() != ambient_dim-degree:
                 v[i] = 0
@@ -951,7 +949,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
             pass
 
         self._degree = tuple(ChowGroup_degree_class(self,d)
-                             for d in range(0,self._variety.dimension()+1))
+                             for d in range(self._variety.dimension() + 1))
         return self._degree
 
 
@@ -1153,26 +1151,25 @@ class ChowGroup_degree_class(SageObject):
             'Q'
         """
         invariants = self._module.invariants()
-        if len(invariants)==0:
+        if not invariants:
             return '0'
 
-        free = [x for x in invariants if x==0]
-        tors = [x for x in invariants if x> 0]
+        free = [x for x in invariants if x == 0]
+        tors = [x for x in invariants if x > 0]
 
-        if self._Chow_group.base_ring()==ZZ:
+        if self._Chow_group.base_ring() is ZZ:
             ring = 'Z'
-        elif self._Chow_group.base_ring()==QQ:
+        elif self._Chow_group.base_ring() is QQ:
             ring = 'Q'
         else:
             raise NotImplementedError('Base ring must be ZZ or QQ.')
 
         s = ['C' + str(x) for x in tors]
-        if len(free)==1:
+        if len(free) == 1:
             s.append(ring)
-        if len(free)>1:
+        elif len(free) > 1:
             s.append(ring + '^' + str(len(free)))
         return ' x '.join(s)
-
 
     def module(self):
         """
@@ -1191,7 +1188,6 @@ class ChowGroup_degree_class(SageObject):
         """
         return self._module
 
-
     def ngens(self):
         """
         Return the number of generators.
@@ -1208,7 +1204,6 @@ class ChowGroup_degree_class(SageObject):
             1
         """
         return len(self._gens)
-
 
     def gen(self, i):
         """
@@ -1232,7 +1227,6 @@ class ChowGroup_degree_class(SageObject):
             ( 0 | 0 | 1 )
         """
         return self._gens[i]
-
 
     def gens(self):
         """
@@ -1268,7 +1262,7 @@ def is_ChowGroup(x):
 
     EXAMPLES::
 
-        sage: P2=toric_varieties.P2()
+        sage: P2 = toric_varieties.P2()
         sage: A = P2.Chow_group()
         sage: from sage.schemes.toric.chow_group import is_ChowGroup
         sage: is_ChowGroup(A)

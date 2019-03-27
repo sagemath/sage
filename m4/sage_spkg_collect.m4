@@ -72,11 +72,11 @@ AC_MSG_RESULT([])
 # Usage: newest_version $pkg
 # Print version number of latest package $pkg
 newest_version() {
-    PKG=$[1]
-    if test -f "$SAGE_ROOT/build/pkgs/$PKG/package-version.txt" ; then
-        cat "$SAGE_ROOT/build/pkgs/$PKG/package-version.txt"
+    SPKG=$[1]
+    if test -f "$SAGE_ROOT/build/pkgs/$SPKG/package-version.txt" ; then
+        cat "$SAGE_ROOT/build/pkgs/$SPKG/package-version.txt"
     else
-        echo "$PKG"
+        echo "$SPKG"
     fi
 }
 
@@ -113,74 +113,74 @@ SAGE_SCRIPT_PACKAGES='\
 for DIR in $SAGE_ROOT/build/pkgs/*; do
     test -d "$DIR" || continue
 
-    PKG_TYPE_FILE="$DIR/type"
-    if test -f "$PKG_TYPE_FILE"; then
-        PKG_TYPE=`cat $PKG_TYPE_FILE`
+    SPKG_TYPE_FILE="$DIR/type"
+    if test -f "$SPKG_TYPE_FILE"; then
+        SPKG_TYPE=`cat $SPKG_TYPE_FILE`
     else
-        AC_MSG_ERROR(["$PKG_TYPE_FILE" is missing.])
+        AC_MSG_ERROR(["$SPKG_TYPE_FILE" is missing.])
     fi
 
-    PKG_NAME=$(basename $DIR)
-    PKG_VERSION=$(newest_version $PKG_NAME)
+    SPKG_NAME=$(basename $DIR)
+    SPKG_VERSION=$(newest_version $SPKG_NAME)
 
     in_sdist=no
 
     # Check consistency of 'DIR/type' file
-    case "$PKG_TYPE" in
+    case "$SPKG_TYPE" in
     base) ;;
-    standard) 
-        SAGE_STANDARD_PACKAGES+="    $PKG_NAME \\"$'\n'
+    standard)
+        SAGE_STANDARD_PACKAGES+="    $SPKG_NAME \\"$'\n'
         in_sdist=yes
         ;;
     optional)
-        if test -f $SAGE_SPKG_INST/$PKG_NAME-*; then
-            SAGE_OPTIONAL_INSTALLED_PACKAGES+="    $PKG_NAME \\"$'\n'
+        if test -f $SAGE_SPKG_INST/$SPKG_NAME-*; then
+            SAGE_OPTIONAL_INSTALLED_PACKAGES+="    $SPKG_NAME \\"$'\n'
         fi;
         ;;
     experimental) ;;
     script) ;;
     pip) ;;
     *)
-        AC_MSG_ERROR([The content of "$PKG_TYPE_FILE" must be 'base', 'standard', 'optional', 'experimental', 'script', or 'pip'])
+        AC_MSG_ERROR([The content of "$SPKG_TYPE_FILE" must be 'base', 'standard', 'optional', 'experimental', 'script', or 'pip'])
         ;;
     esac
 
-    SAGE_PACKAGE_VERSIONS+="vers_$PKG_NAME = $PKG_VERSION"$'\n'
+    SAGE_PACKAGE_VERSIONS+="vers_$SPKG_NAME = $SPKG_VERSION"$'\n'
 
-    # If $sage_spkg_install_{PKG_NAME} is set to no, then set inst_<pkgname> to
+    # If $sage_spkg_install_{SPKG_NAME} is set to no, then set inst_<pkgname> to
     # some dummy file to skip the installation. Note that an explicit
-    # "./sage -i PKG_NAME" will still install the package.
-    if test "$PKG_NAME" != "$PKG_VERSION"; then
-        sage_spkg_install="sage_spkg_install_${PKG_NAME}"
+    # "./sage -i SPKG_NAME" will still install the package.
+    if test "$SPKG_NAME" != "$SPKG_VERSION"; then
+        sage_spkg_install="sage_spkg_install_${SPKG_NAME}"
 
         if test "${!sage_spkg_install}" != no ; then
-            SAGE_BUILT_PACKAGES+="    $PKG_NAME \\"$'\n'
-            AC_MSG_RESULT([    $PKG_NAME-$PKG_VERSION])
+            SAGE_BUILT_PACKAGES+="    $SPKG_NAME \\"$'\n'
+            AC_MSG_RESULT([    $SPKG_NAME-$SPKG_VERSION])
         else
-            SAGE_DUMMY_PACKAGES+="    $PKG_NAME \\"$'\n'
-            AC_MSG_RESULT([    $PKG_NAME-$PKG_VERSION not installed (configure check)])
+            SAGE_DUMMY_PACKAGES+="    $SPKG_NAME \\"$'\n'
+            AC_MSG_RESULT([    $SPKG_NAME-$SPKG_VERSION will not be installed (configure check)])
         fi
     fi
 
     # Packages that should be included in the source distribution
     # This includes all standard packages and two special cases
-    case "$PKG_NAME" in
+    case "$SPKG_NAME" in
     mpir|python2)
         in_sdist=yes
         ;;
     esac
 
     if test "$in_sdist" = yes; then
-        SAGE_SDIST_PACKAGES+="    $PKG_NAME \\"$'\n'
+        SAGE_SDIST_PACKAGES+="    $SPKG_NAME \\"$'\n'
     fi
 
     # Determine package dependencies
-    DEP_FILE="$SAGE_ROOT/build/pkgs/$PKG_NAME/dependencies"
+    DEP_FILE="$SAGE_ROOT/build/pkgs/$SPKG_NAME/dependencies"
     if test -f "$DEP_FILE"; then
         # - the # symbol is treated as comment which is removed
         DEPS=`sed 's/^ *//; s/ *#.*//; q' $DEP_FILE`
     else
-        case "$PKG_TYPE" in
+        case "$SPKG_TYPE" in
         optional)
             DEPS=' | $(STANDARD_PACKAGES)' # default for optional packages
             ;;
@@ -196,18 +196,18 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
         esac
     fi
 
-    SAGE_PACKAGE_DEPENDENCIES+="deps_$PKG_NAME = $DEPS"$'\n'
+    SAGE_PACKAGE_DEPENDENCIES+="deps_$SPKG_NAME = $DEPS"$'\n'
 
     # Determine package build rules
-    case "$PKG_TYPE" in
+    case "$SPKG_TYPE" in
     pip)
-        SAGE_PIP_PACKAGES+="    $PKG_NAME \\"$'\n'
+        SAGE_PIP_PACKAGES+="    $SPKG_NAME \\"$'\n'
         ;;
     script)
-        SAGE_SCRIPT_PACKAGES+="    $PKG_NAME \\"$'\n'
+        SAGE_SCRIPT_PACKAGES+="    $SPKG_NAME \\"$'\n'
         ;;
     *)
-        SAGE_NORMAL_PACKAGES+="    $PKG_NAME \\"$'\n'
+        SAGE_NORMAL_PACKAGES+="    $SPKG_NAME \\"$'\n'
         ;;
     esac
 done

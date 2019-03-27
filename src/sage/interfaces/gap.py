@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 r"""
 Interface to GAP
 
@@ -226,8 +226,8 @@ def set_gap_memory_pool_size(size_in_bytes):
     """
     Set the desired gap memory pool size.
 
-    Subsequently started GAP/libGAP instances will use this as
-    default. Currently running instances are unchanged.
+    Subsequently started GAP instances will use this as default.
+    Already running instances are unchanged.
 
     GAP will only reserve ``size_in_bytes`` address space. Unless you
     actually start a big GAP computation, the memory will not be
@@ -295,7 +295,7 @@ def _get_gap_memory_pool_size_MB():
 
     String.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.interfaces.gap import \
         ....:     _get_gap_memory_pool_size_MB
@@ -944,7 +944,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             return self.new('last2;')
         else:
             if res.strip():
-                from sage.interfaces.expect import AsciiArtString
+                from sage.interfaces.interface import AsciiArtString
                 return AsciiArtString(res)
 
     def get_record_element(self, record, name):
@@ -1584,7 +1584,6 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
         except RuntimeError as msg:
             if verbose:
                 print('*** %s' % msg)
-            pass
     # end for
     g.save_workspace()
     g.quit()
@@ -1651,15 +1650,13 @@ class GapElement(GapElement_generic):
             sage: 'Centralizer' in s5._tab_completion()
             True
         """
-        from sage.misc.misc import uniq
         P = self.parent()
         v = P.eval(r'\$SAGE.OperationsAdmittingFirstArgument(%s)'%self.name())
         v = v.replace('Tester(','').replace('Setter(','').replace(')','').replace('\n', '')
         v = v.split(',')
         v = [ oper.split('"')[1] for oper in v ]
         v = [ oper for oper in v if all(ch in string.ascii_letters for ch in oper) ]
-        v = uniq(v)
-        return v
+        return sorted(set(v))
 
 
 @instancedoc

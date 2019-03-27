@@ -58,6 +58,13 @@
 #    If $SAGE_DESTDIR is not set then the command is run with $SAGE_SUDO, if
 #    set.
 #
+# - sdh_cmake [...]
+#
+#    Runs `cmake` in the current directory with the given arguments, as well as
+#    additional arguments passed to cmake (assuming packages are using the
+#    GNUInstallDirs module) so that `CMAKE_INSTALL_PREFIX` and
+#    `CMAKE_INSTALL_LIBDIR` are set correctly.
+#
 # - sdh_install [-T] SRC [SRC...] DEST
 #
 #    Copies one or more files or directories given as SRC (recursively in the
@@ -191,6 +198,25 @@ sdh_pip_install() {
     fi
     $sudo sage-pip-install $root "$@" || \
         sdh_die "Error installing $PKG_NAME"
+}
+
+
+sdh_cmake() {
+    echo "Configuring $PKG_NAME with cmake"
+    cmake . -DCMAKE_INSTALL_PREFIX="${SAGE_LOCAL}" \
+            -DCMAKE_INSTALL_LIBDIR=lib \
+            "$@"
+    if [ $? -ne 0 ]; then
+        if [ -f "$(pwd)/CMakeFiles/CMakeOutput.log" ]; then
+            sdh_die <<_EOF_
+Error configuring $PKG_NAME with cmake
+See the file
+    $(pwd)/CMakeFiles/CMakeOutput.log
+for details.
+_EOF_
+        fi
+        sdh_die "Error configuring $PKG_NAME with cmake"
+    fi
 }
 
 

@@ -117,7 +117,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def _pickle(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: R.<x> = Integers(25)['x']; A = matrix(R, [1,x,x^3+1,2*x])
             sage: A._pickle()
             ([1, x, x^3 + 1, 2*x], 0)
@@ -126,7 +127,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def _unpickle(self, data, int version):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: R.<x> = Integers(25)['x']; A = matrix(R, [1,x,x^3+1,2*x]); B = A.parent()(0)
             sage: v = A._pickle()
             sage: B._unpickle(v[0], v[1])

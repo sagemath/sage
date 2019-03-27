@@ -137,9 +137,9 @@ def adjoint(self):
 
     """
     if is_odd(self.dim()):
-        return QuadraticForm(self.matrix().adjoint()*2)
+        return QuadraticForm(self.matrix().adjoint_classical()*2)
     else:
-        return QuadraticForm(self.matrix().adjoint())
+        return QuadraticForm(self.matrix().adjoint_classical())
 
 
 def antiadjoint(self):

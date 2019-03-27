@@ -40,11 +40,7 @@ from __future__ import print_function
 from sage.categories.homset import HomsetWithBase
 from sage.structure.factory import UniqueFactory
 
-from sage.rings.all import ZZ, QQ, CommutativeRing
-from sage.arith.all import gcd
-
-from sage.rings.rational_field import is_RationalField
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.all import ZZ
 from sage.rings.ring import CommutativeRing
 
 from sage.schemes.generic.scheme import AffineScheme, is_AffineScheme

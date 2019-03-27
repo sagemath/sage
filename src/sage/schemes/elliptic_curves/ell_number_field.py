@@ -3834,6 +3834,14 @@ class EllipticCurve_number_field(EllipticCurve_field):
             ([(-3/4 : -15/8 : 1), (159965/16129 : -67536260/2048383 : 1)],
             45,
             0.152460177943144)
+
+        See :trac:`27387`::
+
+            sage: K.<a> = NumberField(x^2-x-26)
+            sage: E = EllipticCurve([a,1-a,0,93-16*a, 3150-560*a])
+            sage: P = E([65-35*a/3, (959*a-5377)/9])
+            sage: E.saturation([P],one_prime=2)
+            ([(-1/4*a + 3/4 : 59/8*a - 317/8 : 1)], 2, 0.344624259712631)
         """
         full_saturation = (max_prime == 0) and (one_prime == 0)
         Plist = [self(P) for P in points]

@@ -140,19 +140,19 @@ class MVPolytope(PBWCrystalElement):
 
             sage: MV = crystals.infinity.MVPolytopes(['C', 3])
             sage: b = MV.module_generators[0].f_string([1,2,1,2])
-            sage: sorted(b._polytope_vertices(MV.weight_lattice_realization()), key=list)
-            [(0, 0, 0), (2, 0, -2), (0, 2, -2)]
+            sage: sorted(b._polytope_vertices(MV.weight_lattice_realization()), key=attrcall('to_vector'))
+            [(0, 0, 0), (0, 2, -2), (2, 0, -2)]
 
             sage: MV = crystals.infinity.MVPolytopes(['D', 4])
             sage: b = MV.module_generators[0].f_string([1,2,3,4])
             sage: P = RootSystem(['D',4]).weight_lattice()
-            sage: sorted(b._polytope_vertices(P), key=list)  # long time
-            [0,
-             -Lambda[1] + Lambda[3] + Lambda[4],
-             Lambda[1] - Lambda[2] + Lambda[3] + Lambda[4],
+            sage: sorted(b._polytope_vertices(P), key=attrcall('to_vector'))  # long time
+            [-Lambda[1] + Lambda[3] + Lambda[4],
              -2*Lambda[2] + 2*Lambda[3] + 2*Lambda[4],
+             -Lambda[2] + 2*Lambda[4],
              -Lambda[2] + 2*Lambda[3],
-             -Lambda[2] + 2*Lambda[4]]
+             0,
+             Lambda[1] - Lambda[2] + Lambda[3] + Lambda[4]]
         """
         pbw_data = self._pbw_datum.parent
         W = pbw_data.weyl_group

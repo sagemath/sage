@@ -1110,7 +1110,7 @@ class ToricDivisor_generic(Divisor_generic):
         The :class:`~sage.schemes.toric.chow_group.ChowCycle`
         represented by the divisor.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: dP6 = toric_varieties.dP6()
             sage: cone = dP6.fan(1)[0]

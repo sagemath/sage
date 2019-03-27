@@ -2383,10 +2383,10 @@ class Graphics(WithEqualityById, SageObject):
         at least 10 units apart::
 
             sage: p = Graphics()
-            sage: p._get_vmin_vmax(1, 2, 10, None)
-            (9/10, 10.0)
-            sage: p._get_vmin_vmax(1, 5, 10, None)
-            (9/10, 10.0)
+            sage: p._get_vmin_vmax(1, 2, 10, None) == (9/10, 10)
+            True
+            sage: p._get_vmin_vmax(1, 5, 10, None) == (9/10, 10)
+            True
             sage: p._get_vmin_vmax(1, 10, 10, None)
             (9/10, 11)
             sage: p._get_vmin_vmax(1, 11, 10, None)
@@ -2903,7 +2903,7 @@ class Graphics(WithEqualityById, SageObject):
             if vgridlines=='minor':
                 vgridstyle['which']='both'
 
-            if hasattr(hgridlines, '__iter__'):
+            if not isinstance(hgridlines, str) and hasattr(hgridlines, '__iter__'):
                 hlines=iter(hgridlines)
                 hgridstyle.pop("minor",None)
                 for hline in hlines:
@@ -2919,7 +2919,7 @@ class Graphics(WithEqualityById, SageObject):
                 if hgridlines not in (None, False):
                     subplot.yaxis.grid(True, **hgridstyle)
 
-            if hasattr(vgridlines, '__iter__'):
+            if not isinstance(vgridlines, str) and hasattr(vgridlines, '__iter__'):
                 vlines=iter(vgridlines)
                 vgridstyle.pop("minor",None)
                 for vline in vlines:

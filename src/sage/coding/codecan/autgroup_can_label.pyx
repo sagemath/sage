@@ -50,7 +50,7 @@ EXAMPLES::
     sage: LinearCode(P.get_transporter()*C.generator_matrix()) == P.get_canonical_form()
     True
     sage: A = P.get_autom_gens()
-    sage: all( [ LinearCode(a*C.generator_matrix()) == C for a in A])
+    sage: all(LinearCode(a*C.generator_matrix()) == C for a in A)
     True
     sage: P.get_autom_order() == GL(3, GF(3)).order()
     True
@@ -90,18 +90,19 @@ and to the action of the symmetric group only::
     sage: P.get_autom_order() == C.permutation_automorphism_group().order()
     True
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Thomas Feulner <thomas.feulner@uni-bayreuth.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.coding.codecan.codecan import PartitionRefinementLinearCode
 from sage.combinat.permutation import Permutation
 from sage.functions.other import factorial
+
 
 def _cyclic_shift(n, p):
     r"""
@@ -563,7 +564,7 @@ class LinearCodeAutGroupCanLabel:
             sage: C = codes.HammingCode(GF(2), 3).dual_code()
             sage: A = LinearCodeAutGroupCanLabel(C).get_autom_gens()
             sage: Gamma = C.generator_matrix().echelon_form()
-            sage: all([(g*Gamma).echelon_form() == Gamma for g in A])
+            sage: all((g*Gamma).echelon_form() == Gamma for g in A)
             True
         """
         return self._PGammaL_autom_gens + self._trivial_autom_gens
@@ -599,7 +600,7 @@ class LinearCodeAutGroupCanLabel:
             sage: A = LinearCodeAutGroupCanLabel(C).get_PGammaL_gens()
             sage: Gamma = C.generator_matrix()
             sage: N = [ x.monic() for x in Gamma.columns() ]
-            sage: all([ (g[0]*n.apply_map(g[1])).monic() in N for n in N for g in A])
+            sage: all((g[0]*n.apply_map(g[1])).monic() in N for n in N for g in A)
             True
         """
         Gamma = self.C.generator_matrix()

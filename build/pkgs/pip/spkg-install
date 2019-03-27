@@ -3,7 +3,7 @@ cd src
 
 # pip can install itself! But first we need to ensure that the pip
 # source directory in on the PYTHONPATH
-export PYTHONPATH=`cd src && pwd`
+export PYTHONPATH="$(pwd)/src"
 
 # need to use --upgrade or --ignore-installed; Otherwise pip, which is
 # importing itself, will think itself is already installed

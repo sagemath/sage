@@ -2189,7 +2189,7 @@ class CategoryWithAxiom(Category):
 
         .. SEEALSO:: :meth:`Category.additional_structure`.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Sets().Finite().additional_structure()
             sage: Monoids().additional_structure()

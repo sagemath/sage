@@ -129,7 +129,6 @@ import sage.rings.all as rings
 from sage.rings.real_mpfr import is_RealField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
 import sage.groups.generic as generic
 from sage.libs.pari import pari
 from cypari2.pari_instance import prec_words_to_bits
@@ -142,7 +141,6 @@ from sage.schemes.projective.projective_point import (SchemeMorphism_point_proje
 from sage.schemes.generic.morphism import is_SchemeMorphism
 
 from .constructor import EllipticCurve
-from sage.misc.superseded import deprecated_function_alias
 
 oo = rings.infinity       # infinity
 
@@ -2881,8 +2879,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             h *= 2
         return h
 
-    archimedian_local_height = deprecated_function_alias(13951, archimedean_local_height)
-
     def non_archimedean_local_height(self, v=None, prec=None,
                                      weighted=False, is_minimal=None):
         """
@@ -3067,12 +3063,10 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                     r = r / (v.ramification_index() * v.residue_class_degree())
             return r * log(Nv)
 
-    nonarchimedian_local_height = deprecated_function_alias(13951, non_archimedean_local_height)
-
     def elliptic_logarithm(self, embedding=None, precision=100,
                            algorithm='pari'):
         r"""
-        Returns the elliptic logarithm of this elliptic curve point.
+        Return the elliptic logarithm of this elliptic curve point.
 
         An embedding of the base field into `\RR` or `\CC` (with
         arbitrary precision) may be given; otherwise the first real

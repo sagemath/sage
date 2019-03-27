@@ -251,12 +251,12 @@ cdef class CircuitClosuresMatroid(Matroid):
             False
 
         """
-        for r in sorted(self._circuit_closures.keys()):
+        for r in sorted(self._circuit_closures):
             if len(F) <= r:
                 break
             for C in self._circuit_closures[r]:
                 S = F & C
-                if(len(S) > r):
+                if len(S) > r:
                     return False
         return True
 
@@ -315,17 +315,16 @@ cdef class CircuitClosuresMatroid(Matroid):
             sage: sorted(M._circuit(set(['a', 'c', 'd'])))
             Traceback (most recent call last):
             ...
-            ValueError: no circuit in independent set.
-
+            ValueError: no circuit in independent set
         """
-        for r in sorted(self._circuit_closures.keys()):
+        for r in sorted(self._circuit_closures):
             for C in self._circuit_closures[r]:
                 S = set(F & C)
-                if(len(S) > r):
+                if len(S) > r:
                     while len(S) > r + 1:
                         S.pop()
                     return frozenset(S)
-        raise ValueError("no circuit in independent set.")
+        raise ValueError("no circuit in independent set")
 
     cpdef circuit_closures(self):
         """

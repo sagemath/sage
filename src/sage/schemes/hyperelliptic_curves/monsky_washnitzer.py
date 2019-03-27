@@ -1375,7 +1375,7 @@ def adjusted_prec(p, prec):
 
 def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
     r"""
-    Computes the matrix of Frobenius on Monsky-Washnitzer cohomology,
+    Compute the matrix of Frobenius on Monsky-Washnitzer cohomology,
     with respect to the basis `(dx/y, x dx/y)`.
 
     INPUT:
@@ -1386,10 +1386,9 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
        `\ZZ/(p^M)\ZZ`-algebra in which the matrix of
        frobenius will be constructed.
 
-    - ``p`` -- prime = 5 for which E has good reduction
+    - ``p`` -- prime >= 5 for which E has good reduction
 
-    - ``M`` -- integer = 2; `p` -adic precision of
-       the coefficient ring
+    - ``M`` -- integer >= 2; `p` -adic precision of the coefficient ring
 
     - ``trace`` -- (optional) the trace of the matrix, if
        known in advance. This is easy to compute because it is just the
@@ -1576,10 +1575,10 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
         [   847 + 668*t + 81*t^2 + 424*t^3 + O(t^4)   185 + 341*t + 171*t^2 + 642*t^3 + O(t^4)]
 
     The trace trick should work for power series rings too, even in the
-    badly- conditioned case. Unfortunately I don't know how to compute
-    the trace in advance, so I'm not sure exactly how this would help.
+    badly-conditioned case. Unfortunately I do not know how to compute
+    the trace in advance, so I am not sure exactly how this would help.
     Also, I suspect the running time will be dominated by the
-    expansion, so the trace trick won't really speed things up anyway.
+    expansion, so the trace trick will not really speed things up anyway.
     Another problem is that the determinant is not always p::
 
         sage: B.det()                                               # long time
@@ -1589,7 +1588,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
     that if you substitute t - 11t, you do get the constant series p
     (mod p\*\*prec). Similarly for the trace. And since the parameter
     only really makes sense when it is divisible by p anyway, perhaps
-    this isn't a problem after all.
+    this is not a problem after all.
     """
     M = int(M)
     if M < 2:

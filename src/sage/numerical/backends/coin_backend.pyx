@@ -666,7 +666,7 @@ cdef class CoinBackend(GenericBackend):
         return (lb[i] if lb[i] != - self.si.getInfinity() else None,
                 ub[i] if ub[i] != + self.si.getInfinity() else None)
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         r"""
         Adds a column.
 
@@ -701,14 +701,27 @@ cdef class CoinBackend(GenericBackend):
             5
         """
 
-        cdef int n = len(indices)
+        cdef list list_indices
+        cdef list list_coeffs
+
+        if type(indices) is not list:
+            list_indices = list(indices)
+        else:
+            list_indices = <list>indices
+
+        if type(coeffs) is not list:
+            list_coeffs = list(coeffs)
+        else:
+            list_coeffs = <list>coeffs
+
+        cdef int n = len(list_indices)
         cdef int * c_indices = <int*>check_malloc(n*sizeof(int))
         cdef double * c_values  = <double*>check_malloc(n*sizeof(double))
         cdef int i
 
         for 0<= i< n:
-            c_indices[i] = indices[i]
-            c_values[i] = coeffs[i]
+            c_indices[i] = list_indices[i]
+            c_values[i] = list_coeffs[i]
 
         self.si.addCol (n, c_indices, c_values, 0, self.si.getInfinity(), 0)
 

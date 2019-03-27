@@ -86,7 +86,7 @@ def unpickle_function(pickled):
     """
     Unpickle a pickled function.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: def f(N,M): return N*M
         ...

@@ -828,7 +828,7 @@ cdef uint32_t * c_eccentricity_bounding(G, vertex_list=None) except NULL:
 
     return LB
 
-def eccentricity(G, algorithm="standard"):
+def eccentricity(G, algorithm="standard", vertex_list=None):
     r"""
     Return the vector of eccentricities in G.
 
@@ -844,12 +844,24 @@ def eccentricity(G, algorithm="standard"):
       ``'standard'`` which performs a BFS from each vertex and ``'bounds'``
       which uses the fast algorithm proposed in [TK13]_ for undirected graphs.
 
+    - ``vertex_list`` -- list (default: ``None``); a list of `n` vertices
+      specifying a mapping from `(0, \ldots, n-1)` to vertex labels in `G`. When
+      set, ``ecc[i]`` is the eccentricity of vertex ``vertex_list[i]``. When
+      ``vertex_list`` is ``None``, ``ecc[i]`` is the eccentricity of vertex
+      ``G.vertices()[i]``.
+
     EXAMPLES::
 
         sage: from sage.graphs.distances_all_pairs import eccentricity
         sage: g = graphs.PetersenGraph()
         sage: eccentricity(g)
         [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+        sage: g.add_edge(0, g.add_vertex())
+        sage: V = list(g)
+        sage: eccentricity(g, vertex_list=V)
+        [2, 2, 3, 3, 2, 2, 3, 3, 3, 3, 3]
+        sage: eccentricity(g, vertex_list=V[::-1])
+        [3, 3, 3, 3, 3, 2, 2, 3, 3, 2, 2]
 
     TESTS:
 
@@ -887,6 +899,15 @@ def eccentricity(G, algorithm="standard"):
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm 'Nice Jazz Festival', please contribute
+
+    Invalid value for parameter vertex_list::
+
+        sage: from sage.graphs.distances_all_pairs import eccentricity
+        sage: g = graphs.PathGraph(2)
+        sage: eccentricity(g, vertex_list=[0, 1, 2])
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter vertex_list is incorrect for this graph
     """
     from sage.rings.infinity import Infinity
     cdef int n = G.order()
@@ -899,8 +920,15 @@ def eccentricity(G, algorithm="standard"):
     elif not G.is_connected():
         return [Infinity] * n
 
+    cdef list int_to_vertex
+    if vertex_list is None:
+        int_to_vertex = G.vertices()
+    elif len(vertex_list) == n and set(vertex_list) == set(G):
+        int_to_vertex = vertex_list
+    else:
+        raise ValueError("parameter vertex_list is incorrect for this graph")
+
     cdef uint32_t* ecc
-    cdef list int_to_vertex = G.vertices()
     if algorithm == "bounds":
         ecc = c_eccentricity_bounding(G, vertex_list=int_to_vertex)
     elif algorithm == "standard":
@@ -1510,11 +1538,16 @@ def floyd_warshall(gg, paths=True, distances=False):
 
         sage: g = graphs.Grid2dGraph(2,2)
         sage: from sage.graphs.distances_all_pairs import floyd_warshall
-        sage: print(floyd_warshall(g))
+        sage: print(floyd_warshall(g))  # py2
         {(0, 1): {(0, 1): None, (1, 0): (0, 0), (0, 0): (0, 1), (1, 1): (0, 1)},
-        (1, 0): {(0, 1): (0, 0), (1, 0): None, (0, 0): (1, 0), (1, 1): (1, 0)},
-        (0, 0): {(0, 1): (0, 0), (1, 0): (0, 0), (0, 0): None, (1, 1): (0, 1)},
-        (1, 1): {(0, 1): (1, 1), (1, 0): (1, 1), (0, 0): (0, 1), (1, 1): None}}
+         (1, 0): {(0, 1): (0, 0), (1, 0): None, (0, 0): (1, 0), (1, 1): (1, 0)},
+         (0, 0): {(0, 1): (0, 0), (1, 0): (0, 0), (0, 0): None, (1, 1): (0, 1)},
+         (1, 1): {(0, 1): (1, 1), (1, 0): (1, 1), (0, 0): (0, 1), (1, 1): None}}
+        sage: print(floyd_warshall(g))  # py3
+        {(0, 0): {(0, 0): None, (0, 1): (0, 0), (1, 0): (0, 0), (1, 1): (0, 1)},
+         (0, 1): {(0, 1): None, (0, 0): (0, 1), (1, 0): (0, 0), (1, 1): (0, 1)},
+         (1, 0): {(1, 0): None, (0, 0): (1, 0), (0, 1): (0, 0), (1, 1): (1, 0)},
+         (1, 1): {(1, 1): None, (0, 0): (0, 1), (0, 1): (1, 1), (1, 0): (1, 1)}}
 
     Checking the distances are correct ::
 

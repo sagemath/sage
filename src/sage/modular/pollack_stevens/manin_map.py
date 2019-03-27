@@ -529,7 +529,7 @@ class ManinMap(object):
         SN = Sigma0(self._manin._N)
         A = M2Z(A)
         B = self._manin.equivalent_rep(A)
-        gaminv = SN(B * M2Z(A).adjoint())
+        gaminv = SN(B * M2Z(A).adjugate())
         return (self[B] * gaminv).normalize()
 
     def __call__(self, A):

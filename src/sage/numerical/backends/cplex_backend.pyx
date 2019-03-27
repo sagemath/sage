@@ -800,7 +800,7 @@ cdef class CPLEXBackend(GenericBackend):
         return (None if lb <= -int(CPX_INFBOUND) else lb,
                 None if ub >= +int(CPX_INFBOUND) else ub)
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         r"""
         Adds a column.
 
@@ -835,9 +835,22 @@ cdef class CPLEXBackend(GenericBackend):
             5
         """
 
+        cdef list list_indices
+        cdef list list_coeffs
+
+        if type(indices) is not list:
+            list_indices = list(indices)
+        else:
+            list_indices = <list>indices
+
+        if type(coeffs) is not list:
+            list_coeffs = list(coeffs)
+        else:
+            list_coeffs = <list>coeffs
+
         cdef int status
         cdef int i
-        cdef int n = len(indices)
+        cdef int n = len(list_indices)
         cdef int ncols = self.ncols()
 
         status = CPXnewcols(self.env, self.lp, 1, NULL, NULL, NULL, NULL, NULL)
@@ -850,8 +863,8 @@ cdef class CPLEXBackend(GenericBackend):
         cdef int * c_col = <int *> sig_malloc(n * sizeof(int))
 
         for 0<= i < n:
-            c_coeff[i] = coeffs[i]
-            c_indices[i] = indices[i]
+            c_coeff[i] = list_coeffs[i]
+            c_indices[i] = list_indices[i]
             c_col[i] = ncols
 
 

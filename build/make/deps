@@ -45,11 +45,8 @@ all-build: toolchain-deps
 
 
 # The 2 preliminary build phases: base and toolchain.
-# During the toolchain build, we export SAGE_BUILD_TOOLCHAIN=yes
-# such that packages can do different things when they are built
-# as prerequisite of GCC.
 base-toolchain: _clean-broken-gcc base
-	env SAGE_BUILD_TOOLCHAIN=yes $(MAKE) toolchain
+	$(MAKE) toolchain
 
 # All targets except for the base packages
 all-sage: \
@@ -127,7 +124,7 @@ base: $(inst_patch) $(inst_pkgconf)
 # dependencies for Cython files (e.g. PARI, NTL, MP_LIBRARY).
 sagelib: \
 		$(inst_arb) \
-		$(BLAS) \
+		$(inst_$(BLAS)) \
 		$(inst_brial) \
 		$(inst_cliquer) \
 		$(inst_cypari) \
@@ -141,6 +138,7 @@ sagelib: \
 		$(inst_gap) \
 		$(inst_givaro) \
 		$(inst_glpk) \
+		$(inst_gmpy2) \
 		$(inst_gsl) \
 		$(inst_iml) \
 		$(inst_jinja2) \
@@ -156,7 +154,7 @@ sagelib: \
 		$(inst_mpc) \
 		$(inst_mpfi) \
 		$(inst_mpfr) \
-		$(MP_LIBRARY) \
+		$(inst_$(MP_LIBRARY)) \
 		$(inst_ntl) \
 		$(inst_numpy) \
 		$(inst_pari) \
@@ -164,10 +162,10 @@ sagelib: \
 		$(inst_pkgconfig) \
 		$(inst_planarity) \
 		$(inst_ppl) \
+		$(inst_pplpy) \
 		$(inst_pycygwin) \
 		$(inst_pynac) \
-		$(inst_python2) \
-		$(inst_python3) \
+		$(inst_$(PYTHON)) \
 		$(inst_ratpoints) \
 		$(inst_readline) \
 		$(inst_rw) \

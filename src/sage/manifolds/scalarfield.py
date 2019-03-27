@@ -24,7 +24,7 @@ REFERENCES:
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
@@ -33,14 +33,15 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from six import itervalues
 
 from sage.structure.element import CommutativeAlgebraElement
 from sage.symbolic.expression import Expression
 from sage.manifolds.chart_func import ChartFunction
+
 
 class ScalarField(CommutativeAlgebraElement):
     r"""
@@ -1574,28 +1575,6 @@ class ScalarField(CommutativeAlgebraElement):
             self._express[chart] = chart.function(new_expr)
             self._del_derived()
         return self._express[chart]
-
-    def function_chart(self, chart=None, from_chart=None):
-        r"""
-        Deprecated.
-
-        Use :meth:`coord_function` instead.
-
-        EXAMPLES::
-
-            sage: M = Manifold(2, 'M', structure='topological')
-            sage: c_xy.<x,y> = M.chart()
-            sage: f = M.scalar_field(x*y^2)
-            sage: fc = f.function_chart()
-            doctest:...: DeprecationWarning: Use coord_function() instead.
-            See http://trac.sagemath.org/18640 for details.
-            sage: fc
-            x*y^2
-
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(18640, 'Use coord_function() instead.')
-        return self.coord_function(chart=chart, from_chart=from_chart)
 
     def expr(self, chart=None, from_chart=None):
         r"""

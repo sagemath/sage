@@ -920,21 +920,6 @@ class GraphDatabase(SQLDatabase):
 
         This is a helper method for the ``interactive_query`` method and should
         not be called directly.
-
-        EXAMPLES::
-
-            sage: D = GraphDatabase()
-            sage: D.interactive_query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=['<=', 5], max_degree=3)
-            <html>...</html>
-
-        ::
-
-            sage: G = GraphDatabase()
-            sage: f = G._gen_interact_func(display=['graph6'], num_vertices=3)
-            sage: type(f)
-            <... 'function'>
-            sage: interact(f)
-            <html>...
         """
         from sagenb.notebook.interact import input_grid
         arg = ['%s=%s'%(word, kwds[word]) for word in kwds]

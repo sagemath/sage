@@ -445,7 +445,6 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
         n = self._cartan_type.rank()
         partitions = [None] * n
         riggings = [None] * n
-        vac_nums = [None] * n
         vindex = self._folded_ct._folding.index_set()
         for a in range(n):
             index = vindex.index(sigma[a][0])

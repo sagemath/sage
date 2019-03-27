@@ -525,9 +525,14 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         result._cartan_type = self._cartan_type.dual() if not self._cartan_type is None else None
         return result
 
-    def relabel(self, relabelling, inplace=False, **kwds):
+    def relabel(self, *args, **kwds):
         """
-        Return the relabelling Dynkin diagram of ``self``.
+        Return the relabelled Dynkin diagram of ``self``.
+
+        INPUT: see :meth:`~sage.graphs.generic_graph.GenericGraph.relabel`
+
+        There is one difference: the default value for ``inplace`` is
+        ``False`` instead of ``True``.
 
         EXAMPLES::
 
@@ -541,29 +546,65 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             1   2   3
             C3
 
+            sage: _ = D.relabel({1:0, 2:4, 3:1}, inplace=True)
+            sage: D
+            O---O=<=O
+            0   4   1
+            C3 relabelled by {1: 0, 2: 4, 3: 1}
+
             sage: D = DynkinDiagram(['A', [1,2]])
-            sage: Dp = D.relabel({-1:4, 0:-3, 1:3, 2:2}); Dp
+            sage: Dp = D.relabel({-1:4, 0:-3, 1:3, 2:2})
+            sage: Dp
             O---X---O---O
             4   -3  3   2
             A1|2 relabelled by {-1: 4, 0: -3, 1: 3, 2: 2}
             sage: Dp.odd_isotropic_roots()
             (-3,)
+
+            sage: D = DynkinDiagram(['D', 5])
+            sage: G, perm = D.relabel(range(5), return_map=True)
+            sage: G
+                    O 4
+                    |
+                    |
+            O---O---O---O
+            0   1   2   3
+            D5 relabelled by {1: 0, 2: 1, 3: 2, 4: 3, 5: 4}
+            sage: perm
+            {1: 0, 2: 1, 3: 2, 4: 3, 5: 4}
+
+            sage: perm = D.relabel(range(5), return_map=True, inplace=True)
+            sage: D
+                    O 4
+                    |
+                    |
+            O---O---O---O
+            0   1   2   3
+            D5 relabelled by {1: 0, 2: 1, 3: 2, 4: 3, 5: 4}
+            sage: perm
+            {1: 0, 2: 1, 3: 2, 4: 3, 5: 4}
         """
+        return_map = kwds.pop("return_map", False)
+        inplace = kwds.pop("inplace", False)
         if inplace:
-            DiGraph.relabel(self, relabelling, inplace, **kwds)
             G = self
         else:
-            # We must make a copy of ourselves first because of DiGraph's
-            #   relabel default behavior is to do so in place, and if not
-            #   then it recurses on itself with no argument for inplace
-            G = self.copy().relabel(relabelling, inplace=True, **kwds)
-        if isinstance(relabelling, dict):
-            relabelling = relabelling.__getitem__
-        new_odds = [relabelling(i) for i in self._odd_isotropic_roots]
+            # We need to copy self because we want to return the
+            # permutation and that works when relabelling in place.
+            G = self.copy()
+
+        perm = DiGraph.relabel(G, *args, inplace=True, return_map=True, **kwds)
+        new_odds = [perm[i] for i in self._odd_isotropic_roots]
         G._odd_isotropic_roots = tuple(new_odds)
         if self._cartan_type is not None:
-            G._cartan_type = self._cartan_type.relabel(relabelling)
-        return G
+            G._cartan_type = self._cartan_type.relabel(perm.__getitem__)
+        if return_map:
+            if inplace:
+                return perm
+            else:
+                return G, perm
+        else:
+            return G
 
     def subtype(self, index_set):
         """

@@ -114,7 +114,7 @@ from sage.interfaces.all import *
 from sage.functions.all  import *
 from sage.calculus.all   import *
 
-import sage.tests.all as tests
+lazy_import('sage.tests', 'all', as_='tests', deprecation=27337)
 from sage.cpython.all    import *
 
 from sage.crypto.all     import *

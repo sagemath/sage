@@ -135,7 +135,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         sage: p['something']
         Traceback (most recent call last):
         ...
-        ValueError: ['s', 'o', 'm', 'e', 't', 'h', 'i', 'n', 'g'] is not an element of Partitions
+        ValueError: all parts of 'something' should be nonnegative integers
         sage: p.basis()['something']
         p'something'
 
@@ -1047,7 +1047,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: SymmetricFunctions(QQ).induced_trivial_character()
-            Symmetric Functions over Rational Field in the induced trivial character basis
+            Symmetric Functions over Rational Field in the induced trivial symmetric group character basis
             sage: ht = SymmetricFunctions(QQ).ht()
             sage: h = SymmetricFunctions(QQ).h()
             sage: h(ht([3,2]).character_to_frobenius_image(9))
@@ -1064,9 +1064,11 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: [ht([1]).eval_at_permutation_roots(rho) for rho in Partitions(5)]
             [0, 1, 0, 2, 1, 3, 5]
         """
-        from .character import character_basis
-        return character_basis(self, self.h(), "induced trivial character", 'ht')
+        from .character import induced_trivial_character_basis
+        return induced_trivial_character_basis(self, 'ht')
+
     ht = induced_trivial_character
+
 
     def forgotten(self):
         r"""

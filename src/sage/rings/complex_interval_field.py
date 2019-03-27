@@ -183,6 +183,11 @@ class ComplexIntervalField_class(Field):
         0.?e1 + 0.?e1*I
         sage: x + CIF(RIF(3.14,3.15), 0)
         x + 3.15?
+
+    Methods inherited from categories::
+
+        sage: CIF.is_finite()
+        False
     """
     Element = complex_interval.ComplexIntervalFieldElement
 
@@ -612,17 +617,6 @@ class ComplexIntervalField_class(Field):
             True
         """
         return True
-
-    def is_finite(self):
-        """
-        Return ``False``, since the complex numbers are infinite.
-
-        EXAMPLES::
-
-            sage: CIF.is_finite()
-            False
-        """
-        return False
 
     def pi(self):
         r"""

@@ -98,6 +98,7 @@ SAGE_SPKG_CONFIGURE([gcc], [
     if test $HAVE_CXX11 != 1; then
         SAGE_MUST_INSTALL_GCC([your C++ compiler does not support C++11])
     fi
+    AC_SUBST(CXX)
 
     AC_LANG_PUSH(C)
     if test -z "$CC"; then

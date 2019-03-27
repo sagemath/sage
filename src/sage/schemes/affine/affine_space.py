@@ -443,7 +443,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
             sage: A.<x, y> = AffineSpace(2, ZZ)
             sage: A._latex_generic_point([y-x^2])
-            '\\left(- x^{2} + y\\right)'
+            '\\left(-x^{2} + y\\right)'
             sage: A._latex_generic_point()
             '\\left(x, y\\right)'
         """

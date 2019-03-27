@@ -8,7 +8,7 @@ AUTHORS:
 
 - Travis Scrimshaw (2017-08): Initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -20,18 +20,12 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 
 from sage.combinat.partition import _Partitions, Partitions
 from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
-from sage.matrix.all import matrix
-from sage.categories.morphism import SetMorphism
-from sage.categories.homset import Hom
-from sage.categories.modules_with_basis import ModulesWithBasis
-from sage.rings.integer_ring import ZZ
 
 
 class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
@@ -168,8 +162,8 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
         self._p = sym.power()
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-        category = ModulesWithBasis(self._sym.base_ring())
-        self   .register_coercion(self._p._module_morphism(self._p_to_qbar_on_basis,
+        # category = ModulesWithBasis(self._sym.base_ring())
+        self.register_coercion(self._p._module_morphism(self._p_to_qbar_on_basis,
                                                            codomain=self))
         self._p.register_coercion(self._module_morphism(self._qbar_to_p_on_basis,
                                                         codomain=self._p))

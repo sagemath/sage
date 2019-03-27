@@ -58,7 +58,7 @@ def restore_cwd(chdir=None):
     - ``chdir`` -- optionally change directories to the given directory
       upon entering the context manager
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: import os
         sage: from sage.misc.sage_ostools import restore_cwd

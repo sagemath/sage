@@ -149,10 +149,8 @@ class RationalField(Singleton, number_field_base.NumberField):
 
             sage: RationalField() in Fields() # indirect doctest
             True
-
         """
         try:
-            from sage.rings.rational_field import QQ
             return QQ
         except BaseException:
             from sage.rings.number_field.number_field_base import NumberField
@@ -234,12 +232,18 @@ class RationalField(Singleton, number_field_base.NumberField):
             ('x',)
             sage: QQ._element_constructor_((2, 3))
             2/3
+
+            sage: QQ.is_finite()
+            False
+
+            sage: QQ.is_field()
+            True
         """
         from sage.categories.basic import QuotientFields
         from sage.categories.number_fields import NumberFields
         ParentWithGens.__init__(self, self, category=[QuotientFields().Metric(),
                                                       NumberFields()])
-        self._assign_names(('x',),normalize=False) # ???
+        self._assign_names(('x',), normalize=False)  # ?????
         self._populate_coercion_lists_(init_no_parent=True)
 
     _element_constructor_ = Rational
@@ -809,28 +813,6 @@ class RationalField(Singleton, number_field_base.NumberField):
             True
         """
         return True
-
-    def is_field(self, proof = True):
-        """
-        Return ``True``, since the rational field is a field.
-
-        EXAMPLES::
-
-            sage: QQ.is_field()
-            True
-        """
-        return True
-
-    def is_finite(self):
-        """
-        Return ``False``, since the rational field is not finite.
-
-        EXAMPLES::
-
-            sage: QQ.is_finite()
-            False
-        """
-        return False
 
     def is_prime_field(self):
         r"""

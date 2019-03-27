@@ -83,7 +83,7 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
     polynomial ring. A ``ValueError`` is raised if the polynomial is
     not homogeneous.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.schemes.toric.weierstrass_higher import _check_polynomials_P3
         sage: R.<w,x,y,z> = QQ[]
@@ -106,9 +106,8 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
     if quadratic1.parent() is not quadratic2.parent():
         raise ValueError('The two quadratics must be in the same polynomial ring.')
     if variables is None:
-        from sage.misc.misc import uniq
-        variables = uniq(quadratic1.variables() + quadratic2.variables())
-        variables.reverse()
+        variables = quadratic1.variables() + quadratic2.variables()
+        variables = sorted(set(variables), reverse=True)
     if len(variables) == 4:
         w, x, y, z = variables
         _check_homogeneity(quadratic1, [w, x, y, z], (1, 1, 1, 1), 2)

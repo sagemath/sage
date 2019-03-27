@@ -101,7 +101,7 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
     def __init__(self, parent, vector, element=None, check=False):
         r"""
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
             sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])

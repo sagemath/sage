@@ -49,7 +49,7 @@ from sage.groups.braid import BraidGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.rings.rational_field import QQ
 from sage.rings.qqbar import QQbar
-from sage.rings.all import CC, CIF
+from sage.rings.all import CC
 from sage.parallel.decorate import parallel
 from sage.misc.flatten import flatten
 from sage.groups.free_group import FreeGroup

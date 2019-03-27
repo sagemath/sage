@@ -114,7 +114,7 @@ Make sure we don't have a new field for every new literal::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from __future__ import absolute_import, print_function
@@ -168,9 +168,8 @@ from sage.structure.parent_gens cimport ParentWithGens
 from sage.arith.numerical_approx cimport digits_to_bits
 from sage.arith.constants cimport M_LN2_LN10
 
-IF HAVE_GMPY2:
-    cimport gmpy2
-    gmpy2.import_gmpy2()
+cimport gmpy2
+gmpy2.import_gmpy2()
 
 
 #*****************************************************************************
@@ -515,6 +514,11 @@ cdef class RealField_class(sage.rings.ring.Field):
             Traceback (most recent call last):
             ...
             OverflowError: Sage Integer too large to convert to C long
+
+        Check methods inherited from categories::
+
+            sage: RealField(10).is_finite()
+            False
         """
         global MY_MPFR_PREC_MAX
         if prec < MPFR_PREC_MIN or prec > MY_MPFR_PREC_MAX:
@@ -530,7 +534,7 @@ cdef class RealField_class(sage.rings.ring.Field):
         self.rnd_str = char_to_str(rnd_str + 5)  # Strip "MPFR_"
 
         from sage.categories.fields import Fields
-        ParentWithGens.__init__(self, self, tuple([]), False, category=Fields().Metric().Complete())
+        ParentWithGens.__init__(self, self, tuple([]), False, category=Fields().Infinite().Metric().Complete())
 
         # Initialize zero and one
         cdef RealNumber rn
@@ -936,17 +940,6 @@ cdef class RealField_class(sage.rings.ring.Field):
         if key == 'element_is_atomic':
             return True
         return super(RealField_class, self)._repr_option(key)
-
-    def is_finite(self):
-        """
-        Return ``False``, since the field of real numbers is not finite.
-
-        EXAMPLES::
-
-            sage: RealField(10).is_finite()
-            False
-        """
-        return False
 
     def characteristic(self):
         """
@@ -1385,12 +1378,12 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         Conversion from gmpy2 numbers::
 
-            sage: from gmpy2 import *  # optional - gmpy2
-            sage: RR(mpz(5))           # optional - gmpy2
+            sage: from gmpy2 import *
+            sage: RR(mpz(5))
             5.00000000000000
-            sage: RR(mpq(1/2))         # optional - gmpy2
+            sage: RR(mpq(1/2))
             0.500000000000000
-            sage: RR(mpfr('42.1'))     # optional - gmpy2
+            sage: RR(mpfr('42.1'))
             42.1000000000000
 
         .. NOTE::
@@ -1483,11 +1476,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             mpfr_set_d(self.value, x.real, parent.rnd)
         elif isinstance(x, RealDoubleElement):
             mpfr_set_d(self.value, (<RealDoubleElement>x)._value, parent.rnd)
-        elif HAVE_GMPY2 and type(x) is gmpy2.mpfr:
+        elif type(x) is gmpy2.mpfr:
             mpfr_set(self.value, (<gmpy2.mpfr>x).f, parent.rnd)
-        elif HAVE_GMPY2 and type(x) is gmpy2.mpq:
+        elif type(x) is gmpy2.mpq:
             mpfr_set_q(self.value, (<gmpy2.mpq>x).q, parent.rnd)
-        elif HAVE_GMPY2 and type(x) is gmpy2.mpz:
+        elif type(x) is gmpy2.mpz:
             mpfr_set_z(self.value, (<gmpy2.mpz>x).z, parent.rnd)
         else:
             s = str(x).replace(' ','')
@@ -1935,6 +1928,16 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: y.str(digits=1)
             '-4.'
 
+        Zero has the correct number of digits::
+
+            sage: zero = RR.zero()
+            sage: print(zero.str(digits=3))
+            0.00
+            sage: print(zero.str(digits=3, no_sci=False))
+            0.00e0
+            sage: print(zero.str(digits=3, skip_zeroes=True))
+            0.
+
         The output always contains a decimal point, except when using
         scientific notation with exactly one digit::
 
@@ -2023,6 +2026,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
             if digits < 2:
                 digits = 2
 
+            # For backwards compatibility, add one extra digit for 0.0
+            if mpfr_zero_p(self.value):
+                digits += 1
+
         sig_on()
         cdef char *s
         cdef mp_exp_t exponent
@@ -2042,6 +2049,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         if skip_zeroes:
             t = _re_skip_zeroes.match(t).group(1)
+
+        # Treat 0.0 as having exponent 1, this gives better results
+        # (effectively treating it as 0. instead of .0)
+        if mpfr_zero_p(self.value):
+            exponent = 1
 
         if no_sci is None:
             use_sci = (<RealField_class>self._parent).sci_not or abs(exponent-1) >= 6
@@ -3212,7 +3224,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
         # by using internal interfaces of MPFR, which are documented
         # as subject-to-change.
 
-        sig_on()
         if mpfr_nan_p(self.value) or mpfr_inf_p(self.value):
             raise ValueError('Cannot convert NaN or infinity to Pari float')
 
@@ -3234,6 +3245,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         cdef mp_exp_t exponent
         cdef GEN pari_float
 
+        sig_on()
         if mpfr_zero_p(self.value):
             pari_float = real_0_bit(-rounded_prec)
         else:
@@ -3245,7 +3257,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             # Create a PARI REAL
             pari_float = cgetr(2 + rounded_prec / wordsize)
             pari_float[1] = evalexpo(exponent + rounded_prec - 1) + evalsigne(mpfr_sgn(self.value))
-            mpz_export(&pari_float[2], NULL, 1, wordsize/8, 0, 0, mantissa)
+            mpz_export(&pari_float[2], NULL, 1, wordsize // 8, 0, 0, mantissa)
             mpz_clear(mantissa)
 
         return new_gen(pari_float)
@@ -3777,40 +3789,30 @@ cdef class RealNumber(sage.structure.element.RingElement):
         EXAMPLES::
 
             sage: r = RR(4.12)
-            sage: r.__mpfr__()            # optional - gmpy2
+            sage: r.__mpfr__()
             mpfr('4.1200000000000001')
-            sage: from gmpy2 import mpfr  # optional - gmpy2
-            sage: mpfr(RR(4.5))           # optional - gmpy2
+            sage: from gmpy2 import mpfr
+            sage: mpfr(RR(4.5))
             mpfr('4.5')
             sage: R = RealField(127)
-            sage: mpfr(R.pi()).precision  # optional - gmpy2
+            sage: mpfr(R.pi()).precision
             127
             sage: R = RealField(42)
-            sage: mpfr(R.pi()).precision  # optional - gmpy2
+            sage: mpfr(R.pi()).precision
             42
             sage: R = RealField(256)
-            sage: x = mpfr(R.pi())        # optional - gmpy2
-            sage: x.precision             # optional - gmpy2
+            sage: x = mpfr(R.pi())
+            sage: x.precision
             256
-            sage: y = R(x)                # optional - gmpy2
-            sage: mpfr(y) == x            # optional - gmpy2
+            sage: y = R(x)
+            sage: mpfr(y) == x
             True
-            sage: x = mpfr('2.567e42', precision=128)   # optional - gmpy2
-            sage: y = RealField(128)(x)   # optional - gmpy2
-            sage: mpfr(y) == x            # optional - gmpy2
+            sage: x = mpfr('2.567e42', precision=128)
+            sage: y = RealField(128)(x)
+            sage: mpfr(y) == x
             True
-
-        TESTS::
-
-            sage: r.__mpfr__(); raise NotImplementedError("gmpy2 is not installed")
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: gmpy2 is not installed
         """
-        IF HAVE_GMPY2:
-            return gmpy2.GMPy_MPFR_From_mpfr(self.value)
-        ELSE:
-            raise NotImplementedError("gmpy2 is not installed")
+        return gmpy2.GMPy_MPFR_From_mpfr(self.value)
 
     ###########################################
     # Comparisons: ==, !=, <, <=, >, >=
@@ -5608,7 +5610,7 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
 
     - ``base`` -- an integer between 2 and 62
 
-    - ``pad`` -- an integer = 0.
+    - ``pad`` -- an integer >= 0.
 
     - ``rnd`` -- rounding mode:
 
@@ -5719,7 +5721,7 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
         else:
             bits = int(math.log(base,2)*1.00001*sigfigs)+1
 
-        R = RealField(prec=max(bits+pad, min_prec), rnd=rnd)
+        R = RealField(prec=max(bits + pad, min_prec), rnd=rnd)
 
     return RealLiteral(R, s, base)
 

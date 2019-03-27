@@ -637,6 +637,7 @@ cdef extern from "singular/Singular/libsingular.h":
     # divide monomial p by monomial q, p,q const
 
     poly *pMDivide(poly *p,poly *q)
+    poly *p_MDivide(poly *p, poly *q, ring *r)
 
     # return the i-th power of p; p destroyed, requires global ring
 

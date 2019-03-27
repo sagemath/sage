@@ -3727,7 +3727,7 @@ class TensorField(ModuleElement):
         In the present case (Euclidean metric and Cartesian coordinates), the
         components of the Laplacian are the Laplacians of the components::
 
-            sage: all([Dv[[i]] == laplacian(v[[i]]) for i in M.irange()])
+            sage: all(Dv[[i]] == laplacian(v[[i]]) for i in M.irange())
             True
 
         The Laplacian can be taken with respect to a metric tensor that is

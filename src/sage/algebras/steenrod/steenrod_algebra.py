@@ -1159,7 +1159,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: all([Adem(Milnor.Sq(n) ** 3)._repr_() == (Adem.Sq(n) ** 3)._repr_() for n in range(10)])
+            sage: all(Adem(Milnor.Sq(n) ** 3)._repr_() == (Adem.Sq(n) ** 3)._repr_() for n in range(10))
             True
             sage: Wall = SteenrodAlgebra(basis='wall')
             sage: Wall(Adem.Sq(4,4) * Milnor.Sq(4)) == Adem(Wall.Sq(4,4) * Milnor.Sq(4))
@@ -1167,7 +1167,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
             sage: A3 = SteenrodAlgebra(p=3, basis='adem')
             sage: M3 = SteenrodAlgebra(p=3, basis='milnor')
-            sage: all([A3(M3.P(n) * M3.Q(0) * M3.P(n))._repr_() == (A3.P(n) * A3.Q(0) * A3.P(n))._repr_() for n in range(5)])
+            sage: all(A3(M3.P(n) * M3.Q(0) * M3.P(n))._repr_() == (A3.P(n) * A3.Q(0) * A3.P(n))._repr_() for n in range(5))
             True
 
             sage: EA = SteenrodAlgebra(generic=True)
@@ -1258,10 +1258,10 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: all([A.coproduct_on_basis((n,1), algorithm='milnor') == A.coproduct_on_basis((n,1), algorithm='adem') for n in range(9)]) # long time
+            sage: all(A.coproduct_on_basis((n,1), algorithm='milnor') == A.coproduct_on_basis((n,1), algorithm='adem') for n in range(9)) # long time
             True
             sage: A7 = SteenrodAlgebra(p=7, basis='adem')
-            sage: all([A7.coproduct_on_basis((0,n,1), algorithm='milnor') == A7.coproduct_on_basis((0,n,1), algorithm='adem') for n in range(9)]) # long time
+            sage: all(A7.coproduct_on_basis((0,n,1), algorithm='milnor') == A7.coproduct_on_basis((0,n,1), algorithm='adem') for n in range(9)) # long time
             True
         """
         def coprod_list(t):
@@ -1470,10 +1470,10 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         TESTS::
 
             sage: Milnor = SteenrodAlgebra()
-            sage: all([x.antipode().antipode() == x for x in Milnor.basis(11)]) # long time
+            sage: all(x.antipode().antipode() == x for x in Milnor.basis(11)) # long time
             True
             sage: A5 = SteenrodAlgebra(p=5, basis='adem')
-            sage: all([x.antipode().antipode() == x for x in A5.basis(25)])
+            sage: all(x.antipode().antipode() == x for x in A5.basis(25))
             True
             sage: H = SteenrodAlgebra(profile=[2,2,1])
             sage: H.Sq(1,2).antipode() in H
@@ -2036,20 +2036,20 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             if not self._generic:
                 self_prec = len(self._profile)
                 S_prec = len(S._profile)
-                return all([self.profile(i) >= S.profile(i)
-                            for i in range(1, max(self_prec, S_prec)+1)])
+                return all(self.profile(i) >= S.profile(i)
+                           for i in range(1, max(self_prec, S_prec)+1))
             self_prec = len(self._profile[0])
             S_prec = len(S._profile[0])
-            return (all([self.profile(i) >= S.profile(i)
-                         for i in range(1, max(self_prec, S_prec)+1)])
-                    and all([self.profile(i, 1) >= S.profile(i, 1)
-                         for i in range(1, max(self_prec, S_prec)+1)]))
+            return (all(self.profile(i) >= S.profile(i)
+                        for i in range(1, max(self_prec, S_prec)+1))
+                    and all(self.profile(i, 1) >= S.profile(i, 1)
+                            for i in range(1, max(self_prec, S_prec)+1)))
         if (isinstance(S, CombinatorialFreeModule)
             and S.dimension() < Infinity and p == S.base_ring().characteristic()):
             from .steenrod_algebra_misc import get_basis_name
             try:
                 get_basis_name(S.prefix(), S.base_ring().characteristic())
-                # return all([a in self for a in S.basis()])
+                # return all(a in self for a in S.basis())
                 return True
             except ValueError:
                 return False
@@ -2153,8 +2153,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 pass
             A = SteenrodAlgebra(p=p, basis=self.basis_name(), generic=self._generic)
             if self._has_nontrivial_profile():
-                return all([self._check_profile_on_basis(mono)
-                            for mono in A(x).support()])
+                return all(self._check_profile_on_basis(mono)
+                           for mono in A(x).support())
             return True  # trivial profile, so True
         return False
 
@@ -2258,17 +2258,17 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                                 profile=self._profile,
                                 truncation_type=self._truncation_type,
                                 generic=self._generic)
-            return all([A._check_profile_on_basis(a[0])
-                        for a in self._milnor_on_basis(t)])
+            return all(A._check_profile_on_basis(a[0])
+                       for a in self._milnor_on_basis(t))
 
         from sage.rings.infinity import Infinity
         p = self.prime()
         if not self._has_nontrivial_profile():
             return True
         if not self._generic:
-            return all([self.profile(i+1) == Infinity
-                        or t[i] < 2**self.profile(i+1)
-                        for i in range(len(t))])
+            return all(self.profile(i+1) == Infinity
+                       or t[i] < 2**self.profile(i+1)
+                       for i in range(len(t)))
         # p odd:
         if any(self.profile(i, 1) != 2 for i in t[0]):
             return False
@@ -2838,10 +2838,10 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             return False
         if not self._generic:
             n = max(self._profile)
-            return all([self.profile(i) == 0 for i in range(1, n)])
+            return all(self.profile(i) == 0 for i in range(1, n))
         n = max(self._profile[0])
-        return (all([self.profile(i,0) == 0 for i in range(1, n)])
-                and all([self.profile(i,1) == 1 for i in range(n)]))
+        return (all(self.profile(i,0) == 0 for i in range(1, n))
+                and all(self.profile(i,1) == 1 for i in range(n)))
 
     def is_finite(self):
         r"""
@@ -3197,11 +3197,11 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
             TESTS::
 
-                sage: all([x.degree() == 10 for x in SteenrodAlgebra(basis='woody').basis(10)])
+                sage: all(x.degree() == 10 for x in SteenrodAlgebra(basis='woody').basis(10))
                 True
-                sage: all([x.degree() == 11 for x in SteenrodAlgebra(basis='woodz').basis(11)])
+                sage: all(x.degree() == 11 for x in SteenrodAlgebra(basis='woodz').basis(11))
                 True
-                sage: all([x.degree() == x.milnor().degree() for x in SteenrodAlgebra(basis='wall').basis(11)])
+                sage: all(x.degree() == x.milnor().degree() for x in SteenrodAlgebra(basis='wall').basis(11))
                 True
                 sage: a = SteenrodAlgebra(basis='pst').basis(10)[0]
                 sage: a.degree() == a.change_basis('arnonc').degree()
@@ -3209,15 +3209,15 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 sage: b = SteenrodAlgebra(basis='comm').basis(12)[1]
                 sage: b.degree() == b.change_basis('adem').change_basis('arnona').degree()
                 True
-                sage: all([x.degree() == 9 for x in SteenrodAlgebra(basis='comm').basis(9)])
+                sage: all(x.degree() == 9 for x in SteenrodAlgebra(basis='comm').basis(9))
                 True
-                sage: all([x.degree() == 8 for x in SteenrodAlgebra(basis='adem').basis(8)])
+                sage: all(x.degree() == 8 for x in SteenrodAlgebra(basis='adem').basis(8))
                 True
-                sage: all([x.degree() == 7 for x in SteenrodAlgebra(basis='milnor').basis(7)])
+                sage: all(x.degree() == 7 for x in SteenrodAlgebra(basis='milnor').basis(7))
                 True
-                sage: all([x.degree() == 24 for x in SteenrodAlgebra(p=3).basis(24)])
+                sage: all(x.degree() == 24 for x in SteenrodAlgebra(p=3).basis(24))
                 True
-                sage: all([x.degree() == 40 for x in SteenrodAlgebra(p=5, basis='serre-cartan').basis(40)])
+                sage: all(x.degree() == 40 for x in SteenrodAlgebra(p=5, basis='serre-cartan').basis(40))
                 True
             """
             if len(self.support()) == 0:
@@ -3382,6 +3382,39 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 1 # Q_1 P(1) + P(1) # Q_1 + Q_1 # P(1) + Q_1 P(1) # 1
                 sage: a.coproduct(algorithm='adem')
                 1 # Q_1 P(1) + P(1) # Q_1 + Q_1 # P(1) + Q_1 P(1) # 1
+
+            Once you have an element of the tensor product, you may
+            want to extract the tensor factors of its summands. ::
+
+                sage: b = Sq(2).coproduct()
+                sage: b
+                1 # Sq(2) + Sq(1) # Sq(1) + Sq(2) # 1
+                sage: supp = sorted(b.support()); supp
+                [((), (2,)), ((1,), (1,)), ((2,), ())]
+                sage: Sq(*supp[0][0])
+                1
+                sage: Sq(*supp[0][1])
+                Sq(2)
+                sage: [(Sq(*x), Sq(*y)) for (x,y) in supp]
+                [(1, Sq(2)), (Sq(1), Sq(1)), (Sq(2), 1)]
+
+            The ``support`` of an element does not include the
+            coefficients, so at odd primes it may be better to use
+            ``monomial_coefficients``::
+
+                sage: A3 = SteenrodAlgebra(p=3)
+                sage: b = (A3.P(1)**2).coproduct()
+                sage: b
+                2*1 # P(2) + 2*P(1) # P(1) + 2*P(2) # 1
+                sage: sorted(b.support())
+                [(((), ()), ((), (2,))), (((), (1,)), ((), (1,))), (((), (2,)), ((), ()))]
+                sage: b.monomial_coefficients()
+                {(((), ()), ((), (2,))): 2,
+                 (((), (1,)), ((), (1,))): 2,
+                 (((), (2,)), ((), ())): 2}
+                sage: mc = b.monomial_coefficients()
+                sage: sorted([(A3.monomial(x), A3.monomial(y), mc[x,y]) for (x,y) in mc])
+                [(1, P(2), 2), (P(1), P(1), 2), (P(2), 1, 2)]
             """
             A = self.parent()
             return A.coproduct(self, algorithm=algorithm)

@@ -347,7 +347,7 @@ class Magmas(Category_singleton):
 
         def extra_super_categories(self):
             """
-            EXAMPLES:
+            EXAMPLES::
 
                 sage: Magmas().Commutative().Algebras(QQ).extra_super_categories()
                 [Category of commutative magmas]
@@ -407,7 +407,7 @@ class Magmas(Category_singleton):
 
             def extra_super_categories(self):
                 """
-                EXAMPLES:
+                EXAMPLES::
 
                     sage: Magmas().Commutative().Algebras(QQ).extra_super_categories()
                     [Category of commutative magmas]
@@ -722,7 +722,7 @@ class Magmas(Category_singleton):
 
             def extra_super_categories(self):
                 """
-                EXAMPLES:
+                EXAMPLES::
 
                     sage: Magmas().Commutative().Algebras(QQ).extra_super_categories()
                     [Category of commutative magmas]

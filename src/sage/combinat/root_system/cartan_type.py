@@ -2530,7 +2530,6 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
             True
 
         """
-        from .cartan_type import CartanType
         return (CartanType, (self.letter, self.n))
 
     def __hash__(self):
@@ -2725,11 +2724,11 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
                 letter = 'A'
                 n *= 2
             if compact:
-                return '%s%s^%s'%(letter, n, aff)
+                return '%s%s^%s' % (letter, n, aff)
         if compact:
-            return '%s%s~'%(letter, n)
+            return '%s%s~' % (letter, n)
         else:
-            return "['%s', %s, %s]"%(letter, n, aff)
+            return "['%s', %s, %s]" % (letter, n, aff)
 
     def __reduce__(self):
         """
@@ -2742,7 +2741,6 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
             True
 
         """
-        from sage.combinat.root_system.cartan_type import CartanType
         return (CartanType, (self.letter, self.n, self.affine))
 
     def __getitem__(self, i):

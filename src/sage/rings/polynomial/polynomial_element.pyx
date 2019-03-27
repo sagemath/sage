@@ -92,9 +92,10 @@ from sage.rings.real_double import is_RealDoubleField, RDF
 from sage.rings.complex_double import is_ComplexDoubleField, CDF
 from sage.rings.real_mpfi import is_RealIntervalField
 
+from sage.structure.coerce cimport coercion_model
 from sage.structure.element import coerce_binop
 from sage.structure.element cimport (parent, have_same_parent,
-        Element, RingElement, coercion_model)
+        Element, RingElement)
 
 from sage.rings.rational_field import QQ, is_RationalField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
@@ -1369,21 +1370,29 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: f.inverse_of_unit()
             Traceback (most recent call last):
             ...
-            ValueError: self is not a unit
+            ArithmeticError: x - 90283 is not a unit in Univariate Polynomial Ring in x over Rational Field
             sage: f = R(-90283); g = f.inverse_of_unit(); g
             -1/90283
             sage: parent(g)
             Univariate Polynomial Ring in x over Rational Field
+
+        TESTS::
+
+            sage: Integers(1)['x'](0).inverse_of_unit()
+            0
         """
         d = self.degree()
         if d > 0:
             if not self.is_unit():
-                raise ValueError("self is not a unit")
+                raise ArithmeticError(f"{self} is not a unit in {self.parent()}")
             else:
                 raise NotImplementedError("polynomial inversion over non-integral domains not implemented")
         elif d == -1:
-            return self._parent(~self._parent._base.zero())
-        return self._parent(~self.get_unsafe(0))
+            cst = self._parent._base.zero()
+        else:
+            cst = self.get_unsafe(0)
+        inv = cst.inverse_of_unit()
+        return self._parent([inv])
 
     def inverse_mod(a, m):
         """
@@ -4363,8 +4372,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: G.prod() == g
             True
         """
-        pols = G[0]
-        exps = G[1]
+        pols, exps = G
         R = self._parent
         F = [(R(f), int(e)) for f, e in zip(pols, exps)]
 
@@ -6087,7 +6095,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         For internal use only.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<a> = PolynomialRing(ZZ)
             sage: (2*a^2 + a)._pari_with_name()
@@ -10904,7 +10912,8 @@ cdef class Polynomial_generic_dense(Polynomial):
         OUTPUT:
             element of base ring
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: R.<t> = QQ[]
             sage: S.<x> = R[]
             sage: f = x*t + x + t
@@ -11045,6 +11054,14 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: q,r = h.quo_rem(f)
             sage: h == q*f + r and r.degree() < f.degree()
             True
+
+        :trac:`26907`::
+
+            sage: P.<x> = ZZ[]
+            sage: R.<y> = P[]
+            sage: a = 3*y + 1
+            sage: a//a
+            1
         """
         if other.is_zero():
             raise ZeroDivisionError("division by zero polynomial")
@@ -11495,7 +11512,7 @@ cdef class PolynomialBaseringInjection(Morphism):
     By :trac:`9944`, there are now only very few exceptions::
 
         sage: PolynomialRing(QQ,names=[]).coerce_map_from(QQ)
-        Generic morphism:
+        Call morphism:
           From: Rational Field
           To:   Multivariate Polynomial Ring in no variables over Rational Field
     """

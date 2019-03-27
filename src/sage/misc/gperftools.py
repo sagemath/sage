@@ -26,13 +26,13 @@ AUTHORS:
 - Volker Braun (2014-03-31): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sys
 import ctypes
@@ -144,7 +144,7 @@ class Profiler(SageObject):
         global libprofiler
         if libprofiler is not None:
             return libprofiler
-        import ctypes, ctypes.util
+        import ctypes.util
         name = ctypes.util.find_library('profiler')
         if name:
             libprofiler = ctypes.CDLL(name)

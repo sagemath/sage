@@ -16,7 +16,7 @@ EXAMPLES::
     sage: py3_syntax = Python3SyntaxTest('sage', 'sage_setup')
     sage: py3_syntax.run_tests('.py')   # long time
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Volker Braun <vbraun.name@gmail.com>
 #                     2017 Frédéric Chapoton <chapoton@math.univ-lyon1.fr>
 #                     2017 Julian Rüth <julian.rueth@fsfe.org>
@@ -25,9 +25,8 @@ EXAMPLES::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 import os
@@ -77,9 +76,10 @@ class SortedDirectoryWalkerABC(object):
         EXAMPLES::
 
             sage: from sage.tests.py3_syntax import Python3SyntaxTest
-            sage: test = Python3SyntaxTest('sage/tests/french_book')
+            sage: name = 'sage/tests/books/computational-mathematics-with-sagemath'
+            sage: test = Python3SyntaxTest(name)
             sage: next(iter(test))
-            ('...src/sage/tests/french_book', 'README', '')
+            ('...src/sage/tests/books/computational-mathematics-with-sagemath', 'README', '')
         """
         tree_walk = itertools.chain(*map(os.walk, self._directories))
         for path, _, files in tree_walk:

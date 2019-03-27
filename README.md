@@ -17,9 +17,10 @@ and functions list the authors.
 Getting Started
 ---------------
 
-If you downloaded a [binary](http://www.sagemath.org/download.html),
-you just need open a terminal in the directory where you extracted the binary
-archive and type:
+If you downloaded a [binary](http://www.sagemath.org/download.html)
+(i.e. a version of SageMath prepared for a specific operating system),
+Sage is ready to start -- just open a terminal in the directory where
+you extracted the binary archive and type:
 
     ./sage
 
@@ -148,45 +149,73 @@ More Detailed Instructions to Build from Source
    gas/as, gld/ld, gnm/nm. On most platforms, these are automatically
    installed when you install the programs listed above.
 
-1. Extract the Sage source tarball and cd into a directory with no
-   spaces in it. If you have a machine with 4 processors, say, type
-   `export MAKE="make -j4"` the following to configure the build script to
-   perform a parallel compilation of Sage using 4 jobs.
-   (With 4 processors, you might also consider `-j5` or `-j6` --
-   building with more jobs than CPU cores can speed things up.)
+1. Extract the Sage source tarball into a directory, making sure
+   there are no spaces in the path to the resulting directory.
+
+   Note that moving the directory after Sage has been built will
+   require to build Sage again.
+
+1. Change to the Sage directory using `cd`.
+
+1. Optional: set some environment variables to customize the build.
+
+   For example, the `MAKE` environment variable controls whether to run
+   several jobs in parallel, while the `SAGE_CHECK` environment variable
+   controls whether to perform more tests during the installation.  For
+   an in-depth discussion of environment variables for building Sage, see
+   [the installation guide](http://doc.sagemath.org/html/en/installation/source.html#environment-variables).
+
+   On a machine with 4 processors, say, typing `export MAKE="make -j4"`
+   will configure the build script to perform a parallel compilation of
+   Sage using 4 jobs. You might even consider `-j5` or `-j6`, as
+   building with more jobs than CPU cores can speed things up further.
    You might in addition pass a `-l` [load flag](https://www.gnu.org/software/make/manual/make.html#Options-Summary)
-   to "make": this sets a load limit, so for example if you execute
+   to `make`: this sets a load limit, so for example if you execute
    `export MAKE="make -j4 -l5.5"` then "make" won't start more than one
    job at a time if the system load average is above 5.5, see
    the [make documentation](https://www.gnu.org/software/make/manual/make.html#Parallel).
 
-   If you want to run the test suite for each individual spkg as it is
-   installed, type `export SAGE_CHECK="yes"` before starting the Sage
-   build. This will run each test suite and will raise an error if any
-   failures occur. Python's test suite has been disabled by default,
-   because it causes failures on most systems. To enable the Python
-   testsuite, set the environment variable `SAGE_CHECK_PACKAGES` to `python`.
+   If you want to run the test suite for each individual Sage package
+   as it gets installed, type `export SAGE_CHECK="yes"`. This will run
+   each test suite, raising an error if any failure occurs. Python's
+   test suite has been disabled by default, because it causes failures
+   on most systems. To enable the Python test suite, set the environment
+   variable `SAGE_CHECK_PACKAGES` to `python`.
 
-   To start the build, type `make`.
+1. To start the build, type `make`.
+
+   Note: to build a Python3-based Sage, instead of typing `make`, type
+
+       make configure
+       ./configure --with-python=3
+       make
+
+   This will build Sage based on Python 3 rather than based on Python 2,
+   which is still the default at this point. The resulting Sage mostly
+   works well, though some features (less of them at each release!) are
+   not yet ready for Python 3. The progress on this is tracked at
+   [Sage Trac ticket 15530: Metaticket: Add support for python 3.6+](https://trac.sagemath.org/ticket/15530).
 
 1. Wait about 20 minutes to 14 days, depending on your computer (it took
    about 2 weeks to build Sage on the T-Mobile G1 Android cell phone).
 
 1. Type `./sage` to try it out.
 
-1. Optional: Type `make ptest` to test all examples in the documentation
+1. Optional: Type `make ptestlong` to test all examples in the documentation
    (over 200,000 lines of input!) -- this takes from 10 minutes to
    several hours. Don't get too disturbed if there are 2 to 3 failures,
-   but always feel free to email the section of `logs/ptest.log` that
+   but always feel free to email the section of `logs/ptestlong.log` that
    contains errors to the [sage-support mailing list](https://groups.google.com/group/sage-support).
    If there are numerous failures, there was a serious problem with your build.
+
+   Note: if you built for Python 3, you can instead run `make ptest-python3`.
 
 1. The HTML version of the [documentation](http://doc.sagemath.org/html/en/index.html)
    is built during the compilation process of Sage and resides in the directory
    `local/share/doc/sage/html/`.
 
-   * Optional: If you want to build the PDF version (requires LaTeX)
-   of the documentation, run `make doc-pdf`.
+1. Optional: If you want to build the PDF version of the documentation,
+    run `make doc-pdf` (this requires LaTeX to be installed).
 
 1. Optional: You might install optional packages of interest to you: type
    `./sage --optional` to get a list.
@@ -335,7 +364,7 @@ source tree goes something like this:
 
 1. `make python2`
 1. run `./bootstrap` if `configure` does not exist
-1. run `./configure` if `build/make/Makefile` doe not exist
+1. run `./configure` if `build/make/Makefile` does not exist
 1. `cd` into `build/make` and run the `install` script--this is little more
    than a front-end to running `make -f build/make/Makefile python2`, which
    sets some necessary environment variables and logs some information

@@ -911,7 +911,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             Supports printing in exponential coordinates of the first and
             second kinds, depending on the default coordinate system.
 
-            EXAMPLES:
+            EXAMPLES::
 
                 sage: L = LieAlgebra(QQ, 2, step=2)
                 sage: G = L.lie_group('H')

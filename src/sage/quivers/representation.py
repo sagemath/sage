@@ -2196,7 +2196,7 @@ class QuiverRep_generic(WithEqualityById, Module):
             projection map from ``self`` to ``quot`` can be obtained by
             calling ``quot.coerce_map_from(self)``.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Q = DiGraph({1:{2:['a','b']}, 2:{3:['c']}}).path_semigroup()
             sage: M = Q.I(GF(3), 3)

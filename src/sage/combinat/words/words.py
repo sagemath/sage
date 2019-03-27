@@ -593,7 +593,7 @@ class FiniteWords(AbstractLanguage):
            when reloading. Also, most iterators do not support copying and
            should not support pickling by extension.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: W = FiniteWords()
 

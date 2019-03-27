@@ -1069,8 +1069,8 @@ class CycleIndexSeries(LazyPowerSeries):
 
             The compositional inverse `\Omega` of the species `E_{+}`
             of nonempty sets can be handled much more efficiently
-            using specialized methods. These are implemented in
-            :class:`~sage.combinat.species.combinatorial_logarithm.CombinatorialLogarithmSeries`.
+            using specialized methods. See
+            :func:`~sage.combinat.species.generating_series.LogarithmCycleIndexSeries`
 
         AUTHORS:
 

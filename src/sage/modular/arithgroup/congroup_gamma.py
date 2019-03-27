@@ -235,7 +235,8 @@ class Gamma_class(CongruenceSubgroup):
 
         TESTS::
 
-            sage: G = Gamma(50); all([c == G.reduce_cusp(c) for c in G.cusps()])
+            sage: G = Gamma(50)
+            sage: all(c == G.reduce_cusp(c) for c in G.cusps())
             True
         """
         N = self.level()

@@ -213,7 +213,7 @@ Creating Lists I: [Square brackets]
     sage: L
     [3, [5, 1, 4, 2, 3], 17, 17, 3, 51]
 
-**Exercise:** Create the list :math:`[63, 12, -10, \text{``a''}, 12]`,
+**Exercise:** Create the list ``[63, 12, -10, "a", 12]``,
 assign it to the variable ``L``, and print the list.
 
 ::

@@ -80,8 +80,8 @@ libSingular
    sage/libs/singular/ring
    sage/libs/singular/groebner_strategy
 
-libGAP
-------
+GAP
+---
 .. toctree::
    :maxdepth: 2
 

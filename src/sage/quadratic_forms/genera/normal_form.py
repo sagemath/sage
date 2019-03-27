@@ -266,7 +266,7 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
         return G.parent().zero(), G.parent().zero()
     # the transformation matrix is called B
     B = Matrix.identity(R, n)
-    if(p == 2):
+    if p == 2:
         D, B = _jordan_2_adic(G)
     else:
         D, B = _jordan_odd_adic(G)
@@ -274,7 +274,7 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
     B = B1 * B
     # we have reached a normal form for p != 2
     # for p == 2 extra work is necessary
-    if p==2:
+    if p == 2:
         D, B1 = _two_adic_normal_forms(D, partial=partial)
         B = B1 * B
     nondeg = B * nondeg
@@ -282,11 +282,12 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
     D = Matrix.block_diagonal([D, Matrix.zero(kernel.nrows())])
     if debug:
         assert B.determinant().valuation() == 0     # B is invertible!
-        if p==2:
+        if p == 2:
             assert B*G*B.T == Matrix.block_diagonal(collect_small_blocks(D))
         else:
             assert B*G*B.T == Matrix.diagonal(D.diagonal())
     return D/p**d, B
+
 
 def _find_min_p(G, cnt, lower_bound=0):
     r"""
@@ -716,7 +717,7 @@ def _jordan_2_adic(G):
                     eqn_mat = D[cnt:cnt+2, cnt:cnt+2].list()
                     eqn_mat = Matrix(R, 2, 2, [e // content for e in eqn_mat])
                     # calculate the inverse without using division
-                    inv = eqn_mat.adjoint() * eqn_mat.det().inverse_of_unit()
+                    inv = eqn_mat.adjugate() * eqn_mat.det().inverse_of_unit()
                     B1 = B[cnt:cnt+2, :]
                     B2 = D[cnt+2:, cnt:cnt+2] * inv
                     for i in range(B2.nrows()):

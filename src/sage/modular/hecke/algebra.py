@@ -75,7 +75,7 @@ def _heckebasis(M):
         [1 0]
         [0 1],
         Hecke operator on Modular Symbols space of dimension 2 for Gamma_0(11) of weight 2 with sign 1 over Rational Field defined by:
-        [0 1]
+        [0 2]
         [0 5]]
     """
     d = M.rank()
@@ -410,7 +410,7 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
 
             sage: M = ModularSymbols(Gamma0(22), sign=1)
             sage: [B[0,0] for B in M.hecke_algebra().basis()]
-            [701, 512, 413, 160, 850]
+            [-955, -994, -706, -490, -1070]
             sage: [B[0, 0] for B in M.anemic_hecke_algebra().basis()]
             Traceback (most recent call last):
             ...
@@ -534,20 +534,10 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
         EXAMPLES::
 
             sage: T = ModularSymbols(Gamma1(7), 4).hecke_algebra()
-            sage: T.diamond_bracket_matrix(3)
-            [    0     0     1     0     0     0     0     0     0     0     0     0]
-            [    1     0     0     0     0     0     0     0     0     0     0     0]
-            [    0     1     0     0     0     0     0     0     0     0     0     0]
-            [    0     0     0 -11/9  -4/9     1   2/3   7/9   2/9   7/9  -5/9  -2/9]
-            [    0     0     0  58/9  17/9    -5 -10/3   4/9   5/9 -50/9  37/9  13/9]
-            [    0     0     0 -22/9  -8/9     2   4/3   5/9   4/9  14/9 -10/9  -4/9]
-            [    0     0     0  44/9  16/9    -4  -8/3   8/9   1/9 -28/9  20/9   8/9]
-            [    0     0     0     0     0     0     0     0     0     0     1     0]
-            [    0     0     0     0     0     0     0     0     0     0     0     1]
-            [    0     0     0     1     0     0     0     0     0     0     0     0]
-            [    0     0     0     2     0    -1     0     0     0     0     0     0]
-            [    0     0     0    -4     0     4     1     0     0     0     0     0]
-
+            sage: d3 = T.diamond_bracket_matrix(3)
+            sage: x = d3.charpoly().variables()[0]
+            sage: d3.charpoly() == (x^3-1)^4
+            True
         """
         return self.__M.diamond_bracket_matrix(d)
 

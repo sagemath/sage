@@ -12,7 +12,8 @@
 # serve to show the default.
 
 import sys, os
-sys.path.append(os.environ['SAGE_DOC_SRC'])
+from sage.env import SAGE_DOC_SRC
+sys.path.append(SAGE_DOC_SRC)
 from common.conf import *
 
 # General information about the project.

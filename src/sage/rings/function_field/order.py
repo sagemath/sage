@@ -89,7 +89,6 @@ from __future__ import absolute_import
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
 
 from sage.modules.free_module_element import vector
 from sage.arith.all import lcm, gcd
@@ -101,6 +100,9 @@ from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.euclidean_domains import EuclideanDomains
 
+from sage.matrix.special import block_matrix
+from sage.matrix.constructor import matrix
+
 from .ideal import (
     IdealMonoid,
     FunctionFieldIdeal,
@@ -110,9 +112,6 @@ from .ideal import (
     FunctionFieldIdealInfinite_module,
     FunctionFieldIdealInfinite_rational,
     FunctionFieldIdealInfinite_global)
-
-lazy_import('sage.matrix.special', 'block_matrix')
-lazy_import('sage.matrix.constructor', 'matrix')
 
 class FunctionFieldOrder_base(CachedRepresentation, Parent):
     """

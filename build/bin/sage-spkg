@@ -715,7 +715,7 @@ __EOF__
 }
 
 
-WRAPPED_SCRIPTS="build install check postinst legacy-uninstall prerm postrm"
+WRAPPED_SCRIPTS="build install check preinst postinst legacy-uninstall prerm postrm"
 INSTALLED_SCRIPTS="prerm postrm"
 
 
@@ -850,6 +850,15 @@ if [ "$KEEP_EXISTING" != "yes" ]; then
     sage-spkg-uninstall "$PKG_BASE"
 fi
 
+# Run the pre-install script, if any
+if [ -f spkg-preinst ]; then
+    echo "Running pre-install script for $PKG_NAME."
+    time $SAGE_SUDO ./spkg-preinst
+    if [ $? -ne 0 ]; then
+        error_msg "Error running the preinst script for $PKG_NAME."
+        exit 1
+    fi
+fi
 
 if [ -f spkg-build ]; then
     # Package has both spkg-build and spkg-install; execute the latter with SAGE_SUDO
@@ -976,7 +985,15 @@ if [ "$SAGE_CHECK" = "yes" ]; then
     fi
 fi
 
-FILE_LIST="$(echo "$FILE_LIST" | sed 's/^\(.\+\)$/"\1"/; 2,$s/^/        /; $!s/$/,/')"
+# For each line in $FILE_LIST, enclose in double quotes:
+NEW_LIST=""
+for f in $FILE_LIST; do
+         NEW_LIST+="\"$f\"
+"
+done
+# Now remove the last line (it's blank), indent each line (skipping
+# the first) and append a comma (skipping the last).
+FILE_LIST="$(echo "$NEW_LIST" | sed '$d' | sed '2,$s/^/        /; $!s/$/,/')"
 
 # Mark that the new package has been installed (and tested, if
 # applicable).

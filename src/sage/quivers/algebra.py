@@ -500,7 +500,7 @@ class PathAlgebra(CombinatorialFreeModule):
 
         - :class:`DiGraph`, the quiver of the algebra
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: P = DiGraph({1:{2:['a', 'b']}}).path_semigroup()
             sage: A = P.algebra(GF(3))
@@ -526,7 +526,7 @@ class PathAlgebra(CombinatorialFreeModule):
         - the path semigroup from which ``self`` was formed (a partial
           semigroup)
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: P = DiGraph({1:{2:['a', 'b']}}).path_semigroup()
             sage: A = P.algebra(GF(3))

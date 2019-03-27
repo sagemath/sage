@@ -178,7 +178,6 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
             [{2, 3}*{1, 4}, {2, 3}*{1, 4}, {2, 3}*{1, 4}, {2, 3}*{1, 4}]
         """
         from sage.groups.all import PermutationGroupElement, PermutationGroup
-        from sage.misc.misc import uniq
         from sage.combinat.species.misc import change_support
 
         left, right = self._list
@@ -197,7 +196,7 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
 
         gens = l_aut.gens() + r_aut.gens()
         gens = [g for g in gens if g != identity]
-        gens = uniq(gens) if gens else [[]]
+        gens = sorted(set(gens)) if gens else [[]]
         return PermutationGroup(gens)
 
 

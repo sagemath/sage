@@ -2,12 +2,6 @@ r"""
 Hall-Littlewood Polynomials
 
 Notation used in the definitions follows mainly [Mac1995]_.
-
-REFERENCES:
-
-.. [Mac1995] \I. G. Macdonald, Symmetric functions and Hall polynomials, second ed.,
-   The Clarendon Press, Oxford University Press, New York, 1995, With contributions
-   by A. Zelevinsky, Oxford Science Publications.
 """
 from __future__ import absolute_import
 #*****************************************************************************

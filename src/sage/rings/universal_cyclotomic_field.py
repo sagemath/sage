@@ -14,10 +14,10 @@ number fields, such as calculations with matrices of cyclotomics.
 
     There used to be a native Sage version of the universal cyclotomic field
     written by Christian Stump (see :trac:`8327`). It was slower on most
-    operations and it was decided to use a version based on libGAP instead (see
+    operations and it was decided to use a version based on GAP instead (see
     :trac:`18152`). One main difference in the design choices is that GAP stores
     dense vectors whereas the native ones used Python dictionaries (storing only
-    nonzero coefficients). Most operations are faster with libGAP except some
+    nonzero coefficients). Most operations are faster with GAP except some
     operation on very sparse elements. All details can be found in
     :trac:`18152`.
 
@@ -783,7 +783,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: UniversalCyclotomicField().zero().multiplicative_order()
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, argument must be nonzero
+            GAPError: Error, argument must be nonzero
         """
         return self._obj.Order().sage()
 
@@ -1013,25 +1013,39 @@ class UniversalCyclotomicFieldElement(FieldElement):
         return [P.element_class(P, obj.GaloisCyc(i))
                 for i in n.coprime_integers(n)]
 
-    def abs(self):
+    def __abs__(self):
         """
-        Return the absolute value of ``self`` as an algebraic real number.
+        Return the absolute value (or complex modulus) of ``self``.
+
+        The absolute value is returned as an algebraic real number.
 
         EXAMPLES::
 
             sage: f = 5/2*E(3)+E(5)/7
             sage: f.abs()
             2.597760303873084?
+            sage: abs(f)
+            2.597760303873084?
+            sage: a = E(8)
+            sage: abs(a)
+            1
+            sage: v, w = vector([a]), vector([a, a])
+            sage: v.norm(), w.norm()
+            (1, 1.414213562373095?)
+            sage: v.norm().parent()
+            Algebraic Real Field
 
         TESTS::
 
-            sage: [E(n).abs() for n in range(1, 11)]
+            sage: [abs(E(n)) for n in range(1, 11)]
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
             sage: UniversalCyclotomicField().zero().abs()
             0
         """
         square = self * self.conjugate()
         return AA(square).sqrt()
+
+    abs = __abs__
 
     def norm_of_galois_extension(self):
         r"""
@@ -1126,6 +1140,9 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
 
             sage: UCF = UniversalCyclotomicField()
             sage: TestSuite(UCF).run()
+
+            sage: UniversalCyclotomicField().is_finite()
+            False
         """
         from sage.categories.fields import Fields
         Field.__init__(self, base_ring=QQ, category=Fields().Infinite())

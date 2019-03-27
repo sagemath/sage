@@ -68,7 +68,7 @@ cdef class ntl_ZZ_pX(object):
     or Karatsuba algorithms.
     """
     # See ntl_ZZ_pX.pxd for definition of data members
-    def __init__(self, v = None, modulus = None):
+    def __init__(self, v=None, modulus=None):
         """
         EXAMPLES::
 

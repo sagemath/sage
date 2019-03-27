@@ -28,11 +28,11 @@ cdef void reference_obj(Obj obj)
 cdef void dereference_obj(Obj obj)
 
 # callback from the GAP memory manager so we can mark all_gap_elements.values()
-cdef void gasman_callback()
+cdef void gasman_callback() with gil
 
 
 ############################################################################
-### Initialization of libGAP ###############################################
+### Initialization of GAP ##################################################
 ############################################################################
 
 cdef initialize()

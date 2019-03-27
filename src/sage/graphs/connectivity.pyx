@@ -380,10 +380,12 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
         ([[0, 1, 4, 2, 3], [0, 6, 9, 7, 8]], [0])
         sage: rings.blocks_and_cut_vertices()
         ([[0, 1, 4, 2, 3], [0, 6, 9, 7, 8]], [0])
-        sage: blocks_and_cut_vertices(rings, algorithm="Tarjan_Sage", sort=True)
+        sage: B, C = blocks_and_cut_vertices(rings, algorithm="Tarjan_Sage", sort=True)
+        sage: B, C
         ([[0, 1, 2, 3, 4], [0, 6, 7, 8, 9]], [0])
-        sage: blocks_and_cut_vertices(rings, algorithm="Tarjan_Sage", sort=False)
-        ([[0, 1, 2, 3, 4], [8, 9, 0, 6, 7]], [0])
+        sage: B2, C2 = blocks_and_cut_vertices(rings, algorithm="Tarjan_Sage", sort=False)
+        sage: Set(map(Set, B)) == Set(map(Set, B2)) and set(C) == set(C2)
+        True
 
     The Petersen graph is biconnected, hence has no cut vertices::
 
@@ -2256,19 +2258,19 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0):
         sage: for u,v in G.edges(labels=False, sort=False):
         ....:     G.add_path([u, G.add_vertex(), G.add_vertex(), v])
         sage: T = G.spqr_tree(algorithm="Hopcroft_Tarjan")
-        sage: Counter(u[0] for u in T)
-        Counter({'P': 15, 'S': 15, 'R': 1})
+        sage: sorted(Counter(u[0] for u in T).items())
+        [('P', 15), ('R', 1), ('S', 15)]
         sage: T = G.spqr_tree(algorithm="cleave")
-        sage: Counter(u[0] for u in T)
-        Counter({'P': 15, 'S': 15, 'R': 1})
+        sage: sorted(Counter(u[0] for u in T).items())
+        [('P', 15), ('R', 1), ('S', 15)]
         sage: for u,v in G.edges(labels=False, sort=False):
         ....:     G.add_path([u, G.add_vertex(), G.add_vertex(), v])
         sage: T = G.spqr_tree(algorithm="Hopcroft_Tarjan")
-        sage: Counter(u[0] for u in T)
-        Counter({'S': 75, 'P': 60, 'R': 1})
-        sage: T = G.spqr_tree(algorithm="cleave") # long time
-        sage: Counter(u[0] for u in T)            # long time
-        Counter({'S': 75, 'P': 60, 'R': 1})
+        sage: sorted(Counter(u[0] for u in T).items())
+        [('P', 60), ('R', 1), ('S', 75)]
+        sage: T = G.spqr_tree(algorithm="cleave")       # long time
+        sage: sorted(Counter(u[0] for u in T).items())  # long time
+        [('P', 60), ('R', 1), ('S', 75)]
 
     TESTS::
 
@@ -2413,7 +2415,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0):
                 try:
                     if block[1].has_edge(e):
                         Tree.add_edge(block, P_block)
-                except:
+                except LookupError:
                     continue
             if num == 2:
                 # When 2 S or R blocks are separated by a 2-cut without edge, we
@@ -2437,7 +2439,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0):
                     if block[1].has_edge(e):
                         Tree.add_edge(block, P_block)
                         break
-                except:
+                except LookupError:
                     continue
 
     return Tree
@@ -2794,7 +2796,10 @@ cdef class TriconnectivitySPQR:
         ....: (6, 7), (8, 9), (8, 11), (8, 12), (9, 10), (9, 11), (9, 12),
         ....: (10, 11), (10, 12)])
         sage: tric = TriconnectivitySPQR(G)
-        sage: tric.print_triconnected_components()
+        sage: T = tric.get_spqr_tree()
+        sage: G.is_isomorphic(spqr_tree_to_graph(T))
+        True
+        sage: tric.print_triconnected_components()  # py2
         Polygon: [(6, 7, None), (5, 6, None), (7, 5, 'newVEdge0')]
         Bond: [(7, 5, 'newVEdge0'), (5, 7, 'newVEdge1'), (5, 7, None)]
         Polygon: [(5, 7, 'newVEdge1'), (4, 7, None), (5, 4, 'newVEdge2')]
@@ -2822,6 +2827,9 @@ cdef class TriconnectivitySPQR:
 
         sage: G = Graph([(1, 2), (1, 5), (1, 5), (2, 3), (2, 3), (3, 4), (4, 5)], multiedges=True)
         sage: tric = TriconnectivitySPQR(G)
+        sage: T = tric.get_spqr_tree()
+        sage: G.is_isomorphic(spqr_tree_to_graph(T))
+        True
         sage: tric.print_triconnected_components()
         Bond:  [(1, 5, None), (1, 5, None), (1, 5, 'newVEdge0')]
         Bond:  [(2, 3, None), (2, 3, None), (2, 3, 'newVEdge1')]
@@ -3998,12 +4006,16 @@ cdef class TriconnectivitySPQR:
         An example from [Hopcroft1973]_::
 
             sage: from sage.graphs.connectivity import TriconnectivitySPQR
+            sage: from sage.graphs.connectivity import spqr_tree_to_graph
             sage: G = Graph([(1, 2), (1, 4), (1, 8), (1, 12), (1, 13), (2, 3),
             ....: (2, 13), (3, 4), (3, 13), (4, 5), (4, 7), (5, 6), (5, 7), (5, 8),
             ....: (6, 7), (8, 9), (8, 11), (8, 12), (9, 10), (9, 11), (9, 12),
             ....: (10, 11), (10, 12)])
             sage: tric = TriconnectivitySPQR(G)
-            sage: tric.print_triconnected_components()
+            sage: T = tric.get_spqr_tree()
+            sage: G.is_isomorphic(spqr_tree_to_graph(T))
+            True
+            sage: tric.print_triconnected_components()  # py2
             Polygon: [(6, 7, None), (5, 6, None), (7, 5, 'newVEdge0')]
             Bond: [(7, 5, 'newVEdge0'), (5, 7, 'newVEdge1'), (5, 7, None)]
             Polygon: [(5, 7, 'newVEdge1'), (4, 7, None), (5, 4, 'newVEdge2')]
@@ -4016,6 +4028,19 @@ cdef class TriconnectivitySPQR:
             Bond: [(1, 4, None), (1, 4, 'newVEdge9'), (1, 4, 'newVEdge10')]
             Polygon: [(1, 4, 'newVEdge10'), (3, 4, None), (1, 3, 'newVEdge11')]
             Triconnected: [(2, 3, None), (2, 13, None), (1, 2, None), (1, 3, 'newVEdge11'), (1, 13, None), (3, 13, None)]
+            sage: tric.print_triconnected_components()  # py3
+            Triconnected: [(8, 9, None), (9, 12, None), (9, 11, None), (8, 11, None), (10, 11, None), (9, 10, None), (10, 12, None), (8, 12, 'newVEdge0')]
+            Bond: [(8, 12, None), (8, 12, 'newVEdge0'), (8, 12, 'newVEdge1')]
+            Polygon: [(6, 7, None), (5, 6, None), (7, 5, 'newVEdge2')]
+            Bond: [(7, 5, 'newVEdge2'), (5, 7, 'newVEdge3'), (5, 7, None)]
+            Polygon: [(5, 7, 'newVEdge3'), (4, 7, None), (5, 4, 'newVEdge4')]
+            Bond: [(5, 4, 'newVEdge4'), (4, 5, 'newVEdge5'), (4, 5, None)]
+            Polygon: [(4, 5, 'newVEdge5'), (5, 8, None), (1, 4, 'newVEdge9'), (1, 8, 'newVEdge10')]
+            Triconnected: [(1, 2, None), (2, 13, None), (1, 13, None), (3, 13, None), (2, 3, None), (1, 3, 'newVEdge7')]
+            Polygon: [(1, 3, 'newVEdge7'), (3, 4, None), (1, 4, 'newVEdge8')]
+            Bond: [(1, 4, None), (1, 4, 'newVEdge8'), (1, 4, 'newVEdge9')]
+            Bond: [(1, 8, None), (1, 8, 'newVEdge10'), (1, 8, 'newVEdge11')]
+            Polygon: [(8, 12, 'newVEdge1'), (1, 8, 'newVEdge11'), (1, 12, None)]
         """
         # The types are {0: "Bond", 1: "Polygon", 2: "Triconnected"}
         cdef list prefix = ["Bond", "Polygon", "Triconnected"]

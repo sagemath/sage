@@ -316,7 +316,7 @@ class FunctionUnitStep(GinacFunction):
 
         -  ``x`` - a real number or a symbolic expression
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: unit_step(-1)
             0
@@ -405,7 +405,7 @@ class FunctionSignum(BuiltinFunction):
         r"""
         The sgn function, ``sgn(x)``.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: sgn(-1)
             -1

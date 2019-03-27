@@ -237,7 +237,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
             if is_FGP_Module(S):
                 if S.is_submodule(T):
                     V = S.V()
-                    if all([V==V*f.matrix() for f in self.gens()]):
+                    if all(V == V * f.matrix() for f in self.gens()):
                         return GroupActionOnQuotientModule(self, S)
         return None
 

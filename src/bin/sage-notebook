@@ -10,7 +10,6 @@ import textwrap
 logging.basicConfig()
 logger = logging.getLogger()
 
-from sage.env import SAGE_ROOT
 from sage.misc.banner import banner
 
 

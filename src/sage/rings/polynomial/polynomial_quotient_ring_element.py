@@ -283,7 +283,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         Compare this element with something else, where equality testing
         coerces the object on the right, if possible (and necessary).
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quotient(x^3-2)

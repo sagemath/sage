@@ -285,10 +285,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #
 ##########################################################################
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, AsciiArtString
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
+from sage.interfaces.interface import AsciiArtString
 from sage.misc.all import prod
 from sage.env import DOT_SAGE, SAGE_LOCAL
 from sage.interfaces.tab_completion import ExtraTabCompletion
@@ -296,8 +296,9 @@ from sage.docs.instancedoc import instancedoc
 import os
 
 
-COMMANDS_CACHE = '%s/lie_commandlist_cache.sobj'%DOT_SAGE
-HELP_CACHE = '%s/lie_helpdict_cache.sobj'%DOT_SAGE
+COMMANDS_CACHE = '%s/lie_commandlist_cache.sobj' % DOT_SAGE
+HELP_CACHE = '%s/lie_helpdict_cache.sobj' % DOT_SAGE
+
 
 class LiE(ExtraTabCompletion, Expect):
     r"""

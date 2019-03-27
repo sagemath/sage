@@ -1152,55 +1152,55 @@ def hyperbolicity(G,
 
         sage: from sage.graphs.hyperbolicity import hyperbolicity
         sage: G = graphs.Grid2dGraph(3, 3)
-        sage: hyperbolicity(G, algorithm='BCCM')
+        sage: L,C,U = hyperbolicity(G, algorithm='BCCM'); L,sorted(C),U
         (2, [(0, 0), (0, 2), (2, 0), (2, 2)], 2)
-        sage: hyperbolicity(G, algorithm='CCL')
+        sage: L,C,U = hyperbolicity(G, algorithm='CCL'); L,sorted(C),U
         (2, [(0, 0), (0, 2), (2, 0), (2, 2)], 2)
-        sage: hyperbolicity(G, algorithm='basic')
+        sage: L,C,U = hyperbolicity(G, algorithm='basic'); L,sorted(C),U
         (2, [(0, 0), (0, 2), (2, 0), (2, 2)], 2)
 
     Hyperbolicity of a PetersenGraph::
 
         sage: from sage.graphs.hyperbolicity import hyperbolicity
         sage: G = graphs.PetersenGraph()
-        sage: hyperbolicity(G, algorithm='BCCM')
+        sage: L,C,U = hyperbolicity(G, algorithm='BCCM'); L,sorted(C),U
         (1/2, [6, 7, 8, 9], 1/2)
-        sage: hyperbolicity(G, algorithm='CCL')
+        sage: L,C,U = hyperbolicity(G, algorithm='CCL'); L,sorted(C),U
         (1/2, [0, 1, 2, 3], 1/2)
-        sage: hyperbolicity(G, algorithm='CCL+')
+        sage: L,C,U = hyperbolicity(G, algorithm='CCL+'); L,sorted(C),U
         (1/2, [0, 1, 2, 3], 1/2)
-        sage: hyperbolicity(G, algorithm='CCL+FA')
+        sage: L,C,U = hyperbolicity(G, algorithm='CCL+FA'); L,sorted(C),U
         (1/2, [0, 1, 2, 3], 1/2)
-        sage: hyperbolicity(G, algorithm='basic')
+        sage: L,C,U = hyperbolicity(G, algorithm='basic'); L,sorted(C),U
         (1/2, [0, 1, 2, 3], 1/2)
-        sage: hyperbolicity(G, algorithm='dom')
+        sage: L,C,U = hyperbolicity(G, algorithm='dom'); L,sorted(C),U
         (0, [0, 1, 2, 6], 1)
 
     Asking for an approximation in a grid graph::
 
         sage: from sage.graphs.hyperbolicity import hyperbolicity
         sage: G = graphs.Grid2dGraph(2, 10)
-        sage: hyperbolicity(G, algorithm='CCL', approximation_factor=1.5)
-        (1, [(0, 0), (0, 9), (1, 0), (1, 9)], 3/2)
-        sage: hyperbolicity(G, algorithm='CCL+', approximation_factor=1.5)
-        (1, [(0, 0), (0, 9), (1, 0), (1, 9)], 1)
-        sage: hyperbolicity(G, algorithm='CCL', approximation_factor=4)
-        (1, [(0, 0), (0, 9), (1, 0), (1, 9)], 4)
-        sage: hyperbolicity(G, algorithm='CCL', additive_gap=2)
-        (1, [(0, 0), (0, 9), (1, 0), (1, 9)], 3)
-        sage: hyperbolicity(G, algorithm='dom')
-        (1, [(0, 1), (0, 8), (1, 0), (1, 9)], 5)
+        sage: L,C,U = hyperbolicity(G, algorithm='CCL', approximation_factor=1.5); L,U
+        (1, 3/2)
+        sage: L,C,U = hyperbolicity(G, algorithm='CCL+', approximation_factor=1.5); L,U
+        (1, 1)
+        sage: L,C,U = hyperbolicity(G, algorithm='CCL', approximation_factor=4); L,U
+        (1, 4)
+        sage: L,C,U = hyperbolicity(G, algorithm='CCL', additive_gap=2); L,U
+        (1, 3)
+        sage: L,C,U = hyperbolicity(G, algorithm='dom'); L,U
+        (1, 5)
 
     Asking for an approximation in a cycle graph::
 
         sage: from sage.graphs.hyperbolicity import hyperbolicity
         sage: G = graphs.CycleGraph(10)
-        sage: hyperbolicity(G, algorithm='CCL', approximation_factor=1.5)
-        (2, [0, 2, 5, 7], 5/2)
-        sage: hyperbolicity(G, algorithm='CCL+FA', approximation_factor=1.5)
-        (2, [0, 2, 5, 7], 5/2)
-        sage: hyperbolicity(G, algorithm='CCL+FA', additive_gap=1)
-        (2, [0, 2, 5, 7], 5/2)
+        sage: L,C,U = hyperbolicity(G, algorithm='CCL', approximation_factor=1.5); L,U
+        (2, 5/2)
+        sage: L,C,U = hyperbolicity(G, algorithm='CCL+FA', approximation_factor=1.5); L,U
+        (2, 5/2)
+        sage: L,C,U = hyperbolicity(G, algorithm='CCL+FA', additive_gap=1); L,U
+        (2, 5/2)
 
     Comparison of results::
 
@@ -1239,7 +1239,7 @@ def hyperbolicity(G,
         sage: from sage.graphs.hyperbolicity import hyperbolicity
         sage: G = graphs.PetersenGraph() * 2
         sage: G.add_edge(0, 11)
-        sage: hyperbolicity(G)
+        sage: L,C,U = hyperbolicity(G); L,sorted(C),U
         (1/2, [6, 7, 8, 9], 1/2)
 
     TESTS:
@@ -1475,7 +1475,7 @@ def hyperbolicity(G,
     certificate = [int_to_vertex[i] for i in certif]
 
     # Last, we return the computed value and the certificate
-    return  ZZ(hyp)/2, sorted(certificate), ZZ(hyp_UB)/2
+    return  ZZ(hyp)/2, certificate, ZZ(hyp_UB)/2
 
 
 ######################################################################

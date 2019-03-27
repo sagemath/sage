@@ -1,14 +1,5 @@
 cd src
 
-# Use C++11 to compile BRiAl, see https://trac.sagemath.org/ticket/21083
-if [ "$UNAME" = "CYGWIN" ]; then
-    # However, on Cygwin we need to use gnu++11:
-    # https://trac.sagemath.org/ticket/24860
-    export CXXFLAGS="$CXXFLAGS -std=gnu++11"
-else
-    export CXXFLAGS="$CXXFLAGS -std=c++11"
-fi
-
 export PYTHON=sage-python23
 
 #

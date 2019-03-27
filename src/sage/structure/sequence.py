@@ -57,25 +57,18 @@ substantial coercions.  It can be greatly sped up by explicitly
 specifying the universe of the sequence::
 
     sage: v = Sequence(range(10000), universe=ZZ)
-
-TESTS::
-
-    sage: v = Sequence([1..5])
-    sage: loads(dumps(v)) == v
-    True
-
 """
 
-
-##########################################################################
-#
-#   Sage: System for Algebra and Geometry Experimentation
-#
+#*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-##########################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+#*****************************************************************************
+
 from __future__ import print_function
 from six.moves import range
 
@@ -83,7 +76,6 @@ from sage.misc.latex import list_function as list_latex_function
 import sage.structure.sage_object
 import sage.structure.coerce
 
-#from mutability import Mutability #we cannot inherit from Mutability and list at the same time
 
 def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=None, use_sage_types=False):
     """
@@ -805,6 +797,26 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         except AttributeError:
             return True
 
+    def __reduce__(self):
+        """
+        Implement pickling for sequences.
+
+        TESTS::
+
+            sage: v = Sequence([1..5])
+            sage: w = loads(dumps(v))
+            sage: v == w
+            True
+            sage: w.is_mutable()
+            True
+            sage: v.set_immutable()
+            sage: w = loads(dumps(v))
+            sage: w.is_mutable()
+            False
+        """
+        args = (list(self), self.__universe, False,
+                self._is_immutable, self.__cr_str)
+        return type(self), args
 
     def __copy__(self):
         """

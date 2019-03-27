@@ -118,15 +118,16 @@ def _UG(n, R, special, var='a', invariant_form=None):
         if not invariant_form.is_hermitian():
             raise ValueError("invariant_form must be hermitian")
 
-        inserted_text = 'with respect to hermitian form'
         try:
-            if not invariant_form.is_positive_definite():
-               inserted_text = 'with respect to non positive definite hermitian form'
-        except:
-            pass
+            if invariant_form.is_positive_definite():
+               inserted_text = "with respect to positive definite hermitian form"
+            else:
+               inserted_text = "with respect to non positive definite hermitian form"
+        except ValueError:
+            inserted_text = "with respect to hermitian form"
 
         name = '{0} Unitary Group of degree {1} over {2} {3}\n{4}'.format(prefix,
-                                 degree, ring, inserted_text,invariant_form)
+                                 degree, ring, inserted_text, invariant_form)
         ltx  = r'\text{{{0}U}}_{{{1}}}({2})\text{{ {3} }}{4}'.format(latex_prefix,
                      degree, latex(ring), inserted_text, latex(invariant_form))
     else:
@@ -375,7 +376,7 @@ class UnitaryMatrixGroup_generic(NamedMatrixGroup_generic):
         sage: m=matrix(CF3, 3,3, [[1,e3,0],[e3.conjugate(),2,0],[0,0,1]])
         sage: G = SU(3, CF3, invariant_form=m)
         sage: latex(G)
-        \text{SU}_{3}(\Bold{Q}(\zeta_{3}))\text{ with respect to hermitian form }\left(\begin{array}{rrr}
+        \text{SU}_{3}(\Bold{Q}(\zeta_{3}))\text{ with respect to positive definite hermitian form }\left(\begin{array}{rrr}
         1 & \zeta_{3} & 0 \\
         -\zeta_{3} - 1 & 2 & 0 \\
         0 & 0 & 1

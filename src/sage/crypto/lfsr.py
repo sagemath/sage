@@ -122,7 +122,7 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###########################################################################
 
 import copy
@@ -130,6 +130,7 @@ import copy
 from sage.structure.all import Sequence
 from sage.rings.all import Integer, PolynomialRing
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+
 
 def lfsr_sequence(key, fill, n):
     r"""
@@ -152,6 +153,7 @@ def lfsr_sequence(key, fill, n):
         sage: fill = [l,l,o,l]; key = [1,o,o,l]; n = 20
         sage: L = lfsr_sequence(key,fill,20); L
         [1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0]
+        sage: from sage.matrix.berlekamp_massey import berlekamp_massey
         sage: g = berlekamp_massey(L); g
         x^4 + x^3 + 1
         sage: (1)/(g.reverse()+O(x^20))
@@ -247,6 +249,7 @@ def lfsr_connection_polynomial(s):
         [1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0]
         sage: lfsr_connection_polynomial(s)
         x^4 + x + 1
+        sage: from sage.matrix.berlekamp_massey import berlekamp_massey
         sage: berlekamp_massey(s)
         x^4 + x^3 + 1
 

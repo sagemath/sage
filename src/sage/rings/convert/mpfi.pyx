@@ -135,11 +135,11 @@ cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1:
         if isinstance(x, ComplexDoubleElement):
             zd = <ComplexDoubleElement>x
             if im is NULL:
-                if zd._complex.dat[1] != 0:
+                if zd._complex.imag:
                     raise TypeError(f"unable to convert complex number {x!r} to real interval")
             else:
-                mpfi_set_d(im, zd._complex.dat[1])
-            mpfi_set_d(re, zd._complex.dat[0])
+                mpfi_set_d(im, zd._complex.imag)
+            mpfi_set_d(re, zd._complex.real)
             return 0
     else:  # not a Sage Element
         # Real

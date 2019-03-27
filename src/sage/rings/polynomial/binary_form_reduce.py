@@ -132,7 +132,7 @@ def covariant_z0(F, z0_cov=False, prec=53, emb=None, error_limit=0.000001):
     """
     R = F.parent()
     d = ZZ(F.degree())
-    if R.ngens() != 2 or any([sum(t) != d for t in F.exponents()]):
+    if R.ngens() != 2 or any(sum(t) != d for t in F.exponents()):
         raise TypeError('must be a binary form')
     if d < 3:
         raise ValueError('must be at least degree 3')
@@ -328,7 +328,7 @@ def epsinv(F, target, prec=53, target_tol=0.001, z=None, emb=None):
     if z is None:
         z, th = covariant_z0(F, prec=prec, emb=emb)
     else: #need to do our own input checking
-        if R.ngens() != 2 or any([sum(t) != d for t in F.exponents()]):
+        if R.ngens() != 2 or any(sum(t) != d for t in F.exponents()):
             raise TypeError('must be a binary form')
         if d < 3:
             raise ValueError('must be at least degree 3')

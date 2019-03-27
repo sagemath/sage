@@ -1,5 +1,5 @@
 """
-Utility functions for libGAP
+Utility functions for GAP
 """
 
 #*****************************************************************************
@@ -17,14 +17,14 @@ from __future__ import print_function, absolute_import
 import os
 import signal
 import warnings
-
+from posix.dlfcn cimport dlopen, dlclose, RTLD_NOW, RTLD_GLOBAL
 from libc.string cimport strcpy, strlen
 
-from cpython.exc cimport PyErr_SetObject, PyErr_Occurred, PyErr_Fetch
+from cpython.exc cimport PyErr_Fetch, PyErr_Restore
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
-from cpython.ref cimport PyObject
+from cpython.ref cimport PyObject, Py_XINCREF, Py_XDECREF
 from cysignals.memory cimport sig_malloc
-from cysignals.pysignals import changesignal
+from cysignals.pysignals import containsignals
 from cysignals.signals cimport sig_on, sig_off, sig_error
 
 import sage.env
@@ -156,7 +156,7 @@ cdef void dereference_obj(Obj obj):
         owned_objects_refcount[wrapped] = refcount - 1
 
 
-cdef void gasman_callback():
+cdef void gasman_callback() with gil:
     """
     Callback before each GAP garbage collection
     """
@@ -165,11 +165,8 @@ cdef void gasman_callback():
         MarkBag((<ObjWrapper>obj).value)
 
 
-
-
-
 ############################################################################
-### Initialization of libGAP ###############################################
+### Initialization of GAP ##################################################
 ############################################################################
 
 def gap_root():
@@ -258,6 +255,18 @@ cdef initialize():
     """
     global _gap_is_initialized, environ
     if _gap_is_initialized: return
+    # Hack to ensure that all symbols provided by libgap are loaded into the
+    # global symbol table
+    # Note: we could use RTLD_NOLOAD and avoid the subsequent dlclose() but
+    # this isn't portable
+    cdef void* handle
+    libgapname = str_to_bytes(sage.env.GAP_SO)
+    handle = dlopen(libgapname, RTLD_NOW | RTLD_GLOBAL)
+    if handle is NULL:
+        raise RuntimeError(
+                "Could not dlopen() libgap even though it should already "
+                "be loaded!")
+    dlclose(handle)
 
     # Define argv and environ variables, which we will pass in to
     # initialize GAP. Note that we must pass define the memory pool
@@ -311,21 +320,19 @@ cdef initialize():
 
     env = copy_environ(environ)
 
-    # Initialize GAP and capture any error messages
-    # The initialization just prints error and does not use the error handler
-    sig_on()
-    try:
-        with changesignal(signal.SIGCHLD, signal.SIG_DFL), \
-                changesignal(signal.SIGINT, signal.SIG_DFL):
-            # Need to save/restore current SIGINT handling since GAP_Initialize
-            # currently clobbers it; it doesn't matter what we set SIGINT to
-            # temporarily.
+    # Need to save/restore current SIGINT handling since GAP_Initialize
+    # currently clobbers it; it doesn't matter what we set SIGINT to
+    # temporarily.
+    with containsignals():
+        sig_on()
+        try:
+            # Initialize GAP and capture any error messages. The
+            # initialization just prints any errors and does not
+            # use the error handler.
             GAP_Initialize(argc, argv, env, &gasman_callback,
                            &error_handler)
-    except RuntimeError as msg:
-        raise RuntimeError('libGAP initialization failed\n' + msg)
-    finally:
-        sig_off()
+        finally:
+            sig_off()
 
     # Set the ERROR_OUTPUT global in GAP to an output stream in which to
     # receive error output
@@ -374,7 +381,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         sage: libgap.eval('if 4>3 thenPrint("hi");\nfi')
         Traceback (most recent call last):
         ...
-        ValueError: libGAP: Syntax error: then expected in stream:1
+        GAPError: Syntax error: then expected in stream:1
         if 4>3 thenPrint("hi");
                ^^^^^^^^^
         sage: libgap.eval('1+1')   # testing that we have successfully recovered
@@ -389,7 +396,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         sage: libgap.eval('Complex Field with 53 bits of precision;')
         Traceback (most recent call last):
         ...
-        ValueError: libGAP: Error, Variable: 'Complex' must have a value
+        GAPError: Error, Variable: 'Complex' must have a value
         Syntax error: ; expected in stream:1
         Complex Field with 53 bits of precision;;
          ^^^^^^^^^^^^
@@ -403,14 +410,13 @@ cdef Obj gap_eval(str gap_string) except? NULL:
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         Error, Variable: 'precision' must have a value
 
-
     Test that on a subsequent attemt we get the same message (no garbage was
     left in the error stream)::
 
         sage: libgap.eval('Complex Field with 53 bits of precision;')
         Traceback (most recent call last):
         ...
-        ValueError: libGAP: Error, Variable: 'Complex' must have a value
+        GAPError: Error, Variable: 'Complex' must have a value
         ...
         Error, Variable: 'precision' must have a value
 
@@ -422,7 +428,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
     cdef int i, j, nresults
 
     # Careful: We need to keep a reference to the bytes object here
-    # so that Cython doesn't dereference it before libGAP is done with
+    # so that Cython doesn't deallocate it before GAP is done with
     # its contents.
     cmd = str_to_bytes(gap_string + ';\n')
     sig_on()
@@ -439,7 +445,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         nresults = LEN_LIST(result)
         if nresults > 1:  # to mimick the old libGAP
             # TODO: Get rid of this restriction eventually?
-            raise ValueError('can only evaluate a single statement')
+            raise GAPError("can only evaluate a single statement")
 
         # Get the result of the first statement
         result = ELM0_LIST(result, 1) # 1-indexed!
@@ -448,7 +454,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
             # An otherwise unhandled error occurred in GAP (such as a
             # syntax error).  Try running the error handler manually
             # to capture the error output, if any.
-            # This should result in a RuntimeError being set.
+            # This should result in a GAPError being set.
             error_handler_check_exception()
 
         # The actual resultant object, if any, is in the second entry
@@ -457,8 +463,6 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # this like returning None)
 
         return ELM0_LIST(result, 2)
-    except RuntimeError as msg:
-        raise ValueError(f'libGAP: {msg}')
     finally:
         GAP_Leave()
         sig_off()
@@ -491,8 +495,13 @@ cdef void hold_reference(Obj obj):
 ### Error handler ##########################################################
 ############################################################################
 
+class GAPError(ValueError):  # ValueError for historical reasons
+    """
+    Exceptions raised by the GAP library
+    """
 
-cdef object extract_libgap_errout():
+
+cdef str extract_libgap_errout():
     """
     Reads the global variable libgap_errout and returns a Python string
     containing the error message (with some boilerplate removed).
@@ -516,41 +525,55 @@ cdef object extract_libgap_errout():
     return msg_py
 
 
-cdef void error_handler():
+cdef void error_handler() with gil:
     """
     The libgap error handler.
 
-    If an error occurred we set a RuntimeError; when the original
-    GAP_EvalString returns this exception will be raised.
+    If an error occurred, we raise a ``GAPError``; when the original
+    ``GAP_EvalString`` returns, this exception will be seen.
 
     TODO: We should probably prevent re-entering this function if we
     are already handling an error; if there is an error in our stream
     handling code below it could result in a stack overflow.
     """
-    cdef PyObject* exc_type
-    cdef PyObject* exc_val
-    cdef PyObject* exc_tb
+    cdef PyObject* exc_type = NULL
+    cdef PyObject* exc_val = NULL
+    cdef PyObject* exc_tb = NULL
 
-    # Close the error stream: This flushes any remaining output and closes
-    # the stream for further writing; reset ERROR_OUTPUT to something sane
-    # just in case (trying to print to a closed stream segfaults GAP)
     try:
         GAP_EnterStack()
+
+        # Close the error stream: this flushes any remaining output and
+        # closes the stream for further writing; reset ERROR_OUTPUT to
+        # something sane just in case (trying to print to a closed
+        # stream segfaults GAP)
         GAP_EvalStringNoExcept(_close_error_output_cmd)
+
+        # Fetch any existing exception before calling
+        # extract_libgap_errout() so that the exception indicator is
+        # cleared
+        PyErr_Fetch(&exc_type, &exc_val, &exc_tb)
+
         msg = extract_libgap_errout()
-
-        if PyErr_Occurred() != NULL and msg:
-            # Sometimes error_handler() can be called multiple times from a
-            # single GAP_EvalString call before it returns; in this case we
-            # just update the exception by appending to the existing exception
-            # message
-            PyErr_Fetch(&exc_type, &exc_val, &exc_tb)
-            if exc_val != NULL:
-                msg = str(<object>exc_val) + '\n' + msg
+        # Sometimes error_handler() can be called multiple times
+        # from a single GAP_EvalString call before it returns.
+        # In this case, we just update the exception by appending
+        # to the existing exception message
+        if exc_type is <PyObject*>GAPError and exc_val is not NULL:
+            msg = str(<object>exc_val) + '\n' + msg
         elif not msg:
-            msg = "An unknown error occurred in libGAP"
+            msg = "an unknown error occurred in GAP"
 
-        PyErr_SetObject(RuntimeError, msg)
+        # Raise an exception using PyErr_Restore().
+        # This way, we can keep any existing traceback object.
+        # Note that we manually need to deal with refcounts here.
+        Py_XDECREF(exc_type)
+        Py_XDECREF(exc_val)
+        exc_type = <PyObject*>GAPError
+        exc_val = <PyObject*>msg
+        Py_XINCREF(exc_type)
+        Py_XINCREF(exc_val)
+        PyErr_Restore(exc_type, exc_val, exc_tb)
     finally:
         # Reset ERROR_OUTPUT with a new text string stream
         GAP_EvalStringNoExcept(_reset_error_output_cmd)

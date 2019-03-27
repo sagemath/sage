@@ -629,7 +629,7 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
             - :meth:`Category.additional_structure`.
             - :meth:`is_construction_defined_by_base`.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Modules(ZZ).Graded().additional_structure()
             Category of graded modules over Integer Ring

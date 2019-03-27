@@ -1777,13 +1777,27 @@ class TermOrder(SageObject):
             sage: T1 = TermOrder('lex',2)+TermOrder('lex',3)
             sage: T2 = TermOrder('lex',3)+TermOrder('lex',2)
             sage: T1 == T2
-            True
+            False
 
         ::
 
             sage: T1 = TermOrder('lex',2)+TermOrder('neglex',3)
             sage: T2 = TermOrder('lex',2)+TermOrder('neglex',3)
             sage: T1 == T2
+            True
+
+        TESTS::
+
+        We assert that comparisons take into account the block size of
+        orderings (cf. :trac:`24981`)::
+
+            sage: R = PolynomialRing(QQ, 6, 'x', order="lex(1),degrevlex(5)")
+            sage: S = R.change_ring(order="lex(2),degrevlex(4)")
+            sage: R == S
+            False
+            sage: S.term_order() == R.term_order()
+            False
+            sage: S.term_order() == TermOrder('lex', 2) + TermOrder('degrevlex', 4)
             True
         """
         if not isinstance(other, TermOrder):
@@ -1792,8 +1806,10 @@ class TermOrder(SageObject):
             except Exception:
                 return False
 
-        return (self._name == other._name       # note that length is not considered.
+        return (self._name == other._name
             and self._blocks == other._blocks
+            and (not self.is_block_order()
+                or all(len(t1) == len(t2) for (t1, t2) in zip(self._blocks, other._blocks)))
             and self._weights == other._weights
             and self._matrix == other._matrix)
 
@@ -1806,7 +1822,7 @@ class TermOrder(SageObject):
             sage: T1 = TermOrder('lex',2)+TermOrder('lex',3)
             sage: T2 = TermOrder('lex',3)+TermOrder('lex',2)
             sage: T1 != T2
-            False
+            True
         """
         return not self == other
 

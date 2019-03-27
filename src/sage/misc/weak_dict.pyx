@@ -124,7 +124,7 @@ import six
 from weakref import KeyedRef
 from copy import deepcopy
 
-from cpython.dict cimport *
+from cpython.dict cimport PyDict_SetItem, PyDict_Next
 from cpython.tuple cimport PyTuple_GET_SIZE, PyTuple_New
 from cpython.weakref cimport PyWeakref_NewRef
 from cpython.object cimport PyObject_Hash

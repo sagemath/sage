@@ -46,7 +46,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2014 Julian Rueth <julian.rueth@fsfe.org>
 #
@@ -54,8 +54,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 from six.moves import range, zip
 
@@ -73,6 +73,7 @@ from sage.rings.complex_field import is_ComplexField
 from sage.rings.qqbar import is_AlgebraicField
 from sage.rings.ring import is_Ring
 
+from sage.misc.functional import round
 from sage.misc.cachefunc                    import cached_method
 from sage.misc.fast_methods                 import WithEqualityById
 from sage.structure.element                 import MultiplicativeGroupElement
@@ -1748,11 +1749,12 @@ class DirichletCharacter(MultiplicativeGroupElement):
         if is_ComplexField(P.base_ring()):
             zeta = P.zeta()
             zeta_argument = zeta.argument()
-            v = M([int(round(x.argument()/zeta_argument))
+            v = M([int(round(x.argument() / zeta_argument))
                    for x in self.values_on_gens()])
         else:
             dlog = P._zeta_dlog
             v = M([dlog[x] for x in self.values_on_gens()])
+        v.set_immutable()
         return v
 
     def __setstate__(self, state):

@@ -181,7 +181,7 @@ def FinitelyGeneratedAbelianPresentation(int_list):
         sage: gg = (C2.direct_product(C4)[0]).direct_product(C8)[0]
         sage: gg.is_isomorphic(G.as_permutation_group())
         True
-        sage: all([groups.presentation.FGAbelian([i]).as_permutation_group().is_isomorphic(groups.presentation.Cyclic(i).as_permutation_group()) for i in [2..35]])
+        sage: all(groups.presentation.FGAbelian([i]).as_permutation_group().is_isomorphic(groups.presentation.Cyclic(i).as_permutation_group()) for i in [2..35])
         True
     """
     from sage.groups.free_group import _lexi_gen
@@ -363,9 +363,10 @@ def DiCyclicPresentation(n):
         sage: Q = groups.presentation.DiCyclic(2)
         sage: Q.as_permutation_group().is_isomorphic(QuaternionGroup())
         True
-        sage: all([groups.presentation.DiCyclic(i).as_permutation_group(
-        ....: ).is_isomorphic(groups.permutation.DiCyclic(i)) for i in [5,8,12,2^5]])
-        True
+        sage: for i in [5, 8, 12, 32]:
+        ....:     A = groups.presentation.DiCyclic(i).as_permutation_group()
+        ....:     B = groups.permutation.DiCyclic(i)
+        ....:     assert A.is_isomorphic(B)
         sage: groups.presentation.DiCyclic(1)
         Traceback (most recent call last):
         ...

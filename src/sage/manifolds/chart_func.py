@@ -2807,8 +2807,8 @@ class MultiCoordFunction(SageObject):
             return False
         if other._nf != self._nf:
             return False
-        return all([other._functions[i] == self._functions[i]
-                    for i in range(self._nf)])
+        return all(other._functions[i] == self._functions[i]
+                   for i in range(self._nf))
 
     def __ne__(self, other):
         r"""

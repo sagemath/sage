@@ -803,7 +803,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
                     :meth:`algebraic_complement`, :meth:`coalgebraic_complement`
 
-                EXAMPLES:
+                EXAMPLES::
 
                     sage: WQSym = algebras.WQSym(ZZ)
                     sage: X = WQSym.X()
@@ -2138,7 +2138,7 @@ class WQSymBases(Category_realization_of_parent):
             Assume that `V` is an (additive) abelian group, and that
             `I` is a poset. For each `i \in I`, let `M_i` be an element
             of `V`. Also, let `\omega` be an involution of the set `I`
-            (not necesssarily order-preserving or order-reversing),
+            (not necessarily order-preserving or order-reversing),
             and let `\omega'` be an involutive group endomorphism of
             `V` such that each `i \in I` satisfies
             `\omega'(M_i) = M_{\omega(i)}`.

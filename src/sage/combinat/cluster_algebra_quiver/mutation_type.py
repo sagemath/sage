@@ -10,13 +10,13 @@ AUTHORS:
 - Christian Stump
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Gregg Musiker <musiker@math.mit.edu>
 #                          Christian Stump <christian.stump@univie.ac.at>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 from six.moves import range
 
@@ -73,7 +73,7 @@ def is_mutation_finite(M, nr_of_checks=None):
         return True, None
     if nr_of_checks is None:
         nr_of_checks = 1000 * n
-    k = 0
+    k = random.randint(0, n - 1)
     path = []
     for i in range(nr_of_checks):
         # avoid mutating back in the same direction
@@ -110,7 +110,7 @@ def _triangles(dg):
         [([(1, 0), (0, 2), (2, 1)], True)]
     """
     E = dg.edges(labels=False)
-    V = dg.vertices()
+    V = list(dg)
     trians = []
     flat_trians = []
     for e in E:
@@ -175,7 +175,7 @@ def _all_induced_cycles_iter( dg ):
                 if len(cycle) > 4:
                     sg = dg.subgraph(cycle)
                     is_oriented = True
-                    V = sg.vertices()
+                    V = list(sg)
                     while is_oriented and V:
                         v = V.pop()
                         if not sg.in_degree(v) == 1:
@@ -218,7 +218,7 @@ def _reset_dg(dg, vertices, dict_in_out, del_vertices):
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _reset_dg
         sage: dg = ClusterQuiver(['A',[2,2],1]).digraph(); dg
         Digraph on 4 vertices
-        sage: vertices = dg.vertices()
+        sage: vertices = list(dg)
         sage: dict_in_out = {}
         sage: for v in vertices: dict_in_out[v] = (dg.in_degree(v), dg.out_degree(v), dg.degree(v))
         sage: _reset_dg(dg,vertices, dict_in_out, [1])
@@ -303,7 +303,8 @@ def _check_special_BC_cases(dg, n, check_letter_list, check_twist_list,
             # Now, tries to connect up the quiver components (keeping in mind ['D',3] - ['A',3] equivalence)
             if hope_letter == 'D' and mut_type._letter == 'A' and mut_type._rank == 3 and not mut_type._twist:
                 hope_letter = 'A'
-                if conn_vert_list: conn_verts = list( set(dg.vertices()).difference(conn_verts) )
+                if conn_vert_list:
+                    conn_verts = list(set(dg).difference(conn_verts))
             if mut_type._letter == hope_letter and not mut_type._twist and conn_vert.issubset(conn_verts):
                 if len(check_letter)>1:
                     check_twist = 1
@@ -333,7 +334,7 @@ def _connected_mutation_type(dg):
     # defining some shorthands
     n = dg.order()
     edges = dg.edges()
-    vertices = dg.vertices()
+    vertices = list(dg)
     # initializing lists of the edges with labels (2,-1) or (1,-2); (4,-1) or (1,-4); or (2,-2), respectively
     exc_labels = []
     exc_labels41 = []
@@ -485,7 +486,6 @@ def _connected_mutation_type(dg):
             if dict_in_out[label2[0]][2] == 1 or dict_in_out[label2[1]][2] == 1:
                 label1, label2 = label2, label1
             if dict_in_out[label1[0]][2] == 1:
-                v = label1[0]
                 if label2[1] == label3[0] and dict_in_out[label2[1]][2] == 2 and dg.has_edge(label3[1],label2[0],1):
                     v1,v2 = label3[1],label2[0]
                     _reset_dg( dg, vertices, dict_in_out, [label2[1]] )
@@ -507,7 +507,6 @@ def _connected_mutation_type(dg):
                 else:
                     return _false_return()
             elif dict_in_out[label1[1]][2] == 1:
-                v = label1[1]
                 if label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1],label3[0],1):
                     v1,v2 = label2[1],label3[0]
                     _reset_dg( dg, vertices, dict_in_out, [label3[1]] )
@@ -542,9 +541,8 @@ def _connected_mutation_type(dg):
             if dict_in_out[label2[0]][2] == 1 or dict_in_out[label2[1]][2] == 1:
                 label1, label2 = label2, label1
             if dict_in_out[label1[1]][2] == 1:
-                v = label1[0]
                 if label2[1] == label3[0] and dict_in_out[label2[1]][2] == 2 and dg.has_edge(label3[1],label2[0],1):
-                    v1,v2 = label3[1],label2[0]
+                    v1, v2 = label3[1], label2[0]
                     _reset_dg( dg, vertices, dict_in_out, [label2[1]] )
                     if len( set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1)) ) > 0:
                         return _false_return()
@@ -553,7 +551,7 @@ def _connected_mutation_type(dg):
                     else:
                         return _check_special_BC_cases( dg, n, ['CC'],[1],['A'] )
                 elif label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1],label3[0],1):
-                    v1,v2 = label2[1], label3[0]
+                    v1, v2 = label2[1], label3[0]
                     _reset_dg( dg, vertices, dict_in_out, [label3[1]] )
                     if len( set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1)) ) > 0:
                         return _false_return()
@@ -564,9 +562,8 @@ def _connected_mutation_type(dg):
                 else:
                     return _false_return()
             elif dict_in_out[label1[0]][2] == 1:
-                v = label1[1]
                 if label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1],label3[0],1):
-                    v1,v2 = label2[1],label3[0]
+                    v1, v2 = label2[1], label3[0]
                     _reset_dg( dg, vertices, dict_in_out, [label3[1]] )
                     if len( set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1)) ) > 0:
                         return _false_return()
@@ -575,7 +572,7 @@ def _connected_mutation_type(dg):
                     else:
                         return _check_special_BC_cases( dg, n, ['BB'],[1],['A'] )
                 elif label2[1] == label3[0] and dict_in_out[label2[1]][2] == 2 and dg.has_edge(label3[1],label2[0],1):
-                    v1,v2 = label3[1],label2[0]
+                    v1, v2 = label3[1], label2[0]
                     _reset_dg( dg, vertices, dict_in_out, [label2[1]] )
                     if len( set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1)) ) > 0:
                         return _false_return()
@@ -832,7 +829,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
         'unknown'
     """
     # naming the vertices
-    vertices = dg.vertices()
+    vertices = list(dg)
     n = dg.order()
 
     # Test if ClusterQuiver(dg) is of type D_n Type 1, i.e. A_{n-2} plus two leaves
@@ -1458,32 +1455,31 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
                         elif ran2 == 6: c,d = 2,-2
                         elif ran2 == 7: c,d = 1,-4
                         elif ran2 == 8: c,d = 4,-1
-                        M[i,j],M[j,i] = c,d
-                    if M.is_skew_symmetrizable( positive=True ):
+                        M[i, j], M[j, i] = c, d
+                    if M.is_skew_symmetrizable(positive=True):
                         skew_sym = True
                     else:
-                        M[i,j],M[j,i] = a,b
+                        M[i, j], M[j, i] = a, b
             # we now have a new matrix M
             # and a new digraph db
-            dg = _matrix_to_digraph( M )
-            mt = _connected_mutation_type( dg )
+            dg = _matrix_to_digraph(M)
+            mt = _connected_mutation_type(dg)
             mut = -1
             # we perform nr_mut many mutations
-            for i in range(nr_mut):
+            for k in range(nr_mut):
                 # while making sure that we do not mutate back
                 mut_tmp = mut
                 while mut == mut_tmp:
                     mut = random.randint(0, dg.order() - 1)
                 dg_new = _digraph_mutate(dg, mut)
-                M = _edge_list_to_matrix(dg.edges(), list(range(dg.order())), [])
-                mt_new = _connected_mutation_type( dg_new )
-                if not mt == mt_new:
+                mt_new = _connected_mutation_type(dg_new)
+                if mt != mt_new:
                     print("FOUND ERROR!")
-                    M1 = _edge_list_to_matrix( dg.edges(), list(range(dg.order())), [] )
-                    print(M1)
-                    print("has mutation type " + str( mt ) + " while it has mutation type " + str(mt_new) + " after mutating at " + str(mut) + ":")
-                    M2 = _edge_list_to_matrix( dg_new.edges(), list(range(dg.order())), [] )
-                    print(M2)
+                    print(_edge_list_to_matrix(dg.edges(),
+                                               list(range(dg.order())), []))
+                    print("has mutation type " + str(mt) + " while it has mutation type " + str(mt_new) + " after mutating at " + str(mut) + ":")
+                    print(_edge_list_to_matrix(dg_new.edges(),
+                                               list(range(dg.order())), []))
                     return dg, dg_new
                 else:
                     dg = dg_new

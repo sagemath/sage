@@ -19,6 +19,9 @@ fi
 
 echo "Building OpenBLAS: $MAKE $OPENBLAS_CONFIGURE"
 
+# Ensure USE_TLS=1 ; see https://trac.sagemath.org/ticket/27256
+OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_TLS=1"
+
 if ! (sdh_make libs netlib shared $OPENBLAS_CONFIGURE); then
     if [[ $OPENBLAS_CONFIGURE == *"TARGET"* ]]; then
         sdh_die "Error building OpenBLAS"

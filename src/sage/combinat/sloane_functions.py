@@ -381,7 +381,7 @@ class A000001(SloaneSequence):
             sage: sloane.A000001._eval(5000)
             Traceback (most recent call last):
             ...
-            ValueError: libGAP: Error, the library of groups of size 5000 is not available
+            GAPError: Error, the library of groups of size 5000 is not available
         """
         if n <= 50:
             return self._small[n-1]
@@ -5610,15 +5610,11 @@ class A001909(ExtremesOfPermanentsSequence):
 
         INPUT:
 
-
-        -  ``n`` - positive integer = 2
-
+        -  ``n`` - positive integer >= 2
 
         OUTPUT:
 
-
         -  ``integer`` - function value
-
 
         EXAMPLES::
 
@@ -5674,15 +5670,11 @@ class A001910(ExtremesOfPermanentsSequence):
 
         INPUT:
 
-
-        -  ``n`` - positive integer = 3
-
+        -  ``n`` - positive integer >= 3
 
         OUTPUT:
 
-
         -  ``integer`` - function value
-
 
         EXAMPLES::
 
@@ -9486,18 +9478,13 @@ class A000110(ExponentialNumbers):
             B_n = \sum{k=0}^{n} S(n, k) .
 
 
-
         INPUT:
 
-
-        -  ``n`` - integer = 0
-
+        -  ``n`` - integer >= 0
 
         OUTPUT:
 
-
         -  ``integer`` - `B_n`
-
 
         EXAMPLES::
 
@@ -9546,18 +9533,13 @@ class A000587(ExponentialNumbers):
             C_n = \sum{k=0}^{n} (-1)^k S(n, k) .
 
 
-
         INPUT:
 
-
-        -  ``n`` - integer = 0
-
+        - ``n`` -- integer >= 0
 
         OUTPUT:
 
-
-        -  ``integer`` - `C_n`
-
+        - ``integer`` -- `C_n`
 
         EXAMPLES::
 

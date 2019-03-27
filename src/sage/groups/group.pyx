@@ -213,7 +213,7 @@ cdef class Group(Parent):
 
         An element of the group.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: G = AbelianGroup([2,3,4,5])
             sage: G.an_element()

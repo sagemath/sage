@@ -24,9 +24,9 @@ from cypari2.types cimport typ, t_MAT, t_VEC, t_COL, t_VECSMALL, t_LIST, t_STR, 
 
 from .matrix_space import MatrixSpace
 from sage.rings.all import ZZ, RDF, CDF
-from sage.structure.coerce cimport is_numpy_type, py_scalar_parent
-from sage.structure.element cimport (coercion_model,
-        Element, RingElement, coercion_model)
+from sage.structure.coerce cimport (coercion_model,
+        is_numpy_type, py_scalar_parent)
+from sage.structure.element cimport Element, RingElement
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.misc_c import sized_iter
 from sage.categories import monoids
@@ -1161,6 +1161,29 @@ cdef class MatrixArgs:
         change ``self.entries``.
 
         If the entries are invalid, return ``MA_ENTRIES_UNKNOWN``.
+
+        TESTS:
+
+        Check that :trac:`26655` is fixed::
+
+            sage: F.<a> = GF(9)
+            sage: M = MatrixSpace(F, 2, 2)
+            sage: A = M([[1, a], [0, 1]])
+            sage: M(pari(A))
+            [1 a]
+            [0 1]
+
+        Constructing a matrix from a PARI ``t_VEC`` or ``t_COL`` with
+        ``t_VEC`` or ``t_COL`` elements is currently not supported::
+
+            sage: M(pari([1, a, 0, 1]))
+            Traceback (most recent call last):
+            ...
+            NameError: name 'a' is not defined
+            sage: M(pari([[1, a], [0, 1]]))
+            Traceback (most recent call last):
+            ...
+            NameError: name 'a' is not defined
         """
         # Check basic Python types. This is very fast, so it doesn't
         # hurt to do these first.
@@ -1204,7 +1227,12 @@ cdef class MatrixArgs:
         if isinstance(self.entries, Gen):  # PARI object
             t = typ((<Gen>self.entries).g)
             if t == t_MAT:
-                self.entries = self.entries.Col().sage()
+                R = self.base
+                if R is None:
+                    self.entries = self.entries.Col().sage()
+                else:
+                    self.entries = [[R(x) for x in v]
+                                    for v in self.entries.mattranspose()]
                 return MA_ENTRIES_SEQ_SEQ
             elif t in [t_VEC, t_COL, t_VECSMALL, t_LIST]:
                 self.entries = self.entries.sage()

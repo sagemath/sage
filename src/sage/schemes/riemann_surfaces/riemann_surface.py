@@ -36,7 +36,7 @@ the imaginary part is positive definite::
 
     sage: all(abs(a) < 1e-20 for a in (M-M.T).list())
     True
-    sage: iM=Matrix(RDF,3,3,[a.imag_part() for a in M.list()])
+    sage: iM = Matrix(RDF,3,3,[a.imag_part() for a in M.list()])
     sage: iM.is_positive_definite()
     True
 
@@ -53,38 +53,39 @@ In fact it is an order in a number field::
     sage: all(len(a.minpoly().roots(K)) == a.minpoly().degree() for a in A)
     True
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Alexandre Zotine, Nils Bruin
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import division
+from six.moves import range
 
 from scipy.spatial import Voronoi
-from sage.misc.cachefunc import cached_method
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.complex_field import ComplexField, CDF
-from sage.rings.real_mpfr import RealField
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+from sage.arith.misc import GCD, algdep
 from sage.arith.srange import srange
 from sage.ext.fast_callable import fast_callable
 from sage.graphs.graph import Graph
+from sage.groups.matrix_gps.finitely_generated import MatrixGroup
+from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.matrix.constructor import Matrix, matrix
+from sage.matrix.special import block_matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
 from sage.modules.free_module import VectorSpace
 from sage.numerical.gauss_legendre import integrate_vector
-from sage.misc.misc_c import prod
-from sage.arith.misc import algdep
-from sage.groups.matrix_gps.finitely_generated import MatrixGroup
+from sage.rings.complex_field import ComplexField, CDF
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import number_field_elements_from_algebraics
-from sage.matrix.special import block_matrix
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RealField
 import sage.libs.mpmath.all as mpall
-from sage.arith.misc import GCD
+
 
 def voronoi_ghost(cpoints, n=6, CC=CDF):
     r"""
@@ -132,7 +133,8 @@ def voronoi_ghost(cpoints, n=6, CC=CDF):
     extra_points = [average+radius*z**i for i in range(n)]
     return [(c.real_part(),c.imag_part()) for c in cpoints+extra_points]
 
-def bisect(L,t):
+
+def bisect(L, t):
     r"""
     Find position in a sorted list using bisection.
 
@@ -592,7 +594,7 @@ class RiemannSurface(object):
         - ``epsilon`` -- a real number, which is the minimum distance between
           the w-values above ``z1``
 
-        - ``wvalues`` -- a list (default: None). If specified, saves
+        - ``wvalues`` -- a list (default: ``None``). If specified, saves
           recomputation.
 
         OUTPUT:
@@ -608,7 +610,7 @@ class RiemannSurface(object):
             sage: f = w^2 - z^4 + 1
             sage: S = RiemannSurface(f)
 
-        Pick a point which lies on the voronoi diagram, and compute an
+        Pick a point which lies on the Voronoi diagram, and compute an
         appropriate epsilon::
 
             sage: z1 = S._vertices[0]
@@ -618,7 +620,7 @@ class RiemannSurface(object):
             sage: S._compute_delta(z1, epsilon) # abs tol 1e-8
             0.152628501142363
 
-        If the Riemann surface doesn't have certified homotopy continuation,
+        If the Riemann surface does not have certified homotopy continuation,
         then the delta will just be the minimum distance away from a branch
         point::
 
@@ -635,23 +637,27 @@ class RiemannSurface(object):
                 wvalues = self.w_values(z1)
             # For computation of rho. Need the branch locus + roots of a0.
             badpoints = self.branch_locus + self._a0roots
-            rho = min(abs(z1 - z) for z in badpoints)/2
-            Y = max(abs(self._fastcall_dfdz(z1,wi)/self._fastcall_dfdw(z1,wi)) for wi in wvalues)
+            rho = min(abs(z1 - z) for z in badpoints) / 2
+            Y = max(abs(self._fastcall_dfdz(z1, wi)/self._fastcall_dfdw(z1, wi))
+                    for wi in wvalues)
 
             # compute M
-            upperbounds = [sum(ak[k]*(abs(z1) + rho)**k for k in range(ak.degree())) for ak in self._aks]
+            upperbounds = [sum(ak[k] * (abs(z1) + rho)**k
+                               for k in range(ak.degree()))
+                           for ak in self._aks]
             upperbounds.reverse()
             # If a0 is a constant polynomial, it is obviously bounded below.
             if self._a0roots == []:
-                lowerbound = self._CC(self._a0)/2
+                lowerbound = self._CC(self._a0) / 2
             else:
-                lowerbound = self._a0[self._a0.degree()]*prod(abs((zk - z1) - rho) for zk in self._a0roots)/2
-            M = 2*max(abs((upperbounds[k]/lowerbound))**(1/(k+1)) for k in range(self.degree-1))
-            return rho*( ((rho*Y - epsilon)**2 + 4*epsilon*M).sqrt() - (rho*Y + epsilon))/(2*M - 2*rho*Y)
+                lowerbound = self._a0[self._a0.degree()]*prod(abs((zk - z1) - rho) for zk in self._a0roots) / 2
+            M = 2 * max((upperbounds[k]/lowerbound).abs().nth_root(k+1)
+                        for k in range(self.degree-1))
+            return rho*(((rho*Y - epsilon)**2 + 4*epsilon*M).sqrt() - (rho*Y + epsilon))/(2*M - 2*rho*Y)
         else:
             # Instead, we just compute the minimum distance between branch
             # points and the point in question.
-            return min([abs(b-z1) for b in self.branch_locus])/2
+            return min(abs(b - z1) for b in self.branch_locus) / 2
 
     def homotopy_continuation(self, edge):
         r"""
@@ -1136,28 +1142,32 @@ class RiemannSurface(object):
             sage: R.<z,w> = QQ[]
             sage: g = w^2 - z^4 + 1
             sage: S = RiemannSurface(g)
-            sage: S.homology_basis()
-            [[(1,
-               [(3, 1),
-                (5, 0),
-                (9, 0),
-                (10, 0),
-                (2, 0),
-                (4, 0),
-                (7, 1),
-                (10, 1),
-                (3, 1)])],
-             [(1,
-               [(8, 0),
-                (6, 0),
-                (7, 0),
-                (10, 0),
-                (2, 0),
-                (4, 0),
-                (7, 1),
-                (10, 1),
-                (9, 1),
-                (8, 0)])]]
+            sage: S.homology_basis() #random
+            [[(1, [(3, 1), (5, 0), (9, 0), (10, 0), (2, 0), (4, 0),
+                (7, 1), (10, 1), (3, 1)])],
+             [(1, [(8, 0), (6, 0), (7, 0), (10, 0), (2, 0), (4, 0),
+                (7, 1), (10, 1), (9, 1), (8, 0)])]]
+                
+        In order to check that the answer returned above is reasonable, we
+        test some basic properties. We express the faces of the downstairs graph
+        as ZZ-linear combinations of the edges and check that the projection
+        of the homology basis upstairs projects down to independent linear
+        combinations of an even number of faces::
+        
+            sage: dg = S.downstairs_graph()
+            sage: edges = dg.edges()
+            sage: E = ZZ^len(edges)
+            sage: edge_to_E = { e[:2]: E.gen(i) for i,e in enumerate(edges)}
+            sage: edge_to_E.update({ (e[1],e[0]): -E.gen(i) for i,e in enumerate(edges)})
+            sage: face_span = E.submodule([sum(edge_to_E[e] for e in f) for f in dg.faces()])
+            sage: def path_to_E(path):
+            ....:     k,P = path
+            ....:     return k*sum(edge_to_E[(P[i][0],P[i+1][0])] for i in range(len(P)-1))
+            sage: hom_basis = [sum(path_to_E(p) for p in loop) for loop in S.homology_basis()]
+            sage: face_span.submodule(hom_basis).rank()
+            2
+            sage: [sum(face_span.coordinate_vector(b))%2 for b in hom_basis]
+            [0, 0]
         """
         if self.genus == 0:
             return []
@@ -1416,7 +1426,7 @@ class RiemannSurface(object):
         differentials `g/(df/dw) dz`, where `f(z,w)=0` is the equation
         specifying the Riemann surface.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<z,w> = QQ[]
@@ -1488,8 +1498,12 @@ class RiemannSurface(object):
             sage: R.<x,y> = QQ[]
             sage: S = RiemannSurface(x^3 + y^3 + 1)
             sage: B = S.cohomology_basis()
-            sage: S.matrix_of_integral_values(B) #abs tol 1e-12
-            [   0.883319375142725 - 1.52995403705719*I 1.76663875028545 + 5.55111512312578e-17*I]
+            sage: m = S.matrix_of_integral_values(B)
+            sage: parent(m)
+            Full MatrixSpace of 1 by 2 dense matrices over Complex Field with 53 bits of precision
+            sage: (m[0,0]/m[0,1]).algdep(3).degree() #curve is CM, so the period is quadratic
+            2
+
         """
         cycles = self.homology_basis()
         def normalize_pairs(L):
@@ -1693,11 +1707,14 @@ class RiemannSurface(object):
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
             sage: S = RiemannSurface(x^3 + y^3 + 1)
-            sage: S.endomorphism_basis()
+            sage: B = S.endomorphism_basis(); B #random
             [
             [1 0]  [ 0 -1]
             [0 1], [ 1  1]
             ]
+            sage: sorted([b.minpoly().disc() for b in B])
+            [-3, 1]
+
         """
         M = self.riemann_matrix()
         return integer_matrix_relations(M,M,b,r)
@@ -1775,7 +1792,7 @@ class RiemannSurface(object):
             sage: P = S.period_matrix()
             sage: Rs = S.endomorphism_basis()
             sage: Ts = S.tangent_representation_numerical(Rs)
-            sage: all([ ((T*P - P*R).norm() < 2^(-80)) for [ T, R ] in zip(Ts, Rs) ])
+            sage: all(((T*P - P*R).norm() < 2^(-80)) for [T, R] in zip(Ts, Rs))
             True
         """
         if not other:
@@ -1784,16 +1801,16 @@ class RiemannSurface(object):
         CCP = P.base_ring()
         g = self.genus
         Q = other.period_matrix()
-        Ptsubinv = numerical_inverse((P.transpose())[range(g)])
-        Ts = [ ]
+        Ptsubinv = numerical_inverse((P.transpose())[list(range(g))])
+        Ts = []
         for R in Rs:
-            QRtsub = ((Q * R).transpose())[range(g)]
+            QRtsub = ((Q * R).transpose())[list(range(g))]
             Tt = Ptsubinv * QRtsub
             T = Tt.transpose().change_ring(CCP)
             Ts.append(T)
         return Ts
 
-    def tangent_representation_algebraic(self, Rs, other = None, epscomp = None):
+    def tangent_representation_algebraic(self, Rs, other=None, epscomp=None):
         r"""
         Compute the algebraic tangent representations corresponding to the
         homology representations in ``Rs``.
@@ -1949,8 +1966,8 @@ class RiemannSurface(object):
             sage: Q = Y.period_matrix()
             sage: Rs = X.symplectic_isomorphisms(Y)
             sage: Ts = X.tangent_representation_numerical(Rs, other = Y)
-            sage: test1 = all([ ((T*P - Q*R).norm() < 2^(-80)) for [ T, R ] in zip(Ts, Rs) ])
-            sage: test2 = all([ det(R) == 1 for R in Rs ])
+            sage: test1 = all(((T*P - Q*R).norm() < 2^(-80)) for [T, R] in zip(Ts, Rs))
+            sage: test2 = all(det(R) == 1 for R in Rs)
             sage: test1 and test2
             True
         """

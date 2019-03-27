@@ -426,8 +426,7 @@ class DeltaComplex(GenericCellComplex):
         """
         if isinstance(data, (list, tuple)):
             data = dict(zip(range(len(data)), data))
-        else:
-            data = data
+
         # new_dict: dictionary for constructing the subcomplex
         new_dict = {}
         # new_data: dictionary of all cells in the subcomplex: store

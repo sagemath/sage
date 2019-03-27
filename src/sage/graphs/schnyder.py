@@ -220,7 +220,8 @@ def _normal_label(g, comb_emb, external_face):
         v1_neighbors += v_neighbors - Set([v1])
         contractible = []
         for w in g.neighbors(v1):
-            if(len(v1_neighbors.intersection(Set(g.neighbors(w))))) == 2 and w not in [v1, v2, v3]:
+            if (len(v1_neighbors.intersection(Set(g.neighbors(w)))) == 2
+                    and w not in [v1, v2, v3]):
                 contractible.append(w)
 
     # expansion phase:

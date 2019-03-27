@@ -1534,12 +1534,11 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
     if verbose:
         print("Naive test of primes up to {} returns {}.".format(max_small_prime, OK_small_primes))
 
-    from sage.schemes.elliptic_curves.gal_reps_number_field import Billerey_B_bound
     B1 = Billerey_B_bound(E, max_l, num_l, max_small_prime, verbose)
     if B1 == [0]:
         if verbose:
             print("...  B_bound ineffective using max_l={}, moving on to R-bound".format(max_l))
-        from sage.schemes.elliptic_curves.gal_reps_number_field import Billerey_R_bound
+
         B1 = Billerey_R_bound(E,max_l, num_l, max_small_prime, verbose)
         if B1 == [0]:
             if verbose:
@@ -1553,7 +1552,7 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
     B = sorted(set(B0 + B1 + OK_small_primes))
     if verbose:
         print("... combined bound = {}".format(B))
-    from sage.schemes.elliptic_curves.gal_reps_number_field import Frobenius_filter
+
     num_p = 100
     B = Frobenius_filter(E, B, num_p)
     if verbose:
@@ -1596,7 +1595,6 @@ def reducible_primes_naive(E, max_l=None, num_P=None, verbose=False):
         [2, 5]
         sage: [phi.degree() for phi in E.isogenies_prime_degree()]
         [2, 2, 2, 5]
-
     """
     if max_l is None:
         max_l = 1000
@@ -1604,7 +1602,7 @@ def reducible_primes_naive(E, max_l=None, num_P=None, verbose=False):
         num_P = 100
     if verbose:
         print("E = {}, finding reducible primes up to {} using Frobenius filter with {} primes".format(E.ainvs(), max_l, num_P))
-    from sage.schemes.elliptic_curves.gal_reps_number_field import Frobenius_filter
+
     B = Frobenius_filter(E, primes(max_l), num_P)
     if verbose:
         print("... returning {}".format(B))

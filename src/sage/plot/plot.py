@@ -1975,7 +1975,6 @@ def plot(funcs, *args, **kwds):
             xmin = kwds.pop('xmin', -1)
             xmax = kwds.pop('xmax', 1)
             G = _plot(funcs, (xmin, xmax), *args, **kwds)
-            pass
         else:
             sage.misc.misc.verbose("there were %s extra arguments (besides %s)" % (n, funcs), level=0)
 

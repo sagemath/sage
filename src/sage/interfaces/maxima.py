@@ -741,7 +741,6 @@ class Maxima(MaximaAbstract, Expect):
                     i += 1
                     if i > 10:
                         break
-                    pass
                 else:
                     break
             raise KeyboardInterrupt(msg)

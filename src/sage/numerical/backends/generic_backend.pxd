@@ -22,7 +22,7 @@ cdef class GenericBackend (SageObject):
     cpdef add_linear_constraint_vector(self, degree, coefficients, lower_bound, upper_bound, name=*)
     cpdef remove_constraint(self, int)
     cpdef remove_constraints(self, constraints)
-    cpdef add_col(self, list indices, list coeffs)
+    cpdef add_col(self, indices, coeffs)
     cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names=*)
     cpdef int solve(self) except -1
     cpdef get_objective_value(self)

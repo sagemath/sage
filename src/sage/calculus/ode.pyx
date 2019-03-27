@@ -346,13 +346,13 @@ class ode_solver(object):
         self.params = params
         self.solution = []
 
-    def __setattr__(self,name,value):
-        if(hasattr(self,'solution')):
-            object.__setattr__(self,'solution',[])
-        object.__setattr__(self,name,value)
+    def __setattr__(self, name, value):
+        if hasattr(self, 'solution'):
+            object.__setattr__(self, 'solution', [])
+        object.__setattr__(self, name, value)
 
-    def interpolate_solution(self,i=0):
-        pts = [(t,y[i]) for t,y in self.solution]
+    def interpolate_solution(self, i=0):
+        pts = [(t, y[i]) for t, y in self.solution]
         return sage.calculus.interpolation.spline(pts)
 
     def plot_solution(self, i=0, filename=None, interpolate=False, **kwds):

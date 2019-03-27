@@ -1,6 +1,5 @@
 from .sage_object cimport SageObject
 from .parent cimport Parent
-from cpython.number cimport PyNumber_Check
 from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
 
 
@@ -261,11 +260,3 @@ cdef class Matrix(ModuleElement):
 
     cdef bint is_sparse_c(self)
     cdef bint is_dense_c(self)
-
-
-cdef class CoercionModel:
-    cpdef canonical_coercion(self, x, y)
-    cpdef bin_op(self, x, y, op)
-    cpdef richcmp(self, x, y, int op)
-
-cdef CoercionModel coercion_model

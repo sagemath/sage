@@ -5,7 +5,12 @@
 
 from __future__ import print_function
 
-import platform, os, sys, time, shutil, glob, subprocess
+import platform
+import os
+import sys
+import shutil
+import glob
+import subprocess
 
 
 # this dictionary will hold all configuration information

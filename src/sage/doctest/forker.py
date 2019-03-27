@@ -169,7 +169,7 @@ def init_sage():
     from sage.cpython._py2_random import Random
     sage.misc.randstate.DEFAULT_PYTHON_RANDOM = Random
 
-    import sage.all_cmdline
+    import sage.repl.ipython_kernel.all_jupyter
     sage.interfaces.quit.invalidate_all()
 
     # Disable cysignals debug messages in doctests: this is needed to
@@ -673,6 +673,16 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 raise
             except BaseException:
                 exception = sys.exc_info()
+                # On Python 2, the exception lives in sys.exc_info() as
+                # long we are in the same stack frame. To ensure that
+                # sig_occurred() works correctly, we need to clear the
+                # exception. This is not an issue on Python 3, where the
+                # exception is cleared as soon as we are outside of the
+                # "except" clause.
+                try:
+                    sys.exc_clear()
+                except AttributeError:
+                    pass  # Python 3
             finally:
                 if self.debugger is not None:
                     self.debugger.set_continue() # ==== Example Finished ====
@@ -699,8 +709,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
             # The example raised an exception: check if it was expected.
             else:
-                exc_info = exception
-                exc_msg = traceback.format_exception_only(*exc_info[:2])[-1]
+                exc_msg = traceback.format_exception_only(*exception[:2])[-1]
 
                 if six.PY3 and example.exc_msg is not None:
                     # On Python 3 the exception repr often includes the
@@ -709,7 +718,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     # normalize Python 3 exceptions to match tests written to
                     # Python 2
                     # See https://trac.sagemath.org/ticket/24271
-                    exc_cls = exc_info[0]
+                    exc_cls = exception[0]
                     exc_name = exc_cls.__name__
                     if exc_cls.__module__:
                         exc_fullname = (exc_cls.__module__ + '.' +
@@ -736,7 +745,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                                     break
 
                 if not quiet:
-                    got += doctest._exception_traceback(exc_info)
+                    got += doctest._exception_traceback(exception)
 
                 # If `example.exc_msg` is None, then we weren't expecting
                 # an exception.
@@ -770,7 +779,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             elif outcome is BOOM:
                 if not quiet:
                     self.report_unexpected_exception(out, test, example,
-                                                     exc_info)
+                                                     exception)
                 failures += 1
             else:
                 assert False, ("unknown outcome", outcome)
@@ -2497,7 +2506,9 @@ class DocTestTask(object):
         if self.source.basename.startswith("sagenb."):
             import sage.all_notebook as sage_all
         else:
-            import sage.all_cmdline as sage_all
+            # Import Jupyter globals to doctest the Jupyter
+            # implementation of widgets and interacts
+            import sage.repl.ipython_kernel.all_jupyter as sage_all
         dict_all = sage_all.__dict__
         # Remove '__package__' item from the globals since it is not
         # always in the globals in an actual Sage session.

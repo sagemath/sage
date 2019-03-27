@@ -1314,11 +1314,11 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
             [[[[]], [[]]], [[]], []]
         """
         close_root = False
-        if(root is None):
+        if root is None:
             from sage.combinat.ordered_tree import OrderedTree
             root = OrderedTree().clone()
             close_root = True
-        if(self):
+        if self:
             left, right = self[0], self[1]
             if bijection == "left":
                 root = left._to_ordered_tree(bijection=bijection, root=root)
@@ -4506,7 +4506,7 @@ class FullBinaryTrees_size(BinaryTrees):
         TESTS::
 
             sage: B = BinaryTrees(19, full=True)
-            sage: all([B.random_element() in B for i in range(20)])
+            sage: all(B.random_element() in B for i in range(20))
             True
         """
         from sage.combinat.dyck_word import CompleteDyckWords_size

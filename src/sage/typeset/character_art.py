@@ -672,10 +672,9 @@ class CharacterArt(SageObject):
         new_breakpoints.append(self._l)
         for bp in Nelt._breakpoints:
             new_breakpoints.append(bp + self._l)
-        from sage.misc.misc import uniq
         return self.__class__(
             lines=new_matrix,
-            breakpoints=uniq(new_breakpoints),
+            breakpoints=sorted(set(new_breakpoints)),
             baseline=new_baseline,
         )
 

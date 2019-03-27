@@ -139,12 +139,12 @@ class SymmetricGroupConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyC
             sage: for x in C: x
             (2,3,4)
             (2,4,3)
-            (1,3,4)
-            (1,4,3)
-            (1,2,4)
-            (1,4,2)
             (1,2,3)
             (1,3,2)
+            (1,2,4)
+            (1,4,2)
+            (1,3,4)
+            (1,4,3)
         """
         if self._set:
             for x in self._set:
@@ -213,12 +213,12 @@ class PermutationsConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyCla
             sage: for x in C: x
             [1, 3, 4, 2]
             [1, 4, 2, 3]
-            [3, 2, 4, 1]
-            [4, 2, 1, 3]
-            [2, 4, 3, 1]
-            [4, 1, 3, 2]
             [2, 3, 1, 4]
             [3, 1, 2, 4]
+            [2, 4, 3, 1]
+            [4, 1, 3, 2]
+            [3, 2, 4, 1]
+            [4, 2, 1, 3]
         """
         if self._set:
             for x in self._set:
@@ -317,21 +317,20 @@ def conjugacy_class_iterator(part, S=None):
         sage: from sage.groups.perm_gps.symgp_conjugacy_class import conjugacy_class_iterator
         sage: for p in conjugacy_class_iterator([2,2]): print(p)
         [(1, 2), (3, 4)]
-        [(1, 3), (2, 4)]
         [(1, 4), (2, 3)]
+        [(1, 3), (2, 4)]
 
     In order to get permutations, one just has to wrap::
 
         sage: S = SymmetricGroup(5)
         sage: for p in conjugacy_class_iterator([3,2]): print(S(p))
-        (1,2)(3,4,5)
-        (1,2)(3,5,4)
         (1,3)(2,4,5)
         (1,3)(2,5,4)
+        (1,2)(3,4,5)
+        (1,2)(3,5,4)
         ...
-        (1,4,2)(3,5)
-        (1,2,3)(4,5)
-        (1,3,2)(4,5)
+        (1,4)(2,3,5)
+        (1,4)(2,5,3)
 
     Check that the number of elements is the number of elements in
     the conjugacy class::
@@ -346,7 +345,7 @@ def conjugacy_class_iterator(part, S=None):
         sage: next(it)
         [('a', 'c'), ('b', 'e'), ('d', 'f')]
         sage: next(it)
-        [('a', 'c'), ('b', 'd'), ('e', 'f')]
+        [('a', 'f'), ('c', 'b'), ('e', 'd')]
     """
     n = sum(part)
     if part not in _Partitions:

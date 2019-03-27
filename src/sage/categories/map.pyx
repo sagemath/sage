@@ -27,7 +27,6 @@ from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.arith.power cimport generic_power
 from sage.sets.pythonclass cimport Set_PythonType
 from sage.misc.constant_function import ConstantFunction
-from sage.misc.superseded import deprecated_function_alias
 from sage.structure.element cimport parent
 from cpython.object cimport PyObject_RichCompare
 
@@ -1825,10 +1824,9 @@ cdef class FormalCompositeMap(Map):
             sage: (f*g).then() == f
             True
         """
-        if len(self.__list) == 2: return self.__list[1]
+        if len(self.__list) == 2:
+            return self.__list[1]
         return FormalCompositeMap(self.__list[1:])
-
-    second = deprecated_function_alias(16291, then)
 
     def is_injective(self):
         """

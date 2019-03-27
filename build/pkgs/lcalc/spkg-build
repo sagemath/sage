@@ -20,7 +20,7 @@ fi
 
 # Export everything. Probably not necessary in most cases.
 export CFLAGS
-export CXXFLAGS="$CXXFLAGS -std=c++11"
+export CXXFLAGS
 
 export DEFINES=""
 

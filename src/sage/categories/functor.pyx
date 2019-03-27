@@ -17,7 +17,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu> and
 #                     William Stein <wstein@math.ucsd.edu>
 #
@@ -30,8 +30,8 @@ AUTHORS:
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 
 from . import category
@@ -382,7 +382,7 @@ cdef class Functor(SageObject):
         if is_Morphism(x):
             return self._apply_functor_to_morphism(x)
         y = self._apply_functor(self._coerce_into_domain(x))
-        if not ((y in self.__codomain) or (y in self.__codomain.hom_category())):
+        if not ((y in self.__codomain) or (y in self.__codomain.Homsets())):
             raise TypeError("%s is ill-defined, since it sends x (=%s) to something that is not in %s." % (repr(self), x, self.__codomain))
         return y
 
@@ -524,7 +524,7 @@ class ForgetfulFunctor_generic(Functor):
         """
         Return whether ``self`` is not equal to ``other``.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: F1 = ForgetfulFunctor(FiniteFields(),Fields())
             sage: F1 != F1

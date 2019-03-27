@@ -35,11 +35,9 @@ order to post anything to Sage's Trac.  Now, if you have a GitHub account, you
 may log in using it to create and comment on tickets, and edit wiki pages on
 Sage's Trac.
 
-A manual account request is currently only necessary if you prefer not to use
-GitHub, if you wish to use the ``git trac`` git plugin (the ``git trac`` plugin
-is useful for beginners, but is not be necessary for experienced git users), or
-you want to log into the old `Sage Wiki <https://wiki.sagemath.org>`_. This may
-change as well in the future.
+A manual account request is currently only necessary if you prefer not to
+use GitHub or if you want to log into the old `Sage Wiki
+<https://wiki.sagemath.org>`_.  This may change as well in the future.
 
 To obtain a non-GitHub account, send an email to
 ``sage-trac-account@googlegroups.com`` containing:
@@ -50,9 +48,9 @@ To obtain a non-GitHub account, send an email to
 * and reason for needing a trac account
 
 Your trac account also grants you access to the `sage wiki
-<https://wiki.sagemath.org>`_. Make sure you understand the review process, and the
-procedures for opening and closing tickets before making changes. The remainder
-of this chapter contains various guidelines on using the trac server.
+<https://wiki.sagemath.org>`_. Make sure you understand the review process, and
+the procedures for opening and closing tickets before making changes. The
+remainder of this chapter contains various guidelines on using the trac server.
 
 Trac authentication through SSH
 ===============================

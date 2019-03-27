@@ -118,6 +118,7 @@ usage_advanced() {
     echo "  -ipython [...]      -- run Sage's IPython using the default environment (not"
     echo "                         Sage), passing additional options to IPython"
     echo "  -ipython3 [...]     -- same as above, but using Python 3"
+    echo "  -jupyter [...]      -- run Sage's Jupyter with given arguments"
     echo "  -kash [...]         -- run Sage's Kash with given arguments"
     command -v kash &>/dev/null || \
     echo "                         (not installed currently, run sage -i kash)"
@@ -131,6 +132,8 @@ usage_advanced() {
     command -v polymake &>/dev/null || \
     echo "                         (not installed currently, run sage -i polymake)"
     echo "  -python [...]       -- run the Python interpreter"
+    echo "  -python2 [...]      -- run the Python 2 interpreter"
+    echo "  -python3 [...]      -- run the Python 3 interpreter"
     echo "  -R [...]            -- run Sage's R with given arguments"
     echo "  -scons [...]        -- run Sage's scons"
     echo "  -sh [...]           -- run \$SHELL ($SHELL) with Sage environment variables"
@@ -629,6 +632,11 @@ fi
 if [ "$1" = '-ipython3' -o "$1" = '--ipython3' ]; then
     shift
     exec ipython3 "$@"
+fi
+
+if [ "$1" = '-jupyter' -o "$1" = '--jupyter' ]; then
+    shift
+    exec jupyter "$@"
 fi
 
 if [ "$1" = '-git' -o "$1" = '--git' ]; then

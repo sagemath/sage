@@ -21,14 +21,14 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012-2013 John Cremona, Jenny Cooley, Kimi Tsukazaki
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen
@@ -80,15 +80,20 @@ def Fricke_polynomial(l):
         sage: Fricke_polynomial(13)
         t^14 + 26*t^13 + 325*t^12 + 2548*t^11 + 13832*t^10 + 54340*t^9 + 157118*t^8 + 333580*t^7 + 509366*t^6 + 534820*t^5 + 354536*t^4 + 124852*t^3 + 15145*t^2 + 746*t + 13
     """
-    Zt = PolynomialRing(ZZ,'t')
-    t = Zt.gen()
-    if l==2: return (t+16)**3
-    elif l==3: return (t+3)**3*(t+27)
-    elif l==5: return (t**2+10*t+5)**3
-    elif l==7: return (t**2+5*t+1)**3 * (t**2+13*t+49)
-    elif l==13: return (t**2+5*t+13)*(t**4+7*t**3+20*t**2+19*t+1)**3
+    t = PolynomialRing(ZZ, 't').gen()
+    if l == 2:
+        return (t+16)**3
+    elif l == 3:
+        return (t+3)**3*(t+27)
+    elif l == 5:
+        return (t**2+10*t+5)**3
+    elif l == 7:
+        return (t**2+5*t+1)**3 * (t**2+13*t+49)
+    elif l == 13:
+        return (t**2+5*t+13)*(t**4+7*t**3+20*t**2+19*t+1)**3
     else:
         raise ValueError("The only genus zero primes are 2, 3, 5, 7 or 13.")
+
 
 @cached_function
 def Fricke_module(l):
@@ -125,11 +130,9 @@ def Fricke_module(l):
         sage: Fricke_module(13)
         (t^14 + 26*t^13 + 325*t^12 + 2548*t^11 + 13832*t^10 + 54340*t^9 + 157118*t^8 + 333580*t^7 + 509366*t^6 + 534820*t^5 + 354536*t^4 + 124852*t^3 + 15145*t^2 + 746*t + 13)/t
     """
-    try:
-        t = PolynomialRing(QQ,'t').gen()
-        return Fricke_polynomial(l) / t
-    except ValueError:
-        raise ValueError("The only genus zero primes are 2, 3, 5, 7 or 13.")
+    t = PolynomialRing(QQ, 't').gen()
+    return Fricke_polynomial(l) / t
+
 
 @cached_function
 def Psi(l, use_stored=True):
@@ -184,24 +187,24 @@ def Psi(l, use_stored=True):
         sage: assert Psi(7, use_stored=True) == Psi(7, use_stored=False)
         sage: assert Psi(13, use_stored=True) == Psi(13, use_stored=False) # not tested (very long time)
     """
-    if not l in [2,3,5,7,13]:
+    if not l in [2, 3, 5, 7, 13]:
         raise ValueError("Genus zero primes are 2, 3, 5, 7 or 13.")
 
-    R = PolynomialRing(ZZ,2,'Xt')
-    X,t = R.gens()
+    R = PolynomialRing(ZZ, 2, 'Xt')
+    X, t = R.gens()
 
     if use_stored:
-        if l==2:
+        if l == 2:
             return X + t + 64
-        if l==3:
+        if l == 3:
             return X + t + 27
-        if l==5:
+        if l == 5:
             return X**2 + 2*X*(t**2 + 22*t + 125)+ (t**2 + 22*t + 89) * (t**2 + 22*t + 125)
-        if l==7:
+        if l == 7:
             return (X**3 + 3*(t**2 + 13*t + 49)*X**2
                     + 3*(t**2 + 13*t + 33)*(t**2 + 13*t + 49)*X
                     + (t**2 + 13*t + 49)*(t**4 + 26*t**3 + 219*t**2 + 778*t + 881))
-        if l==13:
+        if l == 13:
             return (t**24 + 66*t**23 + 2091*t**22 + 6*X*t**20 + 42582*t**21 + 330*X*t**19 + 627603*t**20 + 8700*X*t**18 + 7134744*t**19 + 15*X**2*t**16 + 146886*X*t**17 + 65042724*t**18 + 660*X**2*t**15 + 1784532*X*t**16 + 487778988*t**17 + 13890*X**2*t**14 + 16594230*X*t**15 + 3061861065*t**16 + 20*X**3*t**12 + 186024*X**2*t**13 + 122552328*X*t**14 + 16280123754*t**15 + 660*X**3*t**11 + 1774887*X**2*t**12 + 735836862*X*t**13 + 73911331425*t**14 + 10380*X**3*t**10 + 12787272*X**2*t**11 + 3646188342*X*t**12 + 287938949178*t**13 + 15*X**4*t**8 + 102576*X**3*t**9 + 71909658*X**2*t**10 + 15047141292*X*t**11 + 964903805434*t**12 + 330*X**4*t**7 + 707604*X**3*t**8 + 321704316*X**2*t**9 + 51955096824*X*t**10 + 2781843718722*t**11 + 3435*X**4*t**6 + 3582876*X**3*t**7 + 1155971196*X**2*t**8 + 150205315932*X*t**9 + 6885805359741*t**10 + 6*X**5*t**4 + 21714*X**4*t**5 + 13632168*X**3*t**6 + 3343499244*X**2*t**7 + 362526695094*X*t**8 + 14569390179114*t**9 + 66*X**5*t**3 + 90660*X**4*t**4 + 39215388*X**3*t**5 + 7747596090*X**2*t**6 + 725403501318*X*t**7 + 26165223178293*t**8 + 336*X**5*t**2 + 255090*X**4*t**3 + 84525732*X**3*t**4 + 14206132008*X**2*t**5 + 1189398495432*X*t**6 + 39474479008356*t**7 + X**6 + 858*X**5*t + 472143*X**4*t**2 + 132886992*X**3*t**3 + 20157510639*X**2*t**4 + 1569568001646*X*t**5 + 49303015587132*t**6 + 1014*X**5 + 525954*X**4*t + 144222780*X**3*t**2 + 21320908440*X**2*t**3 + 1622460290100*X*t**4 + 49941619724976*t**5 + 272259*X**4 + 96482100*X**3*t + 15765293778*X**2*t**2 + 1260038295438*X*t**3 + 39836631701295*t**4 + 29641924*X**3 + 7210949460*X**2*t + 686651250012*X*t**2 + 23947528862166*t**3 + 1506392823*X**2 + 231462513906*X*t + 10114876838391*t**2 + 35655266790*X + 2644809206442*t + 317295487717)
 # The coefficients for l=13 are:
 # X**6: 1
@@ -211,23 +214,23 @@ def Psi(l, use_stored=True):
 # X**2: (3) * (t**2 + 5*t + 13)**2 * (t**2 + 6*t + 13)**2 * (5*t**8 + 110*t**7 + 1045*t**6 + 5798*t**5 + 20508*t**4 + 47134*t**3 + 67685*t**2 + 54406*t + 17581)
 # X**1: (6) * (t**2 + 5*t + 13)**2 * (t**2 + 6*t + 13)**3 * (t**10 + 27*t**9 + 316*t**8 + 2225*t**7 + 10463*t**6 + 34232*t**5 + 78299*t**4 + 122305*t**3 + 122892*t**2 + 69427*t + 16005)
 # X**0: (t**2 + 5*t + 13)**2 * (t**2 + 6*t + 13)**3 * (t**14 + 38*t**13 + 649*t**12 + 6844*t**11 + 50216*t**10 + 271612*t**9 + 1115174*t**8 + 3520132*t**7 + 8549270*t**6 + 15812476*t**5 + 21764840*t**4 + 21384124*t**3 + 13952929*t**2 + 5282630*t + 854569)
-#
 
     # Here the generic kernel polynomials are actually calculated:
     j = Fricke_module(l)
-    k = j-1728
+    k = j - 1728
     from sage.misc.all import prod
-    f = prod( [p for p,e in j.factor() if e==3]
-             +[p for p,e in k.factor() if e==2])
+    f = prod([p for p, e in j.factor() if e == 3]
+             + [p for p, e in k.factor() if e == 2])
     A4 = -3*t**2*j*k // f**2
     A6 = -2*t**3*j*k**2 // f**3
-    E = EllipticCurve([0,0,0,A4,A6])
+    E = EllipticCurve([0, 0, 0, A4, A6])
     assert E.j_invariant() == j
-    return E.division_polynomial(l,X).factor()[0][0]
+    return E.division_polynomial(l, X).factor()[0][0]
 
 
 def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
-    """Returns list of ``l`` -isogenies with domain ``E``.
+    """
+    Return list of ``l`` -isogenies with domain ``E``.
 
     INPUT:
 
@@ -278,23 +281,23 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
     j = E.j_invariant()
     if F.characteristic() in [2, 3, l]:
         raise NotImplementedError("2, 3, 5, 7 and 13-isogenies are not yet implemented in characteristic 2 and 3, and when the characteristic is the same as the degree of the isogeny.")
-    if l==2:
+    if l == 2:
         return isogenies_2(E, minimal_models=minimal_models)
-    if l==3:
+    if l == 3:
         return isogenies_3(E, minimal_models=minimal_models)
-    if j==F(0):
-        if l==5:
+    if j == F(0):
+        if l == 5:
             return isogenies_5_0(E, minimal_models=minimal_models)
-        if l==7:
+        if l == 7:
             return isogenies_7_0(E, minimal_models=minimal_models)
-        if l==13:
+        if l == 13:
             return isogenies_13_0(E, minimal_models=minimal_models)
-    if j==F(1728):
-        if l==5:
+    if j == F(1728):
+        if l == 5:
             return isogenies_5_1728(E, minimal_models=minimal_models)
-        if l==7:
+        if l == 7:
             return isogenies_7_1728(E, minimal_models=minimal_models)
-        if l==13:
+        if l == 13:
             return isogenies_13_1728(E, minimal_models=minimal_models)
 
     if l is not None:
@@ -355,7 +358,7 @@ sporadic_j = {
 @cached_function
 def _sporadic_Q_data(j):
     r"""
-    Returns technical data used in computing sporadic isogenies over `\QQ`.
+    Return technical data used in computing sporadic isogenies over `\QQ`.
 
     INPUT:
 
@@ -531,7 +534,7 @@ def _sporadic_Q_data(j):
         ....:     E = EllipticCurve(j=j).short_weierstrass_model()
         ....:     f = R(_sporadic_Q_data(j)[1])
         ....:     g = E.division_polynomial(ell)
-        ....:     assert g%f==0
+        ....:     assert g % f == 0
     """
     from sage.rings.all import RealField
     from sage.misc.all import prod
@@ -812,7 +815,7 @@ def isogenies_5_0(E, minimal_models=True):
     a = Ew.a6()
     x = polygen(F)
     betas = sorted((x**6-160*a*x**3-80*a**2).roots(multiplicities=False))
-    if len(betas)==0:
+    if not betas:
         return []
     gammas = [(beta**2 *(beta**3-140*a))/(120*a) for beta in betas]
     from sage.rings.number_field.number_field_base import is_NumberField
@@ -823,7 +826,8 @@ def isogenies_5_0(E, minimal_models=True):
     return isogs
 
 def isogenies_5_1728(E, minimal_models=True):
-    r"""Returns a list of 5-isogenies with domain ``E`` when the j-invariant is
+    r"""
+    Return a list of 5-isogenies with domain ``E`` when the j-invariant is
     1728.
 
     INPUT:
@@ -927,7 +931,8 @@ def isogenies_5_1728(E, minimal_models=True):
     return isogs
 
 def isogenies_7_0(E, minimal_models=True):
-    r"""Returns list of all 7-isogenies from E when the j-invariant is 0.
+    r"""
+    Return list of all 7-isogenies from E when the j-invariant is 0.
 
     INPUT:
 
@@ -1021,7 +1026,7 @@ def isogenies_7_0(E, minimal_models=True):
     kers = [7*x-(2+6*t) for t in ts]
     kers = [k(x**3/a).monic() for k in kers]
     isogs = [Ew.isogeny(k,model=model) for k in kers]
-    if len(isogs)>0:
+    if isogs:
         [endo.set_post_isomorphism(endo.codomain().isomorphism_to(E)) for endo in isogs]
 
     # we may have up to 6 other isogenies:
@@ -1037,7 +1042,8 @@ def isogenies_7_0(E, minimal_models=True):
     return isogs
 
 def isogenies_7_1728(E, minimal_models=True):
-    r"""Returns list of all 7-isogenies from E when the j-invariant is 1728.
+    r"""
+    Return list of all 7-isogenies from E when the j-invariant is 1728.
 
     INPUT:
 
@@ -1107,7 +1113,7 @@ def isogenies_7_1728(E, minimal_models=True):
     a = Ew.a4()
 
     ts = (Fricke_module(7)-1728).numerator().roots(F,multiplicities=False)
-    if len(ts)==0:
+    if not ts:
         return []
     ts.sort()
     isogs = []
@@ -1126,7 +1132,7 @@ def isogenies_7_1728(E, minimal_models=True):
 
 def isogenies_13_0(E, minimal_models=True):
     """
-    Returns list of all 13-isogenies from E when the j-invariant is 0.
+    Return list of all 13-isogenies from E when the j-invariant is 0.
 
     INPUT:
 
@@ -1230,7 +1236,7 @@ def isogenies_13_0(E, minimal_models=True):
     kers = [13*x**2 + (78*t + 26)*x + 24*t + 40 for t in ts]
     kers = [k(x**3/a).monic() for k in kers]
     isogs = [Ew.isogeny(k,model=model) for k in kers]
-    if len(isogs)>0:
+    if isogs:
         [endo.set_post_isomorphism(endo.codomain().isomorphism_to(E)) for endo in isogs]
 
     # we may have up to 12 other isogenies:
@@ -1251,8 +1257,10 @@ def isogenies_13_0(E, minimal_models=True):
 
     return isogs
 
+
 def isogenies_13_1728(E, minimal_models=True):
-    r"""Returns list of all 13-isogenies from E when the j-invariant is 1728.
+    r"""
+    Return list of all 13-isogenies from E when the j-invariant is 1728.
 
     INPUT:
 
@@ -1347,7 +1355,7 @@ def isogenies_13_1728(E, minimal_models=True):
     kers = [13*x**3 + (-26*i - 13)*x**2 + (-52*i - 13)*x - 2*i - 3 for i in ts]
     kers = [k(x**2/a).monic() for k in kers]
     isogs = [Ew.isogeny(k,model=model) for k in kers]
-    if len(isogs)>0:
+    if isogs:
         [endo.set_post_isomorphism(endo.codomain().isomorphism_to(E)) for endo in isogs]
 
     # we may have up to 12 other isogenies:
@@ -1529,7 +1537,7 @@ def _hyperelliptic_isogeny_data(l):
 @cached_function
 def Psi2(l):
     """
-    Returns the generic kernel polynomial for hyperelliptic `l`-isogenies.
+    Return the generic kernel polynomial for hyperelliptic `l`-isogenies.
 
     INPUT:
 
@@ -1591,7 +1599,7 @@ def Psi2(l):
 
 def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
     """
-    Returns list of ``l`` -isogenies with domain ``E``.
+    Return list of ``l`` -isogenies with domain ``E``.
 
     INPUT:
 
@@ -1734,9 +1742,10 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
         kernels += [psi((36*X+3*b2)*T,u0,v0).monic()]
     return [E.isogeny(ker) for ker in kernels]
 
+
 def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
     """
-    Returns a list of hyperelliptic ``l`` -isogenies with domain ``E`` when `j(E)=0`.
+    Return a list of hyperelliptic ``l`` -isogenies with domain ``E`` when `j(E)=0`.
 
     INPUT:
 
@@ -1810,7 +1819,7 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
             S += [[u0,v0] for v0 in (X**2-f(u0)).roots(multiplicities=False)]
         else:
             S += [[u0,-a(u0)/b(u0)]]
-    if len(S)==0 and len(kernels) == 0:
+    if not S and not kernels:
         return []
     S.sort()
 
@@ -1820,9 +1829,10 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
         kernels += [psi((36*X+3*b2)*T,u0,v0).monic() for T in (X**3-A6/(-54*c6)).roots(multiplicities=False)]
     return [E.isogeny(ker) for ker in kernels]
 
+
 def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
     """
-    Returns a list of ``l`` -isogenies with domain ``E`` when `j(E)=1728`.
+    Return a list of ``l`` -isogenies with domain ``E`` when `j(E)=1728`.
 
     INPUT:
 
@@ -1901,7 +1911,7 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
             S += [[u0,v0] for v0 in (X**2-f(u0)).roots(multiplicities=False)]
         else:
             S += [[u0,(2*1728-a(u0))/b(u0)]]
-    if len(S)==0 and len(kernels) == 0:
+    if not S and not kernels:
         return []
     S.sort()
 
@@ -1919,7 +1929,7 @@ def _least_semi_primitive(p):
 
     INPUT:
 
-    - ``p`` -- an odd prime.
+    - ``p`` -- an odd prime power.
 
     OUTPUT:
 
@@ -1943,21 +1953,122 @@ def _least_semi_primitive(p):
         sage: _least_semi_primitive(997)
         7
     """
-    if not p.is_prime() or p<3:
-        raise ValueError("%s is not an odd prime"%p)
+    if p % 2 == 0 or not p.is_prime_power():
+        raise ValueError("{} is not an odd prime power".format(p))
 
-    def is_semi_primitive(a,p):
-        from sage.rings.finite_rings.integer_mod_ring import Integers
-        d = Integers(p)(a).multiplicative_order()
-        if p%4==1:
-            return (d==p-1)
-        else:
-            return d >= (p-1)/2
+    from sage.arith.misc import euler_phi
+    from sage.rings.finite_rings.integer_mod_ring import Integers
+    phip = euler_phi(p)
+    ord = phip if p % 4 == 1 else phip // 2
+    R = Integers(p)
+    return next((a for a in range(2, p) if p.gcd(a) == 1
+                 and R(a).multiplicative_order() >= ord), 0)
 
-    a = 2
-    while not is_semi_primitive(a,p):
-        a += 1
-    return a
+
+def is_kernel_polynomial(E, m, f):
+    r"""
+    Test whether ``E`` has a cyclic isogeny of degree ``m`` with kernel
+    polynomial ``f``.
+
+    INPUT:
+
+    - ``E`` -- an elliptic curve.
+
+    - ``m`` -- a positive integer.
+
+    - ``f`` -- a polynomial over the base field of ``E``.
+
+    OUTPUT:
+
+    (bool) ``True`` if ``E`` has a cyclic isogeny of degree ``m`` with
+    kernel polynomial ``f``, else ``False``.
+
+    ALGORITHM:
+
+    `f` must have degree `(m-1)/2` (if `m` is odd) or degree `m/2` (if
+    `m` is even), and have the property that for each root `x` of `f`,
+    `\mu(x)` is also a root where `\mu` is the multiplication-by-`m`
+    map on `E` and `m` runs over a set of generators of
+    `(\ZZ/m\ZZ)^*/\{1,-1\}`.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.isogeny_small_degree import is_kernel_polynomial
+        sage: E = EllipticCurve([0, -1, 1, -10, -20])
+        sage: x = polygen(QQ)
+        sage: is_kernel_polynomial(E,5,x^2 + x - 29/5)
+        True
+        sage: is_kernel_polynomial(E,5,(x - 16) * (x - 5))
+        True
+
+    An example from [KT2013]_, where the 13-division polynomial splits
+    into 14 factors each of degree 6, but only two of these is a
+    kernel polynomial for a 13-isogeny::
+
+        sage: F = GF(3)
+        sage: E = EllipticCurve(F,[0,0,0,-1,0])
+        sage: f13 = E.division_polynomial(13)
+        sage: factors = [f for f,e in f13.factor()]
+        sage: all([f.degree()==6 for f in factors])
+        True
+        sage: [is_kernel_polynomial(E,13,f) for f in factors]
+        [True,
+        True,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False]
+
+    See :trac:`22232`::
+
+        sage: K =GF(47^2)
+        sage: E = EllipticCurve([0, K.gen()])
+        sage: psi7 = E.division_polynomial(7)
+        sage: f = psi7.factor()[4][0]
+        sage: f
+        x^3 + (7*z2 + 11)*x^2 + (25*z2 + 33)*x + 25*z2
+        sage: f.divides(psi7)
+        True
+        sage: is_kernel_polynomial(E,7, f)
+        False
+
+    """
+    m2 = m // 2
+    if f.degree() != m2:
+        return False
+    if m == 1:
+        return True
+
+    # Compute the quotient polynomial ring mod (f)
+    S = f.parent().quotient_ring(f)
+
+    # test if the m-division polynomial is a multiple of f by computing it in the quotient:
+    if E.division_polynomial(m, x=S.gen()) != 0:
+        return False
+
+    if m == 2 or m == 3:
+        return True
+
+    # For each a in a set of generators of (Z/mZ)^* we check that the
+    # multiplcation-by-a map permutes the roots of f.  It would be
+    # enough to take a generating (Z/mZ)^*/{1,-1} but that is not
+    # implemented.  If m is prime (or more generally, has a primitive
+    # root) then only one a will be needed.
+
+    from sage.rings.finite_rings.integer_mod_ring import Integers
+    for a in Integers(m).unit_gens():
+        mu = E.multiplication_by_m(a, x_only=True)
+        if f( S(mu.numerator()) / S(mu.denominator()) ) != 0:
+            return False
+    return True
 
 
 def isogenies_prime_degree_general(E, l, minimal_models=True):
@@ -2070,10 +2181,10 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
         [(0, 0, 0, -840*i + 1081, 0), (0, 0, 0, 840*i + 1081, 0)]
     """
     if not l.is_prime():
-        raise ValueError("%s is not prime."%l)
-    if l==2:
+        raise ValueError("%s is not prime." % l)
+    if l == 2:
         return isogenies_2(E, minimal_models=minimal_models)
-    if l==3:
+    if l == 3:
         return isogenies_3(E, minimal_models=minimal_models)
 
     psi_l = E.division_polynomial(l)

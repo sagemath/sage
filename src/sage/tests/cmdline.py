@@ -55,7 +55,7 @@ AUTHORS:
 - Jeroen Demeyer (2010-11-20): initial version (:trac:`10300`)
 
 """
-from subprocess import *
+from subprocess import Popen, PIPE
 import os
 import select
 
@@ -410,12 +410,10 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         sage: os.chmod(d, 0o777)
         sage: (out, err, ret) = test_executable(["sage", "-t", "nonexisting.py"], cwd=d)
         sage: print(err)
-        Traceback (most recent call last):
         ...
         RuntimeError: refusing to run doctests...
         sage: (out, err, ret) = test_executable(["sage", "-tp", "1", "nonexisting.py"], cwd=d)
         sage: print(err)
-        Traceback (most recent call last):
         ...
         RuntimeError: refusing to run doctests...
 
@@ -810,7 +808,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         ....:  "nbformat_minor": 2
         ....: }
         ....: '''
-        sage: t = '.. escape-backslashes\n.. default-role:: math\n\n\n::\n\n    sage: 1+1\n    2\n\n\n'
+        sage: t = '.. escape-backslashes\n.. default-role:: math\n\n\n::\n\n    sage: 1+1\n    2\n\n\n\n\n'
         sage: input = tmp_filename(ext='.ipynb')
         sage: output = tmp_filename(ext='.rst')
         sage: with open(input, 'w') as F:
@@ -839,7 +837,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         ///
         4
         }}}
-        sage: err
+        sage: err # py2
         ''
         sage: ret
         0
@@ -852,7 +850,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         sage: with open(input, 'w') as F:
         ....:     _ = F.write(s)
         sage: test_executable(["sage", "--rst2txt", input, output])
-        ('', '', 0)
+        ('', ..., 0)
         sage: print(open(output, 'r').read())
         {{{id=0|
         2^10
@@ -873,11 +871,11 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         sage: output = tmp_filename(ext='.sws')
         sage: with open(input, 'w') as F:
         ....:     _ = F.write(s)
-        sage: test_executable(["sage", "--rst2sws", input, output])
+        sage: test_executable(["sage", "--rst2sws", input, output]) # py2
         ('', '', 0)
-        sage: import tarfile
-        sage: f = tarfile.open(output, 'r')
-        sage: print(f.extractfile('sage_worksheet/worksheet.html').read())
+        sage: import tarfile # py2
+        sage: f = tarfile.open(output, 'r') # py2
+        sage: print(f.extractfile('sage_worksheet/worksheet.html').read()) # py2
         <h1 class="title">Thetitle</h1>
         <BLANKLINE>
         {{{id=0|
@@ -891,7 +889,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         ///
         4
         }}}
-        sage: print(f.extractfile('sage_worksheet/worksheet.txt').read())
+        sage: print(f.extractfile('sage_worksheet/worksheet.txt').read()) # py2
         Thetitle
         system:sage
         <BLANKLINE>

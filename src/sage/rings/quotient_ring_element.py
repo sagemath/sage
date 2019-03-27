@@ -597,9 +597,9 @@ class QuotientRingElement(RingElement):
 
             sage: R.<x,y> = QQ[]
             sage: S.<a,b> = R.quo(x^2 + y^2)
-            sage: hash(a)
-            15360174650385711  # 64-bit
-            1505322287         # 32-bit
+            sage: c = a*a + b
+            sage: hash(a) != hash(b)
+            True
         """
         return hash(self.__rep)
 

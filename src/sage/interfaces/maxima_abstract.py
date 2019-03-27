@@ -58,7 +58,7 @@ import sys
 import subprocess
 
 from sage.env import DOT_SAGE
-COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj'%DOT_SAGE
+COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
 
 from sage.cpython.string import bytes_to_str
 
@@ -68,7 +68,7 @@ from sage.structure.richcmp import richcmp, rich_to_bool
 import sage.server.support
 
 from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
-  InterfaceFunction, AsciiArtString)
+                        InterfaceFunction, AsciiArtString)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
 

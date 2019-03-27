@@ -327,7 +327,7 @@ class FiniteFieldFactory(UniqueFactory):
         sage: K.<a> = GF(13^2, modulus=sin(x))
         Traceback (most recent call last):
         ...
-        TypeError: unable to convert sin(x) to an integer
+        TypeError: self must be a numeric expression
 
     If you wish to live dangerously, you can tell the constructor not
     to test irreducibility using ``check_irreducible=False``, but this

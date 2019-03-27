@@ -1031,10 +1031,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 1/2
 
             """
-            try:
-                return x.inverse_of_unit()
-            except:
-                raise NotImplementedError("can not compute approximate inverse with respect to this valuation")
+            return x.inverse_of_unit()
 
         def _relative_size(self, x):
             r"""
@@ -1636,7 +1633,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 for prec in (0, 1, 42, infinity):
                     try:
                         y = self.inverse(x, prec)
-                    except NotImplementedError:
+                    except ArithmeticError:  # Inverse does not exist
                         continue
                     except ValueError:
                         if prec is not infinity:

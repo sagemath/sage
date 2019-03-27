@@ -142,7 +142,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         ....:     quots.append(L)
         sage: [Q.dimension() for Q in quots]
         [5, 4, 3, 2, 1, 0]
-        sage: all([Lp is Ln.ambient() for Lp, Ln in zip(quots,quots[1:])])
+        sage: all(Lp is Ln.ambient() for Lp, Ln in zip(quots,quots[1:]))
         True
         sage: X = quots[-2].an_element()
         sage: lifts = [X]
@@ -150,7 +150,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         sage: for Q in quots:
         ....:     X = Q.lift(X)
         ....:     lifts.append(X)
-        sage: all([X.parent() is L for X, L in zip(lifts,quots)])
+        sage: all(X.parent() is L for X, L in zip(lifts,quots))
         True
 
     Verify a quotient construction when the basis ordering and indices ordering

@@ -40,15 +40,15 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from __future__ import absolute_import, print_function
 
@@ -74,8 +74,6 @@ from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
 from sage.structure.parent cimport Parent
-
-from sage.misc.superseded import deprecated_function_alias
 
 cdef object is_IntegerMod
 cdef object Integer
@@ -1426,8 +1424,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         return Integer(self._cache.log_to_int(self.element))
 
-    log_to_int = deprecated_function_alias(11295, _log_to_int)
-
     def log(FiniteField_givaroElement self, base):
         """
         Return the log to the base `b` of ``self``, i.e., an integer `n`
@@ -1464,8 +1460,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         return self._cache._element_int_repr(self)
 
-    int_repr = deprecated_function_alias(11295, _int_repr)
-
     def _log_repr(FiniteField_givaroElement self):
         r"""
         Return the log representation of ``self`` as a string.  See the
@@ -1481,8 +1475,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         return self._cache._element_log_repr(self)
 
-    log_repr = deprecated_function_alias(11295, _log_repr)
-
     def _poly_repr(FiniteField_givaroElement self):
         r"""
         Return representation of this finite field element as a polynomial
@@ -1496,8 +1488,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             'b + 2'
         """
         return self._cache._element_poly_repr(self)
-
-    poly_repr = deprecated_function_alias(11295, _poly_repr)
 
     def polynomial(FiniteField_givaroElement self, name=None):
         """

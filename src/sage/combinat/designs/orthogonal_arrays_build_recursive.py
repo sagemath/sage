@@ -383,11 +383,11 @@ def OA_and_oval(q):
     # We build the TD by relabelling the point set, and removing those which
     # contain x.
     r = {}
-    B = list(B)
-    # (this is to make sure that the first set containing x in B is the one
-    # which contains no other oval point)
 
-    B.sort(key=lambda b:int(any([xx in oval for xx in b])))
+    # Make sure that the first set containing x in B is the one
+    # which contains no other oval point
+    B = sorted(B, key=lambda b: any(xx in oval for xx in b))
+
     BB = []
     for b in B:
         if x in b:
@@ -803,13 +803,14 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
 
     q = n
     K = FiniteField(q, 'x')
-    relabel = {x:i for i,x in enumerate(K)}
-    PG = DesarguesianProjectivePlaneDesign(q,check=False,point_coordinates=False).blocks(copy=False)
+    relabel = {x: i for i, x in enumerate(K)}
+    PG = DesarguesianProjectivePlaneDesign(q, check=False,
+                                           point_coordinates=False).blocks()
 
     if q % 3 == 0:
         t = K.one()
-    elif q%3 == 1:
-        t = K.multiplicative_generator()**((q-1)//3)
+    elif q % 3 == 1:
+        t = K.multiplicative_generator()**((q - 1)//3)
     else:
         raise ValueError("q(={}) must be congruent to 0 or 1 mod 3".format(q))
 

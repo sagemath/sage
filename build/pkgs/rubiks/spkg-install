@@ -2,14 +2,6 @@
 ## rubiks
 ###########################################
 
-if [ -z "$SAGE_LOCAL" ] ; then
-   echo "SAGE_LOCAL undefined ... exiting"
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
-set -e
-
 # Add a sensible default optimisation flag. Change if necessary.
 OPTIMIZATION_FLAGS="-O2"
 # Work around a bug in gcc 4.6.0: http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48702
@@ -84,13 +76,7 @@ else
     INSTALL=install; export INSTALL
 fi
 
-
-# remove the old dik binary since the has a name collision
-# with polynmake - see #2595
-rm -f $SAGE_LOCAL/bin/cube
-
 cd src
 
 echo "Building Rubiks cube solvers"
-$MAKE install PREFIX="$SAGE_LOCAL"
-
+sdh_make_install PREFIX="$SAGE_LOCAL"

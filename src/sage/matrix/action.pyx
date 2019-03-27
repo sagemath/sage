@@ -65,7 +65,7 @@ import operator
 
 from .matrix_space import MatrixSpace, is_MatrixSpace
 from sage.modules.free_module import FreeModule, is_FreeModule
-from sage.structure.element cimport coercion_model
+from sage.structure.coerce cimport coercion_model
 
 
 cdef class MatrixMulAction(Action):

@@ -12,6 +12,8 @@ AUTHORS:
 - Sebastian Oehms (2018-11): Added :meth:`gap` as synonym to
   :meth:`_gap_` (compatibility to libgap framework, see :trac:`26750`)
 
+- Sebastian Oehms (2019-02): Implemented :meth:`gap` properly (:trac:`27234`)
+
 There are several ways to define a permutation group element:
 
 -  Define a permutation group `G`, then use ``G.gens()``
@@ -600,7 +602,23 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     # for compatibility with sage.groups.libgap_wrapper.ElementLibGAP
     # see sage.groups.perm_gps.permgroup.PermutationGroup_generic.gap
-    gap = _gap_
+    def gap(self):
+        """
+        Returns self as a libgap element
+
+        EXAMPLES::
+
+            sage: P = PGU(8,2)
+            sage: p, q = P.gens()
+            sage: p_libgap  = p.gap()
+            sage: p_pexpect = gap(p)
+            sage: p_libgap == p_pexpect
+            True
+            sage: type(p_libgap) == type(p_pexpect)
+            False
+        """
+        from sage.libs.gap.libgap import libgap
+        return libgap(self)
 
     def _gap_init_(self):
         """

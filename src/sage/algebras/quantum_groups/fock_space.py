@@ -1586,7 +1586,7 @@ class FockSpaceBases(Category_realization_of_parent):
                 sage: A[2,2,2,1]
                 Traceback (most recent call last):
                 ...
-                ValueError: (2, 2, 2, 1) is not an element of 3-Regular Partitions
+                ValueError: [2, 2, 2, 1] is not an element of 3-Regular Partitions
 
                 sage: F = FockSpace(3, [0, 0])
                 sage: A = F.A()

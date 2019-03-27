@@ -87,11 +87,11 @@ from .args cimport SparseEntry, MatrixArgs_init
 #########################################################
 # PARI C library
 from cypari2.gen cimport Gen
+from cypari2.stack cimport clear_stack, new_gen
+from cypari2.paridecl cimport *
 from sage.libs.pari.convert_gmp cimport INT_to_mpz
 from sage.libs.pari.convert_flint cimport (_new_GEN_from_fmpz_mat_t,
            _new_GEN_from_fmpz_mat_t_rotate90, integer_matrix)
-from cypari2.stack cimport clear_stack
-from cypari2.paridecl cimport *
 #########################################################
 
 from sage.arith.multi_modular cimport MultiModularBasis
@@ -479,7 +479,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         Return space separated string of the entries in this matrix, in the
         given base. This is optimized for speed.
 
-        INPUT: base -an integer = 36; (default: 10)
+        INPUT:
+
+        - base -- an integer <= 36; (default: 10)
 
         EXAMPLES::
 
@@ -2016,10 +2018,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise ValueError("transformation matrix only available with p-adic algorithm")
         elif algorithm in ["pari", "pari0", "pari1", "pari4"]:
             flag = int(algorithm[-1]) if algorithm != "pari" else 1
-            if self.height().ndigits() > 10000 or n >= 50:
-                H_m = self._hnf_pari_big(flag, include_zero_rows=include_zero_rows)
-            else:
-                H_m = self._hnf_pari(flag, include_zero_rows=include_zero_rows)
+            H_m = self._hnf_pari(flag, include_zero_rows=include_zero_rows)
         elif algorithm == 'ntl':
             if nr != nc:
                 raise ValueError("ntl only computes HNF for square matrices of full rank.")
@@ -2653,16 +2652,16 @@ cdef class Matrix_integer_dense(Matrix_dense):
         return (format, K)
 
     # TODO: implement using flint function
-    def _adjoint(self):
+    def _adjugate(self):
         """
-        Return the adjoint of this matrix.
+        Return the adjugate (classical adjoint) of this matrix.
 
-        Assumes self is a square matrix (checked in adjoint).
+        Assumes ``self`` is a square matrix (checked in adjugate).
 
         EXAMPLES::
 
             sage: m = matrix(ZZ,3,[1..9])
-            sage: m.adjoint()
+            sage: m.adjugate()
             [ -3   6  -3]
             [  6 -12   6]
             [ -3   6  -3]
@@ -4108,8 +4107,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ...
             ZeroDivisionError: Matrix is singular
         """
-        A,d = self._invert_flint()
-        return A/d
+        A, d = self._invert_flint()
+        return A / d
 
     def _invert_unit(self):
         r"""
@@ -4148,7 +4147,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ...
             ArithmeticError: non-invertible matrix
         """
-        A,d = self._invert_flint()
+        A, d = self._invert_flint()
         if not d.is_one():
             raise ArithmeticError("non-invertible matrix")
         return A
@@ -4252,7 +4251,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             True
 
         """
-        t = verbose('starting %s solve_right...'%algorithm)
+        t = verbose('starting %s solve_right...' % algorithm)
 
         # It would probably be much better to rewrite linbox so it
         # throws an error instead of ** going into an infinite loop **
@@ -4807,8 +4806,20 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: t = ModularSymbols(11,sign=1).hecke_matrix(2)
             sage: w = t.change_ring(ZZ)
-            sage: w.list()
-            [3, -1, 0, -2]
+            sage: w
+            [ 3 -2]
+            [ 0 -2]
+            sage: w.charpoly().factor()
+            (x - 3) * (x + 2)
+            sage: w.decomposition()
+            [
+            (Free module of degree 2 and rank 1 over Integer Ring
+            Echelon basis matrix:
+            [ 5 -2], True),
+            (Free module of degree 2 and rank 1 over Integer Ring
+            Echelon basis matrix:
+            [0 1], True)
+            ]
         """
         F = self.charpoly().factor()
         if len(F) == 1:
@@ -5664,6 +5675,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         matrices.
 
         EXAMPLES::
+
             sage: matrix(ZZ,3,[1..9])._rank_pari()
             2
         """
@@ -5674,16 +5686,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
     def _hnf_pari(self, int flag=0, bint include_zero_rows=True):
         """
-        Hermite form of this matrix, computed using PARI.  The
-        computation is done entirely on the PARI stack, then the PARI
-        stack is cleared.  This function is only useful for small
-        matrices, and can crash on large matrices (e.g., if the PARI
-        stack overflows).
+        Hermite normal form of this matrix, computed using PARI.
 
         INPUT:
 
         - ``flag`` -- 0 (default), 1, 3 or 4 (see docstring for
-          gp.mathnf).
+          ``pari.mathnf``).
 
         - ``include_zero_rows`` -- boolean. if False, do not include
           any of the zero rows at the bottom of the matrix in the
@@ -5733,98 +5741,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: pari('mathnf(Mat([0,1]), 4)')
             [Mat(1), [1, 0; 0, 1]]
         """
-        cdef GEN A
         sig_on()
         A = _new_GEN_from_fmpz_mat_t_rotate90(self._matrix)
-        cdef GEN H = mathnf0(A, flag)
-        B = self.extract_hnf_from_pari_matrix(H, flag, include_zero_rows)
-        clear_stack()  # This calls sig_off()
-        return B
-
-
-    def _hnf_pari_big(self, int flag=0, bint include_zero_rows=True):
-        """
-        Hermite form of this matrix, computed using PARI.
-
-        INPUT:
-
-        - ``flag`` -- 0 (default), 1, 3 or 4 (see docstring for
-          gp.mathnf).
-
-        - ``include_zero_rows`` -- boolean. if False, do not include
-          any of the zero rows at the bottom of the matrix in the
-          output.
-
-        .. NOTE::
-
-            In no cases is the transformation matrix returned by this
-            function.
-
-        EXAMPLES::
-
-            sage: a = matrix(ZZ,3,3,[1..9])
-            sage: a._hnf_pari_big(flag=0, include_zero_rows=True)
-            [1 2 3]
-            [0 3 6]
-            [0 0 0]
-            sage: a._hnf_pari_big(flag=1, include_zero_rows=True)
-            [1 2 3]
-            [0 3 6]
-            [0 0 0]
-            sage: a._hnf_pari_big(flag=3, include_zero_rows=True)
-            [1 2 3]
-            [0 3 6]
-            [0 0 0]
-            sage: a._hnf_pari_big(flag=4, include_zero_rows=True)
-            [1 2 3]
-            [0 3 6]
-            [0 0 0]
-
-        Check that ``include_zero_rows=False`` works correctly::
-
-            sage: matrix(ZZ,3,[1..9])._hnf_pari_big(0, include_zero_rows=False)
-            [1 2 3]
-            [0 3 6]
-            sage: matrix(ZZ,3,[1..9])._hnf_pari_big(1, include_zero_rows=False)
-            [1 2 3]
-            [0 3 6]
-            sage: matrix(ZZ,3,[1..9])._hnf_pari_big(3, include_zero_rows=False)
-            [1 2 3]
-            [0 3 6]
-            sage: matrix(ZZ,3,[1..9])._hnf_pari_big(4, include_zero_rows=False)
-            [1 2 3]
-            [0 3 6]
-        """
-        cdef Gen H = integer_matrix(self._matrix, 1)
-        H = H.mathnf(flag)
-        sig_on()
-        B = self.extract_hnf_from_pari_matrix(H.g, flag, include_zero_rows)
-        clear_stack()  # This calls sig_off()
-        return B
-
-    cdef extract_hnf_from_pari_matrix(self, GEN H, int flag, bint include_zero_rows):
-        # Throw away the transformation matrix (yes, we should later
-        # code this to keep track of it).
-        cdef mpz_t tmp
-        mpz_init(tmp)
-        if flag > 0:
-            H = gel(H,1)
-
-        # Figure out how many columns we got back.
-        cdef Py_ssize_t H_nc = glength(H)  # number of columns
-        # Now get the resulting Hermite form matrix back to Sage, suitably re-arranged.
-        cdef Matrix_integer_dense B
-        if include_zero_rows:
-            B = self.new_matrix()
-        else:
-            B = self.new_matrix(nrows=H_nc)
-        for i in range(self._ncols):
-            for j in range(H_nc):
-                INT_to_mpz(tmp, gcoeff(H, i+1, H_nc-j))
-                fmpz_set_mpz(fmpz_mat_entry(B._matrix,j,self._ncols-i-1),tmp)
-        mpz_clear(tmp)
-        return B
-
+        H = mathnf0(A, flag)
+        if typ(H) == t_VEC:
+            H = gel(H, 1)
+        GenH = new_gen(H)
+        return extract_hnf_from_pari_matrix(self, GenH, include_zero_rows)
 
     def p_minimal_polynomials(self, p, s_max=None):
         r"""
@@ -5966,7 +5889,27 @@ cdef inline GEN pari_GEN(Matrix_integer_dense B):
     return A
 
 
-    #####################################################################################
+cdef extract_hnf_from_pari_matrix(Matrix_integer_dense self, Gen H, bint include_zero_rows):
+    cdef mpz_t tmp
+    mpz_init(tmp)
+
+    # Figure out how many columns we got back.
+    cdef long H_nc = glength(H.g)  # number of columns
+    # Now get the resulting Hermite form matrix back to Sage, suitably re-arranged.
+    cdef Matrix_integer_dense B
+    if include_zero_rows:
+        B = self.new_matrix()
+    else:
+        B = self.new_matrix(nrows=H_nc)
+    cdef long i, j
+    for i in range(self._ncols):
+        for j in range(H_nc):
+            sig_check()
+            INT_to_mpz(tmp, gcoeff(H.g, i+1, H_nc-j))
+            fmpz_set_mpz(fmpz_mat_entry(B._matrix,j,self._ncols-i-1),tmp)
+    mpz_clear(tmp)
+    return B
+
 
 cdef _clear_columns(Matrix_integer_dense A, pivots, Py_ssize_t n):
     # Clear all columns
@@ -5989,11 +5932,6 @@ cdef _clear_columns(Matrix_integer_dense A, pivots, Py_ssize_t n):
     fmpz_clear(c)
     fmpz_clear(t)
     sig_off()
-
-###############################################################
-
-
-
 
 
 cpdef _lift_crt(Matrix_integer_dense M, residues, moduli=None):

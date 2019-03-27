@@ -2280,8 +2280,8 @@ class SIE_dict(SageInputExpression):
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sib.dict({'us':'good', 'them':'bad'})
-            {dict: {{atomic:'them'}:{atomic:'bad'}, {atomic:'us'}:{atomic:'good'}}}
+            sage: sib.dict({'me':'good', 'you':'bad'})
+            {dict: {{atomic:'me'}:{atomic:'good'}, {atomic:'you'}:{atomic:'bad'}}}
             sage: sib.dict([(10, 'PS2'), (12, 'PS2'), (13, 'PS3')])
             {dict: {{atomic:10}:{atomic:'PS2'}, {atomic:12}:{atomic:'PS2'}, {atomic:13}:{atomic:'PS3'}}}
         """

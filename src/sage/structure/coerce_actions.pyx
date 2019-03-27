@@ -19,7 +19,8 @@ from cpython.int cimport *
 from cpython.number cimport *
 from cysignals.signals cimport sig_check
 
-from .element cimport parent, coercion_model, Element, ModuleElement
+from .coerce cimport coercion_model
+from .element cimport parent, Element, ModuleElement
 from .parent cimport Parent
 from .coerce_exceptions import CoercionException
 from sage.categories.action cimport InverseAction, PrecomposedAction
@@ -735,10 +736,17 @@ cdef class IntegerMulAction(IntegerAction):
 
         Check that large multiplications can be interrupted::
 
-            sage: alarm(0.5); (2^(10^7)) * P  # not tested; see trac:#24986
+            sage: alarm(0.5); (2^(10^6)) * P
             Traceback (most recent call last):
             ...
             AlarmInterrupt
+
+        Verify that cysignals correctly detects that the above
+        exception has been handled::
+
+            sage: from cysignals.tests import print_sig_occurred
+            sage: print_sig_occurred()
+            No current exception
         """
         cdef int err = 0
         cdef long n_long

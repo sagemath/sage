@@ -2,6 +2,7 @@ r"""
 Interface to FriCAS
 
 .. TODO::
+
     - some conversions in ``sage.functions`` are still missing and
       all should be checked and tested
 
@@ -196,17 +197,23 @@ FriCAS does some limits right::
 ###########################################################################
 from __future__ import print_function
 
+import re
+import os
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.interfaces.expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from sage.misc.misc import SAGE_TMP_INTERFACE
 from sage.env import DOT_SAGE, LOCAL_IDENTIFIER
 from sage.docs.instancedoc import instancedoc
-import re
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.libs.pynac.pynac', ['symbol_table'])
+lazy_import('sage.calculus.var', ['var', 'function'])
 
 
-FRICAS_SINGLE_LINE_START = 3 # where the output starts when it fits next to the line number
-FRICAS_MULTI_LINE_START = 2  # and when it doesn't
-FRICAS_LINE_LENGTH = 80      # length of a line, should match the line length in sage
+FRICAS_SINGLE_LINE_START = 3  # where output starts when it fits next to the line number
+FRICAS_MULTI_LINE_START = 2   # and when it doesn't
+FRICAS_LINE_LENGTH = 80       # length of a line, should match the line length in sage
 # the following messages have, unfortunately, no markup.
 FRICAS_WHAT_OPERATIONS_STRING = r"Operations whose names satisfy the above pattern\(s\):"
 FRICAS_ERROR_IN_LIBRARY_CODE = ">> Error detected within library code:"
@@ -215,20 +222,38 @@ FRICAS_ERROR_IN_LIBRARY_CODE = ">> Error detected within library code:"
 # work, the other are optimizations.  Beware that lisp distinguishes
 # between ' and ".
 FRICAS_INIT_CODE = (
-")set functions compile on",
-")set message autoload off",
-")set message type off",
-")set output length " + str(FRICAS_LINE_LENGTH),
-")lisp (setf |$ioHook|"
-"            (lambda (x &optional args)"
-"              (when (member x '(|startAlgebraOutput| |endOfAlgebraOutput|"
-"                                |startKeyedMsg|      |endOfKeyedMsg|))"
-"               (prin1 x)"
-"               (princ #\\Newline))))")
+    ")set functions compile on",
+    ")set message autoload off",
+    ")set message type off",
+    ")set output length " + str(FRICAS_LINE_LENGTH),
+    ")lisp (setf |$ioHook|"
+    "            (lambda (x &optional args)"
+    "              (when (member x '(|startAlgebraOutput| |endOfAlgebraOutput|"
+    "                                |startKeyedMsg|      |endOfKeyedMsg|))"
+    "               (prin1 x)"
+    "               (princ #\\Newline))))")
+# code (one-liners!) executed after having set up the prompt
+FRICAS_HELPER_CODE = (
+    'sageprint(x:InputForm):String == ' +
+    '(atom? x => (' +
+    'float? x => return float(x)::String;' +
+    'integer? x => return integer(x)::String;' +
+    'string? x => return concat(["_"", string(x)::String, "_""])$String;' +
+    'symbol? x => return string(symbol(x)));' +
+    'S: List String := [sageprint y for y in destruct x];' +
+    'R: String := new(1 + reduce(_+, [1 + #(s)$String for s in S], 0),' +
+    'space()$Character);' +
+    'copyInto!(R, "(", 1);' +
+    'i := 2;' +
+    'for s in S repeat'
+    '(copyInto!(R, s, i); i := i + 1 + #(s)$String);' +
+    'copyInto!(R, ")", i-1);' +
+    'return R)',)
 
 FRICAS_LINENUMBER_OFF_CODE = ")lisp (setf |$IOindex| NIL)"
 FRICAS_FIRST_PROMPT = r"\(1\) -> "
 FRICAS_LINENUMBER_OFF_PROMPT = r"\(NIL\) -> "
+
 
 class FriCAS(ExtraTabCompletion, Expect):
     """
@@ -259,22 +284,22 @@ class FriCAS(ExtraTabCompletion, Expect):
             sage: fricas(I*x).sage()                                            # optional - fricas
             I*x
         """
-        eval_using_file_cutoff = 4096-5 # magic number from Expect._eval_line (there might be a bug)
+        eval_using_file_cutoff = 4096-5  # magic number from Expect._eval_line (there might be a bug)
         assert max(len(c) for c in FRICAS_INIT_CODE) < eval_using_file_cutoff
         self.__eval_using_file_cutoff = eval_using_file_cutoff
-        self._COMMANDS_CACHE = '%s/%s_commandlist_cache.sobj'%(DOT_SAGE, name)
+        self._COMMANDS_CACHE = '%s/%s_commandlist_cache.sobj' % (DOT_SAGE, name)
         # we run the init code in _start to avoid spurious output
         Expect.__init__(self,
-                        name = name,
-                        prompt = FRICAS_FIRST_PROMPT,
-                        command = command,
-                        script_subdirectory = script_subdirectory,
+                        name=name,
+                        prompt=FRICAS_FIRST_PROMPT,
+                        command=command,
+                        script_subdirectory=script_subdirectory,
                         server=server,
                         server_tmpdir=server_tmpdir,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
-                        init_code = [],
-                        logfile = logfile,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
+                        init_code=[],
+                        logfile=logfile,
                         eval_using_file_cutoff=eval_using_file_cutoff)
 
     def _start(self):
@@ -299,6 +324,8 @@ class FriCAS(ExtraTabCompletion, Expect):
         # switching off the line numbers also modified the prompt
         self._prompt = FRICAS_LINENUMBER_OFF_PROMPT
         self.eval(FRICAS_LINENUMBER_OFF_CODE, reformat=False)
+        for line in FRICAS_HELPER_CODE:
+            self.eval(line, reformat=False)
 
     def _quit_string(self):
         """
@@ -344,7 +371,8 @@ class FriCAS(ExtraTabCompletion, Expect):
             True
         """
         output = self.eval(")what operations", reformat=False)
-        m = re.search(FRICAS_WHAT_OPERATIONS_STRING + r"\n(.*)\n\|startKeyedMsg\|", output, flags = re.DOTALL)
+        m = re.search(FRICAS_WHAT_OPERATIONS_STRING + r"\n(.*)\n\|startKeyedMsg\|",
+                      output, flags=re.DOTALL)
         l = m.groups()[0].split()
         return l
 
@@ -385,13 +413,12 @@ class FriCAS(ExtraTabCompletion, Expect):
                 print("To force rebuild later, delete %s." % self._COMMANDS_CACHE)
             v = self._commands()
 
-            #Process we now need process the commands to strip out things which
-            #are not valid Python identifiers.
+            # process the commands to strip out things which are not
+            # valid Python identifiers
             valid = re.compile('[^a-zA-Z0-9_]+')
             names = [x for x in v if valid.search(x) is None]
 
-            #Change everything that ends with ? to _q and
-            #everything that ends with ! to _e
+            # replace trailing ? with _q and trailing ! with _e
             names += [x[:-1]+"_q" for x in v if x.endswith("?")]
             names += [x[:-1]+"_e" for x in v if x.endswith("!")]
 
@@ -424,7 +451,7 @@ class FriCAS(ExtraTabCompletion, Expect):
         if not filename.endswith('.input'):
             raise ValueError("the filename must end with .input")
 
-        return ')read %s )quiet'%filename
+        return ')read %s )quiet' % filename
 
     def _local_tmpfile(self):
         """
@@ -447,7 +474,7 @@ class FriCAS(ExtraTabCompletion, Expect):
         try:
             return self.__remote_tmpfile
         except AttributeError:
-            self.__remote_tmpfile = self._remote_tmpdir()+"/interface_%s:%s.input"%(LOCAL_IDENTIFIER,self.pid())
+            self.__remote_tmpfile = self._remote_tmpdir() + "/interface_%s:%s.input" % (LOCAL_IDENTIFIER, self.pid())
             return self.__remote_tmpfile
 
 # what I expect from FriCAS:
@@ -511,7 +538,8 @@ class FriCAS(ExtraTabCompletion, Expect):
 
         """
         # otherwise there might be a message
-        m = re.search(r"\|startKeyedMsg\|\n(.*)\n\|endOfKeyedMsg\|", output, flags = re.DOTALL)
+        m = re.search(r"\|startKeyedMsg\|\n(.*)\n\|endOfKeyedMsg\|",
+                      output, flags=re.DOTALL)
         if m:
             replacements = [('|startKeyedMsg|\n', ''),
                             ('|endOfKeyedMsg|', '')]
@@ -541,7 +569,7 @@ class FriCAS(ExtraTabCompletion, Expect):
             '2'
 
         """
-        cmd = '%s%s%s;'%(var,self._assign_symbol(), value)
+        cmd = '%s%s%s;' % (var, self._assign_symbol(), value)
         output = self.eval(cmd, reformat=False)
         self._check_errors(value, output)
 
@@ -568,7 +596,8 @@ class FriCAS(ExtraTabCompletion, Expect):
         """
         output = self.eval(str(var), reformat=False)
         # if there is AlgebraOutput we ask no more
-        m = re.search(r"\|startAlgebraOutput\|\n(.*)\n\|endOfAlgebraOutput\|", output, flags = re.DOTALL)
+        m = re.search(r"\|startAlgebraOutput\|\n(.*)\n\|endOfAlgebraOutput\|",
+                      output, flags=re.DOTALL)
         if m:
             lines = m.groups()[0].split("\n")
             if max(len(line) for line in lines) < FRICAS_LINE_LENGTH:
@@ -674,7 +703,19 @@ class FriCAS(ExtraTabCompletion, Expect):
             '(1..3)$Segment(PositiveInteger())'
 
         """
-        return self.get_string('unparse((%s)::InputForm)' %str(var))
+        return self.get_string('unparse((%s)::InputForm)' % str(var))
+
+    def get_InputForm(self, var):
+        """
+        Return the ``InputForm`` as a string.
+
+        TESTS::
+
+            sage: fricas.get_InputForm('1..3')                                  # optional - fricas
+            '(($elt (Segment (PositiveInteger)) SEGMENT) 1 3)'
+
+        """
+        return self.get_string('sageprint((%s)::InputForm)' % str(var))
 
     def _assign_symbol(self):
         """
@@ -805,7 +846,6 @@ class FriCAS(ExtraTabCompletion, Expect):
 
         return output
 
-
     def _function_class(self):
         """
         Return the FriCASExpectFunction class.
@@ -883,7 +923,7 @@ class FriCASElement(ExpectElement):
             6
         """
         P = self._check_valid()
-        l = P('#(%s)' %self._name)
+        l = P('#(%s)' % self._name)
         return l.sage()
 
     def __getitem__(self, n):
@@ -916,7 +956,7 @@ class FriCASElement(ExpectElement):
         P = self._check_valid()
         # use "elt" instead of "." here because then the error
         # message is clearer
-        return P.new("elt(%s,%s)" %(self._name, n+1))
+        return P.new("elt(%s,%s)" % (self._name, n+1))
 
     def __int__(self):
         """
@@ -980,7 +1020,6 @@ class FriCASElement(ExpectElement):
             sage: ZZ(fricas('1'))                                               # optional - fricas
             1
         """
-        from sage.rings.all import ZZ
         return ZZ(self.sage())
 
     def _rational_(self):
@@ -990,7 +1029,6 @@ class FriCASElement(ExpectElement):
             sage: QQ(fricas('-1/2'))                                            # optional - fricas
             -1/2
         """
-        from sage.rings.all import QQ
         return QQ(self.sage())
 
     def gen(self, n):
@@ -1007,7 +1045,7 @@ class FriCASElement(ExpectElement):
             {{\log \left( {{e+1}} \right)} \  {\sin \left( {{y+x}} \right)}} \over {{e} ^{z}}
 
             sage: latex(fricas("matrix([[1,2],[3,4]])"))                        # optional - fricas
-            \left[ \begin{array}{cc} 1 & 2 \\ 3 & 4 \end{array}  \right]
+            \left[ \begin{array}{cc} 1 & 2 \\ 3 & 4\end{array} \right]
 
             sage: latex(fricas("integrate(sin(x+1/x),x)"))                      # optional - fricas
             \int ^{\displaystyle x} {{\sin \left( {{{{{ \%O} ^{2}}+1} \over  \%O}} \right)} \  {d \%O}}
@@ -1017,7 +1055,7 @@ class FriCASElement(ExpectElement):
                         (r'\sb ', '_'),
                         (r'\sb{', '_{')]
         P = self._check_valid()
-        s = P.get_string("first tex(%s)" % self._name)
+        s = P.get_string("latex(%s)" % self._name)
         for old, new in replacements:
             s = s.replace(old, new)
         return s
@@ -1037,8 +1075,14 @@ class FriCASElement(ExpectElement):
             sage: m = fricas("dom(1/2)::Any")                                   # optional - fricas
             sage: fricas(0)._get_sage_type(m)                                   # optional - fricas
             Rational Field
+
+        TESTS::
+
+            sage: m = fricas("UP(y, UP(x, AN))::INFORM")                        # optional - fricas
+            sage: fricas(0)._get_sage_type(m)                                   # optional - fricas
+            Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Algebraic Field
         """
-        from sage.rings.all import ZZ, QQbar, RDF
+        from sage.rings.all import QQbar, RDF, PolynomialRing
         from sage.rings.fraction_field import FractionField
         from sage.rings.finite_rings.integer_mod_ring import Integers
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -1053,7 +1097,7 @@ class FriCASElement(ExpectElement):
             return str
         if head == "Float":
             P = self._check_valid()
-            prec = max(P.new("length mantissa(%s)" %self._name).sage(), 53)
+            prec = max(P.new("length mantissa(%s)" % self._name).sage(), 53)
             return RealField(prec)
         if head == "DoubleFloat":
             return RDF
@@ -1081,19 +1125,217 @@ class FriCASElement(ExpectElement):
             # this is a workaround, since in sage we always have to specify the variables
             return SR
 
-        raise NotImplementedError("The translation of FriCAS type %s to sage is not yet implemented." %domain)
+        if head == "UnivariatePolynomial":
+            var = str(domain[1])
+            return PolynomialRing(self._get_sage_type(domain[2]), var)
 
-    def _sage_expression(self, unparsed_InputForm):
+        raise NotImplementedError("the translation of FriCAS type %s to sage is not yet implemented" % domain)
+
+    _WHITESPACE = " "
+    _LEFTBRACKET = "("
+    _RIGHTBRACKET = ")"
+    _STRINGMARKER = '"'
+    _ESCAPEMARKER = '_'  # STRINGMARKER must be escaped in strings
+
+    @staticmethod
+    def _parse_and_eval(s, start=0):
+        """
+        Parse and evaluate the string.
+
+        INPUT:
+
+        - ``s`` -- string
+        - ``start`` -- integer; specifies where to start parsing
+
+        OUTPUT:
+
+        - a pair ``(L, end)``, where ``L`` is the parsed list and
+          ``end`` is the position of the last parsed letter.
+
+        TESTS::
+
+            sage: from sage.interfaces.fricas import FriCASElement
+            sage: FriCASElement._parse_and_eval("abc")
+            (abc, 2)
+
+            sage: FriCASElement._parse_and_eval("(asin c)")
+            (arcsin(c), 7)
+
+            sage: N(FriCASElement._parse_and_eval("(pi)")[0])                   # optional - fricas
+            3.14159265358979
+
+            sage: FriCASElement._parse_and_eval('(a "(b c)")')
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot coerce arguments: no canonical coercion from <type 'str'> to Symbolic Ring
+
+        """
+        a = start
+        while s[a] in FriCASElement._WHITESPACE:
+            a += 1
+
+        if s[a] == FriCASElement._LEFTBRACKET:
+            return FriCASElement._parse_list(s, start=a)
+        elif s[a] == FriCASElement._STRINGMARKER:
+            return FriCASElement._parse_string(s, start=a)
+        else:
+            return FriCASElement._parse_other(s, start=a)
+
+    @staticmethod
+    def _parse_list(s, start=0):
+        """
+        Parse the initial part of a string, assuming that it is a
+        whitespace separated list, treating its first element as
+        function and the rest as arguments.
+
+        INPUT:
+
+        - ``s`` -- string
+        - ``start`` -- integer; specifies the position of the left
+          bracket
+
+        TESTS::
+
+            sage: from sage.interfaces.fricas import FriCASElement
+            sage: FriCASElement._parse_list("()")
+            Traceback (most recent call last):
+            ...
+            TypeError: 'tuple' object is not callable
+
+            sage: FriCASElement._parse_list("(a b c)")
+            (a(b, c), 6)
+
+            sage: FriCASElement._parse_list('(bcd)')
+            (bcd(), 4)
+
+        """
+        a = start
+        assert s[a] == FriCASElement._LEFTBRACKET
+        a += 1
+        # the first element of a list must be a function call
+        fun, a = FriCASElement._parse_other(s, start=a, make_fun=True)
+        a += 1
+        args = []
+        while s[a] != FriCASElement._RIGHTBRACKET:
+            e, a = FriCASElement._parse_and_eval(s, start=a)
+            args.append(e)
+            a += 1
+        return fun(*args), a
+
+    @staticmethod
+    def _parse_other(s, start=0, make_fun=False):
+        """
+        Parse the initial part of a string, assuming that it is an
+        atom, but not a string.
+
+        Symbols and numbers must not contain ``FriCASElement._WHITESPACE`` and
+        ``FriCASElement._RIGHTBRACKET``.
+
+        INPUT:
+
+        - ``s`` -- string
+        - ``start`` -- integer; specifies where the symbol begins
+        - ``make_fun`` -- (default: ``False``) a Boolean; specifying
+          whether the atom should be interpreted as a function call
+
+        TESTS::
+
+            sage: from sage.interfaces.fricas import FriCASElement
+            sage: FriCASElement._parse_other("abc")
+            (abc, 2)
+            sage: FriCASElement._parse_other("123 xyz")
+            (123, 2)
+            sage: FriCASElement._parse_other("abc -1.23", 4)
+            (-1.23, 8)
+
+        This function uses the symbol table to translate symbols
+        which are not function calls.  At least ``%pi`` is an
+        example showing that this may be necessary::
+
+            sage: FriCASElement._parse_other("%pi")
+            (pi, 2)
+
+        """
+        a = start
+        b = len(s)
+        while a < b and s[a] not in FriCASElement._WHITESPACE and s[a] != FriCASElement._RIGHTBRACKET:
+            a += 1
+
+        e = s[start:a]
+        if make_fun:
+            try:
+                e = symbol_table["fricas"][e]
+            except KeyError:
+                e = function(e)
+        else:
+            try:
+                e = ZZ(e)
+            except TypeError:
+                try:
+                    e = float(e)
+                except ValueError:
+                    try:
+                        e = symbol_table["fricas"][e]
+                    except KeyError:
+                        e = var(e.replace("%", "_"))
+        return e, a-1
+
+    @staticmethod
+    def _parse_string(s, start=0):
         r"""
+        Parse the initial part of a string, assuming that it represents a
+        string.
+
+        INPUT:
+
+        - ``s`` -- string
+        - ``start`` -- integer; specifies the position of the left
+          quote
+
+        TESTS::
+
+            sage: from sage.interfaces.fricas import FriCASElement
+            sage: FriCASElement._parse_string('"abc" 123')
+            ('abc', 4)
+
+            sage: FriCASElement._parse_string('"" 123')
+            ('', 1)
+
+            sage: FriCASElement._parse_string('"____" 123')
+            ('__', 5)
+
+            sage: FriCASElement._parse_string('"_a" 123')
+            ('a', 3)
+
+            sage: FriCASElement._parse_string('"_" _"" 123')
+            ('" "', 6)
+
+            sage: FriCASElement._parse_string('"(b c)"')
+            ('(b c)', 6)
+
+        """
+        a = start
+        assert s[a] == FriCASElement._STRINGMARKER
+        b = a + 1
+        a = b
+        S = []
+        while s[b] != FriCASElement._STRINGMARKER:
+            if s[b] == FriCASElement._ESCAPEMARKER:
+                S.append(s[a:b])
+                b += 1
+                a = b
+            b += 1
+        S.append(s[a:b])
+        return "".join(S), b
+
+    @staticmethod
+    def _sage_expression(fricas_InputForm):
+        """
         Convert an expression to an element of the Symbolic Ring.
 
-        This does not depend on `self`.  Instead, for practical
-        reasons of the implementation of `self._sage_`, it takes the
-        unparsed InputForm as argument.
+        INPUT:
 
-        .. TODO::
-
-             We really should walk through the InputForm here.
+        - fricas_InputForm, a string, the InputForm of a FriCAS expression.
 
         TESTS::
 
@@ -1107,9 +1349,10 @@ class FriCASElement(ExpectElement):
                    | 2
                    |---
                   \|%pi
-            sage: s = fricas.get_unparsed_InputForm(f._name); s                 # optional - fricas
-            'fresnelS(x*(2/pi())^(1/2))/((2/pi())^(1/2))'
-            sage: f._sage_expression(s)                                         # optional - fricas
+            sage: s = fricas.get_InputForm(f._name); s                          # optional - fricas
+            '(/ (fresnelS (* x (^ (/ 2 (pi)) (/ 1 2)))) (^ (/ 2 (pi)) (/ 1 2)))'
+            sage: from sage.interfaces.fricas import FriCASElement
+            sage: FriCASElement._sage_expression(s)                             # optional - fricas
             1/2*sqrt(2)*sqrt(pi)*fresnel_sin(sqrt(2)*x/sqrt(pi))
 
         Check that :trac:`22525` is fixed::
@@ -1199,6 +1442,40 @@ class FriCASElement(ExpectElement):
             sage: n(r.subs(a=1, x=5)-r.subs(a=1, x=3))                          # optional - fricas tol 0.1
             193.020947266268 - 8.73114913702011e-11*I
 
+        Check conversions of sums and products::
+
+            sage: var("k, m, n")                                                # optional - fricas
+            (k, m, n)
+            sage: fricas("sum(1/factorial(k), k=1..n)").sage()                  # optional - fricas
+            sum(1/factorial(_...), _..., 1, n)
+            sage: fricas("eval(sum(x/k, k=1..n), x=k)").sage()                  # optional - fricas
+            k*harmonic_number(n)
+            sage: fricas("product(1/factorial(k), k=1..n)").sage()              # optional - fricas
+            1/product(factorial(_...), _..., 1, n)
+
+            sage: f = fricas.guess([sum(1/k, k,1,n) for n in range(10)])[0]; f  # optional - fricas
+             n - 1
+              --+       1
+              >      -------
+              --+    s   + 1
+            s   = 0   10
+             10
+
+            sage: f.sage()                                                      # optional - fricas
+            harmonic_number(n)
+
+            sage: f = fricas.guess([0, 1, 3, 9, 33])[0]; f                      # optional - fricas
+                    s  - 1
+            n - 1    5
+             --+    ++-++
+             >       | |    p  + 2
+             --+     | |     4
+            s  = 0  p  = 0
+             5       4
+
+            sage: f.sage()                                                      # optional - fricas
+            sum(factorial(_... + 1), _..., 0, n - 1)
+
         Check that :trac:`26746` is fixed::
 
             sage: _ = var('x, y, z')
@@ -1217,70 +1494,106 @@ class FriCASElement(ExpectElement):
             0.7798934003_7682282947_42
 
         """
-        from sage.calculus.calculus import symbolic_expression_from_string
-        from sage.calculus.functional import diff
-        from sage.libs.pynac.pynac import symbol_table, register_symbol
+        from sage.libs.pynac.pynac import register_symbol
         from sage.symbolic.all import I
+        from sage.symbolic.constants import e, pi
+        from sage.calculus.functional import diff
         from sage.functions.log import dilog, lambert_w
-        register_symbol(lambda f,x: diff(f, x), {'fricas':'D'})
-        register_symbol(lambda x,y: x + y*I, {'fricas':'complex'})
-        register_symbol(lambda x: dilog(1-x), {'fricas':'dilog'})
-        register_symbol(lambda z: lambert_w(z), {'fricas':'lambertW'})
+        from sage.functions.trig import sin, cos, tan, cot, sec, csc
+        from sage.functions.hyperbolic import tanh, sinh, cosh, coth, sech, csch
+        from sage.misc.functional import symbolic_sum, symbolic_prod
+        from sage.rings.infinity import infinity
+        register_symbol(I, {'fricas': '%i'})
+        register_symbol(e, {'fricas': '%e'})
+        register_symbol(pi, {'fricas': 'pi'})  # fricas uses both pi and %pi
+        register_symbol(lambda: infinity, {'fricas': 'infinity'})
+        register_symbol(lambda: infinity, {'fricas': 'plusInfinity'})
+        register_symbol(lambda: -infinity, {'fricas': 'minusInfinity'})
+        register_symbol(cos, {'fricas': 'cos'})
+        register_symbol(sin, {'fricas': 'sin'})
+        register_symbol(tan, {'fricas': 'tan'})
+        register_symbol(cot, {'fricas': 'cot'})
+        register_symbol(sec, {'fricas': 'sec'})
+        register_symbol(csc, {'fricas': 'csc'})
+        register_symbol(tanh, {'fricas': 'tanh'})
+        register_symbol(sinh, {'fricas': 'sinh'})
+        register_symbol(cosh, {'fricas': 'cosh'})
+        register_symbol(coth, {'fricas': 'coth'})
+        register_symbol(sech, {'fricas': 'sech'})
+        register_symbol(csch, {'fricas': 'csch'})
+        register_symbol(lambda x, y: x + y, {'fricas': '+'})
+        register_symbol(lambda x, y: x - y, {'fricas': '-'})
+        register_symbol(lambda x, y: x * y, {'fricas': '*'})
+        register_symbol(lambda x, y: x / y, {'fricas': '/'})
+        register_symbol(lambda x, y: x ** y, {'fricas': '^'})
+        register_symbol(lambda f, x: diff(f, x), {'fricas': 'D'})
+        register_symbol(lambda x, y: x + y*I, {'fricas': 'complex'})
+        register_symbol(lambda x: dilog(1-x), {'fricas': 'dilog'})
+        register_symbol(lambda z: lambert_w(z), {'fricas': 'lambertW'})
+        # the following is a hack to deal with
+        # integrate(sin((x^2+1)/x),x)::INFORM giving
+        # (integral (sin (/ (+ (^ x 2) 1) x)) (:: x Symbol))
+        register_symbol(lambda x, y: x, {'fricas': '::'})
 
+        def _convert_sum(x, y):
+            v, seg = y.operands()
+            a, b = seg.operands()
+            return symbolic_sum(x, v, a, b)
+
+        def _convert_prod(x, y):
+            v, seg = y.operands()
+            a, b = seg.operands()
+            return symbolic_prod(x, v, a, b)
+
+        register_symbol(_convert_sum, {'fricas': 'sum'})
+        register_symbol(_convert_prod, {'fricas': 'product'})
 
         def explicitely_not_implemented(*args):
-            raise NotImplementedError("The translation of the FriCAS Expression %s to sage is not yet implemented." %args)
-        register_symbol(explicitely_not_implemented, {'fricas':'rootOfADE'})
-        register_symbol(explicitely_not_implemented, {'fricas':'rootOfRec'})
+            raise NotImplementedError("the translation of the FriCAS Expression '%s' to sage is not yet implemented" % args)
 
-        rootOf = dict() # (variable, polynomial)
-        rootOf_ev = dict() # variable -> (complex) algebraic number
+        register_symbol(lambda *args: explicitely_not_implemented("rootOfADE"), {'fricas': 'rootOfADE'})
+        register_symbol(lambda *args: explicitely_not_implemented("rootOfRec"), {'fricas': 'rootOfRec'})
+
+        rootOf = dict()  # (variable, polynomial)
+        rootOf_ev = dict()  # variable -> (complex) algebraic number
+
         def convert_rootOf(x, y):
             if y in rootOf:
                 assert rootOf[y] == x
             else:
                 rootOf[y] = x
             return y
-        register_symbol(convert_rootOf, {'fricas':'rootOf'})
 
-        s = unparsed_InputForm
-        replacements = [('pi()', 'pi '),
-                        ('::Symbol', ' '),
-                        ('%', '_')] # this last one is a workaround - python does not allow % in variable names
-        for old, new in replacements:
-            s = s.replace(old, new)
+        register_symbol(convert_rootOf, {'fricas': 'rootOf'})
 
-        try:
-            ex = symbolic_expression_from_string(s, symbol_table["fricas"])
-        except (SyntaxError, TypeError):
-            raise NotImplementedError("The translation of the FriCAS Expression %s to sage is not yet implemented." %s)
-
+        ex, _ = FriCASElement._parse_and_eval(fricas_InputForm)
+        # postprocessing of rootOf
         from sage.rings.all import QQbar, PolynomialRing
-        i = 0
         while rootOf:
-            (var, poly) = rootOf.items()[i]
-            pvars = poly.variables()
-            rvars = [v for v in pvars if v not in rootOf_ev] # remaining variables
-            uvars = [v for v in rvars if v in rootOf] # variables to evaluate
-            if len(uvars) == 1:
-                assert uvars[0] == var
-                # substitute known roots
-                poly = poly.subs(rootOf_ev)
-                evars = [v for v in rvars if v not in rootOf] # extraneous variables
-                assert set(evars) == set(poly.variables()).difference([var])
-                if evars:
-                    # we just need any root per FriCAS specification
-                    rootOf_ev[var] = poly.roots(var, multiplicities=False)[0]
-                else:
-                    R = PolynomialRing(QQbar, "x")
-                    # PolynomialRing does not accept variable names with leading underscores
-                    poly = R(poly.subs({var:R.gen()}))
-                    # we just need any root per FriCAS specification
-                    rootOf_ev[var] = poly.roots(multiplicities=False)[0].radical_expression()
-                del rootOf[var]
-                i = 0
+            for var, poly in rootOf.items():
+                pvars = poly.variables()
+                rvars = [v for v in pvars if v not in rootOf_ev]  # remaining variables
+                uvars = [v for v in rvars if v in rootOf]  # variables to evaluate
+                if len(uvars) == 1:
+                    assert uvars[0] == var, "the only variable in uvars should be %s but is %s" % (var, uvars[0])
+                    break
             else:
-                i += 1
+                assert False, "circular dependency in rootOf expression"
+            # substitute known roots
+            poly = poly.subs(rootOf_ev)
+            evars = [v for v in rvars if v not in rootOf]  # extraneous variables
+            assert set(evars) == set(poly.variables()).difference([var])
+            del rootOf[var]
+            if evars:
+                # we just need any root per FriCAS specification
+                rootOf_ev[var] = poly.roots(var, multiplicities=False)[0]
+            else:
+                R = PolynomialRing(QQbar, "x")
+                # PolynomialRing does not accept variable names with leading underscores
+                poly = R(poly.subs({var: R.gen()}))
+                # we just need any root per FriCAS specification
+                rootOf_ev[var] = poly.roots(multiplicities=False)[0].radical_expression()
+
         return ex.subs(rootOf_ev)
 
     def _sage_(self):
@@ -1346,12 +1659,32 @@ class FriCASElement(ExpectElement):
             sage: fricas("x^2/2").sage()                                        # optional - fricas
             1/2*x^2
 
+            sage: x = polygen(QQ, 'x')
+            sage: fricas(x+3).sage()                                            # optional - fricas
+            x + 3
+            sage: fricas(x+3).domainOf()                                        # optional - fricas
+            Polynomial(Integer())
+
+            sage: fricas(matrix([[2,3],[4,x+5]])).diagonal().sage()             # optional - fricas
+            (2, x + 5)
+
+            sage: f = fricas("(y^2+3)::UP(y, INT)").sage(); f                   # optional - fricas
+            y^2 + 3
+            sage: f.parent()                                                    # optional - fricas
+            Univariate Polynomial Ring in y over Integer Ring
+
+            sage: fricas("(y^2+sqrt 3)::UP(y, AN)").sage()                      # optional - fricas
+            y^2 + 1.732050807568878?
+
         Rational functions::
 
             sage: fricas("x^2 + 1/z").sage()                                    # optional - fricas
             x^2 + 1/z
 
         Expressions::
+
+            sage: fricas(pi).sage()                                             # optional - fricas
+            pi
 
             sage: fricas("sin(x+y)/exp(z)*log(1+%e)").sage()                    # optional - fricas
             e^(-z)*log(e + 1)*sin(x + y)
@@ -1398,7 +1731,7 @@ class FriCASElement(ExpectElement):
             sage: s.sage()                                                      # optional - fricas
             Traceback (most recent call last):
             ...
-            NotImplementedError: The translation of the FriCAS Expression rootOfADE(n,...()) to sage is not yet implemented.
+            NotImplementedError: the translation of the FriCAS Expression 'rootOfADE' to sage is not yet implemented
 
             sage: s = fricas("series(sqrt(1+x), x=0)"); s                       # optional - fricas
                   1     1  2    1  3    5   4    7   5    21   6    33   7    429   8
@@ -1412,7 +1745,7 @@ class FriCASElement(ExpectElement):
             sage: s.sage()                                                      # optional - fricas
             Traceback (most recent call last):
             ...
-            NotImplementedError: The translation of the FriCAS object
+            NotImplementedError: the translation of the FriCAS object
             <BLANKLINE>
                   1     1  2    1  3    5   4    7   5    21   6    33   7    429   8
               1 + - x - - x  + -- x  - --- x  + --- x  - ---- x  + ---- x  - ----- x
@@ -1427,7 +1760,7 @@ class FriCASElement(ExpectElement):
             <BLANKLINE>
                Cannot convert the value from type Any to InputForm .
         """
-        from sage.rings.all import ZZ, PolynomialRing, RDF
+        from sage.rings.all import PolynomialRing, RDF
         from sage.rings.real_mpfr import RealField
         from sage.symbolic.ring import SR
         from sage.symbolic.all import I
@@ -1443,10 +1776,10 @@ class FriCASElement(ExpectElement):
 
         # the coercion to Any gets rid of the Union domain
         P = self._check_valid()
-        domain = P.new("dom((%s)::Any)" % self._name) # domain is now a fricas SExpression
+        domain = P.new("dom((%s)::Any)" % self._name)  # domain is now a fricas SExpression
 
-        # first translate dummy domains such as "failed". we must not
-        # recurse here!
+        # first translate dummy domains such as "failed".  We must
+        # not recurse here!
         if P.get_boolean("string?(%s)" % domain._name):
             return P.get_string("string(%s)" % domain._name)
 
@@ -1454,38 +1787,44 @@ class FriCASElement(ExpectElement):
         # or where we do not need it.
         head = str(domain.car())
         if head == "Record":
-            fields = fricas("[string symbol(e.2) for e in rest destruct %s]"%domain._name).sage()
+            fields = fricas("[string symbol(e.2) for e in rest destruct %s]" % domain._name).sage()
             return {field: self.elt(field).sage() for field in fields}
 
         if head == "List":
-            n = P.get_integer('#(%s)' %self._name)
-            return [P.new('elt(%s,%s)' %(self._name, k)).sage() for k in range(1, n+1)]
+            n = P.get_integer('#(%s)' % self._name)
+            return [self.elt(k).sage() for k in range(1, n + 1)]
 
-        if head == "Vector":
-            n = P.get_integer('#(%s)' %self._name)
-            return vector([P.new('elt(%s,%s)' %(self._name, k)).sage() for k in range(1, n+1)])
+        if head == "Vector" or head == "DirectProduct":
+            n = P.get_integer('#(%s)' % self._name)
+            return vector([self.elt(k).sage() for k in range(1, n + 1)])
 
         if head == "Matrix":
             base_ring = self._get_sage_type(domain[1])
-            rows = P.new('listOfLists(%s)' %self._name).sage()
+            rows = self.listOfLists().sage()
             return matrix(base_ring, rows)
 
         if head == "Fraction":
-            return P.new("numer(%s)" %self._name).sage()/P.new("denom(%s)" %self._name).sage()
+            return self.numer().sage() / self.denom().sage()
 
         if head == "Complex":
-            return (P.new("real(%s)" %self._name).sage() +
-                    P.new("imag(%s)" %self._name).sage()*I)
+            return self.real().sage() + self.imag().sage()*I
 
         if head == "Factored":
-            l = P.new('[[f.factor, f.exponent] for f in factors(%s)]' %self._name).sage()
-            return Factorization([(p, e) for p,e in l])
+            l = P.new('[[f.factor, f.exponent] for f in factors(%s)]' % self._name).sage()
+            return Factorization([(p, e) for p, e in l])
+
+        if head == "UnivariatePolynomial":
+            base_ring = self._get_sage_type(domain[2])
+            vars = str(domain[1])
+            R = PolynomialRing(base_ring, vars)
+            return R([self.coefficient(i).sage()
+                      for i in range(ZZ(self.degree()) + 1)])
 
         # finally translate domains with InputForm
         try:
             unparsed_InputForm = P.get_unparsed_InputForm(self._name)
         except RuntimeError as error:
-            raise NotImplementedError("The translation of the FriCAS object\n\n%s\n\nto sage is not yet implemented:\n%s" %(self, error))
+            raise NotImplementedError("the translation of the FriCAS object\n\n%s\n\nto sage is not yet implemented:\n%s" % (self, error))
         if head == "Boolean":
             return unparsed_InputForm == "true"
 
@@ -1499,7 +1838,7 @@ class FriCASElement(ExpectElement):
             # Warning: precision$Float gives the current precision,
             # whereas length(mantissa(self)) gives the precision of
             # self.
-            prec = max(P.new("length mantissa(%s)" %self._name).sage(), 53)
+            prec = max(P.new("length mantissa(%s)" % self._name).sage(), 53)
             R = RealField(prec)
             x, e, b = unparsed_InputForm.lstrip('float(').rstrip(')').split(',')
             return R(ZZ(x)*ZZ(b)**ZZ(e))
@@ -1522,25 +1861,25 @@ class FriCASElement(ExpectElement):
             base_ring = self._get_sage_type(domain[1])
             # Polynomial Complex is translated into SR
             if base_ring is SR:
-                return self._sage_expression(unparsed_InputForm)
+                return FriCASElement._sage_expression(P.get_InputForm(self._name))
 
             # the following is a bad hack, we should be getting a list here
-            vars = P.get_unparsed_InputForm("variables(%s)" %self._name)[1:-1]
+            vars = P.get_unparsed_InputForm("variables(%s)" % self._name)[1:-1]
             if vars == "":
                 return base_ring(unparsed_InputForm)
             else:
                 R = PolynomialRing(base_ring, vars)
                 return R(unparsed_InputForm)
 
-        if head == "OrderedCompletion":
-            # this is a workaround, I don't know how translate this
-            if str(domain[1].car()) == "Expression":
-                return self._sage_expression(unparsed_InputForm)
+        if head in ["OrderedCompletion", "OnePointCompletion"]:
+            # it would be more correct to get the type parameter
+            # (which might not be Expression Integer) and recurse
+            return FriCASElement._sage_expression(P.get_InputForm(self._name))
 
-        if head == "Expression":
+        if head == "Expression" or head == "Pi":
             # we treat Expression Integer and Expression Complex
             # Integer just the same
-            return self._sage_expression(unparsed_InputForm)
+            return FriCASElement._sage_expression(P.get_InputForm(self._name))
 
         if head == 'DistributedMultivariatePolynomial':
             base_ring = self._get_sage_type(domain[2])
@@ -1548,7 +1887,7 @@ class FriCASElement(ExpectElement):
             R = PolynomialRing(base_ring, vars)
             return R(unparsed_InputForm)
 
-        raise NotImplementedError("The translation of the FriCAS object %s to sage is not yet implemented." %(unparsed_InputForm))
+        raise NotImplementedError("the translation of the FriCAS object %s to sage is not yet implemented" % (unparsed_InputForm))
 
 
 @instancedoc
@@ -1611,7 +1950,9 @@ def is_FriCASElement(x):
     """
     return isinstance(x, FriCASElement)
 
+
 fricas = FriCAS()
+
 
 def reduce_load_fricas():
     """
@@ -1626,7 +1967,6 @@ def reduce_load_fricas():
     """
     return fricas
 
-import os
 
 def fricas_console():
     """
@@ -1648,6 +1988,7 @@ def fricas_console():
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%fricas magics instead.')
     os.system('fricas -nox')
+
 
 def __doctest_cleanup():
     """

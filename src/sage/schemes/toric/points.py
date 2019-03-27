@@ -437,7 +437,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
         A finite field element.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: point_set = toric_varieties.P2(base_ring=GF(5^2, 'a')).point_set()
             sage: ffe = point_set._finite_field_enumerator()
@@ -1031,4 +1031,3 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
             for log_t in self.solutions(inhomogeneous, log_range):
                 n += 1
         return n
-

@@ -561,7 +561,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: CIF(0).union(CIF(5, 5)).str(style='brackets')
-            '[0.00000000000000000 .. 5.0000000000000000] + [0.00000000000000000 .. 5.0000000000000000]*I'
+            '[0.0000000000000000 .. 5.0000000000000000] + [0.0000000000000000 .. 5.0000000000000000]*I'
         """
         x = self._new()
         cdef ComplexIntervalFieldElement other_intv
@@ -831,12 +831,12 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
 
             sage: a = CIF(RIF(-1,1))
             sage: print((a^2).str(style="brackets"))
-            [0.00000000000000000 .. 1.0000000000000000]
+            [0.0000000000000000 .. 1.0000000000000000]
             sage: print((a*a).str(style="brackets"))
             [-1.0000000000000000 .. 1.0000000000000000]
             sage: a = CIF(0, RIF(-1,1))
             sage: print((a^2).str(style="brackets"))
-            [-1.0000000000000000 .. -0.00000000000000000]
+            [-1.0000000000000000 .. -0.0000000000000000]
             sage: print((a*a).str(style="brackets"))
             [-1.0000000000000000 .. 1.0000000000000000]
             sage: a = CIF(RIF(-1,1), RIF(-1,1))

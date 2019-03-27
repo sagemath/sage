@@ -89,18 +89,18 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #############################################################################
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
 import os
 
 from .expect import (Expect, ExpectElement, ExpectFunction,
-                    FunctionElement, AsciiArtString)
+                    FunctionElement)
+from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.env import DOT_SAGE
 from sage.docs.instancedoc import instancedoc
 
-COMMANDS_CACHE = '%s/mupad_commandlist_cache.sobj'%DOT_SAGE
+COMMANDS_CACHE = '%s/mupad_commandlist_cache.sobj' % DOT_SAGE
 PROMPT = ">>"
 seq = 0
 

@@ -131,6 +131,24 @@ def p_saturation(Plist, p, sieve=True, lin_combs = dict(), verbose=False):
 
         sage: p_saturation([res[2],P-6*Q,R],11)
         (True, {})
+
+    TESTS:
+
+    See :trac:`27387`::
+
+        sage: K.<a> = NumberField(x^2-x-26)
+        sage: E = EllipticCurve([a,1-a,0,93-16*a, 3150-560*a])
+        sage: P = E([65-35*a/3, (959*a-5377)/9])
+        sage: T = E.torsion_points()[0]
+        sage: from sage.schemes.elliptic_curves.saturation import p_saturation
+        sage: p_saturation([P,T],2,True, {}, True)
+        Using sieve method to saturate...
+        ...
+        -- points were not 2-saturated, gaining index 2
+        (False, 0, (-1/4*a + 3/4 : 59/8*a - 317/8 : 1))
+        sage: p_saturation([P,T],2,False, {})
+        (False, 0, (-1/4*a + 3/4 : 59/8*a - 317/8 : 1))
+
     """
     # This code does a lot of residue field construction and elliptic curve
     # group structure computations, and would benefit immensely if those
@@ -184,7 +202,10 @@ def p_saturation(Plist, p, sieve=True, lin_combs = dict(), verbose=False):
 
         Returns a list of 0, 1 or 2 vectors in \F_p^n
         """
-        Ek = E.reduction(Q)
+        # NB we do not do E.reduction(Q) since that may change the
+        # model which will cause problems when we reduce points.
+        # see trac #27387
+        Ek = E.change_ring(K.residue_field(Q))
         G = Ek.abelian_group() # cached!
 
         if not p.divides(G.order()):
@@ -282,9 +303,10 @@ def p_saturation(Plist, p, sieve=True, lin_combs = dict(), verbose=False):
     rankA = 0
     count = 0
     from sage.sets.primes import Primes
+    Edisc = E.discriminant()
     for q in Primes():
         for Q in K.primes_above(q, degree=1):
-            if E.has_bad_reduction(Q):
+            if not E.is_local_integral_model(Q) or Edisc.valuation(Q)!=0:
                 continue
             vecs = projections(Q,p)
             if len(vecs) == 0:

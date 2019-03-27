@@ -316,7 +316,7 @@ cdef class CVXOPTBackend(GenericBackend):
 
 
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         """
         Add a column.
 
@@ -351,11 +351,11 @@ cdef class CVXOPTBackend(GenericBackend):
             5
         """
         column = []
-        for i in range(len(indices)):
+        for _ in indices:
             column.append(0.0)
 
-        for i in range(len(indices)):
-            column[indices[i]] = coeffs[i]
+        for idx, ind in enumerate(indices):
+            column[ind] = coeffs[idx]
 
         self.G_matrix.append(column)
 

@@ -271,12 +271,6 @@ cdef class MonoDict:
     It is implemented as a hash table with open addressing, similar to python's
     dict.
 
-    If ki supports weak references then ri is a weak reference to ki with a
-    callback to remove the entry from the dictionary if ki gets garbage
-    collected. If ki is does not support weak references then ri is identical to ki.
-    In the latter case the presence of the key in the dictionary prevents it from
-    being garbage collected.
-
     INPUT:
 
     - ``data`` -- optional iterable defining initial data, as dict or
@@ -546,7 +540,7 @@ cdef class MonoDict:
         self.used = 0
         self.fill = 0
 
-    def __init__(self, data=None, size=None, threshold=None, *, weak_values=False):
+    def __init__(self, data=None, *, weak_values=False):
         """
         Create a special dict using singletons for keys.
 
@@ -565,36 +559,8 @@ cdef class MonoDict:
             sage: L[a]
             1
 
-        TESTS::
-
-            sage: L = MonoDict(31)
-            doctest:...: DeprecationWarning: the 'size' argument to MonoDict is deprecated
-            See http://trac.sagemath.org/24135 for details.
-            sage: list(L.items())
-            []
-            sage: L = MonoDict(31, {"x": 1})
-            sage: list(L.items())
-            [('x', 1)]
-            sage: L = MonoDict(threshold=0.9)
-            doctest:...: DeprecationWarning: the 'threshold' argument to MonoDict is deprecated
-            See http://trac.sagemath.org/24135 for details.
         """
         self.weak_values = weak_values
-        if size is not None:
-            # Use size as data argument
-            data = size
-            from sage.misc.superseded import deprecation
-            deprecation(24135, "the 'size' argument to MonoDict is deprecated")
-        elif data is not None:
-            try:
-                iter(data)
-            except TypeError:
-                data = None
-                from sage.misc.superseded import deprecation
-                deprecation(24135, "the 'size' argument to MonoDict is deprecated")
-        if threshold is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(24135, "the 'threshold' argument to MonoDict is deprecated")
         if data:
             try:
                 data = data.items()
@@ -803,20 +769,6 @@ cdef class MonoDict:
             raise KeyError(k)
         L = extract_mono_cell(cursor)
         self.used -= 1
-
-    def iteritems(self):
-        """
-        EXAMPLES::
-
-            sage: from sage.structure.coerce_dict import MonoDict
-            sage: MonoDict().iteritems()
-            doctest:...: DeprecationWarning: MonoDict.iteritems is deprecated, use MonoDict.items instead
-            See http://trac.sagemath.org/24135 for details.
-            <generator object at ...>
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(24135, "MonoDict.iteritems is deprecated, use MonoDict.items instead")
-        return self.items()
 
     def items(self):
         """
@@ -1042,18 +994,18 @@ cdef class TripleDict:
 
        - All keys must be sequence of exactly three elements. All sequence
          types (tuple, list, etc.) map to the same item.
+
+       - Any of the three key components that support weak-refs are stored
+         via a weakref. If any of these components gets garbage collected
+         then the entire entry is removed. In that sense, this structure
+         behaves like a nested :class:`~weakref.WeakKeyDictionary`.
+
        - Comparison is done using the 'is' rather than '==' operator.
 
     There are special cdef set/get methods for faster access.
     It is bare-bones in the sense that not all dictionary methods are
     implemented.
 
-    It is implemented as a list of lists (hereafter called buckets). The bucket is
-    chosen according to a very simple hash based on the object pointer, and each
-    bucket is of the form [id(k1), id(k2), id(k3), r1, r2, r3, value, id(k1),
-    id(k2), id(k3), r1, r2, r3, value, ...], on which a linear search is performed.
-    If a key component ki supports weak references then ri is a weak reference to
-    ki; otherwise ri is identical to ki.
 
     INPUT:
 
@@ -1064,10 +1016,12 @@ cdef class TripleDict:
       weak references to the values in this dictionary will be used,
       when possible.
 
-    If any of the key components k1,k2,k3 (this can happen for a key component
-    that supports weak references) gets garbage collected then the entire
-    entry disappears. In that sense this structure behaves like a nested
-    :class:`~weakref.WeakKeyDictionary`.
+
+    IMPLEMENTATION:
+
+    It is implemented as a hash table with open addressing, similar to python's
+    dict.
+
 
     EXAMPLES::
 
@@ -1256,7 +1210,7 @@ cdef class TripleDict:
         self.used = 0
         self.fill = 0
 
-    def __init__(self, data=None, size=None, threshold=None, *, weak_values=False):
+    def __init__(self, data=None, *, weak_values=False):
         """
         Create a special dict using triples for keys.
 
@@ -1276,36 +1230,8 @@ cdef class TripleDict:
             sage: L[key]
             42
 
-        TESTS::
-
-            sage: L = TripleDict(31)
-            doctest:...: DeprecationWarning: the 'size' argument to TripleDict is deprecated
-            See http://trac.sagemath.org/24135 for details.
-            sage: list(L.items())
-            []
-            sage: L = TripleDict(31, {key: 42})
-            sage: list(L.items())
-            [(('x', 'y', 'z'), 42)]
-            sage: L = TripleDict(threshold=0.9)
-            doctest:...: DeprecationWarning: the 'threshold' argument to TripleDict is deprecated
-            See http://trac.sagemath.org/24135 for details.
         """
         self.weak_values = weak_values
-        if size is not None:
-            # Use size as data argument
-            data = size
-            from sage.misc.superseded import deprecation
-            deprecation(24135, "the 'size' argument to TripleDict is deprecated")
-        elif data is not None:
-            try:
-                iter(data)
-            except TypeError:
-                data = None
-                from sage.misc.superseded import deprecation
-                deprecation(24135, "the 'size' argument to TripleDict is deprecated")
-        if threshold is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(24135, "the 'threshold' argument to TripleDict is deprecated")
         if data:
             try:
                 data = data.items()
@@ -1519,20 +1445,6 @@ cdef class TripleDict:
             raise KeyError(k)
         L = extract_triple_cell(cursor)
         self.used -= 1
-
-    def iteritems(self):
-        """
-        EXAMPLES::
-
-            sage: from sage.structure.coerce_dict import TripleDict
-            sage: TripleDict().iteritems()
-            doctest:...: DeprecationWarning: TripleDict.iteritems is deprecated, use TripleDict.items instead
-            See http://trac.sagemath.org/24135 for details.
-            <generator object at ...>
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(24135, "TripleDict.iteritems is deprecated, use TripleDict.items instead")
-        return self.items()
 
     def items(self):
         """

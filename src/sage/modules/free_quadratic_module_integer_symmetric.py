@@ -46,15 +46,15 @@ AUTHORS:
 - Paolo Menegatti (2018-03): Added IntegralLatticeDirectSum, IntegralLatticeGluing
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Simon Brandhorst <sbrandhorst@web.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from copy import copy
 from sage.rings.integer_ring import ZZ
@@ -631,11 +631,9 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
     for i in range(N):
         ALi = Lattices[i].discriminant_group()
         for g in glue:
-            try:
-                ALi(g[i])
-            except:
-                raise ValueError("the gluing vectors must be in the"
-                                 "corresponding discriminant groups")
+            # Check that the gluing vectors are in the
+            # corresponding discriminant groups
+            ALi(g[i])
     generators = [sum(phi[i](g[i].lift()*g[i].order())/g[i].order()
                       for i in range(N))
                   for g in glue]
@@ -1346,9 +1344,9 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         """
         try:
             s = self.base_ring()(s)
-        except:
-            ValueError("the scaling factor must be an element of the base ring.")
-        if (s==0):
+        except TypeError:
+            raise ValueError("the scaling factor must be an element of the base ring.")
+        if s==0:
             raise ValueError("the scaling factor must be non zero")
         if discard_basis:
             return IntegralLattice(s * self.gram_matrix())
@@ -1357,4 +1355,3 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             inner_product_matrix = s * self.inner_product_matrix()
             ambient = FreeQuadraticModule(self.base_ring(), n, inner_product_matrix)
             return FreeQuadraticModule_integer_symmetric(ambient=ambient, basis=self.basis(), inner_product_matrix=inner_product_matrix)
-

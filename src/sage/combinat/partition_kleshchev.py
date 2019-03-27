@@ -1521,22 +1521,52 @@ class KleshchevPartitions_all(KleshchevPartitions):
 
             sage: it = iter(KleshchevPartitions(2, [0,1], convention='LS'))
             sage: [next(it) for _ in range(10)]
-            [([], []), ([1], []), ([], [1]), ([1], [1]), ([], [1, 1]),
-             ([1], [1, 1]), ([1, 1], [1]), ([], [2, 1]),
-             ([], [1, 1, 1]), ([1], [1, 1, 1])]
+            [([], []),
+             ([1], []),
+             ([], [1]),
+             ([1], [1]),
+             ([], [1, 1]),
+             ([1, 1], [1]),
+             ([1], [1, 1]),
+             ([], [2, 1]),
+             ([], [1, 1, 1]),
+             ([2, 1], [1])]
             sage: it = iter(KleshchevPartitions(2, [0,1], convention='RS'))
             sage: [next(it) for _ in range(10)]
-            [([], []), ([1], []), ([], [1]), ([1, 1], []), ([1], [1]),
-             ([1, 1, 1], []), ([2, 1], []), ([1], [1, 1]),
-             ([1, 1], [1]), ([1, 1, 1, 1], [])]
+            [([], []),
+             ([1], []),
+             ([], [1]),
+             ([1, 1], []),
+             ([1], [1]),
+             ([2, 1], []),
+             ([1, 1, 1], []),
+             ([1, 1], [1]),
+             ([1], [1, 1]),
+             ([2, 1, 1], [])]
             sage: it = iter(KleshchevPartitions(2, [0,1], convention='LG'))
             sage: [next(it) for _ in range(10)]
-            [([], []), ([1], []), ([], [1]), ([2], []), ([1], [1]),
-             ([3], []), ([2, 1], []), ([1], [2]), ([2], [1]), ([4], [])]
+            [([], []),
+             ([1], []),
+             ([], [1]),
+             ([2], []),
+             ([1], [1]),
+             ([3], []),
+             ([2, 1], []),
+             ([2], [1]),
+             ([1], [2]),
+             ([4], [])]
             sage: it = iter(KleshchevPartitions(2, [0,1], convention='RG'))
             sage: [next(it) for _ in range(10)]
-            [([], []), ([1], []), ([], [1]), ([1], [1]), ([], [2]),
-             ([1], [2]), ([2], [1]), ([], [2, 1]), ([], [3]), ([1], [3])]
+            [([], []),
+             ([1], []),
+             ([], [1]),
+             ([1], [1]),
+             ([], [2]),
+             ([2], [1]),
+             ([1], [2]),
+             ([], [3]),
+             ([], [2, 1]),
+             ([2, 1], [1])]
 
             sage: it = iter(KleshchevPartitions(3, [0,1,2]))
             sage: [next(it) for _ in range(10)]
@@ -1563,9 +1593,9 @@ class KleshchevPartitions_all(KleshchevPartitions):
                 for mu in cur:
                     yield mu
                     mu_list = mu.to_list()
-                    for cell in mu.cogood_cells().values():
+                    for cell in sorted(mu.cogood_cells().values()):
                         data = [list(p) for p in mu_list]
-                        k,r,c = cell
+                        k, r, c = cell
                         if c == 0:
                             data[k].append(1)
                         else:
@@ -1589,6 +1619,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
             ([1], [1], [1], [1])
         """
         return self[12]
+
 
 class KleshchevPartitions_size(KleshchevPartitions):
     """

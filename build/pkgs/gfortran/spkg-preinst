@@ -1,0 +1,6 @@
+# This spkg shouldn't be installed if gcc is already installed
+GCC_SPKG_VERSION="$(cat "$SAGE_ROOT/build/pkgs/gcc/package-version.txt")"
+
+if [ -e "$SAGE_SPKG_INST/gcc-$GCC_SPKG_VERSION" ]; then
+    sdh_die "Error: The gcc SPKG is already installed and provides gfortran"
+fi

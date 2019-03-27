@@ -32,7 +32,8 @@ from sage.structure.coerce cimport is_numpy_type
 from sage.rings.all import RR, CC, ZZ
 
 import operator
-
+import parser
+    
 cdef class SymbolicRing(CommutativeRing):
     """
     Symbolic Ring, parent object for all symbolic expressions.
@@ -1331,6 +1332,7 @@ def is_SymbolicVariable(x):
     """
     return is_Expression(x) and is_a_symbol((<Expression>x)._gobj)
 
+
 def isidentifier(x):
     """
     Return whether ``x`` is a valid identifier.
@@ -1340,7 +1342,7 @@ def isidentifier(x):
 
     INPUT:
 
-    - ``x`` -- a string.
+    - ``x`` -- a string
 
     OUTPUT:
 
@@ -1363,10 +1365,15 @@ def isidentifier(x):
         True
         sage: isidentifier('lambda s:s+1')
         False
+        sage: isidentifier('None')
+        True
     """
-    import parser
+    try:
+        return x.isidentifier()  # py3
+    except AttributeError:
+        pass  # py2
     try:
         code = parser.expr(x).compile()
-    except (MemoryError, OverflowError, SyntaxError, SystemError, parser.ParserError), msg:
+    except (MemoryError, OverflowError, SyntaxError, SystemError, parser.ParserError):
         return False
     return len(code.co_names) == 1 and code.co_names[0] == x

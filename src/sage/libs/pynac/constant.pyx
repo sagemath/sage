@@ -27,7 +27,7 @@ cdef class PynacConstant:
         """
         Creates a constant in Pynac.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.libs.pynac.constant import PynacConstant
             sage: f = PynacConstant('foo', 'foo', 'real')

@@ -95,13 +95,13 @@ This module contains the following methods
     :delim: |
 
     :meth:`bandwidth` | Compute the bandwidth of an undirected graph
-    :meth:`~sage.graphs.base.boost_graph.bandwidth_heuristics` | Uses Boost heuristics to approximate the bandwidth of the input graph
+    :meth:`~sage.graphs.base.boost_graph.bandwidth_heuristics` | Use Boost heuristics to approximate the bandwidth of the input graph
 
 Functions
 ---------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Nathann Cohen <nathann.cohen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -109,7 +109,7 @@ Functions
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from libc.stdint cimport uint16_t
 from cysignals.signals cimport sig_check
@@ -133,10 +133,10 @@ def bandwidth(G, k=None):
 
     INPUT:
 
-    - ``G`` (a graph)
+    - ``G`` -- a graph
 
-    - ``k`` -- set to an integer value to test whether `bw(G)\leq k`, or to
-      ``None`` (default) to compute `bw(G)`.
+    - ``k`` -- integer (default: ``None``); set to an integer value to test
+      whether `bw(G)\leq k`, or to ``None`` (default) to compute `bw(G)`
 
     OUTPUT:
 
@@ -203,20 +203,19 @@ def bandwidth(G, k=None):
         sage: bandwidth(digraphs.Circuit(5))
         Traceback (most recent call last):
         ...
-        ValueError: This method only works on undirected graphs
+        ValueError: this method only works on undirected graphs
         sage: bandwidth(Graph(graphs.PetersenGraph(), weighted=True))
         Traceback (most recent call last):
         ...
-        ValueError: This method only works on unweighted graphs
+        ValueError: this method only works on unweighted graphs
 
     """
     if G.is_directed():
-        raise ValueError("This method only works on undirected graphs")
+        raise ValueError("this method only works on undirected graphs")
     if G.weighted():
-        raise ValueError("This method only works on unweighted graphs")
+        raise ValueError("this method only works on unweighted graphs")
     # Trivial cases
     if G.order() <= 1:
-        from sage.matrix.constructor import Matrix
         if k is None:
             return 0, list(G)
         else:
@@ -226,7 +225,7 @@ def bandwidth(G, k=None):
         max_k = 0 if k is None else k
         order = []
         for GG in G.connected_components_subgraphs():
-            ans = bandwidth(GG,k=k)
+            ans = bandwidth(GG, k=k)
             if not ans:
                 return False
             if k is None:
@@ -244,39 +243,39 @@ def bandwidth(G, k=None):
 
     cdef MemoryAllocator mem = MemoryAllocator()
 
-    cdef unsigned short ** d                = <unsigned short **> mem.allocarray(n,   sizeof(unsigned short *))
-    cdef unsigned short *  distances        = <unsigned short *>  mem.allocarray(n*n, sizeof(unsigned short  ))
-    cdef index_t *         current          = <index_t *>         mem.allocarray(n,   sizeof(index_t))
-    cdef index_t *         ordering         = <index_t *>         mem.allocarray(n,   sizeof(index_t))
-    cdef index_t *         left_to_order    = <index_t *>         mem.allocarray(n,   sizeof(index_t))
-    cdef index_t *         index_array_tmp  = <index_t *>         mem.allocarray(n,   sizeof(index_t))
-    cdef range_t *         range_arrays     = <range_t *>         mem.allocarray(n*n, sizeof(range_t))
-    cdef range_t **        ith_range_array  = <range_t **>        mem.allocarray(n,   sizeof(range_t *))
-    cdef range_t *         range_array_tmp  = <range_t *>         mem.allocarray(n,   sizeof(range_t))
+    cdef unsigned short ** d = <unsigned short **> mem.allocarray(n, sizeof(unsigned short *))
+    cdef unsigned short * distances = <unsigned short *> mem.allocarray(n*n, sizeof(unsigned short))
+    cdef index_t * current = <index_t *> mem.allocarray(n, sizeof(index_t))
+    cdef index_t * ordering = <index_t *> mem.allocarray(n, sizeof(index_t))
+    cdef index_t * left_to_order = <index_t *> mem.allocarray(n, sizeof(index_t))
+    cdef index_t * index_array_tmp  = <index_t *> mem.allocarray(n, sizeof(index_t))
+    cdef range_t * range_arrays = <range_t *> mem.allocarray(n*n, sizeof(range_t))
+    cdef range_t ** ith_range_array  = <range_t **> mem.allocarray(n, sizeof(range_t *))
+    cdef range_t * range_array_tmp  = <range_t *> mem.allocarray(n, sizeof(range_t))
 
-    cdef int i,j,kk
+    cdef int i, j, kk
     # compute the distance matrix
     all_pairs_shortest_path_BFS(G, NULL, distances, NULL, vertex_list=int_to_vertex)
 
     # fill d so that d[i][j] works
     for i in range(n):
-        d[i] = distances + i*n
+        d[i] = distances + i * n
 
     # ith_range_array
     for i in range(n):
-        ith_range_array[i] = range_arrays + i*n
+        ith_range_array[i] = range_arrays + i * n
 
     # initialize left_to_order
     for i in range(n):
         left_to_order[i] = i
 
     if k is None:
-        for kk in range((n-1)//G.diameter(),n):
-            if bandwidth_C(n,kk,d,current,ordering,left_to_order,index_array_tmp,ith_range_array,range_array_tmp):
+        for kk in range((n - 1) // G.diameter(), n):
+            if bandwidth_C(n, kk, d, current, ordering, left_to_order, index_array_tmp, ith_range_array, range_array_tmp):
                 ans = True
                 break
     else:
-        ans = bool(bandwidth_C(n,k,d,current,ordering,left_to_order,index_array_tmp,ith_range_array,range_array_tmp))
+        ans = bool(bandwidth_C(n, k, d, current, ordering, left_to_order, index_array_tmp, ith_range_array, range_array_tmp))
 
     if ans:
         order = [int_to_vertex[ordering[i]] for i in range(n)]
@@ -289,30 +288,30 @@ def bandwidth(G, k=None):
 
 cdef bint bandwidth_C(int n, int k,
                      unsigned short ** d,
-                     index_t *         current,         # choice of vertex for the current position
-                     index_t *         ordering,        # the actual ordering of vertices
-                     index_t *         left_to_order,   # begins with the assigned vertices, ends with the others
-                     index_t *         index_array_tmp, # tmp space
-                     range_t **        ith_range_array, # array of ranges, for every step of the algorithm
-                     range_t *         range_array_tmp):# tmp space
+                     index_t * current,           # choice of vertex for the current position
+                     index_t * ordering,          # the actual ordering of vertices
+                     index_t * left_to_order,     # begins with the assigned vertices, ends with the others
+                     index_t * index_array_tmp,   # tmp space
+                     range_t ** ith_range_array,  # array of ranges, for every step of the algorithm
+                     range_t * range_array_tmp):  # tmp space
 
-    cdef int i,v
-    cdef int pi # the position for which a vertex is being chosen
-    cdef int vi # the vertex being tested at position pi
+    cdef int i, v
+    cdef int pi  # the position for which a vertex is being chosen
+    cdef int vi  # the vertex being tested at position pi
     cdef int radius
     current[0] = -1
 
     # At first any vertex can be anywhere
     for v in range(n):
         ith_range_array[0][v].m = 0
-        ith_range_array[0][v].M = n-1
+        ith_range_array[0][v].M = n - 1
 
     i = 0
     while True:
         sig_check()
 
         # There are (n-i) choices for vertex i, as i-1 have already been
-        # determined. Thus, i<=current[i]<n.
+        # determined. Thus, i <= current[i] < n.
         current[i] += 1
 
         # All choices for this position i have been tested. We must change our
@@ -320,12 +319,12 @@ cdef bint bandwidth_C(int n, int k,
         if current[i] == n:
             if i == 0:
                 return 0
-            i = i-1
+            i -= 1
             left_to_order[i], left_to_order[current[i]] = left_to_order[current[i]], left_to_order[i]
             continue
 
-        # The position of the ith vertex. p0=0, p1=n-1, p2=1, p3=n-2, ...
-        pi = (n-1-i//2) if (i%2) else (i//2)
+        # The position of the ith vertex. p0 = 0, p1 = n-1, p2 = 1, p3 = n-2, ...
+        pi = (n - 1 - i // 2) if i % 2 else (i // 2)
 
         # The ith vertex
         vi = left_to_order[current[i]]
@@ -343,7 +342,7 @@ cdef bint bandwidth_C(int n, int k,
         ordering[pi] = vi
 
         # If we found the position of the nth vertex, we are done.
-        if i == n-1:
+        if i == n - 1:
             return 1
 
         # As vertex vi has been assigned position pi, we use that information to
@@ -351,18 +350,18 @@ cdef bint bandwidth_C(int n, int k,
         #
         # \forall v, k*d[v][vi] >= |p_v-p_{vi}| (see module documentation)
         for v in range(n):
-            radius = k*d[v][vi]
-            ith_range_array[i+1][v].m = max(<int> ith_range_array[i][v].m,pi-radius)
-            ith_range_array[i+1][v].M = min(<int> ith_range_array[i][v].M,pi+radius)
+            radius = k * d[v][vi]
+            ith_range_array[i + 1][v].m = max(<int> ith_range_array[i][v].m, pi - radius)
+            ith_range_array[i + 1][v].M = min(<int> ith_range_array[i][v].M, pi + radius)
 
         # Check the feasibility of a matching with the updated intervals of
         # admissible positions (see module doc).
         #
         # If it is possible we explore deeper, otherwise we undo the changes as
         # pi is not a good position for vi after all.
-        if is_matching_feasible(n,ith_range_array[i+1],range_array_tmp, index_array_tmp):
+        if is_matching_feasible(n, ith_range_array[i + 1], range_array_tmp, index_array_tmp):
             i += 1
-            current[i] = i-1
+            current[i] = i - 1
         else:
             # swap back
             left_to_order[i], left_to_order[current[i]] = left_to_order[current[i]], left_to_order[i]
@@ -373,16 +372,16 @@ cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_arr
 
     INPUT:
 
-    - ``n`` (integer) -- number of points
+    - ``n`` -- integer; number of points
 
     - ``range_array`` -- associates to every point an interval in which the
-    point must be given a position.
+      point must be given a position
 
     - ``range_array_tmp`` -- temporary spaces with the same characteristics as
       ``range_array``
 
     - ``index_array_tmp`` -- temporary space to associate an integer to every
-      point.
+      point
 
     OUTPUT:
 
@@ -390,10 +389,10 @@ cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_arr
     ``range_array``.
     """
     # Heuristic: check if some vertex has an empty range, that's an easy 'no'.
-    cdef int v,M,m,j
+    cdef int v, M, m, j
     for v in range(n):
         if range_array[v].M < range_array[v].m:
-            #print range_array[v].m, range_array[v].M
+            # print range_array[v].m, range_array[v].M
             return 0
         index_array_tmp[v] = 0
 
@@ -404,8 +403,8 @@ cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_arr
         index_array_tmp[range_array[v].M] += 1
 
     # Step 2: sorted table
-    for v in range(1,n):
-        index_array_tmp[v] += index_array_tmp[v-1]
+    for v in range(1, n):
+        index_array_tmp[v] += index_array_tmp[v - 1]
 
     for v in range(n):
         M = range_array[v].M
@@ -421,8 +420,8 @@ cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_arr
 
     for v in range(n):
         sig_check()
-        for j in range(range_array_tmp[v].m, range_array_tmp[v].M+1):
-            if not index_array_tmp[j]:
+        for j in range(range_array_tmp[v].m, range_array_tmp[v].M + 1):
+            if index_array_tmp[j] == 0:
                 index_array_tmp[j] = 1
                 break
         else:

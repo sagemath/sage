@@ -1,7 +1,7 @@
 cd src
 
-# Disabling harfbuzz until upstream properly check for suitable version
-GNUMAKE=${MAKE} sdh_configure --with-harfbuzz=no
+# Enable the now-deprecated `freetype-config`
+GNUMAKE=${MAKE} sdh_configure --enable-freetype-config
 sdh_make
 sdh_make_install
 

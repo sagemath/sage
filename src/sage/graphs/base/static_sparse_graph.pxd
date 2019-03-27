@@ -1,4 +1,4 @@
-from cpython cimport PyObject
+from cpython.object cimport PyObject
 from libc.stdint cimport uint32_t, uint64_t, UINT32_MAX
 from sage.data_structures.bitset cimport *
 

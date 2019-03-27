@@ -315,9 +315,6 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             base_ring, basis_keys, category=category, prefix=prefix, names=names,
             **keywords)
 
-    # We make this explicitly a Python class so that the methods,
-    #   specifically _mul_, from category framework still works. -- TCS
-    # We also need to deal with the old pickles too. -- TCS
     Element = IndexedFreeModuleElement
 
     @lazy_attribute

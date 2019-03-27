@@ -692,9 +692,13 @@ class DocTestController(SageObject):
             'sagenb'
         """
         opj = os.path.join
-        from sage.env import SAGE_SRC, SAGE_DOC_SRC, SAGE_ROOT
-        DOT_GIT = opj(SAGE_ROOT, '.git')
-        have_git = os.path.exists(DOT_GIT)
+        from sage.env import SAGE_SRC, SAGE_DOC_SRC, SAGE_ROOT, SAGE_ROOT_GIT
+        # SAGE_ROOT_GIT can be None on distributions which typically
+        # only have the SAGE_LOCAL install tree but not SAGE_ROOT
+        if SAGE_ROOT_GIT is not None:
+            have_git = os.path.isdir(SAGE_ROOT_GIT)
+        else:
+            have_git = False
 
         def all_files():
             self.files.append(opj(SAGE_SRC, 'sage'))
@@ -714,7 +718,7 @@ class DocTestController(SageObject):
             self.log("Doctesting files changed since last git commit")
             import subprocess
             change = subprocess.check_output(["git",
-                                              "--git-dir=" + DOT_GIT,
+                                              "--git-dir=" + SAGE_ROOT_GIT,
                                               "--work-tree=" + SAGE_ROOT,
                                               "status",
                                               "--porcelain"])
@@ -1062,7 +1066,7 @@ class DocTestController(SageObject):
             sage: DD = DocTestDefaults(valgrind=True, optional="all", timeout=172800)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
-            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions="$SAGE_LOCAL/lib/valgrind/sage.supp"  --log-file=".../valgrind/sage-memcheck.%p" python "$SAGE_LOCAL/bin/sage-runtests" --serial --timeout=172800 --optional=all hello_world.py
+            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions="$SAGE_EXTCODE/valgrind/pyalloc.supp" --suppressions="$SAGE_EXTCODE/valgrind/sage.supp" --suppressions="$SAGE_EXTCODE/valgrind/sage-additional.supp"  --log-file=".../valgrind/sage-memcheck.%p" python "$SAGE_LOCAL/bin/sage-runtests" --serial --timeout=172800 --optional=all hello_world.py
         """
         try:
             sage_cmd = self._assemble_cmd()
@@ -1092,7 +1096,9 @@ class DocTestController(SageObject):
                 flags = os.getenv("SAGE_MEMCHECK_FLAGS")
                 if flags is None:
                     flags = "--leak-resolution=high --leak-check=full --num-callers=25 "
-                    flags += '''--suppressions="%s" '''%(os.path.join("$SAGE_LOCAL","lib","valgrind","sage.supp"))
+                    flags += '''--suppressions="%s" '''%(os.path.join("$SAGE_EXTCODE","valgrind","pyalloc.supp"))
+                    flags += '''--suppressions="%s" '''%(os.path.join("$SAGE_EXTCODE","valgrind","sage.supp"))
+                    flags += '''--suppressions="%s" '''%(os.path.join("$SAGE_EXTCODE","valgrind","sage-additional.supp"))
             elif opt.massif:
                 toolname = "massif"
                 flags = os.getenv("SAGE_MASSIF_FLAGS", "--depth=6 ")
@@ -1199,13 +1205,14 @@ class DocTestController(SageObject):
         else:
             self.test_safe_directory()
             self.create_run_id()
-            from sage.env import SAGE_ROOT
-            DOT_GIT = os.path.join(SAGE_ROOT, '.git')
-            if os.path.isdir(DOT_GIT):
+            from sage.env import SAGE_ROOT_GIT
+            # SAGE_ROOT_GIT can be None on distributions which typically
+            # only have the SAGE_LOCAL install tree but not SAGE_ROOT
+            if (SAGE_ROOT_GIT is not None) and os.path.isdir(SAGE_ROOT_GIT):
                 import subprocess
                 try:
                     branch = subprocess.check_output(["git",
-                                                      "--git-dir=" + DOT_GIT,
+                                                      "--git-dir=" + SAGE_ROOT_GIT,
                                                       "rev-parse",
                                                       "--abbrev-ref",
                                                       "HEAD"])

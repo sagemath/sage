@@ -15,8 +15,9 @@ import six
 
 from subprocess import Popen, PIPE
 from sage.misc.misc import SAGE_TMP
-
+from sage.rings.integer import Integer
 from sage.features.latte import Latte
+
 
 def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False, raw_output=False, verbose=False, **kwds):
     r"""
@@ -187,8 +188,8 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         if raw_output:
             return ans
         else:
-            from sage.rings.integer import Integer
             return Integer(ans)
+
 
 def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, verbose=False, **kwds):
     r"""
@@ -304,6 +305,8 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
     # Check that LattE is present
     Latte().require()
 
+    from sage.rings.rational import Rational
+
     args = ['integrate']
 
     got_polynomial = True if polynomial is not None else False
@@ -371,8 +374,8 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
     if raw_output:
         return ans
     else:
-        from sage.rings.rational import Rational
         return Rational(ans)
+
 
 def to_latte_polynomial(polynomial):
     r"""

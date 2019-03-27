@@ -19,7 +19,7 @@ Complex Plots
 from __future__ import absolute_import
 
 # TODO: use NumPy buffers and complex fast_callable (when supported)
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on, sig_off, sig_check
 
 cimport numpy as cnumpy
 
@@ -29,15 +29,15 @@ from sage.rings.complex_double cimport ComplexDoubleElement
 from sage.arith.srange import srange
 
 from libc.math cimport hypot, atan2, atan, log, sqrt
-
-cdef double PI = 4 * atan(1)
+from sage.arith.constants cimport M_PI as PI
 
 
 cdef inline ComplexDoubleElement new_CDF_element(double x, double y):
-    cdef ComplexDoubleElement z = ComplexDoubleElement.__new__(ComplexDoubleElement)
-    z._complex.dat[0] = x
-    z._complex.dat[1] = y
+    z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
+    z._complex.real = x
+    z._complex.imag = y
     return z
+
 
 cdef inline double mag_to_lightness(double r):
     """
@@ -114,7 +114,7 @@ def complex_to_rgb(z_values):
                 z = <ComplexDoubleElement>zz
             else:
                 z = CDF(zz)
-            x, y = z._complex.dat[0], z._complex.dat[1]
+            x, y = z._complex.dat
             mag = hypot(x, y)
             arg = atan2(y, x) # math module arctan has range from -pi to pi, so cut along negative x-axis
 
@@ -381,12 +381,18 @@ def complex_plot(f, xrange, yrange, **options):
         pass
 
     cdef double x, y
-    ignore, ranges = setup_for_eval_on_grid([], [xrange, yrange], options['plot_points'])
-    xrange,yrange=[r[:2] for r in ranges]
-    sig_on()
-    z_values = [[  f(new_CDF_element(x, y)) for x in srange(*ranges[0], include_endpoint=True)]
-                                            for y in srange(*ranges[1], include_endpoint=True)]
-    sig_off()
+    _, ranges = setup_for_eval_on_grid([], [xrange, yrange], options['plot_points'])
+    xrange = ranges[0]
+    yrange = ranges[1]
+    cdef list z_values = []
+    cdef list row
+    for y in srange(*yrange, include_endpoint=True):
+        row = []
+        for x in srange(*xrange, include_endpoint=True):
+            sig_check()
+            row.append(f(new_CDF_element(x, y)))
+        z_values.append(row)
+
     g = Graphics()
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options, ignore=['xmin', 'xmax']))
     g.add_primitive(ComplexPlot(complex_to_rgb(z_values), xrange, yrange, options))

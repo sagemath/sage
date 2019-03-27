@@ -2001,13 +2001,13 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             slack_variables = ["{}{:d}".format(slack_variables, i)
                                for i in indices]
         else:
-            slack_variables = list(map(str, slack_variables))
+            slack_variables = [str(s) for s in slack_variables]
             if len(slack_variables) != m:
                 raise ValueError("wrong number of slack variables")
         if auxiliary_variable is None:
            auxiliary_variable = x + "0" if isinstance(x, str) else "x0"
         names = [str(auxiliary_variable)]
-        names.extend(map(str, self.x()))
+        names.extend([str(s) for s in self.x()])
         names.extend(slack_variables)
         if names[0] == names[1]:
             names.pop(0)

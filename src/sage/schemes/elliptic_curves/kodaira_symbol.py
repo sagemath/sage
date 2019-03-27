@@ -325,7 +325,7 @@ def KodairaSymbol(symbol):
         [I0, II, III, IV, I1, I2, I3, I4, I5]
         sage: [KS(-n) for n in range(1,10)]
         [I0*, II*, III*, IV*, I1*, I2*, I3*, I4*, I5*]
-        sage: all([KS(str(KS(n)))==KS(n) for n in range(-10,10) if n!=0])
+        sage: all(KS(str(KS(n))) == KS(n) for n in range(-10,10) if n != 0)
         True
     """
     if symbol in _ks_cache:

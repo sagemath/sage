@@ -809,6 +809,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
     def g_algebra(self, relations, names=None, order='degrevlex', check=True):
         """
         The `G`-Algebra derived from this algebra by relations.
+
         By default is assumed, that two variables commute.
 
         .. TODO::

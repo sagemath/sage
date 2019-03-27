@@ -4,7 +4,9 @@
 
 cd src
 
+GAP_BUILD_ROOT="$(pwd)"
 GAP_ROOT="$SAGE_LOCAL/share/gap"
+DESTDIR_GAP_ROOT="$SAGE_DESTDIR$GAP_ROOT"
 
 # Enable debug info if requested.
 # Note that -g3 allows you to use preprocessor macros in gdb which are widely used
@@ -43,6 +45,10 @@ mkdir -p "$SAGE_DESTDIR$SAGE_BIN" || sdh_die "Failed to create the directory $SA
 # GAP_ROOT; we don't need everything from the source tree
 sdh_install bin doc gen grp lib src tst sysinfo.gap "$GAP_ROOT"
 
+# GAP's copy of libtool is also used by the toolchain for build GAP packages
+# (i.e. by gac)
+sdh_install libtool "$GAP_ROOT"
+
 # Install only the minimal packages GAP needs to run
 sdh_install pkg/GAPDoc-* pkg/primgrp-* pkg/SmallGrp-* pkg/transgrp "$GAP_ROOT"/pkg
 
@@ -76,15 +82,27 @@ chmod +x "$SAGE_DESTDIR$SAGE_BIN/gap"
 
 # Create symlinks under $GAP_ROOT for these executables, as they are expected
 # (especially when building kernel packages) to exist
-ln -sf "$SAGE_BIN/gap-bin" "$SAGE_DESTDIR$GAP_ROOT/gap"
-ln -sf "$SAGE_BIN/gac" "$SAGE_DESTDIR$GAP_ROOT/gac"
+ln -sf "$SAGE_BIN/gap-bin" "$DESTDIR_GAP_ROOT/gap"
+ln -sf "$SAGE_BIN/gac" "$DESTDIR_GAP_ROOT/gac"
 
 # Fix the $GAP_ROOT/bin/<arch>/src symlink to be relative (otherwise it links
 # to the actual path of the sources GAP was compiled from)
-for srclink in "$SAGE_DESTDIR$GAP_ROOT"/bin/*/src; do
+for srclink in "$DESTDIR_GAP_ROOT"/bin/*/src; do
     rm -f "$srclink"
     ln -s "../../src" "$srclink"
 done
+
+# Additional fixups for some files after they have been copied into their
+# destination directory.  gac and sysinfo.gap are generated files that contain
+# in them hard-coded references to the GAP build directory, which will soon
+# be going away.  This breaks the build toolchain for some compiled GAP
+# packages.  We need to replace these paths with the final GAP_ROOT path.  The
+# below will work so long as neither of these paths contain '|', and if they do
+# then god help you.  https://trac.sagemath.org/ticket/27218
+sed -i -e "s|$GAP_BUILD_ROOT|$GAP_ROOT|g" \
+    "$SAGE_DESTDIR$SAGE_BIN/gac" "$DESTDIR_GAP_ROOT/sysinfo.gap" \
+    "$DESTDIR_GAP_ROOT/bin/gap.sh" "$DESTDIR_GAP_ROOT/doc/make_doc" || \
+    sdh_die "Failed to fix up hard-coded paths in GAP build tools."
 
 # TODO: This seems unnecessary--we are already installing all of doc/ to
 # GAP_ROOT, which is necessary for some functionality in GAP to work.  Do

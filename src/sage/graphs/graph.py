@@ -80,6 +80,9 @@ AUTHORS:
 
 - David Coudert (2018-10-07): cleaning
 
+- Amanda Francis, Caitlin Lienkaemper, Kate Collins, Rajat Mittal (2019-03-10):
+  methods for computing effective resistance
+
 Graph Format
 ------------
 
@@ -2024,7 +2027,7 @@ class Graph(GenericGraph):
         vertex is the unique apex vertex ::
 
             sage: G = graphs.Grid2dGraph(4,4)
-            sage: G.apex_vertices() == G.vertices()
+            sage: set(G.apex_vertices()) == set(G.vertices())
             True
             sage: G.add_edges([('universal',v) for v in G])
             sage: G.apex_vertices()
@@ -2049,13 +2052,14 @@ class Graph(GenericGraph):
         Neighbors of an apex of degree 2 are apex::
 
             sage: G = graphs.Grid2dGraph(5,5)
-            sage: G.add_path([(1,1),'x',(3,3)])
+            sage: v = (666, 666)
+            sage: G.add_path([(1, 1), v, (3, 3)])
             sage: G.is_planar()
             False
-            sage: G.degree('x')
+            sage: G.degree(v)
             2
-            sage: G.apex_vertices()
-            ['x', (2, 2), (3, 3), (1, 1)]
+            sage: sorted(G.apex_vertices())
+            [(1, 1), (2, 2), (3, 3), (666, 666)]
 
 
         TESTS:
@@ -2086,7 +2090,8 @@ class Graph(GenericGraph):
 
         # Easy cases: null graph, subgraphs of K_5 and K_3,3
         if self.order() <= 5 or (self.order() <= 6 and self.is_bipartite()):
-            return self.vertices()[:k]
+            it = self.vertex_iterator()
+            return [next(it) for _ in range(k)]
 
 
         if not self.is_connected():
@@ -2097,20 +2102,25 @@ class Graph(GenericGraph):
 
             P = [H for H in self.connected_components_subgraphs() if not H.is_planar()]
             if not P: # The graph is planar
-                return self.vertices()[:k]
+                it = self.vertex_iterator()
+                return [next(it) for _ in range(k)]
             elif len(P) > 1:
                 return []
             else:
                 # We proceed with the non planar component
-                H = Graph(P[0].edges(labels=0), immutable=False, loops=False, multiedges=False) if P[0].is_immutable() else P[0]
+                if P[0].is_immutable():
+                    H = Graph(P[0].edges(labels=0, sort=False), immutable=False, loops=False, multiedges=False)
+                else:
+                    H = P[0]
 
         elif self.is_planar():
             # A planar graph is apex.
-            return self.vertices()[:k]
+            it = self.vertex_iterator()
+            return [next(it) for _ in range(k)]
 
         else:
             # We make a basic copy of the graph since we will modify it
-            H = Graph(self.edges(labels=0), immutable=False, loops=False, multiedges=False)
+            H = Graph(self.edges(labels=0, sort=False), immutable=False, loops=False, multiedges=False)
 
 
         # General case: basic implementation
@@ -2779,7 +2789,7 @@ class Graph(GenericGraph):
         if k is not None and k >= g.order() - 1:
             if certificate:
                 from sage.sets.set import Set
-                return Graph({Set(g.vertices()):[]}, name="Tree decomposition")
+                return Graph({Set(g): []}, name="Tree decomposition")
             return True
 
         # TDLIB
@@ -2807,8 +2817,9 @@ class Graph(GenericGraph):
                     return all(cc.treewidth(k) for cc in g.connected_components_subgraphs())
             else:
                 T = [cc.treewidth(certificate=True) for cc in g.connected_components_subgraphs()]
-                tree = Graph([sum([t.vertices() for t in T],[]), sum([t.edges(labels=False) for t in T],[])],
-                                 format='vertices_and_edges', name="Tree decomposition")
+                tree = Graph([sum([list(t) for t in T], []),
+                              sum([t.edges(labels=False, sort=False) for t in T], [])],
+                             format='vertices_and_edges', name="Tree decomposition")
                 v = next(T[0].vertex_iterator())
                 for t in T[1:]:
                     tree.add_edge(next(t.vertex_iterator()),v)
@@ -2850,7 +2861,7 @@ class Graph(GenericGraph):
 
                 # Removing v may have disconnected cc. We iterate on its
                 # connected components
-                for cci in g.subgraph(ccv).connected_components():
+                for cci in g.subgraph(ccv).connected_components(sort=False):
 
                     # The recursive subcalls. We remove on-the-fly the vertices
                     # from the cut which play no role in separating the
@@ -2873,7 +2884,7 @@ class Graph(GenericGraph):
             return False
 
         # Main call to rec function, i.e. rec({v}, V-{v})
-        V = g.vertices()
+        V = list(g)
         v = frozenset([V.pop()])
         TD = rec(v, frozenset(V))
 
@@ -2896,7 +2907,7 @@ class Graph(GenericGraph):
         changed = True
         while changed:
             changed = False
-            for v in G.vertices():
+            for v in G.vertices(sort=False):
                 for u in G.neighbor_iterator(v):
                     if u.issuperset(v):
                         G.merge_vertices([u, v]) # the new vertex is named 'u'
@@ -3685,7 +3696,7 @@ class Graph(GenericGraph):
         if not n:
             return DiGraph()
 
-        vertices = self.vertices()
+        vertices = list(self)
         vertices_id = {y: x for x,y in enumerate(vertices)}
 
         b = {}
@@ -4146,10 +4157,14 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: G = Graph("Fooba")
-            sage: P = G.coloring(algorithm="MILP"); P
-            [[2, 1, 3], [0, 6, 5], [4]]
-            sage: P = G.coloring(algorithm="DLX"); P
-            [[1, 2, 3], [0, 5, 6], [4]]
+            sage: P = G.coloring(algorithm="MILP")
+            sage: Q = G.coloring(algorithm="DLX")
+            sage: def are_equal_colorings(A, B):
+            ....:     return Set(map(Set, A)) == Set(map(Set, B))
+            sage: are_equal_colorings(P, [[1, 2, 3], [0, 5, 6], [4]])
+            True
+            sage: are_equal_colorings(P, Q)
+            True
             sage: G.plot(partition=P)
             Graphics object consisting of 16 graphics primitives
             sage: G.coloring(hex_colors=True, algorithm="MILP")
@@ -4446,10 +4461,10 @@ class Graph(GenericGraph):
         and LP formulation::
 
             sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
-            sage: g.matching()
+            sage: sorted(g.matching())
             [(0, 1, 0), (2, 3, -5)]
-            sage: g.matching(algorithm="LP")
-            [(2, 3, -5), (0, 1, 0)]
+            sage: sorted(g.matching(algorithm="LP"))
+            [(0, 1, 0), (2, 3, -5)]
 
         When ``use_edge_labels`` is set to ``True``, with Edmonds' algorithm and
         LP formulation::
@@ -4969,7 +4984,7 @@ class Graph(GenericGraph):
 
         # Boolean variable in two dimension whose first element is a vertex and
         # whose second element is one of the sets given as arguments.
-        # When true, indicated that the vertex is the representant of the
+        # When true, indicated that the vertex is the representative of the
         # corresponding set
         classss = p.new_variable(binary=True)
 
@@ -4979,7 +4994,7 @@ class Graph(GenericGraph):
             for v in f:
                 lists[v].append(i)
 
-            # a classss has exactly one representant
+            # a classss has exactly one representative
             p.add_constraint(p.sum(classss[v,i] for v in f), max=1, min=1)
 
         # A vertex represents at most one classss (vertex_taken is binary), and
@@ -4987,7 +5002,7 @@ class Graph(GenericGraph):
         for v in self:
             p.add_constraint(p.sum(classss[v,i] for i in lists[v]) - vertex_taken[v], max=0)
 
-        # Two adjacent vertices can not both be representants of a set
+        # Two adjacent vertices can not both be representatives of a set
 
         for u,v in self.edge_iterator(labels=None):
             p.add_constraint(vertex_taken[u] + vertex_taken[v], max=1)
@@ -5102,7 +5117,7 @@ class Graph(GenericGraph):
 
         # rs = Representative set of a vertex
         # for h in H, v in G is such that rs[h,v] == 1 if and only if v
-        # is a representant of h in self
+        # is a representative of h in self
         rs = p.new_variable(binary=True)
 
         for v in self:
@@ -5520,7 +5535,7 @@ class Graph(GenericGraph):
             sage: p=graphs.chang_graphs()
             sage: T8 = graphs.CompleteGraph(8).line_graph()
             sage: C = T8.seidel_switching([(0,1,None),(2,3,None),(4,5,None),(6,7,None)],inplace=False)
-            sage: T8.twograph()==C.twograph()
+            sage: T8.twograph() == C.twograph()
             True
             sage: T8.is_isomorphic(C)
             False
@@ -5541,7 +5556,7 @@ class Graph(GenericGraph):
               -- ditto, but much faster.
         """
         from sage.combinat.designs.twographs import TwoGraph
-        G = self.relabel(inplace=False)
+        G = self.relabel(range(self.order()), inplace=False)
         T = []
 
         # Triangles
@@ -5683,7 +5698,7 @@ class Graph(GenericGraph):
         p.set_objective(None)
 
         #######################
-        # Vertex representant #
+        # Vertex representative #
         #######################
         #
         # v_repr[h,g] = 1 if vertex h from H is represented by vertex
@@ -5691,7 +5706,7 @@ class Graph(GenericGraph):
 
         v_repr = p.new_variable(binary=True)
 
-        # Exactly one representant per vertex of H
+        # Exactly one representative per vertex of H
         for h in H:
             p.add_constraint(p.sum(v_repr[h,g] for g in G), min=1, max=1)
 
@@ -5716,7 +5731,7 @@ class Graph(GenericGraph):
         ###################################
         #
         # For any edge (h1,h2) in H, we have a corresponding path in G
-        # between the representants of h1 and h2. Which means there is
+        # between the representatives of h1 and h2. Which means there is
         # a flow of intensity 1 from one to the other.
         # We are then writing a flow problem for each edge of H.
         #
@@ -5741,7 +5756,7 @@ class Graph(GenericGraph):
             for v in G:
 
                 # The flow balance depends on whether the vertex v is a
-                # representant of h1 or h2 in G, or a representant of none
+                # representative of h1 or h2 in G, or a representative of none
                 p.add_constraint(flow_balance((h1,h2),v) == v_repr[h1,v] - v_repr[h2,v])
 
         #############################
@@ -6623,9 +6638,9 @@ class Graph(GenericGraph):
 
         Ear decomposition of a biconnected graph::
 
-            sage: g = graphs.CubeGraph(2)
+            sage: g = graphs.CycleGraph(4)
             sage: g.ear_decomposition()
-            [['00', '01', '11', '10', '00']]
+            [[0, 3, 2, 1, 0]]
 
         Ear decomposition of a connected but not biconnected graph::
 
@@ -6677,18 +6692,15 @@ class Graph(GenericGraph):
         # Dfs tree traversal.
         traversed = set()
 
-        # Dict to store parent vertex of all the visited vertices.
-        parent = {}
+        # Dictionary to store parent vertex of all the visited vertices.
+        # Initialized for the first vertex to be visited.
+        parent = {next(self.vertex_iterator()): None}
 
         # List to store visit_time of vertices in Dfs traversal.
         value = {}
 
         # List to store all the chains and cycles of the input graph G.
         chains = []
-
-        vertices = self.vertices()
-
-        parent[vertices[0]] = None
 
         # DFS() : Function that performs depth first search on input graph G and
         #         stores DFS tree in parent array format.
@@ -6727,7 +6739,7 @@ class Graph(GenericGraph):
             chains.append(chain)
 
         # Perform ear decomposition on each connected component of input graph.
-        for v in vertices:
+        for v in self:
             if v not in seen:
               # Start the depth first search from first vertex
                 DFS(v)
@@ -6836,20 +6848,21 @@ class Graph(GenericGraph):
             [[0, 4], [1, 2, 3, 4]]
             sage: C.cliques_containing_vertex(cliques=E)
             {0: [[0, 4]], 1: [[1, 2, 3, 4]], 2: [[1, 2, 3, 4]], 3: [[1, 2, 3, 4]], 4: [[0, 4], [1, 2, 3, 4]]}
-            sage: F = graphs.Grid2dGraph(2,3)
-            sage: F.cliques_containing_vertex()
-            {(0, 0): [[(0, 1), (0, 0)], [(1, 0), (0, 0)]],
-             (0, 1): [[(0, 1), (0, 0)], [(0, 1), (0, 2)], [(0, 1), (1, 1)]],
-             (0, 2): [[(0, 1), (0, 2)], [(1, 2), (0, 2)]],
-             (1, 0): [[(1, 0), (0, 0)], [(1, 0), (1, 1)]],
-             (1, 1): [[(0, 1), (1, 1)], [(1, 2), (1, 1)], [(1, 0), (1, 1)]],
-             (1, 2): [[(1, 2), (1, 1)], [(1, 2), (0, 2)]]}
-            sage: F.cliques_containing_vertex(vertices=[(0, 1), (1, 2)])
-            {(0, 1): [[(0, 1), (0, 0)], [(0, 1), (0, 2)], [(0, 1), (1, 1)]], (1, 2): [[(1, 2), (1, 1)], [(1, 2), (0, 2)]]}
+
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
             sage: G.show(figsize=[2,2])
             sage: G.cliques_containing_vertex()
             {0: [[0, 1, 2], [0, 1, 3]], 1: [[0, 1, 2], [0, 1, 3]], 2: [[0, 1, 2]], 3: [[0, 1, 3]]}
+
+        Since each clique of a 2 dimensional grid corresponds to an edge, the
+        number of cliques in which a vertex is involved equals its degree::
+
+            sage: F = graphs.Grid2dGraph(2,3)
+            sage: d = F.cliques_containing_vertex()
+            sage: all(F.degree(u) == len(cliques) for u,cliques in d.items())
+            True
+            sage: F.cliques_containing_vertex(vertices=[(0, 1)])
+            {(0, 1): [[(0, 1), (0, 0)], [(0, 1), (0, 2)], [(0, 1), (1, 1)]]}
 
         """
         import networkx
@@ -7648,9 +7661,9 @@ class Graph(GenericGraph):
         if not self.is_connected():
             g = Graph()
             for cc in self.connected_components_subgraphs():
-                g = g.union(cc._gomory_hu_tree(frozenset(cc.vertices()), algorithm=algorithm))
+                g = g.union(cc._gomory_hu_tree(frozenset(cc.vertex_iterator()), algorithm=algorithm))
         else:
-            g = self._gomory_hu_tree(frozenset(self.vertices()), algorithm=algorithm)
+            g = self._gomory_hu_tree(frozenset(self.vertex_iterator()), algorithm=algorithm)
 
         if self.get_pos() is not None:
             g.set_pos(dict(self.get_pos()))
@@ -7721,9 +7734,8 @@ class Graph(GenericGraph):
         # a sink (-1,v) and a source (1,v)
         # Any edge (u,v) in the digraph is then added as ((-1,u),(1,v))
 
-        from sage.graphs.graph import Graph
         g = Graph()
-        g.add_edges(((-1, u), (1, v)) for u,v in d.edge_iterator(labels=None))
+        g.add_edges(((-1, u), (1, v)) for u, v in d.edge_iterator(labels=None))
 
         # This new bipartite graph is now edge_colored
         from sage.graphs.graph_coloring import edge_coloring
@@ -8022,19 +8034,21 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: G=graphs.GridGraph([2,3])
-            sage: list(G.perfect_matchings())
-            [[((0, 0), (0, 1)), ((0, 2), (1, 2)), ((1, 0), (1, 1))],
-             [((0, 1), (0, 2)), ((1, 1), (1, 2)), ((0, 0), (1, 0))],
-             [((0, 1), (1, 1)), ((0, 2), (1, 2)), ((0, 0), (1, 0))]]
+            sage: for m in G.perfect_matchings():
+            ....:     print(sorted(m))
+            [((0, 0), (0, 1)), ((0, 2), (1, 2)), ((1, 0), (1, 1))]
+            [((0, 0), (1, 0)), ((0, 1), (0, 2)), ((1, 1), (1, 2))]
+            [((0, 0), (1, 0)), ((0, 1), (1, 1)), ((0, 2), (1, 2))]
 
             sage: G = graphs.CompleteGraph(4)
-            sage: list(G.perfect_matchings(labels=True))
-            [[(0, 1, None), (2, 3, None)],
-             [(0, 2, None), (1, 3, None)],
-             [(0, 3, None), (1, 2, None)]]
+            sage: for m in G.perfect_matchings(labels=True):
+            ....:     print(sorted(m))
+            [(0, 1, None), (2, 3, None)]
+            [(0, 2, None), (1, 3, None)]
+            [(0, 3, None), (1, 2, None)]
 
             sage: G = Graph([[1,-1,'a'], [2,-2, 'b'], [1,-2,'x'], [2,-1,'y']])
-            sage: list(G.perfect_matchings(labels=True))
+            sage: sorted(sorted(m) for m in G.perfect_matchings(labels=True))
             [[(-2, 1, 'x'), (-1, 2, 'y')], [(-2, 2, 'b'), (-1, 1, 'a')]]
 
             sage: G = graphs.CompleteGraph(8)
@@ -8172,6 +8186,316 @@ class Graph(GenericGraph):
         else:
             raise ValueError('algorithm must be set to "Edmonds", "LP_matching" or "LP"')
 
+    @doc_index("Leftovers")
+    def effective_resistance(self, i, j):
+        r"""
+        Return the effective resistance between nodes `i` and `j`.
+
+        The resistance distance between vertices `i` and `j` of a simple
+        connected graph `G` is defined as the effective resistance between the
+        two vertices on an electrical network constructed from `G` replacing
+        each edge of the graph by a unit (1 ohm) resistor.
+
+        See the :wikipedia:`Resistance_distance` for more information.
+
+        INPUT:
+
+        - ``i``, ``j`` -- vertices of the graph
+
+        OUTPUT: rational number denoting resistance between nodes `i` and `j`
+
+        EXAMPLES:
+
+        Effective resitances in a straight linear 2-tree on 6 vertices ::
+
+            sage: G=Graph([(0,1),(0,2),(1,2),(1,3),(3,5),(2,4),(2,3),(3,4),(4,5)])
+            sage: G.effective_resistance(0,1)
+            34/55
+            sage: G.effective_resistance(0,3)
+            49/55
+            sage: G.effective_resistance(1,4)
+            9/11
+            sage: G.effective_resistance(0,5)
+            15/11
+
+        Effective resistances in a fan on 6 vertices ::
+
+            sage: H = Graph([(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(1,2),(2,3),(3,4),(4,5)])
+            sage: H.effective_resistance(1,5)
+            6/5
+            sage: H.effective_resistance(1,3)
+            49/55
+
+        .. SEEALSO::
+
+            * :meth:`effective_resistance_matrix` --
+              a similar method giving a matrix full of all effective
+              resistances between all nodes
+
+            * :meth:`least_effective_resistance` --
+              gives node pairs with least effective resistances
+
+            * See :wikipedia:`Resistance_distance` for more details.
+
+        TESTS::
+
+            sage: G = graphs.CompleteGraph(4)
+            sage: all(G.effective_resistance(u, v) == 1/2 for u,v in G.edge_iterator(labels=False))
+            True
+            sage: Graph(1).effective_resistance(0,0)
+            0
+            sage: G = Graph([(0,1),(1,2)])
+            sage: G.effective_resistance(0,2)
+            2
+            sage: G = Graph([(0,1),(1,2),(2,0)])
+            sage: G.effective_resistance(0,2)
+            2/3
+            sage: G = Graph([(0,1),(0,2),(0,3),(0,4),(0,5),(1,2),(2,3),(3,4),(4,5),(5,1)])
+            sage: r = G.effective_resistance(0,3)
+            sage: r == fibonacci(2*(5-3)+1)*fibonacci(2*3-1)/fibonacci(2*5)
+            True
+        """
+        from sage.matrix.constructor import matrix
+        if i not in self:
+            raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(i)))
+        elif j not in self:
+            raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(j)))    
+
+        if i == j :
+            return 0
+
+        self._scream_if_not_simple()
+        if not self.is_connected():
+            raise ValueError('the Graph is not a connected graph')
+
+        vert = list(self)
+        i1 = vert.index(i)
+        i2 = vert.index(j)
+        n = self.order()
+        L = self.laplacian_matrix(vertices=vert)
+        M = L.pseudoinverse()
+        Id = matrix.identity(n)
+        sigma = matrix(Id[i1] - Id[i2])
+        diff = sigma * M * sigma.transpose()
+
+        return diff[0, 0]
+
+    @doc_index("Leftovers")
+    def effective_resistance_matrix(self, vertices=None, nonedgesonly=True):
+        r"""
+        Return a matrix whose (`i` , `j`) entry gives the effective resistance
+        between vertices `i` and `j`.
+
+        The resistance distance between vertices `i` and `j` of a simple
+        connected graph `G` is defined as the effective resistance between the
+        two vertices on an electrical network constructed from `G` replacing
+        each edge of the graph by a unit (1 ohm) resistor.
+
+        INPUT:
+
+        - ``nonedgesonly`` -- boolean (default: ``True``); if ``True`` assign
+          zero resistance to pairs of adjacent vertices.
+
+        - ``vertices`` -- list (default: ``None``); the ordering of the
+          vertices defining how they should appear in the matrix. By default,
+          the ordering given by :meth:`GenericGraph.vertices` is used.
+
+        OUTPUT: matrix
+
+        EXAMPLES:
+
+        The effective resitance matrix  for a straight linear 2-tree counting
+        only non-adjacent vertex pairs ::
+
+            sage: G = Graph([(0,1),(0,2),(1,2),(1,3),(3,5),(2,4),(2,3),(3,4),(4,5)])
+            sage: G.effective_resistance_matrix()
+            [    0     0     0 49/55 59/55 15/11]
+            [    0     0     0     0  9/11 59/55]
+            [    0     0     0     0     0 49/55]
+            [49/55     0     0     0     0     0]
+            [59/55  9/11     0     0     0     0]
+            [15/11 59/55 49/55     0     0     0]
+
+        The same effective resistance matrix, this time including adjacent
+        vertices ::
+
+            sage: G.effective_resistance_matrix(nonedgesonly=False)
+            [    0 34/55 34/55 49/55 59/55 15/11]
+            [34/55     0 26/55 31/55  9/11 59/55]
+            [34/55 26/55     0  5/11 31/55 49/55]
+            [49/55 31/55  5/11     0 26/55 34/55]
+            [59/55  9/11 31/55 26/55     0 34/55]
+            [15/11 59/55 49/55 34/55 34/55     0]
+
+        This example illustrates the common neighbors matrix  for a fan on 6
+        vertices counting only non-adjacent vertex pairs ::
+
+            sage: H = Graph([(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(1,2),(2,3),(3,4),(4,5)])
+            sage: H.effective_resistance_matrix()
+            [    0     0     0     0     0     0     0]
+            [    0     0     0 49/55 56/55   6/5 89/55]
+            [    0     0     0     0   4/5 56/55 81/55]
+            [    0 49/55     0     0     0 49/55 16/11]
+            [    0 56/55   4/5     0     0     0 81/55]
+            [    0   6/5 56/55 49/55     0     0 89/55]
+            [    0 89/55 81/55 16/11 81/55 89/55     0]
+
+        .. SEEALSO::
+
+            * :meth:`least_effective_resistance` --
+              gives node pairs with least effective resistances
+
+            * :meth:`effective_resistance` --
+              computes effective resistance for a single node pair
+
+            * See :wikipedia:`Resistance_Distance` for more details.
+
+        TESTS::
+
+            sage: graphs.CompleteGraph(4).effective_resistance_matrix()
+            [0 0 0 0]
+            [0 0 0 0]
+            [0 0 0 0]
+            [0 0 0 0]
+
+            sage: G = Graph(multiedges=True, sparse=True)
+            sage: G.add_edges([(0, 1)] * 3)
+            sage: G.effective_resistance_matrix()
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with
+            multiedges. Perhaps this method can be updated to handle them, but
+            in the meantime if you want to use it please disallow multiedges
+            using allow_multiple_edges().
+            
+            sage: graphs.CompleteGraph(4).effective_resistance_matrix(nonedgesonly=False)
+            [  0 1/2 1/2 1/2]
+            [1/2   0 1/2 1/2]
+            [1/2 1/2   0 1/2]
+            [1/2 1/2 1/2   0]
+            sage: Graph(1).effective_resistance_matrix()
+            [0]
+            sage: Graph().effective_resistance_matrix()
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to compute effective resistance for an empty Graph object
+            sage: G = Graph([(0,1),(1,2),(2,3),(3,0),(0,2)])
+            sage: G.effective_resistance_matrix()
+            [0 0 0 0]
+            [0 0 0 1]
+            [0 0 0 0]
+            [0 1 0 0]
+            sage: G = Graph([(0,1),(0,2),(0,3),(0,4),(0,5),(1,2),(2,3),(3,4),(4,5),(5,1)])
+            sage: r = G.effective_resistance_matrix(nonedgesonly=False)[0,3]
+            sage: r == fibonacci(2*(5-3)+1)*fibonacci(2*3-1)/fibonacci(2*5)
+            True
+        """
+        from sage.matrix.constructor import matrix
+        from sage.rings.rational_field import QQ
+
+        n = self.order()
+        if not n:
+            raise ValueError('unable to compute effective resistance for an empty Graph object')
+        if vertices is None:
+            vertices = self.vertices()
+        self._scream_if_not_simple()
+        if not self.is_connected():
+            raise ValueError('the Graph is not a connected graph')
+
+        L = self.laplacian_matrix(vertices=vertices)
+        M = L.pseudoinverse()
+        d = matrix(M.diagonal()).transpose()
+        onesvec = matrix(QQ, n, 1, lambda i, j: 1)
+        S = d * onesvec.transpose() + onesvec * d.transpose() - 2 * M
+        onesmat = matrix(QQ, n, n, lambda i, j: 1)
+        if nonedgesonly:
+            B = onesmat - self.adjacency_matrix(vertices=vertices) - matrix.identity(n)
+            S = S.elementwise_product(B)
+
+        return S
+
+    @doc_index("Leftovers")
+    def least_effective_resistance(self, nonedgesonly=True):
+        r"""
+        Return a list of pairs of nodes with the least effective resistance.
+
+        The resistance distance between vertices `i` and `j` of a simple
+        connected graph `G` is defined as the effective resistance between the
+        two vertices on an electrical network constructed from `G` replacing
+        each edge of the graph by a unit (1 ohm) resistor.
+
+        INPUT:
+
+        - ``nonedgesonly`` -- Boolean (default: `True`); if true, assign zero
+          resistance to pairs of adjacent vertices
+
+        OUTPUT: list
+
+        EXAMPLES:
+
+        Pairs of non-adjacent nodes with least effective resitance in a
+        straight linear 2-tree on 6 vertices::
+
+            sage: G = Graph([(0,1),(0,2),(1,2),(1,3),(3,5),(2,4),(2,3),(3,4),(4,5)])
+            sage: G.least_effective_resistance()
+            [(1, 4)]
+
+        Pairs of (adjacent or non-adjacent) nodes with least effective
+        resitance in a straight linear 2-tree on 6 vertices ::
+
+            sage: G.least_effective_resistance(nonedgesonly = False)
+            [(2, 3)]
+
+        Pairs of non-adjacent nodes with least effective resitance in a fan on
+        6 vertices counting only non-adjacent vertex pairs ::
+
+            sage: H = Graph([(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(1,2),(2,3),(3,4),(4,5)])
+            sage: H.least_effective_resistance()
+            [(2, 4)]
+
+        .. SEEALSO::
+
+            * :meth:`effective_resistance_matrix` --
+              a similar method giving a matrix full of all effective
+              resistances
+
+            * :meth:`effective_resistance` --
+              compuetes effective resistance for a single node pair
+
+            * See :wikipedia:`Resistance_distance` for more details.
+
+
+        TESTS::
+
+            sage: graphs.CompleteGraph(4).least_effective_resistance()
+            []
+            sage: graphs.CompleteGraph(4).least_effective_resistance(nonedgesonly=False)
+            [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
+            sage: Graph(1).least_effective_resistance()
+            []
+            sage: G = Graph([(0,1),(1,2),(2,3),(3,0),(0,2)])
+            sage: G.least_effective_resistance()
+            [(1, 3)]
+        """
+        n = self.order()
+        if not n:
+            raise ValueError('unable to compute least resistance on empty Graph')
+        self._scream_if_not_simple()
+        if not self.is_connected():
+            raise ValueError('the Graph is not a connected graph')
+        if nonedgesonly and self.is_clique():
+            return []
+        verts = list(self)
+        verttoidx = {u: i for i, u in enumerate(verts)}
+        S = self.effective_resistance_matrix(vertices=verts, nonedgesonly=nonedgesonly)
+        if nonedgesonly:
+            edges = self.complement().edges(labels=False)
+        else:
+            edges = [(verts[i], verts[j]) for i in range(n) for j in range(i + 1, n)]
+            
+        rmin = min(S[(verttoidx[e[0]], verttoidx[e[1]])] for e in edges)
+        return [e for e in edges if S[(verttoidx[e[0]], verttoidx[e[1]])] == rmin]
+        
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
     from sage.graphs.asteroidal_triples import is_asteroidal_triple_free

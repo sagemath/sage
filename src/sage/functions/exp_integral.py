@@ -51,6 +51,7 @@ from __future__ import division, print_function
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
 from sage.structure.all import parent
+from sage.misc.latex import latex
 from sage.libs.mpmath import utils as mpmath_utils
 mpmath_utils_call = mpmath_utils.call # eliminate some overhead in _evalf_
 
@@ -157,7 +158,6 @@ class Function_exp_integral_e(BuiltinFunction):
 
         """
         BuiltinFunction.__init__(self, "exp_integral_e", nargs=2,
-                                 latex_name=r'exp_integral_e',
                                  conversions=dict(maxima='expintegral_e',
                                                   sympy='expint'))
 
@@ -222,6 +222,17 @@ class Function_exp_integral_e(BuiltinFunction):
         """
         import mpmath
         return mpmath_utils.call(mpmath.expint, n, z, parent=parent)
+
+    def _print_latex_(self, n, z):
+        """
+        Custom ``_print_latex_`` method.
+
+        EXAMPLES::
+
+            sage: latex(exp_integral_e(1, -x - 1))
+            E_{1}\left(-x - 1\right)
+        """
+        return r"E_{{{}}}\left({}\right)".format(latex(n), latex(z))
 
     def _derivative_(self, n, z, diff_param=None):
         """
@@ -310,7 +321,6 @@ class Function_exp_integral_e1(BuiltinFunction):
 
         """
         BuiltinFunction.__init__(self, "exp_integral_e1", nargs=1,
-                                 latex_name=r'exp_integral_e1',
                                  conversions=dict(maxima='expintegral_e1',
                                                   sympy='E1'))
 
@@ -326,6 +336,18 @@ class Function_exp_integral_e1(BuiltinFunction):
         """
         import mpmath
         return mpmath_utils_call(mpmath.e1, z, parent=parent)
+
+
+    def _print_latex_(self, z):
+        """
+        Custom ``_print_latex_`` method.
+
+        EXAMPLES::
+
+            sage: latex(exp_integral_e1(2))
+            E_{1}\left(2\right)
+        """
+        return r"E_{{1}}\left({}\right)".format(latex(z))
 
     def _derivative_(self, z, diff_param=None):
         """

@@ -47,13 +47,15 @@ SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
     case $st in
         0) true;; # Success
 
-        63|127)  # Autotools not installed or version too old
+        16|63|127)  # no m4 for pkg-config, or autotools not installed, or version too old
             if [ $DOWNLOAD = yes ]; then
                 echo >&2 "Bootstrap failed, downloading required files instead."
                 bootstrap-download || exit $?
             else
                 if [ $st -eq 127 ]; then
                     verb="install"
+                elif [ $st -eq 16 ]; then
+                    verb="install pkg-config m4 macros for"
                 else
                     verb="upgrade"
                 fi

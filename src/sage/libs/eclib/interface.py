@@ -13,62 +13,25 @@ and call methods that are implemented using this module.
 
    This interface is a direct library-level interface to ``eclib``,
    including the 2-descent program ``mwrank``.
+
+TESTS:
+
+Check that ``eclib`` is imported as needed::
+
+    sage: [k for k in sys.modules if k.startswith("sage.libs.eclib")]
+    []
+    sage: EllipticCurve('11a1').mwrank_curve()
+    y^2+ y = x^3 - x^2 - 10*x - 20
+    sage: [k for k in sys.modules if k.startswith("sage.libs.eclib")]
+    ['...']
 """
 
 from sage.structure.sage_object import SageObject
+from sage.rings.all import Integer
 from sage.rings.integer_ring import IntegerRing
 
-def get_precision():
-    r"""
-    Return the global NTL real number precision.
+from .mwrank import _Curvedata, _two_descent, _mw
 
-    See also :meth:`set_precision`.
-
-    .. warning::
-
-       The internal precision is binary.  This function multiplies the
-       binary precision by 0.3 (`=\log_2(10)` approximately) and
-       truncates.
-
-    OUTPUT:
-
-    (int) The current decimal precision.
-
-    EXAMPLES::
-
-        sage: mwrank_get_precision()
-        50
-    """
-    # don't want to load mwrank every time Sage starts up, so we do
-    # the import here.
-    from sage.libs.eclib.mwrank import get_precision
-    return get_precision()
-
-def set_precision(n):
-    r"""
-    Set the global NTL real number precision.  This has a massive
-    effect on the speed of mwrank calculations.  The default (used if
-    this function is not called) is ``n=50``, but it might have to be
-    increased if a computation fails.  See also :meth:`get_precision`.
-
-    INPUT:
-
-    - ``n`` (long) -- real precision used for floating point
-      computations in the library, in decimal digits.
-
-    .. warning::
-
-       This change is global and affects *all* future calls of eclib
-       functions by Sage.
-
-    EXAMPLES::
-
-        sage: mwrank_set_precision(20)
-    """
-    # don't want to load mwrank every time Sage starts up, so we do
-    # the import here.
-    from sage.libs.eclib.mwrank import set_precision
-    set_precision(n)
 
 class mwrank_EllipticCurve(SageObject):
     r"""
@@ -140,17 +103,13 @@ class mwrank_EllipticCurve(SageObject):
             sage: e.ainvs()
             [0, 1, 1, -2, 0]
         """
-        # import here to save time during startup (mwrank takes a while to init)
 
-        from sage.libs.eclib.mwrank import _Curvedata
+        ainvs = list(ainvs)
+        if len(ainvs) > 5:
+            raise TypeError("ainvs must have length at most 5")
 
-        # if not isinstance(ainvs, list) and len(ainvs) <= 5:
-        if not isinstance(ainvs, (list,tuple)) or not len(ainvs) <= 5:
-            raise TypeError("ainvs must be a list or tuple of length at most 5.")
-
-        # Pad ainvs on the beginning by 0's, so e.g.
-        # [a4,a5] works.
-        ainvs = [0]*(5-len(ainvs)) + ainvs
+        # Pad ainvs on the beginning by 0's, so e.g. [a4, a6] works
+        ainvs = [0] * (5 - len(ainvs)) + ainvs
 
         # Convert each entry to an int
         try:
@@ -203,7 +162,7 @@ class mwrank_EllipticCurve(SageObject):
 
             sage: E = mwrank_EllipticCurve([0, 0, 1, -1, 0])
             sage: E.set_verbose(1)
-            sage: E.saturate() # tol 1e-14
+            sage: E.saturate() # tol 1e-10
             Basic pair: I=48, J=-432
             disc=255744
             2-adic index bound = 2
@@ -411,7 +370,6 @@ class mwrank_EllipticCurve(SageObject):
             sage: E.two_descent(verbose=False)
             True
         """
-        from sage.libs.eclib.mwrank import _two_descent # import here to save time
         first_limit = int(first_limit)
         second_limit = int(second_limit)
         n_aux = int(n_aux)
@@ -655,7 +613,6 @@ class mwrank_EllipticCurve(SageObject):
             [[0, -1, 1]]
         """
         self.saturate()
-        from sage.rings.all import Integer
         L = eval(self.__two_descent_data().getbasis().replace(":",","))
         return [[Integer(x), Integer(y), Integer(z)] for (x,y,z) in L]
 
@@ -910,7 +867,6 @@ class mwrank_MordellWeil(SageObject):
             verb = 1
         else:
             verb = 0
-        from sage.libs.eclib.mwrank import _mw # import here to save time
         self.__mw = _mw(curve._curve_data(), verb, pp, maxr)
 
     def __reduce__(self):
@@ -1007,7 +963,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ.points()
             [[1547, -2967, 343], [2707496766203306, 864581029138191, 2969715140223272], [-13422227300, -49322830557, 12167000000]]
             sage: EQ.regulator()
-            375.42919921875
+            375.42920288254555
             sage: EQ.saturate(2)  # points were not 2-saturated
             saturating basis...Saturation index bound = 93
             WARNING: saturation at primes p > 2 will not be done;
@@ -1018,7 +974,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ.points()
             [[-2, 3, 1], [2707496766203306, 864581029138191, 2969715140223272], [-13422227300, -49322830557, 12167000000]]
             sage: EQ.regulator()
-            93.8572998046875
+            93.85730072063639
             sage: EQ.saturate(3)  # points were not 3-saturated
             saturating basis...Saturation index bound = 46
             WARNING: saturation at primes p > 3 will not be done;
@@ -1029,7 +985,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ.points()
             [[-2, 3, 1], [-14, 25, 8], [-13422227300, -49322830557, 12167000000]]
             sage: EQ.regulator()
-            10.4285888671875
+            10.4285889689596
             sage: EQ.saturate(5)  # points were not 5-saturated
             saturating basis...Saturation index bound = 15
             WARNING: saturation at primes p > 5 will not be done;
@@ -1040,7 +996,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ.points()
             [[-2, 3, 1], [-14, 25, 8], [1, -1, 1]]
             sage: EQ.regulator()
-            0.4171435534954071
+            0.417143558758384
             sage: EQ.saturate()   # points are now saturated
             saturating basis...Saturation index bound = 3
             Checking saturation at [ 2 3 ]
@@ -1128,7 +1084,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ.rank()
             3
             sage: EQ.regulator()
-            0.4171435534954071
+            0.417143558758384
 
         We do in fact now have a full Mordell-Weil basis.
 
@@ -1169,7 +1125,7 @@ class mwrank_MordellWeil(SageObject):
 
         - ``unsatlist`` (list of ints) -- list of primes at which
           saturation could not be proved or achieved.  Increasing the
-          decimal precision should correct this, since it happens when
+          precision should correct this, since it happens when
           a linear combination of the points appears to be a multiple
           of `p` but cannot be divided by `p`.  (Note that ``eclib``
           uses floating point methods based on elliptic logarithms to
@@ -1211,7 +1167,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ
             Subgroup of Mordell-Weil group: [[1547:-2967:343], [2707496766203306:864581029138191:2969715140223272], [-13422227300:-49322830557:12167000000]]
             sage: EQ.regulator()
-            375.42919921875
+            375.42920288254555
 
         Now we saturate at `p=2`, and gain index 2::
 
@@ -1225,7 +1181,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ
             Subgroup of Mordell-Weil group: [[-2:3:1], [2707496766203306:864581029138191:2969715140223272], [-13422227300:-49322830557:12167000000]]
             sage: EQ.regulator()
-            93.8572998046875
+            93.85730072063639
 
         Now we saturate at `p=3`, and gain index 3::
 
@@ -1239,7 +1195,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ
             Subgroup of Mordell-Weil group: [[-2:3:1], [-14:25:8], [-13422227300:-49322830557:12167000000]]
             sage: EQ.regulator()
-            10.4285888671875
+            10.4285889689596
 
         Now we saturate at `p=5`, and gain index 5::
 
@@ -1253,7 +1209,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ
             Subgroup of Mordell-Weil group: [[-2:3:1], [-14:25:8], [1:-1:1]]
             sage: EQ.regulator()
-            0.4171435534954071
+            0.417143558758384
 
         Finally we finish the saturation.  The output here shows that
         the points are now provably saturated at all primes::
@@ -1280,7 +1236,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ
             Subgroup of Mordell-Weil group: [[-2:3:1], [-14:25:8], [1:-1:1]]
             sage: EQ.regulator()
-            0.4171435534954071
+            0.417143558758384
 
         But we would still need to use the :meth:`saturate()` function to
         verify that full saturation has been done::
@@ -1369,17 +1325,6 @@ class mwrank_MordellWeil(SageObject):
 
         moduli_option = 0  # Use Stoll's sieving program... see strategies in ratpoints-1.4.c
 
-        ##            moduli_option -- int (default: 0); if > 0; a flag used to determine
-        ##                    the moduli that are used in sieving
-        ##                       1 -- first 10 odd primes; the first one you
-        ##                            would think of.
-        ##                       2 -- three composites; $2^6\cdot 3^4$, ... TODO
-        ##                             (from German mathematician J. Gebel;
-        ##                               personal conversation about SIMATH)
-        ##                       3 -- nine prime powers; $2^5, \ldots$;
-        ##                            like 1 but includes powers of small primes
-        ##                    TODO: Extract the meaning from mwprocs.cc; line 776 etc.
-
         verbose = bool(verbose)
         self.__mw.search(height_limit, moduli_option, verbose)
 
@@ -1408,5 +1353,4 @@ class mwrank_MordellWeil(SageObject):
 
         """
         L = eval(self.__mw.getbasis().replace(":",","))
-        from sage.rings.all import Integer
         return [[Integer(x), Integer(y), Integer(z)] for (x,y,z) in L]

@@ -360,7 +360,7 @@ def signature(self):
 
         an integer
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,0,0,-4,3,11,3])
         sage: Q.signature()
@@ -873,7 +873,7 @@ def compute_definiteness_string_by_determinants(self):
 
         string describing the definiteness
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1,1])
         sage: Q.compute_definiteness_string_by_determinants()

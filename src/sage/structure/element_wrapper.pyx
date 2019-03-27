@@ -21,8 +21,9 @@ AUTHORS:
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, PyObject_RichCompare
 
+from sage.structure.coerce cimport coercion_model
+from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
-from sage.structure.element cimport Element, coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
 from copy import copy
 
@@ -365,8 +366,6 @@ cdef class ElementWrapper(Element):
             sage: l11 < l21              # parents differ
             False
             sage: l11 < 1                # class differ
-            False
-            sage: 1 < l11                # random, since it depends on what the Integer 1 decides to do, which may just involve memory locations
             False
         """
         return (self.__class__ is other.__class__

@@ -185,8 +185,11 @@ cpdef kruskal(G, wfunction=None, bint check=False):
         ....: "c":{"d":7, "f":4, "i":2}, "d":{"e":9, "f":14},
         ....: "e":{"f":10}, "f":{"g":2}, "g":{"h":1, "i":6}, "h":{"i":7}})
         sage: G.weighted(True)
-        sage: sorted(kruskal(G, check=True))
-        [('a', 'b', 4), ('a', 'h', 8), ('c', 'd', 7), ('c', 'f', 4), ('c', 'i', 2), ('d', 'e', 9), ('f', 'g', 2), ('g', 'h', 1)]
+        sage: T = Graph(kruskal(G, check=True), format='list_of_edges')
+        sage: sum(T.edge_labels())
+        37
+        sage: T.is_tree()
+        True
 
     An example with custom edge labels::
 

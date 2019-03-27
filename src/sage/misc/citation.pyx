@@ -5,7 +5,7 @@ Dependency usage tracking for citations
 from __future__ import absolute_import
 
 from sage.misc.all import tmp_filename
-from sage.env import SAGE_ROOT
+from sage.env import SAGE_LOCAL
 
 systems = {}
 systems['PARI'] = ['cypari2', 'sage.interfaces.gp']
@@ -48,16 +48,18 @@ systems['M4RI'] = ['sage.matrix.matrix_mod2_dense']
 systems['Givaro'] = ['sage.rings.finite_rings.element_givaro']
 systems['PolyBoRi'] = ['sage.rings.polynomial.pbori']
 
+
 def get_systems(cmd):
     """
-    Returns a list of the systems used in running the command ``cmd``.
+    Return a list of the systems used in running the command ``cmd``.
+
     Note that the results can sometimes include systems that did not
     actually contribute to the computation. Due to caching, it
     could miss some dependencies as well.
 
     INPUT:
 
-    - ``cmd`` - a string to run
+    - ``cmd`` -- a string to run
 
     .. WARNING::
 
@@ -74,7 +76,7 @@ def get_systems(cmd):
         sage: integrate(x^2, x)  # Priming coercion model
         1/3*x^3
         sage: get_systems('integrate(x^2, x)')
-        ['ginac', 'Maxima']
+        ['Maxima', 'ginac']
         sage: R.<x,y,z> = QQ[]
         sage: I = R.ideal(x^2+y^2, z^2+y)
         sage: get_systems('I.primary_decomposition()')
@@ -110,7 +112,8 @@ def get_systems(cmd):
     stats = pstats.Stats(filename)
 
     #Strings is a list of method names and modules which get run
-    strings = [a[0].replace(SAGE_ROOT, "") + " " + a[2] for a in stats.stats.keys()]
+    strings = [a[0].replace(SAGE_LOCAL, "") + " " + a[2]
+               for a in stats.stats]
 
     #Remove trivial functions
     bad_res = [re.compile(r'is_.*Element'), re.compile("is_[a-z_]*_type")]
@@ -128,7 +131,7 @@ def get_systems(cmd):
         if any((r in s) or (r.replace('.', '/') in s)
                for r in systems[system] for s in strings):
             systems_used.append(system)
-    return systems_used
+    return sorted(systems_used)
 
 
 cdef extern from *:
@@ -139,6 +142,7 @@ cdef extern from *:
         0
         #endif
         """
+
 
 cpdef inline bint cython_profile_enabled():
     """

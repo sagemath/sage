@@ -785,7 +785,7 @@ cdef class GLPKBackend(GenericBackend):
             (ub if ub != +DBL_MAX else None)
             )
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         """
         Add a column.
 
@@ -1466,10 +1466,14 @@ cdef class GLPKBackend(GenericBackend):
 
             sage: p.add_variable()
             0
-            sage: p.variable_upper_bound(0, 'hey!')
+            sage: p.variable_upper_bound(0, 'hey!')  # py2
             Traceback (most recent call last):
             ...
             TypeError: a float is required
+            sage: p.variable_upper_bound(0, 'hey!')  # py3
+            Traceback (most recent call last):
+            ...
+            TypeError: must be real number, not str
         """
         cdef double x
         cdef double min
@@ -1557,10 +1561,14 @@ cdef class GLPKBackend(GenericBackend):
 
             sage: p.add_variable()
             0
-            sage: p.variable_lower_bound(0, 'hey!')
+            sage: p.variable_lower_bound(0, 'hey!')  # py2
             Traceback (most recent call last):
             ...
             TypeError: a float is required
+            sage: p.variable_lower_bound(0, 'hey!')  # py3
+            Traceback (most recent call last):
+            ...
+            TypeError: must be real number, not str
         """
         cdef double x
         cdef double max

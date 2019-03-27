@@ -101,7 +101,7 @@ def CongruenceSubgroup_constructor(*args):
     if not hasattr(R, "cover_ring") or R.cover_ring() != ZZ:
         raise TypeError("Ring of definition must be Z / NZ for some N")
 
-    if not all([x.matrix().det() == 1 for x in G.gens()]):
+    if not all(x.matrix().det() == 1 for x in G.gens()):
         raise ValueError("Group must be contained in SL(2, Z / N)")
     GG = _minimize_level(G)
     if GG in ZZ:

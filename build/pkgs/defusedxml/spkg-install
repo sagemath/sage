@@ -1,0 +1,1 @@
+cd src && sdh_pip_install .

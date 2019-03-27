@@ -298,7 +298,7 @@ def __find_eisen_chars_gammaH(N, H, k):
     """
     params = []
     for chi in dirichlet.DirichletGroup(N):
-        if all([chi(h) == 1 for h in H]):
+        if all(chi(h) == 1 for h in H):
             params += __find_eisen_chars(chi, k)
     return params
 

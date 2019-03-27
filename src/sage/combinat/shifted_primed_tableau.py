@@ -2199,7 +2199,6 @@ def _add_strip(sub_tab, full_tab, length):
                 if cliff == 0:
                     row += 1
                     primed_strip.append(0)
-                    pass
                 primed_strip.extend([int(primed_list[i] > j)
                                      for j in range(cliff)])
                 row += cliff

@@ -20,7 +20,7 @@ Functions and classes
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 from __future__ import print_function, absolute_import
 from six import iteritems
@@ -274,7 +274,6 @@ class experimental(object):
         from sage.misc.decorators import sage_wraps
         @sage_wraps(func)
         def wrapper(*args, **kwds):
-            from sage.misc.superseded import experimental_warning
             if not wrapper._already_issued:
                 experimental_warning(self.trac_number,
                             'This class/method/function is marked as '
@@ -288,8 +287,8 @@ class experimental(object):
 
         return wrapper
 
-from sage.structure.sage_object import SageObject
-class __experimental_self_test(SageObject):
+
+class __experimental_self_test(object):
     r"""
     This is a class only to demonstrate with a doc-test that the @experimental
     decorator only issues a warning message once (see :trac:`20601`).

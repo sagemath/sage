@@ -571,8 +571,8 @@ cdef class SubgraphSearch:
 
     The algorithm is a brute-force search.  Let `V(H) =
     \{h_1,\dots,h_k\}`.  It first tries to find in `G` a possible
-    representant of `h_1`, then a representant of `h_2` compatible
-    with `h_1`, then a representant of `h_3` compatible with the first
+    representative of `h_1`, then a representative of `h_2` compatible
+    with `h_1`, then a representative of `h_3` compatible with the first
     two, etc.
 
     This way, most of the time we need to test far less than `k!
@@ -734,7 +734,7 @@ cdef class SubgraphSearch:
         self.stack[0] = 0
         self.stack[1] = -1
 
-        # Number of representants we have already found. Set to 1 as vertex 0
+        # Number of representatives we have already found. Set to 1 as vertex 0
         # is already part of the partial copy of H in G.
         self.active = 1
 
@@ -841,7 +841,7 @@ cdef class SubgraphSearch:
         # as long as there is a non-void partial copy of H in G
         while self.active >= 0:
             # If we are here and found nothing yet, we try the next possible
-            # vertex as a representant of the active i-th vertex of H.
+            # vertex as a representative of the active i-th vertex of H.
             self.i = self.stack[self.active] + 1
             # Looking for a vertex that is not busy and compatible with the
             # partial copy we have of H.
@@ -868,7 +868,7 @@ cdef class SubgraphSearch:
                     else:
                         self.i += 1
 
-            # If we have found a good representant of H's i-th vertex in G
+            # If we have found a good representative of H's i-th vertex in G
             if self.i < self.ng:
 
                 # updating the last vertex of the stack
@@ -890,7 +890,7 @@ cdef class SubgraphSearch:
                     # we begin the search of the next vertex at 0
                     self.stack[self.active] = -1
 
-            # If we found no representant for the i-th vertex, it
+            # If we found no representative for the i-th vertex, it
             # means that we cannot extend the current copy of H so we
             # update the status of stack[active] and prepare to change
             # the previous vertex.
@@ -1231,7 +1231,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         (False, [0, 1, 2, 3])
         sage: fh(G, find_path=True)
         (False, [0, 1, 2, 3])
-        
+
     """
     from sage.misc.prandom import randint
     cdef int n = G.order()

@@ -22,7 +22,8 @@ from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 from sage.misc.misc import repr_lincomb
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.structure.element cimport have_same_parent, coercion_model, parent
+from sage.structure.element cimport have_same_parent, parent
+from sage.structure.coerce cimport coercion_model
 from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
 from sage.structure.element_wrapper cimport ElementWrapper
 from sage.structure.richcmp cimport richcmp, richcmp_not_equal
@@ -1146,8 +1147,8 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
 
             sage: L = lie_algebras.Affine(QQ, ['A',1,1])
             sage: e1,f1,h1,e0,f0,c,d = list(L.lie_algebra_generators())
-            sage: e0.bracket(e1) + d + e1 + c + 3*d
-            (E[alpha[1]])#t^0 + (-h1)#t^1 + c + 4*d
+            sage: e0.bracket(e1) + d + c + 3*d
+            (-h1)#t^1 + c + 4*d
         """
         cdef UntwistedAffineLieAlgebraElement rt = <UntwistedAffineLieAlgebraElement> other
         return type(self)(self._parent, add(self._t_dict, rt._t_dict),
@@ -1162,8 +1163,8 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
 
             sage: L = lie_algebras.Affine(QQ, ['A',1,1])
             sage: e1,f1,h1,e0,f0,c,d = list(L.lie_algebra_generators())
-            sage: e0.bracket(e1) + d - e1 + c - 3*d
-            (-E[alpha[1]])#t^0 + (-h1)#t^1 + c + -2*d
+            sage: d - e1 + c - 3*d
+            (-E[alpha[1]])#t^0 + c + -2*d
             sage: 4*c - e0.bracket(f0)
             (h1)#t^0
             sage: 4*c - e0.bracket(f0) - h1
@@ -1187,8 +1188,8 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
             sage: L = lie_algebras.Affine(QQ, ['A',1,1])
             sage: e1,f1,h1,e0,f0,c,d = list(L.lie_algebra_generators())
             sage: x = e0.bracket(e1) + d + e1 + c + 3*d
-            sage: -x
-            (-E[alpha[1]])#t^0 + (h1)#t^1 + -1*c + -4*d
+            sage: -x + e1
+            (h1)#t^1 + -1*c + -4*d
         """
         return type(self)(self._parent, negate(self._t_dict),
                           -self._c_coeff, -self._d_coeff)
@@ -1485,34 +1486,36 @@ cdef class LieObject(SageObject):
         """
         raise NotImplementedError
 
+
 cdef class LieGenerator(LieObject):
     """
     A wrapper around an object so it can ducktype with and do
     comparison operations with :class:`LieBracket`.
     """
-    def __init__(self, name):
+    def __init__(self, name, index):
         """
-        Initalize ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator
-            sage: x = LieGenerator('x')
+            sage: x = LieGenerator('x', 0)
             sage: TestSuite(x).run()
         """
         self._word = (name,)
         self._name = name
+        self._index_word = (index,)
 
     def __reduce__(self):
         """
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator
-            sage: x = LieGenerator('x')
+            sage: x = LieGenerator('x', 0)
             sage: loads(dumps(x)) == x
             True
         """
-        return (LieGenerator, (self._name,))
+        return (LieGenerator, (self._name, self._index_word[0]))
 
     def _repr_(self):
         """
@@ -1521,7 +1524,7 @@ cdef class LieGenerator(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator
-            sage: LieGenerator('x')
+            sage: LieGenerator('x', 0)
             x
         """
         return self._name
@@ -1535,7 +1538,7 @@ cdef class LieGenerator(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator
-            sage: x = LieGenerator('x')
+            sage: x = LieGenerator('x', 0)
             sage: hash(x) == hash('x')
             True
         """
@@ -1548,15 +1551,15 @@ cdef class LieGenerator(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: x == y
             False
             sage: x < y
             True
             sage: y < x
             False
-            sage: z = LieGenerator('x')
+            sage: z = LieGenerator('x', 0)
             sage: x == z
             True
             sage: z = LieBracket(x, y)
@@ -1576,7 +1579,7 @@ cdef class LieGenerator(LieObject):
             # when the comparison ``self < rhs`` returns a
             # NotImplemented error.)
         if isinstance(rhs, LieGenerator):
-            return richcmp(self._name, <LieGenerator>(rhs)._name, op)
+            return richcmp(self._index_word[0], <LieGenerator>(rhs)._index_word[0], op)
         return op == Py_NE
 
     def _im_gens_(self, codomain, im_gens, names):
@@ -1609,7 +1612,7 @@ cdef class LieGenerator(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator
-            sage: x = LieGenerator('x')
+            sage: x = LieGenerator('x', 0)
             sage: x.to_word()
             ('x',)
         """
@@ -1626,14 +1629,15 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: z = LieBracket(x, y)
             sage: TestSuite(z).run()
         """
         self._left = l
         self._right = r
         self._word = ()
+        self._index_word = self._left._index_word + self._right._index_word
         self._hash = -1
 
     def __reduce__(self):
@@ -1641,8 +1645,8 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: z = LieBracket(x, y)
             sage: loads(dumps(z)) == z
             True
@@ -1656,8 +1660,8 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: LieBracket(x, y)
             [x, y]
         """
@@ -1670,8 +1674,8 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: z = LieBracket(x, y)
             sage: latex(z)
             \left[ x , y \right]
@@ -1686,8 +1690,8 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: z = LieBracket(x, y)
             sage: z[0]
             x
@@ -1711,9 +1715,9 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
-            sage: z = LieGenerator('z')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
+            sage: z = LieGenerator('z', 2)
             sage: b = LieBracket(x, y)
             sage: c = LieBracket(y, x)
             sage: b == c
@@ -1751,9 +1755,9 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
-            sage: z = LieGenerator('z')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
+            sage: z = LieGenerator('z', 2)
             sage: b = LieBracket(x, y)
             sage: hash(b) == hash(b)
             True
@@ -1823,8 +1827,8 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: b = LieBracket(x, y)
             sage: c = LieBracket(b, x)
             sage: c.to_word()
@@ -1851,8 +1855,8 @@ cdef class GradedLieBracket(LieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, GradedLieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: b = GradedLieBracket(x, y, 2)
             sage: TestSuite(b).run()
         """
@@ -1864,8 +1868,8 @@ cdef class GradedLieBracket(LieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, GradedLieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: b = GradedLieBracket(x, y, 2)
             sage: loads(dumps(b)) == b
             True
@@ -1879,9 +1883,9 @@ cdef class GradedLieBracket(LieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, GradedLieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
-            sage: z = LieGenerator('z')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
+            sage: z = LieGenerator('z', 2)
             sage: b = GradedLieBracket(x, y, 2)
             sage: b < x
             False
@@ -1911,9 +1915,9 @@ cdef class GradedLieBracket(LieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, GradedLieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
-            sage: z = LieGenerator('z')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
+            sage: z = LieGenerator('z', 2)
             sage: b = GradedLieBracket(x, y, 2)
             sage: hash(b) == hash(b)
             True
@@ -1940,13 +1944,13 @@ cdef class LyndonBracket(GradedLieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LyndonBracket
-            sage: x,y,z = [LieGenerator(letter) for letter in ['x', 'y', 'z']]
+            sage: x,y,z = [LieGenerator(letter, ind) for letter,ind in zip(['x', 'y', 'z'],range(3))]
             sage: LyndonBracket(x, LyndonBracket(y, z, 2), 3) < LyndonBracket(LyndonBracket(y, z, 2), x, 3)
             True
         """
         if not isinstance(rhs, LieObject):
             return op == Py_NE
-        return richcmp(self.to_word(), <LieObject>(rhs).to_word(), op)
+        return richcmp(self._index_word, <LieObject>(rhs)._index_word, op)
 
     def __hash__(self):
         """
@@ -1955,12 +1959,13 @@ cdef class LyndonBracket(GradedLieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LyndonBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: b = LyndonBracket(x, y, 2)
-            sage: hash(b) == hash((x, y))
+            sage: hash(b) == hash((0, 1))
             True
         """
         if self._hash == -1:
-            self._hash = hash(self.to_word())
+            self._hash = hash(self._index_word)
         return self._hash
+

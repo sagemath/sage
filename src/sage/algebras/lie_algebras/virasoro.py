@@ -331,6 +331,22 @@ class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
         IndexedGenerators.__init__(self, ZZ, prefix='d', bracket='[',
                                    sorting_key=_basis_key)
 
+    def _basis_key(self, m):
+        """
+        Return a key for sorting for the index ``m``.
+
+        TESTS::
+
+            sage: d = lie_algebras.VirasoroAlgebra(QQ)
+            sage: d._basis_key(3)
+            3
+            sage: d._basis_key('c')
+            +Infinity
+            sage: d._basis_key(4) < d._basis_key('c')
+            True
+        """
+        return _basis_key(m)
+
     def _repr_term(self, m):
         """
         Return a string representation of the term indexed by ``m``.

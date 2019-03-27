@@ -399,7 +399,7 @@ class Set_object(Set_generic):
         The following is random, illustrating that comparison of
         sets is not the subset relation, when they are not equal::
 
-            sage: Primes() < Set(QQ)             # random
+            sage: Primes() < Set(QQ)             # random  # py2
             True or False
         """
         if not isinstance(right, Set_object):
@@ -892,9 +892,10 @@ class Set_object_enumerated(Set_object):
             TypeError: unhashable type: 'set'
             sage: s = X.frozenset(); s
             frozenset({0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1})
-            sage: hash(s)
-            -1390224788            # 32-bit
-             561411537695332972    # 64-bit
+
+            sage: hash(s) != hash(tuple(X.set()))
+            True
+
             sage: type(s)
             <... 'frozenset'>
         """

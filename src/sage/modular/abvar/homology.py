@@ -31,7 +31,7 @@ EXAMPLES::
     doctest:warning
     ...
     DeprecationWarning: The default order on free modules has changed. The old ordering is in sage.modules.free_module.EchelonMatrixKey
-    See http://trac.sagemath.org/23878 for details.
+    See http://trac.sagemath.org/23978 for details.
     [
     Submodule of rank 2 of Integral Homology of Abelian variety J0(43) of dimension 3,
     Submodule of rank 4 of Integral Homology of Abelian variety J0(43) of dimension 3
@@ -388,10 +388,10 @@ class IntegralHomology(Homology_abvar):
             sage: J0(48).integral_homology().hecke_bound()
             16
             sage: t = J1(13).integral_homology().hecke_matrix(3); t
+            [-2  2  2 -2]
+            [-2  0  2  0]
+            [ 0  0  0 -2]
             [ 0  0  2 -2]
-            [-2 -2  0  2]
-            [-2 -2  0  0]
-            [ 0 -2  2 -2]
             sage: t.base_ring()
             Integer Ring
         """
@@ -461,17 +461,17 @@ class RationalHomology(Homology_abvar):
         EXAMPLES::
 
             sage: t = J1(13).homology(QQ).hecke_matrix(3); t
+            [-2  2  2 -2]
+            [-2  0  2  0]
+            [ 0  0  0 -2]
             [ 0  0  2 -2]
-            [-2 -2  0  2]
-            [-2 -2  0  0]
-            [ 0 -2  2 -2]
             sage: t.base_ring()
             Rational Field
             sage: t = J1(13).homology(GF(3)).hecke_matrix(3); t
+            [1 2 2 1]
+            [1 0 2 0]
+            [0 0 0 1]
             [0 0 2 1]
-            [1 1 0 2]
-            [1 1 0 0]
-            [0 1 2 1]
             sage: t.base_ring()
             Finite Field of size 3
         """
@@ -552,10 +552,10 @@ class Homology_over_base(Homology_abvar):
         EXAMPLES::
 
             sage: t = J1(13).homology(GF(3)).hecke_matrix(3); t
+            [1 2 2 1]
+            [1 0 2 0]
+            [0 0 0 1]
             [0 0 2 1]
-            [1 1 0 2]
-            [1 1 0 0]
-            [0 1 2 1]
             sage: t.base_ring()
             Finite Field of size 3
         """

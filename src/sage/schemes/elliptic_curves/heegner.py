@@ -4232,7 +4232,7 @@ class KolyvaginPoint(HeegnerPoint):
             sage: PP = P.numerical_approx()
             sage: [c.real() for c in PP]
             [6.00000000000000, -15.0000000000000, 1.00000000000000]
-            sage: all([c.imag().abs() < 1e-14 for c in PP])
+            sage: all(c.imag().abs() < 1e-14 for c in PP)
             True
             sage: P.trace_to_real_numerical()
             (1.61355529131986 : -2.18446840788880 : 1.00000000000000)

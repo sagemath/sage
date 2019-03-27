@@ -5,7 +5,7 @@ This module provides helper class for wrapping GAP groups via
 :mod:`~sage.libs.gap.libgap`. See :mod:`~sage.groups.free_group` for an
 example how they are used.
 
-The parent class keeps track of the libGAP element object, to use it
+The parent class keeps track of the GAP element object, to use it
 in your Python parent you have to derive both from the suitable group
 parent and :class:`ParentLibGAP` ::
 
@@ -234,7 +234,7 @@ class ParentLibGAP(SageObject):
             sage: diagonals = itertools.product((1,-1), repeat=3)
             sage: subgroup_gens = [diagonal_matrix(L) for L in diagonals]
             sage: G.subgroup(subgroup_gens)
-            Matrix group over Rational Field with 8 generators
+            Subgroup with 8 generators of Matrix group over Rational Field with 48 generators
 
         """
         generators = [ g if isinstance(g, GapElement) else self(g).gap()
@@ -292,7 +292,7 @@ class ParentLibGAP(SageObject):
 
         A :class:`~sage.libs.gap.element.GapElement`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: G = FreeGroup(2)
             sage: G._gap_gens()

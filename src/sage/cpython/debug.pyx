@@ -26,6 +26,16 @@ cdef extern from "sage/cpython/debugimpl.c":
 from .getattr cimport AttributeErrorMessage
 
 
+# Determine subtype_traverse, subtype_clear, subtype_dealloc functions
+# for type_debug(). These are the default tp_traverse, tp_clear and
+# tp_dealloc functions for heap types (= Python classes).
+cdef:
+    X = type("X", (), {})  # heap type
+    void* subtype_traverse "subtype_traverse" = (<PyTypeObject*>X).tp_traverse
+    void* subtype_clear "subtype_clear" = (<PyTypeObject*>X).tp_clear
+    void* subtype_dealloc "subtype_dealloc" = (<PyTypeObject*>X).tp_dealloc
+
+
 def shortrepr(obj, max=50):
     """
     Return ``repr(obj)`` bounded to ``max`` characters. If the string

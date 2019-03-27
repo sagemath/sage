@@ -2751,18 +2751,16 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         n = len(X)
         m = len(Y)
 
-        sol=False
+        sol = False
         T = spanning_stars(M)
 
-        for (x1,y1) in T:
+        for (x1, y1) in T:
             # The whiting out
             B = copy(M)
-            for (x,y) in product(range(n),range(m)):
-                if (x1!=x and y1!=y):
-                    if(M[x1,y]!=0 and
-                       M[x,y1]!=0 and
-                       M[x,y]!=0):
-                        B[x,y]=0
+            for (x, y) in product(range(n), range(m)):
+                if (x1 != x and y1 != y):
+                    if (M[x1, y] != 0 and M[x, y1] != 0 and M[x, y] != 0):
+                        B[x, y] = 0
 
             # remove row x1 and y1
             Xp = list(xrange(n))
@@ -2784,7 +2782,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 Q_rows = []
                 Q_cols = []
                 # make sure the matrix has rank 2
-                if(M.matrix_from_rows_and_columns(P_rows,P_cols).rank()==2):
+                if M.matrix_from_rows_and_columns(P_rows,P_cols).rank() == 2:
                     sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
                     if sol:
                         break
@@ -5869,7 +5867,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         if self._r_projection is None:
             R = self._basic_representation()._matrix_()
-            self._r_projection = R.transpose() * (R * R.transpose()).adjoint() * R
+            self._r_projection = R.transpose() * (R * R.transpose()).adjugate() * R
         return self._r_projection
 
     cpdef _invariant(self):

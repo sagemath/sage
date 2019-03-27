@@ -51,7 +51,7 @@ def _pushout_family(elements, initial=ZZ):
 
     - ``initial`` -- a parent
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.rings.tate_algebra_element import _pushout_family
 

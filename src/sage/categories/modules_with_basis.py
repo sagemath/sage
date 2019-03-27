@@ -1276,27 +1276,17 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: p = Partition([2,1])
-                sage: q = Partition([1,1,1])
-                sage: s = SymmetricFunctions(QQ).schur()
-                sage: a = s(p)
-                sage: a._coefficient_fast([2,1])
-                Traceback (most recent call last):
-                ...
-                TypeError: unhashable type: 'list'
-
-            ::
-
-                sage: a._coefficient_fast(p)
-                1
-                sage: a._coefficient_fast(q)
+                sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
+                sage: x[((0,0,0),(0,0,0))]
                 0
-                sage: a[p]
+                sage: x[((1,0,0),(0,0,0))]
                 1
-                sage: a[q]
-                0
             """
-            return self.monomial_coefficients(copy=False).get(m, self.base_ring().zero())
+            res = self.monomial_coefficients(copy=False).get(m)
+            if res is None:
+                return self.base_ring().zero()
+            else:
+                return res
 
         def coefficient(self, m):
             """

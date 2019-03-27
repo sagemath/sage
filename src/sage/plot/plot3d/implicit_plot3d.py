@@ -7,27 +7,27 @@ from .implicit_surface import ImplicitSurface
 
 def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
     r"""
-    Plots an isosurface of a function.
+    Plot an isosurface of a function.
 
     INPUT:
 
-    -  ``f`` - function
+    -  ``f`` -- function
 
-    -  ``xrange`` - a 2-tuple (x_min, x_max) or a 3-tuple (x, x_min, x_max)
+    -  ``xrange`` -- a 2-tuple (x_min, x_max) or a 3-tuple (x, x_min, x_max)
 
-    -  ``yrange`` - a 2-tuple (y_min, y_may) or a 3-tuple (y, y_min, y_may)
+    -  ``yrange`` -- a 2-tuple (y_min, y_max) or a 3-tuple (y, y_min, y_max)
 
-    -  ``zrange`` - a 2-tuple (z_min, z_maz) or a 3-tuple (z, z_min, z_maz)
+    -  ``zrange`` -- a 2-tuple (z_min, z_max) or a 3-tuple (z, z_min, z_max)
 
-    -  ``plot_points`` - (default: "automatic", which is 40) the number of
+    -  ``plot_points`` -- (default: "automatic", which is 40) the number of
        function evaluations in each direction. (The number of cubes in the
        marching cubes algorithm will be one less than this). Can be a triple of
        integers, to specify a different resolution in each of x,y,z.
 
-    -  ``contour`` - (default: 0) plot the isosurface f(x,y,z)==contour. Can be a
+    -  ``contour`` -- (default: 0) plot the isosurface f(x,y,z)==contour. Can be a
        list, in which case multiple contours are plotted.
 
-    -  ``region`` - (default: None) If region is given, it must be a Python
+    -  ``region`` -- (default: None) If region is given, it must be a Python
        callable. Only segments of the surface where region(x,y,z) returns a
        number >0 will be included in the plot. (Note that returning a Python
        boolean is acceptable, since True == 1 and False == 0).
@@ -588,16 +588,27 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
         sage: implicit_plot3d(x^2 + y^2 + z^2, (x,-2,2), (y,-2,2), (z,-2,2), contour=4, viewer='tachyon')
         Graphics3d Object
 
-    An implicit plot that doesn't include any surface in the view volume
+    An implicit plot that does not include any surface in the view volume
     produces an empty plot::
 
         sage: implicit_plot3d(x^2 + y^2 + z^2 - 5000, (x,-2,2), (y,-2,2), (z,-2,2), plot_points=6)
         Graphics3d Object
 
-    Make sure that implicit_plot3d doesn't error if the function cannot
+    Make sure that implicit_plot3d does not error if the function cannot
     be symbolically differentiated::
 
         sage: implicit_plot3d(max_symbolic(x, y^2) - z, (x,-2,2), (y,-2,2), (z,-2,2), plot_points=6)
+        Graphics3d Object
+
+    TESTS:
+
+    Check for :trac:`10599`::
+
+        sage: var('x,y,z')
+        (x, y, z)
+        sage: M = matrix(3,[1,-1,-1,-1,3,1,-1,1,3])
+        sage: v = 1/M.eigenvalues()[1]
+        sage: implicit_plot3d(x^2+y^2+z^2==v, [x,-3,3], [y,-3,3],[z,-3,3])
         Graphics3d Object
     """
     # These options, related to rendering with smooth shading, are irrelevant

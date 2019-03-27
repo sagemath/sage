@@ -837,7 +837,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: P._latex_generic_point([z*y-x^2])
-            '\\left(- x^{2} + y z\\right)'
+            '\\left(-x^{2} + y z\\right)'
             sage: P._latex_generic_point()
             '\\left(x : y : z\\right)'
         """

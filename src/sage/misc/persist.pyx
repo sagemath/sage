@@ -76,12 +76,13 @@ def load(*filename, compress=True, verbose=True):
 
     EXAMPLES::
 
-        sage: u = 'http://sage.math.washington.edu/home/was/db/test.sobj'
+        sage: u = 'http://www.sagemath.org/files/test.sobj'
         sage: s = load(u)                                                  # optional - internet
-        Attempting to load remote file: http://sage.math.washington.edu/home/was/db/test.sobj
-        Loading: [.]
+        Attempting to load remote file: http://www.sagemath.org/files/test.sobj
+        Loading started
+        Loading ended
         sage: s                                                            # optional - internet
-        'hello SAGE'
+        'hello SageMath'
 
     We test loading a file or multiple files or even mixing loading files and objects::
 
@@ -980,7 +981,7 @@ def picklejar(obj, dir=None):
     environment variable ``SAGE_PICKLE_JAR``, which will make it so
     :func:`dumps` will by default call :func:`picklejar` with the
     default dir.  Once you do that and doctest Sage, you'll find that
-    the ``SAGE_ROOT/tmp/pickle_jar`` directory contains a bunch of
+    the ``DOT_SAGE/pickle_jar`` directory contains a bunch of
     pickled objects along with corresponding txt descriptions of them.
     Use the :func:`unpickle_all` to see if they unpickle later.
 
@@ -989,7 +990,7 @@ def picklejar(obj, dir=None):
     - ``obj`` -- a pickleable object
 
     - ``dir`` -- a string or None; if None then ``dir`` defaults to
-      ``SAGE_ROOT/tmp/pickle_jar``
+      ``DOT_SAGE/pickle_jar``
 
     EXAMPLES::
 
@@ -1021,7 +1022,8 @@ def picklejar(obj, dir=None):
         sage: os.chmod(dir, 0o755)
     """
     if dir is None:
-        dir = os.path.join(os.environ['SAGE_ROOT'], '/tmp/pickle_jar/')
+        from sage.env import DOT_SAGE
+        dir = os.path.join(DOT_SAGE, 'pickle_jar')
     try:
         os.makedirs(dir)
     except OSError as err:

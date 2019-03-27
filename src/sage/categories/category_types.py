@@ -15,11 +15,12 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.latex import latex
 from sage.misc.unknown import Unknown
 from .category import JoinCategory, Category, CategoryWithParameters
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.categories.objects', 'Objects')
+lazy_import('sage.misc.latex', 'latex')
+
 
 ####################################################################
 #   Different types of categories

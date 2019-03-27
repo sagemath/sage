@@ -164,8 +164,9 @@ if 'SAGE_ATLAS_LIB' in os.environ:
         sys.exit(2)
 
     for fname in os.listdir(ATLAS_LIB):
-        if fname.startswith(prefix+'f77blas'):
+        if fname.startswith(prefix + 'f77blas'):
             f77blas = os.path.join(ATLAS_LIB, fname)
+            break
     else:
         f77blas = None
     if f77blas is not None:

@@ -97,7 +97,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
         """
         if self.level() == 0: return
         v = self.parent().subgroup_gens(self.level())
-        if all([self(x) == 1 for x in v]):
+        if all(self(x) == 1 for x in v):
             new_gens = self.parent().unit_gens(self.level() - 1)
             new_values = [self(x) for x in new_gens]
             self._values_on_gens = Sequence(new_values, universe=self.base_ring(), immutable=True)
@@ -754,8 +754,8 @@ class SmoothCharacterGroupGeneric(ParentWithBase):
             gens = self.unit_gens(c)
             exps = self.exponents(c)
             T.assertTrue(exps[-1] == 0)
-            T.assertTrue(all([u != 0 for u in exps[:-1]]))
-            T.assertTrue(all([u.parent() is self.number_field() for u in gens]))
+            T.assertTrue(all(u != 0 for u in exps[:-1]))
+            T.assertTrue(all(u.parent() is self.number_field() for u in gens))
 
             I = self.ideal(c)
             for i in range(len(exps[:-1])):
@@ -790,7 +790,7 @@ class SmoothCharacterGroupGeneric(ParentWithBase):
         for c in range(1, 6):
             sgs = self.subgroup_gens(c)
             I2 = self.ideal(c-1)
-            T.assertTrue(all([x-1 in I2 for x in sgs]), "Kernel gens at level %s not in kernel!" % c)
+            T.assertTrue(all(x - 1 in I2 for x in sgs), "Kernel gens at level %s not in kernel!" % c)
 
             # now find the exponent of the kernel
 

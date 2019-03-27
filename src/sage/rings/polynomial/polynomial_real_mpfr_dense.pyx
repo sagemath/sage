@@ -26,7 +26,8 @@ from __future__ import absolute_import
 from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
-from cpython cimport PyInt_AS_LONG, PyFloat_AS_DOUBLE
+from cpython.int cimport PyInt_AS_LONG
+from cpython.float cimport PyFloat_AS_DOUBLE
 
 from sage.structure.parent cimport Parent
 from .polynomial_element cimport Polynomial, _dict_to_list

@@ -1114,7 +1114,7 @@ class InterfaceElement(Element):
 
         """
         try:
-            P = self._check_valid()
+            self._check_valid()
         except ValueError as msg:
             return '(invalid {} object -- {})'.format(self.parent() or type(self), msg)
         cr = getattr(self, '_cached_repr', None)

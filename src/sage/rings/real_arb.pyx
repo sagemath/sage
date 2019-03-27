@@ -359,6 +359,9 @@ class RealBallField(UniqueRepresentation, Field):
         sage: a = (sqrt2 - 1)^1000
         sage: RBF(a)
         [1.676156872756536e-383 +/- ...e-399]
+
+        sage: RealBallField().is_finite()
+        False
     """
     Element = RealBall
 
@@ -614,21 +617,6 @@ class RealBallField(UniqueRepresentation, Field):
         EXAMPLES::
 
             sage: RealBallField().is_exact()
-            False
-        """
-        return False
-
-    def is_finite(self):
-        """
-        Real ball fields are infinite.
-
-        They already specify it via their category, but we currently need to
-        re-implement this method due to the legacy implementation in
-        :class:`sage.rings.ring.Ring`.
-
-        EXAMPLES::
-
-            sage: RealBallField().is_finite()
             False
         """
         return False
@@ -3172,6 +3160,36 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
+    def sec(self):
+        """
+        Return the secant of this ball.
+
+        EXAMPLES::
+
+            sage: RBF(1).sec()
+            [1.850815717680925 +/- ...e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_sec(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    def csc(self):
+        """
+        Return the cosecant of this ball.
+
+        EXAMPLES::
+
+            sage: RBF(1).csc()
+            [1.188395105778121 +/- ...e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_csc(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
     def arcsin(self):
         """
         Return the arcsine of this ball.
@@ -3280,6 +3298,36 @@ cdef class RealBall(RingElement):
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
         arb_coth(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    def sech(self):
+        """
+        Return the hyperbolic secant of this ball.
+
+        EXAMPLES::
+
+            sage: RBF(1).sech()
+            [0.648054273663885 +/- ...e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_sech(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    def csch(self):
+        """
+        Return the hyperbolic cosecant of this ball.
+
+        EXAMPLES::
+
+            sage: RBF(1).csch()
+            [0.850918128239321 +/- ...e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_csch(res.value, self.value, prec(self))
         if _do_sig(prec(self)): sig_off()
         return res
 

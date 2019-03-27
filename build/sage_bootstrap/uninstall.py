@@ -70,33 +70,37 @@ def uninstall(spkg_name, sage_local, keep_files=False, verbose=False):
     # Find all stamp files for the package; there should be only one, but if
     # there is somehow more than one we'll work with the most recent and delete
     # the rest
-    stamp_files = glob.glob(pth.join(spkg_inst, '{0}-*'.format(spkg_name)))
-
-    if len(stamp_files) > 1:
-        stamp_files.sort(key=pth.getmtime)
-    elif not stamp_files:
-        print("No record that '{0}' was ever installed; skipping "
-              "uninstall".format(spkg_name), file=sys.stderr)
-        return
-
-    stamp_file = stamp_files[-1]
+    pattern = pth.join(spkg_inst, '{0}-*'.format(spkg_name))
+    stamp_files = sorted(glob.glob(pattern), key=pth.getmtime)
 
     if keep_files:
-        print("Removing stamp file '{0}' but keeping package files".format(
-            stamp_file))
+        print("Removing stamp file but keeping package files")
         remove_stamp_files(stamp_files)
         return
 
-    try:
-        with open(stamp_file) as f:
-            spkg_meta = json.load(f)
-    except (OSError, ValueError):
-        spkg_meta = {}
+    if stamp_files:
+        stamp_file = stamp_files[-1]
+    else:
+        stamp_file = None
+
+    spkg_meta = {}
+    if stamp_file:
+        try:
+            with open(stamp_file) as f:
+                spkg_meta = json.load(f)
+        except (OSError, ValueError):
+            pass
 
     if 'files' not in spkg_meta:
-        print("Old-style or corrupt stamp file '{0}'".format(stamp_file),
-              file=sys.stderr)
+        if stamp_file:
+            print("Old-style or corrupt stamp file '{0}'"
+                  .format(stamp_file), file=sys.stderr)
+        else:
+            print("Package '{0}' is currently not installed"
+                  .format(spkg_name), file=sys.stderr)
 
+        # Run legacy uninstaller even if there is no stamp file: the
+        # package may be partially installed without a stamp file
         legacy_uninstall(spkg_name, verbose=verbose)
     else:
         files = spkg_meta['files']
@@ -118,8 +122,7 @@ def legacy_uninstall(spkg_name, verbose=False):
     spkg_dir = pth.join(PKGS, spkg_name)
     legacy_uninstall = pth.join(spkg_dir, 'spkg-legacy-uninstall')
 
-    if not (pth.isfile(legacy_uninstall) and
-            os.access(legacy_uninstall, os.X_OK)):
+    if not pth.isfile(legacy_uninstall):
         print("No legacy uninstaller found for '{0}'; nothing to "
               "do".format(spkg_name), file=sys.stderr)
         return
@@ -131,7 +134,7 @@ def legacy_uninstall(spkg_name, verbose=False):
 
     # Any errors from this, including a non-zero return code will
     # bubble up and exit the uninstaller
-    subprocess.check_call([legacy_uninstall])
+    subprocess.check_call(['bash', legacy_uninstall])
 
 
 def modern_uninstall(spkg_name, sage_local, files, verbose=False):
@@ -227,8 +230,7 @@ def modern_uninstall(spkg_name, sage_local, files, verbose=False):
 def remove_stamp_files(stamp_files, verbose=False):
     # Finally, if all went well, delete all the stamp files.
     for stamp_file in stamp_files:
-        if verbose:
-            print('rm "{}"'.format(stamp_file))
+        print("Removing stamp file '{0}'".format(stamp_file))
         os.remove(stamp_file)
 
 

@@ -248,6 +248,7 @@ class Crystals(Category_singleton):
             """
             return self.first()
 
+        @cached_method
         def weight_lattice_realization(self):
             """
             Return the weight lattice realization used to express weights

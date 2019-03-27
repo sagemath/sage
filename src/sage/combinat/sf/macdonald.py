@@ -55,12 +55,10 @@ from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.categories.modules_with_basis import ModulesWithBasis
 from . import sfa
-from sage.combinat.partition import Partition, Partitions_n, _Partitions
-from sage.combinat.skew_partition import SkewPartitions
+from sage.combinat.partition import Partitions_n, _Partitions
 from sage.matrix.all import MatrixSpace
 from sage.rings.all import QQ
 from sage.misc.all import prod
-from sage.rings.fraction_field import FractionField
 from sage.misc.cachefunc import cached_function
 import functools
 
@@ -78,6 +76,7 @@ _S_to_s_cache = {}
 _s_to_S_cache = {}
 
 _qt_kostka_cache = {}
+
 
 class Macdonald(UniqueRepresentation):
 

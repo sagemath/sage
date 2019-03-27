@@ -634,45 +634,29 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                                (<IndexedFreeModuleElement>other)._monomial_coefficients,
                                self._monomial_coefficients))
 
-    cpdef _coefficient_fast(self, m):
-        """
-        Return the coefficient of ``m`` in ``self``, where ``m`` is key in
-        ``self._monomial_coefficients``.
-
-        EXAMPLES::
-
-            sage: p = Partition([2,1])
-            sage: q = Partition([1,1,1])
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: a = s(p)
-            sage: a._coefficient_fast([2,1])
-            Traceback (most recent call last):
-            ...
-            TypeError: unhashable type: 'list'
-
-        ::
-
-            sage: a._coefficient_fast(p)
-            1
-            sage: a._coefficient_fast(q)
-            0
-        """
-        return self._monomial_coefficients.get(m, self.base_ring().zero())
-
     def __getitem__(self, m):
         """
+        Return the coefficient of ``m`` in ``self``.
+
         EXAMPLES::
 
-            sage: s = SymmetricFunctions(QQ).schur()
             sage: p = Partition([2,1])
             sage: q = Partition([1,1,1])
+            sage: s = SymmetricFunctions(QQ).schur()
             sage: a = s(p)
             sage: a[p]
             1
             sage: a[q]
             0
+            sage: a[[2,1]]
+            Traceback (most recent call last):
+            ...
+            TypeError: unhashable type: 'list'
         """
-        return self._coefficient_fast(m)
+        res = self._monomial_coefficients.get(m)
+        if res is None:
+            return self.base_ring().zero()
+        return res
 
     def _vector_(self, new_base_ring=None):
         """

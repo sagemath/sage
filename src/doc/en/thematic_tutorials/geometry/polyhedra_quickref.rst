@@ -76,6 +76,7 @@ List of Polyhedron methods
 
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.backend` | gives the backend used
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.base_ring` | gives the base ring used
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.change_ring` | changes the base ring
 
 **Transforming polyhedra**
 

@@ -1,16 +1,15 @@
 """
 Root system data for reducible Cartan types
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-2009 Daniel Bump
 #       Copyright (C) 2008-2009 Justin Walker
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
 
 from sage.misc.cachefunc import cached_method
 from sage.combinat.root_system.cartan_type import CartanType_abstract, CartanType_simple, CartanType_finite, CartanType_simply_laced, CartanType_crystallographic
@@ -163,9 +162,10 @@ class CartanType(SageObject, CartanType_abstract):
         r"""
         EXAMPLES::
 
-            sage: hash(CartanType(['A',1],['B',2]))
-            1110723648           # 32-bit
-            -6896789355307447232 # 64-bit
+            sage: ct0 = CartanType(['A',1],['B',2])
+            sage: ct1 = CartanType(['A',2],['B',3])
+            sage: hash(ct0) != hash(ct1)
+            True
         """
         return hash(repr(self._types))
 

@@ -22,15 +22,15 @@ TESTS::
 """
 from __future__ import absolute_import
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.all        import ModularAbelianVarieties
 from sage.structure.sequence    import Sequence, Sequence_generic
@@ -2214,10 +2214,10 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             sage: (J0(11) * J1(13))._ambient_hecke_matrix_on_modular_symbols(2)
             [-2  0  0  0  0  0]
             [ 0 -2  0  0  0  0]
-            [ 0  0 -2  0 -1  1]
-            [ 0  0  1 -1  0 -1]
-            [ 0  0  1  1 -2  0]
-            [ 0  0  0  1 -1 -1]
+            [ 0  0 -1 -1 -1  1]
+            [ 0  0  1 -2 -1  0]
+            [ 0  0  0  0 -2  1]
+            [ 0  0  0  0 -1 -1]
         """
         if not self.is_ambient():
             return self.ambient_variety()._ambient_hecke_matrix_on_modular_symbols(n)
@@ -2501,10 +2501,10 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             sage: H.hecke_operator(2).matrix()
             [-2  0  0  0  0  0]
             [ 0 -2  0  0  0  0]
-            [ 0  0 -2  0 -1  1]
-            [ 0  0  1 -1  0 -1]
-            [ 0  0  1  1 -2  0]
-            [ 0  0  0  1 -1 -1]
+            [ 0  0 -1 -1 -1  1]
+            [ 0  0  1 -2 -1  0]
+            [ 0  0  0  0 -2  1]
+            [ 0  0  0  0 -1 -1]
         """
         return self.homology(ZZ)
 
@@ -3094,8 +3094,6 @@ class ModularAbelianVariety_abstract(ParentWithBase):
 
         if field_of_definition is None:
             field_of_definition = QQbar
-        else:
-            field_of_definition = field_of_definition
 
         return FiniteSubgroup_lattice(
             self, X, field_of_definition=field_of_definition, check=check)

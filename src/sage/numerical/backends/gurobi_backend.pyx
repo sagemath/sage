@@ -198,7 +198,7 @@ cdef class GurobiBackend(GenericBackend):
 
         return self.ncols()-1
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         """
         Add a column.
 
@@ -364,7 +364,7 @@ cdef class GurobiBackend(GenericBackend):
         cdef int error
         cdef char * pp_name[1]
 
-        if name:
+        if name is not None:
             error = GRBsetstrattr(self.model, "ModelName", str_to_bytes(name))
             check(self.env, error)
             check(self.env,GRBupdatemodel(self.model))

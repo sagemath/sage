@@ -1715,7 +1715,7 @@ class IntegratedCurve(DifferentiableCurve):
                             # unfortunately building the tangent space is too
                             # slow, so we have to cheat a little and apply the
                             # change of frame manually (with a precompiled
-                            # fonction)
+                            # function)
 
                             new_vel = self._fast_changes_of_frame[(new_chart.frame().restrict(inter),
                                chart.frame().restrict(inter))](last_pts, last_vel)

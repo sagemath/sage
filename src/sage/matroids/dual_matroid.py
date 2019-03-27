@@ -311,8 +311,7 @@ class DualMatroid(Matroid):
             sage: sorted(M._cocircuit(set(['a', 'c', 'd'])))
             Traceback (most recent call last):
             ...
-            ValueError: no circuit in independent set.
-
+            ValueError: no circuit in independent set
         """
         return self._matroid._circuit(X)
 

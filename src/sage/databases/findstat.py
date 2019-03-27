@@ -411,12 +411,9 @@ class FindStat(SageObject):
         sage: p = findstat({pi: pi.length() for pi in l}, depth=0); p           # optional -- internet, random
         0: (St000018: The number of inversions of a permutation., [], 873)
 
-    Note however, that the results of these two queries are not
-    necessarily the same, because we compare queries by the data
-    sent, and the ordering of the data might be different::
-
-        sage: p == q                                                            # optional -- internet
-        False
+    Note however, that the results of these two queries need not
+    compare equal, because we compare queries by the data
+    sent, and the ordering of the data might be different.
 
     Another possibility is to send a collection and a function.  In
     this case, the function is applied to the first few objects of
@@ -548,59 +545,63 @@ class FindStat(SageObject):
                                      depth=depth)._find_by_values(max_values=max_values)
 
         def query_by_iterable(query, collection=None):
-            # either a pair (list of objects, list of integers)
-            # or a list of such or (object, integer) pairs
+            # either a pair (objects, values)
+            # or an iterable of such or (object, integer) pairs
 
-            # values must always be converted to lists because
-            # otherwise we get a trailing comma when printing
-            if (len(query) == 2 and
-                isinstance(query[1], (list, tuple)) and
-                len(query[1]) != 0 and
-                isinstance(query[1][0], (int, Integer))):
+            # we must convert to lists because we want to allow
+            # iterables for the values
+            query = list(query)
+            if len(query) == 2:
+                try:
+                    query[1] = list(map(Integer, query[1]))
+                except TypeError:
+                    pass
                 # just a single pair, i.e., a pure distribution query
+                else:
+                    collection, to_str = get_collection(collection, query[0][0])
+                    data = [(query[0], list(map(to_str, query[0])), query[1])]
+                    if len(data[0][1]) != len(data[0][2]):
+                        raise ValueError("FindStat expects the same number of objects as values.")
+                    if len(set(data[0][1])) != len(data[0][2]):
+                        raise ValueError("FindStat expects that every object occurs at most once.")
 
-                (collection, to_str) = get_collection(collection, query[0][0])
-                data = [(query[0], map(to_str, query[0]), map(Integer, query[1]))]
-                if len(data[0][0]) != len(data[0][2]):
-                    raise ValueError("FindStat expects the same number of objects as values.")
-                if len(set(data[0][1])) != len(data[0][2]):
-                    raise ValueError("FindStat expects that every object occurs at most once.")
+                    return FindStatStatistic(id=0, data=data,
+                                             collection=collection,
+                                             depth=depth)._find_by_values(max_values=max_values)
 
+            key, value = query[0]
+            try:
+                query[0][1] = list(value)
+                collection, to_str = get_collection(collection, key[0])
+            except TypeError:
+                collection, to_str = get_collection(collection, key)
+
+            data = []
+            is_statistic = True
+            for key, value in query:
+                try:
+                    value = list(map(Integer, value))
+                    if len(key) != len(value):
+                        raise ValueError("FindStat expects the same number of objects as values.")
+                    if len(value) != 1:
+                        is_statistic = False
+                    data += [(key, list(map(to_str, key)), value)]
+                except TypeError:
+                    data += [([key], [to_str(key)], [Integer(value)])]
+
+            all_elements = [e for (elements, elements_str, value) in data for e in elements_str]
+            if len(set(all_elements)) != len(all_elements):
+                raise ValueError("FindStat expects that every object occurs at most once.")
+
+            if is_statistic:
+                return FindStatStatistic(id=0, data=data,
+                                         collection=collection,
+                                         first_terms=query,
+                                         depth=depth)._find_by_values(max_values=max_values)
+            else:
                 return FindStatStatistic(id=0, data=data,
                                          collection=collection,
                                          depth=depth)._find_by_values(max_values=max_values)
-            else:
-                (key, value) = query[0]
-                if isinstance(value, (list, tuple)):
-                    (collection, to_str) = get_collection(collection, key[0])
-                else:
-                    (collection, to_str) = get_collection(collection, key)
-
-                data = []
-                is_statistic = True
-                for (key, value) in query:
-                    if isinstance(value, (list, tuple)):
-                        if len(key) != len(value):
-                            raise ValueError("FindStat expects the same number of objects as values.")
-                        if len(value) != 1:
-                            is_statistic = False
-                        data += [(key, map(to_str, key), map(Integer, value))]
-                    else:
-                        data += [([key], [to_str(key)], [Integer(value)])]
-
-                all_elements = [e for (elements, elements_str, values) in data for e in elements_str]
-                if len(set(all_elements)) != len(all_elements):
-                    raise ValueError("FindStat expects that every object occurs at most once.")
-
-                if is_statistic:
-                    return FindStatStatistic(id=0, data=data,
-                                             collection=collection,
-                                             first_terms=query,
-                                             depth=depth)._find_by_values(max_values=max_values)
-                else:
-                    return FindStatStatistic(id=0, data=data,
-                                             collection=collection,
-                                             depth=depth)._find_by_values(max_values=max_values)
 
         if query_2 is None:
             if isinstance(query_1, str):
@@ -966,9 +967,9 @@ class FindStatStatistic(SageObject):
             else:
                 raise
 
-        self._description           = self._raw[FINDSTAT_STATISTIC_DESCRIPTION].encode("utf-8")
-        self._name                  = self._raw[FINDSTAT_STATISTIC_NAME].encode("utf-8")
-        self._references            = self._raw[FINDSTAT_STATISTIC_REFERENCES].encode("utf-8")
+        self._description           = self._raw[FINDSTAT_STATISTIC_DESCRIPTION]
+        self._name                  = self._raw[FINDSTAT_STATISTIC_NAME]
+        self._references            = self._raw[FINDSTAT_STATISTIC_REFERENCES]
         self._collection            = FindStatCollection(self._raw[FINDSTAT_STATISTIC_COLLECTION])
         self._code                  = self._raw[FINDSTAT_STATISTIC_CODE]
         self._sage_code             = self._raw[FINDSTAT_STATISTIC_SAGE_CODE]
@@ -1044,7 +1045,7 @@ class FindStatStatistic(SageObject):
         stat_str = "\n".join(["\n".join(keys) + "\n====> " + values for (keys, values) in stat])
         verbose("Sending the following data to FindStat\r\n %s" % stat_str, caller_name='FindStat')
 
-        values = urlencode({"freedata": stat_str, "depth": str(self._depth), "caller": "Sage"})
+        values = urlencode({"freedata": stat_str, "depth": str(self._depth), "caller": "Sage"}).encode("utf-8")
         verbose("Fetching URL %s with encoded data %s" % (url, values), caller_name='FindStat')
 
         request = Request(url, data=values)
@@ -1602,7 +1603,8 @@ class FindStatStatistic(SageObject):
             1: [[OEIS:A005118]]
             2: [[oeis:A246865]]
         """
-        l = [ref.strip() for ref in self._references.split(FINDSTAT_SEPARATOR_REFERENCES)]
+        sp = self._references.split(FINDSTAT_SEPARATOR_REFERENCES)
+        l = [ref.strip() for ref in sp]
         return FancyTuple([ref for ref in l if ref != ""])
 
     def set_references(self, value):
@@ -1923,6 +1925,9 @@ class FindStatCollection(Element):
         Cc0005: Dyck paths
 
         sage: FindStatCollection(DyckWords(2))                                  # optional -- internet
+        Cc0005: Dyck paths
+
+        sage: FindStatCollection(DyckWords)                                     # optional -- internet
         Cc0005: Dyck paths
 
     .. SEEALSO::
@@ -2343,6 +2348,11 @@ class FindStatCollections(Parent, UniqueRepresentation):
     # several fields are initialised with 'None', they are updated
     # upon the first call to this class
     _findstat_collections = {
+        1:  [None, None, None, Permutation,           Permutations,            None,
+             lambda x: x.size(),
+             lambda x, l: x.size() in l,
+             str,
+             lambda x: Permutation(literal_eval(x))],
         24: [None, None, None, Word_class, lambda x: Words([0,1], x), None,
              lambda x: x.length(),
              lambda x, l: x.length() in l,
@@ -2351,7 +2361,7 @@ class FindStatCollections(Parent, UniqueRepresentation):
         17: [None, None, None, AlternatingSignMatrix, AlternatingSignMatrices, None,
              lambda x: x.to_matrix().nrows(),
              lambda x, l: x.to_matrix().nrows() in l,
-             lambda x: str(map(list, list(x._matrix))),
+             lambda x: str(list(map(list, x.to_matrix().rows()))),
              lambda x: AlternatingSignMatrix(literal_eval(x))],
         10: [None, None, None, BinaryTree,            BinaryTrees,             None,
              lambda x: x.node_number(),
@@ -2365,8 +2375,8 @@ class FindStatCollections(Parent, UniqueRepresentation):
              lambda X: "( "+X._repr_()+", "+str(X.k())+" )",
              lambda x: (lambda pi, k: Core(pi, k))(*literal_eval(x))],
         5:  [None, None, None, DyckWord,              DyckWords,               None,
-             lambda x: (x.length()/2),
-             lambda x, l: (x.length()/2) in l,
+             lambda x: Integer(x.length()/2),
+             lambda x, l: Integer(x.length()/2) in l,
              lambda x: str(list(DyckWord(x))),
              lambda x: DyckWord(literal_eval(x))],
         22: [None, None, None, CartanType_abstract,   _finite_irreducible_cartan_types_by_rank,
@@ -2412,11 +2422,6 @@ class FindStatCollections(Parent, UniqueRepresentation):
              lambda x, l: x.size() in l,
              str,
              lambda x: PerfectMatching(literal_eval(x))],
-        1:  [None, None, None, Permutation,           Permutations,            None,
-             lambda x: x.size(),
-             lambda x, l: x.size() in l,
-             str,
-             lambda x: Permutation(literal_eval(x))],
         14: [None, None, None, FinitePoset,           posets,                  None,
              lambda x: x.cardinality(),
              lambda x, l: x.cardinality() in l,
@@ -2547,13 +2552,13 @@ class FindStatCollections(Parent, UniqueRepresentation):
 
         if isinstance(entry, string_types):
             # find by name in _findstat_collections
-            for (id, c) in iteritems(self._findstat_collections):
+            for id, c in self._findstat_collections.items():
                 if entry.upper() in (c[0].upper(), c[1].upper(), c[2].upper()):
                     return self.element_class(self, id, c, None)
 
         elif isinstance(entry, (int, Integer)):
             # find by id in _findstat_collections
-            for (id, c) in iteritems(self._findstat_collections):
+            for id, c in self._findstat_collections.items():
                 if entry == id:
                     return self.element_class(self, id, c, None)
 
@@ -2566,7 +2571,7 @@ class FindStatCollections(Parent, UniqueRepresentation):
             # CartanType.
 
             # first check whether the class fits:
-            for (id, c) in self._findstat_collections.iteritems():
+            for (id, c) in self._findstat_collections.items():
                 # this will work rarely, often c[4] is even a function!
                 if entry == c[4]:
                     return self.element_class(self, id, c, None)
@@ -2574,18 +2579,18 @@ class FindStatCollections(Parent, UniqueRepresentation):
                     P = entry.parent()
                     if P is c[3] or P.Element is c[3]:
                         return self.element_class(self, id, c, None)
-                except AttributeError:
+                except (TypeError, AttributeError):
                     pass
 
             # now check whether entry is an instance:
-            for (id, c) in self._findstat_collections.iteritems():
+            for (id, c) in self._findstat_collections.items():
                 if isinstance(entry, c[3]):
                     return self.element_class(self, id, c, None)
 
             # check whether entry is iterable (it's not a string!)
             try:
                 obj = next(iter(entry))
-                for (id, c) in iteritems(self._findstat_collections):
+                for (id, c) in self._findstat_collections.items():
                     if isinstance(obj, c[3]):
                         return self.element_class(self, id, c, entry)
 
@@ -2931,11 +2936,11 @@ class FindStatMaps(Parent, UniqueRepresentation):
     domain and codomain::
 
         sage: from sage.databases.findstat import FindStatMap, FindStatMaps
-        sage: for m in sorted(FindStatMaps(), key=lambda m: (m.domain(), m.codomain)):    # optional -- internet, random
+        sage: for m in sorted(FindStatMaps(), key=lambda m: (m.domain(), m.codomain())):  # optional -- internet, random
         ....:     print(m.domain().name().ljust(30)+" "+m.codomain().name().ljust(30)+" "+m.name())
-        Permutation                    Standard tableau               Robinson-Schensted insertion tableau
-        Permutation                    Integer partition              Robinson-Schensted tableau shape
-        Permutation                    Binary tree                    to increasing tree
+        Permutation                    Permutation                    cactus evacuation
+        Permutation                    Permutation                    complement
+        Permutation                    Permutation                    cycle-as-one-line notation
         ...
 
     """

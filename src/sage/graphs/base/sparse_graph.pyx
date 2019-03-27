@@ -1384,7 +1384,7 @@ cdef class SparseGraphBackend(CGraphBackend):
     objects::
 
         sage: G.add_vertex((0,1,2))
-        sage: sorted(G.vertices(),
+        sage: sorted(list(G),
         ....:        key=lambda x: (isinstance(x, tuple), x))
         [0,
         ...
@@ -1403,7 +1403,7 @@ cdef class SparseGraphBackend(CGraphBackend):
         """
         Initialize a sparse graph with n vertices.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
             sage: D.add_edge(0,1,None,False)

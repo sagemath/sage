@@ -30,7 +30,8 @@ from sage.cpython.string cimport str_to_bytes, char_to_str
 
 from sage.arith.all import gcd, lcm, is_prime, factorial, bernoulli
 
-from sage.structure.element cimport Element, parent, coercion_model
+from sage.structure.coerce cimport coercion_model
+from sage.structure.element cimport Element, parent
 from sage.misc.persist import loads, dumps
 
 from sage.rings.integer_ring import ZZ
@@ -1726,7 +1727,7 @@ cdef py_log(x):
             return math.log(real)
         elif real < 0:
             res = gsl_complex_log(gsl_complex_rect(real, 0))
-            return PyComplex_FromDoubles(res.dat[0], res.dat[1])
+            return PyComplex_FromDoubles(res.real, res.imag)
         else:
             return float('-inf')
     elif type(x) is complex:
@@ -1735,7 +1736,7 @@ cdef py_log(x):
         if real == 0 and imag == 0:
             return float('-inf')
         res = gsl_complex_log(gsl_complex_rect(real, imag))
-        return PyComplex_FromDoubles(res.dat[0], res.dat[1])
+        return PyComplex_FromDoubles(res.real, res.imag)
     elif isinstance(x, Integer):
         return x.log().n()
     elif hasattr(x, 'log'):

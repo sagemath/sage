@@ -80,7 +80,7 @@ The following example shows all these steps::
     Optimal solution found.
     sage: print('Objective Value: {}'.format(round(opt,3)))
     Objective Value: 1.0
-    sage: [round(x,3) for x in p.get_values(x).values()]
+    sage: [round(x, 3) for x in sorted(p.get_values(x).values())]
     [0.0, 1.0]
     sage: p.show()
     Maximization:
@@ -728,7 +728,7 @@ cdef class SemidefiniteProgram(SageObject):
         values for the corresponding variables ::
 
             sage: x_sol = p.get_values(x)
-            sage: list(x_sol.keys())
+            sage: sorted(x_sol)
             [3, 5]
 
         Obviously, it also works with variables of higher dimension::
@@ -1038,7 +1038,7 @@ cdef class SemidefiniteProgram(SageObject):
             [0.0 0.0]
             sage: B1.is_positive_definite()
             True
-            sage: x = p.get_values(x).values()
+            sage: x = sorted(p.get_values(x).values())
             sage: x[0]*b1 + x[1]*b2 - b3 + B1       # tol 1e-09
             [0.0 0.0]
             [0.0 0.0]
@@ -1287,7 +1287,7 @@ cdef class SDPVariable(Element):
             sage: p = SemidefiniteProgram()
             sage: v = p.new_variable()
             sage: p.set_objective(v[0] + v[1])
-            sage: list(v.keys())
+            sage: sorted(v.keys())
             [0, 1]
         """
         return self._dict.keys()
@@ -1301,7 +1301,7 @@ cdef class SDPVariable(Element):
             sage: p = SemidefiniteProgram()
             sage: v = p.new_variable()
             sage: p.set_objective(v[0] + v[1])
-            sage: list(v.items())
+            sage: sorted(v.items())
             [(0, x_0), (1, x_1)]
         """
         return self._dict.items()
@@ -1315,7 +1315,7 @@ cdef class SDPVariable(Element):
             sage: p = SemidefiniteProgram()
             sage: v = p.new_variable()
             sage: p.set_objective(v[0] + v[1])
-            sage: list(v.values())
+            sage: sorted(v.values(), key=str)
             [x_0, x_1]
         """
         return self._dict.values()

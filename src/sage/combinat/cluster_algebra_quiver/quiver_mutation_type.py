@@ -2334,19 +2334,14 @@ def _bipartite_graph_to_digraph(g):
         sage: _bipartite_graph_to_digraph(G)
         Digraph on 2 vertices
     """
-    if not g.is_bipartite():
-        raise ValueError('The input graph is not bipartite.')
-
-    order = g.bipartite_sets()
+    sources = g.bipartite_sets()[0]
     dg = DiGraph()
-    for edge in g.edges():
-        if edge[0] in order[0]:
-            dg.add_edge( edge[0], edge[1], edge[2] )
+    dg.add_vertices(g)
+    for a, b, c in g.edge_iterator():
+        if a in sources:
+            dg.add_edge(a, b, c)
         else:
-            dg.add_edge( edge[1], edge[0], edge[2] )
-    for vert in g.vertex_iterator():
-        if vert not in dg.vertices():
-            dg.add_vertex(vert)
+            dg.add_edge(b, a, c)
     return dg
 
 
@@ -2367,6 +2362,7 @@ def _is_mutation_type(data):
         return True
     except Exception:
         return False
+
 
 def _mutation_type_error(data):
     r"""

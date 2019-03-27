@@ -257,7 +257,14 @@ cdef class CategoryObject(SageObject):
     # Generators
     ##############################################################################
 
-    def gens_dict(self):
+    @cached_method
+    def __gens_dict(self):
+        cdef dict v = {}
+        for x in self._defining_names():
+            v[str(x)] = x
+        return v
+
+    def gens_dict(self, *, copy=True):
         r"""
         Return a dictionary whose entries are ``{name:variable,...}``,
         where ``name`` stands for the variable names of this
@@ -269,11 +276,19 @@ cdef class CategoryObject(SageObject):
             sage: B.<a,b,c,d> = BooleanPolynomialRing()
             sage: B.gens_dict()
             {'a': a, 'b': b, 'c': c, 'd': d}
+
+        TESTS::
+
+            sage: B.<a,b,c,d> = PolynomialRing(QQ)
+            sage: B.gens_dict(copy=False) is B.gens_dict(copy=False)
+            True
+            sage: B.gens_dict(copy=False) is B.gens_dict()
+            False
         """
-        cdef dict v = {}
-        for x in self._defining_names():
-            v[str(x)] = x
-        return v
+        if copy:
+            return dict(self.__gens_dict())
+        else:
+            return self.__gens_dict()
 
     def gens_dict_recursive(self):
         r"""

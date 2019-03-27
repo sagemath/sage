@@ -780,7 +780,7 @@ class DifferentialPrecisionGeneric(SageObject):
         Return the dimension of the vector space in which the precision
         module/lattice lives.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R = ZpLC(2, label='ambient_dim')
             sage: prec = R.precision()

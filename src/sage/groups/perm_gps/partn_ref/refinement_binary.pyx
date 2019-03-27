@@ -115,7 +115,8 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
         partition -- an optional list of lists partition of the columns.
             default is the unit partition.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_binary import LinearBinaryCodeStruct
 
             sage: B = LinearBinaryCodeStruct(matrix(GF(2),[[1,0,1],[0,1,1]]))
@@ -301,7 +302,8 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
         """
         Calculate whether self is isomorphic to other.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_binary import LinearBinaryCodeStruct
 
             sage: B = LinearBinaryCodeStruct(Matrix(GF(2), [[1,1,1,1,0,0],[0,0,1,1,1,1]]))
@@ -463,7 +465,8 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
         partition -- an optional list of lists partition of the columns.
             default is the unit partition.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_binary import NonlinearBinaryCodeStruct
 
             sage: B = NonlinearBinaryCodeStruct(Matrix(GF(2), [[1,0,0,0],[0,0,1,0]]))
@@ -562,7 +565,8 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
         """
         Calculate whether self is isomorphic to other.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_binary import NonlinearBinaryCodeStruct
 
             sage: B = NonlinearBinaryCodeStruct(Matrix(GF(2), [[1,1,1,1,0,0],[0,0,1,1,1,1]]))

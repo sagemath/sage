@@ -110,11 +110,11 @@ Comparison with the results from the Handbook of Combinatorial Designs (2ed)
 REFERENCES:
 
 .. [Stinson2004] Douglas R. Stinson,
-  Combinatorial designs: construction and analysis,
+  *Combinatorial designs: construction and analysis*,
   Springer, 2004.
 
 .. [ColDin01] Charles Colbourn, Jeffrey Dinitz,
-  Mutually orthogonal latin squares: a brief survey of constructions,
+  *Mutually orthogonal latin squares: a brief survey of constructions*,
   Volume 95, Issues 1-2, Pages 9-48,
   Journal of Statistical Planning and Inference,
   Springer, 1 May 2001.
@@ -126,6 +126,7 @@ from __future__ import print_function, absolute_import
 from six import iteritems
 from six.moves import zip
 
+from sage.rings.integer import Integer
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
 from sage.env import COMBINATORIAL_DESIGN_DATA_DIR
@@ -205,7 +206,7 @@ def are_mutually_orthogonal_latin_squares(l, verbose=False):
     return is_orthogonal_array(list(zip(*[[x for R in M for x in R] for M in l])),k,n, verbose=verbose, terminology="MOLS")
 
 
-def mutually_orthogonal_latin_squares(k,n, partitions = False, check = True, existence=False):
+def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
     r"""
     Return `k` Mutually Orthogonal `n\times n` Latin Squares (MOLS).
 
@@ -219,7 +220,7 @@ def mutually_orthogonal_latin_squares(k,n, partitions = False, check = True, exi
 
     - ``n`` (integer) -- size of the latin square.
 
-    - ``partition`` (boolean) -- a Latin Square can be seen as 3 partitions of
+    - ``partitions`` (boolean) -- a Latin Square can be seen as 3 partitions of
       the `n^2` cells of the array into `n` sets of size `n`, respectively :
 
       * The partition of rows
@@ -230,24 +231,9 @@ def mutually_orthogonal_latin_squares(k,n, partitions = False, check = True, exi
       These partitions have the additional property that any two sets from
       different partitions intersect on exactly one element.
 
-      When ``partition`` is set to ``True``, this function returns a list of `k+2`
+      When ``partitions`` is set to ``True``, this function returns a list of `k+2`
       partitions satisfying this intersection property instead of the `k+2` MOLS
       (though the data is exactly the same in both cases).
-
-    - ``existence`` (boolean) -- instead of building the design, return:
-
-        - ``True`` -- meaning that Sage knows how to build the design
-
-        - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
-
-        - ``False`` -- meaning that the design does not exist.
-
-      .. NOTE::
-
-          When ``k=None`` and ``existence=True`` the function returns an
-          integer, i.e. the largest `k` such that we can build a `k` MOLS of
-          order `n`.
 
     - ``check`` -- (boolean) Whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
@@ -334,10 +320,19 @@ def mutually_orthogonal_latin_squares(k,n, partitions = False, check = True, exi
 
         sage: designs.mutually_orthogonal_latin_squares(3, 1)
         [[0], [0], [0]]
+
+    Wrong input for `k`::
+
         sage: designs.mutually_orthogonal_latin_squares(None, 1)
         Traceback (most recent call last):
         ...
-        ValueError: there are no bound on k when 0<=n<=1
+        TypeError: k must be a positive integer
+
+        sage: designs.mutually_orthogonal_latin_squares(-1, 1)
+        Traceback (most recent call last):
+        ...
+        ValueError: k must be positive
+
         sage: designs.mutually_orthogonal_latin_squares(2,10)
         [
         [1 8 9 0 2 4 6 3 5 7]  [1 7 6 5 0 9 8 2 3 4]
@@ -356,58 +351,40 @@ def mutually_orthogonal_latin_squares(k,n, partitions = False, check = True, exi
     from sage.matrix.constructor import Matrix
     from .database import MOLS_constructions
 
-    # Is k is None we find the largest available
     if k is None:
-        from sage.misc.superseded import deprecation
-        deprecation(17034,"please use designs.orthogonal_arrays.largest_available_k instead of k=None")
-        if n == 0 or n == 1:
-            if existence:
-                from sage.rings.infinity import Infinity
-                return Infinity
-            raise ValueError("there are no bound on k when 0<=n<=1")
-
-        k = orthogonal_array(None,n,existence=True) - 2
-        if existence:
-            return k
-
-    if existence:
-        from sage.misc.superseded import deprecation
-        deprecation(17034,"please use designs.orthogonal_arrays.is_available/exists instead of existence=True")
+        raise TypeError('k must be a positive integer')
+    try:
+        Integer(k)
+    except TypeError:
+        raise
+    if k < 0:
+        raise ValueError('k must be positive')
 
     if n == 1:
-        if existence:
-            return True
-        matrices = [Matrix([[0]])]*k
+        matrices = [Matrix([[0]])] * k
 
     elif k >= n:
-        if existence:
-            return False
         raise EmptySetError("There exist at most n-1 MOLS of size n if n>=2.")
 
     elif n in MOLS_constructions and k <= MOLS_constructions[n][0]:
-        if existence:
-            return True
         _, construction = MOLS_constructions[n]
 
         matrices = construction()[:k]
 
-    elif orthogonal_array(k+2,n,existence=True) is not Unknown:
+    elif orthogonal_array(k + 2, n, existence=True) is not Unknown:
         # Forwarding non-existence results
-        if orthogonal_array(k+2,n,existence=True):
-            if existence:
-                return True
+        if orthogonal_array(k + 2, n, existence=True):
+            pass
         else:
-            if existence:
-                return False
-            raise EmptySetError("There does not exist {} MOLS of order {}!".format(k,n))
+            raise EmptySetError("There does not exist {} MOLS of order {}!".format(k, n))
 
         # make sure that the first two columns are "11, 12, ..., 1n, 21, 22, ..."
-        OA = sorted(orthogonal_array(k+2,n,check=False))
+        OA = sorted(orthogonal_array(k + 2, n, check=False))
 
         # We first define matrices as lists of n^2 values
         matrices = [[] for _ in range(k)]
         for L in OA:
-            for i in range(2,k+2):
+            for i in range(2, k + 2):
                 matrices[i-2].append(L[i])
 
         # The real matrices
@@ -415,9 +392,7 @@ def mutually_orthogonal_latin_squares(k,n, partitions = False, check = True, exi
         matrices = [Matrix(M) for M in matrices]
 
     else:
-        if existence:
-            return Unknown
-        raise NotImplementedError("I don't know how to build {} MOLS of order {}".format(k,n))
+        raise NotImplementedError("I don't know how to build {} MOLS of order {}".format(k, n))
 
     if check:
         assert are_mutually_orthogonal_latin_squares(matrices)
@@ -438,7 +413,8 @@ def mutually_orthogonal_latin_squares(k,n, partitions = False, check = True, exi
     else:
         return matrices
 
-def latin_square_product(M,N,*others):
+
+def latin_square_product(M, N, *others):
     r"""
     Return the product of two (or more) latin squares.
 
@@ -553,7 +529,6 @@ def MOLS_table(start,stop=None,compare=False,width=None):
 
     # choose an appropriate width (needs to be >= 3 because "+oo" should fit)
     if width is None:
-        from sage.rings.integer import Integer
         width = max(3, Integer(stop-1).ndigits(10))
 
     print(" " * (width + 2) + " ".join("{i:>{width}}".format(i=i,width=width)

@@ -73,7 +73,7 @@ finite polynomial rings are merged with infinite polynomial rings::
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Simon King <king@mathematik.nuigalway.ie>
 #                          and Mike Hansen <mhansen@gmail.com>,
 #
@@ -86,8 +86,8 @@ finite polynomial rings are merged with infinite polynomial rings::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from six.moves import range
 
 from sage.rings.integer_ring import ZZ
@@ -254,7 +254,6 @@ class InfinitePolynomial_sparse(RingElement):
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: str(x[1] + x[2])  # indirect doctest
             'x_2 + x_1'
-
         """
         return repr(self._p)
 
@@ -264,9 +263,9 @@ class InfinitePolynomial_sparse(RingElement):
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: a = x[0] + x[1]
-            sage: hash(a) # indirect doctest
-            971115012877883067 # 64-bit
-            -2103273797        # 32-bit
+            sage: b = 1 + 4*x[1]
+            sage: hash(a) != hash(b)
+            True
         """
         return hash(self._p)
 
@@ -277,7 +276,7 @@ class InfinitePolynomial_sparse(RingElement):
         EXAMPLES::
 
             sage: X.<x,y> = InfinitePolynomialRing(GF(7))
-            sage: p=x[2]*y[1]+3*y[0]
+            sage: p = x[2]*y[1]+3*y[0]
             sage: p
             x_2*y_1 + 3*y_0
             sage: p.polynomial()

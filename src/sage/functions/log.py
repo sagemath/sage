@@ -23,6 +23,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
+
 class Function_exp(GinacFunction):
     r"""
     The exponential function, `\exp(x) = e^x`.
@@ -232,7 +233,7 @@ class Function_log1(GinacFunction):
         """
         GinacFunction.__init__(self, 'log', latex_name=r'\log',
                                conversions=dict(maxima='log', fricas='log',
-                                                mathematica='Log'))
+                                                mathematica='Log', giac='ln'))
 
 ln = function_log = Function_log1()
 
@@ -247,6 +248,13 @@ class Function_log2(GinacFunction):
         sage: from sage.functions.log import logb
         sage: logb(1000,10)
         3
+
+    TESTS::
+
+        sage: logb(7, 2)
+        log(7)/log(2)
+        sage: logb(int(7), 2)
+        log(7)/log(2)
     """
     def __init__(self):
         """
@@ -1274,11 +1282,11 @@ class Function_harmonic_number_generalized(BuiltinFunction):
             return harmonic_m1._evalf_(z, parent, algorithm)
 
         from sage.functions.transcendental import zeta, hurwitz_zeta
-        return zeta(m) - hurwitz_zeta(m,z+1)
+        return zeta(m) - hurwitz_zeta(m, z + 1)
 
     def _maxima_init_evaled_(self, n, z):
         """
-        EXAMPLES:
+        EXAMPLES::
 
             sage: maxima_calculus(harmonic_number(x,2))
             gen_harmonic_number(2,_SAGE_VAR_x)
@@ -1448,7 +1456,7 @@ class Function_harmonic_number(BuiltinFunction):
             1/6*pi^2 - harmonic_number(x, 2)
         """
         from sage.functions.transcendental import zeta
-        return zeta(2)-harmonic_number(z,2)
+        return zeta(2) - harmonic_number(z, 2)
 
     def _print_latex_(self, z):
         """

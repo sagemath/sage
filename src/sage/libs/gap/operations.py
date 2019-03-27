@@ -54,7 +54,7 @@ class OperationInspector(SageObject):
 
         String
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.libs.gap.operations import OperationInspector
             sage: opr = OperationInspector(libgap(123))

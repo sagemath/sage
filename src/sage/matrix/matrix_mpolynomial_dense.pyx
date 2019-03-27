@@ -227,7 +227,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         elif algorithm == 'row_reduction':
             self._echelonize_row_reduction()
         else:
-            raise ValueError("Unknown algorithm '%s'"%algorithm)
+            raise ValueError("Unknown algorithm '%s'" % algorithm)
 
     def _echelonize_gauss_bareiss(self):
         """

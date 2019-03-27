@@ -602,7 +602,7 @@ class Func_chebyshev_T(ChebyshevFunction):
         Values known for special values of x.
         For details see [AS1964]_ 22.4 (p. 777)
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: var('n')
             n

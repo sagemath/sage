@@ -1243,11 +1243,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         monomial_coefficients = self._MPolynomial_element__element.dict()
 
-        if( not self.is_constant() ):
+        if not self.is_constant():
             var_idx = self.degrees().nonzero_positions()[0] #variable
         else:
-            var_idx = 0; #constant
-            if( len(monomial_coefficients.keys())==0 ):
+            var_idx = 0 #constant
+            if len(monomial_coefficients) == 0:
                 return R(0)
 
         #construct list

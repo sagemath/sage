@@ -339,7 +339,7 @@ class Category(UniqueRepresentation, SageObject):
         ....:         Parent.__init__(self, category=Ds())
         ....:     def g(self):
         ....:         return "myparent"
-        ....:     class Element:
+        ....:     class Element(object):
         ....:         pass
         sage: D = myparent()
         sage: D.__class__
@@ -1721,13 +1721,12 @@ class Category(UniqueRepresentation, SageObject):
             sage: Algebras(ZZ['t']).element_class is Algebras(ZZ['t','x']).element_class
             True
 
-        These classes are constructed with ``__slots__ = []``, so they
-        behave like extension types::
+        These classes are constructed with ``__slots__ = ()``, so
+        instances may not have a ``__dict__``::
 
             sage: E = FiniteEnumeratedSets().element_class
-            sage: from sage.structure.misc import is_extension_type
-            sage: is_extension_type(E)
-            True
+            sage: E.__dictoffset__
+            0
 
         .. SEEALSO:: :meth:`parent_class`
         """
@@ -2784,7 +2783,7 @@ class CategoryWithParameters(Category):
              and Category of quotient fields
              and Category of metric spaces
             sage: RR.category()
-            Join of Category of fields and Category of complete metric spaces
+            Join of Category of fields and Category of infinite sets and Category of complete metric spaces
             sage: Modules(QQ).parent_class is Modules(RR).parent_class
             False
 

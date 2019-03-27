@@ -68,8 +68,8 @@ EXAMPLES::
     sage: H = Hom(T,S)
     sage: T
     Simplicial complex with 8 vertices and 12 facets
-    sage: T.vertices()
-    ((0, 0), (0, 1), (1, 0), (1, 1), (2, 0), (2, 1), (3, 0), (3, 1))
+    sage: sorted(T.vertices())
+    [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0), (2, 1), (3, 0), (3, 1)]
     sage: f = {(0, 0): 0, (0, 1): 0, (1, 0): 1, (1, 1): 1, (2, 0): 2, (2, 1): 2, (3, 0): 3, (3, 1): 3}
     sage: x = H(f)
     sage: U = simplicial_complexes.Sphere(1)
@@ -81,7 +81,7 @@ EXAMPLES::
     sage: z = y.fiber_product(x)
     sage: z                                     # this is the mapping path space
     Simplicial complex morphism:
-      From: Simplicial complex with 6 vertices and 6 facets
+      From: Simplicial complex with 6 vertices and 4 facets
       To:   Minimal triangulation of the 2-sphere
       Defn: ['L0R(0, 0)', 'L0R(0, 1)', 'L1R(1, 0)', 'L1R(1, 1)', 'L2R(2, 0)', 'L2R(2, 1)'] --> [0, 0, 1, 1, 2, 2]
 """
@@ -160,7 +160,7 @@ class SimplicialComplexMorphism(Morphism):
         """
         if not isinstance(X,SimplicialComplex) or not isinstance(Y,SimplicialComplex):
             raise ValueError("X and Y must be SimplicialComplexes")
-        if not set(f.keys()) == set(X._vertex_set):
+        if not set(f.keys()) == set(X.vertices()):
             raise ValueError("f must be a dictionary from the vertex set of X to single values in the vertex set of Y")
         dim = X.dimension()
         Y_faces = Y.faces()
@@ -553,7 +553,7 @@ class SimplicialComplexMorphism(Morphism):
             return False
         else:
             f = dict()
-            for i in self.domain()._vertex_set:
+            for i in self.domain().vertices():
                 f[i] = i
             if self._vertex_dictionary != f:
                 return False
@@ -581,7 +581,7 @@ class SimplicialComplexMorphism(Morphism):
             sage: z = x.fiber_product(y)
             sage: z
             Simplicial complex morphism:
-              From: Simplicial complex with 4 vertices and facets {('L1R1',), ('L2R0',), ('L0R0', 'L1R2')}
+              From: Simplicial complex with 4 vertices and facets {...}
               To:   Simplicial complex with vertex set (0, 1, 2) and facets {(2,), (0, 1)}
               Defn: L0R0 |--> 0
                     L1R1 |--> 1
@@ -593,8 +593,8 @@ class SimplicialComplexMorphism(Morphism):
         X = self.domain().product(other.domain(),rename_vertices = rename_vertices)
         v = []
         f = dict()
-        eff1 = self.domain()._vertex_set
-        eff2 = other.domain()._vertex_set
+        eff1 = self.domain().vertices()
+        eff2 = other.domain().vertices()
         for i in eff1:
             for j in eff2:
                 if self(Simplex([i])) == other(Simplex([j])):

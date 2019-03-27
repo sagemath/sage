@@ -7,12 +7,12 @@ AUTHORS:
 
 - Vincent Delecroix (2012 and 2013): improve import_statements
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from __future__ import absolute_import
 
 import os
@@ -180,7 +180,6 @@ def load_submodules(module=None, exclude_pattern=None):
         exclude_pattern = r"^sage\.libs|^sage\.tests|tests$|^sage\.all_|all$|sage\.interacts$|^sage\.misc\.benchmark$"
 
     if exclude_pattern:
-        import re
         exclude = re.compile(exclude_pattern)
     else:
         exclude = None

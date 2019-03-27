@@ -416,8 +416,6 @@ the parent as its first argument::
 # ****************************************************************************
 from __future__ import print_function, absolute_import
 
-from cpython cimport PyObject
-
 cdef extern from "methodobject.h":
     cdef int METH_NOARGS, METH_O
     cdef int PyCFunction_GetFlags(object op) except -1

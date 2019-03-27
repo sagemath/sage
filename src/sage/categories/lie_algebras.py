@@ -280,7 +280,6 @@ class LieAlgebras(Category_over_base_ring):
                 sage: L.bracket(L, q+p)
                 Ideal (p1 + q1) of Heisenberg algebra of rank 1 over Rational Field
             """
-            from sage.categories.lie_algebras import LieAlgebras
             if lhs in LieAlgebras:
                 if rhs in LieAlgebras:
                     return lhs.product_space(rhs)

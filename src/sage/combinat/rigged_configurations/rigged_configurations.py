@@ -6,7 +6,7 @@ AUTHORS:
 - Travis Scrimshaw (2010-09-26): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010-2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -18,8 +18,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import itertools
 
@@ -65,8 +65,8 @@ def KirillovReshetikhinCrystal(cartan_type, r, s):
         sage: K1 is KirillovReshetikhinCrystal(['A',6,2], 2, 1)
         True
     """
-    from sage.combinat.rigged_configurations.rigged_configurations import RiggedConfigurations
-    return RiggedConfigurations(cartan_type, [[r,s]])
+    return RiggedConfigurations(cartan_type, [[r, s]])
+
 
 # Note on implementation, this class is used for simply-laced types only
 class RiggedConfigurations(UniqueRepresentation, Parent):
@@ -795,9 +795,9 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         """
         vac_num = 0
         if "B" in options:
-            for tableau in options["B"]:
-                if len(tableau) == self._rc_index[a]:
-                    vac_num += min(i, len(tableau[0]))
+            for tab in options["B"]:
+                if len(tab) == self._rc_index[a]:
+                    vac_num += min(i, len(tab[0]))
         elif "L" in options:
             L = options["L"]
             if a in L:
@@ -1135,9 +1135,9 @@ class RCNonSimplyLaced(RiggedConfigurations):
         """
         vac_num = 0
         if "B" in options:
-            for tableau in options["B"]:
-                if len(tableau) == self._rc_index[a]:
-                    vac_num += min(i, len(tableau[0]))
+            for tab in options["B"]:
+                if len(tab) == self._rc_index[a]:
+                    vac_num += min(i, len(tab[0]))
         elif "L" in options:
             L = options["L"]
             if a in L:
@@ -1484,9 +1484,9 @@ class RCTypeA2Even(RCNonSimplyLaced):
         """
         vac_num = 0
         if "B" in options:
-            for tableau in options["B"]:
-                if len(tableau) == self._rc_index[a]:
-                    vac_num += min(i, len(tableau[0]))
+            for tab in options["B"]:
+                if len(tab) == self._rc_index[a]:
+                    vac_num += min(i, len(tab[0]))
         elif "L" in options:
             L = options["L"]
             if a in L:
@@ -1637,9 +1637,9 @@ class RCTypeA2Dual(RCTypeA2Even):
 
         vac_num = 0
         if "B" in options:
-            for tableau in options["B"]:
-                if len(tableau) == self._rc_index[a]:
-                    vac_num += min(i, len(tableau[0]))
+            for tab in options["B"]:
+                if len(tab) == self._rc_index[a]:
+                    vac_num += min(i, len(tab[0]))
         elif "L" in options:
             L = options["L"]
             if a in L:

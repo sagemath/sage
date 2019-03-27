@@ -362,7 +362,8 @@ import re
 
 from sage.misc.cachefunc import cached_method
 from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
-                                    FunctionElement, AsciiArtString)
+                                    FunctionElement)
+from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
 

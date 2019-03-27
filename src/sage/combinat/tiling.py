@@ -947,7 +947,7 @@ class Polyomino(SageObject):
             Polyomino: [(3, 4, 0), (4, 4, 0), (4, 5, 0), (4, 5, 1), (4, 6, 0)], Color: deeppink
             Polyomino: [(3, 5, 0), (4, 5, 0), (4, 6, 0), (4, 6, 1), (4, 7, 0)], Color: deeppink
 
-        This method is independant of the translation of the polyomino::
+        This method is independent of the translation of the polyomino::
 
             sage: q = Polyomino([(0,0,0), (1,0,0)])
             sage: list(q.translated_copies((2,2,1)))

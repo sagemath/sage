@@ -500,6 +500,9 @@ cdef class RealIntervalField_class(Field):
         sage: RIF.middle_field() is RR
         True
         sage: TestSuite(RIF).run()
+
+        sage: RealIntervalField(10).is_finite()
+        False
     """
     Element = RealIntervalFieldElement
 
@@ -975,17 +978,6 @@ cdef class RealIntervalField_class(Field):
         if key == 'element_is_atomic':
             return True
         return super(RealIntervalField_class, self)._repr_option(key)
-
-    def is_finite(self):
-        """
-        Return ``False``, since the field of real numbers is not finite.
-
-        EXAMPLES::
-
-            sage: RealIntervalField(10).is_finite()
-            False
-        """
-        return False
 
     def characteristic(self):
         """
@@ -2773,7 +2765,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1, 2).square().str(style='brackets')
             '[1.0000000000000000 .. 4.0000000000000000]'
             sage: RIF(-1, 1).square().str(style='brackets')
-            '[0.00000000000000000 .. 1.0000000000000000]'
+            '[0.0000000000000000 .. 1.0000000000000000]'
             sage: (RIF(-1, 1) * RIF(-1, 1)).str(style='brackets')
             '[-1.0000000000000000 .. 1.0000000000000000]'
         """
@@ -3960,7 +3952,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1, 2).union(pi).str(style='brackets')
             '[1.0000000000000000 .. 3.1415926535897936]'
             sage: RIF(1).union(RIF(0, 2)).str(style='brackets')
-            '[0.00000000000000000 .. 2.0000000000000000]'
+            '[0.0000000000000000 .. 2.0000000000000000]'
             sage: RIF(1).union(RIF(-1)).str(style='brackets')
             '[-1.0000000000000000 .. 1.0000000000000000]'
         """

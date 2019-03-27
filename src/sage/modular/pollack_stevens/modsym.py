@@ -486,7 +486,7 @@ class PSModularSymbolElement(ModuleElement):
             sage: phi.hecke(101) == phi * E.ap(101)
             True
 
-            sage: all([phi.hecke(p, algorithm='naive') == phi * E.ap(p) for p in [2,3,5,101]]) # long time
+            sage: all(phi.hecke(p, algorithm='naive') == phi * E.ap(p) for p in [2,3,5,101]) # long time
             True
         """
         return self.__class__(self._map.hecke(ell, algorithm),

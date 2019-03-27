@@ -1055,7 +1055,7 @@ done from the right side.""")
             doctest:warning
             ...
             DeprecationWarning: The default order on free modules has changed. The old ordering is in sage.modules.free_module.EchelonMatrixKey
-            See http://trac.sagemath.org/23878 for details.
+            See http://trac.sagemath.org/23978 for details.
             False
             sage: CC^3 <= QQ^3
             False
@@ -1269,7 +1269,7 @@ done from the right side.""")
             return self._eq(other)
         if op == op_NE:
             return not self._eq(other)
-        deprecation(23878,"The default order on free modules has changed. "
+        deprecation(23978,"The default order on free modules has changed. "
                     "The old ordering is in sage.modules.free_module.EchelonMatrixKey")
         if op == op_LE:
             return self.is_submodule(other)

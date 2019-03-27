@@ -209,8 +209,8 @@ be obtained and queried.
 
     sage: parent(1 + 1/2)
     Rational Field
-    sage: cm = sage.structure.element.get_coercion_model(); cm
-    <sage.structure.coerce.CoercionModel_cache_maps object at ...>
+    sage: cm = coercion_model; cm
+    <sage.structure.coerce.CoercionModel object at ...>
     sage: cm.explain(ZZ, QQ)
     Coercion on left operand via
        Natural morphism:

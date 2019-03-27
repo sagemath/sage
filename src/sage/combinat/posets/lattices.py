@@ -3500,8 +3500,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         # subset S, but we assume that the user made an error
         # if S is not also connected.
 
-        from sage.misc.misc import uniq
-        S = uniq(S)
+        S = sorted(set(S))
         S_ = [self._element_to_vertex(e) for e in S]
         if not self._hasse_diagram.is_convex_subset(S_):
             raise ValueError("subset S is not convex")

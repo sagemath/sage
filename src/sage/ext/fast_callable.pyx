@@ -1125,7 +1125,8 @@ cdef class ExpressionConstant(Expression):
     r"""
     An Expression that represents an arbitrary constant.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
         sage: etb = ExpressionTreeBuilder(vars=(x,))
         sage: type(etb(3))
@@ -1192,7 +1193,8 @@ cdef class ExpressionVariable(Expression):
     r"""
     An Expression that represents a variable.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
         sage: etb = ExpressionTreeBuilder(vars=(x,))
         sage: type(etb.var(x))
@@ -1258,7 +1260,8 @@ cdef class ExpressionCall(Expression):
     r"""
     An Expression that represents a function call.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
         sage: etb = ExpressionTreeBuilder(vars=(x,))
         sage: type(etb.call(sin, x))
@@ -1346,7 +1349,8 @@ cdef class ExpressionIPow(Expression):
     r"""
     A power Expression with an integer exponent.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
         sage: etb = ExpressionTreeBuilder(vars=(x,))
         sage: type(etb.var('x')^17)
@@ -1605,7 +1609,7 @@ class IntegerPowerFunction(object):
         sage: square(I)
         -1
         sage: square(RIF(-1, 1)).str(style='brackets')
-        '[0.00000000000000000 .. 1.0000000000000000]'
+        '[0.0000000000000000 .. 1.0000000000000000]'
         sage: IntegerPowerFunction(-1)
         (^(-1))
         sage: IntegerPowerFunction(-1)(22/7)
@@ -2500,4 +2504,3 @@ cdef class Wrapper:
             if isinstance(op, tuple) and op[0] == 'py_call':
                 py_calls.append(op[1])
         return py_calls
-

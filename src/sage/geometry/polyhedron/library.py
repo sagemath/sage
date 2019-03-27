@@ -395,7 +395,7 @@ class Polytopes():
             sage: ico = polytopes.icosahedron(exact=False)
             sage: ico.base_ring()
             Real Double Field
-            sage: ico.volume()
+            sage: ico.volume() # known bug (trac 18214)
             2.181694990...
 
         A version using `AA <sage.rings.qqbar.AlgebraicRealField>`::
@@ -1155,7 +1155,7 @@ class Polytopes():
         fully work unfortunately, see https://github.com/cddlib/cddlib/pull/7
         for a detailed discussion of this case::
 
-            sage: td = polytopes.truncated_dodecahedron(exact=False)
+            sage: td = polytopes.truncated_dodecahedron(exact=False) # random
             doctest:warning
             ...
             UserWarning: This polyhedron data is numerically complicated; cdd could not convert between the inexact V and H representation without loss of data. The resulting object might show inconsistencies.
@@ -1370,7 +1370,7 @@ class Polytopes():
 
         The implementation using floating point approximations is much faster::
 
-            sage: ti = polytopes.truncated_icosidodecahedron(exact=False)
+            sage: ti = polytopes.truncated_icosidodecahedron(exact=False) # random
             sage: ti.f_vector()
             (1, 120, 180, 62, 1)
             sage: ti.base_ring()
@@ -1602,7 +1602,7 @@ class Polytopes():
 
         Computation with approximated coordinates is much faster::
 
-            sage: gap = polytopes.grand_antiprism(exact=False)
+            sage: gap = polytopes.grand_antiprism(exact=False) # random
             sage: gap
             A 4-dimensional polyhedron in RDF^4 defined as the convex hull of 100 vertices
             sage: gap.f_vector()

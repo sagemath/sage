@@ -23,7 +23,6 @@ from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent
 from sage.categories.sets_cat import Sets
 from sage.matrix.constructor import matrix
-from sage.misc.misc import uniq
 from sage.misc.cachefunc import cached_method
 
 from .functions cimport binomial
@@ -438,7 +437,7 @@ cdef class PointConfiguration_base(Parent):
         self._ambient_dim = len(projective_points[0])-1
         assert all(len(p) == self._ambient_dim+1 for p in projective_points), \
             'The given point coordinates must all have the same length.'
-        assert len(uniq(projective_points)) == len(projective_points), \
+        assert len(set(projective_points)) == len(projective_points), \
             'Not all points are pairwise distinct.'
 
         proj = matrix(projective_points).transpose()

@@ -13,15 +13,15 @@ AUTHORS:
 - Mariah Lenox (2011-03): Added set_order method
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from __future__ import print_function, absolute_import
 
@@ -1106,9 +1106,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         # Finished: record group order, structure and generators
 
         from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
-        self._order = n1*n2
+        self._order = n1 * n2
         if n1 == 1:
-            gens = orders = tuple()
             return AdditiveAbelianGroupWrapper(self.point_homset(), [], [])
         elif n2 == 1:
             gens = (P1,)
@@ -1122,7 +1121,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
     def is_isogenous(self, other, field=None, proof=True):
         """
-        Returns whether or not self is isogenous to other
+        Return whether or not self is isogenous to other
 
         INPUT:
 

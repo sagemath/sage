@@ -691,7 +691,8 @@ cdef class DenseGraphBackend(CGraphBackend):
     objects::
 
         sage: G.add_vertex((0, 1, 2))
-        sage: G.vertices()
+        sage: sorted(list(G),
+        ....:        key=lambda x: (isinstance(x, tuple), x))
         [0,
         ...
          29,

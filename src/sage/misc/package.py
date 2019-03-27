@@ -34,20 +34,21 @@ Functions
 ---------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
-from sage.env import SAGE_ROOT, SAGE_PKGS
+from sage.env import SAGE_PKGS
 
 import json
 import os
 import subprocess
+import sys
 try:
     # Python 3.3+
     from urllib.request import urlopen
@@ -142,9 +143,15 @@ def pip_installed_packages():
         sage: d['beautifulsoup']   # optional - beautifulsoup
         u'...'
     """
-    proc = subprocess.Popen(["pip", "list", "--no-index", "--format", "json"], stdout=subprocess.PIPE)
-    stdout = proc.communicate()[0].decode()
-    return {package['name'].lower():package['version'] for package in json.loads(stdout)}
+    with open(os.devnull, 'w')  as devnull:
+        proc = subprocess.Popen(
+            [sys.executable, "-m", "pip", "list", "--no-index", "--format", "json"],
+            stdout=subprocess.PIPE,
+            stderr=devnull,
+        )
+        stdout = proc.communicate()[0].decode()
+        return {package['name'].lower():package['version']
+                for package in json.loads(stdout)}
 
 def list_packages(*pkg_types, **opts):
     r"""
@@ -330,6 +337,7 @@ def is_package_installed(package, exclude_pip=True):
     """
     return any(p.split('-')[0] == package for p in installed_packages(exclude_pip))
 
+
 def package_versions(package_type, local=False):
     r"""
     Return version information for each Sage package.
@@ -361,6 +369,7 @@ def package_versions(package_type, local=False):
         ('0.9.p12', '0.9.p12')
     """
     return {pkg['name']: (pkg['installed_version'], pkg['remote_version']) for pkg in list_packages(package_type, local=local).values()}
+
 
 def standard_packages():
     """
@@ -427,6 +436,7 @@ def optional_packages():
     return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
             sorted(pkg['name'] for pkg in pkgs if not pkg['installed']))
 
+
 def experimental_packages():
     """
     Return two lists. The first contains the installed and the second
@@ -452,6 +462,42 @@ def experimental_packages():
     pkgs = list_packages('experimental', local=True).values()
     return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
             sorted(pkg['name'] for pkg in pkgs if not pkg['installed']))
+
+def package_manifest(package):
+    """
+    Return the manifest for ``package``.
+
+    INPUT:
+
+    - ``package`` -- package name
+
+    The manifest is written in the file
+    ``SAGE_SPKG_INST/package-VERSION``. It is a JSON file containing a
+    dictionary with the package name, version, installation date, list
+    of installed files, etc.
+
+    EXAMPLES::
+
+        sage: from sage.misc.package import package_manifest
+        sage: sagetex_manifest = package_manifest('sagetex')
+        sage: sagetex_manifest['package_name'] == 'sagetex'
+        True
+        sage: 'files' in sagetex_manifest
+        True
+
+    Test a nonexistent package::
+
+        sage: package_manifest('dummy-package')
+        Traceback (most recent call last):
+        ...
+        KeyError: 'dummy-package'
+    """
+    version = installed_packages()[package]
+    stamp_file = os.path.join(os.environ['SAGE_SPKG_INST'],
+                              '{}-{}'.format(package, version))
+    with open(stamp_file) as f:
+        spkg_meta = json.load(f)
+    return spkg_meta
 
 
 class PackageNotFoundError(RuntimeError):

@@ -182,6 +182,7 @@ def ModularSymbols_clear_cache():
     global _cache
     _cache = {}
 
+
 def ModularSymbols(group  = 1,
                    weight = 2,
                    sign   = 0,
@@ -194,7 +195,7 @@ def ModularSymbols(group  = 1,
     INPUT:
 
     - ``group`` - A congruence subgroup or a Dirichlet character eps.
-    - ``weight`` - int, the weight, which must be = 2.
+    - ``weight`` - int, the weight, which must be >= 2.
     - ``sign`` - int, The sign of the involution on modular symbols
       induced by complex conjugation. The default is 0, which means
       "no sign", i.e., take the whole space.

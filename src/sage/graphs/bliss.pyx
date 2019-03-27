@@ -30,7 +30,6 @@ AUTHORS:
 import numpy
 from operator import itemgetter
 
-from cpython cimport PyObject
 from libc.limits cimport LONG_MAX
 
 from cysignals.memory cimport check_calloc, sig_free
@@ -89,7 +88,7 @@ cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
     for i in range(n):
         done[i] = False
 
-    gens, int_to_vertex = <object> <PyObject *> user_param
+    gens, int_to_vertex = <object>user_param
 
     while True:
         while cur < n and done[cur]:
@@ -540,11 +539,11 @@ cdef automorphism_group_gens_from_edge_list(int Vnr, Vout, Vin, int Lnr=1, label
 
     if directed:
         d = bliss_digraph_from_labelled_edges(Vnr, Lnr, Vout, Vin, labels, partition)
-        d.find_automorphisms(s, add_gen, <PyObject *> data)
+        d.find_automorphisms(s, add_gen, <void*>data)
         del d
     else:
         g = bliss_graph_from_labelled_edges(Vnr, Lnr, Vout, Vin, labels, partition)
-        g.find_automorphisms(s, add_gen, <PyObject *> data)
+        g.find_automorphisms(s, add_gen, <void*>data)
         del g
 
     return [[cyc for cyc in gen if cyc[0] is not None] for gen in gens]
@@ -683,16 +682,6 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
         12
         sage: automorphism_group(gg,[[0],[1,2,3,4]]).cardinality()              # optional - bliss
         6
-
-    Making sure that #25426 is fixed:
-
-        sage: j = matrix([(3, 2, 1, 0, 0),
-        ....:  (2, 2, 0, 1, 0),
-        ....:  (1, 0, 3, 0, 2),
-        ....:  (0, 1, 0, 2, 1),
-        ....:  (0, 0, 2, 1, 2)])
-        sage: j.automorphisms_of_rows_and_columns()
-        [((), ()), ((1,3)(2,5), (1,3)(2,5))]
     """
     # We need this to convert the numbers from <unsigned int> to
     # <long>. This assertion should be true simply for memory reasons.
@@ -736,7 +725,8 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
     gens = automorphism_group_gens_from_edge_list(Vnr, Vout, Vin, Lnr, labels, int2vert, partition, directed)
 
     from sage.groups.perm_gps.permgroup import PermutationGroup
-    return PermutationGroup(gens, domain=sorted(G))
+    return PermutationGroup(gens, domain=list(G))
+
 
 #####################################################
 # old direct interactions graphs <-> bliss graphs

@@ -166,11 +166,11 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         ....:     k11 + k20]
         sage: from sage.sat.boolean_polynomials import solve as solve_sat
         sage: solve_sat(keqs, n=1, solver=SAT('cryptominisat'))     # optional - cryptominisat
-        [{k28: 1,
-          k26: 0,
+        [{k28: 0,
+          k26: 1,
           k24: 0,
           k20: 0,
-          k19: 1,
+          k19: 0,
           k18: 0,
           k17: 0,
           k16: 0,
@@ -180,16 +180,16 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
           k12: 0,
           k11: 0,
           k10: 0,
-          k9: 1,
+          k9: 0,
           k8: 0,
           k7: 0,
-          k6: 0,
+          k6: 1,
           k5: 0,
           k4: 0,
-          k3: 0,
+          k3: 1,
           k2: 0,
           k1: 0,
-          k0: 1}]
+          k0: 0}]
         sage: solve_sat(keqs, n=1, solver=SAT('picosat'))           # optional - pycosat
         [{k28: 0,
           k26: 1,

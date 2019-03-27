@@ -44,7 +44,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #                    Ben Hutz <bn4941@gmail.com>
 #
@@ -52,23 +52,23 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.schemes.generic.scheme import is_Scheme
 from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-from sage.misc.mrange import xmrange
+
 
 def enum_product_projective_rational_field(X, B):
     r"""
-    Enumerates projective, rational points on scheme ``X`` of height up to
+    Enumerate projective, rational points on scheme ``X`` of height up to
     bound ``B``.
 
     INPUT:
 
-    - ``X`` -  a scheme or set of abstract rational points of a scheme
+    - ``X`` -- a scheme or set of abstract rational points of a scheme
 
-    - ``B`` -  a positive integer bound
+    - ``B`` -- a positive integer bound
 
     OUTPUT:
 

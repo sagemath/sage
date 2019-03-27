@@ -1099,7 +1099,7 @@ class NumberFieldIdeal(Ideal_generic):
         ``proof=True`` (this is the default setting) to prove the correctness
         of the output.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: K = QuadraticField(-119,'a')
             sage: P = K.factor(2)[1][0]

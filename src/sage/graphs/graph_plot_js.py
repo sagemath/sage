@@ -189,6 +189,19 @@ def gen_html_code(G,
     :trac:`17370`::
 
         sage: filename = gen_html_code(graphs.CompleteBipartiteGraph(4, 5))
+
+    In the generated html code, the source (resp. target) of a link is the index
+    of the node in the list defining the names of the nodes. We check that the
+    order is correct (:trac:`27460`)::
+
+        sage: filename = gen_html_code(DiGraph({1: [10]}))
+        sage: with open(filename, 'r') as f:
+        ....:     data = f.read()
+        sage: nodes = data.partition('"nodes":')[2]; nodes
+        ...[{..."name": "10"...}, {..."name": "1"...}]...
+        sage: links = data.partition('"links":')[2]
+        sage: '"source": 1' in links and '"target": 0' in links
+        True
     """
     directed = G.is_directed()
     multiple_edges = G.has_multiple_edges()
@@ -206,9 +219,8 @@ def gen_html_code(G,
             color[v_to_id[v]] = i
 
     # Vertex list
-    nodes = []
-    for v in G.vertices():
-        nodes.append({"name": str(v), "group": str(color[v_to_id[v]])})
+    # Data for vertex v must be at position v_to_id[v] in list nodes
+    nodes = [{"name": str(v), "group": str(color[v_to_id[v]])} for v in G]
 
     # Edge colors.
     edge_color_default = "#aaa"
@@ -258,6 +270,7 @@ def gen_html_code(G,
                 curve = (1 if seen[u, v] % 2 else -1) * (seen[u, v] // 2) * 15
 
         # Adding the edge to the list
+        # The source (resp. target) is the index of u (resp. v) in list nodes
         edges.append({"source": v_to_id[u],
                       "target": v_to_id[v],
                       "strength": 0,

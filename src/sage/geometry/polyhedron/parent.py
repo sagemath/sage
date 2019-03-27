@@ -575,6 +575,25 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         elif base_ring.has_coerce_map_from(self.base_ring()):
             return Polyhedra(base_ring, self.ambient_dim(), backend=backend)
 
+    def change_ring(self, base_ring, backend=None):
+        """
+        Return the parent with the new base ring.
+
+        INPUT:
+
+        - ``base_ring``, ``backend`` -- see
+          :func:`~sage.geometry.polyhedron.constructor.Polyhedron`.
+
+        EXAMPLES::
+
+            sage: from sage.geometry.polyhedron.parent import Polyhedra
+            sage: Polyhedra(ZZ,3).change_ring(QQ)
+            Polyhedra in QQ^3
+            sage: Polyhedra(ZZ,3).an_element().change_ring(QQ)
+            A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 4 vertices
+            """
+        return Polyhedra(base_ring, self.ambient_dim(), backend=backend)
+
     def _coerce_base_ring(self, other):
         r"""
         Return the common base rincg for both ``self`` and ``other``.

@@ -1477,8 +1477,10 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
         sage: from sage.graphs.strongly_regular_db import is_twograph_descendant_of_srg
         sage: t = is_twograph_descendant_of_srg(27, 10, 1, 5); t
         (<cyfunction is_twograph_descendant_of_srg.<locals>.la at...
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g  # py2
         descendant of complement(Johnson graph with parameters 8,2) at {5, 7}: Graph on 27 vertices
+        sage: g = t[0](*t[1:]); g  # py3
+        descendant of complement(Johnson graph with parameters 8,2) at {0, 1}: Graph on 27 vertices
         sage: g.is_strongly_regular(parameters=True)
         (27, 10, 1, 5)
         sage: t = is_twograph_descendant_of_srg(5,5,5,5); t
@@ -2231,19 +2233,19 @@ def SRG_196_91_42_42():
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
     from sage.graphs.generators.intersection import IntersectionGraph
     k = 7
-    G = IntegerModRing(91)
-    A = map(G,{0, 10, 27, 28, 31, 43, 50})
-    B = map(G,{0, 11, 20, 25, 49, 55, 57})
-    H = map(G,[13*i for i in range(k)])
-    U = list(map(frozenset, [[x + z for x in A] for z in G]))
-    V = list(map(frozenset, [[x + z for x in B] for z in G]))
-    W = list(map(frozenset, [[x + z for x in H] for z in G]))
+    R = IntegerModRing(91)
+    A = list(map(R, [0, 10, 27, 28, 31, 43, 50]))
+    B = list(map(R, [0, 11, 20, 25, 49, 55, 57]))
+    H = list(map(R, [13 * i for i in range(k)]))
+    U = list(map(frozenset, [[x + z for x in A] for z in R]))
+    V = list(map(frozenset, [[x + z for x in B] for z in R]))
+    W = list(map(frozenset, [[x + z for x in H] for z in R]))
     G = IntersectionGraph(U + V + W)
 
     G.seidel_switching(U)
 
-    G.add_edges((-1,x) for x in U)
-    G.relabel()
+    G.add_edges((-1, x) for x in U)
+    G.relabel(perm={u: i for i, u in enumerate(G)})
     G.name('RSHCD+')
     return G
 
@@ -2620,25 +2622,27 @@ def SRG_176_90_38_54():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_176_90_38_54
-        sage: G = SRG_176_90_38_54()
+        sage: G = SRG_176_90_38_54(); G
+        a Seidel switching of Distance graph for distance 2 in : Graph on 176 vertices
         sage: G.is_strongly_regular(parameters=True)
         (176, 90, 38, 54)
     """
     from sage.graphs.generators.basic import CompleteGraph
     from sage.misc.flatten import flatten
     g = SRG_175_72_20_36()
-    g.relabel()
+    g.relabel(range(175))
     # c=filter(lambda x: len(x)==5, g.cliques_maximal())
     # r=flatten(Hypergraph(c).packing()[:18]) # takes 3s, so we put the answer here
-    r=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,28,29,32,\
-       38,39,41,42,43,47,49,50,51,52,53,55,57,61,63,65,67,69,72,75,77,79,81,84,87,88,\
-       89,92,95,96,97,99,101,102,104,105,107,112,114,117,118,123,125,129,132,139,140,\
-       141,144,146,147,153,154,162,165,166,167,170,172,173,174]
-    j=g.disjoint_union(CompleteGraph(1))
-    j.relabel()
-    j.seidel_switching(r)
-    j.name('a Seidel switching of '+SRG_175_72_20_36().name())
-    return j
+    r = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,
+         24,25,28,29,32,38,39,41,42,43,47,49,50,51,52,53,55,57,61,63,65,
+         67,69,72,75,77,79,81,84,87,88,89,92,95,96,97,99,101,102,104,
+         105,107,112,114,117,118,123,125,129,132,139,140,141,144,146,
+         147,153,154,162,165,166,167,170,172,173,174]
+    g.add_vertex()
+    g.seidel_switching(r)
+    g.name('a Seidel switching of ' + g.name())
+    return g
+
 
 def SRG_630_85_20_10():
     r"""
@@ -3096,7 +3100,7 @@ def _build_small_srg_database():
     parameters of the graph of words of `C`. Another relevant reference is
     Sect.9.8.3 of [BH12]_.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import _build_small_srg_database
         sage: _build_small_srg_database()

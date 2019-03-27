@@ -869,7 +869,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             Univariate Polynomial Ring in beta over Finite Field of size 3
         """
         sig_on()
-        return self._parent.polynomial_ring(name)(new_gen(FF_to_FpXQ_i(self.val)))
+        pol = new_gen(FF_to_FpXQ(self.val))
+        return self._parent.polynomial_ring(name)(pol)
 
     def minpoly(self, var='x'):
         """
@@ -887,7 +888,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             y^2 + 1
         """
         sig_on()
-        return self._parent.polynomial_ring(var)(new_gen(FF_minpoly(self.val)))
+        pol = new_gen(FF_minpoly(self.val))
+        return self._parent.polynomial_ring(var)(pol)
 
     def charpoly(self, var='x'):
         """
@@ -905,7 +907,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             y^2 + 1
         """
         sig_on()
-        return self._parent.polynomial_ring(var)(new_gen(FF_charpoly(self.val)))
+        pol = new_gen(FF_charpoly(self.val))
+        return self._parent.polynomial_ring(var)(pol)
 
     def is_square(self):
         """

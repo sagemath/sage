@@ -259,14 +259,14 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             polys = [morphism_or_polys]
 
         PR = get_coercion_model().common_parent(*polys)         
-        fraction_field = any([is_FractionField(poly.parent()) for poly in polys])
+        fraction_field = any(is_FractionField(poly.parent()) for poly in polys)
         if fraction_field:
             K = PR.base_ring().fraction_field()
             # Replace base ring with its fraction field
             PR = PR.ring().change_ring(K).fraction_field()
             polys = [PR(poly) for poly in polys]
         else:
-            quotient_ring = any([is_QuotientRing(poly.parent()) for poly in polys])
+            quotient_ring = any(is_QuotientRing(poly.parent()) for poly in polys)
             # If any of the list entries lies in a quotient ring, we try
             # to lift all entries to a common polynomial ring.
             if quotient_ring:

@@ -4,14 +4,14 @@ The PPL (Parma Polyhedra Library) backend for polyhedral computations
 from __future__ import absolute_import
 
 from sage.rings.all import ZZ, QQ
+from sage.rings.integer import Integer
 from sage.arith.functions import LCM_list
 from sage.misc.functional import denominator
-from sage.matrix.constructor import matrix
-from sage.libs.ppl import (
+from ppl import (
     C_Polyhedron, Constraint_System, Generator_System,
-    Variable, Linear_Expression,
-    line, ray, point )
-
+    Linear_Expression,
+    line, ray, point
+)
 from .base import Polyhedron_base
 from .base_QQ import Polyhedron_QQ
 from .base_ZZ import Polyhedron_ZZ
@@ -161,16 +161,17 @@ class Polyhedron_ppl(Polyhedron_base):
         gs = self._ppl_polyhedron.minimized_generators()
         parent = self.parent()
         for g in gs:
+            coefficients = [Integer(mpz) for mpz in g.coefficients()]
             if g.is_point():
-                d = g.divisor()
+                d = Integer(g.divisor())
                 if d.is_one():
-                    parent._make_Vertex(self, g.coefficients())
+                    parent._make_Vertex(self, coefficients)
                 else:
-                    parent._make_Vertex(self, [x/d for x in g.coefficients()])
+                    parent._make_Vertex(self, [x/d for x in coefficients])
             elif g.is_ray():
-                parent._make_Ray(self, g.coefficients())
+                parent._make_Ray(self, coefficients)
             elif g.is_line():
-                parent._make_Line(self, g.coefficients())
+                parent._make_Line(self, coefficients)
             else:
                 assert False
         self._Vrepresentation = tuple(self._Vrepresentation)

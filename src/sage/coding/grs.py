@@ -611,7 +611,7 @@ def ReedSolomonCode(base_field, length, dimension, primitive_root=None):
       one will be computed and can be recovered as ``C.evaluation_points()[1]``
       where `C` is the code returned by this method.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: C = codes.ReedSolomonCode(GF(7), 6, 3); C
         [6, 3, 4] Reed-Solomon Code over GF(7)

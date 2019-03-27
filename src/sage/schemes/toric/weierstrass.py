@@ -649,7 +649,7 @@ def _check_polynomial_P2(cubic, variables):
     polynomial ring. A ``ValueError`` is raised if the polynomial is
     not homogeneous.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.schemes.toric.weierstrass import _check_polynomial_P2
         sage: R.<x,y,z> = QQ[]
@@ -990,7 +990,7 @@ def _check_polynomial_P2_112(polynomial, variables):
     polynomial ring. A ``ValueError`` is raised if the polynomial is
     not homogeneous.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.schemes.toric.weierstrass import _check_polynomial_P2_112
         sage: R.<x,y,z,t> = QQ[]

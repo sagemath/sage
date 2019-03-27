@@ -53,6 +53,9 @@ Iterated image under a morphism::
     sage: m('y', 3)
     word: ysxyssxyxsxssysxyssxyss
 
+See more examples in the documentation of the call method
+(``m.__call__?``).
+
 Infinite fixed point of morphism::
 
     sage: fix = m.fixed_point('x')
@@ -230,52 +233,56 @@ class WordMorphism(SageObject):
     r"""
     WordMorphism class
 
-    EXAMPLES::
+    INPUT:
+
+    - ``data`` -- dict or str or an instance of WordMorphism, the map
+      giving the image of letters
+    - ``domain`` -- (optional:``None``) set of words over a given
+      alphabet. If ``None``, the domain alphabet is computed from ``data``
+      and is *sorted*.
+    - ``codomain`` -- (optional:``None``) set of words over a given
+      alphabet. If ``None``, the codomain alphabet is computed from
+      ``data`` and is *sorted*.
+
+    .. NOTE::
+
+        When the domain or the codomain are not explicitely given, it is
+        expected that the letters are comparable because the alphabets of
+        the domain and of the codomain are sorted.
+
+    EXAMPLES:
+
+    From a dictionary::
 
         sage: n = WordMorphism({0:[0,2,2,1],1:[0,2],2:[2,2,1]})
+        sage: n
+        WordMorphism: 0->0221, 1->02, 2->221
+
+    From a string with ``'->'`` as separation::
+
         sage: m = WordMorphism('x->xyxsxss,s->xyss,y->ys')
+        sage: m
+        WordMorphism: s->xyss, x->xyxsxss, y->ys
+        sage: m.domain()
+        Finite words over {'s', 'x', 'y'}
+        sage: m.codomain()
+        Finite words over {'s', 'x', 'y'}
 
-    Power of a morphism::
+    Specifying the domain and codomain::
 
-        sage: n^2
-        WordMorphism: 0->022122122102, 1->0221221, 2->22122102
+        sage: W = FiniteWords([0,1,2])
+        sage: d = {0:[0,1], 1:[0,1,0], 2:[0]}
+        sage: m = WordMorphism(d, domain=W, codomain=W)
+        sage: m([0]).parent()
+        Finite words over {0, 1, 2}
 
-    Image under a morphism::
+    When the alphabet is non-sortable, the domain and/or codomain must be
+    explicitely given::
 
-        sage: m('y')
-        word: ys
-        sage: m('xxxsy')
-        word: xyxsxssxyxsxssxyxsxssxyssys
-
-    Iterated image under a morphism::
-
-        sage: m('y', 3)
-        word: ysxyssxyxsxssysxyssxyss
-
-    See more examples in the documentation of the call method
-    (``m.__call__?``).
-
-    Infinite fixed point of morphism::
-
-        sage: fix = m.fixed_point('x')
-        sage: fix
-        word: xyxsxssysxyxsxssxyssxyxsxssxyssxyssysxys...
-        sage: fix.length()
-        +Infinity
-
-    Incidence matrix::
-
-        sage: matrix(m)
-        [2 3 1]
-        [1 3 0]
-        [1 1 1]
-
-    Many other functionalities...::
-
-        sage: m.is_identity()
-        False
-        sage: m.is_endomorphism()
-        True
+        sage: W = FiniteWords(['a',6])
+        sage: d = {'a':['a',6,'a'],6:[6,6,6,'a']}
+        sage: WordMorphism(d, domain=W, codomain=W)
+        WordMorphism: 6->666a, a->a6a
 
     TESTS::
 
@@ -337,8 +344,6 @@ class WordMorphism(SageObject):
             WordMorphism: a->ab, b->ba
             sage: WordMorphism({2:[4,5,6],3:[1,2,3]})
             WordMorphism: 2->456, 3->123
-            sage: WordMorphism({'a':['a',6,'a'],6:[6,6,6,'a']})
-            WordMorphism: 6->666a, a->a6a
 
         The image of a letter can be a set, but the order is not
         preserved::
@@ -1263,8 +1268,8 @@ class WordMorphism(SageObject):
 
         ::
 
-            sage: s = WordMorphism({0:[1,2], 'a':(2,3,4), 'z':[9,8,7]})
-            sage: s.image(0)
+            sage: s = WordMorphism({'b':[1,2], 'a':(2,3,4), 'z':[9,8,7]})
+            sage: s.image('b')
             word: 12
             sage: s.image('a')
             word: 234
@@ -1809,7 +1814,7 @@ class WordMorphism(SageObject):
 
         - ``word`` - the fixed point of ``self`` beginning with ``letter``.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: W = FiniteWords('abc')
 
@@ -2303,7 +2308,7 @@ class WordMorphism(SageObject):
         if self.is_empty():
             return [self]
 
-        #Construire la liste c des morphismes conjugues
+        # Build the list c of conjugate morphisms
         c = []
         m = self
         c.append(m)
@@ -2319,7 +2324,7 @@ class WordMorphism(SageObject):
                 break
             c.insert(0, m)
 
-        #Construire la liste d des morphismes distincts
+        # Build the list d of distinct morphisms
         d = []
         for m in c:
             if m not in d:

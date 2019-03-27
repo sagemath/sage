@@ -253,7 +253,8 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         This code is implicitly called for multiplying self by another
         sparse matrix.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: a = matrix(GF(43), 3, 3, range(9), sparse=True)
             sage: b = matrix(GF(43), 3, 3, range(10,19), sparse=True)
             sage: a*b
@@ -326,7 +327,8 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         Multiply self by the sparse matrix _right, and return the
         result as a dense matrix.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: a = matrix(GF(10007), 2, [1,2,3,4], sparse=True)
             sage: b = matrix(GF(10007), 2, 3, [1..6], sparse=True)
             sage: a * b

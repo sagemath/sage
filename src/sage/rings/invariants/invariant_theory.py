@@ -100,21 +100,20 @@ AUTHORS:
 - Jesper Noordsij (2018-05-18): support for binary quintics added
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.matrix.constructor import matrix
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.misc.cachefunc import cached_method
-
 
 
 ######################################################################
@@ -155,20 +154,21 @@ def _guess_variables(polynomial, *args):
         R = polynomial[0].parent()
         if not all(p.parent() is R for p in polynomial):
             raise ValueError('All input polynomials must be in the same ring.')
-    if len(args)==0 or (len(args)==1 and args[0] is None):
+    if not args or (len(args) == 1 and args[0] is None):
         if isinstance(polynomial, (list, tuple)):
-            variables = set()
+            variables = tuple()
             for p in polynomial:
-                variables.update(p.variables())
-            variables = list(variables)
-            variables.reverse()   # to match polynomial.variables() behavior
-            return tuple(variables)
+                for var in p.variables():
+                    if var not in variables:
+                        variables += (var,)
+            return variables
         else:
             return polynomial.variables()
     elif len(args) == 1 and isinstance(args[0], (tuple, list)):
         return tuple(args[0])
     else:
         return tuple(args)
+
 
 def transvectant(f, g, h=1, scale='default'):
     r"""
@@ -262,7 +262,7 @@ def transvectant(f, g, h=1, scale='default'):
     f = f.homogenized()
     g = g.homogenized()
     R = f._ring
-    if not g._ring is R:
+    if g._ring is not R:
         raise ValueError('All input forms must be in the same polynomial ring.')
     x = f._variables[0]
     y = f._variables[1]
@@ -278,6 +278,7 @@ def transvectant(f, g, h=1, scale='default'):
             scalar = 1
         else:
             raise ValueError('Unknown scale type: %s' %scale)
+
         def diff(j):
             df = f.form().derivative(x,j).derivative(y,h-j)
             dg = g.form().derivative(x,h-j).derivative(y,j)
@@ -290,6 +291,7 @@ def transvectant(f, g, h=1, scale='default'):
     return AlgebraicForm(2, degree, tv, x, y)
 
 ######################################################################
+
 
 @richcmp_method
 class FormsBase(SageObject):
@@ -541,7 +543,6 @@ class AlgebraicForm(FormsBase):
         super(AlgebraicForm, self).__init__(n, homogeneous, ring, variables)
         self._check()
 
-
     def _check(self):
         """
         Check that the input is of the correct degree and number of
@@ -572,7 +573,6 @@ class AlgebraicForm(FormsBase):
             return
         else:
             raise ValueError('Polynomial is of the wrong degree.')
-
 
     def _check_covariant(self, method_name, g=None, invariant=False):
         r"""
@@ -620,7 +620,7 @@ class AlgebraicForm(FormsBase):
         # The transform of the covariant
         g_cov = getattr(self, method_name)().subs(transform)
         # they must be the same
-        assert (g_cov - cov_g).is_zero(),  'Not covariant.'
+        assert (g_cov - cov_g).is_zero(), 'Not covariant.'
         if invariant:
             cov = getattr(self, method_name)()
             assert (cov - cov_g).is_zero(), 'Not invariant.'
@@ -818,6 +818,7 @@ class AlgebraicForm(FormsBase):
             assert indices == [0]
             coefficient_monomial_iter = [(c, R.gen(0)**i) for i,c in
                                          enumerate(self._polynomial.padded_list())]
+
             def index(monomial):
                 if monomial in R.base_ring():
                     return (0,)
@@ -825,6 +826,7 @@ class AlgebraicForm(FormsBase):
         else:
             # Multivariate polynomials
             coefficient_monomial_iter = self._polynomial
+
             def index(monomial):
                 if monomial in R.base_ring():
                     return tuple(0 for i in indices)
@@ -980,7 +982,8 @@ class QuadraticForm(AlgebraicForm):
             (x^2, y^2, 1, x*y, x, y)
         """
         var = self._variables
-        def prod(a,b):
+
+        def prod(a, b):
             if a is None and b is None:
                 return self._ring.one()
             elif a is None:
@@ -988,7 +991,7 @@ class QuadraticForm(AlgebraicForm):
             elif b is None:
                 return a
             else:
-                return a*b
+                return a * b
         squares = tuple( prod(x,x) for x in var )
         mixed = []
         for i in range(self._n):
@@ -1186,7 +1189,7 @@ class QuadraticForm(AlgebraicForm):
             (42849/256) * (2*x^2 + x*y + 3*y^2 + 4*z^2 + 5*z + 1)
         """
         A = self.matrix()
-        Aadj = A.adjoint()
+        Aadj = A.adjugate()
         if self._homogeneous:
             var = self._variables
         else:
@@ -1681,8 +1684,8 @@ class BinaryQuintic(AlgebraicForm):
             (a0, a1, a2, a3, a4, a5)
         """
         coeff = self.coeffs()
-        return (coeff[0], coeff[1]/5, coeff[2]/10, coeff[3]/10, coeff[4]/5, \
-                    coeff[5])
+        return (coeff[0], coeff[1] / 5, coeff[2] / 10, coeff[3] / 10,
+                coeff[4] / 5, coeff[5])
 
     @cached_method
     def H_covariant(self, as_form=False):
@@ -2231,17 +2234,18 @@ class BinaryQuintic(AlgebraicForm):
 
         """
         if self._ring.characteristic() in [2, 3, 5]:
-            raise NotImplementedError('No invariants implemented for fields \
-                        of characteristic 2, 3 or 5.') # todo: add support
+            raise NotImplementedError('No invariants implemented for fields '
+                                      'of characteristic 2, 3 or 5.')
+        # todo: add support
         else:
             invariants = {}
             invariants['A'] = self.A_invariant()
             invariants['B'] = self.B_invariant()
             invariants['C'] = self.C_invariant()
             invariants['R'] = self.R_invariant()
-        if as_tuple == True:
-            return (invariants['A'], invariants['B'], invariants['C'], \
-                        invariants['R'])
+        if as_tuple:
+            return (invariants['A'], invariants['B'], invariants['C'],
+                    invariants['R'])
         else:
             return invariants
 
@@ -2306,6 +2310,8 @@ class BinaryQuintic(AlgebraicForm):
         return invariants
 
 ######################################################################
+
+
 def _covariant_conic(A_scaled_coeffs, B_scaled_coeffs, monomials):
     """
     Helper function for :meth:`TernaryQuadratic.covariant_conic`
@@ -2841,10 +2847,10 @@ class TernaryCubic(AlgebraicForm):
             sage: len(list(cubic.Theta_covariant()))
             6952
         """
-        U_conic = self.polar_conic().adjoint()
+        U_conic = self.polar_conic().adjugate()
         U_coeffs = ( U_conic[0,0], U_conic[1,1], U_conic[2,2],
                      U_conic[0,1], U_conic[0,2], U_conic[1,2] )
-        H_conic = TernaryCubic(3, 3, self.Hessian(), self.variables()).polar_conic().adjoint()
+        H_conic = TernaryCubic(3, 3, self.Hessian(), self.variables()).polar_conic().adjugate()
         H_coeffs = ( H_conic[0,0], H_conic[1,1], H_conic[2,2],
                      H_conic[0,1], H_conic[0,2], H_conic[1,2] )
         quadratic = TernaryQuadratic(3, 2, self._ring.zero(), self.variables())
@@ -2908,7 +2914,7 @@ class TernaryCubic(AlgebraicForm):
         """
         return ( -J**2 + 4*Theta**3 + T*U**2*Theta**2 +
                  Theta*(-4*S**3*U**4 + 2*S*T*U**3*H - 72*S**2*U**2*H**2
-                        - 18*T*U*H**3 +  108*S*H**4)
+                        - 18*T*U*H**3 + 108*S*H**4)
                  -16*S**4*U**5*H - 11*S**2*T*U**4*H**2 -4*T**2*U**3*H**3
                  +54*S*T*U**2*H**4 -432*S**2*U*H**5 -27*T*H**6 )
 
@@ -3140,7 +3146,7 @@ class SeveralAlgebraicForms(FormsBase):
         # The transform of the covariant
         g_cov = getattr(self, method_name)().subs(transform)
         # they must be the same
-        assert (g_cov - cov_g).is_zero(),  'Not covariant.'
+        assert (g_cov - cov_g).is_zero(), 'Not covariant.'
         if invariant:
             cov = getattr(self, method_name)()
             assert (cov - cov_g).is_zero(), 'Not invariant.'
@@ -3509,7 +3515,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         """
         a0, a1, a2, a3, b0, b1, b2, b3, b4, b5 = scaled_coeffs_1
         A0, A1, A2, A3, B0, B1, B2, B3, B4, B5 = scaled_coeffs_2
-        return  a1*a2*a3*A0 - a3*b3**2*A0 - a2*b4**2*A0 + 2*b3*b4*b5*A0 - a1*b5**2*A0 \
+        return a1*a2*a3*A0 - a3*b3**2*A0 - a2*b4**2*A0 + 2*b3*b4*b5*A0 - a1*b5**2*A0 \
             + a0*a2*a3*A1 - a3*b1**2*A1 - a2*b2**2*A1 + 2*b1*b2*b5*A1 - a0*b5**2*A1 \
             + a0*a1*a3*A2 - a3*b0**2*A2 - a1*b2**2*A2 + 2*b0*b2*b4*A2 - a0*b4**2*A2 \
             + a0*a1*a2*A3 - a2*b0**2*A3 - a1*b1**2*A3 + 2*b0*b1*b3*A3 - a0*b3**2*A3 \
@@ -3522,7 +3528,6 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             + 2*a2*b0*b2*B4 - 2*b1*b2*b3*B4 - 2*a0*a2*b4*B4 + 2*b1**2*b4*B4 \
             - 2*b0*b1*b5*B4 + 2*a0*b3*b5*B4 + 2*a1*b1*b2*B5 - 2*b0*b2*b3*B5 \
             - 2*b0*b1*b4*B5 + 2*a0*b3*b4*B5 - 2*a0*a1*b5*B5 + 2*b0**2*b5*B5
-
 
     def Theta_invariant(self):
         r"""
@@ -3617,6 +3622,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         # Construct the entries of the 4x4 matrix T using symmetries:
         # cyclic: a0 -> a1 -> a2 -> a3 -> a0, b0->b3->b5->b2->b0, b1->b4->b1
         # flip: a0<->a1, b1<->b3, b2<->b4
+
         def T00(a0, a1, a2, a3, b0, b1, b2, b3, b4, b5, A0, A1, A2, A3, B0, B1, B2, B3, B4, B5):
             return a0*a3*A0*A1*A2 - b2**2*A0*A1*A2 + a0*a2*A0*A1*A3 - b1**2*A0*A1*A3 \
                 + a0*a1*A0*A2*A3 - b0**2*A0*A2*A3 - a0*a3*A2*B0**2 + b2**2*A2*B0**2 \
@@ -3635,6 +3641,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
                 + 2*b0*b1*B0*B2*B5 - 2*a0*b3*B0*B2*B5 + 2*a0*a1*B1*B2*B5 - 2*b0**2*B1*B2*B5 \
                 - 2*b0*b2*A0*B3*B5 + 2*a0*b4*A0*B3*B5 - 2*b0*b1*A0*B4*B5 + 2*a0*b3*A0*B4*B5 \
                 - a0*a1*A0*B5**2 + b0**2*A0*B5**2
+
         def T01(a0, a1, a2, a3, b0, b1, b2, b3, b4, b5, A0, A1, A2, A3, B0, B1, B2, B3, B4, B5):
             return a3*b0*A0*A1*A2 - b2*b4*A0*A1*A2 + a2*b0*A0*A1*A3 - b1*b3*A0*A1*A3 \
                 + a0*a1*A2*A3*B0 - b0**2*A2*A3*B0 - a3*b0*A2*B0**2 + b2*b4*A2*B0**2 \
@@ -3694,8 +3701,8 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             sage: p2 += B0*x*y + B1*x*z + B2*x + B3*y*z + B4*y + B5*z
             sage: q = invariant_theory.quaternary_biquadratic(p1, p2, [x, y, z])
             sage: T = invariant_theory.quaternary_quadratic(q.T_covariant(), [x,y,z]).matrix()
-            sage: M = q[0].matrix().adjoint() + t*q[1].matrix().adjoint()
-            sage: M = M.adjoint().apply_map(             # long time (4s on my thinkpad W530)
+            sage: M = q[0].matrix().adjugate() + t*q[1].matrix().adjugate()
+            sage: M = M.adjugate().apply_map(             # long time (4s on my thinkpad W530)
             ....:         lambda m: m.coefficient(t))
             sage: M == q.Delta_invariant()*T             # long time
             True
@@ -3717,8 +3724,8 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             sage: q = invariant_theory.quaternary_biquadratic(p1, p2, [x, y, z])
             sage: Tprime = invariant_theory.quaternary_quadratic(
             ....:     q.T_prime_covariant(), [x,y,z]).matrix()
-            sage: M = q[0].matrix().adjoint() + t*q[1].matrix().adjoint()
-            sage: M = M.adjoint().apply_map(                # long time (4s on my thinkpad W530)
+            sage: M = q[0].matrix().adjugate() + t*q[1].matrix().adjugate()
+            sage: M = M.adjugate().apply_map(                # long time (4s on my thinkpad W530)
             ....:         lambda m: m.coefficient(t^2))
             sage: M == q.Delta_prime_invariant() * Tprime   # long time
             True
@@ -4329,6 +4336,4 @@ can then be queried for invariant and covariants. For example,
         return TwoQuaternaryQuadratics([q1, q2])
 
 
-
 invariant_theory = InvariantTheoryFactory()
-

@@ -1128,7 +1128,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         The operator ``==`` is not transitive for `p`-adic numbers. We disable
         the check of the category framework by overriding this method.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R = Zp(3)
             sage: R(3) == R(0,1)

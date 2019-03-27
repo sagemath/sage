@@ -22,7 +22,6 @@ from sage.cpython.string import bytes_to_str
 from sage.misc.pager import pager
 from sage.misc.temporary_file import tmp_filename
 from sage.structure.sage_object import SageObject
-from sage.cpython.string import bytes_to_str
 
 
 class TachyonRT(SageObject):

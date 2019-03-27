@@ -775,8 +775,8 @@ class RijndaelGF(SageObject):
             return ''.join([self._GF_to_hex(el)
                             for col in GF.columns() for el in col])
         elif isinstance(GF, list):
-            if not all([g.parent().is_field() and g.parent().is_finite() and
-                        g.parent().order() == 2**8 for g in GF]):
+            if not all(g.parent().is_field() and g.parent().is_finite() and
+                       g.parent().order() == 2**8 for g in GF):
                 msg = "The elements of keyword 'GF' must all be from {0}"
                 raise TypeError(msg.format(self._F))
             return ''.join([self._GF_to_hex(el) for el in GF])
@@ -901,8 +901,8 @@ class RijndaelGF(SageObject):
             return ''.join([self._GF_to_bin(el)
                             for col in GF.columns() for el in col])
         elif isinstance(GF, list):
-            if not all([g.parent().is_field() and g.parent().is_finite() and
-                        g.parent().order() == 2**8 for g in GF]):
+            if not all(g.parent().is_field() and g.parent().is_finite() and
+                       g.parent().order() == 2**8 for g in GF):
                 msg = "The elements of keyword 'GF' must all be from {0}"
                 raise TypeError(msg.format(self._F))
             return ''.join([self._GF_to_bin(el) for el in GF])
@@ -1400,10 +1400,10 @@ class RijndaelGF(SageObject):
             raise TypeError(msg)
         if keys is not None and (not isinstance(keys, list) or \
            len(keys) != self._Nr + 1 or \
-           not all([isinstance(k, Matrix) for k in keys]) or \
-           not all([k.dimensions() == (4, self._Nb) for k in keys]) or \
-           not all([k.base_ring().is_finite() and k.base_ring().is_field()
-                    and k.base_ring().order() == 256 for k in keys]) ):
+           not all(isinstance(k, Matrix) for k in keys) or \
+           not all(k.dimensions() == (4, self._Nb) for k in keys) or \
+           not all(k.base_ring().is_finite() and k.base_ring().is_field()
+                   and k.base_ring().order() == 256 for k in keys) ):
             msg = ("keys must be a length {0} array of 4 by {1} matrices"
                    " over {2}")
             raise TypeError(msg.format(self._Nr, self._Nb, self._F))
@@ -1534,7 +1534,7 @@ class RijndaelGF(SageObject):
             ....: rgf.mix_columns_poly_constr(), algorithm='decrypt')
             sage: g = rgf.compose(rgf.sub_bytes_poly_constr(),
             ....: rgf.mix_columns_poly_constr())
-            sage: all([f(i,j) == g(i,j) for i in range(4) for j in range(4)])
+            sage: all(f(i,j) == g(i,j) for i in range(4) for j in range(4))
             True
 
         We can change the keyword attributes of the ``__call__`` methods of
@@ -2210,8 +2210,8 @@ class RijndaelGF(SageObject):
             the ``polynomial_constr`` method and helps ensure that each
             ``Round_Component_Poly_Constr`` object will act similarly. ::
 
-                sage: all([rgf._mix_columns_pc(i, j) == rcpc(i, j)
-                ....: for i in range(4) for j in range(4)])
+                sage: all(rgf._mix_columns_pc(i, j) == rcpc(i, j)
+                ....: for i in range(4) for j in range(4))
                 True
 
             Since all keyword arguments of ``polynomial_constr`` must have a
@@ -2313,8 +2313,8 @@ class RijndaelGF(SageObject):
                 ....: rgf._shift_rows_pc, rgf, "Shift Rows")
                 sage: rcpc(1, 2)
                 a13
-                sage: all([rcpc(i, j) == rgf._shift_rows_pc(i, j)
-                ....: for i in range(4) for j in range(4)])
+                sage: all(rcpc(i, j) == rgf._shift_rows_pc(i, j)
+                ....: for i in range(4) for j in range(4))
                 True
             """
             if row not in range(4):

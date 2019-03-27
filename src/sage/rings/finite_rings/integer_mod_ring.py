@@ -446,6 +446,10 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
             sage: TestSuite(Z16).run()
             sage: R = Integers(100000)
             sage: TestSuite(R).run()  # long time (17s on sage.math, 2011)
+
+            sage: R = IntegerModRing(18)
+            sage: R.is_finite()
+            True
         """
         order = ZZ(order)
         if order <= 0:
@@ -634,18 +638,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
         """
         return tuple(tuple(g.value() for g in H.gens())
                      for H in self.unit_group().subgroups())
-
-    def is_finite(self):
-        r"""
-        Return ``True`` since `\ZZ/N\ZZ` is finite for all positive `N`.
-
-        EXAMPLES::
-
-            sage: R = IntegerModRing(18)
-            sage: R.is_finite()
-            True
-        """
-        return True
 
     def is_integral_domain(self, proof=None):
         """

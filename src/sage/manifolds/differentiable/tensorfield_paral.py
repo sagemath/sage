@@ -1550,8 +1550,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
         Check::
 
-            sage: all([s[ind] == sum(a[k, ind[0]]*b[ind[1], k] for k in [0..1])
-            ....:      for ind in M.index_generator(2)])
+            sage: all(s[ind] == sum(a[k, ind[0]]*b[ind[1], k] for k in [0..1])
+            ....:     for ind in M.index_generator(2))
             True
 
         The same contraction with repeated index notation::
@@ -1569,8 +1569,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
         Check::
 
-            sage: all([s[ind] == sum(a[ind[0], k]*b[ind[1], k] for k in [0..1])
-            ....:      for ind in M.index_generator(2)])
+            sage: all(s[ind] == sum(a[ind[0], k]*b[ind[1], k] for k in [0..1])
+            ....:     for ind in M.index_generator(2))
             True
 
         The same contraction with repeated index notation::
@@ -1622,8 +1622,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             a*v = -(x + 1)*y d/dx*dx*dx - 2*y d/dx*dx*dy - y^2 d/dx*dy*dx
              + x^2*y d/dx*dy*dy + (x^2 + x) d/dy*dx*dx + 2*x d/dy*dx*dy
              + x*y d/dy*dy*dx - x^3 d/dy*dy*dy
-            sage: all([s[ind] == v[ind[0]] * a[ind[1],ind[2]]
-            ....:      for ind in M.index_generator(3)])
+            sage: all(s[ind] == v[ind[0]] * a[ind[1],ind[2]]
+            ....:     for ind in M.index_generator(3))
             True
 
         Multiplication on the right by a scalar field::

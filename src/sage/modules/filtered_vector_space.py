@@ -115,7 +115,7 @@ from sage.rings.infinity import InfinityRing, infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
 from sage.matrix.constructor import matrix
-from sage.misc.all import uniq, cached_method
+from sage.misc.all import cached_method
 
 
 def is_FilteredVectorSpace(X):
@@ -310,10 +310,10 @@ def construct_from_generators(filtration, base_ring, check):
     # convert generator notation to generator+indices
     if len(filtration) == 0:
         raise ValueError('you need to specify at least one ray to deduce the dimension')
-    generators = []
+    generators = set()
     for gens in filtration.values():
-        generators += map(normalize_gen, gens)
-    generators = tuple(uniq(generators))
+        generators.update(normalize_gen(g) for g in gens)
+    generators = tuple(sorted(generators))
 
     # normalize filtration data
     normalized = dict()
@@ -1013,7 +1013,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         filtration = dict()
         self_indices = set()
         other_indices = set()
-        for deg in reversed(uniq(list(self_filt) + list(other_filt))):
+        degrees = list(self_filt) + list(other_filt)
+        for deg in sorted(set(degrees), reverse=True):
             self_indices.update(self_filt.get(deg, []))
             other_indices.update(other_filt.get(deg, []))
             gens = join_indices(self_indices, other_indices)

@@ -228,6 +228,6 @@ class TestNestedParent(UniqueRepresentation, Parent):
     See the test in ``sage.misc.sageinspect.sage_getsourcelines``.
     """
 
-    class Element:
+    class Element(object):
         "This is a dummy element class"
         pass

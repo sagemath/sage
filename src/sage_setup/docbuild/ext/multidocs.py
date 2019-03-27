@@ -50,7 +50,7 @@ def merge_environment(app, env):
     """
     app.info(bold('Merging environment/index files...'))
     for curdoc in app.env.config.multidocs_subdoc_list:
-        app.info("    %s:"%curdoc, nonl=1)
+        app.info("    %s:" % curdoc, nonl=1)
         docenv = get_env(app, curdoc)
         if docenv is not None:
             fixpath = lambda path: os.path.join(curdoc, path)
@@ -189,8 +189,10 @@ def get_js_index(app, curdoc):
     return indexer
 
 
-mustbefixed = ['search', 'genindex', 'genindex-all'
+mustbefixed = ['search', 'genindex', 'genindex-all',
                'py-modindex', 'searchindex.js']
+
+
 def fix_path_html(app, pagename, templatename, ctx, event_arg):
     """
     Fixes the context so that the files

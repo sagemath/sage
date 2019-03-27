@@ -469,8 +469,6 @@ def quaternion_order_with_given_level(A, level):
     if A.base_ring() is not QQ:
         raise NotImplementedError("base field must be rational numbers")
 
-    from sage.modular.quatalg.brandt import maximal_order
-
     if len(A.ramified_primes()) > 1:
         raise NotImplementedError("Currently this algorithm only works when the quaternion algebra is only ramified at one finite prime.")
 
@@ -479,7 +477,7 @@ def quaternion_order_with_given_level(A, level):
     level = abs(level)
     N = A.discriminant()
     N1 = gcd(level, N)
-    M1 = level/N1
+    M1 = level / N1
 
     O = maximal_order(A)
     if 0 and N1 != 1: # we don't know why magma does the following, so we don't do it.

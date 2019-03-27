@@ -34,15 +34,15 @@ AUTHORS:
     download by hand from `Jean Michel's website
     <http://webusers.imj-prg.fr/~jean.michel/gap3/>`_.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011-2016 Christian Stump <christian.stump at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from six.moves import range
@@ -54,6 +54,7 @@ from sage.interfaces.gap3 import gap3
 from sage.combinat.root_system.reflection_group_complex import ComplexReflectionGroup, IrreducibleComplexReflectionGroup
 from sage.misc.sage_eval import sage_eval
 from sage.combinat.root_system.reflection_group_element import RealReflectionGroupElement
+
 
 def ReflectionGroup(*args,**kwds):
     r"""
@@ -141,12 +142,12 @@ def ReflectionGroup(*args,**kwds):
 
         # precheck for valid input data
         if not (isinstance(X, (CartanType_abstract,tuple)) or (X in ZZ and 4 <= X <= 37)):
-            raise ValueError(error_msg%X)
+            raise ValueError(error_msg % X)
 
         # transforming two reducible types and an irreducible type
         if isinstance(X, CartanType_abstract):
             if not X.is_finite():
-                raise ValueError(error_msg%X)
+                raise ValueError(error_msg % X)
             if hasattr(X,"cartan_type"):
                 X = X.cartan_type()
             if X.is_irreducible():
@@ -200,7 +201,7 @@ def ReflectionGroup(*args,**kwds):
             if isinstance(index_set, (list, tuple)):
                 kwds[index_set_kwd] = tuple(index_set)
             else:
-                raise ValueError('the keyword %s must be a list or tuple'%index_set_kwd)
+                raise ValueError('the keyword %s must be a list or tuple' % index_set_kwd)
 
     if len(W_types) == 1:
         if is_complex is True:
@@ -216,6 +217,7 @@ def ReflectionGroup(*args,**kwds):
                index_set=kwds.get('index_set', None),
                hyperplane_index_set=kwds.get('hyperplane_index_set', None),
                reflection_index_set=kwds.get('reflection_index_set', None))
+
 
 @cached_function
 def is_chevie_available():
@@ -240,6 +242,7 @@ def is_chevie_available():
 
 #####################################################################
 ## Classes
+
 
 class RealReflectionGroup(ComplexReflectionGroup):
     """
@@ -289,7 +292,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             type_str += self._irrcomp_repr_(W_type)
             type_str += ' x '
         type_str = type_str[:-3]
-        return 'Reducible real reflection group of rank %s and type %s'%(self._rank,type_str)
+        return 'Reducible real reflection group of rank %s and type %s' % (self._rank, type_str)
 
     def iteration(self, algorithm="breadth", tracking_words=True):
         r"""
@@ -508,17 +511,18 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: for r in W.reflections(): print(W.reflection_to_positive_root(r))  # optional - gap3
+            sage: W = ReflectionGroup(['A',2])  # optional - gap3
+            sage: for r in W.reflections():     # optional - gap3
+            ....:     print(W.reflection_to_positive_root(r))
             (1, 0)
             (0, 1)
             (1, 1)
         """
         Phi = self.roots()
-        N = len(Phi) / 2
-        for i in range(1, N+1):
+        N = len(Phi) // 2
+        for i in range(1, N + 1):
             if r(i) == i + N:
-                return Phi[i-1]
+                return Phi[i - 1]
         raise AssertionError("there is a bug in reflection_to_positive_root")
 
     @cached_method
@@ -565,11 +569,11 @@ class RealReflectionGroup(ComplexReflectionGroup):
         m = self.cartan_matrix().transpose().inverse()
         Delta = tuple(self.simple_roots())
         zero = Delta[0].parent().zero()
-        weights = [sum([m[i,j] * sj for j,sj in enumerate(Delta)], zero)
+        weights = [sum([m[i, j] * sj for j, sj in enumerate(Delta)], zero)
                    for i in range(len(Delta))]
         for weight in weights:
             weight.set_immutable()
-        return Family({ind:weights[i] for i,ind in enumerate(self._index_set)})
+        return Family({ind:weights[i] for i, ind in enumerate(self._index_set)})
 
     def fundamental_weight(self, i):
         r"""
@@ -600,11 +604,11 @@ class RealReflectionGroup(ComplexReflectionGroup):
         V = self.index_set()
         S = self.simple_reflections()
         E = []
-        for i,j in combinations(V, 2):
-            o = (S[i]*S[j]).order()
+        for i, j in combinations(V, 2):
+            o = (S[i] * S[j]).order()
             if o >= 3:
-                E.append((i,j,o))
-        return Graph([V,E], format='vertices_and_edges', immutable=True)
+                E.append((i, j, o))
+        return Graph([V, E], format='vertices_and_edges', immutable=True)
 
     @cached_method
     def coxeter_matrix(self):
@@ -742,6 +746,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             """
             return [ (~w) for w in self.right_coset_representatives() ]
 
+
 class IrreducibleRealReflectionGroup(RealReflectionGroup, IrreducibleComplexReflectionGroup):
     def _repr_(self):
         r"""
@@ -758,8 +763,7 @@ class IrreducibleRealReflectionGroup(RealReflectionGroup, IrreducibleComplexRefl
             Irreducible real reflection group of rank 2 and type I2(7)
         """
         type_str = self._irrcomp_repr_(self._type[0])
-        return 'Irreducible real reflection group of rank %s and type %s'%(self._rank,type_str)
+        return 'Irreducible real reflection group of rank %s and type %s' % (self._rank,type_str)
 
     class Element(RealReflectionGroup.Element, IrreducibleComplexReflectionGroup.Element):
         pass
-

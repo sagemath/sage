@@ -36,7 +36,7 @@ def ChessboardGraphGenerator(dim_list,
     This function allows to generate many kinds of graphs corresponding to legal
     movements on a `d`-dimensional chessboard: Queen Graph, King Graph, Knight
     Graphs, Bishop Graph, and many generalizations. It also allows to avoid
-    redondant code.
+    redundant code.
 
     INPUT:
 

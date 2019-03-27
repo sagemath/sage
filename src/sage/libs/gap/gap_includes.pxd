@@ -85,9 +85,13 @@ cdef extern from "<gap/libgap-api.h>":
 
 
 cdef extern from "<gap/libgap-api.h>" nogil:
+    """
+    #define sig_GAP_Enter()  {int t = GAP_Enter(); if (!t) sig_error();}
+    """
     cdef void GAP_EnterStack()
     cdef void GAP_LeaveStack()
     cdef int GAP_Enter() except 0
+    cdef void sig_GAP_Enter()
     cdef void GAP_Leave()
     cdef int GAP_Error_Setjmp() except 0
 

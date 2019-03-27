@@ -177,19 +177,17 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 from __future__ import print_function
 
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import Element
 from sage.misc.cachefunc import cached_method
 
 from sage.combinat.combination import Combinations
 from sage.rings.all import QQ, ZZ
 from sage.matrix.constructor import matrix
 from sage.modules.all import vector
-from sage.groups.perm_gps.permgroup import PermutationGroup
 
 from copy import copy
 import sys
@@ -507,11 +505,11 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: p = PointConfiguration([[1,1], [2,2], [3,3]])
             sage: list(p)     # indirect doctest
             [P(1, 1), P(2, 2), P(3, 3)]
-            sage: [ p[i] for i in range(0,p.n_points()) ]
+            sage: [ p[i] for i in range(p.n_points()) ]
             [P(1, 1), P(2, 2), P(3, 3)]
             sage: list(p.points())
             [P(1, 1), P(2, 2), P(3, 3)]
-            sage: [ p.point(i) for i in range(0,p.n_points()) ]
+            sage: [ p.point(i) for i in range(p.n_points()) ]
             [P(1, 1), P(2, 2), P(3, 3)]
         """
         for p in self.points():
@@ -1178,7 +1176,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         # backends. It should probably be set back to sparse = False as soon as
         # the backends are fixed.
         G = Graph(sparse=True)
-        for i in range(0,len(v_list)):
+        for i in range(len(v_list)):
             for j in range(i+1,len(v_list)):
                 v_i = v_list[i]
                 v_j = v_list[j]
@@ -1246,10 +1244,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         except AttributeError:
             pass
 
-        d = [ self.face_codimension(i) for i in range(0,self.n_points()) ]
+        d = [ self.face_codimension(i) for i in range(self.n_points()) ]
 
-        return tuple( tuple(i for i in range(0,self.n_points()) if d[i]==codim )
-                      for codim in range(0,self.dim()+1) )
+        return tuple( tuple(i for i in range(self.n_points()) if d[i]==codim )
+                      for codim in range(self.dim()+1) )
 
 
     def exclude_points(self, point_idx_list):
@@ -1278,7 +1276,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: p.exclude_points( p.face_interior(codim=1) ).points()
             (P(-1, 0), P(0, 0), P(1, -1), P(1, 1))
         """
-        points = [ self.point(i) for i in range(0,self.n_points())
+        points = [ self.point(i) for i in range(self.n_points())
                    if not i in point_idx_list ]
         return PointConfiguration(points,
                                   projective=False,
@@ -1406,16 +1404,15 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             [(0, 3, 4), (0, 1, 2), (1, 2, 3, 4)]
         """
         n = len(self)
-        U = [ self[i].reduced_projective() for i in range(0,n) ]
+        U = [self[i].reduced_projective() for i in range(n)]
 
         # the index set of U
-        I = set(range(0,n))
+        I = set(range(n))
         # The (indices of) known independent elements of U
-        independent_k = [ (i,) for i in range(0,n) ]
+        independent_k = [(i,) for i in range(n)]
         supports_k = []
 
-        supports = ()   # supports of circuits
-        for k in range(2, self.dim()+3):
+        for k in range(2, self.dim() + 3):
 
             # possibly linear dependent subsets
             supports_knext = set()
@@ -1496,20 +1493,19 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             pass
 
         n = len(self)
-        U = [ self[i].reduced_projective() for i in range(0,n) ]
+        U = [self[i].reduced_projective() for i in range(n)]
 
         Circuits = ()
         for support in self.circuits_support():
             m = matrix([ U[i] for i in support ]).transpose()
             ker = m.right_kernel().basis()[0]
             assert len(ker)==len(support)
-            Cplus  = [ support[i] for i in range(0,len(support)) if ker[i]>0 ]
-            Cminus = [ support[i] for i in range(0,len(support)) if ker[i]<0 ]
-            Czero  = set( range(0,n) ).difference(support)
+            Cplus  = [ support[i] for i in range(len(support)) if ker[i]>0 ]
+            Cminus = [ support[i] for i in range(len(support)) if ker[i]<0 ]
+            Czero  = set( range(n) ).difference(support)
             Circuits += ( (tuple(Cplus), tuple(Czero), tuple(Cminus)), )
         self._circuits = Circuits
         return Circuits
-
 
     def positive_circuits(self, *negative):
         r"""
@@ -1586,13 +1582,13 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         for C in self.circuits():
             Cpos = list(C[0])
             Cneg = list(C[2])
-            support = sorted(Cpos+Cneg)
-            Tpos = [ Cpos+Cneg[0:i]+Cneg[i+1:len(Cneg)] for i in range(0,len(Cneg)) ]
-            Tneg = [ Cneg+Cpos[0:i]+Cpos[i+1:len(Cpos)] for i in range(0,len(Cpos)) ]
-            flips.append( (self.element_class(Tpos, parent=self, check=False),
-                           self.element_class(Tneg, parent=self, check=False)) )
+            Tpos = [Cpos + Cneg[0:i] + Cneg[i+1:len(Cneg)]
+                    for i in range(len(Cneg))]
+            Tneg = [Cneg + Cpos[0:i] + Cpos[i+1:len(Cpos)]
+                    for i in range(len(Cpos))]
+            flips.append((self.element_class(Tpos, parent=self, check=False),
+                          self.element_class(Tneg, parent=self, check=False)))
         return tuple(flips)
-
 
     def lexicographic_triangulation(self):
         r"""
@@ -1641,7 +1637,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         lex_supp = sorted(lex_supp, key=lambda x:-len(x))
         basepts = copy(lex_supp)
-        for i in range(0,len(lex_supp)-1):
+        for i in range(len(lex_supp)-1):
             for j in range(i+1,len(lex_supp)):
                 if set(lex_supp[j]).issubset(set(lex_supp[i])):
                     try:
@@ -1674,7 +1670,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             return triangulation
 
         triangulation = make_cotriang(basepts)
-        I = frozenset(range(0,self.n_points()))
+        I = frozenset(range(self.n_points()))
         triangulation = [ tuple(I.difference(t)) for t in triangulation ]
 
         return self(triangulation)
@@ -1920,7 +1916,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 points.remove(p)
             else:
                 p = points.pop()
-            edge = p.reduced_affine_vector()-origin.reduced_affine_vector()
+            edge = p.reduced_affine_vector() - origin.reduced_affine_vector()
             if edges and (ker * edge).is_zero():
                 continue
             vertices.append(p)
@@ -2062,7 +2058,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             facets.update(new_facets)
 
         # construct the triangulation
-        triangulation = [[p.index() for p in simplex] for simplex in simplices]
+        triangulation = [[p.index() for p in simplx] for simplx in simplices]
         return self(triangulation)
 
     pushing_triangulation = placing_triangulation

@@ -411,7 +411,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
            delegates the task to the Magma computer algebra
            system.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Conic(RR, [1, 1, 1]).has_rational_point()
             False

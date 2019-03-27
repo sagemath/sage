@@ -381,10 +381,8 @@ class TrivialDiscreteValuation(TrivialDiscretePseudoValuation_base, DiscreteValu
             sage: v = valuations.TrivialValuation(ZZ)
             sage: v.extensions(QQ)
             [Trivial valuation on Rational Field]
-
         """
         if self.domain().is_subring(ring):
-            from sage.rings.valuation.trivial_valuation import TrivialValuation
             return [TrivialValuation(ring)]
         return super(DiscretePseudoValuation, self).extensions(ring)
 

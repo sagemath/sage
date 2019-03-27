@@ -2563,7 +2563,7 @@ class CompletionFunctor(ConstructionFunctor):
             sage: Rlist = [R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11]
             sage: from sage.categories.pushout import pushout
             sage: pushouts = [R0,R0,R0,R1,R0,R1,R0,R1,R0,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R0,R1,R2,R2,R2,R3,R0,R1,R2,R3,R3,R3,R1,R1,R3,R3,R3,R3,R1,R1,R3,R3,R3,R3,R0,R1,R2,R3,R4,R4,R0,R1,R2,R3,R3,R5,R1,R1,R3,R3,R5,R5,R1,R1,R3,R3,R3,R5,R0,R1,R0,R1,R0,R1,R6,R6,R6,R7,R7,R7,R1,R1,R1,R1,R1,R1,R7,R7,R7,R7,R7,R7,R0,R1,R2,R3,R2,R3,R6,R7,R8,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R9,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R10,R10,R10,R10,R1,R1,R3,R3,R5,R5,R7,R7,R9,R9,R10,R11]
-            sage: all([R is S for R, S in zip(pushouts, [pushout(a, b) for a in Rlist for b in Rlist])])
+            sage: all(R is S for R, S in zip(pushouts, [pushout(a, b) for a in Rlist for b in Rlist]))
             True
 
         ::
@@ -2579,7 +2579,7 @@ class CompletionFunctor(ConstructionFunctor):
             sage: Plist = [P2,P3,P4,P5,P6,P7]
             sage: from sage.categories.pushout import pushout
             sage: pushouts = [P2,P3,P4,P5,P6,P7,P3,P3,P5,P5,P7,P7,P4,P5,P4,P5,P6,P7,P5,P5,P5,P5,P7,P7,P6,P7,P6,P7,P6,P7,P7,P7,P7,P7,P7,P7]
-            sage: all([P is Q for P, Q in zip(pushouts, [pushout(a, b) for a in Plist for b in Plist])])
+            sage: all(P is Q for P, Q in zip(pushouts, [pushout(a, b) for a in Plist for b in Plist]))
             True
         """
         if self == other: # both are Completion functors with the same p

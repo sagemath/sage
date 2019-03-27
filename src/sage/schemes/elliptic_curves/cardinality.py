@@ -61,8 +61,8 @@ def _cardinality_with_j_invariant_1728(self):
 
         sage: F.<a> = GF(2**15,'a')
         sage: ais = [[0,0,1,0,0],[0,0,1,1,0],[0,0,1,1,1]]
-        sage: curves=[EllipticCurve(F,ai) for ai in ais]
-        sage: all([all([e1==e2 or not e1.is_isomorphic(e2) for e1 in curves]) for e2 in curves])
+        sage: curves = [EllipticCurve(F,ai) for ai in ais]
+        sage: all((e1 == e2 or not e1.is_isomorphic(e2)) for e1 in curves for e2 in curves)
         True
         sage: [_cardinality_with_j_invariant_1728(e) for e in curves]
         [32769, 33025, 32513]
@@ -72,8 +72,8 @@ def _cardinality_with_j_invariant_1728(self):
         sage: F.<a> = GF(2**16,'a')
         sage: b = a^11 # trace 1
         sage: ais = [[0,0,1,0,0],[0,0,1,0,b],[0,0,1,b,0],[0,0,a,0,0],[0,0,a,0,a^2*b],[0,0,a^2,0,0],[0,0,a^2,0,a^4*b]]
-        sage: curves=[EllipticCurve(F,ai) for ai in ais]
-        sage: all([all([e1==e2 or not e1.is_isomorphic(e2) for e1 in curves]) for e2 in curves])
+        sage: curves = [EllipticCurve(F,ai) for ai in ais]
+        sage: all((e1 == e2 or not e1.is_isomorphic(e2)) for e1 in curves for e2 in curves)
         True
         sage: [_cardinality_with_j_invariant_1728(e) for e in curves]
         [65025, 66049, 65537, 65793, 65281, 65793, 65281]
@@ -81,10 +81,10 @@ def _cardinality_with_j_invariant_1728(self):
     Examples with `q=3^d`, d odd (4 isomorphism classes)::
 
         sage: F.<a> = GF(3**15,'a')
-        sage: b=a^7  # has trace 1
-        sage: ais=[[0,0,0,1,0],[0,0,0,-1,0],[0,0,0,-1,b],[0,0,0,-1,-b]]
-        sage: curves=[EllipticCurve(F,ai) for ai in ais]
-        sage: all([all([e1==e2 or not e1.is_isomorphic(e2) for e1 in curves]) for e2 in curves])
+        sage: b = a^7  # has trace 1
+        sage: ais = [[0,0,0,1,0],[0,0,0,-1,0],[0,0,0,-1,b],[0,0,0,-1,-b]]
+        sage: curves = [EllipticCurve(F,ai) for ai in ais]
+        sage: all((e1 == e2 or not e1.is_isomorphic(e2)) for e1 in curves for e2 in curves)
         True
         sage: [_cardinality_with_j_invariant_1728(e) for e in curves]
         [14348908, 14348908, 14342347, 14355469]
@@ -96,7 +96,7 @@ def _cardinality_with_j_invariant_1728(self):
         sage: a=g^8  # has trace 1
         sage: ais= [[0,0,0,1,0],[0,0,0,1,i*a],[0,0,0,g,0],[0,0,0,g^3,0],[0,0,0,g^2,0], [0,0,0,g^2,i*a*g^3]]
         sage: curves=[EllipticCurve(F,ai) for ai in ais]
-        sage: all([all([e1==e2 or not e1.is_isomorphic(e2) for e1 in curves]) for e2 in curves])
+        sage: all((e1 == e2 or not e1.is_isomorphic(e2)) for e1 in curves for e2 in curves)
         True
         sage: [_cardinality_with_j_invariant_1728(e) for e in curves]
         [387459856, 387400807, 387420490, 387420490, 387381124, 387440173]

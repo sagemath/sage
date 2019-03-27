@@ -594,18 +594,19 @@ class PeriodLattice_ell(PeriodLattice):
             1.9072648860892725468182549468 - 1.3404778596244020196600112394*I)
         """
         if prec is None:
-            prec = RealField().precision()
+            prec = 53
         R = RealField(prec)
         C = ComplexField(prec)
 
-        if algorithm=='pari':
-            if self.E.base_field() is QQ:
-                periods = self.E.pari_curve().omega(prec).sage()
-                return (R(periods[0]), C(periods[1]))
+        if algorithm == 'pari':
+            ainvs = self.E.a_invariants()
+            if self.E.base_field() is not QQ:
+                ainvs = [C(self.embedding(ai)).real() for ai in ainvs]
 
-            E_pari = pari([R(self.embedding(ai).real()) for ai in self.E.a_invariants()]).ellinit()
-            periods = E_pari.omega(prec).sage()
-            return (R(periods[0]), C(periods[1]))
+            # The precision for omega() is determined by ellinit()
+            E_pari = pari.ellinit(ainvs, precision=prec)
+            w1, w2 = E_pari.omega()
+            return R(w1), C(w2)
 
         if algorithm!='sage':
             raise ValueError("invalid value of 'algorithm' parameter")

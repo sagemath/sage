@@ -1,5 +1,4 @@
 # distutils: language = c++
-# distutils: extra_compile_args = -DNTL_ALL
 # distutils: libraries = ec ntl pari gmp m
 
 

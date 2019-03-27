@@ -129,37 +129,34 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
         raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'.")
 
 def RandomBarabasiAlbert(n, m, seed=None):
-    u"""
+    r"""
     Return a random graph created using the Barabasi-Albert preferential
     attachment model.
 
-    A graph with m vertices and no edges is initialized, and a graph of n
-    vertices is grown by attaching new vertices each with m edges that are
+    A graph with `m` vertices and no edges is initialized, and a graph of `n`
+    vertices is grown by attaching new vertices each with `m` edges that are
     attached to existing vertices, preferentially with high degree.
 
     INPUT:
 
-    - ``n`` - number of vertices in the graph
+    - ``n`` -- number of vertices in the graph
 
-    - ``m`` - number of edges to attach from each new node
+    - ``m`` -- number of edges to attach from each new node
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
-
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     EXAMPLES:
 
-    We show the edge list of a random graph on 6 nodes with m = 2.
+    We show the edge list of a random graph on 6 nodes with `m = 2`::
 
-    ::
+        sage: G = graphs.RandomBarabasiAlbert(6,2)
+        sage: G.order(), G.size()
+        (6, 8)
+        sage: G.degree_sequence()  # random
+        [4, 3, 3, 2, 2, 2]
 
-        sage: graphs.RandomBarabasiAlbert(6,2).edges(labels=False)
-        [(0, 2), (0, 3), (0, 5), (1, 2), (2, 3), (2, 4), (3, 4), (3, 5)]    # 32-bit
-        [(0, 2), (0, 3), (1, 2), (1, 4), (1, 5), (2, 3), (2, 4), (3, 5)]    # 64-bit
-
-    We plot a random graph on 12 nodes with m = 3.
-
-    ::
+    We plot a random graph on 12 nodes with `m = 3`::
 
         sage: ba = graphs.RandomBarabasiAlbert(12,3)
         sage: ba.show()  # long time
@@ -179,11 +176,15 @@ def RandomBarabasiAlbert(n, m, seed=None):
         sage: G = sage.plot.graphics.GraphicsArray(j)
         sage: G.show()  # long time
 
+    When `m = 1`, the generated graph is a tree::
+
+        sage: graphs.RandomBarabasiAlbert(6, 1).is_tree()
+        True
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.barabasi_albert_graph(n,m,seed=seed))
+    return Graph(networkx.barabasi_albert_graph(n, m, seed=seed))
 
 def RandomBipartite(n1, n2, p, set_position=False):
     r"""
@@ -674,43 +675,59 @@ def RandomGNM(n, m, dense=False, seed=None):
         return Graph(networkx.gnm_random_graph(n, m, seed=seed))
 
 def RandomNewmanWattsStrogatz(n, k, p, seed=None):
-    """
-    Returns a Newman-Watts-Strogatz small world random graph on n
-    vertices.
+    r"""
+    Return a Newman-Watts-Strogatz small world random graph on `n` vertices.
 
-    From the NetworkX documentation: First create a ring over n nodes.
-    Then each node in the ring is connected with its k nearest
-    neighbors. Then shortcuts are created by adding new edges as
-    follows: for each edge u-v in the underlying "n-ring with k nearest
-    neighbors"; with probability p add a new edge u-w with
-    randomly-chosen existing node w. In contrast with
-    watts_strogatz_graph(), no edges are removed.
+    From the NetworkX documentation: first create a ring over `n` nodes.  Then
+    each node in the ring is connected with its `k` nearest neighbors. Then
+    shortcuts are created by adding new edges as follows: for each edge `u-v` in
+    the underlying "`n`-ring with `k` nearest neighbors"; with probability `p`
+    add a new edge `u-w` with randomly-chosen existing node `w`. In contrast
+    with ``networkx.watts_strogatz_graph()``, no edges are removed.
 
     INPUT:
 
-    - ``n`` - number of vertices.
+    - ``n`` -- number of vertices
 
-    - ``k`` - each vertex is connected to its k nearest
-      neighbors
+    - ``k`` -- each vertex is connected to its `k` nearest neighbors
 
-    - ``p`` - the probability of adding a new edge for
-      each edge
+    - ``p`` -- the probability of adding a new edge for each edge
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
+    EXAMPLES:
 
-    EXAMPLES: We show the edge list of a random graph on 7 nodes with 2
-    "nearest neighbors" and probability `p = 0.2`::
+    We check that the generated graph contains a cycle of order `n`::
 
-        sage: graphs.RandomNewmanWattsStrogatz(7, 2, 0.2).edges(labels=False)
-        [(0, 1), (0, 5), (0, 6), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (5, 6)]    # 32-bit
-        [(0, 1), (0, 4), (0, 6), (1, 2), (1, 4), (2, 3), (3, 4), (4, 5), (5, 6)]    # 64-bit
+        sage: G = graphs.RandomNewmanWattsStrogatz(7, 2, 0.2)
+        sage: G.order(), G.size()
+        (7, 9)
+        sage: C7 = graphs.CycleGraph(7)
+        sage: G.subgraph_search(C7)
+        Subgraph of (): Graph on 7 vertices
+        sage: G.diameter() <= C7.diameter()
+        True
 
     ::
 
         sage: G = graphs.RandomNewmanWattsStrogatz(12, 2, .3)
         sage: G.show()  # long time
+
+    TESTS:
+
+    We check that when `k = 2` and `p = 0`, the generated graph is a cycle::
+
+        sage: G = graphs.RandomNewmanWattsStrogatz(7, 2, 0)
+        sage: G.is_cycle()
+        True
+
+    We check that when `k = 4` and `p = 0`, the generated graph is a circulant
+    graph of parameters ``[1, 2]``::
+
+        sage: G = graphs.RandomNewmanWattsStrogatz(7, 4, 0)
+        sage: G.is_isomorphic(graphs.CirculantGraph(7, [1, 2]))
+        True
 
     REFERENCE:
 
@@ -724,47 +741,45 @@ def RandomNewmanWattsStrogatz(n, k, p, seed=None):
     return Graph(networkx.newman_watts_strogatz_graph(n, k, p, seed=seed))
 
 def RandomHolmeKim(n, m, p, seed=None):
-    """
-    Returns a random graph generated by the Holme and Kim algorithm for
+    r"""
+    Return a random graph generated by the Holme and Kim algorithm for
     graphs with power law degree distribution and approximate average
     clustering.
 
     INPUT:
 
-    - ``n`` - number of vertices.
+    - ``n`` -- number of vertices
 
-    - ``m`` - number of random edges to add for each new
-      node.
+    - ``m`` -- number of random edges to add for each new node
 
-    - ``p`` - probability of adding a triangle after
-      adding a random edge.
+    - ``p`` -- probability of adding a triangle after adding a random edge
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
+    From the NetworkX documentation: the average clustering has a hard time
+    getting above a certain cutoff that depends on `m`. This cutoff is often
+    quite low. Note that the transitivity (fraction of triangles to possible
+    triangles) seems to go down with network size. It is essentially the
+    Barabasi-Albert growth model with an extra step that each random edge is
+    followed by a chance of making an edge to one of its neighbors too (and thus
+    a triangle). This algorithm improves on B-A in the sense that it enables a
+    higher average clustering to be attained if desired. It seems possible to
+    have a disconnected graph with this algorithm since the initial `m` nodes
+    may not be all linked to a new node on the first iteration like the BA
+    model.
 
-    From the NetworkX documentation: The average clustering has a hard
-    time getting above a certain cutoff that depends on m. This cutoff
-    is often quite low. Note that the transitivity (fraction of
-    triangles to possible triangles) seems to go down with network
-    size. It is essentially the Barabasi-Albert growth model with an
-    extra step that each random edge is followed by a chance of making
-    an edge to one of its neighbors too (and thus a triangle). This
-    algorithm improves on B-A in the sense that it enables a higher
-    average clustering to be attained if desired. It seems possible to
-    have a disconnected graph with this algorithm since the initial m
-    nodes may not be all linked to a new node on the first iteration
-    like the BA model.
+    EXAMPLES:
 
-    EXAMPLES: We show the edge list of a random graph on 8 nodes with 2
-    random edges per node and a probability `p = 0.5` of
-    forming triangles.
+    We check that a random graph on 8 nodes with 2 random edges per node and a
+    probability `p = 0.5` of forming triangles contains a triangle::
 
-    ::
-
-        sage: graphs.RandomHolmeKim(8, 2, 0.5).edges(labels=False)
-        [(0, 2), (0, 3), (0, 5), (1, 2), (1, 4), (1, 5), (1, 6), (2, 3), (2, 4), (2, 6), (5, 7), (6, 7)]    # 32-bit
-        [(0, 2), (0, 3), (0, 4), (0, 5), (0, 7), (1, 2), (1, 3), (1, 6), (2, 4), (2, 6), (3, 5), (4, 7)]    # 64-bit
+        sage: G = graphs.RandomHolmeKim(8, 2, 0.5)
+        sage: G.order(), G.size()
+        (8, 12)
+        sage: C3 = graphs.CycleGraph(3)
+        sage: G.subgraph_search(C3)
+        Subgraph of (): Graph on 3 vertices
 
     ::
 
@@ -1184,7 +1199,6 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None):
         return Graph(n, name="Random Chordal Graph")
 
     # 1. Generate a random tree of order n
-    from sage.graphs.generators.random import RandomTree
     T = RandomTree(n)
 
     # 2. Generate n non-empty subtrees of T: {T1,...,Tn}
@@ -1341,36 +1355,36 @@ def RandomTree(n):
 
     return g
 
+
 def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
     """
-    Returns a tree with a power law degree distribution. Returns False
-    on failure.
+    Return a tree with a power law degree distribution, or ``False`` on failure.
 
-    From the NetworkX documentation: A trial power law degree sequence
-    is chosen and then elements are swapped with new elements from a
-    power law distribution until the sequence makes a tree (size = order
-    - 1).
+    From the NetworkX documentation: a trial power law degree sequence is chosen
+    and then elements are swapped with new elements from a power law
+    distribution until the sequence makes a tree (size = order - 1).
 
     INPUT:
 
-    - ``n`` - number of vertices
+    - ``n`` -- number of vertices
 
-    - ``gamma`` - exponent of power law
+    - ``gamma`` -- exponent of power law distribution
 
-    - ``tries`` - number of attempts to adjust sequence to
-      make a tree
+    - ``tries`` -- number of attempts to adjust sequence to make a tree
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
 
-    EXAMPLES: We show the edge list of a random graph with 10 nodes and
-    a power law exponent of 2.
+    EXAMPLES:
 
-    ::
+    We check that the generated graph is a tree::
 
-        sage: graphs.RandomTreePowerlaw(10, 3).edges(labels=False)
-        [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (5, 8), (6, 7), (6, 9)]
+        sage: G = graphs.RandomTreePowerlaw(10, 3)
+        sage: G.is_tree()
+        True
+        sage: G.order(), G.size()
+        (10, 9)
 
     ::
 
@@ -1389,29 +1403,28 @@ def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
 
 def RandomRegular(d, n, seed=None):
     r"""
-    Return a random d-regular graph on n vertices, or returns False on
-    failure.
+    Return a random `d`-regular graph on `n` vertices, or ``False`` on failure.
 
-    Since every edge is incident to two vertices, n\*d must be even.
+    Since every edge is incident to two vertices, `n\times d` must be even.
 
     INPUT:
 
-    - ``n`` - number of vertices
+    - ``d`` -- degree
 
-    - ``d`` - degree
+    - ``n`` -- number of vertices
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
+    EXAMPLES:
 
-    EXAMPLES: We show the edge list of a random graph with 8 nodes each
-    of degree 3.
+    We check that a random graph with 8 nodes each of degree 3 is 3-regular::
 
-    ::
-
-        sage: graphs.RandomRegular(3, 8).edges(labels=False)
-        [(0, 2), (0, 4), (0, 5), (1, 5), (1, 6), (1, 7), (2, 4), (2, 7), (3, 4), (3, 5), (3, 6), (6, 7)]    # 32-bit
-        [(0, 3), (0, 5), (0, 6), (1, 2), (1, 3), (1, 7), (2, 4), (2, 6), (3, 6), (4, 5), (4, 7), (5, 7)]    # 64-bit
+        sage: G = graphs.RandomRegular(3, 8)
+        sage: G.is_regular(k=3)
+        True
+        sage: G.degree_histogram()
+        [0, 0, 0, 8]
 
     ::
 
@@ -1434,37 +1447,35 @@ def RandomRegular(d, n, seed=None):
     import networkx
     try:
         N = networkx.random_regular_graph(d, n, seed=seed)
-        if N is False: return False
+        if N is False:
+            return False
         return Graph(N, sparse=True)
     except Exception:
         return False
 
 def RandomShell(constructor, seed=None):
     """
-    Returns a random shell graph for the constructor given.
+    Return a random shell graph for the constructor given.
 
     INPUT:
 
-    - ``constructor`` - a list of 3-tuples (n,m,d), each
-      representing a shell
+    - ``constructor`` -- a list of 3-tuples `(n, m, d)`, each representing a
+      shell, where:
 
-    - ``n`` - the number of vertices in the shell
+      - ``n`` -- the number of vertices in the shell
 
-    - ``m`` - the number of edges in the shell
+      - ``m`` -- the number of edges in the shell
 
-    - ``d`` - the ratio of inter (next) shell edges to
-      intra shell edges
+      - ``d`` -- the ratio of inter (next) shell edges to intra shell edges
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
-
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     EXAMPLES::
 
         sage: G = graphs.RandomShell([(10,20,0.8),(20,40,0.8)])
-        sage: G.edges(labels=False)
-        [(0, 2), (0, 3), (0, 6), (0, 7), (0, 9), (0, 27), (1, 4), (1, 8), (3, 4), (3, 6), (3, 9), (4, 5), (4, 8), (4, 14), (5, 6), (5, 7), (6, 15), (7, 8), (7, 9), (7, 19), (10, 21), (10, 24), (11, 19), (11, 22), (11, 27), (12, 15), (13, 20), (13, 27), (14, 15), (14, 17), (14, 21), (15, 17), (15, 22), (15, 26), (16, 18), (17, 26), (17, 28), (18, 20), (18, 21), (18, 25), (18, 26), (19, 20), (19, 22), (19, 26), (19, 28), (21, 28), (22, 23), (23, 27), (24, 25), (24, 27), (25, 27), (25, 28)]    # 32-bit
-        [(0, 7), (0, 8), (0, 9), (1, 3), (1, 4), (1, 5), (1, 7), (1, 9), (1, 27), (2, 5), (2, 9), (2, 15), (2, 21), (3, 6), (3, 8), (3, 9), (4, 6), (4, 7), (6, 7), (8, 21), (10, 26), (12, 17), (12, 18), (12, 20), (12, 25), (12, 26), (13, 14), (13, 19), (14, 16), (14, 18), (14, 19), (14, 22), (14, 24), (15, 21), (16, 17), (16, 25), (16, 26), (16, 28), (17, 19), (17, 29), (18, 24), (18, 26), (19, 28), (20, 27), (20, 29), (22, 24), (22, 27), (22, 29), (23, 24), (23, 26), (24, 27), (26, 29)]    # 64-bit
+        sage: G.order(), G.size()
+        (30, 52)
         sage: G.show()  # long time
     """
     if seed is None:

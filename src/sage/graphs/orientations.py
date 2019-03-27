@@ -50,7 +50,7 @@ def strong_orientations_iterator(G):
     Therefore, this function generates all partial orientations of the non-tree
     edges and then launches a helper function corresponding to the generation
     algorithm described in [CGMRV16]_.
-    In order to avoid trivial symetries, the orientation of an arbitrary edge
+    In order to avoid trivial symmetries, the orientation of an arbitrary edge
     is fixed before the start of the enumeration process.
 
     INPUT:
@@ -64,7 +64,7 @@ def strong_orientations_iterator(G):
     .. NOTE::
 
         Works only for simple graphs (no multiple edges).
-        To avoid symetries an orientation of an arbitrary edge is fixed.
+        To avoid symmetries an orientation of an arbitrary edge is fixed.
 
 
     EXAMPLES:
@@ -191,7 +191,7 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
     - an iterator which will produce all strong orientations of the input
       partially directed graph.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.graphs.orientations import _strong_orientations_of_a_mixed_graph
         sage: g = graphs.CycleGraph(5)

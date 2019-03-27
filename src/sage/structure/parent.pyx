@@ -112,7 +112,8 @@ import operator
 from copy import copy
 
 from sage.cpython.type cimport can_assign_class
-from sage.structure.element cimport parent, coercion_model
+from .coerce cimport coercion_model
+from sage.structure.element cimport parent
 cimport sage.categories.morphism as morphism
 cimport sage.categories.map as map
 from .category_object import CategoryObject
@@ -121,10 +122,10 @@ from .coerce_exceptions import CoercionException
 from sage.structure.debug_options cimport debug
 from sage.structure.richcmp cimport rich_to_bool
 from sage.structure.sage_object cimport SageObject
-from sage.structure.misc import is_extension_type
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.misc.lazy_format import LazyFormat
+from sage.misc.lazy_string cimport _LazyString
 from .coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
         DefaultConvertMap_unique, CallableConvertMap)
 from sage.sets.pythonclass cimport Set_PythonType_class, Set_PythonType
@@ -545,17 +546,27 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         except AttributeError: #else:
             return NotImplemented
 
-
-    def __make_element_class__(self, cls, name = None, module=None, inherit = None):
+    def __make_element_class__(self, cls, name=None, module=None, inherit=None):
         """
         A utility to construct classes for the elements of this
         parent, with appropriate inheritance from the element class of
-        the category (only for pure python types so far).
+        the category.
+
+        It used to be the case that this didn't work for extension
+        types, which used to never support a ``__dict__`` for instances.
+        So for backwards compatibility, we only use dynamic classes by
+        default if the class has a non-zero ``__dictoffset__``. But it
+        works regardless: just pass ``inherit=True`` to
+        ``__make_element_class__``. See also :trac:`24715`.
+
+        When we don't use a dynamic element class, the ``__getattr__``
+        implementation from :class:`Element` provides fake
+        inheritance from categories.
         """
-        # By default, don't fiddle with extension types yet; inheritance from
-        # categories will probably be achieved in a different way
+        if not isinstance(cls, type):
+            raise TypeError(f"element class {cls!r} should be a type")
         if inherit is None:
-            inherit = not is_extension_type(cls)
+            inherit = (cls.__dictoffset__ != 0)
         if inherit:
             if name is None:
                 name = "%s_with_category"%cls.__name__
@@ -890,7 +901,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             else:
                 return mor._call_with_args(x, args, kwds)
 
-        raise TypeError("No conversion defined from %s to %s"%(R, self))
+        raise TypeError(_LazyString(_lazy_format, ("No conversion defined from %s to %s", R, self), {}))
 
     def __mul__(self,x):
         """
@@ -1120,14 +1131,17 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: V.coerce(0)
             (0, 0, 0, 0, 0, 0, 0)
         """
-        mor = self._internal_coerce_map_from(parent(x))
+        cdef R = parent(x)
+        if R is self:
+            return x
+        mor = self._internal_coerce_map_from(R)
         if mor is None:
             if is_Integer(x) and not x:
                 try:
                     return self(0)
                 except Exception:
                     _record_exception()
-            raise TypeError("no canonical coercion from %s to %s" % (parent(x), self))
+            raise TypeError(_LazyString(_lazy_format, ("no canonical coercion from %s to %s", parent(x), self), {}))
         else:
             return (<map.Map>mor)._call_(x)
 
@@ -2858,3 +2872,6 @@ cdef bint _unregister_pair(x, y, tag) except -1:
         _coerce_test_dict.pop(EltPair(x,y,tag), None)
     except (ValueError, CoercionException):
         pass
+
+def _lazy_format(msg, *args):
+    return msg % args

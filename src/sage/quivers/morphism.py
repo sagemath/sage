@@ -2,7 +2,7 @@
 Quiver Morphisms
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Jim Stark <jstarx@gmail.com>
 #                2013 Simon King <simon.king@uni-jena.de>
 #
@@ -15,11 +15,12 @@ Quiver Morphisms
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.morphism import CallMorphism
 from sage.matrix.constructor import Matrix
+
 
 class QuiverRepHom(CallMorphism):
     r"""
@@ -506,7 +507,6 @@ class QuiverRepHom(CallMorphism):
             sage: g == h
             True
         """
-        from sage.quivers.morphism import QuiverRepHom
         # A homomorphism can only be equal to another homomorphism between the
         # same domain and codomain
         if not isinstance(other, QuiverRepHom) or self._domain != other._domain or self._codomain != other._codomain:
@@ -554,7 +554,6 @@ class QuiverRepHom(CallMorphism):
             sage: g != h
             True
         """
-        from sage.quivers.morphism import QuiverRepHom
         # A homomorphism can only be equal to another homomorphism between the
         # same domain and codomain
         if not isinstance(other, QuiverRepHom) or self._domain != other._domain or self._codomain != other._codomain:
@@ -1201,7 +1200,6 @@ class QuiverRepHom(CallMorphism):
             sage: g.is_surjective()
             False
         """
-        from sage.quivers.morphism import QuiverRepHom
         # Get the list of maps to be summed
         if isinstance(maps, QuiverRepHom):
             maplist = [self, maps]

@@ -27,7 +27,7 @@ def gap_workspace_file(system="gap", name="workspace", dir=None):
       ``"libgap"``
 
     - ``name`` -- the kind of workspace, usually ``"workspace"`` but
-      libGAP also uses other files
+      the library interface also uses other files
 
     - ``dir`` -- the directory where the workspaces should be stored.
       By default, this is ``DOT_SAGE/gap``

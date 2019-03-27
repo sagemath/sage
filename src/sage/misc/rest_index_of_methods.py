@@ -15,6 +15,7 @@ from six import PY2
 
 from sage.misc.sageinspect import _extract_embedded_position
 
+
 def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
     r"""
     Return a ReST table describing a list of functions.
@@ -241,7 +242,6 @@ def list_of_subfunctions(root, only_local_functions=True):
          {<function GenericGraph.order at 0x...>: 'x'})
 
     """
-    import inspect
     if inspect.ismodule(root):
         ismodule = True
     elif inspect.isclass(root):
