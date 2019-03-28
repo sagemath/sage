@@ -137,7 +137,7 @@ def joint_spectral_radius(S, delta=None, norm=None,
         sage: A0 = Matrix([[1, 0], [0, 1]])
         sage: A1 = Matrix([[3, -3], [3, 3]])
         sage: joint_spectral_radius((A0, A1), delta=RIF(0.2)).endpoints()
-        (4.24264068711928, 4.24264068711929)
+        (4.24264068711928, 4.44264068711929)
 
     [Dumas2013]_, Example 6 (result is `1`)::
 
@@ -162,6 +162,7 @@ def joint_spectral_radius(S, delta=None, norm=None,
         (1.00000000000000, 1.14720269043988)
     """
     from sage.arith.srange import srange
+    from sage.functions.other import sqrt
     from sage.misc.misc_c import prod
 
     import logging
@@ -175,8 +176,7 @@ def joint_spectral_radius(S, delta=None, norm=None,
     if delta is None:
         delta = R(0.1)
     if norm is None:
-        norm = lambda M: M.norm(2)
-    Rnorm = lambda M: R(norm(M))
+        norm = lambda M: sqrt(sum(R(m)**2 for m in M.list()))
     if max_iterations is None:
         max_iterations = 1000
 
@@ -192,14 +192,14 @@ def joint_spectral_radius(S, delta=None, norm=None,
         return max(R(abs(v)) for v in M.eigenvalues())
 
     def pp(X, j):
-        return Rnorm(prod(X[:j]))**(1/R(j))
+        return norm(prod(X[:j]))**(1/R(j))
 
     def p(X):
         return min(pp(X, j) for j in srange(1, len(X)+1))
 
-    T = tuple(((M,), Rnorm(M)) for M in S)
+    T = tuple(((M,), norm(M)) for M in S)
     alpha = max(rho(M) for M in S)
-    beta = max(pX for X, pX in T)  # pX equals Rnorm(M) here
+    beta = max(pX for X, pX in T)  # pX equals norm(M) here
     ell = 0
 
     for m in srange(2, max_iterations):
