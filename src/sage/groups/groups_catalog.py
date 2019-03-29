@@ -16,6 +16,7 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
   - :class:`groups.permutation.KleinFour <sage.groups.perm_gps.permgroup_named.KleinFourGroup>`
   - :class:`groups.permutation.Quaternion <sage.groups.perm_gps.permgroup_named.QuaternionGroup>`
   - :class:`groups.permutation.Cyclic <sage.groups.perm_gps.permgroup_named.CyclicPermutationGroup>`
+  - :class:`groups.permutation.ComplexReflection <sage.groups.perm_gps.permgroup_named.ComplexReflectionGroup>`
   - :class:`groups.permutation.Dihedral <sage.groups.perm_gps.permgroup_named.DihedralGroup>`
   - :class:`groups.permutation.DiCyclic <sage.groups.perm_gps.permgroup_named.DiCyclicGroup>`
   - :class:`groups.permutation.Mathieu <sage.groups.perm_gps.permgroup_named.MathieuGroup>`
@@ -54,6 +55,10 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
 
   - :func:`groups.affine.Affine <sage.groups.affine_gps.affine_group.AffineGroup>`
   - :func:`groups.affine.Euclidean <sage.groups.affine_gps.euclidean_group.EuclideanGroup>`
+
+- Lie Groups  (``groups.lie.<tab>``)
+
+  - :class:`groups.lie.Nilpotent <sage.groups.lie_gps.nilpotent_lie_group.NilpotentLieGroup>`
 
 - Miscellaneous Groups (``groups.misc.<tab>``)
 
@@ -97,4 +102,6 @@ from sage.groups.matrix_gps import catalog as matrix
 from sage.groups.perm_gps import permutation_groups_catalog as permutation
 from sage.groups.misc_gps import misc_groups_catalog as misc
 from sage.groups.affine_gps import catalog as affine
+from sage.groups.lie_gps import catalog as lie
 from sage.groups import finitely_presented_catalog as presentation
+

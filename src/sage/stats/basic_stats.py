@@ -183,7 +183,7 @@ def std(v, bias=False):
         sage: std([])
         NaN
         sage: std([I, sqrt(2), 3/5])
-        sqrt(1/450*(10*sqrt(2) - 5*I - 3)^2 + 1/450*(5*sqrt(2) - 10*I + 3)^2 + 1/450*(5*sqrt(2) + 5*I - 6)^2)
+        1/15*sqrt(1/2)*sqrt((10*sqrt(2) - 5*I - 3)^2 + (5*sqrt(2) - 10*I + 3)^2 + (5*sqrt(2) + 5*I - 6)^2)
         sage: std([RIF(1.0103, 1.0103), RIF(2)])
         0.6998235813403261?
         sage: import numpy
@@ -202,7 +202,6 @@ def std(v, bias=False):
 
     import numpy
 
-    x = 0
     if isinstance(v, numpy.ndarray):
         # accounts for numpy arrays
         if bias:
@@ -215,6 +214,7 @@ def std(v, bias=False):
         return NaN
 
     return sqrt(variance(v, bias=bias))
+
 
 def variance(v, bias=False):
     """
@@ -267,13 +267,13 @@ def variance(v, bias=False):
         1
         sage: class SillyPythonList:
         ....:   def __init__(self):
-        ....:       self.__list = [2L,4L]
+        ....:       self.__list = [2, 4]
         ....:   def __len__(self):
         ....:       return len(self.__list)
         ....:   def __iter__(self):
         ....:       return self.__list.__iter__()
         ....:   def mean(self):
-        ....:       return 3L
+        ....:       return 3
         sage: R = SillyPythonList()
         sage: variance(R)
         2

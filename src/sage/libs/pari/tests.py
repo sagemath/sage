@@ -164,9 +164,6 @@ Deprecation checks::
     4
     sage: pari('9234.1').sizedigit()
     5
-    sage: pari(8).bernvec()
-    doctest:...: DeprecationWarning: the PARI/GP function bernvec() is obsolete: use repeated calls to bernfrac() instead
-    [1, 1/6, -1/30, 1/42, -1/30, 5/66, -691/2730, 7/6, -3617/510]
     sage: [pari(2*n).bernfrac() for n in range(9)]
     [1, 1/6, -1/30, 1/42, -1/30, 5/66, -691/2730, 7/6, -3617/510]
     sage: e = pari([0,1,1,-2,0]).ellinit()
@@ -225,13 +222,13 @@ Polynomial functions::
     sage: f = pari("x^2 + y^3 + x*y")
     sage: f
     x^2 + y*x + y^3
-    sage: f.polcoeff(1)
+    sage: f.polcoef(1)
     y
-    sage: f.polcoeff(3)
+    sage: f.polcoef(3)
     0
-    sage: f.polcoeff(3, "y")
+    sage: f.polcoef(3, "y")
     1
-    sage: f.polcoeff(1, "y")
+    sage: f.polcoef(1, "y")
     x
 
     sage: pari("x^2 + 1").poldisc()
@@ -932,18 +929,18 @@ Linear algebra::
     sage: B = pari('[1,2]~')
     sage: M = pari('[1,2;3,4]')
     sage: M.matsolvemod(D, B)
-    [-2, 0]~
+    [10, 0]~
     sage: M.matsolvemod(3, 1)
-    [-1, 1]~
+    [2, 1]~
     sage: M.matsolvemod(pari('[3,0]~'), pari('[1,2]~'))
     [6, -4]~
     sage: M2 = pari('[1,10;9,18]')
     sage: M2.matsolvemod(3, pari('[2,3]~'), 1)
-    [[0, -1]~, [-1, -2; 1, -1]]
+    [[2, 0]~, [3, 2; 0, 1]]
     sage: M2.matsolvemod(9, pari('[2,3]~'))
     0
     sage: M2.matsolvemod(9, pari('[2,45]~'), 1)
-    [[1, 1]~, [-1, -4; 1, -5]]
+    [[2, 0]~, [9, 8; 0, 1]]
 
     sage: pari('[1,2,3;4,5,6;7,8,9]').matker()
     [1; -2; 1]
@@ -1524,12 +1521,12 @@ General number fields::
 
     sage: G = pari(x^4 + 1).galoisinit()
     sage: G.galoisfixedfield(G[5][1], flag=2)
-    [x^2 - 2, Mod(-x^3 + x, x^4 + 1), [x^2 - y*x + 1, x^2 + y*x + 1]]
+    [y^2 - 2, Mod(-x^3 + x, x^4 + 1), [x^2 - y*x + 1, x^2 + y*x + 1]]
     sage: G.galoisfixedfield(G[5][5:7])
     [x^4 + 1, Mod(x, x^4 + 1)]
     sage: L = G.galoissubgroups()
     sage: G.galoisfixedfield(L[3], flag=2, v='z')
-    [x^2 + 2, Mod(x^3 + x, x^4 + 1), [x^2 - z*x - 1, x^2 + z*x - 1]]
+    [z^2 + 2, Mod(x^3 + x, x^4 + 1), [x^2 - z*x - 1, x^2 + z*x - 1]]
 
     sage: G = pari(x^6 + 108).galoisinit()
     sage: L = G.galoissubgroups()
@@ -1693,7 +1690,7 @@ General number fields::
     sage: F.__pari__().nfisisom(GG.pari_nf())
     [1/2*y^2]
     sage: F.pari_nf().nfisisom(GG.__pari__()[0])
-    [y^2]
+    [1/2*y^2]
     sage: H = NumberField(x^2-2,'alpha')
     sage: F.__pari__().nfisisom(H.__pari__())
     0
@@ -1715,7 +1712,7 @@ General number fields::
 
     sage: nf = pari('x^2 + 1').nfinit()
     sage: nf.nfrootsof1()
-    [4, x]
+    [4, [0, 1]~]
 
     sage: x = ZZ['xx1'].0; pari(x)
     xx1

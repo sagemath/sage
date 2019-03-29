@@ -6,11 +6,12 @@ This is a pure Python file with no dependencies so it can be used in setup.py.
 
 import os
 
-from ..env import SAGE_SRC, DOT_SAGE
+from ..env import SAGE_LIB, DOT_SAGE
 
 def get_cache_file():
     """
-    Returns a per-branch file for caching names of lazily imported modules.
+    Return the canonical filename for caching names of lazily imported
+    modules.
 
     EXAMPLES::
 
@@ -30,6 +31,6 @@ def get_cache_file():
         True
         sage: sage.misc.lazy_import_cache.DOT_SAGE = OLD
     """
-    mangled = os.path.realpath(SAGE_SRC).replace(os.sep, '_')
+    mangled = os.path.realpath(SAGE_LIB).replace(os.sep, '_')
     return os.path.join(DOT_SAGE, 'cache',
                         "%s-lazy_import_cache.pickle" % mangled)

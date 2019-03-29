@@ -314,8 +314,8 @@ def generators_helper(coset_reps, level):
         z_index = crs.index(z_index)
         y = reps[y_index]
         z = reps[z_index]
-        y = y._invert_unit()
-        z = z._invert_unit()
+        y = y.inverse_of_unit()
+        z = z.inverse_of_unit()
         ans.append(x*genS*y)
         ans.append(x*genT*z)
     return [x for x in ans if x != genI]

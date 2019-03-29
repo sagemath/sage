@@ -5,41 +5,43 @@ Q-Systems
 AUTHORS:
 
 - Travis Scrimshaw (2013-10-08): Initial version
+- Travis Scrimshaw (2017-12-08): Added twisted Q-systems
 """
 
 #*****************************************************************************
-#  Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
+#       Copyright (C) 2013,2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
 import itertools
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
 
 from sage.categories.algebras import Algebras
-from sage.categories.realizations import Realizations, Category_realization_of_parent
-from sage.rings.all import ZZ, QQ
+from sage.rings.all import ZZ
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.sets.family import Family
-from sage.sets.positive_integers import PositiveIntegers
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedMonoid
-from sage.matrix.constructor import matrix
+from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
+
 
 class QSystem(CombinatorialFreeModule):
     r"""
     A Q-system.
 
     Let `\mathfrak{g}` be a tamely-laced symmetrizable Kac-Moody algebra
-    with index set `I` over a field `k`. Follow the presentation given
-    in [HKOTY1999]_, an unrestricted Q-system is a `k`-algebra in infinitely
-    many variables `Q^{(a)}_m`, where `a \in I` and `m \in \ZZ_{>0}`,
-    that satisifies the relations
+    with index set `I` and Cartan matrix `(C_{ab})_{a,b \in I}` over a
+    field `k`. Follow the presentation given in [HKOTY1999]_, an
+    unrestricted Q-system is a `k`-algebra in infinitely many variables
+    `Q^{(a)}_m`, where `a \in I` and `m \in \ZZ_{>0}`, that satisfies
+    the relations
 
     .. MATH::
 
@@ -62,6 +64,16 @@ class QSystem(CombinatorialFreeModule):
     condition) given by setting `Q_{d_a \ell}^{(a)} = 1`, where `d_a`
     are the entries of the symmetrizing matrix for the dual type of
     `\mathfrak{g}`.
+
+    Similarly, for twisted affine types (we omit type `A_{2n}^{(2)}`),
+    we can define the *twisted Q-system* by using the relation:
+
+    .. MATH::
+
+        (Q^{(a)}_{m})^2 = Q^{(a)}_{m+1} Q^{(a)}_{m-1}
+         + \prod_{b \neq a} (Q^{(b)}_{m})^{-C_{ba}}.
+
+    See [Wil2013]_ for more information.
 
     EXAMPLES:
 
@@ -88,8 +100,25 @@ class QSystem(CombinatorialFreeModule):
         Q^(4)[1]
         sage: Q.Q(1,2)
         Q^(1)[1]^2 - Q^(2)[1]
+        sage: Q.Q(2,3)
+        Q^(1)[1]^2*Q^(4)[1] - 2*Q^(1)[1]*Q^(2)[1]*Q^(3)[1]
+         + Q^(2)[1]^3 - Q^(2)[1]*Q^(4)[1] + Q^(3)[1]^2
         sage: Q.Q(3,3)
         Q^(1)[1]*Q^(4)[1]^2 - 2*Q^(2)[1]*Q^(3)[1]*Q^(4)[1] + Q^(3)[1]^3
+
+    We compare that with the twisted Q-system of type `A_7^{(2)}`::
+
+        sage: Q = QSystem(QQ, ['A',7,2], twisted=True)
+        sage: Q.Q(4,1)
+        Q^(4)[1]
+        sage: Q.Q(1,2)
+        Q^(1)[1]^2 - Q^(2)[1]
+        sage: Q.Q(2,3)
+        Q^(1)[1]^2*Q^(4)[1] - 2*Q^(1)[1]*Q^(2)[1]*Q^(3)[1]
+         + Q^(2)[1]^3 - Q^(2)[1]*Q^(4)[1] + Q^(3)[1]^2
+        sage: Q.Q(3,3)
+        -Q^(1)[1]*Q^(3)[1]^2 + Q^(1)[1]*Q^(4)[1]^2 + Q^(2)[1]^2*Q^(3)[1]
+         - 2*Q^(2)[1]*Q^(3)[1]*Q^(4)[1] + Q^(3)[1]^3
 
     REFERENCES:
 
@@ -97,7 +126,7 @@ class QSystem(CombinatorialFreeModule):
     - [KNS2011]_
     """
     @staticmethod
-    def __classcall__(cls, base_ring, cartan_type, level=None):
+    def __classcall__(cls, base_ring, cartan_type, level=None, twisted=False):
         """
         Normalize arguments to ensure a unique representation.
 
@@ -107,13 +136,22 @@ class QSystem(CombinatorialFreeModule):
             sage: Q2 = QSystem(QQ, 'A4')
             sage: Q1 is Q2
             True
+
+        Twisted Q-systems are different from untwisted Q-systems::
+
+            sage: Q1 = QSystem(QQ, ['E',6,2], twisted=True)
+            sage: Q2 = QSystem(QQ, ['E',6,2])
+            sage: Q1 is Q2
+            False
         """
         cartan_type = CartanType(cartan_type)
         if not is_tamely_laced(cartan_type):
             raise ValueError("the Cartan type is not tamely-laced")
-        return super(QSystem, cls).__classcall__(cls, base_ring, cartan_type, level)
+        if twisted and not cartan_type.is_affine() and not cartan_type.is_untwisted_affine():
+            raise ValueError("the Cartan type must be of twisted type")
+        return super(QSystem, cls).__classcall__(cls, base_ring, cartan_type, level, twisted)
 
-    def __init__(self, base_ring, cartan_type, level):
+    def __init__(self, base_ring, cartan_type, level, twisted):
         """
         Initialize ``self``.
 
@@ -121,13 +159,22 @@ class QSystem(CombinatorialFreeModule):
 
             sage: Q = QSystem(QQ, ['A',2])
             sage: TestSuite(Q).run()
+
+            sage: Q = QSystem(QQ, ['E',6,2], twisted=True)
+            sage: TestSuite(Q).run()
         """
         self._cartan_type = cartan_type
         self._level = level
+        self._twisted = twisted
         indices = tuple(itertools.product(cartan_type.index_set(), [1]))
         basis = IndexedFreeAbelianMonoid(indices, prefix='Q', bracket=False)
         # This is used to do the reductions
-        self._poly = PolynomialRing(ZZ, ['q'+str(i) for i in cartan_type.index_set()])
+        if self._twisted:
+            self._cm = cartan_type.classical().cartan_matrix()
+        else:
+            self._cm = cartan_type.cartan_matrix()
+        self._Irev = {ind: pos for pos,ind in enumerate(self._cm.index_set())}
+        self._poly = PolynomialRing(ZZ, ['q'+str(i) for i in self._cm.index_set()])
 
         category = Algebras(base_ring).Commutative().WithBasis()
         CombinatorialFreeModule.__init__(self, base_ring, basis,
@@ -141,11 +188,16 @@ class QSystem(CombinatorialFreeModule):
 
             sage: QSystem(QQ, ['A',4])
             Q-system of type ['A', 4] over Rational Field
+
+            sage: QSystem(QQ, ['A',7,2], twisted=True)
+            Twisted Q-system of type ['B', 4, 1]^* over Rational Field
         """
         if self._level is not None:
             res = "Restricted level {} ".format(self._level)
         else:
             res = ''
+        if self._twisted:
+            res += "Twisted "
         return "{}Q-system of type {} over {}".format(res, self._cartan_type, self.base_ring())
 
     def _repr_term(self, t):
@@ -266,6 +318,10 @@ class QSystem(CombinatorialFreeModule):
             sage: Q = QSystem(QQ, ['A',4])
             sage: Q.cartan_type()
             ['A', 4]
+
+            sage: Q = QSystem(QQ, ['D',4,3], twisted=True)
+            sage: Q.cartan_type()
+            ['G', 2, 1]^* relabelled by {0: 0, 1: 2, 2: 1}
         """
         return self._cartan_type
 
@@ -278,8 +334,12 @@ class QSystem(CombinatorialFreeModule):
             sage: Q = QSystem(QQ, ['A',4])
             sage: Q.index_set()
             (1, 2, 3, 4)
+
+            sage: Q = QSystem(QQ, ['D',4,3], twisted=True)
+            sage: Q.index_set()
+            (1, 2)
         """
-        return self._cartan_type.index_set()
+        return self._cm.index_set()
 
     def level(self):
         """
@@ -322,8 +382,12 @@ class QSystem(CombinatorialFreeModule):
             sage: Q = QSystem(QQ, ['A',4])
             sage: Q.algebra_generators()
             Finite family {1: Q^(1)[1], 2: Q^(2)[1], 3: Q^(3)[1], 4: Q^(4)[1]}
+
+            sage: Q = QSystem(QQ, ['D',4,3], twisted=True)
+            sage: Q.algebra_generators()
+            Finite family {1: Q^(1)[1], 2: Q^(2)[1]}
         """
-        I = self._cartan_type.index_set()
+        I = self._cm.index_set()
         d = {a: self.Q(a, 1) for a in I}
         return Family(I, d.__getitem__)
 
@@ -340,7 +404,7 @@ class QSystem(CombinatorialFreeModule):
         return tuple(self.algebra_generators())
 
     def dimension(self):
-        """
+        r"""
         Return the dimension of ``self``, which is `\infty`.
 
         EXAMPLES::
@@ -367,6 +431,20 @@ class QSystem(CombinatorialFreeModule):
              - 2*Q^(6)[1]*Q^(7)[1]*Q^(8)[1] + Q^(7)[1]^3
             sage: Q.Q(1, 0)
             1
+
+        Twisted Q-system::
+
+            sage: Q = QSystem(QQ, ['D',4,3], twisted=True)
+            sage: Q.Q(1,2)
+            Q^(1)[1]^2 - Q^(2)[1]
+            sage: Q.Q(2,2)
+            -Q^(1)[1]^3 + Q^(2)[1]^2
+            sage: Q.Q(2,3)
+            3*Q^(1)[1]^4 - 2*Q^(1)[1]^3*Q^(2)[1] - 3*Q^(1)[1]^2*Q^(2)[1]
+             + Q^(2)[1]^2 + Q^(2)[1]^3
+            sage: Q.Q(1,4)
+            -2*Q^(1)[1]^2 + 2*Q^(1)[1]^3 + Q^(1)[1]^4
+             - 3*Q^(1)[1]^2*Q^(2)[1] + Q^(2)[1] + Q^(2)[1]^2
         """
         if a not in self._cartan_type.index_set():
             raise ValueError("a is not in the index set")
@@ -380,7 +458,7 @@ class QSystem(CombinatorialFreeModule):
             return self.monomial( self._indices.gen((a,1)) )
         #if self._cartan_type.type() == 'A' and self._level is None:
         #    return self._jacobi_trudy(a, m)
-        I = self._cartan_type.index_set()
+        I = self._cm.index_set()
         p = self._Q_poly(a, m)
         return p.subs({ g: self.Q(I[i], 1) for i,g in enumerate(self._poly.gens()) })
 
@@ -393,7 +471,7 @@ class QSystem(CombinatorialFreeModule):
 
         .. MATH::
 
-            Q^{(a)}_{m-1}^2 = Q^{(a)}_m Q^{(a)}_{m-2} + \mathcal{Q}_{a,m-1},
+            (Q^{(a)}_{m-1})^2 = Q^{(a)}_m Q^{(a)}_{m-2} + \mathcal{Q}_{a,m-1},
 
         which implies
 
@@ -404,6 +482,13 @@ class QSystem(CombinatorialFreeModule):
 
         This becomes our relation used for reducing the Q-system to the
         fundamental representations.
+
+        For twisted Q-systems, we use
+
+        .. MATH::
+
+            (Q^{(a)}_{m-1})^2 = Q^{(a)}_m Q^{(a)}_{m-2}
+             + \prod_{b \neq a} (Q^{(b)}_{m-1})^{-A_{ba}}.
 
         .. NOTE::
 
@@ -419,23 +504,51 @@ class QSystem(CombinatorialFreeModule):
             q3^2 - q2*q4
             sage: Q._Q_poly(6, 3)
             q6^3 - 2*q5*q6*q7 + q4*q7^2 + q5^2*q8 - q4*q6*q8
+
+        Twisted types::
+
+            sage: Q = QSystem(QQ, ['E',6,2], twisted=True)
+            sage: Q._Q_poly(1,2)
+            q1^2 - q2
+            sage: Q._Q_poly(2,2)
+            q2^2 - q1*q3
+            sage: Q._Q_poly(3,2)
+            -q2^2*q4 + q3^2
+            sage: Q._Q_poly(4,2)
+            q4^2 - q3
+            sage: Q._Q_poly(3,3)
+            2*q1*q2^2*q4^2 - q1^2*q3*q4^2 + q2^4 - 2*q1*q2^2*q3
+             + q1^2*q3^2 - 2*q2^2*q3*q4 + q3^3
+
+            sage: Q = QSystem(QQ, ['D',4,3], twisted=True)
+            sage: Q._Q_poly(1,2)
+            q1^2 - q2
+            sage: Q._Q_poly(2,2)
+            -q1^3 + q2^2
+            sage: Q._Q_poly(1,3)
+            q1^3 + q1^2 - 2*q1*q2
+            sage: Q._Q_poly(2,3)
+            3*q1^4 - 2*q1^3*q2 - 3*q1^2*q2 + q2^3 + q2^2
         """
         if m == 0 or m == self._level:
             return self._poly.one()
         if m == 1:
-            return self._poly.gen(self._cartan_type.index_set().index(a))
+            return self._poly.gen(self._Irev[a])
 
-        cm = CartanMatrix(self._cartan_type)
-        I = self._cartan_type.index_set()
+        cm = self._cm
         m -= 1 # So we don't have to do it everywhere
 
-        cur = self._Q_poly(a, m)**2
-        i = I.index(a)
-        ret = self._poly.one()
-        for b in self._cartan_type.dynkin_diagram().neighbors(a):
-            j = I.index(b)
-            for k in range(-cm[i,j]):
-                ret *= self._Q_poly(b, (m * cm[j,i] - k) // cm[i,j])
+        cur = self._Q_poly(a, m) ** 2
+        if self._twisted:
+            ret = prod(self._Q_poly(b, m) ** -cm[self._Irev[b],self._Irev[a]]
+                       for b in self._cm.dynkin_diagram().neighbors(a))
+        else:
+            ret = self._poly.one()
+            i = self._Irev[a]
+            for b in self._cm.dynkin_diagram().neighbors(a):
+                j = self._Irev[b]
+                for k in range(-cm[i,j]):
+                    ret *= self._Q_poly(b, (m * cm[j,i] - k) // cm[i,j])
         cur -= ret
         if m > 1:
             cur //= self._Q_poly(a, m-1)

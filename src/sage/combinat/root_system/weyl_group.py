@@ -356,7 +356,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
             sage: W = WeylGroup("B2", prefix="s")
             sage: refdict = W.reflections(); refdict
-            Finite family {(1, -1): s1, (1, 1): s2*s1*s2, (1, 0): s1*s2*s1, (0, 1): s2}
+            Finite family {(1, -1): s1, (0, 1): s2, (1, 1): s2*s1*s2, (1, 0): s1*s2*s1}
             sage: [r+refdict[r].action(r) for r in refdict.keys()]
             [(0, 0), (0, 0), (0, 0), (0, 0)]
 
@@ -1107,6 +1107,31 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
         """
         return self.iteration(algorithm="breadth", tracking_words=True)
 
+    def _coerce_map_from_(self, P):
+        """
+        Return ``True`` if ``P`` is a Weyl group of the same
+        Cartan type and ``False`` otherwise.
+
+        EXAMPLES::
+
+            sage: W = WeylGroup(["B",4], implementation="permutation")
+            sage: W2 = WeylGroup(["B",4])
+            sage: W._coerce_map_from_(W2)
+            True
+            sage: W3 = WeylGroup(["B",5])
+            sage: W.has_coerce_map_from(W3)
+            False
+            sage: W4 = CoxeterGroup(["B",4])
+            sage: W.has_coerce_map_from(W4)
+            False
+            sage: W5 = WeylGroup(["C",4], implementation="permutation")
+            sage: W.has_coerce_map_from(W5)
+            False
+        """
+        if isinstance(P, WeylGroup_gens) and P.cartan_type() is self.cartan_type():
+            return True
+        return super(WeylGroup_permutation, self)._coerce_map_from_(P)
+
     @cached_method
     def rank(self):
         """
@@ -1293,19 +1318,6 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             [0, 1, 2]
         """
         return self._index_set_inverse[i]
-
-    def _element_class(self):
-        r"""
-        A temporary workaround for compatibility with Sage's
-        permutation groups.
-
-        TESTS::
-
-            sage: W = WeylGroup(['B',3], implementation="permutation")
-            sage: W._element_class() is W.element_class
-            True
-        """
-        return self.element_class
 
     class Element(RealReflectionGroupElement):
         def _repr_(self):

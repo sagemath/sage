@@ -313,7 +313,7 @@ class VoronoiDiagram(SageObject):
 
         EXAMPLES::
 
-            sage: py_trips = [[a, b] for a in range(1, 50) for b in range(1, 50) if (a^2 + b^2).is_square()]
+            sage: py_trips = [[a, b] for a in range(1, 50) for b in range(1, 50) if ZZ(a^2 + b^2).is_square()]
             sage: v = VoronoiDiagram(py_trips)
             sage: v._are_points_in_regions()
             True

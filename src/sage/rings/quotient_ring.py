@@ -13,7 +13,7 @@ TESTS::
 
     sage: R.<x> = PolynomialRing(ZZ)
     sage: I = R.ideal([4 + 3*x + x^2, 1 + x^2])
-    sage: S = R.quotient_ring(I);
+    sage: S = R.quotient_ring(I)
 
 .. todo::
 
@@ -341,10 +341,9 @@ def is_QuotientRing(x):
     """
     return isinstance(x, QuotientRing_nc)
 
-from sage.categories.rings import Rings
+
 _Rings = Rings()
 _RingsQuotients = Rings().Quotients()
-from sage.categories.commutative_rings import CommutativeRings
 _CommutativeRingsQuotients = CommutativeRings().Quotients()
 from sage.structure.category_object import check_default_category
 
@@ -949,7 +948,6 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             return super(QuotientRing_nc, self).ideal(gens, **kwds)
         if is_SingularElement(gens):
             gens = list(gens)
-            coerce = True
         elif not isinstance(gens, (list, tuple)):
             gens = [gens]
         if 'coerce' in kwds and kwds['coerce']:

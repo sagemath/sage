@@ -584,8 +584,7 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
 
             sage: O = algebras.QuantumMatrixCoordinate(2)
             sage: O.algebra_generators()
-            Finite family {(1, 2): x[1,2], (1, 1): x[1,1],
-                           (2, 1): x[2,1], (2, 2): x[2,2]}
+            Finite family {(1, 1): x[1,1], (1, 2): x[1,2], (2, 1): x[2,1], (2, 2): x[2,2]}
         """
         l = [(i, j) for i in range(1, self._m + 1)
              for j in range(1, self._n + 1)]
@@ -710,7 +709,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
 
     REFERENCES:
 
-    .. [DD91] R. Dipper and S. Donkin. *Quantum* `GL_n`.
+    .. [DD91] \R. Dipper and S. Donkin. *Quantum* `GL_n`.
        Proc. London Math. Soc. (3) **63** (1991), no. 1, pp. 165-211.
 
     .. [Karimipour93] Vahid Karimipour.
@@ -792,8 +791,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
 
             sage: O = algebras.QuantumGL(2)
             sage: O.algebra_generators()
-            Finite family {(1, 2): x[1,2], 'c': c, (1, 1): x[1,1],
-                           (2, 1): x[2,1], (2, 2): x[2,2]}
+            Finite family {(1, 1): x[1,1], (1, 2): x[1,2], (2, 1): x[2,1], (2, 2): x[2,2], 'c': c}
         """
         l = [(i, j) for i in range(1, self._n + 1)
              for j in range(1, self._n + 1)]
@@ -976,19 +974,27 @@ def _generator_key(t):
     Helper function to make ``'c'`` less that all other indices for
     sorting the monomials in :class:`QuantumGL`.
 
+    INPUT:
+
+    a tuple (index, exponent)
+
+    OUTPUT:
+
+    a tuple made from the index only
+
     EXAMPLES::
 
         sage: from sage.algebras.quantum_matrix_coordinate_algebra import _generator_key as k
-        sage: k((1,2)) < k('c')
+        sage: k(((1,2),1)) < k(('c',1))
         False
-        sage: k((1,2)) < k((1,3))
+        sage: k(((1,2),1)) < k(((1,3),1))
         True
-        sage: k((1,2)) < k((3,1))
+        sage: k(((1,2),1)) < k(((3,1),1))
         True
-        sage: k('c') < k((1,1))
+        sage: k(('c',2)) < k(((1,1),1))
         True
     """
+    t = t[0]
     if isinstance(t, tuple):
         return t
     return ()
-

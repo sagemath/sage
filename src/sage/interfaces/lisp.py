@@ -387,7 +387,7 @@ class Lisp(Expect):
 # Inherit from RingElement to make __pow__ work
 @instancedoc
 class LispElement(RingElement, ExpectElement):
-    def __cmp__(self, other):
+    def _cmp_(self, other):
         """
         EXAMPLES::
 

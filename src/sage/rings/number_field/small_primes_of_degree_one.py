@@ -237,9 +237,7 @@ class Small_primes_of_degree_one_iter():
             sage: K.<y> = QQ.extension(25*z^2 + 26*z + 5)
             sage: for p in K.primes_of_degree_one_list(10):
             ....:     assert p.is_prime()
-
         """
-        count = 0
         if not self._queue:
             self._lengthen_queue()
         if not self._queue:

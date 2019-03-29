@@ -82,7 +82,7 @@ def _is_finite(L, fallback=True):
 
     try:
         n = _len(L)
-    except (TypeError, AttributeError):
+    except (TypeError, AttributeError, NotImplementedError):
         # We usually assume L is finite for speed reasons
         return fallback
 
@@ -639,9 +639,9 @@ def cantor_product(*args, **kwds):
         [(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3)]
 
     Infinite iterators are valid input as well::
-    
+
        sage: from itertools import islice
-       sage: list(islice(cantor_product(ZZ, QQ), 14))
+       sage: list(islice(cantor_product(ZZ, QQ), 14r))
         [(0, 0),
          (1, 0),
          (0, 1),
@@ -686,6 +686,18 @@ def cantor_product(*args, **kwds):
         sage: list(cantor_product(srange(5), repeat=2, min_slope=1))
         [(0, 1), (0, 2), (1, 2), (0, 3), (1, 3),
          (0, 4), (2, 3), (1, 4), (2, 4), (3, 4)]
+
+    Check that :trac:`24897` is fixed::
+
+        sage: from sage.misc.mrange import cantor_product
+        sage: list(cantor_product([1]))
+        [(1,)]
+        sage: list(cantor_product([1], repeat=2))
+        [(1, 1)]
+        sage: list(cantor_product([1], [1,2]))
+        [(1, 1), (1, 2)]
+        sage: list(cantor_product([1,2], [1]))
+        [(1, 1), (2, 1)]
     """
     from itertools import count
     from sage.combinat.integer_lists import IntegerListsLex
@@ -719,5 +731,5 @@ def cantor_product(*args, **kwds):
         for v in IntegerListsLex(n, length=mm, ceiling=ceiling, **kwds):
             yield tuple(data[i%m][v[i]] for i in range(mm))
 
-        if all(l is not None for l in lengths) and repeat*sum(l-1 for l in lengths) == n:
+        if all(l is not None for l in lengths) and repeat*sum(l-1 for l in lengths) <= n:
             return

@@ -177,17 +177,10 @@ class RingHomset_generic(HomsetWithBase):
             True
         """
         from sage.categories.map import Map
-        from sage.categories.all import Rings
-        if isinstance(im_gens, Map) and im_gens.category_for().is_subcategory(Rings()):
+        if isinstance(im_gens, Map):
             return self._coerce_impl(im_gens)
-        try:
+        else:
             return morphism.RingHomomorphism_im_gens(self, im_gens, check=check)
-        except (NotImplementedError, ValueError) as err:
-            try:
-                return self._coerce_impl(im_gens)
-            except TypeError:
-                raise TypeError("images do not define a valid homomorphism")
-
 
     def natural_map(self):
         """
@@ -294,7 +287,7 @@ class RingHomset_quo_ring(RingHomset_generic):
             pi = self.domain().cover()
             phi = pi.domain().hom(im_gens, check=check)
             return morphism.RingHomomorphism_from_quotient(self, phi)
-        except (NotImplementedError, ValueError) as err:
+        except (NotImplementedError, ValueError):
             try:
                 return self._coerce_impl(im_gens)
             except TypeError:

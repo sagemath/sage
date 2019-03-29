@@ -16,7 +16,7 @@ from __future__ import absolute_import
 from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
 
 from sage.matrix.constructor import Matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.rings.ideal import Ideal_generic
 from sage.structure.element import parent
 from sage.structure.sage_object import SageObject

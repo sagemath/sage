@@ -3,7 +3,7 @@
 from sage.libs.arb.types cimport *
 from sage.libs.gmp.types cimport mpz_t
 from sage.libs.flint.types cimport fmpz_t
-from sage.libs.mpfr cimport mpfr_t, mpfr_rnd_t
+from sage.libs.mpfr.types cimport mpfr_t, mpfr_rnd_t
 
 cdef extern from "arf.h":
     void arf_init(arf_t x)
@@ -132,5 +132,3 @@ cdef extern from "arf.h":
     int arf_complex_mul(arf_t e, arf_t f, const arf_t a, const arf_t b, const arf_t c, const arf_t d, long prec, arf_rnd_t rnd)
     int arf_complex_mul_fallback(arf_t e, arf_t f, const arf_t a, const arf_t b, const arf_t c, const arf_t d, long prec, arf_rnd_t rnd)
     int arf_complex_sqr(arf_t e, arf_t f, const arf_t a, const arf_t b, long prec, arf_rnd_t rnd)
-
-    long ARF_PREC_EXACT

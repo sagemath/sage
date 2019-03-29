@@ -59,6 +59,6 @@ cdef inline wrapperbase* get_slotdef(wrapper_descriptor slotwrapper) except NULL
         sage: py_get_slotdef(X.__eq__)
         Traceback (most recent call last):
         ...
-        TypeError: Cannot convert instancemethod to wrapper_descriptor
+        TypeError: Cannot convert ... to wrapper_descriptor
     """
     return slotwrapper.d_base

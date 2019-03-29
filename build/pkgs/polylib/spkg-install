@@ -1,0 +1,5 @@
+cd src
+
+sdh_configure --with-libgmp=${SAGE_LOCAL}/lib
+sdh_make
+sdh_make_install

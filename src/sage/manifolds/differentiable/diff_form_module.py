@@ -278,23 +278,26 @@ class DiffFormModule(UniqueRepresentation, Parent):
 
         In the above test suite, ``_test_elements`` is skipped because of the
         ``_test_pickling`` error of the elements (to be fixed in
-        :class:`sage.manifolds.differentialbe.tensorfield.TensorField`)
+        :class:`sage.manifolds.differentiable.tensorfield.TensorField`)
 
         """
         domain = vector_field_module._domain
         dest_map = vector_field_module._dest_map
         name = "Omega^{}(".format(degree) + domain._name
         latex_name = r"\Omega^{{{}}}\left({}".format(degree, domain._latex_name)
-        if dest_map is domain.identity_map():
-            name += ")"
-            latex_name += r"\right)"
-        else:
-            name += "," + dest_map._name + ")"
-            latex_name += "," + dest_map._latex_name + r"\right)"
+        if dest_map is not domain.identity_map():
+            dm_name = dest_map._name
+            dm_latex_name = dest_map._latex_name
+            if dm_name is None:
+                dm_name = "unnamed map"
+            if dm_latex_name is None:
+                dm_latex_name = r"\mathrm{unnamed\; map}"
+            name += "," + dm_name
+            latex_name += "," + dm_latex_name
+        self._name = name + ")"
+        self._latex_name = latex_name + r"\right)"
         self._vmodule = vector_field_module
         self._degree = degree
-        self._name = name
-        self._latex_name = latex_name
         # the member self._ring is created for efficiency (to avoid calls to
         # self.base_ring()):
         self._ring = domain.scalar_field_algebra()
@@ -751,12 +754,17 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
         dest_map = vector_field_module._dest_map
         name = "Omega^{}(".format(degree) + domain._name
         latex_name = r"\Omega^{{{}}}\left({}".format(degree, domain._latex_name)
-        if dest_map is domain.identity_map():
-            name += ")"
-            latex_name += r"\right)"
-        else:
-            name += "," + dest_map._name + ")"
-            latex_name += "," + dest_map._latex_name + r"\right)"
+        if dest_map is not domain.identity_map():
+            dm_name = dest_map._name
+            dm_latex_name = dest_map._latex_name
+            if dm_name is None:
+                dm_name = "unnamed map"
+            if dm_latex_name is None:
+                dm_latex_name = r"\mathrm{unnamed\; map}"
+            name += "," + dm_name
+            latex_name += "," + dm_latex_name
+        name += ")"
+        latex_name += r"\right)"
         ExtPowerDualFreeModule.__init__(self, vector_field_module, degree,
                                         name=name, latex_name=latex_name)
         self._domain = domain

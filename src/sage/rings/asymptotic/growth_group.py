@@ -335,6 +335,12 @@ class Variable(CachedRepresentation, SageObject):
             Traceback (most recent call last):
             ...
             ValueError: ':-' is not a valid name for a variable.
+
+        Check :trac:`26452`::
+
+            sage: Variable(('w',),
+            ....:          repr='w^(Number Field in i with defining polynomial x^2 + 1) * log(w)^ZZ')
+            w^(Number Field in i with defining polynomial x^2 + 1) * log(w)^ZZ
         """
         from sage.symbolic.ring import isidentifier
         from .misc import split_str_by_op
@@ -366,7 +372,7 @@ class Variable(CachedRepresentation, SageObject):
             if latex_name is None:
                 try:
                     latex_name = latex(SR(var_repr))
-                except TypeError:
+                except (TypeError, ValueError):
                     latex_name = latex(var_repr)
 
         if len(var_bases) != len(set(var_bases)):
@@ -1033,7 +1039,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: from sage.rings.asymptotic.growth_group import GenericGrowthGroup
-            sage: G = GenericGrowthGroup(ZZ);
+            sage: G = GenericGrowthGroup(ZZ)
             sage: hash(G(raw_element=42))  # random
             5656565656565656
         """
@@ -1462,9 +1468,6 @@ class GenericGrowthGroup(UniqueRepresentation, Parent):
             sage: P2 = MonomialGrowthGroup(ZZ, ZZ['x'].gen())
             sage: P3 = MonomialGrowthGroup(ZZ, SR.var('x'))
             sage: P1 is P2 and P2 is P3
-            True
-            sage: P4 = MonomialGrowthGroup(ZZ, buffer('xylophone', 0, 1))
-            sage: P1 is P4
             True
             sage: P5 = MonomialGrowthGroup(ZZ, 'x ')
             sage: P1 is P5
@@ -3102,8 +3105,8 @@ class MonomialGrowthGroup(GenericGrowthGroup):
 
         from sage.symbolic.ring import SymbolicRing
         from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        from sage.rings.polynomial.multi_polynomial_ring_generic import \
-            MPolynomialRing_generic
+        from sage.rings.polynomial.multi_polynomial_ring_base import \
+            MPolynomialRing_base
         from sage.rings.power_series_ring import PowerSeriesRing_generic
         import operator
         if isinstance(P, SymbolicRing):
@@ -3111,7 +3114,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
                 base, exponent = data.operands()
                 if str(base) == var:
                     return exponent
-        elif isinstance(P, (PolynomialRing_general, MPolynomialRing_generic)):
+        elif isinstance(P, (PolynomialRing_general, MPolynomialRing_base)):
             if data.is_monomial() and len(data.variables()) == 1:
                 if var == str(data.variables()[0]):
                     return data.degree()
@@ -4180,11 +4183,15 @@ class GrowthGroupFactory(UniqueFactory):
             b, e = split
             try:
                 B = repr_short_to_parent(b)
-            except ValueError as exc_b:
+            except ValueError as exc:
+                exc_b = exc
+                exc_b.__traceback__ = None
                 B = None
             try:
                 E = repr_short_to_parent(e)
-            except ValueError as exc_e:
+            except ValueError as exc:
+                exc_e = exc
+                exc_e.__traceback__ = None
                 E = None
 
             if B is None and E is None:

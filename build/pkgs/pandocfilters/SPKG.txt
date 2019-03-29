@@ -20,5 +20,4 @@ Home page: https://github.com/jgm/pandocfilters
 == Special Update/Build Instructions ==
 
 Download the last release from
-https://github.com/jgm/pandocfilters/releases
-
+https://pypi.python.org/pypi/pandocfilters

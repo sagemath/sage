@@ -79,9 +79,9 @@ def sudoku(m):
         ...
         ValueError: sudoku function expects puzzle to be a matrix, perhaps use the Sudoku class
     """
-    from sage.matrix.matrix import Matrix
+    from sage.structure.element import is_Matrix
 
-    if not(isinstance(m, Matrix)):
+    if not is_Matrix(m):
         raise ValueError('sudoku function expects puzzle to be a matrix, perhaps use the Sudoku class')
     solution = next(Sudoku(m).solve(algorithm='dlx'))
     return (solution.to_matrix() if solution else None)
@@ -173,12 +173,12 @@ class Sudoku(SageObject):
             ValueError: Sudoku puzzle has an invalid entry
         """
         from math import sqrt
-        from sage.matrix.matrix import Matrix
+        from sage.structure.element import is_Matrix
 
         if isinstance(puzzle, list):
             puzzle_size = int(round(sqrt(len(puzzle))))
             self.puzzle = tuple(puzzle)
-        elif isinstance(puzzle, Matrix):
+        elif is_Matrix(puzzle):
             puzzle_size = puzzle.ncols()
             if verify_input and not(puzzle.is_square()):
                 raise ValueError('Sudoku puzzle must be a square matrix')
@@ -226,6 +226,18 @@ class Sudoku(SageObject):
             False
         """
         return self.puzzle == tuple(other.to_list())
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: a = Sudoku('.4..32....14..3.')
+            sage: hash(a) == hash(a.puzzle)
+            True
+        """
+        return hash(self.puzzle)
 
     def __ne__(self, other):
         """
@@ -426,11 +438,10 @@ class Sudoku(SageObject):
         nsquare = n*n
         m = self.to_matrix()
         m.subdivide(list(range(0,nsquare+1,n)), list(range(0,nsquare+1,n)))
-        naked_zero = compile('([\|, ]+)0')
+        naked_zero = compile(r'([\|, ]+)0')
         blanked = naked_zero.sub(lambda x: x.group(1)+' ', m.str())
-        brackets = compile('[\[,\]]')
+        brackets = compile(r'[\[,\]]')
         return brackets.sub('', blanked)
-
 
     def to_latex(self):
         r"""

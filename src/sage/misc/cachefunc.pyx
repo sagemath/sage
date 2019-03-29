@@ -37,34 +37,7 @@ which is used to create unique parents: If an algebraic structure, such
 as a finite field, is only temporarily used, then it will not stay in
 cache forever. That behaviour is implemented using ``weak_cached_function``,
 that behaves the same as ``cached_function``, except that it uses a
-:class:`~sage.misc.weak_dict.WeakValueDictionary` for storing the results.
-::
-
-    sage: from sage.misc.cachefunc import weak_cached_function
-    sage: class A: pass
-    sage: @weak_cached_function
-    ....: def f():
-    ....:     print("doing a computation")
-    ....:     return A()
-    sage: a = f()
-    doing a computation
-
-The result is cached::
-
-    sage: b = f()
-    sage: a is b
-    True
-
-However, if there are no strong references left, the result
-may be garbage collected, and thus a new computation would
-take place::
-
-    sage: del a
-    sage: del b
-    sage: import gc
-    sage: n = gc.collect()
-    sage: a = f()
-    doing a computation
+:class:`~sage.misc.weak_dict.CachedWeakValueDictionary` for storing the results.
 
 Cython cdef functions do not allow arbitrary decorators.
 However, one can wrap a Cython function and turn it into
@@ -128,34 +101,7 @@ which is used to create unique parents: If an algebraic structure, such
 as a finite field, is only temporarily used, then it will not stay in
 cache forever. That behaviour is implemented using ``weak_cached_function``,
 that behaves the same as ``cached_function``, except that it uses a
-:class:`~sage.misc.weak_dict.WeakValueDictionary` for storing the results.
-::
-
-    sage: from sage.misc.cachefunc import weak_cached_function
-    sage: class A: pass
-    sage: @weak_cached_function
-    ....: def f():
-    ....:     print("doing a computation")
-    ....:     return A()
-    sage: a = f()
-    doing a computation
-
-The result is cached::
-
-    sage: b = f()
-    sage: a is b
-    True
-
-However, if there are no strong references left, the result
-may be garbage collected, and thus a new computation would
-take place::
-
-    sage: del a
-    sage: del b
-    sage: import gc
-    sage: n = gc.collect()
-    sage: a = f()
-    doing a computation
+:class:`~sage.misc.weak_dict.CachedWeakValueDictionary` for storing the results.
 
 By :trac:`11115`, even if a parent does not allow attribute
 assignment, it can inherit a cached method from the parent class of a
@@ -455,7 +401,7 @@ the parent as its first argument::
     False
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #                          Mike Hansen <mhansen@gmail.com>
 #                     2011 Simon King <simon.king@uni-jena.de>
@@ -466,11 +412,9 @@ the parent as its first argument::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function, absolute_import
-
-from cpython cimport PyObject
 
 cdef extern from "methodobject.h":
     cdef int METH_NOARGS, METH_O
@@ -481,7 +425,7 @@ from os.path import relpath,normpath,commonprefix
 from sage.misc.sageinspect import sage_getfile, sage_getsourcelines, sage_getargspec
 from inspect import isfunction
 
-from sage.misc.weak_dict cimport WeakValueDictionary
+from sage.misc.weak_dict cimport CachedWeakValueDictionary
 from sage.misc.decorators import decorator_keywords
 
 cdef frozenset special_method_names = frozenset(['__abs__', '__add__',
@@ -502,7 +446,7 @@ cdef frozenset special_method_names = frozenset(['__abs__', '__add__',
 def _cached_function_unpickle(module, name, cache=None):
     """
     Unpickle the cache function ``name`` defined in ``module``.
-    
+
     This function loads ``name`` from ``module`` (it does not restore the code
     of the actual function when it was pickled.) The cache is restored from
     ``cache`` if present.
@@ -1265,9 +1209,7 @@ cdef class CachedFunction(object):
             sage: g.cache
             {}
         """
-        cdef cache = self.cache
-        for key in cache.keys():
-            del cache[key]
+        self.cache.clear()
 
     def precompute(self, arglist, num_processes=1):
         """
@@ -1309,7 +1251,8 @@ cached_function = decorator_keywords(CachedFunction)
 
 cdef class WeakCachedFunction(CachedFunction):
     """
-    A version of :class:`CachedFunction` using weak references on the values.
+    A version of :class:`CachedFunction` using weak references on the
+    values.
 
     If ``f`` is a function, do either ``g = weak_cached_function(f)`` to make
     a cached version of ``f``, or put ``@weak_cached_function`` right before
@@ -1319,11 +1262,15 @@ cdef class WeakCachedFunction(CachedFunction):
         def f(...):
             ...
 
+    As an exception meant to improve performance, the most recently
+    computed values are strongly referenced. The number of strongly
+    cached values can be controlled by the ``cache`` keyword.
+
     EXAMPLES::
 
         sage: from sage.misc.cachefunc import weak_cached_function
         sage: class A: pass
-        sage: @weak_cached_function
+        sage: @weak_cached_function(cache=0)
         ....: def f():
         ....:     print("doing a computation")
         ....:     return A()
@@ -1336,16 +1283,33 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: a is b
         True
 
-    However, if there are no strong references left, the result
-    may be garbage collected, and thus a new computation would
-    take place::
+    However, if there are no strong references left, the result is
+    deleted, and thus a new computation takes place::
 
         sage: del a
         sage: del b
-        sage: import gc
-        sage: n = gc.collect()
         sage: a = f()
         doing a computation
+
+    Above, we used the ``cache=0`` keyword. With a larger value, the
+    most recently computed values are cached anyway, even if they are
+    not referenced::
+
+        sage: @weak_cached_function(cache=3)
+        ....: def f(x):
+        ....:     print("doing a computation for x={}".format(x))
+        ....:     return A()
+        sage: a = f(1); del a
+        doing a computation for x=1
+        sage: a = f(2), f(1); del a
+        doing a computation for x=2
+        sage: a = f(3), f(1); del a
+        doing a computation for x=3
+        sage: a = f(4), f(1); del a
+        doing a computation for x=4
+        doing a computation for x=1
+        sage: a = f(5), f(1); del a
+        doing a computation for x=5
 
     The parameter ``key`` can be used to ignore parameters for
     caching. In this example we ignore the parameter ``algorithm``::
@@ -1357,32 +1321,6 @@ cdef class WeakCachedFunction(CachedFunction):
         True
 
     TESTS::
-
-        sage: from sage.misc.cachefunc import weak_cached_function
-        sage: class A: pass
-        sage: @weak_cached_function
-        ....: def f():
-        ....:     print("doing a computation")
-        ....:     return A()
-        sage: a = f()    # indirect doctest
-        doing a computation
-
-    The result is cached::
-
-        sage: b = f()
-        sage: a is b
-        True
-
-    However, if there are no strong references left, the result
-    may be garbage collected, and thus a new computation would
-    take place::
-
-        sage: del a
-        sage: del b
-        sage: import gc
-        sage: n = gc.collect()
-        sage: a = f()
-        doing a computation
 
     Check that :trac:`16316` has been fixed, i.e., caching works for
     immutable unhashable objects which define
@@ -1410,7 +1348,7 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: class A:
         ....:     def __init__(self, x):
         ....:         self.x = x
-        sage: @weak_cached_function
+        sage: @weak_cached_function(cache=0)
         ....: def f(n):
         ....:    return A(n)
         sage: a = f(5)
@@ -1422,11 +1360,9 @@ cdef class WeakCachedFunction(CachedFunction):
         True
 
     However, if there are no strong references left, the cached
-    item is removed from cache after garbage collection::
+    item is removed from the cache::
 
         sage: del a
-        sage: import gc
-        sage: n = gc.collect()
         sage: f.is_in_cache(5)
         False
 
@@ -1469,7 +1405,7 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: f.is_in_cache(t)
         True
     """
-    def __init__(self, f, *, classmethod=False, name=None, key=None):
+    def __init__(self, f, *, classmethod=False, name=None, key=None, **kwds):
         """
         The inputs to the function must be hashable or they must define
         :meth:`sage.structure.sage_object.SageObject._cache_key`.
@@ -1493,11 +1429,10 @@ cdef class WeakCachedFunction(CachedFunction):
             sage: loads(dumps(f))
             Cached version of <function f at ...>
             sage: str(f.cache)
-            '<WeakValueDictionary at 0x...>'
-
+            '<CachedWeakValueDictionary at 0x...>'
         """
         self._common_init(f, None, name=name, key=key)
-        self.cache = WeakValueDictionary()
+        self.cache = CachedWeakValueDictionary(**kwds)
 
 
 weak_cached_function = decorator_keywords(WeakCachedFunction)
@@ -1527,7 +1462,7 @@ class CachedMethodPickle(object):
          x^2*y*z^3 - x*y^2*z^3 + 2*y^3*z^3 + z^6,
          x*y^3 + y^4 + x*z^3, x^3 + y^3 + z^3]
         sage: I.groebner_basis
-        Cached version of <function groebner_basis at 0x...>
+        Cached version of <function ...groebner_basis at 0x...>
 
     We now pickle and unpickle the ideal. The cached method
     ``groebner_basis`` is replaced by a placeholder::
@@ -1543,7 +1478,7 @@ class CachedMethodPickle(object):
         sage: J.groebner_basis.is_in_cache()
         True
         sage: J.groebner_basis
-        Cached version of <function groebner_basis at 0x...>
+        Cached version of <function ...groebner_basis at 0x...>
         sage: J.groebner_basis() == I.groebner_basis()
         True
 
@@ -1674,14 +1609,14 @@ class CachedMethodPickle(object):
             sage: P.<a,b,c,d> = QQ[]
             sage: I = P*[a,b]
             sage: I.gens
-            Cached version of <function gens at 0x...>
+            Cached version of <function ...gens at 0x...>
             sage: J = loads(dumps(I))
             sage: J.gens
             Pickle of the cached method "gens"
             sage: J.gens()   # indirect doctest
             [a, b]
             sage: J.gens
-            Cached version of <function gens at 0x...>
+            Cached version of <function ...gens at 0x...>
 
         """
         self._instance.__dict__.__delitem__(self._name)
@@ -1690,7 +1625,7 @@ class CachedMethodPickle(object):
             if isinstance(CM, CachedMethodCallerNoArgs):
                 CM.cache = self._cache
             else:
-                for k,v in self._cache:
+                for k, v in self._cache:
                     CM.cache[k] = v
         return CM(*args,**kwds)
 
@@ -1720,8 +1655,7 @@ class CachedMethodPickle(object):
             sage: J.groebner_basis.is_in_cache()  #indirect doctest
             True
             sage: J.groebner_basis
-            Cached version of <function groebner_basis at 0x...>
-
+            Cached version of <function ...groebner_basis at 0x...>
         """
         self._instance.__dict__.__delitem__(self._name)
         CM = getattr(self._instance,self._name)
@@ -1729,7 +1663,7 @@ class CachedMethodPickle(object):
             if isinstance(CM, CachedMethodCallerNoArgs):
                 CM.cache = self._cache
             else:
-                for k,v in self._cache:
+                for k, v in self._cache:
                     CM.cache[k] = v
         return getattr(CM,s)
 
@@ -1753,7 +1687,7 @@ cdef class CachedMethodCaller(CachedFunction):
         ....:        return x^2
         sage: a = A()
         sage: a.bar
-        Cached version of <function bar at 0x...>
+        Cached version of <function ...bar at 0x...>
         sage: type(a.bar)
         <type 'sage.misc.cachefunc.CachedMethodCaller'>
         sage: a.bar(2) is a.bar(x=2)
@@ -1842,7 +1776,7 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: J.groebner_basis.is_in_cache()
             True
             sage: J.groebner_basis
-            Cached version of <function groebner_basis at 0x...>
+            Cached version of <function ...groebner_basis at 0x...>
         """
         if isinstance(self._cachedmethod, CachedInParentMethod) or hasattr(self._instance,self._cachedmethod._cache_name):
             return CachedMethodPickle,(self._instance,self.__name__)
@@ -2220,7 +2154,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
         sage: P.<a,b,c,d> = QQ[]
         sage: I = P*[a,b]
         sage: I.gens
-        Cached version of <function gens at 0x...>
+        Cached version of <function ...gens at 0x...>
         sage: type(I.gens)
         <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
         sage: I.gens is I.gens
@@ -2328,14 +2262,13 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             sage: I.gens()
             [a, b]
             sage: I.gens
-            Cached version of <function gens at 0x...>
+            Cached version of <function ...gens at 0x...>
             sage: J = loads(dumps(I))
             sage: J.gens
             Pickle of the cached method "gens"
             sage: J.gens.cache # the cache is dropped because gens is not marked with do_pickle=True
             sage: J.gens
-            Cached version of <function gens at 0x...>
-
+            Cached version of <function ...gens at 0x...>
         """
         if self.do_pickle:
             return CachedMethodPickle,(self._instance, self.__name__, self.cache)
@@ -2564,7 +2497,7 @@ cdef class GloballyCachedMethodCaller(CachedMethodCaller):
 
             sage: class MyParent(Parent):
             ....:     pass
-            sage: class MyElement:
+            sage: class MyElement(object):
             ....:     def __init__(self, x):
             ....:         self.x = x
             ....:     def parent(self):
@@ -2574,7 +2507,7 @@ cdef class GloballyCachedMethodCaller(CachedMethodCaller):
             ....:         return self.x^2
             sage: a = MyElement(2)
             sage: a.f.get_key()
-            (<__main__.MyElement instance at 0x...>, ((), ()))
+            (<__main__.MyElement object at 0x...>, ((), ()))
             sage: a.f.get_key()[0] is a
             True
         """
@@ -2693,7 +2626,7 @@ cdef class CachedMethod(object):
         """
         EXAMPLES::
 
-            sage: class Foo:
+            sage: class Foo(object):
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
@@ -2732,15 +2665,15 @@ cdef class CachedMethod(object):
 
         The cached method ``f0`` accepts no arguments, which allows
         for an improved way of caching: By an attribute of the cached
-        method itsel. This cache is *only* available in that way, i.e.,
+        method itself. This cache is *only* available in that way, i.e.,
         it is not additionally stored as an attribute of ``a``::
 
             sage: type(a.f0)
             <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
             sage: a.f0.cache
             4
-            sage: sorted(dir(a))
-            ['__doc__', '__init__', '__module__', '_cache__f', '_x', 'f', 'f0']
+            sage: sorted(n for n in dir(a) if not n.startswith('__'))
+            ['_cache__f', '_x', 'f', 'f0']
 
         The cached method has its name and module set::
 
@@ -3475,7 +3408,7 @@ class FileCache(object):
             sage: I.sort(); I
             [(((), ()), 1), (((1,), (('a', 1),)), 3), (((1, 2), ()), 2)]
         """
-        return [(k,self[k]) for k in self]
+        return [(k, self[k]) for k in self]
 
     def values(self):
         """
@@ -3532,11 +3465,37 @@ class FileCache(object):
             [((), ()), ((1,), (('a', 1),)), ((1, 2), ())]
         """
         cdef list K = []
-        from sage.structure.sage_object import load
+        from sage.misc.persist import load
         for f in self.file_list():
             if f[-9:] == '.key.sobj':
                 K.append(load(f))
         return K
+
+    def clear(self):
+        """
+        Clear all key, value pairs from self and unlink the associated files
+        from the file cache.
+
+        EXAMPLES::
+
+            sage: from sage.misc.cachefunc import FileCache
+            sage: dir = tmp_dir()
+            sage: FC1 = FileCache(dir, memory_cache=False, prefix='foo')
+            sage: FC2 = FileCache(dir, memory_cache=False, prefix='foo')
+            sage: k1 = ((), (('a', 1),))
+            sage: t1 = randint(0, 1000)
+            sage: k2 = ((), (('b', 1),))
+            sage: t2 = randint(0, 1000)
+            sage: FC1[k1] = t1
+            sage: FC2[k2] = t2
+            sage: FC2.clear()
+            sage: k1 in FC1
+            False
+            sage: k2 in FC1
+            False
+        """
+        for k in self:
+            del self[k]
 
     def _filename(self, key):
         """
@@ -3606,7 +3565,7 @@ class FileCache(object):
             KeyError: ((1, 2), (('a', 4), ('b', 2)))
 
         """
-        from sage.structure.sage_object import load
+        from sage.misc.persist import load
 
         cache = self._cache
         if cache is not None:
@@ -3615,7 +3574,7 @@ class FileCache(object):
 
         f = self._filename(key) + '.sobj'
         try:
-            k,v = load(f)
+            k, v = load(f)
         except IOError:
             raise KeyError(key)
         if k != key:
@@ -3645,7 +3604,7 @@ class FileCache(object):
             sage: FC2[k]!= t
             True
         """
-        from sage.structure.sage_object import save
+        from sage.misc.persist import save
 
         f = self._filename(key)
 

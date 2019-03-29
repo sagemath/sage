@@ -19,10 +19,9 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, division
 
 from sage.rings.polynomial.polynomial_element import is_Polynomial
-from sage.functions.other import floor
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial
 from sage.structure.sage_object import SageObject
@@ -30,7 +29,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 
 class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
-    """
+    r"""
     A Kazhdan-Lusztig polynomial.
 
     INPUT:
@@ -45,18 +44,6 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
 
     The parent of ``q`` may be a :class:`PolynomialRing` or a
     :class:`LaurentPolynomialRing`.
-
-    REFERENCES:
-
-    .. [KL79] \D. Kazhdan and G. Lusztig. *Representations of Coxeter
-       groups and Hecke algebras*. Invent. Math. **53** (1979).
-       no. 2, 165--184. :doi:`10.1007/BF01390031` :mathscinet:`MR0560412`
-
-    .. [Dy93] \M. J. Dyer. *Hecke algebras and shellings of Bruhat
-       intervals*. Compositio Mathematica, 1993, 89(1): 91-115.
-
-    .. [BB05] \A. Bjorner, F. Brenti. *Combinatorics of Coxeter
-       groups*. New York: Springer, 2005.
 
     EXAMPLES::
 
@@ -145,7 +132,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         Return the Kazhdan-Lusztig `\tilde{R}` polynomial.
 
         Information about the `\tilde{R}` polynomials can be found in
-        [Dy93]_ and [BB05]_.
+        [Dy1993]_ and [BB2005]_.
 
         INPUT:
 
@@ -219,8 +206,9 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
                 return self._base_ring.one()
             else:
                 return self._base_ring.zero()
-        p = sum(-self.R(x,t)*self.P(t,y) for t in self._coxeter_group.bruhat_interval(x,y) if t != x)
-        tr = floor((y.length()-x.length()+1)/2)
+        p = sum(-self.R(x, t) * self.P(t, y)
+                for t in self._coxeter_group.bruhat_interval(x, y) if t != x)
+        tr = (y.length() - x.length() + 1) // 2
         ret = p.truncate(tr)
         if self._trace:
             print("    P({},{})={}".format(x, y, ret))

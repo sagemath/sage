@@ -292,20 +292,20 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
             sage: d1 = M.degeneracy_map(33); d1
             Hecke module morphism degeneracy map corresponding to f(q) |--> f(q) defined by the matrix
             [ 1  0  0  0 -2 -1]
-            [ 0  0 -2  2  0  0]
+            [ 0 -1  1  0  0  0]
             Domain: Modular Symbols space of dimension 2 for Gamma_0(11) of weight ...
             Codomain: Modular Symbols space of dimension 6 for Gamma_0(33) of weight ...
             sage: M.degeneracy_map(33,3).matrix()
-            [ 3  2  2  0 -2  1]
-            [ 0  2  0 -2  0  0]
+            [ 3  2  0  2 -2  1]
+            [ 0  0 -1  1  0  0]
             sage: M = ModularSymbols(33,sign=1)
             sage: d2 = M.degeneracy_map(11); d2.matrix()
-            [  1   0]
-            [  0 1/2]
-            [  0  -1]
-            [  0   1]
-            [ -1   0]
-            [ -1   0]
+            [ 1  0]
+            [ 0 -2]
+            [ 0  2]
+            [ 0  1]
+            [-1  0]
+            [-1  0]
             sage: (d2*d1).matrix()
             [4 0]
             [0 4]

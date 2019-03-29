@@ -82,7 +82,7 @@ EXAMPLES::
     <class '...MyMetaclass'>
     sage: class MyPythonType(MyDerivedType):
     ....:     pass
-    Calling MyMetaclass.__init__(<class '...MyPythonType'>, 'MyPythonType', (<type '...MyDerivedType'>,), {'__module__': '__main__'})
+    Calling MyMetaclass.__init__(<class '...MyPythonType'>, 'MyPythonType', (<type '...MyDerivedType'>,), {...})
 
 Implementation
 ==============

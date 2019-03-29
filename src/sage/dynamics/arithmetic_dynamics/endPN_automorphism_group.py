@@ -25,7 +25,7 @@ from sage.combinat.subset import Subsets
 from sage.functions.all import sqrt
 from itertools import permutations, combinations
 from sage.matrix.constructor import matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.misc.misc_c import prod
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import Integers
@@ -47,7 +47,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
 
     INPUT:
 
-    - ``rational_function`` - Rational Function defined over `\mathbb{Z}` or `\mathbb{Q}`
+    - ``rational_function`` - Rational Function defined over `\ZZ` or `\QQ`
 
     - ``return_functions`` - Boolean Value, True will return elements in the automorphism group
         as linear fractional transformations. False will return elements as `PGL2` matrices
@@ -64,7 +64,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
         sage: rational_function = (z^2 - 2*z - 2)/(-2*z^2 - 2*z + 1)
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import automorphism_group_QQ_fixedpoints
         sage: automorphism_group_QQ_fixedpoints(rational_function, True)
-          [z, 2/(2*z), -z - 1, -2*z/(2*z + 2), (-z - 1)/z, -1/(z + 1)]
+          [z, 1/z, -z - 1, -z/(z + 1), (-z - 1)/z, -1/(z + 1)]
 
     ::
 
@@ -342,8 +342,8 @@ def PGL_repn(rational_function):
         sage: f = ((2*z-1)/(3-z))
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import PGL_repn
         sage: PGL_repn(f)
-        [ 2 -1]
-        [-1  3]
+        [-2  1]
+        [ 1 -3]
     """
     if is_Matrix(rational_function):
         return rational_function
@@ -584,7 +584,7 @@ def remove_redundant_automorphisms(automorphisms, order_elts, moduli, integral_a
         to_del_temp = []
         for psi in integral_autos:
             #The return_functions boolean determines if the automorphisms
-            #are matricies or linear fractional transformations
+            #are matrices or linear fractional transformations
             if is_Matrix(psi):
                 ppsi = psi.change_ring(GF(p))
                 B = [ppsi[0,0], ppsi[0,1], ppsi[1,0], psi[1,1]]
@@ -1068,11 +1068,11 @@ def three_stable_points(rational_function, invariant_list):
 
     INPUT:
 
-    - ``rational_function``--rational function `phi` defined over finite
+    - ``rational_function`` -- rational function `\phi` defined over finite
       field `E`
 
-    - ``invariant_list``-- a list of at least `3` points of `\mathbb{P}^1(E)` that
-      is stable under `Aut_{phi}(E)`
+    - ``invariant_list`` -- a list of at least `3` points of `\mathbb{P}^1(E)` that
+      is stable under `Aut_{\phi}(E)`
 
     OUTPUT: list of automorphisms
 
@@ -1083,7 +1083,7 @@ def three_stable_points(rational_function, invariant_list):
         sage: L = [[0,1],[4,1],[1,1],[1,0]]
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import three_stable_points
         sage: three_stable_points(f,L)
-        [z, 4*z, 2/(2*z), 3/(2*z)]
+        [z, 4*z, 1/z, 4/z]
     """
     # define ground field and ambient function field
     if rational_function.parent().is_field():
@@ -1151,7 +1151,7 @@ def automorphism_group_FF_alg2(rational_function):
         sage: f = (3*z^3 - z^2)/(z-1)
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import automorphism_group_FF_alg2
         sage: automorphism_group_FF_alg2(f)
-        [Univariate Polynomial Ring in w over Finite Field in b of size 7^2, [w, (3*b + 2)/((2*b + 6)*w)]]
+        [Univariate Polynomial Ring in w over Finite Field in b of size 7^2, [w, 5/w]]
 
     ::
 
@@ -1159,11 +1159,13 @@ def automorphism_group_FF_alg2(rational_function):
         sage: f = (3456*z^(4))
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import automorphism_group_FF_alg2
         sage: automorphism_group_FF_alg2(f)
-        [Univariate Polynomial Ring in w over Finite Field in b of size 5^6, [w,
-        (3*b^5 + 4*b^4 + 3*b^2 + 2*b + 1)*w, (2*b^5 + b^4 + 2*b^2 + 3*b + 3)*w,
-        (3*b^5 + 4*b^4 + 3*b^2 + 2*b)/((3*b^5 + 4*b^4 + 3*b^2 + 2*b)*w), (4*b^5
-        + 2*b^4 + 4*b^2 + b + 2)/((3*b^5 + 4*b^4 + 3*b^2 + 2*b)*w), (3*b^5 +
-        4*b^4 + 3*b^2 + 2*b + 3)/((3*b^5 + 4*b^4 + 3*b^2 + 2*b)*w)]]
+        [Univariate Polynomial Ring in w over Finite Field in b of size 5^6,
+         [w,
+          (3*b^5 + 4*b^4 + 3*b^2 + 2*b + 1)*w,
+          (2*b^5 + b^4 + 2*b^2 + 3*b + 3)*w,
+          1/w,
+          (3*b^5 + 4*b^4 + 3*b^2 + 2*b + 1)/w,
+          (2*b^5 + b^4 + 2*b^2 + 3*b + 3)/w]]
     """
     # define ground field and ambient function field
     if rational_function.parent().is_field():
@@ -1452,7 +1454,7 @@ def automorphisms_fixing_pair(rational_function, pair, quad):
         sage: L = [[4, 1], [2, 1]]
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import automorphisms_fixing_pair
         sage: automorphisms_fixing_pair(f, L, False)
-        [(6*z + 6)/z, 4/(3*z + 3)]
+        [(6*z + 6)/z, 6/(z + 1)]
     """
     # define ground field and ambient function field
     if rational_function.parent().is_field():
@@ -1526,7 +1528,7 @@ def automorphism_group_FF_alg3(rational_function):
         sage: f = (3456*z^4)
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import automorphism_group_FF_alg3
         sage: automorphism_group_FF_alg3(f)
-        [z, 3/(3*z)]
+        [z, 1/z]
     """
     # define ground field and ambient function field
     if rational_function.parent().is_field():

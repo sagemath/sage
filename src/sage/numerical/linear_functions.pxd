@@ -4,7 +4,7 @@ from sage.structure.element cimport ModuleElement, RingElement, Element
 cpdef is_LinearFunction(x)
 
 cdef class LinearFunctionOrConstraint(ModuleElement):
-    cdef void chained_comparator_hack_nonzero(self)
+    pass
 
 cdef class LinearFunctionsParent_class(Parent):
     cpdef _element_constructor_(self, x)

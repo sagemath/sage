@@ -110,12 +110,12 @@ cdef class ContainChildren(object):
         The flushing solves the following double-output problem::
 
             sage: try:
-            ....:     sys.stdout.write("X ")
+            ....:     _ = sys.stdout.write("X ")
             ....:     if os.fork() == 0:
-            ....:         sys.stdout.write("Y ")
+            ....:         _ = sys.stdout.write("Y ")
             ....:         sys.stdout.flush()
             ....:         os._exit(0)
-            ....:     sleep(0.5)  # Give the child process time
+            ....:     sleep(float(0.5))  # Give the child process time
             ....:     print("Z")
             ....: finally:
             ....:     pass
@@ -125,9 +125,9 @@ cdef class ContainChildren(object):
 
             sage: from sage.interfaces.process import ContainChildren
             sage: try:
-            ....:     sys.stdout.write("X ")
+            ....:     _ = sys.stdout.write("X ")
             ....:     with ContainChildren():
-            ....:         sys.stdout.write("Y ")
+            ....:         _ = sys.stdout.write("Y ")
             ....:     sleep(0.5)  # Give the child process time
             ....:     print("Z")
             ....: finally:
@@ -203,7 +203,8 @@ def terminate(sp, interval=1, signals=[signal.SIGTERM, signal.SIGKILL]):
         sage: cmd = [sys.executable, '-c', 'import sys; print("y")\n'
         ....:                              'sys.stdout.flush()\n'
         ....:                              'while True: pass']
-        sage: sp = Popen(cmd, stdout=PIPE)
+        sage: sp = Popen(cmd, stdout=PIPE)  # py2
+        sage: sp = Popen(cmd, stdout=PIPE, encoding='ascii')  # py3
         sage: with terminate(sp, interval=0.2):
         ....:     print(sp.stdout.readline())
         y
@@ -219,7 +220,8 @@ def terminate(sp, interval=1, signals=[signal.SIGTERM, signal.SIGKILL]):
         ....:          'signal(SIGTERM, SIG_IGN)\n' \
         ....:          'print("y"); sys.stdout.flush()\n' \
         ....:          'while True: pass'
-        sage: sp = Popen(cmd, stdout=PIPE)
+        sage: sp = Popen(cmd, stdout=PIPE)  # py2
+        sage: sp = Popen(cmd, stdout=PIPE, encoding='ascii')  # py3
         sage: with terminate(sp, interval=0.2):
         ....:     print(sp.stdout.readline())
         y

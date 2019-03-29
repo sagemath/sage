@@ -22,7 +22,8 @@ from cpython.sequence cimport *
 
 from cysignals.memory cimport sig_free
 
-from sage.misc.long cimport pyobject_to_long
+from sage.arith.long cimport pyobject_to_long
+from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.structure.sage_object cimport SageObject
 from sage.rings.integer cimport Integer
 from sage.libs.flint.fmpz_poly cimport *
@@ -51,7 +52,7 @@ cdef class Fmpz_poly(SageObject):
         cdef long c
         cdef Integer w
         if isinstance(v, str):
-            if not fmpz_poly_set_str(self.poly, v):
+            if not fmpz_poly_set_str(self.poly, str_to_bytes(v)):
                 return
             else:
                 raise ValueError("Unable to create Fmpz_poly from that string.")
@@ -117,7 +118,7 @@ cdef class Fmpz_poly(SageObject):
             8  0 0 0 0 0 0 0 1
         """
         cdef char* ss = fmpz_poly_get_str(self.poly)
-        cdef object s = ss
+        cdef object s = char_to_str(ss)
         sig_free(ss)
         return s
 
@@ -253,7 +254,7 @@ cdef class Fmpz_poly(SageObject):
             sage: f**(3/2)
             Traceback (most recent call last):
             ...
-            TypeError: rational is not an integer
+            TypeError: unable to convert rational 3/2 to an integer
         """
         cdef long nn = pyobject_to_long(n)
         if not isinstance(self, Fmpz_poly):

@@ -1,8 +1,7 @@
 """
 Schur symmetric functions
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
 #
@@ -15,13 +14,13 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import absolute_import
 from six.moves import zip
 
 from . import classical
 import sage.libs.lrcalc.lrcalc as lrcalc
-from sage.rings.all import ZZ, QQ, Integer
 
 
 class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classical):
@@ -164,6 +163,42 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
         except ValueError:
             return super(SymmetricFunctionAlgebra_schur, self)._element_constructor_(x)
 
+    def _repeated_bernstein_creation_operator_on_basis(self, la, nu):
+        r"""
+        A Schur function indexed by a partition or zero from applying creation
+        operators on `s(la)`.
+
+        INPUT:
+
+        - ``la`` -- a partition
+        - ``nu`` -- list of lintegers
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(QQ).schur()
+            sage: rbco = s._repeated_bernstein_creation_operator_on_basis
+            sage: rbco(Partition([2,1]),[1])
+            0
+            sage: rbco(Partition([2,1]),[2])
+            s[2, 2, 1]
+            sage: rbco(Partition([2,1]),[-2])
+            s[1]
+            sage: rbco(Partition([2,1]),[1, -2])
+            s[1, 1]
+            sage: rbco(Partition([2,1]),[1, 0])
+            -s[1, 1, 1, 1]
+            sage: rbco(Partition([2,1]),[-3, 0])
+            s[]
+        """
+        r = len(nu) + len(la)
+        ga = [a-b for (a,b) in zip(nu+la.to_list(), range(-r,0))]
+        if r == len(set(ga)) and min(ga) > 0:
+            m = sum(1 for i in range(len(ga)) for j in range(i, len(ga))
+                    if ga[i] < ga[j])
+            ga.sort(reverse=True)
+            return (-1)**m * self([a+b for (a,b) in zip(ga, range(-r,0))])
+        return self.zero()
+
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def __pow__(self, n):
             """
@@ -271,7 +306,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
         omega_involution = omega
 
         def scalar(self, x, zee=None):
-            """
+            r"""
             Return the standard scalar product between ``self`` and `x`.
 
             Note that the Schur functions are self-dual with respect to this
@@ -537,5 +572,5 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             return self._expand(condition, n, alphabet)
 
 # Backward compatibility for unpickling
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.schur', 'SymmetricFunctionAlgebraElement_schur',  SymmetricFunctionAlgebra_schur.Element)

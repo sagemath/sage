@@ -1,17 +1,14 @@
-from sage.libs.mpfi cimport *
+from sage.libs.mpfr.types cimport mpfr_prec_t
+from sage.libs.mpfi.types cimport mpfi_t
 
 cimport sage.structure.element
-from .real_mpfi cimport RealIntervalFieldElement
+from .real_mpfi cimport RealIntervalFieldElement, RealIntervalField_class
+
 
 cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
     cdef mpfi_t __re
     cdef mpfi_t __im
-    cdef mp_prec_t _prec
-
-    cpdef _add_(self, other)
-    cpdef _mul_(self, other)
-    cdef RealIntervalFieldElement abs_c(ComplexIntervalFieldElement self)
-    cdef RealIntervalFieldElement norm_c(ComplexIntervalFieldElement self)
+    cdef mpfr_prec_t _prec
 
     cdef inline ComplexIntervalFieldElement _new(self):
         """
@@ -20,3 +17,11 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         """
         cdef type t = type(self)
         return t.__new__(t, self._parent)
+
+    cdef inline RealIntervalFieldElement _new_real(self):
+        """
+        Quickly create a new real interval with the same precision as
+        ``self``.
+        """
+        P = <RealIntervalField_class>(self._parent.real_field())
+        return P._new()

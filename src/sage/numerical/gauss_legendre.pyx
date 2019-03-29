@@ -1,4 +1,3 @@
-# distutils: libraries = mpfr
 r"""
 Gauss-Legendre integration for vector-valued functions
 
@@ -147,18 +146,17 @@ def estimate_error(results,prec,epsilon):
 
     An estimate of the error.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.numerical.gauss_legendre import estimate_error
-        sage: prec=200
-        sage: K=RealField(prec)
-        sage: V=VectorSpace(K,2)
-        sage: a=V([1,-1])
-        sage: b=V([1,1/2])
-        sage: L=[a+2^(-2^i)*b for i in [0..5]]
+        sage: prec = 200
+        sage: K = RealField(prec)
+        sage: V = VectorSpace(K,2)
+        sage: a = V([1,-1])
+        sage: b = V([1,1/2])
+        sage: L = [a+2^(-2^i)*b for i in [0..5]]
         sage: estimate_error(L,prec,K(2^(-prec)))
         2.328235...e-10
-
     """
     if len(results)==2:
         return max((results[0][i]-results[1][i]).abs() for i in xrange(len(results[0])))
@@ -196,7 +194,7 @@ def integrate_vector(f,prec,epsilon=None):
 
     Vector approximating value of the integral.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.numerical.gauss_legendre import integrate_vector
         sage: prec=200

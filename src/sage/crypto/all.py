@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 import sage.crypto.sbox
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.crypto.mq.sbox', 'SBox', sage.crypto.sbox.SBox)
 
 from sage.misc.lazy_import import lazy_import

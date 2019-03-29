@@ -360,7 +360,7 @@ def signature(self):
 
         an integer
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,0,0,-4,3,11,3])
         sage: Q.signature()
@@ -389,7 +389,7 @@ def signature(self):
 
 
 def hasse_invariant(self, p):
-    """
+    r"""
     Computes the Hasse invariant at a prime `p` or at infinity, as given on p55 of
     Cassels's book.  If Q is diagonal with coefficients `a_i`, then the
     (Cassels) Hasse invariant is given by
@@ -455,7 +455,6 @@ def hasse_invariant(self, p):
         sage: Q=DiagonalQuadraticForm(K,[-a,a+2])
         sage: [Q.hasse_invariant(p) for p in K.primes_above(19)]
         [-1, 1]
-
     """
     ## TO DO: Need to deal with the case n=1 separately somewhere!
 
@@ -483,7 +482,7 @@ def hasse_invariant(self, p):
 
 
 def hasse_invariant__OMeara(self, p):
-    """
+    r"""
     Compute the O'Meara Hasse invariant at a prime `p`.
 
     This is defined on
@@ -837,7 +836,6 @@ def compute_definiteness(self):
 
     ## Some useful variables
     n = self.dim()
-    M = self.matrix()
 
     ## Deal with the zero-diml form
     if n == 0:
@@ -861,7 +859,6 @@ def compute_definiteness(self):
         return
 
 
-
 def compute_definiteness_string_by_determinants(self):
     """
     Compute the (positive) definiteness of a quadratic form by looking
@@ -876,7 +873,7 @@ def compute_definiteness_string_by_determinants(self):
 
         string describing the definiteness
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1,1])
         sage: Q.compute_definiteness_string_by_determinants()

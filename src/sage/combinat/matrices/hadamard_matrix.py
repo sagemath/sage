@@ -88,9 +88,10 @@ def normalise_hadamard(H):
             H.rescale_row(i, -1)
     return H
 
+
 def hadamard_matrix_paleyI(n, normalize=True):
-    """
-    Implements the Paley type I construction.
+    r"""
+    Implement the Paley type I construction.
 
     The Paley type I case corresponds to the case `p \cong 3 \mod{4}` for a
     prime `p` (see [Hora]_).
@@ -154,9 +155,10 @@ def hadamard_matrix_paleyI(n, normalize=True):
         H = normalise_hadamard(H)
     return H
 
+
 def hadamard_matrix_paleyII(n):
-    """
-    Implements the Paley type II construction.
+    r"""
+    Implement the Paley type II construction.
 
     The Paley type II case corresponds to the case `p \cong 1 \mod{4}` for a
     prime `p` (see [Hora]_).
@@ -584,7 +586,7 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n,e,existence=False
       Strongly regular graphs with parameters `(4m^4,2m^4+m^2,m^4+m^2,m^4+m^2)` exist for all `m>1`,
       European Journal of Combinatorics,
       Volume 31, Issue 6, August 2010, Pages 1553-1559,
-      http://dx.doi.org/10.1016/j.ejc.2009.07.009.
+      :doi:`10.1016/j.ejc.2009.07.009`
     """
     if existence and (n,e) in _rshcd_cache:
         return _rshcd_cache[n,e]
@@ -717,20 +719,19 @@ def RSHCD_324(e):
         sage: for e in [1,-1]:  # long time
         ....:     M = RSHCD_324(e)
         ....:     print("{} {} {}".format(M==M.T,is_hadamard_matrix(M),all([M[i,i]==1 for i in range(324)])))
-        ....:     print(set(map(sum,M)))
+        ....:     print(list(set(sum(x) for x in M)))
         True True True
-        set([18])
+        [18]
         True True True
-        set([-18])
+        [-18]
 
     REFERENCE:
 
     .. [CP16] \N. Cohen, D. Pasechnik,
-       Implementing Brouwer's database of strongly regular graphs,
+       *Implementing Brouwer's database of strongly regular graphs*,
        Designs, Codes, and Cryptography, 2016
        :doi:`10.1007/s10623-016-0264-x`
     """
-
     from sage.graphs.generators.smallgraphs import JankoKharaghaniTonchevGraph as JKTG
     M = JKTG().adjacency_matrix()
     M = J(324) - 2*M
@@ -745,7 +746,7 @@ def RSHCD_324(e):
 
 def _helper_payley_matrix(n, zero_position=True):
     r"""
-    Return the marix constructed in Lemma 1.19 page 291 of [SWW72]_.
+    Return the matrix constructed in Lemma 1.19 page 291 of [SWW72]_.
 
     This function return a `n^2` matrix `M` whose rows/columns are indexed by
     the element of a finite field on `n` elements `x_1,...,x_n`. The value
@@ -981,11 +982,10 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
         92 x 92 dense matrix over Integer Ring...
         sage: GS_skew_hadamard_smallcases(100)
     """
-    from sage.combinat.matrices.hadamard_matrix import\
-         williamson_goethals_seidel_skew_hadamard_matrix as WGS
+    WGS = williamson_goethals_seidel_skew_hadamard_matrix
 
     def pmtoZ(s):
-       return [1 if x == '+' else -1 for x in s]
+        return [1 if x == '+' else -1 for x in s]
 
     if existence:
         return n in [36, 52, 92]
@@ -1207,6 +1207,7 @@ def symmetric_conference_matrix(n, check=True):
         assert (C==C.T and C**2==(n-1)*I(n))
     return C
 
+
 def szekeres_difference_set_pair(m, check=True):
     r"""
     Construct Szekeres `(2m+1,m,1)`-cyclic difference family
@@ -1246,16 +1247,18 @@ def szekeres_difference_set_pair(m, check=True):
     t = F.multiplicative_generator()**2
     G = F.cyclotomic_cosets(t, cosets=[F.one()])[0]
     sG = set(G)
-    A = filter(lambda a: a-F.one() in sG, G)
-    B = filter(lambda b: b+F.one() in sG, G)
+    A = [a for a in G if a - F.one() in sG]
+    B = [b for b in G if b + F.one() in sG]
     if check:
         from itertools import product, chain
-        assert(len(A)==len(B)==m)
-        if m>1:
-            assert(sG==set([xy[0]/xy[1] for xy in chain(product(A,A), product(B,B))]))
-        assert(all(F.one()/b+F.one() in sG for b in B))
-        assert(not any(F.one()/a-F.one() in sG for a in A))
-    return G,A,B
+        assert(len(A) == len(B) == m)
+        if m > 1:
+            assert(sG == set([xy[0] / xy[1]
+                              for xy in chain(product(A, A), product(B, B))]))
+        assert(all(F.one() / b + F.one() in sG for b in B))
+        assert(not any(F.one() / a - F.one() in sG for a in A))
+    return G, A, B
+
 
 def typeI_matrix_difference_set(G,A):
     r"""

@@ -91,10 +91,9 @@ class Gamma1_class(GammaH_class):
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         sage: [Gamma1(4).dimension_cusp_forms(k) for k in [1..20]]
         [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8]
+
         sage: Gamma1(23).dimension_cusp_forms(1)
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: Computation of dimensions of weight 1 cusp forms spaces not implemented in general
+        1
     """
 
     def __init__(self, level):
@@ -399,8 +398,8 @@ class Gamma1_class(GammaH_class):
         - ``algorithm`` -- either "CohenOesterle" (the default) or "Quer". This
           specifies the method to use in the case of nontrivial character:
           either the Cohen--Oesterle formula as described in Stein's book, or
-          by Möbius inversion using the subgroups GammaH (a method due to
-          Jordi Quer).
+          by Möbius inversion using the subgroups GammaH (a method due to Jordi
+          Quer). Ignored for weight 1.
 
         EXAMPLES:
 
@@ -428,15 +427,16 @@ class Gamma1_class(GammaH_class):
             sage: [Gamma1(9).dimension_cusp_forms(k, eps^2) for k in [1..10]]
             [0, 0, 0, 2, 0, 4, 0, 6, 0, 8]
 
-        In weight 1 this will return 0 in a few small cases, and otherwise give a NotImplementedError::
+        In weight 1, we can sometimes rule out cusp forms existing via
+        Riemann-Roch, but if this does not work, we trigger computation of the
+        cusp forms space via Schaeffer's algorithm::
 
             sage: chi = [u for u in DirichletGroup(40) if u(-1) == -1 and u(21) == 1][0]
             sage: Gamma1(40).dimension_cusp_forms(1, chi)
             0
-            sage: Gamma1(40).dimension_cusp_forms(1)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Computation of dimensions of weight 1 cusp forms spaces not implemented in general
+            sage: G = DirichletGroup(57); chi = (G.0) * (G.1)^6
+            sage: Gamma1(57).dimension_cusp_forms(1, chi)
+            1
         """
         from .all import Gamma0
 
@@ -459,15 +459,8 @@ class Gamma1_class(GammaH_class):
             return ZZ(0)
 
         if k == 1:
-            try:
-                # see if we can rule out cusp forms existing
-                n = GammaH_constructor(self.level(), eps.kernel()).dimension_cusp_forms(1)
-                if n == 0:
-                    return ZZ(0)
-                else: # never happens at present
-                    raise NotImplementedError("Computations of dimensions of spaces of weight 1 cusp forms not implemented at present")
-            except NotImplementedError:
-                raise
+            from sage.modular.modform.weight1 import dimension_wt1_cusp_forms
+            return dimension_wt1_cusp_forms(eps)
 
         # now the main part
 

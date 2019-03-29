@@ -1,4 +1,4 @@
-from sage.libs.mpfr cimport *
+from sage.libs.mpfr.types cimport mpfr_rnd_t, mpfr_t
 
 cimport sage.rings.ring
 cimport sage.structure.element

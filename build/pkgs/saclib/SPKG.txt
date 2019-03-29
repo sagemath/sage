@@ -25,7 +25,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 == Upstream Contact ==
 
-Website: http://www.usna.edu/CS/qepcadweb/B/QEPCAD.html
+- Website: http://www.usna.edu/CS/qepcadweb/B/QEPCAD.html
+- Alternative location (sometimes more up-to-date):
+  https://www.usna.edu/Users/cs/wcbrown/qepcad/B/QEPCAD.html
 
 == Dependencies ==
 

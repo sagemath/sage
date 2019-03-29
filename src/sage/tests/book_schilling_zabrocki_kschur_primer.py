@@ -447,9 +447,11 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 2740::
     sage: w.stanley_symmetric_function()
     4*m[1, 1, 1, 1, 1, 1] + 3*m[2, 1, 1, 1, 1] + 2*m[2, 2, 1, 1]
         + m[2, 2, 2] + 2*m[3, 1, 1, 1] + m[3, 2, 1]
-    sage: w.reduced_words()
-    [[2, 0, 3, 2, 1, 0], [0, 2, 3, 2, 1, 0], [0, 3, 2, 3, 1, 0],
-     [0, 3, 2, 1, 3, 0]]
+    sage: sorted(w.reduced_words())
+    [[0, 2, 3, 2, 1, 0],
+     [0, 3, 2, 1, 3, 0],
+     [0, 3, 2, 3, 1, 0],
+     [2, 0, 3, 2, 1, 0]]
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 2752::
 

@@ -116,13 +116,12 @@ def format_error(message):
 def run_safe():
     try:
         run()
-    except StandardError as error:
+    except Exception as error:
         try:
             format_error(error)
         finally:
             sys.exit(1)
 
-                
         
 if __name__ == '__main__':
     run_safe()

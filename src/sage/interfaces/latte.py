@@ -13,6 +13,12 @@ Interface to LattE integrale programs
 
 import six
 
+from subprocess import Popen, PIPE
+from sage.misc.misc import SAGE_TMP
+from sage.rings.integer import Integer
+from sage.features.latte import Latte
+
+
 def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False, raw_output=False, verbose=False, **kwds):
     r"""
     Call to the program count from LattE integrale
@@ -38,7 +44,7 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
 
     EXAMPLES::
 
-        sage: from sage.interfaces.latte import count
+        sage: from sage.interfaces.latte import count    # optional - latte_int
         sage: P = 2 * polytopes.cube()
 
     Counting integer points from either the H or V representation::
@@ -73,7 +79,7 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
 
     Testing raw output::
 
-        sage: from sage.interfaces.latte import count
+        sage: from sage.interfaces.latte import count   # optional - latte_int
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
         sage: count(cddin, cdd=True, raw_output=True)  # optional - latte_int
@@ -104,9 +110,8 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         1
 
     """
-    from subprocess import Popen, PIPE
-    from sage.misc.misc import SAGE_TMP
-    from sage.rings.integer import Integer
+    # Check that LattE is present
+    Latte().require()
 
     args = ['count']
     if ehrhart_polynomial and multivariate_generating_function:
@@ -138,16 +143,12 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
     else:
         args += ['/dev/stdin']
 
-    try:
-        # The cwd argument is needed because latte
-        # always produces diagnostic output files.
-        latte_proc = Popen(args,
-                           stdin=PIPE, stdout=PIPE,
-                           stderr=(None if verbose else PIPE),
-                           cwd=str(SAGE_TMP))
-    except OSError:
-        from sage.misc.package import PackageNotFoundError
-        raise PackageNotFoundError('latte_int')
+    # The cwd argument is needed because latte
+    # always produces diagnostic output files.
+    latte_proc = Popen(args,
+                       stdin=PIPE, stdout=PIPE,
+                       stderr=(None if verbose else PIPE),
+                       cwd=str(SAGE_TMP))
 
     ans, err = latte_proc.communicate(arg)
     ret_code = latte_proc.poll()
@@ -187,8 +188,8 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         if raw_output:
             return ans
         else:
-            from sage.rings.integer import Integer
             return Integer(ans)
+
 
 def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, verbose=False, **kwds):
     r"""
@@ -216,7 +217,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     EXAMPLES::
 
-        sage: from sage.interfaces.latte import integrate
+        sage: from sage.interfaces.latte import integrate   # optional - latte_int
         sage: P = 2 * polytopes.cube()
         sage: x, y, z = polygen(QQ, 'x, y, z')
 
@@ -243,7 +244,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     Testing raw output::
 
-        sage: from sage.interfaces.latte import integrate
+        sage: from sage.interfaces.latte import integrate   # optional - latte_int
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
         sage: x, y, z = polygen(QQ, 'x, y, z')
@@ -261,7 +262,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     Testing triangulate algorithm::
 
-        sage: from sage.interfaces.latte import integrate
+        sage: from sage.interfaces.latte import integrate   # optional - latte_int
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
         sage: integrate(cddin, algorithm='triangulate', cdd=True)  # optional - latte_int
@@ -269,7 +270,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     Testing convex decomposition algorithm::
 
-        sage: from sage.interfaces.latte import integrate
+        sage: from sage.interfaces.latte import integrate   # optional - latte_int
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
         sage: integrate(cddin, algorithm='cone-decompose', cdd=True)  # optional - latte_int
@@ -277,7 +278,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     Testing raw output::
 
-        sage: from sage.interfaces.latte import integrate
+        sage: from sage.interfaces.latte import integrate   # optional - latte_int
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
         sage: integrate(cddin, cdd=True, raw_output=True)  # optional - latte_int
@@ -285,14 +286,14 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     Testing polynomial given as a string in LattE description::
 
-        sage: from sage.interfaces.latte import integrate
+        sage: from sage.interfaces.latte import integrate   # optional - latte_int
         sage: P = polytopes.cuboctahedron()
         sage: integrate(P.cdd_Hrepresentation(), '[[3,[2,4,6]],[7,[0, 3, 5]]]', cdd=True)   # optional - latte_int
         629/47775
 
     Testing the ``verbose`` option to compute the volume of a polytope::
 
-        sage: from sage.interfaces.latte import integrate
+        sage: from sage.interfaces.latte import integrate   # optional - latte_int
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
         sage: ans = integrate(cddin, cdd=True, raw_output=True, verbose=True)  # optional - latte_int
@@ -301,9 +302,10 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
         Invocation: integrate --valuation=volume --triangulate --redundancy-check=none --cdd /dev/stdin
         ...
     """
-    from subprocess import Popen, PIPE
-    from sage.misc.misc import SAGE_TMP
-    from sage.rings.integer import Integer
+    # Check that LattE is present
+    Latte().require()
+
+    from sage.rings.rational import Rational
 
     args = ['integrate']
 
@@ -348,16 +350,12 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     args += ['/dev/stdin']
 
-    try:
-        # The cwd argument is needed because latte
-        # always produces diagnostic output files.
-        latte_proc = Popen(args,
-                           stdin=PIPE, stdout=PIPE,
-                           stderr=(None if verbose else PIPE),
-                           cwd=str(SAGE_TMP))
-    except OSError:
-        from sage.misc.package import PackageNotFoundError
-        raise PackageNotFoundError('latte_int')
+    # The cwd argument is needed because latte
+    # always produces diagnostic output files.
+    latte_proc = Popen(args,
+                       stdin=PIPE, stdout=PIPE,
+                       stderr=(None if verbose else PIPE),
+                       cwd=str(SAGE_TMP))
 
     ans, err = latte_proc.communicate(arg)
     ret_code = latte_proc.poll()
@@ -376,8 +374,8 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
     if raw_output:
         return ans
     else:
-        from sage.rings.rational import Rational
         return Rational(ans)
+
 
 def to_latte_polynomial(polynomial):
     r"""

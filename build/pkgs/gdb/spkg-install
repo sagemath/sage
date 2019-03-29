@@ -1,34 +1,11 @@
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 cd src
 
 # We add -ltinfo flag to let gdb compile on some 32bit VM, see #22487.
-LDFLAGS="${LDFLAGS} -L${SAGE_LOCAL}/lib -ltinfo"
-export LDFLAGS
+export LDFLAGS="${LDFLAGS} -L${SAGE_LOCAL}/lib -ltinfo"
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
+sdh_configure \
     --with-mpc="$SAGE_LOCAL" \
     --with-mpfr="$SAGE_LOCAL" \
-    --with-gmp="$SAGE_LOCAL" \
-    --with-ppl="$SAGE_LOCAL"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring gdb."
-    exit 1
-fi
-
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building gdb."
-    exit 1
-fi
-
-
-$MAKE -j1 install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing gdb"
-    exit 1
-fi
+    --with-gmp="$SAGE_LOCAL"
+sdh_make
+sdh_make_install

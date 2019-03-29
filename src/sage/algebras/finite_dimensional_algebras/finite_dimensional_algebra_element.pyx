@@ -19,7 +19,7 @@ import re
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 

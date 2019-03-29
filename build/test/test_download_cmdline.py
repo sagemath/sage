@@ -16,10 +16,14 @@ Test sage-download-file commandline utility
 import os
 import unittest
 import subprocess
+import logging
 
 from sage_bootstrap.env import SAGE_DISTFILES
 from sage_bootstrap.download.mirror_list import MIRRORLIST_FILENAME
 from sage_bootstrap.util import is_url
+
+
+log = logging.getLogger()
 
 
 EXECUTABLE = os.path.join(

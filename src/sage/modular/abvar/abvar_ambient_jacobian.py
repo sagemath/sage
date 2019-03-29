@@ -13,7 +13,7 @@ from __future__ import absolute_import
 import weakref
 from sage.structure.sequence import Sequence
 
-from .abvar             import (ModularAbelianVariety_modsym_abstract, ModularAbelianVariety,
+from .abvar             import (ModularAbelianVariety_modsym_abstract,
                                simple_factorization_of_modsym_space, modsym_lattices,
                                ModularAbelianVariety_modsym)
 from sage.rings.all    import QQ, Integer

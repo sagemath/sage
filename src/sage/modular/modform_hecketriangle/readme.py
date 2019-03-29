@@ -248,7 +248,7 @@ Hecke triangle groups and elements:
   Note that for hyperbolic (and parabolic) fixed points there is a
   1-1 correspondence with primitive hyperbolic/parabolic group
   elements (at least if ``n < infinity``). The group action on
-  fixed points resp. on matrices is compatible with this correpondence.
+  fixed points resp. on matrices is compatible with this correspondence.
 
   EXAMPLES::
 
@@ -410,8 +410,8 @@ Hecke triangle groups and elements:
       ....:     return True
 
       sage: z = PolynomialRing(G.base_ring(), 'z').gen()
-      sage: uniq([ is_rpf(1 - z^(-k), k=k) for k in range(-6, 6, 2)])    # long time
-      [True]
+      sage: [is_rpf(1 - z^(-k), k=k) for k in range(-6, 6, 2)]  # long time
+      [True, True, True, True, True, True]
       sage: [is_rpf(1/z, k=k) for k in range(-6, 6, 2)]
       [False, False, False, False, True, False]
 
@@ -531,11 +531,11 @@ Hecke triangle groups and elements:
       sage: G.class_representatives(68)
       [S*T^(-2)*S*T^(-1)*S*T, -S*T^(-1)*S*T^2*S*T, S*T^(-5)*S*T^(-1)*S, T*S*T^5]
       sage: R = G.reduced_elements(68)
-      sage: uniq([v.is_reduced() for v in R])    # long time
-      [True]
+      sage: all(v.is_reduced() for v in R)  # long time
+      True
       sage: R = G.simple_elements(68)
-      sage: uniq([v.is_simple() for v in R])    # long time
-      [True]
+      sage: all(v.is_simple() for v in R)  # long time
+      True
       sage: G.element_repr_method("default")
 
       sage: G = HeckeTriangleGroup(n=5)
@@ -549,8 +549,8 @@ Hecke triangle groups and elements:
       sage: G.class_representatives(9*G.lam() + 5)
       [S*T^(-2)*S*T^(-1)*S, T*S*T^2]
       sage: R = G.reduced_elements(9*G.lam() + 5)
-      sage: uniq([v.is_reduced() for v in R])    # long time
-      [True]
+      sage: all(v.is_reduced() for v in R)  # long time
+      True
       sage: R = G.simple_elements(7*G.lam() + 6)
       sage: for v in R: print(v.string_repr("default"))
       [lam + 2     lam]
@@ -930,7 +930,7 @@ Modular forms ring and spaces for Hecke triangle groups:
       sage: L.taylor_series(1, 3)
       -0.0304484570583... - 0.0504570844798...*z - 0.0350657360354...*z^2 + O(z^3)
       sage: coeffs = f.q_expansion_vector(min_exp=0, max_exp=20, fix_d=True)
-      sage: abs(L(10) - sum([coeffs[k]*k^(-10) for k in range(1,len(coeffs))]).n(53)) < 10^(-7)
+      sage: abs(L(10) - sum([coeffs[k] * ZZ(k)^(-10) for k in range(1,len(coeffs))]).n(53)) < 10^(-7)
       True
 
       sage: L = ModularForms(n=6, k=6, ep=-1).E6().lseries(num_prec=200)

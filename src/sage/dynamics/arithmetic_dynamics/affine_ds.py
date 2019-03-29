@@ -47,8 +47,6 @@ from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.fraction_field import FractionField
 from sage.rings.fraction_field import is_FractionField
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.quotient_ring import is_QuotientRing
 from sage.schemes.affine.affine_morphism import SchemeMorphism_polynomial_affine_space
 from sage.schemes.affine.affine_morphism import SchemeMorphism_polynomial_affine_space_field
@@ -57,6 +55,7 @@ from sage.schemes.affine.affine_space import is_AffineSpace
 from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+from sage.structure.element import get_coercion_model
 from sage.symbolic.ring import is_SymbolicExpressionRing
 from sage.symbolic.ring import var
 from sage.symbolic.ring import SR
@@ -92,8 +91,8 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
       * ``morphism_or_polys`` is a list of polynomials or rational
         functions and ``domain`` is unspecified; ``domain`` is then
-        taken to be the affine space of appropriate dimension over the
-        base ring of the first element of ``morphism_or_polys``
+        taken to be the affine space of appropriate dimension over the 
+        common base ring, if one exists, of the elements of ``morphism_or_polys``
 
       * ``morphism_or_polys`` is a single polynomial or rational
         function; ``domain`` is ignored and assumed to be the
@@ -224,6 +223,21 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             Traceback (most recent call last):
             ...
             ValueError: "domain" must be an affine scheme
+
+        ::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: f = DynamicalSystem_affine([x+y+z, y*z])
+            Traceback (most recent call last):
+            ...
+            ValueError: Number of polys does not match dimension of Affine Space of dimension 3 over Rational Field
+
+        ::
+            sage: A.<x,y> = AffineSpace(QQ,2)
+            sage: f = DynamicalSystem_affine([CC.0*x^2, y^2], domain=A)
+            Traceback (most recent call last):
+            ...
+            TypeError: coefficients of polynomial not in Rational Field
         """
         if isinstance(morphism_or_polys, SchemeMorphism_polynomial):
             morphism = morphism_or_polys
@@ -244,49 +258,38 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         else:
             polys = [morphism_or_polys]
 
-        # We now arrange for all of our list entries to lie in the same ring
-        # Fraction field case first
-        fraction_field = False
-        for poly in polys:
-            P = poly.parent()
-            if is_FractionField(P):
-                fraction_field = True
-                break
+        PR = get_coercion_model().common_parent(*polys)         
+        fraction_field = any(is_FractionField(poly.parent()) for poly in polys)
         if fraction_field:
-            K = P.base_ring().fraction_field()
+            K = PR.base_ring().fraction_field()
             # Replace base ring with its fraction field
-            P = P.ring().change_ring(K).fraction_field()
-            polys = [P(poly) for poly in polys]
+            PR = PR.ring().change_ring(K).fraction_field()
+            polys = [PR(poly) for poly in polys]
         else:
+            quotient_ring = any(is_QuotientRing(poly.parent()) for poly in polys)
             # If any of the list entries lies in a quotient ring, we try
             # to lift all entries to a common polynomial ring.
-            quotient_ring = False
-            for poly in polys:
-                P = poly.parent()
-                if is_QuotientRing(P):
-                    quotient_ring = True
-                    break
             if quotient_ring:
-                polys = [P(poly).lift() for poly in polys]
+                polys = [PR(poly).lift() for poly in polys]
             else:
-                poly_ring = False
-                for poly in polys:
-                    P = poly.parent()
-                    if is_PolynomialRing(P) or is_MPolynomialRing(P):
-                        poly_ring = True
-                        break
-                if poly_ring:
-                    polys = [P(poly) for poly in polys]
-
+                polys = [PR(poly) for poly in polys]
         if domain is None:
-            f = polys[0]
-            CR = f.parent()
-            if CR is SR:
+            if PR is SR:
                 raise TypeError("Symbolic Ring cannot be the base ring")
             if fraction_field:
-                CR = CR.ring()
-            domain = AffineSpace(CR)
-
+                PR = PR.ring()
+            domain = AffineSpace(PR)
+        else:
+            # Check if we can coerce the given polynomials over the given domain 
+            PR = domain.ambient_space().coordinate_ring()
+            try:
+                if fraction_field:
+                    PR = PR.fraction_field()
+                polys = [PR(poly) for poly in polys]
+            except TypeError:
+                raise TypeError('coefficients of polynomial not in {}'.format(domain.base_ring()))
+        if len(polys) != domain.ambient_space().coordinate_ring().ngens():
+            raise ValueError('Number of polys does not match dimension of {}'.format(domain))
         R = domain.base_ring()
         if R is SR:
             raise TypeError("Symbolic Ring cannot be the base ring")
@@ -298,7 +301,6 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         if is_FiniteField(R):
                 return DynamicalSystem_affine_finite_field(polys, domain)
         return DynamicalSystem_affine_field(polys, domain)
-
 
     def __init__(self, polys_or_rat_fncts, domain):
         r"""
@@ -699,9 +701,10 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             sage: A.<x,y> = AffineSpace(FractionField(R), 2)
             sage: f = DynamicalSystem_affine([(x-t*y^2)/x, t*x*y])
             sage: f.orbit(A(1, t), 3)
-            [(1, t), (-t^3 + 1, t^2), ((-t^5 - t^3 + 1)/(-t^3 + 1), -t^6 + t^3),
-            ((-t^16 + 3*t^13 - 3*t^10 + t^7 + t^5 + t^3 - 1)/(t^5 + t^3 - 1), -t^9 -
-            t^7 + t^4)]
+            [(1, t),
+             (-t^3 + 1, t^2),
+             ((t^5 + t^3 - 1)/(t^3 - 1), -t^6 + t^3),
+             ((-t^16 + 3*t^13 - 3*t^10 + t^7 + t^5 + t^3 - 1)/(t^5 + t^3 - 1), -t^9 - t^7 + t^4)]
         """
         Q = P
         if isinstance(n, list) or isinstance(n, tuple):

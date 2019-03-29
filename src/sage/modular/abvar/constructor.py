@@ -186,7 +186,7 @@ def AbelianVariety(X):
     if is_ModularSymbolsSpace(X):
         return abvar.ModularAbelianVariety_modsym(X)
 
-    if isinstance(X, (tuple,list)) and all([is_CongruenceSubgroup(G) for G in X]):
+    if isinstance(X, (tuple,list)) and all(is_CongruenceSubgroup(G) for G in X):
         return abvar.ModularAbelianVariety(X)
 
     raise TypeError("X must be an integer, string, newform, modsym space, congruence subgroup or tuple of congruence subgroups")

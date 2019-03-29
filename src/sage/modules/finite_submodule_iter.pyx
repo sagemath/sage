@@ -281,7 +281,7 @@ cdef class FiniteFieldsubspace_iterator(FiniteZZsubmodule_iterator):
             sage: Y = list(iter)
             sage: len(Y)
             1024
-            sage: all([Y[i]-X[i]==v for i in range(len(X))])
+            sage: all(Y[i]-X[i] == v for i in range(len(X)))
             True
         """
         cdef Py_ssize_t d, i, p
@@ -336,7 +336,7 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
 
     Prove that the option ``normalize == True`` will only return normalized vectors.
 
-        sage: all([ x.monic() == x for x in FiniteFieldsubspace_projPoint_iterator(A, True) ])
+        sage: all(x.monic() == x for x in FiniteFieldsubspace_projPoint_iterator(A, True))
         True
 
     TESTS::

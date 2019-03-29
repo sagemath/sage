@@ -31,7 +31,7 @@ cdef class DebugOptions_class:
 
             sage: from sage.structure.debug_options import debug
             sage: type(debug)
-            <type 'sage.structure.debug_options.DebugOptions_class'>
+            <... 'sage.structure.debug_options.DebugOptions_class'>
         """
         self.unique_parent_warnings = False
         # This one will be enabled during doctests

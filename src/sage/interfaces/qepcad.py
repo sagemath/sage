@@ -530,7 +530,8 @@ TESTS:
 
 Check the qepcad configuration file::
 
-    sage: open('%s/default.qepcadrc'%SAGE_LOCAL).readlines()[-1]
+    sage: with open(os.path.join(SAGE_LOCAL, 'default.qepcadrc')) as f:  # optional - qepcad
+    ....:     f.readlines()[-1]
     'SINGULAR .../bin\n'
 
 Tests related to the not tested examples (nondeterministic order of atoms)::
@@ -603,8 +604,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 from six import string_types
 
 from sage.env import SAGE_LOCAL
@@ -617,7 +617,8 @@ from sage.misc.sage_eval import sage_eval
 from sage.repl.preparse import implicit_mul
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
-from .expect import Expect, ExpectFunction, AsciiArtString
+from .expect import Expect, ExpectFunction
+from sage.interfaces.interface import AsciiArtString
 
 
 def _qepcad_atoms(formula):
@@ -634,7 +635,7 @@ def _qepcad_atoms(formula):
     EXAMPLES::
 
     sage: from sage.interfaces.qepcad import _qepcad_atoms
-    sage: _qepcad_atoms('y^5 + 4 y + 8 >= 0 /\ y <= 0 /\ [ y = 0 \/ y^5 + 4 y + 8 = 0 ]')
+    sage: _qepcad_atoms('y^5 + 4 y + 8 >= 0 /\\ y <= 0 /\\ [ y = 0 \\/ y^5 + 4 y + 8 = 0 ]')
     {'y <= 0', 'y = 0', 'y^5 + 4 y + 8 = 0', 'y^5 + 4 y + 8 >= 0'}
     """
     return set(i.strip() for i in flatten([i.split('\\/') for i in formula.replace('[','').replace(']','').split('/\\')]))
@@ -684,7 +685,7 @@ def _update_command_info():
 
     cache = {}
 
-    with open('%s/bin/qepcad.help'%SAGE_LOCAL) as help:
+    with open(os.path.join(SAGE_LOCAL, 'bin', 'qepcad.help')) as help:
         assert(help.readline().strip() == '@')
 
         while True:
@@ -1866,9 +1867,8 @@ class qepcad_formula_factory:
             sage: qf._combine_formulas([x^2 == 0, y < 17])
             (['x^2 = 0', 'y < 17'], frozenset({'x', 'y'}))
         """
-        formulas = map(self.atomic, formulas)
-        formulas = map(self.atomic, formulas)
-        formula_strs = [repr(_) for _ in formulas]
+        formulas = [self.atomic(f) for f in formulas]
+        formula_strs = [repr(f) for f in formulas]
         vars = frozenset()
         for f in formulas:
             vars = vars | f.vars

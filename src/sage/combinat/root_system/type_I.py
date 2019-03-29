@@ -43,9 +43,20 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
         assert n >= 1
         CartanType_standard_finite.__init__(self, "I", n)
 
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: latex(CartanType(['I',5]))
+            I_2(5)
+        """
+        return "I_2({})".format(self.n)
+
     def rank(self):
         """
-        Type `I_p` is of rank 2
+        Type `I_2(p)` is of rank 2.
 
         EXAMPLES::
 
@@ -55,8 +66,8 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
         return 2
 
     def index_set(self):
-        """
-        Type `I_p` is of rank 2
+        r"""
+        Type `I_2(p)` is indexed by `\{1,2\}`.
 
         EXAMPLES::
 

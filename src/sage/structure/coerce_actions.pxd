@@ -15,5 +15,12 @@ cdef class RightModuleAction(ModuleAction):
 cdef class PyScalarAction(Action):
     cdef Action _action
 
-cdef class IntegerMulAction(Action):
+
+cdef class IntegerAction(Action):
+    pass
+
+cdef class IntegerMulAction(IntegerAction):
+    pass
+
+cdef class IntegerPowAction(IntegerAction):
     pass

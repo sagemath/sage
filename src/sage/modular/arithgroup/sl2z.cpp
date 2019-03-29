@@ -22,6 +22,3 @@ const SL2Z SL2Z::T(1,  1, 0, 1);
 const SL2Z SL2Z::E(1,  0, 0, 1);
 const SL2Z SL2Z::I(-1, 0, 0, -1);
 
-
-    
-  

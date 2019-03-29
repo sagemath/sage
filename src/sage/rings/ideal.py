@@ -318,6 +318,21 @@ class Ideal_generic(MonoidElement):
         """
         return "Ideal %s of %s"%(self._repr_short(), self.ring())
 
+    def random_element(self, *args, **kwds):
+        """
+        Return a random element in this ideal.
+
+        EXAMPLES::
+
+            sage: P.<a,b,c> = GF(5)[[]]
+            sage: I = P.ideal([a^2, a*b + c, c^3])
+            sage: I.random_element()  # random
+            2*a^5*c + a^2*b*c^4 + ... + O(a, b, c)^13
+
+        """
+        return sum(self.__ring.random_element(*args, **kwds) * g for g in self.__gens)
+
+
     def _richcmp_(self, other, op):
         """
         Compares the generators of two ideals.
@@ -877,7 +892,7 @@ class Ideal_generic(MonoidElement):
         emb = []
         for p in ass:
             try:
-                i = min_ass.index(p)
+                min_ass.index(p)
             except ValueError:
                 emb.append(p)
         emb.sort()

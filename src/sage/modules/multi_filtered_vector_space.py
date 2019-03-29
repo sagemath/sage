@@ -30,22 +30,21 @@ arbitrary indexing set and values are
     [  1 3/2]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from six import iteritems, itervalues
 
-from sage.rings.all import QQ, ZZ, RDF, RR, Integer
-from sage.rings.infinity import InfinityRing, infinity, minus_infinity
+from sage.rings.all import QQ, ZZ, Integer
+from sage.rings.infinity import infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
-from sage.matrix.constructor import vector, matrix, block_matrix, zero_matrix, identity_matrix
-from sage.misc.all import uniq, cached_method, prod
+from sage.misc.all import cached_method
 from sage.modules.filtered_vector_space import FilteredVectorSpace
 
 
@@ -237,7 +236,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         return all(F.is_constant() for F in self._filt.values())
 
     def is_exhaustive(self):
-        """
+        r"""
         Return whether the multi-filtration is exhaustive.
 
         A filtration $\{F_d\}$ in an ambient vector space $V$ is
@@ -259,7 +258,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         return all(F.is_exhaustive() for F in self._filt.values())
 
     def is_separating(self):
-        """
+        r"""
         Return whether the multi-filtration is separating.
 
         A filtration $\{F_d\}$ in an ambient vector space $V$ is
@@ -460,11 +459,10 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
                                     base_ring=self.base_ring())
             return 'Unfiltered ' + repr(F)
         rows = []
-        support = self.support()
         min_deg, max_deg = self.min_degree(), self.max_degree()
         for key in sorted(self.index_set()):
             F = self.get_filtration(key)
-            r = [str(key)] + F._repr_degrees(min_deg, max_deg-1)
+            r = [str(key)] + F._repr_degrees(min_deg, max_deg - 1)
             rows.append(r)
         from sage.misc.table import table
         t = table(rows)
@@ -510,7 +508,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             True
         """
         return not (self == other)
-    
+
     def direct_sum(self, other):
         """
         Return the direct sum.
@@ -613,14 +611,13 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             sage: F1 = FilteredVectorSpace(2, 1)
             sage: F2 = FilteredVectorSpace(1, 3) + FilteredVectorSpace(1,0)
             sage: V = MultiFilteredVectorSpace({'a':F1, 'b':F2})
-            sage: V.exterior_power(2)
+            sage: V.exterior_power(2)  # long time
             Filtrations
                 a: QQ^1 >=  0   >= 0
                 b: QQ^1 >= QQ^1 >= 0
         """
-        filtrations = {}
-        for key in self.index_set():
-            filtrations[key] = self._filt[key].exterior_power(n)
+        filtrations = {key: value.exterior_power(n)
+                       for key, value in self._filt.items()}
         return MultiFilteredVectorSpace(filtrations)
 
     wedge = exterior_power
@@ -649,9 +646,8 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
                 a: QQ^3 >= QQ^3 >= QQ^3 >=  0   >=  0   >=  0   >=  0   >= 0
                 b: QQ^3 >= QQ^2 >= QQ^2 >= QQ^2 >= QQ^1 >= QQ^1 >= QQ^1 >= 0
         """
-        filtrations = {}
-        for key in self.index_set():
-            filtrations[key] = self._filt[key].symmetric_power(n)
+        filtrations = {key: value.symmetric_power(n)
+                       for key, value in self._filt.items()}
         return MultiFilteredVectorSpace(filtrations)
 
     def dual(self):
@@ -673,9 +669,8 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
                 a: QQ^2 >= QQ^2 >= QQ^2 >=  0   >= 0
                 b: QQ^2 >= QQ^1 >= QQ^1 >= QQ^1 >= 0
         """
-        filtrations = {}
-        for key in self.index_set():
-            filtrations[key] = self._filt[key].dual()
+        filtrations = {key: value.dual()
+                       for key, value in self._filt.items()}
         return MultiFilteredVectorSpace(filtrations)
 
     def shift(self, deg):
@@ -697,9 +692,8 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             sage: V.shift(-5).support()
             (-5, -4, -2)
         """
-        filtrations = {}
-        for key in self.index_set():
-            filtrations[key] = self._filt[key].shift(deg)
+        filtrations = {key: value.shift(deg)
+                       for key, value in self._filt.items()}
         return MultiFilteredVectorSpace(filtrations)
 
     def random_deformation(self, epsilon=None):
@@ -729,7 +723,6 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             Basis matrix:
             [     1 8/1197]
         """
-        filtrations = {}
-        for key in self.index_set():
-            filtrations[key] = self._filt[key].random_deformation(epsilon)
+        filtrations = {key: value.random_deformation(epsilon)
+                       for key, value in self._filt.items()}
         return MultiFilteredVectorSpace(filtrations)

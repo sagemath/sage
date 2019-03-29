@@ -1,5 +1,5 @@
 """
-Short tests for libGAP
+Short tests for GAP
 """
 
 from sage.libs.all import libgap

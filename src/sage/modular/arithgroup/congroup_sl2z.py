@@ -105,11 +105,10 @@ class SL2Z_class(Gamma0_class):
             sage: SL2Z([2, 0, 0, 2], check=False) # don't do this!
             [2 0]
             [0 2]
-            sage: SL2Z([1, QQ, False], check=False) # don't do this either!
+            sage: SL2Z([1, QQ, False])
             Traceback (most recent call last):
             ...
-            TypeError: cannot construct an element of Full MatrixSpace of 2 by 2
-            dense matrices over Integer Ring from [1, Rational Field, False]!
+            TypeError: unable to coerce <class 'sage.rings.rational_field.RationalField_with_category'> to an integer
         """
         return ArithmeticSubgroupElement(self, x, check=check)
 

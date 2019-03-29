@@ -394,7 +394,7 @@ def preprocess_assumptions(args):
 
 
 def assume(*args):
-    """
+    r"""
     Make the given assumptions.
 
     INPUT:

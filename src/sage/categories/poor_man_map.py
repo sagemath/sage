@@ -180,7 +180,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         return hash((self._functions, self._domain, self._codomain, self._name))
 
     def __mul__(self, other):
-        """
+        r"""
         Composition
 
         INPUT:

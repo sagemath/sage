@@ -121,7 +121,7 @@ from .power_series_pari import PowerSeries_pari
 from . import power_series_ring_element
 
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.multi_polynomial_ring_generic import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 from .polynomial.polynomial_ring_constructor import PolynomialRing
 from . import laurent_series_ring
 from . import laurent_series_ring_element
@@ -134,9 +134,10 @@ from sage.structure.nonexact import Nonexact
 from sage.interfaces.magma import MagmaElement
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.misc.sage_eval import sage_eval
-
+    
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.category_object import normalize_names
+from sage.structure.element import parent
 import sage.categories.commutative_rings as commutative_rings
 _CommutativeRings = commutative_rings.CommutativeRings()
 import sage.categories.integral_domains as integral_domains
@@ -360,7 +361,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
     ## too many things (padics, elliptic curves) depend on this behavior,
     ## so no warning for now.
     ##
-    # from sage.misc.superseded import deprecation
+
     # if isinstance(name, (int,integer.Integer)) or isinstance(arg2,(int,integer.Integer)):
     #     deprecation(trac_number, "This behavior of PowerSeriesRing is being deprecated in favor of constructing multivariate power series rings. (See Trac ticket #1956.)")
 
@@ -456,8 +457,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
     """
 
     def __init__(self, base_ring, name=None, default_prec=None, sparse=False,
-                 use_lazy_mpoly_ring=None, implementation=None,
-                 category=None):
+                 implementation=None, category=None):
         """
         Initializes a power series ring.
 
@@ -476,9 +476,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         - ``implementation`` -- either ``'poly'``, ``'mpoly'``, or
           ``'pari'``.  The default is ``'pari'`` if the base field is
           a PARI finite field, and ``'poly'`` otherwise.
-
-        - ``use_lazy_mpoly_ring`` -- This option is deprecated; use
-          ``implementation='mpoly'`` instead.
 
         If the base ring is a polynomial ring, then the option
         ``implementation='mpoly'`` causes computations to be done with
@@ -520,17 +517,11 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             ValueError: default_prec (= -5) must be non-negative
 
         """
-        if use_lazy_mpoly_ring is not None:
-            deprecation(15601, 'The option use_lazy_mpoly_ring is deprecated; use implementation="mpoly" instead')
-
         from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
 
         if implementation is None:
             if isinstance(base_ring, FiniteField_pari_ffelt):
                 implementation = 'pari'
-            elif use_lazy_mpoly_ring and (is_MPolynomialRing(base_ring) or
-                                          is_PolynomialRing(base_ring)):
-                implementation = 'mpoly'
             else:
                 implementation = 'poly'
 
@@ -937,13 +928,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         return self.__poly_ring
 
-    def _mpoly_ring(self):
-        """
-        Return the polynomial ring that we use if ``use_lazy_mpoly_ring``
-        was set.
-        """
-        return self.__mpoly_ring
-
     def base_extend(self, R):
         """
         Return the power series ring over R in the same variable as self,
@@ -1151,13 +1135,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: s in R
             False
         """
-        if x.parent() == self:
-            return True
-        try:
-            self._coerce_(x)
-        except TypeError:
-            return False
-        return True
+        return self.has_coerce_map_from(parent(x))
 
     def is_field(self, proof = True):
         """
@@ -1279,4 +1257,3 @@ def unpickle_power_series_ring_v0(base_ring, name, default_prec, sparse):
         True
     """
     return PowerSeriesRing(base_ring, name=name, default_prec = default_prec, sparse=sparse)
-

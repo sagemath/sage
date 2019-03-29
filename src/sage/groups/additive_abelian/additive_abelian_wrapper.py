@@ -101,7 +101,7 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
     def __init__(self, parent, vector, element=None, check=False):
         r"""
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
             sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
@@ -268,10 +268,6 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             sage: G(V([6,2]))
             (6, 2)
             sage: G([1,1])
-            doctest:...: DeprecationWarning: The default behaviour changed!
-             If you *really* want a linear combination of smith generators,
-             use .linear_combination_of_smith_form_gens.
-            See http://trac.sagemath.org/16261 for details.
             (6, 2)
             sage: G(G([1,1]))
             (6, 2)

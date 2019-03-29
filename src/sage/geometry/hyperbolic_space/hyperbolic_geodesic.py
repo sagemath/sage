@@ -1422,8 +1422,10 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         expressions do not generate runtime errors. ::
 
             sage: g=HyperbolicPlane().UHP().get_geodesic(-1+I,1+I)
-            sage: g.midpoint()
-            Point in UHP 1/2*(sqrt(2)*e^(1/2*arccosh(3)) - sqrt(2) + (I - 1)*e^(1/2*arccosh(3)) + I - 1)/((1/4*I - 1/4)*sqrt(2)*e^(1/2*arccosh(3)) - (1/4*I - 1/4)*sqrt(2) + 1/2*e^(1/2*arccosh(3)) + 1/2)
+            sage: point = g.midpoint(); point
+            Point in UHP -1/2*(sqrt(2)*...
+            sage: QQbar(point.coordinates()).radical_expression()
+            I*sqrt(2)
 
         Check that floating points remain floating points
         in :meth:`midpoint` ::
@@ -1552,8 +1554,8 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
     @staticmethod
     def _get_B(a):
         r"""
-        Helper function to get an appropiate matrix transforming
-        (0,1,inf)->(0,I,inf) based on the type of a
+        Helper function to get an appropriate matrix transforming
+        (0,1,inf) -> (0,I,inf) based on the type of a
 
         INPUT:
 
@@ -1703,7 +1705,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             True
             sage: bool(moebius_transform(A, p3) == infinity)
             True
-            sage: (x,y,z) = var('x,y,z');
+            sage: (x,y,z) = var('x,y,z')
             sage: HyperbolicGeodesicUHP._crossratio_matrix(x,y,z)
             [     y - z -x*(y - z)]
             [    -x + y  (x - y)*z]

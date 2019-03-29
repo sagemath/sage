@@ -77,7 +77,7 @@ class CartanType(CartanType_standard, CartanType_simple):
         return ret % (self.letter, 'ZZ' if self.n == ZZ else 'NN')
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::
@@ -225,7 +225,7 @@ class CartanType(CartanType_standard, CartanType_simple):
         return self.letter
 
     def index_set(self):
-        """
+        r"""
         Return the index set for the Cartan type ``self``.
 
         The index set for all standard finite Cartan types is of the form
@@ -238,4 +238,3 @@ class CartanType(CartanType_standard, CartanType_simple):
             (1, 2, 3, 4, 5)
         """
         return self.n
-

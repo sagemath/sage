@@ -1,0 +1,23 @@
+commit 05c17553c70cf1449e9dafe4f948515a6fbbe77e
+Author: Jeroen Demeyer <jdemeyer@cage.ugent.be>
+Date:   Mon Feb 26 10:56:51 2018 +0100
+
+    Use @SAGE_LOCAL@ instead of hardcoded /usr/local
+
+diff --git a/directories.h b/directories.h
+index 496dff5..b7ecc18 100644
+--- a/directories.h
++++ b/directories.h
+@@ -25,9 +25,9 @@
+ */
+ 
+ namespace directories {
+-  const char* const COXMATRIX_DIR = "/usr/local/coxeter/coxeter_matrices";
+-  const char* const HEADER_DIR = "/usr/local/coxeter/headers";
+-  const char* const MESSAGE_DIR = "/usr/local/coxeter/messages";
++  const char* const COXMATRIX_DIR = "@SAGE_LOCAL@/coxeter/coxeter_matrices";
++  const char* const HEADER_DIR = "@SAGE_LOCAL@/coxeter/headers";
++  const char* const MESSAGE_DIR = "@SAGE_LOCAL@/coxeter/messages";
+ };
+ 
+ #endif

@@ -17,7 +17,7 @@ element contains the following data:
   variable `x` is the uniformizer in the case of eisenstein extensions.
   This ZZ_pX is created with global ntl modulus determined by absprec.
   Let `a` be absprec and `e` be the ramification index over
-  `\mathbb{Q}_p` or `\mathbb{Z}_p`.  Then the modulus is given by
+  `\QQ_p` or `\ZZ_p`.  Then the modulus is given by
   `p^{ceil(a/e)}`.  Note that all kinds of problems arise if you try
   to mix moduli.  ``ZZ_pX_conv_modulus`` gives a semi-safe way to
   convert between different moduli without having to pass through ZZX.
@@ -69,7 +69,7 @@ An eisenstein extension::
     sage: S.<x> = ZZ[]
     sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
     sage: W.<w> = R.ext(f); W
-    Eisenstein Extension in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5 with capped absolute precision 25 over 5-adic Ring
+    5-adic Eisenstein Extension Ring in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5
     sage: z = (1+w)^5; z
     1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24 + O(w^25)
     sage: y = z >> 1; y
@@ -85,7 +85,7 @@ An eisenstein extension::
     sage: (1/w)^12+w
     w^-12 + w + O(w^12)
     sage: (1/w).parent()
-    Eisenstein Extension in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5 with capped relative precision 25 over 5-adic Field
+    5-adic Eisenstein Extension Field in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5
 
 An unramified extension::
 
@@ -327,7 +327,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
                 L = []
                 x = x.lift().lift()
                 for i from 0 <= i <= x.poldegree():
-                    L.append(Integer(x.polcoeff(i)))
+                    L.append(Integer(x.polcoef(i)))
                 x = L
             else:
                 raise TypeError("unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed")
@@ -927,7 +927,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             sage: y = ~z; y # indirect doctest
             1 + 4*w^5 + 4*w^6 + 3*w^7 + w^8 + 2*w^10 + w^11 + w^12 + 2*w^14 + 3*w^16 + 3*w^17 + 4*w^18 + 4*w^19 + 2*w^20 + 2*w^21 + 4*w^22 + 3*w^23 + 3*w^24 + O(w^25)
             sage: y.parent()
-            Eisenstein Extension in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5 with capped relative precision 25 over 5-adic Field
+            5-adic Eisenstein Extension Field in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: z = z - 1
             sage: ~z
             w^-5 + 4*w^-4 + 4*w^-3 + 4*w^-2 + 2*w^-1 + 1 + w + 4*w^2 + 4*w^3 + 4*w^4 + w^5 + w^6 + w^7 + 4*w^8 + 4*w^9 + 2*w^10 + w^11 + 2*w^12 + 4*w^13 + 4*w^14 + O(w^15)
@@ -949,7 +949,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             sage: y = z.to_fraction_field(); y #indirect doctest
             1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24 + O(w^25)
             sage: y.parent()
-            Eisenstein Extension in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5 with capped relative precision 25 over 5-adic Field
+            5-adic Eisenstein Extension Field in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5
         """
         cdef pAdicZZpXCRElement ans = pAdicZZpXCRElement.__new__(pAdicZZpXCRElement)
         ans._parent = self._parent.fraction_field()
@@ -1175,7 +1175,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         result.
 
         In computing `(a + O(\pi^k))^{b + O(p^m)}`, one needs that the
-        reduction of `a` mod `\pi` is in the prime field `\mathbb{F}_p` (so
+        reduction of `a` mod `\pi` is in the prime field `\GF{p}` (so
         that the `p^m` power of the Teichmuller part is constant as
         `m` increases).  Given this restriction, we can factor out the
         Teichmuller part and use the above lemma to find the first
@@ -1698,7 +1698,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             sage: S.<x> = ZZ[]
             sage: W.<w> = ZpCA(5).extension(x^2 - 5)
             sage: (w + W(5, 7)).polynomial()
-            (1 + O(5^3))*x + (5 + O(5^4))
+            (1 + O(5^3))*x + 5 + O(5^4)
         """
         R = self.base_ring()
         S = R[var]
@@ -1869,6 +1869,15 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             []
             sage: list(A(0,4).expansion())
             []
+
+        Check that :trac:`25879` has been resolved::
+
+            sage: K = ZpCA(3,5)
+            sage: R.<a> = K[]
+            sage: L.<a> = K.extension(a^2 - 3)
+            sage: a.residue()
+            0
+
         """
         if lift_mode == 'teichmuller':
             zero = self.parent()(0)
@@ -1876,6 +1885,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             zero = []
         else:
             zero = Integer(0)
+        ordp = self.valuation()
         if n in ('simple', 'smallest', 'teichmuller'):
             deprecation(14825, "Interface to expansion has changed; first argument now n")
             lift_mode = n
@@ -1883,7 +1893,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         elif isinstance(n, slice):
             return self.slice(n.start, n.stop, n.step)
         elif n is not None:
-            if self.is_zero():
+            if self.is_zero() or n < ordp:
                 return zero
             elif n >= self.absprec:
                 raise PrecisionError
@@ -1900,7 +1910,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
                 return self.teichmuller_expansion(n)
         else:
             raise ValueError("lift mode must be one of 'simple', 'smallest' or 'teichmuller'")
-        ordp = self.valuation()
         if n is not None:
             try:
                 return ulist[n - ordp]

@@ -165,3 +165,21 @@ class IdealMonoid_c(Parent):
             False
         """
         return not (self == other)
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: R = QuadraticField(-23, 'a')
+            sage: M = R.ideal_monoid()
+            sage: hash(M) == hash(QQ)
+            False
+            sage: hash(M) == 17
+            False
+            sage: hash(M) == hash(R.ideal_monoid())
+            True
+        """
+        # uses a random number, to have a distinct hash
+        return hash((1580963238588124931699, self.ring()))

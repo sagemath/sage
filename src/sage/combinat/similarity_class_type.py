@@ -2,7 +2,7 @@ r"""
 Similarity class types of matrices with entries in a finite field
 
 The notion of a matrix conjugacy class type was introduced by J. A. Green in
-[Green55]_, in the context of computing the irreducible charcaters of finite
+[Green55]_, in the context of computing the irreducible characters of finite
 general linear groups. The class types are equivalence classes of similarity
 classes of square matrices with entries in a finite field which, roughly
 speaking, have the same qualitative properties.
@@ -195,9 +195,10 @@ from sage.misc.cachefunc import cached_in_parent_method, cached_function
 from sage.combinat.misc import IterableFunctionCall
 from functools import reduce
 
+
 @cached_function
 def fq(n, q = None):
-    """
+    r"""
     Return `(1-q^{-1}) (1-q^{-2}) \cdots (1-q^{-n})`.
 
     INPUT:
@@ -669,7 +670,7 @@ class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
                 yield self.element_class(self, d, par)
 
     def size(self):
-        """
+        r"""
         Return size of elements of ``self``.
 
         The size of a primary similarity class type `(d, \lambda)` is
@@ -774,7 +775,7 @@ class SimilarityClassType(CombinatorialElement):
         return sum([PT.centralizer_algebra_dim() for PT in self])
 
     def centralizer_group_card(self, q = None):
-        """
+        r"""
         Return the cardinality of the group of matrices in `GL_n(\GF{q})`
         which commute with a matrix of type ``self``.
 
@@ -1288,28 +1289,22 @@ def input_parsing(data):
     """
     if isinstance(data, SimilarityClassType):
         case = 'sim'
-        output = data
     elif isinstance(data, PrimarySimilarityClassType):
         case = 'pri'
-        output = data
     elif isinstance(data, Partition):
         case = 'par'
-        output = data
     else:
         try:
             data = Partition(data)
             case = 'par'
-            output = data
         except(TypeError, ValueError):
             try:
                 data = SimilarityClassType(data)
                 case = 'sim'
-                output = data
             except(TypeError, ValueError):
                 try:
                     data = PrimarySimilarityClassType(*data)
                     case = 'pri'
-                    output = data
                 except(TypeError, ValueError):
                     raise ValueError("Expected a Partition, a SimilarityClassType or a PrimarySimilarityClassType, got a %s" % type(data))
     return case, data

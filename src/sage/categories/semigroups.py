@@ -23,7 +23,8 @@ from sage.categories.subquotients import SubquotientsCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.quotients import QuotientsCategory
 from sage.categories.magmas import Magmas
-from sage.structure.element import generic_power
+from sage.arith.power import generic_power
+
 
 all_axioms += ("HTrivial", "Aperiodic", "LTrivial", "RTrivial", "JTrivial")
 
@@ -119,7 +120,7 @@ class Semigroups(CategoryWithAxiom):
             S = tester.some_elements()
             from sage.misc.misc import some_tuples
             for x,y,z in some_tuples(S, 3, tester._max_runs):
-                tester.assert_((x * y) * z == x * (y * z))
+                tester.assertTrue((x * y) * z == x * (y * z))
 
         @abstract_method(optional=True)
         def semigroup_generators(self):
@@ -438,7 +439,7 @@ class Semigroups(CategoryWithAxiom):
                                       category=category)
 
         def trivial_representation(self, base_ring=None, side="twosided"):
-            """
+            r"""
             Return the trivial representation of ``self`` over ``base_ring``.
 
             INPUT:
@@ -481,7 +482,7 @@ class Semigroups(CategoryWithAxiom):
 
     class ElementMethods:
 
-        def _pow_(self, n):
+        def _pow_int(self, n):
             """
             Return ``self`` to the `n^{th}` power.
 
@@ -498,18 +499,16 @@ class Semigroups(CategoryWithAxiom):
                 sage: x^0
                 Traceback (most recent call last):
                 ...
-                AssertionError
+                ArithmeticError: only positive powers are supported in a semigroup
 
             TESTS::
 
-                sage: x._pow_(17)
+                sage: x._pow_int(17)
                 'x'
-
             """
-            assert n > 0
+            if n <= 0:
+                raise ArithmeticError("only positive powers are supported in a semigroup")
             return generic_power(self, n)
-
-        __pow__ = _pow_
 
 
     class SubcategoryMethods:

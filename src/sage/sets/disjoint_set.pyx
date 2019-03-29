@@ -190,7 +190,7 @@ cdef class DisjointSet_class(SageObject):
             sage: sorted(d)
             [['a'], ['b'], ['c']]
         """
-        return (<dict?>self.root_to_elements_dict()).itervalues()
+        return iter((<dict?>self.root_to_elements_dict()).itervalues())
 
     def __richcmp__(self, other, int op):
         r"""
@@ -528,14 +528,14 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         EXAMPLES::
 
             sage: d = DisjointSet(5)
-            sage: d.root_to_elements_dict()
-            {0: [0], 1: [1], 2: [2], 3: [3], 4: [4]}
+            sage: sorted(d.root_to_elements_dict().items())
+            [(0, [0]), (1, [1]), (2, [2]), (3, [3]), (4, [4])]
             sage: d.union(2,3)
-            sage: d.root_to_elements_dict()
-            {0: [0], 1: [1], 2: [2, 3], 4: [4]}
+            sage: sorted(d.root_to_elements_dict().items())
+            [(0, [0]), (1, [1]), (2, [2, 3]), (4, [4])]
             sage: d.union(3,0)
-            sage: d.root_to_elements_dict()
-            {1: [1], 2: [0, 2, 3], 4: [4]}
+            sage: sorted(d.root_to_elements_dict().items())
+            [(1, [1]), (2, [0, 2, 3]), (4, [4])]
             sage: d
             {{0, 2, 3}, {1}, {4}}
         """
@@ -826,8 +826,9 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d = DisjointSet(range(5))
             sage: d.union(2,3)
             sage: d.union(4,1)
-            sage: e = d.root_to_elements_dict(); e
-            {0: [0], 2: [2, 3], 4: [1, 4]}
+            sage: e = d.root_to_elements_dict()
+            sage: sorted(e.items())
+            [(0, [0]), (2, [2, 3]), (4, [1, 4])]
         """
         s = {}
         for e in self._int_to_el:
@@ -847,8 +848,9 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d = DisjointSet(range(5))
             sage: d.union(2,3)
             sage: d.union(4,1)
-            sage: e = d.element_to_root_dict(); e
-            {0: 0, 1: 4, 2: 2, 3: 2, 4: 4}
+            sage: e = d.element_to_root_dict()
+            sage: sorted(e.items())
+            [(0, 0), (1, 4), (2, 2), (3, 2), (4, 4)]
             sage: WordMorphism(e)
             WordMorphism: 0->0, 1->4, 2->2, 3->2, 4->4
         """

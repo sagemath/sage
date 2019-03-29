@@ -4,25 +4,17 @@ using namespace std;
 
 /**************** Miscellaneous functions ****************/
 
+/* NB In eclib versions before v20190226, precision was decimal
+   precision by default, while now it is bit precision. */
+
 long mwrank_get_precision()
 {
-  return decimal_precision();
+  return bit_precision();
 }
 
 void mwrank_set_precision(long n)
 {
-  set_precision(n);
-  /*
-  Conversion from base 10 to base 2 and back is done within eclib by
-  the functions n --> int(3.33*n) and n --> int(0.3*n) which
-  introduces rounding errors.  Without the following loop, doing
-  set_precision(get_precision()) reduces the decimal precision by at
-  least 1 (exactly 1 for n<803), which has disastrous effects if done
-  repeatedly.
-  */
-  long m=n;
-  while (decimal_precision()<m)
-    {n++; set_precision(n);}
+  set_bit_precision(n);
 }
 
 void mwrank_initprimes(char* pfilename, int verb)
@@ -73,17 +65,17 @@ char* Curvedata_repr(struct Curvedata* curve)
   return stringstream_to_char(instore);
 }
 
-double Curvedata_silverman_bound(const struct Curvedata* curve)
+double Curvedata_silverman_bound(const Curvedata* curve)
 {
   return silverman_bound(*curve);
 }
 
-double Curvedata_cps_bound(const struct Curvedata* curve)
+double Curvedata_cps_bound(const Curvedata* curve)
 {
   return cps_bound(*curve);
 }
 
-double Curvedata_height_constant(const struct Curvedata* curve)
+double Curvedata_height_constant(const Curvedata* curve)
 {
   return height_constant(*curve);
 }
@@ -133,13 +125,14 @@ char* Curvedata_isogeny_class(struct Curvedata* E, int verbose)
 
 
 int mw_process(struct Curvedata* curve, struct mw* m,
-                      const struct bigint* x, const struct bigint* y,
-                      const struct bigint* z, int sat)
+                      const bigint* x, const bigint* y,
+                      const bigint* z, int sat)
 {
   Point P(*curve, *x, *y, *z);
   if (!P.isvalid())
     return 1;
   m->process(P, sat);
+  cout<<flush;
   return 0;
 }
 
@@ -174,12 +167,9 @@ char* mw_getbasis(struct mw* m)
   return point_vector_to_str(m->getbasis());
 }
 
-char* mw_regulator(struct mw* m)
+double mw_regulator(struct mw* m)
 {
-  bigfloat reg = m->regulator();
-  ostringstream instore;
-  instore << reg;
-  return stringstream_to_char(instore);
+  return to_double(m->regulator());
 }
 
 int mw_rank(struct mw* m)
@@ -188,7 +178,7 @@ int mw_rank(struct mw* m)
 }
 
 /* Returns index and unsat long array, which user must deallocate */
-int mw_saturate(struct mw* m, struct bigint* index, char** unsat,
+int mw_saturate(struct mw* m, bigint* index, char** unsat,
                        long sat_bd, int odd_primes_only)
 {
   vector<long> v;
@@ -209,11 +199,9 @@ bigfloat str_to_bigfloat(char* s) {
 
 void mw_search(struct mw* m, char* h_lim, int moduli_option, int verb)
 {
-
   m->search(str_to_bigfloat(h_lim), moduli_option, verb);
+  cout<<flush;
 }
-
-
 
 
 //////// two_descent //////////
@@ -238,12 +226,12 @@ char* two_descent_get_basis(struct two_descent* t)
   return p2point_vector_to_str(t->getbasis());
 }
 
-int two_descent_ok(const struct two_descent* t)
+int two_descent_ok(const two_descent* t)
 {
   return t->ok();
 }
 
-long two_descent_get_certain(const struct two_descent* t)
+long two_descent_get_certain(const two_descent* t)
 {
   return t->getcertain();
 }
@@ -253,10 +241,7 @@ void two_descent_saturate(struct two_descent* t, long sat_bd)
   t->saturate(sat_bd);
 }
 
-char* two_descent_regulator(struct two_descent* t)
+double two_descent_regulator(struct two_descent* t)
 {
-  bigfloat reg = t->regulator();
-  ostringstream instore;
-  instore << reg;
-  return stringstream_to_char(instore);
+  return to_double(t->regulator());
 }

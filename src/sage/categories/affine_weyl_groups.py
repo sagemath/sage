@@ -123,7 +123,7 @@ class AffineWeylGroups(Category_singleton):
 
              - all reduced words for self end with 0.
              - self is the identity, or 0 is its single right descent.
-             - self is a mimimal coset representative for W / cl W.
+             - self is a minimal coset representative for W / cl W.
 
             EXAMPLES::
 

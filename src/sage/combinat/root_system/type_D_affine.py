@@ -139,11 +139,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             from . import cartan_type
             relabel = {0:label(0), 1:label(3), 2:label(1), 3:label(2)}
             return cartan_type.CartanType(["A",3,1]).relabel(relabel)._latex_dynkin_diagram(node_dist=node_dist)
-        if self.options.mark_special_node in ['latex', 'both']:
-            special_fill = 'black'
-        else:
-            special_fill = 'white'
-        rt_most = (n-2)*node_dist
+        rt_most = (n - 2) * node_dist
         center_point = rt_most - node_dist
         ret = "\\draw (0,0.7 cm) -- (%s cm,0);\n"%node_dist
         ret += "\\draw (0,-0.7 cm) -- (%s cm,0);\n"%node_dist

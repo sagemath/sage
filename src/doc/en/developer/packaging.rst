@@ -129,6 +129,15 @@ build and/or install the package.  If no ``spkg-build`` exists, then the
 ``spkg-install`` is responsible for both steps, though separating them is
 encouraged where possible.
 
+It is also possible to include similar scripts named ``spkg-preinst`` or
+``spkg-postinst`` to run additional steps before or after the package has been
+installed into ``$SAGE_LOCAL``. It is encouraged to put steps which modify
+already installed files in a separate ``spkg-postinst`` script rather than
+combinging them with ``spkg-install``.  This is because since :trac:`24106`,
+``spkg-install`` does not necessarily install packages directly to
+``$SAGE_LOCAL``.  However, by the time ``spkg-postinst`` is run, the
+installation to ``$SAGE_LOCAL`` is complete.
+
 These scripts should *not* be prefixed with a shebang line (``#!...``) and
 should not have the executable bit set in their permissions.  These are
 added automatically, along with some additional boilerplate, when the
@@ -247,10 +256,10 @@ If pip will not work but a command like ``python setup.py install``
 will, then the ``spkg-install`` script should call ``sage-python23``
 rather than ``python``. This will ensure that the correct version of
 Python is used to build and install the package. The same holds for
-``spkg-check`` scripts; for example, the ``pycrypto`` ``spkg-check``
+``spkg-check`` scripts; for example, the ``scipy`` ``spkg-check``
 file contains the line ::
 
-    sage-python23 setup.py test
+    exec sage-python23 spkg-check.py
 
 
 .. _section-spkg-SPKG-txt:

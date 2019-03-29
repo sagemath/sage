@@ -68,7 +68,7 @@ def _pyrand():
 
         sage: from sage.misc.prandom import _pyrand
         sage: _pyrand()
-        <random.Random object at 0x...>
+        <...random.Random object at 0x...>
         sage: _pyrand().getrandbits(10)
         114L
     """

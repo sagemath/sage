@@ -18,7 +18,6 @@ TESTS::
     a^21 + 2*a^7*b^14
 
 """
-
 #################################################################
 #
 #   Sage: System for Algebra and Geometry Experimentation
@@ -67,6 +66,7 @@ class PolynomialRing_singular_repr:
     def _singular_(self, singular=singular):
         r"""
         Returns a singular ring for this polynomial ring.
+
         Currently `\QQ`, `{\rm GF}(p), {\rm GF}(p^n)`, `\CC`, `\RR`, `\ZZ` and
         `\ZZ/n\ZZ` are supported.
 
@@ -81,21 +81,23 @@ class PolynomialRing_singular_repr:
             sage: R.<x,y> = PolynomialRing(CC)
             sage: singular(R)
             polynomial ring, over a field, global ordering
-            //   coefficients: float[I](complex:15 digits, additional 0 digits)/(I^2+1)
-            //   number of vars : 2
+            // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1)
+            // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
             //        block   2 : ordering C
+
             sage: R.<x,y> = PolynomialRing(RealField(100))
             sage: singular(R)
             polynomial ring, over a field, global ordering
-            //   coefficients: float
-            //   number of vars : 2
+            // coefficients: Float()
+            // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
             //        block   2 : ordering C
 
             sage: w = var('w')
+
             sage: R.<x> = PolynomialRing(NumberField(w^2+1,'s'))
             sage: singular(R)
             polynomial ring, over a field, global ordering
@@ -176,6 +178,15 @@ class PolynomialRing_singular_repr:
             //   number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
+            //        block   2 : ordering C
+
+            sage: R = ZZ['x']
+            sage: singular(R)
+            polynomial ring, over a domain, global ordering
+            // coefficients: ZZ
+            // number of vars : 1
+            //        block   1 : ordering lp
+            //                  : names    x
             //        block   2 : ordering C
 
             sage: k.<a> = FiniteField(25)
@@ -340,6 +351,7 @@ class PolynomialRing_singular_repr:
 
         return self.__singular
 
+
 def can_convert_to_singular(R):
     """
     Returns True if this ring's base field or ring can be
@@ -354,6 +366,8 @@ def can_convert_to_singular(R):
 
         sage: from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
         sage: can_convert_to_singular(PolynomialRing(QQ, names=['x']))
+        True
+        sage: can_convert_to_singular(PolynomialRing(ZZ, names=['x']))
         True
 
         sage: can_convert_to_singular(PolynomialRing(QQ, names=[]))
@@ -392,6 +406,7 @@ def can_convert_to_singular(R):
     else:
         return False
 
+
 class Polynomial_singular_repr:
     """
     Implements coercion of polynomials to Singular polynomials.
@@ -408,6 +423,7 @@ class Polynomial_singular_repr:
 
     def _singular_init_func(self, singular=singular, have_ring=False):
         return _singular_init_func(self, singular, have_ring)
+
 
 def _singular_func(self, singular=singular, have_ring=False):
     """

@@ -422,7 +422,7 @@ cdef class PathAlgebraElement(RingElement):
             sage: P.inject_variables()
             Defining e_1, x, y, z
             sage: p = (x+2*z+1)^3
-            sage: list(sorted(p.monomial_coefficients().items()))
+            sage: sorted(p.monomial_coefficients().items())
             [(x*x*x, 1),
              (z*x*x, 2),
              (x*z*x, 2),

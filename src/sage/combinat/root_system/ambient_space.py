@@ -122,7 +122,7 @@ class AmbientSpace(CombinatorialFreeModule):
         D = T.symmetrizer()
         alpha = self.simple_roots()
         for C in T.dynkin_diagram().connected_components():
-            tester.assertEquals(len( set( alpha[i].scalar(alpha[i]) / D[i] for i in C ) ), 1)
+            tester.assertEqual(len( set( alpha[i].scalar(alpha[i]) / D[i] for i in C ) ), 1)
 
     # FIXME: attribute or method?
     def dimension(self):
@@ -143,7 +143,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
     @classmethod
     def smallest_base_ring(cls, cartan_type=None):
-        """
+        r"""
         Return the smallest ground ring over which the ambient space can be realized.
 
         This class method will get called with the Cartan type as
@@ -263,7 +263,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
     @cached_method
     def fundamental_weight(self, i):
-        """
+        r"""
         Returns the fundamental weight `\Lambda_i` in ``self``
 
         In several of the ambient spaces, it is more convenient to

@@ -36,7 +36,7 @@ def ChessboardGraphGenerator(dim_list,
     This function allows to generate many kinds of graphs corresponding to legal
     movements on a `d`-dimensional chessboard: Queen Graph, King Graph, Knight
     Graphs, Bishop Graph, and many generalizations. It also allows to avoid
-    redondant code.
+    redundant code.
 
     INPUT:
 
@@ -84,7 +84,7 @@ def ChessboardGraphGenerator(dim_list,
         sage: G.is_isomorphic( graphs.CompleteGraph(4) )
         True
 
-    A Rook's Graph in 2 dimensions is isomporphic to the Cartesian product of 2
+    A Rook's Graph in 2 dimensions is isomorphic to the Cartesian product of 2
     complete graphs::
 
         sage: G, _ = graphs.ChessboardGraphGenerator( [3,4], rook=True, rook_radius=None, bishop=False, knight=False )

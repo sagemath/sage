@@ -25,7 +25,13 @@ export SAGE_LOCAL="@prefix@"
 export CONFIGURED_CC="@CC@"
 export CONFIGURED_CXX="@CXX@"
 export CONFIGURED_FC="@FC@"
-export CONFIGURED_OBJC="@OBJ@"
+export CONFIGURED_OBJC="@OBJC@"
 export CONFIGURED_OBJCXX="@OBJCXX@"
 
-
+#######################################
+# Other configuration
+#######################################
+export SAGE_PYTHON_VERSION=@SAGE_PYTHON_VERSION@
+if [ "$SAGE_PYTHON_VERSION" = 3 ]; then
+    export SAGE_PYTHON3=yes
+fi

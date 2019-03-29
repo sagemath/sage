@@ -146,7 +146,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         INPUT:
 
-        - ``i`` -- An integer peresenting the index.
+        - ``i`` -- An integer, the index.
         - ``xy`` -- An object to store as `i`-th element of the array ``self[i]``.
 
         EXAMPLES::

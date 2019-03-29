@@ -30,6 +30,7 @@ for further details.
 
 from sage.categories.filtered_modules import FilteredModulesCategory
 from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
 
 class FilteredModulesWithBasis(FilteredModulesCategory):
     r"""
@@ -113,6 +114,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
         # If F = (f_i)_{i\in I} is a family, should ``F.subset(degree = 3)``
         # be the elements of F of degree 3 or those whose index is of degree 3?
 
+        @cached_method
         def basis(self, d=None):
             r"""
             Return the basis for (the ``d``-th homogeneous component
@@ -787,7 +789,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             .. SEEALSO:: :meth:`homogeneous_degree`
 
-            EXAMPLES:
+            EXAMPLES::
 
                 sage: A = ModulesWithBasis(ZZ).Filtered().example()
                 sage: x = A(Partition((3,2,1)))
@@ -844,7 +846,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             return max(degree_on_basis(m) for m in self.support())
 
         def homogeneous_component(self, n):
-            """
+            r"""
             Return the homogeneous component of degree ``n`` of the
             element ``self``.
 

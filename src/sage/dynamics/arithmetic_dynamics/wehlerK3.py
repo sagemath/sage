@@ -114,7 +114,8 @@ def random_WehlerK3Surface(PP):
             Q += BR.random_element() * CR.gen(a[0]) * CR.gen(a[1]) * CR.gen(3+b[0]) * CR.gen(3+b[1])
     #We can always change coordinates to make L diagonal
     L = CR.gen(0) * CR.gen(3) + CR.gen(1) * CR.gen(4) + CR.gen(2) * CR.gen(5)
-    return(WehlerK3Surface([L,Q]))
+    return WehlerK3Surface([L, Q])
+
 
 class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
     r"""
@@ -446,7 +447,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             + 4*x1^2*y1*y2 + x0*x1*y2^2 + 3*x2^2*y2^2
             sage: Y = x0*y0 + x1*y1 + x2*y2
             sage: X = WehlerK3Surface([Z, Y])
-            sage: T = PP(1, 1, 0, 1, 0, 0);
+            sage: T = PP(1, 1, 0, 1, 0, 0)
             sage: X.Lxa(T[0])
             y0 + y1
         """
@@ -458,7 +459,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         PSYC = PSY.coordinate_ring()
         #Define projection homomorphism
         p = ASC.hom([a[0],a[1],a[2]] + list(PSY.gens()), PSYC)
-        return((p(self.L)))
+        return p(self.L)
 
     def Qxa(self, a):
         r"""
@@ -483,7 +484,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
            - 4*x1*x2*y0*y2 + 7*x0^2*y1*y2 + 4*x1^2*y1*y2 + x0*x1*y2^2 + 3*x2^2*y2^2 \
            sage: Y = x0*y0 + x1*y1 + x2*y2
            sage: X = WehlerK3Surface([Z, Y])
-           sage: T = PP(1, 1, 0, 1, 0, 0);
+           sage: T = PP(1, 1, 0, 1, 0, 0)
            sage: X.Qxa(T[0])
            5*y0^2 + 7*y0*y1 + y1^2 + 11*y1*y2 + y2^2
         """
@@ -495,7 +496,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         PSYC = PSY.coordinate_ring()
         #Define projection homomorphism
         p = ASC.hom([a[0], a[1], a[2]] + list(PSY.gens()), PSYC)
-        return(p(self.Q))
+        return p(self.Q)
 
     def Sxa(self, a):
         r"""
@@ -522,7 +523,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
            sage: Y = x0*y0 + x1*y1 + x2*y2
            sage: Y = x0*y0 + x1*y1 + x2*y2
            sage: X = WehlerK3Surface([Z, Y])
-           sage: T = PP(1, 1, 0, 1, 0, 0);
+           sage: T = PP(1, 1, 0, 1, 0, 0)
            sage: X.Sxa(T[0])
              Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               y0 + y1,
@@ -558,7 +559,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
            sage: Y = x0*y0 + x1*y1 + x2*y2
            sage: Y = x0*y0 + x1*y1 + x2*y2
            sage: X = WehlerK3Surface([Z, Y])
-           sage: T = PP(1, 1, 0, 1, 0, 0);
+           sage: T = PP(1, 1, 0, 1, 0, 0)
            sage: X.Lyb(T[1])
              x0
         """
@@ -595,7 +596,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             + 4*x1^2*y1*y2 + x0*x1*y2^2 + 3*x2^2*y2^2
             sage: Y = x0*y0 + x1*y1 + x2*y2
             sage: X = WehlerK3Surface([Z, Y])
-            sage: T = PP(1, 1, 0, 1, 0, 0);
+            sage: T = PP(1, 1, 0, 1, 0, 0)
             sage: X.Qyb(T[1])
             x0^2 + 3*x0*x1 + x1^2
         """
@@ -631,7 +632,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
            + 4*x1^2*y1*y2 + x0*x1*y2^2 + 3*x2^2*y2^2
            sage: Y = x0 * y0 + x1 * y1 + x2 * y2
            sage: X = WehlerK3Surface([Z, Y])
-           sage: T = PP(1, 1, 0, 1, 0, 0);
+           sage: T = PP(1, 1, 0, 1, 0, 0)
            sage: X.Syb(T[1])
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x0,
@@ -979,7 +980,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 X = self.change_ring(GF(p))
                 if not X.is_degenerate():
                     bad_primes.remove(p)
-        return(bad_primes)
+        return bad_primes
 
     def is_smooth(self):
         r"""
@@ -1115,11 +1116,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 except (TypeError, NotImplementedError, AttributeError):
                     raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(P, self))
         pt = list(P[0]) + [0, 0, 0]
-        if(P[1][0] != 0):
+        if P[1][0] != 0:
             [a,b,c] = [P[1][0]*self.Gpoly(1, 0)(*pt),\
                        -1*P[1][0]*self.Hpoly(1, 0, 1)(*pt) - P[1][1]*self.Gpoly(1, 0)(*pt),\
                        -P[1][0]*self.Hpoly(1, 0, 2)(*pt) - P[1][2]*self.Gpoly(1, 0)(*pt)]
-        elif(P[1][1] != 0):
+        elif P[1][1] != 0:
             [a,b,c] = [-1*P[1][1]*self.Hpoly(1, 0, 1)(*pt)-P[1][0]*self.Gpoly(1, 1)(*pt),\
                         P[1][1]*self.Gpoly(1, 1)(*pt),\
                        -P[1][1]*self.Hpoly(1, 1, 2)(*pt)-P[1][2]*self.Gpoly(1, 1)(*pt)]
@@ -1357,11 +1358,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 except (TypeError, NotImplementedError, AttributeError):
                     raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(P, self))
         pt = [0, 0, 0] + list(P[1])
-        if(P[0][0] != 0):
+        if P[0][0] != 0:
             [a, b, c] = [P[0][0]*self.Gpoly(0, 0)(*pt), \
                       -1*P[0][0]*self.Hpoly(0, 0, 1)(*pt) - P[0][1]*self.Gpoly(0, 0)(*pt), \
                       -P[0][0]*self.Hpoly(0, 0, 2)(*pt) - P[0][2]*self.Gpoly(0, 0)(*pt)]
-        elif(P[0][1] != 0):
+        elif P[0][1] != 0:
             [a, b, c] = [-1*P[0][1]*self.Hpoly(0, 0, 1)(*pt) - P[0][0]*self.Gpoly(0, 1)(*pt),\
                        P[0][1]*self.Gpoly(0, 1)(*pt), \
                        -P[0][1]*self.Hpoly(0, 1, 2)(*pt) - P[0][2]*self.Gpoly(0, 1)(*pt)]
@@ -1848,7 +1849,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         h = self.lambda_plus(P, 0, N, m, n, prec)
         for p in badprimes:
             h += self.lambda_plus(P, p, N, m, n, prec)
-        return(h)
+        return h
 
     def canonical_height_minus(self, P, N, badprimes=None, prec=100):
         r"""
@@ -1912,7 +1913,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         h = self.lambda_minus(P, 0, N, m, n, prec)
         for p in badprimes:
             h += self.lambda_minus(P, p, N, m, n, prec)
-        return(h)
+        return h
 
     def canonical_height(self, P, N, badprimes=None, prec=100):
         r"""
@@ -1964,8 +1965,8 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         """
         if badprimes is None:
             badprimes = self.degenerate_primes()
-        return(self.canonical_height_plus(P, N,badprimes,prec) +
-               self.canonical_height_minus(P, N,badprimes,prec))
+        return (self.canonical_height_plus(P, N, badprimes, prec) +
+                self.canonical_height_minus(P, N, badprimes, prec))
 
     def fiber(self, p, component):
         r"""
@@ -2077,7 +2078,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                     Points.append([A2, One, C2] + P)
             else:
                 return []
-        elif(self.Gpoly(component, 2)(P0) != 0):
+        elif self.Gpoly(component, 2)(P0) != 0:
             T0 = (self.Hpoly(component, 0, 2)(P0)**2 - 4*self.Gpoly(component, 0)(P0)*self.Gpoly(component, 2)(P0))
             T1 = (self.Hpoly(component, 1, 2)(P0)**2 - 4*self.Gpoly(component, 1)(P0)*self.Gpoly(component, 2)(P0))
             if (T0.is_square() and T1.is_square()):
@@ -2099,7 +2100,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                     Points.append([A2, B2, One] + P)
             else:
                 return []
-        elif(self.Hpoly(component, 0, 1)(P0) != 0):
+        elif self.Hpoly(component, 0, 1)(P0) != 0:
             if component == 1:
                 Points.append(P+[Zero, One, Zero])
                 Points.append(P+[-self.Hpoly(component, 0, 1)(P0),Zero,-self.Hpoly(component, 1, 2)(P0)])
@@ -2110,14 +2111,14 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 Points.append([-self.Hpoly(component, 0, 1)(P0),Zero,-self.Hpoly(component, 1, 2)(P0)] + P)
                 Points.append([One,Zero,Zero]+P)
                 Points.append([Zero,-self.Hpoly(component, 0, 1)(P0),-self.Hpoly(component, 0, 2)(P0)] + P)
-        elif(self.Hpoly(component, 0, 2)(P0) != 0):
+        elif self.Hpoly(component, 0, 2)(P0) != 0:
             if component == 1:
                 Points.append(P+[Zero, Zero, One])
                 Points.append(P+[-self.Hpoly(component, 0, 2)(P0),-self.Hpoly(component, 1, 2)(P0), Zero])
             else:
                 Points.append([Zero, Zero, One]+P)
                 Points.append([-self.Hpoly(component, 0, 2)(P0),-self.Hpoly(component, 1, 2)(P0), Zero]+  P)
-        elif(self.Hpoly(component, 1, 2)(P0) != 0):
+        elif self.Hpoly(component, 1, 2)(P0) != 0:
             if component == 1:
                 Points.append(P + [Zero, Zero, One])
                 Points.append(P + [Zero, One, Zero])
@@ -2133,7 +2134,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 Y = self.point(x, False)
                 if not Y in fiber:
                     fiber.append(Y)
-        return(fiber)
+        return fiber
 
     def nth_iterate_phi(self, P, n, **kwds):
         r"""
@@ -2189,16 +2190,16 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             n = ZZ(n)
         except TypeError:
             raise TypeError("iterate number must be an integer")
-        #Since phi and psi and inveerses and automorphism
+        #Since phi and psi are inverses and automorphisms
         if n < 0:
-            return(self.nth_iterate_psi(P, abs(n), **kwds))
+            return self.nth_iterate_psi(P, abs(n), **kwds)
         if n == 0:
-            return(self)
+            return self
         else:
             Q = self.phi(P, **kwds)
             for i in range(2, n+1):
                 Q = self.phi(Q, **kwds)
-            return(Q)
+            return Q
 
     def nth_iterate_psi(self, P, n, **kwds):
         r"""
@@ -2245,14 +2246,14 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             raise TypeError("iterate number must be an integer")
         #Since phi and psi and inverses
         if n < 0:
-            return(self.nth_iterate_phi(P, abs(n), **kwds))
+            return self.nth_iterate_phi(P, abs(n), **kwds)
         if n == 0:
-            return(self)
+            return self
         else:
             Q = self.psi(P, **kwds)
             for i in range(2, n+1):
                 Q = self.psi(Q, **kwds)
-            return(Q)
+            return Q
 
     def orbit_phi(self,P,N, **kwds):
         r"""
@@ -2302,7 +2303,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         if N[0] < 0 or N[1] < 0:
             raise TypeError("orbit bounds must be non-negative")
         if N[0] > N[1]:
-            return([])
+            return []
         Q = self(copy(P))
         for i in range(1, N[0] + 1):
             Q = self.phi(Q, **kwds)
@@ -2358,7 +2359,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         if N[0] < 0 or N[1] < 0:
             raise TypeError("orbit bounds must be non-negative")
         if N[0] > N[1]:
-            return([])
+            return []
         Q = self(copy(P))
         for i in range(1, N[0] + 1):
             Q = self.psi(Q, **kwds)
@@ -2452,7 +2453,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             if P[0] == Q[0] or P[1] == Q[1]:
                 sym = True
             i += 1
-        return(sym)
+        return sym
 
 
 class WehlerK3Surface_field( WehlerK3Surface_ring):
@@ -2494,20 +2495,20 @@ class WehlerK3Surface_finite_field( WehlerK3Surface_field):
         for i in getPx1():
             for j in getPx1():
                 A = i + j
-                if(self.L(A) == 0 and self.Q(A) == 0):
+                if self.L(A) == 0 and self.Q(A) == 0:
                     Count += 1
             for k in getPx2():
                 A = i + k
-                if(self.L(A) == 0 and self.Q(A) == 0):
+                if self.L(A) == 0 and self.Q(A) == 0:
                     Count += 1
             B = i + Ypoint
-            if(self.L(B) == 0 and self.Q(B) == 0):
+            if self.L(B) == 0 and self.Q(B) == 0:
                 Count += 1
         #Create all possible Px2 Values
         for i in getPx2():
             for j in getPx1():
                 A = i + j
-                if (self.L(A) == 0 and self.Q(A) == 0):
+                if self.L(A) == 0 and self.Q(A) == 0:
                     Count += 1
             for k in getPx2():
                 A = i + k

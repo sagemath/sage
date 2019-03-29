@@ -258,12 +258,16 @@ cdef class UniqueFactory(SageObject):
 
     The factory only knows about the pickling protocol used by new style
     classes. Hence, again, pickling and unpickling fails to use the cache,
-    even though the "factory data" are now available::
+    even though the "factory data" are now available (this is not the case
+    on Python 3 which *only* has new style classes)::
 
-        sage: loads(dumps(d)) is d
+        sage: loads(dumps(d)) is d  # py2
         False
         sage: d._factory_data
-        (<class '__main__.MyFactory'>, (...), (2,), {'impl': 'D'})
+        (<__main__.MyFactory object at ...>,
+         (...),
+         (2,),
+         {'impl': 'D'})
 
     Only when we have a new style class that can be weak referenced and allows
     for attribute assignment, everything works::
@@ -274,10 +278,11 @@ cdef class UniqueFactory(SageObject):
         sage: loads(dumps(e)) is e
         True
         sage: e._factory_data
-        (<class '__main__.MyFactory'>, (...), (3,), {'impl': None})
-
+        (<__main__.MyFactory object at ...>,
+         (...),
+         (3,),
+         {'impl': None})
     """
-
     cdef readonly _name
     cdef readonly _cache
 
@@ -344,12 +349,12 @@ cdef class UniqueFactory(SageObject):
             sage: from sage.structure.test_factory import test_factory
             sage: _ = test_factory(1,2,3); _
             Making object (1, 2, 3)
-            <sage.structure.test_factory.A instance at ...>
+            <sage.structure.test_factory.A object at ...>
 
         It already created one, so don't re-create::
 
             sage: test_factory(1,2,3)
-            <sage.structure.test_factory.A instance at ...>
+            <sage.structure.test_factory.A object at ...>
             sage: test_factory(1,2,3) is test_factory(1,2,3)
             True
 
@@ -374,7 +379,7 @@ cdef class UniqueFactory(SageObject):
             sage: from sage.structure.test_factory import test_factory
             sage: a = test_factory.get_object(3.0, 'a', {}); a
             Making object a
-            <sage.structure.test_factory.A instance at ...>
+            <sage.structure.test_factory.A object at ...>
             sage: test_factory.get_object(3.0, 'a', {}) is test_factory.get_object(3.0, 'a', {})
             True
             sage: test_factory.get_object(3.0, 'a', {}) is test_factory.get_object(3.1, 'a', {})
@@ -488,12 +493,12 @@ cdef class UniqueFactory(SageObject):
             sage: from sage.structure.test_factory import test_factory
             sage: test_factory.create_object(0, (1,2,3))
             Making object (1, 2, 3)
-            <sage.structure.test_factory.A instance at ...>
+            <sage.structure.test_factory.A object at ...>
             sage: test_factory('a')
             Making object ('a',)
-            <sage.structure.test_factory.A instance at ...>
+            <sage.structure.test_factory.A object at ...>
             sage: test_factory('a') # NOT called again
-            <sage.structure.test_factory.A instance at ...>
+            <sage.structure.test_factory.A object at ...>
         """
         raise NotImplementedError
 
@@ -544,7 +549,7 @@ cdef class UniqueFactory(SageObject):
             Making object (1, 2)
             sage: test_factory.reduce_data(a)
             (<built-in function generic_factory_unpickle>,
-             (<class 'sage.structure.test_factory.UniqueFactoryTester'>,
+             (<sage.structure.test_factory.UniqueFactoryTester object at ...>,
               (...),
               (1, 2),
               {}))
@@ -564,7 +569,7 @@ def register_factory_unpickle(name, callable):
 
     :class:`UniqueFactory` pickles use a global name through
     :func:`generic_factory_unpickle()`, so the usual
-    :func:`~sage.structure.sage_object.register_unpickle_override()`
+    :func:`~sage.misc.persist.register_unpickle_override()`
     cannot be used here.
 
     .. SEEALSO::
@@ -754,5 +759,5 @@ def lookup_global(name):
     return getattr(all, name)
 
 
-# To make the pickle jar happy:
+# Old imports required for unpickling old pickles
 from sage.structure.test_factory import test_factory

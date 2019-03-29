@@ -48,7 +48,6 @@ Verify that the Airy functions are solutions to the differential equation::
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
-from sage.functions.other import gamma
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_double import RDF
 from sage.rings.rational import Rational as R
@@ -193,6 +192,7 @@ class FunctionAiryAiSimple(BuiltinFunction):
             sage: airy_ai_simple(1.0 * I)
             0.331493305432141 - 0.317449858968444*I
         """
+        from .gamma import gamma
         if x == 0:
             r = ZZ(2) / 3
             return 1 / (3 ** (r) * gamma(r))
@@ -293,6 +293,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
             sage: airy_ai_prime(0.0)
             -0.258819403792807
         """
+        from .gamma import gamma
         if x == 0:
             r = ZZ(1) / 3
             return -1 / (3 ** (r) * gamma(r))
@@ -625,6 +626,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
             sage: airy_bi_simple(1.0 * I)
             0.648858208330395 + 0.344958634768048*I
         """
+        from .gamma import gamma
         if x == 0:
             one_sixth = ZZ(1) / 6
             return 1 / (3 ** (one_sixth) * gamma(4 * one_sixth))
@@ -725,6 +727,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
             sage: airy_bi_prime(0.0)
             0.448288357353826
         """
+        from .gamma import gamma
         if x == 0:
             one_sixth = ZZ(1) / 6
             return 3 ** (one_sixth) / gamma(2 * one_sixth)

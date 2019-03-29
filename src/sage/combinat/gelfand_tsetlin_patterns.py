@@ -248,7 +248,7 @@ class GelfandTsetlinPattern(ClonableArray):
 
     @combinatorial_map(name='to semistandard tableau')
     def to_tableau(self):
-        """
+        r"""
         Return ``self`` as a semistandard Young tableau.
 
         The conversion from a Gelfand-Tsetlin pattern to a semistandard Young

@@ -22,7 +22,6 @@ from __future__ import absolute_import
 #*****************************************************************************
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from .pow_computer_ext import PowComputer_ext_maker
 from .pow_computer_flint import PowComputer_flint_maker
@@ -119,7 +118,7 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
         EXAMPLES::
 
             sage: R.<a> = ZqCR(27,10000); R #indirect doctest
-            Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 10000 over 3-adic Ring
+            3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
 
             sage: R.<a> = ZqCR(next_prime(10^30)^3, 3); R.prime()
             1000000000000000000000000000057
@@ -177,7 +176,7 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
         EXAMPLES::
 
             sage: R.<a> = Qq(27,10000); R #indirect doctest
-            Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 10000 over 3-adic Field
+            3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
 
             sage: R.<a> = Qq(next_prime(10^30)^3, 3); R.prime()
             1000000000000000000000000000057
@@ -203,6 +202,32 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
             from .qadic_flint_CR import pAdicCoercion_ZZ_CR, pAdicCoercion_QQ_CR
             self.register_coercion(pAdicCoercion_ZZ_CR(self))
             self.register_coercion(pAdicCoercion_QQ_CR(self))
+
+    def _coerce_map_from_(self, R):
+        r"""
+        Return a coercion from ``R`` into this ring or ``True`` if the default
+        conversion map can be used to perform a coercion.
+
+        EXAMPLES::
+
+            sage: R.<a> = QqCR(27)
+            sage: R.coerce_map_from(ZqCR(27,names='a')) # indirect doctest
+            Ring morphism:
+              From: 3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
+              To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
+            sage: R.coerce_map_from(ZqCA(27,names='a')) # indirect doctest
+            Ring morphism:
+              From: 3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
+              To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
+        """
+        if isinstance(R, UnramifiedExtensionRingCappedRelative) and R.fraction_field() is self:
+           from sage.rings.padics.qadic_flint_CR import pAdicCoercion_CR_frac_field
+           return pAdicCoercion_CR_frac_field(R, self)
+        if isinstance(R, UnramifiedExtensionRingCappedAbsolute) and R.fraction_field() is self:
+           from sage.rings.padics.qadic_flint_CA import pAdicCoercion_CA_frac_field
+           return pAdicCoercion_CA_frac_field(R, self)
+
+        return super(UnramifiedExtensionFieldCappedRelative, self)._coerce_map_from_(R)
 
 class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCappedAbsoluteRingGeneric):
     """
@@ -236,7 +261,7 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
         EXAMPLES::
 
             sage: R.<a> = ZqCA(27,10000); R #indirect doctest
-            Unramified Extension in a defined by x^3 + 2*x + 1 with capped absolute precision 10000 over 3-adic Ring
+            3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
 
             sage: R.<a> = ZqCA(next_prime(10^30)^3, 3); R.prime()
             1000000000000000000000000000057
@@ -268,7 +293,7 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
     TESTS::
 
         sage: R.<a> = ZqFM(27,10000)
-        sage: TestSuite(R).run(skip='_test_log',max_runs=4)
+        sage: TestSuite(R).run(skip='_test_log',max_runs=4) # long time
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
         """
@@ -294,7 +319,7 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
         EXAMPLES::
 
             sage: R.<a> = ZqFM(27,10000); R #indirect doctest
-            Unramified Extension in a defined by x^3 + 2*x + 1 of fixed modulus 3^10000 over 3-adic Ring
+            3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
 
             sage: R.<a> = ZqFM(next_prime(10^30)^3, 3); R.prime()
             1000000000000000000000000000057
@@ -356,7 +381,7 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
         EXAMPLES::
 
             sage: R.<a> = ZqFP(27,10000); R #indirect doctest
-            Unramified Extension in a defined by x^3 + 2*x + 1 with floating precision 10000 over 3-adic Ring
+            3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
             sage: R.<a> = ZqFP(next_prime(10^30)^3, 3); R.prime()
             1000000000000000000000000000057
 
@@ -380,6 +405,7 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
         from .qadic_flint_FP import pAdicCoercion_ZZ_FP, pAdicConvert_QQ_FP
         self.register_coercion(pAdicCoercion_ZZ_FP(self))
         self.register_conversion(pAdicConvert_QQ_FP(self))
+
 
 class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFloatingPointFieldGeneric):
     """
@@ -412,7 +438,7 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
         EXAMPLES::
 
             sage: R.<a> = QqFP(27,10000); R #indirect doctest
-            Unramified Extension in a defined by x^3 + 2*x + 1 with floating precision 10000 over 3-adic Field
+            3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
             sage: R.<a> = Qq(next_prime(10^30)^3, 3); R.prime()
             1000000000000000000000000000057
         """
@@ -429,6 +455,25 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
         from .qadic_flint_FP import pAdicCoercion_ZZ_FP, pAdicCoercion_QQ_FP
         self.register_coercion(pAdicCoercion_ZZ_FP(self))
         self.register_coercion(pAdicCoercion_QQ_FP(self))
+
+    def _coerce_map_from_(self, R):
+        r"""
+        Return a coercion from ``R`` into this ring or ``True`` if the default
+        conversion map can be used to perform a coercion.
+
+        EXAMPLES::
+
+            sage: R.<a> = QqFP(27)
+            sage: R.coerce_map_from(ZqFP(27,names='a')) # indirect doctest
+            Ring morphism:
+              From: 3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
+              To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
+        """
+        if isinstance(R, UnramifiedExtensionRingFloatingPoint) and R.fraction_field() is self:
+            from sage.rings.padics.qadic_flint_FP import pAdicCoercion_FP_frac_field
+            return pAdicCoercion_FP_frac_field(R, self)
+
+        return super(UnramifiedExtensionFieldFloatingPoint, self)._coerce_map_from_(R)
 
 class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCappedRelativeRingGeneric):
     """
@@ -463,7 +508,7 @@ class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCap
 
             sage: R = Zp(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
             sage: W.<w> = R.ext(f); W #indirect doctest
-            Eisenstein Extension in w defined by x^3 + 9*x - 3 with capped relative precision 30000 over 3-adic Ring
+            3-adic Eisenstein Extension Ring in w defined by x^3 + 9*x - 3
             sage: W.precision_cap()
             30000
 
@@ -518,7 +563,7 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
 
             sage: R = Qp(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
             sage: W.<w> = R.ext(f); W #indirect doctest
-            Eisenstein Extension in w defined by x^3 + 9*x - 3 with capped relative precision 30000 over 3-adic Field
+            3-adic Eisenstein Extension Field in w defined by x^3 + 9*x - 3
             sage: W.precision_cap()
             30000
 
@@ -574,7 +619,7 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
 
             sage: R = ZpCA(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
             sage: W.<w> = R.ext(f); W
-            Eisenstein Extension in w defined by x^3 + 9*x - 3 with capped absolute precision 30000 over 3-adic Ring
+            3-adic Eisenstein Extension Ring in w defined by x^3 + 9*x - 3
             sage: W.precision_cap()
             30000
 
@@ -629,7 +674,7 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
 
             sage: R = ZpFM(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
             sage: W.<w> = R.ext(f); W #indirect doctest
-            Eisenstein Extension in w defined by x^3 + 9*x - 3 of fixed modulus w^30000 over 3-adic Ring
+            3-adic Eisenstein Extension Ring in w defined by x^3 + 9*x - 3
             sage: W.precision_cap()
             30000
 

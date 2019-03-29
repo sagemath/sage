@@ -17,7 +17,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu> and
 #                     William Stein <wstein@math.ucsd.edu>
 #
@@ -30,8 +30,8 @@ AUTHORS:
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 
 from . import category
@@ -210,9 +210,10 @@ cdef class Functor(SageObject):
             True
             sage: F.codomain()
             Category of rings
-
         """
-        return _Functor_unpickle, (self.__class__, self.__dict__.items(), self.__domain, self.__codomain)
+        return (_Functor_unpickle,
+                (self.__class__, list(self.__dict__.items()),
+                 self.__domain, self.__codomain))
 
     def _apply_functor(self, x):
         """
@@ -261,7 +262,7 @@ cdef class Functor(SageObject):
                             Ring endomorphism of Finite Field in a of size 5^2
                               Defn: a |--> 4*a + 1
             sage: fF((a^2+a)*t^2/(a*t - a^2))
-            3*a*t^2/((4*a + 1)*t + a + 1)
+            ((4*a + 2)*t^2)/(t + a + 4)
 
         """
         try:
@@ -381,7 +382,7 @@ cdef class Functor(SageObject):
         if is_Morphism(x):
             return self._apply_functor_to_morphism(x)
         y = self._apply_functor(self._coerce_into_domain(x))
-        if not ((y in self.__codomain) or (y in self.__codomain.hom_category())):
+        if not ((y in self.__codomain) or (y in self.__codomain.Homsets())):
             raise TypeError("%s is ill-defined, since it sends x (=%s) to something that is not in %s." % (repr(self), x, self.__codomain))
         return y
 
@@ -483,10 +484,10 @@ class ForgetfulFunctor_generic(Functor):
             The forgetful functor from Category of finite enumerated fields to Category of fields
 
         """
-        return "The forgetful functor from %s to %s"%(
-            self.domain(), self.codomain())
+        return "The forgetful functor from %s to %s" % (self.domain(),
+                                                        self.codomain())
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         NOTE:
 
@@ -512,15 +513,27 @@ class ForgetfulFunctor_generic(Functor):
             sage: F2 = QQ.construction()[0]
             sage: F1 == F2 #indirect doctest
             False
-
         """
         from sage.categories.pushout import IdentityConstructionFunctor
-        if not isinstance(other, (self.__class__,IdentityConstructionFunctor)):
-            return -1
-        if self.domain() == other.domain() and \
-           self.codomain() == other.codomain():
-            return 0
-        return -1
+        if not isinstance(other, (self.__class__, IdentityConstructionFunctor)):
+            return False
+        return (self.domain() == other.domain() and
+                self.codomain() == other.codomain())
+
+    def __ne__(self, other):
+        """
+        Return whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: F1 = ForgetfulFunctor(FiniteFields(),Fields())
+            sage: F1 != F1
+            False
+            sage: F1 != QQ
+            True
+        """
+        return not self ==  other
+
 
 class IdentityFunctor_generic(ForgetfulFunctor_generic):
     """

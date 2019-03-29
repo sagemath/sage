@@ -341,7 +341,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         return ZZq(d)
 
     def parabolic_kazhdan_lusztig_polynomial(self, u, v, J, constant_term_one=True):
-        """
+        r"""
         Return the parabolic Kazhdan-Lusztig polynomial `P_{u,v}^{-,J}`.
 
         INPUT:
@@ -540,7 +540,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         length = __len__
 
         def bruhat_le(self, v):
-            """
+            r"""
             Return whether ``self`` `\le` ``v`` in Bruhat order.
 
             EXAMPLES::

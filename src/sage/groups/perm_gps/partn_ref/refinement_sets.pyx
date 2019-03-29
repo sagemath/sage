@@ -378,17 +378,15 @@ def sets_isom_py(generators, set1, set2):
         False
         sage: sets_isom_py([[2,3,0,1]], [0,1,3], [1,2,3])
         [2, 3, 0, 1]
-
-
     """
-    from sage.misc.misc import uniq
-    set1 = uniq(set1)
-    set2 = uniq(set2)
-    if len(generators) == 0:
+    set1 = set(set1)
+    set2 = set(set2)
+    if not generators:
         if set1 == set2:
             return list(xrange(max(set1) + 1))
         else:
             return False
+
     cdef int i, j, n = len(generators[0]), n_gens = len(generators)
     cdef StabilizerChain *supergroup = SC_new(n)
     cdef int *gens = <int *> sig_malloc(n*n_gens * sizeof(int))

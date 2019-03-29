@@ -87,8 +87,6 @@ Miscellaneous
 .. toctree::
    :maxdepth: 2
 
-   sage/repl/readline_extra_commands
-
    sage/repl/interpreter
    sage/repl/ipython_extension
    sage/repl/interface_magic

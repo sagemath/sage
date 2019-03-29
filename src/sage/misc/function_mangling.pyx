@@ -110,7 +110,7 @@ cdef class ArgumentFixer:
         sage: class one:
         ....:    def __init__(self, x = 1):
         ....:       self.x = x
-        sage: af = ArgumentFixer(one.__init__.__func__, classmethod=True)
+        sage: af = ArgumentFixer(one.__init__, classmethod=True)
         sage: af.fix_to_pos(1,2,3,a=31,b=2,n=3)
         ((1, 2, 3), (('a', 31), ('b', 2), ('n', 3)))
 
@@ -272,16 +272,17 @@ cdef class ArgumentFixer:
         EXAMPLES::
 
             sage: from sage.misc.function_mangling import ArgumentFixer
-            sage: def do_something(a,b,c=3,*args,**kwargs):
-            ....:     print("{} {} {} {} {}".format(a,b,c, args, kwargs))
+            sage: def do_something(a, b, c=3, *args, **kwargs):
+            ....:     print("{} {} {} {} {}".format(a, b, c, args,
+            ....:                                   sorted(kwargs.items())))
             sage: AF = ArgumentFixer(do_something)
-            sage: A,K = AF.fix_to_pos(1,2,3,4,5,6,f=14,e=16)
+            sage: A, K = AF.fix_to_pos(1, 2, 3, 4, 5, 6, f=14, e=16)
             sage: print("{} {}".format(A, K))
             (1, 2, 3, 4, 5, 6) (('e', 16), ('f', 14))
-            sage: do_something(*A,**dict(K))
-            1 2 3 (4, 5, 6) {'e': 16, 'f': 14}
-            sage: do_something(1,2,3,4,5,6,f=14,e=16)
-            1 2 3 (4, 5, 6) {'e': 16, 'f': 14}
+            sage: do_something(*A, **dict(K))
+            1 2 3 (4, 5, 6) [('e', 16), ('f', 14)]
+            sage: do_something(1, 2, 3, 4, 5, 6, f=14, e=16)
+            1 2 3 (4, 5, 6) [('e', 16), ('f', 14)]
         """
         return self.fix_to_pos_args_kwds(args, kwds)
 

@@ -14,7 +14,6 @@ Affine Crystals
 
 from sage.misc.abstract_method import abstract_method
 from sage.categories.loop_crystals import RegularLoopCrystals
-from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper

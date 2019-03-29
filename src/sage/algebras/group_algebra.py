@@ -7,15 +7,15 @@ TESTS:
 
 Check that unpicking old group algebra classes work::
 
-sage: G = loads("x\x9cM\xceM\n\xc20\x10\x86a\xac\xff\xf1$n\xb2\xf1\x04\x82"
-....:           "\xe8>\xe0:\xc4fL\x83i\xda\x99$K\xc1M\xf5\xdaj\x1a\xc1\xdd<"
-....:           "\xf0\xbd0\x8f\xaa\x0e\xca\x00\x0f\x91R\x1d\x13\x01O\xdeb\x02I"
-....:           "\xd0\x13\x04\xf0QE\xdby\x96<\x81N50\x9c\x8c\x81r\x06.\xa4\x027"
-....:           "\xd4\xa5^\x16\xb2\xd3W\xfb\x02\xac\x9a\xb2\xce\xa3\xc0{\xa0V"
-....:           "\x9ar\x8c\xa1W-hv\xb0\rhR.\xe7\x0c\xa7cE\xd6\x9b\xc0\xad\x8f`"
-....:           "\x80X\xabn \x7f\xc0\xd9y\xb2\x1b\x04\xce\x87\xfb\x0b\x17\x02"
-....:           "\x97\xff\x05\xe5\x9f\x95\x93W\x0bN3Qx\xcc\xc2\xd5V\xe0\xfa\xf9"
-....:           "\xc9\x98\xc0\r\x7f\x03\x9d\xd7^'")
+sage: G = loads(b"x\x9cM\xceM\n\xc20\x10\x86a\xac\xff\xf1$n\xb2\xf1\x04\x82"
+....:           b"\xe8>\xe0:\xc4fL\x83i\xda\x99$K\xc1M\xf5\xdaj\x1a\xc1\xdd<"
+....:           b"\xf0\xbd0\x8f\xaa\x0e\xca\x00\x0f\x91R\x1d\x13\x01O\xdeb\x02I"
+....:           b"\xd0\x13\x04\xf0QE\xdby\x96<\x81N50\x9c\x8c\x81r\x06.\xa4\x027"
+....:           b"\xd4\xa5^\x16\xb2\xd3W\xfb\x02\xac\x9a\xb2\xce\xa3\xc0{\xa0V"
+....:           b"\x9ar\x8c\xa1W-hv\xb0\rhR.\xe7\x0c\xa7cE\xd6\x9b\xc0\xad\x8f`"
+....:           b"\x80X\xabn \x7f\xc0\xd9y\xb2\x1b\x04\xce\x87\xfb\x0b\x17\x02"
+....:           b"\x97\xff\x05\xe5\x9f\x95\x93W\x0bN3Qx\xcc\xc2\xd5V\xe0\xfa\xf9"
+....:           b"\xc9\x98\xc0\r\x7f\x03\x9d\xd7^'")
 sage: G
 Algebra of Dihedral group of order 6 as a permutation group over Rational Field
 sage: type(G)
@@ -43,8 +43,9 @@ from sage.categories.sets_cat import Sets
 from sage.categories.morphism import SetMorphism
 from sage.combinat.free_module import CombinatorialFreeModule
 
+
 def GroupAlgebra(G, R=IntegerRing()):
-    """
+    r"""
     Return the group algebra of `G` over `R`.
 
     INPUT:
@@ -62,7 +63,7 @@ def GroupAlgebra(G, R=IntegerRing()):
         sage: A = GroupAlgebra(G, R); A
         Algebra of Dihedral group of order 6 as a permutation group over Rational Field
         sage: a = A.an_element(); a
-        () + 4*(1,2,3) + 2*(1,3)
+        () + (1,2) + 3*(1,2,3) + 2*(1,3,2)
 
     This space is endowed with an algebra structure, obtained by extending
     by bilinearity the multiplication of `G` to a multiplication on `RG`::
@@ -70,7 +71,7 @@ def GroupAlgebra(G, R=IntegerRing()):
         sage: A in Algebras
         True
         sage: a * a
-        5*() + 8*(2,3) + 8*(1,2) + 8*(1,2,3) + 16*(1,3,2) + 4*(1,3)
+        14*() + 5*(2,3) + 2*(1,2) + 10*(1,2,3) + 13*(1,3,2) + 5*(1,3)
 
     :func:`GroupAlgebra` is just a short hand for a more general
     construction that covers, e.g., monoid algebras, additive group
@@ -175,21 +176,6 @@ class GroupAlgebra_class(CombinatorialFreeModule):
 
             sage: ZG.coerce_map_from(QG)
 
-        This coercion when restricting the group is unexpected::
-
-            sage: QH.coerce_map_from(QG)
-            Generic morphism:
-              From: Algebra of Dihedral group of order 6 as a permutation group over Rational Field
-              To:   Algebra of Cyclic group of order 3 as a permutation group over Rational Field
-
-        but is induced by the partial coercion at the level of
-        the groups::
-
-            sage: H.coerce_map_from(G)
-            Call morphism:
-              From: Dihedral group of order 6 as a permutation group
-              To:   Cyclic group of order 3 as a permutation group
-
         There is no coercion for additive groups since ``+`` could mean
         both the action (i.e., the group operation) or adding a term::
 
@@ -216,6 +202,6 @@ class GroupAlgebra_class(CombinatorialFreeModule):
                 return SetMorphism(S.Hom(self, category=self.category() | S.category()),
                                    lambda x: self.sum_of_terms( (hom_G(g), hom_K(c)) for g,c in x ))
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.algebras.group_algebras', 'GroupAlgebra',  GroupAlgebra_class)
 

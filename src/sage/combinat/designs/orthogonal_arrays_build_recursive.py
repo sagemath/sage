@@ -383,11 +383,11 @@ def OA_and_oval(q):
     # We build the TD by relabelling the point set, and removing those which
     # contain x.
     r = {}
-    B = list(B)
-    # (this is to make sure that the first set containing x in B is the one
-    # which contains no other oval point)
 
-    B.sort(key=lambda b:int(any([xx in oval for xx in b])))
+    # Make sure that the first set containing x in B is the one
+    # which contains no other oval point
+    B = sorted(B, key=lambda b: any(xx in oval for xx in b))
+
     BB = []
     for b in B:
         if x in b:
@@ -540,7 +540,7 @@ def construction_q_x(k,q,x,check=True,explain_construction=False):
     PBD = [[relabel[xx] for xx in B if not xx in points_to_delete] for B in TD]
 
     # Taking the unique block of size x+2
-    assert map(len,PBD).count(x+2)==1
+    assert list(map(len,PBD)).count(x+2)==1
     for B in PBD:
         if len(B) == x+2:
             break
@@ -694,7 +694,7 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
     assert G_set[0] == G.zero() and G_set[1] == G.one(), "problem with the ordering of {}".format(G)
     G_to_int = {v:i for i,v in enumerate(G_set)}
 
-    # Builds an OA(n+1,n) whose last n-1 colums are
+    # Builds an OA(n+1,n) whose last n-1 columns are
     #
     # \forall x \in G and x!=0, C_x(i,j) = i+x*j
     #
@@ -803,13 +803,14 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
 
     q = n
     K = FiniteField(q, 'x')
-    relabel = {x:i for i,x in enumerate(K)}
-    PG = DesarguesianProjectivePlaneDesign(q,check=False,point_coordinates=False).blocks(copy=False)
+    relabel = {x: i for i, x in enumerate(K)}
+    PG = DesarguesianProjectivePlaneDesign(q, check=False,
+                                           point_coordinates=False).blocks()
 
     if q % 3 == 0:
         t = K.one()
-    elif q%3 == 1:
-        t = K.multiplicative_generator()**((q-1)//3)
+    elif q % 3 == 1:
+        t = K.multiplicative_generator()**((q - 1)//3)
     else:
         raise ValueError("q(={}) must be congruent to 0 or 1 mod 3".format(q))
 
@@ -972,13 +973,13 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
         Three-factor product with n=8.9.9 from:
            Peter J. Dukes, Alan C.H. Ling,
            A three-factor product construction for mutually orthogonal latin squares,
-           http://arxiv.org/abs/1401.1466
+           https://arxiv.org/abs/1401.1466
 
     REFERENCE:
 
     .. [DukesLing14] A three-factor product construction for mutually orthogonal latin squares,
       Peter J. Dukes, Alan C.H. Ling,
-      http://arxiv.org/abs/1401.1466
+      :arxiv:`1401.1466`
 
     .. [Rees00] Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side,
       Rolf S. Rees,
@@ -994,7 +995,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
         return ("Three-factor product with n={}.{}.{} from:\n"+
                 "   Peter J. Dukes, Alan C.H. Ling,\n"+
                 "   A three-factor product construction for mutually orthogonal latin squares,\n"+
-                "   http://arxiv.org/abs/1401.1466").format(n1,n2,n3)
+                "   https://arxiv.org/abs/1401.1466").format(n1, n2, n3)
 
     def assert_c_partition(classs,k,n,c):
         r"""

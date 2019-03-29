@@ -1320,7 +1320,8 @@ class Function_Struve_H(BuiltinFunction):
         if diff_param == 0:
             raise ValueError("cannot differentiate struve_H in the first parameter")
 
-        from sage.functions.other import sqrt, gamma
+        from .gamma import gamma
+        from .other import sqrt
         return (z**a/(sqrt(pi)*2**a*gamma(a+Integer(3)/Integer(2)))-struve_H(a+1,z)+struve_H(a-1,z))/2
 
     def _print_latex_(self, a, z):
@@ -1434,7 +1435,8 @@ class Function_Struve_L(BuiltinFunction):
         if diff_param == 0:
             raise ValueError("cannot differentiate struve_L in the first parameter")
 
-        from sage.functions.other import sqrt, gamma
+        from .gamma import gamma
+        from .other import sqrt
         return (z**a/(sqrt(pi)*2**a*gamma(a+Integer(3)/Integer(2)))-struve_L(a+1,z)+struve_L(a-1,z))/2
 
     def _print_latex_(self, a, z):

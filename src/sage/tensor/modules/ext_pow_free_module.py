@@ -241,7 +241,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
         self._zero_element = 0 # provisory (to avoid infinite recursion
                                # in what follows)
         if name is None and fmodule._name is not None:
-            name = '/\^{}('.format(degree) + fmodule._name + ')'
+            name = r'/\^{}('.format(degree) + fmodule._name + ')'
         if latex_name is None and fmodule._latex_name is not None:
             latex_name = r'\Lambda^{' + str(degree) + r'}\left(' + \
                                        fmodule._latex_name + r'\right)'
@@ -620,7 +620,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
                 latex_name = fmodule._latex_name + r'^*'
         else:
             if name is None and fmodule._name is not None:
-                name = '/\^{}('.format(degree) + fmodule._name + '*)'
+                name = r'/\^{}('.format(degree) + fmodule._name + '*)'
             if latex_name is None and fmodule._latex_name is not None:
                 latex_name = r'\Lambda^{' + str(degree) + r'}\left(' + \
                              fmodule._latex_name + r'^*\right)'

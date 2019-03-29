@@ -117,12 +117,12 @@ class BackendEmacs(BackendIPythonCommandline):
         """
 
         if isinstance(rich_output, OutputPlainText):
-            return ({u'text/plain': rich_output.text.get()}, {})
+            return ({u'text/plain': rich_output.text.get_str()}, {})
         elif isinstance(rich_output, OutputAsciiArt):
-            return ({u'text/plain': rich_output.ascii_art.get()}, {})
+            return ({u'text/plain': rich_output.ascii_art.get_str()}, {})
         elif isinstance(rich_output, OutputLatex):
-            text = "BEGIN_TEXT:" + plain_text.text.get() + ":END_TEXT\nBEGIN_LATEX:" + \
-                   rich_output.latex.get() + ":END_LATEX"
+            text = "BEGIN_TEXT:" + plain_text.text.get_str() + ":END_TEXT\nBEGIN_LATEX:" + \
+                   rich_output.latex.get_str() + ":END_LATEX"
             return ({u'text/plain': text}, {})
 
         # TODO: perhaps handle these by returning the data inline,

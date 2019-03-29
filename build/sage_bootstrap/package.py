@@ -15,12 +15,12 @@ Sage Packages
 
 import re
 import os
-
 import logging
-log = logging.getLogger()
 
 from sage_bootstrap.env import SAGE_ROOT, SAGE_DISTFILES
 
+
+log = logging.getLogger()
 
 
 class Package(object):
@@ -148,6 +148,25 @@ class Package(object):
         return self.tarball_pattern.replace('VERSION', self.version)
 
     @property
+    def tarball_package(self):
+        """
+        Return the canonical package for the tarball
+
+        This is almost always equal to ``self`` except if the package
+        or the ``checksums.ini`` file is a symbolic link. In that case,
+        the package of the symbolic link is returned.
+
+        OUTPUT:
+
+        A ``Package`` instance
+        """
+        n = self.__tarball_package_name
+        if n == self.name:
+            return self
+        else:
+            return type(self)(n)
+
+    @property
     def version(self):
         """
         Return the version
@@ -211,6 +230,8 @@ class Package(object):
         self.__sha1 = result.get('sha1', None)
         self.__cksum = result.get('cksum', None)
         self.__tarball_pattern = result['tarball']
+        # Name of the directory containing the checksums.ini file
+        self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
         
     VERSION_PATCHLEVEL = re.compile('(?P<version>.*)\.p(?P<patchlevel>[0-9]+)')
     

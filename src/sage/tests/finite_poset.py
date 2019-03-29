@@ -5,30 +5,31 @@ bugs by testing random finite posets and lattices.
 As an examples: if a lattice is distributive, then it must be also
 modular, and if a poset is ranked, then the dual poset must also
 be ranked.
-
-.. TODO::
-
-    Currently only finite lattices have test function. Add some to
-    general posets too.
 """
+
+from sage.misc.prandom import randint
+from sage.misc.misc import attrcall
+from functools import reduce
+
 implications = {
  'doubling_convex': ['doubling_any'],
- 'doubling_interval': ['doubling_lower'],
- 'doubling_interval': ['doubling_upper'],
+ 'doubling_interval': ['doubling_lower', 'doubling_upper'],
  'doubling_lower': ['doubling_convex', 'meet_semidistributive'],
  'doubling_upper': ['doubling_convex', 'join_semidistributive'],
  'cosectionally_complemented': ['complemented', 'coatomic', 'regular'],
- 'distributive': ['modular', 'semidistributive', 'join_distributive', 'meet_distributive', 'subdirectly_reducible', 'doubling_interval'],
+ 'distributive': ['modular', 'semidistributive', 'join_distributive', 'meet_distributive', 'subdirectly_reducible', 'doubling_interval', 'extremal'],
  'geometric': ['upper_semimodular', 'relatively_complemented'],
  'isoform': ['uniform'],
  'join_distributive': ['meet_semidistributive', 'upper_semimodular'],
- 'join_semidistributive': ['join_pseudocomplemented'],
+ 'join_semidistributive': ['join_pseudocomplemented', 'interval_dismantlable'],
  'lower_semimodular': ['graded'],
  'meet_distributive': ['join_semidistributive', 'lower_semimodular'],
- 'meet_semidistributive': ['pseudocomplemented'],
+ 'meet_semidistributive': ['pseudocomplemented', 'interval_dismantlable'],
  'modular': ['upper_semimodular', 'lower_semimodular', 'supersolvable'],
  'orthocomplemented': ['self_dual', 'complemented'],
  'planar': ['dismantlable'],
+ 'dismantlable': ['sublattice_dismantlable'],
+ 'interval_dismantlable': ['sublattice_dismantlable'],
  'relatively_complemented': ['sectionally_complemented', 'cosectionally_complemented', 'isoform'],
  'sectionally_complemented': ['complemented', 'atomic', 'regular'],
  'semidistributive': ['join_semidistributive', 'meet_semidistributive'],
@@ -53,7 +54,8 @@ dual_properties = [
 selfdual_properties = ['distributive', 'modular', 'semidistributive', 'complemented',
  'relatively_complemented', 'orthocomplemented', 'uniq_orthocomplemented', 'supersolvable', 'planar',
  'dismantlable', 'vertically_decomposable', 'simple', 'isoform', 'uniform', 'regular',
-  'subdirectly_reducible', 'doubling_any', 'doubling_convex', 'doubling_interval']
+ 'subdirectly_reducible', 'doubling_any', 'doubling_convex', 'doubling_interval',
+ 'interval_dismantlable', 'interval_dismantlable']
 
 dual_elements = [
  ['atoms', 'coatoms'],
@@ -67,10 +69,14 @@ two_to_one = [ ['distributive', 'dismantlable', 'planar'],
                ['meet_semidistributive', 'join_semidistributive', 'semidistributive'],
                ['lower_semimodular', 'meet_semidistributive', 'distributive'],
                ['upper_semimodular', 'join_semidistributive', 'distributive'],
+               ['complemented', 'modular', 'relatively_complemented'],
              ]
 
 mutually_exclusive = [
  ['doubling_any', 'simple'],
+ ['vertically_decomposable', 'atomic'],
+ ['vertically_decomposable', 'coatomic'],
+ ['vertically_decomposable', 'regular'],
 ]
 
 set_inclusions = [
@@ -101,7 +107,6 @@ def test_attrcall(name, L):
         sage: N5.is_constructible_by_doublings('convex') == test_attrcall('is_doubling_convex', N5)
         True
     """
-    from sage.misc.misc import attrcall
     if name == 'is_doubling_any':
         return L.is_constructible_by_doublings('any')
     if name == 'is_doubling_lower':
@@ -153,12 +158,14 @@ def test_finite_lattice(L):
     from sage.misc.flatten import flatten
     from sage.misc.misc import attrcall
 
+    from sage.misc.sageinspect import sage_getargspec
+
     if L.cardinality() < 4:
         # Special cases should be tested in specific TESTS-sections.
         return None
 
-    all_props = set(implications.keys() + flatten(implications.values()))
-    P = {x: test_attrcall('is_'+x, L) for x in all_props}
+    all_props = set(list(implications) + flatten(implications.values()))
+    P = {x: test_attrcall('is_' + x, L) for x in all_props}
 
     ### Relations between boolean-valued properties ###
 
@@ -174,7 +181,7 @@ def test_finite_lattice(L):
         if P[p1] and P[p2]:
             raise ValueError("error: %s and %s should be impossible combination" % (p1, p2))
 
-    # Two-propery implications
+    # Two-property implications
     for p1, p2, p3 in two_to_one:
         if P[p1] and P[p2] and not P[p3]:
             raise ValueError("error: %s and %s, so should be %s" % (p1, p2, p3))
@@ -193,6 +200,18 @@ def test_finite_lattice(L):
             raise ValueError("dual elements error %s" % e1)
 
     ### Certificates ###
+
+    # Return value must be a pair with correct result as first element.
+    for p_ in all_props:
+        # Dirty fix first
+        if p_[:9] == 'doubling_' or p_[:5] == 'uniq_': continue
+        p = "is_"+p_
+        if 'certificate' in sage_getargspec(getattr(L, p)).args:
+            res = attrcall(p, certificate=True)(L)
+            if type(res) != type((1,2)) or len(res) != 2:
+                raise ValueError("certificate-option does not return a pair in %s" % p)
+            if P[p_] != res[0]:
+                raise ValueError("certificate-option changes result in %s" % p)
 
     # Test for "yes"-certificates
     if P['supersolvable']:
@@ -417,3 +436,180 @@ def test_finite_lattice(L):
     a = L.random_element(); b = L.random_element()
     if not L.sublattice([e, a, b]).is_distributive():
         raise ValueError("error in neutral_elements")
+
+def test_finite_poset(P):
+    """
+    Test several functions on a given finite poset.
+
+    The function contains tests of different kinds, for example
+
+    - Numerical properties jump number, dimension etc. can't be a bigger
+      in a subposet with one element less.
+    - "Dual tests", for example the dual of meet-semilattice must be a join-semilattice.
+    - Random tries: for example if the dimension of a poset is `k`, then it can't be the
+      intersection of `k-1` random linear extensions.
+
+    EXAMPLES::
+
+        sage: from sage.tests.finite_poset import test_finite_poset
+        sage: P = posets.RandomPoset(10, 0.15)
+        sage: test_finite_poset(P) is None  # Long time
+        True
+    """
+    from sage.combinat.posets.posets import Poset
+    from sage.combinat.subset import Subsets
+    from sage.misc.prandom import shuffle
+
+    from sage.misc.misc import attrcall
+
+    e = P.random_element()
+    P_one_less = P.subposet([x for x in P if x != e])
+
+    # Cardinality
+    if len(P) != P.cardinality():
+        raise ValueError("error 1 in cardinality")
+    if P.cardinality()-1 != P_one_less.cardinality():
+        raise ValueError("error 5 in cardinality")
+
+    # Height
+    h1 = P.height()
+    h2, chain = P.height(certificate=True)
+    if h1 != h2:
+        raise ValueError("error 1 in height")
+    if h1 != len(chain):
+        raise ValueError("error 2 in height")
+    if not P.is_chain_of_poset(chain):
+        raise ValueError("error 3 in height")
+    if len(P.random_maximal_chain()) > h1:
+        raise ValueError("error 4 in height")
+    if h1-P_one_less.height() not in [0, 1]:
+        raise ValueError("error 5 in height")
+
+    # Width
+    w1 = P.width()
+    w2, antichain = P.width(certificate=True)
+    if w1 != w2:
+        raise ValueError("error 1 in width")
+    if w1 != len(antichain):
+        raise ValueError("error 2 in width")
+    if not P.is_antichain_of_poset(antichain):
+        raise ValueError("error 3 in width")
+    if len(P.random_maximal_antichain()) > w1:
+        raise ValueError("error 4 in width")
+    if w1-P_one_less.width() not in [0, 1]:
+        raise ValueError("error 5 in width")
+
+    # Dimension
+    dim1 = P.dimension()
+    dim2, linexts = P.dimension(certificate=True)
+    if dim1 != dim2:
+        raise ValueError("error 1 in dimension")
+    if dim1 != len(linexts):
+        raise ValueError("error 2 in dimension")
+    P_ = Poset( (P.list(), lambda a, b: all(linext.index(a) < linext.index(b) for linext in linexts)) )
+    if P_ != Poset(P.hasse_diagram()):
+        raise ValueError("error 3 in dimension")
+    x = [P.random_linear_extension() for _ in range(dim1-1)]
+    P_ = Poset( (P.list(), lambda a, b: all(linext.index(a) < linext.index(b) for linext in x)) )
+    if P_ == Poset(P.hasse_diagram()):
+        raise ValueError("error 4 in dimension")
+    if dim1-P_one_less.dimension() < 0:
+        raise ValueError("error 5 in dimension")
+
+    # Jump number
+    j1 = P.jump_number()
+    j2, linext = P.jump_number(certificate=True)
+    if j1 != j2:
+        raise ValueError("error 1 in jump number")
+    if P.linear_extension(linext).jump_count() != j1:
+        raise ValueError("error 2 in jump number")
+    if not P.is_linear_extension(linext):
+        raise ValueError("error 3 in jump number")
+    if P.linear_extension(P.random_linear_extension()).jump_count() < j1:
+        raise ValueError("error 4 in jump number")
+    if j1-P_one_less.jump_number() not in [0, 1]:
+        raise ValueError("error 5 in jump number")
+
+    P_dual = P.dual()
+    selfdual_properties = ['chain', 'bounded', 'connected', 'graded', 'ranked', 'series_parallel', 'slender', 'lattice']
+    for prop in selfdual_properties:
+        f = attrcall('is_'+prop)
+        if f(P) != f(P_dual):
+            raise ValueError("error in self-dual property %s" % prop)
+    if P.is_graded():
+        if P.is_bounded():
+            if P.is_eulerian() != P_dual.is_eulerian():
+                raise ValueError("error in self-dual property eulerian")
+            if P.is_eulerian():
+                P_ = P.star_product(P)
+                if not P_.is_eulerian():
+                    raise("error in star product / eulerian")
+        chain1 = P.random_maximal_chain()
+        if len(chain1) != h1:
+            raise ValueError("error in is_graded")
+        if not P.is_ranked():
+            raise ValueError("error in is_ranked / is_graded")
+
+    if P.is_meet_semilattice() != P_dual.is_join_semilattice():
+        raise ValueError("error in meet/join semilattice")
+
+    if set(P.minimal_elements()) != set(P_dual.maximal_elements()):
+        raise ValueError("error in min/max elements")
+    if P.top() != P_dual.bottom():
+        raise ValueError("error in top/bottom element")
+
+    parts = P.connected_components()
+    P_ = Poset()
+    for part in parts:
+        P_ = P_.disjoint_union(part)
+    if not P.is_isomorphic(P_):
+        raise ValueError("error in connected components / disjoint union")
+    parts = P.ordinal_summands()
+    P_ = Poset()
+    for part in parts:
+        P_ = P_.ordinal_sum(part)
+    if not P.is_isomorphic(P_):
+        raise ValueError("error in ordinal summands / ordinal sum")
+
+    P_ = P.with_bounds().without_bounds()
+    if not P.is_isomorphic(P_):
+        raise ValueError("error in with bounds / without bounds")
+
+    P_ = P.completion_by_cuts().irreducibles_poset()
+    if not P.has_isomorphic_subposet(P_):
+        raise ValueError("error in completion by cuts / irreducibles poset")
+
+    P_ = P.subposet(Subsets(P).random_element())
+    if not P_.is_induced_subposet(P):
+        raise ValueError("error in subposet / is induced subposet")
+
+    if not P.is_linear_extension(P.random_linear_extension()):
+        raise ValueError("error in is linear extension")
+
+    x = list(P)
+    shuffle(x)
+    if not P.is_linear_extension(P.sorted(x)):
+        raise ValueError("error in sorted")
+
+    dil = P.dilworth_decomposition()
+    chain = dil[randint(0, len(dil)-1)]
+    if not P.is_chain_of_poset(chain):
+        raise ValueError("error in Dilworth decomposition")
+    lev = P.level_sets()
+    level = lev[randint(0, len(lev)-1)]
+    if not P.is_antichain_of_poset(level):
+        raise ValueError("error in level sets")
+
+    # certificate=True must return a pair
+    bool_with_cert = ['eulerian', 'greedy', 'join_semilattice',
+                      'jump_critical', 'meet_semilattice', 'slender']
+    for p in bool_with_cert:
+        try:  # some properties are not always defined for all posets
+            res1 = attrcall('is_'+p)(P)
+        except ValueError:
+            continue
+        res2 = attrcall('is_'+p, certificate=True)(P)
+        if type(res2) != type((1,2)) or len(res2) != 2:
+            raise ValueError("certificate-option does not return a pair in %s" % p)
+        if res1 != res2[0]:
+            raise ValueError("certificate-option changes result in %s" % p)

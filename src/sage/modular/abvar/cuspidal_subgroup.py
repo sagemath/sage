@@ -11,7 +11,7 @@ EXAMPLES: We compute the cuspidal subgroup of `J_1(13)`::
     sage: C = A.cuspidal_subgroup(); C
     Finite subgroup with invariants [19, 19] over QQ of Abelian variety J1(13) of dimension 2
     sage: C.gens()
-    [[(1/19, 0, 0, 9/19)], [(0, 1/19, 1/19, 18/19)]]
+    [[(1/19, 0, 9/19, 9/19)], [(0, 1/19, 0, 9/19)]]
     sage: C.order()
     361
     sage: C.invariants()
@@ -75,7 +75,7 @@ from sage.rings.all                 import infinity, QQ, ZZ
 from sage.matrix.all                import matrix
 from sage.modular.arithgroup.all    import is_Gamma0
 from sage.modular.cusps             import Cusp
-from sage.arith.all import gcd
+
 
 class CuspidalSubgroup_generic(FiniteSubgroup):
     def _compute_lattice(self, rational_only=False, rational_subgroup=False):
@@ -132,10 +132,10 @@ class CuspidalSubgroup_generic(FiniteSubgroup):
             sage: C._compute_lattice()
             Free module of degree 4 and rank 4 over Integer Ring
             Echelon basis matrix:
-            [ 1/19     0     0  9/19]
-            [    0  1/19  1/19 18/19]
-            [    0     0     1     0]
-            [    0     0     0     1]
+            [1/19    0 9/19 9/19]
+            [   0 1/19    0 9/19]
+            [   0    0    1    0]
+            [   0    0    0    1]
 
         We compute with and without the optional
         ``rational_only`` option.
@@ -173,7 +173,7 @@ class CuspidalSubgroup_generic(FiniteSubgroup):
             if not is_Gamma0(A.group()):
                 raise NotImplementedError('computation of rational cusps only implemented in Gamma0 case.')
             if not N.is_squarefree():
-                data = [n for n in range(2,N) if gcd(n,N) == 1]
+                data = [n for n in N.coprime_integers(N) if n >= 2]
                 C = [c for c in C if is_rational_cusp_gamma0(c, N, data)]
 
         v = [Amb([infinity, alpha]).element() for alpha in C]
@@ -186,6 +186,7 @@ class CuspidalSubgroup_generic(FiniteSubgroup):
         X = X.matrix_from_columns(range(Cusp.dimension()))
         lattice = X.row_module(ZZ) + A.lattice()
         return lattice
+
 
 class CuspidalSubgroup(CuspidalSubgroup_generic):
     """
@@ -343,9 +344,11 @@ class RationalCuspidalSubgroup(CuspidalSubgroup_generic):
             self.__lattice = lattice
             return lattice
 
+
 def is_rational_cusp_gamma0(c, N, data):
     """
     Return True if the rational number c is a rational cusp of level N.
+
     This uses remarks in Glenn Steven's Ph.D. thesis.
 
     INPUT:
@@ -376,7 +379,4 @@ def is_rational_cusp_gamma0(c, N, data):
     """
     num = c.numerator()
     den = c.denominator()
-    for d in data:
-        if not c.is_gamma0_equiv(Cusp(num,d*den), N):
-            return False
-    return True
+    return all(c.is_gamma0_equiv(Cusp(num, d * den), N) for d in data)

@@ -21,6 +21,7 @@ from sage.functions.all import sqrt
 from sage.rings.real_mpfr import (RealField, is_RealField)
 from sage.rings.rational_field import is_RationalField
 from sage.sets.set import Set
+from pprint import pformat
 
 ################################################################################
 ################################################################################
@@ -95,11 +96,12 @@ class DiscreteRandomVariable(RandomVariable_generic):
             return RR(self._function[x])
         except KeyError:
             # Need some condition for x being a valid domain element:
-            #    raise IndexError, "Argument x (= %s) is not a valid domain element." % x
+            #    raise IndexError("Argument x (= %s) is not a valid domain element." % x)
             return RR(0)
 
     def __repr__(self):
-        return "Discrete random variable defined by %s" % self._function
+        F = pformat(self._function)
+        return "Discrete random variable defined by %s" % F
 
     def function(self):
         """
@@ -294,6 +296,7 @@ class ProbabilitySpace_generic(RandomVariable_generic):
     def domain(self):
         return self._domain
 
+
 class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
     r"""
     The discrete probability space
@@ -308,15 +311,17 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
 
             sage: S = [ i for i in range(16) ]
             sage: P = {}
-                   sage: for i in range(15): P[i] = 2^(-i-1)
-            sage: P[15] = 2^-16
+            sage: for i in range(15): P[i] = 2^(-i-1)
+            sage: P[15] = 2^-15
             sage: X = DiscreteProbabilitySpace(S,P)
+            sage: sum(X.function().values())
+            1
             sage: X.domain()
             (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
             sage: X.set()
             {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
             sage: X.entropy().n()
-            1.99972534179688
+            1.99993896484375
 
         A probability space can be defined on any list of elements::
 
@@ -325,7 +330,7 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             sage: P = { 'A':1/2, 'B':1/4, 'C':1/4 }
             sage: X = DiscreteProbabilitySpace(S,P)
             sage: X
-            Discrete probability space defined by {'A': 1/2, 'C': 1/4, 'B': 1/4}
+            Discrete probability space defined by {'A': 1/2, 'B': 1/4, 'C': 1/4}
             sage: X.entropy().n()
             1.50000000000000
         """
@@ -334,18 +339,28 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
         if not is_RealField(codomain) and not is_RationalField(codomain):
             raise TypeError("Argument codomain (= %s) must be the reals or rationals" % codomain)
         if check:
-            one = sum([ P[x] for x in P.keys() ])
+            one = sum(P.values())
             if is_RationalField(codomain):
                 if not one == 1:
                     raise TypeError("Argument P (= %s) does not define a probability function")
             else:
-                if not Abs(one-1) < 2^(-codomain.precision()+1):
+                if not abs(one - 1) < 2 ** (-codomain.precision() + 1):
                     raise TypeError("Argument P (= %s) does not define a probability function")
         ProbabilitySpace_generic.__init__(self, X, codomain)
         DiscreteRandomVariable.__init__(self, self, P, codomain, check)
 
     def __repr__(self):
-        return "Discrete probability space defined by %s" % self.function()
+        """
+        TESTS::
+
+            sage: S = list(range(4))
+            sage: P = {i: 2^(-i-1) for i in range(3)}
+            sage: P[4] = 2^-3
+            sage: DiscreteProbabilitySpace(S,P)
+            Discrete probability space defined by {0: 1/2, 1: 1/4, 2: 1/8, 4: 1/8}
+        """
+        F = pformat(self.function())
+        return "Discrete probability space defined by %s" % F
 
     def set(self):
         r"""

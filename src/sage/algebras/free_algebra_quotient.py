@@ -13,7 +13,9 @@ different implementation. See
 :mod:`~sage.algebras.letterplace.free_algebra_letterplace` and
 :mod:`~sage.rings.quotient_ring`.
 
-TESTS::
+TESTS:
+
+::
 
     sage: n = 2
     sage: A = FreeAlgebra(QQ,n,'x')
@@ -28,6 +30,17 @@ TESTS::
     True
     sage: i == loads(dumps(i))
     True
+
+Test comparison by equality::
+
+    sage: HQ = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0]
+    sage: HZ = sage.algebras.free_algebra_quotient.hamilton_quatalg(ZZ)[0]
+    sage: HQ == HQ
+    True
+    sage: HQ == HZ
+    False
+    sage: HZ == QQ
+    False
 """
 
 #*****************************************************************************
@@ -140,29 +153,6 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
         self.__matrix_action = mats
         self.__monomial_basis = mons # elements of free monoid
         Algebra.__init__(self, R, names, normalize=True)
-
-    def __eq__(self, right):
-        """
-        Return True if all defining properties of self and right match up.
-
-        EXAMPLES::
-
-            sage: HQ = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0]
-            sage: HZ = sage.algebras.free_algebra_quotient.hamilton_quatalg(ZZ)[0]
-            sage: HQ == HQ
-            True
-            sage: HQ == HZ
-            False
-            sage: HZ == QQ
-            False
-        """
-        return isinstance(right, FreeAlgebraQuotient) and \
-               self.ngens() == right.ngens() and \
-               self.rank() == right.rank() and \
-               self.module() == right.module() and \
-               self.matrix_action() == right.matrix_action() and \
-               self.monomial_basis() == right.monomial_basis()
-
 
     def _element_constructor_(self, x):
         """
@@ -282,6 +272,9 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
 
     def monomial_basis(self):
         """
+        The free monoid of generators of the algebra as elements of a free
+        monoid.
+
         EXAMPLES::
 
             sage: sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0].monomial_basis()
@@ -321,18 +314,6 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             Free monoid on 3 generators (i0, i1, i2)
         """
         return self.__free_algebra.monoid()
-
-    def monomial_basis(self):
-        """
-        The free monoid of generators of the algebra as elements of a free
-        monoid.
-
-       EXAMPLES::
-
-            sage: sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0].monomial_basis()
-            (1, i0, i1, i2)
-        """
-        return self.__monomial_basis
 
     def free_algebra(self):
         """

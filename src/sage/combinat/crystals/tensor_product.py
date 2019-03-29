@@ -47,7 +47,7 @@ from .letters import CrystalOfLetters
 from .spins import CrystalOfSpins, CrystalOfSpinsMinus, CrystalOfSpinsPlus
 from sage.combinat.crystals.tensor_product_element import (TensorProductOfCrystalsElement,
         TensorProductOfRegularCrystalsElement, CrystalOfTableauxElement,
-        TensorProductOfSuperCrystalsElement)
+        TensorProductOfSuperCrystalsElement, TensorProductOfQueerSuperCrystalsElement)
 from sage.misc.flatten import flatten
 from sage.structure.element import get_coercion_model
 
@@ -404,9 +404,8 @@ class TensorProductOfCrystals(CrystalOfWords):
         return FullTensorProductOfCrystals(tp, cartan_type=cartan_type)
 
     # add options to class
-    options=GlobalOptions('TensorProductOfCrystals', 
-        module='sage.combinat.crystals',
-        doc=r"""
+    class options(GlobalOptions):
+        r"""
         Sets the global options for tensor products of crystals. The default is to
         use the anti-Kashiwara convention.
 
@@ -414,8 +413,8 @@ class TensorProductOfCrystals(CrystalOfWords):
         and the difference between the two is the order of the tensor factors
         are reversed. This affects both the input and output. See the example
         below.
-        """,
-        end_doc=r"""
+
+        @OPTIONS@
 
         .. NOTE::
 
@@ -443,14 +442,15 @@ class TensorProductOfCrystals(CrystalOfWords):
             sage: T(C(2), C(1)) == elt
             True
             sage: crystals.TensorProduct.options._reset()
-        """,
-        convention=dict(default="antiKashiwara",
+        """
+        NAME = 'TensorProductOfCrystals'
+        module = 'sage.combinat.crystals'
+        convention = dict(default="antiKashiwara",
                         description='Sets the convention used for displaying/inputting tensor product of crystals',
                         values=dict(antiKashiwara='use the anti-Kashiwara convention',
                                     Kashiwara='use the Kashiwara convention'),
                             alias=dict(anti="antiKashiwara", opposite="antiKashiwara"),
                             case_sensitive=False)
-    )
 
     def _element_constructor_(self, *crystalElements):
         """
@@ -645,6 +645,47 @@ class FullTensorProductOfSuperCrystals(FullTensorProductOfCrystals):
     class Element(TensorProductOfSuperCrystalsElement):
         pass
 
+class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals):
+    r"""
+    Tensor product of queer super crystals.
+    """
+    @cached_method
+    def index_set(self):
+        """
+        Return the enlarged index set.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q',3])
+            sage: T = tensor([Q,Q])
+            sage: T.index_set()
+            (-4, -3, -2, -1, 1, 2)
+        """
+        n = self.cartan_type().n
+        return tuple(range(-2*n,0)) + tuple(range(1,n+1))
+
+    @cached_method
+    def _long_element(self):
+        r"""
+        Return the long element in `S_n`.
+
+        This method is used in the construction of the crystal operators
+        `e_i` and `f_i`.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q', 4])
+            sage: T = tensor([Q,Q,Q,Q])
+            sage: T._long_element()
+            (3, 2, 1, 3, 2, 3)
+        """
+        from sage.combinat.permutation import Permutations
+        n = self.cartan_type().n
+        return tuple(Permutations(n+1).long_element().reduced_word())
+
+    class Element(TensorProductOfQueerSuperCrystalsElement):
+        pass
+
 #########################################################
 ## Crystal of tableaux
 
@@ -674,7 +715,7 @@ class CrystalOfTableaux(CrystalOfWords):
     have this property.
 
     Crystals of tableaux are constructed using an embedding into
-    tensor products following Kashiwara and Nakashima [KN94]_. Sage's tensor
+    tensor products following Kashiwara and Nakashima [KN1994]_. Sage's tensor
     product rule for crystals differs from that of Kashiwara and Nakashima
     by reversing the order of the tensor factors. Sage produces the same
     crystals of tableaux as Kashiwara and Nakashima. With Sage's convention,

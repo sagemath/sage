@@ -202,13 +202,15 @@ class DedekindEtaModularPolynomialDatabase(ModularPolynomialDatabase):
     """
     model = "Eta"
 
+
 class DedekindEtaModularCorrespondenceDatabase(ModularCorrespondenceDatabase):
-    """
+    r"""
     The database of modular correspondences in $X_0(p) \times X_0(p)$, where
     the model of the curves $X_0(p) = \Bold{P}^1$ are specified by quotients of
     Dedekind's eta function.
     """
     model = "EtaCrr"
+
 
 class AtkinModularPolynomialDatabase(ModularPolynomialDatabase):
     """

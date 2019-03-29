@@ -183,8 +183,9 @@ def get_basis_name(basis, p, generic=None):
 ######################################################
 # profile functions
 
+
 def is_valid_profile(profile, truncation_type, p=2, generic=None):
-    """
+    r"""
     True if ``profile``, together with ``truncation_type``, is a valid
     profile at the prime `p`.
 
@@ -294,8 +295,9 @@ def is_valid_profile(profile, truncation_type, p=2, generic=None):
                         return False
     return True
 
+
 def normalize_profile(profile, precision=None, truncation_type='auto', p=2, generic=None):
-    """
+    r"""
     Given a profile function and related data, return it in a standard form,
     suitable for hashing and caching as data defining a sub-Hopf
     algebra of the Steenrod algebra.

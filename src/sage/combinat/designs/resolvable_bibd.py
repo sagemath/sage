@@ -32,7 +32,7 @@ References:
    A survey of Kirkman triple systems and related designs,
    Volume 92, Issues 1-3, 17 November 1991, Pages 371-393,
    Discrete Mathematics,
-   http://dx.doi.org/10.1016/0012-365X(91)90294-C.
+   :doi:`10.1016/0012-365X(91)90294-C`
 
 .. [RCW71] \D. K. Ray-Chaudhuri, R. M. Wilson,
    Solution of Kirkman's schoolgirl problem,
@@ -439,7 +439,7 @@ def PBD_4_7(v,check=True, existence=False):
 
         sage: from sage.combinat.designs.resolvable_bibd import PBD_4_7
         sage: PBD_4_7(22)
-        Pairwise Balanced Design on 22 points with sets of sizes in set([4, 7])
+        Pairwise Balanced Design on 22 points with sets of sizes in [4, 7]
 
     TESTS:
 
@@ -699,14 +699,14 @@ def PBD_4_7_from_Y(gdd,check=True):
 
         sage: from sage.combinat.designs.resolvable_bibd import PBD_4_7_from_Y
         sage: PBD_4_7_from_Y(designs.transversal_design(7,8))
-        Pairwise Balanced Design on 169 points with sets of sizes in set([4, 7])
+        Pairwise Balanced Design on 169 points with sets of sizes in [4, 7]
 
     TESTS::
 
         sage: PBD_4_7_from_Y(designs.balanced_incomplete_block_design(10,10))
         Traceback (most recent call last):
         ...
-        ValueError: The GDD should only contain blocks of size {4,5,7} but there are other: set([10])
+        ValueError: The GDD should only contain blocks of size {4,5,7} but there are other: [10]
         sage: PBD_4_7_from_Y(designs.transversal_design(4,3))
         Traceback (most recent call last):
         ...
@@ -716,9 +716,10 @@ def PBD_4_7_from_Y(gdd,check=True):
     from .bibd import PairwiseBalancedDesign
     block_sizes = set(map(len,gdd._blocks))
     group_sizes = set(map(len,gdd._groups))
-    if not block_sizes.issubset([4,5,7]):
+    if not block_sizes.issubset([4, 5, 7]):
+        txt = list(block_sizes.difference([4, 5, 7]))
         raise ValueError("The GDD should only contain blocks of size {{4,5,7}} "
-                         "but there are other: {}".format(block_sizes.difference([4,5,7])))
+                         "but there are other: {}".format(txt))
 
     for gs in group_sizes:
         if not PBD_4_7(3*gs+1,existence=True):

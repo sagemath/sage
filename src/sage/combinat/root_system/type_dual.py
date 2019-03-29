@@ -1,15 +1,14 @@
 """
 Root system data for dual Cartan types
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-2009 Anne Schilling <anne at math.ucdavis.edu>
 #       Copyright (C) 2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
 
 from sage.misc.misc import attrcall
 from sage.misc.cachefunc import cached_method
@@ -311,6 +310,18 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
         """
         return not (self == other)
 
+    def __hash__(self):
+        """
+        Compute the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: B41 = CartanType(['B', 4, 1])
+            sage: B41dual = CartanType(['B', 4, 1]).dual()
+            sage: h = hash(B41dual)
+        """
+        return hash(self._type)
+
     def dual(self):
         """
         EXAMPLES::
@@ -592,7 +603,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
                     return 'A%s^2'%(self.classical().rank()*2-1)
                 return "['A', %s, 2]"%(self.classical().rank()*2-1)
             elif self._type.type() == 'BC':
-                dual_str = '+'
+                dual_str = '+'  # UNUSED ?
             elif self._type.type() == 'C':
                 if compact:
                     return 'D%s^2'%(self.rank())
@@ -642,7 +653,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
                 return "E_6^{(2)}"
         result = self._type._latex_()
         import re
-        if re.match(".*\^{\(\d\)}$", result):
+        if re.match(r".*\^{\(\d\)}$", result):
             return "%s%s}"%(result[:-1], self.options('dual_latex'))
         else:
             return "{%s}^%s"%(result, self.options('dual_latex'))

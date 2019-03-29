@@ -14,11 +14,7 @@ Benkart-Kang-Kashiwara crystals for the general-linear Lie superalgebra
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-
 from sage.categories.regular_supercrystals import RegularSuperCrystals
 from sage.combinat.partition import _Partitions
 from sage.combinat.root_system.cartan_type import CartanType
@@ -80,7 +76,6 @@ class CrystalOfBKKTableaux(CrystalOfWords):
         self._shape = shape
         self._cartan_type = ct
         m = ct.m + 1
-        n = ct.n + 1
         C = CrystalOfBKKLetters(ct)
         tr = shape.conjugate()
         mg = []
@@ -134,8 +129,8 @@ class CrystalOfBKKTableaux(CrystalOfWords):
             sage: B.genuine_highest_weight_vectors()
             ([[-2, -2, -2], [-1, -1], [1]],)
             sage: B.highest_weight_vectors()
-            ([[-2, -2, -2], [-1, 2], [1]],
-             [[-2, -2, -2], [-1, -1], [1]],
+            ([[-2, -2, -2], [-1, -1], [1]],
+             [[-2, -2, -2], [-1, 2], [1]],
              [[-2, -2, 2], [-1, -1], [1]])
         """
         if index_set is None or index_set == self.index_set():

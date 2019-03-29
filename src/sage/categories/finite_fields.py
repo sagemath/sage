@@ -91,21 +91,6 @@ class FiniteFields(CategoryWithAxiom):
         raise TypeError("unable to canonically associate a finite field to %s"%x)
         # TODO: local dvr ring?
 
-    #@lazy_attribute
-    #def element_class(self):
-    #    """
-    #    A common super class for all elements of finite fields
-    #
-    #    EXAMPLES::
-    #
-    #        sage: C = FiniteFields().element_class; C
-    #        <type 'sage.rings.finite_rings.element_base.FiniteFieldElement'>
-    #        sage: type(C)
-    #        <... 'type'>
-    #    """
-    #    from sage.rings.finite_rings.element_base import FiniteFieldElement
-    #    return FiniteFieldElement
-
     class ParentMethods:
         pass
 

@@ -265,7 +265,7 @@ class PseudolineArrangement:
 
             seq = deepcopy(seq)
             self._n = len(seq)
-            ordering = range(self._n)
+            ordering = list(range(self._n))
 
             self._permutations = [[] for i in range(self._n)]
 

@@ -97,6 +97,27 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             X.extended_codomain()._check_satisfies_equations(v)
         self._coords = tuple(v)
 
+    def __hash__(self):
+        r"""
+        Computes the hash value of this affine point.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: hash(A([1, 1]))
+            1300952125                      # 32-bit
+            3713081631935493181             # 64-bit
+        
+        ::
+
+            sage: A.<x,y,z> = AffineSpace(CC, 3)
+            sage: pt = A([1, 2, -i])
+            sage: hash(pt) == hash(tuple(pt))
+            True
+
+        """
+        return hash(tuple(self))
+
     def nth_iterate(self, f, n):
         r"""
         Returns the point `f^n(self)`
@@ -260,6 +281,29 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
         return(phi(self))
 
 class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
+
+    def __hash__(self):
+       r"""
+       Computes the hash value of this affine point.
+
+       EXAMPLES::
+
+           sage: A.<x,y> = AffineSpace(QQ, 2)
+           sage: X = A.subscheme(x - y)
+           sage: hash(X([1, 1]))
+           1300952125                      # 32-bit
+           3713081631935493181             # 64-bit
+       
+       ::
+
+           sage: A.<x,y> = AffineSpace(QQ, 2)
+           sage: X = A.subscheme(x^2 - y^3)
+           sage: pt = X([1, 1])
+           sage: hash(pt) == hash(tuple(pt))
+           True
+
+       """
+       return hash(tuple(self)) 
 
     def weil_restriction(self):
         r"""
@@ -435,7 +479,7 @@ class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field
         """
         p = self.codomain().base_ring().order()
         N = self.codomain().ambient_space().dimension_relative()
-        return sum(hash(self[i])*p**i for i in range(N))
+        return int(sum(hash(self[i])*p**i for i in range(N)))
 
     def orbit_structure(self, f):
         r"""

@@ -59,8 +59,8 @@ cdef extern from "io.h" namespace "io":
 ##############
 #    Type    #
 ##############
-cdef extern from "type.h" namespace "type":
-    cdef cppclass c_Type "type::Type":
+cdef extern from "type.h":
+    cdef cppclass c_Type "coxeter::Type":
         c_Type()
         c_Type(char* s)
         c_String name()
@@ -106,8 +106,8 @@ cdef extern from "list.h" namespace "list":
 ###################
 #     CoxGroup    #
 ###################
-cdef extern from "coxgroup.h" namespace "coxgroup":
-    cdef cppclass c_CoxGroup "coxgroup::CoxGroup":
+cdef extern from "coxgroup.h":
+    cdef cppclass c_CoxGroup "coxeter::CoxGroup":
         c_CoxGroup()
         c_CoxGroup(c_Type t, Rank r)
 

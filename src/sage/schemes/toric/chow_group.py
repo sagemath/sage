@@ -69,7 +69,7 @@ EXAMPLES::
     (Z, C7, C2 x C2 x Z^5, Z)
     sage: A.degree(2).ngens()
     7
-    sage: a = sum( A.gen(i) * (i+1) for i in range(0,A.ngens()) )   # an element of A
+    sage: a = sum( A.gen(i) * (i+1) for i in range(A.ngens()) )   # an element of A
     sage: a  # long time (2s on sage.math, 2011)
     ( 3 | 1 mod 7 | 0 mod 2, 1 mod 2, 4, 5, 6, 7, 8 | 9 )
 
@@ -116,19 +116,20 @@ Chow cycles can be of mixed degrees::
     ( 1 | 4 mod 7 | 1 mod 2, 1 mod 2, 1, 1, 1, 1, 1 | 1 )
     sage: mixed.project_to_degree(1)
     ( 0 | 4 mod 7 | 0 mod 2, 0 mod 2, 0, 0, 0, 0, 0 | 0 )
-    sage: sum( mixed.project_to_degree(i) for i in range(0,X.dimension()+1) ) == mixed
+    sage: sum( mixed.project_to_degree(i) for i in range(X.dimension()+1) ) == mixed
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Volker Braun  <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.all import flatten
+from sage.misc.fast_methods import WithEqualityById
 from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.modules.fg_pid.fgp_element import FGP_Element
 from sage.modules.free_module import FreeModule
@@ -152,7 +153,7 @@ class ChowCycle(FGP_Element):
 
         Do not construct :class:`ChowCycle` objects manually. Instead,
         use the parent :class:`ChowGroup<ChowGroup_class>` to obtain
-        generators or Chow cycles correspondig to cones of the fan.
+        generators or Chow cycles corresponding to cones of the fan.
 
     EXAMPLES::
 
@@ -192,7 +193,6 @@ class ChowCycle(FGP_Element):
         """
         FGP_Element.__init__(self, parent, v, check)
 
-
     def _repr_(self):
         r"""
         Return a string representation of the Chow cycle.
@@ -216,29 +216,28 @@ class ChowCycle(FGP_Element):
             sage: A = X.Chow_group()
             sage: A.degree()
             (Z, 0, C2 x Z^5, Z)
-            sage: sum( A.gen(i) * (i+1) for i in range(0,A.ngens()) )
+            sage: sum( A.gen(i) * (i+1) for i in range(A.ngens()) )
             ( 2 || 1 mod 2, 3, 4, 5, 6, 7 | 8 )
         """
         A = self.parent()
         s = '('
-        for degree in range(0,A.scheme().dimension()+1):
-            if degree>0:
+        for degree in range(A.scheme().dimension() + 1):
+            if degree:
                 s += '|'
             generators = A.gens(degree=degree)
             coefficients = A.coordinate_vector(self, degree=degree)
-            if len(generators)>0:
+            if generators:
                 s += ' '
             for i, gen in enumerate(generators):
-                if i>0:
+                if i > 0:
                     s += ', '
                 s += str(coefficients[i])
                 if gen.order() != Infinity:
-                    s += ' mod '+str(gen.order())
-            if len(generators)>0:
+                    s += ' mod ' + str(gen.order())
+            if generators:
                 s += ' '
         s += ')'
         return s
-
 
     def degree(self):
         r"""
@@ -295,7 +294,7 @@ class ChowCycle(FGP_Element):
         """
         ambient_dim = self.parent()._variety.dimension()
         v = list(self.lift())
-        for i in range(0,len(v)):
+        for i in range(len(v)):
             cone = self.parent()._cones[i]
             if cone.dim() != ambient_dim-degree:
                 v[i] = 0
@@ -400,9 +399,9 @@ class ChowCycle(FGP_Element):
             sage: intersection_QQ.count_points()
             -1
             sage: type(intersection_QQ.count_points())
-            <type 'sage.rings.rational.Rational'>
+            <... 'sage.rings.rational.Rational'>
             sage: type(intersection.count_points())
-            <type 'sage.rings.integer.Integer'>
+            <... 'sage.rings.integer.Integer'>
 
         TESTS:
 
@@ -546,7 +545,7 @@ class ChowGroupFactory(UniqueFactory):
     """
 
     def create_key_and_extra_args(self, toric_variety, base_ring=ZZ, check=True):
-        """
+        r"""
         Create a key that uniquely determines the :class:`ChowGroup_class`.
 
         INPUT:
@@ -604,7 +603,7 @@ ChowGroup = ChowGroupFactory('ChowGroup')
 
 
 #*******************************************************************
-class ChowGroup_class(FGP_Module_class):
+class ChowGroup_class(FGP_Module_class, WithEqualityById):
     r"""
     The Chow group of a toric variety.
 
@@ -643,10 +642,11 @@ class ChowGroup_class(FGP_Module_class):
             ...
             TypeError: unsupported operand parent(s) for *: 'Rational Field'
             and 'Chow group of 2-d CPR-Fano toric variety covered by 3 affine patches'
-            sage: A_ZZ.get_action(ZZ)
+            sage: coercion_model.get_action(A_ZZ, ZZ)
             Right scalar multiplication by Integer Ring on Chow group of 2-d
             CPR-Fano toric variety covered by 3 affine patches
-            sage: A_ZZ.get_action(QQ)
+            sage: print(coercion_model.get_action(A_ZZ, QQ))
+            None
 
         You can't multiply integer classes with fractional
         numbers. For that you need to go to the rational Chow group::
@@ -656,10 +656,10 @@ class ChowGroup_class(FGP_Module_class):
             ( 0 | 0 | 6 )
             sage: 1/2 * A_QQ.an_element() * 1/3
             ( 0 | 0 | 1/6 )
-            sage: A_QQ.get_action(ZZ)
+            sage: coercion_model.get_action(A_QQ, ZZ)
             Right scalar multiplication by Integer Ring on QQ-Chow group of 2-d
             CPR-Fano toric variety covered by 3 affine patches
-            sage: A_QQ.get_action(QQ)
+            sage: coercion_model.get_action(A_QQ, QQ)
             Right scalar multiplication by Rational Field on QQ-Chow group of 2-d
             CPR-Fano toric variety covered by 3 affine patches
         """
@@ -772,8 +772,6 @@ class ChowGroup_class(FGP_Module_class):
             sage: matrix(rel).submatrix(col=21, ncols=6).elementary_divisors()
             [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         """
-        fan = self._variety.fan()
-        dim = self._variety.dimension()
         relations = []
         for rho in self._cones:
             for u in rho.orthogonal_sublattice().gens():
@@ -782,10 +780,9 @@ class ChowGroup_class(FGP_Module_class):
                     sigma_idx = self._cones.index(sigma)
                     Q = sigma.relative_quotient(rho)
                     for v in [n.lift() for n in Q.gens()]:
-                        rel += (u*v) * V.gen(sigma_idx)
+                        rel += (u * v) * V.gen(sigma_idx)
                 relations.append(rel)
         return V.span(relations)
-
 
     def __truediv__(self, other):
         r"""
@@ -826,30 +823,6 @@ class ChowGroup_class(FGP_Module_class):
             return "Chow group of " + str(self._variety)
         else:
             raise ValueError
-
-
-    def __eq__(self, other):
-        r"""
-        Comparison of two Chow groups.
-
-        INPUT:
-
-        - ``other`` -- anything.
-
-        OUTPUT:
-
-        ``True`` or ``False``.
-
-        EXAMPLES::
-
-            sage: P2 = toric_varieties.P2()
-            sage: P2.Chow_group() == P2.Chow_group()
-            True
-            sage: P2.Chow_group(ZZ) == P2.Chow_group(QQ)
-            False
-        """
-        return self is other  # ChowGroup_class is unique
-
 
     def _cone_to_V(self, cone):
         r"""
@@ -976,7 +949,7 @@ class ChowGroup_class(FGP_Module_class):
             pass
 
         self._degree = tuple(ChowGroup_degree_class(self,d)
-                             for d in range(0,self._variety.dimension()+1))
+                             for d in range(self._variety.dimension() + 1))
         return self._degree
 
 
@@ -1178,26 +1151,25 @@ class ChowGroup_degree_class(SageObject):
             'Q'
         """
         invariants = self._module.invariants()
-        if len(invariants)==0:
+        if not invariants:
             return '0'
 
-        free = [x for x in invariants if x==0]
-        tors = [x for x in invariants if x> 0]
+        free = [x for x in invariants if x == 0]
+        tors = [x for x in invariants if x > 0]
 
-        if self._Chow_group.base_ring()==ZZ:
+        if self._Chow_group.base_ring() is ZZ:
             ring = 'Z'
-        elif self._Chow_group.base_ring()==QQ:
+        elif self._Chow_group.base_ring() is QQ:
             ring = 'Q'
         else:
             raise NotImplementedError('Base ring must be ZZ or QQ.')
 
         s = ['C' + str(x) for x in tors]
-        if len(free)==1:
+        if len(free) == 1:
             s.append(ring)
-        if len(free)>1:
+        elif len(free) > 1:
             s.append(ring + '^' + str(len(free)))
         return ' x '.join(s)
-
 
     def module(self):
         """
@@ -1216,7 +1188,6 @@ class ChowGroup_degree_class(SageObject):
         """
         return self._module
 
-
     def ngens(self):
         """
         Return the number of generators.
@@ -1233,7 +1204,6 @@ class ChowGroup_degree_class(SageObject):
             1
         """
         return len(self._gens)
-
 
     def gen(self, i):
         """
@@ -1257,7 +1227,6 @@ class ChowGroup_degree_class(SageObject):
             ( 0 | 0 | 1 )
         """
         return self._gens[i]
-
 
     def gens(self):
         """
@@ -1293,7 +1262,7 @@ def is_ChowGroup(x):
 
     EXAMPLES::
 
-        sage: P2=toric_varieties.P2()
+        sage: P2 = toric_varieties.P2()
         sage: A = P2.Chow_group()
         sage: from sage.schemes.toric.chow_group import is_ChowGroup
         sage: is_ChowGroup(A)

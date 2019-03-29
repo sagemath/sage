@@ -74,18 +74,17 @@ Check that Cython source code appears in tracebacks::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
-    sage: shell.run_cell('1/0')
-    ---------------------------------------------------------------------------
-    ZeroDivisionError                         Traceback (most recent call last)
+    sage: print("dummy line"); shell.run_cell('1/0') # see #25320 for the reason of the `...` and the dummy line in this test
+    dummy line
+    ...
+    ZeroDivisionError...Traceback (most recent call last)
     <ipython-input-...> in <module>()
     ----> 1 Integer(1)/Integer(0)
-    <BLANKLINE>
-    .../src/sage/rings/integer.pyx in sage.rings.integer.Integer.__div__ (.../cythonized/sage/rings/integer.c:...)()
-       ....:        if type(left) is type(right):
-       ....:            if mpz_sgn((<Integer>right).value) == 0:
+    .../sage/rings/integer.pyx in sage.rings.integer.Integer...div... (.../cythonized/sage/rings/integer.c:...)()
+    ...
     -> ...                  raise ZeroDivisionError("rational division by zero")
        ....:            x = <Rational> Rational.__new__(Rational)
-       ....:            mpq_div_zz(x.value, (<Integer>left).value, (<Integer>right).value)
+       ....:            mpq_div_zz(x.value, ....value, (<Integer>right).value)
     <BLANKLINE>
     ZeroDivisionError: rational division by zero
     sage: shell.quit()
@@ -355,11 +354,8 @@ class SageTestShell(SageShellOverride, TerminalInteractiveShell):
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: rc = shell.run_cell('1/0')
-            ---------------------------------------------------------------------------
-            ZeroDivisionError                         Traceback (most recent call last)
-            ...
-            ZeroDivisionError: rational division by zero
+            sage: rc = shell.run_cell('2^50')
+            1125899906842624
             sage: rc is None
             True
             sage: shell.quit()

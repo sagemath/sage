@@ -10,14 +10,15 @@ How do I get started?
 
 You can try out Sage without downloading anything:
 
-* **SageMathCloud™:** Go to http://cloud.sagemath.org and set up a free
-  account.
+* **CoCalc™:** Go to https://cocalc.com and set up a free account.
 
   If you log in, you will gain access to the latest version of Sage and to 
   many other programs.
 
+  Note that this website is an independent commercial service.
+
 * **Sage cell:** A "one-off" version of Sage, available for doing one
-  computation at a time. http://sagecell.sagemath.org/
+  computation at a time. https://sagecell.sagemath.org/
 
 To download a **pre-built binary** Sage distribution, visit
 http://sagemath.org/download.html and click on the link for the binary for your
@@ -36,10 +37,6 @@ You can also run it from the command line of sage::
 
     sage: notebook() # not tested
 
-Where can I find more information about using SageMathCloud™?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-Visit the Frequently Asked Questions page for SageMathCloud™ at https://github.com/sagemath/cloud/wiki/FAQ .
 
 What are the prerequisites for installing a copy of Sage on my computer?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -48,8 +45,8 @@ Most of the dependencies of Sage are shipped with Sage itself. In most
 cases, you can download a pre-built binary and use that without
 installing any dependencies. If you use Windows, you will need to
 install
-`VirtualBox <http://www.virtualbox.org>`_, which can be downloaded
-from the page http://www.virtualbox.org/wiki/Downloads. After
+`VirtualBox <https://www.virtualbox.org>`_, which can be downloaded
+from the page https://www.virtualbox.org/wiki/Downloads. After
 installing VirtualBox, you need to download a VirtualBox distribution
 of Sage available at
 http://www.sagemath.org/download-windows.html. Ensure you follow the
@@ -146,11 +143,17 @@ every change applied to the file simple.py will be automatically updated in Sage
 Can I use SageMath with Python 3.x?
 """""""""""""""""""""""""""""""""""
 
-Currently, no (February 2017). Work in progress aims to allow this in
-the not-so-far future. Until this task is completed, SageMath will continue
-to use Python 2.x.
+Currently, (September 2018) you can build the source code of SageMath with
+Python 3 using the instructions at the bottom of
+https://wiki.sagemath.org/Python3-compatible%20code
 
-See :trac:`15530` for tracking the current progress.
+Beware that this is still at an experimental stage.
+
+Work in progress aims to allow usage of Python 3 in the not-so-far
+future. Until this task is completed, SageMath will continue to use
+Python 2.x.
+
+See :trac:`15530` and :trac:`26212` for tracking the current progress.
 
 I'm seeing an error about "Permission denied" on a file called "sage-flags.txt".
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -209,7 +212,7 @@ from the
 `download page <http://www.sagemath.org/download.html>`_.
 If you would like to help with updating the Debian/Ubuntu version of
 Sage, please email the
-`sage-devel <http://groups.google.com/group/sage-devel>`_
+`sage-devel <https://groups.google.com/group/sage-devel>`_
 mailing list.
 
 
@@ -218,9 +221,9 @@ Should I use the official version or development version?
 
 You are encouraged to use the latest official version of
 Sage. Development versions are frequently announced on the
-`sage-devel <http://groups.google.com/group/sage-devel>`_
+`sage-devel <https://groups.google.com/group/sage-devel>`_
 and
-`sage-release <http://groups.google.com/group/sage-release>`_
+`sage-release <https://groups.google.com/group/sage-release>`_
 mailing lists. An easy way of helping out with Sage development is to
 download the latest development release, compile it on your system,
 run all doctests, and report any compilation errors or doctest
@@ -242,9 +245,9 @@ by a web search.
 * `Dive into Python <http://www.diveintopython.net>`_ by Mark Pilgrim
 * `How to Think Like a Computer Scientist <http://www.openbookproject.net/thinkCSpy>`_
   by Jeffrey Elkner, Allen B. Downey, and Chris Meyers
-* `Official Python Tutorial <http://docs.python.org/tutorial>`_
+* `Official Python Tutorial <https://docs.python.org/tutorial>`_
 * `Python <http://www.python.org>`_ home page and the
-  `Python standard documentation <http://docs.python.org>`_
+  `Python standard documentation <https://docs.python.org>`_
 
 
 Can I do X in Sage?
@@ -273,7 +276,7 @@ When you type "0.6**2" in Python, it returns something like
 0.35999999999999999. But when you do the same in Sage it returns
 0.360000000000000. To understand why Python behaves as it does, see
 the
-`Python Tutorial <http://docs.python.org/tutorial/floatingpoint.html>`_,
+`Python Tutorial <https://docs.python.org/tutorial/floatingpoint.html>`_,
 especially the chapter "Floating Point Arithmetic: Issues and
 Limitations". What Sage does is "preparse" the input and transforms it
 like this::
@@ -305,7 +308,7 @@ arrow key and then press down arrow key, then the next line in history
 is fetched. This feature allows you to fetch as many successive lines
 in history as you like. However, Sage does not have a similar
 feature. The
-`IPython <http://ipython.scipy.org>`_
+`IPython <https://ipython.org>`_
 command prompt uses the readline library (via pyreadline), which
 evidently does not support this feature. Magma has its own custom
 "readline-like" library, which does support this feature. (Since so
@@ -338,7 +341,7 @@ ints. For example::
     sage: RealNumber = float; Integer = int
     sage: from scipy import stats
     sage: stats.ttest_ind(list([1,2,3,4,5]),list([2,3,4,5,.6]))
-    Ttest_indResult(statistic=0.076752955645333687, pvalue=0.94070490247380478)
+    Ttest_indResult(statistic=0.0767529..., pvalue=0.940704...)
     sage: stats.uniform(0,15).ppf([0.5,0.7])
     array([  7.5,  10.5])
 
@@ -643,7 +646,7 @@ methods mentioned in the plot documentation, but this one is easiest::
 
 The *reason* this is necessary is that Sage returns complex numbers
 for odd roots of negative numbers when numerically approximated, which
-is a `standard convention <http://en.wikipedia.org/wiki/Cube_root#Complex_numbers>`_.
+is a `standard convention <https://en.wikipedia.org/wiki/Cube_root#Complex_numbers>`_.
 
     sage: N((-1)^(1/3))
     0.500000000000000 + 0.866025403784439*I
@@ -737,3 +740,22 @@ You will need to do this from the command line.  Just run a command like this.
 
     BROWSER='open -a Firefox' ./sage --notebook
     BROWSER='open -a Google\ Chrome' ./sage --notebook
+
+
+Where is the source code for ``<function>``?
+""""""""""""""""""""""""""""""""""""""""""""
+
+Functions and classes written in Python or Cython are in general accessible
+on the IPython command line with the ``??`` shortcut::
+
+    sage: plot??                            # not tested
+    Signature: plot(*args, **kwds)
+    Source:   
+    ...
+
+Objects that are built into Python or IPython are compiled and will
+not show, however. There are many functions in Sage implemented as
+symbolic functions, i.e., they can be used unevaluated as part of
+symbolic expressions. Their source code may also not be accessible
+from the command line, especially with elementary functions, because
+they are coded in C++ for efficiency reasons.

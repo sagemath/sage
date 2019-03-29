@@ -176,7 +176,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A = HopfAlgebrasWithBasis(QQ).example()
                 sage: W = A.basis().keys(); W
                 Dihedral group of order 6 as a permutation group
-                sage: w = W.an_element(); w
+                sage: w = W.gen(0); w
                 (1,2,3)
                 sage: A.antipode_on_basis(w)
                 B[(1,3,2)]
@@ -259,13 +259,13 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 # antipode is an anti-homomorphism
                 for y in tester.some_elements():
-                    tester.assert_(S(x) * S(y) == S(y * x))
+                    tester.assertTrue(S(x) * S(y) == S(y * x))
 
                 # mu * (S # I) * delta == counit * unit
-                tester.assert_(SI(x) == self.counit(x) * self.one())
+                tester.assertTrue(SI(x) == self.counit(x) * self.one())
 
                 # mu * (I # S) * delta == counit * unit
-                tester.assert_(IS(x) == self.counit(x) * self.one())
+                tester.assertTrue(IS(x) == self.counit(x) * self.one())
 
     class ElementMethods:
         pass

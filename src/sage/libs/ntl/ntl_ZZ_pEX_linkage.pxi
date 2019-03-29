@@ -27,7 +27,8 @@ from sage.libs.ntl.types cimport ZZ_pX_c, ZZ_pEX_c
 
 cdef ZZ_pEX_c *celement_new(cparent parent):
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
     """
     if parent != NULL:
@@ -37,7 +38,8 @@ cdef ZZ_pEX_c *celement_new(cparent parent):
 
 cdef int celement_delete(ZZ_pEX_c *e, cparent parent):
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
         sage: del x
     """
@@ -48,7 +50,8 @@ cdef int celement_delete(ZZ_pEX_c *e, cparent parent):
 
 cdef int celement_construct(ZZ_pEX_c *e, cparent parent):
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
     """
     if parent != NULL:
@@ -57,7 +60,8 @@ cdef int celement_construct(ZZ_pEX_c *e, cparent parent):
 
 cdef int celement_destruct(ZZ_pEX_c *e, cparent parent):
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
         sage: del x
     """
@@ -67,7 +71,8 @@ cdef int celement_destruct(ZZ_pEX_c *e, cparent parent):
 
 cdef int celement_gen(ZZ_pEX_c *e, long i, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
     """
     if parent != NULL:
@@ -79,7 +84,8 @@ cdef object celement_repr(ZZ_pEX_c *e, cparent parent):
     """
     We ignore NTL's printing.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
         sage: x
         x
@@ -88,7 +94,8 @@ cdef object celement_repr(ZZ_pEX_c *e, cparent parent):
 
 cdef inline int celement_set(ZZ_pEX_c* res, ZZ_pEX_c* a, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
         sage: y = x
         sage: y
@@ -98,7 +105,8 @@ cdef inline int celement_set(ZZ_pEX_c* res, ZZ_pEX_c* a, cparent parent) except 
 
 cdef inline int celement_set_si(ZZ_pEX_c* res, long i, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
         sage: P(0)
         0
@@ -117,7 +125,8 @@ cdef inline long celement_get_si(ZZ_pEX_c* res, cparent parent) except -2:
 
 cdef inline bint celement_is_zero(ZZ_pEX_c* a, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
         sage: bool(x), x.is_zero()
         (True, False)
@@ -131,7 +140,8 @@ cdef inline bint celement_is_zero(ZZ_pEX_c* a, cparent parent) except -2:
 
 cdef inline bint celement_is_one(ZZ_pEX_c *a, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
         sage: x.is_one()
         False
@@ -145,7 +155,8 @@ cdef inline bint celement_is_one(ZZ_pEX_c *a, cparent parent) except -2:
 
 cdef inline bint celement_equal(ZZ_pEX_c *a, ZZ_pEX_c *b, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
         sage: x == x
         True
@@ -170,7 +181,8 @@ cdef inline int celement_cmp(ZZ_pEX_c *a, ZZ_pEX_c *b, cparent parent) except -2
 
 cdef long celement_len(ZZ_pEX_c *a, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
         sage: x.degree()
         1
@@ -184,7 +196,8 @@ cdef long celement_len(ZZ_pEX_c *a, cparent parent) except -2:
 
 cdef inline int celement_add(ZZ_pEX_c *res, ZZ_pEX_c *a, ZZ_pEX_c *b, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: K.<a> = GF(next_prime(2**60)**3)
         sage: P.<x> = PolynomialRing(K,implementation='NTL')
         sage: (1+a+a^2)*x + (1+x+x^2)
@@ -197,7 +210,8 @@ cdef inline int celement_add(ZZ_pEX_c *res, ZZ_pEX_c *a, ZZ_pEX_c *b, cparent pa
 
 cdef inline int celement_sub(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c* b, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: K.<a> = GF(next_prime(2**60)**3)
         sage: P.<x> = PolynomialRing(K,implementation='NTL')
         sage: (1+a+a^2)*x - (1+x+x^2)
@@ -210,7 +224,8 @@ cdef inline int celement_sub(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c* b, cparent pa
 
 cdef inline int celement_neg(ZZ_pEX_c* res, ZZ_pEX_c* a, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: K.<a> = GF(next_prime(2**60)**3)
         sage: P.<x> = PolynomialRing(K,implementation='NTL')
         sage: -x
@@ -226,7 +241,8 @@ cdef inline int celement_mul_scalar(ZZ_pEX_c* res, ZZ_pEX_c* p, object c, cparen
 
 cdef inline int celement_mul(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c* b, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: K.<a> = GF(next_prime(2**60)**3)
         sage: P.<x> = PolynomialRing(K,implementation='NTL')
         sage: (1+a+a^2)*x * (1+x+x^2)
@@ -245,7 +261,8 @@ cdef inline int celement_div(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c* b, cparent pa
 
 cdef inline int celement_floordiv(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c* b, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: K.<a> = GF(next_prime(2**60)**3)
         sage: P.<x> = PolynomialRing(K,implementation='NTL')
         sage: (x^2+2*a*x+a^2)//(x+a)
@@ -264,7 +281,8 @@ cdef inline int celement_floordiv(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c* b, cpare
 
 cdef inline int celement_mod(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c* b, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: K.<a> = GF(next_prime(2**60)**3)
         sage: P.<x> = PolynomialRing(K,implementation='NTL')
         sage: (x^2-2*a*x) % (x+a)
@@ -277,7 +295,8 @@ cdef inline int celement_mod(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c* b, cparent pa
 
 cdef inline int celement_quorem(ZZ_pEX_c* q, ZZ_pEX_c* r, ZZ_pEX_c* a, ZZ_pEX_c* b, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: K.<a> = GF(next_prime(2**60)**3)
         sage: P.<x> = PolynomialRing(K,implementation='NTL')
         sage: (x^2+2*a*x).quo_rem(x-a)
@@ -357,7 +376,8 @@ cdef inline int celement_pow(ZZ_pEX_c* res, ZZ_pEX_c* x, long e, ZZ_pEX_c *modul
 
 cdef inline int celement_gcd(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c *b, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: K.<a> = GF(next_prime(2**60)**3)
         sage: P.<x> = PolynomialRing(K,implementation='NTL')
         sage: f = (x+3)*(x^7+a*x^5+1)
@@ -373,7 +393,8 @@ cdef inline int celement_gcd(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c *b, cparent pa
 
 cdef inline int celement_xgcd(ZZ_pEX_c* res, ZZ_pEX_c* s, ZZ_pEX_c *t, ZZ_pEX_c* a, ZZ_pEX_c *b, cparent parent) except -2:
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: K.<a> = GF(next_prime(2**60)**3)
         sage: P.<x> = PolynomialRing(K,implementation='NTL')
         sage: f = (x+3)*(x^7+a*x^5+1)

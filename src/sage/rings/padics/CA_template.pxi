@@ -75,16 +75,19 @@ cdef class CAElement(pAdicTemplateElement):
             sage: a = R(25/9, absprec = 5, relprec = 4); a #indirect doctest
             4*5^2 + 2*5^3 + O(5^5)
         """
+        IF CELEMENT_IS_PY_OBJECT:
+            polyt = type(self.prime_pow.modulus)
+            self.value = <celement>polyt.__new__(polyt)
         cconstruct(self.value, self.prime_pow)
-        cdef long rprec = comb_prec(relprec, self.prime_pow.prec_cap)
-        cdef long aprec = comb_prec(absprec, min(self.prime_pow.prec_cap, xprec))
+        cdef long rprec = comb_prec(relprec, self.prime_pow.ram_prec_cap)
+        cdef long aprec = comb_prec(absprec, min(self.prime_pow.ram_prec_cap, xprec))
         if aprec <= val:
             csetzero(self.value, self.prime_pow)
             self.absprec = aprec
         else:
             self.absprec = min(aprec, val + rprec)
             if isinstance(x,CAElement) and x.parent() is self.parent():
-                cshift(self.value, (<CAElement>x).value, 0, self.absprec, self.prime_pow, True)
+                cshift_notrunc(self.value, (<CAElement>x).value, 0, self.absprec, self.prime_pow, True)
             else:
                 cconv(self.value, x, self.absprec, 0, self.prime_pow)
 
@@ -96,11 +99,20 @@ cdef class CAElement(pAdicTemplateElement):
 
             sage: R = ZpCA(5); R(6,5) * R(7,8) #indirect doctest
             2 + 3*5 + 5^2 + O(5^5)
+
+            sage: R.<a> = ZqCA(25)
+            sage: S.<x> = ZZ[]
+            sage: W.<w> = R.ext(x^2 - 5)
+            sage: w * (w+1) #indirect doctest
+            w + w^2 + O(w^40)
         """
         cdef type t = type(self)
         cdef CAElement ans = t.__new__(t)
         ans._parent = self._parent
         ans.prime_pow = self.prime_pow
+        IF CELEMENT_IS_PY_OBJECT:
+            polyt = type(self.prime_pow.modulus)
+            ans.value = <celement>polyt.__new__(polyt)
         cconstruct(ans.value, ans.prime_pow)
         return ans
 
@@ -120,7 +132,7 @@ cdef class CAElement(pAdicTemplateElement):
         """
         Sets ``value`` to the unit of this p-adic element.
         """
-        cremove(value, self.value, 0, self.prime_pow)
+        cremove(value, self.value, self.absprec, self.prime_pow, True)
 
     cdef int check_preccap(self) except -1:
         """
@@ -134,7 +146,7 @@ cdef class CAElement(pAdicTemplateElement):
             ...
             PrecisionError: Precision higher than allowed by the precision cap.
         """
-        if self.absprec > self.prime_pow.prec_cap:
+        if self.absprec > self.prime_pow.ram_prec_cap:
             raise PrecisionError("Precision higher than allowed by the precision cap.")
 
     def __copy__(self):
@@ -277,12 +289,12 @@ cdef class CAElement(pAdicTemplateElement):
         cdef CAElement right = _right
         cdef CAElement ans = self._new_c()
         cdef long vals, valr
-        if self.absprec == self.prime_pow.prec_cap and right.absprec == self.prime_pow.prec_cap:
+        if self.absprec == self.prime_pow.ram_prec_cap and right.absprec == self.prime_pow.ram_prec_cap:
             ans.absprec = self.absprec
         else:
             vals = self.valuation_c()
             valr = right.valuation_c()
-            ans.absprec = min(vals + valr + min(self.absprec - vals, right.absprec - valr), self.prime_pow.prec_cap)
+            ans.absprec = min(vals + valr + min(self.absprec - vals, right.absprec - valr), self.prime_pow.ram_prec_cap)
         cmul(ans.value, self.value, right.value, ans.absprec, ans.prime_pow)
         creduce(ans.value, ans.value, ans.absprec, ans.prime_pow)
         return ans
@@ -312,6 +324,72 @@ cdef class CAElement(pAdicTemplateElement):
         """
         K = self.parent().fraction_field()
         return K(self) / K(right)
+
+    def _quo_rem(self, _right):
+        """
+        Quotient with remainder.
+
+        EXAMPLES::
+
+            sage: R = ZpCA(3, 5)
+            sage: R(12).quo_rem(R(2)) # indirect doctest
+            (2*3 + O(3^5), O(3^5))
+            sage: R(2).quo_rem(R(12)) # indirect doctest
+            (O(3^4), 2 + O(3^5))
+            sage: q, r = R(4).quo_rem(R(12)); q, r
+            (1 + 2*3 + 2*3^3 + O(3^4), 1 + O(3^5))
+            sage: 12*q + r == 4
+            True
+
+        In general, the remainder is returned with maximal precision.
+        However, it is not the case when the valuation of the divisor
+        is greater than the absolute precision on the numerator::
+
+            sage: R(1,2).quo_rem(R(81))
+            (O(3^0), 1 + O(3^2))
+        """
+        cdef CAElement right = _right
+        if right._is_inexact_zero():
+            raise ZeroDivisionError
+        cdef CAElement q = self._new_c()
+        cdef CAElement r = self._new_c()
+        cdef long sval, srprec, rval, rrprec, diff, qrprec
+        sval = self.valuation_c()
+        srprec = self.absprec - sval
+        rval = right.valuation_c()
+        rrprec = right.absprec - rval
+        diff = sval - rval
+        rprec = min(srprec, rrprec)
+        r.absprec = r.prime_pow.ram_prec_cap
+        qrprec = diff + srprec
+        if qrprec < 0:
+            csetzero(q.value, q.prime_pow)
+            q.absprec = 0
+            r = self
+        elif qrprec == 0:
+            q._set_inexact_zero(0)
+            ccopy(r.value, self.value, r.prime_pow)
+        elif ciszero(self.value, self.prime_pow):
+            q.absprec = diff + rprec
+            csetzero(q.value, q.prime_pow)
+            csetzero(r.value, r.prime_pow)
+        elif diff >= 0:
+            q.absprec = diff + rprec
+            # shift right and self by the same power of the uniformizer
+            cshift_notrunc(r.value, right.value, -rval, q.absprec, r.prime_pow, False)
+            # We use shift_rem as a temp variable
+            cshift_notrunc(self.prime_pow.shift_rem, self.value, -rval, q.absprec, q.prime_pow, False)
+            # divide
+            cdivunit(q.value, self.prime_pow.shift_rem, r.value, q.absprec, q.prime_pow)
+            csetzero(r.value, r.prime_pow)
+        else:
+            q.absprec = min(qrprec, rrprec)
+            cshift(q.value, r.value, self.value, -rval, q.absprec, q.prime_pow, False)
+            cshift_notrunc(q.prime_pow.shift_rem, right.value, -rval, q.absprec, q.prime_pow, False)
+            cdivunit(q.value, q.value, q.prime_pow.shift_rem, q.absprec, q.prime_pow)
+        creduce(q.value, q.value, q.absprec, q.prime_pow)
+        return q, r
+
 
     def __pow__(CAElement self, _right, dummy):
         """
@@ -466,17 +544,17 @@ cdef class CAElement(pAdicTemplateElement):
         elif shift == 0:
             return self
         cdef CAElement ans = self._new_c()
-        if shift >= self.prime_pow.prec_cap:
+        if shift >= self.prime_pow.ram_prec_cap:
             csetzero(ans.value, ans.prime_pow)
-            ans.absprec = self.prime_pow.prec_cap
+            ans.absprec = self.prime_pow.ram_prec_cap
         else:
-            ans.absprec = min(self.absprec + shift, self.prime_pow.prec_cap)
-            cshift(ans.value, self.value, shift, ans.absprec, ans.prime_pow, False)
+            ans.absprec = min(self.absprec + shift, self.prime_pow.ram_prec_cap)
+            cshift_notrunc(ans.value, self.value, shift, ans.absprec, ans.prime_pow, self.prime_pow.e > 1)
         return ans
 
     cdef pAdicTemplateElement _rshift_c(self, long shift):
         """
-        Divides by ``\pi^{\mbox{shift}}``.
+        Divides by ``π^{\mbox{shift}}``.
 
         Positive shifts may truncate the result.
 
@@ -503,7 +581,7 @@ cdef class CAElement(pAdicTemplateElement):
             ans.absprec = 0
         else:
             ans.absprec = self.absprec - shift
-            cshift(ans.value, self.value, -shift, ans.absprec, ans.prime_pow, False)
+            cshift(ans.value, ans.prime_pow.shift_rem, self.value, -shift, ans.absprec, ans.prime_pow, self.prime_pow.e > 1)
         return ans
 
     def add_bigoh(self, absprec):
@@ -747,7 +825,7 @@ cdef class CAElement(pAdicTemplateElement):
         """
         cdef CAElement ans
         if absprec == maxordp:
-            absprec = self.prime_pow.prec_cap
+            absprec = self.prime_pow.ram_prec_cap
         if absprec <= self.absprec:
             return self
         ans = self._new_c()
@@ -804,7 +882,7 @@ cdef class CAElement(pAdicTemplateElement):
         """
         if self.valuation_c() > 0:
             csetzero(self.value, self.prime_pow)
-            self.absprec = self.prime_pow.prec_cap
+            self.absprec = self.prime_pow.ram_prec_cap
         elif self.absprec == 0:
             raise ValueError("not enough precision")
         else:
@@ -823,16 +901,16 @@ cdef class CAElement(pAdicTemplateElement):
 
             sage: R.<a> = ZqCA(5^3)
             sage: a.polynomial()
-            (1 + O(5^20))*x + (O(5^20))
+            (1 + O(5^20))*x + O(5^20)
             sage: a.polynomial(var='y')
-            (1 + O(5^20))*y + (O(5^20))
+            (1 + O(5^20))*y + O(5^20)
             sage: (5*a^2 + R(25, 4)).polynomial()
-            (5 + O(5^4))*x^2 + (O(5^4))*x + (5^2 + O(5^4))
+            (5 + O(5^4))*x^2 + O(5^4)*x + 5^2 + O(5^4)
         """
         R = self.base_ring()
         S = R[var]
         prec = self.precision_absolute()
-        e = self.parent().e()
+        e = self.parent().relative_e()
         L = ccoefficients(self.value, 0, self.absprec, self.prime_pow)
         if e == 1:
             L = [R(c, prec) for c in L]
@@ -888,7 +966,7 @@ cdef class CAElement(pAdicTemplateElement):
             O(17^0)
         """
         cdef CAElement ans = (<CAElement>self)._new_c()
-        cdef long val = cremove(ans.value, (<CAElement>self).value, (<CAElement>self).absprec, (<CAElement>self).prime_pow)
+        cdef long val = cremove(ans.value, (<CAElement>self).value, (<CAElement>self).absprec, (<CAElement>self).prime_pow, True)
         ans.absprec = (<CAElement>self).absprec - val
         return ans
 
@@ -938,7 +1016,7 @@ cdef class CAElement(pAdicTemplateElement):
         """
         cdef CAElement unit = self._new_c()
         cdef Integer valuation = Integer.__new__(Integer)
-        cdef long val = cremove(unit.value, self.value, self.absprec, self.prime_pow)
+        cdef long val = cremove(unit.value, self.value, self.absprec, self.prime_pow, True)
         mpz_set_si(valuation.value, val)
         unit.absprec = self.absprec - val
         return valuation, unit
@@ -989,7 +1067,7 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
         self._zero = R.element_class(R, 0)
         self._section = pAdicConvert_CA_ZZ(R)
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1004,9 +1082,10 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
             sage: f(6) == g(6)
             True
         """
+        _slots = RingHomomorphism._extra_slots(self)
         _slots['_zero'] = self._zero
         _slots['_section'] = self.section() # use method since it copies coercion-internal sections.
-        return RingHomomorphism._extra_slots(self, _slots)
+        return _slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1042,7 +1121,7 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
         if mpz_sgn((<Integer>x).value) == 0:
             return self._zero
         cdef CAElement ans = self._zero._new_c()
-        ans.absprec = ans.prime_pow.prec_cap
+        ans.absprec = ans.prime_pow.ram_prec_cap
         cconv_mpz_t(ans.value, (<Integer>x).value, ans.absprec, True, ans.prime_pow)
         return ans
 
@@ -1059,7 +1138,7 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
             sage: R = ZpCA(5,4)
             sage: type(R(10,2))
             <type 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
-            sage: R(10,2)
+            sage: R(10,2) # indirect doctest
             2*5 + O(5^2)
             sage: R(10,3,1)
             2*5 + O(5^2)
@@ -1076,7 +1155,7 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
         cdef CAElement ans
         _process_args_and_kwds(&aprec, &rprec, args, kwds, True, self._zero.prime_pow)
         if mpz_sgn((<Integer>x).value) == 0:
-            if aprec >= self._zero.prime_pow.prec_cap:
+            if aprec >= self._zero.prime_pow.ram_prec_cap:
                 return self._zero
             ans = self._zero._new_c()
             csetzero(ans.value, ans.prime_pow)
@@ -1136,7 +1215,7 @@ cdef class pAdicConvert_CA_ZZ(RingMap):
             sage: f.category()
             Category of homsets of sets
         """
-        if R.degree() > 1 or R.characteristic() != 0 or R.residue_characteristic() == 0:
+        if R.absolute_degree() > 1 or R.characteristic() != 0 or R.residue_characteristic() == 0:
             RingMap.__init__(self, Hom(R, ZZ, SetsWithPartialMaps()))
         else:
             RingMap.__init__(self, Hom(R, ZZ, Sets()))
@@ -1182,7 +1261,7 @@ cdef class pAdicConvert_QQ_CA(Morphism):
         Morphism.__init__(self, Hom(QQ, R, SetsWithPartialMaps()))
         self._zero = R.element_class(R, 0)
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1197,8 +1276,9 @@ cdef class pAdicConvert_QQ_CA(Morphism):
             sage: g(1/6) == f(1/6)
             True
         """
+        _slots = Morphism._extra_slots(self)
         _slots['_zero'] = self._zero
-        return Morphism._extra_slots(self, _slots)
+        return _slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1233,8 +1313,8 @@ cdef class pAdicConvert_QQ_CA(Morphism):
         if mpq_sgn((<Rational>x).value) == 0:
             return self._zero
         cdef CAElement ans = self._zero._new_c()
-        cconv_mpq_t(ans.value, (<Rational>x).value, ans.prime_pow.prec_cap, True, ans.prime_pow)
-        ans.absprec = ans.prime_pow.prec_cap
+        cconv_mpq_t(ans.value, (<Rational>x).value, ans.prime_pow.ram_prec_cap, True, ans.prime_pow)
+        ans.absprec = ans.prime_pow.ram_prec_cap
         return ans
 
     cpdef Element _call_with_args(self, x, args=(), kwds={}):
@@ -1248,7 +1328,7 @@ cdef class pAdicConvert_QQ_CA(Morphism):
             sage: R = ZpCA(5,4)
             sage: type(R(10/3,2))
             <type 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
-            sage: R(10/3,2)
+            sage: R(10/3,2) # indirect doctest
             4*5 + O(5^2)
             sage: R(10/3,3,1)
             4*5 + O(5^2)
@@ -1269,7 +1349,7 @@ cdef class pAdicConvert_QQ_CA(Morphism):
         cdef CAElement ans
         _process_args_and_kwds(&aprec, &rprec, args, kwds, True, self._zero.prime_pow)
         if mpq_sgn((<Rational>x).value) == 0:
-            if aprec >= self._zero.prime_pow.prec_cap:
+            if aprec >= self._zero.prime_pow.ram_prec_cap:
                 return self._zero
             ans = self._zero._new_c()
             csetzero(ans.value, ans.prime_pow)
@@ -1295,8 +1375,8 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
         sage: K = R.fraction_field()
         sage: f = K.coerce_map_from(R); f
         Ring morphism:
-          From: Unramified Extension in a defined by x^3 + 2*x + 1 with capped absolute precision 20 over 3-adic Ring
-          To:   Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Field
+          From: 3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
+          To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
 
     TESTS::
 
@@ -1332,8 +1412,14 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
         """
         cdef CAElement x = _x
         cdef CRElement ans = self._zero._new_c()
-        ans.ordp = cremove(ans.unit, x.value, x.absprec, x.prime_pow)
-        ans.relprec = x.absprec - ans.ordp
+        ans.ordp = 0
+        ans.relprec = x.absprec
+        ccopy(ans.unit, x.value, x.prime_pow)
+        IF CELEMENT_IS_PY_OBJECT:
+            # The base ring is wrong, so we fix it.
+            K = ans.unit.base_ring()
+            ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+        ans._normalize()
         return ans
 
     cpdef Element _call_with_args(self, _x, args=(), kwds={}):
@@ -1349,7 +1435,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
-            sage: f(a, 3)
+            sage: f(a, 3) # indirect doctest
             a + O(3^3)
             sage: b = 9*a
             sage: f(b, 3)
@@ -1370,22 +1456,23 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
         cdef long aprec, rprec
         cdef CAElement x = _x
         cdef CRElement ans = self._zero._new_c()
-        cdef bint reduce = False
         _process_args_and_kwds(&aprec, &rprec, args, kwds, False, ans.prime_pow)
         if x.absprec < aprec:
             aprec = x.absprec
-            reduce = True
-        ans.ordp = cremove(ans.unit, x.value, aprec, x.prime_pow)
+        ans.ordp = cremove(ans.unit, x.value, aprec, x.prime_pow, True)
         ans.relprec = aprec - ans.ordp
         if rprec < ans.relprec:
             ans.relprec = rprec
-            reduce = True
         if ans.relprec < 0:
             ans.relprec = 0
             ans.ordp = aprec
             csetzero(ans.unit, x.prime_pow)
-        elif reduce:
-            creduce(ans.unit, ans.unit, ans.relprec, x.prime_pow)
+        else:
+            IF CELEMENT_IS_PY_OBJECT:
+                # The base ring is wrong, so we fix it.
+                K = ans.unit.base_ring()
+                ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+            pass
         return ans
 
     def section(self):
@@ -1400,6 +1487,10 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             sage: f = K.coerce_map_from(R)
             sage: f(K.gen())
             a + O(3^20)
+            sage: f.section()
+            Generic morphism:
+              From: 3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
+              To:   3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
         """
         from sage.misc.constant_function import ConstantFunction
         if not isinstance(self._section.domain, ConstantFunction):
@@ -1407,7 +1498,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             self._section = copy.copy(self._section)
         return self._section
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1419,8 +1510,8 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             sage: g = copy(f)   # indirect doctest
             sage: g
             Ring morphism:
-              From: Unramified Extension in a defined by x^3 + 2*x + 1 with capped absolute precision 20 over 3-adic Ring
-              To:   Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Field
+              From: 3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
+              To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
             sage: g == f
             True
             sage: g is f
@@ -1431,9 +1522,10 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             True
 
         """
+        _slots = RingHomomorphism._extra_slots(self)
         _slots['_zero'] = self._zero
         _slots['_section'] = self.section() # use method since it copies coercion-internal sections.
-        return RingHomomorphism._extra_slots(self, _slots)
+        return _slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1447,8 +1539,8 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             sage: g = copy(f)   # indirect doctest
             sage: g
             Ring morphism:
-              From: Unramified Extension in a defined by x^2 + 2*x + 2 with capped absolute precision 20 over 3-adic Ring
-              To:   Unramified Extension in a defined by x^2 + 2*x + 2 with capped relative precision 20 over 3-adic Field
+              From: 3-adic Unramified Extension Ring in a defined by x^2 + 2*x + 2
+              To:   3-adic Unramified Extension Field in a defined by x^2 + 2*x + 2
             sage: g == f
             True
             sage: g is f
@@ -1504,8 +1596,8 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
         sage: K = R.fraction_field()
         sage: f = R.convert_map_from(K); f
         Generic morphism:
-          From: Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Field
-          To:   Unramified Extension in a defined by x^3 + 2*x + 1 with capped absolute precision 20 over 3-adic Ring
+          From: 3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
+          To:   3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
     """
     def __init__(self, K, R):
         """
@@ -1530,13 +1622,13 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K)
-            sage: f(K.gen())
+            sage: f(K.gen()) # indirect doctest
             a + O(3^20)
         """
         cdef CRElement x = _x
         if x.ordp < 0: raise ValueError("negative valuation")
         cdef CAElement ans = self._zero._new_c()
-        cdef bint reduce = False
+        cdef bint reduce = (x.prime_pow.e > 1)
         ans.absprec = x.relprec + x.ordp
         if ans.absprec > ans.prime_pow.ram_prec_cap:
             ans.absprec = ans.prime_pow.ram_prec_cap
@@ -1544,7 +1636,11 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
         if x.ordp >= ans.absprec:
             csetzero(ans.value, ans.prime_pow)
         else:
-            cshift(ans.value, x.unit, x.ordp, ans.absprec, ans.prime_pow, reduce)
+            cshift_notrunc(ans.value, x.unit, x.ordp, ans.absprec, ans.prime_pow, reduce)
+            IF CELEMENT_IS_PY_OBJECT:
+                # The base ring is wrong, so we fix it.
+                R = ans.value.base_ring()
+                ans.value.__coeffs = [R(c) for c in ans.value.__coeffs]
         return ans
 
     cpdef Element _call_with_args(self, _x, args=(), kwds={}):
@@ -1560,7 +1656,7 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K); a = K(a)
-            sage: f(a, 3)
+            sage: f(a, 3) # indirect doctest
             a + O(3^3)
             sage: b = 9*a
             sage: f(b, 3)
@@ -1594,12 +1690,14 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
         if x.ordp >= ans.absprec:
             csetzero(ans.value, ans.prime_pow)
         else:
-            sig_on()
-            cshift(ans.value, x.unit, x.ordp, ans.absprec, ans.prime_pow, reduce)
-            sig_off()
+            cshift_notrunc(ans.value, x.unit, x.ordp, ans.absprec, ans.prime_pow, reduce)
+            IF CELEMENT_IS_PY_OBJECT:
+                # The base ring is wrong, so we fix it.
+                R = ans.value.base_ring()
+                ans.value.__coeffs = [R(c) for c in ans.value.__coeffs]
         return ans
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1612,8 +1710,8 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
             sage: g = copy(f)   # indirect doctest
             sage: g
             Generic morphism:
-              From: Unramified Extension in a defined by x^3 + 2*x + 1 with capped relative precision 20 over 3-adic Field
-              To:   Unramified Extension in a defined by x^3 + 2*x + 1 with capped absolute precision 20 over 3-adic Ring
+              From: 3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
+              To:   3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
             sage: g == f
             True
             sage: g is f
@@ -1622,10 +1720,10 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
             a + O(3^20)
             sage: g(a) == f(a)
             True
-
         """
+        _slots = Morphism._extra_slots(self)
         _slots['_zero'] = self._zero
-        return Morphism._extra_slots(self, _slots)
+        return _slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1640,8 +1738,8 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
             sage: g = copy(f)   # indirect doctest
             sage: g
             Generic morphism:
-              From: Unramified Extension in a defined by x^2 + 2*x + 2 with capped relative precision 20 over 3-adic Field
-              To:   Unramified Extension in a defined by x^2 + 2*x + 2 with capped absolute precision 20 over 3-adic Ring
+              From: 3-adic Unramified Extension Field in a defined by x^2 + 2*x + 2
+              To:   3-adic Unramified Extension Ring in a defined by x^2 + 2*x + 2
             sage: g == f
             True
             sage: g is f
@@ -1682,6 +1780,9 @@ def unpickle_cae_v2(cls, parent, value, absprec):
     cdef CAElement ans = cls.__new__(cls)
     ans._parent = parent
     ans.prime_pow = <PowComputer_?>parent.prime_pow
+    IF CELEMENT_IS_PY_OBJECT:
+        polyt = type(ans.prime_pow.modulus)
+        ans.value = <celement>polyt.__new__(polyt)
     cconstruct(ans.value, ans.prime_pow)
     cunpickle(ans.value, value, ans.prime_pow)
     ans.absprec = absprec

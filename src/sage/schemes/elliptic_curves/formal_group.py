@@ -582,7 +582,7 @@ class EllipticCurveFormalGroup(SageObject):
         return F
 
     def mult_by_n(self, n, prec=10):
-        """
+        r"""
         Return the formal 'multiplication by n' endomorphism `[n]`.
 
         INPUT:
@@ -665,8 +665,6 @@ class EllipticCurveFormalGroup(SageObject):
             sage: E = EllipticCurve(QQ, [1,2,3,4,6])
             sage: E.formal().mult_by_n(2,prec=5)
             2*t - t^2 - 4*t^3 - 19*t^4 + O(t^5)
-
-
         """
         if self.curve().base_ring().is_field() and self.curve().base_ring().characteristic() == 0 and n != 0:
             # The following algorithm only works over a field of

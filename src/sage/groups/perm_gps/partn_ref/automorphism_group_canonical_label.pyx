@@ -353,7 +353,7 @@ cdef agcl_work_space *allocate_agcl_work_space(int n):
        work_space.orbits_of_subgroup    is NULL or \
        work_space.orbits_of_permutation is NULL or \
        work_space.first_ps              is NULL:
-        deallocate_agcl_work_space(work_space)
+        sig_free(work_space)
         return NULL
 
     work_space.perm_stack       = int_array

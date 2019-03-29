@@ -104,7 +104,7 @@ We are able to speed up the computation by making use of refinements
 (i.e. `(S_n)_C`-homomorphisms). Suppose we constructed a node
 `(C, I_C, y, G_{\Pi^{(I_C)}(y))})`. We define
 `Y := \{z \in X^n \mid \Pi^{(I_C)}(z) = \Pi^{(I_C)}(y)\}`
-and we search for functions `\omega: Y \rightarrow \mathbb{Z}^n` which are
+and we search for functions `\omega: Y \rightarrow \ZZ^n` which are
 constant on the orbits of `G_{\Pi^{(I_C)}(y)}` and compatible with the action
 of `(S_n)_C` on both sides. Then we compute a permutation `\pi \in (S_n)_C`
 which cell-wisely sorts the entries of `\omega(y)`. Afterwards we are allowed
@@ -334,11 +334,13 @@ cdef class LabelledBranching:
             sage: L = LabelledBranching(3)
         """
         from sage.libs.gap.libgap import libgap
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 
         self.n = n
         self.group = libgap.eval("Group(())")
         self.ClosureGroup = libgap.eval("ClosureGroup")
         self.father = < int *> sig_malloc(n * sizeof(int))
+        self.sym_gp = SymmetricGroup(self.n)
         if self.father is NULL:
             raise MemoryError('allocating LabelledBranching')
         self.act_perm = < int *> sig_malloc(n * sizeof(int))
@@ -433,8 +435,7 @@ cdef class LabelledBranching:
             [(1,2,3)]
         """
         from sage.libs.gap.libgap import libgap
-
-        return libgap.SmallGeneratingSet(self.group).sage()
+        return libgap.SmallGeneratingSet(self.group).sage(parent=self.sym_gp)
 
     def get_order(self):
         r"""
@@ -809,7 +810,7 @@ cdef class PartitionRefinement_generic:
                 self._latex_act_node("autcut in " + refine_name)
                 return False
 
-            if len( res[1] ) > 0:
+            if res[1]:
                 self._fixed_not_minimized += res[1]
                 if self._inner_min_unminimized(inner_group_changed):
                     return True

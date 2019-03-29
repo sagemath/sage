@@ -429,9 +429,7 @@ You can even nicely typeset the solution in LaTeX:
 To have the above appear onscreen via xdvi, type ``view(s)``.
 
 You can also solve linear equations symbolically using the
-``solve`` command:
-
-::
+``solve`` command::
 
     sage: var('x,y,z,a')
     (x, y, z, a)
@@ -439,9 +437,7 @@ You can also solve linear equations symbolically using the
     sage: solve(eqns, x, y, z)
     [[x == a + 1, y == 2*a, z == a - 1]]
 
-Here is a numerical Numpy example:
-
-::
+Here is a numerical Numpy example::
 
     sage: from numpy import arange, eye, linalg
     sage: A = eye(10)       ##   the 10x10 identity matrix
@@ -449,13 +445,11 @@ Here is a numerical Numpy example:
     sage: x = linalg.solve(A,b)
 
 Another way to solve a system numerically is to use Sage's octave
-interface:
-
-::
+interface::
 
     sage: M33 = MatrixSpace(QQ,3,3)
     sage: A   = M33([1,2,3,4,5,6,7,8,0])
     sage: V3  = VectorSpace(QQ,3)
     sage: b   = V3([1,2,3])
     sage: octave.solve_linear_system(A,b)    # optional - octave
-    [-0.33333299999999999, 0.66666700000000001, 0]
+    [-0.333333, 0.666667, 0]

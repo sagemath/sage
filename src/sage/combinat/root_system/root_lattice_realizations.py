@@ -12,6 +12,7 @@ Root lattice realizations
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
+from six.moves import range
 
 from sage.misc.abstract_method import abstract_method, AbstractMethod
 from sage.misc.misc import attrcall
@@ -327,8 +328,8 @@ class RootLatticeRealizations(Category_over_base_ring):
             # Check the embeddings from the root lattice and the root space over the same base ring
             root_lattice = self.root_system.root_lattice()
             root_space   = self.root_system.root_space  (R)
-            tester.assert_(self.coerce_map_from(root_lattice) is not None)
-            tester.assert_(self.coerce_map_from(root_space  ) is not None)
+            tester.assertTrue(self.coerce_map_from(root_lattice) is not None)
+            tester.assertTrue(self.coerce_map_from(root_space  ) is not None)
             for i in self.index_set():
                 # This embedding maps simple roots to simple roots
                 tester.assertEqual(self(root_lattice.simple_root(i)), alpha[i])
@@ -352,8 +353,8 @@ class RootLatticeRealizations(Category_over_base_ring):
                 nullcoroot = self.null_coroot()
                 special_node = self.cartan_type().special_node()
                 for i in alpha.keys():
-                    tester.assert_(nullroot.scalar(alphacheck[i]).is_zero())
-                    tester.assert_(alpha[i].scalar(nullcoroot).is_zero())
+                    tester.assertTrue(nullroot.scalar(alphacheck[i]).is_zero())
+                    tester.assertTrue(alpha[i].scalar(nullcoroot).is_zero())
                 # Check the projection on the classical space
                 classical = self.classical()
                 alpha_classical = classical.alpha()
@@ -1131,7 +1132,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             chains = [chain for chain in L.chains().list() if len(chain) <= m]
             multichains = []
             for chain in chains:
-                for multilist in combinations_with_replacement(range(len(chain)), m):
+                for multilist in combinations_with_replacement(list(range(len(chain))), m):
                     if len(set(multilist)) == len(chain):
                         multichains.append(tuple([chain[i] for i in multilist]))
             def is_saturated_chain(chain):
@@ -1214,8 +1215,8 @@ class RootLatticeRealizations(Category_over_base_ring):
             return self.root_system.coroot_lattice()
 
         def coroot_space(self, base_ring = QQ):
-            """
-            Returns the coroot space over ``base_ring``
+            r"""
+            Return the coroot space over ``base_ring``.
 
             INPUT:
 
@@ -1496,8 +1497,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         @cached_method
         def simple_reflections(self):
-            """
-            Returns the family `(s_i)_{i\in I}` of the simple reflections
+            r"""
+            Return the family `(s_i)_{i\in I}` of the simple reflections
             of this root system.
 
             EXAMPLES::
@@ -1648,7 +1649,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 \tau_+( \beta ) = (\prod_{i \in J} s_i) (\beta)
 
-            See Equation (1.2) of [CFZ]_.
+            See Equation (1.2) of [CFZ2002]_.
 
             EXAMPLES::
 
@@ -1669,7 +1670,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             The action on all almost positive roots::
 
                 sage: for root in L.almost_positive_roots():
-                ....:     print('tau({:<41}) = {}'.format(root, tau(root)))
+                ....:     print('tau({:<41}) = {}'.format(str(root), tau(root)))
                 tau(-alpha[1]                                ) = alpha[1]
                 tau(alpha[1]                                 ) = -alpha[1]
                 tau(alpha[1] + alpha[2]                      ) = alpha[2] + alpha[3]
@@ -1690,7 +1691,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: L = RootSystem(['B',3]).ambient_space()
                 sage: tau = L.tau_epsilon_operator_on_almost_positive_roots([1,3])
                 sage: for root in L.almost_positive_roots():
-                ....:     print('tau({:<41}) = {}'.format(root, tau(root)))
+                ....:     print('tau({:<41}) = {}'.format(str(root), tau(root)))
                 tau((-1, 1, 0)                               ) = (1, -1, 0)
                 tau((1, 0, 0)                                ) = (0, 1, 0)
                 tau((1, -1, 0)                               ) = (-1, 1, 0)
@@ -1705,11 +1706,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 tau((0, 0, 1)                                ) = (0, 0, -1)
 
             .. SEEALSO:: :meth:`tau_plus_minus`
-
-            REFERENCES:
-
-            .. [CFZ] Chapoton, Fomin, Zelevinsky - Polytopal realizations of
-               generalized associahedra, :arxiv:`math/0202004`.
             """
             W = self.weyl_group()
             t = W.from_reduced_word(J)
@@ -1745,7 +1741,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES:
 
-            We explore the example of [CFZ]_ Eq.(1.3)::
+            We explore the example of [CFZ2002]_ Eq.(1.3)::
 
                 sage: S = RootSystem(['A',2]).root_lattice()
                 sage: taup, taum = S.tau_plus_minus()
@@ -2103,7 +2099,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: L = RootSystem(["A",2,1]).ambient_space()
                 sage: options = L.plot_parse_options()
                 sage: options
-                <sage.combinat.root_system.plot.PlotOptions instance at ...>
+                <sage.combinat.root_system.plot.PlotOptions object at ...>
 
             .. SEEALSO::
 
@@ -2261,9 +2257,9 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                  sage: list(RootSystem(["A",2]).ambient_lattice().plot_roots())
                  [Arrow from (0.0,0.0) to (1.5,0.86...),
-                  Text '$\alpha_{1}$' at the point (1.575,0.90...),
+                  Text '$\alpha_{1}$' at the point (1.575...,0.90...),
                   Arrow from (0.0,0.0) to (-1.5,0.86...),
-                  Text '$\alpha_{2}$' at the point (-1.575,0.90...)]
+                  Text '$\alpha_{2}$' at the point (-1.575...,0.90...)]
 
                  sage: list(RootSystem(["B",2]).ambient_space().plot_roots())
                  [Arrow from (0.0,0.0) to (1.0,-1.0),
@@ -2389,10 +2385,10 @@ class RootLatticeRealizations(Category_over_base_ring):
                  Text '$\Lambda_{2}$' at the point (0.0,1.05)]
 
                  sage: sorted(RootSystem(["A",2]).ambient_lattice().plot_fundamental_weights(), key=str)
-                 [Arrow from (0.0,0.0) to (-0.5,0.866024518389),
-                  Arrow from (0.0,0.0) to (0.5,0.866024518389),
-                  Text '$\Lambda_{1}$' at the point (0.525,0.909325744308),
-                  Text '$\Lambda_{2}$' at the point (-0.525,0.909325744308)]
+                 [Arrow from (0.0,0.0) to (-0.5,0.86602451838...),
+                  Arrow from (0.0,0.0) to (0.5,0.86602451838...),
+                  Text '$\Lambda_{1}$' at the point (0.525,0.909325744308...),
+                  Text '$\Lambda_{2}$' at the point (-0.525,0.909325744308...)]
             """
             plot_options = self.plot_parse_options(**options)
             # We build the family of fundamental weights in this space,
@@ -2451,24 +2447,24 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: L = RootSystem(["A",2]).ambient_space()
                 sage: print(L.plot_reflection_hyperplanes().description())
-                Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15)
-                Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15)
+                Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15...)
+                Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15...)
                 Line defined by 2 points: [(-1.73..., 3.0), (1.73..., -3.0)]
                 Line defined by 2 points: [(1.73..., 3.0), (-1.73..., -3.0)]
 
                 sage: print(L.plot_reflection_hyperplanes("all").description())
-                Text '$H_{\alpha^\vee_{1} + \alpha^\vee_{2}}$' at the point (3.15,0.0)
-                Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15)
-                Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15)
+                Text '$H_{\alpha^\vee_{1} + \alpha^\vee_{2}}$' at the point (3.15...,0.0)
+                Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15...)
+                Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15...)
                 Line defined by 2 points: [(-1.73..., 3.0), (1.73..., -3.0)]
                 Line defined by 2 points: [(1.73..., 3.0), (-1.73..., -3.0)]
                 Line defined by 2 points: [(3.0, 0.0), (-3.0, 0.0)]
 
                 sage: L = RootSystem(["A",2,1]).ambient_space()
                 sage: print(L.plot_reflection_hyperplanes().description())
-                Text '$H_{\alpha^\vee_{0}}$' at the point (3.15,0.90...)
-                Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15)
-                Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15)
+                Text '$H_{\alpha^\vee_{0}}$' at the point (3.15...,0.90...)
+                Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15...)
+                Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15...)
                 Line defined by 2 points: [(-1.73..., 3.0), (1.73..., -3.0)]
                 Line defined by 2 points: [(1.73..., 3.0), (-1.73..., -3.0)]
                 Line defined by 2 points: [(3.0, 0.86...), (-3.0, 0.86...)]
@@ -2526,7 +2522,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: RootSystem(["D",3]).ambient_space().plot_hedron()
                 Graphics3d Object
 
-            Surprise: polyhedrons of large dimension know how to
+            Surprise: polyhedra of large dimension know how to
             project themselves nicely::
 
                 sage: RootSystem(["F",4]).ambient_space().plot_hedron() # long time
@@ -2886,8 +2882,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             And another with some foldings::
 
-                sage: L.plot_alcoves(bounding_box=3) + \
-                ....:   L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],
+                sage: L.plot_alcoves(bounding_box=3) +\
+                ....: L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],
                 ....:                      foldings = [False, False, True, False, False, False, True, False, True, False],
                 ....:                      color="green")            # long time (3s)
                 Graphics object consisting of 155 graphics primitives
@@ -3160,7 +3156,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             g = crystal.digraph()
             mults = {}
-            for x in g.vertices():
+            for x in g.vertex_iterator():
                 wt = self(x.weight())
                 mults[wt] = mults.get(wt, []) + [x]
             positions = {x: plot_options.projection(x) for x in mults.keys()}
@@ -3392,7 +3388,7 @@ class RootLatticeRealizations(Category_over_base_ring):
         ##########################################################################
 
         def simple_reflection(self, i):
-            """
+            r"""
             Returns the image of ``self`` by the `i`-th simple reflection.
 
             EXAMPLES::
@@ -3463,6 +3459,75 @@ class RootLatticeRealizations(Category_over_base_ring):
                 6
             """
             return list(self._orbit_iter())
+
+        def _dot_orbit_iter(self):
+            """
+            Iterate the orbit of ``self`` under the dot or affine action
+            of the Weyl group.
+
+            Call this method when the dot orbit just needs to be
+            iterated over.
+
+            EXAMPLES::
+
+                sage: L = RootSystem(['A', 2]).ambient_lattice()
+                sage: sorted(L.rho()._dot_orbit_iter())    # the output order is not specified
+                [(-2, 1, 4), (-2, 3, 2), (2, -1, 2),
+                 (2, 1, 0), (0, -1, 4), (0, 3, 0)]
+                sage: sorted(L.rho()._orbit_iter())        # the output order is not specified
+                [(1, 2, 0), (1, 0, 2), (2, 1, 0),
+                 (2, 0, 1), (0, 1, 2), (0, 2, 1)]
+            """
+            I = self.parent().index_set()
+            def apply_action(la):
+                return [la.dot_action([i]) for i in I]
+            R = RecursivelyEnumeratedSet([self], apply_action, structure=None,
+                                         enumeration='breadth')
+            return iter(R)
+
+        def dot_orbit(self):
+            r"""
+            The orbit of ``self`` under the dot or affine action of
+            the Weyl group.
+
+            EXAMPLES::
+
+                sage: L = RootSystem(['A', 2]).ambient_lattice()
+                sage: sorted(L.rho().dot_orbit())          # the output order is not specified
+                [(-2, 1, 4), (-2, 3, 2), (2, -1, 2),
+                 (2, 1, 0), (0, -1, 4), (0, 3, 0)]
+
+                sage: L = RootSystem(['B',2]).weight_lattice()
+                sage: sorted(L.fundamental_weights()[1].dot_orbit())   # the output order is not specified
+                [-4*Lambda[1], -4*Lambda[1] + 4*Lambda[2],
+                 -3*Lambda[1] - 2*Lambda[2], -3*Lambda[1] + 4*Lambda[2],
+                 Lambda[1], Lambda[1] - 6*Lambda[2],
+                 2*Lambda[1] - 6*Lambda[2], 2*Lambda[1] - 2*Lambda[2]]
+
+            We compare the dot action orbit to the regular orbit::
+
+                sage: L = RootSystem(['A', 3]).weight_lattice()
+                sage: len(L.rho().dot_orbit())
+                24
+                sage: len((-L.rho()).dot_orbit())
+                1
+                sage: La = L.fundamental_weights()
+                sage: len(La[1].dot_orbit())
+                24
+                sage: len(La[1].orbit())
+                4
+                sage: len((-L.rho() + La[1]).dot_orbit())
+                4
+                sage: len(La[2].dot_orbit())
+                24
+                sage: len(La[2].orbit())
+                6
+                sage: len((-L.rho() + La[2]).dot_orbit())
+                6
+            """
+            return list(self._dot_orbit_iter())
+
+        affine_orbit = dot_orbit
 
         ##########################################################################
         #
@@ -3948,22 +4013,22 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: L = RootSystem(["A",3]).root_lattice()
                 sage: positive_roots = L.positive_roots()
-                sage: for alpha in positive_roots:
+                sage: for alpha in sorted(positive_roots):
                 ....:     print("{} {}".format(alpha, alpha.to_simple_root()))
                 alpha[1] 1
-                alpha[2] 2
-                alpha[3] 3
                 alpha[1] + alpha[2] 2
-                alpha[2] + alpha[3] 3
                 alpha[1] + alpha[2] + alpha[3] 3
-                sage: for alpha in positive_roots:
+                alpha[2] 2
+                alpha[2] + alpha[3] 3
+                alpha[3] 3
+                sage: for alpha in sorted(positive_roots):
                 ....:     print("{} {}".format(alpha, alpha.to_simple_root(reduced_word=True)))
                 alpha[1] (1, ())
-                alpha[2] (2, ())
-                alpha[3] (3, ())
                 alpha[1] + alpha[2] (2, (1,))
-                alpha[2] + alpha[3] (3, (2,))
                 alpha[1] + alpha[2] + alpha[3] (3, (1, 2))
+                alpha[2] (2, ())
+                alpha[2] + alpha[3] (3, (2,))
+                alpha[3] (3, ())
 
             ALGORITHM:
 
@@ -4074,17 +4139,18 @@ class RootLatticeRealizations(Category_over_base_ring):
                 raise ValueError("%s is not of level zero"%(self))
             return x + x.level() * self
 
-        def weyl_action(self, element, inverse = False):
+        def weyl_action(self, element, inverse=False):
             r"""
-            Acts on ``self`` by an element of the Coxeter or Weyl group.
+            Act on ``self`` by an element of the Coxeter or Weyl group.
 
             INPUT:
 
             - ``element`` -- an element of a Coxeter or Weyl group
               of the same Cartan type, or a tuple or a list (such as a
-              reduced word) of elements from the index set.
+              reduced word) of elements from the index set
 
-            - ``inverse`` -- a boolean (default: False); whether to act by the inverse element.
+            - ``inverse`` -- a boolean (default: ``False``); whether to
+              act by the inverse element
 
             EXAMPLES::
 
@@ -4119,11 +4185,9 @@ class RootLatticeRealizations(Category_over_base_ring):
                 False
                 sage: mudom.weyl_action(w)
                 Lambda[1] - 2*Lambda[3]
-
             """
-
             # TODO, some day: accept an iterator
-            if isinstance(element, (tuple, list)):
+            if isinstance(element, (tuple, list, range)):
                 # Action by a (reduced) word
                 the_word = [x for x in element]
                 I = self.parent().index_set()
@@ -4176,6 +4240,53 @@ class RootLatticeRealizations(Category_over_base_ring):
                 index_set = self.parent().cartan_type().index_set()
             alphavee = self.parent().coroot_lattice().basis()
             return [i for i in index_set if self.scalar(alphavee[i]) == 0]
+
+        def dot_action(self, w, inverse=False):
+            r"""
+            Act on ``self`` by ``w`` using the dot or affine action.
+
+            Let `w` be an element of the Weyl group. The *dot action*
+            or *affine action* is given by:
+
+            .. MATH::
+
+                w \bullet \lambda = w (\lambda + \rho) - \rho,
+
+            where `\rho` is the sum of the fundamental weights.
+
+            INPUT:
+
+            - ``w`` -- an element of a Coxeter or Weyl group of
+              the same Cartan type, or a tuple or a list (such
+              as a reduced word) of elements from the index set
+
+            - ``inverse`` -- a boolean (default: ``False``); whether
+              to act by the inverse element
+
+            EXAMPLES::
+
+                sage: P = RootSystem(['B',3]).weight_lattice()
+                sage: La = P.fundamental_weights()
+                sage: mu = La[1] + 2*La[2] - 3*La[3]
+                sage: mu.dot_action([1])
+                -3*Lambda[1] + 4*Lambda[2] - 3*Lambda[3]
+                sage: mu.dot_action([3])
+                Lambda[1] + Lambda[3]
+                sage: mu.dot_action([1,2,3])
+                -4*Lambda[1] + Lambda[2] + 3*Lambda[3]
+
+            We check that the origin of this action is at `-\rho`::
+
+                sage: all((-P.rho()).dot_action([i]) == -P.rho()
+                ....:     for i in P.index_set())
+                True
+
+            REFERENCES:
+
+            - :wikipedia:`Affine_action`
+            """
+            rho = self.parent().rho()
+            return (self + rho).weyl_action(w, inverse=inverse) - rho
 
         def is_parabolic_root(self, index_set):
             r"""

@@ -46,10 +46,10 @@ from __future__ import print_function
 from six.moves import zip
 
 import numpy
-import math, bisect
+import math
+import bisect
 
-from sage.rings.all import (ZZ, QQ, RR, RDF, RIF, CC, CDF, CIF,
-    infinity)
+from sage.rings.all import (ZZ, QQ, RR, RDF, RIF, CC, CDF, CIF, infinity)
 
 from sage.misc.all import cached_method, cartesian_product_iterator
 from sage.arith.all import lcm, factorial
@@ -454,8 +454,6 @@ class UnionOfIntervals:
             False
             sage: -infinity in A
             False
-            sage: 'a' in A
-            False
         """
         return x in self._endpoints or bisect.bisect_left(self._endpoints, x) % 2 == 1
 
@@ -483,6 +481,7 @@ class UnionOfIntervals:
             ([1, 3] U [5, 7])
         """
         return "(%s)" % " U ".join(str(list(I)) for I in self.intervals())
+
 
 def nonneg_region(f):
     r"""
@@ -535,7 +534,7 @@ def inf_max_abs(f, g, D):
 
     INPUT:
 
-    - ``f``, ``g`` (polynomials) -- real univariate polynomaials
+    - ``f``, ``g`` (polynomials) -- real univariate polynomials
 
     - ``D`` (UnionOfIntervals) -- a subset of `\RR`
 
@@ -634,10 +633,10 @@ def min_on_disk(f, tol, max_iter=10000):
             if in_disk:
                 s_in_disk = True     # if the original region si in the disk so are all its children
             else:
-                 r = abs(s)          # otherwise we test each one
-                 if r > 1:
-                     continue        # skip this subregion if it is entirely outside the disk
-                 s_in_disk = r < 1   # meaning it is entirely inside the disk
+                r = abs(s)          # otherwise we test each one
+                if r > 1:
+                    continue        # skip this subregion if it is entirely outside the disk
+                s_in_disk = r < 1   # meaning it is entirely inside the disk
 
             fs = f(s)
 
@@ -654,11 +653,13 @@ def min_on_disk(f, tol, max_iter=10000):
     # If we get here, then even after max_iter iterations the tolerance has not been reached.
     raise ValueError("too many iterations")
 
-two_pi_i_CDF = CDF(0, 2*RDF.pi())
-two_pi_i_CIF = CIF(0, 2*RIF.pi())
+
+two_pi_i_CDF = CDF(0, 2 * RDF.pi())
+two_pi_i_CIF = CIF(0, 2 * RIF.pi())
 
 # Ideas: We know tau, so we know the direction of the diagonal.
-#        We can solve for x in p1, will this allow us to find the maxima exactly?
+# We can solve for x in p1, will this allow us to find the maxima exactly?
+
 
 def rat_term_CIF(z, try_strict=True):
     r"""
@@ -724,6 +725,7 @@ def rat_term_CIF(z, try_strict=True):
         imag_part = -(r**2-1)*y*r/denom
 
     return CIF(real_part, imag_part)
+
 
 def eps(err, is_real):
     r"""
@@ -1623,18 +1625,18 @@ class EllipticCurveCanonicalHeight:
         even::
 
             sage: H.wp_on_grid(v,4)
-            array([[ 25.43920182,   5.28760943,   5.28760943,  25.43920182],
-            [  6.05099485,   1.83757786,   1.83757786,   6.05099485],
-            [  6.05099485,   1.83757786,   1.83757786,   6.05099485],
-            [ 25.43920182,   5.28760943,   5.28760943,  25.43920182]])
+            array([[25.43920182,  5.28760943,  5.28760943, 25.43920182],
+                   [ 6.05099485,  1.83757786,  1.83757786,  6.05099485],
+                   [ 6.05099485,  1.83757786,  1.83757786,  6.05099485],
+                   [25.43920182,  5.28760943,  5.28760943, 25.43920182]])
 
         The array of values on the half-grid::
 
             sage: H.wp_on_grid(v,4,True)
-            array([[ 25.43920182,   5.28760943],
-            [  6.05099485,   1.83757786],
-            [  6.05099485,   1.83757786],
-            [ 25.43920182,   5.28760943]])
+            array([[25.43920182,  5.28760943],
+                   [ 6.05099485,  1.83757786],
+                   [ 6.05099485,  1.83757786],
+                   [25.43920182,  5.28760943]])
         """
         tau = self.tau(v)
         fk, err = self.fk_intervals(v, 15, CDF)
@@ -1834,12 +1836,12 @@ class EllipticCurveCanonicalHeight:
         # of these is 1 we can return True right away (see [TT]_,
         # Proposition 5.1).
         Bk = []
-        for n in ZZ.range(1, N+1):
+        for n in ZZ.range(1, N + 1):
             b = self.B(n, mu)
             if verbose:
                 print("B_%s(%s) = %s" % (n, mu, b))
             if b < 1:
-               return True
+                return True
             Bk.append(b)
 
         # Each real or complex embedding of the number field gives us
@@ -1900,7 +1902,7 @@ class EllipticCurveCanonicalHeight:
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([0,1-i,i,-i,0])
             sage: H = E.height_function()
-            sage: H.min_gr(0.01,5)
+            sage: H.min_gr(0.01, 5)  # long time
             0.020153685521979152
 
         In this example the point `P=(0,0)` has height 0.023 so our
@@ -1925,12 +1927,11 @@ class EllipticCurveCanonicalHeight:
 
         This example from the LMFDB gave problems before the fix in :trac:`8829`::
 
-            sage: K.<a> = NumberField(x^2-x-1)
-            sage: phi = a
+            sage: K.<phi> = NumberField(x^2-x-1)
             sage: E = EllipticCurve([phi + 1, -phi + 1, 1, 20*phi - 39, 196*phi + 237])
             sage: H = E.height_function()
-            sage: H.min_gr(.1,5,True) # long time (~22s)
-            B_1(1) = 1540.19924637
+            sage: H.min_gr(.1, 5, verbose=True)  # long time (~22s)
+            B_1(1) = 1540.199246369678
             ...
             halving mu to 0.25 and increasing n_max to 6
             ...
@@ -1939,42 +1940,42 @@ class EllipticCurveCanonicalHeight:
             doubling mu to 0.015625
             height bound in [0.0078125, 0.015625] using n_max = 13
             ...
-            height bound in [0.0120485220735, 0.0131390064883] using n_max = 13
+            height bound in [0.012048522073499539, 0.01313900648833929] using n_max = 13
             0.012048522073499539
         """
         test = self.test_mu
         if test(1, n_max, verbose):
-            mu = 2
+            mu = 2.0
             while test(mu, n_max, False):
                 mu *= 2
-            mu /= 2
+            mu *= 0.5
         else:
-            mu = .5
+            mu = 0.5
             while not test(mu, n_max, False):
-                mu /= 2
+                mu *= 0.5
                 n_max += 1
                 if verbose:
-                    print("halving mu to %s and increasing n_max to %s" % (mu,n_max))
+                    print("halving mu to %r and increasing n_max to %r" % (mu, n_max))
             # now we have (mu,n_max) which work we can try to increase
             # mu again using this larger n_max:
             mu *= 2
             while test(mu, n_max, False):
                 mu *= 2
                 if verbose:
-                    print("doubling mu to %s" % mu)
-            mu /= 2
+                    print("doubling mu to %r" % mu)
+            mu *= 0.5
 
         # The true value lies between mu and eps * mu.
         eps = 2.0
         while eps > tol + 1:
             if verbose:
-                print("height bound in [%s, %s] using n_max = %s"
+                print("height bound in [%r, %r] using n_max = %r"
                       % (mu, mu * eps, n_max))
             eps = math.sqrt(eps)
             if test(mu * eps, n_max, False):
                 mu = mu * eps
         if verbose:
-            print("height bound in [%s, %s] using n_max = %s"
+            print("height bound in [%r, %r] using n_max = %r"
                   % (mu, mu * eps, n_max))
         return RDF(mu)
 
@@ -2069,13 +2070,13 @@ class EllipticCurveCanonicalHeight:
         tp = lcm([L.tamagawa_exponent() for L in self.E.local_data()] + [ZZ(1)])
 
         # Include infinite places:
-        if tp%2==1:
+        if tp % 2 == 1:
             if self.K == QQ:
-                if self.E.real_components()==2:
-                    tp*=2
-            elif any([v(self.E.discriminant()>0)
-                      for v in self.K.real_places()]):
-                tp *=2
+                if self.E.real_components() == 2:
+                    tp *= 2
+            elif any(v(self.E.discriminant()) > 0
+                     for v in self.K.real_places()):
+                tp *= 2
         # Now tp is such that tp*P has good reduction at all places
         # for all points P:
         return self.min_gr(tol, n_max, verbose) / tp ** 2

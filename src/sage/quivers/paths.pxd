@@ -10,5 +10,3 @@ cdef class QuiverPath(MonoidElement):
     cpdef tuple complement(self, QuiverPath subpath)
     cpdef bint has_subpath(self, QuiverPath subpath) except -1
     cpdef bint has_prefix(self, QuiverPath subpath) except -1
-
-cpdef QuiverPath NewQuiverPath(Q, start, end, data)

@@ -1,9 +1,3 @@
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 # distribute doesn't allow itself to be replaced by setuptools
 # so we manually have to delete it
 # (pip actually can uninstall setuptools but we may not have pip
@@ -16,14 +10,8 @@ export PYTHON_EGG_CACHE="$DOT_SAGE/.python-eggs"
 cd src
 
 # Prevent setuptools from installing itself with easy_install
-python2 setup.py --no-user-cfg install --single-version-externally-managed --record=/dev/null
-if [ $? -ne 0 ]; then
-    echo "Error Python 2 building / installing setuptools"
-    exit 1
-fi
-
-python3 setup.py --no-user-cfg install --single-version-externally-managed --record=/dev/null
-if [ $? -ne 0 ]; then
-    echo "Error Python 3 building / installing setuptools"
-    exit 1
-fi
+for vers in 2 3; do
+    python${vers} setup.py --no-user-cfg install \
+            --single-version-externally-managed --root="$SAGE_DESTDIR" || \
+        sdh_die "Error building / installing setuptools for Python ${vers}"
+done

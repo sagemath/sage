@@ -16,7 +16,7 @@ Schilling, and Thiery, with the help of many, to deal with
 limitations and lack of robustness w.r.t. input.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Bryan Gillespie <Brg008@gmail.com>
 #                          Nicolas M. Thiery <nthiery at users.sf.net>
 #                          Anne Schilling <anne@math.ucdavis.edu>
@@ -25,11 +25,12 @@ limitations and lack of robustness w.r.t. input.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from __future__ import print_function, absolute_import
 
-from builtins import object
+import builtins
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.cachefunc import cached_method
@@ -260,6 +261,8 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
         sage: oeis(_)                  # optional -- internet
         0: A001006: Motzkin numbers: number of ways of drawing any number
         of nonintersecting chords joining n (labeled) points on a circle.
+        1: ...
+        2: ...
 
     or Dyck words (see also :class:`DyckWords`), through the bijection
     with paths from `(0,0)` to `(n,n)` with left and up steps that remain
@@ -786,28 +789,11 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
     @staticmethod
     def __classcall_private__(cls, n=None, **kwargs):
         r"""
-        Return a disjoint union if ``n`` is a list or iterable.
-
-        TESTS:
-
-        Specifying a list or iterable as argument is deprecated::
-
-            sage: IntegerListsLex([2,2], length=2).list()
-            doctest:...: DeprecationWarning: Calling IntegerListsLex with n an iterable is deprecated. Please use DisjointUnionEnumeratedSets or the min_sum and max_sum arguments instead
-            See http://trac.sagemath.org/17979 for details.
-            [[2, 0], [1, 1], [0, 2], [2, 0], [1, 1], [0, 2]]
-            sage: IntegerListsLex(NN, max_length=3)
-            Disjoint union of Lazy family (<...>(i))_{i in Non negative integer semiring}
+        Specifying a list or iterable as argument was deprecated in
+        :trac:`17979`. Please use ``DisjointUnionEnumeratedSets`` or
+        the ``min_sum`` and ``max_sum`` arguments instead.
         """
-        import collections
-        if isinstance(n, collections.Iterable):
-            from sage.misc.superseded import deprecation
-            deprecation(17979, 'Calling IntegerListsLex with n an iterable is deprecated. Please use DisjointUnionEnumeratedSets or the min_sum and max_sum arguments instead')
-            from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-            from sage.sets.family import Family
-            return DisjointUnionEnumeratedSets(Family(n, lambda i: IntegerListsLex(i, **kwargs)))
-        else:
-            return typecall(cls, n=n, **kwargs)
+        return typecall(cls, n=n, **kwargs)
 
 
 cdef class IntegerListsBackend_invlex(IntegerListsBackend):
@@ -1088,7 +1074,8 @@ DECREASE  = 2
 POP       = 1
 STOP      = 0
 
-class IntegerListsLexIter(object):
+
+class IntegerListsLexIter(builtins.object):
     r"""
     Iterator class for IntegerListsLex.
 
@@ -1547,7 +1534,7 @@ class IntegerListsLexIter(object):
         ``self._current_list``. The current algorithm computes,
         for `k = j, j+1, \ldots`, a lower bound `l_k` and an upper
         bound `u_k` for `v_0+\dots+v_k`, and stops if none of the
-        invervals `[l_k, u_k]` intersect ``[min_sum, max_sum]``.
+        intervals `[l_k, u_k]` intersect ``[min_sum, max_sum]``.
 
         The lower bound `l_k` is given by the area below
         `v_0,\dots,v_{j-1}` prolongated by the lower envelope

@@ -57,6 +57,7 @@ import sage.rings.rational
 import sage.rings.integer_ring
 import sage.rings.integer
 
+from sage.arith.power cimport generic_power
 from sage.rings.real_mpfi cimport RealIntervalFieldElement
 
 cimport sage.rings.number_field.number_field_base as number_field_base
@@ -68,8 +69,9 @@ from sage.categories.fields import Fields
 
 from sage.modules.free_module_element import vector
 
-from sage.structure.element cimport Element, generic_power_c, FieldElement
-from sage.structure.element import canonical_coercion, parent, coerce_binop
+from sage.structure.element cimport Element, FieldElement
+from sage.structure.element cimport parent
+from sage.structure.element import canonical_coercion, coerce_binop
 
 from sage.libs.pari import pari
 
@@ -106,41 +108,42 @@ def is_NumberFieldElement(x):
     """
     return isinstance(x, NumberFieldElement)
 
+
 def __create__NumberFieldElement_version0(parent, poly):
     """
     Used in unpickling elements of number fields pickled under very old Sage versions.
 
-    EXAMPLES::
+    TESTS::
 
         sage: k.<a> = NumberField(x^3 - 2)
         sage: R.<z> = QQ[]
         sage: sage.rings.number_field.number_field_element.__create__NumberFieldElement_version0(k, z^2 + z + 1)
+        doctest:...: DeprecationWarning: __create__NumberFieldElement_version0() is deprecated
+        See https://trac.sagemath.org/25848 for details.
         a^2 + a + 1
     """
+    from sage.misc.superseded import deprecation
+    deprecation(25848, '__create__NumberFieldElement_version0() is deprecated')
     return NumberFieldElement(parent, poly)
+
 
 def __create__NumberFieldElement_version1(parent, cls, poly):
     """
-    Used in unpickling elements of number fields.
+    Used in unpickling elements of number fields pickled under old Sage versions.
 
-    EXAMPLES:
-
-    Since this is just used in unpickling, we unpickle.
-
-    ::
+    TESTS::
 
         sage: k.<a> = NumberField(x^3 - 2)
-        sage: loads(dumps(a+1)) == a + 1 # indirect doctest
-        True
-
-    This also gets called for unpickling order elements; we check that
-    :trac:`6462` is fixed::
-
-        sage: L = NumberField(x^3 - x - 1,'a'); OL = L.maximal_order(); w = OL.0
-        sage: loads(dumps(w)) == w # indirect doctest
-        True
+        sage: R.<z> = QQ[]
+        sage: sage.rings.number_field.number_field_element.__create__NumberFieldElement_version1(k, type(a), z^2 + z + 1)
+        doctest:...: DeprecationWarning: __create__NumberFieldElement_version1() is deprecated
+        See https://trac.sagemath.org/25848 for details.
+        a^2 + a + 1
     """
+    from sage.misc.superseded import deprecation
+    deprecation(25848, '__create__NumberFieldElement_version1() is deprecated')
     return cls(parent, poly)
+
 
 def _inverse_mod_generic(elt, I):
     r"""
@@ -167,7 +170,8 @@ def _inverse_mod_generic(elt, I):
         raise ValueError("inverse is not defined modulo the zero ideal")
     n = R.absolute_degree()
     B = R.basis()
-    m = matrix(ZZ, map(R.coordinates, I.integral_basis() + [elt*s for s in B]))
+    m = matrix(ZZ, [R.coordinates(x)
+                    for x in I.integral_basis() + [elt*s for s in B]])
     a, b = m.echelon_form(transformation=True)
     if a[0:n] != 1:
         raise ZeroDivisionError("%s is not invertible modulo %s" % (elt, I))
@@ -411,18 +415,30 @@ cdef class NumberFieldElement(FieldElement):
         """
         Used in pickling number field elements.
 
-        Note for developers: If this is changed, please also change the doctests of __create__NumberFieldElement_version1.
-
         EXAMPLES::
 
             sage: k.<a> = NumberField(x^3 - 17*x^2 + 1)
             sage: t = a.__reduce__(); t
-            (<built-in function __create__NumberFieldElement_version1>, (Number Field in a with defining polynomial x^3 - 17*x^2 + 1, <type 'sage.rings.number_field.number_field_element.NumberFieldElement_absolute'>, x))
+            (<type 'sage.rings.number_field.number_field_element.NumberFieldElement_absolute'>,
+             (Number Field in a with defining polynomial x^3 - 17*x^2 + 1, x))
             sage: t[0](*t[1]) == a
             True
+
+        ::
+
+            sage: k.<a> = NumberField(x^3 - 2)
+            sage: loads(dumps(a+1)) == a + 1 # indirect doctest
+            True
+
+        This also gets called for unpickling order elements; we check that
+        :trac:`6462` is fixed::
+
+            sage: L = NumberField(x^3 - x - 1,'a'); OL = L.maximal_order(); w = OL.0
+            sage: loads(dumps(w)) == w # indirect doctest
+            True
         """
-        return __create__NumberFieldElement_version1, \
-               (self.parent(), type(self), self.polynomial())
+        args = (self.parent(), self.polynomial())
+        return type(self), args
 
     def _repr_(self):
         """
@@ -2062,6 +2078,25 @@ cdef class NumberFieldElement(FieldElement):
         else:
             return t
 
+    def is_padic_square(self, P, check=True):
+        r"""
+        Return if ``self`` is a square in the completion at the prime `P`.
+
+        INPUT:
+
+        - ``P`` -- a prime ideal
+        - ``check`` -- (default: ``True``); check if `P` is prime
+
+        EXAMPLES::
+
+            sage: K.<a> = NumberField(x^2 + 2)
+            sage: p = K.primes_above(2)[0]
+            sage: K(5).is_padic_square(p)
+            False
+        """
+        infinity = sage.rings.infinity.infinity
+        return self.parent().quadratic_defect(self, P, check=check) == infinity
+
     def sqrt(self, all=False):
         """
         Returns the square root of this number in the given number field.
@@ -2177,8 +2212,12 @@ cdef class NumberFieldElement(FieldElement):
             sage: (1+sqrt2)^-1
             sqrt2 - 1
 
-        If the exponent is not integral, perform this operation in
-        the symbolic ring::
+        If the exponent is not integral, attempt this operation in the NumberField:
+
+            sage: K(2)^(1/2)
+            sqrt2
+
+        If this fails, perform this operation in the symbolic ring::
 
             sage: sqrt2^(1/5)
             2^(1/10)
@@ -2210,30 +2249,39 @@ cdef class NumberFieldElement(FieldElement):
         """
         if (isinstance(base, NumberFieldElement) and
             (isinstance(exp, Integer) or type(exp) is int or exp in ZZ)):
-            return generic_power_c(base, exp, None)
-        else:
-            cbase, cexp = canonical_coercion(base, exp)
-            if not isinstance(cbase, NumberFieldElement):
-                return cbase ** cexp
-            # Return a symbolic expression.
-            # We use the hold=True keyword argument to prevent the
-            # symbolics library from trying to simplify this expression
-            # again. This would lead to infinite loops otherwise.
-            from sage.symbolic.ring import SR
+            return generic_power(base, exp)
+
+        if (isinstance(base, NumberFieldElement) and exp in QQ):
+            qqexp = QQ(exp)
+            n = qqexp.numerator()
+            d = qqexp.denominator()
             try:
-                res = QQ(base)**QQ(exp)
-            except TypeError:
+                return base.nth_root(d)**n
+            except ValueError:
                 pass
-            else:
-                if res.parent() is not SR:
-                    return parent(cbase)(res)
-                return res
-            sbase = SR(base)
-            if sbase.operator() is operator.pow:
-                nbase, pexp = sbase.operands()
-                return nbase.power(pexp * exp, hold=True)
-            else:
-                return sbase.power(exp, hold=True)
+
+        cbase, cexp = canonical_coercion(base, exp)
+        if not isinstance(cbase, NumberFieldElement):
+            return cbase ** cexp
+        # Return a symbolic expression.
+        # We use the hold=True keyword argument to prevent the
+        # symbolics library from trying to simplify this expression
+        # again. This would lead to infinite loops otherwise.
+        from sage.symbolic.ring import SR
+        try:
+            res = QQ(base)**QQ(exp)
+        except TypeError:
+            pass
+        else:
+            if res.parent() is not SR:
+                return parent(cbase)(res)
+            return res
+        sbase = SR(base)
+        if sbase.operator() is operator.pow:
+            nbase, pexp = sbase.operands()
+            return nbase.power(pexp * exp, hold=True)
+        else:
+            return sbase.power(exp, hold=True)
 
     cdef void _reduce_c_(self):
         """
@@ -2524,7 +2572,7 @@ cdef class NumberFieldElement(FieldElement):
         EXAMPLES::
 
             sage: K.<a> = NumberField(x^10 - x - 1)
-            sage: long(a)
+            sage: long(a)  # py2
             Traceback (most recent call last):
             ...
             TypeError: cannot coerce nonconstant polynomial to long
@@ -3440,7 +3488,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: ((a-b)/2).is_integral()
             False
         """
-        return all([a in ZZ for a in self.absolute_minpoly()])
+        return all(a in ZZ for a in self.absolute_minpoly())
 
     def matrix(self, base=None):
         r"""
@@ -4271,7 +4319,7 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^3 + 2)
+            sage: K.<a> = NumberField(x^3 + 2) # optional - magma
             sage: a._magma_init_(magma)            # optional - magma
             '(_sage_[...]![0, 1, 0])'
             sage: m = magma((2/3)*a^2 - 17/3); m   # optional - magma
@@ -4283,8 +4331,8 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
 
         ::
 
-            sage: K = CyclotomicField(9)
-            sage: K.gen()
+            sage: K = CyclotomicField(9) # optional - magma
+            sage: K.gen() # optional - magma
             zeta9
             sage: K.gen()._magma_init_(magma)     # optional - magma
             '(_sage_[...]![0, 1, 0, 0, 0, 0])'
@@ -5138,7 +5186,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
 
 
 
-class CoordinateFunction:
+class CoordinateFunction(object):
     r"""
     This class provides a callable object which expresses
     elements in terms of powers of a fixed field generator `\alpha`.
@@ -5149,7 +5197,7 @@ class CoordinateFunction:
         sage: f = (a + 1).coordinates_in_terms_of_powers(); f
         Coordinate function that writes elements in terms of the powers of a + 1
         sage: f.__class__
-        <class sage.rings.number_field.number_field_element.CoordinateFunction at ...>
+        <class 'sage.rings.number_field.number_field_element.CoordinateFunction'>
         sage: f(a)
         [-1, 1]
         sage: f == loads(dumps(f))
@@ -5209,7 +5257,6 @@ class CoordinateFunction:
             ...
             TypeError: Cannot coerce element into this number field
         """
-        from sage.all import parent
         if not self.__K.has_coerce_map_from(parent(x)):
             raise TypeError("Cannot coerce element into this number field")
         return self.__W.coordinates(self.__to_V(self.__K(x)))

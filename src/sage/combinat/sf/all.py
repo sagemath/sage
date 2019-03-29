@@ -13,4 +13,8 @@ from .sf import SymmetricFunctions
 
 lazy_import('sage.combinat.sf.kfpoly', 'KostkaFoulkesPolynomial')
 
-from .ns_macdonald import NonattackingFillings, AugmentedLatticeDiagramFilling, LatticeDiagram
+lazy_import('sage.combinat.sf.ns_macdonald', ['NonattackingFillings',
+                                              'AugmentedLatticeDiagramFilling',
+                                              'LatticeDiagram'])
+
+del absolute_import

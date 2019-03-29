@@ -1,12 +1,8 @@
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 cd src
 
 # Use newer version of config.guess and config.sub (see Trac #19723)
 cp "$SAGE_ROOT"/config/config.* .
 
-./configure --prefix="$SAGE_LOCAL" && $MAKE install
+sdh_configure
+sdh_make
+sdh_make_install

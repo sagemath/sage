@@ -1,5 +1,5 @@
 r"""
-Weierstrass for Elliptic Curves in Higher Codimension
+Weierstrass for elliptic curves in higher codimension
 
 The :mod:`~sage.schemes.toric.weierstrass` module lets you transform a
 genus-one curve, given as a hypersurface in a toric surface, into
@@ -30,9 +30,8 @@ X^3 - \frac{1}{4} X Z^4$.
 #*****************************************************************************
 
 from sage.rings.all import PolynomialRing
-from sage.rings.invariant_theory import invariant_theory
-from sage.schemes.toric.weierstrass import (
-    _check_homogeneity, _extract_coefficients )
+from sage.rings.invariants.invariant_theory import invariant_theory
+from sage.schemes.toric.weierstrass import _check_homogeneity
 
 
 ######################################################################
@@ -84,7 +83,7 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
     polynomial ring. A ``ValueError`` is raised if the polynomial is
     not homogeneous.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.schemes.toric.weierstrass_higher import _check_polynomials_P3
         sage: R.<w,x,y,z> = QQ[]
@@ -107,9 +106,8 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
     if quadratic1.parent() is not quadratic2.parent():
         raise ValueError('The two quadratics must be in the same polynomial ring.')
     if variables is None:
-        from sage.misc.misc import uniq
-        variables = uniq(quadratic1.variables() + quadratic2.variables())
-        variables.reverse()
+        variables = quadratic1.variables() + quadratic2.variables()
+        variables = sorted(set(variables), reverse=True)
     if len(variables) == 4:
         w, x, y, z = variables
         _check_homogeneity(quadratic1, [w, x, y, z], (1, 1, 1, 1), 2)
@@ -135,24 +133,24 @@ def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
     p_4(T, T')$ where
 
     * $J$, $T$, $T'$ are the covariants of the biquadratic.
-    
+
     * $p_4$ is some quartic polynomial whose coefficients are
       invariants of the biquadratic.
-  
+
     INPUT:
 
     See :func:`WeierstrassForm_P3`
 
     OUTPUT:
 
-    A triple consisting of 
+    A triple consisting of
 
     - The quaternary biquadratic as an algebraic form
       :class:`~sage.rings.invariant_theory.TwoQuaternaryQuadratics`
-      
+
     - The binary quartic $p_4$ as a
       :class:`~sage.rings.invariant_theory.BinaryQuartic`
-      
+
     - The dictionary of variable substitutions from the variables of
       the quartic to the variables of the biquadratic.
 
@@ -161,13 +159,13 @@ def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
         sage: from sage.schemes.toric.weierstrass_higher import _biquadratic_syzygy_quartic
         sage: R.<w,x,y,z> = QQ[]
         sage: _biquadratic_syzygy_quartic(w^2+x^2+y^2, z^2)
-        (Joint quaternary quadratic with coefficients (1, 1, 1, 0, 0, 0, 0, 0, 0, 0) 
-         and quaternary quadratic with coefficients (0, 0, 0, 1, 0, 0, 0, 0, 0, 0), 
+        (Joint quaternary quadratic with coefficients (1, 1, 1, 0, 0, 0, 0, 0, 0, 0)
+         and quaternary quadratic with coefficients (0, 0, 0, 1, 0, 0, 0, 0, 0, 0),
          Binary quartic with coefficients (0, 0, 0, -1, 0), {aux...})
     """
     w, x, y, z = _check_polynomials_P3(quadratic1, quadratic2, variables)
     biquadratic = invariant_theory.quaternary_biquadratic(quadratic1, quadratic2, [w, x, y, z])
-    
+
     # construct auxiliary polynomial ring to work with the rhs of the syzygy
     R = biquadratic.ring()
     n = R.ngens()
@@ -251,14 +249,14 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
         sage: X
         1/1024*w^8 + 3/256*w^6*x^2 + 19/512*w^4*x^4 + 3/256*w^2*x^6 + 1/1024*x^8
         sage: Y
-        1/32768*w^12 - 7/16384*w^10*x^2 - 145/32768*w^8*x^4 - 49/8192*w^6*x^6 
+        1/32768*w^12 - 7/16384*w^10*x^2 - 145/32768*w^8*x^4 - 49/8192*w^6*x^6
         - 145/32768*w^4*x^8 - 7/16384*w^2*x^10 + 1/32768*x^12
         sage: Z
         -1/8*w^2*y*z + 1/8*x^2*y*z
-        
+
         sage: a, b = WeierstrassForm_P3(quadratic1, quadratic2);  a, b
         (-1/4, 0)
-        
+
         sage: ideal = R.ideal(quadratic1, quadratic2)
         sage: (-Y^2 + X^3 + a*X*Z^4 + b*Z^6).reduce(ideal)
         0
@@ -276,13 +274,13 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
         sage: Z.total_degree(), len(Z.coefficients())
         (10, 24)
         sage: Z
-        w*x*y*z*a0^3*a1^2*a2 - w*x*y*z*a0^2*a1^3*a2 - w*x*y*z*a0^3*a1*a2^2 
-        + w*x*y*z*a0*a1^3*a2^2 + w*x*y*z*a0^2*a1*a2^3 - w*x*y*z*a0*a1^2*a2^3 
-        - w*x*y*z*a0^3*a1^2*a3 + w*x*y*z*a0^2*a1^3*a3 + w*x*y*z*a0^3*a2^2*a3 
-        - w*x*y*z*a1^3*a2^2*a3 - w*x*y*z*a0^2*a2^3*a3 + w*x*y*z*a1^2*a2^3*a3 
-        + w*x*y*z*a0^3*a1*a3^2 - w*x*y*z*a0*a1^3*a3^2 - w*x*y*z*a0^3*a2*a3^2 
-        + w*x*y*z*a1^3*a2*a3^2 + w*x*y*z*a0*a2^3*a3^2 - w*x*y*z*a1*a2^3*a3^2 
-        - w*x*y*z*a0^2*a1*a3^3 + w*x*y*z*a0*a1^2*a3^3 + w*x*y*z*a0^2*a2*a3^3 
+        w*x*y*z*a0^3*a1^2*a2 - w*x*y*z*a0^2*a1^3*a2 - w*x*y*z*a0^3*a1*a2^2
+        + w*x*y*z*a0*a1^3*a2^2 + w*x*y*z*a0^2*a1*a2^3 - w*x*y*z*a0*a1^2*a2^3
+        - w*x*y*z*a0^3*a1^2*a3 + w*x*y*z*a0^2*a1^3*a3 + w*x*y*z*a0^3*a2^2*a3
+        - w*x*y*z*a1^3*a2^2*a3 - w*x*y*z*a0^2*a2^3*a3 + w*x*y*z*a1^2*a2^3*a3
+        + w*x*y*z*a0^3*a1*a3^2 - w*x*y*z*a0*a1^3*a3^2 - w*x*y*z*a0^3*a2*a3^2
+        + w*x*y*z*a1^3*a2*a3^2 + w*x*y*z*a0*a2^3*a3^2 - w*x*y*z*a1*a2^3*a3^2
+        - w*x*y*z*a0^2*a1*a3^3 + w*x*y*z*a0*a1^2*a3^3 + w*x*y*z*a0^2*a2*a3^3
         - w*x*y*z*a1^2*a2*a3^3 - w*x*y*z*a0*a2^2*a3^3 + w*x*y*z*a1*a2^2*a3^3
     """
     biquadratic, quartic, from_aux = \

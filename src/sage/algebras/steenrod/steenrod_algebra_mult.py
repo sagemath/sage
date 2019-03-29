@@ -226,12 +226,12 @@ def milnor_multiplication(r,s):
     EXAMPLES::
 
         sage: from sage.algebras.steenrod.steenrod_algebra_mult import milnor_multiplication
-        sage: milnor_multiplication((2,), (1,))
-        {(0, 1): 1, (3,): 1}
-        sage: milnor_multiplication((4,), (2,1))
-        {(0, 3): 1, (2, 0, 1): 1, (6, 1): 1}
-        sage: milnor_multiplication((2,4), (0,1))
-        {(2, 0, 0, 1): 1, (2, 5): 1}
+        sage: milnor_multiplication((2,), (1,)) == {(0, 1): 1, (3,): 1}
+        True
+        sage: sorted(milnor_multiplication((4,), (2,1)).items())
+        [((0, 3), 1), ((2, 0, 1), 1), ((6, 1), 1)]
+        sage: sorted(milnor_multiplication((2,4), (0,1)).items())
+        [((2, 0, 0, 1), 1), ((2, 5), 1)]
 
     These examples correspond to the following product computations:
 
@@ -394,14 +394,14 @@ def milnor_multiplication_odd(m1,m2,p):
     EXAMPLES::
 
         sage: from sage.algebras.steenrod.steenrod_algebra_mult import milnor_multiplication_odd
-        sage: milnor_multiplication_odd(((0,2),(5,)), ((1,),(1,)), 5)
-        {((0, 1, 2), (0, 1)): 4, ((0, 1, 2), (6,)): 4}
+        sage: sorted(milnor_multiplication_odd(((0,2),(5,)), ((1,),(1,)), 5).items())
+        [(((0, 1, 2), (0, 1)), 4), (((0, 1, 2), (6,)), 4)]
         sage: milnor_multiplication_odd(((0,2,4),()), ((1,3),()), 7)
         {((0, 1, 2, 3, 4), ()): 6}
         sage: milnor_multiplication_odd(((0,2,4),()), ((1,5),()), 7)
         {((0, 1, 2, 4, 5), ()): 1}
-        sage: milnor_multiplication_odd(((),(6,)), ((),(2,)), 3)
-        {((), (0, 2)): 1, ((), (4, 1)): 1, ((), (8,)): 1}
+        sage: sorted(milnor_multiplication_odd(((),(6,)), ((),(2,)), 3).items())
+        [(((), (0, 2)), 1), (((), (4, 1)), 1), (((), (8,)), 1)]
 
     These examples correspond to the following product computations:
 
@@ -739,8 +739,8 @@ def adem(a, b, c=0, p=2, generic=None):
         {(3, 1): 1}
         sage: adem(4,2)
         {(4, 2): 1}
-        sage: adem(4,4)
-        {(6, 2): 1, (7, 1): 1}
+        sage: adem(4,4) == {(6, 2): 1, (7, 1): 1}
+        True
 
     If `p` is given and is odd, then with two inputs `a` and `b`, the
     Adem relation for `P^a P^b` is computed.  With three inputs `a`,
@@ -760,10 +760,10 @@ def adem(a, b, c=0, p=2, generic=None):
         {(0, 3, 0, 1, 0): 1}
         sage: adem(1,0,1, p=7)
         {(0, 2, 0): 2}
-        sage: adem(1,1,1, p=5)
-        {(0, 2, 1): 1, (1, 2, 0): 1}
-        sage: adem(1,1,2, p=5)
-        {(0, 3, 1): 1, (1, 3, 0): 2}
+        sage: adem(1,1,1, p=5) == {(0, 2, 1): 1, (1, 2, 0): 1}
+        True
+        sage: adem(1,1,2, p=5) == {(0, 3, 1): 1, (1, 3, 0): 2}
+        True
     """
     if generic is None:
         generic = False if p==2 else True

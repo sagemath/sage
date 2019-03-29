@@ -309,7 +309,7 @@ def _negaconvolution(L1, L2, n):
 
 
 def _negaconvolution_fft(L1, L2, n):
-   """
+   r"""
    Returns negacyclic convolution of lists L1 and L2, using FFT
    algorithm. L1 and L2 must both be length `2^n`, where
    `n \geq 3`. Assumes all entries of L1 and L2 belong to the
@@ -365,9 +365,8 @@ def _negaconvolution_fft(L1, L2, n):
    return [R(x / M) for x in L3]
 
 
-
 def _convolution_fft(L1, L2):
-   """
+   r"""
    Returns convolution of non-empty lists L1 and L2, using FFT
    algorithm. L1 and L2 may have arbitrary lengths `\geq 4`.
    Assumes all entries of L1 and L2 belong to the same ring.

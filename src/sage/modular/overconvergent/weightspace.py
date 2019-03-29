@@ -191,7 +191,6 @@ class WeightSpace_class(ParentWithBase):
             sage: W(1 + O(17^5), 4, algebraic = False)
             [1 + O(17^5), 4]
         """
-
         if isinstance(arg1, WeightCharacter):
             if arg1.parent() is self:
                 return arg1
@@ -218,8 +217,6 @@ class WeightSpace_class(ParentWithBase):
         """
         return self(0)
 
-    zero_element = deprecated_function_alias(17694, zero)
-
     def prime(self):
         r"""
         Return the prime `p` such that this is a `p`-adic weight space.
@@ -233,8 +230,9 @@ class WeightSpace_class(ParentWithBase):
 
     def base_extend(self, R):
         r"""
-        Extend scalars to the ring R. There must be a canonical coercion map
-        from the present base ring to R.
+        Extend scalars to the ring R.
+
+        There must be a canonical coercion map from the present base ring to R.
 
         EXAMPLES::
 
@@ -494,7 +492,7 @@ class AlgebraicWeight(WeightCharacter):
         if n == 1:
             n = self._p
         if not n.is_power_of(self._p):
-            raise ValueError("Character must have %s-power conductor" % p)
+            raise ValueError("Character must have %s-power conductor" % self._p)
         self._chi = DirichletGroup(n, chi.base_ring())(chi)
 
     def __call__(self, x):

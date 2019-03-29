@@ -30,9 +30,17 @@ the `Sage trac timeline <http://trac.sagemath.org/timeline>`_.
 Obtaining an Account
 ====================
 
-You need a trac account if you want to *change* anything on the Sage trac
-server, even if you just want to comment on a ticket. To obtain one, send an
-email to ``sage-trac-account@googlegroups.com`` containing:
+**New:** Previously, it was necessary to manually request a Trac account in
+order to post anything to Sage's Trac.  Now, if you have a GitHub account, you
+may log in using it to create and comment on tickets, and edit wiki pages on
+Sage's Trac.
+
+A manual account request is currently only necessary if you prefer not to
+use GitHub or if you want to log into the old `Sage Wiki
+<https://wiki.sagemath.org>`_.  This may change as well in the future.
+
+To obtain a non-GitHub account, send an email to
+``sage-trac-account@googlegroups.com`` containing:
 
 * your full name,
 * preferred username,
@@ -40,9 +48,9 @@ email to ``sage-trac-account@googlegroups.com`` containing:
 * and reason for needing a trac account
 
 Your trac account also grants you access to the `sage wiki
-<https://wiki.sagemath.org>`_. Make sure you understand the review process, and the
-procedures for opening and closing tickets before making changes. The remainder
-of this chapter contains various guidelines on using the trac server.
+<https://wiki.sagemath.org>`_. Make sure you understand the review process, and
+the procedures for opening and closing tickets before making changes. The
+remainder of this chapter contains various guidelines on using the trac server.
 
 Trac authentication through SSH
 ===============================

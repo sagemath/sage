@@ -7,7 +7,7 @@ and display of symbolic expressions.
 AUTHORS:
 
 - Michal Bejger (2015) : class :class:`ExpressionNice`
-- Eric Gourgoulhon (2015) : simplification functions
+- Eric Gourgoulhon (2015, 2017) : simplification functions
 - Travis Scrimshaw (2016): review tweaks
 
 """
@@ -15,7 +15,7 @@ AUTHORS:
 #******************************************************************************
 #
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
-#       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#       Copyright (C) 2015, 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,318 @@ AUTHORS:
 
 from __future__ import division
 
+from operator import pow as _pow
 from sage.symbolic.expression import Expression
+from sage.symbolic.expression_conversions import ExpressionTreeWalker
+from sage.symbolic.ring import SR
+from sage.symbolic.constants import pi
+from sage.functions.other import sqrt, abs_symbolic
+from sage.functions.trig import cos, sin
+from sage.rings.all import Rational
+
+class SimplifySqrtReal(ExpressionTreeWalker):
+    r"""
+    Class for simplifying square roots in the real domain, by walking the
+    expression tree.
+
+    The end user interface is the function :func:`simplify_sqrt_real`.
+
+    INPUT:
+
+    - ``ex`` -- a symbolic expression
+
+    EXAMPLES:
+
+    Let us consider the square root of an exact square under some assumption::
+
+        sage: assume(x<1)
+        sage: a = sqrt(x^2-2*x+1)
+
+    The method :meth:`~sage.symbolic.expression.Expression.simplify_full()`
+    is ineffective on such an expression::
+
+        sage: a.simplify_full()
+        sqrt(x^2 - 2*x + 1)
+
+    and the more agressive method :meth:`~sage.symbolic.expression.Expression.canonicalize_radical()`
+    yields a wrong result, given that `x<1`::
+
+        sage: a.canonicalize_radical()  # wrong output!
+        x - 1
+
+    We construct a :class:`SimplifySqrtReal` object ``s`` from the symbolic
+    expression ``a``::
+
+        sage: from sage.manifolds.utilities import SimplifySqrtReal
+        sage: s = SimplifySqrtReal(a)
+
+    We use the ``__call__`` method to walk the expression tree and produce a
+    correctly simplified expression::
+
+        sage: s()
+        -x + 1
+
+    Calling the simplifier ``s`` with an expression actually simplifies this
+    expression::
+
+        sage: s(a)  # same as s() since s is built from a
+        -x + 1
+        sage: s(sqrt(x^2))
+        abs(x)
+        sage: s(sqrt(1+sqrt(x^2-2*x+1)))  # nested sqrt's
+        sqrt(-x + 2)
+
+    Another example where both
+    :meth:`~sage.symbolic.expression.Expression.simplify_full()` and
+    :meth:`~sage.symbolic.expression.Expression.canonicalize_radical()`
+    fail::
+
+        sage: b = sqrt((x-1)/(x-2))*sqrt(1-x)
+        sage: b.simplify_full()  # does not simplify
+        sqrt(-x + 1)*sqrt((x - 1)/(x - 2))
+        sage: b.canonicalize_radical()  # wrong output, given that x<1
+        (I*x - I)/sqrt(x - 2)
+        sage: SimplifySqrtReal(b)()  # OK, given that x<1
+        -(x - 1)/sqrt(-x + 2)
+
+    TESTS:
+
+    We check that the inverse of a square root is well simplified; this is a
+    a non-trivial test since ``1/sqrt(x)`` is represented by ``pow(x,-1/2)``
+    in the expression tree::
+
+        sage: SimplifySqrtReal(1/sqrt(x^2-4*x+4))()
+        -1/(x - 2)
+        sage: SimplifySqrtReal(sqrt((x-2)/((x-3)*(x^2-2*x+1))))()
+        -sqrt(-x + 2)/((x - 1)*sqrt(-x + 3))
+        sage: forget()  # for doctests below
+
+    .. SEEALSO::
+
+        :func:`simplify_sqrt_real` for more examples with
+        :class:`SimplifySqrtReal` at work.
+
+    """
+    def arithmetic(self, ex, operator):
+        r"""
+        This is the only method of the base class
+        :class:`~sage.symbolic.expression_conversions.ExpressionTreeWalker`
+        that is reimplemented, since square roots are considered as
+        arithmetic operations with ``operator`` = ``pow`` and
+        ``ex.operands()[1]`` = ``1/2`` or ``-1/2``.
+
+        INPUT:
+
+        - ``ex`` -- a symbolic expression
+        - ``operator`` -- an arithmetic operator
+
+        OUTPUT:
+
+        - a symbolic expression, equivalent to ``ex`` with square roots
+          simplified
+
+        EXAMPLES::
+
+            sage: from sage.manifolds.utilities import SimplifySqrtReal
+            sage: a = sqrt(x^2+2*x+1)
+            sage: s = SimplifySqrtReal(a)
+            sage: a.operator()
+            <built-in function pow>
+            sage: s.arithmetic(a, a.operator())
+            abs(x + 1)
+
+        ::
+
+            sage: a = x + 1  # no square root
+            sage: s.arithmetic(a, a.operator())
+            x + 1
+
+        ::
+
+            sage: a = x + 1 + sqrt(function('f')(x)^2)
+            sage: s.arithmetic(a, a.operator())
+            x + abs(f(x)) + 1
+
+        """
+        if operator is _pow:
+            operands = ex.operands()
+            power = operands[1]
+            one_half = Rational((1,2))
+            minus_one_half = -one_half
+            if (power == one_half) or (power == minus_one_half):
+                # This is a square root or the inverse of a square root
+                w0 = SR.wild(0); w1 = SR.wild(1)
+                sqrt_pattern = w0**one_half
+                inv_sqrt_pattern = w0**minus_one_half
+                sqrt_ratio_pattern1 = w0**one_half * w1**minus_one_half
+                sqrt_ratio_pattern2 = w0**minus_one_half * w1**one_half
+                argum = operands[0]  # the argument of sqrt
+                if argum.has(sqrt_pattern) or argum.has(inv_sqrt_pattern):
+                    argum = self(argum)  # treatment of nested sqrt's
+                den = argum.denominator()
+                if not (den == 1):  # the argument of sqrt is a fraction
+                    # NB: after #19312 (integrated in Sage 6.10.beta7), the
+                    # above test cannot be written as "if den != 1:"
+                    num = argum.numerator()
+                    if num < 0 or den < 0:
+                        ex = sqrt(-num) / sqrt(-den)
+                    else:
+                        ex = sqrt(argum)
+                else:
+                    ex = sqrt(argum)
+                simpl = SR(ex._maxima_().radcan())
+                if (not simpl.match(sqrt_pattern) and
+                    not simpl.match(inv_sqrt_pattern) and
+                    not simpl.match(sqrt_ratio_pattern1) and
+                    not simpl.match(sqrt_ratio_pattern2)):
+                    # radcan transformed substantially the expression,
+                    # possibly getting rid of some sqrt; in order to ensure a
+                    # positive result, the absolute value of radcan's output
+                    # is taken, the call to simplify() taking care of possible
+                    # assumptions regarding signs of subexpression of simpl:
+                    simpl = abs(simpl).simplify()
+                if power == minus_one_half:
+                    simpl = SR(1)/simpl
+                return simpl
+        # If operator is not a square root, we default to ExpressionTreeWalker:
+        return super(SimplifySqrtReal, self).arithmetic(ex, operator)
+
+class SimplifyAbsTrig(ExpressionTreeWalker):
+    r"""
+    Class for simplifying absolute values of cosines or sines (in the real
+    domain), by walking the expression tree.
+
+    The end user interface is the function :func:`simplify_abs_trig`.
+
+    INPUT:
+
+    - ``ex`` -- a symbolic expression
+
+    EXAMPLES:
+
+    Let us consider the following symbolic expression with some assumption
+    on the range of the variable `x`::
+
+        sage: assume(pi/2<x, x<pi)
+        sage: a = abs(cos(x)) + abs(sin(x))
+
+    The method :meth:`~sage.symbolic.expression.Expression.simplify_full()`
+    is ineffective on such an expression::
+
+        sage: a.simplify_full()
+        abs(cos(x)) + abs(sin(x))
+
+    We construct a :class:`SimplifyAbsTrig` object ``s`` from the symbolic
+    expression ``a``::
+
+        sage: from sage.manifolds.utilities import SimplifyAbsTrig
+        sage: s = SimplifyAbsTrig(a)
+
+    We use the ``__call__`` method to walk the expression tree and produce a
+    correctly simplified expression, given that `x\in(\pi/2, \pi)`::
+
+        sage: s()
+        -cos(x) + sin(x)
+
+    Calling the simplifier ``s`` with an expression actually simplifies this
+    expression::
+
+        sage: s(a)  # same as s() since s is built from a
+        -cos(x) + sin(x)
+        sage: s(abs(cos(x/2)) + abs(sin(x/2)))  #  pi/4 < x/2 < pi/2
+        cos(1/2*x) + sin(1/2*x)
+        sage: s(abs(cos(2*x)) + abs(sin(2*x)))  #  pi < 2 x < 2*pi
+        abs(cos(2*x)) - sin(2*x)
+        sage: s(abs(sin(2+abs(cos(x)))))  # nested abs(sin_or_cos(...))
+        sin(-cos(x) + 2)
+
+    TESTS::
+
+        sage: forget()  # for doctests below
+
+    .. SEEALSO::
+
+        :func:`simplify_abs_trig` for more examples with
+        :class:`SimplifyAbsTrig` at work.
+
+    """
+    def composition(self, ex, operator):
+        r"""
+        This is the only method of the base class
+        :class:`~sage.symbolic.expression_conversions.ExpressionTreeWalker`
+        that is reimplemented, since it manages the composition of
+        ``abs`` with ``cos`` or ``sin``.
+
+        INPUT:
+
+        - ``ex`` -- a symbolic expression
+        - ``operator`` -- an operator
+
+        OUTPUT:
+
+        - a symbolic expression, equivalent to ``ex`` with ``abs(cos(...))``
+          and ``abs(sin(...))`` simplified, according to the range of their
+          argument.
+
+        EXAMPLES::
+
+            sage: from sage.manifolds.utilities import SimplifyAbsTrig
+            sage: assume(-pi/2 < x, x<0)
+            sage: a = abs(sin(x))
+            sage: s = SimplifyAbsTrig(a)
+            sage: a.operator()
+            abs
+            sage: s.composition(a, a.operator())
+            sin(-x)
+
+        ::
+
+            sage: a = exp(function('f')(x))  # no abs(sin_or_cos(...))
+            sage: a.operator()
+            exp
+            sage: s.composition(a, a.operator())
+            e^f(x)
+
+        ::
+
+            sage: forget()  # no longer any assumption on x
+            sage: a = abs(cos(sin(x)))  # simplifiable since -1 <= sin(x) <= 1
+            sage: s.composition(a, a.operator())
+            cos(sin(x))
+            sage: a = abs(sin(cos(x)))  # not simplifiable
+            sage: s.composition(a, a.operator())
+            abs(sin(cos(x)))
+
+        """
+        if operator is abs_symbolic:
+            argum = ex.operands()[0]  # argument of abs
+            if argum.operator() is sin:
+                # Case of abs(sin(...))
+                x = argum.operands()[0]  # argument of sin
+                w0 = SR.wild()
+                if x.has(abs_symbolic(sin(w0))) or x.has(abs_symbolic(cos(w0))):
+                    x = self(x)  # treatment of nested abs(sin_or_cos(...))
+                # Simplifications for values of x in the range [-pi, 2*pi]:
+                if x>=0 and x<=pi:
+                    ex = sin(x)
+                elif (x>pi and x<=2*pi) or (x>=-pi and x<0):
+                    ex = -sin(x)
+                return ex
+            if argum.operator() is cos:
+                # Case of abs(cos(...))
+                x = argum.operands()[0]  # argument of cos
+                w0 = SR.wild()
+                if x.has(abs_symbolic(sin(w0))) or x.has(abs_symbolic(cos(w0))):
+                    x = self(x)  # treatment of nested abs(sin_or_cos(...))
+                # Simplifications for values of x in the range [-pi, 2*pi]:
+                if (x>=-pi/2 and x<=pi/2) or (x>=3*pi/2 and x<=2*pi):
+                    ex = cos(x)
+                elif (x>pi/2 and x<=3*pi/2) or (x>=-pi and x<-pi/2):
+                    ex = -cos(x)
+                return ex
+        # If no pattern is found, we default to ExpressionTreeWalker:
+        return super(SimplifyAbsTrig, self).composition(ex, operator)
+
 
 def simplify_sqrt_real(expr):
     r"""
@@ -48,7 +359,7 @@ def simplify_sqrt_real(expr):
         sage: simplify_sqrt_real( sqrt(x^2) + sqrt(x^2-2*x+1) )
         -2*x + 1
 
-    This improves over Sage's
+    This improves over
     :meth:`~sage.symbolic.expression.Expression.canonicalize_radical`,
     which yields incorrect results when ``x < 0``::
 
@@ -60,7 +371,7 @@ def simplify_sqrt_real(expr):
         -x
         sage: sqrt(x^2-2*x+1).canonicalize_radical() # wrong output
         x - 1
-        sage: ( sqrt(x^2) + sqrt(x^2-2*x+1) ).canonicalize_radical()
+        sage: ( sqrt(x^2) + sqrt(x^2-2*x+1) ).canonicalize_radical() # wrong output
         -1
 
     Simplification of nested ``sqrt``'s::
@@ -80,89 +391,38 @@ def simplify_sqrt_real(expr):
         sage: (sqrt(x^2 + sqrt(4*x^2) + 1)).canonicalize_radical()
         x - 1
 
+    TESTS:
+
+    Simplification of expressions involving some symbolic derivatives::
+
+        sage: f = function('f')
+        sage: simplify_sqrt_real( diff(f(x), x)/sqrt(x^2-2*x+1) )  # x<0 => x-1<0
+        -diff(f(x), x)/(x - 1)
+        sage: g = function('g')
+        sage: simplify_sqrt_real( sqrt(x^3*diff(f(g(x)), x)^2) )  # x<0
+        (-x)^(3/2)*abs(D[0](f)(g(x)))*abs(diff(g(x), x))
+        sage: forget()  # for doctests below
+
     """
-    from sage.symbolic.ring import SR
-    from sage.functions.other import sqrt
-    # 1/ Search for the sqrt's in expr
-    sexpr = str(expr)
-    if 'sqrt(' not in sexpr:  # no sqrt to simplify
-        return expr
-    if ('D[' in sexpr) or ('diff(' in sexpr):
-        return expr    #!# the code below is not capable of simplifying
-                       # expressions with symbolic derivatives denoted
-                       # by Pynac symbols of the type D[0] or diff(...)
-    # Lists to store the positions of all the top-level sqrt's in sexpr:
-    pos_sqrts = []  # position of first character, i.e. 's' of 'sqrt(...)'
-    pos_after = []  # position of character immediately after 'sqrt(...)'
-    the_sqrts = []  # the sqrt sub-expressions in sexpr, i.e. 'sqrt(...)'
-    pos_max = len(sexpr) - 6
-    pos = 0
-    while pos < pos_max:
-        if sexpr[pos:pos+5] == 'sqrt(':
-            pos_sqrts.append(pos)
-            parenth = 1
-            scan = pos+5
-            while parenth != 0:
-                if sexpr[scan] == '(': parenth += 1
-                if sexpr[scan] == ')': parenth -= 1
-                scan += 1
-            the_sqrts.append( sexpr[pos:scan] )
-            pos_after.append(scan)
-            pos = scan
-        else:
-            pos += 1
-    # 2/ Search for sub-sqrt's:
-    for i in range(len(the_sqrts)):
-        argum = the_sqrts[i][5:-1]  # the sqrt argument
-        if 'sqrt(' in argum:
-            simpl = simplify_sqrt_real(SR(argum))
-            the_sqrts[i] = 'sqrt(' + str(simpl) + ')'
-    # 3/ Simplifications of the sqrt's
-    new_expr = ""    # will contain the result
-    pos0 = 0
-    for i, pos in enumerate(pos_sqrts):
-        # radcan is called on each sqrt:
-        x = SR(the_sqrts[i])
-        argum = x.operands()[0] # the argument of sqrt
-        den = argum.denominator()
-        if not (den == 1):  # the argument of sqrt is a fraction
-            # NB: after #19312 (integrated in Sage 6.10.beta7), the above
-            # cannot be written as
-            #    if den != 1!:
-            num = argum.numerator()
-            if num < 0 or den < 0:
-                x = sqrt(-num) / sqrt(-den)  # new equivalent expression for x
-        simpl = SR(x._maxima_().radcan())
-        if str(simpl)[:5] == 'sqrt(' or str(simpl)[:7] == '1/sqrt(':
-            # no further simplification seems possible:
-            ssimpl = str(simpl)
-        else:
-            # the absolute value of radcan's output is taken, the call to
-            # simplify() taking into account possible assumptions regarding the
-            # sign of simpl:
-            ssimpl = str(abs(simpl).simplify())
-        # search for abs(1/sqrt(...)) term to simplify it into 1/sqrt(...):
-        pstart = ssimpl.find('abs(1/sqrt(')
-        if pstart != -1:
-            ssimpl = ssimpl[:pstart] + ssimpl[pstart+3:] # getting rid of 'abs'
-        new_expr += sexpr[pos0:pos] + '(' + ssimpl + ')'
-        pos0 = pos_after[i]
-    new_expr += sexpr[pos0:]
-    return SR(new_expr)
+    w0 = SR.wild()
+    one_half = Rational((1,2))
+    if expr.has(w0**one_half) or expr.has(w0**(-one_half)):
+        return SimplifySqrtReal(expr)()
+    return expr
+
 
 def simplify_abs_trig(expr):
     r"""
-    Simplify ``abs(sin(...))`` in symbolic expressions.
+    Simplify ``abs(sin(...))`` and ``abs(cos(...))`` in symbolic expressions.
 
     EXAMPLES::
 
-        sage: forget()  # for doctests only
         sage: M = Manifold(3, 'M', structure='topological')
         sage: X.<x,y,z> = M.chart(r'x y:(0,pi) z:(-pi/3,0)')
         sage: X.coord_range()
         x: (-oo, +oo); y: (0, pi); z: (-1/3*pi, 0)
 
-    Since ``x`` spans all `\RR`, no simplification of ``abs(sin(x))``
+    Since `x` spans all `\RR`, no simplification of ``abs(sin(x))``
     occurs, while ``abs(sin(y))`` and ``abs(sin(3*z))`` are correctly
     simplified, given that `y \in (0,\pi)` and `z \in (-\pi/3,0)`::
 
@@ -170,7 +430,7 @@ def simplify_abs_trig(expr):
         sage: simplify_abs_trig( abs(sin(x)) + abs(sin(y)) + abs(sin(3*z)) )
         abs(sin(x)) + sin(y) + sin(-3*z)
 
-    Note that neither Sage's function
+    Note that neither
     :meth:`~sage.symbolic.expression.Expression.simplify_trig` nor
     :meth:`~sage.symbolic.expression.Expression.simplify_full`
     works in this case::
@@ -197,58 +457,47 @@ def simplify_abs_trig(expr):
         sage: simplify_abs_trig( abs(sin(4*z)) )  # must not simplify
         abs(sin(-4*z))
 
+    Simplification of ``abs(cos(...))``::
+
+        sage: forget()
+        sage: M = Manifold(3, 'M', structure='topological')
+        sage: X.<x,y,z> = M.chart(r'x y:(0,pi/2) z:(pi/4,3*pi/4)')
+        sage: X.coord_range()
+        x: (-oo, +oo); y: (0, 1/2*pi); z: (1/4*pi, 3/4*pi)
+        sage: simplify_abs_trig( abs(cos(x)) + abs(cos(y)) + abs(cos(2*z)) )
+        abs(cos(x)) + cos(y) - cos(2*z)
+
+    Additional tests::
+
+        sage: simplify_abs_trig(abs(cos(y-pi/2)))  # shall simplify
+        cos(-1/2*pi + y)
+        sage: simplify_abs_trig(abs(cos(y+pi/2)))  # shall simplify
+        -cos(1/2*pi + y)
+        sage: simplify_abs_trig(abs(cos(y-pi)))  # shall simplify
+        -cos(-pi + y)
+        sage: simplify_abs_trig(abs(cos(2*y)))  # must not simplify
+        abs(cos(2*y))
+        sage: simplify_abs_trig(abs(cos(y/2)) * abs(sin(z)))  # shall simplify
+        cos(1/2*y)*sin(z)
+
+    TESTS:
+
+    Simplification of expressions involving some symbolic derivatives::
+
+        sage: f = function('f')
+        sage: s = abs(cos(x)) + abs(cos(y))*diff(f(x),x) + abs(cos(2*z))
+        sage: simplify_abs_trig(s)
+        cos(y)*diff(f(x), x) + abs(cos(x)) - cos(2*z)
+        sage: s = abs(sin(x))*diff(f(x),x).subs(x=y^2) + abs(cos(y))
+        sage: simplify_abs_trig(s)
+        abs(sin(x))*D[0](f)(y^2) + cos(y)
+        sage: forget()  # for doctests below
+
     """
-    from sage.symbolic.ring import SR
-    from sage.symbolic.constants import pi
-    sexpr = str(expr)
-    if 'abs(sin(' not in sexpr:  # nothing to simplify
-        return expr
-    if ('D[' in sexpr) or ('diff(' in sexpr):
-        return expr    #!# the code below is not capable of simplifying
-                       # expressions with symbolic derivatives denoted
-                       # by Pynac symbols of the type D[0] or diff(...)
-    tp = []
-    val = []
-    for pos in range(len(sexpr)):
-        if sexpr[pos:pos+8] == 'abs(sin(':
-            # finding the end of abs argument:
-            scan = pos+4 # start of abs
-            parenth = 1
-            while parenth != 0:
-                if sexpr[scan] == '(': parenth += 1
-                if sexpr[scan] == ')': parenth -= 1
-                scan += 1
-            pos_abs_end = scan
-            # finding the end of sin argument:
-            scan = pos+8 # start of sin
-            parenth = 1
-            while parenth != 0:
-                if sexpr[scan] == '(': parenth += 1
-                if sexpr[scan] == ')': parenth -= 1
-                scan += 1
-            pos_sin_end = scan
-            # if the abs contains only the sinus, the simplification can be tried:
-            if pos_sin_end == pos_abs_end-1:
-                tp.append(pos)
-                val.append( sexpr[pos:pos_abs_end] )
-    simp = []
-    for v in val:
-        # argument of the sinus:
-        sx = v[8:-2]
-        x = SR(sx)
-        if x>=0 and x<=pi:
-            simp.append('sin(' + sx + ')')
-        elif x>=-pi and x<=0:
-            simp.append('(-sin(' + sx + '))')
-        else:
-            simp.append(v)  # no simplification is applicable
-    nexpr = ""
-    pos0 = 0
-    for i, pos in enumerate(tp):
-        nexpr += sexpr[pos0:pos] + simp[i]
-        pos0 = pos + len(val[i])
-    nexpr += sexpr[pos0:]
-    return SR(nexpr)
+    w0 = SR.wild()
+    if expr.has(abs_symbolic(sin(w0))) or expr.has(abs_symbolic(cos(w0))):
+        return SimplifyAbsTrig(expr)()
+    return expr
 
 
 def simplify_chain_real(expr):
@@ -258,7 +507,7 @@ def simplify_chain_real(expr):
 
     This is the simplification chain used in calculus involving coordinate
     functions on real manifolds, as implemented in
-    :class:`~sage.manifolds.coord_func_symb.CoordFunctionSymb`.
+    :class:`~sage.manifolds.chart_func.ChartFunction`.
 
     The chain is formed by the following functions, called
     successively:
@@ -277,7 +526,6 @@ def simplify_chain_real(expr):
 
     We consider variables that are coordinates of a chart on a real manifold::
 
-        sage: forget()  # for doctest only
         sage: M = Manifold(2, 'M', structure='topological')
         sage: X.<x,y> = M.chart('x:(0,1) y')
 
@@ -340,6 +588,10 @@ def simplify_chain_real(expr):
         sage: s.simplify_full()  # OK
         1
 
+    TESTS::
+
+        sage: forget()  # for doctests below
+
     """
     expr = expr.simplify_factorial()
     expr = expr.simplify_trig()
@@ -352,13 +604,14 @@ def simplify_chain_real(expr):
     expr = expr.simplify_trig()
     return expr
 
+
 def simplify_chain_generic(expr):
     r"""
     Apply a chain of simplifications to a symbolic expression.
 
     This is the simplification chain used in calculus involving coordinate
     functions on manifolds over fields different from `\RR`, as implemented in
-    :class:`~sage.manifolds.coord_func_symb.CoordFunctionSymb`.
+    :class:`~sage.manifolds.chart_func.ChartFunction`.
 
     The chain is formed by the following functions, called
     successively:
@@ -377,7 +630,6 @@ def simplify_chain_generic(expr):
     We consider variables that are coordinates of a chart on a complex
     manifold::
 
-        sage: forget()  # for doctest only
         sage: M = Manifold(2, 'M', structure='topological', field='complex')
         sage: X.<x,y> = M.chart()
 
@@ -409,6 +661,10 @@ def simplify_chain_generic(expr):
         sage: simplify_chain_generic(s)
         0
 
+    TESTS::
+
+        sage: forget()  # for doctests below
+
     """
     expr = expr.simplify_factorial()
     expr = expr.simplify_rectform()
@@ -417,7 +673,137 @@ def simplify_chain_generic(expr):
     expr = expr.expand_sum()
     return expr
 
+def simplify_chain_generic_sympy(expr):
+    r"""
+    Apply a chain of simplifications to a sympy expression.
 
+    This is the simplification chain used in calculus involving coordinate
+    functions on manifolds over fields different from `\RR`, as implemented in
+    :class:`~sage.manifolds.chart_func.ChartFunction`.
+
+    The chain is formed by the following functions, called
+    successively:
+
+    #. :meth:`~sympy.simplify.combsimp`
+    #. :meth:`~sympy.simplify.trigsimp`
+    #. :meth:`~sympy.core.expand`
+    #. :meth:`~sympy.simplify.simplify`
+
+    EXAMPLES:
+
+    We consider variables that are coordinates of a chart on a complex
+    manifold::
+
+        sage: forget()  # for doctest only
+        sage: M = Manifold(2, 'M', structure='topological', field='complex', calc_method='sympy')
+        sage: X.<x,y> = M.chart()
+
+    Then neither ``x`` nor ``y`` is assumed to be real::
+
+        sage: assumptions()
+        []
+
+    Accordingly, ``simplify_chain_generic_sympy`` does not simplify
+    ``sqrt(x^2)`` to ``abs(x)``::
+
+        sage: from sage.manifolds.utilities import simplify_chain_generic_sympy
+        sage: s = (sqrt(x^2))._sympy_()
+        sage: simplify_chain_generic_sympy(s)
+        sqrt(x**2)
+
+    This contrasts with the behavior of
+    :func:`~sage.manifolds.utilities.simplify_chain_real_sympy`.
+
+    Other simplifications::
+
+        sage: s = ((x+y)^2 - x^2 -2*x*y - y^2)._sympy_()
+        sage: simplify_chain_generic_sympy(s)
+        0
+        sage: s = ((x^2 - 2*x + 1) / (x^2 -1))._sympy_()
+        sage: simplify_chain_generic_sympy(s)
+        (x - 1)/(x + 1)
+        sage: s = (cos(2*x) - 2*cos(x)^2 + 1)._sympy_()
+        sage: simplify_chain_generic_sympy(s)
+        0
+
+    """
+    expr = expr.combsimp()
+    expr = expr.trigsimp()
+    expr = expr.expand()
+    expr = expr.simplify()
+    return expr
+
+def simplify_chain_real_sympy(expr):
+    r"""
+    Apply a chain of simplifications to a sympy expression, assuming the
+    real domain.
+
+    This is the simplification chain used in calculus involving coordinate
+    functions on real manifolds, as implemented in
+    :class:`~sage.manifolds.chart_func.ChartFunction`.
+
+    The chain is formed by the following functions, called
+    successively:
+
+    #. :meth:`~sympy.simplify.combsimp`
+    #. :meth:`~sympy.simplify.trigsimp`
+    #. :func:`simplify_sqrt_real`
+    #. :func:`simplify_abs_trig`
+    #. :meth:`~sympy.core.expand`
+    #. :meth:`~sympy.simplify.simplify`
+
+    EXAMPLES:
+
+    We consider variables that are coordinates of a chart on a real manifold::
+
+        sage: forget()  # for doctest only
+        sage: M = Manifold(2, 'M', structure='topological',calc_method='sympy')
+        sage: X.<x,y> = M.chart('x:(0,1) y')
+
+    The following assumptions then hold::
+
+        sage: assumptions()
+        [x is real, x > 0, x < 1, y is real]
+
+    and we have::
+
+        sage: from sage.manifolds.utilities import simplify_chain_real_sympy
+        sage: s = (sqrt(y^2))._sympy_()
+        sage: simplify_chain_real_sympy(s)
+        Abs(y)
+
+    Furthermore, we have::
+
+        sage: s = (sqrt(x^2-2*x+1))._sympy_()
+        sage: simplify_chain_real_sympy(s)
+        -x + 1
+
+    Other simplifications::
+
+        sage: s = (abs(sin(pi*x)))._sympy_()
+        sage: simplify_chain_real_sympy(s)  # correct output since x in (0,1)
+        sin(pi*x)
+
+    ::
+
+        sage: s = (cos(y)^2 + sin(y)^2)._sympy_()
+        sage: simplify_chain_real_sympy(s)
+        1
+
+    """
+    # TODO: introduce pure SymPy functions instead of simplify_sqrt_real and
+    #       simplify_abs_trig
+    if 'sqrt(' in str(expr):
+        expr = simplify_sqrt_real(expr._sage_())._sympy_()
+    expr = expr.combsimp()
+    expr = expr.trigsimp()
+    if 'sqrt(' in str(expr):
+        expr = simplify_sqrt_real(expr._sage_())._sympy_()
+    if 'Abs(sin(' in str(expr):
+        expr = simplify_abs_trig(expr._sage_())._sympy_()
+    expr = expr.expand()
+    expr = expr.simplify()
+    return expr
 
 #******************************************************************************
 
@@ -680,22 +1066,22 @@ class ExpressionNice(Expression):
             # checking if the variable is composite
             for i, val in enumerate(strv):
                 if bool(re.search(r'[+|-|/|*|^|(|)]', val)):
-                    latv[i] = "\left(" + latv[i] + "\\right)"
+                    latv[i] = r"\left(" + latv[i] + r"\right)"
 
             # dictionary to group multiple occurrences of differentiation: d/dxdx -> d/dx^2 etc.
             occ = {i: (latv[i] + "^" + latex(diffargs.count(i))
                        if diffargs.count(i) > 1 else latv[i])
                    for i in diffargs}
 
-            res = "\\frac{\partial" + numargs + "\," + funcname + \
-                  "}{\partial " + "\partial ".join(i for i in occ.values()) + "}"
+            res = r"\frac{\partial" + numargs + r"\," + funcname + \
+                  r"}{\partial " + r"\partial ".join(i for i in occ.values()) + "}"
 
             # representation of the operator
             s = self._parent._latex_element_(m[0])
 
             # if diff operator is raised to some power (m[5]), put brackets around
             if m[5]:
-                res = "\left(" + res + "\\right)^{" + str(m[5]) + "}"
+                res = r"\left(" + res + r"\right)^{" + str(m[5]) + "}"
                 o = s + "^{" + str(m[5]) + "}"
             else:
                 o = s
@@ -819,7 +1205,7 @@ def _list_functions(ex, list_f):
     if op:
         # FIXME: This hack is needed because the NewSymbolicFunction is
         #   a class defined inside of the *function* function_factory().
-        if str(type(op)) == "<class 'sage.symbolic.function_factory.NewSymbolicFunction'>":
+        if "NewSymbolicFunction" in str(type(op)):
             repr_function = repr(op)
             latex_function = latex(op)
 

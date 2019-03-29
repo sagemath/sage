@@ -177,7 +177,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: w.length()
             7
             sage: type(w.length())
-            <type 'sage.rings.integer.Integer'>
+            <... 'sage.rings.integer.Integer'>
             sage: type(len(w))
             <... 'int'>
         """
@@ -463,7 +463,40 @@ cdef class WordDatatype_char(WordDatatype):
             w._set_data(other)
             return (<WordDatatype_char> self)._concatenate(w)
 
-        raise TypeError("not able to initialize a word from {}".format(other))
+        else:
+            from sage.combinat.words.finite_word import FiniteWord_class
+            return FiniteWord_class.concatenate(self, other)
+
+    def __add__(self, other):
+        r"""
+        Concatenation (alias for ``*``).
+
+        TESTS::
+
+            sage: W = Words([0,1,2])
+            sage: type(W([0]) + W([1])) is W.finite_words()._element_classes['char']
+            True
+        """
+        return self * other
+
+    def concatenate(self, other):
+        r"""
+        Concatenation of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = Words([0,1,2])
+            sage: W([0,2,1]).concatenate([0,0,0])
+            word: 021000
+
+        TESTS::
+
+            sage: W = Words([0,1,2])
+            sage: w = W([0,2,1]).concatenate(W([0,0,0]))
+            sage: type(w) is W.finite_words()._element_classes['char']
+            True
+        """
+        return self * other
 
     def __pow__(self, exp, mod):
         r"""

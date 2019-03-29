@@ -43,10 +43,10 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: K = Qp(13,7)
             sage: R.<t> = K[]
             sage: R([K(13), K(1)])
-            (1 + O(13^7))*t + (13 + O(13^8))
+            (1 + O(13^7))*t + 13 + O(13^8)
             sage: T.<t> = ZZ[]
             sage: R(t + 2)
-            (1 + O(13^7))*t + (2 + O(13^7))
+            (1 + O(13^7))*t + 2 + O(13^7)
 
         Check that :trac:`13620` has been fixed::
 
@@ -165,7 +165,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
             sage: R.<t> = Zp(5)[]
             sage: t._new_constant_poly(O(5),R)
-            (O(5))
+            O(5)
         """
         return self.__class__(P, [a], check=False)
 
@@ -311,7 +311,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: R.<t> = K[]
             sage: a = 2*t^3 + 169*t - 1
             sage: a
-            (2 + O(13^7))*t^3 + (13^2 + O(13^9))*t + (12 + 12*13 + 12*13^2 + 12*13^3 + 12*13^4 + 12*13^5 + 12*13^6 + O(13^7))
+            (2 + O(13^7))*t^3 + (13^2 + O(13^9))*t + 12 + 12*13 + 12*13^2 + 12*13^3 + 12*13^4 + 12*13^5 + 12*13^6 + O(13^7)
             sage: a.list()
             [12 + 12*13 + 12*13^2 + 12*13^3 + 12*13^4 + 12*13^5 + 12*13^6 + O(13^7),
              13^2 + O(13^9),
@@ -365,15 +365,16 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         Slices can be used to truncate polynomials::
 
             sage: a[:2]
-            (13^2 + O(13^4))*t + (12*13^4 + 12*13^5 + 12*13^6 + 12*13^7 + 12*13^8 + 12*13^9 + 12*13^10 + O(13^11))
+            (13^2 + O(13^4))*t + 12*13^4 + 12*13^5 + 12*13^6 + 12*13^7 + 12*13^8 + 12*13^9 + 12*13^10 + O(13^11)
 
         Any other kind of slicing is deprecated or an error, see
         :trac:`18940`::
 
             sage: a[1:3]
-            doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
+            doctest:warning...:
+            DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
             See http://trac.sagemath.org/18940 for details.
-            (13^2 + O(13^4))*t
+            0*t^2 + (13^2 + O(13^4))*t
             sage: a[1:3:2]
             Traceback (most recent call last):
             ...
@@ -420,7 +421,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: a = t^4 + 17*t^2 + 1
             sage: b = -t^4 + 9*t^2 + 13*t - 1
             sage: c = a + b; c
-            (O(13^7))*t^4 + (2*13 + O(13^7))*t^2 + (13 + O(13^8))*t + (O(13^7))
+            O(13^7)*t^4 + (2*13 + O(13^7))*t^2 + (13 + O(13^8))*t + O(13^7)
             sage: c.list()
             [O(13^7), 13 + O(13^8), 2*13 + O(13^7), 0, O(13^7)]
         """
@@ -454,7 +455,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: a = t^4 + 17*t^2 + 1
             sage: b = t^4 - 9*t^2 - 13*t + 1
             sage: c = a - b; c
-            (O(13^7))*t^4 + (2*13 + O(13^7))*t^2 + (13 + O(13^8))*t + (O(13^7))
+            O(13^7)*t^4 + (2*13 + O(13^7))*t^2 + (13 + O(13^8))*t + O(13^7)
             sage: c.list()
             [O(13^7), 13 + O(13^8), 2*13 + O(13^7), 0, O(13^7)]
         """
@@ -526,11 +527,11 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: a = t^4 + 17*t^2 + 1
             sage: b = -t^4 + 9*t^2 + 13*t - 1
             sage: c = a + b; c
-            (O(13^7))*t^4 + (2*13 + O(13^7))*t^2 + (13 + O(13^8))*t + (O(13^7))
+            O(13^7)*t^4 + (2*13 + O(13^7))*t^2 + (13 + O(13^8))*t + O(13^7)
             sage: d = R([K(1,4), K(2, 6), K(1, 5)]); d
-            (1 + O(13^5))*t^2 + (2 + O(13^6))*t + (1 + O(13^4))
+            (1 + O(13^5))*t^2 + (2 + O(13^6))*t + 1 + O(13^4)
             sage: e = c * d; e
-            (O(13^7))*t^6 + (O(13^7))*t^5 + (2*13 + O(13^6))*t^4 + (5*13 + O(13^6))*t^3 + (4*13 + O(13^5))*t^2 + (13 + O(13^5))*t + (O(13^7))
+            O(13^7)*t^6 + O(13^7)*t^5 + (2*13 + O(13^6))*t^4 + (5*13 + O(13^6))*t^3 + (4*13 + O(13^5))*t^2 + (13 + O(13^5))*t + O(13^7)
             sage: e.list()
             [O(13^7),
              13 + O(13^5),
@@ -568,7 +569,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: R.<t> = K[]
             sage: a = t^4 + K(13,5)*t^2 + 13
             sage: K(13,7) * a
-            (13 + O(13^7))*t^4 + (13^2 + O(13^6))*t^2 + (13^2 + O(13^8))
+            (13 + O(13^7))*t^4 + (13^2 + O(13^6))*t^2 + 13^2 + O(13^8)
         """
         return None
         # The code below has never been tested and is somehow subtly broken.
@@ -595,7 +596,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: R.<t> = K[]
             sage: a = t^4 + 13*t^2 + 4
             sage: -a
-            (12 + 12*13 + O(13^2))*t^4 + (12*13 + 12*13^2 + O(13^3))*t^2 + (9 + 12*13 + O(13^2))
+            (12 + 12*13 + O(13^2))*t^4 + (12*13 + 12*13^2 + O(13^3))*t^2 + 9 + 12*13 + O(13^2)
         """
         return Polynomial_padic_capped_relative_dense(self.parent(), (-self._poly, self._valbase, self._relprecs, False, self._valaddeds, None), construct = True)
 
@@ -609,7 +610,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: R.<t> = K[]
             sage: a = t + 52
             sage: a.lshift_coeffs(3)
-            (13^3 + O(13^7))*t + (4*13^4 + O(13^8))
+            (13^3 + O(13^7))*t + 4*13^4 + O(13^8)
         """
         if shift < 0:
             return self.rshift_coeffs(-shift, no_list)
@@ -618,25 +619,27 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         else:
             return Polynomial_padic_capped_relative_dense(self.parent(), (self._poly, self._valbase + shift, self._relprecs, False, self._valaddeds, [c.__lshift__(shift) for c in self._list]), construct = True)
 
-    def rshift_coeffs(self, shift, no_list = False):
+    def rshift_coeffs(self, shift, no_list=False):
         """
         Return a new polynomial whose coefficients are p-adically
-        shifted to the right by shift.
+        shifted to the right by ``shift``.
 
-        NOTES: Type Qp(5)(0).__rshift__? for more information.
+        .. NOTE::
+
+            Type ``Qp(5)(0).__rshift__?`` for more information.
 
         EXAMPLES::
 
             sage: K = Zp(13, 4)
             sage: R.<t> = K[]
             sage: a = t^2 + K(13,3)*t + 169; a
-            (1 + O(13^4))*t^2 + (13 + O(13^3))*t + (13^2 + O(13^6))
+            (1 + O(13^4))*t^2 + (13 + O(13^3))*t + 13^2 + O(13^6)
             sage: b = a.rshift_coeffs(1); b
-            (O(13^3))*t^2 + (1 + O(13^2))*t + (13 + O(13^5))
+            O(13^3)*t^2 + (1 + O(13^2))*t + 13 + O(13^5)
             sage: b.list()
             [13 + O(13^5), 1 + O(13^2), O(13^3)]
             sage: b = a.rshift_coeffs(2); b
-            (O(13^2))*t^2 + (O(13))*t + (1 + O(13^4))
+            O(13^2)*t^2 + O(13)*t + 1 + O(13^4)
             sage: b.list()
             [1 + O(13^4), O(13), O(13^2)]
         """
@@ -762,7 +765,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: K = Qp(3,10)
             sage: R.<T> = K[]
             sage: f = T + 2; f
-            (1 + O(3^10))*T + (2 + O(3^10))
+            (1 + O(3^10))*T + 2 + O(3^10)
             sage: f.degree()
             1
             sage: (f-T).degree()
@@ -776,7 +779,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: li = [3^i * x for i in range(0,5)]; li
             [O(3^5), O(3^6), O(3^7), O(3^8), O(3^9)]
             sage: f = R(li); f
-            (O(3^9))*T^4 + (O(3^8))*T^3 + (O(3^7))*T^2 + (O(3^6))*T + (O(3^5))
+            O(3^9)*T^4 + O(3^8)*T^3 + O(3^7)*T^2 + O(3^6)*T + O(3^5)
             sage: f.degree()
             -1
             sage: f.degree(secure=True)
@@ -803,7 +806,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: K = Qp(3,10)
             sage: R.<T> = K[]
             sage: f = T + 2; f
-            (1 + O(3^10))*T + (2 + O(3^10))
+            (1 + O(3^10))*T + 2 + O(3^10)
             sage: f.prec_degree()
             1
         """
@@ -830,7 +833,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: K = Qp(3,10)
             sage: R.<T> = K[]
             sage: f = T + 2; f
-            (1 + O(3^10))*T + (2 + O(3^10))
+            (1 + O(3^10))*T + 2 + O(3^10)
             sage: f.precision_absolute()
             [10, 10]
         """
@@ -859,7 +862,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: K = Qp(3,10)
             sage: R.<T> = K[]
             sage: f = T + 2; f
-            (1 + O(3^10))*T + (2 + O(3^10))
+            (1 + O(3^10))*T + 2 + O(3^10)
             sage: f.precision_relative()
             [10, 10]
         """
@@ -894,7 +897,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: K = Qp(3,10)
             sage: R.<T> = K[]
             sage: f = T + 2; f
-            (1 + O(3^10))*T + (2 + O(3^10))
+            (1 + O(3^10))*T + 2 + O(3^10)
             sage: f.valuation_of_coefficient(1)
             0
         """
@@ -929,7 +932,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: K = Qp(3,10)
             sage: R.<T> = K[]
             sage: f = T + 2; f
-            (1 + O(3^10))*T + (2 + O(3^10))
+            (1 + O(3^10))*T + 2 + O(3^10)
             sage: f.valuation()
             0
         """
@@ -957,15 +960,15 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: f = t^3 + 4*t; f
             (1 + O(13^7))*t^3 + (4 + O(13^7))*t
             sage: f.reverse()
-            (4 + O(13^7))*t^2 + (1 + O(13^7))
+            0*t^3 + (4 + O(13^7))*t^2 + 1 + O(13^7)
             sage: f.reverse(3)
-            (4 + O(13^7))*t^2 + (1 + O(13^7))
+            0*t^3 + (4 + O(13^7))*t^2 + 1 + O(13^7)
             sage: f.reverse(2)
-            (4 + O(13^7))*t
+            0*t^2 + (4 + O(13^7))*t
             sage: f.reverse(4)
-            (4 + O(13^7))*t^3 + (1 + O(13^7))*t
+            0*t^4 + (4 + O(13^7))*t^3 + (1 + O(13^7))*t
             sage: f.reverse(6)
-            (4 + O(13^7))*t^5 + (1 + O(13^7))*t^3
+            0*t^6 + (4 + O(13^7))*t^5 + (1 + O(13^7))*t^3
         """
         if n is None:
             n = self._poly.degree()
@@ -1038,8 +1041,8 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: f = T + 2
             sage: g = T**4 + 3*T+22
             sage: g.quo_rem(f)
-            ((1 + O(3^10))*T^3 + (1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10))*T^2 + (1 + 3 + O(3^10))*T + (1 + 3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10)),
-            (2 + 3 + 3^3 + O(3^10)))
+            ((1 + O(3^10))*T^3 + (1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10))*T^2 + (1 + 3 + O(3^10))*T + 1 + 3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10),
+             2 + 3 + 3^3 + O(3^10))
 
         TESTS:
 
@@ -1047,7 +1050,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
             sage: R.<x> = Qp(3)[]
             sage: x.quo_rem(x)
-            ((1 + O(3^20)), 0)
+            (1 + O(3^20), 0)
 
         """
         return self._quo_rem_list(right, secure=secure)
@@ -1133,7 +1136,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: R.<x> = Qp(3,3)[]
             sage: f = x + 1
             sage: f.xgcd(f^2)
-            ((1 + O(3^3))*x + (1 + O(3^3)), (1 + O(3^3)), 0)
+            ((1 + O(3^3))*x + 1 + O(3^3), 1 + O(3^3), 0)
 
         In these examples the results are incorrect, see :trac:`13439`::
 
@@ -1194,7 +1197,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         not sufficient::
 
             sage: g = f + K(0,0)*t^4; g
-            (5^2 + O(5^22))*t^10 + (O(5^0))*t^4 + (3 + O(5^20))*t + (5 + O(5^21))
+            (5^2 + O(5^22))*t^10 + O(5^0)*t^4 + (3 + O(5^20))*t + 5 + O(5^21)
             sage: g.newton_polygon()
             Traceback (most recent call last):
             ...
@@ -1247,14 +1250,14 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         TESTS::
 
             sage: f = R([K(5,1),0,0,1]); f
-            (1 + O(5^20))*t^3 + (O(5))
+            (1 + O(5^20))*t^3 + O(5)
             sage: f.is_eisenstein()
             Traceback (most recent call last):
             ...
             PrecisionError: Not enough precision on the constant coefficient
 
             sage: g = R([5,K(0,0),0,1]); g 
-            (1 + O(5^20))*t^3 + (O(5^0))*t + (5 + O(5^21))
+            (1 + O(5^20))*t^3 + O(5^0)*t + 5 + O(5^21)
             sage: g.is_eisenstein()
             True
             sage: g.is_eisenstein(secure=True)

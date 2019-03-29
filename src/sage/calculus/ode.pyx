@@ -23,6 +23,7 @@ from __future__ import absolute_import
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
+from sage.misc.sageinspect import sage_getargspec
 from sage.libs.gsl.all cimport *
 import sage.calculus.interpolation
 
@@ -345,13 +346,13 @@ class ode_solver(object):
         self.params = params
         self.solution = []
 
-    def __setattr__(self,name,value):
-        if(hasattr(self,'solution')):
-            object.__setattr__(self,'solution',[])
-        object.__setattr__(self,name,value)
+    def __setattr__(self, name, value):
+        if hasattr(self, 'solution'):
+            object.__setattr__(self, 'solution', [])
+        object.__setattr__(self, name, value)
 
-    def interpolate_solution(self,i=0):
-        pts = [(t,y[i]) for t,y in self.solution]
+    def interpolate_solution(self, i=0):
+        pts = [(t, y[i]) for t, y in self.solution]
         return sage.calculus.interpolation.spline(pts)
 
     def plot_solution(self, i=0, filename=None, interpolate=False, **kwds):
@@ -423,9 +424,9 @@ class ode_solver(object):
                 wrapper.the_jacobian = None
             else:
                 wrapper.the_jacobian = self.jacobian
-            if self.params==[] and len(inspect.getargspec(wrapper.the_function)[0])==2:
+            if self.params==[] and len(sage_getargspec(wrapper.the_function)[0])==2:
                 wrapper.the_parameters=[]
-            elif self.params==[] and len(inspect.getargspec(wrapper.the_function)[0])>2:
+            elif self.params==[] and len(sage_getargspec(wrapper.the_function)[0])>2:
                 raise ValueError("ODE system has a parameter but no parameters specified")
             elif self.params!=[]:
                 wrapper.the_parameters = self.params

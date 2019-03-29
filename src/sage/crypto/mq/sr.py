@@ -184,9 +184,9 @@ Note that the S-Box object for SR can be constructed with a call to ``sr.sbox()`
    sage: sr = mq.SR(1,1,1,4, gf2=True, polybori=True)
    sage: S = sr.sbox()
 
-For example, we can now study the difference distribution matrix of ``S``::
+For example, we can now study the difference distribution table of ``S``::
 
-   sage: S.difference_distribution_matrix()
+   sage: S.difference_distribution_table()
    [16  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
    [ 0  2  2  2  2  0  0  0  2  0  0  0  2  4  0  0]
    [ 0  2  0  4  2  2  2  0  0  2  0  0  0  0  0  2]
@@ -313,7 +313,7 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing, BooleanPolynomialRing_constructor as BooleanPolynomialRing
 
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.matrix.constructor import Matrix, random_matrix
 from sage.matrix.matrix_space import MatrixSpace
 
@@ -326,7 +326,6 @@ from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 from .mpolynomialsystemgenerator import MPolynomialSystemGenerator
 
 from sage.rings.polynomial.term_order import TermOrder
-from sage.structure.richcmp import richcmp_not_equal, rich_to_bool, op_LT
 
 
 def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -631,7 +630,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
             return self._base
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Two generators are considered equal if they agree on all parameters
         passed to them during construction.
@@ -639,13 +638,9 @@ class SR_generic(MPolynomialSystemGenerator):
         EXAMPLES::
 
             sage: sr1 = mq.SR(2, 2, 2, 4)
-            sage: sr2 = mq.SR(2, 2, 2, 4)
-            sage: sr1 == sr2
+            sage: sr1 == sr1
             True
 
-        ::
-
-            sage: sr1 = mq.SR(2, 2, 2, 4)
             sage: sr2 = mq.SR(2, 2, 2, 4, gf2=True)
             sage: sr1 == sr2
             False
@@ -655,8 +650,24 @@ class SR_generic(MPolynomialSystemGenerator):
             lx = getattr(self, name)
             rx = getattr(other, name)
             if lx != rx:
-                return 1 if richcmp_not_equal(lx, rx, op_LT) else -1
-        return 0
+                return False
+        return True
+
+    def __ne__(self, other):
+        """
+        Return whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: sr1 = mq.SR(2, 2, 2, 4)
+            sage: sr1 != sr1
+            False
+
+            sage: sr2 = mq.SR(2, 2, 2, 4, gf2=True)
+            sage: sr1 != sr2
+            True
+        """
+        return not(self == other)
 
     def sub_bytes(self, d):
         r"""
@@ -1069,7 +1080,7 @@ class SR_generic(MPolynomialSystemGenerator):
         return random_matrix(self.base_ring(), self._r, self._c, *args, **kwds)
 
     def random_vector(self, *args, **kwds):
-        """
+        r"""
         Return a random vector as it might appear in the algebraic
         expression of self.
 
@@ -1523,7 +1534,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
 
     def varformatstr(self, name, n=None, rc=None, e=None):
-        """
+        r"""
         Return a format string which is understood by print et al.
 
         If a numerical value is omitted, the default value of ``self``
@@ -1902,7 +1913,7 @@ class SR_generic(MPolynomialSystemGenerator):
             return tuple(lin + sbox)
 
     def key_schedule_polynomials(self, i):
-        """
+        r"""
         Return polynomials for the `i`-th round of the key
         schedule.
 
@@ -2240,7 +2251,7 @@ class SR_gf2n(SR_generic):
             raise TypeError
 
     def antiphi(self, l):
-        """
+        r"""
         The operation `\phi^{-1}` from [MR2002]_ or the inverse of ``self.phi``.
 
         INPUT:
@@ -2461,7 +2472,7 @@ class SR_gf2n(SR_generic):
         return [xi[j, 0]*wi[j, 0] + 1 for j in range(length)]
 
     def field_polynomials(self, name, i, l=None):
-        """
+        r"""
         Return list of conjugacy polynomials for a given round ``i``
         and name ``name``.
 
@@ -2646,7 +2657,7 @@ class SR_gf2(SR_generic):
         else: raise TypeError
 
     def antiphi(self, l):
-        """
+        r"""
         The operation `\phi^{-1}` from [MR2002]_ or the inverse of ``self.phi``.
 
         INPUT:
@@ -3186,7 +3197,7 @@ class SR_gf2(SR_generic):
         return l
 
     def field_polynomials(self, name, i, l=None):
-        """
+        r"""
         Return list of field polynomials for a given round ``i`` and
         name ``name``.
 

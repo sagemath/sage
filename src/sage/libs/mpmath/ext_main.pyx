@@ -1067,12 +1067,14 @@ cdef class Context:
 
             sage: class MyInt(int):
             ....:     pass
-            sage: class MyLong(long):
+            sage: class MyLong(long):  # py2
             ....:     pass
             sage: class MyFloat(float):
             ....:     pass
-            sage: mag(MyInt(10)), mag(MyLong(10))
-            (4, 4)
+            sage: mag(MyInt(10))
+            4
+            sage: mag(MyLong(10))  # py2
+            4
 
         """
         cdef int typ
@@ -2061,11 +2063,11 @@ cdef class mpf(mpf_base):
 
         TESTS::
 
-            sage: import mpmath
-            sage: v = mpmath.mpf(2)
-            sage: class MyLong(long):
+            sage: import mpmath  # py2
+            sage: v = mpmath.mpf(2)  # py2
+            sage: class MyLong(long):  # py2
             ....:     pass
-            sage: MyLong(v)
+            sage: MyLong(v)  # py2
             2L
         """
         MPF_to_fixed(tmp_mpz, &self.value, 0, True)

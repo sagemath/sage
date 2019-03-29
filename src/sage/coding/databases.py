@@ -4,7 +4,7 @@ Databases and accessors of online databases for coding theory
 """
 from six.moves import range
 from sage.interfaces.all import gap
-from sage.misc.package import is_package_installed, PackageNotFoundError
+from sage.features.gap import GapPackage
 
 #Don't put any global imports here since this module is accessible as sage.codes.databases.<tab>
 
@@ -42,8 +42,7 @@ def best_linear_code_in_guava(n, k, F):
     between 2 and 4. Use ``bounds_on_minimum_distance_in_guava(10,5,GF(2))``
     for further details.
     """
-    if not is_package_installed('gap_packages'):
-        raise PackageNotFoundError('gap_packages')
+    GapPackage("guava", spkg="gap_packages").require()
     gap.load_package("guava")
     q = F.order()
     C = gap("BestKnownLinearCode(%s,%s,GF(%s))"%(n,k,q))
@@ -110,8 +109,7 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
           upperBound := 4,
           upperBoundExplanation := ... )
     """
-    if not is_package_installed('gap_packages'):
-        raise PackageNotFoundError('gap_packages')
+    GapPackage("guava", spkg="gap_packages").require()
     gap.load_package("guava")
     q = F.order()
     gap.eval("data := BoundsMinimumDistance(%s,%s,GF(%s))"%(n,k,q))
@@ -119,12 +117,10 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
     return Ldata
 
 
-
-
 def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
     r"""
     Return the best linear code and its construction as per the web database
-    http://codetables.de.
+    http://www.codetables.de/
 
     INPUT:
 
@@ -166,13 +162,13 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
     from six.moves.urllib.request import urlopen
     q = F.order()
     if not q in [2, 3, 4, 5, 7, 8, 9]:
-        raise ValueError("q (=%s) must be in [2,3,4,5,7,8,9]"%q)
+        raise ValueError("q (=%s) must be in [2,3,4,5,7,8,9]" % q)
     n = int(n)
     k = int(k)
 
-    param = ("?q=%s&n=%s&k=%s"%(q,n,k)).replace('L','')
+    param = ("?q=%s&n=%s&k=%s" % (q, n, k)).replace('L', '')
 
-    url = "http://iaks-www.ira.uka.de/home/grassl/codetables/BKLC/BKLC.php"+param
+    url = "http://www.codetables.de/" + "BKLC/BKLC.php" + param
     if verbose:
         print("Looking up the bounds at %s" % url)
     f = urlopen(url)
@@ -185,7 +181,6 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
         raise IOError("Error parsing data (missing pre tags).")
     text = s[i+5:j].strip()
     return text
-
 
 
 def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
@@ -276,7 +271,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Since all the codes will be self-orthogonal, b must be divisible by
     2::
 
-        sage: list(self_orthogonal_binary_codes(8, 4, 1, equal=True))
+        sage: list(codes.databases.self_orthogonal_binary_codes(8, 4, 1, equal=True))
         Traceback (most recent call last):
         ...
         ValueError: b (1) must be a positive even integer.

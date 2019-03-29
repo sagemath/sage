@@ -22,7 +22,7 @@ EXAMPLES::
     sage: build_alphabet(name="lower")
     {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Franco Saliola <saliola@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ EXAMPLES::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from __future__ import print_function
 from six.moves import range
 from six import integer_types
@@ -45,6 +45,7 @@ from sage.rings.infinity import Infinity
 
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.positive_integers import PositiveIntegers
+from sage.misc.persist import register_unpickle_override
 
 
 set_of_letters = {
@@ -60,6 +61,7 @@ set_of_letters = {
     'hexadecimal' : "0123456789abcdef",
     'radix64'     : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
     }
+
 
 def build_alphabet(data=None, names=None, name=None):
     r"""
@@ -140,7 +142,7 @@ def build_alphabet(data=None, names=None, name=None):
     The other families for the option ``name`` are among 'lower', 'upper',
     'space', 'underscore', 'punctuation', 'printable', 'binary', 'octal',
     'decimal', 'hexadecimal', 'radix64' which refer to standard set of
-    charaters. Theses names may be combined by separating them by a space::
+    characters. Theses names may be combined by separating them by a space::
 
         sage: build_alphabet(name="lower")
         {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
@@ -217,7 +219,7 @@ def build_alphabet(data=None, names=None, name=None):
     # Swap arguments if we need to try and make sure we have "good" user input
     if isinstance(names, integer_types + (Integer,)) or names == Infinity \
             or (data is None and names is not None):
-        data,names = names,data
+        data, names = names, data
 
     # data is an integer
     if isinstance(data, integer_types + (Integer,)):
@@ -225,7 +227,7 @@ def build_alphabet(data=None, names=None, name=None):
             from sage.sets.integer_range import IntegerRange
             return IntegerRange(Integer(data))
         if isinstance(names, str):
-            return TotallyOrderedFiniteSet([names + '%d'%i for i in range(data)])
+            return TotallyOrderedFiniteSet([names + '%d' % i for i in range(data)])
         if len(names) == data:
             return TotallyOrderedFiniteSet(names)
         raise ValueError("invalid value for names")
@@ -262,8 +264,8 @@ def build_alphabet(data=None, names=None, name=None):
         return TotallyOrderedFiniteSet(data)
 
     # Alphabet(**nothing**)
-    if data is None: # name is also None
-        from sage.structure.parent import Set_PythonType
+    if data is None:  # name is also None
+        from sage.sets.pythonclass import Set_PythonType
         return Set_PythonType(object)
 
     raise ValueError("unable to construct an alphabet from the given parameters")
@@ -275,6 +277,7 @@ Alphabet = build_alphabet
 # More precisely, the ticket #8920 suppress several classes. The following code
 # just allows to unpickle old style alphabet saved from previous version of
 # Sage.
+
 
 class OrderedAlphabet(object):
     r"""
@@ -314,6 +317,7 @@ class OrderedAlphabet(object):
 
 OrderedAlphabet_Finite = OrderedAlphabet
 
+
 class OrderedAlphabet_backward_compatibility(TotallyOrderedFiniteSet):
     r"""
     .. WARNING::
@@ -347,9 +351,8 @@ class OrderedAlphabet_backward_compatibility(TotallyOrderedFiniteSet):
             from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
             Parent.__init__(self, category=FiniteEnumeratedSets(), facade=True)
             return self._elements
-        raise AttributeError("no attribute %s"%name)
+        raise AttributeError("no attribute %s" % name)
 
-from sage.structure.sage_object import register_unpickle_override
 
 register_unpickle_override(
     'sage.combinat.words.alphabet',
@@ -362,4 +365,3 @@ register_unpickle_override(
     'OrderedAlphabet_PositiveIntegers',
     PositiveIntegers,
     call_name=('sage.sets.positive_integers', 'PositiveIntegers'))
-

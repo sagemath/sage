@@ -154,7 +154,7 @@ cdef class SkewPolynomial(AlgebraElement):
         sage: b = S([t^2,t+1,1]); b
         x^2 + (t + 1)*x + t^2
         sage: c = S.random_element(degree=3,monic=True); c
-        x^3 + (-95*t^2 + t + 2)*x^2 + (-t^2 + t)*x + 2*t - 8
+        x^3 + (2*t - 1)*x
 
     Ring operations are supported::
 
@@ -181,9 +181,9 @@ cdef class SkewPolynomial(AlgebraElement):
 
         sage: q,r = c.right_quo_rem(b)
         sage: q
-        x - 95*t^2
+        x - t - 2
         sage: r
-        (95*t^3 + 93*t^2 - t - 1)*x + 95*t^4 + 2*t - 8
+        3*t*x + t^3 + 2*t^2
         sage: c == q*b + r
         True
 
@@ -1571,7 +1571,7 @@ cdef class SkewPolynomial(AlgebraElement):
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
-            sage: a = t^2 + 1/2*x*t;
+            sage: a = t^2 + 1/2*x*t
             sage: a._repr_()
             '(1/2*t + 1/2)*x + t^2'
             sage: a._repr_(name='y')
@@ -1621,7 +1621,7 @@ cdef class SkewPolynomial(AlgebraElement):
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
-            sage: a = t^2 + 1/2*x*t;
+            sage: a = t^2 + 1/2*x*t
             sage: a._latex_()
             '\\left(\\frac{1}{2} t + \\frac{1}{2}\\right) x + t^{2}'
             sage: a._latex_(name='y')
@@ -2251,7 +2251,7 @@ cdef class SkewPolynomial_generic_dense(SkewPolynomial):
         Return the generic dense skew polynomial corresponding to the
         current parameters provided ``self``.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])
@@ -2443,11 +2443,11 @@ cdef class SkewPolynomial_generic_dense(SkewPolynomial):
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
             sage: a = S.random_element(monic=True); a
-            x^2 + (-12*t^2 + 1/2*t - 1/95)*x - 1/2*t^2 - 4
+            x^2 + (-1/95*t - 1/2)*x
             sage: b = -S.random_element(monic=True); b
-            -x^2 + (5/2*t - 2/3)*x + 1/4*t^2 - 1/2*t + 1
+            -x^2 - 1/2*x
             sage: c = a+b; c
-            (-12*t^2 + 3*t - 193/285)*x - 1/4*t^2 - 1/2*t - 3
+            (-1/95*t - 1)*x
             sage: c.degree()
             1
         """
@@ -2474,11 +2474,11 @@ cdef class SkewPolynomial_generic_dense(SkewPolynomial):
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
             sage: a = S.random_element(monic=True); a
-            x^2 + (-12*t^2 + 1/2*t - 1/95)*x - 1/2*t^2 - 4
+            x^2 + (-1/95*t - 1/2)*x
             sage: b = S.random_element(monic=True); b
-            x^2 + (-5/2*t + 2/3)*x - 1/4*t^2 + 1/2*t - 1
+            x^2 + 1/2*x
             sage: c = a-b; c
-            (-12*t^2 + 3*t - 193/285)*x - 1/4*t^2 - 1/2*t - 3
+            (-1/95*t - 1)*x
             sage: c.degree()
             1
         """
@@ -2866,9 +2866,9 @@ cdef class SkewPolynomial_generic_dense(SkewPolynomial):
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
             sage: a = S.random_element(degree=4); a
-            t^2*x^4 + (-12*t^2 - 2*t - 1)*x^3 + (-95*t^2 + t + 2)*x^2 + (-t^2 + t)*x + 2*t - 8
+            (-t - 95)*x^4 + x^3 + (2*t - 1)*x
             sage: b = S.random_element(monic=True); b
-            x^2 + (4*t^2 - t - 2)*x - t^2 + t - 1
+            x^2 + (-12*t - 2)*x
             sage: q,r = a.right_quo_rem(b)
             sage: a == q*b + r
             True
@@ -2876,7 +2876,7 @@ cdef class SkewPolynomial_generic_dense(SkewPolynomial):
         The leading coefficient of the divisor need to be invertible::
 
             sage: c = S.random_element(); c
-            (-4*t^2 + t)*x^2 - 2*t^2*x + 5*t^2 - 6*t - 4
+            (t - 1)*x^2 + t^2*x
             sage: a.right_quo_rem(c)
             Traceback (most recent call last):
             ...

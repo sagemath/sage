@@ -20,7 +20,7 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 from __future__ import print_function, absolute_import
 
@@ -196,7 +196,7 @@ ELIF PY_VERSION_HEX>=0x03060000:
         ctypedef struct PyDictKeysObject
     ####
     #definitions replicated from CPython's Objects/dict-common.h
-    #(this file is not exported fron CPython, so we need to be
+    #(this file is not exported from CPython, so we need to be
     #careful the definitions are in step with what happens there.
     ctypedef union IndexBlock:
         int8_t as_1[8]
@@ -438,6 +438,5 @@ def test_del_dictitem_by_exact_value(D, value, h):
         sage: test_del_dictitem_by_exact_value(D, QQ, 1)
         sage: D
         {1: Integer Ring}
-
     """
     return del_dictitem_by_exact_value(<PyDictObject *>D, <PyObject *>value, h)

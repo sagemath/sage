@@ -99,9 +99,10 @@ from __future__ import absolute_import
 #*****************************************************************************
 
 from .ring import SymbolicRing, SR
-
-
+from sage.categories.pushout import ConstructionFunctor
 from sage.structure.factory import UniqueFactory
+
+
 class SymbolicSubringFactory(UniqueFactory):
     r"""
     A factory creating a symbolic subring.
@@ -472,8 +473,23 @@ class GenericSymbolicSubring(SymbolicRing):
         """
         return not self == other
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
 
-from sage.categories.pushout import ConstructionFunctor
+        EXAMPLES::
+
+            sage: from sage.symbolic.subring import SymbolicSubring
+            sage: A = SymbolicSubring(accepting_variables=('a',))
+            sage: B = SymbolicSubring(accepting_variables=('b',))
+            sage: hash(A) == hash(A)
+            True
+            sage: hash(A) == hash(B)
+            False
+        """
+        return hash(tuple(sorted(self._vars_)))
+
+
 class GenericSymbolicSubringFunctor(ConstructionFunctor):
     r"""
     A base class for the functors constructing symbolic subrings.
@@ -775,7 +791,6 @@ class SymbolicSubringAcceptingVarsFunctor(GenericSymbolicSubringFunctor):
             if not (self.vars & other.vars):
                 return other
 
-
     def _apply_functor(self, R):
         """
         Apply this functor to the given symbolic ring `R`.
@@ -1037,7 +1052,6 @@ class SymbolicConstantsSubring(SymbolicSubringAcceptingVars):
         """
         return 'Symbolic Constants Subring'
 
-
     def has_valid_variable(self, variable):
         r"""
         Return whether the given ``variable`` is valid in this subring.
@@ -1062,7 +1076,6 @@ class SymbolicConstantsSubring(SymbolicSubringAcceptingVars):
             False
         """
         return False
-
 
     def _an_element_(self):
         r"""

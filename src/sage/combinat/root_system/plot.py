@@ -813,9 +813,11 @@ from sage.structure.element import parent
 from sage.modules.free_module_element import vector
 from sage.rings.all import ZZ, QQ
 from sage.combinat.root_system.cartan_type import CartanType
-lazy_import("sage.combinat.root_system.root_lattice_realizations", "RootLatticeRealizations")
+lazy_import("sage.combinat.root_system.root_lattice_realizations",
+            "RootLatticeRealizations")
 
-class PlotOptions:
+
+class PlotOptions(object):
     r"""
     A class for plotting options for root lattice realizations.
 
@@ -1294,10 +1296,10 @@ class PlotOptions:
             Graphics object consisting of 5 graphics primitives
             sage: list(p)
             [Text '$0$' at the point (0.0,0.0),
-             Arrow from (0.0,0.0) to (0.5,0.866024518389),
-             Text '$1$' at the point (0.525,0.909325744308),
-             Arrow from (0.0,0.0) to (-0.5,0.866024518389),
-             Text '$2$' at the point (-0.525,0.909325744308)]
+             Arrow from (0.0,0.0) to (0.5,0.86602451838...),
+             Text '$1$' at the point (0.525,0.909325744308...),
+             Arrow from (0.0,0.0) to (-0.5,0.86602451838...),
+             Text '$2$' at the point (-0.525,0.909325744308...)]
         """
         from sage.plot.arrow import arrow
         tail = self.origin_projected
@@ -1354,7 +1356,7 @@ class PlotOptions:
             Graphics object consisting of 2 graphics primitives
             sage: list(p)
             [Polygon defined by 4 points,
-             Text '$2$' at the point (3.15,3.15)]
+             Text '$2$' at the point (3.15...,3.15...)]
             sage: options.cone(rays=[alpha[1]], lines=[alpha[2]], color='green', label=2, as_polyhedron=True)
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex, 1 ray, 1 line
 
@@ -1370,7 +1372,7 @@ class PlotOptions:
             sage: options = L.plot_parse_options()
             sage: p = options.cone(rays=[alpha[1]+alpha[2]], color='green', label=2, thickness=4, alpha=.5)
             sage: list(p)
-            [Line defined by 2 points, Text '$2$' at the point (3.15,3.15)]
+            [Line defined by 2 points, Text '$2$' at the point (3.15...,3.15...)]
             sage: sorted(p[0].options().items())
             [('alpha', 0.500000000000000), ('legend_color', None),
              ('legend_label', None), ('rgbcolor', 'green'), ('thickness', 4),
@@ -1442,7 +1444,7 @@ class PlotOptions:
         TESTS::
 
             sage: print(H.description())
-            Text '$H_{\alpha^\vee_{1}}$' at the point (0.0,3.15)
+            Text '$H_{\alpha^\vee_{1}}$' at the point (0.0,3.15...)
             Line defined by 2 points: [(0.0, 3.0), (0.0, -3.0)]
 
         ::
@@ -1586,7 +1588,8 @@ def barycentric_projection_matrix(n, angle=0):
     if angle and n == 2:
         from sage.functions.trig import sin
         from sage.functions.trig import cos
-        rotation = matrix([[sin(angle), cos(angle)],[-cos(angle), sin(angle)]])
+        rotation = matrix([[sin(angle), cos(angle)],
+                           [-cos(angle), sin(angle)]])
         result = rotation * result
     result.set_immutable()
     return result

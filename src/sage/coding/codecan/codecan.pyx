@@ -313,7 +313,7 @@ cdef class InnerGroup:
                 # rescale the already fixed part by column multiplications
                 for col in fixed_minimized_cols:
                     col_nz = m.column(col).nonzero_positions()
-                    if len(col_nz) > 0:
+                    if col_nz:
                         row = col_nz[0]
                         if self.compute_transporter:
                             my_trans.v = (my_trans.v[:col] + (m[row, col],) +
@@ -460,15 +460,16 @@ cdef class InnerGroup:
             [[1], [0], [2]]
         """
         if self.row_partition.num_cells == 1:
-            return [range(mat.ncols())]
+            return [list(range(mat.ncols()))]
 
-        r = [[] for i in range(mat.ncols()) ]
+        r = [[] for i in range(mat.ncols())]
         cols = iter(mat.columns())
         for i in range(mat.ncols()):
             # there should be no zero columns by assumption!
             m = OP_find(self.row_partition, next(cols).nonzero_positions()[0])
             r[m].append(i)
-        return [ x for x in r if len(x) > 0 ]
+        return [x for x in r if x]
+
 
 cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
     """
@@ -657,9 +658,9 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
     cdef _compute_group_element(self, SemimonomialTransformation trans, str algorithm_type):
         """
-        Apply ``trans`` to ``self._root_matrix`` and minimize the this matrix
+        Apply ``trans`` to ``self._root_matrix`` and minimize this matrix
         column by column under the inner minimization. The action is
-        simoultaneously applied to ``trans``.
+        simultaneously applied to ``trans``.
 
         The output of this function is a triple containing, the modified
         group element ``trans``, the minimized matrix and the stabilizer of this

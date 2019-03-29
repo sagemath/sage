@@ -26,14 +26,15 @@ AUTHORS:
 - Volker Braun (2014-03-31): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
+import sys
 import ctypes
 import time
 from sage.structure.sage_object import SageObject
@@ -143,7 +144,7 @@ class Profiler(SageObject):
         global libprofiler
         if libprofiler is not None:
             return libprofiler
-        import ctypes, ctypes.util
+        import ctypes.util
         name = ctypes.util.find_library('profiler')
         if name:
             libprofiler = ctypes.CDLL(name)
@@ -242,9 +243,8 @@ class Profiler(SageObject):
             sage: from sage.misc.gperftools import Profiler
             sage: prof = Profiler()
             sage: prof._executable()
-            '.../python'
+            '.../python...'
         """
-        import sys
         return sys.executable
 
     def _call_pprof(self, *args, **kwds):
@@ -388,8 +388,6 @@ def run_100ms():
     """
     t0 = time.time()   # start
     t1 = t0 + 0.1      # end
-    from sage.misc.functional import symbolic_sum
     from sage.symbolic.ring import SR
     while time.time() < t1:
-        sum(1/(1+SR(n) ** 2) for n in range(100))
-
+        sum(1 / (1 + SR(n) ** 2) for n in range(100))

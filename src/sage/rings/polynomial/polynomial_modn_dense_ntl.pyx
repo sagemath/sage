@@ -35,6 +35,8 @@ from sage.rings.polynomial.polynomial_element cimport Polynomial, _dict_to_list
 
 from sage.libs.all import pari, pari_gen
 
+from sage.rings.integer cimport smallInteger
+
 from sage.libs.ntl.all import ZZ as ntl_ZZ, ZZX, zero_ZZX, ZZ_p, ZZ_pX
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
@@ -48,7 +50,7 @@ from sage.rings.infinity import infinity
 from . import polynomial_singular_interface
 from sage.interfaces.all import singular as singular_default
 
-from sage.structure.element import generic_power, canonical_coercion, bin_op, coerce_binop
+from sage.structure.element import coerce_binop
 
 from sage.libs.ntl.types cimport NTL_SP_BOUND
 from sage.libs.ntl.ZZ_p cimport *
@@ -294,10 +296,27 @@ cdef class Polynomial_dense_mod_n(Polynomial):
 
     def degree(self, gen=None):
         """
-        Return the degree of this polynomial.  The zero polynomial
-        has degree -1.
+        Return the degree of this polynomial.
+
+        The zero polynomial has degree -1.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
+            sage: (x^3 + 3*x - 17).degree()
+            3
+            sage: R.zero().degree()
+            -1
+
+        TESTS:
+
+        Check output type (see :trac:`25182`)::
+
+            sage: R.<x> = PolynomialRing(Integers(3), implementation='NTL')
+            sage: isinstance(x.degree(), Integer)
+            True
         """
-        return max(self.__poly.degree(), -1)
+        return smallInteger(max(self.__poly.degree(), -1))
 
     cpdef list list(self, bint copy=True):
         """
@@ -802,13 +821,13 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             x^5 + 95*x^4 + 10*x^3 + 90*x^2 + 5*x + 99
 
         Negative powers will not work::
-        
+
             sage: R.<x> = PolynomialRing(Integers(101), implementation='NTL')
             sage: (x-1)^(-5)
             Traceback (most recent call last):
             ...
             NotImplementedError: Fraction fields not implemented for this type.
-            
+
         We define ``0^0`` to be unity, :trac:`13895`::
 
             sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')

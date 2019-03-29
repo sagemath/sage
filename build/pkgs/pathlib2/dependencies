@@ -1,4 +1,4 @@
-$(PYTHON) | setuptools pip six
+$(PYTHON) | setuptools pip six scandir
 
 ----------
 All lines of this file are ignored except the first.

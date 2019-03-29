@@ -105,7 +105,7 @@ class SixVertexConfiguration(ClonableArray):
 
         The signed matrix corresponding to a six vertex configuration is
         given by `0` if there is a cross flow, a `1` if the outward arrows
-        are vertical and `-1` if the outward arrows are horizonal.
+        are vertical and `-1` if the outward arrows are horizontal.
 
         EXAMPLES::
 

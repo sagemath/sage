@@ -88,7 +88,7 @@ TESTS:
 Check that :trac:`20088` is fixed::
 
     sage: ((1+x).series(x)^pi).series(x,3)
-    1 + (pi)*x + (-1/2*pi + 1/2*pi^2)*x^2 + Order(x^3)
+    1 + pi*x + (-1/2*pi + 1/2*pi^2)*x^2 + Order(x^3)
 
 Check that :trac:`14878` is fixed, this should take only microseconds::
 
@@ -281,7 +281,7 @@ cdef class SymbolicSeries(Expression):
         EXAMPLES::
 
             sage: ex=(gamma(1-x)).series(x,3); ex
-            1 + (euler_gamma)*x + (1/2*euler_gamma^2 + 1/12*pi^2)*x^2 + Order(x^3)
+            1 + euler_gamma*x + (1/2*euler_gamma^2 + 1/12*pi^2)*x^2 + Order(x^3)
             sage: g=ex.power_series(SR); g
             1 + euler_gamma*x + (1/2*euler_gamma^2 + 1/12*pi^2)*x^2 + O(x^3)
             sage: g.parent()

@@ -23,17 +23,20 @@ The algorithm used in this file comes from
 #*****************************************************************************
 from six.moves import range
 
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.combinat.composition import Composition
-from sage.combinat.combinat import CombinatorialClass
-from sage.arith.all import euler_phi,factorial, divisors, gcd
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.arith.all import euler_phi, factorial, divisors, gcd
+from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.misc.all import prod
 from sage.combinat.misc import DoublyLinkedList
 
+
 def Necklaces(content):
     r"""
-    Return the combinatorial class of necklaces with evaluation ``content``.
+    Return the set of necklaces with evaluation ``content``.
 
     A necklace is a list of integers that such that the list is
     the smallest lexicographic representative of all the cyclic shifts
@@ -45,7 +48,7 @@ def Necklaces(content):
 
     INPUT:
 
-    - ``content`` -- a list of non-negative integers
+    - ``content`` -- a list or tuple of non-negative integers
 
     EXAMPLES::
 
@@ -66,14 +69,31 @@ def Necklaces(content):
     """
     return Necklaces_evaluation(content)
 
-class Necklaces_evaluation(CombinatorialClass):
+
+class Necklaces_evaluation(UniqueRepresentation, Parent):
     """
     Necklaces with a fixed evaluation (content).
 
     INPUT:
 
-    - ``content`` -- a list of non-negative integers
+    - ``content`` -- a list or tuple of non-negative integers
     """
+    @staticmethod
+    def __classcall_private__(cls, content):
+        """
+        Return the correct parent object, with standardized parameters.
+
+        EXAMPLES::
+
+            sage: Necklaces([2,1,1]) is Necklaces(Composition([2,1,1]))
+            True
+        """
+        if isinstance(content, Composition):
+            return super(Necklaces_evaluation, cls).__classcall__(cls, content)
+        else:
+            content = Composition(content)
+            return super(Necklaces_evaluation, cls).__classcall__(cls, content)
+
     def __init__(self, content):
         r"""
         Initialize ``self``.
@@ -83,28 +103,11 @@ class Necklaces_evaluation(CombinatorialClass):
             sage: N = Necklaces([2,2,2])
             sage: N == loads(dumps(N))
             True
+            sage: T = Necklaces([2,1])
+            sage: TestSuite(T).run()
         """
-        if isinstance(content, Composition):
-            self._content = content
-        else:
-            self._content = Composition(content)
-
-    @lazy_attribute
-    def e(self):
-        """
-        Deprecated in :trac:`17436`. Use :meth:`content` instead.
-
-        TESTS::
-
-            sage: N = Necklaces([2,2,2])
-            sage: N.e
-            doctest:...: DeprecationWarning: e attribute is deprecated. Use the content method instead
-            See http://trac.sagemath.org/17436 for details.
-            [2, 2, 2]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(17436, 'e attribute is deprecated. Use the content method instead')
-        return self._content
+        self._content = content
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def content(self):
         """
@@ -125,7 +128,7 @@ class Necklaces_evaluation(CombinatorialClass):
             sage: repr(Necklaces([2,1,1]))
             'Necklaces with evaluation [2, 1, 1]'
         """
-        return "Necklaces with evaluation %s"%self._content
+        return "Necklaces with evaluation %s" % self._content
 
     def __contains__(self, x):
         r"""
@@ -218,12 +221,13 @@ class Necklaces_evaluation(CombinatorialClass):
         evaluation = self._content
         le = list(evaluation)
         if not le:
-            return 0
+            return ZZ.zero()
 
         n = sum(le)
 
-        return sum(euler_phi(j)*factorial(n/j) / prod(factorial(ni/j)
-                    for ni in evaluation) for j in divisors(gcd(le))) / n
+        return ZZ.sum(euler_phi(j) * factorial(n // j) //
+                      prod(factorial(ni // j) for ni in evaluation)
+                      for j in divisors(gcd(le))) // n
 
     def __iter__(self):
         r"""
@@ -296,6 +300,7 @@ def _ffc(content, equality=False):
 
     for x in _fast_fixed_content(a, e, 2, 1, k, r, 2, dll, equality=equality):
         yield x
+
 
 def _fast_fixed_content(a, content, t, p, k, r, s, dll, equality=False):
     """
@@ -392,6 +397,7 @@ def _lfc(content, equality=False):
     for z in _list_fixed_content(a, content, 2, 1, k, dll, equality=equality):
         yield z
 
+
 def _list_fixed_content(a, content, t, p, k, dll, equality=False):
     """
     EXAMPLES::
@@ -443,7 +449,6 @@ def _list_fixed_content(a, content, t, p, k, dll, equality=False):
             j = dll.next(j)
 
 
-
 ################################
 #Simple Fixed Content Algorithm#
 ################################
@@ -475,10 +480,11 @@ def _sfc(content, equality=False):
         [[0, 0, 0, 1, 1, 1], [0, 0, 1, 0, 1, 1], [0, 0, 1, 1, 0, 1]]
     """
     content = list(content)
-    a = [0]*sum(content)
+    a = [0] * sum(content)
     content[0] -= 1
     k = len(content)
     return _simple_fixed_content(a, content, 2, 1, k, equality=equality)
+
 
 def _simple_fixed_content(a, content, t, p, k, equality=False):
     """

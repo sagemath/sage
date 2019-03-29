@@ -53,6 +53,6 @@ fi
 # Openssl installs itself readonly, which will break attempts to
 # rewrite library paths later
 chmod u+w                        \
-    "$SAGE_LOCAL"/lib/engines/*  \
+    "$SAGE_LOCAL"/lib/engines-1.1/*  \
     "$SAGE_LOCAL"/lib/libssl*    \
     "$SAGE_LOCAL"/lib/libcrypto*

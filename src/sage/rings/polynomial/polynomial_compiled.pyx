@@ -16,7 +16,7 @@ AUTHORS:
 ################################################################################
 
 from sage.misc.binary_tree cimport BinaryTree
-from sage.misc.decorators import rename_keyword
+
 
 cdef class CompiledPolynomialFunction:
     """
@@ -40,7 +40,6 @@ cdef class CompiledPolynomialFunction:
           extremely sparse polynomials of very high degree
     """
 
-    #@rename_keyword(deprecation=trac_number, method="algorithm")
     def __init__(self, coeffs, algorithm='binary'):
         """
         Compiles a polynomial into an evaluation DAG representation which
@@ -115,7 +114,7 @@ cdef class CompiledPolynomialFunction:
         self._dag = dag.nodummies()
 
     def __repr__(self):
-        return "CompiledPolynomialFunction(%s)"%(self._dag)
+        return "CompiledPolynomialFunction(%s)" % self._dag
 
     def __call__(self, x):
         return self.eval(x)

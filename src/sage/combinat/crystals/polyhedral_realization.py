@@ -47,11 +47,11 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
     where `B_i` is an
     :class:`~sage.combinat.crystals.elementary_crystals.ElementaryCrystal`.
 
-    As given in Theorem 2.1.1 of [K93]_, there exists a strict crystal embedding
+    As given in Theorem 2.1.1 of [Ka1993]_, there exists a strict crystal embedding
     `\Psi_i \colon B(\infty) \to B_i \otimes B(\infty)` defined by `u_{\infty}
     \mapsto b_i(0) \otimes u_{\infty}`, where `b_i(0) \in B_i` and `u_{\infty}`
     is the (unique) highest weight element in `B(\infty)`. This is sometimes
-    known as the *Kashiwara embedding* [NZ97]_ (though, in [NZ97]_, the target
+    known as the *Kashiwara embedding* [NZ1997]_ (though, in [NZ1997]_, the target
     of this map is denoted by `\ZZ_J^\infty`).  By iterating this embedding by
     taking `\Psi_J = \Psi_{j_n} \circ \Psi_{j_{n-1}} \circ \cdots \circ
     \Psi_{j_1}`, we obtain the following strict crystal embedding:
@@ -60,7 +60,7 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
 
         \Psi_J^n \colon B(\infty) \to B_J^{\otimes n} \otimes B(\infty).
 
-    We note there is a natural analog of Lemma 10.6.2 in [HK02]_ that
+    We note there is a natural analog of Lemma 10.6.2 in [HK2002]_ that
     for any `b \in B(\infty)`, there exists a positive integer `N` such that
 
     .. MATH::
@@ -105,11 +105,6 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
         \otimes e_i\left( b^{(N)} \right),
 
     then we consider this to be `0`.
-
-    REFERENCES:
-
-    .. [K93] \M. Kashiwara. *The crystal base and Littelmann's refined Demazure
-       character formula*. Duke Math. J. **71**. 1993.
 
     INPUT:
 

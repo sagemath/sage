@@ -2,7 +2,7 @@ r"""
 Benchmarks
 
 Tests that will take a long time if something is wrong, but be very
-quick otherwise.  See http://wiki.sagemath.org/symbench.  The
+quick otherwise.  See https://wiki.sagemath.org/symbench.  The
 parameters chosen below are such that with pynac most of these take
 well less than a second, but would not even be feasible using Sage's
 Maxima-based symbolics.
@@ -43,7 +43,7 @@ Problem R5::
     ....:        L.append( (L[i] + L[i+1]) * L[i+2] )
     sage: L = list(var('x,y,z'))
     sage: blowup(L,15)
-    sage: len(uniq(L))
+    sage: len(set(L))
     19
 
 Problem R6::

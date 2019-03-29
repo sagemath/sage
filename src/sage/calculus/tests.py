@@ -76,7 +76,7 @@ Restoring variables after they have been turned into functions::
 
     sage: x = function('x')
     sage: type(x)
-    <class 'sage.symbolic.function_factory.NewSymbolicFunction'>
+    <class 'sage.symbolic.function_factory...NewSymbolicFunction'>
     sage: x(2/3)
     x(2/3)
     sage: restore('x')

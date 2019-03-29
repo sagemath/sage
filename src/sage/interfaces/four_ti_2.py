@@ -127,7 +127,7 @@ class FourTi2(object):
             sage: four_ti_2.write_matrix([[1,2],[3,4]], "test_file")
         """
         from sage.matrix.constructor import matrix
-        from sage.matrix.matrix import is_Matrix
+        from sage.structure.element import is_Matrix
         if not is_Matrix(mat):
             mat = matrix(ZZ, mat)
         if mat.base_ring() != ZZ:

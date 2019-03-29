@@ -36,12 +36,12 @@ http://www.python.org/community/
 
 == Special Update/Build Instructions ==
 
- * Remove src/Lib/distutils/command/wininst-*.exe when building a
-   new spkg. Once we support Windows we will likely need to add them
-   back in.
- * We used to block parallel MAKE, but extensive testing [make -j64]
-   showed that there is no longer any problem. The problem is with
-   parallel 'make install', which remains disabled.
+ * We keep a copy of the stdlib 'random' module in
+   src/sage/cpython/_py2_random.py.  Normally it shouldn't be necessary
+   to update this, but when upgrading Python make sure to bring over
+   any security updates from the upstream 'random' module in the unlikely
+   chance there are any.  This might mean updating any "random" test results
+   that depend on the implementation details of the random module.
  * Spaces in SAGE_ROOT aren't yet fully supported by this package,
    since we put $SAGE_LOCAL/... into CPPFLAGS and LDFLAGS, which
    wouldn't work then.

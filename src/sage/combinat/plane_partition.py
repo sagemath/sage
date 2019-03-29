@@ -428,14 +428,14 @@ class PlanePartition(ClonableArray):
         from sage.graphs.graph_latex import setup_latex_preamble
         setup_latex_preamble()
 
-        x = self._max_x
-        y = self._max_y
-        z = self._max_z
         ret = "\\begin{tikzpicture}\n"
+
         def add_topside(i,j,k):
             return "\\draw[fill={},shift={{(210:{})}},shift={{(-30:{})}},shift={{(90:{})}}]\n(0,0)--(-30:1)--(0,-1)--(210:1)--(0,0);\n".format(colors[0],i,j,k)
+
         def add_leftside(j,k,i):
             return "\\draw[fill={},shift={{(210:{})}},shift={{(-30:{})}},shift={{(90:{})}}]\n(0,0)--(0,1)--(30:1)--(-30:1)--(0,0);\n".format(colors[1],i,j,k)
+
         def add_rightside(k,i,j):
             return "\\draw[fill={},shift={{(210:{})}},shift={{(-30:{})}},shift={{(90:{})}}]\n(0,0)--(210:1)--(150:1)--(0,1)--(0,0);\n".format(colors[2],i,j,k)
         funcs = [add_topside, add_rightside, add_leftside]
@@ -467,9 +467,6 @@ class PlanePartition(ClonableArray):
             sage: PP.plot()
             Graphics object consisting of 27 graphics primitives
         """
-        x = self._max_x
-        y = self._max_y
-        z = self._max_z
         from sage.functions.trig import cos, sin
         from sage.plot.polygon import polygon
         from sage.symbolic.constants import pi
@@ -480,10 +477,12 @@ class PlanePartition(ClonableArray):
         Xdir = [cos(7*pi/6), sin(7*pi/6)]
         Ydir = [cos(-pi/6), sin(-pi/6)]
         Zdir = [0, 1]
+
         def move(side, i, j, k):
             return [[P[0]+i*Xdir[0]+j*Ydir[0]+k*Zdir[0],
                      P[1]+i*Xdir[1]+j*Ydir[1]+k*Zdir[1]]
                     for P in side]
+
         def add_topside(i, j, k):
             return polygon(move(Uside,i,j,k), edgecolor="black", color=colors[0])
         def add_leftside(i, j, k):

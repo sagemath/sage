@@ -1,0 +1,144 @@
+Add support for Celeron/Pentium CPUs that use the Haswell microarchitecture but
+without various extended instruction sets
+https://trac.sagemath.org/ticket/25858
+diff -ru a/configure b/configure
+--- a/configure	2018-07-13 14:49:36.839366500 +0200
++++ b/configure	2018-07-13 15:08:51.229370000 +0200
+@@ -4585,7 +4585,7 @@
+   # mode, in case -m32 has failed not because it's an old gcc, but because
+   # it's a dual 32/64-bit gcc without a 32-bit libc, or whatever.
+   #
+-  i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | prescott-*-* | core-*-* | athlon-*-* | viac3*-*-* | x86_64-*-* | netburst-*-* | netburstlahf-*-* | k8-*-* | k10-*-* | k102-*-* | k103-*-* | core2-*-* | penryn-*-* | nehalem-*-* | westmere-*-* | sandybridge-*-* | atom-*-* | nano-*-* | bobcat-*-* | bulldozer-*-* | piledriver-*-* | ivybridge-*-* | haswell-*-*  | broadwell-*-* | skylake-*-* | skylakeavx-*-*)
++  i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | prescott-*-* | core-*-* | athlon-*-* | viac3*-*-* | x86_64-*-* | netburst-*-* | netburstlahf-*-* | k8-*-* | k10-*-* | k102-*-* | k103-*-* | core2-*-* | penryn-*-* | nehalem-*-* | westmere-*-* | sandybridge-*-* | atom-*-* | nano-*-* | bobcat-*-* | bulldozer-*-* | piledriver-*-* | ivybridge-*-* | haswell-*-*  | haswellavx-*-* | broadwell-*-* | skylake-*-* | skylakeavx-*-*)
+     abilist="32"
+     cclist="gcc icc cc"
+     gcc_cflags="-O2 $fomit_frame_pointer"
+@@ -4761,7 +4761,11 @@
+         gcc_cflags_cpu="-mtune=corei7 -mtune=core2 -mtune=nocona -mtune=pentium3 -mcpu=pentiumpro -mcpu=i486 -m486"
+         gcc_cflags_arch="-march=corei7 -march=core2 -march=nocona -march=pentium3 -march=pentiumpro -march=pentium"
+         ;;
+-      sandybridge | ivybridge | haswell)
++      haswell)
++        gcc_cflags_cpu="-mtune=corei7 -mtune=corei7 -mtune=core2 -mtune=nocona -mtune=pentium3 -mcpu=pentiumpro -mcpu=i486 -m486"
++        gcc_cflags_arch="-march=corei7 -march=corei7 -march=core2 -march=nocona -march=pentium3 -march=pentiumpro -march=pentium"
++        ;;
++      sandybridge | ivybridge | haswellavx)
+         gcc_cflags_cpu="-mtune=corei7-avx -mtune=corei7 -mtune=core2 -mtune=nocona -mtune=pentium3 -mcpu=pentiumpro -mcpu=i486 -m486"
+         gcc_cflags_arch="-march=corei7-avx -march=corei7 -march=core2 -march=nocona -march=pentium3 -march=pentiumpro -march=pentium"
+         ;;
+@@ -4800,7 +4804,7 @@
+       k8 | bobcat)		path="x86/k7/mmx/k8 x86/k7/mmx x86/k7 x86" ;;
+       core2 | penryn)		path="x86/core2 x86" ;;
+       i786 | pentium4)		path="x86/pentium4/sse2 x86/pentium4/mmx x86/pentium4 x86" ;;
+-      nehalem | westmere | sandybridge | ivybridge | haswell | skylake | skylakeavx | broadwell)	path="x86/nehalem x86" ;;
++      nehalem | westmere | sandybridge | ivybridge | haswell | haswellavx | skylake | skylakeavx | broadwell)	path="x86/nehalem x86" ;;
+       prescott | netburst | netburstlahf)       path="x86/pentium4/sse2 x86/pentium4/mmx x86/pentium4 x86" ;;
+       # VIA/Centaur processors, sold as CyrixIII and C3.
+       nano | viac32)           path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
+@@ -4842,7 +4846,7 @@
+     fi
+ 
+     case $host in
+-      x86_64-*-* | netburst-*-* | netburstlahf-*-* | k8-*-* | k10-*-* | k102-*-* | k103-*-* | core2-*-* | penryn-*-* | nehalem-*-* | westmere-*-* | sandybridge-*-* | atom-*-* | nano-*-* | bobcat-*-* | bulldozer-*-* | piledriver-*-* | ivybridge-*-* | haswell-*-*  | broadwell-*-* | skylake-*-* | skylakeavx-*-*)
++      x86_64-*-* | netburst-*-* | netburstlahf-*-* | k8-*-* | k10-*-* | k102-*-* | k103-*-* | core2-*-* | penryn-*-* | nehalem-*-* | westmere-*-* | sandybridge-*-* | atom-*-* | nano-*-* | bobcat-*-* | bulldozer-*-* | piledriver-*-* | ivybridge-*-* | haswell-*-*  | haswellavx-*-* | broadwell-*-* | skylake-*-* | skylakeavx-*-*)
+         abilist="64 32"
+         cclist_64="gcc cc"
+         gcc_64_cflags="-m64"
+@@ -4901,10 +4905,12 @@
+             path_64="x86_64w/sandybridge/ivybridge x86_64w/sandybridge x86_64w" ;;
+           haswell-pc-msys|haswell-w64-mingw*|haswell-*-cygwin*)
+             path_64="x86_64w/haswell x86_64w/sandybridge x86_64w" ;;
++          haswellavx-pc-msys|haswellavx-w64-mingw*|haswellavx-*-cygwin*)
++            path_64="x86_64w/haswell/avx x86_64w/haswell x86_64w/sandybridge x86_64w" ;;
+           skylake-pc-msys|skylake-w64-mingw*|skylake-*-cygwin*)
+             path_64="x86_64w/skylake x86_64w/sandybridge x86_64w" ;;
+           skylakeavx-pc-msys|skylakeavx-w64-mingw*|skylakeavx-*-cygwin*)
+-            path_64="x86_64w/skylakeavx x86_64w/skylake x86_64w/haswell x86_64w/sandybridge x86_64w" ;;
++            path_64="x86_64w/skylake/avx x86_64w/skylake x86_64w/haswell x86_64w/sandybridge x86_64w" ;;
+           broadwell-pc-msys|broadwell-w64-mingw*|broadwell-*-cygwin*)
+             path_64="x86_64w/haswell/broadwell x86_64w/haswell/avx x86_64w/haswell x86_64w/sandybridge x86_64w" ;;
+           atom-pc-msys|atom-w64-mingw*|atom-*-cygwin*)
+@@ -4945,6 +4951,8 @@
+           ivybridge-*-*)
+             path_64="x86_64/sandybridge/ivybridge x86_64/sandybridge x86_64/nehalem x86_64/core2 x86_64" ;;
+           haswell-*-*)
++            path_64="x86_64/haswell x86_64/sandybridge x86_64" ;;
++          haswellavx-*-*)
+             path_64="x86_64/haswell/avx x86_64/haswell x86_64/sandybridge x86_64" ;;
+           broadwell-*-*)
+             path_64="x86_64/haswell/broadwell x86_64/haswell/avx x86_64/haswell x86_64/sandybridge x86_64" ;;
+@@ -10775,7 +10783,7 @@
+ # enough assembler.
+ #
+ case $host in
+-  i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | prescott-*-* | core-*-* | athlon-*-* | viac3*-*-* | x86_64-*-* | netburst-*-* | netburstlahf-*-* | k8-*-* | k10-*-* | k102-*-* | k103-*-* | core2-*-* | penryn-*-* | nehalem-*-* | westmere-*-* | sandybridge-*-* | atom-*-* | nano-*-* | bobcat-*-* | bulldozer-*-* | piledriver-*-* | ivybridge-*-* | haswell-*-*  | broadwell-*-* | skylake-*-* | skylakeavx-*-*)
++  i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | prescott-*-* | core-*-* | athlon-*-* | viac3*-*-* | x86_64-*-* | netburst-*-* | netburstlahf-*-* | k8-*-* | k10-*-* | k102-*-* | k103-*-* | core2-*-* | penryn-*-* | nehalem-*-* | westmere-*-* | sandybridge-*-* | atom-*-* | nano-*-* | bobcat-*-* | bulldozer-*-* | piledriver-*-* | ivybridge-*-* | haswell-*-*  | haswellavx-*-* | broadwell-*-* | skylake-*-* | skylakeavx-*-*)
+     if test "$ABI" = 32; then
+       case "$path $fat_path" in
+         *mmx*)   { $as_echo "$as_me:${as_lineno-$LINENO}: checking if the assembler knows about MMX instructions" >&5
+@@ -25885,7 +25867,7 @@
+           ;;
+       esac
+       ;;
+-    i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | prescott-*-* | core-*-* | athlon-*-* | viac3*-*-* | x86_64-*-* | netburst-*-* | netburstlahf-*-* | k8-*-* | k10-*-* | k102-*-* | k103-*-* | core2-*-* | penryn-*-* | nehalem-*-* | westmere-*-* | sandybridge-*-* | atom-*-* | nano-*-* | bobcat-*-* | bulldozer-*-* | piledriver-*-* | ivybridge-*-* | haswell-*-*  | broadwell-*-* | skylake-*-* | skylakeavx-*-*)
++    i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | prescott-*-* | core-*-* | athlon-*-* | viac3*-*-* | x86_64-*-* | netburst-*-* | netburstlahf-*-* | k8-*-* | k10-*-* | k102-*-* | k103-*-* | core2-*-* | penryn-*-* | nehalem-*-* | westmere-*-* | sandybridge-*-* | atom-*-* | nano-*-* | bobcat-*-* | bulldozer-*-* | piledriver-*-* | ivybridge-*-* | haswell-*-*  | haswellavx-*-* | broadwell-*-* | skylake-*-* | skylakeavx-*-*)
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking if the .align directive accepts an 0x90 fill in .text" >&5
+ $as_echo_n "checking if the .align directive accepts an 0x90 fill in .text... " >&6; }
+diff -ru a/cpuid.c b/cpuid.c
+--- a/cpuid.c	2018-07-13 14:49:31.111368100 +0200
++++ b/cpuid.c	2018-07-13 15:08:45.680372700 +0200
+@@ -174,12 +174,16 @@ CPUVEC_SETUP_x86_64;
+ 	  if (model == 54){ CPUIS(atom);break;}//DualCore Intel Atom D2700, 2133 MHz (16 x 133) (Cedarview, Saltwell core) 32nm
+ 	  if (model == 55){ CPUIS(atom);break;}
+           if (model == 58){ CPUIS(ivybridge);break;}
+-	  if (model == 60){ CPUIS(haswell);break;}
++	  if (model == 60){
++          int feat = ((int *)features)[2];
++          if (feat & FEAT_HAS_AVX) { CPUIS(haswellavx);break; } /* Core i Haswell */
++          else { CPUIS(haswell);break; } /* Celeron/Pentium Haswell without AVX */
++      }
+           if (model == 61){ CPUIS(broadwell);break;}
+           if (model == 62){ CPUIS(ivybridge);break;}
+-          if (model == 63){ CPUIS(haswell);break;}
+-          if (model == 69){ CPUIS(haswell);break;}
+-          if (model == 70){ CPUIS(haswell);break;}
++          if (model == 63){ CPUIS(haswellavx);break;}
++          if (model == 69){ CPUIS(haswellavx);break;}
++          if (model == 70){ CPUIS(haswellavx);break;}
+           if (model == 71){ CPUIS(broadwell);break;}
+           if (model == 78){ CPUIS(skylakeavx);break;}
+           if (model == 79){ CPUIS(broadwell);break;}
+diff -ru a/mpn/x86/fat/fat.c b/mpn/x86/fat/fat.c
+--- a/mpn/x86/fat/fat.c	2018-07-13 14:49:31.111368100 +0200
++++ b/mpn/x86/fat/fat.c	2018-07-13 15:08:45.680372700 +0200
+@@ -109,6 +109,7 @@
+ #define CPUSETUP_sandybridge	CPUVEC_SETUP_nehalem
+ #define CPUSETUP_ivybridge	CPUVEC_SETUP_nehalem
+ #define CPUSETUP_haswell	CPUVEC_SETUP_nehalem
++#define CPUSETUP_haswellavx	CPUVEC_SETUP_nehalem
+ #define CPUSETUP_broadwell      CPUVEC_SETUP_nehalem
+ #define CPUSETUP_skylake        CPUVEC_SETUP_nehalem
+ #define CPUSETUP_skylakeavx     CPUVEC_SETUP_nehalem
+diff -ru a/mpn/x86_64/fat/fat.c b/mpn/x86_64/fat/fat.c
+--- a/mpn/x86_64/fat/fat.c	2018-07-13 14:49:32.356372900 +0200
++++ b/mpn/x86_64/fat/fat.c	2018-07-13 15:08:46.992374500 +0200
+@@ -103,6 +103,7 @@
+ #define CPUSETUP_sandybridge	CPUVEC_SETUP_sandybridge
+ #define CPUSETUP_ivybridge	CPUVEC_SETUP_sandybridge;CPUVEC_SETUP_sandybridge_ivybridge
+ #define CPUSETUP_haswell	CPUVEC_SETUP_haswell
++#define CPUSETUP_haswellavx	CPUVEC_SETUP_haswell;CPUVEC_SETUP_haswell_avx
+ #define CPUSETUP_broadwell      CPUVEC_SETUP_haswell;CPUVEC_SETUP_haswell_broadwell
+ #define CPUSETUP_skylake        CPUVEC_SETUP_skylake
+ #define CPUSETUP_skylakeavx     CPUVEC_SETUP_skylake;CPUVEC_SETUP_skylake_avx
+diff -ru a/mpn/x86_64w/fat/fat.c b/mpn/x86_64w/fat/fat.c
+--- a/mpn/x86_64w/fat/fat.c	2018-07-13 14:49:28.284367600 +0200
++++ b/mpn/x86_64w/fat/fat.c	2018-07-13 15:08:43.058372800 +0200
+@@ -103,6 +103,7 @@
+ #define CPUSETUP_sandybridge	CPUVEC_SETUP_sandybridge
+ #define CPUSETUP_ivybridge	CPUVEC_SETUP_sandybridge
+ #define CPUSETUP_haswell        CPUVEC_SETUP_haswell
++#define CPUSETUP_haswellavx        CPUVEC_SETUP_haswell;CPUVEC_SETUP_haswell_avx
+ #define CPUSETUP_broadwell      CPUVEC_SETUP_haswell;CPUVEC_SETUP_haswell_broadwell
+ #define CPUSETUP_skylake        CPUVEC_SETUP_skylake
+ #define CPUSETUP_skylakeavx     CPUVEC_SETUP_skylake;CPUVEC_SETUP_skylake_avx

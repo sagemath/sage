@@ -67,6 +67,7 @@ cdef extern from "boost_interface.cpp":
         vector[v_index] bandwidth_ordering(bool)
         vector[v_index] kruskal_min_spanning_tree()
         vector[v_index] prim_min_spanning_tree()
+        vector[vector[v_index]] blocks_and_cut_vertices()
         result_distances dijkstra_shortest_paths(v_index s)
         result_distances bellman_ford_shortest_paths(v_index s)
         vector[vector[double]] johnson_shortest_paths()

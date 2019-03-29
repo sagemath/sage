@@ -346,7 +346,7 @@ class SkewPartition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: loads('x\x9c\x85P\xcbN\xc2@\x14\r\x08>\x06\xf1\xfd~\xbb+.\x9a\xa8\xdf\xe0\xc2McJ\xba4\x93i\xb9v&\xb4\x03w\x1e!,Ht!\xfe\xb6Sh1\xb0qw\xce}\x9c{\xee\xf9\xac\'\x9a\xa5\xe0\'\x83<\x16\x92\x19_\xf7aD\x87L\x19a\xc4@\x92\xae\xa3o\x15\xa3I\xc6\xb4&X\xeb|a}\x82k^\xd4\xa4\x9ci\x8e\x8d\xc0\xa1Lh\x83\xcdw\\\xf7\xe6\x92\xda(\x9b\x18\xab\xc0\xef\x8d%\xcbER\xae/3\xdc\xf0\xa2\x87\xc5\x05MY\x96\xd1\x910\x9c&\xcc@:Pc\x1f2\xc8A\x9a\xf9<n\xae\xf8\xfd\xb3\xba\x10!\xb8\x95P\x1a[\x91\x19!)%)\x18f\x8c"HV\x8dY)\xd0\x02U0T\xa0\xdd\r6[\xb7RA\xcf&@\xb0U\x1e\x9b[\x11\xa0}!?\x84\x14\x06(H\x9b\x83r\x8d\x1e\xd5`4y-\x1b/\x8bz\xb7(\xe3vg\xf2\x83\xed\x10w\xa2\xf6\xf2#\xbb\xd3\x10\xf7\xa6\xb8\x1f\x04\x81\t\xf1\xc0Ez\xc8[\xff?7K\x88\xe0Q!{\x1c\xe2\xc9\x04O=\xde\x08\xb8\x0b\xfe\xac\x0c^\t\x99\x16N\x9diP$g}\xa0\x15\xc1\xf3\xa8\xf6\xfc\x1d\xe2\x05w\xe0\xc9\x81\xcb\x02<:p\x05v\x1a\xf3\xc2\xc65w\xa27\x95\xe8\xadWM\xdcU\xe0\xbe\x18\x05\x1b\xfb\xbf\x8e\x7f\xcc\xbb')
+            sage: loads(b'x\x9c\x85P\xcbN\xc2@\x14\r\x08>\x06\xf1\xfd~\xbb+.\x9a\xa8\xdf\xe0\xc2McJ\xba4\x93i\xb9v&\xb4\x03w\x1e!,Ht!\xfe\xb6Sh1\xb0qw\xce}\x9c{\xee\xf9\xac\'\x9a\xa5\xe0\'\x83<\x16\x92\x19_\xf7aD\x87L\x19a\xc4@\x92\xae\xa3o\x15\xa3I\xc6\xb4&X\xeb|a}\x82k^\xd4\xa4\x9ci\x8e\x8d\xc0\xa1Lh\x83\xcdw\\\xf7\xe6\x92\xda(\x9b\x18\xab\xc0\xef\x8d%\xcbER\xae/3\xdc\xf0\xa2\x87\xc5\x05MY\x96\xd1\x910\x9c&\xcc@:Pc\x1f2\xc8A\x9a\xf9<n\xae\xf8\xfd\xb3\xba\x10!\xb8\x95P\x1a[\x91\x19!)%)\x18f\x8c"HV\x8dY)\xd0\x02U0T\xa0\xdd\r6[\xb7RA\xcf&@\xb0U\x1e\x9b[\x11\xa0}!?\x84\x14\x06(H\x9b\x83r\x8d\x1e\xd5`4y-\x1b/\x8bz\xb7(\xe3vg\xf2\x83\xed\x10w\xa2\xf6\xf2#\xbb\xd3\x10\xf7\xa6\xb8\x1f\x04\x81\t\xf1\xc0Ez\xc8[\xff?7K\x88\xe0Q!{\x1c\xe2\xc9\x04O=\xde\x08\xb8\x0b\xfe\xac\x0c^\t\x99\x16N\x9diP$g}\xa0\x15\xc1\xf3\xa8\xf6\xfc\x1d\xe2\x05w\xe0\xc9\x81\xcb\x02<:p\x05v\x1a\xf3\xc2\xc65w\xa27\x95\xe8\xadWM\xdcU\xe0\xbe\x18\x05\x1b\xfb\xbf\x8e\x7f\xcc\xbb')
             [3, 2, 1] / [1, 1]
             sage: loads(dumps( SkewPartition([[3,2,1], [1,1]]) ))
             [3, 2, 1] / [1, 1]
@@ -459,10 +459,11 @@ class SkewPartition(CombinatorialElement):
             ┌┬┴┘
             └┘
         """
+        from sage.typeset.unicode_art import UnicodeArt
         out, inn = self
         inn = inn + [0] * (len(out) - len(inn))
         if not self._list:
-            return u'∅'
+            return UnicodeArt(u'∅')
         if self.parent().options.convention == "French":
             s, t, b, l, r, tr, tl, br, bl, x, h = list(u' ┴┬├┤┘└┐┌┼─')
         else:
@@ -504,7 +505,6 @@ class SkewPartition(CombinatorialElement):
 
         if self.parent().options.convention == "French":
             txt = list(reversed(txt))
-        from sage.typeset.unicode_art import UnicodeArt        
         return UnicodeArt(txt, baseline=0)
 
     def inner(self):
@@ -1291,9 +1291,8 @@ class SkewPartitions(UniqueRepresentation, Parent):
             Parent.__init__(self, category=FiniteEnumeratedSets())
 
     # add options to class
-    options=GlobalOptions('SkewPartitions',
-        module='sage.combinat.skew_partition',
-        doc="""
+    class options(GlobalOptions):
+        """
         Sets and displays the options for elements of the skew partition
         classes.  If no parameters are set, then the function returns a copy of
         the options dictionary.
@@ -1301,8 +1300,9 @@ class SkewPartitions(UniqueRepresentation, Parent):
         The ``options`` to skew partitions can be accessed as the method
         :obj:`SkewPartitions.options` of :class:`SkewPartitions` and
         related parent classes.
-        """,
-        end_doc=r"""
+
+        @OPTIONS@
+
         EXAMPLES::
 
             sage: SP = SkewPartition([[4,2,2,1], [3, 1, 1]])
@@ -1341,30 +1341,31 @@ class SkewPartitions(UniqueRepresentation, Parent):
               1  2  3
               4  5
             sage: SkewPartitions.options._reset()
-        """,
-        display=dict(default="quotient",
+        """
+        NAME = 'SkewPartitions'
+        module = 'sage.combinat.skew_partition'
+        display = dict(default="quotient",
                      description='Specifies how skew partitions should be printed',
                      values=dict(lists='displayed as a pair of lists',
                                  quotient='displayed as a quotient of partitions',
                                  diagram='as a skew Ferrers diagram'),
                      alias=dict(array="diagram", ferrers_diagram="diagram",
                                 young_diagram="diagram", pair="lists"),
-                     case_sensitive=False),
-        latex=dict(default="young_diagram",
+                     case_sensitive=False)
+        latex = dict(default="young_diagram",
                    description='Specifies how skew partitions should be latexed',
                    values=dict(diagram='latex as a skew Ferrers diagram',
                                young_diagram='latex as a skew Young diagram',
                                marked='latex as a partition where the skew shape is marked'),
                    alias=dict(array="diagram", ferrers_diagram="diagram"),
-                   case_sensitive=False),
-        diagram_str=dict(link_to=(Partitions.options,'diagram_str')),
-        latex_diagram_str=dict(link_to=(Partitions.options,'latex_diagram_str')),
-        latex_marking_str=dict(default="X",
+                   case_sensitive=False)
+        diagram_str = dict(link_to=(Partitions.options,'diagram_str'))
+        latex_diagram_str = dict(link_to=(Partitions.options,'latex_diagram_str'))
+        latex_marking_str = dict(default="X",
                          description='The character used to marked the deleted cells when latexing marked partitions',
-                         checker=lambda char: isinstance(char, str)),
-        convention=dict(link_to=(Tableaux.options,'convention')),
+                         checker=lambda char: isinstance(char, str))
+        convention = dict(link_to=(Tableaux.options,'convention'))
         notation = dict(alt_name='convention')
-    )
 
     Element = SkewPartition
 
@@ -1931,7 +1932,7 @@ class SkewPartitions_rowlengths(SkewPartitions):
             for sp in self._from_row_lengths_aux(sskp, self.co[-2], self.co[-1], self.overlap):
                 yield self.element_class(self, sp)
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.skew_partition', 'SkewPartition_class', SkewPartition)
 
 # Deprecations from trac:18555. July 2016

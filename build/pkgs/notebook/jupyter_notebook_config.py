@@ -11,3 +11,8 @@ c.NotebookApp.mathjax_url = 'nbextensions/mathjax/MathJax.js'
 # * https://github.com/oreillymedia/thebe/issues/93
 
 c.NotebookApp.disable_check_xsrf = True
+
+# send2trash sometimes doesn't work, so disable that for now
+# See https://github.com/jupyter/notebook/issues/3249
+
+c.FileContentsManager.delete_to_trash = False

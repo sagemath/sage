@@ -72,7 +72,8 @@ class ClusterComplexFacet(SubwordComplexFacet):
             raise NotImplementedError("not working for multi-cluster complexes")
         F = self.parent().greedy_facet(side="positive")
         R = F.extended_root_configuration()
-        return [-R[i] if i < len(list(F)) else R[i] for i in self]
+        N = len(list(F))
+        return [-R[i] if i < N else R[i] for i in self]
 
     def upper_cluster(self):
         """
@@ -105,6 +106,7 @@ class ClusterComplexFacet(SubwordComplexFacet):
         return W.prod(W.reflections()[beta]
                       for beta in reversed(self.upper_cluster()))
 
+
 class ClusterComplex(SubwordComplex):
     r"""
     A cluster complex (or generalized dual associahedron).
@@ -119,7 +121,7 @@ class ClusterComplex(SubwordComplex):
     facets being triangulations.
 
     The implementation of the cluster complex depends on its
-    connection to subword complexes, see [CLS]_. Let `c` be a Coxeter
+    connection to subword complexes, see [CLS2014]_. Let `c` be a Coxeter
     element with reduced word `{\bf c}` in a finite Coxeter group `W`,
     and let `{\bf w}_\circ` be the `c`-sorting word for the longest
     element `w_\circ \in W`.
@@ -163,10 +165,7 @@ class ClusterComplex(SubwordComplex):
 
     REFERENCES:
 
-    .. [CLS] \C. Ceballos, J.-P. Labbe, C. Stump, *Subword complexes,
-       cluster complexes, and generalized multi-associahedra*,
-       J. Algebr. Comb. **39** (2014) pp. 17-51.
-       :doi:`10.1007/s10801-013-0437-x`, :arxiv:`1108.1776`.
+    - [CLS2014]_
     """
 
     @staticmethod
@@ -185,7 +184,7 @@ class ClusterComplex(SubwordComplex):
             sage: S1 is S2 and S2 is S3 and S3 is S4
             True
         """
-        if not k in NN:
+        if k not in NN:
             raise ValueError("the additional parameter must be a "
                              "nonnegative integer")
 
@@ -272,9 +271,9 @@ class ClusterComplex(SubwordComplex):
             "Cluster complex of type ['A', 2] with 5 vertices and 5 facets"
         """
         name = self.__custom_name
-        name += ( ' of type %s with %s vertices and %s facets'
-                  % (self.cartan_type(), len(self.vertices()),
-                     len(self._facets)) )
+        name += (' of type %s with %s vertices and %s facets'
+                 % (self.cartan_type(), len(self.vertices()),
+                    len(self._facets)))
         return name
 
     def k(self):
@@ -304,12 +303,12 @@ class ClusterComplex(SubwordComplex):
     def cyclic_rotation(self):
         """
         Return the operation on the facets of ``self`` obtained by the
-        cyclic rotation as defined in _[CLS].
+        cyclic rotation as defined in [CLS2014]_.
 
         EXAMPLES::
 
             sage: ClusterComplex(['A', 2]).cyclic_rotation()
-            <function act at ...>
+            <function ...act at ...>
         """
         W = self._W
         w = self._w0
@@ -323,4 +322,3 @@ class ClusterComplex(SubwordComplex):
         def act(F):
             return self.parent().element_class(sorted([D[i] for i in F]))
         return act
-

@@ -152,6 +152,15 @@ class NameChange(NumberFieldStructure):
         sage: NameChange(K)
         <sage.rings.number_field.structure.NameChange object at 0x...>
 
+    Check for memory leaks:
+
+        sage: u=id(NumberField(x^2-5,'a').absolute_field('b'))
+        sage: import gc
+        sage: gc.collect() #random
+        10
+        sage: [id(v) for v in gc.get_objects() if id(v) == u]
+        []
+
     """
     def create_structure(self, field):
         r"""

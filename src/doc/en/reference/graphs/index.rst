@@ -97,5 +97,6 @@ Libraries of algorithms
    sage/graphs/partial_cube
    sage/graphs/generic_graph_pyx
    sage/graphs/orientations
+   sage/graphs/connectivity
 
 .. include:: ../footer.txt

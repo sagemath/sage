@@ -22,17 +22,7 @@ a linear function over P.
 GPL v2
 
 == Upstream Contact ==
-Komei Fukuda <fukuda@ifor.math.ethz.ch>
-Institute for Operations Research
-and Institute of Theoretical Computer Science
-ETH Zentrum, CH-8092 Zurich, Switzerland
-Tel +41-1-632-4023, Fax +41-1-632-1025
-http://www.ifor.math.ethz.ch/staff/fukuda/
+https://github.com/cddlib/cddlib
 
 == Dependencies ==
  * gmp (or its fork mpir)
-
-== Special Update/Build Instructions ==
-From clean upstream sources:
- * remove directories doc, examples*, autom4te.cache
-

@@ -28,6 +28,7 @@ AUTHORS:
 from libc.string cimport strlen
 from cysignals.memory cimport check_calloc, check_reallocarray, sig_malloc, sig_free
 
+from sage.cpython.string cimport char_to_str, str_to_bytes, bytes_to_str
 from sage.libs.gmp.mpn cimport *
 from sage.data_structures.bitset cimport *
 from cython.operator import preincrement as preinc
@@ -734,10 +735,11 @@ cdef char* bitset_chars(char* s, bitset_t bits, char zero=c'0', char one=c'1'):
     s[bits.size] = 0
     return s
 
-cdef int bitset_from_str(bitset_t bits, char* s, char zero=c'0', char one=c'1') except -1:
+
+cdef int bitset_from_char(bitset_t bits, char* s, char zero=c'0', char one=c'1') except -1:
     """
-    Initialize a bitset with a set derived from the character string
-    s, where one represents the character indicating set membership.
+    Initialize a bitset with a set derived from the C string s, where one
+    represents the character indicating set membership.
     """
     bitset_init(bits, strlen(s))
     cdef long i
@@ -745,15 +747,36 @@ cdef int bitset_from_str(bitset_t bits, char* s, char zero=c'0', char one=c'1') 
         bitset_set_to(bits, i, s[i] == one)
     return 0
 
+
+cdef int bitset_from_str(bitset_t bits, object s, char zero=c'0', char one=c'1') except -1:
+    """
+    Initialize a bitset with a set derived from the Python str s, where one
+    represents the character indicating set membership.
+    """
+    cdef bytes b = str_to_bytes(s)
+    return bitset_from_char(bits, b, zero, one)
+
+
 cdef bitset_string(bitset_t bits):
     """
     Return a python string representing the bitset.
     """
+    return bytes_to_str(bitset_bytes(bits))
+
+
+cdef bitset_bytes(bitset_t bits):
+    """
+    Return a python bytes string representing the bitset.
+
+    On Python 2 this is equivalent to bitset_string.
+    """
+
     cdef char* s = bitset_chars(NULL, bits)
     cdef object py_s
     py_s = s
     sig_free(s)
     return py_s
+
 
 cdef list bitset_list(bitset_t bits):
     """

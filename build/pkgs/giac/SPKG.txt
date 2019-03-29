@@ -16,8 +16,11 @@
 
 == Licence ==
 
-GPLv3+ except the french html documentation which is freely redistributable
-       for non commercial only purposes. This doc has been removed in the spkg)
+GPLv3+
+
+Note: except the french html documentation which is freely
+redistributable for non commercial only purposes. This doc has been
+removed in the Sage package, see spkg-src
 
 == Upstream Contact ==
 
@@ -30,12 +33,8 @@ GPLv3+ except the french html documentation which is freely redistributable
   * gettext, readline
   * giac will benefit of ntl, pari, mpfr, gsl, lapack but they should be already installed by sage.
   * giac can also benefit of mpfi for arithmetic on intervals.
-  * The Documentation is  pre-built, hevea or latex or ... are not needed to install the package.
+  * The Documentation is pre-built, hevea or latex or ... are not needed to install the package.
 
 == Special Update/Build Instructions ==
 
-  * The script_subdirectory of the pexpect giac interface is create in spkg-install.
-  * Some gcc 4.7.2 gives a seg fault when compiling giac, but earlier or later version
-    should be fine.
-    http://gcc.gnu.org/bugzilla/show_bug.cgi?id=54986
-  * pari support has been enabled in spkg-install. To allow this, giac have been patched to not always init pari. (See the comments in patches/README.txt for details)
+  * Use spkg-src to update this package

@@ -6,15 +6,16 @@ AUTHORS:
 - Travis Scrimshaw (2013-09-06): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from six import iteritems
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
@@ -28,10 +29,8 @@ from sage.sets.family import Family
 import sage.data_structures.blas_dict as blas
 from sage.rings.ring import Algebra
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-from sage.rings.polynomial.multi_polynomial_ring_generic import MPolynomialRing_generic
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
-import six
 
 
 def repr_from_monomials(monomials, term_repr, use_latex=False):
@@ -111,7 +110,7 @@ def repr_from_monomials(monomials, term_repr, use_latex=False):
         sage: c*(a*a + 2)*b
         (-x - 2)*e1*e2 - 4*x - 8
         sage: latex(c*(a*a + 2)*b)
-        \left( - x - 2 \right)  e_{1} e_{2} - 4 x - 8
+        \left( -x - 2 \right)  e_{1} e_{2} - 4 x - 8
     """
     if not monomials:
         if use_latex:
@@ -120,7 +119,7 @@ def repr_from_monomials(monomials, term_repr, use_latex=False):
             return '0'
 
     ret = ''
-    for m,c in monomials:
+    for m, c in monomials:
         # Get the monomial portion
         term = term_repr(m)
 
@@ -156,6 +155,7 @@ def repr_from_monomials(monomials, term_repr, use_latex=False):
         else:
             ret = term
     return ret
+
 
 class DifferentialWeylAlgebraElement(AlgebraElement):
     """
@@ -285,7 +285,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
             sage: dy - (3*x - z)*dx
             dy + z*dx - 3*x*dx
         """
-        return self.__class__(self.parent(), {m:-c for m,c in six.iteritems(self.__monomials)})
+        return self.__class__(self.parent(), {m:-c for m, c in iteritems(self.__monomials)})
 
     def _add_(self, other):
         """
@@ -303,7 +303,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
 
         d = copy(self.__monomials)
         zero = self.parent().base_ring().zero()
-        for m,c in six.iteritems(other.__monomials):
+        for m, c in iteritems(other.__monomials):
             d[m] = d.get(m, zero) + c
             if d[m] == zero:
                 del d[m]
@@ -336,7 +336,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
                 for i,p in enumerate(ml[1]):
                     for j in range(p):
                         next = []
-                        for m,c in cur: # Distribute and apply the derivative
+                        for m, c in cur:  # Distribute and apply the derivative
                             diff = list(m[1])
                             diff[i] += 1
                             next.append( ((m[0], tuple(diff)), c) )
@@ -347,7 +347,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
                                 next.append( ((tuple(poly), m[1]), c) )
                         cur = next
 
-                for m,c in cur:
+                for m, c in cur:
                     # multiply the resulting term by the other term
                     m = (add_tuples(ml[0], m[0]), add_tuples(mr[1], m[1]))
                     d[m] = d.get(m, zero) + c
@@ -464,13 +464,13 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
             sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
             sage: dx,dy,dz = W.differentials()
             sage: elt = dy - (3*x - z)*dx + 1
-            sage: elt.support()
-            [((0, 0, 0), (0, 1, 0)),
-             ((1, 0, 0), (1, 0, 0)),
-             ((0, 0, 0), (0, 0, 0)),
-             ((0, 0, 1), (1, 0, 0))]
+            sage: sorted(elt.support())
+            [((0, 0, 0), (0, 0, 0)),
+            ((0, 0, 0), (0, 1, 0)),
+            ((0, 0, 1), (1, 0, 0)),
+            ((1, 0, 0), (1, 0, 0))]
         """
-        return self.__monomials.keys()
+        return list(self.__monomials)
 
     # This is essentially copied from
     #   sage.combinat.free_module.CombinatorialFreeModuleElement
@@ -583,7 +583,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             sage: W1 is W2
             True
         """
-        if isinstance(R, (PolynomialRing_general, MPolynomialRing_generic)):
+        if isinstance(R, (PolynomialRing_general, MPolynomialRing_base)):
             if names is None:
                 names = R.variable_names()
                 R = R.base_ring()
@@ -659,7 +659,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             return self.element_class(self, {i: R(c) for i,c in x if R(c) != zero})
         x = self._poly_ring(x)
         return self.element_class(self, {(tuple(m), t): c
-                                         for m,c in six.iteritems(x.dict())})
+                                         for m, c in iteritems(x.dict())})
 
     def _coerce_map_from_(self, R):
         """
@@ -760,7 +760,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             [1, x, y, dx, dy, x^2, x*y, x*dx, x*dy, y^2, y*dx, y*dy,
              dx^2, dx*dy, dy^2, x^3, x^2*y, x^2*dx, x^2*dy, x*y^2]
             sage: dx, dy = W.differentials()
-            sage: (dx*x).monomials()
+            sage: sorted((dx*x).monomials(), key=str)
             [1, x*dx]
             sage: B[(x*y).support()[0]]
             x*y
@@ -789,9 +789,9 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             sage: R.<x,y,z> = QQ[]
             sage: W = DifferentialWeylAlgebra(R)
             sage: W.algebra_generators()
-            Finite family {'dz': dz, 'dx': dx, 'dy': dy, 'y': y, 'x': x, 'z': z}
+            Finite family {'x': x, 'y': y, 'z': z, 'dx': dx, 'dy': dy, 'dz': dz}
         """
-        d = {x: self.gen(i) for i,x in enumerate(self.variable_names())}
+        d = {x: self.gen(i) for i, x in enumerate(self.variable_names())}
         return Family(self.variable_names(), lambda x: d[x])
 
     @cached_method
@@ -807,10 +807,10 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
 
             sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
             sage: W.variables()
-            Finite family {'y': y, 'x': x, 'z': z}
+            Finite family {'x': x, 'y': y, 'z': z}
         """
         N = self.variable_names()[:self._n]
-        d = {x: self.gen(i) for i,x in enumerate(N) }
+        d = {x: self.gen(i) for i, x in enumerate(N)}
         return Family(N, lambda x: d[x])
 
     @cached_method
@@ -826,10 +826,10 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
 
             sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
             sage: W.differentials()
-            Finite family {'dz': dz, 'dx': dx, 'dy': dy}
+            Finite family {'dx': dx, 'dy': dy, 'dz': dz}
         """
         N = self.variable_names()[self._n:]
-        d = {x: self.gen(self._n+i) for i,x in enumerate(N) }
+        d = {x: self.gen(self._n+i) for i, x in enumerate(N)}
         return Family(N, lambda x: d[x])
 
     def gen(self, i):
@@ -866,7 +866,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             sage: W.ngens()
             6
         """
-        return self._n*2
+        return self._n * 2
 
     @cached_method
     def one(self):

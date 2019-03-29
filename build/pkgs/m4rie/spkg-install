@@ -1,9 +1,3 @@
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo >&2 "SAGE_LOCAL undefined ... exiting"
-   echo >&2 "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 unset RM
 
 ROOT_DIR="`pwd`"
@@ -31,11 +25,6 @@ else
    ENABLE_DEBUG=""
 fi
 
-if [ "x$SAGE64" = "xyes" ]; then
-    CFLAGS="$CFLAGS -m64"
-    CPPFLAGS="$CPPFLAGS -m64"
-fi
-
 export CFLAGS
 export CPPFLAGS
 export LDFLAGS
@@ -49,28 +38,6 @@ fi
 # build M4RIE
 
 cd $ROOT_DIR/src/
-./configure \
-    --prefix="$SAGE_LOCAL" \
-    --libdir="$SAGE_LOCAL/lib" \
-    --enable-shared --disable-static \
-    $ENABLE_DEBUG
-
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring m4rie"
-    exit 1
-fi
-
-$MAKE
-
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building m4rie"
-    exit 1
-fi
-
-$MAKE install
-
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing m4rie"
-    exit 1
-fi
-
+sdh_configure --enable-shared --disable-static $ENABLE_DEBUG
+sdh_make
+sdh_make_install

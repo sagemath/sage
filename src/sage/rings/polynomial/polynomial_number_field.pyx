@@ -154,9 +154,9 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
             sage: N = NumberField(x-3, 'a')
             sage: a = N.gen()
             sage: R = N['x']
-            sage: f = R.random_element()
-            sage: g1 = R.random_element()
-            sage: g2 = g1*R.random_element() + 1
+            sage: f = R._random_nonzero_element()
+            sage: g1 = R._random_nonzero_element()
+            sage: g2 = g1 * R._random_nonzero_element() + 1
             sage: g1 *= f
             sage: g2 *= f
             sage: d = gcd(g1, g2)
@@ -280,7 +280,7 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
             sage: x = var('x')
             sage: R = NumberField([x^2-2, x^2-3], 'a')['x']
-            sage: f = R.random_element()
+            sage: f = R._random_nonzero_element()
             sage: g1 = R.random_element()
             sage: g2 = R.random_element()*g1+1
             sage: g1 *= f

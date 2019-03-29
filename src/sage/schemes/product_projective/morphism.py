@@ -22,8 +22,11 @@ EXAMPLES::
 #*****************************************************************************
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.categories.fields import Fields
+from sage.categories.number_fields import NumberFields
+from sage.rings.number_field.order import is_NumberFieldOrder
+from sage.rings.fraction_field import FractionField
+from sage.rings.qqbar import QQbar
 _Fields = Fields()
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 
 
 class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
@@ -233,6 +236,114 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         newP = [f(Q) for f in self.defining_polynomials()]
         return(A.point(newP, check))
 
+    def __eq__(self, right):
+        """
+        Tests the equality of two product projective morphisms.
+
+        INPUT:
+
+        - ``right`` - a map on product of projective space.
+
+        OUTPUT:
+
+        - Boolean - True if ``self`` and ``right`` define the same product projective
+          map. False otherwise.
+
+        EXAMPLES::
+
+            sage: P1.<x1,x2,x3,x4> = ProductProjectiveSpaces([1, 1], QQ)
+            sage: P2.<y1,y2,y3,y4> = ProductProjectiveSpaces([1, 1], CC)
+            sage: H1 = End(P1); H2 = End(P2)
+            sage: f = H1([x1*x2, x2^2, x3*x4, x4^2])
+            sage: g = H2([y1*y2, y2^2, y3*y4, y4^2])
+            sage: f == g
+            False
+
+        ::
+
+            sage: P.<x,y,u,v> = ProductProjectiveSpaces([1, 1], QQ)
+            sage: H = Hom(P, P)
+            sage: f = H([x^2, y^2, u^2, v^2])
+            sage: g = H([x^2, x*y, u*v, u^2])
+            sage: f == g
+            False
+
+        ::
+
+            sage: PP.<x,y,z,a,b> = ProductProjectiveSpaces([2,1], ZZ)
+            sage: H = End(PP)
+            sage: f = H([x^2*y*z, x*y^2*z, x*y*z^2, a^2, b^2])
+            sage: g = H([x, y, z, a^3, a*b^2])
+            sage: f == g
+            True
+        """
+        if not isinstance(right, SchemeMorphism_polynomial):
+            return False
+        if self.parent() != right.parent():
+            return False
+        PP = self.parent().codomain()
+
+        n = PP.num_components()
+        dim = [ P.ngens() for P in PP ]
+        dim_prefix = [0,dim[0]]
+
+        for i in range(1,n):
+            dim_prefix.append(dim_prefix[i] + dim[i])
+
+        # compare ratio of coordinates for each projective component
+        for m in range(n):
+            l = dim_prefix[m]; r = dim_prefix[m] + dim[m]
+            for i in range(l,r):
+                for j in range(i+1,r):
+                    if self[i]*right[j] != self[j]*right[i]:
+                        return False
+        return True
+
+    def __ne__(self, right):
+        """
+        Tests the inequality of two prduct projective morphisms.
+
+        INPUT:
+
+        - ``right`` -- a map on product of projective space.
+
+        OUTPUT:
+
+        - Boolean -- True if ``self`` and ``right`` define different product
+          projective maps. False otherwise.
+
+        EXAMPLES::
+
+            sage: PP.<a,b,x,y,z> = ProductProjectiveSpaces([1,2], ZZ)
+            sage: E = End(PP)
+            sage: f = E([a^3, a*b^2, x*y, y*z, z*x])
+            sage: g = E([a*b, a^2, x^2, y^2, z^2])
+            sage: f != g
+            True
+            sage: f != f
+            False
+        """
+        if not isinstance(right, SchemeMorphism_polynomial):
+            return True
+        if self.parent() != right.parent():
+            return True
+        PP = self.parent().codomain()
+
+        n = PP.num_components()
+        dim = [ P.ngens() for P in PP ]
+        dim_prefix = [0,dim[0]]
+
+        for i in range(1,n):
+            dim_prefix.append(dim_prefix[i] + dim[i])
+
+        for m in range(n):
+            l = dim_prefix[m]; r = dim_prefix[m] + dim[m]
+            for i in range(l,r):
+                for j in range(i+1,r):
+                    if self[i]*right[j] != self[j]*right[i]:
+                        return True
+        return False
+
     def is_morphism(self):
         r"""
         Returns ``True`` if this mapping is a morphism of products of projective spaces.
@@ -289,11 +400,11 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
     def as_dynamical_system(self):
         """
-        Return this endomorpism as a :class:`DynamicalSystem_producte_projective`.
+        Return this endomorphism as a :class:`DynamicalSystem_producte_projective`.
 
         OUTPUT:
 
-        - :class:`DynamicalSystem_produce_projective`.
+        - :class:`DynamicalSystem_produce_projective`
 
         EXAMPLES::
 
@@ -366,3 +477,99 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         from sage.misc.superseded import deprecation
         deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.green_function instead")
         return self.as_dynamical_system().nth_iterate_map(n)
+
+    def global_height(self, prec=None):
+        r"""
+        Returns the maximum of the absolute logarithmic heights of the coefficients
+        in any of the coordinate functions of this map.
+
+        INPUT:
+
+        - ``prec`` -- desired floating point precision (default:
+          default RealField precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        .. TODO::
+
+            Add functionality for `\QQbar`, implement function to convert
+            the map defined over `\QQbar` to map over a number field.
+
+        EXAMPLES::
+
+            sage: P1xP1.<x,y,u,v> = ProductProjectiveSpaces([1, 1], ZZ)
+            sage: H = End(P1xP1)
+            sage: f = H([x^2*u, 3*y^2*v, 5*x*v^2, y*u^2])
+            sage: f.global_height()
+            1.60943791243410
+
+        ::
+
+            sage: u = QQ['u'].0
+            sage: R = NumberField(u^2 - 2, 'v')
+            sage: PP.<x,y,a,b> = ProductProjectiveSpaces([1, 1], R)
+            sage: H = End(PP)
+            sage: O = R.maximal_order()
+            sage: g = H([3*O(u)*x^2, 13*x*y, 7*a*y, 5*b*x + O(u)*a*y])
+            sage: g.global_height()
+            2.56494935746154
+        """
+        K = self.domain().base_ring()
+        if K in NumberFields() or is_NumberFieldOrder(K):
+            H = 0
+            for i in range(self.domain().ambient_space().ngens()):
+                C = self[i].coefficients()
+                h = max(c.global_height(prec=prec) for c in C)
+                H = max(H, h)
+            return H
+        elif K == QQbar:
+            raise NotImplementedError("not implemented for QQbar")
+        else:
+            raise TypeError("Must be over a Numberfield or a Numberfield Order or QQbar")
+
+    def local_height(self, v, prec=None):
+        r"""
+        Returns the maximum of the local height of the coefficients in any
+        of the coordinate functions of this map.
+
+        INPUT:
+
+        - ``v`` -- a prime or prime ideal of the base ring.
+
+        - ``prec`` -- desired floating point precision (default:
+          default RealField precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: T.<x,y,z,w,u> = ProductProjectiveSpaces([2, 1], QQ)
+            sage: H = T.Hom(T)
+            sage: f = H([4*x^2+3/100*y^2, 8/210*x*y, 1/10000*z^2, 20*w^2, 1/384*u*w])
+            sage: f.local_height(2)
+            4.85203026391962
+
+        ::
+
+            sage: R.<z> = PolynomialRing(QQ)
+            sage: K.<w> = NumberField(z^2-5)
+            sage: P.<x,y,a,b> = ProductProjectiveSpaces([1, 1], K)
+            sage: H = Hom(P,P)
+            sage: f = H([2*x^2 + w/3*y^2, 1/w*y^2, a^2, 6*b^2 + 1/9*a*b])
+            sage: f.local_height(K.ideal(3))
+            2.19722457733622
+        """
+        K = FractionField(self.domain().base_ring())
+        if K not in NumberFields():
+            raise TypeError("must be over a number field or a number field order")
+
+        H = 0
+        for i in range(self.domain().ambient_space().ngens()):
+            C = self[i].coefficients()
+            h = max(K(c).local_height(v, prec) for c in C)
+            H = max(H, h)
+        return H

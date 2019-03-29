@@ -1,21 +1,42 @@
 # distutils: language = c++
-# distutils: extra_compile_args = -DNTL_ALL
 # distutils: libraries = ec ntl pari gmp m
 
-# NOTE: eclib includes have specific dependencies and must be included
-# in a specific order. That explains the various empty
-# "cdef extern from" blocks below.
 
 from libcpp.map cimport map
+from libcpp.vector cimport vector
+from libcpp.pair cimport pair
+from sage.libs.ntl.types cimport ZZ_c
 
+
+# NOTE: eclib includes have specific dependencies and must be included
+# in a specific order. So we start by listing all relevant include files
+# in the correct order.
+cdef extern from "eclib/vector.h": pass
+cdef extern from "eclib/xmod.h": pass
+cdef extern from "eclib/svector.h": pass
+cdef extern from "eclib/matrix.h": pass
+cdef extern from "eclib/smatrix.h": pass
+cdef extern from "eclib/interface.h": pass
+cdef extern from "eclib/rat.h": pass
+cdef extern from "eclib/bigrat.h": pass
+cdef extern from "eclib/isogs.h": pass
+cdef extern from "eclib/curve.h": pass
+cdef extern from "eclib/descent.h": pass
+cdef extern from "eclib/egr.h": pass
+cdef extern from "eclib/htconst.h": pass
+cdef extern from "eclib/moddata.h": pass
+cdef extern from "eclib/symb.h": pass
+cdef extern from "eclib/homspace.h": pass
+cdef extern from "eclib/oldforms.h": pass
+cdef extern from "eclib/newforms.h": pass
+
+
+# Now the actual declarations, where the order no longer matters
 cdef extern from "eclib/vector.h":
     ctypedef int scalar
 
     cdef cppclass vec:
         scalar operator[](long)
-
-cdef extern from "eclib/xmod.h":
-    cdef const int DEFAULT_MODULUS
 
 cdef extern from "eclib/svector.h":
     cdef cppclass svec:
@@ -48,10 +69,8 @@ cdef extern from "eclib/smatrix.h":
         scalar elem(int, int) const
         svec row(int) const
 
-from sage.libs.ntl.types cimport ZZ_c
-ctypedef ZZ_c bigint
-
 cdef extern from "eclib/interface.h":
+    ctypedef ZZ_c bigint
     int I2int(bigint)
 
 cdef extern from "eclib/rat.h":
@@ -66,9 +85,6 @@ cdef extern from "eclib/bigrat.h":
         pass
     cdef bigint bigrational_num "num"(bigrational q)
     cdef bigint bigrational_den "den"(bigrational q)
-
-cdef extern from "eclib/isogs.h":
-    pass
 
 cdef extern from "eclib/curve.h":
     cdef cppclass Curve:
@@ -99,15 +115,6 @@ cdef extern from "eclib/descent.h":
     cdef cppclass mw:
         mw(Curvedata* curve, int verb, int pp, int maxr)
 
-cdef extern from "eclib/egr.h":
-    pass
-cdef extern from "eclib/htconst.h":
-    pass
-cdef extern from "eclib/moddata.h":
-    pass
-cdef extern from "eclib/symb.h":
-    pass
-
 cdef extern from "eclib/homspace.h":
     cdef cppclass homspace:
         long modulus
@@ -122,12 +129,6 @@ cdef extern from "eclib/homspace.h":
         vec heckeop_col(long p, int j, int display)
         smat s_heckeop(long p, int dual, int display)
         long h1ncusps()
-
-cdef extern from "eclib/oldforms.h":
-    pass
-
-from libcpp.vector cimport vector
-from libcpp.pair cimport pair
 
 cdef extern from "eclib/newforms.h":
     cdef cppclass newforms:

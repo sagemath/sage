@@ -883,7 +883,8 @@ class AsymptoticExpansionGenerators(SageObject):
                 MonomialGrowthGroup
         from sage.arith.all import falling_factorial
         from sage.categories.cartesian_product import cartesian_product
-        from sage.functions.other import binomial, gamma
+        from sage.functions.other import binomial
+        from sage.functions.gamma import gamma
         from sage.calculus.calculus import limit
         from sage.misc.cachefunc import cached_function
         from sage.arith.srange import srange
@@ -971,7 +972,7 @@ class AsymptoticExpansionGenerators(SageObject):
             # because it does not exist in growth group.
             log_n = 1
 
-        it = reversed(list(islice(it, precision+1)))
+        it = reversed(list(islice(it, int(precision) + 1)))
         if normalized:
             beta_denominator = beta
         else:
@@ -1094,7 +1095,7 @@ class AsymptoticExpansionGenerators(SageObject):
             sage: asymptotic_expansions.ImplicitExpansion('Z', phi=lambda u: 1 + 2*u + u^2, tau=2, precision=5)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Symbolic division by zero
+            ZeroDivisionError: symbolic division by zero
             sage: asymptotic_expansions.ImplicitExpansion('Z', phi=lambda u: 1 + 2*u + u^2, tau=3, precision=5)
             3 - 4*I*sqrt(3)*Z^(-1/2) + 6*I*sqrt(3)*Z^(-3/2) + O(Z^(-2))
 
@@ -1407,7 +1408,8 @@ def _fundamental_constant_implicit_function_(phi):
     """
     from sage.symbolic.ring import SR
     u = SR('u')
-    positive_solution = filter(lambda s: s.rhs() > 0, (phi(u) - u*phi(u).diff(u)).solve(u))
+    positive_solution = [s for s in (phi(u) - u*phi(u).diff(u)).solve(u)
+                         if s.rhs() > 0]
     if len(positive_solution) == 1:
         return positive_solution[0].rhs()
     raise ValueError('Fundamental constant tau could not be determined')

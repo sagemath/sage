@@ -21,7 +21,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-class MultiplexFunction:
+class MultiplexFunction(object):
     """
     A simple wrapper object for functions that are called on a list of
     objects.
@@ -34,7 +34,7 @@ class MultiplexFunction:
             sage: m = Multiplex(1,1/2)
             sage: f = MultiplexFunction(m,'str')
             sage: f
-            <sage.misc.object_multiplexer.MultiplexFunction instance at 0x...>
+            <sage.misc.object_multiplexer.MultiplexFunction object at 0x...>
         """
         self.multiplexer = multiplexer
         self.name = name
@@ -57,7 +57,7 @@ class MultiplexFunction:
         else:
             return tuple(l)
 
-class Multiplex:
+class Multiplex(object):
     """
     Object for a list of children such that function calls on this
     new object implies that the same function is called on all
@@ -81,7 +81,7 @@ class Multiplex:
             sage: from sage.misc.object_multiplexer import Multiplex
             sage: m = Multiplex(1,1/2)
             sage: m.str
-            <sage.misc.object_multiplexer.MultiplexFunction instance at 0x...>
+            <sage.misc.object_multiplexer.MultiplexFunction object at 0x...>
             sage: m.trait_names
             Traceback (most recent call last):
             ...

@@ -17,16 +17,13 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, QQ, infinity
+from sage.rings.all import ZZ
 
 from sage.modules.module import Module
-from sage.categories.all import Modules
-from sage.modules.free_module_element import vector
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 
-from .hecke_triangle_groups import HeckeTriangleGroup
 from .abstract_space import FormsSpace_abstract
 
 
@@ -249,8 +246,12 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
             sage: MF = ModularForms(n=6, k=20, ep=1)
             sage: subspace = MF.subspace([MF.Delta()*MF.E4()^2, MF.gen(0)])
+            sage: subspace.change_ring(QQ)
+            Subspace of dimension 2 of ModularForms(n=6, k=20, ep=1) over Rational Field
             sage: subspace.change_ring(CC)
-            Subspace of dimension 2 of ModularForms(n=6, k=20, ep=1) over Complex Field with 53 bits of precision
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
         """
 
         return self.__class__.__base__(self._ambient_space.change_ring(new_base_ring), self._basis, check=False)

@@ -13,8 +13,9 @@ from sage.categories.algebras import Algebras
 from sage.categories.modules import Modules
 from sage.misc.lazy_import import LazyImport
 
+
 class SuperAlgebras(SuperModulesCategory):
-    """
+    r"""
     The category of super algebras.
 
     An `R`-*super algebra* is an `R`-super module `A` endowed with an

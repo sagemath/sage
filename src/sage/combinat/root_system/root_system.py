@@ -207,13 +207,13 @@ class RootSystem(UniqueRepresentation, SageObject):
         sage: W = L.weyl_group()
         sage: S3 = [ w.action(id) for w in W.classical() ]
         sage: [L.classical()(x) for x in S3]
-        [(1, 2, 3), (3, 2, 1), (3, 1, 2), (2, 1, 3), (2, 3, 1), (1, 3, 2)]
+        [(1, 2, 3), (3, 1, 2), (2, 3, 1), (2, 1, 3), (1, 3, 2), (3, 2, 1)]
 
     And the action of `s_0` on these yields::
 
         sage: s = W.simple_reflections()
         sage: [L.classical()(s[0].action(x)) for x in S3]
-        [(0, 2, 4), (-2, 2, 6), (-1, 1, 6), (0, 1, 5), (-2, 3, 5), (-1, 3, 4)]
+        [(0, 2, 4), (-1, 1, 6), (-2, 3, 5), (0, 1, 5), (-1, 3, 4), (-2, 2, 6)]
 
     We can also plot various components of the ambient spaces::
 
@@ -349,7 +349,6 @@ class RootSystem(UniqueRepresentation, SageObject):
 
         .. SEEALSO:: :class:`TestSuite`.
         """
-        tester = self._tester(**options)
         options.pop('tester', None)
         from sage.misc.sage_unittest import TestSuite
         TestSuite(self.root_lattice()).run(**options)
@@ -812,9 +811,9 @@ def WeylDim(ct, coeffs):
         8
         sage: WeylDim(['B',3],[1,0,1]) # sum of the first and third fundamental weights
         48
-        sage: [WeylDim(['F',4],x) for x in [1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]
+        sage: [WeylDim(['F',4],x) for x in ([1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1])]
         [52, 1274, 273, 26]
-        sage: [WeylDim(['E', 6], x) for x in [0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 2], [0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0], [1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 1], [2, 0, 0, 0, 0, 0]]
+        sage: [WeylDim(['E', 6], x) for x in ([0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 2], [0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0], [1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 1], [2, 0, 0, 0, 0, 0])]
         [1, 78, 27, 351, 351, 351, 27, 650, 351]
     """
     ct = CartanType(ct)

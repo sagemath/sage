@@ -302,7 +302,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         sage: s.display()
         M --> R
         on U: (x, y) |--> 1/2*sqrt(2)*arctan(x^2 + y^2)/pi
-        on V: (u, v) |--> 1/4*(sqrt(2)*pi - 2*sqrt(2)*arctan(u^2 + v^2))/pi
+        on V: (u, v) |--> 1/4*sqrt(2)*(pi - 2*arctan(u^2 + v^2))/pi
 
     ::
 
@@ -616,4 +616,3 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         return self.element_class(self,
                                   coord_expression=coord_express,
                                   name='1', latex_name='1')
-

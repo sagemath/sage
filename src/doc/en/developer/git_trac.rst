@@ -100,6 +100,23 @@ make sure that it is not readable by other users on your system. For
 example, by running ``chmod 0600 .git/config`` if your home directory
 is not already private.
 
+Instead of a username and password you may also configure authentication via
+a generated token by passing ``--token=<token>`` instead of ``--pass``::
+
+    [user@localhost sage]$ git trac config --user=<username> --token=<token>
+
+This is required if you authenticate to Trac with your GitHub account, as
+you do not have a Trac password.  Logged in users can find their token
+under `the token tab in preferences on the trac site <https://trac.sagemath.org/prefs/token>`_ .
+
+If both a token and a username/password are configured, the token-based
+authentication takes precedence.
+
+If you do not want to store your trac username/password/token on disk you
+can temporarily override it with the environment variables
+``TRAC_USERNAME``,  ``TRAC_PASSWORD``, and ``TRAC_TOKEN`` respectively.
+These take precedence over any other configuration.
+
 If there is no SSH key listed then you haven't uploaded your SSH
 public key to the trac server. You should do that now following the
 instructions to :ref:`section-trac-ssh-key`, if you want to upload

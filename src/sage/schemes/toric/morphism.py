@@ -1,5 +1,5 @@
 r"""
-Morphisms of Toric Varieties
+Morphisms of toric varieties
 
 There are three "obvious" ways to map toric varieties to toric
 varieties:
@@ -180,7 +180,7 @@ coordinate charts of $O_{\mathbb{P}^1}(2)$ ::
 The fibers are labeled by torus orbits in the base, that is, cones of
 the codomain fan. In this case, the fibers over lower-dimensional
 torus orbits are::
- 
+
     sage: A2_Z2_cones = flatten(A2_Z2.fan().cones())
     sage: table([('cone', 'dim')] +
     ....:       [(cone.ambient_ray_indices(), single_chart.fiber_dimension(cone))
@@ -201,7 +201,7 @@ irreducible. The irreducible components are labeled by the
 which are certain cones of the domain fan that map to the cone in the
 base that defines the torus orbit::
 
-    sage: table([('base cone', 'primitive preimage cones')] + 
+    sage: table([('base cone', 'primitive preimage cones')] +
     ....:       [(cone.ambient_ray_indices(),
     ....:         single_chart.fan_morphism().primitive_preimage_cones(cone))
     ....:        for cone in A2_Z2_cones], header_row=True)
@@ -250,11 +250,11 @@ Here is an example with higher dimensional varieties involved::
     ...
     AttributeError: 'SchemeMorphism_fan_toric_variety' object
     has no attribute 'fiber_generic'
-    
+
 Let's use factorization mentioned above::
 
     sage: phi_i, phi_b, phi_s = phi.factor()
-    
+
 It is possible to study fibers of the last two morphisms or their composition::
 
     sage: phi_d = phi_b * phi_s
@@ -280,13 +280,13 @@ It is possible to study fibers of the last two morphisms or their composition::
     (1, 2)
     (0, 2)
     (0, 1)
-    
+
 We see that codomain fan of this morphism is a projective plane, which can be
 verified by ::
 
     sage: phi_d.codomain().fan().is_isomorphic(toric_varieties.P2().fan()) # known bug
     True
-    
+
 (Unfortunately it cannot be verified correctly until :trac:`16012` is fixed.)
 
 We now have access to fiber methods::
@@ -309,7 +309,7 @@ We now have access to fiber methods::
     sage: fiber[0].fan().rays()
     Empty collection
     in Sublattice <N(1, 1, -1)>
-    
+
 We see that generic fibers of this morphism consist of 2 one-dimensional tori
 each. To see what happens over boundary points we can look at fiber components
 corresponding to the cones of the domain fan::
@@ -328,7 +328,7 @@ corresponding to the cones of the domain fan::
     (1, 2) |-> 1-d affine toric variety (1 rays, multiplicity 1) over (0, 1)
     (0, 2) |-> 1-d affine toric variety (1 rays, multiplicity 1) over (0, 1)
     (0, 1, 2) |-> 0-d affine toric variety (0 rays, multiplicity 1) over (0, 1)
-    
+
 Now we see that over one of the coordinate lines of the projective plane we also
 have one-dimensional tori (but only one in each fiber), while over one of the
 points fixed by torus action we have two affine planes intersecting along an
@@ -351,8 +351,8 @@ REFERENCES:
 
 .. [BB]
     Gavin Brown, Jaroslaw Buczynski:
-    Maps of toric varieties in Cox coordinates,
-    http://arxiv.org/abs/1004.4924
+    *Maps of toric varieties in Cox coordinates*,
+    :arxiv:`1004.4924`
 """
 
 #*****************************************************************************
@@ -588,7 +588,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         Scheme morphism:
           From: 1-d toric variety covered by 2 affine patches
           To:   2-d CPR-Fano toric variety covered by 4 affine patches
-          Defn: Defined by embedding the torus closure associated to the 1-d 
+          Defn: Defined by embedding the torus closure associated to the 1-d
                 cone of Rational polyhedral fan in 2-d lattice N.
 
     TESTS::
@@ -610,7 +610,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 1-d toric variety covered by 2 affine patches
               To:   2-d CPR-Fano toric variety covered by 3 affine patches
-              Defn: Defined by embedding the torus closure associated to the 1-d cone 
+              Defn: Defined by embedding the torus closure associated to the 1-d cone
                     of Rational polyhedral fan in 2-d lattice N.
         """
         SchemeMorphism.__init__(self, parent)
@@ -620,17 +620,17 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
     def defining_cone(self):
         r"""
         Return the cone corresponding to the torus orbit.
-        
+
         OUTPUT:
-        
+
         A cone of the fan of the ambient toric variety.
-        
+
         EXAMPLES::
 
             sage: P2 = toric_varieties.P2()
             sage: cone = P2.fan(1)[0]
             sage: P1 = P2.orbit_closure(cone)
-            sage: P1.embedding_morphism().defining_cone() 
+            sage: P1.embedding_morphism().defining_cone()
             1-d cone of Rational polyhedral fan in 2-d lattice N
             sage: _ is cone
             True
@@ -663,7 +663,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         reverse_ray_dict = dict()
         for n1, n2 in iteritems(self._ray_map):
             ray_index = codomain_fan.rays().index(n1)
-            if n2.is_zero(): 
+            if n2.is_zero():
                 assert ray_index in self._defining_cone.ambient_ray_indices()
                 continue
             n2 = orbit.fan().lattice()(n2)
@@ -685,7 +685,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
             sage: V = P2.orbit_closure(P2.fan(1)[0]);  V
             1-d toric variety covered by 2 affine patches
             sage: V.embedding_morphism()._repr_defn()
-            'Defined by embedding the torus closure associated to the 1-d cone of 
+            'Defined by embedding the torus closure associated to the 1-d cone of
              Rational polyhedral fan in 2-d lattice N.'
         """
         s  = 'Defined by embedding the torus closure associated to the '
@@ -710,7 +710,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         map if and only if each primitive orbit ray generator is the
         image of at least one primitive ray generator of the ambient
         toric variety.
-        
+
         EXAMPLES::
 
             sage: P2 = toric_varieties.P2()
@@ -747,7 +747,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
                 raise TypeError('The embedding cannot be written with homogeneous polynomials.')
             polys[ray_index] = R.gen(i)
         return SchemeMorphism_polynomial_toric_variety(self.parent(), polys)
-        
+
     def pullback_divisor(self, divisor):
         r"""
         Pull back a toric divisor.
@@ -1295,7 +1295,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 1-d affine toric variety
               To:   1-d CPR-Fano toric variety covered by 2 affine patches
-              Defn: Defined by sending Rational polyhedral fan in 1-d lattice N 
+              Defn: Defined by sending Rational polyhedral fan in 1-d lattice N
                     to Rational polyhedral fan in 1-d lattice N.
             sage: phi.is_dominant()
             True
@@ -1349,11 +1349,11 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety):
     """
     Construct a morphism determined by a dominant fan morphism.
-    
+
     A dominant morphism is one that is surjective onto a dense
     subset. In the context of toric morphisms, this means that it is
     onto the big torus orbit.
-    
+
     .. WARNING::
 
         You should not create objects of this class directly. Use the
@@ -1388,7 +1388,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
 
     @cached_method
     def fiber_generic(self):
-        """
+        r"""
         Return the generic fiber.
 
         OUTPUT:
@@ -1396,7 +1396,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         - a tuple `(X, n)`, where `X` is a :class:`toric variety
           <sage.schemes.toric.variety.ToricVariety_field>` with the
           embedding morphism into domain of ``self`` and `n` is an integer.
-        
+
         The fiber over the base point with homogeneous coordinates
         `[1:1:\cdots:1]` consists of `n` disjoint toric varieties isomorphic to
         `X`. Note that fibers of a dominant toric morphism are isomorphic over
@@ -1459,16 +1459,16 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         INPUT:
 
         - ``domain_cone`` -- a cone of the domain fan of ``self``.
-        
+
         - ``multiplicity`` (default: ``False``) -- whether to return the number
           of fiber components corresponding to ``domain_cone`` as well.
-        
+
         OUTPUT:
 
         - either `X` or a tuple `(X, n)`, where `X` is a :class:`toric variety
           <sage.schemes.toric.variety.ToricVariety_field>` with the
           embedding morphism into domain of ``self`` and `n` is an integer.
-          
+
         Let `\phi: \Sigma \to \Sigma'` be the :class:`fan morphism
         <sage.geometry.fan_morphism.FanMorphism>` corresponding to
         ``self``. Let `\sigma \in \Sigma` and `\sigma' \in \Sigma'` be
@@ -1476,7 +1476,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         of `\sigma`.  The fiber over any point of the torus orbit corresponding
         to `\sigma'` consists of `n` isomorphic connected components with each
         component being a union of toric varieties intersecting along
-        their torus invariant subvarieties. The latter correspond to 
+        their torus invariant subvarieties. The latter correspond to
         :meth:`~sage.geometry.fan_morphism.FanMorphism.preimage_cones` of
         `\sigma'` and `X` is one of the `n` components corresponding to
         `\sigma`. The irreducible components correspond to
@@ -1595,7 +1595,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         components intersect, the
         corresponding nodes of the graph are joined by an edge. Note that
         irreducible components do not have to be of the same dimension.
-        
+
         .. SEEALSO::
 
             :meth:`~SchemeMorphism_fan_toric_variety_dominant.fiber_component`.
@@ -1644,7 +1644,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
                 return True
             except ValueError:
                 return False
-                
+
         m = matrix(ZZ, n, n, lambda i,j:is_union_in_fan(self,prim[i], prim[j]))
 
         for i in range(n):
@@ -1666,7 +1666,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
     itself not a toric morphism!
 
     INPUT:
-    
+
     - ``toric_morphism`` -- a toric morphism. The toric morphism whose
       fiber component we are describing.
 
@@ -1835,7 +1835,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             0-d affine toric variety
             sage: blowup.fiber_component(Cone([(1,1)]))
             1-d toric variety covered by 2 affine patches
-            
+
             sage: P1 = toric_varieties.P1()
             sage: f = P1.hom(matrix([2]), P1)
             sage: f.fiber_component(P1.fan(1)[0])
@@ -1927,7 +1927,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             in 2-d lattice N
             sage: f.base_cone().rays()
             N(1)
-            in 1-d lattice N       
+            in 1-d lattice N
         """
         return self._base_cone
 

@@ -519,11 +519,25 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 sage: K.is_perfect()
                 True
 
+            TESTS:
+
+            Check that this works correctly for `B^{n,s}`
+            of type `A_{2n}^{(2)\dagger}` (:trac:`24364`)::
+
+                sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 3,1)
+                sage: K.is_perfect()
+                True
+                sage: K.is_perfect(1)
+                True
+
             .. TODO::
 
                 Implement a version for tensor products of KR crystals.
             """
             if ell is None:
+                if (self.cartan_type().dual().type() == 'BC'
+                    and self.cartan_type().rank() - 1 == self.r()):
+                    return True
                 ell = self.s() / self.cartan_type().c()[self.r()]
                 if ell not in ZZ:
                     return False
@@ -533,6 +547,9 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
             # [FOS2010]_ check
             if self.cartan_type().classical().type() not in ['E','F','G']:
+                if (self.cartan_type().dual().type() == 'BC'
+                    and self.cartan_type().rank() - 1 == self.r()):
+                    return ell == self.s()
                 return ell == self.s() / self.cartan_type().c()[self.r()]
 
             # Check by definition
@@ -584,9 +601,25 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 Traceback (most recent call last):
                 ...
                 ValueError: this crystal is not perfect
+
+            TESTS:
+
+            Check that this works correctly for `B^{n,s}`
+            of type `A_{2n}^{(2)\dagger}` (:trac:`24364`)::
+
+                sage: ct = CartanType(['A',6,2]).dual()
+                sage: K1 = crystals.KirillovReshetikhin(ct, 3,1)
+                sage: K1.level()
+                1
+                sage: K4 = crystals.KirillovReshetikhin(ct, 3,4)
+                sage: K4.level()
+                4
             """
             if not self.is_perfect():
                 raise ValueError("this crystal is not perfect")
+            if (self.cartan_type().dual().type() == 'BC'
+                and self.cartan_type().rank() - 1 == self.r()):
+                return self.s()
             return self.s() / self.cartan_type().c()[self.r()]
 
         def q_dimension(self, q=None, prec=None, use_product=False):

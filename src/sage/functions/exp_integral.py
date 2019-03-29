@@ -14,7 +14,7 @@ REFERENCES:
 - [AS1964]_ Abramowitz and Stegun: *Handbook of Mathematical Functions*
 - :wikipedia:`Exponential_integral`
 - Online Encyclopedia of Special Function: http://algo.inria.fr/esf/index.html
-- NIST Digital Library of Mathematical Functions: http://dlmf.nist.gov/
+- NIST Digital Library of Mathematical Functions: https://dlmf.nist.gov/
 - Maxima `special functions package`_
 - `mpmath library`_
 
@@ -51,6 +51,7 @@ from __future__ import division, print_function
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
 from sage.structure.all import parent
+from sage.misc.latex import latex
 from sage.libs.mpmath import utils as mpmath_utils
 mpmath_utils_call = mpmath_utils.call # eliminate some overhead in _evalf_
 
@@ -157,7 +158,6 @@ class Function_exp_integral_e(BuiltinFunction):
 
         """
         BuiltinFunction.__init__(self, "exp_integral_e", nargs=2,
-                                 latex_name=r'exp_integral_e',
                                  conversions=dict(maxima='expintegral_e',
                                                   sympy='expint'))
 
@@ -222,6 +222,17 @@ class Function_exp_integral_e(BuiltinFunction):
         """
         import mpmath
         return mpmath_utils.call(mpmath.expint, n, z, parent=parent)
+
+    def _print_latex_(self, n, z):
+        """
+        Custom ``_print_latex_`` method.
+
+        EXAMPLES::
+
+            sage: latex(exp_integral_e(1, -x - 1))
+            E_{1}\left(-x - 1\right)
+        """
+        return r"E_{{{}}}\left({}\right)".format(latex(n), latex(z))
 
     def _derivative_(self, n, z, diff_param=None):
         """
@@ -310,7 +321,6 @@ class Function_exp_integral_e1(BuiltinFunction):
 
         """
         BuiltinFunction.__init__(self, "exp_integral_e1", nargs=1,
-                                 latex_name=r'exp_integral_e1',
                                  conversions=dict(maxima='expintegral_e1',
                                                   sympy='E1'))
 
@@ -327,9 +337,23 @@ class Function_exp_integral_e1(BuiltinFunction):
         import mpmath
         return mpmath_utils_call(mpmath.e1, z, parent=parent)
 
+
+    def _print_latex_(self, z):
+        """
+        Custom ``_print_latex_`` method.
+
+        EXAMPLES::
+
+            sage: latex(exp_integral_e1(2))
+            E_{1}\left(2\right)
+        """
+        return r"E_{{1}}\left({}\right)".format(latex(z))
+
     def _derivative_(self, z, diff_param=None):
         """
-        The derivative of `E_1(z)` is `-e^{-z}/z`. See [AS1964], 5.1.26.
+        The derivative of `E_1(z)` is `-e^{-z}/z`.
+
+        See [AS1964]_ 5.1.26.
 
         EXAMPLES::
 
@@ -641,7 +665,7 @@ class Function_log_integral_offset(BuiltinFunction):
         return mpmath_utils_call(mpmath.li, z, offset=True, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
-        """
+        r"""
         The derivative of `\operatorname{Li}(z) is `1/log(z)`.
 
         EXAMPLES::
@@ -654,7 +678,6 @@ class Function_log_integral_offset(BuiltinFunction):
             sage: f = log_integral_offset(x^2)
             sage: f.diff(x)
             2*x/log(x^2)
-
         """
         return 1/log(z)
 
@@ -798,7 +821,7 @@ class Function_sin_integral(BuiltinFunction):
             return z
 
     def _evalf_(self, z, parent=None, algorithm=None):
-        """
+        r"""
         EXAMPLES:
 
         The limit `\operatorname{Si}(z)` as `z \to \infty`  is `\pi/2`::
@@ -823,7 +846,6 @@ class Function_sin_integral(BuiltinFunction):
             -1.60541297680269
             sage: sin_integral(-1e23)
             -1.57079632679490
-
         """
         import mpmath
         return mpmath_utils_call(mpmath.si, z, parent=parent)
@@ -1246,7 +1268,7 @@ class Function_cosh_integral(BuiltinFunction):
         return mpmath_utils_call(mpmath.chi, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
-        """
+        r"""
         The derivative of `\operatorname{Chi}(z)` is `\cosh(z)/z`.
 
         EXAMPLES::

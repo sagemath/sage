@@ -392,12 +392,12 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         ring_latex = self.base_ring()._latex_()
         return ('\\left(' + ring_latex + '^' + str(self.degree()) + '\\wr' +
                 SymmetricGroup(self.degree())._latex_() +
-                ' \\right) \\rtimes \operatorname{Aut}(' + ring_latex + ')')
+                ' \\right) \\rtimes \\operatorname{Aut}(' + ring_latex + ')')
 
 
 class SemimonomialActionVec(Action):
     r"""
-    The natural action of the semimonomial group on vectors.
+    The natural left action of the semimonomial group on vectors.
 
     The action is defined by:
     `(\phi, \pi, \alpha)*(v_0, \ldots, v_{n-1}) :=
@@ -432,7 +432,7 @@ class SemimonomialActionVec(Action):
 
         Action.__init__(self, G, V.dense_module())
 
-    def _call_(self, a, b):
+    def _act_(self, a, b):
         r"""
         Apply the semimonomial group element `a` to the vector `b`.
 
@@ -452,7 +452,7 @@ class SemimonomialActionVec(Action):
 
 class SemimonomialActionMat(Action):
     r"""
-    The action of
+    The left action of
     :class:`~sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialTransformationGroup`
     on matrices over the same ring whose number of columns is equal to the degree.
     See :class:`~sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialActionVec`
@@ -485,7 +485,7 @@ class SemimonomialActionMat(Action):
                 raise ValueError('%s and %s have different base rings' % (M, G))
         Action.__init__(self, G, M)
 
-    def _call_(self, a, b):
+    def _act_(self, a, b):
         r"""
         Apply the semimonomial group element `a` to the matrix `b`.
 

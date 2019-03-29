@@ -44,3 +44,14 @@ cdef extern from "acb_poly.h":
     ctypedef acb_poly_struct[1] acb_poly_t
     ctypedef acb_poly_struct * acb_poly_ptr
     ctypedef const acb_poly_struct * acb_poly_srcptr
+
+cdef extern from "acb_calc.h":
+    ctypedef struct acb_calc_integrate_opt_struct:
+        long deg_limit
+        long eval_limit
+        long depth_limit
+        bint use_heap
+        int verbose
+    ctypedef acb_calc_integrate_opt_struct acb_calc_integrate_opt_t[1]
+    ctypedef int (*acb_calc_func_t)(acb_ptr out,
+            const acb_t inp, void * param, long order, long prec)

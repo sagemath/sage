@@ -21,6 +21,7 @@ from sage.misc.lazy_import import lazy_import
 
 import sage.algebras.catalog as algebras
 
+from .quantum_groups.all import *
 from .quatalg.all import *
 
 # Algebra base classes
@@ -30,15 +31,18 @@ from .free_algebra_quotient import FreeAlgebraQuotient
 
 from .steenrod.all import *
 from .lie_algebras.all import *
+from .quantum_groups.all import *
 
 from .finite_dimensional_algebras.all import FiniteDimensionalAlgebra
 
-from .group_algebra import GroupAlgebra
+lazy_import('sage.algebras.group_algebra', 'GroupAlgebra')
 
-from .iwahori_hecke_algebra import IwahoriHeckeAlgebra
-from .affine_nil_temperley_lieb import AffineNilTemperleyLiebTypeA
+lazy_import('sage.algebras.iwahori_hecke_algebra', 'IwahoriHeckeAlgebra')
+lazy_import('sage.algebras.affine_nil_temperley_lieb',
+            'AffineNilTemperleyLiebTypeA')
 lazy_import('sage.algebras.nil_coxeter_algebra', 'NilCoxeterAlgebra')
-lazy_import('sage.algebras.schur_algebra', ['SchurAlgebra', 'SchurTensorModule'])
+lazy_import('sage.algebras.schur_algebra', ['SchurAlgebra',
+                                            'SchurTensorModule'])
 
 lazy_import('sage.algebras.hall_algebra', 'HallAlgebra')
 
@@ -51,7 +55,8 @@ from .weyl_algebra import DifferentialWeylAlgebra
 
 lazy_import('sage.algebras.commutative_dga', 'GradedCommutativeAlgebra')
 
-lazy_import('sage.algebras.rational_cherednik_algebra', 'RationalCherednikAlgebra')
+lazy_import('sage.algebras.rational_cherednik_algebra',
+            'RationalCherednikAlgebra')
 
 lazy_import('sage.algebras.tensor_algebra', 'TensorAlgebra')
 
@@ -60,3 +65,5 @@ lazy_import('sage.algebras.q_system', 'QSystem')
 lazy_import('sage.algebras.cluster_algebra', 'ClusterAlgebra')
 
 lazy_import('sage.algebras.yangian', 'Yangian')
+
+del absolute_import

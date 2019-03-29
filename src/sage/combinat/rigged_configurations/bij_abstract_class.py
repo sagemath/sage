@@ -333,18 +333,6 @@ class RCToKRTBijectionAbstract:
         cp.set_immutable()
         self._graph = [ [[], (cp, 0)] ]
 
-        # Compute the current L matrix
-#        self.L = {}
-#        for dim in self.rigged_con.parent().dims:
-#            if self.L.has_key(dim[0]):
-#                row = self.L[dim[0]]
-#                if row.has_key(dim[1]):
-#                    row[dim[1]] += 1
-#                else:
-#                    row[dim[1]] = 1
-#            else:
-#                self.L[dim[0]] = {dim[1]:1}
-
     def __eq__(self, rhs):
         r"""
         Check equality.

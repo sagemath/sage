@@ -1,16 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Compute invariants of quintics and sextics via 'Ueberschiebung'.
-
-REFERENCES:
-
-.. [M] Mestre, Jean-Francois. *Construction de courbes de genre 2 a
-   partir de leurs modules*. Effective methods in algebraic geometry
-   (Castiglioncello,
-   1990), 313--334, Progr. Math., 94, Birkhauser Boston, Boston, MA, 1991.
-
-.. [I] Igusa, Jun-ichi. *Arithmetic variety of moduli for genus two*.
-   Ann. of Math. (2) 72 1960 612--649.
+Compute invariants of quintics and sextics via 'Ueberschiebung'
 
 .. TODO::
 
@@ -20,7 +10,8 @@ REFERENCES:
 
 AUTHOR:
 
-* Nick Alexander
+- Nick Alexander
+
 """
 from sage.rings.all import ZZ
 from sage.rings.all import PolynomialRing
@@ -55,7 +46,7 @@ def differential_operator(f, g, k):
     r"""
     Return the differential operator `(f g)_k` symbolically in the polynomial ring in ``dfdx, dfdy, dgdx, dgdy``.
 
-    This is defined by Mestre on p 315 [M]_:
+    This is defined by Mestre on p 315 [MJ1991]_:
 
     .. MATH::
 
@@ -123,7 +114,7 @@ def Ueberschiebung(f, g, k):
     r"""
     Return the differential operator `(f g)_k`.
 
-    This is defined by Mestre on page 315 [M]_:
+    This is defined by Mestre on page 315 [MJ1991]_:
 
     .. MATH::
 
@@ -149,7 +140,7 @@ def Ueberschiebung(f, g, k):
 
 def ubs(f):
     r"""
-    Given a sextic form `f`, return a dictionary of the invariants of Mestre, p 317 [M]_.
+    Given a sextic form `f`, return a dictionary of the invariants of Mestre, p 317 [MJ1991]_.
 
     `f` may be homogeneous in two variables or inhomogeneous in one.
 
@@ -268,7 +259,8 @@ def igusa_to_clebsch(I2, I4, I6, I10):
 
 def clebsch_invariants(f):
     r"""
-    Given a sextic form `f`, return the Clebsch invariants `(A, B, C, D)` of Mestre, p 317, [M]_.
+    Given a sextic form `f`, return the Clebsch invariants `(A, B, C, D)` of
+    Mestre, p 317, [MJ1991]_.
 
     `f` may be homogeneous in two variables or inhomogeneous in one.
 
@@ -288,7 +280,8 @@ def clebsch_invariants(f):
     """
     R = f.parent().base_ring()
     if R.characteristic() in [2, 3, 5]:
-        raise NotImplementedError("Invariants of binary sextics/genus 2 hyperelliptic curves not implemented in characteristics 2, 3, and 5")
+        raise NotImplementedError("Invariants of binary sextics/genus 2 hyperelliptic "
+                                  "curves not implemented in characteristics 2, 3, and 5")
 
     U = ubs(f)
     L = U['A'], U['B'], U['C'], U['D']
@@ -298,7 +291,8 @@ def clebsch_invariants(f):
 
 def igusa_clebsch_invariants(f):
     r"""
-    Given a sextic form `f`, return the Igusa-Clebsch invariants `I_2, I_4, I_6, I_{10}` of Igusa and Clebsch [I]_.
+    Given a sextic form `f`, return the Igusa-Clebsch invariants `I_2, I_4,
+    I_6, I_{10}` of Igusa and Clebsch [IJ1960]_.
 
     `f` may be homogeneous in two variables or inhomogeneous in one.
 
@@ -335,14 +329,13 @@ def igusa_clebsch_invariants(f):
 
 def absolute_igusa_invariants_wamelen(f):
     r"""
-    Given a sextic form `f`, return the three absolute Igusa invariants used by van Wamelen [W]_.
+    Given a sextic form `f`, return the three absolute Igusa invariants used by van Wamelen [Wam1999]_.
 
     `f` may be homogeneous in two variables or inhomogeneous in one.
 
     REFERENCES:
 
-    .. [W] van Wamelen, Paul. *Examples of genus two CM curves defined
-       over the rationals*. Math. Comp. 68 (1999), no. 225, 307--320.
+    - [Wam1999]_
 
     EXAMPLES::
 
@@ -372,15 +365,9 @@ def absolute_igusa_invariants_wamelen(f):
 
 def absolute_igusa_invariants_kohel(f):
     r"""
-    Given a sextic form `f`, return the three absolute Igusa invariants used by Kohel [K]_.
+    Given a sextic form `f`, return the three absolute Igusa invariants used by Kohel [KohECHIDNA]_.
 
     `f` may be homogeneous in two variables or inhomogeneous in one.
-
-    REFERENCES:
-
-    .. [K] Kohel, David.  ECHIDNA: Databases for Elliptic Curves
-       and Higher Dimensional Analogues.
-       Available at http://echidna.maths.usyd.edu.au/~kohel/dbs/
 
     EXAMPLES::
 
@@ -390,7 +377,7 @@ def absolute_igusa_invariants_kohel(f):
         sage: absolute_igusa_invariants_kohel(x^5 - x)
         (100, -20000, -2000)
 
-    The following example can be checked against Kohel's database [K]_ ::
+    The following example can be checked against Kohel's database [KohECHIDNA]_ ::
 
         sage: i1, i2, i3 = absolute_igusa_invariants_kohel(-x^5 + 3*x^4 + 2*x^3 - 6*x^2 - 3*x + 1)
         sage: list(map(factor, (i1, i2, i3)))

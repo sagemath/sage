@@ -208,7 +208,7 @@ class GraphPaths_common:
 
     def paths(self):
         """
-        Returns a list of all the paths of self.
+        Return a list of all the paths of ``self``.
 
         EXAMPLES::
 
@@ -218,9 +218,10 @@ class GraphPaths_common:
             37
         """
         paths = []
-        for source in self.graph.vertices():
+        for source in self.graph.vertex_iterator():
             paths += self.outgoing_paths(source)
         return paths
+
 
 class GraphPaths_all(CombinatorialClass, GraphPaths_common):
     """

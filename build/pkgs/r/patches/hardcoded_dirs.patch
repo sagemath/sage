@@ -1,7 +1,7 @@
-From 83041ba9a07ca498049cd1be437fdfa72532f809 Mon Sep 17 00:00:00 2001
+From 4dc58ff28b6cc21dc9edc03b76277affc0da2bd6 Mon Sep 17 00:00:00 2001
 From: Emmanuel Charpentier <emm.charpentier@free.fr>
-Date: Fri, 13 Oct 2017 07:12:08 +0200
-Subject: [PATCH 3/8] hardcoded_dirs
+Date: Wed, 14 Mar 2018 19:30:37 +0100
+Subject: [PATCH 3/9] hardcoded_dirs
 
 Make R_HOME_DIR relative to SAGE_LOCAL by setting
 R_HOME_DIR to "${SAGE_LOCAL}/lib/R/" when running R.
@@ -54,5 +54,5 @@ index 674d5e0..11bfede 100644
     test "${R_HOME}" != "${R_HOME_DIR}"; then
    echo "WARNING: ignoring environment value of R_HOME"
 -- 
-2.14.2
+2.16.1
 

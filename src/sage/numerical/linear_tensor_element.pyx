@@ -235,8 +235,8 @@ cdef class LinearTensor(ModuleElement):
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
             sage: LT = LinearFunctionsParent(RDF).tensor(RDF^(2,2))
             sage: LT.an_element()  # indirect doctest
-            [1 + 5*x_2 + 7*x_5 0]
-            [0                 0]
+            [1 + 5*x_2 + 7*x_5 1 + 5*x_2 + 7*x_5]
+            [1 + 5*x_2 + 7*x_5 1 + 5*x_2 + 7*x_5]
         """
         MS = self.parent().free_module()
         assert self.parent().is_matrix_space()
@@ -443,45 +443,28 @@ cdef class LinearTensor(ModuleElement):
 
             sage: p = MixedIntegerLinearProgram()
             sage: lt0 = p[0] * vector([1,2])
-            sage: lt0.__hash__()   # random output
+            sage: hash(lt0)   # random output
             103987752
             sage: d = {}
             sage: d[lt0] = 3
+
+        Since we hash by ``id()``, linear functions and constraints are
+        only considered equal for sets and dicts if they are the same
+        object::
+
+            sage: f = p[0] * vector([1])
+            sage: g = p[0] * vector([1])
+            sage: set([f, f])
+            {((1.0))*x_0}
+            sage: set([f, g])
+            {((1.0))*x_0, ((1.0))*x_0}
+            sage: len(set([f, f+1]))
+            2
+
+            sage: d = {}
+            sage: d[f] = 123
+            sage: d[g] = 456
+            sage: len(list(d))
+            2
         """
-        # see _cmp_() if you want to change the hash function
         return hash_by_id(<void *> self)
-
-    def __cmp__(left, right):
-        """
-        Implement comparison of two linear functions.
-
-        EXAMPLES::
-
-            sage: p = MixedIntegerLinearProgram()
-            sage: f = p[0] * vector([1,2])
-            sage: v0 = vector([0, 0])
-            sage: v1 = vector([1, 1])
-            sage: cmp(f, f)
-            0
-            sage: abs(cmp(f, f+v0))     # since we are comparing by id()
-            1
-            sage: abs(cmp(f, f+v1))
-            1
-            sage: len(set([f, f]))
-            1
-            sage: len(set([f, f+v0]))
-            2
-            sage: len(set([f, f+v1]))
-            2
-        """
-        # Note: if you want to implement smarter comparison, you also
-        # need to change __hash__(). The comparison function must
-        # satisfy cmp(x,y)==0 => hash(x)==hash(y)
-        if left is right:
-            return 0
-        if <size_t><void*>left < <size_t><void*>right:
-            return -1
-        else:
-            return 1
-
-

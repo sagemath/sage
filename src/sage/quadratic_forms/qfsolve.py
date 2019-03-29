@@ -111,10 +111,10 @@ def qfparam(G, sol):
         Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
     """
     R = QQ['t']
-    t = R.gen()
     mat = G.__pari__().qfparam(sol)
     # Interpret the rows of mat as coefficients of polynomials
     return vector(R, mat.Col())
+
 
 def solve(self, c=0):
     r"""

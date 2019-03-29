@@ -1,9 +1,3 @@
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting"
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 CFLAGS="$CFLAGS -I$SAGE_LOCAL/include -g"
 
 COMPILER=`testcc.sh $CC`
@@ -24,10 +18,6 @@ else
    ENABLE_DEBUG=""
 fi
 
-if [ "x$SAGE64" = "xyes" ]; then
-    CFLAGS="$CFLAGS -m64"
-fi
-
 export CFLAGS
 
 if [ "x$SAGE_FAT_BINARY" = "xyes" ]; then
@@ -42,24 +32,6 @@ rm -rf "$SAGE_LOCAL/include/m4ri"
 cd src
 
 # Configure and build M4RI
-./configure \
-    --prefix="$SAGE_LOCAL" \
-    --libdir="$SAGE_LOCAL/lib" \
-    --enable-shared --disable-static \
-    $ENABLE_DEBUG $DISABLE_SSE2
-if [ $? -ne 0 ]; then
-    echo "Error configuring m4ri"
-    exit 1
-fi
-
-$MAKE
-if [ $? -ne 0 ]; then
-    echo "Error building m4ri"
-    exit 1
-fi
-
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo "Error installing m4ri"
-    exit 1
-fi
+sdh_configure --enable-shared --disable-static $ENABLE_DEBUG $DISABLE_SSE2
+sdh_make
+sdh_make_install

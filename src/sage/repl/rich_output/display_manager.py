@@ -24,14 +24,14 @@ EXAMPLES::
     The Sage display manager using the doctest backend
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 
 import warnings
@@ -57,6 +57,7 @@ class DisplayException(Exception):
     """
     pass
 
+
 class OutputTypeException(DisplayException):
     """
     Wrong Output container.
@@ -77,6 +78,7 @@ class OutputTypeException(DisplayException):
         OutputTypeException: foo
     """
     pass
+
 
 class RichReprWarning(UserWarning):
     """
@@ -362,7 +364,7 @@ class DisplayManager(SageObject):
         Boolean.
         """
         return self._backend.is_in_terminal()
-    
+
     def check_backend_class(self, backend_class):
         """
         Check that the current backend is an instance of
@@ -471,7 +473,7 @@ class DisplayManager(SageObject):
         return output
 
     def _preferred_text_formatter(self, obj, plain_text=None, **kwds):
-        """
+        r"""
         Return the preferred textual representation
 
         INPUT:
@@ -540,7 +542,7 @@ class DisplayManager(SageObject):
             if type(plain_text) is not OutputPlainText:
                 raise OutputTypeException('backend returned wrong output type, require PlainText')
             return plain_text
-        out =  self._backend.plain_text_formatter(obj, **kwds)
+        out = self._backend.plain_text_formatter(obj, **kwds)
         if type(out) is not OutputPlainText:
             raise OutputTypeException('backend returned wrong output type, require PlainText')
         return out
@@ -574,7 +576,7 @@ class DisplayManager(SageObject):
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: dm._call_rich_repr(Foo(), {})
-            doctest:...: RichReprWarning: Exception in _rich_repr_ while displaying object: reason
+            doctest:...: ...RichReprWarning: Exception in _rich_repr_ while displaying object: reason
         """
         if rich_repr_kwds:
             # do not ignore errors from invalid options
@@ -690,7 +692,7 @@ class DisplayManager(SageObject):
             sage: out = dm.graphics_from_save(plt.save, dict(), '.png', dm.types.OutputImagePng)
             sage: out
             OutputImagePng container
-            sage: out.png.get().startswith('\x89PNG')
+            sage: out.png.get().startswith(b'\x89PNG')
             True
             sage: out.png.filename()   # random
             '/home/user/.sage/temp/localhost.localdomain/23903/tmp_pu5woK.png'
@@ -744,7 +746,7 @@ class DisplayManager(SageObject):
         """
         if online:
             from sage.misc.package import installed_packages
-            version = installed_packages()['threejs']
+            version = installed_packages()['threejs'].split('.')[0]
             return """
 <script src="https://cdn.rawgit.com/mrdoob/three.js/{0}/build/three.min.js"></script>
 <script src="https://cdn.rawgit.com/mrdoob/three.js/{0}/examples/js/controls/OrbitControls.js"></script>
@@ -832,8 +834,6 @@ class DisplayManager(SageObject):
         """
         plain_text, rich_output = self._rich_output_formatter(obj, rich_repr_kwds)
         self._backend.display_immediately(plain_text, rich_output)
-
-
 
 
 get_display_manager = DisplayManager.get_instance

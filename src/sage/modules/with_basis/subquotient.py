@@ -231,7 +231,6 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
             [x[0] - x[1], x[1] - x[2]]
             sage: TestSuite(Y).run()
         """
-        import operator
         ring = ambient.base_ring()
         CombinatorialFreeModule.__init__(self, ring, basis.keys(),
                                          category=category.Subobjects())

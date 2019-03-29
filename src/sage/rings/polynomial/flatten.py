@@ -34,14 +34,14 @@ Vincent Delecroix, Ben Hutz (July 2016): initial implementation
 
 from __future__ import absolute_import, print_function
 
-from sage.misc.cachefunc import cached_method
+import itertools, six
 
+from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
-import six
-
+from sage.misc.cachefunc import cached_method
 from .polynomial_ring_constructor import PolynomialRing
 from .polynomial_ring import is_PolynomialRing
-from .multi_polynomial_ring_generic import is_MPolynomialRing
+from .multi_polynomial_ring_base import is_MPolynomialRing
 
 class FlatteningMorphism(Morphism):
     r"""
@@ -102,9 +102,9 @@ class FlatteningMorphism(Morphism):
             sage: R = ZZ['a']['a','b']
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: FlatteningMorphism(R)
-            Traceback (most recent call last):
-            ...
-            ValueError: clash in variable names
+            Flattening morphism:
+              From: Multivariate Polynomial Ring in a, b over Univariate Polynomial Ring in a over Integer Ring
+              To:   Multivariate Polynomial Ring in a, a0, b over Integer Ring
 
         ::
 
@@ -140,6 +140,18 @@ class FlatteningMorphism(Morphism):
             sage: f.domain(), f.codomain()
             (Univariate Polynomial Ring in z over Algebraic Field,
              Univariate Polynomial Ring in z over Algebraic Field)
+
+        TESTS::
+
+            sage: Pol = QQ['x']['x0']['x']
+            sage: fl = FlatteningMorphism(Pol)
+            sage: fl
+            Flattening morphism:
+              From: Univariate Polynomial Ring in x over Univariate Polynomial Ring in x0 over Univariate Polynomial Ring in x over Rational Field
+              To:   Multivariate Polynomial Ring in x, x0, x1 over Rational Field
+            sage: p = Pol([[[1,2],[3,4]],[[5,6],[7,8]]])
+            sage: fl.section()(fl(p)) == p
+            True
         """
         if not is_PolynomialRing(domain) and not is_MPolynomialRing(domain):
             raise ValueError("domain should be a polynomial ring")
@@ -151,23 +163,29 @@ class FlatteningMorphism(Morphism):
         while is_PolynomialRing(ring) or is_MPolynomialRing(ring):
             intermediate_rings.append(ring)
             v = ring.variable_names()
-            if any(vv in variables for vv in v):
-                raise ValueError("clash in variable names")
             variables.extend(reversed(v))
             ring = ring.base_ring()
         self._intermediate_rings = intermediate_rings
         variables.reverse()
+        for i, a in enumerate(variables):
+            if a in variables[:i]:
+                for index in itertools.count():
+                    b = a + str(index)
+                    if b not in variables: # not just variables[:i]!
+                        break
+                variables[i] = b
         if is_MPolynomialRing(domain):
             codomain = PolynomialRing(ring, variables, len(variables))
         else:
             codomain = PolynomialRing(ring, variables)
 
-        Morphism.__init__(self, domain, codomain)
+        hom = Homset(domain, codomain, base=ring, check=False)
+        Morphism.__init__(self, hom)
         self._repr_type_str = 'Flattening'
 
     def _call_(self, p):
         r"""
-        Evaluate an flattening morphism.
+        Evaluate a flattening morphism.
 
         EXAMPLES::
 
@@ -198,19 +216,19 @@ class FlatteningMorphism(Morphism):
             new_p = {}
             if is_PolynomialRing(ring):
                 for mon,pp in six.iteritems(p):
-                    assert pp.parent() == ring
+                    assert pp.parent() is ring
                     for i,j in six.iteritems(pp.dict()):
                         new_p[(i,)+(mon)] = j
             elif is_MPolynomialRing(ring):
                 for mon,pp in six.iteritems(p):
-                    assert pp.parent() == ring
+                    assert pp.parent() is ring
                     for mmon,q in six.iteritems(pp.dict()):
                         new_p[tuple(mmon)+mon] = q
             else:
                 raise RuntimeError
             p = new_p
 
-        return self.codomain()(p)
+        return self.codomain()(p, check=False)
 
     @cached_method
     def section(self):
@@ -307,19 +325,22 @@ class UnflatteningMorphism(Morphism):
         ring = codomain
         intermediate_rings = []
 
-        while is_PolynomialRing(ring) or is_MPolynomialRing(ring):
-            intermediate_rings.append(ring)
+        while True:
+            is_polynomial_ring = is_PolynomialRing(ring)
+            if not (is_polynomial_ring or is_MPolynomialRing(ring)):
+                break
+            intermediate_rings.append((ring, is_polynomial_ring))
             ring = ring.base_ring()
 
-        if domain.base_ring() != intermediate_rings[-1].base_ring():
+        if domain.base_ring() != intermediate_rings[-1][0].base_ring():
             raise ValueError("rings must have same base ring")
-        if domain.ngens() != sum([R.ngens() for R in intermediate_rings]):
+        if domain.ngens() != sum([R.ngens() for R, _ in intermediate_rings]):
             raise ValueError("rings must have the same number of variables")
 
         self._intermediate_rings = intermediate_rings
-        self._intermediate_rings.reverse()
 
-        Morphism.__init__(self, domain, codomain)
+        hom = Homset(domain, codomain, base=ring, check=False)
+        Morphism.__init__(self, hom)
         self._repr_type_str = 'Unflattening'
 
     def _call_(self, p):
@@ -336,23 +357,31 @@ class UnflatteningMorphism(Morphism):
             ....:    for _ in range(10):
             ....:        p = R.random_element()
             ....:        assert p == g(f(p))
+            ....:        z = R.zero()
+            ....:        assert z == g(f(z))
         """
-        num = [len(R.gens()) for R in self._intermediate_rings]
-        f = self.codomain().zero()
-        for mon,pp in six.iteritems(p.dict()):
-            ind = 0
-            g = pp
-            for i in range(len(num)):
-                m = mon[ind:ind+num[i]]
-                ind += num[i]
-                R = self._intermediate_rings[i]
-                if is_PolynomialRing(R):
-                    m = m[0]
-                g = R({m: g})
-            f += g
-
-        return f
-
+        index = [0]
+        for R, _ in reversed(self._intermediate_rings):
+            index.append(index[-1] + len(R.gens()))
+        newpol = [{} for _ in self._intermediate_rings]
+        expo = sorted(p.exponents(), key=lambda e: tuple(reversed(e)))
+        for i in range(len(expo)):
+            cur_exp = expo[i]
+            for l in range(len(self._intermediate_rings)):
+                R, univariate = self._intermediate_rings[-1-l]
+                sub_exp = (cur_exp[index[l]] if univariate
+                          else cur_exp[index[l]:index[l+1]])
+                if l == 0:
+                    newpol[l][sub_exp] = p[cur_exp]
+                else:
+                    newpol[l][sub_exp] = newpol[l-1]
+                    newpol[l-1] = {}
+                if (i == len(expo) - 1
+                        or expo[i+1][index[l+1]:] != cur_exp[index[l+1]:]):
+                    newpol[l] = R(newpol[l], check=False)
+                else:
+                    break
+        return R(newpol[-1], check=False)
 
 class SpecializationMorphism(Morphism):
     r"""

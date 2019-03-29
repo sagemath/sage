@@ -45,13 +45,7 @@ AUTHORS:
 
 -Isabel Vogt (2013): initial version
 
-REFERENCES:
-
-    .. [SV13] Silliman and Vogt. "Powers in Lucas Sequences via Galois Representations." Proceedings of the American Mathematical Society, 2013. :arxiv:`1307.5078v2`
-
-    .. [BMS06] Bugeaud, Mignotte, and Siksek. "Classical and modular approaches to exponential Diophantine equations: I. Fibonacci and Lucas perfect powers." Annals of Math, 2006.
-
-    .. [SS] Shorey and Stewart. "On the Diophantine equation a x^{2t} + b x^t y + c y^2 = d and pure powers in recurrence sequences." Mathematica Scandinavica, 1983.
+See [SV2013]_, [BMS2006]_, and [SS1983]_.
 """
 
 #****************************************************************************#
@@ -374,7 +368,7 @@ class BinaryRecurrenceSequence(SageObject):
         Return the period of the binary recurrence sequence modulo
         an integer ``m``.
 
-        If `n_1` is congruent to `n_2` modulu ``period(m)``, then `u_{n_1}` is
+        If `n_1` is congruent to `n_2` modulo ``period(m)``, then `u_{n_1}` is
         is congruent to `u_{n_2}` modulo ``m``.
 
         INPUT:
@@ -388,7 +382,7 @@ class BinaryRecurrenceSequence(SageObject):
         EXAMPLES:
 
         If `p = \\pm 1 \\mod 5`, then the period of the Fibonacci sequence
-        mod `p` is `p-1` (c.f. Lemma 3.3 of [BMS06]).
+        mod `p` is `p-1` (c.f. Lemma 3.3 of [BMS2006]_).
 
         ::
 
@@ -534,7 +528,7 @@ class BinaryRecurrenceSequence(SageObject):
 
         Let `u_n` be a binary recurrence sequence.  A ``p`` th power in `u_n` is a solution
         to `u_n = y^p` for some integer `y`.  There are only finitely many ``p`` th powers in
-        any recurrence sequence [SS].
+        any recurrence sequence [SS1983]_.
 
         INPUT:
 
@@ -549,7 +543,7 @@ class BinaryRecurrenceSequence(SageObject):
         EXAMPLES::
 
             sage: R = BinaryRecurrenceSequence(1,1)        #the Fibonacci sequence
-            sage: R.pthpowers(2, 10**30)        # long time (7 seconds) -- in fact these are all squares, c.f. [BMS06]
+            sage: R.pthpowers(2, 10**30)        # long time (7 seconds) -- in fact these are all squares, c.f. [BMS2006]_
             [0, 1, 2, 12]
 
             sage: S = BinaryRecurrenceSequence(8,1) #a Lucas sequence
@@ -649,7 +643,7 @@ class BinaryRecurrenceSequence(SageObject):
         #Thus, given such an `\\ell`, we get a set of necessary congruences for the index modulo the
         #the period of the sequence mod `\\ell`.  Then we intersect these congruences for many primes
         #to get a tight list modulo a growing modulus.  In order to keep this step manageable, we
-        #only use primes `\\ell` that are have particularly smooth periods.
+        #only use primes `\\ell` that have particularly smooth periods.
 
         #Some congruences in the list will remain as the modulus grows.  If a congruence remains through
         #7 rounds of increasing the modulus, then we check if this corresponds to a perfect power (if

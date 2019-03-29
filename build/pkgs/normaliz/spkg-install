@@ -7,8 +7,10 @@ die () {
 
 cd src
 
-# Disable features that require packages SCIP and CoCoA, for which we don't have packages (yet).
-./configure --disable-scip --disable-nmzintegrate --prefix=$SAGE_LOCAL || die "Error configuring normaliz"
+# Disable features that require packages SCIP and CoCoA, both of which are experimental packages.
+# FLINT is a standard package.  We pass --enable-flint to configure so that an error will be signalled
+# if FLINT cannot be found, rather than building normaliz without it.
+./configure --disable-scip --disable-nmzintegrate --enable-flint --prefix=$SAGE_LOCAL || die "Error configuring normaliz"
 $MAKE || die "Error building normaliz"
 $MAKE install || die "Error installing normaliz"
 

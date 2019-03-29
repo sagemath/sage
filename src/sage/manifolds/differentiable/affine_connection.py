@@ -156,16 +156,15 @@ class AffineConnection(SageObject):
     :class:`~sage.manifolds.differentiable.tensorfield.TensorField` for the
     documentation. In particular, the square brackets return the connection
     coefficients as instances of
-    :class:`~sage.manifolds.coord_func.CoordFunction` (of the subclass
-    :class:`~sage.manifolds.coord_func_symb.CoordFunctionSymb` in the current
-    example), while the double square brackets return a scalar field::
+    :class:`~sage.manifolds.chart_func.ChartFunction`,
+    while the double square brackets return a scalar field::
 
         sage: nab[1,1,2]
         x^2
         sage: nab[1,1,2].display()
         (x, y, z) |--> x^2
         sage: type(nab[1,1,2])
-        <class 'sage.manifolds.coord_func_symb.CoordFunctionSymbRing_with_category.element_class'>
+        <class 'sage.manifolds.chart_func.ChartFunctionRing_with_category.element_class'>
         sage: nab[[1,1,2]]
         Scalar field on the 3-dimensional differentiable manifold M
         sage: nab[[1,1,2]].display()
@@ -293,6 +292,48 @@ class AffineConnection(SageObject):
         True
         sage: nab.restrict(U)(a.restrict(V)) == da.restrict(W)
         True
+
+    Same examples with SymPy as the engine for symbolic calculus::
+
+        sage: M.set_calculus_method('sympy')
+        sage: nab = M.affine_connection('nabla', r'\nabla')
+        sage: nab[0,0,0], nab[1,0,1] = x, x*y
+        sage: for i in M.irange():
+        ....:     for j in M.irange():
+        ....:         for k in M.irange():
+        ....:             nab.add_coef(eV)[i,j,k] = nab.coef(eVW)[i,j,k,c_uvW].expr()
+        ....:
+
+    At this stage, the connection is fully defined on all the manifold::
+
+        sage: nab.coef(eU)[:]
+        [[[x, 0], [0, 0]], [[0, x*y], [0, 0]]]
+        sage: nab.coef(eV)[:]
+        [[[u**2/16 + u/8 - v**2/16 + v/8, -u**2/16 + u/8 + v**2/16 + v/8],
+         [u**2/16 + u/8 - v**2/16 + v/8, -u**2/16 + u/8 + v**2/16 + v/8]],
+        [[-u**2/16 + u/8 + v**2/16 + v/8, u**2/16 + u/8 - v**2/16 + v/8],
+         [-u**2/16 + u/8 + v**2/16 + v/8, u**2/16 + u/8 - v**2/16 + v/8]]]
+
+    We may let it act on a vector field defined globally on `M`::
+
+        sage: a = M.vector_field('a')
+        sage: a[eU,:] = [-y,x]
+        sage: a[eV,0] = a[eVW,0,c_uvW].expr()
+        sage: a[eV,1] = a[eVW,1,c_uvW].expr()
+        sage: a.display(eU)
+        a = -y d/dx + x d/dy
+        sage: a.display(eV)
+        a = v d/du - u d/dv
+        sage: da = nab(a) ; da
+        Tensor field nabla(a) of type (1,1) on the 2-dimensional differentiable
+         manifold M
+        sage: da.display(eU)
+        nabla(a) = -x*y d/dx*dx - d/dx*dy + d/dy*dx - x*y**2 d/dy*dy
+        sage: da.display(eV)
+        nabla(a) = (-u**3/16 + u**2*v/16 - u**2/8 + u*v**2/16 - v**3/16 + v**2/8) d/du*du
+         + (u**3/16 - u**2*v/16 - u**2/8 - u*v**2/16 + v**3/16 + v**2/8 + 1) d/du*dv
+         + (u**3/16 - u**2*v/16 - u**2/8 - u*v**2/16 + v**3/16 + v**2/8 - 1) d/dv*du
+         + (-u**3/16 + u**2*v/16 - u**2/8 + u*v**2/16 - v**3/16 + v**2/8) d/dv*dv
 
     """
     def __init__(self, domain, name, latex_name=None):
@@ -878,7 +919,7 @@ class AffineConnection(SageObject):
 
         - the connection coefficient corresponding to the specified frame and
           indices, as an instance of
-          :class:`~sage.manifolds.coord_func.CoordFunction`
+          :class:`~sage.manifolds.chart_func.ChartFunction`
           (or the list of all connection coefficients if ``args==[:]`` or
           ``args=[frame,:]``).
 
@@ -893,7 +934,7 @@ class AffineConnection(SageObject):
             sage: nab[1,2,1]  # equivalent to above
             x*y
             sage: type(nab.__getitem__((1,2,1)))
-            <class 'sage.manifolds.coord_func_symb.CoordFunctionSymbRing_with_category.element_class'>
+            <class 'sage.manifolds.chart_func.ChartFunctionRing_with_category.element_class'>
             sage: nab.__getitem__((X.frame(),1,2,1))
             x*y
             sage: nab[X.frame(),1,2,1]  # equivalent to above
@@ -1145,8 +1186,8 @@ class AffineConnection(SageObject):
         if index_labels is None and isinstance(frame, CoordFrame) and \
           coordinate_labels:
             ch = frame.chart()
-            index_labels = map(str, ch[:])
-            index_latex_labels = map(latex, ch[:])
+            index_labels = [str(z) for z in ch[:]]
+            index_latex_labels = [latex(z) for z in ch[:]]
         return self.coef(frame=frame).display(symbol,
               latex_symbol=latex_symbol, index_positions='udd',
               index_labels=index_labels, index_latex_labels=index_latex_labels,

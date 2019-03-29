@@ -10,7 +10,7 @@ AUTHORS:
     polynomials, added some features, unified Number Field and `\QQ` code.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -22,11 +22,11 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import (Integer, RationalField, ZZ)
+from sage.rings.all import RationalField
 import sage.groups.additive_abelian.additive_abelian_wrapper as groups
 from sage.structure.richcmp import richcmp_method, richcmp
 
@@ -97,16 +97,16 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
     Examples over other Number Fields::
 
-        sage: E=EllipticCurve('11a1')
-        sage: K.<i>=NumberField(x^2+1)
-        sage: EK=E.change_ring(K)
+        sage: E = EllipticCurve('11a1')
+        sage: K.<i> = NumberField(x^2+1)
+        sage: EK = E.change_ring(K)
         sage: from sage.schemes.elliptic_curves.ell_torsion import EllipticCurveTorsionSubgroup
         sage: EllipticCurveTorsionSubgroup(EK)
         Torsion Subgroup isomorphic to Z/5 associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in i with defining polynomial x^2 + 1
 
-        sage: E=EllipticCurve('11a1')
-        sage: K.<i>=NumberField(x^2+1)
-        sage: EK=E.change_ring(K)
+        sage: E = EllipticCurve('11a1')
+        sage: K.<i> = NumberField(x^2+1)
+        sage: EK = E.change_ring(K)
         sage: T = EK.torsion_subgroup()
         sage: T.ngens()
         1
@@ -127,7 +127,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
     - Chris Wuthrich - initial implementation over number fields.
     - John Cremona - additional features and unification.
     """
-    def __init__(self, E, algorithm=None):
+    def __init__(self, E):
         r"""
         Initialization function for EllipticCurveTorsionSubgroup class
 
@@ -138,9 +138,9 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.ell_torsion import EllipticCurveTorsionSubgroup
-            sage: E=EllipticCurve('11a1')
-            sage: K.<i>=NumberField(x^2+1)
-            sage: EK=E.change_ring(K)
+            sage: E = EllipticCurve('11a1')
+            sage: K.<i> = NumberField(x^2+1)
+            sage: EK = E.change_ring(K)
             sage: EllipticCurveTorsionSubgroup(EK)
             Torsion Subgroup isomorphic to Z/5 associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in i with defining polynomial x^2 + 1
 
@@ -154,21 +154,15 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
             sage: T == loads(dumps(T))  # known bug, see http://trac.sagemath.org/sage_trac/ticket/11599#comment:7
             True
         """
-        if algorithm is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(20219, "the keyword 'algorithm' is deprecated and no longer used")
-
         self.__E = E
         self.__K = E.base_field()
 
         if self.__K is RationalField():
             G = self.__E.pari_curve().elltors()
-            order = G[0].sage()
             structure = G[1].sage()
             gens = G[2].sage()
 
-            self.__torsion_gens = [ self.__E(P) for P in gens ]
-            from sage.groups.additive_abelian.additive_abelian_group import cover_and_relations_from_invariants
+            self.__torsion_gens = [self.__E(P) for P in gens]
             groups.AdditiveAbelianGroupWrapper.__init__(self, self.__E(0).parent(), self.__torsion_gens, structure)
             return
 
@@ -181,17 +175,15 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         bound = E._torsion_bound(number_of_places=20)
 
         # now do prime by prime
-        for p,e in bound.factor():
-            ptor = E._p_primary_torsion_basis(p,e)
-            # print p,'-primary part is ',ptor
-            if len(ptor)>0:
+        for p, e in bound.factor():
+            ptor = E._p_primary_torsion_basis(p, e)
+            if ptor:
                 T1 += ptor[0][0]
                 k1 *= p**(ptor[0][1])
-            if len(ptor)>1:
+            if len(ptor) > 1:
                 T2 += ptor[1][0]
                 k2 *= p**(ptor[1][1])
 
-        order = k1*k2
         if k1 == 1:
             structure = []
             gens = []
@@ -199,13 +191,13 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
             structure = [k1]
             gens = [T1]
         else:
-            structure = [k1,k2]
-            gens = [T1,T2]
+            structure = [k1, k2]
+            gens = [T1, T2]
 
         #self.__torsion_gens = gens
         self._structure = structure
-        groups.AdditiveAbelianGroupWrapper.__init__(self, T1.parent(), [T1, T2], structure)
-
+        groups.AdditiveAbelianGroupWrapper.__init__(self, T1.parent(),
+                                                    [T1, T2], structure)
 
     def _repr_(self):
         """
@@ -213,9 +205,9 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         EXAMPLES::
 
-            sage: E=EllipticCurve('11a1')
-            sage: K.<i>=NumberField(x^2+1)
-            sage: EK=E.change_ring(K)
+            sage: E = EllipticCurve('11a1')
+            sage: K.<i> = NumberField(x^2+1)
+            sage: EK = E.change_ring(K)
             sage: T = EK.torsion_subgroup(); T._repr_()
             'Torsion Subgroup isomorphic to Z/5 associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in i with defining polynomial x^2 + 1'
         """
@@ -228,7 +220,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a1')
-            sage: tor  = E.torsion_subgroup()
+            sage: tor = E.torsion_subgroup()
             sage: tor == tor
             True
         """
@@ -242,9 +234,9 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         EXAMPLES::
 
-            sage: E=EllipticCurve('11a1')
-            sage: K.<i>=NumberField(x^2+1)
-            sage: EK=E.change_ring(K)
+            sage: E = EllipticCurve('11a1')
+            sage: K.<i> = NumberField(x^2+1)
+            sage: EK = E.change_ring(K)
             sage: T = EK.torsion_subgroup()
             sage: T.curve() is EK
             True
@@ -255,11 +247,12 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
     def points(self):
         """
         Return a list of all the points in this torsion subgroup.
+
         The list is cached.
 
         EXAMPLES::
 
-            sage: K.<i>=NumberField(x^2 + 1)
+            sage: K.<i> = NumberField(x^2 + 1)
             sage: E = EllipticCurve(K,[0,0,0,1,0])
             sage: tor = E.torsion_subgroup()
             sage: tor.points()

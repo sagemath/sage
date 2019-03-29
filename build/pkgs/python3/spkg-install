@@ -13,19 +13,11 @@ export SVNVERSION=no
 
 cd src
 
-
-# Remove old libraries
-rm -f "$SAGE_LOCAL"/lib/lib"$PKG_BASE"*
-
 # Running 'make install' in parallel is a bad idea, so we use
 # only 1 job.
 # The "-i" option to ignore errors is crucial, especially in the
 # case of upgrades.
-$MAKE -i -j1 install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing Python."
-    exit 1
-fi
+sdh_make_install -i -j1
 
 echo "Installing valgrind suppression file..."
 if [ "$PKG_BASE" = "python2" ]; then
@@ -33,12 +25,7 @@ if [ "$PKG_BASE" = "python2" ]; then
 else
     SUPP_FILENAME="${PKG_BASE}.supp"
 fi
-mkdir -p "$SAGE_EXTCODE/valgrind"
-cp Misc/valgrind-python.supp "$SAGE_EXTCODE/valgrind/$SUPP_FILENAME"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing valgrind suppression file."
-    exit 1
-fi
+sdh_install -T Misc/valgrind-python.supp "$SAGE_EXTCODE/valgrind/$SUPP_FILENAME"
 
 if [ "$UNAME" = "Linux" ]; then
     export LD_LIBRARY_PATH="."
@@ -71,9 +58,9 @@ fi
 # x.y.z with x >= 10).
 if [ "$UNAME" = "Darwin" ] && \
     [ `uname -r | cut '-d.' -f1` -gt 9 ]; then
-    rm -f "${PYTHON_CONFIG_DIR}/libpython${PYTHON_LDVERSION}.a"
+    rm -f "${SAGE_DESTDIR}${PYTHON_CONFIG_DIR}/libpython${PYTHON_LDVERSION}.a"
 elif [ "$UNAME" = "CYGWIN" ]; then
     # See http://trac.sagemath.org/ticket/20437
     ln -sf "${PYTHON_CONFIG_DIR}/libpython${PYTHON_LDVERSION}.dll.a" \
-        "$SAGE_LOCAL/lib/libpython${PYTHON_LDVERSION}.dll.a"
+        "${SAGE_DESTDIR_LOCAL}/lib/libpython${PYTHON_LDVERSION}.dll.a"
 fi

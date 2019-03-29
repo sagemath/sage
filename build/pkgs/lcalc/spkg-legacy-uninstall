@@ -1,0 +1,1 @@
+rm -fr "$SAGE_LOCAL"/include/libLfunction

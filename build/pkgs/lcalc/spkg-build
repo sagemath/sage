@@ -4,25 +4,6 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
-if [ "x$SAGE64" = xyes ]; then
-    echo "Building a 64-bit version of lcalc"
-
-    # Both Sun and GNU compilers use -m64 to build 64-bit code, but compilers
-    # from IBM (on AIX), and HP (on HP-UX) do not. So allow the environment
-    # variables CFLAG64 and CXXFLAG64 to set the flag to whatever option the
-    # C and C++ compilers want for 64-bit code. If not set, default to -m64.
-
-    if [ -z "$CFLAG64" ]; then
-        CFLAG64=-m64
-    fi
-    if [ -z "$CXXFLAG64" ]; then
-        CXXFLAG64="$CFLAG64" # default to that of the C compiler
-    fi
-
-    CFLAGS="$CFLAGS $CFLAG64"
-    CXXFLAGS="$CXXFLAGS $CXXFLAG64"
-fi
-
 # If SAGE_DEBUG is set to 'yes', add debugging information.  Since both
 # the Sun and GNU compilers accept -g to give debugging information,
 # there is no need to do anything specific to one compiler or the other.
@@ -41,19 +22,10 @@ fi
 export CFLAGS
 export CXXFLAGS
 
-success() {
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error building the Lcalc package: '$1'"
-        exit 1
-    fi
-}
-
 export DEFINES=""
 
 cd src/src   # Now we are in src/src.
 
 # Build everything:
 echo "Now building lcalc, example programs and the shared library..."
-$MAKE
-success "$MAKE"
-
+sdh_make

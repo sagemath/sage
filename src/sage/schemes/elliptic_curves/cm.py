@@ -18,7 +18,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005-2012 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -30,9 +30,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from six import iteritems
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.interfaces.all import magma
 from sage.rings.all import (Integer,
@@ -47,7 +46,7 @@ from sage.misc.all import cached_function
 @cached_function
 def hilbert_class_polynomial(D, algorithm=None):
     r"""
-    Returns the Hilbert class polynomial for discriminant `D`.
+    Return the Hilbert class polynomial for discriminant `D`.
 
     INPUT:
 
@@ -98,20 +97,19 @@ def hilbert_class_polynomial(D, algorithm=None):
 
     TESTS::
 
-        sage: all([hilbert_class_polynomial(d, algorithm="arb") == \
-        ....:      hilbert_class_polynomial(d, algorithm="sage") \
-        ....:        for d in range(-1,-100,-1) if d%4 in [0,1]])
+        sage: all(hilbert_class_polynomial(d, algorithm="arb") ==
+        ....:      hilbert_class_polynomial(d, algorithm="sage")
+        ....:        for d in range(-1,-100,-1) if d % 4 in [0, 1])
         True
-
     """
     if algorithm is None:
         algorithm = "arb"
 
     D = Integer(D)
     if D >= 0:
-        raise ValueError("D (=%s) must be negative"%D)
-    if not (D%4 in [0,1]):
-         raise ValueError("D (=%s) must be a discriminant"%D)
+        raise ValueError("D (=%s) must be negative" % D)
+    if not (D % 4 in [0, 1]):
+        raise ValueError("D (=%s) must be a discriminant" % D)
 
     if algorithm == "arb":
         import sage.libs.arb.arith
@@ -119,14 +117,14 @@ def hilbert_class_polynomial(D, algorithm=None):
 
     if algorithm == "magma":
         magma.eval("R<x> := PolynomialRing(IntegerRing())")
-        f = str(magma.eval("HilbertClassPolynomial(%s)"%D))
+        f = str(magma.eval("HilbertClassPolynomial(%s)" % D))
         return IntegerRing()['x'](f)
 
     if algorithm != "sage":
-        raise ValueError("%s is not a valid algorithm"%algorithm)
+        raise ValueError("%s is not a valid algorithm" % algorithm)
 
     from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
-    from sage.rings.all import RR, ZZ, ComplexField
+    from sage.rings.all import RR, ComplexField
     from sage.functions.all import elliptic_j
 
     # get all primitive reduced quadratic forms, (necessary to exclude
@@ -136,10 +134,10 @@ def hilbert_class_polynomial(D, algorithm=None):
 
     # compute needed precision
     #
-    # NB: [http://arxiv.org/abs/0802.0979v1], quoting Enge (2006), is
+    # NB: [https://arxiv.org/abs/0802.0979v1], quoting Enge (2006), is
     # incorrect.  Enge writes (2009-04-20 email to John Cremona) "The
     # source is my paper on class polynomials
-    # [http://hal.inria.fr/inria-00001040] It was pointed out to me by
+    # [https://hal.inria.fr/inria-00001040] It was pointed out to me by
     # the referee after ANTS that the constant given there was
     # wrong. The final version contains a corrected constant on p.7
     # which is consistent with your example. It says:
@@ -166,8 +164,8 @@ def hilbert_class_polynomial(D, algorithm=None):
     pol = R(1)
     for qf in rqf:
         a, b, c = list(qf)
-        tau = (b+Dsqrt)/(a<<1)
-        pol *=  (t - elliptic_j(tau))
+        tau = (b + Dsqrt) / (a << 1)
+        pol *= (t - elliptic_j(tau))
 
     coeffs = [cof.real().round() for cof in pol.coefficients(sparse=False)]
     return IntegerRing()['x'](coeffs)
@@ -206,12 +204,16 @@ def cm_j_invariants(K, proof=None):
 
         sage: K.<a> = NumberField(x^3 - 2)
         sage: cm_j_invariants(K)
-        [-12288000, 54000, 0, 287496, 1728, 16581375, -3375, 8000, -32768, -884736, -884736000, -147197952000, -262537412640768000, 31710790944000*a^2 + 39953093016000*a + 50337742902000]
+        [-262537412640768000, -147197952000, -884736000,
+         -884736, -32768, 8000, -3375, 16581375, 1728, 287496, 0,
+         54000, -12288000,
+         31710790944000*a^2 + 39953093016000*a + 50337742902000]
         sage: K.<a> = NumberField(x^4 - 2)
         sage: len(cm_j_invariants(K))
         23
     """
-    return list(sorted([j for D,f,j in cm_j_invariants_and_orders(K, proof=proof)]))
+    return sorted(j for D, f, j in cm_j_invariants_and_orders(K, proof=proof))
+
 
 @cached_function
 def cm_j_invariants_and_orders(K, proof=None):
@@ -237,23 +239,32 @@ def cm_j_invariants_and_orders(K, proof=None):
     Over an imaginary quadratic field there are no more than over `QQ`::
 
         sage: cm_j_invariants_and_orders(QuadraticField(-1, 'i'))
-        [(-3, 3, -12288000), (-3, 2, 54000), (-3, 1, 0), (-4, 2, 287496), (-4, 1, 1728), (-7, 2, 16581375), (-7, 1, -3375), (-8, 1, 8000), (-11, 1, -32768), (-19, 1, -884736), (-43, 1, -884736000), (-67, 1, -147197952000), (-163, 1, -262537412640768000)]
+        [(-163, 1, -262537412640768000), (-67, 1, -147197952000),
+         (-43, 1, -884736000), (-19, 1, -884736), (-11, 1, -32768),
+         (-8, 1, 8000), (-7, 1, -3375), (-7, 2, 16581375), (-4, 1, 1728),
+         (-4, 2, 287496), (-3, 1, 0), (-3, 2, 54000), (-3, 3, -12288000)]
 
     Over real quadratic fields there may be more::
 
         sage: v = cm_j_invariants_and_orders(QuadraticField(5,'a')); len(v)
         31
-        sage: [(D,f) for D,f,j in v if j not in QQ]
-        [(-3, 5), (-3, 5), (-4, 5), (-4, 5), (-15, 2), (-15, 2), (-15, 1), (-15, 1), (-20, 1), (-20, 1), (-35, 1), (-35, 1), (-40, 1), (-40, 1), (-115, 1), (-115, 1), (-235, 1), (-235, 1)]
+        sage: [(D, f) for D, f, j in v if j not in QQ]
+        [(-235, 1), (-235, 1), (-115, 1), (-115, 1), (-40, 1), (-40, 1),
+         (-35, 1), (-35, 1), (-20, 1), (-20, 1), (-15, 1), (-15, 1), (-15, 2),
+         (-15, 2), (-4, 5), (-4, 5), (-3, 5), (-3, 5)]
 
     Over number fields K of many higher degrees this also works::
 
         sage: K.<a> = NumberField(x^3 - 2)
         sage: cm_j_invariants_and_orders(K)
-        [(-3, 3, -12288000), (-3, 2, 54000), (-3, 1, 0), (-4, 2, 287496), (-4, 1, 1728), (-7, 2, 16581375), (-7, 1, -3375), (-8, 1, 8000), (-11, 1, -32768), (-19, 1, -884736), (-43, 1, -884736000), (-67, 1, -147197952000), (-163, 1, -262537412640768000), (-3, 6, 31710790944000*a^2 + 39953093016000*a + 50337742902000)]
+        [(-163, 1, -262537412640768000), (-67, 1, -147197952000),
+         (-43, 1, -884736000), (-19, 1, -884736), (-11, 1, -32768),
+         (-8, 1, 8000), (-7, 1, -3375), (-7, 2, 16581375), (-4, 1, 1728),
+         (-4, 2, 287496), (-3, 1, 0), (-3, 2, 54000), (-3, 3, -12288000),
+         (-3, 6, 31710790944000*a^2 + 39953093016000*a + 50337742902000)]
     """
     if K == QQ:
-        return [(ZZ(d),ZZ(f),ZZ(j)) for d,f,j in [
+        return [(ZZ(d), ZZ(f), ZZ(j)) for d, f, j in [
             (-3, 3, -12288000),
             (-3, 2, 54000),
             (-3, 1, 0),
@@ -272,7 +283,7 @@ def cm_j_invariants_and_orders(K, proof=None):
     # polynomial F(x) with a root in K.  If F(x) has a root alpha in K,
     # then F is the minimal polynomial of alpha in K, so the degree of
     # F(x) is at most [K:QQ].
-    dlist = sum([v for h, v in iteritems(discriminants_with_bounded_class_number(K.degree(), proof=proof))], [])
+    dlist = sorted(Df for v in discriminants_with_bounded_class_number(K.degree(), proof=proof).values() for Df in v)
 
     return [(D, f, j) for D, f in dlist
             for j in hilbert_class_polynomial(D*f*f).roots(K, multiplicities=False)]
@@ -301,7 +312,7 @@ def cm_orders(h, proof=None):
         sage: v = cm_orders(1); v
         [(-3, 3), (-3, 2), (-3, 1), (-4, 2), (-4, 1), (-7, 2), (-7, 1), (-8, 1), (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]
         sage: type(v[0][0]), type(v[0][1])
-        (<type 'sage.rings.integer.Integer'>, <type 'sage.rings.integer.Integer'>)
+        (<... 'sage.rings.integer.Integer'>, <... 'sage.rings.integer.Integer'>)
         sage: v = cm_orders(2); v
          [(-3, 7), (-3, 5), (-3, 4), (-4, 5), (-4, 4), (-4, 3), (-7, 4), (-8, 3), (-8, 2), (-11, 3), (-15, 2), (-15, 1), (-20, 1), (-24, 1), (-35, 1), (-40, 1), (-51, 1), (-52, 1), (-88, 1), (-91, 1), (-115, 1), (-123, 1), (-148, 1), (-187, 1), (-232, 1), (-235, 1), (-267, 1), (-403, 1), (-427, 1)]
         sage: len(v)
@@ -317,7 +328,6 @@ def cm_orders(h, proof=None):
         84
     """
     h = Integer(h)
-    T = None
     if h <= 0:
         # trivial case
         return []
@@ -334,6 +344,8 @@ def cm_orders(h, proof=None):
 #        v = [int(a) for a in X.split()]
 #        for i in range(5):
 #            z[v[3*i]]=(v[3*i+2], v[3*i+1])
+
+
 watkins_table = {1: (163, 9), 2: (427, 18), 3: (907, 16), 4: (1555, 54), 5: (2683, 25),
                  6: (3763, 51), 7: (5923, 31), 8: (6307, 131), 9: (10627, 34), 10:
                  (13843, 87), 11: (15667, 41), 12: (17803, 206), 13: (20563, 37), 14:
@@ -361,6 +373,7 @@ watkins_table = {1: (163, 9), 2: (427, 18), 3: (907, 16), 4: (1555, 54), 5: (268
                  91: (1391083,214), 92: (1452067, 1248), 93: (1475203, 262), 94: (1587763, 509),
                  95:(1659067, 241), 96: (1684027, 3283), 97: (1842523, 185), 98: (2383747,580),
                  99: (1480627, 289), 100: (1856563, 1736)}
+
 
 def largest_fundamental_disc_with_class_number(h):
     """
@@ -400,11 +413,12 @@ def largest_fundamental_disc_with_class_number(h):
         return (Integer(B), Integer(c))
     except KeyError:
         # nobody knows, since I guess Watkins's is state of the art.
-        raise NotImplementedError("largest discriminant not known for class number %s"%h)
+        raise NotImplementedError("largest discriminant not known for class number %s" % h)
+
 
 @cached_function
 def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
-    """
+    r"""
     Return dictionary with keys class numbers `h\le hmax` and values the
     list of all pairs `(D, f)`, with `D<0` a fundamental discriminant such
     that `Df^2` has class number `h`.  If the optional bound `B` is given,
@@ -432,7 +446,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     EXAMPLES::
 
         sage: v = sage.schemes.elliptic_curves.cm.discriminants_with_bounded_class_number(3)
-        sage: list(v)
+        sage: sorted(v)
         [1, 2, 3]
         sage: v[1]
         [(-3, 3), (-3, 2), (-3, 1), (-4, 2), (-4, 1), (-7, 2), (-7, 1), (-8, 1), (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]
@@ -441,8 +455,8 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
         sage: v[3]
         [(-3, 9), (-3, 6), (-11, 2), (-19, 2), (-23, 2), (-23, 1), (-31, 2), (-31, 1), (-43, 2), (-59, 1), (-67, 2), (-83, 1), (-107, 1), (-139, 1), (-163, 2), (-211, 1), (-283, 1), (-307, 1), (-331, 1), (-379, 1), (-499, 1), (-547, 1), (-643, 1), (-883, 1), (-907, 1)]
         sage: v = sage.schemes.elliptic_curves.cm.discriminants_with_bounded_class_number(8, proof=False)
-        sage: [len(v[h]) for h in v]
-        [13, 29, 25, 84, 29, 101, 38, 208]
+        sage: sorted(len(v[h]) for h in v)
+        [13, 25, 29, 29, 38, 84, 101, 208]
 
     Find all class numbers for discriminant up to 50::
 
@@ -451,8 +465,6 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     """
     # imports that are needed only for this function
     from sage.structure.proof.proof import get_flag
-    import math
-    from sage.misc.functional import round
 
     # deal with input defaults and type checking
     proof = get_flag(proof, 'number_field')
@@ -554,10 +566,11 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
         # discriminants; we might as well, since Watkins provides this
         # data.
         for h in T:
-            if len([D for D,f in T[h] if f==1]) != fund_count[h]:
+            if len([DD for DD, ff in T[h] if ff == 1]) != fund_count[h]:
                 raise RuntimeError("number of discriminants inconsistent with Watkins's table")
 
     return T
+
 
 @cached_function
 def is_cm_j_invariant(j, method='new'):
@@ -603,9 +616,8 @@ def is_cm_j_invariant(j, method='new'):
     TESTS::
 
         sage: from sage.schemes.elliptic_curves.cm import is_cm_j_invariant
-        sage: all([is_cm_j_invariant(j) == (True, (d,f)) for d,f,j in cm_j_invariants_and_orders(QQ)])
+        sage: all(is_cm_j_invariant(j) == (True, (d,f)) for d,f,j in cm_j_invariants_and_orders(QQ))
         True
-
     """
     # First we check that j is an algebraic number:
 
@@ -680,7 +692,7 @@ def is_cm_j_invariant(j, method='new'):
     # divides all the values a_P^2-4N(P), since that is the
     # discriminant of the order containing the Frobenius at P.  So we
     # end up with a finite number (usually one) of candidate
-    # discriminats to test.  Each is tested by checking that its class
+    # discriminants to test.  Each is tested by checking that its class
     # number is h, and if so then that j is a root of its Hilbert
     # class polynomial.  In practice non CM curves will be eliminated
     # by the local test at a small number of primes (probably just 2).
@@ -713,9 +725,9 @@ def is_cm_j_invariant(j, method='new'):
 
     # it looks like cm by disc cmd * f**2 where f divides cmf
 
-    if cmd%4!=1:
-        cmd = cmd*4
-        cmf = cmf//2
+    if cmd % 4 != 1:
+        cmd = cmd * 4
+        cmf = cmf // 2
 
     # Now we must check if h(cmd*f**2)==h for f|cmf; if so we check
     # whether j is a root of the associated Hilbert class polynomial.
@@ -724,7 +736,6 @@ def is_cm_j_invariant(j, method='new'):
         if h != d.class_number():
             continue
         pol = hilbert_class_polynomial(d)
-        if pol(j)==0:
-            return True, (cmd,f)
+        if pol(j) == 0:
+            return True, (cmd, f)
     return False, None
-

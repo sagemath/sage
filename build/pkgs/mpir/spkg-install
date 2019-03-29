@@ -1,9 +1,3 @@
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
 cd src
 
 ###############################################################################
@@ -67,13 +61,7 @@ fi
 
 case "$UNAME" in
     SunOS)
-        if [ "$SAGE64" = yes ]; then
-            echo "Building a 64-bit version of MPIR."
-            ABI=64
-        else
-            echo "Building a 32-bit version of MPIR."
-            ABI=32
-        fi;;
+        true;;  # Auto-detect ABI
     Darwin)
         # In some cases (see SAGE_ROOT/spkg/bin/sage-env), on Darwin,
         # CC might be set to clang, but MPIR doesn't seem to build
@@ -83,31 +71,24 @@ case "$UNAME" in
         if [ -n "$CC" ] && [ "$CC" = "$CLANG" ] && [ -n "$GCC" ] ; then
             export CC="$GCC"
         fi
-        if [ "$SAGE64" = yes ]; then
-            # Note that we do not support 64-bit builds on MacOS X PPC at all,
-            # so we don't special-case on the architecture here.
-            echo "Building a 64-bit version of MPIR."
-            ABI=64
+        # Do not set ABI=32 on MacOS X 10.6 (Darwin 10) and later, since
+        # there everything defaults to 64-bit:
+        if [ "`uname -r | sed 's/\..*//'`" -lt 10 ]; then
+            # Assume MacOS X 10.4 or 10.5 (Darwin 8 or 9); also, PPC CPUs
+            # are only supported by these, not later versions.
+            echo "Building a 32-bit version of MPIR, which is the only supported option."
+            ABI=32
+            case "`uname -m`" in
+                ppc|ppc64|[Pp]ower*) # Apple's 'uname' returns strange strings
+                    # The Darwin assembler rejects code using an
+                    # extended instruction set by default (cf. #8664):
+                    required_cflags="$required_cflags -Wa,-force_cpusubtype_ALL"
+                    ;;
+            esac
         else
-            # Do not set ABI=32 on MacOS X 10.6 (Darwin 10) and later, since
-            # there everything defaults to 64-bit:
-            if [ "`uname -r | sed 's/\..*//'`" -lt 10 ]; then
-                # Assume MacOS X 10.4 or 10.5 (Darwin 8 or 9); also, PPC CPUs
-                # are only supported by these, not later versions.
-                echo "Building a 32-bit version of MPIR, which is the only supported option."
-                ABI=32
-                case "`uname -m`" in
-                    ppc|ppc64|[Pp]ower*) # Apple's 'uname' returns strange strings
-                        # The Darwin assembler rejects code using an
-                        # extended instruction set by default (cf. #8664):
-                        required_cflags="$required_cflags -Wa,-force_cpusubtype_ALL"
-                        ;;
-                esac
-            else
-                # Darwin 10 (MacOS X 10.6) or later, SAGE64 not "yes"
-                # We don't have to set ABI here.
-                echo "Building a 64-bit version of MPIR, which is the default."
-            fi
+            # Darwin 10 (MacOS X 10.6) or later.
+            # We don't have to set ABI here.
+            echo "Building a 64-bit version of MPIR, which is the default."
         fi
         ;; # Darwin
     Linux)
@@ -214,28 +195,16 @@ case `uname -m` in
         ;;
 esac
 
-# If we're bootstrapping GCC from the GCC spkg, don't build the C++
-# interface (cf. #12782), static libraries and disable fat binary.
-# After GCC is built, we will build MPIR again.
-if [ "$SAGE_BUILD_TOOLCHAIN" = yes ]; then
-    echo "Building a reduced version of MPIR to bootstrap GCC."
-    echo "MPIR will later get rebuilt (with the C++ interface and static libraries"
-    echo "enabled) using the new compiler."
-    MPIR_CONFIGURE="$MPIR_CONFIGURE --disable-cxx --disable-static"
-    SAGE_FAT_BINARY=no
+# Also build the static library to be used by e.g. ECM
+# unless we are on Cygwin where we can only build a shared
+# or a static library but not both:
+if [ "$UNAME" = "CYGWIN" ]; then
+    echo "Building MPIR with the C++ interface and (only) shared libraries."
+    MPIR_CONFIGURE="--enable-cxx $MPIR_CONFIGURE --disable-static"
 else
-    # Also build the static library to be used by e.g. ECM
-    # unless we are on Cygwin where we can only build a shared
-    # or a static library but not both:
-    if [ "$UNAME" = "CYGWIN" ]; then
-        echo "Building MPIR with the C++ interface and (only) shared libraries."
-        MPIR_CONFIGURE="--enable-cxx $MPIR_CONFIGURE --disable-static"
-    else
-        echo "Building MPIR with the C++ interface and (also) static libraries."
-        MPIR_CONFIGURE="--enable-cxx --enable-static $MPIR_CONFIGURE"
-    fi
+    echo "Building MPIR with the C++ interface and (also) static libraries."
+    MPIR_CONFIGURE="--enable-cxx --enable-static $MPIR_CONFIGURE"
 fi
-# (Further options to 'configure' are added below.)
 
 # If SAGE_FAT_BINARY is enabled, then add --enable-fat to configure
 # options on Linux x86 systems.  On other systems, fat binaries are not
@@ -324,23 +293,13 @@ echo "You can set MPIR_CONFIGURE to pass additional parameters."
 # Clear the cache of the previous configure run
 find . -name config.cache -exec rm -f {} \;
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" $MPIR_CONFIGURE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring MPIR. (See above for the options passed to it.)"
-    exit 1
-fi
+sdh_configure $MPIR_CONFIGURE
 
 ###############################################################################
 # Now build MPIR:
 ###############################################################################
 
-echo "Now building MPIR..."
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building MPIR."
-    exit 1
-fi
-
+sdh_make
 echo "Build succeeded."
 
 ###############################################################################
@@ -370,9 +329,4 @@ rm -f "$SAGE_SPKG_INST"/gmp-*
 # Now install MPIR:
 ###############################################################################
 
-echo "Now installing MPIR..."
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing MPIR."
-    exit 1
-fi
+sdh_make_install

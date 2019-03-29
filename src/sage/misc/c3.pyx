@@ -151,9 +151,8 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
         sage: class A(B, C): pass
         Traceback (most recent call last):
         ...
-        TypeError: Error when calling the metaclass bases
-            Cannot create a consistent method resolution
-        order (MRO) for bases ...
+        TypeError: ...Cannot create a consistent method resolution order (MRO)
+        for bases ...
 
         sage: B = HierarchyElement("B", ())
         sage: C = HierarchyElement("C", (B,))

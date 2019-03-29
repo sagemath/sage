@@ -18,6 +18,7 @@ import unittest
 import tempfile
 import subprocess
 import shutil
+import logging
 
 from sage_bootstrap.env import SAGE_DISTFILES
 from sage_bootstrap.download.mirror_list import MIRRORLIST_FILENAME
@@ -26,108 +27,121 @@ from sage_bootstrap.package import Package
 from test.capture import CapturedLog
 
 
-EXECUTABLE = os.path.join(
+log = logging.getLogger()
+
+
+PATH = os.path.join(
     os.path.dirname(os.path.dirname(__file__)),
-    'bin',
-    'sage-package',
+    'bin'
 )
+
+
+EXECUTABLE = os.path.join(PATH, 'sage-package')
 
 
 class SagePackageTestCase(unittest.TestCase):
 
     def run_command(self, *args, **kwds):
+        env = dict(os.environ)
+        env.update(kwds.get('env', {}))
+        env['PATH'] = PATH + os.pathsep + env['PATH']
         kwds.update(
             stdin=None,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            env=env,
         )
+        log.debug('running {}: {}'.format(args, kwds))
         proc = subprocess.Popen(args, **kwds)
         stdout, stderr = proc.communicate()
         stdout = stdout.decode('utf-8')
         stderr = stderr.decode('utf-8')
+        log.debug(u'stdout="{}", stderr="{}"'.format(stdout, stderr))
         rc = proc.returncode
         return (rc, stdout, stderr)
     
     def test_config(self):
         rc, stdout, stderr = self.run_command(EXECUTABLE, 'config')
+        # Prints nothing to stderr
+        self.assertEqual(stderr, '')
         # returns successfully
         self.assertEqual(rc, 0)
         # Prints to stdout
         self.assertTrue(stdout.startswith('Configuration:\n'))
-        # Prints nothing to stderr
-        self.assertEqual(stderr, '')
 
     def test_list(self):
         rc, stdout, stderr = self.run_command(EXECUTABLE, 'list')
+        # Prints nothing to stderr
+        self.assertEqual(stderr, '')
         # returns successfully
         self.assertEqual(rc, 0)
         # Prints to stdout
         self.assertTrue('configure' in stdout.splitlines())
-        # Prints nothing to stderr
-        self.assertEqual(stderr, '')
 
     def test_name(self):
         pkg = Package('configure')
         rc, stdout, stderr = self.run_command(EXECUTABLE, 'name', pkg.tarball_filename)
+        # Prints nothing to stderr
+        self.assertEqual(stderr, '')
         # returns successfully
         self.assertEqual(rc, 0)
         # Prints to stdout
         self.assertEqual(stdout.rstrip(), 'configure')
-        # Prints nothing to stderr
-        self.assertEqual(stderr, '')
 
     def test_tarball(self):
         pkg = Package('configure')
         rc, stdout, stderr = self.run_command(EXECUTABLE, 'tarball', pkg.name)
+        # Prints nothing to stderr
+        self.assertEqual(stderr, '')
         # returns successfully
         self.assertEqual(rc, 0)
         # Prints to stdout
         self.assertEqual(stdout.rstrip(), pkg.tarball_filename)
-        # Prints nothing to stderr
-        self.assertEqual(stderr, '')
 
     def test_apropos(self):
         rc, stdout, stderr = self.run_command(EXECUTABLE, 'apropos', 'python')
+        # Prints nothing to stderr
+        self.assertEqual(stderr, '')
         # returns successfully
         self.assertEqual(rc, 0)
         # Prints to stdout
         self.assertTrue(stdout.startswith('Did you mean:'))
-        # Prints nothing to stderr
-        self.assertEqual(stderr, '')
 
     def test_download(self):
         pkg = Package('configure')
         with CapturedLog() as log:
             pkg.tarball.download()
         rc, stdout, stderr = self.run_command(EXECUTABLE, 'download', pkg.name)
+        # Prints info to stderr
+        self.assertTrue(stderr.startswith('Using cached file'))
         # returns successfully
         self.assertEqual(rc, 0)
         # Prints filename to stdout
         self.assertEqual(stdout.rstrip(), pkg.tarball.upstream_fqn)
-        # Prints info to stderr
-        self.assertTrue(stderr.startswith('Using cached file'))
 
     def test_update(self):
         pkg = Package('configure')
         # The confball never has a patchlevel since we are upstream...
         self.assertEqual(pkg.patchlevel, -1)
         rc, stdout, stderr = self.run_command(EXECUTABLE, 'update', pkg.name, pkg.version)
+        # Prints nothing to stderr
+        self.assertEqual(stderr, '')
         # returns successfully
         self.assertEqual(rc, 0)
         # Prints nothing to stdout
         self.assertEqual(stdout, '')
-        # Prints nothing to stderr
-        self.assertEqual(stderr, '')
 
     def test_fix_checksum(self):
         pkg = Package('configure')
         rc, stdout, stderr = self.run_command(EXECUTABLE, 'fix-checksum', 'configure')
+        # Prints nothing to stderr
+        self.assertEqual(stderr, '')
         # returns successfully
         self.assertEqual(rc, 0)
         # Prints to stdout
-        self.assertEqual(stdout.rstrip(), 'Checksum of {0} unchanged'.format(pkg.tarball_filename))
-        # Prints nothing to stderr
-        self.assertEqual(stderr, '')
+        self.assertEqual(
+            stdout.rstrip(),
+            'Checksum of {0} unchanged'.format(pkg.tarball_filename))
 
     def test_create(self):
         tmp = tempfile.mkdtemp()

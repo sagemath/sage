@@ -12,7 +12,10 @@ interactive mathlet.  In the command line, it will simply return the underlying
 HTML and Sage code which creates the mathlet::
 
     sage: interacts.calculus.taylor_polynomial()
-    <html>...</html>
+    Interactive function <function taylor_polynomial at ...> with 3 widgets
+      title: HTMLText(value=u'<h2>Taylor polynomial</h2>')
+      f: EvalText(value=u'e^(-x)*sin(x)', description=u'$f(x)=$', layout=Layout(max_width=u'81em'))
+      order: SelectionSlider(description=u'order', options=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), value=1)
 
 AUTHORS:
 
@@ -31,6 +34,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
+from __future__ import absolute_import, division
 
 from sage.all import *
 x = SR.var('x')
@@ -67,7 +72,8 @@ def library_interact(f):
         ....: def f(n=5):
         ....:     print(n)
         sage: f()  # an interact appears if using the notebook, else code
-        <html>...</html>
+        Interactive function <function f at ...> with 1 widget
+          n: IntSlider(value=5, description=u'n', max=15, min=-5)
     """
     @sage_wraps(f)
     def library_wrapper():
@@ -108,7 +114,9 @@ def demo(n=slider(range(10)), m=slider(range(10))):
     creates the mathlet::
 
         sage: interacts.demo()
-        <html>...</html>
+        Interactive function <function demo at ...> with 2 widgets
+          n: SelectionSlider(description=u'n', options=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), value=0)
+          m: SelectionSlider(description=u'm', options=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), value=0)
     """
     print(n + m)
 
@@ -131,16 +139,21 @@ def taylor_polynomial(
     creates the mathlet::
 
         sage: interacts.calculus.taylor_polynomial()
-        <html>...</html>
+        Interactive function <function taylor_polynomial at ...> with 3 widgets
+          title: HTMLText(value=u'<h2>Taylor polynomial</h2>')
+          f: EvalText(value=u'e^(-x)*sin(x)', description=u'$f(x)=$', layout=Layout(max_width=u'81em'))
+          order: SelectionSlider(description=u'order', options=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), value=1)
     """
     x0  = 0
     p   = plot(f,(x,-1,5), thickness=2)
     dot = point((x0,f(x=x0)),pointsize=80,rgbcolor=(1,0,0))
     ft = f.taylor(x,x0,order)
     pt = plot(ft,(-1, 5), color='green', thickness=2)
-    html('$f(x)\;=\;%s$'%latex(f))
-    html('$\hat{f}(x;%s)\;=\;%s+\mathcal{O}(x^{%s})$'%(x0,latex(ft),order+1))
+    html(r'$f(x)\;=\;%s$' % latex(f))
+    html(r'$\hat{f}(x;%s)\;=\;%s+\mathcal{O}(x^{%s})$' % (x0, latex(ft),
+                                                          order + 1))
     show(dot + p + pt, ymin = -.5, ymax = 1)
+
 
 @library_interact
 def definite_integral(
@@ -169,7 +182,13 @@ def definite_integral(
     creates the mathlet::
 
         sage: interacts.calculus.definite_integral()
-        <html>...</html>
+        Interactive function <function definite_integral at ...> with 6 widgets
+          title: HTMLText(value=u'<h2>Definite integral</h2>')
+          f: EvalText(value=u'3*x', description=u'$f(x)=$', layout=Layout(max_width=u'81em'))
+          g: EvalText(value=u'x^2', description=u'$g(x)=$', layout=Layout(max_width=u'81em'))
+          interval: IntRangeSlider(value=(0, 3), description=u'Interval', max=10, min=-10)
+          x_range: IntRangeSlider(value=(0, 3), description=u'plot range (x)', max=10, min=-10)
+          selection: Dropdown(description=u'Select', index=2, options=('f', 'g', 'f and g', 'f - g'), value='f and g')
     """
     x = SR.var('x')
     f = symbolic_expression(f).function(x)
@@ -244,7 +263,11 @@ def function_derivative(
     creates the mathlet::
 
         sage: interacts.calculus.function_derivative()
-        <html>...</html>
+        Interactive function <function function_derivative at ...> with 4 widgets
+          title: HTMLText(value=u'<h2>Derivative grapher</h2>')
+          function: EvalText(value=u'x^5-3*x^3+1', description=u'Function:', layout=Layout(max_width=u'81em'))
+          x_range: FloatRangeSlider(value=(-2.0, 2.0), description=u'Range (x)', max=15.0, min=-15.0)
+          y_range: FloatRangeSlider(value=(-8.0, 6.0), description=u'Range (y)', max=15.0, min=-15.0)
     """
     x = SR.var('x')
     f = symbolic_expression(function).function(x)
@@ -256,9 +279,10 @@ def function_derivative(
     else:
         show(plots, xmin=x_range[0], xmax=x_range[1], ymin=y_range[0], ymax=y_range[1])
 
-    html("<center>$\color{Blue}{f(x) = %s}$</center>"%latex(f(x)))
-    html("<center>$\color{Green}{f'(x) = %s}$</center>"%latex(df(x)))
-    html("<center>$\color{Red}{f''(x) = %s}$</center>"%latex(ddf(x)))
+    html(r"<center>$\color{Blue}{f(x) = %s}$</center>" % latex(f(x)))
+    html(r"<center>$\color{Green}{f'(x) = %s}$</center>" % latex(df(x)))
+    html(r"<center>$\color{Red}{f''(x) = %s}$</center>" % latex(ddf(x)))
+
 
 @library_interact
 def difference_quotient(
@@ -286,11 +310,16 @@ def difference_quotient(
     creates the mathlet::
 
         sage: interacts.calculus.difference_quotient()
-        <html>...</html>
+        Interactive function <function difference_quotient at ...> with 5 widgets
+          title: HTMLText(value=u'<h2>Difference quotient</h2>')
+          f: EvalText(value=u'sin(x)', description=u'f(x)', layout=Layout(max_width=u'81em'))
+          interval: FloatRangeSlider(value=(0.0, 10.0), description=u'Range', max=10.0)
+          a: IntSlider(value=5, description=u'$a$', max=10)
+          x0: IntSlider(value=2, description=u'$x_0$ (start point)', max=10)
     """
     html('<h2>Difference Quotient</h2>')
     html('<div style="white-space: normal;">\
-         <a href="http://en.wikipedia.org/wiki/Difference_quotient" target="_blank">\
+         <a href="https://en.wikipedia.org/wiki/Difference_quotient" target="_blank">\
          Wikipedia article about difference quotient</a></div>'
          )
 
@@ -341,7 +370,10 @@ def quadratic_equation(A = slider(-7, 7, 1, 1), B = slider(-7, 7, 1, 1), C = sli
     creates the mathlet::
 
         sage: interacts.calculus.quadratic_equation()
-        <html>...</html>
+        Interactive function <function quadratic_equation at ...> with 3 widgets
+          A: IntSlider(value=1, description=u'A', max=7, min=-7)
+          B: IntSlider(value=1, description=u'B', max=7, min=-7)
+          C: IntSlider(value=-2, description=u'C', max=7, min=-7)
     """
     x = SR.var('x')
     f = symbolic_expression(A*x**2 + B*x + C).function(x)
@@ -399,7 +431,10 @@ def trigonometric_properties_triangle(
     creates the mathlet::
 
         sage: interacts.geometry.trigonometric_properties_triangle()
-        <html>...</html>
+        Interactive function <function trigonometric_properties_triangle at ...> with 3 widgets
+          a0: IntSlider(value=30, description=u'A', max=360)
+          a1: IntSlider(value=180, description=u'B', max=360)
+          a2: IntSlider(value=300, description=u'C', max=360)
     """
     import math
 
@@ -413,12 +448,12 @@ def trigonometric_properties_triangle(
     # are adjacent and the side c is opposite to the angle
     def angle(a, b, c):
         a,b,c = map(float,[a,b,c])
-        return acos((b**2 + c**2 - a**2)/(2.0*b*c))
+        return acos(0.5 * (b**2 + c**2 - a**2) / (b * c))
 
     # Returns the area of a triangle when an angle alpha
     # and adjacent sides a and b are known
     def area(alpha, a, b):
-        return 1.0/2.0*a*b*sin(alpha)
+        return 0.5 * a * b * sin(alpha)
 
     xy = [0]*3
     html('<h2>Trigonometric Properties of a Triangle</h2>')
@@ -449,14 +484,10 @@ def trigonometric_properties_triangle(
     labels = a_label + b_label + c_label
 
     show(unit_circle + triangle + triangle_points + labels, figsize=[5, 5], xmin=-1, xmax=1, ymin=-1, ymax=1)
-    angl_txt = r"$\angle A = {%s}^{\circ},$ $\angle B = {%s}^{\circ},$ $\angle C = {%s}^{\circ}$" % (
-            math.degrees(ak[0]),
-            math.degrees(ak[1]),
-            math.degrees(ak[2])
-        )
-    html(angl_txt)
-    html(r"$AB = %s,$  $BC = %s,$  $CA = %s$"%(al[2], al[0], al[1]))
-    html(r"Area of triangle $ABC = %s$"%A)
+    html(r"$\angle A = {%.3f}^{\circ},$ $\angle B = {%.3f}^{\circ},$ $\angle C = {%.3f}^{\circ}$"
+         % (math.degrees(ak[0]), math.degrees(ak[1]), math.degrees(ak[2])))
+    html(r"$AB = %.6f$, $BC = %.6f$, $CA = %.6f$" % (al[2], al[0], al[1]))
+    html(r"Area of triangle $ABC = %.6f$" % A)
 
 @library_interact
 def unit_circle(
@@ -479,7 +510,9 @@ def unit_circle(
     creates the mathlet::
 
         sage: interacts.geometry.unit_circle()
-        <html>...</html>
+        Interactive function <function unit_circle at ...> with 2 widgets
+          function: Dropdown(description=u'function', options=(('sin(x)', 0), ('cos(x)', 1), ('tan(x)', 2)), value=0)
+          x: TransformFloatSlider(value=0.0, description=u'x', max=6.283185307179586, step=0.015707963267948967)
     """
     xy = (cos(x), sin(x))
     t = SR.var('t')
@@ -566,15 +599,25 @@ def special_points(
     creates the mathlet::
 
         sage: interacts.geometry.special_points()
-        <html>...</html>
+        Interactive function <function special_points at ...> with 10 widgets
+          title: HTMLText(value=u'<h2>Special points in triangle</h2>')
+          a0: IntSlider(value=30, description=u'A', max=360)
+          a1: IntSlider(value=180, description=u'B', max=360)
+          a2: IntSlider(value=300, description=u'C', max=360)
+          show_median: Checkbox(value=False, description=u'Medians')
+          show_pb: Checkbox(value=False, description=u'Perpendicular Bisectors')
+          show_alt: Checkbox(value=False, description=u'Altitudes')
+          show_ab: Checkbox(value=False, description=u'Angle Bisectors')
+          show_incircle: Checkbox(value=False, description=u'Incircle')
+          show_euler: Checkbox(value=False, description=u"Euler's Line")
     """
     import math
     # Return the intersection point of the bisector of the angle <(A[a],A[c],A[b]) and the unit circle. Angles given in radians.
     def half(A, a, b, c):
         if (A[a] < A[b] and (A[c] < A[a] or A[c] > A[b])) or (A[a] > A[b] and (A[c] > A[a] or A[c] < A[b])):
-            p = A[a] + (A[b] - A[a]) / 2.0
+            p = A[a] + 0.5 * (A[b] - A[a])
         else:
-            p = A[b] + (2*pi - (A[b]-A[a])) / 2.0
+            p = A[b] + 0.5 * (2*pi - (A[b]-A[a]))
         return (math.cos(p), math.sin(p))
 
     # Returns the distance between points (x1,y1) and (x2,y2)
@@ -610,9 +653,9 @@ def special_points(
 
     # Midpoints of edges (bc, ca, ab)
     a_middle = [
-        ((xy[1][0] + xy[2][0])/2.0, (xy[1][1] + xy[2][1])/2.0),
-        ((xy[2][0] + xy[0][0])/2.0, (xy[2][1] + xy[0][1])/2.0),
-        ((xy[0][0] + xy[1][0])/2.0, (xy[0][1] + xy[1][1])/2.0)
+        (0.5 * (xy[1][0] + xy[2][0]), 0.5 * (xy[1][1] + xy[2][1])),
+        (0.5 * (xy[2][0] + xy[0][0]), 0.5 * (xy[2][1] + xy[0][1])),
+        (0.5 * (xy[0][0] + xy[1][0]), 0.5 * (xy[0][1] + xy[1][1]))
     ]
 
     # Incircle
@@ -623,7 +666,7 @@ def special_points(
     )
 
     if show_incircle:
-        s = perimeter/2.0
+        s = 0.5 * perimeter
         incircle_r = math.sqrt((s - ad[0]) * (s - ad[1]) * (s - ad[2]) / s)
         incircle_graph = circle(incircle_center, incircle_r) + point(incircle_center)
     else:
@@ -725,7 +768,9 @@ def coin(n = slider(2,10000, 100, default=1000, label="Number of Tosses"), inter
     creates the mathlet::
 
         sage: interacts.statistics.coin()
-        <html>...</html>
+        Interactive function <function coin at ...> with 2 widgets
+          n: IntSlider(value=1000, description=u'Number of Tosses', max=10000, min=2, step=100)
+          interval: IntRangeSlider(value=(0, 0), description=u'Plotting range (y)', max=1)
     """
     from random import random
     c = []
@@ -762,7 +807,12 @@ def bisection_method(
     creates the mathlet::
 
         sage: interacts.calculus.secant_method()
-        <html>...</html>
+        Interactive function <function secant_method at ...> with 5 widgets
+          title: HTMLText(value=u'<h2>Secant method for numerical root finding</h2>')
+          f: EvalText(value=u'x^2-2', description=u'f(x)', layout=Layout(max_width=u'81em'))
+          interval: IntRangeSlider(value=(0, 4), description=u'range', max=5, min=-5)
+          d: IntSlider(value=3, description=u'10^-d precision', max=16, min=1)
+          maxn: IntSlider(value=10, description=u'max iterations', max=15)
     """
     def _bisection_method(f, a, b, maxn, eps):
         intervals = [(a,b)]
@@ -833,7 +883,12 @@ def secant_method(
     creates the mathlet::
 
         sage: interacts.calculus.secant_method()
-        <html>...</html>
+        Interactive function <function secant_method at ...> with 5 widgets
+          title: HTMLText(value=u'<h2>Secant method for numerical root finding</h2>')
+          f: EvalText(value=u'x^2-2', description=u'f(x)', layout=Layout(max_width=u'81em'))
+          interval: IntRangeSlider(value=(0, 4), description=u'range', max=5, min=-5)
+          d: IntSlider(value=3, description=u'10^-d precision', max=16, min=1)
+          maxn: IntSlider(value=10, description=u'max iterations', max=15)
     """
     def _secant_method(f, a, b, maxn, h):
         intervals = [(a,b)]
@@ -899,7 +954,14 @@ def newton_method(
     creates the mathlet::
 
         sage: interacts.calculus.newton_method()
-        <html>...</html>
+        Interactive function <function newton_method at ...> with 7 widgets
+          title: HTMLText(value=u'<h2>Newton method</h2>')
+          f: EvalText(value=u'x^2 - 2', description=u'f', layout=Layout(max_width=u'81em'))
+          c: IntSlider(value=6, description=u'Start ($x$)', max=10, min=-10)
+          d: IntSlider(value=3, description=u'$10^{-d}$ precision', max=16, min=1)
+          maxn: IntSlider(value=10, description=u'max iterations', max=15)
+          interval: IntRangeSlider(value=(0, 6), description=u'Interval', max=10, min=-10)
+          list_steps: Checkbox(value=False, description=u'List steps')
     """
     def _newton_method(f, c, maxn, h):
         midpoints = [c]
@@ -916,13 +978,13 @@ def newton_method(
     f = symbolic_expression(f).function(x)
     a, b = interval
     h = 10**(-d)
-    c, midpoints = _newton_method(f, float(c), maxn, h/2.0)
+    c, midpoints = _newton_method(f, float(c), maxn, 0.5 * h)
     html(r"$\text{Precision } 2h = %s$"%latex(float(h)))
     html(r"${c = }%s$"%c)
     html(r"${f(c) = }%s"%latex(f(c)))
     html(r"$%s \text{ iterations}"%len(midpoints))
     if list_steps:
-        s = [["$n$","$x_n$","$f(x_n)$", "$f(x_n-h)\,f(x_n+h)$"]]
+        s = [["$n$", "$x_n$", "$f(x_n)$", r"$f(x_n-h)\,f(x_n+h)$"]]
         for i, c in enumerate(midpoints):
             s.append([i+1, c, f(c), (c-h)*f(c+h)])
         pretty_print(table(s, header_row=True))
@@ -965,7 +1027,14 @@ def trapezoid_integration(
     creates the mathlet::
 
         sage: interacts.calculus.trapezoid_integration()
-        <html>...</html>
+        Interactive function <function trapezoid_integration at ...> with 7 widgets
+          title: HTMLText(value=u'<h2>Trapezoid integration</h2>')
+          f: EvalText(value=u'x^2-5*x + 10', description=u'$f(x)=$', layout=Layout(max_width=u'81em'))
+          n: IntSlider(value=5, description=u'# divisions', min=1)
+          interval_input: ToggleButtons(description=u'Integration interval', options=('from slider', 'from keyboard'), value='from slider')
+          interval_s: IntRangeSlider(value=(0, 8), description=u'slider: ', max=10, min=-10)
+          interval_g: Grid(value=[[0, 8]], children=(Label(value=u'keyboard: '), VBox(children=(EvalText(value=u'0', layout=Layout(max_width=u'5em')),)), VBox(children=(EvalText(value=u'8', layout=Layout(max_width=u'5em')),))))
+          output_form: ToggleButtons(description=u'Computations form', options=('traditional', 'table', 'none'), value='traditional')
     """
     xs = []
     ys = []
@@ -1012,7 +1081,7 @@ def trapezoid_integration(
         sum_values_html = r"\frac{%.2f}{2} \cdot \left[%.2f + %s + %.2f\right]" % (
             h,
             N(ys[0], digits=5),
-            ' + '.join([ "2\cdot %.2f" % N(i, digits=5) for i in ys[1:-1]]),
+            ' + '.join([ r"2\cdot %.2f" % N(i, digits=5) for i in ys[1:-1]]),
             N(ys[n], digits=5)
             )
 
@@ -1032,7 +1101,7 @@ def trapezoid_integration(
                 N(approx, digits=7)
         ))
     elif output_form == 'table':
-        s = [['$i$','$x_i$','$f(x_i)$','$m$','$m\cdot f(x_i)$']]
+        s = [['$i$', '$x_i$', '$f(x_i)$', '$m$', r'$m\cdot f(x_i)$']]
         for i in range(0,n+1):
             if i==0 or i==n:
                 j = 1
@@ -1072,7 +1141,14 @@ def simpson_integration(
     creates the mathlet::
 
         sage: interacts.calculus.simpson_integration()
-        <html>...</html>
+        Interactive function <function simpson_integration at ...> with 7 widgets
+          title: HTMLText(value=u'<h2>Simpson integration</h2>')
+          f: EvalText(value=u'x*sin(x)+x+1', description=u'$f(x)=$', layout=Layout(max_width=u'81em'))
+          n: IntSlider(value=6, description=u'# divisions', min=2, step=2)
+          interval_input: ToggleButtons(description=u'Integration interval', options=('from slider', 'from keyboard'), value='from slider')
+          interval_s: IntRangeSlider(value=(0, 10), description=u'slider: ', max=10, min=-10)
+          interval_g: Grid(value=[[0, 10]], children=(Label(value=u'keyboard: '), VBox(children=(EvalText(value=u'0', layout=Layout(max_width=u'5em')),)), VBox(children=(EvalText(value=u'10', layout=Layout(max_width=u'5em')),))))
+          output_form: ToggleButtons(description=u'Computations form', options=('traditional', 'table', 'none'), value='traditional')
     """
     x = SR.var('x')
     f = symbolic_expression(f).function(x)
@@ -1151,14 +1227,14 @@ def simpson_integration(
                 N(approx,digits=7)
                 ))
     elif output_form == 'table':
-        s = [['$i$','$x_i$','$f(x_i)$','$m$','$m\cdot f(x_i)$']]
+        s = [['$i$', '$x_i$', '$f(x_i)$', '$m$', r'$m\cdot f(x_i)$']]
         for i in range(0,n+1):
             if i==0 or i==n:
                 j = 1
             else:
                 j = (i+1)%2*(-2)+4
             s.append([i, xs[i], ys[i],j,N(j*ys[i])])
-        s.append(['','','','$\sum$','$%s$'%latex(3/dx*approx)])
+        s.append(['', '', '', r'$\sum$', '$%s$' % latex(3/dx*approx)])
         pretty_print(table(s, header_row=True))
         html(r'$\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x}\approx\frac {%.2f}{3}\cdot %s=%s$'%
              (interval[0], interval[1],dx,latex(3/dx*approx),latex(approx)))
@@ -1195,7 +1271,16 @@ def riemann_sum(
     creates the mathlet::
 
         sage: interacts.calculus.riemann_sum()
-        <html>...</html>
+        Manual interactive function <function riemann_sum at ...> with 9 widgets
+          title: HTMLText(value=u'<h2>Riemann integral with random sampling</h2>')
+          f: EvalText(value=u'x^2+1', description=u'$f(x)=$', layout=Layout(max_width=u'41em'))
+          n: IntSlider(value=5, description=u'# divisions', max=30, min=1)
+          hr1: HTMLText(value=u'<hr>')
+          interval_input: ToggleButtons(description=u'Integration interval', options=('from slider', 'from keyboard'), value='from slider')
+          interval_s: IntRangeSlider(value=(0, 2), description=u'slider: ', max=10, min=-5)
+          interval_g: Grid(value=[[0, 2]], children=(Label(value=u'keyboard: '), VBox(children=(EvalText(value=u'0', layout=Layout(max_width=u'5em')),)), VBox(children=(EvalText(value=u'2', layout=Layout(max_width=u'5em')),))))
+          hr2: HTMLText(value=u'<hr>')
+          list_table: Checkbox(value=False, description=u'List table')
 
     AUTHORS:
 
@@ -1230,14 +1315,14 @@ def riemann_sum(
     delka_intervalu=[division[i+1]-division[i] for i in range(n)]
     if list_table:
         pretty_print(table([
-            ["$i$", "$[x_{i-1},x_i]$", "$\eta_i$", "$f(\eta_i)$", "$x_{i}-x_{i-1}$"]
+            ["$i$", "$[x_{i-1},x_i]$", r"$\eta_i$", r"$f(\eta_i)$", "$x_{i}-x_{i-1}$"]
         ] + [
             [i+1,[division[i],division[i+1]],xs[i],ys[i],delka_intervalu[i]] for i in range(n)
         ],  header_row=True))
 
-    html('Riemann sum: $\displaystyle\sum_{i=1}^{%s} f(\eta_i)(x_i-x_{i-1})=%s$ '%
+    html(r'Riemann sum: $\displaystyle\sum_{i=1}^{%s} f(\eta_i)(x_i-x_{i-1})=%s$ '%
          (latex(n),latex(sum([ys[i]*delka_intervalu[i] for i in range(n)]))))
-    html('Exact value of the integral $\displaystyle\int_{%s}^{%s}%s\,\mathrm{d}x=%s$'%
+    html(r'Exact value of the integral $\displaystyle\int_{%s}^{%s}%s\,\mathrm{d}x=%s$'%
          (latex(a),latex(b),latex(func(x)),latex(integral_numerical(func(x),a,b)[0])))
 
 
@@ -1273,7 +1358,14 @@ def function_tool(f=sin(x), g=cos(x), xrange=range_slider(-3,3,default=(0,1),lab
     creates the mathlet::
 
         sage: interacts.calculus.function_tool()
-        <html>...</html>
+        Interactive function <function function_tool at ...> with 7 widgets
+          f: EvalText(value=u'sin(x)', description=u'f')
+          g: EvalText(value=u'cos(x)', description=u'g')
+          xrange: IntRangeSlider(value=(0, 1), description=u'x-range', max=3, min=-3)
+          yrange: Text(value=u'auto', description=u'yrange')
+          a: IntSlider(value=1, description=u'a', max=3, min=-1)
+          action: ToggleButtons(description=u'h = ', options=('f', 'df/dx', 'int f', 'num f', 'den f', '1/f', 'finv', 'f+a', 'f-a', 'f*a', 'f/a', 'f^a', 'f(x+a)', 'f(x*a)', 'f+g', 'f-g', 'f*g', 'f/g', 'f(g)'), value='f')
+          do_plot: Checkbox(value=True, description=u'Draw Plots')
     """
     x = SR.var('x')
     try:
@@ -1390,7 +1482,15 @@ def julia(expo = slider(-10,10,0.1,2),
     creates the mathlet::
 
         sage: interacts.fractals.julia()
-        <html>...</html>
+        Interactive function <function julia at ...> with 8 widgets
+          expo: FloatSlider(value=2.0, description=u'expo', max=10.0, min=-10.0)
+          c_real: FloatSlider(value=0.5, description=u'real part const.', max=2.0, min=-2.0, step=0.01)
+          c_imag: FloatSlider(value=0.5, description=u'imag part const.', max=2.0, min=-2.0, step=0.01)
+          iterations: IntSlider(value=20, description=u'# iterations', min=1)
+          zoom_x: FloatRangeSlider(value=(-1.5, 1.5), description=u'Zoom X', max=2.0, min=-2.0, step=0.01)
+          zoom_y: FloatRangeSlider(value=(-1.5, 1.5), description=u'Zoom Y', max=2.0, min=-2.0, step=0.01)
+          plot_points: IntSlider(value=150, description=u'plot points', max=400, min=20, step=20)
+          dpi: IntSlider(value=80, description=u'dpi', max=200, min=20, step=10)
     """
     z = SR.var('z')
     I = CDF.gen()
@@ -1431,7 +1531,13 @@ def mandelbrot(expo = slider(-10,10,0.1,2),
     creates the mathlet::
 
         sage: interacts.fractals.mandelbrot()
-        <html>...</html>
+        Interactive function <function mandelbrot at ...> with 6 widgets
+          expo: FloatSlider(value=2.0, description=u'expo', max=10.0, min=-10.0)
+          iterations: IntSlider(value=20, description=u'# iterations', min=1)
+          zoom_x: FloatRangeSlider(value=(-2.0, 1.0), description=u'Zoom X', max=2.0, min=-2.0, step=0.01)
+          zoom_y: FloatRangeSlider(value=(-1.5, 1.5), description=u'Zoom Y', max=2.0, min=-2.0, step=0.01)
+          plot_points: IntSlider(value=150, description=u'plot points', max=400, min=20, step=20)
+          dpi: IntSlider(value=80, description=u'dpi', max=200, min=20, step=10)
     """
     x, z, c = SR.var('x, z, c')
     f = symbolic_expression(z**expo + c).function(z, c)
@@ -1469,7 +1575,10 @@ def cellular_automaton(
     creates the mathlet::
 
         sage: interacts.fractals.cellular_automaton()
-        <html>...</html>
+        Interactive function <function cellular_automaton at ...> with 3 widgets
+          N: IntSlider(value=100, description=u'Number of iterations', max=500, min=1)
+          rule_number: IntSlider(value=110, description=u'Rule number', max=255)
+          size: IntSlider(value=6, description=u'size of graphic', max=11, min=1)
     """
     from sage.all import Integer
     if not 0 <= rule_number <= 255:
@@ -1524,10 +1633,14 @@ def polar_prime_spiral(
     creates the mathlet::
 
         sage: sage.interacts.algebra.polar_prime_spiral()
-        <html>...</html>
-
+        Interactive function <function polar_prime_spiral at ...> with 6 widgets
+          interval: IntRangeSlider(value=(1, 1000), description=u'range', max=4000, min=1, step=10)
+          show_factors: Checkbox(value=True, description=u'show_factors')
+          highlight_primes: Checkbox(value=True, description=u'highlight_primes')
+          show_curves: Checkbox(value=True, description=u'show_curves')
+          n: IntSlider(value=89, description=u'number $n$', max=200, min=1)
+          dpi: IntSlider(value=100, description=u'dpi', max=300, min=10, step=10)
     """
-
     html('<h2>Polar Prime Spiral</h2> \
           <div style="white-space: normal;">\
           For more information about the factors in the spiral, visit \
@@ -1590,12 +1703,12 @@ def polar_prime_spiral(
             t = SR.var('t')
             a=1.0
             b=0.0
-            if n > (floor(sqrt(n)))**2 and n <= (floor(sqrt(n)))**2 + floor(sqrt(n)):
-                c = -((floor(sqrt(n)))**2 - n)
-                c2= -((floor(sqrt(n)))**2 + floor(sqrt(n)) - n)
+            S = int(sqrt(n))
+            if n <= S * (S + 1):
+                c = n - S**2
             else:
-                c = -((ceil(sqrt(n)))**2 - n)
-                c2= -((floor(sqrt(n)))**2 + floor(sqrt(n)) - n)
+                c = n - (S + 1)**2
+            c2 = n - S * (S + 1)
             html('Pink Curve:  $n^2 + %s$' % c)
             html('Green Curve: $n^2 + n + %s$' % c2)
             m = SR.var('m')

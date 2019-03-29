@@ -293,7 +293,8 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
 
     cpdef _pairwise_product_(self, Vector right):
         """
-        EXAMPLES:
+        EXAMPLES::
+
            sage: v = vector(Integers(8), [2,3]); w = vector(Integers(8), [2,5])
            sage: v * w
            3

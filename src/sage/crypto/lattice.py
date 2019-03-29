@@ -25,7 +25,7 @@ from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 
 def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
                 quotient=None, dual=False, ntl=False, lattice=False):
-    """
+    r"""
     This function generates different types of integral lattice bases
     of row vectors relevant in cryptography.
 
@@ -100,10 +100,10 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [ 4 -2 -3 -3  1  0  0  0]
-        [-3  4 -2 -3  0  1  0  0]
-        [-3 -3  4 -2  0  0  1  0]
-        [-2 -3 -3  4  0  0  0  1]
+        [-2 -3 -3  4  1  0  0  0]
+        [ 4 -2 -3 -3  0  1  0  0]
+        [-3  4 -2 -3  0  0  1  0]
+        [-3 -3  4 -2  0  0  0  1]
 
     Ideal bases also work with polynomials::
 
@@ -113,10 +113,10 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [ 4  1  4 -3  1  0  0  0]
-        [-3  4  1  4  0  1  0  0]
-        [ 4 -3  4  1  0  0  1  0]
-        [ 1  4 -3  4  0  0  0  1]
+        [ 1  4 -3  3  1  0  0  0]
+        [ 3  1  4 -3  0  1  0  0]
+        [-3  3  1  4  0  0  1  0]
+        [ 4 -3  3  1  0  0  0  1]
 
     Cyclotomic bases with n=2^k are SWIFFT bases::
 
@@ -125,10 +125,10 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [ 4 -2 -3 -3  1  0  0  0]
-        [ 3  4 -2 -3  0  1  0  0]
-        [ 3  3  4 -2  0  0  1  0]
-        [ 2  3  3  4  0  0  0  1]
+        [-2 -3 -3  4  1  0  0  0]
+        [-4 -2 -3 -3  0  1  0  0]
+        [ 3 -4 -2 -3  0  0  1  0]
+        [ 3  3 -4 -2  0  0  0  1]
 
     Dual modular bases are related to Regev's famous public-key
     encryption [Reg2005]_::
@@ -160,7 +160,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=cos(x))
         Traceback (most recent call last):
         ...
-        TypeError: unable to convert cos(x) to an integer
+        TypeError: self must be a numeric expression
         sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=x^23-1)
         Traceback (most recent call last):
         ...

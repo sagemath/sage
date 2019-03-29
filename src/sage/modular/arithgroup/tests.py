@@ -385,7 +385,7 @@ class Test:
             sage: Test().test_todd_coxeter() #random
         """
         from .all import SL2Z
-        from .arithgroup_perm import S2m,S3m,Lm,Rm
+        from .arithgroup_perm import S2m,S3m,Lm
 
         G = random_even_arithgroup(self.index)
 

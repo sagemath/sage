@@ -8,10 +8,10 @@ from .parametric_surface import ParametricSurface
 from .shapes2 import line3d
 from sage.arith.srange import xsrange, srange
 from sage.structure.element import is_Vector
+from sage.misc.decorators import rename_keyword
 
-from sage.ext.fast_eval import fast_float, fast_float_constant
 
-
+@rename_keyword(alpha='opacity')
 def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
                       boundary_style=None, **kwds):
     r"""
@@ -163,7 +163,9 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sphinx_plot(parametric_plot3d((cos(u), sin(u)+cos(v), sin(v)), (u,0,2*pi), (v,-pi,pi),
                     color='green', opacity=0.1, plot_points=[30,30]))
 
-    One can also color the surface using a coloring function and a colormap::
+    One can also color the surface using a coloring function and a
+    colormap as follows. Note that the coloring function must take
+    values in the interval [0,1]. ::
 
         sage: u,v = var('u,v')
         sage: def cf(u,v): return sin(u+v/2)**2
@@ -380,7 +382,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_z = v
         sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-1,1), frame=False, color="red"))
 
-    A Trefoil knot https://en.wikipedia.org/wiki/Trefoil_knot::
+    A Trefoil knot (:wikipedia:`Trefoil_knot`)::
 
         sage: u, v = var('u,v')
         sage: f_x = (4*(1+0.25*sin(3*v))+cos(u))*cos(2*v)
@@ -414,7 +416,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_z = cos(u) / (1 + sqrt(2))
         sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), frame=False, color="green"))
 
-    Boy's surface http://en.wikipedia.org/wiki/Boy's_surface and http://mathcurve.com/surfaces/boy/boy.shtml::
+    Boy's surface (:wikipedia:`Boy's_surface` and https://mathcurve.com/surfaces/boy/boy.shtml)::
 
         sage: u, v = var('u,v')
         sage: K = cos(u) / (sqrt(2) - cos(2*u)*sin(3*v))
@@ -436,7 +438,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
                               plot_points=[90,90], frame=False, color="orange") # long time -- about 30 seconds
         sphinx_plot(P)
 
-    Maeder's Owl also known as Bour's minimal surface https://en.wikipedia.org/wiki/Bour%27s_minimal_surface::
+    Maeder's Owl also known as Bour's minimal surface (:wikipedia:`Bour%27s_minimal_surface`)::
 
         sage: u, v = var('u,v')
         sage: f_x = v*cos(u) - 0.5*v^2*cos(2*u)
@@ -527,8 +529,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_z = sin(v)
         sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="green"))
 
-    Yellow Whitney's umbrella
-    http://en.wikipedia.org/wiki/Whitney_umbrella::
+    Yellow Whitney's umbrella (:wikipedia:`Whitney_umbrella`)::
 
         sage: u, v = var('u,v')
         sage: f_x = u*v
@@ -545,7 +546,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_z = v**2
         sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-1,1), (v,-1,1), frame=False, color="yellow"))
 
-    Cross cap http://en.wikipedia.org/wiki/Cross-cap::
+    Cross cap (:wikipedia:`Cross-cap`)::
 
         sage: u, v = var('u,v')
         sage: f_x = (1+cos(v)) * cos(u)
@@ -597,8 +598,8 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,4*pi), (v,0,2*pi), frame=False, color="red", opacity=0.7))
 
     Steiner surface/Roman's surface (see
-    http://en.wikipedia.org/wiki/Roman_surface and
-    http://en.wikipedia.org/wiki/Steiner_surface)::
+    :wikipedia:`Roman_surface` and
+    :wikipedia:`Steiner_surface`)::
 
         sage: u, v = var('u,v')
         sage: f_x = (sin(2*u) * cos(v) * cos(v))
@@ -615,7 +616,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_z = (cos(u) * sin(2*v))
         sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi/2,pi/2), (v,-pi/2,pi/2), frame=False, color="red"))
 
-    Klein bottle? (see http://en.wikipedia.org/wiki/Klein_bottle)::
+    Klein bottle? (see :wikipedia:`Klein_bottle`)::
 
         sage: u, v = var('u,v')
         sage: f_x = (3*(1+sin(v)) + 2*(1-cos(v)/2)*cos(u)) * cos(v)
@@ -633,7 +634,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="green"))
 
     A Figure 8 embedding of the Klein bottle (see
-    http://en.wikipedia.org/wiki/Klein_bottle)::
+    :wikipedia:`Klein_bottle`)::
 
         sage: u, v = var('u,v')
         sage: f_x = (2+cos(v/2)*sin(u)-sin(v/2)*sin(2*u)) * cos(v)
@@ -651,7 +652,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="red"))
 
     Enneper's surface (see
-    http://en.wikipedia.org/wiki/Enneper_surface)::
+    :wikipedia:`Enneper_surface`)::
 
         sage: u, v = var('u,v')
         sage: f_x = u - u^3/3 + u*v^2
@@ -861,7 +862,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), plot_points=[50,50], frame=False, color="red"))
 
     A Helicoid (lines through a helix,
-    http://en.wikipedia.org/wiki/Helix)::
+    :wikipedia:`Helix`)::
 
         sage: u, v = var('u,v')
         sage: f_x = sinh(v) * sin(u)
@@ -932,7 +933,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-25,25), (v,-25,25), plot_points=[50,50], frame=False, color="green"))
 
     The breather surface
-    (http://en.wikipedia.org/wiki/Breather_surface)::
+    (:wikipedia:`Breather_surface`)::
 
         sage: K = sqrt(0.84)
         sage: G = (0.4*((K*cosh(0.4*u))^2 + (0.4*sin(K*v))^2))

@@ -187,8 +187,8 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
                               self._base_to_self_cache, to_other_function = self._to_base)
 
     def _to_base(self, part):
-        """
-        Returns a function which takes in a partition `\mu` and returns the
+        r"""
+        Return a function which takes in a partition `\mu` and returns the
         coefficient of a partition in the expansion of ``self`` `(part)` in base.
 
         INPUT:
@@ -249,5 +249,5 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         return self( self._sf_base(left)*self._sf_base(right) )
 
 # Backward compatibility for unpickling
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.orthotriang', 'SymmetricFunctionAlgebraElement_orthotriang',  SymmetricFunctionAlgebra_orthotriang.Element)

@@ -1,4 +1,4 @@
-"""
+r"""
 Double Description Algorithm for Cones
 
 This module implements the double description algorithm for extremal
@@ -246,7 +246,7 @@ class DoubleDescriptionPair:
         return matrix(self.problem.base_ring(), [[a.inner_product(r) for r in self.R] for a in self.A])
 
     def cone(self):
-        """
+        r"""
         Return the cone defined by `A`.
 
         This method is for debugging only. Assumes that the base ring
@@ -521,7 +521,7 @@ class Problem:
     pair_class = DoubleDescriptionPair
 
     def __init__(self, A):
-        """
+        r"""
         Base class for implementations of the double description algorithm
 
         It does not make sense to instantiate the base class directly,

@@ -273,6 +273,15 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             sage: from sage.rings.asymptotic.growth_group import GrowthGroup
             sage: GrowthGroup('x^ZZ * y^ZZ')  # indirect doctest
             Growth Group x^ZZ * y^ZZ
+
+        Check :trac:`26452`::
+
+            sage: from sage.rings.asymptotic.growth_group import MonomialGrowthGroup
+            sage: R = QQ.extension(x^2+1, 'i')
+            sage: P = MonomialGrowthGroup(R, 'w')
+            sage: L = MonomialGrowthGroup(ZZ, 'log(w)')
+            sage: cartesian_product([P, L])
+            Growth Group w^(Number Field in i with defining polynomial x^2 + 1) * log(w)^ZZ
         """
         order = kwds.pop('order')
         CartesianProductPoset.__init__(self, sets, category, order, **kwds)
@@ -296,10 +305,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         See :class:`TestSuite` for a typical use case.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT:
 
         An iterator.
@@ -309,7 +314,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             sage: from itertools import islice
             sage: from sage.rings.asymptotic.growth_group import GrowthGroup
             sage: G = GrowthGroup('QQ^y * x^QQ * log(x)^ZZ')
-            sage: tuple(islice(G.some_elements(), 10))
+            sage: tuple(islice(G.some_elements(), 10r))
             (x^(1/2)*(1/2)^y,
              x^(-1/2)*log(x)*(-1/2)^y,
              x^2*log(x)^(-1)*2^y,
@@ -760,11 +765,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         S.next_custom()
         O.next_custom()
         while S.var is not None or O.var is not None:
-            if S.var is not None and S.var < O.var:
+            if S.var is not None and O.var is not None and S.var < O.var:
                 newS.extend(S.factors)
                 newO.extend(S.factors)
                 S.next_custom()
-            elif O.var is not None and S.var > O.var:
+            elif S.var is not None and O.var is not None and S.var > O.var:
                 newS.extend(O.factors)
                 newO.extend(O.factors)
                 O.next_custom()

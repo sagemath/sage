@@ -532,7 +532,7 @@ class LeviCivitaConnection(AffineConnection):
                         # sequential
                         for ind in gam.non_redundant_index_generator():
                             i, j, k = ind
-                            # The computation is performed at the CoordFunction level:
+                            # The computation is performed at the ChartFunction level:
                             rsum = 0
                             for s in manif.irange():
                                 rsum += ginv[i,s, chart] * (

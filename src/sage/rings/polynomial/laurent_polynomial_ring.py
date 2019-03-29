@@ -1,4 +1,4 @@
-"""
+r"""
 Ring of Laurent Polynomials
 
 If `R` is a commutative ring, then the ring of Laurent polynomials in `n`
@@ -42,19 +42,16 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
-from six import iteritems, iterkeys, integer_types
+from six import iteritems, iterkeys
 from six.moves import range
 
-from sage.structure.category_object import normalize_names
-from sage.structure.element import is_Element, parent
-from sage.rings.ring import is_Ring
+from sage.structure.element import parent
+from sage.structure.parent import Parent
 from sage.rings.infinity import infinity
-from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.latex import latex
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_mpair, LaurentPolynomial_univariate
 from sage.rings.ring import CommutativeRing
-from sage.structure.parent_gens import ParentWithGens
 
 def is_LaurentPolynomialRing(R):
     """
@@ -228,7 +225,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
            w0^2 + 4*w0*w8 + 4*w8^2 + 2*w0*w13 + 4*w8*w13 + w13^2
     """
     from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-    from sage.rings.polynomial.multi_polynomial_ring_generic import is_MPolynomialRing
+    from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 
     R = PolynomialRing(base_ring, *args, **kwds)
     if R in _cache:
@@ -385,7 +382,7 @@ def _split_laurent_polynomial_dict_(P, M, d):
     return sum(P({k: 1}) * value(v, P) for k, v in iteritems(D)).dict()
 
 
-class LaurentPolynomialRing_generic(CommutativeRing, ParentWithGens):
+class LaurentPolynomialRing_generic(CommutativeRing, Parent):
     """
     Laurent polynomial ring (base class).
 
@@ -412,12 +409,11 @@ class LaurentPolynomialRing_generic(CommutativeRing, ParentWithGens):
         self._R = R
         names = R.variable_names()
         CommutativeRing.__init__(self, R.base_ring(), names=names)
-        self._populate_coercion_lists_(element_constructor=self._element_constructor_,
-                                       init_no_parent=True)
+        self._populate_coercion_lists_(init_no_parent=True)
 
     def ngens(self):
         """
-        Returns the number of generators of self.
+        Return the number of generators of ``self``.
 
         EXAMPLES::
 
@@ -525,7 +521,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, ParentWithGens):
 
     def construction(self):
         """
-        Returns the construction of self.
+        Return the construction of ``self``.
 
         EXAMPLES::
 
@@ -556,10 +552,21 @@ class LaurentPolynomialRing_generic(CommutativeRing, ParentWithGens):
             -x^-1 + 1
             sage: 1/PP(f)
             -x - x^2 - x^3 - x^4 - x^5 - x^6 - x^7 - x^8 - x^9 - x^10 - x^11 - x^12 - x^13 - x^14 - x^15 - x^16 - x^17 - x^18 - x^19 - x^20 + O(x^21)
+
+        TESTS:
+
+        Check that the precision is taken into account (:trac:`24431`)::
+
+            sage: L = LaurentPolynomialRing(QQ, 'x')
+            sage: L.completion('x', 100).default_prec()
+            100
+            sage: L.completion('x', 20).default_prec()
+            20
         """
         if str(p) == self._names[0] and self._n == 1:
             from sage.rings.laurent_series_ring import LaurentSeriesRing
-            return LaurentSeriesRing(self.base_ring(), name=self._names[0])
+            R = self.polynomial_ring().completion(self._names[0], prec)
+            return LaurentSeriesRing(R)
         else:
             raise TypeError("Cannot complete %s with respect to %s" % (self, p))
 
@@ -662,14 +669,29 @@ class LaurentPolynomialRing_generic(CommutativeRing, ParentWithGens):
         """
         return not (self == other)
 
-    def _latex_(self):
+    def __hash__(self):
         """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: h1 = hash(LaurentPolynomialRing(ZZ,'x,y,z'))
+            sage: h2 = hash(LaurentPolynomialRing(ZZ,'x,y,z'))
+            sage: h3 = hash(LaurentPolynomialRing(QQ,'x,y,z'))
+            sage: h4 = hash(LaurentPolynomialRing(ZZ,'x,y'))
+            sage: h1 == h2 and h1 != h3 and h1 != h4
+            True
+        """
+        return hash(self._R) ^ 12059065606945654693
+
+    def _latex_(self):
+        r"""
         EXAMPLES::
 
             sage: latex(LaurentPolynomialRing(QQ,2,'x'))
             \Bold{Q}[x_{0}^{\pm 1}, x_{1}^{\pm 1}]
         """
-        vars = ', '.join([a + '^{\pm 1}' for a in self.latex_variable_names()])
+        vars = ', '.join([a + r'^{\pm 1}' for a in self.latex_variable_names()])
         return "%s[%s]"%(latex(self.base_ring()), vars)
 
     def _ideal_class_(self, n=0):
@@ -850,12 +872,19 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             <class 'sage.rings.polynomial.laurent_polynomial_ring.LaurentPolynomialRing_univariate_with_category'>
             sage: L == loads(dumps(L))
             True
+
+
+        TESTS::
+
+            sage: TestSuite(LaurentPolynomialRing(Zmod(4), 'y')).run()
+            sage: TestSuite(LaurentPolynomialRing(ZZ, 'u')).run()
+            sage: TestSuite(LaurentPolynomialRing(Zmod(4)['T'], 'u')).run()
         """
         if R.ngens() != 1:
             raise ValueError("must be 1 generator")
-        if not R.base_ring().is_integral_domain():
-            raise ValueError("base ring must be an integral domain")
         LaurentPolynomialRing_generic.__init__(self, R)
+
+    Element = LaurentPolynomial_univariate
 
     def _repr_(self):
         """
@@ -940,7 +969,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             elif len(self.variable_names()) == len(P.variable_names()):
                 x = x.dict()
 
-        return LaurentPolynomial_univariate(self, x)
+        return self.element_class(self, x)
 
     def __reduce__(self):
         """
@@ -971,6 +1000,8 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         if not R.base_ring().is_integral_domain():
             raise ValueError("base ring must be an integral domain")
         LaurentPolynomialRing_generic.__init__(self, R)
+
+    Element = LaurentPolynomial_mpair
 
     def _repr_(self):
         """
@@ -1008,14 +1039,12 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             ...
             TypeError: tuple key must have same length as ngens
         """
-        element_class = LaurentPolynomial_mpair
-
         if len(args) != self.ngens():
             raise TypeError("tuple key must have same length as ngens")
 
         from sage.rings.polynomial.polydict import ETuple
         m = ETuple(args, int(self.ngens()))
-        return element_class(self, self.polynomial_ring().one(), m)
+        return self.element_class(self, self.polynomial_ring().one(), m)
 
     def _element_constructor_(self, x, mon=None):
         """
@@ -1107,15 +1136,14 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             y^-1*z^-1 + x^-1*z^-1 + x^-1*y^-1
         """
         from sage.symbolic.expression import Expression
-        element_class = LaurentPolynomial_mpair
 
         if mon is not None:
-            return element_class(self, x, mon)
+            return self.element_class(self, x, mon)
 
         P = parent(x)
         if P is self.polynomial_ring():
             from sage.rings.polynomial.polydict import ETuple
-            return element_class( self, x, mon=ETuple({}, int(self.ngens())) )
+            return self.element_class( self, x, mon=ETuple({}, int(self.ngens())) )
 
         elif isinstance(x, Expression):
             return x.laurent_polynomial(ring=self)
@@ -1134,13 +1162,13 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             elif self.base_ring().has_coerce_map_from(P):
                 from sage.rings.polynomial.polydict import ETuple
                 mz = ETuple({}, int(self.ngens()))
-                return element_class(self, {mz: self.base_ring()(x)}, mz)
+                return self.element_class(self, {mz: self.base_ring()(x)}, mz)
             elif x.is_constant() and self.has_coerce_map_from(P.base_ring()):
                 return self(x.constant_coefficient())
             elif len(self.variable_names()) == len(P.variable_names()):
                 x = x.dict()
 
-        return element_class(self, x)
+        return self.element_class(self, x)
 
     def __reduce__(self):
         """
@@ -1148,7 +1176,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         EXAMPLES::
 
-            sage: L = LaurentPolynomialRing(QQ,2,'x')
+            sage: L = LaurentPolynomialRing(QQ, 2, 'x')
             sage: loads(dumps(L)) == L
             True
         """

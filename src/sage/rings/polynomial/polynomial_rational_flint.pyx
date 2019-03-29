@@ -20,7 +20,7 @@ from cysignals.memory cimport check_allocarray, check_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
 from cpython.int cimport PyInt_AS_LONG
-from sage.misc.long cimport pyobject_to_long
+from sage.arith.long cimport pyobject_to_long
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
@@ -473,7 +473,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         TESTS:
 
-            sage: t(-sys.maxint-1r) == t(-sys.maxint-1)
+            sage: t(-sys.maxsize-1r) == t(-sys.maxsize-1)
             True
         """
         cdef Polynomial_rational_flint f
@@ -602,7 +602,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f.reverse(2**64 - 1)
             Traceback (most recent call last):
             ...
-            OverflowError: long int too large to convert
+            OverflowError:... int too large to convert...
 
         Secondly, a value which cannot be converted to an integral value,
         resulting in a ValueError::
@@ -1143,7 +1143,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f^3
             -1/27*t^6 + 2/3*t^5 - 23/6*t^4 + 6*t^3 + 23/4*t^2 + 3/2*t + 1/8
             sage: f^(-3)
-            1/(-1/27*t^6 + 2/3*t^5 - 23/6*t^4 + 6*t^3 + 23/4*t^2 + 3/2*t + 1/8)
+            -27/(t^6 - 18*t^5 + 207/2*t^4 - 162*t^3 - 621/4*t^2 - 81/2*t - 27/8)
 
         TESTS::
 
@@ -2052,11 +2052,11 @@ cdef class Polynomial_rational_flint(Polynomial):
 
             sage: R.<x> = QQ[]
             sage: f = x^4 - 17*x^3 - 2*x + 1
-            sage: G = f.galois_group(); G            # optional - database_gap
+            sage: G = f.galois_group(); G
             Transitive group number 5 of degree 4
-            sage: G.gens()                           # optional - database_gap
+            sage: G.gens()
             [(1,2), (1,2,3,4)]
-            sage: G.order()                          # optional - database_gap
+            sage: G.order()
             24
 
         It is potentially useful to instead obtain the corresponding PARI
@@ -2069,7 +2069,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(pari_group=True); G
             PARI group [24, -1, 5, "S4"] of degree 4
-            sage: PermutationGroup(G)                # optional - database_gap
+            sage: PermutationGroup(G)
             Transitive group number 5 of degree 4
 
         You can use KASH to compute Galois groups as well.  The advantage is
@@ -2084,7 +2084,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             Transitive group number 5 of degree 4
 
             sage: f = x^4 - 17*x^3 - 2*x + 1
-            sage: f.galois_group(algorithm='magma')  # optional - magma database_gap
+            sage: f.galois_group(algorithm='magma')  # optional - magma
             Transitive group number 5 of degree 4
 
         TESTS:
@@ -2226,11 +2226,11 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: R.<x> = QQ[]
             sage: f = x^3 - 2
             sage: f.factor_padic(2)
-            (1 + O(2^10))*x^3 + (O(2^10))*x^2 + (O(2^10))*x + (2 + 2^2 + 2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^8 + 2^9 + O(2^10))
+            (1 + O(2^10))*x^3 + O(2^10)*x^2 + O(2^10)*x + 2 + 2^2 + 2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^8 + 2^9 + O(2^10)
             sage: f.factor_padic(3)
-            (1 + O(3^10))*x^3 + (O(3^10))*x^2 + (O(3^10))*x + (1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10))
+            (1 + O(3^10))*x^3 + O(3^10)*x^2 + O(3^10)*x + 1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10)
             sage: f.factor_padic(5)
-            ((1 + O(5^10))*x + (2 + 4*5 + 2*5^2 + 2*5^3 + 5^4 + 3*5^5 + 4*5^7 + 2*5^8 + 5^9 + O(5^10))) * ((1 + O(5^10))*x^2 + (3 + 2*5^2 + 2*5^3 + 3*5^4 + 5^5 + 4*5^6 + 2*5^8 + 3*5^9 + O(5^10))*x + (4 + 5 + 2*5^2 + 4*5^3 + 4*5^4 + 3*5^5 + 3*5^6 + 4*5^7 + 4*5^9 + O(5^10)))
+            ((1 + O(5^10))*x + 2 + 4*5 + 2*5^2 + 2*5^3 + 5^4 + 3*5^5 + 4*5^7 + 2*5^8 + 5^9 + O(5^10)) * ((1 + O(5^10))*x^2 + (3 + 2*5^2 + 2*5^3 + 3*5^4 + 5^5 + 4*5^6 + 2*5^8 + 3*5^9 + O(5^10))*x + 4 + 5 + 2*5^2 + 4*5^3 + 4*5^4 + 3*5^5 + 3*5^6 + 4*5^7 + 4*5^9 + O(5^10))
 
         The input polynomial is considered to have "infinite" precision,
         therefore the `p`-adic factorization of the polynomial is not
@@ -2239,7 +2239,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
             sage: f = x^2 - 3^6
             sage: f.factor_padic(3,5)
-            ((1 + O(3^5))*x + (3^3 + O(3^5))) * ((1 + O(3^5))*x + (2*3^3 + 2*3^4 + O(3^5)))
+            ((1 + O(3^5))*x + 3^3 + O(3^5)) * ((1 + O(3^5))*x + 2*3^3 + 2*3^4 + O(3^5))
             sage: f.change_ring(Qp(3,5)).factor()
             Traceback (most recent call last):
             ...
@@ -2249,7 +2249,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
             sage: f = 100 * (5*x + 1)^2 * (x + 5)^2
             sage: f.factor_padic(5, 10)
-            (4*5^4 + O(5^14)) * ((1 + O(5^9))*x + (5^-1 + O(5^9)))^2 * ((1 + O(5^10))*x + (5 + O(5^10)))^2
+            (4*5^4 + O(5^14)) * ((1 + O(5^9))*x + 5^-1 + O(5^9))^2 * ((1 + O(5^10))*x + 5 + O(5^10))^2
 
         Try some bogus inputs::
 

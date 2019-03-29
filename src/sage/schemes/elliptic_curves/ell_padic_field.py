@@ -20,7 +20,6 @@ from __future__ import absolute_import
 #*****************************************************************************
 
 
-import sage.rings.ring as ring
 from .ell_field import EllipticCurve_field
 from . import ell_point
 from sage.rings.all import PolynomialRing
@@ -29,9 +28,6 @@ from sage.rings.all import PolynomialRing
 # there is an "is a" relationship here, and common implementation with regard
 # Coleman integration.
 from sage.schemes.hyperelliptic_curves.hyperelliptic_padic_field import HyperellipticCurve_padic_field
-
-import sage.databases.cremona
-
 
 class EllipticCurve_padic_field(EllipticCurve_field, HyperellipticCurve_padic_field):
     """

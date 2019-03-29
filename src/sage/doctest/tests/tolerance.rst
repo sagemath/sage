@@ -24,3 +24,8 @@ Wrong number and ordinary doctest failure (both errors are reported)::
 
     sage: print("Hello 1.0")  # rel tol 1e-6
     Goodbye 0.999999
+
+Hiding numbers under ellipsis (...) is not supported::
+
+    sage: print("Hello 1.0")  # rel tol 1e-6
+    Hello ...

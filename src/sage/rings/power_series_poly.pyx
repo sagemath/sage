@@ -77,17 +77,15 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __hash__(self):
         """
-        Return a hash of self.
+        Return a hash of ``self``.
 
         EXAMPLES::
 
             sage: R.<t> = ZZ[[]]
-            sage: t.__hash__()
-            760233507         # 32-bit
-            14848694839950883 # 64-bit
-            sage: hash(t)
-            760233507         # 32-bit
-            14848694839950883 # 64-bit
+            sage: hash(t) == hash(R.gen())
+            True
+            sage: hash(t) != hash(R.one())
+            True
         """
         return hash(self.__f)
 
@@ -291,7 +289,7 @@ cdef class PowerSeries_poly(PowerSeries):
         if len(kwds) >= 1:
             name = P.variable_name()
             if name in kwds: # a keyword specifies the power series generator
-                if len(x) > 0:
+                if x:
                     raise ValueError("must not specify %s keyword and positional argument" % name)
                 a = self(kwds[name])
                 del kwds[name]
@@ -299,7 +297,7 @@ cdef class PowerSeries_poly(PowerSeries):
                     return a(**kwds)
                 except TypeError:
                     return a
-            elif len(x) > 0:       # both keywords and positional arguments
+            elif x:       # both keywords and positional arguments
                 a = self(*x)
                 try:
                     return a(**kwds)

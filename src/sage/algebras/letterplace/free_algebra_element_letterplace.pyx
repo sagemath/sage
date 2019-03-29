@@ -139,11 +139,11 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
             sage: F.<w,x,y,z> = FreeAlgebra(GF(3), implementation='letterplace')
             sage: p = x*y-z^2
-            sage: list(p)   # indirect doctest
+            sage: sorted(p)   # indirect doctest
             [((0, 0, 0, 1, 0, 0, 0, 1), 2), ((0, 1, 0, 0, 0, 0, 1, 0), 1)]
-
         """
-        return self._poly.dict().iteritems()
+        cdef dict d = self._poly.dict()
+        yield from d.iteritems()
 
     def _repr_(self):
         """

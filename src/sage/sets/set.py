@@ -36,11 +36,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+import six
 from six import integer_types
 
 from sage.misc.latex import latex
 from sage.misc.prandom import choice
-from sage.misc.misc import is_iterator
 
 from sage.structure.category_object import CategoryObject
 from sage.structure.element import Element
@@ -187,7 +187,7 @@ def Set(X=[]):
         {}
     """
     if isinstance(X, CategoryObject):
-        if is_Set(X):
+        if isinstance(X, Set_generic):
             return X
         elif X in Sets().Finite():
             return Set_object_enumerated(X)
@@ -204,27 +204,6 @@ def Set(X=[]):
     else:
         return Set_object_enumerated(X)
 
-
-def is_Set(x):
-    """
-    Returns ``True`` if ``x`` is a Sage :class:`Set_object` (not to be confused
-    with a Python set).
-
-    EXAMPLES::
-
-        sage: from sage.sets.set import is_Set
-        sage: is_Set([1,2,3])
-        False
-        sage: is_Set(set([1,2,3]))
-        False
-        sage: is_Set(Set([1,2,3]))
-        True
-        sage: is_Set(Set(QQ))
-        True
-        sage: is_Set(Primes())
-        True
-    """
-    return isinstance(x, Set_generic)
 
 @richcmp_method
 class Set_object(Set_generic):
@@ -386,8 +365,8 @@ class Set_object(Set_generic):
             False
             sage: 5/3 in GF(7)
             False
-            sage: Set(GF(7)).union(Set(GF(5)))
-            {0, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 0}
+            sage: sorted(Set(GF(7)).union(Set(GF(5))), key=int)
+            [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6]
             sage: Set(GF(7)).intersection(Set(GF(5)))
             {}
         """
@@ -420,7 +399,7 @@ class Set_object(Set_generic):
         The following is random, illustrating that comparison of
         sets is not the subset relation, when they are not equal::
 
-            sage: Primes() < Set(QQ)             # random
+            sage: Primes() < Set(QQ)             # random  # py2
             True or False
         """
         if not isinstance(right, Set_object):
@@ -445,10 +424,10 @@ class Set_object(Set_generic):
             True
             sage: GF(5)(2) in X
             False
-            sage: Set(GF(7)) + Set(GF(3))
-            {0, 1, 2, 3, 4, 5, 6, 1, 2, 0}
+            sage: sorted(Set(GF(7)) + Set(GF(3)), key=int)
+            [0, 0, 1, 1, 2, 2, 3, 4, 5, 6]
         """
-        if is_Set(X):
+        if isinstance(X, Set_generic):
             if self is X:
                 return self
             return Set_object_union(self, X)
@@ -466,8 +445,8 @@ class Set_object(Set_generic):
             {0, 1, 2, 0, 1}
             sage: Set(GF(2)) + Set(GF(4,'a'))
             {0, 1, a, a + 1}
-            sage: Set(GF(8,'b')) + Set(GF(4,'a'))
-            {0, 1, b, b + 1, b^2, b^2 + 1, b^2 + b, b^2 + b + 1, a, a + 1, 1, 0}
+            sage: sorted(Set(GF(8,'b')) + Set(GF(4,'a')), key=str)
+            [0, 0, 1, 1, a, a + 1, b, b + 1, b^2, b^2 + 1, b^2 + b, b^2 + b + 1]
         """
         return self.union(X)
 
@@ -508,7 +487,7 @@ class Set_object(Set_generic):
             sage: X
             {}
         """
-        if is_Set(X):
+        if isinstance(X, Set_generic):
             if self is X:
                 return self
             return Set_object_intersection(self, X)
@@ -538,7 +517,7 @@ class Set_object(Set_generic):
             sage: X
             {0, 1, 2, b, b + 1, b + 2, 2*b, 2*b + 1, 2*b + 2}
         """
-        if is_Set(X):
+        if isinstance(X, Set_generic):
             if self is X:
                 return Set([])
             return Set_object_difference(self, X)
@@ -555,7 +534,7 @@ class Set_object(Set_generic):
             {1, 2, 4}
         """
 
-        if is_Set(X):
+        if isinstance(X, Set_generic):
             if self is X:
                 return Set([])
             return Set_object_symmetric_difference(self, X)
@@ -642,7 +621,7 @@ class Set_object(Set_generic):
 
         OUTPUT:
 
-        True if the set is empty, false if otherwise.
+        True if the set is empty, False if otherwise.
 
         EXAMPLES::
 
@@ -835,9 +814,19 @@ class Set_object_enumerated(Set_object):
             sage: S = Set(GF(2))
             sage: S
             {0, 1}
+
+        TESTS::
+
+            sage: Set()
+            {}
         """
-        s = repr(self.set())
-        return "{" + s[5:-2] + "}"
+        py_set = self.set()
+        if six.PY3:
+            if not py_set:
+                return "{}"
+            return repr(py_set)
+        else:
+            return "{" + repr(py_set)[5:-2] + "}"
 
     def list(self):
         """
@@ -903,9 +892,10 @@ class Set_object_enumerated(Set_object):
             TypeError: unhashable type: 'set'
             sage: s = X.frozenset(); s
             frozenset({0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1})
-            sage: hash(s)
-            -1390224788            # 32-bit
-             561411537695332972    # 64-bit
+
+            sage: hash(s) != hash(tuple(X.set()))
+            True
+
             sage: type(s)
             <... 'frozenset'>
         """
@@ -936,8 +926,12 @@ class Set_object_enumerated(Set_object):
             False
             sage: Set(QQ) == Set(ZZ)
             False
+            sage: Set([1]) == set([1])
+            True
         """
         if not isinstance(other, Set_object_enumerated):
+            if isinstance(other, (set, frozenset)):
+                return self.set() == other
             return NotImplemented
         if self.set() == other.set():
             return rich_to_bool(op, 0)
@@ -1009,10 +1003,10 @@ class Set_object_enumerated(Set_object):
             sage: Y = Set([GF(8,'c').0, 1, 2, 3])
             sage: X
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: Y
-            {1, c, 3, 2}
-            sage: X.union(Y)
-            {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1, 2, 3}
+            sage: sorted(Y)
+            [1, 2, 3, c]
+            sage: sorted(X.union(Y), key=str)
+            [0, 1, 2, 3, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1]
         """
         if not isinstance(other, Set_object_enumerated):
             return Set_object.union(self, other)
@@ -1237,7 +1231,7 @@ class Set_object_union(Set_object_binary):
             sage: Set(ZZ).union(Set(QQ)) == Set(QQ)
             False
         """
-        if not is_Set(right):
+        if not isinstance(right, Set_generic):
             return rich_to_bool(op, -1)
         if not isinstance(right, Set_object_union):
             return rich_to_bool(op, -1)
@@ -1371,7 +1365,7 @@ class Set_object_intersection(Set_object_binary):
             sage: Set(ZZ).intersection(Set(QQ)) == Set(QQ)
             False
         """
-        if not is_Set(right):
+        if not isinstance(right, Set_generic):
             return rich_to_bool(op, -1)
         if not isinstance(right, Set_object_intersection):
             return rich_to_bool(op, -1)
@@ -1517,7 +1511,7 @@ class Set_object_difference(Set_object_binary):
             sage: X == Set(QQ).difference(Set(ZZ))
             True
         """
-        if not is_Set(right):
+        if not isinstance(right, Set_generic):
             return rich_to_bool(op, -1)
         if not isinstance(right, Set_object_difference):
             return rich_to_bool(op, -1)
@@ -1644,7 +1638,7 @@ class Set_object_symmetric_difference(Set_object_binary):
             True
 
         """
-        if not is_Set(right):
+        if not isinstance(right, Set_generic):
             return rich_to_bool(op, -1)
         if not isinstance(right, Set_object_symmetric_difference):
             return rich_to_bool(op, -1)
@@ -1713,3 +1707,19 @@ class Set_object_symmetric_difference(Set_object_binary):
         """
         return (x in self._X and x not in self._Y) \
                or (x in self._Y and x not in self._X)
+
+def is_Set(x):
+    """
+    Deprecated. Use ``isinstance(x, Set_generic)`` instead.
+
+    TESTS::
+
+        sage: from sage.sets.set import is_Set
+        sage: is_Set(Primes())
+        doctest:...: DeprecationWarning: Please use isinstance(x, Set_generic)
+        See http://trac.sagemath.org/24443 for details.
+        True
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(24443, "Please use isinstance(x, Set_generic)")
+    return isinstance(x, Set_generic)

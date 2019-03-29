@@ -333,7 +333,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         from sage.rings.rational_field import RationalField
         if (not base_ring.has_coerce_map_from(RationalField())) and self._scalar == sage.combinat.sf.sfa.zee:
             # This is the case when (due to the base ring not being a
-            # \mathbb{Q}-algebra) we cannot use the power-sum basis,
+            # \QQ-algebra) we cannot use the power-sum basis,
             # but (due to zee being the standard zee function) we can
             # use the Schur basis.
 
@@ -735,7 +735,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                 sage: h = m.dual_basis(scalar=zee)
                 sage: a = h([2,1])
                 sage: a.scalar_hl(a)
-                (t + 2)/(-t^4 + 2*t^3 - 2*t + 1)
+                (-t - 2)/(t^4 - 2*t^3 + 2*t - 1)
             """
             return self._dual.scalar_hl(x)
 
@@ -894,6 +894,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             return self._dual.expand(n, alphabet)
 
 # Backward compatibility for unpickling
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.dual', 'SymmetricFunctionAlgebraElement_dual',  SymmetricFunctionAlgebra_dual.Element)
 

@@ -1,8 +1,8 @@
 r"""
 SemiDefinite Programming
 
-A semidefinite program (`SDP <http://en.wikipedia.org/wiki/Semidefinite_programming>`_)
-is an `optimization problem <http://en.wikipedia.org/wiki/Optimization_%28mathematics%29>`_
+A semidefinite program (:wikipedia:`SDP <Semidefinite_programming>`)
+is an optimization problem (:wikipedia:`Optimization_(mathematics)>`)
 of the following form
 
 .. MATH::
@@ -80,7 +80,7 @@ The following example shows all these steps::
     Optimal solution found.
     sage: print('Objective Value: {}'.format(round(opt,3)))
     Objective Value: 1.0
-    sage: [round(x,3) for x in p.get_values(x).values()]
+    sage: [round(x, 3) for x in sorted(p.get_values(x).values())]
     [0.0, 1.0]
     sage: p.show()
     Maximization:
@@ -224,7 +224,7 @@ from sage.structure.element cimport Element
 from sage.misc.cachefunc import cached_method
 from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
 from sage.matrix.all import Matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 
 
 cdef class SemidefiniteProgram(SageObject):
@@ -517,8 +517,8 @@ cdef class SemidefiniteProgram(SageObject):
         """
         Construct the first `n` SDPVariables.
 
-        This method is used for the generater syntax (see below). You
-        probably shouldn't use it for anything else.
+        This method is used for the generator syntax (see below). You
+        probably should not use it for anything else.
 
         INPUT:
 
@@ -625,7 +625,7 @@ cdef class SemidefiniteProgram(SageObject):
         # inv_variables associates a SDPVariable object to an id
         inv_variables = {}
         for (v, id) in self._variables.iteritems():
-            inv_variables[id]=v
+            inv_variables[id] = v
 
         # varid_name associates variables id to names
         varid_name = {}
@@ -728,7 +728,7 @@ cdef class SemidefiniteProgram(SageObject):
         values for the corresponding variables ::
 
             sage: x_sol = p.get_values(x)
-            sage: x_sol.keys()
+            sage: sorted(x_sol)
             [3, 5]
 
         Obviously, it also works with variables of higher dimension::
@@ -740,8 +740,7 @@ cdef class SemidefiniteProgram(SageObject):
         for l in lists:
             if isinstance(l, SDPVariable):
                     c = {}
-                    for (k,v) in l.items():
-                        #c[k] = self._values[v] if self._values.has_key(v) else None
+                    for k, v in l.items():
                         c[k] = self._backend.get_variable_value(self._variables[v])
                     val.append(c)
             elif isinstance(l, list):
@@ -760,8 +759,7 @@ cdef class SemidefiniteProgram(SageObject):
         else:
             return val
 
-
-    def set_objective(self,obj):
+    def set_objective(self, obj):
         r"""
         Sets the objective of the ``SemidefiniteProgram``.
 
@@ -907,8 +905,7 @@ cdef class SemidefiniteProgram(SageObject):
                 self.add_constraint(c.lhs()-c.rhs(), name=name)
 
         elif is_LinearFunction(linear_function) or is_LinearTensor(linear_function):
-            l = linear_function.dict().items()
-            l.sort()
+            l = sorted(linear_function.dict().items())
             self._backend.add_linear_constraint(l, name)
 
         else:
@@ -989,7 +986,7 @@ cdef class SemidefiniteProgram(SageObject):
             sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)
             sage: p.solve()                                                         # tol 1e-08
             -3.0
-            sage: x=p.get_values(x).values()
+            sage: x = p.get_values(x).values()
             sage: -(a3*p.dual_variable(0)).trace()-(b3*p.dual_variable(1)).trace()  # tol 1e-07
             -3.0
 
@@ -1001,7 +998,6 @@ cdef class SemidefiniteProgram(SageObject):
         TESTS::
 
             sage: p.dual_variable(7)
-            ...
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
@@ -1042,7 +1038,7 @@ cdef class SemidefiniteProgram(SageObject):
             [0.0 0.0]
             sage: B1.is_positive_definite()
             True
-            sage: x = p.get_values(x).values()
+            sage: x = sorted(p.get_values(x).values())
             sage: x[0]*b1 + x[1]*b2 - b3 + B1       # tol 1e-09
             [0.0 0.0]
             [0.0 0.0]
@@ -1050,7 +1046,6 @@ cdef class SemidefiniteProgram(SageObject):
         TESTS::
 
             sage: p.slack(7)
-            ...
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
@@ -1132,8 +1127,8 @@ cdef class SemidefiniteProgram(SageObject):
         """
         d = {}
         for v in L:
-            for id,coeff  in v.iteritems():
-                d[id] = coeff + d.get(id,0)
+            for id, coeff  in v.iteritems():
+                d[id] = coeff + d.get(id, 0)
         return self.linear_functions_parent()(d)
 
     def get_backend(self):
@@ -1185,7 +1180,6 @@ class SDPSolverException(RuntimeError):
         sage: b = matrix([[1,9],[9,4]])
         sage: p.add_constraint( a*x[0] == b   )
         sage: p.solve()
-        ...
         Traceback (most recent call last):
         ...
         SDPSolverException: ...
@@ -1286,43 +1280,42 @@ cdef class SDPVariable(Element):
 
     def keys(self):
         r"""
-        Returns the keys already defined in the dictionary.
+        Return the keys already defined in the dictionary.
 
         EXAMPLES::
 
             sage: p = SemidefiniteProgram()
             sage: v = p.new_variable()
             sage: p.set_objective(v[0] + v[1])
-            sage: v.keys()
+            sage: sorted(v.keys())
             [0, 1]
         """
         return self._dict.keys()
 
     def items(self):
         r"""
-        Returns the pairs (keys,value) contained in the dictionary.
+        Return the pairs (keys,value) contained in the dictionary.
 
         EXAMPLES::
 
             sage: p = SemidefiniteProgram()
             sage: v = p.new_variable()
             sage: p.set_objective(v[0] + v[1])
-            sage: v.items()
+            sage: sorted(v.items())
             [(0, x_0), (1, x_1)]
         """
         return self._dict.items()
 
-
     def values(self):
         r"""
-        Returns the symbolic variables associated to the current dictionary.
+        Return the symbolic variables associated to the current dictionary.
 
         EXAMPLES::
 
             sage: p = SemidefiniteProgram()
             sage: v = p.new_variable()
             sage: p.set_objective(v[0] + v[1])
-            sage: v.values()
+            sage: sorted(v.values(), key=str)
             [x_0, x_1]
         """
         return self._dict.values()
@@ -1369,7 +1362,7 @@ cdef class SDPVariable(Element):
             sage: m * v
             (1.0, 3.0)*x_0 + (2.0, 4.0)*x_1
         """
-        from sage.matrix.matrix import is_Matrix
+        from sage.structure.element import is_Matrix
         if is_Matrix(mat):
             return self._matrix_rmul_impl(mat) if self_on_left else self._matrix_lmul_impl(mat)
 

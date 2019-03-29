@@ -33,7 +33,6 @@ from libc.string cimport memcmp
 from .data_structures cimport *
 include "sage/data_structures/bitset.pxi"
 from sage.rings.integer cimport Integer
-from sage.misc.misc import uniq
 from sage.matrix.constructor import Matrix
 from .refinement_binary cimport NonlinearBinaryCodeStruct, refine_by_bip_degree
 from .double_coset cimport double_coset
@@ -49,10 +48,10 @@ cdef class MatrixStruct:
         cdef NonlinearBinaryCodeStruct S_temp
         self.matrix = matrix
 
-        self.symbols = uniq(self.matrix.list())
-        if 0 in self.symbols:
-            self.symbols.remove(0)
-        self.nsymbols = len(self.symbols)
+        symbols = set(self.matrix.list())
+        symbols.discard(0)
+        self.symbols = sorted(symbols)
+        self.nsymbols = len(symbols)
 
         self.symbol_structs = []
         num_rows = <int *> sig_malloc(self.nsymbols * sizeof(int))
@@ -65,8 +64,9 @@ cdef class MatrixStruct:
         for i from 0 <= i < self.nsymbols:
             num_rows[i] = 0
         for row in self.matrix.rows():
-            row = uniq(row.list())
-            if 0 in row: row.remove(0)
+            row = set(row.list())
+            if 0 in row:
+                row.remove(0)
             for s in row:
                 num_rows[self.symbols.index(s)] += 1
         for i from 0 <= i < self.nsymbols:

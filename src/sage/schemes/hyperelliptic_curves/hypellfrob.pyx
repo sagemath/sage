@@ -1,13 +1,14 @@
 r"""
-Frobenius on Monsky-Washnitzer cohomology of a hyperelliptic curve over GF(p),
-for largish p
+Frobenius on Monsky-Washnitzer cohomology of a hyperelliptic curve over a largish prime finite field
 
 This is a wrapper for the matrix() function in hypellfrob.cpp.
 
 AUTHOR:
 
 - David Harvey (2007-05)
+
 - David Harvey (2007-12): rewrote for hypellfrob version 2.0
+
 """
 
 #*****************************************************************************
@@ -83,10 +84,10 @@ def hypellfrob(p, N, Q):
         sage: ZZ(M.det())
         10201
         sage: M = hypellfrob(p, 1, f); M
-        [ 0 + O(101)  0 + O(101) 93 + O(101) 62 + O(101)]
-        [ 0 + O(101)  0 + O(101) 55 + O(101) 19 + O(101)]
-        [ 0 + O(101)  0 + O(101) 65 + O(101) 42 + O(101)]
-        [ 0 + O(101)  0 + O(101) 89 + O(101) 29 + O(101)]
+        [     O(101)      O(101) 93 + O(101) 62 + O(101)]
+        [     O(101)      O(101) 55 + O(101) 19 + O(101)]
+        [     O(101)      O(101) 65 + O(101) 42 + O(101)]
+        [     O(101)      O(101) 89 + O(101) 29 + O(101)]
 
     AUTHORS:
 

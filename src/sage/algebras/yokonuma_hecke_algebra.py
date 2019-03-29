@@ -472,13 +472,30 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
                    + (q^-1+q)*t1^2*t2^2*t3^2 + 3*t1^2*t2^2*t3^2*g[1],
                  (q^-1+q)*t1^2*t3 + (q^-1+q)*t1^2*t2
                    + (q^-1+q)*t1^2*t2^2*t3^2 + 3*t1^2*t2^2*t3^2*g[2]]
+
+            TESTS:
+
+            Check that :trac:`26424` is fixed::
+
+                sage: Y = algebras.YokonumaHecke(3, 3)
+                sage: t = 3 * prod(Y.t())
+                sage: ~t
+                1/3*t1^2*t2^2*t3^2
+
+                sage: ~Y.zero()
+                Traceback (most recent call last):
+                ...
+                ZeroDivisionError
             """
+            if not self:
+                raise ZeroDivisionError
             if len(self) != 1:
                 raise NotImplementedError("inverse only implemented for basis elements (monomials in the generators)"%self)
             H = self.parent()
             t,w = self.support_of_term()
+            c = ~self.coefficients()[0]
             telt = H.monomial( (tuple((H._d - e) % H._d for e in t), H._Pn.one()) )
-            return telt * H.prod(H.inverse_g(i) for i in reversed(w.reduced_word()))
+            return c * telt * H.prod(H.inverse_g(i) for i in reversed(w.reduced_word()))
 
         __invert__ = inverse
 

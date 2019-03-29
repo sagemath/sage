@@ -181,22 +181,25 @@ tensor ``t`` acts on pairs formed by a linear form and a module element::
     -2
 
 """
-from __future__ import absolute_import
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+from __future__ import absolute_import
 
 from sage.rings.integer import Integer
 from sage.structure.element import ModuleElement
 from sage.tensor.modules.comp import (Components, CompWithSym, CompFullySym,
                                       CompFullyAntiSym)
 from sage.tensor.modules.tensor_with_indices import TensorWithIndices
+from sage.parallel.decorate import parallel
+from sage.parallel.parallelism import Parallelism
+
 
 class FreeModuleTensor(ModuleElement):
     r"""
@@ -596,7 +599,7 @@ class FreeModuleTensor(ModuleElement):
             sage: w = - 3/4 * de[1] + de[2] ; w
             Linear form on the 2-dimensional vector space M over the Rational
              Field
-            sage: w.set_name('w', latex_name='\omega')
+            sage: w.set_name('w', latex_name='\\omega')
             sage: w.display()
             w = -3/4 e^1 + e^2
             sage: latex(w.display())  # display in the notebook
@@ -624,6 +627,17 @@ class FreeModuleTensor(ModuleElement):
             w = 9/4 f^1 + 5/2 f^2
             sage: t.display(f)
             v*w = -6 f_1*f^1 - 20/3 f_1*f^2 + 27/8 f_2*f^1 + 15/4 f_2*f^2
+
+
+        Parallel computation::
+
+            sage: Parallelism().set('tensor', nproc=2)
+            sage: t2 = v*w
+            sage: t2.display(f)
+            v*w = -6 f_1*f^1 - 20/3 f_1*f^2 + 27/8 f_2*f^1 + 15/4 f_2*f^2
+            sage: t2[f,:] == t[f,:]  # check of the parallel computation
+            True
+            sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
 
         The output format can be set via the argument ``output_formatter``
         passed at the module construction::
@@ -862,29 +876,6 @@ class FreeModuleTensor(ModuleElement):
                                         only_nonzero=only_nonzero,
                                         only_nonredundant=only_nonredundant)
 
-    def view(self, basis=None, format_spec=None):
-        r"""
-        Deprecated method.
-
-        Use method :meth:`display` instead.
-
-        EXAMPLES::
-
-            sage: M = FiniteRankFreeModule(ZZ, 2, 'M')
-            sage: e = M.basis('e')
-            sage: v = M([2,-3], basis=e, name='v')
-            sage: v.view(e)
-            doctest:...: DeprecationWarning: Use function display() instead.
-            See http://trac.sagemath.org/15916 for details.
-            v = 2 e_0 - 3 e_1
-            sage: v.display(e)
-            v = 2 e_0 - 3 e_1
-
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(15916, 'Use function display() instead.')
-        return self.display(basis=basis, format_spec=format_spec)
-
     def set_name(self, name=None, latex_name=None):
         r"""
         Set (or change) the text name and LaTeX name of ``self``.
@@ -1078,6 +1069,7 @@ class FreeModuleTensor(ModuleElement):
                 raise ValueError("the tensor components are not known in " +
                                  "the {}".format(from_basis))
             (n_con, n_cov) = self._tensor_type
+            pp = None
             if n_cov > 0:
                 if (from_basis, basis) not in fmodule._basis_changes:
                     raise ValueError("the change-of-basis matrix from the " +
@@ -1086,6 +1078,7 @@ class FreeModuleTensor(ModuleElement):
                 pp = \
                   fmodule._basis_changes[(from_basis, basis)].comp(from_basis)
                 # pp not used if n_cov = 0 (pure contravariant tensor)
+            ppinv = None
             if n_con > 0:
                 if (basis, from_basis) not in fmodule._basis_changes:
                     raise ValueError("the change-of-basis matrix from the " +
@@ -1098,18 +1091,53 @@ class FreeModuleTensor(ModuleElement):
             new_comp = self._new_comp(basis)
             rank = self._tensor_rank
             # loop on the new components:
-            for ind_new in new_comp.non_redundant_index_generator():
-                # Summation on the old components multiplied by the proper
-                # change-of-basis matrix elements (tensor formula):
-                res = 0
-                for ind_old in old_comp.index_generator():
-                    t = old_comp[[ind_old]]
-                    for i in range(n_con): # loop on contravariant indices
-                        t *= ppinv[[ind_new[i], ind_old[i]]]
-                    for i in range(n_con,rank):  # loop on covariant indices
-                        t *= pp[[ind_old[i], ind_new[i]]]
-                    res += t
-                new_comp[ind_new] = res
+            nproc = Parallelism().get('tensor')
+
+            if nproc != 1 :
+                # Parallel computation
+                lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
+                ind_list = [ind for ind in new_comp.non_redundant_index_generator()]
+                ind_step = max(1, int(len(ind_list)/nproc/2))
+                local_list = lol(ind_list, ind_step)
+                # list of input parameters
+                listParalInput = [(old_comp, ppinv, pp, n_con, rank, ii) for ii in local_list]
+                @parallel(p_iter='multiprocessing', ncpus=nproc)
+                def paral_newcomp(old_comp, ppinv, pp, n_con, rank, local_list_ind):
+                    partial = []
+                    for ind in local_list_ind:
+                        res = 0
+                        # Summation on the old components multiplied by the proper
+                        # change-of-basis matrix elements (tensor formula):
+                        for ind_old in old_comp.index_generator():
+                            t = old_comp[[ind_old]]
+                            for i in range(n_con): # loop on contravariant indices
+                                t *= ppinv[[ind[i], ind_old[i]]]
+                            for i in range(n_con,rank):  # loop on covariant indices
+                                t *= pp[[ind_old[i], ind[i]]]
+                            res += t
+                        partial.append([ind,res])
+                    return partial
+
+                for ii,val in paral_newcomp(listParalInput):
+                    for jj in val:
+                        new_comp[[jj[0]]] = jj[1]
+
+
+            else:
+                # Sequential computation
+                for ind_new in new_comp.non_redundant_index_generator():
+                    # Summation on the old components multiplied by the proper
+                    # change-of-basis matrix elements (tensor formula):
+                    res = 0
+                    for ind_old in old_comp.index_generator():
+                        t = old_comp[[ind_old]]
+                        for i in range(n_con): # loop on contravariant indices
+                            t *= ppinv[[ind_new[i], ind_old[i]]]
+                        for i in range(n_con,rank):  # loop on covariant indices
+                            t *= pp[[ind_old[i], ind_new[i]]]
+                        res += t
+                    new_comp[ind_new] = res
+
             self._components[basis] = new_comp
             # end of case where the computation was necessary
         return self._components[basis]
@@ -1171,7 +1199,7 @@ class FreeModuleTensor(ModuleElement):
             sage: M.set_change_of_basis(e, f, a)
             sage: t.display(e)
             t = -4 e_1*e^2
-            sage: sorted(t._components)  # random output (dictionary keys)
+            sage: sorted(t._components, key=repr)
             [Basis (e_0,e_1,e_2) on the Rank-3 free module M over the Integer Ring,
              Basis (f_0,f_1,f_2) on the Rank-3 free module M over the Integer Ring]
 
@@ -1237,7 +1265,7 @@ class FreeModuleTensor(ModuleElement):
 
         The components w.r.t. basis e have been kept::
 
-            sage: sorted(t._components) # # random output (dictionary keys)
+            sage: sorted(t._components, key=repr)
             [Basis (e_0,e_1,e_2) on the Rank-3 free module M over the Integer Ring,
              Basis (f_0,f_1,f_2) on the Rank-3 free module M over the Integer Ring]
             sage: t.display(f)
@@ -1274,7 +1302,7 @@ class FreeModuleTensor(ModuleElement):
             sage: u = M([2,1,-5])
             sage: f = M.basis('f')
             sage: u.add_comp(f)[:] = [0,4,2]
-            sage: sorted(u._components) # random output (dictionary keys)
+            sage: sorted(u._components, key=repr)
             [Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring,
              Basis (f_1,f_2,f_3) on the Rank-3 free module M over the Integer Ring]
             sage: u.del_other_comp(f)
@@ -1284,7 +1312,7 @@ class FreeModuleTensor(ModuleElement):
         Let us restore the components w.r.t. e and delete those w.r.t. f::
 
             sage: u.add_comp(e)[:] = [2,1,-5]
-            sage: sorted(u._components)  # random output (dictionary keys)
+            sage: sorted(u._components, key=repr)
             [Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring,
              Basis (f_1,f_2,f_3) on the Rank-3 free module M over the Integer Ring]
             sage: u.del_other_comp()  # default argument: basis = e
@@ -1507,9 +1535,9 @@ class FreeModuleTensor(ModuleElement):
 
         Indeed, v is now known in basis e::
 
-            sage: sorted(v._components) # random output (dictionary keys)
-            [Basis (f_1,f_2,f_3) on the Rank-3 free module M over the Integer Ring,
-             Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring]
+            sage: sorted(v._components, key=repr)
+            [Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring,
+             Basis (f_1,f_2,f_3) on the Rank-3 free module M over the Integer Ring]
 
         """
         # Compatibility checks:
@@ -2566,7 +2594,7 @@ class FreeModuleTensor(ModuleElement):
             if pos not in pos2:
                 nb_con_o += 1
         if nb_cov_s != 0 and nb_con_o != 0:
-            # some reodering is necessary:
+            # some reordering is necessary:
             p2 = k1 + l1 - ncontr
             p1 = p2 - nb_cov_s
             p3 = p2 + nb_con_o

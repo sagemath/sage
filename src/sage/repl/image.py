@@ -32,6 +32,7 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import io
 
 import PIL.Image
 from sage.structure.sage_object import SageObject
@@ -235,7 +236,8 @@ class Image(SageObject):
             sage: img = Image('P', (12, 34), (13,))
             sage: filename = tmp_filename(ext='.png')
             sage: img.save(filename)
-            sage: open(filename).read().startswith('\x89PNG')
+            sage: with open(filename, 'rb') as f:
+            ....:     f.read(4) == b'\x89PNG'
             True
         """
         self.pil.save(filename)
@@ -292,11 +294,10 @@ class Image(SageObject):
             ('JPEG', types.OutputImageJpg),
             ('GIF',  types.OutputImageGif),
         )
-        from six import StringIO
         from sage.repl.rich_output.buffer import OutputBuffer
         for format, output_container in preferred:
             if output_container in display_manager.supported_output():
-                stream = StringIO()
+                stream = io.BytesIO()
                 try:
                     self.pil.save(stream, format=format)
                 except IOError:

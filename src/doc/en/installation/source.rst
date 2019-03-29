@@ -13,7 +13,7 @@ Install from Source Code
    :depth: 2
 
 More familiarity with computers may be required to build Sage from
-the `source code <http://en.wikipedia.org/wiki/Source_code>`_.
+the `source code <https://en.wikipedia.org/wiki/Source_code>`_.
 If you do have all the :ref:`pre-requisite tools <section-prereqs>`,
 the process should be completely
 painless, basically consisting in extracting the source tarball and typing
@@ -28,35 +28,35 @@ Moreover, it offers you full development capabilities:
 you can change absolutely any part of Sage or the programs on which it depends,
 and recompile the modified parts.
 
-`Download the Sage source code <http://www.sagemath.org/download-source.html>`_
+`Download the Sage source code <https://www.sagemath.org/download-source.html>`_
 or get it from the `git repository <https://github.com/sagemath/sage>`_.
 Note: if you  are installing Sage for development, you should rather follow
 the instructions in
-`The Sage Developer's Guide <http://doc.sagemath.org/html/en/developer/walk_through.html#chapter-walkthrough>`_.
+`The Sage Developer's Guide <https://doc.sagemath.org/html/en/developer/walk_through.html#chapter-walkthrough>`_.
 
 It is also possible to download a
-`binary distribution <http://www.sagemath.org/download.html>`_
+`binary distribution <https://www.sagemath.org/download.html>`_
 for some operating systems, rather than compiling from source.
 
 Supported platforms
 -------------------
 
-See http://wiki.sagemath.org/SupportedPlatforms for the full list of platforms
+See https://wiki.sagemath.org/SupportedPlatforms for the full list of platforms
 on which Sage is supported and the level of support for these systems.
 
-Sage is supported on a number of `Linux <http://en.wikipedia.org/wiki/Linux>`_,
-Mac `OS X <http://www.apple.com/macosx/>`_ ,
-Sun/Oracle `Solaris <http://www.oracle.com/solaris>`_ releases,
+Sage is supported on a number of `Linux <https://en.wikipedia.org/wiki/Linux>`_,
+`macOS <https://www.apple.com/macosx/>`_ ,
+Sun/Oracle `Solaris <https://www.oracle.com/solaris>`_ releases,
 but not necessarily all versions of these operating systems.
 There is no native version of Sage which installs on
-`Microsoft Windows <http://en.wikipedia.org/wiki/Microsoft_Windows>`_,
+`Microsoft Windows <https://en.wikipedia.org/wiki/Microsoft_Windows>`_,
 although Sage can be used on Windows with the aid of a
-`virtual machine <http://en.wikipedia.org/wiki/Virtual_machine>`_
-or the `Cygwin <http://cygwin.com/>`_ Linux API layer.
+`virtual machine <https://en.wikipedia.org/wiki/Virtual_machine>`_
+or the `Cygwin <https://cygwin.com/>`_ Linux API layer.
 
-On the `list of supported platforms <http://wiki.sagemath.org/SupportedPlatforms>`_,
+On the `list of supported platforms <https://wiki.sagemath.org/SupportedPlatforms>`_,
 you can find details about
-`ports <http://en.wikipedia.org/wiki/Computer_port_%28software%29>`_
+`ports <https://en.wikipedia.org/wiki/Computer_port_%28software%29>`_
 to other operating systems or processors which may be taking place.
 
 .. _section-prereqs:
@@ -75,19 +75,19 @@ Disk space and memory
 
 Your computer comes with at least 6 GB of free disk space running one of the
 supported versions of an operating system listed at
-http://wiki.sagemath.org/SupportedPlatforms.
+https://wiki.sagemath.org/SupportedPlatforms.
 It is recommended to have at least 2 GB of RAM, but you might get away
 with less (be sure to have some swap space in this case).
 
 Command-line tools
 ^^^^^^^^^^^^^^^^^^
 
-In addition to standard `POSIX <http://en.wikipedia.org/wiki/POSIX>`_ utilities
-and the `bash <http://en.wikipedia.org/wiki/Bash_(Unix_shell)>`_ shell,
+In addition to standard `POSIX <https://en.wikipedia.org/wiki/POSIX>`_ utilities
+and the `bash <https://en.wikipedia.org/wiki/Bash_(Unix_shell)>`_ shell,
 the following standard command-line development tools must be installed on your
 computer:
 
-- A **C/C++ compiler**: Since Sage builds its own GCC if needed,
+- A **C/C++ compiler**: Since SageMath builds its own GCC if needed,
   a wide variety of C/C++ compilers is supported.
   Many GCC versions work,
   from as old as version 3.4.3 to the most recent release.
@@ -134,7 +134,7 @@ Fortran and compiler suites
 Sage also needs a Fortran compiler.
 The only configuration currently supported is matching versions of the
 C, C++ and Fortran compilers from the
-`GNU Compiler Collection (GCC) <http://gcc.gnu.org/>`_.
+`GNU Compiler Collection (GCC) <https://gcc.gnu.org/>`_.
 Therefore, if you plan on using your own GCC compilers, then make sure that
 their versions match.
 
@@ -168,7 +168,7 @@ and inform you of any that are missing, or have unsuitable versions.
 System-specific requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On Mac OS X, there are various developer tools needed which may require
+On macOS, there are various developer tools needed which may require
 some registration on Apple's developer site; see
 :ref:`section_macprereqs`.
 
@@ -193,23 +193,23 @@ or::
 
 on the command line. If it gives an error (or returns nothing), then
 either ``perl`` is not installed, or it is installed but not in your
-`PATH <http://en.wikipedia.org/wiki/PATH_%28variable%29>`_.
+`PATH <https://en.wikipedia.org/wiki/PATH_%28variable%29>`_.
 
 Linux prerequisite installation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 On Linux systems (e.g., Ubuntu, Redhat, etc), ``ar`` and ``ranlib`` are in the
-`binutils <http://www.gnu.org/software/binutils/>`_ package.
+`binutils <https://www.gnu.org/software/binutils/>`_ package.
 The other programs are usually located in packages with their respective names.
 Assuming you have sufficient privileges, you can install the ``binutils`` and
 other necessary components.
 If you do not have the privileges to do this, ask your system administrator to
 do this, or build the components from source code.
 The method of installing additional software varies from distribution to
-distribution, but on a `Debian <http://www.debian.org/>`_ based system (e.g.
-`Ubuntu <http://www.ubuntu.com/>`_ or `Mint <http://www.linuxmint.com/>`_),
+distribution, but on a `Debian <https://www.debian.org/>`_ based system (e.g.
+`Ubuntu <https://www.ubuntu.com/>`_ or `Mint <https://www.linuxmint.com/>`_),
 you would use
-`apt-get <http://en.wikipedia.org/wiki/Advanced_Packaging_Tool>`_::
+`apt-get <https://en.wikipedia.org/wiki/Advanced_Packaging_Tool>`_::
 
      # debian
      sudo apt-get install binutils gcc make m4 perl tar git openssl libssl-dev
@@ -232,22 +232,22 @@ own GCC::
 (These examples suppose that you choose to use a systemwide OpenSSL
 library. This was tested on Ubuntu 12.04.2.)
 On other Linux systems, you might use
-`rpm <http://en.wikipedia.org/wiki/RPM_Package_Manager>`_,
-`yum <http://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified>`_,
+`rpm <https://en.wikipedia.org/wiki/RPM_Package_Manager>`_,
+`yum <https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified>`_,
 or other package managers.
 
 .. _section_macprereqs:
 
-Mac OS X prerequisite installation
+macOS prerequisite installation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-On OS X systems, you need a recent version of
-`Command Line Tools <http://developer.apple.com/downloads/index.action?=command%20line%20tools>`_.
+On macOS systems, you need a recent version of
+`Command Line Tools <https://developer.apple.com/downloads/index.action?=command%20line%20tools>`_.
 It provides all the above requirements.
 
-If you have already installed `Xcode <http://developer.apple.com/xcode/>`_
+If you have already installed `Xcode <https://developer.apple.com/xcode/>`_
 (which at the time of writing is freely available in the Mac App Store,
-or through http://developer.apple.com/downloads/ provided you registered for an
+or through https://developer.apple.com/downloads/ provided you registered for an
 Apple Developer account), you can install the command line tools from
 there as well.
 
@@ -258,19 +258,19 @@ there as well.
 - Using OS X Mountain Lion or earlier, run Xcode, open its "Downloads"
   preference pane and install the command line tools from there.
 
-- On pre-Lion OS X systems, the command line tools are not available as a
+- On pre-Lion macOS systems, the command line tools are not available as a
   separate download and you have to install the full-blown Xcode supporting your
   system version.
 
-If you have not installed `Xcode <http://developer.apple.com/xcode/>`_
+If you have not installed `Xcode <https://developer.apple.com/xcode/>`_
 you can get these tools as a relatively small download, but it does require
 a registration.
 
 - First, you will need to register as an Apple Developer at
-  http://developer.apple.com/register/.
+  https://developer.apple.com/register/.
 
 - Having done so, you should be able to download it for free at
-  http://developer.apple.com/downloads/index.action?=command%20line%20tools
+  https://developer.apple.com/downloads/index.action?=command%20line%20tools
 
 - Alternately, https://developer.apple.com/opensource/ should have a link
   to Command Line Tools.
@@ -292,7 +292,7 @@ On other systems, check the documentation for your particular operating system.
 Specific notes for ``make`` and ``tar``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On OS X, the system-wide BSD ``tar`` supplied will build Sage, so there is no
+On macOS, the system-wide BSD ``tar`` supplied will build Sage, so there is no
 need to install the GNU ``tar``.
 
 On Solaris or OpenSolaris, the Sun/Oracle versions of ``make`` and ``tar`` are
@@ -339,7 +339,7 @@ If you are interested in working on support for commercial compilers from
 `Intel <http://software.intel.com/en-us/articles/intel-compilers/>`_,
 `Sun/Oracle <http://www.oracle.com/technetwork/server-storage/solarisstudio/overview/index.html>`_,
 etc,
-please email the sage-devel mailing list at http://groups.google.com/group/sage-devel.
+please email the sage-devel mailing list at https://groups.google.com/group/sage-devel.
 
 
 Additional software
@@ -358,9 +358,9 @@ but provide additional capabilities:
 - **LaTeX**: highly recommended.
 
 It is highly recommended that you have
-`LaTeX <http://en.wikipedia.org/wiki/LaTeX>`_
+`LaTeX <https://en.wikipedia.org/wiki/LaTeX>`_
 installed, but it is not required.
-The most popular packaging is `TeX Live <http://www.tug.org/texlive/>`_,
+The most popular packaging is `TeX Live <https://www.tug.org/texlive/>`_,
 which can be installed following the directions on their web site.
 On Linux systems you can alternatively install your distribution's
 texlive packages::
@@ -384,18 +384,18 @@ Notebook additional features
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, the Sage notebook uses the
-`HTTP <http://en.wikipedia.org/wiki/HTTP>`_
+`HTTP <https://en.wikipedia.org/wiki/HTTP>`_
 protocol when you type the command ``notebook()``.
 To run the notebook in secure mode by typing ``notebook(secure=True)`` which
-uses the `HTTPS <http://en.wikipedia.org/wiki/HTTPS>`_ protocol,
-or to use `OpenID <http://en.wikipedia.org/wiki/OpenID>`_ authentication,
+uses the `HTTPS <https://en.wikipedia.org/wiki/HTTPS>`_ protocol,
+or to use `OpenID <https://en.wikipedia.org/wiki/OpenID>`_ authentication,
 you need to follow specific installation steps described in
 :ref:`section_notebook_ssl`.
 
 Although all necessary components are provided through Sage optional
 packages, i.e., even if you choose not to install a systemwide version
 of OpenSSL, you can install a local (Sage_specific) version of
-`OpenSSL <http://www.openssl.org>`_ by using Sage's **openssl**
+`OpenSSL <https://www.openssl.org>`_ by using Sage's **openssl**
 package and running ``sage -i openssl`` as suggested in
 :ref:`section_notebook_ssl` (this requires an Internet
 connection). Alternatively, you might prefer to install OpenSSL and
@@ -404,8 +404,8 @@ above.
 
 Finally, if you intend to distribute the notebook load onto several Sage
 servers, you will surely want to setup an
-`SSH <http://en.wikipedia.org/wiki/SSH>`_ server and generate SSH keys.
-This can be achieved using `OpenSSH <http://www.openssh.org>`_.
+`SSH <https://en.wikipedia.org/wiki/SSH>`_ server and generate SSH keys.
+This can be achieved using `OpenSSH <https://www.openssh.com/>`_.
 
 On Linux systems, the OpenSSH server, client and utilities are usually provided
 by the **openssh-server** and **openssh-client** packages and can be installed
@@ -418,7 +418,7 @@ or similar commands.
 Tcl/Tk
 ~~~~~~
 
-If you want to use `Tcl/Tk <http://www.tcl.tk/>`_ libraries in Sage,
+If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage,
 you need to install the Tcl/Tk and its development headers before building
 Sage.
 Sage's Python will then automatically recognize your system's install of
@@ -466,7 +466,7 @@ you build:
 several of Sage's components will not build if there are spaces in the path.
 Running Sage from a directory with spaces in its name will also fail.
 
-#. Go to http://www.sagemath.org/download-source.html, select a mirror,
+#. Go to https://www.sagemath.org/download-source.html, select a mirror,
    and download the file :file:`sage-x.y.tar`.
 
    This tarfile contains the source code for Sage and the source for all
@@ -476,7 +476,7 @@ Running Sage from a directory with spaces in its name will also fail.
 
    Download it into any directory you have write access to, preferably on a
    fast filesystem, avoiding
-   `NFS <http://en.wikipedia.org/wiki/Network_File_System>`_ and the like.
+   `NFS <https://en.wikipedia.org/wiki/Network_File_System>`_ and the like.
    On personal computers, any subdirectory of your :envvar:`HOME` directory
    should do. Note that once you have built Sage (by running ``make``,
    as described below), you will not be able to move or rename its
@@ -499,23 +499,11 @@ Running Sage from a directory with spaces in its name will also fail.
 #. Optional, but highly recommended:
    Read the :file:`README.md` file there.
 
-#. On OSX 10.4, OS 10.5, Solaris 10 and OpenSolaris, if you wish to build a
-   64-bit version of Sage, assuming your computer and operating system are
-   64-bit, type::
-
-       export SAGE64=yes
-
-   It should be noted that as of April 2011, 64-bit builds of Sage on both
-   Solaris 10 and OpenSolaris are not very stable, so you are advised not to
-   set :envvar:`SAGE64` to ``yes``.
-   This will then create stable 32-bit versions of Sage.
-   See http://wiki.sagemath.org/solaris for the latest information.
-
 #. Optional:  Set various other environment variables that influence the
    build process; see :ref:`section_envvar`.
 
    Some environment variables deserve a special mention: `CC`, `CXX` and `FC`;
-   and on OS X, `OBJC` and `OBJCXX`. Those variables defining your compilers
+   and on macOS, `OBJC` and `OBJCXX`. Those variables defining your compilers
    can be set at configuration time and their values will be recorded for
    further use at runtime. Those initial values are over-ridden if Sage builds
    its own compiler or they are set to a different value again before calling
@@ -552,8 +540,8 @@ Running Sage from a directory with spaces in its name will also fail.
 
    .. NOTE::
 
-      Mac OS X allows changing directories without using exact capitalization.
-      Beware of this convenience when compiling for OS X. Ignoring exact
+      macOS allows changing directories without using exact capitalization.
+      Beware of this convenience when compiling for macOS. Ignoring exact
       capitalization when changing into :envvar:`SAGE_ROOT` can lead to build
       errors for dependencies requiring exact capitalization in path names.
 
@@ -578,11 +566,11 @@ Running Sage from a directory with spaces in its name will also fail.
    failed package.
    If this happens, then paste the contents of these log file(s)
    to the Sage support
-   newsgroup at http://groups.google.com/group/sage-support.
+   newsgroup at https://groups.google.com/group/sage-support.
    If the log files are very large (and many are), then don't paste the whole
    file, but make sure to include any error messages.
    It would also be helpful to include the type of operating system
-   (Linux, OS X, Solaris, OpenSolaris, Cygwin, or any other system),
+   (Linux, macOS, Solaris, OpenSolaris, Cygwin, or any other system),
    the version and release date of that operating system and the version of
    the copy of Sage you are using.
    (There are no formal requirements for bug reports -- just send them;
@@ -618,7 +606,7 @@ Running Sage from a directory with spaces in its name will also fail.
    Note that this should have been already automatically tested during the
    build process.
    If the above is not displayed (e.g., if you get a massive traceback), please
-   report the problem, e.g., at http://groups.google.com/group/sage-support.
+   report the problem, e.g., at https://groups.google.com/group/sage-support.
 
    After Sage has started, try a simple command::
 
@@ -652,8 +640,8 @@ Running Sage from a directory with spaces in its name will also fail.
 #. Optional:
    Check the interfaces to any other software that you have available.
    Note that each interface calls its corresponding program by a particular
-   name: `Mathematica <http://www.wolfram.com/mathematica/>`_ is invoked by
-   calling ``math``, `Maple <http://www.maplesoft.com/>`_ by calling ``maple``,
+   name: `Mathematica <https://www.wolfram.com/mathematica/>`_ is invoked by
+   calling ``math``, `Maple <https://www.maplesoft.com/>`_ by calling ``maple``,
    etc.
    The easiest way to change this name or perform other customizations is
    to create a redirection script in :file:`$SAGE_ROOT/local/bin`.
@@ -690,7 +678,7 @@ Running Sage from a directory with spaces in its name will also fail.
      (note that you have to change ``<SAGE_ROOT>`` above!).
      It is best to edit only the copy, not the original.
 
-   - For `KDE <http://www.kde.org/>`_ users, create a bash script called
+   - For `KDE <https://www.kde.org/>`_ users, create a bash script called
      ``sage`` containing the lines
      (note that you have to change ``<SAGE_ROOT>`` below!)::
 
@@ -708,7 +696,7 @@ Running Sage from a directory with spaces in its name will also fail.
      (under the Application tab of the Properties of the icon, which you get my
      right clicking the mouse on the icon).
 
-   - On Linux and OS X systems, you can make an alias to
+   - On Linux and macOS systems, you can make an alias to
      :file:`$SAGE_ROOT/sage`.
      For example, put something similar to the following line in your
      :file:`.bashrc` file::
@@ -722,7 +710,7 @@ Running Sage from a directory with spaces in its name will also fail.
 #. Optional:
    Install optional Sage packages and databases.
    Type ``sage --optional`` to see a list of them (this requires an Internet
-   connection), or visit http://www.sagemath.org/packages/optional/.
+   connection), or visit https://www.sagemath.org/packages/optional/.
    Then type ``sage -i <package-name>`` to automatically download and install
    a given package.
 
@@ -745,7 +733,7 @@ For security, you may wish users to access the server using the HTTPS protocol
 (i.e., to run ``notebook(secure=True)``).
 You also may want to use OpenID for user authentication.
 The first of these requires you to install
-`pyOpenSSL <http://pyopenssl.sourceforge.net/>`_,
+`pyOpenSSL <https://pyopenssl.org/>`_,
 and they both require OpenSSL.
 
 If you have OpenSSL and the OpenSSL development headers installed on your
@@ -823,7 +811,7 @@ Make targets
 ------------
 
 To build Sage from scratch, you would typically execute ``make`` in Sage's home
-directory to build Sage and its `HTML <http://en.wikipedia.org/wiki/HTML>`_
+directory to build Sage and its `HTML <https://en.wikipedia.org/wiki/HTML>`_
 documentation.
 The ``make`` command is pretty smart, so if your build of Sage is interrupted,
 then running ``make`` again should cause it to pick up where it left off.
@@ -927,13 +915,13 @@ Here are some of the more commonly used variables affecting the build process:
   for example, tells ``make`` to try to use four jobs, but to not start more
   than one job if the system load average is above 5.5.
   See the manual page for GNU ``make``: `Command-line options
-  <http://www.gnu.org/software/make/manual/make.html#Options-Summary>`_
+  <https://www.gnu.org/software/make/manual/make.html#Options-Summary>`_
   and `Parallel building
-  <http://www.gnu.org/software/make/manual/make.html#Parallel>`_.
+  <https://www.gnu.org/software/make/manual/make.html#Parallel>`_.
 
   .. warning::
 
-      Some users on single-core OS X machines have reported problems when
+      Some users on single-core macOS machines have reported problems when
       building Sage with ``MAKE='make -jNUM'`` with ``NUM`` greater than one.
 
 - :envvar:`SAGE_NUM_THREADS` - if set to a number, then when building the
@@ -977,25 +965,8 @@ Here are some of the more commonly used variables affecting the build process:
      So when this variable is empty or unset, Sage uses a default of
      ``!python2,!python3``.
 
-- :envvar:`SAGE64` - if set to ``yes``, then build a 64-bit binary on platforms
-  which default to 32-bit, even though they can build 64-bit binaries.
-  It adds the compiler flag ``-m64`` when compiling programs.
-  The :envvar:`SAGE64` variable is mainly of use on OS X (pre 10.6), Solaris
-  and OpenSolaris, though it will add the ``-m64`` flag on any operating
-  system.
-  If you are running Linux or version 10.6 or later of OS X on a 64-bit
-  machine, then Sage will automatically build a 64-bit binary, so this
-  variable does not need to be set.
-
-- :envvar:`CFLAG64` - default value ``-m64``.
-  If Sage detects that it should build a 64-bit binary, then it uses this flag
-  when compiling C code.
-  Modify it if necessary for your system and C compiler.
-  This should not be necessary on most systems -- this flag will typically be
-  set automatically, based on the setting of :envvar:`SAGE64`, for example.
-
 - :envvar:`SAGE_INSTALL_GCC` - by default, Sage will automatically detect
-  whether to install the `GNU Compiler Collection (GCC) <http://gcc.gnu.org/>`_
+  whether to install the `GNU Compiler Collection (GCC) <https://gcc.gnu.org/>`_
   package or not (depending on whether C, C++, and Fortran compilers are present
   and the versions of those compilers).
   Setting ``SAGE_INSTALL_GCC=yes`` will force Sage to install GCC.
@@ -1138,19 +1109,6 @@ Here are some of the more commonly used variables affecting the build process:
   supports :envvar:`SAGE_SUDO`, into a root-owned installation
   hierarchy (:envvar:`SAGE_LOCAL`).
 
-- :envvar:`SAGE_PYTHON3` - set this to ``yes`` to build Sage using
-  Python 3 rather than Python 2.
-
-  .. WARNING::
-
-     This will probably break your Sage installation!
-
-  .. WARNING::
-
-     This environment variable may not be supported in future versions
-     of Sage; it may be replaced by (for example) ``configure``
-     options.
-
 Variables to set if you're trying to build Sage with an unusual setup, e.g.,
 an unsupported machine or an unusual compiler:
 
@@ -1163,7 +1121,7 @@ an unsupported machine or an unusual compiler:
       which is not a supported platform for Sage yet. Things may or
       may not work. If you would like to help port Sage to AIX,
       please join the sage-devel discussion list -- see
-      http://groups.google.com/group/sage-devel
+      https://groups.google.com/group/sage-devel
       The Sage community would also appreciate any patches you submit.
 
       To get past this message and try building Sage anyway,
@@ -1308,9 +1266,6 @@ Sage uses the following environment variables when it runs:
   time Sage starts.
   The default value is :file:`$DOT_SAGE/init.sage`.
 
-- :envvar:`SAGE_PATH` - a colon-separated list of directories which Sage
-  searches when trying to locate Python libraries.
-
 - :envvar:`BROWSER` - on most platforms, Sage will detect the command to
   run a web browser, but if this doesn't seem to work on your machine, set this
   variable to the appropriate command.
@@ -1325,16 +1280,6 @@ Variables dealing with doctesting:
   seconds to allow a doctest before timing it out, if tests are run using
   ``sage -t --long``.
   If this isn't set, the default is 1800 seconds (30 minutes).
-
-- :envvar:`SAGE_PICKLE_JAR` - if you want to update the standard pickle
-  jar, set this to something non-empty and run the doctest suite.
-  See the documentation for the functions :func:`picklejar` and
-  :func:`unpickle_all` in
-  :file:`$SAGE_ROOT/src/sage/structure/sage_object.pyx`, online
-  `here (picklejar)
-  <http://doc.sagemath.org/html/en/reference/sage/structure/sage_object.html#sage.structure.sage_object.picklejar>`_
-  and `here (unpickle_all)
-  <http://doc.sagemath.org/html/en/reference/sage/structure/sage_object.html#sage.structure.sage_object.unpickle_all>`_.
 
 - :envvar:`SAGE_TEST_GLOBAL_ITER`, :envvar:`SAGE_TEST_ITER`: these can
   be used instead of passing the flags ``--global-iterations`` and

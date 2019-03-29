@@ -1,7 +1,7 @@
-From 934a15d3253ecdc3b6bb82254ba7e45cdac6d3fc Mon Sep 17 00:00:00 2001
+From 04d878728603db345c0a0b01718864a12bcfa97d Mon Sep 17 00:00:00 2001
 From: Emmanuel Charpentier <emm.charpentier@free.fr>
-Date: Fri, 13 Oct 2017 07:09:24 +0200
-Subject: [PATCH 1/8] autoconf_verb_dash
+Date: Wed, 14 Mar 2018 19:30:36 +0100
+Subject: [PATCH 1/9] autoconf_verb_dash
 
 Bug in autoconf and R macros.
 Use -### instead of -v to detect linker options.
@@ -15,10 +15,10 @@ autoconf-2.68 gives errors, even on the clean upstream sources.
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/configure b/configure
-index 2d9f8e8..df67628 100755
+index a314719..dee602f 100755
 --- a/configure
 +++ b/configure
-@@ -24836,7 +24836,7 @@ _ACEOF
+@@ -24837,7 +24837,7 @@ _ACEOF
  if ac_fn_f77_try_compile "$LINENO"; then :
    ac_cv_prog_f77_v=
  # Try some options frequently used verbose output
@@ -27,7 +27,7 @@ index 2d9f8e8..df67628 100755
    cat > conftest.$ac_ext <<_ACEOF
        program main
  
-@@ -25192,7 +25192,7 @@ _ACEOF
+@@ -25193,7 +25193,7 @@ _ACEOF
  if ac_fn_c_try_compile "$LINENO"; then :
    r_cv_prog_c_v=
  # Try some options frequently used verbose output
@@ -37,5 +37,5 @@ index 2d9f8e8..df67628 100755
  /* end confdefs.h.  */
  
 -- 
-2.14.2
+2.16.1
 

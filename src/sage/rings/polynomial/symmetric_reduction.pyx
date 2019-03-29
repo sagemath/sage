@@ -37,7 +37,7 @@ once. This is the background of
 Our current strategy is to keep the number of terms in the polynomials
 as small as possible. For this, we sort `L` by increasing number of
 terms. If several elements of `L` allow for a reduction of `p`, we
-chose the one with the smallest number of terms. Later on, it should
+choose the one with the smallest number of terms. Later on, it should
 be possible to implement further strategies for choice.
 
 When adding a new polynomial `q` to `L`, we first reduce `q` with

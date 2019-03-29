@@ -1,72 +1,86 @@
-# WARNING -- if you add a package here, also add it to
-# the gap_reset_workspace() command in
-#    <SAGE_ROOT>/src/sage/interfaces/gap.py
+GAP_ROOT="$SAGE_LOCAL/share/gap"
+PKG_DIR="$GAP_ROOT/pkg"
+
+PKG_SRC_DIR="$(pwd)/src/pkg"
+cd "$PKG_SRC_DIR"
+
+# directly install pure GAP packages
 #
+#    happrime - no longer distributed, partly merged in Hap,
+#    cf. https://www.gap-system.org/Packages/packages.html#deppkg
+#    (GAP 4.8.6 still had it, but this is gone in 4.10)
 
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "SAGE_LOCAL undefined ... exiting"
-    echo >&2 "Maybe run 'sage --sh'?"
-    exit 1
-fi
+sdh_install \
+    aclib-* \
+    AutoDoc-* \
+    corelg \
+    crime-* \
+    cryst \
+    crystcat \
+    design \
+    gbnp \
+    Hap* \
+    HAPcryst \
+    hecke-* \
+    liealgdb-* \
+    liepring-* \
+    liering \
+    loops \
+    MapClass-* \
+    polymaking \
+    qpa-* \
+    quagroup \
+    radiroot-* \
+    repsn \
+    sla \
+    sonata-* \
+    Toric-* \
+    utils-* \
+    "$PKG_DIR"
 
-GAP_DIR="$SAGE_LOCAL/gap/latest"
-PKG_DIR="$GAP_DIR/pkg"
+install_compiled_pkg()
+{
+    local pkg="$1"
+    # Install the bin/ dir (where compiled modules should end up)
+    # under <prefix>/lib/gap; we then symlink to it later
+    sdh_install bin "$SAGE_LOCAL/lib/gap/pkg/$pkg"
 
-# Some GAP packages have weird permissions which can prevent us from
-# overwriting them
-chmod -R u+rwX "$PKG_DIR" || mkdir -p "$PKG_DIR"
+    # Clean up any build artificts before installing the rest of the package
+    # Also remove configure/Makefiles
+    # Note: None, if any of the packages really have a proper install target
+    make clean  # Works for some packages but not all
+    rm -rf bin/
+    rm -rf configure configure.* config.* autogen.sh *.m4 Makefile* m4/
 
-cp SPKG.txt "$PKG_DIR"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error copying SPKG.txt"
-    exit 1
-fi
+    # Create the bin/ symlink
+    ln -s "$SAGE_LOCAL/lib/gap/pkg/$pkg/bin" bin
 
+    # Install the rest of the package files
+    sdh_install * "$PKG_DIR/$pkg"
+}
 
-cd src/
-
-for p in \
-    aclib crime ctbllib cryst crystcat design factint grape \
-    guava-3.13 Hap1.11 HAPcryst happrime laguna polymaking \
-    sonata toric1.8 polycyclic-2.11 autpgrp Alnuth-3.0.0 atlasrep
+# Build and install compiled packages:
+#
+# These packages have an old ./configure that take the GAP_ROOT as a positional
+# argument
+for pkg in cohomolo-* crypting-* grape-* guava-*
 do
-    echo "Copying package $p"
-    cp -r $p "$PKG_DIR"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error copying package $p."
-        exit 1
-    fi
+    echo "Building GAP package $pkg"
+    cd "$PKG_SRC_DIR/$pkg"
+    ./configure "$GAP_ROOT"
+    sdh_make -j1
+    install_compiled_pkg "$pkg"
+    cd "$PKG_SRC_DIR"
 done
 
+# These packages have a new-style autoconf ./configure
+# that takes --with-gaproot
 
-# Build GRAPE package
-cd "$PKG_DIR/grape"
-rm -rf bin   # added since rebuilding breaks otherwise
-./configure "$GAP_DIR"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring GRAPE package."
-    exit 1
-fi
-$MAKE -j1
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building GRAPE package."
-    exit 1
-fi
-
-
-# Build GUAVA package
-cd "$PKG_DIR"/guava-3* && ./configure "$GAP_DIR"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring GUAVA packagae."
-    exit 1
-fi
-$MAKE -j1
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building GUAVA package."
-    exit 1
-fi
-
-# Some GAP packages have weird permissions
-chmod -R u+rwX "$PKG_DIR"
-
-
+for pkg in nq-* io-*
+do
+    cd "$PKG_SRC_DIR/$pkg"
+    sdh_configure --with-gaproot="$GAP_ROOT"
+    sdh_make -j1
+    install_compiled_pkg "$pkg"
+    cd "$PKG_SRC_DIR"
+done

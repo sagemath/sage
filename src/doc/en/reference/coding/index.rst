@@ -111,13 +111,5 @@ Other modules
    sage/coding/code_bounds
    sage/coding/delsarte_bounds
 
-Deprecated modules
-----------------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/coding/sd_codes
-
 
 .. include:: ../footer.txt

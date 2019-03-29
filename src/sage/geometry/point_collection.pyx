@@ -80,6 +80,7 @@ from __future__ import print_function
 from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp
 
+from sage.geometry.toric_lattice import ToricLattice
 from sage.matrix.all import matrix
 from sage.misc.all import latex
 
@@ -855,7 +856,7 @@ cdef class PointCollection(SageObject):
             [1 1 1 1]
             in 3-d lattice N
 
-        Note that the last two outpus are identical, separators are only
+        Note that the last two outputs are identical, separators are only
         inserted in the LaTeX mode::
 
             sage: latex(c)
@@ -900,3 +901,125 @@ cdef class PointCollection(SageObject):
         if self._set is None:
             self._set = frozenset(self._points)
         return self._set
+
+    def write_for_palp(self, f):
+        r"""
+        Write ``self`` into an open file ``f`` in PALP format.
+
+        INPUT:
+
+        - ``f`` -- a file opened for writing.
+
+        EXAMPLES::
+
+            sage: o = lattice_polytope.cross_polytope(3)
+            sage: from six import StringIO
+            sage: f = StringIO()
+            sage: o.vertices().write_for_palp(f)
+            sage: print(f.getvalue())
+            6 3
+            1 0 0
+            0 1 0
+            0 0 1
+            -1 0 0
+            0 -1 0
+            0 0 -1
+        """
+        f.write('{} {}\n'.format(len(self), self._module.rank()))
+        f.write('\n'.join(' '.join(str(c) for c in p) for p in self))
+        f.write('\n')
+
+
+def read_palp_point_collection(f, lattice=None, permutation=False):
+    r"""
+    Read and return a point collection from an opened file.
+
+    Data must be in PALP format:
+   
+        * the first input line starts with two integers `m` and `n`, the number
+          of points and the number of components of each;
+    
+        * the rest of the first line may contain a permutation;
+    
+        * the next `m` lines contain `n` numbers each.
+        
+    .. NOTE::
+    
+        If `m` < `n`, it is assumed (for compatibility with PALP) that the
+        matrix is transposed, i.e. that each column is a point.
+
+    INPUT:
+
+    - ``f`` -- an opened file with PALP output.
+    
+    - ``lattice`` -- the lattice for points. If not given, the
+      :class:`toric lattice <sage.geometry.toric_lattice.ToricLatticeFactory>`
+      `M` of dimension `n` will be used.
+
+    - ``permutation`` -- (default: ``False``) if ``True``, try to retrieve
+      the permutation. This parameter makes sense only when PALP computed the
+      normal form of a lattice polytope.
+
+    OUTPUT:
+
+    - a :class:`point collection <PointCollection>`, optionally followed by
+      a permutation. ``None`` if EOF is reached.
+
+    EXAMPLES::
+
+        sage: data = "3 2 regular\n1 2\n3 4\n5 6\n2 3 transposed\n1 2 3\n4 5 6"
+        sage: print(data)
+        3 2 regular
+        1 2
+        3 4
+        5 6
+        2 3 transposed
+        1 2 3
+        4 5 6
+        sage: from six import StringIO
+        sage: f = StringIO(data)
+        sage: from sage.geometry.point_collection \
+        ....:     import read_palp_point_collection
+        sage: read_palp_point_collection(f)
+        M(1, 2),
+        M(3, 4),
+        M(5, 6)
+        in 2-d lattice M
+        sage: read_palp_point_collection(f)
+        M(1, 4),
+        M(2, 5),
+        M(3, 6)
+        in 2-d lattice M
+        sage: read_palp_point_collection(f) is None
+        True
+    """
+    cdef int i, j, m, n
+    first_line = f.readline()
+    if first_line == "":
+        return None
+    first_line = first_line.split()
+    m = int(first_line[0])
+    n = int(first_line[1])
+    if m >= n:
+        # Typical situation: a point on each line
+        lattice = lattice or ToricLattice(n).dual()
+        points = [lattice.element_class(lattice, f.readline().split())
+                for i in range(m)]
+    else:
+        # Also may appear as PALP output, e.g. points of 3-d polytopes
+        lattice = lattice or ToricLattice(m).dual()
+        data = [f.readline().split() for j in range(m)]
+        points = [lattice.element_class(lattice, [data[j][i] for j in range(m)])
+                for i in range(n)]
+    for p in points:
+        p.set_immutable()
+    pc = PointCollection(points, lattice)
+    if permutation:
+        last_piece = first_line[-1].split('=')
+        if last_piece[0] != 'perm':
+            raise ValueError('permutation was requested but not found')
+        from sage.geometry.lattice_polytope import _palp_convert_permutation
+        p = _palp_convert_permutation(last_piece[1])
+        return (pc, p)
+    else:
+        return pc

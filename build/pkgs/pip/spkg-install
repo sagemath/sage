@@ -1,20 +1,16 @@
 cd src
 
-# pip can install itself!
-#
+
+# pip can install itself! But first we need to ensure that the pip
+# source directory in on the PYTHONPATH
+export PYTHONPATH="$(pwd)/src"
+
 # need to use --upgrade or --ignore-installed; Otherwise pip, which is
 # importing itself, will think itself is already installed
 #
 # Install pip3 first so pip2 overwrites local/bin/pip
-
-python3 -m pip install --verbose --no-index --ignore-installed --isolated .
-if [ $? -ne 0 ]; then
-    echo "Error building / installing pip3"
-    exit 1
-fi
-
-python2 -m pip install --verbose --no-index --ignore-installed --isolated .
-if [ $? -ne 0 ]; then
-    echo "Error building / installing pip2"
-    exit 1
-fi
+for vers in 3 2; do
+    python${vers} -m pip install --verbose --no-index --ignore-installed \
+            --no-build-isolation --isolated --root="$SAGE_DESTDIR" . || \
+        sdh_die "Error building / installing pip${vers}"
+done

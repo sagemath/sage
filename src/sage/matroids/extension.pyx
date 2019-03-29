@@ -195,7 +195,7 @@ cdef class LinearSubclassesIter:
             sage: from sage.matroids.extension import LinearSubclasses
             sage: M = matroids.Uniform(3, 6)
             sage: type(LinearSubclasses(M).__iter__())
-            <type 'sage.matroids.extension.LinearSubclassesIter'>
+            <... 'sage.matroids.extension.LinearSubclassesIter'>
         """
         cdef CutNode first_cut = CutNode(MC)
         self._MC = MC

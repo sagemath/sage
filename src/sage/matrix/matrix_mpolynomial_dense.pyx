@@ -227,7 +227,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         elif algorithm == 'row_reduction':
             self._echelonize_row_reduction()
         else:
-            raise ValueError("Unknown algorithm '%s'"%algorithm)
+            raise ValueError("Unknown algorithm '%s'" % algorithm)
 
     def _echelonize_gauss_bareiss(self):
         """
@@ -352,15 +352,15 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         A more interesting example::
 
             sage: P.<x0,x1,y0,y1> = PolynomialRing(GF(2), 4)
-            sage: l = [1, 1, 1, 1,     1, \
-                       0, 1, 0, 1,    x0, \
-                       0, 0, 1, 1,    x1, \
-                       1, 1, 0, 0,    y0, \
-                       0, 1, 0, 1,    y1, \
-                       0, 1, 0, 0, x0*y0, \
-                       0, 1, 0, 1, x0*y1, \
-                       0, 0, 0, 0, x1*y0, \
-                       0, 0, 0, 1, x1*y1]
+            sage: l = [1, 1, 1, 1,     1,
+            ....:      0, 1, 0, 1,    x0,
+            ....:      0, 0, 1, 1,    x1,
+            ....:      1, 1, 0, 0,    y0,
+            ....:      0, 1, 0, 1,    y1,
+            ....:      0, 1, 0, 0, x0*y0,
+            ....:      0, 1, 0, 1, x0*y1,
+            ....:      0, 0, 0, 0, x1*y0,
+            ....:      0, 0, 0, 1, x1*y1]
             sage: A = Matrix(P, 9, 5, l)
             sage: B = A.__copy__()
             sage: B.echelonize('row_reduction'); B
@@ -384,7 +384,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         ALGORITHM:
 
         Gaussian elimination with division limited to constant
-        entries. Based on SINGULAR's rowred commamnd.
+        entries. Based on SINGULAR's rowred command.
         """
         from sage.matrix.constructor import matrix
 

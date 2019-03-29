@@ -1,4 +1,4 @@
-"""
+r"""
 Double Description for Arbitrary Polyhedra
 
 This module is part of the python backend for polyhedra. It uses the

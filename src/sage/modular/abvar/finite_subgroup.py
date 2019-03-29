@@ -102,12 +102,11 @@ from __future__ import absolute_import
 from sage.modular.abvar.torsion_point import TorsionPoint
 from sage.modules.module import Module
 from sage.modules.free_module import is_FreeModule
-from sage.structure.element import ModuleElement
 from sage.structure.gens_py import abelian_iterator
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.all import QQ, ZZ, QQbar, Integer
-from sage.arith.all import gcd, lcm
+from sage.arith.all import lcm
 from sage.misc.all import prod
 from sage.structure.element import coercion_model
 
@@ -253,8 +252,10 @@ class FiniteSubgroup(Module):
         if not A.in_same_ambient_variety(B):
             return richcmp(A.ambient_variety(), B.ambient_variety(), op)
         L = A.lattice() + B.lattice()
+        lx = other.lattice() + L
+        rx = self.lattice() + L
         # order gets reversed in passing to lattices.
-        return richcmp(other.lattice() + L, self.lattice() + L, op)
+        return lx._echelon_matrix_richcmp(rx, op)
 
     def is_subgroup(self, other):
         """
@@ -295,6 +296,11 @@ class FiniteSubgroup(Module):
             sage: A = C.subgroup([C.0]); B = C.subgroup([C.1])
             sage: A + B == C
             True
+
+        An example where the parent abelian varieties are different::
+
+            A = J0(48); A[0].cuspidal_subgroup() + A[1].cuspidal_subgroup()
+            Finite subgroup with invariants [2, 4, 4] over QQ of Abelian subvariety of dimension 2 of J0(48)
         """
         if not isinstance(other, FiniteSubgroup):
             raise TypeError("only addition of two finite subgroups is defined")
@@ -305,9 +311,11 @@ class FiniteSubgroup(Module):
         K = coercion_model.common_parent(self.field_of_definition(), other.field_of_definition())
         lattice = self.lattice() + other.lattice()
         if A != B:
+            C = A + B
             lattice += C.lattice()
-
-        return FiniteSubgroup_lattice(self.abelian_variety(), lattice, field_of_definition=K)
+            return FiniteSubgroup_lattice(C, lattice, field_of_definition=K)
+        else:
+            return FiniteSubgroup_lattice(self.abelian_variety(), lattice, field_of_definition=K)
 
     def exponent(self):
         """
@@ -569,7 +577,7 @@ class FiniteSubgroup(Module):
             sage: J0(43).cuspidal_subgroup().gens()
             [[(0, 1/7, 0, 6/7, 0, 5/7)]]
             sage: J1(13).cuspidal_subgroup().gens()
-            [[(1/19, 0, 0, 9/19)], [(0, 1/19, 1/19, 18/19)]]
+            [[(1/19, 0, 9/19, 9/19)], [(0, 1/19, 0, 9/19)]]
             sage: J0(22).torsion_subgroup(6).gens()
             [[(1/6, 0, 0, 0)], [(0, 1/6, 0, 0)], [(0, 0, 1/6, 0)], [(0, 0, 0, 1/6)]]
         """

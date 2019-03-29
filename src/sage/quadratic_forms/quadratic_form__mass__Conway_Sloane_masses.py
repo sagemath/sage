@@ -642,13 +642,9 @@ def conway_mass(self):
     """
     Compute the mass by using the Conway-Sloane mass formula.
 
-    INPUT:
-
-        none
-
     OUTPUT:
 
-        a rational number > 0
+    a rational number > 0
 
     EXAMPLES::
 
@@ -664,24 +660,27 @@ def conway_mass(self):
         sage: Q.conway_mass()
         3/32
 
+        sage: Q = QuadraticForm(Matrix(ZZ,2,[2,1,1,2]))
+        sage: Q.conway_mass()
+        1/12
     """
     ## Try to use the cached result
     try:
         return self.__conway_mass
     except AttributeError:
-        ## Double the form so it's integer-matrix
+        # Double the form so it's integer-matrix
         Q = self.scale_by_factor(2)
 
-        ## Compute the standard mass
+        # Compute the standard mass
         mass = Q.conway_standard_mass()
 
-        ## Adjust the p-masses when p|2d
+        # Adjust the p-masses when p|2d
         d = self.det()
         for p in prime_divisors(2*d):
             mass *= (Q.conway_p_mass(p) / Q.conway_standard_p_mass(p))
 
-        ## Cache and return the (simplified) result
-        self.__conway_mass = QQ((mass**ZZ(2))**(ZZ(1)/ZZ(2)))
+        # Cache and return the (simplified) result
+        self.__conway_mass = QQ(mass.canonicalize_radical()).abs()
         return self.__conway_mass
 
 

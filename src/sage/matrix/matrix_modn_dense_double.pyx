@@ -7,27 +7,32 @@ AUTHORS:
 - Martin Albrecht
 """
 ###############################################################################
-#   SAGE: Open Source Mathematical Software
 #       Copyright (C) 2011 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2011 Martin Albrecht <martinralbrecht@googlemail.com>
-#  Distributed under the terms of the GNU General Public License (GPL),
-#  version 2 or any later version.  The full text of the GPL is available at:
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
+#*****************************************************************************
 
 
 from sage.rings.finite_rings.stdint cimport *
 
-from sage.libs.linbox.echelonform cimport BlasMatrixDouble as BlasMatrix
-from sage.libs.linbox.modular cimport ModDoubleField as ModField, ModDoubleFieldElement as ModFieldElement
-from sage.libs.linbox.echelonform cimport EchelonFormDomainDouble as EchelonFormDomain
+from sage.libs.linbox.givaro cimport \
+    Modular_double as ModField, \
+    Poly1Dom, Dense
 
-from sage.libs.linbox.fflas cimport ModDouble_fgemm as Mod_fgemm, ModDouble_fgemv as Mod_fgemv, \
-    ModDoubleDet as ModDet, \
-    ModDoubleRank as ModRank, ModDouble_echelon as Mod_echelon, \
-    ModDouble_applyp as Mod_applyp, \
-    ModDouble_MinPoly as Mod_MinPoly, \
-    ModDouble_CharPoly as Mod_CharPoly
+from sage.libs.linbox.linbox cimport \
+    DenseMatrix_Modular_double as BlasMatrix, \
+    EchelonForm_Modular_double as EchelonFormDomain
+
+from sage.libs.linbox.fflas cimport \
+    fgemm, fgemv, Det, Rank, ReducedRowEchelonForm, applyP, \
+    MinPoly, CharPoly, MinPoly, \
+    ModDoubleDensePolynomial as ModDensePoly
+
+ctypedef Poly1Dom[ModField, Dense] ModDensePolyRing
 
 # Limit for LinBox Modular<double>
 MAX_MODULUS = 2**23

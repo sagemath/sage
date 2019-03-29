@@ -132,7 +132,7 @@ cpdef int iaxpy(a, dict X, dict Y, bint remove_zeros=True, bint factor_on_left=T
                 else:
                     value = value*a
                 if not value:
-                    continue # a is a zero divizor
+                    continue  # a is a zero divisor
             # assert value
             if key in Y:
                 Y[key] += value

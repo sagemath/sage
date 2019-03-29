@@ -31,14 +31,12 @@ import copy
 import os
 import re
 import string
-import time
 
 from sage.structure.sage_object import SageObject
 from sage.rings.all import ComplexField, Integer
 from sage.misc.all import verbose, sage_eval, SAGE_TMP
 import sage.interfaces.gp
 from sage.env import SAGE_EXTCODE
-
 
 
 class Dokchitser(SageObject):
@@ -602,13 +600,30 @@ class Dokchitser(SageObject):
             sage: L = E.lseries().dokchitser(200)
             sage: L.taylor_series(1,3)
             -9.094...e-82 + (5.1538...e-82)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
+
+        Check that :trac:`25402` is fixed::
+
+            sage: L = EllipticCurve("24a1").modular_form().lseries()
+            sage: L.taylor_series(-1, 3)
+            0.000000000000000 - 0.702565506265199*z + 0.638929001045535*z^2 + O(z^3)
+
+        Check that :trac:`25965` is fixed::
+
+            sage: L2 = EllipticCurve("37a1").modular_form().lseries(); L2
+            L-series associated to the cusp form q - 2*q^2 - 3*q^3 + 2*q^4 - 2*q^5 + O(q^6)
+            sage: L2.taylor_series(0,4)
+            0.000000000000000 - 0.357620466127498*z + 0.273373112603865*z^2 + 0.303362857047671*z^3 + O(z^4)
+            sage: L2.taylor_series(0,1)
+            O(z^1)
+            sage: L2(0)
+            0.000000000000000
         """
         self.__check_init()
         a = self.__CC(a)
         k = Integer(k)
         try:
             z = self._gp_call_inst('Lseries', a, '', k - 1)
-            z = self.gp()('Vec(%s)' % z)
+            z = self.gp()('Vecrev(Pol(%s))' % z)
         except TypeError as msg:
             raise RuntimeError("%s\nUnable to compute Taylor expansion (try lowering the number of terms)" % msg)
         r = repr(z)
@@ -622,7 +637,7 @@ class Dokchitser(SageObject):
         K = self.__CC
         v = [K(repr(x)) for x in v]
         R = self.__CC[[var]]
-        return R(v, len(v))
+        return R(v, k)
 
     def check_functional_equation(self, T=1.2):
         r"""

@@ -1,11 +1,12 @@
 r"""
 ISGCI: Information System on Graph Classes and their Inclusions
 
-This module implements an interface to the `ISGCI <http://www.graphclasses.org/>`_ database in Sage.
+This module implements an interface to the
+`ISGCI <http://www.graphclasses.org/>`_ database in Sage.
 
-This database gathers information on graph classes and their
-inclusions in each other. It also contains information on the
-complexity of several computational problems.
+This database gathers information on graph classes and their inclusions in each
+other. It also contains information on the complexity of several computational
+problems.
 
 It is available on the `GraphClasses.org <http://www.graphclasses.org/>`_
 website maintained by H.N. de Ridder et al.
@@ -52,9 +53,9 @@ database with the :meth:`~GraphClass.description` method::
     sage: Chordal.description()
     Class of graphs : Chordal
     -------------------------
-    type                           :  base
     id                             :  gc_32
     name                           :  chordal
+    type                           :  base
     <BLANKLINE>
     Problems :
     -----------
@@ -94,8 +95,8 @@ calling the :meth:`~GraphClasses.show_all` method (beware -- long output)::
     gc_7      | $P_4$--extendible                        | base                 |
     ...
 
-Until a proper search method is implemented, this lets one find
-classes which do not appear in :obj:`graph_classes.* <GraphClasses>`.
+Until a proper search method is implemented, this lets one find classes which do
+not appear in :obj:`graph_classes.* <GraphClasses>`.
 
 To retrieve a class of graph from its ISGCI ID one may use
 the :meth:`~GraphClasses.get_class` method::
@@ -226,6 +227,10 @@ Predefined classes
 
      - :meth:`~sage.graphs.generic_graph.GenericGraph.is_planar`
 
+   * - Polyhedral
+
+     - :meth:`~sage.graphs.generic_graph.Graph.is_polyhedral`
+
    * - Split
 
      - :meth:`~sage.graphs.graph.Graph.is_split`
@@ -276,10 +281,10 @@ Its nodes are ID of ISGCI classes::
     sage: d.vertices()[-10:]
     ['gc_990', 'gc_991', 'gc_992', 'gc_993', 'gc_994', 'gc_995', 'gc_996', 'gc_997', 'gc_998', 'gc_999']
 
-An arc from ``gc1`` to ``gc2`` means that ``gc1`` is a superclass of
-``gc2``. This being said, not all edges are stored ! To ensure that a given
-class is included in another one, we have to check whether there is in the
-digraph a ``path`` from the first one to the other::
+An arc from ``gc1`` to ``gc2`` means that ``gc1`` is a superclass of ``gc2``.
+This being said, not all edges are stored ! To ensure that a given class is
+included in another one, we have to check whether there is in the digraph a
+``path`` from the first one to the other::
 
     sage: bip_id = graph_classes.Bipartite._gc_id
     sage: perfect_id = graph_classes.Perfect._gc_id
@@ -307,9 +312,9 @@ bipartite graphs. Therefore bipartite graphs are perfect !
 
 .. note::
 
-    The inclusion digraph is **NOT ACYCLIC**. Indeed, several entries
-    exist in the ISGCI database which represent the same graph class,
-    for instance Perfect graphs and Berge graphs::
+    The inclusion digraph is **NOT ACYCLIC**. Indeed, several entries exist in
+    the ISGCI database which represent the same graph class, for instance
+    Perfect graphs and Berge graphs::
 
         sage: graph_classes.inclusion_digraph().is_directed_acyclic()
         False
@@ -366,16 +371,16 @@ Information for developpers
 
     * Implement intersection of graph classes
 
-    * Write generic recognition algorithms for specific classes (when a graph class
-      is defined by the exclusion of subgraphs, one can write a generic algorithm
-      checking the existence of each of the graphs, and this method already exists
-      in Sage).
+    * Write generic recognition algorithms for specific classes (when a graph
+      class is defined by the exclusion of subgraphs, one can write a generic
+      algorithm checking the existence of each of the graphs, and this method
+      already exists in Sage).
 
-    * Improve the performance of Sage's graph library by letting it
-      take advantage of the properties of graph classes. For example,
-      :meth:`Graph.independent_set` could use the library to detect
-      that a given graph is, say, a tree or a planar graph, and use a
-      specialized algorithm for finding an independent set.
+    * Improve the performance of Sage's graph library by letting it take
+      advantage of the properties of graph classes. For example,
+      :meth:`Graph.independent_set` could use the library to detect that a given
+      graph is, say, a tree or a planar graph, and use a specialized algorithm
+      for finding an independent set.
 
 AUTHORS:
 --------
@@ -429,7 +434,7 @@ class GraphClass(SageObject, CachedRepresentation):
         sage: Chordal >= Trees
         True
     """
-    def __init__(self, name, gc_id, recognition_function = None):
+    def __init__(self, name, gc_id, recognition_function=None):
         r"""
         Class constructor
 
@@ -461,7 +466,7 @@ class GraphClass(SageObject, CachedRepresentation):
             sage: graph_classes.Chordal  # indirect doctest
             Chordal graphs
         """
-        return self._name+" graphs"
+        return self._name + " graphs"
 
     def __hash__(self):
         r"""
@@ -539,8 +544,8 @@ class GraphClass(SageObject, CachedRepresentation):
         r"""
         Returns the list of forbidden induced subgraphs defining the class.
 
-        If the graph class is not defined by a *finite* list of forbidden induced
-        subgraphs, ``None`` is returned instead.
+        If the graph class is not defined by a *finite* list of forbidden
+        induced subgraphs, ``None`` is returned instead.
 
         EXAMPLES::
 
@@ -614,7 +619,7 @@ class GraphClass(SageObject, CachedRepresentation):
                                       "for this class.")
 
         for gg in excluded:
-            if g.subgraph_search(gg, induced = True):
+            if g.subgraph_search(gg, induced=True):
                 return False
 
         return True
@@ -628,9 +633,9 @@ class GraphClass(SageObject, CachedRepresentation):
             sage: graph_classes.Chordal.description()
             Class of graphs : Chordal
             -------------------------
-            type                           :  base
             id                             :  gc_32
             name                           :  chordal
+            type                           :  base
             <BLANKLINE>
             Problems :
             -----------
@@ -658,10 +663,10 @@ class GraphClass(SageObject, CachedRepresentation):
         classes = GraphClasses().classes()
         cls = classes[self._gc_id]
 
-        print("Class of graphs : "+self._name)
-        print("-" * (len(self._name)+18))
+        print("Class of graphs : " + self._name)
+        print("-" * (len(self._name) + 18))
 
-        for key, value in six.iteritems(cls):
+        for key, value in sorted(cls.items()):
             if value != "" and key != "problem":
                 print("{:30} : {}".format(key, value))
 
@@ -706,10 +711,10 @@ class GraphClasses(UniqueRepresentation):
         if id in classes:
             c = classes[id]
 
-            if c.get("name",""):
+            if c.get("name", ""):
                 name = c["name"]
             else:
-                name = "class "+str(id)
+                name = "class " + str(id)
 
             return GraphClass(name, id)
         else:
@@ -720,8 +725,8 @@ class GraphClasses(UniqueRepresentation):
         r"""
         Returns the graph classes, as a dictionary.
 
-        Upon the first call, this loads the database from the local
-        XML file. Subsequent calls are cached.
+        Upon the first call, this loads the database from the local XML
+        file. Subsequent calls are cached.
 
         EXAMPLES::
 
@@ -747,8 +752,8 @@ class GraphClasses(UniqueRepresentation):
 
         a list of dictionaries
 
-        Upon the first call, this loads the database from the local
-        XML file. Subsequent calls are cached.
+        Upon the first call, this loads the database from the local XML file.
+        Subsequent calls are cached.
 
         EXAMPLES::
 
@@ -766,8 +771,8 @@ class GraphClasses(UniqueRepresentation):
         r"""
         Returns a dictionary associating a graph to a graph description string.
 
-        Upon the first call, this loads the database from the local
-        XML files. Subsequent calls are cached.
+        Upon the first call, this loads the database from the local XML files.
+        Subsequent calls are cached.
 
         EXAMPLES::
 
@@ -791,8 +796,8 @@ class GraphClasses(UniqueRepresentation):
         r"""
         Returns the class inclusion digraph
 
-        Upon the first call, this loads the database from the local
-        XML file. Subsequent calls are cached.
+        Upon the first call, this loads the database from the local XML file.
+        Subsequent calls are cached.
 
         EXAMPLES::
 
@@ -827,11 +832,11 @@ class GraphClasses(UniqueRepresentation):
         from sage.misc.misc import SAGE_TMP
         import os.path
         u = urlopen('http://www.graphclasses.org/data.zip')
-        localFile = open(os.path.join(SAGE_TMP,'isgci.zip'), 'w')
+        localFile = open(os.path.join(SAGE_TMP, 'isgci.zip'), 'w')
         localFile.write(u.read())
         localFile.close()
         import os, zipfile
-        z = zipfile.ZipFile(os.path.join(SAGE_TMP,'isgci.zip'))
+        z = zipfile.ZipFile(os.path.join(SAGE_TMP, 'isgci.zip'))
 
         # Save a systemwide updated copy whenever possible
 
@@ -860,21 +865,19 @@ class GraphClasses(UniqueRepresentation):
         import os.path
         from sage.graphs.graph import Graph
 
-        xml_file = os.path.join(GRAPHS_DATA_DIR,_XML_FILE)
+        xml_file = os.path.join(GRAPHS_DATA_DIR, _XML_FILE)
         tree = ET.ElementTree(file=xml_file)
         root = tree.getroot()
         DB = _XML_to_dict(root)
 
-        giveme = lambda x,y : str(x.getAttribute(y))
-
-        classes = {c['id']:c for c in DB['GraphClasses']["GraphClass"]}
+        classes = {c['id']: c for c in DB['GraphClasses']["GraphClass"]}
         for c in itervalues(classes):
-            c["problem"] = { pb.pop("name"):pb for pb in c["problem"]}
+            c["problem"] = {pb.pop("name"): pb for pb in c["problem"]}
 
         inclusions = DB['Inclusions']['incl']
 
         # Parses the list of ISGCI small graphs
-        smallgraph_file = open(os.path.join(GRAPHS_DATA_DIR,_SMALLGRAPHS_FILE),'r')
+        smallgraph_file = open(os.path.join(GRAPHS_DATA_DIR, _SMALLGRAPHS_FILE), 'r')
         smallgraphs = {}
 
         for l in smallgraph_file.readlines():
@@ -889,7 +892,8 @@ class GraphClasses(UniqueRepresentation):
 
     def update_db(self):
         r"""
-        Updates the ISGCI database by downloading the latest version from internet.
+        Updates the ISGCI database by downloading the latest version from
+        internet.
 
         This method downloads the ISGCI database from the website
         `GraphClasses.org <http://www.graphclasses.org/>`_. It then extracts the
@@ -905,8 +909,6 @@ class GraphClasses(UniqueRepresentation):
 
             sage: graph_classes.update_db() # Not tested -- requires internet
         """
-        from sage.misc.misc import SAGE_TMP, SAGE_DB
-
         self._download_db()
 
         print("Database downloaded")
@@ -924,13 +926,14 @@ class GraphClasses(UniqueRepresentation):
 
         OUTPUT:
 
-        A pair ``(classes, inclusions)`` where ``classes`` is a dict of dict, and
-        ``inclusions`` is a list of dicts.
+        A pair ``(classes, inclusions)`` where ``classes`` is a dict of dict,
+        and ``inclusions`` is a list of dicts.
 
         .. NOTE::
 
-            This method returns the data contained in the most recent ISGCI database
-            present on the computer. See :meth:`update_db` to update the latter.
+            This method returns the data contained in the most recent ISGCI
+            database present on the computer. See :meth:`update_db` to update
+            the latter.
 
         EXAMPLES::
 
@@ -938,23 +941,22 @@ class GraphClasses(UniqueRepresentation):
         """
 
         import os.path
-        from sage.all import save, load
-        from sage.misc.misc import SAGE_TMP, SAGE_DB
+        from sage.misc.misc import SAGE_DB
 
         try:
-            open(os.path.join(SAGE_DB,_XML_FILE))
+            open(os.path.join(SAGE_DB, _XML_FILE))
 
             # Which copy is the most recent on the disk ?
-            if (os.path.getmtime(os.path.join(SAGE_DB,_XML_FILE)) >
-                os.path.getmtime(os.path.join(GRAPHS_DATA_DIR,_XML_FILE))):
+            if (os.path.getmtime(os.path.join(SAGE_DB, _XML_FILE)) >
+                os.path.getmtime(os.path.join(GRAPHS_DATA_DIR, _XML_FILE))):
 
-                directory = os.path.join(SAGE_DB,_XML_FILE)
+                directory = os.path.join(SAGE_DB, _XML_FILE)
 
             else:
-                directory = os.path.join(GRAPHS_DATA_DIR,_XML_FILE)
+                directory = os.path.join(GRAPHS_DATA_DIR, _XML_FILE)
 
-        except IOError as e:
-            directory = os.path.join(GRAPHS_DATA_DIR,_XML_FILE)
+        except IOError:
+            directory = os.path.join(GRAPHS_DATA_DIR, _XML_FILE)
 
         self._parse_db(directory)
 
@@ -977,7 +979,6 @@ class GraphClasses(UniqueRepresentation):
             ...
         """
         classes = self.classes()
-        classes_list = classes.values()
 
         # We want to print the different fields, and this dictionary stores the
         # maximal number of characters of each field.
@@ -988,16 +989,20 @@ class GraphClasses(UniqueRepresentation):
             "name": 0
             }
 
-        # We sort the classes alphabetically, though we would like to display the
-        # meaningful classes at the top of the list
-        classes_list.sort(key = lambda x:x.get("name","zzzzz")+"{0:4}".format(int(x["id"].split('_')[1])))
+        # We sort the classes alphabetically, though we would like to display
+        # the meaningful classes at the top of the list
+        def sort_key(x):
+            name = x.get("name", "zzzzz")
+            return "{}{:4}".format(name, int(x["id"].split('_')[1]))
+
+        classes_list = sorted(classes.values(), key=sort_key)
 
         # Maximum width of a field
         MAX_LEN = 40
 
         # Computing te max of each field with the database
         for key in MAX:
-            MAX[key] = len(max((str(x.get(key,"")) for x in classes_list), key = len))
+            MAX[key] = len(max((str(x.get(key, "")) for x in classes_list), key=len))
 
         # At most MAX characters per field
         for key, length in six.iteritems(MAX):
@@ -1009,10 +1014,10 @@ class GraphClasses(UniqueRepresentation):
 
         # Entries
         for entry in classes_list:
-            ID = entry.get("id","")
-            name = entry.get("name","")
-            type = entry.get("type","")
-            smallgraph = entry.get("smallgraph","")
+            ID = entry.get("id", "")
+            name = entry.get("name", "")
+            type = entry.get("type", "")
+            smallgraph = entry.get("smallgraph", "")
             print(("{0:"+str(MAX["id"])+"} | {1:"+str(MAX["name"])+"} | {2:"+str(MAX["type"])+"} | ").format(ID, name[:MAX_LEN], type[:MAX_LEN])+str(smallgraph)[:MAX_LEN])
 
 def _XML_to_dict(root):
@@ -1032,15 +1037,15 @@ def _XML_to_dict(root):
         sage: graph_classes.Perfect.description() # indirect doctest
         Class of graphs : Perfect
         -------------------------
-        type                           :  base
         id                             :  gc_56
         name                           :  perfect
+        type                           :  base
         ...
     """
     ans = root.attrib.copy()
     for child in root:
         if child.tag in ans:
-            if not isinstance(ans[child.tag],list):
+            if not isinstance(ans[child.tag], list):
                 ans[child.tag] = [ans[child.tag]]
             ans[child.tag].append(_XML_to_dict(child))
         else:
@@ -1055,26 +1060,27 @@ def _XML_to_dict(root):
 graph_classes = GraphClasses()
 
 # Any object added to this list should also appear in the class' documentation, at the top of the file.
-graph_classes.Apex = GraphClass("Apex", "gc_1181", recognition_function = lambda x:x.is_apex())
-graph_classes.AT_free = GraphClass("AT-free", "gc_61", recognition_function = lambda x:x.is_asteroidal_triple_free())
-graph_classes.Biconnected = GraphClass("Biconnected", "gc_771", recognition_function = lambda x:x.is_biconnected())
+graph_classes.Apex = GraphClass("Apex", "gc_1181", recognition_function=lambda x: x.is_apex())
+graph_classes.AT_free = GraphClass("AT-free", "gc_61", recognition_function=lambda x: x.is_asteroidal_triple_free())
+graph_classes.Biconnected = GraphClass("Biconnected", "gc_771", recognition_function=lambda x: x.is_biconnected())
 graph_classes.BinaryTrees = GraphClass("BinaryTrees", "gc_847")
-graph_classes.Bipartite = GraphClass("Bipartite", "gc_69", recognition_function = lambda x:x.is_bipartite())
-graph_classes.Block = GraphClass("Block", "gc_93", recognition_function = lambda x:x.is_block_graph())
-graph_classes.Cactus = GraphClass("Cactus", "gc_108", recognition_function = lambda x:x.is_cactus())
-graph_classes.Chordal = GraphClass("Chordal", "gc_32", recognition_function = lambda x:x.is_chordal())
+graph_classes.Bipartite = GraphClass("Bipartite", "gc_69", recognition_function=lambda x: x.is_bipartite())
+graph_classes.Block = GraphClass("Block", "gc_93", recognition_function=lambda x: x.is_block_graph())
+graph_classes.Cactus = GraphClass("Cactus", "gc_108", recognition_function=lambda x: x.is_cactus())
+graph_classes.Chordal = GraphClass("Chordal", "gc_32", recognition_function=lambda x: x.is_chordal())
 graph_classes.ClawFree = GraphClass("Claw-free", "gc_62")
-graph_classes.CoGraph = GraphClass("CoGraph", "gc_151", recognition_function = lambda x:x.is_cograph())
-graph_classes.Comparability = GraphClass("Comparability", "gc_72", recognition_function = lambda x: __import__('sage').graphs.comparability.is_comparability)
+graph_classes.CoGraph = GraphClass("CoGraph", "gc_151", recognition_function=lambda x: x.is_cograph())
+graph_classes.Comparability = GraphClass("Comparability", "gc_72", recognition_function=lambda x: __import__('sage').graphs.comparability.is_comparability)
 graph_classes.Gallai = GraphClass("Gallai", "gc_73")
 graph_classes.Grid = GraphClass("Grid", "gc_464")
-graph_classes.Interval = GraphClass("Interval", "gc_234", recognition_function = lambda x:x.is_interval())
-graph_classes.Line = GraphClass("Line", "gc_249", recognition_function = lambda x:x.is_line_graph())
+graph_classes.Interval = GraphClass("Interval", "gc_234", recognition_function=lambda x: x.is_interval())
+graph_classes.Line = GraphClass("Line", "gc_249", recognition_function=lambda x: x.is_line_graph())
 graph_classes.Modular = GraphClass("Modular", "gc_50")
 graph_classes.Outerplanar = GraphClass("Outerplanar", "gc_110")
-graph_classes.Perfect = GraphClass("Perfect", "gc_56", recognition_function = lambda x:x.is_perfect())
-graph_classes.Planar = GraphClass("Planar", "gc_43", recognition_function = lambda x:x.is_planar())
-graph_classes.Split = GraphClass("Split", "gc_39", recognition_function = lambda x:x.is_split())
-graph_classes.Tree = GraphClass("Tree", "gc_342", recognition_function = lambda x:x.is_tree())
+graph_classes.Perfect = GraphClass("Perfect", "gc_56", recognition_function=lambda x: x.is_perfect())
+graph_classes.Planar = GraphClass("Planar", "gc_43", recognition_function=lambda x: x.is_planar())
+graph_classes.Polyhedral = GraphClass("Polyhedral", "gc_986", recognition_function=lambda x: x.is_polyhedral())
+graph_classes.Split = GraphClass("Split", "gc_39", recognition_function=lambda x: x.is_split())
+graph_classes.Tree = GraphClass("Tree", "gc_342", recognition_function=lambda x: x.is_tree())
 graph_classes.UnitDisk = GraphClass("UnitDisk", "gc_389")
 graph_classes.UnitInterval = GraphClass("UnitInterval", "gc_299")

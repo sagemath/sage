@@ -15,6 +15,8 @@ cdef extern from "gurobi_c.h":
          pass
 
      int GRBloadenv(GRBenv **, char *)
+     int GRBemptyenv(GRBenv **)
+     int GRBstartenv(GRBenv *)
      int GRBnewmodel(GRBenv *env, GRBmodel **modelP, char *Pname, int numvars, double *obj, double *lb, double *ub, char *vtype, char **varnames)
      GRBmodel * GRBcopymodel (GRBmodel *model)
 

@@ -40,7 +40,7 @@ from sage.modular.cusps import Cusp
 
 from sage.plot.all import Graphics
 from sage.plot.colors import to_mpl_color
-from sage.plot.misc import options, rename_keyword
+from sage.misc.decorators import options, rename_keyword
 from sage.plot.all import hyperbolic_arc, hyperbolic_triangle, text
 
 from sage.misc.latex import latex

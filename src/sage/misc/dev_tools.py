@@ -7,13 +7,20 @@ AUTHORS:
 
 - Vincent Delecroix (2012 and 2013): improve import_statements
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from __future__ import absolute_import
+
+import os
+import re
+import sys
+
+from collections import defaultdict
+
 from six import iteritems, string_types
 
 
@@ -58,12 +65,12 @@ def runsnake(command):
 
     """
     import cProfile
-    import os
     from sage.misc.temporary_file import tmp_filename
     from sage.misc.misc import get_main_globals
     from sage.repl.preparse import preparse
     tmpfile = tmp_filename()
-    cProfile.runctx(preparse(command.lstrip().rstrip()), get_main_globals(), locals(), filename=tmpfile)
+    cProfile.runctx(preparse(command.lstrip().rstrip()), get_main_globals(),
+                    locals(), filename=tmpfile)
     os.system("/usr/bin/python -E `which runsnake` %s &" % tmpfile)
 
 
@@ -165,16 +172,14 @@ def load_submodules(module=None, exclude_pattern=None):
         load sage.geometry.polyhedron.palp_database... succeeded
         load sage.geometry.polyhedron.ppl_lattice_polygon... succeeded
     """
-    import sys
     import pkgutil
 
     if module is None:
         import sage
         module = sage
-        exclude_pattern = "^sage\.libs|^sage\.tests|tests$|^sage\.all_|all$|sage\.interacts$|^sage\.misc\.benchmark$"
+        exclude_pattern = r"^sage\.libs|^sage\.tests|tests$|^sage\.all_|all$|sage\.interacts$|^sage\.misc\.benchmark$"
 
     if exclude_pattern:
-        import re
         exclude = re.compile(exclude_pattern)
     else:
         exclude = None
@@ -242,7 +247,6 @@ def find_objects_from_name(name, module_name=None):
         It might be a good idea to move this function into
         :mod:`sage.misc.sageinspect`.
     """
-    import sys
 
     obj = []
     for smodule_name, smodule in iteritems(sys.modules):
@@ -290,7 +294,6 @@ def find_object_modules(obj):
         module_name = obj.__module__
 
     if module_name:
-        import sys
         if module_name not in sys.modules:
             raise ValueError("This should not happen!")
         d = sys.modules[module_name].__dict__
@@ -300,7 +303,6 @@ def find_object_modules(obj):
 
     # otherwise, we parse all (already loaded) modules and hope to find
     # something
-    import sys
     module_to_obj = {}
     for module_name, module in iteritems(sys.modules):
         if module_name != '__main__' and hasattr(module, '__dict__'):
@@ -311,8 +313,7 @@ def find_object_modules(obj):
 
     # if the object is an instance, we try to guess where it is defined
     if sageinspect.isclassinstance(obj):
-        import re
-        dec_pattern = re.compile("^(\w[\w0-9\_]*)\s*=", re.MULTILINE)
+        dec_pattern = re.compile(r"^(\w[\w0-9\_]*)\s*=", re.MULTILINE)
         module_to_obj2 = {}
         for module_name, obj_names in iteritems(module_to_obj):
             module_to_obj2[module_name] = []
@@ -425,21 +426,22 @@ def import_statements(*objects, **kwds):
         from sage.modular.arithgroup.farey_symbol import Farey as FareySymbol
 
         sage: import_statements('power')
-        from sage.structure.element import generic_power as power
+        from sage.arith.power import generic_power as power
 
     In order to be able to detect functions that belong to a non-loaded module,
     you might call the helper :func:`load_submodules` as in the following::
 
-        sage: import_statements('EnumeratedSetFromIterator')
+        sage: import_statements('HeckeMonoid')
         Traceback (most recent call last):
         ...
-        LookupError: no object named 'EnumeratedSetFromIterator'
+        LookupError: no object named 'HeckeMonoid'
         sage: from sage.misc.dev_tools import load_submodules
-        sage: load_submodules(sage.sets)
-        load sage.sets.real_set... succeeded
-        load sage.sets.set_from_iterator... succeeded
-        sage: import_statements('EnumeratedSetFromIterator')
-        from sage.sets.set_from_iterator import EnumeratedSetFromIterator
+        sage: load_submodules(sage.monoids)
+        load sage.monoids.automatic_semigroup... succeeded
+        load sage.monoids.hecke_monoid... succeeded
+        load sage.monoids.indexed_free_monoid... succeeded
+        sage: import_statements('HeckeMonoid')
+        from sage.monoids.hecke_monoid import HeckeMonoid
 
     We test different objects which have no appropriate answer::
 
@@ -503,7 +505,8 @@ def import_statements(*objects, **kwds):
     import inspect
     from sage.misc.lazy_import import LazyImport
 
-    answer = {}
+    answer = defaultdict(list)
+    module_name = None
     # a dictionary module -> [(name1,alias1), (name2,alias2) ...]
     # where "nameX" is an object in "module" that has to be
     # imported with the alias "aliasX"
@@ -513,7 +516,7 @@ def import_statements(*objects, **kwds):
     answer_as_str = kwds.pop("answer_as_str", False)
 
     if kwds:
-        raise TypeError("Unexpected '%s' argument" % next(iter(kwds.keys())))
+        raise TypeError("Unexpected '{}' argument".format(next(iter(kwds))))
 
     for obj in objects:
         name = None    # the name of the object
@@ -554,9 +557,10 @@ def import_statements(*objects, **kwds):
                 modules = set()
                 for o in obj:
                     modules.update(find_object_modules(o))
-                print("# **Warning**: distinct objects with name '{}' in:".format(name))
-                for module_name in modules:
-                    print("#   - {}".format(module_name))
+                print("# **Warning**: distinct objects with name '{}' "
+                      "in:".format(name))
+                for mod in sorted(modules):
+                    print("#   - {}".format(mod))
 
             # choose a random object among the potentially enormous list of
             # objects we get from "name"
@@ -564,9 +568,11 @@ def import_statements(*objects, **kwds):
                 obj = obj[0]
             except IndexError:
                 if deprecation:
-                    raise LookupError("object named %r is deprecated (see trac ticket %s)" % (name, deprecation))
+                    raise LookupError(
+                        "object named {!r} is deprecated (see trac ticket "
+                        "{})".format(name, deprecation))
                 else:
-                    raise LookupError("no object named %r" % name)
+                    raise LookupError("no object named {!r}".format(name))
 
         # 1'. if obj is a LazyImport we recover the real object
         if isinstance(obj, LazyImport):
@@ -580,8 +586,6 @@ def import_statements(*objects, **kwds):
         # easy case: the object is itself a module
         if inspect.ismodule(obj):
             module_name = obj.__name__
-            if module_name not in answer:
-                answer[module_name] = []
             answer[module_name].append((None, None))
             continue
 
@@ -596,16 +600,14 @@ def import_statements(*objects, **kwds):
             (module_name, obj_names), = modules.items()
             if name is None:
                 if verbose and len(obj_names) > 1:
-                    print("# ** Warning **: several names for that object: {}".format(', '.join(sorted(obj_names))))
+                    print("# ** Warning **: several names for that object: "
+                          "{}".format(', '.join(sorted(obj_names))))
                 name = alias = obj_names[0]
             elif name in modules[module_name]:
                 alias = name
             else:
                 alias = name
                 name = obj_names[0]
-
-            if module_name not in answer:
-                answer[module_name] = []
 
             answer[module_name].append((name, alias))
             continue
@@ -615,14 +617,12 @@ def import_statements(*objects, **kwds):
         # has name "name")
         if name is not None:
             good_modules = []
-            for module_name in modules:
-                if name in modules[module_name]:
-                    good_modules.append(module_name)
+            for mod in modules:
+                if name in modules[mod]:
+                    good_modules.append(mod)
 
             if len(good_modules) == 1:
-                if module_name not in answer:
-                    answer[module_name] = []
-                answer[module_name].append((name, name))
+                answer[good_modules[0]].append((name, name))
                 continue
 
         # if the object is a class instance, it is likely that it is defined in
@@ -641,15 +641,17 @@ def import_statements(*objects, **kwds):
         if module_name is None:
             # here, either "obj" is a class instance but there is no natural
             # candidate for its module or "obj" is not a class instance.
-
-            not_all_modules = [module_name for module_name in modules
-                               if '.all_' not in module_name and not module_name.endswith('.all')]
-            if not(not_all_modules):
-                print("# ** Warning **: the object {} is only defined in .all modules".format(obj))
-                module_name = next(iter(modules.keys()))
+            all_re = re.compile(r'.+\.all(?:_\w+)?$')
+            not_all_modules = [mod for mod in modules
+                               if not all_re.match(mod)]
+            if not not_all_modules:
+                print("# ** Warning **: the object {} is only defined in "
+                      ".all modules".format(obj))
+                module_name = next(iter(modules))
             else:
                 if len(not_all_modules) > 1:
-                    print("# ** Warning **: several modules for the object {}: {}".format(obj, ', '.join(modules.keys())))
+                    print("# ** Warning **: several modules for the object "
+                          "{}: {}".format(obj, ', '.join(sorted(modules))))
                 module_name = not_all_modules[0]
 
         # 3. Now that we found the module, we fix the problem of the alias
@@ -659,8 +661,6 @@ def import_statements(*objects, **kwds):
             alias = name
             name = modules[module_name][0]
 
-        if module_name not in answer:
-            answer[module_name] = []
         answer[module_name].append((name, alias))
 
     res = []
@@ -668,8 +668,9 @@ def import_statements(*objects, **kwds):
     if lazy:
         res.append("from sage.misc.lazy_import import lazy_import")
 
-    for module_name in sorted(answer.keys()):
-        res.append(import_statement_string(module_name, answer[module_name], lazy))
+    for module_name in sorted(answer):
+        res.append(import_statement_string(module_name, answer[module_name],
+                                           lazy))
 
     if answer_as_str:
         return '\n'.join(res)

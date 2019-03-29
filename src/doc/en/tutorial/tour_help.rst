@@ -259,9 +259,9 @@ the ``range`` command that we used creates a list (in python 2):
 
 ::
 
-    sage: range(2,10)   # optional - python2
+    sage: range(2,10)   # py2
     [2, 3, 4, 5, 6, 7, 8, 9]
-    sage: list(range(2,10))   # optional - python3
+    sage: list(range(2,10))   # py3
     [2, 3, 4, 5, 6, 7, 8, 9]
 
 Here is a more complicated list:

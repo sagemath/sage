@@ -17,7 +17,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
 
@@ -26,8 +26,9 @@ from cpython.type cimport type as pytype
 
 __all__ = ['ClasscallMetaclass', 'typecall', 'timeCall']
 
+
 cdef class ClasscallMetaclass(NestedClassMetaclass):
-    """
+    r"""
     A metaclass providing support for special methods for classes.
 
     From the Section :python:`Special method names
@@ -97,7 +98,6 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             sage: isinstance(Foo, type)
             True
     """
-    _included_private_doc_ = ['__call__', '__contains__', '__get__']
 
     def __cinit__(self, *args, **opts):
         r"""
@@ -367,7 +367,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             sage: from sage.misc.classcall_metaclass import ClasscallMetaclass
             sage: class Outer:
             ....:     __metaclass__ = NestedClassMetaclass # workaround for python pickling bug
-            ...
+            ....:
             ....:     class Inner(object):
             ....:         __metaclass__ = ClasscallMetaclass
             ....:         @staticmethod

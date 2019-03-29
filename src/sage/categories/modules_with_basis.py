@@ -215,7 +215,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
                 sage: F.basis()
-                Finite family {'a': B['a'], 'c': B['c'], 'b': B['b']}
+                Finite family {'a': B['a'], 'b': B['b'], 'c': B['c']}
 
             ::
 
@@ -675,8 +675,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                the elements of ``gens`` are already in (not necessarily
                reduced) echelon form
 
-            - ``unitrangular`` -- (default: ``False``) whether
-              the lift morphism is unitrangular
+            - ``unitriangular`` -- (default: ``False``) whether
+              the lift morphism is unitriangular
 
             If ``already_echelonized`` is ``False``, then the
             generators are put in reduced echelon form using
@@ -771,7 +771,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: S3A = S3.algebra(QQ)
                 sage: basis = S3A.annihilator_basis(S3A.algebra_generators(), S3A.bracket)
                 sage: basis
-                ((), (2,3) + (1,2) + (1,3), (1,2,3) + (1,3,2))
+                ((), (1,2,3) + (1,3,2), (2,3) + (1,2) + (1,3))
                 sage: center = S3A.submodule(basis,
                 ....:                        category=AlgebrasWithBasis(QQ).Subobjects(),
                 ....:                        already_echelonized=True)
@@ -782,7 +782,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: center.print_options(prefix='c')
                 sage: c = center.basis()
                 sage: c[1].lift()
-                (2,3) + (1,2) + (1,3)
+                (1,2,3) + (1,3,2)
                 sage: c[0]^2
                 c[0]
                 sage: e = 1/6*(c[0]+c[1]+c[2])
@@ -1005,7 +1005,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             return self.sum(self.term(index, coeff) for (index, coeff) in terms)
 
         def linear_combination(self, iter_of_elements_coeff, factor_on_left=True):
-            """
+            r"""
             Return the linear combination `\lambda_1 v_1 + \cdots +
             \lambda_k v_k` (resp.  the linear combination `v_1 \lambda_1 +
             \cdots + v_k \lambda_k`) where ``iter_of_elements_coeff`` iterates
@@ -1200,9 +1200,16 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: DihedralGroup(6).algebra(QQ).random_element()
                 -1/95*() - 1/2*(1,4)(2,5)(3,6)
+
+            Note, this result can depend on the PRNG state in libgap in a way
+            that depends on which packages are loaded, so we must re-seed GAP
+            to ensure a consistent result for this example::
+
+                sage: libgap.set_seed(0)
+                0
                 sage: SU(2, 13).algebra(QQ).random_element(1)
-                1/2*[       3        0]
-                [11*a + 1        9]
+                1/2*[       1  9*a + 2]
+                [2*a + 12        2]
                 sage: CombinatorialFreeModule(ZZ, Partitions(4)).random_element() # random
                 2*B[[2, 1, 1]] + B[[2, 2]]
             """
@@ -1269,27 +1276,17 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: p = Partition([2,1])
-                sage: q = Partition([1,1,1])
-                sage: s = SymmetricFunctions(QQ).schur()
-                sage: a = s(p)
-                sage: a._coefficient_fast([2,1])
-                Traceback (most recent call last):
-                ...
-                TypeError: unhashable type: 'list'
-
-            ::
-
-                sage: a._coefficient_fast(p)
-                1
-                sage: a._coefficient_fast(q)
+                sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
+                sage: x[((0,0,0),(0,0,0))]
                 0
-                sage: a[p]
+                sage: x[((1,0,0),(0,0,0))]
                 1
-                sage: a[q]
-                0
             """
-            return self.monomial_coefficients(copy=False).get(m, self.base_ring().zero())
+            res = self.monomial_coefficients(copy=False).get(m)
+            if res is None:
+                return self.base_ring().zero()
+            else:
+                return res
 
         def coefficient(self, m):
             """
@@ -1326,14 +1323,14 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 AssertionError: [2, 1] should be an element of Partitions
 
             Test that ``coefficient`` also works for those parents that do
-            not yet have an element_class::
+            not have an ``element_class``::
 
-                sage: G = DihedralGroup(3)
-                sage: F = CombinatorialFreeModule(QQ, G)
-                sage: hasattr(G, "element_class")
+                sage: H = End(ZZ)
+                sage: F = CombinatorialFreeModule(QQ, H)
+                sage: hasattr(H, "element_class")
                 False
-                sage: g = G.an_element()
-                sage: (2*F.monomial(g)).coefficient(g)
+                sage: h = H.an_element()
+                sage: (2*F.monomial(h)).coefficient(h)
                 2
             """
             # NT: coefficient_fast should be the default, just with appropriate assertions
@@ -2024,7 +2021,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 This method simply delegates the work to
                 :meth:`ModulesWithBasis.ParentMethods.module_morphism`. It
                 is used by :meth:`Homset.__call__` to handle the
-                ``on_basis`` argument, and will disapear as soon as
+                ``on_basis`` argument, and will disappear as soon as
                 the logic will be generalized.
 
                 EXAMPLES::
@@ -2155,7 +2152,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: A.an_element()
                     B[word: ] + 2*B[word: a] + 3*B[word: b] + B[word: bab]
                     sage: B.an_element()
-                    B[()] + 4*B[(1,2,3)] + 2*B[(1,3)]
+                    B[()] + B[(1,2)] + 3*B[(1,2,3)] + 2*B[(1,3,2)]
                     sage: cartesian_product((A, B, A)).an_element()           # indirect doctest
                     2*B[(0, word: )] + 2*B[(0, word: a)] + 3*B[(0, word: b)]
                 """

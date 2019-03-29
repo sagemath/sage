@@ -1,4 +1,4 @@
-"""
+"""nodoctest
 All Documented GAP Functions
 
 This Python module contains all documented GAP functions, they can be

@@ -16,7 +16,7 @@ Polynomial Template for C/C++ Library Interfaces
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.structure.element cimport ModuleElement, Element, RingElement
-from sage.structure.element import coerce_binop, bin_op
+from sage.structure.element import coerce_binop
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.integer cimport Integer

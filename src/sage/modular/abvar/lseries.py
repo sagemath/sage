@@ -24,8 +24,6 @@ TESTS::
 from sage.structure.sage_object import SageObject
 from sage.rings.all import Integer, infinity, ZZ, QQ, CC
 from sage.modules.free_module import span
-from sage.modular.modform.constructor import Newform, CuspForms
-from sage.modular.arithgroup.congroup_gamma0 import is_Gamma0
 from sage.misc.misc_c import prod
 
 
@@ -235,11 +233,11 @@ class Lseries_complex(Lseries):
             sage: L = J1(23).lseries(); L
             Complex L-series attached to Abelian variety J1(23) of dimension 12
             sage: L(1)  # long time (about 3 s)
-            0.000129519861426989 + 1.14001148377577e-19*I
+            0.0001295198...
             sage: L.vanishes_at_1()
             False
-            sage: L(1, prec=100)  # long time (about 3 s)
-            0.00012951986142702571478817757149 - 2.9734441752025676942763838067e-33*I
+            sage: abs(L(1, prec=100)- 0.00012951986142702571478817757148) < 1e-32  # long time (about 3 s)
+            True
 
             sage: L = J1(31).lseries(); L
             Complex L-series attached to Abelian variety J1(31) of dimension 26

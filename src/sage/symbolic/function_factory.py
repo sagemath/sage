@@ -7,14 +7,14 @@ Factory for symbolic functions
 #       Copyright (C) 2009 Burcin Erocal <burcin@erocal.org>
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###############################################################################
 from __future__ import print_function
 from six import string_types
 
-from sage.symbolic.function import SymbolicFunction, sfunctions_funcs, \
-        unpickle_wrapper
-from sage.misc.decorators import sage_wraps
+from sage.symbolic.function import (SymbolicFunction, sfunctions_funcs,
+                                    unpickle_wrapper)
+
 
 def function_factory(name, nargs=0, latex_name=None, conversions=None,
             evalf_params_first=True, eval_func=None, evalf_func=None,
@@ -67,6 +67,21 @@ def function_factory(name, nargs=0, latex_name=None, conversions=None,
             """
             return "'%s"%self.name()
 
+        def _fricas_init_(self):
+            """
+            Return the FriCAS equivalent of a formal function.
+
+            Note that the arity is ignored.
+
+            EXAMPLES::
+
+                sage: from sage.symbolic.function_factory import function_factory
+                sage: f = function_factory('f', 2) # indirect doctest
+                sage: f._fricas_init_()
+                'operator("f")'
+            """
+            return 'operator("%s")'%self.name()
+
         def _sympy_(self):
             from sympy import Function
             return Function(self.name())
@@ -94,6 +109,7 @@ def function_factory(name, nargs=0, latex_name=None, conversions=None,
             setattr(NewSymbolicFunction, '_%s_'%func_name, func)
 
     return NewSymbolicFunction()
+
 
 def unpickle_function(name, nargs, latex_name, conversions, evalf_params_first,
         pickled_funcs):
@@ -132,6 +148,7 @@ def unpickle_function(name, nargs, latex_name, conversions, evalf_params_first,
     funcs = [unpickle_wrapper(_) for _ in pickled_funcs]
     args = [name, nargs, latex_name, conversions, evalf_params_first] + funcs
     return function_factory(*args)
+
 
 def function(s, *args, **kwds):
     r"""
@@ -203,7 +220,7 @@ def function(s, *args, **kwds):
         sage: 2*f
         Traceback (most recent call last):
         ...
-        TypeError: unsupported operand parent(s) for *: 'Integer Ring' and '<class 'sage.symbolic.function_factory.NewSymbolicFunction'>'
+        TypeError: unsupported operand parent(s) for *: 'Integer Ring' and '<class 'sage.symbolic.function_factory...NewSymbolicFunction'>'
 
     You now need to evaluate the function in order to do the arithmetic::
 
@@ -232,7 +249,6 @@ def function(s, *args, **kwds):
     Defining custom methods for automatic or numeric evaluation, derivation,
     conjugation, etc. is supported::
 
-
         sage: def ev(self, x): return 2*x
         sage: foo = function("foo", nargs=1, eval_func=ev)
         sage: foo(x)
@@ -256,22 +272,28 @@ def function(s, *args, **kwds):
         sage: foo(x).conjugate()
         2*x
 
-        sage: def deriv(self, *args,**kwds): print("{} {}".format(args, kwds)); return args[kwds['diff_param']]^2
+        sage: def deriv(self, *args,**kwds):
+        ....:     print("{} {}".format(args, kwds))
+        ....:     return args[kwds['diff_param']]^2
         sage: foo = function("foo", nargs=2, derivative_func=deriv)
         sage: foo(x,y).derivative(y)
         (x, y) {'diff_param': 1}
         y^2
 
-        sage: def pow(self, x, power_param=None): print("{} {}".format(x, power_param)); return x*power_param
+        sage: def pow(self, x, power_param=None):
+        ....:     print("{} {}".format(x, power_param))
+        ....:     return x*power_param
         sage: foo = function("foo", nargs=1, power_func=pow)
         sage: foo(y)^(x+y)
         y x + y
         (x + y)*y
 
-        sage: def expand(self, *args, **kwds): print("{} {}".format(args, kwds)); return sum(args[0]^i for i in range(kwds['order']))
+        sage: def expand(self, *args, **kwds):
+        ....:     print("{} {}".format(args, sorted(kwds.items())))
+        ....:     return sum(args[0]^i for i in range(kwds['order']))
         sage: foo = function("foo", nargs=1, series_func=expand)
         sage: foo(y).series(y, 5)
-        (y,) {'var': y, 'options': 0, 'at': 0, 'order': 5}
+        (y,) [('at', 0), ('options', 0), ('order', 5), ('var', y)]
         y^4 + y^3 + y^2 + y + 1
 
         sage: def my_print(self, *args): return "my args are: " + ', '.join(map(repr, args))
@@ -341,6 +363,7 @@ def function(s, *args, **kwds):
         return res[0]
     return tuple(res)
 
+
 def deprecated_custom_evalf_wrapper(func):
     """
     This is used while pickling old symbolic functions that define a custom
@@ -369,40 +392,3 @@ def deprecated_custom_evalf_wrapper(func):
             prec = 53
         return func(*args, prec=prec)
     return new_evalf
-
-
-# This code is used when constructing dynamic methods for symbolic
-# expressions representing evaluated symbolic functions. See
-# get_dynamic_class_for_function in sage/symbolic/expression.pyx.
-# Since Cython does not support closures, this needs to live in a Python
-# file. This file is the only pure Python file we have related to symbolic
-# functions.
-def eval_on_operands(f):
-    """
-    Given a method ``f`` return a new method which takes a single symbolic
-    expression argument and appends operands of the given expression to
-    the arguments of ``f``.
-
-    EXAMPLES::
-
-        sage: def f(ex, x, y):
-        ....:     '''
-        ....:     Some documentation.
-        ....:     '''
-        ....:     return x + 2*y
-        ....:
-        sage: f(None, x, 1)
-        x + 2
-        sage: from sage.symbolic.function_factory import eval_on_operands
-        sage: g = eval_on_operands(f)
-        sage: g(x + 1)
-        x + 2
-        sage: g.__doc__.strip()
-        'Some documentation.'
-    """
-    @sage_wraps(f)
-    def new_f(ex, *args, **kwds):
-        new_args = list(ex._unpack_operands())
-        new_args.extend(args)
-        return f(ex, *new_args, **kwds)
-    return new_f
