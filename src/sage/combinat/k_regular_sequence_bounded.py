@@ -320,32 +320,34 @@ def has_bounded_matrix_powers(matrices):
 
     Eigenvalues are used for the check.
 
-    EXAMPLES::
+    EXAMPLES:
 
-        max(abs(eigenvalues)) = 1, multiplicities okay:
+    Maximum of the absolute value of the eigenvalues `=1`,
+    multiplicities okay::
+
         sage: from sage.combinat.k_regular_sequence_bounded import has_bounded_matrix_powers
         sage: matrices = [Matrix([[-1, 1, 1], [-1, 1, 1], [1, -1, 1]]),
         ....:             Matrix([[-1, 1, 1], [-1, 0, 0], [1, 1, 1]])]
         sage: has_bounded_matrix_powers(matrices)
         True
 
-    ::
+    Maximum of the absolute value of the eigenvalues `>1`::
 
-        max(abs(eigenvalues)) > 1:
         sage: matrices = [Matrix([[1, 1], [1/2, -1]])]
         sage: has_bounded_matrix_powers(matrices)
         False
 
-    ::
+    Maximum of the absolute value of the eigenvalues `=1`,
+    multiplicities different::
 
+        max(abs(eigenvalues)) > 1:
         max(abs(eigenvalues)) = 1, multiplicities different:
         sage: matrices = [Matrix([[0,1],[1,1]])]
         sage: has_bounded_matrix_powers(matrices)
         False
 
-    ::
+    Maximum of the absolute value of the eigenvalues `<1`::
 
-        max(abs(eigenvalues)) < 1:
         sage: matrices = [Matrix([[1, -1], [1/2, -1]])]
         sage: has_bounded_matrix_powers(matrices)
         True
