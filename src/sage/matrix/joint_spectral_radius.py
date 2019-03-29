@@ -99,16 +99,16 @@ def joint_spectral_radius(S, delta=None, norm=None,
         ....:     (Matrix([[3, 0],  [1, 3]]) / 5,
         ....:      Matrix([[3, -3], [0, -1]]) / 5),
         ....:     delta=RIF(0.01))
-        DEBUG:...:m=2, alpha=0.6000000000000000?, beta=0.70827625302982189?, len(T)=4
-        DEBUG:...:m=3, alpha=0.600000000000000?, beta=0.706734263510838?, len(T)=6
-        DEBUG:...:m=4, alpha=0.600000000000000?, beta=0.704390998023197?, len(T)=8
+        DEBUG:...:m=2, alpha=0.6000000000000000?, beta=0.758617019844353?, len(T)=4
+        DEBUG:...:m=3, alpha=0.600000000000000?, beta=0.737345636408069?, len(T)=6
+        DEBUG:...:m=4, alpha=0.600000000000000?, beta=0.720562173105602?, len(T)=10
         ...
-        DEBUG:...:m=16, alpha=0.659678908955284?, beta=0.6707696905811751?, len(T)=1
+        DEBUG:...:m=16, alpha=0.659678908955284?, beta=0.6707715447224348?, len(T)=1
         DEBUG:...:m=17, alpha=0.659678908955284?, beta=0.669678908955284?, len(T)=0
         INFO:...:lower bound: 0.659678908955284?
         INFO:...:upper bound: 0.669678908955284?
         INFO:...:iterations m: 17
-        INFO:...:max size of T_m: 15
+        INFO:...:max size of T_m: 16
         0.66?
 
     ::
