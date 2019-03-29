@@ -39,7 +39,6 @@ Finite Fields Using Pari
 
    sage/rings/finite_rings/finite_field_pari_ffelt
    sage/rings/finite_rings/element_pari_ffelt
-   sage/rings/finite_rings/finite_field_ext_pari
 
 Finite Fields Using Givaro
 --------------------------

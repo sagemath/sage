@@ -115,9 +115,9 @@ class VectorFieldModule(UniqueRepresentation, Parent):
 
         sage: M = Manifold(2, 'M') # the 2-dimensional sphere S^2
         sage: U = M.open_subset('U') # complement of the North pole
-        sage: c_xy.<x,y> = U.chart() # stereographic coordinates from North pole
+        sage: c_xy.<x,y> = U.chart() # stereographic coordinates from the North pole
         sage: V = M.open_subset('V') # complement of the South pole
-        sage: c_uv.<u,v> = V.chart() # stereographic coordinates from South pole
+        sage: c_uv.<u,v> = V.chart() # stereographic coordinates from the South pole
         sage: M.declare_union(U,V)   # S^2 is the union of U and V
         sage: xy_to_uv = c_xy.transition_map(c_uv, (x/(x^2+y^2), y/(x^2+y^2)),
         ....:                 intersection_name='W', restrictions1= x^2+y^2!=0,
@@ -190,9 +190,9 @@ class VectorFieldModule(UniqueRepresentation, Parent):
 
             sage: M = Manifold(2, 'M') # the 2-dimensional sphere S^2
             sage: U = M.open_subset('U') # complement of the North pole
-            sage: c_xy.<x,y> = U.chart() # stereographic coordinates from North pole
+            sage: c_xy.<x,y> = U.chart() # stereographic coordinates from the North pole
             sage: V = M.open_subset('V') # complement of the South pole
-            sage: c_uv.<u,v> = V.chart() # stereographic coordinates from South pole
+            sage: c_uv.<u,v> = V.chart() # stereographic coordinates from the South pole
             sage: M.declare_union(U,V)   # S^2 is the union of U and V
             sage: xy_to_uv = c_xy.transition_map(c_uv, (x/(x^2+y^2), y/(x^2+y^2)),
             ....:                intersection_name='W', restrictions1= x^2+y^2!=0,
@@ -216,15 +216,18 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         if dest_map is None:
             dest_map = domain.identity_map()
         self._dest_map = dest_map
-        if dest_map is domain.identity_map():
-            name += ")"
-            latex_name += r"\right)"
-        else:
-            name += "," + self._dest_map._name + ")"
-            latex_name += "," + self._dest_map._latex_name + r"\right)"
+        if dest_map is not domain.identity_map():
+            dm_name = dest_map._name
+            dm_latex_name = dest_map._latex_name
+            if dm_name is None:
+                dm_name = "unnamed map"
+            if dm_latex_name is None:
+                dm_latex_name = r"\mathrm{unnamed\; map}"
+            name += "," + dm_name
+            latex_name += "," + dm_latex_name
+        self._name = name + ")"
+        self._latex_name = latex_name + r"\right)"
         self._ambient_domain = self._dest_map._codomain
-        self._name = name
-        self._latex_name = latex_name
         # The member self._ring is created for efficiency (to avoid
         # calls to self.base_ring()):
         self._ring = domain.scalar_field_algebra()
@@ -1215,6 +1218,29 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
         sage: TestSuite(XIM).run()
 
+    Let us introduce an open subset of `J\subset I` and the vector field module
+    corresponding to the restriction of `\Phi` to it::
+
+        sage: J = I.open_subset('J', coord_def= {canon: t<pi})
+        sage: XJM = J.vector_field_module(dest_map=Phi.restrict(J)); XJM
+        Free module X(J,Phi) of vector fields along the Open subset J of the
+         1-dimensional differentiable manifold I mapped into the 2-dimensional
+         differentiable manifold R^2
+
+    We have then::
+
+        sage: XJM.default_basis()
+        Vector frame (J, (d/dx,d/dy)) with values on the 2-dimensional
+         differentiable manifold R^2
+        sage: XJM.default_basis() is XIM.default_basis().restrict(J)
+        True
+        sage: v.restrict(J)
+        Vector field along the Open subset J of the 1-dimensional
+         differentiable manifold I with values on the 2-dimensional
+         differentiable manifold R^2
+        sage: v.restrict(J).display()
+        t d/dx + t^2 d/dy
+
     Let us now consider the module of vector fields on the circle `S^1`; we
     start by constructing the `S^1` manifold::
 
@@ -1334,12 +1360,17 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         self._ambient_domain = self._dest_map._codomain
         name = "X(" + domain._name
         latex_name = r"\mathfrak{X}\left(" + domain._latex_name
-        if self._dest_map == domain.identity_map():
-            name += ")"
-            latex_name += r"\right)"
-        else:
-            name += "," + self._dest_map._name + ")"
-            latex_name += "," + self._dest_map._latex_name + r"\right)"
+        if dest_map is not domain.identity_map():
+            dm_name = dest_map._name
+            dm_latex_name = dest_map._latex_name
+            if dm_name is None:
+                dm_name = "unnamed map"
+            if dm_latex_name is None:
+                dm_latex_name = r"\mathrm{unnamed\; map}"
+            name += "," + dm_name
+            latex_name += "," + dm_latex_name
+        name += ")"
+        latex_name += r"\right)"
         manif = self._ambient_domain.manifold()
         cat = Modules(domain.scalar_field_algebra()).FiniteDimensional()
         FiniteRankFreeModule.__init__(self, domain.scalar_field_algebra(),
@@ -1354,8 +1385,33 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         self._induced_bases = {}
         if self._dest_map != self._domain.identity_map():
             for frame in self._ambient_domain._top_frames:
-                basis = self.basis(from_frame=frame)
-                self._induced_bases[frame] = basis
+                if (frame.destination_map() ==
+                    self._ambient_domain.identity_map()):
+                    basis = self.basis(from_frame=frame)
+                    self._induced_bases[frame] = basis
+
+                    # basis is added to the restrictions of bases on a larger
+                    # domain
+                    for dom in domain._supersets:
+                        if dom is not domain:
+                            for supbase in dom._frames:
+                                if (supbase.domain() is dom and
+                                        supbase.destination_map().restrict(domain)
+                                        is self._dest_map and
+                                        domain not in supbase._restrictions):
+                                    supbase._restrictions[domain] = basis
+                                    supbase._subframes.add(basis)
+                                    basis._superframes.add(supbase)
+
+                    # basis is added as a superframe of smaller domain
+                    for superframe in basis._superframes:
+                        for subframe in superframe._subframes:
+                            if subframe.domain() is not domain and subframe.domain().is_subset(
+                                    self._domain) and self._dest_map.restrict(
+                                    subframe.domain()) is subframe.destination_map():
+                                subframe._superframes.update(basis._superframes)
+                                basis._subframes.update(subframe._subframes)
+                                basis._restrictions.update(subframe._restrictions)
 
         # Initialization of the components of the zero element:
         zero = self.zero()
@@ -1768,7 +1824,9 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
                                                     AutomorphismFieldParalGroup
         return AutomorphismFieldParalGroup(self)
 
-    def basis(self, symbol=None, latex_symbol=None, from_frame=None):
+    def basis(self, symbol=None, latex_symbol=None, from_frame=None,
+              indices=None, latex_indices=None, symbol_dual=None,
+              latex_symbol_dual=None):
         r"""
         Define a basis of ``self``.
 
@@ -1782,16 +1840,31 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
         INPUT:
 
-        - ``symbol`` -- (string; default: ``None``) a letter (of a few
-          letters) to denote a generic element of the basis; if ``None``
-          and ``from_frame = None`` the module's default basis is returned
-        - ``latex_symbol`` -- (string; default: ``None``) symbol to denote a
-          generic element of the basis; if ``None``, the value of ``symbol``
-          is used
+        - ``symbol`` -- (default: ``None``) either a string, to be used as a
+          common base for the symbols of the elements of the basis, or a
+          tuple of strings, representing the individual symbols of the
+          elements of the basis
+        - ``latex_symbol`` -- (default: ``None``) either a string, to be used
+          as a common base for the LaTeX symbols of the elements of the basis,
+          or a tuple of strings, representing the individual LaTeX symbols
+          of the elements of the basis; if ``None``, ``symbol`` is used in
+          place of ``latex_symbol``
         - ``from_frame`` -- (default: ``None``) vector frame `\tilde{e}`
           on the codomain `M` of the destination map `\Phi` of ``self``;
           the returned basis `e` is then such that for all `p \in U`,
           we have `e(p) = \tilde{e}(\Phi(p))`
+        - ``indices`` -- (default: ``None``; used only if ``symbol`` is a
+          single string) tuple of strings representing the indices
+          labelling the elements of the basis; if ``None``, the indices will be
+          generated as integers within the range declared on ``self``
+        - ``latex_indices`` -- (default: ``None``) tuple of strings
+          representing the indices for the LaTeX symbols of the elements of
+          the basis; if ``None``, ``indices`` is used instead
+        - ``symbol_dual`` -- (default: ``None``) same as ``symbol`` but for the
+          dual basis; if ``None``, ``symbol`` must be a string and is used
+          for the common base of the symbols of the elements of the dual basis
+        - ``latex_symbol_dual`` -- (default: ``None``) same as ``latex_symbol``
+          but for the dual basis
 
         OUTPUT:
 
@@ -1817,11 +1890,18 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             else:
                 symbol = from_frame._symbol
                 latex_symbol = from_frame._latex_symbol
+                indices = from_frame._indices
+                latex_indices = from_frame._latex_indices
+                symbol_dual = from_frame._symbol_dual
+                latex_symbol_dual = from_frame._latex_symbol_dual
         for other in self._known_bases:
             if symbol == other._symbol:
                 return other
-        return VectorFrame(self, symbol=symbol, latex_symbol=latex_symbol,
-                           from_frame=from_frame)
+        return VectorFrame(self, symbol, latex_symbol=latex_symbol,
+                           from_frame=from_frame, indices=indices,
+                           latex_indices=latex_indices,
+                           symbol_dual=symbol_dual,
+                           latex_symbol_dual=latex_symbol_dual)
 
     def tensor(self, tensor_type, name=None, latex_name=None, sym=None,
                antisym=None, specific_type=None):
@@ -1984,8 +2064,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             t = (x + 1) dx*dx - y dx*dy + x*y dy*dx + (-y^2 + 2) dy*dy
 
         """
-        from sage.tensor.modules.comp import (CompWithSym, CompFullySym,
-                                              CompFullyAntiSym)
+        from sage.tensor.modules.comp import (CompWithSym, CompFullyAntiSym)
 
         # 0/ Compatibility checks:
         if comp._ring is not self._ring:

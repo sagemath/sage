@@ -346,7 +346,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             return sum(coeff * y[I] for (I, coeff) in x)
 
         def sum_of_partitions(self, la):
-            """
+            r"""
             Return the sum over all sets partitions whose shape is ``la``,
             scaled by `\prod_i m_i!` where `m_i` is the multiplicity
             of `i` in ``la``.

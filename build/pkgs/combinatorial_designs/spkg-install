@@ -1,2 +1,1 @@
-mkdir -p "$SAGE_SHARE"/combinatorial_designs
-mv src/* "$SAGE_SHARE"/combinatorial_designs
+sdh_install src/* "$SAGE_SHARE"/combinatorial_designs

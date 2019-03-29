@@ -6,29 +6,27 @@ An overconvergent eigensymbol gives rise to a `p`-adic `L`-series,
 which is essentially defined as the evaluation of the eigensymbol at the
 path `0 \rightarrow \infty`. The resulting distribution on `\ZZ_p` can be restricted
 to `\ZZ_p^\times`, thus giving the measure attached to the sought `p`-adic `L`-series.
+
 All this is carefully explained in [PS]_.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
+
 from sage.rings.padics.all import pAdicField
 from sage.rings.all import ZZ, QQ
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.big_oh import O
-from sage.arith.all import binomial, gcd, kronecker
+from sage.arith.all import binomial, kronecker
 from sage.rings.padics.precision_error import PrecisionError
-
 from sage.structure.sage_object import SageObject
-from .sigma0 import Sigma0
-from .fund_domain import M2Z
+from sage.misc.superseded import deprecation
 
 
 class pAdicLseries(SageObject):
@@ -40,7 +38,7 @@ class pAdicLseries(SageObject):
     - ``symb`` -- an overconvergent eigensymbol
     - ``gamma`` -- topological generator of `1 + p\ZZ_p` (default: `1+p` or 5 if `p=2`)
     - ``quadratic_twist`` -- conductor of quadratic twist `\chi` (default: 1)
-    - ``precision`` -- if None (default) is specified, the correct precision bound is
+    - ``precision`` -- if ``None`` (default) is specified, the correct precision bound is
       computed and the answer is returned modulo that accuracy
 
     EXAMPLES::
@@ -120,7 +118,7 @@ class pAdicLseries(SageObject):
         self._gamma = gamma
         self._quadratic_twist = quadratic_twist
         self._precision = precision
-        self._cinf = ZZ(1) # is set when called for an elliptic curve
+        self._cinf = ZZ(1)  # is set when called for an elliptic curve
 
     def __getitem__(self, n):
         r"""
@@ -145,26 +143,23 @@ class pAdicLseries(SageObject):
             gamma = self._gamma
             precision = self._precision
 
-            S = QQ[['z']]
-            z = S.gen()
             M = symb.precision_relative()
             K = pAdicField(p, M)
             dn = 0
             if n == 0:
                 precision = M
-                lb = [1] + [0 for a in range(M - 1)]
+                lb = [1] + [0] * (M - 1)
             else:
-                lb = log_gamma_binomial(p, gamma, z, n, 2 * M)
+                lb = log_gamma_binomial(p, gamma, n, 2 * M)
                 if precision is None:
-                    precision = min([j + lb[j].valuation(p)
-                                     for j in range(M, len(lb))])
+                    precision = min(j + lb[j].valuation(p)
+                                    for j in range(M, len(lb)))
                 lb = [lb[a] for a in range(M)]
 
-            for j in range(len(lb)):
-                cjn = lb[j]
-                temp = sum((ZZ(K.teichmuller(a)) ** (-j))
-                           * self._basic_integral(a, j) for a in range(1, p))
-                dn = dn + cjn * temp
+            for j, cjn in enumerate(lb):
+                temp = sum((ZZ(K.teichmuller(a)) ** (-j)) *
+                           self._basic_integral(a, j) for a in range(1, p))
+                dn += cjn * temp
             self._coefficients[n] = dn.add_bigoh(precision)
             self._coefficients[n] /= self._cinf
             return self._coefficients[n]
@@ -182,7 +177,7 @@ class pAdicLseries(SageObject):
         """
         if not isinstance(other, pAdicLseries):
             return False
-        
+
         return (self._symb == other._symb and
                 self._quadratic_twist == other._quadratic_twist and
                 self._gamma == other._gamma and
@@ -200,10 +195,10 @@ class pAdicLseries(SageObject):
             False
         """
         return not self.__eq__(other)
-    
+
     def symbol(self):
         r"""
-        Return the overconvergent modular symbol
+        Return the overconvergent modular symbol.
 
         EXAMPLES::
 
@@ -234,7 +229,7 @@ class pAdicLseries(SageObject):
 
     def quadratic_twist(self):
         r"""
-        Return the discriminant of the quadratic twist
+        Return the discriminant of the quadratic twist.
 
         EXAMPLES::
 
@@ -250,7 +245,7 @@ class pAdicLseries(SageObject):
 
     def _repr_(self):
         r"""
-        Return the string representation
+        Return the string representation.
 
         EXAMPLES::
 
@@ -264,7 +259,7 @@ class pAdicLseries(SageObject):
     def series(self, prec=5):
         r"""
         Return the ``prec``-th approximation to the `p`-adic `L`-series
-        associated to self, as a power series in `T` (corresponding to
+        associated to ``self``, as a power series in `T` (corresponding to
         `\gamma-1` with `\gamma` the chosen generator of `1+p\ZZ_p`).
 
         INPUT:
@@ -294,7 +289,6 @@ class pAdicLseries(SageObject):
         M = self.symbol().precision_relative()
         K = pAdicField(p, M)
         R = PowerSeriesRing(K, names='T')
-        T = R.gens()[0]
         return R([self[i] for i in range(prec)]).add_bigoh(prec)
 
     def interpolation_factor(self, ap, chip=1, psi=None):
@@ -348,8 +342,9 @@ class pAdicLseries(SageObject):
 
     def _basic_integral(self, a, j):
         r"""
-        Return `\int_{a+pZ_p} (z-{a})^j d\Phi(0-infty)`
-        -- see formula [Pollack-Stevens, sec 9.2]
+        Return `\int_{a+pZ_p} (z-{a})^j d\Phi(0-infty)`.
+
+        See formula in section 9.2 of [PS]_
 
         INPUT:
 
@@ -374,23 +369,21 @@ class pAdicLseries(SageObject):
         ap = ap * kronecker(D, p)
         K = pAdicField(p, M)
         symb_twisted = symb.evaluate_twisted(a, D)
-        return ( sum(binomial(j, r)
-                 * ((a - ZZ(K.teichmuller(a))) ** (j - r))
-                 * (p ** r)
-                 * symb_twisted.moment(r) for r in range(j + 1))
-                 / ap  )
+        return sum(binomial(j, r) *
+                   ((a - ZZ(K.teichmuller(a))) ** (j - r)) *
+                   (p ** r) *
+                   symb_twisted.moment(r) for r in range(j + 1)) / ap
 
 
-def log_gamma_binomial(p, gamma, z, n, M):
+def log_gamma_binomial(p, gamma, n, M, old=None):
     r"""
     Return the list of coefficients in the power series
     expansion (up to precision `M`) of `\binom{\log_p(z)/\log_p(\gamma)}{n}`
 
     INPUT:
 
-    - ``p`` --  prime
+    - ``p`` -- prime
     - ``gamma`` -- topological generator, e.g. `1+p`
-    - ``z`` -- variable
     - ``n`` -- nonnegative integer
     - ``M`` -- precision
 
@@ -401,13 +394,27 @@ def log_gamma_binomial(p, gamma, z, n, M):
 
     EXAMPLES::
 
-        sage: R.<z> = QQ['z']
         sage: from sage.modular.pollack_stevens.padic_lseries import log_gamma_binomial
-        sage: log_gamma_binomial(5,1+5,z,2,4)
+        sage: log_gamma_binomial(5,1+5,2,4)
         [0, -3/205, 651/84050, -223/42025]
-        sage: log_gamma_binomial(5,1+5,z,3,4)
+        sage: log_gamma_binomial(5,1+5,3,4)
         [0, 2/205, -223/42025, 95228/25845375]
+
+    TESTS::
+
+        sage: z = polygen(QQ, 'z')
+        sage: log_gamma_binomial(5,1+5,z,2,4)
+        doctest:...: DeprecationWarning: the parameter z is ignored and deprecated
+        See https://trac.sagemath.org/26096 for details.
+        [0, -3/205, 651/84050, -223/42025]
     """
-    L = sum([ZZ(-1) ** j / j * z ** j for j in range(1, M)])  # log_p(1+z)
-    loggam = L / (L(gamma - 1))   # log_{gamma}(1+z)= log_p(1+z)/log_p(gamma)
-    return z.parent()(binomial(loggam, n)).truncate(M).list()
+    if old is not None:
+        deprecation(26096, 'the parameter z is ignored and deprecated')
+        # old deprecated order for the parameters
+        z, n, M = n, M, old
+
+    S = PowerSeriesRing(QQ, 'z')
+    L = S([0] + [ZZ(-1) ** j / j for j in range(1, M)])  # log_p(1+z)
+    loggam = L.O(M) / L(gamma - 1)
+    # log_{gamma}(1+z)= log_p(1+z)/log_p(gamma)
+    return binomial(loggam, n).list()

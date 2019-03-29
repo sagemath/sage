@@ -949,13 +949,10 @@ Each saved variable is again available. Moreover, the variable
 
 .. _section-notebook:
 
-The Notebook Interface
-======================
+The legacy Notebook Interface
+=============================
 
 This section refers to the legacy Sage notebook, or "sagenb".
-See the `sagenb documentation
-<https://doc.sagemath.org/html/en/reference/notebook/index.html>`_
-for full details.
 
 SageMath is transitioning to using the
 `Jupyter notebook

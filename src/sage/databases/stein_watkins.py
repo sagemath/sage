@@ -300,7 +300,7 @@ class SteinWatkinsAllData:
             except StopIteration:
                 if C != []:
                     yield C
-                raise StopIteration
+                return
             if E.conductor != N:
                 if C != []:
                     yield C

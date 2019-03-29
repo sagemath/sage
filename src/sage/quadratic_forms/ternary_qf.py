@@ -29,20 +29,18 @@ from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.rings.all import ZZ
-from sage.arith.all import gcd, inverse_mod, kronecker_symbol
+from sage.arith.all import gcd, kronecker_symbol
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.matrix.constructor import matrix, identity_matrix
-from sage.matrix.matrix import Matrix, is_Matrix
-from sage.structure.element import is_Vector
+from sage.structure.element import is_Vector, is_Matrix
 from sage.quadratic_forms.ternary import _reduced_ternary_form_eisenstein_with_matrix
 from sage.quadratic_forms.ternary import _reduced_ternary_form_eisenstein_without_matrix, _find_zeros_mod_p_odd, _find_zeros_mod_p_2, _find_p_neighbor_from_vec, _basic_lemma
 from sage.quadratic_forms.ternary import _find_all_ternary_qf_by_level_disc, _find_a_ternary_qf_by_level_disc
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.integer_mod import mod
-from sage.modules.free_module_element import vector
 from sage.rings.ring import is_Ring
-from sage.rings.rational_field import QQ
-from sage.rings.polynomial.polynomial_ring import polygen, polygens
+from sage.rings.polynomial.polynomial_ring import polygens
+
 
 class TernaryQF(SageObject):
     """
@@ -79,7 +77,7 @@ class TernaryQF(SageObject):
     possible_automorphisms = None
 
     def __init__(self,v):
-        """
+        r"""
         Creates the ternary quadratic form `a*x^2 + b*y^2 + c*z^2 + r*y*z + s*x*z + t*x*y.` from the
         tuple v=[a,b,c,r,s,t] over `\ZZ`.
 
@@ -94,8 +92,6 @@ class TernaryQF(SageObject):
             Ternary quadratic form with integer coefficients:
             [1 2 3]
             [4 5 6]
-
-
         """
 
         if len(v) != 6:
@@ -228,7 +224,7 @@ class TernaryQF(SageObject):
             else:
                 return QuadraticForm(ZZ, v.transpose() * self.matrix() * v)
         elif (is_Vector(v) or isinstance(v, (list, tuple))):
-            ## Check that v has lenght 3
+            ## Check that v has length 3
             if not (len(v) == 3):
                 raise TypeError("Oops! Your vector needs to have length 3")
             v0, v1, v2 = v
@@ -627,8 +623,9 @@ class TernaryQF(SageObject):
 
     def adjoint(self):
         """
-        Returns the adjoint form associated to the given ternary quadratic form.
-        That is, the Hessian matrix of the adjoint form is twice the adjoint matrix of the Hessian matrix of the given form.
+        Returns the adjoint form associated to the given ternary quadratic
+        form. That is, the Hessian matrix of the adjoint form is twice the
+        classical adjoint matrix of the Hessian matrix of the given form.
 
         EXAMPLES::
 
@@ -637,7 +634,7 @@ class TernaryQF(SageObject):
             Ternary quadratic form with integer coefficients:
             [68 68 3]
             [0 0 -68]
-            sage: Q.adjoint().matrix() == 2*Q.matrix().adjoint()
+            sage: Q.adjoint().matrix() == 2*Q.matrix().adjoint_classical()
             True
 
         """

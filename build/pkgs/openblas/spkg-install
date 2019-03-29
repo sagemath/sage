@@ -1,13 +1,4 @@
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "SAGE_LOCAL undefined ... exiting"
-    echo >&2 "Maybe run 'sage --sh'?"
-    exit 1
-fi
-
 cd src
-
-# See #22021 for issues with multithreading
-OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_THREAD=0"
 
 # OpenBLAS does not build on 32bit Haswell. Upstream suggests to pass BINARY=32 to default to NEHALEM kernels
 # See https://github.com/xianyi/OpenBLAS/issues/657
@@ -28,33 +19,32 @@ fi
 
 echo "Building OpenBLAS: $MAKE $OPENBLAS_CONFIGURE"
 
-$MAKE libs netlib shared $OPENBLAS_CONFIGURE
-if [ $? -ne 0 ]; then
-    # First make sure we already didn't set a target
+# Ensure USE_TLS=1 ; see https://trac.sagemath.org/ticket/27256
+OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_TLS=1"
+
+if ! (sdh_make libs netlib shared $OPENBLAS_CONFIGURE); then
     if [[ $OPENBLAS_CONFIGURE == *"TARGET"* ]]; then
-        echo >&2 "Error building OpenBLAS"
-        exit 1
+        sdh_die "Error building OpenBLAS"
     else
         # The recommended TARGET is ATOM if CPU fails
         # See https://github.com/xianyi/OpenBLAS/issues/1204
         OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=ATOM"
         echo "Error building OpenBLAS"
         echo "Retrying building OpenBLAS: $MAKE $OPENBLAS_CONFIGURE"
-        $MAKE libs netlib shared $OPENBLAS_CONFIGURE
-        if [ $? -ne 0 ]; then
-            echo >&2 "Error building OpenBLAS a second time"
-            exit 1
-        fi
+        sdh_make libs netlib shared $OPENBLAS_CONFIGURE
     fi
-
 fi
 
-$MAKE install PREFIX="$SAGE_LOCAL" NO_STATIC=1 $OPENBLAS_CONFIGURE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing OpenBLAS"
-    exit 1
-fi
-
-
+sdh_make_install PREFIX="$SAGE_LOCAL" NO_STATIC=1 $OPENBLAS_CONFIGURE
 cd ..
 ./write_pc_file.py
+
+# OpenBLAS's Makefile has a bug w.r.t. calling install_name_tool when
+# DESTDIR is set.  It should *not* include the DESTDIR in the library's
+# install_name; we set the correct install_name here
+if [ "$UNAME" = "Darwin" ]; then
+    cd "$SAGE_DESTDIR_LOCAL/lib"
+    for dylib in lib*openblas*.dylib; do
+        install_name_tool -id "$SAGE_LOCAL/lib/$dylib" "$dylib"
+    done
+fi

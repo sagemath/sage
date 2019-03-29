@@ -5,6 +5,10 @@
 Michael Stoll's program which searches for rational points on hyperelliptic
 curves.
 
+NOTE: the ratpoints package has been assimilated by PARI/GP. Therefore,
+this package (as Sage package) is deprecated. In the future, it will be
+removed from Sage.
+
 == Upstream Contact ==
 
  * Author: Michael Stoll

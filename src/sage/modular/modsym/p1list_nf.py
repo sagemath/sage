@@ -234,7 +234,7 @@ class MSymbol(SageObject):
             sage: latex(alpha) # indirect doctest
             \(3: 5 a^{2} - 1\)
         """
-        return "\\(%s: %s\)"%(self.c._latex_(), self.d._latex_())
+        return r"\(%s: %s\)" % (self.c._latex_(), self.d._latex_())
 
     def __richcmp__(self, other, op):
         """
@@ -362,8 +362,8 @@ class MSymbol(SageObject):
         return lift_to_sl2_Ok(self.__N, self.__c, self.__d)
 
     def normalize(self, with_scalar=False):
-        """
-        Returns a normalized MSymbol (a canonical representative of an element
+        r"""
+        Return a normalized MSymbol (a canonical representative of an element
         of `\mathbb{P}^1(R/N)` ) equivalent to ``self``.
 
         INPUT:
@@ -458,9 +458,10 @@ class MSymbol(SageObject):
 #*       P1NFList class                                                   *
 #**************************************************************************
 
+
 @richcmp_method
 class P1NFList(SageObject):
-    """
+    r"""
     The class for `\mathbb{P}^1(R/N)`, the projective line modulo `N`, where
     `R` is the ring of integers of a number field `K` and `N` is an integral ideal.
 
@@ -588,8 +589,8 @@ class P1NFList(SageObject):
         return self.__list
 
     def normalize(self, c, d=None, with_scalar=False):
-        """
-        Returns a normalised element of `\mathbb{P}^1(R/N)`.
+        r"""
+        Return a normalised element of `\mathbb{P}^1(R/N)`.
 
         INPUT:
 
@@ -657,8 +658,8 @@ class P1NFList(SageObject):
         return self.__N
 
     def index(self, c, d=None, with_scalar=False):
-        """
-        Returns the index of the class of the pair `(c, d)` in the fixed list
+        r"""
+        Return the index of the class of the pair `(c, d)` in the fixed list
         of representatives of `\mathbb{P}^1(R/N)`.
 
         INPUT:
@@ -740,8 +741,8 @@ class P1NFList(SageObject):
         return False
 
     def index_of_normalized_pair(self, c, d=None):
-        """
-        Returns the index of the class `(c, d)` in the fixed list of
+        r"""
+        Return the index of the class `(c, d)` in the fixed list of
         representatives of `\mathbb(P)^1(R/N)`.
 
         INPUT:
@@ -918,8 +919,8 @@ class P1NFList(SageObject):
         return j
 
     def apply_J_epsilon(self, i, e1, e2=1):
-        """
-        Applies the matrix `J_{\epsilon}` = [e1, 0, 0, e2] to the i-th
+        r"""
+        Apply the matrix `J_{\epsilon}` = [e1, 0, 0, e2] to the i-th
         M-Symbol of the list.
 
         e1, e2 are units of the underlying number field.
@@ -1170,8 +1171,9 @@ def make_coprime(N, c, d):
         d1 = d + m
         return c, d1
 
+
 def psi(N):
-    """
+    r"""
     The index `[\Gamma : \Gamma_0(N)]`, where `\Gamma = GL(2, R)` for `R` the
     corresponding ring of integers, and `\Gamma_0(N)` standard congruence
     subgroup.

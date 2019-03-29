@@ -38,12 +38,9 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
 from sage.calculus.functions import jacobian
-from sage.categories.number_fields import NumberFields
-from sage.categories.homset import Hom, End
 from sage.misc.all import prod
 from sage.misc.cachefunc import cached_method
 from sage.rings.all import Integer
@@ -52,22 +49,21 @@ from sage.rings.complex_field import ComplexField_class
 from sage.rings.complex_interval_field import ComplexIntervalField_class
 from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
 from sage.rings.fraction_field import FractionField
-from sage.rings.fraction_field_element import is_FractionFieldElement, FractionFieldElement
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
-from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField_class
 from sage.rings.real_mpfi import RealIntervalField_class
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
-from sage.symbolic.constants import e
 from sage.ext.fast_callable import fast_callable
 from sage.misc.lazy_attribute import lazy_attribute
 import sys
+
 from sage.categories.number_fields import NumberFields
+from sage.categories.homset import Hom, End
 _NumberFields = NumberFields()
 from sage.categories.fields import Fields
 _Fields = Fields()
@@ -213,18 +209,18 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             # morphisms from projective space are always given by
             # homogeneous polynomials of the same degree
             try:
-                d = polys[0].degree()
+                polys[0].degree()
             except AttributeError:
                 polys = [f.lift() for f in polys]
-            if not all([f.is_homogeneous() for f in polys]):
+            if not all(f.is_homogeneous() for f in polys):
                 raise  ValueError("polys (=%s) must be homogeneous" % polys)
             degs = [f.degree() for f in polys]
-            if not all([d == degs[0] for d in degs[1:]]):
+            if not all(d == degs[0] for d in degs[1:]):
                 raise ValueError("polys (=%s) must be of the same degree" % polys)
         self._is_prime_finite_field = is_PrimeFiniteField(polys[0].base_ring())
 
     def __call__(self, x, check=True):
-        """
+        r"""
         Compute the forward image of the point or subscheme ``x`` by this map.
 
         For subschemes, the forward image is computed through elimination.
@@ -428,11 +424,12 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``right`` - a map on projective space.
+        - ``right`` -- a map on projective space
 
         OUTPUT:
 
-        - Boolean - True if ``self`` and ``right`` define the same projective map. False otherwise.
+        ``True`` if ``self`` and ``right`` define the same projective map.
+        ``False`` otherwise.
 
         EXAMPLES::
 
@@ -443,7 +440,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f == g
             False
 
-            ::
+        ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P2.<u,v> = ProjectiveSpace(CC, 1)
@@ -454,7 +451,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f == g
             False
 
-            ::
+        ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
@@ -468,7 +465,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         if self.parent() != right.parent():
             return False
         n = len(self._polys)
-        return all([self[i]*right[j] == self[j]*right[i] for i in range(0, n) for j in range(i+1, n)])
+        return all(self._polys[i] * right._polys[j] == self._polys[j] * right._polys[i]
+                   for i in range(n) for j in range(i+1, n))
 
     def __ne__(self, right):
         """
@@ -476,11 +474,12 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``right`` -- a map on projective space.
+        - ``right`` -- a map on projective space
 
         OUTPUT:
 
-        - Boolean -- True if ``self`` and ``right`` define different projective maps. False otherwise.
+        ``True`` if ``self`` and ``right`` define different projective maps.
+        ``False`` otherwise.
 
         EXAMPLES::
 
@@ -491,7 +490,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f != g
             True
 
-            ::
+        ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: H = Hom(P, P)
@@ -504,19 +503,16 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         if self.parent() != right.parent():
             return True
         n = len(self._polys)
-        for i in range(0, n):
-            for j in range(i + 1, n):
-                if self._polys[i] * right._polys[j] != self._polys[j] * right._polys[i]:
-                    return True
-        return False
+        return any(self._polys[i] * right._polys[j] != self._polys[j] * right._polys[i]
+                   for i in range(n) for j in range(i + 1, n))
 
     def as_dynamical_system(self):
         """
-        Return this endomorpism as a :class:`DynamicalSystem_projective`.
+        Return this endomorphism as a :class:`DynamicalSystem_projective`.
 
         OUTPUT:
 
-        - :class:`DynamicalSystem_projective`.
+        - :class:`DynamicalSystem_projective`
 
         EXAMPLES::
 
@@ -541,7 +537,18 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f = H([x^2, y^2])
             sage: type(f.as_dynamical_system())
             <class 'sage.dynamics.arithmetic_dynamics.projective_ds.DynamicalSystem_projective_finite_field'>
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(RR, 1)
+            sage: f = DynamicalSystem([x^2 + y^2, y^2], P)
+            sage: g = f.as_dynamical_system()
+            sage: g is f
+            True
         """
+        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
+        if isinstance(self, DynamicalSystem):
+            return self
         if not self.is_endomorphism():
             raise TypeError("must be an endomorphism")
         from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
@@ -864,8 +871,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f = H([x^2+y^2, y^2])
             sage: f.dehomogenize(0)
             Scheme endomorphism of Affine Space of dimension 1 over Integer Ring
-              Defn: Defined on coordinates by sending (x) to
-                    (x^2/(x^2 + 1))
+              Defn: Defined on coordinates by sending (y) to
+                    (y^2/(y^2 + 1))
 
         ::
 
@@ -873,9 +880,11 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: H = Hom(P,P)
             sage: f = H([x^2-y^2, y^2])
             sage: f.dehomogenize((0,1))
-            Scheme endomorphism of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    ((-x^2 + 1)/x^2)
+            Scheme morphism:
+              From: Affine Space of dimension 1 over Rational Field
+              To:   Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (y) to
+                    ((-y^2 + 1)/y^2)
 
         ::
 
@@ -884,8 +893,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f = H([x^2+y^2, y^2-z^2, 2*z^2])
             sage: f.dehomogenize(2)
             Scheme endomorphism of Affine Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    (1/2*x0^2 + 1/2*x1^2, 1/2*x1^2 - 1/2)
+              Defn: Defined on coordinates by sending (x, y) to
+                    (1/2*x^2 + 1/2*y^2, 1/2*y^2 - 1/2)
 
         ::
 
@@ -896,8 +905,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f.dehomogenize(2)
             Scheme endomorphism of Affine Space of dimension 2 over Fraction Field
             of Univariate Polynomial Ring in t over Rational Field
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    (1/t*x0^2 + x1^2, x1^2 - 1/t)
+              Defn: Defined on coordinates by sending (x, y) to
+                    (1/t*x^2 + y^2, y^2 - 1/t)
 
         ::
 
@@ -907,9 +916,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f = H([x^2, y^2, x*z])
             sage: f.dehomogenize(2)
             Scheme endomorphism of Closed subscheme of Affine Space of dimension 2 over Integer Ring defined by:
-              x0^2 - x1^2
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    (x0, x1^2/x0)
+              x^2 - y^2
+              Defn: Defined on coordinates by sending (x, y) to
+                    (x, y^2/x)
 
         ::
 
@@ -918,6 +927,18 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f = H([x^2 - 2*x*y, y^2])
             sage: f.dehomogenize(0).homogenize(0) == f
             True
+
+        ::
+
+            sage: K.<w> = QuadraticField(3)
+            sage: O = K.ring_of_integers()
+            sage: P.<x,y> = ProjectiveSpace(O,1)
+            sage: H = End(P)
+            sage: f = H([x^2 - O(w)*y^2,y^2])
+            sage: f.dehomogenize(1)
+            Scheme endomorphism of Affine Space of dimension 1 over Maximal Order in Number Field in w with defining polynomial x^2 - 3
+              Defn: Defined on coordinates by sending (x) to
+                    (x^2 - w)
         """
         #the dehomogenizations are stored for future use.
         try:
@@ -938,9 +959,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         else:
             Aff_domain = PS_domain.affine_patch(ind[0])
             S = Aff_domain.ambient_space().coordinate_ring()
+            FS = FractionField(S)
             N = A_domain.dimension_relative()
             R = A_domain.coordinate_ring()
-            phi = R.hom([S.gen(j) for j in range(0, ind[0])] + [1] + [S.gen(j) for j in range(ind[0], N)], S)
+            phi = R.hom([S.gen(j) for j in range(0, ind[0])] + [1] + [S.gen(j) for j in range(ind[0], N)], FS)
             F = []
             G = phi(self._polys[ind[1]])
             for i in range(0, N + 1):
@@ -1675,7 +1697,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
     def sigma_invariants(self, n, formal=False, embedding=None, type='point'):
         r"""
         Computes the values of the elementary symmetric polynomials of the ``n``
-        multilpier spectra of this dynamical system.
+        multiplier spectra of this dynamical system.
 
         EXAMPLES::
 
@@ -1710,16 +1732,16 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             (
             Dynamical System of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
-                    (x^3 : 3*x^2*y + y^3)
-            ,
+                    (x^3 + 3*x*y^2 : y^3) ,
             <BLANKLINE>
-            [ -1   0]
-            [221  -1]
+            [  0  -1]
+            [  1 221]
             )
         """
         from sage.misc.superseded import deprecation
         deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.reduced_form instead")
-        return self.as_dynamical_system().reduced_form(prec, return_conjugation, error_limit)
+        return self.as_dynamical_system().reduced_form(prec=prec,\
+            return_conjugation=return_conjugation, error_limit=error_limit)
 
 
 class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial_projective_space):
@@ -1915,7 +1937,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                     raise NotImplementedError("subschemes as preimages not implemented")
                 preimages = []
                 for T in X.rational_points():
-                    if not all([g(tuple(T)) == 0 for g in self]):
+                    if not all(g(tuple(T)) == 0 for g in self):
                         preimages.append(PS(T))
                 L2 = L2 + preimages
             L = L2
@@ -2026,7 +2048,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
     def connected_rational_component(self, P, n=0):
         """
-        Return the component of all ratioanl preimage and forward images.
+        Return the component of all rational preimage and forward images.
 
         EXAMPLES::
 
@@ -2206,7 +2228,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
     def normal_form(self, return_conjugation=False):
         """
-        Return a normla form conjugate to this map.
+        Return a normal form conjugate to this map.
 
         EXAMPLES::
 
@@ -2497,4 +2519,4 @@ class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_pol
         from sage.misc.superseded import deprecation
         deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.automorphism_group instead")
         return self.as_dynamical_system().automorphism_group(**kwds)
-    
+

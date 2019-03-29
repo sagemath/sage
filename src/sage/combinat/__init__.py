@@ -13,6 +13,7 @@ Thematic indexes
 
 - :ref:`sage.combinat.algebraic_combinatorics`
 
+  - :ref:`sage.combinat.chas`
   - :ref:`sage.combinat.cluster_algebra_quiver`
   - :ref:`sage.combinat.crystals`
   - :ref:`sage.combinat.root_system`

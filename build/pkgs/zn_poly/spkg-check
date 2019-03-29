@@ -14,17 +14,6 @@ fi
 # Set up environment variables:
 ###############################################################################
 
-if [ "$SAGE64" = yes ]; then
-    echo "Building a 64-bit version of zn_poly's \"extensive\" test suite."
-    if [ -z "$CFLAG64" ]; then
-        CFLAG64=-m64
-    fi
-    CFLAGS="$CFLAGS $CFLAG64"
-    CPPFLAGS="$CPPFLAGS $CFLAG64"
-    CXXFLAGS="$CXXFLAGS $CFLAG64"
-    LDFLAGS="$LDFLAGS $CFLAG64"
-fi
-
 if [ "$SAGE_DEBUG" = yes ]; then
     echo >&2 "Warning: Setting SAGE_DEBUG to 'yes' completely disables optimization."
     CFLAGS="$CFLAGS -O0 -g -fPIC"

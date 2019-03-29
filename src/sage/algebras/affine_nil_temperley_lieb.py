@@ -143,8 +143,8 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
 
     @cached_method
     def algebra_generators(self):
-        """
-        Returns the generators `a_i` for `i=0,1,2,\ldots,n-1`.
+        r"""
+        Return the generators `a_i` for `i=0,1,2,\ldots,n-1`.
 
         EXAMPLES::
 

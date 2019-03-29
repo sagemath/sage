@@ -137,8 +137,8 @@ class FinitelyGeneratedSemigroups(CategoryWithAxiom):
 
                 sage: S = FiniteSemigroups().example(alphabet=('x','y'))
                 sage: it = S.__iter__()
-                sage: list(it)
-                ['x', 'y', 'yx', 'xy']
+                sage: sorted(it)
+                ['x', 'xy', 'y', 'yx']
             """
             from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
             return iter(RecursivelyEnumeratedSet(self.semigroup_generators(),
@@ -163,26 +163,26 @@ class FinitelyGeneratedSemigroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: S = FiniteSemigroups().example()
-                sage: list(S.ideal([S('cab')], side="left"))
-                ['cab', 'acb', 'dcab', 'bca', 'abc', 'adcb', 'bdca',
-                 'cba', 'cdab', 'bac', 'dacb', 'dbca', 'adbc', 'bcda',
-                 'dbac', 'dabc', 'cbda', 'cdba', 'abdc', 'bdac', 'dcba',
-                 'cadb', 'badc', 'acdb', 'abcd', 'cbad', 'bacd', 'acbd',
-                 'bcad', 'cabd']
+                sage: sorted(S.ideal([S('cab')], side="left"))
+                ['abc', 'abcd', 'abdc', 'acb', 'acbd', 'acdb', 'adbc',
+                 'adcb', 'bac', 'bacd', 'badc', 'bca', 'bcad', 'bcda',
+                 'bdac', 'bdca', 'cab', 'cabd', 'cadb', 'cba', 'cbad',
+                 'cbda', 'cdab', 'cdba', 'dabc', 'dacb', 'dbac', 'dbca',
+                 'dcab', 'dcba']
                 sage: list(S.ideal([S('cab')], side="right"))
                 ['cab', 'cabd']
-                sage: list(S.ideal([S('cab')], side="twosided"))
-                ['cab', 'acb', 'dcab', 'bca', 'cabd', 'abc', 'adcb',
-                 'acbd', 'bdca', 'bcad', 'cba', 'cdab', 'bac', 'dacb',
-                 'dbca', 'abcd', 'cbad', 'bacd', 'bcda', 'dbac', 'dabc',
-                 'cbda', 'cdba', 'abdc', 'adbc', 'bdac', 'dcba', 'cadb',
-                 'badc', 'acdb']
-                sage: list(S.ideal([S('cab')]))
-                ['cab', 'acb', 'dcab', 'bca', 'cabd', 'abc', 'adcb',
-                 'acbd', 'bdca', 'bcad', 'cba', 'cdab', 'bac', 'dacb',
-                 'dbca', 'abcd', 'cbad', 'bacd', 'bcda', 'dbac', 'dabc',
-                 'cbda', 'cdba', 'abdc', 'adbc', 'bdac', 'dcba', 'cadb',
-                 'badc', 'acdb']
+                sage: sorted(S.ideal([S('cab')], side="twosided"))
+                ['abc', 'abcd', 'abdc', 'acb', 'acbd', 'acdb', 'adbc',
+                 'adcb', 'bac', 'bacd', 'badc', 'bca', 'bcad', 'bcda',
+                 'bdac', 'bdca', 'cab', 'cabd', 'cadb', 'cba', 'cbad',
+                 'cbda', 'cdab', 'cdba', 'dabc', 'dacb', 'dbac', 'dbca',
+                 'dcab', 'dcba']
+                sage: sorted(S.ideal([S('cab')]))
+                ['abc', 'abcd', 'abdc', 'acb', 'acbd', 'acdb', 'adbc',
+                 'adcb', 'bac', 'bacd', 'badc', 'bca', 'bcad', 'bcda',
+                 'bdac', 'bdca', 'cab', 'cabd', 'cadb', 'cba', 'cbad',
+                 'cbda', 'cdab', 'cdba', 'dabc', 'dacb', 'dbac', 'dbca',
+                 'dcab', 'dcba']
             """
             from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
             return RecursivelyEnumeratedSet(gens, self.succ_generators(side=side))
@@ -199,8 +199,8 @@ class FinitelyGeneratedSemigroups(CategoryWithAxiom):
                 EXAMPLES::
 
                     sage: S = FiniteSemigroups().example(alphabet=('x','y'))
-                    sage: S.some_elements()
-                    ['x', 'y', 'yx', 'xy']
+                    sage: sorted(S.some_elements())
+                    ['x', 'xy', 'y', 'yx']
                     sage: S = FiniteSemigroups().example(alphabet=('x','y','z'))
                     sage: S.some_elements()
                     ['x', 'y', 'z', 'xz', 'yx', 'yz', 'zx', 'zy', 'xy', 'yxz']

@@ -18,8 +18,9 @@ With Realizations Covariant Functorial Construction
 from sage.categories.category import Category
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 
+
 def WithRealizations(self):
-    """
+    r"""
     Return the category of parents in ``self`` endowed with multiple realizations.
 
     INPUT:

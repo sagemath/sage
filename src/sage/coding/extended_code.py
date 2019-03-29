@@ -1,11 +1,11 @@
 r"""
 Extended code
 
-Let `C` be a linear code of length `n` over `\mathbb{F}_{q}`. The extended code of `C` is the code
+Let `C` be a linear code of length `n` over `\GF{q}`. The extended code of `C` is the code
 
 .. MATH::
 
-    \hat{C} = \{x_{1}x_{2}\dots x_{n+1} \in \mathbb{F}_{q}^{n+1} \,\vert\,  x_{1}x_{2}\dots x_{n} \in C \text{ with } x_{1} + x_{2} + \dots + x_{n+1} = 0 \}.
+    \hat{C} = \{x_{1}x_{2}\dots x_{n+1} \in \GF{q}^{n+1} \,\vert\,  x_{1}x_{2}\dots x_{n} \in C \text{ with } x_{1} + x_{2} + \dots + x_{n+1} = 0 \}.
 
 See [HP2003]_ (pp 15-16) for details.
 """

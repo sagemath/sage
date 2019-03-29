@@ -439,14 +439,13 @@ def _frobenius_shift(K, generators, check_only=False):
             j = qlist.index(mqlist[k])
             i = qlist.index(mqlist[k-1])
             crt[(i,j)].append(_find_pow_of_frobenius(p, m, compatible[m][qlist[j]], compatible[m][qlist[i]]))
-    from .integer_mod import mod
-    pairs = crt.keys()
-    for i, j in pairs:
+    for i, j in list(crt):
         L = crt[(i,j)]
-        running = mod(0,1)
+        running = mod(0, 1)
         for a in L:
             running = _crt_non_coprime(running, a)
-        crt[(i,j)] = [(mod(running, q**(running.modulus().valuation(q))), running.modulus().valuation(q)) for q in qlist]
+        crt[(i,j)] = [(mod(running, qq**(running.modulus().valuation(qq))),
+                       running.modulus().valuation(qq)) for qq in qlist]
         crt[(j,i)] = [(-a, level) for a, level in crt[(i,j)]]
     # Let x_j be the power of Frobenius we apply to generators[qlist[j]], for 0 < j < len(qlist)
     # We have some direct conditions on the x_j: x_j reduces to each entry in crt[(0,j)].
@@ -458,7 +457,8 @@ def _frobenius_shift(K, generators, check_only=False):
     # We can set x_0=0 everywhere, can get an initial setting of x_j from the c_0j.
     # We go through prime by prime.
     import bisect
-    frob_powers=[mod(0,1) for q in qlist]
+    frob_powers = [mod(0, 1) for _ in qlist]
+
     def find_leveller(qindex, level, x, xleveled, searched, i):
         searched[i] = True
         crt_possibles = []
@@ -475,6 +475,7 @@ def _frobenius_shift(K, generators, check_only=False):
                 path.append(j)
                 return path
         return None
+
     def propagate_levelling(qindex, level, x, xleveled, i):
         for j in range(1, len(qlist)):
             if i==j: continue

@@ -36,7 +36,6 @@ def expect_quitall(verbose=False):
         if not R is None:
             try:
                 R.quit(verbose=verbose)
-                pass
             except RuntimeError:
                 pass
     kill_spawned_jobs()
@@ -67,15 +66,17 @@ def kill_spawned_jobs(verbose=False):
     file = os.path.join(SAGE_TMP, 'spawned_processes')
     if not os.path.exists(file):
         return
-    for L in open(file).readlines():
-        i = L.find(' ')
-        pid = L[:i].strip()
-        try:
-            if verbose:
-                print("Killing spawned job %s" % pid)
-            os.killpg(int(pid), 9)
-        except OSError:
-            pass
+    with open(file) as f:
+        for L in f:
+            i = L.find(' ')
+            pid = L[:i].strip()
+            try:
+                if verbose:
+                    print("Killing spawned job %s" % pid)
+                os.killpg(int(pid), 9)
+            except OSError:
+                pass
+
 
 def is_running(pid):
     """

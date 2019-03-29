@@ -6,15 +6,13 @@ fi
 
 cd src/
 
-$MAKE -j1
-if [ $? -ne 0 ]; then
-   echo "Error building qhull"
-   exit 1
-fi
+cmake -DCMAKE_INSTALL_PREFIX="${SAGE_LOCAL}" -DCMAKE_VERBOSE_MAKEFILE=ON
 
-# Note that the Makefile uses DESTDIR for what otherwise would be called "prefix".
-$MAKE -j1 install DESTDIR="$SAGE_LOCAL"
-if [ $? -ne 0 ]; then
-    echo "Error installing qhull"
-    exit 1
-fi
+sdh_make
+
+# clean old install
+rm -rf "${SAGE_LOCAL}"/include/libqhull
+rm -rf "${SAGE_LOCAL}"/include/qhull
+rm -rf "${SAGE_LOCAL}"/lib/libqhull*
+
+sdh_make_install

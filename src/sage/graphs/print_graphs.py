@@ -185,24 +185,16 @@ def print_graph_eps(vert_ls, edge_iter, pos_dict):
     t = ""
     s = ""
 
-    xmin = 0
-    ymin = 0
-
-    xmax = -1
-    ymax = -1
-
-#    n = len(vert_ls)
-
     for v in vert_ls:
         x,y = pos_dict[v]
         pos_dict[v] = int(floor(50*x))+50, int(floor(50*y))+50
         x,y = pos_dict[v]
-        s += "%s %s point\n"%(x,y)
+        s += "%s %s point\n" % (x, y)
 
     for (u, v, l) in edge_iter:
         ux, uy = pos_dict[u]
         vx, vy = pos_dict[v]
-        s += "%s %s %s %s edge\n"%(ux, uy, vx, vy)
+        s += "%s %s %s %s edge\n" % (ux, uy, vx, vy)
 
     t = print_header_eps(t, 0, 0, 100, 100)
     t = print_functions(t)

@@ -8,7 +8,7 @@ in finite type.
 AUTHORS:
 
 - Dinakar Muthiah (2015-05): initial version
-- Travis Scrimshaw (2016-06): simplfied code and converted to Cython
+- Travis Scrimshaw (2016-06): simplified code and converted to Cython
 """
 
 #*****************************************************************************

@@ -29,6 +29,8 @@ from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 from sage.rings.padics.common_conversion cimport cconv_mpz_t_out_shared, cconv_mpz_t_shared, cconv_mpq_t_out_shared, cconv_mpq_t_shared, cconv_shared
 import sage.rings.finite_rings.integer_mod
 
+DEF CELEMENT_IS_PY_OBJECT = False
+
 cdef Integer holder = PY_NEW(Integer)
 cdef Integer holder2 = PY_NEW(Integer)
 
@@ -166,7 +168,7 @@ cdef inline bint creduce_small(mpz_t out, mpz_t a, long prec, PowComputer_ prime
         mpz_set(out, a)
     return mpz_sgn(out) == 0
 
-cdef inline long cremove(mpz_t out, mpz_t a, long prec, PowComputer_ prime_pow) except -1:
+cdef inline long cremove(celement out, celement a, long prec, PowComputer_ prime_pow, bint reduce_relative=False) except -1:
     """
     Extract the maximum power of the uniformizer dividing this
     element.
@@ -177,6 +179,9 @@ cdef inline long cremove(mpz_t out, mpz_t a, long prec, PowComputer_ prime_pow) 
     - ``a`` -- the element whose valuation and unit are desired.
     - ``prec`` -- a long, used if `a = 0`.
     - ``prime_pow`` -- the PowComputer for the ring.
+    - ``reduce_relative`` -- a bint: whether the final result
+      should be reduced at precision ``prec`` (case ``False``)
+      or ``prec - valuation`` (case ``True``)
 
     OUTPUT:
 
@@ -226,7 +231,7 @@ cdef inline bint cisunit(mpz_t a, PowComputer_ prime_pow) except -1:
     """
     return mpz_divisible_p(a, prime_pow.prime.value) == 0
 
-cdef inline int cshift(mpz_t out, mpz_t a, long n, long prec, PowComputer_ prime_pow, bint reduce_afterward) except -1:
+cdef inline int cshift(mpz_t out, mpz_t rem, mpz_t a, long n, long prec, PowComputer_ prime_pow, bint reduce_afterward) except -1:
     """
     Multiplies by a power of the uniformizer.
 
@@ -235,6 +240,7 @@ cdef inline int cshift(mpz_t out, mpz_t a, long n, long prec, PowComputer_ prime
     - ``out`` -- an ``mpz_t`` to store the result.  If `n >= 0` then
                  out will be set to `a * p^n`.  If `n < 0`, out will
                  be set to `a // p^n`.
+    - ``rem`` -- an ``mpz_t`` to store the remainder, when `n < 0`
     - ``a`` -- the element to shift.
     - ``n`` -- long, the amount to shift by.
     - ``prec`` -- long, a precision modulo which to reduce.
@@ -245,14 +251,14 @@ cdef inline int cshift(mpz_t out, mpz_t a, long n, long prec, PowComputer_ prime
         mpz_mul(out, a, prime_pow.pow_mpz_t_tmp(n))
     elif n < 0:
         sig_on()
-        mpz_fdiv_q(out, a, prime_pow.pow_mpz_t_tmp(-n))
+        mpz_fdiv_qr(out, rem, a, prime_pow.pow_mpz_t_tmp(-n))
         sig_off()
     else: # elif a != out:
         mpz_set(out, a)
     if reduce_afterward:
         creduce(out, out, prec, prime_pow)
 
-cdef inline int cshift_notrunc(mpz_t out, mpz_t a, long n, long prec, PowComputer_ prime_pow) except -1:
+cdef inline int cshift_notrunc(mpz_t out, mpz_t a, long n, long prec, PowComputer_ prime_pow, bint reduce_afterward) except -1:
     """
     Multiplies by a power of the uniformizer, assuming that the
     valuation of a is at least -n.
@@ -267,6 +273,7 @@ cdef inline int cshift_notrunc(mpz_t out, mpz_t a, long n, long prec, PowCompute
     - ``n`` -- long, the amount to shift by.
     - ``prec`` -- long, a precision modulo which to reduce.
     - ``prime_pow`` -- the PowComputer for the ring.
+    - ``reduce_afterward`` -- whether to reduce afterward.
     """
     if n > 0:
         mpz_mul(out, a, prime_pow.pow_mpz_t_tmp(n))
@@ -276,6 +283,8 @@ cdef inline int cshift_notrunc(mpz_t out, mpz_t a, long n, long prec, PowCompute
         sig_off()
     else:
         mpz_set(out, a)
+    if reduce_afterward:
+        creduce(out, out, prec, prime_pow)
 
 cdef inline int csub(mpz_t out, mpz_t a, mpz_t b, long prec, PowComputer_ prime_pow) except -1:
     """
@@ -343,10 +352,10 @@ cdef inline int cdivunit(mpz_t out, mpz_t a, mpz_t b, long prec, PowComputer_ pr
     - ``prime_pow`` -- the PowComputer for the ring.
     """
     cdef bint success
-    success = mpz_invert(out, b, prime_pow.pow_mpz_t_tmp(prec))
+    success = mpz_invert(prime_pow.aliasing, b, prime_pow.pow_mpz_t_tmp(prec))
     if not success:
         raise ZeroDivisionError
-    mpz_mul(out, a, out)
+    mpz_mul(out, a, prime_pow.aliasing)
 
 cdef inline int csetone(mpz_t out, PowComputer_ prime_pow) except -1:
     """
@@ -531,7 +540,7 @@ cdef inline cexpansion_getitem(mpz_t value, long m, PowComputer_ prime_pow):
         mpz_mod(ans.value, value, prime_pow.prime.value)
     return ans
 
-# The element is filled in for zero in the the p-adic expansion if necessary.
+# The element is filled in for zero in the p-adic expansion if necessary.
 # It could be [] for some other linkages.
 _expansion_zero = Integer(0)
 

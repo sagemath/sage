@@ -40,88 +40,40 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
         #self._precompute()
 
-    def _repr_(self, do_latex = False):
+    def _extension_type(self):
         """
-        Returns a print representation of this extension.
+        Return the type (``Unramified``, ``Eisenstein``) of this 
+        extension as a string, if any.
+
+        Used for printing.
 
         EXAMPLES::
 
-            sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
-            sage: B #indirect doctest
-            Eisenstein Extension in t defined by x^2 + 7 with capped relative precision 20 over 7-adic Ring
+            sage: K.<a> = Qq(5^3)
+            sage: K._extension_type()
+            'Unramified'
+
+            sage: L.<pi> = Qp(5).extension(x^2 - 5)
+            sage: L._extension_type()
+            'Eisenstein'
         """
-        if do_latex:
-            return "Eisenstein Extension in %s defined by %s over %s"%(self.latex_name(), latex(self.defining_polynomial(exact=True)), latex(self.ground_ring()))
-        else:
-            return "Eisenstein Extension in %s defined by %s %s over %s-adic %s"%(self.variable_name(), self.defining_polynomial(exact=True), precprint(self._prec_type(), self.precision_cap(), self.variable_name()), self.prime(), "Field" if self.is_field() else "Ring")
+        return "Eisenstein"
 
-    def ramification_index(self, K = None):
+    def absolute_e(self):
         """
-        Returns the ramification index of self over K, or over the
-        ground ring if K is None.
-
-        The ramification index is the index of the image of the
-        valuation map on K in the image of the valuation map on self
-        (both normalized so that the valuation of p is 1).
-
-        INPUT:
-
-        - self -- an Eisenstein extension
-        - K -- a subring of self (default None -> self.ground_ring())
-
-        OUTPUT:
-
-        - The ramification index of the extension self/K
+        Return the absolute ramification index of this ring or field
 
         EXAMPLES::
 
-            sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
-            sage: B.ramification_index()
+            sage: K.<a> = Qq(3^5)
+            sage: K.absolute_e()
+            1
+
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)
+            sage: L.absolute_e()
             2
         """
-        if K is None or K is self.ground_ring():
-            return self.modulus().degree()
-        elif K is self:
-            return 1
-        else:
-            raise NotImplementedError
-
-    def inertia_degree(self, K = None):
-        """
-        Returns the inertia degree of self over K, or the ground ring
-        if K is None.
-
-        The inertia degree is the degree of the extension of residue
-        fields induced by this extensions.  Since Eisenstein
-        extensions are totally ramified, this will be 1 for K=None.
-
-        INPUT:
-
-        - self -- an Eisenstein extension
-        - K -- a subring of self (default None -> self.ground_ring())
-
-        OUTPUT:
-
-        - The degree of the induced extensions of residue fields.
-
-        EXAMPLES::
-
-            sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
-            sage: B.inertia_degree()
-            1
-        """
-        if K is None or K is self.ground_ring():
-            return Integer(1)
-        elif K is self:
-            return Integer(1)
-        else:
-            raise NotImplementedError
+        return self.modulus().degree() * self.base_ring().absolute_e()
 
     def inertia_subring(self):
         """

@@ -69,13 +69,12 @@ from sage.rings.all import ZZ, QQ, RDF, RR, AA, QQbar
 from sage.combinat.permutation import Permutations
 from sage.groups.perm_gps.permgroup_named import AlternatingGroup
 from sage.misc.decorators import rename_keyword
-from sage.misc.superseded import deprecated_function_alias
 from .constructor import Polyhedron
 from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.associahedron import Associahedron
 
 
-def zero_sum_projection(d):
+def zero_sum_projection(d, base_ring=RDF):
     r"""
     Return a matrix corresponding to the projection on the orthogonal of
     `(1,1,\ldots,1)` in dimension `d`.
@@ -86,8 +85,8 @@ def zero_sum_projection(d):
 
     OUTPUT:
 
-    A matrix of dimensions `(d-1)\times d` defined over :class:`RDF
-    <sage.rings.real_double.RealDoubleField_class>`.
+    A matrix of dimensions `(d-1)\times d` defined over ``base_ring`` (default:
+    :class:`RDF <sage.rings.real_double.RealDoubleField_class>`).
 
     EXAMPLES::
 
@@ -97,15 +96,29 @@ def zero_sum_projection(d):
         sage: zero_sum_projection(3)
         [ 0.7071067811865475 -0.7071067811865475                 0.0]
         [ 0.4082482904638631  0.4082482904638631 -0.8164965809277261]
+
+    Exact computation in `AA <sage.rings.qqbar.AlgebraicRealField>``::
+
+        sage: zero_sum_projection(3, base_ring=AA)
+        [ 0.7071067811865475? -0.7071067811865475?                    0]
+        [ 0.4082482904638630?  0.4082482904638630? -0.8164965809277260?]
+
     """
     from sage.matrix.constructor import matrix
     from sage.modules.free_module_element import vector
-    basis = [vector(RDF,[1]*i + [-i] + [0]*(d-i-1)) for i in range(1,d)]
-    return matrix(RDF, [v / v.norm() for v in basis])
+    basis = [vector(base_ring,[1]*i + [-i] + [0]*(d-i-1)) for i in range(1,d)]
+    return matrix(base_ring, [v / v.norm() for v in basis])
 
-def project_points(*points):
+def project_points(*points, **kwds):
     """
     Projects a set of points into a vector space of dimension one less.
+
+    INPUT:
+
+    - ``points``... -- the points to project.
+
+    - ``base_ring`` -- (defaults to ``RDF`` if keyword is ``None`` or not
+      provided in ``kwds``) the base ring to use.
 
     The projection is isometric to the orthogonal projection on the hyperplane
     made of zero sum vector. Hence, if the set of points have all equal sums,
@@ -141,12 +154,24 @@ def project_points(*points):
         sage: for i in range(21):
         ....:     for j in range(21):
         ....:         assert abs((V[i]-V[j]).norm() - (P[i]-P[j]).norm()) < 0.00001
+
+    Example with exact computation::
+
+        sage: V = [ vector(v) for v in IntegerVectors(n=4,length=2) ]
+        sage: P = project_points(*V, base_ring=AA)
+        sage: for i in range(len(V)):
+        ....:     for j in range(len(V)):
+        ....:         assert (V[i]-V[j]).norm() == (P[i]-P[j]).norm()
+
     """
     if not points:
         return []
+    base_ring = kwds.pop('base_ring', None)
+    if base_ring is None:
+        base_ring = RDF
     from sage.modules.free_module_element import vector
-    vecs = [vector(RDF,p) for p in points]
-    m = zero_sum_projection(len(vecs[0]))
+    vecs = [vector(base_ring,p) for p in points]
+    m = zero_sum_projection(len(vecs[0]), base_ring=base_ring)
     return [m*v for v in vecs]
 
 class Polytopes():
@@ -155,7 +180,7 @@ class Polytopes():
     polytopes.
     """
 
-    def regular_polygon(self, n, exact=True, base_ring=None):
+    def regular_polygon(self, n, exact=True, base_ring=None, backend=None):
         """
         Return a regular polygon with `n` vertices.
 
@@ -170,6 +195,8 @@ class Polytopes():
           ``None`` by default. If it is not provided and ``exact`` is ``True``
           then it will be the field of real algebraic number, if ``exact`` is
           ``False`` it will be the real double field.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -210,9 +237,9 @@ class Polytopes():
             z = QQbar.zeta(n)
             verts = [(base_ring((z**k).imag()), base_ring((z**k).real())) for k in range(n)]
 
-        return Polyhedron(vertices=verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    def Birkhoff_polytope(self, n):
+    def Birkhoff_polytope(self, n, backend=None):
         """
         Return the Birkhoff polytope with `n!` vertices.
 
@@ -223,6 +250,8 @@ class Polytopes():
         INPUT:
 
         - ``n`` -- a positive integer giving the size of the permutation matrices.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         .. SEEALSO::
 
@@ -249,16 +278,20 @@ class Polytopes():
             sage: b4 = polytopes.Birkhoff_polytope(4)
             sage: b4.n_vertices(), b4.ambient_dim(), b4.dim()
             (24, 16, 9)
+
+        TESTS::
+
+            sage: b4norm = polytopes.Birkhoff_polytope(4,backend='normaliz')  # optional - pynormaliz
+            sage: TestSuite(b4norm).run(skip='_test_pickling')                # optional - pynormaliz
         """
         from itertools import permutations
         verts = []
         for p in permutations(range(n)):
             verts.append( [ZZ.one() if p[i]==j else ZZ.zero() for j in range(n) for i in range(n) ] )
-        return Polyhedron(vertices=verts, base_ring=ZZ)
+        return Polyhedron(vertices=verts, base_ring=ZZ, backend=backend)
 
-    @rename_keyword(deprecation=18213, dim_n='dim')
-    def simplex(self, dim=3, project=False):
-        """
+    def simplex(self, dim=3, project=False, base_ring=None, backend=None):
+        r"""
         Return the ``dim`` dimensional simplex.
 
         The `d`-simplex is the convex hull in `\RR^{d+1}` of the standard basis
@@ -272,9 +305,15 @@ class Polytopes():
 
         - ``project`` -- (boolean, default ``False``) if ``True``, the polytope
           is (isometrically) projected to a vector space of dimension ``dim-1``.
-          This operation turns the coordinates into floating point
-          approximations and corresponds to the projection given by the matrix
-          from :func:`zero_sum_projection`.
+          This corresponds to the projection given by the matrix from
+          :func:`zero_sum_projection`.  By default, this operation turns the
+          coordinates into floating point approximations (see ``base_ring``).
+
+        - ``base_ring`` -- the base ring to use to create the polytope.
+          If ``project`` is ``False``, this defaults to `\ZZ`.
+          Otherwise, it defaults to ``RDF``.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         .. SEEALSO::
 
@@ -305,18 +344,29 @@ class Polytopes():
             0.00367465459870082
             sage: sqrt(7.) / factorial(6)
             0.00367465459870082
+
+        Computation in algebraic reals::
+
+            sage: s3 = polytopes.simplex(3, project=True, base_ring=AA)
+            sage: s3.volume() == sqrt(3+1) / factorial(3)
+            True
+
+        TESTS::
+
+            sage: s6norm = polytopes.simplex(6,backend='normaliz')  # optional - pynormaliz
+            sage: TestSuite(s6norm).run(skip='_test_pickling')      # optional - pynormaliz
         """
         verts = list((ZZ ** (dim+1)).basis())
-        if project: verts = project_points(*verts)
-        return Polyhedron(vertices=verts)
+        if project:
+            # Handling of default in base_ring is delegated to project_points
+            verts = project_points(*verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    n_simplex = deprecated_function_alias(18213, simplex)
-
-    def icosahedron(self, exact=True, base_ring=None):
-        """
+    def icosahedron(self, exact=True, base_ring=None, backend=None):
+        r"""
         Return an icosahedron with edge length 1.
 
-        The icosahedron is one of the Platonic solid. It has 20 faces
+        The icosahedron is one of the Platonic solids. It has 20 faces
         and is dual to the :meth:`dodecahedron`.
 
         INPUT:
@@ -329,6 +379,8 @@ class Polytopes():
           provided and ``exact=True`` it will be the number field
           `\QQ[\sqrt(5)]` and if ``exact=False`` it will be the real double
           field.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -343,8 +395,8 @@ class Polytopes():
             sage: ico = polytopes.icosahedron(exact=False)
             sage: ico.base_ring()
             Real Double Field
-            sage: ico.volume()
-            2.1816949907715726
+            sage: ico.volume() # known bug (trac 18214)
+            2.181694990...
 
         A version using `AA <sage.rings.qqbar.AlgebraicRealField>`::
 
@@ -378,10 +430,10 @@ class Polytopes():
         pts = [[z, s1 * r12, s2 * g / 2]
                for s1, s2 in itertools.product([1, -1], repeat=2)]
         verts = [p(v) for p in AlternatingGroup(3) for v in pts]
-        return Polyhedron(vertices=verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    def dodecahedron(self, exact=True, base_ring=None):
-        """
+    def dodecahedron(self, exact=True, base_ring=None, backend=None):
+        r"""
         Return a dodecahedron.
 
         The dodecahedron is the Platonic solid dual to the :meth:`icosahedron`.
@@ -396,6 +448,8 @@ class Polytopes():
           provided and ``exact=True`` it will be the number field
           `\QQ[\sqrt(5)]` and if ``exact=False`` it will be the real double
           field.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -418,10 +472,10 @@ class Polytopes():
             ...
             TypeError: unable to convert 1/4*sqrt(5) + 1/4 to a rational
         """
-        return self.icosahedron(exact=exact, base_ring=base_ring).polar()
+        return self.icosahedron(exact=exact, base_ring=base_ring, backend=backend).polar()
 
-    def small_rhombicuboctahedron(self, exact=True, base_ring=None):
-        """
+    def small_rhombicuboctahedron(self, exact=True, base_ring=None, backend=None):
+        r"""
         Return the (small) rhombicuboctahedron.
 
         The rhombicuboctahedron is an Archimedean solid with 24 vertices and 26
@@ -436,6 +490,8 @@ class Polytopes():
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False`` it
           will be the real double field.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -477,10 +533,10 @@ class Polytopes():
         verts.extend([s1*one, s2*one, s3*a] for s1,s2,s3 in itertools.product([1,-1], repeat=3))
         verts.extend([s1*one, s3*a, s2*one] for s1,s2,s3 in itertools.product([1,-1], repeat=3))
         verts.extend([s1*a, s2*one, s3*one] for s1,s2,s3 in itertools.product([1,-1], repeat=3))
-        return Polyhedron(vertices=verts)
+        return Polyhedron(vertices=verts, backend=backend)
 
-    def great_rhombicuboctahedron(self, exact=True, base_ring=None):
-        """
+    def great_rhombicuboctahedron(self, exact=True, base_ring=None, backend=None):
+        r"""
         Return the great rhombicuboctahedron.
 
         The great rhombicuboctahedron (or truncated cuboctahedron) is an
@@ -496,6 +552,8 @@ class Polytopes():
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False`` it
           will be the real double field.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -534,15 +592,19 @@ class Polytopes():
         verts = [ [s1*z1, s2*z2, s3*z3]
                        for z1,z2,z3 in itertools.permutations([one,v1,v2])
                        for s1,s2,s3 in itertools.product([1,-1], repeat=3)]
-        return Polyhedron(vertices=verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    def rhombic_dodecahedron(self):
+    def rhombic_dodecahedron(self, backend=None):
         """
         Return the rhombic dodecahedron.
 
         The rhombic dodecahedron is a a polytope  dual to the cuboctahedron. It
         has 14 vertices and 12 faces. For more information see
         the :wikipedia:`Rhombic_dodecahedron`.
+
+        INPUT:
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         .. SEEALSO::
 
@@ -568,13 +630,18 @@ class Polytopes():
             [33, 185, 553, 1233]
             sage: [len((i*rd).integral_points()) for i in [1,2,3,4]]
             [33, 185, 553, 1233]
+
+        TESTS::
+
+            sage: rd_norm = polytopes.rhombic_dodecahedron(backend='normaliz')  # optional - pynormaliz
+            sage: TestSuite(rd_norm).run(skip='_test_pickling')                 # optional - pynormaliz
         """
         v = [[2,0,0],[-2,0,0],[0,2,0],[0,-2,0],[0,0,2],[0,0,-2]]
         v.extend((itertools.product([1,-1], repeat=3)))
-        return Polyhedron(vertices=v, base_ring=ZZ)
+        return Polyhedron(vertices=v, base_ring=ZZ, backend=backend)
 
-    def cuboctahedron(self):
-        """
+    def cuboctahedron(self, backend=None):
+        r"""
         Return the cuboctahedron.
 
         The cuboctahedron is an Archimedean solid with 12 vertices and 14 faces
@@ -582,6 +649,10 @@ class Polytopes():
         of the twelve vertices `(0, \pm 1, \pm 1)`, `(\pm 1, 0, \pm 1)` and
         `(\pm 1, \pm 1, 0)`. For more information, see the
         :wikipedia:`Cuboctahedron`.
+
+        INPUT:
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         .. SEEALSO::
 
@@ -606,15 +677,20 @@ class Polytopes():
             20/3
             sage: co.ehrhart_polynomial()      # optional - latte_int
             20/3*t^3 + 8*t^2 + 10/3*t + 1
+
+        TESTS::
+
+            sage: co_norm = polytopes.cuboctahedron(backend='normaliz')  # optional - pynormaliz
+            sage: TestSuite(co_norm).run(skip='_test_pickling')          # optional - pynormaliz
         """
         v = [ [ 0, -1, -1], [ 0, 1,-1], [ 1,-1, 0],
               [ 1,  1,  0], [ 1, 0, 1], [ 1, 0,-1],
               [ 0,  1,  1], [ 0,-1, 1], [-1, 0, 1],
               [-1,  1,  0], [-1, 0,-1], [-1,-1, 0] ]
-        return Polyhedron(vertices=v, base_ring=ZZ)
+        return Polyhedron(vertices=v, base_ring=ZZ, backend=backend)
 
-    def truncated_cube(self, exact=True, base_ring=None):
-        """
+    def truncated_cube(self, exact=True, base_ring=None, backend=None):
+        r"""
         Return the truncated cube.
 
         The truncated cube is an Archimedean solid with 24 vertices
@@ -632,6 +708,8 @@ class Polytopes():
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\sqrt{2}]` and if ``exact=False`` it
           will be the real double field.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -665,9 +743,9 @@ class Polytopes():
         v = [[a * g, b, c] for a in [-1, 1] for b in [-1, 1] for c in [-1, 1]]
         v += [[a, b * g, c] for a in [-1, 1] for b in [-1, 1] for c in [-1, 1]]
         v += [[a, b, c * g] for a in [-1, 1] for b in [-1, 1] for c in [-1, 1]]
-        return Polyhedron(vertices=v, base_ring=base_ring)
+        return Polyhedron(vertices=v, base_ring=base_ring, backend=backend)
 
-    def tetrahedron(self):
+    def tetrahedron(self, backend=None):
         """
         Return the tetrahedron.
 
@@ -676,6 +754,10 @@ class Polytopes():
         of the 4 vertices `(0, 0, 0)`, `(1, 1, 0)`, `(1, 0, 1)` and
         `(0, 1, 1)`. For more information, see the
         :wikipedia:`Tetrahedron`.
+
+        INPUT:
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         .. SEEALSO::
 
@@ -698,12 +780,17 @@ class Polytopes():
             1/3
             sage: co.ehrhart_polynomial()      # optional - latte_int
             1/3*t^3 + t^2 + 5/3*t + 1
+
+        TESTS::
+
+            sage: t_norm = polytopes.tetrahedron(backend='normaliz')  # optional - pynormaliz
+            sage: TestSuite(t_norm).run(skip='_test_pickling')        # optional - pynormaliz
         """
         v = [[0, 0, 0], [1, 0, 1], [1, 1, 0], [0, 1, 1]]
-        return Polyhedron(vertices=v, base_ring=ZZ)
+        return Polyhedron(vertices=v, base_ring=ZZ, backend=backend)
 
-    def truncated_tetrahedron(self):
-        """
+    def truncated_tetrahedron(self, backend=None):
+        r"""
         Return the truncated tetrahedron.
 
         The truncated tetrahedron is an Archimedean solid with 12
@@ -711,6 +798,10 @@ class Polytopes():
         all the permutations of `(\pm 1, \pm 1, \pm 3)` with an even
         number of minus signs. For more information, see the
         :wikipedia:`Truncated_tetrahedron`.
+
+        INPUT:
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -731,15 +822,20 @@ class Polytopes():
             184/3
             sage: co.ehrhart_polynomial()      # optional - latte_int
             184/3*t^3 + 28*t^2 + 26/3*t + 1
+
+        TESTS::
+
+            sage: tt_norm = polytopes.truncated_tetrahedron(backend='normaliz')  # optional - pynormaliz
+            sage: TestSuite(tt_norm).run(skip='_test_pickling')                  # optional - pynormaliz
         """
         v = [(3,1,1), (1,3,1), (1,1,3),
              (-3,-1,1), (-1,-3,1), (-1,-1,3),
              (-3,1,-1), (-1,3,-1), (-1,1,-3),
              (3,-1,-1), (1,-3,-1), (1,-1,-3)]
-        return Polyhedron(vertices=v, base_ring=ZZ)
+        return Polyhedron(vertices=v, base_ring=ZZ, backend=backend)
 
-    def truncated_octahedron(self):
-        """
+    def truncated_octahedron(self, backend=None):
+        r"""
         Return the truncated octahedron.
 
         The truncated octahedron is an Archimedean solid with 24
@@ -748,6 +844,10 @@ class Polytopes():
         information, see the :wikipedia:`Truncated_octahedron`.
 
         This is also known as the permutohedron of dimension 3.
+
+        INPUT:
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -768,14 +868,19 @@ class Polytopes():
             32
             sage: co.ehrhart_polynomial()      # optional - latte_int
             32*t^3 + 18*t^2 + 6*t + 1
+
+        TESTS::
+
+            sage: to_norm = polytopes.truncated_octahedron(backend='normaliz')  # optional - pynormaliz
+            sage: TestSuite(to_norm).run(skip='_test_pickling')                 # optional - pynormaliz
         """
         v = [(0, e, f) for e in [-1, 1] for f in [-2, 2]]
         v = [(xyz[sigma(1) - 1], xyz[sigma(2) - 1], xyz[sigma(3) - 1])
              for sigma in Permutations(3) for xyz in v]
-        return Polyhedron(vertices=v, base_ring=ZZ)
+        return Polyhedron(vertices=v, base_ring=ZZ, backend=backend)
 
-    def octahedron(self):
-        """
+    def octahedron(self, backend=None):
+        r"""
         Return the octahedron.
 
         The octahedron is a Platonic solid with 6 vertices and 8 faces
@@ -783,6 +888,10 @@ class Polytopes():
         of the six vertices `(0, 0, \pm 1)`, `(\pm 1, 0, 0)` and
         `(0, \pm 1, 0)`. For more information, see the
         :wikipedia:`Octahedron`.
+
+        INPUT:
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -801,12 +910,17 @@ class Polytopes():
             4/3
             sage: co.ehrhart_polynomial()      # optional - latte_int
             4/3*t^3 + 2*t^2 + 8/3*t + 1
+
+        TESTS::
+
+            sage: o_norm = polytopes.octahedron(backend='normaliz')  # optional - pynormaliz
+            sage: TestSuite(o_norm).run(skip='_test_pickling')       # optional - pynormaliz
         """
         v = [[0, 0, -1], [0, 0, 1], [1, 0, 0],
              [-1, 0,  0], [0, 1, 0], [0, -1, 0]]
-        return Polyhedron(vertices=v, base_ring=ZZ)
+        return Polyhedron(vertices=v, base_ring=ZZ, backend=backend)
 
-    def snub_cube(self):
+    def snub_cube(self, backend=None):
         """
         Return a snub cube.
 
@@ -814,6 +928,10 @@ class Polytopes():
         For more information see the :wikipedia:`Snub_cube`.
 
         It uses the real double field for the coordinates.
+
+        INPUT:
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -841,8 +959,8 @@ class Polytopes():
                             verts += [p(v)]
         return Polyhedron(vertices=verts, base_ring=base_ring)
 
-    def buckyball(self, exact=True, base_ring=None):
-        """
+    def buckyball(self, exact=True, base_ring=None, backend=None):
+        r"""
         Return the bucky ball.
 
         The bucky ball, also known as the truncated icosahedron is an Archimedean solid.
@@ -861,6 +979,8 @@ class Polytopes():
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False`` it
           will be the real double field.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -885,9 +1005,9 @@ class Polytopes():
             sage: sum(1 for f in bb.faces(2) if len(f.vertices()) == 6)
             20
         """
-        return self.icosahedron(exact=exact, base_ring=base_ring).truncation()
+        return self.icosahedron(exact=exact, base_ring=base_ring, backend=backend).truncation()
 
-    def icosidodecahedron(self, exact=True):
+    def icosidodecahedron(self, exact=True, backend=None):
         """
         Return the icosidodecahedron.
 
@@ -899,6 +1019,8 @@ class Polytopes():
 
         - ``exact`` -- (boolean, default ``True``) If ``False`` use an
           approximate ring for the coordinates.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -930,10 +1052,10 @@ class Polytopes():
             return Polyhedron(vertices=verts,base_ring=K)
         else:
             verts = [(RR(x), RR(y), RR(z)) for x, y, z in verts]
-            return Polyhedron(vertices=verts)
+            return Polyhedron(vertices=verts, backend=backend)
 
-    def icosidodecahedron_V2(self, exact=True, base_ring=None):
-        """
+    def icosidodecahedron_V2(self, exact=True, base_ring=None, backend=None):
+        r"""
         Return the icosidodecahedron.
 
         The icosidodecahedron is an Archimedean solid.
@@ -949,6 +1071,8 @@ class Polytopes():
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False`` it
           will be the real double field.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -990,10 +1114,10 @@ class Polytopes():
         verts = pts
         verts += [[v[1], v[2], v[0]] for v in pts]
         verts += [[v[2], v[0], v[1]] for v in pts]
-        return Polyhedron(vertices=verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    def truncated_dodecahedron(self, exact=True, base_ring=None):
-        """
+    def truncated_dodecahedron(self, exact=True, base_ring=None, backend=None):
+        r"""
         Return the truncated dodecahedron.
 
         The truncated dodecahedron is an Archimedean solid.
@@ -1010,21 +1134,15 @@ class Polytopes():
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False`` it
           will be the real double field.
 
+        - ``backend`` -- the backend to use to create the polytope.
+
         EXAMPLES::
 
-            sage: td = polytopes.truncated_dodecahedron()   # long time - 6secs
-            sage: td.f_vector()                # long time
-            (1, 60, 90, 32, 1)
-            sage: td.base_ring()               # long time
-            Number Field in sqrt5 with defining polynomial x^2 - 5
-
-        A much faster implementation using floating point approximations::
-
-            sage: td = polytopes.truncated_dodecahedron(exact=False)
+            sage: td = polytopes.truncated_dodecahedron()
             sage: td.f_vector()
             (1, 60, 90, 32, 1)
             sage: td.base_ring()
-            Real Double Field
+            Number Field in sqrt5 with defining polynomial x^2 - 5
 
         Its faces are 20 triangles and 12 regular decagons::
 
@@ -1032,6 +1150,21 @@ class Polytopes():
             20
             sage: sum(1 for f in td.faces(2) if len(f.vertices()) == 10)
             12
+
+        The faster implementation using floating point approximations does not
+        fully work unfortunately, see https://github.com/cddlib/cddlib/pull/7
+        for a detailed discussion of this case::
+
+            sage: td = polytopes.truncated_dodecahedron(exact=False) # random
+            doctest:warning
+            ...
+            UserWarning: This polyhedron data is numerically complicated; cdd could not convert between the inexact V and H representation without loss of data. The resulting object might show inconsistencies.
+            sage: td.f_vector()
+            Traceback (most recent call last):
+            ...
+            KeyError: ...
+            sage: td.base_ring()
+            Real Double Field
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -1054,10 +1187,10 @@ class Polytopes():
         verts = pts
         verts += [[v[1], v[2], v[0]] for v in pts]
         verts += [[v[2], v[0], v[1]] for v in pts]
-        return Polyhedron(vertices=verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    def pentakis_dodecahedron(self, exact=True, base_ring=None):
-        """
+    def pentakis_dodecahedron(self, exact=True, base_ring=None, backend=None):
+        r"""
         Return the pentakis dodecahedron.
 
         The pentakis dodecahedron (orkisdodecahedron) is a face-regular,
@@ -1074,6 +1207,8 @@ class Polytopes():
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False`` it
           will be the real double field.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -1096,15 +1231,19 @@ class Polytopes():
             sage: all(len(f.vertices()) == 3 for f in pd.faces(2))
             True
         """
-        return self.buckyball(exact=exact, base_ring=base_ring).polar()
+        return self.buckyball(exact=exact, base_ring=base_ring, backend=backend).polar()
 
-    def Kirkman_icosahedron(self):
-        """
+    def Kirkman_icosahedron(self, backend=None):
+        r"""
         Return the Kirkman icosahedron.
 
         The Kirkman icosahedron is a 3-polytope with integer coordinates: `(\pm
         9, \pm 6, \pm 6)`, `(\pm 12, \pm 4, 0)`, `(0, \pm 12, \pm 8)`, `(\pm 6,
         0, \pm 12)`. See [Fe2012]_ for more information.
+
+        INPUT:
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -1120,16 +1259,21 @@ class Polytopes():
             sage: edge_lengths = [norm(edge[0]-edge[1]) for edge in edges]
             sage: union(edge_lengths)
             [7, 8, 9, 11, 12, 14, 16]
+
+        TESTS::
+
+            sage: ki_norm = polytopes.Kirkman_icosahedron(backend='normaliz')  # optional - pynormaliz
+            sage: TestSuite(ki_norm).run(skip='_test_pickling')                # optional - pynormaliz
         """
         vertices = [[9, 6, 6], [-9, 6, 6], [9, -6, 6], [9, 6, -6],
                     [-9, -6, 6], [-9, 6, -6], [9, -6, -6], [-9, -6, -6],
                     [12, 4, 0], [-12, 4, 0], [12, -4, 0], [-12, -4, 0],
                     [0, 12, 8], [0, -12, 8], [0, 12, -8], [0, -12, -8],
                     [6, 0, 12], [-6, 0, 12], [6, 0, -12], [-6, 0, -12]]
-        return Polyhedron(vertices=vertices, base_ring=ZZ)
+        return Polyhedron(vertices=vertices, base_ring=ZZ, backend=backend)
 
-    def rhombicosidodecahedron(self, exact=True, base_ring=None):
-        """
+    def rhombicosidodecahedron(self, exact=True, base_ring=None, backend=None):
+        r"""
         Return the rhombicosidodecahedron.
 
         The rhombicosidodecahedron is an Archimedean solid.
@@ -1145,6 +1289,8 @@ class Polytopes():
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False`` it
           will be the real double field.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -1188,14 +1334,14 @@ class Polytopes():
                 for s1, s2, s3 in itertools.product([1, -1], repeat=3)]
         pts += [[s1 * (2 + g), 0, s2 * (g**2)]
                 for s1, s2 in itertools.product([1, -1], repeat=2)]
-        #the vertices are all ever permutations of the lists in pts
+        #the vertices are all even permutations of the lists in pts
         verts = pts
         verts += [[v[1], v[2], v[0]] for v in pts]
         verts += [[v[2], v[0], v[1]] for v in pts]
-        return Polyhedron(vertices=verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    def truncated_icosidodecahedron(self, exact=True, base_ring=None):
-        """
+    def truncated_icosidodecahedron(self, exact=True, base_ring=None, backend=None):
+        r"""
         Return the truncated icosidodecahedron.
 
         The truncated icosidodecahedron is an Archimedean solid.
@@ -1212,6 +1358,8 @@ class Polytopes():
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False`` it
           will be the real double field.
 
+        - ``backend`` -- the backend to use to create the polytope.
+
         EXAMPLES::
 
             sage: ti = polytopes.truncated_icosidodecahedron()   # long time
@@ -1220,9 +1368,9 @@ class Polytopes():
             sage: ti.base_ring()               # long time
             Number Field in sqrt5 with defining polynomial x^2 - 5
 
-        A much faster implementation using floating point approximations::
+        The implementation using floating point approximations is much faster::
 
-            sage: ti = polytopes.truncated_icosidodecahedron(exact=False)
+            sage: ti = polytopes.truncated_icosidodecahedron(exact=False) # random
             sage: ti.f_vector()
             (1, 120, 180, 62, 1)
             sage: ti.base_ring()
@@ -1262,9 +1410,9 @@ class Polytopes():
         verts = pts
         verts += [[v[1], v[2], v[0]] for v in pts]
         verts += [[v[2], v[0], v[1]] for v in pts]
-        return Polyhedron(vertices=verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    def snub_dodecahedron(self, base_ring=None):
+    def snub_dodecahedron(self, base_ring=None, backend=None):
         """
         Return the snub dodecahedron.
 
@@ -1277,26 +1425,34 @@ class Polytopes():
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided it will be the real double field.
 
-        EXAMPLES::
+        - ``backend`` -- the backend to use to create the polytope.
+
+        EXAMPLES:
+
+        Unfortunately, no polyhedra backend supports the construction of the
+        snub dodecahedron at the moment::
 
             sage: sd = polytopes.snub_dodecahedron()
-            sage: sd.f_vector()
+            Traceback (most recent call last):
+            ...
+            ValueError: *Error: Numerical inconsistency is found.  Use the GMP exact arithmetic.
+            sage: sd.f_vector() # not tested
             (1, 60, 150, 92, 1)
-            sage: sd.base_ring()
+            sage: sd.base_ring() # not tested
             Real Double Field
 
         Its faces are 80 triangles and 12 pentagons::
 
-            sage: sum(1 for f in sd.faces(2) if len(f.vertices()) == 3)
+            sage: sum(1 for f in sd.faces(2) if len(f.vertices()) == 3) # not tested
             80
-            sage: sum(1 for f in sd.faces(2) if len(f.vertices()) == 5)
+            sage: sum(1 for f in sd.faces(2) if len(f.vertices()) == 5) # not tested
             12
         """
         if base_ring is None:
             base_ring = RDF
         phi = (1 + base_ring(5).sqrt()) / 2
-        xi = ((phi/2 + (phi - 5/27).sqrt()/2).nth_root(3) +
-              (phi/2 - (phi - 5/27).sqrt()/2).nth_root(3))
+        xi = ((phi/2 + (phi - 5/27).sqrt()/2)**(~ZZ(3)) +
+              (phi/2 - (phi - 5/27).sqrt()/2)**(~ZZ(3)))
 
         alpha = xi - 1 / xi
         beta = xi * phi + phi**2 + phi / xi
@@ -1313,19 +1469,23 @@ class Polytopes():
         pts += [[s1 * (-alpha/phi + beta * phi - 1), s2 * (alpha - beta/phi - phi), s3 * (alpha * phi + beta + 1/phi)]
                 for s1, s2, s3 in signs]
 
-        #the vertices are all ever permutations of the lists in pts
+        # the vertices are all ever permutations of the lists in pts
         verts = pts
         verts += [[v[1], v[2], v[0]] for v in pts]
         verts += [[v[2], v[0], v[1]] for v in pts]
-        return Polyhedron(vertices=verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    def twenty_four_cell(self):
+    def twenty_four_cell(self, backend=None):
         """
         Return the standard 24-cell polytope.
 
         The 24-cell polyhedron (also called icositetrachoron or octaplex) is a
         regular polyhedron in 4-dimension. For more information see
         the :wikipedia:`24-cell`.
+
+        INPUT:
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -1345,15 +1505,20 @@ class Polytopes():
 
             sage: p24.volume()
             2
+
+        TESTS::
+
+            sage: tfcell = polytopes.twenty_four_cell(backend='normaliz')  # optional - pynormaliz
+            sage: TestSuite(tfcell).run(skip='_test_pickling')             # optional - pynormaliz
         """
         q12 = QQ((1,2))
         verts = list(itertools.product([q12,-q12], repeat=4))
         B4 = (ZZ**4).basis()
         verts.extend(v for v in B4)
         verts.extend(-v for v in B4)
-        return Polyhedron(vertices=verts)
+        return Polyhedron(vertices=verts, backend=backend)
 
-    def six_hundred_cell(self, exact=False):
+    def six_hundred_cell(self, exact=False, backend=None):
         """
         Return the standard 600-cell polytope.
 
@@ -1369,6 +1534,8 @@ class Polytopes():
 
         - ``exact`` - (boolean, default ``False``) if ``True`` use exact
           coordinates instead of floating point approximations
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -1403,9 +1570,9 @@ class Polytopes():
         pts = [[s1 * q12, s2*g/2, s3/(2*g), z] for (s1,s2,s3) in itertools.product([1,-1], repeat=3)]
         for p in AlternatingGroup(4):
             verts.extend(p(x) for x in pts)
-        return Polyhedron(vertices=verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    def grand_antiprism(self, exact=True):
+    def grand_antiprism(self, exact=True, backend=None):
         """
         Return the grand antiprism.
 
@@ -1425,6 +1592,8 @@ class Polytopes():
         - ``exact`` - (boolean, default ``True``) if ``False`` use floating
           point approximations instead of exact coordinates
 
+        - ``backend`` -- the backend to use to create the polytope.
+
         EXAMPLES::
 
             sage: gap = polytopes.grand_antiprism()  # not tested - very long time
@@ -1433,7 +1602,7 @@ class Polytopes():
 
         Computation with approximated coordinates is much faster::
 
-            sage: gap = polytopes.grand_antiprism(exact=False)
+            sage: gap = polytopes.grand_antiprism(exact=False) # random
             sage: gap
             A 4-dimensional polyhedron in RDF^4 defined as the convex hull of 100 vertices
             sage: gap.f_vector()
@@ -1484,9 +1653,9 @@ class Polytopes():
         verts.extend([s1/(2*g), z, g/2, -q12] for s1 in [1,-1])
         verts.extend([s1/(2*g), z, -g/2, q12] for s1 in [1,-1])
 
-        return Polyhedron(vertices=verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    def Gosset_3_21(self):
+    def Gosset_3_21(self, backend=None):
         r"""
         Return the Gosset `3_{21}` polytope.
 
@@ -1494,12 +1663,21 @@ class Polytopes():
         vertices, and 702 facets: `126` `3_{11}` and `576` `6`-simplex. For more
         information, see the :wikipedia:`3_21_polytope`.
 
+        INPUT:
+
+        - ``backend`` -- the backend to use to create the polytope.
+
         EXAMPLES::
 
             sage: g = polytopes.Gosset_3_21(); g
             A 7-dimensional polyhedron in ZZ^8 defined as the convex hull of 56 vertices
             sage: g.f_vector() # not tested (~16s)
             (1, 56, 756, 4032, 10080, 12096, 6048, 702, 1)
+
+        TESTS::
+
+            sage: G321 = polytopes.Gosset_3_21(backend='normaliz')   # optional - pynormaliz
+            sage: TestSuite(G321).run(skip='_test_pickling')         # optional - pynormaliz
         """
         from itertools import combinations
         verts = []
@@ -1509,11 +1687,10 @@ class Polytopes():
             verts.append(x)
             verts.append([-xx for xx in x])
 
-        return Polyhedron(vertices=verts, base_ring=ZZ)
+        return Polyhedron(vertices=verts, base_ring=ZZ, backend=backend)
 
-    @rename_keyword(deprecation=18213, points_n='n', dim_n='dim')
-    def cyclic_polytope(self, dim, n, base_ring=QQ):
-        """
+    def cyclic_polytope(self, dim, n, base_ring=QQ, backend=None):
+        r"""
         Return a cyclic polytope.
 
         A cyclic polytope of dimension ``dim`` with ``n`` vertices is the convex
@@ -1528,18 +1705,24 @@ class Polytopes():
 
         - ``base_ring`` -- either ``QQ`` (default) or ``RDF``.
 
+        - ``backend`` -- the backend to use to create the polytope.
+
         EXAMPLES::
 
             sage: c = polytopes.cyclic_polytope(4,10)
             sage: c.f_vector()
             (1, 10, 45, 70, 35, 1)
+
+        TESTS::
+
+            sage: cp = polytopes.cyclic_polytope(4,10,backend='normaliz')  # optional - pynormaliz
+            sage: TestSuite(cp).run(skip='_test_pickling')                 # optional - pynormaliz
         """
         verts = [[t**i for i in range(1,dim+1)] for t in range(n)]
-        return Polyhedron(vertices=verts, base_ring=base_ring)
+        return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-    @rename_keyword(deprecation=18213, dim_n='dim')
-    def hypersimplex(self, dim, k, project=False):
-        """
+    def hypersimplex(self, dim, k, project=False, backend=None):
+        r"""
         Return the hypersimplex in dimension ``dim`` and parameter ``k``.
 
         The hypersimplex `\Delta_{d,k}` is the convex hull of the vertices made
@@ -1563,6 +1746,8 @@ class Polytopes():
           approximations and corresponds to the projection given by the matrix
           from :func:`zero_sum_projection`.
 
+        - ``backend`` -- the backend to use to create the polytope.
+
         EXAMPLES::
 
             sage: h_4_2 = polytopes.hypersimplex(4, 2)
@@ -1581,10 +1766,10 @@ class Polytopes():
         """
         verts = Permutations([0]*(dim-k) + [1]*k).list()
         if project: verts = project_points(*verts)
-        return Polyhedron(vertices=verts)
+        return Polyhedron(vertices=verts, backend=backend)
 
-    def permutahedron(self, n, project=False):
-        """
+    def permutahedron(self, n, project=False, backend=None):
+        r"""
         Return the standard permutahedron of (1,...,n).
 
         The permutahedron (or permutohedron) is the convex hull of the
@@ -1607,6 +1792,8 @@ class Polytopes():
           approximations and corresponds to the projection given by the matrix
           from :func:`zero_sum_projection`.
 
+        - ``backend`` -- the backend to use to create the polytope.
+
         EXAMPLES::
 
             sage: perm4 = polytopes.permutahedron(4)
@@ -1628,13 +1815,18 @@ class Polytopes():
         .. SEEALSO::
 
             * :meth:`~sage.graphs.graph_generators.GraphGenerators.BubbleSortGraph`
+
+        TESTS::
+
+            sage: p4 = polytopes.permutahedron(4,backend='normaliz')   # optional - pynormaliz
+            sage: TestSuite(p4).run(skip='_test_pickling')             # optional - pynormaliz
         """
         verts = list(itertools.permutations(range(1,n+1)))
         if project: verts = project_points(*verts)
-        return Polyhedron(vertices=verts)
+        return Polyhedron(vertices=verts, backend=backend)
 
-    def hypercube(self, dim):
-        """
+    def hypercube(self, dim, backend=None):
+        r"""
         Return a hypercube in the given dimension.
 
         The `d` dimensional hypercube is the convex hull of the points `(\pm 1,
@@ -1644,6 +1836,8 @@ class Polytopes():
         INPUT:
 
         - ``dim`` -- integer. The dimension of the cube.
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -1656,10 +1850,15 @@ class Polytopes():
             16
             sage: four_cube.ehrhart_polynomial()    # optional - latte_int
             16*t^4 + 32*t^3 + 24*t^2 + 8*t + 1
-        """
-        return Polyhedron(vertices=list(itertools.product([1, -1], repeat=dim)))
 
-    def cube(self):
+        TESTS::
+
+            sage: fc = polytopes.hypercube(4,backend='normaliz')   # optional - pynormaliz
+            sage: TestSuite(fc).run(skip='_test_pickling')         # optional - pynormaliz
+        """
+        return Polyhedron(vertices=list(itertools.product([1, -1], repeat=dim)), base_ring=ZZ, backend=backend)
+
+    def cube(self, backend=None):
         r"""
         Return the cube.
 
@@ -1670,6 +1869,10 @@ class Polytopes():
         .. SEEALSO::
 
             :meth:`hypercube`
+
+        INPUT:
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -1683,12 +1886,10 @@ class Polytopes():
             sage: c.plot()
             Graphics3d Object
         """
-        return self.hypercube(3)
+        return self.hypercube(3, backend=backend)
 
-    n_cube = deprecated_function_alias(18213, hypercube)
-
-    def cross_polytope(self, dim):
-        """
+    def cross_polytope(self, dim, backend=None):
+        r"""
         Return a cross-polytope in dimension ``dim``.
 
         A cross-polytope is a higher dimensional generalization of the
@@ -1700,6 +1901,8 @@ class Polytopes():
 
         - ``dim`` -- integer. The dimension of the cross-polytope.
 
+        - ``backend`` -- the backend to use to create the polytope.
+
         EXAMPLES::
 
             sage: four_cross = polytopes.cross_polytope(4)
@@ -1707,21 +1910,28 @@ class Polytopes():
             (1, 8, 24, 32, 16, 1)
             sage: four_cross.is_simple()
             False
+
+        TESTS::
+
+            sage: cp = polytopes.cross_polytope(4,backend='normaliz')   # optional - pynormaliz
+            sage: TestSuite(cp).run(skip='_test_pickling')              # optional - pynormaliz
         """
         verts = list((ZZ**dim).basis())
         verts.extend([-v for v in verts])
-        return Polyhedron(vertices=verts)
+        return Polyhedron(vertices=verts, backend=backend)
 
-    def parallelotope(self, generators):
+    def parallelotope(self, generators, backend=None):
         r"""
-        Return the parallelotope spanned by the generators.
+        Return the zonotope, or parallelotope, spanned by the generators.
 
         The parallelotope is the multi-dimensional generalization of a
         parallelogram (2 generators) and a parallelepiped (3 generators).
 
         INPUT:
 
-        - ``generators`` -- a list vector of vectors of same dimension
+        - ``generators`` -- a list of vectors of same dimension
+
+        - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
@@ -1738,14 +1948,17 @@ class Polytopes():
         """
         from sage.modules.free_module_element import vector
         from sage.structure.sequence import Sequence
-        generators = map(vector,generators)
+        generators = [vector(v) for v in generators]
         V = Sequence(generators).universe()
         R = V.base_ring()
 
         from itertools import combinations
-        par =  [ V.zero() ]
-        par.extend(sum(c) for k in range(1,len(generators)+1) for c in combinations(generators,k))
-        return Polyhedron(vertices=par, base_ring=R)
+        par = [V.zero()]
+        par.extend(sum(c) for k in range(1, len(generators) + 1)
+                   for c in combinations(generators, k))
+        return Polyhedron(vertices=par, base_ring=R, backend=backend)
+
+    zonotope = parallelotope
 
     # --------------------------------------------------------
     # imports from other files

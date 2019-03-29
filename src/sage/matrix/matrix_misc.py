@@ -29,102 +29,6 @@ def row_iterator(A):
     for i in range(A.nrows()):
         yield A.row(i)
 
-def row_reduced_form(M,transformation=False):
-    """
-    This function computes a row reduced form of a matrix over a rational
-    function field `k(x)`, for `k` a field.
-
-    INPUT:
-
-     - `M` - a matrix over `k(x)` or `k[x]` for `k` a field.
-     - `transformation` - A boolean (default: `False`). If this boolean is set to `True` a second matrix is output (see OUTPUT).
-
-    OUTPUT:
-
-    If `transformation` is `False`, the output is `W`, a row reduced form of `M`.
-
-    If `transformation` is `True`, this function will output a pair `(W,N)` consisting of two matrices over `k(x)`:
-
-    1. `W` - a row reduced form of `M`.
-    2. `N` - an invertible matrix over `k(x)` satisfying `NW = M`.
-
-    EXAMPLES:
-
-    The function expects matrices over the rational function field, but
-    other examples below show how one can provide matrices over the ring
-    of polynomials (whose quotient field is the rational function field).
-
-    ::
-
-        sage: R.<t> = GF(3)['t']
-        sage: K = FractionField(R)
-        sage: import sage.matrix.matrix_misc
-        sage: sage.matrix.matrix_misc.row_reduced_form(matrix([[(t-1)^2/t],[(t-1)]]))
-        doctest:...: DeprecationWarning: Row reduced form will soon be supported only for matrices of polynomials.
-        See http://trac.sagemath.org/21024 for details.
-        [        0]
-        [(t + 2)/t]
-
-    The last example shows the usage of the transformation parameter.
-
-    ::
-        sage: Fq.<a> = GF(2^3)
-        sage: Fx.<x> = Fq[]
-        sage: A = matrix(Fx,[[x^2+a,x^4+a],[x^3,a*x^4]])
-        sage: from sage.matrix.matrix_misc import row_reduced_form
-        sage: row_reduced_form(A,transformation=True)
-        (
-        [          x^2 + a           x^4 + a]  [1 0]
-        [x^3 + a*x^2 + a^2               a^2], [a 1]
-        )
-
-    NOTES:
-
-    See docstring for row_reduced_form method of matrices for
-    more information.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(21024, "Row reduced form will soon be supported only for matrices of polynomials.")
-
-    # determine whether M has polynomial or rational function coefficients
-    R0 = M.base_ring()
-
-    #Compute the base polynomial ring
-    if R0 in _Fields:
-        R = R0.base()
-    else:
-        R = R0
-    from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-    if not is_PolynomialRing(R) or not R.base_ring().is_field():
-        raise TypeError("the coefficients of M must lie in a univariate polynomial ring over a field")
-
-    t = R.gen()
-
-    # calculate least-common denominator of matrix entries and clear
-    # denominators. The result lies in R
-    from sage.arith.all import lcm
-    from sage.matrix.constructor import matrix
-    from sage.misc.functional import numerator
-    if R0 in _Fields:
-        den = lcm([a.denominator() for a in M.list()])
-        num = matrix([[numerator(_) for _ in v] for v in (M*den).rows()])
-    else:
-        # No need to clear denominators
-        num = M
-
-    if transformation:
-        A, N = num.row_reduced_form(transformation=True)
-    else:
-        A = num.row_reduced_form(transformation=False)
-
-    if not is_PolynomialRing(R0):
-        A = ~den * A
-
-    if transformation:
-        return (A, N)
-    else:
-        return A
-
 def prm_mul(p1, p2, mask_free, prec):
     """
     Return the product of ``p1`` and ``p2``, putting free variables in
@@ -198,7 +102,7 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
     ``A.permanental_minor(i)``).
 
     The algorithm implemented by that function has been developed by P. Butera
-    and M. Pernici, see [BP2015]. Its complexity is `O(2^n m^2 n)` where `m` and
+    and M. Pernici, see [BP2015]_. Its complexity is `O(2^n m^2 n)` where `m` and
     `n` are the number of rows and columns of `A`.  Moreover, if `A` is a banded
     matrix with width `w`, that is `A_{ij}=0` for `|i - j| > w` and `w < n/2`,
     then the complexity of the algorithm is `O(4^w (w+1) n^2)`.

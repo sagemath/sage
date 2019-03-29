@@ -93,14 +93,12 @@ class FiniteGroups(CategoryWithAxiom):
             We need to use a finite group which uses this default
             implementation of cardinality::
 
-                sage: R.<x> = PolynomialRing(QQ)
-                sage: f = x^4 - 17*x^3 - 2*x + 1
-                sage: G = f.galois_group(pari_group=True); G
-                PARI group [24, -1, 5, "S4"] of degree 4
+                sage: G = groups.misc.SemimonomialTransformation(GF(5), 3); G
+                Semimonomial transformation group over Finite Field of size 5 of degree 3
                 sage: G.cardinality.__module__
                 'sage.categories.finite_groups'
                 sage: G.cardinality()
-                24
+                384
             """
             try:
                 o = self.order
@@ -165,8 +163,7 @@ class FiniteGroups(CategoryWithAxiom):
                 sage: G.conjugacy_classes()
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: Listing the conjugacy classes for
-                group <type 'sage.groups.group.FiniteGroup'> is not implemented
+                NotImplementedError: Listing the conjugacy classes for group <sage.groups.group.FiniteGroup object at ...> is not implemented
             """
             raise NotImplementedError("Listing the conjugacy classes for group %s is not implemented"%self)
 

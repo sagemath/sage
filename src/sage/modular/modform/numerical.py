@@ -13,17 +13,18 @@ Numerical computation of newforms
 #*****************************************************************************
 from six import integer_types
 
+from sage.arith.all              import prime_range
+from sage.matrix.constructor     import matrix
+from sage.misc.misc              import verbose
+from sage.misc.cachefunc         import cached_method
+from sage.misc.prandom           import randint
+from sage.modular.arithgroup.all import Gamma0
+from sage.modular.modsym.all     import ModularSymbols
+from sage.modules.all            import vector
+from sage.rings.all              import CDF, Integer, QQ
+from sage.structure.richcmp      import richcmp_method, richcmp
 from sage.structure.sage_object  import SageObject
 from sage.structure.sequence     import Sequence
-from sage.structure.richcmp import richcmp_method, richcmp
-from sage.modular.modsym.all     import ModularSymbols
-from sage.modular.arithgroup.all import Gamma0
-from sage.modules.all            import vector
-from sage.misc.misc              import verbose
-from sage.rings.all import CDF, Integer, QQ
-from sage.arith.all import next_prime, prime_range
-from sage.misc.prandom           import randint
-from sage.matrix.constructor     import matrix
 
 # This variable controls importing the SciPy library sparingly
 scipy=None
@@ -71,12 +72,12 @@ class NumericalEigenforms(SageObject):
         sage: n = numerical_eigenforms(23)
         sage: n == loads(dumps(n))
         True
-        sage: n.ap(2)  # rel tol 2e-15
-        [3.0, 0.6180339887498941, -1.618033988749895]
-        sage: n.systems_of_eigenvalues(7)  # rel tol 2e-15
+        sage: n.ap(2)  # rel tol 2e-14
+        [3.0, -1.6180339887498947, 0.6180339887498968]
+        sage: n.systems_of_eigenvalues(7)  # rel tol 2e-14
         [
-        [-1.618033988749895, 2.23606797749979, -3.23606797749979],
-        [0.6180339887498941, -2.2360679774997902, 1.2360679774997883],
+        [-1.6180339887498947, 2.2360679774997894, -3.2360679774997894],
+        [0.6180339887498968, -2.236067977499788, 1.2360679774997936],
         [3.0, 4.0, 6.0]
         ]
         sage: n.systems_of_abs(7)
@@ -85,10 +86,10 @@ class NumericalEigenforms(SageObject):
         [1.6180339887..., 2.236067977..., 3.236067977...],
         [3.0, 4.0, 6.0]
         ]
-        sage: n.eigenvalues([2,3,5])  # rel tol 2e-15
-        [[3.0, 0.6180339887498941, -1.618033988749895],
-         [4.0, -2.2360679774997902, 2.23606797749979],
-         [6.0, 1.2360679774997883, -3.23606797749979]]
+        sage: n.eigenvalues([2,3,5])  # rel tol 2e-14
+        [[3.0, -1.6180339887498947, 0.6180339887498968],
+         [4.0, 2.2360679774997894, -2.236067977499788],
+         [6.0, -3.2360679774997894, 1.2360679774997936]]
     """
     def __init__(self, group, weight=2, eps=1e-20,
                  delta=1e-2, tp=[2,3,5]):
@@ -164,6 +165,7 @@ class NumericalEigenforms(SageObject):
         return "Numerical Hecke eigenvalues for %s of weight %s"%(
             self._group, self._weight)
 
+    @cached_method
     def modular_symbols(self):
         """
         Return the space of modular symbols used for computing this
@@ -174,16 +176,13 @@ class NumericalEigenforms(SageObject):
             sage: n = numerical_eigenforms(61) ; n.modular_symbols()
             Modular Symbols space of dimension 5 for Gamma_0(61) of weight 2 with sign 1 over Rational Field
         """
-        try:
-            return self.__modular_symbols
-        except AttributeError:
-            M = ModularSymbols(self._group,
-                    self._weight, sign=1)
-            if M.base_ring() != QQ:
-                raise ValueError("modular forms space must be defined over QQ")
-            self.__modular_symbols = M
-            return M
+        M = ModularSymbols(self._group,
+                self._weight, sign=1)
+        if M.base_ring() != QQ:
+            raise ValueError("modular forms space must be defined over QQ")
+        return M
 
+    @cached_method
     def _eigenvectors(self):
         r"""
         Find numerical approximations to simultaneous eigenvectors in
@@ -213,18 +212,13 @@ class NumericalEigenforms(SageObject):
 
             sage: n = numerical_eigenforms(61, eps=2.0)
             sage: evectors = n._eigenvectors()
-            sage: evalues = diagonal_matrix(CDF, [-283.0, 108.522012456, 142.0])
+            sage: evalues = diagonal_matrix(CDF, [-283.0, 142.0, 108.522012456])
             sage: diff = n._hecke_matrix*evectors - evectors*evalues
             sage: sum([abs(diff[i,j]) for i in range(5) for j in range(3)]) < 1.0e-9
             True
         """
-        try:
-            return self.__eigenvectors
-        except AttributeError:
-            pass
         verbose('Finding eigenvector basis')
         M = self.modular_symbols()
-        N = self.level()
 
         tp = self._tp
         p = tp[0]
@@ -255,9 +249,9 @@ class NumericalEigenforms(SageObject):
                     uniq = False
             if uniq:
                 w.append(i)
-        self.__eigenvectors = B.matrix_from_columns(w)
-        return self.__eigenvectors
+        return B.matrix_from_columns(w)
 
+    @cached_method
     def _easy_vector(self):
         """
         Return a very sparse vector v such that v times the eigenvector matrix
@@ -285,10 +279,6 @@ class NumericalEigenforms(SageObject):
             sage: n._easy_vector()                 # slightly random output
             (0, 0, 0, 1.0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         """
-        try:
-            return self.__easy_vector
-        except AttributeError:
-            pass
         E = self._eigenvectors()
         delta = self._delta
         x = (CDF**E.nrows()).zero_vector()
@@ -305,7 +295,7 @@ class NumericalEigenforms(SageObject):
             EXAMPLES::
 
                 sage: numerical_eigenforms(61)._easy_vector() # indirect doctest
-                (1.0, 1.0, 0.0, 0.0, 0.0)
+                (1.0, 0.0, 0.0, 0.0, 1.0)
             """
             R = M.rows()
             v = [len(support(r, delta)) for r in R]
@@ -319,18 +309,19 @@ class NumericalEigenforms(SageObject):
 
         while True:
             s = set(support(e, delta))
-            zp = [i for i in range(e.degree()) if not i in s]
-            if len(zp) == 0:
+            zp = [j for j in range(e.degree()) if j not in s]
+            if not zp:
                 break
             C = E.matrix_from_columns(zp)
             # best row
             i, f = best_row(C)
             x[i] += 1   # simplistic
-            e = x*E
+            e = x * E
 
         self.__easy_vector = x
         return x
 
+    @cached_method
     def _eigendata(self):
         """
         Return all eigendata for self._easy_vector().
@@ -340,10 +331,6 @@ class NumericalEigenforms(SageObject):
             sage: numerical_eigenforms(61)._eigendata() # random order
             ((1.0, 0.668205013164, 0.219198805797, 0.49263343893, 0.707106781187), (1.0, 1.49654668896, 4.5620686498, 2.02990686579, 1.41421356237), [0, 1], (1.0, 1.0))
         """
-        try:
-            return self.__eigendata
-        except AttributeError:
-            pass
         x = self._easy_vector()
 
         B = self._eigenvectors()
@@ -369,6 +356,7 @@ class NumericalEigenforms(SageObject):
         self.__eigendata = (phi_x, phi_x_inv, nzp, x_nzp)
         return self.__eigendata
 
+    @cached_method
     def ap(self, p):
         """
         Return a list of the eigenvalues of the Hecke operator `T_p`
@@ -400,15 +388,7 @@ class NumericalEigenforms(SageObject):
         p = Integer(p)
         if not p.is_prime():
             raise ValueError("p must be a prime")
-        try:
-            return self._ap[p]
-        except AttributeError:
-            self._ap = {}
-        except KeyError:
-            pass
-        a = Sequence(self.eigenvalues([p])[0], immutable=True)
-        self._ap[p] = a
-        return a
+        return Sequence(self.eigenvalues([p])[0], immutable=True)
 
     def eigenvalues(self, primes):
         """
@@ -522,7 +502,7 @@ def support(v, eps):
         []
 
         sage: sage.modular.modform.numerical.support( numerical_eigenforms(61)._easy_vector(), 0.5 )
-        [0, 1]
+        [0, 4]
 
     """
     return [i for i in range(v.degree()) if abs(v[i]) > eps]

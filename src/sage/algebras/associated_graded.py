@@ -281,7 +281,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
             sage: A = Algebras(QQ).WithBasis().Filtered().example()
             sage: grA = A.graded_algebra()
             sage: grA.algebra_generators()
-            Finite family {'y': bar(U['y']), 'x': bar(U['x']), 'z': bar(U['z'])}
+            Finite family {'x': bar(U['x']), 'y': bar(U['y']), 'z': bar(U['z'])}
         """
         G = self._A.algebra_generators()
         return Family(G.keys(), lambda x: self(G[x]), name="generator")
@@ -302,7 +302,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
 
     @cached_method
     def one_basis(self):
-        """
+        r"""
         Return the basis index of the element `1` of
         `\operatorname{gr} A`.
 

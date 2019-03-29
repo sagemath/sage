@@ -1,7 +1,7 @@
 from .types cimport GF2_c
 
 
-cdef extern from "ntlwrap.cpp":
+cdef extern from "ntlwrap.h":
     int GF2_IsOne "IsOne"(GF2_c x)
     int GF2_IsZero "IsZero"(GF2_c x)
 

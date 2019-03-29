@@ -145,7 +145,7 @@ You can work with subcones that form faces of other cones::
 If you need to know inclusion relations between faces, you can use ::
 
     sage: L = four_rays.face_lattice()
-    sage: list(map(len, L.level_sets()))
+    sage: [len(s) for s in L.level_sets()]
     [1, 4, 4, 1]
     sage: face = L.level_sets()[2][0]
     sage: face.rays()
@@ -179,7 +179,7 @@ REFERENCES:
 - [Fu1993]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2012 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
@@ -187,9 +187,12 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+# Use python-3.x versions of print() and range().
 from __future__ import print_function
+from six.moves import range
 
 import collections
 import copy
@@ -200,20 +203,20 @@ from sage.combinat.posets.posets import FinitePoset
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.geometry.polyhedron.base import is_Polyhedron
-from sage.geometry.hasse_diagram import Hasse_diagram_from_incidences
-from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice, \
-    is_ToricLatticeQuotient
+from sage.geometry.hasse_diagram import lattice_from_incidences
+from sage.geometry.toric_lattice import (ToricLattice, is_ToricLattice,
+                                         is_ToricLatticeQuotient)
 from sage.geometry.toric_plotter import ToricPlotter, label_list
 from sage.graphs.digraph import DiGraph
-from sage.matrix.all import matrix, MatrixSpace
+from sage.matrix.all import column_matrix, matrix, MatrixSpace
 from sage.misc.all import cached_method, flatten, latex
 from sage.modules.all import span, vector, VectorSpace
 from sage.rings.all import QQ, RR, ZZ
 from sage.structure.all import SageObject, parent
 from sage.structure.richcmp import richcmp_method, richcmp
-from sage.libs.ppl import C_Polyhedron, Generator_System, Constraint_System, \
-    Linear_Expression, ray as PPL_ray, point as PPL_point, \
-    Poly_Con_Relation
+from ppl import (C_Polyhedron, Generator_System, Constraint_System,
+                 Linear_Expression, ray as PPL_ray, point as PPL_point,
+                 Poly_Con_Relation)
 from sage.geometry.integral_points import parallelotope_points
 
 
@@ -449,8 +452,8 @@ def Cone(rays, lattice=None, check=True, normalize=True):
 
 
 def _Cone_from_PPL(cone, lattice, original_rays=None):
-    """
-    Construct a cone from a :class:`~sage.libs.ppl.Polyhedron`.
+    r"""
+    Construct a cone from a :class:`~ppl.polyhedron.Polyhedron`.
 
     This is a private function and not intended to be exposed to the
     end user. It is used internally by :func:`Cone` and in
@@ -458,7 +461,7 @@ def _Cone_from_PPL(cone, lattice, original_rays=None):
 
     INPUT:
 
-    - ``cone`` -- a :class:`~sage.libs.ppl.Polyhedron` having the
+    - ``cone`` -- a :class:`~ppl.polyhedron.Polyhedron` having the
       origin as its single point.
 
     - ``lattice`` -- :class:`ToricLattice
@@ -1227,7 +1230,7 @@ class IntegralRayCollection(SageObject,
 
 
 def classify_cone_2d(ray0, ray1, check=True):
-    """
+    r"""
     Return `(d,k)` classifying the lattice cone spanned by the two rays.
 
     INPUT:
@@ -1242,7 +1245,7 @@ def classify_cone_2d(ray0, ray1, check=True):
 
     A pair `(d,k)` of integers classifying the cone up to `GL(2, \ZZ)`
     equivalence. See Proposition 10.1.1 of [CLS]_ for the
-    definition. We return the unique `(d,k)` with minmial `k`, see
+    definition. We return the unique `(d,k)` with minimal `k`, see
     Proposition 10.1.3 of [CLS]_.
 
     EXAMPLES::
@@ -1365,9 +1368,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
     In both cases, the following keyword parameter may be specified in addition:
 
     - ``PPL`` -- either ``None`` (default) or a
-      :class:`~sage.libs.ppl.C_Polyhedron` representing the cone. This
+      :class:`~ppl.polyhedron.C_Polyhedron` representing the cone. This
       serves only to cache the polyhedral data if you know it
-      already. The polyhedron will be set immutable.
+      already. The constructor does not make a copy so the ``PPL`` object
+      should not be modified afterwards.
 
     OUTPUT:
 
@@ -1427,7 +1431,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
                       ambient.lattice())
         if not PPL is None:
             self._PPL_C_Polyhedron = PPL
-            self._PPL_C_Polyhedron.set_immutable()
 
     def _sage_input_(self, sib, coerced):
         """
@@ -1449,7 +1452,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         OUTPUT:
 
-        A :class:`~sage.libs.ppl.C_Polyhedron` representing the cone.
+        A :class:`~ppl.polyhedron.C_Polyhedron` representing the cone.
 
         EXAMPLES::
 
@@ -1479,7 +1482,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             for r in self.rays():
                 gs.insert( PPL_ray(Linear_Expression(r,0)) )
             self._PPL_C_Polyhedron = C_Polyhedron(gs)
-            self._PPL_C_Polyhedron.set_immutable()
         return self._PPL_C_Polyhedron
 
     def __contains__(self, point):
@@ -1513,7 +1515,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
             sage: C = Cone([(1,0)])
             sage: C.face_lattice()
-            Finite poset containing 2 elements with distinguished linear extension
+            Finite lattice containing 2 elements with distinguished linear extension
             sage: C._test_pickling()
             sage: C2 = loads(dumps(C)); C2
             1-d cone in 2-d lattice N
@@ -2235,7 +2237,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: quadrant = Cone([(1,0), (0,1)])
             sage: L = quadrant.face_lattice()
             sage: L
-            Finite poset containing 4 elements with distinguished linear extension
+            Finite lattice containing 4 elements with distinguished linear extension
 
         To see all faces arranged by dimension, you can do this::
 
@@ -2300,7 +2302,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: supercone = Cone([(1,2,3,4), (5,6,7,8),
             ....:                   (1,2,4,8), (1,3,9,7)])
             sage: supercone.face_lattice()
-            Finite poset containing 16 elements with distinguished linear extension
+            Finite lattice containing 16 elements with distinguished linear extension
             sage: supercone.face_lattice().top()
             4-d cone in 4-d lattice N
             sage: cone = supercone.facets()[0]
@@ -2362,7 +2364,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
                     # and there is only a conversion (no coercion)
                     # between them as of Trac ticket #10513.
                     try:
-                        _ = S(ray)
+                        S(ray)
                         subspace_rays.append(i)
                     except (TypeError, ValueError):
                         facets = [j for j, normal in enumerate(normals)
@@ -2387,7 +2389,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
                     else:
                         return self
 
-                self._face_lattice = Hasse_diagram_from_incidences(
+                self._face_lattice = lattice_from_incidences(
                                     atom_to_facets, facet_to_atoms, ConeFace,
                                     key = id(self))
             else:
@@ -2584,7 +2586,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         If the ambient :meth:`~IntegralRayCollection.lattice` of ``self`` is a
         :class:`toric lattice
-        <sage.geometry.toric_lattice.ToricLatticeFactory>`, the facet nomals
+        <sage.geometry.toric_lattice.ToricLatticeFactory>`, the facet normals
         will be elements of the dual lattice. If it is a general lattice (like
         ``ZZ^n``) that does not have a ``dual()`` method, the facet normals
         will be returned as integral vectors.
@@ -2956,7 +2958,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
             sage: cone1 = Cone([(1,0), (0, 3)])
             sage: m = matrix(ZZ, [(1, -5), (-1, 4)]) # a GL(2,ZZ)-matrix
-            sage: cone2 = Cone([m*r for r in cone1.rays()])
+            sage: cone2 = Cone( m*r for r in cone1.rays() )
             sage: cone1.is_isomorphic(cone2)
             True
 
@@ -2972,7 +2974,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             (1, 0)
             sage: classify_cone_2d(*cone2.rays())
             (3, 2)
-            
+
         We check that :trac:`18613` is fixed::
 
             sage: K = Cone([], ToricLattice(0))
@@ -3341,7 +3343,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
                              L._latex_name, L._latex_dual_name)
         else:
             S = ZZ**Q.dimension()
-        rays = [Q(ray) for ray in self.rays() if not Q(ray).is_zero()]
+        rays = ( Q(ray) for ray in self if not Q(ray).is_zero() )
         quotient = Cone(rays, S, check=False)
         quotient._is_strictly_convex = True
         return quotient
@@ -3467,7 +3469,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         # have at least one non-zero coordinate; otherwise they would
         # lie outside of the span of our cone. And they don't, because
         # they generate the cone.
-        rays = [ S(subL.coordinates(ray)) for ray in self ]
+        rays = ( S(subL.coordinates(ray)) for ray in self )
         return Cone(rays, lattice=S, check=False)
 
     def _split_ambient_lattice(self):
@@ -3507,7 +3509,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         n = N.dimension()
         basis = self.rays().basis()
         r = len(basis)
-        Nsigma = matrix(ZZ, r, n, [N.coordinates(v) for v in basis])
+        Nsigma = matrix(ZZ, r, n, ( N.coordinates(v) for v in basis ))
         D, U, V = Nsigma.smith_form()  # D = U*N*V <=> N = Uinv*D*Vinv
         basis = (V.inverse() * N.basis_matrix()).rows()
         # spanned lattice N_sigma
@@ -3727,14 +3729,30 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             Sublattice <N(1, -1, 1), N(0, 1, 0)>
             sage: c12.orthogonal_sublattice()
             Sublattice <M(1, 0, -1)>
+
+        TESTS:
+
+        We check that :trac:`24541` is fixed::
+
+            sage: c = Cone([(1,0)], lattice=ZZ^2)
+            sage: c.orthogonal_sublattice()
+            Free module of degree 2 and rank 1 over Integer Ring
+            User basis matrix:
+            [0 1]
+            sage: c.dual()
+            2-d cone in 2-d lattice
         """
         if "_orthogonal_sublattice" not in self.__dict__:
             try:
                 self._orthogonal_sublattice = self.sublattice_quotient().dual()
             except AttributeError:
-                # Non-toric quotient? Just make ZZ^n then.
-                self._orthogonal_sublattice = ZZ**(self.lattice().dimension() -
-                                                  self.sublattice().dimension())
+                N = self.lattice()
+                basis = self.rays().basis()
+                Nsigma = column_matrix(ZZ, (N.coordinates(v) for v in basis))
+                D, U, V = Nsigma.smith_form()  # D = U * Nsigma * V
+                M = self.dual_lattice()
+                self._orthogonal_sublattice = M.submodule_with_basis(
+                    U.rows()[len(basis):])
         if args or kwds:
             return self._orthogonal_sublattice(*args, **kwds)
         else:
@@ -3968,8 +3986,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         A non-simplicial cone works, too::
 
             sage: cone = Cone([(3,0,-1), (1,-1,0), (0,1,0), (0,0,1)])
-            sage: cone.semigroup_generators()
-            (N(1, 0, 0), N(0, 0, 1), N(0, 1, 0), N(3, 0, -1), N(1, -1, 0))
+            sage: sorted(cone.semigroup_generators())
+            [N(0, 0, 1), N(0, 1, 0), N(1, -1, 0), N(1, 0, 0), N(3, 0, -1)]
 
         GAP's toric package thinks this is challenging::
 
@@ -3986,11 +4004,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: line.semigroup_generators()
             (N(1, 1, 1), N(-1, -1, -1))
             sage: wedge = Cone([ (1,0,0), (1,2,0), (0,0,1), (0,0,-1) ])
-            sage: wedge.semigroup_generators()
-            (N(1, 0, 0), N(1, 1, 0), N(1, 2, 0), N(0, 0, 1), N(0, 0, -1))
+            sage: sorted(wedge.semigroup_generators())
+            [N(0, 0, -1), N(0, 0, 1), N(1, 0, 0), N(1, 1, 0), N(1, 2, 0)]
 
-        Nor does it have to be full-dimensional (see
-        http://trac.sagemath.org/sage_trac/ticket/11312)::
+        Nor does it have to be full-dimensional (see :trac:`11312`)::
 
             sage: Cone([(1,1,0), (-1,1,0)]).semigroup_generators()
             N( 0, 1, 0),
@@ -4004,10 +4021,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: A.elementary_divisors()
             [1, 1, 1, 0]
             sage: cone3d = Cone([(3,0,-1), (1,-1,0), (0,1,0), (0,0,1)])
-            sage: rays = [ A*vector(v) for v in cone3d.rays() ]
-            sage: gens = Cone(rays).semigroup_generators(); gens
-            (N(1, -1, 1, 15), N(0, 1, -2, 0), N(-2, -1, 0, 17), N(3, -4, 5, 45), N(3, 0, 1, -2))
-            sage: set(map(tuple,gens)) == set([ tuple(A*r) for r in cone3d.semigroup_generators() ])
+            sage: rays = ( A*vector(v) for v in cone3d.rays() )
+            sage: gens = Cone(rays).semigroup_generators(); sorted(gens)
+            [N(-2, -1, 0, 17),
+             N(0, 1, -2, 0),
+             N(1, -1, 1, 15),
+             N(3, -4, 5, 45),
+             N(3, 0, 1, -2)]
+            sage: set(map(tuple,gens)) == set( tuple(A*r) for r in cone3d.semigroup_generators() )
             True
 
         TESTS::
@@ -4053,16 +4074,16 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             origin = self.nrays() # last one in pc
             pc = PointConfiguration(tuple(self.rays()) + (N(0),), star=origin)
             triangulation = pc.triangulate()
-            subcones = [ Cone([self.ray(i) for i in simplex if i!=origin],
+            subcones = ( Cone(( self.ray(i) for i in simplex if i!=origin ),
                               lattice=N, check=False)
-                         for simplex in triangulation ]
+                         for simplex in triangulation )
             gens = set()
             for cone in subcones:
                 gens.update(cone.semigroup_generators())
             return tuple(gens)
 
         gens = list(parallelotope_points(self.rays(), N)) + list(self.rays())
-        gens = [v for v in gens if gcd(v) == 1]
+        gens = ( v for v in gens if gcd(v) == 1 )
         return PointCollection(gens, N)
 
     @cached_method
@@ -4076,7 +4097,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         set over `\ZZ` for the integral points `C\cap \ZZ^d`.
 
         If the cone `C` is not strictly convex, this method finds the
-        (unique) minimial set of lattice points that need to be added
+        (unique) minimal set of lattice points that need to be added
         to the defining rays of the cone to generate the whole
         semigroup `C\cap \ZZ^d`. But because the rays of the cone are
         not unique nor necessarily minimal in this case, neither is
@@ -4152,8 +4173,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         Not a strictly convex cone::
 
             sage: wedge = Cone([ (1,0,0), (1,2,0), (0,0,1), (0,0,-1) ])
-            sage: wedge.semigroup_generators()
-            (N(1, 0, 0), N(1, 1, 0), N(1, 2, 0), N(0, 0, 1), N(0, 0, -1))
+            sage: sorted(wedge.semigroup_generators())
+            [N(0, 0, -1), N(0, 0, 1), N(1, 0, 0), N(1, 1, 0), N(1, 2, 0)]
             sage: wedge.Hilbert_basis()
             N(1, 2,  0),
             N(1, 0,  0),
@@ -4162,8 +4183,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             N(1, 1,  0)
             in 3-d lattice N
 
-        Not full-dimensional cones are ok, too (see
-        http://trac.sagemath.org/sage_trac/ticket/11312)::
+        Not full-dimensional cones are ok, too (see :trac:`11312`)::
 
             sage: Cone([(1,1,0), (-1,1,0)]).Hilbert_basis()
             N( 1, 1, 0),
@@ -4183,7 +4203,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
                 # "x in linear_subspace" does not work, due to absence
                 # of coercion maps as of Trac ticket #10513.
                 try:
-                    _ = linear_subspace(x)
+                    linear_subspace(x)
                     return False
                 except (TypeError, ValueError):
                     return True
@@ -4207,7 +4227,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         else:
             return PointCollection(irreducible, self.lattice())
 
-    def Hilbert_coefficients(self, point):
+    def Hilbert_coefficients(self, point, solver=None, verbose=0):
         r"""
         Return the expansion coefficients of ``point`` with respect to
         :meth:`Hilbert_basis`.
@@ -4217,6 +4237,15 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         - ``point`` -- a :meth:`~IntegralRayCollection.lattice` point
           in the cone, or something that can be converted to a
           point. For example, a list or tuple of integers.
+
+        - ``solver`` -- (default: ``None``) Specify a Linear Program (LP) solver
+          to be used. If set to ``None``, the default one is used. For more
+          information on LP solvers and which default solver is used, see the
+          method :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of
+          the class :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+
+        - ``verbose`` -- integer (default: ``0``). Sets the level of verbosity
+          of the LP solver. Set to 0 by default, which means quiet.
 
         OUTPUT:
 
@@ -4272,13 +4301,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         basis = self.Hilbert_basis()
 
         from sage.numerical.mip import MixedIntegerLinearProgram
-        p = MixedIntegerLinearProgram(maximization=False)
+        p = MixedIntegerLinearProgram(maximization=False, solver=solver)
         p.set_objective(None)
         x = p.new_variable(integer=True, nonnegative=True)
-        x = [ x[i] for i in range(0,len(basis)) ]
-        for i in range(0,self.lattice_dim()):
-            p.add_constraint(sum(b[i]*x[j] for j,b in enumerate(basis)) == point[i])
-        p.solve()
+        for i in range(self.lattice_dim()):
+            p.add_constraint(p.sum(b[i]*x[j] for j,b in enumerate(basis)) == point[i])
+        p.solve(log=verbose)
 
         return vector(ZZ, p.get_values(x))
 
@@ -4510,7 +4538,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         REFERENCES:
 
-        - [Or2016]_
+        - [Or2017]_
 
         EXAMPLES:
 
@@ -4571,7 +4599,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6)
             sage: dcs = K.discrete_complementarity_set()
-            sage: sum([ (s*x).abs() for (x,s) in dcs ])
+            sage: sum( (s*x).abs() for (x,s) in dcs )
             0
         """
         # Return an immutable tuple instead of a mutable list because
@@ -4603,7 +4631,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         REFERENCES:
 
-        - [Or2016]_
+        - [Or2017]_
 
         - [RNPA2011]_
 
@@ -4677,16 +4705,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         TESTS:
 
-        The vectors `L(x)` and `s` are orthogonal for every pair `(x,s)`
-        in the :meth:`discrete_complementarity_set` of the cone::
+        Every operator in a :meth:`lyapunov_like_basis` is Lyapunov-like
+        on the cone::
 
             sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
-            sage: dcs = K.discrete_complementarity_set()
             sage: LL = K.lyapunov_like_basis()
-            sage: ips = [ s*(L*x) for (x,s) in dcs for L in LL ]
-            sage: sum(map(abs, ips))
-            0
+            sage: all( L.is_lyapunov_like_on(K) for L in LL )
+            True
 
         The Lyapunov-like transformations on a cone and its dual are
         transposes of one another. However, there's no reason to expect
@@ -4695,10 +4721,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: LL1 = K.lyapunov_like_basis()
-            sage: LL2 = [L.transpose() for L in K.dual().lyapunov_like_basis()]
+            sage: LL2 = (L.transpose() for L in K.dual().lyapunov_like_basis())
             sage: V = VectorSpace(K.lattice().base_field(), K.lattice_dim()^2)
-            sage: LL1_vecs = [ V(m.list()) for m in LL1 ]
-            sage: LL2_vecs = [ V(m.list()) for m in LL2 ]
+            sage: LL1_vecs = ( V(m.list()) for m in LL1 )
+            sage: LL2_vecs = ( V(m.list()) for m in LL2 )
             sage: V.span(LL1_vecs) == V.span(LL2_vecs)
             True
 
@@ -4709,10 +4735,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: K = random_cone(max_ambient_dim=4)
             sage: LL = K.lyapunov_like_basis()
             sage: W = VectorSpace(K.lattice().base_field(), K.lattice_dim()**2)
-            sage: LL_W = W.span([ W(m.list()) for m in LL ])
-            sage: brackets = [ W((L1*L2 - L2*L1).list()) for L1 in LL
-            ....:                                        for L2 in LL ]
-            sage: all([ b in LL_W for b in brackets ])
+            sage: LL_W = W.span( W(m.list()) for m in LL )
+            sage: brackets = ( W((L1*L2 - L2*L1).list()) for L1 in LL
+            ....:                                        for L2 in LL )
+            sage: all( b in LL_W for b in brackets )
             True
         """
         # Matrices are not vectors in Sage, so we have to convert them
@@ -4723,12 +4749,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         # These tensor products contain a basis for the orthogonal
         # complement of the Lyapunov-like transformations on this cone.
-        tensor_products = [ s.tensor_product(x)
-                            for (x,s) in self.discrete_complementarity_set() ]
+        tensor_products = ( s.tensor_product(x)
+                            for (x,s) in self.discrete_complementarity_set() )
 
         # Convert those tensor products to long vectors.
         W = VectorSpace(F, n**2)
-        perp_vectors = [ W(tp.list()) for tp in tensor_products ]
+        perp_vectors = ( W(tp.list()) for tp in tensor_products )
 
         # Now find the Lyapunov-like transformations (as long vectors).
         LL_vectors = W.span(perp_vectors).complement()
@@ -4756,11 +4782,11 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         space is `n > 0`, then the resulting Lyapunov rank will be
         between `1` and `n^2` inclusive. If this cone :meth:`is_proper`,
         then that upper bound reduces from `n^2` to `n`. A Lyapunov rank
-        of `n-1` is not possible (by Lemma 5 [Or2016]_) in either case.
+        of `n-1` is not possible (by Lemma 6 [Or2017]_) in either case.
 
         ALGORITHM:
 
-        Algorithm 3 [Or2016]_ is used. Every closed convex cone is
+        Algorithm 3 [Or2017]_ is used. Every closed convex cone is
         isomorphic to a Cartesian product of a proper cone, a subspace,
         and a trivial cone. The Lyapunov ranks of the subspace and
         trivial cone are easy to compute. Essentially, we "peel off"
@@ -4773,7 +4799,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         - [GT2014]_
 
-        - [Or2016]_
+        - [Or2017]_
 
         - [RNPA2011]_
 
@@ -4793,7 +4819,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             3
 
         A vector space of dimension `n` has Lyapunov rank `n^{2}`
-        [Or2016]_::
+        [Or2017]_::
 
             sage: Q5 = VectorSpace(QQ, 5)
             sage: gs = Q5.basis() + [ -r for r in Q5.basis() ]
@@ -4811,7 +4837,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             1
 
         A ray in `n` dimensions has Lyapunov rank `n^{2} - n + 1`
-        [Or2016]_::
+        [Or2017]_::
 
             sage: K = Cone([(1,0,0,0,0)])
             sage: K.lyapunov_rank()
@@ -4820,7 +4846,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             21
 
         A subspace of dimension `m` in an `n`-dimensional ambient space
-        has Lyapunov rank `n^{2} - m(n - m)` [Or2016]_::
+        has Lyapunov rank `n^{2} - m(n - m)` [Or2017]_::
 
             sage: e1 = vector(QQ, [1,0,0,0,0])
             sage: e2 = vector(QQ, [0,1,0,0,0])
@@ -4872,13 +4898,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             True
 
         Lyapunov rank should be invariant under a linear isomorphism
-        [Or2016]_::
+        [Or2017]_::
 
             sage: set_random_seed()
             sage: K1 = random_cone(max_ambient_dim=8)
             sage: n = K1.lattice_dim()
             sage: A = random_matrix(QQ, n, algorithm='unimodular')
-            sage: K2 = Cone( [ A*r for r in K1.rays() ], lattice=K1.lattice())
+            sage: K2 = Cone( ( A*r for r in K1 ), lattice=K1.lattice())
             sage: K1.lyapunov_rank() == K2.lyapunov_rank()
             True
 
@@ -4906,7 +4932,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             False
 
         No polyhedral closed convex cone in `n` dimensions has Lyapunov
-        rank `n-1` [Or2016]_::
+        rank `n-1` [Or2017]_::
 
             sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
@@ -4914,7 +4940,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             False
 
         The calculation of the Lyapunov rank of an improper cone can
-        be reduced to that of a proper cone [Or2016]_::
+        be reduced to that of a proper cone [Or2017]_::
 
             sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
@@ -4936,12 +4962,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         A "perfect" cone has Lyapunov rank `n` or more in `n`
         dimensions. We can make any cone perfect by adding a slack
-        variable [Or2016]_::
+        variable::
 
             sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: L = ToricLattice(K.lattice_dim() + 1)
-            sage: K = Cone([ r.list() + [0] for r in K.rays() ], lattice=L)
+            sage: K = Cone([ r.list() + [0] for r in K ], lattice=L)
             sage: K.lyapunov_rank() >= K.lattice_dim()
             True
         """
@@ -5018,9 +5044,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
             sage: set_random_seed()
             sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
-            sage: all([ x >= 0 for x in K.random_element() ])
+            sage: all( x >= 0 for x in K.random_element() )
             True
-            sage: all([ x >= 0 for x in K.random_element(ring=QQ) ])
+            sage: all( x >= 0 for x in K.random_element(ring=QQ) )
             True
 
         If ``ring`` is not ``ZZ`` or ``QQ``, an error is raised::
@@ -5073,9 +5099,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
             sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
-            sage: K.contains(sum([K.random_element() for i in range(10)]))
+            sage: K.contains(sum(K.random_element() for i in range(10)))
             True
-            sage: K.contains(sum([K.random_element(QQ) for i in range(10)]))
+            sage: K.contains(sum(K.random_element(QQ) for i in range(10)))
             True
 
         The sum of random elements of a cone belongs to its ambient
@@ -5084,9 +5110,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: V = K.lattice().vector_space()
-            sage: sum([K.random_element() for i in range(10)]) in V
+            sage: sum(K.random_element() for i in range(10)) in V
             True
-            sage: sum([K.random_element(ring=QQ) for i in range(10)]) in V
+            sage: sum(K.random_element(ring=QQ) for i in range(10)) in V
             True
 
         By default, the sum of random elements of the cone should live
@@ -5094,7 +5120,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
             sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
-            sage: sum([K.random_element() for i in range(10)]) in K.lattice()
+            sage: sum(K.random_element() for i in range(10)) in K.lattice()
             True
         """
         if not ring in [ZZ, QQ]:
@@ -5111,7 +5137,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             L = L.vector_space()
 
         # Scale each generator by a random nonnegative factor.
-        terms = [ ring.random_element().abs()*L(g) for g in self ]
+        terms = ( ring.random_element().abs()*L(g) for g in self )
 
         # Make sure we return a lattice element or vector. Without the
         # explicit conversion, we return ``0`` when we have no rays.
@@ -5254,7 +5280,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: K2 = random_cone(max_ambient_dim=3)
             sage: pi_gens = K1.positive_operators_gens(K2)
             sage: L = ToricLattice(K1.lattice_dim() * K2.lattice_dim())
-            sage: pi_cone = Cone([ g.list() for g in pi_gens ],
+            sage: pi_cone = Cone(( g.list() for g in pi_gens ),
             ....:                lattice=L,
             ....:                check=False)
             sage: P = matrix(K2.lattice_dim(),
@@ -5271,7 +5297,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: K = random_cone(max_ambient_dim=3)
             sage: pi_gens = K.positive_operators_gens()
             sage: L = ToricLattice(K.lattice_dim()**2)
-            sage: pi_cone = Cone([ g.list() for g in pi_gens ],
+            sage: pi_cone = Cone(( g.list() for g in pi_gens ),
             ....:                lattice=L,
             ....:                check=False)
             sage: actual = pi_cone.dual().linear_subspace()
@@ -5295,7 +5321,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: l = K.lineality()
             sage: pi_gens = K.positive_operators_gens()
             sage: L = ToricLattice(n**2)
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: actual = pi_cone.dual().lineality()
@@ -5313,7 +5339,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: l = K.lineality()
             sage: pi_gens = K.positive_operators_gens()
             sage: L = ToricLattice(n**2)
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: actual = pi_cone.dim()
@@ -5330,7 +5356,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             True
             sage: L = ToricLattice(n^2)
             sage: pi_gens = K.positive_operators_gens()
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: pi_cone.dim() == n^2
@@ -5340,7 +5366,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: K.is_full_space()
             True
             sage: pi_gens = K.positive_operators_gens()
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: pi_cone.dim() == n^2
@@ -5348,7 +5374,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
             sage: K = Cone([(1,0),(0,1),(0,-1)])
             sage: pi_gens = K.positive_operators_gens()
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                check=False)
             sage: pi_cone.dim() == 3
             True
@@ -5361,7 +5387,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: n = K.lattice_dim()
             sage: pi_gens = K.positive_operators_gens()
             sage: L = ToricLattice(n**2)
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: actual = pi_cone.lineality()
@@ -5378,7 +5404,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             True
             sage: L = ToricLattice(n^2)
             sage: pi_gens = K.positive_operators_gens()
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: pi_cone.lineality() == n^2
@@ -5388,7 +5414,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: K.is_full_space()
             True
             sage: pi_gens = K.positive_operators_gens()
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: pi_cone.lineality() == n^2
@@ -5396,7 +5422,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
             sage: K = Cone([(1,0),(0,1),(0,-1)])
             sage: pi_gens = K.positive_operators_gens()
-            sage: pi_cone = Cone([g.list() for g in pi_gens], check=False)
+            sage: pi_cone = Cone((g.list() for g in pi_gens), check=False)
             sage: pi_cone.lineality() == 2
             True
 
@@ -5407,7 +5433,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: K = random_cone(max_ambient_dim=3)
             sage: pi_gens = K.positive_operators_gens()
             sage: L = ToricLattice(K.lattice_dim()**2)
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: K.is_proper() == pi_cone.is_proper()
@@ -5420,13 +5446,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: K = random_cone(max_ambient_dim=3)
             sage: L = ToricLattice(K.lattice_dim()**2)
             sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()
-            sage: pK = Cone([ p*k for k in K ], K.lattice(), check=False)
+            sage: pK = Cone(( p*k for k in K ), K.lattice(), check=False)
             sage: pi_gens = pK.positive_operators_gens()
-            sage: actual = Cone([g.list() for g in pi_gens],
+            sage: actual = Cone((g.list() for g in pi_gens),
             ....:               lattice=L,
             ....:               check=False)
             sage: pi_gens = K.positive_operators_gens()
-            sage: expected = Cone([(p*g*p.inverse()).list() for g in pi_gens],
+            sage: expected = Cone(((p*g*p.inverse()).list() for g in pi_gens),
             ....:                 lattice=L,
             ....:                 check=False)
             sage: actual.is_equivalent(expected)
@@ -5445,11 +5471,11 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: L = ToricLattice(n*m)
             sage: W = VectorSpace(F, n*m)
             sage: pi_gens = K1.positive_operators_gens(K2)
-            sage: pi_fwd = Cone([g.list() for g in pi_gens],
+            sage: pi_fwd = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: pi_gens = K2.dual().positive_operators_gens(K1.dual())
-            sage: pi_back = Cone([g.list() for g in pi_gens],
+            sage: pi_back = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: M_fwd = MatrixSpace(F, m, n)
@@ -5464,6 +5490,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         The Lyapunov rank of the positive operators is the product of
         the Lyapunov ranks of the associated cones if both are proper::
 
+            sage: set_random_seed()
             sage: K1 = random_cone(max_ambient_dim=3,
             ....:                  strictly_convex=True,
             ....:                  solid=True)
@@ -5472,7 +5499,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             ....:                  solid=True)
             sage: pi_gens = K1.positive_operators_gens(K2)
             sage: L = ToricLattice(K1.lattice_dim() * K2.lattice_dim())
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: beta1 = K1.lyapunov_rank()
@@ -5484,6 +5511,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         cone can be computed from the Lyapunov-like operators on the cones
         with respect to which the operators are positive::
 
+            sage: set_random_seed()
             sage: K1 = random_cone(max_ambient_dim=3,
             ....:                  strictly_convex=True,
             ....:                  solid=True)
@@ -5497,17 +5525,16 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: L = ToricLattice(m*n)
             sage: M1 = MatrixSpace(F, m, m)
             sage: M2 = MatrixSpace(F, n, n)
-            sage: LL_K1 = [ M1(x.list())
-            ....:           for x in K1.dual().lyapunov_like_basis() ]
-            sage: LL_K2 = [ M2(x.list()) for x in K2.lyapunov_like_basis() ]
-            sage: tps = [ s.tensor_product(x) for x in LL_K1 for s in LL_K2 ]
+            sage: tps = ( M2(s.list()).tensor_product(M1(x.list()))
+            ....:             for x in K1.dual().lyapunov_like_basis()
+            ....:             for s in K2.lyapunov_like_basis() )
             sage: W = VectorSpace(F, (m**2)*(n**2))
-            sage: expected = span(F, [ W(x.list()) for x in tps ])
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: expected = span(F, ( W(x.list()) for x in tps ))
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: LL_pi = pi_cone.lyapunov_like_basis()
-            sage: actual = span(F, [ W(x.list()) for x in LL_pi ])
+            sage: actual = span(F, ( W(x.list()) for x in LL_pi ))
             sage: actual == expected
             True
         """
@@ -5521,12 +5548,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         n = self.lattice_dim()
         m = K2.lattice_dim()
 
-        tensor_products = [ s.tensor_product(x) for x in self
-                                                for s in K2.dual() ]
+        tensor_products = ( s.tensor_product(x) for x in self
+                                                for s in K2.dual() )
 
         # Convert those tensor products to long vectors.
         W = VectorSpace(F, n*m)
-        vectors = [ W(tp.list()) for tp in tensor_products ]
+        vectors = ( W(tp.list()) for tp in tensor_products )
 
         check = True
         if self.is_proper() and K2.is_proper():
@@ -5612,10 +5639,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             [0 0], [1 0], [0 0], [ 0  0], [0 1], [ 0 -1]
             ]
             sage: K = Cone([(1,0,0,0),(0,1,0,0),(0,0,1,0),(0,0,0,1)])
-            sage: all([ c[i][j] >= 0 for c in K.cross_positive_operators_gens()
-            ....:                    for i in range(c.nrows())
-            ....:                    for j in range(c.ncols())
-            ....:                    if i != j ])
+            sage: all( c[i][j] >= 0 for c in K.cross_positive_operators_gens()
+            ....:                   for i in range(c.nrows())
+            ....:                   for j in range(c.ncols())
+            ....:                   if i != j )
             True
 
         The trivial cone in a trivial space has no cross-positive
@@ -5659,10 +5686,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: K = Cone([(1,0),(-1,0),(0,1),(0,-1)])
             sage: K.is_full_space()
             True
-            sage: lls = span([ vector(l.list())
-            ....:              for l in K.lyapunov_like_basis() ])
-            sage: cs  = span([ vector(c.list())
-            ....:               for c in K.cross_positive_operators_gens() ])
+            sage: lls = span( vector(l.list())
+            ....:             for l in K.lyapunov_like_basis() )
+            sage: cs  = span( vector(c.list())
+            ....:             for c in K.cross_positive_operators_gens() )
             sage: cs == lls
             True
 
@@ -5674,8 +5701,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: cp_gens = K.cross_positive_operators_gens()
-            sage: dcs = K.discrete_complementarity_set()
-            sage: all([ s*(g*x) >= 0 for g in cp_gens for (x,s) in dcs ])
+            sage: all( L.is_cross_positive_on(K) for L in cp_gens )
             True
 
         The lineality space of the cone of cross-positive operators is
@@ -5685,11 +5711,11 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: K = random_cone(max_ambient_dim=3)
             sage: L = ToricLattice(K.lattice_dim()**2)
             sage: cp_gens = K.cross_positive_operators_gens()
-            sage: cp_cone = Cone([g.list() for g in cp_gens],
+            sage: cp_cone = Cone((g.list() for g in cp_gens),
             ....:                    lattice=L,
             ....:                    check=False)
-            sage: ll_basis = [ vector(l.list())
-            ....:              for l in K.lyapunov_like_basis() ]
+            sage: ll_basis = ( vector(l.list())
+            ....:              for l in K.lyapunov_like_basis() )
             sage: lls = L.vector_space().span(ll_basis)
             sage: cp_cone.linear_subspace() == lls
             True
@@ -5704,10 +5730,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: pi_gens = K.positive_operators_gens()
             sage: cp_gens = K.cross_positive_operators_gens()
             sage: L = ToricLattice(K.lattice_dim()**2)
-            sage: pi_cone = Cone([g.list() for g in pi_gens],
+            sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
-            sage: cp_cone = Cone([g.list() for g in cp_gens],
+            sage: cp_cone = Cone((g.list() for g in cp_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: pi_cone.dim() == cp_cone.dim()
@@ -5726,7 +5752,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             True
             sage: L = ToricLattice(n^2)
             sage: cp_gens = K.cross_positive_operators_gens()
-            sage: cp_cone = Cone([g.list() for g in cp_gens],
+            sage: cp_cone = Cone((g.list() for g in cp_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: cp_cone.dim() == n^2
@@ -5736,7 +5762,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: K.is_full_space()
             True
             sage: cp_gens = K.cross_positive_operators_gens()
-            sage: cp_cone = Cone([g.list() for g in cp_gens],
+            sage: cp_cone = Cone((g.list() for g in cp_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: cp_cone.dim() == n^2
@@ -5744,7 +5770,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
             sage: K = Cone([(1,0),(0,1),(0,-1)])
             sage: cp_gens = K.cross_positive_operators_gens()
-            sage: cp_cone = Cone([g.list() for g in cp_gens ], check=False)
+            sage: cp_cone = Cone(( g.list() for g in cp_gens ), check=False)
             sage: cp_cone.dim() == 3
             True
 
@@ -5755,13 +5781,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: K = random_cone(max_ambient_dim=3)
             sage: L = ToricLattice(K.lattice_dim()**2)
             sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()
-            sage: pK = Cone([ p*k for k in K ], K.lattice(), check=False)
+            sage: pK = Cone(( p*k for k in K ), K.lattice(), check=False)
             sage: cp_gens = pK.cross_positive_operators_gens()
-            sage: actual = Cone([g.list() for g in cp_gens],
+            sage: actual = Cone((g.list() for g in cp_gens),
             ....:               lattice=L,
             ....:               check=False)
             sage: cp_gens = K.cross_positive_operators_gens()
-            sage: expected = Cone([(p*g*p.inverse()).list() for g in cp_gens],
+            sage: expected = Cone(((p*g*p.inverse()).list() for g in cp_gens),
             ....:                 lattice=L,
             ....:                 check=False)
             sage: actual.is_equivalent(expected)
@@ -5777,11 +5803,11 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: L = ToricLattice(n**2)
             sage: W = VectorSpace(F, n**2)
             sage: cp_gens = K.cross_positive_operators_gens()
-            sage: cp_cone = Cone([g.list() for g in cp_gens],
+            sage: cp_cone = Cone((g.list() for g in cp_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: cp_gens = K.dual().cross_positive_operators_gens()
-            sage: cp_star = Cone([g.list() for g in cp_gens],
+            sage: cp_star = Cone((g.list() for g in cp_gens),
             ....:                lattice=L,
             ....:                check=False)
             sage: M = MatrixSpace(F, n)
@@ -5800,12 +5826,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         # These tensor products contain generators for the dual cone of
         # the cross-positive operators.
-        tensor_products = [ s.tensor_product(x)
-                            for (x,s) in self.discrete_complementarity_set() ]
+        tensor_products = ( s.tensor_product(x)
+                            for (x,s) in self.discrete_complementarity_set() )
 
         # Turn our matrices into long vectors...
         W = VectorSpace(F, n**2)
-        vectors = [ W(m.list()) for m in tensor_products ]
+        vectors = ( W(m.list()) for m in tensor_products )
 
         check = True
         if self.is_proper():
@@ -5875,8 +5901,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: Z_gens = K.Z_operators_gens()
-            sage: dcs = K.discrete_complementarity_set()
-            sage: all([ s*(z*x) <= 0 for z in Z_gens for (x,s) in dcs ])
+            sage: all( L.is_Z_operator_on(K) for L in Z_gens )
             True
         """
         return [ -cp for cp in self.cross_positive_operators_gens() ]
@@ -6168,12 +6193,15 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         generators. Please decrease min_rays.
 
     Ensure that we can obtain a cone in three dimensions with a large
-    number (in particular, more than 2*dim) rays::
+    number (in particular, more than 2*dim) rays. The ``max_rays`` is
+    not strictly necessary, but it minimizes the number of times that
+    we will loop with an absurd, unattainable, number of rays::
 
         sage: set_random_seed()                  # long time
         sage: K = random_cone(min_ambient_dim=3, # long time
         ....:                 max_ambient_dim=3, # long time
-        ....:                 min_rays=7)        # long time
+        ....:                 min_rays=7,        # long time
+        ....:                 max_rays=9)        # long time
         sage: K.nrays() >= 7                     # long time
         True
         sage: K.lattice_dim()                    # long time
@@ -6292,16 +6320,16 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             raise ValueError(msg)
 
         if min_rays > 2 and max_ambient_dim < 2:
-           msg  = 'all cones in zero/one dimensions have two or fewer '
-           msg += 'generators. Please increase max_ambient_dim to at least '
-           msg += '2, or decrease min_rays.'
-           raise ValueError(msg)
+            msg  = 'all cones in zero/one dimensions have two or fewer '
+            msg += 'generators. Please increase max_ambient_dim to at least '
+            msg += '2, or decrease min_rays.'
+            raise ValueError(msg)
 
         if min_rays > 0 and max_ambient_dim == 0:
-           msg  = 'all cones in zero dimensions have no generators. '
-           msg += 'Please increase max_ambient_dim to at least 1, or '
-           msg += 'decrease min_rays.'
-           raise ValueError(msg)
+            msg  = 'all cones in zero dimensions have no generators. '
+            msg += 'Please increase max_ambient_dim to at least 1, or '
+            msg += 'decrease min_rays.'
+            raise ValueError(msg)
 
     if max_rays is not None:
         if max_rays < 0:
@@ -6318,14 +6346,14 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             raise ValueError(msg)
 
         if min_rays > 2 and lattice.dimension() < 2:
-           msg  = 'all cones in the given lattice have two or fewer '
-           msg += 'generators. Please decrease min_rays.'
-           raise ValueError(msg)
+            msg  = 'all cones in the given lattice have two or fewer '
+            msg += 'generators. Please decrease min_rays.'
+            raise ValueError(msg)
 
         if min_rays > 0 and lattice.dimension() == 0:
-           msg  = 'all cones in the given lattice have no generators. '
-           msg += 'Please decrease min_rays.'
-           raise ValueError(msg)
+            msg  = 'all cones in the given lattice have no generators. '
+            msg += 'Please decrease min_rays.'
+            raise ValueError(msg)
 
     # Sanity checks for strictly_convex.
     if strictly_convex is not None and not strictly_convex:
@@ -6430,12 +6458,11 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         else:
             if K.lattice() is not lattice:
                 return False
-        return all([
-            K.nrays() >= min_rays,
-            K.nrays() <= max_rays or max_rays is None,
-            K.is_solid() == solid or solid is None,
-            K.is_strictly_convex() == strictly_convex or strictly_convex is None
-            ])
+        return all([K.nrays() >= min_rays,
+                    max_rays is None or K.nrays() <= max_rays,
+                    solid is None or K.is_solid() == solid,
+                    strictly_convex is None or
+                    K.is_strictly_convex() == strictly_convex])
 
     # Now we actually compute the thing. To avoid recursion (and the
     # associated "maximum recursion depth exceeded" error), we loop
@@ -6448,23 +6475,45 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             # No lattice given, make our own.
             d = random_min_max(min_ambient_dim, max_ambient_dim)
             L = ToricLattice(d)
+        else:
+            d = L.dimension()
 
+        # The number of rays that we will try to attain in this iteration.
         r = random_min_max(min_rays, max_rays)
 
         # The rays are trickier to generate, since we could generate v and
         # 2*v as our "two rays." In that case, the resulting cone would
-        # have one generating ray. To avoid such a situation, we start by
-        # generating ``r`` rays where ``r`` is the number we want to end
-        # up with...
-        rays = [L.random_element() for i in range(r)]
+        # have only one generating ray -- not what we want.
+        #
+        # Let's begin with an easier question: how many rays should we
+        # start with? If we want to attain r rays in this iteration,
+        # then surely r is a good number to start with, even if some
+        # of them will be redundant?
+        #
+        # Not quite, because after 2*d rays, there is a greater
+        # tendency for them to be redundant. If, for example, the
+        # maximum number of rays is unbounded, then r could be enormous
+        # Ultimately that won't be a problem, because almost all of
+        # those rays will be thrown out. However, as we discovered in
+        # Trac #24517, simply generating the random rays in the first
+        # place (and storing them in a list) is problematic.
+        #
+        # Since the returns fall off around 2*d, we start with the
+        # smaller of the two numbers 2*d or r to ensure that we don't
+        # pay a huge performance penalty for things we're going to
+        # throw out anyway. This has a side effect, namely that if you
+        # ask for more than 2*d rays, then you'll probably get the
+        # minimum amount, because we'll start with 2*d and add them
+        # one-at-a-time (see below).
+        rays = [L.random_element() for i in range(min(r,2*d))]
 
         # The lattice parameter is required when no rays are given, so
-        # we pass it in case ``r == 0`` or ``d == 0`` (or ``d == 1``
-        # but we're making a strictly convex cone).
+        # we pass it in case r == 0 or d == 0 (or d == 1 but we're
+        # making a strictly convex cone).
         K = Cone(rays, lattice=L)
 
         # Now, some of the rays that we generated were probably redundant,
-        # so we need to come up with more. We can obviously stop if ``K``
+        # so we need to come up with more. We can obviously stop if K
         # becomes the entire ambient vector space.
         #
         # We're still not guaranteed to have the correct number of
@@ -6495,7 +6544,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
                     # rays has immutable elements
                     from copy import copy
-                    rays = map(copy, rays)
+                    rays = [copy(ray) for ray in rays]
 
                     for i, ray in enumerate(rays):
                         rays[i][0] = pm * (ray[0].abs() + 1)

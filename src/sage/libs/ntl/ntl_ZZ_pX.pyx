@@ -22,6 +22,7 @@ include 'misc.pxi'
 include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
+from sage.cpython.string cimport char_to_str
 from sage.rings.integer cimport Integer
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
@@ -67,7 +68,7 @@ cdef class ntl_ZZ_pX(object):
     or Karatsuba algorithms.
     """
     # See ntl_ZZ_pX.pxd for definition of data members
-    def __init__(self, v = None, modulus = None):
+    def __init__(self, v=None, modulus=None):
         """
         EXAMPLES::
 
@@ -1243,7 +1244,9 @@ cdef class ntl_ZZ_pX(object):
         sig_on()
         cdef char* t
         t = ZZ_pX_trace_list(&self.x)
-        return eval(string_delete(t).replace(' ', ','))
+        r = eval(char_to_str(t).replace(' ', ','))
+        string_delete(t)
+        return r
 
     def resultant(self, ntl_ZZ_pX other):
         """

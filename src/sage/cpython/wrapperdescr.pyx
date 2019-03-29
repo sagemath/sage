@@ -16,8 +16,10 @@ Pure Python classes have normal methods, not slot wrappers::
     sage: class X(object):
     ....:     def __add__(self, other):
     ....:         return NotImplemented
-    sage: X.__add__
+    sage: X.__add__    # py2
     <unbound method X.__add__>
+    sage: X.__add__    # py3
+    <function X.__add__ at ...>
 """
 
 #*****************************************************************************
@@ -27,8 +29,11 @@ Pure Python classes have normal methods, not slot wrappers::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
+
+from .string import bytes_to_str
+
 
 def wrapperdescr_call(slotwrapper, self, *args, **kwds):
     """
@@ -93,6 +98,7 @@ cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds):
         return wk(self, args, slotwrapper.d_wrapped, kwds)
 
     if <PyObject*>kwds is not NULL and kwds:
-        raise TypeError(f"wrapper {slotdef.name} slotdef doesn't take keyword arguments")
+        raise TypeError(f"wrapper {bytes_to_str(slotdef.name)} slotdef "
+                         "doesn't take keyword arguments")
 
     return slotdef.wrapper(self, args, slotwrapper.d_wrapped)

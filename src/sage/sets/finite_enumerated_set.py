@@ -308,9 +308,9 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         :meth:`Parent.__call__` enforces that
         :meth:`_element_constructor_` return an :class:`Element` (more
         precisely, it calls :meth:`_element_constructor_` through a
-        :class:`sage.structure.coerce_maps.DefaultConvertMap`, and any
-        :class:`sage.categories.map.Map` requires its results to be
-        instances of :class:`Element`).
+        :class:`sage.structure.coerce_maps.DefaultConvertMap_unique`,
+        and any :class:`sage.categories.map.Map` requires its results
+        to be instances of :class:`Element`).
 
         Since :class:`FiniteEnumeratedSets` is often a facade over
         plain Python objects, :trac:`16280` introduced this method
@@ -342,7 +342,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             2
             sage: phi.register_as_conversion()
 
-            sage: from sage.structure.parent import Set_PythonType_class
+            sage: from sage.sets.pythonclass import Set_PythonType_class
             sage: psi = Hom(Set_PythonType_class(str), F, Sets())(lambda s: ZZ(len(s)))
             sage: psi.register_as_conversion()
             sage: psi('a')

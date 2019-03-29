@@ -410,9 +410,8 @@ class TransducerGenerators(object):
             initial_states=[0],
             final_states=[0])
 
-
     def CountSubblockOccurrences(self, block, input_alphabet):
-        """
+        r"""
         Returns a transducer counting the number of (possibly
         overlapping) occurrences of a block in the input.
 
@@ -706,7 +705,7 @@ class TransducerGenerators(object):
 
 
     def all(self, input_alphabet, number_of_operands=2):
-        """
+        r"""
         Returns a transducer which realizes logical ``and`` over the given
         input alphabet.
 
@@ -758,7 +757,7 @@ class TransducerGenerators(object):
 
 
     def any(self, input_alphabet, number_of_operands=2):
-        """
+        r"""
         Returns a transducer which realizes logical ``or`` over the given
         input alphabet.
 
@@ -810,7 +809,7 @@ class TransducerGenerators(object):
 
 
     def add(self, input_alphabet, number_of_operands=2):
-        """
+        r"""
         Returns a transducer which realizes addition on pairs over the
         given input alphabet.
 
@@ -865,7 +864,7 @@ class TransducerGenerators(object):
 
 
     def sub(self, input_alphabet):
-        """
+        r"""
         Returns a transducer which realizes subtraction on pairs over
         the given input alphabet.
 
@@ -972,7 +971,7 @@ class TransducerGenerators(object):
 
 
     def abs(self, input_alphabet):
-        """
+        r"""
         Returns a transducer which realizes the letter-wise
         absolute value of an input word over the given input alphabet.
 
@@ -1947,7 +1946,7 @@ class TransducerGenerators(object):
                        input_alphabet=input_alphabet)
 
         def edge_recursion_digraph(n):
-            """
+            r"""
             Compute the list of outgoing edges of ``n`` in the recursion digraph.
 
             INPUT:

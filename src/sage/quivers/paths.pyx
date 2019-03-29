@@ -17,8 +17,10 @@ Quiver Paths
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 from __future__ import print_function
 
+cimport cython
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.data_structures.bounded_integer_sequences cimport *
@@ -787,7 +789,9 @@ cdef class QuiverPath(MonoidElement):
             biseq_inititem(out._path, i, biseq_getitem(self._path, l-i))
         return out
 
-cpdef QuiverPath NewQuiverPath(Q, start, end, biseq_data):
+
+@cython.binding(True)
+def NewQuiverPath(Q, start, end, biseq_data):
     """
     Return a new quiver path for given defining data.
 
@@ -812,7 +816,7 @@ cpdef QuiverPath NewQuiverPath(Q, start, end, biseq_data):
         sage: loads(dumps(p)) == p   # indirect doctest
         True
         sage: p.__reduce__()
-        (<...NewQuiverPath>,
+        (<cyfunction NewQuiverPath at ...>,
          (Partial semigroup formed by the directed paths of Multi-digraph on 3 vertices,
           1,
           3,

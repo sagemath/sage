@@ -87,8 +87,8 @@ cdef class ntl_mat_GF2E(object):
         cdef unsigned long _nrows, _ncols
         cdef unsigned long i, j
 
-        import sage.matrix.matrix
-        if sage.matrix.matrix.is_Matrix(nrows):
+        from sage.structure.element import is_Matrix
+        if is_Matrix(nrows):
             _nrows = nrows.nrows()
             _ncols = nrows.ncols()
             v     = nrows.list()

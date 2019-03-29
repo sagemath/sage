@@ -1,5 +1,5 @@
 r"""
-Set of homomorphisms between two toric varieties.
+Set of homomorphisms between two toric varieties
 
 For schemes `X` and `Y`, this module implements the set of morphisms
 `Hom(X,Y)`. This is done by
@@ -109,7 +109,7 @@ coordinates where the codomain is not implemented as a toric variety::
 from sage.categories.finite_fields import FiniteFields
 from sage.rings.all import ZZ
 
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.geometry.fan_morphism import FanMorphism
 
@@ -431,7 +431,7 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
 
 
 class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
-    """
+    r"""
     Set of rational points of a toric variety.
 
     You should not use this class directly. Instead, use the
@@ -467,11 +467,11 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
         sage: point_set.cardinality()
         21
         sage: sorted(X.point_set().list())
-        [[0 : 0 : 1], [0 : 1 : 0], [0 : 1 : 1], [0 : 1 : 3], 
-         [1 : 0 : 0], [1 : 0 : 1], [1 : 0 : 3], [1 : 1 : 0], 
-         [1 : 1 : 1], [1 : 1 : 2], [1 : 1 : 3], [1 : 1 : 4], 
-         [1 : 1 : 5], [1 : 1 : 6], [1 : 3 : 0], [1 : 3 : 1], 
-         [1 : 3 : 2], [1 : 3 : 3], [1 : 3 : 4], [1 : 3 : 5], 
+        [[0 : 0 : 1], [0 : 1 : 0], [0 : 1 : 1], [0 : 1 : 3],
+         [1 : 0 : 0], [1 : 0 : 1], [1 : 0 : 3], [1 : 1 : 0],
+         [1 : 1 : 1], [1 : 1 : 2], [1 : 1 : 3], [1 : 1 : 4],
+         [1 : 1 : 5], [1 : 1 : 6], [1 : 3 : 0], [1 : 3 : 1],
+         [1 : 3 : 2], [1 : 3 : 3], [1 : 3 : 4], [1 : 3 : 5],
          [1 : 3 : 6]]
 
     As for a non-compact example, the blow-up of the plane is the line
@@ -528,7 +528,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
             sage: X = ToricVariety(fan, base_field=GF(7))
             sage: X.point_set().cardinality()
             21
-        
+
         Fulton's formula does not apply since the variety is not
         smooth. And, indeed, naive application gives a different
         result::
@@ -676,4 +676,4 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
         except AttributeError:
             return super(SchemeHomset_points_subscheme_toric_field, self).cardinality()
 
-            
+

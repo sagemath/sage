@@ -12,10 +12,6 @@ else
     export CFLAGS="-O2 -g $CFLAGS"
 fi
 
-if [ "$SAGE64" = "yes" ]; then
-    CFLAGS="-m64 $CFLAGS"
-fi
-
 
 echo "Testing the IML library"
 $MAKE check

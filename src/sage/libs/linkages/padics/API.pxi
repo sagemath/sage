@@ -191,7 +191,7 @@ cdef inline bint creduce_small(celement out, celement a, long prec, PowComputer_
     """
     pass
 
-cdef inline long cremove(celement out, celement a, long prec, PowComputer_class prime_pow) except -1:
+cdef inline long cremove(celement out, celement a, long prec, PowComputer_class prime_pow, bint reduce_relative=False) except -1:
     """
     Extract the maximum power of the uniformizer dividing this element.
 
@@ -201,6 +201,9 @@ cdef inline long cremove(celement out, celement a, long prec, PowComputer_class 
     - ``a`` -- the element whose valuation and unit are desired.
     - ``prec`` -- a long, used if `a = 0`.
     - ``prime_pow`` -- the PowComputer for the ring.
+    - ``reduce_relative`` -- a bint: whether the final result 
+      should be reduced at precision ``prec`` (case ``False``) 
+      or ``prec - valuation`` (case ``True``)
 
     OUTPUT:
 
@@ -245,7 +248,7 @@ cdef inline bint cisunit(celement a, PowComputer_class prime_pow) except -1:
     """
     pass
 
-cdef inline int cshift(celement out, celement a, long n, long prec, PowComputer_class prime_pow, bint reduce_afterward) except -1:
+cdef inline int cshift(celement out, celement rem, celement a, long n, long prec, PowComputer_class prime_pow, bint reduce_afterward) except -1:
     """
     Multiplies by a power of the uniformizer.
 
@@ -254,6 +257,7 @@ cdef inline int cshift(celement out, celement a, long n, long prec, PowComputer_
     - ``out`` -- an ``celement`` to store the result.  If `n >= 0`
       then out will be set to `a * p^n`.
       If `n < 0`, out will be set to `a // p^-n`.
+    - ``rem`` -- a ``celement`` to store the remainder, when `n < 0`
     - ``a`` -- the element to shift.
     - ``n`` -- long, the amount to shift by.
     - ``prec`` -- long, a precision modulo which to reduce.
@@ -262,7 +266,7 @@ cdef inline int cshift(celement out, celement a, long n, long prec, PowComputer_
     """
     pass
 
-cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowComputer_class prime_pow) except -1:
+cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowComputer_class prime_pow, bint reduce_afterward) except -1:
     """
     Multiplies by a power of the uniformizer, assuming that the
     valuation of a is at least -n.
@@ -277,6 +281,7 @@ cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowC
     - ``n`` -- long, the amount to shift by.
     - ``prec`` -- long, a precision modulo which to reduce.
     - ``prime_pow`` -- the PowComputer for the ring.
+    - ``reduce_afterward`` -- whether to reduce afterward.
     """
     pass
 

@@ -259,36 +259,6 @@ Arbitrary powers work as well; for example, we have
     sage: (1 + 1/z + O(1/z^5))^(1 + 1/z)
     1 + z^(-1) + z^(-2) + 1/2*z^(-3) + 1/3*z^(-4) + O(z^(-5))
 
-.. NOTE::
-
-    In the asymptotic ring
-    ::
-
-        sage: M.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ', coefficient_ring=ZZ)
-
-    the operation
-    ::
-
-        sage: (1/2)^n
-        Traceback (most recent call last):
-        ...
-        ValueError: 1/2 is not in Exact Term Monoid QQ^n * n^QQ
-        with coefficients in Integer Ring. ...
-
-    fails, since the rational `1/2` is not contained in `M`. You can use
-    ::
-
-        sage: n.rpow(1/2)
-        (1/2)^n
-
-    instead. (See also the examples in
-    :meth:`ExactTerm.rpow() <sage.rings.asymptotic.term_monoid.ExactTerm.rpow>`
-    for a detailed explanation.)
-    Another way is to use a larger coefficient ring::
-
-        sage: M_QQ.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ', coefficient_ring=QQ)
-        sage: (1/2)^n
-        (1/2)^n
 
 Multivariate Arithmetic
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -1639,6 +1609,12 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             > *previous* ValueError: Cannot determine main term of s + t
             since there are several maximal elements s, t.
 
+        Check that :trac:`19945` is fixed::
+
+            sage: A.<n> = AsymptoticRing('QQ^n * n^QQ', ZZ)
+            sage: (1/2)^n
+            (1/2)^n
+
         Check that :trac:`19946` is fixed::
 
             sage: A.<n> = AsymptoticRing('QQ^n * n^QQ', SR)
@@ -2106,6 +2082,10 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             False
             sage: (log(y-1)/log(y) - 1).is_little_o_of_one()
             True
+
+        .. SEEALSO::
+
+            :meth:`limit`
         """
         return all(term.is_little_o_of_one() for term in self.summands.maximal_elements())
 
@@ -2147,7 +2127,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: n.rpow(2)
             2^n
             sage: _.parent()
-            Asymptotic Ring <QQ^n * n^SR> over Symbolic Ring
+            Asymptotic Ring <SR^n * n^SR> over Symbolic Ring
         """
         if isinstance(base, AsymptoticExpansion):
             return base.__pow__(self, precision=precision)
@@ -3249,6 +3229,50 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             raise NotImplementedOZero(self)
         return result
 
+    def limit(self):
+        """
+        Compute the limit of this asymptotic expansion.
+
+        OUTPUT:
+
+        An element of the coefficient ring.
+
+        EXAMPLES::
+
+            sage: A.<S> = AsymptoticRing("S^ZZ", SR, default_prec=3)
+            sage: (3 + 1/S + O(1/S^2)).limit()
+            3
+            sage: ((1+1/S)^S).limit()
+            e
+            sage: (1/S).limit()
+            0
+            sage: (S + 3 + 1/S + O(1/S^2)).limit()
+            Traceback (most recent call last):
+            ...
+            ValueError: Cannot determine limit of S + 3 + S^(-1) + O(S^(-2))
+            sage: (O(S^0)).limit()
+            Traceback (most recent call last):
+            ...
+            ValueError: Cannot determine limit of O(1)
+
+        .. SEEALSO::
+
+            :meth:`is_little_o_of_one`
+        """
+        non_o_one_terms = list(
+            term for term in self.summands
+            if not term.is_little_o_of_one()
+        )
+        if not non_o_one_terms:
+            return self.parent().base_ring()(0)
+        elif (
+            len(non_o_one_terms) == 1
+            and non_o_one_terms[0].growth.is_one()
+            and non_o_one_terms[0].is_exact()
+            ):
+            return non_o_one_terms[0].coefficient
+        else:
+            raise ValueError("Cannot determine limit of {}".format(self))
 
 class AsymptoticRing(Algebra, UniqueRepresentation):
     r"""
@@ -3338,7 +3362,7 @@ class AsymptoticRing(Algebra, UniqueRepresentation):
         sage: from itertools import islice
         sage: TestSuite(A).run(  # not tested  # long time  # see #19424
         ....:     verbose=True,
-        ....:     elements=tuple(islice(A.some_elements(), 10)),
+        ....:     elements=tuple(islice(A.some_elements(), int(10))),
         ....:     skip=('_test_some_elements',  # to many elements
         ....:           '_test_distributivity'))  # due to cancellations: O(z) != O(z^2)
     """
@@ -3829,7 +3853,7 @@ class AsymptoticRing(Algebra, UniqueRepresentation):
         from .misc import combine_exceptions
         from sage.symbolic.ring import SymbolicRing
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        from sage.rings.polynomial.multi_polynomial_ring_generic import is_MPolynomialRing
+        from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
         from sage.rings.power_series_ring import is_PowerSeriesRing
 
         if isinstance(P, SymbolicRing):
@@ -4019,7 +4043,7 @@ class AsymptoticRing(Algebra, UniqueRepresentation):
 
             sage: from itertools import islice
             sage: A = AsymptoticRing(growth_group='z^QQ', coefficient_ring=ZZ)
-            sage: tuple(islice(A.some_elements(), 10))
+            sage: tuple(islice(A.some_elements(), int(10)))
             (z^(3/2) + O(z^(1/2)),
              O(z^(1/2)),
              z^(3/2) + O(z^(-1/2)),

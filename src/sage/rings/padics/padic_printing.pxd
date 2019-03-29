@@ -7,8 +7,11 @@ cdef class pAdicPrinter_class(SageObject):
     cdef int mode
     cdef bint pos
     cdef object ram_name
+    cdef object latex_ram_name
     cdef object unram_name
+    cdef object latex_unram_name
     cdef object var_name
+    cdef object latex_var_name
     cdef object sep
     cdef object alphabet
     cdef PowComputer_class prime_pow

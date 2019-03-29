@@ -140,7 +140,7 @@ class p_iter_fork(object):
             sage: Polygen = parallel(polygen)
             sage: list(Polygen([QQ]))
             [(((Rational Field,), {}), x)]
-            sage: from sage.structure.sage_object import unpickle_override, register_unpickle_override
+            sage: from sage.misc.persist import unpickle_override, register_unpickle_override
             sage: register_unpickle_override('sage.rings.polynomial.polynomial_rational_flint', 'Polynomial_rational_flint', Integer)
             sage: L = list(Polygen([QQ]))
             sage: L
@@ -156,7 +156,7 @@ class p_iter_fork(object):
         n = self.ncpus
         v = list(inputs)
         import os, sys, signal
-        from sage.structure.sage_object import loads
+        from sage.misc.persist import loads
         from sage.misc.temporary_file import tmp_dir
         dir = tmp_dir()
         timeout = self.timeout
@@ -207,7 +207,7 @@ class p_iter_fork(object):
                         # collect data from process that successfully terminated
                         sobj = os.path.join(dir, '%s.sobj'%pid)
                         try:
-                            with open(sobj) as file:
+                            with open(sobj, "rb") as file:
                                 data = file.read()
                         except IOError:
                             answer = "NO DATA" + W.failure
@@ -280,7 +280,7 @@ class p_iter_fork(object):
             sage: sys.stdout = saved_stdout
         """
         import imp, os, sys
-        from sage.structure.sage_object import save
+        from sage.misc.persist import save
 
         # Make it so all stdout is sent to a file so it can
         # be displayed.

@@ -916,8 +916,12 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                 bitset_add(b2, morph[j])
                 j = bitset_next(self._b, j + 1)
             if bitset_in((<BasisMatroid>other)._bb, set_to_index(b2)):
+                bitset_free(b2)
+                bitset_free(bb_comp)
                 return False
             i = bitset_next(bb_comp, i + 1)
+        bitset_free(b2)
+        bitset_free(bb_comp)
         return True
 
     cpdef _is_isomorphism(self, other, morphism):

@@ -1,5 +1,5 @@
 r"""
-Construct sheaves on toric varieties.
+Construct sheaves on toric varieties
 
 A toric vector bundle (on a toric variety) is a vector bundle that is
 equivariant with respect to the algebraic torus action.
@@ -41,7 +41,7 @@ def TangentBundle(X):
     """
     if not is_ToricVariety(X):
         raise ValueError('not a toric variety')
-    base_ring = X.base_ring()
+
     fan = X.fan()
     filtrations = dict()
     from sage.modules.filtered_vector_space import FilteredVectorSpace
@@ -99,10 +99,10 @@ def TrivialBundle(X, rank=1):
     """
     if not is_ToricVariety(X):
         raise ValueError('not a toric variety')
-    from sage.modules.free_module import VectorSpace
+
     base_ring = X.base_ring()
-    filtrations = dict([ray, FilteredVectorSpace(rank, 0, base_ring=base_ring)]
-                       for ray in X.fan().rays())
+    filtrations = {ray: FilteredVectorSpace(rank, 0, base_ring=base_ring)
+                   for ray in X.fan().rays()}
     from . import klyachko
     return klyachko.Bundle(X, filtrations, check=True)
 
@@ -132,14 +132,13 @@ def LineBundle(X, D):
     """
     if not is_ToricVariety(X):
         raise ValueError('not a toric variety')
-    from sage.modules.free_module import VectorSpace
+
     base_ring = X.base_ring()
-    filtrations = dict([X.fan().ray(i),
-                        FilteredVectorSpace(1, D.function_value(i), base_ring=base_ring)]
-                       for i in range(X.fan().nrays()))
+    filtrations = {X.fan().ray(i): FilteredVectorSpace(1, D.function_value(i),
+                                                       base_ring=base_ring)
+                   for i in range(X.fan().nrays())}
     from . import klyachko
     return klyachko.Bundle(X, filtrations, check=True)
-
 
 
 class SheafLibrary(object):

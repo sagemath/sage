@@ -24,10 +24,12 @@ Francisco, California, 94105, USA.
 == SPKG Maintainers ==
 
 Dan Drake (dr.dan.drake at gmail)
+and
+SageMath developers (sage-devel@googlegroups.com)
 
 == Upstream Contact ==
 
-Author: Dan Drake. Web: [[https://github.com/dandrake/sagetex]]
+Author: Dan Drake. Web: [[https://github.com/sagemath/sagetex]]
 
 == Dependencies ==
 

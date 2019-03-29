@@ -42,8 +42,7 @@ from __future__ import absolute_import
 #*****************************************************************************
 from six import integer_types
 
-from sage.arith.all import (factor, is_prime, valuation, kronecker_symbol,
-        gcd, euler_phi, lcm)
+from sage.arith.all import factor, is_prime, valuation
 
 from sage.misc.all import prod as mul
 from sage.rings.all import Mod, Integer, IntegerModRing, ZZ

@@ -18,11 +18,15 @@ tensor fields:
 * :class:`~sage.manifolds.differentiable.diff_form.DiffFormParal` for
   differential forms (fully antisymmetric covariant tensor fields)
 
+* :class:`~sage.manifolds.differentiable.multivectorfield.MultivectorFieldParal`
+  for multivector fields (fully antisymmetric contravariant tensor fields)
+
 
 AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2013-2015) : initial version
 - Travis Scrimshaw (2016): review tweaks
+- Eric Gourgoulhon (2018): method :meth:`TensorFieldParal.along`
 
 REFERENCES:
 
@@ -280,8 +284,6 @@ as follows::
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.rings.integer import Integer
-from sage.structure.element import ModuleElement
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.parallel.decorate import parallel
@@ -614,6 +616,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         #     being self._components, which is initialized by
         #     FreeModuleTensor.__init__ ); accordingly self._restrictions is
         #     initialized by _init_derived() and cleared by _del_derived().
+
         # Initialization of derived quantities:
         self._init_derived()
 
@@ -673,6 +676,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         TensorField._init_derived(self)
         self._restrictions = {} # dict. of restrictions of self on subdomains
                                 # of self._domain, with the subdomains as keys
+        self._extensions_graph = {self._domain: self}
+        self._restrictions_graph = {self._domain: self}
 
     def _del_derived(self, del_restrictions=True):
         r"""
@@ -695,6 +700,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         TensorField._del_derived(self)
         if del_restrictions:
             self._restrictions.clear()
+            self._extensions_graph = {self._domain: self}
+            self._restrictions_graph = {self._domain: self}
 
     def set_comp(self, basis=None):
         r"""
@@ -1005,7 +1012,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             if frame1 in other._components and isinstance(frame1, CoordFrame):
                 return frame1
         # 1b/ Search involving subframes
-        dom2 = other._domain
         for frame1 in self._components:
             if not isinstance(frame1, CoordFrame):
                 continue
@@ -1350,28 +1356,71 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
                                  "the {}".format(self))
             # First one tries to derive the restriction from a tighter domain:
             for dom, rst in self._restrictions.items():
-                if subdomain.is_subset(dom):
+                if subdomain.is_subset(dom) and subdomain in rst._restrictions:
+                    res = rst._restrictions[subdomain]
+                    self._restrictions[subdomain] = res
+                    self._restrictions_graph[subdomain] = res
+                    res._extensions_graph.update(self._extensions_graph)
+                    for ext in self._extensions_graph.values():
+                        ext._restrictions[subdomain] = res
+                        ext._restrictions_graph[subdomain] = res
+                    return self._restrictions[subdomain]
+
+            for dom, rst in self._restrictions.items():
+                if subdomain.is_subset(dom) and dom is not self._domain:
                     self._restrictions[subdomain] = rst.restrict(subdomain)
-                    break
+                    self._restrictions_graph[subdomain] = rst.restrict(subdomain)
+                    return self._restrictions[subdomain]
+
+            # Secondly one tries to get the restriction from one previously
+            # defined on a larger domain:
+            for dom, ext in self._extensions_graph.items():
+                if subdomain in ext._restrictions_graph:
+                    res = ext._restrictions_graph[subdomain]
+                    self._restrictions[subdomain] = res
+                    self._restrictions_graph[subdomain] = res
+                    res._extensions_graph.update(self._extensions_graph)
+                    for ext in self._extensions_graph.values():
+                        ext._restrictions[subdomain] = res
+                        ext._restrictions_graph[subdomain] = res
+                    return self._restrictions[subdomain]
+
             # If this fails, the restriction is created from scratch:
-            else:
-                smodule = subdomain.vector_field_module(dest_map=dest_map)
-                resu = smodule.tensor(self._tensor_type, name=self._name,
-                                      latex_name=self._latex_name, sym=self._sym,
-                                      antisym=self._antisym,
-                                      specific_type=type(self))
-                for frame in self._components:
-                    for sframe in subdomain._covering_frames:
-                        if sframe in frame._subframes:
-                            comp_store = self._components[frame]._comp
-                            scomp = resu._new_comp(sframe)
-                            scomp_store = scomp._comp
-                            # the components of the restriction are evaluated
-                            # index by index:
-                            for ind, value in comp_store.items():
-                                scomp_store[ind] = value.restrict(subdomain)
-                            resu._components[sframe] = scomp
-                self._restrictions[subdomain] = resu
+            smodule = subdomain.vector_field_module(dest_map=dest_map)
+            res = smodule.tensor(self._tensor_type, name=self._name,
+                                  latex_name=self._latex_name, sym=self._sym,
+                                  antisym=self._antisym,
+                                  specific_type=type(self))
+
+            for frame in self._components:
+                for sframe in subdomain._frames:
+                    if (sframe.domain() is subdomain and
+                            sframe.destination_map() is dest_map and
+                            sframe in frame._subframes):
+                        comp_store = self._components[frame]._comp
+                        scomp = res._new_comp(sframe)
+                        scomp_store = scomp._comp
+                        # the components of the restriction are evaluated
+                        # index by index:
+                        for ind, value in comp_store.items():
+                            scomp_store[ind] = value.restrict(subdomain)
+                        res._components[sframe] = scomp
+
+            res._extensions_graph.update(self._extensions_graph)
+            for dom, ext in self._extensions_graph.items():
+                ext._restrictions[subdomain] = res
+                ext._restrictions_graph[subdomain] = res
+
+            for dom, rst in self._restrictions.items():
+                if dom.is_subset(subdomain):
+                    if rst is not res:
+                        res._restrictions.update(rst._restrictions)
+                    res._restrictions_graph.update(rst._restrictions_graph)
+                    rst._extensions_graph.update(res._extensions_graph)
+
+            self._restrictions[subdomain] = res
+            self._restrictions_graph[subdomain] = res
+
         return self._restrictions[subdomain]
 
     def __call__(self, *args):
@@ -1501,8 +1550,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
         Check::
 
-            sage: all([s[ind] == sum(a[k, ind[0]]*b[ind[1], k] for k in [0..1])
-            ....:      for ind in M.index_generator(2)])
+            sage: all(s[ind] == sum(a[k, ind[0]]*b[ind[1], k] for k in [0..1])
+            ....:     for ind in M.index_generator(2))
             True
 
         The same contraction with repeated index notation::
@@ -1520,8 +1569,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
         Check::
 
-            sage: all([s[ind] == sum(a[ind[0], k]*b[ind[1], k] for k in [0..1])
-            ....:      for ind in M.index_generator(2)])
+            sage: all(s[ind] == sum(a[ind[0], k]*b[ind[1], k] for k in [0..1])
+            ....:     for ind in M.index_generator(2))
             True
 
         The same contraction with repeated index notation::
@@ -1573,8 +1622,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             a*v = -(x + 1)*y d/dx*dx*dx - 2*y d/dx*dx*dy - y^2 d/dx*dy*dx
              + x^2*y d/dx*dy*dy + (x^2 + x) d/dy*dx*dx + 2*x d/dy*dx*dy
              + x*y d/dy*dy*dx - x^3 d/dy*dy*dy
-            sage: all([s[ind] == v[ind[0]] * a[ind[1],ind[2]]
-            ....:      for ind in M.index_generator(3)])
+            sage: all(s[ind] == v[ind[0]] * a[ind[1],ind[2]]
+            ....:     for ind in M.index_generator(3))
             True
 
         Multiplication on the right by a scalar field::
@@ -1597,7 +1646,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
     def display_comp(self, frame=None, chart=None, coordinate_labels=True,
                      only_nonzero=True, only_nonredundant=False):
         r"""
-        Display the tensor components with repect tp a given frame,
+        Display the tensor components with respect to a given frame,
         one per line.
 
         The output is either text-formatted (console mode) or LaTeX-formatted
@@ -1726,8 +1775,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         index_latex_labels = None
         if isinstance(frame, CoordFrame) and coordinate_labels:
             ch = frame.chart()
-            index_labels = map(str, ch[:])
-            index_latex_labels = map(latex, ch[:])
+            index_labels = list(map(str, ch[:]))
+            index_latex_labels = list(map(latex, ch[:]))
         return FreeModuleTensor.display_comp(self, basis=frame,
                                   format_spec=chart, index_labels=index_labels,
                                   index_latex_labels=index_latex_labels,
@@ -1867,4 +1916,120 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             comp_resu = resu.add_comp(frame.at(point))
             for ind, val in comp._comp.items():
                 comp_resu._comp[ind] = val(point)
+        return resu
+
+    def along(self, mapping):
+        r"""
+        Return the tensor field deduced from ``self`` via a differentiable map,
+        the codomain of which is included in the domain of ``self``.
+
+        More precisely, if ``self`` is a tensor field `t` on `M` and if
+        `\Phi: U \rightarrow M` is a differentiable map from some
+        differentiable manifold `U` to `M`, the returned object is
+        a tensor field `\tilde t` along `U` with values on `M` such that
+
+        .. MATH::
+
+           \forall p \in U,\  \tilde t(p) = t(\Phi(p)).
+
+        INPUT:
+
+        - ``mapping`` -- differentiable map `\Phi: U \rightarrow M`
+
+        OUTPUT:
+
+        - tensor field `\tilde t` along `U` defined above.
+
+        EXAMPLES:
+
+        Let us consider the map `\Phi` between the interval `U=(0,2\pi)` and
+        the Euclidean plane `M=\RR^2` defining the lemniscate of Gerono::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: t = var('t', domain='real')
+            sage: Phi = M.curve({X: [sin(t), sin(2*t)/2]}, (t, 0, 2*pi),
+            ....:               name='Phi')
+            sage: U = Phi.domain(); U
+            Real interval (0, 2*pi)
+
+        and a vector field on `M`::
+
+            sage: v = M.vector_field('v')
+            sage: v[:] = -y , x
+
+        We have then::
+
+            sage: vU = v.along(Phi); vU
+            Vector field v along the Real interval (0, 2*pi) with values on
+             the 2-dimensional differentiable manifold M
+            sage: vU.display()
+            v = -cos(t)*sin(t) d/dx + sin(t) d/dy
+            sage: vU.parent()
+            Free module X((0, 2*pi),Phi) of vector fields along the Real
+             interval (0, 2*pi) mapped into the 2-dimensional differentiable
+             manifold M
+            sage: vU.parent() is Phi.tangent_vector_field().parent()
+            True
+
+        We check that the defining relation `\tilde t(p) = t(\Phi(p))` holds::
+
+            sage: p = U(t)  # a generic point of U
+            sage: vU.at(p) == v.at(Phi(p))
+            True
+
+        Case of a tensor field of type ``(0,2)``::
+
+            sage: a = M.tensor_field(0, 2)
+            sage: a[0,0], a[0,1], a[1,1] = x+y, x*y, x^2-y^2
+            sage: aU = a.along(Phi); aU
+            Tensor field of type (0,2) along the Real interval (0, 2*pi) with
+             values on the 2-dimensional differentiable manifold M
+            sage: aU.display()
+            (cos(t) + 1)*sin(t) dx*dx + cos(t)*sin(t)^2 dx*dy + sin(t)^4 dy*dy
+            sage: aU.parent()
+            Free module T^(0,2)((0, 2*pi),Phi) of type-(0,2) tensors fields
+             along the Real interval (0, 2*pi) mapped into the 2-dimensional
+             differentiable manifold M
+            sage: aU.at(p) == a.at(Phi(p))
+            True
+
+        """
+        dom = self._domain
+        if self._ambient_domain is not dom:
+            raise ValueError("{} is not a tensor field ".format(self) +
+                             "with values in the {}".format(dom))
+        if mapping.codomain().is_subset(dom):
+            rmapping = mapping
+        else:
+            rmapping = None
+            for doms, rest in mapping._restrictions.items():
+                if doms[1].is_subset(dom):
+                    rmapping = rest
+                    break
+            else:
+                raise ValueError("the codomain of {} is not ".format(mapping) +
+                                 "included in the domain of {}".format(self))
+        dom_resu = rmapping.domain()
+        vmodule = dom_resu.vector_field_module(dest_map=rmapping)
+        resu = vmodule.tensor(self._tensor_type, name=self._name,
+                              latex_name=self._latex_name, sym=self._sym,
+                              antisym=self._antisym)
+        for frame, comp in self._components.items():
+            comp_resu = resu.add_comp(frame.along(rmapping))
+            for ind, val in comp._comp.items():
+                val_resu = dom_resu.scalar_field()
+                for chart2, func2 in val._express.items():
+                    for chart1 in dom_resu.atlas():
+                        if (chart1, chart2) in rmapping._coord_expression:
+                            phi = rmapping._coord_expression[(chart1, chart2)]
+                            # X2 coordinates expressed in terms of X1 ones via
+                            # phi:
+                            coord2_1 = phi(*(chart1._xx))
+                            val_resu.add_expr(func2(*coord2_1), chart=chart1)
+                if not val_resu._express:
+                    raise ValueError("no pair of charts has been found to " +
+                                     "set the value of the component " +
+                                     "{} in the {}".format(ind, frame))
+                comp_resu._comp[ind] = val_resu
         return resu

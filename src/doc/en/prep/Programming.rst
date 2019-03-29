@@ -303,8 +303,9 @@ Below, we show that one can get step sizes other than one as well.
 
 ::
 
-    sage: range(3, 23, 2); [3,5..21]
+    sage: range(3, 23, 2)   # py2
     [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
+    sage: [3,5..21]
     [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
 
 .. note::

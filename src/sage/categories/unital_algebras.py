@@ -98,57 +98,67 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             if base_ring is self:
                 # There are rings that are their own base rings. No need to register that.
                 return
-            if self.is_coercion_cached(base_ring):
+            if self._is_coercion_cached(base_ring):
                 # We will not use any generic stuff, since a (presumably) better conversion
                 # has already been registered.
                 return
-            mor = None
+
             # This could be a morphism of Algebras(self.base_ring()); however, e.g., QQ is not in Algebras(QQ)
             H = Hom(base_ring, self, Rings()) # TODO: non associative ring!
 
-            # Idea: There is a generic method "from_base_ring", that just does multiplication with
-            # the multiplicative unit. However, the unit is constructed repeatedly, which is slow.
-            # Hence, if the unit is available *now*, then we store it.
+            # We need to register a coercion from the base ring to self.
             #
-            # However, if there is a specialised from_base_ring method, then it should be used!
-            try:
-                has_custom_conversion = self.category().parent_class.from_base_ring.__func__ is not self.from_base_ring.__func__
-            except AttributeError:
-                # Sometimes from_base_ring is a lazy attribute
-                has_custom_conversion = True
-            if has_custom_conversion:
-                mor = SetMorphism(function = self.from_base_ring, parent = H)
+            # There is a generic method from_base_ring(), that just does
+            # multiplication with the multiplicative unit. However, the
+            # unit is constructed repeatedly, which is slow.
+            # So, if the unit is available *now*, then we can create a
+            # faster coercion map.
+            #
+            # This only applies for the generic from_base_ring() method.
+            # If there is a specialised from_base_ring(), then it should
+            # be used unconditionally.
+            generic_from_base_ring = self.category().parent_class.from_base_ring
+            if type(self).from_base_ring != generic_from_base_ring:
+                # Custom from_base_ring()
+                use_from_base_ring = True
+            if isinstance(generic_from_base_ring, lazy_attribute):
+                # If the category implements from_base_ring() as lazy
+                # attribute, then we always use it.
+                # This is for backwards compatibility, see Trac #25181
+                use_from_base_ring = True
+            else:
+                try:
+                    one = self.one()
+                    use_from_base_ring = False
+                except (NotImplementedError, AttributeError, TypeError):
+                    # The unit is not available, yet. But there are cases
+                    # in which it will be available later. So, we use
+                    # the generic from_base_ring() after all.
+                    use_from_base_ring = True
+
+            mor = None
+            if use_from_base_ring:
+                mor = SetMorphism(function=self.from_base_ring, parent=H)
+            else:
+                # We have the multiplicative unit, so implement the
+                # coercion from the base ring as multiplying with that.
+                #
+                # But first we check that it actually works. If not,
+                # then the generic implementation of from_base_ring()
+                # would fail as well so we don't use it.
+                try:
+                    if one._lmul_(base_ring.an_element()) is not None:
+                        # There are cases in which lmul returns None,
+                        # which means that it's not implemented.
+                        # One example: Hecke algebras.
+                        mor = SetMorphism(function=one._lmul_, parent=H)
+                except (NotImplementedError, AttributeError, TypeError):
+                    pass
+            if mor is not None:
                 try:
                     self.register_coercion(mor)
                 except AssertionError:
                     pass
-                return
-
-            try:
-                one = self.one()
-            except (NotImplementedError, AttributeError, TypeError):
-                # The unit is not available, yet. But there are cases
-                # in which it will be available later. Hence:
-                mor = SetMorphism(function = self.from_base_ring, parent = H)
-            # try sanity of one._lmul_
-            if mor is None:
-                try:
-                    if one._lmul_(base_ring.an_element()) is None:
-                        # There are cases in which lmul returns None, believe it or not.
-                        # One example: Hecke algebras.
-                        # In that case, the generic implementation of from_base_ring would
-                        # fail as well. Hence, unless it is overruled, we will not use it.
-                        #mor = SetMorphism(function = self.from_base_ring, parent = H)
-                        return
-                except (NotImplementedError, AttributeError, TypeError):
-                    # it is possible that an_element or lmul are not implemented.
-                    return
-                    #mor = SetMorphism(function = self.from_base_ring, parent = H)
-                mor = SetMorphism(function = one._lmul_, parent = H)
-            try:
-                self.register_coercion(mor)
-            except AssertionError:
-                pass
 
     class WithBasis(CategoryWithAxiom_over_base_ring):
 
@@ -167,7 +177,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                     sage: A = AlgebrasWithBasis(QQ).example()
                     sage: A.one_basis()
-                    word: 
+                    word:
                     sage: A.one()
                     B[word: ]
                     sage: A.from_base_ring(4)
@@ -188,7 +198,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                     sage: A = AlgebrasWithBasis(QQ).example()
                     sage: A.one_basis()
-                    word: 
+                    word:
                     sage: A.one_from_one_basis()
                     B[word: ]
                     sage: A.one()
@@ -226,7 +236,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                     sage: A = AlgebrasWithBasis(QQ).example()
                     sage: A.one_basis()
-                    word: 
+                    word:
                     sage: A.one()
                     B[word: ]
                 """

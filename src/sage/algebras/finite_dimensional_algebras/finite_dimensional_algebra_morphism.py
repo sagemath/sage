@@ -17,7 +17,7 @@ from sage.categories.homset import Hom
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.homset import RingHomset_generic
 from sage.matrix.constructor import matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 
 class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
     """

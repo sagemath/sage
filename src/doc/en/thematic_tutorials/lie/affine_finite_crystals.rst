@@ -1,3 +1,5 @@
+.. _AffineFinite:
+
 ======================
 Affine Finite Crystals
 ======================

@@ -42,6 +42,7 @@ def global_genus_symbol(self):
         [0 4 0 0]
         [0 0 6 0]
         [0 0 0 8]
+        Signature:  (4, 0)
         Genus symbol at 2:    [2^-2 4^1 8^1]_6
         Genus symbol at 3:     1^3 3^-1
 
@@ -54,7 +55,8 @@ def global_genus_symbol(self):
         [ 1  8  5  6]
         [ 2  5 14  8]
         [ 3  6  8 18]
-        Genus symbol at 2:    1^-4 
+        Signature:  (3, 1)
+        Genus symbol at 2:    1^-4
         Genus symbol at 563:     1^3 563^-1
 
     """

@@ -116,7 +116,7 @@ say, ``/home/mvngu/totient.sage``, organizing it as follows to enhance
 readability. ::
 
     L = []
-    for n in xrange(1, 21):
+    for n in range(1, 21):
         if gcd(n, 20) == 1:
             L.append(n)
     L

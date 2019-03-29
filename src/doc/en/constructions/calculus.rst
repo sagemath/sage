@@ -309,7 +309,7 @@ If you have ``Octave`` and ``gnuplot`` installed,
     sage: octave.de_system_plot(['x+y','x-y'], [1,-1], [0,2]) # optional - octave
 
 yields the two plots :math:`(t,x(t)), (t,y(t))` on the same graph
-(the :math:`t`-axis is the horizonal axis) of the system of ODEs
+(the :math:`t`-axis is the horizontal axis) of the system of ODEs
 
 .. math::
     x' = x+y, x(0) = 1; y' = x-y, y(0) = -1,

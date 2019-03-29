@@ -1,5 +1,5 @@
 """
-Generic curves.
+Generic curves
 """
 from __future__ import absolute_import
 
@@ -67,13 +67,13 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: x,y,z = PolynomialRing(QQ, 3, names='x,y,z').gens()
             sage: C = Curve(y^2*z - x^3 - 17*x*z^2 + y*z^2)
             sage: latex(C)
-            - x^{3} + y^{2} z - 17 x z^{2} + y z^{2}
+            -x^{3} + y^{2} z - 17 x z^{2} + y z^{2}
 
             sage: A2 = AffineSpace(2, QQ, names=['x','y'])
             sage: x, y = A2.coordinate_ring().gens()
             sage: C = Curve(y^2 - x^3 - 17*x + y)
             sage: latex(C)
-            - x^{3} + y^{2} - 17 x + y
+            -x^{3} + y^{2} - 17 x + y
         """
         return latex(self.defining_polynomial())
 
@@ -275,6 +275,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
         if F is None:
             if not self.base_ring() in Fields():
                 raise TypeError("curve must be defined over a field")
+            F = self.base_ring()
         elif not F in Fields():
             raise TypeError("(=%s) must be a field"%F)
         X = self.singular_subscheme()

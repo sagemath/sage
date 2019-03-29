@@ -1631,7 +1631,7 @@ class InteractiveLPProblem(SageObject):
             b = b.n().change_ring(QQ)
         F = self.feasible_set()
         if ymax is None:
-            ymax = max(map(abs, b) + [v[1] for v in F.vertices()])
+            ymax = max([abs(bb) for bb in b] + [v[1] for v in F.vertices()])
         if ymin is None:
             ymin = min([-ymax/4.0] + [v[1] for v in F.vertices()])
         if xmax is None:
@@ -2001,13 +2001,13 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             slack_variables = ["{}{:d}".format(slack_variables, i)
                                for i in indices]
         else:
-            slack_variables = list(map(str, slack_variables))
+            slack_variables = [str(s) for s in slack_variables]
             if len(slack_variables) != m:
                 raise ValueError("wrong number of slack variables")
         if auxiliary_variable is None:
            auxiliary_variable = x + "0" if isinstance(x, str) else "x0"
         names = [str(auxiliary_variable)]
-        names.extend(map(str, self.x()))
+        names.extend([str(s) for s in self.x()])
         names.extend(slack_variables)
         if names[0] == names[1]:
             names.pop(0)
@@ -3964,11 +3964,11 @@ class LPDictionary(LPAbstractDictionary):
         if self._entering is not None:
             # Highlight the entering variable column
             e = 2 * tuple(N).index(self._entering) + 4
-            for i, line in enumerate(lines):
-                line = line.split("&")
-                if len(line) > 1:
-                    line[e] = r"\color{green}" + line[e]
-                    lines[i] = "&".join(line)
+            for i, lin in enumerate(lines):
+                lin = lin.split("&")
+                if len(lin) > 1:
+                    lin[e] = r"\color{green}" + lin[e]
+                    lines[i] = "&".join(lin)
         if self._leaving is not None:
             # Highlight the leaving variable row
             l = tuple(B).index(self._leaving)
@@ -3976,12 +3976,12 @@ class LPDictionary(LPAbstractDictionary):
                l += 3
             if style() == "Vanderbei":
                 l += 4
-            line = lines[l].split("&")
-            for i, term in enumerate(line):
-                line[i] = r"\color{red}" + term
-            line = "&".join(line)
-            line = line.replace(r"\color{red}\color{green}", r"\color{blue}")
-            lines[l] = line
+            lin = lines[l].split("&")
+            for i, term in enumerate(lin):
+                lin[i] = r"\color{red}" + term
+            lin = "&".join(lin)
+            lin = lin.replace(r"\color{red}\color{green}", r"\color{blue}")
+            lines[l] = lin
         return  "\n".join(lines)
 
     def ELLUL(self, entering, leaving):

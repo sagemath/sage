@@ -14,12 +14,15 @@ Test Sage Third-Party Tarball Handling
 #*****************************************************************************
 
 import unittest
+import logging
 
 from sage_bootstrap.package import Package
 from sage_bootstrap.tarball import Tarball
 
 from .capture import CapturedLog, CapturedOutput
 
+
+log = logging.getLogger()
 
 
 class TarballTestCase(unittest.TestCase):

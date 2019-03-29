@@ -70,7 +70,7 @@ which queries the LJCR.
 REFERENCES:
 
 .. [1] La Jolla Covering Repository,
-  http://www.ccrwest.org/cover.html
+  https://math.ccrwest.org/cover.html
 """
 
 from sage.combinat.designs.block_design import (BlockDesign,

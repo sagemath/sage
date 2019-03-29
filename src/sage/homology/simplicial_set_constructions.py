@@ -972,7 +972,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
         return ' x '.join([str(X) for X in self._factors])
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::
@@ -1805,7 +1805,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
         return 'Quotient: ({}/{})'.format(self.ambient(), self.subcomplex())
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::
@@ -1942,7 +1942,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
         return s
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::
@@ -2405,7 +2405,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         return 'Cone of {}'.format(self._base)
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::
@@ -2783,7 +2783,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         We use `S` to denote unreduced suspension, `\Sigma` for
         reduced suspension.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: T = simplicial_sets.Torus()
             sage: K = T.suspension(10)
@@ -2824,7 +2824,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         We use `S` to denote unreduced suspension, `\Sigma` for
         reduced suspension.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: S2 = simplicial_sets.Sphere(2)
             sage: S2.suspension(3)
@@ -2844,7 +2844,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         We use `S` to denote unreduced suspension, `\Sigma` for
         reduced suspension.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: S2 = simplicial_sets.Sphere(2)
             sage: latex(S2.suspension(3))

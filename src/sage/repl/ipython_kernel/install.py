@@ -4,6 +4,14 @@ Installing the SageMath Jupyter Kernel and Extensions
 Kernels have to register themselves with Jupyter so that they appear
 in the Jupyter notebook's kernel drop-down. This is done by
 :class:`SageKernelSpec`.
+
+.. NOTE::
+
+    The doctests in this module run in a temporary directory as the involved
+    directories might be different during runs of the tests and actual
+    installation and because we might be lacking write permission to places
+    such as ``/usr/share``.
+
 """
 
 import os
@@ -11,28 +19,38 @@ import errno
 
 from sage.env import (
     SAGE_DOC, SAGE_LOCAL, SAGE_EXTCODE,
-    SAGE_VERSION
+    SAGE_VERSION,
+    MATHJAX_DIR, JSMOL_DIR, THREEJS_DIR,
 )
-from jupyter_core.paths import ENV_JUPYTER_PATH
-JUPYTER_PATH = ENV_JUPYTER_PATH[0]
 
 
 class SageKernelSpec(object):
 
-    def __init__(self):
+    def __init__(self, prefix=None):
         """
         Utility to manage SageMath kernels and extensions
+
+        INPUT:
+
+        - ``prefix`` -- (optional, default: ``sys.prefix``)
+          directory for the installation prefix
 
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec()
+            sage: prefix = tmp_dir()
+            sage: spec = SageKernelSpec(prefix=prefix)
             sage: spec._display_name    # random output
             'SageMath 6.9'
+            sage: spec.kernel_dir == SageKernelSpec(prefix=prefix).kernel_dir
+            True
         """
         self._display_name = 'SageMath {0}'.format(SAGE_VERSION)
-        self.nbextensions_dir = os.path.join(JUPYTER_PATH, "nbextensions")
-        self.kernel_dir = os.path.join(JUPYTER_PATH, "kernels", self.identifier())
+        if prefix is None:
+            from sys import prefix
+        jupyter_dir = os.path.join(prefix, "share", "jupyter")
+        self.nbextensions_dir = os.path.join(jupyter_dir, "nbextensions")
+        self.kernel_dir = os.path.join(jupyter_dir, "kernels", self.identifier())
         self._mkdirs()
 
     def _mkdirs(self):
@@ -42,7 +60,7 @@ class SageKernelSpec(object):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec()
+            sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec._mkdirs()
             sage: os.path.isdir(spec.nbextensions_dir)
             True
@@ -83,7 +101,7 @@ class SageKernelSpec(object):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec()
+            sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: path = tmp_dir()
             sage: spec.symlink(os.path.join(path, 'a'), os.path.join(path, 'b'))
             sage: os.listdir(path)
@@ -103,13 +121,13 @@ class SageKernelSpec(object):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec()
+            sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec.use_local_mathjax()
             sage: mathjax = os.path.join(spec.nbextensions_dir, 'mathjax')
             sage: os.path.isdir(mathjax)
             True
         """
-        src = os.path.join(SAGE_LOCAL, 'share', 'mathjax')
+        src = MATHJAX_DIR
         dst = os.path.join(self.nbextensions_dir, 'mathjax')
         self.symlink(src, dst)
 
@@ -120,13 +138,15 @@ class SageKernelSpec(object):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec()
+            sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec.use_local_jsmol()
             sage: jsmol = os.path.join(spec.nbextensions_dir, 'jsmol')
             sage: os.path.isdir(jsmol)
             True
+            sage: os.path.isfile(os.path.join(jsmol, "JSmol.min.js"))
+            True
         """
-        src = os.path.join(SAGE_LOCAL, 'share', 'jsmol')
+        src = os.path.join(JSMOL_DIR)
         dst = os.path.join(self.nbextensions_dir, 'jsmol')
         self.symlink(src, dst)
 
@@ -137,13 +157,13 @@ class SageKernelSpec(object):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec()
+            sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec.use_local_threejs()
             sage: threejs = os.path.join(spec.nbextensions_dir, 'threejs')
             sage: os.path.isdir(threejs)
             True
         """
-        src = os.path.join(SAGE_LOCAL, 'share', 'threejs')
+        src = THREEJS_DIR
         dst = os.path.join(self.nbextensions_dir, 'threejs')
         self.symlink(src, dst)
 
@@ -158,7 +178,7 @@ class SageKernelSpec(object):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec()
+            sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec._kernel_cmd()
             ['/.../sage',
              '--python',
@@ -185,7 +205,7 @@ class SageKernelSpec(object):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec()
+            sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec.kernel_spec()
             {'argv': ..., 'display_name': 'SageMath ...'}
         """
@@ -201,8 +221,9 @@ class SageKernelSpec(object):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec()
-            sage: spec._install_spec()    # not tested
+            sage: spec = SageKernelSpec(prefix=tmp_dir())
+            sage: spec._install_spec()
+
         """
         jsonfile = os.path.join(self.kernel_dir, "kernel.json")
         import json
@@ -220,9 +241,10 @@ class SageKernelSpec(object):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec()
-            sage: spec._install_spec()         # not tested
-            sage: spec._symlink_resources()    # not tested
+            sage: spec = SageKernelSpec(prefix=tmp_dir())
+            sage: spec._install_spec()
+            sage: spec._symlink_resources()
+
         """
         path = os.path.join(SAGE_EXTCODE, 'notebook-ipython')
         for filename in os.listdir(path):
@@ -236,7 +258,7 @@ class SageKernelSpec(object):
         )
 
     @classmethod
-    def update(cls):
+    def update(cls, *args, **kwds):
         """
         Configure the Jupyter notebook for the SageMath kernel
 
@@ -247,10 +269,10 @@ class SageKernelSpec(object):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec()
-            sage: spec.update()  # not tested
+            sage: SageKernelSpec.update(prefix=tmp_dir())
+
         """
-        instance = cls()
+        instance = cls(*args, **kwds)
         instance.use_local_mathjax()
         instance.use_local_jsmol()
         instance.use_local_threejs()

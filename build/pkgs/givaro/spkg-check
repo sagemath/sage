@@ -8,20 +8,6 @@ fi
 # Set up environment variables: #
 #################################
 
-if [[ -z $CFLAG64 ]]; then
-    CFLAG64=-m64
-fi
-if [[ -z $CXXFLAG64 ]]; then
-    CXXFLAG64="$CFLAG64"
-fi
-if [[ "$SAGE64" = yes ]]; then
-    echo "Building a 64-bit version of Givaro's test suite."
-    CFLAGS="$CFLAGS $CFLAG64"
-    CPPFLAGS="$CPPFLAGS $CFLAG64"
-    CXXFLAGS="$CXXFLAGS $CXXFLAG64"
-    LDFLAGS="$LDFLAGS $CFLAG64"
-fi
-
 # It shouldn't be necessary to add Sage's include directory here,
 # since we configure with '--with-gmp=...'.
 # Also, '-I...' should normally be added to (just) CPPFLAGS.

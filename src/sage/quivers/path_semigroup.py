@@ -184,12 +184,13 @@ class PathSemigroup(UniqueRepresentation, Parent):
         self._labels = tuple([x[2] for x in self._sorted_edges])
         self._label_index = {s[2]: i for i,s in enumerate(self._sorted_edges)}
         self._nb_arrows = max(len(self._sorted_edges), 1)
-        names = ['e_{0}'.format(v) for v in Q.vertices()] + list(self._labels)
+        names = ['e_{0}'.format(v) for v in Q.vertex_iterator()]
+        names += list(self._labels)
         self._quiver = Q
         if Q.num_verts() == 1:
-            cat = cat.join([cat,Monoids()])
+            cat = cat.join([cat, Monoids()])
         else:
-            cat = cat.join([cat,Semigroups()])
+            cat = cat.join([cat, Semigroups()])
         Parent.__init__(self, names=names, category=cat)
 
     def _repr_(self):
@@ -407,8 +408,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: P.arrows()
             (a, b, c, d)
         """
-        Q = self._quiver
-        return tuple(self.element_class(self, e[0],e[1], [i]) for i,e in enumerate(self._sorted_edges))
+        return tuple(self.element_class(self, e[0], e[1], [i])
+                     for i, e in enumerate(self._sorted_edges))
 
     @cached_method
     def idempotents(self):
@@ -422,7 +423,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: P.idempotents()
             (e_1, e_2, e_3)
         """
-        return tuple(self.element_class(self, v,v, []) for v in self._quiver.vertices())
+        return tuple(self.element_class(self, v,v, [])
+                     for v in self._quiver.vertex_iterator())
 
     def ngens(self):
         """
@@ -605,8 +607,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
         length_d_available = True
         while length_d_available:
             length_d_available = False
-            for v in self._quiver.vertices():
-                for w in self.iter_paths_by_length_and_startpoint(d,v):
+            for v in self._quiver.vertex_iterator():
+                for w in self.iter_paths_by_length_and_startpoint(d, v):
                     length_d_available = True
                     yield w
             d += 1

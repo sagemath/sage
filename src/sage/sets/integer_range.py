@@ -84,7 +84,7 @@ class IntegerRange(UniqueRepresentation, Parent):
     Except for the type of the numbers::
 
         sage: type(IntegerRange(-54,13,12)[0]), type(list(range(-54,13,12))[0])
-        (<type 'sage.rings.integer.Integer'>, <... 'int'>)
+        (<... 'sage.rings.integer.Integer'>, <... 'int'>)
 
     When ``begin`` is finite and ``end`` is +Infinity, ``self`` is the infinite
     arithmetic progression starting from the ``begin`` by step ``step``::
@@ -219,7 +219,7 @@ class IntegerRange(UniqueRepresentation, Parent):
             sage: IntegerRange(1.0)
             Traceback (most recent call last):
             ...
-            TypeError: end must be Integer or Infinity, not <type 'sage.rings.real_mpfr.RealLiteral'>
+            TypeError: end must be Integer or Infinity, not <... 'sage.rings.real_mpfr.RealLiteral'>
         """
         if isinstance(begin, int): begin = Integer(begin)
         if isinstance(end, int): end = Integer(end)

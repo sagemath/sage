@@ -13,24 +13,20 @@ EXAMPLES::
     sage: R.<u,v,w> = QQ[]
     sage: f = EllipticCurve_from_cubic(u^3 + v^3 + w^3, [1,-1,0], morphism=True);  f
     Scheme morphism:
-      From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-      u^3 + v^3 + w^3
-      To:   Elliptic Curve defined by y^2 + 2*x*y + 1/3*y
-            = x^3 - x^2 - 1/3*x - 1/27 over Rational Field
+      From: Projective Plane Curve over Rational Field defined by u^3 + v^3 + w^3
+      To:   Elliptic Curve defined by y^2 - 9*y = x^3 - 27 over Rational Field
       Defn: Defined on coordinates by sending (u : v : w) to
-            (-w : -v + w : 3*u + 3*v)
+            (-w : 3*u : 1/3*u + 1/3*v)
 
     sage: finv = f.inverse();  finv
     Scheme morphism:
-      From: Elliptic Curve defined by y^2 + 2*x*y + 1/3*y
-            = x^3 - x^2 - 1/3*x - 1/27 over Rational Field
-      To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-      u^3 + v^3 + w^3
+      From: Elliptic Curve defined by y^2 - 9*y = x^3 - 27 over Rational Field
+      To:   Projective Plane Curve over Rational Field defined by u^3 + v^3 + w^3
       Defn: Defined on coordinates by sending (x : y : z) to
-            (x + y + 1/3*z : -x - y : -x)
+            (1/3*y : -1/3*y + 3*z : -x)
 
     sage: (u^3 + v^3 + w^3)(f.inverse().defining_polynomials()) * f.inverse().post_rescaling()
-    -x^3 + x^2*z + 2*x*y*z + y^2*z + 1/3*x*z^2 + 1/3*y*z^2 + 1/27*z^3
+    -x^3 + y^2*z - 9*y*z^2 + 27*z^3
 
     sage: E = finv.domain()
     sage: E.defining_polynomial()(f.defining_polynomials()) * f.post_rescaling()
@@ -39,9 +35,9 @@ EXAMPLES::
     sage: f([1,-1,0])
     (0 : 1 : 0)
     sage: f([1,0,-1])
-    (1/3 : -1/3 : 1)
+    (3 : 9 : 1)
     sage: f([0,1,-1])
-    (1/3 : -2/3 : 1)
+    (3 : 0 : 1)
 """
 from __future__ import absolute_import
 
@@ -55,12 +51,7 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
-
-from sage.categories.morphism import Morphism
-from .constructor import EllipticCurve
-from sage.categories.homset import Hom
 
 
 class WeierstrassTransformation(SchemeMorphism_polynomial):
@@ -137,7 +128,7 @@ class WeierstrassTransformation(SchemeMorphism_polynomial):
             sage: P = [2,2,-1]
             sage: f = EllipticCurve_from_cubic(cubic, P, morphism=True).inverse()
             sage: f.post_rescaling()
-            1/60480/(180*x^2*z)
+            -1/7
 
         So here is what it does. If we just plug in the coordinate
         transformation, we get the defining polynomial up to
@@ -145,10 +136,9 @@ class WeierstrassTransformation(SchemeMorphism_polynomial):
         equation to bring the result into the standard form::
 
             sage: cubic(f.defining_polynomials())
-            -10886400*x^5*z - 256690425600*x^4*z^2 - 7859980800*x^3*y*z^2
-            + 10886400*x^2*y^2*z^2 - 238085568000000*x^2*y*z^3
+            7*x^3 - 7*y^2*z + 1806336*y*z^2 - 155373797376*z^3
             sage: cubic(f.defining_polynomials()) * f.post_rescaling()
-            -x^3 - 23579*x^2*z - 722*x*y*z + y^2*z - 21870000*y*z^2
+            -x^3 + y^2*z - 258048*y*z^2 + 22196256768*z^3
         """
         return self._post
 
@@ -164,6 +154,12 @@ def WeierstrassTransformationWithInverse(domain, codomain,
 
         sage: R.<u,v,w> = QQ[]
         sage: f = EllipticCurve_from_cubic(u^3 + v^3 + w^3, [1,-1,0], morphism=True);  f
+        Scheme morphism:
+          From: Projective Plane Curve over Rational Field defined by u^3 + v^3 + w^3
+          To:   Elliptic Curve defined by y^2 - 9*y = x^3 - 27 over Rational Field
+          Defn: Defined on coordinates by sending (u : v : w) to
+            (-w : 3*u : 1/3*u + 1/3*v)
+
         Scheme morphism:
           From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
           u^3 + v^3 + w^3
@@ -198,13 +194,9 @@ class WeierstrassTransformationWithInverse_class(WeierstrassTransformation):
             sage: f = EllipticCurve_from_cubic(u^3 + v^3 + w^3, [1,-1,0], morphism=True)
             sage: f.inverse()
             Scheme morphism:
-              From: Elliptic Curve defined by y^2 + 2*x*y + 1/3*y
-                    = x^3 - x^2 - 1/3*x - 1/27 over Rational Field
-              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-              u^3 + v^3 + w^3
+              From: Elliptic Curve defined by y^2 - 9*y = x^3 - 27 over Rational Field
+              To:   Projective Plane Curve over Rational Field defined by u^3 + v^3 + w^3
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (x + y + 1/3*z : -x - y : -x)
+              (1/3*y : -1/3*y + 3*z : -x)
         """
         return self._inverse
-
-

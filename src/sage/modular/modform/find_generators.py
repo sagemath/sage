@@ -22,7 +22,7 @@ from six.moves import range
 from six import integer_types
 
 from sage.structure.richcmp import richcmp_method, richcmp
-from sage.rings.all import Integer, QQ, ZZ, PowerSeriesRing
+from sage.rings.all import Integer, QQ, ZZ
 from sage.misc.all import prod, verbose
 from sage.misc.cachefunc import cached_method
 from sage.modular.arithgroup.all import Gamma0, is_CongruenceSubgroup

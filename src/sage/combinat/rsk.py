@@ -99,7 +99,7 @@ REFERENCES:
 
 from builtins import zip
 
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.matrix.all import matrix
 
 

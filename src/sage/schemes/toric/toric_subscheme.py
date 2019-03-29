@@ -4,8 +4,11 @@ Subschemes of toric space
 AUTHORS:
 
 - David Kohel (2005): initial version.
+
 - William Stein (2005): initial version.
+
 - Andrey Novoseltsev (2010-05-17): subschemes of toric varieties.
+
 """
 
 #*****************************************************************************
@@ -264,7 +267,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
             David A. Cox, "The Homogeneous Coordinate Ring of a Toric
             Variety", Lemma 2.2.
-            http://www.arxiv.org/abs/alg-geom/9210008v2
+            :arxiv:`alg-geom/9210008v2`
 
         EXAMPLES::
 
@@ -472,7 +475,6 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         point = list(point)
         self._check_satisfies_equations(point)
         PP = self.ambient_space()
-        n = PP.dimension()
         fan = PP.fan()
         cone_idx = self._best_affine_patch(point)
         cone = fan.generating_cone(cone_idx)
@@ -481,7 +483,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         R = patch_cover.coordinate_ring()
         phi = []
         point_preimage = []
-        for i in range(0,fan.nrays()):
+        for i in range(fan.nrays()):
             try:
                 ray_index = cone.ambient_ray_indices().index(i)
                 phi.append(R.gen(ray_index))
@@ -640,7 +642,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
             sage: Y.is_nondegenerate()
             True
 
-         This example is from Hamm, arXiv:1106.1826v1. It addresses
+         This example is from Hamm, :arxiv:`1106.1826v1`. It addresses
          an issue raised at :trac:`15239`::
 
             sage: X = toric_varieties.WP([1,4,2,3], names='z0 z1 z2 z3')

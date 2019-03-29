@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Crystals of letters
 """
@@ -40,7 +41,7 @@ def CrystalOfLetters(cartan_type, element_print_style=None, dual=None):
     component of the tensor product of several copies of this crystal
     (plus possibly one copy of the spin crystal, see
     :class:`~sage.combinat.crystals.spins.CrystalOfSpins`).
-    See [KN94]_. Elements of this irreducible component have a fixed shape,
+    See [KN1994]_. Elements of this irreducible component have a fixed shape,
     and can be fit inside a tableau shape. Otherwise said, any irreducible
     classical crystal is isomorphic to a crystal of tableaux with cells
     filled by elements of the crystal of letters (possibly tensored with
@@ -55,13 +56,6 @@ def CrystalOfLetters(cartan_type, element_print_style=None, dual=None):
     INPUT:
 
     - ``T`` -- a Cartan type
-
-    REFERENCES:
-
-    .. [KN94] \M. Kashiwara and T. Nakashima.
-       Crystal graphs for representations of the `q`-analogue of classical Lie
-       algebras.
-       J. Algebra **165**, no. 2, pp. 295--345, 1994.
 
     EXAMPLES::
 
@@ -117,6 +111,8 @@ def CrystalOfLetters(cartan_type, element_print_style=None, dual=None):
         return ClassicalCrystalOfLettersWrapped(ct)
     elif ct.letter == 'G':
         return ClassicalCrystalOfLetters(ct, Crystal_of_letters_type_G_element)
+    elif ct.letter == 'Q':
+        return CrystalOfQueerLetters(ct)
     else:
         raise NotImplementedError
 
@@ -358,8 +354,6 @@ cdef class Letter(Element):
         sage: C(1) != C(-1)
         True
     """
-    cdef readonly int value
-
     def __init__(self, parent, int value):
         """
         EXAMPLES::
@@ -432,6 +426,29 @@ cdef class Letter(Element):
             return "\\overline{" + repr(-self.value) + "}"
         return repr(self.value)
 
+    def _unicode_art_(self):
+        r"""
+        A unicode art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: C = crystals.Letters(['D', 4])
+            sage: unicode_art(C(2))
+            2
+            sage: unicode_art(C(-3))
+            3̄
+
+            sage: C = crystals.Letters(['D',12])
+            sage: unicode_art(C(12))
+            12
+            sage: unicode_art(C(-11))
+            1̄1̄
+        """
+        from sage.typeset.unicode_art import UnicodeArt
+        if self.value < 0:
+            return UnicodeArt(["".join(let + u"̄" for let in unicode(-self.value))])
+        return UnicodeArt([unicode(self.value)])
+
     def __hash__(self):
         """
         Return the hash value of ``self``.
@@ -485,11 +502,11 @@ cdef class Letter(Element):
         if op == Py_LT:
             return self._parent.lt_elements(self, x)
         if op == Py_GT:
-            return x.parent().lt_elements(x, self)
+            return x._parent.lt_elements(x, self)
         if op == Py_LE:
             return self.value == x.value or self._parent.lt_elements(self, x)
         if op == Py_GE:
-            return self.value == x.value or x.parent().lt_elements(x, self)
+            return self.value == x.value or x._parent.lt_elements(x, self)
         return False
 
 cdef class EmptyLetter(Element):
@@ -503,8 +520,6 @@ cdef class EmptyLetter(Element):
 
     Used in the rigged configuration bijections.
     """
-    cdef readonly str value
-
     def __init__(self, parent):
         """
         Initialize ``self``.
@@ -604,7 +619,7 @@ cdef class EmptyLetter(Element):
             sage: C('E').weight()
             (0, 0, 0)
         """
-        return self.parent().weight_lattice_realization().zero()
+        return self._parent.weight_lattice_realization().zero()
 
     cpdef e(self, int i):
         """
@@ -1285,8 +1300,6 @@ cdef class LetterTuple(Element):
     """
     Abstract class for type `E` letters.
     """
-    cdef readonly tuple value
-
     def __init__(self, parent, tuple value):
         """
         Initialize ``self``.
@@ -1383,6 +1396,20 @@ cdef class LetterTuple(Element):
             (-1, 3)
         """
         return repr(self.value)
+
+    def _unicode_art_(self):
+        r"""
+        A unicode art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: C = crystals.Letters(['E',6])
+            sage: unicode_art(C.list()[:5])
+            [ (1), (1̄, 3), (3̄, 4), (4̄, 2, 5), (2̄, 5) ]
+        """
+        from sage.typeset.unicode_art import UnicodeArt
+        return UnicodeArt([u"({})".format(u", ".join(unicode(x) if x > 0 else unicode(-x) + u"̄"
+                                                     for x in self.value))])
 
     def _latex_(self):
         r"""
@@ -2317,6 +2344,30 @@ cdef class BKKLetter(Letter):
             ret = ret + '*'
         return ret
 
+    def _unicode_art_(self):
+        r"""
+        A unicode art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: C = crystals.Letters(['A', [2, 1]])
+            sage: unicode_art(C(2))
+            2
+            sage: unicode_art(C(-3))
+            3̄
+
+            sage: C = crystals.Letters(['A', [2, 1]], dual=True)
+            sage: unicode_art(C(2))
+            2˅
+            sage: unicode_art(C(-3))
+            3̄˅
+        """
+        ret = Letter._unicode_art_(self)
+        from sage.typeset.unicode_art import UnicodeArt
+        if self._parent._dual:
+            ret = ret + UnicodeArt([u'˅'])
+        return ret
+
     def _latex_(self):
         r"""
         A latex representation of ``self``.
@@ -2494,9 +2545,10 @@ class CrystalOfBKKLetters(ClassicalCrystalOfLetters):
             sage: [x for x in C]
             [-3, -2, -1, 1, 2]
         """
+        cdef int t
         for t in range(-self._cartan_type.m - 1, self._cartan_type.n + 2):
             if t != 0:
-                yield self(t)
+                yield self._element_constructor_(t)
 
     def _repr_(self):
         """
@@ -2515,6 +2567,209 @@ class CrystalOfBKKLetters(ClassicalCrystalOfLetters):
 
     Element = BKKLetter
 
+#################
+# Type q(n) queer
+#################
+
+class CrystalOfQueerLetters(ClassicalCrystalOfLetters):
+    r"""
+    Queer crystal of letters elements.
+
+    The index set is of the form `\{-n, \ldots, -1, 1, \ldots, n\}`.
+    For `1 < i \leq n`, the operators `e_{-i}` and `f_{-i}` are defined as
+
+    .. MATH::
+
+        f_{-i} = s_{w^{-1}_i} f_{-1} s_{w_i}, \quad
+        e_{-i} = s_{w^{-1}_i} e_{-1} s_{w_i},
+
+    where `w_i = s_2 \cdots s_i s_1 \cdots s_{i-1}` and `s_i` is the
+    reflection along the `i`-string in the crystal. See [GJK+2014]_.
+
+    TESTS::
+
+        sage: Q = crystals.Letters(['Q',4])
+        sage: Q.list()
+        [1, 2, 3, 4]
+        sage: [ [x < y for y in Q] for x in Q ]
+        [[False, True, True, True],
+         [False, False, True, True],
+         [False, False, False, True],
+         [False, False, False, False]]
+        sage: Q.module_generators
+        (1,)
+        sage: TestSuite(Q).run()
+    """
+    @staticmethod
+    def __classcall_private__(cls, ct):
+        """
+        Normalize input to ensure a unique representation.
+
+        TESTS::
+
+            sage: crystals.Letters(['Q',3])
+            The queer crystal of letters for q(3)
+        """
+        ct = CartanType(ct)
+        return super(CrystalOfQueerLetters, cls).__classcall__(cls, ct)
+
+    def __init__(self, ct):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q',3]); Q
+            The queer crystal of letters for q(3)
+            sage: Q.module_generators
+            (1,)
+            sage: Q._index_set
+            (1, 2, -2, -1)
+            sage: Q._list
+            [1, 2, 3]
+        """
+        self._cartan_type = ct
+        Parent.__init__(self, category=RegularSuperCrystals())
+        self._index_set = ct.index_set()
+        self.module_generators = (self._element_constructor_(1),)
+        self._list = list(self.__iter__())
+
+    def __iter__(self):
+        """
+        Iterate through ``self``.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q',3])
+            sage: [x for x in Q]
+            [1, 2, 3]
+        """
+        cdef int t
+        for t in range(1, self._cartan_type.n + 2):
+            yield self._element_constructor_(t)
+
+    def _repr_(self):
+        """
+        TESTS::
+
+            sage: crystals.Letters(['Q',3])
+            The queer crystal of letters for q(3)
+        """
+        return "The queer crystal of letters for q(%s)"%(self._cartan_type.n+1)
+
+    def index_set(self):
+        """
+        Return index set of ``self``.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q',3])
+            sage: Q.index_set()
+            (1, 2, -2, -1)
+        """
+        return self._index_set
+
+    # temporary workaround while an_element is overriden by Parent
+    _an_element_ = EnumeratedSets.ParentMethods._an_element_
+
+    Element = QueerLetter_element
+
+
+cdef class QueerLetter_element(Letter):
+    r"""
+    Queer supercrystal letters elements.
+
+    TESTS::
+
+        sage: Q = crystals.Letters(['Q',3])
+        sage: Q.list()
+        [1, 2, 3]
+        sage: [ [x < y for y in Q] for x in Q ]
+        [[False, True, True], [False, False, True], [False, False, False]]
+
+    ::
+
+        sage: Q = crystals.Letters(['Q',3])
+        sage: Q(1) < Q(1), Q(1) < Q(2), Q(2)< Q(1)
+        (False, True, False)
+
+    ::
+
+        sage: TestSuite(Q).run()
+    """
+    def weight(self):
+        """
+        Return the weight of ``self``.
+
+        EXAMPLES::
+
+            sage: [v.weight() for v in crystals.Letters(['Q',4])]
+            [(1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)]
+        """
+        return self._parent.weight_lattice_realization().monomial(self.value-1)
+
+    cpdef Letter e(self, int i):
+        r"""
+        Return the action of `e_i` on ``self``.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q',3])
+            sage: [(c,i,c.e(i)) for i in Q.index_set() for c in Q if c.e(i) is not None]
+            [(2, 1, 1), (3, 2, 2), (3, -2, 2), (2, -1, 1)]
+        """
+        if self.value == -i+1:
+           return self._parent._element_constructor_(self.value-1)
+        if self.value == i+1:
+            return self._parent._element_constructor_(self.value-1)
+        else:
+            return None
+
+    cpdef Letter f(self, int i):
+        r"""
+        Return the action of `f_i` on ``self``.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q',3])
+            sage: [(c,i,c.f(i)) for i in Q.index_set() for c in Q if c.f(i) is not None]
+            [(1, 1, 2), (2, 2, 3), (2, -2, 3), (1, -1, 2)]
+        """
+        if self.value == -i:
+           return self._parent._element_constructor_(-i+1)
+        if self.value == i:
+            return self._parent._element_constructor_(self.value+1)
+        else:
+            return None
+
+    cpdef int epsilon(self, int i):
+        r"""
+        Return `\varepsilon_i` of ``self``.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q',3])
+            sage: [(c,i) for i in Q.index_set() for c in Q if c.epsilon(i) != 0]
+            [(2, 1), (3, 2), (3, -2), (2, -1)]
+        """
+        if self.value == i+1 or self.value == -i+1:
+            return 1
+        return 0
+
+    cpdef int phi(self, int i):
+        r"""
+        Return `\varphi_i` of ``self``.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q',3])
+            sage: [(c,i) for i in Q.index_set() for c in Q if c.phi(i) != 0]
+            [(1, 1), (2, 2), (2, -2), (1, -1)]
+        """
+        if self.value == i or self.value == -i:
+            return 1
+        return 0
+
 #########################
 # Wrapped letters
 #########################
@@ -2524,8 +2779,6 @@ cdef class LetterWrapped(Element):
     Element which uses another crystal implementation and converts
     those elements to a tuple with `\pm i`.
     """
-    cdef readonly Element value
-
     def __init__(self, parent, Element value):
         """
         Initialize ``self``.
@@ -2628,6 +2881,20 @@ cdef class LetterWrapped(Element):
         """
         return repr(self._to_tuple())
 
+    def _unicode_art_(self):
+        r"""
+        A unicode art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: C = crystals.Letters(['E', 8])
+            sage: unicode_art(C((1,-4,5)))
+            (1, 4̄, 5)
+        """
+        from sage.typeset.unicode_art import UnicodeArt
+        return UnicodeArt([u"({})".format(u", ".join(unicode(x) if x > 0 else unicode(-x) + u"̄"
+                                                     for x in self._to_tuple()))])
+
     def _latex_(self):
         r"""
         A latex representation of ``self``.
@@ -2665,7 +2932,7 @@ cdef class LetterWrapped(Element):
         cdef Element ret = self.value.e(i)
         if ret is None:
             return None
-        return type(self)(self.parent(), ret)
+        return type(self)(self._parent, ret)
 
     cpdef LetterWrapped f(self, int i):
         r"""
@@ -2681,7 +2948,7 @@ cdef class LetterWrapped(Element):
         cdef Element ret = self.value.f(i)
         if ret is None:
             return None
-        return type(self)(self.parent(), ret)
+        return type(self)(self._parent, ret)
 
     cpdef int epsilon(self, int i):
         r"""
@@ -2731,7 +2998,7 @@ class ClassicalCrystalOfLettersWrapped(ClassicalCrystalOfLetters):
         EXAMPLES::
 
             sage: C = crystals.Letters(['E', 8])
-            sage: TestSuite(C).run()
+            sage: TestSuite(C).run()  # long time
 
             sage: C = crystals.Letters(['F', 4])
             sage: TestSuite(C).run()

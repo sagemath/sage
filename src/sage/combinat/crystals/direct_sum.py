@@ -16,7 +16,6 @@ Direct Sum of Crystals
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
 
-from sage.structure.parent import Parent
 from sage.categories.category import Category
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family

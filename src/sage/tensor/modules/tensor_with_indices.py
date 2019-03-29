@@ -183,7 +183,7 @@ class TensorWithIndices(SageObject):
                               # version of the original tensor (True if
                               # symmetries or contractions are indicated in the
                               # indices)
-        # Suppress all '{' and '}' comming from LaTeX notations:
+        # Suppress all '{' and '}' coming from LaTeX notations:
         indices = indices.replace('{','').replace('}','')
         # Suppress the first '^':
         if indices[0] == '^':

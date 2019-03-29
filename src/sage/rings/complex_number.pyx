@@ -12,6 +12,9 @@ AUTHORS:
 - Vincent Delecroix (2010-01): plot function
 
 - Travis Scrimshaw (2012-10-18): Added documentation for full coverage
+
+- Vincent Klein (2017-11-14) : add __mpc__() to class ComplexNumber.
+  ComplexNumber constructor support gmpy2.mpc parameter.
 """
 
 #*****************************************************************************
@@ -22,12 +25,13 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
-from __future__ import print_function
+
+from __future__ import absolute_import, print_function
 
 import math
 import operator
 
+from sage.libs.mpfr cimport *
 from sage.structure.element cimport FieldElement, RingElement, Element, ModuleElement
 from sage.categories.map cimport Map
 
@@ -42,6 +46,8 @@ import sage.rings.infinity as infinity
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 from sage.rings.integer_ring import ZZ
 
+cimport gmpy2
+gmpy2.import_gmpy2()
 
 cdef object numpy_complex_interface = {'typestr': '=c16'}
 cdef object numpy_object_interface = {'typestr': '|O'}
@@ -156,6 +162,13 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             2.00000000000000
             sage: imag(a)
             1.00000000000000
+
+        Conversion from gmpy2 numbers::
+
+            sage: from gmpy2 import *
+            sage: c = mpc('2.0+1.0j')
+            sage: CC(c)
+            2.00000000000000 + 1.00000000000000*I
         """
         cdef RealNumber rr, ii
         self._parent = parent
@@ -177,6 +190,8 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
                 real = re
             elif isinstance(real, complex):
                 real, imag = real.real, real.imag
+            elif type(real) is gmpy2.mpc:
+                real, imag = (<gmpy2.mpc>real).real, (<gmpy2.mpc>real).imag
             else:
                 imag = 0
         try:
@@ -578,6 +593,40 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             return self.real().__pari__()
         return sage.libs.pari.all.pari.complex(self.real() or 0, self.imag())
 
+    def __mpc__(self):
+        """
+        Convert Sage ``ComplexNumber`` to gmpy2 ``mpc``.
+
+        EXAMPLES::
+
+            sage: c = ComplexNumber(2,1)
+            sage: c.__mpc__()
+            mpc('2.0+1.0j')
+            sage: from gmpy2 import mpc
+            sage: mpc(c)
+            mpc('2.0+1.0j')
+            sage: CF = ComplexField(134)
+            sage: mpc(CF.pi()).precision
+            (134, 134)
+            sage: CF = ComplexField(45)
+            sage: mpc(CF.zeta(5)).precision
+            (45, 45)
+            sage: CF = ComplexField(255)
+            sage: x = CF(5, 8)
+            sage: y = mpc(x)
+            sage: y.precision
+            (255, 255)
+            sage: CF(y) == x
+            True
+            sage: x = mpc('1.324+4e50j', precision=(70,70))
+            sage: CF = ComplexField(70)
+            sage: y = CF(x)
+            sage: x == mpc(y)
+            True
+        """
+        return gmpy2.GMPy_MPC_From_mpfr(self.__re, self.__im)
+
+
     def _mpmath_(self, prec=None, rounding=None):
         """
         Returns an mpmath version of ``self``.
@@ -800,7 +849,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         r"""
         Raise ``self`` to the ``right`` exponent.
 
-        This takes `a^b` and compues `\exp(b \log(a))`.
+        This takes `a^b` and computes `\exp(b \log(a))`.
 
         EXAMPLES::
 
@@ -1684,7 +1733,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         this is a multi-valued function, and the algorithm used
         affects the value returned, as follows:
 
-        - "pari": Call the sgm function from the pari library.
+        - "pari": Call the :pari:`agm` function from the pari library.
 
         - "optimal": Use the AGM sequence such that at each stage
               `(a,b)` is replaced by `(a_1,b_1)=((a+b)/2,\pm\sqrt{ab})`
@@ -2216,7 +2265,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         rho = abs(self)
         arg = self.argument() / n
         mpfr_init2(r, self._prec)
-        mpfr_root(r, rho.value, n, rnd)
+        mpfr_rootn_ui(r, rho.value, n, rnd)
 
         mpfr_sin_cos(z.__im, z.__re, arg.value, rnd)
         mpfr_mul(z.__re, z.__re, r, rnd)
@@ -2521,7 +2570,7 @@ cdef class RRtoCC(Map):
         self._zero = ComplexNumber(CC, 0)
         self._repr_type_str = "Natural"
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         A helper for pickling and copying.
 
@@ -2543,8 +2592,9 @@ cdef class RRtoCC(Map):
               From: Real Field with 53 bits of precision
               To:   Complex Field with 53 bits of precision
         """
-        _slots['_zero'] = self._zero
-        return Map._extra_slots(self, _slots)
+        slots = Map._extra_slots(self)
+        slots['_zero'] = self._zero
+        return slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -2593,9 +2643,9 @@ cdef class CCtoCDF(Map):
             sage: f(exp(pi*CC.0/4))
             0.7071067811865476 + 0.7071067811865475*I
         """
-        cdef ComplexDoubleElement z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
-        z._complex.dat[0] = mpfr_get_d((<ComplexNumber>x).__re, MPFR_RNDN)
-        z._complex.dat[1] = mpfr_get_d((<ComplexNumber>x).__im, MPFR_RNDN)
+        z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
+        z._complex.real = mpfr_get_d((<ComplexNumber>x).__re, MPFR_RNDN)
+        z._complex.imag = mpfr_get_d((<ComplexNumber>x).__im, MPFR_RNDN)
         return z
 
 

@@ -21,8 +21,7 @@ from sage.rings.integer_ring import ZZ
 
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.matrix.constructor import Matrix, matrix
-from sage.matrix.matrix import is_Matrix
-from sage.modules.free_module_element import vector
+from sage.structure.element import is_Matrix
 from sage.rings.ring import Algebra
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
@@ -32,7 +31,7 @@ from functools import reduce
 
 
 class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
-    """
+    r"""
     Create a finite-dimensional `k`-algebra from a multiplication table.
 
     INPUT:
@@ -282,6 +281,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         """
         return self.element_class(self, [j == i for j in range(self.ngens())])
 
+    @cached_method
     def basis(self):
         """
         Return a list of the basis elements of ``self``.
@@ -290,9 +290,10 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [0, 0]])])
             sage: A.basis()
-            [e0, e1]
+            Family (e0, e1)
         """
-        return list(self.gens())
+        from sage.sets.family import Family
+        return Family(self.gens())
 
     def __iter__(self):
         """
@@ -670,11 +671,11 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             sage: H(Matrix([[1, 0], [1, 1]]))
             Traceback (most recent call last):
             ...
-            ValueError: relations do not all (canonically) map to 0 under map determined by images of generators.
+            ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
             sage: Hom(B, B)(Matrix([[2]]))
             Traceback (most recent call last):
             ...
-            ValueError: relations do not all (canonically) map to 0 under map determined by images of generators.
+            ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
         """
         assert len(im_gens) == self.degree()
 

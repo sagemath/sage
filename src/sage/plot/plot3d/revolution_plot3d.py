@@ -21,10 +21,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
+from sage.misc.decorators import rename_keyword
 
 from sage.plot.plot3d.parametric_plot3d import parametric_plot3d
+
+@rename_keyword(alpha='opacity')
 def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),print_vector=False,show_curve=False,**kwds):
-    """
+    r"""
     Return a plot of a revolved curve.
 
     There are three ways to call this function:
@@ -166,7 +169,8 @@ def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),pr
         sphinx_plot(P)
 
     One can also color the surface using a coloring function of two
-    parameters and a colormap as follows::
+    parameters and a colormap as follows. Note that the coloring
+    function must take values in the interval [0,1]. ::
 
         sage: u, phi = var('u,phi')
         sage: def cf(u,phi): return sin(phi+u) ^ 2
@@ -189,6 +193,22 @@ def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),pr
         This kind of coloring using a colormap can be visualized using
         Jmol, Tachyon (option ``viewer='tachyon'``) and Canvas3D
         (option ``viewer='canvas3d'`` in the notebook).
+
+    Another colored example, illustrating that one can use (colormap, color function) instead of (color function, colormap)::
+
+        sage: u, phi = var('u,phi')
+        sage: def cf(u, phi): return float(2 * u / pi) % 1
+        sage: curve = (sin(u), 0, u)
+        sage: revolution_plot3d(curve, (u,0,pi), (0,2*pi), parallel_axis
+        ....: ='z', color=(colormaps.brg, cf)).show(aspect_ratio=1)
+
+    .. PLOT::
+
+        u, phi = var('u,phi')
+        def cf(u, phi): return float(2 * u / pi) % 1
+        curve = (sin(u), 0, u)
+        P = revolution_plot3d(curve, (u,0,pi), (0,2*pi), parallel_axis='z', color=(colormaps.brg, cf))
+        sphinx_plot(P)
     """
     from sage.symbolic.ring import SR
     from sage.symbolic.constants import pi
@@ -211,7 +231,6 @@ def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),pr
         phirange = (phi, 0, 2 * pi)
     elif len(phirange) == 3:
         phi = phirange[0]
-        pass
     else:
         phirange = (phi, phirange[0], phirange[1])
         

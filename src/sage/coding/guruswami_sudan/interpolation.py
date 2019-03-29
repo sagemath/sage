@@ -123,16 +123,15 @@ def _interpolation_matrix_given_monomials(points, s, monomials):
         [ 0  0  1 10]
         [ 0  1  5  0]
     """
-    n = len(points)
-    def eqs_affine(x0,y0):
+    def eqs_affine(x0, y0):
         r"""
         Make equation for the affine point x0, y0. Return a list of
         equations, each equation being a list of coefficients corresponding to
         the monomials in ``monomials``.
         """
         eqs = []
-        for i in range(0, s):
-            for j in range(0, s-i):
+        for i in range(s):
+            for j in range(s - i):
                 eq = dict()
                 for monomial in monomials:
                     ihat = monomial[0]
@@ -146,6 +145,7 @@ def _interpolation_matrix_given_monomials(points, s, monomials):
                 eqs.append([eq.get(monomial, 0) for monomial in monomials])
         return eqs
     return matrix(list(_flatten_once([eqs_affine(*point) for point in points])))
+
 
 def _interpolation_max_weighted_deg(n, tau, s):
     """Return the maximal weighted degree allowed for an interpolation
@@ -190,7 +190,7 @@ def _interpolation_matrix_problem(points, tau, parameters, wy):
 
         sage: from sage.coding.guruswami_sudan.interpolation import _interpolation_matrix_problem
         sage: F = GF(11)
-        sage: points = [ (F(x),F(y)) for (x,y) in (0, 5), (1, 1), (2, 4), (3, 6), (4, 3), (5, 3)]
+        sage: points = [(F(x), F(y)) for (x,y) in [(0, 5), (1, 1), (2, 4), (3, 6), (4, 3), (5, 3)]]
         sage: tau = 3
         sage: params = (2, 4)
         sage: wy = 1
@@ -254,7 +254,7 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
 
         sage: from sage.coding.guruswami_sudan.interpolation import gs_interpolation_linalg
         sage: F = GF(11)
-        sage: points = [ (F(x),F(y)) for (x,y) in (0, 5), (1, 1), (2, 4), (3, 6), (4, 3), (5, 3)]
+        sage: points = [(F(x),F(y)) for (x,y) in [(0, 5), (1, 1), (2, 4), (3, 6), (4, 3), (5, 3)]]
         sage: tau = 3
         sage: params = (2, 4)
         sage: wy = 1
@@ -386,7 +386,7 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
     F = points[0][0].parent()
     M = lee_osullivan_module(points, (s,l), wy)
     shifts = [i * wy for i in range(0,l+1)]
-    Mnew = M.row_reduced_form(shifts=shifts)
+    Mnew = M.reduced_form(shifts=shifts)
     # Construct Q as the element of the row with the lowest weighted degree
     Qlist = min(Mnew.rows(), key=lambda r: _degree_of_vector(r, shifts))
     PFxy = F['x,y']

@@ -1,22 +1,3 @@
-# Let the user define the environment variable CFLAG64 to
-# something if their C compiler needs a compiler flag other than
-# -m64 to build 64-bit objects. This would be the case with IBM's
-# compiler on AIX and HP's compiler on HP-UX. But -m64 works
-# with both GCC and SunStudio.
-if [ -z $CFLAG64 ] ; then
-   CFLAG64="-m64"
-fi
-
-# Create a 64-bit build if the environment variable SAGE64 is set to
-# "yes".
-if [ "x$SAGE64" = xyes ] ; then
-   echo "Creating a 64-bit version of GNU patch"
-   CFLAGS="$CFLAGS $CFLAG64"
-   export CFLAGS
-   LDFLAGS="$LDFLAGS $CFLAG64"
-   export LDFLAGS
-fi
-
 # Disable debugging information on AIX, as this causes link errors. See:
 # http://www.ibm.com/developerworks/forums/thread.jspa?threadID=348558
 # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=46072
@@ -31,12 +12,5 @@ sdh_make
 sdh_make_install
 
 if [ "$UNAME" = "CYGWIN" ] ; then
-    cp ../patch.exe.manifest "$SAGE_LOCAL/bin/"
-fi
-
-# Sanity check that we have the correct version of patch
-# in our PATH.
-if ! patch --version | grep >/dev/null 'patch 2\.7\.5'; then
-    echo >&2 "Cannot find the patch program we just installed"
-    exit 1
+    cp ../patch.exe.manifest "$SAGE_DESTDIR$SAGE_LOCAL/bin/"
 fi

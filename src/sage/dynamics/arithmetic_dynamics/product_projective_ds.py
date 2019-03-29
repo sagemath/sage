@@ -167,7 +167,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
     def orbit(self, P, N, **kwds):
         r"""
-        Return the orbit of `P` by this dynamcial system.
+        Return the orbit of `P` by this dynamical system.
 
         Let `F` be this dynamical system. If `N` is an integer return `[P,F(P),\ldots,F^N(P)]`.
 

@@ -17,7 +17,7 @@ if [ "$UNAME" = "Darwin" ]; then
     export LDFLAGS="-bundle -undefined dynamic_lookup $LDFLAGS"
     export CPPFLAGS="-D__ACCELERATE__ $CPPFLAGS"
 else
-    export {ATLAS,PTATLAS,OPENBLAS,MKL}=None
+    export {ATLAS,PTATLAS,OPENBLAS,MKL,MKLROOT}=None
     export LDFLAGS="-shared $LDFLAGS"
 fi
 

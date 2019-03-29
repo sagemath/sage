@@ -39,7 +39,7 @@ class OpenInterval(DifferentiableManifold):
 
     - ``lower`` -- lower bound of the interval (possibly ``-Infinity``)
     - ``upper`` -- upper bound of the interval (possibly ``+Infinity``)
-    - ``ambient`` -- (default: ``None``) another open interval,
+    - ``ambient_interval`` -- (default: ``None``) another open interval,
       to which the constructed interval is a subset of
     - ``name`` -- (default: ``None``) string; name (symbol) given to
       the interval; if ``None``, the name is constructed from ``lower``
@@ -198,9 +198,9 @@ class OpenInterval(DifferentiableManifold):
         (2,)
 
     The construction of a subinterval can be performed via the argument
-    ``ambient`` of ``OpenInterval``::
+    ``ambient_interval`` of ``OpenInterval``::
 
-        sage: J = OpenInterval(0, 1, ambient=I); J
+        sage: J = OpenInterval(0, 1, ambient_interval=I); J
         Real interval (0, 1)
 
     However, it is recommended to use the method :meth:`open_interval`
@@ -290,11 +290,11 @@ class OpenInterval(DifferentiableManifold):
         t: (1/2, 1)
 
     """
-    def __init__(self, lower, upper, ambient=None,
+    def __init__(self, lower, upper, ambient_interval=None,
                  name=None, latex_name=None,
                  coordinate=None, names=None, start_index=0):
         r"""
-        Construct an open inverval.
+        Construct an open interval.
 
         TESTS::
 
@@ -313,19 +313,19 @@ class OpenInterval(DifferentiableManifold):
                 latex_name = name
         if name is None:
             name = "({}, {})".format(lower, upper)
-        if ambient is None:
+        if ambient_interval is None:
             ambient_manifold = None
         else:
-            if not isinstance(ambient, OpenInterval):
-                raise TypeError("the argument ambient must be an open interval")
-            ambient_manifold = ambient.manifold()
+            if not isinstance(ambient_interval, OpenInterval):
+                raise TypeError("the argument ambient_interval must be an open interval")
+            ambient_manifold = ambient_interval.manifold()
         field = 'real'
         structure = RealDifferentialStructure()
         DifferentiableManifold.__init__(self, 1, name, field, structure,
-                                        ambient=ambient_manifold,
+                                        base_manifold=ambient_manifold,
                                         latex_name=latex_name,
                                         start_index=start_index)
-        if ambient is None:
+        if ambient_interval is None:
             if coordinate is None:
                 if names is None:
                     coordinate = 't'
@@ -334,17 +334,17 @@ class OpenInterval(DifferentiableManifold):
             self._canon_chart = self.chart(coordinates=coordinate)
             t = self._canon_chart[start_index]
         else:
-            if lower < ambient.lower_bound():
+            if lower < ambient_interval.lower_bound():
                 raise ValueError("the lower bound is smaller than that of "
                                  + "the containing interval")
-            if upper > ambient.upper_bound():
+            if upper > ambient_interval.upper_bound():
                 raise ValueError("the upper bound is larger than that of "
                                  + "the containing interval")
-            self._supersets.update(ambient._supersets)
-            for sd in ambient._supersets:
+            self._supersets.update(ambient_interval._supersets)
+            for sd in ambient_interval._supersets:
                 sd._subsets.add(self)
-            ambient._top_subsets.add(self)
-            t = ambient.canonical_coordinate()
+            ambient_interval._top_subsets.add(self)
+            t = ambient_interval.canonical_coordinate()
         if lower != minus_infinity:
             if upper != infinity:
                 restrictions = [t > lower, t < upper]
@@ -355,12 +355,12 @@ class OpenInterval(DifferentiableManifold):
                 restrictions = t < upper
             else:
                 restrictions = None
-        if ambient is None:
+        if ambient_interval is None:
             if restrictions is not None:
                 self._canon_chart.add_restrictions(restrictions)
         else:
-            self._canon_chart = ambient.canonical_chart().restrict(self,
-                                                     restrictions=restrictions)
+            self._canon_chart = ambient_interval.canonical_chart().restrict(self,
+                                                                            restrictions=restrictions)
         self._lower = lower
         self._upper = upper
 
@@ -666,16 +666,16 @@ class OpenInterval(DifferentiableManifold):
             return self
         # To cope with the unique representation framework, we have to
         # distinguish several cases, instead of performing a mere
-        # return OpenInterval(lower, upper, ambient=self, name=name,
+        # return OpenInterval(lower, upper, ambient_interval=self, name=name,
         #                     latex_name=latex_name)
         if name is None:
             if latex_name is None:
-                return OpenInterval(lower, upper, ambient=self)
-            return OpenInterval(lower, upper, ambient=self,
+                return OpenInterval(lower, upper, ambient_interval=self)
+            return OpenInterval(lower, upper, ambient_interval=self,
                                 latex_name=latex_name)
         if latex_name is None:
-            return OpenInterval(lower, upper, ambient=self, name=name)
-        return OpenInterval(lower, upper, ambient=self, name=name,
+            return OpenInterval(lower, upper, ambient_interval=self, name=name)
+        return OpenInterval(lower, upper, ambient_interval=self, name=name,
                             latex_name=latex_name)
 
 

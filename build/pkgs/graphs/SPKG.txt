@@ -14,7 +14,7 @@ Grout. Since April 2012 it also contains the ISGCI graph database.
  * For Andries Brouwer's database:
 
    The data is taken from from Andries E. Brouwer's website
-   (http://www.win.tue.nl/~aeb/). Anything related to the data should be
+   (https://www.win.tue.nl/~aeb/). Anything related to the data should be
    reported to him directly (aeb@cwi.nl)
 
    The code used to parse the data and create the .json file is available at

@@ -1,6 +1,8 @@
 import sys, os, sphinx
-from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC, THEBE_DIR
-from datetime import date
+from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC, THEBE_DIR, SAGE_SHARE
+import sage.version
+from sage.misc.sagedoc import extlinks
+import dateutil.parser
 from six import iteritems
 
 # If your extensions are in another directory, add it here.
@@ -11,33 +13,93 @@ sys.path.append(os.path.join(SAGE_SRC, "sage_setup", "docbuild", "ext"))
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['inventory_builder', 'multidocs',
-              'sage_autodoc',  'sphinx.ext.graphviz',
-              'sphinx.ext.inheritance_diagram', 'sphinx.ext.todo',
-              'sphinx.ext.extlinks', 'matplotlib.sphinxext.plot_directive']
+extensions = ['inventory_builder', 'multidocs', 'sage_autodoc',
+              'sphinx.ext.graphviz', 'sphinx.ext.inheritance_diagram',
+              'sphinx.ext.todo', 'sphinx.ext.extlinks',
+              'matplotlib.sphinxext.plot_directive']
 
 # This code is executed before each ".. PLOT::" directive in the Sphinx
 # documentation. It defines a 'sphinx_plot' function that displays a Sage object
 # through mathplotlib, so that it will be displayed in the HTML doc
 plot_html_show_source_link = False
 plot_pre_code = """
-def sphinx_plot(plot):
+def sphinx_plot(graphics, **kwds):
     import matplotlib.image as mpimg
     from sage.misc.temporary_file import tmp_filename
     import matplotlib.pyplot as plt
     if os.environ.get('SAGE_SKIP_PLOT_DIRECTIVE', 'no') != 'yes':
-        fn = tmp_filename(ext=".png")
-        plot.plot().save(fn)
-        img = mpimg.imread(fn)
-        plt.imshow(img)
+        ## Option handling is taken from Graphics.save
+        options = dict()
+        if isinstance(graphics, sage.plot.graphics.Graphics):
+            options.update(graphics.SHOW_OPTIONS)
+            options.update(graphics._extra_kwds)
+            options.update(kwds)
+        else:
+            graphics = graphics.plot(**kwds)
+        dpi = options.pop('dpi', None)
+        transparent = options.pop('transparent', None)
+        fig_tight = options.pop('fig_tight', None)
+        figsize = options.pop('figsize', None)
+        ## figsize handling is taken from Graphics.matplotlib()
+        if figsize is not None and not isinstance(figsize, (list, tuple)):
+            # in this case, figsize is a number and should be positive
+            try:
+                figsize = float(figsize) # to pass to mpl
+            except TypeError:
+                raise TypeError("figsize should be a positive number, not {0}".format(figsize))
+            if figsize > 0:
+                default_width, default_height=rcParams['figure.figsize']
+                figsize=(figsize, default_height*figsize/default_width)
+            else:
+                raise ValueError("figsize should be positive, not {0}".format(figsize))
+
+        if figsize is not None:
+            # then the figsize should be two positive numbers
+            if len(figsize) != 2:
+                raise ValueError("figsize should be a positive number "
+                                 "or a list of two positive numbers, not {0}".format(figsize))
+            figsize = (float(figsize[0]),float(figsize[1])) # floats for mpl
+            if not (figsize[0] > 0 and figsize[1] > 0):
+                raise ValueError("figsize should be positive numbers, "
+                                 "not {0} and {1}".format(figsize[0],figsize[1]))
+
+        plt.figure(figsize=figsize)
+        figure = plt.gcf()
+        if isinstance(graphics, sage.plot.graphics.GraphicsArray):
+            ## from GraphicsArray.save
+            rows = graphics.nrows()
+            cols = graphics.ncols()
+            for i, g in enumerate(graphics):
+                subplot = figure.add_subplot(rows, cols, i + 1)
+                g_options = copy(options)
+                g_options.update(g.SHOW_OPTIONS)
+                g_options.update(g._extra_kwds)
+                g_options.pop('dpi', None)
+                g_options.pop('transparent', None)
+                g_options.pop('fig_tight', None)
+                g.matplotlib(figure=figure, sub=subplot, **g_options)
+        elif isinstance(graphics, sage.plot.graphics.Graphics):
+            graphics.matplotlib(figure=figure, figsize=figsize, **options)
+        else:
+            # 3d graphics via png
+            import matplotlib as mpl
+            mpl.rcParams['image.interpolation'] = 'bilinear'
+            mpl.rcParams['image.resample'] = False
+            mpl.rcParams['figure.figsize'] = [8.0, 6.0]
+            mpl.rcParams['figure.dpi'] = 80
+            mpl.rcParams['savefig.dpi'] = 100
+            fn = tmp_filename(ext=".png")
+            graphics.save(fn)
+            img = mpimg.imread(fn)
+            plt.imshow(img)
         plt.margins(0)
-        plt.axis("off")
         plt.tight_layout(pad=0)
 
 from sage.all_cmdline import *
 """
 
 plot_html_show_formats = False
+plot_formats = ['svg', 'pdf', 'png']
 
 # We do *not* fully initialize intersphinx since we call it by hand
 # in find_sage_dangling_links.
@@ -55,15 +117,13 @@ master_doc = 'index'
 
 # General information about the project.
 project = u""
-copyright = u"2005--{}, The Sage Development Team".format(date.today().year)
+copyright = u"2005--{}, The Sage Development Team".format(dateutil.parser.parse(sage.version.date).year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
-#
-# The short X.Y version.
-from sage.version import version
-release = version
+version = sage.version.version
+release = sage.version.version
 
 # The language for content autogenerated by Sphinx. Refer to documentation
 # for a list of supported languages.
@@ -113,9 +173,12 @@ todo_include_todos = True
 
 
 # Cross-links to other project's online documentation.
+python_version = sys.version_info.major
 intersphinx_mapping = {
     'python': ('https://docs.python.org/',
-                os.path.join(SAGE_DOC_SRC, "common", "python.inv"))}
+                os.path.join(SAGE_DOC_SRC, "common",
+                             "python{}.inv".format(python_version))),
+    'pplpy': (os.path.join(SAGE_SHARE, "doc", "pplpy"), None)}
 
 def set_intersphinx_mappings(app):
     """
@@ -143,21 +206,6 @@ def set_intersphinx_mappings(app):
             dst = os.path.join(invpath, directory, 'objects.inv')
             app.config.intersphinx_mapping[src] = dst
 
-
-pythonversion = sys.version.split(' ')[0]
-# Python and Sage trac ticket shortcuts. For example, :trac:`7549` .
-
-# Sage trac ticket shortcuts. For example, :trac:`7549` .
-extlinks = {
-    'python': ('https://docs.python.org/release/'+pythonversion+'/%s', ''),
-    'trac': ('https://trac.sagemath.org/%s', 'trac ticket #'),
-    'wikipedia': ('https://en.wikipedia.org/wiki/%s', 'Wikipedia article '),
-    'arxiv': ('http://arxiv.org/abs/%s', 'Arxiv '),
-    'oeis': ('https://oeis.org/%s', 'OEIS sequence '),
-    'doi': ('https://dx.doi.org/%s', 'doi:'),
-    'pari': ('http://pari.math.u-bordeaux.fr/dochtml/help/%s', 'pari:'),
-    'mathscinet': ('http://www.ams.org/mathscinet-getitem?mr=%s', 'MathSciNet ')
-    }
 
 # By default document are not master.
 multidocs_is_master = True
@@ -219,14 +267,12 @@ if (os.environ.get('SAGE_DOC_MATHJAX', 'no') != 'no'
     from sage.misc.latex_macros import sage_mathjax_macros
     html_theme_options['mathjax_macros'] = sage_mathjax_macros()
 
-    from pkg_resources import Requirement, working_set
-    sagenb_path = working_set.find(Requirement.parse('sagenb')).location
-    mathjax_relative = os.path.join('sagenb','data','mathjax')
+    mathjax_relative = 'mathjax'
 
     # It would be really nice if sphinx would copy the entire mathjax directory,
     # (so we could have a _static/mathjax directory), rather than the contents of the directory
 
-    mathjax_static = os.path.join(sagenb_path, mathjax_relative)
+    mathjax_static = os.path.join(SAGE_SHARE, mathjax_relative)
     html_static_path.append(mathjax_static)
     exclude_patterns += ['**/'+os.path.join(mathjax_relative, i)
                          for i in ('docs', 'README*', 'test',
@@ -415,7 +461,7 @@ latex_elements['preamble'] = r"""
 \fi
 
 \let\textLaTeX\LaTeX
-\renewcommand*{\LaTeX}{\hbox{\textLaTeX}}
+\AtBeginDocument{\renewcommand*{\LaTeX}{\hbox{\textLaTeX}}}
 """
 
 # Documents to append as an appendix to all manuals.
@@ -618,14 +664,14 @@ def call_intersphinx(app, env, node, contnode):
     Check that the link from the thematic tutorials to the reference
     manual is relative, see :trac:`20118`::
 
-        sage: from sage.env import SAGE_DOC
-        sage: thematic_index = os.path.join(SAGE_DOC, "html", "en", "thematic_tutorials", "index.html")
-        sage: for line in open(thematic_index).readlines():
+        sage: from sage.env import SAGE_DOC  # optional - dochtml
+        sage: thematic_index = os.path.join(SAGE_DOC, "html", "en", "thematic_tutorials", "index.html")  # optional - dochtml
+        sage: for line in open(thematic_index).readlines():  # optional - dochtml
         ....:     if "padics" in line:
-        ....:         sys.stdout.write(line)
-        <li><a class="reference external" href="../reference/padics/sage/rings/padics/tutorial.html#sage-rings-padics-tutorial" title="(in Sage Reference Manual: p-Adics ...)"><span>Introduction to the -adics</span></a></li>
+        ....:         _ = sys.stdout.write(line)
+        <li><a class="reference external" href="../reference/padics/sage/rings/padics/tutorial.html#sage-rings-padics-tutorial" title="(in Sage Reference Manual: p-Adics v...)"><span>Introduction to the -adics</span></a></li>
     """
-    debug_inf(app, "???? Trying intersphinx for %s"%node['reftarget'])
+    debug_inf(app, "???? Trying intersphinx for %s" % node['reftarget'])
     builder = app.builder
     res =  sphinx.ext.intersphinx.missing_reference(
         app, env, node, contnode)
@@ -637,9 +683,9 @@ def call_intersphinx(app, env, node, contnode):
             here = os.path.dirname(os.path.join(builder.outdir,
                                                 node['refdoc']))
             res['refuri'] = os.path.relpath(res['refuri'], here)
-            debug_inf(app, "++++ Found at %s"%res['refuri'])
+            debug_inf(app, "++++ Found at %s" % res['refuri'])
     else:
-        debug_inf(app, "---- Intersphinx: %s not Found"%node['reftarget'])
+        debug_inf(app, "---- Intersphinx: %s not Found" % node['reftarget'])
     return res
 
 def find_sage_dangling_links(app, env, node, contnode):
@@ -653,7 +699,7 @@ def find_sage_dangling_links(app, env, node, contnode):
     try:
         doc = node['refdoc']
     except KeyError:
-        debug_inf(app, "-- no refdoc in node %s"%node)
+        debug_inf(app, "-- no refdoc in node %s" % node)
         return None
 
     debug_inf(app, "Searching %s from %s"%(reftarget, doc))
@@ -681,14 +727,19 @@ def find_sage_dangling_links(app, env, node, contnode):
     basename = reftarget.split(".")[0]
     try:
         target_module = getattr(sys.modules['sage.all'], basename).__module__
+        debug_inf(app, "++ found %s using sage.all in %s" % (basename, target_module))
     except AttributeError:
-        debug_inf(app, "-- %s not found in sage.all"%(basename))
-        return None
+        try:
+            target_module = getattr(sys.modules[node['py:module']], basename).__module__
+            debug_inf(app, "++ found %s in this module" % (basename,))
+        except AttributeError:
+            debug_inf(app, "-- %s not found in sage.all or this module" % (basename))
+            return None
+        except KeyError:
+            target_module = None
     if target_module is None:
         target_module = ""
         debug_inf(app, "?? found in None !!!")
-
-    debug_inf(app, "++ found %s using sage.all in %s"%(basename, target_module))
 
     newtarget = target_module+'.'+reftarget
     node['reftarget'] = newtarget

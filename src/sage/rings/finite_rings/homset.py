@@ -93,7 +93,7 @@ class FiniteFieldHomset(RingHomset_generic):
                 from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
                 return FiniteFieldHomomorphism_prime(self, im_gens, check=check)
             return FiniteFieldHomomorphism_generic(self, im_gens, check=check)
-        except (NotImplementedError, ValueError) as err:
+        except (NotImplementedError, ValueError):
             try:
                 return self._coerce_impl(im_gens)
             except TypeError:
@@ -348,5 +348,5 @@ class FiniteFieldHomset(RingHomset_generic):
         return K.hom([K.modulus().any_root(L)])
 
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.finite_field_morphism', 'FiniteFieldHomset', FiniteFieldHomset)

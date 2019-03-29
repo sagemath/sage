@@ -1,22 +1,3 @@
-if [[ -z $SAGE_LOCAL ]]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
-if [[ -z $CFLAG64 ]]; then
-    CFLAG64=-m64
-fi
-
-# Compile for 64-bit if SAGE64 is set to 'yes':
-if [[ $SAGE64 = yes ]]; then
-    echo "Building a 64-bit version of Readline."
-    CFLAGS="$CFLAGS $CFLAG64"
-    CPPFLAGS="$CPPFLAGS $CFLAG64"
-    # Some packages may need LDFLAGS and/or ABI set here.
-    LDFLAGS="$LDFLAGS $CFLAG64"
-fi
-
 if [[ $SAGE_DEBUG = yes ]]; then
     CFLAGS="$CFLAGS -g -O0"
 else
@@ -37,23 +18,9 @@ export LDFLAGS
 
 cd src/
 
-echo "Configuring readline..."
-./configure \
-    --prefix="$SAGE_LOCAL" \
-    --libdir="$SAGE_LOCAL/lib" \
-    --with-curses \
-    --enable-shared --disable-static
-if [[ $? -ne 0 ]]; then
-    echo >&2 "Error configuring readline."
-    exit 1
-fi
-
+sdh_configure --with-curses --enable-shared --disable-static
 echo "Now building static and shared readline libraries..."
-$MAKE
-if [[ $? -ne 0 ]]; then
-    echo >&2 "Error building readline."
-    exit 1
-fi
+sdh_make
 
 echo "Build succeedeed.  Deleting old readline headers and libs"
 echo "before installing the new ones..."
@@ -66,11 +33,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "Now installing the new readline headers and libraries..."
-$MAKE install
-if [[ $? -ne 0 ]]; then
-    echo >&2 "Error installing readline."
-    exit 1
-fi
+sdh_make_install
 
 case "$UNAME" in
     Darwin)
@@ -93,10 +56,10 @@ esac
 
 # Make sure that the install worked, despite whatever the
 # exit code of 'make' or 'make install' was:
-if [[ -f "$SAGE_LOCAL/lib/$DYLIB_NAME" ]]; then
+if [[ -f "$SAGE_DESTDIR$SAGE_LOCAL/lib/$DYLIB_NAME" ]]; then
     echo "Fixing permissions of libraries..."
-    chmod 755 "$SAGE_LOCAL"/lib/libreadline.*
-    chmod 755 "$SAGE_LOCAL"/lib/libhistory.*
+    chmod 755 "$SAGE_DESTDIR$SAGE_LOCAL"/lib/libreadline.*
+    chmod 755 "$SAGE_DESTDIR$SAGE_LOCAL"/lib/libhistory.*
 else
     # One or both of the readline libraries are missing, i.e.
     # haven't been installed.

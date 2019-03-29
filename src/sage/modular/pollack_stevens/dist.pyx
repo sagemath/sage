@@ -100,29 +100,12 @@ def get_dist_classes(p, prec_cap, base, symk, implementation):
     if implementation is not None:
         if implementation == 'long':
             raise NotImplementedError('The optimized implementation -using longs- has been disabled and may return wrong results.')
-            #if base.is_field():
-            #    raise NotImplementedError('The implementation "long" does'
-            #                              ' not support fields as base rings')
-            #if (isinstance(base, pAdicGeneric) and base.degree() > 1):
-            #    raise NotImplementedError('The implementation "long" does not '
-            #                              'support extensions of p-adics')
-            #if p is None:
-            #    raise NotImplementedError('The implementation "long" supports'
-            #                              ' only p-adic rings')
-            #return Dist_long, WeightKAction_long
         elif implementation == 'vector':
             return Dist_vector, WeightKAction_vector
         else:
             raise NotImplementedError('The implementation "%s" does not exist yet' % (implementation))
 
     return Dist_vector, WeightKAction_vector
-    # We return always the "slow" (but safe) implementation.
-    # if symk or p is None or base.is_field() or (isinstance(base, pAdicGeneric) and base.degree() > 1):
-    #     return Dist_vector, WeightKAction_vector
-    # if 7 * p ** (prec_cap) < ZZ(2) ** (4 * sizeof(long) - 1):
-    #     return Dist_long, WeightKAction_long
-    # else:
-    #     return Dist_vector, WeightKAction_vector
 
 
 cdef class Dist(ModuleElement):
@@ -145,7 +128,7 @@ cdef class Dist(ModuleElement):
         EXAMPLES::
 
             sage: D = OverconvergentDistributions(4, 7, 10)
-            sage: v = D([7,14,21,28,35]);
+            sage: v = D([7,14,21,28,35])
             sage: v.moment(3)
             4*7 + O(7^2)
             sage: v.moment(0)
@@ -163,7 +146,7 @@ cdef class Dist(ModuleElement):
 
         EXAMPLES::
 
-            sage: D = OverconvergentDistributions(4, 5, 10, base = Qp(5));
+            sage: D = OverconvergentDistributions(4, 5, 10, base = Qp(5))
             sage: v = D([1,7,4,2,-1])
             sage: v = 1/5^3 * v
             sage: v
@@ -1456,7 +1439,7 @@ cdef class WeightKAction_vector(WeightKAction):
             B *= (a * d - b * c) ** (self._dettwist)
         return B
 
-    cpdef _call_(self, _v, g):
+    cpdef _act_(self, g, _v):
         r"""
         The right action of ``g`` on a distribution.
 
@@ -1483,8 +1466,6 @@ cdef class WeightKAction_vector(WeightKAction):
         """
         # if g is a matrix it needs to be immutable
         # hashing on arithmetic_subgroup_elements is by str
-        if self.is_left():
-            _v, g = g, _v
         if g == 1:
             return _v
         cdef Dist_vector v = <Dist_vector?>_v
@@ -1499,205 +1480,3 @@ cdef class WeightKAction_vector(WeightKAction):
         ans._moments = v_moments * self.acting_matrix(g, len(v_moments))
         ans.ordp = v.ordp
         return ans
-
-# cdef inline long mymod(long a, unsigned long pM):
-#     """
-#     Returns the remainder ``a % pM``.
-
-#     INPUT:
-
-#     - ``a`` -- a long
-
-#     - ``pM`` -- an unsigned long
-
-#     OUTPUT:
-
-#     - ``a % pM`` as a positive integer.
-#     """
-#     a = a % pM
-#     if a < 0:
-#         a += pM
-#     return a
-
-
-# cdef class SimpleMat(SageObject):
-#     r"""
-#     A simple class emulating a square matrix that holds its values as
-#     a C array of longs.
-
-#     INPUT:
-
-#     - ``M`` -- a positive integer, the dimension of the matrix
-
-#     EXAMPLES::
-
-#         sage: from sage.modular.pollack_stevens.distributions import OverconvergentDistributions, Symk
-#     """
-#     def __cinit__(self, unsigned long M):
-#         r"""
-#         Memory initialization.
-
-#         TESTS::
-
-#             sage: from sage.modular.pollack_stevens.distributions import OverconvergentDistributions, Symk
-#         """
-#         self._inited = False
-#         self.M = M
-#         self._mat = <long*>sage_malloc(M * M * sizeof(long))
-#         if self._mat == NULL:
-#             raise MemoryError
-#         self._inited = True
-
-#     def __getitem__(self, i):
-#         r"""
-
-
-#         INPUT:
-
-#         - ``i`` -- a tuple containing two slices, each from `0` to `M'` for some `M' < M`
-
-#         OUTPUT:
-
-#         - A new SimpleMat of size `M'` with the top left `M' \times
-#           M'` block of values copied over.
-
-#         EXAMPLES::
-
-#             sage: from sage.modular.pollack_stevens.distributions import OverconvergentDistributions, Symk
-#         """
-#         cdef Py_ssize_t r, c, Mnew, Morig = self.M
-#         cdef SimpleMat ans
-#         if isinstance(i,tuple) and len(i) == 2:
-#             a, b = i
-#             if isinstance(a, slice) and isinstance(b, slice):
-#                 r0, r1, rs = a.indices(Morig)
-#                 c0, c1, cs = b.indices(Morig)
-#                 if r0 != 0 or c0 != 0 or rs != 1 or cs != 1:
-#                     raise NotImplementedError
-#                 Mr = r1
-#                 Mc = c1
-#                 if Mr != Mc:
-#                     raise ValueError("result not square")
-#                 Mnew = Mr
-#                 if Mnew > Morig:
-#                     raise IndexError("index out of range")
-#                 ans = SimpleMat(Mnew)
-#                 for r in range(Mnew):
-#                     for c in range(Mnew):
-#                         ans._mat[Mnew * c + r] = self._mat[Morig * c + r]
-#                 return ans
-#         raise NotImplementedError
-
-#     def __dealloc__(self):
-#         r"""
-#         Deallocation.
-
-#         TESTS::
-
-#             sage: from sage.modular.pollack_stevens.distributions import OverconvergentDistributions, Symk
-#         """
-#         sage_free(self._mat)
-
-# cdef class WeightKAction_long(WeightKAction):
-#     cpdef _compute_acting_matrix(self, g, _M):
-#         r"""
-
-
-#         INPUT:
-
-#         - ``g`` -- a `2 \times 2` instance of
-#           :class:`sage.matrices.matrix_integer_dense.Matrix_integer_dense`
-
-#         - ``_M`` -- a positive integer giving the precision at which
-#           ``g`` should act.
-
-#         OUTPUT:
-
-#         - A :class:`SimpleMat` that gives the action of ``g`` at
-#           precision ``_M`` in the sense that the moments of the result
-#           are obtained from the moments of the input by a
-#           vector-matrix multiplication.
-
-#         EXAMPLES::
-
-#             sage: from sage.modular.pollack_stevens.distributions import OverconvergentDistributions, Symk
-#         """
-#         _a, _b, _c, _d = self._adjuster(g)
-#         #if self._character is not None: raise NotImplementedError
-#         # self._check_mat(_a, _b, _c, _d)
-#         cdef long k = self._k
-#         cdef Py_ssize_t row, col, M = _M
-#         cdef nmod_poly_t t, scale, xM, bdy
-#         cdef mp_limb_t pM = self._p ** M  # unsigned long
-#         cdef long a, b, c, d
-#         a = mymod(ZZ(_a), pM)
-#         b = mymod(ZZ(_b), pM)
-#         c = mymod(ZZ(_c), pM)
-#         d = mymod(ZZ(_d), pM)
-#         cdef mp_limb_t pMinv = 1 / pM  # n_preinvert_limb(pM) # DEBUG!!! was pM
-#         nmod_poly_init2_preinv(t, pM, pMinv, M)
-#         nmod_poly_init2_preinv(scale, pM, pMinv, M)
-#         nmod_poly_init2_preinv(xM, pM, pMinv, M)
-#         nmod_poly_init2_preinv(bdy, pM, pMinv, 2)
-#         nmod_poly_set_coeff_ui(xM, M, 1)
-#         nmod_poly_set_coeff_ui(t, 0, a)
-#         nmod_poly_set_coeff_ui(t, 1, c)
-#         nmod_poly_inv_series(scale, t, M)
-#         nmod_poly_set_coeff_ui(bdy, 0, b)
-#         nmod_poly_set_coeff_ui(bdy, 1, d)
-#         nmod_poly_mullow(scale, scale, bdy, M)  # scale = (b+dy)/(a+cy)
-#         nmod_poly_pow_trunc(t, t, k, M)  # t = (a+cy)^k
-#         cdef SimpleMat B = SimpleMat(M)
-#         for col in range(M):
-#             for row in range(M):
-#                 B._mat[M * col + row] = nmod_poly_get_coeff_ui(t, row)
-#             if col < M - 1:
-#                 nmod_poly_mullow(t, t, scale, M)
-#         if self._character is not None:
-#             B = B * self._character(_a, _b, _c, _d)
-#         return B
-
-#     cpdef _call_(self, _v, g):
-#         r"""
-#         Application of the action.
-
-#         INPUT:
-
-#         - ``_v`` -- a :class:`Dist_long` instance, the distribution on
-#           which to act.
-
-#         - ``g`` -- a `2 \times 2` instance of
-#           :class:`sage.matrix.matrix_integer_dense.Matrix_integer_dense`.
-
-#         OUTPUT:
-
-#         - The image of ``_v`` under the action of ``g``.
-
-#         EXAMPLES::
-
-#             sage: from sage.modular.pollack_stevens.distributions import OverconvergentDistributions, Symk
-#         """
-#         if self.is_left():
-#             _v, g = g, _v
-
-#         cdef Dist_long v = <Dist_long?>_v
-#         cdef Dist_long ans = v._new_c()
-#         ans.relprec = v.relprec
-#         ans.ordp = v.ordp
-#         cdef long pM = self._p ** ans.relprec
-#         cdef SimpleMat B = <SimpleMat>self.acting_matrix(g, ans.relprec)
-#         cdef long row, col, entry = 0
-#         for col in range(ans.relprec):
-#             ans._moments[col] = 0
-#             for row in range(ans.relprec):
-#                 mom = v._moments[row]
-#                 # DEBUG BELOW
-#                 # if not mom.parent().base_ring().is_exact():
-#                 #     try:
-#                 #         mom = mom.apply_map(operator.methodcaller('lift'))
-#                 #     except AttributeError:
-#                 #         pass
-#                 ans._moments[col] += mymod(B._mat[entry] * mom, pM)
-#                 entry += 1
-#         ans.normalize()
-#         return ans

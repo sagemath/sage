@@ -28,3 +28,5 @@ from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.modules.filtered_vector_space', 'FilteredVectorSpace')
 lazy_import('sage.modules.multi_filtered_vector_space', 'MultiFilteredVectorSpace')
+lazy_import('sage.modules.free_quadratic_module_integer_symmetric', 'IntegralLattice')
+lazy_import('sage.modules.torsion_quadratic_module', 'TorsionQuadraticForm')

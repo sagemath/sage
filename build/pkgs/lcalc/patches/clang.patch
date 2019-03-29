@@ -38,7 +38,7 @@ index c67f01a..7b3e5c9 100644
  	int n,fact_n;
  	Complex log_Gamma[N+1][a+1][MYDIGITS+1];
 -	Complex sum_log_Gamma[N+1][MYDIGITS+1];
-+        std:vector<std::vector<Complex> > sum_log_Gamma(N+1);
++        std::vector<std::vector<Complex> > sum_log_Gamma(N+1);
 +        for (j=1;j<=N;j++) sum_log_Gamma[j].resize(MYDIGITS+1);
  	
  	for (j=1;j<=N;j++)

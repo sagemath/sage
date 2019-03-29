@@ -20,17 +20,16 @@ AUTHORS:
 """
 from __future__ import absolute_import
 
-import operator
 from sage.structure.sage_object     import SageObject
-from sage.rings.all                 import QQ, ZZ, Zmod, QQbar, PolynomialRing, polygen
+from sage.rings.all                 import ZZ, Zmod, QQbar, PolynomialRing, polygen
 from sage.modular.modform.element   import Newform
 from sage.modular.dirichlet         import DirichletGroup
 from sage.misc.cachefunc            import cached_method
 from sage.misc.abstract_method      import abstract_method
 from sage.structure.sequence        import Sequence
 
-from .type_space                     import TypeSpace
-from .smoothchar                     import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic, SmoothCharacterGroupRamifiedQuadratic
+from .type_space                    import TypeSpace
+from .smoothchar                    import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic
 
 def LocalComponent(f, p, twist_factor=None):
     r"""
@@ -624,7 +623,7 @@ class PrimitiveSupercuspidal(LocalComponentBase):
             sage: chars[0].base_ring()
             Number Field in d with defining polynomial x^2 + x + 1
 
-        These characters are interchanged by the Frobenius automorphism of `\mathbb{F}_{25}`::
+        These characters are interchanged by the Frobenius automorphism of `\GF{25}`::
 
             sage: chars[0] == chars[1]**5
             True

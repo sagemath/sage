@@ -8,11 +8,10 @@ Objects
 #                2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #******************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecated_function_alias
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.homsets import HomsetsCategory
 
@@ -91,13 +90,6 @@ class Objects(Category_singleton):
                 sage: Rings().Homsets()
                 Category of homsets of unital magmas and additive unital additive magmas
 
-            This used to be called ``hom_category``::
-
-                sage: Sets().hom_category()
-                doctest:...: DeprecationWarning: hom_category is deprecated. Please use Homsets instead.
-                See http://trac.sagemath.org/10668 for details.
-                Category of homsets of sets
-
             .. NOTE:: Background
 
                 Information, code, documentation, and tests about the
@@ -147,8 +139,6 @@ class Objects(Category_singleton):
                   - plus plenty of spots where this is not implemented.
             """
             return HomsetsCategory.category_of(self)
-
-        hom_category = deprecated_function_alias(10668, Homsets)
 
         @cached_method
         def Endsets(self):

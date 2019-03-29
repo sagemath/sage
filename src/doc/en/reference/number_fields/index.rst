@@ -39,11 +39,12 @@ Orders, Ideals, Ideal Classes
    sage/rings/number_field/number_field_ideal_rel
    sage/rings/number_field/class_group
    sage/rings/number_field/unit_group
+   sage/rings/number_field/S_unit_solver
    sage/rings/number_field/small_primes_of_degree_one
 
 .. SEEALSO::
 
-    :ref:`sage.rings.finite_rings.residue_field`
+    :mod:`sage.rings.finite_rings.residue_field`
 
 Totally Real Fields
 -------------------
@@ -67,6 +68,6 @@ Algebraic Numbers
 
 .. SEEALSO::
 
-    :ref:`sage.rings.algebraic_closure_finite_field`
+    :mod:`sage.rings.algebraic_closure_finite_field`
 
 .. include:: ../footer.txt

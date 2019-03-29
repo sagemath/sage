@@ -79,6 +79,8 @@ from __future__ import absolute_import
 from libc.string cimport memcpy
 from cysignals.signals cimport sig_on, sig_off
 
+from sage.cpython.string cimport str_to_bytes, char_to_str
+
 from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport richcmp
 
@@ -110,6 +112,7 @@ from sage.misc.misc import get_verbose
 
 from sage.structure.sequence import Sequence, Sequence_generic
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, PolynomialSequence_generic
+
 
 cdef poly* sage_vector_to_poly(v, ring *r) except <poly*> -1:
     """
@@ -187,7 +190,7 @@ cdef class RingWrap:
             sage: ring(l, ring=P).var_names()
             ['x', 'y', 'z']
         """
-        return [self._ring.names[i] for i in range(self.ngens())]
+        return [char_to_str(self._ring.names[i]) for i in range(self.ngens())]
 
     def npars(self):
         """
@@ -219,9 +222,7 @@ cdef class RingWrap:
             sage: ring(l, ring=P).ordering_string()
             'dp(3),C'
         """
-        return rOrderingString(self._ring)
-
-
+        return char_to_str(rOrderingString(self._ring))
 
     def par_names(self):
         """
@@ -237,7 +238,8 @@ cdef class RingWrap:
             sage: ring(l, ring=P).par_names()
             []
         """
-        return [n_ParameterNames(self._ring.cf)[i] for i in range(self.npars())]
+        return [char_to_str(n_ParameterNames(self._ring.cf)[i])
+                for i in range(self.npars())]
 
     def characteristic(self):
         """
@@ -533,7 +535,7 @@ cdef class Converter(SageObject):
             elif isinstance(a, int) or isinstance(a, long):
                 v = self.append_int(a)
 
-            elif isinstance(a, basestring):
+            elif isinstance(a, str):
                 v = self.append_str(a)
 
             elif isinstance(a, Matrix_mpolynomial_dense):
@@ -544,7 +546,7 @@ cdef class Converter(SageObject):
 
             elif isinstance(a, Matrix_generic_dense) and\
                 is_sage_wrapper_for_singular_ring(a.parent().base_ring()):
-                self.append_matrix(a)
+                v = self.append_matrix(a)
 
             elif isinstance(a, Resolution):
                 v = self.append_resolution(a)
@@ -592,8 +594,8 @@ cdef class Converter(SageObject):
             if attributes and a in attributes:
                 for attrib in attributes[a]:
                     if attrib == "isSB" :
-                        val = int(attributes[a][attrib])
-                        atSet(v, omStrDup("isSB"), <void*><int>val, INT_CMD)
+                        val = <long>(attributes[a][attrib])
+                        atSet(v, omStrDup("isSB"), <void*>val, INT_CMD)
                         setFlag(v, FLAG_STD)
                     else:
                         raise NotImplementedError("Support for attribute '%s' not implemented yet."%attrib)
@@ -918,8 +920,8 @@ cdef class Converter(SageObject):
         """
         Append the string ``n`` to the list.
         """
-        cdef char *_n = <char *>n
-        return self._append(omStrDup(_n), STRING_CMD)
+        b = str_to_bytes(n)
+        return self._append(omStrDup(b), STRING_CMD)
 
     cdef to_python(self, leftv* to_convert):
         """
@@ -973,7 +975,10 @@ cdef class Converter(SageObject):
             return si2sa_intvec(<intvec *>to_convert.data)
 
         elif rtyp == STRING_CMD:
-            ret = <char *>to_convert.data
+            # TODO: Need to determine what kind of data can be returned by a
+            # STRING_CMD--is it just ASCII strings or can it be an arbitrary
+            # binary?
+            ret = char_to_str(<char *>to_convert.data)
             return ret
         elif rtyp == VECTOR_CMD:
             result = self.to_sage_vector_destructive(
@@ -1311,7 +1316,7 @@ cdef class SingularFunction(SageObject):
             [[e + d + c + b + a, ...]]
         """
         global dummy_ring
-        
+
         if ring is None:
             ring = self.common_ring(args, ring)
             if ring is None:
@@ -1520,7 +1525,7 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
 
     if errorreported:
         errorreported = 0
-        raise RuntimeError("error in Singular function call %r:\n%s"%
+        raise RuntimeError("error in Singular function call %r:\n%s" %
             (self._name, "\n".join(error_messages)))
 
     res = argument_list.to_python(_res)
@@ -1560,7 +1565,7 @@ cdef class SingularLibraryFunction(SingularFunction):
         self.call_handler = self.get_call_handler()
 
     cdef BaseCallHandler get_call_handler(self):
-        cdef idhdl* singular_idhdl = ggetid(self._name)
+        cdef idhdl* singular_idhdl = ggetid(str_to_bytes(self._name))
         if singular_idhdl==NULL:
             raise NameError("Singular library function {!r} is not defined".format(self._name))
         if singular_idhdl.typ!=PROC_CMD:
@@ -1571,7 +1576,7 @@ cdef class SingularLibraryFunction(SingularFunction):
         return res
 
     cdef bint function_exists(self):
-        cdef idhdl* singular_idhdl = ggetid(self._name)
+        cdef idhdl* singular_idhdl = ggetid(str_to_bytes(self._name))
         return singular_idhdl!=NULL
 
 cdef class SingularKernelFunction(SingularFunction):
@@ -1607,7 +1612,7 @@ cdef class SingularKernelFunction(SingularFunction):
 
     cdef BaseCallHandler get_call_handler(self):
         cdef int cmd_n = 0
-        arity = IsCmd(self._name, cmd_n) # call by reverence for CMD_n
+        arity = IsCmd(str_to_bytes(self._name), cmd_n) # call by reverence for CMD_n
         if not cmd_n:
             raise NameError("Singular kernel function {!r} is not defined".format(self._name))
 
@@ -1615,7 +1620,7 @@ cdef class SingularKernelFunction(SingularFunction):
 
     cdef bint function_exists(self):
         cdef int cmd_n = -1
-        arity = IsCmd(self._name, cmd_n) # call by reverence for CMD_n
+        arity = IsCmd(str_to_bytes(self._name), cmd_n) # call by reverence for CMD_n
         return cmd_n != -1
 
 
@@ -1831,7 +1836,7 @@ def lib(name):
          si_opt_2 &= ~Sy_bit(V_LOAD_LIB)
          si_opt_2 &= ~Sy_bit(V_REDEFINE)
 
-    cdef char* cname = omStrDup(name)
+    cdef char* cname = omStrDup(str_to_bytes(name))
     sig_on()
     cdef bint failure = iiLibCmd(cname, 1, 1, 1)
     sig_off()
@@ -1860,13 +1865,13 @@ def list_of_functions(packages=False):
     cdef idhdl *ph = NULL
     while h!=NULL:
         if PROC_CMD == IDTYP(h):
-            l.append(h.id)
-        if  PACKAGE_CMD == IDTYP(h):
+            l.append(char_to_str(h.id))
+        if PACKAGE_CMD == IDTYP(h):
             if packages:
                 ph = IDPACKAGE(h).idroot
                 while ph != NULL:
                     if PROC_CMD == IDTYP(ph):
-                        l.append(ph.id)
+                        l.append(char_to_str(ph.id))
                     ph = IDNEXT(ph)
         h = IDNEXT(h)
     return l

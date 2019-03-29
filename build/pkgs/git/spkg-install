@@ -5,16 +5,6 @@ die () {
 
 [ -n "$SAGE_LOCAL" ] || die 'Error: $SAGE_LOCAL not set. Source sage-env or run this script from `sage -sh`.'
 
-if [ "$SAGE64" = yes ]; then
-    echo "Building with extra 64-bit flags"
-    if [ -z "$CFLAG64" ]; then
-        CFLAG64=-m64
-    fi
-    export CFLAGS="$CFLAGS $CFLAG64"
-    export CPPFLAGS="$CPPFLAGS $CFLAG64"
-    export LDFLAGS="$LDFLAGS $CFLAG64"
-fi
-
 # Path to "install" command
 for cmd in /usr/ucb/install ginstall install; do
     [ -z "$INSTALL" ] || break

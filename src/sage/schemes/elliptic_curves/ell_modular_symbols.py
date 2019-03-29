@@ -95,7 +95,6 @@ from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.modular.modsym.all import ModularSymbols
-from sage.libs.eclib.newforms import ECModularSymbol
 from sage.databases.cremona import parse_cremona_label
 
 from sage.arith.all import next_prime, kronecker_symbol, prime_divisors, valuation
@@ -138,7 +137,6 @@ def modular_symbol_space(E, sign, base_ring, bound=None):
     """
     if not sign in [-1,0,1]:
         raise TypeError('sign must -1, 0 or 1')
-    _sign = int(sign)
     N = E.conductor()
     M = ModularSymbols(N, sign=sign, base_ring=base_ring)
     if bound is None:
@@ -153,6 +151,7 @@ def modular_symbol_space(E, sign, base_ring, bound=None):
         p = next_prime(p)
 
     return V
+
 
 class ModularSymbol(SageObject):
     r"""
@@ -304,6 +303,8 @@ class ModularSymbolECLIB(ModularSymbol):
             sage: m(0)
             1/5
         """
+        from sage.libs.eclib.newforms import ECModularSymbol
+
         if not sign in [-1,1]:
             raise TypeError('sign must -1 or 1')
         self._sign = ZZ(sign)
@@ -399,7 +400,7 @@ class ModularSymbolSage(ModularSymbol):
             sage: M(1/3)
             1
             sage: M._scaling
-            -1
+            1
 
             sage: M = EllipticCurve('121d1').modular_symbol(implementation="sage")
             sage: M(0)
@@ -468,7 +469,7 @@ class ModularSymbolSage(ModularSymbol):
             1/25
             sage: m = EllipticCurve('37a1').modular_symbol(implementation="sage")
             sage: m._scaling
-            1
+            -1
             sage: m = EllipticCurve('37a1').modular_symbol()
             sage: m._scaling
             1
@@ -477,10 +478,10 @@ class ModularSymbolSage(ModularSymbol):
             1
             sage: m = EllipticCurve('389a1').modular_symbol(implementation="sage")
             sage: m._scaling
-            2
+            1
             sage: m = EllipticCurve('196a1').modular_symbol(implementation="sage")
             sage: m._scaling
-            1/2
+            1
 
         Some harder cases fail::
 
@@ -569,12 +570,12 @@ class ModularSymbolSage(ModularSymbol):
                     verbose('scale modular symbols by %s'%(l1/at0))
                     self._scaling = l1/at0
 
-
-    def __lalg__(self,D):
+    def __lalg__(self, D):
         r"""
         For positive `D`, this function evaluates the quotient
         `L(E_D,1)\cdot \sqrt(D)/\Omega_E` where `E_D` is the twist of
         `E` by `D`, `\Omega_E` is the least positive period of `E`.
+
         For negative `E`, it is the quotient
         `L(E_D,1)\cdot \sqrt(-D)/\Omega^{-}_E`
         where `\Omega^{-}_E` is the least positive imaginary part of a
@@ -588,7 +589,6 @@ class ModularSymbolSage(ModularSymbol):
             1/5
             sage: m.__lalg__(3)
             5/2
-
         """
         from sage.functions.all import sqrt
         # the computation of the L-value could take a lot of time,
@@ -597,23 +597,22 @@ class ModularSymbolSage(ModularSymbol):
 
         E = self._E
         ED = E.quadratic_twist(D)
-        lv = ED.lseries().L_ratio() # this is L(ED,1) divided by the Néron period omD of ED
-        lv *= ED.real_components() # now it is by the least positive period
+        lv = ED.lseries().L_ratio()  # this is L(ED,1) divided by the Néron period omD of ED
+        lv *= ED.real_components()  # now it is by the least positive period
         omD = ED.period_lattice().basis()[0]
         if D > 0 :
             om = E.period_lattice().basis()[0]
-            q = sqrt(D)*omD/om * 8
+            q = sqrt(D) * omD / om * 8
         else :
             om = E.period_lattice().basis()[1].imag()
             if E.real_components() == 1:
                 om *= 2
-            q = sqrt(-D)*omD/om*8
+            q = sqrt(-D) * omD / om * 8
 
         # see padic_lseries.pAdicLeries._quotient_of_periods_to_twist
         # for the explanation of the second factor
-        verbose('real approximation is %s'%q)
-        return lv/8 * QQ(int(round(q)))
-
+        verbose('real approximation is %s' % q)
+        return lv / 8 * QQ(q.round())
 
     def _find_scaling_period(self):
         r"""
@@ -627,15 +626,15 @@ class ModularSymbolSage(ModularSymbol):
             sage: E = EllipticCurve('11a1')
             sage: m = sage.schemes.elliptic_curves.ell_modular_symbols.ModularSymbolSage(E,+1,normalize='period')
             sage: m._e
-            (1/5, 1)
+            (1/5, 1/2)
             sage: E = EllipticCurve('11a2')
             sage: m = sage.schemes.elliptic_curves.ell_modular_symbols.ModularSymbolSage(E,+1,normalize='period')
             sage: m._e
-            (1, 5)
+            (1, 5/2)
             sage: E = EllipticCurve('121b2')
             sage: m = sage.schemes.elliptic_curves.ell_modular_symbols.ModularSymbolSage(E,+1,normalize='period')
             sage: m._e
-            (0, 11/2, 0, 11/2, 11/2, 0, 0, -3, 2, 1/2, -1, 3/2)
+            (0, 0, 0, 11/2, 11/2, 11/2, 11/2, -3, 3/2, 1/2, -1, 2)
 
         TESTS::
 
@@ -673,16 +672,15 @@ class ModularSymbolSage(ModularSymbol):
                     q *= 2
                 if E.real_components() == 1:
                     q /= 2
-            q = QQ(int(round(q*200)))/200
-            verbose('scale modular symbols by %s'%q)
+            q = QQ((q * 200).round()) / 200
+            verbose('scale modular symbols by %s' % q)
             self._scaling = q
-        c = self(0) #  required, to change base point from oo to 0
-        if c<0:
+        c = self(0)  #  required, to change base point from oo to 0
+        if c < 0:
             c *= -1
             self._scaling *= -1
         self._at_zero = c
         self._e *= self._scaling
-
 
     def _call_with_caching(self, r):
         r"""

@@ -147,17 +147,6 @@ if [ "$SAGE_ROOT" != "$NEW_SAGE_ROOT" -a -n "$SAGE_ROOT" ]; then
     echo >&2 "New SAGE_ROOT=$NEW_SAGE_ROOT"
 fi
 
-# Display the Sage startup banner, used in src/bin/sage
-sage_banner() {
-    if [ "$SAGE_BANNER" = "bare" ]; then
-        cat "$SAGE_ROOT/VERSION.txt"
-    elif [ "$SAGE_BANNER" != "no" ]; then
-        # This file sage-banner is not yet available during the build
-        # of Sage, so we ignore errors from cat.
-        cat "$SAGE_LOCAL/bin/sage-banner" 2>/dev/null
-    fi
-}
-
 
 # Don't execute the commands more than once for the same version of
 # sage-env.  Check this after checking the validity of SAGE_ROOT, but
@@ -289,7 +278,6 @@ if [ 1 = 2 ]; then
     echo "MAKE        The make program (e.g. make, /usr/bin/make or /usr/local/bin/gmake)"
     echo "MAKEFLAGS   Flag(s) to make (e.g. -j4)."
     echo "RANLIB      Archiver ranlib (e.g. ranlib, /usr/ccs/bin/ranlib etc)"
-    echo "SAGE64      Set to \"yes\" to build a 64-bit binary (Solaris SPARC or Solaris x86 only)"
     echo "SHAREDFLAGS Flag(s) necessary for building a shared library (e.g. -fPIC or -xcode=pic32)"
     echo "We attempt to set this to sensible values, but check below to"
     echo "ensure they are OK. If you wish to override any then please use:"
@@ -306,6 +294,7 @@ export SAGE_ETC="$SAGE_LOCAL/etc"
 export SAGE_SHARE="$SAGE_LOCAL/share"
 export SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
 export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
+export SAGE_SPKG_SCRIPTS="$SAGE_LOCAL/var/lib/sage/scripts"
 export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
 export SAGE_SRC="$SAGE_ROOT/src"
 export SAGE_DOC_SRC="$SAGE_SRC/doc"
@@ -344,6 +333,12 @@ if [ "$UNAME" = "Darwin" ]; then
         MACOSX_DEPLOYMENT_TARGET=10.$[$MACOSX_VERSION-4]
     fi
     export MACOSX_DEPLOYMENT_TARGET MACOSX_VERSION
+
+    # Work around problems on recent OS X crashing with an error message
+    # "... may have been in progress in another thread when fork() was called"
+    # when objective-C functions are called after fork(). See Trac #25921.
+    # Most likely, these errors are false positives, so we disable them:
+    export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 fi
 
 # Compile-time path for libraries.  This is the equivalent of
@@ -499,7 +494,9 @@ if [ -d "$DOT_SAGE" ] ; then
         fi
     fi
 fi
+
 export MAXIMA_PREFIX="$SAGE_LOCAL"
+export MAXIMA_USERDIR="$DOT_SAGE/maxima"
 
 PERL5LIB="$SAGE_LOCAL/lib/perl5:$PERL5LIB" && export PERL5LIB
 
@@ -507,15 +504,6 @@ PERL5LIB="$SAGE_LOCAL/lib/perl5:$PERL5LIB" && export PERL5LIB
 if [ -n "$SAGE_BROWSER" ]; then
     export BROWSER="$SAGE_BROWSER"
 fi
-
-############ architecture flags
-
-# Support flags to change the build architecture.  Currently, this is
-# only SAGE64.
-# Whenever a flag like SAGE64 has been set once, it needs to be
-# restored in every run of sage, as mixing 64-bit and 32-bit code is
-# bad idea at best.  This script takes care of that.
-. "$SAGE_SCRIPTS_DIR/sage-arch-env"
 
 ############ compilation flags
 
@@ -633,6 +621,16 @@ SAGE_NUM_THREADS_PARALLEL=${sage_num_threads_array[1]}
 export SAGE_NUM_THREADS
 export SAGE_NUM_THREADS_PARALLEL
 
+# Multithreading in OpenBLAS does not seem to play well with Sage's attempts to
+# spawn new processes, see #26118. Apparently, OpenBLAS sets the thread
+# affinity and, e.g., parallel doctest jobs, remain on the same core.
+# Disabling that thread-affinity with OPENBLAS_MAIN_FREE=1 leads to hangs in
+# some computations.
+# So we disable OpenBLAS' threading completely; we might loose some performance
+# here but strangely the opposite seems to be the case. Note that callers such
+# as LinBox use a single-threaded OpenBLAS anyway.
+export OPENBLAS_NUM_THREADS=1
+
 if [ "$MAKE" = "" ]; then
     MAKE="make"
 fi
@@ -643,9 +641,6 @@ if [ "${MAKEFLAGS-__unset__}" != "__unset__" ]; then
     MAKE=`echo "$MAKE" | sed 's/ .*//'`
 fi
 export MAKE
-
-# Deprecated: See https://trac.sagemath.org/ticket/24014
-export PIP_INSTALL="sage-pip-install"
 
 export PIP_FORMAT="columns"
 

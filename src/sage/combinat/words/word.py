@@ -37,7 +37,7 @@ from .word_infinite_datatypes import (
                             WordDatatype_callable)
 from sage.monoids.free_monoid_element import FreeMonoidElement
 
-# TODO. Word needs to be replaced by Word. Consider renameing
+# TODO. Word needs to be replaced by Word. Consider renaming
 # Word_class to Word and imbedding Word as its __call__ method.
 
 def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK_data=None):

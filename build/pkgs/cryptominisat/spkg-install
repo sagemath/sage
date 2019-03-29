@@ -1,19 +1,15 @@
-fail () {
-    echo -e >&2 $1
-    exit 1
-}
-
-if [ "$SAGE_LOCAL" = "" ]; then
-    fail "SAGE_LOCAL undefined ... exiting\nMaybe run 'sage -sh'?"
-fi
-
 cd src
 
-cmake -DCMAKE_INSTALL_PREFIX="${SAGE_LOCAL}" -DUSE_GAUSS='ON' -DZLIB_ROOT="${SAGE_LOCAL}" . || fail 'Error configuring cryptominisat'
+if [ $SAGE_PYTHON_VERSION -eq 2 ]
+then
+   EXTRA_OPTS="-DFORCE_PYTHON2='ON'"
+fi
 
-$MAKE VERBOSE=ON || fail 'Error building cryptominisat'
+cmake -DCMAKE_INSTALL_PREFIX="${SAGE_LOCAL}" \
+      -DZLIB_ROOT="${SAGE_LOCAL}" \
+      -DUSE_GAUSS='ON' \
+      $EXTRA_OPTS \
+      . || sdh_die 'Error configuring cryptominisat'
 
-$MAKE VERBOSE=ON install || fail 'Error installing cryptominisat'
-
-exit 0
-
+sdh_make VERBOSE=ON
+sdh_make_install VERBOSE=ON

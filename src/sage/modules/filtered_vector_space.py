@@ -94,8 +94,8 @@ Or the algebraic field::
     sage: r1 = (1, 0, 1+QQbar(I));  r1
     (1, 0, I + 1)
     sage: FilteredVectorSpace([r1, r2, r3], {0:[0,1], oo:[1]}, base_ring=QQbar)
-    Vector space of dimension 2 over Algebraic Field 
-    >= Vector space of dimension 1 over Algebraic Field 
+    Vector space of dimension 2 over Algebraic Field
+    >= Vector space of dimension 1 over Algebraic Field
     in Vector space of dimension 3 over Algebraic Field
 """
 
@@ -114,8 +114,8 @@ from sage.rings.all import QQ, ZZ, RDF, RR, Integer
 from sage.rings.infinity import InfinityRing, infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
-from sage.matrix.constructor import vector, matrix
-from sage.misc.all import uniq, cached_method
+from sage.matrix.constructor import matrix
+from sage.misc.all import cached_method
 
 
 def is_FilteredVectorSpace(X):
@@ -145,7 +145,7 @@ def is_FilteredVectorSpace(X):
 
 
 def FilteredVectorSpace(arg1, arg2=None, base_ring=QQ, check=True):
-    """
+    r"""
     Construct a filtered vector space.
 
     INPUT:
@@ -310,10 +310,10 @@ def construct_from_generators(filtration, base_ring, check):
     # convert generator notation to generator+indices
     if len(filtration) == 0:
         raise ValueError('you need to specify at least one ray to deduce the dimension')
-    generators = []
+    generators = set()
     for gens in filtration.values():
-        generators += map(normalize_gen, gens)
-    generators = tuple(uniq(generators))
+        generators.update(normalize_gen(g) for g in gens)
+    generators = tuple(sorted(generators))
 
     # normalize filtration data
     normalized = dict()
@@ -355,7 +355,7 @@ def construct_from_generators_indices(generators, filtration, base_ring, check):
         QQ^2 >= QQ^1 >= QQ^1 >= 0
     """
     # normalize generators
-    generators = map(list, generators)
+    generators = [list(g) for g in generators]
 
     # deduce dimension
     if len(generators) == 0:
@@ -378,7 +378,7 @@ def construct_from_generators_indices(generators, filtration, base_ring, check):
     normalized = dict()
     for deg, gens in iteritems(filtration):
         deg = normalize_degree(deg)
-        gens = map(ZZ, gens)
+        gens = [ZZ(i) for i in gens]
         if any(i < 0 or i >= len(generators) for i in gens):
             raise ValueError('generator index out of bounds')
         normalized[deg] = tuple(sorted(gens))
@@ -543,7 +543,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         return (len(f) == 1) or (len(f) == 2 and f[1][0] == infinity)
 
     def is_exhaustive(self):
-        """
+        r"""
         Return whether the filtration is exhaustive.
 
         A filtration $\{F_d\}$ in an ambient vector space $V$ is
@@ -568,7 +568,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             self.ambient_vector_space().dimension()
 
     def is_separating(self):
-        """
+        r"""
         Return whether the filtration is separating.
 
         A filtration $\{F_d\}$ in an ambient vector space $V$ is
@@ -781,7 +781,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
             sage: FilteredVectorSpace(2, base_ring=QQ)._repr_field_name()
             'QQ'
-        
+
             sage: F.<a> = GF(9)
             sage: FilteredVectorSpace(2, base_ring=F)._repr_field_name()
             'GF(9)'
@@ -881,8 +881,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: FilteredVectorSpace({1:[(1,0), (-1,1)], 3:[(1,0)]}, base_ring=GF(3))
             GF(3)^2 >= GF(3)^1 >= GF(3)^1 >= 0
             sage: FilteredVectorSpace({1:[(1,0), (-1,1)], 3:[(1,0)]}, base_ring=AA)
-            Vector space of dimension 2 over Algebraic Real Field 
-            >= Vector space of dimension 1 over Algebraic Real Field 
+            Vector space of dimension 2 over Algebraic Real Field
+            >= Vector space of dimension 1 over Algebraic Real Field
             >= Vector space of dimension 1 over Algebraic Real Field >= 0
         """
         finite_support = [d for d in self.support() if d != infinity]
@@ -1013,7 +1013,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         filtration = dict()
         self_indices = set()
         other_indices = set()
-        for deg in reversed(uniq(self_filt.keys() + other_filt.keys())):
+        degrees = list(self_filt) + list(other_filt)
+        for deg in sorted(set(degrees), reverse=True):
             self_indices.update(self_filt.get(deg, []))
             other_indices.update(other_filt.get(deg, []))
             gens = join_indices(self_indices, other_indices)

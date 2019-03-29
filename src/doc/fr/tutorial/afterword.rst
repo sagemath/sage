@@ -132,7 +132,7 @@ Aussi, Sage se comporte différemment de Python à plusieurs égards.
        Rational Field
        sage: 2//3
        0
-       sage: int(2)/int(3)   # optional - python2
+       sage: int(2)/int(3)   # py2
        0
 
 -  **Entiers longs :** Python possède nativement un support pour les entiers de

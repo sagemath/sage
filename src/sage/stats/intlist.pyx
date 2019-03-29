@@ -28,6 +28,7 @@ AUTHOR:
 # Global parameter that sets the maximum number of entries of an IntList to print.
 max_print = 10
 
+cimport cython
 from libc.string cimport memcpy
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -35,6 +36,7 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.rings.integer import Integer
 from sage.finance.time_series cimport TimeSeries
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AsString
+from sage.structure.richcmp cimport rich_to_bool
 
 
 cdef class IntList:
@@ -116,7 +118,7 @@ cdef class IntList:
             for i in range(self._length):
                 self._values[i] = values[i]
 
-    def __cmp__(self, _other):
+    def __richcmp__(IntList self, other, int op):
         """
         Compare self and other.  This has the same semantics
         as list comparison.
@@ -133,19 +135,20 @@ cdef class IntList:
             sage: w == w
             True
         """
-        cdef IntList other
+        cdef IntList _other
         cdef Py_ssize_t c, i
-        cdef int d
-        if not isinstance(_other, IntList):
-            _other = IntList(_other)
-        other = _other
-        for i in range(min(self._length, other._length)):
-            d = self._values[i] - other._values[i]
-            if d: return -1 if d < 0 else 1
-        c = self._length - other._length
-        if c < 0: return -1
-        elif c > 0: return 1
-        return 0
+        if not isinstance(other, IntList):
+            _other = IntList(other)
+        else:
+            _other = <IntList>other
+        for i in range(min(self._length, _other._length)):
+            d = self._values[i] - _other._values[i]
+            if d:
+                return rich_to_bool(op, -1 if d < 0 else 1)
+        c = self._length - _other._length
+        if c:
+            return rich_to_bool(op, -1 if c < 0 else 1)
+        return rich_to_bool(op, 0)
 
     def  __dealloc__(self):
         """
@@ -197,7 +200,7 @@ cdef class IntList:
             sage: a[5:-2]
             [5, 6, 7]
             sage: type(a[5:-2])
-            <type 'sage.stats.intlist.IntList'>
+            <... 'sage.stats.intlist.IntList'>
             sage: type(a[5])
             <... 'int'>
         """
@@ -285,10 +288,9 @@ cdef class IntList:
             sage: loads(dumps(a)) == a
             True
 
-
             sage: v = stats.IntList([1,-3])
             sage: v.__reduce__()
-            (<built-in function unpickle_intlist_v1>, ('...', 2))
+            (<cyfunction unpickle_intlist_v1 at ...>, (..., 2))
             sage: loads(dumps(v)) == v
             True
 
@@ -298,7 +300,6 @@ cdef class IntList:
             sage: v = stats.IntList([1..10^5])
             sage: loads(dumps(v, compress=False),compress=False) == v
             True
-
         """
         buf = PyBytes_FromStringAndSize(<char*>self._values, self._length*sizeof(int)/sizeof(char))
         return unpickle_intlist_v1, (buf, self._length)
@@ -496,7 +497,7 @@ cdef class IntList:
             sage: T = stats.IntList([-2,3,5]).time_series(); T
             [-2.0000, 3.0000, 5.0000]
             sage: type(T)
-            <type 'sage.finance.time_series.TimeSeries'>
+            <... 'sage.finance.time_series.TimeSeries'>
         """
         cdef TimeSeries T = TimeSeries.__new__(TimeSeries)
         # We just reach into the data structure underlying T, since we
@@ -558,6 +559,7 @@ cdef IntList new_int_list(Py_ssize_t length):
     return t
 
 
+@cython.binding(True)
 def unpickle_intlist_v1(bytes v, Py_ssize_t n):
     """
     Version 1 unpickle method.
@@ -570,13 +572,13 @@ def unpickle_intlist_v1(bytes v, Py_ssize_t n):
 
         sage: v = stats.IntList([1,2,3])
         sage: s = v.__reduce__()[1][0]
-        sage: type(s)
-        <... 'str'>
+        sage: type(s) == type(b'')
+        True
         sage: sage.stats.intlist.unpickle_intlist_v1(s, 3)
         [1, 2, 3]
         sage: sage.stats.intlist.unpickle_intlist_v1(s+s,6)
         [1, 2, 3, 1, 2, 3]
-        sage: sage.stats.intlist.unpickle_intlist_v1('',0)
+        sage: sage.stats.intlist.unpickle_intlist_v1(b'',0)
         []
     """
     cdef IntList t = new_int_list(n)

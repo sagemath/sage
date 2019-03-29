@@ -58,13 +58,13 @@ def trace(code, preparse=True):
         sage: s = pexpect.spawn('sage')
         sage: _ = s.sendline("trace('print(factor(10))'); print(3+97)")
         sage: _ = s.expect('ipdb>', timeout=90)
-        sage: _ = s.sendline("s"); _ = s.sendline("c");
+        sage: _ = s.sendline("s"); _ = s.sendline("c")
         sage: _ = s.expect('100', timeout=90)
 
     Seeing the ipdb prompt and the 2 \* 5 in the output below is a
     strong indication that the trace command worked correctly::
 
-        sage: print(s.before[s.before.find('--'):])
+        sage: print(s.before[s.before.find(b'--'):].decode())
         --...
         ipdb> c
         2 * 5

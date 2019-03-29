@@ -405,7 +405,7 @@ class PathAlgebra(CombinatorialFreeModule):
             OQ = other._quiver
             SQ = self._quiver
             SQE = self._semigroup._sorted_edges
-            if all(v in SQ for v in OQ.vertices()) and all(e in SQE for e in other._semigroup._sorted_edges):
+            if all(v in SQ for v in OQ.vertex_iterator()) and all(e in SQE for e in other._semigroup._sorted_edges):
                 return True
         if self._semigroup.has_coerce_map_from(other):
             return True
@@ -500,7 +500,7 @@ class PathAlgebra(CombinatorialFreeModule):
 
         - :class:`DiGraph`, the quiver of the algebra
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: P = DiGraph({1:{2:['a', 'b']}}).path_semigroup()
             sage: A = P.algebra(GF(3))
@@ -526,7 +526,7 @@ class PathAlgebra(CombinatorialFreeModule):
         - the path semigroup from which ``self`` was formed (a partial
           semigroup)
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: P = DiGraph({1:{2:['a', 'b']}}).path_semigroup()
             sage: A = P.algebra(GF(3))

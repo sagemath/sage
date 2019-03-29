@@ -6,26 +6,6 @@ fi
 
 CUR=`pwd`
 
-# Let the user set an environment variable CFLAG64 to
-# indicate the C compiler flag for 64-bit builds. By
-# default this will be -m64. IBM's compiler on AIX
-# and HP's on HP-UX do NOT use -m64.
-
-if [ -z "$CFLAG64" ] ; then
-    CFLAG64=-m64
-fi
-
-# There is no C++ code in cvxopt, so no need to do likewise
-# with CXXFLAG64.
-
-if [ "x$SAGE64" = xyes ]; then
-    echo "Testing a 64-bit version of the cvxopt"
-    CFLAGS="$CFLAGS $CFLAG64"
-    CPPFLAGS="$CPPFLAGS $CFLAG64" ; export CPPFLAGS
-    LDFLAGS="$LDFLAGS $CFLAG64" ; export LDFLAGS
-    CC="$CC $CFLAG64" ; export CC
-fi
-
 if [ "x$SAGE_DEBUG" = xyes ] ; then
     CFLAGS="$CFLAGS -g -O0" # No optimisation, aids debugging.
 else

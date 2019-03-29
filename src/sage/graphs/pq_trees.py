@@ -114,7 +114,6 @@ Methods and functions
 #                         http://www.gnu.org/licenses/                         #
 ################################################################################
 from __future__ import print_function
-from six import iteritems
 
 # Constants, to make the code more readable
 
@@ -542,8 +541,6 @@ class P(PQ):
         n_PARTIAL_ALIGNED       = len(set_PARTIAL_ALIGNED)
         n_PARTIAL_UNALIGNED     = len(set_PARTIAL_UNALIGNED)
 
-        counts = {x: len(y) for x, y in iteritems(sorting)}
-
         # Excludes the situation where there is no solution.
         # read next comment for more explanations
 
@@ -829,8 +826,6 @@ class Q(PQ):
         n_PARTIAL_ALIGNED       = len(set_PARTIAL_ALIGNED)
         n_PARTIAL_UNALIGNED     = len(set_PARTIAL_UNALIGNED)
 
-        counts = {x: len(y) for x, y in iteritems(sorting)}
-
         ###################################################################
         #                                                                 #
         # Picking the good ordering for the children :                    #
@@ -1037,7 +1032,6 @@ class Q(PQ):
 
             :meth:`cardinality` -- return the number of orderings
 
-
         EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
@@ -1049,11 +1043,11 @@ class Q(PQ):
         """
         if len(self._children) == 1:
             c = self._children[0]
-            for o in (c.orderings() if isinstance(c,PQ) else [o]):
+            for o in (c.orderings() if isinstance(c, PQ) else [c]):
                 yield o
         else:
             from itertools import product
-            for o in product(*[x.orderings() if isinstance(x,PQ) else [x]
+            for o in product(*[x.orderings() if isinstance(x, PQ) else [x]
                                for x in self._children]):
                 yield o
                 yield o[::-1]

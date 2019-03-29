@@ -33,6 +33,7 @@ The matplotlib mailing lists: see http://sourceforge.net/projects/matplotlib
  * dateutil
  * pyparsing
  * tornado
+ * kiwisolver
 
 == Build Instructions/Changes ==
 

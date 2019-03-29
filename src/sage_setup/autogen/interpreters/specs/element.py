@@ -23,12 +23,11 @@ class MemoryChunkElementArguments(MemoryChunkPythonArguments):
     A special-purpose memory chunk, for the Python-object based
     interpreters that want to process (and perhaps modify) the data.
 
-    We allocate a new list (via the map function) on every call to
-    hold the modified arguments.  That's not strictly necessary --
-    we could pre-allocate a list and map into it -- but this lets us
-    use simpler code for a very-likely-negligible efficiency cost.
-    (The Element interpreter is going to allocate lots of objects
-    as it runs, anyway.)
+    We allocate a new list on every call to hold the modified arguments.
+    That's not strictly necessary -- we could pre-allocate a list and map into
+    it -- but this lets us use simpler code for a very-likely-negligible
+    efficiency cost.  (The Element interpreter is going to allocate lots of
+    objects as it runs, anyway.)
     """
 
     def setup_args(self):
@@ -41,9 +40,9 @@ class MemoryChunkElementArguments(MemoryChunkPythonArguments):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkElementArguments('args', ty_python)
             sage: mc.setup_args()
-            'mapped_args = map(self._domain, args)\n'
+            'mapped_args = [self._domain(a) for a in args]\n'
         """
-        return "mapped_args = map(self._domain, args)\n"
+        return "mapped_args = [self._domain(a) for a in args]\n"
 
     def pass_argument(self):
         r"""
@@ -117,7 +116,7 @@ class ElementInterpreter(PythonInterpreter):
             }
             """)
 
-        self.pyx_header = ri(0, """
+        self.pyx_header += ri(0, """
             from sage.structure.element cimport Element
 
             cdef public object el_check_element(object v, parent):

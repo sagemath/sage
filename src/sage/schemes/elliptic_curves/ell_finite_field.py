@@ -13,39 +13,37 @@ AUTHORS:
 - Mariah Lenox (2011-03): Added set_order method
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from __future__ import print_function, absolute_import
+
 from six.moves import range
-from sage.misc.randstate import current_randstate
 
 from sage.schemes.curves.projective_curve import Hasse_bounds
 from .ell_field import EllipticCurve_field
-from .constructor import EllipticCurve, EllipticCurve_from_j
+from .constructor import EllipticCurve
 from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import HyperellipticCurve_finite_field
-import sage.rings.ring as ring
 from sage.rings.all import Integer, ZZ, PolynomialRing, GF, polygen
 from sage.rings.finite_rings.element_base import is_FiniteFieldElement
 import sage.groups.generic as generic
 from . import ell_point
 from sage.arith.all import gcd, lcm, binomial
-from sage.structure.sequence import Sequence
 from sage.misc.cachefunc import cached_method
 
 import sage.plot.all as plot
 
-import sage.libs.pari
-pari = sage.libs.pari.all.pari
+
 
 class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_field):
-    """
+    r"""
     Elliptic curve over a finite field.
 
     EXAMPLES::
@@ -202,7 +200,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         """
         try:
             return self.__points
-        except AttributeError: pass
+        except AttributeError:
+            pass
 
         from sage.structure.sequence import Sequence
         k = self.base_ring()
@@ -300,7 +299,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: k = GF(next_prime(7^5))
             sage: E = EllipticCurve(k,[2,4])
-            sage: P = E.random_element(); P
+            sage: P = E.random_element(); P # random
             (16740 : 12486 : 1)
             sage: type(P)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
@@ -405,370 +404,28 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         """
         return 1 + self.base_field().order() - self.cardinality()
 
-    def _cardinality_with_j_invariant_1728(self):
-        r"""
-        Special function to compute cardinality when j=1728.
-
-        EXAMPLES: An example with q=p=1 (mod 4)
-
-        ::
-
-            sage: F=GF(10009)
-            sage: [EllipticCurve(F,[0,0,0,11^i,0])._cardinality_with_j_invariant_1728() for i in range(4)]
-            [10016, 10210, 10004, 9810]
-
-        An example with q=p=3 (mod 4)
-
-        ::
-
-            sage: F=GF(10007)
-            sage: [EllipticCurve(F,[0,0,0,5^i,0])._cardinality_with_j_invariant_1728() for i in range(4)]
-            [10008, 10008, 10008, 10008]
-
-        An example with `q=p^2`, p=3 (mod 4)
-
-        ::
-
-            sage: F.<a>=GF(10007^2,'a')
-            sage: [EllipticCurve(F,[0,0,0,a^i,0])._cardinality_with_j_invariant_1728() for i in range(4)]
-            [100160064, 100140050, 100120036, 100140050]
-
-        Examples with `q=2^d`, d odd (3 isomorphism classes)::
-
-            sage: F.<a> = GF(2**15,'a')
-            sage: ais = [[0,0,1,0,0],[0,0,1,1,0],[0,0,1,1,1]]
-            sage: curves=[EllipticCurve(F,ai) for ai in ais]
-            sage: all([all([e1==e2 or not e1.is_isomorphic(e2) for e1 in curves]) for e2 in curves])
-            True
-            sage: [e._cardinality_with_j_invariant_1728() for e in curves]
-            [32769, 33025, 32513]
-
-        Examples with `q=2^d`, d even (7 isomorphism classes)::
-
-            sage: F.<a> = GF(2**16,'a')
-            sage: b = a^11 # trace 1
-            sage: ais = [[0,0,1,0,0],[0,0,1,0,b],[0,0,1,b,0],[0,0,a,0,0],[0,0,a,0,a^2*b],[0,0,a^2,0,0],[0,0,a^2,0,a^4*b]]
-            sage: curves=[EllipticCurve(F,ai) for ai in ais]
-            sage: all([all([e1==e2 or not e1.is_isomorphic(e2) for e1 in curves]) for e2 in curves])
-            True
-            sage: [e._cardinality_with_j_invariant_1728() for e in curves]
-            [65025, 66049, 65537, 65793, 65281, 65793, 65281]
-
-        Examples with `q=3^d`, d odd (4 isomorphism classes)::
-
-            sage: F.<a> = GF(3**15,'a')
-            sage: b=a^7  # has trace 1
-            sage: ais=[[0,0,0,1,0],[0,0,0,-1,0],[0,0,0,-1,b],[0,0,0,-1,-b]]
-            sage: curves=[EllipticCurve(F,ai) for ai in ais]
-            sage: all([all([e1==e2 or not e1.is_isomorphic(e2) for e1 in curves]) for e2 in curves])
-            True
-            sage: [e._cardinality_with_j_invariant_1728() for e in curves]
-            [14348908, 14348908, 14342347, 14355469]
-
-        Examples with `q=3^d`, d even (6 isomorphism classes)::
-
-            sage: F.<g>=GF(3^18,'g')
-            sage: i=F(-1).sqrt()
-            sage: a=g^8  # has trace 1
-            sage: ais= [[0,0,0,1,0],[0,0,0,1,i*a],[0,0,0,g,0],[0,0,0,g^3,0],[0,0,0,g^2,0], [0,0,0,g^2,i*a*g^3]]
-            sage: curves=[EllipticCurve(F,ai) for ai in ais]
-            sage: all([all([e1==e2 or not e1.is_isomorphic(e2) for e1 in curves]) for e2 in curves])
-            True
-            sage: [E._cardinality_with_j_invariant_1728() for E in curves]
-            [387459856, 387400807, 387420490, 387420490, 387381124, 387440173]
-
-        TESTS:
-
-        Check that a bug noted at :trac:`15667` is fixed::
-
-            sage: F.<a>=GF(3^6,'a')
-            sage: EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1]).cardinality()
-            784
-            sage: EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1]).cardinality_exhaustive()
-            784
-
-        """
-        try:
-            return self._order
-        except AttributeError:
-            pass
-
-        k = self.base_ring()
-        assert self.j_invariant()==k(1728)
-        q = k.cardinality()
-        p = k.characteristic()
-        d = k.degree()
-        x=polygen(ZZ)
-
-# p=2, j=0=1728
-#
-# Number of isomorphism classes is 3 (in odd degree) or 7 (in even degree)
-#
-        if p==2:
-            if d%2==1:
-                # The 3 classes are represented, independently of d,
-                # by [0,0,1,0,0], [0,0,1,1,0], [0,0,1,1,1]
-                E=EllipticCurve(k,[0,0,1,0,0])
-                if self.is_isomorphic(E):
-                    N = q+1
-                else:
-                    n = (d+1)//2
-                    t = 2**n
-                    n = n%4
-                    if n==0 or n==1: t=-t
-                    E=EllipticCurve(k,[0,0,1,1,1])
-                    if self.is_isomorphic(E): t=-t
-                    N = q+1-t
-            else:
-                # The 7 classes are represented by E1=[0,0,1,0,0],
-                # E2=[0,0,1,0,b], E3=[0,0,1,b,0], E4=[0,0,a,0,0],
-                # E4=[0,0,a,0,a^2*b], E6=[0,0,a^2,0,0],
-                # E7=[0,0,a^2,0,a^4*b], where a is a non-cube and b
-                # has trace 1.  E1's Frobenius is pi=(-2)**(d//2); the
-                # Frobeniuses are then pi, -pi, 0; w*pi, -w*pi;
-                # w^2*pi, -w^2*pi where w is either cube root of
-                # unity, so the traces are 2*pi, -2*pi, 0, -pi, +pi;
-                # -pi, +pi.
-                delta = self.discriminant()
-                discube = (delta**((q-1)//3) == k(1))
-                pi = (-2)**(d//2)
-                if discube:
-                    a = k.gen()
-                    b = a
-                    while b.trace()==0: b*=a
-                    if self.is_isomorphic(EllipticCurve(k,[0,0,1,b,0])):
-                        t = 0
-                    else:
-                        t = 2*pi
-                        if not self.is_isomorphic(EllipticCurve(k,[0,0,1,0,0])):
-                            t = -t
-
-                else:
-                    t = pi
-                    if self.is_isomorphic(EllipticCurve(k,[0,0,delta,0,0])):
-                        t = -t
-                N = q+1-t
-
-
-# p=3, j=0=1728
-#
-# Number of isomorphism classes is 4 (odd degree) or 6 (even degree)
-#
-        elif p==3:
-            if d%2==1:
-                # The 4 classes are represented by [0,0,0,1,0],
-                # [0,0,0,-1,0], [0,0,0,-1,a], [0,0,0,-1,-a] where a
-                # has trace 1
-                delta = self.discriminant()
-                if (-delta).is_square():
-                    t = 0
-                else:
-                    u = delta.sqrt()
-                    if not u.is_square(): u=-u
-                    tr = ((self.a3()**2+self.a6())/u).trace()
-                    if tr==0:
-                        t = 0
-                    else:
-                        d2 = (d+1)//2
-                        t = 3**d2
-                        if d2%2==1: t = -t
-                        if tr==-1:  t = -t
-                N = q+1-t
-            else:
-                # The 6 classes are represented by: [0,0,0,1,0],
-                # [0,0,0,1,i*a]; [0,0,0,g,0], [0,0,0,g^3,0];
-                # [0,0,0,g^2,0], [0,0,0,g^2,i*a*g^3]; where g
-                # generates the multiplicative group modulo 4th
-                # powers, and a has nonzero trace.
-
-                # The curve is isomorphic to [0,0,0,A4,A6]
-
-                A4 = self.a4() - self.a1()*self.a3() # = -b4 = 2*b4
-                if A4.is_square():
-                    u = A4.sqrt()
-                    t = (-3)**(d//2)
-                    i = k(-1).sqrt()
-                    A6 = self.a3()**2 + self.a6()   # = b6
-                    if (A6/(i*u*A4)).trace()==0:
-                        t *= 2
-                    else:
-                        t *= -1
-                    if not u.is_square():
-                        t *= -1
-                else:
-                    t = 0
-                N = q+1-t
-
-# p>3, j=1728
-#
-# Number of isomorphism classes is 4 if q=1 (mod 4), else 2
-#
-        elif p%4==3:
-            if d%2==1:
-                t = 0
-            else:
-                t  = (-p)**(d//2)
-                w = (self.c4()/k(48))**((q-1)//4)
-                if   w==1:    t =  2*t
-                elif w==-1:   t = -2*t
-                else: t = 0
-
-            N = q+1-t
-
-# p=1 (mod 4).  First find Frobenius pi=a+b*i for [0,0,0,-1,0] over GF(p):
-# N(pi)=p and N(pi-1)=0 (mod 8).
-#
-        else: # p%4==1
-            R = ZZ.extension(x**2+1,'i')
-            i = R.gen(1)
-            pi = R.fraction_field().factor(p)[0][0].gens_reduced()[0]
-            a,b = pi.list()
-            if a%2==0:
-                a,b = -b,a
-            if (a+b+1)%4==0:
-                a,b = -a,-b
-            pi = a+b*i        # Now pi=a+b*i with (a,b)=(1,0),(3,2) mod 4
-
-        # Lift to Frobenius for [0,0,0,-1,0] over GF(p^d):
-
-            if d>1:
-                pi = pi**d
-                a,b = pi.list()
-
-        # Compute appropriate quartic twist:
-
-            w = (self.c4()/k(48))**((q-1)//4)
-            if w==1:
-                t = 2*a
-            elif w==-1:
-                t = -2*a
-            elif k(b)==w*k(a):
-                t = 2*b
-            else:
-                t = -2*b
-            N = q+1-t
-
-        self._order = Integer(N)
-        return self._order
-
-    def _cardinality_with_j_invariant_0(self):
-        r"""
-        Special function to compute cardinality when j=0.
-
-        EXAMPLES: An example with q=p=1 (mod 6)
-
-        ::
-
-            sage: F=GF(1009)
-            sage: [EllipticCurve(F,[0,0,0,0,11^i])._cardinality_with_j_invariant_0() for i in range(6)]
-            [948, 967, 1029, 1072, 1053, 991]
-
-        An example with q=p=5 (mod 6)
-
-        ::
-
-            sage: F=GF(1013)
-            sage: [EllipticCurve(F,[0,0,0,0,3^i])._cardinality_with_j_invariant_0() for i in range(6)]
-            [1014, 1014, 1014, 1014, 1014, 1014]
-
-        An example with `q=p^2`, p=5 (mod 6)
-
-        ::
-
-            sage: F.<a>=GF(1013^2,'a')
-            sage: [EllipticCurve(F,[0,0,0,0,a^i])._cardinality_with_j_invariant_0() for i in range(6)]
-            [1028196, 1027183, 1025157, 1024144, 1025157, 1027183]
-
-        For examples in characteristic 2 and 3, see the function
-        _cardinality_with_j_invariant_1728()
-        """
-
-        try:
-            return self._order
-        except AttributeError:
-            pass
-
-        k = self.base_ring()
-        assert self.j_invariant()==k(0)
-        p = k.characteristic()
-        if p==2 or p==3:  # then 0==1728
-            return self._cardinality_with_j_invariant_1728()
-
-        q = k.cardinality()
-        d = k.degree()
-        x=polygen(ZZ)
-
-# p>3, j=0
-#
-# Number of isomorphism classes is 4 if q=1 (mod 4), else 2
-#
-        if p%6==5:
-            if d%2==1:
-                t = 0
-            else:
-                t  = (-p)**(d//2)
-                w = (self.c6()/k(-864))**((q-1)//6)
-                if   w==1:    t =  2*t
-                elif w==-1:   t = -2*t
-                elif w**3==1: t = -t
-
-            N = q+1-t
-
-# p=1 (mod 6).  First find Frobenius pi=a+b*w for [0,0,0,0,1] over GF(p):
-# N(pi)=p and N(pi-1)=0 (mod 12).
-#
-        else: # p%6==1
-            R = ZZ.extension(x**2-x+1,'zeta6')
-            zeta6 = R.gen(1)
-            pi = R.fraction_field().factor(p)[0][0].gens_reduced()[0]
-            while (pi-1).norm()%12 !=0:  pi*=zeta6
-            a,b = pi.list()
-            z = k(-b)/k(a)  # a *specific* 6th root of unity in k
-
-# Now pi=a+b*zeta6 with N(pi-1)=0 (mod 12)
-
-# Lift to Frobenius for [0,0,0,0,1] over GF(p^d):
-
-            if d>1:
-                pi = pi**d
-                a,b = pi.list()
-
-# Compute appropriate sextic twist:
-
-            w = (self.c6()/k(-864))**((q-1)//6)
-
-            if   w==1:       t = 2*a+b  # = Trace(pi)
-            elif w==-1:      t = -2*a-b # = Trace(-pi)
-            elif w==z:       t = a-b    # = Trace(pi*zeta6)
-            elif w==z**2:    t = -a-2*b # = Trace(pi*zeta6**2)
-            elif w==z**4:    t = b-a    # = Trace(pi*zeta6**4)
-            elif w==z**5:    t = a+2*b  # = Trace(pi*zeta6**5)
-
-            N = q+1-t
-
-        self._order = Integer(N)
-        return self._order
-
-    def cardinality(self, algorithm='pari', extension_degree=1):
+    def cardinality(self, algorithm=None, extension_degree=1):
         r"""
         Return the number of points on this elliptic curve.
 
         INPUT:
 
-        - ``algorithm`` -- string (default: ``'pari'``), used only for
-          point counting over prime fields:
+        - ``algorithm`` -- (optional) string:
 
-          - ``'pari'`` -- use the baby-step giant-step or
-            Schoof-Elkies-Atkin methods as implemented in the PARI
-            C-library function ``ellap``
+          - ``'pari'`` -- use the PARI C-library function ``ellcard``.
 
           - ``'bsgs'`` -- use the baby-step giant-step method as
-            implemented in Sage, with the Cremona-Sutherland version
-            of Mestre's trick
+             implemented in Sage, with the Cremona-Sutherland version
+             of Mestre's trick.
+
+          - ``'exhaustive'`` -- naive point counting.
+
+          - ``'subfield'`` -- reduce to a smaller field, provided that
+            the j-invariant lies in a subfield.
 
           - ``'all'`` -- compute cardinality with both ``'pari'`` and
             ``'bsgs'``; return result if they agree or raise a
-            ``RuntimeError`` if they do not
+            ``AssertionError`` if they do not
 
         - ``extension_degree`` -- an integer `d` (default: 1): if the
           base field is `\GF{q}`, return the cardinality of ``self``
@@ -779,13 +436,6 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         The order of the group of rational points of ``self`` over its
         base field, or over an extension field of degree `d` as above.
         The result is cached.
-
-        Over prime fields, one of the above algorithms is used. Over
-        non-prime fields, the serious point counting is done on a standard
-        curve with the same `j`-invariant over the field `\GF{p}(j)`, then
-        lifted to the base field, and finally account is taken of twists.
-
-        For `j = 0` and `j = 1728` special formulas are used instead.
 
         EXAMPLES::
 
@@ -823,18 +473,55 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E = EllipticCurve(GF(3^100, 'a'), [1,2,3,4,5])
             sage: E.cardinality() is E.cardinality()
             True
-            sage: E = EllipticCurve(GF(11^2, 'a'), [3,3])
-            sage: E.cardinality()
-            128
-            sage: EllipticCurve(GF(11^100, 'a'), [3,3]).cardinality()
+
+        The following is very fast since the curve is actually defined
+        over the prime field::
+
+            sage: k.<a> = GF(11^100)
+            sage: E1 = EllipticCurve(k, [3,3])
+            sage: N1 = E1.cardinality(algorithm="subfield"); N1
             137806123398222701841183371720896367762643312000384671846835266941791510341065565176497846502742959856128
+            sage: E1.cardinality_pari() == N1
+            True
+            sage: E2 = E1.quadratic_twist()
+            sage: N2 = E2.cardinality(algorithm="subfield"); N2
+            137806123398222701841183371720896367762643312000384656816094284101308193849980588362304472492174093035876
+            sage: E2.cardinality_pari() == N2
+            True
+            sage: N1 + N2 == 2*(k.cardinality() + 1)
+            True
+
+        We can count points over curves defined as a reduction::
+
+            sage: x = polygen(QQ)
+            sage: K.<w> = NumberField(x^2 + x + 1)
+            sage: EK = EllipticCurve(K, [0, 0, w, 2, 1])
+            sage: E = EK.base_extend(K.residue_field(2))
+            sage: E
+            Elliptic Curve defined by y^2 + wbar*y = x^3 + 1 over Residue field in wbar of Fractional ideal (2)
+            sage: E.cardinality()
+            7
+            sage: E = EK.base_extend(K.residue_field(w - 1))
+            sage: E.abelian_group()
+            Trivial group embedded in Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 + 2*x + 1 over Residue field of Fractional ideal (w - 1)
+
+        ::
+
+            sage: R.<x> = GF(17)[]
+            sage: pol = R.irreducible_element(5)
+            sage: k.<a> = R.residue_field(pol)
+            sage: E = EllipticCurve(R, [1, x]).base_extend(k)
+            sage: E
+            Elliptic Curve defined by y^2 = x^3 + x + a over Residue field in a of Principal ideal (x^5 + x + 14) of Univariate Polynomial Ring in x over Finite Field of size 17
+            sage: E.cardinality()
+            1421004
 
         TESTS::
 
             sage: EllipticCurve(GF(10009), [1,2,3,4,5]).cardinality(algorithm='foobar')
             Traceback (most recent call last):
             ...
-            ValueError: Algorithm is not known
+            ValueError: algorithm 'foobar' is not known
 
         If the cardinality has already been computed, then the ``algorithm``
         keyword is ignored::
@@ -844,95 +531,68 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             10076
             sage: E.cardinality(algorithm='foobar')
             10076
+
+        Check that a bug noted at :trac:`15667` is fixed::
+
+            sage: F.<a> = GF(3^6)
+            sage: EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1]).cardinality()
+            784
         """
-        if extension_degree>1:
+        if extension_degree > 1:
             # A recursive call to cardinality() with
             # extension_degree=1, which will cache the cardinality, is
             # made by the call to frobenius_order() here:
-            R=self.frobenius_order()
-            if R.degree()==1:
-                return (self.frobenius()**extension_degree-1)**2
+            frob = self.frobenius() ** extension_degree - 1
+            R = self.frobenius_order()
+            if R.degree() == 1:
+                return frob * frob
             else:
-                return (self.frobenius()**extension_degree-1).norm()
+                return frob.norm()
 
-        # Now extension_degree==1
+        # We need manual caching (not @cached_method) since various
+        # other methods refer to this _order attribute, in particular
+        # self.set_order().
         try:
             return self._order
         except AttributeError:
             pass
 
-        k = self.base_ring()
-        q = k.cardinality()
-
-        if q < 50:
-            return self.cardinality_exhaustive()
-
-        # use special code for j=0, 1728 (for any field)
-        j = self.j_invariant()
-        if j==k(0):
-            return self._cardinality_with_j_invariant_0()
-        if j==k(1728):
-            return self._cardinality_with_j_invariant_1728()
-
-        N = 0
-        p = k.characteristic()
-        d = k.degree()
-
-        # Over prime fields, we have a variety of algorithms to choose from:
-
-        if d == 1:
-            if algorithm in ('heuristic', 'sea'):  # for backwards compatibility
-                algorithm = 'pari'
-            if algorithm == 'pari':
-                N = self.cardinality_pari()
-            elif algorithm == 'bsgs':
-                N = self.cardinality_bsgs()
-            elif algorithm == 'all':
-                N1 = self.cardinality_pari()
-                N2 = self.cardinality_bsgs()
-                if N1 == N2:
-                    N = N1
-                else:
-                    raise RuntimeError("BUG! Cardinality with pari=%s but with bsgs=%s"%(N1, N2))
+        if algorithm in ["sea", "heuristic"]:
+            from sage.misc.superseded import deprecation
+            deprecation(16931, "algorithm={!r} is deprecated".format(algorithm))
+            algorithm = None
+        jpol = None
+        if algorithm is None:
+            # Check for j in subfield
+            jpol = self.j_invariant().minimal_polynomial()
+            if jpol.degree() < self.base_field().degree():
+                algorithm = "subfield"
             else:
-                raise ValueError("Algorithm is not known")
-            self._order = Integer(N)
-            return self._order
+                algorithm = "pari"
 
-        # now k is not a prime field and j is not 0, 1728
-
-        # we count points on a standard curve with the same
-        # j-invariant, defined over the field it generates, then lift
-        # to the curve's own field, and finally allow for twists
-
-        # Since j is not 0, 1728 the only twists are quadratic
-
-        j_pol=j.minimal_polynomial()
-        j_deg=j_pol.degree()
-
-        # if not possible to work over a smaller field:
-        if d==j_deg:
-            self._order = self.cardinality_bsgs()
-            return self._order
-
-        # Let jkj be the j-invariant as element of the smallest finite
-        # field over which j is defined.
-        if j_deg == 1:
-            # j_pol is of the form X - j
-            jkj = -j_pol[0]
+        if algorithm == "pari":
+            N = self.cardinality_pari()
+        elif algorithm == "subfield":
+            if jpol is None:
+                jpol = self.j_invariant().minimal_polynomial()
+            N = self._cardinality_subfield(jpol)
+        elif algorithm == "bsgs":
+            N = self.cardinality_bsgs()
+        elif algorithm == "exhaustive":
+            N = self.cardinality_exhaustive()
+        elif algorithm == "all":
+            N = self.cardinality_pari()
+            N2 = self.cardinality_bsgs()
+            if N != N2:
+                raise AssertionError("cardinality with pari=%s but with bsgs=%s"%(N, N2))
         else:
-            jkj = GF(p**j_deg, name='a', modulus=j_pol).gen()
-
-        # recursive call which will do all the real work:
-        Ej = EllipticCurve_from_j(jkj)
-        N=Ej.cardinality(extension_degree=d//j_deg)
-
-        # if curve ia a (quadratic) twist of the "standard" one:
-        if not self.is_isomorphic(EllipticCurve_from_j(j)):
-            N = 2*(q+1) - N
+            raise ValueError("algorithm {!r} is not known".format(algorithm))
 
         self._order = N
-        return self._order
+        return N
+
+    from .cardinality import (cardinality_bsgs,
+            cardinality_exhaustive, _cardinality_subfield)
 
     order = cardinality # alias
 
@@ -1027,30 +687,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         else:
             return R.gen(1)
 
-    def cardinality_exhaustive(self):
-        r"""
-        Return the cardinality of self over the base field. Simply adds up
-        the number of points with each x-coordinate: only used for small
-        field sizes!
-
-        EXAMPLES::
-
-            sage: p=next_prime(10^3)
-            sage: E=EllipticCurve(GF(p),[3,4])
-            sage: E.cardinality_exhaustive()
-            1020
-            sage: E=EllipticCurve(GF(3^4,'a'),[1,1])
-            sage: E.cardinality_exhaustive()
-            64
-        """
-        self._order = Integer(1+sum([len(self.lift_x(x,all=True)) for x in self.base_field()]))
-        return self._order
-
     def cardinality_pari(self):
         r"""
-        Return the cardinality of self over the (prime) base field using PARI.
-
-        The result is not cached.
+        Return the cardinality of ``self`` using PARI.
 
         EXAMPLES::
 
@@ -1063,160 +702,24 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E.cardinality_pari()
             999945
 
-        TESTS::
+        Since :trac:`16931`, this now works over finite fields which
+        are not prime fields::
 
-            sage: K.<a>=GF(3^20)
-            sage: E=EllipticCurve(K,[1,0,0,1,a])
+            sage: k.<a> = GF(7^3)
+            sage: E = EllipticCurve_from_j(a)
             sage: E.cardinality_pari()
-            Traceback (most recent call last):
-            ...
-            ValueError: cardinality_pari() only works over prime fields.
-            sage: E.cardinality()
+            318
+            sage: K.<a> = GF(3^20)
+            sage: E = EllipticCurve(K,[1,0,0,1,a])
+            sage: E.cardinality_pari()
             3486794310
 
+        TESTS::
+
+            sage: E.cardinality_pari().parent()
+            Integer Ring
         """
-        k = self.base_ring()
-        p = k.characteristic()
-        if k.degree()==1:
-            return ZZ(p + 1 - int(self.__pari__().ellap(p)))
-        else:
-            raise ValueError("cardinality_pari() only works over prime fields.")
-
-    def cardinality_bsgs(self, verbose=False):
-        r"""
-        Return the cardinality of self over the base field. Will be called
-        by user function cardinality only when necessary, i.e. when the
-        j_invariant is not in the prime field.
-
-        ALGORITHM: A variant of "Mestre's trick" extended to all finite
-        fields by Cremona and Sutherland, 2008.
-
-        .. note::
-
-           1. The Mestre-Schoof-Cremona-Sutherland algorithm may fail for
-              a small finite number of curves over `F_q` for `q` at most 49, so
-              for `q<50` we use an exhaustive count.
-
-           2. Quadratic twists are not implemented in characteristic 2
-              when `j=0 (=1728)`; but this case is treated separately.
-
-       EXAMPLES::
-
-            sage: p=next_prime(10^3)
-            sage: E=EllipticCurve(GF(p),[3,4])
-            sage: E.cardinality_bsgs()
-            1020
-            sage: E=EllipticCurve(GF(3^4,'a'),[1,1])
-            sage: E.cardinality_bsgs()
-            64
-            sage: F.<a>=GF(101^3,'a')
-            sage: E=EllipticCurve([2*a^2 + 48*a + 27, 89*a^2 + 76*a + 24])
-            sage: E.cardinality_bsgs()
-            1031352
-        """
-        E1 = self
-        k = self.base_field()
-        q = k.order()
-        if q<50:
-            if verbose:
-                print("q=", q, "< 50 so using exhaustive count")
-            return self.cardinality_exhaustive()
-
-        # Construct the quadratic twist:
-        E2 = E1.quadratic_twist()
-        if verbose:
-            print("Quadratic twist is ", E2.ainvs())
-
-        bounds = Hasse_bounds(q)
-        lower, upper = bounds
-        B = upper-q-1 # = floor(2*sqrt(q))
-        a = ZZ(0)
-        N1 = N2 = M = ZZ(1)
-        kmin = -B
-        kmax = B
-        q1 = q+1
-        # Throughout, we have #E=q+1-t where |t|<=B and t=a+k*M = a
-        # (mod M) where kmin <= k <= kmax.
-
-        # M is the lcm of the orders of all the points found on E1 and
-        # E2, which will eventually exceed 2*B, at which point
-        # kmin=kmax.
-
-        if q > 2**10:
-            N1 = ZZ(2)**sum([e for P,e in E1._p_primary_torsion_basis(2)])
-            N2 = ZZ(2)**sum([e for P,e in E2._p_primary_torsion_basis(2)])
-            if q > 2**20:
-                N1 *= ZZ(3)**sum([e for P,e in E1._p_primary_torsion_basis(3)])
-                N2 *= ZZ(3)**sum([e for P,e in E2._p_primary_torsion_basis(3)])
-                if q > 2**40:
-                    N1 *= ZZ(5)**sum([e for P,e in E1._p_primary_torsion_basis(5)])
-                    N2 *= ZZ(5)**sum([e for P,e in E2._p_primary_torsion_basis(5)])
-            # We now know that t=q+1 (mod N1) and t=-(q+1) (mod N2)
-            a = q1
-            M = N1
-            g,u,v = M.xgcd(N2) # g==u*M+v*N2
-            if N2>g:
-                a = (a*v*N2-q1*u*M)//g
-                M *= (N2//g) # = lcm(M,N2)
-                a = a%M
-                if verbose:
-                    print("(a,M)=", (a, M))
-                kmin = ((-B-a)/M).ceil()
-                kmax = ((B-a)/M).floor()
-                if kmin==kmax:
-                    self._order = q1-a-kmin*M
-                    if verbose: print("no random points were needed")
-                    return self._order
-            if verbose: print("(2,3,5)-torsion subgroup gives M=", M)
-
-        # N1, N2 are divisors of the orders of E1, E2 separately,
-        # which are used to speed up the computation of the orders of
-        # points on each curve.  For large q it is worth initializing
-        # these with the full order of the (2,3,5)-torsion which are
-        # often non-trivial.
-
-        while kmax!=kmin:
-            # Get a random point on E1 and find its order, using the
-            # Hasse bounds and the fact that we know that the group
-            # order is a multiple of N1:
-            n = generic.order_from_bounds(E1.random_point(),bounds,N1,operation='+')
-            if verbose: print("New point on E has order ", n)
-            # update N1 and M
-            N1 = N1.lcm(n)
-            g,u,v = M.xgcd(n) # g==u*M+v*n
-            if n>g:
-                # update congruence a (mod M) with q+1 (mod n)
-                a = (a*v*n+q1*u*M)//g
-                M *= (n//g) # = lcm(M,n)
-                a = a%M
-                if verbose: print("(a,M)=", (a, M))
-                kmin = ((-B-a)/M).ceil()
-                kmax = ((B-a)/M).floor()
-                if kmin==kmax:
-                    self._order = q1-a-kmin*M
-                    return self._order
-                if verbose: print("number of possibilities is now ",kmax-kmin+1)
-
-            # Get a random point on E2 and find its order, using the
-            # Hasse bounds and the fact that we know that the group
-            # order is a multiple of N2:
-            n = generic.order_from_bounds(E2.random_point(),bounds,N2,operation='+')
-            if verbose:  print("New point on E' has order ", n)
-            # update N2 and M
-            N2 = N2.lcm(n)
-            g,u,v = M.xgcd(n) # g==u*M+v*n
-            if n>g:
-                # update congruence a (mod M) with -(q+1) (mod n)
-                a = (a*v*n-q1*u*M)//g
-                M *= (n//g) # = lcm(M,n)
-                a = a%M
-                if verbose: print("(a,M)=", (a, M))
-                kmin = ((-B-a)/M).ceil()
-                kmax = ((B-a)/M).floor()
-                if kmin==kmax:
-                    self._order = q1-a-kmin*M
-                    return self._order
-                if verbose: print("number of possibilities is now ",kmax-kmin+1)
+        return Integer(self.__pari__().ellcard())
 
     @cached_method
     def gens(self):
@@ -1238,7 +741,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             In the case of 2 generators `P` and `Q`, it is not
             guaranteed that the group is the cartesian product of the 2
             cyclic groups `\langle P \rangle` and `\langle Q \rangle`.
-            In other words, the order of `Q` isn't as small as possible.
+            In other words, the order of `Q` is not as small as possible.
             If you really need to know the group structure, use
             :meth:`abelian_group`.
 
@@ -1250,10 +753,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E.cardinality(), P.order()
             (10, 10)
             sage: E = EllipticCurve(GF(41),[2,5])
-            sage: P, Q = E.gens(); P, Q # random
-            ((30 : 13 : 1), (32 : 23 : 1))
-            sage: P.order()*Q.order()
-            484
+            sage: E.gens()  # random
+            ((20 : 38 : 1), (25 : 31 : 1))
             sage: E.cardinality()
             44
 
@@ -1263,22 +764,24 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E.abelian_group()
             Additive abelian group isomorphic to Z/22 + Z/2 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 2*x + 5 over Finite Field of size 41
             sage: E.abelian_group().gens()
-            ((30 : 28 : 1), (23 : 0 : 1))
+            ((30 : 13 : 1), (23 : 0 : 1))
             sage: E.gens()
-            ((30 : 28 : 1), (23 : 0 : 1))
+            ((30 : 13 : 1), (23 : 0 : 1))
             sage: E.gens()[0].order()
             22
             sage: E.gens()[1].order()
             2
 
+        Examples with 1 and 0 generators::
+
             sage: F.<a> = GF(3^6)
-            sage: E = EllipticCurve([a,a+1])
+            sage: E = EllipticCurve([a, a+1])
             sage: pts = E.gens()
             sage: len(pts)
             1
             sage: pts[0].order() == E.cardinality()
             True
-            sage: E = EllipticCurve(GF(2),[0,0,1,1,1])
+            sage: E = EllipticCurve(GF(2), [0,0,1,1,1])
             sage: E.gens()
             ()
 
@@ -1286,15 +789,15 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         too expensive::
 
             sage: k.<a> = GF(5^60)
-            sage: E = EllipticCurve([a,a])
+            sage: E = EllipticCurve([a, a])
             sage: len(E.gens())
             2
-            sage: E.cardinality()      # known bug #16931
-            867361737988403547205571230383620219837340
-            sage: E.gens()[0].order()  # known bug #16931
-            433680868994201773602785615191810109918670
-            sage: E.gens()[1].order()  # known bug #16931
-            48186763221577974844753957243534456657630
+            sage: E.cardinality()
+            867361737988403547207212930746733987710588
+            sage: E.gens()[0].order()
+            433680868994201773603606465373366993855294
+            sage: E.gens()[1].order()
+            433680868994201773603606465373366993855294
         """
         G = self.__pari__().ellgroup(flag=1)
         return tuple(self.point(list(pt)) for pt in G[2])
@@ -1447,86 +950,55 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         """
         k = self.base_field()
         q = k.order()
-        p = k.characteristic()
-        d = k.degree()
-        j = self.j_invariant()
-        if d>1:
-            d = j.minimal_polynomial().degree()
-
-
-        # Before computing the group structure we compute the
-        # cardinality.  While this is not strictly necessary, it makes
-        # the code simpler and also makes computation of orders of
-        # points faster.
-
-        # j=0,1728
-
-        if j==k(0):
-            N = self._cardinality_with_j_invariant_0()
-        if j==k(1728):
-            N = self._cardinality_with_j_invariant_1728()
 
         bounds = Hasse_bounds(q)
         lower, upper = bounds
         if debug:
             print("Lower and upper bounds on group order: [",lower,",",upper,"]")
 
-        try:
-            N=self._order
-            if debug:
-                print("Group order already known to be ", N)
-        except Exception:
-            if (q<50):
-                if debug:
-                    print("Computing group order naively")
-                N=self.cardinality_exhaustive()
-            elif d==1:
-                if debug:
-                    print("Computing group order using PARI")
-                N=self.cardinality()
-            else:
-                if debug:
-                    print("Computing group order using bsgs")
-                N=self.cardinality_bsgs()
-            if debug:
-                print("... group order = ", N)
-
-        self._order=N
+        # Before computing the group structure we compute the
+        # cardinality.  This makes the code simpler and also makes
+        # computation of orders of points much faster.
+        N = self.cardinality()
         plist = N.prime_factors()
-        P1=self(0)
-        P2=self(0)
-        n1= Integer(1)
-        n2= Integer(1)
-        P1._order=n1
-        P2._order=n2
-        npts = 0
+        if debug:
+            print("Curve cardinality:", N)
 
         # At all stages the current subgroup is generated by P1, P2 with
         # orders n1,n2 which are disjoint.  We stop when n1*n2 == N
+        P1 = self(0)
+        P2 = self(0)
+        n1 = Integer(1)
+        n2 = Integer(1)
+        P1._order = n1
+        P2._order = n2
+        npts = 0
 
         if debug:
-            "About to start generating random points"
+            print("About to start generating random points")
 
         while n1*n2 != N:
             if debug:
-                "Getting a new random point"
+                print("Getting a new random point")
             Q = self.random_point()
             while Q.is_zero(): Q = self.random_point()
             npts += 1
             if debug:
                 print("Q = ", Q, ": Order(Q) = ", Q.order())
 
-            Q1=n1*Q;
+            Q1 = n1 * Q
 
             if Q1.is_zero() and npts>=10: # then P1,n1 will not change but we may increase n2
-                if debug: print("Case 2: n2 may increase")
+                if debug:
+                    print("Case 2: n2 may increase")
                 n1a = 1; n1b = n1
                 P1a = P1
                 n1a = n1.prime_to_m_part(N//n1)
                 n1b = n1//n1a
                 Q = n1a*Q       # has order | n1b
                 P1a = n1a*P1    # has order = n1b
-                if debug: print("n1a=", n1a)
+                if debug:
+                    print("n1a=", n1a)
                 a = None
                 for m in n1b.divisors():
                     try:
@@ -1536,12 +1008,15 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
                         pass
                 assert a is not None
                 a *= (m*n1a)
-                if debug: print("linear relation gives m=",m,", a=",a)
-                if debug: assert m*Q==a*P1
-                if m>1: # else Q is in <P1>
-                    Q=Q-(a//m)*P1; # has order m and is disjoint from P1
-                    if debug: assert Q.order()==m
-                    Q._order=m
+                if debug:
+                    print("linear relation gives m=", m, ", a=", a)
+                if debug:
+                    assert m * Q == a * P1
+                if m>1:  # else Q is in <P1>
+                    Q = Q - (a // m) * P1  # has order m and is disjoint from P1
+                    if debug:
+                        assert Q.order() == m
+                    Q._order = m
                     if n2==1: # this is our first nontrivial P2
                         P2=Q
                         n2=m
@@ -1551,24 +1026,29 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
                     else:     # we must merge P2 and Q:
                         oldn2=n2 # holds old value
                         P2,n2=generic.merge_points((P2,n2),(Q,m),operation='+', check=debug)
-                        if debug: assert P2.order()==n2
-                        P2._order=n2
+                        if debug:
+                            assert P2.order() == n2
+                        P2._order = n2
                         if debug:
                             if n2>oldn2:
                                 print("Replacing second generator by ",P2,end="")
                                 print(" of order ",n2, "  gaining index ",n2//oldn2)
                                 print("Subgroup order now ",n1*n2,"=",n1,"*",n2)
             elif not Q1.is_zero(): # Q1 nonzero: n1 will increase
-                if debug:  print("Case 1: n1 may increase")
+                if debug:
+                    print("Case 1: n1 may increase")
                 oldn1=n1
                 if n2>1:
                     P3=(n1//n2)*P1  # so P2,P3 are a basis for n2-torsion
-                    if debug: assert P3.order()==n2
+                    if debug:
+                        assert P3.order()==n2
                     P3._order=n2
-                    if debug: print("storing generator ",P3," of ",n2,"-torsion")
+                    if debug:
+                        print("storing generator ",P3," of ",n2,"-torsion")
                 m = generic.order_from_multiple(Q,N,plist,operation='+', check=debug)
                 P1,n1=generic.merge_points((P1,n1),(Q,m), check=debug)
-                if debug: assert P1.order()==n1
+                if debug:
+                    assert P1.order() == n1
                 P1._order=n1
                 if debug:
                     print("Replacing first  generator by ",P1," of order ",end="")
@@ -1579,24 +1059,32 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
                 # (n1//n2)*P1 are still a basis for n2-torsion:
                 if n2>1:
                     a,m = generic.linear_relation(P1,P3,operation='+')
-                    if debug: print("linear relation gives m=",m,", a=",a)
+                    if debug:
+                        print("linear relation gives m=",m,", a=",a)
                     P3=P3-(a//m)*P1
-                    if debug: assert P3.order()==m
-                    P3._order=m
-                    if debug: print("First  P2 component =",P3)
+                    if debug:
+                        assert P3.order() == m
+                    P3._order = m
+                    if debug:
+                        print("First  P2 component =", P3)
                     if m==n2:
                         P2=P3
                     else:
                         a,m = generic.linear_relation(P1,P2,operation='+')
-                        if debug: print("linear relation gives m=",m,", a=",a)
-                        P2=P2-(a//m)*P1;
-                        if debug: assert P2.order()==m
-                        P2._order=m
-                        if debug: print("Second  P2 component =",P2)
+                        if debug:
+                            print("linear relation gives m=", m, ", a=", a)
+                        P2 = P2 - (a // m) * P1
+                        if debug:
+                            assert P2.order() == m
+                        P2._order = m
+                        if debug:
+                            print("Second  P2 component =", P2)
                         P2,n2=generic.merge_points((P2,n2),(P3,m), check=debug)
-                        if debug: assert P2.order()==n2
-                        P2._order=n2
-                        if debug: print("Combined P2 component =",P2)
+                        if debug:
+                            assert P2.order() == n2
+                        P2._order = n2
+                        if debug:
+                            print("Combined P2 component =", P2)
 
             if debug:
                 if P1.order()!=n1:
@@ -1618,9 +1106,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         # Finished: record group order, structure and generators
 
         from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
-        self._order = n1*n2
+        self._order = n1 * n2
         if n1 == 1:
-            gens = orders = tuple()
             return AdditiveAbelianGroupWrapper(self.point_homset(), [], [])
         elif n2 == 1:
             gens = (P1,)
@@ -1634,7 +1121,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
     def is_isogenous(self, other, field=None, proof=True):
         """
-        Returns whether or not self is isogenous to other
+        Return whether or not self is isogenous to other
 
         INPUT:
 
@@ -1722,36 +1209,32 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             raise ValueError("Second argument is not an Elliptic Curve.")
         if self.is_isomorphic(other):
             return True
-        elif self.base_field().characteristic() != other.base_field().characteristic():
+        if self.base_field().characteristic() != other.base_field().characteristic():
             raise ValueError("The base fields must have the same characteristic.")
-        elif field is None:
+        if field is None:
             if self.base_field().degree() == other.base_field().degree():
-                if self.cardinality() == other.cardinality():
-                    return True
-                else:
-                    return False
-            elif self.base_field().degree() == gcd(self.base_field().degree(),other.base_field().degree()):
-                if self.cardinality(extension_degree=other.base_field().degree()//self.base_field().degree()) == other.cardinality():
-                    return True
-                else:
-                    return False
-            elif other.base_field().degree() == gcd(self.base_field().degree(),other.base_field().degree()):
-                if other.cardinality(extension_degree=self.base_field().degree()//other.base_field().degree()) == self.cardinality():
-                    return True
-                else:
-                    return False
+                return self.cardinality() == other.cardinality()
+
+            elif self.base_field().degree() == gcd(self.base_field().degree(),
+                                                   other.base_field().degree()):
+                return self.cardinality(extension_degree=other.base_field().degree()//self.base_field().degree()) == other.cardinality()
+
+            elif other.base_field().degree() == gcd(self.base_field().degree(),
+                                                    other.base_field().degree()):
+                return other.cardinality(extension_degree=self.base_field().degree()//other.base_field().degree()) == self.cardinality()
+
             else:
                 raise ValueError("Curves have different base fields: use the field parameter.")
         else:
-            if not lcm(self.base_field().degree(), other.base_field().degree()).divides(field.degree()):
+            f_deg = field.degree()
+            s_deg = self.base_field().degree()
+            o_deg = other.base_field().degree()
+            if not lcm(s_deg, o_deg).divides(f_deg):
                 raise ValueError("Field must be an extension of the base fields of both curves")
             else:
-                if \
-self.cardinality(extension_degree=field.degree()//self.base_field().degree())\
- == other.cardinality(extension_degree=field.degree()//other.base_field().degree()):
-                      return True
-                else:
-                      return False
+                sc = self.cardinality(extension_degree=f_deg // s_deg)
+                oc = other.cardinality(extension_degree=f_deg // o_deg)
+                return sc == oc
 
     def is_supersingular(self, proof=True):
         r"""
@@ -1865,7 +1348,7 @@ self.cardinality(extension_degree=field.degree()//self.base_field().degree())\
             sage: E = EllipticCurve([F(A), F(B)])
             sage: E.set_order(q)
             sage: G = E.random_point()
-            sage: E.order() * G  # This takes practically no time.
+            sage: G.order() * G  # This takes practically no time.
             (0 : 1 : 0)
             sage: proof.arithmetic(prev_proof_state) # restore state
 
@@ -1876,11 +1359,7 @@ self.cardinality(extension_degree=field.degree()//self.base_field().degree())\
             sage: E.set_order("hi")
             Traceback (most recent call last):
             ...
-            ValueError: Value hi illegal (not an integer in the Hasse range)
-            sage: E.set_order(3.14159)
-            Traceback (most recent call last):
-            ...
-            ValueError: Value 3.14159000000000 illegal (not an integer in the Hasse range)
+            TypeError: unable to convert 'hi' to an integer
             sage: E.set_order(0)
             Traceback (most recent call last):
             ...
@@ -1915,7 +1394,6 @@ self.cardinality(extension_degree=field.degree()//self.base_field().degree())\
 
             sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
             sage: E.set_order(4, num_checks=0)
-            WARNING: No checking done in set_order
             sage: E.order()
             4
 
@@ -1924,26 +1402,18 @@ self.cardinality(extension_degree=field.degree()//self.base_field().degree())\
 
             sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
             sage: E.set_order(4, num_checks=-12)
-            WARNING: No checking done in set_order
             sage: E.order()
             4
-
-        NOTES:
-
-        The implementation is based on the fact that orders of elliptic curves
-        are cached in the (pseudo-private) _order slot.
 
         AUTHORS:
 
          - Mariah Lenox (2011-02-16)
         """
+        value = Integer(value)
+
         # Is value in the Hasse range?
         q = self.base_field().order()
         a,b = Hasse_bounds(q,1)
-        #a = q + 1 - 2*q.isqrt()
-        #b = q + 1 + 2*q.isqrt()
-        if not value in ZZ:
-            raise ValueError('Value %s illegal (not an integer in the Hasse range)'%value)
         if not a <= value <= b:
             raise ValueError('Value %s illegal (not an integer in the Hasse range)'%value)
         # Is value*random == identity?
@@ -1951,12 +1421,11 @@ self.cardinality(extension_degree=field.degree()//self.base_field().degree())\
             G = self.random_point()
             if value * G != self(0):
                 raise ValueError('Value %s illegal (multiple of random point not the identity)'%value)
-        if(num_checks <= 0):
-            print('WARNING: No checking done in set_order')
         self._order = value
 
+
 def supersingular_j_polynomial(p):
-    """
+    r"""
     Return a polynomial whose roots are the supersingular `j`-invariants
     in characteristic `p`, other than 0, 1728.
 
@@ -1993,7 +1462,6 @@ def supersingular_j_polynomial(p):
         Traceback (most recent call last):
         ...
         ValueError: p (=6) should be a prime number
-
     """
     try:
         p = ZZ(p)
@@ -2021,7 +1489,8 @@ def supersingular_j_polynomial(p):
 # For p in [13..300] we have precomputed these polynomials and store
 # them (as lists of their coefficients in ZZ) in a dict:
 
-supersingular_j_polynomials = dict()
+
+supersingular_j_polynomials = {}
 
 supersingular_j_polynomials[13] = [8, 1]
 supersingular_j_polynomials[17] = [9, 1]
@@ -2176,14 +1645,14 @@ def is_j_supersingular(j, proof=True):
     # First we replace j by an element of GF(p) or GF(p^2) (since F
     # might be a proper extension of these):
 
-    if degj==1:
-        j = -jpol(0) # = j, but in GF(p)
-    elif d>2:
-        F = GF(p^2,'a')
-        j = jpol.roots(F,multiplicities=False)[0] # j, but in GF(p^2)
+    if degj == 1:
+        j = -jpol(0)  # = j, but in GF(p)
+    elif d > 2:
+        F = GF(p**2, 'a')
+        j = jpol.roots(F,multiplicities=False)[0]  # j, but in GF(p^2)
 
     E = EllipticCurve(j=j)
-    if degj==1:
+    if degj == 1:
         for i in range(10):
             P = E.random_element()
             if not ((p+1)*P).is_zero():
@@ -2219,5 +1688,3 @@ def is_j_supersingular(j, proof=True):
     # expensive since it involves counting the number of points on E):
 
     return E.trace_of_frobenius() % p == 0
-
-

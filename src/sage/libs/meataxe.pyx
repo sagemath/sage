@@ -31,8 +31,63 @@ cdef dict ErrMsg = {
     "Not a permutation": TypeError
 }
 
+
+cdef Matrix_t *rawMatrix(int Field, list entries) except NULL:
+    """
+    Return a meataxe matrix.
+
+    INPUT:
+
+    - ``Field`` -- Integer, the field size
+    - ``entries`` -- list of lists, the entries of the matrix, also
+      defining the matrix dimensions. It is *not* tested that all rows
+      in ``entries`` have the same length, and it is assumed that both
+      the number of rows and the number of columns is positive. All
+      elements are given by ints, they are automatically interpreted as
+      field elements.
+    """
+    cdef Matrix_t *M = MatAlloc(Field, len(entries), len(entries[0]))
+    cdef PTR x = M.Data
+    cdef int idx, i, j
+    cdef list dt_i
+    for i in range(M.Nor):
+        idx = 0
+        dt_i = entries[i]
+        for j in range(M.Noc):
+            FfInsert(x, j, FfFromInt(dt_i[j]))
+        FfStepPtr(&(x))
+    return M
+
+###############################################################
+## It is needed to do some initialisation. Since the meataxe
+## version used in Sage (SharedMeatAxe) is a dynamic (shared)
+## library, it sufficed to do this initialisation only once.
+## For convenience, the meataxe_init() function is called in
+## this module. Hence, `import sage.libs.meataxe` is enough
+## to make sure that MeatAxe is initialised.
+
+from sage.cpython.string cimport str_to_bytes, char_to_str
+import os
+from sage.env import DOT_SAGE
+
 cdef void sage_meataxe_error_handler(const MtxErrorRecord_t *err):
     sig_block()
-    cdef bytes ErrText = err.Text
-    PyErr_SetObject(ErrMsg.get(ErrText.split(': ')[-1], RuntimeError), "{} in file {} (line {})".format(ErrText, err.FileInfo.BaseName, err.LineNo))
+    ErrText  = char_to_str(err.Text)
+    BaseName = char_to_str(err.FileInfo.BaseName)
+    LineNo   = err.LineNo
+    PyErr_SetObject(ErrMsg.get(ErrText.split(': ')[-1], RuntimeError), f"{ErrText} in file {BaseName} (line {LineNo})")
     sig_unblock()
+
+cdef inline meataxe_init():
+    ## Assign to a variable that enables MeatAxe to find
+    ## its multiplication tables.
+    global MtxLibDir
+    mtxdir = str_to_bytes(os.path.join(DOT_SAGE, 'meataxe'))
+    if len(mtxdir) >= 1024:
+        raise RuntimeError(f"the path for the meataxe library {mtxdir!r} is too long, it needs to be of length < 1024")
+    MtxLibDir[:len(mtxdir)] = mtxdir
+    MtxLibDir[len(mtxdir)] = c'\0'
+    ## Error handling for MeatAxe, to prevent immediate exit of the program
+    MtxSetErrorHandler(sage_meataxe_error_handler)
+
+meataxe_init()

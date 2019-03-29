@@ -303,8 +303,9 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
         sage: PW0(w)
         t[Lambdacheck[1] - 2*Lambdacheck[2]] * s1
 
-    Note that for untwisted affine type the dual form of the classical Weyl group
-    is isomorphic to the usual one, but acts on a different lattice and is therefore different to sage::
+    Note that for untwisted affine type, the dual form of the classical
+    Weyl group is isomorphic to the usual one, but acts on a different
+    lattice and is therefore different to sage::
 
         sage: W0v = E.dual_classical_weyl(); W0v
         Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
@@ -313,10 +314,14 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
         s1*s2
         sage: y = PW0(v); y
         s1*s2
-        sage: x == y
-        False
         sage: x.parent() == y.parent()
         False
+
+    However, because there is a coercion from ``PvW0`` to ``PW0``,
+    the elements ``x`` and ``y`` compare as equal::
+
+        sage: x == y
+        True
 
     An element can be created directly from a reduced word::
 
@@ -2102,7 +2107,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: x = ExtendedAffineWeylGroup(['A',2,1]).W0P().simple_reflection(0); x;
+                sage: x = ExtendedAffineWeylGroup(['A',2,1]).W0P().simple_reflection(0); x
                 s1*s2*s1 * t[-Lambdacheck[1] - Lambdacheck[2]]
                 sage: x.to_classical_weyl()
                 s1*s2*s1

@@ -289,7 +289,7 @@ SageのIntegerクラスが使えるのは言うまでもない(Rationalクラス
 
 ::
 
-    sage: range(1, 15)
+    sage: range(1, 15)  # py2
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
 この ``range`` が便利なのは，リスト内包表記を使ってリストを生成する場合だ:
@@ -415,8 +415,8 @@ Sageで使われる第三のリスト類似データ型が，シーケンスで�
     sage: d = {1:5, 'sage':17, ZZ:GF(7)}
     sage: type(d)
     <... 'dict'>
-    sage: d.keys()
-     [1, 'sage', Integer Ring]
+    sage: list(d.keys())
+    [1, 'sage', Integer Ring]
     sage: d['sage']
     17
     sage: d[ZZ]
@@ -503,7 +503,8 @@ Pythonには集合(set)型が組込まれている．
 
 ::
 
-    sage: v = (n^2 for n in xrange(10000000))
+    sage: v = (n^2 for n in xrange(10000000))  # py2
+    sage: v = (n^2 for n in range(10000000))  # py3
     sage: next(v)
     0
     sage: next(v)
@@ -647,7 +648,7 @@ Sageにおける異種オブジェクト間の比較演算では，まず対象�
 
     sage: 1 is 2/2
     False
-    sage: int(1) is int(2)/int(2)  # optional - python2
+    sage: int(1) is int(2)/int(2)  # py2
     True
     sage: 1 is 1
     False

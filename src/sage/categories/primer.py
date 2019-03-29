@@ -113,24 +113,25 @@ The hierarchy of categories
 
 What makes binary powering work in the above examples? In both cases,
 we have *a set* endowed with a *multiplicative binary operation* which
-is *associative*. Such a set is called a *semigroup*, and binary
-powering works generally for any semigroup.
+is *associative* and which has a unit element. Such a set is called a
+*monoid*, and binary powering (to a non-negative power) works generally
+for any monoid.
 
-Sage knows about semigroups::
+Sage knows about monoids::
 
-    sage: Semigroups()
-    Category of semigroups
+    sage: Monoids()
+    Category of monoids
 
 and sure enough, binary powering is defined there::
 
-    sage: m._pow_.__module__
-    'sage.categories.semigroups'
+    sage: m._pow_int.__module__
+    'sage.categories.monoids'
 
 That's our bookshelf! And it's used in many places::
 
-    sage: GL(2,ZZ) in Semigroups()
+    sage: GL(2,ZZ) in Monoids()
     True
-    sage: NN in Semigroups()
+    sage: NN in Monoids()
     True
 
 For a less trivial bookshelf we can consider euclidean rings: once we
@@ -438,12 +439,12 @@ done by introspection::
 For plain Python methods, one can also just ask in which module they
 are implemented::
 
-    sage: i._pow_.__module__
+    sage: i._pow_.__module__  # not tested (Trac #24275)
     'sage.categories.semigroups'
 
     sage: pQ._mul_.__module__
     'sage.rings.polynomial.polynomial_element_generic'
-    sage: pQ._pow_.__module__
+    sage: pQ._pow_.__module__  # not tested (Trac #24275)
     'sage.categories.semigroups'
 
 We see that integers and polynomials have each their own
@@ -539,7 +540,7 @@ categories and parallel to that we had seen for the elements. This is
 best viewed graphically::
 
     sage: g = class_graph(m.__class__)
-    sage: g.relabel(lambda x: x.replace("_","\_"))
+    sage: g.relabel(lambda x: x.replace("_",r"\_"))
     sage: g.set_latex_options(format="dot2tex")
     sage: view(g)                 # not tested
 
@@ -849,7 +850,7 @@ And rerun the test::
     Traceback (most recent call last):
     ...
       File ".../sage/categories/semigroups.py", line ..., in _test_associativity
-        tester.assert_((x * y) * z == x * (y * z))
+        tester.assertTrue((x * y) * z == x * (y * z))
     ...
     AssertionError: False is not true
 
@@ -864,7 +865,7 @@ work yet in the notebook)::
     -> raise self.failureException(msg)
     (Pdb) u
     > /opt/sage-5.11.rc1/local/lib/python2.7/site-packages/sage/categories/semigroups.py(145)_test_associativity()
-    -> tester.assert_((x * y) * z == x * (y * z))
+    -> tester.assertTrue((x * y) * z == x * (y * z))
     (Pdb) p x, y, z
     ('a', 'a', 'a')
     (Pdb) p (x * y) * z
@@ -919,9 +920,9 @@ to use Sage's introspection tools to recover where it's implemented::
     sage: sage.misc.sageinspect.sage_getfile(x._repr_)
     '.../sage/structure/element_wrapper.pyx'
 
-``__pow__`` is a generic method for all finite semigroups::
+``_pow_int`` is a generic method for all finite semigroups::
 
-    sage: x.__pow__.__module__
+    sage: x._pow_int.__module__
     'sage.categories.semigroups'
 
 ``__mul__`` is a generic method provided by the :class:`Magmas`
@@ -1599,7 +1600,7 @@ elements). For instance::
     2*x*y
     sage: P.prod.__module__
     'sage.categories.monoids'
-    sage: P.prod.__func__ is Monoids().ParentMethods.prod.__func__
+    sage: P.prod.__func__ is raw_getattr(Monoids().ParentMethods, "prod")
     True
 
 We recommend to study the code of one example::
@@ -1629,7 +1630,7 @@ methods ``foo`` in `C_1` and `C_2` must have the same semantic. Code
 should not rely on any specific order, as it is subject to later
 change. Whenever one of the implementations is preferred in some common
 subcategory of `C_1` and `C_2`, for example for efficiency reasons,
-the ambiguity should be resolved explicitly by definining a
+the ambiguity should be resolved explicitly by defining a
 method ``foo`` in this category. See the method ``some_elements`` in
 the code of the category :class:`FiniteCoxeterGroups` for an example.
 

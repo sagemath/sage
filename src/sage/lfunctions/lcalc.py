@@ -53,7 +53,7 @@ class LCalc(SageObject):
        function
 
     -  elliptic curve E - where E is an elliptic curve over
-       `\mathbb{Q}`; defines `L(E,s)`
+       `\QQ`; defines `L(E,s)`
 
 
     You can also use the complete command-line interface of

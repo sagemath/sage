@@ -17,7 +17,6 @@ Affinization Crystals
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
 
-from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import Element
@@ -72,7 +71,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    - [HK02]_ Chapter 10
+    - [HK2002]_ Chapter 10
     """
     def __init__(self, B):
         """

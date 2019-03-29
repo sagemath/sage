@@ -98,15 +98,14 @@ AUTHORS:
 from __future__ import print_function
 
 import os
+import re
 
-from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
-                                    AsciiArtString)
-
+from sage.interfaces.expect import Expect, ExpectElement, ExpectFunction
+from sage.interfaces.interface import AsciiArtString
 from sage.misc.multireplace import multiple_replace
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
 
-import re
 
 def remove_output_labels(s):
     r"""
@@ -425,7 +424,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: macaulay2.version() # optional - macaulay2
-            (1, 3, 1)
+            (1, 1...
         """
         s = self.eval("version")
         r = re.compile("VERSION => (.*?)\n")
@@ -519,8 +518,8 @@ class Macaulay2(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: macaulay2.help("load")  # optional - macaulay2
-            load -- read Macaulay2 commands
-            *******************************
+            load ...
+            ****...
             ...
               * "input" -- read Macaulay2 commands and echo
               * "notify" -- whether to notify the user when a file is loaded
@@ -607,7 +606,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 @instancedoc
 class Macaulay2Element(ExtraTabCompletion, ExpectElement):
     def _latex_(self):
-        """
+        r"""
         EXAMPLES::
 
             sage: m = macaulay2('matrix {{1,2},{3,4}}') # optional - macaulay2
@@ -615,7 +614,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
             | 1 2 |
             | 3 4 |
             sage: latex(m) # optional - macaulay2
-            \begin{pmatrix}1& {2}\\ {3}& {4}\\ \end{pmatrix}
+            \begin{pmatrix}1& 2\\ 3& 4\\ \end{pmatrix}
         """
         s = self.tex().external_string().strip('"').strip('$').replace('\\\\','\\')
         s = s.replace(r"\bgroup","").replace(r"\egroup","")
@@ -661,7 +660,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
 
            sage: R = macaulay2("QQ[symbol x, symbol y]")  # optional - macaulay2
            sage: R.external_string()                      # optional - macaulay2
-           'QQ[x..y, Degrees => {2:1}, Heft => {1}, MonomialOrder => VerticalList{MonomialSize => 32, GRevLex => {2:1}, Position => Up}, DegreeRank => 1]'
+           'QQ(monoid[x..y, Degrees => {2:1}, Heft => {1}, MonomialOrder => VerticalList{MonomialSize => 32, GRevLex => {2:1}, Position => Up}, DegreeRank => 1])'
         """
         P = self._check_valid()
         code = 'toExternalString(%s)'%self.name()
@@ -908,7 +907,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
                 if parent currentClass === currentClass then break;
                 currentClass = parent currentClass;
                 )
-            toString total""" % self.name())
+            print toString total""" % self.name())
         r = sorted(r[1:-1].split(", "))
         return r
 
@@ -1042,6 +1041,11 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
             sage: I.to_sage()                      # optional - macaulay2
             Ideal (x, y) of Multivariate Polynomial Ring in x, y over Rational Field
 
+            sage: macaulay2("x = symbol x")           # optional - macaulay2
+            x
+            sage: macaulay2("QQ[x_0..x_2]").to_sage() # optional - macaulay2
+            Multivariate Polynomial Ring in x_0, x_1, x_2 over Rational Field
+
             sage: X = R/I       # optional - macaulay2
             sage: X.to_sage()   # optional - macaulay2
             Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x, y)
@@ -1100,7 +1104,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
                 base_ring = self.coefficientRing().to_sage()
 
                 #Get a string list of generators
-                gens = str(self.gens())[1:-1]
+                gens = str(self.gens().toString())[1:-1]
 
                 # Check that we are dealing with default degrees, i.e. 1's.
                 if self.degrees().any("x -> x != {1}").to_sage():
@@ -1174,8 +1178,8 @@ class Macaulay2Function(ExpectFunction):
         EXAMPLES::
 
             sage: print(macaulay2.load.__doc__)  # optional - macaulay2
-            load -- read Macaulay2 commands
-            *******************************
+            load ...
+            ****...
             ...
               * "input" -- read Macaulay2 commands and echo
               * "notify" -- whether to notify the user when a file is loaded

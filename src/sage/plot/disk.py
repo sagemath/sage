@@ -49,7 +49,7 @@ class Disk(GraphicPrimitive):
         sage: from sage.plot.disk import Disk
         sage: D = Disk((1,2), 2, (pi/2,pi), {'zorder':3})
         sage: D
-        Disk defined by (1.0,2.0) with r=2.0 spanning (1.57079632679, 3.14159265359) radians
+        Disk defined by (1.0,2.0) with r=2.0 spanning (1.5707963267..., 3.1415926535...) radians
         sage: D.options()['zorder']
         3
         sage: D.x
@@ -141,9 +141,9 @@ class Disk(GraphicPrimitive):
 
             sage: P = disk((3, 3), 1, (0, pi/2))
             sage: p = P[0]; p
-            Disk defined by (3.0,3.0) with r=1.0 spanning (0.0, 1.57079632679) radians
+            Disk defined by (3.0,3.0) with r=1.0 spanning (0.0, 1.5707963267...) radians
         """
-        return "Disk defined by (%s,%s) with r=%s spanning (%s, %s) radians"%(self.x,
+        return "Disk defined by (%s,%s) with r=%s spanning (%s, %s) radians" % (self.x,
         self.y, self.r, self.rad1, self.rad2)
 
     def _render_on_subplot(self, subplot):
@@ -285,7 +285,7 @@ def disk(point, radius, angle, **options):
         sage: d
         Graphics3d Object
         sage: type(d)
-        <type 'sage.plot.plot3d.index_face_set.IndexFaceSet'>
+        <... 'sage.plot.plot3d.index_face_set.IndexFaceSet'>
 
     Extra options will get passed on to ``show()``, as long as they are valid::
 

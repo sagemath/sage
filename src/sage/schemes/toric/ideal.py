@@ -429,7 +429,7 @@ class ToricIdeal(MPolynomialIdeal):
         """
         N = self.nvariables()
         y = list(ring.gens())
-        x = [ y[i-n] for i in range(0,N) ]
+        x = [ y[i-n] for i in range(N) ]
         y_to_x = dict(zip(x,y))
         x_to_y = dict(zip(y,x))
         # swap variables such that the n-th variable becomes the last one
@@ -440,17 +440,18 @@ class ToricIdeal(MPolynomialIdeal):
         # [GRIN]?
         basis = J.groebner_basis()
 
-        x_n = y[0]   # the cheapest variable in the revlex order
-        def subtract(e,power):
+        # x_n = y[0]   # the cheapest variable in the revlex order
+        def subtract(e, power):
             l = list(e)
             return tuple([l[0]-power] + l[1:])
+
         def divide_by_x_n(p):
             d_old = p.dict()
             power = min([ e[0] for e in d_old.keys() ])
-            d_new = dict( (subtract(exponent,power), coefficient)
+            d_new = dict( (subtract(exponent, power), coefficient)
                           for exponent, coefficient in six.iteritems(d_old) )
             return p.parent()(d_new)
-        basis = [divide_by_x_n(_) for _ in basis]
+        basis = [divide_by_x_n(b) for b in basis]
         quotient = ring.ideal(basis)
         return quotient.subs(x_to_y)
 

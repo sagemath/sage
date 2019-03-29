@@ -1,8 +1,3 @@
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    exit 1
-fi
-
 cd src/
 
 # Use newer version of config.guess and config.sub (see Trac #19724)
@@ -55,16 +50,6 @@ if [ -n "$system_gmp_h" ]; then
     case "$system_gmp_cflags" in __MPIR_CFLAGS|"")
         system_gmp_cflags=`sed -n -e "${gmp_cflags_pat/GMP/MPIR}" $system_gmp_h`
     esac
-fi
-
-
-if [ "$SAGE64" = yes ]; then
-    echo "Building a 64-bit version of GMP-ECM."
-    if [ -z "$CFLAG64" ]; then
-        CFLAG64=-m64
-    fi
-    CFLAGS="$CFLAGS $CFLAG64"
-    LDFLAGS="$LDFLAGS $CFLAG64"; export LDFLAGS
 fi
 
 
@@ -236,26 +221,13 @@ if [ -z "$ECM_CONFIGURE" ]; then
 fi
 echo
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
-            --with-gmp="$SAGE_LOCAL" \
-            $ECM_CONFIGURE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring GMP-ECM."
-    echo >&2 "(See above for the options passed to its 'configure'.)"
-    exit 1
-fi
+sdh_configure --with-gmp="$SAGE_LOCAL" $ECM_CONFIGURE
 
 ###############################################################################
 # Now build ECM:
 ###############################################################################
 
-echo
-echo "Now building GMP-ECM..."
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building GMP-ECM."
-    exit 1
-fi
+sdh_make
 
 ###############################################################################
 # Remove old executable/header/libraries/manpage:
@@ -272,9 +244,4 @@ rm -f "$SAGE_LOCAL"/share/man/man1/ecm.1
 # Now install ECM:
 ###############################################################################
 
-echo "Now installing GMP-ECM..."
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing GMP-ECM (though it appears to have built fine)."
-    exit 1
-fi
+sdh_make_install

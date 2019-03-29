@@ -135,7 +135,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         sage: p['something']
         Traceback (most recent call last):
         ...
-        ValueError: ['s', 'o', 'm', 'e', 't', 'h', 'i', 'n', 'g'] is not an element of Partitions
+        ValueError: all parts of 'something' should be nonnegative integers
         sage: p.basis()['something']
         p'something'
 
@@ -550,6 +550,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     * Jack bases
     * Macdonald bases
     * `k`-Schur functions
+    * Hecke character basis
 
     We briefly demonstrate how to access these bases. For more information, see
     the documentation of the individual bases.
@@ -577,6 +578,16 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         sage: P = Mcd.P(); J = Mcd.J(); Q = Mcd.Q()
         sage: J(P[2,1])
         (1/(-q*t^4+2*q*t^3-q*t^2+t^2-2*t+1))*McdJ[2, 1]
+
+    We can also construct the `\bar{q}` basis that can be used
+    to determine character tables for Hecke algebras (with quadratic
+    relation `T_i^2 = (1-q) T_i + q`)::
+
+        sage: Sym = SymmetricFunctions(ZZ['q'].fraction_field())
+        sage: qbar = Sym.hecke_character()
+        sage: s = Sym.s()
+        sage: s(qbar[2,1])
+        -s[1, 1, 1] + (q-1)*s[2, 1] + q*s[3]
 
     .. rubric:: `k`-Schur functions
 
@@ -638,8 +649,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         sage: ksp3 = SymS3.ksplit()
         sage: ksp3(Qp[2,1,1,1])
         ksp3[2, 1, 1, 1] + t^2*ksp3[2, 2, 1] + (t^3+t^2)*ksp3[3, 1, 1] + t^4*ksp3[3, 2]
-        sage: [ks(ksp3(la)) for la in ksp3(Qp[2,1,1,1]).support()]
-        [ks3[2, 2, 1], ks3[2, 1, 1, 1] + t*ks3[2, 2, 1], ks3[3, 2], ks3[3, 1, 1]]
+        sage: [ks(ksp3(la)) for la in sorted(ksp3(Qp[2,1,1,1]).support())]
+        [ks3[2, 1, 1, 1] + t*ks3[2, 2, 1], ks3[2, 2, 1], ks3[3, 1, 1], ks3[3, 2]]
 
     .. rubric:: dual `k`-Schur functions
 
@@ -993,12 +1004,13 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             -s[2, 2, 2]
             sage: list(SymmetricGroup(5).character_table()[-2])
             [4, 2, 0, 1, -1, 0, -1]
-            sage: list(reversed([st([1]).eval_at_permutation_roots(rho) \
+            sage: list(reversed([st([1]).eval_at_permutation_roots(rho)
             ....:   for rho in Partitions(5)]))
             [4, 2, 0, 1, -1, 0, -1]
         """
         from .character import irreducible_character_basis
         return irreducible_character_basis(self, 'st')
+
     st = irreducible_symmetric_group_character
 
     def induced_trivial_character(self):
@@ -1035,7 +1047,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: SymmetricFunctions(QQ).induced_trivial_character()
-            Symmetric Functions over Rational Field in the induced trivial character basis
+            Symmetric Functions over Rational Field in the induced trivial symmetric group character basis
             sage: ht = SymmetricFunctions(QQ).ht()
             sage: h = SymmetricFunctions(QQ).h()
             sage: h(ht([3,2]).character_to_frobenius_image(9))
@@ -1052,9 +1064,11 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: [ht([1]).eval_at_permutation_roots(rho) for rho in Partitions(5)]
             [0, 1, 0, 2, 1, 3, 5]
         """
-        from .character import character_basis
-        return character_basis(self, self.h(), "induced trivial character", 'ht')
+        from .character import induced_trivial_character_basis
+        return induced_trivial_character_basis(self, 'ht')
+
     ht = induced_trivial_character
+
 
     def forgotten(self):
         r"""
@@ -1170,6 +1184,24 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         from . import orthogonal
         return orthogonal.SymmetricFunctionAlgebra_orthogonal(self)
     o = orthogonal
+
+    def hecke_character(self, q='q'):
+        """
+        The basis of symmetric functions that determines the character
+        tables for Hecke algebras.
+
+        EXAMPLES::
+
+            sage: SymmetricFunctions(ZZ['q'].fraction_field()).hecke_character()
+            Symmetric Functions over
+             Fraction Field of Univariate Polynomial Ring in q over Integer Ring
+             in the Hecke character with q=q basis
+            sage: SymmetricFunctions(QQ).hecke_character(1/2)
+            Symmetric Functions over Rational Field in the Hecke character with q=1/2 basis
+        """
+        from sage.combinat.sf.hecke import HeckeCharacter
+        return HeckeCharacter(self, q)
+    qbar = hecke_character
 
     def macdonald(self, q='q', t='t'):
         r"""
@@ -1341,7 +1373,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         return self.m().from_polynomial(f)
 
     def register_isomorphism(self, morphism, only_conversion=False):
-        """
+        r"""
         Register an isomorphism between two bases of ``self``, as a canonical coercion
         (unless the optional keyword ``only_conversion`` is set to ``True``,
         in which case the isomorphism is registered as conversion only).
@@ -1429,7 +1461,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         The subspace of the ring of symmetric functions spanned by
         `\{ s_{\lambda}[X/(1-t)] \}_{\lambda_1\le k} = \{ s_{\lambda}^{(k)}[X,t]\}_{\lambda_1 \le k}`
-        over the base ring `\mathbb{Q}[t]`. When `t=1`, this space is in fact a subalgebra of
+        over the base ring `\QQ[t]`. When `t=1`, this space is in fact a subalgebra of
         the ring of symmetric functions generated by the complete homogeneous symmetric functions
         `h_i` for `1\le i \le k`.
 

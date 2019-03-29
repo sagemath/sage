@@ -25,11 +25,11 @@ generally, all sage expression as an ASCII art object::
     sage: shell = get_test_shell()
     sage: shell.run_cell('%display ascii_art')
     sage: shell.run_cell('integral(x^2/pi^x, x)')
-     / 2    2                      \  -x*log(pi)
-    -\x *log (pi) + 2*x*log(pi) + 2/*e
-    ---------------------------------------------
-                         3
-                      log (pi)
+       -x / 2    2                      \ 
+    -pi  *\x *log (pi) + 2*x*log(pi) + 2/ 
+    --------------------------------------
+                     3                   
+                   log (pi)               
     sage: shell.run_cell("i = var('i')")
     sage: shell.run_cell('sum(i*x^i, i, 0, 10)')
         10      9      8      7      6      5      4      3      2
@@ -60,11 +60,9 @@ This other facility uses a simple
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
 from IPython.core.formatters import DisplayFormatter, PlainTextFormatter
-from IPython.utils.py3compat import str_to_unicode, unicode_to_str
+from IPython.utils.py3compat import unicode_to_str
 
-from sage.structure.sage_object import SageObject
 from sage.repl.display.pretty_print import SagePrettyPrinter
 
 
@@ -175,7 +173,7 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell.run_cell('ipython_image')
             <IPython.core.display.Image object>
             sage: shell.run_cell('get_ipython().display_formatter.format(ipython_image)')
-            ({u'image/png': '\x89PNG...',
+            ({u'image/png': ...'\x89PNG...',
               u'text/plain': u'<IPython.core.display.Image object>'},
             {})
 

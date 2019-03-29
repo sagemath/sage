@@ -216,7 +216,7 @@ class Manifolds(Category_over_base_ring):
 
         @cached_method
         def Complex(self):
-            """
+            r"""
             Return the subcategory of manifolds over `\CC` of ``self``.
 
             EXAMPLES::

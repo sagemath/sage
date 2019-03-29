@@ -13,7 +13,7 @@ docstrings.
 -  Catalan numbers, :func:`catalan_number` (not to be
    confused with the Catalan constant)
 
--  Eulerian/Euler numbers, :func:`euler_number` (Maxima)
+-  Euler numbers, :func:`euler_number` (Maxima)
 
 -  Fibonacci numbers, :func:`fibonacci` (PARI) and
    :func:`fibonacci_number` (GAP) The PARI version is
@@ -177,7 +177,7 @@ def bell_number(n, algorithm='flint', **options):
 
       - ``'flint'`` -- Wrap FLINT's ``arith_bell_number``
 
-      - ``'gap'`` -- Wrap libGAP's ``Bell``
+      - ``'gap'`` -- Wrap GAP's ``Bell``
 
       - ``'mpmath'`` -- Wrap mpmath's ``bell``
 
@@ -662,11 +662,11 @@ def lucas_number2(n, P, Q):
         sage: n = lucas_number2(5,2,3); n
         2
         sage: type(n)
-        <type 'sage.rings.integer.Integer'>
+        <... 'sage.rings.integer.Integer'>
         sage: n = lucas_number2(5,2,-3/9); n
         418/9
         sage: type(n)
-        <type 'sage.rings.rational.Rational'>
+        <... 'sage.rings.rational.Rational'>
 
     The case `P=1`, `Q=-1` is the Lucas sequence in Brualdi's Introductory
     Combinatorics, 4th ed., Prentice-Hall, 2004::
@@ -687,7 +687,9 @@ def stirling_number1(n, k):
 
     This is the number of permutations of `n` points with `k` cycles.
 
-    This wraps GAP's Stirling1.
+    This wraps GAP's ``Stirling1``.
+
+    See :wikipedia:`Stirling_numbers_of_the_first_kind`.
 
     EXAMPLES::
 
@@ -702,13 +704,14 @@ def stirling_number1(n, k):
 
     Indeed, `S_1(n,k) = S_1(n-1,k-1) + (n-1)S_1(n-1,k)`.
     """
-    n = ZZ(n);  k = ZZ(k)
+    n = ZZ(n)
+    k = ZZ(k)
     from sage.libs.gap.libgap import libgap
     return libgap.Stirling1(n, k).sage()
 
 
 def stirling_number2(n, k, algorithm=None):
-    """
+    r"""
     Return the `n`-th Stirling number `S_2(n,k)` of the second
     kind (the number of ways to partition a set of `n` elements into `k`
     pairwise disjoint nonempty subsets). (The `n`-th Bell number is the
@@ -777,17 +780,17 @@ def stirling_number2(n, k, algorithm=None):
         sage: n
         1900842429486
         sage: type(n)
-        <type 'sage.rings.integer.Integer'>
+        <... 'sage.rings.integer.Integer'>
         sage: n = stirling_number2(20,11,algorithm='gap')
         sage: n
         1900842429486
         sage: type(n)
-        <type 'sage.rings.integer.Integer'>
+        <... 'sage.rings.integer.Integer'>
         sage: n = stirling_number2(20,11,algorithm='maxima')
         sage: n
         1900842429486
         sage: type(n)
-        <type 'sage.rings.integer.Integer'>
+        <... 'sage.rings.integer.Integer'>
 
      Sage's implementation splitting the computation of the Stirling
      numbers of the second kind in two cases according to `n`, let us
@@ -831,7 +834,7 @@ def stirling_number2(n, k, algorithm=None):
         from sage.libs.gap.libgap import libgap
         return libgap.Stirling2(n, k).sage()
     elif algorithm == 'maxima':
-        return ZZ(maxima.eval("stirling2(%s,%s)"%(n, k)))
+        return ZZ(maxima.eval("stirling2(%s,%s)" % (n, k)))
     else:
         raise ValueError("unknown algorithm: %s" % algorithm)
 
@@ -1332,25 +1335,6 @@ class CombinatorialClass(Parent):
         """
         Parent.__init__(self, category = EnumeratedSets().or_subcategory(category))
 
-
-    def __len__(self):
-        """
-        __len__ has been removed ! to get the number of element in a
-        combinatorial class, use .cardinality instead.
-
-
-        TESTS::
-
-            sage: class C(CombinatorialClass):
-            ....:     def __iter__(self):
-            ....:         return iter([1,2,3])
-            sage: len(C())
-            Traceback (most recent call last):
-            ...
-            AttributeError: __len__ has been removed; use .cardinality() instead
-        """
-        raise AttributeError("__len__ has been removed; use .cardinality() instead")
-
     def is_finite(self):
         """
         Returns whether self is finite or not.
@@ -1506,7 +1490,7 @@ class CombinatorialClass(Parent):
         if x in self:
             return self._element_constructor_(x)
         else:
-            raise ValueError("%s not in %s"%(x, self))
+            raise ValueError("%s not in %s" % (x, self))
 
     Element = CombinatorialObject # mostly for backward compatibility
     @lazy_attribute
@@ -1715,7 +1699,7 @@ class CombinatorialClass(Parent):
             if counter == r:
                 return u
             counter += 1
-        raise ValueError("the value must be between %s and %s inclusive"%(0,counter-1))
+        raise ValueError("the value must be between %s and %s inclusive" % (0, counter - 1))
 
     #Set the default implementation of unrank
     unrank = __unrank_from_iterator
@@ -2006,7 +1990,7 @@ class UnionCombinatorialClass(CombinatorialClass):
         if self._name:
             return self._name
         else:
-            return "Union combinatorial class of \n    %s\nand\n    %s"%(self.left_cc, self.right_cc)
+            return "Union combinatorial class of \n    %s\nand\n    %s" % (self.left_cc, self.right_cc)
 
     def __contains__(self, x):
         """
@@ -2207,7 +2191,7 @@ class MapCombinatorialClass(CombinatorialClass):
         if self._name:
             return self._name
         else:
-            return "Image of %s by %s"%(self.cc, self.f)
+            return "Image of %s by %s" % (self.cc, self.f)
 
     def cardinality(self):
         """
@@ -2243,7 +2227,7 @@ class MapCombinatorialClass(CombinatorialClass):
 
             sage: R = SymmetricGroup(10).map(attrcall('reduced_word'))
             sage: R.an_element()
-            [9, 8, 7, 6, 5, 4, 3, 2, 1]
+            [9, 8, 7, 6, 5, 4, 3, 2]
         """
         return self.f(self.cc.an_element())
 
@@ -2688,7 +2672,7 @@ def bell_polynomial(n, k):
 
     REFERENCES:
 
-    - E.T. Bell, "Partition Polynomials"
+    - [Bel1927]_
 
     AUTHORS:
 

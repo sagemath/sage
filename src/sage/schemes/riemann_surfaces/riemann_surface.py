@@ -1,24 +1,25 @@
 r"""
-Computation of Riemann matrices and endomorphism rings of algebraic Riemann surfaces.
+Riemann matrices and endomorphism rings of algebraic Riemann surfaces
 
 This module provides a class, RiemannSurface, to model the Riemann surface
 determined by a plane algebraic curve over a subfield of the complex numbers.
 
-A homology basis is derived from the edges of a Voronoi cell decomposition based on
-the branch locus. The pull-back of these edges to the Riemann surface provides
-a graph on it that contains a homology basis.
+A homology basis is derived from the edges of a Voronoi cell decomposition based
+on the branch locus. The pull-back of these edges to the Riemann surface
+provides a graph on it that contains a homology basis.
 
 The class provides methods for computing the Riemann period matrix of the
 surface numerically, using a certified homotopy continuation method due to
 [Kr2016].
 
 The class also provides facilities for computing the endomorphism ring of the
-period lattice numerically, by determining integer (near) solutions to the relevant
-approximate linear equations.
+period lattice numerically, by determining integer (near) solutions to the
+relevant approximate linear equations.
 
 AUTHORS:
 
 - Alexandre Zotine, Nils Bruin (2017-06-10): initial version
+- Nils Bruin, Jeroen Sijsling (2018-01-05): algebraization, isomorphisms
 
 EXAMPLES:
 
@@ -35,7 +36,7 @@ the imaginary part is positive definite::
 
     sage: all(abs(a) < 1e-20 for a in (M-M.T).list())
     True
-    sage: iM=Matrix(RDF,3,3,[a.imag_part() for a in M.list()])
+    sage: iM = Matrix(RDF,3,3,[a.imag_part() for a in M.list()])
     sage: iM.is_positive_definite()
     True
 
@@ -51,47 +52,51 @@ In fact it is an order in a number field::
     sage: K.<a>=NumberField(t^6 - t^5 + 2*t^4 + 8*t^3 - t^2 - 5*t + 7)
     sage: all(len(a.minpoly().roots(K)) == a.minpoly().degree() for a in A)
     True
-
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Alexandre Zotine, Nils Bruin
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import division
+from six.moves import range
 
-from scipy.spatial import Voronoi, voronoi_plot_2d
-from sage.misc.cachefunc import cached_method
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.complex_field import ComplexField, CDF
-from sage.rings.real_mpfr import RealField
-from sage.rings.real_double import RDF
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+from scipy.spatial import Voronoi
+from sage.arith.misc import GCD, algdep
 from sage.arith.srange import srange
 from sage.ext.fast_callable import fast_callable
 from sage.graphs.graph import Graph
-from sage.matrix.constructor import Matrix
+from sage.groups.matrix_gps.finitely_generated import MatrixGroup
+from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+from sage.matrix.constructor import Matrix, matrix
+from sage.matrix.special import block_matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
 from sage.modules.free_module import VectorSpace
 from sage.numerical.gauss_legendre import integrate_vector
-from sage.misc.misc_c import prod
-import operator
+from sage.rings.complex_field import ComplexField, CDF
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.qqbar import number_field_elements_from_algebraics
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RealField
+import sage.libs.mpmath.all as mpall
+
 
 def voronoi_ghost(cpoints, n=6, CC=CDF):
     r"""
-    Convert a set of complex points to a list of real tuples `(x,y)`,
-    and appends n points in a big circle around them.
+    Convert a set of complex points to a list of real tuples `(x,y)`, and
+    appends n points in a big circle around them.
 
     The effect is that, with n >= 3, a Voronoi decomposition will have only
-    finite cells around the original points. Furthermore, because
-    the extra points are placed on a circle centered on the average of the given
-    points, with a radius 3/2 times the largest distance between the center and
-    the given points, these finite cells form a simply connected region.
+    finite cells around the original points. Furthermore, because the extra
+    points are placed on a circle centered on the average of the given points,
+    with a radius 3/2 times the largest distance between the center and the
+    given points, these finite cells form a simply connected region.
 
     INPUT:
 
@@ -99,8 +104,8 @@ def voronoi_ghost(cpoints, n=6, CC=CDF):
 
     OUTPUT:
 
-    A list of real tuples `(x,y)` consisting of the original points and a set
-    of points which surround them.
+    A list of real tuples `(x,y)` consisting of the original points and a set of
+    points which surround them.
 
     EXAMPLES::
 
@@ -128,13 +133,14 @@ def voronoi_ghost(cpoints, n=6, CC=CDF):
     extra_points = [average+radius*z**i for i in range(n)]
     return [(c.real_part(),c.imag_part()) for c in cpoints+extra_points]
 
-def bisect(L,t):
+
+def bisect(L, t):
     r"""
     Find position in a sorted list using bisection.
 
-    Given a list `L = [(t_0,...),(t_1,...),...(t_n,...)]` with
-    increasing t_i, find the index i such that `t_i <= t < t_{i+1}` using bisection.
-    The rest of the tuple is available for whatever use required.
+    Given a list `L = [(t_0,...),(t_1,...),...(t_n,...)]` with increasing `t_i`,
+    find the index i such that `t_i <= t < t_{i+1}` using bisection. The rest of
+    the tuple is available for whatever use required.
 
     INPUT:
 
@@ -164,7 +170,6 @@ def bisect(L,t):
         sage: t = 0.5
         sage: bisect(L,t)
         3
-
     """
     # Defining starting indices for the loop.
     min = 0
@@ -188,6 +193,41 @@ def bisect(L,t):
     # Once the loop terminates, we return what the indices converged to.
     return min
 
+def numerical_inverse(C):
+    """
+    Compute numerical inverse of a matrix via LU decomposition
+
+    INPUT:
+
+    - ``C`` -- A real or complex invertible square matrix
+
+    EXAMPLES::
+
+        sage: C=matrix(CC,3,3,[-4.5606e-31 + 1.2326e-31*I,
+        ....: -0.21313 + 0.24166*I,
+        ....: -3.4513e-31 + 0.16111*I,
+        ....: -1.0175 + 9.8608e-32*I,
+        ....: 0.30912 + 0.19962*I,
+        ....: -4.9304e-32 + 0.39923*I,
+        ....: 0.96793 - 3.4513e-31*I,
+        ....: -0.091587 + 0.19276*I,
+        ....: 3.9443e-31 + 0.38552*I])
+        sage: from sage.schemes.riemann_surfaces.riemann_surface import numerical_inverse
+        sage: max(abs(c) for c in (C^(-1)*C-C^0).list()) < 1e-10
+        False
+        sage: max(abs(c) for c in (numerical_inverse(C)*C-C^0).list()) < 1e-10
+        True
+    """
+    R=C.parent()
+    prec = R.base_ring().prec()
+    mpall.mp.prec = prec
+    with mpall.workprec(prec):
+        Cmp=mpall.matrix([mpall.sage_to_mpmath(list(c),prec) for c in C])
+        PLU=mpall.lu(Cmp)
+    P,L,U=[ R([mpall.mpmath_to_sage(c,prec) for c in M]) for M in PLU]
+    return U.inverse()*L.inverse()*P
+
+
 class ConvergenceError(ValueError):
     r"""
     Error object suitable for raising and catching when Newton iteration fails.
@@ -204,6 +244,76 @@ class ConvergenceError(ValueError):
     """
     pass
 
+def differential_basis_baker(f):
+    r"""
+    Compute a differential bases for a curve that is nonsingular outside (1:0:0),(0:1:0),(0:0:1)
+
+    Baker's theorem tells us that if a curve has its singularities at the coordinate vertices and meets
+    some further easily tested genericity criteria,
+    then we can read off a basis for the regular differentials from the interior of the
+    Newton polygon spanned by the monomials. While this theorem only applies to special plane curves
+    it is worth implementing because the analysis is relatively cheap and it applies to a lot of
+    commonly encountered curves (e.g., curves given by a hyperelliptic model). Other advantages include
+    that we can do the computation over any exact base ring (the alternative Singular based method for
+    computing the adjoint ideal requires the rationals), and that we can avoid being affected by subtle bugs
+    in the Singular code.
+
+    ``None`` is returned when ``f`` does not describe a curve of the relevant type. If ``f`` is of the relevant
+    type, but is of genus `0` then ``[]`` is returned (which are both False values, but they are not equal).
+
+    INPUT:
+
+    - `f` -- a bivariate polynomial
+
+    EXAMPLES::
+
+        sage: from sage.schemes.riemann_surfaces.riemann_surface import differential_basis_baker
+        sage: R.<x,y>=QQ[]
+        sage: f=x^3+y^3+x^5*y^5
+        sage: differential_basis_baker(f)
+        [y^2, x*y, x*y^2, x^2, x^2*y, x^2*y^2, x^2*y^3, x^3*y^2, x^3*y^3]
+        sage: f=y^2-(x-3)^2*x
+        sage: differential_basis_baker(f) is None
+        True
+        sage: differential_basis_baker(x^2+y^2-1)
+        []
+
+    TESTS::
+
+        sage: from sage.schemes.riemann_surfaces.riemann_surface import differential_basis_baker
+        sage: R.<x,y>=QQ[]
+        sage: f = y^12 - x*(x - 1)^7
+        sage: differential_basis_baker(f) is None
+        True
+
+    """
+    k = f.base_ring()
+    R = PolynomialRing(k,3,"x,y,z")
+    x,y,z = R.gens()
+    F = f(x/z,y/z).numerator()
+    W = [F] + [F.derivative(v) for v in R.gens()]
+    #we check that the singularities lie at (1:0:0),(0:1:0),(0:0:1)
+    #by checking that the eliminations of x, y, z result in (principal) ideals
+    #generated by a monomial. This is a sufficient condition, but not completely necessary.
+    #It's cheap to check, though.
+    for c in R.gens():
+        B = GCD([W[i].resultant(W[j],c) for i in range(4) for j in range(i)])
+        if len(B.monomials()) > 1:
+            return None
+    from sage.geometry.polyhedron.constructor import Polyhedron
+    D = { (k[0],k[1]): v for k,v in f.dict().items() }
+    P = Polyhedron(D)
+    kT = k['t']
+    #here we check the additional genericity conditions: that the polynomials
+    #along the edges of the newton polygon are square-free.
+    for e in P.bounded_edges():
+        h=kT([D.get(tuple(c),0) for c in Polyhedron(e).integral_points()])
+        if not h.is_squarefree():
+            return None
+    x,y = f.parent().gens()
+    return [x**(a[0]-1)*y**(a[1]-1) for a in P.integral_points() if P.interior_contains(a)]
+
+
 class RiemannSurface(object):
     r"""
     Construct a Riemann Surface. This is specified by the zeroes of a bivariate
@@ -211,25 +321,25 @@ class RiemannSurface(object):
 
     INPUT:
 
-    - ``f`` -- a bivariate polynomial with rational coefficients.
-      The surface is interpreted as the covering space of the
-      coordinate plane in the first variable.
+    - ``f`` -- a bivariate polynomial with rational coefficients. The surface is
+      interpreted as the covering space of the coordinate plane in the first
+      variable.
 
-    - ``prec`` -- the desired precision of computations on the surface
-      in bits (default: 53)
+    - ``prec`` -- the desired precision of computations on the surface in bits
+      (default: 53)
 
     - ``certification`` -- a boolean (default: True) value indicating whether
-      homotopy continuation is certified or not. Uncertified homotopy continuation
-      can be faster.
+      homotopy continuation is certified or not. Uncertified homotopy
+      continuation can be faster.
 
     - ``differentials`` -- (default: None). If specified, provides a list of
       polynomials `h` such that `h/(df/dw) dz` is a regular differential on the
       Riemann surface. This is taken as a basis of the regular differentials, so
-      the genus is assumed to be equal to the length of this list. The results from
-      the homology basis computation are checked against this value. Providing this
-      parameter makes the computation independent from Singular. For a nonsingular
-      plane curve of degree `d`, an appropriate set is given by the monomials of degree
-      up to `d-3`.
+      the genus is assumed to be equal to the length of this list. The results
+      from the homology basis computation are checked against this value.
+      Providing this parameter makes the computation independent from Singular.
+      For a nonsingular plane curve of degree `d`, an appropriate set is given
+      by the monomials of degree up to `d-3`.
 
     EXAMPLES::
 
@@ -248,9 +358,9 @@ class RiemannSurface(object):
 
     We can also work with Riemann surfaces that are defined over fields with a
     complex embedding, but since the current interface for computing genus and
-    regular differentials in Singular presently does not support extensions of QQ,
-    we need to specify a description of the differentials ourselves. We give an
-    example of a CM elliptic curve::
+    regular differentials in Singular presently does not support extensions of
+    QQ, we need to specify a description of the differentials ourselves. We give
+    an example of a CM elliptic curve::
 
         sage: Qt.<t> = QQ[]
         sage: K.<a> = NumberField(t^2-t+3,embedding=CC(0.5+1.6*I))
@@ -265,9 +375,10 @@ class RiemannSurface(object):
 
     TESTS:
 
-    This elliptic curve has a relatively poorly conditioned set of branch points,
-    so it challenges the path choice a bit. The code just verifies that the period is quadratic,
-    because the curve has CM, but really the test is that the computation completes at all.::
+    This elliptic curve has a relatively poorly conditioned set of branch
+    points, so it challenges the path choice a bit. The code just verifies that
+    the period is quadratic, because the curve has CM, but really the test is
+    that the computation completes at all.::
 
         sage: prec = 50
         sage: Qx.<t> = QQ[]
@@ -281,7 +392,6 @@ class RiemannSurface(object):
         sage: tau = S.riemann_matrix()[0, 0]
         sage: tau.algdep(6).degree() == 2
         True
-
     """
     def __init__(self, f, prec=53, certification=True, differentials=None):
         r"""
@@ -291,7 +401,6 @@ class RiemannSurface(object):
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: S = RiemannSurface(w^2 - z^3 + 1)
             sage: TestSuite(S).run() #not tested; Unclear what pickling strategy is best.
-
         """
         # Initializations.
         self._prec = prec
@@ -311,10 +420,15 @@ class RiemannSurface(object):
             self._differentials = [self._R(a) for a in differentials]
             self.genus = len(self._differentials)
         else:
-            self._differentials = None
-            self.genus = self._R.ideal(self.f).genus()
-            if self.genus < 0:
-                raise ValueError("Singular reports negative genus. Specify differentials manually.")
+            B = differential_basis_baker(f)
+            if B is not None:
+                self._differentials = B
+                self.genus = len(B)
+            else:
+                self._differentials = None
+                self.genus = self._R.ideal(self.f).genus()
+                if self.genus < 0:
+                    raise ValueError("Singular reports negative genus. Specify differentials manually.")
         self.degree = self.f.degree(w)
         self._dfdw = self.f.derivative(w)
         self._dfdz = self.f.derivative(z)
@@ -335,7 +449,6 @@ class RiemannSurface(object):
         self._wvalues = [self.w_values(z0) for z0 in self._vertices]
         self._Sn = SymmetricGroup(srange(self.degree))
         self._L = dict()
-        self._PM = None
         self._fastcall_f = fast_callable(f,domain=self._CC)
         self._fastcall_dfdw = fast_callable(self._dfdw,domain=self._CC)
         self._fastcall_dfdz = fast_callable(self._dfdz,domain=self._CC)
@@ -351,7 +464,6 @@ class RiemannSurface(object):
             sage: f = w^2 - z^4 + 1
             sage: RiemannSurface(f)
             Riemann surface defined by polynomial f = -z^4 + w^2 + 1 = 0, with 53 bits of precision
-
         """
         s = 'Riemann surface defined by polynomial f = %s = 0, with %s bits of precision'%(self.f, self._prec)
         return s
@@ -379,7 +491,6 @@ class RiemannSurface(object):
 
             sage: S.w_values(0) # abs tol 1e-14
             [-1.00000000000000*I, 1.00000000000000*I]
-
         """
         return self.f(z0,self._CCw.gen(0)).roots(multiplicities=False)
 
@@ -390,8 +501,8 @@ class RiemannSurface(object):
 
         OUTPUT:
 
-        A list of integer tuples corresponding to edges between vertices
-        in the Voronoi diagram.
+        A list of integer tuples corresponding to edges between vertices in the
+        Voronoi diagram.
 
         EXAMPLES:
 
@@ -439,8 +550,8 @@ class RiemannSurface(object):
         r"""
         Retun the Voronoi decomposition as a planar graph.
 
-        The result of this routine can be useful to interpret the labelling
-        of the vertices.
+        The result of this routine can be useful to interpret the labelling of
+        the vertices.
 
         OUTPUT:
 
@@ -455,9 +566,9 @@ class RiemannSurface(object):
             sage: S.downstairs_graph()
             Graph on 11 vertices
 
-        Similarly one can form the graph of the upstairs edges, which is visually
-        rather less attractive but can be instructive to verify that a homology
-        basis is likely correctly computed.::
+        Similarly one can form the graph of the upstairs edges, which is
+        visually rather less attractive but can be instructive to verify that a
+        homology basis is likely correctly computed.::
 
             sage: G=Graph(S.upstairs_edges()); G
             Graph on 22 vertices
@@ -467,7 +578,6 @@ class RiemannSurface(object):
             1
             sage: G.is_connected()
             True
-
         """
         G=Graph(self.downstairs_edges())
         G.set_pos(dict(enumerate([list(v) for v in self._vertices])))
@@ -484,7 +594,8 @@ class RiemannSurface(object):
         - ``epsilon`` -- a real number, which is the minimum distance between
           the w-values above ``z1``
 
-        - ``wvalues`` -- a list (default: None). If specified, saves recomputation.
+        - ``wvalues`` -- a list (default: ``None``). If specified, saves
+          recomputation.
 
         OUTPUT:
 
@@ -499,7 +610,7 @@ class RiemannSurface(object):
             sage: f = w^2 - z^4 + 1
             sage: S = RiemannSurface(f)
 
-        Pick a point which lies on the voronoi diagram, and compute an
+        Pick a point which lies on the Voronoi diagram, and compute an
         appropriate epsilon::
 
             sage: z1 = S._vertices[0]
@@ -509,7 +620,7 @@ class RiemannSurface(object):
             sage: S._compute_delta(z1, epsilon) # abs tol 1e-8
             0.152628501142363
 
-        If the Riemann surface doesn't have certified homotopy continuation,
+        If the Riemann surface does not have certified homotopy continuation,
         then the delta will just be the minimum distance away from a branch
         point::
 
@@ -520,35 +631,38 @@ class RiemannSurface(object):
             sage: epsilon = min([abs(currw[i] - currw[n-j-1]) for i in range(n) for j in range(n-i-1)])/3
             sage: T._compute_delta(z1, epsilon) # abs tol 1e-8
             0.381881307912987
-
         """
         if self._certification:
             if wvalues is None:
                 wvalues = self.w_values(z1)
             # For computation of rho. Need the branch locus + roots of a0.
             badpoints = self.branch_locus + self._a0roots
-            rho = min(abs(z1 - z) for z in badpoints)/2
-            Y = max(abs(self._fastcall_dfdz(z1,wi)/self._fastcall_dfdw(z1,wi)) for wi in wvalues)
+            rho = min(abs(z1 - z) for z in badpoints) / 2
+            Y = max(abs(self._fastcall_dfdz(z1, wi)/self._fastcall_dfdw(z1, wi))
+                    for wi in wvalues)
 
             # compute M
-            upperbounds = [sum(ak[k]*(abs(z1) + rho)**k for k in range(ak.degree())) for ak in self._aks]
+            upperbounds = [sum(ak[k] * (abs(z1) + rho)**k
+                               for k in range(ak.degree()))
+                           for ak in self._aks]
             upperbounds.reverse()
             # If a0 is a constant polynomial, it is obviously bounded below.
             if self._a0roots == []:
-                lowerbound = self._CC(self._a0)/2
+                lowerbound = self._CC(self._a0) / 2
             else:
-                lowerbound = self._a0[self._a0.degree()]*prod(abs((zk - z1) - rho) for zk in self._a0roots)/2
-            M = 2*max(abs((upperbounds[k]/lowerbound))**(1/(k+1)) for k in range(self.degree-1))
-            return rho*( ((rho*Y - epsilon)**2 + 4*epsilon*M).sqrt() - (rho*Y + epsilon))/(2*M - 2*rho*Y)
+                lowerbound = self._a0[self._a0.degree()]*prod(abs((zk - z1) - rho) for zk in self._a0roots) / 2
+            M = 2 * max((upperbounds[k]/lowerbound).abs().nth_root(k+1)
+                        for k in range(self.degree-1))
+            return rho*(((rho*Y - epsilon)**2 + 4*epsilon*M).sqrt() - (rho*Y + epsilon))/(2*M - 2*rho*Y)
         else:
             # Instead, we just compute the minimum distance between branch
             # points and the point in question.
-            return min([abs(b-z1) for b in self.branch_locus])/2
+            return min(abs(b - z1) for b in self.branch_locus) / 2
 
     def homotopy_continuation(self, edge):
         r"""
-        Perform homotopy continuation along an edge of the Voronoi diagram
-        using Newton iteration.
+        Perform homotopy continuation along an edge of the Voronoi diagram using
+        Newton iteration.
 
         INPUT:
 
@@ -564,21 +678,20 @@ class RiemannSurface(object):
 
         EXAMPLES:
 
-        We check that continued values along an edge correspond (up to the appropriate
-        permutation) to what is stored. Note that the permutation was originally
-        computed from this data.
+        We check that continued values along an edge correspond (up to the
+        appropriate permutation) to what is stored. Note that the permutation
+        was originally computed from this data::
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<z,w> = QQ[]
             sage: f = z^3*w + w^3 + z
             sage: S = RiemannSurface(f)
-            sage: edge1 = S.edge_permutations().keys()[0]
+            sage: edge1 = sorted(S.edge_permutations())[0]
             sage: sigma = S.edge_permutations()[edge1]
             sage: continued_values = S.homotopy_continuation(edge1)
             sage: stored_values = S.w_values(S._vertices[edge1[1]])
             sage: all( abs(continued_values[i]-stored_values[sigma(i)]) < 1e-8 for i in range(3))
             True
-
         """
         i0, i1 = edge
         ZERO = self._RR.zero()
@@ -639,8 +752,8 @@ class RiemannSurface(object):
         A list of points the same length as ``oldw`` corresponding to the new
         newton iterated points.
 
-        However, if the newton iteration exceedes the alloted attempts, or
-        exits the ``epsilon`` ball, raises a convergence error.
+        However, if the newton iteration exceedes the alloted attempts, or exits
+        the ``epsilon`` ball, raises a convergence error.
 
         EXAMPLES:
 
@@ -664,9 +777,9 @@ class RiemannSurface(object):
             sage: abs(neww[1] - oldw[1]) #abs tol 0.00000001
             0.000000000000...
 
-        Here is an example where we exit the ``epsilon`` bound. This approach
-        is based on the homotopy continuation procedure which traverses along
-        a path and attempts newton iteration::
+        Here is an example where we exit the ``epsilon`` bound. This approach is
+        based on the homotopy continuation procedure which traverses along a
+        path and attempts newton iteration::
 
             sage: g = z^3*w + w^3 + z
             sage: T = RiemannSurface(g)
@@ -677,7 +790,6 @@ class RiemannSurface(object):
             [-0.562337685361648 + 0.151166007149998*I,
              0.640201585779414 - 1.48567225836436*I,
              -0.0778639004177661 + 1.33450625121437*I]
-
         """
         # Tools of newton iteration.
         F = self._fastcall_f
@@ -730,8 +842,8 @@ class RiemannSurface(object):
 
         A complex number, which should be a w-value above ``z0``.
 
-        However, if the Newton iteration exceedes the alloted attempts, or
-        exits the ``epsilon`` ball, raises a convergence error.
+        However, if the Newton iteration exceedes the alloted attempts, or exits
+        the ``epsilon`` ball, raises a convergence error.
 
         EXAMPLES:
 
@@ -752,9 +864,9 @@ class RiemannSurface(object):
             sage: oldw - neww #abs tol 0.00000001
             0.000000000000000
 
-        Here is an example where we exit the epsilon bound. This approach
-        is based on the homotopy continuation procedure which traverses along
-        a path and attempts newton iteration::
+        Here is an example where we exit the epsilon bound. This approach is
+        based on the homotopy continuation procedure which traverses along a
+        path and attempts newton iteration::
 
             sage: g = z^3*w + w^3 + z
             sage: T = RiemannSurface(g)
@@ -763,7 +875,6 @@ class RiemannSurface(object):
             sage: oldw = T.w_values(T._vertices[2])[0]
             sage: T._newton_iteration(z0, oldw, epsilon)
             -0.562337685361648 + 0.151166007149998*I
-
         """
         F = self._fastcall_f
         dF = self._fastcall_dfdw
@@ -793,8 +904,8 @@ class RiemannSurface(object):
     @cached_method
     def upstairs_edges(self):
         r"""
-        Compute the edgeset of the lift of the downstairs graph onto the
-        Riemann surface.
+        Compute the edgeset of the lift of the downstairs graph onto the Riemann
+        surface.
 
         OUTPUT:
 
@@ -813,7 +924,6 @@ class RiemannSurface(object):
             True
             sage: {(v[0],w[0]) for v,w in edgeset} == set(S.downstairs_edges())
             True
-
         """
         edgeset = []
         n = len(self._wvalues[0])
@@ -844,8 +954,8 @@ class RiemannSurface(object):
 
         OUTPUT:
 
-        A permutation corresponding to how the roots interchange when
-        moving along the edge.
+        A permutation corresponding to how the roots interchange when moving
+        along the edge.
 
         EXAMPLES::
 
@@ -879,16 +989,16 @@ class RiemannSurface(object):
     @cached_method
     def edge_permutations(self):
         r"""
-        Compute the permutations of branches associated to each edge
+        Compute the permutations of branches associated to each edge.
 
-        Over the vertices of the Voronoi decomposition around the branch
-        locus, we label the fibres. By following along an edge, the lifts
-        of the edge induce a permutation of that labelling.
+        Over the vertices of the Voronoi decomposition around the branch locus,
+        we label the fibres. By following along an edge, the lifts of the edge
+        induce a permutation of that labelling.
 
         OUTPUT:
 
-        A dictionary with as keys the edges of the Voronoi decomposition
-        and as values the corresponding permutations.
+        A dictionary with as keys the edges of the Voronoi decomposition and as
+        values the corresponding permutations.
 
         EXAMPLES::
 
@@ -924,14 +1034,14 @@ class RiemannSurface(object):
     @cached_method
     def monodromy_group(self):
         r"""
-        Compute local monodromy generators of the riemann surface.
+        Compute local monodromy generators of the Riemann surface.
 
         For each branch point, the local monodromy is encoded by a permutation.
         The permutations returned correspond to positively oriented loops around
-        each branch point, with a fixed base point. This means the generators are
-        properly conjugated to ensure that together they generate the global monodromy.
-        The list has an entry for every finite point stored in `self.branch_locus`, plus an entry
-        for the ramification above infinity.
+        each branch point, with a fixed base point. This means the generators
+        are properly conjugated to ensure that together they generate the global
+        monodromy. The list has an entry for every finite point stored in
+        ``self.branch_locus``, plus an entry for the ramification above infinity.
 
         OUTPUT:
 
@@ -947,7 +1057,8 @@ class RiemannSurface(object):
             sage: G = S.monodromy_group(); G
             [(0,1,2), (0,1), (0,2), (1,2), (1,2), (1,2), (0,1), (0,2), (0,2)]
 
-        The permutations give the local monodromy generators for the branch points::
+        The permutations give the local monodromy generators for the branch
+        points::
 
             sage: list(zip(S.branch_locus + [unsigned_infinity], G)) #abs tol 0.0000001
             [(0.000000000000000, (0,1,2)),
@@ -965,7 +1076,6 @@ class RiemannSurface(object):
 
             sage: 2*S.genus-2 == -2*S.degree + sum(e-1 for g in G for e in g.cycle_type())
             True
-
         """
         n = len(self.branch_locus)
         G = Graph(self.downstairs_edges())
@@ -1002,19 +1112,14 @@ class RiemannSurface(object):
         P0 = loops[0][0]
         monodromy_gens = []
         edge_perms = self.edge_permutations()
+        SG = self._Sn
         for c in loops:
-            to_loop = G.shortest_path(P0,c[0])
-            to_loop_perm = reduce(
-                operator.mul,
-                (edge_perms[(to_loop[i],to_loop[i+1])]
-                    for i in range(len(to_loop)-1)),
-                self._Sn(()))
-            c_perm = reduce(
-                operator.mul,
-                (edge_perms[(c[i],c[i+1])]
-                    for i in range(len(c)-1)),
-                self._Sn(()))
-            monodromy_gens.append(to_loop_perm*c_perm*to_loop_perm**(-1))
+            to_loop = G.shortest_path(P0, c[0])
+            to_loop_perm = SG.prod(edge_perms[(to_loop[i], to_loop[i + 1])]
+                                   for i in range(len(to_loop) - 1))
+            c_perm = SG.prod(edge_perms[(c[i], c[i + 1])]
+                             for i in range(len(c) - 1))
+            monodromy_gens.append(to_loop_perm * c_perm * ~to_loop_perm)
         return monodromy_gens
 
     @cached_method
@@ -1024,12 +1129,10 @@ class RiemannSurface(object):
 
         OUTPUT:
 
-        A list of paths `L = [P_1, \dots, P_n]`.
-
-        Each path `P_i` is of the form `(k, [p_1 ... p_m, p_1])`, where
-        `k` is the number of times to traverse the path (if negative, to
-        traverse it backwards), and the `p_i` are vertices of the
-        upstairs graph.
+        A list of paths `L = [P_1, \dots, P_n]`. Each path `P_i` is of the form
+        `(k, [p_1 ... p_m, p_1])`, where `k` is the number of times to traverse
+        the path (if negative, to traverse it backwards), and the `p_i` are
+        vertices of the upstairs graph.
 
         EXAMPLES:
 
@@ -1039,29 +1142,32 @@ class RiemannSurface(object):
             sage: R.<z,w> = QQ[]
             sage: g = w^2 - z^4 + 1
             sage: S = RiemannSurface(g)
-            sage: S.homology_basis()
-            [[(1,
-               [(3, 1),
-                (5, 0),
-                (9, 0),
-                (10, 0),
-                (2, 0),
-                (4, 0),
-                (7, 1),
-                (10, 1),
-                (3, 1)])],
-             [(1,
-               [(8, 0),
-                (6, 0),
-                (7, 0),
-                (10, 0),
-                (2, 0),
-                (4, 0),
-                (7, 1),
-                (10, 1),
-                (9, 1),
-                (8, 0)])]]
-
+            sage: S.homology_basis() #random
+            [[(1, [(3, 1), (5, 0), (9, 0), (10, 0), (2, 0), (4, 0),
+                (7, 1), (10, 1), (3, 1)])],
+             [(1, [(8, 0), (6, 0), (7, 0), (10, 0), (2, 0), (4, 0),
+                (7, 1), (10, 1), (9, 1), (8, 0)])]]
+                
+        In order to check that the answer returned above is reasonable, we
+        test some basic properties. We express the faces of the downstairs graph
+        as ZZ-linear combinations of the edges and check that the projection
+        of the homology basis upstairs projects down to independent linear
+        combinations of an even number of faces::
+        
+            sage: dg = S.downstairs_graph()
+            sage: edges = dg.edges()
+            sage: E = ZZ^len(edges)
+            sage: edge_to_E = { e[:2]: E.gen(i) for i,e in enumerate(edges)}
+            sage: edge_to_E.update({ (e[1],e[0]): -E.gen(i) for i,e in enumerate(edges)})
+            sage: face_span = E.submodule([sum(edge_to_E[e] for e in f) for f in dg.faces()])
+            sage: def path_to_E(path):
+            ....:     k,P = path
+            ....:     return k*sum(edge_to_E[(P[i][0],P[i+1][0])] for i in range(len(P)-1))
+            sage: hom_basis = [sum(path_to_E(p) for p in loop) for loop in S.homology_basis()]
+            sage: face_span.submodule(hom_basis).rank()
+            2
+            sage: [sum(face_span.coordinate_vector(b))%2 for b in hom_basis]
+            [0, 0]
         """
         if self.genus == 0:
             return []
@@ -1073,6 +1179,19 @@ class RiemannSurface(object):
         # Forming a list of lists of zeroes. Later this will be converted into a
         # matrix.
         intersectionprod = [[0 for c in cycles] for c in cycles]
+
+        #as it turns out, in extreme examples argument computation can be quite dominant
+        #so we cache this (since we may end up using these values multiple times)
+        direction_cache = {}
+        def direction(center,neighbour):
+            k=(center,neighbour)
+            if k not in direction_cache:
+                theta=(self._vertices[neighbour]-self._vertices[center]).argument()
+                direction_cache[k]=theta
+                return theta
+            else:
+                return direction_cache[k]
+
         # This loop will start at the entry (0,1), and proceed along the row up
         # til (0,cn-1).
         # Then it will go to entry (1,2), and proceed along the row, etc.
@@ -1087,7 +1206,7 @@ class RiemannSurface(object):
                     i0 = cycles[i].index(v)
                     i1 = cycles[j].index(v)
                     # Get the complex value of the vertex v.
-                    vd = self._vertices[cycles[i][i0][0]]
+                    center = cycles[i][i0][0]
 
                     # We are in the following situation:
                     # We have two paths a_in->v->a_out and
@@ -1112,10 +1231,10 @@ class RiemannSurface(object):
                     # we can get the angles (and hence the rotation order)
                     # by taking the arguments of the differences.
 
-                    a_in_arg=(self._vertices[a_in]-vd).argument()
-                    a_out_arg=(self._vertices[a_out]-vd).argument()
-                    b_in_arg=(self._vertices[b_in]-vd).argument()
-                    b_out_arg=(self._vertices[b_out]-vd).argument()
+                    a_in_arg=direction(center,a_in)
+                    a_out_arg=direction(center,a_out)
+                    b_in_arg=direction(center,b_in)
+                    b_out_arg=direction(center,b_out)
 
                     # we make sure to test overlap on the indices, so no rounding
                     # problems occur with that.
@@ -1171,7 +1290,7 @@ class RiemannSurface(object):
     def make_zw_interpolator(self, upstairs_edge):
         r"""
         Given an upstairs edge for which continuation data has been stored,
-        return a function that computes `z(t),w(t)` , where t in `[0,1]` is a
+        return a function that computes `z(t),w(t)` , where `t` in `[0,1]` is a
         parametrization of the edge.
 
         INPUT:
@@ -1182,7 +1301,8 @@ class RiemannSurface(object):
         OUTPUT:
 
         A tuple (g, d), where g is the function that computes the interpolation
-        along the edge and d is the difference of the z-values of the end and start point.
+        along the edge and d is the difference of the z-values of the end and
+        start point.
 
         EXAMPLES::
 
@@ -1196,7 +1316,6 @@ class RiemannSurface(object):
             True
             sage: abs((g(1)[0]-g(0)[0]) - d) < 1e-13
             True
-
         """
         eindex = tuple(u[0] for u in upstairs_edge)
         i0, i1 = eindex
@@ -1248,8 +1367,8 @@ class RiemannSurface(object):
 
         INPUT:
 
-        - ``upstairs_edge`` -- a pair of integer tuples corresponding to an
-          edge of the upstairs graph.
+        - ``upstairs_edge`` -- a pair of integer tuples corresponding to an edge
+          of the upstairs graph.
 
         - ``differentials`` -- a list of polynomials; a polynomial `g`
           represents the differential `g(z,w)/(df/dw) dz` where `f(z,w)=0` is
@@ -1296,10 +1415,10 @@ class RiemannSurface(object):
         INPUT:
 
         - ``option`` -- Presently, this routine uses Singular's ``adjointIdeal``
-            and passes the ``option`` parameter on. Legal values are 1, 2, 3 ,4,
-            where 1 is the default. See the Singular documentation for the meaning.
-            The backend for this function may change, and support for this parameter may
-            disappear.
+          and passes the ``option`` parameter on. Legal values are 1, 2, 3 ,4,
+          where 1 is the default. See the Singular documentation for the
+          meaning. The backend for this function may change, and support for
+          this parameter may disappear.
 
         OUTPUT:
 
@@ -1307,7 +1426,7 @@ class RiemannSurface(object):
         differentials `g/(df/dw) dz`, where `f(z,w)=0` is the equation
         specifying the Riemann surface.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<z,w> = QQ[]
@@ -1356,11 +1475,13 @@ class RiemannSurface(object):
 
     def matrix_of_integral_values(self, differentials):
         r"""
-        Compute the path integrals of the given differentials along the homology basis.
+        Compute the path integrals of the given differentials along the homology
+        basis.
 
-        The returned answer has a row for each differential. If the Riemann surface is
-        given by the equation `f(z,w)=0`, then the differentials are encoded by polynomials
-        g, signifying the differential `g(z,w)/(df/dw) dz`.
+        The returned answer has a row for each differential. If the Riemann
+        surface is given by the equation `f(z,w)=0`, then the differentials are
+        encoded by polynomials g, signifying the differential `g(z,w)/(df/dw)
+        dz`.
 
         INPUT:
 
@@ -1368,8 +1489,8 @@ class RiemannSurface(object):
 
         OUTPUT:
 
-        A matrix, one row per differential, containing the values of the path integrals along
-        the homology basis of the Riemann surface.
+        A matrix, one row per differential, containing the values of the path
+        integrals along the homology basis of the Riemann surface.
 
         EXAMPLES::
 
@@ -1377,8 +1498,11 @@ class RiemannSurface(object):
             sage: R.<x,y> = QQ[]
             sage: S = RiemannSurface(x^3 + y^3 + 1)
             sage: B = S.cohomology_basis()
-            sage: S.matrix_of_integral_values(B) #abs tol 1e-12
-            [   0.883319375142725 - 1.52995403705719*I 1.76663875028545 + 5.55111512312578e-17*I]
+            sage: m = S.matrix_of_integral_values(B)
+            sage: parent(m)
+            Full MatrixSpace of 1 by 2 dense matrices over Complex Field with 53 bits of precision
+            sage: (m[0,0]/m[0,1]).algdep(3).degree() #curve is CM, so the period is quadratic
+            2
 
         """
         cycles = self.homology_basis()
@@ -1424,7 +1548,7 @@ class RiemannSurface(object):
 
         A matrix of complex values.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<z,w> = QQ[]
@@ -1432,14 +1556,14 @@ class RiemannSurface(object):
             sage: S = RiemannSurface(f, prec=30)
             sage: M = S.period_matrix()
 
-        The results are highly arbitrary, so it is hard to check if the result produced is
-        correct. The closely related `riemann matrix` is somewhat easier to test.
+        The results are highly arbitrary, so it is hard to check if the result
+        produced is correct. The closely related ``riemann_matrix`` is somewhat
+        easier to test.::
 
             sage: parent(M)
             Full MatrixSpace of 3 by 6 dense matrices over Complex Field with 30 bits of precision
             sage: M.rank()
             3
-
         """
         differentials = self.cohomology_basis()
         differentials = [fast_callable(omega,domain=self._CC)
@@ -1453,7 +1577,7 @@ class RiemannSurface(object):
 
         OUTPUT:
 
-        A matrix of complex values
+        A matrix of complex values.
 
         EXAMPLES::
 
@@ -1470,22 +1594,21 @@ class RiemannSurface(object):
             sage: K.<a> = NumberField(x^2-x+2)
             sage: all(len(m.algdep(6).roots(K)) > 0 for m in M.list())
             True
-
         """
         PeriodMatrix = self.period_matrix()
         Am = PeriodMatrix[0:self.genus,0:self.genus]
-        RM = (Am.inverse())*PeriodMatrix[0:self.genus,self.genus:2*self.genus]
+        RM = numerical_inverse(Am)*PeriodMatrix[0:self.genus,self.genus:2*self.genus]
         return RM
 
     def plot_paths(self):
         r"""
         Make a graphical representation of the integration paths.
 
-        Returns a two dimensional plot containing the branch points (in red)
-        and the integration paths (obtained from the Voronoi cells of the
-        branch points). The integration paths are plotted by plotting the points
-        that have been computed for homotopy continuation, so the density
-        gives an indication of where numerically sensitive features occur.
+        Returns a two dimensional plot containing the branch points (in red) and
+        the integration paths (obtained from the Voronoi cells of the branch
+        points). The integration paths are plotted by plotting the points that
+        have been computed for homotopy continuation, so the density gives an
+        indication of where numerically sensitive features occur.
 
         EXAMPLES::
 
@@ -1494,7 +1617,6 @@ class RiemannSurface(object):
             sage: S = RiemannSurface(y^2 - x^3 - x)
             sage: S.plot_paths()
             Graphics object consisting of 2 graphics primitives
-
         """
         from sage.plot.point import point2d
         P=[]
@@ -1518,11 +1640,11 @@ class RiemannSurface(object):
         Return the homology basis as a graph in 3-space.
 
         The homology basis of the surface is constructed by taking the Voronoi
-        cells around the branch points and taking the inverse image of the
-        edges on the Riemann surface. If the surface is given by the equation
+        cells around the branch points and taking the inverse image of the edges
+        on the Riemann surface. If the surface is given by the equation
         `f(z,w)`, the returned object gives the image of this graph in 3-space
-        with coordinates
-        `\left(\operatorname{Re}(z), \operatorname{Im}(z), \operatorname{Im}(w)\right)`.
+        with coordinates `\left(\operatorname{Re}(z), \operatorname{Im}(z),
+        \operatorname{Im}(w)\right)`.
 
         EXAMPLES::
 
@@ -1531,7 +1653,6 @@ class RiemannSurface(object):
             sage: S = RiemannSurface(y^2-x^3-x)
             sage: S.plot_paths3d()
             Graphics3d Object
-
         """
         from sage.plot.graphics import Graphics
         from sage.plot.plot3d.shapes2 import point3d, line3d
@@ -1560,17 +1681,17 @@ class RiemannSurface(object):
         Numerically compute a `\ZZ`-basis for the endomorphism ring.
 
         Let `\left(I | M \right)` be the normalized period matrix (`M` is the
-        `g\times g` :meth:`riemann_matrix`).
-        We consider the system of matrix equations `MA + C = (MB + D)M` where
-        `A, B, C, D` are `g\times g` integer matrices.  We determine small
-        integer (near) solutions using LLL reductions.  These solutions are
-        returned as `2g \times 2g` integer matrices obtained by stacking
-        `\left(D | B\right)` on top of `\left(C | A\right)`.
+        `g\times g` :meth:`riemann_matrix`). We consider the system of matrix
+        equations `MA + C = (MB + D)M` where `A, B, C, D` are `g\times g`
+        integer matrices.  We determine small integer (near) solutions using LLL
+        reductions.  These solutions are returned as `2g \times 2g` integer
+        matrices obtained by stacking `\left(D | B\right)` on top of `\left(C |
+        A\right)`.
 
         INPUT:
 
-        - ``b`` -- integer (default provided). The equation coefficients
-          are scaled by `2^b` before rounding to integers.
+        - ``b`` -- integer (default provided). The equation coefficients are
+          scaled by `2^b` before rounding to integers.
 
         - ``r`` -- integer (default: ``b/4``). Solutions that have all
           coefficients smaller than `2^r` in absolute value are reported as
@@ -1586,11 +1707,13 @@ class RiemannSurface(object):
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
             sage: S = RiemannSurface(x^3 + y^3 + 1)
-            sage: S.endomorphism_basis()
+            sage: B = S.endomorphism_basis(); B #random
             [
             [1 0]  [ 0 -1]
             [0 1], [ 1  1]
             ]
+            sage: sorted([b.minpoly().disc() for b in B])
+            [-3, 1]
 
         """
         M = self.riemann_matrix()
@@ -1598,24 +1721,22 @@ class RiemannSurface(object):
 
     def homomorphism_basis(self, other, b=None, r=None):
         r"""
-        Numerically compute a `\ZZ`-basis for module of homomorphisms to
-        a given complex torus.
+        Numerically compute a `\ZZ`-basis for module of homomorphisms to a given
+        complex torus.
 
-        Given another complex torus (given as the analytic Jacobian of a
-        Riemann surface), numerically compute a basis for the homomorphism
-        module. The answer is returned as a list of 2g x 2g integer matrices
-        T=(D, B; C, A)
-        such that if the columns of (I|M1) generate the lattice defining
-        the Jacobian of the Riemann surface and the columns of (I|M2) do this
-        for the codomain, then approximately we have
-        (I|M2)T=(D+M2C)(I|M1),
-        i.e., up to a choice of basis for `\CC^g` as a complex vector space, we
-        we realize (I|M1) as a sublattice of (I|M2).
+        Given another complex torus (given as the analytic Jacobian of a Riemann
+        surface), numerically compute a basis for the homomorphism module. The
+        answer is returned as a list of 2g x 2g integer matrices T=(D, B; C, A)
+        such that if the columns of (I|M1) generate the lattice defining the
+        Jacobian of the Riemann surface and the columns of (I|M2) do this for
+        the codomain, then approximately we have (I|M2)T=(D+M2C)(I|M1), i.e., up
+        to a choice of basis for `\CC^g` as a complex vector space, we we
+        realize (I|M1) as a sublattice of (I|M2).
 
         INPUT:
 
-        - ``b`` -- integer (default provided). The equation coefficients
-          are scaled by `2^b` before rounding to integers.
+        - ``b`` -- integer (default provided). The equation coefficients are
+          scaled by `2^b` before rounding to integers.
 
         - ``r`` -- integer (default: ``b/4``). Solutions that have all
           coefficients smaller than `2^r` in absolute value are reported as
@@ -1632,11 +1753,292 @@ class RiemannSurface(object):
             sage: S2 = EllipticCurve("11a3").riemann_surface()
             sage: [m.det() for m in S1.homomorphism_basis(S2)]
             [5]
-
         """
         M1 = self.riemann_matrix()
         M2 = other.riemann_matrix()
         return integer_matrix_relations(M2,M1,b,r)
+
+    def tangent_representation_numerical(self, Rs, other = None):
+        r"""
+        Compute the numerical tangent representations corresponding to the
+        homology representations in ``Rs``.
+
+        The representations on homology ``Rs`` have to be given with respect to
+        the symplectic homology basis of the Jacobian of ``self`` and ``other``.
+        Such matrices can for example be obtained via
+        :meth:`endomorphism_basis`.
+
+        Let `P` and `Q` be the period matrices of ``self`` and ``other``. Then
+        for a homology representation `R`, the corresponding tangential
+        representation `T` satisfies `T P = Q R`.
+
+        INPUT:
+
+        - ``Rs`` -- a set of matrices on homology to be converted to their
+          tangent representations.
+
+        - ``other`` (default: ``self``) -- the codomain, another Riemann
+          surface.
+
+        OUTPUT:
+
+        The numerical tangent representations of the matrices in ``Rs``.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
+            sage: A.<x,y> = QQ[]
+            sage: S = RiemannSurface(y^2 - (x^6 + 2*x^4 + 4*x^2 + 8), prec = 100)
+            sage: P = S.period_matrix()
+            sage: Rs = S.endomorphism_basis()
+            sage: Ts = S.tangent_representation_numerical(Rs)
+            sage: all(((T*P - P*R).norm() < 2^(-80)) for [T, R] in zip(Ts, Rs))
+            True
+        """
+        if not other:
+            other = self
+        P = self.period_matrix()
+        CCP = P.base_ring()
+        g = self.genus
+        Q = other.period_matrix()
+        Ptsubinv = numerical_inverse((P.transpose())[list(range(g))])
+        Ts = []
+        for R in Rs:
+            QRtsub = ((Q * R).transpose())[list(range(g))]
+            Tt = Ptsubinv * QRtsub
+            T = Tt.transpose().change_ring(CCP)
+            Ts.append(T)
+        return Ts
+
+    def tangent_representation_algebraic(self, Rs, other=None, epscomp=None):
+        r"""
+        Compute the algebraic tangent representations corresponding to the
+        homology representations in ``Rs``.
+
+        The representations on homology ``Rs`` have to be given with respect to
+        the symplectic homology basis of the Jacobian of ``self`` and ``other``.
+        Such matrices can for example be obtained via
+        :meth:`endomorphism_basis`.
+
+        Let `P` and `Q` be the period matrices of ``self`` and ``other``. Then
+        for a homology representation `R`, the corresponding tangential
+        representation `T` satisfies `T P = Q R`.
+
+        INPUT:
+
+        - ``Rs`` -- a set of matrices on homology to be converted to their
+          tangent representations.
+
+        - ``other`` (default: ``self``) -- the codomain, another Riemann
+          surface.
+
+        - ``epscomp`` -- real number (default: ``2^(-prec + 30)``). Used to
+          determine whether a complex number is close enough to a root of a
+          polynomial.
+
+        OUTPUT:
+
+        The algebraic tangent representations of the matrices in ``Rs``.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
+            sage: A.<x,y> = QQ[]
+            sage: S = RiemannSurface(y^2 - (x^6 + 2*x^4 + 4*x^2 + 8), prec = 100)
+            sage: Rs = S.endomorphism_basis()
+            sage: Ts = S.tangent_representation_algebraic(Rs)
+            sage: Ts[0].base_ring().maximal_order().discriminant() == 8
+            True
+        """
+        if not epscomp:
+            epscomp = 2**(-self._prec + 30)
+        QQalg = QQ.algebraic_closure()
+        def polynomialize_element(alpha):
+            d = 1
+            while True:
+                d += 1
+                dep = algdep(alpha, d, height_bound = 10^d)
+                if dep and dep(alpha) < epscomp:
+                    return dep
+        def algebraize_element(alpha):
+            alphaPol = polynomialize_element(alpha)
+            CC = alpha.parent()
+            for tup in alphaPol.roots(QQalg):
+                rt = tup[0]
+                if (alpha - CC(rt)).abs() < epscomp:
+                    return rt
+            raise AssertionError('No close root found while algebraizing')
+
+        def algebraize_matrices(Ts):
+            nr = Ts[0].nrows()
+            nc = Ts[0].ncols()
+            rr = range(nr)
+            rc = range(nc)
+            TsAlg = []
+            for T in Ts:
+                TAlg = Matrix([[algebraize_element(T[i, j]) for j in rc]
+                               for i in rr])
+                TsAlg.append(TAlg)
+            elts = [x for TAl in TsAlg for x in TAl.list()]
+            eltsAlg = number_field_elements_from_algebraics(elts)[1]
+            L = eltsAlg[0].parent()
+            TsAlgL = [ ]
+            for i in range(len(Ts)):
+                TAlgL = [ eltsAlg[j] for j in range(i*nr*nc, (i + 1)*nr*nc) ]
+                TsAlgL.append(Matrix(L, nr, nc, TAlgL))
+            return TsAlgL
+        Ts = self.tangent_representation_numerical(Rs, other = other)
+        return algebraize_matrices(Ts)
+
+    def rosati_involution(self, R):
+        r"""
+        Computes the Rosati involution of an endomorphism.
+
+        The endomorphism in question should be given by its homology
+        representation with respect to the symplectic basis of the Jacobian.
+
+        INPUT:
+
+        - ``R`` -- integral matrix.
+
+        OUTPUT:
+
+        The result of applying the Rosati involution to ``R``.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
+            sage: A.<x,y> = QQ[]
+            sage: S = RiemannSurface(y^2 - (x^6 + 2*x^4 + 4*x^2 + 8), prec = 100)
+            sage: Rs = S.endomorphism_basis()
+            sage: S.rosati_involution(S.rosati_involution(Rs[1])) == Rs[1]
+            True
+        """
+        def standard_symplectic_matrix(n):
+            m = n // 2
+            one = matrix.identity(m)
+            zero = matrix.zero(m)
+            return 1*matrix.block([ [zero, -one], [one, zero] ])
+        g = self.genus
+        if len(R.rows()) != 2*g or len(R.columns()) != 2*g:
+            raise AssertionError("Matrix is not the homology representation of an endomorphism")
+        J = standard_symplectic_matrix(2*g)
+        return -J * R.transpose() * J
+
+    def symplectic_isomorphisms(self, other = None, hom_basis = None, b = None, r = None):
+        r"""
+        Numerically compute symplectic isomorphisms.
+
+        INPUT:
+
+        - ``other`` (default: ``self``) -- the codomain, another Riemann
+          surface.
+
+        - ``hom_basis`` (default: ``None``) -- a `\ZZ`-basis of the
+          homomorphisms from ``self`` to ``other``, as obtained from
+          :meth:`homomorphism_basis`. If you have already calculated this
+          basis, it saves time to pass it via this keyword argument. Otherwise
+          the method will calculate it.
+
+        - ``b`` -- integer (default provided): as for
+          :meth:`homomorphism_basis`, and used in its invocation if
+          (re)calculating said basis.
+
+        - ``r`` -- integer (default: ``b/4``).  as for
+          :meth:`homomorphism_basis`, and used in its invocation if
+          (re)calculating said basis.
+
+        OUTPUT:
+
+        Returns the combinations of the elements of :meth:`homomorphism_basis`
+        that correspond to symplectic isomorphisms between the Jacobians of
+        ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
+            sage: R.<x,y> = QQ[]
+            sage: f = y^2 - (x^6 + 2*x^4 + 4*x^2 + 8)
+            sage: X = RiemannSurface(f, prec = 100)
+            sage: P = X.period_matrix()
+            sage: g = y^2 - (x^6 + x^4 + x^2 + 1)
+            sage: Y = RiemannSurface(g, prec = 100)
+            sage: Q = Y.period_matrix()
+            sage: Rs = X.symplectic_isomorphisms(Y)
+            sage: Ts = X.tangent_representation_numerical(Rs, other = Y)
+            sage: test1 = all(((T*P - Q*R).norm() < 2^(-80)) for [T, R] in zip(Ts, Rs))
+            sage: test2 = all(det(R) == 1 for R in Rs)
+            sage: test1 and test2
+            True
+        """
+        if not other:
+            other = self
+        if hom_basis:
+            Rs = hom_basis
+        else:
+            Rs = self.homomorphism_basis(other = other, b = b, r = r)
+        r = len(Rs)
+        g = self.genus
+        A = PolynomialRing(QQ, r, 'x')
+        gensA = A.gens()
+        # Use that the trace is positive definite; we could also put this as an
+        # extra condition when determining the endomorphism basis to speed up
+        # that calculation slightly
+        R = sum( gensA[i]*Rs[i].change_ring(A) for i in range(r) )
+        tr = (R*self.rosati_involution(R)).trace()
+        # Condition tr = 2 g creates ellipsoid
+        M = Matrix(ZZ, r, r, [ tr.derivative(gen1).derivative(gen2)
+                              for gen1 in gensA for gen2 in gensA ])
+        vs = M.__pari__().qfminim(4*g)[2].sage().transpose()
+        vs = [ v for v in vs if v * M * v == 4*g ]
+        vs += [ -v for v in vs ]
+        RsIso = [ ]
+        for v in vs:
+            R = sum( v[i]*Rs[i] for i in range(r) )
+            if R*self.rosati_involution(R) == 1:
+                RsIso.append(R)
+        return RsIso
+
+    def symplectic_automorphism_group(self, endo_basis = None, b = None, r = None):
+        r"""
+        Numerically compute the symplectic automorphism group as a permutation
+        group.
+
+        INPUT:
+
+        - ``endo_basis`` (default: ``None``) -- a `\ZZ`-basis of the
+          endomorphisms of ``self``, as obtained from
+          :meth:`endomorphism_basis`. If you have already calculated this
+          basis, it saves time to pass it via this keyword argument. Otherwise
+          the method will calculate it.
+
+        - ``b`` -- integer (default provided): as for
+          :meth:`homomorphism_basis`, and used in its invocation if
+          (re)calculating said basis.
+
+        - ``r`` -- integer (default: ``b/4``).  as for
+          :meth:`homomorphism_basis`, and used in its invocation if
+          (re)calculating said basis.
+
+        OUTPUT:
+
+        The symplectic automorphism group of the Jacobian of the Riemann
+        surface. The automorphism group of the Riemann surface itself can be
+        recovered from this; if the curve is hyperelliptic, then it is
+        identical, and if not, then one divides out by the central element
+        corresponding to multiplication by -1.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
+            sage: A.<x,y> = QQ[]
+            sage: S = RiemannSurface(y^2 - (x^6 + 2*x^4 + 4*x^2 + 8), prec = 100)
+            sage: G = S.symplectic_automorphism_group()
+            sage: G.as_permutation_group().is_isomorphic(DihedralGroup(4))
+            True
+        """
+        RsAut = self.symplectic_isomorphisms(hom_basis = endo_basis, b = b, r = r)
+        return MatrixGroup(RsAut)
 
     def __add__(self,other):
         r"""
@@ -1649,43 +2051,41 @@ class RiemannSurface(object):
             sage: S1 = RiemannSurface(y^2-x^3-x-1)
             sage: S1+S1
             Riemann surface sum with period lattice of rank 4
-
         """
         return RiemannSurfaceSum([self,other])
 
 def integer_matrix_relations(M1,M2,b=None,r=None):
     r"""
-    Determine integer relations between complex matrices
+    Determine integer relations between complex matrices.
 
-    Given two g x g matrices with complex entries, numerically determine
-    an (approximate) ZZ-basis for the 2g x 2g matrices with integer entries
-    of the shape (D, B; C, A) such that
-    B+M1*A=(D+M1*C)*M2
-    By considering real and imaginary parts separately we obtain `2g^2`
-    equations with real coefficients in `4g^2` variables. We scale the
-    coefficients by a constant `2^b` and round them to integers, in order
-    to obtain an integer system of equations. Standard application of LLL
-    allows us to determine near solutions.
+    Given two square matrices with complex entries of size g, h respectively,
+    numerically determine an (approximate) ZZ-basis for the 2g x 2h matrices
+    with integer entries of the shape (D, B; C, A) such that B+M1*A=(D+M1*C)*M2.
+    By considering real and imaginary parts separately we obtain `2gh` equations
+    with real coefficients in `4gh` variables. We scale the coefficients by a
+    constant `2^b` and round them to integers, in order to obtain an integer
+    system of equations. Standard application of LLL allows us to determine near
+    solutions.
 
     The user can specify the parameter `b`, but by default the system will
-    choose a `b` based on the size of the coefficients and the precision
-    with which they are given.
+    choose a `b` based on the size of the coefficients and the precision with
+    which they are given.
 
     INPUT:
 
-    - `M1` -- square complex valued matrix
+    - ``M1`` -- square complex valued matrix
 
-    - `M2` -- square complex valued matrix of same size as M1
+    - ``M2`` -- square complex valued matrix of same size as M1
 
-    - ``b`` -- integer (default provided). The equation coefficients
-      are scaled by `2^b` before rounding to integers.
+    - ``b`` -- integer (default provided). The equation coefficients are scaled
+      by `2^b` before rounding to integers.
 
     - ``r`` -- integer (default: ``b/4``). The vectors found by LLL that satisfy
       the scaled equations to withing `2^r` are reported as solutions.
 
     OUTPUT:
 
-    A list of 2g x 2g integer matrices that, for large enough `r`, `b-r`,
+    A list of 2g x 2h integer matrices that, for large enough `r`, `b-r`,
     generate the ZZ-module of relevant transformations.
 
     EXAMPLES::
@@ -1697,10 +2097,9 @@ def integer_matrix_relations(M1,M2,b=None,r=None):
         sage: M1t=[id.augment(M1) * t for t in T]
         sage: [((m[:,:2]^(-1)*m)[:,2:]-M2).norm() < 1e-13 for m in M1t]
         [True, True]
-
     """
-    if not(M1.ncols()==M2.ncols() and M1.nrows()==M1.nrows() and M2.nrows()==M2.nrows()):
-        raise ValueError("matrices need to be square of same dimensions")
+    if not(M1.ncols()==M1.nrows() and M2.ncols()==M2.nrows()):
+        raise ValueError("matrices need to be square")
     prec = min(M1.base_ring().precision(),M2.base_ring().precision())
     H = max(max( abs(m.real_part()) for m in M1.list()+M2.list()), max( abs(m.imag_part()) for m in M1.list()+M2.list()))
     if b is None:
@@ -1710,38 +2109,40 @@ def integer_matrix_relations(M1,M2,b=None,r=None):
     S = 2**b
     if H*S > 2**(prec-4):
         raise ValueError("insufficient precision for b=%s"%b)
-    g = M1.ncols()
-    CC = M1.base_ring()
-    V = ["%s%s"%(n,i) for n in ["a","b","c","d"] for i in srange(1,1+g**2)]
+    g1 = M1.ncols()
+    g2 = M2.ncols()
+    CC = M1.base_ring() if (M1.base_ring().precision() <= M2.base_ring().precision()) else M2.base_ring()
+    V = ["%s%s"%(n,i) for n in ["a","b","c","d"] for i in srange(1,1+g1*g2)]
     R = PolynomialRing(CC,V)
-    A = Matrix(R,g,g,V[:g**2])
-    B = Matrix(R,g,g,V[g**2:2*g**2])
-    C = Matrix(R,g,g,V[2*g**2:3*g**2])
-    D = Matrix(R,g,g,V[3*g**2:4*g**2])
+    vars = R.gens()
+    A = Matrix(R, g1, g2, vars[:g1*g2])
+    B = Matrix(R, g1, g2, vars[g1*g2:2*g1*g2])
+    C = Matrix(R, g1, g2, vars[2*g1*g2:3*g1*g2])
+    D = Matrix(R, g1, g2, vars[3*g1*g2:4*g1*g2])
     W = ((M1*A+B) - (M1*C+D)*M2).list()
     vars = R.gens()
-    mt = Matrix(ZZ,[[1 if i==j else 0 for j in range(4*g**2)] +
+    mt = Matrix(ZZ,[[1 if i==j else 0 for j in range(4*g1*g2)] +
       [(S*w.monomial_coefficient(vars[i]).real_part()).round() for w in W] +
       [(S*w.monomial_coefficient(vars[i]).imag_part()).round() for w in W] for i in range(len(vars))])
     # we compute an LLL-reduced basis of this lattice:
     mtL = mt.LLL()
-    def vectomat(v,g):
-        A = Matrix(g,g,v[:g**2].list())
-        B = Matrix(g,g,v[g**2:2*g**2].list())
-        C = Matrix(g,g,v[2*g**2:3*g**2].list())
-        D = Matrix(g,g,v[3*g**2:4*g**2].list())
+    def vectomat(v):
+        A = Matrix(g1,g2,v[:g1*g2].list())
+        B = Matrix(g1,g2,v[g1*g2:2*g1*g2].list())
+        C = Matrix(g1,g2,v[2*g1*g2:3*g1*g2].list())
+        D = Matrix(g1,g2,v[3*g1*g2:4*g1*g2].list())
         return D.augment(B).stack(C.augment(A))
     c = 2**r
-    return [vectomat(v,g) for v in mtL if all(a.abs() <= c for a in v[4*g**2:])]
+    return [vectomat(v) for v in mtL if all(a.abs() <= c for a in v[g1*g2:])]
 
 class RiemannSurfaceSum(RiemannSurface):
     r"""
     Represent the disjoint union of finitely many Riemann surfaces.
 
-    Rudimentary class to represent disjoint unions of Riemann surfaces.
-    Exists mainly (and this is the only functionality actually
-    implemented) to represents direct products of the complex tori that
-    arise as analytic Jacobians of Riemann surfaces.
+    Rudimentary class to represent disjoint unions of Riemann surfaces. Exists
+    mainly (and this is the only functionality actually implemented) to
+    represents direct products of the complex tori that arise as analytic
+    Jacobians of Riemann surfaces.
 
     INPUT:
 
@@ -1755,7 +2156,6 @@ class RiemannSurfaceSum(RiemannSurface):
         sage: S2 = HyperellipticCurve(1-2*x+3*x^2-7*x^3).riemann_surface(prec=60)
         sage: len(SC.homomorphism_basis(S1+S2))
         2
-
     """
     def __init__(self,L):
         r"""
@@ -1768,24 +2168,54 @@ class RiemannSurfaceSum(RiemannSurface):
             sage: S = RiemannSurfaceSum([S1,S2])
             sage: S.riemann_matrix() == S1.riemann_matrix().block_sum(S2.riemann_matrix())
             True
-
         """
         if not all(isinstance(l,RiemannSurface) for l in L):
             raise ValueError("summands must be RiemannSurface objects")
-        prec=min(l._prec for l in L)
-        self._prec=prec
-        it=iter(L)
-        M=next(it).riemann_matrix()
+        prec = min(l._prec for l in L)
+        self._prec = prec
+        self.genus = sum(s.genus for s in L)
+        it = iter(L)
+        s = next(it)
+        g = s.genus
+        PM = s.period_matrix()
+        PM1 = PM[:g,:g]
+        PM2 = PM[:g,g:2*g]
+        tau = s.riemann_matrix()
         for s in it:
-            M=M.block_sum(s.riemann_matrix())
-        self.M=M
+            g = s.genus
+            PM = s.period_matrix()
+            PM1 = PM1.block_sum(PM[:g,:g])
+            PM2 = PM2.block_sum(PM[:g,g:2*g])
+            tau = tau.block_sum(s.riemann_matrix())
+        self.PM = block_matrix([[PM1, PM2]], subdivide = False)
+        self.tau = tau
+
+    def period_matrix(self):
+        r"""
+        Return the period matrix of the surface.
+
+        This is just the diagonal block matrix constructed from the period
+        matrices of the constituents.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface, RiemannSurfaceSum
+            sage: R.<x,y>=QQ[]
+            sage: S1 = RiemannSurface(y^2-x^3-x-1)
+            sage: S2 = RiemannSurface(y^2-x^3-x-5)
+            sage: S = RiemannSurfaceSum([S1,S2])
+            sage: S1S2 = S1.period_matrix().block_sum(S2.period_matrix())
+            sage: S.period_matrix() == S1S2[[0,1],[0,2,1,3]]
+            True
+        """
+        return self.PM
 
     def riemann_matrix(self):
         r"""
-        Return the normalized period matrix of the surface
+        Return the normalized period matrix of the surface.
 
-        This is just the diagonal block matrix constructed from the Riemann matrices
-        of the constituents.
+        This is just the diagonal block matrix constructed from the Riemann
+        matrices of the constituents.
 
         EXAMPLES::
 
@@ -1796,9 +2226,8 @@ class RiemannSurfaceSum(RiemannSurface):
             sage: S = RiemannSurfaceSum([S1,S2])
             sage: S.riemann_matrix() == S1.riemann_matrix().block_sum(S2.riemann_matrix())
             True
-
         """
-        return self.M
+        return self.tau
 
     def __repr__(self):
         r"""
@@ -1812,9 +2241,8 @@ class RiemannSurfaceSum(RiemannSurface):
             sage: S2 = RiemannSurface(y^2-x^3-x-5)
             sage: RiemannSurfaceSum([S1,S2])
             Riemann surface sum with period lattice of rank 4
-
         """
-        return "Riemann surface sum with period lattice of rank "+repr(2*self.M.ncols())
+        return "Riemann surface sum with period lattice of rank " + repr(2*self.genus)
 
     def __add__(self,other):
         r"""
@@ -1827,6 +2255,5 @@ class RiemannSurfaceSum(RiemannSurface):
             sage: S1 = RiemannSurface(y^2-x^3-x-1)
             sage: S1+S1+S1
             Riemann surface sum with period lattice of rank 6
-
         """
-        return RiemannSurfaceSum([self,other])
+        return RiemannSurfaceSum([self, other])

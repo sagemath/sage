@@ -31,7 +31,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         sage: S
         The symmetric group on {0, ..., 3}
         sage: S.category()
-        Category of finite weyl groups
+        Category of finite irreducible weyl groups
 
     The elements of this group are permutations of the set `\{0,\ldots,3\}`::
 
@@ -50,6 +50,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
     - :meth:`.one`
     - :meth:`.product`
     - :meth:`.simple_reflection`
+    - :meth:`.cartan_type`
     - :meth:`.Element.has_right_descent`.
 
     All the other usual Weyl group operations are inherited from the
@@ -80,7 +81,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
             sage: S == FiniteWeylGroups().example(4)
             True
         """
-        Parent.__init__(self, category = FiniteWeylGroups())
+        Parent.__init__(self, category=FiniteWeylGroups().Irreducible())
         self.n = n
 
     def _repr_(self):
@@ -128,6 +129,20 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         """
         assert i in self.index_set()
         return self(tuple(range(i)) + (i + 1, i) + tuple(range(i + 2, self.n)))
+
+    def cartan_type(self):
+        """
+        Return the Cartan type of ``self``.
+
+        EXAMPLES::
+
+            sage: FiniteWeylGroups().example().cartan_type()
+            ['A', 3] relabelled by {1: 0, 2: 1, 3: 2}
+        """
+        from sage.combinat.root_system.cartan_type import CartanType
+        C = CartanType(['A',self.n-1])
+        C = C.relabel(lambda i:i-1)
+        return C
 
     def product(self, x, y):
         """

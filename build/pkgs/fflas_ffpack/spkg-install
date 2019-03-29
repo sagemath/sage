@@ -1,54 +1,7 @@
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "Error: SAGE_LOCAL undefined ... exiting"
-    echo >&2 "Maybe run 'sage --sh'?"
-    exit 1
-fi
-
 cd src
-
-# Use newer version of config.guess and config.sub (see Trac #19757)
-cp "$SAGE_ROOT"/config/config.* build-aux
-
-
-export CFLAGS="-g -O2 -fPIC $CFLAGS"
-export CXXFLAGS="-g -O2 -fPIC $CXXFLAGS"
-
-# GCC 4.9 <= 4.9.2 is broken, cf. https://trac.sagemath.org/ticket/17635#comment:178 ff.:
-case `$CXX -dumpversion 2>/dev/null` in
-    4.9.[0-2])
-        CXXFLAGS+=" -fpermissive"
-        ;;
-    4.9) # some distros' GCCs omit the patch level
-        if $CXX --version 2>/dev/null | head -n 1 | grep '4.9.[0-2]' >/dev/null; then
-            CXXFLAGS+=" -fpermissive"
-        fi
-esac
-
-if [ "$SAGE64" = "yes" ]; then
-   echo "64 bit build"
-   CFLAGS="-m64 $CFLAGS "; export CFLAGS
-   CXXFLAGS="-m64 $CXXFLAGS "; export CXXFLAGS
-   CPPFLAGS="-m64 $CPPFLAGS "; export CPPFLAGS
-   LDFLAGS="-m64 $LDFLAGS"; export LDFLAGS
-fi
-
 
 if [ "$LINBOX_BLAS" != "" ]; then
     echo "Using environment variable LINBOX_BLAS=$LINBOX_BLAS"
-elif [ "$UNAME" = "CYGWIN" ]; then
-    # TODO: we should install a suitable blas.pc on Cygwin
-    echo "Using system-wide Cygwin LAPACK BLAS."
-    if [ ! -f "/usr/lib/libblas.a" ]; then
-        echo >&2 "*************************************************"
-        echo >&2 "*"
-        echo >&2 "* Error: On Cygwin you must install the standard LAPACK Cygwin package"
-        echo >&2 "* via the Cygwin setup.exe program in the 'Math' category."
-        echo >&2 "*"
-        echo >&2 "*************************************************"
-        exit 1
-    fi
-    LINBOX_BLAS="-lblas"
-    LINBOX_BLAS_CFLAGS=""
 else
     LINBOX_BLAS="$(pkg-config --libs cblas)"
     BLAS_CFLAGS="$(pkg-config --cflags cblas)"
@@ -65,30 +18,26 @@ echo "*************************************************"
 
 # If SAGE_FAT_BINARY is set, disable all processor-specific optimizations
 if [ "$SAGE_FAT_BINARY" = yes ]; then
-    FFLAS_FFPACK_CONFIGURE="--disable-simd $FFLAS_FFPACK_CONFIGURE"
+    FFLAS_FFPACK_CONFIGURE="--disable-sse --disable-sse2 --disable-sse3 --disable-ssse3 --disable-sse41 --disable-sse42 --disable-fma --disable-fma4 --disable-avx --disable-avx2 $FFLAS_FFPACK_CONFIGURE"
+fi
+
+# Need to use 'bash' for configure, see
+# https://trac.sagemath.org/ticket/23451
+if [ -z "$CONFIG_SHELL" ]; then
+    export CONFIG_SHELL=`command -v bash`
 fi
 
 # We disable openmp because of build failures, see
 # http://trac.sagemath.org/ticket/17635#comment:67
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
-    --with-default="$SAGE_LOCAL" \
-    --with-blas-libs="$LINBOX_BLAS" \
-    "$LINBOX_BLAS_CFLAGS" \
-    --enable-optimization --disable-static --enable-precompilation \
-    --disable-openmp $FFLAS_FFPACK_CONFIGURE
+sdh_configure --with-default="$SAGE_LOCAL" --with-blas-libs="$LINBOX_BLAS" \
+              "$LINBOX_BLAS_CFLAGS" --disable-static \
+              --enable-precompilation --disable-openmp $FFLAS_FFPACK_CONFIGURE
+sdh_make
+
+$MAKE autotune
 if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring fflas-ffpack"
+    echo >&2 "Error tuning fflas-ffpack"
     exit 1
 fi
 
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building fflas-ffpack"
-    exit 1
-fi
-
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing fflas-ffpack"
-    exit 1
-fi
+sdh_make_install

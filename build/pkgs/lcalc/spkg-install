@@ -1,31 +1,14 @@
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "Error: SAGE_LOCAL undefined ... exiting"
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
-cd src
-
-success() {
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error building the Lcalc package: '$1'"
-        exit 1
-    fi
-}
-
-echo "Now installing lcalc binary, library and header files..."
-rm -fr "$SAGE_LOCAL"/include/libLfunction
-
-cd src   # Now we are in src/src.
+cd src/src
 
 if [ "$UNAME" = "Darwin" ]; then
     export LDFLAGS="$LDFLAGS -Wl,-headerpad_max_install_names"
 fi
-$MAKE install INSTALL_DIR="$SAGE_LOCAL"
-success "$MAKE install"
+
+export CXXFLAGS
+mkdir -p "$SAGE_DESTDIR_LOCAL"/{bin,include,lib}
+sdh_make_install INSTALL_DIR="$SAGE_DESTDIR_LOCAL"
 
 if [ "$UNAME" = "Darwin" ]; then
-    install_name_tool -id ${SAGE_LOCAL}/lib/libLfunction.dylib "${SAGE_LOCAL}"/lib/libLfunction.dylib
-    success "install_name_tool"
+    install_name_tool -id "${SAGE_LOCAL}/lib/libLfunction.dylib" \
+        "${SAGE_DESTDIR_LOCAL}/lib/libLfunction.dylib" || exit $?
 fi
-

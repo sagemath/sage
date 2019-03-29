@@ -685,7 +685,7 @@ class ReedMullerVectorEncoder(Encoder):
 
 class ReedMullerPolynomialEncoder(Encoder):
     r"""
-    Encoder for Reed-Muller codes which encodes appropiate multivariate polynomials into codewords.
+    Encoder for Reed-Muller codes which encodes appropriate multivariate polynomials into codewords.
 
     Consider a Reed-Muller code of order `r`, number of variables `m`, length `n`,
     dimension `k` over some finite field `F`.

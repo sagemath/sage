@@ -190,9 +190,10 @@ def get_flag(t = None, subsystem = None):
             return _proof_prefs._require_proof["other"]
     return t
 
-class WithProof:
+
+class WithProof(object):
     """
-    Use WithProof to temparily set the value of one of the proof
+    Use WithProof to temporarily set the value of one of the proof
     systems for a block of code, with a guarantee that it will be set
     back to how it was before after the block is done, even if there is an error.
 
@@ -214,7 +215,7 @@ class WithProof:
 
             sage: proof.arithmetic(True)
             sage: P = proof.WithProof('arithmetic',False); P
-            <sage.structure.proof.proof.WithProof instance at ...>
+            <sage.structure.proof.proof.WithProof object at ...>
             sage: P._subsystem
             'arithmetic'
             sage: P._t

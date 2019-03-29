@@ -16,6 +16,7 @@ from sage.categories.category_singleton import Category_singleton
 from .discrete_valuation import DiscreteValuationRings, DiscreteValuationFields
 #from sage.misc.cachefunc import cached_method
 
+
 class CompleteDiscreteValuationRings(Category_singleton):
     """
     The category of complete discrete valuation rings
@@ -88,6 +89,45 @@ class CompleteDiscreteValuationRings(Category_singleton):
             """
             return self.parent()(1)
 
+        @abstract_method
+        def lift_to_precision(self, absprec=None):
+            """
+            Return another element of the same parent with absolute precision
+            at least ``absprec``, congruent to this element modulo the
+            precision of this element.
+
+            INPUT:
+
+            - ``absprec`` -- an integer or ``None`` (default: ``None``), the
+              absolute precision of the result. If ``None``, lifts to the maximum
+              precision allowed.
+
+            .. NOTE::
+
+                If setting ``absprec`` that high would violate the precision cap,
+                raises a precision error.  Note that the new digits will not
+                necessarily be zero.
+
+            EXAMPLES::
+
+                sage: R = ZpCA(17)
+                sage: R(-1,2).lift_to_precision(10)
+                16 + 16*17 + O(17^10)
+                sage: R(1,15).lift_to_precision(10)
+                1 + O(17^15)
+                sage: R(1,15).lift_to_precision(30)
+                Traceback (most recent call last):
+                ...
+                PrecisionError: Precision higher than allowed by the precision cap.
+                sage: R(-1,2).lift_to_precision().precision_absolute() == R.precision_cap()
+                True
+
+                sage: R = Zp(5); c = R(17,3); c.lift_to_precision(8)
+                2 + 3*5 + O(5^8)
+                sage: c.lift_to_precision().precision_relative() == R.precision_cap()
+                True
+
+            """
 
 class CompleteDiscreteValuationFields(Category_singleton):
     """

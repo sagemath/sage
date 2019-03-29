@@ -145,7 +145,7 @@ class Bimodules(CategoryWithParameters):
         return self._right_base_ring
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::

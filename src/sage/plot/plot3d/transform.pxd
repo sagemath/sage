@@ -1,17 +1,13 @@
 cdef struct point_c:
-  double x
-  double y
-  double z
+    double x, y, z
 
 cdef struct color_c:
-  double r
-  double g
-  double b
+    double r, g, b
 
 cdef struct face_c:
-  int n
-  int* vertices
-  color_c color
+    int n
+    int* vertices
+    color_c color
 
 cdef class Transformation:
     cdef matrix

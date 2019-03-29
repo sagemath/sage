@@ -165,10 +165,9 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             False
             sage: matrix([[-1, 3, 1]]) in IM
             False
-
         """
-        from sage.matrix.matrix import Matrix
-        if not isinstance(x, Matrix):
+        from sage.structure.element import is_Matrix
+        if not is_Matrix(x):
             return False
         row_sums = [ZZ.zero()] * x.nrows()
         col_sums = [ZZ.zero()] * x.ncols()
@@ -313,7 +312,7 @@ def integer_matrices_generator(row_sums, column_sums):
 
         sage: from sage.combinat.integer_matrices import integer_matrices_generator
         sage: iter = integer_matrices_generator([3,2,2], [2,5]); iter
-        <generator object integer_matrices_generator at ...>
+        <generator object ...integer_matrices_generator at ...>
         sage: for m in iter: print(m)
         [[2, 1], [0, 2], [0, 2]]
         [[1, 2], [1, 1], [0, 2]]
@@ -324,7 +323,7 @@ def integer_matrices_generator(row_sums, column_sums):
     """
     column_sums = list(column_sums)
     if sum(row_sums) != sum(column_sums):
-        raise StopIteration
+        return
     if not row_sums:
         yield []
     elif len(row_sums) == 1:

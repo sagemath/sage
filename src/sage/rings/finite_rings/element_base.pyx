@@ -4,7 +4,7 @@ Base class for finite field elements
 AUTHORS::
 
 - David Roe (2010-1-14) -- factored out of sage.structure.element
-
+- Sebastian Oehms (2018-7-19) -- add :meth:`conjugate` (see :trac:`26761`)
 """
 
 from sage.structure.element cimport Element
@@ -100,14 +100,6 @@ cdef class FiniteRingElement(CommutativeRingElement):
         else:
             raise ValueError("unknown algorithm")
 
-    cpdef _add_(self, other):
-        """Abstract addition method"""
-        raise NotImplementedError
-
-    cpdef _mul_(self, other):
-        """Abstract multiplication method"""
-        raise NotImplementedError
-
 
 cdef class FinitePolyExtElement(FiniteRingElement):
     """
@@ -180,14 +172,13 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             R = PolynomialRing(self.parent().prime_subfield(), var)
             return R(self.__pari__().minpoly('x').lift())
         elif algorithm == 'matrix':
-            return self._matrix_().minpoly(var)
+            return self.matrix().minpoly(var)
         else:
             raise ValueError("unknown algorithm '%s'" % algorithm)
 
-
-        ## We have two names for the same method
-        ## for compatibility with sage.matrix
-    def minimal_polynomial(self,var='x'):
+    # We have two names for the same method
+    # for compatibility with sage.matrix
+    def minimal_polynomial(self, var='x'):
         """
         Returns the minimal polynomial of this element
         (over the corresponding prime subfield).
@@ -251,8 +242,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             ret.reverse()
         return k.vector_space()(ret)
 
-    def _matrix_(self, reverse=False):
-        """
+    def matrix(self, reverse=False):
+        r"""
         Return the matrix of left multiplication by the element on
         the power basis `1, x, x^2, \ldots, x^{d-1}` for the field
         extension.  Thus the \emph{columns} of this matrix give the images
@@ -266,9 +257,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
             sage: k.<a> = GF(2^4)
             sage: b = k.random_element()
-            sage: vector(a*b) == matrix(a) * vector(b)
+            sage: vector(a*b) == a.matrix() * vector(b)
             True
-            sage: (a*b)._vector_(reverse=True) == a._matrix_(reverse=True) * b._vector_(reverse=True)
+            sage: (a*b)._vector_(reverse=True) == a.matrix(reverse=True) * b._vector_(reverse=True)
             True
         """
         K = self.parent()
@@ -429,7 +420,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             R = PolynomialRing(self.parent().prime_subfield(), var)
             return R(self.__pari__().charpoly('x').lift())
         elif algorithm == 'matrix':
-            return self._matrix_().charpoly(var)
+            return self.matrix().charpoly(var)
         else:
             raise ValueError("unknown algorithm '%s'" % algorithm)
 
@@ -805,3 +796,49 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             b^11 + b^10 + b^9 + b^7 + b^5 + b^4 + b^2 + b
         """
         return self.pth_power(-k)
+
+    def conjugate(self):
+        """
+        This methods returns the result of the Frobenius morphism
+        in the case where the field is a quadratic extension, say
+        `GF(q^2)`, where `q=p^k` is a prime power and `p` the
+        characteristic of the field.
+
+        OUTPUT:
+
+        Instance of this class representing the image under
+        the Frobenius morphisms.
+
+        EXAMPLES::
+
+            sage: F.<a> = GF(16)
+            sage: b = a.conjugate(); b
+            a + 1
+            sage: a == b.conjugate()
+            True
+
+            sage: F.<a> = GF(27)
+            sage: a.conjugate()
+            Traceback (most recent call last):
+            ...
+            TypeError: cardinality of the field must be a square number
+
+        TESTS:
+
+        Check that :trac:`26761` is fixed::
+
+            sage: G32 = GU(3,2)
+            sage: g1, g2 = G32.gens()
+            sage: m1 = g1.matrix()
+            sage: m1.is_unitary()
+            True
+            sage: G32(m1) == g1
+            True
+        """
+        [(p, k2)] = list(self.parent().cardinality().factor())
+        if k2 % 2 != 0:
+            raise TypeError("cardinality of the field must be a square number")
+        k = k2 / 2
+
+        return self.pth_power(k=k)
+

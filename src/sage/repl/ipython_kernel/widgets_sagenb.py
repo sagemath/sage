@@ -7,7 +7,7 @@ TESTS:
 
 We need to setup a proper test environment for widgets::
 
-    sage: from ipywidgets.widgets.tests import setup_test_comm
+    sage: from ipywidgets.widgets.tests.utils import setup_test_comm
     sage: setup_test_comm()
 
 EXAMPLES::
@@ -79,7 +79,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
 
         sage: w = input_box("4+5", type=str, label="enter a string")
         sage: w
-        TransformText(value=u'4+5', description=u'enter a string')
+        TransformText(value=u'4+5', description=u'enter a string', layout=Layout(max_width=u'81em'))
         sage: w.get_interact_value()
         '4+5'
 
@@ -87,7 +87,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
 
         sage: w = input_box("4+5")
         sage: w
-        EvalText(value=u'4+5')
+        EvalText(value=u'4+5', layout=Layout(max_width=u'81em'))
         sage: w.get_interact_value()
         9
 
@@ -96,7 +96,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
 
         sage: w = input_box("4+5", type=float)
         sage: w
-        EvalText(value=u'4+5')
+        EvalText(value=u'4+5', layout=Layout(max_width=u'81em'))
         sage: w.get_interact_value()
         9.0
 
@@ -104,7 +104,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
 
         sage: w = input_box("4+5", type=sqrt)
         sage: w
-        EvalText(value=u'4+5')
+        EvalText(value=u'4+5', layout=Layout(max_width=u'81em'))
         sage: w.get_interact_value()
         3
 
@@ -112,10 +112,10 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
 
         sage: w = input_box("4+5", width=100, height=1)
         sage: w
-        EvalText(value=u'4+5')
+        EvalText(value=u'4+5', layout=Layout(max_width=u'101em'))
         sage: w = input_box("4+5", width=100, height=5)
         sage: w
-        EvalTextarea(value=u'4+5')
+        EvalTextarea(value=u'4+5', layout=Layout(max_width=u'101em'))
 
     TESTS::
 
@@ -180,37 +180,37 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
 
         sage: from sage.repl.ipython_kernel.all_jupyter import slider
         sage: slider(5, label="slide me")
-        TransformIntSlider(value=5, min=5, max=100, step=1, description=u'slide me')
+        TransformIntSlider(value=5, description=u'slide me', min=5)
         sage: slider(5, 20)
-        TransformIntSlider(value=5, min=5, max=20, step=1)
+        TransformIntSlider(value=5, max=20, min=5)
         sage: slider(5, 20, 0.5)
-        TransformFloatSlider(value=5.0, min=5.0, max=20.0, step=0.5)
+        TransformFloatSlider(value=5.0, max=20.0, min=5.0, step=0.5)
         sage: slider(5, 20, default=12)
-        TransformIntSlider(value=12, min=5, max=20, step=1)
+        TransformIntSlider(value=12, max=20, min=5)
 
     The parent of the inputs determines the parent of the value::
 
         sage: w = slider(5); w
-        TransformIntSlider(value=5, min=5, max=100, step=1)
+        TransformIntSlider(value=5, min=5)
         sage: parent(w.get_interact_value())
         Integer Ring
         sage: w = slider(int(5)); w
-        IntSlider(value=5, min=5, max=100, step=1)
+        IntSlider(value=5, min=5)
         sage: parent(w.get_interact_value())
         <... 'int'>
         sage: w = slider(5, 20, step_size=RDF("0.1")); w
-        TransformFloatSlider(value=5.0, min=5.0, max=20.0, step=0.1)
+        TransformFloatSlider(value=5.0, max=20.0, min=5.0)
         sage: parent(w.get_interact_value())
         Real Double Field
         sage: w = slider(5, 20, step_size=10/3); w
-        SelectionSlider(value=35/3, options=[5, 25/3, 35/3, 15, 55/3])
+        SelectionSlider(index=2, options=(5, 25/3, 35/3, 15, 55/3), value=35/3)
         sage: parent(w.get_interact_value())
         Rational Field
 
     Symbolic input is evaluated numerically::
 
         sage: w = slider(e, pi); w
-        TransformFloatSlider(value=2.718281828459045, min=2.718281828459045, max=3.141592653589793, step=0.1)
+        TransformFloatSlider(value=2.718281828459045, max=3.141592653589793, min=2.718281828459045)
         sage: parent(w.get_interact_value())
         Real Field with 53 bits of precision
 
@@ -218,7 +218,7 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
     possible values::
 
         sage: slider(range(10), default=17/10)
-        SelectionSlider(value=2, options=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        SelectionSlider(index=2, options=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), value=2)
 
     TESTS::
 
@@ -354,26 +354,26 @@ def range_slider(*args, **kwds):
 
         sage: from sage.repl.ipython_kernel.all_jupyter import range_slider
         sage: range_slider(5, label="slide me")
-        TransformIntRangeSlider(value=(28, 76), min=5, max=100, step=1, description=u'slide me')
+        TransformIntRangeSlider(value=(28, 76), description=u'slide me', min=5)
         sage: range_slider(5, 20)
-        TransformIntRangeSlider(value=(8, 16), min=5, max=20, step=1)
+        TransformIntRangeSlider(value=(8, 16), max=20, min=5)
         sage: range_slider(5, 20, 0.5)
-        TransformFloatRangeSlider(value=(8.75, 16.25), min=5.0, max=20.0, step=0.5)
+        TransformFloatRangeSlider(value=(8.75, 16.25), max=20.0, min=5.0, step=0.5)
         sage: range_slider(5, 20, default=(12,15))
-        TransformIntRangeSlider(value=(12, 15), min=5, max=20, step=1)
+        TransformIntRangeSlider(value=(12, 15), max=20, min=5)
 
     The parent of the inputs determines the parent of the value::
 
         sage: w = range_slider(5); w
-        TransformIntRangeSlider(value=(28, 76), min=5, max=100, step=1)
+        TransformIntRangeSlider(value=(28, 76), min=5)
         sage: [parent(x) for x in w.get_interact_value()]
         [Integer Ring, Integer Ring]
         sage: w = range_slider(int(5)); w
-        IntRangeSlider(value=(28, 76), min=5, max=100, step=1)
+        IntRangeSlider(value=(28, 76), min=5)
         sage: [parent(x) for x in w.get_interact_value()]
         [<... 'int'>, <... 'int'>]
         sage: w = range_slider(5, 20, step_size=RDF("0.1")); w
-        TransformFloatRangeSlider(value=(8.75, 16.25), min=5.0, max=20.0, step=0.1)
+        TransformFloatRangeSlider(value=(8.75, 16.25), max=20.0, min=5.0)
         sage: [parent(x) for x in w.get_interact_value()]
         [Real Double Field, Real Double Field]
 
@@ -442,31 +442,35 @@ def selector(values, label=None, default=None, nrows=None, ncols=None, width=Non
 
         sage: from sage.repl.ipython_kernel.all_jupyter import selector
         sage: selector(range(5), label="choose one")
-        Dropdown(value=0, options=[0, 1, 2, 3, 4], description=u'choose one')
+        Dropdown(description=u'choose one', options=(0, 1, 2, 3, 4), value=0)
         sage: selector(range(5), buttons=True, default=4)
-        ToggleButtons(value=4, options=[0, 1, 2, 3, 4])
+        ToggleButtons(index=4, options=(0, 1, 2, 3, 4), value=4)
 
     Apart from a simple list, ``values`` can be given as a list of
     2-tuples ``(value, label)``::
 
         sage: selector([(1,"one"), (2,"two"), (3,"three")])
-        Dropdown(value=1, options=[('one', 1), ('two', 2), ('three', 3)])
+        Dropdown(options=(('one', 1), ('two', 2), ('three', 3)), value=1)
         sage: selector([(1,"one"), (2,"two"), (3,"three")], buttons=True)
-        ToggleButtons(value=1, options=[('one', 1), ('two', 2), ('three', 3)])
+        ToggleButtons(options=(('one', 1), ('two', 2), ('three', 3)), value=1)
 
     A dict of ``label:value`` pairs is also allowed. Since a ``dict``
     is not ordered, it is better to use an :class:`OrderedDict`::
 
         sage: from collections import OrderedDict
-        sage: selector(OrderedDict(one=1, two=2, three=3))
-        Dropdown(value=1, options=OrderedDict([('one', 1), ('three', 3), ('two', 2)]))
-        sage: selector(OrderedDict(one=1, two=2, three=3), buttons=True)
-        ToggleButtons(value=1, options=OrderedDict([('one', 1), ('three', 3), ('two', 2)]))
+        sage: selector(OrderedDict(one=1, two=2, three=3))  # py2
+        Dropdown(options=OrderedDict([('one', 1), ('three', 3), ('two', 2)]), value=1)
+        sage: selector(OrderedDict(one=1, two=2, three=3))  # py3
+        Dropdown(options=OrderedDict([('one', 1), ('two', 2), ('three', 3)]), value=1)
+        sage: selector(OrderedDict(one=1, two=2, three=3), buttons=True) # py2
+        ToggleButtons(options=OrderedDict([('one', 1), ('three', 3), ('two', 2)]), value=1)
+        sage: selector(OrderedDict(one=1, two=2, three=3), buttons=True) # py3
+        ToggleButtons(options=OrderedDict([('one', 1), ('two', 2), ('three', 3)]), value=1)
 
     The values can be any kind of object:
 
         sage: selector([sin(x^2), GF(29), EllipticCurve('37a1')])
-        Dropdown(value=sin(x^2), options=[sin(x^2), Finite Field of size 29, Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field])
+        Dropdown(options=(sin(x^2), Finite Field of size 29, Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field), value=sin(x^2))
     """
     if isinstance(values, Sequence):
         values = list(values)
@@ -519,14 +523,14 @@ def input_grid(nrows, ncols, default=None, label=None, to_value=None, width=4):
 
         sage: from sage.repl.ipython_kernel.all_jupyter import input_grid
         sage: input_grid(2, 2, default=42, label="answers")
-        Grid(value=[[42, 42], [42, 42]], description=u'answers', children=(Label(value=u'answers'), VBox(children=(EvalText(value=u'42'), EvalText(value=u'42'))), VBox(children=(EvalText(value=u'42'), EvalText(value=u'42')))))
+        Grid(value=[[42, 42], [42, 42]], children=(Label(value=u'answers'), VBox(children=(EvalText(value=u'42', layout=Layout(max_width=u'5em')), EvalText(value=u'42', layout=Layout(max_width=u'5em')))), VBox(children=(EvalText(value=u'42', layout=Layout(max_width=u'5em')), EvalText(value=u'42', layout=Layout(max_width=u'5em'))))))
         sage: w = input_grid(2, 2, default=[[cos(x), sin(x)], [-sin(x), cos(x)]], to_value=matrix); w
-        Grid(value=[[cos(x), sin(x)], [-sin(x), cos(x)]], children=(Label(value=u''), VBox(children=(EvalText(value=u'cos(x)'), EvalText(value=u'-sin(x)'))), VBox(children=(EvalText(value=u'sin(x)'), EvalText(value=u'cos(x)')))))
+        Grid(value=[[cos(x), sin(x)], [-sin(x), cos(x)]], children=(Label(value=u''), VBox(children=(EvalText(value=u'cos(x)', layout=Layout(max_width=u'5em')), EvalText(value=u'-sin(x)', layout=Layout(max_width=u'5em')))), VBox(children=(EvalText(value=u'sin(x)', layout=Layout(max_width=u'5em')), EvalText(value=u'cos(x)', layout=Layout(max_width=u'5em'))))))
         sage: w.get_interact_value()
         [ cos(x)  sin(x)]
         [-sin(x)  cos(x)]
         sage: w = input_grid(2, 2, default=[1, x, x^2, x^3], to_value=lambda x: x[1][1]); w
-        Grid(value=[[1, x], [x^2, x^3]], children=(Label(value=u''), VBox(children=(EvalText(value=u'1'), EvalText(value=u'x^2'))), VBox(children=(EvalText(value=u'x'), EvalText(value=u'x^3')))))
+        Grid(value=[[1, x], [x^2, x^3]], children=(Label(value=u''), VBox(children=(EvalText(value=u'1', layout=Layout(max_width=u'5em')), EvalText(value=u'x^2', layout=Layout(max_width=u'5em')))), VBox(children=(EvalText(value=u'x', layout=Layout(max_width=u'5em')), EvalText(value=u'x^3', layout=Layout(max_width=u'5em'))))))
         sage: w.get_interact_value()
         x^3
     """

@@ -494,7 +494,7 @@ So we only need to override ``transmit_unsafe``! Let us do it::
     ....:     number_err = self.number_errors()
     ....:     V = self.input_space()
     ....:     F = GF(2)
-    ....:     for i in sample(xrange(V.dimension()), number_err):
+    ....:     for i in sample(range(V.dimension()), number_err):
     ....:         w[i] += F.one()
     ....:     return w
 
@@ -699,7 +699,7 @@ derive from the one that follows.
             number_err = self.number_errors()
             V = self.input_space()
             F = GF(2)
-            for i in sample(xrange(V.dimension()), number_err):
+            for i in sample(range(V.dimension()), number_err):
                 w[i] += F.one()
             return w
 

@@ -18,6 +18,7 @@ Set Constructions
    sage/sets/finite_set_maps
    sage/sets/finite_set_map_cy
    sage/sets/totally_ordered_finite_set
+   sage/sets/pythonclass
 
 Sets of Numbers
 ---------------

@@ -153,12 +153,12 @@ def combinations(n,t):
         sage: for i,j in combinations(4,2):
         ....:     s.remove(i)
         ....:     s.add(j)
-        ....:     print(s)
-        set([1, 2])
-        set([0, 2])
-        set([2, 3])
-        set([1, 3])
-        set([0, 3])
+        ....:     print(sorted(s))
+        [1, 2]
+        [0, 2]
+        [2, 3]
+        [1, 3]
+        [0, 3]
 
     Note that ``n`` can be infinity::
 
@@ -167,22 +167,22 @@ def combinations(n,t):
         sage: for _ in range(10):
         ....:     i,j = next(c)
         ....:     s.remove(i); s.add(j)
-        ....:     print(s)
-        set([0, 1, 3, 4])
-        set([1, 2, 3, 4])
-        set([0, 2, 3, 4])
-        set([0, 1, 2, 4])
-        set([0, 1, 4, 5])
-        set([1, 2, 4, 5])
-        set([0, 2, 4, 5])
-        set([2, 3, 4, 5])
-        set([1, 3, 4, 5])
-        set([0, 3, 4, 5])
+        ....:     print(sorted(s))
+        [0, 1, 3, 4]
+        [1, 2, 3, 4]
+        [0, 2, 3, 4]
+        [0, 1, 2, 4]
+        [0, 1, 4, 5]
+        [1, 2, 4, 5]
+        [0, 2, 4, 5]
+        [2, 3, 4, 5]
+        [1, 3, 4, 5]
+        [0, 3, 4, 5]
         sage: for _ in range(1000):
         ....:     i,j = next(c)
         ....:     s.remove(i); s.add(j)
-        sage: s
-        {0, 4, 13, 14}
+        sage: sorted(s)
+        [0, 4, 13, 14]
 
     TESTS::
 

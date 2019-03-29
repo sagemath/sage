@@ -6,9 +6,10 @@ Discrete dynamics
 .. toctree::
    :maxdepth: 2
 
-   interval_exchanges
-   flat_surfaces
+   cellular_automata
    complex_dynamics
+   flat_surfaces
+   interval_exchanges
    sage/sandpiles/sandpile
 
 .. SEEALSO::

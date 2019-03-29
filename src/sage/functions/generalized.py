@@ -316,7 +316,7 @@ class FunctionUnitStep(GinacFunction):
 
         -  ``x`` - a real number or a symbolic expression
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: unit_step(-1)
             0
@@ -405,7 +405,7 @@ class FunctionSignum(BuiltinFunction):
         r"""
         The sgn function, ``sgn(x)``.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: sgn(-1)
             -1
@@ -629,7 +629,7 @@ class FunctionKroneckerDelta(BuiltinFunction):
         return 0
 
     def _print_latex_(self, m, n, **kwds):
-        """
+        r"""
         Return latex expression
 
         EXAMPLES::
@@ -638,9 +638,8 @@ class FunctionKroneckerDelta(BuiltinFunction):
             sage: m,n=var('m,n')
             sage: latex(kronecker_delta(m,n))
             \delta_{m,n}
-
         """
         from sage.misc.latex import latex
-        return "\\delta_{%s,%s}"%(latex(m), latex(n))
+        return r"\delta_{%s,%s}" % (latex(m), latex(n))
 
 kronecker_delta = FunctionKroneckerDelta()

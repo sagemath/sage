@@ -43,7 +43,6 @@ from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.ext.fast_callable import fast_callable
 import sys
-from sage.symbolic.ring import var
 from sage.categories.fields import Fields
 _Fields = Fields()
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
@@ -129,8 +128,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: f = H([5*x^3 + 3*x*y^2-y^3, 3*z^3 + y*x^2, x^3-z^3])
             sage: f.dehomogenize(2)
             Scheme endomorphism of Affine Space of dimension 2 over Integer Ring
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    ((5*x0^3 + 3*x0*x1^2 - x1^3)/(x0^3 - 1), (x0^2*x1 + 3)/(x0^3 - 1))
+              Defn: Defined on coordinates by sending (x, y) to
+                    ((5*x^3 + 3*x*y^2 - y^3)/(x^3 - 1), (x^2*y + 3)/(x^3 - 1))
 
             If you pass in quotient ring elements, they are reduced::
 
@@ -233,11 +232,11 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``right`` - a map on affine space.
+        - ``right`` -- a map on affine space
 
         OUTPUT:
 
-        - Boolean - True if the two affine maps define the same map.
+        ``True`` if the two affine maps define the same map.
 
         EXAMPLES::
 
@@ -250,7 +249,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: f == g
             False
 
-            ::
+        ::
 
             sage: A.<x,y,z> = AffineSpace(CC, 3)
             sage: H = End(A)
@@ -262,7 +261,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             return False
         if self.parent() != right.parent():
             return False
-        return all([self[i] == right[i] for i in range(len(self._polys))])
+        return all(val == right._polys[i] for i,val in enumerate(self._polys))
 
     def __ne__(self, right):
         """
@@ -270,11 +269,11 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``right`` -  a map on affine space.
+        - ``right`` -- a map on affine space
 
         OUTPUT:
 
-        - Boolean - True if the two affine maps define the same map.
+        ``True`` if the two affine maps define the same map.
 
         EXAMPLES::
 
@@ -291,14 +290,12 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             return True
         if self.parent() != right.parent():
             return True
-        if all([self[i] == right[i] for i in range(len(self._polys))]):
-            return False
-        return True
+        return any(val != right._polys[i] for i,val in enumerate(self._polys))
 
     @lazy_attribute
     def _fastpolys(self):
         """
-        Lazy attribute for fast_callable polynomials for affine morphsims.
+        Lazy attribute for fast_callable polynomials for affine morphisms.
 
         EXAMPLES::
 
@@ -306,12 +303,12 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: H = Hom(P, P)
             sage: f = H([x^2+y^2, y^2/(1+x)])
             sage: [t.op_list() for g in f._fastpolys for t in g]
-            [[('load_const', 0), ('load_const', 1), ('load_arg', 1), ('ipow', 2),
-            'mul', 'add', ('load_const', 1), ('load_arg', 0), ('ipow', 2), 'mul',
+            [[('load_const', 0), ('load_const', 1), ('load_arg', ...), ('ipow', 2),
+            'mul', 'add', ('load_const', 1), ('load_arg', ...), ('ipow', 2), 'mul',
             'add', 'return'], [('load_const', 0), ('load_const', 1), ('load_arg',
-            1), ('ipow', 2), 'mul', 'add', 'return'], [('load_const', 0),
+            ...), ('ipow', 2), 'mul', 'add', 'return'], [('load_const', 0),
             ('load_const', 1), 'add', 'return'], [('load_const', 0), ('load_const',
-            1), ('load_arg', 0), ('ipow', 1), 'mul', 'add', ('load_const', 1),
+            1), ('load_arg', ...), ('ipow', 1), 'mul', 'add', ('load_const', 1),
             'add', 'return']]
         """
         polys = self._polys
@@ -563,7 +560,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             #remove possible gcd of coefficients
             gc = gcd([f.content() for f in F])
             F = [S(f/gc) for f in F]
-        except (AttributeError, ValueError, NotImplementedError, TypeError): #no gcd
+        except (AttributeError, ValueError, NotImplementedError, TypeError, ArithmeticError): #no gcd
             pass
         d = max([F[i].degree() for i in range(M+1)])
         F = [F[i].homogenize(str(newvar))*newvar**(d-F[i].degree()) for i in range(M+1)]
@@ -571,11 +568,11 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
     def as_dynamical_system(self):
         """
-        Return this endomorpism as a :class:`DynamicalSystem_affine`.
+        Return this endomorphism as a :class:`DynamicalSystem_affine`.
 
         OUTPUT:
 
-        - :class:`DynamicalSystem_affine`.
+        - :class:`DynamicalSystem_affine`
 
         EXAMPLES::
 
@@ -600,7 +597,18 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: f = H([x^2])
             sage: type(f.as_dynamical_system())
             <class 'sage.dynamics.arithmetic_dynamics.affine_ds.DynamicalSystem_affine_finite_field'>
+
+        ::
+
+            sage: P.<x,y> = AffineSpace(RR, 2)
+            sage: f = DynamicalSystem([x^2 + y^2, y^2], P)
+            sage: g = f.as_dynamical_system()
+            sage: g is f
+            True
         """
+        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
+        if isinstance(self, DynamicalSystem):
+            return self
         if not self.domain() == self.codomain():
             raise TypeError("must be an endomorphism")
         from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
@@ -846,7 +854,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: f(P).weil_restriction() == F(Q)
             True
         """
-        if any([isinstance(f,FractionFieldElement) for f in self]):
+        if any(isinstance(f, FractionFieldElement) for f in self):
             raise TypeError("coordinate functions must be polynomials")
 
         DS = self.domain()

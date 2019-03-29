@@ -12,12 +12,12 @@ from six.moves import range
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.categories.category_singleton import Category_singleton
 from sage.categories.sets_cat import Sets
 from sage.categories.sets_cat import EmptySetError
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.rings.integer", "Integer")
+
 
 class EnumeratedSets(CategoryWithAxiom):
     """
@@ -553,7 +553,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 sage: Q.is_finite()
                 Traceback (most recent call last):
                 ...
-                NotImplementedError
+                AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'is_finite'
                 sage: Q.list()   # indirect test
                 Traceback (most recent call last):
                 ...
@@ -814,7 +814,7 @@ class EnumeratedSets(CategoryWithAxiom):
             TESTS::
 
                 sage: super(Parent, C)._an_element_
-                Cached version of <function _an_element_from_iterator at ...>
+                Cached version of <function ..._an_element_from_iterator at ...>
             """
             it = iter(self)
             try:
@@ -883,25 +883,25 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: R = SymmetricGroup(3).map(attrcall('reduced_word')); R
-                Image of Symmetric group of order 3! as a permutation group by *.reduced_word()
+                sage: R = Compositions(4).map(attrcall('partial_sums')); R
+                Image of Compositions of 4 by *.partial_sums()
                 sage: R.cardinality()
-                6
+                8
                 sage: R.list()
-                [[], [1], [2, 1], [1, 2], [2], [1, 2, 1]]
+                [[1, 2, 3, 4], [1, 2, 4], [1, 3, 4], [1, 4], [2, 3, 4], [2, 4], [3, 4], [4]]
                 sage: [ r for r in R]
-                [[], [1], [2, 1], [1, 2], [2], [1, 2, 1]]
+                [[1, 2, 3, 4], [1, 2, 4], [1, 3, 4], [1, 4], [2, 3, 4], [2, 4], [3, 4], [4]]
 
             .. warning::
 
                 If the function is not injective, then there may be
                 repeated elements::
 
-                    sage: P = SymmetricGroup(3)
+                    sage: P = Compositions(4)
                     sage: P.list()
-                    [(), (1,2), (1,2,3), (1,3,2), (2,3), (1,3)]
-                    sage: P.map(attrcall('length')).list()
-                    [0, 1, 2, 2, 1, 3]
+                    [[1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [1, 3], [2, 1, 1], [2, 2], [3, 1], [4]]
+                    sage: P.map(attrcall('major_index')).list()
+                    [6, 3, 4, 1, 5, 2, 3, 0]
 
             .. warning::
 
@@ -1018,11 +1018,11 @@ class EnumeratedSets(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: F = FiniteSemigroups().example(('a','b','c'))
-                sage: L = list(F); L
-                ['a', 'b', 'c', 'ac', 'ab', 'ba', 'bc', 'cb', 'ca',
-                 'acb', 'abc', 'bca', 'cba', 'bac', 'cab']
+                sage: L = list(F)
                 sage: L[7].rank()
                 7
+                sage: all(x.rank() == i for i,x in enumerate(L))
+                True
             """
             return self.parent().rank(self)
 

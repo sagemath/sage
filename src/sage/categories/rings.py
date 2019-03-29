@@ -122,7 +122,7 @@ class Rings(CategoryWithAxiom):
                           From: Integer Ring
                           To:   Fraction Field of Univariate Polynomial Ring in x over Rational Field
                         then
-                          Isomorphism morphism:
+                          Isomorphism:
                           From: Fraction Field of Univariate Polynomial Ring in x over Rational Field
                           To:   Rational function field in x over Rational Field
                 sage: f.is_injective()
@@ -198,7 +198,7 @@ class Rings(CategoryWithAxiom):
     class SubcategoryMethods:
 
         def NoZeroDivisors(self):
-            """
+            r"""
             Return the full subcategory of the objects of ``self`` having
             no nonzero zero divisors.
 
@@ -946,9 +946,6 @@ class Rings(CategoryWithAxiom):
                   From: Number Field in i with defining polynomial x^2 + 1
                   To:   Complex Lazy Field
                   Defn: i -> 1*I
-                sage: QQi.<i> = QuadraticField(-1, embedding=None)
-                sage: QQ[i].coerce_embedding() is None
-                True
 
             TESTS:
 
@@ -1217,7 +1214,7 @@ def _gen_names(elts):
     next(it) # skip empty word
     for x in elts:
         name = str(x)
-        m = re.match('^sqrt\((\d+)\)$', name)
+        m = re.match(r'^sqrt\((\d+)\)$', name)
         if m:
             name = "sqrt%s" % m.groups()[0]
         try:

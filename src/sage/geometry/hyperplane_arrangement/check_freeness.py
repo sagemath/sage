@@ -100,7 +100,6 @@ def construct_free_chain(A):
     G = S.gens()
     r = len(G)
     indices = list(range(len(B)))
-    X = []
 
     # Helper function
     def next_step(indices, prev, T):
@@ -140,4 +139,3 @@ def construct_free_chain(A):
         if ret is not None:
             return ret
     return None
-

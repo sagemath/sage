@@ -17,28 +17,12 @@ Two classes implement differential forms, depending whether the manifold
 * :class:`DiffFormParal` when `M` is parallelizable
 * :class:`DiffForm` when `M` is not assumed parallelizable.
 
-.. NOTE::
-
-    A difference with the class
-    :class:`~sage.tensor.differential_form_element.DifferentialForm`
-    is that the present classes lie at the tensor field level. Accordingly, an
-    instance of :class:`DiffForm` or :class:`DiffFormParal` can have various
-    sets of components, each in a different coordinate system (or more
-    generally in a different coframe), while the class
-    :class:`~sage.tensor.differential_form_element.DifferentialForm`
-    considers differential forms at the component level in a fixed chart.
-    In this respect, the class
-    :class:`~sage.tensor.differential_form_element.DifferentialForm` is
-    closer to the class :class:`~sage.tensor.modules.comp.CompFullyAntiSym`
-    than to :class:`DiffForm`.
-
 AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2013, 2014): initial version
 - Joris Vankerschaver (2010): developed a previous class,
-  :class:`~sage.tensor.differential_form_element.DifferentialForm` (cf. the
-  above note), which inspired the storage of the non-zero components as a
-  dictionary whose keys are the indices.
+  ``DifferentialForm`` (cf. :trac:`24444`), which inspired the storage of the
+  non-zero components as a dictionary whose keys are the indices.
 - Travis Scrimshaw (2016): review tweaks
 
 REFERENCES:
@@ -205,6 +189,73 @@ class DiffForm(TensorField):
         (-x^2*y - 2*x*y^2 - y^3) dx + (x^3 + 2*x^2*y + x*y^2) dy
         sage: s.display(eV)
         1/2*u^2*v du - 1/2*u^3 dv
+
+
+    .. RUBRIC:: Examples with SymPy as the symbolic engine
+
+    From now on, we ask that all symbolic calculus on manifold `M` are
+    performed by SymPy::
+
+        sage: M.set_calculus_method('sympy')
+
+    We define a 2-form `a` as above::
+
+        sage: a = M.diff_form(2, name='a')
+        sage: a[eU,0,1] = x*y^2 + 2*x
+        sage: a.add_comp_by_continuation(eV, W, c_uv)
+        sage: a.display(eU)
+        a = (x*y**2 + 2*x) dx/\dy
+        sage: a.display(eV)
+        a = (-u**3/16 + u**2*v/16 + u*v**2/16 - u/2 - v**3/16 - v/2) du/\dv
+
+    A 1-form on ``M``::
+
+        sage: a = M.one_form('a')
+        sage: a[eU,:] = [-y, x]
+        sage: a.add_comp_by_continuation(eV, W, c_uv)
+        sage: a.display(eU)
+        a = -y dx + x dy
+        sage: a.display(eV)
+        a = v/2 du - u/2 dv
+
+    The exterior derivative of ``a``::
+
+        sage: da = a.exterior_derivative()
+        sage: da.display(eU)
+        da = 2 dx/\dy
+        sage: da.display(eV)
+        da = -du/\dv
+
+    Another 1-form::
+
+        sage: b = M.one_form('b')
+        sage: b[eU,:] = [1+x*y, x^2]
+        sage: b.add_comp_by_continuation(eV, W, c_uv)
+
+    Adding two 1-forms::
+
+        sage: s = a + b
+        sage: s.display(eU)
+        a+b = (x*y - y + 1) dx + x*(x + 1) dy
+        sage: s.display(eV)
+        a+b = (u**2/4 + u*v/4 + v/2 + 1/2) du + (-u*v/4 - u/2 - v**2/4 + 1/2) dv
+
+    The exterior product of two 1-forms::
+
+        sage: s = a.wedge(b)
+        sage: s.display(eU)
+        a/\b = -x*(2*x*y + 1) dx/\dy
+        sage: s.display(eV)
+        a/\b = (u**3/8 + u**2*v/8 - u*v**2/8 + u/4 - v**3/8 + v/4) du/\dv
+
+    Multiplying a 1-form by a scalar field::
+
+        sage: f = M.scalar_field({c_xy: (x+y)^2, c_uv: u^2}, name='f')
+        sage: s = f*a
+        sage: s.display(eU)
+        -y*(x**2 + 2*x*y + y**2) dx + x*(x**2 + 2*x*y + y**2) dy
+        sage: s.display(eV)
+        u**2*v/2 du - u**3/2 dv
 
     """
     def __init__(self, vector_field_module, degree, name=None, latex_name=None):
@@ -707,8 +758,8 @@ class DiffForm(TensorField):
         self_r = self.restrict(dom_resu)
         qvect_r = qvect.restrict(dom_resu)
         if ambient_dom_resu.is_manifestly_parallelizable():
-            # call of the AlternatingContrTensor version:
-            return AlternatingContrTensor.interior_product(self_r, qvect_r)
+            # call of the FreeModuleAltForm version:
+            return FreeModuleAltForm.interior_product(self_r, qvect_r)
         # Otherwise, the result is created here:
         # Name of the result
         resu_name = None
@@ -870,7 +921,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
     An example of 3-form is the volume element on `\RR^3` in Cartesian
     coordinates::
 
-        sage: M = Manifold(3, 'R3', '\RR^3', start_index=1)
+        sage: M = Manifold(3, 'R3', r'\RR^3', start_index=1)
         sage: c_cart.<x,y,z> = M.chart()
         sage: eps = M.diff_form(3, 'epsilon', r'\epsilon')
         sage: eps[1,2,3] = 1  # the only independent component
@@ -1235,7 +1286,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
             True
 
         """
-        from sage.calculus.functional import diff
         from sage.tensor.modules.format_utilities import (format_unop_txt,
                                                           format_unop_latex)
         from sage.tensor.modules.comp import CompFullyAntiSym

@@ -1,4 +1,4 @@
-"""
+r"""
 Multiplicative Abelian Groups With Values
 
 Often, one ends up with a set that forms an Abelian group. It would be
@@ -78,9 +78,8 @@ from sage.groups.abelian_gps.abelian_group import AbelianGroup_class, _normalize
 from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
 
 
-
 def AbelianGroupWithValues(values, n, gens_orders=None, names='f', check=False, values_group=None):
-    """
+    r"""
     Construct an Abelian group with values associated to the generators.
 
     INPUT:

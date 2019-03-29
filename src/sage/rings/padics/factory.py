@@ -1,4 +1,4 @@
-"""
+r"""
 Factory
 
 This file contains the constructor classes and functions for `p`-adic rings and fields.
@@ -6,6 +6,15 @@ This file contains the constructor classes and functions for `p`-adic rings and 
 AUTHORS:
 
 - David Roe
+
+TESTS::
+
+    sage: R = ZpLC(2)
+    doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
+    See http://trac.sagemath.org/23505 for details.
+    sage: R = ZpLF(2)
+    sage: R = QpLC(2)
+    sage: R = QpLF(2)
 """
 
 #*****************************************************************************
@@ -20,8 +29,11 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import absolute_import, print_function
 
+from sage.misc.superseded import experimental
+
 from sage.structure.factory import UniqueFactory
 from sage.rings.integer import Integer
+from sage.rings.infinity import Infinity
 from sage.structure.factorization import Factorization
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -31,8 +43,10 @@ from .padic_base_leaves import (pAdicRingCappedRelative,
                                 pAdicRingCappedAbsolute,
                                 pAdicRingFixedMod,
                                 pAdicRingFloatingPoint,
+                                pAdicRingLattice,
                                 pAdicFieldCappedRelative,
-                                pAdicFieldFloatingPoint)
+                                pAdicFieldFloatingPoint,
+                                pAdicFieldLattice)
 from . import padic_printing
 
 ######################################################
@@ -42,61 +56,96 @@ from . import padic_printing
 ######################################################
 
 from .padic_extension_leaves import *
+from .relative_extension_leaves import *
 from functools import reduce
 #This imports all of the classes used in the ext_table below.
 
 ext_table = {}
 ext_table['e', pAdicFieldCappedRelative] = EisensteinExtensionFieldCappedRelative
-#ext_table['e', pAdicFieldLazy] = EisensteinExtensionFieldLazy
 ext_table['e', pAdicRingCappedAbsolute] = EisensteinExtensionRingCappedAbsolute
 ext_table['e', pAdicRingCappedRelative] = EisensteinExtensionRingCappedRelative
 ext_table['e', pAdicRingFixedMod] = EisensteinExtensionRingFixedMod
 #ext_table['e', pAdicRingFloatingPoint] = EisensteinExtensionRingFloatingPoint
 #ext_table['e', pAdicFieldFloatingPoint] = EisensteinExtensionFieldFloatingPoint
-#ext_table['e', pAdicRingLazy] = EisensteinExtensionRingLazy
 #ext_table['p', pAdicFieldCappedRelative] = pAdicGeneralExtensionFieldCappedRelative
-#ext_table['p', pAdicFieldLazy] = pAdicGeneralExtensionFieldLazy
 #ext_table['p', pAdicRingCappedAbsolute] = pAdicGeneralExtensionRingCappedAbsolute
 #ext_table['p', pAdicRingCappedRelative] = pAdicGeneralExtensionRingCappedRelative
 #ext_table['p', pAdicRingFixedMod] = pAdicGeneralExtensionRingFixedMod
-#ext_table['p', pAdicRingLazy] = pAdicGeneralExtensionRingLazy
 ext_table['u', pAdicFieldCappedRelative] = UnramifiedExtensionFieldCappedRelative
-#ext_table['u', pAdicFieldLazy] = UnramifiedExtensionFieldLazy
 ext_table['u', pAdicRingCappedAbsolute] = UnramifiedExtensionRingCappedAbsolute
 ext_table['u', pAdicRingCappedRelative] = UnramifiedExtensionRingCappedRelative
 ext_table['u', pAdicRingFixedMod] = UnramifiedExtensionRingFixedMod
 ext_table['u', pAdicRingFloatingPoint] = UnramifiedExtensionRingFloatingPoint
 ext_table['u', pAdicFieldFloatingPoint] = UnramifiedExtensionFieldFloatingPoint
-#ext_table['u', pAdicRingLazy] = UnramifiedExtensionRingLazy
+ext_table['re', pAdicRingFixedMod] = RelativeRamifiedExtensionRingFixedMod
+ext_table['re', pAdicRingCappedAbsolute] = RelativeRamifiedExtensionRingCappedAbsolute
+ext_table['re', pAdicRingCappedRelative] = RelativeRamifiedExtensionRingCappedRelative
+ext_table['re', pAdicFieldCappedRelative] = RelativeRamifiedExtensionFieldCappedRelative
+ext_table['re', pAdicRingFloatingPoint] = RelativeRamifiedExtensionRingFloatingPoint
+ext_table['re', pAdicFieldFloatingPoint] = RelativeRamifiedExtensionFieldFloatingPoint
 
-def _default_show_prec(type, print_mode):
-    """
-    Returns the default show_prec value for a given type and printing mode.
+def _canonicalize_show_prec(type, print_mode, show_prec=None):
+    r"""
+    Return a canonical string value for show_prec depending of the type,
+    the print_mode and the given value.
 
     INPUT:
 
-    - ``type`` -- a string: ``'capped-rel'``, ``'capped-abs'``, ``'fixed-mod'`` or ``'floating-point'``
+    - ``type`` -- a string: ``'capped-rel'``, ``'capped-abs'``, ``'fixed-mod'`` or ``'floating-point'``,
+      ``'lattice-cap'`` or ``'lattice-float'``
+
     - ``print_mode`` -- a string: ``'series'``, ``'terse'``, ``'val-unit'``, ``'digits'``, ``'bars'``
+
+    - ``show_prec`` -- a boolean, string or ``None``
+
+    OUTPUT:
+
+    A string, either ``'bigoh'``, ``'dots'`` or ``'none'``
 
     EXAMPLES::
 
-        sage: from sage.rings.padics.factory import _default_show_prec
-        sage: _default_show_prec('floating-point', 'series')
-        False
-        sage: _default_show_prec('capped-rel', 'series')
-        True
-        sage: _default_show_prec('capped-abs', 'digits')
-        False
-    """
-    if type == 'floating-point':
-        return False
-    elif print_mode in ('series', 'terse', 'val-unit'):
-        return True
-    else:
-        return False
+        sage: from sage.rings.padics.factory import _canonicalize_show_prec
+        sage: _canonicalize_show_prec('floating-point', 'series')
+        'none'
 
-def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, check, valid_non_lazy_types):
+        sage: _canonicalize_show_prec('capped-rel', 'series')
+        'bigoh'
+        sage: _canonicalize_show_prec('capped-rel', 'series', False)
+        'none'
+
+        sage: _canonicalize_show_prec('capped-abs', 'digits')
+        'dots'
+        sage: _canonicalize_show_prec('capped-abs', 'digits', 'bigoh')
+        'bigoh'
+
+    TESTS::
+
+        sage: _canonicalize_show_prec('capped-abs', 'digits', 'my_precision')
+        Traceback (most recent call last):
+        ...
+        ValueError: show_prec must be either a boolean, 'none', 'bigoh' or 'dots' when printing mode is digits
     """
+    # Note that None means "choose the default for this ring", while 'none' means "don't print precision".
+    if show_prec is None:
+        show_prec = type not in ('floating-point', 'fixed-mod')
+    if show_prec is False:
+        return "none"
+    if show_prec is True:
+        if print_mode in ('series', 'terse', 'val-unit'):
+            return "bigoh"
+        else:
+            return "dots"
+    if print_mode in ('series', 'terse', 'val-unit'):
+        if show_prec not in ('none', 'bigoh'):
+            raise ValueError("show_prec must be either a boolean, 'none' or 'bigoh' when printing mode is %s" % print_mode)
+    else:
+        if show_prec not in ('none', 'bigoh', 'dots'):
+            raise ValueError("show_prec must be either a boolean, 'none', 'bigoh' or 'dots' when printing mode is %s" % print_mode)
+    return show_prec
+
+
+def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, check, valid_types, label=None):
+    r"""
     This implements create_key for Zp and Qp: moving it here prevents code duplication.
 
     It fills in unspecified values and checks for contradictions in the input.  It also standardizes irrelevant options so that duplicate parents are not created.
@@ -105,19 +154,61 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
 
         sage: from sage.rings.padics.factory import get_key_base
         sage: get_key_base(11, 5, 'capped-rel', None, None, None, None, ':', None, None, False, True, ['capped-rel'])
-        (11, 5, 'capped-rel', 'series', '11', True, '|', (), -1, False)
+        (11, 5, 'capped-rel', 'series', '11', True, '|', (), -1, 'none', None)
         sage: get_key_base(12, 5, 'capped-rel', 'digits', None, None, None, None, None, None, True, False, ['capped-rel'])
-        (12, 5, 'capped-rel', 'digits', '12', True, '|', ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B'), -1, True)
+        (12,
+         5,
+         'capped-rel',
+         'digits',
+         '12',
+         True,
+         '|',
+         ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B'),
+         -1,
+         'dots',
+         None)
     """
-    if prec is None:
-        prec = DEFAULT_PREC
     if check:
         if not isinstance(p, Integer):
             p = Integer(p)
-        if not isinstance(prec, Integer):
-            prec = Integer(prec)
         if not p.is_prime():
             raise ValueError("p must be prime")
+        if type == 'lattice-cap':
+            relative_cap = absolute_cap = None
+            if prec is not None:
+                try:
+                    relative_cap, absolute_cap = prec
+                except (ValueError, TypeError):
+                    relative_cap = prec
+            if relative_cap is not None:
+                if relative_cap is not Infinity:
+                    try:
+                        relative_cap = Integer(relative_cap)
+                    except TypeError:
+                        raise TypeError("relative cap must be either a positive integer or infinity")
+                    if relative_cap <= 0:
+                        raise ValueError("relative cap must be positive")
+            if absolute_cap is not None:
+                try:
+                    absolute_cap = Integer(absolute_cap)
+                except TypeError:
+                    raise TypeError("absolute cap must be an integer")
+            if relative_cap is None and absolute_cap is None:
+                relative_cap = DEFAULT_PREC
+                absolute_cap = 2 * DEFAULT_PREC
+            elif relative_cap is None:
+                relative_cap = Infinity
+            elif absolute_cap is None:
+                absolute_cap = 2 * relative_cap
+            prec = (relative_cap, absolute_cap)
+        else:
+            if prec is not None:
+                prec = Integer(prec)
+    if prec is None:
+        if type == 'lattice-cap':
+            prec = (DEFAULT_PREC, 2*DEFAULT_PREC)
+        else:
+            prec = DEFAULT_PREC
     print_ram_name = ram_name
     if isinstance(print_mode, dict):
         if 'pos' in print_mode:
@@ -183,13 +274,10 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
             name = names
         else:
             name = str(names)
-    if show_prec is None:
-        show_prec = _default_show_prec(type, print_mode)
-    if type in valid_non_lazy_types:
-        key = (p, prec, type, print_mode, name, print_pos, print_sep, tuple(print_alphabet), print_max_terms, show_prec)
-    else:
-        print(type)
-        raise ValueError("type must be %s"%(", ".join(valid_non_lazy_types)))
+    if type not in valid_types:
+        raise ValueError("type must be %s"%(", ".join(valid_types)))
+    show_prec = _canonicalize_show_prec(type, print_mode, show_prec)
+    key = (p, prec, type, print_mode, name, print_pos, print_sep, tuple(print_alphabet), print_max_terms, show_prec, label)
     return key
 
 #######################################################################################################
@@ -197,7 +285,7 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
 #  p-Adic Fields
 #  Qp -- base field
 #  Qq -- unramified extension field of Qp
-#  QpCR, QpL, QqCR, QqL -- shortcuts for capped relative and lazy versions of Qp and Qq
+#  QpCR, QpLC, QpLF, QqCR -- shortcuts for capped relative and lattice versions of Qp and Qq
 #
 #######################################################################################################
 
@@ -205,20 +293,23 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
 padic_field_cache = {}
 DEFAULT_PREC = Integer(20)
 class Qp_class(UniqueFactory):
-    """
+    r"""
     A creation function for `p`-adic fields.
 
     INPUT:
 
-    - ``p`` -- integer: the `p` in `\mathbb{Q}_p`
+    - ``p`` -- integer: the `p` in `\QQ_p`
 
     - ``prec`` -- integer (default: ``20``) the precision cap of the field.
-      Individual elements keep track of their own precision.  See
-      TYPES and PRECISION below.
+      In the lattice capped case, ``prec`` can either be a
+      pair (``relative_cap``, ``absolute_cap``) or an integer
+      (understood at relative cap).
+      Except in the floating point case, individual elements keep track of
+      their own precision.  See TYPES and PRECISION below.
 
     - ``type`` -- string (default: ``'capped-rel'``) Valid types are
-      ``'capped-rel'``, ``'floating-point'`` and ``'lazy'`` (though ``'lazy'`` currently
-      doesn't work).  See TYPES and PRECISION below
+      ``'capped-rel'``, ``'floating-point'``, ``'lattice-cap'``, ``'lattice-float'``.
+      See TYPES and PRECISION below
 
     - ``print_mode`` -- string (default: ``None``).  Valid modes are 'series',
       'val-unit', 'terse', 'digits', and 'bars'. See PRINTING below
@@ -241,12 +332,15 @@ class Qp_class(UniqueFactory):
     - ``print_max_terms`` -- integer (default ``None``) The maximum number of
       terms shown.  See PRINTING below.
 
-    - ``show_prec`` -- bool (default ``None``) whether to show the precision
-      for elements.  See PRINTING below.
+    - ``show_prec`` -- a boolean or a string (default ``None``) Specify how 
+      the precision is printed. See PRINTING below.
 
     - ``check`` -- bool (default ``True``) whether to check if `p` is prime.
       Non-prime input may cause seg-faults (but can also be useful for
       base n expansions for example)
+
+    - ``label`` -- string (default ``None``) used for lattice precision to
+      create parents with different lattices.
 
     OUTPUT:
 
@@ -270,7 +364,7 @@ class Qp_class(UniqueFactory):
         22
 
     There are three types of `p`-adic fields: capped relative fields,
-    floating point fields and lazy fields.
+    floating point fields and lattice precision fields.
 
     In the capped relative case, the relative precision of an element
     is restricted to be at most a certain value, specified at the
@@ -291,8 +385,9 @@ class Qp_class(UniqueFactory):
     precision, but the relative precision of elements is truncated
     during arithmetic to the precision cap of the field.
 
-    The lazy case will eventually support elements that can increase
-    their precision upon request.  It is not currently implemented.
+    In the lattice case, precision on elements is tracked by a global
+    lattice that is updated after every operation, yielding better
+    precision behavior at the cost of higher memory and runtime usage.
 
     PRINTING:
 
@@ -330,9 +425,18 @@ class Qp_class(UniqueFactory):
         sage: U.<p> = Qp(5); p
         p + O(p^21)
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'bigoh'
+    (or equivalently ``True``) or 'bigoh'.
+    The default is ``False`` for the ``'floating-point'`` type
+    and ``True`` for all other types.
 
-        sage: Qp(5, show_prec=False)(6)
+        sage: Qp(5)(6)
+        1 + 5 + O(5^20)
+        sage: Qp(5, show_prec='none')(6)
+        1 + 5
+
+        sage: QpFP(5)(6)
         1 + 5
 
     *print_sep* and *print_alphabet* have no effect in series mode.
@@ -360,7 +464,11 @@ class Qp_class(UniqueFactory):
         sage: T = Qp(5, print_mode='val-unit', names='pi'); a = T(70700); a
         pi^2 * 2828 + O(pi^22)
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``) or 'bigoh'
+    (or equivalently ``True``).
+    The default is ``False`` for the ``'floating-point'`` type
+    and ``True`` for all other types.
 
         sage: Qp(5, print_mode='val-unit', show_prec=False)(30)
         5 * 6
@@ -402,7 +510,11 @@ class Qp_class(UniqueFactory):
         sage: d = T(-707/5^10); d
         95367431639918/unif^10 + O(unif^10)
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``) or 'bigoh'
+    (or equivalently ``True``).
+    The default is ``False`` for the ``'floating-point'`` type
+    and ``True`` for all other types.
 
         sage: Qp(5, print_mode='terse', show_prec=False)(6)
         6
@@ -430,9 +542,9 @@ class Qp_class(UniqueFactory):
         '...444444444444444341.33'
 
     Observe that the significant 0's are printed even if they are
-    located in front of the number. On the contrary, unknown digits 
+    located in front of the number. On the contrary, unknown digits
     located after the comma appears as question marks.
-    The precision can therefore be read in this mode as well. 
+    The precision can therefore be read in this mode as well.
     Here are more examples::
 
         sage: p = 7
@@ -450,29 +562,36 @@ class Qp_class(UniqueFactory):
     Note that if the valuation of the element is very negative, more
     digits will be printed.::
 
-        sage: S = Qp(5, print_mode='digits', print_max_terms=4); b = S(-70700); repr(b)
-        '...214200'
-        sage: d = S(-707/5^2); repr(d)
-        '...41.33'
-        sage: e = S(-707/5^6); repr(e)
-        '...?.434133'
-        sage: f = S(-707/5^6,absprec=-2); repr(f)
-        '...?.??4133'
-        sage: g = S(-707/5^4); repr(g)
-        '...?.4133'
+        sage: S = Qp(5, print_max_terms=4); S(-70700)
+        2*5^2 + 4*5^3 + 5^4 + 2*5^5 + ... + O(5^22)
+        sage: S(-707/5^2)
+        3*5^-2 + 3*5^-1 + 1 + 4*5 + ... + O(5^18)
+        sage: S(-707/5^6)
+        3*5^-6 + 3*5^-5 + 5^-4 + 4*5^-3 + ... + O(5^14)
+        sage: S(-707/5^6,absprec=-2)
+        3*5^-6 + 3*5^-5 + 5^-4 + 4*5^-3 + O(5^-2)
+        sage: S(-707/5^4)
+        3*5^-4 + 3*5^-3 + 5^-2 + 4*5^-1 + ... + O(5^16)
 
     *print_alphabet* controls the symbols used to substitute for digits
     greater than 9.
 
     Defaults to ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')::
 
-        sage: T = Qp(5, print_mode='digits', print_max_terms=4, print_alphabet=('1','2','3','4','5')); b = T(-70700); repr(b)
-        '...325311'
+        sage: T = Qp(5, print_mode='digits', print_alphabet=('1','2','3','4','5')); repr(T(-70700))
+        '...5555555555555551325311'
 
-    *show_prec* determines whether the precision is printed (default ``False``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'dots'
+    (or equivalently ``True``) or 'bigoh'.
+    The default is ``False`` for the ``'floating-point'`` type
+    and ``True`` for all other types.
 
         sage: repr(Zp(5, print_mode='digits', show_prec=True)(6))
-        '...11 + O(5^20)'
+        '...00000000000000000011'
+
+        sage: repr(Zp(5, print_mode='digits', show_prec='bigoh')(6))
+        '11 + O(5^20)'
 
     *print_pos*, *name* and *print_sep* have no effect.
 
@@ -502,25 +621,29 @@ class Qp_class(UniqueFactory):
     Note that if the valuation of the element is very negative, more
     digits will be printed.::
 
-        sage: T = Qp(5, print_mode='bars', print_max_terms=4); b = T(-70700); repr(b)
-        '...2|1|4|2|0|0'
-        sage: d = T(-707/5^2); repr(d)
-        '...4|1|.|3|3'
-        sage: e = T(-707/5^6); repr(e)
-        '...|.|4|3|4|1|3|3'
-        sage: f = T(-707/5^6,absprec=-2); repr(f)
-        '...|.|?|?|4|1|3|3'
-        sage: g = T(-707/5^4); repr(g)
-        '...|.|4|1|3|3'
+        sage: T = Qp(5, print_max_terms=4); T(-70700)
+        2*5^2 + 4*5^3 + 5^4 + 2*5^5 + ... + O(5^22)
+        sage: T(-707/5^2)
+        3*5^-2 + 3*5^-1 + 1 + 4*5 + ... + O(5^18)
+        sage: T(-707/5^6)
+        3*5^-6 + 3*5^-5 + 5^-4 + 4*5^-3 + ... + O(5^14)
+        sage: T(-707/5^6,absprec=-2)
+        3*5^-6 + 3*5^-5 + 5^-4 + 4*5^-3 + O(5^-2)
+        sage: T(-707/5^4)
+        3*5^-4 + 3*5^-3 + 5^-2 + 4*5^-1 + ... + O(5^16)
 
     *print_sep* controls the separation character.::
 
         sage: U = Qp(5, print_mode='bars', print_sep=']['); a = U(70700); repr(a)
         '...4][2][3][0][3][0][0'
 
-    *show_prec* determines whether the precision is printed (default ``False``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'dots'
+    (or equivalently ``True``) or 'bigoh'
+    The default is ``False`` for the ``'floating-point'`` type
+    and ``True`` for all other types.
 
-        sage: repr(Zp(5, print_mode='bars', show_prec=True)(6))
+        sage: repr(Qp(5, print_mode='bars', show_prec='bigoh')(6))
         '...1|1 + O(5^20)'
 
     *name* and *print_alphabet* have no effect.
@@ -537,8 +660,9 @@ class Qp_class(UniqueFactory):
     """
     def create_key(self, p, prec = None, type = 'capped-rel', print_mode = None,
                    names = None, ram_name = None, print_pos = None,
-                   print_sep = None, print_alphabet = None, print_max_terms = None, show_prec=None, check = True):
-        """
+                   print_sep = None, print_alphabet = None, print_max_terms = None, show_prec = None, check = True,
+                   label = None):   # specific to Lattice precision
+        r"""
         Creates a key from input parameters for ``Qp``.
 
         See the documentation for ``Qp`` for more information.
@@ -546,7 +670,7 @@ class Qp_class(UniqueFactory):
         TESTS::
 
             sage: Qp.create_key(5,40)
-            (5, 40, 'capped-rel', 'series', '5', True, '|', (), -1, True)
+            (5, 40, 'capped-rel', 'series', '5', True, '|', (), -1, 'bigoh', None)
         """
         if isinstance(names, (int, Integer)):
             # old pickle; names is what used to be halt.
@@ -556,10 +680,12 @@ class Qp_class(UniqueFactory):
             print_alphabet = print_max_terms
             print_max_terms = check
             check = True
-        return get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, check, ['capped-rel', 'floating-point'])
+        if label is not None and type not in ['lattice-cap','lattice-float']:
+            raise ValueError("label keyword only supported for lattice precision")
+        return get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, check, ['capped-rel', 'floating-point', 'lattice-cap', 'lattice-float'], label)
 
     def create_object(self, version, key):
-        """
+        r"""
         Creates an object using a given key.
 
         See the documentation for ``Qp`` for more information.
@@ -575,11 +701,9 @@ class Qp_class(UniqueFactory):
         elif version[0] < 8:
             p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms = key
             show_prec = None
+            label = None
         else:
-            p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec = key
-        if isinstance(type, Integer):
-            # lazy
-            raise NotImplementedError("lazy p-adics need more work.  Sorry.")
+            p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, label = key
         if (version[0] < 4 or (len(version) > 1 and version[0] == 4 and version[1] < 5) or
             (len(version) > 2 and version[0] == 4 and version[1] == 5 and version[2] < 3)):
             # keys changed in order to reduce irrelevant duplications: e.g. two Qps with print_mode 'series'
@@ -592,7 +716,7 @@ class Qp_class(UniqueFactory):
                     return obj
             except KeyError:
                 pass
-            p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec = key
+            p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, label = key
 
         if type == 'capped-rel':
             if print_mode == 'terse':
@@ -608,6 +732,14 @@ class Qp_class(UniqueFactory):
             else:
                 return pAdicFieldFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                          'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
+        elif type[:8] == 'lattice-':
+            subtype = type[8:]
+            if print_mode == 'terse':
+                return pAdicFieldLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
+                                                            'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name, label)
+            else:
+                return pAdicFieldLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
+                                                            'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name, label)
         else:
             raise ValueError("unexpected type")
 
@@ -622,14 +754,14 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
           print_mode=None, ram_name = None, res_name = None, print_pos = None,
        print_sep = None, print_max_ram_terms = None,
        print_max_unram_terms = None, print_max_terse_terms = None, show_prec=None, check = True, implementation = 'FLINT'):
-    """
+    r"""
     Given a prime power `q = p^n`, return the unique unramified
-    extension of `\mathbb{Q}_p` of degree `n`.
+    extension of `\QQ_p` of degree `n`.
 
     INPUT:
 
     - ``q`` -- integer, list, tuple or ``Factorization`` object. If ``q`` is an
-      integer, it is the prime power `q` in `\mathbb{Q}_q`. If ``q`` is a
+      integer, it is the prime power `q` in `\QQ_q`. If ``q`` is a
       ``Factorization`` object, it is the factorization of the prime power `q`.
       As a tuple it is the pair ``(p, n)``, and as a list it is a single
       element list ``[(p, n)]``.
@@ -639,11 +771,11 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
       TYPES and PRECISION below.
 
     - ``type`` -- string (default: ``'capped-rel'``) Valid types are
-      ``'capped-rel'``, ``'floating-point'`` and ``'lazy'`` (though ``'lazy'``
-      doesn't currently work).  See TYPES and PRECISION below
+      ``'capped-rel'``, ``'floating-point'``, ``'lattice-cap'``
+      and ``'lattice-float'``.  See TYPES and PRECISION below
 
     - ``modulus`` -- polynomial (default ``None``) A polynomial defining an
-      unramified extension of `\mathbb{Q}_p`.  See MODULUS below.
+      unramified extension of `\QQ_p`.  See MODULUS below.
 
     - ``names`` -- string or tuple (``None`` is only allowed when `q=p`).  The
       name of the generator, reducing to a generator of the residue
@@ -703,8 +835,8 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: b.precision_absolute()
         22
 
-    There are three types of unramified `p`-adic fields: capped relative
-    fields, floating point fields and lazy fields.
+    There are two types of unramified `p`-adic fields: capped relative
+    fields, floating point fields.
 
     In the capped relative case, the relative precision of an element
     is restricted to be at most a certain value, specified at the
@@ -725,23 +857,20 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
     precision, but the relative precision of elements is truncated
     during arithmetic to the precision cap of the field.
 
-    The lazy case will eventually support elements that can increase
-    their precision upon request.  It is not currently implemented.
-
     MODULUS:
 
-    The modulus needs to define an unramified extension of `\mathbb{Q}_p`: when it
-    is reduced to a polynomial over `\mathbb{F}_p` it should be irreducible.
+    The modulus needs to define an unramified extension of `\QQ_p`: when it
+    is reduced to a polynomial over `\GF{p}` it should be irreducible.
 
     The modulus can be given in a number of forms.
 
     1. A **polynomial**.
 
-    The base ring can be `\mathbb{Z}`, `\mathbb{Q}`, `\mathbb{Z}_p`, `\mathbb{Q}_p`, `\mathbb{F}_p`.::
+    The base ring can be `\ZZ`, `\QQ`, `\ZZ_p`, `\QQ_p`, `\GF{p}`.::
 
         sage: P.<x> = ZZ[]
         sage: R.<a> = Qq(27, modulus = x^3 + 2*x + 1); R.modulus()
-        (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
+        (1 + O(3^20))*x^3 + O(3^20)*x^2 + (2 + O(3^20))*x + 1 + O(3^20)
         sage: P.<x> = QQ[]
         sage: S.<a> = Qq(27, modulus = x^3 + 2*x + 1)
         sage: P.<x> = Zp(3)[]
@@ -768,7 +897,7 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: P.<x> = Qp(3)[]
         sage: modulus = x^3 + (2 + O(3^7))*x + (1 + O(3^10))
         sage: modulus
-        (1 + O(3^20))*x^3 + (2 + O(3^7))*x + (1 + O(3^10))
+        (1 + O(3^20))*x^3 + (2 + O(3^7))*x + 1 + O(3^10)
         sage: W.<a> = Qq(27, modulus = modulus); W.precision_cap()
         7
 
@@ -776,24 +905,24 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 
         sage: x = var('x')
         sage: X.<a> = Qq(27, modulus = x^3 + 2*x + 1); X.modulus()
-        (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
+        (1 + O(3^20))*x^3 + O(3^20)*x^2 + (2 + O(3^20))*x + 1 + O(3^20)
         sage: X == R
         True
 
     By default, the polynomial chosen is the standard lift of the
-    generator chosen for `\mathbb{F}_q`.::
+    generator chosen for `\GF{q}`.::
 
         sage: GF(125, 'a').modulus()
         x^3 + 3*x + 3
         sage: Y.<a> = Qq(125); Y.modulus()
-        (1 + O(5^20))*x^3 + (O(5^20))*x^2 + (3 + O(5^20))*x + (3 + O(5^20))
+        (1 + O(5^20))*x^3 + O(5^20)*x^2 + (3 + O(5^20))*x + 3 + O(5^20)
 
     However, you can choose another polynomial if desired (as long as
-    the reduction to `\mathbb{F}_p[x]` is irreducible).::
+    the reduction to `\GF{p}[x]` is irreducible).::
 
         sage: P.<x> = ZZ[]
         sage: Z.<a> = Qq(125, modulus = x^3 + 3*x^2 + x + 1); Z.modulus()
-        (1 + O(5^20))*x^3 + (3 + O(5^20))*x^2 + (1 + O(5^20))*x + (1 + O(5^20))
+        (1 + O(5^20))*x^3 + (3 + O(5^20))*x^2 + (1 + O(5^20))*x + 1 + O(5^20)
         sage: Y == Z
         False
 
@@ -849,7 +978,11 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: V.<f> = Qq(128, prec = 8, print_mode='series', print_max_unram_terms = 0); repr((1+f)^9 - 1 - f^3)
         '(...)*2 + (...)*2^2 + (...)*2^3 + (...)*2^4 + (...)*2^5 + (...)*2^6 + (...)*2^7 + O(2^8)'
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'bigoh'
+    (or equivalently ``True``).
+    The default is ``False`` for the ``'floating-point'`` type
+    and ``True`` for all other types.
 
         sage: U.<e> = Qq(9, 2, show_prec=False); repr(-3*(1+2*e)^4)
         '3 + e*3^2'
@@ -892,7 +1025,11 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: b*17*(a^3-a+14)
         1 + O(17^6)
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'bigoh'
+    (or equivalently ``True``).
+    The default is ``False`` for the ``'floating-point'`` type
+    and ``True`` for all other types.
 
         sage: U.<e> = Qq(9, 2, print_mode='val-unit', show_prec=False); repr(-3*(1+2*e)^4)
         '3 * (1 + 3*e)'
@@ -942,7 +1079,11 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: U.<a> = Qq(625, print_mode='terse', print_max_terse_terms=2); (a-1/5)^6
         106251/5^6 + 49994/5^5*a + ... + O(5^14)
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'bigoh'
+    (or equivalently ``True``).
+    The default is ``False`` for the ``'floating-point'`` type
+    and ``True`` for all other types.
 
         sage: U.<e> = Qq(9, 2, print_mode='terse', show_prec=False); repr(-3*(1+2*e)^4)
         '3 + 9*e'
@@ -1007,16 +1148,10 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
     Note that this puts a cap on the relative precision, not the
     absolute precision.::
 
-        sage: T.<a> = Qq(125, print_mode='bars', print_max_ram_terms=3, print_pos=False); repr((a-5)^6)
-        '...[0, 0, -1]|[-2]|[-1, -2, -1]'
-        sage: repr(5*(a-5)^6+50)
-        '...[0, 0, -1]|[]|[-1, -2, -1]|[]'
-
-    However, if the element has negative valuation, digits are shown
-    up to the decimal point.::
-
-        sage: repr((a-1/5)^6)
-        '...|.|[-2, -1, -1]|[2, 2, 1]|[0, 0, -2]|[0, -1]|[0, -1]|[1]'
+        sage: T.<a> = Qq(125, print_max_ram_terms=3, print_pos=False); (a-5)^6
+        (-a^2 - 2*a - 1) - 2*5 - a^2*5^2 + ... + O(5^20)
+        sage: 5*(a-5)^6 + 50
+        (-a^2 - 2*a - 1)*5 - a^2*5^3 + (2*a^2 - a - 2)*5^4 + ... + O(5^21)
 
     *print_sep* controls the separating character (``'|'`` by default).::
 
@@ -1035,10 +1170,14 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: with local_print_mode(U, {'max_unram_terms':0}): repr(b-75*a)
         '...[...][...][...][...][][...][...]'
 
-    *show_prec* determines whether the precision is printed (default ``False``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'dots'
+    (or equivalently ``True``) or 'bigoh'
+    The default is ``False`` for the ``'floating-point'`` type
+    and ``True`` for all other types.
 
         sage: U.<e> = Qq(9, 2, print_mode='bars', show_prec=True); repr(-3*(1+2*e)^4)
-        '...[0, 1]|[1]|[] + O(3^3)'
+        '...[0, 1]|[1]|[]'
 
     *ram_name* and *print_max_terse_terms* have no effect.
 
@@ -1075,7 +1214,7 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
     Check that :trac:`8162` is resolved::
 
         sage: R = Qq([(5,3)], names="alpha", check=False); R
-        Unramified Extension in alpha defined by x^3 + 3*x + 3 with capped relative precision 20 over 5-adic Field
+        5-adic Unramified Extension Field in alpha defined by x^3 + 3*x + 3
         sage: Qq((5, 3), names="alpha") is R
         True
         sage: Qq(125.factor(), names="alpha") is R
@@ -1154,7 +1293,7 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 ######################################################
 
 def QpCR(p, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create capped relative `p`-adic fields.
 
     Same functionality as ``Qp``.  See documentation for ``Qp`` for a
@@ -1168,7 +1307,7 @@ def QpCR(p, prec = None, *args, **kwds):
     return Qp(p, prec, 'capped-rel', *args, **kwds)
 
 def QpFP(p, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create floating point `p`-adic fields.
 
     Same functionality as ``Qp``.  See documentation for ``Qp`` for a
@@ -1182,7 +1321,7 @@ def QpFP(p, prec = None, *args, **kwds):
     return Qp(p, prec, 'floating-point', *args, **kwds)
 
 def QqCR(q, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create capped relative unramified `p`-adic
     fields.
 
@@ -1192,12 +1331,12 @@ def QqCR(q, prec = None, *args, **kwds):
     EXAMPLES::
 
         sage: R.<a> = QqCR(25, 40); R
-        Unramified Extension in a defined by x^2 + 4*x + 2 with capped relative precision 40 over 5-adic Field
+        5-adic Unramified Extension Field in a defined by x^2 + 4*x + 2
     """
     return Qq(q, prec, 'capped-rel', *args, **kwds)
 
 def QqFP(q, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create floating point unramified `p`-adic
     fields.
 
@@ -1207,36 +1346,71 @@ def QqFP(q, prec = None, *args, **kwds):
     EXAMPLES::
 
         sage: R.<a> = QqFP(25, 40); R
-        Unramified Extension in a defined by x^2 + 4*x + 2 with floating precision 40 over 5-adic Field
+        5-adic Unramified Extension Field in a defined by x^2 + 4*x + 2
     """
     return Qq(q, prec, 'floating-point', *args, **kwds)
+
+@experimental(23505)
+def QpLC(p, prec = None, *args, **kwds):
+    r"""
+    A shortcut function to create `p`-adic fields with lattice precision.
+
+    See :func:`ZpLC` for more information about this model of precision.
+
+    EXAMPLES::
+
+        sage: R = QpLC(2)
+        sage: R
+        2-adic Field with lattice-cap precision
+
+    """
+    return Qp(p, prec, 'lattice-cap', *args, **kwds)
+
+@experimental(23505)
+def QpLF(p, prec = None, *args, **kwds):
+    r"""
+    A shortcut function to create `p`-adic fields with lattice precision.
+
+    See :func:`ZpLC` for more information about this model of precision.
+
+    EXAMPLES::
+
+        sage: R = QpLF(2)
+        sage: R
+        2-adic Field with lattice-float precision
+    """
+    return Qp(p, prec, 'lattice-float', *args, **kwds)
+
 
 #######################################################################################################
 #
 #  p-Adic Rings
 #  Zp -- base rings
 #  Zq -- unramified extension ring of Zp
-#  ZpCR, ZpCA, ZpFM, ZpL, ZqCR, ZqCA, ZqFM, ZqL -- shortcuts for capped relative and lazy versions of Zp and Zq
+#  ZpCR, ZpCA, ZpFM, ZpL, ZqCR, ZqCA, ZqFM, ZqL -- shortcuts for precision-type versions of Zp and Zq
 #
 #######################################################################################################
 
 class Zp_class(UniqueFactory):
-    """
+    r"""
     A creation function for `p`-adic rings.
 
     INPUT:
 
-    - ``p`` -- integer: the `p` in `\mathbb{Z}_p`
+    - ``p`` -- integer: the `p` in `\ZZ_p`
 
     - ``prec`` -- integer (default: ``20``) the precision cap of the
-      ring.  Except for the fixed modulus case, individual elements
+      ring.  In the lattice capped case, ``prec`` can either be a
+      pair (``relative_cap``, ``absolute_cap``) or an integer
+      (understood at relative cap).
+      Except for the fixed modulus and floating point cases, individual elements
       keep track of their own precision.  See TYPES and PRECISION
       below.
 
     - ``type`` -- string (default: ``'capped-rel'``) Valid types are
       ``'capped-rel'``, ``'capped-abs'``, ``'fixed-mod'``,
-      ``'floating-point'`` and ``'lazy'`` (though lazy is not yet
-      implemented).  See TYPES and PRECISION below
+      ``'floating-point'``, ``'lattice-cap'``, ``'lattice-float'``
+      See TYPES and PRECISION below
 
     - ``print_mode`` -- string (default: ``None``).  Valid modes are
       ``'series'``, ``'val-unit'``, ``'terse'``, ``'digits'``, and
@@ -1265,15 +1439,18 @@ class Zp_class(UniqueFactory):
       prime.  Non-prime input may cause seg-faults (but can also be
       useful for base `n` expansions for example)
 
+    - ``label`` -- string (default ``None``) used for lattice precision to
+      create parents with different lattices.
+
     OUTPUT:
 
     - The corresponding `p`-adic ring.
 
     TYPES AND PRECISION:
 
-    There are two types of precision for a `p`-adic element.  The first
-    is relative precision, which gives the number of known `p`-adic
-    digits::
+    There are three types of precision.
+    The first is relative precision; it gives the number of known
+    `p`-adic digits::
 
         sage: R = Zp(5, 20, 'capped-rel', 'series'); a = R(675); a
         2*5^2 + 5^4 + O(5^22)
@@ -1286,11 +1463,27 @@ class Zp_class(UniqueFactory):
         sage: a.precision_absolute()
         22
 
-    There are five types of `p`-adic rings: capped relative rings
-    (type= ``'capped-rel'``), capped absolute rings
-    (type= ``'capped-abs'``), fixed modulus rings (type= ``'fixed-mod'``),
-    floating point rings (type=``'floating-point'``),
-    and lazy rings (type= ``'lazy'``).
+    The third one is lattice precision.
+    It is not attached to a single `p`-adic number but is a unique
+    object modeling the precision on a set of `p`-adics, which is
+    typically the set of all elements within the same parent::
+
+        sage: R = ZpLC(17)
+        sage: x = R(1,10); y = R(1,5)
+        sage: R.precision()
+        Precision lattice on 2 objects
+        sage: R.precision().precision_lattice()
+        [2015993900449             0]
+        [            0       1419857]
+
+    We refer to the documentation of the function :func:`ZpLC` for
+    more information about this precision model.
+
+    There are many types of `p`-adic rings: capped relative rings
+    (``type='capped-rel'``), capped absolute rings
+    (``type='capped-abs'``), fixed modulus rings (``type='fixed-mod'``),
+    floating point rings (``type='floating-point'``), lattice capped rings
+    (``type='lattice-cap'``) and lattice float rings (``type='lattice-float'``).
 
     In the capped relative case, the relative precision of an element
     is restricted to be at most a certain value, specified at the
@@ -1323,24 +1516,27 @@ class Zp_class(UniqueFactory):
         1 + 2*5 + O(5^2)
 
     The fixed modulus type is the leanest of the `p`-adic rings: it is
-    basically just a wrapper around `\mathbb{Z} / p^n \mathbb{Z}` providing a unified
+    basically just a wrapper around `\ZZ / p^n \ZZ` providing a unified
     interface with the rest of the `p`-adics.  This is the type you
     should use if your sole interest is speed.  It does not track
     precision of elements.::
 
         sage: R = Zp(5,5,'fixed-mod','series'); a = R(4005); a
-        5 + 2*5^3 + 5^4 + O(5^5)
+        5 + 2*5^3 + 5^4
         sage: a // 5
-        1 + 2*5^2 + 5^3 + O(5^5)
+        1 + 2*5^2 + 5^3
 
     The floating point case is similar to the fixed modulus type
     in that elements do not trac their own precision.  However, relative
     precision is truncated with each operation rather than absolute precision.
 
-    The lazy case will eventually support elements that can increase
-    their precision upon request.  It is not currently implemented.
+    On the contrary, the lattice type tracks precision using lattices
+    and automatic differentiation. It is rather slow but provides sharp
+    (often optimal) results regarding precision.
+    We refer to the documentation of the function :func:`ZpLC` for a
+    small demonstration of the capabilities of this precision model.
 
-    PRINTING
+    PRINTING:
 
     There are many different ways to print `p`-adic elements.  The
     way elements of a given ring print is controlled by options
@@ -1376,7 +1572,11 @@ class Zp_class(UniqueFactory):
         sage: U.<p> = Zp(5); p
         p + O(p^21)
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'bigoh'
+    (or equivalently ``True``).
+    The default is ``False`` for the ``'floating-point'`` and
+    ``'fixed-mod'`` types and ``True`` for all other types.
 
         sage: Zp(5, show_prec=False)(6)
         1 + 5
@@ -1406,7 +1606,11 @@ class Zp_class(UniqueFactory):
         sage: T = Zp(5, print_mode='val-unit', names='pi'); a = T(70700); a
         pi^2 * 2828 + O(pi^22)
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'bigoh'
+    (or equivalently ``True``).
+    The default is ``False`` for the ``'floating-point'`` and
+    ``'fixed-mod'`` types and ``True`` for all other types.
 
         sage: Zp(5, print_mode='val-unit', show_prec=False)(30)
         5 * 6
@@ -1436,7 +1640,11 @@ class Zp_class(UniqueFactory):
         sage: T.<unif> = Zp(5, print_mode='terse'); c = T(-707); c
         95367431639918 + O(unif^20)
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'bigoh'
+    (or equivalently ``True``).
+    The default is ``False`` for the ``'floating-point'`` and
+    ``'fixed-mod'`` types and ``True`` for all other types.
 
         sage: Zp(5, print_mode='terse', show_prec=False)(30)
         30
@@ -1464,20 +1672,26 @@ class Zp_class(UniqueFactory):
 
     *print_max_terms* limits the number of digits that are printed.::
 
-        sage: S = Zp(5, print_mode='digits', print_max_terms=4); b = S(-70700); repr(b)
-        '...214200'
+        sage: S = Zp(5, print_max_terms=4); S(-70700)
+        2*5^2 + 4*5^3 + 5^4 + 2*5^5 + ... + O(5^22)
 
     *print_alphabet* controls the symbols used to substitute for digits
     greater than 9.  Defaults to
     ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')::
 
-        sage: T = Zp(5, print_mode='digits', print_max_terms=4, print_alphabet=('1','2','3','4','5')); b = T(-70700); repr(b)
-        '...325311'
+        sage: T = Zp(5, print_mode='digits', print_alphabet=('1','2','3','4','5')); repr(T(-70700))
+        '...5555555555555551325311'
 
-    *show_prec* determines whether the precision is printed (default ``False``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'dots'
+    (or equivalently ``True``) or 'bigoh'.
+    The default is ``False`` for the ``'floating-point'`` and
+    ``'fixed-mod'`` types and ``True`` for all other types.
 
         sage: repr(Zp(5, 2, print_mode='digits', show_prec=True)(6))
-        '...11 + O(5^2)'
+        '...11'
+        sage: repr(Zp(5, 2, print_mode='digits', show_prec='bigoh')(6))
+        '11 + O(5^2)'
 
     *print_pos*, *name* and *print_sep* have no effect.
 
@@ -1504,18 +1718,24 @@ class Zp_class(UniqueFactory):
 
     *print_max_terms* limits the number of digits that are printed.::
 
-        sage: T = Zp(5, print_mode='bars', print_max_terms=4); b = T(-70700); repr(b)
-        '...2|1|4|2|0|0'
+        sage: T = Zp(5, print_max_terms=4); T(-70700)
+        2*5^2 + 4*5^3 + 5^4 + 2*5^5 + ... + O(5^22)
 
     *print_sep* controls the separation character.::
 
         sage: U = Zp(5, print_mode='bars', print_sep=']['); a = U(70700); repr(a)
         '...4][2][3][0][3][0][0'
 
-    *show_prec* determines whether the precision is printed (default ``False``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'dots'
+    (or equivalently ``True``) or 'bigoh'.
+    The default is ``False`` for the ``'floating-point'`` and
+    ``'fixed-mod'`` types and ``True`` for all other types.
 
         sage: repr(Zp(5, 2, print_mode='bars', show_prec=True)(6))
-        '1|1 + O(5^2)'
+        '...1|1'
+        sage: repr(Zp(5, 2, print_mode='bars', show_prec=False)(6))
+        '1|1'
 
     *name* and *print_alphabet* have no effect.
 
@@ -1603,8 +1823,9 @@ class Zp_class(UniqueFactory):
     """
     def create_key(self, p, prec = None, type = 'capped-rel', print_mode = None,
                    names = None, ram_name = None, print_pos = None, print_sep = None, print_alphabet = None,
-                   print_max_terms = None, show_prec = None, check = True):
-        """
+                   print_max_terms = None, show_prec = None, check = True,
+                   label = None):
+        r"""
         Creates a key from input parameters for ``Zp``.
 
         See the documentation for ``Zp`` for more information.
@@ -1612,9 +1833,19 @@ class Zp_class(UniqueFactory):
         TESTS::
 
             sage: Zp.create_key(5,40)
-            (5, 40, 'capped-rel', 'series', '5', True, '|', (), -1, True)
+            (5, 40, 'capped-rel', 'series', '5', True, '|', (), -1, 'bigoh', None)
             sage: Zp.create_key(5,40,print_mode='digits')
-            (5, 40, 'capped-rel', 'digits', '5', True, '|', ('0', '1', '2', '3', '4'), -1, False)
+            (5,
+             40,
+             'capped-rel',
+             'digits',
+             '5',
+             True,
+             '|',
+             ('0', '1', '2', '3', '4'),
+             -1,
+             'dots',
+             None)
         """
         if isinstance(names, (int, Integer)):
             # old pickle; names is what used to be halt.
@@ -1624,11 +1855,15 @@ class Zp_class(UniqueFactory):
             print_alphabet = print_max_terms
             print_max_terms = check
             check = True
+        if label is not None and type not in ['lattice-cap','lattice-float']:
+            raise ValueError("label keyword only supported for lattice precision")
         return get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_sep, print_alphabet,
-                            print_max_terms, show_prec, check, ['capped-rel', 'fixed-mod', 'capped-abs', 'floating-point'])
+                            print_max_terms, show_prec, check,
+                            ['capped-rel', 'fixed-mod', 'capped-abs', 'floating-point', 'lattice-cap', 'lattice-float'],
+                            label=label)
 
     def create_object(self, version, key):
-        """
+        r"""
         Creates an object using a given key.
 
         See the documentation for ``Zp`` for more information.
@@ -1645,24 +1880,22 @@ class Zp_class(UniqueFactory):
         elif version[0] < 8:
             p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms = key
             show_prec = None
+            label = None
         else:
-            p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec = key
-        if isinstance(type, Integer):
-            # lazy
-            raise NotImplementedError("lazy p-adics need more work.  Sorry.")
+            p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, label = key
         if (version[0] < 4 or (len(version) > 1 and version[0] == 4 and version[1] < 5) or
             (len(version) > 2 and version[0] == 4 and version[1] == 5 and version[2] < 3)):
             # keys changed in order to reduce irrelevant duplications: e.g. two Zps with print_mode 'series'
             # that are identical except for different 'print_alphabet' now return the same object.
             key = get_key_base(p, prec, type, print_mode, name, None, print_pos, print_sep, print_alphabet,
-                               print_max_terms, None, False, ['capped-rel', 'fixed-mod', 'capped-abs'])
+                               print_max_terms, None, False, ['capped-rel', 'fixed-mod', 'capped-abs', 'lattice-cap', 'lattice-float'])
             try:
                 obj = self._cache[version, key]()
                 if obj is not None:
                     return obj
             except KeyError:
                 pass
-            p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec = key
+            p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, label = key
         if type == 'capped-rel':
             return pAdicRingCappedRelative(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                      'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
@@ -1675,6 +1908,10 @@ class Zp_class(UniqueFactory):
         elif type == 'floating-point':
             return pAdicRingFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                      'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
+        elif type[:8] == 'lattice-':
+            subtype = type[8:]
+            return pAdicRingLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
+                                                       'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name, label)
         else:
             raise ValueError("unexpected type")
 
@@ -1689,13 +1926,13 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
           print_mode=None, ram_name = None, res_name = None, print_pos = None,
        print_sep = None, print_max_ram_terms = None,
        print_max_unram_terms = None, print_max_terse_terms = None, show_prec = None, check = True, implementation = 'FLINT'):
-    """
+    r"""
     Given a prime power `q = p^n`, return the unique unramified
-    extension of `\mathbb{Z}_p` of degree `n`.
+    extension of `\ZZ_p` of degree `n`.
 
     INPUT:
 
-    - ``q`` -- integer, list or tuple: the prime power in `\mathbb{Q}_q`.  Or a
+    - ``q`` -- integer, list or tuple: the prime power in `\QQ_q`.  Or a
       factorization object, single element list ``[(p, n)]`` where ``p`` is
       a prime and ``n`` a positive integer, or the pair ``(p, n)``.
 
@@ -1704,12 +1941,11 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
       See TYPES and PRECISION below.
 
     - ``type`` -- string (default: ``'capped-rel'``) Valid types are
-      ``'capped-abs'``, ``'capped-rel'``, ``'fixed-mod'``,
-      ``'floating-point'`` and ``'lazy'`` (though ``'lazy'`` doesn't
-      currently work).  See TYPES and PRECISION below
+      ``'capped-abs'``, ``'capped-rel'``, ``'fixed-mod'``, and
+      ``'floating-point'``.  See TYPES and PRECISION below
 
     - modulus -- polynomial (default None) A polynomial defining an
-      unramified extension of `\mathbb{Z}_p`.  See MODULUS below.
+      unramified extension of `\ZZ_p`.  See MODULUS below.
 
     - ``names`` -- string or tuple (``None`` is only allowed when
       `q=p`).  The name of the generator, reducing to a generator of
@@ -1773,11 +2009,10 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: b.precision_absolute()
         22
 
-    There are five types of `p`-adic rings: capped relative rings
-    (type= ``'capped-rel'``), capped absolute rings
-    (type= ``'capped-abs'``), fixed modulus rings (type= ``'fixed-mod'``),
-    floating point rings (type=``'floating-point'``),
-    and lazy rings (type= ``'lazy'``).
+    There are many types of `p`-adic rings: capped relative rings
+    (``type='capped-rel'``), capped absolute rings
+    (``type='capped-abs'``), fixed modulus rings (``type='fixed-mod'``),
+    and floating point rings (``type='floating-point'``).
 
     In the capped relative case, the relative precision of an element
     is restricted to be at most a certain value, specified at the
@@ -1799,7 +2034,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: d = ~(3*b+c); d
         2*3^-1 + (a + 1) + (a + 1)*3 + a*3^3 + O(3^4)
         sage: d.parent()
-        Unramified Extension in a defined by x^2 + 2*x + 2 with capped relative precision 5 over 3-adic Field
+        3-adic Unramified Extension Field in a defined by x^2 + 2*x + 2
 
     The capped absolute case is the same as the capped relative case,
     except that the cap is on the absolute precision rather than the
@@ -1818,36 +2053,33 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
     individual elements don't track their precision.::
 
         sage: R.<a> = Zq(9, 5, 'fixed-mod', print_mode='series'); b = 3*(1+2*a)^4; b
-        2*3 + (2*a + 2)*3^2 + (2*a + 1)*3^3 + O(3^5)
+        2*3 + (2*a + 2)*3^2 + (2*a + 1)*3^3
         sage: c = R(3249); c
-        3^2 + 3^4 + O(3^5)
+        3^2 + 3^4
         sage: b*c
-        2*3^3 + (2*a + 2)*3^4 + O(3^5)
+        2*3^3 + (2*a + 2)*3^4
         sage: b*c >> 1
-        2*3^2 + (2*a + 2)*3^3 + O(3^5)
+        2*3^2 + (2*a + 2)*3^3
 
     The floating point case is similar to the fixed modulus type
     in that elements do not trac their own precision.  However, relative
     precision is truncated with each operation rather than absolute precision.
 
-    The lazy case will eventually support elements that can increase
-    their precision upon request.  It is not currently implemented.
-
     MODULUS:
 
-    The modulus needs to define an unramified extension of `\mathbb{Z}_p`: when it
-    is reduced to a polynomial over `\mathbb{F}_p` it should be irreducible.
+    The modulus needs to define an unramified extension of `\ZZ_p`: when it
+    is reduced to a polynomial over `\GF{p}` it should be irreducible.
 
     The modulus can be given in a number of forms.
 
     1. A **polynomial**.
 
-    The base ring can be `\mathbb{Z}`, `\mathbb{Q}`, `\mathbb{Z}_p`, `\mathbb{F}_p`, or anything that can
-    be converted to `\mathbb{Z}_p`.::
+    The base ring can be `\ZZ`, `\QQ`, `\ZZ_p`, `\GF{p}`, or anything that can
+    be converted to `\ZZ_p`.::
 
         sage: P.<x> = ZZ[]
         sage: R.<a> = Zq(27, modulus = x^3 + 2*x + 1); R.modulus()
-        (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
+        (1 + O(3^20))*x^3 + O(3^20)*x^2 + (2 + O(3^20))*x + 1 + O(3^20)
         sage: P.<x> = QQ[]
         sage: S.<a> = Zq(27, modulus = x^3 + 2/7*x + 1)
         sage: P.<x> = Zp(3)[]
@@ -1874,7 +2106,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: P.<x> = Zp(3)[]
         sage: modulus = x^3 + (2 + O(3^7))*x + (1 + O(3^10))
         sage: modulus
-        (1 + O(3^20))*x^3 + (2 + O(3^7))*x + (1 + O(3^10))
+        (1 + O(3^20))*x^3 + (2 + O(3^7))*x + 1 + O(3^10)
         sage: W.<a> = Zq(27, modulus = modulus); W.precision_cap()
         7
 
@@ -1882,24 +2114,24 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 
         sage: x = var('x')
         sage: X.<a> = Zq(27, modulus = x^3 + 2*x + 1); X.modulus()
-        (1 + O(3^20))*x^3 + (O(3^20))*x^2 + (2 + O(3^20))*x + (1 + O(3^20))
+        (1 + O(3^20))*x^3 + O(3^20)*x^2 + (2 + O(3^20))*x + 1 + O(3^20)
         sage: X == R
         True
 
     By default, the polynomial chosen is the standard lift of the
-    generator chosen for `\mathbb{F}_q`.::
+    generator chosen for `\GF{q}`.::
 
         sage: GF(125, 'a').modulus()
         x^3 + 3*x + 3
         sage: Y.<a> = Zq(125); Y.modulus()
-        (1 + O(5^20))*x^3 + (O(5^20))*x^2 + (3 + O(5^20))*x + (3 + O(5^20))
+        (1 + O(5^20))*x^3 + O(5^20)*x^2 + (3 + O(5^20))*x + 3 + O(5^20)
 
     However, you can choose another polynomial if desired (as long as
-    the reduction to `\mathbb{F}_p[x]` is irreducible).::
+    the reduction to `\GF{p}[x]` is irreducible).::
 
         sage: P.<x> = ZZ[]
         sage: Z.<a> = Zq(125, modulus = x^3 + 3*x^2 + x + 1); Z.modulus()
-        (1 + O(5^20))*x^3 + (3 + O(5^20))*x^2 + (1 + O(5^20))*x + (1 + O(5^20))
+        (1 + O(5^20))*x^3 + (3 + O(5^20))*x^2 + (1 + O(5^20))*x + 1 + O(5^20)
         sage: Y == Z
         False
 
@@ -1958,7 +2190,11 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: V.<f> = Zq(128, prec = 8, print_mode='series', print_max_unram_terms = 0); repr((1+f)^9 - 1 - f^3)
         '(...)*2 + (...)*2^2 + (...)*2^3 + (...)*2^4 + (...)*2^5 + (...)*2^6 + (...)*2^7 + O(2^8)'
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'bigoh'
+    (or equivalently ``True``).
+    The default is ``False`` for the ``'floating-point'`` and
+    ``'fixed-mod'`` types and ``True`` for all other types.
 
         sage: U.<e> = Zq(9, 2, show_prec=False); repr(-3*(1+2*e)^4)
         '3 + e*3^2'
@@ -1999,7 +2235,11 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: U.<a> = Zq(17^4, 6, print_mode='val-unit', print_max_terse_terms=3); b = (17*(a^3-a+14)^6); b
         17 * (12131797 + 12076378*a + 10809706*a^2 + ...) + O(17^7)
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'bigoh'
+    (or equivalently ``True``).
+    The default is ``False`` for the ``'floating-point'`` and
+    ``'fixed-mod'`` types and ``True`` for all other types.
 
         sage: U.<e> = Zq(9, 2, print_mode='val-unit', show_prec=False); repr(-3*(1+2*e)^4)
         '3 * (1 + 3*e)'
@@ -2052,7 +2292,11 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: U.<a> = Zq(625, print_mode='terse', print_max_terse_terms=2); (a-1/5)^6
         106251/5^6 + 49994/5^5*a + ... + O(5^14)
 
-    *show_prec* determines whether the precision is printed (default ``True``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'bigoh'
+    (or equivalently ``True``).
+    The default is ``False`` for the ``'floating-point'`` and
+    ``'fixed-mod'`` types and ``True`` for all other types.
 
         sage: U.<e> = Zq(9, 2, print_mode='terse', show_prec=False); repr(-3*(1+2*e)^4)
         '3 + 9*e'
@@ -2102,16 +2346,12 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
     Note that this puts a cap on the relative precision, not the
     absolute precision.::
 
-        sage: T.<a> = Zq(125, print_mode='bars', print_max_ram_terms=3, print_pos=False); repr((a-5)^6)
-        '...[0, 0, -1]|[-2]|[-1, -2, -1]'
-        sage: repr(5*(a-5)^6+50)
-        '...[0, 0, -1]|[]|[-1, -2, -1]|[]'
-
-    However, if the element has negative valuation, digits are shown
-    up to the decimal point.::
-
-        sage: repr((a-1/5)^6)
-        '...|.|[-2, -1, -1]|[2, 2, 1]|[0, 0, -2]|[0, -1]|[0, -1]|[1]'
+        sage: T.<a> = Zq(125, print_max_ram_terms=3, print_pos=False); (a-5)^6
+        (-a^2 - 2*a - 1) - 2*5 - a^2*5^2 + ... + O(5^20)
+        sage: 5*(a-5)^6 + 50
+        (-a^2 - 2*a - 1)*5 - a^2*5^3 + (2*a^2 - a - 2)*5^4 + ... + O(5^21)
+        sage: (a-1/5)^6
+        5^-6 - a*5^-5 - a*5^-4 + ... + O(5^14)
 
     *print_sep* controls the separating character (``'|'`` by default).::
 
@@ -2130,9 +2370,13 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: with local_print_mode(U, {'max_unram_terms':0}): repr(b-75*a)
         '...[...][...][...][...][][...][...]'
 
-    *show_prec* determines whether the precision is printed (default ``False``)::
+    *show_prec* determines how the precision is printed.
+    It can be either 'none' (or equivalently ``False``), 'dots'
+    (or equivalently ``True``) or 'bigoh'.
+    The default is ``False`` for the ``'floating-point'`` and
+    ``'fixed-mod'`` types and ``True`` for all other types.
 
-        sage: U.<e> = Zq(9, 2, print_mode='bars', show_prec=True); repr(-3*(1+2*e)^4)
+        sage: U.<e> = Zq(9, 2, print_mode='bars', show_prec='bigoh'); repr(-3*(1+2*e)^4)
         '[0, 1]|[1]|[] + O(3^3)'
 
     *ram_name* and *print_max_terse_terms* have no effect.
@@ -2168,7 +2412,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
     TESTS::
 
         sage: R = Zq([(5,3)], names="alpha"); R
-        Unramified Extension in alpha defined by x^3 + 3*x + 3 with capped relative precision 20 over 5-adic Ring
+        5-adic Unramified Extension Ring in alpha defined by x^3 + 3*x + 3
         sage: Zq((5, 3), names="alpha") is R
         True
         sage: Zq(125.factor(), names="alpha") is R
@@ -2236,7 +2480,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 ######################################################
 
 def ZpCR(p, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create capped relative `p`-adic rings.
 
     Same functionality as ``Zp``.  See documentation for ``Zp`` for a
@@ -2250,10 +2494,10 @@ def ZpCR(p, prec = None, *args, **kwds):
     return Zp(p, prec, 'capped-rel', *args, **kwds)
 
 def ZpCA(p, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create capped absolute `p`-adic rings.
 
-    See documentation for ``Zp`` for a description of the input parameters.
+    See documentation for :func:`Zp` for a description of the input parameters.
 
     EXAMPLES::
 
@@ -2263,10 +2507,10 @@ def ZpCA(p, prec = None, *args, **kwds):
     return Zp(p, prec, 'capped-abs', *args, **kwds)
 
 def ZpFM(p, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create fixed modulus `p`-adic rings.
 
-    See documentation for ``Zp`` for a description of the input parameters.
+    See documentation for :func:`Zp` for a description of the input parameters.
 
     EXAMPLES::
 
@@ -2276,7 +2520,7 @@ def ZpFM(p, prec = None, *args, **kwds):
     return Zp(p, prec, 'fixed-mod', *args, **kwds)
 
 def ZpFP(p, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create floating point `p`-adic rings.
 
     Same functionality as ``Zp``.  See documentation for ``Zp`` for a
@@ -2290,7 +2534,7 @@ def ZpFP(p, prec = None, *args, **kwds):
     return Zp(p, prec, 'floating-point', *args, **kwds)
 
 def ZqCR(q, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create capped relative unramified `p`-adic rings.
 
     Same functionality as ``Zq``.  See documentation for ``Zq`` for a
@@ -2299,38 +2543,38 @@ def ZqCR(q, prec = None, *args, **kwds):
     EXAMPLES::
 
         sage: R.<a> = ZqCR(25, 40); R
-        Unramified Extension in a defined by x^2 + 4*x + 2 with capped relative precision 40 over 5-adic Ring
+        5-adic Unramified Extension Ring in a defined by x^2 + 4*x + 2
     """
     return Zq(q, prec, 'capped-rel', *args, **kwds)
 
 def ZqCA(q, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create capped absolute unramified `p`-adic rings.
 
-    See documentation for ``Zq`` for a description of the input parameters.
+    See documentation for :func:`Zq` for a description of the input parameters.
 
     EXAMPLES::
 
         sage: R.<a> = ZqCA(25, 40); R
-        Unramified Extension in a defined by x^2 + 4*x + 2 with capped absolute precision 40 over 5-adic Ring
+        5-adic Unramified Extension Ring in a defined by x^2 + 4*x + 2
     """
     return Zq(q, prec, 'capped-abs', *args, **kwds)
 
 def ZqFM(q, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create fixed modulus unramified `p`-adic rings.
 
-    See documentation for ``Zq`` for a description of the input parameters.
+    See documentation for :func:`Zq` for a description of the input parameters.
 
     EXAMPLES::
 
         sage: R.<a> = ZqFM(25, 40); R
-        Unramified Extension in a defined by x^2 + 4*x + 2 of fixed modulus 5^40 over 5-adic Ring
+        5-adic Unramified Extension Ring in a defined by x^2 + 4*x + 2
     """
     return Zq(q, prec, 'fixed-mod', *args, **kwds)
 
 def ZqFP(q, prec = None, *args, **kwds):
-    """
+    r"""
     A shortcut function to create floating point unramified `p`-adic rings.
 
     Same functionality as ``Zq``.  See documentation for ``Zq`` for a
@@ -2339,9 +2583,298 @@ def ZqFP(q, prec = None, *args, **kwds):
     EXAMPLES::
 
         sage: R.<a> = ZqFP(25, 40); R
-        Unramified Extension in a defined by x^2 + 4*x + 2 with floating precision 40 over 5-adic Ring
+        5-adic Unramified Extension Ring in a defined by x^2 + 4*x + 2
     """
     return Zq(q, prec, 'floating-point', *args, **kwds)
+
+@experimental(23505)
+def ZpLC(p, prec=None, *args, **kwds):
+    r"""
+    A shortcut function to create `p`-adic rings with lattice precision
+    (precision is encoded by a lattice in a large vector space and tracked
+    using automatic differentiation).
+
+    See documentation for :func:`Zp` for a description of the input parameters.
+
+    EXAMPLES:
+
+    Below is a small demo of the features by this model of precision::
+
+        sage: R = ZpLC(3, print_mode='terse')
+        sage: R
+        3-adic Ring with lattice-cap precision
+
+        sage: x = R(1,10)
+
+    Of course, when we multiply by 3, we gain one digit of absolute
+    precision::
+
+        sage: 3*x
+        3 + O(3^11)
+
+    The lattice precision machinery sees this even if we decompose
+    the computation into several steps::
+
+        sage: y = x+x
+        sage: y
+        2 + O(3^10)
+        sage: x + y
+        3 + O(3^11)
+
+    The same works for the multiplication::
+
+        sage: z = x^2
+        sage: z
+        1 + O(3^10)
+        sage: x*z
+        1 + O(3^11)
+
+    This can be more surprising when we are working with elements given
+    at different precisions::
+
+        sage: R = ZpLC(2, print_mode='terse')
+        sage: x = R(1,10)
+        sage: y = R(1,5)
+        sage: z = x+y; z
+        2 + O(2^5)
+        sage: t = x-y; t
+        O(2^5)
+        sage: z+t  # observe that z+t = 2*x
+        2 + O(2^11)
+        sage: z-t  # observe that z-t = 2*y
+        2 + O(2^6)
+
+        sage: x = R(28888,15)
+        sage: y = R(204,10)
+        sage: z = x/y; z
+        242 + O(2^9)
+        sage: z*y  # which is x
+        28888 + O(2^15)
+
+    The SOMOS sequence is the sequence defined by the recurrence:
+
+    ..MATH::
+
+        u_n = \frac {u_{n-1} u_{n-3} + u_{n-2}^2} {u_{n-4}}
+
+    It is known for its numerical instability.
+    On the one hand, one can show that if the initial values are
+    invertible in `\ZZ_p` and known at precision `O(p^N)`
+    then all the next terms of the SOMOS sequence will be known
+    at the same precision as well.
+    On the other hand, because of the division, when we unroll
+    the recurrence, we loose a lot of precision. Observe::
+
+        sage: R = Zp(2, 30, print_mode='terse')
+        sage: a,b,c,d = R(1,15), R(1,15), R(1,15), R(3,15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        4 + O(2^15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        13 + O(2^15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        55 + O(2^15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        21975 + O(2^15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        6639 + O(2^13)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        7186 + O(2^13)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        569 + O(2^13)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        253 + O(2^13)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        4149 + O(2^13)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        2899 + O(2^12)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        3072 + O(2^12)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        349 + O(2^12)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        619 + O(2^12)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        243 + O(2^12)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        3 + O(2^2)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        2 + O(2^2)
+
+    If instead, we use the lattice precision, everything goes well::
+
+        sage: R = ZpLC(2, 30, print_mode='terse')
+        sage: a,b,c,d = R(1,15), R(1,15), R(1,15), R(3,15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        4 + O(2^15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        13 + O(2^15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        55 + O(2^15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        21975 + O(2^15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        23023 + O(2^15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        31762 + O(2^15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        16953 + O(2^15)
+        sage: a,b,c,d = b,c,d,(b*d+c*c)/a; print(d)
+        16637 + O(2^15)
+
+        sage: for _ in range(100):
+        ....:     a,b,c,d = b,c,d,(b*d+c*c)/a
+        sage: a
+        15519 + O(2^15)
+        sage: b
+        32042 + O(2^15)
+        sage: c
+        17769 + O(2^15)
+        sage: d
+        20949 + O(2^15)
+
+    ALGORITHM:
+
+    The precision is global.
+    It is encoded by a lattice in a huge vector space whose dimension
+    is the number of elements having this parent. Precision is tracked
+    using automatic differentiation techniques (see [CRV2014]_ and
+    [CRV2018]_).
+
+    Concretely, this precision datum is an instance of the class
+    :class:`sage.rings.padic.lattice_precision.PrecisionLattice`.
+    It is attached to the parent and is created at the same time
+    as the parent.
+    (It is actually a bit more subtle because two different parents
+    may share the same instance; this happens for instance for a
+    `p`-adic ring and its field of fractions.)
+
+    This precision datum is accessible through the method :meth:`precision`::
+
+        sage: R = ZpLC(5, print_mode='terse')
+        sage: prec = R.precision()
+        sage: prec
+        Precision lattice on 0 objects
+
+    This instance knows about all elements of the parent. It is
+    automatically updated when a new element (of this parent) is
+    created::
+
+        sage: x = R(3513,10)
+        sage: prec
+        Precision lattice on 1 object
+        sage: y = R(176,5)
+        sage: prec
+        Precision lattice on 2 objects
+        sage: z = R.random_element()
+        sage: prec
+        Precision lattice on 3 objects
+
+    The method :meth:`tracked_elements` provides the list of all
+    tracked elements::
+
+        sage: prec.tracked_elements()
+        [3513 + O(5^10), 176 + O(5^5), ...]
+
+    Similarly, when a variable is collected by the garbage collector,
+    the precision lattice is updated. Note however that the update
+    might be delayed. We can force it with the method :meth:`del_elements`::
+
+        sage: z = 0
+        sage: prec # random output, could be 2 objects if the garbage collector is fast
+        Precision lattice on 3 objects
+        sage: prec.del_elements()
+        sage: prec
+        Precision lattice on 2 objects
+
+    The method :meth:`precision_lattice` returns (a matrix defining)
+    the lattice that models the precision. Here we have::
+
+        sage: prec.precision_lattice()
+        [9765625       0]
+        [      0    3125]
+
+    Observe that `5^10 = 9765625` and `5^5 = 3125`.
+    The above matrix then reflects the precision on `x` and `y`.
+
+    Now, observe how the precision lattice changes while performing
+    computations::
+
+        sage: x, y = 3*x+2*y, 2*(x-y)
+        sage: prec.del_elements()
+        sage: prec.precision_lattice()
+        [    3125 48825000]
+        [       0 48828125]
+
+    The matrix we get is no longer diagonal, meaning that some digits
+    of precision are diffused among the two new elements `x` and `y`.
+    They nevertheless show up when we compute for instance `x+y`::
+
+        sage: x
+        1516 + O(5^5)
+        sage: y
+        424 + O(5^5)
+        sage: x+y
+        17565 + O(5^11)
+
+    These diffused digits of precision (which are tracked but
+    do not appear on the printing) allow to be always sharp on
+    precision.
+
+    NOTE:
+
+    Each elementary operation requires significant manipulations
+    on the precision lattice and therefore is costly. Precisely:
+
+    - The creation of a new element has a cost `O(n)` where `n`
+      is the number of tracked elements.
+
+    - The destruction of one element has a cost `O(m^2)` where
+      `m` is the distance between the destroyed element and
+      the last one. Fortunately, it seems that `m` tends to
+      be small in general (the dynamics of the list of tracked
+      elements is rather close to that of a stack).
+
+    It is nevertheless still possible to manipulate several
+    hundred variables (e.g. square matrices of size 5 or
+    polynomials of degree 20).
+
+    The class :class:`PrecisionLattice` provides several
+    features for introspection, especially concerning timings.
+    See :meth:`history` and :meth:`timings` for details.
+
+    .. SEEALSO::
+
+        :func:`ZpLF`
+    """
+    return Zp(p, prec, 'lattice-cap', *args, **kwds)
+
+@experimental(23505)
+def ZpLF(p, prec=None, *args, **kwds):
+    r"""
+    A shortcut function to create `p`-adic rings where precision
+    is encoded by a module in a large vector space.
+
+    See documentation for :func:`Zp` for a description of the input parameters.
+
+    NOTE:
+
+    The precision is tracked using automatic differentiation
+    techniques (see [CRV2018]_ and [CRV2014]_).
+    Floating point `p`-adic numbers are used for the computation
+    of the differential (which is then not exact).
+
+    EXAMPLES::
+
+        sage: R = ZpLF(5, 40)
+        sage: R
+        5-adic Ring with lattice-float precision
+
+    .. SEEALSO::
+
+        :func:`ZpLC`
+    """
+    return Zp(p, prec, 'lattice-float', *args, **kwds)
+
 
 #######################################################################################################
 #
@@ -2350,7 +2883,7 @@ def ZqFP(q, prec = None, *args, **kwds):
 #######################################################################################################
 
 class pAdicExtension_class(UniqueFactory):
-    """
+    r"""
     A class for creating extensions of `p`-adic rings and fields.
 
     EXAMPLES::
@@ -2359,7 +2892,7 @@ class pAdicExtension_class(UniqueFactory):
         sage: S.<x> = ZZ[]
         sage: W.<w> = pAdicExtension(R, x^4-15)
         sage: W
-        Eisenstein Extension in w defined by x^4 - 15 with capped relative precision 12 over 5-adic Ring
+        5-adic Eisenstein Extension Ring in w defined by x^4 - 15
         sage: W.precision_cap()
         12
     """
@@ -2369,7 +2902,7 @@ class pAdicExtension_class(UniqueFactory):
                                   print_sep = None, print_alphabet = None, print_max_ram_terms = None,
                                   print_max_unram_terms = None, print_max_terse_terms = None,
                                   show_prec = None, check = True, unram = False, implementation='FLINT'):
-        """
+        r"""
         Creates a key from input parameters for pAdicExtension.
 
         See the documentation for ``Qq`` for more information.
@@ -2379,10 +2912,21 @@ class pAdicExtension_class(UniqueFactory):
             sage: R = Zp(5,3)
             sage: S.<x> = ZZ[]
             sage: pAdicExtension.create_key_and_extra_args(R, x^4-15,names='w')
-            (('e', 5-adic Ring with capped relative precision 3,
-              x^4 - 15, ('w', None, None, 'w'),
-              12, 'series', True, '|', (), -1, -1, -1, True, 'NTL'),
-             {'approx_modulus': (1 + O(5^3))*x^4 + (O(5^4))*x^3 + (O(5^4))*x^2 + (O(5^4))*x + (2*5 + 4*5^2 + 4*5^3 + O(5^4))})
+            (('e',
+              5-adic Ring with capped relative precision 3,
+              x^4 - 15,
+              ('w', None, None, 'w'),
+              12,
+              'series',
+              True,
+              '|',
+              (),
+              -1,
+              -1,
+              -1,
+              'bigoh',
+              'NTL'),
+             {'approx_modulus': (1 + O(5^3))*x^4 + O(5^4)*x^3 + O(5^4)*x^2 + O(5^4)*x + 2*5 + 4*5^2 + 4*5^3 + O(5^4)})
 
             sage: A = Qp(3,5)
             sage: Po.<X> = A[]
@@ -2414,8 +2958,7 @@ class pAdicExtension_class(UniqueFactory):
             print_max_unram_terms = base._printer._max_unram_terms()
         if print_max_terse_terms is None:
             print_max_terse_terms = base._printer._max_terse_terms()
-        if show_prec is None:
-            show_prec = _default_show_prec(base._prec_type(), print_mode)
+        show_prec = _canonicalize_show_prec(base._prec_type(), print_mode, show_prec)
         from sage.symbolic.expression import is_Expression
         if check:
             if is_Expression(modulus):
@@ -2458,7 +3001,10 @@ class pAdicExtension_class(UniqueFactory):
             if ram_name is None:
                 ram_name = base._printer._uniformizer_name()
             names = (names, res_name, unram_name, ram_name)
-            polytype = 'u'
+            if base.absolute_degree() == 1:
+                polytype = 'u'
+            else:
+                polytype = 'ru'
             if prec is None:
                 prec = min([c.precision_absolute() for c in approx_modulus.list()] + [base.precision_cap()])
             elif prec > base.precision_cap():
@@ -2470,8 +3016,14 @@ class pAdicExtension_class(UniqueFactory):
             res_name = None
             if ram_name is None:
                 ram_name = names
+            if base.absolute_degree() == 1:
+                unram_name = None
+                polytype = 'e'
+            else:
+                unram_name = base.variable_name()
+                polytype = 're'
+                implementation = 'Polynomial'
             names = (names, res_name, unram_name, ram_name)
-            polytype = 'e'
             e = approx_modulus.degree()
             if prec is None:
                 prec = min([c.precision_absolute() for c in approx_modulus.list() if not c._is_exact_zero()] + [base.precision_cap()]) * e
@@ -2495,7 +3047,7 @@ class pAdicExtension_class(UniqueFactory):
         return key, {'approx_modulus': approx_modulus}
 
     def create_object(self, version, key, approx_modulus=None, shift_seed=None):
-        """
+        r"""
         Creates an object using a given key.
 
         See the documentation for pAdicExtension for more information.
@@ -2505,7 +3057,7 @@ class pAdicExtension_class(UniqueFactory):
             sage: R = Zp(5,3)
             sage: S.<x> = R[]
             sage: pAdicExtension.create_object(version = (6,4,2), key = ('e', R, x^4 - 15, x^4 - 15, ('w', None, None, 'w'), 12, None, 'series', True, '|', (),-1,-1,-1,'NTL'), shift_seed = S(3 + O(5^3)))
-            Eisenstein Extension in w defined by x^4 - 15 with capped relative precision 12 over 5-adic Ring
+            5-adic Eisenstein Extension Ring in w defined by x^4 - 15
         """
         polytype = key[0]
         if version[0] < 6 or version[0] == 6 and version[1] < 1:
@@ -2524,7 +3076,7 @@ class pAdicExtension_class(UniqueFactory):
             (polytype, base, exact_modulus, names, prec, print_mode, print_pos,
              print_sep, print_alphabet, print_max_ram_terms, print_max_unram_terms,
              print_max_terse_terms, show_prec, implementation) = key
-            if polytype == 'e':
+            if polytype in ('e', 're'):
                 unif = exact_modulus.base_ring()(base.uniformizer())
                 shift_seed = (-exact_modulus[:exact_modulus.degree()] / unif).change_ring(base)
             if not krasner_check(exact_modulus, prec):
@@ -2547,7 +3099,7 @@ ExtensionFactory = pAdicExtension = pAdicExtension_class("pAdicExtension")
 ######################################################
 
 def split(poly, prec):
-    """
+    r"""
     Given a polynomial ``poly`` and a desired precision ``prec``, computes
     ``upoly`` and epoly so that the extension defined by ``poly`` is isomorphic
     to the extension defined by first taking an extension by the unramified
@@ -2583,7 +3135,7 @@ def split(poly, prec):
     raise NotImplementedError("Extensions by general polynomials not yet supported.  Please use an unramified or Eisenstein polynomial.")
 
 def truncate_to_prec(poly, R, absprec):
-    """
+    r"""
     Truncates the unused precision off of a polynomial.
 
     EXAMPLES::
@@ -2593,12 +3145,12 @@ def truncate_to_prec(poly, R, absprec):
         sage: from sage.rings.padics.factory import truncate_to_prec
         sage: f = x^4 + (3+O(5^6))*x^3 + O(5^4)
         sage: truncate_to_prec(f, R, 5)
-        (1 + O(5^5))*x^4 + (3 + O(5^5))*x^3 + (O(5^5))*x^2 + (O(5^5))*x + (O(5^4))
+        (1 + O(5^5))*x^4 + (3 + O(5^5))*x^3 + O(5^5)*x^2 + O(5^5)*x + O(5^4)
     """
     return R[poly.variable_name()]([R(a, absprec=absprec) for a in poly.list()]) # Is this quite right?  We don't want flat necessarily...
 
 def krasner_check(poly, prec):
-    """
+    r"""
     Returns True iff poly determines a unique isomorphism class of
     extensions at precision prec.
 
@@ -2615,7 +3167,7 @@ def krasner_check(poly, prec):
     return True #This needs to be implemented
 
 def is_eisenstein(poly):
-    """
+    r"""
     Returns True iff this monic polynomial is Eisenstein.
 
     A polynomial is Eisenstein if it is monic, the constant term has
@@ -2643,7 +3195,7 @@ def is_eisenstein(poly):
     return True
 
 def is_unramified(poly):
-    """
+    r"""
     Returns true iff this monic polynomial is unramified.
 
     A polynomial is unramified if its reduction modulo the maximal

@@ -16,6 +16,7 @@ from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianG
 from sage.groups.abelian_gps.abelian_group import AbelianGroup as MultiplicativeAbelian
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
 from sage.groups.free_group import FreeGroup as Free
+from sage.groups.artin import ArtinGroup as Artin
 from sage.groups.braid import BraidGroup as Braid
 from sage.groups.semimonomial_transformations.semimonomial_transformation_group import SemimonomialTransformationGroup as SemimonomialTransformation
 from sage.combinat.root_system.coxeter_group import CoxeterGroup

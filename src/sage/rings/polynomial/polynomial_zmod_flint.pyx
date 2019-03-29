@@ -35,7 +35,8 @@ AUTHORS:
 
 from sage.libs.ntl.ntl_lzz_pX import ntl_zz_pX
 from sage.structure.factorization import Factorization
-from sage.structure.element import coerce_binop, parent
+from sage.structure.element cimport parent
+from sage.structure.element import coerce_binop
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 
 # We need to define this stuff before including the templating stuff

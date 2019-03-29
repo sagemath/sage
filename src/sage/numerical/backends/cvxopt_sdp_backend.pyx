@@ -283,7 +283,7 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             sage: p.row_name(-1)
             'fun'
         """
-        from sage.matrix.matrix import is_Matrix
+        from sage.structure.element import is_Matrix
         for t in coefficients:
             m = t[1]
             if not is_Matrix(m):
@@ -291,7 +291,7 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             if not m.is_square():
                 raise ValueError("The matrix has to be a square")
             if self.matrices_dim.get(self.nrows()) is not None and m.dimensions()[0] != self.matrices_dim.get(self.nrows()):
-                raise ValueError("The matrces have to be of the same dimension")
+                raise ValueError("the matrices have to be of the same dimension")
         self.coeffs_matrix.append(coefficients)
         self.matrices_dim[self.nrows()] = m.dimensions()[0] #
         self.row_name_var.append(name)
@@ -582,13 +582,13 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
         else:
             return 0
 
-    cpdef problem_name(self, char * name = NULL):
+    cpdef problem_name(self, name=None):
         """
         Return or define the problem's name
 
         INPUT:
 
-        - ``name`` (``char *``) -- the problem's name. When set to
+        - ``name`` (``str``) -- the problem's name. When set to
           ``NULL`` (default), the method returns the problem's name.
 
         EXAMPLES::
@@ -599,9 +599,10 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             sage: print(p.problem_name())
             There once was a french fry
         """
-        if name == NULL:
+        if name is None:
             return self.name
-        self.name = str(<bytes>name)
+
+        self.name = name
 
 
     cpdef row(self, int i):
@@ -682,7 +683,6 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
         TESTS::
 
             sage: B.dual_variable(7)
-            ...
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
@@ -728,7 +728,7 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             [0.0 0.0]
             sage: B1.is_positive_definite()
             True
-            sage: x = p.get_values(x).values()
+            sage: x = sorted(p.get_values(x).values())
             sage: x[0]*b1 + x[1]*b2 - b3 + B1       # tol 1e-09
             [0.0 0.0]
             [0.0 0.0]
@@ -736,7 +736,6 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
         TESTS::
 
             sage: B.slack(7)
-            ...
             Traceback (most recent call last):
             ...
             IndexError: list index out of range

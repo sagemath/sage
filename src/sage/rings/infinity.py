@@ -215,14 +215,13 @@ We check that :trac:`17990` is fixed::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 # python3
-from __future__ import division, unicode_literals
+from __future__ import division
 from six import integer_types
 
 from sys import maxsize
 from sage.rings.ring import Ring
 from sage.structure.element import RingElement, InfinityElement
 from sage.structure.richcmp import rich_to_bool, richcmp
-from sage.structure.parent import Parent
 from sage.misc.fast_methods import Singleton
 import sage.rings.integer
 import sage.rings.rational
@@ -581,7 +580,7 @@ class UnsignedInfinityRing_class(Singleton, Ring):
             sage: UnsignedInfinityRing(3) == UnsignedInfinityRing(-19.5)
             True
         """
-        Parent.__init__(self, self, names=('oo',), normalize=False)
+        Ring.__init__(self, self, names=('oo',), normalize=False)
 
     def ngens(self):
         """
@@ -994,7 +993,7 @@ class InfinityRing_class(Singleton, Ring):
             sage: InfinityRing == UnsignedInfinityRing
             False
         """
-        Parent.__init__(self, self, names=('oo',), normalize=False)
+        Ring.__init__(self, self, names=('oo',), normalize=False)
 
     def fraction_field(self):
         """

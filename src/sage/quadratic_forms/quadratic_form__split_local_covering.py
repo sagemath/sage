@@ -15,7 +15,6 @@ from sage.quadratic_forms.quadratic_form import QuadraticForm__constructor, is_Q
 from sage.rings.real_mpfr import RealField_class, RealField
 from sage.rings.real_double import RDF
 from sage.matrix.matrix_space import MatrixSpace
-#from sage.matrix.matrix import Matrix
 from sage.matrix.constructor import matrix
 from sage.functions.all import floor
 from sage.rings.integer_ring import ZZ
@@ -23,7 +22,7 @@ from sage.arith.all import GCD
 
 
 def cholesky_decomposition(self, bit_prec = 53):
-    """
+    r"""
     Give the Cholesky decomposition of this quadratic form `Q` as a real matrix
     of precision ``bit_prec``.
 
@@ -83,7 +82,6 @@ def cholesky_decomposition(self, bit_prec = 53):
         [ 1.00000000000000  1.00000000000000  1.50000000000000]
         [0.000000000000000  3.00000000000000 0.333333333333333]
         [0.000000000000000 0.000000000000000  3.41666666666667]
-
     """
 
     ## Check that the precision passed is allowed.

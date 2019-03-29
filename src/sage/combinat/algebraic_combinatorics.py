@@ -23,15 +23,6 @@ Enumerated sets of combinatorial objects
 - :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPattern`, :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPatterns`
 - :class:`~sage.combinat.knutson_tao_puzzles.KnutsonTaoPuzzleSolver`
 
-Combinatorial Hopf Algebras
----------------------------
-
-- :ref:`sage.combinat.sf`
-- :ref:`sage.combinat.ncsf_qsym`
-- :ref:`sage.combinat.schubert_polynomial`
-- :ref:`sage.combinat.ncsym`
-- :ref:`sage.combinat.grossman_larson_algebras`
-
 Groups and Algebras
 -------------------
 

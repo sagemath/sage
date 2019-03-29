@@ -1,25 +1,3 @@
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo >&2 "SAGE_LOCAL undefined ... exiting"
-   echo >&2 "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
-# Let the environment variable CFLAG64 specify the compiler flag
-# to build 64-bit code. It it is not set, set it to -m64
-if [ -z $CFLAG64 ] ; then
-   CFLAG64=-m64
-fi
-
-# If SAGE64 is "yes", build 64-bit.
-if [ "x$SAGE64" = xyes ] ; then
-   echo "Building SYMPOW 64-bit"
-   CFLAGS="$CFLAGS $CFLAG64"
-   LDFLAGS="$LDFLAGS $CFLAG64"
-   export CFLAGS
-   export LDFLAGS
-fi
-
-
 #######################################################################
 # Fix FPU precision
 #######################################################################
@@ -92,8 +70,7 @@ echo "CFLAGS for SYMPOW:$CFLAGS"
 
 config/fpubits
 status=$?
-if [ $status -eq 1 ]; then
-cat >&2 <<EOF
+[ $status -eq 1 ] && sdh_die <<_EOF_
 Error: the Quad Double library used by SYMPOW assumes IEEE-754 double
 precision numbers with exactly 53 bits in the mantissa (64 bits in
 total).  Unfortunately, this is not the case on your system and we
@@ -104,72 +81,55 @@ Please report this problem to sage-devel
 (http://groups.google.com/group/sage-devel), mentioning in particular
 your operating system, processor type and compiler version
 (run $CC --version).
-EOF
-elif [ $status -ne 0 ]; then
-cat >&2 <<EOF
+_EOF_
+
+[ $status -ne 0 ] && sdh_die <<_EOF_
 Error: something very bad happened while checking the precision of your
 FPU.  Please report this problem (mentioning any error messages above)
 to sage-devel (http://groups.google.com/group/sage-devel).
 Mention in particular your operating system and compiler version
 (run $CC --version).
-EOF
-exit 1
-fi
+_EOF_
+
 
 #######################################################################
 # Configure
 #######################################################################
 cd src/
-bash ./Configure  # Force bash as shell
-if [ $? -ne 0 ]; then
-   echo >&2 "Error configuring SYMPOW"
-   exit 1
-fi
-
+# Force bash as shell
+bash ./Configure || sdh_die "Error configuring SYMPOW"
 
 #######################################################################
 # Build
 #######################################################################
-$MAKE
-if [ $? -ne 0 ]; then
-   echo >&2 "Error building SYMPOW"
-   exit 1
-fi
+sdh_make
 
 #######################################################################
 # Install
 #######################################################################
 TARGET="$SAGE_LOCAL/lib/sympow"
 
+# Remove old install if any
 rm -rf "$TARGET"
-mkdir "$TARGET"
 
-cp sympow *.gp new_data "$TARGET/"
-if [ $? -ne 0 ]; then
-   echo >&2 "Error copying SYMPOW files"
-   exit 1
-fi
-
-# Copy datafiles
-mv datafiles "$TARGET/"
-if [ ! -d "$TARGET/datafiles" ]; then
-   echo >&2 "Error installing SYMPOW datafiles"
-   exit 1
-fi
+sdh_install sympow *.gp new_data datafiles "$TARGET"
 
 # Create binary versions of datafiles
-cd "$TARGET/datafiles"
+# Note: This should probably be a post-install step since it requires calling
+# the compiled sympow binary; however in this case it happens to work fine
+# since it does not have any external dependencies and can run from the temp
+# install dir
+cd "${SAGE_DESTDIR}${TARGET}/datafiles"
 for file in *.txt; do
     NUM=`grep -c AT $file`
-    ../sympow -txt2bin "$NUM" <$file ${file/%txt/bin}
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error running SYMPOW"
-        exit 1
-    fi
+    ../sympow -txt2bin "$NUM" <$file ${file/%txt/bin} || \
+        sdh_die "Error running SYMPOW"
 done
 
 # Create sympow script in $SAGE_LOCAL/bin
-SCRIPT="$SAGE_LOCAL/bin/sympow"
+BIN="$SAGE_DESTDIR_LOCAL/bin"
+mkdir -p "$BIN"
+SCRIPT="$BIN/sympow"
 
 cat >"$SCRIPT" <<'EOF'
 cd "$SAGE_LOCAL/lib/sympow"

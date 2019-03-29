@@ -8,17 +8,6 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
-# Let the user choose a flag other than -m64 for 64-bit builds
-# if needed:
-if [ -z "$CFLAG64" ]; then
-    CFLAG64=-m64
-fi
-
-if [ "x$SAGE64" = xyes ]; then
-    CFLAGS="$CFLAGS $CFLAG64"
-    CC="$CC $CFLAG64" && export CC
-fi
-
 if [ "x$SAGE_DEBUG" = xyes ] ; then
     CFLAGS="$CFLAGS -O0 -g" # Disable optimisation, add debug symbols. Good
                             # for debugging or working around compiler bugs.

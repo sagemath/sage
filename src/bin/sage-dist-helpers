@@ -35,8 +35,8 @@
 #
 # - sdh_configure [...]
 #
-#    Runs `./configure --prefix="$SAGE_LOCAL"`.  Additional arguments to
-#    `./configure` may be given as arguments.
+#    Runs `./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"`.
+#    Additional arguments to `./configure` may be given as arguments.
 #
 # - sdh_make [...]
 #
@@ -45,14 +45,44 @@
 #
 # - sdh_make_install [...]
 #
-#    Runs `$SAGE_SUDO $MAKE install`.  Additional arguments to `make` may be
-#    given as arguments.
+#    Runs `$MAKE install` with DESTDIR correctly set to a temporary install
+#    directory, for staged installations.  Additional arguments to `make` may
+#    be given as arguments.  If $SAGE_DESTDIR is not set then the command is
+#    run with $SAGE_SUDO, if set.
 #
 # - sdh_pip_install [...]
 #
 #    Runs `pip install` with the given arguments, as well as additional
 #    default arguments used for installing packages into Sage with pip.
 #    Currently this is just a wrapper around the `sage-pip-install` command.
+#    If $SAGE_DESTDIR is not set then the command is run with $SAGE_SUDO, if
+#    set.
+#
+# - sdh_cmake [...]
+#
+#    Runs `cmake` in the current directory with the given arguments, as well as
+#    additional arguments passed to cmake (assuming packages are using the
+#    GNUInstallDirs module) so that `CMAKE_INSTALL_PREFIX` and
+#    `CMAKE_INSTALL_LIBDIR` are set correctly.
+#
+# - sdh_install [-T] SRC [SRC...] DEST
+#
+#    Copies one or more files or directories given as SRC (recursively in the
+#    case of directories) into the destination directory DEST, while ensuring
+#    that DEST and all its parent directories exist.  DEST should be a path
+#    under $SAGE_LOCAL, generally.  For DESTDIR installs the $SAGE_DESTDIR path
+#    is automatically prepended to the destination.
+#
+#    The -T option treats DEST as a normal file instead (e.g. for copying a
+#    file to a different filename).  All directory components are still created
+#    in this case.
+#
+# - sdh_preload_lib EXECUTABLE SONAME
+#
+#    (Linux only--no-op on other platforms.)  Check shared libraries loaded by
+#    EXECUTABLE (may be a program or another library) for a library starting
+#    with SONAME, and if found appends SONAME to the LD_PRELOAD environment
+#    variable.  See https://trac.sagemath.org/24885.
 
 set -o allexport
 
@@ -69,7 +99,7 @@ _sdh_cols() {
 }
 
 
-# Utility function to print a terminal-width horizonal rule using the given
+# Utility function to print a terminal-width horizontal rule using the given
 # character (or '-' by default)
 _sdh_hr() {
     local char="${1:--}"
@@ -118,8 +148,24 @@ sdh_guard() {
 
 sdh_configure() {
     echo "Configuring $PKG_NAME"
-    ./configure --prefix="$SAGE_LOCAL" "$@" || \
+    # Run all configure scripts with bash to work around bugs with
+    # non-portable scripts.
+    # See https://trac.sagemath.org/ticket/24491
+    if [ -z "$CONFIG_SHELL" ]; then
+        export CONFIG_SHELL=`command -v bash`
+    fi
+    ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" "$@"
+    if [ $? -ne 0 ]; then
+        if [ -f "$(pwd)/config.log" ]; then
+            sdh_die <<_EOF_
+Error configuring $PKG_NAME
+See the file
+    $(pwd)/config.log
+for details.
+_EOF_
+        fi
         sdh_die "Error configuring $PKG_NAME"
+    fi
 }
 
 
@@ -131,16 +177,119 @@ sdh_make() {
 
 sdh_make_install() {
     echo "Installing $PKG_NAME"
-    $SAGE_SUDO ${MAKE:-make} install "$@" || \
+    if [ -n "$SAGE_DESTDIR" ]; then
+        local sudo=""
+    else
+        local sudo="$SAGE_SUDO"
+    fi
+    $sudo ${MAKE:-make} install DESTDIR="$SAGE_DESTDIR" "$@" || \
         sdh_die "Error installing $PKG_NAME"
 }
 
 
 sdh_pip_install() {
     echo "Installing $PKG_NAME"
-    $SAGE_SUDO sage-pip-install "$@" || \
+    if [ -n "$SAGE_DESTDIR" ]; then
+        local sudo=""
+        local root="--root=$SAGE_DESTDIR"
+    else
+        local sudo="$SAGE_SUDO"
+        local root=""
+    fi
+    $sudo sage-pip-install $root "$@" || \
         sdh_die "Error installing $PKG_NAME"
 }
 
+
+sdh_cmake() {
+    echo "Configuring $PKG_NAME with cmake"
+    cmake . -DCMAKE_INSTALL_PREFIX="${SAGE_LOCAL}" \
+            -DCMAKE_INSTALL_LIBDIR=lib \
+            "$@"
+    if [ $? -ne 0 ]; then
+        if [ -f "$(pwd)/CMakeFiles/CMakeOutput.log" ]; then
+            sdh_die <<_EOF_
+Error configuring $PKG_NAME with cmake
+See the file
+    $(pwd)/CMakeFiles/CMakeOutput.log
+for details.
+_EOF_
+        fi
+        sdh_die "Error configuring $PKG_NAME with cmake"
+    fi
+}
+
+
+sdh_install() {
+    local T=0
+    local src=()
+
+    if [ "$1" = "-T" ]; then
+        T=1
+        shift
+    fi
+
+    while [ $# -gt 1 ]; do
+        if [ ! \( -e "$1" -o -L "$1" \) ]; then
+            sdh_die "Error: source file/directory $1 does not exist"
+        fi
+        src+=("$1")
+        shift
+    done
+
+    local dest="$1"
+
+    if [ -z "$src" ]; then
+        sdh_die "Error: no source file(s) for sdh_install given"
+    fi
+
+    if [ -z "$dest" ]; then
+        sdh_die "Error: destination for sdh_install not given"
+    fi
+
+    # Prefix SAGE_DESTDIR to the destination for DESTDIR installs
+    dest="${SAGE_DESTDIR}$dest"
+
+    if [ $T -eq 0 -a -e "$dest" -a ! -d "$dest" ]; then
+        sdh_die "Error: destination $dest for sdh_install exists and is not a directory"
+    fi
+
+    local destdir="$dest"
+    if [ $T -eq 1 ]; then
+        destdir="$(dirname $dest)"
+    fi
+
+    if [ ! -d "$destdir" ]; then
+        mkdir -p "$destdir" || exit $?
+    fi
+
+    for s in "${src[@]}"; do
+        echo "$s -> $dest"
+        cp -R -p "$s" "$dest" || exit $?
+    done
+}
+
+
+sdh_preload_lib() {
+    local executable="$1"
+    local soname="$2"
+    if [ "$UNAME" != "Linux" ]; then
+        return 0
+    fi
+
+    local ldlibs="$(ldd $(which $executable))"
+    if [ $? -ne 0 ]; then
+        sdh_die "Could not get shared library dependencies for $executable"
+    fi
+
+    local lib=$(echo "$ldlibs" | sed -n 's/\s*'$soname'.* => \(.\+\) .*/\1/p')
+    if [ -n "$lib" ]; then
+        if [ -n "$LD_PRELOAD" ]; then
+            export LD_PRELOAD="$LD_PRELOAD:$lib"
+        else
+            export LD_PRELOAD="$lib"
+        fi
+    fi
+}
 
 set +o allexport

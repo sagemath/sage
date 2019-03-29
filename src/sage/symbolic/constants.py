@@ -1,4 +1,4 @@
-"""
+r"""
 Mathematical constants
 
 The following standard mathematical constants are defined in Sage,
@@ -541,7 +541,7 @@ class Constant(object):
 
 class Pi(Constant):
     def __init__(self, name="pi"):
-        """
+        r"""
         TESTS::
 
             sage: pi._latex_()
@@ -550,7 +550,6 @@ class Pi(Constant):
             \pi
             sage: mathml(pi)
             <mi>&pi;</mi>
-
         """
         conversions = dict(axiom='%pi', fricas='%pi', maxima='%pi', giac='pi', gp='Pi', kash='PI',
                            mathematica='Pi', matlab='pi', maple='pi',
@@ -948,7 +947,7 @@ class EulerGamma(Constant):
         """
         conversions = dict(kash='EulerGamma(R)', maple='gamma',
                            mathematica='EulerGamma', pari='Euler',
-                           maxima='%gamma', pynac='Euler')
+                           maxima='%gamma', pynac='Euler', giac='euler_gamma')
         Constant.__init__(self, name, conversions=conversions,
                           latex=r'\gamma', domain='positive')
 

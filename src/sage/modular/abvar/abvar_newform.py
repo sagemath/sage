@@ -239,6 +239,7 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
                                    for i in range(1,d+1)])
             V = V+W
             n += 1
+            if n > bound: raise ArithmeticError("Error computing endomorphism generators")
 
         return V.saturation().basis()
 

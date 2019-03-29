@@ -431,7 +431,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
             assert isinstance(v, (ClonableIntArray, list)), '%s should be a list or a integer vector'%v
             assert (self.n == len(v)), '%s should be of length %s'%(v, self.n)
             for p in v:
-                assert (p == NN(p)), 'Elements of %s should be integers'%s
+                assert (p == NN(p)), 'Elements of %s should be integers' % v
         return is_canonical(self._sgs, self.element_class(self, list(v), check=False))
 
     def __contains__(self, v):
@@ -522,8 +522,8 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, SearchForest):
     class Element(ClonableIntArray):
         r"""
         Element class for the set of integer vectors of given sum enumerated modulo
-        the action of a permutation group. These vector are clonable lists of integers
-        which must check conditions comming form the parent appearing in the method
+        the action of a permutation group. These vectors are clonable lists of integers
+        which must satisfy conditions coming from the parent appearing in the method
         :meth:`~sage.structure.list_clone.ClonableIntArray.check`.
 
         TESTS::
@@ -583,8 +583,8 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
 
     Here is the enumeration of unlabeled graphs over 5 vertices::
 
-        sage: G = IntegerVectorsModPermutationGroup(TransitiveGroup(10,12), max_part=1) # optional - database_gap
-        sage: G.cardinality()  # optional - database_gap
+        sage: G = IntegerVectorsModPermutationGroup(TransitiveGroup(10,12), max_part=1)
+        sage: G.cardinality()
         34
 
     TESTS::
@@ -781,10 +781,10 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
             True
         """
         if check:
-            assert isinstance(v, (ClonableIntArray, list)), '%s should be a list or a integer vector'%v
-            assert (self.n == len(v)), '%s should be of length %s'%(v, self.n)
+            assert isinstance(v, (ClonableIntArray, list)), '%s should be a list or a integer vector' % v
+            assert (self.n == len(v)), '%s should be of length %s' % (v, self.n)
             for p in v:
-                assert (p == NN(p)), 'Elements of %s should be integers'%s
+                assert (p == NN(p)), 'Elements of %s should be integers' % v
         return is_canonical(self._sgs, self.element_class(self, list(v), check=False))
 
     def ambient(self):
@@ -919,7 +919,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
             sage: sorted(I.orbit([3,0,0,1]))
             [[0, 0, 1, 3], [0, 1, 3, 0], [1, 3, 0, 0], [3, 0, 0, 1]]
         """
-        assert isinstance(v, (list, ClonableIntArray)), '%s should be a Python list or an element of %s'%(v, self)
+        assert isinstance(v, (list, ClonableIntArray)), '%s should be a Python list or an element of %s' % (v, self)
         try:
             if v.parent() is self:
                 return orbit(self._sgs, v)
@@ -930,7 +930,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
         r"""
         Element class for the set of integer vectors with constraints enumerated
         modulo the action of a permutation group. These vectors are clonable lists
-        of integers which must check conditions comming form the parent as in
+        of integers which must satisfy conditions coming from the parent as in
         the method :meth:`~sage.combinat.integer_vectors_mod_permgroup.IntegerVectorsModPermutationGroup_with_constraints.Element.check`.
 
         TESTS::

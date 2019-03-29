@@ -194,7 +194,7 @@ class ModularParameterization:
         return z
 
     def map_to_complex_numbers(self, z, prec=None):
-        """
+        r"""
         Evaluate ``self`` at a point `z \in X_0(N)` where `z` is given by
         a representative in the upper half plane, returning a point in
         the complex numbers.

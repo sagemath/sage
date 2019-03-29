@@ -54,7 +54,7 @@ EXAMPLES::
 #*****************************************************************************/
 from __future__ import absolute_import
 
-from sage.rings.all import RealField, RR, ZZ
+from sage.rings.all import RR, ZZ
 from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 from sage.structure.sage_object import SageObject
 

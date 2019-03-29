@@ -6,16 +6,16 @@ REFERENCES:
 .. [LLT1997] Alain Lascoux, Bernard Leclerc, Jean-Yves Thibon,
    Ribbon tableaux, Hall-Littlewood functions, quantum affine algebras, and unipotent varieties,
    J. Math. Phys. 38 (1997), no. 2, 1041-1068,
-   arXiv:q-alg/9512-31v1 [math.q.alg]
+   :arxiv:`q-alg/9512031v1` [math.q.alg]
 
 .. [LT2000] Bernard Leclerc and Jean-Yves Thibon,
    Littlewood-Richardson coefficients and Kazhdan-Lusztig polynomials,
    in: Combinatorial methods in representation theory (Kyoto)
    Adv. Stud. Pure Math., vol. 28, Kinokuniya, Tokyo, 2000, pp 155-220
-   arXiv:math/9809122v3 [math.q-alg]
+   :arxiv:`math/9809122v3` [math.q-alg]
 """
 from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
 #
@@ -28,8 +28,8 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.unique_representation import UniqueRepresentation
 from . import sfa
 import sage.combinat.ribbon_tableau as ribbon_tableau
@@ -250,7 +250,8 @@ class LLT_class(UniqueRepresentation):
         if skp in _Partitions:
             m = (sum(skp) / self.level()).floor()
             if m == 0:
-                raise ValueError("level (%=) must divide %s "%(sum(skp), self.level()))
+                raise ValueError("level (%s=) must divide %s " % (sum(skp),
+                                                                  self.level()))
             mu = Partitions( ZZ(sum(skp) / self.level()) )
 
         elif isinstance(skp, list) and skp[0] in sage.combinat.skew_partition.SkewPartitions():
@@ -741,6 +742,6 @@ class LLT_cospin(LLT_generic):
         pass
 
 # Backward compatibility for unpickling
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_spin',  LLT_spin.Element)
 register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_cospin',  LLT_cospin.Element)

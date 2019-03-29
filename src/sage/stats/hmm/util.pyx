@@ -14,7 +14,7 @@ AUTHOR:
 #############################################################################
 
 
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.misc.flatten  import flatten
 
 cdef class HMM_Util:

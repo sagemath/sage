@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Baxter permutations
 """
@@ -22,7 +23,7 @@ class BaxterPermutations(UniqueRepresentation, Parent):
     are adjacent in `\sigma`, the standardized version of `u` is
     neither `2413` nor `3142`.
 
-    See [Gir12]_ for a study of Baxter permutations.
+    See [Gir2012]_ for a study of Baxter permutations.
 
     INPUT:
 
@@ -41,12 +42,6 @@ class BaxterPermutations(UniqueRepresentation, Parent):
         Baxter permutations of size 5
         sage: BaxterPermutations()
         Baxter permutations
-
-    REFERENCES:
-
-    .. [Gir12] Samuele Giraudo,
-       *Algebraic and combinatorial structures on pairs of twin binary trees*,
-       :arxiv:`1204.4776v1`.
     """
     @staticmethod
     def __classcall_private__(classe, n=None):
@@ -179,17 +174,11 @@ class BaxterPermutations_size(BaxterPermutations):
 
         ALGORITHM:
 
-        The algorithm using generating trees described in [BBF08]_ is used.
+        The algorithm using generating trees described in [BBMF2008]_ is used.
         The idea is that all Baxter permutations of size `n + 1` can be
         obtained by inserting the letter `n + 1` either just before a left
         to right maximum or just after a right to left maximum of a Baxter
         permutation of size `n`.
-
-        REFERENCES:
-
-        .. [BBF08] \N. Bonichon, M. Bousquet-Melou, E. Fusy.
-           Baxter permutations and plane bipolar orientations.
-           Seminaire Lotharingien de combinatoire 61A, article B61Ah, 2008.
         """
         if self._n == 0:
             yield Permutations(0)([])
@@ -305,6 +294,11 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
             False
             sage: Permutation([4, 3, 6, 9, 7, 5, 1, 2, 8]) in BaxterPermutations()
             True
+
+        TESTS::
+
+            sage: 42 in BaxterPermutations()
+            False
         """
         if not x in Permutations():
             return False
@@ -325,14 +319,14 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
         (resp. `T_R`) is obtained by inserting the letters of ``p`` from
         left to right (resp. right to left) following the binary search
         tree insertion algorithm. This is called the *Baxter P-symbol*
-        in [Gir12]_ Definition 4.1.
+        in [Gir2012]_ Definition 4.1.
 
         .. NOTE::
 
             This method only works when ``p`` is a permutation. For words
             with repeated letters, it would return two "right binary
-            search trees" (in the terminology of [Gir12]_), which conflicts
-            with the definition in [Gir12]_.
+            search trees" (in the terminology of [Gir2012]_), which conflicts
+            with the definition in [Gir2012]_.
 
         EXAMPLES::
 

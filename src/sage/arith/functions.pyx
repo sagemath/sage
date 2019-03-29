@@ -2,21 +2,21 @@
 Fast Arithmetic Functions
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_check
 
 from sage.libs.gmp.mpz cimport mpz_lcm, mpz_set_ui
 from sage.rings.integer cimport Integer
-from sage.structure.element cimport coercion_model
+from sage.structure.coerce cimport coercion_model
 
 
 def lcm(a, b=None):
@@ -63,8 +63,8 @@ def lcm(a, b=None):
     The following shows that indeed coercion takes place before
     computing the least common multiple::
 
-        sage: R.<x>=QQ[]
-        sage: S.<x>=ZZ[]
+        sage: R.<x> = QQ[]
+        sage: S.<x> = ZZ[]
         sage: p = S.random_element(degree=(0,5))
         sage: q = R.random_element(degree=(0,5))
         sage: parent(lcm([1/p,q]))
@@ -115,7 +115,7 @@ def lcm(a, b=None):
 
     try:
         return a.lcm(b)
-    except (AttributeError,TypeError):
+    except (AttributeError, TypeError):
         pass
     try:
         return Integer(a).lcm(Integer(b))
@@ -186,13 +186,6 @@ cpdef LCM_list(v):
         sage: R.<X> = QQ[]
         sage: LCM_list(Sequence((2*X+4,2*X^2,2)))
         X^3 + 2*X^2
-
-    Passing strings works, but this is deprecated::
-
-        sage: LCM_list([int(3), int(9), '30'])
-        doctest:...: DeprecationWarning: passing strings to lcm() is deprecated
-        See http://trac.sagemath.org/22630 for details.
-        90
     """
     cdef Integer x
     cdef Integer z = <Integer>(Integer.__new__(Integer))
@@ -204,10 +197,6 @@ cpdef LCM_list(v):
         if isinstance(elt, Integer):
             x = <Integer>elt
         elif isinstance(elt, (int, long)):
-            x = Integer(elt)
-        elif isinstance(elt, str):
-            from sage.misc.superseded import deprecation
-            deprecation(22630, "passing strings to lcm() is deprecated")
             x = Integer(elt)
         else:
             # The result is no longer an Integer, pass to generic code

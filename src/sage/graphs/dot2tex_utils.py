@@ -59,7 +59,7 @@ for installation instructions.
 """
     try:
         import dot2tex
-    except ImportError as e:
+    except ImportError:
         print(import_error_string)
         raise # re-raise current exception
     else:

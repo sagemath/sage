@@ -19,7 +19,7 @@ package which must be installed.
 
 
 from distutils.extension import Extension
-from sage.misc.package import is_package_installed, list_packages
+from sage.misc.package import list_packages
 
 all_packages = list_packages(local=True)
 
@@ -60,22 +60,23 @@ def OptionalExtension(*args, **kwds):
 
         sage: from sage_setup.optional_extension import OptionalExtension
         sage: ext = OptionalExtension("foo", ["foo.c"], condition=False)
-        sage: print(ext.__class__)
-        sage_setup.optional_extension.CythonizeExtension
+        sage: print(ext.__class__.__name__)
+        CythonizeExtension
         sage: ext = OptionalExtension("foo", ["foo.c"], condition=True)
-        sage: print(ext.__class__)
-        distutils.extension.Extension
+        sage: print(ext.__class__.__name__)
+        Extension
         sage: ext = OptionalExtension("foo", ["foo.c"], package="no_such_package")
-        sage: print(ext.__class__)
-        sage_setup.optional_extension.CythonizeExtension
+        sage: print(ext.__class__.__name__)
+        CythonizeExtension
         sage: ext = OptionalExtension("foo", ["foo.c"], package="pari")
-        sage: print(ext.__class__)
-        distutils.extension.Extension
+        sage: print(ext.__class__.__name__)
+        Extension
     """
     try:
         condition = kwds.pop("condition")
     except KeyError:
         pkg = kwds.pop("package")
+        from sage.misc.package import is_package_installed
         try:
             pkginfo = all_packages[pkg]
         except KeyError:

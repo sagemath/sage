@@ -498,7 +498,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         weak_lattice = weak_poset
 
         def inversion_sequence(self, word):
-            """
+            r"""
             Return the inversion sequence corresponding to the ``word``
             in indices of simple generators of ``self``.
 
@@ -716,6 +716,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
                 sage: W = CoxeterGroup(['H',3], base_ring=RDF)
                 sage: W.permutahedron()
+                doctest:warning
+                ...
+                UserWarning: This polyhedron data is numerically complicated; cdd could not convert between the inexact V and H representation without loss of data. The resulting object might show inconsistencies.
                 A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 120 vertices
 
                 sage: W = CoxeterGroup(['I',7])
@@ -796,10 +799,10 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             are those covers of `ws_i` that have a descent at `i`.
             """
 
-            i = self.first_descent(positive=True)
+            i = self.first_descent(positive=True,side='right')
             if i is not None:
-                wsi = self.apply_simple_reflection(i)
-                return [u.apply_simple_reflection(i) for u in wsi.bruhat_upper_covers() if u.has_descent(i)] + [wsi]
+                wsi = self.apply_simple_reflection(i,side='right')
+                return [u.apply_simple_reflection(i,side='right') for u in wsi.bruhat_upper_covers() if u.has_descent(i,side='right')] + [wsi]
             else:
                 return []
 

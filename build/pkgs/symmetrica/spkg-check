@@ -4,15 +4,6 @@ if [ -z "$SAGE_LOCAL" ] ; then
     exit 1
 fi
 
-if [ -z "$CFLAG64" ] ; then
-    CFLAG64=-m64
-fi
-
-if [ "x$SAGE64" = xyes ] ; then
-    CFLAGS="$CFLAGS $CFLAG64"
-    LDFLAGS="$LDFLAGS $CFLAG64" # Could use an LDFLAG64 here.
-fi
-
 CFLAGS="-O2 -g $CFLAGS -DFAST -DALLTRUE"
 export CFLAGS LDFLAGS # Currently redundant, but safe.
 

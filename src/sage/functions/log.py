@@ -22,7 +22,7 @@ from sage.rings.complex_double import CDF
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.rational import Rational
+
 
 class Function_exp(GinacFunction):
     r"""
@@ -93,7 +93,7 @@ class Function_exp(GinacFunction):
         sage: exp(2).n(100)
         7.3890560989306502272304274606
 
-    TEST::
+    TESTS::
 
         sage: latex(exp(x))
         e^{x}
@@ -233,7 +233,7 @@ class Function_log1(GinacFunction):
         """
         GinacFunction.__init__(self, 'log', latex_name=r'\log',
                                conversions=dict(maxima='log', fricas='log',
-                                                mathematica='Log'))
+                                                mathematica='Log', giac='ln'))
 
 ln = function_log = Function_log1()
 
@@ -248,6 +248,13 @@ class Function_log2(GinacFunction):
         sage: from sage.functions.log import logb
         sage: logb(1000,10)
         3
+
+    TESTS::
+
+        sage: logb(7, 2)
+        log(7)/log(2)
+        sage: logb(int(7), 2)
+        log(7)/log(2)
     """
     def __init__(self):
         """
@@ -328,6 +335,17 @@ def log(*args, **kwds):
         3.14159265358979*I
         sage: log(-1.0)
         3.14159265358979*I
+
+    Small integer powers are factored out immediately::
+
+        sage: log(4)
+        2*log(2)
+        sage: log(1000000000)
+        9*log(10)
+        sage: log(8) - 3*log(2)
+        0
+        sage: bool(log(8) == 3*log(2))
+        True
 
     The ``hold`` parameter can be used to prevent automatic evaluation::
 
@@ -442,7 +460,7 @@ class Function_polylog(GinacFunction):
         EXAMPLES::
 
             sage: polylog(2.7, 0)
-            0
+            0.000000000000000
             sage: polylog(2, 1)
             1/6*pi^2
             sage: polylog(2, -1)
@@ -507,19 +525,19 @@ class Function_polylog(GinacFunction):
 
             sage: BF = RealBallField(100)
             sage: polylog(2, BF(1/3))
-            [0.36621322997706348761674629766 +/- 4.51e-30]
+            [0.36621322997706348761674629766... +/- ...]
             sage: polylog(2, BF(4/3))
-            nan
+            [2.27001825336107090380391448586 +/- 5.64e-30] + [-0.90377988538400159956755721265 +/- 8.39e-30]*I
             sage: parent(_)
-            Real ball field with 100 bits precision
+            Complex ball field with 100 bits of precision
             sage: polylog(2, CBF(1/3))
-            [0.366213229977063 +/- 5.85e-16]
+            [0.366213229977063 +/- ...]
             sage: parent(_)
-            Complex ball field with 53 bits precision
+            Complex ball field with 53 bits of precision
             sage: polylog(2, CBF(1))
-            [1.644934066848226 +/- 6.59e-16]
+            [1.644934066848226 +/- ...]
             sage: parent(_)
-            Complex ball field with 53 bits precision
+            Complex ball field with 53 bits of precision
         """
         GinacFunction.__init__(self, "polylog", nargs=2)
 
@@ -596,7 +614,7 @@ class Function_dilog(GinacFunction):
             sage: dilog(1)
             1/6*pi^2
             sage: dilog(1.)
-            1.64493406684823 
+            1.64493406684823
             sage: dilog(1).n()
             1.64493406684823
             sage: float(dilog(1))
@@ -638,7 +656,8 @@ class Function_dilog(GinacFunction):
             Complex Field with 13 bits of precision
         """
         GinacFunction.__init__(self, 'dilog',
-                conversions=dict(maxima='li[2]'))
+                conversions=dict(maxima='li[2]',
+                                 fricas='(x+->dilog(1-x))'))
 
 dilog = Function_dilog()
 
@@ -736,12 +755,31 @@ class Function_lambert_w(BuiltinFunction):
             0.567143290409784
             sage: lambert_w(x, x)._sympy_()
             LambertW(x, x)
+
+        TESTS:
+
+        Check that :trac:`25987` is fixed::
+
+            sage: lambert_w(x)._fricas_()                                       # optional - fricas
+            lambertW(x)
+
+            sage: fricas(lambert_w(x)).eval(x = -1/e)                           # optional - fricas
+            - 1
+
+        The two-argument form of Lambert's function is not supported
+        by FriCAS, so we return a generic operator::
+
+            sage: var("n")
+            n
+            sage: lambert_w(n, x)._fricas_()                                    # optional - fricas
+            generalizedLambertW(n,x)
         """
         BuiltinFunction.__init__(self, "lambert_w", nargs=2,
                                  conversions={'mathematica': 'ProductLog',
                                               'maple': 'LambertW',
                                               'matlab': 'lambertw',
                                               'maxima': 'generalized_lambert_w',
+                                              'fricas': "((n,z)+->(if n=0 then lambertW(z) else operator('generalizedLambertW)(n,z)))",
                                               'sympy': 'LambertW'})
 
     def __call__(self, *args, **kwds):
@@ -859,7 +897,7 @@ class Function_lambert_w(BuiltinFunction):
             return mpmath_utils.call(mpmath.lambertw, z, n, parent=R)
 
     def _derivative_(self, n, z, diff_param=None):
-        """
+        r"""
         The derivative of `W_n(x)` is `W_n(x)/(x \cdot W_n(x) + x)`.
 
         EXAMPLES::
@@ -933,7 +971,7 @@ class Function_lambert_w(BuiltinFunction):
             return "lambert_w(%s, %s)" % (n, z)
 
     def _print_latex_(self, n, z):
-        """
+        r"""
         Custom _print_latex_ method to avoid printing the branch
         number if it is zero.
 
@@ -994,7 +1032,8 @@ class Function_exp_polar(BuiltinFunction):
         This fixes :trac:`18085`::
 
             sage: integrate(1/sqrt(1+x^3),x,algorithm='sympy')
-            1/3*x*hypergeometric((1/3, 1/2), (4/3,), -x^3)*gamma(1/3)/gamma(4/3)
+            1/3*x*gamma(1/3)*hypergeometric((1/3, 1/2), (4/3,), -x^3)/gamma(4/3)
+
 
         .. SEEALSO::
 
@@ -1051,12 +1090,20 @@ class Function_exp_polar(BuiltinFunction):
             sage: exp_polar(4*I*pi + x)
             exp_polar(4*I*pi + x)
 
+        TESTS:
+
+        Check that :trac:`24441` is fixed::
+
+            sage: exp_polar(arcsec(jacobi_sn(1.1*I*x, x))) # should be fast
+            exp_polar(arcsec(jacobi_sn(1.10000000000000*I*x, x)))
         """
-        if (isinstance(z, Expression)
-            and bool(-const_pi < z.imag_part() <= const_pi)):
-            return exp(z)
-        else:
-            return None
+        try:
+            im = z.imag_part()
+            if (len(im.variables()) == 0
+                and bool(-const_pi < im <= const_pi)):
+                return exp(z)
+        except AttributeError:
+            pass
 
 exp_polar = Function_exp_polar()
 
@@ -1069,7 +1116,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
     .. MATH::
 
         H_{n}=H_{n,1}=\sum_{k=1}^n\frac{1}{k}
-        
+
         H_{n,m}=\sum_{k=1}^n\frac{1}{k^m}
 
     They are also well-defined for complex argument, through:
@@ -1200,6 +1247,11 @@ class Function_harmonic_number_generalized(BuiltinFunction):
             0.386627621982332
             sage: harmonic_number(3,5/2)
             1/27*sqrt(3) + 1/8*sqrt(2) + 1
+
+        TESTS::
+
+            sage: harmonic_number(int(3), int(3))
+            1.162037037037037
         """
         if m == 0:
             return z
@@ -1207,7 +1259,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
             return harmonic_m1._eval_(z)
 
         if z in ZZ and z >= 0:
-            return sum(1 / (k ** m) for k in range(1, z + 1))
+            return sum(ZZ(k) ** (-m) for k in range(1, z + 1))
 
     def _evalf_(self, z, m, parent=None, algorithm=None):
         """
@@ -1230,11 +1282,11 @@ class Function_harmonic_number_generalized(BuiltinFunction):
             return harmonic_m1._evalf_(z, parent, algorithm)
 
         from sage.functions.transcendental import zeta, hurwitz_zeta
-        return zeta(m) - hurwitz_zeta(m,z+1)
+        return zeta(m) - hurwitz_zeta(m, z + 1)
 
     def _maxima_init_evaled_(self, n, z):
         """
-        EXAMPLES:
+        EXAMPLES::
 
             sage: maxima_calculus(harmonic_number(x,2))
             gen_harmonic_number(2,_SAGE_VAR_x)
@@ -1373,7 +1425,7 @@ class Function_harmonic_number(BuiltinFunction):
                 import sage.libs.flint.arith as flint_arith
                 return flint_arith.harmonic_number(z)
         elif z in QQ:
-            from sage.functions.other import psi1
+            from .gamma import psi1
             return psi1(z+1) - psi1(1)
 
     def _evalf_(self, z, parent=None, algorithm='mpmath'):
@@ -1404,7 +1456,7 @@ class Function_harmonic_number(BuiltinFunction):
             1/6*pi^2 - harmonic_number(x, 2)
         """
         from sage.functions.transcendental import zeta
-        return zeta(2)-harmonic_number(z,2)
+        return zeta(2) - harmonic_number(z, 2)
 
     def _print_latex_(self, z):
         """

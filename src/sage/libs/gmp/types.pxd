@@ -12,7 +12,6 @@ cdef extern from "gmp.h":
     ctypedef long mp_size_t
     ctypedef long mp_exp_t
 
-    ctypedef long mp_limb_t
     ctypedef mp_limb_t* mp_ptr
     ctypedef mp_limb_t* mp_srcptr
 

@@ -10,8 +10,8 @@ the IPython simple prompt is being used::
     sage: import pexpect
     sage: output = pexpect.run(
     ....:     'bash -c \'echo "{0}" | sage\''.format(cmd),
-    ....: )
-    sage: 'In [1]: [False, True]' in output
+    ....: ).decode('utf-8', 'surrogateescape')
+    sage: 'sage: [False, True]' in output
     True
 """
 
@@ -46,23 +46,23 @@ class SageIpythonConfiguration(object):
         This returns ``True`` during doctests.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config._doctest_mode()
             True
         """
         from sage.doctest import DOCTEST_MODE
         return DOCTEST_MODE
-    
+
     def _allow_ansi(self):
         """
         Whether to allow ANSI escape sequences
 
-        This returns ``False`` during doctests to avoid ANSI escape 
+        This returns ``False`` during doctests to avoid ANSI escape
         sequences.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config._allow_ansi()
             False
@@ -73,11 +73,11 @@ class SageIpythonConfiguration(object):
         """
         Return the IPython color palette
 
-        This returns ``'NoColor'`` during doctests to avoid ANSI escape 
+        This returns ``'NoColor'`` during doctests to avoid ANSI escape
         sequences.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config.simple_prompt()
             True
@@ -91,7 +91,7 @@ class SageIpythonConfiguration(object):
         This returns ``True`` during doctests to avoid ANSI escape sequences.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config.simple_prompt()
             True
@@ -105,7 +105,7 @@ class SageIpythonConfiguration(object):
         This returns false during doctests to avoid ANSI escape sequences.
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
             sage: sage_ipython_config.term_title()
             False
@@ -117,10 +117,13 @@ class SageIpythonConfiguration(object):
         Return a new default configuration object
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
-            sage: sage_ipython_config.default()
-            {'InteractiveShell': {'colors': ...
+            sage: conf = sage_ipython_config.default()
+            sage: type(conf)
+            <class 'traitlets.config.loader.Config'>
+            sage: 'InteractiveShell' in conf
+            True
         """
         from sage.repl.interpreter import SageTerminalInteractiveShell
         cfg = Config(
@@ -151,10 +154,13 @@ class SageIpythonConfiguration(object):
         Return a copy of the current configuration
 
         EXAMPLES::
-        
+
             sage: from sage.repl.configuration import sage_ipython_config
-            sage: sage_ipython_config.copy()
-            {'InteractiveShell': {'colors': ...
+            sage: conf = sage_ipython_config.copy()
+            sage: type(conf)
+            <class 'traitlets.config.loader.Config'>
+            sage: 'InteractiveShell' in conf
+            True
         """
         try:
             return copy.deepcopy(get_ipython().config)

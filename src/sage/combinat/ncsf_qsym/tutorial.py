@@ -51,6 +51,9 @@ names. ::
     Defining E as shorthand for Quasisymmetric functions over the Rational Field in the Essential basis
     Defining dI as shorthand for Quasisymmetric functions over the Rational Field in the dualImmaculate basis
     Defining QS as shorthand for Quasisymmetric functions over the Rational Field in the Quasisymmetric Schur basis
+    Defining YQS as shorthand for Quasisymmetric functions over the Rational Field in the Young Quasisymmetric Schur basis
+    Defining phi as shorthand for Quasisymmetric functions over the Rational Field in the phi basis
+    Defining psi as shorthand for Quasisymmetric functions over the Rational Field in the psi basis
 
 Now one can start constructing quasisymmetric functions.
 

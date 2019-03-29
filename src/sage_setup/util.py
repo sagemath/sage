@@ -29,3 +29,28 @@ def stable_uniq(L):
     for pos, item in enumerate(L):
         D[item] = pos  # Store the last position where an item appears
     return sorted(D, key=lambda item: D[item])
+
+
+def have_module(name):
+    """
+    Check whether a Python module named ``name`` can be imported.
+
+    This is done by trying to import that module and returning ``True``
+    if that import succeeded. So, as a side effect, the module is
+    actually imported if possible.
+
+    EXAMPLES::
+
+        sage: from sage_setup.util import have_module
+        sage: have_module("itertools")
+        True
+        sage: have_module("sage.rings.integer")
+        True
+        sage: have_module("no.such.module")
+        False
+    """
+    try:
+        __import__(name, {}, {}, [], 0)
+        return True
+    except ImportError:
+        return False

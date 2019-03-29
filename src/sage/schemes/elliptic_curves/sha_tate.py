@@ -78,7 +78,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.structure.sage_object import SageObject
@@ -273,7 +273,7 @@ class Sha(SageObject):
         if prec is None:
             prec = RealField().precision()
         RR = RealField(prec)
-        prec2 = prec+2
+        prec2 = prec + 2
         RR2 = RealField(prec2)
         try:
             an = self.__an_numerical
@@ -292,7 +292,7 @@ class Sha(SageObject):
         Reg = E.regulator(use_database=use_database, proof=proof, precision=prec2)
         T = E.torsion_order()
         cp = E.tamagawa_product()
-        Sha = RR((Lr*T*T) / (r.factorial()*Om*cp*Reg))
+        Sha = RR((Lr * T * T) / (r.factorial() * Om * cp * Reg))
         self.__an_numerical = Sha
         return Sha
 
@@ -304,13 +304,13 @@ class Sha(SageObject):
 
         INPUT:
 
-            - ``use_database`` -- bool (default: ``False``); if ``True``, try
-              to use any databases installed to lookup the analytic order of
-              `Sha`, if possible.  The order of `Sha` is computed if it cannot
-              be looked up.
+        - ``use_database`` -- bool (default: ``False``); if ``True``, try
+          to use any databases installed to lookup the analytic order of
+          `Sha`, if possible.  The order of `Sha` is computed if it cannot
+          be looked up.
 
-            - ``descent_second_limit`` -- int (default: 12); limit to use on
-              point searching for the quartic twist in the hard case
+        - ``descent_second_limit`` -- int (default: 12); limit to use on
+          point searching for the quartic twist in the hard case
 
         This result is proved correct if the order of vanishing is 0
         and the Manin constant is <= 2.
@@ -443,7 +443,7 @@ class Sha(SageObject):
             regulator = E.regulator(use_database=use_database, descent_second_limit=descent_second_limit)
             T = E.torsion_subgroup().order()
             omega = E.period_lattice().omega()
-            Sha = Integer(round((L1 * T * T) / (E.tamagawa_product() * regulator * omega)))
+            Sha = ((L1 * T * T) / (E.tamagawa_product() * regulator * omega)).round()
             try:
                 Sha = Integer(Sha)
             except ValueError:
@@ -721,7 +721,7 @@ class Sha(SageObject):
         return shan
 
     def p_primary_order(self, p):
-        """
+        r"""
         Return the order of the `p`-primary part of the Tate-Shafarevich
         group.
 

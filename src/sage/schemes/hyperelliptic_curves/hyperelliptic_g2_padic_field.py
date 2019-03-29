@@ -1,5 +1,5 @@
 """
-Hyperelliptic curves of genus 2 over a p-adic field
+Hyperelliptic curves of genus 2 over a `p`-adic field
 """
 from __future__ import absolute_import
 

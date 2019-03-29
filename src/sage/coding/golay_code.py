@@ -8,10 +8,12 @@ perfect codes, while their extended versions are self-dual codes.
 
 REFERENCES:
 
-    - [HP2003]_ pp. 31-33 for a definition of Golay codes.
+- [HP2003]_ pp. 31-33 for a definition of Golay codes.
 
-    .. [WS] F.J. MacWilliams, N.J.A. Sloane, The Theory of Error-Correcting
-         Codes, North-Holland, Amsterdam, 1977
+.. [WS] \F. J. MacWilliams, N. J. A. Sloane, *The Theory of Error-Correcting
+        Codes*, North-Holland, Amsterdam, 1977
+
+- :wikipedia:`Golay_code`
 """
 
 #*****************************************************************************

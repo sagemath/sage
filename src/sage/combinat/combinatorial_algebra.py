@@ -104,7 +104,6 @@ class CombinatorialAlgebraElementOld(CombinatorialFreeModule.Element):
         """
         return self.parent().product(self, y)
 
-
     def __invert__(self):
         """
         EXAMPLES::
@@ -124,10 +123,6 @@ class CombinatorialAlgebraElementOld(CombinatorialFreeModule.Element):
         else:
             raise ValueError("cannot invert self (= %s)"%self)
 
-
-
-
-
     def __repr__(self):
         """
         EXAMPLES::
@@ -139,7 +134,8 @@ class CombinatorialAlgebraElementOld(CombinatorialFreeModule.Element):
         """
         v = sorted(self._monomial_coefficients.items())
         prefix = self.parent().prefix()
-        retur = repr_lincomb( [(prefix + repr(m), c) for m,c in v ], strip_one = True)
+        return repr_lincomb( [(prefix + repr(m), c) for m,c in v ], strip_one = True)
+
 
 class CombinatorialAlgebra(CombinatorialFreeModule):
     """
@@ -272,9 +268,10 @@ class CombinatorialAlgebra(CombinatorialFreeModule):
         return self._coerce_try(x, [self.base_ring()])
 
     def product(self, left, right):
-        """
-        Returns left\*right where left and right are elements of self.
-        product() uses either _multiply or _multiply basis to carry out
+        r"""
+        Return left\*right where left and right are elements of ``self``.
+
+        ``product()`` uses either ``_multiply`` or ``_multiply_basis`` to carry out
         the actual multiplication.
 
         EXAMPLES::

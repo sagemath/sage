@@ -29,6 +29,8 @@ http://scip.zib.de/doc/html/AUTHORS.shtml
 
 == Dependencies ==
 
+cmake
+
 == Special Update/Build Instructions ==
 
 We do not have permission to redistribute SCIP or SoPlex. Hence, you

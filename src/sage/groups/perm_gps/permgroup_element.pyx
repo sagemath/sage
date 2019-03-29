@@ -1,4 +1,4 @@
-"""
+r"""
 Permutation group elements
 
 AUTHORS:
@@ -9,36 +9,79 @@ AUTHORS:
 
 - Robert Bradshaw (2007-11): convert to Cython
 
-EXAMPLES: The Rubik's cube group::
+- Sebastian Oehms (2018-11): Added :meth:`gap` as synonym to
+  :meth:`_gap_` (compatibility to libgap framework, see :trac:`26750`)
 
-    sage: f= [(17,19,24,22),(18,21,23,20),(6,25,43,16),(7,28,42,13),(8,30,41,11)]
-    sage: b=[(33,35,40,38),(34,37,39,36),( 3, 9,46,32),( 2,12,47,29),( 1,14,48,27)]
-    sage: l=[( 9,11,16,14),(10,13,15,12),( 1,17,41,40),( 4,20,44,37),( 6,22,46,35)]
-    sage: r=[(25,27,32,30),(26,29,31,28),( 3,38,43,19),( 5,36,45,21),( 8,33,48,24)]
-    sage: u=[( 1, 3, 8, 6),( 2, 5, 7, 4),( 9,33,25,17),(10,34,26,18),(11,35,27,19)]
-    sage: d=[(41,43,48,46),(42,45,47,44),(14,22,30,38),(15,23,31,39),(16,24,32,40)]
-    sage: cube = PermutationGroup([f,b,l,r,u,d])
-    sage: F=cube.gens()[0]
-    sage: B=cube.gens()[1]
-    sage: L=cube.gens()[2]
-    sage: R=cube.gens()[3]
-    sage: U=cube.gens()[4]
-    sage: D=cube.gens()[5]
+- Sebastian Oehms (2019-02): Implemented :meth:`gap` properly (:trac:`27234`)
+
+There are several ways to define a permutation group element:
+
+-  Define a permutation group `G`, then use ``G.gens()``
+   and multiplication ``*`` to construct elements.
+
+-  Define a permutation group `G`, then use, e.g.,
+   ``G([(1,2),(3,4,5)])`` to construct an element of the
+   group. You could also use ``G('(1,2)(3,4,5)')``
+
+-  Use, e.g.,
+   ``PermutationGroupElement([(1,2),(3,4,5)])`` or
+   ``PermutationGroupElement('(1,2)(3,4,5)')`` to make a
+   permutation group element with parent `S_5`.
+
+EXAMPLES:
+
+We illustrate construction of permutation using several
+different methods.
+
+First we construct elements by multiplying together generators for
+a group::
+
+    sage: G = PermutationGroup(['(1,2)(3,4)', '(3,4,5,6)'], canonicalize=False)
+    sage: s = G.gens()
+    sage: s[0]
+    (1,2)(3,4)
+    sage: s[1]
+    (3,4,5,6)
+    sage: s[0]*s[1]
+    (1,2)(3,5,6)
+    sage: (s[0]*s[1]).parent()
+    Permutation Group with generators [(1,2)(3,4), (3,4,5,6)]
+
+Next we illustrate creation of a permutation using coercion into an
+already-created group::
+
+    sage: g = G([(1,2),(3,5,6)])
+    sage: g
+    (1,2)(3,5,6)
+    sage: g.parent()
+    Permutation Group with generators [(1,2)(3,4), (3,4,5,6)]
+    sage: g == s[0]*s[1]
+    True
+
+We can also use a string or one-line notation to specify the
+permutation::
+
+    sage: h = G('(1,2)(3,5,6)')
+    sage: i = G([2,1,5,4,6,3])
+    sage: g == h == i
+    True
+
+The Rubik's cube group::
+
+    sage: f = [(17,19,24,22),(18,21,23,20),( 6,25,43,16),( 7,28,42,13),( 8,30,41,11)]
+    sage: b = [(33,35,40,38),(34,37,39,36),( 3, 9,46,32),( 2,12,47,29),( 1,14,48,27)]
+    sage: l = [( 9,11,16,14),(10,13,15,12),( 1,17,41,40),( 4,20,44,37),( 6,22,46,35)]
+    sage: r = [(25,27,32,30),(26,29,31,28),( 3,38,43,19),( 5,36,45,21),( 8,33,48,24)]
+    sage: u = [( 1, 3, 8, 6),( 2, 5, 7, 4),( 9,33,25,17),(10,34,26,18),(11,35,27,19)]
+    sage: d = [(41,43,48,46),(42,45,47,44),(14,22,30,38),(15,23,31,39),(16,24,32,40)]
+    sage: cube = PermutationGroup([f, b, l, r, u, d])
+    sage: F, B, L, R, U, D = cube.gens()
     sage: cube.order()
     43252003274489856000
     sage: F.order()
     4
 
-The interested user may wish to explore the following commands:
-move = cube.random_element() and time word_problem([F,B,L,R,U,D],
-move, False). This typically takes about 5 minutes (on a 2 Ghz
-machine) and outputs a word ('solving' the cube in the position
-move) with about 60 terms or so.
-
-OTHER EXAMPLES: We create element of a permutation group of large
-degree.
-
-::
+We create element of a permutation group of large degree::
 
     sage: G = SymmetricGroup(30)
     sage: s = G(srange(30,0,-1)); s
@@ -69,13 +112,17 @@ from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.rings.all      import ZZ, Integer
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 from sage.rings.polynomial.multi_polynomial import is_MPolynomial
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.matrix.all     import MatrixSpace
 from sage.interfaces.all import gap
 from sage.interfaces.gap import is_GapElement
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 import sage.structure.coerce as coerce
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
+
+from sage.libs.gap.element cimport GapElement_List
+from sage.libs.gap.gap_includes cimport Obj, INT_INTOBJ, ELM_LIST
+
 
 import operator
 
@@ -129,9 +176,9 @@ def make_permgroup_element_v2(G, x, domain):
     # G._domain_to_gap be set.
     G._domain = domain
     G._deg = len(domain)
-    G._domain_to_gap = dict([(key, i+1) for i, key in enumerate(domain)])
-    G._domain_from_gap = dict([(i+1, key) for i, key in enumerate(domain)])
-    return G(x, check=False)
+    G._domain_to_gap = {key: i+1 for i, key in enumerate(domain)}
+    G._domain_from_gap = {i+1: key for i, key in enumerate(domain)}
+    return G.element_class(x, G, check=False)
 
 
 def is_PermutationGroupElement(x):
@@ -228,6 +275,8 @@ def standardize_generator(g, convert_dict=None):
     from sage.interfaces.gap import GapElement
     from sage.combinat.permutation import Permutation
     from sage.libs.pari.all import pari_gen
+    from sage.libs.gap.element import GapElement_Permutation
+
 
     if isinstance(g, pari_gen):
         g = list(g)
@@ -236,6 +285,10 @@ def standardize_generator(g, convert_dict=None):
         g = list(g)
 
     needs_conversion = True
+
+    if isinstance(g, GapElement_Permutation):
+        g = g.sage()
+        needs_conversion = False
     if isinstance(g, GapElement):
         g = str(g)
         needs_conversion = False
@@ -547,6 +600,26 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             self._gap_element = gap(self._gap_init_())
         return self._gap_element
 
+    # for compatibility with sage.groups.libgap_wrapper.ElementLibGAP
+    # see sage.groups.perm_gps.permgroup.PermutationGroup_generic.gap
+    def gap(self):
+        """
+        Returns self as a libgap element
+
+        EXAMPLES::
+
+            sage: P = PGU(8,2)
+            sage: p, q = P.gens()
+            sage: p_libgap  = p.gap()
+            sage: p_pexpect = gap(p)
+            sage: p_libgap == p_pexpect
+            True
+            sage: type(p_libgap) == type(p_pexpect)
+            False
+        """
+        from sage.libs.gap.libgap import libgap
+        return libgap(self)
+
     def _gap_init_(self):
         """
         Returns a GAP string representation for this
@@ -559,6 +632,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             'PermList([2, 3, 1, 5, 4])'
         """
         return 'PermList(%s)'%self._gap_list()
+
 
     def _repr_(self):
         """
@@ -866,6 +940,63 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         for i from 0 <= i < left.n:
             prod.perm[i] = right.perm[left.perm[i]]
         return prod
+
+    cpdef PermutationGroupElement _generate_new(self, list v):
+        """
+        Generate a new permutation group element with the same parent
+        as ``self`` from ``v``.
+
+        EXAMPLES::
+
+            sage: P = PermutationGroup([(1,2),(1,2,3,4)])
+            sage: one = P.one()
+            sage: one._generate_new([])
+            ()
+            sage: one._generate_new([4,3,2,1])
+            (1,4)(2,3)
+        """
+        cdef PermutationGroupElement new = self._new_c()
+        cdef Py_ssize_t i, j, vn = len(v)
+        assert vn <= self.n
+        for i in range(vn):
+            j = v[i]
+            new.perm[i] = j - 1
+        for i in range(vn, self.n):
+            new.perm[i] = i
+        return new
+
+    cpdef PermutationGroupElement _generate_new_GAP(self, lst_in):
+        """
+        Generate a new permutation group element with the same parent
+        as ``self`` from the GAP list ``lst_in``.
+
+        EXAMPLES::
+
+            sage: from sage.libs.gap.libgap import libgap
+
+            sage: P = PermutationGroup([(1,2),(1,2,3,4)])
+            sage: one = P.one()
+            sage: perm = libgap.eval('[]')
+            sage: one._generate_new_GAP(perm)
+            ()
+            sage: perm = libgap.eval('[4,3,2,1]')
+            sage: one._generate_new_GAP(perm)
+            (1,4)(2,3)
+        """
+        cdef GapElement_List lst = <GapElement_List?> lst_in
+        cdef Obj obj = lst.value
+
+        cdef PermutationGroupElement new = self._new_c()
+        cdef Py_ssize_t i, j, vn = len(lst)
+
+        assert vn <= self.n
+
+        for i in range(vn):
+            j = INT_INTOBJ(ELM_LIST(obj, i+1))
+            new.perm[i] = j - 1
+        for i in range(vn, self.n):
+            new.perm[i] = i
+        return new
 
     def __invert__(self):
         """
@@ -1324,12 +1455,12 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         INPUT:
 
         - ``g`` -- an element of the permutation group ``self.parent()``
-        
+
         - ``singletons`` -- ``True`` or ``False`` depending on whether on or not
           trivial cycles should be counted (default: ``True``)
 
         - ``as_list`` -- ``True`` or ``False`` depending on whether the cycle
-          type should be returned as a ``list`` or as a :class:`Partition` 
+          type should be returned as a ``list`` or as a :class:`Partition`
           (default: ``False``)
 
         OUTPUT:
@@ -1343,7 +1474,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
             sage: G = DihedralGroup(3)
             sage: [g.cycle_type() for g in G]
-            [[1, 1, 1], [2, 1], [3], [2, 1], [3], [2, 1]]
+            [[1, 1, 1], [3], [3], [2, 1], [2, 1], [2, 1]]
             sage: PermutationGroupElement('(1,2,3)(4,5)(6,7,8)').cycle_type()
             [3, 3, 2]
             sage: G = SymmetricGroup(3); G('(1,2)').cycle_type()
@@ -1501,6 +1632,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             print(l5)
         return l1, l2
 
+
 cdef class SymmetricGroupElement(PermutationGroupElement):
     """
     An element of the symmetric group.
@@ -1521,10 +1653,24 @@ cdef class SymmetricGroupElement(PermutationGroupElement):
 
             sage: S = SymmetricGroup(3)
             sage: [x.absolute_length() for x in S]
-            [0, 1, 2, 2, 1, 1]
+            [0, 2, 2, 1, 1, 1]
         """
         from sage.combinat.permutation import Permutation
         return Permutation(self).absolute_length()
+
+    def has_left_descent(self, i):
+        """
+        Return whether `i` is a left descent of ``self``.
+
+        EXAMPLES::
+
+            sage: W = SymmetricGroup(4)
+            sage: w = W.from_reduced_word([1,3,2,1])
+            sage: [i for i in W.index_set() if w.has_left_descent(i)]
+            [1, 3]
+        """
+        return self.has_descent(i, side='left')
+
 
 cdef bint is_valid_permutation(int* perm, int n):
     """
@@ -1567,4 +1713,3 @@ cdef bint is_valid_permutation(int* perm, int n):
         perm[i] = -1-perm[i]
 
     return True
-

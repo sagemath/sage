@@ -14,7 +14,7 @@ NEEDS TO BE A ONE-YEAR DEPRECATION PERIOD. ALSO, PLEASE INFORM
 IN THIS CASE REGARDING THE CHANGES!
 """
 
-"""
+r"""
 
 Sage example in fsm-in-sage.tex, line 376::
 

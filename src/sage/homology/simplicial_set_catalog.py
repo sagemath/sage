@@ -1,4 +1,4 @@
-"""
+r"""
 Catalog of simplicial sets
 
 This provides pre-built simplicial sets:

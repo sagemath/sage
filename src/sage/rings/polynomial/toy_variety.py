@@ -1,4 +1,4 @@
-"""
+r"""
 Educational Versions of Groebner Basis Algorithms: Triangular Factorization.
 
 In this file is the implementation of two algorithms in [Laz92]_.

@@ -1,7 +1,7 @@
 from .types cimport vec_GF2_c, GF2_c
 
 
-cdef extern from "ntlwrap.cpp":
+cdef extern from "ntlwrap.h":
     int vec_GF2_IsZero "IsZero"(vec_GF2_c x)
 
     void vec_GF2_append_GF2 "append"(vec_GF2_c v, GF2_c a)

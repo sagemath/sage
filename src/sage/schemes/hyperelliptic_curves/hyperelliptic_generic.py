@@ -19,7 +19,7 @@ EXAMPLES::
 
     sage: D = C.affine_patch(0)
     sage: D.defining_polynomials()[0].parent()
-    Multivariate Polynomial Ring in x0, x1 over Rational Field
+    Multivariate Polynomial Ring in x1, x2 over Rational Field
 """
 from __future__ import absolute_import
 
@@ -33,7 +33,11 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import PolynomialRing, RR, PowerSeriesRing, LaurentSeriesRing, O
+from sage.rings.polynomial.all import PolynomialRing
+from sage.rings.big_oh import O
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.real_mpfr import RR
 from sage.functions.all import log
 from sage.structure.category_object import normalize_names
 
@@ -50,7 +54,46 @@ def is_HyperellipticCurve(C):
     """
     return isinstance(C,HyperellipticCurve_generic)
 
+
 class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
+    """
+    TESTS::
+
+        sage: P.<x> = QQ[]
+        sage: f0 = 4*x^5 - 30*x^3 + 45*x - 22
+        sage: C0 = HyperellipticCurve(f0)
+        sage: f1 = x^5 - x^3 + x - 22
+        sage: C1 = HyperellipticCurve(f1)
+        sage: C0 == C1
+        False
+        sage: C0 == C0
+        True
+
+        sage: P.<x> = QQ[]
+        sage: f0 = 4*x^5 - 30*x^3 + 45*x - 22
+        sage: C0 = HyperellipticCurve(f0)
+        sage: f1 = x^5 - x^3 + x - 22
+        sage: C1 = HyperellipticCurve(f1)
+        sage: C0 != C1
+        True
+        sage: C0 != C0
+        False
+
+        sage: P.<x> = QQ[]
+        sage: f0 = 4*x^5 - 30*x^3 + 45*x - 22
+        sage: C0 = HyperellipticCurve(f0)
+        sage: f1 = x^5 - x^3 + x - 22
+        sage: C1 = HyperellipticCurve(f1)
+        sage: Q.<y> = GF(5)[]
+        sage: f2 = y^5 - y^3 + y - 22
+        sage: C2 = HyperellipticCurve(f2)
+        sage: hash(C0) == hash(C0)
+        True
+        sage: hash(C0) == hash(C1)
+        False
+        sage: hash(C1) == hash(C2)
+        False
+    """
     def __init__(self, PP, f, h=None, names=None, genus=None):
         x, y, z = PP.gens()
         df = f.degree()
@@ -88,7 +131,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             sage: L.<a> = K.extension(x^30-3)
             sage: HK = H.change_ring(K)
             sage: HL = HK.change_ring(L); HL
-            Hyperelliptic Curve over Eisenstein Extension in a defined by x^30 - 3 with capped relative precision 150 over 3-adic Field defined by (1 + O(a^150))*y^2 = (1 + O(a^150))*x^5 + (2 + 2*a^30 + a^60 + 2*a^90 + 2*a^120 + O(a^150))*x + a^60 + O(a^210)
+            Hyperelliptic Curve over 3-adic Eisenstein Extension Field in a defined by x^30 - 3 defined by (1 + O(a^150))*y^2 = (1 + O(a^150))*x^5 + (2 + 2*a^30 + a^60 + 2*a^90 + 2*a^120 + O(a^150))*x + a^60 + O(a^210)
 
             sage: R.<x> = FiniteField(7)[]
             sage: H = HyperellipticCurve(x^8 + x + 5)
@@ -125,45 +168,6 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             return "Hyperelliptic Curve over %s defined by %s = %s" % (R, y**2, f(x))
         else:
             return "Hyperelliptic Curve over %s defined by %s + %s = %s" % (R, y**2, h(x)*y, f(x))
-
-    def __eq__(self, other):
-        """
-        Test of equality.
-
-        EXAMPLES::
-
-            sage: P.<x> = QQ[]
-            sage: f0 = 4*x^5 - 30*x^3 + 45*x - 22
-            sage: C0 = HyperellipticCurve(f0)
-            sage: f1 = x^5 - x^3 + x - 22
-            sage: C1 = HyperellipticCurve(f1)
-            sage: C0 == C1
-            False
-            sage: C0 == C0
-            True
-        """
-        if not isinstance(other, HyperellipticCurve_generic):
-            return False
-        return (self._hyperelliptic_polynomials ==
-                other._hyperelliptic_polynomials)
-
-    def __ne__(self, other):
-        """
-        Test of not equality.
-
-        EXAMPLES::
-
-            sage: P.<x> = QQ[]
-            sage: f0 = 4*x^5 - 30*x^3 + 45*x - 22
-            sage: C0 = HyperellipticCurve(f0)
-            sage: f1 = x^5 - x^3 + x - 22
-            sage: C1 = HyperellipticCurve(f1)
-            sage: C0 != C1
-            True
-            sage: C0 != C0
-            False
-        """
-        return not self == other
 
     def hyperelliptic_polynomials(self, K=None, var='x'):
         """
@@ -453,7 +457,6 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         L.set_default_prec(prec)
         K = PowerSeriesRing(L, 'x')
         pol = K(pol)
-        x = K.gen()
         b = P[0]
         f = pol(t+b)
         for i in range((RR(log(prec)/log(2))).ceil()):
@@ -509,7 +512,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         t2  = t**2
         c = b + t2/pol_prime(b)
         c = c.add_bigoh(prec)
-        for _ in range(1 + log(prec, 2)):
+        for _ in range(int(1 + log(prec, 2))):
             c -= (pol(c) - t2)/pol_prime(c)
         return (c, t.add_bigoh(prec))
 
@@ -550,20 +553,21 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             t^-3 + t - t^3 - t^5 + 3*t^7 - 10*t^11 + O(t^12)
 
         AUTHOR:
-            - Jennifer Balakrishnan (2007-12)
+
+        - Jennifer Balakrishnan (2007-12)
         """
         g = self.genus()
         pol = self.hyperelliptic_polynomials()[0]
         K = LaurentSeriesRing(self.base_ring(), name, default_prec=prec+2)
         t = K.gen()
-        L = PolynomialRing(self.base_ring(),'x')
+        L = PolynomialRing(K,'x')
         x = L.gen()
         i = 0
         w = (x**g/t)**2-pol
         wprime = w.derivative(x)
         x = t**-2
         for i in range((RR(log(prec+2)/log(2))).ceil()):
-            x = x-w(x)/wprime(x)
+            x = x - w(x)/wprime(x)
         y = x**g/t
         return x+O(t**(prec+2)) , y+O(t**(prec+2))
 

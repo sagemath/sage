@@ -283,7 +283,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         Compare this element with something else, where equality testing
         coerces the object on the right, if possible (and necessary).
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quotient(x^3-2)
@@ -412,7 +412,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: S.<a> = R.quotient(x^3-2)
             sage: long(S(10))
             10L
-            sage: long(a)
+            sage: long(a)  # py2
             Traceback (most recent call last):
             ...
             TypeError: cannot coerce nonconstant polynomial to long

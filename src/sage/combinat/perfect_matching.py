@@ -60,10 +60,12 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 from sage.combinat.permutation import Permutation, Permutations
 from sage.sets.set import Set
+from sage.structure.list_clone import ClonableArray
 from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
 from sage.matrix.constructor import matrix
 from sage.combinat.set_partition import SetPartition, SetPartitions_set
+from sage.combinat.combinat_cython import perfect_matchings_iterator
 from sage.rings.infinity import infinity
 
 class PerfectMatching(SetPartition):
@@ -177,6 +179,32 @@ class PerfectMatching(SetPartition):
         P = PerfectMatchings(base_set)
         return P(parts)
 
+    def __init__(self, parent, s, check=True, sort=True):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: PM = PerfectMatchings(6)
+            sage: x = PM.element_class(PM, [[5,6],[3,4],[1,2]])
+
+        Use the ``sort`` argument when you do not care if the result
+        is sorted. Be careful with its use as you can get inconsistent
+        results when then input is not sorted::
+
+            sage: y = PM.element_class(PM, [[5,6],[3,4],[1,2]], sort=False)
+            sage: y
+            [(5, 6), (3, 4), (1, 2)]
+            sage: x == y
+            False
+        """
+        self._latex_options = {}
+        if sort:
+            data = sorted(map(frozenset, s), key=min)
+        else:
+            data = list(map(frozenset, s))
+        ClonableArray.__init__(self, parent, data, check=check)
+
     def _repr_(self):
         r"""
         Return a string representation of the matching ``self``.
@@ -197,7 +225,7 @@ class PerfectMatching(SetPartition):
         EXAMPLES::
 
             sage: P = PerfectMatching([(1,3),(2,5),(4,6)])
-            sage: latex(P)  # optional - dot2tex; random
+            sage: latex(P)  # random
             \begin{tikzpicture}
             ...
             \end{tikzpicture}
@@ -207,7 +235,7 @@ class PerfectMatching(SetPartition):
         Above we added ``random`` since warnings might be displayed
         once. The second time, there should be no warnings::
 
-            sage: print(P._latex_())  # optional - dot2tex
+            sage: print(P._latex_())
             \begin{tikzpicture}
             ...
             \end{tikzpicture}
@@ -578,21 +606,13 @@ class PerfectMatchings(SetPartitions_set):
             sage: PerfectMatchings(4).list()
             [[(1, 2), (3, 4)], [(1, 3), (2, 4)], [(1, 4), (2, 3)]]
         """
-        def iter_aux(s):
-            n = len(s)
-            if n == 0:
-                yield []
-            elif n == 1:
-                pass
-            else:
-                a = s[0]
-                for i in range(1, n):
-                    b = s[i]
-                    for p in iter_aux(s[1:i] + s[i+1:]):
-                        yield [(a, b)]+p
-
-        for p in iter_aux(list(self._set)):
-            yield self.element_class(self, p)
+        s = list(self._set)
+        if len(s) % 2 != 0:
+            return
+        # The iterator from fixed-point-free involutions has the resulting
+        #   list of pairs sorted by their minimial element.
+        for val in perfect_matchings_iterator(len(s)//2):
+            yield self.element_class(self, ((s[a], s[b]) for a,b in val), check=False, sort=False)
 
     def __contains__(self, x):
         """

@@ -461,13 +461,28 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
                  |    |
                  0    0
 
-            sage: ascii_art(G.coproduct(y*x))  # indirect doctest
+            sage: Delta_xy = G.coproduct(y*x)
+            sage: ascii_art(Delta_xy)  # random indirect doctest
             1 # B     + 1 # B  + B  # B  + B     # 1 + B  # B  + B  # 1
                    #_        #    #    #      #_        #    #    #
                   / /        |    |    |     / /        |    |    |
                  0 1         1    0    1    0 1         1    0    1
                              |                                    |
                              0                                    0
+
+        TESTS::
+
+            sage: Delta_xy.coefficients()
+            [1, 1, 1, 1, 1, 1]
+            sage: sortkey = G.print_options()['sorting_key']
+            sage: doublekey = lambda tt: (sortkey(tt[0]), sortkey(tt[1]))
+            sage: sorted(Delta_xy.monomial_coefficients(), key=doublekey)
+            [(#[], #[1[0[]]]),
+             (#[], #[0[], 1[]]),
+             (#[0[]], #[1[]]),
+             (#[1[]], #[0[]]),
+             (#[1[0[]]], #[]),
+             (#[0[], 1[]], #[])]
         """
         B = self.basis()
         Trees = B.keys()
@@ -556,6 +571,8 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
             ValueError: incorrect root label
 
             sage: R.<x,y> = algebras.GrossmanLarson(QQ)
+            sage: R(x) is x
+            True
             sage: S.<z> = algebras.GrossmanLarson(GF(3))
             sage: R(z)
             Traceback (most recent call last):

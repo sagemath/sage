@@ -345,9 +345,9 @@ class ComputeMinimalPolynomials(SageObject):
         self._B = B
         self._D = B.base_ring()
         X = polygen(self._D)
-        adjoint = (X - B).adjoint()
+        adjugate = (X - B).adjugate()
         d = B.nrows()**2
-        b = matrix(d, 1, adjoint.list())
+        b = matrix(d, 1, adjugate.list())
         self.chi_B = B.charpoly(X)
         self.mu_B = B.minimal_polynomial()
         self._A = matrix.block([[b , -self.chi_B*matrix.identity(d)]])
@@ -549,7 +549,7 @@ class ComputeMinimalPolynomials(SageObject):
             sage: x = polygen(ZZ, 'x')
             sage: nu_4 = x^2 + 3*x + 2
             sage: g = C.mccoy_column(2, 2, nu_4)
-            sage: b = matrix(9, 1, (x-B).adjoint().list())
+            sage: b = matrix(9, 1, (x-B).adjugate().list())
             sage: M = matrix.block([[b , -B.charpoly(x)*matrix.identity(9)]])
             sage: (M*g % 4).is_zero()
             True

@@ -70,7 +70,7 @@ def IntegerVectorsIterator(vect, min = None):
 
     OUTPUT:
 
-    A list in lexicograohic order of all integer vectors (as lists) which are
+    A list in lexicographic order of all integer vectors (as lists) which are
     dominated elementwise by ``vect`` and are greater than or equal to ``min`` in
     lexicographic order.
 

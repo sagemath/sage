@@ -1,6 +1,12 @@
 r"""
 Permutations template
 
+.. WARNING::
+
+    This module is deprecated. You are advised to install and use the
+    surface_dynamics package instead available at
+    https://pypi.python.org/pypi/surface_dynamics/
+
 This file define high level operations on permutations (alphabet,
 the different rauzy induction, ...) shared by reduced and labeled
 permutations.
@@ -272,6 +278,19 @@ class Permutation(SageObject):
         ::
 
             sage: p = iet.Permutation('a b c','c b a')
+            doctest:warning
+            ...
+            DeprecationWarning: Permutation is deprecated and will be removed from Sage.
+            You are advised to install the surface_dynamics package via:
+            sage -pip install surface_dynamics
+            If you do not have write access to the Sage installation you can
+            alternatively do
+            sage -pip install surface_dynamics --user
+            The package surface_dynamics subsumes all flat surface related
+            computation that are currently available in Sage. See more
+            information at
+            http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+            See http://trac.sagemath.org/20695 for details.
             sage: p._repr_type = 'str'
             sage: p._repr_options = ('\n',)
             sage: p   #indirect doctest
@@ -341,6 +360,19 @@ class Permutation(SageObject):
         For permutations of li::
 
             sage: p = iet.GeneralizedPermutation('a b b','c c a')
+            doctest:warning
+            ...
+            DeprecationWarning: GeneralizedPermutation is deprecated and will be removed from Sage.
+            You are advised to install the surface_dynamics package via:
+            sage -pip install surface_dynamics
+            If you do not have write access to the Sage installation you can
+            alternatively do
+            sage -pip install surface_dynamics --user
+            The package surface_dynamics subsumes all flat surface related
+            computation that are currently available in Sage. See more
+            information at
+            http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+            See http://trac.sagemath.org/20695 for details.
             sage: p.str()
             'a b b\nc c a'
             sage: p.str(sep=' | ')
@@ -1140,6 +1172,19 @@ class PermutationIET(Permutation):
 
             sage: p = iet.Permutation('a b c', 'c b a')
             sage: p.stratum()
+            doctest:warning
+            ...
+            DeprecationWarning: AbelianStratum is deprecated and will be removed from Sage.
+            You are advised to install the surface_dynamics package via:
+                sage -pip install surface_dynamics
+            If you do not have write access to the Sage installation you can
+            alternatively do
+                sage -pip install surface_dynamics --user
+            The package surface_dynamics subsumes all flat surface related
+            computation that are currently available in Sage. See more
+            information at
+                http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+            See http://trac.sagemath.org/20695 for details.
             H(0, 0)
 
             sage: p = iet.Permutation('a b c d', 'd a b c')
@@ -1249,12 +1294,12 @@ class PermutationIET(Permutation):
 
         REFERENCES:
 
-        [Jo80] D. Johnson, "Spin structures and quadratic forms on surfaces", J.
-        London Math. Soc (2), 22, 1980, 365-373
+        .. [Jo80] D. Johnson, "Spin structures and quadratic forms on surfaces",
+           J. London Math. Soc (2), 22, 1980, 365-373
 
-        [KoZo03] M. Kontsevich, A. Zorich "Connected components of the moduli
-        spaces of Abelian differentials with prescribed singularities",
-        Inventiones Mathematicae, 153, 2003, 631-678
+        .. [KoZo03] M. Kontsevich, A. Zorich "Connected components of the moduli
+           spaces of Abelian differentials with prescribed singularities",
+           Inventiones Mathematicae, 153, 2003, 631-678
         """
         M = self.intersection_matrix()
         F, C = M.symplectic_form()
@@ -1976,7 +2021,7 @@ class FlippedPermutationLI(FlippedPermutation, PermutationLI):
         for i,f in enumerate(self._flips[1]):
             if f == -1:
                 res.append(l[1][i])
-        return list(set(res))
+        return sorted(set(res))
 
 
 @add_metaclass(NestedClassMetaclass)
@@ -2632,6 +2677,19 @@ class RauzyDiagram(SageObject):
         TESTS::
 
             sage: r1 = iet.RauzyDiagram('a b','b a')
+            doctest:warning
+            ...
+            DeprecationWarning: RauzyDiagram is deprecated and will be removed from Sage.
+            You are advised to install the surface_dynamics package via:
+            sage -pip install surface_dynamics
+            If you do not have write access to the Sage installation you can
+            alternatively do
+            sage -pip install surface_dynamics --user
+            The package surface_dynamics subsumes all flat surface related
+            computation that are currently available in Sage. See more
+            information at
+            http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+            See http://trac.sagemath.org/20695 for details.
             sage: r2 = loads(dumps(r1))
         """
         self._edge_types = []

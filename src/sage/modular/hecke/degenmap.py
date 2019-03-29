@@ -28,6 +28,7 @@ class DegeneracyMap(morphism.HeckeModuleMorphism_matrix):
     A degeneracy map between Hecke modules of different levels.
 
     EXAMPLES:
+
     We construct a number of degeneracy maps::
 
         sage: M = ModularSymbols(33)

@@ -129,10 +129,14 @@ def local_giacsettings(func):
 
 
 @local_giacsettings
-def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **kwds):
+def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
+                   elim_variables=None, *args, **kwds):
     """
     Computes a Groebner Basis of an ideal using giacpy_sage. The result is
     automatically converted to sage.
+
+    Supported term orders of the underlying polynomial ring are ``lex``,
+    ``deglex``, ``degrevlex`` and block orders with 2 ``degrevlex`` blocks.
 
     INPUT:
 
@@ -156,6 +160,17 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **
 
     - ``prot`` - (default: False) if True print detailled informations
 
+    - ``elim_variables`` - (default: None) a list of variables to eliminate
+      from the ideal.
+
+        * if ``elim_variables`` is None, a Groebner basis with respect to the
+          term ordering of the parent polynomial ring of the polynomials
+          ``gens`` is computed.
+
+        * if ``elim_variables`` is a list of variables, a Groebner basis of the
+          elimination ideal with respect to a ``degrevlex`` term order is
+          computed, regardless of the term order of the polynomial ring.
+
     OUTPUT:
 
     Polynomial sequence of the reduced Groebner basis.
@@ -170,6 +185,18 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **
         // Groebner basis computation time ...
         Polynomial Sequence with 45 Polynomials in 6 Variables
         sage: B.is_groebner() # optional - giacpy_sage
+        True
+
+    Elimination ideals can be computed by passing ``elim_variables``::
+
+        sage: P = PolynomialRing(GF(previous_prime(2**31)), 5, 'x')       # optional - giacpy_sage
+        sage: I = sage.rings.ideal.Cyclic(P)                              # optional - giacpy_sage
+        sage: B = gb_giac(I.gens(), elim_variables=[P.gen(0), P.gen(2)])  # optional - giacpy_sage
+        <BLANKLINE>
+        // Groebner basis computation time ...
+        sage: B.is_groebner()                                             # optional - giacpy_sage
+        True
+        sage: B.ideal() == I.elimination_ideal([P.gen(0), P.gen(2)])      # optional - giacpy_sage
         True
 
     Computations over QQ can benefit from
@@ -243,6 +270,25 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **
         sage: I.groebner_basis() == gb_giac(I) # optional - giacpy_sage
         True
 
+    Test the supported term orderings::
+
+        sage: from sage.rings.ideal import Cyclic
+        sage: P = PolynomialRing(QQ, 'x', 4, order='lex')
+        sage: B = gb_giac(Cyclic(P))                   # optional - giacpy_sage
+        ...
+        sage: B.is_groebner(), B.ideal() == Cyclic(P)  # optional - giacpy_sage
+        (True, True)
+        sage: P = P.change_ring(order='deglex')
+        sage: B = gb_giac(Cyclic(P))                   # optional - giacpy_sage
+        ...
+        sage: B.is_groebner(), B.ideal() == Cyclic(P)  # optional - giacpy_sage
+        (True, True)
+        sage: P = P.change_ring(order='degrevlex(2),degrevlex(2)')
+        sage: B = gb_giac(Cyclic(P))                   # optional - giacpy_sage
+        ...
+        sage: B.is_groebner(), B.ideal() == Cyclic(P)  # optional - giacpy_sage
+        (True, True)
+
     """
     try:
         from giacpy_sage import libgiac, giacsettings
@@ -269,9 +315,9 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **
     blacklist = blackgiacconstants + [str(j) for j in libgiac.VARS()]
     problematicnames = list(set(P.gens_dict().keys()).intersection(blacklist))
 
-    if(len(problematicnames)>0):
+    if problematicnames:
         raise ValueError("Variables names %s conflict in giac. Change them or purge them from in giac with libgiac.purge(\'%s\')"
-                         %(problematicnames, problematicnames[0]))
+                         % (problematicnames, problematicnames[0]))
 
     if K.is_prime_field() and p == 0:
         F = libgiac(gens)
@@ -279,9 +325,6 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **
         F = (libgiac(gens) % p)
     else:
         raise NotImplementedError("Only prime fields of cardinal < 2^31 are implemented in Giac for Groebner bases.")
-
-    if P.term_order() != "degrevlex":
-        raise NotImplementedError("Only degrevlex term orderings are supported in Giac Groebner bases.")
 
     # proof or probabilistic reconstruction
     if proba_epsilon is None:
@@ -300,7 +343,30 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False, *args, **
     if threads is not None:
         giacsettings.threads = threads
 
-    # compute de groebner basis with giac
-    gb_giac = F.gbasis([P.gens()], "revlex")
+    if elim_variables is None:
+        var_names = P.variable_names()
+        order_name = P.term_order().name()
+        if order_name == "degrevlex":
+            giac_order = "revlex"
+        elif order_name == "lex":
+            giac_order = "plex"
+        elif order_name == "deglex":
+            giac_order = "tdeg"
+        else:
+            blocks = P.term_order().blocks()
+            if (len(blocks) == 2 and
+                    all(order.name() == "degrevlex" for order in blocks)):
+                giac_order = "revlex"
+                var_names = var_names[:len(blocks[0])]
+            else:
+                raise NotImplementedError(
+                        "%s is not a supported term order in "
+                        "Giac Groebner bases." % P.term_order())
+
+        # compute de groebner basis with giac
+        gb_giac = F.gbasis(list(var_names), giac_order)
+
+    else:
+        gb_giac = F.eliminate(list(elim_variables))
 
     return PolynomialSequence(gb_giac, P, immutable=True)

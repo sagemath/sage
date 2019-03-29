@@ -25,7 +25,7 @@ EXAMPLES::
     sage: x.is_surjective()
     False
     sage: x.image()
-    Simplicial complex with vertex set (0, 1, 3) and facets {(1, 3), (0, 3), (0, 1)}
+    Simplicial complex with vertex set (0, 1, 3) and facets {(0, 1), (0, 3), (1, 3)}
     sage: from sage.homology.simplicial_complex import Simplex
     sage: s = Simplex([1,2])
     sage: x(s)
@@ -127,7 +127,7 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
             sage: e
             Simplicial complex morphism:
               From: Simplicial complex with vertex set (0, 1) and facets {(0,), (1,)}
-              To:   Simplicial complex with 4 vertices and facets {((1, 1),), ((1, 0),), ((0, 0),), ((0, 1),)}
+              To:   Simplicial complex with 4 vertices and facets {((0, 0),), ((0, 1),), ((1, 0),), ((1, 1),)}
               Defn: 0 |--> (0, 0)
                     1 |--> (1, 1)
         """

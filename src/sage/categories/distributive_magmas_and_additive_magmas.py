@@ -76,9 +76,9 @@ class DistributiveMagmasAndAdditiveMagmas(CategoryWithAxiom):
             from sage.misc.misc import some_tuples
             for x,y,z in some_tuples(tester.some_elements(), 3, tester._max_runs):
                 # left distributivity
-                tester.assert_(x * (y + z) == (x * y) + (x * z))
+                tester.assertTrue(x * (y + z) == (x * y) + (x * z))
                 # right distributivity
-                tester.assert_((x + y) * z == (x * z) + (y * z))
+                tester.assertTrue((x + y) * z == (x * z) + (y * z))
 
     class CartesianProducts(CartesianProductsCategory):
         def extra_super_categories(self):
@@ -90,7 +90,7 @@ class DistributiveMagmasAndAdditiveMagmas(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: C = (Magmas() & AdditiveMagmas()).Distributive().CartesianProducts()
-                sage: C.extra_super_categories();
+                sage: C.extra_super_categories()
                 [Category of distributive magmas and additive magmas]
                 sage: C.axioms()
                 frozenset({'Distributive'})

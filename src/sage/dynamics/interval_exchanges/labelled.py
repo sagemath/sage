@@ -1,6 +1,12 @@
 r"""
 Labelled permutations
 
+.. WARNING::
+
+    This module is deprecated. You are advised to install and use the
+    surface_dynamics package instead available at
+    https://pypi.python.org/pypi/surface_dynamics/
+
 A labelled (generalized) permutation is better suited to study the
 dynamic of a translation surface than a reduced one (see the module
 :mod:`sage.dynamics.interval_exchanges.reduced`). The latter is more
@@ -88,10 +94,11 @@ TESTS::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
+from __future__ import print_function, absolute_import, division
 from six.moves import zip
 
 from sage.structure.sage_object import SageObject
+from sage.structure.richcmp import rich_to_bool_sgn, richcmp_method
 from sage.misc.lazy_attribute import lazy_attribute
 
 from copy import copy
@@ -169,6 +176,19 @@ class LabelledPermutation(SageObject):
         TESTS::
 
             sage: p = iet.Permutation('a b c','c b a')
+            doctest:warning
+            ...
+            DeprecationWarning: Permutation is deprecated and will be removed from Sage.
+            You are advised to install the surface_dynamics package via:
+            sage -pip install surface_dynamics
+            If you do not have write access to the Sage installation you can
+            alternatively do
+            sage -pip install surface_dynamics --user
+            The package surface_dynamics subsumes all flat surface related
+            computation that are currently available in Sage. See more
+            information at
+            http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+            See http://trac.sagemath.org/20695 for details.
             sage: q = copy(p)
             sage: p == q
             True
@@ -210,7 +230,7 @@ class LabelledPermutation(SageObject):
             sage: len(iet.Permutation('1 2 3 4 5 6','1 2 3 4 5 6'))
             6
         """
-        return (len(self._intervals[0]) + len(self._intervals[1])) / 2
+        return (len(self._intervals[0]) + len(self._intervals[1])) // 2
 
     def length_top(self):
         r"""
@@ -225,6 +245,19 @@ class LabelledPermutation(SageObject):
             sage: iet.Permutation('a b c','c b a').length_top()
             3
             sage: iet.GeneralizedPermutation('a a','b b c c').length_top()
+            doctest:warning
+            ...
+            DeprecationWarning: GeneralizedPermutation is deprecated and will be removed from Sage.
+            You are advised to install the surface_dynamics package via:
+                sage -pip install surface_dynamics
+            If you do not have write access to the Sage installation you can
+            alternatively do
+                sage -pip install surface_dynamics --user
+            The package surface_dynamics subsumes all flat surface related
+            computation that are currently available in Sage. See more
+            information at
+                http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+            See http://trac.sagemath.org/20695 for details.
             2
             sage: iet.GeneralizedPermutation('a a b b','c c').length_top()
             4
@@ -640,6 +673,19 @@ def LabelledPermutationsIET_iterator(nintervals=None,
         sage: for p in iet.Permutations_iterator(2, alphabet="ab"):
         ....:     print(p)
         ....:     print("****")   #indirect doctest
+        doctest:warning
+        ...
+        DeprecationWarning: iet_Permutations_iterator is deprecated and will be removed from Sage.
+        You are advised to install the surface_dynamics package via:
+            sage -pip install surface_dynamics
+        If you do not have write access to the Sage installation you can
+        alternatively do
+            sage -pip install surface_dynamics --user
+        The package surface_dynamics subsumes all flat surface related
+        computation that are currently available in Sage. See more
+        information at
+            http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+        See http://trac.sagemath.org/20695 for details.
         a b
         b a
         ****
@@ -704,9 +750,8 @@ def LabelledPermutationsIET_iterator(nintervals=None,
         b a c
         *****
     """
-    from builtins import map
     from itertools import product
-    from six.moves import filter
+    from six.moves import filter, map
     from sage.combinat.permutation import Permutations
 
     if not irreducible:
@@ -729,6 +774,8 @@ def LabelledPermutationsIET_iterator(nintervals=None,
             lambda x: x.is_irreducible(),
             LabelledPermutationsIET_iterator(nintervals,False,alphabet))
 
+
+@richcmp_method
 class LabelledPermutationIET(LabelledPermutation, PermutationIET):
     """
     Labelled permutation for iet
@@ -766,7 +813,7 @@ class LabelledPermutationIET(LabelledPermutation, PermutationIET):
         sage: p in d
         True
     """
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
         ALGORITHM:
 
@@ -784,21 +831,22 @@ class LabelledPermutationIET(LabelledPermutation, PermutationIET):
             sage: (p1 > p0) and (p1 == p1)
             True
         """
+
         if type(self) is not type(other):
-            return -1
+            return NotImplemented
 
         n = len(self)
         if n != len(other):
-            return n - len(other)
+            return rich_to_bool_sgn(op, n - len(other))
 
         i, j = 0, 0
         while (self._intervals[i][j] == other._intervals[i][j]):
             j += 1
             if j == n:
-                if i == 1: return 0
+                if i == 1: return rich_to_bool_sgn(op, 0)
                 i = 1
                 j = 0
-        return self._intervals[i][j] - other._intervals[i][j]
+        return rich_to_bool_sgn(op, self._intervals[i][j] - other._intervals[i][j])
 
     @lazy_attribute
     def _twin(self):
@@ -1071,6 +1119,8 @@ class LabelledPermutationIET(LabelledPermutation, PermutationIET):
         """
         return LabelledRauzyDiagram(self, **args)
 
+
+@richcmp_method
 class LabelledPermutationLI(LabelledPermutation, PermutationLI):
     r"""
     Labelled quadratic (or generalized) permutation
@@ -1117,7 +1167,7 @@ class LabelledPermutationLI(LabelledPermutation, PermutationLI):
         sage: p in r
         True
     """
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
         ALGORITHM:
 
@@ -1146,25 +1196,27 @@ class LabelledPermutationLI(LabelledPermutation, PermutationLI):
             True
         """
         if type(self) is not type(other):
-            return -1
+            return NotImplemented
 
         n = len(self)
 
-        if n != len(other): return n - len(other)
+        if n != len(other):
+            return rich_to_bool_sgn(op, n - len(other))
 
         l0 = self._intervals[0]
         l1 = other._intervals[0]
 
         n = len(self._intervals[0])
 
-        if n != len(other._intervals[0]): return n - len(other._intervals[0])
+        if n != len(other._intervals[0]):
+            return rich_to_bool_sgn(op, n - len(other._intervals[0]))
 
         i = 0
         while (i < n) and (l0[i] == l1[i]):
             i += 1
 
         if i != n:
-            return l0[i] - l1[i]
+            return rich_to_bool_sgn(op, l0[i] - l1[i])
 
         l0 = self._intervals[1]
         l1 = other._intervals[1]
@@ -1175,9 +1227,9 @@ class LabelledPermutationLI(LabelledPermutation, PermutationLI):
             i += 1
 
         if i != n:
-            return l0[i] - l1[i]
+            return rich_to_bool_sgn(op, l0[i] - l1[i])
 
-        return 0
+        return rich_to_bool_sgn(op, 0)
 
     def has_right_rauzy_move(self, winner):
         r"""
@@ -1766,6 +1818,19 @@ class FlippedLabelledPermutationIET(
     Rauzy diagrams::
 
         sage: d = iet.RauzyDiagram('a b c d','d a b c',flips='a')
+        doctest:warning
+        ...
+        DeprecationWarning: RauzyDiagram is deprecated and will be removed from Sage.
+        You are advised to install the surface_dynamics package via:
+        sage -pip install surface_dynamics
+        If you do not have write access to the Sage installation you can
+        alternatively do
+        sage -pip install surface_dynamics --user
+        The package surface_dynamics subsumes all flat surface related
+        computation that are currently available in Sage. See more
+        information at
+        http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+        See http://trac.sagemath.org/20695 for details.
 
     AUTHORS:
 
@@ -2318,8 +2383,7 @@ class LabelledRauzyDiagram(RauzyDiagram):
             [1 1]
             *****
         """
-        from builtins import map
-        from six.moves import filter
+        from six.moves import filter, map
 
         g = self.path(start)
 
@@ -2357,8 +2421,7 @@ class LabelledRauzyDiagram(RauzyDiagram):
             [1 1]
             *****
         """
-        from builtins import map
-        from six.moves import filter
+        from six.moves import filter, map
 
         g = self.path(start)
 

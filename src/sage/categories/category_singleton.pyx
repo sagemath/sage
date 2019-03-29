@@ -89,7 +89,7 @@ class Category_singleton(Category):
 
     A *singleton* category is a category whose class takes no
     parameters like ``Fields()`` or ``Rings()``. See also the
-    `Singleton design pattern <http://en.wikipedia.org/wiki/Singleton_pattern>`_.
+    `Singleton design pattern <https://en.wikipedia.org/wiki/Singleton_pattern>`_.
 
     This is a subclass of :class:`Category`, with a couple
     optimizations for singleton categories.

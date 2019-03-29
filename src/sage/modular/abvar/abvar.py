@@ -22,20 +22,20 @@ TESTS::
 """
 from __future__ import absolute_import
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.all        import ModularAbelianVarieties
 from sage.structure.sequence    import Sequence, Sequence_generic
-from sage.structure.richcmp import (richcmp_method, richcmp, richcmp_not_equal,
-                                    rich_to_bool)
+from sage.structure.richcmp import (richcmp_method, richcmp_not_equal,
+                                        rich_to_bool)
 from sage.structure.parent_base import ParentWithBase
 from .morphism                   import HeckeOperator, Morphism, DegeneracyMap
 from .torsion_subgroup           import RationalTorsionSubgroup, QQbarTorsionSubgroup
@@ -45,9 +45,7 @@ from sage.rings.all import ZZ, QQ, QQbar, Integer
 from sage.arith.all import LCM, divisors, prime_range, next_prime
 from sage.rings.ring import is_Ring
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.infinity import infinity
-from sage.rings.fraction_field import FractionField
 from sage.modules.free_module   import is_FreeModule
 from sage.modular.arithgroup.all import is_CongruenceSubgroup, is_Gamma0, is_Gamma1, is_GammaH
 from sage.modular.modsym.all    import ModularSymbols
@@ -55,14 +53,12 @@ from sage.modular.modsym.space  import ModularSymbolsSpace
 from sage.modular.modform.constructor  import Newform
 from sage.matrix.all            import matrix, block_diagonal_matrix, identity_matrix
 from sage.modules.all           import vector
-from sage.groups.all            import AbelianGroup
 from sage.databases.cremona     import cremona_letter_code
 from sage.misc.all              import prod
 from sage.arith.misc            import is_prime
 from sage.databases.cremona     import CremonaDatabase
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.sets.primes           import Primes
-from sage.functions.other       import real
 
 from copy import copy
 
@@ -235,7 +231,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
     #############################################################################
     # lattice() *must* be defined by every derived class!!!!
     def lattice(self):
-        """
+        r"""
         Return lattice in ambient cuspidal modular symbols product that
         defines this modular abelian variety.
 
@@ -409,8 +405,7 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         # NOTE!! having the same newform level, isogeny class number,
         # and degen_t does not imply two abelian varieties are equal.
         # See the docstring for self.label.
-
-        return richcmp(self.lattice(), other.lattice(), op)
+        return self.lattice()._echelon_matrix_richcmp(other.lattice(), op)
 
     def __radd__(self,other):
         """
@@ -700,8 +695,6 @@ class ModularAbelianVariety_abstract(ParentWithBase):
 
         if not self.is_simple():
             raise ValueError("self is not simple")
-
-        ls = []
 
         t, N = self.decomposition()[0].degen_t()
         A = self.ambient_variety()
@@ -1372,9 +1365,21 @@ class ModularAbelianVariety_abstract(ParentWithBase):
 
             sage: f.kernel()[0] == G
             True
+
+        Quotienting by the identity should return the original variety and the
+        identity morphism. :trac:`6392` ::
+
+            sage: J = J0(22)
+            sage: G = J.zero_subgroup()
+            sage: Q, f = J / G
+            sage: Q
+            Abelian variety J0(22) of dimension 2
+            sage: f
+            Abelian variety endomorphism of Abelian variety J0(22) of dimension 2
+
         """
         if G.order() == 1:
-            return self
+            return self, self.endomorphism_ring().identity()
         L = self.lattice() + G.lattice()
         A = ModularAbelianVariety(self.groups(), L, G.field_of_definition())
         M = L.coordinate_module(self.lattice()).basis_matrix()
@@ -2209,10 +2214,10 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             sage: (J0(11) * J1(13))._ambient_hecke_matrix_on_modular_symbols(2)
             [-2  0  0  0  0  0]
             [ 0 -2  0  0  0  0]
-            [ 0  0 -2  0 -1  1]
-            [ 0  0  1 -1  0 -1]
-            [ 0  0  1  1 -2  0]
-            [ 0  0  0  1 -1 -1]
+            [ 0  0 -1 -1 -1  1]
+            [ 0  0  1 -2 -1  0]
+            [ 0  0  0  0 -2  1]
+            [ 0  0  0  0 -1 -1]
         """
         if not self.is_ambient():
             return self.ambient_variety()._ambient_hecke_matrix_on_modular_symbols(n)
@@ -2230,6 +2235,35 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             T = T.block_sum(M[i].hecke_matrix(n))
         self.__ambient_hecke_matrix_on_modular_symbols[n] = T
         return T
+
+    def rational_torsion_order(self, proof=True):
+        """
+        Return the order of the rational torsion subgroup of this modular
+        abelian variety.
+
+        This function is really an alias for
+        :meth:`~sage.modular.abvar.torsion_subgroup.RationalTorsionSubgroup.order`
+        See the docstring there for a more in-depth reference and more
+        interesting examples.
+
+        INPUT:
+
+        - ``proof`` -- a boolean (default: True)
+
+        OUTPUT:
+
+        The order of the rational torsion subgroup of this modular abelian
+        variety.
+
+
+        EXAMPLES::
+
+            sage: J0(11).rational_torsion_subgroup().order()
+            5
+            sage: J0(11).rational_torsion_order()
+            5
+        """
+        return self.rational_torsion_subgroup().order(proof=proof)
 
     def number_of_rational_points(self):
         """
@@ -2467,10 +2501,10 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             sage: H.hecke_operator(2).matrix()
             [-2  0  0  0  0  0]
             [ 0 -2  0  0  0  0]
-            [ 0  0 -2  0 -1  1]
-            [ 0  0  1 -1  0 -1]
-            [ 0  0  1  1 -2  0]
-            [ 0  0  0  1 -1 -1]
+            [ 0  0 -1 -1 -1  1]
+            [ 0  0  1 -2 -1  0]
+            [ 0  0  0  0 -2  1]
+            [ 0  0  0  0 -1 -1]
         """
         return self.homology(ZZ)
 
@@ -3027,6 +3061,18 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             Finite subgroup with invariants [6] over QQbar of Abelian variety J0(33) of dimension 3
             sage: J.finite_subgroup(C)
             Finite subgroup with invariants [5] over QQ of Abelian variety J0(33) of dimension 3
+
+        This method gives a way of changing the ambient abelian variety of a
+        finite subgroup. This caused an issue in :trac:`6392` but should be
+        fixed now. ::
+
+            sage: A, B = J0(43)
+            sage: G, _ = A.intersection(B)
+            sage: G
+            Finite subgroup with invariants [2, 2] over QQ of Simple abelian subvariety 43a(1,43) of dimension 1 of J0(43)
+            sage: B.finite_subgroup(G)
+            Finite subgroup with invariants [2, 2] over QQ of Simple abelian subvariety 43b(1,43) of dimension 2 of J0(43)
+
         """
         if isinstance(X, (list, tuple)):
             X = self._ambient_lattice().span(X)
@@ -3040,18 +3086,17 @@ class ModularAbelianVariety_abstract(ParentWithBase):
                 X = X.lattice()
             else:
                 if X.is_subgroup(self):
-                    X = (X.lattice() + self.lattice()).intersection(self.vector_space())
+                    X = (X.lattice() +
+                         self.ambient_variety().lattice()).intersection(
+                             self.vector_space())
                 else:
                     raise ValueError("X must be a subgroup of self.")
 
-
         if field_of_definition is None:
             field_of_definition = QQbar
-        else:
-            field_of_definition = field_of_definition
 
-        return FiniteSubgroup_lattice(self, X, field_of_definition=field_of_definition, check=check)
-
+        return FiniteSubgroup_lattice(
+            self, X, field_of_definition=field_of_definition, check=check)
 
     def torsion_subgroup(self, n):
         """
@@ -3485,7 +3530,6 @@ class ModularAbelianVariety_abstract(ParentWithBase):
         X = amb.decomposition(simple=simple, bound=bound)
         IN = []
         OUT = []
-        i = 0
         V = 0
         last_dimension = 0
         for j in range(len(X)):
@@ -4157,9 +4201,9 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         return M
 
     def _compute_hecke_polynomial(self, n, var='x'):
-        """
+        r"""
         Return the characteristic polynomial of the `n^{th}` Hecke
-        operator on self.
+        operator on ``self``.
 
         .. note::
 
@@ -4638,7 +4682,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
 
         # 2. Compute the map alpha: X --> Hom(X[I],Z) over ZZ
         # todo -- this could be done more quickly with a clever matrix multiply
-        B = [XI(v) for v in XI_ZZ.basis()]
+        B = [XI(vv) for vv in XI_ZZ.basis()]
         mat = []
         for v in M.basis():
             w = Y(v)
@@ -4735,7 +4779,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         if not self.is_simple():
             raise ValueError("self must be simple")
         try:
-            g = self.component_group_order(p)
+            self.component_group_order(p)
         except NotImplementedError:
             raise NotImplementedError("Tamagawa number can't be determined using known algorithms, so consider using the tamagawa_number_bounds function instead")
         div, mul, mul_primes = self.tamagawa_number_bounds(p)
@@ -4792,7 +4836,6 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
             if is_Gamma0(M.group()):
                 g = self.component_group_order(p)
                 W = M.atkin_lehner_operator(p).matrix()
-                cp = None
                 if W == -1:
                     # Frob acts trivially
                     div = g
@@ -4810,13 +4853,12 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
                 else:
                     raise NotImplementedError("Atkin-Lehner at p must act as a scalar")
         else:
-            mul_primes = list(sorted(set([p] + [q for q in prime_range(2,2*self.dimension()+2)])))
+            mul_primes = sorted(set([p] + [q for q in prime_range(2,2*self.dimension()+2)]))
         div = Integer(div)
         mul = Integer(mul)
         mul_primes = tuple(mul_primes)
         self.__tamagawa_number_bounds[p] = (div, mul, mul_primes)
         return (div, mul, mul_primes)
-
 
     def brandt_module(self, p):
         """

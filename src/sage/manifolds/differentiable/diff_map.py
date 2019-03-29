@@ -32,6 +32,8 @@ REFERENCES:
 #*****************************************************************************
 
 from sage.manifolds.continuous_map import ContinuousMap
+from sage.parallel.decorate import parallel
+from sage.parallel.parallelism import Parallelism
 
 class DiffMap(ContinuousMap):
     r"""
@@ -708,7 +710,7 @@ class DiffMap(ContinuousMap):
 
         - the functions `J_{ij}` as a double array, `J_{ij}` being
           the element ``[i][j]`` represented by a
-          :class:`~sage.manifolds.coord_func.CoordFunction`
+          :class:`~sage.manifolds.chart_func.ChartFunction`
 
         To get symbolic expressions, use the method
         :meth:`jacobian_matrix` instead.
@@ -740,7 +742,8 @@ class DiffMap(ContinuousMap):
             sage: J[2][0]
             2*x
             sage: type(J[2][0])
-            <class 'sage.manifolds.coord_func_symb.CoordFunctionSymbRing_with_category.element_class'>
+            <class 'sage.manifolds.chart_func.ChartFunctionRing_with_category.element_class'>
+
             sage: J[2][0].display()
             (x, y) |--> 2*x
 
@@ -890,6 +893,17 @@ class DiffMap(ContinuousMap):
             sage: pg.display()
             Phi_*(g) = dth*dth + sin(th)^2 dph*dph
 
+        Parallel computation::
+
+           sage: Parallelism().set('tensor', nproc=2)
+           sage: pg = Phi.pullback(g) ; pg
+           Field of symmetric bilinear forms Phi_*(g) on the Open subset U of
+            the 2-dimensional differentiable manifold S^2
+           sage: pg.display()
+           Phi_*(g) = dth*dth + sin(th)^2 dph*dph
+           sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
+
+
         Pullback on `S^2` of a 3-form on `R^3`::
 
             sage: a = N.diff_form(3, 'A')
@@ -944,6 +958,10 @@ class DiffMap(ContinuousMap):
             resu = fmodule1.tensor((0,ncov), name=resu_name,
                                    latex_name=resu_latex_name, sym=tensor._sym,
                                    antisym=tensor._antisym)
+
+            nproc = Parallelism().get('tensor')
+            ind_old_list = list(dom2.manifold().index_generator(ncov))
+
             for frame2 in tensor._components:
                 if isinstance(frame2, CoordFrame):
                     chart2 = frame2._chart
@@ -976,15 +994,48 @@ class DiffMap(ContinuousMap):
                             # X2 coordinates expressed in terms of
                             # X1 ones via the diff. map:
                             coord2_1 = phi(*(chart1._xx))
-                            for ind_new in ptcomp.non_redundant_index_generator():
-                                res = 0
-                                for ind_old in dom2.manifold().index_generator(ncov):
-                                    ff = tcomp[[ind_old]].coord_function(chart2)
-                                    t = chart1.function(ff(*coord2_1))
-                                    for i in range(ncov):
-                                        t *= jacob[ind_old[i]-si2, ind_new[i]-si1]
-                                    res += t
-                                ptcomp[ind_new] = res
+
+                            if nproc != 1:
+                                # Parallel computation
+                                lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
+                                ind_list = [ind for ind in ptcomp.non_redundant_index_generator()]
+                                ind_step = max(1, int(len(ind_list)/nproc/2))
+                                local_list = lol(ind_list, ind_step)
+                                # list of input parameters
+                                listParalInput = [(tcomp,chart1,chart2,coord2_1,jacob,
+                                                   ind_old_list,si1,si2,ncov,ind_part) for ind_part  in local_list]
+
+                                @parallel(p_iter='multiprocessing', ncpus=nproc)
+                                def paral_comp(tcomp,chart1,chart2,coord2_1,jacob,
+                                               ind_old_list,si1,si2,ncov,local_list_ind):
+                                    partial = []
+                                    for ind_new in local_list_ind:
+                                        res = 0
+                                        for ind_old in ind_old_list:
+                                            ff = tcomp[[ind_old]].coord_function(chart2)
+                                            t = chart1.function(ff(*coord2_1))
+                                            for i in range(ncov):
+                                                t *= jacob[ind_old[i]-si2, ind_new[i]-si1]
+                                            res += t
+                                        partial.append([ind_new, res])
+                                    return partial
+
+                                for ii, val in paral_comp(listParalInput):
+                                    for jj in val:
+                                        ptcomp[[jj[0]]] = jj[1]
+
+                            else:
+                                # Sequential computation
+                                for ind_new in ptcomp.non_redundant_index_generator():
+                                    res = 0
+                                    for ind_old in ind_old_list:
+                                        ff = tcomp[[ind_old]].coord_function(chart2)
+                                        t = chart1.function(ff(*coord2_1))
+                                        for i in range(ncov):
+                                            t *= jacob[ind_old[i]-si2, ind_new[i]-si1]
+                                        res += t
+                                    ptcomp[ind_new] = res
+
                             resu._components[frame1] = ptcomp
                 return resu
         # End of function _pullback_chart
@@ -1226,4 +1277,3 @@ class DiffMap(ContinuousMap):
         resu = fmodule2.tensor_from_comp((ncon, 0), ptcomp, name=resu_name,
                                          latex_name=resu_latex_name)
         return resu
-

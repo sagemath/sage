@@ -363,7 +363,7 @@ def plot_hyperplane(hyperplane, **kwds):
         sage: e.plot(ranges=[[-1,1],[0,8]], label_offset=(2,2,1), aspect_ratio=1)
         Graphics3d Object
     """
-    if hyperplane.base_ring().characteristic() != 0:
+    if hyperplane.base_ring().characteristic():
         raise NotImplementedError('base field must have characteristic zero')
     elif hyperplane.dimension() not in [0, 1, 2]: # dimension of hyperplane, not ambient space
         raise ValueError('can only plot hyperplanes in dimensions 1, 2, 3')
@@ -424,54 +424,47 @@ def plot_hyperplane(hyperplane, **kwds):
     elif hyperplane.dimension() == 1: # a line in the plane
         pnt = hyperplane.point()
         w = hyperplane.linear_part().matrix()
-        x, y = hyperplane.A()
-        d = hyperplane.b()
         t = SR.var('t')
         if ranges_set:
-            if type(ranges) in [list,tuple]:
+            if isinstance(ranges, (list, tuple)):
                 t0, t1 = ranges
             else:  # ranges should be a single positive number
                 t0, t1 = -ranges, ranges
         else: # default
             t0, t1 = -3, 3
-        p = parametric_plot(pnt+t*w[0], (t,t0,t1), **kwds)
+        p = parametric_plot(pnt + t * w[0], (t, t0, t1), **kwds)
         if has_hyp_label:
             if has_offset:
                 b0, b1 = label_offset
             else:
                 b0, b1 = 0, 0.2
-            label = text(label,(pnt[0]+b0,pnt[1]+b1),
+            label = text(label,(pnt[0] + b0, pnt[1] + b1),
                     color=label_color,fontsize=label_fontsize)
             p += label
     elif hyperplane.dimension() == 2: # a plane in 3-space
         pnt = hyperplane.point()
         w = hyperplane.linear_part().matrix()
-        a, b, c = hyperplane.A()
-        d = hyperplane.b()
-        s,t = SR.var('s t')
+        s, t = SR.var('s t')
         if ranges_set:
-            if type(ranges) in [list,tuple]:
+            if isinstance(ranges, (list, tuple)):
                 s0, s1 = ranges[0]
                 t0, t1 = ranges[1]
-            else: # ranges should be a single positive integers
+            else:  # ranges should be a single positive integers
                 s0, s1 = -ranges, ranges
                 t0, t1 = -ranges, ranges
-        else: # default
+        else:  # default
             s0, s1 = -3, 3
             t0, t1 = -3, 3
-        p = parametric_plot3d(pnt+s*w[0]+t*w[1],(s,s0,s1),(t,t0,t1),**kwds)
+        p = parametric_plot3d(pnt+s*w[0]+t*w[1], (s,s0,s1), (t,t0,t1), **kwds)
         if has_hyp_label: 
             if has_offset:
                 b0, b1, b2 = label_offset
             else:
                 b0, b1, b2 = 0, 0, 0
-            label = text3d(label,(pnt[0]+b0,pnt[1]+b1,pnt[2]+b2),
-                    color=label_color,fontsize=label_fontsize)
+            label = text3d(label,(pnt[0]+b0, pnt[1]+b1, pnt[2]+b2),
+                    color=label_color, fontsize=label_fontsize)
             p += label
     return p
-
-
-
 
 
 def legend_3d(hyperplane_arrangement, hyperplane_colors, length):

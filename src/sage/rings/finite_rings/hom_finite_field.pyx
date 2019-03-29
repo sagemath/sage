@@ -323,7 +323,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
             sage: k.<t> = GF(3^7)
             sage: K.<T> = GF(3^21)
-            sage: f = FiniteFieldHomomorphism_generic(Hom(k, K));
+            sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: g = f.section(); g
             Section of Ring morphism:
               From: Finite Field in t of size 3^7
@@ -668,5 +668,5 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         return Morphism.__hash__(self)
 
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.finite_field_morphism', 'FiniteFieldHomomorphism_generic', FiniteFieldHomomorphism_generic)

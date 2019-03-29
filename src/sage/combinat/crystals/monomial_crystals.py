@@ -49,7 +49,7 @@ where `(a_{ij})` is a Cartan matrix.  Then
     f_iM &= A_{i,k_f}^{-1} M.
     \end{aligned}
 
-It is shown in [KKS07]_ that the connected component of `\widehat{\mathcal{M}}`
+It is shown in [KKS2007]_ that the connected component of `\widehat{\mathcal{M}}`
 containing the element `\boldsymbol{1}`, which we denote by
 `\mathcal{M}(\infty)`, is crystal isomorphic to the crystal `B(\infty)`.
 
@@ -62,7 +62,7 @@ that
     f_iM = \begin{cases} 0 & \text{if } \varphi_i(M) = 0, \\
     A_{i,k_f}^{-1}M & \text{if } \varphi_i(M) > 0. \end{cases}
 
-Then Kashiwara [Kash03]_ showed that the connected component in
+Then Kashiwara [Ka2003]_ showed that the connected component in
 `\widetilde{\mathcal{M}}` containing a monomial `M` such that `e_iM = 0`, for
 all `i \in I`, is crystal isomorphic to the irreducible highest weight
 crystal `B(\mathrm{wt}(M))`.
@@ -73,28 +73,17 @@ WARNING:
     `C = (c_{ij})_{i\neq j}` satisfying the condition `c_{ij}+c_{ji}=1`.
     We have chosen such integers uniformly such that `c_{ij} = 1` if
     `i < j` and `c_{ij} = 0` if `i>j`.
-
-REFERENCES:
-
-.. [KKS07] \S.-J. Kang, J.-A. Kim, and D.-U. Shin.
-   Modified Nakajima Monomials and the Crystal `B(\infty)`.
-   J. Algebra **308**, pp. 524--535, 2007.
-
-.. [Kash03] \M. Kashiwara.
-   Realizations of Crystals.
-   Combinatorial and geometric representation theory (Seoul, 2001),
-   Contemp. Math. **325**, Amer. Math. Soc., pp. 133--139, 2003.
 """
 
-#******************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2013
 #
 #  Arthur Lubovsky (alubovsky at albany dot edu)
 #  Ben Salisbury (ben dot salisbury at cmich dot edu)
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from copy import copy
 from sage.structure.element import Element
@@ -106,10 +95,8 @@ from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
-from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
-from sage.matrix.matrix import is_Matrix
 from sage.matrix.matrix_space import MatrixSpace
 
 import six
@@ -232,9 +219,9 @@ class NakajimaMonomial(Element):
 
             sage: M = crystals.infinity.NakajimaMonomials(['C',5])
             sage: m1 = M.module_generators[0].f(1)
-            sage: hash(m1)
-            4715601665014767730  # 64-bit
-            -512614286           # 32-bit
+            sage: m2 = M.module_generators[0].f(2)
+            sage: hash(m1) != hash(m2)
+            True
         """
         return hash(frozenset(tuple(six.iteritems(self._Y))))
 
@@ -730,7 +717,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
         f_iM &= A_{i,k_f}^{-1} M.
         \end{aligned}
 
-    It is shown in [KKS07]_ that the connected component of
+    It is shown in [KKS2007]_ that the connected component of
     `\widehat{\mathcal{M}}` containing the element `\boldsymbol{1}`,
     which we denote by `\mathcal{M}(\infty)`, is crystal isomorphic
     to the crystal `B(\infty)`.
@@ -832,7 +819,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
         return c
 
     @staticmethod
-    def __classcall_private__(cls, ct, c=None, use_Y=None):
+    def __classcall_private__(cls, ct, c=None):
         r"""
         Normalize input to ensure a unique representation.
 
@@ -848,20 +835,11 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
             sage: M is M1 is M2
             True
         """
-        if use_Y is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(18895, 'use_Y is deprecated; use the set_variables() method instead.')
-        else:
-            use_Y = True
-
         cartan_type = CartanType(ct)
         n = len(cartan_type.index_set())
         c = InfinityCrystalOfNakajimaMonomials._normalize_c(c, n)
         M = super(InfinityCrystalOfNakajimaMonomials, cls).__classcall__(cls, cartan_type, c)
-        if not use_Y:
-            M.set_variables('A')
-        else:
-            M.set_variables('Y')
+        M.set_variables('Y')
         return M
 
     def __init__(self, ct, c, category=None):
@@ -1125,7 +1103,7 @@ class CrystalOfNakajimaMonomials(InfinityCrystalOfNakajimaMonomials):
         f_iM = \begin{cases} 0 & \text{if } \varphi_i(M) = 0, \\
         A_{i,k_f}^{-1}M & \text{if } \varphi_i(M) > 0. \end{cases}
 
-    Then Kashiwara [Kash03]_ showed that the connected component in
+    Then Kashiwara [Ka2003]_ showed that the connected component in
     `\widetilde{\mathcal{M}}` containing a monomial `M` such that `e_iM = 0`,
     for all `i \in I`, is crystal isomorphic to the irreducible highest weight
     crystal `B(\mathrm{wt}(M))`.
@@ -1186,16 +1164,16 @@ class CrystalOfNakajimaMonomials(InfinityCrystalOfNakajimaMonomials):
         sage: c = matrix([[0,1,0],[0,0,1],[1,0,0]])
         sage: La = RootSystem(['A',2,1]).weight_lattice(extended=True).fundamental_weights()
         sage: M = crystals.NakajimaMonomials(2*La[1], c=c)
-        sage: list(M.subcrystal(max_depth=3))
-        [Y(1,0)^2,
-         Y(0,1) Y(1,0) Y(1,1)^-1 Y(2,0),
-         Y(0,2)^-1 Y(1,0) Y(2,0) Y(2,2),
-         Y(0,1)^2 Y(1,1)^-2 Y(2,0)^2,
-         Y(0,0) Y(0,1) Y(1,0) Y(2,1)^-1,
+        sage: sorted(M.subcrystal(max_depth=3), key=str)
+        [Y(0,0) Y(0,1) Y(1,0) Y(2,1)^-1,
+         Y(0,0) Y(0,1)^2 Y(1,1)^-1 Y(2,0) Y(2,1)^-1,
          Y(0,0) Y(0,2)^-1 Y(1,0) Y(1,1) Y(2,1)^-1 Y(2,2),
          Y(0,1) Y(0,2)^-1 Y(1,1)^-1 Y(2,0)^2 Y(2,2),
-         Y(0,0) Y(0,1)^2 Y(1,1)^-1 Y(2,0) Y(2,1)^-1,
-         Y(1,0) Y(1,3) Y(2,0) Y(2,3)^-1]
+         Y(0,1) Y(1,0) Y(1,1)^-1 Y(2,0),
+         Y(0,1)^2 Y(1,1)^-2 Y(2,0)^2,
+         Y(0,2)^-1 Y(1,0) Y(2,0) Y(2,2),
+         Y(1,0) Y(1,3) Y(2,0) Y(2,3)^-1,
+         Y(1,0)^2]
     """
     @staticmethod
     def __classcall_private__(cls, cartan_type, La=None, c=None):

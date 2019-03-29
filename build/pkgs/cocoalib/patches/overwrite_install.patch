@@ -1,0 +1,50 @@
+Simply overwrite an existing installation without asking questions
+
+diff -ru a/Makefile b/Makefile
+--- a/Makefile	2017-11-21 13:35:13.000000000 +0100
++++ b/Makefile	2018-06-29 19:48:19.654035809 +0200
+@@ -22,9 +22,6 @@
+ 	@echo ">>> WARNING  CoCoALib installation procedure is still experimental! <<<"
+ 	@echo "======================================================================="
+ 	@echo
+-	@echo "Continuing with installation after 5 secs..."
+-	@echo
+-	@sleep 5
+ 	@if [ \! -f lib/libcocoa.a ]; \
+ 	 then \
+ 	   echo "***** INSTALLATION ERROR: CoCoALib is not built!           *****"; \
+@@ -54,25 +51,6 @@
+ 	   echo "***** >>>>   Consider using \`sudo' command   <<<<"; \
+ 	   exit 1; \
+ 	 fi
+-	@if [ -e "$(COCOALIB_INSTALL_DIR)/include/CoCoA" -a \! -L "$(COCOALIB_INSTALL_DIR)/include/CoCoA" ]; \
+-	then \
+-	  echo; \
+-	  echo "***** ERROR: $(COCOALIB_INSTALL_DIR)/include/CoCoA exists but is not a symlink *****"; \
+-	  echo "***** >>>> Please remove it or rename it before installing CoCoALib <<<<"; \
+-	  exit 2; \
+-	fi
+-	@if [ -e "$(COCOALIB_INSTALL_DIR)/lib/libcocoa.a" -a \! -f "$(COCOALIB_INSTALL_DIR)/lib/libcocoa.a" ]; \
+-	then \
+-	  echo; \
+-	  echo "***** ERROR: $(COCOALIB_INSTALL_DIR)/lib/libcocoa.a exists but is not a symlink *****"; \
+-	  echo "***** >>>> Please remove it or rename it before installing CoCoALib <<<<"; \
+-	  exit 2; \
+-	fi
+-	@if [ -e "$(COCOALIB_INSTALL_DIR)/include/CoCoA-$(VERSION)" ]; \
+-	 then \
+-	   read -p "Really overwrite existing installation? " yn; \
+-	   if [ "X$$yn" \!= "Xy" -a "X$$yn" \!= "Xyes" ]; then exit 3; fi; \
+-	 fi
+ 	@/bin/rm -rf "$(COCOALIB_INSTALL_DIR)/include/CoCoA-$(VERSION)"
+ 	@/bin/mkdir -p "$(COCOALIB_INSTALL_DIR)/include/CoCoA-$(VERSION)"
+ 	@$(INSTALL_CMD) -m 644 include/CoCoA/*.H "$(COCOALIB_INSTALL_DIR)/include/CoCoA-$(VERSION)"
+@@ -88,7 +66,7 @@
+ 	@$(INSTALL_CMD) -m 644 doc/html/*.html "$(COCOALIB_INSTALL_DIR)/include/CoCoA-$(VERSION)/doc/html"
+ 	@$(INSTALL_CMD) -m 644 doc/html/cocoalib-doc.css "$(COCOALIB_INSTALL_DIR)/include/CoCoA-$(VERSION)/doc/html"
+ 	@echo "Installed CoCoA documentation in \"$(COCOALIB_INSTALL_DIR)/include/CoCoA/doc/\""
+-	@/bin/rm -f "$(COCOALIB_INSTALL_DIR)/include/CoCoA"
++	@/bin/rm -rf "$(COCOALIB_INSTALL_DIR)/include/CoCoA"
+ 	@/bin/ln -s "$(COCOALIB_INSTALL_DIR)/include/CoCoA-$(VERSION)" "$(COCOALIB_INSTALL_DIR)/include/CoCoA"
+ 	@echo "Installed CoCoA headers in \"$(COCOALIB_INSTALL_DIR)/include/CoCoA/\""
+ 	@/bin/rm -f "$(COCOALIB_INSTALL_DIR)/lib/libcocoa-$(VERSION).a"

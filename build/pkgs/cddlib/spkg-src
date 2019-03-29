@@ -13,12 +13,12 @@ shopt -s extglob
 # Remove old sources and download new
 rm -rf src cddlib*
 
-CDDLIBVERSION=094g
+CDDLIBVERSION=0.94j
 CDDLIBDIR=cddlib-$CDDLIBVERSION
 CDDLIBTAR=$CDDLIBDIR.tar.gz
 
 if [ -z "$UPSTREAM_SOURCE_DIRECTORY" ]; then
-    tar xzf <( curl -L "ftp://ftp.ifor.math.ethz.ch/pub/fukuda/cdd/$CDDLIBTAR" )
+    tar xzf <( curl -L "https://github.com/cddlib/cddlib/archive/$CDDLIBTAR" )
 else
     tar xzf "$UPSTREAM_SOURCE_DIRECTORY/$CDDLIBTAR"
 fi

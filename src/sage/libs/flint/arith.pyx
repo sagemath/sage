@@ -21,9 +21,12 @@ from .fmpq cimport *
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 
+
 def bell_number(unsigned long n):
     """
-    Returns the `n` th Bell number.
+    Return the `n`-th Bell number.
+
+    See :wikipedia:`Bell_number`.
 
     EXAMPLES::
 
@@ -57,6 +60,8 @@ def bernoulli_number(unsigned long n):
     """
     Return the `n`-th Bernoulli number.
 
+    See :wikipedia:`Bernoulli_number`.
+
     EXAMPLES::
 
         sage: from sage.libs.flint.arith import bernoulli_number
@@ -86,6 +91,8 @@ def euler_number(unsigned long n):
     """
     Return the Euler number of index `n`.
 
+    See :wikipedia:`Euler_number`.
+
     EXAMPLES::
 
         sage: from sage.libs.flint.arith import euler_number
@@ -110,7 +117,9 @@ def euler_number(unsigned long n):
 
 def number_of_partitions(unsigned long n):
     """
-    Returns the number of partitions of the integer ``n``.
+    Return the number of partitions of the integer `n`.
+
+    See :wikipedia:`Partition_(number_theory)`.
 
     EXAMPLES::
 
@@ -174,9 +183,12 @@ def number_of_partitions(unsigned long n):
     fmpz_clear(ans_fmpz)
     return ans
 
+
 def dedekind_sum(p, q):
     """
     Return the Dedekind sum `s(p, q)` where `p` and `q` are arbitrary integers.
+
+    See :wikipedia:`Dedekind_sum`.
 
     EXAMPLES::
 
@@ -208,9 +220,12 @@ def dedekind_sum(p, q):
 
     return s
 
+
 def harmonic_number(unsigned long n):
     """
-    Returns the harmonic number ``H_n``.
+    Return the harmonic number `H_n`.
+
+    See :wikipedia:`Harmonic_number`.
 
     EXAMPLES::
 
@@ -233,4 +248,3 @@ def harmonic_number(unsigned long n):
     fmpq_clear(s_fmpq)
 
     return s
-

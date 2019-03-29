@@ -369,7 +369,8 @@ def trace_method(obj, meth, **kwds):
         exit f -> 9
         9
     """
-    f = getattr(obj, meth).__func__
+    from sage.cpython.getattr import raw_getattr
+    f = raw_getattr(obj, meth)
     t = AttributeAccessTracerProxy(obj, **kwds)
     @wraps(f)
     def g(*args, **kwds):

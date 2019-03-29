@@ -15,15 +15,14 @@ AUTHORS:
 
 - Volker Braun (2012-01-18): initial version
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -33,6 +32,7 @@ from sage.libs.gmp.mpz cimport mpz_add_ui
 from libcpp.vector cimport vector
 from libcpp.string cimport string
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
+from sage.cpython.string cimport char_to_str
 
 
 cdef class stl_int_vector(SageObject):
@@ -90,7 +90,7 @@ cdef class stl_int_vector(SageObject):
             sage: v[1]
             456
         """
-        assert i>=0 and i<self.data.size()
+        assert 0 <= i < self.data.size()
         return self.data.at(i)
 
     def __repr__(self):
@@ -107,10 +107,10 @@ cdef class stl_int_vector(SageObject):
              data[0] = 123
              data[1] = 456
         """
-        s = self.name.c_str()
+        s = char_to_str(self.name.c_str())
         s += 'vector<int>:\n'
-        for i in range(0,self.data.size()):
-            s += ' data['+str(i)+'] = '+str(self.data.at(i))+'\n'
+        for i in range(self.data.size()):
+            s += ' data[' + str(i) + '] = ' + str(self.data.at(i)) + '\n'
         return s.strip()
 
     cpdef sum(self):

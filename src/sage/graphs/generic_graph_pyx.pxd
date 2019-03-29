@@ -1,5 +1,6 @@
 from sage.structure.sage_object cimport SageObject
 from sage.graphs.base.dense_graph cimport DenseGraph
+from sage.ext.memory_allocator cimport MemoryAllocator
 
 ctypedef int * D_TWO
 ctypedef char * D_THREE
@@ -29,3 +30,4 @@ cdef class SubgraphSearch:
     cdef int i
     cdef bint directed
     cdef int * tmp_array
+    cdef MemoryAllocator mem

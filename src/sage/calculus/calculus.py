@@ -231,7 +231,7 @@ Another example::
     sage: f(x=3)
     arcsinh(1)
     sage: f.derivative(x)
-    1/3/sqrt(1/9*x^2 + 1)
+    1/sqrt(x^2 + 9)
 
 We compute the length of the parabola from 0 to 2::
 
@@ -368,14 +368,7 @@ Check that the problem with Taylor expansions of the gamma function
 (:trac:`9217`) is fixed::
 
     sage: taylor(gamma(1/3+x),x,0,3)
-    -1/432*((72*euler_gamma^3 + 36*euler_gamma^2*(sqrt(3)*pi + 9*log(3)) +
-    27*pi^2*log(3) + 243*log(3)^3 + 18*euler_gamma*(6*sqrt(3)*pi*log(3) + pi^2
-    + 27*log(3)^2 + 12*psi(1, 1/3)) + 324*log(3)*psi(1, 1/3) + sqrt(3)*(pi^3 +
-    9*pi*(9*log(3)^2 + 4*psi(1, 1/3))))*gamma(1/3) - 72*psi(2,
-    1/3)*gamma(1/3))*x^3 + 1/24*(6*sqrt(3)*pi*log(3) + 12*euler_gamma^2 + pi^2
-    + 4*euler_gamma*(sqrt(3)*pi + 9*log(3)) + 27*log(3)^2 + 12*psi(1,
-    1/3))*x^2*gamma(1/3) - 1/6*(6*euler_gamma + sqrt(3)*pi +
-    9*log(3))*x*gamma(1/3) + gamma(1/3)
+    -1/432*((72*euler_gamma^3 + 36*euler_gamma^2*(sqrt(3)*pi + 9*log(3)) + ...
     sage: [f[0].n() for f in _.coefficients()]  # numerical coefficients to make comparison easier; Maple 12 gives same answer
     [2.6789385347..., -8.3905259853..., 26.662447494..., -80.683148377...]
 
@@ -401,6 +394,7 @@ see :trac:`9538`::
     sage: sage.calculus.calculus.maxima('f1')
     f1
 """
+from six import iteritems
 
 import re
 from sage.arith.all import algdep
@@ -769,7 +763,7 @@ def nintegral(ex, x, a, b,
     Now numerically integrating, we see why the answer is wrong::
 
         sage: f.nintegrate(x,0,1)
-        (-480.0000000000001, 5.32907051820075e-12, 21, 0)
+        (-480.0000000000001, 5.32907051820075...e-12, 21, 0)
 
     It is just because every floating point evaluation of return -480.0
     in floating point.
@@ -806,7 +800,9 @@ def nintegral(ex, x, a, b,
 
     return float(v[0]), float(v[1]), Integer(v[2]), Integer(v[3])
 
+
 nintegrate = nintegral
+
 
 def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
     r"""
@@ -1253,6 +1249,15 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         sage: lim(sin(1/x), x = 0)
         ind
 
+    We can use other packages than maxima::
+
+        sage: (x / (x+2^x+cos(x))).limit(x=-infinity, algorithm='fricas')       # optional - fricas
+        1
+        sage: limit(e^(-1/x), x=0, dir='right', algorithm='fricas')             # optional - fricas
+        0
+        sage: limit(e^(-1/x), x=0, dir='left', algorithm='fricas')              # optional - fricas
+        +Infinity
+
     TESTS::
 
         sage: lim(x^2, x=2, dir='nugget')
@@ -1260,6 +1265,11 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         ...
         ValueError: dir must be one of None, 'plus', '+', 'above', 'right',
         'minus', '-', 'below', 'left'
+
+        sage: x.limit(x=3, algorithm='nugget')
+        Traceback (most recent call last):
+        ...
+        ValueError: Unknown algorithm: nugget
 
     We check that :trac:`3718` is fixed, so that
     Maxima gives correct limits for the floor function::
@@ -1316,6 +1326,23 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
         sage: (1/(x-3)).limit(x=3, dir='below')
         -Infinity
+
+    From :trac:`14677`::
+
+        sage: f = (x^x-sin(x)^sin(x))/(x^3*log(x))
+        sage: limit(f, x=0, algorithm='fricas')                                 # optional - fricas
+        und
+
+        sage: limit(f, x=0, dir='right', algorithm='fricas')                    # optional - fricas
+        1/6
+
+    From :trac:`26497`::
+
+        sage: mu, y, sigma = var("mu, y, sigma")
+        sage: f = 1/2*sqrt(2)*e^(-1/2*(mu - log(y))^2/sigma^2)/(sqrt(pi)*sigma*y)
+        sage: limit(f, y=0, algorithm='fricas')                                 # optional - fricas
+        0
+
     """
     if not isinstance(ex, Expression):
         ex = SR(ex)
@@ -1330,23 +1357,25 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
     if taylor and algorithm == 'maxima':
         algorithm = 'maxima_taylor'
 
-    if dir not in [None, 'plus', '+', 'right', 'minus', '-', 'left',
-            'above', 'below']:
-        raise ValueError("dir must be one of None, 'plus', '+', 'above', 'right', 'minus', '-', 'below', 'left'")
+    dir_plus = ['plus', '+', 'above', 'right']
+    dir_minus = ['minus', '-', 'below', 'left']
+    dir_both = [None] + dir_plus + dir_minus
+    if dir not in dir_both:
+        raise ValueError("dir must be one of " + ", ".join(map(repr, dir_both)))
 
     if algorithm == 'maxima':
         if dir is None:
             l = maxima.sr_limit(ex, v, a)
-        elif dir in ['plus', '+', 'right', 'above']:
+        elif dir in dir_plus:
             l = maxima.sr_limit(ex, v, a, 'plus')
-        elif dir in ['minus', '-', 'left', 'below']:
+        elif dir in dir_minus:
             l = maxima.sr_limit(ex, v, a, 'minus')
     elif algorithm == 'maxima_taylor':
         if dir is None:
             l = maxima.sr_tlimit(ex, v, a)
-        elif dir in ['plus', '+', 'right', 'above']:
+        elif dir in dir_plus:
             l = maxima.sr_tlimit(ex, v, a, 'plus')
-        elif dir in ['minus', '-', 'left', 'below']:
+        elif dir in dir_minus:
             l = maxima.sr_tlimit(ex, v, a, 'minus')
     elif algorithm == 'sympy':
         if dir is None:
@@ -1354,6 +1383,20 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
             l = sympy.limit(ex._sympy_(), v._sympy_(), a._sympy_())
         else:
             raise NotImplementedError("sympy does not support one-sided limits")
+    elif algorithm == 'fricas':
+        from sage.interfaces.fricas import fricas
+        eq = fricas.equation(v._fricas_(), a._fricas_())
+        f = ex._fricas_()
+        if dir is None:
+            l = fricas.limit(f, eq).sage()
+            if isinstance(l, dict):
+                l = maxima("und")
+        elif dir in dir_plus:
+            l = fricas.limit(f, eq, '"right"').sage()
+        elif dir in dir_minus:
+            l = fricas.limit(f, eq, '"left"').sage()
+    else:
+        raise ValueError("Unknown algorithm: %s" % algorithm)
 
     #return l.sage()
     return ex.parent()(l)
@@ -1397,11 +1440,12 @@ def laplace(ex, t, s, algorithm='maxima'):
 
       - ``'giac'`` - use Giac
     
-    NOTES:
+    .. NOTE::
     
-    - The ``'sympy'`` algorithm returns the tuple (`F`, `a`, ``cond``) where `F` is the Laplace 
-      transform of `f(t)`, `Re(s)>a` is the half-plane of convergence, and cond 
-      are auxiliary convergence conditions.
+        The ``'sympy'`` algorithm returns the tuple (`F`, `a`, ``cond``)
+        where `F` is the Laplace transform of `f(t)`,
+        `Re(s)>a` is the half-plane of convergence, and ``cond`` are
+        auxiliary convergence conditions.
 
     .. SEEALSO::
 
@@ -1516,20 +1560,26 @@ def laplace(ex, t, s, algorithm='maxima'):
     Testing SymPy::
 
         sage: laplace(t^n, t, s, algorithm='sympy')
-        (s^(-n)*gamma(n + 1)/s, 0, -re(n) < 1)
-        
+        (gamma(n + 1)/(s*s^n), 0, -re(n) < 1)
+
     Testing Maxima::
 
         sage: laplace(t^n, t, s, algorithm='maxima')
-        s^(-n - 1)*gamma(n + 1)    
-            
-    Testing expression that is not parsed from SymPy to Sage::
+        s^(-n - 1)*gamma(n + 1)
+
+    Check that :trac:`24212` is fixed::
 
         sage: laplace(cos(t^2), t, s, algorithm='sympy')
+        (-1/2*sqrt(pi)*(sqrt(2)*cos(1/4*s^2)*fresnel_sin(1/2*sqrt(2)*s/sqrt(pi)) -
+        sqrt(2)*fresnel_cos(1/2*sqrt(2)*s/sqrt(pi))*sin(1/4*s^2) - cos(1/4*pi + 1/4*s^2)),
+        0, True)
+
+    Testing result from SymPy that Sage doesn't know how to handle::
+
+        sage: laplace(cos(-1/t), t, s, algorithm='sympy')
         Traceback (most recent call last):
         ...
-        AttributeError: Unable to convert SymPy result (=sqrt(pi)*(sqrt(2)*sin(s**2/4)*fresnelc(sqrt(2)*s/(2*sqrt(pi))) - 
-        sqrt(2)*cos(s**2/4)*fresnels(sqrt(2)*s/(2*sqrt(pi))) + cos(s**2/4 + pi/4))/2) into Sage
+        AttributeError: Unable to convert SymPy result (=meijerg(((), ()), ((-1/2, 0, 1/2), (0,)), s**2/16)/4) into Sage
     """
     if not isinstance(ex, (Expression, Function)):
         ex = SR(ex)
@@ -1560,7 +1610,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         try:
             result = giac.laplace(ex, t, s)
         except TypeError:
-            raise ValueError("Giac cannot make sense of: %s" % ex_gi)
+            raise ValueError("Giac cannot make sense of: %s" % ex)
         if 'integrate' in format(result) or 'integration' in format(result):
             return dummy_laplace(ex, t, s)
         else:
@@ -1568,6 +1618,7 @@ def laplace(ex, t, s, algorithm='maxima'):
 
     else:
         raise ValueError("Unknown algorithm: %s" % algorithm)
+
 
 def inverse_laplace(ex, s, t, algorithm='maxima'):
     r"""
@@ -1804,15 +1855,17 @@ def at(ex, *args, **kwds):
     """
     if not isinstance(ex, (Expression, Function)):
         ex = SR(ex)
-    kwds={ (k[10:] if k[:10] == "_SAGE_VAR_" else k):v for k,v in six.iteritems(kwds)}
-    if len(args) == 1 and isinstance(args[0],list):
+    kwds = {(k[10:] if k[:10] == "_SAGE_VAR_" else k): v
+            for k, v in iteritems(kwds)}
+    if len(args) == 1 and isinstance(args[0], list):
         for c in args[0]:
-            kwds[str(c.lhs())]=c.rhs()
+            kwds[str(c.lhs())] = c.rhs()
     else:
-        if len(args) !=0:
+        if len(args):
             raise TypeError("at can take at most one argument, which must be a list")
 
     return ex.subs(**kwds)
+
 
 def dummy_diff(*args):
     """
@@ -1948,27 +2001,25 @@ symtable = {'%pi':'pi', '%e': 'e', '%i':'I', '%gamma':'euler_gamma',\
             '%c' : '_C', '%k1' : '_K1', '%k2' : '_K2',
             'e':'_e', 'i':'_i', 'I':'_I'}
 
-import re
-
-import six
 
 
 maxima_tick = re.compile("'[a-z|A-Z|0-9|_]*")
 
-maxima_qp = re.compile("\?\%[a-z|A-Z|0-9|_]*")  # e.g., ?%jacobi_cd
+maxima_qp = re.compile(r"\?\%[a-z|A-Z|0-9|_]*")  # e.g., ?%jacobi_cd
 
-maxima_var = re.compile("[a-z|A-Z|0-9|_\%]*")  # e.g., %jacobi_cd
+maxima_var = re.compile(r"[a-z|A-Z|0-9|_\%]*")  # e.g., %jacobi_cd
 
-sci_not = re.compile("(-?(?:0|[1-9]\d*))(\.\d+)?([eE][-+]\d+)")
+sci_not = re.compile(r"(-?(?:0|[1-9]\d*))(\.\d+)?([eE][-+]\d+)")
 
-polylog_ex = re.compile('li\[([^\[\]]*)\]\(')
+polylog_ex = re.compile(r'li\[([^\[\]]*)\]\(')
 
-maxima_polygamma = re.compile("psi\[([^\[\]]*)\]\(")  # matches psi[n]( where n is a number
+maxima_polygamma = re.compile(r"psi\[([^\[\]]*)\]\(")  # matches psi[n]( where n is a number
 
-maxima_hyper = re.compile("\%f\[\d+,\d+\]")  # matches %f[m,n]
+maxima_hyper = re.compile(r"\%f\[\d+,\d+\]")  # matches %f[m,n]
+
 
 def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
-    """
+    r"""
     Given a string representation of a Maxima expression, parse it and
     return the corresponding Sage symbolic expression.
 
@@ -2108,7 +2159,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     while True:
         olds = s
         s = polylog_ex.sub('polylog(\\1,', s)
-        s = maxima_polygamma.sub('psi(\g<1>,', s) # this replaces psi[n](foo) with psi(n,foo), ensuring that derivatives of the digamma function are parsed properly below
+        s = maxima_polygamma.sub(r'psi(\g<1>,', s) # this replaces psi[n](foo) with psi(n,foo), ensuring that derivatives of the digamma function are parsed properly below
         if s == olds: break
 
     if equals_sub:
@@ -2188,6 +2239,7 @@ def mapped_opts(v):
         return str(v).lower()
     return str(v)
 
+
 def maxima_options(**kwds):
     """
     Used internally to create a string of options to pass to Maxima.
@@ -2195,9 +2247,10 @@ def maxima_options(**kwds):
     EXAMPLES::
 
         sage: sage.calculus.calculus.maxima_options(an_option=True, another=False, foo='bar')
-        'an_option=true,foo=bar,another=false'
+        'an_option=true,another=false,foo=bar'
     """
-    return ','.join(['%s=%s'%(key,mapped_opts(val)) for key, val in six.iteritems(kwds)])
+    return ','.join('%s=%s' % (key, mapped_opts(val))
+                    for key, val in sorted(iteritems(kwds)))
 
 
 # Parser for symbolic ring elements

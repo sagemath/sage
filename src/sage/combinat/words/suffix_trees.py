@@ -1,7 +1,7 @@
 r"""
 Suffix Tries and Suffix Trees
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Franco Saliola <saliola@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -9,7 +9,7 @@ Suffix Tries and Suffix Trees
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from six.moves import range
 from six import iteritems
 
@@ -23,6 +23,7 @@ from sage.rings.integer import Integer
 # Suffix Tries
 ################################################################################
 
+
 class SuffixTrie(SageObject):
     def __init__(self, word):
         r"""
@@ -32,8 +33,9 @@ class SuffixTrie(SageObject):
         the factors of w. It is a tree whose edges are labelled with
         letters of w, and whose leafs correspond to suffixes of w.
 
-        This is a straightforward implementation of Algorithm 1 from [1].
-        It constructs the suffix trie of w[:i] from that of w[:i-1].
+        This is a straightforward implementation of Algorithm 1 from
+        [Ukko1995]_.  It constructs the suffix trie of w[:i] from that
+        of w[:i-1].
 
         A suffix trie is modelled as a deterministic finite-state automaton
         together with the suffix_link map. The set of states corresponds to
@@ -53,8 +55,7 @@ class SuffixTrie(SageObject):
 
         REFERENCES:
 
-        - [1] E. Ukkonen, "On-line construction of suffix trees",
-          Algorithmica, 1995, volume 14, number 3, pages 249--260.
+        - [Ukko1995]_
 
         EXAMPLES::
 
@@ -91,7 +92,6 @@ class SuffixTrie(SageObject):
 
         # Process each letter, in order.
         W = word.parent()
-        w = W()
         for letter in word:
             self._process_letter(W([letter]))
 
@@ -501,6 +501,7 @@ class SuffixTrie(SageObject):
 # Suffix Trees
 ################################################################################
 
+
 class ImplicitSuffixTree(SageObject):
     def __init__(self, word):
         r"""
@@ -514,8 +515,9 @@ class ImplicitSuffixTree(SageObject):
         indices of the occurrence of the factors in w.
 
         The following is a straightforward implementation of Ukkonen's
-        on-line algorithm for constructing the implicit suffix tree [1].
-        It constructs the suffix tree for w[:i] from that of w[:i-1].
+        on-line algorithm for constructing the
+        implicit suffix tree [Ukko1995]_.  It constructs the suffix tree for
+        w[:i] from that of w[:i-1].
 
         GENERAL IDEA. The suffix tree of w[:i+1] can be obtained from that
         of w[:i] by visiting each node corresponding to a suffix of w[:i]
@@ -556,8 +558,7 @@ class ImplicitSuffixTree(SageObject):
 
         REFERENCES:
 
-        - [1] E. Ukkonen, "On-line construction of suffix trees",
-          Algorithmica, 1995, volume 14, number 3, pages 249--260.
+        - [Ukko1995]_
 
         EXAMPLES::
 
@@ -591,8 +592,9 @@ class ImplicitSuffixTree(SageObject):
 
     def _process_letter(self, letter):
         r"""
-        This is the main part of Ukkonen's algorithm. This corresponds to
-        the algorithm "update" in [1].
+        This is the main part of Ukkonen's algorithm.
+
+        This corresponds to the algorithm "update" in [Ukko1995]_.
 
         .. note::
 
@@ -601,8 +603,7 @@ class ImplicitSuffixTree(SageObject):
 
         REFERENCES:
 
-        - [1] E. Ukkonen, "On-line construction of suffix trees",
-          Algorithmica, 1995, volume 14, number 3, pages 249--260.
+        - [Ukko1995]_
 
         TESTS::
 
@@ -910,7 +911,6 @@ class ImplicitSuffixTree(SageObject):
         self.plot(word_labels=word_labels, *args, **kwds).show()
         return
 
-
     #####
     # Various methods
     #####
@@ -1095,7 +1095,6 @@ class ImplicitSuffixTree(SageObject):
         end_of_string = object()
         self._letters.append(end_of_string)
         (s,(k,i)) = self._active_state
-        old_r = 0
         (end_state, r) = self._test_and_split(s,(k,i-1), end_of_string)
         while not end_state:
             (s, k) = self._canonize(self._suffix_link[s], (k,i-1))
@@ -1122,7 +1121,7 @@ class ImplicitSuffixTree(SageObject):
         """
         queue = [0]
         while queue:
-            v=queue.pop()
+            v = queue.pop()
             for ((i,j),u) in iteritems(self._transition_function[v]):
                 yield (v,u,(i-1,j))
                 queue.append(u)
@@ -1193,7 +1192,7 @@ class ImplicitSuffixTree(SageObject):
                     num_factors += length_word - i
                 else:
                     num_factors += j - i
-        elif isinstance(n, (int,Integer)):
+        elif isinstance(n, (int, Integer)):
             length_word = self.word().length()
             num_factors = 0
             queue = [(0, 0)]
@@ -1211,7 +1210,7 @@ class ImplicitSuffixTree(SageObject):
                             else:
                                 queue.append((u,l+j-i+1))
         else:
-            raise TypeError("not an integer or None: %s" %s)
+            raise TypeError("not an integer or None: %s" % n)
         return num_factors
 
     def factor_iterator(self,n=None):
@@ -1250,36 +1249,90 @@ class ImplicitSuffixTree(SageObject):
         """
         # Every factor is a prefix of a suffix, so we do a depth
         # first search of the implicit suffix tree of the word.
+        w = self.word()
+        wlen = self.word().length()
         if n is None:
-            queue = [(0, self._word.parent()())]
+            queue = [(0, 0, -1, 0)]
+            yield w[0:0]
             while queue:
-                (v,w) = queue.pop()
-                yield w
-                if self._transition_function[v] != {}:
+                (v,i,j,l) = queue.pop()
+                for k in range(i,j+1):
+                    yield w[j-l:k]
+                for ((i,j),u) in iteritems(self._transition_function[v]):
+                    if j is None:
+                        j = wlen
+                    queue.append((u,i,j, l+j-i+1))
+        elif isinstance(n, (int, Integer)):
+            queue = [(0, 0, -1, 0)]
+            while queue:
+                (v,i,j,l) = queue.pop()
+                if l == n:
+                    yield w[j-l:j]
+                if l < n:
                     for ((i,j),u) in iteritems(self._transition_function[v]):
                         if j is None:
-                            j = self.word().length()
-                        for k in range(i,j):
-                            yield w * self.word()[i-1:k]
-                        queue.append((u,w*self.word()[i-1:j]))
-        elif isinstance(n, (int,Integer)):
-            queue = [(0, self._word.parent()())]
-            while queue:
-                (v,w) = queue.pop()
-                length_w = w.length()
-                if length_w == n:
-                    yield w
-                if length_w < n:
-                    if self._transition_function[v] != {}:
-                        for ((i,j),u) in iteritems(self._transition_function[v]):
-                            if j is None:
-                                j = self.word().length()
-                            if j - i >= n - length_w:
-                                yield w*self.word()[i-1:i-1+n-length_w]
-                            else:
-                                queue.append((u,w*self.word()[i-1:j]))
+                            j = wlen
+                        if j - i >= n - l:
+                            yield w[i-l-1:i-l+n-1]
+                        else:
+                            queue.append((u,i,j, l+j-i+1))
         else:
-            raise TypeError("not an integer or None: %s" %s)
+            raise TypeError("not an integer or None: %s" % n)
+
+    def LZ_decomposition(self):
+        r"""
+        Return a list of index of the beginning of the block of the Lempel-Ziv
+        decomposition of ``self.word``
+
+        The *Lempel-Ziv decomposition* is the factorisation `u_1...u_k` of a
+        word `w=x_1...x_n` such that `u_i` is the longest prefix of `u_i...u_k`
+        that has an occurence starting before `u_i` or a letter if this prefix
+        is empty.
+
+        OUTPUT:
+
+        Return a list ``iB`` of index such that the blocks of the decomposition
+        are ``self.word()[iB[k]:iB[k+1]]``
+
+        EXAMPLES::
+
+            sage: w = Word('abababb')
+            sage: T = w.suffix_tree()
+            sage: T.LZ_decomposition()
+            [0, 1, 2, 6, 7]
+            sage: w = Word('abaababacabba')
+            sage: T = w.suffix_tree()
+            sage: T.LZ_decomposition()
+            [0, 1, 2, 3, 6, 8, 9, 11, 13]
+            sage: w = Word([0, 0, 0, 1, 1, 0, 1])
+            sage: T = w.suffix_tree()
+            sage: T.LZ_decomposition()
+            [0, 1, 3, 4, 5, 7]
+            sage: w = Word('0000100101')
+            sage: T = w.suffix_tree()
+            sage: T.LZ_decomposition()
+            [0, 1, 4, 5, 9, 10]
+        """
+        iB = [0]
+        i = 0
+        w = self.word()
+        while i < len(w):
+            l = 0
+            ((x, y), successor) = self._find_transition(0, w[i])
+            x = x-1
+            while x < i+l:
+                if y is None:
+                    l = len(w)-i
+                else:
+                    l += y-x
+                if i+l >= len(w):
+                    l = len(w)-i
+                    break
+                ((x, y), successor) = self._find_transition(successor, w[i+l])
+                x = x-1
+            i += max(1, l)
+            iB.append(i)
+        return iB
 
     #####
     # Miscellaneous methods
@@ -1308,7 +1361,7 @@ class ImplicitSuffixTree(SageObject):
             if len(label) == 1:
                 newtree.add_edge(u,v)
             else:
-                newtree.add_edge(u,new_node,label[0]);
+                newtree.add_edge(u,new_node,label[0])
                 for w in label[1:-1]:
                     newtree.add_edge(new_node,new_node+1,w)
                     new_node += 1
@@ -1347,4 +1400,3 @@ class ImplicitSuffixTree(SageObject):
                     d[new_node,w[-1:]] = v
                     new_node += 1
         return d
-

@@ -2,7 +2,7 @@
 Symbolic Integration
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Golam Mortuza Hossain <gmhossain@gmail.com>
 #       Copyright (C) 2010 Burcin Erocal <burcin@erocal.org>
 #
@@ -10,22 +10,22 @@ Symbolic Integration
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************`
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************`
 from __future__ import print_function
 
 from sage.symbolic.ring import SR, is_SymbolicVariable
-from sage.symbolic.function import BuiltinFunction, Function
+from sage.symbolic.function import BuiltinFunction
 
 ##################################################################
 #  Table of available integration routines
 ##################################################################
 
+import sage.symbolic.integration.external as external
+
 # Add new integration routines to the dictionary below. This will make them
 # accessible with the 'algorithm' keyword parameter of top level integrate().
 available_integrators = {}
-
-import sage.symbolic.integration.external as external
 available_integrators['maxima'] = external.maxima_integrator
 available_integrators['sympy'] = external.sympy_integrator
 available_integrators['mathematica_free'] = external.mma_free_integrator
@@ -37,6 +37,7 @@ available_integrators['giac'] = external.giac_integrator
 # Class implementing symbolic integration
 #
 ######################################################
+
 
 class IndefiniteIntegral(BuiltinFunction):
     def __init__(self):
@@ -79,14 +80,13 @@ class IndefiniteIntegral(BuiltinFunction):
         if not is_SymbolicVariable(x):
             if len(x.variables()) == 1:
                 nx = x.variables()[0]
-                f = f*x.diff(nx)
+                f = f * x.diff(nx)
                 x = nx
             else:
                 return None
 
         # we try all listed integration algorithms
         for integrator in self.integrators:
-            res = integrator(f, x)
             try:
                 return integrator(f, x)
             except NotImplementedError:
@@ -106,12 +106,12 @@ class IndefiniteIntegral(BuiltinFunction):
             0
         """
         if x.has(diff_param):
-            return f*x.derivative(diff_param)
+            return f * x.derivative(diff_param)
         else:
             return f.derivative(diff_param).integral(x)
 
     def _print_latex_(self, f, x):
-        """
+        r"""
         EXAMPLES::
 
             sage: from sage.symbolic.integration.integral import indefinite_integral
@@ -126,18 +126,20 @@ class IndefiniteIntegral(BuiltinFunction):
         """
         from sage.misc.latex import latex
         if not is_SymbolicVariable(x):
-            dx_str = "{d \\left(%s\\right)}"%(latex(x))
+            dx_str = "{d \\left(%s\\right)}" % latex(x)
         else:
-            dx_str = "{d %s}"%(latex(x))
+            dx_str = "{d %s}" % latex(x)
 
-        return "\\int %s\\,%s"%(latex(f), dx_str)
+        return "\\int %s\\,%s" % (latex(f), dx_str)
+
 
 indefinite_integral = IndefiniteIntegral()
+
 
 class DefiniteIntegral(BuiltinFunction):
     def __init__(self):
         """
-        Symbolic function representing a definite integral.
+        The symbolic function representing a definite integral.
 
         EXAMPLES::
 
@@ -156,7 +158,7 @@ class DefiniteIntegral(BuiltinFunction):
 
     def _eval_(self, f, x, a, b):
         """
-        Returns the results of symbolic evaluation of the integral
+        Return the results of symbolic evaluation of the integral
 
         EXAMPLES::
 
@@ -168,12 +170,12 @@ class DefiniteIntegral(BuiltinFunction):
         if not is_SymbolicVariable(x):
             if len(x.variables()) == 1:
                 nx = x.variables()[0]
-                f = f*x.diff(nx)
+                f = f * x.diff(nx)
                 x = nx
             else:
                 return None
 
-        args = (f,x,a,b)
+        args = (f, x, a, b)
 
         # we try all listed integration algorithms
         for integrator in self.integrators:
@@ -185,7 +187,7 @@ class DefiniteIntegral(BuiltinFunction):
 
     def _evalf_(self, f, x, a, b, parent=None, algorithm=None):
         """
-        Returns numerical approximation of the integral
+        Return a numerical approximation of the integral
 
         EXAMPLES::
 
@@ -209,7 +211,7 @@ class DefiniteIntegral(BuiltinFunction):
 
     def _tderivative_(self, f, x, a, b, diff_param=None):
         """
-        Returns derivative of symbolic integration
+        Return the derivative of symbolic integration
 
         EXAMPLES::
 
@@ -227,13 +229,13 @@ class DefiniteIntegral(BuiltinFunction):
             # integration variable != differentiation variable
             ans = definite_integral(f.diff(diff_param), x, a, b)
         else:
-            ans = SR(0)
-        return ans + f.subs(x==b)*b.diff(diff_param) \
-                    - f.subs(x==a)*a.diff(diff_param)
+            ans = SR.zero()
+        return (ans + f.subs(x == b) * b.diff(diff_param)
+                    - f.subs(x == a) * a.diff(diff_param))
 
     def _print_latex_(self, f, x, a, b):
         r"""
-        Returns LaTeX expression for integration of a symbolic function.
+        Convert this integral to LaTeX notation
 
         EXAMPLES::
 
@@ -249,29 +251,49 @@ class DefiniteIntegral(BuiltinFunction):
         """
         from sage.misc.latex import latex
         if not is_SymbolicVariable(x):
-            dx_str = "{d \\left(%s\\right)}"%(latex(x))
+            dx_str = "{d \\left(%s\\right)}" % latex(x)
         else:
-            dx_str = "{d %s}"%(latex(x))
-        return "\\int_{%s}^{%s} %s\\,%s"%(latex(a), latex(b), latex(f), dx_str)
+            dx_str = "{d %s}" % latex(x)
+        return "\\int_{%s}^{%s} %s\\,%s" % (latex(a), latex(b),
+                                            latex(f), dx_str)
+
+    def _sympy_(self, f, x, a, b):
+        """
+        Convert this integral to the equivalent SymPy object
+
+        The resulting SymPy integral can be evaluated using ``doit()``.
+
+        EXAMPLES::
+
+            sage: integral(x, x, 0, 1, hold=True)._sympy_()
+            Integral(x, (x, 0, 1))
+            sage: _.doit()
+            1/2
+        """
+        from sympy.integrals import Integral
+        return Integral(f, (x, a, b))
+
 
 definite_integral = DefiniteIntegral()
 
 
-def _normalize_integral_input(f, v=None, a=None, b=None):
+def _normalize_integral_input(f, v, a=None, b=None):
     r"""
     Validate and return variable and endpoints for an integral.
 
     INPUT:
 
-    - ``f`` -- an expression to integrate;
+    - ``f`` -- an expression to integrate
 
-    - ``v`` -- a variable of integration or a triple;
+    - ``v`` -- a variable of integration or a triple
 
-    - ``a`` -- (optional) the left endpoint of integration;
+    - ``a`` -- (optional) the left endpoint of integration
 
-    - ``b`` -- (optional) the right endpoint of integration.
+    - ``b`` -- (optional) the right endpoint of integration
 
-    It is also possible to pass last three parameters in ``v`` as a triple.
+    It is also possible to pass the last three parameters in ``v`` as a triple.
+
+    If the input contains endpoints, both endpoints must be given.
 
     OUTPUT:
 
@@ -285,41 +307,39 @@ def _normalize_integral_input(f, v=None, a=None, b=None):
         (x^2, x, 0, 3)
         sage: _normalize_integral_input(x^2, [x, 0, 3], None, None)
         (x^2, x, 0, 3)
-        sage: _normalize_integral_input(x^2, [0, 3], None, None)
-        doctest:...: DeprecationWarning:
-        Variable of integration should be specified explicitly.
-        See http://trac.sagemath.org/12438 for details.
-        (x^2, x, 0, 3)
         sage: _normalize_integral_input(x^2, [x], None, None)
         (x^2, x, None, None)
+
+    TESTS::
+
+        sage: _normalize_integral_input(x^2, [0, 3], None, None)
+        Traceback (most recent call last):
+        ...
+        TypeError: invalid input [0, 3] - please use variable,
+        with or without two endpoints
+        sage: _normalize_integral_input(x^2, x, 0, None)
+        Traceback (most recent call last):
+        ...
+        TypeError: only one endpoint was given!
     """
     if isinstance(v, (list, tuple)) and a is None and b is None:
-        if len(v) == 1: # bare variable in a tuple
+        if len(v) == 1:  # bare variable in a tuple
             v = v[0]
-        elif len(v) == 2: # endpoints only
-            a, b = v
-            v = None
-        elif len(v) == 3: # variable and endpoints
+        elif len(v) == 3:  # variable and two endpoints
             v, a, b = v
         else:
-            raise ValueError("invalid input %s - please use variable, "
-                             "with or without two endpoints" % repr(v))
-    elif b is None and a is not None:
-        # two arguments, must be endpoints
-        v, a, b = None, v, a
-    if v is None:
-        from sage.misc.superseded import deprecation
-        deprecation(12438, "Variable of integration should be specified explicitly.")
-        v = f.default_variable()
-        if isinstance(f, Function):  # a bare function like sin
-            f = f(v)
+            raise TypeError("invalid input %s - please use variable, "
+                            "with or without two endpoints" % repr(v))
+
     if (a is None) ^ (b is None):
         raise TypeError('only one endpoint was given!')
+
     return f, v, a, b
+
 
 def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
     r"""
-    Returns the indefinite integral with respect to the variable
+    Return the indefinite integral with respect to the variable
     `v`, ignoring the constant of integration. Or, if endpoints
     `a` and `b` are specified, returns the definite
     integral over the interval `[a, b]`.
@@ -391,7 +411,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     The variable is required, but the endpoints are optional::
 
-        sage: y=var('y')
+        sage: y = var('y')
         sage: integral(sin(x), x)
         -cos(x)
         sage: integral(sin(x), y)
@@ -494,7 +514,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: _ = var('x, y, z')  # optional - internet
         sage: f = sin(x^2) + y^z   # optional - internet
         sage: f.integrate(x, algorithm="mathematica_free")   # optional - internet
-        x*y^z + sqrt(1/2)*sqrt(pi)*fresnels(sqrt(2)*x/sqrt(pi))
+        x*y^z + sqrt(1/2)*sqrt(pi)*fresnel_sin(sqrt(2)*x/sqrt(pi))
 
     We can also use Sympy::
 
@@ -506,7 +526,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: (x^y - z).integrate(y)
         -y*z + x^y/log(x)
         sage: (x^y - z).integrate(y, algorithm="sympy")
-        -y*z + cases(((log(x) == 0, y), (1, x^y/log(x))))
+        -y*z + cases(((log(x) != 0, x^y/log(x)), (1, y)))
 
     We integrate the above function in Maple now::
 
@@ -642,7 +662,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: integrate(x^2,(x,1,2,3))
         Traceback (most recent call last):
         ...
-        ValueError: invalid input (x, 1, 2, 3) - please use variable, with or without two endpoints
+        TypeError: invalid input (x, 1, 2, 3) - please use variable, with or without two endpoints
 
     Note that this used to be the test, but it is actually divergent
     (Maxima currently asks for assumptions on theta)::
@@ -669,14 +689,6 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         sage: exp(-x*i).integral(x,0,1)
         I*e^(-I) - I
-
-    Test deprecation warning when variable is not specified::
-
-        sage: x.integral()
-        doctest:...: DeprecationWarning:
-        Variable of integration should be specified explicitly.
-        See http://trac.sagemath.org/12438 for details.
-        1/2*x^2
 
     Test that :trac:`8729` is fixed::
 
@@ -803,5 +815,6 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         return indefinite_integral(expression, v, hold=hold)
     else:
         return definite_integral(expression, v, a, b, hold=hold)
+
 
 integral = integrate

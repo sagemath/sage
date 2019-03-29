@@ -102,7 +102,8 @@ cdef class ntl_ZZ(object):
         """
         Return the string representation of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ntl.ZZ(5).__repr__()
             '5'
         """
@@ -244,7 +245,8 @@ cdef class ntl_ZZ(object):
         """
         Return self as an int.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ntl.ZZ(22).__int__()
             22
             sage: type(ntl.ZZ(22).__int__())
@@ -252,8 +254,10 @@ cdef class ntl_ZZ(object):
 
             sage: ntl.ZZ(10^30).__int__()
             1000000000000000000000000000000L
-            sage: type(ntl.ZZ(10^30).__int__())
+            sage: type(ntl.ZZ(10^30).__int__())  # py2
             <type 'long'>
+            sage: type(ntl.ZZ(10^30).__int__())  # py3
+            <class 'int'>
         """
         return int(self._integer_())
 
@@ -308,7 +312,8 @@ cdef class ntl_ZZ(object):
         r"""
         Sets the value from a sage int.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: n=ntl.ZZ(2983)
             sage: n
             2983
@@ -335,7 +340,7 @@ cdef class ntl_ZZ(object):
 
     def valuation(self, ntl_ZZ prime):
         """
-        Uses code in ``ntlwrap.cpp`` to compute the number of times
+        Uses code in ``ntlwrap_impl.h`` to compute the number of times
         prime divides self.
 
         EXAMPLES::
@@ -364,7 +369,7 @@ cdef class ntl_ZZ(object):
 
     def val_unit(self, ntl_ZZ prime):
         """
-        Uses code in ``ntlwrap.cpp`` to compute p-adic valuation and
+        Uses code in ``ntlwrap_impl.h`` to compute p-adic valuation and
         unit of self.
 
         EXAMPLES::
@@ -392,7 +397,8 @@ def unpickle_class_value(cls, x):
     """
     Here for unpickling.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: sage.libs.ntl.ntl_ZZ.unpickle_class_value(ntl.ZZ, 3)
         3
         sage: type(sage.libs.ntl.ntl_ZZ.unpickle_class_value(ntl.ZZ, 3))
@@ -404,7 +410,8 @@ def unpickle_class_args(cls, x):
     """
     Here for unpickling.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: sage.libs.ntl.ntl_ZZ.unpickle_class_args(ntl.ZZ, [3])
         3
         sage: type(sage.libs.ntl.ntl_ZZ.unpickle_class_args(ntl.ZZ, [3]))

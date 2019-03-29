@@ -1,5 +1,5 @@
 """
-Klyachko Bundles and Sheaves.
+Klyachko bundles and sheaves
 
 Klyachko bundles are torus-equivariant bundles on toric
 varieties. That is, the action of the maximal torus on the toric
@@ -57,12 +57,10 @@ from __future__ import print_function
 
 from sage.structure.all import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
-from sage.rings.all import QQ, ZZ
-from sage.misc.all import uniq, cached_method
-from sage.matrix.constructor import vector, matrix, block_matrix, zero_matrix
-from sage.geometry.cone import is_Cone, IntegralRayCollection
-
-from sage.modules.filtered_vector_space import FilteredVectorSpace, is_FilteredVectorSpace
+from sage.rings.all import ZZ
+from sage.misc.all import cached_method
+from sage.matrix.constructor import vector, block_matrix, zero_matrix
+from sage.geometry.cone import is_Cone
 from sage.modules.multi_filtered_vector_space import MultiFilteredVectorSpace
 
 
@@ -773,8 +771,8 @@ class KlyachkoBundle_class(SageObject):
         lx = self.variety()
         rx = other.variety()
         if lx != rx:
-            return richcmp_not_equal(lr, rx, op)
-        
+            return richcmp_not_equal(lx, rx, op)
+
         return richcmp(self._filt, other._filt, op)
 
     def is_isomorphic(self, other):
@@ -864,7 +862,7 @@ class KlyachkoBundle_class(SageObject):
     __mul__ = tensor_product
 
     def exterior_power(self, n):
-        """
+        r"""
         Return the `n`-th exterior power.
 
         INPUT:
@@ -948,7 +946,7 @@ class KlyachkoBundle_class(SageObject):
 
         OUTPUT:
 
-        A new Klyachko bundle with randomly perturbed moduly. In
+        A new Klyachko bundle with randomly perturbed moduli. In
         particular, the same Chern classes.
 
         EXAMPLES::

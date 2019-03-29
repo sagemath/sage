@@ -56,4 +56,12 @@ Utilities
    sage/rings/infinity
    sage/rings/numbers_abc
 
+Derivation
+----------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/rings/derivation
+
 .. include:: ../footer.txt

@@ -15,7 +15,7 @@ from sage.combinat.subset import Subsets
 
 
 class PairwiseCompatibleSubsets(SearchForest):
-    """
+    r"""
     The set of all subsets of ``ambient`` whose elements satisfy
     ``predicate`` pairwise
 
@@ -31,7 +31,7 @@ class PairwiseCompatibleSubsets(SearchForest):
 
     .. warning:: The current name is suboptimal and is subject to
        change. Suggestions for a good name, and a good user entry
-       point are welcome. Maybe ``Subsets(..., independant = predicate)``.
+       point are welcome. Maybe ``Subsets(..., independent = predicate)``.
 
     EXAMPLES:
 

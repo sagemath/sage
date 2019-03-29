@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 The Sage ZMQ Kernel
 
@@ -66,8 +67,8 @@ class SageKernel(IPythonKernel):
 
             sage: from sage.repl.ipython_kernel.kernel import SageKernel
             sage: sk = SageKernel.__new__(SageKernel)
-            sage: sk.banner
-            '...SageMath version...'
+            sage: print(sk.banner)
+            ┌...SageMath version...
         """
         from sage.misc.banner import banner_text
         return banner_text()
@@ -157,7 +158,7 @@ class SageKernel(IPythonKernel):
             },
             {
                 'text': "Matplotlib",
-                'url': "http://matplotlib.org/contents.html",
+                'url': "https://matplotlib.org/contents.html",
             },
             {
                 'text': "Markdown",

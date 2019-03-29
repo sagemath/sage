@@ -211,9 +211,10 @@ class FiniteMonoids(CategoryWithAxiom):
                         continue
                     try:
                         kSrad.retract(kS(m) - kS(n))
-                        res.append((m, n))
-                    except:
+                    except ValueError:
                         pass
+                    else:
+                        res.append((m, n))
             return res
 
     class ElementMethods:

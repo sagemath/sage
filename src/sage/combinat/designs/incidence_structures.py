@@ -44,12 +44,10 @@ import six
 from six import itervalues
 from six.moves import range
 
-from sage.misc.cachefunc import cached_method
-
-from sage.rings.all import ZZ
 from sage.rings.integer import Integer
 from sage.misc.latex import latex
 from sage.sets.set import Set
+
 
 class IncidenceStructure(object):
     r"""
@@ -72,7 +70,7 @@ class IncidenceStructure(object):
           defines the ground set as the union of the blocks::
 
               sage: H = IncidenceStructure([['a','b','c'],['c','d','e']])
-              sage: H.ground_set()
+              sage: sorted(H.ground_set())
               ['a', 'b', 'c', 'd', 'e']
 
     - ``blocks`` -- (i.e. edges, i.e. sets) the blocks defining the incidence
@@ -170,9 +168,9 @@ class IncidenceStructure(object):
             sage: blocks = [[e0,e1,e2],[e0,e1],[e2,e4]]
             sage: I = IncidenceStructure(V, blocks)
             sage: type(I.ground_set()[0])
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <... 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: type(I.blocks()[0][0])
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <... 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
 
         TESTS::
 
@@ -203,15 +201,15 @@ class IncidenceStructure(object):
             self._blocks = sorted(M.nonzero_positions_in_column(i) for i in range(M.ncols()))
 
         else:
-            if isinstance(points, (int,Integer)):
+            if isinstance(points, (int, Integer)):
                 self._points = list(range(points))
                 self._point_to_index = None
             else:
-                self._points = sorted(points)
-                if self._points == list(range(len(points))) and all(isinstance(x,(int,Integer)) for x in self._points):
+                self._points = list(points)
+                if self._points == list(range(len(points))) and all(isinstance(x, (int, Integer)) for x in self._points):
                     self._point_to_index = None
                 else:
-                    self._point_to_index = {e:i for i,e in enumerate(self._points)}
+                    self._point_to_index = {e: i for i, e in enumerate(self._points)}
 
             if check:
                 for block in blocks:
@@ -1105,8 +1103,8 @@ class IncidenceStructure(object):
             sizes = PositiveIntegers()
         elif sizes in PositiveIntegers():
             sizes = (sizes,)
-        V = map(Set,self)
-        return Graph([V,lambda x,y: len(x&y) in sizes],loops=False)
+        V = [Set(v)  for v in self]
+        return Graph([V, lambda x,y: len(x & y) in sizes], loops=False)
 
     def incidence_matrix(self):
         r"""
@@ -1403,8 +1401,9 @@ class IncidenceStructure(object):
 
         EXAMPLES::
 
-            sage; IncidenceStructure([[1,2],[3,"A"],[2,3]]).packing()
-            [[1, 2], [3, 'A']]
+            sage: P = IncidenceStructure([[1,2],[3,4],[2,3]]).packing()
+            sage: sorted(sorted(b) for b in P)
+            [[1, 2], [3, 4]]
             sage: len(designs.steiner_triple_system(9).packing())
             3
         """
@@ -1412,13 +1411,13 @@ class IncidenceStructure(object):
 
         # List of blocks containing a given point x
         d = [[] for x in self._points]
-        for i,B in enumerate(self._blocks):
+        for i, B in enumerate(self._blocks):
             for x in B:
                 d[x].append(i)
 
         p = MixedIntegerLinearProgram(solver=solver)
         b = p.new_variable(binary=True)
-        for x,L in enumerate(d): # Set of disjoint blocks
+        for x, L in enumerate(d):  # Set of disjoint blocks
             p.add_constraint(p.sum([b[i] for i in L]) <= 1)
 
         # Maximum number of blocks
@@ -1427,7 +1426,7 @@ class IncidenceStructure(object):
         p.solve(log=verbose)
 
         return [[self._points[x] for x in self._blocks[i]]
-                for i,v in six.iteritems(p.get_values(b)) if v]
+                for i, v in six.iteritems(p.get_values(b)) if v]
 
     def is_t_design(self, t=None, v=None, k=None, l=None, return_parameters=False):
         r"""
@@ -1752,7 +1751,7 @@ class IncidenceStructure(object):
             sage: print(D.dual(algorithm="gap"))       # optional - gap_packages
             Incidence structure with 3 points and 4 blocks
             sage: blocks = [[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]]
-            sage: BD = IncidenceStructure(7, blocks, name="FanoPlane");
+            sage: BD = IncidenceStructure(7, blocks, name="FanoPlane")
             sage: BD
             Incidence structure with 7 points and 7 blocks
             sage: print(BD.dual(algorithm="gap"))         # optional - gap_packages
@@ -2135,14 +2134,15 @@ class IncidenceStructure(object):
         from sage.graphs.graph import Graph
 
         g = Graph()
-        for s in map(Set,self.blocks()):
+        for s in map(Set, self.blocks()):
             for x in s:
-                g.add_edge(s,x)
+                g.add_edge((0, s), (1, x))
 
         _ = g.plot(iterations = 50000,save_pos=True)
 
         # The values are rounded as TikZ does not like accuracy.
-        return {k:(round(x,3),round(y,3)) for k,(x,y) in g.get_pos().items()}
+        return {k[1]: (round(x, 3), round(y, 3))
+                for k, (x, y) in g.get_pos().items()}
 
     def _latex_(self):
         r"""
@@ -2162,7 +2162,6 @@ class IncidenceStructure(object):
             sage: H = Hypergraph(sets)
             sage: view(H) # not tested
         """
-        from sage.rings.integer import Integer
         from sage.functions.trig import arctan2
 
         from sage.misc.misc import warn

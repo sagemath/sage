@@ -238,7 +238,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: S.isotype_generating_series().coefficients(5) #indirect
             [1, t, t^2 + t, t^3 + t^2 + t, t^4 + t^3 + 2*t^2 + t]
 
-        We do the same thing with set partitions weighed by the number of
+        We do the same thing with set partitions weighted by the number of
         blocks.
 
         ::

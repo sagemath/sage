@@ -19,7 +19,8 @@ zz_pContextDict = {}
 cdef class ntl_zz_pContext_class(object):
     def __init__(self, long v):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             # You can construct contexts manually.
             sage: c = ntl.zz_pContext(11)
             sage: n1 = ntl.zz_p(12,c)
@@ -58,7 +59,8 @@ cdef class ntl_zz_pContext_class(object):
         """
         Print the modulus for self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c1 = ntl.zz_pContext(36)
             sage: c1.modulus()
             36
@@ -69,7 +71,8 @@ cdef class ntl_zz_pContext_class(object):
         """
         Restore a zz_pContext.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.zz_pContext(5)
             sage: m = ntl.zz_p(4,7)
             sage: c.restore()
@@ -80,7 +83,8 @@ cdef class ntl_zz_pContext_class(object):
         """
         Actual code for the above.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: n = ntl.zz_p(3,5)
             sage: m = ntl.zz_p(4,7)
             sage: n*n ## indirect doctest
@@ -93,7 +97,8 @@ def ntl_zz_pContext( v ):
     """
     Creation function for a zz_p context.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: f = ntl.zz_pContext(26)
         sage: f = ntl.zz_pContext(10^100)
         Traceback (most recent call last):

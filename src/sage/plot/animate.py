@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Animated plots
 
@@ -43,8 +44,6 @@ Animate using FFmpeg_ instead of ImageMagick::
 Animate as an APNG_::
 
     sage: a.apng()  # long time
-    doctest:...: DeprecationWarning: use tmp_filename instead
-    See http://trac.sagemath.org/17234 for details.
 
 An animated :class:`sage.plot.graphics.GraphicsArray` of rotating ellipses::
 
@@ -118,9 +117,11 @@ import os
 import struct
 import zlib
 
+import six
+
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
-from sage.misc.temporary_file import tmp_dir, tmp_filename, graphics_filename
+from sage.misc.temporary_file import tmp_dir, tmp_filename
 from . import plot
 import sage.misc.misc
 import sage.misc.viewer
@@ -559,7 +560,7 @@ class Animation(WithEqualityById, SageObject):
             sage: td = tmp_dir()
             sage: a.gif()              # not tested
             sage: a.gif(savefile=td + 'my_animation.gif', delay=35, iterations=3)  # optional -- ImageMagick
-            sage: with open(td + 'my_animation.gif', 'rb') as f: print('\x21\xf9\x04\x08\x23\x00') in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'my_animation.gif', 'rb') as f: print('\x21\xf9\x04\x08\x23\x00' in f.read())  # optional -- ImageMagick
             True
             sage: a.gif(savefile=td + 'my_animation.gif', show_path=True) # optional -- ImageMagick
             Animation saved to .../my_animation.gif.
@@ -605,7 +606,7 @@ www.ffmpeg.org, or use 'convert' to produce gifs instead."""
                 raise OSError(msg)
         else:
             if not savefile:
-                savefile = graphics_filename(ext='.gif')
+                savefile = tmp_filename(ext='.gif')
             if not savefile.endswith('.gif'):
                 savefile += '.gif'
             savefile = os.path.abspath(savefile)
@@ -876,8 +877,6 @@ See www.imagemagick.org and www.ffmpeg.org for more information."""
         TESTS::
 
             sage: a.ffmpeg(output_format='gif',delay=30,iterations=5)     # optional -- ffmpeg
-            doctest:...: DeprecationWarning: use tmp_filename instead
-            See http://trac.sagemath.org/17234 for details.
         """
         if not self._have_ffmpeg():
             msg = """Error: ffmpeg does not appear to be installed. Saving an animation to
@@ -891,7 +890,7 @@ please install it and try again."""
                 else:
                     if output_format[0] != '.':
                         output_format = '.'+output_format
-                savefile = graphics_filename(ext=output_format)
+                savefile = tmp_filename(ext=output_format)
             else:
                 if output_format is None:
                     suffix = os.path.splitext(savefile)[1]
@@ -996,7 +995,7 @@ please install it and try again."""
         """
         pngdir = self.png()
         if savefile is None:
-            savefile = graphics_filename('.png')
+            savefile = tmp_filename('.png')
         with open(savefile, "wb") as out:
             apng = APngAssembler(
                 out, len(self),
@@ -1054,19 +1053,19 @@ please install it and try again."""
         GIF image (see :trac:`18176`)::
 
             sage: a.save(td + 'wave.gif')   # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xf9\x04\x08\x14\x00') in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xf9\x04\x08\x14\x00' in f.read())  # optional -- ImageMagick
             True
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00') in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())  # optional -- ImageMagick
             True
             sage: a.save(td + 'wave.gif', delay=35)   # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xf9\x04\x08\x14\x00') in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xf9\x04\x08\x14\x00' in f.read())  # optional -- ImageMagick
             False
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xf9\x04\x08\x23\x00') in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xf9\x04\x08\x23\x00' in f.read())  # optional -- ImageMagick
             True
             sage: a.save(td + 'wave.gif', iterations=3)   # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00') in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())  # optional -- ImageMagick
             False
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xff\x0bNETSCAPE2.0\x03\x01\x03\x00\x00') in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xff\x0bNETSCAPE2.0\x03\x01\x03\x00\x00' in f.read())  # optional -- ImageMagick
             True
         """
         if filename is None:
@@ -1170,8 +1169,8 @@ class APngAssembler(object):
         TESTS::
 
             sage: from sage.plot.animate import APngAssembler
-            sage: from six import StringIO
-            sage: buf = StringIO()
+            sage: from io import BytesIO
+            sage: buf = BytesIO()
             sage: apng = APngAssembler(buf, 2)
             sage: fn = APngAssembler._testData("input1", True)
             sage: apng.add_frame(fn, delay=0x567, delay_denominator=0x1234)
@@ -1220,8 +1219,8 @@ class APngAssembler(object):
         TESTS::
 
             sage: from sage.plot.animate import APngAssembler
-            sage: from six import StringIO
-            sage: buf = StringIO()
+            sage: from io import BytesIO
+            sage: buf = BytesIO()
             sage: apng = APngAssembler(buf, 1)
             sage: fn = APngAssembler._testData("input1", True)
             sage: apng.set_default(fn)
@@ -1252,25 +1251,25 @@ class APngAssembler(object):
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_add_png", reads=False)
             enter _add_png('...png')
-              write _current_chunk = ('\x00\x00\x00\r', 'IHDR', '\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', '\xb8\x1f9\xc6')
+              write _current_chunk = (...'\x00\x00\x00\r', ...'IHDR', ...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', ...'\xb8\x1f9\xc6')
               call _copy() -> None
-              call _first_IHDR('\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00') -> None
-              write _current_chunk = ('\x00\x00\x00\x04', 'gAMA', '\x00\x01\x86\xa0', '1\xe8\x96_')
+              call _first_IHDR(...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00') -> None
+              write _current_chunk = (...'\x00\x00\x00\x04', ...'gAMA', ...'\x00\x01\x86\xa0', ...'1\xe8\x96_')
               call _copy() -> None
-              write _current_chunk = ('\x00\x00\x00\x07', 'tIME', '\x07\xde\x06\x1b\x0b&$', '\x1f0z\xd5')
-              write _current_chunk = ('\x00\x00\x00\x08', 'IDAT', 'img1data', '\xce\x8aI\x99')
-              call _first_IDAT('img1data') -> None
-              write _current_chunk = ('\x00\x00\x00\x00', 'IEND', '', '\xaeB`\x82')
+              write _current_chunk = (...'\x00\x00\x00\x07', ...'tIME', ...'\x07\xde\x06\x1b\x0b&$', ...'\x1f0z\xd5')
+              write _current_chunk = (...'\x00\x00\x00\x08', ...'IDAT', ...'img1data', ...'\xce\x8aI\x99')
+              call _first_IDAT(...'img1data') -> None
+              write _current_chunk = (...'\x00\x00\x00\x00', ...'IEND', ...'', ...'\xaeB`\x82')
               write _first = False
             exit _add_png -> None
             enter _add_png('...png')
-              write _current_chunk = ('\x00\x00\x00\r', 'IHDR', '\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', '\xb8\x1f9\xc6')
-              write _current_chunk = ('\x00\x00\x00\x04', 'gAMA', '\x00\x01\x86\xa0', '1\xe8\x96_')
-              write _current_chunk = ('\x00\x00\x00\x04', 'IDAT', 'img2', '\x0ei\xab\x1d')
-              call _next_IDAT('img2') -> None
-              write _current_chunk = ('\x00\x00\x00\x04', 'IDAT', 'data', 'f\x94\xcbx')
-              call _next_IDAT('data') -> None
-              write _current_chunk = ('\x00\x00\x00\x00', 'IEND', '', '\xaeB`\x82')
+              write _current_chunk = (...'\x00\x00\x00\r', ...'IHDR', ...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', ...'\xb8\x1f9\xc6')
+              write _current_chunk = (...'\x00\x00\x00\x04', ...'gAMA', ...'\x00\x01\x86\xa0', ...'1\xe8\x96_')
+              write _current_chunk = (...'\x00\x00\x00\x04', ...'IDAT', ...'img2', ...'\x0ei\xab\x1d')
+              call _next_IDAT(...'img2') -> None
+              write _current_chunk = (...'\x00\x00\x00\x04', ...'IDAT', ...'data', ...'f\x94\xcbx')
+              call _next_IDAT(...'data') -> None
+              write _current_chunk = (...'\x00\x00\x00\x00', ...'IEND', ...'', ...'\xaeB`\x82')
               write _first = False
             exit _add_png -> None
         """
@@ -1310,15 +1309,15 @@ class APngAssembler(object):
         TESTS::
 
             sage: from sage.plot.animate import APngAssembler
-            sage: from six import StringIO
-            sage: buf = StringIO()
+            sage: from io import BytesIO
+            sage: buf = BytesIO()
             sage: apng = APngAssembler(buf, 1)
-            sage: apng._seqno()
-            '\x00\x00\x00\x00'
-            sage: apng._seqno()
-            '\x00\x00\x00\x01'
-            sage: apng._seqno()
-            '\x00\x00\x00\x02'
+            sage: apng._seqno() == b'\x00\x00\x00\x00'
+            True
+            sage: apng._seqno() == b'\x00\x00\x00\x01'
+            True
+            sage: apng._seqno() == b'\x00\x00\x00\x02'
+            True
         """
         self._last_seqno += 1
         return struct.pack(">L", self._last_seqno)
@@ -1331,7 +1330,7 @@ class APngAssembler(object):
 
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_first_IHDR")
-            enter _first_IHDR('\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00')
+            enter _first_IHDR(...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00')
               write width = 3
               write height = 2
             exit _first_IHDR -> None
@@ -1348,7 +1347,7 @@ class APngAssembler(object):
 
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_first_IDAT")
-            enter _first_IDAT('img1data')
+            enter _first_IDAT(...'img1data')
               call _actl() -> None
               call _fctl() -> None
               call _copy() -> None
@@ -1366,15 +1365,15 @@ class APngAssembler(object):
 
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_next_IDAT")
-            enter _next_IDAT('img2')
+            enter _next_IDAT(...'img2')
               call _fctl() -> None
-              call _seqno() -> '\x00\x00\x00\x02'
-              call _chunk('fdAT', '\x00\x00\x00\x02img2') -> None
+              call _seqno() -> ...'\x00\x00\x00\x02'
+              call _chunk(...'fdAT', ...'\x00\x00\x00\x02img2') -> None
             exit _next_IDAT -> None
-            enter _next_IDAT('data')
+            enter _next_IDAT(...'data')
               call _fctl() -> None
-              call _seqno() -> '\x00\x00\x00\x03'
-              call _chunk('fdAT', '\x00\x00\x00\x03data') -> None
+              call _seqno() -> ...'\x00\x00\x00\x03'
+              call _chunk(...'fdAT', ...'\x00\x00\x00\x03data') -> None
             exit _next_IDAT -> None
         """
         self._fctl()
@@ -1393,16 +1392,16 @@ class APngAssembler(object):
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_copy")
             enter _copy()
-              read _current_chunk = ('\x00\x00\x00\r', 'IHDR', '\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', '\xb8\x1f9\xc6')
-              read out = <StringIO.StringIO instance at ...
-              read out = <StringIO.StringIO instance at ...
-              read out = <StringIO.StringIO instance at ...
-              read out = <StringIO.StringIO instance at ...
+              read _current_chunk = (...'\x00\x00\x00\r', ...'IHDR', ...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', ...'\xb8\x1f9\xc6')
+              read out = <_io.BytesIO object at ...
+              read out = <_io.BytesIO object at ...
+              read out = <_io.BytesIO object at ...
+              read out = <_io.BytesIO object at ...
             exit _copy -> None
             enter _copy()
-              read _current_chunk = ('\x00\x00\x00\x04', 'gAMA', '\x00\x01\x86\xa0', '1\xe8\x96_')
+              read _current_chunk = (...'\x00\x00\x00\x04', ...'gAMA', ...'\x00\x01\x86\xa0', ...'1\xe8\x96_')
             ...
-              read _current_chunk = ('\x00\x00\x00\x08', 'IDAT', 'img1data', '\xce\x8aI\x99')
+              read _current_chunk = (...'\x00\x00\x00\x08', ...'IDAT', ...'img1data', ...'\xce\x8aI\x99')
             ...
             exit _copy -> None
         """
@@ -1421,7 +1420,7 @@ class APngAssembler(object):
               read _actl_written = False
               read num_frames = 2
               read num_plays = 0
-              call _chunk('acTL', '\x00\x00\x00\x02\x00\x00\x00\x00') -> None
+              call _chunk(...'acTL', ...'\x00\x00\x00\x02\x00\x00\x00\x00') -> None
               write _actl_written = True
             exit _actl -> None
         """
@@ -1445,8 +1444,8 @@ class APngAssembler(object):
               read height = 2
               read delay_numerator = 1383
               read delay_denominator = 4660
-              call _seqno() -> '\x00\x00\x00\x00'
-              call _chunk('fcTL', '\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x05g\x124\x01\x00') -> None
+              call _seqno() -> ...'\x00\x00\x00\x00'
+              call _chunk(...'fcTL', ...'\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x05g\x124\x01\x00') -> None
               write _fctl_written = True
             exit _fctl -> None
             enter _fctl()
@@ -1455,8 +1454,8 @@ class APngAssembler(object):
               read height = 2
               read delay_numerator = 200
               read delay_denominator = 100
-              call _seqno() -> '\x00\x00\x00\x01'
-              call _chunk('fcTL', '\x00\x00\x00\x01\x00\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc8\x00d\x01\x00') -> None
+              call _seqno() -> ...'\x00\x00\x00\x01'
+              call _chunk(...'fcTL', ...'\x00\x00\x00\x01\x00\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc8\x00d\x01\x00') -> None
               write _fctl_written = True
             exit _fctl -> None
             enter _fctl()
@@ -1480,14 +1479,14 @@ class APngAssembler(object):
         TESTS::
 
             sage: from sage.plot.animate import APngAssembler
-            sage: from six import StringIO
-            sage: buf = StringIO()
+            sage: from io import BytesIO
+            sage: buf = BytesIO()
             sage: apng = APngAssembler(buf, 1)
-            sage: buf.getvalue()
-            '\x89PNG\r\n\x1a\n'
-            sage: apng._chunk("abcd", "efgh")
-            sage: buf.getvalue()
-            '\x89PNG\r\n\x1a\n\x00\x00\x00\x04abcdefgh\xae\xef*P'
+            sage: buf.getvalue() == b'\x89PNG\r\n\x1a\n'
+            True
+            sage: apng._chunk(b"abcd", b"efgh")
+            sage: buf.getvalue() == b'\x89PNG\r\n\x1a\n\x00\x00\x00\x04abcdefgh\xae\xef*P'
+            True
         """
         ccrc = struct.pack(">L", zlib.crc32(ctype + cdata) & 0xffffffff)
         clen = struct.pack(">L", len(cdata))
@@ -1527,12 +1526,15 @@ class APngAssembler(object):
                 b.append(int(h[:2], 16))
                 h = h[2:]
             elif h[0] == '.': # for chunk type
-                b.extend(ord(h[i]) for i in range(1,5))
+                b.extend(ord(h[i]) for i in range(1, 5))
                 h = h[5:]
             else: # for PNG magic
                 b.append(ord(h[0]))
                 h = h[1:]
-        return ''.join(map(chr,b))
+        if six.PY2:
+            return ''.join(map(chr, b))
+        else:
+            return bytes(b)
 
     @classmethod
     def _testData(cls, name, asFile):
@@ -1549,8 +1551,8 @@ class APngAssembler(object):
         EXAMPLES::
 
             sage: from sage.plot.animate import APngAssembler
-            sage: APngAssembler._testData("input1", False)
-            '\x89PNG\r\n\x1a\n\x00...'
+            sage: APngAssembler._testData("input1", False).startswith(b'\x89PNG')
+            True
             sage: APngAssembler._testData("input2", True)
             '...png'
         """
@@ -1623,8 +1625,8 @@ class APngAssembler(object):
             sage: APngAssembler._testCase1()
         """
         from sage.doctest.fixtures import trace_method
-        from six import StringIO
-        buf = StringIO()
+        from io import BytesIO
+        buf = BytesIO()
         apng = cls(buf, 2)
         if methodToTrace is not None:
             trace_method(apng, methodToTrace, **kwds)

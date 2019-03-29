@@ -1,12 +1,12 @@
 """
 Hyperelliptic curves of genus 2 over a general ring
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import absolute_import
 
 from . import hyperelliptic_generic
 from . import jacobian_g2
@@ -69,13 +69,12 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
             pass
         if not self.is_odd_degree():
             raise TypeError("Kummer embedding not determined for even degree model curves.")
-        J = self.jacobian()
-        K = J.kummer_surface()
+        self.jacobian().kummer_surface()
         return self._kummer_morphism
 
     def clebsch_invariants(self):
         r"""
-        Return the Clebsch invariants `(A, B, C, D)` of Mestre, p 317, [M]_.
+        Return the Clebsch invariants `(A, B, C, D)` of Mestre, p 317, [MJ1991]_.
 
         .. SEEALSO::
 
@@ -111,7 +110,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def igusa_clebsch_invariants(self):
         r"""
-        Return the Igusa-Clebsch invariants `I_2, I_4, I_6, I_{10}` of Igusa and Clebsch [I]_.
+        Return the Igusa-Clebsch invariants `I_2, I_4, I_6, I_{10}` of Igusa and Clebsch [IJ1960]_.
 
         .. SEEALSO::
 
@@ -147,7 +146,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def absolute_igusa_invariants_wamelen(self):
         r"""
-        Return the three absolute Igusa invariants used by van Wamelen [W]_.
+        Return the three absolute Igusa invariants used by van Wamelen [Wam1999]_.
 
         EXAMPLES::
 
@@ -162,7 +161,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def absolute_igusa_invariants_kohel(self):
         r"""
-        Return the three absolute Igusa invariants used by Kohel [K]_.
+        Return the three absolute Igusa invariants used by Kohel [KohECHIDNA]_.
 
         .. SEEALSO::
 
@@ -183,7 +182,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def clebsch_invariants(self):
         r"""
-        Return the Clebsch invariants `(A, B, C, D)` of Mestre, p 317, [M]_.
+        Return the Clebsch invariants `(A, B, C, D)` of Mestre, p 317, [MJ1991]_.
 
         .. SEEALSO::
 
@@ -219,7 +218,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def igusa_clebsch_invariants(self):
         r"""
-        Return the Igusa-Clebsch invariants `I_2, I_4, I_6, I_{10}` of Igusa and Clebsch [I]_.
+        Return the Igusa-Clebsch invariants `I_2, I_4, I_6, I_{10}` of Igusa and Clebsch [IJ1960]_.
 
         .. SEEALSO::
 
@@ -256,7 +255,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def absolute_igusa_invariants_wamelen(self):
         r"""
-        Return the three absolute Igusa invariants used by van Wamelen [W]_.
+        Return the three absolute Igusa invariants used by van Wamelen [Wam1999]_.
 
         EXAMPLES::
 
@@ -271,7 +270,7 @@ class HyperellipticCurve_g2_generic(hyperelliptic_generic.HyperellipticCurve_gen
 
     def absolute_igusa_invariants_kohel(self):
         r"""
-        Return the three absolute Igusa invariants used by Kohel [K]_.
+        Return the three absolute Igusa invariants used by Kohel [KohECHIDNA]_.
 
         .. SEEALSO::
 

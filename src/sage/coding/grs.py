@@ -9,6 +9,9 @@ finite field `F`, the corresponding Reed-Solomon code (RS code) of dimension
 
     \{ f(\alpha_1), \ldots, f(\alpha_n)  \mid  f \in F[x], \deg f < k \}
 
+An RS code is often called "classical" if `alpha_i = \alpha^{i-1}` and `\alpha`
+is a primitive `n`'th root of unity.
+
 More generally, given also `n` "column multipliers" `\beta_1, \dots, \beta_n`,
 the corresponding Generalized Reed-Solomon code (GRS code) of dimension `k` is
 the set:
@@ -21,6 +24,7 @@ the set:
 Here is a list of all content related to GRS codes:
 
 - :class:`GeneralizedReedSolomonCode`, the class for GRS codes
+- :func:`ReedSolomonCode`, function for constructing classical Reed-Solomon codes.
 - :class:`GRSEvaluationVectorEncoder`, an encoder with a vectorial message
   space
 - :class:`GRSEvaluationPolynomialEncoder`, an encoder with a polynomial
@@ -81,13 +85,14 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
     EXAMPLES:
 
-    A classical Reed-Solomon code can be constructed by taking all non-zero
-    elements of the field as evaluation points, and specifying no column
-    multipliers::
+    Often, one constructs a Reed-Solomon code by taking all non-zero elements of
+    the field as evaluation points, and specifying no column multipliers (see
+    also :func:`ReedSolomonCode` for constructing classical Reed-Solomon codes
+    directly)::
 
         sage: F = GF(7)
         sage: evalpts = [F(i) for i in range(1,7)]
-        sage: C = codes.GeneralizedReedSolomonCode(evalpts,3)
+        sage: C = codes.GeneralizedReedSolomonCode(evalpts, 3)
         sage: C
         [6, 3, 4] Reed-Solomon Code over GF(7)
 
@@ -192,14 +197,14 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
                 self._evaluation_points = common_points[:len(evaluation_points)]
                 self._column_multipliers = common_points[len(evaluation_points):]
             except (TypeError, ValueError) as e:
-                raise ValueError("Failed converting all evaluation points and column multipliers to the same field (%s)" % e.message)
+                raise ValueError("Failed converting all evaluation points and column multipliers to the same field (%s)" % e)
         else:
             try:
                 self._evaluation_points = vector(evaluation_points)
                 F = self._evaluation_points.base_ring()
                 self._column_multipliers = vector(F, [F.one()] * len(self._evaluation_points))
             except (TypeError, ValueError) as e:
-                raise ValueError("Failed converting all evaluation points to the same field (%s)" % e.message)
+                raise ValueError("Failed converting all evaluation points to the same field (%s)" % e)
 
         if not F.is_finite() or not F.is_field():
             raise ValueError("Evaluation points must be in a finite field (and %s is not one)" % F)
@@ -225,7 +230,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             sage: n, k = 40, 12
             sage: C1 = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
             sage: C2 = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
-            sage: C1.__eq__(C2)
+            sage: C1 == C2
             True
         """
         return isinstance(other, GeneralizedReedSolomonCode) \
@@ -235,6 +240,23 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
                 and self.evaluation_points() == other.evaluation_points() \
                 and self.column_multipliers() == other.column_multipliers()
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: F = GF(59)
+            sage: n, k = 40, 12
+            sage: C1 = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
+            sage: C2 = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
+            sage: hash(C1) == hash(C2)
+            True
+        """
+        return hash((self.base_field(), self.length(), self.dimension(),
+                     tuple(self.evaluation_points()),
+                     tuple(self.column_multipliers())))
+    
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
@@ -554,6 +576,84 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             return self.encoder().unencode_nocheck(r)
         return vector(self.decoder().decode_to_message(r))
 
+
+
+
+def ReedSolomonCode(base_field, length, dimension, primitive_root=None):
+    r"""
+    Construct a classical Reed-Solomon code.
+
+    A classical `[n,k]` Reed-Solomon code over `GF(q)` with `1 \le k \le n` and
+    `n | (q-1)` is a Reed-Solomon code whose evaluation points are the
+    consecutive powers of a primitive `n`'th root of unity `\alpha`, i.e.
+    `\alpha_i = \alpha^{i-1}`, where `\alpha_1, \ldots, \alpha_n` are the
+    evaluation points. A classical Reed-Solomon codes has all column multipliers
+    equal `1`.
+
+    Classical Reed-Solomon codes are cyclic, unlike most Generalized
+    Reed-Solomon codes.
+
+    Use :class:`GeneralizedReedSolomonCode` if you instead wish to construct
+    non-classical Reed-Solomon and Generalized Reed-Solomon codes.
+
+    INPUT:
+
+    - ``base_field`` -- the finite field for which to build the classical
+      Reed-Solomon code.
+
+    - ``length`` -- the length of the classical Reed-Solomon code. Must divide
+      `q-1` where `q` is the cardinality of ``base_field``.
+
+    - ``dimension`` -- the dimension of the resulting code.
+
+    - ``primitive_root`` -- (default: ``None``) a primitive `n`'th root of unity
+      to use for constructing the classical Reed-Solomon code. If not supplied,
+      one will be computed and can be recovered as ``C.evaluation_points()[1]``
+      where `C` is the code returned by this method.
+
+    EXAMPLES::
+
+        sage: C = codes.ReedSolomonCode(GF(7), 6, 3); C
+        [6, 3, 4] Reed-Solomon Code over GF(7)
+
+    This code is cyclic as can be seen by coercing it into a cyclic code::
+
+        sage: Ccyc = codes.CyclicCode(code=C); Ccyc
+        [6, 3] Cyclic Code over GF(7)
+
+        sage: Ccyc.generator_polynomial()
+        x^3 + 3*x^2 + x + 6
+
+    Another example over an extension field::
+
+        sage: C = codes.ReedSolomonCode(GF(64,'a'), 9, 4); C
+        [9, 4, 6] Reed-Solomon Code over GF(64)
+
+    The primitive `n`'th root of unity can be recovered as the 2nd evaluation point of the code::
+
+        sage: alpha = C.evaluation_points()[1]; alpha
+        a^5 + a^4 + a^2 + a
+
+    We can also supply a different primitive `n`'th root of unity::
+
+        sage: beta = alpha^2; beta
+        a^4 + a
+        sage: beta.multiplicative_order()
+        9
+        sage: D = codes.ReedSolomonCode(GF(64), 9, 4, primitive_root=beta); D
+        [9, 4, 6] Reed-Solomon Code over GF(64)
+        sage: C == D
+        False
+    """
+    if not length.divides(base_field.cardinality()-1):
+        raise ValueError("A classical Reed-Solomon code has a length which divides the field cardinality minus 1")
+    if primitive_root is None:
+        g = base_field.multiplicative_generator()
+        primitive_root = g**((base_field.cardinality()-1)/length)
+    else:
+        if primitive_root.multiplicative_order() != length:
+            raise ValueError("Supplied primitive_root is not a primitive n'th root of unity")
+    return GeneralizedReedSolomonCode([ primitive_root**i for i in range(length) ], dimension)
 
 
 
@@ -1360,7 +1460,7 @@ class GRSGaoDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
             sage: D1 = codes.decoders.GRSGaoDecoder(C)
             sage: D2 = codes.decoders.GRSGaoDecoder(C)
-            sage: D1.__eq__(D2)
+            sage: D1 == D2
             True
             sage: D1 is D2
             False
@@ -1368,6 +1468,22 @@ class GRSGaoDecoder(Decoder):
         return (isinstance(other, GRSGaoDecoder)
                 and self.code() == other.code()
                 and self.input_space() == other.input_space())
+
+    def __hash__(self):
+        """
+        Return the hash of self.
+
+        EXAMPLES::
+
+            sage: F = GF(59)
+            sage: n, k = 40, 12
+            sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
+            sage: D1 = codes.decoders.GRSGaoDecoder(C)
+            sage: D2 = codes.decoders.GRSGaoDecoder(C)
+            sage: hash(D1) == hash(D2)
+            True
+        """
+        return hash((self.code(), self.input_space()))
 
     def _repr_(self):
         r"""
@@ -2274,8 +2390,6 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         return (self.code().minimum_distance()-1) // 2
 
 
-# Make an alias to make everyone happy
-ReedSolomonCode = GeneralizedReedSolomonCode
 
 ####################### registration ###############################
 

@@ -40,7 +40,7 @@ import sage.modular.modsym.g1list as g1list
 import sage.modular.modsym.ghlist as ghlist
 from sage.rings.all import Integer
 from sage.structure.parent import Parent
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
@@ -80,7 +80,7 @@ class ManinSymbolList(Parent):
 
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList
             sage: ManinSymbolList(6,P1List(11))
-            <class 'sage.modular.modsym.manin_symbol_list.ManinSymbolList_with_category'>
+            <sage.modular.modsym.manin_symbol_list.ManinSymbolList_with_category object at ...>
         """
         self._weight = weight
         self._symbol_list = lst
@@ -407,8 +407,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
         sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_group
         sage: ManinSymbolList_group(11, 2, P1List(11))
-        <class 'sage.modular.modsym.manin_symbol_list.ManinSymbolList_group_with_category'>
-
+        <sage.modular.modsym.manin_symbol_list.ManinSymbolList_group_with_category object at ...>
     """
     def __init__(self, level, weight, syms):
         """
@@ -427,7 +426,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_group
             sage: L = ManinSymbolList_group(11, 2, P1List(11)); L
-            <class 'sage.modular.modsym.manin_symbol_list.ManinSymbolList_group_with_category'>
+            <sage.modular.modsym.manin_symbol_list.ManinSymbolList_group_with_category object at ...>
         """
         self.__level = level
         self.__syms = syms  # syms is anything with a normalize and list method.
@@ -800,7 +799,7 @@ class ManinSymbolList_gamma1(ManinSymbolList_group):
         True
     """
     def __init__(self, level, weight):
-        """
+        r"""
         Constructor for a ModularSymbolList for `\Gamma_0(N)`.
 
         EXAMPLES::

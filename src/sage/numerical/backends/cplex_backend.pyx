@@ -19,6 +19,8 @@ AUTHORS:
 
 from cysignals.memory cimport sig_malloc, sig_free
 
+from sage.cpython.string cimport char_to_str, str_to_bytes
+from sage.cpython.string import FS_ENCODING
 from sage.numerical.mip import MIPSolverException
 
 cdef class CPLEXBackend(GenericBackend):
@@ -346,14 +348,14 @@ cdef class CPLEXBackend(GenericBackend):
             status = CPXchgobj(self.env, self.lp, 1, &variable, &value)
             check(status)
 
-    cpdef problem_name(self, char * name = NULL):
+    cpdef problem_name(self, name=None):
         r"""
         Returns or defines the problem's name
 
         INPUT:
 
-        - ``name`` (``char *``) -- the problem's name. When set to
-          ``NULL`` (default), the method returns the problem's name.
+        - ``name`` (``str``) -- the problem's name. When set to
+          ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
 
@@ -367,18 +369,18 @@ cdef class CPLEXBackend(GenericBackend):
         cdef int status
         cdef int zero
         cdef char * n
-        if name == NULL:
+        if name is None:
 
             n = <char*> sig_malloc(500*sizeof(char))
             status = CPXgetprobname(self.env, self.lp, n, 500, &zero)
             check(status)
-            s = str(n)
+            s = char_to_str(n)
             sig_free(n)
             return s
 
 
         else:
-            status = CPXchgprobname(self.env, self.lp, name)
+            status = CPXchgprobname(self.env, self.lp, str_to_bytes(name))
             check(status)
 
 
@@ -798,7 +800,7 @@ cdef class CPLEXBackend(GenericBackend):
         return (None if lb <= -int(CPX_INFBOUND) else lb,
                 None if ub >= +int(CPX_INFBOUND) else ub)
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         r"""
         Adds a column.
 
@@ -833,9 +835,22 @@ cdef class CPLEXBackend(GenericBackend):
             5
         """
 
+        cdef list list_indices
+        cdef list list_coeffs
+
+        if type(indices) is not list:
+            list_indices = list(indices)
+        else:
+            list_indices = <list>indices
+
+        if type(coeffs) is not list:
+            list_coeffs = list(coeffs)
+        else:
+            list_coeffs = <list>coeffs
+
         cdef int status
         cdef int i
-        cdef int n = len(indices)
+        cdef int n = len(list_indices)
         cdef int ncols = self.ncols()
 
         status = CPXnewcols(self.env, self.lp, 1, NULL, NULL, NULL, NULL, NULL)
@@ -848,8 +863,8 @@ cdef class CPLEXBackend(GenericBackend):
         cdef int * c_col = <int *> sig_malloc(n * sizeof(int))
 
         for 0<= i < n:
-            c_coeff[i] = coeffs[i]
-            c_indices[i] = indices[i]
+            c_coeff[i] = list_coeffs[i]
+            c_indices[i] = list_indices[i]
             c_col[i] = ncols
 
 
@@ -1416,7 +1431,7 @@ cdef class CPLEXBackend(GenericBackend):
             status = CPXchgbds(self.env, self.lp, 1, &index, &x, &c_value)
             check(status)
 
-    cpdef write_lp(self, char * filename):
+    cpdef write_lp(self, filename):
         r"""
         Writes the problem to a .lp file
 
@@ -1437,10 +1452,11 @@ cdef class CPLEXBackend(GenericBackend):
 
         cdef int status
         cdef char * ext = "LP"
+        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
         status = CPXwriteprob(self.env, self.lp, filename, ext)
         check(status)
 
-    cpdef write_mps(self, char * filename, int modern):
+    cpdef write_mps(self, filename, int modern):
         r"""
         Writes the problem to a .mps file
 
@@ -1461,6 +1477,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         cdef int status
         cdef char * ext = "MPS"
+        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
         status = CPXwriteprob(self.env, self.lp, filename, ext)
         check(status)
 

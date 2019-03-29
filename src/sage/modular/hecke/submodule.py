@@ -1,7 +1,7 @@
 """
 Submodules of Hecke modules
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Sage: System for Algebra and Geometry Experimentation
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -15,15 +15,14 @@ Submodules of Hecke modules
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 
 import sage.arith.all as arith
 import sage.misc.misc as misc
 from sage.misc.cachefunc import cached_method
-from sage.structure.richcmp import richcmp_method, richcmp_not_equal, richcmp
-
+from sage.structure.richcmp import richcmp_method, richcmp_not_equal
 import sage.modules.all
 
 from . import module
@@ -190,8 +189,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         rx = other.ambient()
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
-        else:
-            return richcmp(self.free_module(), other.free_module(), op)
+        return self.free_module()._echelon_matrix_richcmp(other.free_module(), op)
 
     ################################
     # Semi-Private functions
@@ -244,7 +242,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def _compute_diamond_matrix(self, d):
         r"""
-        EXAMPLES:
+        EXAMPLES::
 
             sage: f = ModularSymbols(Gamma1(13),2,sign=1).cuspidal_subspace().decomposition()[0]
             sage: a = f.diamond_bracket_operator(2).matrix() # indirect doctest
@@ -845,7 +843,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         return self.free_module().nonembedded_free_module()
 
     def old_submodule(self, p=None):
-        """
+        r"""
         Return the old or p-old submodule of this space of modular
         symbols.
 
@@ -914,7 +912,6 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             sage: S.submodule(S[0].free_module())
             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_0(18) of weight 4 with sign 0 over Rational Field
         """
-        from . import ambient_module
         if not sage.modules.free_module.is_FreeModule(M):
             V = self.ambient_module().free_module()
             if isinstance(M, (list,tuple)):
@@ -972,9 +969,11 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         return self.ambient_hecke_module().submodule(V, Vdual, check=check)
 
     def hecke_bound(self):
-        """
-        Compute the Hecke bound for self; that is, a number n such that the
-        T_m for m = n generate the Hecke algebra.
+        r"""
+        Compute the Hecke bound for ``self``.
+
+        This is a number `n` such that the `T_m` for `m \leq n`
+        generate the Hecke algebra.
 
         EXAMPLES::
 

@@ -1,9 +1,3 @@
-if [ -z "$SAGE_LOCAL" ]; then
-    echo "SAGE_LOCAL undefined - exiting ..."
-    echo "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
 cd src
 
 # Delete old version
@@ -19,8 +13,4 @@ sage-python23 setup.py \
        --disable-jpeg \
        install \
        --single-version-externally-managed \
-       --record /dev/null
-if [ $? -ne 0 ]; then
-    echo "Error building / installing Pillow"
-    exit 1
-fi
+       --root "$SAGE_DESTDIR" || sdh_die "Error building/installing Pillow"

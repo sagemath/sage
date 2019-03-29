@@ -416,9 +416,9 @@ def expand(x, *args, **kwds):
 
     TESTS::
 
-        sage: t1 = (sqrt(3)-3)*(sqrt(3)+1)/6;
-        sage: tt1 = -1/sqrt(3);
-        sage: t2 = sqrt(3)/6;
+        sage: t1 = (sqrt(3)-3)*(sqrt(3)+1)/6
+        sage: tt1 = -1/sqrt(3)
+        sage: t2 = sqrt(3)/6
         sage: float(t1)
         -0.577350269189625...
         sage: float(tt1)

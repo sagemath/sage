@@ -58,7 +58,9 @@ import sys
 import subprocess
 
 from sage.env import DOT_SAGE
-COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj'%DOT_SAGE
+COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
+
+from sage.cpython.string import bytes_to_str
 
 from sage.misc.misc import ECL_TMP
 from sage.misc.multireplace import multiple_replace
@@ -66,7 +68,7 @@ from sage.structure.richcmp import richcmp, rich_to_bool
 import sage.server.support
 
 from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
-  InterfaceFunction, AsciiArtString)
+                        InterfaceFunction, AsciiArtString)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
 
@@ -174,18 +176,16 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         env['TMPDIR'] = str(ECL_TMP)
 
         if redirect:
-            p = subprocess.Popen(cmd, shell=True, env=env,
-                                 stdin=subprocess.PIPE,
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE)
-            res = p.stdout.read()
+            res = bytes_to_str(subprocess.check_output(cmd, shell=True,
+                                                       env=env))
             # We get 4 lines of commented verbosity
             # every time Maxima starts, so we need to get rid of them
             for _ in range(4):
                 res = res[res.find('\n')+1:]
+
             return AsciiArtString(res)
         else:
-            subprocess.Popen(cmd, shell=True, env=env)
+            subprocess.check_call(cmd, shell=True, env=env)
 
     def help(self, s):
         r"""
@@ -432,8 +432,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: maxima.version()
-            '5.39.0'
+            sage: maxima.version()  # random
+            '5.41.0'
         """
         return maxima_version()
 
@@ -986,7 +986,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         if n < 1:
             raise ValueError("n (=%s) must be >= 1" % n)
         s = repr(self('qunit(%s)' % n)).lower()
-        r = re.compile('sqrt\(.*\)')
+        r = re.compile(r'sqrt\(.*\)')
         a = QuadraticField(n, 'a').gen()
         s = r.sub('a', s)
         return eval(s)
@@ -1556,7 +1556,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         ::
 
             sage: f = maxima('exp(x^2)').integral('x',0,1); f
-            -(sqrt(%pi)*%i*erf(%i))/2 
+            -(sqrt(%pi)*%i*erf(%i))/2
             sage: f.numer()
             1.46265174590718...
         """
@@ -1725,7 +1725,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         return P('%s, %s'%(self.name(), args))
 
     def _latex_(self):
-        """
+        r"""
         Return Latex representation of this Maxima object.
 
         INPUT: none
@@ -1743,7 +1743,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: y,d = var('y,d')
             sage: f = function('f')
             sage: latex(maxima(derivative(f(x*y), x)))
-            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it t_0}}}\,f\left({\it t_0}\right)  \right|_{{\it t_0}={\it x}\,  {\it y}}\right)\,{\it y}
+            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it t}_{0}}}\,f\left({\it t}_{0}\right)  \right|_{{\it t}_{0}={\it x}\,  {\it y}}\right)\,{\it y}
             sage: latex(maxima(derivative(f(x,y,d), d,x,x,y)))
             {{{\it \partial}^4}\over{{\it \partial}\,{\it d}\,  {\it \partial}\,{\it x}^2\,{\it \partial}\,  {\it y}}}\,f\left({\it x} ,  {\it y} , {\it d}\right)
             sage: latex(maxima(d/(d-2)))
@@ -1771,7 +1771,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         # This regex matches a string of spaces preceded by either a '}', a
         # decimal digit, or a ')', and followed by a decimal digit. The spaces
         # get replaced by a '\cdot'.
-        s = re.sub(r'(?<=[})\d]) +(?=\d)', '\cdot', s)
+        s = re.sub(r'(?<=[})\d]) +(?=\d)', r'\\cdot', s)
 
         return s
 
@@ -2028,10 +2028,8 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         return self.definition()
 
     def _latex_(self):
-        """
+        r"""
         Return latex representation of this Maxima function.
-
-        INPUT: none
 
         OUTPUT: string
 
@@ -2042,7 +2040,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
             \mathrm{sin(x+y)}
         """
         if self.__latex is None:
-            return r'\mathrm{%s}'%self.__defn
+            return r'\mathrm{%s}' % self.__defn
         else:
             return self.__latex
 
@@ -2155,17 +2153,17 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         """
         P = self._check_valid()
         if isinstance(f, P._object_function_class()):
-            tmp = list(sorted(set(self.arguments() + f.arguments())))
+            tmp = sorted(set(self.arguments() + f.arguments()))
             args = ','.join(tmp)
-            defn = "(%s)%s(%s)"%(self.definition(), operation, f.definition())
+            defn = "(%s)%s(%s)" % (self.definition(), operation, f.definition())
         elif f is None:
             args = self.arguments(split=False)
-            defn = "%s(%s)"%(operation, self.definition())
+            defn = "%s(%s)" % (operation, self.definition())
         else:
             args = self.arguments(split=False)
-            defn = "(%s)%s(%s)"%(self.definition(), operation, repr(f))
+            defn = "(%s)%s(%s)" % (self.definition(), operation, repr(f))
 
-        return P.function(args,P.eval(defn))
+        return P.function(args, P.eval(defn))
 
 
 def reduce_load_MaximaAbstract_function(parent, defn, args, latex):
@@ -2192,10 +2190,12 @@ def maxima_version():
     EXAMPLES::
 
         sage: from sage.interfaces.maxima_abstract import maxima_version
-        sage: maxima_version()
-        '5.39.0'
+        sage: maxima_version()  # random
+        '5.41.0'
     """
-    return os.popen('maxima --version').read().split()[-1]
+    with os.popen('maxima --version') as p:
+        return p.read().split()[-1]
+
 
 def maxima_console():
     """

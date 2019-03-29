@@ -1,7 +1,7 @@
 r"""
 General linear group of a free module
 
-The set `\mathrm{GL}(M)` of automorphisms (i.e. invertible endomorphims) of a
+The set `\mathrm{GL}(M)` of automorphisms (i.e. invertible endomorphisms) of a
 free module of finite rank `M` is a group under composition of automorphisms,
 named the *general linear group* of `M`. In other words, `\mathrm{GL}(M)` is
 the group of units (i.e. invertible elements) of `\mathrm{End}(M)`, the
@@ -41,7 +41,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
 
     Given a free module of finite rank `M` over a commutative ring `R`, the
     *general linear group* of `M` is the group `\mathrm{GL}(M)` of
-    automorphisms (i.e. invertible endomorphims) of `M`. It is the group of
+    automorphisms (i.e. invertible endomorphisms) of `M`. It is the group of
     units (i.e. invertible elements) of `\mathrm{End}(M)`, the endomorphism
     ring of `M`.
 

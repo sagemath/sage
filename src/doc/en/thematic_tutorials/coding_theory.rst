@@ -299,14 +299,14 @@ Let us see how one can explore this::
     sage: C.encoders_available()
     ['EvaluationPolynomial', 'EvaluationVector', 'Systematic']
     sage: C.decoders_available()
-    ['Syndrome',
-     'NearestNeighbor',
+    ['BerlekampWelch',
      'ErrorErasure',
      'Gao',
      'GuruswamiSudan',
+     'InformationSet',
      'KeyEquationSyndrome',
-     'BerlekampWelch',
-     'InformationSet']
+     'NearestNeighbor',
+     'Syndrome']
 
 We got a list of the available encoders and decoders for our GRS code.
 Rather than using the default ones as we did before,

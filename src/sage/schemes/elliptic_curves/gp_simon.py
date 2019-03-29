@@ -24,7 +24,7 @@ from sage.interfaces.gp import Gp
 from sage.misc.sage_eval import sage_eval
 from sage.misc.randstate import current_randstate
 from sage.rings.all import QQ, ZZ
-from .constructor import EllipticCurve
+
 
 gp = None
 def init():

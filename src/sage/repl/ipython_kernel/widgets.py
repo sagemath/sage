@@ -8,11 +8,11 @@ TESTS:
 
 We need to setup a proper test environment for widgets::
 
-    sage: from ipywidgets.widgets.tests import setup_test_comm
+    sage: from ipywidgets.widgets.tests.utils import setup_test_comm
     sage: setup_test_comm()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,13 +20,14 @@ We need to setup a proper test environment for widgets::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from __future__ import unicode_literals
 
-from ipywidgets.widgets import (IntSlider, IntRangeSlider, FloatSlider,
-        FloatRangeSlider, Text, Textarea, ColorPicker, HTML,
-        Label, HBox, VBox, ValueWidget)
+from ipywidgets.widgets import (IntSlider, IntRangeSlider,
+                                FloatSlider, FloatRangeSlider, Text,
+                                Textarea, ColorPicker, HTMLMath, Label,
+                                HBox, VBox, ValueWidget)
 from traitlets import List, Unicode, link
 
 from sage.misc.sage_eval import sage_eval
@@ -34,9 +35,9 @@ from sage.repl.user_globals import get_globals
 from sage.plot.colors import Color
 
 
-class HTMLText(HTML):
+class HTMLText(HTMLMath):
     """
-    A HTML widget whose ``description`` is always empty.
+    An HTML widget whose ``description`` is always empty.
 
     This is used to display arbitrary HTML text in interacts without
     a label. The :func:`text_control` function from SageNB is an alias
@@ -81,6 +82,7 @@ class HTMLText(HTML):
         """
         pass
 
+
 class TransformWidget(object):
     """
     A mixin class for a widget to transform the bare widget value for
@@ -100,7 +102,7 @@ class TransformWidget(object):
         sage: class TransformToggleButtons(TransformWidget, ToggleButtons): pass
         sage: w = TransformToggleButtons(options=["pi", "e"], transform=lambda x: x+x)
         sage: w
-        TransformToggleButtons(value='pi', options=['pi', 'e'])
+        TransformToggleButtons(options=('pi', 'e'), value='pi')
         sage: w.get_interact_value()
         'pipi'
     """
@@ -140,7 +142,7 @@ class TransformWidget(object):
         Return the transformed value of this widget, by calling
         the ``transform`` function.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from ipywidgets import Checkbox
             sage: from sage.repl.ipython_kernel.widgets import TransformWidget
@@ -170,7 +172,7 @@ class EvalWidget(TransformWidget):
         sage: class EvalToggleButtons(EvalWidget, ToggleButtons): pass
         sage: w = EvalToggleButtons(options=["pi", "e"], transform=lambda x: x+x)
         sage: w
-        EvalToggleButtons(value='pi', options=['pi', 'e'])
+        EvalToggleButtons(options=('pi', 'e'), value='pi')
         sage: w.get_interact_value()
         2*pi
     """
@@ -178,14 +180,14 @@ class EvalWidget(TransformWidget):
         """
         Evaluate the bare widget value using :func:`sage_eval`.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from ipywidgets import Dropdown
             sage: from sage.repl.ipython_kernel.widgets import EvalWidget
             sage: class EvalDropdown(EvalWidget, Dropdown): pass
             sage: w = EvalDropdown(options=["the_answer"], transform=RR)
             sage: w
-            EvalDropdown(value='the_answer', options=['the_answer'])
+            EvalDropdown(options=('the_answer',), value='the_answer')
             sage: the_answer = 42
             sage: w.get_value()
             42
@@ -205,7 +207,7 @@ class TransformIntSlider(TransformWidget, IntSlider):
         sage: from sage.repl.ipython_kernel.widgets import TransformIntSlider
         sage: w = TransformIntSlider(min=0, max=100, value=7, transform=lambda x: x^2)
         sage: w
-        TransformIntSlider(value=7, min=0, max=100, step=1)
+        TransformIntSlider(value=7)
         sage: w.get_interact_value()
         49
     """
@@ -222,7 +224,7 @@ class TransformFloatSlider(TransformWidget, FloatSlider):
         sage: from sage.repl.ipython_kernel.widgets import TransformFloatSlider
         sage: w = TransformFloatSlider(min=0, max=100, value=7, transform=lambda x: sqrt(x))
         sage: w
-        TransformFloatSlider(value=7.0, min=0.0, max=100.0, step=0.1)
+        TransformFloatSlider(value=7.0)
         sage: w.get_interact_value()
         2.6457513110645907
     """
@@ -239,7 +241,7 @@ class TransformIntRangeSlider(TransformWidget, IntRangeSlider):
         sage: from sage.repl.ipython_kernel.widgets import TransformIntRangeSlider
         sage: w = TransformIntRangeSlider(min=0, max=100, value=(7,9), transform=lambda x: x[1]-x[0])
         sage: w
-        TransformIntRangeSlider(value=(7, 9), min=0, max=100, step=1)
+        TransformIntRangeSlider(value=(7, 9))
         sage: w.get_interact_value()
         2
     """
@@ -256,7 +258,7 @@ class TransformFloatRangeSlider(TransformWidget, FloatRangeSlider):
         sage: from sage.repl.ipython_kernel.widgets import TransformFloatRangeSlider
         sage: w = TransformFloatRangeSlider(min=0, max=100, value=(7,9), transform=lambda x: x[1]-x[0])
         sage: w
-        TransformFloatRangeSlider(value=(7.0, 9.0), min=0.0, max=100.0, step=1.0)
+        TransformFloatRangeSlider(value=(7.0, 9.0))
         sage: w.get_interact_value()
         2.0
     """
@@ -333,7 +335,7 @@ class EvalTextarea(EvalWidget, Textarea):
 
 class SageColorPicker(ColorPicker):
     """
-    A color picker widget return a Sage :class:`Color`.
+    A color picker widget returning a Sage :class:`Color`.
 
     EXAMPLES::
 
@@ -396,7 +398,7 @@ class Grid(TransformWidget, HBox, ValueWidget):
             sage: w = Grid(2, 2, lambda i,j: EvalText(str(j+4*i)),
             ....:         description="2x2 matrix", transform=matrix)
             sage: w
-            Grid(value=[[0, 1], [4, 5]], description=u'2x2 matrix', children=(Label(value=u'2x2 matrix'), VBox(children=(EvalText(value=u'0'), EvalText(value=u'4'))), VBox(children=(EvalText(value=u'1'), EvalText(value=u'5')))))
+            Grid(value=[[0, 1], [4, 5]], children=(Label(value=u'2x2 matrix'), VBox(children=(EvalText(value=u'0'), EvalText(value=u'4'))), VBox(children=(EvalText(value=u'1'), EvalText(value=u'5')))))
             sage: w.get_interact_value()
             [0 1]
             [4 5]

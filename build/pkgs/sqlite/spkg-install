@@ -1,21 +1,9 @@
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "SAGE_LOCAL undefined ... exiting"
-    echo >&2 "Maybe run 'sage --sh'?"
-    exit 1
-fi
-
 rm -f "$SAGE_LOCAL/bin/sqlite3"
 
 cd src
 
 # Use newer version of config.guess and config.sub (see Trac #19711)
 cp "$SAGE_ROOT"/config/config.* .
-
-
-# Compile for 64-bit if SAGE64 is set to 'yes'
-if [ "x$SAGE64" = "xyes" ] ; then
-    CFLAGS="$CFLAGS -m64 "
-fi
 
 
 # Build with -O0 if debugging requested
@@ -34,20 +22,6 @@ if uname -sr |grep 'Darwin [0-8][.]' >/dev/null; then
 fi
 
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring sqlite."
-    exit 1
-fi
-
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error making sqlite."
-    exit 1
-fi
-
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing sqlite."
-    exit 1
-fi
+sdh_configure
+sdh_make
+sdh_make_install

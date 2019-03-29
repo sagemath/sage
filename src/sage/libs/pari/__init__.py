@@ -201,6 +201,17 @@ def _get_pari_instance():
     from sage.ext.memory import init_memory_functions
     init_memory_functions()
 
+    # PARI sets debugmem=1 by default but we do not want those warning
+    # messages in Sage.
+    P.default("debugmem", 0)
+
+    # Make sure pari doesn't use threads, regardless of how it was compiled.
+    # Threads cause some doctest failures (memory issues). Those could probably
+    # be solved without disabling threads. But that would require figuring out
+    # some sensible values for `threadsizemax`. See
+    # https://pari.math.u-bordeaux.fr/dochtml/html/GP_defaults.html
+    P.default("nbthreads", 1)
+
     return P
 
 pari = _get_pari_instance()

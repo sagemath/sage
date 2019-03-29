@@ -11,11 +11,6 @@
 #
 ###############################################################################
 
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
 
 SRC=`pwd`/src/src
 
@@ -30,14 +25,6 @@ ntl_configure()
     # This ensures that they get written by DoConfig into 'makefile'.
     CFLAGS="-O2 -g $CFLAGS"
     CXXFLAGS="-O2 -g $CXXFLAGS"
-
-    if [ "$SAGE64" = "yes" ]; then
-        if [ -z "$CFLAG64" ]; then
-            CFLAG64="-m64"
-        fi
-        CFLAGS="$CFLAG64 $CFLAGS"
-        CXXFLAGS="$CFLAG64 $CXXFLAGS"
-    fi
 
     case "$UNAME" in
       Darwin)
@@ -112,12 +99,7 @@ ntl_configure()
         LDFLAGS="$LDFLAGS" LIBTOOL_LINK_FLAGS="$LIBTOOL_LINK_FLAGS" \
         NTL_GMP_LIP=on NTL_GF2X_LIB=on \
         "$DISABLE_NATIVE" \
-        NTL_THREADS=off
-
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error configuring NTL."
-        exit 1
-    fi
+        NTL_THREADS=off || sdh_die "Error configuring NTL."
 }
 
 ntl_build()
@@ -127,12 +109,7 @@ ntl_build()
 
     cd "$SRC"
 
-    $MAKE
-
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error building/tuning NTL."
-        exit 1
-    fi
+    sdh_make
 }
 
 ntl_install()
@@ -147,17 +124,7 @@ ntl_install()
 
     cd "$SRC"
 
-    $MAKE install
-
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error installing NTL."
-        exit 1
-    fi
-
-    # Touch all includes such that dependency checking works properly:
-    # the timestamp of the includes should be *now*, not the time when
-    # the NTL package was created.
-    touch "$SAGE_LOCAL"/include/NTL/*
+    sdh_make_install
 }
 
 ntl_configure

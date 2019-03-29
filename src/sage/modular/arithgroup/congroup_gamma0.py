@@ -57,12 +57,14 @@ def Gamma0_constructor(N):
         True
     """
     from .all import SL2Z
-    if N == 1: return SL2Z
+    if N == 1:
+        return SL2Z
     try:
         return _gamma0_cache[N]
     except KeyError:
         _gamma0_cache[N] = Gamma0_class(N)
         return _gamma0_cache[N]
+
 
 class Gamma0_class(GammaH_class):
     r"""

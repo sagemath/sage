@@ -137,7 +137,7 @@ illustrated by an example::
       - main:    pizza
       - tip:     10
 
-In the examples above, the options are contructed when the ``options``
+In the examples above, the options are constructed when the ``options``
 object is created. However, it is also possible to construct the options
 dynamically using the :meth:`GlobalOptions._add_to_options` methods.
 

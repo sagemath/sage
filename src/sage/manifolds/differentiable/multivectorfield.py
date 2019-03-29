@@ -37,7 +37,6 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
@@ -786,7 +785,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
 
     An example of 3-vector field in `\RR^3` with Cartesian coordinates::
 
-        sage: M = Manifold(3, 'R3', '\RR^3', start_index=1)
+        sage: M = Manifold(3, 'R3', r'\RR^3', start_index=1)
         sage: c_cart.<x,y,z> = M.chart()
         sage: a = M.multivector_field(3, name='a')
         sage: a[1,2,3] = x^2+y^2+z^2  # the only independent component
@@ -1417,7 +1416,6 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         bb = other_r.comp(coord_frame) # components B^{j_1...j_q}
         qq = other._tensor_rank
         deg_resu = pp + qq - 1  # degree of the result
-        nn = dom_resu.dim()
         if deg_resu == 1:
             resuc = Components(ring, coord_frame, 1,
                                start_index=fmodule._sindex,

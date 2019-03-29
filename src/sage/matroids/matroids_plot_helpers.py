@@ -67,7 +67,7 @@ EXAMPLES::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 from __future__ import print_function
 
@@ -81,7 +81,7 @@ from sage.matroids.advanced import newlabel
 
 
 def it(M, B1, nB1, lps):
-    """
+    r"""
     Return points on and off the triangle and lines to be drawn for a rank 3
     matroid.
 
@@ -113,30 +113,28 @@ def it(M, B1, nB1, lps):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers as mph
-        sage: M=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0],
+        sage: M = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0],
         ....: [0, 1, 0, 1, 0, 1, 1,0],[0, 0, 1, 1, 1, 0, 1,0]])
-        sage: N=M.simplify()
-        sage: B1=list(N.basis())
-        sage: nB1=list(set(M.simplify().groundset())-set(B1))
-        sage: pts,trilines,nontripts,curvedlines=mph.it(M,
+        sage: N = M.simplify()
+        sage: B1 = list(N.basis())
+        sage: nB1 = list(set(M.simplify().groundset())-set(B1))
+        sage: pts,trilines,nontripts,curvedlines = mph.it(M,
         ....: B1,nB1,M.loops())
-        sage: print(pts)
-        {1: (1.0, 0.0), 2: (1.5, 1.0), 3: (0.5, 1.0), 4: (0, 0), 5: (1, 2),
-        6: (2, 0)}
-        sage: print(trilines)
+        sage: pts
+        {1: (1.0, 0.0), 2: (1.5, 1.0), 3: (0.5, 1.0),
+         4: (0, 0), 5: (1, 2), 6: (2, 0)}
+        sage: trilines
         [[3, 4, 5], [2, 5, 6], [1, 4, 6]]
-        sage: print(nontripts)
+        sage: nontripts
         [0]
-        sage: print(curvedlines)
+        sage: curvedlines
         [[0, 1, 5], [0, 2, 4], [0, 3, 6], [1, 2, 3], [1, 4, 6], [2, 5, 6],
          [3, 4, 5]]
 
     .. NOTE::
 
-            This method does NOT do any checks.
-
+        This method does NOT do any checks.
     """
-
     tripts = [(0, 0), (1, 2), (2, 0)]
     pts = {}
     j = 0
@@ -200,8 +198,8 @@ def trigrid(tripts):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers
-        sage: points=matroids_plot_helpers.trigrid([[2,1],[4,5],[5,2]])
-        sage: print(points)
+        sage: points = matroids_plot_helpers.trigrid([[2,1],[4,5],[5,2]])
+        sage: points
         [[3.6666666666666665, 2.6666666666666665],
          [3.222222222222222, 2.888888888888889],
          [4.222222222222222, 3.222222222222222],
@@ -212,7 +210,6 @@ def trigrid(tripts):
             This method does NOT do any checks.
 
     """
-    n = 0
     pairs = [[0, 1], [1, 2], [0, 2]]
     cpt = list((float(tripts[0][0]+tripts[1][0]+tripts[2][0])/3,
                float(tripts[0][1]+tripts[1][1]+tripts[2][1])/3))
@@ -241,7 +238,7 @@ def addnontripts(tripts_labels, nontripts_labels, ptsdict):
     OUTPUT:
 
     A dictionary containing ground set elements in ``tripts`` as keys and
-    their (x,y) position as values allong with all keys and respective values
+    their (x,y) position as values along with all keys and respective values
     in ``ptsdict``.
 
     EXAMPLES::
@@ -412,7 +409,7 @@ def slp(M1, pos_dict=None, B=None):
         sage: M.is_simple()
         True
         sage: setprint([L,P])
-        [{7}, {8, 9, 10}]
+        [{10, 8, 9}, {7}]
         sage: M1=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
         ....: [0, 1, 0, 1, 0, 1, 1,0,0,1,0],[0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
         sage: posdict= {8: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
@@ -421,7 +418,7 @@ def slp(M1, pos_dict=None, B=None):
         sage: M.is_simple()
         True
         sage: setprint([L,P])
-        [{7}, {0, 9, 10}]
+        [{0, 10, 9}, {7}]
 
     .. NOTE::
 
@@ -429,10 +426,9 @@ def slp(M1, pos_dict=None, B=None):
 
     """
     L = set(M1.loops())
-    sg = sorted(M1.simplify().groundset())
     nP = L | set(M1.simplify().groundset())
     P = set(M1.groundset())-nP
-    if len(P) > 0:
+    if P:
         if pos_dict is not None:
             pcls = list(set([frozenset(set(M1.closure([p])) - L)
                              for p in list(P)]))
@@ -503,10 +499,10 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
     if G is None:
         G = Graphics()
     # deal with loops
-    if len(L) > 0:
+    if L:
         loops = L
-        looptext = ", ".join([str(l) for l in loops])
-        if(limits is None):
+        looptext = ", ".join(str(l) for l in loops)
+        if limits is None:
             rectx = -1
             recty = -1
         else:
@@ -525,7 +521,7 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
                   fontsize=13, color='black')
         limits = tracklims(limits, [rectx, rectx+rectw], [recty, recty+recth])
     # deal with parallel elements
-    if len(P) > 0:
+    if P:
         # create list of lists where inner lists are parallel classes
         pcls = []
         gnd = sorted(list(M1.groundset()))
@@ -686,21 +682,18 @@ def posdict_is_sane(M1, pos_dict):
             matroid and ``posdict`` is assumed to be a dictionary.
     """
     L = set(M1.loops())
-    sg = sorted(M1.simplify().groundset())
     nP = L | set(M1.simplify().groundset())
     P = set(M1.groundset())-nP
     pcls = list(set([frozenset(set(M1.closure([p])) - L) for p in list(P)]))
     for pcl in pcls:
         pcl_list = list(pcl)
-        if not any([x in pos_dict.keys() for x in pcl_list]):
+        if not any(x in pos_dict for x in pcl_list):
             return False
     allP = []
     for pcl in pcls:
             allP.extend(list(pcl))
-    if not all([x in pos_dict.keys()
-                for x in list(set(M1.groundset()) - (L | set(allP)))]):
-            return False
-    return True
+    return all(x in pos_dict
+               for x in list(set(M1.groundset()) - (L | set(allP))))
 
 
 def tracklims(lims, x_i=[], y_i=[]):
@@ -855,8 +848,8 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
         ptsx, ptsy, x_i, y_i = createline(pts2, bline, lineorders1)
         lims = tracklims(lims, x_i, y_i)
         G += line(zip(x_i, y_i), color='black', thickness=3, zorder=1)
-        pels = [p for p in pts2.keys() if any([M1.rank([p, q]) == 1
-                for q in P])]
+        pels = [p for p in pts2
+                if any(M1.rank([p, q]) == 1 for q in P)]
         allpts = [list(pts2[i]) for i in M.groundset()]
         xpts = [float(k[0]) for k in allpts]
         ypts = [float(k[1]) for k in allpts]
@@ -891,8 +884,8 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
                 ptsx, ptsy, x_i, y_i = createline(pts2, ll, lineorders1)
                 lims = tracklims(lims, x_i, y_i)
                 G += line(zip(x_i, y_i), color='black', thickness=3, zorder=1)
-        pels = [p for p in pts2.keys() if any([M1.rank([p, q]) == 1
-                for q in P])]
+        pels = [p for p in pts2
+                if any(M1.rank([p, q]) == 1 for q in P)]
         allpts = [list(pts2[i]) for i in M.groundset()]
         xpts = [float(k[0]) for k in allpts]
         ypts = [float(k[1]) for k in allpts]

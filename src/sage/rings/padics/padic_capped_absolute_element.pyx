@@ -200,7 +200,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
             sage: b.parent()
             Ring of integers modulo 49
             sage: c = a % 7^2; c
-            1 + 7 + O(7^8)
+            1 + 7 + O(7^10)
             sage: c.parent()
             7-adic Ring with capped absolute precision 10
 
@@ -256,10 +256,11 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
     def multiplicative_order(self):
         r"""
-        Returns the minimum possible multiplicative order of this element.
+        Return the minimum possible multiplicative order of this element.
 
         OUTPUT:
-        the multiplicative order of self.  This is the minimum multiplicative
+
+        The multiplicative order of self.  This is the minimum multiplicative
         order of all elements of `\ZZ_p` lifting ``self`` to infinite
         precision.
 
@@ -362,8 +363,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
             sage: r = Zp(5,prec=4,type='fixed-mod')(6)
             sage: r._log_binary_splitting(5)
-            5 + 2*5^2 + 4*5^3 + O(5^4)
-
+            5 + 2*5^2 + 4*5^3
         """
         cdef unsigned long p
         cdef unsigned long prec = min(aprec, self.absprec)

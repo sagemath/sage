@@ -4,23 +4,13 @@ if [ "$SAGE_LOCAL" = "" ]; then
    exit 1
 fi
 
-cd src
-
-# Choice of OPT should be consistent with spkg-install
-OPT=opt
-if [ `uname` = 'Darwin' ] ; then
-    OPT=dbg
-fi
+cd src/build/
 
 echo "Now running the SCIP test suite..."
 # Do the tests with the installed version of SCIP.
 # (The uninstalled ones do not work because we did not adjust their library dependencies.)
-$MAKE check OPT=$OPT MAINFILE="$SAGE_LOCAL"/bin/scip | tee testsuite.log
+$MAKE test  | tee testsuite.log
 if [ $? -ne 0 ]; then
     echo >&2 "Error: The SCIP test suite failed with an error status."
-    exit 1
-fi
-if grep -q fail testsuite.log ; then
-    echo >&2 "Error: The SCIP test suite failed."
     exit 1
 fi

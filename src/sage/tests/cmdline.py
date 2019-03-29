@@ -37,6 +37,7 @@ test.spyx
 --R
 --root
 --rst2ipynb
+--ipynb2rst
 --rst2txt
 --rst2sws
 --sh
@@ -54,9 +55,11 @@ AUTHORS:
 - Jeroen Demeyer (2010-11-20): initial version (:trac:`10300`)
 
 """
-from subprocess import *
+from subprocess import Popen, PIPE
 import os
 import select
+
+import six
 
 
 def test_executable(args, input="", timeout=100.0, **kwds):
@@ -387,7 +390,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         **********************************************************************
         Previously executed commands:
             s...: assert True == False
-        In [1]:
+        sage:
         <BLANKLINE>
         Returning to doctests...
         **********************************************************************
@@ -407,12 +410,10 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         sage: os.chmod(d, 0o777)
         sage: (out, err, ret) = test_executable(["sage", "-t", "nonexisting.py"], cwd=d)
         sage: print(err)
-        Traceback (most recent call last):
         ...
         RuntimeError: refusing to run doctests...
         sage: (out, err, ret) = test_executable(["sage", "-tp", "1", "nonexisting.py"], cwd=d)
         sage: print(err)
-        Traceback (most recent call last):
         ...
         RuntimeError: refusing to run doctests...
 
@@ -612,7 +613,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
     Check some things requiring an internet connection::
 
         sage: (out, err, ret) = test_executable(["sage", "--standard"])  # optional - internet
-        sage: out.find("atlas") >= 0  # optional - internet
+        sage: out.find("cython") >= 0  # optional - internet
         True
         sage: err  # optional - internet
         ''
@@ -628,7 +629,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         0
 
         sage: (out, err, ret) = test_executable(["sage", "--experimental"])  # optional - internet
-        sage: out.find("macaulay2") >= 0  # optional - internet
+        sage: out.find("valgrind") >= 0  # optional - internet
         True
         sage: err  # optional - internet
         ''
@@ -752,6 +753,71 @@ def test_executable(args, input="", timeout=100.0, **kwds):
          }
         }
 
+    Test ``sage --ipynb2rst file.ipynb file.rst`` on a ipynb file::
+
+        sage: s = r'''{
+        ....:  "cells": [
+        ....:   {
+        ....:    "cell_type": "code",
+        ....:    "execution_count": 1,
+        ....:    "metadata": {},
+        ....:    "outputs": [
+        ....:     {
+        ....:      "data": {
+        ....:       "text/plain": [
+        ....:        "2"
+        ....:       ]
+        ....:      },
+        ....:      "execution_count": 1,
+        ....:      "metadata": {},
+        ....:      "output_type": "execute_result"
+        ....:     }
+        ....:    ],
+        ....:    "source": [
+        ....:     "1+1"
+        ....:    ]
+        ....:   },
+        ....:   {
+        ....:    "cell_type": "code",
+        ....:    "execution_count": null,
+        ....:    "metadata": {},
+        ....:    "outputs": [],
+        ....:    "source": []
+        ....:   }
+        ....:  ],
+        ....:  "metadata": {
+        ....:   "kernelspec": {
+        ....:    "display_name": "SageMath 8.3.beta4",
+        ....:    "language": "",
+        ....:    "name": "sagemath"
+        ....:   },
+        ....:   "language_info": {
+        ....:    "codemirror_mode": {
+        ....:     "name": "ipython",
+        ....:     "version": 2
+        ....:    },
+        ....:    "file_extension": ".py",
+        ....:    "mimetype": "text/x-python",
+        ....:    "name": "python",
+        ....:    "nbconvert_exporter": "python",
+        ....:    "pygments_lexer": "ipython2",
+        ....:    "version": "2.7.15"
+        ....:   }
+        ....:  },
+        ....:  "nbformat": 4,
+        ....:  "nbformat_minor": 2
+        ....: }
+        ....: '''
+        sage: t = '.. escape-backslashes\n.. default-role:: math\n\n\n::\n\n    sage: 1+1\n    2\n\n\n\n\n'
+        sage: input = tmp_filename(ext='.ipynb')
+        sage: output = tmp_filename(ext='.rst')
+        sage: with open(input, 'w') as F:
+        ....:     _ = F.write(s)
+        sage: L = ["sage", "--ipynb2rst", input, output]
+        sage: _ = test_executable(L)                        # optional - pandoc
+        sage: print(open(output, 'r').read() == t)          # optional - pandoc
+        True
+
     Test ``sage --rst2txt file.rst`` on a ReST file::
 
         sage: s = "::\n\n    sage: 2^10\n    1024\n    sage: 2 + 2\n    4"
@@ -771,7 +837,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         ///
         4
         }}}
-        sage: err
+        sage: err # py2
         ''
         sage: ret
         0
@@ -784,7 +850,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         sage: with open(input, 'w') as F:
         ....:     _ = F.write(s)
         sage: test_executable(["sage", "--rst2txt", input, output])
-        ('', '', 0)
+        ('', ..., 0)
         sage: print(open(output, 'r').read())
         {{{id=0|
         2^10
@@ -805,11 +871,11 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         sage: output = tmp_filename(ext='.sws')
         sage: with open(input, 'w') as F:
         ....:     _ = F.write(s)
-        sage: test_executable(["sage", "--rst2sws", input, output])
+        sage: test_executable(["sage", "--rst2sws", input, output]) # py2
         ('', '', 0)
-        sage: import tarfile
-        sage: f = tarfile.open(output, 'r')
-        sage: print(f.extractfile('sage_worksheet/worksheet.html').read())
+        sage: import tarfile # py2
+        sage: f = tarfile.open(output, 'r') # py2
+        sage: print(f.extractfile('sage_worksheet/worksheet.html').read()) # py2
         <h1 class="title">Thetitle</h1>
         <BLANKLINE>
         {{{id=0|
@@ -823,7 +889,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         ///
         4
         }}}
-        sage: print(f.extractfile('sage_worksheet/worksheet.txt').read())
+        sage: print(f.extractfile('sage_worksheet/worksheet.txt').read()) # py2
         Thetitle
         system:sage
         <BLANKLINE>
@@ -847,14 +913,24 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         del pexpect_env["TERM"]
     except KeyError:
         pass
-    p = Popen(args, stdin=PIPE, stdout=PIPE, stderr=PIPE, env=pexpect_env, **kwds)
+
+    encoding = kwds.pop('encoding', 'utf-8')
+    errors = kwds.pop('errors', None)
+
+    if six.PY3:
+        kwds['encoding'] = encoding
+        kwds['errors'] = errors
+
+    p = Popen(args, stdin=PIPE, stdout=PIPE, stderr=PIPE, env=pexpect_env,
+              **kwds)
     if input:
         p.stdin.write(input)
+
     p.stdin.close()
     fdout = p.stdout.fileno()
     fderr = p.stderr.fileno()
-    out = ""
-    err = ""
+    out = []
+    err = []
 
     while True:
         # Try reading from fdout and fderr
@@ -872,14 +948,16 @@ def test_executable(args, input="", timeout=100.0, **kwds):
             p.terminate()
             raise RuntimeError("timeout in test_executable()")
         if fdout in rlist:
-            s = os.read(fdout, 1024)
-            if s == "":
+            s = p.stdout.read(1024)
+            if not s:
                 fdout = None   # EOF
-            out += s
+                p.stdout.close()
+            out.append(s)
         if fderr in rlist:
-            s = os.read(fderr, 1024)
-            if s == "":
+            s = p.stderr.read(1024)
+            if not s:
                 fderr = None   # EOF
-            err += s
+                p.stderr.close()
+            err.append(s)
 
-    return (out, err, p.wait())
+    return (''.join(out), ''.join(err), p.wait())

@@ -24,6 +24,8 @@ from __future__ import absolute_import
 
 from cysignals.signals cimport sig_on, sig_off
 
+from sage.cpython.string cimport str_to_bytes
+
 from sage.libs.gmp.mpz cimport *
 from sage.libs.mpfr cimport *
 from sage.rings.integer cimport Integer
@@ -63,7 +65,8 @@ cdef class Lfunction:
         cdef RealNumber tmpr    # for accessing real values
         cdef ComplexNumber tmpc # for accessing complex values
 
-        cdef char *NAME = name
+        _name = str_to_bytes(name)
+        cdef char *NAME = _name
         cdef int what_type = what_type_L
 
         tmpi = Integer(period)
@@ -93,11 +96,10 @@ cdef class Lfunction:
 
         self.__init_fun(NAME, what_type, dirichlet_coefficient, Period, q,  w,  A, g, l, n_poles, p, r)
 
-        repr_name = str(NAME)
-        if str(repr_name) != "":
-            repr_name += ": "
+        if name:
+            name += ': '
 
-        self._repr = repr_name + "L-function"
+        self._repr = name + 'L-function'
 
         del_doubles(g)
         del_Complexes(l)
@@ -407,7 +409,7 @@ cdef class Lfunction_I(Lfunction):
         \Lambda(s) = Q^s \left( \prod_{j=1}^a \Gamma(\kappa_j s + \gamma_j) \right) L(s)
 
 
-    See (23) in http://arxiv.org/abs/math/0412181
+    See (23) in :arxiv:`math/0412181`
 
     INPUT:
 
@@ -432,7 +434,7 @@ cdef class Lfunction_I(Lfunction):
 
     - ``residue`` - List of the residues of the L-function
 
-    NOTES:
+    .. NOTE::
 
         If an L-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
         by replacing `s` by `s+(k-1)/2`, one can get it in the form we need.
@@ -544,7 +546,7 @@ cdef class Lfunction_D(Lfunction):
 
         \Lambda(s) = Q^s \left( \prod_{j=1}^a \Gamma(\kappa_j s + \gamma_j) \right) L(s)
 
-    See (23) in http://arxiv.org/abs/math/0412181
+    See (23) in :arxiv:`math/0412181`
 
     INPUT:
 
@@ -569,7 +571,7 @@ cdef class Lfunction_D(Lfunction):
 
     - ``residue`` - List of the residues of the L-function
 
-    NOTES:
+    .. NOTE::
 
         If an L-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
         by replacing `s` by `s+(k-1)/2`, one can get it in the form we need.
@@ -683,7 +685,7 @@ cdef class Lfunction_C:
 
         \Lambda(s) = Q^s \left( \prod_{j=1}^a \Gamma(\kappa_j s + \gamma_j) \right) L(s)
 
-    See (23) in http://arxiv.org/abs/math/0412181
+    See (23) in :arxiv:`math/0412181`
 
     INPUT:
 
@@ -708,7 +710,7 @@ cdef class Lfunction_C:
 
     - ``residue`` - List of the residues of the L-function
 
-    NOTES:
+    .. NOTE::
 
         If an L-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
         by replacing `s` by `s+(k-1)/2`, one can get it in the form we need.
