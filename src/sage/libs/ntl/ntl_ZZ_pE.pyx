@@ -70,7 +70,8 @@ cdef class ntl_ZZ_pE(object):
         r"""
         Initializes an ntl ZZ_pE.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1],11))
             sage: c.ZZ_pE([13,4,1])
             [1 3]
@@ -114,13 +115,13 @@ cdef class ntl_ZZ_pE(object):
                 # surely because the above call restore things and breaks the modulus
                 self.c.restore_c()
                 self.x = ZZ_pX_to_ZZ_pE(tmp_zzpx.x)
+            elif isinstance(v, long):
+                PyLong_to_ZZ(&temp, v)
+                self.x = ZZ_to_ZZ_pE(temp)
             elif isinstance(v, int):
                 self.x = long_to_ZZ_pE(v)
             elif isinstance(v, ntl_ZZ_p):
                 self.x = ZZ_p_to_ZZ_pE((<ntl_ZZ_p>v).x)
-            elif isinstance(v, long):
-                PyLong_to_ZZ(&temp, v)
-                self.x = ZZ_to_ZZ_pE(temp)
             elif isinstance(v, ntl_ZZ):
                 self.x = ZZ_to_ZZ_pE((<ntl_ZZ>v).x)
             elif isinstance(v, Integer):
@@ -203,7 +204,8 @@ cdef class ntl_ZZ_pE(object):
 
     def __invert__(ntl_ZZ_pE self):
         r"""
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([2,7,1],11))
             sage: ~ntl.ZZ_pE([1,1],modulus=c)
             [7 3]
@@ -337,11 +339,12 @@ def make_ZZ_pE(x, c):
     """
     Here for unpickling.
 
-    EXAMPLES:
-    sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([-5,0,1],25))
-    sage: sage.libs.ntl.ntl_ZZ_pE.make_ZZ_pE([4,3], c)
-    [4 3]
-    sage: type(sage.libs.ntl.ntl_ZZ_pE.make_ZZ_pE([4,3], c))
-    <type 'sage.libs.ntl.ntl_ZZ_pE.ntl_ZZ_pE'>
+    EXAMPLES::
+
+        sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([-5,0,1],25))
+        sage: sage.libs.ntl.ntl_ZZ_pE.make_ZZ_pE([4,3], c)
+        [4 3]
+        sage: type(sage.libs.ntl.ntl_ZZ_pE.make_ZZ_pE([4,3], c))
+        <type 'sage.libs.ntl.ntl_ZZ_pE.ntl_ZZ_pE'>
     """
     return ntl_ZZ_pE(x, c)

@@ -3,12 +3,6 @@
 ###########################################
 
 
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 #############################################################
 #    Environment Variables
 #############################################################
@@ -50,22 +44,13 @@ if [ "$UNAME" = "Darwin" ]; then
     DISABLENLS="--disable-nls"
 fi
 
-./configure --prefix="$SAGE_LOCAL" --disable-gui --disable-ao --disable-lapack "$DISABLENLS"
-
-if [ $? -ne 0 ]; then
-    exit 1
-fi
+sdh_configure --disable-gui --disable-ao --disable-lapack "$DISABLENLS" --enable-png=no --disable-samplerate
 
 #############################################################
 #   Build
 #############################################################
 
-echo "Building  giac..."
-$MAKE
-
-if [ $? -ne 0 ]; then
-    exit 1
-fi
+sdh_make
 
 #############################################################
 #   Clean old install
@@ -88,11 +73,5 @@ rm -rf ${SAGE_LOCAL}/include/giac
 #############################################################
 #   Install
 #############################################################
-echo "Installing giac..."
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing Giac."
-    exit 1
-fi
 
-
+sdh_make_install

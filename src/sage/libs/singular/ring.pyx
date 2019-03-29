@@ -15,6 +15,8 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 
+from sage.cpython.string cimport str_to_bytes
+
 from sage.libs.gmp.types cimport __mpz_struct
 from sage.libs.gmp.mpz cimport mpz_init_set_ui, mpz_init_set
 
@@ -38,6 +40,10 @@ from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular, MPolynomialRing_libsingular
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+from cpython.object cimport Py_EQ, Py_NE
+
+from collections import defaultdict
 
 
 # mapping str --> SINGULAR representation
@@ -118,7 +124,6 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     cdef ring* _ring
     cdef char **_names
     cdef char **_ext_names
-    cdef char *_name
     cdef int i,j
     cdef int nblcks
     cdef int offset
@@ -147,10 +152,9 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     nblcks = nbaseblcks + order.singular_moreblocks()
     offset = 0
 
-
     _names = <char**>omAlloc0(sizeof(char*)*(len(names)))
     for i from 0 <= i < n:
-        _name = names[i]
+        _name = str_to_bytes(names[i])
         _names[i] = omStrDup(_name)
 
     # from the SINGULAR source code documentation for the rInit function
@@ -233,7 +237,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         _ext_names = <char**>omAlloc0(sizeof(char*))
         extname = k.gen()
-        _name = k._names[0]
+        _name = str_to_bytes(k._names[0])
         _ext_names[0] = omStrDup(_name)
         _cfr = rDefault( 0, 1, _ext_names )
 
@@ -284,7 +288,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         cexponent = F[0][1]
 
         _ext_names = <char**>omAlloc0(sizeof(char*))
-        _name = k._names[0]
+        _name = str_to_bytes(k._names[0])
         _ext_names[0] = omStrDup(_name)
         _cfr = rDefault( modbase, 1, _ext_names )
 
@@ -311,24 +315,23 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
             exponent = ch.nbits() -1
             cexponent = exponent
 
-            if exponent <= 30:  ringtype = n_Z2m
-            else:               ringtype = n_Znm
+            if exponent <= 30:
+                ringtype = n_Z2m
+            else:
+                ringtype = n_Znm
 
             if ringtype == n_Znm:
+                F = ch.factor()
 
-              F = ch.factor()
+                modbase = F[0][0]
+                cexponent = F[0][1]
 
-              modbase = F[0][0]
-              cexponent = F[0][1]
-
-              _info.base = <__mpz_struct*>omAlloc(sizeof(__mpz_struct))
-              mpz_init_set_ui(_info.base, modbase)
-              _info.exp = cexponent
-              _cf = nInitChar( n_Znm, <void *>&_info )
-
-            elif  ringtype == n_Z2m:
-                _cf = nInitChar( n_Z2m, <void *>cexponent )
-
+                _info.base = <__mpz_struct*>omAlloc(sizeof(__mpz_struct))
+                mpz_init_set_ui(_info.base, modbase)
+                _info.exp = cexponent
+                _cf = nInitChar(ringtype, <void *>&_info)
+            else:  # ringtype == n_Z2m
+                _cf = nInitChar(ringtype, <void *>cexponent)
 
         elif not isprime and ch.is_prime_power() and ch < ZZ(2)**160:
             F = ch.factor()
@@ -372,7 +375,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     rComplete(_ring, 1)
 
     _ring.ShortOut = 0
- 
+
     if order.is_local():
         assert(_ring.OrdSgn == -1)
     if order.is_global():
@@ -382,7 +385,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
 
 #############################################################################
-ring_refcount_dict = {}
+ring_refcount_dict = defaultdict(int)
 
 
 cdef class ring_wrapper_Py(object):
@@ -412,7 +415,11 @@ cdef class ring_wrapper_Py(object):
             sage: from sage.libs.singular.ring import ring_wrapper_Py
             sage: t = ring_wrapper_Py(); t
             The ring pointer 0x0
-            sage: TestSuite(t).run()
+
+        These are just wrappers around a pointer, so it isn't really meaningful
+        to pickle them::
+
+            sage: TestSuite(t).run(skip='_test_pickling')
         """
         self._ring = NULL
 
@@ -452,10 +459,12 @@ cdef class ring_wrapper_Py(object):
         """
         return 'The ring pointer '+hex(self.__hash__())
 
-    def __cmp__(ring_wrapper_Py left, ring_wrapper_Py right):
+    # This could be written using __eq__ but that does not work
+    # due to https://github.com/cython/cython/issues/2019
+    def __richcmp__(ring_wrapper_Py self, other, int op):
         """
-        Compare ``left`` and ``right`` so that instances can be used
-        as dictionary keys.
+        Equality comparison between two ``ring_wrapper_Py`` instances,
+        for use when hashing.
 
         INPUT:
 
@@ -463,21 +472,35 @@ cdef class ring_wrapper_Py(object):
 
         OUTPUT:
 
-        -1, 0, or +1 depending on whether ``left`` and ``right`` are
-         less than, equal, or greather than.
+        True if both ``ring_wrapper_Py`` wrap the same pointer.
 
         EXAMPLES::
 
-            sage: from sage.libs.singular.ring import ring_wrapper_Py
+            sage: from sage.libs.singular.ring import (ring_wrapper_Py,
+            ....:     currRing_wrapper)
             sage: t = ring_wrapper_Py()
             sage: t == t
             True
+            sage: P.<x,y,z> = QQ[]
+            sage: t2 = currRing_wrapper()
+            sage: t3 = currRing_wrapper()
+            sage: t == t2
+            False
+            sage: t2 == t3
+            True
+            sage: t2 != t3
+            False
+            sage: t2 == None
+            False
         """
-        if left._ring < right._ring:
-            return -1
-        if left._ring > right._ring:
-            return +1
-        return 0
+        if not (op == Py_EQ or op == Py_NE):
+            return NotImplemented
+
+        if type(other) is not ring_wrapper_Py:
+            return op != Py_EQ
+
+        r = <ring_wrapper_Py>other
+        return (self._ring == r._ring) == (op == Py_EQ)
 
 
 cdef wrap_ring(ring* R):
@@ -521,9 +544,9 @@ cdef ring *singular_ring_reference(ring *existing_ring) except NULL:
         sage: from sage.libs.singular.groebner_strategy import GroebnerStrategy
         sage: from sage.libs.singular.ring import ring_refcount_dict
         sage: n = len(ring_refcount_dict)
-        sage: prev_rings = set(ring_refcount_dict.keys())
+        sage: prev_rings = set(ring_refcount_dict)
         sage: P = MPolynomialRing_libsingular(GF(541), 2, ('x', 'y'), TermOrder('degrevlex', 2))
-        sage: ring_ptr = set(ring_refcount_dict.keys()).difference(prev_rings).pop()
+        sage: ring_ptr = set(ring_refcount_dict).difference(prev_rings).pop()
         sage: ring_ptr  # random output
         The ring pointer 0x7f78a646b8d0
         sage: ring_refcount_dict[ring_ptr]
@@ -543,10 +566,11 @@ cdef ring *singular_ring_reference(ring *existing_ring) except NULL:
         sage: ring_ptr in ring_refcount_dict
         True
     """
-    if existing_ring==NULL:
+    if existing_ring is NULL:
         raise ValueError('singular_ring_reference(ring*) called with NULL pointer.')
+
     cdef object r = wrap_ring(existing_ring)
-    ring_refcount_dict[r] = ring_refcount_dict.get(r,0)+1
+    ring_refcount_dict[r] += 1
     return existing_ring
 
 
@@ -586,10 +610,11 @@ cdef void singular_ring_delete(ring *doomed):
         return
 
     cdef ring_wrapper_Py r = wrap_ring(doomed)
-    refcount = ring_refcount_dict.pop(r)
-    if refcount > 1:
-        ring_refcount_dict[r] = refcount-1
+    ring_refcount_dict[r] -= 1
+    if ring_refcount_dict[r] > 0:
         return
+
+    del ring_refcount_dict[r]
 
     global currRing
     cdef ring *oldRing = currRing
@@ -600,8 +625,6 @@ cdef void singular_ring_delete(ring *doomed):
         rChangeCurrRing(doomed)
         rDelete(doomed)
         rChangeCurrRing(oldRing)
-
-
 
 
 #############################################################################
@@ -657,6 +680,7 @@ cpdef print_currRing():
     """
     cdef size_t addr = <size_t>currRing
     print("DEBUG: currRing == " + str(hex(addr)))
+
 
 def currRing_wrapper():
     """

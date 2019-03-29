@@ -4,15 +4,18 @@ Graphics objects
 
 This file contains the definition of the classes :class:`Graphics` and
 :class:`GraphicsArray`.  Usually, you don't create these classes directly
-(although you can do it), you would use :func:`plot` or
-:func:`graphics_array` instead.
+(although you can do it), you would use :func:`plot` or :func:`graphics_array`
+instead.
 
 AUTHORS:
 
 - Jeroen Demeyer (2012-04-19): split off this file from plot.py (:trac:`12857`)
+
 - Punarbasu Purkayastha (2012-05-20): Add logarithmic scale (:trac:`4529`)
+
 - Emily Chen (2013-01-05): Add documentation for
   :meth:`~sage.plot.graphics.Graphics.show` figsize parameter (:trac:`5956`)
+
 - Eric Gourgoulhon (2015-03-19): Add parameter axes_labels_size (:trac:`18004`)
 
 """
@@ -34,7 +37,6 @@ from six import integer_types
 import os
 from math import isnan
 import sage.misc.misc
-from sage.misc.html import html
 from sage.misc.temporary_file import tmp_filename
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
@@ -82,7 +84,7 @@ class Graphics(WithEqualityById, SageObject):
     Here we make a graphic of embedded isosceles triangles, coloring
     each one with a different color as we go::
 
-        sage: h=10; c=0.4; p=0.5;
+        sage: h=10; c=0.4; p=0.5
         sage: G = Graphics()
         sage: for x in srange(1,h+1):
         ....:     l = [[0,x*sqrt(3)],[-x/2,-x*sqrt(3)/2],[x/2,-x*sqrt(3)/2],[0,x*sqrt(3)]]
@@ -1118,10 +1120,16 @@ class Graphics(WithEqualityById, SageObject):
 
         It does not accept any argument (:trac:`19539`)::
 
-            sage: S.plot(1)
+            sage: S.plot(1)  # py2
             Traceback (most recent call last):
             ...
             TypeError: plot() takes exactly 1 argument (2 given)
+
+            sage: S.plot(1)  # py3
+            Traceback (most recent call last):
+            ...
+            TypeError: plot() takes 1 positional argument but 2 were given
+
             sage: S.plot(hey="hou")
             Traceback (most recent call last):
             ...
@@ -1549,7 +1557,7 @@ class Graphics(WithEqualityById, SageObject):
 
           - ``"default"`` -- Uses matplotlib's internal text rendering
             engine called Mathtext ( see
-            http://matplotlib.org/users/mathtext.html ). If you have
+            https://matplotlib.org/users/mathtext.html ). If you have
             modified the default matplotlib settings, for instance via
             a matplotlibrc file, then this option will not change any of
             those settings.
@@ -1587,7 +1595,7 @@ class Graphics(WithEqualityById, SageObject):
 
         You can add a title to a plot::
 
-            sage: show(plot(sin,-4,4), title='A plot of $\sin(x)$')
+            sage: show(plot(sin,-4,4), title=r'A plot of $\sin(x)$')
 
         You can also provide the position for the title to the plot. In the
         plot below the title is placed on the bottom left of the figure.::
@@ -1622,7 +1630,7 @@ class Graphics(WithEqualityById, SageObject):
         background. This behavior can be recovered by passing in certain
         ``legend_options``::
 
-            sage: p = plot(sin(x), legend_label='$\sin(x)$')
+            sage: p = plot(sin(x), legend_label=r'$\sin(x)$')
             sage: p.show(legend_options={'back_color': (0.9,0.9,0.9),
             ....:                        'shadow': False})
 
@@ -1932,12 +1940,11 @@ class Graphics(WithEqualityById, SageObject):
             Graphics object consisting of 1 graphics primitive
 
         When using ``title_pos``, it must be ensured that a list or a tuple
-        of length two is used. Otherwise, an error is raised.::
+        of length two is used. Otherwise, a warning is raised::
 
-            sage; plot(x, -4, 4, title='Plot x', title_pos=0.05)
-            Traceback (most recent call last):
-            ...
-            ValueError: 'title_pos' must be a list or tuple of two real numbers.
+            sage: plot(x, -4, 4, title='Plot x', title_pos=0.05)
+            doctest:...: ...RichReprWarning: Exception in _rich_repr_ while displaying object: 'title_pos' must be a list or tuple of two real numbers.
+            Graphics object consisting of 1 graphics primitive
 
         TESTS:
 
@@ -2126,7 +2133,7 @@ class Graphics(WithEqualityById, SageObject):
         return self._limit_output_aspect_ratio(xmin, xmax, ymin, ymax)
 
     def _limit_output_aspect_ratio(self, xmin, xmax, ymin, ymax):
-        """
+        r"""
         Private helper function for :meth:`get_minmax_data`
 
         INPUT:
@@ -2254,6 +2261,7 @@ class Graphics(WithEqualityById, SageObject):
         from matplotlib.ticker import FuncFormatter, FixedFormatter
         from sage.misc.latex import latex
         from sage.symbolic.ring import SR
+        from .misc import _multiple_of_constant
         #---------------------- Formatting x-ticks ----------------------#
         if x_formatter is None:
             if scale[0] == 'log':
@@ -2261,7 +2269,6 @@ class Graphics(WithEqualityById, SageObject):
             else:
                 x_formatter = OldScalarFormatter()
         elif x_formatter in SR:
-            from .misc import _multiple_of_constant
             x_const = x_formatter
             x_formatter = FuncFormatter(lambda n,pos:
                                         _multiple_of_constant(n,pos,x_const))
@@ -2287,7 +2294,6 @@ class Graphics(WithEqualityById, SageObject):
             else:
                 y_formatter = OldScalarFormatter()
         elif y_formatter in SR:
-            from .misc import _multiple_of_constant
             y_const = y_formatter
             y_formatter = FuncFormatter(lambda n,pos:
                                         _multiple_of_constant(n,pos,y_const))
@@ -2377,10 +2383,10 @@ class Graphics(WithEqualityById, SageObject):
         at least 10 units apart::
 
             sage: p = Graphics()
-            sage: p._get_vmin_vmax(1, 2, 10, None)
-            (9/10, 10.0)
-            sage: p._get_vmin_vmax(1, 5, 10, None)
-            (9/10, 10.0)
+            sage: p._get_vmin_vmax(1, 2, 10, None) == (9/10, 10)
+            True
+            sage: p._get_vmin_vmax(1, 5, 10, None) == (9/10, 10)
+            True
             sage: p._get_vmin_vmax(1, 10, 10, None)
             (9/10, 11)
             sage: p._get_vmin_vmax(1, 11, 10, None)
@@ -2457,6 +2463,7 @@ class Graphics(WithEqualityById, SageObject):
                    axes_pad=None, ticks_integer=None,
                    tick_formatter=None, ticks=None, title=None,
                    title_pos=None, base=None, scale=None,
+                   stylesheet=None,
                    typeset='default'):
         r"""
         Return a matplotlib figure object representing the graphic
@@ -2510,7 +2517,7 @@ class Graphics(WithEqualityById, SageObject):
         ``typeset`` must not be set to an arbitrary string::
 
             sage: plot(x, typeset='garbage')
-            doctest:...: RichReprWarning: Exception in _rich_repr_ while
+            doctest:...: ...RichReprWarning: Exception in _rich_repr_ while
             displaying object: typeset must be set to one of 'default',
             'latex', or 'type1'; got 'garbage'.
             Graphics object consisting of 1 graphics primitive
@@ -2526,8 +2533,20 @@ class Graphics(WithEqualityById, SageObject):
         if not isinstance(ticks, (list, tuple)):
             ticks = (ticks, None)
 
+        # as discussed in trac #25799 and #23696, Sage prefers the computer
+        # modern fonts of TeX for math texts such as axes labels, but otherwise
+        # adopts the default style of matplotlib
+        from matplotlib import rcParams
+        rcParams['mathtext.fontset'] = 'cm'
+        rcParams['mathtext.rm'] = 'serif'
+
+        import matplotlib.pyplot as plt
+        if stylesheet in plt.style.available:
+            plt.style.use(stylesheet)
+
         from sage.symbolic.ring import SR
-        if not isinstance(tick_formatter, (list, tuple)):  # make sure both formatters typeset or both don't
+        # make sure both formatters typeset or both don't
+        if not isinstance(tick_formatter, (list, tuple)):
             if tick_formatter == "latex" or tick_formatter in SR:
                 tick_formatter = (tick_formatter, "latex")
             else:
@@ -2540,7 +2559,6 @@ class Graphics(WithEqualityById, SageObject):
             axes = self._show_axes
 
         from matplotlib.figure import Figure
-        from matplotlib import rcParams
         if typeset == 'type1': # Requires LaTeX, dvipng, gs to be installed.
             rcParams['ps.useafm'] = True
             rcParams['pdf.use14corefonts'] = True
@@ -2572,10 +2590,12 @@ class Graphics(WithEqualityById, SageObject):
         if figsize is not None:
             # then the figsize should be two positive numbers
             if len(figsize) != 2:
-                raise ValueError("figsize should be a positive number or a list of two positive numbers, not {0}".format(figsize))
+                raise ValueError("figsize should be a positive number "
+                                 "or a list of two positive numbers, not {0}".format(figsize))
             figsize = (float(figsize[0]),float(figsize[1])) # floats for mpl
             if not (figsize[0] > 0 and figsize[1] > 0):
-                raise ValueError("figsize should be positive numbers, not {0} and {1}".format(figsize[0],figsize[1]))
+                raise ValueError("figsize should be positive numbers, "
+                                 "not {0} and {1}".format(figsize[0],figsize[1]))
 
         if figure is None:
             figure=Figure(figsize=figsize)
@@ -2883,7 +2903,7 @@ class Graphics(WithEqualityById, SageObject):
             if vgridlines=='minor':
                 vgridstyle['which']='both'
 
-            if hasattr(hgridlines, '__iter__'):
+            if not isinstance(hgridlines, str) and hasattr(hgridlines, '__iter__'):
                 hlines=iter(hgridlines)
                 hgridstyle.pop("minor",None)
                 for hline in hlines:
@@ -2899,7 +2919,7 @@ class Graphics(WithEqualityById, SageObject):
                 if hgridlines not in (None, False):
                     subplot.yaxis.grid(True, **hgridstyle)
 
-            if hasattr(vgridlines, '__iter__'):
+            if not isinstance(vgridlines, str) and hasattr(vgridlines, '__iter__'):
                 vlines=iter(vgridlines)
                 vgridstyle.pop("minor",None)
                 for vline in vlines:
@@ -3159,7 +3179,7 @@ class Graphics(WithEqualityById, SageObject):
                 if latex_implementations[0] == "pdflatex":
                     # use pdflatex and set font encoding as per
                     # matplotlib documentation:
-                    # http://matplotlib.org/users/pgf.html#pgf-tutorial
+                    # https://matplotlib.org/users/pgf.html#pgf-tutorial
                     pgf_options= {"pgf.texsystem": "pdflatex",
                                   "pgf.preamble": [
                                       r"\usepackage[utf8x]{inputenc}",

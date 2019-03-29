@@ -118,8 +118,8 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
                 TESTS::
 
                     sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
-                    sage: H.antipode(H.monomial(140))
-                    P140
+                    sage: H.antipode(H.monomial(14))
+                    P14
 
                     sage: H.monomial(0).antipode()
                     P0

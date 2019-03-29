@@ -222,9 +222,10 @@ def bch_bound(n, D, arithmetic=False):
         one_len, offset = longest_streak(1)
         return (one_len + 1, (1, offset))
     else:
+        n = Integer(n)
         longest_streak_list = [(longest_streak(step), step)
-                               for step in range(1, n // 2 + 1)
-                               if gcd(step, n) == 1]
+                               for step in n.coprime_integers(n // 2 + 1)
+                               if step >= 1]
         (max_len, offset), step = max(longest_streak_list)
         return (max_len + 1, (step, offset))
 
@@ -367,18 +368,17 @@ class CyclicCode(AbstractLinearCode):
             sage: Cc = codes.CyclicCode(D=Dset, field=F, length=n, primitive_root=alpha)
             Traceback (most recent call last):
             ...
-            ValueError: primitive_root must belong to an extension of the base field.
+            ValueError: primitive_root must belong to an extension of the base field
             sage: alpha = GF(16).one()
             sage: Cc = codes.CyclicCode(D=Dset, field=F, length=n, primitive_root=alpha)
             Traceback (most recent call last):
             ...
-            ValueError: primitive_root must be a primitive n-th root of unity.
+            ValueError: primitive_root must be a primitive n-th root of unity
             sage: alpha = GF(32).gen()
             sage: Cc = codes.CyclicCode(D=Dset, field=F, length=n, primitive_root=alpha)
             Traceback (most recent call last):
             ...
-            ValueError: primitive_root must be a primitive n-th root of unity.
-
+            ValueError: primitive_root must be a primitive n-th root of unity
         """
         # Case (1) : generator polynomial and length are provided.
         if (generator_pol is not None and length is not None and
@@ -445,14 +445,13 @@ class CyclicCode(AbstractLinearCode):
                 Fsplit = primitive_root.parent()
                 try:
                     FE = RelativeFiniteFieldExtension(Fsplit, F)
-                    assert FE.extension_degree() == s
-                    assert primitive_root.multiplicative_order() == n
-                except AssertionError:
-                    raise ValueError("primitive_root must be a primitive "
-                                     "n-th root of unity.")
-                except:
+                except Exception:
                     raise ValueError("primitive_root must belong to an "
-                                     "extension of the base field.")
+                                     "extension of the base field")
+                if (FE.extension_degree() != s or
+                        primitive_root.multiplicative_order() != n):
+                    raise ValueError("primitive_root must be a primitive "
+                                     "n-th root of unity")
                 alpha = primitive_root
             else:
                 Fsplit, F_to_Fsplit = F.extension(Integer(s), map=True)
@@ -998,7 +997,7 @@ class CyclicCodePolynomialEncoder(Encoder):
             sage: C = codes.CyclicCode(generator_pol = g, length = n)
             sage: E = codes.encoders.CyclicCodePolynomialEncoder(C)
             sage: E.message_space()
-            Univariate Polynomial Ring in x over Finite Field of size 2 (using NTL)
+            Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
         """
         return self._polynomial_ring
 

@@ -190,10 +190,8 @@ class GraphicsFile(SageObject):
         with open(launch_script, 'w') as f:
             f.write('set defaultdirectory "{0}"\n'.format(self.filename()))
             f.write('script SCRIPT\n')
-        from sage.env import SAGE_LOCAL
-        JMOL = os.path.join(SAGE_LOCAL, 'bin', 'jmol')
-        os.system('{0} {1} 2>/dev/null 1>/dev/null &'
-                  .format(JMOL, launch_script))
+        os.system('jmol {0} 2>/dev/null 1>/dev/null &'
+                  .format(launch_script))
 
     def sagenb_embedding(self):
         """

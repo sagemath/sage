@@ -21,6 +21,7 @@ from sage.libs.pynac.pynac import symbol_table
 from sage.symbolic.constants import (pi, e, golden_ratio, log2, euler_gamma,
                                      catalan, khinchin, twinprime, mertens)
 from sage.functions.hypergeometric import hypergeometric
+from sage.functions.other import cases
 from sage.symbolic.comparison import mixed_order
 
 ###################################################################
@@ -45,17 +46,16 @@ def _mk_full_functions():
         integrate, kronecker_delta, log, polylog, real_part, sec,
         sech, sgn, sin, sinh, tan, tanh, unit_step, zeta, zetaderiv]
 
-    Note that this doctest will fail whenever a Pynac function is added or
-    removed.  In that case, it is very likely that the doctests for
-    random_expr will fail as well.  That's OK; just fix the doctest
-    to match the new output.
+    Note that this doctest will produce different output whenever a
+    symbolic function is added or removed.
     """
     items = sorted(symbol_table['functions'].items())
     return [(1.0, f, f.number_of_arguments())
             for (name, f) in items
             if hasattr(f, 'number_of_arguments') and
                f.number_of_arguments() > 0 and
-               f != hypergeometric]
+               f != hypergeometric and
+               f != cases]
 
 # For creating simple expressions
 
@@ -259,14 +259,16 @@ def random_expr(size, nvars=1, ncoeffs=None, var_frac=0.5,
     EXAMPLES::
 
         sage: from sage.symbolic.random_tests import *
-        sage: set_random_seed(53)
-        sage: random_expr(50, nvars=3, coeff_generator=CDF.random_element) # random
-        (v1^(0.97134084277 + 0.195868299334*I)/csc(-pi + v1^2 + v3) + sgn(1/
-        ((-v3 - 0.760455994772 - 0.554367254855*I)*erf(v3 + 0.982759757946 -
-        0.0352136502348*I)) + binomial(arccoth(v1^pi), 0.760455994772 +
-        0.554367254855*I) + arccosh(2*v2 - (v2 + 0.841911550437 -
-        0.303757179824*I)/sinh_integral(pi) + arccoth(v3 + 0.530133230474 +
-        0.532140303485*I))))/v2
+        sage: some_functions = [arcsinh, arctan, arctan2, arctanh,
+        ....: arg, beta, binomial, ceil, conjugate, cos, cosh, cot, coth,
+        ....: elliptic_pi, erf, exp, factorial, floor, heaviside, imag_part,
+        ....: sech, sgn, sin, sinh, tan, tanh, unit_step, zeta, zetaderiv]
+        sage: my_internal = [(0.6, full_binary, 2), (0.2, full_unary, 1),
+        ....: (0.2, [(1.0,f,f.number_of_arguments()) for f in some_functions])]
+        sage: set_random_seed(1)
+        sage: random_expr(50, nvars=3, internal=my_internal,
+        ....:   coeff_generator=CDF.random_element)
+        (v1^(0.9713408427702117 + 0.195868299334218*I)/cot(-pi + v1^2 + v3) + tan(arctan(v2 + arctan2(-0.35859061674557324 + 0.9407509502498164*I, v3) - 0.8419115504372718 + 0.30375717982404615*I) + arctan2((0.2275357305882964 - 0.8258002386106038*I)/factorial(v2), -v3 - 0.7604559947718565 - 0.5543672548552057*I) + ceil(1/arctan2(v1, v1))))/v2
         sage: random_expr(5, verbose=True) # random
         About to apply <built-in function inv> to [31]
         About to apply sgn to [v1]
@@ -407,7 +409,6 @@ def test_symbolic_expression_order(repetitions=100):
         return randint(-100,100)/randint(1,100)
 
     def make_random_expr():
-        from sage.symbolic.random_tests import random_expr, fast_nodes
         while True:
             try:
                 return random_expr(

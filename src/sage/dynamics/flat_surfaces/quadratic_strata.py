@@ -1,12 +1,17 @@
 r"""
 Strata of quadratic differentials on Riemann surfaces
+
+.. WARNING::
+
+    This module is deprecated. You are advised to install and use the
+    surface_dynamics package instead available at
+    https://pypi.python.org/pypi/surface_dynamics/
 """
 from __future__ import print_function
 from six import iteritems
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
-from sage.rings.rational import Rational
 
 
 class QuadraticStratum(SageObject):
@@ -18,6 +23,19 @@ class QuadraticStratum(SageObject):
         TESTS::
 
             sage: a = QuadraticStratum(-1,-1,-1,-1)
+            doctest:warning
+            ...
+            DeprecationWarning: QuadraticStratum is deprecated and will be removed from Sage.
+            You are advised to install the surface_dynamics package via:
+            sage -pip install surface_dynamics
+            If you do not have write access to the Sage installation you can
+            alternatively do
+            sage -pip install surface_dynamics --user
+            The package surface_dynamics subsumes all flat surface related
+            computation that are currently available in Sage. See more
+            information at
+            http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+            See http://trac.sagemath.org/20695 for details.
             sage: loads(dumps(a)) == a
             True
             sage: QuadraticStratum([])
@@ -25,6 +43,9 @@ class QuadraticStratum(SageObject):
             ...
             ValueError: the list must be non empty !
         """
+        from sage.dynamics.surface_dynamics_deprecation import surface_dynamics_deprecation
+        surface_dynamics_deprecation("QuadraticStratum")
+
         if isinstance(l[0], list) or isinstance(l[0], tuple):
             if not l[0]:
                 raise ValueError("the list must be non empty !")

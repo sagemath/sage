@@ -568,10 +568,11 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
 
             sage: G1 = ArithmeticSubgroup_Permutation(S2='(1,2)(3,4)(5,6)',S3='(1,2,3)(4,5,6)')
             sage: G2 = ArithmeticSubgroup_Permutation(S2='(1,2)(3,4)(5,6)',S3='(1,5,6)(4,2,3)')
-            sage: G1.__hash__() == G2.__hash__()
+            sage: hash(G1) == hash(G2)
             False
         """
-        return hash((tuple(self.relabel(inplace=False)._S2),tuple(self.relabel(inplace=False)._S3)))
+        return hash((tuple(self.relabel(inplace=False)._S2),
+                     tuple(self.relabel(inplace=False)._S3)))
 
     def _repr_(self):
         r"""
@@ -1329,9 +1330,9 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         r"""
         Return ``True`` if this is a congruence subgroup, and ``False``
         otherwise.
-        
+
         ALGORITHM:
-        
+
         Uses Hsu's algorithm [Hsu1996]_. Adapted from Chris Kurth's
         implementation in KFarey [Kur2008]_.
 
@@ -1377,7 +1378,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         (B1-7) is not satisfied.
 
         EXAMPLES:
-    
+
         Test if `{\rm SL}_2(\ZZ)` is congruence::
 
             sage: a = ArithmeticSubgroup_Permutation(L='',R='')
@@ -1451,7 +1452,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             # N is a power of 2
             onefifth = ZZ(5).inverse_mod(N) # i.e. 5^(-1) mod N
             S = L**20*R**onefifth*L**(-4)*~R
-    
+
             # congruence if the three below permutations are trivial
             rel = (~L*R*~L) * S * (L*~R*L) * S
             if not rel.is_one():
@@ -1469,7 +1470,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
                 return False
 
             return True
-        
+
         else:
             # e>1, m>1
             onehalf = ZZ(2).inverse_mod(m) # i.e. 2^(-1) mod m
@@ -1512,7 +1513,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             if not rel.is_one():
                 verbose("Failed relation B6")
                 return False
-            
+
             rel = (l*~r*l)**2*(s*r**5*l*~r*l)**(-3)
             if not rel.is_one():
                 verbose("Failed relation B7")

@@ -188,7 +188,7 @@ class TensorFreeModule(FiniteRankFreeModule):
     See the documentation of
     :class:`~sage.tensor.modules.free_module_tensor.FreeModuleTensor`
     for the full list of arguments that can be provided to the __call__
-    operator. For instance, to contruct a tensor symmetric with respect to the
+    operator. For instance, to construct a tensor symmetric with respect to the
     last two indices::
 
         sage: t = T([], name='t', sym=(1,2))

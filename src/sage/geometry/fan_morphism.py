@@ -82,7 +82,7 @@ from sage.categories.all import Hom
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan, is_Fan, discard_faces
 from sage.matrix.all import identity_matrix, matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.misc.all import cached_method, latex, prod, walltime
 from sage.modules.free_module_morphism import (FreeModuleMorphism,
                                                is_FreeModuleMorphism)
@@ -1246,7 +1246,7 @@ class FanMorphism(FreeModuleMorphism):
         if for any cone `\sigma' \in \Sigma'` and any primitive
         preimage cone `\sigma \in \Sigma` corresponding to `\sigma'`
         the linear map of vector spaces `\phi_\RR` induces a bijection
-        between `\sigma` and `\sigma'`, and, in addition, `phi` is
+        between `\sigma` and `\sigma'`, and, in addition, `\phi` is
         :meth:`dominant <is_dominant>` (that is, `\phi_\RR: N_\RR \to
         N'_\RR$ is surjective).
 

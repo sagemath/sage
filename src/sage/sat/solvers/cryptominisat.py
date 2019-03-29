@@ -92,7 +92,8 @@ class CryptoMiniSat(SatSolver):
             sage: solver.var()                                              # optional - cryptominisat
             5
         """
-        return self._nvars + 1
+        self._nvars += 1
+        return self._nvars
 
     def nvars(self):
         r"""

@@ -1,4 +1,4 @@
-"""
+"""nodoctest
 List of assigned names in GAP
 
 EXAMPLES::
@@ -21,15 +21,13 @@ EXAMPLES::
 #                   http://www.gnu.org/licenses/
 ###############################################################################
 
-
 from six.moves import cPickle
-import string
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.saved_workspace import workspace
 
 
 NamesGVars = libgap.function_factory('NamesGVars')
-Filtered =libgap.function_factory('Filtered')
+Filtered = libgap.function_factory('Filtered')
 ValueGlobal = libgap.function_factory('ValueGlobal')
 IsBoundGlobal = libgap.function_factory('IsBoundGlobal')
 IsFunction = libgap.function_factory('IsFunction')
@@ -66,7 +64,7 @@ def load_or_compute(name, function):
     else:
         value = function()
         from sage.misc.temporary_file import atomic_write
-        with atomic_write(filename) as f:
+        with atomic_write(filename, binary=True) as f:
             cPickle.dump(value, f)
         return value
 
@@ -139,9 +137,3 @@ def list_functions():
 
 
 FUNCTIONS = load_or_compute('functions', list_functions)
-
-    
-
-
-
-

@@ -23,6 +23,8 @@ from __future__ import print_function
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
+from sage.cpython.string cimport char_to_str, str_to_bytes
+from sage.cpython.string import FS_ENCODING
 from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.numerical.mip import MIPSolverException
 from sage.libs.glpk.error import GLPKError
@@ -142,7 +144,7 @@ cdef class GLPKBackend(GenericBackend):
             glp_set_col_kind(self.lp, n_var, GLP_IV)
 
         if name is not None:
-            glp_set_col_name(self.lp, n_var, name)
+            glp_set_col_name(self.lp, n_var, str_to_bytes(name))
 
         if obj:
             self.objective_coefficient(n_var - 1, obj)
@@ -154,7 +156,7 @@ cdef class GLPKBackend(GenericBackend):
         Add ``number`` new variables.
 
         This amounts to adding new columns to the matrix. By default,
-        the variables are both positive, real and theor coefficient in
+        the variables are both positive, real and their coefficient in
         the objective function is 0.0.
 
         INPUT:
@@ -230,7 +232,8 @@ cdef class GLPKBackend(GenericBackend):
                 self.objective_coefficient(n_var - i - 1, obj)
 
             if names is not None:
-                glp_set_col_name(self.lp, n_var - i, names[number - i - 1])
+                glp_set_col_name(self.lp, n_var - i,
+                                 str_to_bytes(names[number - i - 1]))
 
         return n_var - 1
 
@@ -324,14 +327,14 @@ cdef class GLPKBackend(GenericBackend):
         else:
             glp_set_obj_coef(self.lp, variable + 1, coeff)
 
-    cpdef problem_name(self, char * name = NULL):
+    cpdef problem_name(self, name=None):
         """
         Return or define the problem's name
 
         INPUT:
 
-        - ``name`` (``char *``) -- the problem's name. When set to
-          ``NULL`` (default), the method returns the problem's name.
+        - ``name`` (``str``) -- the problem's name. When set to
+          ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
 
@@ -343,14 +346,15 @@ cdef class GLPKBackend(GenericBackend):
         """
         cdef char * n
 
-        if name == NULL:
+        if name is None:
             n =  <char *> glp_get_prob_name(self.lp)
             if n == NULL:
                 return ""
             else:
-                return n
+                return char_to_str(n)
 
         else:
+            name = str_to_bytes(name)
             if len(name) > 255:
                 raise ValueError("Problem name for GLPK must not be longer than 255 characters.")
             glp_set_prob_name(self.lp, name)
@@ -403,7 +407,7 @@ cdef class GLPKBackend(GenericBackend):
             0.30000000000000004
             sage: p.get_backend().set_verbosity(3)
             sage: p.solve()
-            GLPK Integer Optimizer, v4.63
+            GLPK Integer Optimizer...
             2 rows, 2 columns, 2 non-zeros
             0 integer variables, none of which are binary
             Preprocessing...
@@ -614,7 +618,7 @@ cdef class GLPKBackend(GenericBackend):
                 glp_set_row_bnds(self.lp, n, GLP_DB, lower_bound, upper_bound)
 
         if name is not None:
-            glp_set_row_name(self.lp, n, name)
+            glp_set_row_name(self.lp, n, str_to_bytes(name))
 
     cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names=None):
         """
@@ -661,7 +665,8 @@ cdef class GLPKBackend(GenericBackend):
                 else:
                     glp_set_row_bnds(self.lp, n-i, GLP_DB, lower_bound, upper_bound)
             if names is not None:
-                glp_set_row_name(self.lp, n-i, names[number-i-1])
+                glp_set_row_name(self.lp, n-i,
+                                 str_to_bytes(names[number-i-1]))
 
     cpdef row(self, int index):
         r"""
@@ -780,13 +785,13 @@ cdef class GLPKBackend(GenericBackend):
             (ub if ub != +DBL_MAX else None)
             )
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         """
         Add a column.
 
         INPUT:
 
-        - ``indices`` (list of integers) -- this list constains the
+        - ``indices`` (list of integers) -- this list contains the
           indices of the constraints in which the variable's
           coefficient is nonzero
 
@@ -831,6 +836,8 @@ cdef class GLPKBackend(GenericBackend):
 
         glp_set_mat_col(self.lp, n, len(indices), col_i, col_values)
         glp_set_col_bnds(self.lp, n, GLP_LO, 0,0)
+        sig_free(col_i)
+        sig_free(col_values)
 
 
     cpdef int solve(self) except -1:
@@ -1294,7 +1301,7 @@ cdef class GLPKBackend(GenericBackend):
         s = <char*> glp_get_col_name(self.lp, index + 1)
 
         if s != NULL:
-            return s
+            return char_to_str(s)
         else:
             return ""
 
@@ -1320,7 +1327,7 @@ cdef class GLPKBackend(GenericBackend):
         s = <char*> glp_get_row_name(self.lp, index + 1)
 
         if s != NULL:
-            return s
+            return char_to_str(s)
         else:
             return ""
 
@@ -1459,10 +1466,14 @@ cdef class GLPKBackend(GenericBackend):
 
             sage: p.add_variable()
             0
-            sage: p.variable_upper_bound(0, 'hey!')
+            sage: p.variable_upper_bound(0, 'hey!')  # py2
             Traceback (most recent call last):
             ...
             TypeError: a float is required
+            sage: p.variable_upper_bound(0, 'hey!')  # py3
+            Traceback (most recent call last):
+            ...
+            TypeError: must be real number, not str
         """
         cdef double x
         cdef double min
@@ -1550,10 +1561,14 @@ cdef class GLPKBackend(GenericBackend):
 
             sage: p.add_variable()
             0
-            sage: p.variable_lower_bound(0, 'hey!')
+            sage: p.variable_lower_bound(0, 'hey!')  # py2
             Traceback (most recent call last):
             ...
             TypeError: a float is required
+            sage: p.variable_lower_bound(0, 'hey!')  # py3
+            Traceback (most recent call last):
+            ...
+            TypeError: must be real number, not str
         """
         cdef double x
         cdef double max
@@ -1592,7 +1607,7 @@ cdef class GLPKBackend(GenericBackend):
                     glp_set_col_bnds(self.lp, index + 1, GLP_DB, value, max)
                 sig_off()
 
-    cpdef write_lp(self, char * filename):
+    cpdef write_lp(self, filename):
         """
         Write the problem to a .lp file
 
@@ -1612,9 +1627,10 @@ cdef class GLPKBackend(GenericBackend):
             Writing problem data to ...
             9 lines were written
         """
+        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
         glp_write_lp(self.lp, NULL, filename)
 
-    cpdef write_mps(self, char * filename, int modern):
+    cpdef write_mps(self, filename, int modern):
         """
         Write the problem to a .mps file
 
@@ -1634,7 +1650,8 @@ cdef class GLPKBackend(GenericBackend):
             Writing problem data to ...
             17 records were written
         """
-        glp_write_mps(self.lp, modern, NULL,  filename)
+        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
+        glp_write_mps(self.lp, modern, NULL, filename)
 
     cpdef __copy__(self):
         """
@@ -1686,7 +1703,7 @@ cdef class GLPKBackend(GenericBackend):
         For example, both ``glp_gmi_cuts`` or ``"gmi_cuts"`` control whether
         to solve using Gomory cuts.
 
-        Parameter **values** are specificed as strings in upper case,
+        Parameter **values** are specified as strings in upper case,
         or as constants in lower case. For example, both ``glp_on`` and ``"GLP_ON"``
         specify the same thing.
 
@@ -1712,7 +1729,7 @@ cdef class GLPKBackend(GenericBackend):
 
          * - ``simplex_or_intopt``
 
-           - specifiy which of ``simplex``, ``exact`` and ``intopt`` routines
+           - specify which of ``simplex``, ``exact`` and ``intopt`` routines
              in GLPK to use.
              This is controlled by setting ``simplex_or_intopt`` to
              ``glp_simplex_only``, ``glp_exact_simplex_only``,
@@ -2230,7 +2247,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return self.get_row_stat(index) == GLP_NU
 
-    cpdef int print_ranges(self, char * filename = NULL) except -1:
+    cpdef int print_ranges(self, filename=None) except -1:
         r"""
         Print results of a sensitivity analysis
 
@@ -2301,14 +2318,16 @@ cdef class GLPKBackend(GenericBackend):
 
         from sage.misc.all import SAGE_TMP
 
-        if filename == NULL:
-            fname = SAGE_TMP+"/ranges.tmp"
+        if filename is None:
+            fname = SAGE_TMP + "/ranges.tmp"
         else:
             fname = filename
 
-        res = glp_print_ranges(self.lp, 0, 0, 0, fname)
+        res = glp_print_ranges(self.lp, 0, 0, 0,
+                               str_to_bytes(fname, FS_ENCODING,
+                                            'surrogateescape'))
 
-        if filename == NULL:
+        if filename is None:
             if res == 0:
                 with open(fname) as f:
                     for line in f:
@@ -2615,7 +2634,7 @@ cdef class GLPKBackend(GenericBackend):
         - if `0 \leq k \leq m-1`, the basic variable is `k`-th auxiliary
           variable,
 
-        - if `m \leq k \leq m+n-1`, the basic variable is `(k-m)`-th structual
+        - if `m \leq k \leq m+n-1`, the basic variable is `(k-m)`-th structural
           variable,
 
         where `m` is the number of rows and `n` is the number of columns in the
@@ -2708,7 +2727,7 @@ cdef class GLPKBackend(GenericBackend):
           variable,
 
         - if `m \leq k \leq m+n-1`, the non-basic variable is `(k-m)`-th
-          structual variable,
+          structural variable,
 
         where `m` is the number of rows and `n` is the number of columns
         in the specified problem object.

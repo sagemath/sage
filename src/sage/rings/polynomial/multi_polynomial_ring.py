@@ -70,7 +70,7 @@ from sage.rings.integer_ring import is_IntegerRing
 
 import sage.rings.polynomial.multi_polynomial_ideal as multi_polynomial_ideal
 
-from sage.rings.polynomial.multi_polynomial_ring_generic import MPolynomialRing_generic, is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base, is_MPolynomialRing
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polydict import PolyDict, ETuple
 from sage.rings.polynomial.term_order import TermOrder
@@ -120,7 +120,7 @@ class MPolynomialRing_macaulay2_repr:
         return self.base_ring().is_exact()
 
 
-class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_singular_repr, MPolynomialRing_generic):
+class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_singular_repr, MPolynomialRing_base):
     """
     Multivariable polynomial ring.
 
@@ -134,7 +134,7 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
     def __init__(self, base_ring, n, names, order):
         from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
         order = TermOrder(order,n)
-        MPolynomialRing_generic.__init__(self, base_ring, n, names, order)
+        MPolynomialRing_base.__init__(self, base_ring, n, names, order)
         # Construct the generators
         v = [0] * n
         one = base_ring(1);
@@ -148,7 +148,7 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
         self._zero_tuple = tuple(v)
         self._has_singular = can_convert_to_singular(self)
         # This polynomial ring should belong to Algebras(base_ring).
-        # Algebras(...).parent_class, which was called from MPolynomialRing_generic.__init__,
+        # Algebras(...).parent_class, which was called from MPolynomialRing_base.__init__,
         # tries to provide a conversion from the base ring, if it does not exist.
         # This is for algebras that only do the generic stuff in their initialisation.
         # But here, we want to use PolynomialBaseringInjection. Hence, we need to
@@ -193,6 +193,17 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
             False
         """
         return not (self == other)
+
+    def __hash__(self):
+        """
+        Compute the hash of self.
+
+        EXAMPLES::
+
+            sage: h = hash(PolynomialRing(Integers(8), 'x', 3))
+        """
+        return hash((self.base_ring(), self.ngens(),
+                     self.variable_names(), self.term_order()))
 
     def __call__(self, x, check=True):
         """
@@ -690,22 +701,18 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
             sage: P.monomial_lcm(x, P(1))
             x
         """
-        one = self.base_ring()(1)
+        one = self.base_ring().one()
 
-        f = f.dict().keys()[0]
-        g = g.dict().keys()[0]
-
+        f, = f.dict()
+        g, = g.dict()
 
         length = len(f)
 
-        res = {}
+        res = {i: max(f[i], g[i])
+               for i in f.common_nonzero_positions(g)}
 
-        for i in f.common_nonzero_positions(g):
-            res[i] = max([f[i],g[i]])
-
-        res =  self(PolyDict({ETuple(res,length):one},\
-                            force_int_exponents=False,force_etuples=False))
-        return res
+        return self(PolyDict({ETuple(res, length): one},
+                             force_int_exponents=False, force_etuples=False))
 
     def monomial_reduce(self, f, G):
         r"""
@@ -771,15 +778,15 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
 
     def monomial_divides(self, a, b):
         """
-        Return False if ``a`` does not divide ``b`` and True otherwise.
+        Return ``False`` if ``a`` does not divide ``b`` and ``True`` otherwise.
 
         INPUT:
 
-        -  ``a`` - monomial.
+        - ``a`` -- monomial
 
-        -  ``b`` - monomial.
+        - ``b`` -- monomial
 
-        OUTPUT: Boolean.
+        OUTPUT: Boolean
 
         EXAMPLES::
 
@@ -802,8 +809,8 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
         if not a:
             raise ZeroDivisionError
 
-        a = a.dict().keys()[0]
-        b = b.dict().keys()[0]
+        a, = a.dict()
+        b, = b.dict()
 
         for i in b.common_nonzero_positions(a):
             if b[i] - a[i] < 0:
@@ -898,21 +905,22 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
             raise TypeError("only monomials are supported")
 
         R = self
-        one = self.base_ring()(1)
+        one = self.base_ring().one()
         M = list()
 
-        maxvector = list(t.dict().keys()[0])
+        v, = t.dict()
+        maxvector = list(v)
 
-        tempvector =[0,]*len(maxvector)
+        tempvector =[0,] * len(maxvector)
 
         pos = 0
 
         while tempvector != maxvector:
             tempvector = addwithcarry(list(tempvector) , maxvector, pos)
-            M.append(R(PolyDict({ETuple(tempvector):one}, \
-                              force_int_exponents=False,force_etuples=False)))
+            M.append(R(PolyDict({ETuple(tempvector): one},
+                                force_int_exponents=False,
+                                force_etuples=False)))
         return M
-
 
 
 class MPolynomialRing_polydict_domain(IntegralDomain,
@@ -944,7 +952,7 @@ class MPolynomialRing_polydict_domain(IntegralDomain,
                 gens = gens[0]
         if not self._has_singular:
             # pass through
-            MPolynomialRing_generic.ideal(self,gens,**kwds)
+            MPolynomialRing_base.ideal(self,gens,**kwds)
         if is_SingularElement(gens):
             gens = list(gens)
             do_coerce = True

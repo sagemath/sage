@@ -1,7 +1,7 @@
-"""
+r"""
 `p`-Adic Base Leaves
 
-Implementations of `\mathbb{Z}_p` and `\mathbb{Q}_p`
+Implementations of `\ZZ_p` and `\QQ_p`
 
 AUTHORS:
 
@@ -99,20 +99,20 @@ when cast into the ring.::
     <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
 
 The fixed modulus type is the leanest of the p-adic rings: it is
-basically just a wrapper around `\mathbb{Z} / p^n \mathbb{Z}`
+basically just a wrapper around `\ZZ / p^n \ZZ`
 providing a unified interface with the rest of the `p`-adics.  This is
 the type you should use if your primary interest is in speed (though
 it's not all that much faster than other `p`-adic types).  It does not
 track precision of elements.::
 
     sage: R = ZpFM(5, 5); a = R(4005); a
-    5 + 2*5^3 + 5^4 + O(5^5)
+    5 + 2*5^3 + 5^4
     sage: a // 5
-    1 + 2*5^2 + 5^3 + O(5^5)
+    1 + 2*5^2 + 5^3
 
 `p`-Adic rings and fields should be created using the creation
 functions ``Zp`` and ``Qp`` as above.  This will ensure that there is
-only one instance of `\mathbb{Z}_p` and `\mathbb{Q}_p` of a given
+only one instance of `\ZZ_p` and `\QQ_p` of a given
 type, `p`, print mode and precision.  It also saves typing very long
 class names.::
 
@@ -125,7 +125,7 @@ class names.::
 
 Once one has a `p`-Adic ring or field, one can cast elements into it
 in the standard way.  Integers, ints, longs, Rationals, other `p`-Adic
-types, pari `p`-adics and elements of `\mathbb{Z} / p^n \mathbb{Z}`
+types, pari `p`-adics and elements of `\ZZ / p^n \ZZ`
 can all be cast into a `p`-Adic field.::
 
     sage: R = Qp(5, 5, 'capped-rel','series'); a = R(16); a
@@ -133,7 +133,7 @@ can all be cast into a `p`-Adic field.::
     sage: b = R(23/15); b
     5^-1 + 3 + 3*5 + 5^2 + 3*5^3 + O(5^4)
     sage: S = Zp(5, 5, 'fixed-mod','val-unit'); c = S(Mod(75,125)); c
-    5^2 * 3 + O(5^5)
+    5^2 * 3
     sage: R(c)
     3*5^2 + O(5^5)
 
@@ -197,12 +197,15 @@ from .generic_nodes import pAdicFieldBaseGeneric, \
                           pAdicFixedModRingGeneric, \
                           pAdicCappedAbsoluteRingGeneric, \
                           pAdicFloatingPointRingGeneric, \
-                          pAdicFloatingPointFieldGeneric
+                          pAdicFloatingPointFieldGeneric, \
+                          pAdicLatticeGeneric
 from .padic_capped_relative_element import pAdicCappedRelativeElement
 from .padic_capped_absolute_element import pAdicCappedAbsoluteElement
 from .padic_fixed_mod_element import pAdicFixedModElement
 from .padic_floating_point_element import pAdicFloatingPointElement
+
 from sage.rings.integer_ring import ZZ
+
 
 class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGeneric):
     r"""
@@ -272,7 +275,7 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
             sage: K.has_coerce_map_from(ZpCA(17,40))
             False
         """
-        #if isistance(R, pAdicRingLazy) and R.prime() == self.prime():
+        #if isinstance(R, pAdicRingLazy) and R.prime() == self.prime():
         #    return True
         if isinstance(R, pAdicRingCappedRelative) and R.prime() == self.prime():
             if R.precision_cap() < self.precision_cap():
@@ -368,7 +371,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
             sage: K.has_coerce_map_from(Zp(17,40))
             True
         """
-        #if isistance(R, pAdicRingLazy) and R.prime() == self.prime():
+        #if isinstance(R, pAdicRingLazy) and R.prime() == self.prime():
         #    return True
         if isinstance(R, pAdicRingCappedRelative) and R.prime() == self.prime():
             return True
@@ -551,7 +554,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
 
             sage: K = ZpFM(17)
             sage: K(1) + 1 #indirect doctest
-            2 + O(17^20)
+            2
             sage: K.has_coerce_map_from(ZZ)
             True
             sage: K.has_coerce_map_from(int)
@@ -569,7 +572,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
             sage: K.has_coerce_map_from(Zp(17,40))
             False
         """
-        #if isistance(R, pAdicRingLazy) and R.prime() == self.prime():
+        #if isinstance(R, pAdicRingLazy) and R.prime() == self.prime():
         #    return True
         if isinstance(R, pAdicRingFixedMod) and R.prime() == self.prime():
             if R.precision_cap() > self.precision_cap():
@@ -826,3 +829,270 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
             if N == p**n:
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
+
+# Lattice precision
+###################
+
+class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
+    """
+    An implementation of the `p`-adic integers with lattice precision.
+
+    INPUT:
+
+    - ``p`` -- prime
+
+    - ``prec`` -- precision cap, given as a pair (``relative_cap``, ``absolute_cap``)
+
+    - ``subtype`` -- either ``'cap'`` or ``'float'``
+
+    - ``print_mode`` -- dictionary with print options
+
+    - ``names`` -- how to print the prime
+
+    - ``label`` -- the label of this ring
+
+    .. SEEALSO::
+
+        :meth:`label`
+
+    EXAMPLES::
+
+        sage: R = ZpLC(next_prime(10^60)) # indirect doctest
+        doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
+        See http://trac.sagemath.org/23505 for details.
+        sage: type(R)
+        <class 'sage.rings.padics.padic_base_leaves.pAdicRingLattice_with_category'>
+
+        sage: R = ZpLC(2, label='init') # indirect doctest
+        sage: R
+        2-adic Ring with lattice-cap precision (label: init)
+    """
+    def __init__(self, p, prec, subtype, print_mode, names, label=None):
+        """
+        Initialization.
+
+        TESTS:
+
+            sage: R = ZpLC(7, label='init')
+            sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+        """
+        # We need to set the subtype first, so that
+        # pAdicRingBaseGeneric.__init__ can work
+        self._subtype = subtype
+        if isinstance(prec,tuple):
+            pAdicRingBaseGeneric.__init__(self, p, prec[1], print_mode, names, None)
+        else:
+            pAdicRingBaseGeneric.__init__(self, p, prec, print_mode, names, None)
+        pAdicLatticeGeneric.__init__(self, p, prec, print_mode, names, label)
+
+    def _coerce_map_from_(self, R):
+        """
+        Return ``True`` if there is a coerce map from ``R`` to this ring.
+
+        EXAMPLES::
+
+            sage: R = ZpLC(2)
+            sage: R.has_coerce_map_from(ZZ)
+            True
+            sage: R.has_coerce_map_from(QQ)
+            False
+
+            sage: K = R.fraction_field()
+            sage: K.has_coerce_map_from(R)
+            True
+            sage: K.has_coerce_map_from(QQ)
+            True
+
+        Note that coerce map does not exist between ``p``-adic rings with
+        lattice precision and other ``p``-adic rings.
+
+            sage: S = Zp(2)
+            sage: R.has_coerce_map_from(S)
+            False
+            sage: S.has_coerce_map_from(R)
+            False
+
+        Similarly there is no coercion maps between ``p``-adic rings with
+        different labels.
+
+            sage: R2 = ZpLC(2, label='coerce')
+            sage: R.has_coerce_map_from(R2)
+            False
+            sage: R2.has_coerce_map_from(R)
+            False
+        """
+        if isinstance(R, pAdicRingLattice) and R.precision() is self.precision():
+            return True
+
+    def random_element(self, prec=None):
+        """
+        Return a random element of this ring.
+
+        INPUT:
+
+        - ``prec`` -- an integer or ``None`` (the default): the
+          absolute precision of the generated random element
+
+        EXAMPLES::
+
+            sage: R = ZpLC(2)
+            sage: R.random_element()    # random
+            2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^10 + 2^11 + 2^14 + 2^15 + 2^16 + 2^17 + 2^18 + 2^19 + 2^21 + O(2^23)
+
+            sage: R.random_element(prec=10)    # random
+            1 + 2^3 + 2^4 + 2^7 + O(2^10)
+        """
+        p = self.prime()
+        if self._subtype == 'cap':
+            if prec is None:
+                prec = self._prec_cap_absolute
+            x = ZZ.random_element(p**prec)
+            relcap = x.valuation(p) + self._prec_cap_relative
+            if relcap < prec:
+                prec = relcap
+            return self._element_class(self, x, prec=prec)
+        else:
+            if prec is None:
+                cap = self._prec_cap_relative
+            else:
+                cap = prec
+            x = ZZ.random_element(p**cap)
+            v = x.valuation(p)
+            if prec is None and v > 0:
+                x += p**cap * ZZ.random_element(p**v)
+            return self._element_class(self, x, prec=prec)
+
+class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
+    """
+    An implementation of the `p`-adic numbers with lattice precision.
+
+    INPUT:
+
+    - ``p`` -- prime
+
+    - ``prec`` -- precision cap, given as a pair (``relative_cap``, ``absolute_cap``)
+
+    - ``subtype`` -- either ``'cap'`` or ``'float'``
+
+    - ``print_mode`` -- dictionary with print options
+
+    - ``names`` -- how to print the prime
+
+    - ``label`` -- the label of this ring
+
+    .. SEEALSO::
+
+        :meth:`label`
+
+    EXAMPLES::
+
+        sage: R = QpLC(next_prime(10^60)) # indirect doctest
+        doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
+        See http://trac.sagemath.org/23505 for details.
+        sage: type(R)
+        <class 'sage.rings.padics.padic_base_leaves.pAdicFieldLattice_with_category'>
+
+        sage: R = QpLC(2,label='init') # indirect doctest
+        sage: R
+        2-adic Field with lattice-cap precision (label: init)
+    """
+    def __init__(self, p, prec, subtype, print_mode, names, label=None):
+        """
+        Initialization.
+
+        TESTS::
+
+            sage: R = QpLC(7, label='init')
+            sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+        """
+        # We need to set the subtype first, so that
+        # pAdicFieldBaseGeneric.__init__ can work
+        self._subtype = subtype
+        if isinstance(prec,tuple):
+            pAdicFieldBaseGeneric.__init__(self, p, prec[1], print_mode, names, None)
+        else:
+            pAdicFieldBaseGeneric.__init__(self, p, prec, print_mode, names, None)
+        pAdicLatticeGeneric.__init__(self, p, prec, print_mode, names, label)
+
+    def _coerce_map_from_(self, R):
+        """
+        Return ``True`` if there is a coerce map from ``R`` to this ring.
+
+        EXAMPLES::
+
+            sage: R = ZpLC(2)
+            sage: R.has_coerce_map_from(ZZ)
+            True
+            sage: R.has_coerce_map_from(QQ)
+            False
+
+            sage: K = R.fraction_field()
+            sage: K.has_coerce_map_from(R)
+            True
+            sage: K.has_coerce_map_from(QQ)
+            True
+
+        Note that coerce map does not exist between ``p``-adic fields with
+        lattice precision and other ``p``-adic rings.
+
+            sage: L = Qp(2)
+            sage: K.has_coerce_map_from(L)
+            False
+            sage: L.has_coerce_map_from(K)
+            False
+
+        Similarly there is no coercion maps between ``p``-adic rings with
+        different labels.
+
+            sage: K2 = QpLC(2, label='coerce')
+            sage: K.has_coerce_map_from(K2)
+            False
+            sage: K2.has_coerce_map_from(K)
+            False
+        """
+        if isinstance(R, (pAdicRingLattice, pAdicFieldLattice)) and R.precision() is self.precision():
+            return True
+
+    def random_element(self, prec=None, integral=False):
+        """
+        Return a random element of this ring.
+
+        INPUT:
+
+        - ``prec`` -- an integer or ``None`` (the default): the
+          absolute precision of the generated random element
+
+        - ``integral`` -- a boolean (default: ``False``); if true
+          return an element in the ring of integers
+
+        EXAMPLES::
+
+            sage: K = QpLC(2)
+            sage: K.random_element()   # random
+            2^-8 + 2^-7 + 2^-6 + 2^-5 + 2^-3 + 1 + 2^2 + 2^3 + 2^5 + O(2^12)
+            sage: K.random_element(integral=True)    # random
+            2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^10 + 2^11 + 2^14 + 2^15 + 2^16 + 2^17 + 2^18 + 2^19 + O(2^20)
+
+            sage: K.random_element(prec=10)    # random
+            2^(-3) + 1 + 2 + 2^4 + 2^8 + O(2^10)
+
+        If the given precision is higher than the internal cap of the
+        parent, then the cap is used::
+
+            sage: K.precision_cap_relative()
+            20
+            sage: K.random_element(prec=100)    # random
+            2^5 + 2^8 + 2^11 + 2^12 + 2^14 + 2^18 + 2^20 + 2^24 + O(2^25)
+        """
+        if integral:
+            val = 0
+        else:
+            val = ZZ.random_element()
+        if prec is None:
+            prec = self._prec_cap_absolute - val
+        p = self.prime()
+        x = ZZ.random_element(p**prec)
+        relcap = x.valuation(p) + self._prec_cap_relative
+        if relcap < prec:
+            prec = relcap
+        return self._element_class(self, x*(p**val), prec=prec)

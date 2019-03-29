@@ -19,6 +19,7 @@ from __future__ import absolute_import, division, print_function
 from .pynac cimport *
 from sage.symbolic.expression cimport new_Expression_from_GEx
 from sage.symbolic.ring import SR
+from sage.cpython.string cimport str_to_bytes
 
 
 cdef class PynacConstant:
@@ -26,7 +27,7 @@ cdef class PynacConstant:
         """
         Creates a constant in Pynac.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.libs.pynac.constant import PynacConstant
             sage: f = PynacConstant('foo', 'foo', 'real')
@@ -65,7 +66,8 @@ cdef class PynacConstant:
         elif self._name == "NaN":
             self.pointer = <GConstant *>&g_NaN
         else:
-            self._object = new GConstant(name, ConstantEvalf, texname, domain)
+            self._object = new GConstant(str_to_bytes(name), ConstantEvalf,
+                                         str_to_bytes(texname), domain)
             self.pointer = self._object
 
     def __dealloc__(self):

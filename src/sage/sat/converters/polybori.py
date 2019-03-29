@@ -91,8 +91,8 @@ class CNFEncoder(ANF2CNFConverter):
             sage: _ = solver.write()
             sage: print(open(fn).read())
             p cnf 3 2
-            1 0
             -2 0
+            1 0
             sage: e.phi
             [None, a, b, c]
 
@@ -189,7 +189,7 @@ class CNFEncoder(ANF2CNFConverter):
 
     def zero_blocks(self, f):
         """
-        Divides the zero set of ``f`` into blocks.
+        Divide the zero set of ``f`` into blocks.
 
         EXAMPLES::
 
@@ -197,10 +197,10 @@ class CNFEncoder(ANF2CNFConverter):
             sage: from sage.sat.converters.polybori import CNFEncoder
             sage: from sage.sat.solvers.dimacs import DIMACS
             sage: e = CNFEncoder(DIMACS(), B)
-            sage: sorted(e.zero_blocks(a*b*c))
-            [{c: 0}, {b: 0}, {a: 0}]
+            sage: sorted(sorted(d.items()) for d in e.zero_blocks(a*b*c))
+            [[(c, 0)], [(b, 0)], [(a, 0)]]
 
-        .. note::
+        .. NOTE::
 
             This function is randomised.
         """
@@ -271,8 +271,8 @@ class CNFEncoder(ANF2CNFConverter):
             sage: _ = solver.write()
             sage: print(open(fn).read())
             p cnf 3 2
-            1 0
             -2 0
+            1 0
             sage: e.phi
             [None, a, b, c]
         """
@@ -280,17 +280,21 @@ class CNFEncoder(ANF2CNFConverter):
         # the block it is evaluated to 0 by f, iff it is not lying in
         # any zero block of f+1
 
-        blocks = self.zero_blocks(f+1)
-        C = [dict([(variable, 1-value) for (variable, value) in six.iteritems(b)]) for b in blocks ]
+        blocks = self.zero_blocks(f + 1)
+        C = [{variable: 1 - value for variable, value in six.iteritems(b)}
+             for b in blocks]
 
         def to_dimacs_index(v):
-            return v.index()+1
+            return v.index() + 1
 
         def clause(c):
-            return [to_dimacs_index(variable) if value == 1 else -to_dimacs_index(variable) for (variable, value) in six.iteritems(c)]
+            return [to_dimacs_index(variable)
+                    if value == 1 else -to_dimacs_index(variable)
+                    for variable, value in six.iteritems(c)]
 
-        for c in C:
-            self.solver.add_clause(clause(c))
+        data = (clause(c) for c in C)
+        for d in sorted(data):
+            self.solver.add_clause(d)
 
     ###################################################
     # Indirect conversion, may add new variables
@@ -331,7 +335,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         if self.use_xor_clauses:
             self.solver.add_xor_clause(f, rhs=not equal_zero)
-        elif f > self.cutting_number:
+        elif len(f) > self.cutting_number:
             for fpart, this_equal_zero in self.split_xor(f, equal_zero):
                 ll = len(fpart)
                 for p in self.permutations(ll, this_equal_zero):
@@ -505,8 +509,8 @@ class CNFEncoder(ANF2CNFConverter):
             sage: _ = solver.write()
             sage: print(open(fn).read())
             p cnf 3 2
-            1 0
             -2 0
+            1 0
             sage: e.phi
             [None, a, b, c]
 
@@ -560,8 +564,8 @@ class CNFEncoder(ANF2CNFConverter):
             sage: _ = solver.write()
             sage: print(open(fn).read())
             p cnf 4 9
-            1 0
             -2 0
+            1 0
             1 -4 0
             2 -4 0
             4 -1 -2 0
@@ -573,7 +577,6 @@ class CNFEncoder(ANF2CNFConverter):
             sage: e.phi
             [None, a, b, c, a*b]
         """
-        res = []
         for f in F:
             self.clauses(f)
         return self.phi
@@ -602,17 +605,10 @@ class CNFEncoder(ANF2CNFConverter):
             sage: e.to_polynomial( (1,-2,3) )
             a*b*c + a*b + b*c + b
         """
-        def product(l):
-            # order of these multiplications for performance
-            res = l[0]
-            for p in l[1:]:
-                res = res*p
-            return res
-
         phi = self.phi
-        product = self.ring(1)
+        product = self.ring.one()
         for v in c:
             if phi[abs(v)] is None:
                 raise ValueError("clause contains an XOR glueing variable")
-            product *= phi[abs(v)] + int(v>0)
+            product *= phi[abs(v)] + int(v > 0)
         return product

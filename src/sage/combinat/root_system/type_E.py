@@ -635,5 +635,5 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
         return ret + '---'.join(node(i) for i in labels) + '\n' + "".join("{!s:4}".format(i) for i in labels)
 
 # For unpickling backward compatibility (Sage <= 4.1)
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_E', 'ambient_space',  AmbientSpace)

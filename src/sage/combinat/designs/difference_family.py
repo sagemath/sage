@@ -55,7 +55,7 @@ import six
 from six import itervalues
 from six.moves import range
 
-from sage.misc.cachefunc import cached_method
+from sage.misc.cachefunc import cached_function
 
 from sage.categories.sets_cat import EmptySetError
 import sage.arith.all as arith
@@ -805,7 +805,7 @@ def one_radical_difference_family(K, k):
     from sage.groups.generic import discrete_log
     logA = [discrete_log(a,x)%c for a in A]
 
-    # if two elments of A are equal modulo c then no tiling is possible
+    # if two elements of A are equal modulo c then no tiling is possible
     if len(set(logA)) != m:
         return None
 
@@ -1094,7 +1094,7 @@ def mcfarland_1973_construction(q, s):
     .. [McF1973] Robert L. McFarland
        "A family of difference sets in non-cyclic groups"
        J. Combinatorial Theory (A) 15 (1973) 1--10.
-       http://dx.doi.org/10.1016/0097-3165(73)90031-9
+       :doi:`10.1016/0097-3165(73)90031-9`
 
     EXAMPLES::
 
@@ -1146,7 +1146,7 @@ def are_hadamard_difference_set_parameters(v, k, lmbda):
     N2 = N*N
     return v == 4*N2 and k == 2*N2 - N and lmbda == N2 - N
 
-@cached_method
+@cached_function
 def hadamard_difference_set_product_parameters(N):
     r"""
     Check whether a product construction is available for Hadamard difference
@@ -1354,7 +1354,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
         sage: from itertools import islice
         sage: l6 = {True:[], False: [], Unknown: []}
-        sage: for q in islice(prime_power_mod(1,30), 60):
+        sage: for q in islice(prime_power_mod(1,30), int(60)):
         ....:     l6[designs.difference_family(q,6,existence=True)].append(q)
         sage: l6[True]
         [31, 121, 151, 181, 211, ...,  3061, 3121, 3181]
@@ -1364,7 +1364,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         []
 
         sage: l7 = {True: [], False: [], Unknown: []}
-        sage: for q in islice(prime_power_mod(1,42), 60):
+        sage: for q in islice(prime_power_mod(1,42), int(60)):
         ....:     l7[designs.difference_family(q,7,existence=True)].append(q)
         sage: l7[True]
         [169, 337, 379, 421, 463, 547, 631, 673, 757, 841, 883, 967, ...,  4621, 4957, 5167]
@@ -1518,6 +1518,23 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         ...
         NotImplementedError: No construction available for (9,3,1)-difference family
 
+    Check that when ``existence=True`` we always obtain ``True``, ``False`` or ``Unknown``
+    and when ``explain_construction=True``it is a string (see :trac:`24513`)::
+
+        sage: designs.difference_family(3, 2, 1, existence=True)
+        True
+        sage: designs.difference_family(3, 2, 1, explain_construction=True)
+        'Trivial difference family'
+
+        sage: for _ in range(100):
+        ....:     v = randint(1, 30)
+        ....:     k = randint(2, 30)
+        ....:     l = randint(1, 30)
+        ....:     res = designs.difference_family(v, k, l, existence=True)
+        ....:     assert res is True or res is False or res is Unknown
+        ....:     if res is True:
+        ....:         assert isinstance(designs.difference_family(3, 2, 1, explain_construction=True), str)
+
     .. TODO::
 
         Implement recursive constructions from Buratti "Recursive for difference
@@ -1570,7 +1587,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         else:
             K = G = GF(v,'a',modulus=poly)
 
-        B = map(K,B)
+        B = [K(b) for b in B]
         e = k*(k-1)//2
         xe = G.multiplicative_generator()**e
         df = [[xe**j*b for b in B] for j in range((v-1)//(2*e))]
@@ -1589,6 +1606,11 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
     # trivial construction
     if k == (v-1) and l == (v-2):
+        if existence:
+            return True
+        elif explain_construction:
+            return "Trivial difference family"
+
         from sage.rings.finite_rings.integer_mod_ring import Zmod
         G = Zmod(v)
         return G, [list(range(1, v))]

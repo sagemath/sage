@@ -1,2 +1,1 @@
-mkdir -p "$SAGE_SHARE"/graphs
-cp src/* "$SAGE_SHARE"/graphs/
+sdh_install src/* "$SAGE_SHARE"/graphs

@@ -25,6 +25,7 @@ Integer lists
 - :ref:`sage.combinat.composition`
 - :class:`~sage.combinat.composition_signed.SignedCompositions`
 - :class:`IntegerListsLex`
+- :ref:`sage.combinat.superpartition`
 
 - :class:`~sage.combinat.integer_vector.IntegerVectors`
 - :func:`~sage.combinat.integer_vector_weighted.WeightedIntegerVectors`
@@ -68,6 +69,11 @@ Partitions, tableaux, ...
 
 See: :ref:`sage.combinat.catalog_partitions`
 
+Polyominoes
+-----------
+
+See: :ref:`sage.combinat.parallelogram_polyomino`
+
 Integer matrices, ...
 ---------------------
 
@@ -93,6 +99,9 @@ Subsets and set partitions
 - :ref:`sage.combinat.subsets_hereditary`
 - :ref:`sage.combinat.set_partition_ordered`
 - :ref:`sage.combinat.set_partition`
+- :ref:`sage.combinat.diagram_algebras`
+- :class:`~sage.combinat.multiset_partition_into_sets_ordered.OrderedMultisetPartitionsIntoSets`,
+  :class:`~sage.combinat.multiset_partition_into_sets_ordered.OrderedMultisetPartitionIntoSets`
 
 Trees
 -----
@@ -130,7 +139,6 @@ Backtracking solvers and generic enumerated sets
 Low level enumerated sets
 -------------------------
 
-- :ref:`sage.combinat.multichoose_nk`
 - :ref:`sage.combinat.gray_codes`
 
 Misc enumerated sets

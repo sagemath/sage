@@ -139,12 +139,12 @@ class SymmetricGroupConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyC
             sage: for x in C: x
             (2,3,4)
             (2,4,3)
-            (1,3,4)
-            (1,4,3)
-            (1,2,4)
-            (1,4,2)
             (1,2,3)
             (1,3,2)
+            (1,2,4)
+            (1,4,2)
+            (1,3,4)
+            (1,4,3)
         """
         if self._set:
             for x in self._set:
@@ -213,12 +213,12 @@ class PermutationsConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyCla
             sage: for x in C: x
             [1, 3, 4, 2]
             [1, 4, 2, 3]
-            [3, 2, 4, 1]
-            [4, 2, 1, 3]
-            [2, 4, 3, 1]
-            [4, 1, 3, 2]
             [2, 3, 1, 4]
             [3, 1, 2, 4]
+            [2, 4, 3, 1]
+            [4, 1, 3, 2]
+            [3, 2, 4, 1]
+            [4, 2, 1, 3]
         """
         if self._set:
             for x in self._set:
@@ -292,6 +292,7 @@ def default_representative(part, G):
     #   once SymmetricGroup is a proper parent.
     return PermutationGroupElement(cycles, G, check=False)
 
+
 def conjugacy_class_iterator(part, S=None):
     r"""
     Return an iterator over the conjugacy class associated to
@@ -316,23 +317,20 @@ def conjugacy_class_iterator(part, S=None):
         sage: from sage.groups.perm_gps.symgp_conjugacy_class import conjugacy_class_iterator
         sage: for p in conjugacy_class_iterator([2,2]): print(p)
         [(1, 2), (3, 4)]
-        [(1, 3), (2, 4)]
         [(1, 4), (2, 3)]
+        [(1, 3), (2, 4)]
 
-    In order to get permutations, one can use ``map``
-    from the Python module ``builtins`` (works with Python 2 and Python 3)::
+    In order to get permutations, one just has to wrap::
 
-        sage: from builtins import map
         sage: S = SymmetricGroup(5)
-        sage: for p in map(S, conjugacy_class_iterator([3,2])): print(p)
-        (1,2)(3,4,5)
-        (1,2)(3,5,4)
+        sage: for p in conjugacy_class_iterator([3,2]): print(S(p))
         (1,3)(2,4,5)
         (1,3)(2,5,4)
+        (1,2)(3,4,5)
+        (1,2)(3,5,4)
         ...
-        (1,4,2)(3,5)
-        (1,2,3)(4,5)
-        (1,3,2)(4,5)
+        (1,4)(2,3,5)
+        (1,4)(2,5,3)
 
     Check that the number of elements is the number of elements in
     the conjugacy class::
@@ -347,7 +345,7 @@ def conjugacy_class_iterator(part, S=None):
         sage: next(it)
         [('a', 'c'), ('b', 'e'), ('d', 'f')]
         sage: next(it)
-        [('a', 'c'), ('b', 'd'), ('e', 'f')]
+        [('a', 'f'), ('c', 'b'), ('e', 'd')]
     """
     n = sum(part)
     if part not in _Partitions:
@@ -361,8 +359,9 @@ def conjugacy_class_iterator(part, S=None):
 
     m = len(part)
     for s in SetPartitions(S, part):
-        firsts = [t[0] for t in s]
-        rests = [t[1:] for t in s]
+        its = [iter(t) for t in s]
+        firsts = [next(t) for t in its]
+        rests = [list(t) for t in its]
         iterator = tuple(itertools.permutations(r) for r in rests)
         for r in itertools.product(*iterator):
             yield [(firsts[i],) + r[i] for i in range(m)]

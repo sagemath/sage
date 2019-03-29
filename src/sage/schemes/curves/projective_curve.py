@@ -1,5 +1,5 @@
 """
-Projective curves.
+Projective curves
 
 EXAMPLES:
 
@@ -26,6 +26,7 @@ AUTHORS:
 - Moritz Minzlaff (2010-11)
 
 - Grayson Jorgenson (2016-8)
+
 """
 
 #*****************************************************************************
@@ -52,14 +53,11 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import (number_field_elements_from_algebraics,
                               QQbar)
 from sage.rings.rational_field import is_RationalField
-from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
 
 from . import point
 
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
-from sage.schemes.projective.projective_space import (is_ProjectiveSpace,
-                                                      ProjectiveSpace)
 
 from .curve import Curve_generic
 
@@ -128,14 +126,14 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             sage: C = Curve([y*z - x^2, w^2 - x*y], P)
             sage: C.affine_patch(0)
             Affine Curve over Complex Field with 53 bits of precision defined by
-            x0*x1 - 1.00000000000000, x2^2 - x0
+            y*z - 1.00000000000000, w^2 - y
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = Curve(x^3 - x^2*y + y^3 - x^2*z, P)
             sage: C.affine_patch(1)
-            Affine Plane Curve over Rational Field defined by x0^3 - x0^2*x1 - x0^2 + 1
+            Affine Plane Curve over Rational Field defined by x^3 - x^2*z - x^2 + 1
 
         ::
 
@@ -240,7 +238,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             ...
             TypeError: (=Projective Space of dimension 2 over Finite Field of size
             7) must have dimension (=3)
-            
+
 
         ::
 
@@ -1189,8 +1187,8 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             coords = [sum([M.row(j)[k]*PP.gens()[k] for k in range(3)]) for j in range(3)]
             C = PP.curve(baseC.defining_polynomial()(coords))
             # check tangents at (0 : 0 : 1)
-            T = C.tangents(PP([0,0,1]), factor=False)[0]
-            if all([e[0] > 0 for e in T.exponents()]) or all([e[1] > 0 for e in T.exponents()]):
+            T = C.tangents(PP([0, 0, 1]), factor=False)[0]
+            if all(e[0] > 0 for e in T.exponents()) or all(e[1] > 0 for e in T.exponents()):
                 continue
             # check that the other intersections of C with the exceptional lines are correct
             need_continue = False
@@ -1318,7 +1316,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             -1/64*x^4 + 3/64*x^2*y^2 - 1/32*x*y^3 + 1/16*x*y^2*z - 1/16*y^3*z +
             1/16*y^2*z^2 : 3/64*x^4 - 3/32*x^3*y + 3/64*x^2*y^2 + 1/16*x^3*z -
             3/16*x^2*y*z + 1/8*x*y^2*z - 1/8*x*y*z^2 + 1/16*y^2*z^2)
-            sage: all([D.codomain().is_ordinary_singularity(Q) for Q in D.codomain().singular_points()]) # long time
+            sage: all(D.codomain().is_ordinary_singularity(Q) for Q in D.codomain().singular_points()) # long time
             True
 
         ::
@@ -1611,7 +1609,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             sage: R.<x,y,z>=QQ[]
             sage: C=Curve(x^3+3*y^3+5*z^3)
             sage: C.riemann_surface()
-            Riemann surface defined by polynomial f = x0^3 + 3*x1^3 + 5 = 0, with 53 bits of precision
+            Riemann surface defined by polynomial f = x^3 + 3*y^3 + 5 = 0, with 53 bits of precision
 
         """
         return self.affine_patch(2).riemann_surface(**kwargs)
@@ -1924,14 +1922,12 @@ class ProjectivePlaneCurve_prime_finite_field(ProjectivePlaneCurve_finite_field)
         v = singular('POINTS').sage_flattened_str_list()
         coords = [self(int(v[3*i]), int(v[3*i+1]), int(v[3*i+2])) for i in range(len(v)//3)]
         # build correct representation of D for singular
-        Dsupport = D.support()
         Dcoeffs = []
         for x in pnts:
             if x[0] == 1:
                 Dcoeffs.append(D.coefficient(coords[x[1]]))
             else:
                 Dcoeffs.append(0)
-        Dstr = str(tuple(Dcoeffs))
         G = singular(','.join([str(x) for x in Dcoeffs]), type='intvec')
         # call singular's brill noether routine and return
         T = X2[1][2]
@@ -2035,6 +2031,6 @@ def Hasse_bounds(q, genus=1):
     return (q+1-rq,q+1+rq)
 
 # Fix pickles from changing class names and plane_curves folder name
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.schemes.plane_curves.projective_curve',
                            'ProjectiveCurve_generic', ProjectivePlaneCurve)

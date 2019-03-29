@@ -9,13 +9,13 @@ ridiculously large integer, see :trac:`15363`::
     sage: 2^(2^63-2)                                           # optional - mpir
     Traceback (most recent call last):
     ...
-    RuntimeError: exponent must be at most 2147483647          # 32-bit
+    OverflowError: exponent must be at most 2147483647         # 32-bit
     MemoryError: failed to allocate 1152921504606847008 bytes  # 64-bit
 
     sage: 2^(2^63-3)                                           # optional - gmp
     Traceback (most recent call last):
     ...
-    RuntimeError: exponent must be at most 2147483647          # 32-bit
+    OverflowError: exponent must be at most 2147483647         # 32-bit
     RuntimeError: Aborted                                      # 64-bit
 
 AUTHORS:

@@ -46,7 +46,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2014 Julian Rueth <julian.rueth@fsfe.org>
 #
@@ -54,8 +54,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 from six.moves import range, zip
 
@@ -73,6 +73,7 @@ from sage.rings.complex_field import is_ComplexField
 from sage.rings.qqbar import is_AlgebraicField
 from sage.rings.ring import is_Ring
 
+from sage.misc.functional import round
 from sage.misc.cachefunc                    import cached_method
 from sage.misc.fast_methods                 import WithEqualityById
 from sage.structure.element                 import MultiplicativeGroupElement
@@ -761,7 +762,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
     @cached_method
     def decomposition(self):
-        """
+        r"""
         Return the decomposition of self as a product of Dirichlet
         characters of prime power modulus, where the prime powers exactly
         divide the modulus of this character.
@@ -944,6 +945,14 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: chi.gauss_sum()
             zeta52^22 + zeta52^21 + zeta52^19 - zeta52^16 + zeta52^15 + zeta52^14 + zeta52^12 - zeta52^11 - zeta52^10 - zeta52^7 - zeta52^5 + zeta52^4
 
+        Check that :trac:`25127` is fixed::
+
+            sage: G = DirichletGroup(1)
+            sage: chi = G.one()
+            sage: chi.gauss_sum()
+            1
+
+
         .. SEEALSO::
 
             - :func:`sage.arith.misc.gauss_sum` for general finite fields
@@ -966,7 +975,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         else:
             raise NotImplementedError("Gauss sums only currently implemented when the base ring is a cyclotomic field, QQ, QQbar, or a complex field")
         zeta = zeta ** a
-        g = L.zero()
+        g = L(chi(0))
         z = L.one()
         for c in chi.values()[1:]:
             z *= zeta
@@ -1043,7 +1052,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         else:
             raise NotImplementedError("Gauss sums only currently implemented when the base ring is a cyclotomic field, QQ, QQbar, or a complex field")
         zeta = CC.zeta(G.modulus()) ** a
-        g = CC.zero()
+        g = phi(self(0))
         z = CC.one()
         for c in self.values()[1:]:
             z *= zeta
@@ -1051,9 +1060,11 @@ class DirichletCharacter(MultiplicativeGroupElement):
         return g
 
     def jacobi_sum(self, char, check=True):
-        """
+        r"""
         Return the Jacobi sum associated to these Dirichlet characters
-        (i.e., J(self,char)). This is defined as
+        (i.e., J(self,char)).
+
+        This is defined as
 
         .. MATH::
 
@@ -1738,11 +1749,12 @@ class DirichletCharacter(MultiplicativeGroupElement):
         if is_ComplexField(P.base_ring()):
             zeta = P.zeta()
             zeta_argument = zeta.argument()
-            v = M([int(round(x.argument()/zeta_argument))
+            v = M([int(round(x.argument() / zeta_argument))
                    for x in self.values_on_gens()])
         else:
             dlog = P._zeta_dlog
             v = M([dlog[x] for x in self.values_on_gens()])
+        v.set_immutable()
         return v
 
     def __setstate__(self, state):
@@ -2045,7 +2057,7 @@ class DirichletGroupFactory(UniqueFactory):
             sage: DirichletGroup(-33)
             Traceback (most recent call last):
             ...
-            ValueError: modulus should be positive            
+            ValueError: modulus should be positive
         """
         modulus = rings.Integer(N)
         if modulus <= 0:

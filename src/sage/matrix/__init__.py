@@ -1,5 +1,2 @@
-"""
-Classes for matrix algebra.
-
-See docs.py for more information
-"""
+# Resolve a cyclic import
+import sage.matrix.args

@@ -1,6 +1,7 @@
 """
-Plane quartic curves over a general ring. These are generic genus 3 curves,
-as distinct from hyperelliptic curves of genus 3.
+Plane quartic curves over a general ring
+
+These are generic genus 3 curves, as distinct from hyperelliptic curves of genus 3.
 
 EXAMPLES::
 

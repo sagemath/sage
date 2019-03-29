@@ -6,11 +6,12 @@ This module implements the design methods that need to be somewhat efficient.
 Functions
 ---------
 """
-from __future__ import print_function, absolute_import
+from __future__ import print_function, absolute_import, division
 
 include "sage/data_structures/bitset.pxi"
 
 from libc.string cimport memset
+
 from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
 from sage.misc.unknown import Unknown
@@ -242,7 +243,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
                     print("a block has size {} while K={}".format(len(b),list(K)))
                 return False
 
-    # Check that "groups" consists of disjoints sets whose union has length n
+    # Check that "groups" consists of disjoint sets whose union has length n
     if (groups is not None and
         (sum(len(g) for g in groups) != n or
          len(set().union(*groups)) != n)):
@@ -289,10 +290,10 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
         from sage.sets.disjoint_set import DisjointSet_of_integers
         groups = DisjointSet_of_integers(n)
         for i in range(n):
-            for j in range(i+1,n):
-                if matrix[i*n+j] == 0:
-                    groups.union(i,j)
-        groups = groups.root_to_elements_dict().values()
+            for j in range(i + 1, n):
+                if matrix[i * n + j] == 0:
+                    groups.union(i, j)
+        groups = list(groups.root_to_elements_dict().values())
 
     # Group sizes are element of G
     if G is not None:
@@ -333,6 +334,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
     sig_free(matrix)
 
     return True if not guess_groups else (True, groups)
+
 
 def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
     r"""

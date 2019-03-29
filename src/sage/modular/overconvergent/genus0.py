@@ -169,7 +169,7 @@ classical) does not apply.
 #                     2008-9 David Loeffler <d.loeffler.01@cantab.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
 from six.moves import range
@@ -178,10 +178,9 @@ from six import integer_types
 from sage.matrix.all        import matrix, MatrixSpace, diagonal_matrix
 from sage.misc.misc         import verbose
 from sage.misc.cachefunc    import cached_method
-from sage.misc.superseded   import deprecated_function_alias
-from sage.modular.all       import (DirichletGroup, trivial_character, EtaProduct,
+from sage.modular.all       import (trivial_character, EtaProduct,
                                     j_invariant_qexp, hecke_operator_on_qexp)
-from sage.modular.arithgroup.all import (Gamma1, is_Gamma0, is_Gamma1)
+from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
 from sage.modular.modform.element import ModularFormElement
 from sage.modules.all       import vector
 from sage.modules.module    import Module
@@ -356,7 +355,7 @@ class OverconvergentModularFormsSpace(Module):
             sage: OverconvergentModularForms(3, 2, 1/40, base_ring=L)
             Traceback (most recent call last):
             ...
-            ValueError: no element of base ring (=Eisenstein Extension ...) has normalised valuation 3/20
+            ValueError: no element of base ring (=3-adic Eisenstein Extension ...) has normalised valuation 3/20
         """
 
         p = ZZ(self.prime())
@@ -418,7 +417,7 @@ class OverconvergentModularFormsSpace(Module):
 
             sage: M = OverconvergentModularForms(2, 0, 1/2, base_ring = Qp(2))
             sage: M.base_extend(Qp(2).extension(x^2 - 2, names="w"))
-            Space of 2-adic 1/2-overconvergent modular forms of weight-character 0 over Eisenstein Extension ...
+            Space of 2-adic 1/2-overconvergent modular forms of weight-character 0 over 2-adic Eisenstein Extension ...
             sage: M.base_extend(QQ)
             Traceback (most recent call last):
             ...
@@ -525,6 +524,20 @@ class OverconvergentModularFormsSpace(Module):
         """
         return not (self == other)
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: h1 = hash(OverconvergentModularForms(3, 12, 1/2))
+            sage: h2 = hash(OverconvergentModularForms(3, 12, 1/2))
+            sage: h3 = hash(OverconvergentModularForms(3, 0, 1/2))
+            sage: h1 == h2 and h1 != h3
+            True
+        """
+        return hash(self._params())
+
     def _params(self):
         r"""
         Return the parameters that define this module uniquely: prime, weight,
@@ -535,7 +548,12 @@ class OverconvergentModularFormsSpace(Module):
 
             sage: L.<w> = Qp(7).extension(x^2 - 7)
             sage: OverconvergentModularForms(7, 0, 1/4, base_ring=L)._params()
-            (7, 0, 1/4, Eisenstein Extension ..., 20, Dirichlet character modulo 7 of conductor 1 mapping 3 |--> 1)
+            (7,
+             0,
+             1/4,
+             7-adic Eisenstein Extension Field in w defined by x^2 - 7,
+             20,
+             Dirichlet character modulo 7 of conductor 1 mapping 3 |--> 1)
 
         """
         return (self.prime(), self.weight().k(), self.radius(), self.base_ring(), self.prec(), self.weight().chi())
@@ -548,7 +566,13 @@ class OverconvergentModularFormsSpace(Module):
 
             sage: L.<w> = Qp(7).extension(x^2 - 7)
             sage: OverconvergentModularForms(7, 0, 1/4, base_ring=L).__reduce__()
-            (<function OverconvergentModularForms at ...>, (7, 0, 1/4, Eisenstein Extension ..., 20, Dirichlet character modulo 7 of conductor 1 mapping 3 |--> 1))
+            (<function OverconvergentModularForms at ...>,
+             (7,
+              0,
+              1/4,
+              7-adic Eisenstein Extension Field in w defined by x^2 - 7,
+              20,
+              Dirichlet character modulo 7 of conductor 1 mapping 3 |--> 1))
 
         """
         return (OverconvergentModularForms, self._params())
@@ -753,12 +777,11 @@ class OverconvergentModularFormsSpace(Module):
         """
         return self(0)
 
-    zero_element = deprecated_function_alias(17694, zero)
-
     def _coerce_from_ocmf(self, f):
         r"""
-        Try to convert the overconvergent modular form `f` into an element of self. An error will be raised if this is
-        obviously nonsense.
+        Try to convert the overconvergent modular form `f` into an element of self.
+
+        An error will be raised if this is obviously nonsense.
 
         EXAMPLES::
 
@@ -994,12 +1017,12 @@ class OverconvergentModularFormsSpace(Module):
                             mat[i,j] = mat[i,j] + mat[i-u-1, j-v-1]*self.recurrence_matrix()[u,v]
 
         else:
-            if( n*self.prime() > self.prec()):
+            if n * self.prime() > self.prec():
                 raise ValueError("n is too large")
             for j in range(self.prime(), n):
                 l = self._convert_to_basis(self.hecke_operator(self._basis_cache[j], m))
                 for i in range(n):
-                    mat[i,j] = l[i]
+                    mat[i, j] = l[i]
         return mat
 
     def slopes(self, n, use_recurrence=False):
@@ -1236,14 +1259,15 @@ class OverconvergentModularFormsSpace(Module):
             sage: OverconvergentModularForms(3, 16, 1/2, base_ring=Qp(3), prec=30).cps_u(10)
             1 + O(3^20) + (2 + 2*3 + 2*3^2 + 2*3^4 + 3^5 + 3^6 + 3^7 + 2*3^15 + O(3^16))*T + (2*3^3 + 3^5 + 3^6 + 3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13 + 3^14 + 3^15 + O(3^16))*T^2 + (3^14 + 2*3^15 + 2*3^16 + 3^17 + 3^18 + O(3^19))*T^3 + (3^17 + 2*3^18 + 3^19 + 3^20 + 3^21 + O(3^24))*T^4 + (3^29 + 2*3^32 + O(3^33))*T^5 + (2*3^44 + O(3^45))*T^6 + (2*3^59 + O(3^60))*T^7 + (2*3^78 + O(3^79))*T^8
 
-        NOTES:
+        .. NOTE::
 
-        Uses the Hessenberg form of the Hecke matrix to compute the
-        characteristic polynomial.  Because of the use of relative precision
-        here this tends to give better precision in the p-adic coefficients.
+            Uses the Hessenberg form of the Hecke matrix to compute
+            the characteristic polynomial.  Because of the use of
+            relative precision here this tends to give better
+            precision in the p-adic coefficients.
         """
         m = self.hecke_matrix(self.prime(), n, use_recurrence)
-        A = PowerSeriesRing(self.base_ring(),'T')
+        A = PowerSeriesRing(self.base_ring(), 'T')
 
         # From a conversation with David Loeffler, apparently self.base_ring()
         # is either the field of rational numbers or some p-adic field.  In the

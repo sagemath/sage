@@ -79,9 +79,11 @@ Individual Categories
    sage/categories/finite_dimensional_algebras_with_basis
    sage/categories/finite_dimensional_bialgebras_with_basis
    sage/categories/finite_dimensional_coalgebras_with_basis
+   sage/categories/finite_dimensional_graded_lie_algebras_with_basis
    sage/categories/finite_dimensional_hopf_algebras_with_basis
    sage/categories/finite_dimensional_lie_algebras_with_basis
    sage/categories/finite_dimensional_modules_with_basis
+   sage/categories/finite_dimensional_nilpotent_lie_algebras_with_basis
    sage/categories/finite_dimensional_semisimple_algebras_with_basis
    sage/categories/finite_enumerated_sets
    sage/categories/finite_fields
@@ -107,6 +109,8 @@ Individual Categories
    sage/categories/graded_coalgebras_with_basis
    sage/categories/graded_hopf_algebras
    sage/categories/graded_hopf_algebras_with_basis
+   sage/categories/graded_lie_algebras
+   sage/categories/graded_lie_algebras_with_basis
    sage/categories/graded_modules
    sage/categories/graded_modules_with_basis
    sage/categories/graphs
@@ -121,6 +125,7 @@ Individual Categories
    sage/categories/infinite_enumerated_sets
    sage/categories/integral_domains
    sage/categories/j_trivial_semigroups
+   sage/categories/kac_moody_algebras
    sage/categories/lattice_posets
    sage/categories/left_modules
    sage/categories/lie_algebras
@@ -148,6 +153,7 @@ Individual Categories
    sage/categories/posets
    sage/categories/principal_ideal_domains
    sage/categories/quotient_fields
+   sage/categories/quantum_group_representations
    sage/categories/regular_crystals
    sage/categories/regular_supercrystals
    sage/categories/right_modules
@@ -171,6 +177,7 @@ Individual Categories
    sage/categories/super_modules
    sage/categories/super_modules_with_basis
    sage/categories/topological_spaces
+   sage/categories/triangular_kac_moody_algebras
    sage/categories/unique_factorization_domains
    sage/categories/unital_algebras
    sage/categories/vector_spaces

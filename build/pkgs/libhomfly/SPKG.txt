@@ -18,5 +18,4 @@ Miguel Marco (mmarco@unizar.es)
 
 == Dependencies ==
 
-* gcc
-* boehmgc
+* gc

@@ -34,7 +34,7 @@ from __future__ import print_function, absolute_import, division
 from six.moves import range
 from six import add_metaclass
 
-from sage.sets.set import Set, is_Set
+from sage.sets.set import Set, Set_generic
 
 import itertools
 
@@ -46,134 +46,34 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
-from sage.combinat.misc import IterableFunctionCall
 from sage.combinat.combinatorial_map import combinatorial_map
-import sage.combinat.subset as subset
+from sage.combinat.combinat_cython import (set_partition_iterator,
+                                           set_partition_iterator_blocks)
 from sage.combinat.partition import Partition, Partitions
-from sage.combinat.set_partition_ordered import OrderedSetPartitions
 from sage.combinat.combinat import bell_number, stirling_number2
 from sage.combinat.permutation import Permutation
 from sage.functions.other import factorial
 from sage.misc.prandom import random, randint
 from sage.probability.probability_distribution import GeneralDiscreteDistribution
+from sage.sets.disjoint_set import DisjointSet
+from sage.combinat.posets.hasse_diagram import HasseDiagram
 
 @add_metaclass(InheritComparisonClasscallMetaclass)
-class SetPartition(ClonableArray):
+class AbstractSetPartition(ClonableArray):
+    r"""
+    Methods of set partitions which are independent of the base set
     """
-    A partition of a set.
-
-    A set partition `p` of a set `S` is a partition of `S` into subsets
-    called parts and represented as a set of sets. By extension, a set
-    partition of a nonnegative integer `n` is the set partition of the
-    integers from 1 to `n`. The number of set partitions of `n` is called
-    the `n`-th Bell number.
-
-    There is a natural integer partition associated with a set partition,
-    namely the nonincreasing sequence of sizes of all its parts.
-
-    There is a classical lattice associated with all set partitions of
-    `n`. The infimum of two set partitions is the set partition obtained
-    by intersecting all the parts of both set partitions. The supremum
-    is obtained by transitive closure of the relation `i` related to `j`
-    if and only if they are in the same part in at least one of the set
-    partitions.
-
-    We will use terminology from partitions, in particular the *length* of
-    a set partition `A = \{A_1, \ldots, A_k\}` is the number of parts of `A`
-    and is denoted by `|A| := k`. The *size* of `A` is the cardinality of `S`.
-    We will also sometimes use the notation `[n] := \{1, 2, \ldots, n\}`.
-
-    EXAMPLES:
-
-    There are 5 set partitions of the set `\{1,2,3\}`::
-
-        sage: SetPartitions(3).cardinality()
-        5
-
-    Here is the list of them::
-
-        sage: SetPartitions(3).list()
-        [{{1, 2, 3}},
-         {{1}, {2, 3}},
-         {{1, 3}, {2}},
-         {{1, 2}, {3}},
-         {{1}, {2}, {3}}]
-
-    There are 6 set partitions of `\{1,2,3,4\}` whose underlying partition is
-    `[2, 1, 1]`::
-
-        sage: SetPartitions(4, [2,1,1]).list()
-        [{{1}, {2}, {3, 4}},
-         {{1}, {2, 4}, {3}},
-         {{1}, {2, 3}, {4}},
-         {{1, 4}, {2}, {3}},
-         {{1, 3}, {2}, {4}},
-         {{1, 2}, {3}, {4}}]
-
-    Since :trac:`14140`, we can create a set partition directly by
-    :class:`SetPartition`, which creates the base set by taking the
-    union of the parts passed in::
-
-        sage: s = SetPartition([[1,3],[2,4]]); s
-        {{1, 3}, {2, 4}}
-        sage: s.parent()
-        Set partitions
-    """
-    @staticmethod
-    def __classcall_private__(cls, parts, check=True):
+    def _repr_(self):
         """
-        Create a set partition from ``parts`` with the appropriate parent.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
-            sage: s = SetPartition([[1,3],[2,4]]); s
+            sage: S = SetPartitions(4)
+            sage: S([[1,3],[2,4]])
             {{1, 3}, {2, 4}}
-            sage: s.parent()
-            Set partitions
         """
-        P = SetPartitions()
-        return P.element_class(P, parts, check=check)
-
-    def __init__(self, parent, s, check=True):
-        """
-        Initialize ``self``.
-
-        EXAMPLES::
-
-            sage: S = SetPartitions(4)
-            sage: s = S([[1,3],[2,4]])
-            sage: TestSuite(s).run()
-            sage: SetPartition([])
-            {}
-        """
-        self._latex_options = {}
-        ClonableArray.__init__(self, parent, sorted(map(Set, s), key=min), check=check)
-
-    def check(self):
-        """
-        Check that we are a valid set partition.
-
-        EXAMPLES::
-
-            sage: S = SetPartitions(4)
-            sage: s = S([[1, 3], [2, 4]])
-            sage: s.check()
-
-        TESTS::
-
-            sage: s = S([[1, 2, 3]], check=False)
-            sage: s.check()
-            Traceback (most recent call last):
-            ...
-            ValueError: {{1, 2, 3}} is not an element of Set partitions of {1, 2, 3, 4}
-
-            sage: s = S([1, 2, 3])
-            Traceback (most recent call last):
-            ...
-            TypeError: Element has no defined underlying set
-        """
-        if self not in self.parent():
-            raise ValueError("%s is not an element of %s"%(self, self.parent()))
+        return '{' + ', '.join(('{' + repr(sorted(x))[1:-1] + '}' for x in self)) + '}'
 
     def __hash__(self):
         """
@@ -210,8 +110,17 @@ class SetPartition(ClonableArray):
             sage: D = P([[1], [2, 4], [3]])
             sage: A == D
             False
+
+        Note that this may give incorrect answers if the base set is not totally ordered::
+
+            sage: a,b = frozenset([0,1]), frozenset([2,3])
+            sage: p1 = SetPartition([[a], [b]])
+            sage: p2 = SetPartition([[b], [a]])
+            sage: p1 == p2
+            False
+
         """
-        if not isinstance(y, SetPartition):
+        if not isinstance(y, AbstractSetPartition):
             return False
         return list(self) == list(y)
 
@@ -233,6 +142,14 @@ class SetPartition(ClonableArray):
             False
             sage: D = P([[1], [2, 4], [3]])
             sage: A != D
+            True
+
+        Note that this may give incorrect answers if the base set is not totally ordered::
+
+            sage: a,b = frozenset([0,1]), frozenset([2,3])
+            sage: p1 = SetPartition([[a], [b]])
+            sage: p2 = SetPartition([[b], [a]])
+            sage: p1 != p2
             True
         """
         return not (self == y)
@@ -275,7 +192,7 @@ class SetPartition(ClonableArray):
             sage: A < C
             True
         """
-        if not isinstance(y, SetPartition):
+        if not isinstance(y, AbstractSetPartition):
             return False
         return [sorted(_) for _ in self] < [sorted(_) for _ in y]
 
@@ -303,7 +220,7 @@ class SetPartition(ClonableArray):
             sage: A > B
             False
         """
-        if not isinstance(y, SetPartition):
+        if not isinstance(y, AbstractSetPartition):
             return False
         return [sorted(_) for _ in self] > [sorted(_) for _ in y]
 
@@ -397,7 +314,7 @@ class SetPartition(ClonableArray):
 
             sage: def mul2(s, t):
             ....:     temp = [ss.intersection(ts) for ss in s for ts in t]
-            ....:     temp = filter(lambda x: x != Set([]), temp)
+            ....:     temp = filter(bool, temp)
             ....:     return s.__class__(s.parent(), temp)
 
         Let us check that this gives the same as ``__mul__`` on set
@@ -409,7 +326,7 @@ class SetPartition(ClonableArray):
         """
         new_composition = []
         for B in self:
-           for C in other:
+            for C in other:
                 BintC = B.intersection(C)
                 if BintC:
                     new_composition.append(BintC)
@@ -417,17 +334,267 @@ class SetPartition(ClonableArray):
 
     inf = __mul__
 
-    def _repr_(self):
+    def sup(self, t):
         """
-        Return a string representation of ``self``.
+        Return the supremum of ``self`` and ``t`` in the classical set
+        partition lattice.
+
+        The supremum of two set partitions `B` and `C` is obtained as the
+        transitive closure of the relation which relates `i` to `j` if
+        and only if `i` and `j` are in the same part in at least
+        one of the set partitions `B` and `C`.
+
+        .. SEEALSO::
+
+            :meth:`__mul__`
 
         EXAMPLES::
 
             sage: S = SetPartitions(4)
-            sage: S([[1,3],[2,4]])
-            {{1, 3}, {2, 4}}
+            sage: sp1 = S([[2,3,4], [1]])
+            sage: sp2 = S([[1,3], [2,4]])
+            sage: s = S([[1,2,3,4]])
+            sage: sp1.sup(sp2) == s
+            True
         """
-        return '{' + ', '.join(('{' + repr(sorted(x))[1:-1] + '}' for x in self)) + '}'
+        res = list(self)
+        for p in t:
+            # find blocks in res which intersect p
+            inters = [(i, q) for i, q in enumerate(res)
+                      if any(a in q for a in p)]
+            # remove these blocks from res
+            for i, _ in reversed(inters):
+                del res[i]
+            # add the union
+            res.append([e for _, q in inters for e in q])
+        return self.parent()(res)
+
+    def standard_form(self):
+        r"""
+        Return ``self`` as a list of lists.
+
+        When the ground set is totally ordered, the elements of each
+        block are listed in increasing order.
+
+        This is not related to standard set partitions (which simply
+        means set partitions of `[n] = \{ 1, 2, \ldots , n \}` for some
+        integer `n`) or standardization (:meth:`standardization`).
+
+        EXAMPLES::
+
+            sage: [x.standard_form() for x in SetPartitions(4, [2,2])]
+            [[[1, 2], [3, 4]], [[1, 4], [2, 3]], [[1, 3], [2, 4]]]
+
+        TESTS::
+
+            sage: SetPartition([(1, 9, 8), (2, 3, 4, 5, 6, 7)]).standard_form()
+            [[1, 8, 9], [2, 3, 4, 5, 6, 7]]
+        """
+        return [sorted(_) for _ in self]
+
+    def base_set(self):
+        """
+        Return the base set of ``self``, which is the union of all parts
+        of ``self``.
+
+        EXAMPLES::
+
+            sage: SetPartition([[1], [2,3], [4]]).base_set()
+            {1, 2, 3, 4}
+            sage: SetPartition([[1,2,3,4]]).base_set()
+            {1, 2, 3, 4}
+            sage: SetPartition([]).base_set()
+            {}
+        """
+        return Set([e for p in self for e in p])
+
+    def base_set_cardinality(self):
+        """
+        Return the cardinality of the base set of ``self``, which is the sum
+        of the sizes of the parts of ``self``.
+
+        This is also known as the *size* (sometimes the *weight*) of
+        a set partition.
+
+        EXAMPLES::
+
+            sage: SetPartition([[1], [2,3], [4]]).base_set_cardinality()
+            4
+            sage: SetPartition([[1,2,3,4]]).base_set_cardinality()
+            4
+        """
+        return sum(len(x) for x in self)
+
+    def coarsenings(self):
+        """
+        Return a list of coarsenings of ``self``.
+
+        .. SEEALSO::
+
+            :meth:`refinements`
+
+        EXAMPLES::
+
+            sage: SetPartition([[1,3],[2,4]]).coarsenings()
+            [{{1, 2, 3, 4}}, {{1, 3}, {2, 4}}]
+            sage: SetPartition([[1],[2,4],[3]]).coarsenings()
+            [{{1, 2, 3, 4}},
+             {{1, 2, 4}, {3}},
+             {{1, 3}, {2, 4}},
+             {{1}, {2, 3, 4}},
+             {{1}, {2, 4}, {3}}]
+            sage: SetPartition([]).coarsenings()
+            [{}]
+        """
+        SP = SetPartitions(len(self))
+        def union(s):
+            # Return the partition obtained by combining, for every
+            # part of s, those parts of self which are indexed by
+            # the elements of this part of s into a single part.
+            ret = []
+            for part in s:
+                cur = []
+                for i in part:
+                    cur.extend(self[i-1]) # -1 for indexing
+                ret.append(cur)
+            return ret
+        return [self.parent()(union(s)) for s in SP]
+
+    def max_block_size(self):
+        r"""
+        The maximum block size of the diagram.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.diagram_algebras import PartitionDiagram, PartitionDiagrams
+            sage: pd = PartitionDiagram([[1,-3,-5],[2,4],[3,-1,-2],[5],[-4]])
+            sage: pd.max_block_size()
+            3
+            sage: sorted(d.max_block_size() for d in PartitionDiagrams(2))
+            [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4]
+            sage: sorted(sp.max_block_size() for sp in SetPartitions(3))
+            [1, 2, 2, 2, 3]
+        """
+        return max(len(block) for block in self)
+
+
+@add_metaclass(InheritComparisonClasscallMetaclass)
+class SetPartition(AbstractSetPartition):
+    r"""
+    A partition of a set.
+
+    A set partition `p` of a set `S` is a partition of `S` into subsets
+    called parts and represented as a set of sets. By extension, a set
+    partition of a nonnegative integer `n` is the set partition of the
+    integers from 1 to `n`. The number of set partitions of `n` is called
+    the `n`-th Bell number.
+
+    There is a natural integer partition associated with a set partition,
+    namely the nonincreasing sequence of sizes of all its parts.
+
+    There is a classical lattice associated with all set partitions of
+    `n`. The infimum of two set partitions is the set partition obtained
+    by intersecting all the parts of both set partitions. The supremum
+    is obtained by transitive closure of the relation `i` related to `j`
+    if and only if they are in the same part in at least one of the set
+    partitions.
+
+    We will use terminology from partitions, in particular the *length* of
+    a set partition `A = \{A_1, \ldots, A_k\}` is the number of parts of `A`
+    and is denoted by `|A| := k`. The *size* of `A` is the cardinality of `S`.
+    We will also sometimes use the notation `[n] := \{1, 2, \ldots, n\}`.
+
+    EXAMPLES:
+
+    There are 5 set partitions of the set `\{1,2,3\}`::
+
+        sage: SetPartitions(3).cardinality()
+        5
+
+    Here is the list of them::
+
+        sage: SetPartitions(3).list()
+        [{{1, 2, 3}}, {{1, 2}, {3}}, {{1, 3}, {2}}, {{1}, {2, 3}}, {{1}, {2}, {3}}]
+
+    There are 6 set partitions of `\{1,2,3,4\}` whose underlying partition is
+    `[2, 1, 1]`::
+
+        sage: SetPartitions(4, [2,1,1]).list()
+        [{{1}, {2, 4}, {3}},
+         {{1}, {2}, {3, 4}},
+         {{1, 4}, {2}, {3}},
+         {{1, 3}, {2}, {4}},
+         {{1, 2}, {3}, {4}},
+         {{1}, {2, 3}, {4}}]
+
+    Since :trac:`14140`, we can create a set partition directly by
+    :class:`SetPartition`, which creates the base set by taking the
+    union of the parts passed in::
+
+        sage: s = SetPartition([[1,3],[2,4]]); s
+        {{1, 3}, {2, 4}}
+        sage: s.parent()
+        Set partitions
+    """
+    @staticmethod
+    def __classcall_private__(cls, parts, check=True):
+        """
+        Create a set partition from ``parts`` with the appropriate parent.
+
+        EXAMPLES::
+
+            sage: s = SetPartition([[1,3],[2,4]]); s
+            {{1, 3}, {2, 4}}
+            sage: s.parent()
+            Set partitions
+        """
+        P = SetPartitions()
+        return P.element_class(P, parts, check=check)
+
+    def __init__(self, parent, s, check=True):
+        """
+        Initialize ``self``.
+
+        Internally, a set partition is stored as iterable of blocks,
+        sorted by minimal element.
+
+        EXAMPLES::
+
+            sage: S = SetPartitions(4)
+            sage: s = S([[1,3],[2,4]])
+            sage: TestSuite(s).run()
+            sage: SetPartition([])
+            {}
+
+        """
+        self._latex_options = {}
+        ClonableArray.__init__(self, parent, sorted(map(frozenset, s), key=min), check=check)
+
+    def check(self):
+        """
+        Check that we are a valid set partition.
+
+        EXAMPLES::
+
+            sage: S = SetPartitions(4)
+            sage: s = S([[1, 3], [2, 4]])
+            sage: s.check()
+
+        TESTS::
+
+            sage: s = S([[1, 2, 3]], check=False)
+            sage: s.check()
+            Traceback (most recent call last):
+            ...
+            ValueError: {{1, 2, 3}} is not an element of Set partitions of {1, 2, 3, 4}
+
+            sage: s = S([1, 2, 3])
+            Traceback (most recent call last):
+            ...
+            TypeError: 'sage.rings.integer.Integer' object is not iterable
+        """
+        if self not in self.parent():
+            raise ValueError("%s is not an element of %s"%(self, self.parent()))
 
     def set_latex_options(self, **kwargs):
         r"""
@@ -546,19 +713,19 @@ class SetPartition(ClonableArray):
             \draw[color=red] (4) to [out=115,in=65] (3);
             \end{tikzpicture}
 
-            sage: p = SetPartition([['a','c'],['b',1],[20]])
+            sage: p = SetPartition([['a','c'],['b','d'],['e']])
             sage: p.set_latex_options(plot='cyclic', color='blue', fill=True, tikz_scale=2)
             sage: latex(p)
             \begin{tikzpicture}[scale=2]
             \draw (0,0) circle [radius=1cm];
-            \node[label=90:1] (0) at (90:1cm) {};
-            \node[label=18:20] (1) at (18:1cm) {};
-            \node[label=-54:a] (2) at (-54:1cm) {};
-            \node[label=-126:b] (3) at (-126:1cm) {};
-            \node[label=-198:c] (4) at (-198:1cm) {};
-            \draw[-,thick,color=blue,fill=blue,fill opacity=0.1] (2.center) -- (4.center) -- cycle;
-            \draw[-,thick,color=blue,fill=blue,fill opacity=0.1] (0.center) -- (3.center) -- cycle;
-            \draw[-,thick,color=blue,fill=blue,fill opacity=0.1] (1.center) -- cycle;
+            \node[label=90:a] (0) at (90:1cm) {};
+            \node[label=18:b] (1) at (18:1cm) {};
+            \node[label=-54:c] (2) at (-54:1cm) {};
+            \node[label=-126:d] (3) at (-126:1cm) {};
+            \node[label=-198:e] (4) at (-198:1cm) {};
+            \draw[-,thick,color=blue,fill=blue,fill opacity=0.1] (0.center) -- (2.center) -- cycle;
+            \draw[-,thick,color=blue,fill=blue,fill opacity=0.1] (1.center) -- (3.center) -- cycle;
+            \draw[-,thick,color=blue,fill=blue,fill opacity=0.1] (4.center) -- cycle;
             \fill[color=black] (0) circle (1.5pt);
             \fill[color=black] (1) circle (1.5pt);
             \fill[color=black] (2) circle (1.5pt);
@@ -643,34 +810,7 @@ class SetPartition(ClonableArray):
 
     cardinality = ClonableArray.__len__
 
-    def sup(self, t):
-        """
-        Return the supremum of ``self`` and ``t`` in the classical set
-        partition lattice.
-
-        The supremum of two set partitions `B` and `C` is obtained as the
-        transitive closure of the relation which relates `i` to `j` if
-        and only if `i` and `j` are in the same part in at least
-        one of the set partitions `B` and `C`.
-
-        .. SEEALSO::
-
-            :meth:`__mul__`
-
-        EXAMPLES::
-
-            sage: S = SetPartitions(4)
-            sage: sp1 = S([[2,3,4], [1]])
-            sage: sp2 = S([[1,3], [2,4]])
-            sage: s = S([[1,2,3,4]])
-            sage: sp1.sup(sp2) == s
-            True
-        """
-        res = Set(list(self))
-        for p in t:
-            inters = Set([x for x in list(res) if x.intersection(p) != Set([])])
-            res = res.difference(inters).union(_set_union(inters))
-        return SetPartition(res)
+    size = AbstractSetPartition.base_set_cardinality
 
     def pipe(self, other):
         r"""
@@ -754,28 +894,424 @@ class SetPartition(ClonableArray):
         """
         return Permutation(tuple( map(tuple, self.standard_form()) ))
 
-    def standard_form(self):
+    def to_restricted_growth_word(self, bijection="blocks"):
         r"""
-        Return ``self`` as a list of lists.
+        Convert a set partition of `\{1,...,n\}` to a word of length `n`
+        with letters in the non-negative integers such that each
+        letter is at most 1 larger than all the letters before.
 
-        When the ground set is totally ordered, the elements of each
-        block are listed in increasing order.
+        INPUT:
 
-        This is not related to standard set partitions (which simply
-        means set partitions of `[n] = \{ 1, 2, \ldots , n \}` for some
-        integer `n`) or standardization (:meth:`standardization`).
+        - ``bijection`` (default: ``blocks``) -- defines the map from
+          set partitions to restricted growth functions.  These are
+          currently:
+
+          - ``blocks``: :meth:`to_restricted_growth_word_blocks`.
+
+          - ``intertwining``: :meth:`to_restricted_growth_word_intertwining`.
+
+        OUTPUT:
+
+        A restricted growth word.
+
+        .. SEEALSO::
+
+            :meth:`SetPartitions.from_restricted_growth_word`
 
         EXAMPLES::
 
-            sage: [x.standard_form() for x in SetPartitions(4, [2,2])]
-            [[[1, 2], [3, 4]], [[1, 3], [2, 4]], [[1, 4], [2, 3]]]
+            sage: P = SetPartition([[1,4],[2,8],[3,5,6,9],[7]])
+            sage: P.to_restricted_growth_word()
+            [0, 1, 2, 0, 2, 2, 3, 1, 2]
+
+            sage: P.to_restricted_growth_word("intertwining")
+            [0, 1, 2, 2, 1, 0, 3, 3, 2]
+
+            sage: P = SetPartition([[1,2,4,7],[3,9],[5,6,10,11,13],[8],[12]])
+            sage: P.to_restricted_growth_word()
+            [0, 0, 1, 0, 2, 2, 0, 3, 1, 2, 2, 4, 2]
+
+            sage: P.to_restricted_growth_word("intertwining")
+            [0, 0, 1, 1, 2, 0, 1, 3, 3, 3, 0, 4, 1]
 
         TESTS::
 
-            sage: SetPartition([(1, 9, 8), (2, 3, 4, 5, 6, 7)]).standard_form()
-            [[1, 8, 9], [2, 3, 4, 5, 6, 7]]
+            sage: P = SetPartition([])
+            sage: P.to_restricted_growth_word()
+            []
+            sage: P.to_restricted_growth_word("intertwining")
+            []
+            sage: S = SetPartitions(5, 2)
+            sage: all(S.from_restricted_growth_word(P.to_restricted_growth_word()) == P for P in S)
+            True
+
+            sage: S = SetPartitions(5, 2)
+            sage: all(S.from_restricted_growth_word(P.to_restricted_growth_word("intertwining"), "intertwining") == P for P in S)
+            True
+
         """
-        return [sorted(_) for _ in self]
+        if bijection == "blocks":
+            return self.to_restricted_growth_word_blocks()
+        elif bijection == "intertwining":
+            return self.to_restricted_growth_word_intertwining()
+        else:
+            raise ValueError("The given bijection is not valid.")
+
+    def to_restricted_growth_word_blocks(self):
+        r"""
+        Convert a set partition of `\{1,...,n\}` to a word of length `n`
+        with letters in the non-negative integers such that each
+        letter is at most 1 larger than all the letters before.
+
+        The word is obtained by sorting the blocks by their minimal
+        element and setting the letters at the positions of the
+        elements in the `i`-th block to `i`.
+
+        OUTPUT:
+
+        - a restricted growth word.
+
+        .. SEEALSO::
+
+            :meth:`to_restricted_growth_word`
+            :meth:`SetPartitions.from_restricted_growth_word`
+
+        EXAMPLES::
+
+            sage: P = SetPartition([[1,4],[2,8],[3,5,6,9],[7]])
+            sage: P.to_restricted_growth_word_blocks()
+            [0, 1, 2, 0, 2, 2, 3, 1, 2]
+
+        """
+        w = [0] * self.size()
+        # we can assume that the blocks are sorted by minimal element
+        for i, B in enumerate(self):
+            for j in B:
+                w[j-1] = i
+        return w
+
+    def to_restricted_growth_word_intertwining(self):
+        r"""
+        Convert a set partition of `\{1,...,n\}` to a word of length `n`
+        with letters in the non-negative integers such that each
+        letter is at most 1 larger than all the letters before.
+
+        The `i`-th letter of the word is the numbers of crossings of
+        the arc (or half-arc) in the extended arc diagram ending at
+        `i`, with arcs (or half-arcs) beginning at a smaller element
+        and ending at a larger element.
+
+        OUTPUT:
+
+        - a restricted growth word.
+
+        .. SEEALSO::
+
+            :meth:`to_restricted_growth_word`
+            :meth:`SetPartitions.from_restricted_growth_word`
+
+        EXAMPLES::
+
+            sage: P = SetPartition([[1,4],[2,8],[3,5,6,9],[7]])
+            sage: P.to_restricted_growth_word_intertwining()
+            [0, 1, 2, 2, 1, 0, 3, 3, 2]
+
+        """
+        A = sorted(self.arcs())
+        O = [min(B) for B in self] # openers
+        C = [max(B) for B in self] # closers
+        I = [0]*self.size()
+        for i in O:
+            I[i-1] = sum(1 for k,l in A if k < i < l) + sum(1 for k in C if k < i)
+        for (i,j) in A:
+            I[j-1] = sum(1 for k,l in A if i < k < j < l) + sum(1 for k in C if i < k < j)
+        return I
+
+    def openers(self):
+        """
+        Return the minimal elements of the blocks.
+
+        EXAMPLES::
+
+            sage: P = SetPartition([[1,2,4,7],[3,9],[5,6,10,11,13],[8],[12]])
+            sage: P.openers()
+            [1, 3, 5, 8, 12]
+        """
+        return sorted([min(B) for B in self])
+
+    def closers(self):
+        """
+        Return the maximal elements of the blocks.
+
+        EXAMPLES::
+
+            sage: P = SetPartition([[1,2,4,7],[3,9],[5,6,10,11,13],[8],[12]])
+            sage: P.closers()
+            [7, 8, 9, 12, 13]
+        """
+        return sorted([max(B) for B in self])
+
+    def to_rook_placement(self, bijection="arcs"):
+        r"""
+        Return a set of pairs defining a placement of non-attacking rooks
+        on a triangular board.
+
+        The cells of the board corresponding to a set partition of
+        `\{1,...,n\}` are the pairs `(i,j)` with `0 < i < j < n+1`.
+
+        INPUT:
+
+        - ``bijection`` (default: ``arcs``) -- defines the bijection
+          from set partitions to rook placements.  These are
+          currently:
+
+          - ``arcs``: :meth:`arcs`
+          - ``gamma``: :meth:`to_rook_placement_gamma`
+          - ``rho``: :meth:`to_rook_placement_rho`
+          - ``psi``: :meth:`to_rook_placement_psi`
+
+        .. SEEALSO::
+
+            :meth:`SetPartitions.from_rook_placement`
+
+        EXAMPLES::
+
+            sage: P = SetPartition([[1,2,4,7],[3,9],[5,6,10,11,13],[8],[12]])
+            sage: P.to_rook_placement()
+            [(1, 2), (2, 4), (4, 7), (3, 9), (5, 6), (6, 10), (10, 11), (11, 13)]
+            sage: P.to_rook_placement("gamma")
+            [(1, 4), (3, 5), (4, 6), (5, 8), (7, 11), (8, 9), (10, 12), (12, 13)]
+            sage: P.to_rook_placement("rho")
+            [(1, 2), (2, 6), (3, 4), (4, 10), (5, 9), (6, 7), (10, 11), (11, 13)]
+            sage: P.to_rook_placement("psi")
+            [(1, 2), (2, 6), (3, 4), (5, 9), (6, 7), (7, 10), (9, 11), (11, 13)]
+
+        """
+        if bijection == "arcs":
+            return self.arcs()
+        elif bijection == "gamma":
+            return self.to_rook_placement_gamma()
+        elif bijection == "rho":
+            return self.to_rook_placement_rho()
+        elif bijection == "psi":
+            return self.to_rook_placement_psi()
+        else:
+            raise ValueError("The given map is not valid.")
+
+    def to_rook_placement_gamma(self):
+        """
+        Return the rook diagram obtained by placing rooks according to
+        Wachs and White's bijection gamma.
+
+        Note that our index convention differs from the convention in
+        [WW1991]_: regarding the rook board as a lower-right
+        triangular grid, we refer with `(i,j)` to the cell in the
+        `i`-th column from the right and the `j`-th row from the top.
+
+        The algorithm proceeds as follows: non-attacking rooks are
+        placed beginning at the left column.  If `n+1-i` is an
+        opener, column `i` remains empty.  Otherwise, we place a rook
+        into column `i`, such that the number of cells below the
+        rook, which are not yet attacked by another rook, equals the
+        index of the block to which `n+1-i` belongs.
+
+        OUTPUT:
+
+        A list of coordinates.
+
+        .. SEEALSO::
+
+            - :meth:`to_rook_placement`
+            - :meth:`SetPartitions.from_rook_placement`
+            - :meth:`SetPartitions.from_rook_placement_gamma`
+
+        EXAMPLES::
+
+            sage: P = SetPartition([[1,4],[2,8],[3,5,6,9],[7]])
+            sage: P.to_rook_placement_gamma()
+            [(1, 3), (2, 7), (4, 5), (5, 6), (6, 9)]
+
+        Figure 5 in [WW1991]_::
+
+            sage: P = SetPartition([[1,2,4,7],[3,9],[5,6,10,11,13],[8],[12]])
+            sage: r = P.to_rook_placement_gamma(); r
+            [(1, 4), (3, 5), (4, 6), (5, 8), (7, 11), (8, 9), (10, 12), (12, 13)]
+
+        TESTS::
+
+            sage: P = SetPartition([])
+            sage: P.to_rook_placement_gamma()
+            []
+            sage: S = SetPartitions(5, 2)
+            sage: all(S.from_rook_placement(P.to_rook_placement("gamma"), "gamma") == P for P in S)
+            True
+
+        """
+        n = self.size()
+        if n == 0:
+            return []
+        w = self.to_restricted_growth_word_blocks()
+        # the set of openers - leftmost occurrences of a letter in w
+        EC = sorted([w.index(i) for i in range(max(w)+1)])
+        rooks = [] # pairs (row i, column j)
+        R = [] # attacked rows
+        for c in range(n): # columns from left to right
+            if c not in EC:
+                r = 0
+                w_c = w[c]
+                while w_c > 0 or r in R:
+                    if r not in R:
+                        w_c -= 1
+                    r += 1
+                rooks.append((n-c, n-r))
+                R.append(r)
+        return sorted(rooks)
+
+    def to_rook_placement_rho(self):
+        """
+        Return the rook diagram obtained by placing rooks according to
+        Wachs and White's bijection rho.
+
+        Note that our index convention differs from the convention in
+        [WW1991]_: regarding the rook board as a lower-right
+        triangular grid, we refer with `(i,j)` to the cell in the
+        `i`-th column from the right and the `j`-th row from the top.
+
+        The algorithm proceeds as follows: non-attacking rooks are
+        placed beginning at the top row.  The columns corresponding
+        to the closers of the set partition remain empty.  Let `rs_j`
+        be the the number of closers which are larger than `j` and
+        whose block is before the block of `j`.
+
+        We then place a rook into row `j`, such that the number of
+        cells to the left of the rook, which are not yet attacked by
+        another rook and are not in a column corresponding to a
+        closer, equals `rs_j`, unless there are not enough cells in
+        this row available, in which case the row remains empty.
+
+        One can show that the precisely those rows which correspond
+        to openers of the set partition remain empty.
+
+        OUTPUT:
+
+        A list of coordinates.
+
+        .. SEEALSO::
+
+            - :meth:`to_rook_placement`
+            - :meth:`SetPartitions.from_rook_placement`
+            - :meth:`SetPartitions.from_rook_placement_rho`
+
+        EXAMPLES::
+
+            sage: P = SetPartition([[1,4],[2,8],[3,5,6,9],[7]])
+            sage: P.to_rook_placement_rho()
+            [(1, 5), (2, 6), (3, 4), (5, 9), (6, 8)]
+
+        Figure 6 in [WW1991]_::
+
+            sage: P = SetPartition([[1,2,4,7],[3,9],[5,6,10,11,13],[8],[12]])
+            sage: r = P.to_rook_placement_rho(); r
+            [(1, 2), (2, 6), (3, 4), (4, 10), (5, 9), (6, 7), (10, 11), (11, 13)]
+
+            sage: sorted(P.closers() + [i for i, _ in r]) == list(range(1,14))
+            True
+            sage: sorted(P.openers() + [j for _, j in r]) == list(range(1,14))
+            True
+
+        TESTS::
+
+            sage: P = SetPartition([])
+            sage: P.to_rook_placement_rho()
+            []
+            sage: S = SetPartitions(5, 2)
+            sage: all(S.from_rook_placement(P.to_rook_placement("rho"), "rho") == P for P in S)
+            True
+
+        """
+        n = self.size()
+        if n == 0:
+            return []
+        w = self.to_restricted_growth_word_blocks()
+        w_rev = w[::-1]
+        # the set of closers - rightmost occurrences of a letter in w
+        R = sorted([n-w_rev.index(i)-1 for i in range(max(w)+1)])
+        # the number of closers which are larger than i and whose
+        # block is before the block of i
+        rs = [sum(1 for j in R if j > i and w[j] < w[i]) for i in range(n)]
+        EC = [n-j for j in R] # empty columns
+        rooks = [] # pairs (row i, column j)
+        for i in range(1,n):
+            U = [j for j in range(n+1-i, n+1) if j not in EC]
+            if rs[i] < len(U):
+                j = U[rs[i]]
+                rooks.append((n+1-j, i+1))
+                EC.append(j)
+        return sorted(rooks)
+
+    def to_rook_placement_psi(self):
+        r"""
+        Return the rook diagram obtained by placing rooks according to
+        Yip's bijection psi.
+
+        OUTPUT:
+
+        A list of coordinates.
+
+        .. SEEALSO::
+
+            - :meth:`to_rook_placement`
+            - :meth:`SetPartitions.from_rook_placement`
+            - :meth:`SetPartitions.from_rook_placement_psi`
+
+        EXAMPLES:
+
+        Example 36 (arXiv version: Example 4.5) in [Yip2018]_::
+
+            sage: P = SetPartition([[1, 5], [2], [3, 8, 9], [4], [6, 7]])
+            sage: P.to_rook_placement_psi()
+            [(1, 7), (3, 8), (4, 5), (7, 9)]
+
+        Note that the columns corresponding to the minimal elements
+        of the blocks remain empty.
+
+        TESTS::
+
+            sage: P = SetPartition([])
+            sage: P.to_rook_placement_psi()
+            []
+            sage: S = SetPartitions(5,2)
+            sage: all(S.from_rook_placement(P.to_rook_placement("psi"), "psi") == P for P in S)
+            True
+
+        """
+        # Yip draws the diagram as an upper triangular matrix, thus
+        # we refer to the cell in row i and column j with (i, j)
+        n = self.size()
+        degrees = []
+        P = [sorted(e) for e in self]
+        for j in range(n, 0, -1):
+            # find the block number into which c was placed by first
+            # removing j and then sorting the blocks
+            B = next(B for B in P if B[-1] == j)
+            if len(B) == 1:
+                P.remove(B)
+            else:
+                del B[-1]
+                P = sorted(P, key=lambda B: (-len(B), min(B)))
+                b = P.index(B)
+                i = j - b - 1
+                degrees.append((j,i))
+        # reconstruct rooks from degree sequence
+        rooks = []
+        attacked_rows = []
+        for j, d in reversed(degrees):
+            i = 1
+            while d > i + sum(1 for r in attacked_rows if r > i):
+                i += 1
+            attacked_rows.append(i)
+            rooks.append((i,j))
+        return sorted(rooks)
 
     def apply_permutation(self, p):
         r"""
@@ -932,7 +1468,7 @@ class SetPartition(ClonableArray):
         EXAMPLES::
 
             sage: n = PerfectMatching([(1, 6), (2, 7), (3, 5), (4, 8)])
-            sage: it = n.nestings_iterator();
+            sage: it = n.nestings_iterator()
             sage: next(it)
             ((1, 6), (3, 5))
             sage: next(it)
@@ -1035,7 +1571,7 @@ class SetPartition(ClonableArray):
         return False
 
     def is_atomic(self):
-        """
+        r"""
         Return if ``self`` is an atomic set partition.
 
         A (standard) set partition `A` can be split if there exist `j < i`
@@ -1069,43 +1605,8 @@ class SetPartition(ClonableArray):
             maximum_so_far = max(maximum_so_far, max(S))
         return True
 
-    def base_set(self):
-        """
-        Return the base set of ``self``, which is the union of all parts
-        of ``self``.
-
-        EXAMPLES::
-
-            sage: SetPartition([[1], [2,3], [4]]).base_set()
-            {1, 2, 3, 4}
-            sage: SetPartition([[1,2,3,4]]).base_set()
-            {1, 2, 3, 4}
-            sage: SetPartition([]).base_set()
-            {}
-        """
-        return Set([e for p in self for e in p])
-
-    def base_set_cardinality(self):
-        """
-        Return the cardinality of the base set of ``self``, which is the sum
-        of the sizes of the parts of ``self``.
-
-        This is also known as the *size* (sometimes the *weight*) of
-        a set partition.
-
-        EXAMPLES::
-
-            sage: SetPartition([[1], [2,3], [4]]).base_set_cardinality()
-            4
-            sage: SetPartition([[1,2,3,4]]).base_set_cardinality()
-            4
-        """
-        return sum(len(x) for x in self)
-
-    size = base_set_cardinality
-
     def standardization(self):
-        """
+        r"""
         Return the standardization of ``self``.
 
         Given a set partition `A = \{A_1, \ldots, A_n\}` of an ordered
@@ -1222,10 +1723,7 @@ class SetPartition(ClonableArray):
 
         REFERENCES:
 
-        .. [LM2011] \A. Lauve, M. Mastnak. *The primitives and antipode in
-           the Hopf algebra of symmetric functions in noncommuting variables*.
-           Advances in Applied Mathematics. **47** (2011). 536-544.
-           :arxiv:`1006.0367v3` :doi:`10.1016/j.aam.2011.01.002`.
+        - [LM2011]_
         """
         cur = 1
         ret = []
@@ -1271,41 +1769,6 @@ class SetPartition(ClonableArray):
         """
         L = [SetPartitions(part) for part in self]
         return [SetPartition(sum(map(list, x), [])) for x in itertools.product(*L)]
-
-    def coarsenings(self):
-        """
-        Return a list of coarsenings of ``self``.
-
-        .. SEEALSO::
-
-            :meth:`refinements`
-
-        EXAMPLES::
-
-            sage: SetPartition([[1,3],[2,4]]).coarsenings()
-            [{{1, 2, 3, 4}}, {{1, 3}, {2, 4}}]
-            sage: SetPartition([[1],[2,4],[3]]).coarsenings()
-            [{{1, 2, 3, 4}},
-             {{1}, {2, 3, 4}},
-             {{1, 3}, {2, 4}},
-             {{1, 2, 4}, {3}},
-             {{1}, {2, 4}, {3}}]
-            sage: SetPartition([]).coarsenings()
-            [{}]
-        """
-        SP = SetPartitions(len(self))
-        def union(s):
-            # Return the partition obtained by combining, for every
-            # part of s, those parts of self which are indexed by
-            # the elements of this part of s into a single part.
-            ret = []
-            for part in s:
-                cur = Set([])
-                for i in part:
-                    cur = cur.union(self[i-1]) # -1 for indexing
-                ret.append(cur)
-            return ret
-        return [SetPartition(union(s)) for s in SP]
 
     def strict_coarsenings(self):
         r"""
@@ -1411,12 +1874,12 @@ class SetPartition(ClonableArray):
             Text '3' at the point (2.0,-0.1)
             Text '4' at the point (3.0,-0.1)
             Text '5' at the point (4.0,-0.1)
-            Arc with center (1.0,-1.0) radii (1.41421356237,1.41421356237)
-             angle 0.0 inside the sector (0.785398163397,2.35619449019)
-            Arc with center (2.5,-0.5) radii (0.707106781187,0.707106781187)
-             angle 0.0 inside the sector (0.785398163397,2.35619449019)
-            Arc with center (2.5,-1.5) radii (2.12132034356,2.12132034356)
-             angle 0.0 inside the sector (0.785398163397,2.35619449019)
+            Arc with center (1.0,-1.0) radii (1.41421356237...,1.41421356237...)
+             angle 0.0 inside the sector (0.785398163397...,2.35619449019...)
+            Arc with center (2.5,-0.5) radii (0.70710678118...,0.70710678118...)
+             angle 0.0 inside the sector (0.785398163397...,2.35619449019...)
+            Arc with center (2.5,-1.5) radii (2.1213203435...,2.1213203435...)
+             angle 0.0 inside the sector (0.785398163397...,2.35619449019...)
             sage: p = SetPartition([['a','c'],['b','d'],['e']])
             sage: print(p.plot().description())
             Point set defined by 1 point(s):  [(0.0, 0.0)]
@@ -1429,10 +1892,10 @@ class SetPartition(ClonableArray):
             Text 'c' at the point (2.0,-0.1)
             Text 'd' at the point (3.0,-0.1)
             Text 'e' at the point (4.0,-0.1)
-            Arc with center (1.0,-1.0) radii (1.41421356237,1.41421356237)
-             angle 0.0 inside the sector (0.785398163397,2.35619449019)
-            Arc with center (2.0,-1.0) radii (1.41421356237,1.41421356237)
-             angle 0.0 inside the sector (0.785398163397,2.35619449019)
+            Arc with center (1.0,-1.0) radii (1.41421356237...,1.41421356237...)
+             angle 0.0 inside the sector (0.785398163397...,2.35619449019...)
+            Arc with center (2.0,-1.0) radii (1.41421356237...,1.41421356237...)
+             angle 0.0 inside the sector (0.785398163397...,2.35619449019...)
             sage: p = SetPartition([['a','c'],['b','d'],['e']])
             sage: print(p.plot(base_set_dict={'a':0,'b':1,'c':2,'d':-2.3,'e':5.4}).description())
             Point set defined by 1 point(s):    [(-2.3, 0.0)]
@@ -1445,10 +1908,10 @@ class SetPartition(ClonableArray):
             Text 'c' at the point (2.0,-0.1)
             Text 'd' at the point (-2.3,-0.1)
             Text 'e' at the point (5.4,-0.1)
-            Arc with center (-0.65,-1.65) radii (2.33345237792,2.33345237792)
-             angle 0.0 inside the sector (0.785398163397,2.35619449019)
-            Arc with center (1.0,-1.0) radii (1.41421356237,1.41421356237)
-             angle 0.0 inside the sector (0.785398163397,2.35619449019)
+            Arc with center (-0.6...,-1.65) radii (2.3334523779...,2.3334523779...)
+             angle 0.0 inside the sector (0.785398163397...,2.35619449019...)
+            Arc with center (1.0,-1.0) radii (1.4142135623...,1.4142135623...)
+             angle 0.0 inside the sector (0.785398163397...,2.35619449019...)
         """
         from sage.plot.graphics import Graphics
         from sage.plot.point import point
@@ -1510,10 +1973,10 @@ class SetPartitions(UniqueRepresentation, Parent):
     EXAMPLES::
 
         sage: S = [1,2,3,4]
-        sage: SetPartitions(S,2)
+        sage: SetPartitions(S, 2)
         Set partitions of {1, 2, 3, 4} with 2 parts
         sage: SetPartitions([1,2,3,4], [3,1]).list()
-        [{{1}, {2, 3, 4}}, {{1, 3, 4}, {2}}, {{1, 2, 4}, {3}}, {{1, 2, 3}, {4}}]
+        [{{1}, {2, 3, 4}}, {{1, 2, 3}, {4}}, {{1, 2, 4}, {3}}, {{1, 3, 4}, {2}}]
         sage: SetPartitions(7, [3,3,1]).cardinality()
         70
 
@@ -1583,17 +2046,17 @@ class SetPartitions(UniqueRepresentation, Parent):
             True
         """
         # x must be a set
-        if not (isinstance(x, (SetPartition, set, frozenset)) or is_Set(x)):
+        if not isinstance(x, (SetPartition, set, frozenset, Set_generic)):
             return False
 
         # Check that all parts are disjoint
-        base_set = Set([e for p in x for e in p])
+        base_set = set([e for p in x for e in p])
         if len(base_set) != sum(map(len, x)):
             return False
 
         # Check to make sure each element of x is a set
         for s in x:
-            if not (isinstance(s, (set, frozenset)) or is_Set(s)):
+            if not isinstance(s, (set, frozenset, Set_generic)):
                 return False
 
         return True
@@ -1626,40 +2089,422 @@ class SetPartitions(UniqueRepresentation, Parent):
 
     Element = SetPartition
 
-    def _iterator_part(self, part):
-        """
-        Return an iterator for the set partitions with block sizes
-        corresponding to the partition ``part``.
+    def from_restricted_growth_word(self, w, bijection="blocks"):
+        r"""
+        Convert a word of length `n` with letters in the non-negative
+        integers such that each letter is at most 1 larger than all
+        the letters before to a set partition of `\{1,...,n\}`.
 
         INPUT:
 
-        -  ``part`` -- a :class:`Partition` object
+        - ``w`` -- a restricted growth word.
+
+        - ``bijection`` (default: ``blocks``) -- defines the map from
+          restricted growth functions to set partitions.  These are
+          currently:
+
+          - ``blocks``: .
+
+          - ``intertwining``: :meth:`from_restricted_growth_word_intertwining`.
+
+        OUTPUT:
+
+        A set partition.
+
+        .. SEEALSO::
+
+            :meth:`SetPartition.to_restricted_growth_word`
 
         EXAMPLES::
 
-            sage: S = SetPartitions(3)
-            sage: it = S._iterator_part(Partition([1,1,1]))
-            sage: list(sorted(map(list, next(it))))
-            [[1], [2], [3]]
-            sage: S21 = SetPartitions(3,Partition([2,1]))
-            sage: len(list(S._iterator_part(Partition([2,1])))) == S21.cardinality()
-            True
+            sage: SetPartitions().from_restricted_growth_word([0, 1, 2, 0, 2, 2, 3, 1, 2])
+            {{1, 4}, {2, 8}, {3, 5, 6, 9}, {7}}
+
+            sage: SetPartitions().from_restricted_growth_word([0, 0, 1, 0, 2, 2, 0, 3, 1, 2, 2, 4, 2])
+            {{1, 2, 4, 7}, {3, 9}, {5, 6, 10, 11, 13}, {8}, {12}}
+
+            sage: SetPartitions().from_restricted_growth_word([0, 0, 1, 0, 2, 2, 0, 3, 1, 2, 2, 4, 2], "intertwining")
+            {{1, 2, 6, 7, 9}, {3, 4}, {5, 10, 13}, {8, 11}, {12}}
+
         """
-        nonzero = []
-        expo = [0] + part.to_exp()
+        if bijection == "blocks":
+            return self.from_restricted_growth_word_blocks(w)
+        elif bijection == "intertwining":
+            return self.from_restricted_growth_word_intertwining(w)
+        else:
+            raise ValueError("The given bijection is not valid.")
 
-        for i in range(len(expo)):
-            if expo[i] != 0:
-                nonzero.append([i, expo[i]])
+    def from_restricted_growth_word_blocks(self, w):
+        r"""
+        Convert a word of length `n` with letters in the non-negative
+        integers such that each letter is at most 1 larger than all
+        the letters before to a set partition of `\{1,...,n\}`.
 
-        taillesblocs = [(x[0])*(x[1]) for x in nonzero]
+        ``w[i]` is the index of the block containing ``i+1`` when
+        sorting the blocks by their minimal element.
 
-        blocs = OrderedSetPartitions(self._set, taillesblocs)
+        INPUT:
 
-        for b in blocs:
-            lb = [IterableFunctionCall(_listbloc, nonzero[i][0], nonzero[i][1], b[i]) for i in range(len(nonzero))]
-            for x in itertools.product(*lb):
-                yield _union(x)
+        - ``w`` -- a restricted growth word.
+
+        OUTPUT:
+
+        A set partition.
+
+        .. SEEALSO::
+
+            :meth:`from_restricted_growth_word`
+            :meth:`SetPartition.to_restricted_growth_word`
+
+        EXAMPLES::
+
+            sage: SetPartitions().from_restricted_growth_word_blocks([0, 0, 1, 0, 2, 2, 0, 3, 1, 2, 2, 4, 2])
+            {{1, 2, 4, 7}, {3, 9}, {5, 6, 10, 11, 13}, {8}, {12}}
+
+        """
+        R = []
+        for i, B in enumerate(w, 1):
+            if len(R) <= B:
+                R.append([i])
+            else:
+                R[B].append(i)
+        return self.element_class(self, R)
+
+    def from_restricted_growth_word_intertwining(self, w):
+        r"""
+        Convert a word of length `n` with letters in the non-negative
+        integers such that each letter is at most 1 larger than all
+        the letters before to a set partition of `\{1,...,n\}`.
+
+        The `i`-th letter of the word is the numbers of crossings of
+        the arc (or half-arc) in the extended arc diagram ending at
+        `i`, with arcs (or half-arcs) beginning at a smaller element
+        and ending at a larger element.
+
+        INPUT:
+
+        - ``w`` -- a restricted growth word.
+
+        OUTPUT:
+
+        A set partition.
+
+        .. SEEALSO::
+
+            :meth:`from_restricted_growth_word`
+            :meth:`SetPartition.to_restricted_growth_word`
+
+        EXAMPLES::
+
+            sage: SetPartitions().from_restricted_growth_word_intertwining([0, 0, 1, 0, 2, 2, 0, 3, 1, 2, 2, 4, 2])
+            {{1, 2, 6, 7, 9}, {3, 4}, {5, 10, 13}, {8, 11}, {12}}
+
+        """
+        if len(w) == 0:
+            return self.element_class(self, [])
+        R = [[1]]
+        C = [1] # closers, always reverse sorted
+        m = 0 # max
+        for i in range(1,len(w)):
+            if w[i] == 1 + m: # i+1 is an opener
+                m += 1
+                R.append([i+1])
+            else:
+                # add i+1 to the block, such that there are I[i] closers thereafter
+                l = C[w[i]]
+                B = next(B for B in R if l in B)
+                B.append(i+1)
+                C.remove(l)
+            C = [i+1] + C
+        return self.element_class(self, R)
+
+    def from_rook_placement(self, rooks, bijection="arcs", n=None):
+        r"""
+        Convert a rook placement of the triangular grid to a set
+        partition of `\{1,...,n\}`.
+
+        If ``n`` is not given, it is first checked whether it can be
+        determined from the parent, otherwise it is the maximal
+        occuring integer in the set of rooks.
+
+        INPUT:
+
+        - ``rooks`` -- a list of pairs `(i,j)` satisfying
+          `0 < i < j < n+1`.
+
+        - ``bijection`` (default: ``arcs``) -- defines the map from
+          rook placements to set partitions.  These are currently:
+
+          - ``arcs``: :meth:`from_arcs`.
+          - ``gamma``: :meth:`from_rook_placement_gamma`.
+          - ``rho``: :meth:`from_rook_placement_rho`.
+          - ``psi``: :meth:`from_rook_placement_psi`.
+
+        - ``n`` -- (optional) the size of the ground set.
+
+        .. SEEALSO::
+
+            :meth:`SetPartition.to_rook_placement`
+
+        EXAMPLES::
+
+            sage: SetPartitions(9).from_rook_placement([[1,4],[2,8],[3,5],[5,6],[6,9]])
+            {{1, 4}, {2, 8}, {3, 5, 6, 9}, {7}}
+
+            sage: SetPartitions(13).from_rook_placement([[12,13],[10,12],[8,9],[7,11],[5,8],[4,6],[3,5],[1,4]], "gamma")
+            {{1, 2, 4, 7}, {3, 9}, {5, 6, 10, 11, 13}, {8}, {12}}
+
+        TESTS::
+
+            sage: SetPartitions().from_rook_placement([])
+            {}
+            sage: SetPartitions().from_rook_placement([], "gamma")
+            {}
+            sage: SetPartitions().from_rook_placement([], "rho")
+            {}
+            sage: SetPartitions().from_rook_placement([], "psi")
+            {}
+            sage: SetPartitions().from_rook_placement([], n=2)
+            {{1}, {2}}
+            sage: SetPartitions().from_rook_placement([], "gamma", 2)
+            {{1}, {2}}
+            sage: SetPartitions().from_rook_placement([], "rho", 2)
+            {{1}, {2}}
+            sage: SetPartitions().from_rook_placement([], "psi", 2)
+            {{1}, {2}}
+
+        """
+        if n is None:
+            try:
+                n = self.base_set_cardinality()
+            except AttributeError:
+                if len(rooks) == 0:
+                    n = 0
+                else:
+                    n = max(max(r) for r in rooks)
+
+        if bijection == "arcs":
+            return self.from_arcs(rooks, n)
+        elif bijection == "rho":
+            return self.from_rook_placement_rho(rooks, n)
+        elif bijection == "gamma":
+            return self.from_rook_placement_gamma(rooks, n)
+        elif bijection == "psi":
+            return self.from_rook_placement_psi(rooks, n)
+        else:
+            raise ValueError("The given bijection is not valid.")
+
+    def from_arcs(self, arcs, n):
+        r"""
+        Return the coarsest set partition of `\{1,...,n\}` such that any
+        two elements connected by an arc are in the same block.
+
+        INPUT:
+
+        - ``n`` -- an integer specifying the size of the set
+          partition to be produced.
+
+        - ``arcs`` -- a list of pairs specifying which elements are
+          in the same block.
+
+        .. SEEALSO::
+
+            - :meth:`from_rook_placement`
+            - :meth:`SetPartition.to_rook_placement`
+            - :meth:`SetPartition.arcs`
+
+        EXAMPLES::
+
+            sage: SetPartitions().from_arcs([(2,3)], 5)
+            {{1}, {2, 3}, {4}, {5}}
+        """
+        P = DisjointSet(range(1,n+1))
+        for i,j in arcs:
+            P.union(i,j)
+        return self.element_class(self, P)
+
+    def from_rook_placement_gamma(self, rooks, n):
+        r"""
+        Return the set partition of `\{1,...,n\}` corresponding to the
+        given rook placement by applying Wachs and White's bijection
+        gamma.
+
+        Note that our index convention differs from the convention in
+        [WW1991]_: regarding the rook board as a lower-right
+        triangular grid, we refer with `(i,j)` to the cell in the
+        `i`-th column from the right and the `j`-th row from the top.
+
+        INPUT:
+
+        - ``n`` -- an integer specifying the size of the set
+          partition to be produced.
+
+        - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j < n+1`.
+
+        OUTPUT:
+
+        A set partition.
+
+        .. SEEALSO::
+
+            - :meth:`from_rook_placement`
+            - :meth:`SetPartition.to_rook_placement`
+            - :meth:`SetPartition.to_rook_placement_gamma`
+
+        EXAMPLES:
+
+        Figure 5 in [WW1991]_ concerns the following rook placement::
+
+            sage: r = [(1, 4), (3, 5), (4, 6), (5, 8), (7, 11), (8, 9), (10, 12), (12, 13)]
+
+        Note that the rook `(1, 4)`, translated into Wachs and
+        White's convention, is a rook in row 4 from the top and
+        column 13 from the left.  The corresponding set partition
+        is::
+
+            sage: SetPartitions().from_rook_placement_gamma(r, 13)
+            {{1, 2, 4, 7}, {3, 9}, {5, 6, 10, 11, 13}, {8}, {12}}
+
+        """
+        if n == 0:
+            return self.element_class(self, [])
+        # the columns of the board, beginning with column n-1
+        C = [set(range(n+1-j, n+1)) for j in range(1,n)]
+        # delete cells north and east of each rook
+        for (j,i) in rooks:
+            # north
+            C[n-j-1].difference_update(range(j+1, i+1))
+            # east
+            for l in range(n+1-j, n+1):
+                C[l-2].discard(i)
+        w = [0] + [len(c) for c in C]
+        return self.from_restricted_growth_word_blocks(w)
+
+    def from_rook_placement_rho(self, rooks, n):
+        r"""
+        Return the set partition of `\{1,...,n\}` corresponding to the
+        given rook placement by applying Wachs and White's bijection
+        rho.
+
+        Note that our index convention differs from the convention in
+        [WW1991]_: regarding the rook board as a lower-right
+        triangular grid, we refer with `(i,j)` to the cell in the
+        `i`-th column from the right and the `j`-th row from the top.
+
+        INPUT:
+
+        - ``n`` -- an integer specifying the size of the set
+          partition to be produced.
+
+        - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j < n+1`.
+
+        OUTPUT:
+
+        A set partition.
+
+        .. SEEALSO::
+
+            - :meth:`from_rook_placement`
+            - :meth:`SetPartition.to_rook_placement`
+            - :meth:`SetPartition.to_rook_placement_rho`
+
+        EXAMPLES:
+
+        Figure 5 in [WW1991]_ concerns the following rook placement::
+
+            sage: r = [(1, 2), (2, 6), (3, 4), (4, 10), (5, 9), (6, 7), (10, 11), (11, 13)]
+
+        Note that the rook `(1, 2)`, translated into Wachs and
+        White's convention, is a rook in row 2 from the top and
+        column 13 from the left.  The corresponding set partition
+        is::
+
+            sage: SetPartitions().from_rook_placement_rho(r, 13)
+            {{1, 2, 4, 7}, {3, 9}, {5, 6, 10, 11, 13}, {8}, {12}}
+        """
+        # the closers correspond to the empty columns
+        cols = [j for j, _ in rooks]
+        R = [j for j in range(1,n+1) if j not in cols]
+        # the columns of the board, beginning with column n-1
+        C = [set(range(n+1-j, n+1)) if n-j not in R else set() for j in range(1,n)]
+        for (j,i) in rooks: # column j from right, row i from top
+            # south
+            C[n-j-1].difference_update(range(i, n+1))
+            # east
+            for l in range(n+1-j, n+1):
+                C[l-2].discard(i)
+
+        C_flat = [i for c in C for i in c]
+        # the number of closers which are larger than i and whose
+        # block is before the block of i
+        rs = [C_flat.count(i) for i in range(1,n+1)]
+        # create the blocks
+        P = [[] for c in R]
+        for i in range(1, n+1):
+            k = rs[i-1]
+            # find k-th block which does not yet have a closer
+            b = 0
+            while k > 0 or (P[b] != [] and P[b][-1] in R):
+                if P[b][-1] not in R:
+                    k -= 1
+                b += 1
+            P[b].append(i)
+        return self.element_class(self, P)
+
+    def from_rook_placement_psi(self, rooks, n):
+        r"""
+        Return the set partition of `\{1,...,n\}` corresponding to the
+        given rook placement by applying Yip's bijection psi.
+
+        INPUT:
+
+        - ``n`` -- an integer specifying the size of the set
+          partition to be produced.
+
+        - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j <
+          n+1`.
+
+        OUTPUT:
+
+        A set partition.
+
+        .. SEEALSO::
+
+            - :meth:`from_rook_placement`
+            - :meth:`SetPartition.to_rook_placement`
+            - :meth:`SetPartition.to_rook_placement_psi`
+
+        EXAMPLES:
+
+        Example 36 (arXiv version: Example 4.5) in [Yip2018]_
+        concerns the following rook placement::
+
+            sage: r = [(4,5), (1,7), (3, 8), (7,9)]
+            sage: SetPartitions().from_rook_placement_psi(r, 9)
+            {{1, 5}, {2}, {3, 8, 9}, {4}, {6, 7}}
+
+        """
+        # Yip draws the diagram as an upper triangular matrix, thus
+        # we refer to the cell in row i and column j with (i, j)
+        P = []
+        rooks_by_column = {j: i for (i, j) in rooks}
+        for c in range(1, n+1):
+            # determine the weight of column c
+            try:
+                r = rooks_by_column[c]
+                n_rooks = 1
+                ne = r-1 + sum(1 for i,j in rooks if i > r and j < c)
+            except KeyError:
+                n_rooks = 0
+                ne = sum(1 for i,j in rooks if j < c)
+
+            b = c - n_rooks - ne
+            if len(P) == b-1:
+                P.append([c])
+            else:
+                P[b-1].append(c)
+            P = sorted(P, key=lambda B: (-len(B), min(B)))
+        return self.element_class(self, P)
 
     def is_less_than(self, s, t):
         r"""
@@ -1699,7 +2544,7 @@ class SetPartitions(UniqueRepresentation, Parent):
             return False
 
         for p in s:
-            x = p[0]
+            x = next(iter(p))
             for t_ in t:
                 if x in t_:
                     break
@@ -1794,8 +2639,8 @@ class SetPartitions_all(SetPartitions):
 
             sage: it = SetPartitions().__iter__()
             sage: [next(it) for x in range(10)]
-            [{}, {{1}}, {{1, 2}}, {{1}, {2}}, {{1, 2, 3}}, {{1}, {2, 3}},
-             {{1, 3}, {2}}, {{1, 2}, {3}}, {{1}, {2}, {3}}, {{1, 2, 3, 4}}]
+            [{}, {{1}}, {{1, 2}}, {{1}, {2}}, {{1, 2, 3}}, {{1, 2}, {3}},
+             {{1, 3}, {2}}, {{1}, {2, 3}}, {{1}, {2}, {3}}, {{1, 2, 3, 4}}]
         """
         n = 0
         while True:
@@ -1887,6 +2732,10 @@ class SetPartitions_set(SetPartitions):
             sage: S = SetPartitions(10)
             sage: S.random_element()
             {{1, 4, 9}, {2, 5, 7}, {3}, {6}, {8, 10}}
+
+            sage: S = SetPartitions(["a", "b", "c"])
+            sage: S.random_element()
+            {{'a'}, {'b', 'c'}}
         """
         base_set = list(self.base_set())
         N = len(base_set)
@@ -1904,7 +2753,7 @@ class SetPartitions_set(SetPartitions):
             else:
                 p[b] = [base_set[i]]
 
-        return SetPartition(p.values())
+        return self.element_class(self, p.values(), check=False)
 
     def cardinality(self):
         """
@@ -1933,11 +2782,13 @@ class SetPartitions_set(SetPartitions):
         EXAMPLES::
 
             sage: SetPartitions(3).list()
-            [{{1, 2, 3}}, {{1}, {2, 3}}, {{1, 3}, {2}}, {{1, 2}, {3}}, {{1}, {2}, {3}}]
+            [{{1, 2, 3}}, {{1, 2}, {3}}, {{1, 3}, {2}}, {{1}, {2, 3}}, {{1}, {2}, {3}}]
+
+            sage: SetPartitions(["a", "b"]).list()
+            [{{'a', 'b'}}, {{'a'}, {'b'}}]
         """
-        for p in Partitions(len(self._set)):
-            for sp in self._iterator_part(p):
-                yield self.element_class(self, sp)
+        for sp in set_partition_iterator(sorted(self._set)):
+            yield self.element_class(self, sp, check=False)
 
     def base_set(self):
         """
@@ -1947,6 +2798,9 @@ class SetPartitions_set(SetPartitions):
 
             sage: SetPartitions(3).base_set()
             {1, 2, 3}
+
+            sage: SetPartitions(["a", "b", "c"]).base_set()
+            {'a', 'c', 'b'}
         """
         return Set(self._set)
 
@@ -1963,8 +2817,8 @@ class SetPartitions_set(SetPartitions):
 
 class SetPartitions_setparts(SetPartitions_set):
     r"""
-    Class of all set partitions with fixed partition sizes corresponding to
-    an integer partition `\lambda`.
+    Set partitions with fixed partition sizes corresponding to an
+    integer partition `\lambda`.
     """
     @staticmethod
     def __classcall_private__(cls, s, parts):
@@ -1984,13 +2838,17 @@ class SetPartitions_setparts(SetPartitions_set):
 
     def __init__(self, s, parts):
         """
+        Initialize the data structure.
+
+        We can assume here that `parts` is a :cls:`Partition`.
+
         TESTS::
 
             sage: S = SetPartitions(4, [2,2])
             sage: TestSuite(S).run()
         """
         SetPartitions_set.__init__(self, s)
-        self.parts = parts
+        self._parts = parts
 
     def _repr_(self):
         """
@@ -1999,7 +2857,35 @@ class SetPartitions_setparts(SetPartitions_set):
             sage: SetPartitions(4, [2,2])
             Set partitions of {1, 2, 3, 4} with sizes in [2, 2]
         """
-        return "Set partitions of %s with sizes in %s"%(Set(self._set), self.parts)
+        return "Set partitions of %s with sizes in %s"%(Set(self._set), self._parts)
+
+    @property
+    def parts(self):
+        r"""
+        ``self.parts`` is deprecated; use :meth:`shape` instead.
+
+        TESTS::
+
+            sage: SetPartitions(5, [2,2,1]).parts
+            doctest:...: DeprecationWarning: The attribute parts for the partition of block sizes is deprecated, use the method shape instead.
+            See https://trac.sagemath.org/25865 for details.
+            [2, 2, 1]
+        """
+        from sage.misc.superseded import deprecation
+        deprecation(25865, "The attribute parts for the partition of block sizes is deprecated,"
+                           " use the method shape instead.")
+        return self.shape()
+
+    def shape(self):
+        r"""
+        Return the partition of block sizes of the set partitions in ``self``.
+
+        EXAMPLES::
+
+            sage: SetPartitions(5, [2,2,1]).shape()
+            [2, 2, 1]
+        """
+        return self._parts
 
     def cardinality(self):
         r"""
@@ -2037,15 +2923,57 @@ class SetPartitions_setparts(SetPartitions_set):
 
         remaining_subset_size = Integer(len(self._set))
         cardinal = Integer(1)
-        for subset_size in self.parts:
+        for subset_size in self._parts:
             cardinal *= remaining_subset_size.binomial(subset_size)
             remaining_subset_size -= subset_size
 
         repetitions = (Integer(rep).factorial()
-                       for rep in self.parts.to_exp_dict().values()
+                       for rep in self._parts.to_exp_dict().values()
                        if rep != 1)
         cardinal /= prod(repetitions)
         return Integer(cardinal)
+
+    def _set_partition_poset(self):
+        r"""
+        Return the Hasse diagram of a poset whose linear extensions correspond
+        to the set partitions with specified block sizes.
+
+        TESTS::
+
+            sage: P = SetPartitions(["a", "b", "c", "d", "e"], [2,2,1])._set_partition_poset()
+            sage: P.cover_relations()
+            [(1, 2), (1, 3), (3, 4)]
+
+            sage: n = 9
+            sage: all(SetPartitions(n, mu).cardinality() ==
+            ....:     len(list(SetPartitions(n, mu)._set_partition_poset().linear_extensions()))
+            ....:     for mu in Partitions(n))
+            True
+
+        """
+        c = self._parts.to_exp_dict()
+        covers = dict()
+        i = 0
+        for s in sorted(c):
+            # s is the block size
+            # each block is one tree in the poset
+            for m in range(c[s]):
+                # m is the multiplicity of blocks with size s
+                #
+                # the first element in each non-final block has an
+                # additional cover
+                first = i
+                if s == 1:
+                    covers[i] = []
+                else:
+                    for j in range(s-1):
+                        covers[i] = [i+1]
+                        i += 1
+                i += 1
+                if m < c[s]-1:
+                    covers[first].append(i)
+        return HasseDiagram(covers)
+
 
     def __iter__(self):
         """
@@ -2055,10 +2983,34 @@ class SetPartitions_setparts(SetPartitions_set):
         EXAMPLES::
 
             sage: SetPartitions(3, [2,1]).list()
-            [{{1}, {2, 3}}, {{1, 3}, {2}}, {{1, 2}, {3}}]
+            [{{1}, {2, 3}}, {{1, 2}, {3}}, {{1, 3}, {2}}]
+
+            sage: SetPartitions(["a", "b", "c"], [2,1]).list()
+            [{{'a'}, {'b', 'c'}}, {{'a', 'c'}, {'b'}}, {{'a', 'b'}, {'c'}}]
+
+        TESTS::
+
+            sage: n = 8
+            sage: all(SetPartitions(n, mu).cardinality() == len(list(SetPartitions(n, mu))) for mu in Partitions(n))
+            True
+
         """
-        for sp in self._iterator_part(self.parts):
-            yield self.element_class(self, sp)
+        # Ruskey, Combinatorial Generation, sec. 5.10.1 and Knuth TAOCP 4A 7.2.1.5, Exercise 6
+        k = len(self._parts)
+        n = len(self._set)
+        s = list(self._set)
+        P = self._set_partition_poset()
+
+        sums = [0]
+        for b in sorted(self._parts):
+            sums.append(sums[-1] + b)
+
+        for ext in P.linear_extensions():
+            pi = [None]*n
+            for i in range(n):
+                pi[ext[i]] = s[i]
+            sp = [[pi[j] for j in range(sums[i], sums[i+1])] for i in range(k)]
+            yield self.element_class(self, sp, check=False)
 
     def __contains__(self, x):
         """
@@ -2076,11 +3028,14 @@ class SetPartitions_setparts(SetPartitions_set):
         """
         if not SetPartitions_set.__contains__(self, x):
             return False
-        return sorted(map(len, x)) == list(reversed(self.parts))
+        return sorted(map(len, x)) == list(reversed(self._parts))
 
 class SetPartitions_setn(SetPartitions_set):
+    """
+    Set partitions with a given number of blocks.
+    """
     @staticmethod
-    def __classcall_private__(cls, s, n):
+    def __classcall_private__(cls, s, k):
         """
         Normalize ``s`` to ensure a unique representation.
 
@@ -2092,16 +3047,16 @@ class SetPartitions_setn(SetPartitions_set):
             sage: S1 is S2, S1 is S3
             (True, True)
         """
-        return super(SetPartitions_setn, cls).__classcall__(cls, frozenset(s), n)
+        return super(SetPartitions_setn, cls).__classcall__(cls, frozenset(s), k)
 
-    def __init__(self, s, n):
+    def __init__(self, s, k):
         """
         TESTS::
 
             sage: S = SetPartitions(5, 3)
             sage: TestSuite(S).run()
         """
-        self.n = n
+        self._k = k
         SetPartitions_set.__init__(self, s)
 
     def _repr_(self):
@@ -2111,7 +3066,35 @@ class SetPartitions_setn(SetPartitions_set):
             sage: SetPartitions(5, 3)
             Set partitions of {1, 2, 3, 4, 5} with 3 parts
         """
-        return "Set partitions of %s with %s parts"%(Set(self._set), self.n)
+        return "Set partitions of %s with %s parts"%(Set(self._set), self._k)
+
+    @property
+    def n(self):
+        r"""
+        ``self.n`` is deprecated; use :meth:`number_of_blocks` instead.
+
+        TESTS::
+
+            sage: SetPartitions(5, 3).n
+            doctest:...: DeprecationWarning: The attribute n for the number of blocks is deprecated, use the method number_of_blocks instead.
+            See https://trac.sagemath.org/25462 for details.
+            3
+        """
+        from sage.misc.superseded import deprecation
+        deprecation(25462, "The attribute n for the number of blocks is deprecated,"
+                           " use the method number_of_blocks instead.")
+        return self.number_of_blocks()
+
+    def number_of_blocks(self):
+        r"""
+        Return the number of blocks of the set partitions in ``self``.
+
+        EXAMPLES::
+
+            sage: SetPartitions(5, 3).number_of_blocks()
+            3
+        """
+        return self._k
 
     def cardinality(self):
         """
@@ -2125,7 +3108,7 @@ class SetPartitions_setn(SetPartitions_set):
             sage: stirling_number2(5,3)
             25
         """
-        return stirling_number2(len(self._set), self.n)
+        return stirling_number2(len(self._set), self._k)
 
     def __iter__(self):
         """
@@ -2133,12 +3116,20 @@ class SetPartitions_setn(SetPartitions_set):
 
         EXAMPLES::
 
-            sage: SetPartitions(3).list()
-            [{{1, 2, 3}}, {{1}, {2, 3}}, {{1, 3}, {2}}, {{1, 2}, {3}}, {{1}, {2}, {3}}]
+            sage: SetPartitions(4, 2).list()
+            [{{1, 3, 4}, {2}},
+             {{1, 4}, {2, 3}},
+             {{1, 2, 4}, {3}},
+             {{1, 3}, {2, 4}},
+             {{1}, {2, 3, 4}},
+             {{1, 2}, {3, 4}},
+             {{1, 2, 3}, {4}}]
+
+            sage: SetPartitions(["a", "b", "c"], 2).list()
+            [{{'a', 'c'}, {'b'}}, {{'a'}, {'b', 'c'}}, {{'a', 'b'}, {'c'}}]
         """
-        for p in Partitions(len(self._set), length=self.n):
-            for sp in self._iterator_part(p):
-                yield self.element_class(self, sp)
+        for sp in set_partition_iterator_blocks(sorted(self._set), self._k):
+            yield self.element_class(self, sp, check=False)
 
     def __contains__(self, x):
         """
@@ -2156,7 +3147,7 @@ class SetPartitions_setn(SetPartitions_set):
         """
         if not SetPartitions_set.__contains__(self, x):
             return False
-        return len(x) == self.n
+        return len(x) == self._k
 
     def random_element(self):
         r"""
@@ -2169,6 +3160,10 @@ class SetPartitions_setn(SetPartitions_set):
             sage: S = SetPartitions(10, 4)
             sage: S.random_element()
             {{1, 2, 4, 6, 9, 10}, {3}, {5, 7}, {8}}
+
+            sage: SetPartitions(["a", "b", "c"], 2).random_element()
+            {{'a'}, {'b', 'c'}}
+
         """
         def re(N, k):
             if N == 0:
@@ -2184,71 +3179,10 @@ class SetPartitions_setn(SetPartitions_set):
 
         base_set = list(self.base_set())
         N = len(base_set)
-        k = self.n
+        k = self._k
         p = re(N, k)
-        return SetPartition([[base_set[e] for e in b] for b in p])
+        return self.element_class(self, [[base_set[e] for e in b] for b in p], check=False)
 
-def _listbloc(n, nbrepets, listint=None):
-    r"""
-    Decompose a set of `n \times n` ``brepets`` integers (the list
-    ``listint``) in ``nbrepets`` parts.
-
-    It is used in the algorithm to generate all set partitions.
-
-    .. WARNING::
-
-        Internal function that is not to be called by the user.
-
-    EXAMPLES::
-
-        sage: list(sage.combinat.set_partition._listbloc(2,1))
-        [{{1, 2}}]
-        sage: l = [Set([Set([3, 4]), Set([1, 2])]), Set([Set([2, 4]), Set([1, 3])]), Set([Set([2, 3]), Set([1, 4])])]
-        sage: list(sage.combinat.set_partition._listbloc(2,2,[1,2,3,4])) == l
-        True
-    """
-    if isinstance(listint, (int, Integer)) or listint is None:
-        listint = Set(range(1,n+1))
-
-    if nbrepets == 1:
-        yield Set([listint])
-        return
-
-    l = sorted(listint)
-    smallest = Set(l[:1])
-    new_listint = Set(l[1:])
-
-    f = lambda u, v: u.union(_set_union([smallest,v]))
-
-    for ssens in subset.Subsets(new_listint, n-1):
-        for z in _listbloc(n, nbrepets-1, new_listint-ssens):
-            yield f(z,ssens)
-
-def _union(s):
-    """
-    TESTS::
-
-        sage: s = Set([ Set([1,2]), Set([3,4]) ])
-        sage: sage.combinat.set_partition._union(s)
-        {1, 2, 3, 4}
-    """
-    result = Set([])
-    for ss in s:
-        result = result.union(ss)
-    return result
-
-def _set_union(s):
-    """
-    TESTS::
-
-        sage: s = Set([ Set([1,2]), Set([3,4]) ])
-        sage: sage.combinat.set_partition._set_union(s)
-        {{1, 2, 3, 4}}
-    """
-    result = Set([])
-    for ss in s:
-        result = result.union(ss)
-    return Set([result])
 
 def cyclic_permutations_of_set_partition(set_part):
     """
@@ -2312,4 +3246,3 @@ def cyclic_permutations_of_set_partition_iterator(set_part):
         for right in cyclic_permutations_of_set_partition_iterator(set_part[1:]):
             for perm in CyclicPermutations(set_part[0]):
                 yield [perm] + right
-

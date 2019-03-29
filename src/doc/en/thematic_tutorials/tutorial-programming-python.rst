@@ -213,7 +213,7 @@ Creating Lists I: [Square brackets]
     sage: L
     [3, [5, 1, 4, 2, 3], 17, 17, 3, 51]
 
-**Exercise:** Create the list :math:`[63, 12, -10, \text{``a''}, 12]`,
+**Exercise:** Create the list ``[63, 12, -10, "a", 12]``,
 assign it to the variable ``L``, and print the list.
 
 ::
@@ -262,7 +262,8 @@ be negative. Use range to construct the list `[10, 7, 4, 1, -2]`.
 
 .. SEEALSO::
 
-    - :func:`xrange`: returns an iterator rather than building a list.
+    - :func:`xrange`: returns an iterator rather than building a list,
+      (only for Python2, replaced by range in Python 3).
     - :func:`srange`: like range but with Sage integers; see below.
     - :func:`xsrange`: like xrange but with Sage integers.
 
@@ -274,7 +275,7 @@ Creating Lists III: list comprehensions
 
 **Example** We already know how to create the list `[1, 2, \dots, 16]`::
 
-    sage: range(1,17)
+    sage: range(1,17)   # py2
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
 Using a *list comprehension*, we can now create the list
@@ -535,7 +536,7 @@ return a sublist of ``L``.
 **Exercise:** Below are some examples of slicing lists. Try to guess
 what the output will be before evaluating the cell::
 
-    sage: L = range(20)
+    sage: L = list(range(20))
     sage: L
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
 
@@ -670,7 +671,7 @@ to use each item once.
     sage: g[0]
     Traceback (most recent call last):
     ...
-    TypeError: 'generator' object has no attribute '__getitem__'
+    TypeError: 'generator' object ...
 
 ::
 
@@ -710,7 +711,7 @@ braces, ``{}``, with comma-separated entries given in the form
 A second method is to use the constructor :class:`dict` which admits a
 list (or actually any iterable) of 2-tuples *(key, value)*::
 
-    sage: dd = dict((i,i^2) for i in xrange(10))
+    sage: dd = dict((i,i^2) for i in range(10))
     sage: dd
     {0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
 
@@ -1011,22 +1012,22 @@ included:
 
 ::
 
-    sage: range(4)
+    sage: range(4)  # py2
     [0, 1, 2, 3]
 
 ::
 
-    sage: range(1, 5)
+    sage: range(1, 5)  # py2
     [1, 2, 3, 4]
 
 ::
 
-    sage: range(1, 11, 2)
+    sage: range(1, 11, 2)  # py2
     [1, 3, 5, 7, 9]
 
 ::
 
-    sage: range(10, 0, -1)
+    sage: range(10, 0, -1)  # py2
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
 ::
@@ -1111,7 +1112,7 @@ How does this work?
 ::
 
     sage: it = iter(GF(5)); it
-    <generator object __iter__ at 0x...>
+    <generator object ...__iter__ at 0x...>
 
     sage: next(it)
     0

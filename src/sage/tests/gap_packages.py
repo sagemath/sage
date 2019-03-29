@@ -9,9 +9,7 @@ TESTS::
       Status   Package   GAP Output
     +--------+---------+------------+
 
-These are packages in the ``database_gap`` package::
-
-    sage: test_packages(['atlasrep', 'tomlib'])    # optional - database_gap gap_packages
+    sage: test_packages(['atlasrep', 'tomlib'])
       Status   Package    GAP Output
     +--------+----------+------------+
                atlasrep   true
@@ -55,26 +53,57 @@ def test_packages(packages, only_failures=False):
         sage: test_packages(pkgs)    # random output
           Status    Package      GAP Output
         +---------+------------+------------+
-                    Alnuth       true
-                    GAPDoc       true
-          Failure   HAPcryst     fail
-                    Hap          true
-                    autpgrp      true
-                    crime        true
-                    ctbllib      true
-                    design       true
-                    factint      true
-                    grape        true
-                    guava        true
-                    laguna       true
-                    polycyclic   true
-                    polymaking   true
-                    sonata       true
-                    toric        true
+                   Alnuth       true
+                   GAPDoc       true
+                   HAPcryst     true
+                   Hap          true
+                   QPA          true
+                   aclib        true
+                   atlasrep     true
+                   autpgrp      true
+                   cohomolo     true
+                   corelg       true
+                   crime        true
+                   cryst        true
+                   crystcat     true
+                   ctbllib      true
+                   design       true
+                   factint      true
+                   gbnp         true
+                   grape        true
+                   guava        true
+                   happrime     true
+                   hecke        true
+                   laguna       true
+                   liealgdb     true
+                   liepring     true
+                   liering      true
+                   loops        true
+                   mapclass     true
+                   polycyclic   true
+                   polymaking   true
+                   quagroup     true
+                   repsn        true
+                   sla          true
+                   sonata       true
+                   tomlib       true
+                   toric        true
     """
     rows = [['Status', 'Package', 'GAP Output']]
-    for pkg in packages:
-        output = libgap.eval('LoadPackage("{0}")'.format(pkg))
+    for pkgdir in packages:
+        # to allow weird suffixes e.g. 'qpa-version'
+        pkg = pkgdir.split('-')[0]
+        orig_warning_level = libgap.InfoLevel(libgap.InfoWarning)
+        # Silence warnings about missing optional packages that might occur
+        # when loading packages; they're not important for the purposes of this
+        # test code
+        libgap.SetInfoLevel(libgap.InfoWarning, 0)
+        try:
+            output = libgap.LoadPackage(pkg)
+        finally:
+            # Restore the original warning level
+            libgap.SetInfoLevel(libgap.InfoWarning, orig_warning_level)
+
         ok = bool(output)
         status = '' if ok else 'Failure'
         if ok and only_failures:
@@ -105,7 +134,7 @@ def all_installed_packages(ignore_dot_gap=False):
         (...'GAPDoc'...)
     """
     packages = []
-    for path in libgap.eval('GAP_ROOT_PATHS').sage():
+    for path in libgap.eval('GAPInfo.RootPaths').sage():
         if ignore_dot_gap and path.endswith('/.gap/'):
             continue
         pkg_dir = os.path.join(path, 'pkg')

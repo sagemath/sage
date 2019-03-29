@@ -211,7 +211,7 @@ cdef class Matroid(SageObject):
     cpdef _internal(self, B)
     cpdef _external(self, B)
     cpdef tutte_polynomial(self, x=*, y=*)
-    cpdef flat_cover(self)
+    cpdef flat_cover(self, solver=*, verbose=*)
 
     # visualization
     cpdef plot(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*)

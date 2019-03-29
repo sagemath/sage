@@ -1,7 +1,7 @@
-From 0af6c798cba27c44c216eac35be56e0b3ca467cd Mon Sep 17 00:00:00 2001
+From 9250c9e75137e78091da1cf1c25b3dbe40c7e4bf Mon Sep 17 00:00:00 2001
 From: Emmanuel Charpentier <emm.charpentier@free.fr>
-Date: Fri, 13 Oct 2017 07:15:37 +0200
-Subject: [PATCH 5/8] link_all_shared_libs
+Date: Wed, 14 Mar 2018 19:30:37 +0100
+Subject: [PATCH 5/9] link_all_shared_libs
 
 ---
  etc/Makeconf.in | 2 +-
@@ -21,5 +21,5 @@ index e7d9fbd..3eccb2c 100644
  .SUFFIXES:
  .SUFFIXES: .c .cc .cpp .d .f .f90 .f95 .m .mm .M .o
 -- 
-2.14.2
+2.16.1
 

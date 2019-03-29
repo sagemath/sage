@@ -371,7 +371,7 @@ class PseudoRiemannianMetric(TensorField):
                     raise ValueError("the metric signature must be odd")
         self._signature = signature
         # the pair (n_+, n_-):
-        self._signature_pm = ((ndim+signature)/2, (ndim-signature)/2)
+        self._signature_pm = ((ndim+signature)//2, (ndim-signature)//2)
         self._indic_signat = 1 - 2*(self._signature_pm[1]%2)  # (-1)^n_-
         # Initialization of derived quantities:
         PseudoRiemannianMetric._init_derived(self)
@@ -693,7 +693,7 @@ class PseudoRiemannianMetric(TensorField):
                                                     # update of the restriction
         return self._inverse
 
-    def connection(self, name=None, latex_name=None):
+    def connection(self, name=None, latex_name=None, init_coef=True):
         r"""
         Return the unique torsion-free affine connection compatible with
         ``self``.
@@ -708,11 +708,15 @@ class PseudoRiemannianMetric(TensorField):
           Levi-Civita connection; if ``None``, it is set to ``name``, or if the
           latter is None as well, it formed from the symbol `\nabla` and the
           metric symbol
+        - ``init_coef`` -- (default: ``True``) determines whether the
+          connection coefficients are initialized, as Christoffel symbols
+          in the top charts of the domain of ``self`` (i.e. disregarding
+          the subcharts)
 
         OUTPUT:
 
         - the Levi-Civita connection, as an instance of
-          :class:`~sage.manifolds.differentiable.levi_civita_connection.LeviCivitaConnection`.
+          :class:`~sage.manifolds.differentiable.levi_civita_connection.LeviCivitaConnection`
 
         EXAMPLES:
 
@@ -765,7 +769,8 @@ class PseudoRiemannianMetric(TensorField):
             if name is None:
                 name = 'nabla_' + self._name
             self._connection = LeviCivitaConnection(self, name,
-                                                    latex_name=latex_name)
+                                                    latex_name=latex_name,
+                                                    init_coef=init_coef)
         return self._connection
 
     def christoffel_symbols(self, chart=None):
@@ -993,7 +998,7 @@ class PseudoRiemannianMetric(TensorField):
              2-dimensional differentiable manifold S^2
             sage: g.riemann()[:]
             [[[[0, 0], [0, 0]], [[0, sin(th)^2], [-sin(th)^2, 0]]],
-             [[[0, (cos(th)^2 - 1)/sin(th)^2], [1, 0]], [[0, 0], [0, 0]]]]
+             [[[0, -1], [1, 0]], [[0, 0], [0, 0]]]]
 
         In dimension 2, the Riemann tensor can be expressed entirely in terms of
         the Ricci scalar `r`:
@@ -1009,6 +1014,17 @@ class PseudoRiemannianMetric(TensorField):
             sage: g.riemann() == \
             ....:  -g.ricci_scalar()*(g*U.tangent_identity_field()).antisymmetrize(2,3)
             True
+
+        Using SymPy as symbolic engine::
+
+            sage: M.set_calculus_method('sympy')
+            sage: g = U.metric('g')
+            sage: g[1,1], g[2,2] = a**2, a**2*sin(th)**2
+            sage: g.riemann()[:]
+            [[[[0, 0], [0, 0]],
+              [[0, sin(2*th)/(2*tan(th)) - cos(2*th)],
+               [-sin(2*th)/(2*tan(th)) + cos(2*th), 0]]],
+             [[[0, -1], [1, 0]], [[0, 0], [0, 0]]]]
 
         """
         return self.connection().riemann(name, latex_name)
@@ -1399,6 +1415,16 @@ class PseudoRiemannianMetric(TensorField):
             sage: s.expr()
             -x^2*y^2 - (x + 1)*y + x + 1
 
+        A shortcut is ``det()``::
+
+            sage: g.det() == g.determinant()
+            True
+
+        The notation ``det(g)`` can be used::
+
+            sage: det(g) == g.determinant()
+            True
+
         Determinant in a frame different from the default's one::
 
             sage: Y.<u,v> = M.chart()
@@ -1425,9 +1451,17 @@ class PseudoRiemannianMetric(TensorField):
             sage: g.determinant(X.frame()) == g.determinant(Y.frame())
             False
 
+        Using SymPy as symbolic engine::
+
+            sage: M.set_calculus_method('sympy')
+            sage: g = M.metric('g')
+            sage: g[1,1], g[1, 2], g[2, 2] = 1+x, x*y , 1-y
+            sage: s = g.determinant()  # determinant in M's default frame
+            sage: s.expr()
+            -x**2*y**2 + x - y*(x + 1) + 1
+
         """
         from sage.matrix.constructor import matrix
-        from sage.manifolds.utilities import simplify_chain_real
         dom = self._domain
         if frame is None:
             frame = dom._def_frame
@@ -1442,12 +1476,15 @@ class PseudoRiemannianMetric(TensorField):
             gg = self.comp(frame)
             i1 = manif.start_index()
             for chart in gg[[i1, i1]]._express:
-                gm = matrix( [[ gg[i, j, chart]._express
+                # TODO: do the computation without the 'SR' enforcement
+                gm = matrix( [[ gg[i, j, chart].expr(method='SR')
                             for j in manif.irange()] for i in manif.irange()] )
-                detgm = simplify_chain_real(gm.det())
+                detgm = chart.simplify(gm.det(), method='SR')
                 resu.add_expr(detgm, chart=chart)
             self._determinants[frame] = resu
         return self._determinants[frame]
+
+    det = determinant
 
     def sqrt_abs_det(self, frame=None):
         r"""
@@ -1519,9 +1556,19 @@ class PseudoRiemannianMetric(TensorField):
             sage: g.sqrt_abs_det(X.frame()) == g.sqrt_abs_det(Y.frame())
             False
 
+        Using SymPy as symbolic engine::
+
+            sage: M.set_calculus_method('sympy')
+            sage: g = M.metric('g')
+            sage: g[1,1], g[1, 2], g[2, 2] = 1+x, x*y , 1-y
+            sage: g.sqrt_abs_det().expr()
+            sqrt(-x**2*y**2 - x*y + x - y + 1)
+            sage: g.sqrt_abs_det(Y.frame()).expr()
+            sqrt(-x**2*y**2 - x*y + x - y + 1)/2
+            sage: g.sqrt_abs_det(Y.frame()).expr(Y)
+            sqrt(-u**4 + 2*u**2*v**2 - 4*u**2 - v**4 + 4*v**2 + 16*v + 16)/8
+
         """
-        from sage.functions.other import sqrt
-        from sage.manifolds.utilities import simplify_chain_real
         dom = self._domain
         if frame is None:
             frame = dom._def_frame
@@ -1533,9 +1580,8 @@ class PseudoRiemannianMetric(TensorField):
             # a new computation is necessary
             detg = self.determinant(frame)
             resu = frame._domain.scalar_field()
-            for chart in detg._express:
-                x = self._indic_signat * detg._express[chart]._express # |g|
-                x = simplify_chain_real(sqrt(x))
+            for chart, funct in detg._express.items():
+                x = (self._indic_signat * funct).sqrt().expr()
                 resu.add_expr(x, chart=chart)
             self._sqrt_abs_dets[frame] = resu
         return self._sqrt_abs_dets[frame]
@@ -1569,12 +1615,14 @@ class PseudoRiemannianMetric(TensorField):
           an instance of
           :class:`~sage.manifolds.differentiable.diff_form.DiffForm`
         - if ``contra = k``, with `1\leq k \leq n`, the tensor field of type
-          (k,n-k) formed from `\epsilon` by raising the first k indices with the
-          metric (see method
+          (k,n-k) formed from `\epsilon` by raising the first k indices with
+          the metric (see method
           :meth:`~sage.manifolds.differentiable.tensorfield.TensorField.up`);
           the output is then an instance of
-          :class:`~sage.manifolds.differentiable.tensorfield.TensorField`, with the
-          appropriate antisymmetries
+          :class:`~sage.manifolds.differentiable.tensorfield.TensorField`, with
+          the appropriate antisymmetries, or of the subclass
+          :class:`~sage.manifolds.differentiable.multivectorfield.MultivectorField`
+          if `k=n`
 
         EXAMPLES:
 
@@ -2004,7 +2052,7 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
                     raise ValueError("the metric signature must be odd")
         self._signature = signature
         # the pair (n_+, n_-):
-        self._signature_pm = ((ndim+signature)/2, (ndim-signature)/2)
+        self._signature_pm = ((ndim+signature)//2, (ndim-signature)//2)
         self._indic_signat = 1 - 2*(self._signature_pm[1]%2)  # (-1)^n_-
         # Initialization of derived quantities:
         PseudoRiemannianMetricParal._init_derived(self)
@@ -2209,11 +2257,20 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
             [ 1/(x + 1)          0]
             [         0 -1/(x - 1)]
 
+        Using SymPy as symbolic engine::
+
+            sage: M.set_calculus_method('sympy')
+            sage: g[1,1], g[1,2], g[2,2] = 1+x, x*y, 1-x
+            sage: g[:]  # components in the manifold's default frame
+            [ x + 1    x*y]
+            [   x*y -x + 1]
+            sage: g.inverse()[:]
+            [ (x - 1)/(x**2*y**2 + x**2 - 1)      x*y/(x**2*y**2 + x**2 - 1)]
+            [     x*y/(x**2*y**2 + x**2 - 1) -(x + 1)/(x**2*y**2 + x**2 - 1)]
+
         """
         from sage.matrix.constructor import matrix
         from sage.tensor.modules.comp import CompFullySym
-        from sage.manifolds.differentiable.vectorframe import CoordFrame
-        from sage.manifolds.utilities import simplify_chain_real
         # Is the inverse metric up to date ?
         for frame in self._components:
             if frame not in self._inverse._components:
@@ -2229,18 +2286,18 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
                     for j in range(i, nsi):   # symmetry taken into account
                         cinv_scal[(i,j)] = dom.scalar_field()
                 for chart in dom.top_charts():
+                    # TODO: do the computation without the 'SR' enforcement
                     try:
                         gmat = matrix(
-                                  [[self.comp(frame)[i, j, chart]._express
+                                  [[self.comp(frame)[i, j, chart].expr(method='SR')
                                   for j in range(si, nsi)] for i in range(si, nsi)])
                         gmat_inv = gmat.inverse()
                     except (KeyError, ValueError):
                         continue
                     for i in range(si, nsi):
                         for j in range(i, nsi):
-                            cinv_scal[(i,j)].add_expr(simplify_chain_real(
-                                                       gmat_inv[i-si,j-si]),
-                                                      chart=chart)
+                            val = chart.simplify(gmat_inv[i-si,j-si], method='SR')
+                            cinv_scal[(i,j)].add_expr(val, chart=chart)
                 for i in range(si, nsi):
                     for j in range(i, nsi):
                         cinv[i,j] = cinv_scal[(i,j)]

@@ -128,7 +128,6 @@ class ScatterPlot(GraphicPrimitive):
             sage: scatter_plot([[n,n] for n in range(5)])
             Graphics object consisting of 1 graphics primitive
         """
-        from matplotlib.pyplot import scatter
         options = self.options()
         p = subplot.scatter(self.xdata, self.ydata, alpha=options['alpha'],
                 zorder=options['zorder'], marker=options['marker'],

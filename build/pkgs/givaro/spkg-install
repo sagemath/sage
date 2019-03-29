@@ -1,57 +1,14 @@
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 #################################
 # Set up environment variables: #
 #################################
 
-if [[ -z $CFLAG64 ]]; then
-    CFLAG64=-m64
-fi
-if [[ -z $CXXFLAG64 ]]; then
-    CXXFLAG64="$CFLAG64"
-fi
-if [[ "$SAGE64" = yes ]]; then
-    echo "Building a 64-bit version of Givaro."
-    CFLAGS="$CFLAGS $CFLAG64"
-    CPPFLAGS="$CPPFLAGS $CFLAG64"
-    CXXFLAGS="$CXXFLAGS $CXXFLAG64"
-    LDFLAGS="$LDFLAGS $CFLAG64"
-fi
-
-CFLAGS="$CFLAGS -fPIC"
-CXXFLAGS="$CXXFLAGS -fPIC"
-
-export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
-
-cd src/
-
-# Use newer version of config.guess and config.sub (see Trac #19728)
-cp "$SAGE_ROOT"/config/config.* build-aux
+cd src
 
 # When SAGE_FAT_BINARY is set, disable processor-specific optimizations
 if [ "$SAGE_FAT_BINARY" = yes ]; then
-    GIVARO_CONFIGURE="--disable-simd $GIVARO_CONFIGURE"
+    GIVARO_CONFIGURE="--disable-sse --disable-sse2 --disable-sse3 --disable-ssse3 --disable-sse41 --disable-sse42 --disable-fma --disable-fma4 --disable-avx --disable-avx2  $GIVARO_CONFIGURE"
 fi
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --with-gmp="$SAGE_LOCAL" \
-        --enable-shared $GIVARO_CONFIGURE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring givaro"
-    exit 1
-fi
-
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building givaro"
-    exit 1
-fi
-
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing givaro"
-    exit 1
-fi
+sdh_configure --with-gmp="$SAGE_LOCAL" --enable-shared $GIVARO_CONFIGURE
+sdh_make
+sdh_make_install

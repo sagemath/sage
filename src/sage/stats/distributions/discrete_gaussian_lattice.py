@@ -87,7 +87,7 @@ def _iter_vectors(n, lower, upper, step=None):
     """
     if step is None:
         if ZZ(lower) >= ZZ(upper):
-            raise ValueError("Expected lower < uppper, but got %d >= %d" % (lower, upper))
+            raise ValueError("Expected lower < upper, but got %d >= %d" % (lower, upper))
         if ZZ(n) <= 0:
             raise ValueError("Expected n>0 but got %d <= 0" % n)
         step = n
@@ -178,7 +178,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             try:
                 precision = ZZ(sigma.precision())
             except AttributeError:
-                pass
+                return 53
         precision = max(53, precision)
         return precision
 

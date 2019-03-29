@@ -41,7 +41,7 @@ def bqf_theta_series(Q, long bound, var=None):
 
     .. MATH::
 
-        \sum_{(x,y) \in \Z^2} q^{f(x,y)} = \sum_{n=-infty}^{\infy} r(n)q^n
+        \sum_{(x,y) \in \Z^2} q^{f(x,y)} = \sum_{n=-\infty}^{\infty} r(n)q^n
 
     where `r(n)` give the number of way `n` is represented by `f`.
 

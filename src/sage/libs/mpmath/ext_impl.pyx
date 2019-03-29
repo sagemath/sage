@@ -46,10 +46,10 @@ from sage.rings.integer cimport Integer
 from sage.libs.gmp.pylong cimport *
 
 cdef mpz_set_integer(mpz_t v, x):
-    if isinstance(x, int):
-        mpz_set_si(v, PyInt_AS_LONG(x))
-    elif isinstance(x, long):
+    if isinstance(x, long):
         mpz_set_pylong(v, x)
+    elif isinstance(x, int):
+        mpz_set_si(v, PyInt_AS_LONG(x))
     elif isinstance(x, Integer):
         mpz_set(v, (<Integer>x).value)
     else:
@@ -1460,10 +1460,10 @@ def cos_sin_fixed(Integer x, int prec, pi2=None):
 
         sage: from sage.libs.mpmath.ext_impl import cos_sin_fixed
         sage: c, s = cos_sin_fixed(1<<53, 53)
-        sage: print(float(c) / 2^53)
-        0.540302305868
-        sage: print(float(s) / 2^53)
-        0.841470984808
+        sage: float(c) / 2^53
+        0.5403023058681398
+        sage: float(s) / 2^53
+        0.8414709848078965
 
     """
     cdef Integer cv, sv
@@ -1511,10 +1511,10 @@ def log_int_fixed(n, long prec, ln2=None):
     EXAMPLES::
 
         sage: from sage.libs.mpmath.ext_impl import log_int_fixed
-        sage: print(float(log_int_fixed(5, 53)) / 2^53)
-        1.60943791243
-        sage: print(float(log_int_fixed(5, 53)) / 2^53)   # exercise cache
-        1.60943791243
+        sage: float(log_int_fixed(5, 53)) / 2^53
+        1.6094379124341003
+        sage: float(log_int_fixed(5, 53)) / 2^53   # exercise cache
+        1.6094379124341003
 
     """
     global log_int_cache_initialized

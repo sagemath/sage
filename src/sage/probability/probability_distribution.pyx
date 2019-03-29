@@ -118,7 +118,7 @@ cdef class ProbabilityDistribution:
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
             sage: h, b = X.generate_histogram_data(bins = 10)
-            sage: h
+            sage: h  # rel tol 1e-08
             [1.6299999999999999,
              0.0,
              0.0,
@@ -130,11 +130,21 @@ cdef class ProbabilityDistribution:
              0.0,
              1.4650000000000003]
             sage: b
-            [0.0, 0.20000000000000001, 0.40000000000000002, 0.60000000000000009, 0.80000000000000004, 1.0, 1.2000000000000002, 1.4000000000000001, 1.6000000000000001, 1.8, 2.0]
+            [0.0,
+             0.2,
+             0.4,
+             0.6000000000000001,
+             0.8,
+             1.0,
+             1.2000000000000002,
+             1.4000000000000001,
+             1.6,
+             1.8,
+             2.0]
         """
         import pylab
         l = [float(self.get_random_element()) for _ in range(num_samples)]
-        S = pylab.hist(l, bins, normed=True)
+        S = pylab.hist(l, bins, density=True)
         return [list(S[0]), list(S[1])]
 
     def generate_histogram_plot(self, name, num_samples = 1000, bins = 50):
@@ -167,7 +177,7 @@ cdef class ProbabilityDistribution:
         """
         import pylab
         l = [float(self.get_random_element()) for _ in range(num_samples)]
-        pylab.hist(l, bins, normed=True)
+        pylab.hist(l, bins, density=True)
         pylab.savefig(name)
 
 
@@ -186,7 +196,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
         sage: T = SphericalDistribution()
         sage: T.get_random_element()  # rel tol 1e-14
         (-0.2922296724828204, -0.9563459345927822, 0.0020668595602153454)
-        sage: T = SphericalDistribution(dimension = 4, rng = 'luxury')
+        sage: T = SphericalDistribution(dimension=4, rng='luxury')
         sage: T.get_random_element()  # rel tol 1e-14
         (-0.0363300434761631, 0.6459885817544098, 0.24825817345598158, 0.7209346430129753)
 
@@ -1028,6 +1038,15 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
             True
             sage: one == three
             False
+
+        Testing that :trac:`24416` is fixed for when entries are larger
+        than `2^{1024}`::
+
+            sage: from collections import Counter
+            sage: X = GeneralDiscreteDistribution([1,2,2^1024])
+            sage: Counter(X.get_random_element() for _ in range(100))
+            Counter({2: 100})
+
         """
         gsl_rng_env_setup()
         self.set_random_number_generator(rng)
@@ -1038,6 +1057,10 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
 
         cdef int n
         n = len(P)
+
+        s = sum(P)
+        if s != 1:
+            P = [p/s for p in P]
 
         cdef double *P_vec
         P_vec = <double *> sig_malloc(n*(sizeof(double)))

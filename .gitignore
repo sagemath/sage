@@ -1,5 +1,4 @@
 *.pyc
-/.BUILDSTART
 /dist
 /local
 /logs
@@ -14,6 +13,8 @@
 /config.log
 /config.status
 /configure
+
+/m4/sage_spkg_configures.m4
 
 ###################
 # Temporary Files #
@@ -81,3 +82,14 @@ $RECYCLE.BIN/
 ###########
 .ipynb_checkpoints
 Untitled*.ipynb
+
+#############################
+# GitLab CI generated files #
+#############################
+gitlab-build-docker.log
+
+/src/.cython_version
+/src/build
+/src/Makefile
+/src/bin/sage-env-config
+

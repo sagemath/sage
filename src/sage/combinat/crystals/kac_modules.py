@@ -12,8 +12,6 @@ Crystals of Kac modules of the general-linear Lie superalgebra
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
@@ -24,8 +22,6 @@ from sage.combinat.crystals.tensor_product import CrystalOfTableaux
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.partition import _Partitions
 
-from sage.combinat.crystals.letters import CrystalOfBKKLetters
-from sage.combinat.crystals.tensor_product_element import CrystalOfBKKTableauxElement
 
 class CrystalOfOddNegativeRoots(UniqueRepresentation, Parent):
     r"""
@@ -160,10 +156,10 @@ class CrystalOfOddNegativeRoots(UniqueRepresentation, Parent):
                 sage: latex(mg.f_string([0,-1,0]))
                 \{-e_{-2}+e_{1}, -e_{-1}+e_{1}\}
             """
-            return ('\{'
+            return (r'\{'
                     + ", ".join("-e_{{{}}}+e_{{{}}}".format(*i)
                                 for i in sorted(self.value))
-                    + '\}')
+                    + r'\}')
 
         def e(self, i):
             r"""
@@ -512,8 +508,8 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
         sage: K.lowest_weight_vectors()
         (({-e[-2]+e[1], -e[-2]+e[2], -e[-1]+e[1], -e[-1]+e[2]}, [[-1, -1]], [[2]]),
          ({-e[-1]+e[1], -e[-1]+e[2]}, [[-1, -1]], [[2]]),
-         ({-e[-2]+e[2], -e[-1]+e[1], -e[-1]+e[2]}, [[-1, -1]], [[2]]),
-         ({-e[-2]+e[2], -e[-1]+e[1], -e[-1]+e[2]}, [[-1, -1]], [[1]]))
+         ({-e[-2]+e[2], -e[-1]+e[1], -e[-1]+e[2]}, [[-1, -1]], [[1]]),
+         ({-e[-2]+e[2], -e[-1]+e[1], -e[-1]+e[2]}, [[-1, -1]], [[2]]))
 
     REFERENCES:
 
@@ -643,9 +639,9 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
                 }
             """
             from sage.misc.latex import latex
-            return " \otimes ".join([latex(self.value[0]),
-                                     latex_dual(self.value[1]),
-                                     latex(self.value[2])])
+            return r" \otimes ".join([latex(self.value[0]),
+                                      latex_dual(self.value[1]),
+                                      latex(self.value[2])])
 
         def e(self, i):
             r"""
@@ -839,6 +835,7 @@ def latex_dual(elt):
         }
     """
     M = elt.parent().cartan_type().rank() + 2
+    from sage.combinat.tableau import Tableau
     from sage.combinat.output import tex_from_array
     # Modified version of to_tableau() to have the entries be letters
     #   rather than their values
@@ -854,8 +851,6 @@ def latex_dual(elt):
             tab[l].append("\\overline{{{}}}".format(M-elt[i].value))
     for x in tab:
         x.reverse()
-    from sage.combinat.tableau import Tableau
-    T = Tableau(tab).conjugate()
-    from sage.combinat.output import tex_from_array
-    return tex_from_array([list(row) for row in T])
 
+    T = Tableau(tab).conjugate()
+    return tex_from_array([list(row) for row in T])

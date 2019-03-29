@@ -112,7 +112,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
     of each edge. In this way we get a bipartite graph where all the black
     vertices have valency 2 and there is no restriction on the valency
     of the white vertices. We call the edges of this new graph *darts*
-    (sometimes they are also called *half eldges* of the original graph).
+    (sometimes they are also called *half edges* of the original graph).
     Observe that each edge of the original graph is formed by two darts.
 
     Given a white vertex `v \in v(\Gamma)`, let `d(v)` be the set of darts

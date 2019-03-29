@@ -159,7 +159,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
 ## ----------------------------------------------------------------------------------------------
 
 def find_p_neighbor_from_vec(self, p, v):
-    """
+    r"""
     Finds the `p`-neighbor of this quadratic form associated to a given
     vector `v` satisfying:
 
@@ -178,7 +178,6 @@ def find_p_neighbor_from_vec(self, p, v):
         [ * 9 0 -6 ]
         [ * * 1 0 ]
         [ * * * 2 ]
-
     """
     R = self.base_ring()
     n = self.dim()

@@ -22,7 +22,7 @@ AUTHORS:
 
 import os
 
-from sage.structure.sage_object import load
+from sage.misc.persist import load
 from sage.env import SAGE_SHARE
 from sage.misc.all import verbose
 

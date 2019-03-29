@@ -29,7 +29,7 @@ from sage.categories.poor_man_map import PoorManMap
 from sage.rings.all import ZZ
 from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.matrix.constructor import Matrix
-from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.args import MatrixArgs
 from sage.sets.family import Family
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.subset import SubsetsSorted
@@ -197,7 +197,7 @@ class CliffordAlgebraElement(CombinatorialFreeModule.Element):
         return sorted(self._monomial_coefficients.keys(), key=lambda x: (-len(x), x))
 
     def reflection(self):
-        """
+        r"""
         Return the image of the reflection automorphism on ``self``.
 
         The *reflection automorphism* of a Clifford algebra is defined
@@ -319,7 +319,7 @@ class CliffordAlgebraElement(CombinatorialFreeModule.Element):
     # TODO: This is a general function which should be moved to a
     #   superalgebras category when one is implemented.
     def supercommutator(self, x):
-        """
+        r"""
         Return the supercommutator of ``self`` and ``x``.
 
         Let `A` be a superalgebra. The *supercommutator* of homogeneous
@@ -548,7 +548,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         """
         self._quadratic_form = Q
         R = Q.base_ring()
-        category = AlgebrasWithBasis(R.category()).Super().Filtered().or_subcategory(category)
+        category = AlgebrasWithBasis(R.category()).Super().Filtered().FiniteDimensional().or_subcategory(category)
         indices = SubsetsSorted(range(Q.dim()))
         CombinatorialFreeModule.__init__(self, R, indices, category=category)
         self._assign_names(names)
@@ -710,7 +710,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: Cl(2/3)
             Traceback (most recent call last):
             ...
-            TypeError: do not know how to make x (= 2/3) an element of self ... 
+            TypeError: do not know how to make x (= 2/3) an element of self ...
             sage: Clp(2/3)
             2/3
             sage: Clp(x)
@@ -768,7 +768,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
             sage: Cl.<x,y,z> = CliffordAlgebra(Q)
             sage: Cl.algebra_generators()
-            Finite family {'y': y, 'x': x, 'z': z}
+            Finite family {'x': x, 'y': y, 'z': z}
         """
         d = {x: self.gen(i) for i,x in enumerate(self.variable_names())}
         return Family(self.variable_names(), lambda x: d[x])
@@ -910,7 +910,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         return ZZ(2)**self._quadratic_form.dim()
 
     def pseudoscalar(self):
-        """
+        r"""
         Return the unit pseudoscalar of ``self``.
 
         Given the basis `e_1, e_2, \ldots, e_n` of the underlying
@@ -1050,6 +1050,28 @@ class CliffordAlgebra(CombinatorialFreeModule):
             -x*y - x*z + 21*x + 7
             sage: phi(a*b*c*d)
             21*x*y + 21*x*z + 42
+
+        TESTS:
+
+        Check that the resulting morphism knows it is for
+        finite-dimensional algebras (:trac:`25339`)::
+
+            sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
+            sage: Cl.<x,y,z> = CliffordAlgebra(Q)
+            sage: m = matrix([[1,-1,-1],[0,1,-1],[1,1,1]])
+            sage: phi = Cl.lift_module_morphism(m, 'abc')
+            sage: phi.category_for()
+            Category of finite dimensional super algebras with basis over
+             (euclidean domains and infinite enumerated sets and metric spaces)
+            sage: phi.matrix()
+            [  1   0   0   0   7  -3  -7   0]
+            [  0   1  -1  -1   0   0   0 -17]
+            [  0   0   1  -1   0   0   0  -4]
+            [  0   1   1   1   0   0   0   3]
+            [  0   0   0   0   1  -1   2   0]
+            [  0   0   0   0   2   2   0   0]
+            [  0   0   0   0  -1   1   2   0]
+            [  0   0   0   0   0   0   0   4]
         """
         Q = self._quadratic_form(m)
         # If R is a quadratic form and m is a matrix, then R(m) returns
@@ -1064,8 +1086,8 @@ class CliffordAlgebra(CombinatorialFreeModule):
         f = lambda x: self.prod(self._from_dict( {(j,): m[j,i] for j in range(n)},
                                                  remove_zeros=True )
                                 for i in x)
-        return Cl.module_morphism(on_basis=f, codomain=self,
-                                  category=AlgebrasWithBasis(self.base_ring()).Super())
+        cat = AlgebrasWithBasis(self.category().base_ring()).Super().FiniteDimensional()
+        return Cl.module_morphism(on_basis=f, codomain=self, category=cat)
 
     def lift_isometry(self, m, names=None):
         r"""
@@ -1112,6 +1134,28 @@ class CliffordAlgebra(CombinatorialFreeModule):
             a*b - a*c - b*c
             sage: phi(x + z) * phi(y + z) == phi((x + z) * (y + z))
             True
+
+        TESTS:
+
+        Check that the resulting morphism knows it is for
+        finite-dimensional algebras (:trac:`25339`)::
+
+            sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
+            sage: Cl.<x,y,z> = CliffordAlgebra(Q)
+            sage: m = matrix([[1,1,2],[0,1,1],[0,0,1]])
+            sage: phi = Cl.lift_isometry(m, 'abc')
+            sage: phi.category_for()
+            Category of finite dimensional super algebras with basis over
+             (euclidean domains and infinite enumerated sets and metric spaces)
+            sage: phi.matrix()
+            [ 1  0  0  0  1  2  5  0]
+            [ 0  1  1  2  0  0  0  5]
+            [ 0  0  1  1  0  0  0 -1]
+            [ 0  0  0  1  0  0  0  1]
+            [ 0  0  0  0  1  1 -1  0]
+            [ 0  0  0  0  0  1  1  0]
+            [ 0  0  0  0  0  0  1  0]
+            [ 0  0  0  0  0  0  0  1]
         """
         MS = m.parent()
         if not m.is_invertible():
@@ -1129,8 +1173,8 @@ class CliffordAlgebra(CombinatorialFreeModule):
         f = lambda x: Cl.prod(Cl._from_dict( {(j,): m[j,i] for j in range(n)},
                                              remove_zeros=True )
                               for i in x)
-        return self.module_morphism(on_basis=f, codomain=Cl,
-                                    category=AlgebrasWithBasis(self.base_ring()).Super())
+        cat = AlgebrasWithBasis(self.category().base_ring()).Super().FiniteDimensional()
+        return self.module_morphism(on_basis=f, codomain=Cl, category=cat)
 
     # This is a general method for finite dimensional algebras with bases
     #   and should be moved to the corresponding category once there is
@@ -1432,8 +1476,8 @@ class ExteriorAlgebra(CliffordAlgebra):
              over Rational Field
             sage: TestSuite(E).run()
         """
-        cat = HopfAlgebrasWithBasis(R).Super()
-        CliffordAlgebra.__init__(self, QuadraticForm(R, len(names)), names, cat)
+        cat = HopfAlgebrasWithBasis(R).Super().FiniteDimensional()
+        CliffordAlgebra.__init__(self, QuadraticForm(R, len(names)), names, category=cat)
         # TestSuite will fail if the HopfAlgebra classes will ever have tests for
         # the coproduct being an algebra morphism -- since this is really a
         # Hopf superalgebra, not a Hopf algebra.
@@ -1570,6 +1614,26 @@ class ExteriorAlgebra(CliffordAlgebra):
             -3/2*a
             sage: Lp(x + 2*y + 3)
             -2*a + 3
+
+        TESTS:
+
+        Check that the resulting morphism knows it is for
+        finite-dimensional algebras (:trac:`25339`)::
+
+            sage: E = ExteriorAlgebra(ZZ, 'e', 3)
+            sage: T = jordan_block(0, 2).block_sum(jordan_block(0, 1))
+            sage: phi = E.lift_morphism(T)
+            sage: phi.category_for()
+            Category of finite dimensional super algebras with basis over Integer Ring
+            sage: phi.matrix()
+            [1 0 0 0 0 0 0 0]
+            [0 0 1 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
         """
         n = phi.nrows()
         R = self.base_ring()
@@ -1577,10 +1641,11 @@ class ExteriorAlgebra(CliffordAlgebra):
         f = lambda x: E.prod(E._from_dict( {(j,): phi[j,i] for j in range(n)},
                                            remove_zeros=True )
                              for i in x)
-        return self.module_morphism(on_basis=f, codomain=E, category=AlgebrasWithBasis(R).Super())
+        cat = AlgebrasWithBasis(R).Super().FiniteDimensional()
+        return self.module_morphism(on_basis=f, codomain=E, category=cat)
 
     def volume_form(self):
-        """
+        r"""
         Return the volume form of ``self``.
 
         Given the basis `e_1, e_2, \ldots, e_n` of the underlying
@@ -1722,7 +1787,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         return self.term(m, (-self.base_ring().one())**len(m))
 
     def counit(self, x):
-        """
+        r"""
         Return the counit of ``x``.
 
         The counit of an element `\omega` of the exterior algebra
@@ -1738,7 +1803,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         return x.constant_coefficient()
 
     def interior_product_on_basis(self, a, b):
-        """
+        r"""
         Return the interior product `\iota_b a` of ``a`` with respect to
         ``b``.
 
@@ -1906,16 +1971,12 @@ class ExteriorAlgebra(CliffordAlgebra):
                     m = len(my)
                     if m != n:
                         continue
-                    MS = MatrixSpace(R, n, n)
-                    MC = MS._get_matrix_class()
                     matrix_list = [M[mx[i], my[j]]
                                    for i in range(n)
                                    for j in range(n)]
-                    matr = MC(MS, matrix_list, copy=False, coerce=False)
-                    # Using low-level matrix constructor here
-                    # because Matrix(...) does too much duck
-                    # typing (trac #17124).
-                    result += cx * cy * matr.determinant()
+                    MA = MatrixArgs(R, n, matrix_list)
+                    del matrix_list
+                    result += cx * cy * MA.matrix(False).determinant()
             return result
         from sage.categories.cartesian_product import cartesian_product
         return PoorManMap(lifted_form, domain=cartesian_product([self, self]),
@@ -2235,12 +2296,31 @@ class ExteriorAlgebraDifferential(with_metaclass(
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
             sage: par = E.boundary({(0,1): z, (1,2):x, (2,0):y})
-            sage: TestSuite(par).run() # known bug - morphisms are properly in a category
+
+        We skip the pickling test as there is an infinite recursion when
+        doing equality checks::
+
+            sage: TestSuite(par).run(skip="_test_pickling")
+
+        Check that it knows it is a finite-dimensional algebra
+        morphism (:trac:`25339`):;
+
+            sage: par.category_for()
+            Category of finite dimensional algebras with basis over Rational Field
+            sage: par.matrix()
+            [ 0  0  0  0  0  0  0  0]
+            [ 0  0  0  0  0  0  1  0]
+            [ 0  0  0  0  0 -1  0  0]
+            [ 0  0  0  0  1  0  0  0]
+            [ 0  0  0  0  0  0  0  0]
+            [ 0  0  0  0  0  0  0  0]
+            [ 0  0  0  0  0  0  0  0]
+            [ 0  0  0  0  0  0  0  0]
         """
         self._s_coeff = s_coeff
 
         # Technically this preserves the grading but with a shift of -1
-        cat = AlgebrasWithBasis(E.base_ring())
+        cat = AlgebrasWithBasis(E.base_ring()).FiniteDimensional()
         ModuleMorphismByLinearity.__init__(self, domain=E, codomain=E, category=cat)
 
     def homology(self, deg=None, **kwds):
@@ -2646,7 +2726,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
         return "Coboundary"
 
     def _on_basis(self, m):
-        """
+        r"""
         Return the differential on the basis element indexed by ``m``.
 
         EXAMPLES:

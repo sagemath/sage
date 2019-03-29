@@ -27,15 +27,18 @@ Modules
    sage/modules/fg_pid/fgp_module
    sage/modules/fg_pid/fgp_element
    sage/modules/fg_pid/fgp_morphism
+   sage/modules/torsion_quadratic_module
 
    sage/modules/diamond_cutting
 
    sage/modules/with_basis/__init__
+   sage/modules/with_basis/cell_module
    sage/modules/with_basis/morphism
    sage/modules/with_basis/subquotient
 
    sage/modules/finite_submodule_iter
    sage/modules/free_quadratic_module
+   sage/modules/free_quadratic_module_integer_symmetric
    sage/modules/misc
    sage/modules/quotient_module
 

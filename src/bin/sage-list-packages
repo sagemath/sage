@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-python23
 r"""
 Script to list the Sage packages
 
 This is script can be called with one argument which might be either
-"installed", "standard", "optional", "experimental" or "pip". It is mostly a
+"all", "standard", "optional", "experimental" or "pip". It is mostly a
 script interface to sage_setup.packages.list_packages.
 """
 
@@ -22,25 +22,44 @@ from sage.misc.package import list_packages, pkgname_split
 #################
 
 parser = argparse.ArgumentParser(description="List Sage's packages")
-parser.add_argument('category', choices=['standard', 'optional',
+parser.add_argument('category', choices=['all', 'standard', 'optional',
                                          'experimental', 'pip', 'installed'],
                     metavar="category",
-                    help="The type of packages. Can be 'standard', "
-                    "'optional', 'experimental', 'pip' or 'installed'.")
+                    help="The type of packages. Can be 'all', 'standard', "
+                    "'optional', 'experimental' or 'pip'.")
+parser.add_argument('--installed-only', dest='installed_only',
+                    default=False, action='store_true',
+                    help='only display installed packages')
+parser.add_argument('--not-installed-only', dest='not_installed_only',
+                    default=False, action='store_true',
+                    help='only display non installed packages')
 parser.add_argument('--dump', dest='dump', default=False, action='store_true',
-                    help='Output computer-friendly format')
+                    help='computer-friendly format')
 parser.add_argument('--no-version', dest='version', default=True,
                     action='store_false',
-                    help='Do not display version numbers')
+                    help='no version number')
 parser.add_argument('--local', dest='local', default=False,
                     action='store_true',
-                    help='Only read local data')
+                    help='only read local data')
 
 args = vars(parser.parse_args())
 
 # Get the data #
 ################
 
+if args['category'] == 'installed':
+    WARN   = "*" * 60 + "\n"
+    WARN += 'The "installed" category is deprecated. Use\n'
+    WARN += '"list-packages all --installed-only" instead\n'
+    WARN += "*" * 60
+
+    args['category'] = 'all'
+    args['installed_only'] = True
+else:
+    WARN = None
+
+if args['installed_only'] and args['not_installed_only']:
+    raise ValueError("only one of --installed-only or --not-installed-only can be specified")
 
 # set the output format
 if args['version']:
@@ -61,12 +80,21 @@ else:
     print()
 
 # make the list of packages
-if args['category'] == 'installed':
-    L = [pkg for pkg in list_packages(local=True, ignore_URLError=True).values() if pkg['installed']]
+if args['category'] == 'all':
+    L = list(list_packages(local=True, ignore_URLError=True).values())
 elif args['category'] == 'optional':
-    L = list_packages('optional', 'pip', local=args['local'], ignore_URLError=True).values()
+    L = list(list_packages('optional', 'pip', local=args['local'], ignore_URLError=True).values())
 else:
-    L = list_packages(args['category'], local=args['local'], ignore_URLError=True).values()
+    L = list(list_packages(args['category'], local=args['local'], ignore_URLError=True).values())
+
+# possible filter by installed/not installed
+if WARN:
+    print(WARN)
+if args['installed_only']:
+    L = [pkg for pkg in L if pkg['installed']]
+elif args['not_installed_only']:
+    L = [pkg for pkg in L if not pkg['installed']]
+
 L.sort(key = lambda pkg: pkg['name'])
 
 # print (while getting rid of None in versions)
@@ -74,3 +102,5 @@ for pkg in L:
     pkg['installed_version'] = pkg['installed_version'] or 'not_installed'
     pkg['remote_version'] = pkg['remote_version'] or '?'
     print(format_string.format(**pkg))
+if WARN:
+    print(WARN)

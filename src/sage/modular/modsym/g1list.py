@@ -22,7 +22,7 @@ from six.moves import range
 from sage.arith.all import GCD
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 
 
 @richcmp_method

@@ -29,7 +29,7 @@ import sage.rings.ring as ring
 import sage.rings.padics.padic_base_leaves as padic_base_leaves
 
 from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
 
 from sage.misc.cachefunc import weak_cached_function
@@ -76,7 +76,10 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     - ``var_array`` -- a list or tuple of names, or a comma separated string
 
-    - ``sparse`` -- bool (default: False), whether or not elements are sparse
+    - ``sparse`` -- bool: whether or not elements are sparse. The
+      default is a dense representation (``sparse=False``) for
+      univariate rings and a sparse representation (``sparse=True``)
+      for multivariate rings.
 
     - ``order`` -- string or
       :class:`~sage.rings.polynomial.term_order.TermOrder` object, e.g.,
@@ -90,17 +93,13 @@ def PolynomialRing(base_ring, *args, **kwds):
       where Sage includes multiple choices (currently `\ZZ[x]` can be
       implemented with ``'NTL'`` or ``'FLINT'``; default is ``'FLINT'``).
       For many base rings, the ``"singular"`` implementation is available.
+      One can always specify ``implementation="generic"`` for a generic
+      Sage implementation which does not use any specialized library.
 
     .. NOTE::
 
-        The following rules were introduced in :trac:`9944`, in order
-        to preserve the "unique parent assumption" in Sage (i.e., if two
-        parents evaluate equal then they should actually be identical).
-
-        - In the multivariate case, a dense representation is not supported.
-          Hence, the argument ``sparse=False`` is silently ignored in that case.
-        - If the given implementation does not exist for rings with the given
-          number of generators and the given sparsity, then an error results.
+        If the given implementation does not exist for rings with the given
+        number of generators and the given sparsity, then an error results.
 
     OUTPUT:
 
@@ -208,6 +207,13 @@ def PolynomialRing(base_ring, *args, **kwds):
 
         sage: (xNTL + xFLINT^2).parent()
         Univariate Polynomial Ring in x over Integer Ring
+
+    The generic implementation uses neither NTL nor FLINT::
+
+        sage: Zx = PolynomialRing(ZZ, 'x', implementation='generic'); Zx
+        Univariate Polynomial Ring in x over Integer Ring
+        sage: Zx.element_class
+        <... 'sage.rings.polynomial.polynomial_element.Polynomial_generic_dense'>
 
     **2. PolynomialRing(base_ring, names, ...)**
 
@@ -376,13 +382,60 @@ def PolynomialRing(base_ring, *args, **kwds):
     We test here some changes introduced in :trac:`9944`.
 
     If there is no dense implementation for the given number of
-    variables, then requesting a dense ring results yields the
-    corresponding sparse ring::
+    variables, then requesting a dense ring is an error::
 
-        sage: R.<x,y> = QQ[]
         sage: S.<x,y> = PolynomialRing(QQ, sparse=False)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: a dense representation of multivariate polynomials is not supported
+
+    Check uniqueness if the same implementation is used for different
+    values of the ``"implementation"`` keyword::
+
+        sage: R = PolynomialRing(QQbar, 'j', implementation="generic")
+        sage: S = PolynomialRing(QQbar, 'j', implementation=None)
         sage: R is S
         True
+
+        sage: R = PolynomialRing(ZZ['t'], 'j', implementation="generic")
+        sage: S = PolynomialRing(ZZ['t'], 'j', implementation=None)
+        sage: R is S
+        True
+
+        sage: R = PolynomialRing(QQbar, 'j,k', implementation="generic")
+        sage: S = PolynomialRing(QQbar, 'j,k', implementation=None)
+        sage: R is S
+        True
+
+        sage: R = PolynomialRing(ZZ, 'j,k', implementation="singular")
+        sage: S = PolynomialRing(ZZ, 'j,k', implementation=None)
+        sage: R is S
+        True
+
+        sage: R = PolynomialRing(ZZ, 'p', sparse=True, implementation="generic")
+        sage: S = PolynomialRing(ZZ, 'p', sparse=True)
+        sage: R is S
+        True
+
+    The generic implementation is different in some cases::
+
+        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); type(R)
+        <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
+        sage: S = PolynomialRing(GF(2), 'j'); type(S)
+        <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
+
+        sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); type(R)
+        <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
+        sage: S = PolynomialRing(ZZ, 'x,y'); type(S)
+        <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
+
+    Sparse univariate polynomials only support a generic
+    implementation::
+
+        sage: R = PolynomialRing(ZZ, 'j', sparse=True); type(R)
+        <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category'>
+        sage: R = PolynomialRing(GF(49), 'j', sparse=True); type(R)
+        <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
 
     If the requested implementation is not known or not supported for
     the given arguments, then an error results::
@@ -390,11 +443,23 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R.<x0> = PolynomialRing(ZZ, implementation='Foo')
         Traceback (most recent call last):
         ...
-        ValueError: unknown implementation 'Foo' for ZZ['x0']
+        ValueError: unknown implementation 'Foo' for dense polynomial rings over Integer Ring
+        sage: R.<x0> = PolynomialRing(GF(2), implementation='GF2X', sparse=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: unknown implementation 'GF2X' for sparse polynomial rings over Finite Field of size 2
         sage: R.<x,y> = PolynomialRing(ZZ, implementation='FLINT')
         Traceback (most recent call last):
         ...
         ValueError: unknown implementation 'FLINT' for multivariate polynomial rings
+        sage: R.<x> = PolynomialRing(QQbar, implementation="whatever")
+        Traceback (most recent call last):
+        ...
+        ValueError: unknown implementation 'whatever' for dense polynomial rings over Algebraic Field
+        sage: R.<x> = PolynomialRing(ZZ['t'], implementation="whatever")
+        Traceback (most recent call last):
+        ...
+        ValueError: unknown implementation 'whatever' for dense polynomial rings over Univariate Polynomial Ring in t over Integer Ring
         sage: PolynomialRing(RR, "x,y", implementation="whatever")
         Traceback (most recent call last):
         ...
@@ -595,166 +660,213 @@ def unpickle_PolynomialRing(base_ring, arg1=None, arg2=None, sparse=False):
     args = [arg for arg in (arg1, arg2) if arg is not None]
     return PolynomialRing(base_ring, *args, sparse=sparse)
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.polynomial.polynomial_ring_constructor', 'PolynomialRing', unpickle_PolynomialRing)
 
 
 def _get_from_cache(key):
-    try:
-        return _cache[key]
-    except TypeError as msg:
-        raise TypeError('key = %s\n%s'%(key,msg))
-    except KeyError:
-        return None
+    key = tuple(key)
+    return _cache.get(key)
+
 
 def _save_in_cache(key, R):
-    try:
-         _cache[key] = R
-    except TypeError as msg:
-        raise TypeError('key = %s\n%s'%(key,msg))
+    key = tuple(key)
+    _cache[key] = R
 
 
 def _single_variate(base_ring, name, sparse=None, implementation=None, order=None):
     # The "order" argument is unused, but we allow it (and ignore it)
     # for consistency with the multi-variate case.
     sparse = bool(sparse)
-    if sparse:
-        implementation = None
 
-    key = (base_ring, name, sparse, implementation)
+    # "implementation" must be last
+    key = [base_ring, name, sparse, implementation]
     R = _get_from_cache(key)
     if R is not None:
         return R
 
-    import sage.rings.polynomial.polynomial_ring as m
-    if isinstance(base_ring, ring.CommutativeRing):
-        if is_IntegerModRing(base_ring) and not sparse:
-            n = base_ring.order()
-            if n.is_prime():
-                R = m.PolynomialRing_dense_mod_p(base_ring, name, implementation=implementation)
-            elif n > 1:
-                R = m.PolynomialRing_dense_mod_n(base_ring, name, implementation=implementation)
-            else:  # n == 1!
-                R = m.PolynomialRing_integral_domain(base_ring, name)   # specialized code breaks in this case.
+    from . import polynomial_ring
 
-        elif is_FiniteField(base_ring) and not sparse:
-            R = m.PolynomialRing_dense_finite_field(base_ring, name, implementation=implementation)
+    # Find the right constructor and **kwds for our polynomial ring
+    constructor = None
+    kwds = {}
+    if sparse:
+        kwds["sparse"] = True
 
-        elif isinstance(base_ring, padic_base_leaves.pAdicFieldCappedRelative):
-            R = m.PolynomialRing_dense_padic_field_capped_relative(base_ring, name)
+    # Specialized implementations
+    specialized = None
+    if is_IntegerModRing(base_ring):
+        n = base_ring.order()
+        if n.is_prime():
+            specialized = polynomial_ring.PolynomialRing_dense_mod_p
+        elif n > 1:  # Specialized code breaks for n == 1
+            specialized = polynomial_ring.PolynomialRing_dense_mod_n
+    elif is_FiniteField(base_ring):
+        specialized = polynomial_ring.PolynomialRing_dense_finite_field
+    elif isinstance(base_ring, padic_base_leaves.pAdicFieldCappedRelative):
+        specialized = polynomial_ring.PolynomialRing_dense_padic_field_capped_relative
+    elif isinstance(base_ring, padic_base_leaves.pAdicRingCappedRelative):
+        specialized = polynomial_ring.PolynomialRing_dense_padic_ring_capped_relative
+    elif isinstance(base_ring, padic_base_leaves.pAdicRingCappedAbsolute):
+        specialized = polynomial_ring.PolynomialRing_dense_padic_ring_capped_absolute
+    elif isinstance(base_ring, padic_base_leaves.pAdicRingFixedMod):
+        specialized = polynomial_ring.PolynomialRing_dense_padic_ring_fixed_mod
 
-        elif isinstance(base_ring, padic_base_leaves.pAdicRingCappedRelative):
-            R = m.PolynomialRing_dense_padic_ring_capped_relative(base_ring, name)
+    # If the implementation is supported, then we are done
+    if specialized is not None:
+        implementation_names = specialized._implementation_names_impl(implementation, base_ring, sparse)
+        if implementation_names is not NotImplemented:
+            implementation = implementation_names[0]
+            constructor = specialized
 
-        elif isinstance(base_ring, padic_base_leaves.pAdicRingCappedAbsolute):
-            R = m.PolynomialRing_dense_padic_ring_capped_absolute(base_ring, name)
-
-        elif isinstance(base_ring, padic_base_leaves.pAdicRingFixedMod):
-            R = m.PolynomialRing_dense_padic_ring_fixed_mod(base_ring, name)
-
+    # Generic implementations
+    if constructor is None:
+        if not isinstance(base_ring, ring.CommutativeRing):
+            constructor = polynomial_ring.PolynomialRing_general
         elif base_ring in _CompleteDiscreteValuationRings:
-            R = m.PolynomialRing_cdvr(base_ring, name, sparse)
-
+            constructor = polynomial_ring.PolynomialRing_cdvr
         elif base_ring in _CompleteDiscreteValuationFields:
-            R = m.PolynomialRing_cdvf(base_ring, name, sparse)
-
-        elif base_ring.is_field(proof = False):
-            R = m.PolynomialRing_field(base_ring, name, sparse)
-
-        elif base_ring.is_integral_domain(proof = False):
-            R = m.PolynomialRing_integral_domain(base_ring, name, sparse, implementation)
+            constructor = polynomial_ring.PolynomialRing_cdvf
+        elif base_ring.is_field(proof=False):
+            constructor = polynomial_ring.PolynomialRing_field
+        elif base_ring.is_integral_domain(proof=False):
+            constructor = polynomial_ring.PolynomialRing_integral_domain
         else:
-            R = m.PolynomialRing_commutative(base_ring, name, sparse)
-    else:
-        R = m.PolynomialRing_general(base_ring, name, sparse)
+            constructor = polynomial_ring.PolynomialRing_commutative
+        implementation_names = constructor._implementation_names(implementation, base_ring, sparse)
+        implementation = implementation_names[0]
 
-    if hasattr(R, '_implementation_names'):
-        for name in R._implementation_names:
-            real_key = key[0:3] + (name,)
-            _save_in_cache(real_key, R)
-    else:
+        # Only use names which are not supported by the specialized class.
+        if specialized is not None:
+            implementation_names = [n for n in implementation_names if
+                    specialized._implementation_names_impl(n, base_ring, sparse) is NotImplemented]
+
+    if implementation is not None:
+        kwds["implementation"] = implementation
+    R = constructor(base_ring, name, **kwds)
+
+    for impl in implementation_names:
+        key[-1] = impl
         _save_in_cache(key, R)
+
     return R
+
 
 def _multi_variate(base_ring, names, sparse=None, order="degrevlex", implementation=None):
-#    if not sparse:
-#        raise ValueError("a dense representation of multivariate polynomials is not supported")
-    sparse = False
-
-    if implementation is None:
-        force_singular = False
-    elif implementation == "singular":
-        force_singular = True
-    else:
-        raise ValueError("unknown implementation %r for multivariate polynomial rings" % (implementation,))
-
-    n = len(names)
+    if sparse is None:
+        sparse = True
+    if not sparse:
+        raise NotImplementedError("a dense representation of multivariate polynomials is not supported")
 
     from sage.rings.polynomial.term_order import TermOrder
+    n = len(names)
     order = TermOrder(order, n)
 
-    key = (base_ring, names, n, sparse, order)
+    # "implementation" must be last
+    key = [base_ring, names, n, order, implementation]
     R = _get_from_cache(key)
-    if not R is None:
+    if R is not None:
         return R
 
-    from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
-    try:
-        R = MPolynomialRing_libsingular(base_ring, n, names, order)
-    except (TypeError, NotImplementedError):
-        if force_singular:
-            raise
-        import sage.rings.polynomial.multi_polynomial_ring as m
-        if isinstance(base_ring, ring.IntegralDomain):
-            R = m.MPolynomialRing_polydict_domain(base_ring, n, names, order)
-        else:
-            R = m.MPolynomialRing_polydict(base_ring, n, names, order)
+    # Multiple arguments for the "implementation" keyword which actually
+    # yield the same implementation. We need this for caching.
+    implementation_names = set([implementation])
 
-    _save_in_cache(key, R)
+    if implementation is None or implementation == "singular":
+        from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
+        try:
+            R = MPolynomialRing_libsingular(base_ring, n, names, order)
+        except (TypeError, NotImplementedError):
+            if implementation is not None:
+                raise
+        else:
+            implementation_names.update([None, "singular"])
+
+    if R is None and implementation is None:
+        # Interpret implementation=None as implementation="generic"
+        implementation = "generic"
+        implementation_names.add(implementation)
+        key[-1] = implementation
+        R = _get_from_cache(key)
+
+    if R is None and implementation == "generic":
+        from . import multi_polynomial_ring
+        if isinstance(base_ring, ring.IntegralDomain):
+            constructor = multi_polynomial_ring.MPolynomialRing_polydict_domain
+        else:
+            constructor = multi_polynomial_ring.MPolynomialRing_polydict
+        R = constructor(base_ring, n, names, order)
+
+    if R is None:
+        raise ValueError("unknown implementation %r for multivariate polynomial rings" % (implementation,))
+
+    for impl in implementation_names:
+        key[-1] = impl
+        _save_in_cache(key, R)
+
     return R
+
 
 #########################################################
 # Choice of a category
 from sage import categories
 from sage.categories.algebras import Algebras
 # Some fixed categories, in order to avoid the function call overhead
+_FiniteSets = categories.sets_cat.Sets().Finite()
+_InfiniteSets = categories.sets_cat.Sets().Infinite()
 _EuclideanDomains = categories.euclidean_domains.EuclideanDomains()
 _UniqueFactorizationDomains = categories.unique_factorization_domains.UniqueFactorizationDomains()
 _IntegralDomains = categories.integral_domains.IntegralDomains()
-_Rings = category = categories.rings.Rings()
+_Rings = categories.rings.Rings()
+
 
 @weak_cached_function
-def polynomial_default_category(base_ring_category, multivariate):
+def polynomial_default_category(base_ring_category, n_variables):
     """
     Choose an appropriate category for a polynomial ring.
 
+    It is assumed that the corresponding base ring is nonzero.
+
     INPUT:
 
-    - ``base_ring_category``: The category of ring over which the polynomial
-      ring shall be defined.
-    - ``multivariate``: Will the polynomial ring be multivariate?
+    - ``base_ring_category`` -- The category of ring over which the polynomial
+      ring shall be defined
+    - ``n_variables`` -- number of variables
 
     EXAMPLES::
 
         sage: from sage.rings.polynomial.polynomial_ring_constructor import polynomial_default_category
-        sage: polynomial_default_category(Rings(), False) is Algebras(Rings())
+        sage: polynomial_default_category(Rings(),1) is Algebras(Rings()).Infinite()
         True
-        sage: polynomial_default_category(Rings().Commutative(),False) is Algebras(Rings().Commutative()).Commutative()
+        sage: polynomial_default_category(Rings().Commutative(),1) is Algebras(Rings().Commutative()).Commutative().Infinite()
         True
-        sage: polynomial_default_category(Fields(),False) is EuclideanDomains() & Algebras(Fields())
+        sage: polynomial_default_category(Fields(),1) is EuclideanDomains() & Algebras(Fields()).Infinite()
         True
-        sage: polynomial_default_category(Fields(),True) is UniqueFactorizationDomains() & CommutativeAlgebras(Fields())
+        sage: polynomial_default_category(Fields(),2) is UniqueFactorizationDomains() & CommutativeAlgebras(Fields()).Infinite()
         True
 
-        sage: QQ['t'].category() is EuclideanDomains() & CommutativeAlgebras(QQ.category())
+        sage: QQ['t'].category() is EuclideanDomains() & CommutativeAlgebras(QQ.category()).Infinite()
         True
-        sage: QQ['s','t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ.category())
+        sage: QQ['s','t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ.category()).Infinite()
         True
-        sage: QQ['s']['t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ['s'].category())
+        sage: QQ['s']['t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ['s'].category()).Infinite()
         True
     """
     category = Algebras(base_ring_category)
-    if base_ring_category.is_subcategory(_Fields) and not multivariate:
+
+    if n_variables:
+        # here we assume the base ring to be nonzero
+        category = category.Infinite()
+    else:
+        if base_ring_category.is_subcategory(_Fields):
+            category = category & _Fields
+
+        if base_ring_category.is_subcategory(_FiniteSets):
+            category = category.Finite()
+        elif base_ring_category.is_subcategory(_InfiniteSets):
+            category = category.Infinite()
+
+    if base_ring_category.is_subcategory(_Fields) and n_variables == 1:
         return category & _EuclideanDomains
     elif base_ring_category.is_subcategory(_UniqueFactorizationDomains):
         return category & _UniqueFactorizationDomains
@@ -763,6 +875,7 @@ def polynomial_default_category(base_ring_category, multivariate):
     elif base_ring_category.is_subcategory(_CommutativeRings):
         return category & _CommutativeRings
     return category
+
 
 def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
     """

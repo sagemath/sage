@@ -228,8 +228,7 @@ the documentation for SageTeX is maintained in
 ``SAGE_ROOT/local/share/doc/sagetex/sagetex.pdf``. There is also an
 example file in the same directory -- see ``example.tex`` and
 ``example.pdf``, the pre-built result of typesetting that file with
-LaTeX and Sage. You can also get those files from the `SageTeX bitbucket
-page <https://bitbucket.org/ddrake/sagetex/downloads>`_.
+LaTeX and Sage. You can also get those files from the `SageTeX page <https://github.com/sagemath/sagetex>`_.
 
 SageTeX and TeXLive
 -------------------

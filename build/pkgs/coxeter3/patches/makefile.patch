@@ -5,7 +5,7 @@ diff -druN src/makefile src/makefile
  gflags = -c $(includedirs) -g
  
  cflags = $(gflags) # the default setting
-+cflags = -c $(includedirs) -O2 -fPIC -g -DFAST -DALLTRUE
++cflags = -c $(includedirs) -O2 -fPIC -g
  
  ifdef optimize
  	NDEBUG = true
@@ -97,11 +97,3 @@ diff -druN src/makefile src/makefile
  depend: $(dependencies)
  
  affine.o: affine.cpp affine.h globals.h coxgroup.h coxtypes.h io.h list.h \
-@@ -152,6 +209,7 @@
- posets.o: posets.cpp posets.h globals.h bits.h list.h memory.h \
-   constants.h list.hpp error.h io.h wgraph.h interface.h automata.h \
-   coxtypes.h minroots.h dotval.h graph.h type.h transducer.h
-+sage.o: sage.cpp sage.h globals.h coxtypes.h coxgroup.h list.h schubert.h
- schubert.o: schubert.cpp schubert.h globals.h coxtypes.h io.h list.h \
-   memory.h constants.h list.hpp error.h bits.h interface.h automata.h \
-   minroots.h dotval.h graph.h type.h transducer.h stack.h stack.hpp

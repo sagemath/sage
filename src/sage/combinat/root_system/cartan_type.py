@@ -451,6 +451,8 @@ this data.
 - :ref:`sage.combinat.root_system.type_G`
 - :ref:`sage.combinat.root_system.type_H`
 - :ref:`sage.combinat.root_system.type_I`
+- :ref:`sage.combinat.root_system.type_super_A`
+- :ref:`sage.combinat.root_system.type_Q`
 - :ref:`sage.combinat.root_system.type_A_affine`
 - :ref:`sage.combinat.root_system.type_B_affine`
 - :ref:`sage.combinat.root_system.type_C_affine`
@@ -473,7 +475,7 @@ this data.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
+from __future__ import print_function, absolute_import, division
 
 from six.moves import range
 from six.moves.builtins import sorted
@@ -671,6 +673,10 @@ class CartanTypeFactory(SageObject):
                     if n >= 1:
                         from . import type_I
                         return type_I.CartanType(n)
+                if letter == "Q":
+                    if n >= 1:
+                        from . import type_Q
+                        return type_Q.CartanType(n)
 
             if len(t) == 3:
                 if t[2] == 1: # Untwisted affine
@@ -708,17 +714,17 @@ class CartanTypeFactory(SageObject):
                             from . import type_BC_affine
                             return type_BC_affine.CartanType(n)
                     if letter == "A" and t[2] == 2:
-                        if n%2 == 0: # Kac' A_2n^(2)
-                            return CartanType(["BC", ZZ(n/2), 2])
+                        if n % 2 == 0: # Kac' A_2n^(2)
+                            return CartanType(["BC", ZZ(n//2), 2])
                         else:        # Kac' A_2n-1^(2)
-                            return CartanType(["B", ZZ((n+1)/2), 1]).dual()
+                            return CartanType(["B", ZZ((n+1)//2), 1]).dual()
                     if letter == "D" and t[2] == 2:
                         return CartanType(["C", n-1, 1]).dual()
                     if letter == "D" and t[2] == 3 and n == 4:
                         return CartanType(["G", 2, 1]).dual().relabel([0,2,1])
                     if letter == "E" and t[2] == 2 and n == 6:
                         return CartanType(["F", 4, 1]).dual()
-            raise ValueError("%s is not a valid Cartan type"%t)
+            raise ValueError("%s is not a valid Cartan type" % t)
 
         if isinstance(t[0], string_types) and isinstance(t[1], (list, tuple)):
             letter, n = t[0], t[1]
@@ -882,17 +888,17 @@ class CartanTypeFactory(SageObject):
         return cls._colors.get(i, 'black')
 
     # add options to class
-    options=GlobalOptions('CartanType',
-        module='sage.combinat.root_system.cartan_type', option_class='CartanTypeFactory',
-        doc=r"""
+    class options(GlobalOptions):
+        r"""
         Sets and displays the options for Cartan types. If no parameters
         are set, then the function returns a copy of the options dictionary.
 
         The ``options`` to partitions can be accessed as the method
         :obj:`CartanType.options` of
         :class:`CartanType <CartanTypeFactory>`.
-        """,
-        end_doc=r"""
+
+        @OPTIONS@
+
         EXAMPLES::
 
             sage: ct = CartanType(['D',5,2]); ct
@@ -934,37 +940,39 @@ class CartanTypeFactory(SageObject):
             0   1   2   3   4
             A8^2+
             sage: CartanType.options._reset()
-        """,
-        notation=dict(default="Stembridge",
+        """
+        NAME = 'CartanType'
+        module = 'sage.combinat.root_system.cartan_type'
+        option_class = 'CartanTypeFactory'
+        notation = dict(default="Stembridge",
                       description='Specifies which notation Cartan types should use when printed',
                       values=dict(Stembridge="use Stembridge's notation",
                                   Kac="use Kac's notation"),
                       case_sensitive=False,
-                      alias=dict(BC="Stembridge", tilde="Stembridge", twisted="Kac")),
-        dual_str=dict(default="*",
+                      alias=dict(BC="Stembridge", tilde="Stembridge", twisted="Kac"))
+        dual_str = dict(default="*",
                       description='The string used for dual Cartan types when printing',
-                      checker=lambda char: isinstance(char, string_types)),
-        dual_latex=dict(default="\\vee",
+                      checker=lambda char: isinstance(char, string_types))
+        dual_latex = dict(default="\\vee",
                         description='The latex used for dual CartanTypes when latexing',
-                        checker=lambda char: isinstance(char, string_types)),
-        mark_special_node=dict(default="none",
+                        checker=lambda char: isinstance(char, string_types))
+        mark_special_node = dict(default="none",
                                description="Make the special nodes",
                                values=dict(none="no markup", latex="only in latex",
                                            printing="only in printing", both="both in latex and printing"),
-                               case_sensitive=False),
-        special_node_str=dict(default="@",
+                               case_sensitive=False)
+        special_node_str = dict(default="@",
                               description="The string used to indicate which node is special when printing",
-                              checker=lambda char: isinstance(char, string_types)),
-        marked_node_str=dict(default="X",
+                              checker=lambda char: isinstance(char, string_types))
+        marked_node_str = dict(default="X",
                              description="The string used to indicate a marked node when printing",
-                             checker=lambda char: isinstance(char, string_types)),
-        latex_relabel=dict(default=True,
+                             checker=lambda char: isinstance(char, string_types))
+        latex_relabel = dict(default=True,
                            description="Indicate in the latex output if a Cartan type has been relabelled",
-                           checker=lambda x: isinstance(x, bool)),
-        latex_marked=dict(default=True,
+                           checker=lambda x: isinstance(x, bool))
+        latex_marked = dict(default=True,
                           description="Indicate in the latex output if a Cartan type has been marked",
                           checker=lambda x: isinstance(x, bool))
-    )
 
 
 CartanType = CartanTypeFactory()
@@ -1021,7 +1029,7 @@ class CartanType_abstract(object):
             <class 'sage.combinat.root_system.type_A_affine.CartanType_with_superclass_with_superclass'>
             sage: C.__class__.__bases__
             (<class 'sage.combinat.root_system.type_A_affine.CartanType_with_superclass'>,
-             <class __main__.MyCartanType at ...>)
+             <class ...__main__.MyCartanType...>)
             sage: C.my_method()
             'I am here!'
 
@@ -1504,7 +1512,7 @@ class CartanType_abstract(object):
         return CartanTypeFolded(self, folding_of, sigma)
 
     def _default_folded_cartan_type(self):
-        """
+        r"""
         Return the default folded Cartan type.
 
         In general, this just returns ``self`` in ``self`` with `\sigma` as
@@ -2192,9 +2200,9 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         REFERENCES:
 
         .. [FSS07] \G. Fourier, A. Schilling, and M. Shimozono,
-           Demazure structure inside Kirillov-Reshetikhin crystals,
+           *Demazure structure inside Kirillov-Reshetikhin crystals*,
            J. Algebra, Vol. 309, (2007), p. 386-404
-           http://arxiv.org/abs/math/0605451
+           :arxiv:`math/0605451`
         """
         a = self.a()
         acheck = self.acheck()
@@ -2359,9 +2367,9 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         REFERENCES:
 
         .. [HST09] \F. Hivert, A. Schilling, and N. M. Thiery,
-           Hecke group algebras as quotients of affine Hecke
-           algebras at level 0, JCT A, Vol. 116, (2009) p. 844-863
-           http://arxiv.org/abs/0804.3781
+           *Hecke group algebras as quotients of affine Hecke
+           algebras at level 0*, JCT A, Vol. 116, (2009) p. 844-863
+           :arxiv:`0804.3781`
         """
         a = self.a()
         acheck = self.acheck()
@@ -2522,7 +2530,6 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
             True
 
         """
-        from .cartan_type import CartanType
         return (CartanType, (self.letter, self.n))
 
     def __hash__(self):
@@ -2538,7 +2545,7 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
     # mathematical methods
 
     def index_set(self):
-        """
+        r"""
         Implements :meth:`CartanType_abstract.index_set`.
 
         The index set for all standard finite Cartan types is of the form
@@ -2717,11 +2724,11 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
                 letter = 'A'
                 n *= 2
             if compact:
-                return '%s%s^%s'%(letter, n, aff)
+                return '%s%s^%s' % (letter, n, aff)
         if compact:
-            return '%s%s~'%(letter, n)
+            return '%s%s~' % (letter, n)
         else:
-            return "['%s', %s, %s]"%(letter, n, aff)
+            return "['%s', %s, %s]" % (letter, n, aff)
 
     def __reduce__(self):
         """
@@ -2734,7 +2741,6 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
             True
 
         """
-        from sage.combinat.root_system.cartan_type import CartanType
         return (CartanType, (self.letter, self.n, self.affine))
 
     def __getitem__(self, i):

@@ -1,7 +1,7 @@
 from .types cimport GF2X_c, GF2_c, GF2XModulus_c, vec_GF2_c, ZZ_c
 
 
-cdef extern from "ntlwrap.cpp":
+cdef extern from "ntlwrap.h":
     long *GF2XHexOutput_c "(&GF2X::HexOutput)" # work-around for Cython bug
 
     int GF2X_IsOne "IsOne"(GF2X_c x)

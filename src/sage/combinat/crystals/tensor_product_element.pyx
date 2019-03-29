@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Tensor Products of Crystal Elements
 
@@ -9,6 +10,7 @@ AUTHORS:
   the regularity
 - Travis Scrimshaw (2017): Cythonized element classes
 - Franco Saliola (2017): Tensor products for crystal of super algebras
+- Anne Schilling (2018): Tensor products for crystals of queer super algebras
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
@@ -25,7 +27,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #****************************************************************************
 from __future__ import print_function, absolute_import
 
@@ -85,45 +87,6 @@ cdef class ImmutableListWithParent(ClonableArray):
         self._list = state[1]['_list']
         self._is_immutable = True
         self._hash = 0
-
-    def reversed(self):
-        """
-        Return a copy of ``self`` but in the reversed order.
-
-        EXAMPLES::
-
-            sage: b = crystals.Tableaux(['A',2], shape=[2,1]).module_generators[0]
-            sage: list(b)
-            [2, 1, 1]
-            sage: list(b.reversed())
-            doctest:warning
-            ...
-            DeprecationWarning: reversed() is deprecated; use reversed(self) instead
-            See http://trac.sagemath.org/22642 for details.
-            [1, 1, 2]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(22642, 'reversed() is deprecated; use reversed(self) instead')
-        return type(self)(self._parent, list=list(reversed(self._list)))
-
-    def set_index(self, k, value):
-        """
-        Return a sibling of ``self`` obtained by setting the
-        `k^{th}` entry of self to value.
-
-        EXAMPLES::
-
-            sage: b = crystals.Tableaux(['A',2], shape=[3]).module_generators[0]
-            sage: list(b.set_index(0, 2))
-            doctest:warning
-            ...
-            DeprecationWarning: set_index is deprecated; use _set_index instead
-            See http://trac.sagemath.org/22642 for details.
-            [2, 1, 1]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(22642, 'set_index is deprecated; use _set_index instead')
-        return self._set_index(int(k), value)
 
     cpdef _set_index(self, k, value):
         r"""
@@ -211,6 +174,38 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
             s = ascii_art(tableau)
             s._baseline = s._h // 2
             ret += AsciiArt([" # "]) + s
+        return ret
+
+    def _unicode_art_(self):
+        """
+        Return a unicode art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: KT = crystals.TensorProductOfKirillovReshetikhinTableaux(['D',4,1],[[3,3],[2,1],[1,2]])
+            sage: unicode_art(KT.module_generators[0])
+            ┌───┬───┬───┐
+            │ 1 │ 1 │ 1 │
+            ├───┼───┼───┤      ┌───┐
+            │ 2 │ 2 │ 2 │      │ 1 │   ┌───┬───┐
+            ├───┼───┼───┤    ⊗ ├───┤ ⊗ │ 1 │ 1 │
+            │ 3 │ 3 │ 3 │      │ 2 │   └───┴───┘
+            ├───┼───┼───┤      └───┘
+            │ 4̄ │ 4̄ │ 4̄ │
+            └───┴───┴───┘
+        """
+        if self._parent.options.convention == "Kashiwara":
+            lst = list(reversed(self))
+        else:
+            lst = self
+        from sage.typeset.unicode_art import unicode_art, UnicodeArt
+        s = unicode_art(lst[0])
+        s._baseline = s._h // 2
+        ret = s
+        for tableau in lst[1:]:
+            s = unicode_art(tableau)
+            s._baseline = s._h // 2
+            ret += UnicodeArt([u" ⊗ "]) + s
         return ret
 
     def _repr_diagram(self):
@@ -750,10 +745,10 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
             sage: T = crystals.Tableaux(['A',3], shape = [2,2])
             sage: t = T(list=[int(3),1,4,2])
             sage: type(t[0])
-            <type 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
+            <... 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
             sage: t = T(list=[3,int(1),4,2])
             sage: type(t[1])
-            <type 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
+            <... 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
             sage: C = crystals.KirillovReshetikhin(['A',int(3),1], 1,1)
             sage: C[0].e(0)
             [[4]]
@@ -839,6 +834,44 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
              -3
         """
         return self.to_tableau()._ascii_art_()
+
+    def _unicode_art_(self):
+        """
+        Return a unicode art version of ``self``.
+
+        EXAMPLES::
+
+            sage: T = crystals.Tableaux(['B',4], shape=[1]*3)
+            sage: unicode_art(T.module_generators[0])
+            ┌───┐
+            │ 1 │
+            ├───┤
+            │ 2 │
+            ├───┤
+            │ 3 │
+            └───┘
+            sage: T = crystals.Tableaux(['D',4], shape=[2,1])
+            sage: t = T.module_generators[0].f_string([1,2,3,4,2,2,3,4])
+            sage: unicode_art(t)
+            ┌───┬───┐
+            │ 1 │ 2̄ │
+            ├───┼───┘
+            │ 3̄ │
+            └───┘
+        """
+        if not self._list:
+            return Tableau([])._unicode_art_()
+        cdef list lst = self._list
+        cdef list tab = [ [lst[0]] ]
+        cdef int i
+        for i in range(1,len(self)):
+            if lst[i-1] < lst[i] or (lst[i-1].value != 0 and lst[i-1] == lst[i]):
+                tab.append([lst[i]])
+            else:
+                tab[len(tab)-1].append(lst[i])
+        for x in tab:
+            x.reverse()
+        return Tableau(tab).conjugate()._unicode_art_()
 
     def _latex_(self):
         r"""
@@ -1322,6 +1355,23 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
         """
         return self.to_tableau()._ascii_art_()
 
+    def _unicode_art_(self):
+        """
+        Return a unicode art version of ``self``.
+
+        EXAMPLES::
+
+            sage: C = crystals.Tableaux(['A',[1,2]], shape=[1,1])
+            sage: c = C.an_element()
+            sage: unicode_art(c)
+            ┌───┐
+            │ 2̄ │
+            ├───┤
+            │ 1̄ │
+            └───┘
+        """
+        return self.to_tableau()._unicode_art_()
+
     def _latex_(self):
         r"""
         Return the latex code of ``self``.
@@ -1366,7 +1416,240 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
                 cur += 1
         return Tableau(tab).conjugate()
 
+#####################################################################
+## Queer crystal elements
+
+cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrystalsElement):
+    r"""
+    Element class for a tensor product of crystals for queer Lie superalgebras.
+
+    This implements the tensor product rule for crystals of Grantcharov et al.
+    [GJK+2014]_. Given crystals `B_1` and `B_2` of type `\mathfrak{q}_{n+1}`,
+    we define the tensor product `b_1 \otimes b_2 \in B_1 \otimes B_2`,
+    where `b_1 \in B_1` and `b_2 \in B_2`, as the following:
+ 
+    In addition to the tensor product rule for type `A_n`, the tensor product
+    rule for `e_{-1}` and `f_{-1}` on `b_1\otimes b_2` are given by
+
+    .. MATH::
+
+        \begin{aligned}
+        e_{-1}(b_1\otimes b_2) &=
+        \begin{cases}
+        b_1 \otimes e_{-1}b_2 &
+         \text{if } \operatorname{wt}(b_1)_1 = \operatorname{wt}(b_1)_2 = 0,\\
+        e_{-1}b_1 \otimes b_2 & \text{otherwise},
+        \end{cases}
+        \\
+        f_{-1}(b_1\otimes b_2) &=
+        \begin{cases}
+        b_1 \otimes f_{-1}b_2 &
+         \text{if } \operatorname{wt}(b_1)_1 = \operatorname{wt}(b_1)_2 = 0,\\
+        f_{-1}b_1 \otimes b_2 & \text{otherwise}.
+        \end{cases}
+        \end{aligned}
+
+    For `1 < i \leq n`, the operators `e_{-i}` and `f_{-i}` are defined as
+
+    .. MATH::
+
+        e_{-i} = s_{w^{-1}_i} e_{-1} s_{w_i}, \quad
+        f_{-i} = s_{w^{-1}_i} f_{-1} s_{w_i}.
+
+    Here, `w_i = s_2 \cdots s_i s_1 \cdots s_{i-1}` and `s_i` is the reflection
+    along the `i`-string in the crystal. Moreover, for `1<i\leq n`, we define
+    the operators `e_{-i'}` and `f_{-i'}` as
+
+    .. MATH::
+
+        e_{-i'} = s_{w_0} f_{-(n+1-i)} s_{w_0}, \quad
+        f_{-i'} = s_{w_0} e_{-(n+1-i)} s_{w_0},
+
+    where `w_0` is the longest element in the symmetric group `S_{n+1}`
+    generated by `s_1,\ldots,s_n`. In this implementation, we use the integers
+    `-2n, \ldots, -(n+1)` to respectively denote the indices `-n', \ldots, -1'`.
+
+    TESTS::
+
+        sage: Q = crystals.Letters(['Q', 3])
+        sage: T = tensor([Q,Q]); T
+        Full tensor product of the crystals
+         [The queer crystal of letters for q(3),
+          The queer crystal of letters for q(3)]
+        sage: T.cardinality()
+        9
+        sage: t = T.an_element(); t
+        [1, 1]
+        sage: t.weight()
+        (2, 0, 0)
+    """
+    def e(self, i):
+        r"""
+        Return `e_i` on ``self``.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q', 3])
+            sage: T = tensor([Q,Q])
+            sage: t = T(Q(1),Q(1))
+            sage: t.e(-1)
+            sage: t = T(Q(2),Q(1))
+            sage: t.e(-1)
+            [1, 1]
+
+            sage: T = tensor([Q,Q,Q,Q])
+            sage: t = T(Q(1),Q(3),Q(2),Q(1))
+            sage: t.e(-2)
+            [2, 2, 1, 1]
+        """
+        if i > 0:
+            return TensorProductOfRegularCrystalsElement.e(self, i)
+        cdef tuple w
+        cdef int k, a, l
+        l = len(self._list)
+        if i == -1:
+            k = 0
+            wt = self._list[k].weight()
+            v = wt[0] + wt[1]
+            while v == 0 and k < l - 1:
+                  k += 1
+                  wt = self[k].weight()
+                  v += wt[0] + wt[1]
+            b = self._list[k].e(i)
+            if b is None:
+               return None
+            return self._set_index(k, b)
+        n = self._parent.cartan_type().n
+        if i < -1 and i >= -n:
+            j = -i
+            b = self
+            for a in range(j-1, 0, -1):
+                b = b.s(a)
+            for a in range(j, 1, -1):
+                b = b.s(a)
+            b = b.e(-1)
+            if b is None:
+               return None
+            for a in range(2, j+1):
+                b = b.s(a)
+            for a in range(1, j):
+                b = b.s(a)
+            return b
+        if i < -n:
+           j = -(i+n)
+           w = <tuple> (self._parent._long_element())
+           b = self
+           for a in w:
+               b = b.s(a)
+           b = b.f(-(n+1-j))
+           if b is None:
+               return None
+           for a in w:
+               b = b.s(a)
+           return b
+        return None
+
+    def f(self, i):
+        r"""
+        Return `f_i` on ``self``.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q', 3])
+            sage: T = tensor([Q, Q])
+            sage: t = T(Q(1), Q(1))
+            sage: t.f(-1)
+            [2, 1]
+        """
+        if i > 0:
+            return TensorProductOfRegularCrystalsElement.f(self, i)
+        cdef tuple w
+        cdef int k, a, l
+        l = len(self._list)
+        if i == -1:
+            k = 0
+            wt = self._list[k].weight()
+            v = wt[0] + wt[1]
+            while v == 0 and k < l - 1:
+                  k += 1
+                  wt = self._list[k].weight()
+                  v += wt[0] + wt[1]
+            b = self._list[k].f(i)
+            if b is None:
+               return None
+            return self._set_index(k, b)
+        n = self._parent.cartan_type().n
+        if i < -1 and i >= -n:
+            j = -i
+            b = self
+            for a in range(j-1, 0, -1):
+                b = b.s(a)
+            for a in range(j, 1, -1):
+                b = b.s(a)
+            b = b.f(-1)
+            if b is None:
+               return None
+            for a in range(2, j+1):
+                b = b.s(a)
+            for a in range(1, j):
+                b = b.s(a)
+            return b
+        if i < -n:
+           j = -(i+n)
+           w = <tuple> (self._parent._long_element())
+           b = self
+           for a in w:
+               b = b.s(a)
+           b = b.e(-(n+1-j))
+           if b is None:
+               return None
+           for a in w:
+               b = b.s(a)
+           return b
+        return None
+
+    # Override epsilon/phi (for now)
+    def epsilon(self, i):
+        r"""
+        Return `\varepsilon_i` on ``self``.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q', 3])
+            sage: T = tensor([Q, Q, Q, Q])
+            sage: t = T(Q(1), Q(3), Q(2), Q(1))
+            sage: t.epsilon(-2)
+            1
+        """
+        string_length = -1
+        x = self
+        while x is not None:
+            string_length += 1
+            x = x.e(i)
+        return string_length
+
+    def phi(self, i):
+        r"""
+        Return `\varphi_i` on ``self``.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q', 3])
+            sage: T = tensor([Q, Q, Q, Q])
+            sage: t = T(Q(1), Q(3), Q(2), Q(1))
+            sage: t.phi(-2)
+            0
+            sage: t.phi(-1)
+            1
+        """
+        string_length = -1
+        x = self
+        while x is not None:
+            string_length += 1
+            x = x.f(i)
+        return string_length
+
 # for unpickling
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.crystals.tensor_product', 'ImmutableListWithParent',  ImmutableListWithParent)
 

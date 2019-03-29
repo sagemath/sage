@@ -117,8 +117,7 @@ class Decoder(SageObject):
 
     def _instance_decoder_type(self):
         r"""
-        This doc-string will be overridden at instantiation by that of
-        `Decoder.decoder_type`.
+        See the documentation of :meth:`decoder_type`.
 
         EXAMPLES:
 
@@ -362,7 +361,6 @@ class Decoder(SageObject):
         """
         raise NotImplementedError
 
-Decoder._instance_decoder_type.__func__.__doc__ = Decoder.decoder_type.__doc__
 
 class DecodingError(Exception):
     r"""

@@ -31,7 +31,7 @@ if [ "$UNAME" = Darwin ]; then
     PYTHON_CONFIGURE="--disable-toolbox-glue $PYTHON_CONFIGURE"
 
     mkdir "../include"
-    if ![ -z "$OPENSSL_INCLUDE" ];  then
+    if [ -n "$OPENSSL_INCLUDE" ];  then
         # If the user explicitely states where to get the openssl
         # includes, use that.
         cp -rp "$OPENSSL_INCLUDE" "../include"
@@ -58,14 +58,16 @@ elif [ "$UNAME" = SunOS ]; then
     export CFLAGS="-D__C99FEATURES__ $CFLAGS"
 fi
 
-if [ "$SAGE64" = yes ]; then
-    echo "64 bit build of Python enabled"
-    export CC="$CC -m64"
-fi
-
 # Remove old symbolic link: it is not needed and its presence can
 # interfere with the Python build.
 rm -f "$SAGE_LOCAL/lib/python"
+
+# Remove old libraries. We really need to do this before building Python
+# since Python tries to import some modules (e.g. ctypes) at build-time.
+# We need to make sure that the old installed libraries in local/lib are
+# not used for that. See https://trac.sagemath.org/ticket/24605
+rm -f "$SAGE_LOCAL"/lib/lib"$PKG_BASE"*
+
 
 if [ "$PKG_BASE" = "python2" ]; then
     PYTHON_CONFIGURE="$PYTHON_CONFIGURE --enable-unicode=ucs4"
@@ -77,28 +79,18 @@ else
     PYTHON_CONFIGURE="$PYTHON_CONFIGURE --without-ensurepip"
 fi
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" \
-    --enable-shared $PYTHON_CONFIGURE
-
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring Python."
-    exit 1
-fi
+sdh_configure --enable-shared $PYTHON_CONFIGURE
 
 # Make sure -L. is placed before -L$SAGE_LOCAL/lib so that python and extension
 # modules are linked with the right libpython; we pass this in at make time
 # only, since we don't want -L. to be saved as one of the default LDFLAGS
 # used for building third-party extension modules
-$MAKE LDFLAGS="-L. $LDFLAGS"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building Python."
-    exit 1
-fi
+sdh_make LDFLAGS="-L. $LDFLAGS"
 
-if [ "$UNAME" = "Linux" ]; then
-    export LD_LIBRARY_PATH="."
-elif [ "$UNAME" = "Darwin" ]; then
+if [ "$UNAME" = "Darwin" ]; then
     export DYLD_LIBRARY_PATH="."
+else
+    export LD_LIBRARY_PATH="."
 fi
 
 # When building on a case-insensitive filesystem (on any OS, not just Windows)

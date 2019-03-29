@@ -1,6 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-python23
 
-import optparse, os, sys
+import optparse
+import os
+import sys
 
 # Note: the DOT_SAGE and SAGE_STARTUP_FILE environment variables have already been set by sage-env
 DOT_SAGE = os.environ['DOT_SAGE']
@@ -26,17 +28,29 @@ if __name__ == "__main__":
         callback=optional_argument, callback_args=(int, 0), nargs=0,
         metavar="N", help="tests in parallel using N threads with 0 interpreted as max(2, min(8, cpu_count()))")
     parser.add_option("-T", "--timeout", type=int, default=-1, help="timeout (in seconds) for doctesting one file, 0 for no timeout")
+    parser.add_option("-m", "--memlimit", type=int, default=3300,
+                      help='maximum virtual memory to allow each test '
+                           'process, in megabytes; no limit if zero or less, '
+                           'but tests tagged "high mem" are skipped if no limit '
+                           'is set (default: 3300 MB)')
     parser.add_option("-a", "--all", action="store_true", default=False, help="test all files in the Sage library")
     parser.add_option("--logfile", metavar="FILE", help="log all output to FILE")
     parser.add_option("--sagenb", action="store_true", default=False, help="test all files from the Sage notebook sources")
 
     parser.add_option("-l", "--long", action="store_true", default=False, help="include lines with the phrase 'long time'")
+    parser.add_option("-s", "--short", dest="target_walltime", default=None, action="callback",
+        callback=optional_argument, callback_args=(int, 300), nargs=0,
+        metavar="SECONDS", help="run as many doctests as possible in about 300 seconds (or the number of seconds given as an optional argument)")
     parser.add_option("--warn-long", dest="warn_long", default=None, action="callback",
         callback=optional_argument, callback_args=(float, 1.0), nargs=0,
         metavar="SECONDS", help="warn if tests take more time than SECONDS")
-    parser.add_option("--optional", metavar="PKGS", default="sage,optional",
+    # By default, include all tests marked 'dochtml' -- see
+    # https://trac.sagemath.org/ticket/25345 and
+    # https://trac.sagemath.org/ticket/26110:
+    parser.add_option("--optional", metavar="PKGS", default="sage,dochtml,optional",
         help='only run tests including one of the "# optional" tags listed in PKGS; '
              'if "sage" is listed, will also run the standard doctests; '
+             'if "dochtml" is listed, will also run the tests relying on the HTML documentation; '
              'if "optional" is listed, will also run tests for installed optional (new-style) packages; '
              'if "external" is listed, will also run tests for available external software; '
              'if set to "all", then all tests will be run')
@@ -80,6 +94,18 @@ if __name__ == "__main__":
     parser.add_option("--stats_path", "--stats-path", default=os.path.join(DOT_SAGE, "timings2.json"),
                           help="path to a json dictionary for the latest run storing a timing for each file")
 
+    def gc_option(option, opt_str, value, parser):
+        gcopts = dict(DEFAULT=0, ALWAYS=1, NEVER=-1)
+        try:
+            arg = gcopts[value.upper()]
+        except KeyError:
+            parser.error("unknown value {0}={1}".format(opt_str, value))
+        setattr(parser.values, option.dest, arg)
+
+    parser.add_option("--gc", type="string", action="callback", callback=gc_option,
+                      help="control garbarge collection "
+                           "(ALWAYS: collect garbage before every test; NEVER: disable gc; DEFAULT: Python default)")
+
     # The --serial option is only really for internal use, better not
     # document it.
     parser.add_option("--serial", action="store_true", default=False, help=optparse.SUPPRESS_HELP)
@@ -93,27 +119,39 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit(2)
 
-    # Ensure that all doctests can be run with virtual memory limited
-    # to 3300 MiB. We must set this limit before starting Sage. Note
-    # that this is a per-process limit, so we do not need to worry about
-    # running multiple doctest processes in parallel. It is in
+    # Ensure that all doctests can be run with virtual memory limited to 3300
+    # MiB (or a user-provided value). We must set this limit before starting
+    # Sage. Note that this is a per-process limit, so we do not need to worry
+    # about running multiple doctest processes in parallel. It is in
     # particular doctests in src/sage/schemes/elliptic_curves/heegner.py
     # which need this much memory.
-    memlimit = 3300 << 20
+    memlimit = options.memlimit << 20
+
     # Python's resource module only supports limits up to sys.maxsize,
     # even if the OS does support higher limits.
-    if memlimit <= sys.maxsize:
+    if memlimit > 0 and memlimit <= sys.maxsize:
         import resource
         lim, hard = resource.getrlimit(resource.RLIMIT_AS)
         if lim == resource.RLIM_INFINITY or lim > memlimit:
             try:
                 resource.setrlimit(resource.RLIMIT_AS, (memlimit, hard))
             except ValueError:
+                options.memlimit = -1
                 if sys.platform != 'cygwin':
                     # RLIMIT_AS is not currently supported on Cygwin so
                     # this will probably fail there:
                     # https://trac.sagemath.org/ticket/23979
                     raise
+            else:
+                if resource.RLIMIT_AS == getattr(resource, 'RLIMIT_RSS', None):
+                    # On some platforms (e.g. OSX) RLIMIT_AS is just an alias
+                    # for RLIMIT_RSS (see
+                    # https://trac.sagemath.org/ticket/24190)
+                    # In this case we still call setrlimit, but then disable
+                    # high mem tests since we don't want such tests to actually
+                    # cause us to run out of physical memory, leading to system
+                    # instability (as opposed to virtual memory allocs failing)
+                    options.memlimit = -1
 
     # Limit the number of threads to 2 to save system resources.
     # See Trac #23713 and #23892

@@ -25,7 +25,7 @@ AUTHORS:
 from __future__ import print_function
 
 from sage.plot.bezier_path import BezierPath
-from sage.plot.misc import options, rename_keyword
+from sage.misc.decorators import options, rename_keyword
 from sage.rings.all import CC
 
 
@@ -178,7 +178,7 @@ def hyperbolic_polygon(pts, **options):
 
 
 def hyperbolic_triangle(a, b, c, **options):
-    """
+    r"""
     Return a hyperbolic triangle in the hyperbolic plane with vertices ``(a,b,c)``.
 
     Type ``?hyperbolic_polygon`` to see all options.

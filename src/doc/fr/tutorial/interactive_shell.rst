@@ -967,12 +967,10 @@ la variable ``b`` n'a pas été écrasée.
 
 .. _section-notebook:
 
-L'interface *notebook*
-======================
+L'ancienne interface *notebook*
+===============================
 
-Cette section concerne l'ancien bloc-note de Sage (“sagenb”). Pour plus de
-détails, voir la `documentation de sagenb
-<https://doc.sagemath.org/html/en/reference/notebook/index.html>`_.
+Cette section concerne l'ancien bloc-note de Sage (“sagenb”).
 
 SageMath est en cours de transition vers l'utilisation par défaut du
 `bloc-note Jupyter

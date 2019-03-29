@@ -142,7 +142,7 @@ Added 16-02-2008 (wdj): optional calls to scipy and replace all
    by hardware floats precision.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #                     2006 David Joyner <wdj@usna.edu>
 #
@@ -155,15 +155,16 @@ Added 16-02-2008 (wdj): optional calls to scipy and replace all
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer import Integer
 from sage.rings.real_mpfr import RealField
 from sage.rings.complex_field import ComplexField
 from sage.misc.latex import latex
 from sage.rings.all import ZZ, RR, RDF, CDF
-from sage.functions.other import real, imag, log_gamma
+from .gamma import log_gamma
+from .other import real, imag
 from sage.symbolic.constants import pi
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
@@ -172,6 +173,7 @@ from sage.structure.element import parent
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.functions.all import sqrt, sin, cot, exp
 from sage.symbolic.all import I
+
 
 class SphericalHarmonic(BuiltinFunction):
     r"""
@@ -473,7 +475,7 @@ class EllipticE(BuiltinFunction):
             return (elliptic_e(z, m) - elliptic_f(z, m)) / (Integer(2) * m)
 
     def _print_latex_(self, z, m):
-        """
+        r"""
         EXAMPLES::
 
             sage: latex(elliptic_e(pi, x))
@@ -483,8 +485,9 @@ class EllipticE(BuiltinFunction):
 
 elliptic_e = EllipticE()
 
+
 class EllipticEC(BuiltinFunction):
-    """
+    r"""
     Return the complete elliptic integral of the second kind:
 
     .. MATH::
@@ -787,7 +790,7 @@ class EllipticF(BuiltinFunction):
                       sqrt(Integer(1) - m * sin(z) ** Integer(2)))))
 
     def _print_latex_(self, z, m):
-        """
+        r"""
         EXAMPLES::
 
             sage: latex(elliptic_f(x,pi))
@@ -796,6 +799,7 @@ class EllipticF(BuiltinFunction):
         return r"F(%s\,|\,%s)" % (latex(z), latex(m))
  
 elliptic_f = EllipticF()
+
 
 class EllipticKC(BuiltinFunction):
     r"""
@@ -1002,7 +1006,7 @@ class EllipticPi(BuiltinFunction):
                      sqrt(Integer(1) - m * sin(z) ** Integer(2)))))
 
     def _print_latex_(self, n, z, m):
-        """
+        r"""
         EXAMPLES::
 
             sage: latex(elliptic_pi(x,pi,0))
@@ -1011,23 +1015,3 @@ class EllipticPi(BuiltinFunction):
         return r"\Pi(%s,%s,%s)" % (latex(n), latex(z), latex(m))
  
 elliptic_pi = EllipticPi()
-
-
-def error_fcn(x):
-    """
-    Deprecated in :trac:`21819`. Please use ``erfc()``.
-
-    EXAMPLES::
-
-        sage: error_fcn(x)
-        doctest:warning
-        ...
-        DeprecationWarning: error_fcn() is deprecated. Please use erfc()
-        See http://trac.sagemath.org/21819 for details.
-        erfc(x)
-    """
-    from .error import erfc
-    from sage.misc.superseded import deprecation
-    deprecation(21819, "error_fcn() is deprecated. Please use erfc()")
-    return erfc(x)
-

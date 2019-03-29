@@ -207,7 +207,6 @@ def scale_by_factor(self, c, change_value_ring_flag=False):
         [ * 3 0 0 ]
         [ * * 6 0 ]
         [ * * * 9 ]
-
     """
     ## Try to scale the coefficients while staying in the ring of values.
     new_coeff_list = [x*c  for x in self.coefficients()]
@@ -224,9 +223,9 @@ def scale_by_factor(self, c, change_value_ring_flag=False):
         if not change_value_ring_flag:
             raise TypeError("Oops! We could not rescale the lattice in this way and preserve its defining ring.")
         else:
-            raise UntestedCode("This code is not tested by current doctests!")
+            raise RuntimeError("This code is not tested by current doctests!")
             F = R.fraction_field()
-            list2 = [F(x)  for x in new_coeff_list]
+            list2 = [F(x) for x in new_coeff_list]
             Q = copy.deepcopy(self)
             Q.__init__(self.dim(), F, list2, R)  ## DEFINE THIS!  IT WANTS TO SET THE EQUIVALENCE RING TO R, BUT WITH COEFFS IN F.
             #Q.set_equivalence_ring(R)

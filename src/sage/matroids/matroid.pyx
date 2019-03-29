@@ -1098,11 +1098,12 @@ cdef class Matroid(SageObject):
             sage: M = matroids.named_matroids.Vamos()
             sage: N = M._minor(contractions=set(['a']), deletions=set([]))
             sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
-            M / {'a'} \ {'b', 'c'}, where M is Vamos: Matroid of rank 4 on 8
-            elements with circuit-closures
+            M / {'a'} \ {'b', 'c'}, where M is Vamos:
+            Matroid of rank 4 on 8 elements with circuit-closures
             {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},
-            {'e', 'f', 'g', 'h'}, {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'}},
-            4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
+                 {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'},
+                 {'e', 'f', 'g', 'h'}},
+             4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         """
         from . import minor_matroid
         return minor_matroid.MinorMatroid(self, contractions, deletions)
@@ -1471,7 +1472,7 @@ cdef class Matroid(SageObject):
             sage: sorted(M.circuit(['a', 'c', 'd']))
             Traceback (most recent call last):
             ...
-            ValueError: no circuit in independent set.
+            ValueError: no circuit in independent set
             sage: M.circuit(['x'])
             Traceback (most recent call last):
             ...
@@ -2956,17 +2957,17 @@ cdef class Matroid(SageObject):
             sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
             sage: SimplicialComplex(M.no_broken_circuits_sets())
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
-             and facets {(1, 3, 4), (1, 3, 5), (1, 2, 5), (1, 2, 4)}
+             and facets {(1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5)}
             sage: SimplicialComplex(M.no_broken_circuits_sets([5,4,3,2,1]))
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
-             and facets {(1, 4, 5), (2, 3, 5), (1, 3, 5), (2, 4, 5)}
+             and facets {(1, 3, 5), (1, 4, 5), (2, 3, 5), (2, 4, 5)}
 
         ::
 
             sage: M = Matroid(circuits=[[1,2,3], [1,4,5], [2,3,4,5]])
             sage: SimplicialComplex(M.no_broken_circuits_sets([5,4,3,2,1]))
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
-             and facets {(2, 3, 5), (1, 3, 5), (2, 4, 5), (3, 4, 5)}
+             and facets {(1, 3, 5), (2, 3, 5), (2, 4, 5), (3, 4, 5)}
         """
         ret = []
         BC = self.broken_circuits(ordering)
@@ -3629,15 +3630,17 @@ cdef class Matroid(SageObject):
             M / {'a', 'b', 'c'} \ {'d', 'e', 'f', 'g'}, where M is Vamos:
             Matroid of rank 4 on 8 elements with circuit-closures
             {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},
-            {'e', 'f', 'g', 'h'}, {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'}},
-            4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
+                 {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'},
+                 {'e', 'f', 'g', 'h'}},
+             4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
 
             sage: M.minor('defgh', 'abc')
             M / {'d', 'e', 'f', 'g'} \ {'a', 'b', 'c', 'h'}, where M is Vamos:
             Matroid of rank 4 on 8 elements with circuit-closures
             {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},
-            {'e', 'f', 'g', 'h'}, {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'}},
-            4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
+                 {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'},
+                 {'e', 'f', 'g', 'h'}},
+             4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
 
             sage: M.minor([1, 2, 3], 'efg')
             Traceback (most recent call last):
@@ -3876,10 +3879,10 @@ cdef class Matroid(SageObject):
             sage: N
             Dual of 'Pappus: Matroid of rank 3 on 9 elements with
             circuit-closures
-            {2: {{'a', 'b', 'c'}, {'a', 'f', 'h'}, {'c', 'e', 'g'},
-            {'b', 'f', 'g'}, {'c', 'd', 'h'}, {'d', 'e', 'f'},
-            {'a', 'e', 'i'}, {'b', 'd', 'i'}, {'g', 'h', 'i'}},
-            3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}'
+            {2: {{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'},
+                 {'b', 'd', 'i'}, {'b', 'f', 'g'}, {'c', 'd', 'h'},
+                 {'c', 'e', 'g'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}},
+             3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}'
         """
         from . import dual_matroid
         return dual_matroid.DualMatroid(self)
@@ -5478,13 +5481,11 @@ cdef class Matroid(SageObject):
         T = spanning_stars(M)
         for (x1,y1) in T:
             # The whiting out
-            B = matrix(M)
-            for (x,y) in product(range(n),range(m)):
-                if (x1!=x and y1!=y):
-                    if(M[x1,y]==1 and
-                       M[x,y1]==1 and
-                       M[x,y]==1):
-                        B[x,y]=0
+            B = M
+            for (x, y) in product(range(n), range(m)):
+                if x1 != x and y1 != y:
+                    if M[x1, y] == 1 and M[x, y1] == 1 and M[x, y] == 1:
+                        B[x, y] = 0
 
             # remove row x1 and y1
             Xp = list(xrange(n))
@@ -5648,16 +5649,16 @@ cdef class Matroid(SageObject):
             #rowshifts
             rowshift = False
             for x in set(remainX):
-                if(self.rank(Y_1|(X-(X_2|set([x])))) - len(X-(X_2|set([x])))
-                   > self.rank(Y_1|(X-X_2)) - len(X-X_2)):
+                if (self.rank(Y_1|(X-(X_2|set([x])))) - len(X-(X_2|set([x])))
+                    > self.rank(Y_1|(X-X_2)) - len(X-X_2)):
                     X_1.add(x)
                     remainX.remove(x)
                     rowshift = True
             #colshifts
             colshift = False
             for y in set(remainY):
-                if(self.rank(Y_2|set([y])|(X-X_1)) - len(X-X_1)
-                   > self.rank(Y_2|(X-X_1)) - len(X-X_1)):
+                if (self.rank(Y_2|set([y])|(X-X_1)) - len(X-X_1)
+                    > self.rank(Y_2|(X-X_1)) - len(X-X_1)):
                     Y_1.add(y)
                     remainY.remove(y)
                     colshift = True
@@ -6565,7 +6566,7 @@ cdef class Matroid(SageObject):
             sage: M.is_max_weight_independent_generic()
             False
 
-        Here is an example from [GriRei2014]_ (Example 7.56 in v3)::
+        Here is an example from [GriRei18]_ (Example 7.4.12 in v5)::
 
             sage: A = Matrix(QQ, [[ 1,  1,  0,  0],
             ....:                 [-1,  0,  1,  1],
@@ -6711,7 +6712,7 @@ cdef class Matroid(SageObject):
 
 
 
-        Here is an example from [GriRei2014]_ (Example 7.56 in v3)::
+        Here is an example from [GriRei18]_ (Example 7.4.12 in v5)::
 
             sage: A = Matrix(QQ, [[ 1,  1,  0,  0],
             ....:                 [-1,  0,  1,  1],
@@ -6749,7 +6750,7 @@ cdef class Matroid(SageObject):
 
         # Construct ``Y``: a list of all elements of ``X``
         # in order of weakly decreasing weight.
-        # and a dictionary that gives the weights of the elementns of X.
+        # and a dictionary that gives the weights of the elements of X.
         else:
             wt = []
             wt_dic = {}
@@ -7404,12 +7405,23 @@ cdef class Matroid(SageObject):
             T = T(a, b)
         return T
 
-    cpdef flat_cover(self):
+    cpdef flat_cover(self, solver=None, verbose=0):
         """
         Return a minimum-size cover of the nonbases by non-spanning flats.
 
         A *nonbasis* is a subset that has the size of a basis, yet is
         dependent. A *flat* is a closed set.
+
+        INPUT:
+
+        - ``solver`` -- (default: ``None``) Specify a Linear Program (LP) solver
+          to be used. If set to ``None``, the default one is used. For more
+          information on LP solvers and which default solver is used, see the
+          method :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of
+          the class :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+
+        - ``verbose`` -- integer (default: ``0``). Sets the level of verbosity
+          of the LP solver. Set to 0 by default, which means quiet.
 
         .. SEEALSO::
 
@@ -7433,12 +7445,12 @@ cdef class Matroid(SageObject):
         for r in range(self.full_rank()):
             FF.extend(self.flats(r))
 
-        MIP = MixedIntegerLinearProgram(maximization=False)
+        MIP = MixedIntegerLinearProgram(maximization=False, solver=solver)
         f = MIP.new_variable(binary=True)
         MIP.set_objective(sum([f[F] for F in FF]))
         for N in NB:
             MIP.add_constraint(sum([f[F] for F in FF if len(F.intersection(N)) > self.rank(F)]), min=1)
-        opt = MIP.solve()
+        opt = MIP.solve(log=verbose)
 
         fsol = MIP.get_values(f)
         eps = 0.00000001
@@ -7718,10 +7730,10 @@ cdef class Matroid(SageObject):
             sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
             sage: M.broken_circuit_complex()
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
-             and facets {(1, 3, 4), (1, 3, 5), (1, 2, 5), (1, 2, 4)}
+             and facets {(1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5)}
             sage: M.broken_circuit_complex([5,4,3,2,1])
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
-             and facets {(1, 4, 5), (2, 3, 5), (1, 3, 5), (2, 4, 5)}
+             and facets {(1, 3, 5), (1, 4, 5), (2, 3, 5), (2, 4, 5)}
         """
         from sage.homology.simplicial_complex import SimplicialComplex
         return SimplicialComplex(self.no_broken_circuits_sets(ordering))

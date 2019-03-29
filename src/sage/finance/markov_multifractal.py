@@ -79,6 +79,18 @@ class MarkovSwitchingMultifractal:
                 self.__gamma_kbar == other.__gamma_kbar and
                 self.__kbar == other.__kbar)
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1.0,0.95,3)
+            sage: H = hash(msm)
+        """
+        return hash((self.__m0, self.__sigma, self.__b, self.__gamma_kbar,
+                     self.__kbar))
+
     def __ne__(self, other):
         """
         Test inequality of ``self`` and ``other``.

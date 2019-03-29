@@ -212,7 +212,7 @@ SageTeXドキュメント
 厳密にはSageのインストール一式には含まれないものの，ここで
 SageTeXのドキュメントが ``SAGE_ROOT/local/share/doc/sagetex/sagetex.pdf`` に配置されていることに触れておきたい．
 同じディレクトリには例題ファイルと，これをLaTeXとSageTeXによってすでに組版処理した結果も用意されている(``example.tex`` と ``example.pdf`` を参照)．
-これらのファイルは `SageTeX bitbucket ページ <https://bitbucket.org/ddrake/sagetex/downloads>`_ からダンロードすることもできる．
+これらのファイルは `SageTeX ページ <https://github.com/sagemath/sagetex>`_ からダンロードすることもできる．
 
 
 

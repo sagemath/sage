@@ -316,12 +316,12 @@ class ResidueFieldFactory(UniqueFactory):
             elif not (is_NumberFieldIdeal(p) or p.ring() is ZZ):
                 raise NotImplementedError
         if isinstance(names, tuple):
-            if len(names) > 0:
+            if names:
                 names = str(names[0])
             else:
                 names = None
         if names is None and p.ring() is not ZZ:
-            names = '%sbar'%(p.ring().fraction_field().variable_name())
+            names = '%sbar' % p.ring().fraction_field().variable_name()
         key = (p, names, impl)
         return key, kwds
 
@@ -821,8 +821,8 @@ cdef class ReductionMap(Map):
             sage: k = P.residue_field()
             sage: k.reduction_map()
             Partially defined reduction map:
-              From: Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 2 (using NTL)
-              To:   Residue field in tbar of Principal ideal (t^7 + t^6 + t^5 + t^4 + 1) of Univariate Polynomial Ring in t over Finite Field of size 2 (using NTL)
+              From: Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
+              To:   Residue field in tbar of Principal ideal (t^7 + t^6 + t^5 + t^4 + 1) of Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
             sage: type(k)
             <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_givaro_with_category'>
         """
@@ -836,7 +836,7 @@ cdef class ReductionMap(Map):
         self._repr_type_str = "Partially defined reduction"
         Map.__init__(self, Hom(K, F, SetsWithPartialMaps()))
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -855,14 +855,15 @@ cdef class ReductionMap(Map):
             sage: r(2 + a) == cr(2 + a)
             True
         """
-        _slots['_K'] = self._K
-        _slots['_F'] = self._F
-        _slots['_to_vs'] = self._to_vs
-        _slots['_PBinv'] = self._PBinv
-        _slots['_to_order'] = self._to_order
-        _slots['_PB'] = self._PB
-        _slots['_section'] = self._section
-        return Map._extra_slots(self, _slots)
+        slots = Map._extra_slots(self)
+        slots['_K'] = self._K
+        slots['_F'] = self._F
+        slots['_to_vs'] = self._to_vs
+        slots['_PBinv'] = self._PBinv
+        slots['_to_order'] = self._to_order
+        slots['_PB'] = self._PB
+        slots['_section'] = self._section
+        return slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1037,8 +1038,8 @@ cdef class ReductionMap(Map):
             sage: f = k.convert_map_from(K)
             sage: f.section()
             Lifting map:
-              From: Residue field in a of Principal ideal (t^5 + t^2 + 1) of Univariate Polynomial Ring in t over Finite Field of size 2 (using NTL)
-              To:   Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 2 (using NTL)
+              From: Residue field in a of Principal ideal (t^5 + t^2 + 1) of Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
+              To:   Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
         """
         if self._section is None:
             self._section = LiftingMap(self, self._to_order, self._PB)
@@ -1120,7 +1121,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         self._repr_type_str = "Reduction"
         RingHomomorphism.__init__(self, Hom(K,F))
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1140,14 +1141,15 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
             sage: psi(OK.an_element()) == phi(OK.an_element())
             True
         """
-        _slots['_K'] = self._K
-        _slots['_F'] = self._F
-        _slots['_to_vs'] = self._to_vs
-        _slots['_PBinv'] = self._PBinv
-        _slots['_to_order'] = self._to_order
-        _slots['_PB'] = self._PB
-        _slots['_section'] = self._section
-        return RingHomomorphism._extra_slots(self, _slots)
+        slots = RingHomomorphism._extra_slots(self)
+        slots['_K'] = self._K
+        slots['_F'] = self._F
+        slots['_to_vs'] = self._to_vs
+        slots['_PBinv'] = self._PBinv
+        slots['_to_order'] = self._to_order
+        slots['_PB'] = self._PB
+        slots['_section'] = self._section
+        return slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1349,7 +1351,7 @@ cdef class LiftingMap(Section):
             sage: k.<a> = R.residue_field(h)
             sage: K = R.fraction_field()
             sage: L = k.lift_map(); L.codomain()
-            Univariate Polynomial Ring in t over Finite Field of size 2 (using NTL)
+            Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
         """
         self._K = reduction._K
         self._F = reduction._F   # finite field
@@ -1357,7 +1359,7 @@ cdef class LiftingMap(Section):
         self._PB = PB
         Section.__init__(self, reduction)
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1375,11 +1377,12 @@ cdef class LiftingMap(Section):
             sage: phi(F.0) == psi(F.0)
             True
         """
-        _slots['_K'] = self._K
-        _slots['_F'] = self._F
-        _slots['_to_order'] = self._to_order
-        _slots['_PB'] = self._PB
-        return Section._extra_slots(self, _slots)
+        slots = Section._extra_slots(self)
+        slots['_K'] = self._K
+        slots['_F'] = self._F
+        slots['_to_order'] = self._to_order
+        slots['_PB'] = self._PB
+        return slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -1610,11 +1613,12 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
         sage: k(1/t)
         3*a^11 + a^10 + 3*a^9 + 2*a^8 + 2*a^7 + a^6 + 4*a^5 + a^3 + 2*a^2 + a
     """
+
     def __init__(self, p, characteristic, name, modulus, to_vs, to_order, PB):
         """
         Initialize ``self``.
 
-        EXAMPLES::
+        EXAMPLES:
 
         We create a residue field with implementation ``pari_ffelt``::
 
@@ -1666,9 +1670,10 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
             2*a^11 + a^10 + 4*a^8 + 3*a^7 + 2*a^6 + a^5 + 4*a^3 + 3*a^2 + 2*a + 1
         """
         try:
-            return FiniteField_pari_ffelt._element_constructor_(self, x)
+            return self.element_class(self, x)
         except TypeError:
             return ResidueField_generic._element_constructor_(self, x)
+
 
 class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
     """

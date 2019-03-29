@@ -1,10 +1,16 @@
 r"""
 Interface to polymake
 
+polymake (https://polymake.org) is a mature open source package for
+research in polyhedral geometry and related fields, developed since 1997
+by Ewgenij Gawrilow and Michael Joswig and various contributors.
+
+polymake has been described in [GJ1997]_, [GJ2006]_, [JMP2009]_, [GJRW2010]_,
+[GHJ2016]_, and [AGHJLPR2017]_.
 """
 
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Simon King <simon.king@uni-jena.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -16,20 +22,20 @@ Interface to polymake
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+#                  hsttp://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
+import six
+from six.moves import range
+from six import reraise as raise_
 
 import os
 import re
 import sys
-import six
+import time
 
-from sage.structure.parent import Parent
-from .expect import console, Expect, ExpectElement, ExpectFunction, FunctionElement
+from .expect import Expect, ExpectElement, FunctionElement
 
-from sage.env import SAGE_EXTCODE, DOT_SAGE
 from sage.misc.misc import get_verbose
 from sage.misc.cachefunc import cached_method
 from sage.interfaces.tab_completion import ExtraTabCompletion
@@ -38,8 +44,6 @@ import pexpect
 from random import randrange
 
 from time import sleep
-from six.moves import range
-from six import reraise as raise_
 import warnings
 
 _name_pattern = re.compile('SAGE[0-9]+')
@@ -56,6 +60,7 @@ _available_polymake_answers = {
     8: "fails to respond timely"
         }
 
+
 class PolymakeError(RuntimeError):
     """
     Raised if polymake yields an error message.
@@ -69,6 +74,7 @@ class PolymakeError(RuntimeError):
 
     """
     pass
+
 
 def polymake_console(command=''):
     """
@@ -99,18 +105,19 @@ def polymake_console(command=''):
         raise RuntimeError('Can use the console only in the terminal. Try %%polymake magics instead.')
     os.system(command or os.getenv('SAGE_POLYMAKE_COMMAND') or 'polymake')
 
+
 class Polymake(ExtraTabCompletion, Expect):
     r"""
     Interface to the polymake interpreter.
 
     In order to use this interface, you need to either install the
     optional polymake package for Sage, or install polymake system-wide
-    on your computer.
+    on your computer; it is available from https://polymake.org.
 
     Type ``polymake.[tab]`` for a list of most functions
     available from your polymake install. Type
-    ``polymake.Function?`` for polymake's help about a given ``Function``
-    Type ``polymake(...)`` to create a new Magma
+    ``polymake.Function?`` for polymake's help about a given ``Function``.
+    Type ``polymake(...)`` to create a new polymake
     object, and ``polymake.eval(...)`` to run a string using
     polymake and get the result back as a string.
 
@@ -846,7 +853,7 @@ class Polymake(ExtraTabCompletion, Expect):
 
         When requesting help, polymake sometimes expect the user to choose
         from a list. In that situation, we abort with a warning, and show
-        the list from which the user can chose; we could demonstrate this using
+        the list from which the user can choose; we could demonstrate this using
         the :meth:`help` method, but here we use an explicit code evaluation::
 
             sage: print(polymake.eval('help "TRIANGULATION";'))     # optional - polymake # random
@@ -1192,7 +1199,7 @@ class Polymake(ExtraTabCompletion, Expect):
             raise ValueError("Unknown polymake application '{}'".format(app))
         self._application = app
         patterns = ["{} > ".format(app),            # 0: normal prompt
-                    "{} \([0-9]+\)> ".format(app),  # 1: continuation prompt
+                    r"{} \([0-9]+\)> ".format(app),  # 1: continuation prompt
                     "Please choose ".format(app),   # 2: user input expected when requesting "help"
                     "killed by signal",             # 3: what we are looking for when interrupting a computation
                     "polymake: +ERROR: +",          # 4: error
@@ -1257,7 +1264,6 @@ def reduce_load_Polymake():
 ########################################
 ## Elements
 
-from warnings import warn
 
 class PolymakeElement(ExtraTabCompletion, ExpectElement):
     """
@@ -1393,7 +1399,7 @@ class PolymakeElement(ExtraTabCompletion, ExpectElement):
                 out = P.get(name).strip()
         return out
 
-    def __cmp__(self, other):
+    def _cmp_(self, other):
         """
         Comparison of polymake elements.
 
@@ -1538,7 +1544,7 @@ class PolymakeElement(ExtraTabCompletion, ExpectElement):
         cmd = 'print join(", ", sorted_uniq(sort { $a cmp $b } map { keys %{$_->properties} }$SAGETMP, @{$SAGETMP->super}));'
         try:
             out = P.eval(cmd).split(', ')
-        except PolymakeError as msg:
+        except PolymakeError:
             return []
         return sorted(out)
 
@@ -1558,7 +1564,7 @@ class PolymakeElement(ExtraTabCompletion, ExpectElement):
         P = self._check_valid()
         try:
             return P.eval('print {}->type->name;'.format(self._name))
-        except PolymakeError as msg:
+        except PolymakeError:
             return ''
 
     def full_typename(self):
@@ -1577,7 +1583,7 @@ class PolymakeElement(ExtraTabCompletion, ExpectElement):
         P = self._check_valid()
         try:
             return P.eval('print {}->type->full_name;'.format(self._name))
-        except PolymakeError as msg:
+        except PolymakeError:
             return ''
 
     def qualified_typename(self):
@@ -1596,7 +1602,7 @@ class PolymakeElement(ExtraTabCompletion, ExpectElement):
         P = self._check_valid()
         try:
             return P.eval('print {}->type->qualified_name;'.format(self._name))
-        except PolymakeError as msg:
+        except PolymakeError:
             return ''
 
     def _tab_completion(self):
@@ -1804,9 +1810,9 @@ class PolymakeElement(ExtraTabCompletion, ExpectElement):
         _, T = self.typeof()
         if self._name.startswith('@'):
             return P('${}[{}]'.format(self._name[1:], key))
-        if T=='ARRAY':
+        if T == 'ARRAY':
             return P('{}[{}]'.format(self._name, key))
-        if T=='HASH':
+        if T == 'HASH':
             try:
                 if key.parent() is self.parent():
                     key = key._name
@@ -1814,7 +1820,7 @@ class PolymakeElement(ExtraTabCompletion, ExpectElement):
                     key = str(key)
             except AttributeError:
                 key = str(key)
-            return P(name+"{"+key+"}")
+            return P(self._name + "{" + key + "}")
         raise NotImplementedError("Cannot get items from Perl type {}".format(T))
 
     def __iter__(self):
@@ -1844,12 +1850,12 @@ class PolymakeElement(ExtraTabCompletion, ExpectElement):
 
         """
         P = self._check_valid()
-        T1,T2 = self.typeof()
+        T1, T2 = self.typeof()
         name = self._name
-        if T2=='ARRAY':
-            return int(P.eval('print scalar @{+%s};'%name))
-        if T2=='HASH':
-            return int(P.eval('print scalar keys %{+%s};'%name))
+        if T2 == 'ARRAY':
+            return int(P.eval('print scalar @{+%s};' % name))
+        if T2 == 'HASH':
+            return int(P.eval('print scalar keys %{+' + '%s};' % name))
         if T1:
             raise TypeError("Don't know how to compute the length of {} object".format(T1))
         return int(P.eval('print scalar {};'.format(name)))
@@ -1931,7 +1937,7 @@ class PolymakeElement(ExtraTabCompletion, ExpectElement):
 
         """
         T1, T2 = self.typeof()
-        P = self._check_valid()
+        self._check_valid()
         if T1:
             Temp = self.typename()
             if Temp:

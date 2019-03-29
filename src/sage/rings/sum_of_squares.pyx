@@ -195,7 +195,7 @@ def is_sum_of_two_squares_pyx(uint32_t n):
     EXAMPLES::
 
         sage: from sage.rings.sum_of_squares import is_sum_of_two_squares_pyx
-        sage: filter(is_sum_of_two_squares_pyx, range(30))
+        sage: [x for x in range(30) if is_sum_of_two_squares_pyx(x)]
         [0, 1, 2, 4, 5, 8, 9, 10, 13, 16, 17, 18, 20, 25, 26, 29]
 
         sage: is_sum_of_two_squares_pyx(2**32)

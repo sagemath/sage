@@ -264,7 +264,7 @@ r"""
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
-    sage: sg = P.subgroups();
+    sage: sg = P.subgroups()
     sage: [H.gens() for H in sg]
     [[()],
      [(2,3)],

@@ -2,12 +2,59 @@
 Variants of getattr()
 """
 
-from cpython.object cimport PyObject, Py_TYPE, descrgetfunc
+from cpython.object cimport PyObject, PyTypeObject, Py_TYPE, descrgetfunc
+
+from .string cimport bytes_to_str
 
 cdef extern from "Python.h":
-    # Internal API to look for a name through the MRO.
-    # This returns a borrowed reference, and doesn't set an exception!
-    PyObject* _PyType_Lookup(type t, name)
+    r"""
+    /* Coded in C because of substantial differences between Python 2
+     * and Python 3 and class internals need to be accessed. */
+    static PyObject*
+    instance_getattr(PyObject* obj, PyObject* name)
+    {
+        #if PY_MAJOR_VERSION < 3
+        if PyClass_Check(obj) {
+            PyClassObject* cp = (PyClassObject*)obj;
+            PyObject *value = PyDict_GetItem(cp->cl_dict, name);
+            Py_ssize_t n = PyTuple_GET_SIZE(cp->cl_bases);
+            for (Py_ssize_t i = 0; value == NULL && i < n; i++) {
+                value = instance_getattr(PyTuple_GetItem(cp->cl_bases, i), name);
+            }
+            return value;
+        }
+        #endif
+
+        if (PyType_Check(obj)) {
+            return _PyType_Lookup((PyTypeObject*)obj, name);
+        }
+
+        PyObject* dict;
+        #if PY_MAJOR_VERSION < 3
+        if PyInstance_Check(obj) {
+            dict = ((PyInstanceObject*)obj)->in_dict;
+        }
+        else
+        #endif
+        {
+            PyObject** dptr = _PyObject_GetDictPtr(obj);
+            if (dptr == NULL) return NULL;
+            dict = *dptr;
+        }
+        if (dict == NULL) return NULL;
+        return PyDict_GetItem(dict, name);
+    }
+    """
+
+    # Return the attribute "name" from "obj". This only looks up the
+    # attribute in the instance "obj" and not in obj.__class__.
+    # If "obj" is a class, this searches for the attribute in the base
+    # classes.
+    #
+    # Return a borrowed reference or NULL if the attribute was not found.
+    PyObject* instance_getattr(obj, name)
+
+    int PyDescr_IsData(PyObject*)
 
 
 cdef class AttributeErrorMessage:
@@ -37,51 +84,31 @@ cdef class AttributeErrorMessage:
     ::
 
         sage: from sage.cpython.getattr import AttributeErrorMessage
-        sage: AttributeErrorMessage(int(1),'bla')
+        sage: AttributeErrorMessage(int(1), 'bla')
         'int' object has no attribute 'bla'
 
     TESTS:
 
-    By :trac:`14100`, the attribute errors raised on elements and parents are
-    unique objects. The error message of this unique error object is changed
-    inplace. This is for reasons of efficiency. ::
+    The error message used for the ``AttributeError`` is a unique object
+    and is changed inplace. This is for reasons of efficiency.
+    Hence, if one really needs the error message as a string, then one should
+    make a copy of its string representation before it changes. ::
 
         sage: try:
         ....:     1.__bla
-        ....: except AttributeError as ElementError:
-        ....:     pass
+        ....: except AttributeError as exc:
+        ....:     ElementError = exc
         sage: ElementError
         AttributeError('sage.rings.integer.Integer' object has no attribute '__bla',)
         sage: try:
         ....:     x.__bla
-        ....: except AttributeError as ElementError2:
-        ....:     pass
-        sage: ElementError2 is ElementError
-        True
+        ....: except AttributeError as exc:
+        ....:     ElementError2 = exc
         sage: ElementError
         AttributeError('sage.symbolic.expression.Expression' object has no attribute '__bla',)
+        sage: ElementError2.args[0] is ElementError.args[0]
+        True
         sage: isinstance(ElementError.args[0], sage.cpython.getattr.AttributeErrorMessage)
-        True
-
-    Hence, if one really needs the error message as a string, then one should
-    make a copy of its string representation before it changes. Attribute
-    Errors of parents behave similarly::
-
-        sage: try:
-        ....:     QQ.__bla
-        ....: except AttributeError as ParentError:
-        ....:     pass
-        sage: ParentError
-        AttributeError('RationalField_with_category' object has no attribute '__bla',)
-        sage: try:
-        ....:     ZZ.__bla
-        ....: except AttributeError as ParentError2:
-        ....:     pass
-        sage: ParentError2 is ParentError
-        True
-        sage: ParentError2
-        AttributeError('sage.rings.integer_ring.IntegerRing_class' object has no attribute '__bla',)
-        sage: ParentError2 is ElementError
         True
 
     AUTHOR:
@@ -93,20 +120,132 @@ cdef class AttributeErrorMessage:
         self.name = name
 
     def __repr__(self):
-        cdef int dictoff = 1
-        try:
-            dictoff = self.cls.__dictoffset__
-        except AttributeError:
-            pass
-        if dictoff:
-            cls = repr(self.cls.__name__)
-        else:
-            cls = repr(self.cls)[6:-1]
-        return f"{cls} object has no attribute {self.name!r}"
+        cls = bytes_to_str((<PyTypeObject*>self.cls).tp_name, 'utf-8',
+                           'replace')
+        # Go directly through tp_name since __name__ can be overridden--this is
+        # almost verbatim how CPython formats this message except we don't cut
+        # off the class name after 50 characters, and non-strings are displayed
+        # with their repr :)
+        return f"'{cls}' object has no attribute {self.name!r}"
 
 
 cdef AttributeErrorMessage dummy_error_message = AttributeErrorMessage()
-cdef dummy_attribute_error = AttributeError(dummy_error_message)
+
+
+cpdef raw_getattr(obj, name):
+    """
+    Like ``getattr(obj, name)`` but without invoking the binding
+    behavior of descriptors under normal attribute access.
+    This can be used to easily get unbound methods or other
+    descriptors.
+
+    This ignores ``__getattribute__`` hooks but it does support
+    ``__getattr__``.
+
+    .. NOTE::
+
+        For Cython classes, ``__getattr__`` is actually implemented as
+        ``__getattribute__``, which means that it is not supported by
+        ``raw_getattr``.
+
+    EXAMPLES::
+
+        sage: class X:
+        ....:     @property
+        ....:     def prop(self):
+        ....:         return 42
+        ....:     def method(self):
+        ....:         pass
+        ....:     def __getattr__(self, name):
+        ....:         return "magic " + name
+        sage: raw_getattr(X, "prop")
+        <property object at ...>
+        sage: raw_getattr(X, "method")
+        <function ...method at ...>
+        sage: raw_getattr(X, "attr")
+        Traceback (most recent call last):
+        ...
+        AttributeError: '...' object has no attribute 'attr'
+        sage: x = X()
+        sage: raw_getattr(x, "prop")
+        <property object at ...>
+        sage: raw_getattr(x, "method")
+        <function ...method at ...>
+        sage: raw_getattr(x, "attr")
+        'magic attr'
+        sage: x.__dict__["prop"] = 'no'
+        sage: x.__dict__["method"] = 'yes'
+        sage: x.__dict__["attr"] = 'ok'
+        sage: raw_getattr(x, "prop")
+        <property object at ...>
+        sage: raw_getattr(x, "method")
+        'yes'
+        sage: raw_getattr(x, "attr")
+        'ok'
+
+    The same tests with an inherited new-style class::
+
+        sage: class Y(X, object):
+        ....:     pass
+        sage: raw_getattr(Y, "prop")
+        <property object at ...>
+        sage: raw_getattr(Y, "method")
+        <function ...method at ...>
+        sage: raw_getattr(Y, "attr")
+        Traceback (most recent call last):
+        ...
+        AttributeError: '...' object has no attribute 'attr'
+        sage: y = Y()
+        sage: raw_getattr(y, "prop")
+        <property object at ...>
+        sage: raw_getattr(y, "method")
+        <function ...method at ...>
+        sage: raw_getattr(y, "attr")
+        'magic attr'
+        sage: y.__dict__["prop"] = 'no'
+        sage: y.__dict__["method"] = 'yes'
+        sage: y.__dict__["attr"] = 'ok'
+        sage: raw_getattr(y, "prop")
+        <property object at ...>
+        sage: raw_getattr(y, "method")
+        'yes'
+        sage: raw_getattr(y, "attr")
+        'ok'
+    """
+    cdef PyObject* class_attr = NULL
+
+    try:
+        cls = obj.__class__
+    except AttributeError:
+        # Old-style classes don't have a __class__ (because these do
+        # not support metaclasses).
+        cls = None
+    else:
+        class_attr = instance_getattr(cls, name)
+
+        # We honor the order prescribed by the descriptor protocol:
+        # a data descriptor overrides instance attributes. In other
+        # cases, the instance attribute takes priority.
+        if class_attr is not NULL and PyDescr_IsData(class_attr):
+            return <object>class_attr
+
+    instance_attr = instance_getattr(obj, name)
+    if instance_attr is not NULL:
+        return <object>instance_attr
+    if class_attr is not NULL:
+        return <object>class_attr
+
+    if cls is not None:
+        try:
+            cls_getattr = cls.__getattr__
+        except AttributeError:
+            pass
+        else:
+            return cls_getattr(obj, name)
+
+    dummy_error_message.cls = type(obj)
+    dummy_error_message.name = name
+    raise AttributeError(dummy_error_message)
 
 
 cpdef getattr_from_other_class(self, cls, name):
@@ -193,7 +332,7 @@ cpdef getattr_from_other_class(self, cls, name):
 
         sage: "__weakref__" in dir(A)
         True
-        sage: "__weakref__" in dir(1)
+        sage: "__weakref__" in dir(1)  # py2
         False
         sage: 1.__weakref__
         Traceback (most recent call last):
@@ -227,9 +366,9 @@ cpdef getattr_from_other_class(self, cls, name):
 
     This does not work with an old-style class::
 
-        sage: class OldStyle:
+        sage: class OldStyle:  # py2 -- no 'old-style' classes in Python 3
         ....:     pass
-        sage: getattr_from_other_class(1, OldStyle, "foo")
+        sage: getattr_from_other_class(1, OldStyle, "foo")  # py2
         Traceback (most recent call last):
         ...
         TypeError: <class __main__.OldStyle at ...> is not a type
@@ -243,15 +382,16 @@ cpdef getattr_from_other_class(self, cls, name):
     """
     if not isinstance(cls, type):
         raise TypeError(f"{cls!r} is not a type")
+
     if isinstance(self, cls):
         dummy_error_message.cls = type(self)
         dummy_error_message.name = name
-        raise dummy_attribute_error
-    cdef PyObject* attr = _PyType_Lookup(<type>cls, name)
+        raise AttributeError(dummy_error_message)
+    cdef PyObject* attr = instance_getattr(cls, name)
     if attr is NULL:
         dummy_error_message.cls = type(self)
         dummy_error_message.name = name
-        raise dummy_attribute_error
+        raise AttributeError(dummy_error_message)
     attribute = <object>attr
     # Check for a descriptor (__get__ in Python)
     cdef descrgetfunc getter = Py_TYPE(attribute).tp_descr_get
@@ -268,7 +408,7 @@ cpdef getattr_from_other_class(self, cls, name):
         pass
     dummy_error_message.cls = type(self)
     dummy_error_message.name = name
-    raise dummy_attribute_error
+    raise AttributeError(dummy_error_message)
 
 
 def dir_with_other_class(self, cls):

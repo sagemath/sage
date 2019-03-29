@@ -691,19 +691,22 @@ dumps the user into an Octave interactive shell::
             Use octave to compute a solution x to A*x = b, as a list.
 
             INPUT:
-                A -- mxn matrix A with entries in QQ or RR
-                b -- m-vector b entries in QQ or RR (resp)
+            
+            - A -- mxn matrix A with entries in QQ or RR
+            - b -- m-vector b entries in QQ or RR (resp)
 
             OUTPUT:
-                An list x (if it exists) which solves M*x = b
 
-            EXAMPLES:
+            An list x (if it exists) which solves M*x = b
+
+            EXAMPLES::
+
                 sage: M33 = MatrixSpace(QQ,3,3)
                 sage: A   = M33([1,2,3,4,5,6,7,8,0])
                 sage: V3  = VectorSpace(QQ,3)
                 sage: b   = V3([1,2,3])
                 sage: octave.solve_linear_system(A,b)    # optional - octave
-                [-0.33333299999999999, 0.66666700000000001, -3.5236600000000002e-18]
+                [-0.333333, 0.666667, 0]
 
             AUTHOR: David Joyner and William Stein
             """

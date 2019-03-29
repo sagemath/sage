@@ -18,7 +18,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 
 class PrimeNumbers(UniqueRepresentation, Parent):
-    """
+    r"""
     An example of parent in the category of sets: the set of prime numbers.
 
     The elements are represented as plain integers in `\ZZ` (facade
@@ -558,7 +558,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
 
 #*************************************************************************#
 class PrimeNumbers_Facade(PrimeNumbers_Abstract):
-    """
+    r"""
     An example of parent in the category of sets: the set of prime numbers.
 
     In this alternative implementation, the elements are represented

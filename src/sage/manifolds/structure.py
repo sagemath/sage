@@ -8,11 +8,13 @@ AUTHORS:
 - Travis Scrimshaw (2015-11-25): Initial version
 - Eric Gourgoulhon (2015): add :class:`DifferentialStructure` and
   :class:`RealDifferentialStructure`
+- Eric Gourgoulhon (2018): add :class:`PseudoRiemannianStructure`,
+  :class:`RiemannianStructure` and :class:`LorentzianStructure`
 
 """
 
 #*****************************************************************************
-#       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#       Copyright (C) 2015, 2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Travis Scrimshaw <tscrimsh at umn.edu>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -58,8 +60,9 @@ class TopologicalStructure(Singleton):
         """
         return cat
 
+
 class RealTopologicalStructure(Singleton):
-    """
+    r"""
     The structure of a topological manifold over `\RR`.
     """
     chart = RealChart
@@ -107,8 +110,9 @@ class DifferentialStructure(Singleton):
         """
         return cat
 
+
 class RealDifferentialStructure(Singleton):
-    """
+    r"""
     The structure of a differentiable manifold over `\RR`.
     """
     chart = RealDiffChart
@@ -123,9 +127,81 @@ class RealDifferentialStructure(Singleton):
 
         EXAMPLES::
 
-            sage: from sage.manifolds.structure import DifferentialStructure
+            sage: from sage.manifolds.structure import RealDifferentialStructure
             sage: from sage.categories.manifolds import Manifolds
-            sage: DifferentialStructure().subcategory(Manifolds(RR))
+            sage: RealDifferentialStructure().subcategory(Manifolds(RR))
+            Category of manifolds over Real Field with 53 bits of precision
+
+        """
+        return cat
+
+class PseudoRiemannianStructure(Singleton):
+    """
+    The structure of a pseudo-Riemannian manifold.
+    """
+    chart = RealDiffChart
+    name = "pseudo-Riemannian"
+    scalar_field_algebra = DiffScalarFieldAlgebra
+    homset =  DifferentiableManifoldHomset
+
+    def subcategory(self, cat):
+        """
+        Return the subcategory of ``cat`` corresponding to the structure
+        of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.manifolds.structure import PseudoRiemannianStructure
+            sage: from sage.categories.manifolds import Manifolds
+            sage: PseudoRiemannianStructure().subcategory(Manifolds(RR))
+            Category of manifolds over Real Field with 53 bits of precision
+
+        """
+        return cat
+
+class RiemannianStructure(Singleton):
+    """
+    The structure of a Riemannian manifold.
+    """
+    chart = RealDiffChart
+    name = "Riemannian"
+    scalar_field_algebra = DiffScalarFieldAlgebra
+    homset =  DifferentiableManifoldHomset
+
+    def subcategory(self, cat):
+        """
+        Return the subcategory of ``cat`` corresponding to the structure
+        of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.manifolds.structure import RiemannianStructure
+            sage: from sage.categories.manifolds import Manifolds
+            sage: RiemannianStructure().subcategory(Manifolds(RR))
+            Category of manifolds over Real Field with 53 bits of precision
+
+        """
+        return cat
+
+class LorentzianStructure(Singleton):
+    """
+    The structure of a Lorentzian manifold.
+    """
+    chart = RealDiffChart
+    name = "Lorentzian"
+    scalar_field_algebra = DiffScalarFieldAlgebra
+    homset =  DifferentiableManifoldHomset
+
+    def subcategory(self, cat):
+        """
+        Return the subcategory of ``cat`` corresponding to the structure
+        of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.manifolds.structure import LorentzianStructure
+            sage: from sage.categories.manifolds import Manifolds
+            sage: LorentzianStructure().subcategory(Manifolds(RR))
             Category of manifolds over Real Field with 53 bits of precision
 
         """

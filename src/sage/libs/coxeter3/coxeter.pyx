@@ -797,7 +797,7 @@ cdef class CoxGroupElement:
 
     def __richcmp__(CoxGroupElement self, other, int op):
         """
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.libs.coxeter3.coxeter import *        # optional - coxeter3
             sage: W = CoxGroup(['A', 5])                          # optional - coxeter3

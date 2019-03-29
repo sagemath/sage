@@ -8,7 +8,7 @@ from .infinity import infinity, is_Infinite
 from sage.libs.all import PariError
 from .power_series_ring_element import is_PowerSeries
 from . import rational_field
-from .polynomial.multi_polynomial_ring_generic import is_MPolynomialRing
+from .polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 from . import power_series_poly
 
 cdef class PowerSeries_mpoly(PowerSeries):

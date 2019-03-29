@@ -20,7 +20,6 @@ import sage.misc.misc as misc
 import sage.modules.module
 from sage.structure.all import Sequence
 import sage.matrix.matrix_space as matrix_space
-from sage.structure.parent import Parent
 
 import sage.misc.prandom as random
 
@@ -132,9 +131,9 @@ class HeckeModule_generic(sage.modules.module.Module):
 
             sage: M = ModularForms(SL2Z, 24)
             sage: M._compute_hecke_matrix_prime_power(3, 3)
-            [    834385168339943471891603972970040        462582247568491031177169792000 3880421605193373124143717311013888000]
-            [                                    0                     -4112503986561480                  53074162446443642880]
-            [                                    0                         2592937954080                     -1312130996155080]
+            [                -4112503986561480              53074162446443642880                                 0]
+            [                    2592937954080                 -1312130996155080                                 0]
+            [                                0                                 0 834385168339943471891603972970040]
         """
         # convert input arguments to int's.
         (p,r) = (int(p), int(r))
@@ -154,7 +153,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         if eps is None:
             raise NotImplementedError("either character or _compute_hecke_matrix_prime_power must be overloaded in a derived class")
         k = self.weight()
-        Tpr2 = self._hecke_matrices[pow/p]
+        Tpr2 = self._hecke_matrices[pow // p]
         return Tp*Tpr1 - eps(p)*(p**(k-1)) * Tpr2
 
     def _compute_hecke_matrix_general_product(self, F, **kwds):
@@ -606,7 +605,6 @@ class HeckeModule_free_module(HeckeModule_generic):
             return self.__eigen_nonzero
         except AttributeError:
             pass
-        A = self.ambient_hecke_module()
         V = self.dual_free_module()
         B = V.basis()
         for i in range(V.degree()):
@@ -755,10 +753,37 @@ class HeckeModule_free_module(HeckeModule_generic):
         raise NotImplementedError
 
     def atkin_lehner_operator(self, d=None):
-        """
-        Return the Atkin-Lehner operator `W_d` on this space, if
-        defined, where `d` is a divisor of the level `N`
-        such that `N/d` and `d` are coprime.
+        r"""
+        Return the Atkin-Lehner operator `W_d` on this space, if defined, where
+        `d` is a divisor of the level `N` such that `N/d` and `d` are coprime.
+        If `d` is not given, we take `d = N`.  If `N/d` is not coprime to `d`,
+        then we replace `d` with the unique integer having this property which
+        has the same prime factors as `d`.
+
+        .. NOTE::
+
+            The operator `W_d` is given by the action of any matrix of the form
+
+            .. math::
+
+                W_d = \begin{pmatrix} dx & y \\ Nz & dw \end{pmatrix}
+
+            with `\det W_d = d` and such that `x = 1 \bmod N/d`, `y = 1 \bmod
+            d`, as in [AL1978]_. However, our definition of the weight `k`
+            action differs from theirs by a power of the determinant, so our
+            operator `W_d` is `d^{k/2 - 1}` times the operator of Atkin-Li. In
+            particular, if `k = 2` our conventions are identical to Atkin and
+            Li's.
+
+            With Sage's conventions, the operator `W_d` satisfies
+
+            .. math::
+
+                W_d^2 = d^{k - 2} \langle x^{-1} \rangle
+
+            where `x` is congruent to `d` modulo `N/d` and to `-1` modulo `d`.
+            In particular, the operator is an involution in weight 2 and
+            trivial character (but not in most other situations).
 
         EXAMPLES::
 
@@ -1026,8 +1051,9 @@ class HeckeModule_free_module(HeckeModule_generic):
         self.__is_splittable = len(D) > 1
         if anemic:
             self.__is_splittable_anemic = len(D) > 1
-
-        D.sort(key = None if not sort_by_basis else lambda ss: ss.free_module())
+        from sage.modules.free_module import EchelonMatrixKey
+        D.sort(key=None if not sort_by_basis
+                        else lambda ss: EchelonMatrixKey(ss.free_module()))
         D.set_immutable()
         self.__decomposition[key] = D
         for i in range(len(D)):
@@ -1187,8 +1213,8 @@ class HeckeModule_free_module(HeckeModule_generic):
         EXAMPLES::
 
             sage: CuspForms(1, 24).dual_hecke_matrix(5)
-            [     79345647584250/2796203 50530996976060416/763363419]
-            [    195556757760000/2796203     124970165346810/2796203]
+            [     44656110        -15040]
+            [-307849789440      28412910]
         """
         n = int(n)
         try:
@@ -1201,7 +1227,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         return self._dual_hecke_matrices[n]
 
     def eigenvalue(self, n, name='alpha'):
-        """
+        r"""
         Assuming that self is a simple space, return the eigenvalue of the
         `n^{th}` Hecke operator on self.
 
@@ -1422,8 +1448,8 @@ class HeckeModule_free_module(HeckeModule_generic):
             [-zeta4      0]
             [     0 -zeta4]
             sage: ModularSymbols(Gamma1(5), 3).diamond_bracket_matrix(3)
-            [ 0 -1  0  0]
-            [ 1  0  0  0]
+            [ 0  1  0  0]
+            [-1  0  0  0]
             [ 0  0  0  1]
             [ 0  0 -1  0]
         """
@@ -1605,9 +1631,11 @@ class HeckeModule_free_module(HeckeModule_generic):
             Modular Symbols subspace of dimension 3 of Modular Symbols space of dimension 5 for Gamma_0(53) of weight 2 with sign 1 over Rational Field
             sage: p = S.projection()
             sage: S.basis()
-            ((1,33) - (1,37), (1,35), (1,49))
+            ((1,43) - (1,45), (1,47), (1,50))
             sage: [ p(x) for x in S.basis() ]
-            [(1,33) - (1,37), (1,35), (1,49)]
+            [(1,43) - (1,45), (1,47), (1,50)]
+            sage: all([p(x)==x for x in S.basis()])
+            True
         """
 
         # Compute the Hecke-stable projection map pi from the ambient

@@ -1,16 +1,15 @@
 """
 Root system data for reducible Cartan types
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-2009 Daniel Bump
 #       Copyright (C) 2008-2009 Justin Walker
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
 
 from sage.misc.cachefunc import cached_method
 from sage.combinat.root_system.cartan_type import CartanType_abstract, CartanType_simple, CartanType_finite, CartanType_simply_laced, CartanType_crystallographic
@@ -35,12 +34,12 @@ class CartanType(SageObject, CartanType_abstract):
 
     INPUT:
 
-    - ``types`` - a list of simple Cartan types
+    - ``types`` -- a list of simple Cartan types
 
     EXAMPLES::
 
-        sage: [t1,t2]=[CartanType(x) for x in ['A',1],['B',2]]
-        sage: CartanType([t1,t2])
+        sage: t1, t2 = [CartanType(x) for x in (['A',1], ['B',2])]
+        sage: CartanType([t1, t2])
         A1xB2
         sage: t = CartanType("A2xB2")
 
@@ -58,7 +57,7 @@ class CartanType(SageObject, CartanType_abstract):
     super classes (see :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract._add_abstract_superclass`)::
 
         sage: t.__class__.mro()
-        [<class 'sage.combinat.root_system.type_reducible.CartanType_with_superclass'>, <class 'sage.combinat.root_system.type_reducible.CartanType'>, <type 'sage.structure.sage_object.SageObject'>, <class 'sage.combinat.root_system.cartan_type.CartanType_finite'>, <class 'sage.combinat.root_system.cartan_type.CartanType_crystallographic'>, <class 'sage.combinat.root_system.cartan_type.CartanType_abstract'>, <... 'object'>]
+        [<class 'sage.combinat.root_system.type_reducible.CartanType_with_superclass'>, <class 'sage.combinat.root_system.type_reducible.CartanType'>, <... 'sage.structure.sage_object.SageObject'>, <class 'sage.combinat.root_system.cartan_type.CartanType_finite'>, <class 'sage.combinat.root_system.cartan_type.CartanType_crystallographic'>, <class 'sage.combinat.root_system.cartan_type.CartanType_abstract'>, <... 'object'>]
 
     The index set of the reducible Cartan type is obtained by
     relabelling successively the nodes of the Dynkin diagrams of
@@ -163,9 +162,10 @@ class CartanType(SageObject, CartanType_abstract):
         r"""
         EXAMPLES::
 
-            sage: hash(CartanType(['A',1],['B',2]))
-            1110723648           # 32-bit
-            -6896789355307447232 # 64-bit
+            sage: ct0 = CartanType(['A',1],['B',2])
+            sage: ct1 = CartanType(['A',2],['B',3])
+            sage: hash(ct0) != hash(ct1)
+            True
         """
         return hash(repr(self._types))
 
@@ -234,7 +234,7 @@ class CartanType(SageObject, CartanType_abstract):
 
     @cached_method
     def index_set(self):
-        """
+        r"""
         Implements :meth:`CartanType_abstract.index_set`.
 
         For the moment, the index set is always of the form `\{1, \ldots, n\}`.
@@ -252,10 +252,6 @@ class CartanType(SageObject, CartanType_abstract):
         the Cartan matrix is a subdivided block matrix showing the
         reducibility but the subdivision can be suppressed with
         the option ``subdivide = False``.
-
-        .. TODO::
-
-            Currently ``subdivide`` is currently ignored.
 
         EXAMPLES::
 
@@ -566,8 +562,8 @@ class AmbientSpace(ambient_space.AmbientSpace):
             [(1, -1, 0, 0, 0), (0, 0, 1, -1, 0), (0, 0, 1, 0, -1), (0, 0, 0, 1, -1)]
         """
         res = []
-        for i, ambient_space in enumerate(self.ambient_spaces()):
-            res.extend(self.inject_weights(i, v) for v in ambient_space.positive_roots())
+        for i, ambient_sp in enumerate(self.ambient_spaces()):
+            res.extend(self.inject_weights(i, v) for v in ambient_sp.positive_roots())
         return res
 
     def negative_roots(self):
@@ -578,8 +574,8 @@ class AmbientSpace(ambient_space.AmbientSpace):
             [(-1, 1, 0, 0, 0), (0, 0, -1, 1, 0), (0, 0, -1, 0, 1), (0, 0, 0, -1, 1)]
         """
         ret = []
-        for i, ambient_space in enumerate(self.ambient_spaces()):
-            ret.extend(self.inject_weights(i, v) for v in ambient_space.negative_roots())
+        for i, ambient_sp in enumerate(self.ambient_spaces()):
+            ret.extend(self.inject_weights(i, v) for v in ambient_sp.negative_roots())
         return ret
 
     def fundamental_weights(self):
@@ -590,8 +586,8 @@ class AmbientSpace(ambient_space.AmbientSpace):
             Finite family {1: (1, 0, 0, 0, 0), 2: (1, 1, 0, 0, 0), 3: (0, 0, 0, 1, 0), 4: (0, 0, 0, 1/2, 1/2)}
         """
         fw = []
-        for i, ambient_space in enumerate(self.ambient_spaces()):
-            fw.extend(self.inject_weights(i, v) for v in ambient_space.fundamental_weights())
+        for i, ambient_sp in enumerate(self.ambient_spaces()):
+            fw.extend(self.inject_weights(i, v) for v in ambient_sp.fundamental_weights())
         return Family(dict([i,fw[i-1]] for i in range(1,len(fw)+1)))
 
 

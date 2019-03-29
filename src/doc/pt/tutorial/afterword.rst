@@ -113,7 +113,7 @@ se comporta diferentemente do Python em diversas situações.
        Rational Field
        sage: 2//3
        0
-       sage: int(2)/int(3)   # optional - python2
+       sage: int(2)/int(3)   # py2
        0
 
 -  **Inteiros longos:** O Python possui suporte nativo para inteiros

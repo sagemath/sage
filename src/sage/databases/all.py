@@ -10,7 +10,7 @@ This file gathers together all the tables in Sage.
     * JonesDatabase() -- returns the John Jones table of number fields
       with bounded ramification and degree <= 6.
 
-    * oeis -- The On-Line Encyclopedia of Integer Sequences (http://oeis.org/).
+    * oeis -- The On-Line Encyclopedia of Integer Sequences (https://oeis.org/).
 
     * SloaneEncyclopedia -- Local copy of Sloane On-Line Encyclopedia of
       Integer Sequences.
@@ -32,7 +32,7 @@ EXAMPLES::
     John Jones's table of number fields with bounded ramification and degree <= 6
 
     sage: oeis
-    The On-Line Encyclopedia of Integer Sequences (http://oeis.org/)
+    The On-Line Encyclopedia of Integer Sequences (https://oeis.org/)
 
     sage: SymbolicData()
     SymbolicData with ... ideals
@@ -58,7 +58,7 @@ from .jones import JonesDatabase
 
 from .stein_watkins import SteinWatkinsAllData, SteinWatkinsPrimeData
 
-from .sloane import sloane_sequence, sloane_find, SloaneEncyclopedia
+from .sloane import SloaneEncyclopedia
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.databases.oeis', 'oeis')

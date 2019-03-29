@@ -198,12 +198,18 @@ class ComplexField_class(ring.Field):
 
             sage: C = ComplexField(200)
             sage: C.category()
-            Join of Category of fields and Category of complete metric spaces
+            Join of Category of fields and Category of infinite sets and Category of complete metric spaces
             sage: TestSuite(C).run()
+
+            sage: CC.is_field()
+            True
+
+            sage: CC.is_finite()
+            False
         """
         self._prec = int(prec)
         from sage.categories.fields import Fields
-        ParentWithGens.__init__(self, self._real_field(), ('I',), False, category=Fields().Metric().Complete())
+        ParentWithGens.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite().Metric().Complete())
 #        self._populate_coercion_lists_()
         self._populate_coercion_lists_(coerce_list=[RRtoCC(self._real_field(), self)])
 
@@ -555,28 +561,6 @@ class ComplexField_class(ring.Field):
             raise IndexError("n must be 0")
         return ComplexNumber(self, 0, 1)
 
-    def is_field(self, proof = True):
-        """
-        Return ``True`` since the complex numbers are a field.
-
-        EXAMPLES::
-
-            sage: CC.is_field()
-            True
-        """
-        return True
-
-    def is_finite(self):
-        """
-        Return ``False`` since there are infinite number of complex numbers.
-
-        EXAMPLES::
-
-            sage: CC.is_finite()
-            False
-        """
-        return False
-
     def construction(self):
         """
         Returns the functorial construction of ``self``, namely the algebraic
@@ -769,9 +753,10 @@ class ComplexField_class(ring.Field):
         # factor it over the reals. To make sure it has complex coefficients we
         # multiply with I.
         I = R.base_ring().gen()
-        g = f*I if f.leading_coefficient()!=I else f
+        g = f * I if f.leading_coefficient() != I else f
 
         F = list(g._pari_with_name().factor())
 
         from sage.structure.factorization import Factorization
-        return Factorization([(R(g).monic(),e) for g,e in zip(*F)], f.leading_coefficient())
+        return Factorization([(R(gg).monic(), e) for gg, e in zip(*F)],
+                             f.leading_coefficient())

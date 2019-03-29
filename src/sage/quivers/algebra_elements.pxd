@@ -14,7 +14,7 @@ Cython types for elements of path algebras
 # is in algebra_elements.pxi, the implementation of the Python class is in
 # algebra_elements.pyx. The latter file also contains all doctests.
 
-from cpython cimport PyObject
+from cpython.object cimport PyObject
 from sage.data_structures.bounded_integer_sequences cimport *
 from sage.structure.element cimport RingElement, ModuleElement, Element
 from sage.quivers.paths cimport QuiverPath

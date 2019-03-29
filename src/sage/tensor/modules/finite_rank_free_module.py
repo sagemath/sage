@@ -1155,7 +1155,9 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             self._general_linear_group = FreeModuleLinearGroup(self)
         return self._general_linear_group
 
-    def basis(self, symbol, latex_symbol=None, from_family=None):
+    def basis(self, symbol, latex_symbol=None, from_family=None,
+              indices=None, latex_indices=None, symbol_dual=None,
+              latex_symbol_dual=None):
         r"""
         Define or return a basis of the free module ``self``.
 
@@ -1180,14 +1182,29 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``symbol`` -- string; a letter (of a few letters) to denote a generic
-          element of the basis
-        - ``latex_symbol`` -- (default: ``None``) string; symbol to denote a
-          generic element of the basis; if ``None``, the value of ``symbol``
-          is used
-        - ``from_family`` -- (default: ``None``) a tuple of `n` linearly
+        - ``symbol`` -- either a string, to be used as a common base for the
+          symbols of the elements of the basis, or a list/tuple of strings,
+          representing the individual symbols of the elements of the basis
+        - ``latex_symbol`` -- (default: ``None``) either a string, to be used
+          as a common base for the LaTeX symbols of the elements of the basis,
+          or a list/tuple of strings, representing the individual LaTeX symbols
+          of the elements of the basis; if ``None``, ``symbol`` is used in
+          place of ``latex_symbol``
+        - ``from_family`` -- (default: ``None``) tuple of `n` linearly
           independent elements of the free module ``self`` (`n` being the
           rank of ``self``)
+        - ``indices`` -- (default: ``None``; used only if ``symbol`` is a
+          single string) list/tuple of strings representing the indices
+          labelling the elements of the basis; if ``None``, the indices will be
+          generated as integers within the range declared on ``self``
+        - ``latex_indices`` -- (default: ``None``) list/tuple of strings
+          representing the indices for the LaTeX symbols of the elements of
+          the basis; if ``None``, ``indices`` is used instead
+        - ``symbol_dual`` -- (default: ``None``) same as ``symbol`` but for the
+          dual basis; if ``None``, ``symbol`` must be a string and is used
+          for the common base of the symbols of the elements of the dual basis
+        - ``latex_symbol_dual`` -- (default: ``None``) same as ``latex_symbol``
+          but for the dual basis
 
         OUTPUT:
 
@@ -1207,21 +1224,41 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: latex(e)
             \left(e_{0},e_{1},e_{2}\right)
 
-        The LaTeX symbol can be set explicitely, as the second argument of
-        :meth:`basis`::
+        The LaTeX symbol can be set explicitely::
 
-            sage: eps = M.basis('eps', r'\epsilon') ; eps
+            sage: eps = M.basis('eps', latex_symbol=r'\epsilon') ; eps
             Basis (eps_0,eps_1,eps_2) on the Rank-3 free module M
              over the Integer Ring
             sage: latex(eps)
             \left(\epsilon_{0},\epsilon_{1},\epsilon_{2}\right)
 
-        If the provided symbol is that of an already defined basis, the latter
-        is returned (no new basis is created)::
+        The indices can be customized::
+
+            sage: f = M.basis('f', indices=('x', 'y', 'z')); f
+            Basis (f_x,f_y,f_z) on the Rank-3 free module M over the Integer Ring
+            sage: latex(f[1])
+            f_{y}
+
+        By providing a list or a tuple for the argument ``symbol``, one can
+        have a different symbol for each element of the basis; it is then
+        mandatory to specify some symbols for the dual basis::
+
+            sage: g = M.basis(('a', 'b', 'c'), symbol_dual=('A', 'B', 'C')); g
+            Basis (a,b,c) on the Rank-3 free module M over the Integer Ring
+            sage: g.dual_basis()
+            Dual basis (A,B,C) on the Rank-3 free module M over the Integer Ring
+
+        If the provided symbol and indices are that of an already defined
+        basis, the latter is returned (no new basis is created)::
 
             sage: M.basis('e') is e
             True
             sage: M.basis('eps') is eps
+            True
+            sage: M.basis('e', indices=['x', 'y', 'z']) is e
+            False
+            sage: M.basis('e', indices=['x', 'y', 'z']) is \
+            ....:  M.basis('e', indices=['x', 'y', 'z'])
             True
 
         The individual elements of the basis are labelled according the
@@ -1273,9 +1310,12 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         """
         from .free_module_basis import FreeModuleBasis
         for other in self._known_bases:
-            if symbol == other._symbol:
+            if symbol == other._symbol and indices == other._indices:
                 return other
-        resu = FreeModuleBasis(self, symbol, latex_symbol)
+        resu = FreeModuleBasis(self, symbol, latex_symbol=latex_symbol,
+                               indices=indices, latex_indices=latex_indices,
+                               symbol_dual=symbol_dual,
+                               latex_symbol_dual=latex_symbol_dual)
         if from_family:
             n = self._rank
             if len(from_family) != n:
@@ -1455,7 +1495,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             4 e^0/\e^1 + 5 e^1/\e^2
 
         """
-        from .comp import CompWithSym, CompFullySym, CompFullyAntiSym
+        from .comp import CompWithSym, CompFullyAntiSym
         #
         # 0/ Compatibility checks:
         if comp._ring is not self._ring:
@@ -2473,7 +2513,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
 
     def endomorphism(self, matrix_rep, basis=None, name=None, latex_name=None):
         r"""
-        Contruct an endomorphism of the free module ``self``.
+        Construct an endomorphism of the free module ``self``.
 
         The returned object is a module morphism `\phi: M \rightarrow M`,
         where `M` is ``self``.

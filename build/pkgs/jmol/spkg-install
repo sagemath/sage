@@ -1,79 +1,60 @@
-if [ "$SAGE_ROOT" = "" ]; then
-   echo "SAGE_ROOT undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 SPKGDIR=`pwd`
-echo "Temporary package directory: $SPKGDIR"
-
-# Patches.  Comment out this section if there are none.
-if [ ! -d "$SPKGDIR"/patches ]; then
-   echo "Error finding patches directory. Exiting."
-   exit 1
-fi
 
 cd "$SPKGDIR/src"
 
-#pure javascript for web and java applet in separate /share/jsmol directory.
-if [ ! -d "$SAGE_LOCAL"/share/jsmol ]; then
-    echo "Directory "$SAGE_LOCAL"/share/jsmol does not exist.  Creating directory..."
-    mkdir -p "$SAGE_LOCAL"/share/jsmol
-else
-    echo "Deleting all files from "$SAGE_LOCAL"/share/jsmol/..."
-    rm -r "$SAGE_LOCAL"/share/jsmol/*
+# Cleanup of of previous installation
+if [ -d "$SAGE_LOCAL"/share/jsmol ]; then
+    echo "Deleting all files from $SAGE_LOCAL/share/jsmol/..."
+    rm -rf "$SAGE_LOCAL"/share/jsmol/*
     echo "Replacing jsmol directory and contents..."
 fi
 
-echo "Installing the JSmol files..."
-cp -r jsmol/* "$SAGE_LOCAL"/share/jsmol/
-if [ $? -ne 0 ]; then
-   echo "Error installing jmol files. Exiting."
-   exit 1
-fi
-
-# "install" the Jmol files...
-if [ ! -d "$SAGE_LOCAL"/share/jmol ]; then
-    echo "Directory "$SAGE_LOCAL"/share/jmol does not exist.  Creating directory..."
-    mkdir -p "$SAGE_LOCAL/share/jmol"
-else
-    echo "Deleting all files from "$SAGE_LOCAL"/share/jmol/..."
-    rm -r "$SAGE_LOCAL"/share/jmol/*
+if [ -d "$SAGE_LOCAL"/share/jmol ]; then
+    echo "Deleting all files from $SAGE_LOCAL/share/jmol/..."
+    rm -rf "$SAGE_LOCAL"/share/jmol/*
     echo "Replacing jmol directory and contents..."
 fi
 
+SAGE_DESTDIR_SHARE="$SAGE_DESTDIR_LOCAL/share"
+
+# Installation
+# pure javascript for web and java applet in separate /share/jsmol directory.
+if [ ! -d "$SAGE_DESTDIR_SHARE"/jsmol ]; then
+    echo -n "Directory $SAGE_DESTDIR_SHARE/jsmol does not exist.  "
+    echo "Creating directory..."
+    mkdir -p "$SAGE_DESTDIR_SHARE"/jsmol
+fi
+
+echo "Installing the JSmol files..."
+cp -r jsmol/* "$SAGE_DESTDIR_SHARE"/jsmol/ || \
+    sdh_die "Error installing jmol files. Exiting."
+#
 # Jsmol is stuck inside the jmol directory, remove
-rm -r "jsmol"
-if [ $? -ne 0 ]; then
-   echo "Error removing the contained jsmol files. Exiting."
-   exit 1
+rm -r "jsmol" || sdh_die "Error removing the contained jsmol files. Exiting."
+
+# "install" the Jmol files...
+if [ ! -d "$SAGE_DESTDIR_SHARE"/jmol ]; then
+    echo -n "Directory $SAGE_DESTDIR_SHARE/jmol does not exist.  "
+    echo "Creating directory..."
+    mkdir -p "$SAGE_DESTDIR_SHARE/jmol"
 fi
 
 echo "Installing the Jmol files..."
-cp -r * "$SAGE_LOCAL"/share/jmol/
-if [ $? -ne 0 ]; then
-   echo "Error installing jmol files. Exiting."
-   exit 1
+cp -r * "$SAGE_DESTDIR_SHARE"/jmol/ || \
+    sdh_die "Error installing jmol files. Exiting."
+
+if [ ! -d "$SAGE_DESTDIR_LOCAL"/bin ]; then
+    mkdir -p "$SAGE_DESTDIR_LOCAL"/bin
 fi
 
 echo "Install the Jmol launcher to bin/..."
-cp -f jmol "$SAGE_LOCAL"/bin/jmol && chmod ugo+x "$SAGE_LOCAL"/bin/jmol
-if [ $? -ne 0 ]; then
-   echo "Error installing the jmol launcher. Exiting."
-   exit 1
-fi
+cp -f "$SPKGDIR"/jmol "$SAGE_DESTDIR_LOCAL"/bin/jmol && \
+    chmod ugo+x "$SAGE_DESTDIR_LOCAL"/bin/jmol || \
+    sdh_die "Error installing the jmol launcher. Exiting."
 
 echo "Installing applet web directory"
-mkdir -p "$SAGE_LOCAL"/share/jmol/appletweb
-cp -r "$SPKGDIR"/patches/appletweb/* "$SAGE_LOCAL"/share/jmol/appletweb/
-if [ $? -ne 0 ]; then
-   echo "Error installing the applet web directory"
-   exit 1
-fi
+mkdir -p "$SAGE_DESTDIR_SHARE"/jmol/appletweb
+cp -r "$SPKGDIR"/appletweb/* "$SAGE_DESTDIR_SHARE"/jmol/appletweb/ || \
+    sdh_die "Error installing the applet web directory"
 
-if [ $? -ne 0 ]; then
-   echo "Error installing Jmol."
-   exit 1
-else
-   echo "New Jmol installed successfully."
-fi
+echo "New Jmol installed successfully."

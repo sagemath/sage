@@ -28,6 +28,7 @@ from __future__ import print_function, absolute_import
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.gsl.all cimport *
+from sage.misc.sageinspect import sage_getargspec
 from sage.ext.fast_eval cimport FastDoubleFunc
 
 
@@ -81,7 +82,9 @@ def numerical_integral(func, a, b=None,
 
     - ``max_points`` -- sets the maximum number of sample points
     - ``params`` -- used to pass parameters to your function
-    - ``eps_abs``, ``eps_rel`` -- absolute and relative error tolerances
+    - ``eps_abs``, ``eps_rel`` -- sets the absolute and relative error
+      tolerances which satisfies the relation ``|RESULT - I|  <= max(eps_abs,
+      eps_rel * |I|)``, where ``I = \int_a^b f(x) d x``.
     - ``rule`` -- This controls the Gauss-Kronrod rule used in the adaptive integration:
 
       * rule=1 -- 15 point rule
@@ -214,7 +217,12 @@ def numerical_integral(func, a, b=None,
     - Robert Bradshaw
     - Jeroen Demeyer
 
-    ALGORITHM: Uses calls to the GSL (GNU Scientific Library) C library.
+    ALGORITHM: Uses calls to the GSL (GNU Scientific Library) C library [GSL]_.
+
+    REFERENCES:
+
+    .. [GSL] GNU numerical integration.
+       https://www.gnu.org/software/gsl/manual/html_node/Numerical-Integration.html
 
     TESTS:
 
@@ -233,7 +241,6 @@ def numerical_integral(func, a, b=None,
         TypeError: unable to simplify to float approximation
    """
 
-   import inspect
    cdef double abs_err # step size
    cdef double result
    cdef int i
@@ -291,9 +298,9 @@ def numerical_integral(func, a, b=None,
       else:
          raise ValueError("No integrand defined")
       try:
-         if params==[] and len(inspect.getargspec(wrapper.the_function)[0])==1:
+         if params==[] and len(sage_getargspec(wrapper.the_function)[0])==1:
             wrapper.the_parameters=[]
-         elif params==[] and len(inspect.getargspec(wrapper.the_function)[0])>1:
+         elif params==[] and len(sage_getargspec(wrapper.the_function)[0])>1:
             raise ValueError("Integrand has parameters but no parameters specified")
          elif params!=[]:
             wrapper.the_parameters = params

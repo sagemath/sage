@@ -21,10 +21,3 @@ Home page: https://github.com/aaren/notedown
 * nbconvert
 * six
 * pandoc_attributes
-
-== Special Update/Build Instructions ==
-
-There are no release numbers, hence find the latest commit, download
-https://github.com/aaren/notedown/archive/${COMMIT}.zip and rename it
-notedown-${COMMIT:0:8}.zip
-

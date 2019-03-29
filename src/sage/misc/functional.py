@@ -727,6 +727,27 @@ def integral(x, *args, **kwds):
         sage: y = (x^2)*exp(x) / (1 + exp(x))^2
         sage: _ = integrate(y, x, -1000, 1000)
 
+    When SymPy cannot solve an integral it gives it back, so we must
+    be able to convert SymPy's ``Integral`` (:trac:`14723`)::
+
+        sage: x, y, z = var('x,y,z')
+        sage: f = function('f')
+        sage: integrate(f(x), x, algorithm='sympy')
+        integrate(f(x), x)
+        sage: integrate(f(x), x, 0, 1,algorithm='sympy')
+        integrate(f(x), x, 0, 1)
+        sage: integrate(integrate(integrate(f(x,y,z), x, algorithm='sympy'), y, algorithm='sympy'), z, algorithm='sympy')
+        integrate(integrate(integrate(f(x, y, z), x), y), z)
+        sage: integrate(sin(x)*tan(x)/(1-cos(x)), x, algorithm='sympy')
+        -integrate(sin(x)*tan(x)/(cos(x) - 1), x)
+        sage: _ = var('a,b,x')
+        sage: integrate(sin(x)*tan(x)/(1-cos(x)), x, a, b, algorithm='sympy')
+        -integrate(sin(x)*tan(x)/(cos(x) - 1), x, a, b)
+        sage: import sympy
+        sage: x, y, z = sympy.symbols('x y z')
+        sage: f = sympy.Function('f')
+        sage: SR(sympy.Integral(f(x,y,z), x, y, z))
+        integrate(integrate(integrate(f(x, y, z), x), y), z)
     """
     if hasattr(x, 'integral'):
         return x.integral(*args, **kwds)
@@ -778,8 +799,10 @@ def xinterval(a, b):
 
     EXAMPLES::
 
-        sage: I = xinterval(2,5); I
+        sage: I = xinterval(2,5); I  # py2
         xrange(2, 6)
+        sage: I = xinterval(2,5); I  # py3
+        range(2, 6)
         sage: 5 in I
         True
         sage: 6 in I
@@ -1081,7 +1104,7 @@ def norm(x):
 
     For complex numbers, the function returns the field norm. If
     `c = a + bi` is a complex number, then the norm of `c` is defined as the
-    product of `c` and its complex conjugate
+    product of `c` and its complex conjugate:
 
     .. MATH::
 
@@ -1099,6 +1122,13 @@ def norm(x):
     integral domain `\ZZ[i]` of Gaussian integers, where the norm of
     each Gaussian integer `c = a + bi` is defined as its complex norm.
 
+    For vector fields on a pseudo-Riemannian manifold `(M,g)`, the function
+    returns the norm with respect to the metric `g`:
+
+    .. MATH::
+
+        |v| = \sqrt{g(v,v)}
+
     .. SEEALSO::
 
         - :meth:`sage.matrix.matrix2.Matrix.norm`
@@ -1110,6 +1140,8 @@ def norm(x):
         - :meth:`sage.rings.complex_number.ComplexNumber.norm`
 
         - :meth:`sage.symbolic.expression.Expression.norm`
+
+        - :meth:`sage.manifolds.differentiable.vectorfield.VectorField.norm`
 
     EXAMPLES:
 

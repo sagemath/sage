@@ -123,7 +123,7 @@ class GenericCellComplex(SageObject):
         the keys are integers, representing dimension, and the value
         associated to an integer `d` is the set of `d`-cells.  If the
         optional argument ``subcomplex`` is present, then return only
-        the faces which are *not* in the subcomplex.
+        the cells which are *not* in the subcomplex.
 
         :param subcomplex: a subcomplex of this cell complex.  Return
            the cells which are not in this subcomplex.
@@ -179,7 +179,7 @@ class GenericCellComplex(SageObject):
         """
         List of cells of dimension ``n`` of this cell complex.
         If the optional argument ``subcomplex`` is present, then
-        return the ``n``-dimensional faces which are *not* in the
+        return the ``n``-dimensional cells which are *not* in the
         subcomplex.
 
         :param n: the dimension
@@ -187,6 +187,11 @@ class GenericCellComplex(SageObject):
         :param subcomplex: a subcomplex of this cell complex. Return
            the cells which are not in this subcomplex.
         :type subcomplex: optional, default ``None``
+
+        .. NOTE::
+
+            The resulting list need not be sorted. If you want a sorted
+            list of `n`-cells, use :meth:`_n_cells_sorted`.
 
         EXAMPLES::
 
@@ -200,6 +205,40 @@ class GenericCellComplex(SageObject):
         else:
             # don't barf if someone asks for n_cells in a dimension where there are none
             return []
+
+    def _n_cells_sorted(self, n, subcomplex=None):
+        """
+        Sorted list of cells of dimension ``n`` of this cell complex.
+        If the optional argument ``subcomplex`` is present, then
+        return the ``n``-dimensional cells which are *not* in the
+        subcomplex.
+
+        :param n: the dimension
+        :type n: non-negative integer
+        :param subcomplex: a subcomplex of this cell complex. Return
+           the cells which are not in this subcomplex.
+        :type subcomplex: optional, default ``None``
+
+        EXAMPLES::
+
+            sage: S = Set(range(1,5))
+            sage: Z = SimplicialComplex(S.subsets())
+            sage: Z
+            Simplicial complex with vertex set (1, 2, 3, 4) and facets {(1, 2, 3, 4)}
+            sage: Z._n_cells_sorted(2)
+            [(1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4)]
+            sage: K = SimplicialComplex([[1,2,3], [2,3,4]])
+            sage: Z._n_cells_sorted(2, subcomplex=K)
+            [(1, 2, 4), (1, 3, 4)]
+            sage: S = SimplicialComplex([[complex(i), complex(1)]])
+            sage: S._n_cells_sorted(0)
+            [((1+0j),), (1j,)]
+        """
+        n_cells = self.n_cells(n, subcomplex)
+        try:
+            return sorted(n_cells)
+        except TypeError:
+            return sorted(n_cells, key=str)
 
     def f_vector(self):
         """
@@ -758,7 +797,7 @@ class GenericCellComplex(SageObject):
             sage: list(simplicial_complexes.Sphere(2).n_chains(1, QQ, cochains=True).basis())
             [\chi_(0, 1), \chi_(0, 2), \chi_(0, 3), \chi_(1, 2), \chi_(1, 3), \chi_(2, 3)]
         """
-        n_cells = tuple(self.n_cells(n))
+        n_cells = tuple(self._n_cells_sorted(n))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)
         else:
@@ -1016,8 +1055,8 @@ class GenericCellComplex(SageObject):
 
             sage: P = SimplicialComplex([[0, 1], [1,2], [2,3]]).face_poset(); P
             Finite poset containing 7 elements
-            sage: P.list()
-            [(3,), (2,), (2, 3), (1,), (1, 2), (0,), (0, 1)]
+            sage: sorted(P.list())
+            [(0,), (0, 1), (1,), (1, 2), (2,), (2, 3), (3,)]
 
             sage: S2 = cubical_complexes.Sphere(2)
             sage: S2.face_poset()
@@ -1064,7 +1103,7 @@ class GenericCellComplex(SageObject):
 
             sage: V = SimplicialComplex([[0,1,2],[3]])
             sage: V
-            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (3,)}
+            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(3,), (0, 1, 2)}
             sage: V.is_connected()
             False
             sage: X = SimplicialComplex([[0,1,2]])

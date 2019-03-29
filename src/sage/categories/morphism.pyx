@@ -28,8 +28,10 @@ import operator
 
 
 
-from sage.structure.element cimport Element
+from sage.structure.element cimport Element, ModuleElement
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
+from sage.structure.parent cimport Parent
+
 
 def is_Morphism(x):
     return isinstance(x, Morphism)
@@ -218,22 +220,14 @@ cdef class Morphism(Map):
             sage: h = R.hom([t2])
             sage: h.is_identity()
             False
-
-        AUTHOR:
-
-        - Xavier Caruso (2012-06-29)
         """
-        domain = self.domain()
-        if domain != self.codomain():
-            return False
         try:
-            gens = domain.gens()
-            for x in gens:
-                if self(x) != x:
-                    return False
-            return True
-        except AttributeError:
-            raise NotImplementedError
+            i = self._parent.identity()
+        except TypeError:
+            # If there is no identity morphism,
+            # then self cannot be equal to it.
+            return False
+        return self._richcmp_(i, Py_EQ)
 
     def pushforward(self, I):
         raise NotImplementedError
@@ -295,21 +289,15 @@ cdef class Morphism(Map):
             sage: S = SymmetricGroup(4)
             sage: phi = Hom(S, ZZ)(lambda x: ZZ(x.sign()))
             sage: x = S.an_element(); x
-            (1,2,3,4)
+            (2,3,4)
             sage: phi(x)
-            -1
+            1
             sage: phi.register_as_conversion()
             sage: ZZ(x)
-            -1
+            1
         """
         self._codomain.register_conversion(self)
 
-    # You *must* override this method in all cython classes
-    # deriving from this class.
-    # If you are happy with this implementation (typically
-    # is your domain has generators), simply write:
-    # def __hash__(self):
-    #     return Morphism.__hash__(self)
     def __hash__(self):
         """
         Return a hash of this morphism.
@@ -335,29 +323,58 @@ cdef class Morphism(Map):
             definition = repr(self)
         return hash((domain, codomain, definition))
 
-    cpdef _richcmp_(left, right, int op):
-        if left is right:
+    cpdef _richcmp_(self, other, int op):
+        """
+        Generic comparison function for morphisms.
+
+        We check the images of the generators of the domain under both
+        maps. We then iteratively check the base.
+
+        TESTS::
+
+            sage: from sage.categories.morphism import SetMorphism
+            sage: E = End(Partitions(5))
+            sage: f = E.identity()
+            sage: g = SetMorphism(E, lambda x:x)
+            sage: f == g
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: unable to compare morphisms of type <... 'sage.categories.morphism.IdentityMorphism'> and <... 'sage.categories.morphism.SetMorphism'> with domain Partitions of the integer 5
+        """
+        if self is other:
             return rich_to_bool(op, 0)
-        if not isinstance(right, Morphism):
-            return NotImplemented
-        ldomain = left.domain()
-        rdomain = right.domain()
-        if ldomain != rdomain:
-            return richcmp_not_equal(ldomain, rdomain, op)
-        lcodomain = left.codomain()
-        rcodomain = right.codomain()
-        if lcodomain != rcodomain:
-            return richcmp_not_equal(lcodomain, rcodomain, op)
-        try:
-            gens = ldomain.gens()
-            for x in gens:
-                lx = left(x)
-                rx = right(x)
-                if lx != rx:
-                    return richcmp_not_equal(lx, rx, op)
-            return rich_to_bool(op, 0)
-        except (AttributeError, NotImplementedError):
-            return NotImplemented
+
+        # Important note: because of the coercion model, we know that
+        # self and other have identical parents. This means that self
+        # and other have the same domain and codomain.
+
+        cdef Parent domain = <Parent?>self.domain()
+        e = None
+        while True:
+            try:
+                m = domain.gens
+            except AttributeError:
+                raise NotImplementedError(f"unable to compare morphisms of type {type(self)} and {type(other)} with domain {domain}")
+            gens = m()
+            # If e is a ModuleElement, then this is not the first
+            # iteration and we are really in the base structure.
+            #
+            # If so, we see the base as a ring of scalars and create new
+            # gens by picking an element of the initial domain (e) and
+            # multiplying it with the gens of the scalar ring.
+            if e is not None and isinstance(e, ModuleElement):
+                gens = [(<ModuleElement>e)._lmul_(x) for x in gens]
+            for e in gens:
+                x = self(e)
+                y = other(e)
+                if x != y:
+                    return richcmp_not_equal(x, y, op)
+            # Check base
+            base = domain._base
+            if base is None or base is domain:
+                break
+            domain = <Parent?>base
+        return rich_to_bool(op, 0)
 
     def __nonzero__(self):
         r"""
@@ -366,7 +383,7 @@ cdef class Morphism(Map):
         .. NOTE::
 
             Be careful when overriding this method. Often morphisms are used
-            (incorrecly) in constructs such as ``if f: # do something`` where
+            (incorrectly) in constructs such as ``if f: # do something`` where
             the author meant to write ``if f is not None: # do something``.
             Having morphisms return ``False`` here can therefore lead to subtle
             bugs.
@@ -381,7 +398,10 @@ cdef class Morphism(Map):
         try:
             return self._is_nonzero()
         except Exception:
-            return super(Morphism, self).__nonzero__()
+            if PY_MAJOR_VERSION < 3:
+                return super(Morphism, self).__nonzero__()
+            else:
+                return super().__bool__()
 
 
 cdef class FormalCoercionMorphism(Morphism):
@@ -423,6 +443,8 @@ cdef class IdentityMorphism(Morphism):
             return x
         cdef Parent C = self._codomain
         if C._element_init_pass_parent:
+            from sage.misc.superseded import deprecation
+            deprecation(26879, "_element_init_pass_parent=True is deprecated. This probably means that _element_constructor_ should be a method and not some other kind of callable")
             return C._element_constructor(C, x, *args, **kwds)
         else:
             return C._element_constructor(x, *args, **kwds)
@@ -439,10 +461,43 @@ cdef class IdentityMorphism(Morphism):
         else:
             return left
 
-    def __pow__(self, n, dummy):
+    cpdef _pow_int(self, n):
         return self
 
     def __invert__(self):
+        return self
+
+    def is_identity(self):
+        """
+        Return ``True`` if this morphism is the identity morphism.
+
+        EXAMPLES::
+
+            sage: E = End(Partitions(5))
+            sage: E.identity().is_identity()
+            True
+
+        Check that :trac:`15478` is fixed::
+
+            sage: K.<z> = GF(4)
+            sage: phi = End(K)([z^2])
+            sage: R.<t> = K[]
+            sage: psi = End(R)(phi)
+            sage: psi.is_identity()
+            False
+        """
+        return True
+
+    def section(self):
+        """
+        Return a section of this morphism.
+
+        EXAMPLES::
+
+            sage: T = Hom(ZZ, ZZ).identity()
+            sage: T.section() is T
+            True
+        """
         return self
 
     def is_surjective(self):
@@ -466,6 +521,7 @@ cdef class IdentityMorphism(Morphism):
             True
         """
         return True
+
 
 cdef class SetMorphism(Morphism):
     def __init__(self, parent, function):
@@ -534,7 +590,7 @@ cdef class SetMorphism(Morphism):
         except Exception:
             raise TypeError("Underlying map %s does not accept additional arguments" % type(self._function))
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         INPUT:
 
@@ -545,16 +601,16 @@ cdef class SetMorphism(Morphism):
         EXAMPLES::
 
             sage: f = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()), operator.__abs__)
-            sage: f._extra_slots_test({"bla":1})
+            sage: f._extra_slots_test()
             {'_codomain': Integer Ring,
              '_domain': Integer Ring,
              '_function': <built-in function __abs__>,
              '_is_coercion': False,
-             '_repr_type_str': None,
-             'bla': 1}
+             '_repr_type_str': None}
         """
-        _slots['_function'] = self._function
-        return Map._extra_slots(self, _slots)
+        slots = Map._extra_slots(self)
+        slots['_function'] = self._function
+        return slots
 
     cdef _update_slots(self, dict _slots):
         """

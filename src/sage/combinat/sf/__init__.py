@@ -20,6 +20,7 @@ Symmetric Functions
 - :ref:`sage.combinat.sf.orthotriang`
 - :ref:`sage.combinat.sf.kfpoly`
 - :ref:`sage.combinat.sf.hall_littlewood`
+- :ref:`sage.combinat.sf.hecke`
 - :ref:`sage.combinat.sf.jack`
 - :ref:`k-Schur Functions <sage.combinat.sf.new_kschur>`
 - :ref:`sage.combinat.sf.k_dual`

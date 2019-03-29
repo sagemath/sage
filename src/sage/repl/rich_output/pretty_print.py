@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-"""
+r"""
 The ``pretty_print`` command.
 
 Works similar to the ``print`` function, except that it always tries
@@ -41,7 +41,7 @@ from sage.repl.rich_output import get_display_manager
 class SequencePrettyPrinter(SageObject):
 
     def __init__(self, *args, **kwds):
-        """
+        r"""
         Pretty Printer for Muliple Arguments.
 
         INPUT/OUTPUT:
@@ -234,7 +234,7 @@ def pretty_print(*args, **kwds):
     
 
 def show(*args, **kwds):
-    """
+    r"""
     Alias for ``pretty_print``
 
     This function is an alias for :meth:`pretty_print`.

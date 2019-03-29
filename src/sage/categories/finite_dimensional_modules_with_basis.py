@@ -477,7 +477,11 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             on_basis = self.on_basis()
             basis_keys = self.domain().basis().keys()
             from sage.matrix.matrix_space import MatrixSpace
-            MS = MatrixSpace(base_ring, basis_keys.cardinality(), self.codomain().dimension())
+            if isinstance(basis_keys, list):
+                nrows = len(basis_keys)
+            else:
+                nrows = basis_keys.cardinality()
+            MS = MatrixSpace(base_ring, nrows, self.codomain().dimension())
             m = MS([on_basis(x)._vector_() for x in basis_keys])
             if side == "left":
                 m = m.transpose()

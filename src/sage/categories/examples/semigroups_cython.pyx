@@ -1,37 +1,13 @@
 r"""
 Examples of semigroups in cython
 """
-from sage.structure.parent import Parent
+
+from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.categories.all import Category, Semigroups
-from sage.misc.cachefunc import cached_method
 from sage.categories.examples.semigroups import LeftZeroSemigroup as LeftZeroSemigroupPython
 from cpython.object cimport PyObject_RichCompare
 
-
-cdef class IdempotentSemigroupsElementMethods:
-    def _pow_(self, i):
-        """
-        EXAMPLES::
-
-            sage: from sage.categories.examples.semigroups_cython import LeftZeroSemigroup
-            sage: S = LeftZeroSemigroup()
-            sage: S(2)._pow_(3) # todo: not implemented (binding; see __getattr__)
-            2
-        """
-        assert i > 0
-        return self
-
-    cpdef is_idempotent_cpdef(self):
-        """
-        EXAMPLES::
-
-            sage: from sage.categories.examples.semigroups_cython import LeftZeroSemigroup
-            sage: S = LeftZeroSemigroup()
-            sage: S(2).is_idempotent_cpdef()  # todo: not implemented (binding; see __getattr__)
-            True
-        """
-        return True
 
 class IdempotentSemigroups(Category):
     def super_categories(self):
@@ -44,7 +20,29 @@ class IdempotentSemigroups(Category):
         """
         return [Semigroups()]
 
-    ElementMethods = IdempotentSemigroupsElementMethods
+    class ElementMethods:
+        def _pow_int(self, i):
+            """
+            EXAMPLES::
+
+                sage: from sage.categories.examples.semigroups_cython import LeftZeroSemigroup
+                sage: S = LeftZeroSemigroup()
+                sage: S(2)._pow_int(3)
+                2
+            """
+            assert i > 0
+            return self
+
+        def is_idempotent(self):
+            """
+            EXAMPLES::
+
+                sage: from sage.categories.examples.semigroups_cython import LeftZeroSemigroup
+                sage: S = LeftZeroSemigroup()
+                sage: S(2).is_idempotent()
+                True
+            """
+            return True
 
 
 cdef class LeftZeroSemigroupElement(Element):
@@ -101,11 +99,7 @@ cdef class LeftZeroSemigroupElement(Element):
         right = (<LeftZeroSemigroupElement>other)._value
         return PyObject_RichCompare(left, right, op)
 
-    # Apparently, python looks for __mul__, __pow__, ... in the
-    # class of self rather than in self itself. No big deal, since
-    # those will usually be defined in a cython super class of
-    # this class
-    def __mul__(self, other):
+    cpdef _mul_(self, other):
         """
         EXAMPLES::
 
@@ -113,15 +107,6 @@ cdef class LeftZeroSemigroupElement(Element):
             sage: S = LeftZeroSemigroup()
             sage: S(2) * S(3)
             2
-        """
-        return self._mul_(other)
-
-    cpdef _mul_(self, other):
-        """
-        EXAMPLES::
-
-            sage: from sage.categories.examples.semigroups_cython import LeftZeroSemigroup
-            sage: S = LeftZeroSemigroup()
             sage: S(2)._mul_(S(3))
             2
         """
@@ -133,9 +118,11 @@ cdef class LeftZeroSemigroupElement(Element):
 
             sage: from sage.categories.examples.semigroups_cython import LeftZeroSemigroup
             sage: S = LeftZeroSemigroup()
-            sage: S(2)^3  # todo: not implemented (binding; see __getattr__)
+            sage: S(2)^3
+            2
         """
-        return self._pow_(i)
+        return self._pow_int(i)
+
 
 class LeftZeroSemigroup(LeftZeroSemigroupPython):
     r"""
@@ -143,14 +130,12 @@ class LeftZeroSemigroup(LeftZeroSemigroupPython):
 
     This class illustrates a minimal implementation of a semi-group
     where the element class is an extension type, and still gets code
-    from the category. Also, the category itself includes some cython
-    methods.
+    from the category. The category itself must be a Python class
+    though.
 
     This is purely a proof of concept. The code obviously needs refactorisation!
 
     Comments:
-
-    - nested classes seem not to be currently supported by Cython
 
     - one cannot play ugly class surgery tricks (as with _mul_parent).
       available operations should really be declared to the coercion model!
@@ -174,7 +159,7 @@ class LeftZeroSemigroup(LeftZeroSemigroupPython):
         sage: S(3)*S(1)*S(2)
         3
 
-        sage: S(3)^12312321312321         # todo: not implemented (see __getattr__)
+        sage: S(3)^12312321312321
         3
 
         sage: TestSuite(S).run(verbose = True)
@@ -207,14 +192,14 @@ class LeftZeroSemigroup(LeftZeroSemigroupPython):
         sage: S(42).is_idempotent()
         True
 
-        sage: S(42)._pow_                 # todo: not implemented (how to bind it?)
-        <method '_pow_' of 'sage.categories.examples.semigroups_cython.IdempotentSemigroupsElement' objects>
-        sage: S(42)^10                    # todo: not implemented (see __getattr__)
+        sage: S(42)._pow_int
+        <bound method IdempotentSemigroups.element_class._pow_int of 42>
+        sage: S(42)^10
         42
 
-        sage: S(42).is_idempotent_cpdef   #  todo: not implemented (how to bind it?)
-        <method 'is_idempotent_cpdef' of 'sage.categories.examples.semigroups_cython.IdempotentSemigroupsElement' objects>
-        sage: S(42).is_idempotent_cpdef() # todo: not implemented (see __getattr__)
+        sage: S(42).is_idempotent
+        <bound method IdempotentSemigroups.element_class.is_idempotent of 42>
+        sage: S(42).is_idempotent()
         True
     """
 

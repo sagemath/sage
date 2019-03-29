@@ -167,7 +167,6 @@ macros = [["ZZ"],
           ["RDF"],
           ["RIF"],
           ["RLF"],
-          ["CFF"],
           ]
 
 # The following is to allow customization of typesetting of rings:

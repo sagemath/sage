@@ -79,8 +79,9 @@ With power series the behavior is the same.
     x
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
+#                     2017 Vincent Delecroix <20100.delecroix@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -91,13 +92,16 @@ With power series the behavior is the same.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 
 import operator
 
 from .infinity import infinity, is_Infinite
+
+from sage.rings.rational_field import QQ
+
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.rings.polynomial.polynomial_element
 import sage.misc.misc
@@ -107,7 +111,6 @@ from . import rational_field
 from . import integer_ring
 from .integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.misc.superseded import deprecated_function_alias, deprecation
 from warnings import warn
 
 from sage.categories.fields import Fields
@@ -287,7 +290,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.change_ring(GF(3))
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Inverse does not exist.
+            ZeroDivisionError: inverse of Mod(0, 3) does not exist
 
         We can only change the ring if there is a ``__call__`` coercion
         defined. The following succeeds because ``ZZ(K(4))`` is defined.
@@ -467,6 +470,36 @@ cdef class PowerSeries(AlgebraElement):
         """
         raise NotImplementedError
 
+    def lift_to_precision(self, absprec=None):
+        """
+        Return a congruent power series with absolute precision at least
+        ``absprec``.
+
+        INPUT:
+
+        - ``absprec`` -- an integer or ``None`` (default: ``None``), the
+          absolute precision of the result. If ``None``, lifts to an exact
+          element.
+
+        EXAMPLES::
+
+            sage: A.<t> = PowerSeriesRing(GF(5))
+            sage: x = t + t^2 + O(t^5)
+            sage: x.lift_to_precision(10)
+            t + t^2 + O(t^10)
+            sage: x.lift_to_precision()
+            t + t^2
+
+        """
+        if absprec is not None and absprec <= self.precision_absolute():
+            return self
+
+        exact = self._parent(self.list())
+        if absprec is None:
+            return exact
+        else:
+            return exact.add_bigoh(absprec)
+
     def __copy__(self):
         """
         Return this power series. Power series are immutable so copy can
@@ -641,8 +674,7 @@ cdef class PowerSeries(AlgebraElement):
             f = self.polynomial()
             m = f.degree() + 1
             d = f._dict_unsafe()
-            coeffs = list(d.iteritems())
-            coeffs.sort()
+            coeffs = sorted(d.items())
             for (n, x) in coeffs:
                 x = repr(x)
                 if x != '0':
@@ -1035,32 +1067,6 @@ cdef class PowerSeries(AlgebraElement):
             num = self
         return num*inv
 
-    cpdef _floordiv_(self, denom):
-        """
-        Euclidean division (over fields) or ordinary division (over
-        other rings; deprecated).
-
-        EXAMPLES::
-
-            sage: A.<q> = GF(7)[[]]
-            sage: (q^2 - 1) // (q + 1)
-            doctest:...: UserWarning: the operator // now returns the Euclidean quotient for power series over fields, use / for the true quotient
-            6 + q + O(q^20)
-
-            sage: R.<t> = ZZ[[]]
-            sage: (t**10 - 1) // (1 + t + t^7)
-            doctest:...: DeprecationWarning: the operator // is deprecated for power series over non-fields, use / instead
-            See http://trac.sagemath.org/20062 for details.
-            -1 + t - t^2 + t^3 - t^4 + t^5 - t^6 + 2*t^7 - 3*t^8 + 4*t^9 - 4*t^10 + 5*t^11 - 6*t^12 + 7*t^13 - 9*t^14 + 12*t^15 - 16*t^16 + 20*t^17 - 25*t^18 + 31*t^19 + O(t^20)
-        """
-        try:
-            q, r = self.quo_rem(denom)
-            warn("the operator // now returns the Euclidean quotient for power series over fields, use / for the true quotient")
-            return q
-        except (AttributeError, NotImplementedError):
-            deprecation(20062, "the operator // is deprecated for power series over non-fields, use / instead")
-            return self._div_(denom)
-
     def __mod__(self, other):
         """
         EXAMPLES::
@@ -1074,6 +1080,42 @@ cdef class PowerSeries(AlgebraElement):
         if isinstance(other, (int, Integer, long)):
             return PowerSeriesRing(IntegerModRing(other), self.variable())(self)
         raise NotImplementedError("Mod on power series ring elements not defined except modulo an integer.")
+
+    def __pow__(self, r, dummy):
+        """
+        EXAMPLES::
+
+            sage: x = QQ[['x']].0
+            sage: f = x^2 + x^4 + O(x^6)
+            sage: f^(1/2)
+            x + 1/2*x^3 + O(x^5)
+            sage: f^7
+            x^14 + 7*x^16 + O(x^18)
+            sage: f^(7/2)
+            x^7 + 7/2*x^9 + O(x^11)
+            sage: h = x^2 + 2*x^4 + x^6
+            sage: h^(1/2)
+            x + x^3
+            sage: O(x^4)^(1/2)
+            O(x^2)
+
+        """
+        try:
+            right = QQ.coerce(r)
+        except TypeError:
+            raise ValueError("exponent must be a rational number")
+
+        if right.denominator() == 1:
+            right = right.numerator()
+            return super().__pow__(right, dummy)
+
+        if self.is_zero():
+            return self.parent()(0).O((self.prec()*right).floor())
+
+        d = right.denominator()
+        n = right.numerator()
+
+        return self.nth_root(d)**n
 
     def shift(self, n):
         r"""
@@ -1347,7 +1389,7 @@ cdef class PowerSeries(AlgebraElement):
 
         ans = s
         if val != 0:
-            ans *= P.gen(0)**(val/2)
+            ans *= P.gen(0) ** (val // 2)
         if test_exact and ans.degree() < prec/2:
             if ans*ans == self:
                 (<PowerSeries>ans)._prec = infinity
@@ -1406,6 +1448,96 @@ cdef class PowerSeries(AlgebraElement):
                 return self.parent()(self.sqrt())
             except TypeError:
                 raise ValueError("Square root does not live in this ring.")
+
+    def nth_root(self, n, prec=None):
+        r"""
+        Return the ``n``-th root of this power series.
+
+        INPUT:
+
+        - ``n`` -- integer
+
+        - ``prec`` -- integer (optional) - precision of the result. Though, if
+          this series has finite precision, then the result can not have larger
+          precision.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[[]]
+            sage: (1+x).nth_root(5)
+            1 + 1/5*x - 2/25*x^2 + ... + 12039376311816/2384185791015625*x^19 + O(x^20)
+
+            sage: (1 + x + O(x^5)).nth_root(5)
+            1 + 1/5*x - 2/25*x^2 + 6/125*x^3 - 21/625*x^4 + O(x^5)
+
+        Check that the results are consistent with taking log and exponential::
+
+            sage: R.<x> = PowerSeriesRing(QQ, default_prec=100)
+            sage: p = (1 + 2*x - x^4)**200
+            sage: p1 = p.nth_root(1000, prec=100)
+            sage: p2 = (p.log()/1000).exp()
+            sage: p1.prec() == p2.prec() == 100
+            True
+            sage: p1.polynomial() == p2.polynomial()
+            True
+
+        Positive characteristic::
+
+            sage: R.<u> = GF(3)[[]]
+            sage: p = 1 + 2 * u^2
+            sage: p.nth_root(4)
+            1 + 2*u^2 + u^6 + 2*u^8 + u^12 + 2*u^14 + O(u^20)
+            sage: p.nth_root(4)**4
+            1 + 2*u^2 + O(u^20)
+
+        TESTS:
+
+        Check that exact roots show infinite precision::
+
+            sage: ((1+x)^5).nth_root(5)
+            1 + x
+
+        Check precision on `O(x^r)`::
+
+            sage: O(x^4).nth_root(2)
+            O(x^2)
+            sage: O(x^4).nth_root(3)
+            O(x^1)
+            sage: O(x^4).nth_root(4)
+            O(x^1)
+
+        Check precision on higher valuation series::
+
+            sage: (x^5+x^6+O(x^7)).nth_root(5)
+            x + 1/5*x^2 + O(x^3)
+        """
+
+        val = self.valuation()
+
+        if self.is_zero():
+            if val is infinity:
+                return self
+            else:
+                return self.parent()(0).O(val // n)
+
+        if val is not infinity and val % n != 0:
+            raise ValueError("power series valuation is not a multiple of %s" % n)
+
+        maxprec = (val // n) + self.precision_relative()
+
+        if prec is None:
+            prec = maxprec
+            if prec == infinity:
+                prec = self.parent().default_prec()
+        else:
+            prec = min(maxprec, prec)
+
+        p = self.polynomial()
+        q = p._nth_root_series(n, prec)
+        ans = self.parent()(q)
+        if not (self.prec() == infinity and q.degree() * n <= prec and q**n == p):
+            ans = ans.add_bigoh(prec)
+        return ans
 
     def cos(self, prec=infinity):
         r"""
@@ -2055,9 +2187,6 @@ cdef class PowerSeries(AlgebraElement):
         """
         return self.parent()([self[i] / arith.factorial(i) for i in range(self.degree()+1)])
 
-    ogf = deprecated_function_alias(15705, egf_to_ogf)
-    egf = deprecated_function_alias(15705, ogf_to_egf)
-
     def __pari__(self):
         """
         Return a PARI representation of this series.
@@ -2094,28 +2223,28 @@ cdef class PowerSeries(AlgebraElement):
             s = s.Ser(v, n - s.valuation(v) if s else n)
         return s
 
+
 def _solve_linear_de(R, N, L, a, b, f0):
     r"""
     Internal function used by PowerSeries.solve_linear_de().
 
     INPUT:
 
+    - ``R`` -- a PolynomialRing
 
-    -  ``R`` - a PolynomialRing
+    - ``N`` -- integer >= 0
 
-    -  ``N`` - integer = 0
+    - ``L`` -- integer >= 1
 
-    -  ``L`` - integer = 1
+    - ``a`` -- list of coefficients of `a`, any
+      length, all coefficients should belong to base ring of R.
 
-    -  ``a`` - list of coefficients of `a`, any
-       length, all coefficients should belong to base ring of R.
+    - ``b`` -- list of coefficients of `b`, length
+      at least `L` (only first `L` coefficients are
+      used), all coefficients should belong to base ring of R.
 
-    -  ``b`` - list of coefficients of `b`, length
-       at least `L` (only first `L` coefficients are
-       used), all coefficients should belong to base ring of R.
-
-    -  ``f0`` - constant term of `f` (only used if
-       `N == 0`), should belong to base ring of R.
+    - ``f0`` -- constant term of `f` (only used if
+      `N == 0`), should belong to base ring of R.
 
 
     OUTPUT: List of coefficients of `f` (length exactly

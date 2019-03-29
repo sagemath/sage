@@ -17,6 +17,8 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from sage.plot.line import line
+
 
 def plot_step_function(v, vertical_lines=True, **kwds):
     r"""
@@ -51,9 +53,8 @@ def plot_step_function(v, vertical_lines=True, **kwds):
         sage: plot_step_function(v, vertical_lines=False, thickness=30, rgbcolor='purple', axes=False)
         Graphics object consisting of 14 graphics primitives
     """
-    from .plot import line
     # make sorted copy of v (don't change in place, since that would be rude).
-    v = list(sorted(v))
+    v = sorted(v)
     if len(v) <= 1:
         return line([]) # empty line
     if vertical_lines:

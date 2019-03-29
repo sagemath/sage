@@ -35,7 +35,8 @@ def mult_schubert_schubert_symmetrica(a, b):
     """
     Multiplies the Schubert polynomials a and b.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.mult_schubert_schubert([3,2,1], [3,2,1])
         X[5, 3, 1, 2, 4]
     """
@@ -68,7 +69,8 @@ def t_SCHUBERT_POLYNOM_symmetrica(a):
     Converts a Schubert polynomial to a 'regular' multivariate
     polynomial.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.t_SCHUBERT_POLYNOM([3,2,1])
         x0^2*x1
     """
@@ -97,7 +99,8 @@ def t_POLYNOM_SCHUBERT_symmetrica(a):
     """
     Converts a multivariate polynomial a to a Schubert polynomial.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: R.<x1,x2,x3> = QQ[]
         sage: w0 = x1^2*x2
         sage: symmetrica.t_POLYNOM_SCHUBERT(w0)
@@ -134,7 +137,8 @@ def mult_schubert_variable_symmetrica(a, i):
     Returns the product of a and x_i.  Note that indexing with i
     starts at 1.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.mult_schubert_variable([3,2,1], 2)
         X[3, 2, 4, 1]
         sage: symmetrica.mult_schubert_variable([3,2,1], 4)
@@ -169,7 +173,8 @@ def divdiff_perm_schubert_symmetrica(perm, a):
     $\delta_i$ to $a$ where $a$ is either a permutation or a
     Schubert polynomial over QQ.
 
-    EXAMPLES:
+    EXAMPLES::
+
        sage: symmetrica.divdiff_perm_schubert([2,3,1], [3,2,1])
        X[2, 1]
        sage: symmetrica.divdiff_perm_schubert([3,1,2], [3,2,1])
@@ -215,7 +220,8 @@ def divdiff_perm_schubert_symmetrica(perm, a):
 
 def scalarproduct_schubert_symmetrica(a, b):
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.scalarproduct_schubert([3,2,1], [3,2,1])
         X[1, 3, 5, 2, 4]
         sage: symmetrica.scalarproduct_schubert([3,2,1], [2,1,3])
@@ -251,7 +257,8 @@ def divdiff_schubert_symmetrica(i, a):
     $\delta_i$ to $a$ where $a$ is either a permutation or a
     Schubert polynomial over QQ.
 
-    EXAMPLES:
+    EXAMPLES::
+
        sage: symmetrica.divdiff_schubert(1, [3,2,1])
        X[2, 3, 1]
        sage: symmetrica.divdiff_schubert(2, [3,2,1])

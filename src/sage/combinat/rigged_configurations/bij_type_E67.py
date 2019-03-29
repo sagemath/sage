@@ -57,8 +57,8 @@ class KRTToRCBijectionTypeE67(KRTToRCBijectionAbstract):
             sage: bijection = KRTToRCBijectionTypeE67(KRT.module_generators[0])
             sage: bijection.cur_path.insert(0, [])
             sage: bijection.cur_dims.insert(0, [1, 1])
-            sage: bijection.cur_path[0].insert(0, [(1,)])
-            sage: bijection.next_state((1,))
+            sage: bijection.cur_path[0].insert(0, [(-3,4)])
+            sage: bijection.next_state((-3,4))
         """
         def find_singular_string(p, max_width):
             max_pos = -1
@@ -80,7 +80,7 @@ class KRTToRCBijectionTypeE67(KRTToRCBijectionAbstract):
                 self._update_vacancy_nums(a)
             return
 
-        max_width = float("inf")
+        max_width = max(nu[0] if nu else 0 for nu in self.ret_rig_con) + 1
         found = True
         while found:
             found = False

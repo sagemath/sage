@@ -361,7 +361,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 sage: W = SymmetricGroup(4); W
                 Symmetric group of order 4! as a permutation group
                 sage: W.an_element()               # indirect doctest
-                (1,2,3,4)
+                (2,3,4)
 
             For a complex reflection group::
 
@@ -691,6 +691,21 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
                 sage: W.from_reduced_word([1, 2, 3]).reduced_word()
                 [1, 2, 3]
+                              
+                sage: W = WeylGroup("A3", prefix='s')
+                sage: AS = W.domain()
+                sage: r1 = AS.roots()[4]
+                sage: r1
+                (0, 1, 0, -1)
+                sage: r2 = AS.roots()[5]
+                sage: r2
+                (0, 0, 1, -1)
+                sage: W.from_reduced_word([r1, r2], word_type='all')
+                s3*s2
+                
+                sage: W = WeylGroup("G2", prefix='s')
+                sage: W.from_reduced_word(W.domain().positive_roots(), word_type='all')
+                s1*s2
 
                 sage: W = ReflectionGroup((1,1,4))           # optional - gap3
                 sage: W.from_reduced_word([1,2,3], word_type='all').reduced_word()  # optional - gap3
@@ -1050,6 +1065,20 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 (0, 1, 3, 2)
 
 
+                sage: W = WeylGroup("A3", prefix='s')
+                sage: w = W.an_element(); w
+                s1*s2*s3
+                sage: AS = W.domain()
+                sage: r1 = AS.roots()[4]
+                sage: r1
+                (0, 1, 0, -1)
+                sage: r2 = AS.roots()[5]
+                sage: r2
+                (0, 0, 1, -1)
+                sage: w.apply_reflections([r1, r2], word_type='all')
+                s1
+                
+                
                 sage: W = ReflectionGroup((1,1,3))          # optional - gap3
                 sage: W.one().apply_reflections([1], word_type='distinguished')   # optional - gap3
                 (1,4)(2,3)(5,6)

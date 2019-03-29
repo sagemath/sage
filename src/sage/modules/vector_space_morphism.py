@@ -329,7 +329,7 @@ from __future__ import absolute_import
 import sage.modules.matrix_morphism as matrix_morphism
 import sage.modules.free_module_morphism as free_module_morphism
 from . import vector_space_homspace
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 
 def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     r"""
@@ -931,7 +931,6 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             '}\n\\left(\\begin{array}{rr}\n0', '&', '1',
             '\\\\\n2', '&', '3', '\\\\\n4', '&', '5\n\\end{array}\\right)']
         """
-        from sage.misc.latex import latex
         s = ('\\text{vector space morphism from }\n', self.domain()._latex_(),
              '\\text{ to }\n', self.codomain()._latex_(),
              '\\text{ represented by the matrix }\n', self.matrix()._latex_())

@@ -11,6 +11,8 @@ The main objects which are exported from this module are:
  * :meth:`erfc <Function_erfc>` -- The complementary error function
  * :meth:`erfi <Function_erfi>` -- The imaginary error function
  * :meth:`erfinv <Function_erfinv>` -- The inverse error function
+ * :meth:`fresnel_sin <Function_Fresnel_sin>` -- The Fresnel integral `S(x)`
+ * :meth:`fresnel_cos <Function_Fresnel_cos>` -- The Fresnel integral `C(x)`
 
 AUTHORS:
 
@@ -19,6 +21,7 @@ AUTHORS:
    Burcin Erocal, Jeroen Demeyer, W. D. Joyner, R. Andrew Ohana
  * Reorganisation in new file, addition of ``erfi``/``erfinv``/``erfc``
    (c) 2016: Ralf Stephan
+ * Fresnel integrals (c) 2017 Marcelo Forets
 
 REFERENCES:
 
@@ -27,23 +30,26 @@ REFERENCES:
 - [WP-Error]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Ralf Stephan <gtrwst9 at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-
+from sage.structure.all import parent as s_parent
 from sage.symbolic.function import BuiltinFunction
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.symbolic.expression import Expression
 from sage.functions.all import sqrt, exp
 from sage.symbolic.constants import pi
+from sage.rings.rational import Rational
 from sage.rings.infinity import unsigned_infinity
+from sage.libs.pynac.pynac import I
+
 
 class Function_erf(BuiltinFunction):
     r"""
@@ -247,7 +253,7 @@ class Function_erf(BuiltinFunction):
 
             sage: gp.set_real_precision(59)  # random
             38
-            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200));
+            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200))
             0.84270079294971486934122063508260925929606699796630290845994
             0.84270079294971486934122063508260925929606699796630290845994
 
@@ -287,8 +293,9 @@ class Function_erf(BuiltinFunction):
 
 erf = Function_erf()
 
+
 class Function_erfi(BuiltinFunction):
-    """
+    r"""
     The imaginary error function.
 
     The imaginary error function is defined by
@@ -373,7 +380,7 @@ class Function_erfc(BuiltinFunction):
     .. MATH::
 
         \frac{2}{\sqrt{\pi}} \int_t^\infty e^{-x^2} dx.
-    
+
     EXAMPLES::
 
         sage: erfc(6)
@@ -387,6 +394,14 @@ class Function_erfc(BuiltinFunction):
         0.520499877813047
         sage: erf(0.5)
         0.520499877813047
+
+    TESTS:
+
+    Check that :trac:`25991` is fixed::
+
+            sage: erfc(x)._fricas_()                                            # optional - fricas
+            - erf(x) + 1
+
     """
     def __init__(self):
         r"""
@@ -401,7 +416,7 @@ class Function_erfc(BuiltinFunction):
                                  latex_name=r"\operatorname{erfc}",
                                  conversions=dict(maxima='erfc',
                                                   sympy='erfc',
-                                                  fricas='erfc',
+                                                  fricas='(x+->1-erf(x))',
                                                   giac='erfc'))
 
     def _eval_(self, x):
@@ -460,7 +475,7 @@ erfc = Function_erfc()
 
 
 class Function_erfinv(BuiltinFunction):
-    """
+    r"""
     The inverse error function.
 
     The inverse error function is defined by:
@@ -487,7 +502,7 @@ class Function_erfinv(BuiltinFunction):
             sage: _ = var('z,t')
             sage: PDF = exp(-x^2 /2)/sqrt(2*pi)
             sage: integralExpr = integrate(PDF,x,z,oo).subs(z==log(t))
-            sage: y = solve(integralExpr==z,t)[0].rhs().subs(z==1/4)    
+            sage: y = solve(integralExpr==z,t)[0].rhs().subs(z==1/4)
             sage: y
             e^(sqrt(2)*erfinv(1/2))
             sage: y.n()
@@ -545,6 +560,204 @@ class Function_erfinv(BuiltinFunction):
 
 erfinv = Function_erfinv()
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.functions.other', 'Function_erf', Function_erf)
 
+############################
+# Fresnel integrals        #
+############################
+class Function_Fresnel_sin(BuiltinFunction):
+    def __init__(self):
+        r"""
+        The sine Fresnel integral.
+
+        It is defined by the integral
+
+        .. MATH ::
+
+            \operatorname{S}(x) = \int_0^x \sin\left(\frac{\pi t^2}{2}\right)\, dt
+
+        for real `x`. Using power series expansions, it can be extended to the
+        domain of complex numbers. See the :wikipedia:`Fresnel_integral`.
+
+        INPUT:
+
+        - ``x`` -- the argument of the function
+
+        EXAMPLES::
+
+            sage: fresnel_sin(0)
+            0
+            sage: fresnel_sin(x).subs(x==0)
+            0
+            sage: x = var('x')
+            sage: fresnel_sin(1).n(100)
+            0.43825914739035476607675669662
+            sage: fresnel_sin(x)._sympy_()
+            fresnels(x)
+        """
+        BuiltinFunction.__init__(self, "fresnel_sin", nargs=1,
+                                 latex_name=r"\operatorname{S}",
+                                 conversions=dict(maxima='fresnel_s',
+                                                  sympy='fresnels',
+                                                  mathematica='FresnelS',
+                                                  maple='FresnelS',
+                                                  fricas='fresnelS'))
+
+    def _eval_(self, x):
+        r"""
+        EXAMPLES::
+
+            sage: fresnel_sin(pi)
+            fresnel_sin(pi)
+            sage: fresnel_sin(oo)
+            1/2
+            sage: fresnel_sin(-oo)
+            -1/2
+            sage: fresnel_sin(I*oo)
+            -1/2*I
+            sage: fresnel_sin(-I*oo)
+            1/2*I
+        """
+        if isinstance(x, Expression):
+            if x.is_negative():
+                return -fresnel_sin(-x)
+            if x.is_trivial_zero():
+                return x
+            if x.is_infinity():
+                if x.is_positive_infinity():
+                    return Rational((1,2))
+                elif x.imag_part().is_positive_infinity():
+                    return -I*Rational((1,2))
+                elif x.imag_part().is_negative_infinity():
+                    return I*Rational((1,2))
+        elif x < 0:
+            return -fresnel_sin(-x)
+        elif not x:
+            return x
+
+    def _evalf_(self, x, parent=None, algorithm=None):
+        r"""
+        EXAMPLES::
+
+            sage: fresnel_sin(pi)
+            fresnel_sin(pi)
+            sage: fresnel_sin(pi).n(100)
+            0.59824907809026766482843860921
+            sage: fresnel_sin(1.0+2*I)
+            36.7254648839914 + 15.5877511044046*I
+        """
+        import mpmath
+        from sage.libs.mpmath import utils as mpmath_utils
+        return mpmath_utils.call(mpmath.fresnels, x, parent=parent)
+
+    def _derivative_(self, x, diff_param=None):
+        """
+        EXAMPLES::
+
+            sage: x = var('x')
+            sage: fresnel_sin(x).diff(x)
+            sin(1/2*pi*x^2)
+        """
+        from sage.functions.trig import sin
+        return sin(pi*x**2/2)
+
+fresnel_sin = Function_Fresnel_sin()
+
+class Function_Fresnel_cos(BuiltinFunction):
+    def __init__(self):
+        r"""
+        The cosine Fresnel integral.
+
+        It is defined by the integral
+
+        .. MATH ::
+
+            \operatorname{C}(x) = \int_0^x \cos\left(\frac{\pi t^2}{2}\right)\, dt
+
+        for real `x`. Using power series expansions, it can be extended to the
+        domain of complex numbers. See the :wikipedia:`Fresnel_integral`.
+
+        INPUT:
+
+        - ``x`` -- the argument of the function
+
+        EXAMPLES::
+
+            sage: fresnel_cos(0)
+            0
+            sage: fresnel_cos(x).subs(x==0)
+            0
+            sage: x = var('x')
+            sage: fresnel_cos(1).n(100)
+            0.77989340037682282947420641365
+            sage: fresnel_cos(x)._sympy_()
+            fresnelc(x)
+        """
+        BuiltinFunction.__init__(self, "fresnel_cos", nargs=1,
+                                 latex_name=r"\operatorname{C}",
+                                 conversions=dict(maxima='fresnel_c',
+                                                  sympy='fresnelc',
+                                                  mathematica='FresnelC',
+                                                  maple='FresnelC',
+                                                  fricas='fresnelC'))
+
+    def _eval_(self, x):
+        r"""
+        EXAMPLES::
+
+            sage: fresnel_cos(pi)
+            fresnel_cos(pi)
+            sage: fresnel_cos(oo)
+            1/2
+            sage: fresnel_cos(-oo)
+            -1/2
+            sage: fresnel_cos(I*oo)
+            1/2*I
+            sage: fresnel_cos(-I*oo)
+            -1/2*I
+        """
+        if isinstance(x, Expression):
+            if x.is_negative():
+                return -fresnel_cos(-x)
+            if x.is_trivial_zero():
+                return x
+            if x.is_infinity():
+                if x.is_positive_infinity():
+                    return Rational((1,2))
+                elif x.imag_part().is_positive_infinity():
+                    return I*Rational((1,2))
+                elif x.imag_part().is_negative_infinity():
+                    return -I*Rational((1,2))
+        elif x < 0:
+            return -fresnel_cos(-x)
+        elif not x:
+            return x
+
+    def _evalf_(self, x, parent=None, algorithm=None):
+        r"""
+        EXAMPLES::
+
+            sage: fresnel_cos(pi)
+            fresnel_cos(pi)
+            sage: fresnel_cos(pi).n(100)
+            0.52369854372622864215767570284
+            sage: fresnel_cos(1.0+2*I)
+            16.0878713741255 - 36.2256879928817*I
+        """
+        import mpmath
+        from sage.libs.mpmath import utils as mpmath_utils
+        return mpmath_utils.call(mpmath.fresnelc, x, parent=parent)
+
+    def _derivative_(self, x, diff_param=None):
+        """
+        EXAMPLES::
+
+            sage: x = var('x')
+            sage: fresnel_cos(x).diff(x)
+            cos(1/2*pi*x^2)
+        """
+        from sage.functions.trig import cos
+        return cos(pi*x**2/2)
+
+fresnel_cos = Function_Fresnel_cos()

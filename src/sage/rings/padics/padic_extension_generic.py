@@ -25,13 +25,17 @@ from .padic_base_generic import pAdicBaseGeneric
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.number_field.order import Order
 from sage.rings.rational_field import QQ
+from sage.rings.infinity import Infinity
 from sage.structure.richcmp import op_EQ
 from functools import reduce
 from sage.categories.morphism import Morphism
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 from sage.categories.integral_domains import IntegralDomains
+from sage.categories.euclidean_domains import EuclideanDomains
+from sage.categories.metric_spaces import MetricSpaces
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
+
 
 class pAdicExtensionGeneric(pAdicGeneric):
     def __init__(self, poly, prec, print_mode, names, element_class):
@@ -56,16 +60,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
         print_mode['var_name'] = names[0]
         names = names[0]
         pAdicGeneric.__init__(self, R, R.prime(), prec, print_mode, names, element_class)
-        self._populate_coercion_lists_(coerce_list=[R], element_constructor=element_class)
-
-#     def __reduce__(self):
-#         """
-#         For pickling.
-
-#         This function is provided because prime_pow needs to be set before _printer, so the standard unpickling fails.
-#         """
-#         from sage.rings.padics.factory import ExtensionFactory
-#         return ExtensionFactory, (self.base_ring(), self._exact_modulus, self.precision_cap(), self.print_mode(), None, self.variable_name())
+        self._populate_coercion_lists_(coerce_list=[R])
 
     def _coerce_map_from_(self, R):
         """
@@ -81,18 +76,111 @@ class pAdicExtensionGeneric(pAdicGeneric):
             w + w^5 + O(w^10)
         """
         # Far more functionality needs to be added here later.
-        if isinstance(R, pAdicExtensionGeneric) and R.fraction_field() is self:
+        if R is self.base_ring():
+            return True
+        elif isinstance(R, pAdicExtensionGeneric) and R.fraction_field() is self:
             if self._implementation == 'NTL':
                 return True
             elif R._prec_type() == 'capped-abs':
-                from sage.rings.padics.qadic_flint_CA import pAdicCoercion_CA_frac_field as coerce_map
+                if R.absolute_e() == 1:
+                    from sage.rings.padics.qadic_flint_CA import pAdicCoercion_CA_frac_field as coerce_map
+                else:
+                    from sage.rings.padics.relative_ramified_CA import pAdicCoercion_CA_frac_field as coerce_map
             elif R._prec_type() == 'capped-rel':
-                from sage.rings.padics.qadic_flint_CR import pAdicCoercion_CR_frac_field as coerce_map
+                if R.absolute_e() == 1:
+                    from sage.rings.padics.qadic_flint_CR import pAdicCoercion_CR_frac_field as coerce_map
+                else:
+                    from sage.rings.padics.relative_ramified_CR import pAdicCoercion_CR_frac_field as coerce_map
             elif R._prec_type() == 'floating-point':
-                from sage.rings.padics.qadic_flint_FP import pAdicCoercion_FP_frac_field as coerce_map
+                if R.absolute_e() == 1:
+                    from sage.rings.padics.qadic_flint_FP import pAdicCoercion_FP_frac_field as coerce_map
+                else:
+                    from sage.rings.padics.relative_ramified_FP import pAdicCoercion_FP_frac_field as coerce_map
             elif R._prec_type() == 'fixed-mod':
-                from sage.rings.padics.qadic_flint_FM import pAdicCoercion_FM_frac_field as coerce_map
+                if R.absolute_e() == 1:
+                    from sage.rings.padics.qadic_flint_FM import pAdicCoercion_FM_frac_field as coerce_map
+                else:
+                    from sage.rings.padics.relative_ramified_FM import pAdicCoercion_FM_frac_field as coerce_map
             return coerce_map(R, self)
+
+    def _extension_type(self):
+        """
+        Return the type (``Unramified``, ``Eisenstein``) of this 
+        extension as a string, if any. 
+
+        Used for printing.
+
+        EXAMPLES::
+
+            sage: K.<a> = Qq(5^3)
+            sage: K._extension_type()
+            'Unramified'
+
+            sage: L.<pi> = Qp(5).extension(x^2 - 5)
+            sage: L._extension_type()
+            'Eisenstein'
+        """
+        return ""
+
+    def _repr_(self, do_latex=False):
+        """
+        Return a print representation of this extension.
+
+        EXAMPLES::
+
+            sage: R = Zp(7,10)
+            sage: R
+            7-adic Ring with capped relative precision 10
+            sage: R1.<a> = Zq(7^3)
+            sage: R1
+            7-adic Unramified Extension Ring in a defined by x^3 + 6*x^2 + 4
+            sage: R1._latex_()
+            '\\Bold{Z}_{7^{3}}'
+            sage: R2.<t> = R.ext(x^2+7)
+            sage: R2 #indirect doctest
+            7-adic Eisenstein Extension Ring in t defined by x^2 + 7
+            sage: R2._latex_()
+            '\\Bold{Z}_{7}[t]'
+
+            sage: K = Qp(7,10)
+            sage: K
+            7-adic Field with capped relative precision 10
+            sage: K1.<a> = Qq(7^3)
+            sage: K1
+            7-adic Unramified Extension Field in a defined by x^3 + 6*x^2 + 4
+            sage: K1._latex_()
+            '\\Bold{Q}_{7^{3}}'
+            sage: K2.<t> = K.ext(x^2+7)
+            sage: K2 #indirect doctest
+            7-adic Eisenstein Extension Field in t defined by x^2 + 7
+            sage: K2._latex_()
+            '\\Bold{Q}_{7}[t]'
+        """
+        type = self._extension_type()
+        base = self.base_ring()
+        p = self.prime()
+        if do_latex:
+            if self.absolute_e() == 1:
+                # unramified extension
+                if self.is_field():
+                    letter = "\\Bold{Q}"
+                else:
+                    letter = "\\Bold{Z}"
+                f = self.absolute_f()
+                if f == 1:
+                    subscript = str(p)
+                else:
+                    subscript = "%s^{%s}" % (p,f)
+                return "%s_{%s}" % (letter, subscript)
+            else:
+                return "%s[%s]" % (self.base_ring()._repr_(do_latex=True), self.latex_name())
+        else:
+            if type != "":
+                type += " "
+            s = "%s-adic %sExtension %s in %s defined by %s" % (p, type, "Field" if self.is_field() else "Ring", self.variable_name(), self.defining_polynomial(exact=True))
+            if base.absolute_degree() > 1:
+                s += " over its base " + ("field" if base.is_field() else "ring")
+            return s
 
     def _convert_map_from_(self, R):
         """
@@ -122,13 +210,15 @@ class pAdicExtensionGeneric(pAdicGeneric):
         """
         cat = None
         if self._implementation == 'NTL' and R == QQ:
-            # Want to use DefaultConvertMap
+            # Want to use DefaultConvertMap_unique
             return None
-        if isinstance(R, pAdicExtensionGeneric) and R.defining_polynomial(exact=True) == self.defining_polynomial(exact=True):
+        if isinstance(R, pAdicExtensionGeneric) and R.prime() == self.prime() and R.defining_polynomial(exact=True) == self.defining_polynomial(exact=True):
             if R.is_field() and not self.is_field():
                 cat = SetsWithPartialMaps()
-            else:
+            elif R.category() is self.category():
                 cat = R.category()
+            else:
+                cat = EuclideanDomains() & MetricSpaces().Complete()
         elif isinstance(R, Order) and R.number_field().defining_polynomial() == self.defining_polynomial():
             cat = IntegralDomains()
         elif isinstance(R, NumberField) and R.defining_polynomial() == self.defining_polynomial():
@@ -185,6 +275,24 @@ class pAdicExtensionGeneric(pAdicGeneric):
         """
         return not self.__eq__(other)
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<a> = Qq(27)
+            sage: S.<a> = Qq(5,print_mode='val-unit')
+            sage: hash(R) == hash(S)
+            False
+            sage: S.<a> = Qq(27,type='capped-rel')
+            sage: hash(R) == hash(S)
+            True
+        """
+        # _printer is not hashable, hence not taken into account
+        return hash((self.ground_ring(), self.defining_polynomial(exact=True),
+                     self.precision_cap()))
+
     #def absolute_discriminant(self):
     #    raise NotImplementedError
 
@@ -197,28 +305,16 @@ class pAdicExtensionGeneric(pAdicGeneric):
     #def is_normal(self):
     #    raise NotImplementedError
 
-    def degree(self):
-        """
-        Returns the degree of this extension.
-
-        EXAMPLES::
-
-            sage: R.<a> = Zq(125); R.degree()
-            3
-            sage: R = Zp(5); S.<x> = ZZ[]; f = x^5 - 25*x^3 + 5; W.<w> = R.ext(f)
-            sage: W.degree()
-            5
-        """
-        return self._given_poly.degree()
-
-    def defining_polynomial(self, exact=False):
+    def defining_polynomial(self, var=None, exact=False):
         """
         Returns the polynomial defining this extension.
 
         INPUT:
 
+        - ``var`` -- string (default: ``'x'``), the name of the variable
+
         - ``exact`` -- boolean (default ``False``), whether to return the underlying exact
-                       defining polynomial rather than the one with coefficients in the base ring.
+            defining polynomial rather than the one with coefficients in the base ring.
 
         EXAMPLES::
 
@@ -227,9 +323,12 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: W.defining_polynomial()
-            (1 + O(5^5))*x^5 + (O(5^6))*x^4 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + (4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))
+            (1 + O(5^5))*x^5 + O(5^6)*x^4 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6)
             sage: W.defining_polynomial(exact=True)
             x^5 + 75*x^3 - 15*x^2 + 125*x - 5
+
+            sage: W.defining_polynomial(var='y', exact=True)
+            y^5 + 75*y^3 - 15*y^2 + 125*y - 5
 
         .. SEEALSO::
 
@@ -237,9 +336,13 @@ class pAdicExtensionGeneric(pAdicGeneric):
             :meth:`exact_field`
         """
         if exact:
-            return self._exact_modulus
+            ans = self._exact_modulus
         else:
-            return self._given_poly
+            ans = self._given_poly
+        if var is None:
+            return ans
+        else:
+            return ans.change_variable_name(var)
 
     def exact_field(self):
         r"""
@@ -306,7 +409,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: W.modulus()
-            (1 + O(5^5))*x^5 + (O(5^6))*x^4 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + (4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))
+            (1 + O(5^5))*x^5 + O(5^6)*x^4 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6)
             sage: W.modulus(exact=True)
             x^5 + 75*x^3 - 15*x^2 + 125*x - 5
 
@@ -315,7 +418,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             :meth:`defining_polynomial`
             :meth:`exact_field`
         """
-        return self.defining_polynomial(exact)
+        return self.defining_polynomial(exact=exact)
 
     def ground_ring(self):
         """
@@ -380,7 +483,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
     #        xnew = x - x*delta*(1-q*delta)
     #    return x
 
-    def construction(self):
+    def construction(self, forbid_frac_field=False):
         """
         Returns the functorial construction of this ring, namely,
         the algebraic extension of the base ring defined by the given
@@ -389,21 +492,47 @@ class pAdicExtensionGeneric(pAdicGeneric):
         Also preserves other information that makes this ring unique
         (e.g. precision, rounding, print mode).
 
+        INPUT:
+
+        - ``forbid_frac_field`` -- require a completion functor rather
+          than a fraction field functor.  This is used in the
+          :meth:`sage.rings.padics.local_generic.LocalGeneric.change` method.
+
         EXAMPLES::
 
             sage: R.<a> = Zq(25, 8, print_mode='val-unit')
             sage: c, R0 = R.construction(); R0
             5-adic Ring with capped relative precision 8
             sage: c(R0)
-            Unramified Extension in a defined by x^2 + 4*x + 2 with capped relative precision 8 over 5-adic Ring
+            5-adic Unramified Extension Ring in a defined by x^2 + 4*x + 2
             sage: c(R0) == R
             True
+
+        For a field, by default we return a fraction field functor.
+
+            sage: K.<a> = Qq(25, 8)
+            sage: c, R = K.construction(); R
+            5-adic Unramified Extension Ring in a defined by x^2 + 4*x + 2
+            sage: c
+            FractionField
+
+        If you prefer an extension functor, you can use the ``forbit_frac_field`` keyword::
+
+            sage: c, R = K.construction(forbid_frac_field=True); R
+            5-adic Field with capped relative precision 8
+            sage: c
+            AlgebraicExtensionFunctor
+            sage: c(R) is K
+            True
         """
-        from sage.categories.pushout import AlgebraicExtensionFunctor as AEF
-        print_mode = self._printer.dict()
-        return (AEF([self.defining_polynomial(exact=True)], [self.variable_name()],
-                    prec=self.precision_cap(), print_mode=self._printer.dict(),
-                    implementation=self._implementation),
+        from sage.categories.pushout import AlgebraicExtensionFunctor as AEF, FractionField as FF
+        if not forbid_frac_field and self.is_field():
+            return (FF(), self.integer_ring())
+        return (AEF([self.defining_polynomial(exact=True)],
+                    [self.variable_name()],
+                    precs=[self.precision_cap()],
+                    print_mode=self._printer.dict(),
+                    implementations=[self._implementation]),
                 self.base_ring())
 
     #def hasGNB(self):
@@ -411,7 +540,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
     def random_element(self):
         """
-        Returns a random element of self.
+        Return a random element of ``self``.
 
         This is done by picking a random element of the ground ring
         self.degree() times, then treating those elements as
@@ -482,17 +611,37 @@ class DefPolyConversion(Morphism):
             sage: z = W.random_element()
             sage: repr(W.change(print_mode='digits')(z))
             '...20112102111011011200001212210222202220100111100200011222122121202100210120010120'
+
+        TESTS:
+
+        We check that :trac:`25990` has been resolved::
+
+            sage: R.<a> = Zp(2).extension(x^3 - 2)
+            sage: K = R.fraction_field()
+            sage: u = K(1,10); u
+            1 + O(a^10)
+            sage: R(u)
+            1 + O(a^10)
+
+            sage: u += a^4 + a^5 + a^7 + a^8; u
+            1 + a^4 + a^5 + a^7 + a^8 + O(a^10)
+            sage: R(u)
+            1 + a^4 + a^5 + a^7 + a^8 + O(a^10)
+
+            sage: R(K(0))
+            0
+
         """
         S = self.codomain()
         Sbase = S.base_ring()
         L = x.polynomial().list()
-        if L and not (len(L) == 1 and L[0].is_zero()):
-            return S([Sbase(c) for c in L])
-        # Inexact zeros need to be handled separately
-        elif isinstance(x.parent(), pAdicExtensionGeneric):
-            return S(0, x.precision_absolute())
-        else:
-            return S(0)
+        while L and L[-1].is_zero():
+            del L[-1]
+        if isinstance(x.parent(), pAdicExtensionGeneric):
+            absprec = x.precision_absolute()
+            if absprec is not Infinity:
+                return S([Sbase(c).lift_to_precision() for c in L], absprec)
+        return S([Sbase(c) for c in L])
 
     def _call_with_args(self, x, args=(), kwds={}):
         """
@@ -506,22 +655,37 @@ class DefPolyConversion(Morphism):
             sage: z = W.random_element()
             sage: repr(W.change(print_mode='digits')(z, absprec=8)) # indirect doctest
             '...20010120'
+
+        TESTS::
+
+            sage: R.<a> = Zp(2).extension(x^3 - 2)
+            sage: K = R.fraction_field()
+            sage: R(K(0), 10)
+            O(a^10)
+
+            sage: R(K(0,10), Infinity)
+            O(a^10)
+
+            sage: R(K(0,10), Infinity, absprec=30)
+            Traceback (most recent call last):
+            ...
+            TypeError: _call_with_args() got multiple values for keyword argument 'absprec'
+
         """
         S = self.codomain()
         Sbase = S.base_ring()
         L = x.polynomial().list()
-        if L and not (len(L) == 1 and L[0].is_zero()):
-            return S([Sbase(c) for c in L], *args, **kwds)
-        # Inexact zeros need to be handled separately
-        elif isinstance(x.parent(), pAdicExtensionGeneric):
+        while L and L[-1].is_zero():
+            del L[-1]
+        if isinstance(x.parent(), pAdicExtensionGeneric):
             if args:
                 if 'absprec' in kwds:
                     raise TypeError("_call_with_args() got multiple values for keyword argument 'absprec'")
                 absprec = args[0]
                 args = args[1:]
             else:
-                absprec = kwds.pop('absprec',x.precision_absolute())
+                absprec = kwds.pop('absprec', Infinity)
             absprec = min(absprec, x.precision_absolute())
-            return S(0, absprec, *args, **kwds)
-        else:
-            return S(0, *args, **kwds)
+            if absprec is not Infinity:
+                return S([Sbase(c).lift_to_precision() for c in L], absprec, *args, **kwds)
+        return S([Sbase(c) for c in L], *args, **kwds)

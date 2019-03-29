@@ -19,6 +19,10 @@ Author:
   Written while listening to Nina Simone *"I wish I knew how it would feel to be
   free"*. Crazy good song. And *"Prendre ta douleur"*, too.
 
+- David Coudert (10-2018), use maximal cliques iterator in :meth:`root_graph`,
+  and use :meth:`root_graph` instead of forbidden subgraph search in
+  :meth:`is_line_graph` (:trac:`26444`).
+
 Definition
 -----------
 
@@ -32,8 +36,7 @@ Given a graph `G`, the *line graph* `L(G)` of `G` is the graph such that
 The definition is extended to directed graphs. In this situation, there is an
 arc `(e,e')` in `L(G)` if the destination of `e` is the origin of `e'`.
 
-For more information, see the :wikipedia:`Wikipedia page on line graphs
-<Line_graph>`.
+For more information, see the :wikipedia:`Line_graph`.
 
 Root graph
 ----------
@@ -133,7 +136,7 @@ This decomposition turns out to be very easy to implement :-)
   Characterizations of derived graphs,
   Journal of Combinatorial Theory,
   Vol. 9(2), pages 129-135, 1970
-  http://dx.doi.org/10.1016/S0021-9800(70)80019-9
+  :doi:`10.1016/S0021-9800(70)80019-9`
 
 Functions
 ---------
@@ -142,7 +145,7 @@ from __future__ import print_function
 from six import iteritems
 
 
-def is_line_graph(g, certificate = False):
+def is_line_graph(g, certificate=False):
     r"""
     Tests wether the graph is a line graph.
 
@@ -160,21 +163,11 @@ def is_line_graph(g, certificate = False):
         given as input, and ``isom`` is a map associating an edge of ``R`` to
         each vertex of the graph.
 
-    .. TODO::
-
-        This method sequentially tests each of the forbidden subgraphs in order
-        to know whether the graph is a line graph, which is a very slow
-        method. It could eventually be replaced by
-        :func:`~sage.graphs.line_graph.root_graph` when this method will not
-        require an exponential time to run on general graphs anymore (see its
-        documentation for more information on this problem)...  and if it can be
-        improved to return negative certificates !
-
     .. NOTE::
 
-        This method wastes a bit of time when the input graph is not
-        connected. If you have performance in mind, it is probably better to
-        only feed it with connected graphs only.
+        This method wastes a bit of time when the input graph is not connected.
+        If you have performance in mind, it is probably better to only feed it
+        with connected graphs only.
 
     .. SEEALSO::
 
@@ -200,7 +193,7 @@ def is_line_graph(g, certificate = False):
 
     This is indeed the subgraph returned::
 
-        sage: C = graphs.PetersenGraph().is_line_graph(certificate = True)[1]
+        sage: C = graphs.PetersenGraph().is_line_graph(certificate=True)[1]
         sage: C.is_isomorphic(graphs.ClawGraph())
         True
 
@@ -212,7 +205,7 @@ def is_line_graph(g, certificate = False):
 
     But what is the graph whose line graph is the house ?::
 
-        sage: is_line, R, isom = g.is_line_graph(certificate = True)
+        sage: is_line, R, isom = g.is_line_graph(certificate=True)
         sage: R.sparse6_string()
         ':DaHI~'
         sage: R.show()
@@ -223,39 +216,59 @@ def is_line_graph(g, certificate = False):
 
     Disconnected graphs::
 
-        sage: g = 2*graphs.CycleGraph(3)
-        sage: gl = g.line_graph().relabel(inplace = False)
-        sage: new_g = gl.is_line_graph(certificate = True)[1]
+        sage: g = 2 * graphs.CycleGraph(3)
+        sage: gl = g.line_graph().relabel(inplace=False)
+        sage: new_g = gl.is_line_graph(certificate=True)[1]
         sage: g.line_graph().is_isomorphic(gl)
         True
     """
     g._scream_if_not_simple()
-    from sage.graphs.graph_generators import graphs
 
-    for fg in graphs.line_graph_forbidden_subgraphs():
-        h = g.subgraph_search(fg, induced = True)
-        if h is not None:
+    def get_certificate(gg):
+        """
+        Assuming that gg is not a line graph, return a forbidden induced
+        subgraph.
+        """
+        from sage.graphs.graph_generators import graphs
+        for fg in graphs.line_graph_forbidden_subgraphs():
+            h = gg.subgraph_search(fg, induced=True)
+            if h is not None:
+                return h
+
+    if g.is_connected():
+        try:
+            R, isom = root_graph(g)
             if certificate:
-                return (False,h)
+                return True, R, isom
+            else:
+                return True
+        except ValueError:
+            # g is not a line graph
+            if certificate:
+                return False, get_certificate(g)
             else:
                 return False
 
-    if not certificate:
+    # g is not connected.
+    from sage.graphs.graph import Graph
+    R = Graph()
+    for gg in g.connected_components_subgraphs():
+        try:
+            RR, isom = root_graph(gg)
+            R += RR
+        except ValueError:
+            # gg is not a line graph
+            if certificate:
+                return False, get_certificate(gg)
+            else:
+                return False
+
+    if certificate:
+        _, isom = g.is_isomorphic(R.line_graph(labels=False), certificate=True)
+        return True, R, isom
+    else:
         return True
 
-    if g.is_connected():
-        R, isom = root_graph(g)
-    else:
-        from sage.graphs.graph import Graph
-        R = Graph()
-
-        for gg in g.connected_components_subgraphs():
-            RR, _ = root_graph(gg)
-            R = R + RR
-
-        _, isom = g.is_isomorphic(R.line_graph(labels = False), certificate = True)
-
-    return (True, R, isom)
 
 def line_graph(self, labels=True):
     """
@@ -263,11 +276,9 @@ def line_graph(self, labels=True):
 
     INPUT:
 
-    - ``labels`` (boolean) -- whether edge labels should be taken in
-      consideration. If ``labels=True``, the vertices of the line graph will be
-      triples ``(u,v,label)``, and pairs of vertices otherwise.
-
-      This is set to ``True`` by default.
+    - ``labels`` -- boolean (default: ``True``); whether edge labels should be
+      taken in consideration. If ``labels=True``, the vertices of the line graph
+      will be triples ``(u,v,label)``, and pairs of vertices otherwise.
 
     The line graph of an undirected graph G is an undirected graph H such that
     the vertices of H are the edges of G and two vertices e and f of H are
@@ -319,7 +330,7 @@ def line_graph(self, labels=True):
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
         sage: h2.am() == h.am()
         True
-        sage: g = DiGraph([[1..4],lambda i,j: i<j])
+        sage: g = DiGraph([[1..4], lambda i,j: i < j])
         sage: h = g.line_graph()
         sage: h.vertices()
         [(1, 2, None),
@@ -348,38 +359,38 @@ def line_graph(self, labels=True):
     self._scream_if_not_simple()
     if self._directed:
         from sage.graphs.digraph import DiGraph
-        G=DiGraph()
+        G = DiGraph()
         G.add_vertices(self.edges(labels=labels))
         for v in self:
             # Connect appropriate incident edges of the vertex v
-            G.add_edges([(e,f) for e in self.incoming_edge_iterator(v, labels=labels) \
-                         for f in self.outgoing_edge_iterator(v, labels=labels)])
+            G.add_edges((e, f) for e in self.incoming_edge_iterator(v, labels=labels)
+                         for f in self.outgoing_edge_iterator(v, labels=labels))
         return G
     else:
         from sage.graphs.all import Graph
-        G=Graph()
+        G = Graph()
 
-        # We must sort the edges' endpoints so that (1,2,None) is seen as
-        # the same edge as (2,1,None).
+        # We must sort the edges' endpoints so that (1,2,None) is seen as the
+        # same edge as (2,1,None).
         #
-        # We do so by comparing hashes, just in case all the natural order
-        # (<) on vertices would not be a total order (for instance when
-        # vertices are sets). If two adjacent vertices have the same hash,
-        # then we store the pair in the dictionary of conflicts
+        # We do so by comparing hashes, just in case all the natural order (<)
+        # on vertices would not be a total order (for instance when vertices are
+        # sets). If two adjacent vertices have the same hash, then we store the
+        # pair in the dictionary of conflicts
 
         conflicts = {}
 
         # 1) List of vertices in the line graph
         elist = []
-        for e in self.edge_iterator(labels = labels):
+        for e in self.edge_iterator(labels=labels):
             if hash(e[0]) < hash(e[1]):
                 elist.append(e)
             elif hash(e[0]) > hash(e[1]):
-                elist.append((e[1],e[0])+e[2:])
+                elist.append((e[1], e[0]) + e[2:])
             else:
                 # Settle the conflict arbitrarily
                 conflicts[e] = e
-                conflicts[(e[1],e[0])+e[2:]] = e
+                conflicts[(e[1], e[0]) + e[2:]] = e
                 elist.append(e)
 
         G.add_vertices(elist)
@@ -393,7 +404,7 @@ def line_graph(self, labels=True):
                 if hash(e[0]) < hash(e[1]):
                     elist.append(e)
                 elif hash(e[0]) > hash(e[1]):
-                    elist.append((e[1],e[0])+e[2:])
+                    elist.append((e[1], e[0]) + e[2:])
                 else:
                     elist.append(conflicts[e])
 
@@ -402,11 +413,11 @@ def line_graph(self, labels=True):
             while elist:
                 x = elist.pop()
                 for y in elist:
-                    G.add_edge(x,y)
+                    G.add_edge(x, y)
 
         return G
 
-def root_graph(g, verbose = False):
+def root_graph(g, verbose=False):
     r"""
     Computes the root graph corresponding to the given graph
 
@@ -416,8 +427,8 @@ def root_graph(g, verbose = False):
 
     - ``g`` -- a graph
 
-    - ``verbose`` (boolean) -- display some information about what is happening
-      inside of the algorithm.
+    - ``verbose`` -- boolean (default: ``False``); display some information
+      about what is happening inside of the algorithm.
 
     .. NOTE::
 
@@ -430,21 +441,14 @@ def root_graph(g, verbose = False):
 
         * This code assumes that the graph is connected.
 
-        * If the graph is *not* a line graph, this implementation will take a
-          loooooong time to run. Its first step is to enumerate all maximal
-          cliques, and that can take a while for general graphs. As soon as
-          there is a way to iterate over maximal cliques without first building
-          the (long) list of them this implementation can be updated, and will
-          deal reasonably with non-line graphs too !
-
     TESTS:
 
     All connected graphs on 6 vertices::
 
         sage: from sage.graphs.line_graph import root_graph
         sage: def test(g):
-        ....:    gl = g.line_graph(labels = False)
-        ....:    d=root_graph(gl)
+        ....:    gl = g.line_graph(labels=False)
+        ....:    d = root_graph(gl)
         sage: for i,g in enumerate(graphs(6)): # long time
         ....:   if not g.is_connected():       # long time
         ....:     continue                     # long time
@@ -461,13 +465,13 @@ def root_graph(g, verbose = False):
 
         sage: from sage.graphs.line_graph import root_graph
         sage: root_graph(graphs.CompleteGraph(3))
-        (Complete bipartite graph: Graph on 4 vertices, {0: (0, 1), 1: (0, 2), 2: (0, 3)})
-        sage: root_graph(graphs.OctahedralGraph())
-        (Complete graph: Graph on 4 vertices, {0: (0, 1), 1: (0, 2), 2: (0, 3), 3: (1, 2), 4: (1, 3), 5: (2, 3)})
-        sage: root_graph(graphs.DiamondGraph())
-        (Graph on 4 vertices, {0: (0, 3), 1: (0, 1), 2: (0, 2), 3: (1, 2)})
-        sage: root_graph(graphs.WheelGraph(5))
-        (Diamond Graph: Graph on 4 vertices, {0: (1, 2), 1: (0, 1), 2: (0, 2), 3: (2, 3), 4: (1, 3)})
+        (Complete bipartite graph of order 1+3: Graph on 4 vertices, {0: (0, 1), 1: (0, 2), 2: (0, 3)})
+        sage: G, D = root_graph(graphs.OctahedralGraph()); G
+        Complete graph: Graph on 4 vertices
+        sage: G, D = root_graph(graphs.DiamondGraph()); G
+        Graph on 4 vertices
+        sage: G, D = root_graph(graphs.WheelGraph(5)); G
+        Diamond Graph: Graph on 4 vertices
     """
     from sage.graphs.digraph import DiGraph
 
@@ -481,22 +485,22 @@ def root_graph(g, verbose = False):
     # Complete Graph ?
     if g.is_clique():
         from sage.graphs.generators.basic import CompleteBipartiteGraph
-        return (CompleteBipartiteGraph(1,g.order()),
-                {v : (0,1+i) for i,v in enumerate(g)})
+        return (CompleteBipartiteGraph(1, g.order()),
+                {v: (0, 1 + i) for i, v in enumerate(g)})
 
     # Diamond Graph ?
     elif g.order() == 4 and g.size() == 5:
         from sage.graphs.graph import Graph
         root = Graph([(0,1),(1,2),(2,0),(0,3)])
         return (root,
-                g.is_isomorphic(root.line_graph(labels = False), certificate = True)[1])
+                g.is_isomorphic(root.line_graph(labels=False), certificate=True)[1])
 
     # Wheel on 5 vertices ?
     elif g.order() == 5 and g.size() == 8 and min(g.degree()) == 3:
         from sage.graphs.generators.basic import DiamondGraph
         root = DiamondGraph()
         return (root,
-                g.is_isomorphic(root.line_graph(labels = False), certificate = True)[1])
+                g.is_isomorphic(root.line_graph(labels=False), certificate=True)[1])
 
     # Octahedron ?
     elif g.order() == 6 and g.size() == 12 and g.is_regular(k=4):
@@ -505,7 +509,7 @@ def root_graph(g, verbose = False):
             from sage.graphs.generators.basic import CompleteGraph
             root = CompleteGraph(4)
             return (root,
-                    g.is_isomorphic(root.line_graph(labels = False), certificate = True)[1])
+                    g.is_isomorphic(root.line_graph(labels=False), certificate=True)[1])
 
     # From now on we can assume (thanks to Beineke) that no edge belongs to two
     # even triangles at once.
@@ -514,33 +518,26 @@ def root_graph(g, verbose = False):
                      "found a bug here ! Please report it on sage-devel,"
                      "our google group !")
 
-    # Better to work on integers... Everything takes more time
-    # otherwise.
-    G = g.relabel(inplace = False)
+    # Better to work on integers... Everything takes more time otherwise.
+    G = g.relabel(inplace=False)
 
-    # Dictionary of (pairs of) cliques, i.e. the two cliques
-    # associated with each vertex.
-    v_cliques = {v:[] for v in G}
+    # Dictionary of (pairs of) cliques, i.e. the two cliques associated with
+    # each vertex.
+    v_cliques = {v: [] for v in G}
 
     # All the even triangles we meet
     even_triangles = []
 
+    # We iterate over all maximal cliques of the graph.
 
-    # Here is THE "problem" of this implementation. Listing all maximal cliques
-    # takes an exponential time on general graphs (while it is obviously
-    # polynomial on line graphs). The problem is that this implementation cannot
-    # be used to *recognise* line graphs for as long as cliques_maximal returns
-    # a list and does not ITERATE on the maximal cliques : if there are too many
-    # cliques in the graph, this implementation will notice it and answer that
-    # the graph is not a line graph. If, on the other hand, the first thing it
-    # does is enumerate ALL maximal cliques, then there is no way to say early
-    # that the graph is not a line graph.
-    #
-    # If this cliques_maximal thing is replaced by an iterator that does not
-    # build the list of all cliques before returning them, then this method is a
-    # good recognition algorithm.
+    # As method G.cliques_maximal() returns the list of all maximal cliques
+    # (which takes an exponential time on general graphs, while it is obviously
+    # polynomial on line graphs), we instead use IndependentSet to iterate over
+    # all the maximal cliques. This way, we can say early that the graph is not
+    # a line graph.
 
-    for S in G.cliques_maximal():
+    from sage.graphs.independent_sets import IndependentSets
+    for S in IndependentSets(G, maximal=True, complement=True):
 
         # Triangles... even or odd ?
         if len(S) == 3:
@@ -553,9 +550,9 @@ def root_graph(g, verbose = False):
             # Note that the elements of S do not appear in this set as they are
             # all seen exactly twice.
 
-            odd_neighbors = set(G.neighbors(S[0]))
-            odd_neighbors.symmetric_difference_update(G.neighbors(S[1]))
-            odd_neighbors.symmetric_difference_update(G.neighbors(S[2]))
+            odd_neighbors = set(G.neighbor_iterator(S[0]))
+            odd_neighbors.symmetric_difference_update(G.neighbor_iterator(S[1]))
+            odd_neighbors.symmetric_difference_update(G.neighbor_iterator(S[2]))
 
             # Even triangles
             if not odd_neighbors:
@@ -574,23 +571,23 @@ def root_graph(g, verbose = False):
             print("Added clique", S)
 
     # Deal with even triangles
-    for u,v,w in even_triangles:
+    for u, v, w in even_triangles:
 
         # According to Beineke, we must go through all even triangles, and for
-        # each triangle uvw consider its three pairs of adjacent verties uv, vw,
-        # wu. For all pairs xy among those such that xy do not appear together
-        # in any clique we have found so far, we add xy to the list of cliques
-        # describing our covering.
+        # each triangle uvw consider its three pairs of adjacent vertices uv,
+        # vw, wu. For all pairs xy among those such that xy do not appear
+        # together in any clique we have found so far, we add xy to the list of
+        # cliques describing our covering.
 
-        for x,y in [(u,v), (v,w), (w,u)]:
+        for x,y in [(u, v), (v, w), (w, u)]:
 
             # If edge xy does not appear in any of the cliques associated with y
-            if all([not x in C for C in v_cliques[y]]):
+            if all(x not in C for C in v_cliques[y]):
                 if len(v_cliques[y]) >= 2 or len(v_cliques[x]) >= 2:
                     raise ValueError("This graph is not a line graph !")
 
-                v_cliques[x].append((x,y))
-                v_cliques[y].append((x,y))
+                v_cliques[x].append((x, y))
+                v_cliques[y].append((x, y))
 
                 if verbose:
                     print("Adding pair", (x, y),
@@ -617,7 +614,7 @@ def root_graph(g, verbose = False):
 
         # Add cliques to relabel dictionary
         for S in L:
-            if not S in relabel:
+            if S not in relabel:
                 relabel[S] = len(relabel)
 
         # The coordinates of edge v
@@ -631,14 +628,14 @@ def root_graph(g, verbose = False):
     # We now build R
     R.add_edges(vertex_to_map.values())
 
-    # Even if whatever is written above is complete nonsense, here we
-    # make sure that we do not return gibberish. Is the line graph of
-    # R isomorphic to the input ? If so, we return R, and the
-    # isomorphism. Else, we panic and scream.
+    # Even if whatever is written above is complete nonsense, here we make sure
+    # that we do not return gibberish. Is the line graph of R isomorphic to the
+    # input ? If so, we return R, and the isomorphism. Else, we panic and
+    # scream.
     #
     # It's actually "just to make sure twice". This can be removed later if it
     # turns out to be too costly.
-    is_isom, isom = g.is_isomorphic(R.line_graph(labels = False), certificate = True)
+    is_isom, isom = g.is_isomorphic(R.line_graph(labels=False), certificate=True)
 
     if not is_isom:
         raise Exception(error_message)

@@ -48,7 +48,7 @@ class SageTimeit:
     """
     def eval(self, code, globs=None, locals=None, **kwds):
         r"""
-        This eval function is called when doing \%timit in the notebook.
+        This eval function is called when doing \%timeit in the notebook.
 
         INPUT:
 
@@ -81,7 +81,7 @@ class SageTimeit:
             globs = globals()
         return sage_timeit.sage_timeit(code, globs, **kwds)
 
-    def __call__(self, code, globals=None, preparse=None, **kwds):
+    def __call__(self, code, globals=None, **kwds):
         """
         INPUT:
 
@@ -104,18 +104,17 @@ class SageTimeit:
 
         OUTPUT:
 
-        This method prints the timing information and does not return
-        anything, except if the option ``seconds=True`` was passed, in
-        which case the wall time in seconds is returned.
+        Return the timing information, either as
+        :class:`~sage.misc.sage_timeit.SageTimeitResult`
+        or as a floating-point number containing the number of seconds
+        (if ``seconds=True`` was passed).
 
         EXAMPLES::
 
             sage: timeit('2^10000', preparse=False, number=100)
             100 loops, best of 3: ... per loop
         """
-        if 'seconds' in kwds:
-            return self.eval(code, globals, preparse=preparse, **kwds)
-        print(self.eval(code, globals, preparse=preparse, **kwds))
+        return self.eval(code, globals, **kwds)
 
 
 timeit = SageTimeit()

@@ -72,6 +72,15 @@ class DiffChart(Chart):
       ``coordinates`` is not provided; it must then be a tuple containing
       the coordinate symbols (this is guaranteed if the shortcut operator
       ``<,>`` is used).
+    - ``calc_method`` -- (default: ``None``) string defining the calculus
+      method for computations involving coordinates of the chart; must be
+      one of
+
+      - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
+      - ``'sympy'``: SymPy
+      - ``None``: the default of
+        :class:`~sage.manifolds.calculus_method.CalculusMethod` will be
+        used
 
     EXAMPLES:
 
@@ -238,7 +247,7 @@ class DiffChart(Chart):
         on differentiable manifolds over `\RR`.
 
     """
-    def __init__(self, domain, coordinates='', names=None):
+    def __init__(self, domain, coordinates='', names=None, calc_method=None):
         r"""
         Construct a chart.
 
@@ -255,7 +264,8 @@ class DiffChart(Chart):
             sage: TestSuite(X).run()
 
         """
-        Chart.__init__(self, domain, coordinates=coordinates, names=names)
+        Chart.__init__(self, domain, coordinates=coordinates, names=names,
+                       calc_method=calc_method)
         # Construction of the coordinate frame associated to the chart:
         self._frame = CoordFrame(self)
         self._coframe = self._frame._coframe
@@ -645,7 +655,6 @@ class DiffChart(Chart):
 
 
 
-
 #*****************************************************************************
 
 class RealDiffChart(DiffChart, RealChart):
@@ -693,6 +702,15 @@ class RealDiffChart(DiffChart, RealChart):
       ``coordinates`` is not provided; it must then be a tuple containing
       the coordinate symbols (this is guaranteed if the shortcut operator
       ``<,>`` is used).
+    - ``calc_method`` -- (default: ``None``) string defining the calculus
+      method for computations involving coordinates of the chart; must be
+      one of
+
+      - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
+      - ``'sympy'``: SymPy
+      - ``None``: the default of
+        :class:`~sage.manifolds.calculus_method.CalculusMethod` will be
+        used
 
     EXAMPLES:
 
@@ -889,7 +907,7 @@ class RealDiffChart(DiffChart, RealChart):
     :meth:`~sage.manifolds.chart.RealChart.plot`.
 
     """
-    def __init__(self, domain, coordinates='', names=None):
+    def __init__(self, domain, coordinates='', names=None, calc_method=None):
         r"""
         Construct a chart on a real differentiable manifold.
 
@@ -907,7 +925,8 @@ class RealDiffChart(DiffChart, RealChart):
             sage: TestSuite(X).run()
 
         """
-        RealChart.__init__(self, domain, coordinates=coordinates, names=names)
+        RealChart.__init__(self, domain, coordinates=coordinates, names=names,
+                           calc_method = calc_method)
         # Construction of the coordinate frame associated to the chart:
         self._frame = CoordFrame(self)
         self._coframe = self._frame._coframe
@@ -1113,7 +1132,7 @@ class DiffCoordChange(CoordChange):
 
         - Jacobian matrix `J`, the elements `J_{ij}` of which being
           coordinate functions
-          (cf. :class:`~sage.manifolds.coord_func.CoordFunction`)
+          (cf. :class:`~sage.manifolds.chart_func.ChartFunction`)
 
         EXAMPLES:
 
@@ -1130,7 +1149,7 @@ class DiffCoordChange(CoordChange):
         Each element of the Jacobian matrix is a coordinate function::
 
             sage: parent(X_to_Y.jacobian()[0,0])
-            Ring of coordinate functions on Chart (M, (x, y))
+            Ring of chart functions on Chart (M, (x, y))
 
         """
         return self._jacobian  # has been computed in __init__
@@ -1147,7 +1166,7 @@ class DiffCoordChange(CoordChange):
 
         - determinant of the Jacobian matrix `J` as a coordinate
           function
-          (cf. :class:`~sage.manifolds.coord_func.CoordFunction`)
+          (cf. :class:`~sage.manifolds.chart_func.ChartFunction`)
 
         EXAMPLES:
 
@@ -1165,7 +1184,7 @@ class DiffCoordChange(CoordChange):
         The Jacobian determinant is a coordinate function::
 
             sage: parent(X_to_Y.jacobian_det())
-            Ring of coordinate functions on Chart (M, (x, y))
+            Ring of chart functions on Chart (M, (x, y))
 
         """
         return self._transf.jacobian_det()

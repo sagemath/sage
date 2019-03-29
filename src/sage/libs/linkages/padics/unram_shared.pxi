@@ -83,7 +83,7 @@ def norm_unram(self, base = None):
 
         ``base`` -- a subfield of the parent `L` of this element.
                     The norm is the relative norm from ``L`` to ``base``.
-                    Defaults to the absolute norm down to `\mathbb{Q}_p` or `\mathbb{Z}_p`.
+                    Defaults to the absolute norm down to `\QQ_p` or `\ZZ_p`.
 
     EXAMPLES::
 
@@ -111,9 +111,9 @@ def norm_unram(self, base = None):
         sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
         sage: W.<w> = R.ext(f)
         sage: ((1+2*w)^5).norm()
-        1 + 5^2 + O(5^5)
+        1 + 5^2
         sage: ((1+2*w)).norm()^5
-        1 + 5^2 + O(5^5)
+        1 + 5^2
 
     TESTS:
 
@@ -159,7 +159,7 @@ def trace_unram(self, base = None):
     norm from `L` to ``base``.
 
     In all other cases, the norm is the absolute norm down to
-    `\mathbb{Q}_p` or `\mathbb{Z}_p`.
+    `\QQ_p` or `\ZZ_p`.
 
     EXAMPLES::
 
@@ -197,11 +197,11 @@ def trace_unram(self, base = None):
         sage: a = (2+3*w)^7
         sage: b = (6+w^3)^5
         sage: a.trace()
-        3*5 + 2*5^2 + 3*5^3 + 2*5^4 + O(5^5)
+        3*5 + 2*5^2 + 3*5^3 + 2*5^4
         sage: a.trace() + b.trace()
-        4*5 + 5^2 + 5^3 + 2*5^4 + O(5^5)
+        4*5 + 5^2 + 5^3 + 2*5^4
         sage: (a+b).trace()
-        4*5 + 5^2 + 5^3 + 2*5^4 + O(5^5)
+        4*5 + 5^2 + 5^3 + 2*5^4
     """
     if base is not None:
         if base is self.parent():

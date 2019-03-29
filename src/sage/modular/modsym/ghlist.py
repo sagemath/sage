@@ -20,7 +20,7 @@ List of coset representatives for `\Gamma_H(N)` in `{\rm SL}_2(\ZZ)`
 from __future__ import absolute_import
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 
 from . import p1list
 

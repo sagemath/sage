@@ -1,4 +1,4 @@
-$(PYTHON) decorator | pip
+$(PYTHON) decorator | pip nose
 
 ----------
 All lines of this file are ignored except the first.

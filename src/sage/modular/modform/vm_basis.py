@@ -1,4 +1,4 @@
-"""
+r"""
 The Victor Miller Basis
 
 This module contains functions for quick calculation of a basis of
@@ -265,8 +265,9 @@ def _delta_poly(prec=10):
 
     return f
 
+
 def _delta_poly_modulo(N, prec=10):
-    """
+    r"""
     Return the q-expansion of `\Delta` modulo `N`. Used internally by
     the :func:`~delta_qexp` function. See the docstring of :func:`~delta_qexp`
     for more information.
@@ -322,7 +323,7 @@ def _delta_poly_modulo(N, prec=10):
 
 
 def delta_qexp(prec=10, var='q', K=ZZ) :
-    """
+    r"""
     Return the `q`-expansion of the weight 12 cusp form `\Delta` as a power
     series with coefficients in the ring K (`= \ZZ` by default).
 

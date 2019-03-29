@@ -2,14 +2,6 @@
 ## rubiks
 ###########################################
 
-if [ -z "$SAGE_LOCAL" ] ; then
-   echo "SAGE_LOCAL undefined ... exiting"
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
-set -e
-
 # Add a sensible default optimisation flag. Change if necessary.
 OPTIMIZATION_FLAGS="-O2"
 # Work around a bug in gcc 4.6.0: http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48702
@@ -28,49 +20,6 @@ CFLAGS="$CFLAGS $OPTIMIZATION_FLAGS "
 CXXFLAGS="$CXXFLAGS $OPTIMIZATION_FLAGS "
 FCFLAGS="$FCFLAGS $OPTIMIZATION_FLAGS "
 F77FLAGS="$F77FLAGS $OPTIMIZATION_FLAGS "
-
-# Compile for 64-bit if SAGE64 is set to 'yes'
-if [ "x$SAGE64" = xyes ] ; then
-   echo "Building a 64-bit version of rubiks"
-   CFLAGS="$CFLAGS -m64 "
-   CXXFLAGS="$CXXFLAGS -m64 "
-   FCFLAGS="$FCFLAGS -m64 "
-   F77FLAGS="$F77FLAGS -m64 "
-   # Some packages may need LDFLAGS and/or ABI set here.
-   LDFLAGS="$LDFLAGS -m64 "
-
-   # If an environment variable CFLAG64 is set, this will be assumed to
-   # be the compiler flag needed for a 64-bit build. If not, -m64 will
-   # be assumed.
-
-   if [ -z "$CFLAG64" ] ; then
-      CFLAG64=-m64
-   fi
-   export CFLAG64
-
-   # The makefile for dikcube and size222 originally set CFLAGS
-   # internally, and did not import CFLAGS from the environment
-   # so it is necessary that these makefiles are modified to enable
-   # a 64-bit build.
-   # It should be noted there is no advantage to having
-   # rubiks build as a 64-bit application, but having two thirds of rubiks build
-   # 64-bit and one third build 64-bit is very unprofessional, and
-   # could lead to confusion by later developers. It is far better
-   # if all of Sage builds 64-bit, as then it will be easier to find
-   # any components which are failing to do so. While it may not
-   # matter for some components, for others it will. Having all of
-   # Sage 32-bit or all of Sage 64-bit makes more sense.
-
-   # Use 'sed' to add ${CFLAG64} to the list of compiler flags (CFLAGS).
-   # The original line is
-   # CFLAGS = -O -DLARGE_MEM -DVERBOSE
-   # This will be changed to:
-   # CFLAGS = ${CFLAG64} -O -DLARGE_MEM -DVERBOSE
-   sed 's/CFLAGS = -O -DLARGE_MEM -DVERBOSE/CFLAGS = ${CFLAG64} -O -DLARGE_MEM -DVERBOSE/' src/dik/makefile > makefile.full-64-bit-build
-   mv makefile.full-64-bit-build src/dik/makefile
-fi
-
-
 
 # If SAGE_DEBUG is set either unset (the default), or set to  'yes'
 # Add debugging information.
@@ -127,13 +76,7 @@ else
     INSTALL=install; export INSTALL
 fi
 
-
-# remove the old dik binary since the has a name collision
-# with polynmake - see #2595
-rm -f $SAGE_LOCAL/bin/cube
-
 cd src
 
 echo "Building Rubiks cube solvers"
-$MAKE install PREFIX="$SAGE_LOCAL"
-
+sdh_make_install PREFIX="$SAGE_LOCAL"

@@ -36,16 +36,15 @@ interferes with doctests::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from .cyclic_code import CyclicCode
 from .grs import GeneralizedReedSolomonCode
-from .decoder import Decoder, DecodingError
+from .decoder import Decoder
 from sage.modules.free_module_element import vector
 from sage.misc.misc_c import prod
 from sage.categories.fields import Fields
-from sage.rings.integer_ring import ZZ
 from sage.arith.all import gcd
 from sage.rings.all import Zmod
 from copy import copy
@@ -132,13 +131,9 @@ class BCHCode(CyclicCode):
             ...
             ValueError: designed_distance must belong to [1, n]
         """
-        if not (designed_distance <= length and designed_distance > 0):
+        if not (0 < designed_distance <= length):
             raise ValueError("designed_distance must belong to [1, n]")
-        if base_field in ZZ and designed_distance in Fields:
-            from sage.misc.superseded import deprecation
-            deprecation(20335, "codes.BCHCode(n, designed_distance, F, b=0) is now deprecated. Please use the new signature instead.")
-            (length, designed_distance, base_field) = (base_field, length, designed_distance)
-            offset = b
+
         if base_field not in Fields or not base_field.is_finite():
             raise ValueError("base_field has to be a finite field")
 

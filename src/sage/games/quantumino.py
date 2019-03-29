@@ -12,7 +12,7 @@ Mathématique in Montreal by Franco Saliola during winter 2011.
 The solution uses the dancing links code which is in Sage and is based on
 the more general code available in the module :mod:`sage.combinat.tiling`.
 Dancing links were originally introduced by Donald Knuth in 2000
-(`arXiv:cs/0011047 <http://arxiv.org/abs/cs/0011047>`_). In particular,
+(:arxiv:`cs/0011047`). In particular,
 Knuth used dancing links to solve tilings of a region by 2D pentaminos.
 Here we extend the method for 3D pentaminos.
 
@@ -83,22 +83,22 @@ The solution is iterable. This may be used to explicitly list the positions of e
 pentamino::
 
     sage: for p in s: p                                   # long time (<1s)
-    Polyomino: [(0, 0, 0), (1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 2, 0)], Color: deeppink
-    Polyomino: [(0, 0, 1), (0, 1, 0), (0, 1, 1), (0, 2, 1), (1, 2, 1)], Color: deeppink
-    Polyomino: [(0, 2, 0), (0, 3, 0), (0, 4, 0), (1, 4, 0), (1, 4, 1)], Color: green
-    Polyomino: [(0, 3, 1), (1, 3, 1), (2, 2, 0), (2, 2, 1), (2, 3, 1)], Color: green
-    Polyomino: [(1, 3, 0), (2, 3, 0), (2, 4, 0), (2, 4, 1), (3, 4, 0)], Color: red
-    Polyomino: [(1, 0, 1), (2, 0, 1), (2, 1, 0), (2, 1, 1), (3, 1, 1)], Color: red
-    Polyomino: [(2, 0, 0), (3, 0, 0), (3, 0, 1), (3, 1, 0), (4, 0, 0)], Color: gray
-    Polyomino: [(3, 2, 0), (4, 0, 1), (4, 1, 0), (4, 1, 1), (4, 2, 0)], Color: purple
-    Polyomino: [(3, 2, 1), (3, 3, 0), (3, 3, 1), (4, 2, 1), (4, 3, 1)], Color: yellow
-    Polyomino: [(3, 4, 1), (3, 5, 1), (4, 3, 0), (4, 4, 0), (4, 4, 1)], Color: blue
-    Polyomino: [(0, 4, 1), (0, 5, 0), (0, 5, 1), (0, 6, 1), (1, 5, 0)], Color: midnightblue
-    Polyomino: [(0, 6, 0), (0, 7, 0), (0, 7, 1), (1, 7, 0), (2, 7, 0)], Color: darkblue
-    Polyomino: [(1, 7, 1), (2, 6, 0), (2, 6, 1), (2, 7, 1), (3, 6, 0)], Color: blue
-    Polyomino: [(1, 5, 1), (1, 6, 0), (1, 6, 1), (2, 5, 0), (2, 5, 1)], Color: yellow
-    Polyomino: [(3, 6, 1), (3, 7, 0), (3, 7, 1), (4, 5, 1), (4, 6, 1)], Color: purple
-    Polyomino: [(3, 5, 0), (4, 5, 0), (4, 6, 0), (4, 7, 0), (4, 7, 1)], Color: orange
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+    Polyomino: [(...), (...), (...), (...), (...)], Color: ...
 
 To get all the solutions, use the iterator returned by the ``solve``
 method. Note that finding the first solution is the most time consuming
@@ -165,8 +165,7 @@ REFERENCES:
 - [1] `Family Games America's Quantumino
   <http://familygamesamerica.com/mainsite/consumers/productview.php?pro_id=274&search=quantumino>`_
 - [2] `Quantumino - How to Play <http://www.youtube.com/watch?v=jX_VKzakZi8>`_ on Youtube
-- [3] Knuth, Donald (2000). "Dancing links". `arXiv:cs/0011047
-  <http://arxiv.org/abs/cs/0011047>`_.
+- [3] Knuth, Donald (2000). *Dancing links*. :arxiv:`cs/0011047`.
 
 """
 #*****************************************************************************
@@ -177,6 +176,8 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import division
+
 from sage.structure.sage_object import SageObject
 from sage.plot.all import Graphics
 from sage.plot.plot3d.platonic import cube
@@ -213,12 +214,12 @@ def show_pentaminos(box=(5,8,2)):
 
     INPUT:
 
-    - ``box`` - tuple of size three (optional, default: ``(5,8,2)``),
+    - ``box`` -- tuple of size three (optional, default: ``(5,8,2)``),
       size of the box
 
     OUTPUT:
 
-        3D Graphic object
+    3D Graphic object
 
     EXAMPLES::
 
@@ -230,18 +231,18 @@ def show_pentaminos(box=(5,8,2)):
         sage: show_pentaminos().show(frame=False)  # not tested (1s)
     """
     G = Graphics()
-    for i,p in enumerate(pentaminos):
-        x = 4 * (i%4)
-        y = 4 * (i/4)
+    for i, p in enumerate(pentaminos):
+        x = 4 * (i % 4)
+        y = 4 * (i // 4)
         q = p + (x, y, 0)
         G += q.show3d()
-        G += text3d(str(i), (x,y,2))
-    G += cube(color='gray',opacity=0.5).scale(box).translate((17,6,0))
+        G += text3d(str(i), (x, y, 2))
+    G += cube(color='gray',opacity=0.5).scale(box).translate((17, 6, 0))
 
     # hack to set the aspect ratio to 1
-    a,b = G.bounding_box()
-    a,b = map(vector, (a,b))
-    G.frame_aspect_ratio(tuple(b-a))
+    a, b = G.bounding_box()
+    a, b = map(vector, (a, b))
+    G.frame_aspect_ratio(tuple(b - a))
 
     return G
 
@@ -504,22 +505,23 @@ class QuantuminoSolver(SageObject):
         The explicit solution::
 
             sage: for p in s: p                                  # long time (fast)
-            Polyomino: [(0, 0, 0), (1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 2, 0)], Color: deeppink
-            Polyomino: [(0, 0, 1), (0, 1, 0), (0, 1, 1), (0, 2, 1), (1, 2, 1)], Color: deeppink
-            Polyomino: [(0, 2, 0), (0, 3, 0), (0, 4, 0), (1, 4, 0), (1, 4, 1)], Color: green
-            Polyomino: [(0, 3, 1), (1, 3, 1), (2, 2, 0), (2, 2, 1), (2, 3, 1)], Color: green
-            Polyomino: [(1, 3, 0), (2, 3, 0), (2, 4, 0), (2, 4, 1), (3, 4, 0)], Color: red
-            Polyomino: [(1, 0, 1), (2, 0, 0), (2, 0, 1), (2, 1, 0), (3, 0, 1)], Color: midnightblue
-            Polyomino: [(0, 4, 1), (0, 5, 0), (0, 5, 1), (0, 6, 0), (1, 5, 0)], Color: red
-            Polyomino: [(2, 1, 1), (3, 0, 0), (3, 1, 0), (3, 1, 1), (4, 0, 0)], Color: blue
-            Polyomino: [(3, 2, 0), (4, 0, 1), (4, 1, 0), (4, 1, 1), (4, 2, 0)], Color: purple
-            Polyomino: [(3, 2, 1), (3, 3, 0), (4, 2, 1), (4, 3, 0), (4, 3, 1)], Color: yellow
-            Polyomino: [(3, 3, 1), (3, 4, 1), (4, 4, 0), (4, 4, 1), (4, 5, 0)], Color: blue
-            Polyomino: [(0, 6, 1), (0, 7, 0), (0, 7, 1), (1, 5, 1), (1, 6, 1)], Color: purple
-            Polyomino: [(1, 6, 0), (1, 7, 0), (1, 7, 1), (2, 7, 0), (3, 7, 0)], Color: darkblue
-            Polyomino: [(2, 5, 0), (2, 6, 0), (3, 6, 0), (4, 6, 0), (4, 6, 1)], Color: orange
-            Polyomino: [(2, 5, 1), (3, 5, 0), (3, 5, 1), (3, 6, 1), (4, 5, 1)], Color: gray
-            Polyomino: [(2, 6, 1), (2, 7, 1), (3, 7, 1), (4, 7, 0), (4, 7, 1)], Color: orange
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+            Polyomino: [(...), (...), (...), (...), (...)], Color: ...
+
 
         Enumerate the solutions::
 

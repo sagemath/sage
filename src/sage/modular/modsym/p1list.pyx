@@ -7,6 +7,7 @@ from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_check
 
 from sage.misc.search import search
+from sage.structure.richcmp cimport rich_to_bool
 
 cimport sage.rings.fast_arith
 import sage.rings.fast_arith
@@ -292,11 +293,11 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
         0
         sage: (7*24) % 90
         78
-        
+
     TESTS:
-    
+
     This test reflects :trac:`20932`::
-    
+
         sage: N = 3*61379
         sage: import sage.modular.modsym.p1list as p1list
         sage: p1 = p1list.P1List(N) # not tested -- too long
@@ -653,7 +654,8 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
         ss[0] = t_a[(s*min_t)%N]
     return 0
 
-cdef class P1List:
+
+cdef class P1List(object):
     """
     The class for `\mathbb{P}^1(\ZZ/N\ZZ)`, the projective line modulo `N`.
 
@@ -731,7 +733,7 @@ cdef class P1List:
         sig_free(self.s)
         sig_free(self.t)
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, int op):
         """
         Comparison function for objects of the class P1List.
 
@@ -754,14 +756,14 @@ cdef class P1List:
             [23, 45, 100]
         """
         if not isinstance(other, P1List):
-            return -1
-        cdef P1List O
-        O = other
-        if self.__N < O.__N:
-            return -1
-        elif self.__N > O.__N:
-            return 1
-        return 0
+            return NotImplemented
+        cdef P1List S = <P1List> self
+        cdef P1List O = <P1List> other
+        if S.__N < O.__N:
+            return rich_to_bool(op, -1)
+        elif S.__N > O.__N:
+            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 0)
 
     def __reduce__(self):
         """
@@ -771,10 +773,9 @@ cdef class P1List:
 
             sage: L = P1List(8)
             sage: L.__reduce__()
-            (<built-in function _make_p1list>, (8,))
+            (<... 'sage.modular.modsym.p1list.P1List'>, (8,))
         """
-        import sage.modular.modsym.p1list
-        return sage.modular.modsym.p1list._make_p1list, (self.__N, )
+        return type(self), (self.__N, )
 
     def __getitem__(self, n):
         r"""
@@ -800,7 +801,7 @@ cdef class P1List:
 
     def __len__(self):
         """
-        Returns the length of this P1List.
+        Return the length of this P1List.
 
         EXAMPLES::
 
@@ -812,7 +813,7 @@ cdef class P1List:
 
     def __repr__(self):
         """
-        Returns the string representation of this P1List.
+        Return the string representation of this P1List.
 
         EXAMPLES::
 
@@ -1082,16 +1083,15 @@ cdef class P1List:
         if t: return i
         return -1
 
-
     def list(self):
         r"""
-        Returns the underlying list of this P1List object.
+        Return the underlying list of this :class:`P1List` object.
 
         EXAMPLES::
 
             sage: L = P1List(8)
             sage: type(L)
-            <type 'sage.modular.modsym.p1list.P1List'>
+            <... 'sage.modular.modsym.p1list.P1List'>
             sage: type(L.list())
             <... 'list'>
         """
@@ -1370,7 +1370,10 @@ def _make_p1list(n):
 
         sage: from sage.modular.modsym.p1list import _make_p1list
         sage: _make_p1list(3)
+        doctest:...: DeprecationWarning: _make_p1list() is deprecated
+        See https://trac.sagemath.org/25848 for details.
         The projective line over the integers modulo 3
-
     """
+    from sage.misc.superseded import deprecation
+    deprecation(25848, '_make_p1list() is deprecated')
     return P1List(n)

@@ -194,7 +194,7 @@ class FreeAlgebraFactory(UniqueFactory):
 
     By :trac:`7797`, we provide a different implementation of free
     algebras, based on Singular's "letterplace rings". Our letterplace
-    wrapper allows for chosing positive integral degree weights for the
+    wrapper allows for choosing positive integral degree weights for the
     generators of the free algebra. However, only (weighted) homogenous
     elements are supported. Of course, isomorphic algebras in different
     implementations are not identical::
@@ -235,10 +235,10 @@ class FreeAlgebraFactory(UniqueFactory):
         sage: c^3 * a * b^2
         a*b^2*c^3
     """
-    def create_key(self,base_ring, arg1=None, arg2=None,
-                                      sparse=False, order='degrevlex',
-                                      names=None, name=None,
-                                      implementation=None, degrees=None):
+    def create_key(self, base_ring, arg1=None, arg2=None,
+            sparse=None, order='degrevlex',
+            names=None, name=None,
+            implementation=None, degrees=None):
         """
         Create the key under which a free algebra is stored.
 
@@ -265,7 +265,6 @@ class FreeAlgebraFactory(UniqueFactory):
             if degrees is None:
                 return (base_ring,)
             return tuple(degrees),base_ring
-        PolRing = None
         # test if we can use libSingular/letterplace
         if implementation == "letterplace":
             args = [arg for arg in (arg1, arg2) if arg is not None]
@@ -275,7 +274,6 @@ class FreeAlgebraFactory(UniqueFactory):
             if names is not None:
                 kwds["names"] = names
             PolRing = PolynomialRing(base_ring, *args, **kwds)
-        if PolRing is not None:
             if degrees is None:
                 return (PolRing,)
             from sage.all import TermOrder
@@ -285,9 +283,10 @@ class FreeAlgebraFactory(UniqueFactory):
             while newname in varnames:
                 newname += '_'
             varnames.append(newname)
-            return tuple(degrees),PolynomialRing(PolRing.base(), varnames,
-                    sparse=sparse, order=T,
-                    implementation=implementation if implementation != 'letterplace' else None)
+            R = PolynomialRing(
+                    PolRing.base(), varnames,
+                    sparse=sparse, order=T)
+            return tuple(degrees), R
         # normalise the generator names
         from sage.all import Integer
         if isinstance(arg1, (Integer,) + integer_types):
@@ -393,6 +392,26 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         sage: c^3 * a * b^2
         a*b^2*c^3
 
+    Two free algebras are considered the same if they have the same
+    base ring, number of generators and variable names, and the same
+    implementation::
+
+        sage: F = FreeAlgebra(QQ,3,'x')
+        sage: F == FreeAlgebra(QQ,3,'x')
+        True
+        sage: F is FreeAlgebra(QQ,3,'x')
+        True
+        sage: F == FreeAlgebra(ZZ,3,'x')
+        False
+        sage: F == FreeAlgebra(QQ,4,'x')
+        False
+        sage: F == FreeAlgebra(QQ,3,'y')
+        False
+
+    Note that since :trac:`7797` there is a different
+    implementation of free algebras. Two corresponding free
+    algebras in different implementations are not equal, but there
+    is a coercion.
     """
     Element = FreeAlgebraElement
     def __init__(self, R, n, names):
@@ -468,41 +487,6 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             False
         """
         return self.__ngens <= 1 and self.base_ring().is_commutative()
-
-    def __eq__(self, other):
-        """
-        Two free algebras are considered the same if they have the same
-        base ring, number of generators and variable names, and the same
-        implementation.
-
-        EXAMPLES::
-
-            sage: F = FreeAlgebra(QQ,3,'x')
-            sage: F == FreeAlgebra(QQ,3,'x')
-            True
-            sage: F is FreeAlgebra(QQ,3,'x')
-            True
-            sage: F == FreeAlgebra(ZZ,3,'x')
-            False
-            sage: F == FreeAlgebra(QQ,4,'x')
-            False
-            sage: F == FreeAlgebra(QQ,3,'y')
-            False
-
-        Note that since :trac:`7797` there is a different
-        implementation of free algebras. Two corresponding free
-        algebras in different implementations are not equal, but there
-        is a coercion.
-        """
-        if not isinstance(other, FreeAlgebra_generic):
-            return False
-        if self.base_ring() != other.base_ring():
-            return False
-        if self.__ngens != other.ngens():
-            return False
-        if self.variable_names() != other.variable_names():
-            return False
-        return True
 
     def _repr_(self):
         """
@@ -730,7 +714,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
 
             sage: F = FreeAlgebra(ZZ,3,'x,y,z')
             sage: F.algebra_generators()
-            Finite family {'y': y, 'x': x, 'z': z}
+            Finite family {'x': x, 'y': y, 'z': z}
         """
         ret = {}
         for i in range(self.__ngens):
@@ -825,6 +809,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
     def g_algebra(self, relations, names=None, order='degrevlex', check=True):
         """
         The `G`-Algebra derived from this algebra by relations.
+
         By default is assumed, that two variables commute.
 
         .. TODO::

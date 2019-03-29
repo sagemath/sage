@@ -16,15 +16,16 @@ AUTHORS:
 - Bjarke Hammersholt Roune (2008-04-25): Wrote the Frobby C++
   program and the initial version of the Python interface.
 
-NOTES:
+.. NOTE::
 
-The official source for Frobby is <http://www.broune.com/frobby>,
-which also has documentation and papers describing the algorithms used.
+    The official source for Frobby is <https://www.broune.com/frobby>,
+    which also has documentation and papers describing the algorithms used.
 """
 from __future__ import print_function
 
 from subprocess import Popen, PIPE
 from sage.misc.misc_c import prod
+
 
 class Frobby:
     def __call__(self, action, input=None, options=[], verbose=False):

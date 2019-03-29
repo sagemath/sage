@@ -17,12 +17,11 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, QQ, infinity
+from sage.rings.all import ZZ, infinity
 
 from sage.rings.ring import CommutativeAlgebra
 from sage.categories.all import CommutativeAlgebras
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.cachefunc import cached_method
 
 from .hecke_triangle_groups import HeckeTriangleGroup
 from .abstract_ring import FormsRing_abstract

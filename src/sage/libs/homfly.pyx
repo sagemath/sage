@@ -32,8 +32,10 @@ AUTHORS:
 
 from cysignals.signals cimport sig_on, sig_off
 
+from sage.cpython.string cimport str_to_bytes, char_to_str
+
 cdef extern from "homfly.h":
-    ctypedef int  word; 
+    ctypedef int  word;
     ctypedef signed long int sb4;
     ctypedef unsigned short int ub2;
     ctypedef signed short int sb2;
@@ -62,17 +64,17 @@ def homfly_polynomial_string(link):
 
     EXAMPLES::
 
-        sage: from sage.libs.homfly import homfly_polynomial_string # optional - libhomfly
+        sage: from sage.libs.homfly import homfly_polynomial_string
         sage: trefoil = '1 6 0 1  1 -1  2 1  0 -1  1 1  2 -1 0 1 1 1 2 1'
-        sage: homfly_polynomial_string(trefoil) # optional - libhomfly
+        sage: homfly_polynomial_string(trefoil)
         ' - L^-4 - 2L^-2 + M^2L^-2'
     """
-    cdef char* c_string = link
+    link = str_to_bytes(link)
     sig_on()
-    cdef char* c_output = homfly_str(c_string)
+    cdef char* c_output = homfly_str(link)
     sig_off()
-    output = <bytes> c_output
-    return output
+    return char_to_str(c_output)
+
 
 def homfly_polynomial_dict(link):
     """
@@ -88,15 +90,15 @@ def homfly_polynomial_dict(link):
 
     EXAMPLES::
 
-        sage: from sage.libs.homfly import homfly_polynomial_dict # optional - libhomfly
+        sage: from sage.libs.homfly import homfly_polynomial_dict
         sage: trefoil = '1 6 0 1  1 -1  2 1  0 -1  1 1  2 -1 0 1 1 1 2 1'
-        sage: homfly_polynomial_dict(trefoil) # optional - libhomfly
+        sage: homfly_polynomial_dict(trefoil)
         {(-4, 0): -1, (-2, 0): -2, (-2, 2): 1}
     """
-    cdef char* c_string = link
+    link = str_to_bytes(link)
     cdef Term ter
     sig_on()
-    cdef Poly* c_output = homfly(c_string)
+    cdef Poly* c_output = homfly(link)
     sig_off()
     cdef int l = c_output.len
     d = dict()

@@ -68,7 +68,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: [i for i in sorted(a)]
             [([2, 1], 1), ([3], 1)]
         """
-        return self._monomial_coefficients.iteritems()
+        return iter(self._monomial_coefficients.iteritems())
 
     def __contains__(self, x):
         """
@@ -107,21 +107,22 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
             sage: B = F.basis()
             sage: f = B['a'] + 3*B['c']
-            sage: hash(f)
-            6429418278783588506           # 64-bit
-            726440090                     # 32-bit
+            sage: hash(f) == hash(B['a'] + 3*B['c'])
+            True
+            sage: hash(f) == hash(B['a'] + 4*B['c'])
+            False
 
             sage: F = RootSystem(['A',2]).ambient_space()
             sage: f = F.simple_root(0)
-            sage: hash(f)
-            6920829894162680369           # 64-bit
-            -528971215                    # 32-bit
+            sage: hash(f) == hash(F.simple_root(0))
+            True
+            sage: hash(f) == hash(F.simple_root(1))
+            False
 
-        This uses the recipe that was proposed for frozendicts in `PEP
-        0416 <http://legacy.python.org/dev/peps/pep-0416/>`_ (and adds
-        the hash of the parent). This recipe relies on the hash
-        function for frozensets which uses tricks to mix the hash
-        values of the items in case they are similar.
+        This uses the recipe that was proposed for frozendicts in
+        :pep:`416` (and adds the hash of the parent). This recipe
+        relies on the hash function for frozensets which uses tricks
+        to mix the hash values of the items in case they are similar.
 
         .. TODO::
 
@@ -152,29 +153,29 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         EXAMPLES::
 
-            sage: loads('x\x9c\x95R\xcbn\x131\x14\xd5\x00\r\x89KK\xcb\xa3'
-            ....: '\xbc\xa1\xbc\xd3\xcd,\xe0\x0f\n\xad\xc4\xa2Y\x0c\xb2XZ'
-            ....: '\x8e\xe7N\xe6\x8a\xb1\xa7\xd7\x0f\x91,F\x82E&\xe2\xafq3'
-            ....: '\x13\xa4"X\xb0\xb1}\xae}\xce=\xf7\xc8\xdf\xaf(\'g\x90:o'
-            ....: '\x83\xf2\xc1B\x9a/\x8c\xd4\xa8\x84\xaa\xa4s\xec2\xa2d'
-            ....: '\xcc\xdf\x7f\xa8\xf5\x14\x8d\xf4\xb5EY\x9dZ\x80\xb3:'
-            ....: '\x0f\x15\x88o\xe8K\xa1\xa4\x87Ym\x17)T\xa0\xc1\xf8\x8eH}'
-            ....: '\x17\xd5S\xd3"\xd2\x84^\xf3\xd8?\xf4N:\x01FW\x95\x10\xd3'
-            ....: '\x80\x95G#\x04\x9b\x81\x97\xde[F\xd7:I\x8dN\xad\x17\xa6dU'
-            ....: '\t\r\xbe\xacsF[\xe5\xd6\x9f\x83\x05\x83\x14@X8\xb7\xe0'
-            ....: '\xa2\xb2\xf4X\x1b\x16\x8c\x85<(`4\xe8=v\x13 \xb8\xb43'
-            ....: '\xe8\xd8Y\xbf\xd3\xf5\xee\x89E3s)\x9a\xf8\x10\xac\xb8@'
-            ....: '\xecS\x07\xb2\x8b3\r\x8f2\x1a-\x1bb|\x98\xa3;\x97^\x95'
-            ....: '\xb4\xfd\xd3\xad\xe8FF;|\xbbKJ\xce\xb1\xd6\xb4\xcbG_":'
-            ....: '\x96\x0e\x1d\xdd\\e\xb4W\xee\xf2\xfdS4\xe8\xe1#\xc6\x00'
-            ....: '\\4)+\xda\x8fW\xb7\xf8\xce\xe5To\xb7\x19\xddi\xe9\xeed2'
-            ....: '\xf1\x19\x1d\x1c\xfd\xa0{\xe5\xe0\xff\x93ft\xbf\x1cm\x88'
-            ....: '\x0e\xbcK\x8bu\x7f\x01&h\xb01\x8f\\\xc42\xeb\\\x9d\xfc.~'
-            ....: '\x8e5z\xc0\x939O\x16-=\\6+z\x94\xd1\xe3\xb6\xa1\'c>\xdc'
-            ....: '\xfc\x04zZ\xee\xf1A\xcc\xbc\xc09=\xe3\xc9qX\xd1aF\xcf'
-            ....: '\x1bz\xc1\x0f\xa23S\xeb\xe8F\xa8\x1a\x8a\x02\x15\xc6\xe9'
-            ....: '\x1c\xbdl\xe8\xd58\xaa\xfe%n\xa6\xe5W\x10\x1b@\xafy\xf2n'
-            ....: '\x99\xd1\x9b\xe8\xa2\xec\xcfo\x83k\xa7\xe9/\xc1\xe1\t\x17')
+            sage: loads(b'x\x9c\x95R\xcbn\x131\x14\xd5\x00\r\x89KK\xcb\xa3'
+            ....: b'\xbc\xa1\xbc\xd3\xcd,\xe0\x0f\n\xad\xc4\xa2Y\x0c\xb2XZ'
+            ....: b'\x8e\xe7N\xe6\x8a\xb1\xa7\xd7\x0f\x91,F\x82E&\xe2\xafq3'
+            ....: b'\x13\xa4"X\xb0\xb1}\xae}\xce=\xf7\xc8\xdf\xaf(\'g\x90:o'
+            ....: b'\x83\xf2\xc1B\x9a/\x8c\xd4\xa8\x84\xaa\xa4s\xec2\xa2d'
+            ....: b'\xcc\xdf\x7f\xa8\xf5\x14\x8d\xf4\xb5EY\x9dZ\x80\xb3:'
+            ....: b'\x0f\x15\x88o\xe8K\xa1\xa4\x87Ym\x17)T\xa0\xc1\xf8\x8eH}'
+            ....: b'\x17\xd5S\xd3"\xd2\x84^\xf3\xd8?\xf4N:\x01FW\x95\x10\xd3'
+            ....: b'\x80\x95G#\x04\x9b\x81\x97\xde[F\xd7:I\x8dN\xad\x17\xa6dU'
+            ....: b'\t\r\xbe\xacsF[\xe5\xd6\x9f\x83\x05\x83\x14@X8\xb7\xe0'
+            ....: b'\xa2\xb2\xf4X\x1b\x16\x8c\x85<(`4\xe8=v\x13 \xb8\xb43'
+            ....: b'\xe8\xd8Y\xbf\xd3\xf5\xee\x89E3s)\x9a\xf8\x10\xac\xb8@'
+            ....: b'\xecS\x07\xb2\x8b3\r\x8f2\x1a-\x1bb|\x98\xa3;\x97^\x95'
+            ....: b'\xb4\xfd\xd3\xad\xe8FF;|\xbbKJ\xce\xb1\xd6\xb4\xcbG_":'
+            ....: b'\x96\x0e\x1d\xdd\\e\xb4W\xee\xf2\xfdS4\xe8\xe1#\xc6\x00'
+            ....: b'\\4)+\xda\x8fW\xb7\xf8\xce\xe5To\xb7\x19\xddi\xe9\xeed2'
+            ....: b'\xf1\x19\x1d\x1c\xfd\xa0{\xe5\xe0\xff\x93ft\xbf\x1cm\x88'
+            ....: b'\x0e\xbcK\x8bu\x7f\x01&h\xb01\x8f\\\xc42\xeb\\\x9d\xfc.~'
+            ....: b'\x8e5z\xc0\x939O\x16-=\\6+z\x94\xd1\xe3\xb6\xa1\'c>\xdc'
+            ....: b'\xfc\x04zZ\xee\xf1A\xcc\xbc\xc09=\xe3\xc9qX\xd1aF\xcf'
+            ....: b'\x1bz\xc1\x0f\xa23S\xeb\xe8F\xa8\x1a\x8a\x02\x15\xc6\xe9'
+            ....: b'\x1c\xbdl\xe8\xd58\xaa\xfe%n\xa6\xe5W\x10\x1b@\xafy\xf2n'
+            ....: b'\x99\xd1\x9b\xe8\xa2\xec\xcfo\x83k\xa7\xe9/\xc1\xe1\t\x17')
             2*B['x'] + 2*B['y']
         """
         self._set_parent(state[0])
@@ -367,6 +368,11 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                ├┤      ├┤       ├┼┘      ┌┼┤    └┴┘
                ├┤      └┘       └┘       └┴┘
                └┘
+
+        The following test failed before :trac:`26850` ::
+
+            sage: unicode_art([M.zero()])  # indirect doctest
+            [ 0 ]
         """
         from sage.misc.misc import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -409,7 +415,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                 s += UnicodeArt([coeff], break_points) + b
                 first = False
         if first:
-            return "0"
+            return UnicodeArt(["0"])
         elif s == empty_unicode_art:
             return UnicodeArt(["1"])
         else:
@@ -628,45 +634,29 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                                (<IndexedFreeModuleElement>other)._monomial_coefficients,
                                self._monomial_coefficients))
 
-    cpdef _coefficient_fast(self, m):
-        """
-        Return the coefficient of ``m`` in ``self``, where ``m`` is key in
-        ``self._monomial_coefficients``.
-
-        EXAMPLES::
-
-            sage: p = Partition([2,1])
-            sage: q = Partition([1,1,1])
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: a = s(p)
-            sage: a._coefficient_fast([2,1])
-            Traceback (most recent call last):
-            ...
-            TypeError: unhashable type: 'list'
-
-        ::
-
-            sage: a._coefficient_fast(p)
-            1
-            sage: a._coefficient_fast(q)
-            0
-        """
-        return self._monomial_coefficients.get(m, self.base_ring().zero())
-
     def __getitem__(self, m):
         """
+        Return the coefficient of ``m`` in ``self``.
+
         EXAMPLES::
 
-            sage: s = SymmetricFunctions(QQ).schur()
             sage: p = Partition([2,1])
             sage: q = Partition([1,1,1])
+            sage: s = SymmetricFunctions(QQ).schur()
             sage: a = s(p)
             sage: a[p]
             1
             sage: a[q]
             0
+            sage: a[[2,1]]
+            Traceback (most recent call last):
+            ...
+            TypeError: unhashable type: 'list'
         """
-        return self._coefficient_fast(m)
+        res = self._monomial_coefficients.get(m)
+        if res is None:
+            return self.base_ring().zero()
+        return res
 
     def _vector_(self, new_base_ring=None):
         """
@@ -772,14 +762,14 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         TESTS::
 
-            sage: F.get_action(QQ, operator.mul, True)
+            sage: coercion_model.get_action(F, QQ, operator.mul)
             Right scalar multiplication by Rational Field on Free module generated by {'a', 'b', 'c'} over Rational Field
-            sage: F.get_action(QQ, operator.mul, False)
+            sage: coercion_model.get_action(QQ, F, operator.mul)
             Left scalar multiplication by Rational Field on Free module generated by {'a', 'b', 'c'} over Rational Field
-            sage: F.get_action(ZZ, operator.mul, True)
+            sage: coercion_model.get_action(F, ZZ, operator.mul)
             Right scalar multiplication by Integer Ring on Free module generated by {'a', 'b', 'c'} over Rational Field
-            sage: F.get_action(F, operator.mul, True)
-            sage: F.get_action(F, operator.mul, False)
+            sage: print(coercion_model.get_action(F, F, operator.mul))
+            None
 
         This also works when a coercion of the coefficient is needed, for
         example with polynomials or fraction fields (:trac:`8832`)::
@@ -915,7 +905,7 @@ def _unpickle_element(C, d):
     return C._from_dict(d, coerce=False, remove_zeros=False)
 
 # Handle old CombinatorialFreeModuleElement pickles, see trac #22632
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.combinat.free_module",
                            "CombinatorialFreeModuleElement",
                            IndexedFreeModuleElement)

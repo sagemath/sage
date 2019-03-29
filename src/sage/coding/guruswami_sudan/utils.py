@@ -19,11 +19,10 @@ AUTHORS:
 #*****************************************************************************
 
 
-from sage.functions.other import binomial, floor, sqrt
+from sage.functions.other import floor, sqrt
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.arith.all import lcm
-from sage.combinat.permutation import Permutation
+
 
 def polynomial_to_list(p, len):
     r"""
@@ -46,6 +45,7 @@ def polynomial_to_list(p, len):
     """
     return list(p) + [0]*max(0, len-p.degree()-1)
 
+
 def johnson_radius(n, d):
     r"""
     Returns the Johnson-radius for the code length `n` and the minimum distance `d`.
@@ -64,6 +64,7 @@ def johnson_radius(n, d):
     """
     return n - sqrt(n*(n-d))
 
+
 def ligt(x):
     r"""
     Returns the least integer greater than ``x``.
@@ -79,7 +80,8 @@ def ligt(x):
         sage: ligt(41.041)
         42
     """
-    return floor(x+1)
+    return floor(x + 1)
+
 
 def gilt(x):
     r"""
@@ -97,11 +99,12 @@ def gilt(x):
         43
     """
     if x in ZZ:
-        return Integer(x-1)
+        return Integer(x - 1)
     else:
         return floor(x)
 
-def solve_degree2_to_integer_range(a,b,c):
+
+def solve_degree2_to_integer_range(a, b, c):
     r"""
     Returns the greatest integer range `[i_1, i_2]` such that
     `i_1 > x_1` and `i_2 < x_2` where `x_1, x_2` are the two zeroes of the equation in `x`:
@@ -136,6 +139,7 @@ def solve_degree2_to_integer_range(a,b,c):
     else:
         return (mini,maxi)
 
+
 def _degree_of_vector(v, shifts=None):
     r"""
     Returns the greatest degree among the entries of the polynomial vector `v`.
@@ -161,8 +165,9 @@ def _degree_of_vector(v, shifts=None):
         1
     """
     if not shifts:
-        return max( vi.degree() for vi in v )
+        return max(vi.degree() for vi in v)
     else:
         if v.is_zero():
-            -1
-        return max( degi + si for (degi,si) in zip([ vi.degree() for vi in v ],shifts) if degi > -1 )
+            return -1
+        return max(degi + si for (degi, si) in zip([vi.degree() for vi in v ], shifts)
+                   if degi > -1)

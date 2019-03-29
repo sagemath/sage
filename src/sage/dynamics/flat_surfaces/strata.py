@@ -1,6 +1,12 @@
 r"""
 Strata of differentials on Riemann surfaces
 
+.. WARNING::
+
+    This module is deprecated. You are advised to install and use the
+    surface_dynamics package instead available at
+    https://pypi.python.org/pypi/surface_dynamics/
+
 The space of Abelian (or quadratic) differentials is stratified by the
 degrees of the zeroes (and simple poles for quadratic
 differentials). Each stratum has one, two or three connected
@@ -45,6 +51,19 @@ EXAMPLES:
 Construction of a stratum from a list of singularity degrees::
 
     sage: a = AbelianStratum(1,1)
+    doctest:warning
+    ...
+    DeprecationWarning: AbelianStratum is deprecated and will be removed from Sage.
+    You are advised to install the surface_dynamics package via:
+    sage -pip install surface_dynamics
+    If you do not have write access to the Sage installation you can
+    alternatively do
+    sage -pip install surface_dynamics --user
+    The package surface_dynamics subsumes all flat surface related
+    computation that are currently available in Sage. See more
+    information at
+    http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+    See http://trac.sagemath.org/20695 for details.
     sage: a
     H(1, 1)
     sage: a.genus()
@@ -92,6 +111,19 @@ of a representative::
 
     sage: for a in AbelianStrata(genus=3):
     ....:     print(a)
+    doctest:warning
+    ...
+    DeprecationWarning: AbelianStrata is deprecated and will be removed from Sage.
+    You are advised to install the surface_dynamics package via:
+        sage -pip install surface_dynamics
+    If you do not have write access to the Sage installation you can
+    alternatively do
+        sage -pip install surface_dynamics --user
+    The package surface_dynamics subsumes all flat surface related
+    computation that are currently available in Sage. See more
+    information at
+        http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+    See http://trac.sagemath.org/20695 for details.
     H(4)
     H(3, 1)
     H(2, 2)
@@ -235,6 +267,7 @@ Rauzy diagrams from the classification of strata::
 from __future__ import print_function
 from six.moves import range
 
+from sage.structure.richcmp import richcmp_method, rich_to_bool, op_EQ, op_NE
 from sage.structure.sage_object import SageObject
 
 from sage.combinat.combinat import CombinatorialClass
@@ -352,6 +385,9 @@ def AbelianStrata(genus=None, nintervals=None, marked_separatrix=None):
         H^out(2, 3, 3)
         H^out(3, 3, 2)
     """
+    from sage.dynamics.surface_dynamics_deprecation import surface_dynamics_deprecation
+    surface_dynamics_deprecation("AbelianStrata")
+
     if genus is None:
         if nintervals is None:
             return AbelianStrata_all()
@@ -590,7 +626,7 @@ class AbelianStrata_gd(CombinatorialClass):
         if self._marked_separatrix == 'no':
             return "Abelian strata of genus %d surfaces and %d intervals" % (self._genus, self._nintervals)
         elif self._marked_separatrix == 'in':
-            return "Abelian strata of genus %d surfaces and %d intervals and a marked incoming ihorizontal separatrix" % (self._genus, self._nintervals)
+            return "Abelian strata of genus %d surfaces and %d intervals and a marked incoming horizontal separatrix" % (self._genus, self._nintervals)
         else:
             return "Abelian strata of genus %d surfaces and %d intervals and a marked outgoing horizontal separatrix" % (self._genus, self._nintervals)
 
@@ -652,6 +688,7 @@ class AbelianStrata_all(InfiniteAbstractCombinatorialClass):
         return AbelianStrata_g(g)
 
 
+@richcmp_method
 class AbelianStratum(SageObject):
     """
     Stratum of Abelian differentials.
@@ -750,6 +787,9 @@ class AbelianStratum(SageObject):
             ...
             ValueError: marked_separatrix must be one of 'no', 'in', 'out'
         """
+        from sage.dynamics.surface_dynamics_deprecation import surface_dynamics_deprecation
+        surface_dynamics_deprecation("AbelianStratum")
+
         if l == ():
             pass
 
@@ -845,9 +885,13 @@ class AbelianStratum(SageObject):
                     '^' + self._marked_separatrix +
                     "(" + str(self._zeroes)[1:-1] + ")")
 
-    def __eq__(self, other):
+    def __richcmp__(self, other, op):
         r"""
-        TESTS:
+        The order is given by the natural:
+
+        self < other iff adherance(self) c adherance(other)
+
+        TESTS::
 
             sage: a = AbelianStratum(1,3)
             sage: b = AbelianStratum(3,1)
@@ -872,23 +916,7 @@ class AbelianStratum(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: the right member must be a stratum
-        """
-        if type(self) is not type(other):
-            raise TypeError("the right member must be a stratum")
 
-        return (self._marked_separatrix == other._marked_separatrix and
-                self._zeroes == other._zeroes)
-
-    def __ne__(self, other):
-        r"""
-        TESTS::
-
-            sage: a = AbelianStratum(1,3)
-            sage: b = AbelianStratum(3,1)
-            sage: c = AbelianStratum(1,3,marked_separatrix='out')
-            sage: d = AbelianStratum(3,1,marked_separatrix='out')
-            sage: e = AbelianStratum(1,3,marked_separatrix='in')
-            sage: f = AbelianStratum(3,1,marked_separatrix='in')
             sage: a != b  # no difference for unmarked
             False
             sage: c != d  # difference for out mark
@@ -905,20 +933,6 @@ class AbelianStratum(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: the right member must be a stratum
-        """
-        if type(self) is not type(other):
-            raise TypeError("the right member must be a stratum")
-
-        return (self._marked_separatrix != other._marked_separatrix or
-                self._zeroes != other._zeroes)
-
-    def __cmp__(self, other):
-        r"""
-        The order is given by the natural:
-
-        self < other iff adherance(self) c adherance(other)
-
-        TESTS::
 
             sage: a3 = AbelianStratum(3,2,1)
             sage: a3_out = AbelianStratum(3,2,1,marked_separatrix='out')
@@ -930,15 +944,22 @@ class AbelianStratum(SageObject):
             sage: a3_out == a3_in
             False
         """
-        if (type(self) is not type(other) or
-            self._marked_separatrix != other._marked_separatrix):
+        if type(self) is not type(other):
+            raise TypeError("the right member must be a stratum")
+
+        if op == op_EQ or op == op_NE:
+            z_eq = self._zeroes == other._zeroes
+            ms_eq = self._marked_separatrix == other._marked_separatrix
+            return (z_eq and ms_eq) == (op == op_EQ)
+
+        if self._marked_separatrix != other._marked_separatrix:
             raise TypeError("the other must be a stratum with same marking")
 
         if self._zeroes < other._zeroes:
-            return 1
+            return rich_to_bool(op, 1)
         elif self._zeroes > other._zeroes:
-            return -1
-        return 0
+            return rich_to_bool(op, -1)
+        return rich_to_bool(op, 0)
 
     def connected_components(self):
         """
@@ -1048,6 +1069,7 @@ class AbelianStratum(SageObject):
         return 2 * self.genus() + len(self._zeroes) - 1
 
 
+@richcmp_method
 class ConnectedComponentOfAbelianStratum(SageObject):
     r"""
     Connected component of Abelian stratum.
@@ -1214,6 +1236,19 @@ class ConnectedComponentOfAbelianStratum(SageObject):
         EXAMPLES::
 
             sage: p = iet.Permutation('a b','b a')
+            doctest:warning
+            ...
+            DeprecationWarning: Permutation is deprecated and will be removed from Sage.
+            You are advised to install the surface_dynamics package via:
+                sage -pip install surface_dynamics
+            If you do not have write access to the Sage installation you can
+            alternatively do
+                sage -pip install surface_dynamics --user
+            The package surface_dynamics subsumes all flat surface related
+            computation that are currently available in Sage. See more
+            information at
+                http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
+            See http://trac.sagemath.org/20695 for details.
             sage: c = p.connected_component()
             sage: c.parent()
             H(0)
@@ -1367,7 +1402,7 @@ class ConnectedComponentOfAbelianStratum(SageObject):
         """
         return self.representative(reduced=reduced).rauzy_diagram()
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
         TESTS::
 
@@ -1396,10 +1431,10 @@ class ConnectedComponentOfAbelianStratum(SageObject):
             return NotImplemented
 
         if self._parent._zeroes < other._parent._zeroes:
-            return 1
+            return rich_to_bool(op, 1)
         elif self._parent._zeroes > other._parent._zeroes:
-            return -1
-        return 0
+            return rich_to_bool(op, -1)
+        return rich_to_bool(op, 0)
 
 
 CCA = ConnectedComponentOfAbelianStratum

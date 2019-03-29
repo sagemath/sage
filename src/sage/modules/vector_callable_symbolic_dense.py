@@ -78,8 +78,8 @@ class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_gener
             return "(%s) |--> %s" % (args, repr_x)
 
     def _latex_(self):
-        """
-        Returns the latex representation of the vector
+        r"""
+        Return the latex representation of the vector.
 
         EXAMPLES::
 

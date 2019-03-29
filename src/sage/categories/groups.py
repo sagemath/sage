@@ -147,8 +147,8 @@ class Groups(CategoryWithAxiom):
             """
             tester = self._tester(**options)
             for x in tester.some_elements():
-                tester.assertEquals(x * ~x, self.one())
-                tester.assertEquals(~x * x, self.one())
+                tester.assertEqual(x * ~x, self.one())
+                tester.assertEqual(~x * x, self.one())
 
         def semidirect_product(self, N, mapping, check = True):
             r"""
@@ -246,40 +246,40 @@ class Groups(CategoryWithAxiom):
                 sage: G = DiCyclicGroup(3)
                 sage: T = G.cayley_table()
                 sage: T.column_keys()
-                ((), (1,3,2,4)(5,7), ..., (1,2)(3,4)(5,7,6))
+                ((), (5,6,7), ..., (1,4,2,3)(5,7))
                 sage: T
                 *  a b c d e f g h i j k l
                  +------------------------
                 a| a b c d e f g h i j k l
-                b| b e f j i h d k a l c g
-                c| c g d e h b k l j f i a
-                d| d k e h l g i a f b j c
-                e| e i h l a k j c b g f d
-                f| f d j i k e c g l h a b
-                g| g h b f j l e i c a d k
-                h| h j l a c i f d g k b e
-                i| i a k g b c l f e d h j
-                j| j c i k g d a b h e l f
-                k| k l g b f a h j d c e i
-                l| l f a c d j b e k i g h
+                b| b c a e f d i g h l j k
+                c| c a b f d e h i g k l j
+                d| d e f a b c j k l g h i
+                e| e f d b c a l j k i g h
+                f| f d e c a b k l j h i g
+                g| g h i j k l d e f a b c
+                h| h i g k l j f d e c a b
+                i| i g h l j k e f d b c a
+                j| j k l g h i a b c d e f
+                k| k l j h i g c a b f d e
+                l| l j k i g h b c a e f d
 
             ::
 
-                sage: M=SL(2,2)
+                sage: M = SL(2, 2)
                 sage: M.cayley_table()
                 *  a b c d e f
                  +------------
-                a| a b c d e f
-                b| b a d c f e
-                c| c f e b a d
-                d| d e f a b c
-                e| e d a f c b
-                f| f c b e d a
+                a| c e a f b d
+                b| d f b e a c
+                c| a b c d e f
+                d| b a d c f e
+                e| f d e b c a
+                f| e c f a d b
                 <BLANKLINE>
 
             ::
 
-                sage: A=AbelianGroup([2,3])
+                sage: A = AbelianGroup([2, 3])
                 sage: A.cayley_table()
                 *  a b c d e f
                  +------------
@@ -317,18 +317,18 @@ class Groups(CategoryWithAxiom):
             ::
 
                 sage: G=QuaternionGroup()
-                sage: names=['1', 'I', 'J', '-1', '-K', 'K', '-I', '-J']
+                sage: names=['1', 'I', '-1', '-I', 'J', '-K', '-J', 'K']
                 sage: G.cayley_table(names=names)
-                 *   1  I  J -1 -K  K -I -J
+                 *   1  I -1 -I  J -K -J  K
                   +------------------------
-                 1|  1  I  J -1 -K  K -I -J
-                 I|  I -1  K -I  J -J  1 -K
-                 J|  J -K -1 -J -I  I  K  1
-                -1| -1 -I -J  1  K -K  I  J
-                -K| -K -J  I  K -1  1  J -I
-                 K|  K  J -I -K  1 -1 -J  I
-                -I| -I  1 -K  I -J  J -1  K
-                -J| -J  K  1  J  I -I -K -1
+                 1|  1  I -1 -I  J -K -J  K
+                 I|  I -1 -I  1  K  J -K -J
+                -1| -1 -I  1  I -J  K  J -K
+                -I| -I  1  I -1 -K -J  K  J
+                 J|  J -K -J  K -1 -I  1  I
+                -K| -K -J  K  J  I -1 -I  1
+                -J| -J  K  J -K  1  I -1 -I
+                 K|  K  J -K -J -I  1  I -1
 
             ::
 
@@ -382,29 +382,30 @@ class Groups(CategoryWithAxiom):
             ::
 
                 sage: from sage.matrix.operation_table import OperationTable
-                sage: G=DiCyclicGroup(3)
+                sage: G = DiCyclicGroup(3)
                 sage: commutator = lambda x, y: x*y*x^-1*y^-1
-                sage: T=OperationTable(G, commutator)
+                sage: T = OperationTable(G, commutator)
                 sage: T
                 .  a b c d e f g h i j k l
                  +------------------------
                 a| a a a a a a a a a a a a
-                b| a a h d a d h h a h d d
-                c| a d a a a d d a d d d a
-                d| a h a a a h h a h h h a
-                e| a a a a a a a a a a a a
-                f| a h h d a a d h h d a d
-                g| a d h d a h a h d a h d
-                h| a d a a a d d a d d d a
-                i| a a h d a d h h a h d d
-                j| a d h d a h a h d a h d
-                k| a h h d a a d h h d a d
-                l| a h a a a h h a h h h a
+                b| a a a a a a c c c c c c
+                c| a a a a a a b b b b b b
+                d| a a a a a a a a a a a a
+                e| a a a a a a c c c c c c
+                f| a a a a a a b b b b b b
+                g| a b c a b c a c b a c b
+                h| a b c a b c b a c b a c
+                i| a b c a b c c b a c b a
+                j| a b c a b c a c b a c b
+                k| a b c a b c b a c b a c
+                l| a b c a b c c b a c b a
+
                 sage: trans = T.translation()
-                sage: comm = [trans['a'], trans['d'],trans['h']]
+                sage: comm = [trans['a'], trans['b'], trans['c']]
                 sage: comm
-                [(), (5,7,6), (5,6,7)]
-                sage: P=G.cayley_table(elements=comm)
+                [(), (5,6,7), (5,7,6)]
+                sage: P = G.cayley_table(elements=comm)
                 sage: P
                 *  a b c
                  +------
@@ -484,7 +485,7 @@ class Groups(CategoryWithAxiom):
     Algebras = LazyImport('sage.categories.group_algebras', 'GroupAlgebras', at_startup=True)
 
     class Commutative(CategoryWithAxiom):
-        """
+        r"""
         Category of commutative (abelian) groups.
 
         A group `G` is *commutative* if `xy = yx` for all `x,y \in G`.

@@ -61,7 +61,6 @@ The arguments in the definition must be symbolic variables (:trac:`10747`)::
     SyntaxError: can't assign to function call
 """
 
-from sage.structure.parent_base import ParentWithBase
 from sage.symbolic.ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
 
@@ -283,7 +282,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing):
 
         TESTS::
 
-            sage: TestSuite(f.parent()).run()
+            sage: TestSuite(f.parent()).run(skip=['_test_divides'])
         """
         self._arguments = arguments
         SymbolicRing.__init__(self, SR)
@@ -456,7 +455,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing):
             sage: f(z=100)
             a + 2*x + 3*y + 100
         """
-        if any([type(arg).__module__ == 'numpy' and type(arg).__name__ == "ndarray" for arg in args]): # avoid importing
+        if any(type(arg).__module__ == 'numpy' and type(arg).__name__ == "ndarray" for arg in args): # avoid importing
             raise NotImplementedError("Numpy arrays are not supported as arguments for symbolic expressions")
 
         d = dict(zip([repr(_) for _ in self.arguments()], args))

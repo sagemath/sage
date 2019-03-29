@@ -34,7 +34,7 @@ class Monoid_class(Parent):
 
             sage: from sage.monoids.monoid import Monoid_class
             sage: Monoid_class(('a','b'))
-            <class 'sage.monoids.monoid.Monoid_class_with_category'>
+            <sage.monoids.monoid.Monoid_class_with_category object at ...>
 
         TESTS::
 

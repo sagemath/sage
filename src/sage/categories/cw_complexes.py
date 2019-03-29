@@ -18,7 +18,7 @@ class CWComplexes(Category_singleton):
     r"""
     The category of CW complexes.
 
-    A CW complex is a Closure-finite cell complex in the Weak toplogy.
+    A CW complex is a Closure-finite cell complex in the Weak topology.
 
     REFERENCES:
 

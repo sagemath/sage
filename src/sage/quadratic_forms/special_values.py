@@ -1,4 +1,4 @@
-"""
+r"""
 Routines for computing special values of L-functions
 
 - :func:`gamma__exact` -- Exact values of the `\Gamma` function at integers and half-integers
@@ -24,7 +24,7 @@ from sage.symbolic.all import I
 # ---------------- The Gamma Function  ------------------
 
 def gamma__exact(n):
-    """
+    r"""
     Evaluates the exact value of the `\Gamma` function at an integer or
     half-integer argument.
 

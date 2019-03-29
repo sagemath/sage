@@ -2,7 +2,7 @@
 
 from sage.libs.arb.types cimport *
 from sage.libs.flint.types cimport fmpz_t, fmpq_t
-from sage.libs.mpfr cimport mpfr_t
+from sage.libs.mpfr.types cimport mpfr_t
 
 cdef extern from "arb.h":
 
@@ -94,6 +94,12 @@ cdef extern from "arb.h":
     bint arb_contains_positive(const arb_t x)
     bint arb_contains_nonnegative(const arb_t x)
     bint arb_contains_int(const arb_t x)
+    bint arb_eq(const arb_t x, const arb_t y)
+    bint arb_ne(const arb_t x, const arb_t y)
+    bint arb_le(const arb_t x, const arb_t y)
+    bint arb_ge(const arb_t x, const arb_t y)
+    bint arb_lt(const arb_t x, const arb_t y)
+    bint arb_gt(const arb_t x, const arb_t y)
 
     void arb_neg(arb_t y, const arb_t x)
     void arb_neg_round(arb_t y, const arb_t x, long prec)
@@ -176,6 +182,8 @@ cdef extern from "arb.h":
     void arb_cos_pi_fmpq(arb_t c, const fmpq_t x, long prec)
     void arb_tan_pi(arb_t y, const arb_t x, long prec)
     void arb_cot_pi(arb_t y, const arb_t x, long prec)
+    void arb_sec(arb_t s, const arb_t x, long prec)
+    void arb_csc(arb_t c, const arb_t x, long prec)
 
     void arb_atan_arf(arb_t z, const arf_t x, long prec)
     void arb_atan(arb_t z, const arb_t x, long prec)
@@ -188,6 +196,8 @@ cdef extern from "arb.h":
     void arb_sinh_cosh(arb_t s, arb_t c, const arb_t x, long prec)
     void arb_tanh(arb_t y, const arb_t x, long prec)
     void arb_coth(arb_t y, const arb_t x, long prec)
+    void arb_sech(arb_t s, const arb_t x, long prec)
+    void arb_csch(arb_t c, const arb_t x, long prec)
 
     void arb_asinh(arb_t z, const arb_t x, long prec)
     void arb_acosh(arb_t z, const arb_t x, long prec)

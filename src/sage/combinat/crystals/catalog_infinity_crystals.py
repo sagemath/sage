@@ -1,4 +1,4 @@
-"""
+r"""
 Catalog Of Crystal Models For `B(\infty)`
 
 We currently have the following models:

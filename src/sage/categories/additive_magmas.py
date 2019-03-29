@@ -8,6 +8,8 @@ Additive Magmas
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+import six
+
 from sage.misc.lazy_import import LazyImport
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -71,7 +73,7 @@ class AdditiveMagmas(Category_singleton):
 
         @cached_method
         def AdditiveAssociative(self):
-            """
+            r"""
             Return the full subcategory of the additive associative
             objects of ``self``.
 
@@ -97,7 +99,7 @@ class AdditiveMagmas(Category_singleton):
 
         @cached_method
         def AdditiveCommutative(self):
-            """
+            r"""
             Return the full subcategory of the commutative objects of ``self``.
 
             An :class:`additive magma <AdditiveMagmas>` `M` is
@@ -539,7 +541,7 @@ class AdditiveMagmas(Category_singleton):
                     sage: A = S.algebra(QQ)
                     sage: a,b,c,d = A.algebra_generators()
                     sage: a * b + b * d * c
-                    B[c + b + d] + B[a + b]
+                    B[b + c + d] + B[a + b]
                 """
                 return self.monomial(g1 + g2)
 
@@ -553,7 +555,7 @@ class AdditiveMagmas(Category_singleton):
                 EXAMPLES::
 
                     sage: C = AdditiveMagmas().AdditiveCommutative().CartesianProducts()
-                    sage: C.extra_super_categories();
+                    sage: C.extra_super_categories()
                     [Category of additive commutative additive magmas]
                     sage: C.axioms()
                     frozenset({'AdditiveCommutative'})
@@ -663,9 +665,9 @@ class AdditiveMagmas(Category_singleton):
                 tester = self._tester(**options)
                 zero = self.zero()
                 # TODO: also call is_zero once it will work
-                tester.assert_(self.is_parent_of(zero))
+                tester.assertTrue(self.is_parent_of(zero))
                 for x in tester.some_elements():
-                    tester.assert_(x + zero == x)
+                    tester.assertTrue(x + zero == x)
                 # Check that zero is immutable if it looks like we can:
                 if hasattr(zero,"is_immutable"):
                     tester.assertEqual(zero.is_immutable(),True)
@@ -696,23 +698,6 @@ class AdditiveMagmas(Category_singleton):
                 """
                 # TODO: add a test that actually exercise this default implementation
                 return self(0)
-
-            def zero_element(self):
-                """
-                Backward compatibility alias for ``self.zero()``.
-
-                TESTS::
-
-                    sage: from sage.geometry.polyhedron.parent import Polyhedra
-                    sage: P = Polyhedra(QQ, 3)
-                    sage: P.zero_element()
-                    doctest:...: DeprecationWarning: .zero_element() is deprecated. Use .zero() instead
-                    See http://trac.sagemath.org/17694 for details.
-                    A 0-dimensional polyhedron in QQ^3 defined as the convex hull of 1 vertex
-                """
-                from sage.misc.superseded import deprecation
-                deprecation(17694, ".zero_element() is deprecated. Use .zero() instead")
-                return self.zero()
 
             def is_empty(self):
                 r"""
@@ -766,7 +751,7 @@ class AdditiveMagmas(Category_singleton):
             #     return self == self.parent().zero()
 
             @abstract_method
-            def __nonzero__(self):
+            def __bool__(self):
                 """
                 Return whether ``self`` is not zero.
 
@@ -784,6 +769,10 @@ class AdditiveMagmas(Category_singleton):
                     sage: bool(S.an_element())
                     True
                  """
+
+            if six.PY2:
+                __nonzero__ = __bool__
+                del __bool__
 
             def _test_nonzero_equal(self, **options):
                 r"""
@@ -902,7 +891,7 @@ class AdditiveMagmas(Category_singleton):
                     EXAMPLES::
 
                         sage: C = AdditiveMagmas().AdditiveUnital().AdditiveInverse().CartesianProducts()
-                        sage: C.extra_super_categories();
+                        sage: C.extra_super_categories()
                         [Category of additive inverse additive unital additive magmas]
                         sage: sorted(C.axioms())
                         ['AdditiveInverse', 'AdditiveUnital']
@@ -938,7 +927,7 @@ class AdditiveMagmas(Category_singleton):
                 EXAMPLES::
 
                     sage: C = AdditiveMagmas().AdditiveUnital().CartesianProducts()
-                    sage: C.extra_super_categories();
+                    sage: C.extra_super_categories()
                     [Category of additive unital additive magmas]
                     sage: C.axioms()
                     frozenset({'AdditiveUnital'})

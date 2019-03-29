@@ -24,8 +24,7 @@ EXAMPLES::
     sage: sorted(dir(f))
     [..., '_tab_completion', 'a', 'b', 'c', 'd']
 """
-
-import warnings
+import builtins
 
 
 class ExtraTabCompletion(object):
@@ -50,4 +49,58 @@ class ExtraTabCompletion(object):
         except AttributeError:
             raise NotImplementedError(
                 '{0} must implement _tab_completion() method'.format(self.__class__))
-        return dir(self.__class__) + self.__dict__.keys() + tab_fn()
+        return dir(self.__class__) + list(self.__dict__) + tab_fn()
+
+
+def completions(s, globs):
+    """
+    Return a list of completions in the given context.
+
+    INPUT:
+
+    - ``s`` -- a string
+
+    - ``globs`` -- a string: object dictionary; context in which to
+      search for completions, e.g., :func:`globals()`
+
+    OUTPUT:
+
+    a list of strings
+
+    EXAMPLES::
+
+         sage: X.<x> = PolynomialRing(QQ)
+         sage: import sage.interfaces.tab_completion as s
+         sage: p = x**2 + 1
+         sage: s.completions('p.co',globals()) # indirect doctest
+         ['p.coefficients',...]
+
+         sage: s.completions('dic',globals()) # indirect doctest
+         ['dickman_rho', 'dict']
+    """
+    if not s:
+        raise ValueError('empty string')
+
+    if '.' not in s:
+        n = len(s)
+        v = [x for x in globs if x[:n] == s]
+        v += [x for x in builtins.__dict__ if x[:n] == s]
+    else:
+        i = s.rfind('.')
+        method = s[i + 1:]
+        obj = s[:i]
+        n = len(method)
+        try:
+            O = eval(obj, globs)
+            D = dir(O)
+            try:
+                D += O.trait_names()
+            except (AttributeError, TypeError):
+                pass
+            if not method:
+                v = [obj + '.' + x for x in D if x and x[0] != '_']
+            else:
+                v = [obj + '.' + x for x in D if x[:n] == method]
+        except Exception:
+            v = []
+    return sorted(set(v))

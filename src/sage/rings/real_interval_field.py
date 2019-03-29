@@ -2,6 +2,9 @@
 Field of Arbitrary Precision Real Number Intervals
 """
 
+from sage.misc.superseded import deprecation
+deprecation(24371, "sage.rings.real_interval_field is deprecated")
+
 from sage.rings.real_mpfi import RealIntervalField_class, RealIntervalFieldElement
 
 def is_RealIntervalField(x):
@@ -11,6 +14,8 @@ def is_RealIntervalField(x):
     EXAMPLES::
 
         sage: from sage.rings.real_interval_field import is_RealIntervalField as is_RIF
+        doctest:...: DeprecationWarning: sage.rings.real_interval_field is deprecated
+        See http://trac.sagemath.org/24371 for details.
         sage: is_RIF(RIF)
         True
     """

@@ -63,6 +63,7 @@ typedef struct column_struct {
 
 class dancing_links {
     int nr_columns;
+    bool search_started;
 
     column *root;
     column * smallest_column()
@@ -251,6 +252,7 @@ public:
         nr_columns = -1;
         current_node = NULL;
         best_col = NULL;
+        search_started = false;
     }
 
     ~dancing_links()
@@ -292,8 +294,15 @@ public:
         }
     }
 
+    bool search_is_started()
+    {
+        return search_started;
+    }
+
     bool search()
     {
+        search_started = true;
+
         if (nr_columns <= 0) {
             return false;
         }

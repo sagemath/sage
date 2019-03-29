@@ -410,7 +410,7 @@ class RiggedConfigurationElement(ClonableArray):
         ret_string = self[0]._latex_()
 
         for partition in self[1:]:
-            ret_string += "\n\quad\n" + partition._latex_()
+            ret_string += "\n\\quad\n" + partition._latex_()
 
         return ret_string
 
@@ -493,6 +493,14 @@ class RiggedConfigurationElement(ClonableArray):
         colabels fixed and increasing the new label by one. If no such string
         exists, then `e_a` is undefined.
 
+        This method can also be used when the underlying Cartan matrix is a
+        Borcherds-Cartan matrix.  In this case, then method of [SS2018]_ is
+        used, where the new label is increased by half of the `a`-th diagonal
+        entry of the underlying Borcherds-Cartan matrix.  This method will also
+        return ``None`` if `a` is imaginary and the smallest rigging in the
+        `a`-th rigged partition is not exactly half of the `a`-th diagonal entry
+        of the Borcherds-Cartan matrix.
+
         INPUT:
 
         - ``a`` -- the index of the partition to remove a box
@@ -516,51 +524,70 @@ class RiggedConfigurationElement(ClonableArray):
             <BLANKLINE>
             -1[ ]-1
             <BLANKLINE>
+
+            sage: A = CartanMatrix([[-2,-1],[-1,-2]], borcherds=True)
+            sage: RC = crystals.infinity.RiggedConfigurations(A)
+            sage: nu0 = RC(partition_list=[[],[]])
+            sage: nu = nu0.f_string([1,0,0,0])
+            sage: ascii_art(nu.e(0))
+            5[ ]3  4[ ]3
+            5[ ]1
         """
         if a not in self.parent()._rc_index_inverse:
             raise ValueError("{} is not in the index set".format(a))
         a = self.parent()._rc_index_inverse[a]
+        M = self.parent()._cartan_matrix
 
         new_list = self[a][:]
         new_vac_nums = self[a].vacancy_numbers[:]
         new_rigging = self[a].rigging[:]
 
-        # Find k and perform e_a
-        k = None
-        num_rows = len(new_list)
-        cur_rigging = -1
-        rigging_index = None
-        for i in range(num_rows):
-            if new_rigging[i] <= cur_rigging:
-                cur_rigging = new_rigging[i]
-                rigging_index = i
-
-        # If we've not found a valid k
-        if rigging_index is None:
-            return None
-
-        # Note that because the riggings are weakly decreasing, we will always
-        #   remove the last box on of a block
-        k = new_list[rigging_index]
-        set_vac_num = False
-        if k == 1:
+        # Separate out one of the Borcherds cases
+        if M[a,a] != 2:
+            k = None
+            set_vac_num = True
+            if new_rigging[-1] != -M[a,a] // 2:
+                return None
             new_list.pop()
             new_vac_nums.pop()
             new_rigging.pop()
         else:
-            new_list[rigging_index] -= 1
-            cur_rigging += 1
-            # Properly sort the riggings
-            j = rigging_index + 1
-            # Update the vacancy number if the row lengths are the same
-            if j < num_rows and new_list[j] == new_list[rigging_index]:
-                new_vac_nums[rigging_index] = new_vac_nums[j]
-                set_vac_num = True
-            while j < num_rows and new_list[j] == new_list[rigging_index] \
-              and new_rigging[j] > cur_rigging:
-                new_rigging[j-1] = new_rigging[j] # Shuffle it along
-                j += 1
-            new_rigging[j-1] = cur_rigging
+            # Find k and perform e_a
+            k = None
+            num_rows = len(new_list)
+            cur_rigging = -1
+            rigging_index = None
+            for i in range(num_rows):
+                if new_rigging[i] <= cur_rigging:
+                    cur_rigging = new_rigging[i]
+                    rigging_index = i
+
+            # If we've not found a valid k
+            if rigging_index is None:
+                return None
+
+            # Note that because the riggings are weakly decreasing, we will always
+            #   remove the last box on of a block
+            k = new_list[rigging_index]
+            set_vac_num = False
+            if k == 1:
+                new_list.pop()
+                new_vac_nums.pop()
+                new_rigging.pop()
+            else:
+                new_list[rigging_index] -= 1
+                cur_rigging += M[a,a] // 2
+                # Properly sort the riggings
+                j = rigging_index + 1
+                # Update the vacancy number if the row lengths are the same
+                if j < num_rows and new_list[j] == new_list[rigging_index]:
+                    new_vac_nums[rigging_index] = new_vac_nums[j]
+                    set_vac_num = True
+                while j < num_rows and new_list[j] == new_list[rigging_index] \
+                  and new_rigging[j] > cur_rigging:
+                    new_rigging[j-1] = new_rigging[j] # Shuffle it along
+                    j += 1
+                new_rigging[j-1] = cur_rigging
 
         new_partitions = []
         for b in range(len(self)):
@@ -569,11 +596,11 @@ class RiggedConfigurationElement(ClonableArray):
             else:
                 # Update the vacancy numbers and the rigging
                 for i in range(len(new_vac_nums)):
-                    if new_list[i] < k:
+                    if k is not None and new_list[i] < k:
                         break
 
-                    new_vac_nums[i] += 2
-                    new_rigging[i] += 2
+                    new_vac_nums[i] += M[a,b]
+                    new_rigging[i] += M[a,b]
 
 
                 if k != 1 and not set_vac_num: # If we did not remove a row nor found another row of length k-1
@@ -623,7 +650,7 @@ class RiggedConfigurationElement(ClonableArray):
         # Update the vacancy numbers and the rigging
         value = self.parent()._cartan_matrix[b,a]
         for i in range(len(new_vac_nums)):
-            if new_list[i] < k:
+            if k is not None and new_list[i] < k:
                 break
 
             new_vac_nums[i] += value
@@ -636,13 +663,18 @@ class RiggedConfigurationElement(ClonableArray):
         Return the action of the crystal operator `f_a` on ``self``.
 
         This implements the method defined in [CrysStructSchilling06]_ which
-        finds the value `k` which is  the length of the string with the
+        finds the value `k` which is the length of the string with the
         smallest nonpositive rigging of largest length. Then it adds a box from
         a string of length `k` in the `a`-th rigged partition, keeping all
         colabels fixed and decreasing the new label by one. If no such string
         exists, then it adds a new string of length 1 with label `-1`. However
         we need to modify the definition to work for `B(\infty)` by removing
         the condition that the resulting rigged configuration is valid.
+
+        This method can also be used when the underlying Cartan matrix is a
+        Borcherds-Cartan matrix.  In this case, then method of [SS2018]_ is
+        used, where the new label is decreased by half of the `a`-th diagonal
+        entry of the underlying Borcherds-Cartan matrix.
 
         INPUT:
 
@@ -664,10 +696,21 @@ class RiggedConfigurationElement(ClonableArray):
             <BLANKLINE>
             (/)
             <BLANKLINE>
+
+            sage: A = CartanMatrix([[-2,-1],[-1,-2]], borcherds=True)
+            sage: RC = crystals.infinity.RiggedConfigurations(A)
+            sage: nu0 = RC(partition_list=[[],[]])
+            sage: nu = nu0.f_string([1,0,0,0])
+            sage: ascii_art(nu.f(0))
+            9[ ]7  6[ ]5
+            9[ ]5
+            9[ ]3
+            9[ ]1
         """
         if a not in self.parent()._rc_index_inverse:
             raise ValueError("{} is not in the index set".format(a))
         a = self.parent()._rc_index_inverse[a]
+        M = self.parent()._cartan_matrix
 
         new_list = self[a][:]
         new_vac_nums = self[a].vacancy_numbers[:]
@@ -694,7 +737,7 @@ class RiggedConfigurationElement(ClonableArray):
         # If we've not found a valid k
         if k is None:
             new_list.append(1)
-            new_rigging.append(Integer(-1))
+            new_rigging.append(-M[a,a] // 2)
             new_vac_nums.append(None)
             k = 0
             add_index = num_rows
@@ -703,7 +746,7 @@ class RiggedConfigurationElement(ClonableArray):
             if add_index is None: # We are adding to the first row in the list
                 add_index = 0
             new_list[add_index] += 1
-            new_rigging.insert(add_index, new_rigging[rigging_index] - 1)
+            new_rigging.insert(add_index, new_rigging[rigging_index] - M[a,a] // 2)
             new_vac_nums.insert(add_index, None)
             new_rigging.pop(rigging_index + 1) # add 1 for the insertion
             new_vac_nums.pop(rigging_index + 1)
@@ -719,8 +762,8 @@ class RiggedConfigurationElement(ClonableArray):
                         break
 
                     if i != add_index:
-                        new_vac_nums[i] -= 2
-                        new_rigging[i] -= 2
+                        new_vac_nums[i] -= M[a,b]
+                        new_rigging[i] -= M[a,b]
 
                 new_partitions.append(RiggedPartition(new_list, new_rigging, new_vac_nums))
 
@@ -923,7 +966,7 @@ class RCNonSimplyLacedElement(RiggedConfigurationElement):
         return self.parent().to_virtual(self)
 
     def e(self, a):
-        """
+        r"""
         Return the action of `e_a` on ``self``.
 
         This works by lifting into the virtual configuration, then applying
@@ -959,7 +1002,7 @@ class RCNonSimplyLacedElement(RiggedConfigurationElement):
         return self.parent().from_virtual(virtual_rc)
 
     def f(self, a):
-        """
+        r"""
         Return the action of `f_a` on ``self``.
 
         This works by lifting into the virtual configuration, then applying
@@ -2344,15 +2387,15 @@ class KRRCTypeA2DualElement(KRRCNonSimplyLacedElement):
             ....:     for mg in RC.module_generators)
             True
         """
-        #return self.to_virtual_configuration().cocharge() / self.parent()._folded_ct.gamma[0]
-        vct = self.parent()._folded_ct
+        # return self.to_virtual_configuration().cocharge() / self.parent()._folded_ct.gamma[0]
         cc = ZZ.zero()
         rigging_sum = ZZ.zero()
-        #sigma = vct.folding_orbit()
-        #gammatilde = list(vct.scaling_factors())
-        #gammatilde[-1] = 2
+        # vct = self.parent()._folded_ct
+        # sigma = vct.folding_orbit()
+        # gammatilde = list(vct.scaling_factors())
+        # gammatilde[-1] = 2
         for a, p in enumerate(self):
-            t_check = 1 # == len(sigma[a+1]) * gammatilde[a+1] / gammatilde[0]
+            t_check = 1  # == len(sigma[a+1]) * gammatilde[a+1] / gammatilde[0]
             for pos, i in enumerate(p._list):
                 # Add the rigging
                 rigging_sum += t_check * p.rigging[pos]

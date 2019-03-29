@@ -34,7 +34,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
             self.__R_character = M.character().change_ring(base_ring)
         else:
             self.__R_character = None
-        ambient.ModularFormsAmbient.__init__(self, M.group(), M.weight(), base_ring, M.character())
+        ambient.ModularFormsAmbient.__init__(self, M.group(), M.weight(), base_ring, M.character(), M._eis_only)
 
     @cached_method(key=lambda self,sign: ZZ(sign)) # convert sign to an Integer before looking this up in the cache
     def modular_symbols(self,sign=0):
@@ -127,7 +127,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
             lst = [R(f) for f in newB]
             return [f/f[f.valuation()] for f in lst]
         else:
-            # this returns a basis of q-expansions, without guaranteeing that 
+            # this returns a basis of q-expansions, without guaranteeing that
             # the first vectors form a basis of the cuspidal subspace
             # TODO: bring this in line with the other cases
             # simply using the above code fails because free modules over

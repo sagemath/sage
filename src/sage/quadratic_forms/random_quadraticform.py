@@ -11,7 +11,7 @@ from sage.rings.all import ZZ
 ################################################
 
 def random_quadraticform(R, n, rand_arg_list=[]):
-    """
+    r"""
     Create a random quadratic form in `n` variables defined over the ring `R`.
 
     The last (and optional) argument ``rand_arg_list`` is a list of at most 3

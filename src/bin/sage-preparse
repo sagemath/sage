@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-python23
 """
 Preparse .sage files and save the result to .sage.py files.
 

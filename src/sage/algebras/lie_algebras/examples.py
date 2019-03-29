@@ -30,8 +30,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.algebras.lie_algebras.classical_lie_algebra import gl, sl, so, sp
-from sage.algebras.lie_algebras.virasoro import VirasoroAlgebra # this is used, just not in this file
+from sage.algebras.lie_algebras.virasoro import VirasoroAlgebra
+from sage.algebras.lie_algebras.onsager import OnsagerAlgebra
 from sage.algebras.lie_algebras.affine_lie_algebra import AffineLieAlgebra as Affine
 
 def three_dimensional(R, a, b, c, d, names=['X', 'Y', 'Z']):
@@ -96,8 +96,9 @@ def cross_product(R, names=['X', 'Y', 'Z']):
     L.rename("Lie algebra of RR^3 under cross product over {}".format(R))
     return L
 
+
 def three_dimensional_by_rank(R, n, a=None, names=['X', 'Y', 'Z']):
-    """
+    r"""
     Return a 3-dimensional Lie algebra of rank ``n``, where `0 \leq n \leq 3`.
 
     Here, the *rank* of a Lie algebra `L` is defined as the dimension
@@ -274,6 +275,8 @@ def regular_vector_fields(R):
     r"""
     Return the Lie algebra of regular vector fields on `\CC^{\times}`.
 
+    This is also known as the Witt (Lie) algebra.
+
     .. SEEALSO::
 
         :class:`~sage.algebras.lie_algebras.virasoro.LieAlgebraRegularVectorFields`
@@ -286,9 +289,16 @@ def regular_vector_fields(R):
     from sage.algebras.lie_algebras.virasoro import LieAlgebraRegularVectorFields
     return LieAlgebraRegularVectorFields(R)
 
+witt = regular_vector_fields
+
 def pwitt(R, p):
     r"""
     Return the `p`-Witt Lie algebra over `R`.
+
+    INPUT:
+
+    - ``R`` -- the base ring
+    - ``p`` -- a positive integer that is `0` in ``R``
 
     EXAMPLES::
 

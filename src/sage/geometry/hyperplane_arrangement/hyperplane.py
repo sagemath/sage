@@ -741,7 +741,7 @@ class AmbientVectorSpace(LinearExpressionModule):
         return AmbientVectorSpace(base_ring, self._names)
 
     def symmetric_space(self):
-        """
+        r"""
         Construct the symmetric space of ``self``.
 
         Consider a hyperplane arrangement `A` in the vector space

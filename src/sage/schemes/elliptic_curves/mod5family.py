@@ -1,10 +1,12 @@
 """
-Elliptic curves with congruent mod-5 representation.
+Elliptic curves with congruent mod-5 representation
 
 AUTHORS:
 
 - Alice Silverberg and Karl Rubin (original PARI/GP version)
+
 - William Stein -- Sage version.
+
 """
 from __future__ import absolute_import
 

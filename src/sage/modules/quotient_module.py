@@ -70,6 +70,22 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         sage: Z == U
         True
 
+    We create three quotient spaces and compare them::
+
+        sage: A = QQ^2
+        sage: V = A.span_of_basis([[1,0], [1,1]])
+        sage: W0 = V.span([V.1, V.0])
+        sage: W1 = V.span([V.1])
+        sage: W2 = V.span([V.1])
+        sage: Q0 = V/W0
+        sage: Q1 = V/W1
+        sage: Q2 = V/W2
+
+        sage: Q0 == Q1
+        False
+        sage: Q1 == Q2
+        True
+
     TESTS::
 
         sage: A = QQ^0; V = A.span([]) # corner case
@@ -81,9 +97,10 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         sage: type(loads(dumps(U)) )
         <class 'sage.modules.quotient_module.FreeModule_ambient_field_quotient_with_category'>
     """
-    def __init__(self, domain, sub, quotient_matrix, lift_matrix, inner_product_matrix = None):
+    def __init__(self, domain, sub, quotient_matrix, lift_matrix, inner_product_matrix=None):
         """
-        Create this quotient space, from the given domain, sub-module, and quotient_matrix.
+        Create this quotient space, from the given domain, submodule,
+        and quotient_matrix.
 
         EXAMPLES::
 
@@ -97,9 +114,9 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
             User basis matrix:
             [1/3 2/3  -1 5/9 1/2]
 
-        This creates a quotient vector space, which calls the init method::
+        This creates a quotient vector space::
 
-            sage: Q = V / W  #indirect doctest
+            sage: Q = V / W
 
         Behold the type of Q::
 
@@ -159,8 +176,8 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def __hash__(self):
         """
-        Return hash of this quotient space V/W, which is by definition the hash of
-        the tuple (V,W).
+        Return hash of this quotient space `V/W`, which is, by definition,
+        the hash of the tuple `(V, W)`.
 
         EXAMPLES:
 
@@ -174,68 +191,13 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
             954887582               # 32-bit
             -5856620741060301410    # 64-bit
 
-        The hash is just got by hashing both V and W::
+        The hash is just got by hashing both `V` and `W`::
 
             sage: hash((V, W))
             954887582             # 32-bit
             -5856620741060301410  # 64-bit
         """
         return self.__hash
-
-    def __eq__(self, other):
-        """
-        Compare ``self`` and ``other``.
-
-        If ``other`` is not a quotient of vector spaces, return ``False``.
-
-        If it is, return comparison of the pair `(V, W)` so that ``self`` is
-        `V/W` for each of ``self`` and ``other``.
-
-        EXAMPLES:
-
-        We create three quotient spaces and compare them::
-
-            sage: A = QQ^2
-            sage: V = A.span_of_basis([[1,0], [1,1]])
-            sage: W0 = V.span([V.1, V.0])
-            sage: W1 = V.span([V.1])
-            sage: W2 = V.span([V.1])
-            sage: Q0 = V/W0
-            sage: Q1 = V/W1
-            sage: Q2 = V/W2
-
-            sage: Q0 == Q1
-            False
-            sage: Q1 == Q2
-            True
-        """
-        if not isinstance(other, FreeModule_ambient_field_quotient):
-            return False
-        return (self.V(), self.W()) == (other.V(), other.W())
-
-    def __ne__(self, other):
-        """
-        Check not-equality of ``self`` and ``other``.
-
-        EXAMPLES:
-
-        We create three quotient spaces and compare them::
-
-            sage: A = QQ^2
-            sage: V = A.span_of_basis([[1,0], [1,1]])
-            sage: W0 = V.span([V.1, V.0])
-            sage: W1 = V.span([V.1])
-            sage: W2 = V.span([V.1])
-            sage: Q0 = V/W0
-            sage: Q1 = V/W1
-            sage: Q2 = V/W2
-
-            sage: Q0 != Q1
-            True
-            sage: Q1 != Q2
-            False
-        """
-        return not (self == other)
 
     def _element_constructor_(self, x):
         """
@@ -348,7 +310,8 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def quotient_map(self):
         """
-        Given this quotient space `Q = V/W`, return the natural quotient map from V to Q.
+        Given this quotient space `Q = V / W`, return the natural quotient
+        map from `V` to `Q`.
 
         EXAMPLES::
 
@@ -371,9 +334,9 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         return self.__quo_map
 
     def lift_map(self):
-        """
-        Given this quotient space `Q = V/W`, return a fixed choice of linear homomorphism
-        (a section) from Q to V.
+        r"""
+        Given this quotient space `Q = V / W`, return a fixed choice of
+        linear homomorphism (a section) from `Q` to `V`.
 
         EXAMPLES::
 
@@ -392,8 +355,9 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         return self.__lift_map
 
     def lift(self, x):
-        """
-        Lift element of this quotient V/W to V by applying the fixed lift homomorphism.
+        r"""
+        Lift element of this quotient `V / W` to `V` by applying
+        the fixed lift homomorphism.
 
         The lift is a fixed homomorphism.
 
@@ -466,3 +430,4 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
             [ 0  1  2  3  4  5  6  7  8  9]
         """
         return self.W()
+

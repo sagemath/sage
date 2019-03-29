@@ -16,10 +16,9 @@ of undirected graphs.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 """
-
-from sage.graphs.graph import Graph
 from collections import deque
 from enum import Enum
+
 
 class NodeType(Enum):
     """
@@ -51,6 +50,7 @@ class NodeType(Enum):
     def __repr__(self):
         return self.name
 
+
 class NodeSplit(Enum):
     """
     NodeSplit is an enumeration class which is used to specify the split that 
@@ -74,6 +74,7 @@ class NodeSplit(Enum):
     BOTH_SPLIT = 3
     NO_SPLIT = 0
 
+
 class VertexPosition(Enum):
     """
     VertexPosition is an enumeration class used to define position of a vertex 
@@ -95,6 +96,7 @@ class VertexPosition(Enum):
     LEFT_OF_SOURCE = -1
     RIGHT_OF_SOURCE = 1
     SOURCE = 0
+
 
 class Node:
     """
@@ -240,6 +242,7 @@ class Node:
                self.is_separated == other.is_separated and \
                self.children == other.children
 
+
 def modular_decomposition(graph):
     """
     Compute the modular decomposition tree for the input graph.
@@ -250,8 +253,8 @@ def modular_decomposition(graph):
 
     INPUT:
 
-    - ``graph`` -- The graph for which modular decompostion
-                   tree needs to be computed
+    - ``graph`` -- The graph for which modular decomposition
+      tree needs to be computed
 
     OUTPUT:
 
@@ -343,7 +346,7 @@ def modular_decomposition(graph):
         sage: test_modular_decomposition(modular_decomposition(g), g)
         True
 
-    Graph from wikipedia link :wikipedia:`Modular_decomposition`::
+    Graph from the :wikipedia:`Modular_decomposition`::
 
         sage: d2 = {1:[2,3,4], 2:[1,4,5,6,7], 3:[1,4,5,6,7], 4:[1,2,3,5,6,7], \
                     5:[2,3,4,6,7], 6:[2,3,4,5,8,9,10,11], \
@@ -463,6 +466,7 @@ def modular_decomposition(graph):
     else:
         return root
 
+
 def number_components(root, vertex_status):
     """
     Function to number the components to the right of SOURCE vertex in the
@@ -530,6 +534,7 @@ def number_components(root, vertex_status):
             continue
 
         comp_num += recursively_number_parts(node, comp_num, NodeType.PARALLEL)
+
 
 def number_cocomponents(root, vertex_status):
     """
@@ -665,6 +670,7 @@ def recursively_number_parts(part_root, part_num, by_type):
         part_num += 1
     return part_num - orig_part_num
 
+
 def assembly(graph, root, vertex_status, vertex_dist):
     """
     Assemble the forest obtained after the promotion phase into a modular 
@@ -681,7 +687,7 @@ def assembly(graph, root, vertex_status, vertex_dist):
 
     EXAMPLES::
 
-        sage: from sage.graphs.modular_decomposition import Node, NodeType, \ 
+        sage: from sage.graphs.modular_decomposition import Node, NodeType, \
               VertexPosition, create_normal_node, number_cocomponents, \
               number_components, assembly
         sage: g = Graph()
@@ -737,7 +743,6 @@ def assembly(graph, root, vertex_status, vertex_dist):
         sage: assembly(g, forest, vertex_status, vertex_dist)
         sage: forest.children
         [PRIME [NORMAL [2], SERIES [NORMAL [4], NORMAL [5], NORMAL [3]], PARALLEL [NORMAL [6], NORMAL [7]], NORMAL [1]]]
-
     """
 
     # Maps index to the mu computed for the (co)component at the index
@@ -2505,7 +2510,7 @@ def test_modular_decomposition(tree_root, graph):
             if not test_modular_decomposition(module,
                                               graph.subgraph(
                                                   get_vertices(module))):
-                # recursively test the modular decompostion subtrees
+                # recursively test the modular decomposition subtrees
                 return False
 
         if not test_maximal_modules(tree_root, graph):
@@ -2531,12 +2536,12 @@ def test_maximal_modules(tree_root, graph):
     INPUT:
 
     - ``tree_root`` -- Modular decomposition tree whose modules are tested for
-                       maximal nature
+      maximal nature
     - ``graph`` -- Graph whose modular decomposition tree is tested
 
     OUTPUT:
 
-    ``True`` if all modules at first level in the modular ddecomposition tree
+    ``True`` if all modules at first level in the modular decomposition tree
     are maximal in nature
 
     EXAMPLES::
@@ -2622,7 +2627,7 @@ def form_module(index, other_index, tree_root, graph):
     OUTPUT:
 
     ``[module_formed, vertices]`` where ``module_formed`` is ``True`` if
-    module is formed else ``False`` and ``vertices`` is a list of verices
+    module is formed else ``False`` and ``vertices`` is a list of vertices
     included in the formed module
 
     EXAMPLES::

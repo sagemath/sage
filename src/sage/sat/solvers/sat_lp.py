@@ -11,19 +11,20 @@ from .satsolver import SatSolver
 from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
 
 class SatLP(SatSolver):
-    def __init__(self, solver=None):
+    def __init__(self, solver=None, verbose=0):
         r"""
         Initializes the instance
 
         INPUT:
 
-        - ``solver`` -- (default: ``None``) Specify a Linear Program (LP)
-          solver to be used. If set to ``None``, the default one is used. For
-          more information on LP solvers and which default solver is used, see
-          the method
-          :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>`
-          of the class
-          :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
+        - ``solver`` -- (default: ``None``) Specify a Linear Program (LP) solver
+          to be used. If set to ``None``, the default one is used. For more
+          information on LP solvers and which default solver is used, see the
+          method :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of
+          the class :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+
+        - ``verbose`` -- integer (default: ``0``). Sets the level of verbosity
+          of the LP solver. Set to 0 by default, which means quiet.
 
         EXAMPLES::
 
@@ -31,7 +32,8 @@ class SatLP(SatSolver):
             an ILP-based SAT Solver
         """
         SatSolver.__init__(self)
-        self._LP = MixedIntegerLinearProgram()
+        self._LP = MixedIntegerLinearProgram(solver=solver)
+        self._LP_verbose = verbose
         self._vars = self._LP.new_variable(binary=True)
 
     def var(self):
@@ -128,7 +130,7 @@ class SatLP(SatSolver):
             False
         """
         try:
-            self._LP.solve()
+            self._LP.solve(log=self._LP_verbose)
         except MIPSolverException:
             return False
 

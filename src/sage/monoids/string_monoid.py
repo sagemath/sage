@@ -20,177 +20,11 @@ from __future__ import absolute_import
 #*****************************************************************************
 
 
-from .free_monoid import FreeMonoid_class
+from .free_monoid import FreeMonoid
 from .string_monoid_element import StringMonoidElement
 from .string_ops import strip_encoding
 
-import weakref
-
-_cache = {}
-
-def BinaryStrings():
-    r"""
-    Returns the free binary string monoid on generators `\{ 0, 1 \}`.
-
-    OUTPUT:
-
-    - Free binary string monoid.
-
-    EXAMPLES::
-
-        sage: S = BinaryStrings(); S
-        Free binary string monoid
-        sage: u = S('')
-        sage: u
-
-        sage: x = S('0')
-        sage: x
-        0
-        sage: y = S('1')
-        sage: y
-        1
-        sage: z = S('01110')
-        sage: z
-        01110
-        sage: x*y^3*x == z
-        True
-        sage: u*x == x*u
-        True
-    """
-    # Here we cache the binary strings to make them unique
-    if 2 in _cache:
-        S = _cache[2]()
-        if not S is None:
-            return S
-    S = BinaryStringMonoid()
-    _cache[2] = weakref.ref(S)
-    return S
-
-def OctalStrings():
-    r"""
-    Returns the free octal string monoid on generators `\{ 0, 1, \dots, 7 \}`.
-
-    OUTPUT:
-
-    - Free octal string monoid.
-
-    EXAMPLES::
-
-        sage: S = OctalStrings(); S
-        Free octal string monoid
-        sage: x = S.gens()
-        sage: x[0]
-        0
-        sage: x[7]
-        7
-        sage: x[0] * x[3]^3 * x[5]^4 * x[6]
-        033355556
-    """
-    # Here we cache the octal strings to make them unique
-    if 8 in _cache:
-        S = _cache[8]()
-        if not S is None:
-            return S
-    S = OctalStringMonoid()
-    _cache[8] = weakref.ref(S)
-    return S
-
-def HexadecimalStrings():
-    r"""
-    Returns the free hexadecimal string monoid on generators
-    `\{ 0, 1, \dots , 9, a, b, c, d, e, f \}`.
-
-    OUTPUT:
-
-    - Free hexadecimal string monoid.
-
-    EXAMPLES::
-
-        sage: S = HexadecimalStrings(); S
-        Free hexadecimal string monoid
-        sage: x = S.gen(0)
-        sage: y = S.gen(10)
-        sage: z = S.gen(15)
-        sage: z
-        f
-        sage: x*y^3*z
-        0aaaf
-    """
-    # Here we cache the hexadecimal strings to make them unique
-    if 16 in _cache:
-        S = _cache[16]()
-        if not S is None:
-            return S
-    S = HexadecimalStringMonoid()
-    _cache[16] = weakref.ref(S)
-    return S
-
-def Radix64Strings():
-    r"""
-    Returns the free radix 64 string monoid on 64 generators
-
-    ::
-
-        A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,
-        a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,
-        0,1,2,3,4,5,6,7,8,9,+,/
-
-    OUTPUT:
-
-    - Free radix 64 string monoid.
-
-    EXAMPLES::
-
-        sage: S = Radix64Strings(); S
-        Free radix 64 string monoid
-        sage: x = S.gens()
-        sage: x[0]
-        A
-        sage: x[62]
-        +
-        sage: x[63]
-        /
-    """
-    # Here we cache the radix-64 strings to make them unique
-    if 64 in _cache:
-        S = _cache[64]()
-        if not S is None:
-            return S
-    S = Radix64StringMonoid()
-    _cache[64] = weakref.ref(S)
-    return S
-
-def AlphabeticStrings():
-    r"""
-    Returns the string monoid on generators A-Z:
-    `\{ A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z \}`.
-
-    OUTPUT:
-
-    - Free alphabetic string monoid on A-Z.
-
-    EXAMPLES::
-
-        sage: S = AlphabeticStrings(); S
-        Free alphabetic string monoid on A-Z
-        sage: x = S.gens()
-        sage: x[0]
-        A
-        sage: x[25]
-        Z
-    """
-    # Here we cache the alphabetic strings to make them unique
-    if 26 in _cache:
-        S = _cache[26]()
-        if not S is None:
-            return S
-    S = AlphabeticStringMonoid()
-    _cache[26] = weakref.ref(S)
-    return S
-
-#*****************************************************************************
-
-class StringMonoid_class(FreeMonoid_class):
+class StringMonoid_class(FreeMonoid):
     r"""
     A free string monoid on `n` generators.
     """
@@ -216,8 +50,8 @@ class StringMonoid_class(FreeMonoid_class):
         """
         # Names must be alphabetical -- omitted since printing is
         # defined locally.
-        # FreeMonoid_class.__init__(self, n, names = alphabet)
-        FreeMonoid_class.__init__(self, n)
+        # FreeMonoid.__init__(self, n, names = alphabet)
+        FreeMonoid.__init__(self, n)
         self._alphabet = alphabet
 
     def __contains__(self, x):
@@ -298,13 +132,32 @@ class BinaryStringMonoid(StringMonoid_class):
             sage: x = S.gens()
             sage: x[0]*x[1]**5 * (x[0]*x[1])
             01111101
+
+            sage: u = S('')
+            sage: u
+
+            sage: x = S('0')
+            sage: x
+            0
+            sage: y = S('1')
+            sage: y
+            1
+            sage: z = S('01110')
+            sage: z
+            01110
+            sage: x*y^3*x == z
+            True
+            sage: u*x == x*u
+            True
+
+        TESTS::
+
+            sage: BinaryStrings() == BinaryStrings()
+            True
+            sage: BinaryStrings() is BinaryStrings()
+            True
         """
         StringMonoid_class.__init__(self, 2, ['0', '1'])
-
-    def __cmp__(self, other):
-        if not isinstance(other, BinaryStringMonoid):
-            return -1
-        return 0
 
     def __repr__(self):
         return "Free binary string monoid"
@@ -395,6 +248,9 @@ class BinaryStringMonoid(StringMonoid_class):
     #     """
     #     return 2
 
+BinaryStrings = BinaryStringMonoid
+
+
 class OctalStringMonoid(StringMonoid_class):
     r"""
     The free octal string monoid on generators `\{ 0, 1, \dots, 7 \}`.
@@ -413,13 +269,14 @@ class OctalStringMonoid(StringMonoid_class):
             07070701650165
             sage: S([ i for i in range(8) ])
             01234567
+            sage: x[0]
+            0
+            sage: x[7]
+            7
+            sage: x[0] * x[3]^3 * x[5]^4 * x[6]
+            033355556
         """
         StringMonoid_class.__init__(self, 8, [ str(i) for i in range(8) ])
-
-    def __cmp__(self, other):
-        if not isinstance(other, OctalStringMonoid):
-            return -1
-        return 0
 
     def __repr__(self):
         return "Free octal string monoid"
@@ -453,6 +310,9 @@ class OctalStringMonoid(StringMonoid_class):
         else:
             raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
+OctalStrings = OctalStringMonoid
+
+
 class HexadecimalStringMonoid(StringMonoid_class):
     r"""
     The free hexadecimal string monoid on generators
@@ -473,14 +333,17 @@ class HexadecimalStringMonoid(StringMonoid_class):
             0a0a0a019f019f
             sage: S([ i for i in range(16) ])
             0123456789abcdef
+
+            sage: x = S.gen(0)
+            sage: y = S.gen(10)
+            sage: z = S.gen(15)
+            sage: z
+            f
+            sage: x*y^3*z
+            0aaaf
         """
         alph = '0123456789abcdef'
         StringMonoid_class.__init__(self, 16, [ alph[i] for i in range(16) ])
-
-    def __cmp__(self, other):
-        if not isinstance(other, HexadecimalStringMonoid):
-            return -1
-        return 0
 
     def __repr__(self):
         return "Free hexadecimal string monoid"
@@ -559,6 +422,9 @@ class HexadecimalStringMonoid(StringMonoid_class):
             hex_string.extend(hex_chars)
         return self(hex_string)
 
+HexadecimalStrings = HexadecimalStringMonoid
+
+
 class Radix64StringMonoid(StringMonoid_class):
     r"""
     The free radix 64 string monoid on 64 generators.
@@ -577,14 +443,15 @@ class Radix64StringMonoid(StringMonoid_class):
             yKyKyK8BTj8BTj
             sage: S([ i for i in range(64) ])
             ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
+            sage: x[0]
+            A
+            sage: x[62]
+            +
+            sage: x[63]
+            /
         """
         alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
         StringMonoid_class.__init__(self, 64, [ alph[i] for i in range(64) ])
-
-    def __cmp__(self, other):
-        if not isinstance(other, Radix64StringMonoid):
-            return -1
-        return 0
 
     def __repr__(self):
         return "Free radix 64 string monoid"
@@ -620,6 +487,9 @@ class Radix64StringMonoid(StringMonoid_class):
             return StringMonoidElement(self, x, check)
         else:
             raise TypeError("Argument x (= %s) is of the wrong type." % x)
+
+Radix64Strings = Radix64StringMonoid
+
 
 class AlphabeticStringMonoid(StringMonoid_class):
     """
@@ -688,11 +558,6 @@ class AlphabeticStringMonoid(StringMonoid_class):
             "Y": RR(0.020), "Z": RR(0.001)}
         alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         StringMonoid_class.__init__(self, 26, [ alph[i] for i in range(26) ])
-
-    def __cmp__(self, other):
-        if not isinstance(other, AlphabeticStringMonoid):
-            return -1
-        return 0
 
     def __repr__(self):
         return "Free alphabetic string monoid on A-Z"
@@ -933,3 +798,5 @@ class AlphabeticStringMonoid(StringMonoid_class):
             'THECATINTHEHAT'
         """
         return self(strip_encoding(S))
+
+AlphabeticStrings = AlphabeticStringMonoid

@@ -179,7 +179,7 @@ class GraphicPrimitive(WithEqualityById, SageObject):
         if do_verify:
             A = self._allowed_options()
             t = False
-            K = A.keys() + ['xmin', 'xmax', 'ymin', 'ymax', 'axes']
+            K = list(A) + ['xmin', 'xmax', 'ymin', 'ymax', 'axes']
             for k in O.keys():
                 if not k in K:
                     do_verify = False

@@ -22,13 +22,6 @@ else
     FCFLAGS="-g -O2 $FCFLAGS"
 fi
 
-if [ "$SAGE64" = yes ]; then
-   echo "Building R 64 bit."
-   CFLAGS="-m64 $CFLAGS"
-   FCFLAGS="-m64 $FCFLAGS"
-   LDFLAGS="-m64 $LDFLAGS"
-fi
-
 export CFLAGS CPPFLAGS FCFLAGS LDFLAGS
 
 if [ "$UNAME" = "Darwin" ]; then

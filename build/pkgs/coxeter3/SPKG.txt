@@ -37,13 +37,9 @@ None
 
 == Special Update/Build Instructions ==
 
-The application of the following patches is automatically handled
-by spkg-install:
+The source package was created by running
 
-- directories.h: update coxeter3 directory information to fetch
-  its data and messages from the Sage installation tree
-- makefile.patch: handle compilation flags for Darwin and Cygwin
-- warning.patch: remove deprecation warnings
-- sage.cpp: add a function for Bruhat invervals which is simpler to
-  code in C++ than Cython
-
+commit=8ac9c71723c8ca57a836d6381aed125261e44e9e
+git clone https://github.com/tscrim/coxeter.git
+cd coxeter
+git archive $commit |bzip2 --best >coxeter-$commit.tar.bz2

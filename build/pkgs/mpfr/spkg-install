@@ -1,10 +1,3 @@
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
-
 mpfr_get_upstream_selected_cflags() # Get MPFR's choice on empty CC and CFLAGS.
 {
     if [ $# -ne 1 ]; then
@@ -49,17 +42,6 @@ mpfr_configure()
         # Add debug symbols by default, enable optimization, but do not (yet)
         # add processor-specific flags (these are eventually added later):
         default_cflags="$default_cflags -g -O3"
-    fi
-
-    if [ "$SAGE64" = yes ]; then
-        if [ -z "$CFLAG64" ]; then
-            CFLAG64=-m64
-        fi
-        echo "Building a 64-bit version of MPFR (using '$CFLAG64')."
-        required_cflags="$required_cflags $CFLAG64"
-        CPPFLAGS="$CPPFLAGS $CFLAG64"
-        LDFLAGS="$LDFLAGS $CFLAG64"
-        # As MPFR doesn't have C++ files, we don't have to modify CXXFLAGS.
     fi
 
     # Enabling thread-safe (which meanwhile is or at least may be the default)
@@ -157,31 +139,14 @@ mpfr_configure()
         echo "You can set MPFR_CONFIGURE to pass additional parameters."
     fi
 
-    ./configure --prefix="$SAGE_LOCAL" \
-                --libdir="$SAGE_LOCAL/lib" \
-                --with-gmp="$SAGE_LOCAL" \
+    sdh_configure --with-gmp="$SAGE_LOCAL" \
                 $SAGE_CONF_OPTS $MPFR_CONFIGURE
 }
 
 mpfr_build()
 {
-    echo "Configuring MPFR..."
     mpfr_configure
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error configuring MPFR."
-        echo >&2 "See above for the options passed to it, and the file"
-        echo >&2 "  `pwd`/config.log"
-        echo >&2 "for details."
-        exit 1
-    fi
-
-    echo
-    echo "Now building MPFR..."
-    $MAKE
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error building MPFR."
-        exit 1
-    fi
+    sdh_make
 
     echo
     echo "Building MPFR succeeded.  Now deleting old headers..."
@@ -190,15 +155,9 @@ mpfr_build()
     # parallel builds.
     # rm -f "$SAGE_LOCAL"/lib/libmpfr.*
 
-    echo "Now installing MPFR..."
-    $MAKE install
-    if [ $? -ne 0 ];  then
-        echo >&2 "Error installing MPFR."
-        exit 1
-    fi
+    sdh_make_install
 }
 
 cd src
 
 mpfr_build
-# All potential errors catched in the above function.

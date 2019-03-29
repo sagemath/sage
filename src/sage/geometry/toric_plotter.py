@@ -979,9 +979,11 @@ def options(option=None, **kwds):
 
     - ``font_size`` -- an integer, the size of font used for labels;
 
-    - ``ray_label`` -- a string or a list of strings used for ray labels;
+    - ``ray_label`` -- a string or a list of strings used for ray labels; use
+      ``None`` to hide labels;
 
-    - ``wall_label`` -- a string or a list of strings used for wall labels;
+    - ``wall_label`` -- a string or a list of strings used for wall labels; use
+      ``None`` to hide labels;
 
     - ``radius`` -- a positive number, the radius of the cut-off region for
       "round" mode;

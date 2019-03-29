@@ -11,10 +11,17 @@ cpdef inline long digits_to_bits(d) except -1:
         Traceback (most recent call last):
         ...
         ValueError: number of digits must be positive
-        sage: digits_to_bits("10")
+
+    TESTS::
+
+        sage: digits_to_bits("10")  # py2
         Traceback (most recent call last):
         ...
         TypeError: a float is required
+        sage: digits_to_bits("10")  # py3
+        Traceback (most recent call last):
+        ...
+        TypeError: must be real number, not str
     """
     if d is None:
         return 53

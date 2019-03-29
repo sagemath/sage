@@ -67,7 +67,7 @@ Polytopes::
     sage: S = SymmetricGroup(4)
     sage: M = PolynomialRing(QQ, 'x0,x1,x2,x3')
     sage: M.an_element() * S.an_element()
-    x1
+    x0
 
 Graph theory, posets, lattices (:ref:`sage.graphs`, :ref:`sage.combinat.posets`)::
 

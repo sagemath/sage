@@ -9,21 +9,24 @@ AUTHORS:
 - Travis Scrimshaw (2013-05-04): Cythonized version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-2010 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE
+from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, PyObject_RichCompare
 
+from sage.structure.coerce cimport coercion_model
+from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
-from sage.structure.element cimport Element, coercion_model
+from sage.structure.unique_representation import UniqueRepresentation
 from copy import copy
+
 
 cdef class ElementWrapper(Element):
     r"""
@@ -94,20 +97,11 @@ cdef class ElementWrapper(Element):
 
             sage: TestSuite(a).run(skip = "_test_category")
 
-            sage: a = ElementWrapper(1, DummyParent("A parent"))
-            doctest:...: DeprecationWarning: the first argument must be a parent
-            See http://trac.sagemath.org/14519 for details.
-
         .. NOTE::
 
             :class:`ElementWrapper` is not intended to be used directly,
             hence the failing category test.
         """
-        #assert isinstance(value, self.wrapped_class)
-        if not isinstance(parent, Parent):
-            from sage.misc.superseded import deprecation
-            deprecation(14519, 'the first argument must be a parent')
-            value, parent = parent, value
         Element.__init__(self, parent=parent)
         self.value = value
 
@@ -173,12 +167,6 @@ cdef class ElementWrapper(Element):
             True
             sage: a = ElementWrapper(DummyParent("A parent"), 1)
             sage: a == loads(dumps(a))
-            True
-
-        Checking that we can still load pickle from before :trac:`14519`::
-
-            sage: f = loads('x\x9c\x85\x8d\xbb\n\xc2@\x14D\xf1\x11\x8d\xebO\xd8\xda,\xf8\t\x82\xf6\x12\x08\x96a\x8dC\x08f\xd7\xdc\xbb{\x15\x8b\x80\x16\xd1\xdf6\x10\xad,,\xcf0s\xe6>\xcc\xbd)\xa0}`\xc9\x8304*X\xb8\x90]\xd9\xd45Xm{\xde\x7f\x90\x06\xcb\x07\xfd\x8c\xc4\x95$\xc8\x185\xc3wm\x13\xca\xb3S\xe2\x18G\xc9\xa1h\xf4\xefe#\xd6\xdev\x86\xbbL\xd18\x8d\xd7\x8b\x1e(j\x9b\x17M\x12\x9a6\x14\xa7\xd1\xc5T\x02\x9a\xf56.]\xe1u\xe9\x02\x8a\xce`\xcd\t\xd9\x17H\xa5\x83U\x9b\xd0\xdc?\x0f\xfa\rl4S\xbc')
-            sage: f == ElementWrapper(DummyParent("A Parent"), 1)
             True
         """
         # Make sure the first part of the state is the parent
@@ -379,8 +367,6 @@ cdef class ElementWrapper(Element):
             False
             sage: l11 < 1                # class differ
             False
-            sage: 1 < l11                # random, since it depends on what the Integer 1 decides to do, which may just involve memory locations
-            False
         """
         return (self.__class__ is other.__class__
                 and self._parent is other.parent()
@@ -419,8 +405,7 @@ cdef class ElementWrapper(Element):
         res.value = copy(self.value)
         return res
 
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+
 class DummyParent(UniqueRepresentation, Parent):
     """
     A class for creating dummy parents for testing ElementWrapper
@@ -509,7 +494,8 @@ class ElementWrapperTester(ElementWrapper):
             sage: x.value = [2,32]; x # indirect doctest
             [n=0, value=[2, 32]]
         """
-        return "[n=%s, value=%s]"%(self.n, self.value)
+        return "[n=%s, value=%s]" % (self.n, self.value)
+
 
 cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
     """
@@ -518,15 +504,28 @@ cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
     """
     wrapped_class = object
 
-    def __richcmp__(left, right, int op):
+    def __hash__(self):
         """
-        Return ``True`` if ``left`` compares with ``right`` based on ``op``.
+        Return the same hash as for the wrapped element.
 
-        .. SEEALSO::
+        EXAMPLES::
 
-            :meth:`ElementWrapper.__richcmp__`
+            sage: A = cartesian_product([ZZ, ZZ])
+            sage: e1 = A((6,9))
+            sage: e2 = A((3,8))
+            sage: e3 = A((6,9))
+            sage: hash(e1) == hash(e2)
+            False
+            sage: hash(e1) == hash(e3)
+            True
+        """
+        return hash(self.value)
 
-        TESTS::
+    def __richcmp__(self, right, int op):
+        """
+        Return ``True`` if ``self`` compares with ``right`` based on ``op``.
+
+        EXAMPLES::
 
             sage: A = cartesian_product([ZZ, ZZ])
             sage: elt = A((1,1))
@@ -534,25 +533,33 @@ cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
             True
             sage: elt == (1, 1)
             True
-            sage: A((1, 2)) == elt
-            False
+            sage: A((1, 2)) > elt
+            True
+            sage: elts = [A((x,y)) for y in range(3) for x in range(2)]
+            sage: elts
+            [(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2)]
+            sage: sorted(elts)
+            [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
+
+        ::
+
+            sage: A = cartesian_product([ZZ, ZZ])
+            sage: B = cartesian_product([GF(3), GF(5)])
+            sage: A((3,5)) == B((0,0))
+            True
         """
-        cdef ElementWrapperCheckWrappedClass self
-        self = left
+        if type(self) is type(right):
+            # Both are instances of ElementWrapperCheckWrappedClass:
+            # compare using wrapped element if the parents are the same
+            other = <ElementWrapperCheckWrappedClass>right
+            if self._parent is other._parent:
+                return PyObject_RichCompare(self.value, other.value, op)
+        elif not isinstance(right, Element):
+            # Right is not an Element: compare using wrapped element
+            return PyObject_RichCompare(self.value, right, op)
+        elif self._parent is (<Element>right)._parent:
+            # Different types but same parent? This should not happen
+            raise TypeError(f"cannot compare {type(self).__name__} with {type(right).__name__} if parents are equal")
 
-        if self.__class__ != right.__class__:
-            if isinstance(right, self.wrapped_class):
-                if op == Py_EQ or op == Py_LE or op == Py_GE:
-                    return self.value == right
-                if op == Py_NE:
-                    return self.value != right
-                return False
-            return op == Py_NE
-        if self._parent != (<ElementWrapper>right)._parent:
-            return op == Py_NE
-        if op == Py_EQ or op == Py_LE or op == Py_GE:
-            return self.value == (<ElementWrapper>right).value
-        if op == Py_NE:
-            return self.value != (<ElementWrapper>right).value
-        return False
-
+        # Different parents => use coercion model
+        return coercion_model.richcmp(self, right, op)

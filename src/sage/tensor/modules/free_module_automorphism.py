@@ -898,9 +898,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             True
             sage: a^(-1)*a == id
             True
-
         """
-        from sage.matrix.constructor import matrix
         from .comp import Components
         if self._is_identity:
             return self

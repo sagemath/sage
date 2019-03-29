@@ -1,4 +1,4 @@
-"""
+r"""
 Base class for polyhedra over `\QQ`
 """
 from __future__ import absolute_import
@@ -9,7 +9,7 @@ from .base import Polyhedron_base
 
 
 class Polyhedron_QQ(Polyhedron_base):
-    """
+    r"""
     Base class for Polyhedra over `\QQ`
 
     TESTS::

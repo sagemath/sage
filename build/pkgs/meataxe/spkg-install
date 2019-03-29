@@ -1,83 +1,36 @@
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "SAGE_LOCAL undefined ... exiting"
-    echo >&2 "Maybe run 'sage --sh'?"
-    exit 1
-fi
+# Delete old (Shared)MeatAxe libraries. This ensures a sane state if
+# installation of this package fails: the mtx library should exist if
+# and only if meataxe is installed. In detail: the build-time check in
+# src/module_list.py checks whether or not the "meataxe" package is
+# marked as installed but the run-time check for the matrix_gfpn_dense
+# module checks whether it can be imported. We need to ensure that these
+# two conditions are equivalent, otherwise strange things can happen.
+# See also https://trac.sagemath.org/ticket/24359#comment:154
+#
+# This also deletes the static library left behind from the installation
+# of MeatAxe (as opposed to SharedMeatAxe).
+rm -f "$SAGE_LOCAL"/lib/libmtx.*
 
-cd src
+# This is the place where arithmetic tables and some other input files
+# are searched by default.
+export MTXLIB="$DOT_SAGE"/meataxe
 
-## The following *could* be put into Makefile.conf
-
-# This is the place where arithmetic tables and some other input files are
-# searched by default.
-export MTXLIB="$DOT_SAGE/meataxe"
 # Directory where executables are installed.
-export MTXBIN="$SAGE_LOCAL/bin"
-# Default compiler flags
-export CFLAGS1="-std=gnu99 -O -Wall -fPIC"
+export MTXBIN="$SAGE_LOCAL"/bin
+
 # Field size up to GF(256)
 export ZZZ=0
 
-# In principle, one should uncomment for field sizes up to GF(2^16).
-# But upstream doesn't provide the required sources.
-#export ZZZ=1
-
-# The following is just to make MeatAxe's Makefile happy
-touch Makefile.conf
-
 # We create a directory for the multiplication tables
-mkdir -p $MTXLIB
+mkdir -p $MTXLIB || \
+    sdh_die "Error creating directory for multiplication tables"
 
-if [ $? -ne 0 ]; then
-    echo >&2 "Error creating directory for multiplication tables."
-    exit 1
+cd src
+sdh_configure
+sdh_make
+sdh_make_install
+
+if [ "$SAGE_SPKG_INSTALL_DOCS" = yes ] ; then
+    $MAKE doc || sdh_die "Error documenting SharedMeatAxe"
 fi
 
-## Install! Aparently MeatAxe would rebuild everything when
-## testing, and "make check" also installs. So, if a test
-## is requested then we do it in one go.
-
-if [ "x$SAGE_CHECK" = xyes ]; then
-    $MAKE check
-else
-    $MAKE
-fi
-
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing MeatAxe."
-    exit 1
-fi
-
-## Surprisingly, MeatAxe's Makefile does NOT install the binaries
-## in MTXBIN. Hence, we do it manually.
-
-mv bin/* "$MTXBIN"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error copying MeatAxe executables."
-    exit 1
-fi
-
-# We move the meataxe library to a permanent location
-mv tmp/libmtx.a "$SAGE_LOCAL/lib"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error copying MeatAxe library."
-    exit 1
-fi
-
-cp src/meataxe.h "$SAGE_LOCAL/include/"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error copying MeatAxe header."
-    exit 1
-fi
-
-# Are we supposed to install the documentation?
-if [ "x$SAGE_SPKG_INSTALL_DOCS" = xyes ] ; then
-    mkdir -p $SAGE_SHARE/doc/meataxe/
-    cp -r doc/* $SAGE_SHARE/doc/meataxe/
-    if [ $? -ne 0 ]; then
-        echo "Error copying documentation."
-        exit 1
-    else
-        echo "The documentation can be found in $SAGE_SHARE/doc/meataxe/"
-    fi
-fi

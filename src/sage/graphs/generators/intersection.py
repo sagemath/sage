@@ -385,7 +385,7 @@ def OrthogonalArrayBlockGraph(k,n,OA=None):
     of them being adjacent if one of their coordinates match.
 
     For more information on these graphs, see `Andries Brouwer's page
-    on Orthogonal Array graphs <www.win.tue.nl/~aeb/graphs/OA.html>`_.
+    on Orthogonal Array graphs <https://www.win.tue.nl/~aeb/graphs/OA.html>`_.
 
     .. WARNING::
 

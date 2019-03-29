@@ -82,7 +82,7 @@ from sage.structure.richcmp cimport richcmp
 from sage.libs.gap.element cimport GapElement, GapElement_List
 from sage.groups.libgap_wrapper cimport ElementLibGAP
 
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.structure.factorization import Factorization
 from sage.misc.cachefunc import cached_method
 from sage.rings.all import ZZ
@@ -310,6 +310,21 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         """
         return self._matrix
 
+    def _matrix_(self, base=None):
+        """
+        Method used by the :func:`matrix` constructor.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup(['A', 3], base_ring=ZZ)
+            sage: g = W.gen(0)
+            sage: matrix(RDF, g)
+            [-1.0  1.0  0.0]
+            [ 0.0  1.0  0.0]
+            [ 0.0  0.0  1.0]
+        """
+        return self.matrix()
+
     cpdef _mul_(self, other):
         """
         Return the product of ``self`` and`` other``, which must
@@ -384,7 +399,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         cdef Matrix M = self._matrix
         # We have a special method for dense matrices over ZZ
         if M.base_ring() is ZZ and M.is_dense():
-            M = M._invert_unit()
+            M = M.inverse_of_unit()
         else:
             M = ~M
             if M.base_ring() is not parent.base_ring():
@@ -590,6 +605,22 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         m.set_immutable()
         return m
 
+    def _matrix_(self, base=None):
+        """
+        Method used by the :func:`matrix` constructor.
+
+        EXAMPLES::
+
+            sage: F = GF(3); MS = MatrixSpace(F,2,2)
+            sage: G = MatrixGroup([MS([1,1,0,1])])
+            sage: g = G.gen(0)
+            sage: M = matrix(GF(9), g); M; parent(M)
+            [1 1]
+            [0 1]
+            Full MatrixSpace of 2 by 2 dense matrices over Finite Field in z2 of size 3^2
+        """
+        return self.matrix()
+
     cpdef list list(self):
         """
         Return list representation of this matrix.
@@ -633,7 +664,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             sage: G.gen(0).order(), G.gen(1).order()
             (7, 3)
 
-            sage: k = QQ;
+            sage: k = QQ
             sage: G = MatrixGroup([matrix(k,2,[1,1,0,1]), matrix(k,2,[1,0,0,2])]); G
             Matrix group over Rational Field with 2 generators (
             [1 1]  [1 0]

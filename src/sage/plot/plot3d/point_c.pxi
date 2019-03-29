@@ -15,12 +15,7 @@
 
 
 # Utility functions for operating on the point_c struct.
-# These would be macros, but inline functions should do the same job.
-
-
-cdef extern from "math.h":
-    double stdmath_sqrt "sqrt" (double)
-    int isfinite(double x)
+from libc cimport math
 
 
 cdef inline bint point_c_set(point_c* res, P) except -2:
@@ -51,21 +46,21 @@ cdef inline int point_c_cmp(point_c P, point_c Q):
         return 1
 
 cdef inline void point_c_update_finite_lower_bound(point_c* res, point_c P):
-    # We use the condition "not P.x>res.x" so that the condition returns True if res.x is NaN
-    if isfinite(P.x) and not P.x>res.x:
+    # We use the condition "not P.x > res.x" so that the condition returns True if res.x is NaN
+    if math.isfinite(P.x) and not P.x > res.x:
         res.x = P.x
-    if isfinite(P.y) and not P.y>res.y:
+    if math.isfinite(P.y) and not P.y > res.y:
         res.y = P.y
-    if isfinite(P.z) and not P.z>res.z:
+    if math.isfinite(P.z) and not P.z > res.z:
         res.z = P.z
 
 cdef inline void point_c_update_finite_upper_bound(point_c* res, point_c P):
-    # We use the condition "not P.x<res.x" so that the condition returns True if res.x is NaN
-    if isfinite(P.x) and not P.x<res.x:
+    # We use the condition "not P.x < res.x" so that the condition returns True if res.x is NaN
+    if math.isfinite(P.x) and not P.x < res.x:
         res.x = P.x
-    if isfinite(P.y) and not P.y<res.y:
+    if math.isfinite(P.y) and not P.y < res.y:
         res.y = P.y
-    if isfinite(P.z) and not P.z<res.z:
+    if math.isfinite(P.z) and not P.z < res.z:
         res.z = P.z
 
 cdef inline void point_c_lower_bound(point_c* res, point_c P, point_c Q):
@@ -102,7 +97,7 @@ cdef inline void point_c_cross(point_c* res, point_c P, point_c Q):
     res.z = P.x * Q.y - P.y * Q.x
 
 cdef inline double point_c_len(point_c P):
-    return stdmath_sqrt(point_c_dot(P, P))
+    return math.sqrt(point_c_dot(P, P))
 
 cdef inline void point_c_transform(point_c* res, double* M, point_c P):
     """
@@ -133,12 +128,12 @@ cdef inline double cos_face_angle(face_c F, face_c E, point_c* vlist):
     face_c_normal(&nF, F, vlist)
     face_c_normal(&nE, E, vlist)
     cdef double dot = point_c_dot(nF, nE)
-    return dot / stdmath_sqrt(point_c_dot(nF, nF)*point_c_dot(nE, nE))
+    return dot / math.sqrt(point_c_dot(nF, nF)*point_c_dot(nE, nE))
 
 cdef inline double sin_face_angle(face_c F, face_c E, point_c* vlist):
     cdef point_c nF, nE
     face_c_normal(&nF, F, vlist)
     face_c_normal(&nE, E, vlist)
     cdef double dot = point_c_dot(nF, nE)
-    return stdmath_sqrt(1-(dot*dot)/(point_c_dot(nF, nF)*point_c_dot(nE, nE)))
+    return math.sqrt(1-(dot*dot)/(point_c_dot(nF, nF)*point_c_dot(nE, nE)))
 

@@ -231,7 +231,7 @@ class NumberField_relative(NumberField_generic):
             sage: l.<b> = k.extension(x - 1/a0); l
             Number Field in b with defining polynomial x + 1/2*a0 over its base field
             sage: l.pari_rnf()
-            [x, [[4, -x^3 - x^2 - 7*x - 3, -x^3 + x^2 - 7*x + 3, 2*x^3 + 10*x], 1/4], ..., [x^4 + 6*x^2 + 1, -x, -1, y^4 + 6*y^2 + 1, x], [0, 0]]
+            [x, [4, -x^3 - x^2 - 7*x - 3, -x^3 + x^2 - 7*x + 3, 2*x^3 + 10*x], ..., [x^4 + 6*x^2 + 1, -x, -1, y^4 + 6*y^2 + 1, x], [0, 0]]
             sage: b
             -1/2*a0
 
@@ -279,8 +279,8 @@ class NumberField_relative(NumberField_generic):
         if not isinstance(polynomial, polynomial_element.Polynomial):
             try:
                 polynomial = polynomial.polynomial(base)
-            except (AttributeError, TypeError) as msg:
-                raise TypeError("polynomial (=%s) must be a polynomial."%repr(polynomial))
+            except (AttributeError, TypeError):
+                raise TypeError("polynomial (=%r) must be a polynomial" % polynomial)
         if name == base.variable_name():
             raise ValueError("base field and extension cannot have the same name %r" % name)
         if polynomial.parent().base_ring() != base:
@@ -712,10 +712,10 @@ class NumberField_relative(NumberField_generic):
 
         An example with nontrivial ``v``::
 
-            sage: L.<a,b> = NumberField([x^2 - 3, x^2 - 5*49])
+            sage: L.<a,b> = NumberField([x^2 - 1000003, x^2 - 5*1000099^2])
             sage: O3 = L.maximal_order([3])
             sage: O3.absolute_discriminant()
-            8643600
+            400160824478095086350656915693814563600
             sage: O3.is_maximal()
             False
         """
@@ -1103,8 +1103,8 @@ class NumberField_relative(NumberField_generic):
         element = self.base_field().coerce(element)
         element = to_abs_base(element)
         # Express element as a polynomial in the absolute generator of self
-        zk, czk = self._pari_nfzk()
-        expr_x = self._pari_base_nf()._nfeltup(element._pari_polynomial(), zk, czk)
+        nfzk = self._pari_nfzk()
+        expr_x = self._pari_base_nf()._nfeltup(element._pari_polynomial(), nfzk)
         # We do NOT call self(...) because this code is called by
         # __init__ before we initialize self.gens(), and self(...)
         # uses self.gens()
@@ -1387,9 +1387,9 @@ class NumberField_relative(NumberField_generic):
         return self.__relative_vector_space
 
     def absolute_vector_space(self):
-        """
-        Return vector space over `\QQ` of self and isomorphisms from
-        the vector space to self and in the other direction.
+        r"""
+        Return vector space over `\QQ` of ``self`` and isomorphisms from
+        the vector space to ``self`` and in the other direction.
 
         EXAMPLES::
 
@@ -1515,8 +1515,7 @@ class NumberField_relative(NumberField_generic):
             sage: K.<a> = NumberField(x^2 - 2)
             sage: L.<b> = K.extension(x^2 - 3)
             sage: L._pari_nfzk()
-            ([2, -x^3 + 9*x], 1/2)
-
+            [2, -x^3 + 9*x]
         """
         return self._pari_base_nf()._nf_nfzk(self._pari_rnfeq())
 
@@ -1637,7 +1636,7 @@ class NumberField_relative(NumberField_generic):
 
             sage: k.<a> = NumberField([x^4 + 3, x^2 + 2])
             sage: k.pari_rnf()
-            [x^4 + 3, [[364, -10*x^7 - 87*x^5 - 370*x^3 - 41*x], 1/364], [[108, 0; 0, 108], 3], ...]
+            [x^4 + 3, [364, -10*x^7 - 87*x^5 - 370*x^3 - 41*x], [108, 3], ...]
         """
         return self._pari_base_nf().rnfinit(self.pari_relative_polynomial())
 
@@ -1744,22 +1743,21 @@ class NumberField_relative(NumberField_generic):
             self.__abs_gen = self._element_class(self, QQ['x'].gen())
             return self.__abs_gen
 
-    @cached_method
     def absolute_field(self, names):
-        r"""
-        Return an absolute number field `K` that is isomorphic to this
-        field along with a field-theoretic bijection from self to `K`
-        and from `K` to self.
+        """
+        Return ``self`` as an absolute number field.
 
         INPUT:
 
         - ``names`` -- string; name of generator of the absolute field
 
-        OUTPUT: an absolute number field
+        OUTPUT:
+
+        An absolute number field `K` that is isomorphic to this field.
 
         Also, ``K.structure()`` returns ``from_K`` and ``to_K``, where
-        ``from_K`` is an isomorphism from `K` to self and ``to_K`` is
-        an isomorphism from self to `K`.
+        ``from_K`` is an isomorphism from `K` to ``self`` and ``to_K``
+        is an isomorphism from ``self`` to `K`.
 
         EXAMPLES::
 
@@ -2267,7 +2265,7 @@ class NumberField_relative(NumberField_generic):
         raise NotImplementedError("For a relative number field you must use relative_discriminant or absolute_discriminant as appropriate")
 
     def order(self, *gens, **kwds):
-        """
+        r"""
         Return the order with given ring generators in the maximal
         order of this number field.
 

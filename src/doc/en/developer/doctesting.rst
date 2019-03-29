@@ -656,18 +656,19 @@ You can run doctests from within Sage, which can be useful since you
 don't have to wait for Sage to start.  Use the ``run_doctests``
 function in the global namespace, passing it either a string or a module::
 
-    sage: run_doctests(sage.coding.sd_codes)
-    Doctesting /Users/roed/sage/sage-5.3/src/sage/coding/sd_codes.py
-    Running doctests with ID 2012-07-07-04-32-36-81f3853b.
+    sage: run_doctests(sage.combinat.affine_permutation)
+    Running doctests with ID 2018-02-07-13-23-13-89fe17b1.
+    Git branch: develop
+    Using --optional=dochtml,sage
     Doctesting 1 file.
-    sage -t /Users/roed/sage/sage-5.3/src/sage/coding/sd_codes.py
-        [18 tests, 0.3 s]
-    ------------------------------------------------------------------------
+    sage -t /opt/sage/sage_stable/src/sage/combinat/affine_permutation.py
+        [338 tests, 4.32 s]
+    ----------------------------------------------------------------------
     All tests passed!
-    ------------------------------------------------------------------------
-    Total time for all tests: 0.4 seconds
-        cpu time: 0.2 seconds
-        cumulative wall time: 0.3 seconds
+    ----------------------------------------------------------------------
+    Total time for all tests: 4.4 seconds
+        cpu time: 3.6 seconds
+        cumulative wall time: 4.3 seconds
 
 .. _section-options:
 
@@ -798,7 +799,7 @@ optional packages.
 
 By default, Sage only runs doctests that are not marked with the ``optional`` tag.  This is equivalent to running ::
 
-    [roed@sage sage-6.0]$ sage -t --optional=sage src/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ sage -t --optional=dochtml,sage src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-30-a368a200.
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -812,7 +813,7 @@ By default, Sage only runs doctests that are not marked with the ``optional`` ta
 
 If you want to also run tests that require magma, you can do the following::
 
-    [roed@sage sage-6.0]$ sage -t --optional=sage,magma src/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ sage -t --optional=dochtml,sage,magma src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-30-a00a7319
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -824,7 +825,7 @@ If you want to also run tests that require magma, you can do the following::
         cpu time: 4.0 seconds
         cumulative wall time: 8.4 seconds
 
-In order to just run the tests that are marked as requiring magma, omit ``sage``::
+In order to just run the tests that are marked as requiring magma, omit ``sage`` and ``dochtml``::
 
     [roed@sage sage-6.0]$ sage -t --optional=magma src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-33-a2bc1fdf
@@ -999,7 +1000,7 @@ appear in real time use the ``--verbose`` flag).  To have doctests run
 under the control of gdb, use the ``--gdb`` flag::
 
     [roed@sage sage-6.0]$ sage -t --gdb src/sage/schemes/elliptic_curves/constructor.py
-    gdb -x /home/roed/sage-6.0.b5/local/bin/sage-gdb-commands --args python /home/roed/sage-6.0.b5/local/bin/sage-runtests --serial --nthreads 1 --timeout 1048576 --optional sage --stats_path /home/roed/.sage/timings2.json src/sage/schemes/elliptic_curves/constructor.py
+    gdb -x /home/roed/sage-6.0.b5/local/bin/sage-gdb-commands --args python /home/roed/sage-6.0.b5/local/bin/sage-runtests --serial --nthreads 1 --timeout 1048576 --optional dochtml,sage --stats_path /home/roed/.sage/timings2.json src/sage/schemes/elliptic_curves/constructor.py
     GNU gdb 6.8-debian
     Copyright (C) 2008 Free Software Foundation, Inc.
     License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>

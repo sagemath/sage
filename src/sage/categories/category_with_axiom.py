@@ -1,4 +1,4 @@
-"""
+r"""
 Axioms
 
 This documentation covers how to implement axioms and proceeds with an
@@ -1679,13 +1679,15 @@ all_axioms += ("Flying", "Blue",
                "WellGenerated",
                "Facade", "Finite", "Infinite","Enumerated",
                "Complete",
+               "Nilpotent",
                "FiniteDimensional", "Connected", "WithBasis",
                "Irreducible",
-               "Commutative", "Associative", "Inverse", "Unital", "Division", "NoZeroDivisors",
+               "Commutative", "Associative", "Inverse", "Unital", "Division", "NoZeroDivisors", "Cellular",
                "AdditiveCommutative", "AdditiveAssociative", "AdditiveInverse", "AdditiveUnital",
                "Distributive",
                "Endset",
-               "Pointed"
+               "Pointed",
+               "Stratified",
               )
 
 def uncamelcase(s,separator=" "):
@@ -1855,13 +1857,13 @@ class CategoryWithAxiom(Category):
     how to implement axioms and the documentation of the axiom
     infrastructure.
 
-    .. automethod:: __classcall__
-    .. automethod:: __classget__
-    .. automethod:: __init__
-    .. automethod:: _repr_object_names
-    .. automethod:: _repr_object_names_static
-    .. automethod:: _test_category_with_axiom
-    .. automethod:: _without_axioms
+    .. automethod:: CategoryWithAxiom.__classcall__
+    .. automethod:: CategoryWithAxiom.__classget__
+    .. automethod:: CategoryWithAxiom.__init__
+    .. automethod:: CategoryWithAxiom._repr_object_names
+    .. automethod:: CategoryWithAxiom._repr_object_names_static
+    .. automethod:: CategoryWithAxiom._test_category_with_axiom
+    .. automethod:: CategoryWithAxiom._without_axioms
     """
 
     @lazy_class_attribute
@@ -2018,7 +2020,7 @@ class CategoryWithAxiom(Category):
             sage: Sets().Infinite()
             Category of infinite sets
             sage: Sets().Infinite
-            Cached version of <function Infinite at ...>
+            Cached version of <function ...Infinite at ...>
             sage: Sets().Infinite.f == Sets.SubcategoryMethods.Infinite.f
             True
 
@@ -2026,7 +2028,7 @@ class CategoryWithAxiom(Category):
         a separate file, and lazy imported::
 
             sage: Sets().Finite
-            Cached version of <function Finite at ...>
+            Cached version of <function ...Finite at ...>
 
         There is no binding behavior when accessing ``Finite`` or
         ``Infinite`` from the class of the category instead of the
@@ -2187,7 +2189,7 @@ class CategoryWithAxiom(Category):
 
         .. SEEALSO:: :meth:`Category.additional_structure`.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Sets().Finite().additional_structure()
             sage: Monoids().additional_structure()
@@ -2267,6 +2269,14 @@ class CategoryWithAxiom(Category):
                 result = result.replace("graded ", "graded connected ", 1)
             elif axiom == "Connected" and "filtered " in result:
                 result = result.replace("filtered ", "filtered connected ", 1)
+            elif axiom == "Stratified" and "graded " in result:
+                result = result.replace("graded ", "stratified ", 1)
+            elif axiom == "Nilpotent" and "finite dimensional " in result:
+                # We need to put nilpotent before finite dimensional in the
+                #   axioms ordering so we do not (unnecessarily) display
+                #   'nilpotent' in 'finite dimensional nilpotent stratified'.
+                # So we need to swap the order here.
+                result = result.replace("finite dimensional ", "finite dimensional nilpotent ", 1)
             elif axiom == "Endset" and "homsets" in result:
                 # Without the space at the end to handle Homsets().Endset()
                 result = result.replace("homsets", "endsets", 1)
@@ -2558,7 +2568,7 @@ def axiom(axiom):
         ....:     def _with_axiom(self, axiom): return self, axiom
         ....:     Finite = axiom("Finite")
         sage: As().Finite()
-        (<__main__.As instance at ...>, 'Finite')
+        (<__main__.As ... at ...>, 'Finite')
     """
     def with_axiom(self):
         return self._with_axiom(axiom)

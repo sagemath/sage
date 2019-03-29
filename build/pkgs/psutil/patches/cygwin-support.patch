@@ -819,7 +819,7 @@ index 0000000..ffba639
 +            raise
 +        # Process name is between parentheses. It can contain spaces and
 +        # other parentheses. This is taken into account by looking for
-+        # the first occurrence of "(" and the last occurrence of ")".
++        # the first occurrence of "(" and the last occurence of ")".
 +        rpar = data.rfind(b')')
 +        name = data[data.find(b'(') + 1:rpar]
 +        fields_after_name = data[rpar + 2:].split()
@@ -1225,10 +1225,10 @@ index 533b548..51852b1 100644
      """Linux process implementation."""
  
 diff --git a/psutil/_psposix.py b/psutil/_psposix.py
-index 6ed7694..4f6dde1 100644
+index 6ed7694..5b79a42 100644
 --- a/psutil/_psposix.py
 +++ b/psutil/_psposix.py
-@@ -173,7 +173,9 @@ def get_terminal_map():
+@@ -173,12 +173,16 @@ def get_terminal_map():
      Used by Process.terminal()
      """
      ret = {}
@@ -1239,6 +1239,14 @@ index 6ed7694..4f6dde1 100644
      for name in ls:
          assert name not in ret, name
          try:
+             ret[os.stat(name).st_rdev] = name
+         except OSError as err:
+-            if err.errno != errno.ENOENT:
++            if err.errno not in (errno.ENOENT, errno.ENXIO):
++                # Note: ENXIO can happen in some cases on Cygwin due to a
++                # bug; see: https://cygwin.com/ml/cygwin/2017-08/msg00198.html
+                 raise
+     return ret
 diff --git a/psutil/_pssunos.py b/psutil/_pssunos.py
 index ad72de2..9269ca9 100644
 --- a/psutil/_pssunos.py
@@ -4239,7 +4247,7 @@ index 16d1eb7..0b934a8 100755
              try:
                  total, used, free, percent = df(part.device)
 diff --git a/psutil/tests/test_process.py b/psutil/tests/test_process.py
-index 6580fe9..85c73cd 100755
+index 6580fe9..434cb3a 100755
 --- a/psutil/tests/test_process.py
 +++ b/psutil/tests/test_process.py
 @@ -29,6 +29,7 @@ from socket import SOCK_STREAM
@@ -4305,7 +4313,28 @@ index 6580fe9..85c73cd 100755
              # Sending a signal to process with PID 0 is not allowed as
              # it would affect every process in the process group of
              # the calling process (os.getpid()) instead of PID 0").
-@@ -317,7 +327,10 @@ class TestProcess(unittest.TestCase):
+@@ -278,10 +288,18 @@ class TestProcess(unittest.TestCase):
+         # Use os.times()[:2] as base values to compare our results
+         # using a tolerance  of +/- 0.1 seconds.
+         # It will fail if the difference between the values is > 0.1s.
+-        if (max([user_time, utime]) - min([user_time, utime])) > 0.1:
++        # On cygwin there seems to be enough overhead differece between
++        # os.times() and reading /proc/stat that the tolerance should
++        # be a bit higher
++        if CYGWIN:
++            tol = 0.2
++        else:
++            tol = 0.1
++
++        if (max([user_time, utime]) - min([user_time, utime])) > tol:
+             self.fail("expected: %s, found: %s" % (utime, user_time))
+ 
+-        if (max([kernel_time, ktime]) - min([kernel_time, ktime])) > 0.1:
++        if (max([kernel_time, ktime]) - min([kernel_time, ktime])) > tol:
+             self.fail("expected: %s, found: %s" % (ktime, kernel_time))
+ 
+     @unittest.skipUnless(hasattr(psutil.Process, "cpu_num"),
+@@ -317,7 +335,10 @@ class TestProcess(unittest.TestCase):
          terminal = psutil.Process().terminal()
          if sys.stdin.isatty() or sys.stdout.isatty():
              tty = os.path.realpath(sh('tty'))
@@ -4317,7 +4346,7 @@ index 6580fe9..85c73cd 100755
          else:
              self.assertIsNone(terminal)
  
-@@ -1086,7 +1099,8 @@ class TestProcess(unittest.TestCase):
+@@ -1086,7 +1107,8 @@ class TestProcess(unittest.TestCase):
                                 psutil.CONN_NONE,
                                 ("all", "inet", "inet6", "udp", "udp6"))
  
@@ -4327,7 +4356,7 @@ index 6580fe9..85c73cd 100755
      @skip_on_access_denied(only_if=OSX)
      def test_connections_unix(self):
          def check(type):
-@@ -1115,6 +1129,8 @@ class TestProcess(unittest.TestCase):
+@@ -1115,6 +1137,8 @@ class TestProcess(unittest.TestCase):
                           'socket.fromfd() not supported')
      @unittest.skipIf(WINDOWS or SUNOS,
                       'connection fd not available on this platform')
@@ -4336,7 +4365,7 @@ index 6580fe9..85c73cd 100755
      def test_connection_fromfd(self):
          with contextlib.closing(socket.socket()) as sock:
              sock.bind(('localhost', 0))
-@@ -1191,8 +1207,10 @@ class TestProcess(unittest.TestCase):
+@@ -1191,8 +1215,10 @@ class TestProcess(unittest.TestCase):
          for p in psutil.process_iter():
              if p.pid == sproc.pid:
                  continue
@@ -4349,7 +4378,7 @@ index 6580fe9..85c73cd 100755
  
      def test_children(self):
          p = psutil.Process()
-@@ -1236,8 +1254,18 @@ class TestProcess(unittest.TestCase):
+@@ -1236,8 +1262,18 @@ class TestProcess(unittest.TestCase):
              except psutil.Error:
                  pass
          # this is the one, now let's make sure there are no duplicates
@@ -4370,7 +4399,7 @@ index 6580fe9..85c73cd 100755
          try:
              c = p.children(recursive=True)
          except psutil.AccessDenied:  # windows
-@@ -1351,7 +1379,7 @@ class TestProcess(unittest.TestCase):
+@@ -1351,7 +1387,7 @@ class TestProcess(unittest.TestCase):
          p = psutil.Process(sproc.pid)
          p.terminate()
          p.wait()
@@ -4379,7 +4408,7 @@ index 6580fe9..85c73cd 100755
              call_until(psutil.pids, "%s not in ret" % p.pid)
          self.assertFalse(p.is_running())
          # self.assertFalse(p.pid in psutil.pids(), msg="retcode = %s" %
-@@ -1394,6 +1422,8 @@ class TestProcess(unittest.TestCase):
+@@ -1394,6 +1430,8 @@ class TestProcess(unittest.TestCase):
              except psutil.AccessDenied:
                  if OPENBSD and name in ('threads', 'num_threads'):
                      pass
@@ -4388,7 +4417,7 @@ index 6580fe9..85c73cd 100755
                  else:
                      raise
              except NotImplementedError:
-@@ -1403,7 +1433,14 @@ class TestProcess(unittest.TestCase):
+@@ -1403,7 +1441,14 @@ class TestProcess(unittest.TestCase):
                      "NoSuchProcess exception not raised for %r, retval=%s" % (
                          name, ret))
  
@@ -4404,7 +4433,7 @@ index 6580fe9..85c73cd 100755
      def test_zombie_process(self):
          def succeed_or_zombie_p_exc(fun, *args, **kwargs):
              try:
-@@ -1806,17 +1843,17 @@ class TestFetchAllProcesses(unittest.TestCase):
+@@ -1806,17 +1851,17 @@ class TestFetchAllProcesses(unittest.TestCase):
      def memory_info(self, ret, proc):
          for name in ret._fields:
              self.assertGreaterEqual(getattr(ret, name), 0)
@@ -4428,7 +4457,7 @@ index 6580fe9..85c73cd 100755
  
      def memory_full_info(self, ret, proc):
          total = psutil.virtual_memory().total
-@@ -1855,6 +1892,11 @@ class TestFetchAllProcesses(unittest.TestCase):
+@@ -1855,6 +1900,11 @@ class TestFetchAllProcesses(unittest.TestCase):
  
      def cwd(self, ret, proc):
          if ret is not None:  # BSD may return None
@@ -4440,7 +4469,7 @@ index 6580fe9..85c73cd 100755
              assert os.path.isabs(ret), ret
              try:
                  st = os.stat(ret)
-@@ -2025,9 +2067,7 @@ class TestUnicode(unittest.TestCase):
+@@ -2025,9 +2075,7 @@ class TestUnicode(unittest.TestCase):
      def test_proc_name(self):
          subp = get_test_subprocess(cmd=[self.uexe])
          if WINDOWS:
@@ -4451,7 +4480,7 @@ index 6580fe9..85c73cd 100755
          else:
              name = psutil.Process(subp.pid).name()
          if not OSX and TRAVIS:
-@@ -2098,6 +2138,16 @@ class TestInvalidUnicode(TestUnicode):
+@@ -2098,6 +2146,16 @@ class TestInvalidUnicode(TestUnicode):
          uexe = TESTFN + b"f\xc0\x80"
          udir = TESTFN + b"d\xc0\x80"
  
@@ -4565,7 +4594,7 @@ index a28794b..287a800 100755
  
  
 diff --git a/setup.py b/setup.py
-index 47772da..6636bdf 100755
+index 47772da..bd6b5ae 100755
 --- a/setup.py
 +++ b/setup.py
 @@ -26,6 +26,7 @@ HERE = os.path.abspath(os.path.dirname(__file__))
@@ -4576,7 +4605,7 @@ index 47772da..6636bdf 100755
  from _common import FREEBSD  # NOQA
  from _common import LINUX  # NOQA
  from _common import NETBSD  # NOQA
-@@ -230,7 +231,35 @@ elif SUNOS:
+@@ -230,7 +231,33 @@ elif SUNOS:
          sources=['psutil/_psutil_sunos.c'],
          define_macros=macros,
          libraries=['kstat', 'nsl', 'socket'])
@@ -4588,12 +4617,10 @@ index 47772da..6636bdf 100755
 +
 +    # sys.getwindowsversion() is not available in Cygwin's Python
 +    import re
-+    import subprocess
-+    winver_re = re.compile(br'\[.+ (?P<major>\d+)\.(?P<minor>\d+)\.'
-+                           br'(?P<build>\d+)\]')
++    winver_re = re.compile(r'CYGWIN_NT-(?P<major>\d+)\.(?P<minor>\d+)')
  
 +    def get_winver():
-+        verstr = subprocess.check_output(['cmd', '/c', 'ver'])
++        verstr = os.uname()[0]
 +        m = winver_re.search(verstr)
 +        maj = int(m.group('major'))
 +        min = int(m.group('minor'))

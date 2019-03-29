@@ -466,14 +466,14 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     # representations
 
     cpdef representation(self, B=None, reduced=False, labels=None, order=None, lift_map=None):
-        """
+        r"""
         Return a matrix representing the matroid.
 
         Let `M` be a matroid on `n` elements with rank `r`. Let `E` be an
         ordering of the groundset, as output by
         :func:`M.groundset_list() <sage.matroids.basis_exchange_matroid.BasisExchangeMatroid.groundset_list>`.
         A *representation* of the matroid is an `r \times n` matrix with the
-        following property. Consider column ``i`` to be labeled by ``E[i]``,
+        following property. Consider column `i` to be labeled by `E[i]`,
         and denote by `A[F]` the submatrix formed by the columns labeled by
         the subset `F \subseteq E`. Then for all `F \subseteq E`, the columns
         of `A[F]` are linearly independent if and only if `F` is an
@@ -2751,18 +2751,16 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         n = len(X)
         m = len(Y)
 
-        sol=False
+        sol = False
         T = spanning_stars(M)
 
-        for (x1,y1) in T:
+        for (x1, y1) in T:
             # The whiting out
             B = copy(M)
-            for (x,y) in product(range(n),range(m)):
-                if (x1!=x and y1!=y):
-                    if(M[x1,y]!=0 and
-                       M[x,y1]!=0 and
-                       M[x,y]!=0):
-                        B[x,y]=0
+            for (x, y) in product(range(n), range(m)):
+                if (x1 != x and y1 != y):
+                    if (M[x1, y] != 0 and M[x, y1] != 0 and M[x, y] != 0):
+                        B[x, y] = 0
 
             # remove row x1 and y1
             Xp = list(xrange(n))
@@ -2784,7 +2782,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 Q_rows = []
                 Q_cols = []
                 # make sure the matrix has rank 2
-                if(M.matrix_from_rows_and_columns(P_rows,P_cols).rank()==2):
+                if M.matrix_from_rows_and_columns(P_rows,P_cols).rank() == 2:
                     sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
                     if sol:
                         break
@@ -3944,20 +3942,30 @@ cdef class BinaryMatroid(LinearMatroid):
             sage: loads(dumps(M)).representation()
             [1 0 1]
             [1 0 1]
+
+        TESTS:
+
+        Check that :trac:`23437` is fixed::
+
+            sage: M = matroids.named_matroids.Fano().dual()
+            sage: B = list(M.bases())
+            sage: N = loads(dumps(M))
+            sage: N.closure(frozenset({'d'}))
+            frozenset({'d'})
+            sage: N.is_isomorphic(M)
+            True
         """
         import sage.matroids.unpickling
         version = 0
+        gs = self._E
         cdef list basis = [0] * self.full_rank()
         if self._representation is not None:
             A = self._representation
-            gs = self._E
             basis = None
         else:
             A = self._A
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            rows, cols = self._current_rows_cols()
-            gs = rows + cols
+            # current basis ordered so matrix cols form identity matrix:
+            basis = self._current_rows_cols()[0]
         data = (A, gs, basis, getattr(self, '__custom_name'))
         return sage.matroids.unpickling.unpickle_binary_matroid, (version, data)
 
@@ -4830,20 +4838,33 @@ cdef class TernaryMatroid(LinearMatroid):
             sage: loads(dumps(M)).representation()
             [1 0 1]
             [1 0 1]
+
+        TESTS:
+
+        Check that :trac:`23437` is fixed::
+
+            sage: from sage.matroids.advanced import *
+            sage: X_bin = matroids.named_matroids.Fano().representation()
+            sage: X = Matrix(GF(3), X_bin)
+            sage: M = TernaryMatroid(matrix=X).dual()
+            sage: B = list(M.bases())
+            sage: N = loads(dumps(M))
+            sage: N.closure(frozenset({3}))
+            frozenset({3})
+            sage: N.is_isomorphic(M)
+            True
         """
         import sage.matroids.unpickling
         version = 0
+        gs = self._E
         cdef list basis = [0] * self.full_rank()
         if self._representation is not None:
             A = self._representation
-            gs = self._E
             basis = None
         else:
             A = self._A
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            rows, cols = self._current_rows_cols()
-            gs = rows + cols
+            # current basis ordered so matrix cols form identity matrix:
+            basis = self._current_rows_cols()[0]
         data = (A, gs, basis, getattr(self, '__custom_name'))
         return sage.matroids.unpickling.unpickle_ternary_matroid, (version, data)
 
@@ -5537,20 +5558,33 @@ cdef class QuaternaryMatroid(LinearMatroid):
             sage: M.rename("U34")
             sage: loads(dumps(M))
             U34
+
+        TESTS:
+
+        Check that :trac:`23437` is fixed::
+
+            sage: from sage.matroids.advanced import QuaternaryMatroid
+            sage: X_bin = matroids.named_matroids.Fano().representation()
+            sage: X = Matrix(GF(4), X_bin)
+            sage: M = QuaternaryMatroid(matrix=X).dual()
+            sage: B = list(M.bases())
+            sage: N = loads(dumps(M))
+            sage: N.closure(frozenset({3}))
+            frozenset({3})
+            sage: N.is_isomorphic(M)
+            True
         """
         import sage.matroids.unpickling
         version = 0
+        gs = self._E
         cdef list basis = [0] * self.full_rank()
         if self._representation is not None:
             A = self._representation
-            gs = self._E
             basis = None
         else:
             A = self._A
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            rows, cols = self._current_rows_cols()
-            gs = rows + cols
+            # current basis ordered so matrix cols form identity matrix:
+            basis = self._current_rows_cols()[0]
         data = (A, gs, basis, getattr(self, '__custom_name'))
         return sage.matroids.unpickling.unpickle_quaternary_matroid, (version, data)
 
@@ -5833,7 +5867,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         if self._r_projection is None:
             R = self._basic_representation()._matrix_()
-            self._r_projection = R.transpose() * (R * R.transpose()).adjoint() * R
+            self._r_projection = R.transpose() * (R * R.transpose()).adjugate() * R
         return self._r_projection
 
     cpdef _invariant(self):

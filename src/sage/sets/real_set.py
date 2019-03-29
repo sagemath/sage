@@ -39,6 +39,28 @@ Instead, you can use the following construction functions::
     sage: RealSet.unbounded_above_closed(1)
     [1, +oo)
 
+Relations containing symbols and numeric values or constants::
+
+    sage: RealSet(x != 0)
+    (-oo, 0) + (0, +oo)
+    sage: RealSet(x == pi)
+    {pi}
+    sage: RealSet(x < 1/2)
+    (-oo, 1/2)
+    sage: RealSet(1/2 < x)
+    (1/2, +oo)
+    sage: RealSet(1.5 <= x)
+    [1.50000000000000, +oo)
+
+Note that multiple arguments are combined as union::
+
+    sage: RealSet(x >= 0, x < 1)
+    (-oo, +oo)
+    sage: RealSet(x >= 0, x > 1)
+    [0, +oo)
+    sage: RealSet(x >= 0, x > -1)
+    (-1, +oo)
+
 AUTHORS:
 
 - Laurent Claessens (2010-12-10): Interval and ContinuousSet, posted
@@ -588,6 +610,85 @@ class InternalRealInterval(UniqueRepresentation, Parent):
             return self._upper_closed
         return False
 
+    def __mul__(left, right):
+        r"""
+        Scale an interval by a scalar on the left or right.
+
+        If scaled with a negative number, the interval is flipped.
+
+        EXAMPLES::
+
+            sage: i = RealSet.open_closed(0,2)[0]; i
+            (0, 2]
+            sage: 2 * i
+            (0, 4]
+            sage: 0 * i
+            {0}
+            sage: (-2) * i
+            [-4, 0)
+            sage: i * (-3)
+            [-6, 0)
+            sage: i * 0
+            {0}
+            sage: i * 1
+            (0, 2]
+
+        TESTS::
+
+            sage: from sage.sets.real_set import InternalRealInterval
+            sage: i = InternalRealInterval(RLF(0), False, RLF(0), False)
+            sage: (0 * i).is_empty()
+            True
+        """
+        if not isinstance(right, InternalRealInterval):
+            right = RLF(right)
+            if left.is_empty():
+                return left
+            lower = left._lower * right
+            lower_closed = left._lower_closed
+            upper = left._upper * right
+            upper_closed = left._upper_closed
+            scalar = right
+        elif not isinstance(left, InternalRealInterval):
+            left = RLF(left)
+            if right.is_empty():
+                return right
+            lower = left * right._lower
+            lower_closed = right._lower_closed
+            upper = left * right._upper
+            upper_closed = right._upper_closed
+            scalar = left
+        else:
+            return NotImplemented
+        if scalar == RLF(0):
+            return InternalRealInterval(RLF(0), True, RLF(0), True)
+        elif scalar < RLF(0):
+            lower, lower_closed, upper, upper_closed = upper, upper_closed, lower, lower_closed
+        if lower == -infinity:
+            lower = -infinity
+        if upper == infinity:
+            upper = infinity
+        return InternalRealInterval(lower, lower_closed,
+                                    upper, upper_closed)
+
+    def __rmul__(self, other):
+        r"""
+        Scale an interval by a scalar on the left.
+
+        If scaled with a negative number, the interval is flipped.
+
+        EXAMPLES::
+
+            sage: i = RealSet.open_closed(0,2)[0]; i
+            (0, 2]
+            sage: 2 * i
+            (0, 4]
+            sage: 0 * i
+            {0}
+            sage: (-2) * i
+            [-4, 0)
+        """
+        return self * other
 
 @richcmp_method
 class RealSet(UniqueRepresentation, Parent):
@@ -610,10 +711,50 @@ class RealSet(UniqueRepresentation, Parent):
             sage: R = RealSet(RealSet.open_closed(0,1), RealSet.closed_open(2,3)); R
             (0, 1] + [2, 3)
 
+        ::
+
+            sage: RealSet(x != 0)
+            (-oo, 0) + (0, +oo)
+            sage: RealSet(x == pi)
+            {pi}
+            sage: RealSet(x < 1/2)
+            (-oo, 1/2)
+            sage: RealSet(1/2 < x)
+            (1/2, +oo)
+            sage: RealSet(1.5 <= x)
+            [1.50000000000000, +oo)
+            sage: RealSet(x >= -1)
+            [-1, +oo)
+            sage: RealSet(x > oo)
+            {}
+            sage: RealSet(x >= oo)
+            {}
+            sage: RealSet(x <= -oo)
+            {}
+            sage: RealSet(x < oo)
+            (-oo, +oo)
+            sage: RealSet(x > -oo)
+            (-oo, +oo)
+            sage: RealSet(x != oo)
+            (-oo, +oo)
+            sage: RealSet(x <= oo)
+            Traceback (most recent call last):
+            ...
+            ValueError: interval cannot be closed at +oo
+            sage: RealSet(x == oo)
+            Traceback (most recent call last):
+            ...
+            ValueError: interval cannot be closed at +oo
+            sage: RealSet(x >= -oo)
+            Traceback (most recent call last):
+            ...
+            ValueError: interval cannot be closed at -oo
+
         TESTS::
 
             sage: TestSuite(R).run()
         """
+        from sage.symbolic.expression import Expression
         if len(args) == 1 and isinstance(args[0], RealSet):
             return args[0]   # common optimization
         intervals = []
@@ -637,6 +778,51 @@ class RealSet(UniqueRepresentation, Parent):
                 intervals.append(arg)
             elif isinstance(arg, RealSet):
                 intervals.extend(arg._intervals)
+            elif isinstance(arg, Expression) and arg.is_relational():
+                from operator import eq, ne, lt, gt, le, ge
+                def rel_to_interval(op, val):
+                    """
+                    Internal helper function.
+                    """
+                    oo = infinity
+                    try:
+                        val = val.pyobject()
+                    except AttributeError:
+                        pass
+                    val = RLF(val)
+                    if op == eq:
+                        return [InternalRealInterval(val, True, val, True)]
+                    elif op == ne:
+                        return [InternalRealInterval(-oo, False, val, False),
+                                InternalRealInterval(val, False, oo, False)]
+                    elif op == gt:
+                        return [InternalRealInterval(val, False, oo, False)]
+                    elif op == ge:
+                        return [InternalRealInterval(val, True, oo, False)]
+                    elif op == lt:
+                        return [InternalRealInterval(-oo, False, val, False)]
+                    else:
+                        return [InternalRealInterval(-oo, False, val, True)]
+
+                if (arg.lhs().is_symbol()
+                    and (arg.rhs().is_numeric() or arg.rhs().is_constant())
+                    and arg.rhs().is_real()):
+                    intervals.extend(rel_to_interval(arg.operator(), arg.rhs()))
+                elif (arg.rhs().is_symbol()
+                    and (arg.lhs().is_numeric() or arg.lhs().is_constant())
+                    and arg.lhs().is_real()):
+                    op = arg.operator()
+                    if op == lt:
+                        op = gt
+                    elif op == gt:
+                        op = lt
+                    elif op == le:
+                        op = ge
+                    elif op == ge:
+                        op = le
+                    intervals.extend(rel_to_interval(op, arg.lhs()))
+                else:
+                    raise ValueError(str(arg) + ' does not determine real interval')
             else:
                 raise ValueError(str(arg) + ' does not determine real interval')
         intervals = RealSet.normalize(intervals)
@@ -1381,10 +1567,24 @@ class RealSet(UniqueRepresentation, Parent):
             1
             sage: RealSet(0, 1).an_element()
             1/2
+            sage: RealSet(-oo,+oo).an_element()
+            0
+            sage: RealSet(-oo,7).an_element()
+            6
+            sage: RealSet(7,+oo).an_element()
+            8
         """
+        from sage.rings.infinity import AnInfinity
         if len(self._intervals) == 0:
             raise ValueError('set is empty')
         i = self._intervals[0]
+        if isinstance(i.lower(), AnInfinity):
+            if isinstance(i.upper(), AnInfinity):
+                return ZZ.zero()
+            else:
+                return i.upper() - 1
+        if isinstance(i.upper(), AnInfinity):
+            return i.lower() + 1
         if i.lower_closed():
             return i.lower()
         if i.upper_closed():
@@ -1503,3 +1703,40 @@ class RealSet(UniqueRepresentation, Parent):
             return sib.name('RealSet')()
         else:
             return sib.sum(interval_input(i) for i in self)
+
+    def __mul__(left, right):
+        r"""
+        Scale a real set by a scalar on the left or right.
+
+        EXAMPLES::
+
+            sage: A = RealSet([0, 1/2], (2, infinity)); A
+            [0, 1/2] + (2, +oo)
+            sage: 2 * A
+            [0, 1] + (4, +oo)
+            sage: A * 100
+            [0, 50] + (200, +oo)
+            sage: 1.5 * A
+            [0.000000000000000, 0.750000000000000] + (3.00000000000000, +oo)
+            sage: (-2) * A
+            (-oo, -4) + [-1, 0]
+        """
+        if not isinstance(right, RealSet):
+            return RealSet(*[e*right for e in left])
+        elif not isinstance(left, RealSet):
+            return RealSet(*[left*e for e in right])
+        else:
+            return NotImplemented
+
+    def __rmul__(self, other):
+        r"""
+        Scale a real set by a scalar on the left.
+
+        TESTS::
+
+            sage: A = RealSet([0, 1/2], RealSet.unbounded_above_closed(2)); A
+            [0, 1/2] + [2, +oo)
+            sage: pi * A
+            [0, 1/2*pi] + [2*pi, +oo)
+        """
+        return self * other

@@ -46,7 +46,7 @@ def _get_base_ring(ring, var_name="d"):
 
     Otherwise return ``ring``.
 
-    The base ring is used in the construction of the correponding
+    The base ring is used in the construction of the corresponding
     ``FormsRing`` or ``FormsSpace``. In particular in the construction
     of holomorphic forms of degree (0, 1). For (binary)
     operations a general ring element is considered (coerced to)
@@ -214,10 +214,10 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
 
             sage: F(BaseFacade(ZZ))
             Subspace of dimension 1 of CuspForms(n=4, k=12, ep=1) over Integer Ring
-            sage: F(BaseFacade(CC))
-            Subspace of dimension 1 of CuspForms(n=4, k=12, ep=1) over Complex Field with 53 bits of precision
-            sage: F(CC)
-            ModularFormsRing(n=4) over Complex Field with 53 bits of precision
+            sage: F(BaseFacade(QQ))
+            Subspace of dimension 1 of CuspForms(n=4, k=12, ep=1) over Integer Ring
+            sage: F(QQ)
+            ModularFormsRing(n=4) over Integer Ring
 
             sage: ambient_space_functor = FormsSpaceFunctor("holo", group=4, k=0, ep=1)
             sage: F = FormsSubSpaceFunctor(ambient_space_functor, [1])
@@ -225,8 +225,6 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
             FormsSubSpaceFunctor with 1 generator for the ModularFormsFunctor(n=4, k=0, ep=1)
             sage: F(BaseFacade(ZZ))
             Subspace of dimension 1 of ModularForms(n=4, k=0, ep=1) over Integer Ring
-            sage: F(CC)
-            Subspace of dimension 1 of ModularForms(n=4, k=0, ep=1) over Complex Field with 53 bits of precision
         """
 
         ambient_space = self._ambient_space_functor(R)

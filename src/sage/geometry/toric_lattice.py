@@ -582,7 +582,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         def make_name(N1, N2, use_latex=False):
             if use_latex:
-                return latex(N1)+ ' \oplus ' +latex(N2)
+                return latex(N1)+ r' \oplus ' +latex(N2)
             else:
                 return N1._name+ '+' +N2._name
 
@@ -756,7 +756,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
         return S if is_ToricLattice(S) else self.ambient_module().submodule(S)
 
     def span(self, gens, base_ring=ZZ, *args, **kwds):
-        """
+        r"""
         Return the span of the given generators.
 
         INPUT:
@@ -1639,7 +1639,7 @@ class ToricLattice_quotient(FGP_Module_class):
         return ToricLattice_quotient(V,W,check)
 
     def base_extend(self, R):
-        """
+        r"""
         Return the base change of ``self`` to the ring ``R``.
 
         INPUT:

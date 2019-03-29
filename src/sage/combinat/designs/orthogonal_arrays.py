@@ -45,11 +45,7 @@ This module defines the following functions:
 
 REFERENCES:
 
-.. [CD96] Making the MOLS table
-  Charles Colbourn and Jeffrey Dinitz
-  Computational and constructive design theory
-  vol 368,pages 67-134
-  1996
+- [CD1996]_
 
 Functions
 ---------
@@ -61,14 +57,14 @@ from builtins import zip
 from six import itervalues, iteritems
 from six.moves import range
 
-from sage.misc.cachefunc import cached_function
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
 from .designs_pyx import is_orthogonal_array
 from .group_divisible_designs import GroupDivisibleDesign
 from .designs_pyx import _OA_cache_set, _OA_cache_get, _OA_cache_construction_available
 
-def transversal_design(k,n,resolvable=False,check=True,existence=False):
+
+def transversal_design(k, n, resolvable=False, check=True, existence=False):
     r"""
     Return a transversal design of parameters `k,n`.
 
@@ -134,7 +130,7 @@ def transversal_design(k,n,resolvable=False,check=True,existence=False):
 
     .. SEEALSO::
 
-        :func:`orthogonal_array` -- a tranversal design `TD(k,n)` is equivalent to an
+        :func:`orthogonal_array` -- a transversal design `TD(k,n)` is equivalent to an
         orthogonal array `OA(k,n,2)`.
 
     EXAMPLES::
@@ -347,8 +343,6 @@ def transversal_design(k,n,resolvable=False,check=True,existence=False):
     if existence and _OA_cache_get(k,n) is not None:
         return _OA_cache_get(k,n)
 
-    may_be_available = _OA_cache_construction_available(k,n) is not False
-
     if n == 1:
         if existence:
             return True
@@ -380,6 +374,7 @@ def transversal_design(k,n,resolvable=False,check=True,existence=False):
         raise NotImplementedError("I don't know how to build a TD({},{})!".format(k,n))
 
     return TransversalDesign(TD,k,n,check=check)
+
 
 class TransversalDesign(GroupDivisibleDesign):
     r"""
@@ -451,7 +446,8 @@ class TransversalDesign(GroupDivisibleDesign):
         """
         return "Transversal Design TD({},{})".format(self._k,self._n)
 
-def is_transversal_design(B,k,n, verbose=False):
+
+def is_transversal_design(B, k, n, verbose=False):
     r"""
     Check that a given set of blocks ``B`` is a transversal design.
 
@@ -469,7 +465,7 @@ def is_transversal_design(B,k,n, verbose=False):
 
     .. NOTE::
 
-        The tranversal design must have `\{0, \ldots, kn-1\}` as a ground set,
+        The transversal design must have `\{0, \ldots, kn-1\}` as a ground set,
         partitioned as `k` sets of size `n`: `\{0, \ldots, k-1\} \sqcup
         \{k, \ldots, 2k-1\} \sqcup \cdots \sqcup \{k(n-1), \ldots, kn-1\}`.
 
@@ -515,7 +511,7 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
       `OA(k,m+\sum_i m_{ij})-\sum_i OA(k,m_{ij(j)})`.
 
     Then there exists an `OA(k,rm+\sum_{i,j}m_{ij})`. This construction appears
-    in [BvR82]_.
+    in [BvR1982]_.
 
     INPUT:
 
@@ -718,7 +714,7 @@ def TD_product(k,TD1,n1,TD2,n2, check=True):
 
         This function uses transversal designs with
         `V_1=\{0,\dots,n-1\},\dots,V_k=\{(k-1)n,\dots,kn-1\}` both as input and
-        ouptut.
+        output.
 
     EXAMPLES::
 
@@ -871,7 +867,6 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
         return _OA_cache_get(k,n)
 
     from .block_design import projective_plane
-    from .latin_squares import mutually_orthogonal_latin_squares
     from .database import OA_constructions, MOLS_constructions, QDM
     from .orthogonal_arrays_find_recursive import find_recursive_construction
     from .difference_matrices import difference_matrix
@@ -1226,15 +1221,6 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         sage: ioa.extend([[i]*3 for i in [3,4,5]])
         sage: is_orthogonal_array(ioa,3,6,verbose=1)
         True
-
-    REFERENCES:
-
-    .. [BvR82] More mutually orthogonal Latin squares,
-      Andries Brouwer and John van Rees
-      Discrete Mathematics
-      vol.39, num.3, pages 263-281
-      1982
-      http://oai.cwi.nl/oai/asset/304/0304A.pdf
     """
     from sage.combinat.designs.database import QDM
     for h in holes:
@@ -1290,7 +1276,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         OA = orthogonal_array(k,n)
         independent_set = OA[:number_of_holes]
 
-    # This is lemma 2.3 from [BvR82]_
+    # This is lemma 2.3 from [BvR1982]_
     #
     # If k>3 and n>(k-1)u and there exists an OA(k,n)-OA(k,u), then there exists
     # an OA(k,n)-OA(k,u)-2.OA(k,1)
@@ -1330,8 +1316,8 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
             holes[i] = [h2]
             IOA.remove(h2)
 
-        holes = sum(holes,[])
-        holes = map(list, list(zip(*holes)))
+        holes = sum(holes, [])
+        holes = [list(h) for h in zip(*holes)]
 
         # Building the relabel matrix
         for l in holes:
@@ -1359,7 +1345,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         OA = [B[:-1] for B in OA]
 
     elif max_hole==1 and orthogonal_array(k,n,existence=True):
-        OA = orthogonal_array(k,n)
+        OA = orthogonal_array(k, n)
         try:
             independent_set = OA_find_disjoint_blocks(OA,k,n,number_of_holes)
         except ValueError:
@@ -1557,7 +1543,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
     Return an `OA(k, |G| \cdot 2^c)` from a constrained `(G,k-1,2)`-difference
     matrix.
 
-    This construction appears in [AbelCheng1994]_ and [AbelThesis]_.
+    This construction appears in [AC1994]_ and [Ab1995]_.
 
     Let `G` be an additive Abelian group. We denote by `H` a `GF(2)`-hyperplane
     in `GF(2^c)`.
@@ -1650,21 +1636,8 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
         ...
         ValueError: B_2,0 - B_0,0 = B_2,6 - B_0,6 but the associated part of the
         matrix C does not satisfies the required condition
-
-    REFERENCES:
-
-    .. [AbelThesis] On the Existence of Balanced Incomplete Block Designs and Transversal Designs,
-       Julian R. Abel,
-       PhD Thesis,
-       University of New South Wales,
-       1995
-
-    .. [AbelCheng1994] \R.J.R. Abel and Y.W. Cheng,
-       Some new MOLS of order 2np for p a prime power,
-       The Australasian Journal of Combinatorics, vol 10 (1994)
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    from sage.rings.integer import Integer
     from itertools import combinations
     from .designs_pyx import is_difference_matrix
 
@@ -1678,7 +1651,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
     F = FiniteField(2**c,'w')
     GG = G.cartesian_product(F)
 
-    # dictionary from integers to elments of GF(2^c): i -> w^i, None -> 0
+    # dictionary from integers to elements of GF(2^c): i -> w^i, None -> 0
     w = F.multiplicative_generator()
     r = {i:w**i for i in range(2**c-1)}
     r[None] = F.zero()
@@ -1862,10 +1835,9 @@ def OA_from_Vmt(m,t,V):
 
         sage: _ = designs.orthogonal_arrays.build(6,46) # indirect doctest
     """
-    from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    q = m*t+1
     Fq, M = QDM_from_Vmt(m,t,V)
     return OA_from_quasi_difference_matrix(M,Fq,add_col = False)
+
 
 def QDM_from_Vmt(m,t,V):
     r"""
@@ -1874,14 +1846,14 @@ def QDM_from_Vmt(m,t,V):
     **Definition**
 
     Let `q` be a prime power and let `q=mt+1` for `m,t` integers. Let `\omega`
-    be a primitive element of `\mathbb{F}_q`. A `V(m,t)` vector is a vector
+    be a primitive element of `\GF{q}`. A `V(m,t)` vector is a vector
     `(a_1,\dots,a_{m+1}` for which, for each `1\leq k < m`, the differences
 
     .. MATH::
 
         \{a_{i+k}-a_i:1\leq i \leq m+1,i+k\neq m+2\}
 
-    represent the `m` cyclotomic classes of `\mathbb{F}_{mt+1}` (compute subscripts
+    represent the `m` cyclotomic classes of `\GF{mt+1}` (compute subscripts
     modulo `m+2`). In other words, for fixed `k`, is
     `a_{i+k}-a_i=\omega^{mx+\alpha}` and `a_{j+k}-a_j=\omega^{my+\beta}` then
     `\alpha\not\equiv\beta \mod{m}`

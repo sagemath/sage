@@ -57,8 +57,6 @@ from sage.rings.all import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
-from sage.plot.misc import rename_keyword
-
 
 def Words(alphabet=None, length=None, finite=True, infinite=True):
     """
@@ -136,9 +134,9 @@ class AbstractLanguage(Parent):
             True
 
             sage: Words('abc').sortkey_letters
-            <bound method FiniteOrInfiniteWords._sortkey_trivial ...>
+            <bound method FiniteOrInfiniteWords._sortkey_trivial of ...>
             sage: Words('bac').sortkey_letters
-            <bound method FiniteOrInfiniteWords._sortkey_letters ...>
+            <bound method FiniteOrInfiniteWords._sortkey_letters of ...>
         """
         if isinstance(alphabet, (int, Integer)):
             from sage.sets.integer_range import IntegerRange
@@ -152,16 +150,20 @@ class AbstractLanguage(Parent):
 
         self._alphabet = alphabet
 
-        if (alphabet.cardinality() == Infinity or
-            (alphabet.cardinality() < 36 and
-             all(alphabet.unrank(i) > alphabet.unrank(j)
-                 for i in range(min(36, alphabet.cardinality()))
-                 for j in range(i)))):
-            self.cmp_letters = cmp  # deprecated
+        # Default sorting key: use rank()
+        self.sortkey_letters = self._sortkey_letters
+
+        # Check if we should use the trivial sorting key
+        N = alphabet.cardinality()
+        if N == Infinity:
             self.sortkey_letters = self._sortkey_trivial
-        else:
-            self.cmp_letters = self._cmp_letters  # deprecated
-            self.sortkey_letters = self._sortkey_letters
+        elif N < 36:
+            try:
+                if all(alphabet.unrank(i) > alphabet.unrank(j)
+                       for i in range(N) for j in range(i)):
+                    self.sortkey_letters = self._sortkey_trivial
+            except TypeError:
+                pass
 
         if category is None:
             category = Sets()
@@ -244,105 +246,10 @@ class AbstractLanguage(Parent):
             ...
             ValueError: z not in alphabet!
         """
-        for a in itertools.islice(w, length):
+        stop = None if length is None else int(length)
+        for a in itertools.islice(w, stop):
             if a not in self.alphabet():
                 raise ValueError("%s not in alphabet!" % a)
-
-    def has_letter(self, letter):
-        r"""
-        Returns True if the alphabet of self contains the given letter.
-
-        INPUT:
-
-        -  ``letter`` -- a letter
-
-        EXAMPLES::
-
-            sage: W = Words()
-            sage: W.has_letter('a')
-            doctest:...: DeprecationWarning: has_letter is deprecated. Use 'letter
-            in W.alphabet()' instead
-            See http://trac.sagemath.org/19619 for details.
-            True
-            sage: W.has_letter(1)
-            True
-            sage: W.has_letter({})
-            True
-            sage: W.has_letter([])
-            True
-            sage: W.has_letter(range(5))
-            True
-            sage: W.has_letter(Permutation([]))
-            True
-
-            sage: W = Words(['a','b','c'])
-            sage: W.has_letter('a')
-            True
-            sage: W.has_letter('d')
-            False
-            sage: W.has_letter(8)
-            False
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(19619, "has_letter is deprecated. Use 'letter in W.alphabet()' instead")
-        return letter in self.alphabet()
-
-    def size_of_alphabet(self):
-        r"""
-        Returns the size of the alphabet.
-
-        EXAMPLES::
-
-            sage: Words().size_of_alphabet()
-            doctest:...: DeprecationWarning: size_of_alphabet is deprecated. Use
-            W.alphabet().cardinality() instead
-            See http://trac.sagemath.org/19619 for details.
-            +Infinity
-            sage: Word('abaccefa').parent().size_of_alphabet()
-            +Infinity
-            sage: Words('abcdef').size_of_alphabet()
-            6
-            sage: Words('').size_of_alphabet()
-            0
-            sage: Words('456').size_of_alphabet()
-            3
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(19619, "size_of_alphabet is deprecated. Use W.alphabet().cardinality() instead")
-        return self.alphabet().cardinality()
-
-    def _cmp_letters(self, letter1, letter2):
-        r"""
-        Returns a negative number, zero or a positive number if
-        ``letter1`` < ``letter2``, ``letter1`` == ``letter2`` or
-        ``letter1`` > ``letter2`` respectively.
-
-        INPUT:
-
-        - ``letter1`` -- a letter in the alphabet
-        - ``letter2`` -- a letter in the alphabet
-
-        EXAMPLES::
-
-            sage: W = FiniteWords('woa')
-            sage: W.cmp_letters('w','a')  # indirect doctest
-            doctest:warning...:
-            DeprecationWarning: cmp_letters is deprecated. Use sortkey_letters instead
-            See http://trac.sagemath.org/21435 for details.
-            -2
-            sage: W.cmp_letters('w','o')  # indirect doctest
-            -1
-            sage: W.cmp_letters('w','w')  # indirect doctest
-            0
-
-        TESTS::
-
-            sage: assert W.cmp_letters == W._cmp_letters
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(21435, "cmp_letters is deprecated. Use sortkey_letters instead")
-        rk = self.alphabet().rank
-        return int(rk(letter1) - rk(letter2))
 
     def _sortkey_trivial(self, letter1):
         """
@@ -686,7 +593,7 @@ class FiniteWords(AbstractLanguage):
            when reloading. Also, most iterators do not support copying and
            should not support pickling by extension.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: W = FiniteWords()
 
@@ -1118,7 +1025,6 @@ class FiniteWords(AbstractLanguage):
         return self([self.alphabet().random_element(*args, **kwds)
                      for x in range(length)])
 
-    @rename_keyword(deprecation=10134, l='arg')
     def iter_morphisms(self, arg=None, codomain=None, min_length=1):
         r"""
         Iterate over all morphisms with domain ``self`` and the given
@@ -2445,15 +2351,12 @@ class Words_all(FiniteOrInfiniteWords):
 
     def _element_constructor_(self):
         r"""
-        This method exists to make (old) unpickling works.
-
-        It is indirectly tested by the function
-        :func:`sage.structure.sage_object.unpickle_all`.
+        This method exists to make (old) unpickling work.
         """
         pass
 
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.combinat.words.words", "Words_over_OrderedAlphabet", FiniteOrInfiniteWords)
 register_unpickle_override("sage.combinat.words.words", "Words_over_Alphabet", FiniteOrInfiniteWords)
 register_unpickle_override("sage.combinat.words.words", "FiniteWords_length_k_over_OrderedAlphabet", Words_n)

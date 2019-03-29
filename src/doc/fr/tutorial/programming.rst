@@ -325,7 +325,7 @@ Sage) :
 
 ::
 
-    sage: range(1, 15)
+    sage: range(1, 15)  # py2
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
 Cela est utile pour construire des listes par compréhension :
@@ -450,8 +450,8 @@ Python pour plus de détails) vers des objets arbitraires.
     sage: d = {1:5, 'sage':17, ZZ:GF(7)}
     sage: type(d)
     <... 'dict'>
-    sage: d.keys()
-     [1, 'sage', Integer Ring]
+    sage: list(d.keys())
+    [1, 'sage', Integer Ring]
     sage: d['sage']
     17
     sage: d[ZZ]
@@ -540,7 +540,8 @@ d'entiers positifs jusqu'à :math:`10000000`.
 
 ::
 
-    sage: v = (n^2 for n in xrange(10000000))
+    sage: v = (n^2 for n in xrange(10000000))  # py2
+    sage: v = (n^2 for n in range(10000000))  # py3
     sage: next(v)
     0
     sage: next(v)

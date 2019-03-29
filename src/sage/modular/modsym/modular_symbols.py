@@ -163,6 +163,16 @@ class ModularSymbol(SageObject):
                        (other.__space,-other.__i,other.__alpha,other.__beta),
                        op)
 
+    def __hash__(self):
+        """
+        EXAMPLES::
+
+            sage: s = ModularSymbols(11).2.modular_symbol_rep()[0][1]
+            sage: hash(s)  # random
+            -7344656798833624820
+        """
+        return hash((self.__space, self.__i, self.__alpha, self.__beta))
+
     def space(self):
         """
         The list of Manin symbols to which this symbol belongs.
@@ -323,12 +333,12 @@ class ModularSymbol(SageObject):
             sage: s = ModularSymbols(11,2).1.modular_symbol_rep()[0][1]; s
             {-1/8, 0}
             sage: s.manin_symbol_rep()          # indirect doctest
-            -(-8,1) - (1,1)
+            -(1,1) - (-8,1)
             sage: M = ModularSymbols(11,2)
             sage: s = M( (1,9) ); s
             (1,9)
             sage: t = s.modular_symbol_rep()[0][1].manin_symbol_rep(); t
-            -(-9,1) - (1,1)
+            -(1,1) - (-9,1)
             sage: M(t)
             (1,9)
         """
@@ -363,7 +373,7 @@ class ModularSymbol(SageObject):
             sage: s = M.1.modular_symbol_rep()[0][1]; s
             X^2*{-1/6, 0}
             sage: s.manin_symbol_rep()
-            -[Y^2,(1,1)] - 2*[X*Y,(-1,0)] - [X^2,(-6,1)] - [X^2,(-1,0)]
+            -2*[X*Y,(-1,0)] - [X^2,(-1,0)] - [Y^2,(1,1)] - [X^2,(-6,1)]
             sage: M(s.manin_symbol_rep()) == M([2,-1/6,0])
             True
         """

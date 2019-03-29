@@ -1,14 +1,8 @@
 cd src
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring TIDES."
-    exit 1
-fi
+sdh_configure
 
-# Use $SAGE_LOCAL/include instead of hardcoded /usr/local/include
-$MAKE AM_CPPFLAGS="-I '$SAGE_LOCAL/include'" install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing TIDES."
-    exit 1
-fi
+# * Use $SAGE_LOCAL/include instead of hardcoded /usr/local/include
+# * Disable -m64 from CFLAGS and FFLAGS (which may be set even on 32-bit
+#   systems)
+sdh_make_install AM_CPPFLAGS="-I '$SAGE_LOCAL/include'" AM_CFLAGS="" AM_FFLAGS=""

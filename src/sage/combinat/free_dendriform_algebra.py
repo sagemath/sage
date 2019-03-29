@@ -26,12 +26,12 @@ from sage.categories.pushout import (ConstructionFunctor,
                                      CompositeConstructionFunctor,
                                      IdentityConstructionFunctor)
 from sage.categories.rings import Rings
-from sage.categories.magmas import Magmas
 from sage.categories.functor import Functor
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
-from sage.categories.rings import Rings
 from sage.sets.family import Family
+from sage.misc.lazy_import import lazy_import
+from sage.structure.coerce_exceptions import CoercionException
 
 
 class FreeDendriformAlgebra(CombinatorialFreeModule):
@@ -119,7 +119,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
     REFERENCES:
 
-    - [LodayRonco]_
+    - [LR1998]_
     """
     @staticmethod
     def __classcall_private__(cls, R, names=None):

@@ -130,17 +130,15 @@ AUTHORS:
 
 - Florent Hivert (2010-03): initial revision
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009-2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import, print_function
 
 from cpython.list cimport *
@@ -149,7 +147,6 @@ from cpython.ref cimport *
 
 from cysignals.memory cimport check_reallocarray, sig_free
 
-import sage
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
@@ -575,9 +572,9 @@ cdef class ClonableArray(ClonableElement):
         EXAMPLES::
 
             sage: from sage.structure.list_clone_demo import IncreasingArrays
-            sage: IncreasingArrays()([1,2,3]).__nonzero__()
+            sage: bool(IncreasingArrays()([1,2,3]))
             True
-            sage: IncreasingArrays()([]).__nonzero__()
+            sage: bool(IncreasingArrays()([]))
             False
         """
         return bool(self._list)
@@ -869,7 +866,7 @@ cdef class ClonableArray(ClonableElement):
             sage: elc = copy(el)
             sage: el is elc
             False
-            sage: elc.__nonzero__()
+            sage: bool(elc)
             False
             sage: elc.is_mutable()
             True
@@ -938,7 +935,13 @@ cdef class ClonableArray(ClonableElement):
             sage: loads(dumps(el))
             [1, 2, 4]
             sage: t = el.__reduce__(); t
-            (<built-in function _make_array_clone>, (<type 'sage.structure.list_clone_demo.IncreasingArray'>, <class 'sage.structure.list_clone_demo.IncreasingArrays_with_category'>, [1, 2, 4], True, True, None))
+            (<built-in function _make_array_clone>,
+             (<type 'sage.structure.list_clone_demo.IncreasingArray'>,
+              <sage.structure.list_clone_demo.IncreasingArrays_with_category object at ...>,
+              [1, 2, 4],
+              True,
+              True,
+              None))
             sage: t[0](*t[1])
             [1, 2, 4]
         """
@@ -947,7 +950,7 @@ cdef class ClonableArray(ClonableElement):
             dic = self.__dict__
         else:
             dic = None
-        return (sage.structure.list_clone._make_array_clone,
+        return (_make_array_clone,
                 (type(self), self._parent, self._list,
                  self._needs_check, self._is_immutable, dic))
 
@@ -1336,9 +1339,9 @@ cdef class ClonableIntArray(ClonableElement):
         EXAMPLES::
 
             sage: from sage.structure.list_clone_demo import IncreasingIntArrays
-            sage: IncreasingIntArrays()([1,2,3]).__nonzero__()
+            sage: bool(IncreasingIntArrays()([1,2,3]))
             True
-            sage: IncreasingIntArrays()([]).__nonzero__()
+            sage: bool(IncreasingIntArrays()([]))
             False
         """
         return self._len != 0
@@ -1643,7 +1646,7 @@ cdef class ClonableIntArray(ClonableElement):
             sage: elc = copy(el)
             sage: el is elc
             False
-            sage: elc.__nonzero__()
+            sage: bool(elc)
             True
             sage: elc.is_mutable()
             True
@@ -1718,7 +1721,13 @@ cdef class ClonableIntArray(ClonableElement):
             sage: loads(dumps(el))
             [1, 2, 4]
             sage: t = el.__reduce__(); t
-            (<built-in function _make_int_array_clone>, (<type 'sage.structure.list_clone_demo.IncreasingIntArray'>, <class 'sage.structure.list_clone_demo.IncreasingIntArrays_with_category'>, [1, 2, 4], True, True, None))
+            (<built-in function _make_int_array_clone>,
+             (<type 'sage.structure.list_clone_demo.IncreasingIntArray'>,
+              <sage.structure.list_clone_demo.IncreasingIntArrays_with_category object at ...>,
+              [1, 2, 4],
+              True,
+              True,
+              None))
             sage: t[0](*t[1])
             [1, 2, 4]
         """
@@ -1727,7 +1736,7 @@ cdef class ClonableIntArray(ClonableElement):
             dic = self.__dict__
         else:
             dic = None
-        return (sage.structure.list_clone._make_int_array_clone,
+        return (_make_int_array_clone,
                 (type(self), self._parent, self[:],
                  self._needs_check, self._is_immutable, dic))
 

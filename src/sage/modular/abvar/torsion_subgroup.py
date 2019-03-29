@@ -373,7 +373,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         """
         try:
             return self._divisor_of_order
-        except:
+        except AttributeError:
             pass
 
         A = self.abelian_variety()
@@ -447,7 +447,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
                 return self._multiple_of_order
             else:
                 return self._multiple_of_order_proof_false
-        except:
+        except AttributeError:
             pass
 
         A = self.abelian_variety()

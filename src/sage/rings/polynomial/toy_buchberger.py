@@ -393,7 +393,7 @@ def select(P):
 
 
 def inter_reduction(Q):
-    """
+    r"""
     If ``Q`` is the set `(f_1, ..., f_n)` this method
     returns `(g_1, ..., g_s)` such that:
 

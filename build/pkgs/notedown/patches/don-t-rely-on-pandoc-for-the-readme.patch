@@ -1,0 +1,34 @@
+From: Vincent Delecroix <20100.delecroix@gmail.com>
+Date: Tue, 6 Mar 2018 00:18:41 +0100
+Don't rely on pandoc for the readme
+
+See https://trac.sagemath.org/ticket/24901
+and https://github.com/aaren/notedown/issues/76
+
+diff --git a/setup.py b/setup.py
+index 120cea6..967a6d5 100644
+--- a/setup.py
++++ b/setup.py
+@@ -1,17 +1,9 @@
+ from __future__ import absolute_import
+-import subprocess
+ 
+ from setuptools import setup
+ 
+-try:
+-    pandoc = subprocess.Popen(['pandoc', 'README.md', '--to', 'rst'],
+-                              stdout=subprocess.PIPE)
+-
+-    readme = pandoc.communicate()[0].decode()
+-
+-except OSError:
+-    with open('README.md') as f:
+-        readme = f.read()
++with open('README.md') as f:
++    readme = f.read()
+ 
+ setup(
+     name="notedown",
+-- 
+2.16.1
+

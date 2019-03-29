@@ -44,16 +44,16 @@ def test_function(n, m,level=10):
         return test_function2(m, n)
 
 
-class Debug:
+class Debug(object):
     """
     Create a debugger for the most recent stack trace.
 
-    NOTES:
+    .. NOTE::
 
-    - Input is not preparsed.
-    - You can define and work with many debug interacts at the same time.
+        - Input is not preparsed.
+        - You can define and work with many debug interacts at the same time.
 
-    TESTS::
+    TESTS:
 
     The current position in the stack frame is self._curframe_index::
 
@@ -70,7 +70,7 @@ class Debug:
 
             sage: a = sage0.eval("sage.interacts.debugger.test_function('n', 'm')")
             sage: sage0('sage.interacts.debugger.Debug()')
-            <sage.interacts.debugger.Debug instance at 0x...>
+            <sage.interacts.debugger.Debug object at 0x...>
         """
         import inspect
         import sys

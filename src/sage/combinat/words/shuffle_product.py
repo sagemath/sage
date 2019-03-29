@@ -21,12 +21,12 @@ Shuffle product of words
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.combinat.words.word import Word_class
+from sage.combinat.words.word import Word_class, Word
 from sage.combinat.combinat import CombinatorialClass
 from sage.arith.all import binomial
 from sage.combinat.integer_vector import IntegerVectors
-from sage.combinat.subset import Subsets
-from sage.combinat.composition import Compositions_n, Compositions
+from sage.combinat.composition import Compositions_n, Compositions, Composition
+from sage.misc.lazy_import import lazy_import
 
 class ShuffleProduct_w1w2(CombinatorialClass):
     def __init__(self, w1, w2):
@@ -189,11 +189,13 @@ class ShuffleProduct_w1w2(CombinatorialClass):
         of `I` when shuffling two compositions `I` and `J`
         (cf. :trac:`15131`)::
 
-            sage: I = Composition([1, 1])
+            sage: I = Compositions(2)([1, 1])
             sage: J = Composition([2])
             sage: S = ShuffleProduct_w1w2(I, J)
             sage: S._proc([1,0,1])
             [1, 2, 1]
+            sage: S.list()
+            [[1, 1, 2], [1, 2, 1], [2, 1, 1]]
         """
         i1 = -1
         i2 = -1
@@ -210,8 +212,11 @@ class ShuffleProduct_w1w2(CombinatorialClass):
         except ValueError:
             # Special situation: the parent of w1 is too
             # restrictive to be cast on res.
-            if isinstance(self._w1.parent(), Compositions_n):
-                return Compositions(res)
+            if isinstance(self._w1, Composition):
+                return Composition(res)
+            elif isinstance(self._w1, Word_class):
+                return Word(res)
+            return res
 
     def __iter__(self):
         """
@@ -266,203 +271,5 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
         """
         return "Shuffle product of %s and %s"% (repr(self._w1), repr(self._w2))
 
-class ShuffleProduct_overlapping_r(CombinatorialClass):
-    def __init__(self, w1, w2, r):
-        """
-        The overlapping shuffle product of the two words ``w1`` and ``w2``
-        with precisely ``r`` overlaps.
-
-        See :class:`ShuffleProduct_overlapping` for a definition.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.words.shuffle_product import ShuffleProduct_overlapping_r
-            sage: w, u = map(Words(range(20)), [[2, 9], [9, 1]])
-            sage: S = ShuffleProduct_overlapping_r(w,u,1)
-            sage: S == loads(dumps(S))
-            True
-        """
-        self._w1 = w1
-        self._w2 = w2
-        self.r  = r
-        self.W  = self._w1.parent()
-        # Special situation: the parent of w1 is too
-        # restrictive to be cast on the shuffles.
-        if isinstance(self.W, Compositions_n):
-            self.W = Compositions()
-
-    def __repr__(self):
-        """
-        EXAMPLES::
-
-            sage: from sage.combinat.words.shuffle_product import ShuffleProduct_overlapping_r
-            sage: w, u = map(Words(range(20)), [[2, 9], [9, 1]])
-            sage: ShuffleProduct_overlapping_r(w,u,1).__repr__()
-            'Overlapping shuffle product of word: 29 and word: 91 with 1 overlaps'
-        """
-        return "Overlapping shuffle product of %s and %s with %s overlaps"%(repr(self._w1), repr(self._w2), self.r)
-
-    def __iter__(self):
-        """
-        EXAMPLES::
-
-            sage: from sage.combinat.words.shuffle_product import ShuffleProduct_overlapping_r
-            sage: w, u = Word([1,2]), Word([3,4])
-            sage: ShuffleProduct_overlapping_r(w,u,1).list()
-            [word: 424, word: 154, word: 442, word: 136, word: 352, word: 316]
-            sage: w, u = map(Words(range(1,7)), [[1,2], [3,4]])
-            sage: W = Words(range(1,7))
-            sage: w, u = W([1,2]), W([3,4])
-            sage: ShuffleProduct_overlapping_r(w, u, 1).list() #indirect doctest
-            [word: 424, word: 154, word: 442, word: 136, word: 352, word: 316]
-
-            sage: I, J = Composition([2, 2]), Composition([1, 1])
-            sage: S = ShuffleProduct_overlapping_r(I, J, 1)
-            sage: S.list()
-            [[3, 2, 1], [2, 3, 1], [3, 1, 2], [2, 1, 3], [1, 3, 2], [1, 2, 3]]
-
-        TESTS:
-
-        Sage is no longer confused by a too-restrictive parent
-        of `I` when shuffling two compositions `I` and `J`
-        (cf. :trac:`15131`)::
-
-            sage: I, J = Compositions(4)([2, 2]), Composition([1, 1])
-            sage: S = ShuffleProduct_overlapping_r(I, J, 1)
-            sage: S.list()
-            [[3, 2, 1], [2, 3, 1], [3, 1, 2], [2, 1, 3], [1, 3, 2], [1, 2, 3]]
-        """
-        W = self.W
-
-        m = len(self._w1)
-        n = len(self._w2)
-        r = self.r
-
-        wc1, wc2 = self._w1, self._w2
-
-        blank = [0]*(m+n-r)
-        for iv in IntegerVectors(m, m+n-r, max_part=1):
-            w = blank[:]
-            filled_places = []
-            unfilled_places = []
-            #Fill in w1 into the iv slots
-            i = 0
-            for j in range(len(iv)):
-                if iv[j] == 1:
-                    w[j] = wc1[i]
-                    i += 1
-                    filled_places.append(j)
-                else:
-                    unfilled_places.append(j)
-
-            #Choose r of these filled places
-            for subset in Subsets(filled_places, r):
-                places_to_fill = sorted(unfilled_places + list(subset))
-
-                #Fill in w2 into the places
-                i = 0
-                res = w[:]
-                for j in places_to_fill:
-                    res[j] += wc2[i]
-                    i += 1
-
-                yield W(res)
-
-class ShuffleProduct_overlapping(CombinatorialClass):
-    def __init__(self, w1, w2):
-        r"""
-        The overlapping shuffle product of the two words ``w1`` and
-        ``w2``.
-
-        If `u` and `v` are two words whose letters belong to an
-        additive monoid or to another kind of alphabet on which addition
-        is well-defined, then the *overlapping shuffle product* of
-        `u` and `v` is a certain multiset of words defined as follows:
-        Let `a` and `b` be the lengths of `u` and `v`, respectively.
-        Let `A` be the set `\{(0, 1), (0, 2), \cdots, (0, a)\}`, and
-        let `B` be the set `\{(1, 1), (1, 2), \cdots, (1, b)\}`.
-        Notice that the sets `A` and `B` are disjoint. We can make
-        `A` and `B` into posets by setting `(k, i) \leq (k, j)` for
-        all `k \in \{0, 1\}` and `i \leq j`. Then, `A \cup B` becomes
-        a poset by disjoint union (we don't set `(0, i) \leq (1, i)`).
-        Let `p` be the map from `A \cup B` to the set of all letters
-        which sends every `(0, i)` to the `i`-th letter of `u`, and
-        every `(1, j)` to the `j`-th letter of `v`. For every
-        nonnegative integer `c` and every surjective map
-        `f : A \cup B \to \{ 1, 2, \cdots, c \}` for which both
-        restrictions `f \mid_A` and `f \mid_B` are strictly increasing,
-        let `w(f)` be the length-`c` word such that for every
-        `1 \leq k \leq c`, the `k`-th letter of `w(f)` equals
-        `\sum_{j \in f^{-1}(k)} p(j)` (this sum always has either
-        one or two addends). The overlapping shuffle product of `u`
-        and `v` is then the multiset of all `w(f)` with `c` ranging
-        over all nonnegative integers and `f` ranging
-        over the surjective maps
-        `f : A \cup B \to \{ 1, 2, \cdots, c \}` for which both
-        restrictions `f \mid_A` and `f \mid_B` are strictly increasing.
-
-        If one restricts `c` to a particular fixed nonnegative
-        integer, then the multiset is instead called the *overlapping
-        shuffle product with precisely `a + b - c` overlaps*. This is
-        nonempty only if `\max \{a, b\} \leq c \leq a + b`.
-
-        If `c = a + b`, then the overlapping shuffle product with
-        precisely `a + b - c` overlaps is plainly the shuffle product
-        (:class:`ShuffleProduct_w1w2`).
-
-        EXAMPLES::
-
-            sage: from sage.combinat.words.shuffle_product import ShuffleProduct_overlapping
-            sage: w, u = map(Words(range(20)), [[2, 9], [9, 1]])
-            sage: S = ShuffleProduct_overlapping(w,u)
-            sage: sorted([list(i) for i in list(S)])
-            [[2, 9, 1, 9],
-             [2, 9, 9, 1],
-             [2, 9, 9, 1],
-             [2, 9, 10],
-             [2, 18, 1],
-             [9, 1, 2, 9],
-             [9, 2, 1, 9],
-             [9, 2, 9, 1],
-             [9, 2, 10],
-             [9, 3, 9],
-             [11, 1, 9],
-             [11, 9, 1],
-             [11, 10]]
-            sage: S == loads(dumps(S))
-            True
-        """
-        self._w1 = w1
-        self._w2 = w2
-
-    def __repr__(self):
-        """
-        EXAMPLES::
-
-            sage: from sage.combinat.words.shuffle_product import ShuffleProduct_overlapping
-            sage: w, u = map(Words(range(20)), [[2, 9], [9, 1]])
-            sage: ShuffleProduct_overlapping(w,u).__repr__()
-            'Overlapping shuffle product of word: 29 and word: 91'
-        """
-        return "Overlapping shuffle product of %s and %s"%(repr(self._w1), repr(self._w2))
-
-    def __iter__(self):
-        """
-        EXAMPLES::
-
-            sage: from sage.combinat.words.shuffle_product import ShuffleProduct_overlapping
-            sage: w, u = map(Words(range(10)), [[0,1],[2,3]])
-            sage: S = ShuffleProduct_overlapping(w,u)
-            sage: S.list()
-            [word: 0123, word: 0213, word: 0231, word: 2013, word: 2031, word: 2301, word: 213, word: 033, word: 231, word: 024, word: 231, word: 204, word: 24]
-
-            sage: w, u = map(Words(range(1,10)), [[1,2],[3,4]])
-            sage: S = ShuffleProduct_overlapping(w,u)
-            sage: S.list()
-            [word: 1234, word: 1324, word: 1342, word: 3124, word: 3142, word: 3412, word: 424, word: 154, word: 442, word: 136, word: 352, word: 316, word: 46]
-        """
-        m = len(self._w1)
-        n = len(self._w2)
-        for r in range(min(m,n)+1):
-            for w in ShuffleProduct_overlapping_r(self._w1, self._w2, r):
-                yield w
+lazy_import('sage.combinat.shuffle', 'ShuffleProduct_overlapping_r', deprecation=15597)
+lazy_import('sage.combinat.shuffle', 'ShuffleProduct_overlapping', deprecation=15597)

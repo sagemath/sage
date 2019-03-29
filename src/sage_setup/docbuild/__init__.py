@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 The documentation builder
 
@@ -9,13 +10,48 @@ in a subprocess call to sphinx, see :func:`builder_helper`.
 * The builder can be configured in build_options.py
 * The sphinx subprocesses are configured in conf.py
 """
+# ****************************************************************************
+#       Copyright (C) 2008-2009 Mike Hansen <mhansen@gmail.com>
+#                     2009-2010 Mitesh Patel <qed777@gmail.com>
+#                     2009-2015 J. H. Palmieri <palmieri@math.washington.edu>
+#                     2009 Carl Witty <cwitty@newtonlabs.com>
+#                     2010-2017 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2012 William Stein <wstein@gmail.com>
+#                     2012-2014 Nicolas M. Thiery <nthiery@users.sf.net>
+#                     2012-2015 André Apitzsch <andre.apitzsch@etit.tu-chemnitz.de>
+#                     2012 Florent Hivert <Florent.Hivert@univ-rouen.fr>
+#                     2013-2014 Volker Braun <vbraun.name@gmail.com>
+#                     2013 R. Andrew Ohana <andrew.ohana@gmail.com>
+#                     2015 Thierry Monteil <sage@lma.metelu.net>
+#                     2015 Marc Mezzarobba <marc@mezzarobba.net>
+#                     2015 Travis Scrimshaw <tscrim at ucdavis.edu>
+#                     2016-2017 Frédéric Chapoton <chapoton@math.univ-lyon1.fr>
+#                     2016 Erik M. Bray <erik.bray@lri.fr>
+#                     2017 Kwankyu Lee <ekwankyu@gmail.com>
+#                     2017 François Bissey <frp.bissey@gmail.com>
+#                     2018 Julian Rüth <julian.rueth@fsfe.org>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
 from six.moves import range
 
-import optparse, os, shutil, subprocess, sys, re
-import logging, warnings
+import logging
+import optparse
+import os
+import re
+import shutil
+import subprocess
+import sys
+import time
+import warnings
+
+logger = logging.getLogger(__name__)
 
 import sphinx.cmdline
 import sphinx.util.console
@@ -24,38 +60,11 @@ import sphinx.ext.intersphinx
 import sage.all
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc import sage_makedirs
-from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC
+from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC, CYGWIN_VERSION
 
 from .build_options import (LANGUAGES, SPHINXOPTS, PAPER, OMIT,
      PAPEROPTS, ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS,
      INCREMENTAL_BUILD, ABORT_ON_ERROR)
-
-
-def excepthook(*exc_info):
-    """
-    Print docbuild error and hint how to solve it
-    """
-    logger.error('Error building the documentation.', exc_info=exc_info)
-    if INCREMENTAL_BUILD:
-        logger.error('''
-Note: incremental documentation builds sometimes cause spurious
-error messages. To be certain that these are real errors, run
-"make doc-clean" first and try again.''')
-
-
-def delete_empty_directories(root_dir):
-    """
-    Delete all empty directories found under ``root_dir``
-
-    INPUT:
-
-    - ``root_dir`` -- string. A valid directory name.
-    """
-    for dirpath, dirnames, filenames in os.walk(root_dir, topdown=False):
-        if not dirnames + filenames:
-            logger.warning('Deleting empty directory {0}'.format(dirpath))
-            os.rmdir(dirpath)
-
 
 ##########################################
 #      Parallel Building Ref Manual      #
@@ -78,6 +87,28 @@ def builder_helper(type):
     """
     Returns a function which builds the documentation for
     output type ``type``.
+
+    TESTS:
+
+    Check that :trac:`25161` has been resolved::
+
+        sage: from sage_setup.docbuild import DocBuilder, setup_parser
+        sage: DocBuilder._options = setup_parser().parse_args([])[0] # builder_helper needs _options to be set
+
+        sage: import sage_setup.docbuild.sphinxbuild
+        sage: def raiseBaseException():
+        ....:     raise BaseException("abort pool operation")
+        sage: original_runsphinx, sage_setup.docbuild.sphinxbuild.runsphinx = sage_setup.docbuild.sphinxbuild.runsphinx, raiseBaseException
+
+        sage: from sage_setup.docbuild import builder_helper, build_many, build_ref_doc
+        sage: helper = builder_helper("html")
+        sage: build_many(build_ref_doc, [("docname", "en", "html", {})])
+        Traceback (most recent call last):
+        ...
+        Exception: ('Non-exception during docbuild: abort pool operation', BaseException('abort pool operation',))
+
+        sage: sage_setup.docbuild.sphinxbuild.runsphinx = original_runsphinx
+
     """
     def f(self, *args, **kwds):
         output_dir = self._output_dir(type)
@@ -106,6 +137,12 @@ def builder_helper(type):
         except Exception:
             if ABORT_ON_ERROR:
                 raise
+        except BaseException as e:
+            # We need to wrap a BaseException that is not an Exception in a
+            # regular Exception. Otherwise multiprocessing.Pool.get hangs, see
+            # #25161
+            if ABORT_ON_ERROR:
+                raise Exception("Non-exception during docbuild: %s"%(e,), e)
 
         if "/latex" in output_dir:
             logger.warning("LaTeX file written to {}".format(output_dir))
@@ -235,8 +272,16 @@ class DocBuilder(object):
     inventory = builder_helper('inventory')
 
 
-if NUM_THREADS > 1:
+if not (CYGWIN_VERSION and CYGWIN_VERSION[0] < 3):
     def build_many(target, args):
+        # Pool() uses an actual fork() to run each new instance. This is
+        # important for performance reasons, i.e., don't use a forkserver when
+        # it becomes available with Python 3: Here, sage is already initialized
+        # which is quite costly, with a forkserver we would have to
+        # reinitialize it for every document we build. At the same time, don't
+        # serialize this by taking the pool (and thus the call to fork()) out
+        # completely: The call to Sphinx leaks memory, so we need to build each
+        # document in its own process to control the RAM usage.
         from multiprocessing import Pool
         pool = Pool(NUM_THREADS, maxtasksperchild=1)
         # map_async handles KeyboardInterrupt correctly. Plain map and
@@ -252,17 +297,17 @@ if NUM_THREADS > 1:
                 raise
         return ret
 else:
-    def build_many(target, args):
-        results = []
-
-        for arg in args:
-            try:
-                results.append(target(arg))
-            except Exception:
-                if ABORT_ON_ERROR:
-                    raise
-
-        return results
+    # Cygwin 64-bit < 3.0.0 has a bug with exception handling when exceptions
+    # occur in pthreads, so it's dangerous to use multiprocessing.Pool, as
+    # signals can't be properly handled in worker processes, and they can crash
+    # causing the docbuild to hang.  But where are these pthreads, you ask?
+    # Well, multiprocessing.Pool runs a thread from which it starts new worker
+    # processes when old workers complete/die, so the worker processes behave
+    # as though they were started from a pthread, even after fork(), and are
+    # actually succeptible to this bug.  As a workaround, here's a naïve but
+    # good-enough "pool" replacement that does not use threads
+    # https://trac.sagemath.org/ticket/27214#comment:25 for further discussion.
+    from .utils import _build_many as build_many
 
 
 ##########################################
@@ -295,7 +340,6 @@ class AllBuilder(object):
         This is the function which goes through all of the documents
         and does the actual building.
         """
-        import time
         start = time.time()
         docs = self.get_all_documents()
         refs = [x for x in docs if x.endswith('reference')]
@@ -569,7 +613,7 @@ class ReferenceBuilder(AllBuilder):
                 #
                 #   <a href="module/module.pdf">blah <img src="_static/pdf.png" /></a>
                 #
-                rst = re.sub('`([^`]*)`__\.\n\n__ (.*)',
+                rst = re.sub(r'`([^`]*)`__\.\n\n__ (.*)',
                                   r'<a href="\2">\1</a>.', rst)
                 rst = re.sub(r':doc:`([^<]*?)\s+<(.*)/index>`',
                              r'<a href="\2/\2.pdf">\1 <img src="_static/pdf.png" /></a>',
@@ -633,7 +677,7 @@ for a webpage listing all of the documents.''' % (output_dir,
             ['reference/algebras',
              'reference/arithgroup',
              ...,
-             'reference/tensor_free_modules']
+             'reference/valuations']
         """
         documents = []
 
@@ -681,23 +725,22 @@ class ReferenceSubBuilder(DocBuilder):
         """
         # Force regeneration of all modules if the inherited
         # and/or underscored members options have changed.
-        global options
         cache = self.get_cache()
         force = False
         try:
-            if (cache['option_inherited'] != options.inherited or
-                cache['option_underscore'] != options.underscore):
+            if (cache['option_inherited'] != self._options.inherited or
+                cache['option_underscore'] != self._options.underscore):
                 logger.info("Detected change(s) in inherited and/or underscored members option(s).")
                 force = True
         except KeyError:
             force = True
-        cache['option_inherited'] = options.inherited
-        cache['option_underscore'] = options.underscore
+        cache['option_inherited'] = self._options.inherited
+        cache['option_underscore'] = self._options.underscore
         self.save_cache()
 
         # After "sage -clone", refresh the reST file mtimes in
         # environment.pickle.
-        if options.update_mtimes:
+        if self._options.update_mtimes:
             logger.info("Checking for reST file mtimes to update...")
             self.update_mtimes()
 
@@ -781,7 +824,6 @@ class ReferenceSubBuilder(DocBuilder):
             return env
         except IOError as err:
             logger.debug("Failed to open Sphinx environment: %s", err)
-            pass
 
     def update_mtimes(self):
         """
@@ -790,7 +832,6 @@ class ReferenceSubBuilder(DocBuilder):
         """
         env = self.get_sphinx_environment()
         if env is not None:
-            import time
             for doc in env.all_docs:
                 env.all_docs[doc] = time.time()
             logger.info("Updated %d reST file mtimes", len(env.all_docs))
@@ -911,7 +952,12 @@ class ReferenceSubBuilder(DocBuilder):
             except ImportError as err:
                 logger.error("Warning: Could not import %s %s", module_name, err)
                 raise
-            newtime = os.path.getmtime(sys.modules[module_name].__file__)
+
+            module_filename = sys.modules[module_name].__file__
+            if (module_filename.endswith('.pyc') or module_filename.endswith('.pyo')):
+                source_filename = module_filename[:-1]
+                if (os.path.exists(source_filename)): module_filename = source_filename
+            newtime = os.path.getmtime(module_filename)
 
             if newtime > mtime:
                 updated_modules.append(module_name)
@@ -949,7 +995,7 @@ class ReferenceSubBuilder(DocBuilder):
         all of the autogenerated reST files that it includes.
         """
         #Create the regular expression used to detect an autogenerated file
-        auto_re = re.compile('^\s*(..\/)*(sage(nb)?\/[\w\/]*)\s*$')
+        auto_re = re.compile(r'^\s*(..\/)*(sage(nb)?\/[\w\/]*)\s*$')
 
         #Read the lines
         f = open(filename)
@@ -1022,8 +1068,7 @@ class ReferenceSubBuilder(DocBuilder):
         outfile.write('='*len(title) + "\n\n")
         outfile.write('.. This file has been autogenerated.\n\n')
 
-        global options
-        inherited = ':inherited-members:' if options.inherited else ''
+        inherited = ':inherited-members:' if self._options.inherited else ''
 
         automodule = '''
 .. automodule:: %s
@@ -1041,7 +1086,6 @@ class ReferenceSubBuilder(DocBuilder):
         """
         Remove all autogenerated reST files.
         """
-        import shutil
         try:
             shutil.rmtree(os.path.join(self.dir, 'sage'))
             logger.debug("Deleted auto-generated reST files in: %s",
@@ -1096,6 +1140,7 @@ class ReferenceSubBuilder(DocBuilder):
         for module_name in self.get_all_included_modules():
             print(module_name)
 
+
 class SingleFileBuilder(DocBuilder):
     """
     This is the class used to build the documentation for a single
@@ -1111,8 +1156,6 @@ class SingleFileBuilder(DocBuilder):
         - ``path`` - the path to the file for which documentation
           should be built
         """
-        global options
-
         self.lang = 'en'
         self.name = 'single_file'
         path = os.path.abspath(path)
@@ -1124,8 +1167,8 @@ class SingleFileBuilder(DocBuilder):
         module_name = os.path.splitext(os.path.basename(path))[0]
         latex_name = module_name.replace('_', r'\_')
 
-        if options.output_dir:
-            base_dir = os.path.join(options.output_dir, module_name)
+        if self._options.output_dir:
+            base_dir = os.path.join(self._options.output_dir, module_name)
             if os.path.exists(base_dir):
                 logger.warning('Warning: Directory %s exists. It is safer to build in a new directory.' % base_dir)
         else:
@@ -1387,6 +1430,7 @@ def help_message_long(option, opt_str, value, parser):
         print(f())
     sys.exit(0)
 
+
 def help_message_short(option=None, opt_str=None, value=None, parser=None,
                        error=False):
     """
@@ -1397,12 +1441,13 @@ def help_message_short(option=None, opt_str=None, value=None, parser=None,
     requested a list (e.g., documents, formats, commands).
     """
     if not hasattr(parser.values, 'printed_help'):
-        if error == True:
+        if error is True:
             if not hasattr(parser.values, 'printed_list'):
                 parser.print_help()
         else:
             parser.print_help()
         setattr(parser.values, 'printed_help', 1)
+
 
 def help_wrapper(option, opt_str, value, parser):
     """
@@ -1534,11 +1579,18 @@ def setup_parser():
 
     return parser
 
+
 def setup_logger(verbose=1, color=True):
-    """
-    Sets up and returns a Python Logger instance for the Sage
-    documentation builder.  The optional argument sets logger's level
-    and message format.
+    r"""
+    Set up a Python Logger instance for the Sage documentation builder. The
+    optional argument sets logger's level and message format.
+
+    EXAMPLES::
+
+        sage: from sage_setup.docbuild import setup_logger, logger
+        sage: setup_logger()
+        sage: type(logger)
+        <class 'logging.Logger'>
     """
     # Set up colors. Adapted from sphinx.cmdline.
     import sphinx.util.console as c
@@ -1564,9 +1616,6 @@ def setup_logger(verbose=1, color=True):
         if i != len(fields):
             format_debug += " "
 
-    # Documentation:  http://docs.python.org/library/logging.html
-    logger = logging.getLogger('docbuild')
-
     # Note: There's also Handler.setLevel().  The argument is the
     # lowest severity message that the respective logger or handler
     # will pass on.  The default levels are DEBUG, INFO, WARNING,
@@ -1586,8 +1635,6 @@ def setup_logger(verbose=1, color=True):
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    return logger
-
 
 class IntersphinxCache:
     """
@@ -1617,8 +1664,8 @@ class IntersphinxCache:
 def main():
     # Parse the command-line.
     parser = setup_parser()
-    global options
     options, args = parser.parse_args()
+    DocBuilder._options = options
 
     # Get the name and type (target format) of the document we are
     # trying to build.
@@ -1629,8 +1676,15 @@ def main():
         sys.exit(1)
 
     # Set up module-wide logging.
-    global logger
-    logger = setup_logger(options.verbose, options.color)
+    setup_logger(options.verbose, options.color)
+
+    def excepthook(*exc_info):
+        logger.error('Error building the documentation.', exc_info=exc_info)
+        if INCREMENTAL_BUILD:
+            logger.error('''
+    Note: incremental documentation builds sometimes cause spurious
+    error messages. To be certain that these are real errors, run
+    "make doc-clean" first and try again.''')
 
     sys.excepthook = excepthook
 
@@ -1666,7 +1720,10 @@ def main():
     # Delete empty directories. This is needed in particular for empty
     # directories due to "git checkout" which never deletes empty
     # directories it leaves behind. See Trac #20010.
-    delete_empty_directories(SAGE_DOC_SRC)
+    for dirpath, dirnames, filenames in os.walk(SAGE_DOC_SRC, topdown=False):
+        if not dirnames + filenames:
+            logger.warning('Deleting empty directory {0}'.format(dirpath))
+            os.rmdir(dirpath)
 
     # Set up Intersphinx cache
     C = IntersphinxCache()

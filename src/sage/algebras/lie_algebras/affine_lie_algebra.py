@@ -17,19 +17,17 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import repr_lincomb
-from sage.structure.element import RingElement, parent
+from sage.structure.element import parent
 from sage.categories.lie_algebras import LieAlgebras
 
 from sage.algebras.lie_algebras.lie_algebra import LieAlgebra, FinitelyGeneratedLieAlgebra
 from sage.algebras.lie_algebras.lie_algebra_element import UntwistedAffineLieAlgebraElement
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.cartesian_product import cartesian_product
 from sage.rings.integer_ring import ZZ
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
+
 
 class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
     r"""
@@ -126,8 +124,8 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
         0
         sage: f0.bracket(f2)
         (E[3*alpha[1] + alpha[2]])#t^-1
-        sage: A[h1+3*h2, A[[[f0, f2], f1], [f1,f2]] + f1]
-        (E[-alpha[1]])#t^0 + (2*E[alpha[1]])#t^-1
+        sage: A[h1+3*h2, A[[[f0, f2], f1], [f1,f2]] + f1] - f1
+        (2*E[alpha[1]])#t^-1
 
     We can construct its derived subalgebra, the affine Lie algebra
     of type `G_2^{(1)}`. In this case, there is no canonical derivation,
@@ -450,7 +448,6 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
              d]
         """
         zero = self.base_ring().zero()
-        one = self.base_ring().one()
         d = {}
         if self._kac_moody:
             d['d'] = self.d()

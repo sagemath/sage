@@ -276,8 +276,8 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             (2, 15*a*b + 3*a + 1)
         """
         try:
-            ## Compute the single generator, if it exists
-            dummy = self.is_principal()
+            # Compute the single generator, if it exists
+            self.is_principal()
             return self.__reduced_generators
         except AttributeError:
             L = self.number_field()
@@ -606,7 +606,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def is_prime(self):
         """
-        Return True if this ideal of a relative number field is prime.
+        Return ``True`` if this ideal of a relative number field is prime.
 
         EXAMPLES::
 
@@ -620,7 +620,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             return self._pari_prime is not None
         except AttributeError:
             abs_ideal = self.absolute_ideal()
-            _ = abs_ideal.is_prime()
+            abs_ideal.is_prime()
             self._pari_prime = abs_ideal._pari_prime
             return self._pari_prime is not None
 

@@ -36,7 +36,8 @@ seed, but currently there is no facility to do so.
 #                   http://www.gnu.org/licenses/
 ###############################################################################
 from __future__ import print_function
-from six import iteritems
+
+from six import iteritems, PY2
 
 import os
 import re
@@ -206,7 +207,17 @@ class ECM(SageObject):
             '1234'
         """
         from subprocess import Popen, PIPE
-        p = Popen(cmd, stdout=PIPE, stdin=PIPE, stderr=PIPE)
+
+        if PY2:
+            enc_kwds = {}
+        else:
+            # Under normal usage this program only returns ASCII; anything
+            # else mixed is garbage and an error
+            # So just accept latin-1 without encoding errors, and let the
+            # output parser deal with the rest
+            enc_kwds = {'encoding': 'latin-1'}
+
+        p = Popen(cmd, stdout=PIPE, stdin=PIPE, stderr=PIPE, **enc_kwds)
         out, err = p.communicate(input=str(n))
         if err != '':
             raise ValueError(err)
@@ -309,15 +320,15 @@ class ECM(SageObject):
         return self._recommended_B1_list[self._B1_table_value(factor_digits)]
 
     _parse_status_re = re.compile(
-        'Using B1=(\d+), B2=(\d+), polynomial ([^,]+), sigma=(\d+)')
+        r'Using B1=(\d+), B2=(\d+), polynomial ([^,]+), sigma=(\d+)')
 
     _found_input_re = re.compile('Found input number N')
 
     _found_factor_re = re.compile(
-        'Found (?P<primality>.*) factor of [\s]*(?P<digits>\d+) digits: (?P<factor>\d+)')
+        r'Found (?P<primality>.*) factor of [\s]*(?P<digits>\d+) digits: (?P<factor>\d+)')
 
     _found_cofactor_re = re.compile(
-        '(?P<primality>.*) cofactor (?P<cofactor>\d+) has [\s]*(?P<digits>\d+) digits')
+        r'(?P<primality>.*) cofactor (?P<cofactor>\d+) has [\s]*(?P<digits>\d+) digits')
 
     def _parse_output(self, n, out):
         """

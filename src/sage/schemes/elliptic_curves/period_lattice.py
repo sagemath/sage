@@ -245,13 +245,13 @@ class PeriodLattice_ell(PeriodLattice):
             self._ei.sort()  # e1 < e2 < e3
             e1, e2, e3 = self._ei
         elif self.real_flag == -1: # negative discriminant
-            self._ei = self.f2.roots(QQbar,multiplicities=False)
-            self._ei = list(sorted(self._ei,key=lambda z: z.imag()))
+            self._ei = self.f2.roots(QQbar, multiplicities=False)
+            self._ei = sorted(self._ei, key=lambda z: z.imag())
             e1, e3, e2 = self._ei # so e3 is real
             e3 = AA(e3)
             self._ei = [e1, e2, e3]
         else:
-            self._ei = self.f2.roots(QQbar,multiplicities=False)
+            self._ei = self.f2.roots(QQbar, multiplicities=False)
             e1, e2, e3 = self._ei
 
         # The quantities sqrt(e_i-e_j) are cached (as elements of
@@ -594,18 +594,19 @@ class PeriodLattice_ell(PeriodLattice):
             1.9072648860892725468182549468 - 1.3404778596244020196600112394*I)
         """
         if prec is None:
-            prec = RealField().precision()
+            prec = 53
         R = RealField(prec)
         C = ComplexField(prec)
 
-        if algorithm=='pari':
-            if self.E.base_field() is QQ:
-                periods = self.E.pari_curve().omega(prec).sage()
-                return (R(periods[0]), C(periods[1]))
+        if algorithm == 'pari':
+            ainvs = self.E.a_invariants()
+            if self.E.base_field() is not QQ:
+                ainvs = [C(self.embedding(ai)).real() for ai in ainvs]
 
-            E_pari = pari([R(self.embedding(ai).real()) for ai in self.E.a_invariants()]).ellinit()
-            periods = E_pari.omega(prec).sage()
-            return (R(periods[0]), C(periods[1]))
+            # The precision for omega() is determined by ellinit()
+            E_pari = pari.ellinit(ainvs, precision=prec)
+            w1, w2 = E_pari.omega()
+            return R(w1), C(w2)
 
         if algorithm!='sage':
             raise ValueError("invalid value of 'algorithm' parameter")
@@ -1182,30 +1183,23 @@ class PeriodLattice_ell(PeriodLattice):
             0.958696500380444
         """
         C = z.parent()
-        z_is_real = False
         if is_RealField(C):
-            z_is_real = True
             C = ComplexField(C.precision())
             z = C(z)
+        elif is_ComplexField(C):
+            pass
         else:
-            if is_ComplexField(C):
-                z_is_real = z.is_real()
-            else:
-                try:
-                    C = ComplexField()
-                    z = C(z)
-                    z_is_real = z.is_real()
-                except TypeError:
-                    raise TypeError("%s is not a complex number"%z)
+            try:
+                C = ComplexField()
+                z = C(z)
+            except TypeError:
+                raise TypeError("%s is not a complex number" % z)
         prec = C.precision()
         if self.real_flag:
-            w1,w2 = self.basis(prec) # w1 real
+            w1, w2 = self.basis(prec)  # w1 real
         else:
-            w1,w2 = self.normalised_basis(prec)
-    #    print "z = ",z
-    #    print "w1,w2 = ",w1,w2
-        u,v = self.coordinates(z, rounding='floor')
-    #    print "u,v = ",u,v
+            w1, w2 = self.normalised_basis(prec)
+        u, v = self.coordinates(z, rounding='floor')
         z = z-u*w1-v*w2
 
         # Final adjustments for the real case.
@@ -1321,7 +1315,6 @@ class PeriodLattice_ell(PeriodLattice):
 
         R = RealField(prec2)
         C = ComplexField(prec2)
-        pi = R.pi()
         e1,e2,e3 = self._ei
         a1,a2,a3 = [self.embedding(a) for a in self.E.ainvs()[:3]]
 
@@ -1468,8 +1461,8 @@ class PeriodLattice_ell(PeriodLattice):
 
         Note that this is actually the inverse of the Weierstrass isomorphism::
 
-            sage: L.elliptic_exponential(_)
-            (3.00000000000000000000000000... : 5.00000000000000000000000000... : 1.000000000000000000000000000)
+            sage: L.elliptic_exponential(_)  # abs tol 1e-26
+            (3.000000000000000000000000000 : 5.000000000000000000000000000 : 1.000000000000000000000000000)
 
         An example with negative discriminant, and a torsion point::
 
@@ -1757,12 +1750,12 @@ class PeriodLattice_ell(PeriodLattice):
         # test for the point at infinity:
 
         eps = (C(2)**(-0.8*prec)).real()  ## to test integrality w.r.t. lattice within 20%
-        if all([(t.round()-t).abs() < eps for t in self.coordinates(z)]):
+        if all((t.round()-t).abs() < eps for t in self.coordinates(z)):
             K = z.parent()
             if to_curve:
                 return self.curve().change_ring(K)(0)
             else:
-                return (K('+infinity'),K('+infinity'))
+                return (K('+infinity'), K('+infinity'))
 
         # general number field code (including QQ):
 
@@ -1823,8 +1816,7 @@ def reduce_tau(tau):
         sage: reduce_tau(CC(1.23,0.0000345))
         (0.130000000001761 + 2.89855072463768*I, [13, -16, 100, -123])
     """
-    assert tau.imag()>0
-    tau_orig = tau
+    assert tau.imag() > 0
     a, b = ZZ(1), ZZ(0)
     c, d = b, a
     k = tau.real().round()
@@ -1842,7 +1834,8 @@ def reduce_tau(tau):
     assert tau.abs()>=0.999 and tau.real().abs() <= 0.5
     return tau, [a,b,c,d]
 
-def normalise_periods(w1,w2):
+
+def normalise_periods(w1, w2):
     r"""
     Normalise the period basis `(w_1,w_2)` so that `w_1/w_2` is in the fundamental region.
 
@@ -1890,7 +1883,7 @@ def normalise_periods(w1,w2):
     return (a*w1+b*w2,c*w1+d*w2), abcd
 
 
-def extended_agm_iteration(a,b,c):
+def extended_agm_iteration(a, b, c):
     r"""
     Internal function for the extended AGM used in elliptic logarithm computation.
     INPUT:
@@ -1921,13 +1914,13 @@ def extended_agm_iteration(a,b,c):
     """
     if not isinstance(a, (RealNumber,ComplexNumber)):
         raise ValueError("values must be real or complex numbers")
-    eps = a.parent().one().real()>>(a.parent().precision()-10)
+    eps = a.parent().one().real() >> (a.parent().precision() - 10)
     while True:
-        a1 = (a + b)/2
-        b1 = (a*b).sqrt()
-        delta = (b**2 - a**2)/c**2
-        f = (1 + (1 + delta).sqrt())/2
-        if (f.abs()-1).abs() < eps:
-            return a,b,c
-        c*=f
-        a,b = a1,b1
+        a1 = (a + b) / 2
+        b1 = (a * b).sqrt()
+        delta = (b**2 - a**2) / c**2
+        f = (1 + (1 + delta).sqrt()) / 2
+        if (f.abs() - 1).abs() < eps:
+            return a, b, c
+        c *= f
+        a, b = a1, b1

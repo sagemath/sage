@@ -11,7 +11,7 @@ AUTHORS:
 
 REFERENCE:
 
-.. [1] Schnyder, Walter. Embedding Planar Graphs on the Grid.
+.. [1] Schnyder, Walter. *Embedding Planar Graphs on the Grid*.
        Proc. 1st Annual ACM-SIAM Symposium on Discrete Algorithms,
        San Francisco (1994), pp. 138-147.
 """
@@ -19,7 +19,7 @@ REFERENCE:
 #      Copyright (C) 2008 Jonathan Bober and Emily Kirkman
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+#                         https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import
 
@@ -171,7 +171,7 @@ def _normal_label(g, comb_emb, external_face):
         [(2, 0), (4, 2), (6, 4), (1, 3), (6, 1), (3, 5), (4, 0), (6, 3)]
         sage: tn = _normal_label(g, g._embedding, faces[0])
         sage: _realizer(g, tn)
-        ({0: [<sage.graphs.schnyder.TreeNode instance at ...>]},
+        ({0: [<sage.graphs.schnyder.TreeNode object at ...>]},
          (0, 1, 2))
     """
     contracted = []
@@ -220,7 +220,8 @@ def _normal_label(g, comb_emb, external_face):
         v1_neighbors += v_neighbors - Set([v1])
         contractible = []
         for w in g.neighbors(v1):
-            if(len(v1_neighbors.intersection(Set(g.neighbors(w))))) == 2 and w not in [v1, v2, v3]:
+            if (len(v1_neighbors.intersection(Set(g.neighbors(w)))) == 2
+                    and w not in [v1, v2, v3]):
                 contractible.append(w)
 
     # expansion phase:
@@ -377,7 +378,7 @@ def _realizer(g, x, example=False):
         [(2, 0), (4, 2), (6, 4), (1, 3), (6, 1), (3, 5), (4, 0), (6, 3)]
         sage: tn = _normal_label(g, g._embedding, faces[0])
         sage: _realizer(g, tn)
-        ({0: [<sage.graphs.schnyder.TreeNode instance at ...>]},
+        ({0: [<sage.graphs.schnyder.TreeNode object at ...>]},
          (0, 1, 2))
 
     """
@@ -532,7 +533,7 @@ def _compute_coordinates(g, x):
     g.set_pos(coordinates)  # Setting _pos attribute to store coordinates
 
 
-class TreeNode():
+class TreeNode(object):
     """
     A class to represent each node in the trees used by ``_realizer`` and
     ``_compute_coordinates`` when finding a planar geometric embedding in
@@ -690,9 +691,9 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
 
     - graph -- a planar triangulation, given by a graph with an embedding.
 
-    - root_edge -- a pair of vertices (default is from ``'a'`` to ``'b'``)
+    - root_edge -- a pair of vertices (default is from ``-1`` to ``-2``)
       The third boundary vertex is then determined using the orientation and
-      will be labelled ``'c'``.
+      will be labelled ``-3``.
 
     - minimal -- boolean (default ``True``), whether to return a
       minimal or a maximal Schnyder wood.
@@ -710,45 +711,45 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
     EXAMPLES::
 
         sage: from sage.graphs.schnyder import minimal_schnyder_wood
-        sage: g = Graph([(0,'a'),(0,'b'),(0,'c'),('a','b'),('b','c'),
-        ....:  ('c','a')], format='list_of_edges')
-        sage: g.set_embedding({'a':['b',0,'c'],'b':['c',0,'a'],
-        ....:  'c':['a',0,'b'],0:['a','b','c']})
+        sage: g = Graph([(0,-1),(0,-2),(0,-3),(-1,-2),(-2,-3),
+        ....:  (-3,-1)], format='list_of_edges')
+        sage: g.set_embedding({-1:[-2,0,-3],-2:[-3,0,-1],
+        ....:  -3:[-1,0,-2],0:[-1,-2,-3]})
         sage: newg = minimal_schnyder_wood(g)
         sage: newg.edges()
-        [(0, 'a', 'green'), (0, 'b', 'blue'), (0, 'c', 'red')]
+        [(0, -3, 'red'), (0, -2, 'blue'), (0, -1, 'green')]
         sage: newg.plot(color_by_label={'red':'red','blue':'blue',
         ....:  'green':'green',None:'black'})
         Graphics object consisting of 8 graphics primitives
 
     A larger example::
 
-        sage: g = Graph([(0,'a'),(0,2),(0,1),(0,'c'),('a','c'),('a',2),
-        ....: ('a','b'),(1,2),(1,'c'),(2,'b'),(1,'b'),('b','c')], format='list_of_edges')
-        sage: g.set_embedding({'a':['b',2,0,'c'],'b':['c',1,2,'a'],
-        ....: 'c':['a',0,1,'b'],0:['a',2,1,'c'],1:['b','c',0,2],2:['a','b',1,0]})
+        sage: g = Graph([(0,-1),(0,2),(0,1),(0,-3),(-1,-3),(-1,2),
+        ....: (-1,-2),(1,2),(1,-3),(2,-2),(1,-2),(-2,-3)], format='list_of_edges')
+        sage: g.set_embedding({-1:[-2,2,0,-3],-2:[-3,1,2,-1],
+        ....: -3:[-1,0,1,-2],0:[-1,2,1,-3],1:[-2,-3,0,2],2:[-1,-2,1,0]})
         sage: newg = minimal_schnyder_wood(g)
         sage: sorted(newg.edges(), key=lambda e:(str(e[0]),str(e[1])))
-        [(0, 2, 'blue'),
-         (0, 'a', 'green'),
-         (0, 'c', 'red'),
+        [(0, -1, 'green'),
+         (0, -3, 'red'),
+         (0, 2, 'blue'),
+         (1, -2, 'blue'),
+         (1, -3, 'red'),
          (1, 0, 'green'),
-         (1, 'b', 'blue'),
-         (1, 'c', 'red'),
-         (2, 1, 'red'),
-         (2, 'a', 'green'),
-         (2, 'b', 'blue')]
+         (2, -1, 'green'),
+         (2, -2, 'blue'),
+         (2, 1, 'red')]
         sage: newg2 = minimal_schnyder_wood(g, minimal=False)
         sage: sorted(newg2.edges(), key=lambda e:(str(e[0]),str(e[1])))
-        [(0, 1, 'blue'),
-         (0, 'a', 'green'),
-         (0, 'c', 'red'),
+        [(0, -1, 'green'),
+         (0, -3, 'red'),
+         (0, 1, 'blue'),
+         (1, -2, 'blue'),
+         (1, -3, 'red'),
          (1, 2, 'green'),
-         (1, 'b', 'blue'),
-         (1, 'c', 'red'),
-         (2, 0, 'red'),
-         (2, 'a', 'green'),
-         (2, 'b', 'blue')]
+         (2, -1, 'green'),
+         (2, -2, 'blue'),
+         (2, 0, 'red')]
 
     TESTS::
 
@@ -773,8 +774,8 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
        3-Tree-Decompositions*, 2000
     """
     if root_edge is None:
-        a = 'a'
-        b = 'b'
+        a = -1
+        b = -2
     else:
         a, b = root_edge
 
@@ -785,7 +786,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
             raise ValueError('not a triangulation')
         if not(a in graph.neighbors(b)):
             raise ValueError('not a valid root edge')
-        
+
     new_g = DiGraph()
     emb = graph.get_embedding()
 
@@ -797,7 +798,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
     # initialisation
     for i in emb[c]:
         if i != a and i != b:
-            new_g.add_edge((i, 'c', 'red'))
+            new_g.add_edge((i, -3, 'red'))
 
     path = list(emb[c])
     idxa = path.index(a)
@@ -836,7 +837,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
                            u != a and u != b]
 
     def relabel(w):
-        return 'c' if w == c else w
+        return -3 if w == c else w
 
     emb = {relabel(v): [relabel(u) for u in emb[v] if not(u in [a, b, c] and
                                                           v in [a, b, c])]

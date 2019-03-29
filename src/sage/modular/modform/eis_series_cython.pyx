@@ -3,7 +3,7 @@ Eisenstein Series (optimized compiled functions)
 """
 
 from cysignals.memory cimport check_allocarray, sig_free
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_check
 
 from sage.rings.rational_field import QQ
 from sage.rings.power_series_ring import PowerSeriesRing
@@ -161,8 +161,7 @@ cpdef eisenstein_series_poly(int k, int prec = 10) :
     """
     cdef mpz_t *val = <mpz_t *>check_allocarray(prec, sizeof(mpz_t))
     cdef mpz_t one, mult, term, last, term_m1, last_m1
-    cdef unsigned long int expt
-    cdef long ind, ppow, int_p
+    cdef long ind
     cdef int i
     cdef Fmpz_poly res = Fmpz_poly.__new__(Fmpz_poly)
 
@@ -173,8 +172,6 @@ cpdef eisenstein_series_poly(int k, int prec = 10) :
     if (prec == 0):
         return Fmpz_poly.__new__(Fmpz_poly)
 
-    sig_on()
-
     mpz_init(one)
     mpz_init(term)
     mpz_init(last)
@@ -182,33 +179,33 @@ cpdef eisenstein_series_poly(int k, int prec = 10) :
     mpz_init(term_m1)
     mpz_init(last_m1)
 
-    for i from 0 <= i < prec :
-        mpz_init(val[i])
-        mpz_set_si(val[i], 1)
+    for i in range(prec):
+        mpz_init_set_si(val[i], 1)
 
     mpz_set_si(one, 1)
 
-    expt = <unsigned long int>(k - 1)
-    a0 = - bernoulli(k) / (2*k)
+    cdef unsigned long expt = k - 1
+    a0 = -bernoulli(k) / (2*k)
 
-    for p in primes(1,prec) :
-        int_p = int(p)
-        ppow = <long int>int_p
+    cdef long p, ppow
+    for p in primes(1, prec) :
+        ppow = p
 
-        mpz_set_si(mult, int_p)
+        mpz_set_si(mult, p)
         mpz_pow_ui(mult, mult, expt)
         mpz_mul(term, mult, mult)
         mpz_set(last, mult)
 
-        while (ppow < prec):
+        while ppow < prec:
+            sig_check()
             ind = ppow
             mpz_sub(term_m1, term, one)
             mpz_sub(last_m1, last, one)
-            while (ind < prec):
+            while ind < prec:
                 mpz_mul(val[ind], val[ind], term_m1)
                 mpz_fdiv_q(val[ind], val[ind], last_m1)
                 ind += ppow
-            ppow *= int_p
+            ppow *= p
             mpz_set(last, term)
             mpz_mul(term, term, mult)
 
@@ -227,7 +224,5 @@ cpdef eisenstein_series_poly(int k, int prec = 10) :
     fmpz_poly_set_coeff_mpz(res.poly, 0, (<Integer>(a0.numerator())).value)
 
     sig_free(val)
-
-    sig_off()
 
     return res

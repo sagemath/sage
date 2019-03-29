@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Mandelbrot and Julia sets (Cython helper)
 
@@ -28,9 +29,29 @@ from sage.rings.complex_field import ComplexField
 from sage.functions.log import exp, log
 from sage.symbolic.constants import pi
 
-def fast_mandelbrot_plot(double x_center, double y_center, double image_width,
- long max_iteration, long pixel_count, long level_sep, long color_num, base_color):
 
+def _color_to_RGB(color):
+    """
+    Convert a color to an RGB triple with values in the interval [0,255].
+
+    EXAMPLES::
+
+        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import _color_to_RGB
+        sage: _color_to_RGB("aquamarine")
+        (127, 255, 212)
+        sage: _color_to_RGB(Color([0, 1/2, 1]))
+        (0, 127, 255)
+        sage: _color_to_RGB([0, 100, 200])
+        (0, 100, 200)
+    """
+    if not isinstance(color, (list, tuple)):
+        color = [int(255.0 * k) for k in Color(color)]
+    return tuple(color)
+
+
+def fast_mandelbrot_plot(double x_center, double y_center, double image_width,
+                         long max_iteration, long pixel_count, long level_sep,
+                         long color_num, base_color):
     r"""
     Plots the Mandelbrot set in the complex plane for the map `Q_c(z) = z^2 + c`.
 
@@ -61,19 +82,17 @@ def fast_mandelbrot_plot(double x_center, double y_center, double image_width,
     Plot the Mandelbrot set with the center point `-1 + 0i`::
 
         sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_mandelbrot_plot
-        sage: fast_mandelbrot_plot(-1, 0, 4, 500, 600, 1, 20, [40, 40, 40]) # long time
+        sage: fast_mandelbrot_plot(-1, 0, 4, 500, 600, 1, 20, [40, 40, 40])
         600x600px 24-bit RGB image
 
     We can focus on smaller parts of the set by adjusting image_width::
 
         sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_mandelbrot_plot
-        sage: fast_mandelbrot_plot(-1.11, 0.2283, 1/128, 2000, 500, 1, 500, [40, 100, 100]) # long time
+        sage: fast_mandelbrot_plot(-1.11, 0.2283, 1/128, 2000, 500, 1, 500, [40, 100, 100])
         500x500px 24-bit RGB image
     """
-
     cdef long i, j, col, row, level, color_value, iteration
     cdef double k, x_corner, y_corner, step_size, x_coor, y_coor, new_x, new_y
-    cdef M, pixel, color_list
 
     # Make sure image_width is positive
     image_width = abs(image_width)
@@ -85,16 +104,13 @@ def fast_mandelbrot_plot(double x_center, double y_center, double image_width,
     # Take the given base color and create a list of evenly spaced
     # colors between the given base color and white. The number of
     # colors in the list depends on the variable color_num.
-    if type(base_color) == Color:
-        # Convert Color to RGB list
-        base_color = [int(k*255) for k in base_color]
+    base_color = _color_to_RGB(base_color)
     color_list = []
     for i in range(color_num):
         sig_check()
-        color_list.append(copy(base_color))
-        for j in range(3):
-            color_list[i][j] += i * (255 - color_list[i][j]) // color_num
-        color_list[i] = tuple(color_list[i])
+        color = [base_color[j] + i * (255 - base_color[j]) // color_num
+                 for j in range(3)]
+        color_list.append(tuple(color))
 
     # First, we determine the complex coordinates of the point in the top left
     # corner of the image. Then, we loop through each pixel in the image and
@@ -360,10 +376,11 @@ cpdef get_line(start, end):
         points.reverse()
     return points
 
-cpdef fast_julia_plot(double c_real, double c_imag,
-  double x_center=0, double y_center=0, double image_width=4,
-  long max_iteration=500, long pixel_count=500, long level_sep=2,
-  long color_num=40, base_color=[50, 50, 50]):
+
+def fast_julia_plot(double c_real, double c_imag,
+                    double x_center, double y_center, double image_width,
+                    long max_iteration, long pixel_count, long level_sep,
+                    long color_num, base_color):
     r"""
     Plots the Julia set for a given `c` value in the complex plane for the map `Q_c(z) = z^2 + c`.
 
@@ -373,21 +390,21 @@ cpdef fast_julia_plot(double c_real, double c_imag,
 
     - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia set.
 
-    - ``x_center`` -- double (optional - default: ``0.0``), Real part of center point.
+    - ``x_center`` -- double, Real part of center point.
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part of center point.
+    - ``y_center`` -- double, Imaginary part of center point.
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image in the complex plane.
+    - ``image_width`` -- double, width of image in the complex plane.
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number of iterations the map ``Q_c(z)``.
+    - ``max_iteration`` -- long, maximum number of iterations the map ``Q_c(z)``.
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of image in number of pixels.
+    - ``pixel_count`` -- long, side length of image in number of pixels.
 
-    - ``level_sep`` -- long (optional - default: ``2``), number of iterations between each color level.
+    - ``level_sep`` -- long, number of iterations between each color level.
 
-    - ``color_num`` -- long (optional - default: ``40``), number of colors used to plot image.
+    - ``color_num`` -- long, number of colors used to plot image.
 
-    - ``base_color`` -- RGB color (optional - default: ``[50, 50, 50]``), color used to determine the coloring of set.
+    - ``base_color`` -- RGB color, color used to determine the coloring of set.
 
     OUTPUT:
 
@@ -398,19 +415,11 @@ cpdef fast_julia_plot(double c_real, double c_imag,
     Plot the Julia set for `c=-1+0i`::
 
         sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_julia_plot
-        sage: fast_julia_plot(-1, 0)
-        500x500px 24-bit RGB image
-
-    We can focus on smaller parts of the set by adjusting ``image_width``::
-
-        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_julia_plot
-        sage: fast_julia_plot(-0.7, 0.3, x_center=.75, image_width=0.01, color_num=100)
-        500x500px 24-bit RGB image
+        sage: fast_julia_plot(-1, 0, 0, 0, 4, 500, 200, 1, 20, [40, 40, 40])
+        200x200px 24-bit RGB image
     """
-
     cdef long i, j, col, row, level, color_value, iteration
     cdef double k, x_corner, y_corner, step_size, x_coor, y_coor, new_x, new_y
-    cdef M, pixel, color_list
 
     # Make sure image_width is positive
     image_width = abs(image_width)
@@ -422,16 +431,13 @@ cpdef fast_julia_plot(double c_real, double c_imag,
     # Take the given base color and create a list of evenly spaced
     # colors between the given base color and white. The number of
     # colors in the list depends on the variable color_num.
-    if type(base_color) == Color:
-        # Convert Color to RGB list
-        base_color = [int(k*255) for k in base_color]
+    base_color = _color_to_RGB(base_color)
     color_list = []
     for i in range(color_num):
         sig_check()
-        color_list.append(copy(base_color))
-        for j in range(3):
-            color_list[i][j] += i * (255 - color_list[i][j]) // color_num
-        color_list[i] = tuple(color_list[i])
+        color = [base_color[j] + i * (255 - base_color[j]) // color_num
+                 for j in range(3)]
+        color_list.append(tuple(color))
 
     # First, we determine the complex coordinates of the point in the top left
     # corner of the image. Then, we loop through each pixel in the image and
@@ -473,11 +479,11 @@ cpdef fast_julia_plot(double c_real, double c_imag,
 
     return J
 
-cpdef julia_helper(double c_real, double c_imag, double x_center=0,
- double y_center=0, double image_width=4, long max_iteration=500,
- long pixel_count=500, long level_sep=2, long color_num=40,
- base_color=[50, 50, 50], point_color=[255, 0, 0]):
 
+def julia_helper(double c_real, double c_imag,
+                 double x_center, double y_center, double image_width,
+                 long max_iteration, long pixel_count, long level_sep,
+                 long color_num, base_color, point_color):
     r"""
     Helper function that returns the image of a Julia set for a given
     `c` value side by side with the Mandelbrot set with a point denoting
@@ -489,23 +495,23 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
 
     - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia set.
 
-    - ``x_center`` -- double (optional - default: ``0.0``), Real part of center point.
+    - ``x_center`` -- double, Real part of center point.
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part of center point.
+    - ``y_center`` -- double, Imaginary part of center point.
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image in the complex plane.
+    - ``image_width`` -- double, width of image in the complex plane.
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number of iterations the map ``Q_c(z)``.
+    - ``max_iteration`` -- long, maximum number of iterations the map ``Q_c(z)``.
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of image in number of pixels.
+    - ``pixel_count`` -- long, side length of image in number of pixels.
 
-    - ``level_sep`` -- long (optional - default: ``2``), number of iterations between each color level.
+    - ``level_sep`` -- long, number of iterations between each color level.
 
-    - ``color_num`` -- long (optional - default: ``40``), number of colors used to plot image.
+    - ``color_num`` -- long, number of colors used to plot image.
 
-    - ``base_color`` -- RGB color (optional - default: ``[50, 50, 50]``), color used to determine the coloring of set.
+    - ``base_color`` -- RGB, color used to determine the coloring of set.
 
-    - ``point_color`` -- RGB color (optional - default: ``[255, 0, 0]``), color of the point `c` in the Mandelbrot set.
+    - ``point_color`` -- RGB color, color of the point `c` in the Mandelbrot set.
 
     OUTPUT:
 
@@ -516,19 +522,10 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
     Plot the Julia set for `c=-1+0i`::
 
         sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import julia_helper
-        sage: julia_helper(-1,0)
-        1001x500px 24-bit RGB image
-
-    We can focus on smaller parts of the set by adjusting ``image_width``::
-
-        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import julia_helper
-        sage: julia_helper(-.5, .6, y_center=0.178, image_width=0.01) # long time
-        1001x500px 24-bit RGB image
+        sage: julia_helper(-1, 0, 0, 0, 4, 500, 200, 1, 20, [40, 40, 40], [255, 0, 0])
+        401x200px 24-bit RGB image
     """
-
-    cdef:
-        int i, j
-        M, Mp, G, Gp, J, Jp, CP
+    cdef int i, j
 
     # Initialize the Julia set
     J = fast_julia_plot(c_real, c_imag, x_center, y_center, image_width,
@@ -550,9 +547,7 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
         for j in range(pixel_count):
             Gp[i,j] = Mp[int(i-pixel_count),j]
 
-    # Convert Color to RGB list if necessary
-    if type(point_color) == Color:
-        point_color = [int(k*255) for k in point_color]
+    point_color = _color_to_RGB(point_color)
 
     # Add a cross representing c-value to the Mandelbrot set.
     CP = convert_to_pixels([(c_real, c_imag)], -1, 0, 4, pixel_count)

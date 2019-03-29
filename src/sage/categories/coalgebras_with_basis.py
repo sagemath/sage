@@ -58,7 +58,7 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         @lazy_attribute
         def coproduct(self):
-            """
+            r"""
             If :meth:`coproduct_on_basis` is available, construct the
             coproduct morphism from ``self`` to ``self`` `\otimes`
             ``self`` by extending it by linearity. Otherwise, use
@@ -108,7 +108,7 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         @lazy_attribute
         def counit(self):
-            """
+            r"""
             If :meth:`counit_on_basis` is available, construct the
             counit morphism from ``self`` to ``self`` `\otimes`
             ``self`` by extending it by linearity

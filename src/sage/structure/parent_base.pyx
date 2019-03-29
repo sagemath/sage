@@ -33,8 +33,8 @@ cdef class ParentWithBase(Parent_old):
     """
     This class is being deprecated, see parent.Parent for the new model.
     """
-    def __init__(self, base, coerce_from=[], actions=[], embeddings=[], category=None):
-        Parent_old.__init__(self, coerce_from=coerce_from, actions=actions, embeddings=embeddings, category=category)
+    def __init__(self, base, *args, **kwds):
+        Parent_old.__init__(self, *args, **kwds)
         self._base = base
 
     cdef _coerce_c_impl(self,x):

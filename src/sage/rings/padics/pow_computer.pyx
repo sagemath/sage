@@ -443,14 +443,34 @@ cdef class PowComputer_base(PowComputer_class):
             try:
                 mpz_init(self.top_power)
                 try:
-                    for i in range(cache_limit + 1):
+                    mpz_init(self.powhelper_oneunit)
+                    try:
+                        mpz_init(self.powhelper_teichdiff)
                         try:
-                            mpz_init(self.small_powers[i])
+                            mpz_init(self.shift_rem)
+                            try:
+                                mpz_init(self.aliasing)
+                                try:
+                                    for i in range(cache_limit + 1):
+                                        try:
+                                            mpz_init(self.small_powers[i])
+                                        except BaseException:
+                                            while i:
+                                                i-=1
+                                                mpz_clear(self.small_powers[i])
+                                            raise
+                                except BaseException:
+                                    mpz_clear(self.aliasing)
+                                    raise
+                            except BaseException:
+                                mpz_clear(self.shift_rem)
+                                raise
                         except BaseException:
-                            while i:
-                                i-=1
-                                mpz_clear(self.small_powers[i])
+                            mpz_clear(self.powhelper_teichdiff)
                             raise
+                    except BaseException:
+                        mpz_clear(self.powhelper_oneunit)
+                        raise
                 except BaseException:
                     mpz_clear(self.top_power)
                     raise
@@ -508,6 +528,10 @@ cdef class PowComputer_base(PowComputer_class):
             for i in range(self.cache_limit + 1):
                 mpz_clear(self.small_powers[i])
             mpz_clear(self.top_power)
+            mpz_clear(self.powhelper_oneunit)
+            mpz_clear(self.powhelper_teichdiff)
+            mpz_clear(self.shift_rem)
+            mpz_clear(self.aliasing)
             mpz_clear(self.temp_m)
             sig_free(self.small_powers)
 

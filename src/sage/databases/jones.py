@@ -72,7 +72,7 @@ from sage.rings.all import NumberField, RationalField, PolynomialRing
 from sage.misc.misc import powerset
 from sage.env import SAGE_SHARE
 
-from sage.structure.sage_object import load, save
+from sage.misc.persist import load, save
 
 from sage.misc.package import PackageNotFoundError
 
@@ -110,7 +110,7 @@ class JonesDatabase:
         S = sorted([eval(z) for z in filename[i:j + 1].split("-")])
         data = open(path + "/" + filename).read()
         data = data.replace("^", "**")
-        x = PolynomialRing(RationalField(), 'x').gen()
+        x = PolynomialRing(RationalField(), 'x').gen()  # used next line
         v = eval(data)
         s = tuple(S)
         if s in self.root:
@@ -145,7 +145,6 @@ class JonesDatabase:
         This takes about 5 seconds.
         """
         from sage.misc.misc import sage_makedirs
-        n = 0
         x = PolynomialRing(RationalField(), 'x').gen()
         self.root = {}
         self.root[tuple([])] = [x - 1]
@@ -234,7 +233,7 @@ class JonesDatabase:
             S = list(S)
         except TypeError:
             S = [S]
-        if not all([p.is_prime() for p in S]):
+        if not all(p.is_prime() for p in S):
             raise ValueError("S must be a list of primes")
         S.sort()
         s = tuple(S)

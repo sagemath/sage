@@ -12,15 +12,12 @@ Representations of objects.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
 import types
 
 from IPython.lib.pretty import (
     _safe_getattr, _baseclass_reprs,
     _type_pprinters,
 )
-
-from IPython.lib import pretty
 
 from sage.repl.display.util import format_list
 

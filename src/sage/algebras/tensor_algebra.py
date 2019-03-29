@@ -87,7 +87,7 @@ class TensorAlgebra(CombinatorialFreeModule):
         sage: TA.base_ring()
         Rational Field
         sage: TA.algebra_generators()
-        Finite family {'a': B['a'], 'c': B['c'], 'b': B['b']}
+        Finite family {'a': B['a'], 'b': B['b'], 'c': B['c']}
     """
     def __init__(self, M, prefix='T', category=None, **options):
         r"""
@@ -461,7 +461,7 @@ class TensorAlgebra(CombinatorialFreeModule):
             sage: C = CombinatorialFreeModule(QQ, ['a','b','c'])
             sage: TA = TensorAlgebra(C)
             sage: TA.algebra_generators()
-            Finite family {'a': B['a'], 'c': B['c'], 'b': B['b']}
+            Finite family {'a': B['a'], 'b': B['b'], 'c': B['c']}
             sage: m = SymmetricFunctions(QQ).m()
             sage: Tm = TensorAlgebra(m)
             sage: Tm.algebra_generators()
@@ -537,7 +537,7 @@ class TensorAlgebra(CombinatorialFreeModule):
             return self.term(m, R.one())
 
     def coproduct_on_basis(self, m):
-        """
+        r"""
         Return the coproduct of the simple tensor indexed by ``m``.
 
         EXAMPLES::

@@ -30,13 +30,32 @@ class AmbientSpace(ambient_space.AmbientSpace):
         sage: e.smallest_base_ring()
         Rational Field
 
+    By default, this ambient space uses the barycentric projection for plotting::
+
+        sage: L = RootSystem(["G",2]).ambient_space()
+        sage: e = L.basis()
+        sage: L._plot_projection(e[0])
+        (1/2, 989/1142)
+        sage: L._plot_projection(e[1])
+        (-1, 0)
+        sage: L._plot_projection(e[2])
+        (1/2, -989/1142)
+        sage: L = RootSystem(["A",3]).ambient_space()
+        sage: l = L.an_element(); l
+        (2, 2, 3, 0)
+        sage: L._plot_projection(l)
+        (0, -1121/1189, 7/3)
+
+    .. SEEALSO::
+
+        - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods._plot_projection`
+
     TESTS::
 
         sage: TestSuite(e).run()
         sage: [WeylDim(['G',2],[a,b]) for a,b in [[0,0], [1,0], [0,1], [1,1]]] # indirect doctest
         [1, 7, 14, 64]
     """
-
     def dimension(self):
         """
         EXAMPLES::
@@ -85,27 +104,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
         return Family({ 1: self([1,0,-1]),
                         2: self([2,-1,-1])})
 
-    __doc__ += """
-    By default, this ambient space uses the barycentric projection for plotting::
-
-        sage: L = RootSystem(["G",2]).ambient_space()
-        sage: e = L.basis()
-        sage: L._plot_projection(e[0])
-        (1/2, 989/1142)
-        sage: L._plot_projection(e[1])
-        (-1, 0)
-        sage: L._plot_projection(e[2])
-        (1/2, -989/1142)
-        sage: L = RootSystem(["A",3]).ambient_space()
-        sage: l = L.an_element(); l
-        (2, 2, 3, 0)
-        sage: L._plot_projection(l)
-        (0, -1121/1189, 7/3)
-
-    .. SEEALSO::
-
-        - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods._plot_projection`
-    """
     _plot_projection = RootLatticeRealizations.ParentMethods.__dict__['_plot_projection_barycentric']
 
 
@@ -280,5 +278,5 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         return CartanTypeFolded(self, ['D', 4], [[1, 3, 4], [2]])
 
 # For unpickling backward compatibility (Sage <= 4.1)
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_G', 'ambient_space',  AmbientSpace)

@@ -55,12 +55,10 @@ from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.categories.modules_with_basis import ModulesWithBasis
 from . import sfa
-from sage.combinat.partition import Partition, Partitions_n, _Partitions
-from sage.combinat.skew_partition import SkewPartitions
+from sage.combinat.partition import Partitions_n, _Partitions
 from sage.matrix.all import MatrixSpace
 from sage.rings.all import QQ
 from sage.misc.all import prod
-from sage.rings.fraction_field import FractionField
 from sage.misc.cachefunc import cached_function
 import functools
 
@@ -78,6 +76,7 @@ _S_to_s_cache = {}
 _s_to_S_cache = {}
 
 _qt_kostka_cache = {}
+
 
 class Macdonald(UniqueRepresentation):
 
@@ -782,12 +781,12 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: J = Sym.macdonald(t=2).J()
             sage: s = Sym.schur()
             sage: J._s_to_self(s[2,1])
-            ((-q+2)/(28*q-7))*McdJ[1, 1, 1] + (1/(-4*q+1))*McdJ[2, 1]
+            ((-1/28*q+1/14)/(q-1/4))*McdJ[1, 1, 1] - (1/4/(q-1/4))*McdJ[2, 1]
 
         This is for internal use only. Please use instead::
 
             sage: J(s[2,1])
-            ((-q+2)/(28*q-7))*McdJ[1, 1, 1] + (1/(-4*q+1))*McdJ[2, 1]
+            ((-1/28*q+1/14)/(q-1/4))*McdJ[1, 1, 1] - (1/4/(q-1/4))*McdJ[2, 1]
         """
         return self._from_cache(x, self._s_cache, self._s_to_self_cache, q = self.q, t = self.t)
 
@@ -1660,7 +1659,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
                 sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
                 sage: Ht = Sym.macdonald().Ht()
-                sage: t = Ht.t; q = Ht.q;
+                sage: t = Ht.t; q = Ht.q
                 sage: s = Sym.schur()
                 sage: a = sum(Ht(p) for p in Partitions(3))
                 sage: Ht(0).nabla()
@@ -2022,7 +2021,7 @@ def qt_kostka(lam, mu):
     return _qt_kostka_cache[(lam,mu)]
 
 # Backward compatibility for unpickling
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_h',  MacdonaldPolynomials_h.Element)
 register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_ht', MacdonaldPolynomials_ht.Element)
 register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_j',  MacdonaldPolynomials_j.Element)

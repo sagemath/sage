@@ -11,8 +11,7 @@ Base class for polyhedra over `\ZZ`
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
 from sage.rings.all import ZZ, QQ
 from sage.misc.all import cached_method
@@ -21,11 +20,12 @@ from .base_QQ import Polyhedron_QQ
 from sage.arith.all import gcd
 from .constructor import Polyhedron
 from .base import Polyhedron_base
+from sage.misc.superseded import deprecated_function_alias
 
 
 #########################################################################
 class Polyhedron_ZZ(Polyhedron_QQ):
-    """
+    r"""
     Base class for Polyhedra over `\ZZ`
 
     TESTS::
@@ -361,7 +361,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
                 plane._delete()
 
     def find_translation(self, translated_polyhedron):
-        """
+        r"""
         Return the translation vector to ``translated_polyhedron``.
 
         INPUT:
@@ -400,7 +400,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         return v
 
     def _subpoly_parallel_facets(self):
-        """
+        r"""
         Generator for all lattice sub-polyhedra with parallel facets.
 
         In a sub-polyhedron `Y\subset X` not all edges of `Y` need to
@@ -419,7 +419,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
             sage: X = Polyhedron(vertices=[(0,0), (0,1), (1,0), (1,1)])
             sage: X._subpoly_parallel_facets()
-            <generator object _subpoly_parallel_facets at 0x...>
+            <generator object ..._subpoly_parallel_facets at 0x...>
             sage: for p in X._subpoly_parallel_facets():
             ....:     print(p.Vrepresentation())
             (A vertex at (0, 0),)
@@ -468,8 +468,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             yield parent([v, [], []], None)
 
     @cached_method
-    def Minkowski_decompositions(self):
-        """
+    def minkowski_decompositions(self):
+        r"""
         Return all Minkowski sums that add up to the polyhedron.
 
         OUTPUT:
@@ -482,7 +482,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         EXAMPLES::
 
             sage: square = Polyhedron(vertices=[(0,0),(1,0),(0,1),(1,1)])
-            sage: square.Minkowski_decompositions()
+            sage: square.minkowski_decompositions()
             ((A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex,
               A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices),
              (A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices,
@@ -492,7 +492,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
             sage: Q = Polyhedron(vertices=[(4,0), (6,0), (0,3), (4,3)])
             sage: R = Polyhedron(vertices=[(0,0), (5,0), (8,4), (3,2)])
-            sage: (Q+R).Minkowski_decompositions()
+            sage: (Q+R).minkowski_decompositions()
             ((A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex,
               A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 7 vertices),
              (A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices,
@@ -510,13 +510,21 @@ class Polyhedron_ZZ(Polyhedron_QQ):
              (A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices,
               A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 6 vertices))
 
-           sage: [ len(square.dilation(i).Minkowski_decompositions())
+           sage: [ len(square.dilation(i).minkowski_decompositions())
            ....:   for i in range(6) ]
            [1, 2, 5, 8, 13, 18]
            sage: [ ceil((i^2+2*i-1)/2)+1 for i in range(10) ]
            [1, 2, 5, 8, 13, 18, 25, 32, 41, 50]
+
+        TESTS::
+
+            sage: Q = Polyhedron(vertices=[(4,0), (6,0), (0,3), (4,3)])
+            sage: D = Q.Minkowski_decompositions()
+            doctest:warning...:
+            DeprecationWarning: Minkowski_decompositions is deprecated. Please use minkowski_decompositions instead.
+            See http://trac.sagemath.org/23685 for details.
         """
-        if self.dim()>2 or not self.is_compact():
+        if self.dim() > 2 or not self.is_compact():
             raise NotImplementedError('only implemented for bounded polygons')
         summands = []
         def is_known_summand(poly):
@@ -533,7 +541,9 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             Y = self - X
             if X+Y != self:
                 continue
-            decompositions.append((X,Y))
+            decompositions.append((X, Y))
             summands += [X, Y]
         return tuple(decompositions)
 
+    Minkowski_decompositions = deprecated_function_alias(23685,
+                                                         minkowski_decompositions)

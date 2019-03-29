@@ -1,5 +1,5 @@
 """
-Jacobian of a Hyperelliptic curve of Genus 2
+Jacobian of a hyperelliptic curve of genus 2
 """
 from __future__ import absolute_import
 

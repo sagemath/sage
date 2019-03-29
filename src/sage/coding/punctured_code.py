@@ -336,12 +336,6 @@ class PuncturedCode(AbstractLinearCode):
         return C._punctured_form(set(list_pts))
 
 
-
-
-
-
-
-
 class PuncturedCodePuncturedMatrixEncoder(Encoder):
     r"""
     Encoder using original code generator matrix to compute the punctured code's one.
@@ -350,12 +344,13 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
 
     - ``code`` -- The associated code of this encoder.
 
-        EXAMPLES::
-            sage: C = codes.random_linear_code(GF(7), 11, 5)
-            sage: Cp = codes.PuncturedCode(C, 3)
-            sage: E = codes.encoders.PuncturedCodePuncturedMatrixEncoder(Cp)
-            sage: E
-            Punctured matrix-based encoder for the Puncturing of [11, 5] linear code over GF(7) on position(s) [3]
+    EXAMPLES::
+
+        sage: C = codes.random_linear_code(GF(7), 11, 5)
+        sage: Cp = codes.PuncturedCode(C, 3)
+        sage: E = codes.encoders.PuncturedCodePuncturedMatrixEncoder(Cp)
+        sage: E
+        Punctured matrix-based encoder for the Puncturing of [11, 5] linear code over GF(7) on position(s) [3]
     """
 
     def __init__(self, code):

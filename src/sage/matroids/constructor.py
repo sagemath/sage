@@ -107,7 +107,7 @@ from six import itervalues
 from itertools import combinations
 from sage.matrix.constructor import Matrix
 from sage.graphs.all import Graph
-import sage.matrix.matrix
+from sage.structure.element import is_Matrix
 from sage.rings.all import ZZ, QQ
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.matroids.matroid
@@ -312,7 +312,7 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M = Matroid(groundset='abcd', circuits=['abc', 'abd', 'acd',
             ....:                                         'bcd'])
             sage: type(M)
-            <type 'sage.matroids.basis_matroid.BasisMatroid'>
+            <... 'sage.matroids.basis_matroid.BasisMatroid'>
 
         Strange things can happen if the input does not satisfy the circuit
         axioms, and these are not always caught by the
@@ -710,7 +710,7 @@ def Matroid(groundset=None, data=None, **kwds):
     if key is None:
         if isinstance(data, sage.graphs.graph.Graph):
             key = 'graph'
-        elif isinstance(data, sage.matrix.matrix.Matrix):
+        elif is_Matrix(data):
             key = 'matrix'
         elif isinstance(data, sage.matroids.matroid.Matroid):
             key = 'matroid'
@@ -762,7 +762,8 @@ def Matroid(groundset=None, data=None, **kwds):
                 b.discard(I.pop())
         rk = len(b)
         # Construct the basis matroid of appropriate rank. Note: slow!
-        BB = [frozenset(B) for B in combinations(groundset, rk) if not any([frozenset(C).issubset(B) for C in data])]
+        BB = [frozenset(B) for B in combinations(groundset, rk)
+              if not any(frozenset(C).issubset(B) for C in data)]
         M = BasisMatroid(groundset=groundset, bases=BB)
 
     # Graphs:
@@ -809,7 +810,7 @@ def Matroid(groundset=None, data=None, **kwds):
         is_reduced = (key == 'reduced_matrix')
 
         # Fix the representation
-        if not isinstance(A, sage.matrix.matrix.Matrix):
+        if not is_Matrix(A):
             if base_ring is not None:
                 A = Matrix(base_ring, A)
             else:

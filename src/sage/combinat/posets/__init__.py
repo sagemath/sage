@@ -23,7 +23,7 @@ Poset-related classes:
 - :ref:`sage.combinat.interval_posets`
 - :ref:`sage.combinat.shard_order`
 
-If you are looking for Poset-related :ref:`categories
+If you are looking for Poset-related :mod:`categories
 <sage.categories.category>`, see
 :class:`~sage.categories.posets.Posets`,
 :class:`~sage.categories.finite_posets.FinitePosets`,

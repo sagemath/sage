@@ -386,7 +386,7 @@ def ellipsis_iter(*args, step=None):
     step = universe(step)
 
     # this is a bit more complicated because we can't pop what's already been yielded
-    next = None
+    next_ = None
     skip = False
     last_end = None
     # first we handle step_magic (which may require two pops if the range is empty)
@@ -401,7 +401,7 @@ def ellipsis_iter(*args, step=None):
                 yield a
             last_end = a
             skip = True
-            next = None
+            next_ = None
             step_magic += 1
         else:
             yield args[step_magic-2]
@@ -421,10 +421,10 @@ def ellipsis_iter(*args, step=None):
                     yield cur
             start, end = args[i-1], args[i+1]
             if i < 2 or args[i-2] is not Ellipsis:
-                next = None
+                next_ = None
             more = xsrange(start, end, step, coerce=False, include_endpoint=True)
             try:
-                first = more.next()  # BUG: cannot currently use next(more)
+                first = next(more)
                 if last_end != first:
                     yield first
                 for a in more:
@@ -433,11 +433,11 @@ def ellipsis_iter(*args, step=None):
             except StopIteration:
                 last_end = None
             skip = True
-            next = None
+            next_ = None
         else:
-            if next is not None:
-                yield next
-            next = args[i]
+            if next_ is not None:
+                yield next_
+            next_ = args[i]
             last_end = None
 
 
@@ -551,7 +551,7 @@ def ellipsis_range(*args, step=None):
                     L.pop()
                     start = args[i-2]
             more = srange(start, end, step, coerce=False, include_endpoint=True)
-            if len(more) > 0:
+            if more:
                 if last_end == more[0]:
                     L.pop()
                 last_end = more[-1]

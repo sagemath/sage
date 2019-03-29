@@ -270,10 +270,13 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
         """
         vac_num = self._wt[self.index_set()[a]]
 
-        for b in range(self._cartan_matrix.ncols()):
+        for b,nu in enumerate(partitions):
             val = self._cartan_matrix[a,b]
             if val:
-                vac_num -= val * partitions[b].get_num_cells_to_column(i)
+                if i == float('inf'):
+                    vac_num -= val * sum(nu)
+                else:
+                    vac_num -= val * nu.get_num_cells_to_column(i)
 
         return vac_num
 
@@ -358,11 +361,15 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
         ia = I[a]
         vac_num = self._wt[ia]
 
+        if i == float('inf'):
+            return vac_num - sum(self._cartan_matrix[a,b] * sum(nu)
+                                 for b,nu in enumerate(partitions))
+
         gamma = self._folded_ct.scaling_factors()
         g = gamma[ia]
-        for b in range(self._cartan_matrix.ncols()):
+        for b, nu in enumerate(partitions):
             ib = I[b]
-            q = partitions[b].get_num_cells_to_column(g*i, gamma[ib])
+            q = nu.get_num_cells_to_column(g*i, gamma[ib])
             vac_num -= self._cartan_matrix[a,b] * q / gamma[ib]
 
         return vac_num
@@ -438,7 +445,6 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
         n = self._cartan_type.rank()
         partitions = [None] * n
         riggings = [None] * n
-        vac_nums = [None] * n
         vindex = self._folded_ct._folding.index_set()
         for a in range(n):
             index = vindex.index(sigma[a][0])

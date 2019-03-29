@@ -20,6 +20,8 @@
 """
 import six
 from six.moves import cPickle
+from six import text_type
+
 import os
 import sys
 import shutil
@@ -48,7 +50,7 @@ def merge_environment(app, env):
     """
     app.info(bold('Merging environment/index files...'))
     for curdoc in app.env.config.multidocs_subdoc_list:
-        app.info("    %s:"%curdoc, nonl=1)
+        app.info("    %s:" % curdoc, nonl=1)
         docenv = get_env(app, curdoc)
         if docenv is not None:
             fixpath = lambda path: os.path.join(curdoc, path)
@@ -105,6 +107,7 @@ def merge_environment(app, env):
             len(env.domaindata['py']['modules'])))
     write_citations(app, env.domaindata["std"]["citations"])
 
+
 def get_env(app, curdoc):
     """
     Get the environment of a sub-doc from the pickle
@@ -116,11 +119,12 @@ def get_env(app, curdoc):
         f = open(filename, 'rb')
     except IOError:
         app.info("")
-        app.warn("Unable to fetch %s "%filename)
+        app.warn("Unable to fetch %s " % filename)
         return None
     docenv = cPickle.load(f)
     f.close()
     return docenv
+
 
 def merge_js_index(app):
     """
@@ -140,7 +144,7 @@ def merge_js_index(app):
                 newmapping = set(map(fixpath, locs))
                 if ref in mapping:
                     newmapping = mapping[ref] | newmapping
-                mapping[unicode(ref)] = newmapping
+                mapping[text_type(ref)] = newmapping
             # merge the titles
             titles = app.builder.indexer._titles
             for (res, title) in six.iteritems(index._titles):
@@ -159,6 +163,7 @@ def merge_js_index(app):
     app.info(bold('Writing js search indexes...'), nonl=1)
     return [] # no extra page to setup
 
+
 def get_js_index(app, curdoc):
     """
     Get the JS index of a sub-doc from the file
@@ -174,18 +179,20 @@ def get_js_index(app, curdoc):
                                app.config.html_search_options, scoring=None)
     indexfile = os.path.join(app.outdir, curdoc, 'searchindex.js')
     try:
-        f = open(indexfile, 'rb')
+        f = open(indexfile, 'r')
     except IOError:
         app.info("")
-        app.warn("Unable to fetch %s "%indexfile)
+        app.warn("Unable to fetch %s " % indexfile)
         return None
     indexer.load(f, sphinx.search.js_index)
     f.close()
     return indexer
 
 
-mustbefixed = ['search', 'genindex', 'genindex-all'
+mustbefixed = ['search', 'genindex', 'genindex-all',
                'py-modindex', 'searchindex.js']
+
+
 def fix_path_html(app, pagename, templatename, ctx, event_arg):
     """
     Fixes the context so that the files
@@ -231,9 +238,10 @@ def write_citations(app, citations):
     """
     from sage.misc.temporary_file import atomic_write
     outdir = citation_dir(app)
-    with atomic_write(os.path.join(outdir, CITE_FILENAME)) as f:
+    with atomic_write(os.path.join(outdir, CITE_FILENAME), binary=True) as f:
         cPickle.dump(citations, f)
-    app.info("Saved pickle file: %s"%CITE_FILENAME)
+    app.info("Saved pickle file: %s" % CITE_FILENAME)
+
 
 def fetch_citation(app, env):
     """

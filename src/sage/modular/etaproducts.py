@@ -29,7 +29,7 @@ AUTHOR:
 #****************************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import richcmp
+from sage.structure.richcmp import richcmp, richcmp_method, op_EQ, op_NE
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.arith.all import divisors, prime_divisors, is_square, euler_phi, gcd
@@ -397,11 +397,11 @@ class EtaGroupElement(MultiplicativeGroupElement):
         sumR = sumDR = sumNoverDr = 0
         prod = 1
 
-        for d in rdict.keys():
+        for d in rdict:
             if N % d:
                 raise ValueError("%s does not divide %s" % (d, N))
 
-        for d in rdict.keys():
+        for d in list(rdict):
             if rdict[d] == 0:
                 rdict.pop(d)
                 continue
@@ -419,9 +419,9 @@ class EtaGroupElement(MultiplicativeGroupElement):
         if not is_square(prod):
             raise ValueError("product (N/d)^(r_d) (=%s) is not a square" % prod)
 
-        self._sumDR = sumDR # this is useful to have around
+        self._sumDR = sumDR  # this is useful to have around
         self._rdict = rdict
-        self._keys = rdict.keys() # avoid factoring N every time
+        self._keys = list(rdict)  # avoid factoring N every time
 
     def _mul_(self, other):
         r"""
@@ -457,7 +457,7 @@ class EtaGroupElement(MultiplicativeGroupElement):
 
     def _richcmp_(self, other, op):
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         Eta products are compared according to their rdicts.
 
@@ -474,12 +474,16 @@ class EtaGroupElement(MultiplicativeGroupElement):
             sage: EtaProduct(6, {1:-24, 2:24, 3:24, 6:-24}) < EtaProduct(6, {1:-24, 2:24})
             False
         """
-        return richcmp((self.level(), self._rdict),
-                       (other.level(), other._rdict), op)
+        if op in [op_EQ, op_NE]:
+            test = (self.level() == other.level() and
+                    self._rdict == other._rdict)
+            return test == (op == op_EQ)
+        return richcmp((self.level(), sorted(self._rdict.items())),
+                       (other.level(), sorted(other._rdict.items())), op)
 
     def _short_repr(self):
         r"""
-        A short string representation of self, which doesn't specify the
+        A short string representation of ``self``, which does not specify the
         level.
 
         EXAMPLES::
@@ -490,11 +494,12 @@ class EtaGroupElement(MultiplicativeGroupElement):
         if self.degree() == 0:
             return "1"
         else:
-            return " ".join("(eta_%s)^%s" % (d,self.r(d)) for d in self._keys)
+            return " ".join("(eta_%s)^%s" % (d, exp)
+                            for d, exp in sorted(self._rdict.items()))
 
     def _repr_(self):
         r"""
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -556,9 +561,10 @@ class EtaGroupElement(MultiplicativeGroupElement):
         eta_n = max([ (n/d).floor() for d in self._keys if self.r(d) != 0])
         eta = qexp_eta(R, eta_n)
         for d in self._keys:
-            if self.r(d) != 0:
-                pr *= eta(q**d)**self.r(d)
-        return pr*q**(self._sumDR / ZZ(24))*( R(1).add_bigoh(n))
+            rd = self.r(d)
+            if rd:
+                pr *= eta(q ** d) ** ZZ(rd)
+        return pr * q**ZZ(self._sumDR / ZZ(24)) * R(1).add_bigoh(n)
 
     def qexp(self, n):
         """
@@ -576,19 +582,15 @@ class EtaGroupElement(MultiplicativeGroupElement):
 
     def order_at_cusp(self, cusp):
         r"""
-        Return the order of vanishing of self at the given cusp.
+        Return the order of vanishing of ``self`` at the given cusp.
 
         INPUT:
 
-
-        -  ``cusp`` -  a CuspFamily object
-
+        -  ``cusp`` --  a CuspFamily object
 
         OUTPUT:
 
-
         - an integer
-
 
         EXAMPLES::
 
@@ -606,7 +608,7 @@ class EtaGroupElement(MultiplicativeGroupElement):
 
     def divisor(self):
         r"""
-        Return the divisor of self, as a formal sum of CuspFamily objects.
+        Return the divisor of ``self``, as a formal sum of CuspFamily objects.
 
         EXAMPLES::
 
@@ -617,7 +619,8 @@ class EtaGroupElement(MultiplicativeGroupElement):
             sage: e.divisor() # random
             -(c_{2}) - (Inf) - (c_{8,2}) - (c_{8,3}) - (c_{8,4}) - (c_{4,2}) - (c_{8,1}) - (c_{4,1}) + (c_{32,4}) + (c_{32,3}) + (c_{64,1}) + (0) + (c_{32,2}) + (c_{64,2}) + (c_{128}) + (c_{32,1})
         """
-        return FormalSum([ (self.order_at_cusp(c), c) for c in AllCusps(self.level())])
+        return FormalSum([(self.order_at_cusp(c), c)
+                          for c in AllCusps(self.level())])
 
     def degree(self):
         r"""
@@ -632,10 +635,6 @@ class EtaGroupElement(MultiplicativeGroupElement):
             230
         """
         return sum( [self.order_at_cusp(c) for c in AllCusps(self.level()) if self.order_at_cusp(c) > 0])
-
-#     def plot(self):
-#         r""" Returns an error as it's not clear what plotting an eta product means. """
-#         raise NotImplementedError
 
     def r(self, d):
         r"""
@@ -679,6 +678,7 @@ def num_cusps_of_width(N, d):
 
     EXAMPLES::
 
+        sage: from sage.modular.etaproducts import num_cusps_of_width
         sage: [num_cusps_of_width(18,d) for d in divisors(18)]
         [1, 1, 2, 2, 1, 1]
         sage: num_cusps_of_width(4,8)
@@ -727,6 +727,8 @@ def AllCusps(N):
                 c.append(CuspFamily(N, d, label=str(i + 1)))
     return c
 
+
+@richcmp_method
 class CuspFamily(SageObject):
     r"""
     A family of elliptic curves parametrising a region of
@@ -761,6 +763,52 @@ class CuspFamily(SageObject):
             raise ValueError("There is only one cusp of width %s on X_0(%s): no need to specify a label" % (width, N))
         self.label = label
 
+    @property
+    def __tuple(self):
+        """
+        The defining data of this ``CuspFamily`` as tuple, used for
+        comparisons.
+        """
+        return (self._N, self._width, self.label)
+
+    def __richcmp__(self, other, op):
+        """
+        EXAMPLES::
+
+            sage: a = CuspFamily(16, 4, "1"); a
+            (c_{4,1})
+            sage: b = CuspFamily(16, 4, "2"); b
+            (c_{4,2})
+            sage: c = CuspFamily(8, 8); c
+            (0)
+            sage: a == a
+            True
+            sage: a == b
+            False
+            sage: a != b
+            True
+            sage: a == c
+            False
+            sage: a < c
+            False
+            sage: a > c
+            True
+            sage: a != "foo"
+            True
+        """
+        if not isinstance(other, CuspFamily):
+            return NotImplemented
+        return richcmp(self.__tuple, other.__tuple, op)
+
+    def __hash__(self):
+        """
+        EXAMPLES::
+
+            sage: hash(CuspFamily(10, 1))  # random
+            -4769758480201659164
+        """
+        return hash(self.__tuple)
+
     def width(self):
         r"""
         The width of this cusp.
@@ -786,9 +834,8 @@ class CuspFamily(SageObject):
         return self._N
 
     def sage_cusp(self):
-        """
-        Return the corresponding element of
-        `\mathbb{P}^1(\QQ)`.
+        r"""
+        Return the corresponding element of `\mathbb{P}^1(\QQ)`.
 
         EXAMPLES::
 
@@ -813,6 +860,7 @@ class CuspFamily(SageObject):
         else:
             return "(c_{%s%s})" % (self.width(), ((self.label and (","+self.label)) or ""))
 
+
 def qexp_eta(ps_ring, prec):
     r"""
     Return the q-expansion of `\eta(q) / q^{1/24}`, where
@@ -822,15 +870,13 @@ def qexp_eta(ps_ring, prec):
 
         \eta(q) = q^{1/24}\prod_{n=1}^\infty (1-q^n),
 
-
     as an element of ps_ring, to precision prec.
 
     INPUT:
 
-    -  ``ps_ring`` - (PowerSeriesRing): a power series ring
+    -  ``ps_ring`` -- (PowerSeriesRing): a power series ring
 
-    -  ``prec`` - (integer): the number of terms to compute.
-
+    -  ``prec`` -- (integer): the number of terms to compute
 
     OUTPUT: An element of ps_ring which is the q-expansion of
     `\eta(q)/q^{1/24}` truncated to prec terms.
@@ -845,11 +891,13 @@ def qexp_eta(ps_ring, prec):
 
     EXAMPLES::
 
+        sage: from sage.modular.etaproducts import qexp_eta
         sage: qexp_eta(ZZ[['q']], 100)
         1 - q - q^2 + q^5 + q^7 - q^12 - q^15 + q^22 + q^26 - q^35 - q^40 + q^51 + q^57 - q^70 - q^77 + q^92 + O(q^100)
     """
     prec = Integer(prec)
-    assert prec>0, "prec must be a positive integer"
+    if not prec > 0:
+        raise ValueError("prec must be a positive integer")
     v = [Integer(0)] * prec
     pm = Integer(1)
     v[0] = pm
@@ -863,6 +911,7 @@ def qexp_eta(ps_ring, prec):
     except IndexError:
         pass
     return ps_ring(v, prec=prec)
+
 
 def eta_poly_relations(eta_elements, degree, labels=['x1','x2'], verbose=False):
     r"""
@@ -904,6 +953,7 @@ def eta_poly_relations(eta_elements, degree, labels=['x1','x2'], verbose=False):
 
     EXAMPLES::
 
+        sage: from sage.modular.etaproducts import eta_poly_relations
         sage: t = EtaProduct(26, {2:2,13:2,26:-2,1:-2})
         sage: u = EtaProduct(26, {2:4,13:2,26:-4,1:-2})
         sage: eta_poly_relations([t, u], 3)

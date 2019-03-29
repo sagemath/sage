@@ -30,7 +30,6 @@ from sage.rings.all import ZZ, Integer
 from sage.arith.all import binomial
 from .combinat import CombinatorialClass
 from .integer_vector import IntegerVectors
-from sage.misc.misc import uniq
 
 
 def Combinations(mset, k=None):
@@ -209,8 +208,7 @@ class Combinations_mset(CombinatorialClass):
         except TypeError:
             return False
 
-        return all(i in self.mset for i in x) and len(uniq(x)) == len(x)
-
+        return all(i in self.mset for i in x) and len(set(x)) == len(x)
 
     def __repr__(self):
         """
@@ -345,8 +343,8 @@ class Combinations_msetk(CombinatorialClass):
             sage: Combinations(['a','a','b'],2).list() # indirect doctest
             [['a', 'a'], ['a', 'b']]
         """
-        items = map(self.mset.index, self.mset)
-        indices = uniq(sorted(items))
+        items = [self.mset.index(x) for x in self.mset]
+        indices = sorted(set(items))
         counts = [0] * len(indices)
         for i in items:
             counts[indices.index(i)] += 1
@@ -355,8 +353,9 @@ class Combinations_msetk(CombinatorialClass):
 
     def cardinality(self):
         """
-        Returns the size of combinations(mset,k). IMPLEMENTATION: Wraps
-        GAP's NrCombinations.
+        Return the size of combinations(mset,k).
+
+        IMPLEMENTATION: Wraps GAP's NrCombinations.
 
         EXAMPLES::
 
@@ -612,16 +611,16 @@ class ChooseNK(Combinations_setk):
 
         TESTS::
 
-            sage: loads("x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\xd1K\xce\xc8\xcf"
-            ....:   "/N\x8d\xcf\xcb\xe6r\x06\xb3\xfc\xbc\xb9\n\x195\x1b\x0b"
-            ....:   "\x99j\x0b\x995B\x99\xe2\xf3\nY :\x8a2\xf3\xd2\x8b\xf52"
-            ....:   "\xf3JR\xd3S\x8b\xb8r\x13\xb3S\xe3a\x9cB\xd6PF\xd3\xd6\xa0"
-            ....:   "B6\xa0\xfa\xecB\xf6\x0c \xd7\x08\xc8\xe5(M\xd2\x03\x00{"
-            ....:   "\x82$\xd8")
+            sage: loads(b"x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\xd1K\xce\xc8\xcf"
+            ....:   b"/N\x8d\xcf\xcb\xe6r\x06\xb3\xfc\xbc\xb9\n\x195\x1b\x0b"
+            ....:   b"\x99j\x0b\x995B\x99\xe2\xf3\nY :\x8a2\xf3\xd2\x8b\xf52"
+            ....:   b"\xf3JR\xd3S\x8b\xb8r\x13\xb3S\xe3a\x9cB\xd6PF\xd3\xd6\xa0"
+            ....:   b"B6\xa0\xfa\xecB\xf6\x0c \xd7\x08\xc8\xe5(M\xd2\x03\x00{"
+            ....:   b"\x82$\xd8")
             Combinations of [0, 1, 2, 3, 4] of length 2
         """
         self.__class__ = Combinations_setk
         Combinations_setk.__init__(self, list(range(state['_n'])), state['_k'])
 
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.combinat.choose_nk", "ChooseNK", ChooseNK)

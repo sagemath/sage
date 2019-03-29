@@ -447,7 +447,7 @@ class RelativeFiniteFieldExtension(SageObject):
 
     def extension_degree(self):
         r"""
-        Returns `m`, teh extension degree of the absiolute field over
+        Return `m`, the extension degree of the absiolute field over
         the relative field.
 
         EXAMPLES::

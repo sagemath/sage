@@ -7,6 +7,7 @@ Groups
    sage/groups/groups_catalog
    sage/groups/group
    sage/groups/group_homset
+   sage/groups/libgap_morphism
    sage/groups/libgap_wrapper
    sage/groups/libgap_group
    sage/groups/libgap_mixin
@@ -33,6 +34,8 @@ Abelian Groups
    :maxdepth: 2
 
    sage/groups/abelian_gps/abelian_group
+   sage/groups/abelian_gps/abelian_group_gap
+   sage/groups/abelian_gps/abelian_aut
    sage/groups/abelian_gps/values
    sage/groups/abelian_gps/dual_abelian_group
    sage/groups/abelian_gps/element_base
@@ -72,12 +75,21 @@ Matrix and Affine Groups
    sage/groups/matrix_gps/coxeter_group
    sage/groups/matrix_gps/linear
    sage/groups/matrix_gps/orthogonal
+   sage/groups/matrix_gps/isometries
    sage/groups/matrix_gps/symplectic
    sage/groups/matrix_gps/unitary
    sage/groups/matrix_gps/heisenberg
    sage/groups/affine_gps/affine_group
    sage/groups/affine_gps/euclidean_group
    sage/groups/affine_gps/group_element
+
+Lie Groups
+------------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/groups/lie_gps/nilpotent_lie_group
 
 Partition Refinement
 --------------------

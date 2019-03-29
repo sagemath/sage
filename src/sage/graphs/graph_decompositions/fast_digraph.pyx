@@ -19,12 +19,20 @@ from cysignals.memory cimport check_allocarray, check_calloc, sig_free
 
 cdef class FastDigraph:
 
-    def __cinit__(self, D):
+    def __cinit__(self, D, vertex_list=None):
         r"""
         Constructor for ``FastDigraph``.
 
         If the input parameter ``D`` is a Graph, it is handled as a symmetric
         DiGraph.
+
+        INPUT:
+
+        - ``D`` -- a (Di)Graph
+
+        - ``vertex_list`` -- list (default: ``None``); specifies a mapping
+          between `[0..n-1]` and the set of vertices of the input (Di)Graph,
+          ``list(D)`` by default
         """
         if D.order() > 8*sizeof(int):
             raise OverflowError("Too many vertices. This structure can only encode digraphs on at most %i vertices"%(8*sizeof(int)))
@@ -36,11 +44,13 @@ cdef class FastDigraph:
         cdef int tmp
 
         # When the vertices are not consecutive integers
-        cdef dict vertices_to_int = {}
-        self.int_to_vertices = {}
-        for i,v in enumerate(D.vertices()):
-            vertices_to_int[v] = i
-            self.int_to_vertices[i] = v
+        if vertex_list is None:
+            self.int_to_vertices = list(D)
+        elif len(vertex_list) == self.n and not set(vertex_list).symmetric_difference(D):
+            self.int_to_vertices = list(vertex_list)
+        else:
+            raise ValueError("the input vertex_list is incorrect")
+        cdef dict vertices_to_int = {v: i for i, v in enumerate(self.int_to_vertices)}
 
         if D.is_directed():
             for u in D:

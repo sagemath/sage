@@ -150,11 +150,11 @@ def ascii_to_bin(A):
         sage: ascii_to_bin(["A", "b", "c", 1, 2, 3])
         Traceback (most recent call last):
         ...
-        TypeError: sequence item 3: expected string, sage.rings.integer.Integer found
+        TypeError: sequence item 3: expected str..., sage.rings.integer.Integer found
         sage: ascii_to_bin(["Abc", 1, 2, 3])
         Traceback (most recent call last):
         ...
-        TypeError: sequence item 1: expected string, sage.rings.integer.Integer found
+        TypeError: sequence item 1: expected str..., sage.rings.integer.Integer found
     """
     bin = BinaryStrings()
     return bin.encoding("".join(list(A)))
@@ -407,8 +407,9 @@ def carmichael_lambda(n):
     # finish the job
     return lcm(t)
 
+
 def has_blum_prime(lbound, ubound):
-    """
+    r"""
     Determine whether or not there is a Blum prime within the specified closed
     interval.
 

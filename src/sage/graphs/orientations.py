@@ -13,6 +13,7 @@ etc.). It also implements some iterators over all these orientations.
     :delim: |
 
     :meth:`strong_orientations_iterator` | Return an iterator over all strong orientations of a graph `G`
+    :meth:`random_orientation` | Return a random orientation of a graph `G`
 
 
 Authors
@@ -24,10 +25,9 @@ Authors
 Methods
 -------
 """
-
-
-from sage.graphs.spanning_tree import kruskal
+from copy import copy
 from sage.graphs.digraph import DiGraph
+
 
 def strong_orientations_iterator(G):
     r"""
@@ -50,7 +50,7 @@ def strong_orientations_iterator(G):
     Therefore, this function generates all partial orientations of the non-tree
     edges and then launches a helper function corresponding to the generation
     algorithm described in [CGMRV16]_.
-    In order to avoid trivial symetries, the orientation of an arbitrary edge
+    In order to avoid trivial symmetries, the orientation of an arbitrary edge
     is fixed before the start of the enumeration process.
 
     INPUT:
@@ -64,12 +64,12 @@ def strong_orientations_iterator(G):
     .. NOTE::
 
         Works only for simple graphs (no multiple edges).
-        In order to avoid symetries an orientation of an arbitrary edge is fixed.
+        To avoid symmetries an orientation of an arbitrary edge is fixed.
 
 
     EXAMPLES:
 
-    A cycle has one possible (non-symetric) strong orientation::
+    A cycle has one possible (non-symmetric) strong orientation::
 
         sage: g = graphs.CycleGraph(4)
         sage: it = g.strong_orientations_iterator()
@@ -109,7 +109,7 @@ def strong_orientations_iterator(G):
         sage: g = graphs.PetersenGraph()
         sage: nr1 = len(list(g.strong_orientations_iterator()))
         sage: nr2 = g.tutte_polynomial()(0,2)
-        sage: nr1 == nr2/2 # The Tutte polynomial counts also the symetrical orientations
+        sage: nr1 == nr2/2 # The Tutte polynomial counts also the symmetrical orientations
         True
 
     """
@@ -122,13 +122,14 @@ def strong_orientations_iterator(G):
     Dg = DiGraph([G.vertices(), G.edges()], pos=G.get_pos())
 
     # compute an arbitrary spanning tree of the undirected graph
-    te = kruskal(G)
+    te = G.min_spanning_tree()
     treeEdges = [(u,v) for u,v,_ in te]
-    A = [edge for edge in G.edges(labels=False) if edge not in treeEdges]
+    tree_edges_set = set(treeEdges)
+    A = [edge for edge in G.edge_iterator(labels=False) if edge not in tree_edges_set]
 
     # initialization of the first binary word 00...0
     # corresponding to the current orientation of the non-tree edges
-    existingAedges = [0]*len(A)
+    existingAedges = [0] * len(A)
 
     # Make the edges of the spanning tree doubly oriented
     for e in treeEdges:
@@ -155,7 +156,7 @@ def strong_orientations_iterator(G):
             bit += 1
 
         previousWord = word
-        if existingAedges[bit] == 0:
+        if not existingAedges[bit]:
             Dg.reverse_edge(A[bit])
             existingAedges[bit] = 1
         else:
@@ -179,7 +180,9 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
     INPUT:
 
     - ``Dg`` -- the mixed graph. The undirected edges are doubly oriented.
+
     - ``V`` -- the set of vertices
+
     - ``E`` -- the set of undirected edges (they are oriented in both ways);
       No labels are allowed.
 
@@ -188,7 +191,7 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
     - an iterator which will produce all strong orientations of the input
       partially directed graph.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.graphs.orientations import _strong_orientations_of_a_mixed_graph
         sage: g = graphs.CycleGraph(5)
@@ -201,39 +204,97 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
     i = 0
     boundEdges = []
     while i < length:
-        (u,v) = E[i]
-        Dg.delete_edge(u,v)
+        u, v = E[i]
+        Dg.delete_edge(u, v)
         if not (v in Dg.depth_first_search(u)):
             del E[i]
             length -= 1
-            Dg.add_edge((u,v))
-            Dg.delete_edge((v,u))
-            boundEdges.append((v,u))
+            Dg.add_edge(u, v)
+            Dg.delete_edge(v, u)
+            boundEdges.append((v, u))
         else:
-            Dg.add_edge((u,v))
-            Dg.delete_edge((v,u))
+            Dg.add_edge(u, v)
+            Dg.delete_edge(v, u)
             if not (u in Dg.depth_first_search(v)):
                 del E[i]
                 length -= 1
-                boundEdges.append((u,v))
-                Dg.delete_edge(u,v)
+                boundEdges.append((u, v))
+                Dg.delete_edge(u, v)
             else:
                 i += 1
-            Dg.add_edge((v,u))
+            Dg.add_edge(v, u)
 
     # if true the obtained orientation is strong
     if not E:
         yield Dg.copy()
     else:
-        (u,v) = E.pop()
-        Dg.delete_edge((v,u))
+        u, v = E.pop()
+        Dg.delete_edge(v, u)
         for orientation in _strong_orientations_of_a_mixed_graph(Dg, V, E):
             yield orientation
-        Dg.add_edge((v,u))
-        Dg.delete_edge(u,v)
+        Dg.add_edge(v, u)
+        Dg.delete_edge(u, v)
         for orientation in _strong_orientations_of_a_mixed_graph(Dg, V, E):
             yield orientation
-        Dg.add_edge(u,v)
-        E.append((u,v))
+        Dg.add_edge(u, v)
+        E.append((u, v))
     Dg.add_edges(boundEdges)
     E.extend(boundEdges)
+
+
+def random_orientation(G):
+    r"""
+    Return a random orientation of a graph `G`.
+
+    An *orientation* of an undirected graph is a directed graph such that every
+    edge is assigned a direction. Hence there are `2^m` oriented digraphs for a
+    simple graph with `m` edges.
+
+    INPUT:
+
+    - ``G`` -- a Graph.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.orientations import random_orientation
+        sage: G = graphs.PetersenGraph()
+        sage: D = random_orientation(G)
+        sage: D.order() == G.order(), D.size() == G.size()
+        (True, True)
+
+    TESTS:
+
+    Giving anything else than a Graph::
+
+        sage: random_orientation([])
+        Traceback (most recent call last):
+        ...
+        ValueError: the input parameter must be a Graph
+
+    .. SEEALSO::
+
+        - :meth:`~Graph.orientations`
+    """
+    from sage.graphs.graph import Graph
+    if not isinstance(G, Graph):
+        raise ValueError("the input parameter must be a Graph")
+
+    D = DiGraph(data=[G.vertices(), []],
+                format='vertices_and_edges',
+                multiedges=G.allows_multiple_edges(),
+                loops=G.allows_loops(),
+                weighted=G.weighted(),
+                pos=G.get_pos(),
+                name="Random orientation of {}".format(G.name()))
+    if hasattr(G, '_embedding'):
+        D._embedding = copy(G._embedding)
+
+    from sage.misc.prandom import getrandbits
+    rbits = getrandbits(G.size())
+    for u,v,l in G.edge_iterator():
+        if rbits % 2:
+            D.add_edge(u, v, l)
+        else:
+            D.add_edge(v, u, l)
+        rbits >>= 1
+    return D

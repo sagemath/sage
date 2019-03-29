@@ -1,28 +1,8 @@
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 cd src
 
 # Use newer version of config.guess and config.sub (see Trac #19725)
 cp "$SAGE_ROOT"/config/config.* .
 
-./configure --prefix="$SAGE_LOCAL"
-if [ $? -ne 0 ]; then
-   echo "Error configuring lrcalc."
-   exit 1
-fi
-
-$MAKE
-if [ $? -ne 0 ]; then
-   echo "Error building lrcalc."
-   exit 1
-fi
-
-$MAKE install
-if [ $? -ne 0 ]; then
-   echo "Error installing lrcalc."
-   exit 1
-fi
+sdh_configure
+sdh_make
+sdh_make_install

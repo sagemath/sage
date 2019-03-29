@@ -293,20 +293,12 @@ def Watson_mass_at_2(self):
     nu = sum([j * n_dict[j] * (ZZ(n_dict[j] + 1) / ZZ(2) + \
               sum([n_dict[r]  for r in range(j+1, s_max+2)]))  for j in range(s_min+1, s_max+2)])
     q = sum([sgn(nu_dict[j-1] * (n_dict[j] + sgn(nu_dict[j])))  for j in range(s_min+1, s_max+2)])
-    P = prod([ prod([1 - QQ(4)**(-i)  for i in range(1, m_dict[j]+1)])  for j in range(s_min+1, s_max+2)])
+    P = prod([prod([1 - QQ(4)**(-k)  for k in range(1, m_dict[j]+1)]) for j in range(s_min+1, s_max+2)])
     E = prod([ZZ(1)/ZZ(2) * (1 + eps_dict[j] * QQ(2)**(-m_dict[j]))  for j in range(s_min, s_max+3)])
-
-    #print "\nFinal Summary:"
-    #print "nu =", nu
-    #print "q = ", q
-    #print "P = ", P
-    #print "E = ", E
-
 
     ## Step 5: Compute the local mass for the prime 2.
     mass_at_2 = QQ(2)**(nu - q) * P / E
     return mass_at_2
-
 
 
 def Kitaoka_mass_at_2(self):

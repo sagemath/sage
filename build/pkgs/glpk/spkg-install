@@ -1,9 +1,3 @@
-if [ -z "$SAGE_LOCAL" ]; then
-   echo >&2 "SAGE_LOCAL undefined ... exiting";
-   echo >&2 "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 cd src/
 
 # Use newer version of config.guess and config.sub (see Trac #19713)
@@ -26,43 +20,13 @@ cp "$SAGE_ROOT"/config/config.* .
 #          (already the default):
 CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
 
-# Let the user set an environment variable CFLAG64 to indicate the flag
-# for the C compiler to build 64-bit code. If not set, asssume it is -m64
-# as that is what is used by both GCC and SunStudio, but -m64 is not used
-# by IBM's compiler on AIX or HP's compiier on HP-UX
-if [ -z "$CFLAG64" ] ; then
-  CFLAG64=-m64 # -m64 is used by gcc and SunStudio.
-fi
-
-if [ "x$SAGE64" = xyes ] ; then
-   echo "Building a 64-bit version of GLPK"
-   CFLAGS="$CFLAG64 $CFLAGS"
-   LDFLAGS="$CFLAG64 $LDFLAGS"
-   CPPFLAGS="$CFLAG64 $CPPFLAGS"
-   # Very rarly is it needed to add '-m64' to CPPFLAGS,
-   # but potentially it can be.
-fi
-
 export CFLAGS LDFLAGS CPPFLAGS
 
-./configure --prefix=$SAGE_LOCAL --libdir="$SAGE_LOCAL/lib" --with-gmp --disable-static
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring GLPK."
-    exit 1
-fi
-
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building GLPK."
-    exit 1
-fi
+sdh_configure --with-gmp --disable-static
+sdh_make
 
 # Remove old libraries to make sure we can downgrade it if needed.
 # See https://trac.sagemath.org/ticket/23596#comment:4 and later.
 rm -f "$SAGE_LOCAL"/lib/libglpk.*
 
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing GLPK."
-    exit 1
-fi
+sdh_make_install

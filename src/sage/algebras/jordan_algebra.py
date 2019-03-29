@@ -18,11 +18,10 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import AlgebraElement
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.misc.cachefunc import cached_method
-#from sage.misc.lazy_attribute import lazy_attribute
-from sage.rings.all import QQ
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.modules.free_module import FreeModule
 from sage.sets.family import Family
+
 
 class JordanAlgebra(Parent, UniqueRepresentation):
     r"""
@@ -34,7 +33,7 @@ class JordanAlgebra(Parent, UniqueRepresentation):
     - `xy = yx`, and
     - `(xy)(xx) = x(y(xx))` (the Jordan identity).
 
-    See [Ja1971]_, [Ch2012]_, and [McC1978], for example.
+    See [Ja1971]_, [Ch2012]_, and [McC1978]_, for example.
 
     These axioms imply that a Jordan algebra is power-associative and the
     following generalization of Jordan's identity holds [Al1947]_:

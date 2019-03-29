@@ -13,6 +13,7 @@ slopes (and hence a last infinite slope).
 #
 #                  http://www.gnu.org/licenses/
 #############################################################################
+from __future__ import division
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -58,7 +59,7 @@ class NewtonPolygon_element(Element):
         """
         Return a string representation of this Newton polygon.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (2,5) ]); NP
@@ -95,7 +96,7 @@ class NewtonPolygon_element(Element):
         The list of vertices of this Newton polygon (or a copy of it
         if ``copy`` is set to True)
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (2,5) ]); NP
@@ -126,7 +127,7 @@ class NewtonPolygon_element(Element):
         Returns the last (infinite) slope of this Newton polygon
         if it is infinite and ``+Infinity`` otherwise.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP1 = NewtonPolygon([ (0,0), (1,1), (2,8), (3,5) ], last_slope=3)
@@ -137,7 +138,7 @@ class NewtonPolygon_element(Element):
             sage: NP2.last_slope()
             +Infinity
 
-        We check that the last slope of a sum (resp. a produit) is the
+        We check that the last slope of a sum (resp. a product) is the
         minimum of the last slopes of the summands (resp. the factors)::
 
             sage: (NP1 + NP2).last_slope()
@@ -167,7 +168,7 @@ class NewtonPolygon_element(Element):
         If ``repetition`` is True, each slope is repeated a number of
         times equal to its length. Otherwise, it appears only one time.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (3,6) ]); NP
@@ -203,7 +204,7 @@ class NewtonPolygon_element(Element):
 
         The Newton polygon, which is the convex hull of this Newton polygon and ``other``
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP1 = NewtonPolygon([ (0,0), (1,1), (2,6) ]); NP1
@@ -229,12 +230,12 @@ class NewtonPolygon_element(Element):
 
         The Newton polygon, which is the Minkowski sum of this Newton polygon and ``other``.
 
-        NOTE::
+        .. NOTE::
 
             If ``self`` and ``other`` are respective Newton polygons of some polynomials
             `f` and `g` the self*other is the Newton polygon of the product `fg`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP1 = NewtonPolygon([ (0,0), (1,1), (2,6) ]); NP1
@@ -255,7 +256,7 @@ class NewtonPolygon_element(Element):
             sage: NP.slopes()
             [1, 3/2]
         """
-        polyhedron = self._polyhedron.Minkowski_sum(other._polyhedron)
+        polyhedron = self._polyhedron.minkowski_sum(other._polyhedron)
         return self.parent()(polyhedron)
 
     def __pow__(self, exp, ignored=None):
@@ -275,7 +276,7 @@ class NewtonPolygon_element(Element):
             If ``self`` is the Newton polygon of a polynomial `f`, then
             ``self^exp`` is the Newton polygon of `f^{exp}`.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (2,6) ]); NP
@@ -299,7 +300,7 @@ class NewtonPolygon_element(Element):
 
         This Newton polygon shifted by the vector `(0,i)`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (2,6) ]); NP
@@ -323,7 +324,7 @@ class NewtonPolygon_element(Element):
 
         This Newton polygon shifted by the vector `(0,-i)`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (2,6) ]); NP
@@ -347,7 +348,7 @@ class NewtonPolygon_element(Element):
 
         The value of this Newton polygon at abscissa `x`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (3,6) ]); NP
@@ -368,9 +369,10 @@ class NewtonPolygon_element(Element):
             return vertices[-1][1]
         if x > vertices[-1][0]:
             return vertices[-1][1] + lastslope * (x - vertices[-1][0])
-        a = 0; b = len(vertices)
+        a = 0
+        b = len(vertices)
         while b - a > 1:
-            c = floor((a+b)/2)
+            c = (a + b) // 2
             if vertices[c][0] < x:
                 a = c
             else:
@@ -458,7 +460,7 @@ class NewtonPolygon_element(Element):
 
             All usual rendering options (color, thickness, etc.) are available.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (2,6) ])
@@ -482,7 +484,7 @@ class NewtonPolygon_element(Element):
                      + line([(xend+0.5, yend + 0.5*self.last_slope()), (xend+1, yend+self.last_slope())], linestyle="--", **kwargs)
 
     def reverse(self, degree=None):
-        """
+        r"""
         Returns the symmetric of ``self``
 
         INPUT:
@@ -495,7 +497,7 @@ class NewtonPolygon_element(Element):
         The image this Newton polygon under the symmetry
         '(x,y) \mapsto (degree-x, y)`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (2,5) ])
@@ -524,7 +526,7 @@ class NewtonPolygon_element(Element):
 
 
 class ParentNewtonPolygon(Parent, UniqueRepresentation):
-    """
+    r"""
     Construct a Newton polygon.
 
     INPUT:
@@ -676,7 +678,7 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
         return self(Polyhedron(base_ring=self.base_ring(), ambient_dim=2))
 
     def _element_constructor_(self, arg, sort_slopes=True, last_slope=Infinity):
-        """
+        r"""
         INPUT:
 
         - ``arg`` -- an argument describing the Newton polygon

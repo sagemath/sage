@@ -63,7 +63,7 @@ from sage.homology.chain_complex import ChainComplex
 from sage.graphs.graph import Graph
 from sage.arith.all import binomial
 from sage.misc.cachefunc import cached_method
-from sage.misc.decorators import rename_keyword
+
 
 class DeltaComplex(GenericCellComplex):
     r"""
@@ -426,8 +426,7 @@ class DeltaComplex(GenericCellComplex):
         """
         if isinstance(data, (list, tuple)):
             data = dict(zip(range(len(data)), data))
-        else:
-            data = data
+
         # new_dict: dictionary for constructing the subcomplex
         new_dict = {}
         # new_data: dictionary of all cells in the subcomplex: store
@@ -475,12 +474,10 @@ class DeltaComplex(GenericCellComplex):
         r"""
         TESTS::
 
-            sage: hash(delta_complexes.Sphere(2))
-            -789842226           # 32-bit
-            -5090854238868998450 # 64-bit
-            sage: hash(delta_complexes.Sphere(4))
-            376965290           # 32-bit
-            8539734868592429226 # 64-bit
+            sage: hash(delta_complexes.Sphere(2)) == hash(delta_complexes.Sphere(2))
+            True
+            sage: hash(delta_complexes.Sphere(4)) == hash(delta_complexes.Sphere(4))
+            True
         """
         return hash(frozenset(self._cells_dict.items()))
 
@@ -573,7 +570,6 @@ class DeltaComplex(GenericCellComplex):
             cells[-1] = (None,)
         return cells
 
-    @rename_keyword(deprecation=20723, check_diffs='check')
     def chain_complex(self, subcomplex=None, augmented=False,
                       verbose=False, check=False, dimensions=None,
                       base_ring=ZZ, cochain=False):
@@ -1230,7 +1226,7 @@ class DeltaComplex(GenericCellComplex):
 
         *Elementary subdivision* of a simplex means replacing that
         simplex with the cone on its boundary.  That is, given a
-        `\Delta`-complex containing an `d`-simplex `S` with vertices
+        `\Delta`-complex containing a `d`-simplex `S` with vertices
         `v_0`, ..., `v_d`, form a new `\Delta`-complex by
 
         - removing `S`
@@ -1301,7 +1297,11 @@ class DeltaComplex(GenericCellComplex):
             new_cells = {}
             # for each n-cell in the standard simplex, add an
             # (n+1)-cell to the subdivided complex.
-            for simplex in pi[n]:
+            try:
+                simplices = sorted(pi[n])
+            except TypeError:
+                simplices = pi[n]
+            for simplex in simplices:
                 # compute the faces of the new (n+1)-cell.
                 cell = []
                 for i in simplex:
@@ -1361,10 +1361,10 @@ class DeltaComplex(GenericCellComplex):
         to the same place::
 
             sage: T = delta_complexes.Torus()
-            sage: T._epi_from_standard_simplex()[1]
-            {(1, 0): 1, (2, 0): 2, (2, 1): 0}
-            sage: T._epi_from_standard_simplex()[0]
-            {(0,): 0, (1,): 0, (2,): 0}
+            sage: sorted(T._epi_from_standard_simplex()[1].items())
+            [((1, 0), 1), ((2, 0), 2), ((2, 1), 0)]
+            sage: sorted(T._epi_from_standard_simplex()[0].items())
+            [((0,), 0), ((1,), 0), ((2,), 0)]
         """
         if dim is None:
             dim = self.dimension()
@@ -1720,13 +1720,13 @@ class DeltaComplexExamples():
         return DeltaComplex({Simplex(n): True})
 
     def SurfaceOfGenus(self, g, orientable=True):
-        """
+        r"""
         A surface of genus g as a `\Delta`-complex.
 
         :param g: the genus
         :type g: non-negative integer
         :param orientable: whether the surface should be orientable
-        :type orientable: bool, optional, default True
+        :type orientable: bool, optional, default ``True``
 
         In the orientable case, return a sphere if `g` is zero, and
         otherwise return a `g`-fold connected sum of a torus with
@@ -1749,7 +1749,7 @@ class DeltaComplexExamples():
 
             sage: delta_g4 = delta_complexes.SurfaceOfGenus(4)
             sage: delta_g4.f_vector()
-            [1, 5, 33, 22]
+            [1, 3, 27, 18]
             sage: simpl_g4 = simplicial_complexes.SurfaceOfGenus(4)
             sage: simpl_g4.f_vector()
             [1, 19, 75, 50]

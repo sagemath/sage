@@ -1,0 +1,24 @@
+#!/usr/bin/env sage-system-python
+# vim: set filetype=python:
+
+# USAGE:
+#
+#     sage-flock [-s|-x] LOCKFILE COMMAND [...]
+#
+# Obtain an exclusive (-x, default) or shared (-s) lock on LOCKFILE and then
+# exec COMMAND, with remaining arguments passed to COMMAND.
+#
+# This is originally motivated by pip, but has since been generalized.  We
+# should avoid running pip while uninstalling a package because that is prone
+# to race conditions. This script can be used to run pip under a lock.  For
+# details, see https://trac.sagemath.org/ticket/21672
+
+try:
+    import sage_bootstrap
+except ImportError:
+    import os, sys
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+    import sage_bootstrap
+
+from sage_bootstrap.flock import run
+run()

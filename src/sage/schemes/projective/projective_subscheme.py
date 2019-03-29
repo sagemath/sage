@@ -11,14 +11,14 @@ AUTHORS:
 """
 
 #*****************************************************************************
-# Copyright (C) 2005 William Stein <wstein@gmail.com>
-# Copyright (C) 2013 Ben Hutz <bn4941@gmail.com>
-
+#       Copyright (C) 2005 William Stein <wstein@gmail.com>
+#       Copyright (C) 2013 Ben Hutz <bn4941@gmail.com>
 #
-# Distributed under the terms of the GNU General Public License (GPL)
-# as published by the Free Software Foundation; either version 2 of
-# the License, or (at your option) any later version.
-# http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.arith.misc import binomial
@@ -224,15 +224,15 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: U = C.affine_patch(0)
             sage: U
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x0^3*x1 + x1^3 + x0
+              Y^3*Z + Z^3 + Y
             sage: U.embedding_morphism()
             Scheme morphism:
               From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x0^3*x1 + x1^3 + x0
+              Y^3*Z + Z^3 + Y
               To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               X^3*Y + Y^3*Z + X*Z^3
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    (1 : x0 : x1)
+              Defn: Defined on coordinates by sending (Y, Z) to
+                    (1 : Y : Z)
             sage: U.projective_embedding() is U.embedding_morphism()
             True
 
@@ -276,11 +276,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         phi = AA.projective_embedding(i, PP)
         polys = self.defining_polynomials()
         xi = phi.defining_polynomials()
-        U = AA.subscheme([ f(xi) for f in polys ])
-        U._default_embedding_index = i
+        U = AA.subscheme([f(xi) for f in polys])
         phi = U.projective_embedding(i, PP)
-        self.__affine_patches[i] = U
         U._embedding_morphism = phi
+        self.__affine_patches[i] = U
         return U
 
     def _best_affine_patch(self, point):
@@ -359,15 +358,15 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             (0 : -3/2 : 1)
             sage: patch = S.neighborhood(s); patch
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x0 + 3*x1
+              x + 3*z
             sage: patch.embedding_morphism()
             Scheme morphism:
               From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x0 + 3*x1
+              x + 3*z
               To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x + 2*y + 3*z
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    (x0 : -3/2 : x1 + 1)
+              Defn: Defined on coordinates by sending (x, z) to
+                    (x : -3/2 : z + 1)
             sage: patch.embedding_center()
             (0, 0)
             sage: patch.embedding_morphism()([0,0])
@@ -391,11 +390,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             phi[j+1] = phi[j+1] + R.gen(j)
 
         pullback_polys = [f(phi) for f in self.defining_polynomials()]
-        patch = patch_cover.subscheme(pullback_polys)
-        patch_hom = patch.hom(phi,self)
-        patch._embedding_center = patch.point([0]*n)
-        patch._embedding_morphism = patch_hom
-        return patch
+        return patch_cover.subscheme(pullback_polys, embedding_center=[0]*n,
+                                     embedding_codomain=self, embedding_images=phi)
 
     def is_smooth(self, point=None):
         r"""
@@ -599,7 +595,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         return self.orbit(f,[n,n+1])[0]
 
     def _forward_image(self, f, check = True):
-        """
+        r"""
         Compute the forward image of this subscheme by the morphism ``f``.
 
         The forward image is computed through elimination and ``f`` must be
@@ -781,9 +777,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         G = L.groebner_basis() #eliminate
         newL = []
         #get only the elimination ideal portion
-        for i in range (len(G)-1,0,-1):
+        for i in range (len(G) - 1, 0, -1):
             v = G[i].variables()
-            if all([Rvars[j] not in v for j in range(n)]):
+            if all(Rvars[j] not in v for j in range(n)):
                 newL.append(psi(G[i]))
         return(codom.subscheme(newL))
 
@@ -1040,7 +1036,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         the ambient projective space of `X`. The elimination ideal `I = J' \cap K[u_{ij}]`
         is a principal ideal, let `R` be its generator. The Chow form is obtained by
         writing `R` as a polynomial in Plucker coordinates (i.e. bracket polynomials).
-        [DalbecSturmfels].
+        [DalbecSturmfels]_.
 
         OUTPUT: a homogeneous polynomial.
 
@@ -1098,30 +1094,30 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         R = P.coordinate_ring()
         N = P.dimension()+1
         d = self.dimension()
-        #create the ring for the generic linear hyperplanes
+        # create the ring for the generic linear hyperplanes
         # u0x0 + u1x1 + ...
         SS = PolynomialRing(R.base_ring(), 'u', N*(d+1), order='lex')
         vars = SS.variable_names() + R.variable_names()
         S = PolynomialRing(R.base_ring(), vars, order='lex')
         n = S.ngens()
         newcoords = [S.gen(n-N+t) for t in range(N)]
-        #map the generators of the subscheme into the ring with the hyperplane variables
+        # map the generators of the subscheme into the ring with the hyperplane variables
         phi = R.hom(newcoords,S)
         phi(self.defining_polynomials()[0])
-        #create the dim(X)+1 linear hyperplanes
+        # create the dim(X)+1 linear hyperplanes
         l = []
         for i in range(d+1):
             t = 0
             for j in range(N):
                 t += S.gen(N*i + j)*newcoords[j]
             l.append(t)
-        #intersect the hyperplanes with X
+        # intersect the hyperplanes with X
         J = phi(I) + S.ideal(l)
-        #saturate the ideal with respect to the irrelevant ideal
-        J2 = J.saturation(S.ideal([phi(t) for t in R.gens()]))[0]
-        #elimante the original variables to be left with the hyperplane coefficients 'u'
+        # saturate the ideal with respect to the irrelevant ideal
+        J2 = J.saturation(S.ideal([phi(u) for u in R.gens()]))[0]
+        # eliminate the original variables to be left with the hyperplane coefficients 'u'
         E = J2.elimination_ideal(newcoords)
-        #create the plucker coordinates
+        # create the plucker coordinates
         D = binomial(N,N-d-1) #number of plucker coordinates
         tvars = [str('t') + str(i) for i in range(D)] #plucker coordinates
         T = PolynomialRing(R.base_ring(), tvars+list(S.variable_names()), order='lex')
@@ -1132,42 +1128,42 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         for c in M.minors(d+1):
             L.append(T.gen(i)-c)
             i += 1
-        #create the ideal that we can use for eliminating to get a polynomial
-        #in the plucker coordinates (brackets)
+        # create the ideal that we can use for eliminating to get a polynomial
+        # in the plucker coordinates (brackets)
         br = T.ideal(L)
-        #create a mapping into a polynomial ring over the plucker coordinates
-        #and the hyperplane coefficients
-        psi = S.hom(coeffs + [0 for i in range(N)],T)
-        E2 = T.ideal([psi(u) for u in E.gens()] +br)
-        #eliminate the hyperplane coefficients
+        # create a mapping into a polynomial ring over the plucker coordinates
+        # and the hyperplane coefficients
+        psi = S.hom(coeffs + [0 for _ in range(N)], T)
+        E2 = T.ideal([psi(u) for u in E.gens()] + br)
+        # eliminate the hyperplane coefficients
         CH = E2.elimination_ideal(coeffs)
-        #CH should be a principal ideal, but because of the relations among
-        #the plucker coordinates, the elimination will probably have several generators
+        # CH should be a principal ideal, but because of the relations among
+        # the plucker coordinates, the elimination will probably have several generators
 
-        #get the relations among the plucker coordinates
+        # get the relations among the plucker coordinates
         rel = br.elimination_ideal(coeffs)
-        #reduce CH with respect to the relations
+        # reduce CH with respect to the relations
         reduced = []
         for f in CH.gens():
             reduced.append(f.reduce(rel))
-        #find the principal generator
+        # find the principal generator
 
-        #polynomial ring in just the plucker coordinates
+        # polynomial ring in just the plucker coordinates
         T2 = PolynomialRing(R.base_ring(), tvars)
         alp = T.hom(tvars + (N*(d+1) +N)*[0], T2)
-        #get the degrees of the reduced generators of CH
+        # get the degrees of the reduced generators of CH
         degs = [u.degree() for u in reduced]
         mind = max(degs)
-        #need the smallest degree form that did not reduce to 0
+        # need the smallest degree form that did not reduce to 0
         for d in degs:
-            if d < mind and d >0:
+            if d < mind and d > 0:
                 mind = d
         ind = degs.index(mind)
         CF = reduced[ind] #this should be the Chow form of X
-        #check that it is correct (i.e., it is a principal generator for CH + the relations)
+        # check that it is correct (i.e., it is a principal generator for CH + the relations)
         rel2 = rel + [CF]
-        assert all([f in rel2 for f in CH.gens()]), "did not find a principal generator"
-        return(alp(CF))
+        assert all(f in rel2 for f in CH.gens()), "did not find a principal generator"
+        return alp(CF)
 
     def degree(self):
         r"""
@@ -1250,8 +1246,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             ...
             TypeError: the intersection of this subscheme and (=Closed subscheme of Affine Space of dimension 3
             over Rational Field defined by:
-              x1^2 + x2^2 - 2*x0,
-              x0^2 - x2^2) must be proper and finite
+              z^2 + w^2 - 2*y,
+              y^2 - w^2) must be proper and finite
         """
         try:
             self.ambient_space()(P)
@@ -1315,13 +1311,13 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         if not self.base_ring() in Fields():
             raise TypeError("subscheme must be defined over a field")
 
-        # Check whether P is a point on this subscheme
+        # check whether P is a point on this subscheme
         try:
             P = self(P)
         except TypeError:
             raise TypeError("(=%s) is not a point on (=%s)"%(P,self))
 
-        # Find an affine chart of the ambient space of self that contains P
+        # find an affine chart of the ambient space of self that contains P
         i = 0
         while(P[i] == 0):
             i = i + 1

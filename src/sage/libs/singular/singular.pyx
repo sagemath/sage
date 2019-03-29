@@ -38,6 +38,9 @@ from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 from sage.libs.pari.all import pari
 from sage.libs.gmp.all cimport *
 
+from sage.cpython.string import FS_ENCODING
+from sage.cpython.string cimport str_to_bytes, char_to_str
+
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular
 
 _saved_options = (int(0),0,0)
@@ -70,7 +73,7 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
 
     ##  Immediate integers handles carry the tag 'SR_INT', i.e. the last bit is 1.
     ##  This distinguishes immediate integers from other handles which point to
-    ##  structures aligned on 4 byte boundaries and therefor have last bit zero.
+    ##  structures aligned on 4 byte boundaries and therefore have last bit zero.
     ##  (The second bit is reserved as tag to allow extensions of this scheme.)
     ##  Using immediates as pointers and dereferencing them gives address errors.
     nom = nlGetNumerator(n, _ring.cf)
@@ -508,15 +511,14 @@ cdef number *sa2si_NF(object elem, ring *_ring):
     # so we hace to get/create one :
     #
     # todo: reuse qqr/ get an existing Singular polynomial ring over Q.
-    varname = "a"
-    _name = omStrDup(varname)
+    _name = omStrDup("a")
     cdef char **_ext_names
     _ext_names = <char**>omAlloc0(sizeof(char*))
     _ext_names[0] = omStrDup(_name)
     qqr = rDefault( 0, 1, _ext_names);
     rComplete(qqr,1)
     qqr.ShortOut = 0
-    
+
 
     nMapFuncPtr =  naSetMap( qqr.cf , _ring.cf ) # choose correct mapping function
     cdef poly *_p
@@ -605,7 +607,6 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring):
     cdef int64_t _d
     cdef char *_name
     cdef char **_ext_names
-    varname = "a"
 
     cdef nMapFunc nMapFuncPtr = NULL;
 
@@ -620,7 +621,7 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring):
         # create ZZr, a plain polynomial ring over ZZ with one variable.
         #
         # todo (later): reuse ZZr
-        _name = omStrDup(varname)
+        _name = omStrDup("a")
         _ext_names = <char**>omAlloc0(sizeof(char*))
         _ext_names[0] = omStrDup(_name)
         _cf = nInitChar( n_Z, NULL) # integer coefficient ring
@@ -769,12 +770,19 @@ cdef init_libsingular():
     cdef void *handle = NULL
 
     from sage.env import SINGULAR_SO
+    if not SINGULAR_SO or not os.path.exists(SINGULAR_SO):
+        raise RuntimeError(
+            "libSingular not found--a working Singular install in $SAGE_LOCAL "
+            "is required for Sage to work")
+
     lib = SINGULAR_SO
 
     if not os.path.exists(lib):
         raise ImportError("cannot locate Singular library ({})".format(lib))
 
-    handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)   
+    lib = str_to_bytes(lib, FS_ENCODING, "surrogateescape")
+
+    handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
     if not handle:
         err = dlerror()
         raise ImportError("cannot load Singular library ({})".format(err))
@@ -803,5 +811,5 @@ cdef init_libsingular():
 init_libsingular()
 
 cdef void libsingular_error_callback(const_char_ptr s):
-    _s = s
+    _s = char_to_str(s)
     error_messages.append(_s)

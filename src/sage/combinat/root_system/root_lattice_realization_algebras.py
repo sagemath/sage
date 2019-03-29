@@ -872,7 +872,7 @@ class Algebras(AlgebrasCategory):
             return self.basis().keys().classical().algebra(self.base_ring())
 
         def q_project_on_basis(self, l, q):
-            """
+            r"""
             Return the monomial `c * cl(l)`  in the group algebra of the classical lattice.
 
             INPUT:
@@ -900,7 +900,7 @@ class Algebras(AlgebrasCategory):
             return KL0.term(L0(l), q**l["delta"])
 
         def q_project(self, x, q):
-            """
+            r"""
             Implement the `q`-projection morphism from ``self`` to the group algebra of the classical space.
 
             INPUT:
@@ -1092,7 +1092,7 @@ class Algebras(AlgebrasCategory):
                     sage: T = KL.twisted_demazure_lusztig_operators(q1,q2, convention="dominant")
                     sage: T._test_relations()
                     Traceback (most recent call last):
-                    ... tester.assert_(Ti(Ti(x,i,-q2),i,-q1).is_zero()) ...
+                    ... tester.assertTrue(Ti(Ti(x,i,-q2),i,-q1).is_zero()) ...
                     AssertionError: False is not true
 
             Comparison with T0::
@@ -1170,13 +1170,13 @@ class Algebras(AlgebrasCategory):
             TESTS::
 
                 sage: type(p.expand(F.gens()))
-                <type 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <... 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
 
                 sage: p = KL.zero()
                 sage: p.expand(F.gens())
                 0
                 sage: type(p.expand(F.gens()))
-                <type 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <... 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
             """
             codomain = alphabet[0].parent()
             return codomain.sum( c * prod(X**int(n) for X,n in zip(alphabet,vector(m))) for m,c in self)

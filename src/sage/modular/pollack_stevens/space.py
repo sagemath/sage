@@ -127,7 +127,7 @@ class PollackStevensModularSymbols_factory(UniqueFactory):
         sage: M = PollackStevensModularSymbols(Gamma0(7), weight=0, prec_cap = None); M
         Space of modular symbols for Congruence Subgroup Gamma0(7) with sign 0 and values in Sym^0 Q^2
 
-    An example with an explict coefficient module::
+    An example with an explicit coefficient module::
 
         sage: D = OverconvergentDistributions(3, 7, prec_cap=10)
         sage: M = PollackStevensModularSymbols(Gamma0(7), coefficients=D); M
@@ -761,7 +761,8 @@ class PollackStevensModularSymbolspace(Module):
             if (not g in manin.reps_with_two_torsion()) and (not g in manin.reps_with_three_torsion()):
                 t += D[g] * manin.gammas[g] - D[g]
             else:
-                if g in MR.reps_with_two_torsion():  # What is MR ??
+                # this was previously MR.reps_with_two_torsion() but there is no variable MR defined...
+                if g in manin.reps_with_two_torsion():
                     t -= D[g]
                 else:
                     t -= D[g]
@@ -769,7 +770,7 @@ class PollackStevensModularSymbolspace(Module):
         ## If k = 0, then t has total measure zero.  However, this is not true when k != 0
         ## (unlike Prop 5.1 of [PS1] this is not a lift of classical symbol).
         ## So instead we simply add (const)*mu_1 to some (non-torsion) v[j] to fix this
-        ## here since (mu_1 |_k ([a,b,c,d]-1))(trival char) = chi(a) k a^{k-1} c ,
+        ## here since (mu_1 |_k ([a,b,c,d]-1))(trivial char) = chi(a) k a^{k-1} c ,
         ## we take the constant to be minus the total measure of t divided by (chi(a) k a^{k-1} c)
 
         if k != 0:

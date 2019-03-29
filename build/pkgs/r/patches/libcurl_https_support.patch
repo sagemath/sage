@@ -1,7 +1,7 @@
-From 51f02b03837fa5f25f892d5735daa000242599b1 Mon Sep 17 00:00:00 2001
+From 996ded767d76952d9aae596219f8fb1b9469ef57 Mon Sep 17 00:00:00 2001
 From: Emmanuel Charpentier <emm.charpentier@free.fr>
-Date: Fri, 13 Oct 2017 07:13:15 +0200
-Subject: [PATCH 4/8] libcurl_https_support
+Date: Wed, 14 Mar 2018 19:30:37 +0100
+Subject: [PATCH 4/9] libcurl_https_support
 
 Don't check for HTTPS support in libcurl; see https://trac.sagemath.org/ticket/20523
 
@@ -11,10 +11,10 @@ Don't check for HTTPS support in libcurl; see https://trac.sagemath.org/ticket/2
  2 files changed, 3 insertions(+), 63 deletions(-)
 
 diff --git a/configure b/configure
-index 776fbbe..3a096b6 100755
+index fadb84e..02e210e 100755
 --- a/configure
 +++ b/configure
-@@ -41047,47 +41047,6 @@ if test "x${r_cv_have_curl722}" = xno; then
+@@ -41069,47 +41069,6 @@ if test "x${r_cv_have_curl722}" = xno; then
    have_libcurl=no
  fi
  
@@ -62,7 +62,7 @@ index 776fbbe..3a096b6 100755
  if test "x${have_libcurl}" = xyes; then
  
  $as_echo "#define HAVE_LIBCURL 1" >>confdefs.h
-@@ -41097,7 +41056,7 @@ $as_echo "#define HAVE_LIBCURL 1" >>confdefs.h
+@@ -41119,7 +41078,7 @@ $as_echo "#define HAVE_LIBCURL 1" >>confdefs.h
  
  
  else
@@ -72,7 +72,7 @@ index 776fbbe..3a096b6 100755
  
  
 diff --git a/m4/R.m4 b/m4/R.m4
-index 6c60c60..bc34d82 100644
+index 3fe8b27..fb35a5f 100644
 --- a/m4/R.m4
 +++ b/m4/R.m4
 @@ -4205,33 +4205,14 @@ if test "x${r_cv_have_curl722}" = xno; then
@@ -112,5 +112,5 @@ index 6c60c60..bc34d82 100644
  ])# R_LIBCURL
  
 -- 
-2.14.2
+2.16.1
 

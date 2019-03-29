@@ -267,7 +267,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             True
         """
         if not isinstance(other, GaussianMixtureDistribution):
-            raise NotImplemented
+            return NotImplemented
         return PyObject_RichCompare(self.__reduce__()[1],
                                     other.__reduce__()[1], op)
 

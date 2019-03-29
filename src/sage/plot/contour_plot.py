@@ -178,12 +178,10 @@ class ContourPlot(GraphicPrimitive):
         if fill:
             if contours is None:
                 CSF = subplot.contourf(self.xy_data_array, cmap=cmap,
-                                       extent=(x0, x1, y0, y1),
-                                       label=options['legend_label'])
+                                       extent=(x0, x1, y0, y1))
             else:
                 CSF = subplot.contourf(self.xy_data_array, contours, cmap=cmap,
-                                       extent=(x0, x1, y0, y1), extend='both',
-                                       label=options['legend_label'])
+                                       extent=(x0, x1, y0, y1), extend='both')
 
         linewidths = options.get('linewidths', None)
         if isinstance(linewidths, (int, Integer)):
@@ -200,13 +198,11 @@ class ContourPlot(GraphicPrimitive):
         if contours is None:
             CS = subplot.contour(self.xy_data_array, cmap=cmap,
                                  extent=(x0, x1, y0, y1),
-                                 linewidths=linewidths, linestyles=linestyles,
-                                 label=options['legend_label'])
+                                 linewidths=linewidths, linestyles=linestyles)
         else:
             CS = subplot.contour(self.xy_data_array, contours, cmap=cmap,
                                  extent=(x0, x1, y0, y1),
-                                 linewidths=linewidths, linestyles=linestyles,
-                                 label=options['legend_label'])
+                                 linewidths=linewidths, linestyles=linestyles)
         if options.get('labels', False):
             label_options = options['label_options']
             label_options['fontsize'] = int(label_options['fontsize'])

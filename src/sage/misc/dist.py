@@ -106,7 +106,7 @@ def install_scripts(directory=None, ignore_existing=False):
     # cmd is available outside of Sage.
     PATH = os.environ['PATH'].split(os.pathsep)
     PATH = [d for d in PATH if os.path.exists(d)]
-    dir_in_path = any([os.path.samefile(directory, d) for d in PATH])
+    dir_in_path = any(os.path.samefile(directory, d) for d in PATH)
     PATH = os.pathsep.join([d for d in PATH if not
                             os.path.samefile(d, SAGE_BIN)])
     for cmd in ['gap', 'gp', 'hg', 'ipython', 'maxima',

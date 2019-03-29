@@ -54,6 +54,7 @@ Lists and Iteration, etc.
    sage/misc/multireplace
    sage/misc/map_threaded
    sage/arith/srange
+   sage/misc/element_with_label
 
 File and OS Access
 ~~~~~~~~~~~~~~~~~~
@@ -233,6 +234,14 @@ Distribution
 
    sage/misc/package
    sage/misc/dist
+   sage/features
+   sage/features/bliss
+   sage/features/csdp
+   sage/features/databases
+   sage/features/fes
+   sage/features/gap
+   sage/features/graph_generators
+   sage/features/lrs
 
 Credits
 ~~~~~~~

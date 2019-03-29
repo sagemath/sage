@@ -199,21 +199,26 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         '__main__'
 
         sage: Foo.__bases__
-        (<... 'object'>,)
-        sage: FooBar.__bases__
-        (<... 'object'>, <class __main__.Bar at ...>)
+        (<type 'object'>,)
+        sage: FooBar.__bases__  # py2
+        (<type 'object'>, <class __main__.Bar at ...>)
+        sage: FooBar.__bases__  # py3
+        (<class '__main__.Bar'>,)
         sage: Foo.mro()
-        [<class '__main__.Foo'>, <... 'object'>]
-        sage: FooBar.mro()
-        [<class '__main__.FooBar'>, <... 'object'>, <class __main__.Bar at ...>]
+        [<class '__main__.Foo'>, <type 'object'>]
+        sage: FooBar.mro()  # py2
+        [<class '__main__.FooBar'>, <type 'object'>, <class __main__.Bar at ...>]
+        sage: FooBar.mro()  # py3
+        [<class '__main__.FooBar'>, <class '__main__.Bar'>, <class 'object'>]
 
-    If all the base classes are extension types, the dynamic class is
-    also considered to be an extension type (see :trac:`23435`)::
+    If all the base classes have a zero ``__dictoffset__``, the dynamic
+    class also has a zero ``__dictoffset__``. This means that the
+    instances of the class don't have a ``__dict__``
+    (see :trac:`23435`)::
 
         sage: dyn = dynamic_class("dyn", (Integer,))
-        sage: from sage.structure.misc import is_extension_type
-        sage: is_extension_type(dyn)
-        True
+        sage: dyn.__dictoffset__
+        0
 
     .. RUBRIC:: Pickling
 
@@ -221,8 +226,10 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     unpickling, the class will be reconstructed by recalling
     dynamic_class with the same arguments::
 
-        sage: type(FooBar).__reduce__(FooBar)
+        sage: type(FooBar).__reduce__(FooBar)  # py2
         (<function dynamic_class at ...>, ('FooBar', (<class __main__.Bar at ...>,), <class '__main__.Foo'>, None, None))
+        sage: type(FooBar).__reduce__(FooBar)  # py3
+        (<function dynamic_class at ...>, ('FooBar', (<class '__main__.Bar'>,), <class '__main__.Foo'>, None, None))
 
     Technically, this is achieved by using a metaclass, since the
     Python pickling protocol for classes is to pickle by name::
@@ -235,7 +242,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
 
         sage: BarFoo = dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (3,)))
         sage: type(BarFoo).__reduce__(BarFoo)
-        (<... 'str'>, (3,))
+        (<type 'str'>, (3,))
         sage: loads(dumps(BarFoo))
         '3'
 
@@ -277,7 +284,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     first class::
 
         sage: dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (2,)), cache="ignore_reduction")._reduction
-        (<... 'str'>, (3,))
+        (<type 'str'>, (3,))
 
     .. WARNING::
 
@@ -296,8 +303,10 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         sage: x.__dict__      # Breaks without the __dict__ deletion in dynamic_class_internal
         {'_x': 3}
 
-        sage: type(FooBar).__reduce__(FooBar)
+        sage: type(FooBar).__reduce__(FooBar)  # py2
         (<function dynamic_class at ...>, ('FooBar', (<class __main__.Bar at ...>,), <class '__main__.Foo'>, None, None))
+        sage: type(FooBar).__reduce__(FooBar)  # py3
+        (<function dynamic_class at ...>, ('FooBar', (<class '__main__.Bar'>,), <class '__main__.Foo'>, None, None))
         sage: from six.moves import cPickle
         sage: cPickle.loads(cPickle.dumps(FooBar)) == FooBar
         True
@@ -396,7 +405,13 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
         if "__dict__" in methods:
             methods.__delitem__("__dict__")
         if prepend_cls_bases:
-            bases = cls.__bases__ + bases
+            cls_bases = cls.__bases__
+            all_bases = set()
+            for base in bases:
+                if isinstance(base, type):
+                    all_bases.update(base.mro())
+            cls_bases = tuple(b for b in cls_bases if b not in all_bases)
+            bases = cls_bases + bases
     else:
         methods = {}
     if doccls is None:
@@ -417,7 +432,7 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
     # NOTE: we need the isinstance(b, type) check to exclude old-style
     # classes.
     if all(isinstance(b, type) and not b.__dictoffset__ for b in bases):
-        methods['__slots__'] = []
+        methods['__slots__'] = ()
 
     metaclass = DynamicMetaclass
     # The metaclass of a class must derive from the metaclasses of its
@@ -481,9 +496,12 @@ class DynamicMetaclass(type):
             sage: class Foo: pass
             sage: class DocClass: pass
             sage: C = sage.structure.dynamic_class.dynamic_class_internal("bla", (object,), Foo, doccls = DocClass)
-            sage: type(C).__reduce__(C)
+            sage: type(C).__reduce__(C)  # py2
             (<function dynamic_class at ...>,
-             ('bla', (<... 'object'>,), <class __main__.Foo at ...>, None, <class __main__.DocClass at ...>))
+             ('bla', (<type 'object'>,), <class __main__.Foo at ...>, None, <class __main__.DocClass at ...>))
+            sage: type(C).__reduce__(C)  # py3
+            (<function dynamic_class at ...>,
+             ('bla', (<type 'object'>,), <class '__main__.Foo'>, None, <class '__main__.DocClass'>))
             sage: C = sage.structure.dynamic_class.dynamic_class_internal("bla", (object,), Foo, doccls = DocClass, reduction = "blah")
             sage: type(C).__reduce__(C)
             'blah'

@@ -1,5 +1,5 @@
 """
-Ambient Spaces
+Ambient spaces
 """
 
 #*****************************************************************************
@@ -69,19 +69,6 @@ class AmbientSpace(Scheme):
     #######################################################################
     # Derived classes must overload all of the following functions
     #######################################################################
-    def __cmp__(self, right):
-        """
-        TESTS::
-
-            sage: from sage.schemes.generic.ambient_space import AmbientSpace
-            sage: A = AmbientSpace(5, ZZ)
-            sage: A.__cmp__(ProjectiveSpace(2, QQ))
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        raise NotImplementedError
-
     def _latex_(self):
         """
         TESTS::

@@ -10,9 +10,9 @@
 #ifndef _SAGE_PYNAC_WRAP_H
 #define _SAGE_PYNAC_WRAP_H
 
-#include "ccobject.h"
 #include <pynac/ginac.h>
 #include <pynac/extern_templates.h>
+#include <sstream>
 #include <string>
 
 using namespace GiNaC;

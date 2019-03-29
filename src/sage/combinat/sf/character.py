@@ -1,4 +1,4 @@
-"""
+r"""
 Characters of the symmetric group as bases of the symmetric functions
 
 Just as the Schur functions are the irreducible characters of `Gl_n`
@@ -118,21 +118,56 @@ class generic_character(SFA_generic):
             sexpr -= sexpr.coefficient(mup) * self._self_to_other_on_basis(mup)
         return out
 
+    def _b_power_k(self, k):
+        r"""
+        An expression involving Moebius inversion in the powersum generators.
 
-class character_basis(generic_character):
+        For a positive value of ``k``, this expression is
+
+        .. MATH::
+
+            \frac{1}{k} \sum_{d|k} \mu(d/k) p_d.
+
+        INPUT:
+
+        - ``k`` -- a positive integer
+
+        OUTPUT:
+
+        - an expression in the powersum basis of the symmetric functions
+
+        EXAMPLES::
+
+            sage: st = SymmetricFunctions(QQ).st()
+            sage: st._b_power_k(1)
+            p[1]
+            sage: st._b_power_k(2)
+            -1/2*p[1] + 1/2*p[2]
+            sage: st._b_power_k(6)
+            1/6*p[1] - 1/6*p[2] - 1/6*p[3] + 1/6*p[6]
+
+        """
+        if k == 1:
+            return self._p([1])
+        if k > 0:
+            return ~k * self._p.linear_combination((self._p([d]),moebius(k//d))
+                                    for d in divisors(k))
+
+
+class induced_trivial_character_basis(generic_character):
     r"""
-    General code for a character basis (irreducible and induced trivial).
+    The induced trivial symmetric group character basis of
+    the symmetric functions.
 
     This is a basis of the symmetric functions that has the
     property that ``self(la).character_to_frobenius_image(n)``
-    is equal to ``other([n-sum(la)]+la)``.
+    is equal to ``h([n-sum(la)]+la)``.
 
-    It should also have the property that the (outer) structure
+    It has the property that the (outer) structure
     constants are the analogue of the stable Kronecker
-    coefficients on the ``other`` basis (where ``other`` is either the
-    Schur or homogeneous bases).
+    coefficients on the complete basis.
 
-    These bases are introduced in [OZ2015]_.
+    This basis is introduced in [OZ2015]_.
 
     EXAMPLES::
 
@@ -165,8 +200,12 @@ class character_basis(generic_character):
         st[1] + st[1, 1] + st[2] + st[2, 1] + st[3]
         sage: s[4,2].kronecker_product(s[5,1])
         s[3, 2, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2] + s[5, 1]
+
+    TESTS::
+
+        sage: TestSuite(ht).run()
     """
-    def __init__(self, Sym, other_basis, bname, pfix):
+    def __init__(self, Sym, pfix):
         r"""
         Initialize the basis and register coercions.
 
@@ -175,35 +214,115 @@ class character_basis(generic_character):
         INPUT:
 
         - ``Sym`` -- an instance of the symmetric function algebra
-        - ``other_basis`` -- a basis of Sym
-        - ``bname`` -- the name for this basis (convention: ends in "character")
         - ``pfix`` -- a prefix to use for the basis
 
         EXAMPLES::
 
             sage: Sym = SymmetricFunctions(QQ)
             sage: ht = SymmetricFunctions(QQ).ht(); ht
-            Symmetric Functions over Rational Field in the induced trivial character basis
-            sage: st = SymmetricFunctions(QQ).st(); st
-            Symmetric Functions over Rational Field in the irreducible symmetric group character basis
-            sage: TestSuite(ht).run()
+            Symmetric Functions over Rational Field in the induced trivial
+             symmetric group character basis
         """
-        SFA_generic.__init__(self, Sym, basis_name=bname, prefix=pfix, graded=False)
-        self._other = other_basis
-        self.module_morphism(self._self_to_other_on_basis,
-                             codomain=self._other).register_as_coercion()
+        SFA_generic.__init__(self, Sym,
+                             basis_name="induced trivial symmetric group character",
+                             prefix=pfix, graded=False)
+        self._other = Sym.complete()
+        self._p = Sym.powersum()
+
+        self.module_morphism(self._self_to_power_on_basis,
+                             codomain=Sym.powersum()).register_as_coercion()
+        from sage.categories.morphism import SetMorphism
         self.register_coercion(SetMorphism(Hom(self._other, self),
                                            self._other_to_self))
 
-    @cached_method
-    def _self_to_other_on_basis(self, lam):
+    def _b_bar_power_k_r(self, k, r):
         r"""
-        Convert a character-basis element to the ``self._other`` basis.
+        An expression involving Moebius inversion in the powersum generators.
 
-        This is a recursive procedure that is calculated
-        by the assumption that the leading term of ``self(lam)``
-        is ``other(lam)`` and
-        ``evalsf(self(lam),n) == other([n-sum(lam)]+lam)``.
+        For a positive value of ``k``, this expression is
+
+        .. MATH::
+
+            \sum_{j=0}^r (-1)^{r-j}k^j\binom{r,j}
+            \left( \frac{1}{k} \sum_{d|k} \mu(d/k) p_d \right)_k.
+
+        INPUT:
+
+        - ``k``, ``r`` -- positive integers
+
+        OUTPUT:
+
+        - an expression in the powersum basis of the symmetric functions
+
+        EXAMPLES::
+
+            sage: ht = SymmetricFunctions(QQ).ht()
+            sage: ht._b_bar_power_k_r(1,1)
+            p[1]
+            sage: ht._b_bar_power_k_r(2,2)
+            2*p[1] + p[1, 1] - 2*p[2] - 2*p[2, 1] + p[2, 2]
+            sage: ht._b_bar_power_k_r(3,2)
+            3*p[1] + p[1, 1] - 3*p[3] - 2*p[3, 1] + p[3, 3]
+
+        """
+        p = self._p
+        return k**r * p.prod( self._b_power_k(k)-j for j in range(r) )
+
+    def _b_bar_power_gamma(self, gamma):
+        r"""
+        An expression involving Moebius inversion in the powersum generators.
+
+        For a partition `\gamma = (1^{m_1}, 2^{m_2}, \ldots, r^{m_r})`,
+        this expression is
+
+        .. MATH::
+
+            {\mathbf p}_{\ga} = \sum_{k \geq 1} {\mathbf p}_{k^{m_k}},
+
+        where
+
+        .. MATH::
+
+            {\mathbf p}_{k^r} = \sum_{j=0}^r (-1)^{r-j}k^j\binom{r,j}
+            \left( \frac{1}{k} \sum_{d|k} \mu(d/k) p_d \right)_k.
+
+        INPUT:
+
+        - ``gamma`` -- a partition
+
+        OUTPUT:
+
+        - an expression in the powersum basis of the symmetric functions
+
+        EXAMPLES::
+
+            sage: ht = SymmetricFunctions(QQ).ht()
+            sage: ht._b_bar_power_gamma(Partition([2,2,1]))
+            2*p[1, 1] + p[1, 1, 1] - 2*p[2, 1] - 2*p[2, 1, 1] + p[2, 2, 1]
+            sage: ht._b_bar_power_gamma(Partition([1,1,1]))
+            2*p[1] - 3*p[1, 1] + p[1, 1, 1]
+            sage: ht._b_bar_power_gamma(Partition([3,3,1]))
+            3*p[1, 1] + p[1, 1, 1] - 3*p[3, 1] - 2*p[3, 1, 1] + p[3, 3, 1]
+
+        """
+        return self._p.prod( self._b_bar_power_k_r(Integer(k),Integer(r))
+                             for (k,r) in six.iteritems(gamma.to_exp_dict()) )
+
+    def _self_to_power_on_basis(self, lam):
+        r"""
+        An expansion of the induced trivial character in the powersum basis.
+
+        The formula for the induced trivial character basis indexed by the
+        partition ``lam`` is given by the formula
+
+        .. MATH::
+
+            \sum_{\gamma} \left\langle h_\lambda, p_\gamma \right\rangle
+            \frac{{\overline {\mathbf p}}_\gamma}{z_\gamma},
+
+        where `{\overline {\mathbf p}}_\gamma` is the
+        power sum expression calculated in the method
+        :meth:`_b_bar_power_gamma`.
 
         INPUT:
 
@@ -211,7 +330,35 @@ class character_basis(generic_character):
 
         OUTPUT:
 
-        - an expression in the ``self._other`` basis
+        - an expression in the power sum basis
+
+        EXAMPLES::
+
+            sage: ht = SymmetricFunctions(QQ).ht()
+            sage: ht._self_to_power_on_basis([2,1])
+            p[1] - 2*p[1, 1] + 1/2*p[1, 1, 1] + 1/2*p[2, 1]
+            sage: ht._self_to_power_on_basis([1,1,1])
+            2*p[1] - 3*p[1, 1] + p[1, 1, 1]
+
+        """
+        return self._p.sum( c*self._b_bar_power_gamma(ga)
+                            for (ga, c) in self._p(self._other(lam)) )
+
+    @cached_method
+    def _self_to_other_on_basis(self, lam):
+        r"""
+        An expansion of the induced trivial character basis in complete basis.
+
+        Compute the complete expansion by first computing it in the
+        powersum basis and the coercing to the complete basis.
+
+        INPUT:
+
+        - ``lam`` -- a partition
+
+        OUTPUT:
+
+        - an expression in the complete (other) basis
 
         EXAMPLES::
 
@@ -219,9 +366,6 @@ class character_basis(generic_character):
             sage: ht = SymmetricFunctions(QQ).ht()
             sage: ht._self_to_other_on_basis(Partition([2,1]))
             h[1] - 2*h[1, 1] + h[2, 1]
-            sage: st = SymmetricFunctions(QQ).st()
-            sage: st._self_to_other_on_basis(Partition([2,1]))
-            3*s[1] - 2*s[1, 1] - 2*s[2] + s[2, 1]
 
         TESTS::
 
@@ -237,12 +381,8 @@ class character_basis(generic_character):
             sage: all(h(st(h[la])) == h[la] for i in range(5) for la in Partitions(i))
             True
         """
-        if not lam:
-            return self._other([])
-        n = sum(lam) + lam[0]
-        sim = self._other(self._other(lam).character_to_frobenius_image(n))
-        return self._other(lam) - sum(c*self._self_to_other_on_basis(Partition(mu[1:]))
-                                      for (mu,c) in sim if mu[1:] != lam)
+        return self._other(self._self_to_power_on_basis(lam))
+
 
 class irreducible_character_basis(generic_character):
     r"""
@@ -254,9 +394,8 @@ class irreducible_character_basis(generic_character):
     is equal to ``s([n-sum(la)]+la)``.
 
     It should also have the property that the (outer) structure
-    constants are the analogue of the stable kronecker
-    coefficients on the Schur basis (where ``other`` is either the
-    Schur or homogeneous bases).
+    constants are the analogue of the stable Kronecker
+    coefficients on the Schur basis.
 
     This basis is introduced in [OZ2015]_.
 
@@ -306,7 +445,7 @@ class irreducible_character_basis(generic_character):
             sage: Sym = SymmetricFunctions(QQ)
             sage: ht = SymmetricFunctions(QQ).ht(); ht
             Symmetric Functions over Rational Field in the induced trivial
-             character basis
+             symmetric group character basis
             sage: st = SymmetricFunctions(QQ).st(); st
             Symmetric Functions over Rational Field in the irreducible
              symmetric group character basis
@@ -323,44 +462,9 @@ class irreducible_character_basis(generic_character):
         self.register_coercion(SetMorphism(Hom(self._other, self),
                                            self._other_to_self))
 
-    def _b_power_k(self, k):
-        r"""
-        An expression involving moebius inversion in the powersum generators.
-
-        For a positive value of ``k``, this expression is
-
-        .. MATH::
-
-            \frac{1}{k} \sum_{d|k} \mu(d/k) p_d.
-
-        INPUT:
-
-        - ``k`` -- a positive integer
-
-        OUTPUT:
-
-        - an expression in the powersum basis of the symmetric functions
-
-        EXAMPLES::
-
-            sage: st = SymmetricFunctions(QQ).st()
-            sage: st._b_power_k(1)
-            p[1]
-            sage: st._b_power_k(2)
-            -1/2*p[1] + 1/2*p[2]
-            sage: st._b_power_k(6)
-            1/6*p[1] - 1/6*p[2] - 1/6*p[3] + 1/6*p[6]
-
-        """
-        if k == 1:
-            return self._p([1])
-        if k > 0:
-            return ~k * self._p.sum(moebius(k/d)*self._p([d])
-                                    for d in divisors(k))
-
     def _b_power_k_r(self, k, r):
         r"""
-        An expression involving moebius inversion in the powersum generators.
+        An expression involving Moebius inversion in the powersum generators.
 
         For a positive value of ``k``, this expression is
 
@@ -395,9 +499,9 @@ class irreducible_character_basis(generic_character):
 
     def _b_power_gamma(self, gamma):
         r"""
-        An expression involving moebius inversion in the powersum generators.
+        An expression involving Moebius inversion in the powersum generators.
 
-        For a partition `\gamma = (1^{m_1}, 2^{m_2}, \ldots r^{m_r})`,
+        For a partition `\gamma = (1^{m_1}, 2^{m_2}, \ldots, r^{m_r})`,
         this expression is
 
         .. MATH::
@@ -409,7 +513,7 @@ class irreducible_character_basis(generic_character):
         .. MATH::
 
             {\mathbf p}_{k^r} = \sum_{j=0}^r (-1)^{r-j}k^j\binom{r,j}
-            \left( \frac{1}{k} \sum_{d|k} \mu(d/k) p_d \right)_k~.
+            \left( \frac{1}{k} \sum_{d|k} \mu(d/k) p_d \right)_k.
 
         INPUT:
 
@@ -422,12 +526,12 @@ class irreducible_character_basis(generic_character):
         EXAMPLES::
 
             sage: st = SymmetricFunctions(QQ).st()
-            sage: st._b_power_k_r(1,1)
-            -p[] + p[1]
-            sage: st._b_power_k_r(2,2)
+            sage: st._b_power_gamma(Partition([2,2]))
             p[] + 4*p[1] + p[1, 1] - 4*p[2] - 2*p[2, 1] + p[2, 2]
-            sage: st._b_power_k_r(3,2)
-            p[] + 5*p[1] + p[1, 1] - 5*p[3] - 2*p[3, 1] + p[3, 3]
+            sage: st._b_power_gamma(Partition([1,1,1]))
+            -p[] + 8*p[1] - 6*p[1, 1] + p[1, 1, 1]
+            sage: st._b_power_gamma(Partition([3,1]))
+            p[] - p[1, 1] - p[3] + p[3, 1]
 
         """
         return self._p.prod( self._b_power_k_r(Integer(k),Integer(r))

@@ -25,3 +25,5 @@ Differentiable Manifolds
    multivector
 
    sage/manifolds/differentiable/affine_connection
+
+   sage/manifolds/differentiable/differentiable_submanifold

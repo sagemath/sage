@@ -33,7 +33,6 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.graphs.digraph import DiGraph
-import sage.graphs.linearextensions
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.structure.list_clone import ClonableArray
@@ -112,10 +111,15 @@ class LinearExtensionOfPoset(ClonableArray):
             Finite poset containing 4 elements
             sage: TestSuite(p).run()
 
+        TESTS::
+
             sage: LinearExtensionOfPoset([4,3,2,1], P)
             Traceback (most recent call last):
             ...
             ValueError: [4, 3, 2, 1] is not a linear extension of Finite poset containing 4 elements
+
+            sage: p is LinearExtensionOfPoset(p, P)
+            True
         """
         if isinstance(linear_extension, cls):
             return linear_extension
@@ -213,6 +217,40 @@ class LinearExtensionOfPoset(ClonableArray):
         relabelling = dict(zip(old,new))
         return P.relabel(relabelling).with_linear_extension(new)
 
+    def is_greedy(self):
+        r"""
+        Return ``True`` if the linear extension is greedy.
+
+        A linear extension `[e_1, e_2, \ldots, e_n]` is *greedy* if for
+        every `i` either `e_{i+1}` covers `e_i` or all upper covers
+        of `e_i` have at least one lower cover that is not in
+        `[e_1, e_2, \ldots, e_i]`.
+
+        Informally said a linear extension is greedy if it "always
+        goes up when possible" and so has no unnecessary jumps.
+
+        EXAMPLES::
+
+            sage: P = posets.PentagonPoset()
+            sage: for l in P.linear_extensions():
+            ....:     if not l.is_greedy():
+            ....:         print(l)
+            [0, 2, 1, 3, 4]
+
+        TESTS::
+
+            sage: E = Poset()
+            sage: E.linear_extensions()[0].is_greedy()
+            True
+        """
+        P = self.poset()
+        for i in range(len(self)-1):
+            if not P.covers(self[i], self[i+1]):
+                for u in P.upper_covers(self[i]):
+                    if all(l in self[:i+1] for l in P.lower_covers(u)):
+                        return False
+        return True
+
     def tau(self, i):
         r"""
         Returns the operator `\tau_i` on linear extensions ``self`` of a poset.
@@ -240,18 +278,18 @@ class LinearExtensionOfPoset(ClonableArray):
             1 [1, 2, 3, 4] [2, 1, 3, 4]
             2 [1, 2, 3, 4] [1, 2, 3, 4]
             3 [1, 2, 3, 4] [1, 2, 4, 3]
-            1 [1, 2, 4, 3] [2, 1, 4, 3]
-            2 [1, 2, 4, 3] [1, 4, 2, 3]
-            3 [1, 2, 4, 3] [1, 2, 3, 4]
-            1 [1, 4, 2, 3] [1, 4, 2, 3]
-            2 [1, 4, 2, 3] [1, 2, 4, 3]
-            3 [1, 4, 2, 3] [1, 4, 2, 3]
             1 [2, 1, 3, 4] [1, 2, 3, 4]
             2 [2, 1, 3, 4] [2, 1, 3, 4]
             3 [2, 1, 3, 4] [2, 1, 4, 3]
             1 [2, 1, 4, 3] [1, 2, 4, 3]
             2 [2, 1, 4, 3] [2, 1, 4, 3]
             3 [2, 1, 4, 3] [2, 1, 3, 4]
+            1 [1, 4, 2, 3] [1, 4, 2, 3]
+            2 [1, 4, 2, 3] [1, 2, 4, 3]
+            3 [1, 4, 2, 3] [1, 4, 2, 3]
+            1 [1, 2, 4, 3] [2, 1, 4, 3]
+            2 [1, 2, 4, 3] [1, 4, 2, 3]
+            3 [1, 2, 4, 3] [1, 2, 3, 4]
 
         TESTS::
 
@@ -325,6 +363,48 @@ class LinearExtensionOfPoset(ClonableArray):
                 self = self.tau(j)
         return self
 
+    def jump_count(self):
+        r"""
+        Return the number of jumps in the linear extension.
+
+        A *jump* in a linear extension `[e_1, e_2, \ldots, e_n]`
+        is a pair `(e_i, e_{i+1})` such that `e_{i+1}` does not
+        cover `e_i`.
+
+        .. SEEALSO::
+
+            - :meth:`sage.combinat.posets.posets.FinitePoset.jump_number()`
+
+        EXAMPLES::
+
+            sage: B3 = posets.BooleanLattice(3)
+            sage: l1 = B3.linear_extension((0, 1, 2, 3, 4, 5, 6, 7))
+            sage: l1.jump_count()
+            3
+            sage: l2 = B3.linear_extension((0, 1, 2, 4, 3, 5, 6, 7))
+            sage: l2.jump_count()
+            5
+
+        TESTS::
+
+            sage: E = Poset()
+            sage: E.linear_extensions()[0].jump_count()
+            0
+            sage: C4 = posets.ChainPoset(4)
+            sage: C4.linear_extensions()[0].jump_count()
+            0
+            sage: A4 = posets.AntichainPoset(4)
+            sage: A4.linear_extensions()[0].jump_count()
+            3
+        """
+        P = self.poset()
+        n = 0
+        for i in range(len(self)-1):
+            if not P.covers(self[i], self[i+1]):
+                n += 1
+        return n
+
+
 class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
     """
     The set of all linear extensions of a finite poset
@@ -349,7 +429,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         sage: L.cardinality()
         5
         sage: L.list()
-        [[1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3], [2, 1, 3, 4], [2, 1, 4, 3]]
+        [[1, 2, 3, 4], [2, 1, 3, 4], [2, 1, 4, 3], [1, 4, 2, 3], [1, 2, 4, 3]]
         sage: L.an_element()
         [1, 2, 3, 4]
         sage: L.poset()
@@ -384,8 +464,6 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             True
             sage: L._poset is P
             True
-            sage: L._linear_extensions_of_hasse_diagram
-            Linear extensions of Hasse diagram of a poset containing 3 elements
             sage: TestSuite(L).run()
 
             sage: P = Poset((divisors(15), attrcall("divides")))
@@ -400,7 +478,6 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: TestSuite(L).run(skip="_test_an_element")
         """
         self._poset = poset
-        self._linear_extensions_of_hasse_diagram = sage.graphs.linearextensions.LinearExtensions(poset._hasse_diagram)
         self._is_facade = facade
         if facade:
             facade = (list,)
@@ -527,10 +604,11 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: P = Poset((elms, rels), linear_extension=True)
             sage: L = P.linear_extensions()
             sage: list(L)
-            [[1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3], [2, 1, 3, 4], [2, 1, 4, 3]]
+            [[1, 2, 3, 4], [2, 1, 3, 4], [2, 1, 4, 3], [1, 4, 2, 3], [1, 2, 4, 3]]
         """
+        from sage.combinat.combinat_cython import linear_extension_iterator
         vertex_to_element = self._poset._vertex_to_element
-        for lin_ext in self._linear_extensions_of_hasse_diagram:
+        for lin_ext in linear_extension_iterator(self._poset._hasse_diagram):
             yield self._element_constructor_([vertex_to_element(_) for _ in lin_ext])
 
     def __contains__(self, obj):
@@ -642,18 +720,19 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: G = L.markov_chain_digraph(labeling = 'source'); G
             Looped multi-digraph on 5 vertices
         """
-        d = dict([x,dict([y,[]] for y in self)] for x in self)
+        L = sorted(self)
+        d = dict([x,dict([y,[]] for y in L)] for x in L)
         if action == 'promotion':
             R = list(range(self.poset().cardinality()))
         else:
             R = list(range(self.poset().cardinality() - 1))
         if labeling == 'source':
-            for x in self:
+            for x in L:
                 for i in R:
                     child = getattr(x, action)(i+1)
                     d[x][child]+=[self.poset().unwrap(x[i])]
         else:
-            for x in self:
+            for x in L:
                 for i in R:
                     child = getattr(x, action)(i+1)
                     d[x][child]+=[i+1]
@@ -714,7 +793,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.matrix.constructor import matrix
-        L = self.list()
+        L = sorted(self.list())
         n = self.poset().cardinality()
         R = PolynomialRing(QQ, 'x', n)
         x = [R.gen(i) for i in range(n)]

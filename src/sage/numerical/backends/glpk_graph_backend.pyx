@@ -72,6 +72,8 @@ from __future__ import absolute_import, print_function
 
 from cysignals.memory cimport check_allocarray, sig_free
 
+from sage.cpython.string cimport str_to_bytes, char_to_str
+from sage.cpython.string import FS_ENCODING
 from sage.libs.glpk.constants cimport *
 from sage.libs.glpk.graph cimport *
 from sage.numerical.mip import MIPSolverException
@@ -207,8 +209,8 @@ cdef class GLPKGraphBackend(object):
         self.s = 1
         self.t = 1
 
-        if isinstance(data,str):
-            fname = data
+        if isinstance(data, str):
+            fname = str_to_bytes(data, FS_ENCODING, 'surrogateescape')
             res = 0
             if format == "plain":
                 res = glp_read_graph(self.graph, fname)
@@ -229,7 +231,7 @@ cdef class GLPKGraphBackend(object):
         else:
             ValueError("Input data is not supported")
 
-    cpdef add_vertex(self, char * name = NULL):
+    cpdef add_vertex(self, name=None):
         """
         Adds an isolated vertex to the graph.
 
@@ -237,7 +239,7 @@ cdef class GLPKGraphBackend(object):
 
         INPUT:
 
-        - ``name`` -- ``String`` of max 255 chars length. If no name is
+        - ``name`` -- ``str`` of max 255 chars length. If no name is
            specified, then the vertex will be represented by the string
            representation of the ID of the vertex or - if this already exists -
            a string representation of the least integer not already representing
@@ -260,31 +262,28 @@ cdef class GLPKGraphBackend(object):
         """
         cdef int n
         cdef vn_t = 0
-        cdef char* c_name
 
-        if name is not NULL and self._find_vertex(name) >= 0:
-                return None
+        if name is not None and self._find_vertex(name) >= 0:
+            return None
 
         cdef int vn = glp_add_vertices(self.graph, 1)
 
-        if name is not NULL:
-            glp_set_vertex_name(self.graph, vn, name)
+        if name is not None:
+            glp_set_vertex_name(self.graph, vn, str_to_bytes(name))
             return None
 
         else:
-            s = str(vn-1)
-            c_name = s
-            n = self._find_vertex(c_name)
+            s = str(vn - 1)
+            n = self._find_vertex(s)
 
             # This is costly, but hopefully will not happen often.
             while n >= 0:
                 vn_t += 1
-                s = str(vn_t-1)
-                c_name = s
-                n = self._find_vertex(c_name)
+                s = str(vn_t - 1)
+                n = self._find_vertex(s)
 
-            glp_set_vertex_name(self.graph, vn, c_name)
-            return c_name
+            glp_set_vertex_name(self.graph, vn, str_to_bytes(s))
+            return s
 
     cpdef __add_vertices_sage(self, g):
         """
@@ -307,7 +306,6 @@ cdef class GLPKGraphBackend(object):
         cdef int i
         cdef double rhs
         cdef glp_vertex* vert
-        cdef char* name
 
         verts = g.vertices()
         n = len(verts)
@@ -319,8 +317,7 @@ cdef class GLPKGraphBackend(object):
         for i in range(n):
             vert = self.graph.v[i+1]
             s = str(verts[i])
-            name = s
-            glp_set_vertex_name(self.graph, i+1, name)
+            glp_set_vertex_name(self.graph, i + 1, str_to_bytes(s))
 
             if g.get_vertex(verts[i]) is not None:
                 try:
@@ -382,7 +379,7 @@ cdef class GLPKGraphBackend(object):
         else:
             return None
 
-    cpdef set_vertex_demand(self, char* vertex, demand):
+    cpdef set_vertex_demand(self, vertex, demand):
         """
         Sets the demand of the vertex in a mincost flow algorithm.
 
@@ -447,7 +444,7 @@ cdef class GLPKGraphBackend(object):
             except KeyError:
                 pass
 
-    cpdef dict get_vertex(self, char* vertex):
+    cpdef dict get_vertex(self, vertex):
         """
         Returns a specific vertex as a ``dict`` Object.
 
@@ -551,10 +548,11 @@ cdef class GLPKGraphBackend(object):
             ['A', 'B', 'C']
         """
 
-        return [self.graph.v[i+1].name if self.graph.v[i+1].name is not NULL
-                else None for i in range(self.graph.nv)]
+        return [char_to_str(self.graph.v[i+1].name)
+                if self.graph.v[i+1].name is not NULL else None
+                for i in range(self.graph.nv)]
 
-    cpdef add_edge(self, char* u, char* v, dict params=None):
+    cpdef add_edge(self, u, v, dict params=None):
         """
         Adds an edge between vertices ``u`` and ``v``.
 
@@ -626,7 +624,7 @@ cdef class GLPKGraphBackend(object):
 
         - ``edges`` -- An iterable container of pairs of the form ``(u, v)``,
           where ``u`` is name (as ``str``) of the tail vertex and ``v`` is the
-          name (as ``str``) of the head vertex or an interable container of
+          name (as ``str``) of the head vertex or an iterable container of
           triples of the form ``(u, v, params)`` where params is a ``dict`` as
           described in ``add_edge``.
 
@@ -680,11 +678,11 @@ cdef class GLPKGraphBackend(object):
         cdef double low
         cdef int isdirected = g.is_directed()
 
-        for (eu,ev,label) in g.edges():
+        for eu, ev, label in g.edges():
             u_name = str(eu)
             v_name = str(ev)
-            u = glp_find_vertex(self.graph, u_name)
-            v = glp_find_vertex(self.graph, v_name)
+            u = glp_find_vertex(self.graph, str_to_bytes(u_name))
+            v = glp_find_vertex(self.graph, str_to_bytes(v_name))
             if u < 1 or v < 1:
                 raise IndexError(u_name + " or " + v_name + " not found")
 
@@ -711,7 +709,7 @@ cdef class GLPKGraphBackend(object):
                     if "low" in label:
                         (<c_a_data *>a.data).low = low
 
-    cpdef tuple get_edge(self, char* u, char* v):
+    cpdef tuple get_edge(self, u, v):
         """
         Returns an edge connecting two vertices.
 
@@ -802,11 +800,11 @@ cdef class GLPKGraphBackend(object):
                 if vert_u.name is NULL:
                     u_name = None
                 else:
-                    u_name = vert_u.name
+                    u_name = char_to_str(vert_u.name)
                 if vert_v.name is NULL:
                     v_name = None
                 else:
-                    v_name = vert_v.name
+                    v_name = char_to_str(vert_v.name)
                 edge_list.append((u_name, v_name,
                               {"low":(<c_a_data *>a.data).low,
                                "cap":(<c_a_data *>a.data).cap,
@@ -816,7 +814,7 @@ cdef class GLPKGraphBackend(object):
             i += 1
         return edge_list
 
-    cpdef delete_vertex(self, char* vert):
+    cpdef delete_vertex(self, vert):
         r"""
         Removes a vertex from the graph.
 
@@ -896,7 +894,7 @@ cdef class GLPKGraphBackend(object):
 
         sig_free(num)
 
-    cpdef delete_edge(self, char* u, char* v, dict params=None):
+    cpdef delete_edge(self, u, v, dict params=None):
         """
         Deletes an edge from the graph.
 
@@ -1008,7 +1006,7 @@ cdef class GLPKGraphBackend(object):
         for edge in edges:
             self.delete_edge(*edge)
 
-    cpdef int _find_vertex(self, char *name):
+    cpdef int _find_vertex(self, name):
         """
         Returns the index of a vertex specified by a name
 
@@ -1033,9 +1031,9 @@ cdef class GLPKGraphBackend(object):
         """
 
         glp_create_v_index(self.graph)
-        return glp_find_vertex(self.graph, name) - 1
+        return glp_find_vertex(self.graph, str_to_bytes(name)) - 1
 
-    cpdef int write_graph(self, char * fname):
+    cpdef int write_graph(self, fname):
         r"""
         Writes the graph to a plain text file
 
@@ -1058,9 +1056,10 @@ cdef class GLPKGraphBackend(object):
             0
         """
 
+        fname = str_to_bytes(fname, FS_ENCODING, 'surrogateescape')
         return glp_write_graph(self.graph, fname)
 
-    cpdef int write_ccdata(self, char * fname):
+    cpdef int write_ccdata(self, fname):
         r"""
         Writes the graph to a text file in DIMACS format.
 
@@ -1087,9 +1086,10 @@ cdef class GLPKGraphBackend(object):
             0
         """
 
+        fname = str_to_bytes(fname, FS_ENCODING, 'surrogateescape')
         return glp_write_ccdata(self.graph, 0, fname)
 
-    cpdef int write_mincost(self, char * fname):
+    cpdef int write_mincost(self, fname):
         """
         Writes the mincost flow problem data to a text file in DIMACS format
 
@@ -1112,6 +1112,7 @@ cdef class GLPKGraphBackend(object):
             0
         """
 
+        fname = str_to_bytes(fname, FS_ENCODING, 'surrogateescape')
         return glp_write_mincost(self.graph, 0, 0, sizeof(double),
                    sizeof(double) + sizeof(double), fname)
 
@@ -1142,7 +1143,7 @@ cdef class GLPKGraphBackend(object):
             sage: v_dict = {}
             sage: for i, v in enumerate(vs):
             ....:     v_dict[v] = vertices[i]
-            sage: gbe.set_vertices_demand(v_dict.items())
+            sage: gbe.set_vertices_demand(list(v_dict.items()))
             sage: cost = ((8, 6, 10, 9), (9, 12, 13, 7), (14, 9, 16, 5))
 
             sage: for i in range(len(cost)):
@@ -1185,7 +1186,7 @@ cdef class GLPKGraphBackend(object):
 
         return graph_sol
 
-    cpdef int write_maxflow(self, char * fname) except -1:
+    cpdef int write_maxflow(self, fname) except -1:
         """
         Writes the maximum flow problem data to a text file in DIMACS format.
 
@@ -1220,6 +1221,7 @@ cdef class GLPKGraphBackend(object):
         if self.graph.nv <= 0:
             raise IOError("Cannot write empty graph")
 
+        fname = str_to_bytes(fname, FS_ENCODING, 'surrogateescape')
         return glp_write_maxflow(self.graph, self.s+1, self.t+1,
                    sizeof(double), fname)
 

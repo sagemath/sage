@@ -1045,7 +1045,7 @@ class ParkingFunction_class(CombinatorialObject):
             sage: ParkingFunction([4,3,1,1]).ides()
             [3]
         """
-        return self.diagonal_reading_word().inverse().descents(from_zero=False)
+        return self.diagonal_reading_word().inverse().descents()
 
     def touch_points(self):
         r"""

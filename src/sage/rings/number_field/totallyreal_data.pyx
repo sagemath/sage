@@ -315,8 +315,8 @@ cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
 
         rts = RRx(fcoeff).roots()
 
-        if len(rts) > 0:
-            rts = [rts[i][0] for i in range(len(rts))]
+        if rts:
+            rts = [rtsi[0] for rtsi in rts]
             z4minmax = [min(rts + z4minmax), max(rts + z4minmax)]
 
     if not z4minmax:
@@ -820,7 +820,7 @@ cdef class tr_data:
                     elif k == n-5 and phc:
                         # New bounds using phc/Lagrange multiplier in degree 4.
                         bminmax = __lagrange_bounds_phc(n, 4, [self.a[i] for i from 0 <= i <= n])
-                        if len(bminmax) > 0:
+                        if bminmax:
                             self.b_lower = bminmax[0]
                             self.b_upper = bminmax[1]
                         else:

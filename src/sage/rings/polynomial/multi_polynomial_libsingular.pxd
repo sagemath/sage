@@ -1,7 +1,7 @@
 from sage.libs.singular.decl cimport poly, ring
 
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial
-from sage.rings.polynomial.multi_polynomial_ring_generic cimport MPolynomialRing_generic
+from sage.rings.polynomial.multi_polynomial_ring_base cimport MPolynomialRing_base
 
 cdef class MPolynomialRing_libsingular
 
@@ -17,7 +17,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
     cpdef MPolynomial_libsingular _new_constant_poly(self, x, MPolynomialRing_libsingular P)
     cpdef long number_of_terms(self)
 
-cdef class MPolynomialRing_libsingular(MPolynomialRing_generic):
+cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
     cdef object __singular
     cdef object __macaulay2
     cdef object __m2_set_ring_cache

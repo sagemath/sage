@@ -1,0 +1,6 @@
+This directory contains all the example code from the book
+"Computational Mathematics with SageMath" by Paul Zimmermann et al,
+freely available from http://sagebook.gforge.inria.fr/english.html
+
+Each file corresponds to a chapter of the book.
+The directory "sol" contains the code for Annex A: answers to exercises

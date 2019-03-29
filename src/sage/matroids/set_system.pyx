@@ -600,7 +600,7 @@ cdef class SetSystem:
         partition ``P``, and while ``P`` has a partition element ``p`` with
         more than one element, select an arbitrary ``e`` from the first such
         ``p`` and split ``p`` into ``p-e``. Then replace ``P`` with
-        the equitabele refinement of this partition.
+        the equitable refinement of this partition.
 
         INPUT:
 
@@ -777,7 +777,7 @@ cdef class SetSystemIterator:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: type(S.__iter__())
-            <type 'sage.matroids.set_system.SetSystemIterator'>
+            <... 'sage.matroids.set_system.SetSystemIterator'>
         """
         self._H = H
         self._pointer = -1
