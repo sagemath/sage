@@ -159,7 +159,7 @@ def construct_phi(matrices):
     def get_immutable(M):
         M.set_immutable()
         return M
-    
+
     phi = set(get_immutable(M.apply_map(lambda m: min(m, 2))) for M in matrices)
     for counter in range(1000000):
         phi.update([get_immutable(multiply_reduce(A, B)) for A in matrices for B in phi])
