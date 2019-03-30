@@ -437,75 +437,79 @@ def k_regular_sequence_is_bounded(S):
         might change without a formal deprecation.
         See http://trac.sagemath.org/21202 for details.
         sage: TM = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [1, 0]])],
-        ....: left=vector([1, 0]), right=vector([0, 1]))
+        ....:            left=vector([1, 0]), right=vector([0, 1]))
         sage: k_regular_sequence_is_bounded(TM)
         True
 
     Binary Sum of Digits::
 
         sage: SD = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])],
-        ....: left=vector([0, 1]), right=vector([1, 0]))
+        ....:           left=vector([0, 1]), right=vector([1, 0]))
         sage: k_regular_sequence_is_bounded(SD)
         False
 
     Sequence of All Natural Numbers::
 
         sage: N = Seq2([Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])],
-        ....: left=vector([1, 0]), right=vector([0, 1]))
+        ....:          left=vector([1, 0]), right=vector([0, 1]))
         sage: k_regular_sequence_is_bounded(N)
         False
 
     Indicator Function of Even Integers::
 
         sage: E = Seq2([Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])],
-        ....: left=vector([1, 0]), right=vector([1, 1]))
+        ....:          left=vector([1, 0]), right=vector([1, 1]))
         sage: k_regular_sequence_is_bounded(E)
         True
 
     Indicator Function of Odd Integers::
 
         sage: O = Seq2([Matrix([[0, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])],
-        ....: left=vector([1, 0]), right=vector([0, 1]))
+        ....:          left=vector([1, 0]), right=vector([0, 1]))
         sage: k_regular_sequence_is_bounded(O)
         True
 
     Number of Odd Entries in Pascal's Triangle::
 
         sage: U = Seq2([Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])],
-        ....: left=vector([0, 1]), right=vector([1, 0]), transpose=True)
+        ....:          left=vector([0, 1]), right=vector([1, 0]), transpose=True)
         sage: k_regular_sequence_is_bounded(U)
         False
 
     Counting '10' in the Binary Representation::
 
-        sage: C = Seq2([Matrix([[0, 1, 0, 0], [0, 0, 0, 1], [-1, 0, 1, 1],
-        ....: [0, 0, 0, 1]]), Matrix([[0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 1, 0],
-        ....: [-1, 0, 1, 1]])], left=vector([1, 0, 0, 0]),
-        ....: right=vector([0, 0, 1, 0]))
+        sage: C = Seq2([Matrix([[0, 1, 0, 0], [0, 0, 0, 1],
+        ....:                   [-1, 0, 1, 1], [0, 0, 0, 1]]),
+        ....:           Matrix([[0, 0, 1, 0], [0, 1, 0, 0],
+        ....:                   [0, 0, 1, 0], [-1, 0, 1, 1]])],
+        ....:                  left=vector([1, 0, 0, 0]),
+        ....:                  right=vector([0, 0, 1, 0]))
         sage: k_regular_sequence_is_bounded(C)
         False
 
     Numbers Starting with '10'::
 
-        sage: D = Seq2([Matrix([[0, 1, 0, 0], [0, 0, 1, 0], [0, -2, 3, 0],
-        ....: [0, -2, 2, 1]]), Matrix([[2, 0, 0, 0], [0, 0, 0, 1],
-        ....: [0, 2, 0, 1], [0, -2, 0, 3]])], left=vector([1, 0, 0, 0]),
-        ....: right=vector([2, 2, 2, 5]))
+        sage: D = Seq2([Matrix([[0, 1, 0, 0], [0, 0, 1, 0],
+        ....:                   [0, -2, 3, 0], [0, -2, 2, 1]]),
+        ....:           Matrix([[2, 0, 0, 0], [0, 0, 0, 1],
+        ....:                   [0, 2, 0, 1], [0, -2, 0, 3]])],
+        ....:                  left=vector([1, 0, 0, 0]),
+        ....:                  right=vector([2, 2, 2, 5]))
         sage: k_regular_sequence_is_bounded(D)
         False
 
     Signum Function::
 
         sage: S = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])],
-        ....: left=vector([1, 0]), right=vector([0, 1]))
+        ....:          left=vector([1, 0]), right=vector([0, 1]))
         sage: k_regular_sequence_is_bounded(S)
         True
 
     Number of Digits from the Right to the First '1'::
 
         sage: S = Seq2([Matrix([[0, 1, 0], [-1, 2, 0], [0, 0, 1]]),
-        ....: Matrix([[0, 0, 1], [0, 0, 2], [0, 0, 1]])],
-        ....: left=vector([1, 0, 0]), right=vector([0, 0, 1]))
+        ....:           Matrix([[0, 0, 1], [0, 0, 2], [0, 0, 1]])],
+        ....:          left=vector([1, 0, 0]), right=vector([0, 0, 1]))
         sage: k_regular_sequence_is_bounded(S)
         False
 
