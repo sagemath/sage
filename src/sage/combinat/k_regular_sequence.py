@@ -1003,15 +1003,6 @@ class kRegularSequence(RecognizableSeries):
             ....:           Matrix([[0, 0, 1], [0, 0, 2], [0, 0, 1]])],
             ....:          left=vector([1, 0, 0]), right=vector([0, 0, 1]))
             sage: S.is_bounded()
-            Traceback (most recent call last):
-            ...
-            RuntimeError: It is not decidable with this implementation whether the
-            sequence is bounded or not.
-
-        Find another Representation or a Sequence which is equivalent in Boundedness::
-
-            sage: S1 = S.subsequence(a = 1, b = 1)
-            sage: S1.is_bounded()
             False
 
         .. SEEALSO::
