@@ -323,7 +323,8 @@ def has_bounded_matrix_powers(matrices):
     EXAMPLES:
 
     Maximum of the absolute value of the eigenvalues `=1`,
-    multiplicities okay::
+    algebraic multiplicity equals geometric multiplicity
+    for all eigenvalues with absolute value `=1`::
 
         sage: from sage.combinat.k_regular_sequence_bounded import has_bounded_matrix_powers
         sage: matrices = [Matrix([[-1, 1, 1], [-1, 1, 1], [1, -1, 1]]),
@@ -338,7 +339,7 @@ def has_bounded_matrix_powers(matrices):
         False
 
     Maximum of the absolute value of the eigenvalues `=1`,
-    multiplicities different::
+    algebraic and geometric multiplicities different for eigenvalue `1`::
 
         max(abs(eigenvalues)) > 1:
         max(abs(eigenvalues)) = 1, multiplicities different:
