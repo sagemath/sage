@@ -341,7 +341,7 @@ def has_bounded_matrix_powers(matrices):
     Maximum of the absolute value of the eigenvalues `=1`,
     algebraic and geometric multiplicities different for eigenvalue `1`::
 
-        sage: matrices = [Matrix([[0,1],[1,1]])]
+        sage: matrices = [Matrix([[1,1],[0,1]])]
         sage: has_bounded_matrix_powers(matrices)
         False
 
