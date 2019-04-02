@@ -1122,13 +1122,14 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
             sage: tuple(kRegularSequenceSpace(2, ZZ).some_elements())
             (2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...,
-             2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...,
-             2-regular sequence 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...,
-             2-regular sequence -2, -4, 4, -8, -4, 8, 8, -16, 4, -8, ...,
-             2-regular sequence 1, 2, 2, 4, 2, 2, 4, 8, 2, 2, ...,
-             2-regular sequence 2, 11, 14, 20, 17, 23, 23, 29, 20, 26, ...,
+             2-regular sequence 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, ...,
+             2-regular sequence 1, 1, 0, 1, -1, 0, 0, 1, -2, -1, ...,
+             2-regular sequence 2, -1, 0, 0, 0, -1, 0, 0, 0, 0, ...,
+             2-regular sequence 1, 1, 0, 1, 5, 0, 0, 1, -33, 5, ...,
+             2-regular sequence -5, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...,
+             2-regular sequence -59, -20, 0, -20, 0, 0, 0, -20, 0, 0, ...,
              ...
-             2-regular sequence 1, 10, 10, 100, 10, 10, 100, 1000, 10, 10, ...)
+             2-regular sequence 2210, 170, 0, 0, 0, 0, 0, 0, 0, 0, ...)
         """
         return super(kRegularSequenceSpace, self).some_elements(heal=True)
 
