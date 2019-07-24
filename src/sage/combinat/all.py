@@ -123,8 +123,10 @@ lazy_import('sage.combinat.alternating_sign_matrix', ('AlternatingSignMatrix',
                                                       'TruncatedStaircases'))
 
 # Plane Partitions
-lazy_import('sage.combinat.plane_partition', ('PlanePartition',
-                                              'PlanePartitions'))
+#lazy_import('sage.combinat.plane_partition', ('PlanePartition',
+#                                              'PlanePartitions'))
+
+from .plane_partition import PlanePartition, PlanePartitions
 
 # Parking Functions
 lazy_import('sage.combinat.non_decreasing_parking_function',

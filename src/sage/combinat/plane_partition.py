@@ -37,7 +37,7 @@ from sage.misc.all import prod
 from sage.combinat.tableau import Tableau
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
+#@add_metaclass(InheritComparisonClasscallMetaclass)
 class PlanePartition(ClonableArray):
     r"""
     A plane partition.
@@ -69,7 +69,7 @@ class PlanePartition(ClonableArray):
         sage: TestSuite(PP).run()
     """
     @staticmethod
-    def __classcall_private__(cls, PP, box_size=None):
+    def __classcall_private__(cls, PP):
         """
         Construct a plane partition with the appropriate parent.
 
@@ -79,12 +79,14 @@ class PlanePartition(ClonableArray):
             sage: PP.parent() is PlanePartitions((3,4,4))
             True
         """
+	if isinstance(PP,PlanePartition):
+            return PP
         if box_size is None:
             if PP:
                 box_size = (len(PP), len(PP[0]), PP[0][0])
             else:
                 box_size = (0, 0, 0)
-        return PlanePartitions(box_size)(PP)
+        return PlanePartitions(box_size, symmetry=symmetry)(PP)
 
     def __init__(self, parent, PP, check=True):
         """
@@ -705,7 +707,66 @@ class PlanePartition(ClonableArray):
         """
         return self.is_TSPP() and self.is_SCPP()
 
+
 class PlanePartitions(UniqueRepresentation, Parent):
+    r"""
+    A factory class for plane partitions.
+
+    PlanePartitions([a,b,c]) returns the class of plane partitions that fit
+    inside an a \times b \times c box.
+
+    Optional keyword is 'symmetry'.
+
+    Describe options.
+
+    """
+    @staticmethod
+    def __classcall_private__(cls, box_size, symmetry=None):
+        """
+        Return correct parent based on input.
+
+        EXAMPLES::
+
+            sage: 1+1
+            2
+        """
+        if len(box_size) != 3:
+            raise ValueError("invalid box size")
+        if symmetry == None:
+            return PlanePartitions_all(box_size)
+        elif symmetry == 'TSPP':
+            return PlanePartitions_TSPP(box_size)
+        elif symmetry == 'SPP':
+            return PlanePartitions_SPP(box_size)
+        elif symmetry == 'CSPP':
+            return PlanePartitions_CSPP(box_size)
+        elif symmetry == 'TSSCPP':
+            return PlanePartitions_TSSCPP(box_size)
+        else:
+            raise ValueError("invalid symmetry class option; must be None, 'TSPP', 'SPP', 'CSPP', or 'TSCCPP' ")
+
+
+
+
+    Element = PlanePartition
+
+
+    def __init__(self, box_size, symmetry=None):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: S = PlanePartitions()
+            sage: TestSuite(S).run()  # long time
+        """
+        self.symmetry=symmetry
+        self._box = box_size
+ #       Tableaux.__init__(self, **kwds)
+ #       ClonableArray.__init__(self)
+
+
+class PlanePartitions_all(PlanePartitions):
     r"""
     All plane partitions inside a rectangular box of given side lengths.
 
@@ -729,6 +790,8 @@ class PlanePartitions(UniqueRepresentation, Parent):
 
         :class:`PlanePartition`
     """
+
+
     @staticmethod
     def __classcall_private__(cls, box_size):
         """
@@ -741,7 +804,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
             sage: P1 is P2
             True
         """
-        return super(PlanePartitions, cls).__classcall__(cls, tuple(box_size))
+        return super(PlanePartitions_all, cls).__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         r"""
@@ -752,12 +815,10 @@ class PlanePartitions(UniqueRepresentation, Parent):
             sage: PP = PlanePartitions((4,3,2))
             sage: TestSuite(PP).run()
         """
-        if len(box_size) != 3:
-            raise ValueError("invalid box size")
+        super(PlanePartitions_all,self ).__init__(box_size)
         self._box = box_size
-        Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def __repr__(self):
         """
         Return a string representation of ``self``.
 
@@ -766,8 +827,8 @@ class PlanePartitions(UniqueRepresentation, Parent):
             sage: PlanePartitions((4,3,2))
             Plane partitions inside a 4 x 3 x 2 box
         """
-        return "Plane partitions inside a {} x {} x {} box".format(
-                    self._box[0], self._box[1], self._box[2])
+        return "Plane partitions inside a %s x %s x %s box" % (self._box[0], self._box[1], self._box[2])
+#        return "Plane partitions inside a box"
 
     def __iter__(self):
         """
@@ -780,16 +841,68 @@ class PlanePartitions(UniqueRepresentation, Parent):
              Plane partition [[1, 0]],
              Plane partition [[1, 1]]]
         """
-        A = self._box[0]
-        B = self._box[1]
-        C = self._box[2]
-        from sage.combinat.tableau import SemistandardTableaux
-        for T in SemistandardTableaux([B for i in range(A)], max_entry=C+A):
-            PP = [[0 for i in range(B)] for j in range(A)]
-            for r in range(A):
-                for c in range(B):
-                    PP[A-1-r][B-1-c] = T[r][c] - r - 1
-            yield self.element_class(self, PP, check=False)
+#        A = self._box[0]
+#        B = self._box[1]
+#        C = self._box[2]
+#        from sage.combinat.tableau import SemistandardTableaux
+#        for T in SemistandardTableaux([B for i in range(A)], max_entry=C+A):
+#            PP = [[0 for i in range(B)] for j in range(A)]
+#            for r in range(A):
+#                for c in range(B):
+#                    PP[A-1-r][B-1-c] = T[r][c] - r - 1
+#            yield self.element_class(self, PP, check=False)
+        def componentwise_comparer(thing1,thing2):
+            if len(thing1) == len(thing2):
+                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
+                    return True
+            return False
+        def product_of_chains_poset(list_of_chain_lengths):
+            elem = cartesian_product([range(chain_length) for chain_length in list_of_chain_lengths])
+            return Poset((elem, componentwise_comparer))
+
+        a = self._box[0]
+        b = self._box[1]
+        c = self._box[2]
+
+        pocp = product_of_chains_poset([a,b,c])
+
+        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
+
+        #iterate through each antichain of product of chains poset with paramaters (a,b,c)
+        for acl in pocp.antichains_iterator():
+            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+
+            #ac format ex: [x,y,z]
+            #iterate through each antichain, assigning the y,z position in ppMatrix = the height of the stack (x + 1)
+            for ac in acl:
+                x = ac[0]
+                y = ac[1]
+                z = ac[2]
+                ppMatrix[y][z] = (x+1)
+
+            #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
+            if acl != []:
+                for i in range(b):
+                    i = b-(i+1)
+                    for j in range(c):
+                        j = c-(j+1)
+                        if (ppMatrix[i][j] == 0):
+                            iValue = 0
+                            jValue = 0
+                            if i < b-1:
+                                iValue = ppMatrix[i+1][j]
+                            if j < c-1:
+                                jValue = ppMatrix[i][j+1]
+                            ppMatrix[i][j] = max(iValue,jValue)
+
+            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
+
+        matrixList.sort()
+        current = 0
+        while current < len(matrixList):
+            yield self.element_class(self, matrixList[current])
+            current += 1
+
 
     def cardinality(self):
         r"""
@@ -856,4 +969,422 @@ class PlanePartitions(UniqueRepresentation, Parent):
             Z[C[0]][C[1]] += 1
         return self.element_class(self, Z, check=False)
 
-    Element = PlanePartition
+class PlanePartitions_TSPP(PlanePartitions):
+
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_TSPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        super(PlanePartitions_TSPP, self).__init__(box_size=box_size)
+        self._box=box_size
+
+    def _repr_(self):
+        return " Totally Symmetric Plane partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
+
+    def __iter__(self):
+        """
+        EXAMPLES:
+        
+
+
+        """
+        def componentwise_comparer(thing1,thing2):
+            if len(thing1) == len(thing2):
+                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
+                    return True
+            return False
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
+        pl = []
+        for x in range(0,a):
+            for y in range(x, b):
+                    for z in range(y,c):
+                        pl.append((x,y,z))
+
+        pocp = Poset((pl,componentwise_comparer))
+        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
+        #iterate through each antichain of product of chains poset with paramaters (a,b,c)
+        for acl in pocp.antichains_iterator():
+            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+
+            #ac format ex: [x,y,z]
+            for ac in acl:
+                x = ac[0]
+                y = ac[1]
+                z = ac[2]
+                ppMatrix[y][z] = (x+1) #x,y,z
+                ppMatrix[z][x] = (y+1) #y,z,x
+                ppMatrix[x][y] = (z+1) #z,x,y
+                ppMatrix[z][y] = (x+1) #x,z,y
+                ppMatrix[x][z] = (y+1) #y,x,z
+                ppMatrix[y][x] = (z+1) #z,y,x
+
+
+            #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
+            if acl != []:
+                for i in range(b):
+                    i = b-(i+1)
+                    for j in range(c):
+                        j = c-(j+1)
+                        if (ppMatrix[i][j] == 0):
+                            iValue = 0
+                            jValue = 0
+                            if i < b-1:
+                                iValue = ppMatrix[i+1][j]
+                            if j < c-1:
+                                jValue = ppMatrix[i][j+1]
+                            ppMatrix[i][j] = max(iValue,jValue)
+
+            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
+
+        matrixList.sort()
+
+
+        current = 0
+        while current < len(matrixList):
+            yield self.element_class(self, matrixList[current])
+            current += 1
+
+
+
+class PlanePartitions_SPP(PlanePartitions):
+
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_SPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        if box_size[1] != box_size[2]:
+            raise ValueError("invalid box size")
+        super(PlanePartitions_SPP, self).__init__(box_size=box_size)
+        self._box=box_size
+
+    def _repr_(self):
+        return " Symmetric Plane partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
+
+    def __iter__(self):
+        def componentwise_comparer(thing1,thing2):
+            if len(thing1) == len(thing2):
+                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
+                    return True
+            return False
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
+        pl = []
+        for x in range(0,a):
+            for y in range(0, b):
+                    for z in range(0,c):
+                        if z <= y:
+                            pl.append((x,y,z))
+
+
+        pocp = Poset((pl,componentwise_comparer))
+
+        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
+            #iterate through each antichain of product of chains poset with paramaters (a,b,c)
+        for acl in pocp.antichains_iterator():
+            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+                #ac format ex: [x,y,z]
+                #iterate through each antichain, assigning the y,z position in ppMatrix = the height of the stack (x + 1)
+            for ac in acl:
+                x = ac[0]
+                y = ac[1]
+                z = ac[2]
+                ppMatrix[y][z] = (x+1)
+
+                #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
+            if acl != []:
+                for i in range(b):
+                    i = b-(i+1)
+                    for j in range(c):
+                        j = c-(j+1)
+                        if (ppMatrix[i][j] == 0) and i>=j:
+                            iValue = 0
+                            jValue = 0
+                            if i < b-1:
+                                iValue = ppMatrix[i+1][j]
+                            if j < c-1:
+                                jValue = ppMatrix[i][j+1]
+                            ppMatrix[i][j] = max(iValue,jValue)
+                        elif j>i:
+                            ppMatrix[i][j] = ppMatrix[j][i]
+
+            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
+        matrixList.sort()
+        current = 0
+        while current < len(matrixList):
+            yield self.element_class(self, matrixList[current])
+            current += 1
+
+
+class PlanePartitions_CSPP(PlanePartitions):
+
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_CSPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        if (box_size[0] != box_size[1] or box_size[1] != box_size[2]):
+            raise ValueError("invalid box size; must be (r,r,r)")
+        super(PlanePartitions_CSPP, self).__init__(box_size=box_size)
+        self._box=box_size
+
+    def _repr_(self):
+        return " Cyclically Symmetric Plane partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
+
+    def __iter__(self):
+        def componentwise_comparer2(thing1,thing2):
+            x = thing2[0]
+            y = thing2[1]
+            z = thing2[2]
+
+            if componentwise_comparer(thing1,(x,y,z)) or componentwise_comparer(thing1,(z,x,y)) or componentwise_comparer(thing1,(y,z,x)):
+                return True
+            return False
+
+        pl = []
+        for x in range(0,a):
+            for y in range(0, b):
+                    for z in range(x,c):
+                        if y <= z  and (x != z or y == x):
+                            pl.append((x,y,z))
+
+        pocp = Poset((pl,componentwise_comparer2))
+        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
+        #iterate through each antichain of product of chains poset with paramaters (a,b,c)
+        for acl in pocp.antichains_iterator():
+            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+
+            #ac format ex: [x,y,z]
+            for ac in acl:
+                x = ac[0]
+                y = ac[1]
+                z = ac[2]
+                ppMatrix[y][z] = (x+1)
+                ppMatrix[z][x] = (y+1)
+                ppMatrix[x][y] = (z+1)
+
+
+            #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
+            if acl != []:
+                for i in range(b):
+                    i = b-(i+1)
+                    for j in range(c):
+                        j = c-(j+1)
+                        if (ppMatrix[i][j] == 0):
+                            iValue = 0
+                            jValue = 0
+                            if i < b-1:
+                                iValue = ppMatrix[i+1][j]
+                            if j < c-1:
+                                jValue = ppMatrix[i][j+1]
+                            ppMatrix[i][j] = max(iValue,jValue)
+
+            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
+
+        matrixList.sort()
+
+        current = 0
+        while current < len(matrixList):
+            yield self.element_class(self, matrixList[current])
+            current += 1
+
+class PlanePartitions_TSSCPP(PlanePartitions):
+
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_TSSCPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        if (box_size[0] != box_size[1] or (box_size[1] != box_size[2]) or box_size[0] % 2 != 0):
+            raise ValueError("invalid box size; must be (2r,2r,2r)")
+        super(PlanePartitions_TSSCPP, self).__init__(box_size=box_size)
+        self._box=box_size
+
+    def _repr_(self):
+        return " Totally Symmetric Self-Complementary Plane partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
+    def __iter__(self):
+        def componentwise_comparer(thing1,thing2):
+            if len(thing1) == len(thing2):
+                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
+                    return True
+            return False
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
+        n = a
+        b = n
+        c = n
+
+        pl = []
+        for x in range(0,n/2 - 2 + 1):
+            for y in range(x, n/2 - 2 + 1):
+                    for z in range(0,n/2 - 2 + 1):
+                        if z <= n/2 - 2 - y:
+                            pl.append((x,y,z))
+
+        pocp = Poset((pl,componentwise_comparer))
+
+        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
+        #iterate through each antichain of product of chains poset with paramaters (a,b,c)
+        for acl in pocp.antichains_iterator():
+            #ac format ex: [x,y,z]
+            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+            width = n/2 - 1
+            height = n/2 - 1
+
+            #generate inner triagle
+            for i in range(width):
+                for j in range(height):
+                    if(i <= j):
+                        for ac in acl:
+                            if ac[0] == i and ac[1] == j:
+                                zVal = ac[2]
+                                matrixVal = ppMatrix[j +(n/2)] [i+ (n/2)]
+                                if zVal + 1 > matrixVal:
+                                    ppMatrix[j +(n/2)] [i+ (n/2)]= zVal + 1
+
+            #fill back
+            for i in range(width):
+                i = width-(i+1)
+                i = i + n/2
+                for j in range(height):
+                    j = height-(j+1)
+                    j = j + n/2
+                    if (ppMatrix[i][j] == 0):
+                        if i >= j:
+                            iValue = 0
+                            jValue = 0
+                            if i < n:
+                                iValue = ppMatrix[i+1][j]
+                            if j < n:
+                               jValue = ppMatrix[i][j+1]
+                            ppMatrix[i][j] = max(iValue,jValue)
+
+
+            #fill half of triangle symmetrically
+            for i in range(width):
+                i = i + n/2
+                for j in range(height):
+                    j = j + n/2
+                    if i >= j:
+                        ppMatrix[j][i] = ppMatrix[i][j]
+
+            #upper left box
+            for i in range(n/2):
+                for j in range(n/2):
+                    ppMatrix[i][j] = n - ppMatrix[n-(i+1)][n-(j+1)]
+
+
+            #fill in lower left cube with values n/2
+            for i in range(n/2):
+                for j in range(n/2):
+                    x = i
+                    y = j
+                    if(ppMatrix[x][y+(n/2)]) == 0:
+                        ppMatrix[x][y+(n/2)] = n/2
+                    if(ppMatrix[x+(n/2)][y]) == 0:
+                        ppMatrix[x+(n/2)][y] = n/2
+
+
+            #add and subtract values from lower left cube to be rotation of lower right cube
+            for i in range(n/2):
+                for j in range(n/2):
+                    x = i+(n/2)
+                    y = j+(n/2)
+                    if ppMatrix[x][y] > 0:
+                        z = ppMatrix[x][y]
+                        for cVal in range(z):
+                            #build onto lower left cube
+                            ppMatrix[x][0+cVal] += 1
+                            #carve out of lower left cube
+                            ppMatrix[n-(1+cVal)][(n/2)-(j+1)] -=1
+
+            #fill in upper right cube symmetrically with lower left
+            for i in range(n/2):
+                for j in range(n/2):
+                    ppMatrix[j][i+(n/2)] = ppMatrix[i+(n/2)][j]
+
+            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
+
+        matrixList.sort()
+
+        current = 0
+        while current < len(matrixList):
+            yield self.element_class(self, matrixList[current])
+            current += 1
