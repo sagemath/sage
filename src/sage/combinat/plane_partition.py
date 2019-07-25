@@ -728,6 +728,10 @@ class PlanePartitions(UniqueRepresentation, Parent):
 
 
 
+
+
+
+
 class PlanePartitions_all(PlanePartitions):
     r"""
     All plane partitions of any size
@@ -781,7 +785,7 @@ class PlanePartitions_all(PlanePartitions):
         return True
 
 
-class PlanePartitions_box(PlanePartitions_all):
+class PlanePartitions_box(PlanePartitions):
     r"""
     All plane partitions of any size
 
@@ -812,7 +816,7 @@ class PlanePartitions_box(PlanePartitions_all):
             sage: PP = PlanePartitions((4,3,2))
             sage: TestSuite(PP).run()
         """
-        super(PlanePartitions_box,self).__init__()
+        super(PlanePartitions_box,self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
 
     def __repr__(self):
@@ -970,7 +974,7 @@ class PlanePartitions_box(PlanePartitions_all):
 
 
 
-class PlanePartitions_n(PlanePartitions_all):
+class PlanePartitions_n(PlanePartitions):
 
 
     def __init__(self, n):
@@ -990,7 +994,7 @@ class PlanePartitions_n(PlanePartitions_all):
 
 
 
-class PlanePartitions_TSPP(PlanePartitions_all):
+class PlanePartitions_TSPP(PlanePartitions):
 
     @staticmethod
     def __classcall_private__(cls, box_size):
@@ -1020,7 +1024,7 @@ class PlanePartitions_TSPP(PlanePartitions_all):
         return " Totally Symmetric Plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
-class PlanePartitions_SPP(PlanePartitions_all):
+class PlanePartitions_SPP(PlanePartitions):
 
     @staticmethod
     def __classcall_private__(cls, box_size):
@@ -1043,7 +1047,7 @@ class PlanePartitions_SPP(PlanePartitions_all):
             sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
             sage: TestSuite(PP).run()
         """
-        super(PlanePartitions_SPP, self).__init__()
+        super(PlanePartitions_SPP, self).__init__(category=FiniteEnumeratedSets())
         self._box=box_size
 
     def _repr_(self):
@@ -1107,7 +1111,7 @@ class PlanePartitions_SPP(PlanePartitions_all):
 
 
 
-class PlanePartitions_CSPP(PlanePartitions_all):
+class PlanePartitions_CSPP(PlanePartitions):
 
     @staticmethod
     def __classcall_private__(cls, box_size):
@@ -1195,7 +1199,7 @@ class PlanePartitions_CSPP(PlanePartitions_all):
             current += 1
 
 
-class PlanePartitions_SCPP(PlanePartitions_all):
+class PlanePartitions_SCPP(PlanePartitions):
 
     @staticmethod
     def __classcall_private__(cls, box_size):
@@ -1373,7 +1377,7 @@ class PlanePartitions_TSSCPP(PlanePartitions_all):
             yield self.element_class(self, matrixList[current])
             current += 1
 
-class PlanePartitions_CSTCPP(PlanePartitions_all):
+class PlanePartitions_CSTCPP(PlanePartitions):
 
     @staticmethod
     def __classcall_private__(cls, box_size):
@@ -1404,7 +1408,7 @@ class PlanePartitions_CSTCPP(PlanePartitions_all):
                     self._box[0], self._box[1], self._box[2])
 
 
-class PlanePartitions_CSSCPP(PlanePartitions_all):
+class PlanePartitions_CSSCPP(PlanePartitions):
 
     @staticmethod
     def __classcall_private__(cls, box_size):
