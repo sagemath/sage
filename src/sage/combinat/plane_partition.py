@@ -33,7 +33,7 @@ from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.posets.posets import Poset
-from sage.combinat.posets.poset_examples import Posets
+from sage.categories.cartesian_product import cartesian_product
 from sage.rings.integer import Integer
 from sage.misc.all import prod
 from sage.combinat.tableau import Tableau
@@ -873,15 +873,15 @@ class PlanePartitions_box(PlanePartitions):
                 if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
                     return True
             return False
-#        def product_of_chains_poset(list_of_chain_lengths):
-#            elem = cartesian_product([range(chain_length) for chain_length in list_of_chain_lengths])
-#            return Poset((elem, componentwise_comparer))
+        def product_of_chains_poset(list_of_chain_lengths):
+            elem = cartesian_product([range(chain_length) for chain_length in list_of_chain_lengths])
+            return Poset((elem, componentwise_comparer))
 
         a = self._box[0]
         b = self._box[1]
         c = self._box[2]
 
-        pocp = posets.ProductOfChains([a,b,c])
+        pocp = product_of_chains_poset([a,b,c])
 
         matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
 
