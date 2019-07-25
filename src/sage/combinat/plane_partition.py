@@ -33,9 +33,11 @@ from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.posets.posets import Poset
+from sage.combinat.posets.poset_examples import Posets
 from sage.rings.integer import Integer
 from sage.misc.all import prod
 from sage.combinat.tableau import Tableau
+
 
 
 @add_metaclass(InheritComparisonClasscallMetaclass)
@@ -62,6 +64,17 @@ class PlanePartition(ClonableList):
             ClonableList.__init__(self, parent, pp, check=False)
         pp = [tuple(_) for _ in pp]
         ClonableList.__init__(self, parent, pp, check=check)
+        if self.parent()._box is None:
+            if pp:
+                self._max_x = len(pp)
+                self._max_y = len(pp[0])
+                self._max_z = pp[0][0]
+            else:
+                self._max_x = 0
+                self._max_y = 0
+                self._max_z = 0
+        else:
+            (self._max_x, self._max_y, self._max_z) = self.parent()._box
 
     def check(self):
         """
@@ -751,6 +764,7 @@ class PlanePartitions_all(PlanePartitions):
             sage: PP = PlanePartitions((4,3,2))
             sage: TestSuite(PP).run()
         """
+        self._box = None
         super(PlanePartitions_all, self).__init__(category=InfiniteEnumeratedSets())
 
     def __repr__(self):
@@ -859,15 +873,15 @@ class PlanePartitions_box(PlanePartitions):
                 if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
                     return True
             return False
-        def product_of_chains_poset(list_of_chain_lengths):
-            elem = cartesian_product([range(chain_length) for chain_length in list_of_chain_lengths])
-            return Poset((elem, componentwise_comparer))
+#        def product_of_chains_poset(list_of_chain_lengths):
+#            elem = cartesian_product([range(chain_length) for chain_length in list_of_chain_lengths])
+#            return Poset((elem, componentwise_comparer))
 
         a = self._box[0]
         b = self._box[1]
         c = self._box[2]
 
-        pocp = product_of_chains_poset([a,b,c])
+        pocp = posets.ProductOfChains([a,b,c])
 
         matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
 
@@ -1142,6 +1156,11 @@ class PlanePartitions_CSPP(PlanePartitions):
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self):
+        def componentwise_comparer(thing1,thing2):
+            if len(thing1) == len(thing2):
+                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
+                    return True
+            return False
         def componentwise_comparer2(thing1,thing2):
             x = thing2[0]
             y = thing2[1]
@@ -1150,7 +1169,9 @@ class PlanePartitions_CSPP(PlanePartitions):
             if componentwise_comparer(thing1,(x,y,z)) or componentwise_comparer(thing1,(z,x,y)) or componentwise_comparer(thing1,(y,z,x)):
                 return True
             return False
-
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
         pl = []
         for x in range(0,a):
             for y in range(0, b):
