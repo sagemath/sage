@@ -713,6 +713,10 @@ class PlanePartitions(UniqueRepresentation, Parent):
                 return PlanePartitions_CSPP(box_size)
             elif symmetry == 'TSSCPP':
                 return PlanePartitions_TSSCPP(box_size)
+            elif symmetry == 'CSTCPP':
+                return PlanePartitions_CSTCPP(box_size)
+            elif symmetry == 'CSSCPP':
+                return PlanePartitions_CSSCPP(box_size)
             else:
                 raise ValueError("invalid symmetry class option; must be None, 'TSPP', 'SPP', 'CSPP', or 'TSCCPP' ")
 
@@ -1368,3 +1372,65 @@ class PlanePartitions_TSSCPP(PlanePartitions_all):
         while current < len(matrixList):
             yield self.element_class(self, matrixList[current])
             current += 1
+
+class PlanePartitions_CSTCPP(PlanePartitions_all):
+
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_CSTCPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        super(PlanePartitions_CSTCPP, self).__init__()
+        self._box=box_size
+
+    def _repr_(self):
+        return " Cyclically symmetric transpose complement partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
+
+class PlanePartitions_CSSCPP(PlanePartitions_all):
+
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_CSSCPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        super(PlanePartitions_CSSCPP, self).__init__()
+        self._box=box_size
+
+    def _repr_(self):
+        return " Cyclically Symmetric Self-Complementary Plane partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
