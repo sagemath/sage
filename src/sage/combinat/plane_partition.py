@@ -984,7 +984,7 @@ class PlanePartitions_n(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
             sage: TestSuite(PP).run()
         """
-        super(PlanePartitions_n, self).__init__()
+        super(PlanePartitions_n, self).__init__(category=FiniteEnumeratedSets())
         self._n = n
 
     def _repr_(self):
@@ -1017,7 +1017,7 @@ class PlanePartitions_TSPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
             sage: TestSuite(PP).run()
         """
-        super(PlanePartitions_TSPP, self).__init__()
+        super(PlanePartitions_TSPP, self).__init__(category=FiniteEnumeratedSets())
         self._box=box_size
 
     def _repr_(self):
@@ -1258,7 +1258,7 @@ class PlanePartitions_TSSCPP(PlanePartitions_all):
         """
         if (box_size[0] != box_size[1] or (box_size[1] != box_size[2]) or box_size[0] % 2 != 0):
             raise ValueError("invalid box size; must be (2r,2r,2r)")
-        super(PlanePartitions_TSSCPP, self).__init__()
+        super(PlanePartitions_TSSCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box=box_size
 
     def _repr_(self):
@@ -1400,7 +1400,7 @@ class PlanePartitions_CSTCPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
             sage: TestSuite(PP).run()
         """
-        super(PlanePartitions_CSTCPP, self).__init__()
+        super(PlanePartitions_CSTCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box=box_size
 
     def _repr_(self):
@@ -1431,7 +1431,7 @@ class PlanePartitions_CSSCPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
             sage: TestSuite(PP).run()
         """
-        super(PlanePartitions_CSSCPP, self).__init__()
+        super(PlanePartitions_CSSCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box=box_size
 
     def _repr_(self):
