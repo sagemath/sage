@@ -578,6 +578,9 @@ REFERENCES:
              Stein. strassen_window_multiply_c. strassen.pyx, Sage
              3.0, 2008. http://www.sagemath.org
 
+.. [BrHu2019] Petter Br{\"a}nd{\'e}n, June Huh. *Lorentzian polynomials*.
+              Preprint (2019). :arxiv:`1902.03719`
+
 .. [BHNR2004] \S. Brlek, S. Hamel, M. Nivat, C. Reutenauer, On the
               Palindromic Complexity of Infinite Words,
               in J. Berstel, J.  Karhumaki, D. Perrin, Eds,
@@ -2253,6 +2256,10 @@ REFERENCES:
             J. Combinatorial Theory Ser. A. (1972).
             http://www.sciencedirect.com/science/article/pii/0097316572900039 .
 
+.. [HMMS2019] June Huh, Jacob P.\ Matherne, Karola M{\'e}sz{\'a}ros, Avery
+              St.\ Dizier.  *Logarithmic concavity of Schur and related
+              polynomials*.  Preprint (2019). :arxiv:`1906.09633`
+
 .. [Hutz2007] \B. Hutz. Arithmetic Dynamics on Varieties of dimension greater
               than one. PhD Thesis, Brown University 2007
 
@@ -2555,7 +2562,7 @@ REFERENCES:
              Compositio Mathematica, **149** (2013), no. 10.
              :arxiv:`1111.3660`.
 
-.. [Kly1990] Klyachko, Aleksandr Anatolevich. 
+.. [Kly1990] Klyachko, Aleksandr Anatolevich.
              Equivariant Bundles on Toral Varieties,
              Math USSR Izv. 35 (1990), 337-375.
              http://iopscience.iop.org/0025-5726/35/2/A04/pdf/0025-5726_35_2_A04.pdf

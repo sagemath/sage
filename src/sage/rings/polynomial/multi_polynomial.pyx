@@ -2455,9 +2455,16 @@ cdef class MPolynomial(CommutativeRingElement):
         d = self.dict()
         return all(c.is_nilpotent() for c in d.values())
 
-    def is_lorentzian_polynomial(self):
+    def is_lorentzian_polynomial(self, give_reason=False):
         r"""
         Return ``True`` if this is a Lorentzian polynomial.
+
+        INPUTS:
+
+        - ``give_failure_reason`` -- boolean (default: ``False``); if ``True``
+          return a tuple whose first element is the boolean result of the test,
+          and the second element is a string describing the reason the test failed,
+          or ``None`` if the test succeeded.
 
         Lorentzian polynomials are a class of polynomials connected with the area
         of discrete convex analysis.  A polynomial `f` with positive real coefficients
@@ -2467,7 +2474,7 @@ cdef class MPolynomial(CommutativeRingElement):
 
         - the support of `f` is `M`-convex
 
-        - `f` has degree degree less than `2`, or if its degree is at least two,
+        - `f` has degree less than `2`, or if its degree is at least two,
           the collection of sequential partial derivatives of `f` which are
           quadratic forms have Gram matrices with at most one positive eigenvalue.
 
@@ -2521,25 +2528,43 @@ cdef class MPolynomial(CommutativeRingElement):
             Traceback (most recent call last):
             ...
             TypeError: Lorentzian polynomials must have real coefficients
+
+        The method can give a reason for a polynomial failing to be Lorentzian::
+
+            sage: p = x^2 + 2*x + y^2
+            sage: p.is_lorentzian_polynomial(give_reason=True)
+            (False, 'inhomogeneous')
+
+        REFERENCES:
+
+        For full definitions and related discussion, see [BrHu2019] and
+        [HMMS2019].  The second reference gives the characterization of
+        Lorentzian polynomials applied in this implementation explicitly.
         """
+        # function to handle return value when reason requested
+        def result(val, explanation=None):
+            if give_reason:
+                return (val, explanation)
+            else:
+                return val
         if not self.base_ring().is_subring(RealField()):
             raise TypeError("Lorentzian polynomials must have real coefficients")
         # zero is Lorentzian
         if self.is_zero():
-            return True
+            return result(True)
         # check homogeneous
         if not self.is_homogeneous():
-            return False
+            return result(False, "inhomogeneous")
         # check nonnegative coefficients
         for coeff in self.coefficients():
             if coeff < 0:
-                return False
+                return result(False, "negative coefficient")
         # for degree <= 1, homogeneous with positive coefficients is sufficient
         if self.degree() <= 1:
-            return True
+            return result(True)
         # check support is M-convex
         if not _is_M_convex_(self.exponents(), check_input=False):
-            return False
+            return result(False, "not M-convex")
         # compute quadratic forms coming from a sequence of partial derivatives
         if self.degree() == 2:
             # print("Degree == 2")
@@ -2562,8 +2587,8 @@ cdef class MPolynomial(CommutativeRingElement):
             G = QuadraticForm(deriv).Gram_matrix()
             spectrum = sorted(G.eigenvalues(), reverse=True)
             if spectrum[1] > 0:
-                return False
-        return True
+                return result(False, "multiple positive eigenvalues")
+        return result(True)
 
 def _is_M_convex_(points, check_input=True):
     r"""
@@ -2620,6 +2645,10 @@ def _is_M_convex_(points, check_input=True):
         Traceback (most recent call last):
         ...
         ValueError: Input points are not integer lattice points
+
+    REFERENCES:
+
+    See [BrHu2019] for a definition of M-convexity.
     """
     points_set = set(imap(tuple, points))
     n_points = len(points_set)
