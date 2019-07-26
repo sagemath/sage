@@ -1123,7 +1123,7 @@ class PlanePartitions_n(PlanePartitions):
         for m in range(n,0,-1):
             for la in Partitions(m):
                 for a in PP_first_row_iter(n,la):
-                    yield a
+                    yield PlanePartition(a)
             
         
 
