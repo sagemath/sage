@@ -1127,11 +1127,19 @@ class PlanePartitions_n(PlanePartitions):
                     yield PlanePartition(a)
             
     def cardinality(self):
-#        def PPn(n):
-#            if n==0:
-#                return 1
-#            return sum(PPn(n-k)*Sigma()(k,2) for k in range(1,n+1))/n
-#        return(PPn(self._n))       
+        r"""
+        Return the number of plane partitions with ``n`` boxes.
+
+        Calculated using the recurrence relation
+
+        ..MATH:
+
+        PL(n) = \sum_{k=1}^n PL(n-k)\sigma_2(k)
+
+        where ``\sigma_k(n)`` is the sum of the kth powers of
+        divisors of n.
+
+        """
         PPn = [1]
         for i in range(1,1+self._n):
             nextPPn = sum(PPn[i-k]*Sigma()(k,2) for k in range(1,i+1))/i
