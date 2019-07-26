@@ -765,20 +765,26 @@ class PlanePartitions(UniqueRepresentation, Parent):
                     box_size = args[0]
             if symmetry == None:
                 return PlanePartitions_box(box_size)
-            elif symmetry == 'TSPP':
-                return PlanePartitions_TSPP(box_size)
             elif symmetry == 'SPP':
                 return PlanePartitions_SPP(box_size)
             elif symmetry == 'CSPP':
                 return PlanePartitions_CSPP(box_size)
-            elif symmetry == 'TSSCPP':
-                return PlanePartitions_TSSCPP(box_size)
+            elif symmetry == 'TSPP':
+                return PlanePartitions_TSPP(box_size)
+            elif symmetry == 'SCPP':
+                return PlanePartitions_SCPP(box_size)
+            elif symmetry == 'TCPP':
+                return PlanePartitions_TCPP(box_size)
+            elif symmetry == 'SSCPP':
+                return PlanePartitions_SSCPP(box_size)
             elif symmetry == 'CSTCPP':
                 return PlanePartitions_CSTCPP(box_size)
             elif symmetry == 'CSSCPP':
                 return PlanePartitions_CSSCPP(box_size)
+            elif symmetry == 'TSSCPP':
+                return PlanePartitions_TSSCPP(box_size)
             else:
-                raise ValueError("invalid symmetry class option; must be None, 'TSPP', 'SPP', 'CSPP', or 'TSCCPP' ")
+                raise ValueError("invalid symmetry class option; must be None, 'SPP', 'CSPP', 'TSPP', 'SCPP', 'TCPP', 'SSCPP', 'CSTCPP', 'CSSCPP', or 'TSSCPP' ")
 
 
     Element = PlanePartition
@@ -1146,39 +1152,13 @@ class PlanePartitions_n(PlanePartitions):
             PPn.append(nextPPn)
         return(PPn[-1])
 
+#Symmetry classes are enumerated and labelled in order as in Proofs and
+#Confirmations/Stanley (with all plane partitions being the first class
 
 
 
 
-class PlanePartitions_TSPP(PlanePartitions):
-
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
-
-        EXAMPLES::
-
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_TSPP, cls).__classcall__(cls, tuple(box_size))
-
-    def __init__(self, box_size):
-        """
-        TESTS::
-    
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
-            sage: TestSuite(PP).run()
-        """
-        super(PlanePartitions_TSPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
-
-    def _repr_(self):
-        return "Totally Symmetric Plane partitions inside a {} x {} x {} box".format(
-                    self._box[0], self._box[1], self._box[2])
+#Class 2
 
 class PlanePartitions_SPP(PlanePartitions):
 
@@ -1266,6 +1246,7 @@ class PlanePartitions_SPP(PlanePartitions):
             current += 1
 
 
+#Class 3
 
 class PlanePartitions_CSPP(PlanePartitions):
 
@@ -1362,6 +1343,43 @@ class PlanePartitions_CSPP(PlanePartitions):
             current += 1
 
 
+#Class 4
+
+
+class PlanePartitions_TSPP(PlanePartitions):
+
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_TSPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        super(PlanePartitions_TSPP, self).__init__(category=FiniteEnumeratedSets())
+        self._box=box_size
+
+    def _repr_(self):
+        return "Totally Symmetric Plane Partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
+
+
+
+
 class PlanePartitions_SCPP(PlanePartitions):
 
     @staticmethod
@@ -1389,12 +1407,186 @@ class PlanePartitions_SCPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return "Self Complementary Plane partitions inside a {} x {} x {} box".format(
+        return "Self-Complementary Plane Partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
 
 
 
+#Class 5
+
+class PlanePartitions_SCPP(PlanePartitions):
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_SCPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
+            raise ValueError("box sides cannot all be odd")
+        super(PlanePartitions_SCPP, self).__init__(category=FiniteEnumeratedSets())
+        self._box=box_size
+
+    def _repr_(self):
+        return "Self-Complementary Plane Partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
+
+#Class 6
+
+class PlanePartitions_TCPP(PlanePartitions):
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_TCPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
+            raise ValueError("box sides cannot all be odd")
+        super(PlanePartitions_TCPP, self).__init__(category=FiniteEnumeratedSets())
+        self._box=box_size
+
+    def _repr_(self):
+        return "Transpose Complement Plane Partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
+#Class 7
+
+class PlanePartitions_SSCPP(PlanePartitions):
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_SSCPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
+            raise ValueError("box sides cannot all be odd")
+        super(PlanePartitions_SSCPP, self).__init__(category=FiniteEnumeratedSets())
+        self._box=box_size
+
+    def _repr_(self):
+        return "Symmetric Self-Complementary Plane Partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
+#Class 8
+
+class PlanePartitions_CSTCPP(PlanePartitions):
+
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_CSTCPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        super(PlanePartitions_CSTCPP, self).__init__(category=FiniteEnumeratedSets())
+        self._box=box_size
+
+    def _repr_(self):
+        return "Cyclically symmetric transpose complement partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
+#Class 9
+
+
+class PlanePartitions_CSSCPP(PlanePartitions):
+
+    @staticmethod
+    def __classcall_private__(cls, box_size):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: P1 = PlanePartitions((4,3,2))
+            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 is P2
+            True
+        """
+        return super(PlanePartitions_CSSCPP, cls).__classcall__(cls, tuple(box_size))
+
+    def __init__(self, box_size):
+        """
+        TESTS::
+    
+            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: TestSuite(PP).run()
+        """
+        super(PlanePartitions_CSSCPP, self).__init__(category=FiniteEnumeratedSets())
+        self._box=box_size
+
+    def _repr_(self):
+        return "Cyclically Symmetric Self-Complementary Plane partitions inside a {} x {} x {} box".format(
+                    self._box[0], self._box[1], self._box[2])
+
+
+
+
+
+
+
+
+
+#Class 10
 
 class PlanePartitions_TSSCPP(PlanePartitions):
 
@@ -1540,64 +1732,4 @@ class PlanePartitions_TSSCPP(PlanePartitions):
             yield self.element_class(self, matrixList[current])
             current += 1
 
-class PlanePartitions_CSTCPP(PlanePartitions):
-
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
-
-        EXAMPLES::
-
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_CSTCPP, cls).__classcall__(cls, tuple(box_size))
-
-    def __init__(self, box_size):
-        """
-        TESTS::
-    
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
-            sage: TestSuite(PP).run()
-        """
-        super(PlanePartitions_CSTCPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
-
-    def _repr_(self):
-        return "Cyclically symmetric transpose complement partitions inside a {} x {} x {} box".format(
-                    self._box[0], self._box[1], self._box[2])
-
-
-class PlanePartitions_CSSCPP(PlanePartitions):
-
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
-
-        EXAMPLES::
-
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_CSSCPP, cls).__classcall__(cls, tuple(box_size))
-
-    def __init__(self, box_size):
-        """
-        TESTS::
-    
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
-            sage: TestSuite(PP).run()
-        """
-        super(PlanePartitions_CSSCPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
-
-    def _repr_(self):
-        return "Cyclically Symmetric Self-Complementary Plane partitions inside a {} x {} x {} box".format(
-                    self._box[0], self._box[1], self._box[2])
 
