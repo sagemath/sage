@@ -38,6 +38,7 @@ from sage.categories.cartesian_product import cartesian_product
 from sage.rings.integer import Integer
 from sage.misc.all import prod
 from sage.combinat.tableau import Tableau
+from sage.arith.misc import Sigma
 
 
 
@@ -1125,7 +1126,18 @@ class PlanePartitions_n(PlanePartitions):
                 for a in PP_first_row_iter(n,la):
                     yield PlanePartition(a)
             
-        
+    def cardinality(self):
+#        def PPn(n):
+#            if n==0:
+#                return 1
+#            return sum(PPn(n-k)*Sigma()(k,2) for k in range(1,n+1))/n
+#        return(PPn(self._n))       
+        PPn = [1]
+        for i in range(1,1+self._n):
+            nextPPn = sum(PPn[i-k]*Sigma()(k,2) for k in range(1,i+1))/i
+            PPn.append(nextPPn)
+        return(PPn[-1])
+
 
 
 
