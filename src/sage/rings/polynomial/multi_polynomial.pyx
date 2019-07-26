@@ -2455,13 +2455,13 @@ cdef class MPolynomial(CommutativeRingElement):
         d = self.dict()
         return all(c.is_nilpotent() for c in d.values())
 
-    def is_lorentzian_polynomial(self, give_reason=False):
+    def is_lorentzian_polynomial(self, explain=False):
         r"""
         Return ``True`` if this is a Lorentzian polynomial.
 
         INPUTS:
 
-        - ``give_failure_reason`` -- boolean (default: ``False``); if ``True``
+        - ``explain`` -- boolean (default: ``False``); if ``True``
           return a tuple whose first element is the boolean result of the test,
           and the second element is a string describing the reason the test failed,
           or ``None`` if the test succeeded.
@@ -2532,7 +2532,7 @@ cdef class MPolynomial(CommutativeRingElement):
         The method can give a reason for a polynomial failing to be Lorentzian::
 
             sage: p = x^2 + 2*x + y^2
-            sage: p.is_lorentzian_polynomial(give_reason=True)
+            sage: p.is_lorentzian_polynomial(explain=True)
             (False, 'inhomogeneous')
 
         REFERENCES:
@@ -2543,7 +2543,7 @@ cdef class MPolynomial(CommutativeRingElement):
         """
         # function to handle return value when reason requested
         def result(val, explanation=None):
-            if give_reason:
+            if explain:
                 return (val, explanation)
             else:
                 return val

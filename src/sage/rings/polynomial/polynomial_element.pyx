@@ -8210,13 +8210,20 @@ cdef class Polynomial(CommutativeAlgebraElement):
         else:
             return b
 
-    def is_lorentzian_polynomial(self, give_reason=False):
+    def is_lorentzian_polynomial(self, explain=False):
         r"""
         Return ``True`` if this is a Lorentzian polynomial.
 
         A univariate real polynomial is Lorentzian if and only if it is a
         monomial with positive coefficient, or zero.  The definition is more
         involved for multivariate real polynomials.
+
+        INPUTS:
+
+        - ``explain`` -- boolean (default: ``False``); if ``True``
+          return a tuple whose first element is the boolean result of the test,
+          and the second element is a string describing the reason the test failed,
+          or ``None`` if the test succeeded.
 
         EXAMPLES:
 
@@ -8248,7 +8255,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         The method can give a reason for a polynomial failing to be Lorentzian::
 
             sage: p = x^2 + 2*x
-            sage: p.is_lorentzian_polynomial(give_reason=True)
+            sage: p.is_lorentzian_polynomial(explain=True)
             (False, 'inhomogeneous')
 
         REFERENCES:
@@ -8257,7 +8264,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         [HMMS2019].
         """
         def result(val, explanation=None):
-            if give_reason:
+            if explain:
                 return (val, explanation)
             else:
                 return val
