@@ -1083,7 +1083,7 @@ class PlanePartitions_n(PlanePartitions):
         return "Plane partitions of size {}".format(self._n)
 
     def __iter__(self):
-        from sage.combinat.partition import Partitions, Partition
+        from sage.combinat.partition import Partitions
         def PP_first_row_iter(n, la):
             m = n-sum(la)
             if m < 0:
@@ -1153,7 +1153,7 @@ class PlanePartitions_n(PlanePartitions):
         return(PPn[-1])
 
 #Symmetry classes are enumerated and labelled in order as in Proofs and
-#Confirmations/Stanley (with all plane partitions being the first class
+#Confirmations/Stanley (with all plane partitions being the first class)
 
 
 
@@ -1187,7 +1187,7 @@ class PlanePartitions_SPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return "Symmetric Plane partitions inside a {} x {} x {} box".format(
+        return "Symmetric plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self):
@@ -1275,7 +1275,7 @@ class PlanePartitions_CSPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return "Cyclically Symmetric Plane partitions inside a {} x {} x {} box".format(
+        return "Cyclically symmetric plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self):
@@ -1373,7 +1373,7 @@ class PlanePartitions_TSPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return "Totally Symmetric Plane Partitions inside a {} x {} x {} box".format(
+        return "Transpose symmetric plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
 
@@ -1407,7 +1407,7 @@ class PlanePartitions_SCPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return "Self-Complementary Plane Partitions inside a {} x {} x {} box".format(
+        return "Self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
 
@@ -1443,7 +1443,7 @@ class PlanePartitions_SCPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return "Self-Complementary Plane Partitions inside a {} x {} x {} box".format(
+        return "Self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
 
@@ -1477,7 +1477,7 @@ class PlanePartitions_TCPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return "Transpose Complement Plane Partitions inside a {} x {} x {} box".format(
+        return "Transpose complement plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
 #Class 7
@@ -1510,7 +1510,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return "Symmetric Self-Complementary Plane Partitions inside a {} x {} x {} box".format(
+        return "Symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
 #Class 8
@@ -1575,12 +1575,8 @@ class PlanePartitions_CSSCPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return "Cyclically Symmetric Self-Complementary Plane partitions inside a {} x {} x {} box".format(
+        return "Cyclically symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
-
-
-
-
 
 
 
@@ -1617,7 +1613,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return "Totally Symmetric Self-Complementary Plane partitions inside a {} x {} x {} box".format(
+        return "Totally symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
 
