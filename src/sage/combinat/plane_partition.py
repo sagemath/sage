@@ -1271,7 +1271,7 @@ class PlanePartitions_CSPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
             sage: TestSuite(PP).run()
         """
-        super(PlanePartitions_CSPP, self).__init__()
+        super(PlanePartitions_CSPP, self).__init__(category=FiniteEnumeratedSets())
         self._box=box_size
 
     def _repr_(self):
@@ -1295,6 +1295,9 @@ class PlanePartitions_CSPP(PlanePartitions):
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
+        cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
+        cmp2 = lambda x,y : cmp(x,y) or cmp(x,(y[2],y[0],y[1])) or cmp(x,(y[1],y[2],y[0]))
+
         pl = []
         for x in range(0,a):
             for y in range(0, b):
@@ -1302,7 +1305,8 @@ class PlanePartitions_CSPP(PlanePartitions):
                         if y <= z  and (x != z or y == x):
                             pl.append((x,y,z))
 
-        pocp = Poset((pl,componentwise_comparer2))
+#        pocp = Poset((pl,componentwise_comparer2))
+        pocp = Poset((pl, cmp2))
         matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
         #iterate through each antichain of product of chains poset with paramaters (a,b,c)
         for acl in pocp.antichains_iterator():
@@ -1332,15 +1336,16 @@ class PlanePartitions_CSPP(PlanePartitions):
                             if j < c-1:
                                 jValue = ppMatrix[i][j+1]
                             ppMatrix[i][j] = max(iValue,jValue)
+            yield self.element_class(self, ppMatrix)
 
-            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
+#            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
 
-        matrixList.sort()
+#        matrixList.sort()
 
-        current = 0
-        while current < len(matrixList):
-            yield self.element_class(self, matrixList[current])
-            current += 1
+#        current = 0
+#        while current < len(matrixList):
+#            yield self.element_class(self, matrixList[current])
+#            current += 1
 
 
 #Class 4
@@ -1403,7 +1408,7 @@ class PlanePartitions_SCPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
             sage: TestSuite(PP).run()
         """
-        super(PlanePartitions_SCPP, self).__init__()
+        super(PlanePartitions_SCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box=box_size
 
     def _repr_(self):
@@ -1618,11 +1623,11 @@ class PlanePartitions_TSSCPP(PlanePartitions):
 
 
     def __iter__(self):
-        def componentwise_comparer(thing1,thing2):
-            if len(thing1) == len(thing2):
-                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
-                    return True
-            return False
+#        def componentwise_comparer(thing1,thing2):
+#            if len(thing1) == len(thing2):
+#                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
+#                    return True
+#            return False
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
@@ -1637,9 +1642,11 @@ class PlanePartitions_TSSCPP(PlanePartitions):
                         if z <= n/2 - 2 - y:
                             pl.append((x,y,z))
 
-        pocp = Poset((pl,componentwise_comparer))
+#        pocp = Poset((pl,componentwise_comparer))
+        cmp = lambda x,y : all(x[i] <= y[i] for i in range(len(x)))
+        pocp = Poset((pl,cmp))
 
-        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
+#        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
         #iterate through each antichain of product of chains poset with paramaters (a,b,c)
         for acl in pocp.antichains_iterator():
             #ac format ex: [x,y,z]
@@ -1718,14 +1725,6 @@ class PlanePartitions_TSSCPP(PlanePartitions):
             for i in range(n/2):
                 for j in range(n/2):
                     ppMatrix[j][i+(n/2)] = ppMatrix[i+(n/2)][j]
-
-            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
-
-        matrixList.sort()
-
-        current = 0
-        while current < len(matrixList):
-            yield self.element_class(self, matrixList[current])
-            current += 1
+            yield self.element_class(self, ppMatrix)
 
 
