@@ -33,6 +33,7 @@ from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.posets.posets import Poset
+from sage.combinat.posets.poset_examples import posets
 from sage.categories.cartesian_product import cartesian_product
 from sage.rings.integer import Integer
 from sage.misc.all import prod
@@ -49,17 +50,34 @@ class PlanePartition(ClonableList):
 
         EXAMPLES::
 
-            sage: PP = PlanePartition([[4,3,3,1], [2,1,1], [1,1]])
-            sage: PP.parent() is PlanePartitions((3,4,4))
-            True
+            sage: p = PlanePartition([[2,1],[1]])
+            sage: TestSuite(t).run()
+
+            sage: p.parent()
+            Plane partitions
+            sage: p.category()
+            Category of elements of plane partitions
+            sage: type(p)
+            <class 'sage.combinat.plane_partition.PlanePartitions_all_with_category.element_class'>
         """
         if isinstance(PP,PlanePartition):
             return PP
         pp = PlanePartitions()
         return pp.element_class(pp, PP)  # The check() will raise the appropriate error
-#        return PlanePartitions()(PP)
 
     def __init__(self, parent, pp, check=True):
+        r"""
+        Initialize a plane partition.
+
+        TESTS::
+
+            sage: a = PlanePartitions()([[2,1],[1]])
+            sage: b = PlanePartitions([2,2,2])([[2,1],[1]))
+            sage: c = PlanePartitions(4)([[2,1],[1]])
+
+        Add more tests to show which parent a,b,c receive, check that a==b, and b==c, but a is not b, and b is not c.
+
+        """
         if isinstance(pp, PlanePartition):
             ClonableList.__init__(self, parent, pp, check=False)
         pp = [tuple(_) for _ in pp]
@@ -82,8 +100,16 @@ class PlanePartition(ClonableList):
 
         EXAMPLES::
 
-            sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-            sage: PP.check()
+            sage: a = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
+            sage: a.check()
+            sage: b = PlanePartition([[1,2],[1]])
+            Traceback (most recent call last):
+            ...          
+            ValueError: Not weakly decreasing along rows
+            sage: c = PlanePartition([[1,1],[2]])
+            Traceback (most recent call last):
+            ...
+            ValueError: Not weakly decreasing along columns
         """
         for row in self:
             if not all(c >= 0 for c in row):
@@ -485,6 +511,14 @@ class PlanePartition(ClonableList):
         r"""
         Return the complement of ``self``.
 
+        If the parent of ``self'' consists only of partitions inside a given
+        box, then the complement is taken in this box. Otherwise, the
+        complement is taken in the smallest box containing the plane partition.
+
+        If ``tableau_only'' is set to ``True'', then only the tableau
+        consisting of the projection of boxes size onto the xy-plane
+        is returned instead of a PlanePartition object.
+
         EXAMPLES::
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
@@ -509,6 +543,10 @@ class PlanePartition(ClonableList):
     def transpose(self, tableau_only=False):
         r"""
         Return the transpose of ``self``.
+
+        If ``tableau_only'' is set to ``True'', then only the tableau
+        consisting of the projection of boxes size onto the xy-plane
+        is returned instead of a PlanePartition object.
 
         EXAMPLES::
 
@@ -697,13 +735,21 @@ class PlanePartitions(UniqueRepresentation, Parent):
     """
     @staticmethod
     def __classcall_private__(cls, *args, **kwds):
-        """
-        Return correct parent based on input.
+        r"""
+        This is a factory class which returns the appropriate parent based on
+        arguments.  See the documentation for :class:`PlanePartitions`
+        for more information.
 
-        EXAMPLES::
+        TESTS::
 
-            sage: 1+1
-            2
+            sage: PlanePartitions()
+            Plane partitions
+            sage: PlanePartitions([3,3,3])
+            Plane partitions inside a 3 x 3 x 3 box
+            sage: PlanePartitions(3)
+            Plane partitions of size 3
+            sage: PlanePartitions([4,4,4], symmetry='TSSCPP')
+            Totally Symmetric Self-Complementary Plane partitions inside a 4 x 4 x 4 box
         """
         symmetry = kwds.get('symmetry', None)
         if not args:
@@ -734,8 +780,6 @@ class PlanePartitions(UniqueRepresentation, Parent):
                 raise ValueError("invalid symmetry class option; must be None, 'TSPP', 'SPP', 'CSPP', or 'TSCCPP' ")
 
 
-
-
     Element = PlanePartition
 
 
@@ -747,22 +791,29 @@ class PlanePartitions(UniqueRepresentation, Parent):
 
 class PlanePartitions_all(PlanePartitions):
     r"""
-    All plane partitions of any size
+    All plane partitions.
 
+    .. TODO:
 
-
-        :class:`PlanePartition`
+    Consider giving this the structure of disjoint union of the classes
+    PlanePartitions(n) for n an integer.
     """
 
 
     def __init__(self):
         r"""
-        Initialize ``self``
+        Initializes the class of all increasing tableaux.
 
-        EXAMPLES::
+        .. WARNING::
 
-            sage: PP = PlanePartitions((4,3,2))
-            sage: TestSuite(PP).run()
+            Input is not checked; please use :class:`IncreasingTableaux` to
+            ensure the options are properly parsed.
+
+        TESTS::
+
+            sage: from sage.combinat.plane_partition import PlanePartition_all
+            sage: P = PlanePartition_all()
+            sage: TestSuite(P).run()  # long time
         """
         self._box = None
         super(PlanePartitions_all, self).__init__(category=InfiniteEnumeratedSets())
@@ -773,20 +824,20 @@ class PlanePartitions_all(PlanePartitions):
 
         EXAMPLES::
 
-            sage: PlanePartitions((4,3,2))
-            Plane partitions inside a 4 x 3 x 2 box
+            sage: PlanePartitions()
+            Plane partitions
         """
-        return "Plane partitions "
-#        return "Plane partitions inside a box"
+        return "Plane partitions"
 
-    def __contains(self, pp):
+    def __contains__(self, pp):
         """
         Check to see that ``self`` is a valid plane partition.
 
-        EXAMPLES::
-
-            sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-            sage: PP.check()
+        .. TODO:
+            
+            Figure out how redundant this is, given that the check function
+            exists for the factor class. Maybe only need __contains__
+            on the fixed size and symmetry classes?
         """
         for row in pp:
             if not all(c >= 0 for c in row):
@@ -801,11 +852,7 @@ class PlanePartitions_all(PlanePartitions):
 
 class PlanePartitions_box(PlanePartitions):
     r"""
-    All plane partitions of any size
-
-
-
-        :class:`PlanePartition`
+    All plane partitions that fit inside a box of a specified size.
     """
     @staticmethod
     def __classcall_private__(cls, box_size):
@@ -823,7 +870,8 @@ class PlanePartitions_box(PlanePartitions):
 
     def __init__(self, box_size):
         r"""
-        Initialize ``self``
+        Initializes the class of plane partitions that fit in a box of a 
+        specified size.
 
         EXAMPLES::
 
@@ -868,20 +916,21 @@ class PlanePartitions_box(PlanePartitions):
 #                for c in range(B):
 #                    PP[A-1-r][B-1-c] = T[r][c] - r - 1
 #            yield self.element_class(self, PP, check=False)
-        def componentwise_comparer(thing1,thing2):
-            if len(thing1) == len(thing2):
-                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
-                    return True
-            return False
-        def product_of_chains_poset(list_of_chain_lengths):
-            elem = cartesian_product([range(chain_length) for chain_length in list_of_chain_lengths])
-            return Poset((elem, componentwise_comparer))
+#        def componentwise_comparer(thing1,thing2):
+#            if len(thing1) == len(thing2):
+#                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
+#                    return True
+#            return False
+#        def product_of_chains_poset(list_of_chain_lengths):
+#            elem = cartesian_product([range(chain_length) for chain_length in list_of_chain_lengths])
+#            return Poset((elem, componentwise_comparer))
 
         a = self._box[0]
         b = self._box[1]
         c = self._box[2]
 
-        pocp = product_of_chains_poset([a,b,c])
+#        pocp = product_of_chains_poset([a,b,c])
+        pocp = posets.ProductOfChains([a,b,c])
 
         matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
 
@@ -911,14 +960,15 @@ class PlanePartitions_box(PlanePartitions):
                             if j < c-1:
                                 jValue = ppMatrix[i][j+1]
                             ppMatrix[i][j] = max(iValue,jValue)
+            yield self.element_class(self, ppMatrix)
 
-            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
+#            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
 
-        matrixList.sort()
-        current = 0
-        while current < len(matrixList):
-            yield self.element_class(self, matrixList[current])
-            current += 1
+#        matrixList.sort()
+#        current = 0
+#        while current < len(matrixList):
+#            yield self.element_class(self, matrixList[current])
+#            current += 1
 
 
     def cardinality(self):
@@ -948,8 +998,8 @@ class PlanePartitions_box(PlanePartitions):
 
     def box(self):
         """
-        Return the sizes of the box of the plane partitions of ``self``
-        are contained in.
+        Return the size of the box of the plane partition of ``self``
+        is contained in.
 
         EXAMPLES::
 
@@ -975,35 +1025,107 @@ class PlanePartitions_box(PlanePartitions):
             sage: P.random_element()
             Plane partition [[4, 3, 3], [4, 0, 0], [2, 0, 0], [0, 0, 0]]
         """
-        def leq(thing1, thing2):
-            return all(thing1[i] <= thing2[i] for i in range(len(thing1)))
-        elem = [(i,j,k) for i in range(self._box[0]) for j in range(self._box[1])
-                for k in range(self._box[2])]
-        myposet = Poset((elem, leq))
-        R = myposet.random_order_ideal()
-        Z = [[0 for i in range(self._box[1])] for j in range(self._box[0])]
-        for C in R:
+#        def leq(thing1, thing2):
+#            return all(thing1[i] <= thing2[i] for i in range(len(thing1)))
+#        elem = [(i,j,k) for i in range(self._box[0]) for j in range(self._box[1])
+#                for k in range(self._box[2])]
+#        myposet = Poset((elem, leq))
+        a = self._box[0]
+        b = self._box[1]
+        c = self._box[2]
+        P = posets.ProductOfChains([a,b,c])
+        I = P.random_order_ideal()
+        Z = [[0 for i in range(b)] for j in range(a)]
+        for C in I:
             Z[C[0]][C[1]] += 1
         return self.element_class(self, Z, check=False)
 
 
 
 class PlanePartitions_n(PlanePartitions):
-
+    """
+    Plane partitions with a fixed number of boxes.
+    """
 
     def __init__(self, n):
-        """
+        r"""
+        Initializes the class of plane partitions with ``n`` boxes.
+
+        .. WARNING::
+
+            Input is not checked; please use :class:`IncreasingTableaux` to
+            ensure the options are properly parsed.
+
         TESTS::
-    
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+
+            sage: PP = PlanePartitions(4)
+            sage: type(PP)
+            <class 'sage.combinat.plane_partition.PlanePartitions_n_with_category'>
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_n, self).__init__(category=FiniteEnumeratedSets())
         self._n = n
 
     def _repr_(self):
-        return " Totally Symmetric Plane partitions inside a {} x {} x {} box".format(
-                    self._box[0], self._box[1], self._box[2])
+        """
+        TESTS::
+
+            sage: PlanePartitions(3)
+            Plane partitions of size 3
+        """
+        return "Plane partitions of size {}".format(self._n)
+
+    def __iter__(self):
+        from sage.combinat.partition import Partitions, Partition
+        def PP_first_row_iter(n, la):
+            m = n-sum(la)
+            if m < 0:
+                yield
+                return
+            if m==0:
+                yield [la]
+                return
+            for k in range(m,0,-1):
+                for mu in P_in_shape_iter(k,la):
+                    if mu is not None:
+                        for PP in PP_first_row_iter(m, mu):
+                            if PP is not None:
+                                yield [la] + PP
+
+
+        def P_in_shape_iter(n, la):
+            if n<0 or sum(la)<n:
+                yield
+                return
+            if n==0:
+                yield []
+                return
+            if len(la)==1:
+                if la[0]>=n:
+                    yield [n]
+                    return
+                else:
+                    yield
+                    return
+            if sum(la)==n:
+                yield la
+                return
+            for mu_0 in range(min(n,la[0]),0,-1):
+                new_la = [min(mu_0,la[i]) for i in range(1,len(la))]
+                for mu in P_in_shape_iter(n-mu_0, new_la):
+                    if mu is not None:
+                        yield [mu_0]+mu
+        n = self._n
+        if n==0:
+            yield PlanePartition([])
+            return
+
+        for m in range(n,0,-1):
+            for la in Partitions(m):
+                for a in PP_first_row_iter(n,la):
+                    yield a
+            
+        
 
 
 
@@ -1035,7 +1157,7 @@ class PlanePartitions_TSPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return " Totally Symmetric Plane partitions inside a {} x {} x {} box".format(
+        return "Totally Symmetric Plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
 class PlanePartitions_SPP(PlanePartitions):
@@ -1065,7 +1187,7 @@ class PlanePartitions_SPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return " Symmetric Plane partitions inside a {} x {} x {} box".format(
+        return "Symmetric Plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self):
@@ -1152,7 +1274,7 @@ class PlanePartitions_CSPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return " Cyclically Symmetric Plane partitions inside a {} x {} x {} box".format(
+        return "Cyclically Symmetric Plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self):
@@ -1247,14 +1369,14 @@ class PlanePartitions_SCPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return " Self Complementary Plane partitions inside a {} x {} x {} box".format(
+        return "Self Complementary Plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
 
 
 
 
-class PlanePartitions_TSSCPP(PlanePartitions_all):
+class PlanePartitions_TSSCPP(PlanePartitions):
 
     @staticmethod
     def __classcall_private__(cls, box_size):
@@ -1283,7 +1405,7 @@ class PlanePartitions_TSSCPP(PlanePartitions_all):
         self._box=box_size
 
     def _repr_(self):
-        return " Totally Symmetric Self-Complementary Plane partitions inside a {} x {} x {} box".format(
+        return "Totally Symmetric Self-Complementary Plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
 
@@ -1425,7 +1547,7 @@ class PlanePartitions_CSTCPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return " Cyclically symmetric transpose complement partitions inside a {} x {} x {} box".format(
+        return "Cyclically symmetric transpose complement partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
 
@@ -1456,6 +1578,6 @@ class PlanePartitions_CSSCPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return " Cyclically Symmetric Self-Complementary Plane partitions inside a {} x {} x {} box".format(
+        return "Cyclically Symmetric Self-Complementary Plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
